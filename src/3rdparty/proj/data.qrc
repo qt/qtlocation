@@ -1,0 +1,15 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>proj_data/epsg</file>
+    <file>proj_data/esri</file>
+    <file>proj_data/esri.extra</file>
+    <file>proj_data/GL27</file>
+    <file>proj_data/IGNF</file>
+    <file>proj_data/nad27</file>
+    <file>proj_data/nad83</file>
+    <file>proj_data/nad.lst</file>
+    <file>proj_data/other.extra</file>
+    <file>proj_data/proj_def.dat</file>
+    <file>proj_data/world</file>
+</qresource>
+</RCC>
