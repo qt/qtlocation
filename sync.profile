@@ -8,7 +8,6 @@
 %mastercontent = (
     "gui" => "#include <QtGui/QtGui>\n",
     "network" => "#include <QtNetwork/QtNetwork>\n",
-    "sql" => "#include <QtSql/QtSql>\n",
 );
 %modulepris = (
     "QtLocation" => "$basedir/modules/qt_location.pri",
@@ -23,7 +22,6 @@
     "QtLocation" => {
         "QtGui" => "0c637cb07ba3c9b353e7e483a209537485cc4e2a",
         "QtNetwork" => "0c637cb07ba3c9b353e7e483a209537485cc4e2a",
-        "QtSql" => "0c637cb07ba3c9b353e7e483a209537485cc4e2a",
         "QtCore" => "0c637cb07ba3c9b353e7e483a209537485cc4e2a",
     },
 );

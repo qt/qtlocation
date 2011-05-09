@@ -64,7 +64,7 @@ QTM_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 #define QT_LANDMARKS_BACKEND_INTERFACE "com.nokia.qt.mobility.landmarks.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QLandmarkManagerEngineFactory, QT_LANDMARKS_BACKEND_INTERFACE);
+Q_DECLARE_INTERFACE(QLandmarkManagerEngineFactory, QT_LANDMARKS_BACKEND_INTERFACE);
 QT_END_NAMESPACE
 
 #endif

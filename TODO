@@ -1,0 +1,7 @@
+The following tasks need to be done once backwards compatibility
+towards Mobilty's QtLocation is somewhat less of an issue.
+
+- Remove qmobilityglobal.h
+- Remove qlatin1constant.h (possible condidate for Qt)
+- Remove qmobilitypluginsearch.h (convert to QFactoryLoader)
+- Remove any occurance of QTM_* defines and associated QtMobility namespace

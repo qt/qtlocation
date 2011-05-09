@@ -74,7 +74,7 @@ QTM_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 #define QT_GEOSERVICE_BACKEND_INTERFACE "com.nokia.qt.mobility.geoservice.serviceproviderfactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QGeoServiceProviderFactory, QT_GEOSERVICE_BACKEND_INTERFACE);
+Q_DECLARE_INTERFACE(QGeoServiceProviderFactory, QT_GEOSERVICE_BACKEND_INTERFACE);
 QT_END_NAMESPACE
 
 #endif

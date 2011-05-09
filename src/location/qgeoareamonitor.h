@@ -48,14 +48,7 @@
 
 QT_BEGIN_HEADER
 
-#ifdef Q_QDOC
-//normally we would use macro only but this causes some other compilation issues
 QTM_BEGIN_NAMESPACE
-#else
-namespace QtMobility
-{
-#endif
-
 
 class QGeoPositionInfo;
 class QGeoAreaMonitorPrivate;
@@ -86,7 +79,8 @@ private:
     QGeoAreaMonitorPrivate *d;
 };
 
-}
+
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

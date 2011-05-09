@@ -81,23 +81,23 @@ public:
         - RMC reports date with a two-digit year so in this case the year
           is assumed to be after the year 2000.
     */
-    QM_AUTOTEST_EXPORT static bool getPosInfoFromNmea(const char *data, int size, QGeoPositionInfo *info, bool *hasFix = 0);
+    Q_AUTOTEST_EXPORT static bool getPosInfoFromNmea(const char *data, int size, QGeoPositionInfo *info, bool *hasFix = 0);
 
     /*
         Returns true if the given NMEA sentence has a valid checksum.
     */
-    QM_AUTOTEST_EXPORT static bool hasValidNmeaChecksum(const char *data, int size);
+    Q_AUTOTEST_EXPORT static bool hasValidNmeaChecksum(const char *data, int size);
 
     /*
         Returns time from a string in hhmmss or hhmmss.z+ format.
     */
-    QM_AUTOTEST_EXPORT static bool getNmeaTime(const QByteArray &bytes, QTime *time);
+    Q_AUTOTEST_EXPORT static bool getNmeaTime(const QByteArray &bytes, QTime *time);
 
     /*
         Accepts e.g. ("2734.7964", 'S', "15306.0124", 'E') and returns the
         lat-long values. Fails if lat or long fail isValidLat() or isValidLong().
     */
-    QM_AUTOTEST_EXPORT static bool getNmeaLatLong(const QByteArray &latString, char latDirection, const QByteArray &lngString, char lngDirection, double *lat, double *lon);
+    Q_AUTOTEST_EXPORT static bool getNmeaLatLong(const QByteArray &latString, char latDirection, const QByteArray &lngString, char lngDirection, double *lat, double *lon);
 };
 
 QTM_END_NAMESPACE

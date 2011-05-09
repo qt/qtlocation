@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,35 +38,30 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QMOBILITYGLOBAL_H
+#define QMOBILITYGLOBAL_H
 
-#ifndef QGEOPOSITIONINFOSOURCEFACTORY_H
-#define QGEOPOSITIONINFOSOURCEFACTORY_H
+#include <QtCore/qglobal.h>
 
-#include "qmobilityglobal.h"
-#include "qgeopositioninfosource.h"
-#include "qgeosatelliteinfosource.h"
-#include <QList>
+// The namespace is hardcoded as moc has issues resolving
+// macros which would be a prerequisite for a dynmamic namespace
+//#define QTM_NAMESPACE QtMobility
+//#define QTM_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+#ifdef QTM_NAMESPACE
+# define QTM_PREPEND_NAMESPACE(name) ::QTM_NAMESPACE::name
+# define QTM_BEGIN_NAMESPACE namespace QTM_NAMESPACE {
+# define QTM_END_NAMESPACE }
+# define QTM_USE_NAMESPACE using namespace QTM_NAMESPACE;
+#else
+# define QTM_PREPEND_NAMESPACE(name) ::name
+# define QTM_BEGIN_NAMESPACE
+# define QTM_END_NAMESPACE
+# define QTM_USE_NAMESPACE
+#endif
 
-class Q_LOCATION_EXPORT QGeoPositionInfoSourceFactory
-{
-public:
-    virtual ~QGeoPositionInfoSourceFactory();
+//in case Qt is in namespace
+QT_USE_NAMESPACE
 
-    virtual QString sourceName() const = 0;
-    virtual int sourceVersion() const = 0;
-    virtual int sourcePriority() const;
+#endif // QMOBILITYGLOBAL_H
 
-    virtual QGeoPositionInfoSource *positionInfoSource(QObject *parent) = 0;
-    virtual QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) = 0;
-};
-
-QTM_END_NAMESPACE
-
-QT_BEGIN_NAMESPACE
-#define QT_POSITION_SOURCE_INTERFACE "com.nokia.qt.mobility.position.sourcefactory/1.0"
-Q_DECLARE_INTERFACE(QGeoPositionInfoSourceFactory, QT_POSITION_SOURCE_INTERFACE);
-QT_END_NAMESPACE
-
-#endif // QGEOPOSITIONINFOSOURCEFACTORY_H
