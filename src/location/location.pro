@@ -1,15 +1,20 @@
-TEMPLATE = lib
-TARGET = QtLocation
-QT = core gui network sql
+load(qt_module)
 
-#include(../../common.pri)
+TARGET = QtLocation
+QPRO_PWD   = $$PWD
+
+CONFIG += module
 MODULE_PRI = ../../modules/qt_location.pri
+
+QT = core gui network
 
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
+include($$QT_SOURCE_TREE/src/qbase.pri)
+
 INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
-INCLUDEPATH += .
-DEPENDPATH += .
+#INCLUDEPATH += .
+#DEPENDPATH += .
 
 include(landmarks/landmarks.pri)
 include(maps/maps.pri)
@@ -194,5 +199,3 @@ simulator {
     qtAddLibrary(QtMobilitySimulator)
 }
 
-CONFIG += middleware
-include(../../features/deploy.pri)

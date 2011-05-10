@@ -1,3 +1,5 @@
+load(qt_module)
+
 TARGET = qtgeoservices_nokia
 QT += location network
 
@@ -34,6 +36,8 @@ SOURCES += \
 RESOURCES += resource.qrc
 
 INCLUDEPATH += $$QT.location.includes
+
+message($$QT.location.includes)
 
 #INCLUDEPATH += $$SOURCE_DIR/src/location \
 #                $$SOURCE_DIR/src/location/maps \
