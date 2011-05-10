@@ -2,7 +2,8 @@ TEMPLATE = lib
 TARGET = QtLocation
 QT = core gui network sql
 
-include(../../common.pri)
+#include(../../common.pri)
+MODULE_PRI = ../../modules/qt_location.pri
 
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 

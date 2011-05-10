@@ -1,2 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS += location
+CONFIG+=ordered
+SUBDIRS += location plugins
