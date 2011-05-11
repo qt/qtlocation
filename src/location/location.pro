@@ -12,9 +12,6 @@ DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
 include($$QT_SOURCE_TREE/src/qbase.pri)
 
-INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
-#INCLUDEPATH += .
-#DEPENDPATH += .
 
 include(landmarks/landmarks.pri)
 include(maps/maps.pri)
@@ -82,15 +79,6 @@ symbian {
     }
 }
 
-wince* {
-    PRIVATE_HEADERS += qgeopositioninfosource_wince_p.h \
-                       qgeosatelliteinfosource_wince_p.h \
-                       qgeoinfothread_wince_p.h
-    SOURCES += qgeopositioninfosource_wince.cpp \
-               qgeosatelliteinfosource_wince.cpp \
-               qgeoinfothread_wince.cpp
-    LIBS += -lgpsapi
-}
 
 maemo6|meego {
     CONFIG += qdbus link_pkgconfig
@@ -104,20 +92,6 @@ maemo6|meego {
                 dbusserver_maemo_p.h
 }
 
-maemo5 {
-    CONFIG += qdbus link_pkgconfig
-    SOURCES += gconfitem.cpp \
-               liblocationwrapper.cpp \
-               qgeopositioninfosource_maemo5.cpp \
-               qgeosatelliteinfosource_maemo5.cpp
-    HEADERS += gconfitem_p.h  \
-               liblocationwrapper_p.h \
-               qgeopositioninfosource_maemo5_p.h \
-               qgeosatelliteinfosource_maemo5_p.h
-    PKGCONFIG += glib-2.0  gconf-2.0
-    LIBS += -llocation
-    QMAKE_PKGCONFIG_REQUIRES = glib-2.0 gconf-2.0
-}
 
 meego {
     contains (geoclue-master_enabled, yes) {
@@ -168,6 +142,7 @@ SOURCES += \
             qgeopositioninfosourcefactory.cpp
 
 symbian {
+    INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC83
 
