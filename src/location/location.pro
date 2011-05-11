@@ -12,6 +12,7 @@ DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
 include($$QT_SOURCE_TREE/src/qbase.pri)
 
+HEADERS += qtlocationversion.h
 
 include(landmarks/landmarks.pri)
 include(maps/maps.pri)
