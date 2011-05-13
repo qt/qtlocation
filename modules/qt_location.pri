@@ -1,6 +1,6 @@
-QT.location.VERSION = 4.8.0
-QT.location.MAJOR_VERSION = 4
-QT.location.MINOR_VERSION = 8
+QT.location.VERSION = 5.0.0
+QT.location.MAJOR_VERSION = 5
+QT.location.MINOR_VERSION = 0
 QT.location.PATCH_VERSION = 0
 
 QT.location.name = QtLocation
