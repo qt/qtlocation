@@ -9,6 +9,7 @@
 %mastercontent = (
     "gui" => "#include <QtGui/QtGui>\n",
     "network" => "#include <QtNetwork/QtNetwork>\n",
+    "declarative" => "#include <QtDeclarative/qdeclarative.h>\n",
 );
 %modulepris = (
     "QtLocation" => "$basedir/modules/qt_location.pri",
@@ -24,5 +25,6 @@
         "QtGui" => "0c637cb07ba3c9b353e7e483a209537485cc4e2a",
         "QtNetwork" => "0c637cb07ba3c9b353e7e483a209537485cc4e2a",
         "QtCore" => "0c637cb07ba3c9b353e7e483a209537485cc4e2a",
+        "QtDeclarative" => "0c637cb07ba3c9b353e7e483a209537485cc4e2a",
     },
 );
