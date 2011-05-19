@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
-SUBDIRS += flickr \
-		 landmarkmap \
-		 mapviewer
+SUBDIRS +=  flickr \
+            landmarkmap \
+            mapviewer
