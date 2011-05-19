@@ -1,0 +1,9 @@
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file>mapviewer.qml</file>
+        <file>TitleBar.qml</file>
+        <file>quit.png</file>
+        <file>titlebar.png</file>
+        <file>titlebar.sci</file>
+    </qresource>
+</RCC>

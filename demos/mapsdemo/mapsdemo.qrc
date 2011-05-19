@@ -1,0 +1,12 @@
+<!DOCTYPE RCC>
+ <RCC version="1.0">
+
+ <qresource prefix="/">
+     <file>icons/mylocation.png</file>
+     <file>icons/startmarker.png</file>
+     <file>icons/endmarker.png</file>
+     <file>icons/pathmarker.png</file>
+     <file>icons/searchmarker.png</file>
+     <file>icons/waypointmarker.png</file>
+ </qresource>
+ </RCC>
