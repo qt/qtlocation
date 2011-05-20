@@ -6,6 +6,7 @@ examples/*/*/*
 !examples/*/*/README
 examples/*/*/*[.]app
 !examples/declarative/*
+!examples/declarative/*/*
 !examples/tutorials/*
 !examples/tutorials/*/*
 !examples/ja_JP/*/*
@@ -18,6 +19,8 @@ demos/*/*[.]app
 config.tests/*/*/*
 !config.tests/*/*/*[.]*
 config.tests/*/*/*[.]app
+
+qml_location_*
 
 callgrind.out.*
 pcviewer.cfg
