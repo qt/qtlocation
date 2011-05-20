@@ -1,0 +1,28 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>landmarkmap.qml</file>
+    <file>nmealog.txt</file>
+    <file>mylm.lmx</file>
+    <file>landmarkmapcommon/ScrollBar.qml</file>
+    <file>landmarkmapcommon/Slider.qml</file>
+    <file>landmarkmapmobile/Button.qml</file>
+    <file>landmarkmapmobile/Floater.qml</file>
+    <file>landmarkmapmobile/ListDelegate.qml</file>
+    <file>landmarkmapmobile/StatusBar.qml</file>
+    <file>landmarkmapmobile/TitleBar.qml</file>
+    <file>landmarkmapmobile/ToolBar.qml</file>
+    <file>landmarkmapmobile/images/gloss.png</file>
+    <file>landmarkmapmobile/images/landmarkstar.png</file>
+    <file>landmarkmapmobile/images/lineedit.png</file>
+    <file>landmarkmapmobile/images/lineedit.sci</file>
+    <file>landmarkmapmobile/images/moon.png</file>
+    <file>landmarkmapmobile/images/quit.png</file>
+    <file>landmarkmapmobile/images/star.png</file>
+    <file>landmarkmapmobile/images/stripes.png</file>
+    <file>landmarkmapmobile/images/sun.png</file>
+    <file>landmarkmapmobile/images/titlebar.png</file>
+    <file>landmarkmapmobile/images/titlebar.sci</file>
+    <file>landmarkmapmobile/images/toolbutton.png</file>
+    <file>landmarkmapmobile/images/toolbutton.sci</file>
+</qresource>
+</RCC>
