@@ -44,13 +44,13 @@
 
 #include <qlandmarkintersectionfilter.h>
 #include <qlandmarkproximityfilter.h>
-#include <qdeclarativecoordinate_p.h>
+#include "qdeclarativecoordinate_p.h"
 #include <qlandmarkunionfilter.h>
 #include <qlandmarknamefilter.h>
 #include <qlandmarkcategoryfilter.h>
 #include <qlandmarkboxfilter.h>
 #include <qlandmarkfilter.h>
-#include <qdeclarativelandmarkcategory_p.h>
+#include "qdeclarativelandmarkcategory_p.h"
 
 #include <QtDeclarative/qdeclarative.h>
 #include <QDeclarativeListProperty>

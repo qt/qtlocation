@@ -59,7 +59,7 @@
 #include <QGraphicsItem>
 #include "qgeocoordinate.h"
 #include "qgraphicsgeomap.h"
-#include "projwrapper_p.h"
+#include <private/projwrapper_p.h>
 #include <QList>
 
 QTM_BEGIN_NAMESPACE

@@ -47,7 +47,7 @@
 #include "qgeomapdata_p.h"
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
-#include "projwrapper_p.h"
+#include <private/projwrapper_p.h>
 
 #include <QtAlgorithms>
 

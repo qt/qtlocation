@@ -51,7 +51,7 @@
 #include "qgeocoordinate.h"
 
 #include "qgeoplace.h"
-#include "qgeoplace_p.h"
+#include <private/qgeoplace_p.h>
 
 #include <QVariant>
 #include <QStringList>

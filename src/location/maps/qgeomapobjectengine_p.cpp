@@ -42,9 +42,9 @@
 #include "qgeomapobjectengine_p.h"
 #include "qgeomaprouteobject.h"
 #include "qgeomapcircleobject.h"
-#include "qgeocoordinate_p.h"
+#include <private/qgeocoordinate_p.h>
 #include "qgeoboundingbox.h"
-#include "projwrapper_p.h"
+#include <private/projwrapper_p.h>
 #include "qgeotiledmapobjectinfo_p.h"
 
 #include <QTransform>

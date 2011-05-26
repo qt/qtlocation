@@ -61,7 +61,7 @@
 
 #include "qgeomapobjectengine_p.h"
 #include "qgeomapobject_p.h"
-#include "projwrapper_p.h"
+#include <private/projwrapper_p.h>
 
 QTM_BEGIN_NAMESPACE
 

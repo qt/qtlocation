@@ -42,8 +42,8 @@
 #ifndef QDECLARATIVELANDMARKMODEL_P_H
 #define QDECLARATIVELANDMARKMODEL_P_H
 
-#include <qdeclarativelandmark_p.h>
-#include <qdeclarativelandmarkfilters_p.h>
+#include "qdeclarativelandmark_p.h"
+#include "qdeclarativelandmarkfilters_p.h"
 
 #include <qlandmark.h>
 #include <qlandmarkmanager.h>

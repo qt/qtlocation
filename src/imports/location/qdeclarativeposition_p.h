@@ -46,7 +46,7 @@
 #include <QDateTime>
 #include <qgeopositioninfosource.h>
 #include <qgeopositioninfo.h>
-#include <qdeclarativecoordinate_p.h>
+#include "qdeclarativecoordinate_p.h"
 #include <QtDeclarative/qdeclarative.h>
 
 // Define this to get qDebug messages
