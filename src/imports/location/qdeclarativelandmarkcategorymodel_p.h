@@ -42,10 +42,10 @@
 #ifndef QDECLARATIVELANDMARKCATEGORYMODEL_P_H
 #define QDECLARATIVELANDMARKCATEGORYMODEL_P_H
 
-#include <qdeclarativelandmark_p.h>
-#include <qdeclarativelandmarkmodel_p.h>
-#include <qdeclarativelandmarkcategory_p.h>
-#include <qdeclarativelandmarkfilters_p.h>
+#include "qdeclarativelandmark_p.h"
+#include "qdeclarativelandmarkmodel_p.h"
+#include "qdeclarativelandmarkcategory_p.h"
+#include "qdeclarativelandmarkfilters_p.h"
 
 #include <qlandmarkcategory.h>
 #include <qlandmarkmanager.h>

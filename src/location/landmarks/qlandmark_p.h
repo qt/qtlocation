@@ -54,7 +54,7 @@
 
 #include "qlandmark.h"
 #include "qlandmarkid.h"
-#include "qgeoplace_p.h"
+#include <private/qgeoplace_p.h>
 #include <QList>
 #include <QHash>
 #include <QSharedData>

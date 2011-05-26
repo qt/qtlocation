@@ -56,7 +56,7 @@
 #include "qgeomapdata_p.h"
 #include "qgeomapobject.h"
 #include "qgeomapobject_p.h"
-#include "projwrapper_p.h"
+#include <private/projwrapper_p.h>
 
 #include <QRectF>
 #include <QHash>
