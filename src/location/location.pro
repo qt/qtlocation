@@ -16,6 +16,7 @@ HEADERS += qtlocationversion.h
 
 include(landmarks/landmarks.pri)
 include(maps/maps.pri)
+include(places/places.pri)
 
 contains(proj_enabled, yes) {
   LIBS += -lproj
