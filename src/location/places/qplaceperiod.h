@@ -3,13 +3,13 @@
 
 #include <QDateTime>
 #include <QSharedDataPointer>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlacePeriodPrivate;
 
-class Q_PLACES_EXPORT QPlacePeriod
+class Q_LOCATION_EXPORT QPlacePeriod
 {
 public:
     QPlacePeriod();
@@ -45,6 +45,6 @@ private:
     QSharedDataPointer<QPlacePeriodPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEPERIOD_H

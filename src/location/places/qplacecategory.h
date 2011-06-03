@@ -5,15 +5,14 @@
 #include <QString>
 #include <QVariant>
 #include <QList>
-#include "qplaceglobal.h"
 #include "qplacealternativevalue.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceManagerEngine;
 
 class QPlaceCategoryPrivate;
-class Q_PLACES_EXPORT QPlaceCategory
+class Q_LOCATION_EXPORT QPlaceCategory
 {
 public:
     QPlaceCategory();
@@ -44,6 +43,6 @@ private:
     QSharedDataPointer<QPlaceCategoryPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACECATEGORY_H

@@ -1,7 +1,7 @@
 #include "qplacegeoboundingbox.h"
 #include "qplacegeoboundingbox_p.h"
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlaceGeoBoundingBoxPrivate::QPlaceGeoBoundingBoxPrivate()
     : QSharedData()

@@ -5,7 +5,7 @@
 
 #include "qplaceperiod.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlacePeriodPrivate : public QSharedData
 {
@@ -30,6 +30,6 @@ public:
     QDateTime end;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEPERIOD_P_H

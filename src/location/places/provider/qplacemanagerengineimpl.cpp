@@ -11,7 +11,7 @@
 #include "qplacerestmanager.h"
 #include "qplacerestreply.h"
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 const char *MANAGER_NAME = "com.nokia.places/0.9";
 

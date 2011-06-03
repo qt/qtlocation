@@ -1,6 +1,6 @@
 #include "qplacetextpredictionreply.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceTextPredictionReplyPrivate
 {
@@ -9,9 +9,9 @@ public:
     QStringList textPredictions;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 /*!
     \class QPlaceTextPredictionReply

@@ -3,14 +3,14 @@
 
 #include <QSharedDataPointer>
 #include <QStringList>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 #include "qplacesupplier.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceDescriptionPrivate;
 
-class Q_PLACES_EXPORT QPlaceDescription
+class Q_LOCATION_EXPORT QPlaceDescription
 {
 public:
     QPlaceDescription();
@@ -42,6 +42,6 @@ private:
     QSharedDataPointer<QPlaceDescriptionPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEDESCRIPTION_H

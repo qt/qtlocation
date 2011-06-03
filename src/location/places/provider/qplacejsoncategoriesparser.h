@@ -10,7 +10,7 @@
 class QScriptEngine;
 class QScriptValue;
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceJSonCategoriesParser : public QObject
 {
@@ -43,6 +43,6 @@ private:
     QList<QPlaceCategory> allCategories;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEJSONCATEGORIESPARSER_H

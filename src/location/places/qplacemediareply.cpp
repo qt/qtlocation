@@ -2,7 +2,7 @@
 
 #include "qplace.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 class QPlaceMediaReplyPrivate
 {
 public:
@@ -11,9 +11,9 @@ public:
     int totalCount;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 /*!
     \class QPlaceMediaReply

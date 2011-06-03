@@ -1,7 +1,7 @@
 #include "qplacebusinessinformation.h"
 #include "qplacebusinessinformation_p.h"
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlaceBusinessInformationPrivate::QPlaceBusinessInformationPrivate() : QSharedData()
 {

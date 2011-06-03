@@ -5,7 +5,7 @@
 
 #include "qplacebusinessinformation.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceBusinessInformationPrivate : public QSharedData
 {
@@ -26,6 +26,6 @@ public:
     QStringList paymentMethods;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEBUSINESSINFORMATION_P_H

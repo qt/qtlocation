@@ -6,7 +6,7 @@
 
 #include "qplacesupplier.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceSupplierPrivate : public QSharedData
 {
@@ -24,6 +24,6 @@ public:
     QString supplierIconURL;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACESUPPLIER_P_H

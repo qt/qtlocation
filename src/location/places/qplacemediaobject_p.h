@@ -5,7 +5,7 @@
 
 #include "qplacemediaobject.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceMediaObjectPrivate : public QSharedData
 {
@@ -25,6 +25,6 @@ public:
     QPlaceSupplier supplier;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEMEDIAOBJECT_P_H

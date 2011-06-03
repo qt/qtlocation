@@ -7,7 +7,7 @@
     #include <QDebug>
 #endif
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 /*!
     Constructor.

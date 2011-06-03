@@ -5,7 +5,7 @@
 #include <QString>
 #include <QVariant>
 #include <QList>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 #include "qplacealternativevalue.h"
 #include "qplacebusinessinformation.h"
 #include "qplacecategory.h"
@@ -17,11 +17,11 @@
 #include "qplacemediaobject.h"
 #include "qplacereview.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlacePrivate;
 
-class Q_PLACES_EXPORT QPlace
+class Q_LOCATION_EXPORT QPlace
 {
 public:
     QPlace();
@@ -81,6 +81,6 @@ private:
     QSharedDataPointer<QPlacePrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACE_H

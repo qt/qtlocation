@@ -3,7 +3,7 @@
 
 #include "qplacemanagerengine.h"
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlaceCategoryPrivate::QPlaceCategoryPrivate()
     : QSharedData()

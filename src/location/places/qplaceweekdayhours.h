@@ -2,14 +2,14 @@
 #define QPLACEWEEKDAYHOURS_H
 
 #include <QSharedDataPointer>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 #include "qplaceperiod.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceWeekdayHoursPrivate;
 
-class Q_PLACES_EXPORT QPlaceWeekdayHours
+class Q_LOCATION_EXPORT QPlaceWeekdayHours
 {
 public:
     QPlaceWeekdayHours();
@@ -33,6 +33,6 @@ private:
     QSharedDataPointer<QPlaceWeekdayHoursPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEWEEKDAYHOURS_H

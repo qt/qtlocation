@@ -6,7 +6,7 @@
 
 #include "qplacebusinessfeature.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceBusinessFeaturePrivate : public QSharedData
 {
@@ -23,6 +23,6 @@ public:
     QString value;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEBUSINESSFEATURE_P_H

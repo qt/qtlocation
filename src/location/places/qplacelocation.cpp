@@ -1,7 +1,7 @@
 #include "qplacelocation.h"
 #include "qplacelocation_p.h"
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlaceLocationPrivate::QPlaceLocationPrivate() : QSharedData()
 {

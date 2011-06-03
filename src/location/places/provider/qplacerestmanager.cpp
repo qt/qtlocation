@@ -10,7 +10,7 @@
     #include <QDebug>
 #endif
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 const char *placesServerUrl = "http://places.maps.ovi.com/rest/v1/places/";
 const char *searchServerUrl = "http://where.desktop.mos.svc.ovi.com/NOSe/json";

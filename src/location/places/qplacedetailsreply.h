@@ -4,10 +4,10 @@
 #include "qplacereply.h"
 #include "qplace.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceDetailsReplyPrivate;
-class Q_PLACES_EXPORT QPlaceDetailsReply : public QPlaceReply
+class Q_LOCATION_EXPORT QPlaceDetailsReply : public QPlaceReply
 {
     Q_OBJECT
 public:
@@ -24,6 +24,6 @@ private:
     QPlaceDetailsReplyPrivate *d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEDETAILSREPLY_H

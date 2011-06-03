@@ -5,7 +5,7 @@
 
 #include "qplacelocation.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceLocationPrivate : public QSharedData
 {
@@ -28,6 +28,6 @@ public:
     QPlaceGeoBoundingBox mapView;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACELOCATION_P_H

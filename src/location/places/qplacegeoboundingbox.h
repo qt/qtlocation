@@ -2,14 +2,14 @@
 #define QPLACEGEOBOUNDINGBOX_H
 
 #include <QSharedDataPointer>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 #include "qplacegeocoordinate.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceGeoBoundingBoxPrivate;
 
-class Q_PLACES_EXPORT QPlaceGeoBoundingBox
+class Q_LOCATION_EXPORT QPlaceGeoBoundingBox
 {
 public:
     QPlaceGeoBoundingBox();
@@ -35,6 +35,6 @@ private:
     QSharedDataPointer<QPlaceGeoBoundingBoxPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEGEOBOUNDINGBOX_H

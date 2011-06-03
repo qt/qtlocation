@@ -3,7 +3,7 @@
 
 #include "../qplacemanagerengine.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceManagerEngineImpl : public QPlaceManagerEngine
 {
@@ -43,6 +43,6 @@ private slots:
     void processingFinished(QPlaceReply *reply);
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEMANAGERENGINEIMPL_H

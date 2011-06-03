@@ -1,18 +1,18 @@
 #ifndef QPLACESEARCHRESULT_H
 #define QPLACESEARCHRESULT_H
 
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 
 #include <QSharedDataPointer>
 #include <QVariant>
 #include <QString>
 #include "qplace.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceSearchResultPrivate;
 
-class Q_PLACES_EXPORT QPlaceSearchResult
+class Q_LOCATION_EXPORT QPlaceSearchResult
 {
 public:
     QPlaceSearchResult();
@@ -67,6 +67,6 @@ private:
     QSharedDataPointer<QPlaceSearchResultPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACESEARCHRESULT_H

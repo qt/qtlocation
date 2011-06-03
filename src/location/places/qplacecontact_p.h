@@ -5,7 +5,7 @@
 
 #include "qplacecontact.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceContactPrivate : public QSharedData
 {
@@ -22,6 +22,6 @@ public:
     QString value;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACECONTACT_P_H

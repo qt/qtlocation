@@ -1,7 +1,7 @@
 #include "qplaceperiod.h"
 #include "qplaceperiod_p.h"
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlacePeriodPrivate::QPlacePeriodPrivate() : QSharedData()
 {

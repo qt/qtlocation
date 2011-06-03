@@ -3,13 +3,13 @@
 
 #include <QSharedDataPointer>
 #include <QString>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 
-namespace QT_PLACES_NAMESPACE {
+QT_BEGIN_HEADER
 
 class QPlaceBusinessFeaturePrivate;
 
-class Q_PLACES_EXPORT QPlaceBusinessFeature
+class Q_LOCATION_EXPORT QPlaceBusinessFeature
 {
 public:
     QPlaceBusinessFeature();
@@ -35,6 +35,6 @@ private:
     QSharedDataPointer<QPlaceBusinessFeaturePrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEBUSINESSFEATURE_H

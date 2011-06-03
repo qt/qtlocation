@@ -5,7 +5,7 @@
 
 #include "qplace.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlacePrivate : public QSharedData
 {
@@ -39,6 +39,6 @@ public:
     QStringList tags;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACE_P_H

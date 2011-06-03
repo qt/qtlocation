@@ -1,13 +1,13 @@
 #ifndef QPLACEREPLY_H
 #define QPLACEREPLY_H
 
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 #include <QObject>
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceReplyPrivate;
-class Q_PLACES_EXPORT QPlaceReply : public QObject
+class Q_LOCATION_EXPORT QPlaceReply : public QObject
 {
     Q_OBJECT
 public:
@@ -58,6 +58,6 @@ private:
     QPlaceReplyPrivate *d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEREPLY_H

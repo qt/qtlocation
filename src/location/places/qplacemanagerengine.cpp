@@ -2,7 +2,7 @@
 
 #include "qplacecategory_p.h"
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlaceManagerEngine::QPlaceManagerEngine(QObject *parent)
     : QObject(parent)

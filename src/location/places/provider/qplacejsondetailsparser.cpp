@@ -139,7 +139,7 @@ static const char *place_premiumcontent_content_friday = "FRI";
 static const char *place_premiumcontent_content_saturday = "SAT";
 static const char *place_premiumcontent_content_sunday = "SUN";
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlaceJSonDetailsParser::QPlaceJSonDetailsParser(QObject *parent) :
     QObject(parent),

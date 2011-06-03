@@ -1,6 +1,6 @@
 #include "qplacedetailsreply.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 class QPlaceDetailsReplyPrivate
 {
 public:
@@ -9,9 +9,9 @@ public:
     QPlace result;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 /*!
     \class QPlaceDetailsReply

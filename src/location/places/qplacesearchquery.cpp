@@ -1,6 +1,6 @@
 #include "qplacesearchquery.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceSearchQueryPrivate : public QSharedData
 {
@@ -19,9 +19,9 @@ public:
     uint dymNumber;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlaceSearchQueryPrivate::QPlaceSearchQueryPrivate()
     : QSharedData(),

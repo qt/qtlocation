@@ -8,7 +8,7 @@
 #include "qplacerestreply.h"
 #include "qplacejsontextpredictionparser.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceTextPreditionReplyImpl : public QPlaceTextPredictionReply
 {
@@ -32,6 +32,6 @@ private:
     QPlaceJSonTextPredictionParser *parser;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACETEXTPREDICTIONREPLYIMPL_H

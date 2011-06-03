@@ -2,18 +2,18 @@
 #define QPLACESEARCHQUERY_H
 
 #include <QSharedDataPointer>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 #include "qplacecategory.h"
 #include "qplacequery.h"
 #include "qplacegeoboundingbox.h"
 
 #include <QString>
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceSearchQueryPrivate;
 
-class Q_PLACES_EXPORT QPlaceSearchQuery : public QPlaceQuery
+class Q_LOCATION_EXPORT QPlaceSearchQuery : public QPlaceQuery
 {
 public:
     enum RelevanceHint {
@@ -55,6 +55,6 @@ private:
     QSharedDataPointer<QPlaceSearchQueryPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACESEARCHQUERY_H

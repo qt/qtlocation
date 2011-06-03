@@ -6,17 +6,16 @@
 #include <QStringList>
 #include <QList>
 #include <QVariant>
-#include "qplaceglobal.h"
 
 #include "qplacebusinessfeature.h"
 #include "qplaceperiod.h"
 #include "qplaceweekdayhours.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceBusinessInformationPrivate;
 
-class Q_PLACES_EXPORT QPlaceBusinessInformation
+class Q_LOCATION_EXPORT QPlaceBusinessInformation
 {
 public:
     QPlaceBusinessInformation();
@@ -50,6 +49,7 @@ private:
     QSharedDataPointer<QPlaceBusinessInformationPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
+
 
 #endif // QPLACEBUSINESSINFORMATION_H

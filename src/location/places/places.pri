@@ -27,7 +27,7 @@ PUBLIC_HEADERS += \
 #result
     places/qplacesearchresult.h \
 #query classes
-    places/placequery.h \
+    places/qplacequery.h \
     places/qplacesearchquery.h \
 #reply classes
     places/qplacereply.h \
@@ -38,8 +38,7 @@ PUBLIC_HEADERS += \
     places/qplacetextpredictionreply.h \
 #manager and engine
     places/qplacemanager.h \
-    places/qplacemanagerengine.h \
-    places/qplaceglobal.h
+    places/qplacemanagerengine.h
 
 PRIVATE_HEADERS += \
     places/qplace_p.h \

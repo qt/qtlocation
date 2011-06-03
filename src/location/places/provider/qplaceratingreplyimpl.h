@@ -7,7 +7,7 @@
 #include "../qplacereply.h"
 #include "qplacerestreply.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceRatingReplyImpl : public QPlaceReply
 {
@@ -29,6 +29,6 @@ private:
     QPlaceRestReply *restReply;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACERATINGREPLYIMPL_H

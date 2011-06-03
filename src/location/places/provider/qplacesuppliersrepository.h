@@ -4,10 +4,10 @@
 #include <QObject>
 #include <QList>
 
-#include "../qplaceglobal.h"
 #include "../qplacesupplier.h"
+#include "../qmobilityglobal.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceSuppliersRepository : public QObject
 {
@@ -25,6 +25,6 @@ private:
     QList<QPlaceSupplier> suppliers;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACESUPPLIERSREPOSITORY_H

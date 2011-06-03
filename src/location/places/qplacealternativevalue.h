@@ -3,13 +3,13 @@
 
 #include <QSharedDataPointer>
 #include <QString>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceAlternativeValuePrivate;
 
-class Q_PLACES_EXPORT QPlaceAlternativeValue
+class Q_LOCATION_EXPORT QPlaceAlternativeValue
 {
 public:
     enum TextSemantics {
@@ -51,6 +51,6 @@ private:
     QSharedDataPointer<QPlaceAlternativeValuePrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEALTERNATIVEVALUE_H

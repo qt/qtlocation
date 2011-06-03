@@ -3,7 +3,7 @@
 #include "qplace.h"
 #include "qplacesearchresult.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_USE_NAMESPACE
 
 class QPlaceReplyPrivate
 {
@@ -14,9 +14,9 @@ public:
     bool isFinished;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 /*!
     \class QPlaceReply

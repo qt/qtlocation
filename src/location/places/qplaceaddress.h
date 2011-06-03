@@ -1,18 +1,18 @@
 #ifndef QPLACEADDRESS_H
 #define QPLACEADDRESS_H
 
+#include "qmobilityglobal.h"
 #include <QSharedDataPointer>
 #include <QString>
 #include <QVariant>
 #include <QList>
-#include "qplaceglobal.h"
 #include "qplacealternativevalue.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceAddressPrivate;
 
-class Q_PLACES_EXPORT QPlaceAddress
+class Q_LOCATION_EXPORT QPlaceAddress
 {
 public:
     QPlaceAddress();
@@ -60,6 +60,6 @@ private:
     QSharedDataPointer<QPlaceAddressPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEADDRESS_H

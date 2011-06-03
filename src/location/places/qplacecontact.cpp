@@ -1,7 +1,7 @@
 #include "qplacecontact.h"
 #include "qplacecontact_p.h"
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlaceContactPrivate::QPlaceContactPrivate() : QSharedData()
 {

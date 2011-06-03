@@ -6,10 +6,10 @@
 
 #include <QStringList>
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceReviewReplyPrivate;
-class Q_PLACES_EXPORT QPlaceReviewReply : public QPlaceReply
+class Q_LOCATION_EXPORT QPlaceReviewReply : public QPlaceReply
 {
     Q_OBJECT
 public:
@@ -30,6 +30,6 @@ private:
     QPlaceReviewReplyPrivate *d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
 #endif

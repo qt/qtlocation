@@ -1,6 +1,6 @@
 #include "qplacequery.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceQueryPrivate : public QSharedData
 {
@@ -16,9 +16,9 @@ public:
     int limit;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlaceQueryPrivate::QPlaceQueryPrivate() : QSharedData()
 {

@@ -2,13 +2,13 @@
 #define QPLACERATING_H
 
 #include <QSharedDataPointer>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceRatingPrivate;
 
-class Q_PLACES_EXPORT QPlaceRating
+class Q_LOCATION_EXPORT QPlaceRating
 {
 public:
     QPlaceRating();
@@ -32,6 +32,6 @@ private:
     QSharedDataPointer<QPlaceRatingPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACERATING_H

@@ -7,11 +7,11 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 
-#include "../qplaceglobal.h"
+#include "../qmobilityglobal.h"
 #include "../qplacesearchquery.h"
 #include "qplacerestreply.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceRestManager : public QObject
 {
@@ -46,6 +46,6 @@ private:
     static QPlaceRestManager *mInstance;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACERESTMANAGER_H

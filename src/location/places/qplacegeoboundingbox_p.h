@@ -6,7 +6,7 @@
 #include "qplacegeoboundingbox.h"
 #include "qplacegeocoordinate.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceGeoBoundingBoxPrivate : public QSharedData
 {
@@ -22,6 +22,6 @@ public:
     QPlaceGeoCoordinate bottomRight;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEGEOCOORDINATE_P_H

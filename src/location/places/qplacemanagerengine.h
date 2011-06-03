@@ -3,9 +3,9 @@
 
 #include "qplacemanager.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
-class Q_PLACES_EXPORT QPlaceManagerEngine : public QObject
+class Q_LOCATION_EXPORT QPlaceManagerEngine : public QObject
 {
     Q_OBJECT
 public:
@@ -44,6 +44,6 @@ Q_SIGNALS:
 
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEMANAGER_H

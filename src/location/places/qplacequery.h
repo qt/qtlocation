@@ -2,13 +2,13 @@
 #define QPLACEQUERY_H
 
 #include <QSharedDataPointer>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceQueryPrivate;
 
-class Q_PLACES_EXPORT QPlaceQuery
+class Q_LOCATION_EXPORT QPlaceQuery
 {
 public:
     QPlaceQuery();
@@ -34,6 +34,6 @@ private:
     QSharedDataPointer<QPlaceQueryPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif

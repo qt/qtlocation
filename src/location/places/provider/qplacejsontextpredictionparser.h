@@ -4,11 +4,11 @@
 #include <QObject>
 #include <QStringList>
 
-#include "../qplaceglobal.h"
+#include "../qmobilityglobal.h"
 
 class QScriptEngine;
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceJSonTextPredictionParser : public QObject
 {
@@ -31,6 +31,6 @@ private:
     QStringList suggestions;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEJSONTEXTPREDICTIONPARSER_H

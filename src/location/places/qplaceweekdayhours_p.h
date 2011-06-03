@@ -5,7 +5,7 @@
 
 #include "qplaceweekdayhours.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceWeekdayHoursPrivate : public QSharedData
 {
@@ -21,6 +21,6 @@ public:
     Qt::DayOfWeek weekday;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEWEEKDAYHOURS_P_H

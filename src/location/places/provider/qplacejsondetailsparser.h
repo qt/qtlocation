@@ -9,7 +9,7 @@
 class QScriptEngine;
 class QScriptValue;
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceJSonDetailsParser : public QObject
 {
@@ -77,6 +77,6 @@ private:
     QPlace place;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEJSONDETAILSPARSER_H

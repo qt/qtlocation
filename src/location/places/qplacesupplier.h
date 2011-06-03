@@ -2,13 +2,13 @@
 #define QPLACESUPPLIER_H
 
 #include <QSharedDataPointer>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceSupplierPrivate;
 
-class Q_PLACES_EXPORT QPlaceSupplier
+class Q_LOCATION_EXPORT QPlaceSupplier
 {
 public:
     QPlaceSupplier();
@@ -36,6 +36,6 @@ private:
     QSharedDataPointer<QPlaceSupplierPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACESUPPLIER_H

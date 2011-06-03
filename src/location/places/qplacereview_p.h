@@ -5,7 +5,7 @@
 
 #include "qplacereview.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceReviewPrivate : public QSharedData
 {
@@ -32,6 +32,6 @@ public:
     QString originatorURL;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEREVIEW_P_H

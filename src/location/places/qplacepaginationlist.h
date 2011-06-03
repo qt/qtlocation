@@ -3,10 +3,10 @@
 
 #include <QSharedDataPointer>
 #include <QList>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 #include "qplacesupplier.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QPlacePaginationList
@@ -20,7 +20,7 @@ namespace QT_PLACES_NAMESPACE {
 
 */
 template <typename T>
-class Q_PLACES_EXPORT QPlacePaginationList
+class Q_LOCATION_EXPORT QPlacePaginationList
 {
 public:
     QPlacePaginationList() : startIndx(0) {};
@@ -80,6 +80,6 @@ private:
     QList<T> dataList;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEPAGINATIONLIST_H

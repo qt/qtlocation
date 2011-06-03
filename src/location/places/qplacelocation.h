@@ -5,17 +5,17 @@
 #include <QString>
 #include <QVariant>
 #include <QList>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 #include "qplacealternativevalue.h"
 #include "qplaceaddress.h"
 #include "qplacegeocoordinate.h"
 #include "qplacegeoboundingbox.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceLocationPrivate;
 
-class Q_PLACES_EXPORT QPlaceLocation
+class Q_LOCATION_EXPORT QPlaceLocation
 {
 public:
     QPlaceLocation();
@@ -53,6 +53,6 @@ private:
     QSharedDataPointer<QPlaceLocationPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACELOCATION_H

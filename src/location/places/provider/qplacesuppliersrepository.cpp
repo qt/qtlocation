@@ -2,7 +2,7 @@
 
 #include "../qplacesupplier.h"
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlaceSuppliersRepository *QPlaceSuppliersRepository::instance()
 {

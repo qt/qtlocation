@@ -1,7 +1,7 @@
 #ifndef QPLACEMANAGER_H
 #define QPLACEMANAGER_H
 
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 #include "qplacemediaobject.h"
 #include "qplacemediareply.h"
 #include "qplacereply.h"
@@ -15,12 +15,12 @@
 #include <QString>
 #include <QObject>
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceManagerEngine;
 
 class QPlaceManagerPrivate;
-class Q_PLACES_EXPORT QPlaceManager : public QObject
+class Q_LOCATION_EXPORT QPlaceManager : public QObject
 {
     Q_OBJECT
 public:
@@ -87,6 +87,6 @@ private:
     QPlaceManagerPrivate* d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEMANAGER_H

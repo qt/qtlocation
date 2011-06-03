@@ -3,13 +3,13 @@
 
 #include <QSharedDataPointer>
 #include <QString>
-#include "qplaceglobal.h"
+#include "qmobilityglobal.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceContactPrivate;
 
-class Q_PLACES_EXPORT QPlaceContact
+class Q_LOCATION_EXPORT QPlaceContact
 {
 public:
     enum ContactType {
@@ -44,6 +44,6 @@ private:
     QSharedDataPointer<QPlaceContactPrivate> d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACECONTACT_H

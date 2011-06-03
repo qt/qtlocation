@@ -5,11 +5,11 @@
 
 #include <QStringList>
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceTextPredictionReplyPrivate;
 
-class Q_PLACES_EXPORT QPlaceTextPredictionReply : public QPlaceReply
+class Q_LOCATION_EXPORT QPlaceTextPredictionReply : public QPlaceReply
 {
     Q_OBJECT
 public:
@@ -26,6 +26,6 @@ private:
     QPlaceTextPredictionReplyPrivate *d;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif

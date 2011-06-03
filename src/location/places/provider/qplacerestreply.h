@@ -7,9 +7,9 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 
-#include "../qplaceglobal.h"
+#include "../qmobilityglobal.h"
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceRestReply : public QObject
 {
@@ -41,6 +41,6 @@ private:
 friend class QRestManager;
 };
 
-} // QT_PLACES_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACERESTREPLY_H

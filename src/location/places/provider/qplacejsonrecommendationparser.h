@@ -9,7 +9,7 @@
 class QScriptEngine;
 class QScriptValue;
 
-namespace QT_PLACES_NAMESPACE {
+QTM_BEGIN_NAMESPACE
 
 class QPlaceJSonRecommendationParser : public QObject
 {
@@ -39,6 +39,6 @@ private:
     QList<QPlaceSearchResult> searchResults;
 };
 
-} // QPLACEAPI_NAMESPACE
+QTM_END_NAMESPACE
 
 #endif // QPLACEJSONRECOMENDATIONPARSER_H

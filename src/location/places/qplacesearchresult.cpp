@@ -1,7 +1,7 @@
 #include "qplacesearchresult.h"
 #include "qplacesearchresult_p.h"
 
-using namespace QT_PLACES_NAMESPACE;
+QTM_USE_NAMESPACE
 
 QPlaceSearchResultPrivate::QPlaceSearchResultPrivate() : QSharedData()
 {
