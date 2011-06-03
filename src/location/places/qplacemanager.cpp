@@ -1,15 +1,13 @@
 #include "qplacemanager.h"
 #include "qplacemanagerengine.h"
 
-#include "provider/qplacemanagerengineimpl.h"
-
 QTM_BEGIN_NAMESPACE
 class QPlaceManagerEngine;
 
 class QPlaceManagerPrivate
 {
 public:
-    QPlaceManagerPrivate(){ engine = new QPlaceManagerEngineImpl(); }
+    QPlaceManagerPrivate(){}
     ~QPlaceManagerPrivate(){ delete engine; }
 
     QPlaceManagerEngine *engine;

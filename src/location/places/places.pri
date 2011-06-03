@@ -1,7 +1,4 @@
 #TODO: remove when plugin is refactored out
-QT += declarative
-QT += script
-
 INCLUDEPATH += places
 
 PUBLIC_HEADERS += \
@@ -38,7 +35,8 @@ PUBLIC_HEADERS += \
     places/qplacetextpredictionreply.h \
 #manager and engine
     places/qplacemanager.h \
-    places/qplacemanagerengine.h
+    places/qplacemanagerengine.h \
+    places/qplacemanagerenginefactory.h
 
 PRIVATE_HEADERS += \
     places/qplace_p.h \
@@ -94,56 +92,3 @@ SOURCES += \
 #manager and engine
     places/qplacemanager.cpp \
     places/qplacemanagerengine.cpp
-
-#provider implementation
-SOURCES += \
-#data classes
-#parsers
-    places/provider/qplacejsoncategoriesparser.cpp \
-    places/provider/qplacejsondetailsparser.cpp \
-    places/provider/qplacejsonmediaparser.cpp \
-    places/provider/qplacejsonrecommendationparser.cpp \
-    places/provider/qplacejsonreviewparser.cpp \
-    places/provider/qplacejsonsearchparser.cpp \
-    places/provider/qplacejsontextpredictionparser.cpp \
-#query classes
-#reply classes
-    places/provider/qplacedetailsreplyimpl.cpp \
-    places/provider/qplacemediareplyimpl.cpp \
-    places/provider/qplaceratingreplyimpl.cpp \
-    places/provider/qplacerecommendationreplyimpl.cpp \
-    places/provider/qplacereviewreplyimpl.cpp \
-    places/provider/qplacesearchreplyimpl.cpp \
-    places/provider/qplacetextpredictionreplyimpl.cpp \
-#manager and engine
-    places/provider/qplacemanagerengineimpl.cpp \
-    places/provider/qplacecategoriesrepository.cpp \
-    places/provider/qplacerestreply.cpp \
-    places/provider/qplacerestmanager.cpp \
-    places/provider/qplacesuppliersrepository.cpp
-
-HEADERS += \
-#data classes
-#parsers
-    places/provider/qplacejsoncategoriesparser.h \
-    places/provider/qplacejsondetailsparser.h \
-    places/provider/qplacejsonmediaparser.h \
-    places/provider/qplacejsonrecommendationparser.h \
-    places/provider/qplacejsonreviewparser.h \
-    places/provider/qplacejsonsearchparser.h \
-    places/provider/qplacejsontextpredictionparser.h \
-#query classes
-#reply classes
-    places/provider/qplacemediareplyimpl.h \
-    places/provider/qplacedetailsreplyimpl.h \
-    places/provider/qplaceratingreplyimpl.h \
-    places/provider/qplacerecommendationreplyimpl.h \
-    places/provider/qplacereviewreplyimpl.h \
-    places/provider/qplacesearchreplyimpl.h \
-    places/provider/qplacetextpredictionreplyimpl.h \
-#manager and engine
-    places/provider/qplacemanagerengineimpl.h \
-    places/provider/qplacecategoriesrepository.h \
-    places/provider/qplacerestreply.h \
-    places/provider/qplacerestmanager.h \
-    places/provider/qplacesuppliersrepository.h

@@ -50,6 +50,11 @@ public:
         UpdatePlaceFeature
     };
 
+    enum Error {
+        NoError,
+        NotSupportedError
+    };
+
     QPlaceManager(QObject *parent = 0);
     ~QPlaceManager();
     QString managerName() const;
