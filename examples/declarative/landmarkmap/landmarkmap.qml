@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import QtMobility.location 1.2
+import Qt.location 5.0
 import "landmarkmapcommon" as Common
 import "landmarkmapmobile" as Mobile
 

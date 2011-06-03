@@ -1,9 +1,23 @@
-<RCC version="1.0">
+<RCC>
     <qresource prefix="/">
         <file>mapviewer.qml</file>
-        <file>TitleBar.qml</file>
-        <file>quit.png</file>
-        <file>titlebar.png</file>
-        <file>titlebar.sci</file>
+        <file>Dialog.qml</file>
+        <file>common/TitleBar.qml</file>
+        <file>common/Button.qml</file>
+        <file>common/Slider.qml</file>
+        <file>common/Menu.qml</file>
+        <file>resources/button.png</file>
+        <file>resources/button.sci</file>
+        <file>resources/quit.png</file>
+        <file>resources/titlebar.png</file>
+        <file>resources/titlebar.sci</file>
+        <file>resources/quit_pressed.png</file>
+        <file>resources/menuItem.png</file>
+        <file>resources/menuItem.sci</file>
+        <file>resources/menuItem_pressed.png</file>
+        <file>resources/quit_hovered.png</file>
+        <file>resources/menuItem_hovered.png</file>
+        <file>resources/button_pressed.png</file>
+        <file>resources/button_hovered.png</file>
     </qresource>
 </RCC>

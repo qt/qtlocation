@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
 ** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser General Public
-** License version 2.1 as published by the Free Software Foundation and
-** appearing in the file LICENSE.LGPL included in the packaging of this
-** file. Please review the following information to ensure the GNU Lesser
-** General Public License version 2.1 requirements will be met:
-** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights. These rights are described in the Nokia Qt LGPL Exception
+** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU General
-** Public License version 3.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of this
-** file. Please review the following information to ensure the GNU General
-** Public License version 3.0 requirements will be met:
-** http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Other Usage
-** Alternatively, this file may be used in accordance with the terms and
-** conditions contained in a signed written agreement between you and Nokia.
+**
+**
 **
 **
 **
@@ -143,8 +143,6 @@ QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
     }
 }
 
-// todo: mixture of mapviews and mapobjects does not preserve the order (z).
-// to be addressed when merged with other changes
 void QDeclarativeGraphicsGeoMap::componentComplete()
 {
     componentCompleted_ = true;
@@ -218,11 +216,8 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
         qmlInfo(this) << tr("Plugin is a write-once property, and cannot be set again.");
         return;
     }
-
     plugin_ = plugin;
-
     emit pluginChanged(plugin_);
-
     serviceProvider_ = new QGeoServiceProvider(plugin_->name(),
             plugin_->parameterMap());
 
@@ -232,7 +227,6 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
         serviceProvider_ = 0;
         return;
     }
-
     mappingManager_ = serviceProvider_->mappingManager();
     if (!mappingManager_ || serviceProvider_->error() != QGeoServiceProvider::NoError) {
         qWarning() << serviceProvider_->errorString();
@@ -242,7 +236,6 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
         mappingManager_ = 0;
         return;
     }
-
     mapData_ = mappingManager_->createMapData();
     mapData_->init();
     //mapData_->setParentItem(this);
@@ -405,9 +398,6 @@ qreal QDeclarativeGraphicsGeoMap::zoomLevel() const
 */
 void QDeclarativeGraphicsGeoMap::setCenter(QDeclarativeCoordinate *center)
 {
-    if (center_ == center)
-        return;
-
     if (center_) {
         center_->disconnect(this);
     }
@@ -762,6 +752,7 @@ void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void QDeclarativeGraphicsGeoMap::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
 //    qWarning() << "hover enter";
 }
 
@@ -831,6 +822,7 @@ void QDeclarativeGraphicsGeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 void QDeclarativeGraphicsGeoMap::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
 //    qWarning() << "hover leave";
 }
 
