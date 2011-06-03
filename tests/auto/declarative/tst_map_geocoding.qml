@@ -1,0 +1,512 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the test suite of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+import QtQuick 1.0
+import QtTest 1.0
+import Qt.location 5.0
+
+Item {
+    Plugin { id: nokiaPlugin; name: "nokia"}
+    Plugin { id: invalidPlugin; name: "invalid"}
+
+    Coordinate{ id: coordinate1; latitude: 51; longitude: 41}
+    Coordinate{ id: coordinate2; latitude: 52; longitude: 42}
+    BoundingBox{ id: boundingBox1; topLeft: coordinate2; bottomLeft: coordinate1; width:  1000}
+    BoundingBox{ id: boundingBox2; topLeft: coordinate2; bottomLeft: coordinate1; width:  1000}
+    BoundingCircle { id: boundingCircle1; center: coordinate1; radius: 100}
+    BoundingCircle { id: boundingCircle2; center: coordinate2; radius: 100}
+
+    BoundingBox {id: emptyBox}
+    Coordinate {id: emptyCoordinate}
+    GeocodeModel {id: emptyModel}
+
+    Address {id: emptyAddress}
+    SignalSpy {id: querySpy; target: emptyModel; signalName: "queryChanged"}
+    SignalSpy {id: autoUpdateSpy; target: emptyModel; signalName: "autoUpdateChanged"}
+    SignalSpy {id: pluginSpy; target: emptyModel ; signalName: "pluginChanged"}
+    SignalSpy {id: boundsSpy; target: emptyModel; signalName: "boundsChanged"}
+
+    TestCase {
+        id: testCase1
+        name: "Map GeocodeModel basic API"
+        function test_model_defaults_and_setters() {
+            // Query: address
+            compare (querySpy.count, 0)
+            emptyModel.query = address1
+            compare (querySpy.count, 1)
+            compare (emptyModel.query.street, address1.street)
+            emptyModel.query = address1
+            compare (querySpy.count, 1)
+            compare (emptyModel.query.street, address1.street)
+            // Query:: coordinate
+            emptyModel.query = coordinate1
+            compare (querySpy.count, 2)
+            compare (emptyModel.query.latitude, coordinate1.latitude)
+            emptyModel.query = coordinate1
+            compare (querySpy.count, 2)
+            compare (emptyModel.query.latitude, coordinate1.latitude)
+
+            // bounding box
+            compare(boundsSpy.count, 0)
+            emptyModel.bounds = boundingBox1
+            compare(boundsSpy.count, 1)
+            compare(emptyModel.bounds.topLeft.latitude, boundingBox1.topLeft.latitude)
+            compare(emptyModel.bounds.bottomRight.longitude, boundingBox1.bottomRight.longitude)
+            emptyModel.bounds = boundingBox1
+            compare(boundsSpy.count, 1)
+            compare(emptyModel.bounds.topLeft.latitude, boundingBox1.topLeft.latitude)
+            compare(emptyModel.bounds.bottomRight.longitude, boundingBox1.bottomRight.longitude)
+            emptyModel.bounds = boundingBox2
+            compare(boundsSpy.count, 2)
+            compare(emptyModel.bounds.topLeft.latitude, boundingBox2.topLeft.latitude)
+            compare(emptyModel.bounds.bottomRight.longitude, boundingBox2.bottomRight.longitude)
+            var dynamicBox = Qt.createQmlObject("import QtQuick 1.0; import Qt.location 5.0; BoundingBox { id: dynBox}", testCase1)
+            emptyModel.bounds = dynamicBox
+            compare(boundsSpy.count, 3)
+
+
+            // bounding circle
+            boundsSpy.clear()
+            emptyModel.bounds = boundingCircle1
+            compare(boundsSpy.count, 1)
+            compare(emptyModel.bounds.center.latitude, coordinate1.latitude)
+            emptyModel.bounds = boundingCircle1
+            compare(boundsSpy.count, 1)
+            compare(emptyModel.bounds.center.latitude, coordinate1.latitude)
+            emptyModel.bounds = boundingCircle2
+            compare(boundsSpy.count, 2)
+            compare(emptyModel.bounds.center.latitude, coordinate2.latitude)
+            var dynamicCircle = Qt.createQmlObject("import QtQuick 1.0; import Qt.location 5.0; BoundingCircle { id: dynCircle; center: Coordinate {id: dynCoord; latitude: 8; longitude: 9}}", testCase1)
+            emptyModel.bounds = dynamicCircle
+            compare(boundsSpy.count, 3)
+            compare(emptyModel.bounds.center.latitude, dynamicCircle.center.latitude)
+
+            // status
+            compare (emptyModel.status, RouteModel.Null)
+
+            // error
+            compare (emptyModel.error, "")
+
+            // count
+            compare( emptyModel.count, 0)
+
+            // auto update
+            compare (autoUpdateSpy.count, 0)
+            compare (emptyModel.autoUpdate, false)
+            emptyModel.autoUpdate = true
+            compare (emptyModel.autoUpdate, true)
+            compare (autoUpdateSpy.count, 1)
+            emptyModel.autoUpdate = true
+            compare (emptyModel.autoUpdate, true)
+            compare (autoUpdateSpy.count, 1)
+
+            // mustn't crash even we don't have plugin
+            emptyModel.update()
+
+            // Plugin
+            compare(pluginSpy.count, 0)
+            emptyModel.plugin = nokiaPlugin
+            compare(pluginSpy.count, 1)
+            compare(emptyModel.plugin, nokiaPlugin)
+            emptyModel.plugin = nokiaPlugin
+            compare(pluginSpy.count, 1)
+            emptyModel.plugin = invalidPlugin
+            compare(pluginSpy.count, 2)
+        }
+        // Test that model acts gracefully when plugin is not set or is invalid
+         // (does not support routing)
+         GeocodeModel {id: invalidModel; plugin: invalidPlugin}
+         SignalSpy {id: countInvalidSpy; target: invalidModel; signalName: "countChanged"}
+         function test_invalid_plugin() {
+             invalidModel.update()
+             invalidModel.clear()
+             invalidModel.reset()
+             invalidModel.update()
+             invalidModel.get(-1)
+             invalidModel.get(1)
+         }
+
+    }
+    Address {id: address1; street: "wellknown street"; city: "expected city"; county: "2"}
+    Address {id: errorAddress1; street: "error"; county: "2"} // street is the error reason
+    Coordinate{ id: rcoordinate1; latitude: 51; longitude: 2}
+    Coordinate{ id: errorCoordinate1; latitude: 73; longitude: 2} // (latiude mod 70) is the error code
+    Coordinate{ id: slackCoordinate1; latitude: 60; longitude: 3}
+    Address {id: slackAddress1; street: "Slacker st"; city: "Lazy town"; county: "4"}
+
+    Coordinate{ id: automaticCoordinate1; latitude: 60; longitude: 3}
+    Address {id: automaticAddress1; street: "Auto st"; city: "Detroit"; county: "4"}
+
+    Plugin {
+        id: testPlugin;
+        name: "qmlgeo.test.plugin"
+        parameters: [
+            // Parms to guide the test plugin
+            PluginParameter { name: "supported"; value: true},
+            PluginParameter { name: "finishRequestImmediately"; value: true},
+            PluginParameter { name: "validateWellKnownValues"; value: true}
+        ]
+    }
+
+    Plugin {
+        id: immediatePlugin;
+        name: "qmlgeo.test.plugin"
+        parameters: [
+            // Parms to guide the test plugin
+            PluginParameter { name: "supported"; value: true},
+            PluginParameter { name: "finishRequestImmediately"; value: true},
+            PluginParameter { name: "validateWellKnownValues"; value: false}
+        ]
+    }
+
+    Plugin {
+        id: slackPlugin;
+        name: "qmlgeo.test.plugin"
+        parameters: [
+            // Parms to guide the test plugin
+            PluginParameter { name: "supported"; value: true},
+            PluginParameter { name: "finishRequestImmediately"; value: false},
+            PluginParameter { name: "validateWellKnownValues"; value: false}
+        ]
+    }
+
+    GeocodeModel {id: testModel; plugin: testPlugin}
+    SignalSpy {id: placesSpy; target: testModel; signalName: "placesChanged"}
+    SignalSpy {id: countSpy; target: testModel; signalName: "countChanged"}
+    SignalSpy {id: testQuerySpy; target: testModel; signalName: "queryChanged"}
+    SignalSpy {id: testStatusSpy; target: testModel; signalName: "statusChanged"}
+
+    GeocodeModel {id: slackModel; plugin: slackPlugin; }
+    SignalSpy {id: placesSlackSpy; target: slackModel; signalName: "placesChanged"}
+    SignalSpy {id: countSlackSpy; target: slackModel; signalName: "countChanged"}
+    SignalSpy {id: querySlackSpy; target: slackModel; signalName: "queryChanged"}
+    SignalSpy {id: errorSlackSpy; target: slackModel; signalName: "errorChanged"}
+    SignalSpy {id: pluginSlackSpy; target: slackModel; signalName: "pluginChanged"}
+
+    GeocodeModel {id: immediateModel; plugin: immediatePlugin}
+    SignalSpy {id: placesImmediateSpy; target: immediateModel; signalName: "placesChanged"}
+    SignalSpy {id: countImmediateSpy; target: immediateModel; signalName: "countChanged"}
+    SignalSpy {id: queryImmediateSpy; target: immediateModel; signalName: "queryChanged"}
+    SignalSpy {id: statusImmediateSpy; target: immediateModel; signalName: "statusChanged"}
+    SignalSpy {id: errorImmediateSpy; target: immediateModel; signalName: "errorChanged"}
+
+    GeocodeModel {id: automaticModel; plugin: slackPlugin; query: automaticAddress1; autoUpdate: true}
+    SignalSpy {id: automaticPlacesSpy; target: automaticModel; signalName: "placesChanged"}
+
+    TestCase {
+        name: "Map GeocodeModel basic (reverse) geocoding"
+        function clear_slack_model() {
+            slackModel.clear()
+            placesSlackSpy.clear()
+            countSlackSpy.clear()
+            querySlackSpy.clear()
+            errorSlackSpy.clear()
+        }
+        function clear_immediate_model() {
+            immediateModel.clear()
+            placesImmediateSpy.clear()
+            countImmediateSpy.clear()
+            queryImmediateSpy.clear()
+            errorImmediateSpy.clear()
+            statusImmediateSpy.clear()
+        }
+        function test_reset() {
+            clear_immediate_model();
+            immediateModel.query = errorAddress1
+            immediateModel.update()
+            compare (immediateModel.error, errorAddress1.street)
+            compare (immediateModel.count, 0)
+            compare (statusImmediateSpy.count, 2)
+            compare (immediateModel.status, GeocodeModel.Error)
+            immediateModel.reset()
+            compare (immediateModel.error, "")
+            compare (immediateModel.status, GeocodeModel.Null)
+            // Check that ongoing req is aborted
+            clear_slack_model()
+            slackModel.query = slackAddress1
+            slackAddress1.county = "5"
+            slackModel.update()
+            wait (100)
+            compare (countSlackSpy.count, 0)
+            compare (placesSlackSpy.count, 0)
+            compare (slackModel.count, 0)
+            slackModel.reset()
+            wait (200)
+            compare (countSlackSpy.count, 0)
+            compare (placesSlackSpy.count, 0)
+            compare (slackModel.count, 0)
+            // Check that results are cleared
+            slackModel.update()
+            wait (300)
+            compare (slackModel.count, 5) //  slackAddress1.county)
+            slackModel.reset()
+            compare (slackModel.count, 0)
+            // Check that changing plugin resets any ongoing requests
+            clear_slack_model()
+            slackModel.query = slackAddress1
+            slackAddress1.county = "7"
+            compare (pluginSlackSpy.count, 0)
+            slackModel.update()
+            wait (100)
+            compare (countSlackSpy.count, 0)
+            slackModel.plugin = invalidPlugin
+            wait (200)
+            compare (countSlackSpy.count, 0)
+            compare (pluginSlackSpy.count, 1)
+            // switch back and check that works
+            slackModel.plugin = slackPlugin
+            compare (pluginSlackSpy.count, 2)
+            slackModel.update()
+            wait (100)
+            compare (countSlackSpy.count, 0)
+            wait (200)
+            compare (countSlackSpy.count, 1)
+        }
+        function test_error_geocode() {
+            // basic immediate geocode error
+            clear_immediate_model()
+            immediateModel.query = errorAddress1
+            immediateModel.update()
+            compare (errorImmediateSpy.count, 1)
+            compare (immediateModel.error, errorAddress1.street)
+            compare (immediateModel.count, 0)
+            compare (statusImmediateSpy.count, 2)
+            compare (immediateModel.status, GeocodeModel.Error)
+            // basic delayed geocode error
+            clear_slack_model()
+            slackModel.query = errorAddress1
+            errorAddress1.street = "error code 2"
+            slackModel.update()
+            compare (errorSlackSpy.count, 0)
+            tryCompare (errorSlackSpy, "count", 1)
+            compare (slackModel.error, errorAddress1.street)
+            compare (slackModel.count, 0)
+            // Check that we recover
+            slackModel.query = address1
+            slackModel.update()
+            tryCompare(countSlackSpy, "count", 1)
+            compare (slackModel.count, 2)
+            compare (errorSlackSpy.count, 2)
+            compare (slackModel.error, "")
+        }
+
+        function test_error_reverse_geocode() {
+            // basic immediate geocode error
+            clear_immediate_model()
+            immediateModel.query = errorCoordinate1
+            immediateModel.update()
+            if (immediateModel.error != "")
+                compare (errorImmediateSpy.count, 2) // the previous error is cleared upon update()
+            else
+                compare (errorImmediateSpy.count, 1)
+            compare (immediateModel.error, "error")
+            compare (immediateModel.count, 0)
+            compare (statusImmediateSpy.count, 2)
+            compare (immediateModel.status, GeocodeModel.Error)
+            // basic delayed geocode error
+            clear_slack_model()
+            slackModel.query = errorCoordinate1
+            slackModel.update()
+            compare (errorSlackSpy.count, 0)
+            if (slackModel.error != "")
+                tryCompare (errorSlackSpy, "count", 2)
+            else
+                tryCompare (errorSlackSpy, "count", 1)
+            compare (slackModel.error, "error")
+            compare (slackModel.count, 0)
+            // Check that we recover
+            slackModel.query = rcoordinate1
+            slackModel.update()
+            tryCompare(countSlackSpy, "count", 1)
+            compare (slackModel.count, 2)
+            compare (errorSlackSpy.count, 2)
+            compare (slackModel.error, "")
+        }
+        function test_basic_geocode() {
+            testQuerySpy.clear()
+            placesSpy.clear()
+            testStatusSpy.clear()
+            testModel.clear()
+            countSpy.clear()
+            compare (placesSpy.count, 0)
+            compare (testModel.error, "")
+            compare (testModel.count, 0)
+            testModel.query = address1
+            compare (testQuerySpy.count, 1)
+            testModel.update()
+            tryCompare (placesSpy, "count", 1) // 5 sec
+            compare (testModel.error, "")
+            compare (testModel.count, 2)
+            compare (testQuerySpy.count, 1)
+            compare (testStatusSpy.count, 2)
+            compare (testModel.status, GeocodeModel.Ready)
+            compare (testModel.get(0).address.street, "wellknown street")
+            compare (testModel.get(0).address.city, "expected city")
+        }
+
+        function test_geocode_auto_updates() {
+            compare (automaticModel.count, 4) // should be something already
+            compare (automaticPlacesSpy.count, 1)
+            // change query and its contents and verify that autoupdate occurs
+            automaticAddress1.county = 6
+            wait (300)
+            compare (automaticPlacesSpy.count, 2)
+            compare (automaticModel.count, 6)
+            automaticAddress1.street = "The Avenue"
+            wait (300)
+            compare (automaticPlacesSpy.count, 3)
+            compare (automaticModel.count, 6)
+            automaticModel.query = automaticCoordinate1
+            wait (300)
+            compare (automaticPlacesSpy.count, 4)
+            compare (automaticModel.count, 3)
+            automaticCoordinate1.longitude = 7
+            wait (300)
+            compare (automaticPlacesSpy.count, 5)
+            compare (automaticModel.count, 7)
+        }
+
+        function test_delayed_geocode() {
+            // basic delayed response
+            slackModel.clear()
+            querySlackSpy.clear()
+            countSlackSpy.clear()
+            placesSlackSpy.clear()
+            slackModel.query = slackAddress1
+            slackAddress1.county = "7"
+            compare (querySlackSpy.count, 1)
+            slackModel.update()
+            wait (100)
+            compare (countSlackSpy.count, 0)
+            compare (placesSlackSpy.count, 0)
+            compare (slackModel.count, 0)
+            wait (200)
+            compare (countSlackSpy.count, 1)
+            compare (placesSlackSpy.count, 1)
+            compare (slackModel.count, 7) //  slackAddress1.county)
+            // Frequent updates, previous requests are aborted
+            slackModel.clear()
+            placesSlackSpy.clear()
+            countSlackSpy.clear()
+            slackModel.update()
+            wait (100)
+            compare(placesSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            slackModel.update()
+            wait (100)
+            compare(placesSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            slackModel.update()
+            wait (100)
+            compare(placesSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            slackModel.update()
+            wait (100)
+            compare(placesSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            wait (200)
+            compare (placesSlackSpy.count, 1)
+            compare(countSlackSpy.count, 1)
+            compare(slackModel.count, 7) // slackAddress1.county
+        }
+        function test_basic_reverse_geocode() {
+            testQuerySpy.clear()
+            placesSpy.clear()
+            testStatusSpy.clear()
+            countSpy.clear()
+            testModel.clear()
+            compare (testModel.error, "")
+            compare (testModel.count, 0)
+            compare (testQuerySpy.count, 0)
+            testModel.query = rcoordinate1
+            compare (testQuerySpy.count, 1)
+            testModel.update()
+            tryCompare (placesSpy, "count", 1) // 5 sec
+            tryCompare(countSpy, "count", 1)
+            compare (testModel.error, "")
+            compare (testModel.count, 2)
+            testModel.clear()
+            tryCompare(countSpy, "count", 1)
+            compare (testModel.count, 0)
+        }
+        function test_delayed_reverse_geocode() {
+            slackModel.clear()
+            querySlackSpy.clear()
+            countSlackSpy.clear()
+            placesSlackSpy.clear()
+            slackModel.query = slackCoordinate1
+            compare (querySlackSpy.count, 1)
+            slackModel.update()
+            wait (100)
+            compare (countSlackSpy.count, 0)
+            compare (placesSlackSpy.count, 0)
+            compare (slackModel.count, 0)
+            wait (200)
+            compare (countSlackSpy.count, 1)
+            compare (placesSlackSpy.count, 1)
+            compare (slackModel.count, 3) //  slackCoordinate1.longitude
+            // Frequent updates, previous requests are aborted
+            slackModel.clear()
+            placesSlackSpy.clear()
+            countSlackSpy.clear()
+            slackModel.update()
+            wait (100)
+            compare(placesSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            slackModel.update()
+            wait (100)
+            compare(placesSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            slackModel.update()
+            wait (100)
+            compare(placesSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            slackModel.update()
+            wait (100)
+            compare(placesSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            wait (200)
+            compare (placesSlackSpy.count, 1)
+            compare(countSlackSpy.count, 1)
+            compare(slackModel.count, 3) // slackCoordinate1.longitude
+        }
+    }
+}
