@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
 ** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser General Public
-** License version 2.1 as published by the Free Software Foundation and
-** appearing in the file LICENSE.LGPL included in the packaging of this
-** file. Please review the following information to ensure the GNU Lesser
-** General Public License version 2.1 requirements will be met:
-** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights. These rights are described in the Nokia Qt LGPL Exception
+** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU General
-** Public License version 3.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of this
-** file. Please review the following information to ensure the GNU General
-** Public License version 3.0 requirements will be met:
-** http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Other Usage
-** Alternatively, this file may be used in accordance with the terms and
-** conditions contained in a signed written agreement between you and Nokia.
+**
+**
 **
 **
 **
@@ -40,6 +40,10 @@
 ****************************************************************************/
 
 #include "qdeclarativegeoserviceprovider_p.h"
+#include "qgeoserviceprovider.h"
+#include "qgeosearchmanager.h"
+#include "qgeomappingmanager.h"
+#include "qgeoroutingmanager.h"
 
 #include <QDebug>
 
@@ -60,7 +64,14 @@ QTM_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
-    : QObject(parent) {}
+    : QObject(parent),
+      supportsGeocoding_(false),
+      supportsReverseGeocoding_(false),
+      supportsRouting_(false),
+      supportsMapping_(false),
+      complete_(false)
+{
+}
 
 QDeclarativeGeoServiceProvider::~QDeclarativeGeoServiceProvider() {}
 
@@ -75,13 +86,135 @@ void QDeclarativeGeoServiceProvider::setName(const QString &name)
         return;
 
     name_ = name;
-
+    if (complete_)
+        updateSupportStatus();
     emit nameChanged(name_);
+}
+
+void QDeclarativeGeoServiceProvider::updateSupportStatus()
+{
+    QGeoServiceProvider* serviceProvider = new QGeoServiceProvider(name(), parameterMap());
+    if (!serviceProvider  || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        setSupportsGeocoding(false);
+        setSupportsReverseGeocoding(false);
+        setSupportsRouting(false);
+        setSupportsMapping(false);
+        return;
+    }
+
+    QGeoSearchManager* searchManager = serviceProvider->searchManager();
+    if (!searchManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        setSupportsGeocoding(false);
+        setSupportsReverseGeocoding(false);
+    } else {
+        setSupportsGeocoding(searchManager->supportsGeocoding());
+        setSupportsReverseGeocoding(searchManager->supportsReverseGeocoding());
+    }
+
+    QGeoRoutingManager* routingManager = serviceProvider->routingManager();
+    if (!routingManager  || serviceProvider->error() != QGeoServiceProvider::NoError)
+        setSupportsRouting(false);
+    else
+        setSupportsRouting(true);
+
+    QGeoMappingManager* mappingManager = serviceProvider->mappingManager();
+    if (!mappingManager  || serviceProvider->error() != QGeoServiceProvider::NoError)
+        setSupportsMapping(false);
+    else
+        setSupportsMapping(true);
+
+    delete serviceProvider;
+}
+
+QStringList QDeclarativeGeoServiceProvider::availableServiceProviders()
+{
+    return QGeoServiceProvider::availableServiceProviders();
+}
+
+void QDeclarativeGeoServiceProvider::setSupportsGeocoding(bool supports)
+{
+    if (supports == supportsGeocoding_)
+        return;
+    supportsGeocoding_ = supports;
+    emit supportsGeocodingChanged();
+}
+
+void QDeclarativeGeoServiceProvider::setSupportsReverseGeocoding(bool supports)
+{
+    if (supports == supportsReverseGeocoding_)
+        return;
+    supportsReverseGeocoding_ = supports;
+    emit supportsReverseGeocodingChanged();
+}
+
+void QDeclarativeGeoServiceProvider::setSupportsRouting(bool supports)
+{
+    if (supports == supportsRouting_)
+        return;
+    supportsRouting_ = supports;
+    emit supportsRoutingChanged();
+}
+
+void QDeclarativeGeoServiceProvider::setSupportsMapping(bool supports)
+{
+    if (supports == supportsMapping_)
+        return;
+    supportsMapping_ = supports;
+    emit supportsMappingChanged();
+}
+
+void QDeclarativeGeoServiceProvider::componentComplete()
+{
+    complete_ = true;
+    if (!name_.isEmpty())
+        updateSupportStatus();
 }
 
 QString QDeclarativeGeoServiceProvider::name() const
 {
     return name_;
+}
+
+
+
+/*!
+    \qmlproperty bool Plugin::supportsGeocoding
+
+    This property holds whether plugin supports geocoding.
+*/
+bool QDeclarativeGeoServiceProvider::supportsGeocoding() const
+{
+    return supportsGeocoding_;
+}
+
+/*!
+    \qmlproperty bool Plugin::supportsReverseGeocoding
+
+    This property holds whether plugin supports reverse geocoding.
+*/
+bool QDeclarativeGeoServiceProvider::supportsReverseGeocoding() const
+{
+    return supportsReverseGeocoding_;
+}
+
+/*!
+    \qmlproperty bool Plugin::supportsRouting
+
+    This property holds whether plugin supports routing.
+*/
+bool QDeclarativeGeoServiceProvider::supportsRouting() const
+{
+    return supportsRouting_;
+}
+
+/*!
+    \qmlproperty bool Plugin::supportsMapping
+
+    This property holds whether plugin supports mapping.
+*/
+bool QDeclarativeGeoServiceProvider::supportsMapping() const
+{
+    return supportsMapping_;
 }
 
 /*!
