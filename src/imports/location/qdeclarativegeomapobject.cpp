@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
 ** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser General Public
-** License version 2.1 as published by the Free Software Foundation and
-** appearing in the file LICENSE.LGPL included in the packaging of this
-** file. Please review the following information to ensure the GNU Lesser
-** General Public License version 2.1 requirements will be met:
-** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights. These rights are described in the Nokia Qt LGPL Exception
+** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU General
-** Public License version 3.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of this
-** file. Please review the following information to ensure the GNU General
-** Public License version 3.0 requirements will be met:
-** http://www.gnu.org/copyleft/gpl.html.
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
 **
-** Other Usage
-** Alternatively, this file may be used in accordance with the terms and
-** conditions contained in a signed written agreement between you and Nokia.
+**
+**
 **
 **
 **
@@ -47,8 +47,6 @@
 #include <QDeclarativeParserStatus>
 #include <QAbstractItemModel>
 #include <QDeclarativeContext>
-
-#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -256,7 +254,7 @@ void QDeclarativeGeoMapObjectView::setModel(const QVariant &model)
     }
     modelVariant_ = model;
     model_ = itemModel;
-    // At the moment maps only works with landmark model. Because of this tight
+    // At the moment maps only works with selected models. Because of this tight
     // restriction, we are not listening to all change signals.
     QObject::connect(model_, SIGNAL(modelReset()), this, SLOT(modelReset()));
     QObject::connect(model_, SIGNAL(rowsRemoved(QModelIndex, int, int)), this, SLOT(modelRowsRemoved(QModelIndex, int, int)));
@@ -397,34 +395,35 @@ QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
         QVariant modelData = model_->data(index, iterator.key());
         if (!modelData.isValid())
             continue;
-        // This call would fail for <QObject*> Need to be figured out why
-        // if the model support is leveraged.
-        QObject *data_ptr = modelData.value<QDeclarativeLandmark*>();
+
+        // Currently we only support QObject* type data.
+        QObject* data_ptr = modelData.value<QObject*>();
+
         if (!data_ptr)
             continue;
         itemContext->setContextProperty(QLatin1String(iterator.value().data()), data_ptr);
+        itemContext->setContextProperty(QLatin1String("model"), data_ptr);
         // To avoid name collisions (delegate has same named attribute as model's role)
         // one can add here that the data is accessible also e.g. via 'model'.
         // In case of landmarks, two of the following are then equivalent:
         // latitude : landmark.coordinate.latitude
         // latitude : model.landmark.coordinate.latitude
-        // itemContext->setContextProperty(QLatin1String("model."), data_ptr);
-        // At the time being, it is however uncertain how to make it from a
-        // QtMobility project (QDeclarativeVisualDataModel not available).
-        // This however needs to be figured out if model support is generalized.
+        // However this requires instantiating a dynamic qobject and assigning it the
+        // dynamic property as property. Dynamic meta object code from declarative
+        // code should be reused. In mobility, e.g. contacts should have an example.
     }
     QObject* obj = delegate_->create(itemContext);
 
     if (!obj) {
         qWarning() << "QDeclarativeGeoMapObject map object creation failed.";
         delete itemContext;
-        return NULL;
+        return 0;
     }
     QDeclarativeGeoMapObject *declMapObj =  qobject_cast<QDeclarativeGeoMapObject*>(obj);
     if (!declMapObj) {
         qWarning() << "QDeclarativeGeoMapObject map object delegate is of unsupported type.";
         delete itemContext;
-        return NULL;
+        return 0;
     }
     itemContext->setParent(declMapObj);
     return declMapObj;

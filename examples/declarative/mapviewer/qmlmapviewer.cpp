@@ -41,6 +41,7 @@
 #include <QtGui/QApplication>
 #include <QtDeclarative/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeEngine>
+#include <QNetworkProxy>
 
 int main(int argc, char *argv[])
 {
@@ -49,6 +50,14 @@ int main(int argc, char *argv[])
     QDeclarativeView view;
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+
+    // Temporary development-time proxy setting
+    // TODO improve later.
+    QNetworkProxy proxy;
+    proxy.setType(QNetworkProxy::HttpProxy);
+    proxy.setHostName("nokes.nokia.com");
+    proxy.setPort(8080);
+    QNetworkProxy::setApplicationProxy(proxy);
     // Qt.quit() called in embedded .qml by default only emits
     // quit() signal, so do this (optionally use Qt.exit()).
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
