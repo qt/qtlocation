@@ -82,6 +82,7 @@ QLandmarkFetchByIdRequest::~QLandmarkFetchByIdRequest()
 
 /*!
     Returns a list of identifiers of landmarks which are to be retrieved by this request.
+    \since 1.1
 */
 QList<QLandmarkId> QLandmarkFetchByIdRequest::landmarkIds() const
 {
@@ -92,6 +93,7 @@ QList<QLandmarkId> QLandmarkFetchByIdRequest::landmarkIds() const
 
 /*!
     Sets the \a landmarkIds to be retrieved by this request.
+    \since 1.1
 */
 void QLandmarkFetchByIdRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
 {
@@ -104,6 +106,7 @@ void QLandmarkFetchByIdRequest::setLandmarkIds(const QList<QLandmarkId> &landmar
     Convenience function that sets  a single landmark, specified by \a landmarkId,
     to be retrieved by this request.
 
+    \since 1.1
 */
 void QLandmarkFetchByIdRequest::setLandmarkId(const QLandmarkId &landmarkId)
 {
@@ -116,6 +119,7 @@ void QLandmarkFetchByIdRequest::setLandmarkId(const QLandmarkId &landmarkId)
 /*!
     Returns the list of landmarks fetched by this request.
 
+    \since 1.1
 */
 QList<QLandmark> QLandmarkFetchByIdRequest::landmarks() const
 {
@@ -127,6 +131,7 @@ QList<QLandmark> QLandmarkFetchByIdRequest::landmarks() const
 /*!
     Returns the mapping of input landmark ID list indices
     to the errors which occurred.
+    \since 1.1
 */
 QMap<int, QLandmarkManager::Error> QLandmarkFetchByIdRequest::errorMap() const
 {

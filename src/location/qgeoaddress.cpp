@@ -93,6 +93,7 @@ QGeoAddress::QGeoAddress()
 
 /*!
     Constructs a copy of \a other.
+    \since 1.1
 */
 QGeoAddress::QGeoAddress(const QGeoAddress &other)
         : d(other.d)
@@ -109,6 +110,7 @@ QGeoAddress::~QGeoAddress()
 /*!
     Assigns the given \a address to this address and
     returns a reference to this address.
+    \since 1.1
 */
 QGeoAddress &QGeoAddress::operator=(const QGeoAddress & address)
 {
@@ -119,6 +121,7 @@ QGeoAddress &QGeoAddress::operator=(const QGeoAddress & address)
 /*!
     Returns true if this address is equal to \a other,
     otherwise returns false.
+    \since 1.1
 */
 bool QGeoAddress::operator==(const QGeoAddress &other) const
 {
@@ -148,10 +151,12 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
 
     Returns true if this address is not equal to \a other,
     otherwise returns false.
+    \since 1.1
 */
 
 /*!
     Returns the country name.
+    \since 1.1
 */
 QString QGeoAddress::country() const
 {
@@ -160,6 +165,7 @@ QString QGeoAddress::country() const
 
 /*!
     Sets the \a country name.
+    \since 1.1
 */
 void QGeoAddress::setCountry(const QString &country)
 {
@@ -168,6 +174,7 @@ void QGeoAddress::setCountry(const QString &country)
 
 /*!
     Returns the country code according to ISO 3166-1 alpha-3
+    \since 1.1
 */
 QString QGeoAddress::countryCode() const
 {
@@ -176,6 +183,7 @@ QString QGeoAddress::countryCode() const
 
 /*!
     Sets the \a countryCode according to ISO 3166-1 alpha-3
+    \since 1.1
 */
 void QGeoAddress::setCountryCode(const QString &countryCode)
 {
@@ -184,6 +192,7 @@ void QGeoAddress::setCountryCode(const QString &countryCode)
 
 /*!
     Returns the state.  The state is considered the first subdivision below country.
+    \since 1.1
 */
 QString QGeoAddress::state() const
 {
@@ -192,6 +201,7 @@ QString QGeoAddress::state() const
 
 /*!
     Sets the \a state.
+    \since 1.1
 */
 void QGeoAddress::setState(const QString &state)
 {
@@ -200,6 +210,7 @@ void QGeoAddress::setState(const QString &state)
 
 /*!
     Returns the county.  The county is considered the second subdivision below country.
+    \since 1.1
 */
 QString QGeoAddress::county() const
 {
@@ -208,6 +219,7 @@ QString QGeoAddress::county() const
 
 /*!
     Sets the \a county.
+    \since 1.1
 */
 void QGeoAddress::setCounty(const QString &county)
 {
@@ -216,6 +228,7 @@ void QGeoAddress::setCounty(const QString &county)
 
 /*!
     Returns the city.
+    \since 1.1
 */
 QString QGeoAddress::city() const
 {
@@ -224,6 +237,7 @@ QString QGeoAddress::city() const
 
 /*!
     Sets the \a city.
+    \since 1.1
 */
 void QGeoAddress::setCity(const QString &city)
 {
@@ -232,6 +246,7 @@ void QGeoAddress::setCity(const QString &city)
 
 /*!
     Returns the district.  The district is considered the subdivison below city.
+    \since 1.1
 */
 QString QGeoAddress::district() const
 {
@@ -240,6 +255,7 @@ QString QGeoAddress::district() const
 
 /*!
     Sets the \a district.
+    \since 1.1
 */
 void QGeoAddress::setDistrict(const QString &district)
 {
@@ -253,6 +269,7 @@ void QGeoAddress::setDistrict(const QString &district)
     but may also contain things like a unit number, a building
     name, or anything else that might be used to
     distinguish one address from another.
+    \since 1.1
 */
 QString QGeoAddress::street() const
 {
@@ -266,6 +283,7 @@ QString QGeoAddress::street() const
     but may also contain things like a unit number, a building
     name, or anything else that might be used to
     distinguish one address from another.
+    \since 1.1
 */
 void QGeoAddress::setStreet(const QString &street)
 {
@@ -274,6 +292,7 @@ void QGeoAddress::setStreet(const QString &street)
 
 /*!
     Returns the post code.
+    \since 1.1
 */
 QString QGeoAddress::postcode() const
 {
@@ -282,6 +301,7 @@ QString QGeoAddress::postcode() const
 
 /*!
     Sets the \a postcode.
+    \since 1.1
 */
 void QGeoAddress::setPostcode(const QString &postcode)
 {
@@ -291,6 +311,7 @@ void QGeoAddress::setPostcode(const QString &postcode)
 /*!
     Returns whether this address is empty. An address is considered empty
     if \i all of its fields are empty.
+    \since 1.1
 */
 bool QGeoAddress::isEmpty() const
 {
@@ -305,6 +326,7 @@ bool QGeoAddress::isEmpty() const
 }
 /*!
     Clears the all the address' data fields.
+    \since 1.1
 */
 void QGeoAddress::clear()
 {

@@ -83,6 +83,7 @@ QLandmarkCategoryRemoveRequest::~QLandmarkCategoryRemoveRequest()
 
 /*!
     Returns the list of identifiers of categories which will be removed.
+    \since 1.1
 */
 QList<QLandmarkCategoryId> QLandmarkCategoryRemoveRequest::categoryIds() const
 {
@@ -94,6 +95,7 @@ QList<QLandmarkCategoryId> QLandmarkCategoryRemoveRequest::categoryIds() const
 /*!
     Sets the list of \a categoryIds of categories which will be removed.
 
+    \since 1.1
     \sa setCategories(), setCategoryId()
 */
 void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
@@ -108,6 +110,7 @@ void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategor
     It is the equivalent of calling setCategoryIds() with a single \a categoryId
     in the ID list.
 
+    \since 1.1
     \sa setCategory(), setCategoryIds()
 */
 void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
@@ -123,6 +126,7 @@ void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &ca
     This function effectively calls setCategoryIds() with the IDs of the
     \a categories.
 
+    \since 1.1
     \sa setCategory(), setCategoryIds()
 */
 void QLandmarkCategoryRemoveRequest::setCategories(const QList<QLandmarkCategory> &categories)
@@ -138,6 +142,7 @@ void QLandmarkCategoryRemoveRequest::setCategories(const QList<QLandmarkCategory
     Convenience function that sets a single \a category to be removed.
     This function effectively calls setCategoryIds() with the ID of \a category.
 
+    \since 1.1
     \sa setCategories(), setCategoryId()
 */
 void QLandmarkCategoryRemoveRequest::setCategory(const QLandmarkCategory &category)
@@ -151,6 +156,7 @@ void QLandmarkCategoryRemoveRequest::setCategory(const QLandmarkCategory &catego
 /*!
     Returns the mapping of input category ID list indices
     to the errors which occurred.
+    \since 1.1
 */
 QMap<int, QLandmarkManager::Error> QLandmarkCategoryRemoveRequest::errorMap() const
 {

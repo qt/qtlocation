@@ -85,6 +85,7 @@ QLandmarkSaveRequest::~QLandmarkSaveRequest()
     finished, any new landmarks will have had their QLandmarkId set.
     (Landmarks which were updated or failed to save will remain unchanged, use the
      errorMap() function to determine which particular landmarks failed to save.)
+    \since 1.1
 */
 QList<QLandmark> QLandmarkSaveRequest::landmarks() const
 {
@@ -96,6 +97,7 @@ QList<QLandmark> QLandmarkSaveRequest::landmarks() const
 /*!
     Sets the list of \a landmarks to be saved.
 
+    \since 1.1
     \sa setLandmark()
 */
 void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
@@ -110,6 +112,7 @@ void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
     function is the equivalent of calling setLandmarks() with a single
     \a landmark.
 
+    \since 1.1
     \sa setLandmarks()
 */
 void QLandmarkSaveRequest::setLandmark(const QLandmark &landmark)
@@ -122,6 +125,7 @@ void QLandmarkSaveRequest::setLandmark(const QLandmark &landmark)
 
 /*!
     Returns the mapping of input landmark list indices to errors which occurred.
+    \since 1.1
 */
 QMap<int, QLandmarkManager::Error> QLandmarkSaveRequest::errorMap() const
 {

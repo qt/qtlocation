@@ -256,7 +256,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(QString requestString,
     return reply;
 }
 
-QString QGeoSearchManagerEngineNokia::trimDouble(qreal degree, int decimalDigits)
+QString QGeoSearchManagerEngineNokia::trimDouble(double degree, int decimalDigits)
 {
     QString sDegree = QString::number(degree, 'g', decimalDigits);
 

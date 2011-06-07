@@ -304,6 +304,9 @@ bool QGraphicsGeoMap::supportsBearing() const
 
     Value in degrees where 0 is equivalent to 90 degrees between view and earth's
     surface i.e. looking straight down to earth.
+
+    Changes to this property will be ignored if supportsBearing()
+    returns false.
 */
 void QGraphicsGeoMap::setBearing(qreal bearing)
 {
@@ -374,6 +377,9 @@ qreal QGraphicsGeoMap::maximumTilt() const
     If \a tilt is less than minimumTilt() then minimumTilt()
     will be used, and if \a tilt is  larger than
     maximumTilt() then maximumTilt() will be used.
+
+    Changes to this property will be ignored if supportsTilting()
+    returns false.
 */
 void QGraphicsGeoMap::setTilt(qreal tilt)
 {
@@ -755,6 +761,9 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
     This signal is emitted when the bearing of the map changes.
 
     The new value is \a bearing.
+
+    This signal will not be emitted if supportsBearing()
+    returns false.
 */
 
 /*!
@@ -763,6 +772,9 @@ QGeoCoordinate QGraphicsGeoMap::screenPositionToCoordinate(QPointF screenPositio
     This signal is emitted when the tilt of the map changes.
 
     The new value is \a tilt.
+
+    This signal will not be emitted if supportsTilting()
+    returns false.
 */
 
 /*!

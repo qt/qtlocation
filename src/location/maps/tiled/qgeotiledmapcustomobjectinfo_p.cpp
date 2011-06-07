@@ -90,7 +90,8 @@ void QGeoTiledMapCustomObjectInfo::graphicsItemChanged(QGraphicsItem * /*graphic
 
 void QGeoTiledMapCustomObjectInfo::offsetChanged(const QPoint &/*offset*/)
 {
-    graphicsItem->setPos(custom->offset());
+    QPoint offset = custom->offset();
+    graphicsItem->translate(offset.x(), offset.y());
     updateItem();
 }
 

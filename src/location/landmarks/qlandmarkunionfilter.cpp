@@ -75,6 +75,7 @@ QLandmarkUnionFilter::QLandmarkUnionFilter()
 /*!
     \fn QLandmarkUnionFilter::QLandmarkUnionFilter(const QLandmarkFilter &other)
     Constructs a copy of \a other if possible, otherwise constructs a new union filter.
+    \since 1.1
 */
 
 /*!
@@ -87,6 +88,7 @@ QLandmarkUnionFilter::~QLandmarkUnionFilter()
 
 /*!
     Sets the \a filters whose criteria will be unioned.
+    \since 1.1
     \sa filters()
 */
 void QLandmarkUnionFilter::setFilters(const QList<QLandmarkFilter>& filters)
@@ -98,6 +100,7 @@ void QLandmarkUnionFilter::setFilters(const QList<QLandmarkFilter>& filters)
 /*!
     Prepends the given \a filter to the list of unioned filters.
 
+    \since 1.1
     \sa append(), filters()
 */
 void QLandmarkUnionFilter::prepend(const QLandmarkFilter &filter)
@@ -109,6 +112,7 @@ void QLandmarkUnionFilter::prepend(const QLandmarkFilter &filter)
 /*!
     Appends the given \a filter to the list of unioned filters.
 
+    \since 1.1
     \sa operator<<(), prepend(), filters()
 */
 void QLandmarkUnionFilter::append(const QLandmarkFilter &filter)
@@ -119,6 +123,7 @@ void QLandmarkUnionFilter::append(const QLandmarkFilter &filter)
 
 /*!
     Removes the given \a filter from the union list.
+    \since 1.1
     \sa filters(), append(), prepend()
 */
 void QLandmarkUnionFilter::remove(const QLandmarkFilter &filter)
@@ -129,6 +134,7 @@ void QLandmarkUnionFilter::remove(const QLandmarkFilter &filter)
 
 /*!
     Removes all filters from the union list.
+    \since 1.1
     \sa remove()
 */
 void QLandmarkUnionFilter::clear()
@@ -140,6 +146,7 @@ void QLandmarkUnionFilter::clear()
 /*!
     Appends the given \a filter to the list of unioned filters.
 
+    \since 1.1
     \sa append()
  */
 QLandmarkUnionFilter& QLandmarkUnionFilter::operator<<(const QLandmarkFilter &filter)
@@ -152,6 +159,7 @@ QLandmarkUnionFilter& QLandmarkUnionFilter::operator<<(const QLandmarkFilter &fi
 /*!
     Returns the list of filters which form the union filter.
 
+    \since 1.1
     \sa setFilters(), prepend(), append(), remove()
  */
 QList<QLandmarkFilter> QLandmarkUnionFilter::filters() const

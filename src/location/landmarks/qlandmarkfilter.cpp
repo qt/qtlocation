@@ -140,6 +140,7 @@ QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate *dd)
 
 /*!
     Constructs a copy of \a other.
+    \since 1.1
 */
 QLandmarkFilter::QLandmarkFilter(const QLandmarkFilter &other)
         : d_ptr(other.d_ptr)
@@ -148,6 +149,7 @@ QLandmarkFilter::QLandmarkFilter(const QLandmarkFilter &other)
 
 /*!
     Assigns \a other to this filter and returns a reference to this filter.
+    \since 1.1
 */
 QLandmarkFilter &QLandmarkFilter::operator=(const QLandmarkFilter & other)
 {
@@ -166,6 +168,7 @@ QLandmarkFilter::~QLandmarkFilter()
 
 /*!
     Returns the type of the filter.
+    \since 1.1
 */
 QLandmarkFilter::FilterType QLandmarkFilter::type() const
 {
@@ -176,11 +179,13 @@ QLandmarkFilter::FilterType QLandmarkFilter::type() const
     \fn QLandmarkFilter::operator!=(const QLandmarkFilter &other) const
     Returns true if this filter is not identical to \a other.
 
+    \since 1.1
     \sa operator==()
 */
 
 /*!
     Returns true if the filter has the same type and criteria as \a other.
+    \since 1.1
     \sa operator!=()
 */
 bool QLandmarkFilter::operator==(const QLandmarkFilter& other) const
@@ -196,6 +201,7 @@ bool QLandmarkFilter::operator==(const QLandmarkFilter& other) const
 /*!
  \relates QLandmarkFilter
  Returns a filter which is the intersection of the \a left and \a right filters
+ \since 1.1
  \sa QLandmarkIntersectionFilter
  */
 const QLandmarkFilter operator&(const QLandmarkFilter &left, const QLandmarkFilter &right)
@@ -212,6 +218,7 @@ const QLandmarkFilter operator&(const QLandmarkFilter &left, const QLandmarkFilt
 /*!
  \relates QLandmarkFilter
  Returns a filter which is the union of the \a left and \a right filters
+ \since 1.1
  \sa QLandmarkUnionFilter
  */
 const QLandmarkFilter operator|(const QLandmarkFilter &left, const QLandmarkFilter &right)

@@ -137,6 +137,7 @@ QGeoCoordinate::QGeoCoordinate()
     the type() will be QGeoCoordinate::InvalidCoordinate.
 
     \sa isValid()
+    \since 1.0
 */
 QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
         : d(new QGeoCoordinatePrivate)
@@ -158,6 +159,7 @@ QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
     Note that \a altitude specifies the metres above sea level.
 
     \sa isValid()
+    \since 1.0
 */
 QGeoCoordinate::QGeoCoordinate(double latitude, double longitude, double altitude)
         : d(new QGeoCoordinatePrivate)
@@ -171,6 +173,7 @@ QGeoCoordinate::QGeoCoordinate(double latitude, double longitude, double altitud
 
 /*!
     Constructs a coordinate from the contents of \a other.
+    \since 1.0
 */
 QGeoCoordinate::QGeoCoordinate(const QGeoCoordinate &other)
         : d(new QGeoCoordinatePrivate)
@@ -189,6 +192,7 @@ QGeoCoordinate::~QGeoCoordinate()
 /*!
     Assigns \a other to this coordinate and returns a reference to this
     coordinate.
+    \since 1.0
 */
 QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate & other)
 {
@@ -207,6 +211,7 @@ QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate & other)
     coordinate are the same as those of \a other.
 
     The longitude will be ignored if the latitude is +/- 90 degrees.
+    \since 1.0
 */
 bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
 {
@@ -228,10 +233,12 @@ bool QGeoCoordinate::operator==(const QGeoCoordinate &other) const
 
     Returns true if the latitude, longitude or altitude of this
     coordinate are not the same as those of \a other.
+    \since 1.0
 */
 
 /*!
     Returns true if the type() is Coordinate2D or Coordinate3D.
+    \since 1.0
 */
 bool QGeoCoordinate::isValid() const
 {
@@ -241,6 +248,7 @@ bool QGeoCoordinate::isValid() const
 
 /*!
     Returns the type of this coordinate.
+    \since 1.0
 */
 QGeoCoordinate::CoordinateType QGeoCoordinate::type() const
 {
@@ -262,6 +270,7 @@ QGeoCoordinate::CoordinateType QGeoCoordinate::type() const
     latitude indicates the Southern Hemisphere.
 
     \sa setLatitude(), type()
+    \since 1.0
 */
 double QGeoCoordinate::latitude() const
 {
@@ -275,6 +284,7 @@ double QGeoCoordinate::latitude() const
     To be valid, the latitude must be between -90 to 90 inclusive.
 
     \sa latitude()
+    \since 1.0
 */
 void QGeoCoordinate::setLatitude(double latitude)
 {
@@ -289,6 +299,7 @@ void QGeoCoordinate::setLatitude(double latitude)
     longitude indicates the Western Hemisphere.
 
     \sa setLongitude(), type()
+    \since 1.0
 */
 double QGeoCoordinate::longitude() const
 {
@@ -302,6 +313,7 @@ double QGeoCoordinate::longitude() const
     To be valid, the longitude must be between -180 to 180 inclusive.
 
     \sa longitude()
+    \since 1.0
 */
 void QGeoCoordinate::setLongitude(double longitude)
 {
@@ -313,6 +325,7 @@ void QGeoCoordinate::setLongitude(double longitude)
 
     The return value is undefined if the altitude has not been set.
 
+    \since 1.0
     \sa setAltitude(), type()
 */
 double QGeoCoordinate::altitude() const
@@ -323,6 +336,7 @@ double QGeoCoordinate::altitude() const
 /*!
     Sets the altitude (meters above sea level) to \a altitude.
 
+    \since 1.0
     \sa altitude()
 */
 void QGeoCoordinate::setAltitude(double altitude)
@@ -340,6 +354,7 @@ void QGeoCoordinate::setAltitude(double altitude)
 
     Returns 0 if the type of this coordinate or the type of \a other is
     QGeoCoordinate::InvalidCoordinate.
+    \since 1.0
 */
 qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
 {
@@ -373,6 +388,7 @@ qreal QGeoCoordinate::distanceTo(const QGeoCoordinate &other) const
 
     Returns 0 if the type of this coordinate or the type of \a other is
     QGeoCoordinate::InvalidCoordinate.
+    \since 1.0
 */
 qreal QGeoCoordinate::azimuthTo(const QGeoCoordinate &other) const
 {
@@ -480,6 +496,7 @@ QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimut
     The altitude field is omitted if no altitude is set.
 
     If the coordinate is invalid, an empty string is returned.
+    \since 1.0
 */
 QString QGeoCoordinate::toString(CoordinateFormat format) const
 {
@@ -599,6 +616,7 @@ QDebug operator<<(QDebug dbg, const QGeoCoordinate &coord)
 
     Writes the given \a coordinate to the specified \a stream.
 
+    \since 1.0
     \sa {Serializing Qt Data Types}
 */
 
@@ -619,6 +637,7 @@ QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate)
     Reads a coordinate from the specified \a stream into the given
     \a coordinate.
 
+    \since 1.0
     \sa {Serializing Qt Data Types}
 */
 

@@ -81,7 +81,12 @@ void QGeoTiledMapPixmapObjectInfo::pixmapChanged(const QPixmap &/*pixmap*/)
 
 void QGeoTiledMapPixmapObjectInfo::offsetChanged(const QPoint &/*offset*/)
 {
-    pixmapItem->setOffset(pixmap->offset());
+    QPoint offset = pixmap->offset();
+
+    QTransform trans;
+    trans.translate(offset.x(), offset.y());
+    pixmapItem->setTransform(trans);
+
     updateItem();
 }
 

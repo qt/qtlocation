@@ -89,6 +89,7 @@ QLandmarkCategoryId::~QLandmarkCategoryId()
 /*!
     Returns true if the identifier is valid, meaning that both
     a manager URI and local id have been set
+    \since 1.1
 */
 bool QLandmarkCategoryId::isValid() const
 {
@@ -99,6 +100,7 @@ bool QLandmarkCategoryId::isValid() const
     Returns the local id of the category identifier.
 
     This id is specific to a particular landmark manager.
+    \since 1.1
 */
 QString QLandmarkCategoryId::localId() const
 {
@@ -107,6 +109,7 @@ QString QLandmarkCategoryId::localId() const
 
 /*!
     Sets the local \a id of the category identifier.
+    \since 1.1
 */
 void QLandmarkCategoryId::setLocalId(const QString &id)
 {
@@ -116,6 +119,7 @@ void QLandmarkCategoryId::setLocalId(const QString &id)
 /*!
     Returns the URI of the manager which this category identifer
     belongs to.
+    \since 1.1
 */
 QString QLandmarkCategoryId::managerUri() const
 {
@@ -125,6 +129,7 @@ QString QLandmarkCategoryId::managerUri() const
 /*!
     Sets the manager \a uri which this category identifier
     belongs to.
+    \since 1.1
 */
 void QLandmarkCategoryId::setManagerUri(const QString &uri)
 {
@@ -134,6 +139,7 @@ void QLandmarkCategoryId::setManagerUri(const QString &uri)
 /*!
     Assigns \a other to this category identifier and returns a reference
     to this category identifier.
+    \since 1.1
 */
 QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId & other)
 {
@@ -148,6 +154,7 @@ QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId & 
     Two QLandmarkCategoryIds are considered equal if both have the same
     manager URI and local id.
 
+    \since 1.1
     \sa operator!=()
 */
 bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
@@ -163,6 +170,7 @@ bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
     If either the manager URIs or local ids differ, then the
     QLandmarkCategoryIds are not considered equal.
 
+    \since 1.1
     \sa operator==()
 */
 bool QLandmarkCategoryId::operator!=(const QLandmarkCategoryId &other) const
