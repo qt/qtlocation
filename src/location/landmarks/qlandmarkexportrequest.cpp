@@ -85,6 +85,7 @@ QLandmarkExportRequest::~QLandmarkExportRequest()
 
 /*!
     Returns the device to which landmarks are written.
+    \since 1.1
 */
 QIODevice *QLandmarkExportRequest::device() const
 {
@@ -95,6 +96,7 @@ QIODevice *QLandmarkExportRequest::device() const
 
 /*!
     Sets the \a device to which landmarks are written.
+    \since 1.1
 */
 void QLandmarkExportRequest::setDevice(QIODevice *device)
 {
@@ -108,6 +110,7 @@ void QLandmarkExportRequest::setDevice(QIODevice *device)
     been called, this function returns the name of the file to be
     written to.  In all other cases, it returns an empty string.
 
+    \since 1.1
     \sa setFileName(), setDevice()
 */
 QString QLandmarkExportRequest::fileName() const
@@ -123,6 +126,7 @@ QString QLandmarkExportRequest::fileName() const
     QLandmarkExportRequest will create a QFile use this as the
     device to export to.
 
+    \since 1.1
     \sa fileName(), setDevice()
 */
 void QLandmarkExportRequest::setFileName(const QString &fileName)
@@ -134,6 +138,7 @@ void QLandmarkExportRequest::setFileName(const QString &fileName)
 
 /*!
     Returns the data format for the export operation.
+    \since 1.1
 */
 QString QLandmarkExportRequest::format() const
 {
@@ -144,6 +149,7 @@ QString QLandmarkExportRequest::format() const
 
 /*!
     Sets the data \a format for the export operation.
+    \since 1.1
 */
 void QLandmarkExportRequest::setFormat(const QString &format)
 {
@@ -158,6 +164,7 @@ void QLandmarkExportRequest::setFormat(const QString &format)
     during the export operation.  The default option is
     QLandmarkManager::IncludeCategoryData.
 
+    \since 1.1
 */
 QLandmarkManager::TransferOption QLandmarkExportRequest::transferOption() const
 {
@@ -170,6 +177,7 @@ QLandmarkManager::TransferOption QLandmarkExportRequest::transferOption() const
     Sets the transfer \a option of the export request.
     The transfer \a option defines how categories are treated
     during the export operation.
+    \since 1.1
 */
 void QLandmarkExportRequest::setTransferOption(QLandmarkManager::TransferOption option)
 {
@@ -182,6 +190,7 @@ void QLandmarkExportRequest::setTransferOption(QLandmarkManager::TransferOption 
     Returns the list of identifiers of landmarks that will be exported.
     By default the list of identifiers is empty, indicating that all
     landmarks should be exported.
+    \since 1.1
 */
 QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
 {
@@ -193,6 +202,7 @@ QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
 /*!
     Sets the landmarks to be exported by specifying a list of
     \a landmarkIds.
+    \since 1.1
 */
 void QLandmarkExportRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
 {

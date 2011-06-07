@@ -299,6 +299,9 @@ private:
 
     TBool mRegularUpdateTimedOut;
 
+    // To check if update interval is already set from application
+    TBool mUpdateIntervalSet;
+
     /*
      * flags for the modules
      */

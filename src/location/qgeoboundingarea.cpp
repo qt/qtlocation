@@ -79,6 +79,7 @@ QGeoBoundingArea::~QGeoBoundingArea() {}
 \fn virtual QGeoBoundingArea::AreaType QGeoBoundingArea::type() const
 
 Returns the type of this area.
+\since 1.1
 */
 
 /*!
@@ -89,6 +90,7 @@ Returns whether this bounding area is valid.
 An area is considered to be invalid if some of the data that is required to
 unambiguously describe the area has not been set or has been set to an
 unsuitable value.
+\since 1.1
 */
 
 /*!
@@ -97,6 +99,7 @@ unsuitable value.
 Returns whether this bounding area is empty.
 
 An empty area is a region which has a geometrical area of 0.
+\since 1.1
 */
 
 /*!
@@ -104,6 +107,7 @@ An empty area is a region which has a geometrical area of 0.
 
 Returns whether the coordinate \a coordinate is contained within this
 area.
+\since 1.1
 */
 
 QTM_END_NAMESPACE

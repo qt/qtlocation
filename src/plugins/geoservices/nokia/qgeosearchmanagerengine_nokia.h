@@ -85,7 +85,7 @@ private slots:
     void placesError(QGeoSearchReply::Error error, const QString &errorString);
 
 private:
-    static QString trimDouble(qreal degree, int decimalDigits = 10);
+    static QString trimDouble(double degree, int decimalDigits = 10);
     QGeoSearchReply* search(QString requestString, QGeoBoundingArea *bounds, int limit = -1, int offset = 0);
     QString languageToMarc(QLocale::Language language);
 

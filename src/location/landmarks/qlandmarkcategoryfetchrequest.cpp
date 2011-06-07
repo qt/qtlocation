@@ -82,6 +82,7 @@ QLandmarkCategoryFetchRequest::~QLandmarkCategoryFetchRequest()
 /*!
     Returns the list of categories that have been found during the
     request.
+    \since 1.1
 */
 QList<QLandmarkCategory> QLandmarkCategoryFetchRequest::categories() const
 {
@@ -94,6 +95,7 @@ QList<QLandmarkCategory> QLandmarkCategoryFetchRequest::categories() const
     Returns the sorting of the categories.
     By default the sorting is case insensitive and in ascending order
     according to the category name.
+    \since 1.1
 */
 QLandmarkNameSort QLandmarkCategoryFetchRequest::sorting() const
 {
@@ -104,6 +106,7 @@ QLandmarkNameSort QLandmarkCategoryFetchRequest::sorting() const
 
 /*!
     Sets \a nameSort to specify the sorting of the returned categories.
+    \since 1.1
 */
 void QLandmarkCategoryFetchRequest::setSorting(const QLandmarkNameSort &nameSort)
 {
@@ -115,6 +118,7 @@ void QLandmarkCategoryFetchRequest::setSorting(const QLandmarkNameSort &nameSort
 /*!
     Returns the maximum number of categories to be returned.  By default the limit
     is -1 indicating that all categories should be retrieved.
+    \since 1.1
 */
 int QLandmarkCategoryFetchRequest::limit() const
 {
@@ -128,6 +132,7 @@ int QLandmarkCategoryFetchRequest::limit() const
     A limit of -1 will retrieve all categories.
 
     (A limit of 0 will retrieve no categories.)
+    \since 1.1
  */
 void QLandmarkCategoryFetchRequest::setLimit(int limit)
 {
@@ -144,6 +149,7 @@ void QLandmarkCategoryFetchRequest::setLimit(int limit)
     For example, if there are 10 categories in the landmark store, setting the offset
     to 2 and limit to 5 will retrieve the 3rd to 7th categories inclusively.  (The order of categories
     is specified by the sorting field).
+    \since 1.1
 */
 int QLandmarkCategoryFetchRequest::offset() const
 {
@@ -154,6 +160,7 @@ int QLandmarkCategoryFetchRequest::offset() const
 
 /*!
     Sets the index \a offset for the request.
+    \since 1.1
 */
 void QLandmarkCategoryFetchRequest::setOffset(int offset) {
     Q_D(QLandmarkCategoryFetchRequest);

@@ -68,7 +68,7 @@ QTM_BEGIN_NAMESPACE
     \inmodule QtLocation
 
     \ingroup landmarks-request
-    \since 1.2
+    \since 1.1
 */
 
 /*!
@@ -88,6 +88,7 @@ QLandmarkCategoryFetchByIdRequest::~QLandmarkCategoryFetchByIdRequest()
 
 /*!
     Returns a list of identifiers of categories which are to be retrieved by this request.
+    \since 1.1
 */
 QList<QLandmarkCategoryId> QLandmarkCategoryFetchByIdRequest::categoryIds() const
 {
@@ -98,6 +99,7 @@ QList<QLandmarkCategoryId> QLandmarkCategoryFetchByIdRequest::categoryIds() cons
 
 /*!
     Sets this request to retrieve a list of categories identified by \a categoryIds.
+    \since 1.1
 */
 void QLandmarkCategoryFetchByIdRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 {
@@ -109,6 +111,7 @@ void QLandmarkCategoryFetchByIdRequest::setCategoryIds(const QList<QLandmarkCate
 /*!
     Convenience function that sets a single category, specified by \a categoryId,
     to be retrieved by this request.
+    \since 1.1
 */
 void QLandmarkCategoryFetchByIdRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
@@ -120,6 +123,7 @@ void QLandmarkCategoryFetchByIdRequest::setCategoryId(const QLandmarkCategoryId 
 
 /*!
     Returns the list of categories fetched by this request
+    \since 1.1
 */
 QList<QLandmarkCategory> QLandmarkCategoryFetchByIdRequest::categories() const
 {
@@ -131,6 +135,7 @@ QList<QLandmarkCategory> QLandmarkCategoryFetchByIdRequest::categories() const
 /*!
     Returns the mapping of input category id list indices
     to the errors which occurred.
+    \since 1.1
 */
 QMap<int, QLandmarkManager::Error> QLandmarkCategoryFetchByIdRequest::errorMap() const
 {

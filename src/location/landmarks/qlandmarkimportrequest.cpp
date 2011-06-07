@@ -84,6 +84,7 @@ QLandmarkImportRequest::~QLandmarkImportRequest()
 
 /*!
     Returns the device from which landmarks are read.
+    \since 1.1
 */
 QIODevice *QLandmarkImportRequest::device() const
 {
@@ -94,6 +95,7 @@ QIODevice *QLandmarkImportRequest::device() const
 
 /*!
     Sets the \a device from which landmarks are read.
+    \since 1.1
 */
 void QLandmarkImportRequest::setDevice(QIODevice *device)
 {
@@ -107,6 +109,7 @@ void QLandmarkImportRequest::setDevice(QIODevice *device)
     been called, this function returns the name of the file to be
     read from.  In all other cases, it returns an empty string.
 
+    \since 1.1
     \sa setFileName(), setDevice()
 */
 QString QLandmarkImportRequest::fileName() const
@@ -122,6 +125,7 @@ QString QLandmarkImportRequest::fileName() const
     QLandmarkImportRequest will create a QFile and use this as the
     device to import from.
 
+    \since 1.1
     \sa fileName(), setDevice()
 */
 void QLandmarkImportRequest::setFileName(const QString &fileName)
@@ -135,6 +139,7 @@ void QLandmarkImportRequest::setFileName(const QString &fileName)
     Returns the expected data format for the import operation.
     By default no format is set, indicating that the manager
     will try to automatically detect the format of the import file.
+    \since 1.1
 */
 QString QLandmarkImportRequest::format() const
 {
@@ -147,6 +152,7 @@ QString QLandmarkImportRequest::format() const
     Sets the expected data \a format for the import operation.
     If an empty string is set, then during the import,
     an attempt is made to auto detect the format.
+    \since 1.1
 */
 void QLandmarkImportRequest::setFormat(const QString &format)
 {
@@ -161,6 +167,7 @@ void QLandmarkImportRequest::setFormat(const QString &format)
     during the import operation.  The default option is
     QLandmarkManager::IncludeCategoryData.
 
+    \since 1.1
 */
 QLandmarkManager::TransferOption QLandmarkImportRequest::transferOption() const
 {
@@ -173,6 +180,7 @@ QLandmarkManager::TransferOption QLandmarkImportRequest::transferOption() const
     Sets the transfer \a option of the import request.
     The transfer \a option defines how categories are treated
     during the import operation.
+    \since 1.1
 */
 void QLandmarkImportRequest::setTransferOption(QLandmarkManager::TransferOption option)
 {
@@ -185,6 +193,7 @@ void QLandmarkImportRequest::setTransferOption(QLandmarkManager::TransferOption 
     Returns identifier of the category which all landmarks are assigned to if
     QLandmarkManager::AttachSingleCategory is used
     as the import option.
+    \since 1.1
 */
 QLandmarkCategoryId QLandmarkImportRequest::categoryId() const
 {
@@ -197,6 +206,7 @@ QLandmarkCategoryId QLandmarkImportRequest::categoryId() const
     Sets the identifier of the category to which all landmarks are assigned to,
     if QLandmarkManager::AttachSingleCategory is used as the import option, to
     \a categoryId.
+    \since 1.1
 */
 void QLandmarkImportRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
@@ -207,6 +217,7 @@ void QLandmarkImportRequest::setCategoryId(const QLandmarkCategoryId &categoryId
 
 /*!
     Returns a list of identifiers of landmarks that have been imported.
+    \since 1.1
 */
 QList<QLandmarkId> QLandmarkImportRequest::landmarkIds() const
 {

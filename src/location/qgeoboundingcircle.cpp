@@ -75,12 +75,14 @@ QGeoBoundingCircle::QGeoBoundingCircle()
 /*!
     Constructs a new bounding circle centered at \a center and with a radius of \a
     radius metres.
+    \since 1.1
 */
 QGeoBoundingCircle::QGeoBoundingCircle(const QGeoCoordinate &center, qreal radius)
         : d_ptr(new QGeoBoundingCirclePrivate(center, radius)) {}
 
 /*!
     Constructs a new bounding circle from the contents of \a other.
+    \since 1.1
 */
 QGeoBoundingCircle::QGeoBoundingCircle(const QGeoBoundingCircle &other)
         : QGeoBoundingArea(other),
@@ -94,6 +96,7 @@ QGeoBoundingCircle::~QGeoBoundingCircle() {}
 /*!
     Assigns \a other to this bounding circle and returns a reference to this
     bounding circle.
+    \since 1.1
 */
 QGeoBoundingCircle& QGeoBoundingCircle::operator = (const QGeoBoundingCircle & other)
 {
@@ -104,6 +107,7 @@ QGeoBoundingCircle& QGeoBoundingCircle::operator = (const QGeoBoundingCircle & o
 
 /*!
     Returns whether this bounding circle is equal to \a other.
+    \since 1.1
 */
 bool QGeoBoundingCircle::operator == (const QGeoBoundingCircle &other) const
 {
@@ -112,6 +116,7 @@ bool QGeoBoundingCircle::operator == (const QGeoBoundingCircle &other) const
 
 /*!
     Returns whether this bounding circle is not equal to \a other.
+    \since 1.1
 */
 bool QGeoBoundingCircle::operator != (const QGeoBoundingCircle &other) const
 {
@@ -124,6 +129,7 @@ bool QGeoBoundingCircle::operator != (const QGeoBoundingCircle &other) const
 
     This function is provided to help find the specific type of
     aQGeoBoundingArea instance.
+    \since 1.1
 */
 QGeoBoundingArea::AreaType QGeoBoundingCircle::type() const
 {
@@ -135,6 +141,7 @@ QGeoBoundingArea::AreaType QGeoBoundingCircle::type() const
 
     A valid bounding circle has a valid center coordinate and a radius
     greater than or equal to zero.
+    \since 1.1
 */
 bool QGeoBoundingCircle::isValid() const
 {
@@ -147,6 +154,7 @@ bool QGeoBoundingCircle::isValid() const
     Returns whether this bounding circle has a geometrical area of zero.
 
     Returns true if this bounding circle is invalid.
+    \since 1.1
 */
 bool QGeoBoundingCircle::isEmpty() const
 {
@@ -155,6 +163,7 @@ bool QGeoBoundingCircle::isEmpty() const
 
 /*!
     Sets the center coordinate of this bounding circle to \a center.
+    \since 1.1
 */
 void QGeoBoundingCircle::setCenter(const QGeoCoordinate &center)
 {
@@ -163,6 +172,7 @@ void QGeoBoundingCircle::setCenter(const QGeoCoordinate &center)
 
 /*!
     Returns the center coordinate of this bounding circle.
+    \since 1.1
 */
 QGeoCoordinate QGeoBoundingCircle::center() const
 {
@@ -170,7 +180,8 @@ QGeoCoordinate QGeoBoundingCircle::center() const
 }
 
 /*!
-    Sets the radius in metres of this bounding circle to \a radius.
+    Sets the radius in meters of this bounding circle to \a radius.
+    \since 1.1
 */
 void QGeoBoundingCircle::setRadius(qreal radius)
 {
@@ -179,6 +190,7 @@ void QGeoBoundingCircle::setRadius(qreal radius)
 
 /*!
     Returns the radius in meters of this bounding circle.
+    \since 1.1
 */
 qreal QGeoBoundingCircle::radius() const
 {
@@ -188,6 +200,7 @@ qreal QGeoBoundingCircle::radius() const
 /*!
     Returns whether the coordinate \a coordinate is contained within this
     bounding circle.
+    \since 1.1
 */
 bool QGeoBoundingCircle::contains(const QGeoCoordinate &coordinate) const
 {
@@ -207,6 +220,7 @@ bool QGeoBoundingCircle::contains(const QGeoCoordinate &coordinate) const
 
     Negative values of \a degreesLatitude and \a degreesLongitude correspond to
     southward and westward translation respectively.
+    \since 1.1
 */
 void QGeoBoundingCircle::translate(double degreesLatitude, double degreesLongitude)
 {
@@ -249,6 +263,7 @@ void QGeoBoundingCircle::translate(double degreesLatitude, double degreesLongitu
     Negative values of \a degreesLatitude and \a degreesLongitude correspond to
     southward and westward translation respectively.
 
+    \since 1.1
     \sa translate()
 */
 QGeoBoundingCircle QGeoBoundingCircle::translated(double degreesLatitude, double degreesLongitude) const

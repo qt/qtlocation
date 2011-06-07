@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
     plugins that implement QLandmarkManagerEngine functionality.
 
     \inmodule QtLocation
-    
+
     \ingroup landmarks-backend
 
     This class provides a simple interface for the creation of
@@ -58,7 +58,8 @@ QTM_BEGIN_NAMESPACE
     associated with it, which forms the \c managerName parameter
     when creating \l QLandmarkManager objects.
 
-  \sa QLandmarkManager, QLandmarkManagerEngine
+    \since 1.1
+    \sa QLandmarkManager, QLandmarkManagerEngine
  */
 
 /*!
@@ -84,7 +85,8 @@ QList<int> QLandmarkManagerEngineFactory::supportedImplementationVersions() cons
 
     Typically this would be of the form "com.nokia.qt.landmarks.engines.sqlite", with
     the appropriate domain and engine name substituted.
- */
+    \since 1.1
+*/
 
 /*!
     \fn QLandmarkManagerEngineFactory::engine(const QMap<QString, QString>& parameters, QLandmarkManager::Error *error,
@@ -98,6 +100,7 @@ QList<int> QLandmarkManagerEngineFactory::supportedImplementationVersions() cons
     If a supplied parameter results in an unfulfillable request, or some other error
     occurs, this function may return a null pointer, and the client developer will get an
     invalid QLandmarkManager in return.  Errors are stored in \a error and \a errorString.
+    \since 1.1
  */
 
 QTM_END_NAMESPACE

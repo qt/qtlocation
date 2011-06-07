@@ -105,7 +105,10 @@ void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
 {
     if (d_ptr->path != path) {
         d_ptr->path = path;
-        setOrigin(path.at(0));
+        if (path.size() != 0)
+            setOrigin(path.at(0));
+        else
+            setOrigin(QGeoCoordinate());
         emit pathChanged(d_ptr->path);
     }
 }

@@ -138,6 +138,7 @@ QLandmarkCategory::QLandmarkCategory()
 
 /*!
     Constructs a copy of \a other.
+    \since 1.1
 */
 QLandmarkCategory::QLandmarkCategory(const QLandmarkCategory &other)
     : d(other.d)
@@ -152,6 +153,7 @@ QLandmarkCategory::~QLandmarkCategory()
 }
 /*!
     Assigns \a other to this category and returns a reference to this category.
+    \since 1.1
 */
 QLandmarkCategory& QLandmarkCategory::operator= (const QLandmarkCategory & other)
 {
@@ -163,6 +165,7 @@ QLandmarkCategory& QLandmarkCategory::operator= (const QLandmarkCategory & other
     Returns true if this category is equal to \a other, otherwise
     returns false.
 
+    \since 1.1
     \sa operator!=()
 */
 bool QLandmarkCategory::operator== (const QLandmarkCategory &other) const
@@ -174,6 +177,7 @@ bool QLandmarkCategory::operator== (const QLandmarkCategory &other) const
     Returns true if this category is not equal to \a other, otherwise
     returns false.
 
+    \since 1.1
     \sa operator==()
 */
 bool QLandmarkCategory::operator!= (const QLandmarkCategory &other) const
@@ -183,6 +187,7 @@ bool QLandmarkCategory::operator!= (const QLandmarkCategory &other) const
 
 /*!
     Returns the name of the category.
+    \since 1.1
 */
 QString QLandmarkCategory::name() const
 {
@@ -193,6 +198,7 @@ QString QLandmarkCategory::name() const
     Sets the \a name of the category.
 
     Using the default manager on the Symbian platform, the catgory name is retricted to a length of 124 characters.
+    \since 1.1
 */
 void QLandmarkCategory::setName(const QString &name)
 {
@@ -201,6 +207,7 @@ void QLandmarkCategory::setName(const QString &name)
 
 /*!
     Returns the url of the category's icon.
+    \since 1.1
 */
 QUrl QLandmarkCategory::iconUrl() const
 {
@@ -209,6 +216,7 @@ QUrl QLandmarkCategory::iconUrl() const
 
 /*!
     Sets the \a url of the category's icon
+    \since 1.1
 */
 void QLandmarkCategory::setIconUrl(const QUrl &url)
 {
@@ -218,6 +226,7 @@ void QLandmarkCategory::setIconUrl(const QUrl &url)
 
 /*!
     Returns the identifier of the category.
+    \since 1.1
 */
 QLandmarkCategoryId QLandmarkCategory::categoryId() const
 {
@@ -229,6 +238,7 @@ QLandmarkCategoryId QLandmarkCategory::categoryId() const
 
     Note that saving a new category using a QLandmarkManager
     will automatically assign the category a valid identifier.
+    \since 1.1
 */
 void QLandmarkCategory::setCategoryId(const QLandmarkCategoryId &id)
 {
@@ -237,6 +247,7 @@ void QLandmarkCategory::setCategoryId(const QLandmarkCategoryId &id)
 
 /*!
     Clears all the data fields of the category.
+    \since 1.1
 */
 void QLandmarkCategory::clear()
 {

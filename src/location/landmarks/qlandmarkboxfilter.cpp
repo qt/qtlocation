@@ -62,6 +62,7 @@ Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkBoxFilter);
 /*!
     Creates a filter that will search for landmarks within a bounding
     box defined by the \a topLeft and \a bottomRight coordinates.
+    \since 1.1
 */
 QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoCoordinate &topLeft,
                                        const QGeoCoordinate &bottomRight)
@@ -71,6 +72,7 @@ QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoCoordinate &topLeft,
 
 /*!
     Creates a filter that will search for landmarks within the \a boundingBox.
+    \since 1.1
 */
 QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoBoundingBox &boundingBox)
         : QLandmarkFilter(new QLandmarkBoxFilterPrivate(boundingBox))
@@ -80,6 +82,7 @@ QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoBoundingBox &boundingBox)
 /*!
     \fn QLandmarkBoxFilter::QLandmarkBoxFilter(const QLandmarkFilter &other)
     Constructs a copy of \a other if possible, otherwise constructs a new box filter.
+    \since 1.1
 */
 
 /*!
@@ -92,6 +95,7 @@ QLandmarkBoxFilter::~QLandmarkBoxFilter()
 
 /*!
     Returns the filter's bounding box.
+    \since 1.1
 */
 QGeoBoundingBox QLandmarkBoxFilter::boundingBox() const
 {
@@ -101,6 +105,7 @@ QGeoBoundingBox QLandmarkBoxFilter::boundingBox() const
 
 /*!
     Sets the \a boundingBox of the filter.
+    \since 1.1
 */
 void QLandmarkBoxFilter::setBoundingBox(const QGeoBoundingBox &boundingBox)
 {
@@ -110,6 +115,7 @@ void QLandmarkBoxFilter::setBoundingBox(const QGeoBoundingBox &boundingBox)
 
 /*!
     Returns the top left coordinate of the box filter.
+    \since 1.1
 */
 QGeoCoordinate QLandmarkBoxFilter::topLeft()
 {
@@ -119,6 +125,7 @@ QGeoCoordinate QLandmarkBoxFilter::topLeft()
 
 /*!
   Sets the \a topLeft coordinate of the box filter.
+    \since 1.1
 */
 void QLandmarkBoxFilter::setTopLeft(const QGeoCoordinate &topLeft)
 {
@@ -129,6 +136,7 @@ void QLandmarkBoxFilter::setTopLeft(const QGeoCoordinate &topLeft)
 
 /*!
     Returns the bottom right coordinate of the box filter.
+    \since 1.1
 */
 QGeoCoordinate QLandmarkBoxFilter::bottomRight()
 {
@@ -138,6 +146,7 @@ QGeoCoordinate QLandmarkBoxFilter::bottomRight()
 
 /*!
     Sets the \a bottomRight coordinate of the box filter.
+    \since 1.1
 */
 void QLandmarkBoxFilter::setBottomRight(const QGeoCoordinate &bottomRight)
 {

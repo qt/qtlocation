@@ -86,6 +86,7 @@ QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest()
 
     By default, the filter's type will be a QLandmarkFilter::DefaultFilter
     and thus match all landmarks.
+    \since 1.1
 */
 QLandmarkFilter QLandmarkIdFetchRequest::filter() const
 {
@@ -97,6 +98,7 @@ QLandmarkFilter QLandmarkIdFetchRequest::filter() const
 /*!
     Sets the \a filter which will be used to select landmark identifiers.
 
+    \since 1.1
 */
 void QLandmarkIdFetchRequest::setFilter(const QLandmarkFilter &filter)
 {
@@ -108,6 +110,7 @@ void QLandmarkIdFetchRequest::setFilter(const QLandmarkFilter &filter)
 /*!
     Returns the sort ordering which is used to sort the result.  By default the
     sort order list is empty, thus no sorting will take place.
+    \since 1.1
 */
 QList<QLandmarkSortOrder> QLandmarkIdFetchRequest::sorting() const
 {
@@ -120,6 +123,7 @@ QList<QLandmarkSortOrder> QLandmarkIdFetchRequest::sorting() const
     Sets the sort ordering of the request to \a sorting.  This
     function will only have an effect on the results if invoked
     prior to calling QLandmarkAbstractRequest::start().
+    \since 1.1
 */
 void QLandmarkIdFetchRequest::setSorting(const QList<QLandmarkSortOrder> &sorting)
 {
@@ -132,6 +136,7 @@ void QLandmarkIdFetchRequest::setSorting(const QList<QLandmarkSortOrder> &sortin
     Convenience function to set the sort ordering of the request to a single \a sorting.  This
     function will only have an effect on the results if invoked
     prior to calling QLandmarkAbstractRequest::start().
+    \since 1.1
 */
 void QLandmarkIdFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 {
@@ -144,6 +149,7 @@ void QLandmarkIdFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 /*!
     Returns the maximum number of landmark IDs to be returned.  By default
     the limit is set to -1 indicating that IDs of all landmarks are to be retrieved.
+    \since 1.1
 */
 int QLandmarkIdFetchRequest::limit() const
 {
@@ -158,6 +164,7 @@ int QLandmarkIdFetchRequest::limit() const
     A limit of -1 indicates that IDs of all landmarks are to be retrieved.
 
     (A limit of 0 will retrieve no landmark IDs.)
+    \since 1.1
  */
 void QLandmarkIdFetchRequest::setLimit(int limit)
 {
@@ -174,6 +181,7 @@ void QLandmarkIdFetchRequest::setLimit(int limit)
     For example, if there are 10 landmarks in the landmark store, setting the offset
     to 2 and limit to 5 will retrieve the 3rd and 7th landmark ids inclusively.  (The order
     of the landmark ids is sepecified by the sorting field).
+    \since 1.1
 */
 int QLandmarkIdFetchRequest::offset() const
 {
@@ -184,6 +192,7 @@ int QLandmarkIdFetchRequest::offset() const
 
 /*!
     Sets the index \a offset for the request.
+    \since 1.1
 */
 void QLandmarkIdFetchRequest::setOffset(int offset) {
     Q_D(QLandmarkIdFetchRequest);
@@ -194,6 +203,7 @@ void QLandmarkIdFetchRequest::setOffset(int offset) {
 /*!
     Returns the list of identifiers of landmarks which matched the
     filter.
+    \since 1.1
 */
 QList<QLandmarkId> QLandmarkIdFetchRequest::landmarkIds() const
 {

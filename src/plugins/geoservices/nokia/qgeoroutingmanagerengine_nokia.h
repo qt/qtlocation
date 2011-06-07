@@ -81,7 +81,7 @@ private:
                             QGeoRouteRequest::TravelModes travelModes) const;
     QString modesRequestString(const QGeoRouteRequest &request,
                                QGeoRouteRequest::TravelModes travelModes) const;
-    static QString trimDouble(qreal degree, int decimalDigits = 10);
+    static QString trimDouble(double degree, int decimalDigits = 10);
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;

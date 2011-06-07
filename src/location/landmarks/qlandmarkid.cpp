@@ -73,6 +73,7 @@ QLandmarkId::QLandmarkId()
 
 /*!
     Constructs a copy of \a other.
+    \since 1.1
 */
 QLandmarkId::QLandmarkId(const QLandmarkId &other)
         : d(other.d)
@@ -89,6 +90,7 @@ QLandmarkId::~QLandmarkId()
 /*!
     Returns true if the identifier is valid, meaning that both
     a manager URI and local id have been set.
+    \since 1.1
 */
 bool QLandmarkId::isValid() const
 {
@@ -99,6 +101,7 @@ bool QLandmarkId::isValid() const
     Returns the local id of the landmark identifier.
 
     This id is specific to a particular landmark manager.
+    \since 1.1
 */
 QString QLandmarkId::localId() const
 {
@@ -107,6 +110,7 @@ QString QLandmarkId::localId() const
 
 /*!
     Sets the local \a id of the landmark identifier.
+    \since 1.1
 */
 void QLandmarkId::setLocalId(const QString &id)
 {
@@ -116,6 +120,7 @@ void QLandmarkId::setLocalId(const QString &id)
 /*!
     Returns the URI of the manager which this landmark identifer
     belongs to.
+    \since 1.1
 */
 QString QLandmarkId::managerUri() const
 {
@@ -125,6 +130,7 @@ QString QLandmarkId::managerUri() const
 /*!
     Sets the manager \a uri which this landmark identifier
     belongs to.
+    \since 1.1
 */
 void QLandmarkId::setManagerUri(const QString &uri)
 {
@@ -134,6 +140,7 @@ void QLandmarkId::setManagerUri(const QString &uri)
 /*!
     Assigns \a other to this landmark identifier and returns a reference
     to this landmark identifier.
+    \since 1.1
 */
 QLandmarkId &QLandmarkId::operator=(const QLandmarkId & other)
 {
@@ -149,6 +156,7 @@ QLandmarkId &QLandmarkId::operator=(const QLandmarkId & other)
     Two QLandmarkIds are considered equal if both have the same
     manager URI and local id.
 
+    \since 1.1
     \sa operator!=()
 */
 bool QLandmarkId::operator==(const QLandmarkId &other) const
@@ -164,6 +172,7 @@ bool QLandmarkId::operator==(const QLandmarkId &other) const
     If either the manager URIs or local ids differ, then the
     QLandmarkIds are not considered equal.
 
+    \since 1.1
     \sa operator==()
 */
 bool QLandmarkId::operator!=(const QLandmarkId &other) const

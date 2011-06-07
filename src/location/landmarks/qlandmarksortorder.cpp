@@ -105,6 +105,7 @@ QLandmarkSortOrder::QLandmarkSortOrder(const QLandmarkSortOrder &other)
 /*!
     Assigns \a other to this sort order and returns a reference to this
     sort order.
+    \since 1.1
 */
 QLandmarkSortOrder &QLandmarkSortOrder::operator=(const QLandmarkSortOrder & other)
 {
@@ -121,6 +122,7 @@ QLandmarkSortOrder::~QLandmarkSortOrder()
 
 /*!
     Returns the type of sort.
+    \since 1.1
 */
 QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 {
@@ -129,6 +131,7 @@ QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 
 /*!
     Returns the direction of the sort order.
+    \since 1.1
 */
 Qt::SortOrder QLandmarkSortOrder::direction() const
 {
@@ -137,6 +140,7 @@ Qt::SortOrder QLandmarkSortOrder::direction() const
 
 /*!
     Sets the \a direction of the sort order.
+    \since 1.1
 */
 void QLandmarkSortOrder::setDirection(Qt::SortOrder direction)
 {
@@ -147,6 +151,7 @@ void QLandmarkSortOrder::setDirection(Qt::SortOrder direction)
     \fn QLandmarkSortOrder::operator==(const QLandmarkSortOrder& other) const
     Returns true if this sort order is identical to \a other.
     \sa operator!=()
+    \since 1.1
 */
 bool QLandmarkSortOrder::operator==(const QLandmarkSortOrder& other) const
 {
@@ -166,6 +171,7 @@ bool QLandmarkSortOrder::operator==(const QLandmarkSortOrder& other) const
     \fn QLandmarkSortOrder::operator!=(const QLandmarkSortOrder &other) const
     Returns true if this sort order is not identical to \a other.
 
+    \since 1.1
     \sa operator==()
 */
 

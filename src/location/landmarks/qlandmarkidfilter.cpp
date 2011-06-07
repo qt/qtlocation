@@ -59,6 +59,7 @@ Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkIdFilter)
 
 /*!
     Creates a filter that selects landmarks using a list of landmark \a ids.
+    \since 1.1
 */
 QLandmarkIdFilter::QLandmarkIdFilter(const QList<QLandmarkId> &ids)
         : QLandmarkFilter(new QLandmarkIdFilterPrivate(ids)) {}
@@ -66,6 +67,7 @@ QLandmarkIdFilter::QLandmarkIdFilter(const QList<QLandmarkId> &ids)
 /*!
     \fn QLandmarkIdFilter::QLandmarkIdFilter(const QLandmarkFilter &other)
     Constructs a copy of \a other if possible, otherwise constructs a new id filter.
+    \since 1.1
 */
 
 /*!
@@ -78,6 +80,7 @@ QLandmarkIdFilter::~QLandmarkIdFilter()
 
 /*!
     Returns the list of landmark identifiers that the filter will use to determine matches.
+    \since 1.1
 */
 QList<QLandmarkId> QLandmarkIdFilter::landmarkIds() const
 {
@@ -87,6 +90,7 @@ QList<QLandmarkId> QLandmarkIdFilter::landmarkIds() const
 
 /*!
     Sets the \a ids that the filter will use to determine matches.
+    \since 1.1
 */
 void QLandmarkIdFilter::setLandmarkIds(const QList<QLandmarkId> &ids)
 {
@@ -96,6 +100,7 @@ void QLandmarkIdFilter::setLandmarkIds(const QList<QLandmarkId> &ids)
 
 /*!
     Adds \a id to the list of landmark ids this filter searches for.
+    \since 1.1
 */
 void QLandmarkIdFilter::append(const QLandmarkId &id)
 {
@@ -105,6 +110,7 @@ void QLandmarkIdFilter::append(const QLandmarkId &id)
 
 /*!
     Removes \a id to the list of landmark ids this filter searches for.
+    \since 1.1
 */
 void QLandmarkIdFilter::remove(const QLandmarkId &id)
 {
@@ -114,6 +120,7 @@ void QLandmarkIdFilter::remove(const QLandmarkId &id)
 
 /*!
     Removes all identifiers from the filter.
+    \since 1.1
 */
 void QLandmarkIdFilter::clear()
 {
@@ -124,6 +131,7 @@ void QLandmarkIdFilter::clear()
 /*!
     Appends the given \a id to the list of landmark identifiers
     this filter searches for.
+    \since 1.1
 */
 QLandmarkIdFilter &QLandmarkIdFilter::operator<<(const QLandmarkId &id)
 {
