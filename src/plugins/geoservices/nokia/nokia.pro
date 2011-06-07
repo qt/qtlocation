@@ -3,7 +3,7 @@ load(qt_module)
 TARGET = qtgeoservices_nokia
 QT += location network
 
-include($$QT_SOURCE_TREE/src/plugins/qpluginbase.pri)
+load(qt_plugin)
 
 DESTDIR = $$QT.location.plugins/geoservices
 #QTDIR_build:REQUIRES += "contains(QT_CONFIG, location)"
