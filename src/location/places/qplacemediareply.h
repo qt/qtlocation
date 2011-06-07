@@ -20,14 +20,15 @@ public:
 
     QList<QPlaceMediaObject> mediaObjects() const;
 
-    int totalCount();
+    int totalCount() const;
 
 protected:
     void setMediaObjects(const QList<QPlaceMediaObject> &objects);
     void setTotalCount(int total);
 
 private:
-    QPlaceMediaReplyPrivate *d;
+    Q_DISABLE_COPY(QPlaceMediaReply)
+    Q_DECLARE_PRIVATE(QPlaceMediaReply)
 };
 
 QTM_END_NAMESPACE

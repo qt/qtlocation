@@ -1,11 +1,12 @@
 #include "qplacetextpredictionreply.h"
+#include "qplacereply_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QPlaceTextPredictionReplyPrivate
+class QPlaceTextPredictionReplyPrivate : public QPlaceReplyPrivate
 {
 public:
-    QPlaceTextPredictionReplyPrivate(){};
+    QPlaceTextPredictionReplyPrivate(){}
     QStringList textPredictions;
 };
 
@@ -28,8 +29,7 @@ QTM_USE_NAMESPACE
     Constructs a text prediction reply with a given \a parent.
 */
 QPlaceTextPredictionReply::QPlaceTextPredictionReply(QObject *parent)
-    : QPlaceReply(parent),
-      d(new QPlaceTextPredictionReplyPrivate)
+    : QPlaceReply(new QPlaceTextPredictionReplyPrivate, parent)
 {
 }
 
@@ -38,7 +38,6 @@ QPlaceTextPredictionReply::QPlaceTextPredictionReply(QObject *parent)
 */
 QPlaceTextPredictionReply::~QPlaceTextPredictionReply()
 {
-    delete d;
 }
 
 /*!
@@ -46,6 +45,7 @@ QPlaceTextPredictionReply::~QPlaceTextPredictionReply()
 */
 QStringList QPlaceTextPredictionReply::textPredictions() const
 {
+    Q_D(const QPlaceTextPredictionReply);
     return d->textPredictions;
 }
 
@@ -62,5 +62,6 @@ QPlaceReply::Type QPlaceTextPredictionReply::type() const
 */
 void QPlaceTextPredictionReply::setTextPredictions(const QStringList &predictions)
 {
+    Q_D(QPlaceTextPredictionReply);
     d->textPredictions = predictions;
 }

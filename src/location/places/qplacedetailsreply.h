@@ -21,7 +21,8 @@ public:
 protected:
     void setResult(const QPlace &result);
 private:
-    QPlaceDetailsReplyPrivate *d;
+    Q_DISABLE_COPY(QPlaceDetailsReply)
+    Q_DECLARE_PRIVATE(QPlaceDetailsReply)
 };
 
 QTM_END_NAMESPACE

@@ -1,20 +1,8 @@
 #include "qplacereply.h"
+#include "qplacereply_p.h"
 
 #include "qplace.h"
 #include "qplacesearchresult.h"
-
-QTM_USE_NAMESPACE
-
-class QPlaceReplyPrivate
-{
-public:
-    QPlaceReplyPrivate() : isFinished(false) {}
-    QPlaceReply::Error error;
-    QString errorString;
-    bool isFinished;
-};
-
-QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -76,8 +64,8 @@ QTM_USE_NAMESPACE
 /*!
     Constructs a reply object with a given \a parent.
 */
-QPlaceReply::QPlaceReply(QObject *parent)
-    : QObject(parent)
+QPlaceReply::QPlaceReply(QPlaceReplyPrivate *dd, QObject *parent)
+    : QObject(parent),d_ptr(dd)
 {
 }
 
@@ -89,6 +77,7 @@ QPlaceReply::~QPlaceReply()
     if (!isFinished()) {
         abort();
     }
+    delete d_ptr;
 }
 
 /*!
@@ -96,7 +85,7 @@ QPlaceReply::~QPlaceReply()
 */
 bool QPlaceReply::isFinished() const
 {
-    return d->isFinished;
+    return d_ptr->isFinished;
 }
 
 /*!
@@ -114,7 +103,7 @@ QPlaceReply::Type QPlaceReply::type() const
 */
 void QPlaceReply::setFinished(bool finished)
 {
-    d->isFinished = finished;
+    d_ptr->isFinished = finished;
 }
 
 /*!
@@ -124,8 +113,8 @@ void QPlaceReply::setFinished(bool finished)
 */
 void QPlaceReply::setError(QPlaceReply::Error error, const QString &errorString)
 {
-    d->error = error;
-    d->errorString = errorString;
+    d_ptr->error = error;
+    d_ptr->errorString = errorString;
 }
 
 /*!
@@ -133,7 +122,7 @@ void QPlaceReply::setError(QPlaceReply::Error error, const QString &errorString)
 */
 QString QPlaceReply::errorString() const
 {
-    return d->errorString;
+    return d_ptr->errorString;
 }
 
 /*!
@@ -141,7 +130,7 @@ QString QPlaceReply::errorString() const
 */
 QPlaceReply::Error QPlaceReply::error() const
 {
-    return d->error;
+    return d_ptr->error;
 }
 
 /*!

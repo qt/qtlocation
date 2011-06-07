@@ -50,12 +50,12 @@ Q_SIGNALS:
     void error(QPlaceReply::Error error, const QString &errorString = QString());
 
 protected:
-    QPlaceReply(QObject *parent = 0);
+    QPlaceReply(QPlaceReplyPrivate *, QObject *parent = 0);
     void setFinished(bool finished);
     void setError(QPlaceReply::Error error, const QString &errorString);
-
+    QPlaceReplyPrivate *d_ptr;
 private:
-    QPlaceReplyPrivate *d;
+    Q_DISABLE_COPY(QPlaceReply)
 };
 
 QTM_END_NAMESPACE

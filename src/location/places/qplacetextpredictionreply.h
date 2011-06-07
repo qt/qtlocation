@@ -23,7 +23,8 @@ protected:
     void setTextPredictions(const QStringList &predictions);
 
 private:
-    QPlaceTextPredictionReplyPrivate *d;
+    Q_DISABLE_COPY(QPlaceTextPredictionReply)
+    Q_DECLARE_PRIVATE(QPlaceTextPredictionReply)
 };
 
 QTM_END_NAMESPACE

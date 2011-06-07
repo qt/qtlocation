@@ -1,7 +1,8 @@
 #include "qplacedetailsreply.h"
+#include "qplacereply_p.h"
 
 QTM_BEGIN_NAMESPACE
-class QPlaceDetailsReplyPrivate
+class QPlaceDetailsReplyPrivate : public QPlaceReplyPrivate
 {
 public:
     QPlaceDetailsReplyPrivate() {}
@@ -28,7 +29,7 @@ QTM_USE_NAMESPACE
     Constructs a search reply with a given \a parent.
 */
 QPlaceDetailsReply::QPlaceDetailsReply(QObject *parent)
-    : QPlaceReply(parent)
+    : QPlaceReply(new QPlaceDetailsReplyPrivate, parent)
 {
 }
 
@@ -37,7 +38,6 @@ QPlaceDetailsReply::QPlaceDetailsReply(QObject *parent)
 */
 QPlaceDetailsReply::~QPlaceDetailsReply()
 {
-    delete d;
 }
 
 /*!
@@ -53,6 +53,7 @@ QPlaceReply::Type QPlaceDetailsReply::type() const
 */
 QPlace QPlaceDetailsReply::result() const
 {
+    Q_D(const QPlaceDetailsReply);
     return d->result;
 }
 
@@ -61,5 +62,6 @@ QPlace QPlaceDetailsReply::result() const
 */
 void QPlaceDetailsReply::setResult(const QPlace &result)
 {
+    Q_D(QPlaceDetailsReply);
     d->result = result;
 }

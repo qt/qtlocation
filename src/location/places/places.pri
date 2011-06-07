@@ -56,7 +56,8 @@ PRIVATE_HEADERS += \
     places/qplacereview_p.h \
     places/qplacesupplier_p.h \
     places/qplaceweekdayhours_p.h \
-    places/qplacesearchresult_p.h
+    places/qplacesearchresult_p.h \
+    places/qplacereply_p.h
 
 SOURCES += \
 #data classes

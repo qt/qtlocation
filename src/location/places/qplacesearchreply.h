@@ -21,7 +21,8 @@ public:
 protected:
     void setResults(const QList<QPlaceSearchResult> &results);
 private:
-    QPlaceSearchReplyPrivate *d;
+    Q_DISABLE_COPY(QPlaceSearchReply)
+    Q_DECLARE_PRIVATE(QPlaceSearchReply)
 };
 
 QTM_END_NAMESPACE

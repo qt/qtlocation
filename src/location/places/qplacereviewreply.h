@@ -20,14 +20,14 @@ public:
 
     QList<QPlaceReview> reviews() const;
 
-    int totalCount();
+    int totalCount() const;
 
 protected:
     void setReviews(const QList<QPlaceReview> &objects);
     void setTotalCount(int total);
-
 private:
-    QPlaceReviewReplyPrivate *d;
+    Q_DISABLE_COPY(QPlaceReviewReply)
+    Q_DECLARE_PRIVATE(QPlaceReviewReply)
 };
 
 QTM_BEGIN_NAMESPACE

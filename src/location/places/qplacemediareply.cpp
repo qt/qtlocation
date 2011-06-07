@@ -1,9 +1,10 @@
 #include "qplacemediareply.h"
+#include "qplacereply_p.h"
 
 #include "qplace.h"
 
 QTM_BEGIN_NAMESPACE
-class QPlaceMediaReplyPrivate
+class QPlaceMediaReplyPrivate : public QPlaceReplyPrivate
 {
 public:
     QPlaceMediaReplyPrivate() {}
@@ -30,9 +31,8 @@ QTM_USE_NAMESPACE
     Constructs a media reply with a given \a parent.
 */
 QPlaceMediaReply::QPlaceMediaReply(QObject *parent)
-    : QPlaceReply(parent)
+    : QPlaceReply(new QPlaceMediaReplyPrivate, parent)
 {
-    d = new QPlaceMediaReplyPrivate;
 }
 
 /*!
@@ -40,7 +40,6 @@ QPlaceMediaReply::QPlaceMediaReply(QObject *parent)
 */
 QPlaceMediaReply::~QPlaceMediaReply()
 {
-    delete d;
 }
 
  /*!
@@ -48,6 +47,7 @@ QPlaceMediaReply::~QPlaceMediaReply()
 */
 QList<QPlaceMediaObject> QPlaceMediaReply::mediaObjects() const
 {
+    Q_D(const QPlaceMediaReply);
     return d->mediaObjects;
 }
 
@@ -64,6 +64,7 @@ QPlaceReply::Type QPlaceMediaReply::type() const
 */
 void QPlaceMediaReply::setMediaObjects(const QList<QPlaceMediaObject> &objects)
 {
+    Q_D(QPlaceMediaReply);
     d->mediaObjects = objects;
 }
 
@@ -71,8 +72,9 @@ void QPlaceMediaReply::setMediaObjects(const QList<QPlaceMediaObject> &objects)
     Returns the total number of media objects for a place.  If the total number of
     media objects cannot be counted a value of -1 is returned.
 */
-int QPlaceMediaReply::totalCount()
+int QPlaceMediaReply::totalCount() const
 {
+    Q_D(const QPlaceMediaReply);
     return d->totalCount;
 }
 
@@ -81,5 +83,6 @@ int QPlaceMediaReply::totalCount()
 */
 void QPlaceMediaReply::setTotalCount(int total)
 {
+    Q_D(QPlaceMediaReply);
     d->totalCount = total;
 }

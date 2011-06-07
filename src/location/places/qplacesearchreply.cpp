@@ -1,10 +1,12 @@
 #include "qplacesearchreply.h"
+#include "qplacereply_p.h"
+
 
 QTM_BEGIN_NAMESPACE
-class QPlaceSearchReplyPrivate
+class QPlaceSearchReplyPrivate : public QPlaceReplyPrivate
 {
 public:
-    QPlaceSearchReplyPrivate();
+    QPlaceSearchReplyPrivate(){}
     QList<QPlaceSearchResult> results;
 };
 
@@ -27,7 +29,7 @@ QTM_USE_NAMESPACE
     Constructs a search reply with a given \a parent.
 */
 QPlaceSearchReply::QPlaceSearchReply(QObject *parent)
-    : QPlaceReply(parent)
+    : QPlaceReply(new QPlaceSearchReplyPrivate, parent)
 {
 }
 
@@ -36,7 +38,6 @@ QPlaceSearchReply::QPlaceSearchReply(QObject *parent)
 */
 QPlaceSearchReply::~QPlaceSearchReply()
 {
-    delete d;
 }
 
 /*!
@@ -52,6 +53,7 @@ QPlaceReply::Type QPlaceSearchReply::type() const
 */
 QList<QPlaceSearchResult> QPlaceSearchReply::results() const
 {
+    Q_D(const QPlaceSearchReply);
     return d->results;
 }
 
@@ -60,5 +62,6 @@ QList<QPlaceSearchResult> QPlaceSearchReply::results() const
 */
 void QPlaceSearchReply::setResults(const QList<QPlaceSearchResult> &results)
 {
+    Q_D(QPlaceSearchReply);
     d->results = results;
 }

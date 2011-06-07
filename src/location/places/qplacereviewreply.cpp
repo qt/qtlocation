@@ -1,9 +1,10 @@
 #include "qplacereviewreply.h"
+#include "qplacereply_p.h"
 
 #include "qplace.h"
 
 QTM_BEGIN_NAMESPACE
-class QPlaceReviewReplyPrivate
+class QPlaceReviewReplyPrivate : public QPlaceReplyPrivate
 {
 public:
     QPlaceReviewReplyPrivate() {}
@@ -30,9 +31,8 @@ QTM_USE_NAMESPACE
     Constructs a review reply with a given \a parent.
 */
 QPlaceReviewReply::QPlaceReviewReply(QObject *parent)
-    : QPlaceReply(parent)
+    : QPlaceReply(new QPlaceReviewReplyPrivate, parent)
 {
-    d = new QPlaceReviewReplyPrivate;
 }
 
 /*!
@@ -40,7 +40,6 @@ QPlaceReviewReply::QPlaceReviewReply(QObject *parent)
 */
 QPlaceReviewReply::~QPlaceReviewReply()
 {
-    delete d;
 }
 
 /*!
@@ -56,6 +55,7 @@ QPlaceReply::Type QPlaceReviewReply::type() const
 */
 QList<QPlaceReview> QPlaceReviewReply::reviews() const
 {
+    Q_D(const QPlaceReviewReply);
     return d->reviews;
 }
 
@@ -64,6 +64,7 @@ QList<QPlaceReview> QPlaceReviewReply::reviews() const
 */
 void QPlaceReviewReply::setReviews(const QList<QPlaceReview> &reviews)
 {
+    Q_D(QPlaceReviewReply);
     d->reviews = reviews;
 }
 
@@ -71,8 +72,9 @@ void QPlaceReviewReply::setReviews(const QList<QPlaceReview> &reviews)
     Returns the total number of reviews for a place.  If the total number of
     reviews cannot be counted a value of -1 is returned.
 */
-int QPlaceReviewReply::totalCount()
+int QPlaceReviewReply::totalCount() const
 {
+    Q_D(const QPlaceReviewReply);
     return d->totalCount;
 }
 
@@ -81,5 +83,6 @@ int QPlaceReviewReply::totalCount()
 */
 void QPlaceReviewReply::setTotalCount(int total)
 {
+    Q_D(QPlaceReviewReply);
     d->totalCount = total;
 }
