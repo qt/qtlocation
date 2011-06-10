@@ -3,7 +3,11 @@
 
 QTM_USE_NAMESPACE
 
-QPlaceReviewPrivate::QPlaceReviewPrivate() : QSharedData()
+QPlaceReviewPrivate::QPlaceReviewPrivate()
+    : QSharedData(),
+      helpfulVotings(0),
+      notHelpfulVotings(0),
+      rating(0)
 {
 }
 

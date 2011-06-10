@@ -8,7 +8,10 @@ QPlacePrivate::QPlacePrivate() : QSharedData()
 }
 
 QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
-    : QSharedData()
+    : QSharedData(),
+      placeScore(0),
+      mediaCount(0),
+      reviewCount(0)
 {
     this->additionalData = other.additionalData;
     this->alternativeNames = other.alternativeNames;

@@ -3,7 +3,13 @@
 
 QTM_USE_NAMESPACE
 
-QPlaceSearchResultPrivate::QPlaceSearchResultPrivate() : QSharedData()
+QPlaceSearchResultPrivate::QPlaceSearchResultPrivate()
+    : QSharedData(),
+      relevance(0),
+      distance(0),
+      heading(0),
+      matchType(QPlaceSearchResult::Undefined),
+      type(QPlaceSearchResult::Unassigned)
 {
 }
 

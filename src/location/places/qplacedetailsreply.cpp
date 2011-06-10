@@ -45,7 +45,7 @@ QPlaceDetailsReply::~QPlaceDetailsReply()
 */
 QPlaceReply::Type QPlaceDetailsReply::type() const
 {
-    return QPlaceReply::PlaceSearchReply;
+    return QPlaceReply::PlaceDetailsReply;
 }
 
  /*!

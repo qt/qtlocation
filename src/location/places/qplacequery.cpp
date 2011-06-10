@@ -20,7 +20,10 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-QPlaceQueryPrivate::QPlaceQueryPrivate() : QSharedData()
+QPlaceQueryPrivate::QPlaceQueryPrivate()
+    : QSharedData(),
+      offset(0),
+      limit(-1)
 {
 }
 
@@ -136,6 +139,6 @@ void QPlaceQuery::setLimit(int limit)
 */
 void QPlaceQuery::clear()
 {
-    d->offset = -1;
+    d->offset = 0;
     d->limit = -1;
 }

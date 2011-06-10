@@ -3,7 +3,10 @@
 
 QTM_USE_NAMESPACE
 
-QPlaceRatingPrivate::QPlaceRatingPrivate() : QSharedData()
+QPlaceRatingPrivate::QPlaceRatingPrivate()
+    : QSharedData(),
+      value(0),
+      count(0)
 {
 }
 

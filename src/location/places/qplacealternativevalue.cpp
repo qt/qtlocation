@@ -3,7 +3,10 @@
 
 QTM_USE_NAMESPACE
 
-QPlaceAlternativeValuePrivate::QPlaceAlternativeValuePrivate() : QSharedData()
+QPlaceAlternativeValuePrivate::QPlaceAlternativeValuePrivate()
+    : QSharedData(),
+    semantics(QPlaceAlternativeValue::Unclassified),
+    type(QPlaceAlternativeValue::Unknown)
 {
 }
 

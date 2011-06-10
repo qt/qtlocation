@@ -3,7 +3,9 @@
 
 QTM_USE_NAMESPACE
 
-QPlaceLocationPrivate::QPlaceLocationPrivate() : QSharedData()
+QPlaceLocationPrivate::QPlaceLocationPrivate()
+    : QSharedData(),
+      locationScore(0)
 {
 }
 
