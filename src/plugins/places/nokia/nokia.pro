@@ -23,7 +23,7 @@ HEADERS += \
     qplacemediareplyimpl.h \
     qplacedetailsreplyimpl.h \
     qplaceratingreplyimpl.h \
-    pqplacerecommendationreplyimpl.h \
+    qplacerecommendationreplyimpl.h \
     qplacereviewreplyimpl.h \
     qplacesearchreplyimpl.h \
     qplacetextpredictionreplyimpl.h \

@@ -106,7 +106,7 @@ void QPlaceGeoBoundingBox::setBottomRight(const QPlaceGeoCoordinate &coordinate)
 /*!
     Returns true if bounding box is valid.
 */
-bool QPlaceGeoBoundingBox::isValid()
+bool QPlaceGeoBoundingBox::isValid() const
 {
     return (d->bottomRight.isValid() && d->topLeft.isValid());
 }

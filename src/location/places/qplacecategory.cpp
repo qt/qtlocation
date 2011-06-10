@@ -171,5 +171,5 @@ void QPlaceCategory::setName(const QString &name)
 */
 bool QPlaceCategory::isEmpty() const
 {
-    return !d->categoryId.isEmpty();
+    return d->categoryId.isEmpty();
 }

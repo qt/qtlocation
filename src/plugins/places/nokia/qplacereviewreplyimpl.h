@@ -17,10 +17,11 @@ public:
     explicit QPlaceReviewReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
     ~QPlaceReviewReplyImpl();
     void abort();
+    void setStartNumber(int number);
 
 Q_SIGNALS:
     void processingFinished(QPlaceReply *reply);
-    void processingError(QPlaceReply *reply, const Error &error, const QString &errorMessage);
+    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
 
 private slots:
     void restError(QPlaceRestReply::Error error);

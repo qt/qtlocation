@@ -39,32 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEMANAGERENGINEFACTORY_H
-#define QPLACEMANAGERENGINEFACTORY_H
+#ifndef QPLACEMANAGER_P_H
+#define QPLACEMANAGER_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include "qmobilityglobal.h"
 #include "qplacemanager.h"
-#include "qplacemanagerengine.h"
-#include <QList>
+#include <QHash>
+#include <QString>
+#include <QMap>
 
 QTM_BEGIN_NAMESPACE
 
 class QPlaceManagerEngine;
-class Q_LOCATION_EXPORT QPlaceManagerEngineFactory
+class QPlaceManagerEngineFactory;
+
+class QPlaceManagerPrivate
 {
 public:
-    virtual ~QPlaceManagerEngineFactory(){}
-    virtual QPlaceManagerEngine *engine(const QMap<QString, QString> &parameters,
-                                           QPlaceManager::Error *error,
-                                           QString *errorString) = 0;
-    virtual QString managerName() const = 0;
+    QPlaceManagerPrivate();
+    void createEngine(const QString &managerName, const QMap<QString,QString> &parameters = (QMap<QString, QString>()));
+
+    QPlaceManagerEngine *engine;
+    mutable QPlaceManager::Error errorCode;
+    mutable QString errorString;
+    mutable QMap<int, QPlaceManager::Error> errorMap;
+    static QPlaceManagerEngine *getEngine(const QPlaceManager* manager);
+    static void loadFactories();
+    static QHash<QString, QPlaceManagerEngineFactory*> factories(bool reload = false);
+    static  void loadDynamicFactories (QHash<QString, QPlaceManagerEngineFactory*> *factories);
+    static  void loadStaticFactories (QHash<QString, QPlaceManagerEngineFactory*> *factories);
+    bool isConnected;//identifies whether connections have been made to the notification signals
+
+    QPlaceManager *q_ptr;
+    Q_DECLARE_PUBLIC(QPlaceManager)
 };
 
 QTM_END_NAMESPACE
 
-QT_BEGIN_NAMESPACE
-#define QT_PLACES_BACKEND_INTERFACE "com.nokia.qt.places.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QPlaceManagerEngineFactory, QT_PLACES_BACKEND_INTERFACE);
-QT_END_NAMESPACE
-
-#endif
+#endif // QPLACEMANAGER_P_H

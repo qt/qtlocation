@@ -29,7 +29,7 @@ public:
     QPlaceGeoCoordinate bottomRight() const;
     void setBottomRight(const QPlaceGeoCoordinate &coordinate);
 
-    bool isValid();
+    bool isValid() const;
 
 private:
     QSharedDataPointer<QPlaceGeoBoundingBoxPrivate> d;

@@ -20,7 +20,7 @@ public:
 
 Q_SIGNALS:
     void processingFinished(QPlaceReply *reply);
-    void processingError(QPlaceReply *reply, const Error &error, const QString &errorMessage);
+    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
 
 private slots:
     void restError(QPlaceRestReply::Error error);
@@ -28,6 +28,7 @@ private slots:
                           const QString &errorMessage);
 
 private:
+    QList<QPlaceSearchResult> filterSecondSearchCenter(const QList<QPlaceSearchResult> &list);
     QPlaceRestReply *restReply;
     QPlaceJSonSearchParser *parser;
 };

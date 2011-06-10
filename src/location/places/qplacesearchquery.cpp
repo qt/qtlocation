@@ -139,7 +139,7 @@ void QPlaceSearchQuery::setSearchTerm(const QString &term)
     Places need only to belong to one of the categories
     to be considered a match by the query.
 */
-QList<QPlaceCategory> QPlaceSearchQuery::categories()
+QList<QPlaceCategory> QPlaceSearchQuery::categories() const
 {
     return d->categories;
 }
@@ -150,7 +150,8 @@ QList<QPlaceCategory> QPlaceSearchQuery::categories()
 void QPlaceSearchQuery::setCategory(const QPlaceCategory &category)
 {
     d->categories.clear();
-    d->categories.append(category);
+    if (!category.isEmpty())
+        d->categories.append(category);
 }
 
 /*!

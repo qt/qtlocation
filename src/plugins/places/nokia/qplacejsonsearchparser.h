@@ -27,7 +27,7 @@ public:
     QList<QPlaceSearchResult> searchResults();
 
 signals:
-    void finished(const Error &error, const QString &errorMessage);
+    void finished(const QPlaceJSonSearchParser::Error &error, const QString &errorMessage);
 
 public slots:
     void processData(const QString &data);

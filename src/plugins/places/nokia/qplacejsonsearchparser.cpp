@@ -128,7 +128,6 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValu
     QPlaceSearchResult result;
     result.setType(QPlaceSearchResult::Place);
     QPlace newPlace;
-    result.setPlace(newPlace);
 
     // Processing properties
     QScriptValue properties = results.property(search_properties_element);
@@ -179,6 +178,7 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValu
             processCategories(value, &newPlace);
         }
     }
+    result.setPlace(newPlace);
     return result;
 }
 

@@ -27,8 +27,8 @@ QPlaceCategoriesRepository::QPlaceCategoriesRepository(QObject *parent)
     if (!categoriesParser) {
         categoriesParser = new QPlaceJSonCategoriesParser(this);
     }
-    connect(categoriesParser, SIGNAL(finished(const QPlaceJSonCategoriesParser::Error &error, const QString &errorMessage)),
-            this, SLOT(categoriesReady(const QPlaceJSonCategoriesParser::Error &error, const QString &errorMessage)));
+    connect(categoriesParser, SIGNAL(finished(const QPlaceJSonCategoriesParser::Error &, const QString &)),
+            this, SLOT(categoriesReady(const QPlaceJSonCategoriesParser::Error &, const QString &)));
     categoriesParser->processData(supportedCategories);
 }
 

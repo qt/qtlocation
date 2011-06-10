@@ -49,7 +49,7 @@ public:
     void setHeading(const qreal &heading);
 
     LocationMatchType matchType() const;
-    void setLocationMatchType(const LocationMatchType &matchType);
+    void setMatchType(const LocationMatchType &matchType);
 
     QVariantHash additionalData() const;
     void setAdditionalData(const QVariantHash &data);

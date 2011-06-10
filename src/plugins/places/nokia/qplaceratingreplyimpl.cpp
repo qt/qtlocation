@@ -17,9 +17,9 @@ QPlaceRatingReplyImpl::QPlaceRatingReplyImpl(QPlaceRestReply *reply, QObject *pa
 {
     if (restReply) {
         restReply->setParent(this);
-        connect(restReply, SIGNAL(finished(const QString &reply)),
-                this, SLOT(processData(const QString &data)));
-        connect(restReply, SIGNAL(error(QPlaceRestReply::Error error)),
+        connect(restReply, SIGNAL(finished(const QString &)),
+                this, SLOT(restFinished(const QString &)));
+        connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
     }
 }
@@ -33,7 +33,8 @@ QPlaceRatingReplyImpl::~QPlaceRatingReplyImpl()
 
 void QPlaceRatingReplyImpl::abort()
 {
-    restReply->cancelProcessing();
+    if (restReply)
+        restReply->cancelProcessing();
 }
 
 void QPlaceRatingReplyImpl::restError(QPlaceRestReply::Error errorId)
@@ -45,6 +46,7 @@ void QPlaceRatingReplyImpl::restError(QPlaceRestReply::Error errorId)
     }
     emit error(this->error(), this->errorString());
     emit processingError(this, this->error(), this->errorString());
+    setFinished(true);
     emit finished();
     emit processingFinished(this);
 }
@@ -52,6 +54,7 @@ void QPlaceRatingReplyImpl::restError(QPlaceRestReply::Error errorId)
 void QPlaceRatingReplyImpl::restFinished(const QString &data)
 {
     Q_UNUSED(data);
+    setFinished(true);
     emit finished();
     emit processingFinished(this);
     restReply->deleteLater();

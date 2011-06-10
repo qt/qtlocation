@@ -83,6 +83,8 @@ public:
     QList<QPlaceCategory> categories() const;
     QPlaceCategory createCategory() const;
 
+    static QStringList availableManagers();
+
 Q_SIGNALS:
     void finished(QPlaceReply *reply);
     void error(QPlaceReply *, QPlaceReply::Error error, const QString &errorString = QString());
@@ -90,6 +92,7 @@ Q_SIGNALS:
 private:
     Q_DISABLE_COPY(QPlaceManager)
     QPlaceManagerPrivate* d;
+    Q_DECLARE_PRIVATE(QPlaceManager)
 };
 
 QTM_END_NAMESPACE

@@ -19,9 +19,9 @@ QPlaceTextPreditionReplyImpl::QPlaceTextPreditionReplyImpl(QPlaceRestReply *repl
 
     if (restReply) {
         restReply->setParent(this);
-        connect(restReply, SIGNAL(finished(const QString &reply)),
-                parser, SLOT(processData(const QString &data)));
-        connect(restReply, SIGNAL(error(QPlaceRestReply::Error error)),
+        connect(restReply, SIGNAL(finished(const QString &)),
+                parser, SLOT(processData(const QString &)));
+        connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
         connect(parser, SIGNAL(finished(QPlaceJSonTextPredictionParser::Error,QString)),
                 this, SLOT(predictionsReady(QPlaceJSonTextPredictionParser::Error,QString)));
@@ -37,7 +37,8 @@ QPlaceTextPreditionReplyImpl::~QPlaceTextPreditionReplyImpl()
 
 void QPlaceTextPreditionReplyImpl::abort()
 {
-    restReply->cancelProcessing();
+    if (restReply)
+        restReply->cancelProcessing();
 }
 
 void QPlaceTextPreditionReplyImpl::restError(QPlaceRestReply::Error errorId)
@@ -49,6 +50,7 @@ void QPlaceTextPreditionReplyImpl::restError(QPlaceRestReply::Error errorId)
     }
     emit error(this->error(), this->errorString());
     emit processingError(this, this->error(), this->errorString());
+    setFinished(true);
     emit finished();
     emit processingFinished(this);
 }
@@ -63,6 +65,7 @@ void QPlaceTextPreditionReplyImpl::predictionsReady(const QPlaceJSonTextPredicti
         emit error(this->error(), this->errorString());
         emit processingError(this, ParseError, errorMessage);
     }
+    setFinished(true);
     emit finished();
     emit processingFinished(this);
     delete parser;

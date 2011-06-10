@@ -17,9 +17,9 @@ QPlaceMediaReplyImpl::QPlaceMediaReplyImpl(QPlaceRestReply *reply, QObject *pare
 
     if (restReply) {
         restReply->setParent(this);
-        connect(restReply, SIGNAL(finished(const QString &reply)),
-                parser, SLOT(processData(const QString &data)));
-        connect(restReply, SIGNAL(error(QPlaceRestReply::Error error)),
+        connect(restReply, SIGNAL(finished(const QString &)),
+                parser, SLOT(processData(const QString &)));
+        connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
         connect(parser, SIGNAL(finished(QPlaceJSonMediaParser::Error,QString)),
                 this, SLOT(predictionsReady(QPlaceJSonMediaParser::Error,QString)));
@@ -35,7 +35,13 @@ QPlaceMediaReplyImpl::~QPlaceMediaReplyImpl()
 
 void QPlaceMediaReplyImpl::abort()
 {
-    restReply->cancelProcessing();
+    if (restReply)
+        restReply->cancelProcessing();
+}
+
+void QPlaceMediaReplyImpl::setStartNumber(int number)
+{
+    setOffset(number);
 }
 
 void QPlaceMediaReplyImpl::restError(QPlaceRestReply::Error errorId)
@@ -47,6 +53,7 @@ void QPlaceMediaReplyImpl::restError(QPlaceRestReply::Error errorId)
     }
     emit error(this->error(), this->errorString());
     emit processingError(this, this->error(), this->errorString());
+    setFinished(true);
     emit finished();
     emit processingFinished(this);
 }
@@ -62,6 +69,7 @@ void QPlaceMediaReplyImpl::predictionsReady(const QPlaceJSonMediaParser::Error &
         emit error(this->error(), this->errorString());
         emit processingError(this, ParseError, errorMessage);
     }
+    setFinished(true);
     emit finished();
     emit processingFinished(this);
     delete parser;

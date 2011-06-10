@@ -37,7 +37,7 @@ public:
     QString searchTerm() const;
     void setSearchTerm(const QString &term);
 
-    QList<QPlaceCategory> categories();
+    QList<QPlaceCategory> categories() const;
     void setCategory(const QPlaceCategory &category);
 
     QPlaceGeoCoordinate searchCenter() const;

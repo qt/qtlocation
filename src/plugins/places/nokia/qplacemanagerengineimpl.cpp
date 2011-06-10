@@ -50,6 +50,7 @@ QPlaceMediaReply *QPlaceManagerEngineImpl::getMedia(const QPlace &place, const Q
                                                                                        query);
     if (restReply) {
         reply = new QPlaceMediaReplyImpl(restReply, this);
+        reply->setStartNumber(query.offset());
         connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
                 this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
         connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
@@ -81,6 +82,7 @@ QPlaceReviewReply *QPlaceManagerEngineImpl::getReviews(const QPlace &place, cons
                                                                                        query);
     if (restReply) {
         reply = new QPlaceReviewReplyImpl(restReply, this);
+        reply->setStartNumber(query.offset());
         connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
                 this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
         connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
@@ -92,7 +94,13 @@ QPlaceReviewReply *QPlaceManagerEngineImpl::getReviews(const QPlace &place, cons
 QPlaceSearchReply *QPlaceManagerEngineImpl::searchForPlaces(const QPlaceSearchQuery &query)
 {
     QPlaceSearchReplyImpl *reply = NULL;
-    QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSuggestionRequest(query);
+    QPlaceSearchQuery newQuery = query;
+    // search by category
+    if (newQuery.categories().count()) {
+        newQuery.setSearchTerm(query.categories().at(0).categoryId());
+    }
+    QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSearchRequest(newQuery);
+
     if (restReply) {
         reply = new QPlaceSearchReplyImpl(restReply, this);
         connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),

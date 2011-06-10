@@ -3,6 +3,7 @@
 
 #include "qplacereply.h"
 #include "qplacereview.h"
+#include "qplacepaginationlist.h"
 
 #include <QStringList>
 
@@ -18,11 +19,12 @@ public:
 
     QPlaceReply::Type type() const;
 
-    QList<QPlaceReview> reviews() const;
+    QPlacePaginationList<QPlaceReview> reviews() const;
 
     int totalCount() const;
 
 protected:
+    void setOffset(int offset);
     void setReviews(const QList<QPlaceReview> &objects);
     void setTotalCount(int total);
 private:

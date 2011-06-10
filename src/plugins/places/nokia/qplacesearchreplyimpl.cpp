@@ -17,9 +17,9 @@ QPlaceSearchReplyImpl::QPlaceSearchReplyImpl(QPlaceRestReply *reply, QObject *pa
 
     if (restReply) {
         restReply->setParent(this);
-        connect(restReply, SIGNAL(finished(const QString &reply)),
-                parser, SLOT(processData(const QString &data)));
-        connect(restReply, SIGNAL(error(QPlaceRestReply::Error error)),
+        connect(restReply, SIGNAL(finished(const QString &)),
+                parser, SLOT(processData(const QString &)));
+        connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
         connect(parser, SIGNAL(finished(QPlaceJSonSearchParser::Error,QString)),
                 this, SLOT(predictionsReady(QPlaceJSonSearchParser::Error,QString)));
@@ -35,7 +35,8 @@ QPlaceSearchReplyImpl::~QPlaceSearchReplyImpl()
 
 void QPlaceSearchReplyImpl::abort()
 {
-    restReply->cancelProcessing();
+    if (restReply)
+        restReply->cancelProcessing();
 }
 
 void QPlaceSearchReplyImpl::restError(QPlaceRestReply::Error errorId)
@@ -47,6 +48,7 @@ void QPlaceSearchReplyImpl::restError(QPlaceRestReply::Error errorId)
     }
     emit error(this->error(), this->errorString());
     emit processingError(this, this->error(), this->errorString());
+    setFinished(true);
     emit finished();
     emit processingFinished(this);
 }
@@ -55,12 +57,13 @@ void QPlaceSearchReplyImpl::predictionsReady(const QPlaceJSonSearchParser::Error
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonSearchParser::NoError) {
-        setResults(parser->searchResults());
+        setResults(filterSecondSearchCenter(parser->searchResults()));
     } else if (errorId == QPlaceJSonSearchParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());
         emit processingError(this, ParseError, errorMessage);
     }
+    setFinished(true);
     emit finished();
     emit processingFinished(this);
     delete parser;
@@ -68,3 +71,24 @@ void QPlaceSearchReplyImpl::predictionsReady(const QPlaceJSonSearchParser::Error
     restReply->deleteLater();
     restReply = NULL;
 }
+
+QList<QPlaceSearchResult> QPlaceSearchReplyImpl::filterSecondSearchCenter(const QList<QPlaceSearchResult> &list)
+{
+    QList<QPlaceSearchResult> newList;
+    foreach (QPlaceSearchResult res, list) {
+        if (res.type() == QPlaceSearchResult::Place) {
+            bool isNotSeconSearchCenter = true;
+            foreach (QPlaceCategory cat, res.place().categories()) {
+                if (cat.categoryId() == "second-search-center") {
+                    isNotSeconSearchCenter = false;
+                    break;
+                }
+            }
+            if (isNotSeconSearchCenter) {
+                newList.append(res);
+            }
+        }
+    }
+    return newList;
+}
+

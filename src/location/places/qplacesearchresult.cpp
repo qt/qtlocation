@@ -143,7 +143,7 @@ QPlaceSearchResult::LocationMatchType QPlaceSearchResult::matchType() const
 /*!
     Sets the location \a matchType.
 */
-void QPlaceSearchResult::setLocationMatchType(const QPlaceSearchResult::LocationMatchType &matchType)
+void QPlaceSearchResult::setMatchType(const QPlaceSearchResult::LocationMatchType &matchType)
 {
     d->matchType = matchType;
 }

@@ -174,7 +174,7 @@ void QPlaceJSonDetailsParser::processData(const QString &data)
     QScriptValue sv = engine->evaluate("(" + data + ")");
     if (sv.isValid()) {
         buildPlace(sv.property(place_place_element), &place);
-        emit finished(NoError, QString());
+        emit finished(QPlaceJSonDetailsParser::NoError, QString());
     } else {
         emit finished(ParsingError, QString("JSON data are invalid"));
     }

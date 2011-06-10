@@ -1,21 +1,7 @@
 #include "qplacemanager.h"
+#include "qplacemanager_p.h"
 #include "qplacemanagerengine.h"
 
-QTM_BEGIN_NAMESPACE
-class QPlaceManagerEngine;
-
-class QPlaceManagerPrivate
-{
-public:
-    QPlaceManagerPrivate(){}
-    ~QPlaceManagerPrivate(){ delete engine; }
-
-    QPlaceManagerEngine *engine;
-};
-
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
 /*!
     \class QPlaceManager
 
@@ -71,6 +57,9 @@ QTM_USE_NAMESPACE
 QPlaceManager::QPlaceManager(QObject *parent)
     : QObject(parent),d(new QPlaceManagerPrivate)
 {
+    QString managerName = "nokia";
+    d->q_ptr = this;
+    d->createEngine(managerName);
 }
 
 /*!
@@ -209,6 +198,14 @@ QPlaceReply *QPlaceManager::initializeCategories(const QString &categorySystemId
 QList<QPlaceCategory> QPlaceManager::categories() const
 {
     return d->engine->categories();
+}
+
+/*!
+    Returns a list of names of available managers that
+    can be used to instantiate manager instances.
+*/
+QStringList QPlaceManager::availableManagers() {
+    return QPlaceManagerPrivate::factories().keys();
 }
 
 /*!

@@ -64,6 +64,11 @@ QTM_USE_NAMESPACE
 /*!
     Constructs a reply object with a given \a parent.
 */
+QPlaceReply::QPlaceReply(QObject *parent)
+    : QObject(parent),d_ptr(new QPlaceReplyPrivate)
+{
+}
+
 QPlaceReply::QPlaceReply(QPlaceReplyPrivate *dd, QObject *parent)
     : QObject(parent),d_ptr(dd)
 {

@@ -8,7 +8,7 @@ class QPlaceReviewReplyPrivate : public QPlaceReplyPrivate
 {
 public:
     QPlaceReviewReplyPrivate() {}
-    QList<QPlaceReview> reviews;
+    QPlacePaginationList<QPlaceReview> reviews;
     int totalCount;
 };
 
@@ -53,7 +53,7 @@ QPlaceReply::Type QPlaceReviewReply::type() const
  /*!
     Returns the reviews.
 */
-QList<QPlaceReview> QPlaceReviewReply::reviews() const
+QPlacePaginationList<QPlaceReview> QPlaceReviewReply::reviews() const
 {
     Q_D(const QPlaceReviewReply);
     return d->reviews;
@@ -65,7 +65,16 @@ QList<QPlaceReview> QPlaceReviewReply::reviews() const
 void QPlaceReviewReply::setReviews(const QList<QPlaceReview> &reviews)
 {
     Q_D(QPlaceReviewReply);
-    d->reviews = reviews;
+    d->reviews.setData(reviews);
+}
+
+/*!
+    Sets the \a offset number of the first media objects on the current page.
+*/
+void QPlaceReviewReply::setOffset(int offset)
+{
+    Q_D(QPlaceReviewReply);
+    d->reviews.setStart(offset);
 }
 
 /*!

@@ -1,5 +1,6 @@
 #include "qplacemediareply.h"
 #include "qplacereply_p.h"
+#include "qplacepaginationlist.h"
 
 #include "qplace.h"
 
@@ -8,7 +9,7 @@ class QPlaceMediaReplyPrivate : public QPlaceReplyPrivate
 {
 public:
     QPlaceMediaReplyPrivate() {}
-    QList<QPlaceMediaObject> mediaObjects;
+    QPlacePaginationList<QPlaceMediaObject> mediaObjects;
     int totalCount;
 };
 
@@ -45,7 +46,7 @@ QPlaceMediaReply::~QPlaceMediaReply()
  /*!
     Returns the media objects.
 */
-QList<QPlaceMediaObject> QPlaceMediaReply::mediaObjects() const
+QPlacePaginationList<QPlaceMediaObject> QPlaceMediaReply::mediaObjects() const
 {
     Q_D(const QPlaceMediaReply);
     return d->mediaObjects;
@@ -65,7 +66,16 @@ QPlaceReply::Type QPlaceMediaReply::type() const
 void QPlaceMediaReply::setMediaObjects(const QList<QPlaceMediaObject> &objects)
 {
     Q_D(QPlaceMediaReply);
-    d->mediaObjects = objects;
+    d->mediaObjects.setData(objects);
+}
+
+/*!
+    Set the \a offst number of the first media objects on the current page.
+*/
+void QPlaceMediaReply::setOffset(int offset)
+{
+    Q_D(QPlaceMediaReply);
+    d->mediaObjects.setStart(offset);
 }
 
 /*!

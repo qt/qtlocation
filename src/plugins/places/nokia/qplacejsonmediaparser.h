@@ -28,7 +28,7 @@ public:
     static QPlaceMediaObject buildMediaObject(const QScriptValue &place);
 
 signals:
-    void finished(const Error &error, const QString &errorMessage);
+    void finished(const QPlaceJSonMediaParser::Error &error, const QString &errorMessage);
 
 public slots:
     void processData(const QString &data);

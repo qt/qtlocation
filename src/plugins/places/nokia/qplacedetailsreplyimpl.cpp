@@ -35,7 +35,8 @@ QPlaceDetailsReplyImpl::~QPlaceDetailsReplyImpl()
 
 void QPlaceDetailsReplyImpl::abort()
 {
-    restReply->cancelProcessing();
+    if (restReply)
+        restReply->cancelProcessing();
 }
 
 void QPlaceDetailsReplyImpl::restError(QPlaceRestReply::Error errorId)
@@ -47,6 +48,7 @@ void QPlaceDetailsReplyImpl::restError(QPlaceRestReply::Error errorId)
     }
     emit error(this->error(), this->errorString());
     emit processingError(this, this->error(), this->errorString());
+    setFinished(true);
     emit finished();
     emit processingFinished(this);
 }
@@ -61,6 +63,7 @@ void QPlaceDetailsReplyImpl::predictionsReady(const QPlaceJSonDetailsParser::Err
         emit error(this->error(), this->errorString());
         emit processingError(this, ParseError, errorMessage);
     }
+    setFinished(true);
     emit finished();
     emit processingFinished(this);
     delete parser;

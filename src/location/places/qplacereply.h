@@ -33,6 +33,7 @@ public:
         MediaReply
     };
 
+    QPlaceReply(QObject *parent);
     virtual ~QPlaceReply();
 
     bool isFinished() const;

@@ -47,9 +47,8 @@
 ****************************************************************************/
 
 #include "placemanagerenginefactory_nokia.h"
-
 #include <QtPlugin>
-
+#include "qplacemanagerengineimpl.h"
 
 PlaceManagerEngineFactoryNokia::PlaceManagerEngineFactoryNokia() {}
 
@@ -63,8 +62,7 @@ QString PlaceManagerEngineFactoryNokia::managerName() const
 QPlaceManagerEngine * PlaceManagerEngineFactoryNokia::engine(const QMap<QString, QString> &parameters,
                                                              QPlaceManager::Error *error,
                                                              QString *errorString) {
-    //TODO: AMOS Replace with realimplementation
-    return NULL;
+    return new QPlaceManagerEngineImpl;
 }
 
 
