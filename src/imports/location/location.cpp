@@ -55,6 +55,7 @@
 
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativegraphicsgeomap_p.h"
+#include "qdeclarative3dgraphicsgeomap_p.h"
 #include "qdeclarativegeomapgroupobject_p.h"
 #include "qdeclarativegeomapobjectborder_p.h"
 #include "qdeclarativegeomapcircleobject_p.h"
@@ -148,7 +149,7 @@ public:
 
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 5, 0, "Plugin");
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
-            qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 5, 0, "Map");
+            qmlRegisterType<QDeclarative3DGraphicsGeoMap>(uri, 5, 0, "Map3D");
             qmlRegisterType<QDeclarativeGeoMapObjectBorder>(); // used as grouped property
             qmlRegisterType<QGeoMapObject>(uri, 5, 0, "QGeoMapObject");
             qmlRegisterType<QDeclarativeGeoMapObject>(uri, 5, 0, "MapObject");
