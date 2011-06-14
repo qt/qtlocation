@@ -25,11 +25,12 @@ class Q_LOCATION_EXPORT QPlaceManager : public QObject
     Q_OBJECT
 public:
     enum ConnectivityMode {
-        NoConnectivity,
-        OnlineMode,
-        OfflineMode,
-        HybridMode
+        Offline = 0x0001,
+        OnlineMode = 0x0002,
+        HybridMode = 0x0003
     };
+
+    Q_DECLARE_FLAGS(ConnectivityModes, ConnectivityMode)
 
     enum SearchVisibilityScope {
         PublicSearch,
@@ -73,7 +74,7 @@ public:
 
     ConnectivityMode connectivityMode() const;
     void setConnectivityMode(ConnectivityMode connectivityMode);
-    QList<ConnectivityMode> supportedConnectivityModes() const;
+    ConnectivityModes supportedConnectivityModes() const;
 
     SearchVisibilityScope searchVisibilityScope() const;
     void setSearchVisbilityScopes(SearchVisibilityScope scope);

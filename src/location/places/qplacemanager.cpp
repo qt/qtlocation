@@ -153,7 +153,7 @@ void QPlaceManager::setConnectivityMode(ConnectivityMode connectivityMode)
 /*!
     Returns the list of connectivity modes that the manager supports.
 */
-QList<QPlaceManager::ConnectivityMode> QPlaceManager::supportedConnectivityModes() const
+QPlaceManager::ConnectivityModes QPlaceManager::supportedConnectivityModes() const
 {
     return d->engine->supportedConnectivityModes();
 }

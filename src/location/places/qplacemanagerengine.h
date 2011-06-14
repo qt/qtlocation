@@ -29,7 +29,7 @@ public:
 
     virtual QPlaceManager::ConnectivityMode connectivityMode() const = 0;
     virtual void setConnectivityMode(QPlaceManager::ConnectivityMode connectivityMode) = 0;
-    virtual QList<QPlaceManager::ConnectivityMode> supportedConnectivityModes() const = 0;
+    virtual QPlaceManager::ConnectivityModes supportedConnectivityModes() const = 0;
 
     virtual QPlaceManager::SearchVisibilityScope searchVisibilityScope() const = 0;
     virtual void setSearchVisbilityScope(QPlaceManager::SearchVisibilityScope scope) = 0;
