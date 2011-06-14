@@ -45,6 +45,15 @@
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativelandmark_p.h"
+#include "qglview.h"
+#include "qglsubsurface.h"
+#include "tilecache.h"
+#include "tile.h"
+#include "tilesphere.h"
+
+#include <qglscenenode.h>
+#include <qglbuilder.h>
+#include <qgeometrydata.h>
 
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
@@ -89,7 +98,7 @@ QTM_BEGIN_NAMESPACE
     Mouse handling is done by adding MapMouseArea items as children of either
     MapObjects or the Map item itself.
 
-    The Map element is part of the \bold{QtMobility.location 1.2} module.
+    The Map element is part of the \bold{Qt.location 5.0} module.
 */
 QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGPaintedItem *parent)
     : QSGPaintedItem(parent),
@@ -101,16 +110,32 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGPaintedItem *paren
       initialCoordinate(0),
       mapType_(NoMap),
       connectivityMode_(NoConnectivity),
-      componentCompleted_(false)
+      componentCompleted_(false),
+      activeMouseArea_(0),
+      tileCache_(0),
+      tileSphere_(0),
+      sceneNode_(0)
 {
     initialCoordinate = new QGeoCoordinate(-27.0, 153.0);
     zoomLevel_ = 8;
     size_ = QSizeF(100.0, 100.0);
-    //    setAcceptsHoverEvents(true);
-    // setAcceptHoverEvents(true);
-    //setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
-    //setFlag(QGraphicsItem::ItemHasNoContents, false);
-    //setFlag(QGraphicsItem::ItemAcceptsInputMethod);
+    setAcceptHoverEvents(true);
+    setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
+
+    setRenderTarget(QSGPaintedItem::FramebufferObject);
+    setFillColor(Qt::yellow);
+
+    tileCache_ = new TileCache();
+    tileSphere_ = new TileSphere(this, tileCache_, 4, 1.0);
+    connect(tileSphere_,
+            SIGNAL(sphereUpdated()),
+            this,
+            SLOT(update()));
+    sceneNode_ = tileSphere_->sphereSceneNode();
+    tileSphere_->setRadius(3.0);
+    tileSphere_->setZoom(5);
+    tileSphere_->limitView(26, 16, 30, 20);
+    tileSphere_->update();
 }
 
 QDeclarative3DGraphicsGeoMap::~QDeclarative3DGraphicsGeoMap()
@@ -120,7 +145,6 @@ QDeclarative3DGraphicsGeoMap::~QDeclarative3DGraphicsGeoMap()
         // Remove map objects, we can't allow mapObject
         // to delete the objects because they are owned
         // by the declarative elements.
-        //QList<QGeoMapObject*> objects = objectMap_.keys();
         QList<QDeclarativeGeoMapObject*> objects = mapObjects_;
         for (int i = 0; i < objects.size(); ++i) {
             mapData_->removeMapObject(objects.at(i)->mapObject());
@@ -129,7 +153,6 @@ QDeclarative3DGraphicsGeoMap::~QDeclarative3DGraphicsGeoMap()
     }
     if (serviceProvider_)
         delete serviceProvider_;
-
     if (initialCoordinate) {
         delete initialCoordinate;
     }
@@ -138,7 +161,6 @@ QDeclarative3DGraphicsGeoMap::~QDeclarative3DGraphicsGeoMap()
 void QDeclarative3DGraphicsGeoMap::componentComplete()
 {
     componentCompleted_ = true;
-    QSGPaintedItem::componentComplete();
     populateMap();
 }
 
@@ -167,6 +189,7 @@ void QDeclarative3DGraphicsGeoMap::populateMap()
         QDeclarativeGeoMapMouseArea *mouseArea
         = qobject_cast<QDeclarativeGeoMapMouseArea*>(kids.at(i));
         if (mouseArea) {
+            // TODO mouse areas won't work
             //mouseArea->setMap(this);
             //mouseAreas_.append(mouseArea);
         }
@@ -180,22 +203,98 @@ void QDeclarative3DGraphicsGeoMap::setupMapView(QDeclarativeGeoMapObjectView *vi
     //view->repopulate();
 }
 
+class ViewportSubsurface : public QGLSubsurface
+{
+public:
+    ViewportSubsurface(QGLAbstractSurface *surface, const QRect &region,
+                       qreal adjust)
+        : QGLSubsurface(surface, region), m_adjust(adjust) {}
 
-//void QDeclarative3DGraphicsGeoMap::paint(QPainter *painter,
-//                                       const QStyleOptionGraphicsItem *option,
-//                                       QWidget * /*widget*/)
-//{
-//  qDebug("-----------original paint called");
-//    if (mapData_) {
-//        mapData_->paint(painter, option);
-//    }
-//}
+    qreal aspectRatio() const;
+    ~ViewportSubsurface() {}
+
+private:
+    qreal m_adjust;
+};
+
+qreal ViewportSubsurface::aspectRatio() const
+{
+    return QGLSubsurface::aspectRatio() * m_adjust;
+}
 
 void QDeclarative3DGraphicsGeoMap::paint(QPainter *painter)
 {
     qDebug() << __FUNCTION__ << "----------- Map3d, mapData_:" << mapData_;
-    if (mapData_)
-        mapData_->paint(painter, 0);
+    // to paint the old mercator projection:
+    //if (mapData_)
+    //    mapData_->paint(painter, 0);
+
+    QGLPainter glPainter;
+    if (!glPainter.begin(painter)) {
+        qWarning("GL graphics system is not active; cannot use 3D items");
+        return;
+    }
+    // No stereo rendering, set the eye as neutral
+    glPainter.setEye(QGL::NoEye);
+
+    // Currently applied transforms for this Map3D element
+    QTransform transform = painter->combinedTransform();
+    // QSGItem::boundingRect() returns (top(0), left(0), width, height).
+    // Then we get the rectangle that is gotten by applying the QTransform on the rect
+    // --> this is the viewport for Map3D
+    QRect viewport = transform.mapRect(boundingRect()).toRect();
+    qDebug() << "Viewport paramteres: " << viewport.width() << viewport.height() << viewport.top() << viewport.left();
+    qreal adjust = 1.0f;
+    ViewportSubsurface surface(glPainter.currentSurface(), viewport, adjust);
+    qDebug() << "surface before: " << &surface;
+    glPainter.pushSurface(&surface);
+    qDebug() << "surface after: " << &surface;
+
+    earlyDraw(&glPainter);
+    // From QGLView
+    QGLCamera defCamera;
+    glPainter.setCamera(&defCamera);
+    paintGL(&glPainter);
+    // Draw the children items
+
+
+
+    glPainter.popSurface();
+}
+
+void QDeclarative3DGraphicsGeoMap::earlyDraw(QGLPainter *painter)
+{
+    // If we have a parent, then assume that the parent has painted
+    // the background and overpaint over the top of it.  If we don't
+    // have a parent, then clear to black.
+    if (parentItem()) {
+        glClear(GL_DEPTH_BUFFER_BIT);
+    } else {
+        painter->setClearColor(Qt::black);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    // Force the effect to be updated.  The GL paint engine
+    // has left the GL state in an unknown condition.
+    painter->disableEffect();
+
+#ifdef GL_RESCALE_NORMAL
+    glEnable(GL_RESCALE_NORMAL);
+#endif
+
+    // Set the default effect for the scene.
+    painter->setStandardEffect(QGL::LitMaterial);
+    painter->setFaceColor(QGL::AllFaces, Qt::white);
+}
+
+
+// Private paint
+void QDeclarative3DGraphicsGeoMap::paintGL(QGLPainter *painter)
+{
+    qDebug() << __FUNCTION__ << " of Map3D, sceneNode_: " << sceneNode_;
+    if (sceneNode_)
+        sceneNode_->draw(painter);
+    qDebug() << __FUNCTION__ << " after";
 }
 
 void QDeclarative3DGraphicsGeoMap::geometryChanged(const QRectF &newGeometry,

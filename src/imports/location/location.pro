@@ -7,6 +7,7 @@ TARGETPATH = Qt/location
 include(../qimportbase.pri)
 
 QT += declarative network location
+CONFIG += qt3d
 
 DESTDIR = $$QT.location.imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
@@ -54,7 +55,12 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeomaneuver_p.h \
            qdeclarativegeomaprouteobject_p.h \
            qdeclarativegeoboundingcircle_p.h \
-           qdeclarative3dgraphicsgeomap_p.h
+           qdeclarative3dgraphicsgeomap_p.h \
+           tilecache.h \
+           tile.h \
+           tilesphere.h \
+           tileprovider.h \
+           tilespec.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -88,8 +94,12 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomaneuver.cpp \
            qdeclarativegeomaprouteobject.cpp \
            qdeclarativegeoboundingcircle.cpp \
-           qdeclarative3dgraphicsgeomap.cpp
-
+           qdeclarative3dgraphicsgeomap.cpp \
+           tilecache.cpp \
+           tile.cpp \
+           tilesphere.cpp \
+           tileprovider.cpp \
+           tilespec.cpp
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
 # are both copied to qt/imports/QtMobility/location -directory,

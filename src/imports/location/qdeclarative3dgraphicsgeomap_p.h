@@ -48,6 +48,13 @@
 #include <QGeoMapData>
 #include "qdeclarativegeomapobject_p.h"
 
+class QGLPainter;
+class QGLSceneNode;
+class TileCache;
+class Tile;
+class TileSpec;
+class TileSphere;
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
@@ -97,11 +104,6 @@ public:
     // From QDeclarativeParserStatus
     virtual void componentComplete();
 
-    // From QGraphicsItem
-    //void paint(QPainter *painter,
-    //           const QStyleOptionGraphicsItem *option,
-    //           QWidget *widget);
-    // From QSGPaintedItem
     virtual void paint (QPainter *painter);
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
@@ -200,6 +202,12 @@ private:
     QList<QDeclarativeGeoMapObjectView*> mapViews_;
     QDeclarativeGeoMapMouseArea* activeMouseArea_;
     QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
+
+    void paintGL(QGLPainter *painter);
+    void earlyDraw(QGLPainter *painter);
+    TileCache *tileCache_;
+    TileSphere *tileSphere_;
+    QGLSceneNode *sceneNode_;
 
     friend class QDeclarativeGeoMapObjectView;
     Q_DISABLE_COPY(QDeclarative3DGraphicsGeoMap)
