@@ -56,21 +56,14 @@ Item {
 
     function setModel(objects)
     {
+        dialogModel.clear()
+
         for (var i=0; i< objects.length; i++){
             dialogModel.append({"label": objects[i][0], "inputText": objects[i][1]})
         }
     }
 
-    Rectangle {
-        id: fader
-        anchors.fill: parent
-        opacity: 0.7
-        color:  "darkgrey"
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-        }
-    }
+    Common.Fader {}
 
     Rectangle {
         id: dialogRectangle
@@ -95,7 +88,7 @@ Item {
             id: titleBar;
             width: parent.width; height: 40;
             anchors.top: parent.top; anchors.left: parent.left;
-            opacity: 0.9; text: dialog.title;
+            opacity: 0.9
             onClicked: { dialog.cancelButtonClicked() }
         }
 
@@ -117,7 +110,6 @@ Item {
                     radius: 5
                     TextInput {
                         id: inputField
-                        text: inputText
                         focus: true
                         width: parent.width - anchors.leftMargin
 
@@ -126,6 +118,11 @@ Item {
                             verticalCenter: parent.verticalCenter;
                             leftMargin: 5
                         }
+
+                        Component.onCompleted: {
+                            text = inputText
+                        }
+
                         onTextChanged:
                         {
                             dialogModel.set(index, {"inputText": text})
@@ -138,6 +135,8 @@ Item {
                 }
             }
         }
+
+
 
         ListView {
             id: listview

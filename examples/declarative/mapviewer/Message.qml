@@ -1,6 +1,6 @@
-/*/****************************************************************************
+/****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,71 +39,74 @@
 ****************************************************************************/
 
 import Qt 4.7
+import "common" as Common
 
 Item {
-    id: slider;
-    height: 40
-    // value is read/write.
-    property int value
-    property real minimum: 0
-    property real maximum: 1
-    property int xMin: 2
-    property int xMax: width - handle.width-xMin
+    id: dialog
+
+    anchors.fill: parent
+
+    property alias title: titleBar.text
+    property alias text: message.text
+    property int gap: 20
+
+    signal okButtonClicked
+    signal cancelButtonClicked
+
+    Common.Fader {}
 
     Rectangle {
-        anchors.fill: parent
-        border.width: 0;
-        radius: 8
-        color: "dimgrey"
-        opacity: 0.6
+        id: dialogRectangle
+
+        color: "lightsteelblue"
+        opacity: 1
+        width: parent.width - gap;
+        height: titleBar.height + message.height + okButton.height + gap*3
+
+        anchors {
+            top: parent.top
+            topMargin: 50
+            left: parent.left
+            leftMargin: gap/2
+        }
+
+        border.width: 1
+        border.color: "darkblue"
+        radius: 5
+
+        Common.TitleBar {
+            id: titleBar;
+            width: parent.width; height: 40;
+            anchors.top: parent.top; anchors.left: parent.left;
+            opacity: 0.9;
+            onClicked: { dialog.cancelButtonClicked() }
+        }
+
+        Text {
+            id: message
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            anchors.top: titleBar.bottom
+            width: dialogRectangle.width - gap
+            anchors.topMargin: gap
+            textFormat: Text.RichText
+            wrapMode: Text.WrapAnywhere
+            onLinkActivated: {
+                Qt.openUrlExternally(link)
+            }
+        }
+
+        Common.Button {
+            id: okButton
+            text: "Ok"
+            anchors.top: message.bottom
+            anchors.topMargin: gap
+            width: 80; height: 32
+            anchors.horizontalCenter: parent.horizontalCenter
+            onClicked: {
+                dialog.okButtonClicked ()
+            }
+        }
     }
-
-    Rectangle {
-        id: handle; smooth: true
-        width: 30;
-        y: slider.xMin;
-        x: slider.xMin + (slider.value - slider.minimum) * slider.xMax / (slider.maximum - slider.minimum)
-
-        height: slider.height-4; radius: 6
-        gradient: normalGradient
-
-        Gradient {
-            id: normalGradient
-            GradientStop { position: 0.0; color: "lightgrey" }
-            GradientStop { position: 1.0; color: "gray" }
-        }
-
-        Gradient {
-            id: pressedGradient
-            GradientStop { position: 0.0; color: "lightgray" }
-            GradientStop { position: 1.0; color: "black" }
-        }
-
-        Gradient {
-            id: hoveredGradient
-            GradientStop { position: 0.0; color: "lightgrey" }
-            GradientStop { position: 1.0; color: "dimgrey" }
-        }
-
-        MouseArea {
-            id: mouseRegion
-            hoverEnabled: true
-            anchors.fill: parent; drag.target: parent
-            drag.axis: Drag.XAxis; drag.minimumX: slider.xMin; drag.maximumX: slider.xMax
-            onPositionChanged: { value = (maximum - minimum) * (handle.x-slider.xMin) / (slider.xMax - slider.xMin) + minimum; }
-        }
-    }
-
-    states: [
-        State {
-            name: "Pressed"
-            when: mouseRegion.pressed
-            PropertyChanges { target: handle; gradient: pressedGradient }
-        },
-        State {
-            name: "Hovered"
-            when: mouseRegion.containsMouse
-            PropertyChanges { target: handle; gradient: hoveredGradient }
-        }
-    ]
 }
+
