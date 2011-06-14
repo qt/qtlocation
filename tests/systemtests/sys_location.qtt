@@ -1,0 +1,484 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/location
+
+testcase = {
+
+    // \groups BAT,1.1,MOBILITY-65
+    current_position: function()
+    {
+        prompt(twiki('---+++ Position is detected
+        Note that GPS connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the weatherinfo_with_location example | Verify that weather information for your local area is displayed |'
+        ));
+    },
+
+    // \groups BAT,1.1,MOBILITY-65
+    location_is_updated: function()
+    {
+        prompt(twiki('---+++ Position changes are detected
+        Note that GPS and internet connection is required for this test case.
+    | *Step* | *Verification* |
+    | Run the lightmaps_with_location app (sources are in demos/lightmaps). | Verify that map is displayed and centered with the current position |
+    | Move to a different location | Verify that map is updated and centered with new location |'
+       ));
+    },
+
+    // \groups BAT,1.2,QTMOBILITY-873
+    third_party_position_source: function()
+    {
+        prompt(twiki('---+++ Position is detected via cusom plugin
+    Note that GPS and internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the testQtLocation application (this is part of BlueWeel project, sources are in git@scm.dev.nokia.troll.no:qtmobility/qtmobility-tests.git | |
+    | Select the Custom Service | Verify that no "Unable to register location service" and "Not valid interface." messages appear |
+    | Press the Update Map button | Verify that map was loaded and correct current position is displayed |'
+        ));
+    },
+
+    //Note that significand precision should be taken into account during comparing real numbers, that is why we consider 5.48417e-16 value equal to zero
+    // \groups BAT,1.2,QTMOBILITY-658
+    shift_to_the_given_offset: function()
+    {
+        prompt(twiki('---+++ New coordinats are calculated
+    | *Step* | *Verification* |
+    | Run the testQtLocation application | |
+    | Select the MapNavigation | |
+    | Fill in "0" in to Start Latitude field | |
+    | Fill in "100" in to Start Longitude field | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
+    | Fill "1000000, 90" in to the given field | |
+    | Press the Ok button | Verify that Destination fields are updated with 5.48417e-16 latitude and 108.9932 longitude |
+    | Fill in "60" in to Start Latitude field | |
+    | Fill in "100" in to Start Longitude field | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
+    | Fill "1000000, 180" in to the given field | |
+    | Press the Ok button | Verify that Destination fields are updated with 51.0068 latitude and 100 longitude |
+    | Fill in "60" in to Start Latitude field | |
+    | Fill in "100" in to Start Longitude field | |
+    | Select Distance/Bearing from pre-defined dropdown list | |
+    | Fill "1000000, 20" in to the given field | |
+    | Press the Ok button | Verify that Destination fields are updated with 68.2523 latitude and 108.296 longitude |'
+        ));
+    },
+
+    // Landmarks
+
+    store_and_load_a_landmark_data: {
+        // Valid landmarks are -90~90 latitude, and -180~180 longitude
+        landmark : ["landmark", "20", "120"]
+    },
+
+    // \groups BAT,1.1,MOBILITY-66
+    store_and_load_a_landmark: function(name, latitude, longitude)
+    {
+        startApplication("landmarkbrowser");
+        select("Add Landmark");
+        enter("Latitude", latitude);
+        enter("Longitude", longitude);
+        enter("Name", name);
+        select("Ok");
+        prompt("Verify that the landmark record is created");
+    },
+
+    negative_store_and_load_a_landmark_data: {
+        // Landmarks outside the ranges -90~90 latitude, and -180~180 longitude
+        bad_landmark_lat : ["bad_landmark", "100", "120"],
+        bad_landmark_long : ["bad_landmark", "80", "300"]
+    },
+
+    // \groups BAT,1.1,MOBILITY-66
+    negative_store_and_load_a_landmark: function(name, latitude, longitude)
+    {
+        startApplication("landmarkbrowser");
+        select("Add Landmark");
+        enter("Latitude", latitude);
+        enter("Longitude", longitude);
+        enter("Name", name);
+        //expectMessageBox("Invalid");
+        prompt("Verify a message box is shown indicating the values are ouside the valid range")
+        select("Ok");
+        select("Cancel");
+    },
+
+    // \groups BAT,1.1,MOBILITY-66
+    sorted_search_based_on_category: function()
+    {
+        prompt(twiki('---+++ Landmarks for the specified category are displayed
+    | *Step* | *Verification* |
+    | Create Accomodation category | |
+    | Create Businesses category | |
+    | Run the landmarkbrowser application | |
+    | Create A1 landmark  in Accomodation category | |
+    | Create A2 landmark  in Accomodation category | |
+    | Create BB landmark in Businesses category | |
+    | Press the Set Filter button | |
+    | Select the Category checkbox | |
+    | Select Accomodation category | |
+    | Press Ok button | Verify that only A1 and A2 landmark is in the list and they are present in alphabetical order |
+    | Press the Set Filter button | |
+    | Select Education category | |
+    | Press Ok button | Verify that no landmarks are in the list |'
+       ));
+    },
+
+    // \groups BAT,1.1,MOBILITY-66
+    sort_landmarks_in_alphabetical_and_nearest: function()
+    {
+        prompt(twiki('---+++ Nearest landmarks are displayed
+    | *Step* | *Verification* |
+    | Run the landmarkbrowser application | |
+    | Create landmark A(12;0) | |
+    | Create landmark B(10;0) | |
+    | Create landmark C(8;0) | |
+    | Create landmark D(8;0) | |
+    | Press Set Filter button | |
+    | Select Proximity checkbox | |
+    | Fill in 0 in to Lat field | |
+    | Fill in 0 in to Long field | |
+    | Fill in 10000000 in to Radius field| |
+    | Press Ok button | Verify that C, D, B, A landmarks are in the list (not in alphabetical order) |
+    | Press Set Filter button | |
+    | Change radius value to 1000000 | |
+    | Press Ok button | Verify that only C and D landmarks are in the list |
+    | Press Set Filter button | |
+    | Deselect Proximity checkbox | |
+    | Press Ok button | Verify that landmarks appear in alphabetical order from A to Z |'
+       ));
+    },
+
+    // \groups BAT,1.1,MOBILITY-66
+    landmarks_within_range_of_a_position: function()
+    {
+        prompt(twiki('---+++ Landmarks within range are displayed
+    | *Step* | *Verification* |
+    | Run the landmarkbrowser application | |
+    | Create landmark A(12;0) | |
+    | Create landmark B(10;0) | |
+    | Create landmark C(8;0) | |
+    | Create landmark D(8;0) | |
+    | Press Set Filter button | |
+    | Select Box checkbox | |
+    | Fill in 9 in to Top Left Lat field | |
+    | Fill in 0 in to Top Left Long field | |
+    | Fill in 0 i to Bottom Right Lat filed | |
+    | Fill in 1 in to Bottom Right Long field | |
+    | Press Ok button | Verify that only C and D landmarks are in the list and landmarks appear in alphabetical order |'
+       ));
+    },
+    
+    // \groups BAT,1.1,MOBILITY-66
+    create_edit_and_delete_a_landmark: function()
+    {
+    //Landmark manager provides notifications whenever landmarks are added, updated or deleted
+        prompt(twiki('---+++ Landmarks are added, edited and deleted
+    | *Step* | *Verification* |
+    | Run the landmarkbrowser application | |
+    | Press Add Landmark button | |
+    | Fill in AAA in to Name field | |
+    | Fill in 30 into Latitude field | |
+    | Fill in 30 into Longitude field | |
+    | Press Ok button | Verify that message "Landmark(s) have been added" appears on the screen |
+    | Press Ok button | Verify that AAA landmark is in the landmarks list |
+    | Select AAA landmark | |
+    | Press Edit Landmark button | |
+    | Change Latitude value to 40 | |
+    | Change Longitude value to 40 | |
+    | Change Name value to BBB | |
+    | Press Ok button | Verify that message "Landmark(s) have been edited" appears on the screen |
+    | Press Ok button | Verify that BBB landmark has new latitude and longitude |
+    | Select BBB landmark | |
+    | Press Delete Landmarks button | Verify that message "Landmark(s) have been removed" appears on the screen |
+    | Press Ok button | Verify that only BBB landmark has been deleted |
+    | Create 2 new landmarks A1 and A2 | |
+    | Select both A1 and A2 landmarks | 
+    | Press Delete Landmarks button | Verify that message "Landmark(s) have been removed" appears on the screen |
+    | Press Ok button | Verify that only A1 and A2 landmarks have been deleted |'
+        ));
+    },
+
+    // \groups BAT,1.1,MOBILITY-66
+    enumerate_categories: function()
+    {
+        prompt(twiki('---+++ Categories are displayed
+    | *Step* | *Verification* |
+    | Run the landmarkbrowser application | |
+    | Select Category tab | |
+    | Create several categories | |
+    | Swith to the Landmark tab and back to the Category tab | Verify that the created categories are present in the list |'
+        ));
+    },
+
+    // \groups BAT,1.1,MOBILITY-66
+    add_and_delete_a_category: function()
+    {
+    //Landmark manager provides notifications whenever categories are added, updated or deleted
+        prompt(twiki('---+++ Categories are added, edited and deleted
+    | *Step* | *Verification* |
+    | Run the landmarkbrowser application | |
+    | Select Category tab | |	
+    | Press Add Category button | |
+    | Fill in AAA in to Name field | |
+    | Press Ok button | Verify that message "Category(ies) have been added" |
+    | Press Ok button | Verify that AAA is added in list of categories in alphabetical order |
+    | Press Add Category button | |
+    | Fill in AAA in to Name field | |
+    | Press Ok button | Verify that message "Add Category Failed: category already Exists" appears on the screen |
+    | Press Ok button | |
+    | Press Add Category button | |
+    | Press Ok button | Verify that message "Category name must not be empty" appears on the screen |
+    | Press Ok button | |
+    | Select AAA category | |
+    | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
+    | Press Ok button | Verify that list of categories does not contain AAA category only | 
+    | Add A1 and A2 categories | |
+    | Select A1 and A2 categories | |
+    | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
+    | Press Ok button | Verify that list of categories does not contain A1 and A2 categories only |
+    | Select some of predefined categories | |
+    | Press Delete Category button | Verify tha message "Cannot delete a global category" appears on the screen |
+    | Press Ok button | Verify that no categories have been deleted |'
+        ));
+    },
+
+    // Maps and Navigation
+    // \groups BAT,1.1,MOBILITY-538
+    select_service_provider: function()
+    {
+        startApplication("geoservicedemo");
+        select("Service Providers");
+        select("nokia");
+        select("Set Service Provider");
+        prompt("Verify selected service provider is indicated as current service provider");
+    },
+
+    request_route_from_one_GPS_location_to_another_data: {
+        route:["-27.575", "153.088", "-27.465", "153.023", "15901", "15987"]
+    },
+
+    // \groups BAT,1.1,MOBILITY-538
+    request_route_from_one_GPS_location_to_another: function(lat1, long1, lat2, long2, distance1, distance2)
+    {
+        startApplication("geoservicedemo");
+        select("Service Providers");
+        select("nokia");
+        select("Set Service Provider");
+        select("Route");
+        select("Request Route");
+        enter(lat1);
+        enter(long1);
+        enter(lat2);
+        enter(long2);
+        select("Ok");
+        prompt(twiki("Wait until the route is calculated (should be less than 10 seconds)"));
+        prompt(twiki("Verify the there are 8 segments, first and last instructions indicate to 'Head toward Logan rd' and 'Turn right onto Bartley St'"));
+        select("routes/route");
+        compare(getText("distance"), distance1);
+        select("Request Route");
+        enter(lat2);
+        enter(long2);
+        enter(lat1);
+        enter(long1);
+        select("Ok");
+        prompt(twiki('Wait until the route is calculated (should be less than 10 seconds)'));
+        prompt(twiki('Verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st'));
+        compare(getText("distance"), distance2);
+    },
+    
+    // \groups BAT,1.1,MOBILITY-538
+    geocoding: function()
+    {
+        prompt(twiki('---+++ Geocoding
+    Note that testing via proxy is not recommended, incorrect settings can be a cause of the " Socket operation timed out" error
+    | *Step* | *Verification* |
+    | Run the GeoServiceDemo application (sources are /tests/location-testing-tools/geoservicedemo) | |
+    | Select Search By Adress tab | |
+    | Select One-box Search checkbox | |
+    | Fill in "Brandl st, Eight Mile Plains, Australia" in search field | |
+    | Select Geocoding search | |
+    | Press Ok button | |
+    | Wait until data is recieved | |
+    | Select places | Verify that count = 1 |
+    | Select place | Verify that latitude is -27.5798, longitude is 153.1 |
+    | Select address | Verify that Country is AUSTRALIA, country code is AUS, city is Eight Mile Plains, street name is Branl St, post code is 4113 |'
+        ));
+
+    },
+    
+    // \groups BAT,1.1,MOBILITY-538
+    reverse_geocoding: function()
+    {
+        prompt(twiki('---+++ Reverse geocoding
+    Note that testing via proxy is not recommended, incorrect settings can be a cause of the " Socket operation timed out" error
+    | *Step* | *Verification* |
+    | Run the GeoServiceDemo application | |
+    | Select Reverse Geocoding tab | |
+    | Press Search By Coordinates button | |
+    | Fill in -27.5798 in Latitude field | |
+    | Fill in 153.1 in Longitude field | |
+    | Press Ok button | |
+    | Wait until data is recieved | |
+    | Select places/place/adress | Verify that Country is AUSTRALIA, country code is AUS, city is Eight Mile Plains, street name is 54 Branl St, post code is 4113 |'
+        ));
+   },
+
+    // \groups BAT,1.1,MOBILITY-538
+    displaying_a_map: function()
+    {
+        prompt(twiki('---+++ Different views are displayed
+    Note that  internet connection is required for this test case.
+    | *Step* | *Verification* |
+    | Run the mapsdemo application (sources are /examples/mapsdemo) | Map for current location is displayed on the screen |'
+        ));
+    },
+
+    // \groups BAT,1.1,MOBILITY-538
+    different_map_types: function()
+    {
+        prompt(twiki('---+++ Different views are displayed
+    Note that  internet connection is required for this test case.
+    Note that Nokia map engine supports only Street, Satellite and Terrain map types
+    | *Step* | *Verification* |
+    | Run the MapViewer application (sources are /tests/location-testing-tools/mapviewer) | Map for current location is displayed on the screen |
+    | Press Option button | |
+    | Press Street button (if button is enabled) | Map is drawn in Street view |
+    | Press Option button | |
+    | Press Satellite button (if button is enabled) | Map is drawn in Satellite view |
+    | Press Option button | |
+    | Press Terrain button (if button is enabled) | Map is drawn in Satellite view |'
+        ));
+    },
+
+    // \groups BAT,1.1,MOBILITY-538
+    zooming_support:function()
+    {
+        prompt(twiki('---+++ Map is zoomed in and out
+    Note that internet connection is required for this test case.
+    | *Step* | *Verification* |
+    | Run the mapsdemo application | Map is displayed on the screen |
+    | Press - button | Map is zoomed out correctly |
+    | Press + button | Map is zoomed in correctly |'
+        ));
+    },
+
+    // \groups BAT,1.1,MOBILITY-538
+    capturing_coordinates:function()
+    {
+        prompt(twiki('---+++ Coordinates are captured
+    Note that internet connection is required for this test case.
+    | *Step* | *Verification* |
+    | Run the MapViewer application | Map is displayed on the screen |
+    | Navigate and/or zoom in the map to see Brisbane | |
+    | Right mouse click on the square which represents Brisbane | |
+    | Select Coordinates menu item | |
+    | Select Capture menu item | Verify that dialog with coordinates appears on the screen. Latitude is about -27.46, longitude is about 153.02 |'
+        ));
+    },
+
+    // \groups BAT,1.2,QTMOBILITY-757,QTMOBILITY-701
+    pixmap_object_zooming: function()
+    {
+        prompt(twiki('---+++ Pixmap object is not scaled during zooming
+    Note that GPS and internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the testQtLocation application | |
+    | Select the MapNavigation | |
+    | Go to Map tab | Verify that map is loaded for current position |
+    | Swith to MapObject mode | |
+    | Tap on the screen to create pixmap object | Verify that blue square appears on the screen in place of touch |
+    | Switch to Pan/Zoom mode | |
+    | Increase zoom level | Verify that the blue square is not scaled |
+    | Decrease zoom level | Verify that the blue square is not scaled |'
+        ));
+    },
+
+    request_landmarks_for_given_coordinate_with_reverse_geocoding: function()
+    {
+        skip( "Nothing tested", SkipAll );
+    },
+
+    //TESTED_COMPONENT=plugins/declarative/location
+
+    // \groups BAT,1.2,QTMOBILITY-796
+    qml_display_map: function()
+    {
+        prompt(twiki('---+++ Map is displayed
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application (sources are in examples/declarative-location/mapviewer) | Verify that map is loaded for the default location (lat 51.5, long -0.11) |'
+        ));
+    },
+
+    // \groups BAT,1.2,QTMOBILITY-796
+    qml_zoom_a_map: function()
+    {
+        prompt(twiki('---+++ Zoom in and out the map
+    Note that GPS and internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Select the MapNavigation.qml | |
+    | Tap on the Mode button | Verify that map is loaded |
+    | Tap on Plus button | Verify that map is zoomed in |
+    | Tap on Plus button | Verify that zoom level is decreased and map is displayed correctly with new zoom level |'
+        ));
+    }
+
+
+}  // end of testcase
+
+
+/*
+
+----Maps And Navigation use cases
+
+    list_of_way_points: function() {    },
+
+    distinguish_pedestrian_and_car_navigation: function() {    },
+
+    find_matching_landmarks_for_given_search_criteria_with_geocoding: function() {    },
+
+    provide_map_for_given_coordinate: function() {    },
+
+    online_and_offline: function() {    }
+
+*/
