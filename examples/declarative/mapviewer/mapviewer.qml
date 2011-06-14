@@ -99,74 +99,176 @@ FocusScope {
                 }
             }
         }
-
     }
 
-        Common.Menu {
-            id: optionsMenu
-            orientation: ListView.Vertical
-            z: mainMenu.z - 1
-            Component.onCompleted: {
-                setModel(["Reverse geocode", "Geocode","Search", "Route"])
-                disableItem(2)
-            }
-            itemHeight: 30;
-            itemWidth: mainMenu.itemWidth
-            anchors.left: mainMenu.left
-            y: page.height
+    Common.Menu {
+        id: optionsMenu
+        orientation: ListView.Vertical
+        z: mainMenu.z - 1
+        Component.onCompleted: {
+            setModel(["Reverse geocode", "Geocode","Search", "Route"])
+            disableItem(2)
+        }
+        itemHeight: 30;
+        itemWidth: mainMenu.itemWidth
+        anchors.left: mainMenu.left
+        y: page.height
 
-            onClicked: {
-                switch (button) {
-                    case 0: {
-                        page.state = "RevGeocode"
-                        break;
-                    }
-                    case 1: {
-                        page.state = "Geocode"
-                        break;
-                    }
-                    case 2: {
-                        page.state = "Search"
-                        break;
-                    }
-                    case 3: {
-                        page.state = "Route"
-                        break;
-                    }
+        onClicked: {
+            switch (button) {
+                case 0: {
+                    page.state = "RevGeocode"
+                    break;
+                }
+                case 1: {
+                    page.state = "Geocode"
+                    break;
+                }
+                case 2: {
+                    page.state = "Search"
+                    break;
+                }
+                case 3: {
+                    page.state = "Route"
+                    break;
                 }
             }
         }
+    }
 
-        Common.Menu {
-            id: settingsMenu
-            orientation: ListView.Vertical
-            z: mainMenu.z - 1
-            Component.onCompleted: {
-                setModel(["Map type", "Provider"])
-                disableItem(0)
-                disableItem(1)
-            }
+    Common.Menu {
+        id: settingsMenu
+        orientation: ListView.Vertical
+        z: mainMenu.z - 1
+        Component.onCompleted: {
+            setModel(["Map type", "Connectivity", "Provider"])
+        }
 
-            itemHeight: 30;
-            itemWidth: mainMenu.itemWidth
-            y: page.height
-            anchors.right: mainMenu.right
+        itemHeight: 30;
+        itemWidth: mainMenu.itemWidth
+        y: page.height
+        anchors.right: mainMenu.right
 
-            onClicked: {
-                switch (button) {
-                    case 0: {
-                        console.log("Map type");
-                        break;
-                    }
-                    case 1: {
-                        console.log("Provider")
-                        break;
-                    }
+        onClicked: {
+            switch (button) {
+                case 0: {
+                    page.state = "MapType"
+                    break;
+                }
+                case 1: {
+                    page.state = "Connectivity"
+                    break;
+                }
+                case 2: {
+                    page.state = "ProviderInfo"
+                    break;
                 }
             }
         }
+    }
+
+    Common.Menu {
+        id: mapTypeMenu
+        orientation: ListView.Vertical
+        z: mainMenu.z - 1
+        keepPreviousValue: true
+        opacity: 0
+
+        itemHeight: 30;
+        itemWidth: mainMenu.itemWidth*2/3
+        anchors.bottom: mainMenu.top
+        anchors.right: settingsMenu.left
+
+        Component.onCompleted: {
+            setModel(["Street", "Satellite", "Satellite Night", "Terrain"])
+            disableItem(2) // Nokia map engine supports only Street, Satellite and Terrain map types
+            button = 0 // Nokia plugin's default map type is Map.StreetMap
+        }
+
+        onClicked: {
+            page.state = ""
+        }
+
+        onButtonChanged: {
+            switch (button) {
+                case 0: {
+                    map.mapType = Map.StreetMap
+                    break;
+                }
+                case 1: {
+                    map.mapType = Map.SatelliteMapDay
+                    break;
+                }
+                case 2: {
+                    map.mapType = Map.SatelliteMapNight
+                    break;
+                }
+                case 3: {
+                    map.mapType = Map.TerrainMap
+                    break;
+                }
+            }
+        }
+    }
+
+    Common.Menu {
+        id: connectivityModeMenu
+        orientation: ListView.Vertical
+        z: mainMenu.z - 1
+        keepPreviousValue: true
+        opacity: 0
+
+        itemHeight: 30;
+        itemWidth: mainMenu.itemWidth/2
+        anchors.bottom: mainMenu.top
+        anchors.right: settingsMenu.left
+
+        Component.onCompleted: {
+            setModel(["Offline", "Online", "Hybrid"])
+            disableItem(0) // Nokia map engine supports online mode
+            disableItem(2)
+            button = 1
+        }
+
+        onClicked: {
+            page.state = ""
+        }
+
+        onButtonChanged: {
+            switch (button) {
+                case 0: {
+                    map.connectivityMode = Map.OfflineMode
+                    break;
+                }
+                case 1: {
+                    map.connectivityMode = Map.OnlineMode
+                    break;
+                }
+                case 2: {
+                    map.connectivityMode = Map.HybridMode
+                    break;
+                }
+            }
+        }
+    }
+
 
     // Dialogs
+
+    Message {
+        id: providerInfoDialog
+        title: "Provider"
+        text: "Nokia OVI <a href=\http://doc.qt.nokia.com/qtmobility-1.2/location-overview.html#the-nokia-plugin\">map plugin</a>."
+        z: 5
+        opacity: 0
+        onOkButtonClicked: {
+            page.state = ""
+        }
+        onCancelButtonClicked: {
+            page.state = ""
+        }
+    }
+
     Dialog {
         id: routeDialog
         title: "Routing from map center to"
@@ -411,11 +513,26 @@ FocusScope {
             PropertyChanges { target: titleBar; hoverEnabled: false }
         },
         State {
+            name: "ProviderInfo"
+            PropertyChanges { target: providerInfoDialog; opacity: 1 }
+            PropertyChanges { target: titleBar; hoverEnabled: false }
+        },
+        State {
             name : "Options"
             PropertyChanges { target: optionsMenu; y: page.height - optionsMenu.height - mainMenu.height }
         },
         State {
             name : "Settings"
+            PropertyChanges { target: settingsMenu; y: page.height - settingsMenu.height - mainMenu.height }
+        },
+        State {
+            name : "MapType"
+            PropertyChanges { target: mapTypeMenu; opacity: 1}
+            PropertyChanges { target: settingsMenu; y: page.height - settingsMenu.height - mainMenu.height }
+        },
+        State {
+            name : "Connectivity"
+            PropertyChanges { target: connectivityModeMenu; opacity: 1}
             PropertyChanges { target: settingsMenu; y: page.height - settingsMenu.height - mainMenu.height }
         }
     ]
@@ -423,6 +540,23 @@ FocusScope {
     // state-transition animations for page
     transitions: [
         Transition {
+            to: "RevGeocode"
+            NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
+        },
+        Transition {
+            to: "Route"
+            NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
+        },
+        Transition {
+            to: "Search"
+            NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
+        },
+        Transition {
+            to: "Geocode"
+            NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
+        },
+        Transition {
+            to: "ProviderInfo"
             NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
         },
         Transition {

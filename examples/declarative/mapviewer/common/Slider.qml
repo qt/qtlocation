@@ -48,7 +48,7 @@ Item {
     property real minimum: 0
     property real maximum: 1
     property int xMin: 2
-    property int xMax: slider.width - handle.width-xMin
+    property int xMax: width - handle.width-xMin
 
     Rectangle {
         anchors.fill: parent
@@ -61,8 +61,8 @@ Item {
     Rectangle {
         id: handle; smooth: true
         width: 30;
-        y: xMin;
-        x: xMin + (value - minimum) * slider.xMax / (maximum - minimum)
+        y: slider.xMin;
+        x: slider.xMin + (slider.value - slider.minimum) * slider.xMax / (slider.maximum - slider.minimum)
 
         height: slider.height-4; radius: 6
         gradient: normalGradient

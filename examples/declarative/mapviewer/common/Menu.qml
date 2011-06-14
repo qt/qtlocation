@@ -1,24 +1,26 @@
-import QtQuick 1.0
+import Qt 4.7
 
 Item {
     id: menu
     property int gap: 0
-    property int button: 0
+    property int button: -1
     property alias orientation: menuView.orientation
     property alias count: menuModel.count
-    property int itemHeight  //to create menu just set menu item height and width, do not set menu's height and width explicitly
+    property int itemHeight //to create menu just set menu item height and width, do not set menu's height and width explicitly
     property int itemWidth
-//    height: (menuView.orientation == ListView.Horizontal)? itemHeight : itemHeight * count
+    height: (menuView.orientation == ListView.Horizontal)? itemHeight : itemHeight * count
     width: (menuView.orientation == ListView.Horizontal)? itemWidth * count : itemWidth
+    property bool keepPreviousValue: false
 
     signal clicked
 
     function setModel(objects)
     {
+        menuModel.clear()
         for (var i=0; i< objects.length; i++){
             menuModel.append({"label": objects[i], "enabledItem" : true})
         }
-        height = (menuView.orientation == ListView.Horizontal)? itemHeight : itemHeight * count
+        menuView.positionViewAtIndex(0,ListView.Beginning)
     }
 
     function disableItem(index){
@@ -52,7 +54,7 @@ Item {
                 text: label;
                 elide: Text.ElideLeft
                 font.bold: true;
-                color: "white"
+                color: index == menuView.currentIndex ? "crimson" :"white"
                 style: Text.Raised;
                 styleColor: "dimgrey"
                 anchors.verticalCenter: parent.verticalCenter
@@ -105,5 +107,6 @@ Item {
         delegate: menuItemDelegate
         spacing: gap
         interactive: false
+        currentIndex: (menu.keepPreviousValue == false) ? -1 : menu.button
     }
 }

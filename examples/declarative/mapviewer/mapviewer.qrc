@@ -19,5 +19,7 @@
         <file>resources/menuItem_hovered.png</file>
         <file>resources/button_pressed.png</file>
         <file>resources/button_hovered.png</file>
+        <file>Message.qml</file>
+        <file>common/Fader.qml</file>
     </qresource>
 </RCC>
