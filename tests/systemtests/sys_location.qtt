@@ -206,7 +206,7 @@ testcase = {
     | Press Ok button | Verify that only C and D landmarks are in the list and landmarks appear in alphabetical order |'
        ));
     },
-    
+
     // \groups BAT,1.1,MOBILITY-66
     create_edit_and_delete_a_landmark: function()
     {
@@ -231,7 +231,7 @@ testcase = {
     | Press Delete Landmarks button | Verify that message "Landmark(s) have been removed" appears on the screen |
     | Press Ok button | Verify that only BBB landmark has been deleted |
     | Create 2 new landmarks A1 and A2 | |
-    | Select both A1 and A2 landmarks | 
+    | Select both A1 and A2 landmarks |
     | Press Delete Landmarks button | Verify that message "Landmark(s) have been removed" appears on the screen |
     | Press Ok button | Verify that only A1 and A2 landmarks have been deleted |'
         ));
@@ -256,7 +256,7 @@ testcase = {
         prompt(twiki('---+++ Categories are added, edited and deleted
     | *Step* | *Verification* |
     | Run the landmarkbrowser application | |
-    | Select Category tab | |	
+    | Select Category tab | |
     | Press Add Category button | |
     | Fill in AAA in to Name field | |
     | Press Ok button | Verify that message "Category(ies) have been added" |
@@ -270,7 +270,7 @@ testcase = {
     | Press Ok button | |
     | Select AAA category | |
     | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
-    | Press Ok button | Verify that list of categories does not contain AAA category only | 
+    | Press Ok button | Verify that list of categories does not contain AAA category only |
     | Add A1 and A2 categories | |
     | Select A1 and A2 categories | |
     | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
@@ -324,7 +324,7 @@ testcase = {
         prompt(twiki('Verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st'));
         compare(getText("distance"), distance2);
     },
-    
+
     // \groups BAT,1.1,MOBILITY-538
     geocoding: function()
     {
@@ -344,7 +344,7 @@ testcase = {
         ));
 
     },
-    
+
     // \groups BAT,1.1,MOBILITY-538
     reverse_geocoding: function()
     {
