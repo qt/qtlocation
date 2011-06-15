@@ -37,12 +37,6 @@ RESOURCES += resource.qrc
 
 INCLUDEPATH += $$QT.location.includes
 
-message($$QT.location.includes)
-
-#INCLUDEPATH += $$SOURCE_DIR/src/location \
-#                $$SOURCE_DIR/src/location/maps \
-#                $$SOURCE_DIR/src/location/maps/tiled
-
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
