@@ -25,18 +25,21 @@ class Q_LOCATION_EXPORT QPlaceManager : public QObject
     Q_OBJECT
 public:
     enum ConnectivityMode {
-        Offline = 0x0001,
+        OfflineMode = 0x0001,
         OnlineMode = 0x0002,
         HybridMode = 0x0003
     };
 
     Q_DECLARE_FLAGS(ConnectivityModes, ConnectivityMode)
 
-    enum SearchVisibilityScope {
-        PublicSearch,
-        PrivateSearch,
-        PublicAndPrivateSearch
+    enum VisibilityScope {
+        NoScope = 0x0000,
+        PublicScope = 0x0001,
+        PrivateScope = 0x0002,
+        PublicAndPrivateScope = 0x0007
     };
+
+    Q_DECLARE_FLAGS(VisibilityScopes, VisibilityScope)
 
     enum ManagerFeature {
         ImportFeature,
@@ -67,18 +70,21 @@ public:
 
     QPlaceMediaReply *getMedia(const QPlace &place, const QPlaceQuery &query) const;
 
-    QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query) const;
+    QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query, VisibilityScope scope) const;
+    VisibilityScopes supportedSearchVisibilityScopes() const;
+
     QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchQuery &query) const;
 
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchQuery &query) const;
 
-    ConnectivityMode connectivityMode() const;
-    void setConnectivityMode(ConnectivityMode connectivityMode);
+    ConnectivityModes connectivityMode() const;
+    void setConnectivityMode(ConnectivityModes connectivityMode);
     ConnectivityModes supportedConnectivityModes() const;
 
-    SearchVisibilityScope searchVisibilityScope() const;
-    void setSearchVisbilityScopes(SearchVisibilityScope scope);
-    QList<SearchVisibilityScope> supportedSearchVisibilityScopes() const;
+    QPlaceReply *savePlace(QPlace *place, VisibilityScope scope);
+    VisibilityScopes supportedSaveVisibilityScopes();
+
+    QPlaceReply *removePlace(const QPlace &place);
 
     QPlaceReply *initializeCategories(const QString &categorySystemId = QString());
     QList<QPlaceCategory> categories() const;
@@ -95,6 +101,9 @@ private:
     QPlaceManagerPrivate* d;
     Q_DECLARE_PRIVATE(QPlaceManager)
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::VisibilityScopes);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::ConnectivityModes);
 
 QTM_END_NAMESPACE
 

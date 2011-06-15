@@ -111,11 +111,19 @@ QPlaceReviewReply *QPlaceManager::getReviews(const QPlace &place, const QPlaceQu
 }
 
 /*!
-    Searches for places according to a given \a query.
+    Searches for places according to a given \a query and at the given \a scope.
 */
-QPlaceSearchReply *QPlaceManager::searchForPlaces(const QPlaceSearchQuery &query) const
+QPlaceSearchReply *QPlaceManager::searchForPlaces(const QPlaceSearchQuery &query, VisibilityScope scope) const
 {
-    return d->engine->searchForPlaces(query);
+    return d->engine->searchForPlaces(query, scope);
+}
+
+/*!
+    Returns the available scopes in which places can be searched
+*/
+QPlaceManager::VisibilityScopes QPlaceManager::supportedSearchVisibilityScopes() const
+{
+    return d->engine->supportedSearchVisibilityScopes();
 }
 
 /*!
@@ -137,17 +145,17 @@ QPlaceTextPredictionReply *QPlaceManager::textPredictions(const QPlaceSearchQuer
 /*!
     Returns the connectivity mode of the manager.
 */
-QPlaceManager::ConnectivityMode QPlaceManager::connectivityMode() const
+QPlaceManager::ConnectivityModes QPlaceManager::connectivityMode() const
 {
     return d->engine->connectivityMode();
 }
 
 /*!
-    Sets the \a connectivityMode of the manager.
+    Sets the connectivity \a mode of the manager.
 */
-void QPlaceManager::setConnectivityMode(ConnectivityMode connectivityMode)
+void QPlaceManager::setConnectivityMode(QPlaceManager::ConnectivityModes mode)
 {
-    return d->engine->setConnectivityMode(connectivityMode);
+    d->engine->setConnectivityMode(mode);
 }
 
 /*!
@@ -159,28 +167,19 @@ QPlaceManager::ConnectivityModes QPlaceManager::supportedConnectivityModes() con
 }
 
 /*!
-    Returns the visibility scope when searching through places, eg search
-    only public places or private places.
+    Saves a \a place at the given \a scope.
 */
-QPlaceManager::SearchVisibilityScope QPlaceManager::searchVisibilityScope() const
+QPlaceReply *QPlaceManager::savePlace(QPlace *place, VisibilityScope scope)
 {
-    return d->engine->searchVisibilityScope();
+    return d->engine->savePlace(place, scope);
 }
 
-/*!
-    Sets the visibility \a scope to be used for searching for places.
+/*
+    Returns the available scopes in which places can be saved.
 */
-void QPlaceManager::setSearchVisbilityScopes(SearchVisibilityScope scope)
+QPlaceManager::VisibilityScopes QPlaceManager::supportedSaveVisibilityScopes()
 {
-    d->engine->setSearchVisbilityScope(scope);
-}
-
-/*!
-    Returns a list of search visibility scopes that the manager supports.
-*/
-QList<QPlaceManager::SearchVisibilityScope> QPlaceManager::supportedSearchVisibilityScopes() const
-{
-    return d->engine->supportedSearchVisibilityScopes();
+    return d->engine->supportedSaveVisibilityScopes();
 }
 
 /*!

@@ -23,17 +23,20 @@ public:
 
     QPlaceReviewReply *getReviews(const QPlace &place, const QPlaceQuery &query);
 
-    QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query);
+    QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query, QPlaceManager::VisibilityScope scope);
+    QPlaceManager::VisibilityScopes supportedSearchVisibilityScopes() const;
+
     QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchQuery &query);
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchQuery &query);
 
-    QPlaceManager::ConnectivityMode connectivityMode() const;
-    void setConnectivityMode(QPlaceManager::ConnectivityMode connectivityMode);
-    QList<QPlaceManager::ConnectivityMode> supportedConnectivityModes() const;
+    QPlaceManager::ConnectivityModes connectivityMode() const;
+    void setConnectivityMode(QPlaceManager::ConnectivityModes connectivityMode);
+    QPlaceManager::ConnectivityModes supportedConnectivityModes() const;
 
-    QPlaceManager::SearchVisibilityScope searchVisibilityScope() const;
-    void setSearchVisbilityScope(QPlaceManager::SearchVisibilityScope scope);
-    QList<QPlaceManager::SearchVisibilityScope> supportedSearchVisibilityScopes() const;
+    QPlaceReply *savePlace(QPlace *place, QPlaceManager::VisibilityScope scope);
+    QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const;
+
+    QPlaceReply *removePlace(const QPlace &place);
 
     QPlaceReply *initializeCategories(const QString &categorySystemId);
     QList<QPlaceCategory> categories() const;

@@ -91,8 +91,9 @@ QPlaceReviewReply *QPlaceManagerEngineImpl::getReviews(const QPlace &place, cons
     return reply;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineImpl::searchForPlaces(const QPlaceSearchQuery &query)
+QPlaceSearchReply *QPlaceManagerEngineImpl::searchForPlaces(const QPlaceSearchQuery &query, QPlaceManager::VisibilityScope scope)
 {
+    //TODO: handling of scope
     QPlaceSearchReplyImpl *reply = NULL;
     QPlaceSearchQuery newQuery = query;
     // search by category
@@ -109,6 +110,11 @@ QPlaceSearchReply *QPlaceManagerEngineImpl::searchForPlaces(const QPlaceSearchQu
                 this, SLOT(processingFinished(QPlaceReply*)));
     }
     return reply;
+}
+
+QPlaceManager::VisibilityScopes QPlaceManagerEngineImpl::supportedSearchVisibilityScopes() const
+{
+    return QPlaceManager::PublicScope;
 }
 
 QPlaceSearchReply *QPlaceManagerEngineImpl::recommendations(const QPlace &place, const QPlaceSearchQuery &query)
@@ -141,40 +147,34 @@ QPlaceTextPredictionReply *QPlaceManagerEngineImpl::textPredictions(const QPlace
     return reply;
 }
 
-QPlaceManager::ConnectivityMode QPlaceManagerEngineImpl::connectivityMode() const
+QPlaceManager::ConnectivityModes QPlaceManagerEngineImpl::connectivityMode() const
 {
     return QPlaceManager::OnlineMode;
 }
 
-void QPlaceManagerEngineImpl::setConnectivityMode(QPlaceManager::ConnectivityMode connectivityMode)
+void QPlaceManagerEngineImpl::setConnectivityMode(QPlaceManager::ConnectivityModes mode)
 {
-    Q_UNUSED(connectivityMode)
+    Q_UNUSED(mode)
     // only QPlaceManager::OnlineMode is suppoerted
 }
 
-QList<QPlaceManager::ConnectivityMode> QPlaceManagerEngineImpl::supportedConnectivityModes() const
+QPlaceManager::ConnectivityModes QPlaceManagerEngineImpl::supportedConnectivityModes() const
 {
-    QList<QPlaceManager::ConnectivityMode> modes;
-    modes.append(QPlaceManager::OnlineMode);
-    return modes;
+    return QPlaceManager::OnlineMode;
 }
 
-QPlaceManager::SearchVisibilityScope QPlaceManagerEngineImpl::searchVisibilityScope() const
-{
-    return QPlaceManager::PublicSearch;
+QPlaceReply *QPlaceManagerEngineImpl::savePlace(QPlace *place, QPlaceManager::VisibilityScope scope) {
+    //TODO: implementation
+    return NULL;
 }
 
-void QPlaceManagerEngineImpl::setSearchVisbilityScope(QPlaceManager::SearchVisibilityScope scope)
-{
-    Q_UNUSED(scope)
-    // only QPlaceManager::PublicSearch is supported
+QPlaceManager::VisibilityScopes QPlaceManagerEngineImpl::supportedSaveVisibilityScopes() const {
+    return QPlaceManager::NoScope;
 }
 
-QList<QPlaceManager::SearchVisibilityScope> QPlaceManagerEngineImpl::supportedSearchVisibilityScopes() const
-{
-    QList<QPlaceManager::SearchVisibilityScope> modes;
-    modes.append(QPlaceManager::PublicSearch);
-    return modes;
+QPlaceReply *QPlaceManagerEngineImpl::removePlace(const QPlace &place) {
+    //TODO: implementation
+    return NULL;
 }
 
 QPlaceReply *QPlaceManagerEngineImpl::initializeCategories(const QString &categorySystemId)
