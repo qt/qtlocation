@@ -6,7 +6,7 @@ QTM_USE_NAMESPACE
 QPlaceReviewPrivate::QPlaceReviewPrivate()
     : QSharedData(),
       helpfulVotings(0),
-      notHelpfulVotings(0),
+      unhelpfulVotings(0),
       rating(0)
 {
 }
@@ -19,7 +19,7 @@ QPlaceReviewPrivate::QPlaceReviewPrivate(const QPlaceReviewPrivate &other)
     this->language = other.language;
     this->helpfulVotings = other.helpfulVotings;
     this->mediaIds = other.mediaIds;
-    this->notHelpfulVotings = other.notHelpfulVotings;
+    this->unhelpfulVotings = other.unhelpfulVotings;
     this->rating = other.rating;
     this->reviewId = other.reviewId;
     this->supplier = other.supplier;
@@ -41,7 +41,7 @@ bool QPlaceReviewPrivate::operator==(const QPlaceReviewPrivate &other) const
             && this->language == other.language
             && this->helpfulVotings == other.helpfulVotings
             && this->mediaIds == other.mediaIds
-            && this->notHelpfulVotings == other.notHelpfulVotings
+            && this->unhelpfulVotings == other.unhelpfulVotings
             && this->rating == other.rating
             && this->reviewId == other.reviewId
             && this->supplier == other.supplier
@@ -153,19 +153,19 @@ void QPlaceReview::setLanguage(const QString &data)
 }
 
 /*!
-    Returns "thumbs up".
+    Returns the number of helpful votings or "thumbs up"
 */
-uint QPlaceReview::helpfulVotings() const
+int QPlaceReview::helpfulVotings() const
 {
     return d->helpfulVotings;
 }
 
 /*!
-    Sets "thumbs up".
+    Sets the number of helpful \a votes or "thumbs up".
 */
-void QPlaceReview::setHelpfulVotings(const uint &data)
+void QPlaceReview::setHelpfulVotings(const int &votes)
 {
-    d->helpfulVotings = data;
+    d->helpfulVotings = votes;
 }
 
 /*!
@@ -185,19 +185,19 @@ void QPlaceReview::setMediaIds(const QStringList &data)
 }
 
 /*!
-    Returns "thumbs down".
+    Returns the number of uhelpful votings or "thumbs down".
 */
-uint QPlaceReview::notHelpfulVotings() const
+int QPlaceReview::unhelpfulVotings() const
 {
-    return d->notHelpfulVotings;
+    return d->unhelpfulVotings;
 }
 
 /*!
-    Sets "thumbs down".
+    Sets the number of unhelpful votings or "thumbs down"
 */
-void QPlaceReview::setNotHelpfulVotings(const uint &data)
+void QPlaceReview::setUnhelpfulVotings(const int &votes)
 {
-    d->notHelpfulVotings = data;
+    d->unhelpfulVotings = votes;
 }
 
 /*!

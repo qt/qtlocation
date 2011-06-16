@@ -37,7 +37,7 @@ QList<QPlaceMediaObject> QPlaceJSonMediaParser::resultMedia()
     return media;
 }
 
-uint QPlaceJSonMediaParser::allMediaCount()
+int QPlaceJSonMediaParser::allMediaCount()
 {
     return allMedia;
 }
@@ -110,6 +110,6 @@ void QPlaceJSonMediaParser::processMedia(const QScriptValue &mediaElement)
     }
     value = mediaElement.property(media_count);
     if (value.isValid()) {
-        allMedia = value.toUInt32();
+        allMedia = value.toInt32();
     }
 }

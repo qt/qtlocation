@@ -68,7 +68,7 @@ void QPlaceTextPreditionReplyImpl::predictionsReady(const QPlaceJSonTextPredicti
     setFinished(true);
     emit finished();
     emit processingFinished(this);
-    delete parser;
+    parser->deleteLater();
     parser = NULL;
     restReply->deleteLater();
     restReply = NULL;

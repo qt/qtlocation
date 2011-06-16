@@ -20,9 +20,9 @@ public:
     QString date;
     QString description;
     QString language;
-    uint helpfulVotings;
+    int helpfulVotings;
     QStringList mediaIds;
-    uint notHelpfulVotings;
+    int unhelpfulVotings;
     double rating;
     QString reviewId;
     QPlaceSupplier supplier;

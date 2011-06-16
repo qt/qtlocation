@@ -30,11 +30,11 @@ public:
     QList<QPlaceSupplier> suppliers;
     QStringList feeds;
     QPlacePaginationList<QPlaceMediaObject> media;
-    uint mediaCount;
+    int mediaCount;
     QString name;
     QString placeId;
     QPlacePaginationList<QPlaceReview> reviews;
-    uint reviewCount;
+    int reviewCount;
     QString shortDescription;
     QStringList tags;
 };

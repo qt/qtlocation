@@ -24,7 +24,7 @@ public:
     virtual ~QPlaceJSonReviewParser();
 
     QList<QPlaceReview> results();
-    uint allReviewsCount();
+    int allReviewsCount();
     static QPlaceReview buildReview(const QScriptValue &place);
 
 signals:
@@ -39,7 +39,7 @@ private:
 private:
     QScriptEngine *engine;
     QList<QPlaceReview> reviews;
-    uint allReviews;
+    int allReviews;
 };
 
 QTM_END_NAMESPACE

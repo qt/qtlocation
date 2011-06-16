@@ -47,7 +47,7 @@ QList<QPlaceReview> QPlaceJSonReviewParser::results()
     return reviews;
 }
 
-uint QPlaceJSonReviewParser::allReviewsCount()
+int QPlaceJSonReviewParser::allReviewsCount()
 {
     return allReviews;
 }
@@ -66,15 +66,15 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review)
     value = review.property(review_minus_element);
     if (value.isValid() && !value.toString().isEmpty()) {
         bool isConverted;
-        uint number = value.toString().toUInt(&isConverted);
+        int number = value.toString().toInt(&isConverted);
         if (isConverted) {
-            newReview.setNotHelpfulVotings(number);
+            newReview.setUnhelpfulVotings(number);
         }
     }
     value = review.property(review_plus_element);
     if (value.isValid() && !value.toString().isEmpty()) {
         bool isConverted;
-        uint number = value.toString().toUInt(&isConverted);
+        int number = value.toString().toInt(&isConverted);
         if (isConverted) {
             newReview.setHelpfulVotings(number);
         }
@@ -172,6 +172,6 @@ void QPlaceJSonReviewParser::processReviews(const QScriptValue &reviewsElement)
     }
     value = reviewsElement.property(review_count);
     if (value.isValid()) {
-        allReviews = value.toUInt32();
+        allReviews = value.toInt32();
     }
 }

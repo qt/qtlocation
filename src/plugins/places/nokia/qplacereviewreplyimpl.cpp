@@ -72,7 +72,7 @@ void QPlaceReviewReplyImpl::predictionsReady(const QPlaceJSonReviewParser::Error
     setFinished(true);
     emit finished();
     emit processingFinished(this);
-    delete parser;
+    parser->deleteLater();
     parser = NULL;
     restReply->deleteLater();
     restReply = NULL;

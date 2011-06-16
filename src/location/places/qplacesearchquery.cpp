@@ -16,7 +16,7 @@ public:
     QList<QPlaceCategory> categories;
     QPlaceGeoCoordinate searchCenter;
     QPlaceGeoBoundingBox boundingBox;
-    uint dymNumber;
+    int dymNumber;
 };
 
 QTM_END_NAMESPACE
@@ -189,7 +189,7 @@ void QPlaceSearchQuery::setBoundingBox(const QPlaceGeoBoundingBox &boundingBox)
 /*!
     Returns maximum number of "did you mean" suggestions returned by search query.
 */
-uint QPlaceSearchQuery::didYouMeanSuggestionNumber() const
+int QPlaceSearchQuery::didYouMeanSuggestionNumber() const
 {
     return d->dymNumber;
 }
@@ -197,7 +197,7 @@ uint QPlaceSearchQuery::didYouMeanSuggestionNumber() const
 /*!
     Sets maximum \a number of "did you mean" suggestions returned by search query.
 */
-void QPlaceSearchQuery::setDidYouMeanSuggestionNumber(const uint &number)
+void QPlaceSearchQuery::setDidYouMeanSuggestionNumber(const int &number)
 {
     d->dymNumber = number;
 }

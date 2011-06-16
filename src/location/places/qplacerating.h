@@ -25,8 +25,8 @@ public:
 
     double value() const;
     void setValue(const double &data);
-    uint count() const;
-    void setCount(const uint &data);
+    int count() const;
+    void setCount(const int &dcount);
 
 private:
     QSharedDataPointer<QPlaceRatingPrivate> d;

@@ -83,25 +83,25 @@ double QPlaceRating::value() const
 }
 
 /*!
-    Sets value.
+    Sets the \a value.
 */
-void QPlaceRating::setValue(const double &src)
+void QPlaceRating::setValue(const double &value)
 {
-    d->value = src;
+    d->value = value;
 }
 
 /*!
     Returns count.
 */
-uint QPlaceRating::count() const
+int QPlaceRating::count() const
 {
     return d->count;
 }
 
 /*!
-    Sets count.
+    Sets the \a count.
 */
-void QPlaceRating::setCount(const uint &src)
+void QPlaceRating::setCount(const int &count)
 {
-    d->count = src;
+    d->count = count;
 }

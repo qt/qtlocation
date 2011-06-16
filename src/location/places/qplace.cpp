@@ -328,7 +328,7 @@ void QPlace::setMedia(const QPlacePaginationList<QPlaceMediaObject> &media)
 /*!
     Returns media count.
 */
-uint QPlace::mediaCount() const
+int QPlace::mediaCount() const
 {
     return d->mediaCount;
 }
@@ -336,9 +336,9 @@ uint QPlace::mediaCount() const
 /*!
     Sets media count.
 */
-void QPlace::setMediaCount(const uint &data)
+void QPlace::setMediaCount(const int &count)
 {
-    d->mediaCount = data;
+    d->mediaCount = count;
 }
 
 /*!
@@ -392,7 +392,7 @@ void QPlace::setReviews(const QPlacePaginationList<QPlaceReview> &reviews)
 /*!
     Returns review count.
 */
-uint QPlace::reviewCount() const
+int QPlace::reviewCount() const
 {
     return d->reviewCount;
 }
@@ -400,9 +400,9 @@ uint QPlace::reviewCount() const
 /*!
     Sets review count.
 */
-void QPlace::setReviewCount(const uint &data)
+void QPlace::setReviewCount(const int &count)
 {
-    d->reviewCount = data;
+    d->reviewCount = count;
 }
 
 /*!

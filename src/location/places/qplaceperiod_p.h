@@ -17,15 +17,6 @@ public:
 
     bool operator==(const QPlacePeriodPrivate &other) const;
 
-    enum Value {
-        None = 0,
-        Date = 1,
-        Time = 2,
-        Year = 4
-    };
-
-    Q_DECLARE_FLAGS(Values, Value);
-    Values values;
     QDateTime begin;
     QDateTime end;
 };

@@ -18,7 +18,7 @@ public:
     bool operator==(const QPlaceRatingPrivate &other) const;
 
     double value;
-    uint count;
+    int count;
 };
 
 QTM_END_NAMESPACE

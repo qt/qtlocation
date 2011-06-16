@@ -66,7 +66,7 @@ void QPlaceDetailsReplyImpl::predictionsReady(const QPlaceJSonDetailsParser::Err
     setFinished(true);
     emit finished();
     emit processingFinished(this);
-    delete parser;
+    parser->deleteLater();
     parser = NULL;
     restReply->deleteLater();
     restReply = NULL;

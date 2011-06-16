@@ -24,7 +24,7 @@ public:
     virtual ~QPlaceJSonMediaParser();
 
     QList<QPlaceMediaObject> resultMedia();
-    uint allMediaCount();
+    int allMediaCount();
     static QPlaceMediaObject buildMediaObject(const QScriptValue &place);
 
 signals:
@@ -39,7 +39,7 @@ private:
 private:
     QScriptEngine *engine;
     QList<QPlaceMediaObject> media;
-    uint allMedia;
+    int allMedia;
 };
 
 QTM_END_NAMESPACE

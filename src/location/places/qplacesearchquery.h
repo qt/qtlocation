@@ -46,8 +46,8 @@ public:
     QPlaceGeoBoundingBox boundingBox() const;
     void setBoundingBox(const QPlaceGeoBoundingBox &boundingBox);
 
-    uint didYouMeanSuggestionNumber() const;
-    void setDidYouMeanSuggestionNumber(const uint &number);
+    int didYouMeanSuggestionNumber() const;
+    void setDidYouMeanSuggestionNumber(const int &number);
 
     void clear();
 

@@ -313,7 +313,7 @@ QPlaceRating *QPlaceJSonDetailsParser::processRating(const QScriptValue &ratingE
         value = ratingElement.property(place_rating_count_element);
         if (value.isValid() && !value.toString().isEmpty()) {
             bool isConverted;
-            uint ratingValue = value.toString().toUInt(&isConverted);
+            uint ratingValue = value.toString().toInt(&isConverted);
             if (isConverted) {
                 rating->setCount(ratingValue);
             }

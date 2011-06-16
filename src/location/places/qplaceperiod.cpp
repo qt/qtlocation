@@ -3,15 +3,20 @@
 
 QTM_USE_NAMESPACE
 
-QPlacePeriodPrivate::QPlacePeriodPrivate() : QSharedData()
+QPlacePeriodPrivate::QPlacePeriodPrivate()
+    : QSharedData()
 {
-    this->values = QPlacePeriodPrivate::None;
+    QDate date;
+    QTime time;
+    begin.setDate(date);
+    begin.setTime(time);
+    end.setDate(date);
+    end.setTime(time);
 }
 
 QPlacePeriodPrivate::QPlacePeriodPrivate(const QPlacePeriodPrivate &other)
     : QSharedData()
 {
-    this->values = other.values;
     this->begin = other.begin;
     this->end = other.end;
 }
@@ -23,8 +28,7 @@ QPlacePeriodPrivate::~QPlacePeriodPrivate()
 bool QPlacePeriodPrivate::operator==(const QPlacePeriodPrivate &other) const
 {
     return (
-            this->values == other.values
-            && this->begin == other.begin
+            this->begin == other.begin
             && this->end == other.end
     );
 }
@@ -47,7 +51,6 @@ QPlacePeriod::QPlacePeriod()
 {
 }
 
-
 QPlacePeriod::QPlacePeriod(int startHour, int startMinute, int endHour, int endMinute)
     : d(new QPlacePeriodPrivate)
 {
@@ -55,7 +58,6 @@ QPlacePeriod::QPlacePeriod(int startHour, int startMinute, int endHour, int endM
     d->begin.setTime(startTime);
     QTime endTime(endHour, endMinute);
     d->end.setTime(endTime);
-    d->values = QPlacePeriodPrivate::Time;
 }
 
 QPlacePeriod::QPlacePeriod(int startMonth, int startDay, int startHour, int startMinute,
@@ -63,14 +65,13 @@ QPlacePeriod::QPlacePeriod(int startMonth, int startDay, int startHour, int star
     : d(new QPlacePeriodPrivate)
 {
     QTime startTime(startHour, startMinute);
-    QDate startDate(2008, startMonth, startDay);
+    QDate startDate(0, startMonth, startDay);
     d->begin.setTime(startTime);
     d->begin.setDate(startDate);
     QTime endTime(endHour, endMinute);
-    QDate endDate(2008, endMonth, endDay);
+    QDate endDate(0, endMonth, endDay);
     d->end.setTime(endTime);
     d->end.setDate(endDate);
-    d->values = QPlacePeriodPrivate::Time & QPlacePeriodPrivate::Date;
 }
 
 QPlacePeriod::QPlacePeriod(int startYear, int startMonth, int startDay, int startHour, int startMinute,
@@ -85,7 +86,6 @@ QPlacePeriod::QPlacePeriod(int startYear, int startMonth, int startDay, int star
     QDate endDate(endYear, endMonth, endDay);
     d->end.setTime(endTime);
     d->end.setDate(endDate);
-    d->values = QPlacePeriodPrivate::Time & QPlacePeriodPrivate::Date & QPlacePeriodPrivate::Year;
 }
 
 /*!
@@ -114,111 +114,67 @@ bool QPlacePeriod::operator==(const QPlacePeriod &other) const
 }
 
 /*!
-    Returns start year. -1 returned if not set.
+    Returns sart date.  Null returned if not set.
+    If year was not set, year value will be default(4713 BC)
 */
-int QPlacePeriod::startYear() const
+QDate QPlacePeriod::startDate() const
 {
-    if (d->values & QPlacePeriodPrivate::Year) {
-        return d->begin.date().year();
-    }
-    return -1;
+    return d->begin.date();
 }
 
 /*!
-    Returns start month. -1 returned if not set.
+    Sets th start \a date
 */
-int QPlacePeriod::startMonth() const
+void QPlacePeriod::setStartDate(const QDate &date)
 {
-    if (d->values & QPlacePeriodPrivate::Date) {
-        return d->begin.date().month();
-    }
-    return -1;
+    d->begin.setDate(date);
 }
 
 /*!
-    Returns start day. -1 returned if not set.
+    Returns the start time.  Null returned if not set.
 */
-int QPlacePeriod::startDay() const
+QTime QPlacePeriod::startTime() const
 {
-    if (d->values & QPlacePeriodPrivate::Date) {
-        return d->begin.date().day();
-    }
-    return -1;
+    return d->begin.time();
 }
 
 /*!
-    Returns start hour. -1 returned if not set.
+    Sets the start time.
 */
-int QPlacePeriod::startHour() const
+void QPlacePeriod::setStartTime(const QTime &time)
 {
-    if (d->values & QPlacePeriodPrivate::Time) {
-        return d->begin.time().hour();
-    }
-    return -1;
+    d->begin.setTime(time);
 }
 
 /*!
-    Returns start minute. -1 returned if not set.
+    Returns the end date.  Null is returned if not set.
+    If the year was not set, year value will be default (4713 BC)
 */
-int QPlacePeriod::startMinute() const
+QDate QPlacePeriod::endDate() const
 {
-    if (d->values & QPlacePeriodPrivate::Time) {
-        return d->begin.time().minute();
-    }
-    return -1;
+    return d->end.date();
 }
 
 /*!
-    Returns end year. -1 returned if not set.
+    Sets the end \a date.
 */
-int QPlacePeriod::endYear() const
+void QPlacePeriod::setEndDate(const QDate &date)
 {
-    if (d->values & QPlacePeriodPrivate::Year) {
-        return d->end.date().year();
-    }
-    return -1;
+    d->end.setDate(date);
 }
 
 /*!
-    Returns end month. -1 returned if not set.
+    Returns end time.  Null returned if not set.
 */
-int QPlacePeriod::endMonth() const
+QTime QPlacePeriod::endTime() const
 {
-    if (d->values & QPlacePeriodPrivate::Date) {
-        return d->end.date().month();
-    }
-    return -1;
+    return d->end.time();
 }
 
 /*!
-    Returns end day. -1 returned if not set.
+    Sets the end \a time
 */
-int QPlacePeriod::endDay() const
+void QPlacePeriod::setEndTime(const QTime &time)
 {
-    if (d->values & QPlacePeriodPrivate::Date) {
-        return d->end.date().day();
-    }
-    return -1;
-}
-
-/*!
-    Returns end year. -1 returned if not set.
-*/
-int QPlacePeriod::endHour() const
-{
-    if (d->values & QPlacePeriodPrivate::Time) {
-        return d->end.time().hour();
-    }
-    return -1;
-}
-
-/*!
-    Returns end year. -1 returned if not set.
-*/
-int QPlacePeriod::endMinute() const
-{
-    if (d->values & QPlacePeriodPrivate::Time) {
-        return d->end.time().minute();
-    }
-    return -1;
+    d->end.setTime(time);
 }

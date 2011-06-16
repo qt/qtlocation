@@ -60,10 +60,13 @@ QTM_BEGIN_NAMESPACE
 class QPlaceReplyPrivate
 {
 public:
-    QPlaceReplyPrivate() : isFinished(false) {}
+    QPlaceReplyPrivate() :
+            isFinished(false),
+            error(QPlaceReply::NoError),
+            errorString(QString()){}
+    bool isFinished;
     QPlaceReply::Error error;
     QString errorString;
-    bool isFinished;
 };
 
 QTM_END_NAMESPACE

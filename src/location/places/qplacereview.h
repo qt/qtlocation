@@ -31,12 +31,12 @@ public:
     void setDescription(const QString &data);
     QString language() const;
     void setLanguage(const QString &data);
-    uint helpfulVotings() const;
-    void setHelpfulVotings(const uint &data);
+    int helpfulVotings() const;
+    void setHelpfulVotings(const int &votes);
     QStringList mediaIds() const;
     void setMediaIds(const QStringList &data);
-    uint notHelpfulVotings() const;
-    void setNotHelpfulVotings(const uint &data);
+    int unhelpfulVotings() const;
+    void setUnhelpfulVotings(const int &votes);
     double rating() const;
     void setRating(const double &data);
     QString reviewId() const;

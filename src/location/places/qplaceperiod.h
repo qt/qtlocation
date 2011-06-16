@@ -30,16 +30,14 @@ public:
         return !(other == *this);
     }
 
-    int startYear() const;
-    int startMonth() const;
-    int startDay() const;
-    int startHour() const;
-    int startMinute() const;
-    int endYear() const;
-    int endMonth() const;
-    int endDay() const;
-    int endHour() const;
-    int endMinute() const;
+    QDate startDate() const;
+    void setStartDate(const QDate &date);
+    QTime startTime() const;
+    void setStartTime(const QTime &time);
+    QDate endDate() const;
+    void setEndDate(const QDate &date);
+    QTime endTime() const;
+    void setEndTime(const QTime &time);
 
 private:
     QSharedDataPointer<QPlacePeriodPrivate> d;
