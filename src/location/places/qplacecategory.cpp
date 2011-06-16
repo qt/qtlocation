@@ -15,7 +15,6 @@ QPlaceCategoryPrivate::QPlaceCategoryPrivate(const QPlaceCategoryPrivate &other)
 {
     this->alternativeNames = other.alternativeNames;
     this->categoryId = other.categoryId;
-    this->categorySystemId = other.categorySystemId;
     this->description = other.description;
     this->name = other.name;
 }
@@ -29,7 +28,6 @@ bool QPlaceCategoryPrivate::operator==(const QPlaceCategoryPrivate &other) const
     return (
             this->alternativeNames == other.alternativeNames
             && this->categoryId == other.categoryId
-            && this->categorySystemId == other.categorySystemId
             && this->description == other.description
             && this->name == other.name
     );
@@ -116,22 +114,6 @@ QString QPlaceCategory::categoryId() const
 void QPlaceCategory::setCategoryId(const QString &catID)
 {
     d->categoryId = catID;
-}
-
-/*!
-    Returns category system id.
-*/
-QString QPlaceCategory::categorySystemId() const
-{
-    return d->categorySystemId;
-}
-
-/*!
-    Sets category system id.
-*/
-void QPlaceCategory::setCategorySystemId(const QString &catID)
-{
-    d->categorySystemId = catID;
 }
 
 /*!

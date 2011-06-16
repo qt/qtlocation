@@ -38,7 +38,7 @@ public:
 
     virtual QPlaceReply *removePlace(const QPlace &place) = 0;
 
-    virtual QPlaceReply *initializeCategories(const QString &categorySystemId) = 0;
+    virtual QPlaceReply *initializeCategories() = 0;
     virtual QList<QPlaceCategory> categories() const = 0;
 
 Q_SIGNALS:

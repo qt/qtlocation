@@ -19,7 +19,6 @@ public:
 
     QList<QPlaceAlternativeValue> alternativeNames;
     QString categoryId;
-    QString categorySystemId;
     QString description;
     QString name;
 };

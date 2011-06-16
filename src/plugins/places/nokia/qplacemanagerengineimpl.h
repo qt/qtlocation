@@ -17,7 +17,7 @@ public:
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
 
-    QPlaceMediaReply * getMedia(const QPlace &place, const QPlaceQuery &query);
+    QPlaceMediaReply *getMedia(const QPlace &place, const QPlaceQuery &query);
 
     QPlaceReply *postRating(const QPlace &place, qreal value);
 
@@ -38,7 +38,7 @@ public:
 
     QPlaceReply *removePlace(const QPlace &place);
 
-    QPlaceReply *initializeCategories(const QString &categorySystemId);
+    QPlaceReply *initializeCategories();
     QList<QPlaceCategory> categories() const;
 
 private slots:

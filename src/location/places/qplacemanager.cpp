@@ -183,12 +183,11 @@ QPlaceManager::VisibilityScopes QPlaceManager::supportedSaveVisibilityScopes()
 }
 
 /*!
-    Initializes the manager categories using a given
-    \a categorySystemId.
+    Initializes the manager categories.
 */
-QPlaceReply *QPlaceManager::initializeCategories(const QString &categorySystemId)
+QPlaceReply *QPlaceManager::initializeCategories()
 {
-    return d->engine->initializeCategories(categorySystemId);
+    return d->engine->initializeCategories();
 }
 
 /*!

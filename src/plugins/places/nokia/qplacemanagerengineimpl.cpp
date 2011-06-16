@@ -62,6 +62,7 @@ QPlaceMediaReply *QPlaceManagerEngineImpl::getMedia(const QPlace &place, const Q
 QPlaceReply *QPlaceManagerEngineImpl::postRating(const QPlace &place, qreal value)
 {
     QPlaceRatingReplyImpl *reply = NULL;
+    //TODO: need to post user name
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->postRatingRequest(place.placeId(),
                                                                                   QString(),
                                                                                   value);
@@ -177,9 +178,9 @@ QPlaceReply *QPlaceManagerEngineImpl::removePlace(const QPlace &place) {
     return NULL;
 }
 
-QPlaceReply *QPlaceManagerEngineImpl::initializeCategories(const QString &categorySystemId)
+QPlaceReply *QPlaceManagerEngineImpl::initializeCategories()
 {
-    return QPlaceCategoriesRepository::instance()->initializeCategories(categorySystemId);
+    return QPlaceCategoriesRepository::instance()->initializeCategories();
 }
 
 QList<QPlaceCategory> QPlaceManagerEngineImpl::categories() const

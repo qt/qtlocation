@@ -31,8 +31,6 @@ public:
     void setAlternativeNames(const QList<QPlaceAlternativeValue> &names);
     QString categoryId() const;
     void setCategoryId(const QString &catID);
-    QString categorySystemId() const;
-    void setCategorySystemId(const QString &catID);
     QString description() const;
     void setDescription(const QString &description);
     QString name() const;

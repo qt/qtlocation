@@ -36,9 +36,9 @@ QPlaceCategoriesRepository::~QPlaceCategoriesRepository()
 {
 }
 
-QPlaceReply *QPlaceCategoriesRepository::initializeCategories(const QString &categorySystemId)
+QPlaceReply *QPlaceCategoriesRepository::initializeCategories()
 {
-    // to be implemented
+    // TODO: to be implemented
     return NULL;
 }
 

@@ -99,10 +99,6 @@ QPlaceCategory QPlaceJSonCategoriesParser::processCategory(const QScriptValue &c
         if (value.isValid() && !value.toString().isEmpty()) {
             category.setName(value.toString());
         }
-        value = categoryValue.property(place_category_systemname_element);
-        if (value.isValid() && !value.toString().isEmpty()) {
-            category.setCategorySystemId(value.toString());
-        }
     }
     return category;
 }

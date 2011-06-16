@@ -86,7 +86,7 @@ public:
 
     QPlaceReply *removePlace(const QPlace &place);
 
-    QPlaceReply *initializeCategories(const QString &categorySystemId = QString());
+    QPlaceReply *initializeCategories();
     QList<QPlaceCategory> categories() const;
     QPlaceCategory createCategory() const;
 

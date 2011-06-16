@@ -19,7 +19,7 @@ public:
 
     ~QPlaceCategoriesRepository();
 
-    QPlaceReply *initializeCategories(const QString &categorySystemId);
+    QPlaceReply *initializeCategories();
     QList<QPlaceCategory> categories() const;
 
     QPlaceCategory mapCategory(const QString &number);
