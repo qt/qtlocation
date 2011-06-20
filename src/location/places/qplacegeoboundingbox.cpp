@@ -115,7 +115,7 @@ bool QPlaceGeoBoundingBox::operator==(const QPlaceGeoBoundingBox &other) const
 /*!
     Returns coordinate of top left edge of bounding box.
 */
-QPlaceGeoCoordinate QPlaceGeoBoundingBox::topLeft() const
+QGeoCoordinate QPlaceGeoBoundingBox::topLeft() const
 {
     return d->topLeft;
 }
@@ -123,7 +123,7 @@ QPlaceGeoCoordinate QPlaceGeoBoundingBox::topLeft() const
 /*!
     Sets \a coordinate of top left edge of bounding box.
 */
-void QPlaceGeoBoundingBox::setTopLeft(const QPlaceGeoCoordinate &coordinate)
+void QPlaceGeoBoundingBox::setTopLeft(const QGeoCoordinate &coordinate)
 {
     d->topLeft = coordinate;
 }
@@ -131,7 +131,7 @@ void QPlaceGeoBoundingBox::setTopLeft(const QPlaceGeoCoordinate &coordinate)
 /*!
     Returns coordinate of bottom right edge of bounding box.
 */
-QPlaceGeoCoordinate QPlaceGeoBoundingBox::bottomRight() const
+QGeoCoordinate QPlaceGeoBoundingBox::bottomRight() const
 {
     return d->bottomRight;
 }
@@ -139,7 +139,7 @@ QPlaceGeoCoordinate QPlaceGeoBoundingBox::bottomRight() const
 /*!
     Sets \a coordinate of bottom right edge of bounding box.
 */
-void QPlaceGeoBoundingBox::setBottomRight(const QPlaceGeoCoordinate &coordinate)
+void QPlaceGeoBoundingBox::setBottomRight(const QGeoCoordinate &coordinate)
 {
     d->bottomRight = coordinate;
 }

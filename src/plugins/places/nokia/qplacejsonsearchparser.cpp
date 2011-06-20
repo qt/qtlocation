@@ -53,7 +53,7 @@
 #include <QtScript/QScriptValueIterator>
 
 #include <qplace.h>
-#include <qplacegeocoordinate.h>
+#include <qgeocoordinate.h>
 #include <qplacecontact.h>
 #include <qplacelocation.h>
 #include <qplaceaddress.h>
@@ -347,15 +347,15 @@ void QPlaceJSonSearchParser::processLocation(const QScriptValue &properties, QPl
         longitude = value.toString().toDouble(&lonOK);
     }
     if (latOK && lonOK) {
-        QPlaceGeoCoordinate pos;
+        QGeoCoordinate pos;
         pos.setLatitude(latitude);
         pos.setLongitude(longitude);
         location.setDisplayPosition(pos);
     }
 
     // bounding box
-    QPlaceGeoCoordinate bottomRight;
-    QPlaceGeoCoordinate topLeft;
+    QGeoCoordinate bottomRight;
+    QGeoCoordinate topLeft;
     latOK = false;
     lonOK = false;
     value = properties.property(search_properties_latitude_bb1_value);

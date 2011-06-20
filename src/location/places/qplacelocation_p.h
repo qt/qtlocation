@@ -61,8 +61,8 @@ public:
     QVariantHash additionalData;
     QPlaceAddress address;
     QList<QPlaceAlternativeValue> alternativeLabels;
-    QPlaceGeoCoordinate displayPosition;
-    QList<QPlaceGeoCoordinate> navigationPositions;
+    QGeoCoordinate displayPosition;
+    QList<QGeoCoordinate> navigationPositions;
     QString label;
     QString locationId;
     int locationScore;

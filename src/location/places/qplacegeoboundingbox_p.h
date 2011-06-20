@@ -39,13 +39,12 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEGEOCOORDINATE_P_H
-#define QPLACEGEOCOORDINATE_P_H
+#ifndef QPLACEGEOBOUNDINGBOX_P_H
+#define QPLACEGEOBOUNDINGBOX_P_H
 
 #include <QSharedData>
 
 #include "qplacegeoboundingbox.h"
-#include "qplacegeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -59,10 +58,10 @@ public:
 
     bool operator==(const QPlaceGeoBoundingBoxPrivate &other) const;
 
-    QPlaceGeoCoordinate topLeft;
-    QPlaceGeoCoordinate bottomRight;
+    QGeoCoordinate topLeft;
+    QGeoCoordinate bottomRight;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QPLACEGEOCOORDINATE_P_H
+#endif

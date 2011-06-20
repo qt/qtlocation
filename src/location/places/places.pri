@@ -12,7 +12,6 @@ PUBLIC_HEADERS += \
     places/qplacecontact.h \
     places/qplacedescription.h \
     places/qplacegeoboundingbox.h \
-    places/qplacegeocoordinate.h \
     places/qplacelocation.h \
     places/qplacemediaobject.h \
     places/qplacepaginationlist.h \
@@ -48,7 +47,6 @@ PRIVATE_HEADERS += \
     places/qplacecontact_p.h \
     places/qplacedescription_p.h \
     places/qplacegeoboundingbox_p.h \
-    places/qplacegeocoordinate_p.h \
     places/qplacelocation_p.h \
     places/qplacemediaobject_p.h \
     places/qplaceperiod_p.h \
@@ -71,7 +69,6 @@ SOURCES += \
     places/qplacecontact.cpp \
     places/qplacedescription.cpp \
     places/qplacegeoboundingbox.cpp \
-    places/qplacegeocoordinate.cpp \
     places/qplacelocation.cpp \
     places/qplacemediaobject.cpp \
     places/qplaceperiod.cpp \

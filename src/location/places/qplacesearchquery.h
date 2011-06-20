@@ -81,8 +81,8 @@ public:
     QList<QPlaceCategory> categories() const;
     void setCategory(const QPlaceCategory &category);
 
-    QPlaceGeoCoordinate searchCenter() const;
-    void setSearchCenter(const QPlaceGeoCoordinate &center);
+    QGeoCoordinate searchCenter() const;
+    void setSearchCenter(const QGeoCoordinate &center);
 
     QPlaceGeoBoundingBox boundingBox() const;
     void setBoundingBox(const QPlaceGeoBoundingBox &boundingBox);

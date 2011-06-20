@@ -253,7 +253,7 @@ QString QPlaceRestManager::prepareSearchRequest(const QPlaceSearchQuery &query)
     searchString += const_views;
     searchString += const_deviceproductid;
     // process search center
-    QPlaceGeoCoordinate searchCentre = query.searchCenter();
+    QGeoCoordinate searchCentre = query.searchCenter();
     if (searchCentre.isValid()) {
         searchString += const_lat + QString::number(searchCentre.latitude());
         searchString += const_lon + QString::number(searchCentre.longitude());

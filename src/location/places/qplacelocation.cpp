@@ -184,7 +184,7 @@ void QPlaceLocation::setAlternativeLabels(const QList<QPlaceAlternativeValue> &l
 /*!
     Returns display position.
 */
-QPlaceGeoCoordinate QPlaceLocation::displayPosition() const
+QGeoCoordinate QPlaceLocation::displayPosition() const
 {
     return d->displayPosition;
 }
@@ -192,7 +192,7 @@ QPlaceGeoCoordinate QPlaceLocation::displayPosition() const
 /*!
     Sets display position.
 */
-void QPlaceLocation::setDisplayPosition(const QPlaceGeoCoordinate &position)
+void QPlaceLocation::setDisplayPosition(const QGeoCoordinate &position)
 {
     d->displayPosition = position;
 }
@@ -200,7 +200,7 @@ void QPlaceLocation::setDisplayPosition(const QPlaceGeoCoordinate &position)
 /*!
     Returns navigation positions.
 */
-QList<QPlaceGeoCoordinate> QPlaceLocation::navigationPositions() const
+QList<QGeoCoordinate> QPlaceLocation::navigationPositions() const
 {
     return d->navigationPositions;
 }
@@ -208,7 +208,7 @@ QList<QPlaceGeoCoordinate> QPlaceLocation::navigationPositions() const
 /*!
     Sets navigation positions.
 */
-void QPlaceLocation::setNavigationPositions(const QList<QPlaceGeoCoordinate> &positions)
+void QPlaceLocation::setNavigationPositions(const QList<QGeoCoordinate> &positions)
 {
     d->navigationPositions = positions;
 }

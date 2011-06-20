@@ -52,8 +52,8 @@
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
 
+#include <qgeocoordinate.h>
 #include <qplace.h>
-#include <qplacegeocoordinate.h>
 #include <qplacecontact.h>
 #include <qplacecategory.h>
 #include <qplacedescription.h>
@@ -451,7 +451,7 @@ QPlaceLocation QPlaceJSonDetailsParser::processLocation(const QScriptValue &loca
     QPlaceLocation newLocation;
     QScriptValue property = location.property(place_geoCoordinates_element);
     if (property.isValid()) {
-        QPlaceGeoCoordinate pos;
+        QGeoCoordinate pos;
         QScriptValue value = property.property(place_geoCoordinates_longitude_value);
         if (value.isValid() && !value.toString().isEmpty()) {
             bool isConverted;

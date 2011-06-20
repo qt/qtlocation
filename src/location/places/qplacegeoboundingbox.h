@@ -44,7 +44,7 @@
 
 #include <QSharedDataPointer>
 #include "qmobilityglobal.h"
-#include "qplacegeocoordinate.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,10 +65,10 @@ public:
         return !(other == *this);
     }
 
-    QPlaceGeoCoordinate topLeft() const;
-    void setTopLeft(const QPlaceGeoCoordinate &coordinate);
-    QPlaceGeoCoordinate bottomRight() const;
-    void setBottomRight(const QPlaceGeoCoordinate &coordinate);
+    QGeoCoordinate topLeft() const;
+    void setTopLeft(const QGeoCoordinate &coordinate);
+    QGeoCoordinate bottomRight() const;
+    void setBottomRight(const QGeoCoordinate &coordinate);
 
     bool isValid() const;
 

@@ -55,7 +55,7 @@ public:
 
     QString searchTerm;
     QList<QPlaceCategory> categories;
-    QPlaceGeoCoordinate searchCenter;
+    QGeoCoordinate searchCenter;
     QPlaceGeoBoundingBox boundingBox;
     int dymNumber;
 };
@@ -198,7 +198,7 @@ void QPlaceSearchQuery::setCategory(const QPlaceCategory &category)
 /*!
     Returns search center.
 */
-QPlaceGeoCoordinate QPlaceSearchQuery::searchCenter() const
+QGeoCoordinate QPlaceSearchQuery::searchCenter() const
 {
     return d->searchCenter;
 }
@@ -206,7 +206,7 @@ QPlaceGeoCoordinate QPlaceSearchQuery::searchCenter() const
 /*!
     Sets the search query to search with search \a center.
 */
-void QPlaceSearchQuery::setSearchCenter(const QPlaceGeoCoordinate &center)
+void QPlaceSearchQuery::setSearchCenter(const QGeoCoordinate &center)
 {
     d->searchCenter = center;
 }
@@ -252,6 +252,6 @@ void QPlaceSearchQuery::clear()
     d->searchTerm.clear();
     d->categories.clear();
     d->boundingBox = QPlaceGeoBoundingBox();
-    d->searchCenter = QPlaceGeoCoordinate();
+    d->searchCenter = QGeoCoordinate();
     d->dymNumber = 0;
 }
