@@ -264,7 +264,7 @@ void QPlaceLocation::setLocationScore(const int &score)
 /*!
     Returns view port.
 */
-QPlaceGeoBoundingBox QPlaceLocation::mapView() const
+QGeoBoundingBox QPlaceLocation::mapView() const
 {
     return d->mapView;
 }
@@ -272,7 +272,7 @@ QPlaceGeoBoundingBox QPlaceLocation::mapView() const
 /*!
     Sets view port.
 */
-void QPlaceLocation::setMapView(const QPlaceGeoBoundingBox &coordinate)
+void QPlaceLocation::setMapView(const QGeoBoundingBox &coordinate)
 {
     d->mapView = coordinate;
 }

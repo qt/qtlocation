@@ -47,10 +47,10 @@
 #include <QVariant>
 #include <QList>
 #include "qgeocoordinate.h"
+#include "qgeoboundingbox.h"
 #include "qmobilityglobal.h"
 #include "qplacealternativevalue.h"
 #include "qplaceaddress.h"
-#include "qplacegeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -87,8 +87,8 @@ public:
     void setLocationId(const QString &locationId);
     int locationScore() const;
     void setLocationScore(const int &score);
-    QPlaceGeoBoundingBox mapView() const;
-    void setMapView(const QPlaceGeoBoundingBox &coordinate);
+    QGeoBoundingBox mapView() const;
+    void setMapView(const QGeoBoundingBox &coordinate);
 
 private:
     QSharedDataPointer<QPlaceLocationPrivate> d;

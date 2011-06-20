@@ -387,7 +387,7 @@ void QPlaceJSonSearchParser::processLocation(const QScriptValue &properties, QPl
     }
 
     if (topLeft.isValid() && bottomRight.isValid()) {
-        QPlaceGeoBoundingBox boundingBox;
+        QGeoBoundingBox boundingBox;
         boundingBox.setTopLeft(topLeft);
         boundingBox.setBottomRight(bottomRight);
         location.setMapView(boundingBox);

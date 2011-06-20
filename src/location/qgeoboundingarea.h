@@ -43,14 +43,13 @@
 #define QGEOBOUNDINGAREA_H
 
 #include "qmobilityglobal.h"
+#include "qgeocoordinate.h"
 
 #include <QSharedDataPointer>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
-
-class QGeoCoordinate;
 
 class Q_LOCATION_EXPORT QGeoBoundingArea
 {

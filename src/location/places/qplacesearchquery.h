@@ -43,10 +43,10 @@
 #define QPLACESEARCHQUERY_H
 
 #include <QSharedDataPointer>
+#include "qgeoboundingbox.h"
 #include "qmobilityglobal.h"
 #include "qplacecategory.h"
 #include "qplacequery.h"
-#include "qplacegeoboundingbox.h"
 
 #include <QString>
 
@@ -84,8 +84,8 @@ public:
     QGeoCoordinate searchCenter() const;
     void setSearchCenter(const QGeoCoordinate &center);
 
-    QPlaceGeoBoundingBox boundingBox() const;
-    void setBoundingBox(const QPlaceGeoBoundingBox &boundingBox);
+    QGeoBoundingBox boundingBox() const;
+    void setBoundingBox(const QGeoBoundingBox &boundingBox);
 
     int didYouMeanSuggestionNumber() const;
     void setDidYouMeanSuggestionNumber(const int &number);

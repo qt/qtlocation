@@ -66,7 +66,7 @@ public:
     QString label;
     QString locationId;
     int locationScore;
-    QPlaceGeoBoundingBox mapView;
+    QGeoBoundingBox mapView;
 };
 
 QTM_END_NAMESPACE

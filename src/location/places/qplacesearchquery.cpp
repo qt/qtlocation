@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qplacesearchquery.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,7 +57,7 @@ public:
     QString searchTerm;
     QList<QPlaceCategory> categories;
     QGeoCoordinate searchCenter;
-    QPlaceGeoBoundingBox boundingBox;
+    QGeoBoundingBox boundingBox;
     int dymNumber;
 };
 
@@ -214,7 +215,7 @@ void QPlaceSearchQuery::setSearchCenter(const QGeoCoordinate &center)
 /*!
     Returns search bounding box.
 */
-QPlaceGeoBoundingBox QPlaceSearchQuery::boundingBox() const
+QGeoBoundingBox QPlaceSearchQuery::boundingBox() const
 {
     return d->boundingBox;
 }
@@ -222,7 +223,7 @@ QPlaceGeoBoundingBox QPlaceSearchQuery::boundingBox() const
 /*!
     Sets the search query to search with bounding box.
 */
-void QPlaceSearchQuery::setBoundingBox(const QPlaceGeoBoundingBox &boundingBox)
+void QPlaceSearchQuery::setBoundingBox(const QGeoBoundingBox &boundingBox)
 {
     d->boundingBox = boundingBox;
 }
@@ -251,7 +252,7 @@ void QPlaceSearchQuery::clear()
     QPlaceQuery::clear();
     d->searchTerm.clear();
     d->categories.clear();
-    d->boundingBox = QPlaceGeoBoundingBox();
+    d->boundingBox = QGeoBoundingBox();
     d->searchCenter = QGeoCoordinate();
     d->dymNumber = 0;
 }
