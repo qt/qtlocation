@@ -56,7 +56,7 @@
 #include "qlandmarksortorder.h"
 #include <QSharedData>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 #define Q_IMPLEMENT_LANDMARKSORTORDER_PRIVATE(Class) \
     Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
@@ -93,18 +93,17 @@ public:
     Qt::SortOrder order;
 };
 
-QTM_END_NAMESPACE
 
 #if defined(Q_CC_MWERKS)
 // This results in multiple symbol definition errors on all other compilers
 // but not having a definition here results in an attempt to use the unspecialized
 // clone (which fails because of the pure virtuals above)
-template<> QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate)>::clone()
+template<> QLandmarkSortOrderPrivate *QSharedDataPointer<QLandmarkSortOrderPrivate>::clone()
 {
     return d->clone();
 }
 #else
-template<> QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate)>::clone();
+template<> QLandmarkSortOrderPrivate *QSharedDataPointer<QLandmarkSortOrderPrivate>::clone();
 #endif
 
 QT_END_NAMESPACE

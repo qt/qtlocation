@@ -43,7 +43,7 @@
 #include "qlandmarkproximityfilter_p.h"
 #include "qgeocoordinate.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkProximityFilter
@@ -177,4 +177,4 @@ QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QLandmark
 
 QLandmarkProximityFilterPrivate::~QLandmarkProximityFilterPrivate() {}
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

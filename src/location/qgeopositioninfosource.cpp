@@ -66,7 +66,7 @@
 #endif
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoPositionInfoSource
@@ -560,4 +560,4 @@ QStringList QGeoPositionInfoSource::availableSources()
 
 #include "moc_qgeopositioninfosource.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

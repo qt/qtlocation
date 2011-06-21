@@ -48,7 +48,7 @@
 #include <QtCore>
 #include <QtDeclarative/qdeclarative.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoBoundingBox : public QObject
 {
@@ -106,7 +106,7 @@ private:
     double m_width;
 };
 
-QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoBoundingBox));
+QT_END_NAMESPACE
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoBoundingBox));
 
 #endif // QDECLARATIVEGEOBOUNDINGBOX_P_H

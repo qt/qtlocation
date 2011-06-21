@@ -43,7 +43,7 @@
 #include "qlandmarkrequests_p.h"
 #include <QFile>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkImportRequest
@@ -228,6 +228,6 @@ QList<QLandmarkId> QLandmarkImportRequest::landmarkIds() const
 
 #include "moc_qlandmarkimportrequest.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 

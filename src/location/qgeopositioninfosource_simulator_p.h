@@ -48,9 +48,8 @@
 
 QT_BEGIN_HEADER
 
+QT_BEGIN_NAMESPACE
 class QTimer;
-
-QTM_BEGIN_NAMESPACE
 
 class QGeoPositionInfoSourceSimulator : public QGeoPositionInfoSource
 {
@@ -80,6 +79,6 @@ private:
     QGeoPositionInfo lastPosition;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QGEOPOSITIONINFOSOURCESIMULATOR_H

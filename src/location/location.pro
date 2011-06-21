@@ -1,4 +1,5 @@
 load(qt_module)
+load(qt_module_config)
 
 TARGET = QtLocation
 QPRO_PWD   = $$PWD
@@ -10,7 +11,7 @@ QT = core gui network
 
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
-load(qt_module_config)
+INCLUDEPATH += $$QT.location.private_includes/QtLocation
 
 HEADERS += qtlocationversion.h
 

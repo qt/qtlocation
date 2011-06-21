@@ -64,7 +64,7 @@
 #include <lbttriggerconditionarea.h>
 #include <lbtgeocircle.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /**
  *  QGeoAreaMonitorS60
@@ -114,6 +114,6 @@ private:
     static TInt refCount;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif /* QGEOAREAMONITORS60_H_ */

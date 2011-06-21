@@ -48,7 +48,7 @@
 
 QT_BEGIN_HEADER
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 
@@ -69,7 +69,7 @@ public:
     virtual bool contains(const QGeoCoordinate &coordinate) const = 0;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_END_HEADER
 

@@ -53,7 +53,7 @@
 
 #include <QDebug>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass MapImage
@@ -349,5 +349,5 @@ void QDeclarativeGeoMapPixmapObject::error(QNetworkReply::NetworkError error)
 
 #include "moc_qdeclarativegeomappixmapobject_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

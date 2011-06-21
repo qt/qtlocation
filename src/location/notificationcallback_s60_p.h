@@ -58,7 +58,7 @@
 #include <lbs.h>
 #include <lbscommon.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class INotificationCallback
 {
@@ -69,6 +69,6 @@ public:
     virtual void updatePosition(HPositionGenericInfo  *mPosInfo, int error) = 0 ;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // NOTIFICATIONCALLBACK_H

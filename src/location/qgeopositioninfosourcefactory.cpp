@@ -41,7 +41,7 @@
 
 #include "qgeopositioninfosourcefactory.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
   \class QGeoPositionInfoSourceFactory
@@ -128,4 +128,4 @@ int QGeoPositionInfoSourceFactory::sourcePriority() const
 QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory()
 {}
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

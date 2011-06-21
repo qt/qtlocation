@@ -57,9 +57,6 @@
 QT_BEGIN_NAMESPACE
 class QTime;
 class QByteArray;
-QT_END_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
 
 class QGeoPositionInfo;
 class QLocationUtils
@@ -100,6 +97,6 @@ public:
     Q_AUTOTEST_EXPORT static bool getNmeaLatLong(const QByteArray &latString, char latDirection, const QByteArray &lngString, char lngDirection, double *lat, double *lon);
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

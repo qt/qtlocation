@@ -45,7 +45,7 @@
 #include "qgeocoordinate.h"
 #include "qnumeric.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoBoundingBox
@@ -860,5 +860,5 @@ bool QGeoBoundingBoxPrivate::operator== (const QGeoBoundingBoxPrivate &other) co
     return ((topLeft == other.topLeft) && (bottomRight == other.bottomRight));
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -78,7 +78,7 @@
 
 #include <QWeakPointer>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 bool matchString(const QString &sourceString, const QString &matchString, QLandmarkFilter::MatchFlags matchFlags )
 {
@@ -1446,4 +1446,4 @@ QList<QLandmarkId> QLandmarkManagerEngine::sortLandmarks(const QList<QLandmark>&
 
 #include "moc_qlandmarkmanagerengine.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

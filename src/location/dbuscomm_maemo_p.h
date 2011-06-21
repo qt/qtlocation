@@ -63,7 +63,7 @@
 #include "qgeosatelliteinfosource.h"
 #include "dbusserver_maemo_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class DBusComm: public QObject, DBusServerIF
 {
@@ -123,6 +123,6 @@ private Q_SLOTS:
 
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

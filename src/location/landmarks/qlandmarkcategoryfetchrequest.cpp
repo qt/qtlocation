@@ -43,7 +43,7 @@
 #include "qlandmarkrequests_p.h"
 #include "qlandmarkcategory.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkCategoryFetchRequest
@@ -170,4 +170,4 @@ void QLandmarkCategoryFetchRequest::setOffset(int offset) {
 
 #include "moc_qlandmarkcategoryfetchrequest.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

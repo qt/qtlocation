@@ -43,7 +43,7 @@
 #include "qlandmarkboxfilter_p.h"
 #include "qgeocoordinate.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkBoxFilter
@@ -170,4 +170,4 @@ QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate(const QLandmarkBoxFilterPri
 
 QLandmarkBoxFilterPrivate::~QLandmarkBoxFilterPrivate() {}
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

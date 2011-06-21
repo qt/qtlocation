@@ -42,7 +42,7 @@
 #include <qnumeric.h>
 #include "qdeclarativegeoboundingbox_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass BoundingBox QDeclarativeGeoBoundingBox
@@ -277,4 +277,4 @@ void QDeclarativeGeoBoundingBox::synchronizeDeclarative()
 
 #include "moc_qdeclarativegeoboundingbox_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

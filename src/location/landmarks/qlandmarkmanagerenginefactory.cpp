@@ -42,7 +42,7 @@
 #include "qlandmarkmanagerenginefactory.h"
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkManagerEngineFactory
@@ -103,6 +103,6 @@ QList<int> QLandmarkManagerEngineFactory::supportedImplementationVersions() cons
     \since 1.1
  */
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 

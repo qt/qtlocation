@@ -60,7 +60,7 @@
 #include <QList>
 #include <QPolygonF>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class ProjCoordinate;
 class QGeoCoordinate;
@@ -124,6 +124,6 @@ private:
     ProjPolygonPrivate *d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // PROJWRAPPER_P_H

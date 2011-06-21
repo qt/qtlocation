@@ -44,7 +44,7 @@
 #include <QColor>
 #include <QBrush>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapObjectBorder::QDeclarativeGeoMapObjectBorder(QObject *parent)
     : QObject(parent),
@@ -82,5 +82,5 @@ int QDeclarativeGeoMapObjectBorder::width() const
 
 #include "moc_qdeclarativegeomapobjectborder_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

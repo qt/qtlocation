@@ -47,7 +47,7 @@
 #include <qgeoserviceprovider.h>
 #include <qgeosearchmanager.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject* parent)
     : QAbstractListModel(parent),
@@ -380,4 +380,4 @@ void QDeclarativeGeocodeModel::setAutoUpdate(bool update)
 
 #include "moc_qdeclarativegeocodemodel_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

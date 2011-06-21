@@ -78,7 +78,6 @@
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
-QTM_USE_NAMESPACE
 
 class QLocationDeclarativeModule: public QDeclarativeExtensionPlugin
 {

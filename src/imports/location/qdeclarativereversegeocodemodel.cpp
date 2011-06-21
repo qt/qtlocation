@@ -43,7 +43,7 @@
 
 #include <qgeosearchmanager.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QDeclarativeReverseGeocodeModel::QDeclarativeReverseGeocodeModel(QObject *parent)
     : QDeclarativeGeoSearchModel(parent),
@@ -141,4 +141,4 @@ QVariant QDeclarativeReverseGeocodeModel::headerData(int section, Qt::Orientatio
 
 #include "moc_qdeclarativereversegeocodemodel_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

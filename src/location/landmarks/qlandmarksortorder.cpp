@@ -44,13 +44,13 @@
 #include "qlandmarkid.h"
 
 #if !defined(Q_CC_MWERKS)
-template<> QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate)>::clone()
+template<> QT_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate)>::clone()
 {
     return d->clone();
 }
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkSortOrder
@@ -196,4 +196,4 @@ QLandmarkSortOrderPrivate::~QLandmarkSortOrderPrivate()
 {
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

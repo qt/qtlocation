@@ -42,7 +42,7 @@
 #include "qgeomaptextobject.h"
 #include "qgeomaptextobject_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapTextObject
@@ -371,5 +371,5 @@ QGeoMapTextObjectPrivate::~QGeoMapTextObjectPrivate() {}
 
 #include "moc_qgeomaptextobject.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

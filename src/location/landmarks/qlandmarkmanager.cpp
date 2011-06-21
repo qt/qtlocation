@@ -56,7 +56,8 @@
 #include "qlandmarkmanagerenginefactory.h"
 #include "qlandmarkidfilter.h"
 
-QTM_USE_NAMESPACE
+
+QT_BEGIN_NAMESPACE
 
 /*!
    \variable QLandmarkManager::Gpx
@@ -1524,3 +1525,5 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 */
 
 #include "moc_qlandmarkmanager.cpp"
+
+QT_END_NAMESPACE

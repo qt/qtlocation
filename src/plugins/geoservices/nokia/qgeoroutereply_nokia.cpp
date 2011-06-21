@@ -51,6 +51,8 @@
 
 #include <qgeorouterequest.h>
 
+QT_BEGIN_NAMESPACE
+
 QGeoRouteReplyNokia::QGeoRouteReplyNokia(const QGeoRouteRequest &request, QNetworkReply *reply, QObject *parent)
         : QGeoRouteReply(request, parent),
         m_reply(reply)
@@ -120,3 +122,5 @@ void QGeoRouteReplyNokia::networkError(QNetworkReply::NetworkError error)
     m_reply->deleteLater();
     m_reply = 0;
 }
+
+QT_END_NAMESPACE

@@ -45,7 +45,7 @@
 #include <QMap>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkCategoryRemoveRequest
@@ -167,6 +167,6 @@ QMap<int, QLandmarkManager::Error> QLandmarkCategoryRemoveRequest::errorMap() co
 
 #include "moc_qlandmarkcategoryremoverequest.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 

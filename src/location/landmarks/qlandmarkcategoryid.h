@@ -48,7 +48,7 @@
 
 QT_BEGIN_HEADER
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkCategoryIdPrivate;
 class Q_LOCATION_EXPORT QLandmarkCategoryId
@@ -73,11 +73,12 @@ private:
     QSharedDataPointer<QLandmarkCategoryIdPrivate> d;
 };
 
-QTM_END_NAMESPACE
+Q_DECLARE_TYPEINFO(QLandmarkCategoryId, Q_MOVABLE_TYPE);
+
+QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QLandmarkCategoryId)
 
 QT_END_HEADER
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QLandmarkCategoryId))
-
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QLandmarkCategoryId), Q_MOVABLE_TYPE);
 #endif

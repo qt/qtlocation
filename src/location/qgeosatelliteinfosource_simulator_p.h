@@ -51,7 +51,7 @@
 
 QT_BEGIN_HEADER
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoSatelliteInfoSourceSimulator : public QGeoSatelliteInfoSource
 {
@@ -74,7 +74,7 @@ private:
     QTimer *requestTimer;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QGEOSATELLITEINFOSOURCE_SIMULATOR_H
 

@@ -58,10 +58,10 @@
 #include <QPen>
 #include <QPolygonF>
 
+QT_BEGIN_NAMESPACE
+
 class QGraphicsPathItem;
 class QPointF;
-
-QTM_BEGIN_NAMESPACE
 
 class QGeoMapPolylineObject;
 
@@ -83,6 +83,6 @@ private:
     void genPath();
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif //QGEOTILEDMAPPOLYLINEOBJECT_INFO_P_H

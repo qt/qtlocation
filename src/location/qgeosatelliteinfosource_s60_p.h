@@ -63,7 +63,7 @@
 
 #define MAX_SIZE 25
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 // CLASS DECLARATION
 //forward declaration
@@ -275,6 +275,6 @@ private:
     TUint8  mModuleFlags;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif /* QGEOSATELLITEINFOSOURCE60_H_ */

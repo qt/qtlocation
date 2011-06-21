@@ -58,7 +58,7 @@
 
 #include <QDebug>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*
   A quick note about how the transforms are set up:
@@ -1176,4 +1176,4 @@ QGraphicsItem* QGeoMapObjectEngine::graphicsItemFromMapObject(QGeoMapObject *obj
 
 #include "moc_qgeomapobjectengine_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

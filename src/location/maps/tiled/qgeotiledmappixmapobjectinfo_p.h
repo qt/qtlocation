@@ -58,10 +58,9 @@
 
 #include <QPixmap>
 
+QT_BEGIN_NAMESPACE
+
 class QGraphicsPixmapItem;
-
-QTM_BEGIN_NAMESPACE
-
 class QGeoMapPixmapObject;
 
 class QGeoTiledMapPixmapObjectInfo : public QGeoTiledMapObjectInfo
@@ -79,7 +78,7 @@ public slots:
     void offsetChanged(const QPoint &offset);
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif //QGEOTILEDMAPPIXMAPOBJECT_INFO_P_H
 

@@ -48,7 +48,7 @@
 #include "qgeopositioninfosource_geocluemaster_p.h"
 #include <gconf/gconf-client.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 #define MINIMUM_UPDATE_INTERVAL 1000
 #define UPDATE_TIMEOUT_COLD_START 120000
@@ -553,4 +553,4 @@ QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::geoclueToPositionInfo(
 }
 
 #include "moc_qgeopositioninfosource_geocluemaster_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

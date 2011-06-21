@@ -43,7 +43,7 @@
 #include "qlandmarkfilter_p.h"
 #include <QHash>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkAttributeFilterPrivate : public QLandmarkFilterPrivate
 {
@@ -277,4 +277,4 @@ QLandmarkFilter::MatchFlags QLandmarkAttributeFilter::matchFlags(const QString &
     return d->flags.value(key);
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

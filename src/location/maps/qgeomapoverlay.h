@@ -47,10 +47,10 @@
 #include <QList>
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
+
 class QPainter;
 class QStyleOptionGraphicsItem;
-
-QTM_BEGIN_NAMESPACE
 
 class QGeoMapData;
 class QGeoMapOverlayPrivate;
@@ -76,6 +76,6 @@ private:
     friend class QGeoMapData;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

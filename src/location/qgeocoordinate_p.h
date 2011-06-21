@@ -56,7 +56,7 @@
 #include "qmobilityglobal.h"
 #include "qgeocoordinate.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoCoordinatePrivate
 {
@@ -72,6 +72,6 @@ public:
                                      double *lon, double *lat);
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QGEOCOORDINATE_P_H

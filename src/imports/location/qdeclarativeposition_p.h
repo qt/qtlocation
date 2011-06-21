@@ -56,7 +56,7 @@
 #include <QDebug>
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativePosition : public QObject
 {
@@ -126,7 +126,7 @@ private:
     QDeclarativeCoordinate m_coordinate;
 };
 
-QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativePosition));
+QT_END_NAMESPACE
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePosition));
 
 #endif

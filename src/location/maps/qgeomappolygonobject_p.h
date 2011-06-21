@@ -48,7 +48,7 @@
 #include <QPen>
 #include <QBrush>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMapPolygonObjectPrivate
 {
@@ -61,6 +61,6 @@ public:
     QBrush brush;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -41,7 +41,7 @@
 
 #include "qdeclarativegeomapmouseevent_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass MapMouseEvent QDeclarativeGeoMapMouseEvent
@@ -199,4 +199,4 @@ QDeclarativeCoordinate* QDeclarativeGeoMapMouseEvent::coordinate()
 
 #include "moc_qdeclarativegeomapmouseevent_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

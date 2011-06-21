@@ -44,13 +44,10 @@
 #include "qmobilityglobal.h"
 
 QT_BEGIN_NAMESPACE
+QT_BEGIN_HEADER
 class QDebug;
 class QDataStream;
-QT_END_NAMESPACE
 
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
 
 class QGeoSatelliteInfoPrivate;
 class Q_LOCATION_EXPORT QGeoSatelliteInfo
@@ -104,7 +101,7 @@ Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoSatelli
 Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info);
 #endif
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_END_HEADER
 

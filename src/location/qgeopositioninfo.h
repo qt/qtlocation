@@ -46,14 +46,11 @@
 
 #include <QDateTime>
 
+QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
+
 class QDebug;
 class QDataStream;
-QT_END_NAMESPACE
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
 
 class QGeoPositionInfoPrivate;
 class Q_LOCATION_EXPORT QGeoPositionInfo
@@ -113,7 +110,7 @@ Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositio
 Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
 #endif
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_END_HEADER
 

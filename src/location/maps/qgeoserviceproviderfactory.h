@@ -49,7 +49,7 @@
 #include <QMap>
 #include <QString>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QGeoServiceProviderFactory
 {
@@ -70,7 +70,7 @@ public:
             QString *errorString) const;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 #define QT_GEOSERVICE_BACKEND_INTERFACE "com.nokia.qt.mobility.geoservice.serviceproviderfactory/1.0"

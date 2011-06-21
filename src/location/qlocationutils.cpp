@@ -48,7 +48,7 @@
 
 #include <math.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 // converts e.g. 15306.0235 from NMEA sentence to 153.100392
 static double qlocationutils_nmeaDegreesToDecimal(double nmeaDegrees)
@@ -350,5 +350,5 @@ bool QLocationUtils::getNmeaLatLong(const QByteArray &latString, char latDirecti
     return false;
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

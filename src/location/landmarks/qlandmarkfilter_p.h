@@ -71,7 +71,7 @@
             d_ptr = new Class##Private(); \
     }
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QLandmarkFilterPrivate : public QSharedData
 {
 public:
@@ -91,19 +91,19 @@ public:
     QLandmarkFilter::FilterType type;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 #if defined(Q_CC_MWERKS)
 // This results in multiple symbol definition errors on all other compilers
 // but not having a definition here results in an attempt to use the unspecialized
 // clone (which fails because of the pure virtuals above)
-template<> QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate)>::clone()
+template<> QT_PREPEND_NAMESPACE(QLandmarkFilterPrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QLandmarkFilterPrivate)>::clone()
 {
     return d->clone();
 }
 #else
-template<> QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate)>::clone();
+template<> QT_PREPEND_NAMESPACE(QLandmarkFilterPrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QLandmarkFilterPrivate)>::clone();
 #endif
 QT_END_NAMESPACE
 

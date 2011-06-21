@@ -90,7 +90,7 @@
     \endcode
 */
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoAreaMonitorPrivate
 {
@@ -216,4 +216,4 @@ QGeoAreaMonitor *QGeoAreaMonitor::createDefaultMonitor(QObject *parent)
     \since 1.0
 */
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

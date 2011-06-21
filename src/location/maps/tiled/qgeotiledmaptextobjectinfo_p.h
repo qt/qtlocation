@@ -60,9 +60,9 @@
 #include <QPen>
 #include <QBrush>
 
-class QGraphicsSimpleTextItem;
+QT_BEGIN_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+class QGraphicsSimpleTextItem;
 
 class QGeoMapTextObject;
 
@@ -88,7 +88,7 @@ private:
     void doAlignment();
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif //QGEOTILEDMAPTEXTOBJECT_INFO_P_H
 

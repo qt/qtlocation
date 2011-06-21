@@ -56,7 +56,7 @@
 #include "qlandmarkfilter_p.h"
 #include "qgeoboundingbox.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 
@@ -78,6 +78,6 @@ public:
     QGeoBoundingBox boundingBox;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

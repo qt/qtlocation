@@ -57,7 +57,7 @@
 #include <QDebug>
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeLandmark : public QDeclarativeGeoPlace
 {
@@ -108,7 +108,7 @@ private:
     QLandmark m_landmark;
 };
 
-QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmark));
+QT_END_NAMESPACE
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeLandmark));
 
 #endif // QDECLARATIVELANDMARK_P_H

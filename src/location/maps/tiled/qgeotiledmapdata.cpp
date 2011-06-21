@@ -80,6 +80,8 @@
 
 #include <math.h>
 
+QT_BEGIN_NAMESPACE
+
 uint qHash(const QRectF& key)
 {
     uint result = qHash(qRound(key.x()));
@@ -89,7 +91,6 @@ uint qHash(const QRectF& key)
     return result;
 }
 
-QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoTiledMapData
@@ -1427,4 +1428,4 @@ QGeoTiledMapRequest QGeoTileIterator::next()
 
 #include "moc_qgeotiledmapdata.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

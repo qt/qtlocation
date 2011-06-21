@@ -62,11 +62,11 @@
 #include <QHash>
 #include <QList>
 
+QT_BEGIN_NAMESPACE
 class QTransform;
 class QGraphicsItem;
 class QGraphicsScene;
 
-QTM_BEGIN_NAMESPACE
 
 class QGeoMapObjectEngine : public QObject
 {
@@ -170,6 +170,6 @@ private:
     Q_DISABLE_COPY(QGeoMapObjectEngine)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QGEOMAPOBJECTENGINE_P_H

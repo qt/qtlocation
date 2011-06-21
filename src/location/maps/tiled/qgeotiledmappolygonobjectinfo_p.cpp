@@ -46,7 +46,7 @@
 
 #include "qgeomappolygonobject.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoTiledMapPolygonObjectInfo::QGeoTiledMapPolygonObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoTiledMapObjectInfo(mapData, mapObject)
@@ -134,5 +134,5 @@ void QGeoTiledMapPolygonObjectInfo::genPoly()
 
 #include "moc_qgeotiledmappolygonobjectinfo_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

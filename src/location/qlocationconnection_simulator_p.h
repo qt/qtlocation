@@ -47,7 +47,7 @@
 
 QT_BEGIN_HEADER
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 namespace Simulator
 {
@@ -75,6 +75,6 @@ void ensureSimulatorConnection();
 QGeoPositionInfoData *qtPositionInfo();
 QGeoSatelliteInfoData *qtSatelliteInfo();
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QLOCATIONCONNECTION_H

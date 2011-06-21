@@ -42,7 +42,7 @@
 #include "qgeotiledmappingmanagerengine.h"
 #include "qgeotiledmappingmanagerengine_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoTiledMappingManagerEngine
@@ -185,4 +185,4 @@ QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate() {}
 
 #include "moc_qgeotiledmappingmanagerengine.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

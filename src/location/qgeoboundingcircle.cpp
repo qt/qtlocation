@@ -47,7 +47,7 @@
 
 #include <QDebug>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoBoundingCircle
@@ -305,5 +305,5 @@ bool QGeoBoundingCirclePrivate::operator== (const QGeoBoundingCirclePrivate &oth
     return ((center == other.center) && (radius == other.radius));
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

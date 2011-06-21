@@ -41,7 +41,7 @@
 
 #include "qdeclarativegeoplace_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass Place QDeclarativeGeoPlace
@@ -155,4 +155,4 @@ void QDeclarativeGeoPlace::setAddress(QDeclarativeGeoAddress* address)
 
 #include "moc_qdeclarativegeoplace_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

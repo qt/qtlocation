@@ -56,7 +56,7 @@
 #include <QDeclarativeListProperty>
 #include <QObject>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeLandmarkFilterBase : public QObject
 {
@@ -229,12 +229,12 @@ private:
     QLandmarkIntersectionFilter m_filter;
 };
 
-QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkNameFilter));
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkCategoryFilter));
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkBoxFilter));
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkProximityFilter));
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkUnionFilter));
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkIntersectionFilter));
+QT_END_NAMESPACE
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeLandmarkNameFilter));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeLandmarkCategoryFilter));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeLandmarkBoxFilter));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeLandmarkProximityFilter));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeLandmarkUnionFilter));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeLandmarkIntersectionFilter));
 
 #endif // QDECLARATIVELANDMARKFILTERS_P_H

@@ -51,6 +51,8 @@
 #include <QXmlStreamReader>
 #include <QIODevice>
 
+QT_BEGIN_NAMESPACE
+
 QGeoCodeXmlParser::QGeoCodeXmlParser()
         : m_reader(0)
 {
@@ -574,3 +576,4 @@ bool QGeoCodeXmlParser::parseCoordinate(QGeoCoordinate *coordinate, const QStrin
     return true;
 }
 
+QT_END_NAMESPACE

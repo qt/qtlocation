@@ -51,6 +51,8 @@
 #include <gconf/gconf-value.h>
 #include <gconf/gconf-client.h>
 
+QT_BEGIN_NAMESPACE
+
 struct GConfItemPrivate {
     QString key;
     QVariant value;
@@ -362,3 +364,5 @@ GConfItem::~GConfItem()
     }
     delete priv;
 }
+
+QT_END_NAMESPACE

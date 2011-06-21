@@ -48,13 +48,13 @@
 #endif
 
 #if !defined(Q_CC_MWERKS)
-template<> QTM_PREPEND_NAMESPACE(QGeoPlacePrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QGeoPlacePrivate)>::clone()
+template<> QT_PREPEND_NAMESPACE(QGeoPlacePrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QGeoPlacePrivate)>::clone()
 {
     return d->clone();
 }
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoPlace
@@ -276,5 +276,5 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
             && (address == other.address));
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

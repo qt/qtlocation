@@ -46,13 +46,12 @@
 #include <QVariant>
 #include <QSharedDataPointer>
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
 
 class QStringList;
 class QUrl;
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
 class QLandmarkCategoryId;
 
 class QLandmarkCategoryPrivate;
@@ -82,11 +81,11 @@ private:
     QSharedDataPointer<QLandmarkCategoryPrivate> d;
 };
 
-QTM_END_NAMESPACE
+Q_DECLARE_TYPEINFO(QLandmarkCategory, Q_MOVABLE_TYPE);
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QLandmarkCategory))
+QT_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QLandmarkCategory), Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(QLandmarkCategory)
 
 QT_END_HEADER
 

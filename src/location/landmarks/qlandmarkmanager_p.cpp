@@ -52,7 +52,7 @@
 
 #include "qmobilitypluginsearch.h"
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QLandmarkManagerPrivate::QLandmarkManagerPrivate()
         : engine(0),
@@ -169,3 +169,5 @@ void QLandmarkManagerPrivate::loadStaticFactories(QHash<QString, QLandmarkManage
 
     }
 }
+
+QT_END_NAMESPACE

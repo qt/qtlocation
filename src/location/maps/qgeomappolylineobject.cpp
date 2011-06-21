@@ -44,7 +44,7 @@
 
 #include "qgeocoordinate.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapPolylineObject
@@ -174,5 +174,5 @@ QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}
 
 #include "moc_qgeomappolylineobject.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

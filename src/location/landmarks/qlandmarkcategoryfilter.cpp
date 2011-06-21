@@ -43,7 +43,7 @@
 #include "qlandmarkcategoryfilter_p.h"
 #include "qlandmarkcategoryid.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkCategoryFilter
@@ -129,4 +129,4 @@ QLandmarkCategoryFilterPrivate::QLandmarkCategoryFilterPrivate(const QLandmarkCa
 
 QLandmarkCategoryFilterPrivate::~QLandmarkCategoryFilterPrivate() {}
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

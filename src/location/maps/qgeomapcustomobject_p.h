@@ -46,10 +46,10 @@
 
 #include <QPoint>
 
+
+QT_BEGIN_NAMESPACE
+
 class QGraphicsItem;
-
-QTM_BEGIN_NAMESPACE
-
 class QGeoMapCustomObjectPrivate
 {
 public:
@@ -60,6 +60,6 @@ public:
     QPoint offset;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

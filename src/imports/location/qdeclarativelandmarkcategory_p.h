@@ -48,7 +48,7 @@
 #include <QAbstractListModel>
 #include <QtCore>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeLandmarkCategory : public QObject
 {
@@ -79,7 +79,7 @@ private:
     void setCategory(const QLandmarkCategory& category);
 };
 
-QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkCategory));
+QT_END_NAMESPACE
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeLandmarkCategory));
 
 #endif // QDECLARATIVELANDMARKCATEGORY_P_H

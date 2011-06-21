@@ -52,7 +52,7 @@
 #include <qgeotiledmapreply.h>
 #include <QNetworkReply>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMapReplyNokia : public QGeoTiledMapReply
 {
@@ -74,5 +74,7 @@ private slots:
 private:
     QNetworkReply *m_reply;
 };
+
+QT_END_NAMESPACE
 
 #endif

@@ -41,7 +41,7 @@
 
 #include "qdeclarativegeoaddress_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass Address QDeclarativeGeoAddress
@@ -245,4 +245,4 @@ void QDeclarativeGeoAddress::setPostcode(const QString& postcode)
 
 #include "moc_qdeclarativegeoaddress_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

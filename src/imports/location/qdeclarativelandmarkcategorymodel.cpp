@@ -48,7 +48,7 @@
 #include <QDebug>
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass LandmarkCategoryModel QDeclarativeLandmarkCategoryModel
@@ -340,4 +340,4 @@ void QDeclarativeLandmarkCategoryModel::categories_clear(QDeclarativeListPropert
 
 #include "moc_qdeclarativelandmarkcategorymodel_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

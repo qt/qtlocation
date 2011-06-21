@@ -61,7 +61,7 @@
 #include "qgeopositioninfosource.h"
 //#include "qgeopositioninfosources60.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class CQGeoPositionInfoSourceS60 ;
 class CQGeoSatelliteInfoSourceS60;
@@ -158,6 +158,6 @@ private:
     TPositionSatelliteInfo mPosSatInfo;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMLBACKENDAO_H

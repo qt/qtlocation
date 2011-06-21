@@ -65,7 +65,7 @@
 #endif
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoSatelliteInfoSourcePrivate
 {
@@ -417,4 +417,4 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
 #include "moc_qgeosatelliteinfosource.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

@@ -62,7 +62,7 @@
 #include <private/projwrapper_p.h>
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMappingManagerEngine;
 class QGeoMapObjectEngine;
@@ -105,6 +105,6 @@ private:
     Q_DISABLE_COPY(QGeoMapDataPrivate)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

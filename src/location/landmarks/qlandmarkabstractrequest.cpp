@@ -45,7 +45,8 @@
 #include <QDebug>
 #include <QMutexLocker>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
+
 
 QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManager *mgr)
     : type(QLandmarkAbstractRequest::InvalidRequest),
@@ -436,6 +437,8 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
 */
 
 #include "moc_qlandmarkabstractrequest.cpp"
+
+QT_END_NAMESPACE
 
 
 

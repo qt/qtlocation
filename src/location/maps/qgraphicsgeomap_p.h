@@ -55,7 +55,7 @@
 
 #include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoServiceProvider;
 class QGeoMappingManager;
@@ -75,6 +75,6 @@ private:
     Q_DISABLE_COPY(QGraphicsGeoMapPrivate)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

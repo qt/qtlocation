@@ -49,7 +49,7 @@
 #include <QString>
 #include <QVariant>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoServiceProviderParameter : public QObject
 {
@@ -138,9 +138,9 @@ private:
     Q_DISABLE_COPY(QDeclarativeGeoServiceProvider)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoServiceProviderParameter));
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoServiceProvider));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProviderParameter));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProvider));
 
 #endif

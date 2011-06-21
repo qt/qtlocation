@@ -56,7 +56,7 @@
 #include "qgeotiledmapreply.h"
 #include "qgeotiledmaprequest.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoTiledMapReplyPrivate
 {
@@ -75,6 +75,6 @@ public:
     QString mapImageFormat;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

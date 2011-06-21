@@ -54,7 +54,7 @@
 #include <QtDeclarative/qdeclarative.h>
 #include <QAbstractListModel>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeLandmarkCategoryModel: public QDeclarativeLandmarkAbstractModel
 {
@@ -112,7 +112,7 @@ private:
     QDeclarativeLandmark* m_landmark;
 };
 
-QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkCategoryModel));
+QT_END_NAMESPACE
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeLandmarkCategoryModel));
 
 #endif // QDECLARATIVELANDMARKCATEGORYMODEL_P_H

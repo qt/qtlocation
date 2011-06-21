@@ -48,7 +48,7 @@
 
 #include "qdeclarativegeomapobject_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 class QGeoMapObject;
@@ -207,8 +207,8 @@ private:
     Q_DISABLE_COPY(QDeclarativeGraphicsGeoMap)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGraphicsGeoMap));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGraphicsGeoMap));
 
 #endif

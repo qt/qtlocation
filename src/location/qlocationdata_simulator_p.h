@@ -59,7 +59,7 @@
 #include <QtCore/QList>
 
 QT_BEGIN_HEADER
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 struct QGeoPositionInfoData
 {
@@ -100,7 +100,7 @@ struct QGeoSatelliteInfoData
 
 void qt_registerLocationTypes();
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QtMobility::QGeoPositionInfoData)
 Q_DECLARE_METATYPE(QtMobility::QGeoSatelliteInfoData)

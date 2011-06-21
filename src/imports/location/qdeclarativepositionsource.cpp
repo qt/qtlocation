@@ -51,7 +51,7 @@
 #include <e32std.h>
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass PositionSource
@@ -417,4 +417,4 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
 
 #include "moc_qdeclarativepositionsource_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

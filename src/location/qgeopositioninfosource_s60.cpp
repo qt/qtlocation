@@ -49,7 +49,7 @@
 
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 // constructor
 CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject* aParent) : QGeoPositionInfoSource(aParent),
@@ -960,4 +960,4 @@ void CQGeoPositionInfoSourceS60::disconnectNotify(const char *aSignal)
 
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

@@ -58,7 +58,7 @@
 #include <QMap>
 #include <QLocale>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoRoutingManagerEnginePrivate
 {
@@ -85,6 +85,6 @@ private:
     Q_DISABLE_COPY(QGeoRoutingManagerEnginePrivate)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

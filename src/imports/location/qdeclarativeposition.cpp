@@ -45,7 +45,7 @@
 #include <QFile>
 #include <QApplication>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass Position
@@ -361,4 +361,4 @@ void QDeclarativePosition::invalidate()
 
 #include "moc_qdeclarativeposition_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

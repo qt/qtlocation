@@ -48,7 +48,7 @@
 #include <QtDeclarative/qdeclarative.h>
 #include <QDeclarativeListProperty>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 
@@ -85,8 +85,8 @@ private:
     QList<QDeclarativeGeoMapObject*> objects_;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapGroupObject));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapGroupObject));
 
 #endif

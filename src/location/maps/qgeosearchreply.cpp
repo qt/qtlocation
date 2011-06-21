@@ -42,7 +42,7 @@
 #include "qgeosearchreply.h"
 #include "qgeosearchreply_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 /*!
     \class QGeoSearchReply
 
@@ -341,4 +341,4 @@ QGeoSearchReplyPrivate::~QGeoSearchReplyPrivate() {}
 
 #include "moc_qgeosearchreply.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

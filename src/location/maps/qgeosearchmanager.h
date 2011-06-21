@@ -49,9 +49,8 @@
 #include <QList>
 #include <QMap>
 
+QT_BEGIN_NAMESPACE
 class QLocale;
-
-QTM_BEGIN_NAMESPACE
 
 class QLandmarkManager;
 
@@ -114,6 +113,6 @@ private:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoSearchManager::SearchTypes)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

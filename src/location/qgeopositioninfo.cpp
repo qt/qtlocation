@@ -44,7 +44,7 @@
 #include <QDebug>
 #include <QDataStream>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoPositionInfoPrivate
 {
@@ -345,4 +345,4 @@ QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info)
 }
 #endif
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

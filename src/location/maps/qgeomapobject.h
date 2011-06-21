@@ -47,11 +47,11 @@
 #include <QList>
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
 class QPainter;
 class QRectF;
 class QGraphicsItem;
 
-QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 class QGeoBoundingBox;
@@ -149,6 +149,6 @@ private:
     friend class QGeoMapGroupObject;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

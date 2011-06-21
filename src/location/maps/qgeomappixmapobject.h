@@ -48,7 +48,7 @@
 #include <QPixmap>
 #include <QPoint>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMapPixmapObjectPrivate;
 
@@ -86,6 +86,6 @@ private:
     Q_DISABLE_COPY(QGeoMapPixmapObject)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

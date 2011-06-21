@@ -53,6 +53,8 @@
 #include <QStringList>
 #include <QString>
 
+QT_BEGIN_NAMESPACE
+
 QGeoRouteXmlParser::QGeoRouteXmlParser(const QGeoRouteRequest &request)
         : m_request(request),
         m_reader(0)
@@ -558,3 +560,5 @@ bool QGeoRouteXmlParser::parseBoundingBox(QGeoBoundingBox &bounds)
 
     return false;
 }
+
+QT_END_NAMESPACE

@@ -59,7 +59,7 @@
 #include <lbscommon.h>
 #include <lbssatellite.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class INotificationSatelliteCallback
 {
@@ -70,6 +70,6 @@ public:
     virtual void updatePosition(TPositionSatelliteInfo  &aSatInfo, int error, bool isStartUpdate) = 0 ;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif /* NOTIFICATIONSATELLITECALLBACK_H_ */

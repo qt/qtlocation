@@ -43,7 +43,7 @@
 #include "qlandmarkrequests_p.h"
 #include "qlandmarkcategory.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkCategorySaveRequest
@@ -134,6 +134,6 @@ QMap<int, QLandmarkManager::Error> QLandmarkCategorySaveRequest::errorMap() cons
 
 #include "moc_qlandmarkcategorysaverequest.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 

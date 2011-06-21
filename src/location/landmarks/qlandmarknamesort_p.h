@@ -55,7 +55,7 @@
 
 #include "qlandmarksortorder_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkNameSortPrivate : public QLandmarkSortOrderPrivate
 {
@@ -76,6 +76,6 @@ public:
     Qt::CaseSensitivity sensitivity;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

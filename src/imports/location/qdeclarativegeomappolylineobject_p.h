@@ -52,7 +52,7 @@
 class QColor;
 class QBrush;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoMapPolylineObject : public QDeclarativeGeoMapObject
 {
@@ -96,8 +96,8 @@ private:
     bool componentCompleted_;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapPolylineObject));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapPolylineObject));
 
 #endif

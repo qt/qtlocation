@@ -44,13 +44,10 @@
 #include "qmobilityglobal.h"
 #include "qgeopositioninfosource.h"
 
-QT_BEGIN_NAMESPACE
-class QIODevice;
-QT_END_NAMESPACE
-
 QT_BEGIN_HEADER
+QT_BEGIN_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+class QIODevice;
 
 class QNmeaPositionInfoSourcePrivate;
 class Q_LOCATION_EXPORT QNmeaPositionInfoSource : public QGeoPositionInfoSource
@@ -93,7 +90,7 @@ private:
     QNmeaPositionInfoSourcePrivate *d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_END_HEADER
 

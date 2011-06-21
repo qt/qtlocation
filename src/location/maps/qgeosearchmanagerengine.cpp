@@ -46,7 +46,7 @@
 #include "qgeocoordinate.h"
 #include "qlandmarkmanager.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoSearchManagerEngine
@@ -512,4 +512,4 @@ QGeoSearchManagerEnginePrivate::~QGeoSearchManagerEnginePrivate()
 
 #include "moc_qgeosearchmanagerengine.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

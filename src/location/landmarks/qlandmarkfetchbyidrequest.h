@@ -44,7 +44,7 @@
 
 #include "qlandmarkabstractrequest.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkFetchByIdRequestPrivate;
 class Q_LOCATION_EXPORT QLandmarkFetchByIdRequest : public QLandmarkAbstractRequest
@@ -66,6 +66,6 @@ private:
     friend class QLandmarkManagerEngine;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

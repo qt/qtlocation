@@ -66,7 +66,7 @@
 
 class QGraphicsScene;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoTiledMapData;
 class QGeoTiledMapRequest;
@@ -163,6 +163,6 @@ private:
     QRect tileRect;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

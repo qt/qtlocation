@@ -45,7 +45,7 @@
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapRectangleObject
@@ -295,5 +295,5 @@ QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate() {}
 
 #include "moc_qgeomaprectangleobject.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

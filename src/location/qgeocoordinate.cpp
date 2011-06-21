@@ -56,7 +56,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 static const double qgeocoordinate_EARTH_MEAN_RADIUS = 6371.0072;
 
@@ -654,4 +654,4 @@ QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
 }
 #endif
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

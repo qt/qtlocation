@@ -41,7 +41,7 @@
 
 #include "qdeclarativegeoroutesegment_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoRouteSegment::QDeclarativeGeoRouteSegment(QObject *parent)
     : QObject(parent)
@@ -111,4 +111,4 @@ void QDeclarativeGeoRouteSegment::path_clear(QDeclarativeListProperty<QDeclarati
 
 #include "moc_qdeclarativegeoroutesegment_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

@@ -43,7 +43,7 @@
 #include "qlandmarkrequests_p.h"
 #include "qlandmark.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkFetchByIdRequest
@@ -142,4 +142,4 @@ QMap<int, QLandmarkManager::Error> QLandmarkFetchByIdRequest::errorMap() const
 
 #include "moc_qlandmarkfetchbyidrequest.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

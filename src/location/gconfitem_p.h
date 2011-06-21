@@ -46,6 +46,8 @@
 #include <QStringList>
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
+
 /*!
 
   \brief GConfItem is a simple C++ wrapper for GConf.
@@ -162,5 +164,7 @@ private:
 
     void update_value(bool emit_signal);
 };
+
+QT_END_NAMESPACE
 
 #endif // GCONFITEM_H

@@ -49,9 +49,9 @@
 #include "qlandmarkabstractrequest.h"
 
 
-class QIODevice;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
+class QIODevice;
 class QLandmarkCategory;
 class QLandmarkCategoryId;
 class QLandmark;
@@ -194,6 +194,6 @@ public:
     static QList<QLandmarkId> sortLandmarks(const QList<QLandmark>& landmarks, const QList<QLandmarkSortOrder>& sortOrders);
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

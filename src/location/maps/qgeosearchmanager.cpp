@@ -56,7 +56,7 @@
 
 #include <QLocale>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoSearchManager
@@ -679,4 +679,4 @@ void QGeoCombiningSearchReply::landmarkFetchStateChanged(QLandmarkAbstractReques
 #include "moc_qgeosearchmanager.cpp"
 #include "moc_qgeosearchmanager_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

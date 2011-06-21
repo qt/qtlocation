@@ -43,9 +43,9 @@
 #define QLANDMARKEXPORTREQUEST_H
 
 #include "qlandmarkabstractrequest.h"
-class QIODevice;
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
+class QIODevice;
 class QLandmarkExportRequestPrivate;
 class Q_LOCATION_EXPORT QLandmarkExportRequest : public QLandmarkAbstractRequest
 {
@@ -74,7 +74,7 @@ private:
     friend class QLandmarkManagerEngine;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif
 
