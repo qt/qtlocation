@@ -88,6 +88,7 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomaprouteobject.cpp \
            qdeclarativegeoboundingcircle.cpp
 
+include(declarativeplaces/declarativeplaces.pri)
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
 # are both copied to qt/imports/QtMobility/location -directory,

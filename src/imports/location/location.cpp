@@ -73,6 +73,31 @@
 #include "qdeclarativegeocodemodel_p.h"
 #include "qdeclarativegeomaneuver_p.h"
 
+//Place includes
+#include "qdeclarativeaddress_p.h"
+#include "qdeclarativealternativevalue_p.h"
+#include "qdeclarativebusinessfeature_p.h"
+#include "qdeclarativebusinessinformation_p.h"
+#include "qdeclarativecategory_p.h"
+#include "qdeclarativecontact_p.h"
+#include "qdeclarativedescription_p.h"
+#include "qdeclarativelocation_p.h"
+#include "qdeclarativemediaobject_p.h"
+#include "qdeclarativemediapaginationlist_p.h"
+#include "qdeclarativeplace_p.h"
+#include "qdeclarativerating_p.h"
+#include "qdeclarativereview_p.h"
+#include "qdeclarativereviewpaginationlist_p.h"
+#include "qdeclarativesearchresult_p.h"
+#include "qdeclarativesupplier_p.h"
+
+#include "qdeclarativerecommendationmodel_p.h"
+#include "qdeclarativesupportedcategoriesmodel_p.h"
+#include "qdeclarativesearchresultmodel_p.h"
+#include "qdeclarativetextpredictionmodel_p.h"
+
+#include "qdeclarativeplacemanager_p.h"
+
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
 #include <QDebug>
@@ -171,6 +196,31 @@ public:
             qmlRegisterType<QDeclarativeGeoRouteSegment>(uri, 5, 0, "RouteSegment");
             qmlRegisterType<QDeclarativeGeoManeuver>(uri, 5, 0, "RouteManeuver");
             qmlRegisterType<QDeclarativeGeoBoundingCircle>(uri, 5, 0, "BoundingCircle");
+
+            qmlRegisterType<QDeclarativeAlternativeValue>(uri, 5, 0, "AlternativeValue");
+            qmlRegisterType<QDeclarativeBusinessFeature>(uri, 5, 0, "BusinessFeature");
+            qmlRegisterType<QDeclarativeBusinessInformation>(uri, 5, 0, "BusinessInformation");
+            qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
+            qmlRegisterType<QDeclarativeContact>(uri, 5, 0, "Contact");
+            qmlRegisterType<QDeclarativeDescription>(uri, 5, 0, "Description");
+            qmlRegisterType<QDeclarativeLocation>(uri, 5, 0, "Location");
+            qmlRegisterType<QDeclarativeMediaObject>(uri, 5, 0, "MediaObject");
+            qmlRegisterType<QDeclarativeMediaPaginationList>(uri, 5, 0, "MediaPaginationList");
+            qmlRegisterType<QDeclarativePeriod>(uri, 5, 0, "Period");
+            qmlRegisterType<QDeclarativePlace>(uri, 5, 0, "Place");
+            qmlRegisterType<QDeclarativeRating>(uri, 5, 0, "Rating");
+            qmlRegisterType<QDeclarativeReview>(uri, 5, 0, "Review");
+            qmlRegisterType<QDeclarativeReviewPaginationList>(uri, 5, 0, "ReviewPaginationList");
+            qmlRegisterType<QDeclarativeSearchResult>(uri, 5, 0, "SearchResult");
+            qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");
+            qmlRegisterType<QDeclarativeWeekdayHours>(uri, 5, 0, "WeekdayHours");
+
+            qmlRegisterType<QDeclarativeRecommendationModel>(uri, 5, 0, "RecommendationModel");
+            qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "SupportedCategoriesModel");
+            qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "SearchResultModel");
+            qmlRegisterType<QDeclarativeTextPredictionModel>(uri, 5, 0, "TextPredictionModel");
+
+            qmlRegisterType<QDeclarativePlaceManager>(uri, 5, 0, "PlaceManager");
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }
