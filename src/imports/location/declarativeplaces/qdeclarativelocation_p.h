@@ -6,7 +6,7 @@
 #include <qplacelocation.h>
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoboundingbox_p.h"
-#include "qdeclarativeaddress_p.h"
+#include "qdeclarativegeoaddress_p.h"
 #include "qdeclarativealternativevalue_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -17,7 +17,7 @@ class QDeclarativeLocation : public QObject
 
     Q_PROPERTY(QVariantHash additionalData READ additionalData WRITE setAdditionalData NOTIFY additionalDataChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeAlternativeValue> alternativeLabels READ alternativeLabels NOTIFY alternativeLabelsChanged)
-    Q_PROPERTY(QDeclarativeAddress* address READ address WRITE setAddress NOTIFY addressChanged);
+    Q_PROPERTY(QDeclarativeGeoAddress* address READ address WRITE setAddress NOTIFY addressChanged);
     Q_PROPERTY(QDeclarativeCoordinate* displayPosition READ displayPosition WRITE setDisplayPosition NOTIFY displayPositionChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> navigationPositions READ navigationPositions NOTIFY navigationPositionsChanged)
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged);
@@ -41,8 +41,8 @@ public:
     static int alternativeValue_count(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop);
     static QDeclarativeAlternativeValue* alternativeValue_at(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop, int index);
     static void alternativeValue_clear(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop);
-    QDeclarativeAddress *address();
-    void setAddress(QDeclarativeAddress *address);
+    QDeclarativeGeoAddress *address();
+    void setAddress(QDeclarativeGeoAddress *address);
     QDeclarativeCoordinate *displayPosition();
     void setDisplayPosition(QDeclarativeCoordinate *position);
     QDeclarativeListProperty<QDeclarativeCoordinate> navigationPositions();
@@ -77,7 +77,7 @@ private:
 
 private:
     QList<QDeclarativeAlternativeValue*> m_alternativeValues;
-    QDeclarativeAddress m_address;
+    QDeclarativeGeoAddress m_address;
     QDeclarativeCoordinate m_displayPosition;
     QDeclarativeGeoBoundingBox m_boundingBox;
     QList<QDeclarativeCoordinate*> m_navigationPositions;

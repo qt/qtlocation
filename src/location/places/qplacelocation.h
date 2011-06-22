@@ -46,11 +46,11 @@
 #include <QString>
 #include <QVariant>
 #include <QList>
+#include "qgeoaddress.h"
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 #include "qmobilityglobal.h"
 #include "qplacealternativevalue.h"
-#include "qplaceaddress.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -73,8 +73,8 @@ public:
 
     QVariantHash additionalData() const;
     void setAdditionalData(const QVariantHash &data);
-    QPlaceAddress address() const;
-    void setAddress(const QPlaceAddress &address);
+    QGeoAddress address() const;
+    void setAddress(const QGeoAddress &address);
     QList<QPlaceAlternativeValue> alternativeLabels() const;
     void setAlternativeLabels(const QList<QPlaceAlternativeValue> &labels);
     QGeoCoordinate displayPosition() const;

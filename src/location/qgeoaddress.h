@@ -81,11 +81,21 @@ public:
     QString district() const;
     void setDistrict(const QString &district);
 
+    QString postcode() const;
+    void setPostcode(const QString &postcode);
+
     QString street() const;
     void setStreet(const QString &street);
 
-    QString postcode() const;
-    void setPostcode(const QString &postcode);
+//    QString streetNumber() const;
+//    void setStreetNumber(QString &streetNumber);
+
+//  TODO:
+//    QString floor() const;
+//    void setFloor(const QString &floor);
+
+//    QString suite() const;
+//    void setSuite(const QString &suite);
 
     bool isEmpty() const;
     void clear();

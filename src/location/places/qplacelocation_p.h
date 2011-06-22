@@ -59,7 +59,7 @@ public:
     bool operator==(const QPlaceLocationPrivate &other) const;
 
     QVariantHash additionalData;
-    QPlaceAddress address;
+    QGeoAddress address;
     QList<QPlaceAlternativeValue> alternativeLabels;
     QGeoCoordinate displayPosition;
     QList<QGeoCoordinate> navigationPositions;

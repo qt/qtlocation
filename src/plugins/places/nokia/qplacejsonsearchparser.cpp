@@ -52,11 +52,11 @@
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
 
-#include <qplace.h>
 #include <qgeocoordinate.h>
+#include <qgeoaddress.h>
+#include <qplace.h>
 #include <qplacecontact.h>
 #include <qplacelocation.h>
-#include <qplaceaddress.h>
 #include <qplacerating.h>
 #include <qplacecategory.h>
 #include <qplacesupplier.h>
@@ -288,10 +288,10 @@ void QPlaceJSonSearchParser::processRating(const QScriptValue &properties, QPlac
 
 void QPlaceJSonSearchParser::processAddress(const QScriptValue &properties, QPlaceLocation *location)
 {
-    QPlaceAddress newAddress;
+    QGeoAddress newAddress;
     QScriptValue value = properties.property(search_properties_address_country);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newAddress.setCountryName(value.toString());
+        newAddress.setCountry(value.toString());
     }
     value = properties.property(search_properties_address_county);
     if (value.isValid() && !value.toString().isEmpty()) {
@@ -307,7 +307,7 @@ void QPlaceJSonSearchParser::processAddress(const QScriptValue &properties, QPla
     }
     value = properties.property(search_properties_address_code);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newAddress.setPostalCode(value.toString());
+        newAddress.setPostcode(value.toString());
     }
     value = properties.property(search_properties_address_city);
     if (value.isValid() && !value.toString().isEmpty()) {
@@ -323,7 +323,9 @@ void QPlaceJSonSearchParser::processAddress(const QScriptValue &properties, QPla
     }
     value = properties.property(search_properties_address_house_number);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newAddress.setHouseNumber(value.toString());
+        //TODO: need to figure out how to deal with street number
+        //and whether to keep it separate from street.
+        newAddress.setStreet(value.toString() + " " + newAddress.street());
     }
     location->setAddress(newAddress);
 }

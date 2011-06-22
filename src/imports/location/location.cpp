@@ -74,7 +74,6 @@
 #include "qdeclarativegeomaneuver_p.h"
 
 //Place includes
-#include "qdeclarativeaddress_p.h"
 #include "qdeclarativealternativevalue_p.h"
 #include "qdeclarativebusinessfeature_p.h"
 #include "qdeclarativebusinessinformation_p.h"

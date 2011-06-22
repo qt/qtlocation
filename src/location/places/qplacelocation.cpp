@@ -152,7 +152,7 @@ void QPlaceLocation::setAdditionalData(const QVariantHash &data)
 /*!
     Returns address.
 */
-QPlaceAddress QPlaceLocation::address() const
+QGeoAddress QPlaceLocation::address() const
 {
     return d->address;
 }
@@ -160,7 +160,7 @@ QPlaceAddress QPlaceLocation::address() const
 /*!
     Sets address.
 */
-void QPlaceLocation::setAddress(const QPlaceAddress &address)
+void QPlaceLocation::setAddress(const QGeoAddress &address)
 {
     d->address = address;
 }

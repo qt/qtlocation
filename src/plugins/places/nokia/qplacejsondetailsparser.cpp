@@ -53,12 +53,12 @@
 #include <QtScript/QScriptValueIterator>
 
 #include <qgeocoordinate.h>
+#include <qgeoaddress.h>
 #include <qplace.h>
 #include <qplacecontact.h>
 #include <qplacecategory.h>
 #include <qplacedescription.h>
 #include <qplacerating.h>
-#include <qplaceaddress.h>
 #include <qplacebusinessinformation.h>
 #include <qplacelocation.h>
 #include <qplacealternativevalue.h>
@@ -380,14 +380,14 @@ QPlaceRating *QPlaceJSonDetailsParser::processRating(const QScriptValue &ratingE
 
 void QPlaceJSonDetailsParser::processAddress(const QScriptValue &address, QPlaceLocation *location)
 {
-    QPlaceAddress newAddress;
+    QGeoAddress newAddress;
     QScriptValue value = address.property(place_address_street);
     if (value.isValid() && !value.toString().isEmpty()) {
         newAddress.setStreet(value.toString());
     }
     value = address.property(place_address_country);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newAddress.setCountryName(value.toString());
+        newAddress.setCountry(value.toString());
     }
     value = address.property(place_address_county);
     if (value.isValid() && !value.toString().isEmpty()) {
@@ -407,7 +407,7 @@ void QPlaceJSonDetailsParser::processAddress(const QScriptValue &address, QPlace
     }
     value = address.property(place_address_code);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newAddress.setPostalCode(value.toString());
+        newAddress.setPostcode(value.toString());
     }
     value = address.property(place_address_district);
     if (value.isValid() && !value.toString().isEmpty()) {
@@ -415,7 +415,7 @@ void QPlaceJSonDetailsParser::processAddress(const QScriptValue &address, QPlace
     }
     value = address.property(place_address_house_number);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newAddress.setHouseNumber(value.toString());
+        newAddress.setStreet(value.toString() + " " + newAddress.street());
     }
     location->setAddress(newAddress);
 }
