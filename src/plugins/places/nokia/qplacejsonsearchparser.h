@@ -83,11 +83,11 @@ public slots:
 private:
     void processResultElement(const QScriptValue &value);
     QPlaceSearchResult processPlaceElement(const QScriptValue &value);
-    void processContacts(const QScriptValue &properties, QPlace *place);
-    void processCategories(const QScriptValue &categories, QPlace *place);
-    void processRating(const QScriptValue &properties, QPlace *place);
+    void processContacts(const QScriptValue &properties, QGeoPlace *place);
+    void processCategories(const QScriptValue &categories, QGeoPlace *place);
+    void processRating(const QScriptValue &properties, QGeoPlace *place);
     void processAddress(const QScriptValue &properties, QPlaceLocation *location);
-    void processLocation(const QScriptValue &properties, QPlace *place);
+    void processLocation(const QScriptValue &properties, QGeoPlace *place);
 private:
     QScriptEngine *engine;
     QList<QPlaceSearchResult> searchResultsList;

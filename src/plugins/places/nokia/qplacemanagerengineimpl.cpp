@@ -91,7 +91,7 @@ QPlaceDetailsReply *QPlaceManagerEngineImpl::getPlaceDetails(const QString &plac
     return reply;
 }
 
-QPlaceMediaReply *QPlaceManagerEngineImpl::getMedia(const QPlace &place, const QPlaceQuery &query)
+QPlaceMediaReply *QPlaceManagerEngineImpl::getMedia(const QGeoPlace &place, const QPlaceQuery &query)
 {
     QPlaceMediaReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceImagesRequest(place.placeId(),
@@ -107,7 +107,7 @@ QPlaceMediaReply *QPlaceManagerEngineImpl::getMedia(const QPlace &place, const Q
     return reply;
 }
 
-QPlaceReply *QPlaceManagerEngineImpl::postRating(const QPlace &place, qreal value)
+QPlaceReply *QPlaceManagerEngineImpl::postRating(const QGeoPlace &place, qreal value)
 {
     QPlaceRatingReplyImpl *reply = NULL;
     //TODO: need to post user name
@@ -124,7 +124,7 @@ QPlaceReply *QPlaceManagerEngineImpl::postRating(const QPlace &place, qreal valu
     return reply;
 }
 
-QPlaceReviewReply *QPlaceManagerEngineImpl::getReviews(const QPlace &place, const QPlaceQuery &query)
+QPlaceReviewReply *QPlaceManagerEngineImpl::getReviews(const QGeoPlace &place, const QPlaceQuery &query)
 {
     QPlaceReviewReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceReviewRequest(place.placeId(),
@@ -166,7 +166,7 @@ QPlaceManager::VisibilityScopes QPlaceManagerEngineImpl::supportedSearchVisibili
     return QPlaceManager::PublicScope;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineImpl::recommendations(const QPlace &place, const QPlaceSearchQuery &query)
+QPlaceSearchReply *QPlaceManagerEngineImpl::recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query)
 {
     QPlaceRecommendationReplyImpl *reply = NULL;
     QPlaceSearchQuery newQuery = query;
@@ -212,7 +212,7 @@ QPlaceManager::ConnectivityModes QPlaceManagerEngineImpl::supportedConnectivityM
     return QPlaceManager::OnlineMode;
 }
 
-QPlaceReply *QPlaceManagerEngineImpl::savePlace(QPlace *place, QPlaceManager::VisibilityScope scope) {
+QPlaceReply *QPlaceManagerEngineImpl::savePlace(QGeoPlace *place, QPlaceManager::VisibilityScope scope) {
     //TODO: implementation
     return NULL;
 }
@@ -221,7 +221,7 @@ QPlaceManager::VisibilityScopes QPlaceManagerEngineImpl::supportedSaveVisibility
     return QPlaceManager::NoScope;
 }
 
-QPlaceReply *QPlaceManagerEngineImpl::removePlace(const QPlace &place) {
+QPlaceReply *QPlaceManagerEngineImpl::removePlace(const QGeoPlace &place) {
     //TODO: implementation
     return NULL;
 }

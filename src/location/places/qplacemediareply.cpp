@@ -43,8 +43,6 @@
 #include "qplacereply_p.h"
 #include "qplacepaginationlist.h"
 
-#include "qplace.h"
-
 QTM_BEGIN_NAMESPACE
 class QPlaceMediaReplyPrivate : public QPlaceReplyPrivate
 {

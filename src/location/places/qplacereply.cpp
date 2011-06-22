@@ -42,9 +42,6 @@
 #include "qplacereply.h"
 #include "qplacereply_p.h"
 
-#include "qplace.h"
-#include "qplacesearchresult.h"
-
 QTM_USE_NAMESPACE
 
 /*!

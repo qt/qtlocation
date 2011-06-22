@@ -47,7 +47,7 @@
 #include <QSharedDataPointer>
 #include <QVariant>
 #include <QString>
-#include "qplace.h"
+#include "qgeoplace.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -98,8 +98,8 @@ public:
     SearchResultType type() const;
     void setType(const SearchResultType &type);
 
-    QPlace place() const;
-    void setPlace(const QPlace &place);
+    QGeoPlace place() const;
+    void setPlace(const QGeoPlace &place);
 
     QString didYouMeanSuggestion() const;
     void setDidYouMeanSuggestion(const QString &didYouMeanSuggestion);

@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QDeclarativeListProperty>
-#include <qplace.h>
+#include <qgeoplace.h>
 #include "qdeclarativelocation_p.h"
 #include "qdeclarativebusinessinformation_p.h"
 #include "qdeclarativecategory_p.h"
@@ -44,11 +44,11 @@ class QDeclarativePlace : public QObject
 
 public:
     explicit QDeclarativePlace(QObject* parent = 0);
-    explicit QDeclarativePlace(const QPlace &src, QObject* parent = 0);
+    explicit QDeclarativePlace(const QGeoPlace &src, QObject* parent = 0);
     ~QDeclarativePlace();
 
-    QPlace place() const;
-    void setPlace(const QPlace &src);
+    QGeoPlace place() const;
+    void setPlace(const QGeoPlace &src);
 
     QVariantHash additionalData() const;
     void setAdditionalData(const QVariantHash &data);
@@ -158,7 +158,7 @@ private:
     QDeclarativeReviewPaginationList m_reviewList;
     QDeclarativeBusinessInformation m_businessInformation;
 
-    QPlace m_src;
+    QGeoPlace m_src;
 };
 
 QTM_END_NAMESPACE

@@ -84,6 +84,27 @@ public:
     QGeoBoundingBox viewport;
     QGeoCoordinate coordinate;
     QGeoAddress address;
+
+    QVariantHash additionalData;
+    QList<QPlaceAlternativeValue> alternativeNames;
+    double placeScore;
+    QPlaceBusinessInformation businessInfo;
+    QList<QPlaceCategory> categories;
+    QList<QPlaceContact> contacts;
+    QList<QPlaceDescription> descriptions;
+    QPlaceLocation location;
+    QList<QPlaceLocation> alternativeLocations;
+    QPlaceRating rating;
+    QList<QPlaceSupplier> suppliers;
+    QStringList feeds;
+    QPlacePaginationList<QPlaceMediaObject> media;
+    int mediaCount;
+    QString name;
+    QString placeId;
+    QPlacePaginationList<QPlaceReview> reviews;
+    int reviewCount;
+    QString shortDescription;
+    QStringList tags;
 };
 
 QTM_END_NAMESPACE

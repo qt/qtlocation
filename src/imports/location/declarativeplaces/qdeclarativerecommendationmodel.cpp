@@ -293,7 +293,7 @@ void QDeclarativeRecommendationModel::executeQuery()
     m_results.clear();
     endResetModel();
     emit resultsChanged();
-    QPlace target;
+    QGeoPlace target;
     target.setPlaceId(m_queryParameters.searchTerm());
     connectNewResponse(m_manager->recommendations(target, m_queryParameters));
 }

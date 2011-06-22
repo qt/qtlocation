@@ -58,26 +58,26 @@ public:
 
     virtual QPlaceDetailsReply *getPlaceDetails(const QString &placeId) = 0;
 
-    virtual QPlaceMediaReply *getMedia(const QPlace &place, const QPlaceQuery &query) = 0;
+    virtual QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceQuery &query) = 0;
 
-    virtual QPlaceReply *postRating(const QPlace &place, qreal value) = 0;
+    virtual QPlaceReply *postRating(const QGeoPlace &place, qreal value) = 0;
 
-    virtual QPlaceReviewReply *getReviews(const QPlace &place, const QPlaceQuery &query) = 0;
+    virtual QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceQuery &query) = 0;
 
     virtual QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query, QPlaceManager::VisibilityScope scope) = 0;
     virtual QPlaceManager::VisibilityScopes supportedSearchVisibilityScopes() const = 0;
 
-    virtual QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchQuery &query) = 0;
+    virtual QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query) = 0;
     virtual QPlaceTextPredictionReply *textPredictions(const QPlaceSearchQuery &query) = 0;
 
     virtual QPlaceManager::ConnectivityModes connectivityMode() const = 0;
     virtual void setConnectivityMode(QPlaceManager::ConnectivityModes mode) = 0;
     virtual QPlaceManager::ConnectivityModes supportedConnectivityModes() const = 0;
 
-    virtual QPlaceReply *savePlace(QPlace *place, QPlaceManager::VisibilityScope scope) = 0;
+    virtual QPlaceReply *savePlace(QGeoPlace *place, QPlaceManager::VisibilityScope scope) = 0;
     virtual QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const = 0;
 
-    virtual QPlaceReply *removePlace(const QPlace &place) = 0;
+    virtual QPlaceReply *removePlace(const QGeoPlace &place) = 0;
 
     virtual QPlaceReply *initializeCategories() = 0;
     virtual QList<QPlaceCategory> categories() const = 0;

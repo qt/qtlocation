@@ -44,10 +44,21 @@
 
 #include "qmobilityglobal.h"
 #include <QSharedDataPointer>
+#include <QVariant>
 
 #include "qgeoaddress.h"
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
+#include "qplacealternativevalue.h"
+#include "qplacebusinessinformation.h"
+#include "qplacecategory.h"
+#include "qplacecontact.h"
+#include "qplacedescription.h"
+#include "qplacelocation.h"
+#include "qplacerating.h"
+#include "qplacepaginationlist.h"
+#include "qplacemediaobject.h"
+#include "qplacereview.h"
 
 class QString;
 
@@ -80,9 +91,49 @@ public:
     QGeoAddress address() const;
     void setAddress(const QGeoAddress &address);
 
+    QVariantHash additionalData() const;
+    void setAdditionalData(const QVariantHash &data);
+    QList<QPlaceAlternativeValue> alternativeNames() const;
+    void setAlternativeNames(const QList<QPlaceAlternativeValue> &alternativeNames);
+    double placeScore() const;
+    void setPlaceScore(const double &data);
+    QPlaceBusinessInformation businessInformation() const;
+    void setBusinessInformation(const QPlaceBusinessInformation &business);
+    QList<QPlaceCategory> categories() const;
+    void setCategories(const QList<QPlaceCategory> &categories);
+    QList<QPlaceContact> contacts() const;
+    void setContacts(const QList<QPlaceContact> &contacts);
+    QList<QPlaceDescription> descriptions() const;
+    void setDescriptions(const QList<QPlaceDescription> &descriptions);
+    QPlaceLocation location() const;
+    void setLocation(const QPlaceLocation &location);
+    QList<QPlaceLocation> alternativeLocations() const;
+    void setAlternativeLocations(const QList<QPlaceLocation> &locations);
+    QPlaceRating rating() const;
+    void setRating(const QPlaceRating &rating);
+    QList<QPlaceSupplier> suppliers() const;
+    void setSuppliers(const QList<QPlaceSupplier> &data);
+    QStringList feeds() const;
+    void setFeeds(const QStringList &feeds);
+    QPlacePaginationList<QPlaceMediaObject> media() const;
+    void setMedia(const QPlacePaginationList<QPlaceMediaObject> &media);
+    int mediaCount() const;
+    void setMediaCount(const int &count);
+    QString name() const;
+    void setName(const QString &name);
+    QString placeId() const;
+    void setPlaceId(const QString &placeId);
+    QPlacePaginationList<QPlaceReview> reviews() const;
+    void setReviews(const QPlacePaginationList<QPlaceReview> &reviews);
+    int reviewCount() const;
+    void setReviewCount(const int &count);
+    QString shortDescription() const;
+    void setShortDescription(const QString &description);
+    QStringList tags() const;
+    void setTags(const QStringList &tags);
+
 protected:
     QGeoPlace(QGeoPlacePrivate *dd);
-
     QSharedDataPointer<QGeoPlacePrivate> d_ptr;
 
 private:

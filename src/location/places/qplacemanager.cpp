@@ -130,7 +130,7 @@ QPlaceDetailsReply *QPlaceManager::getPlaceDetails(const QString &placeId) const
 /*!
     Retrieves media from a given \a place according to the parameters specified in \a query.
 */
-QPlaceMediaReply *QPlaceManager::getMedia(const QPlace &place, const QPlaceQuery &query) const
+QPlaceMediaReply *QPlaceManager::getMedia(const QGeoPlace &place, const QPlaceQuery &query) const
 {
     return d->engine->getMedia(place, query);
 }
@@ -138,7 +138,7 @@ QPlaceMediaReply *QPlaceManager::getMedia(const QPlace &place, const QPlaceQuery
 /*!
     Posts a \a rating to a \a place.
 */
-QPlaceReply* QPlaceManager::postRating(const QPlace &place, qreal rating)
+QPlaceReply* QPlaceManager::postRating(const QGeoPlace &place, qreal rating)
 {
     return d->engine->postRating(place, rating);
 }
@@ -146,7 +146,7 @@ QPlaceReply* QPlaceManager::postRating(const QPlace &place, qreal rating)
 /*!
     Returns reviews for a given \a place according to the parameters specified in \a query.
 */
-QPlaceReviewReply *QPlaceManager::getReviews(const QPlace &place, const QPlaceQuery &query) const
+QPlaceReviewReply *QPlaceManager::getReviews(const QGeoPlace &place, const QPlaceQuery &query) const
 {
     return d->engine->getReviews(place, query);
 }
@@ -170,7 +170,7 @@ QPlaceManager::VisibilityScopes QPlaceManager::supportedSearchVisibilityScopes()
 /*!
     Provides recommendation based on a given \a place.
 */
-QPlaceSearchReply *QPlaceManager::recommendations(const QPlace &place, const QPlaceSearchQuery &query) const
+QPlaceSearchReply *QPlaceManager::recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query) const
 {
     return d->engine->recommendations(place, query);
 }
@@ -210,7 +210,7 @@ QPlaceManager::ConnectivityModes QPlaceManager::supportedConnectivityModes() con
 /*!
     Saves a \a place at the given \a scope.
 */
-QPlaceReply *QPlaceManager::savePlace(QPlace *place, VisibilityScope scope)
+QPlaceReply *QPlaceManager::savePlace(QGeoPlace *place, VisibilityScope scope)
 {
     return d->engine->savePlace(place, scope);
 }

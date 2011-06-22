@@ -42,7 +42,7 @@
 #include "qplacereviewreply.h"
 #include "qplacereply_p.h"
 
-#include "qplace.h"
+#include "qgeoplace.h"
 
 QTM_BEGIN_NAMESPACE
 class QPlaceReviewReplyPrivate : public QPlaceReplyPrivate

@@ -65,26 +65,26 @@ public:
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
 
-    QPlaceMediaReply *getMedia(const QPlace &place, const QPlaceQuery &query);
+    QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceQuery &query);
 
-    QPlaceReply *postRating(const QPlace &place, qreal value);
+    QPlaceReply *postRating(const QGeoPlace &place, qreal value);
 
-    QPlaceReviewReply *getReviews(const QPlace &place, const QPlaceQuery &query);
+    QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceQuery &query);
 
     QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query, QPlaceManager::VisibilityScope scope);
     QPlaceManager::VisibilityScopes supportedSearchVisibilityScopes() const;
 
-    QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchQuery &query);
+    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query);
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchQuery &query);
 
     QPlaceManager::ConnectivityModes connectivityMode() const;
     void setConnectivityMode(QPlaceManager::ConnectivityModes connectivityMode);
     QPlaceManager::ConnectivityModes supportedConnectivityModes() const;
 
-    QPlaceReply *savePlace(QPlace *place, QPlaceManager::VisibilityScope scope);
+    QPlaceReply *savePlace(QGeoPlace *place, QPlaceManager::VisibilityScope scope);
     QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const;
 
-    QPlaceReply *removePlace(const QPlace &place);
+    QPlaceReply *removePlace(const QGeoPlace &place);
 
     QPlaceReply *initializeCategories();
     QList<QPlaceCategory> categories() const;

@@ -64,7 +64,7 @@ public:
     QPlaceSearchResult::LocationMatchType matchType;
     QVariantHash additionalData;
     QPlaceSearchResult::SearchResultType type;
-    QPlace place;
+    QGeoPlace place;
     QString dymString;
 };
 

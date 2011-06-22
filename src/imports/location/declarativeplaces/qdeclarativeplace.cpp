@@ -19,7 +19,7 @@ QDeclarativePlace::QDeclarativePlace(QObject* parent)
 {
 }
 
-QDeclarativePlace::QDeclarativePlace(const QPlace &src,
+QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src,
         QObject *parent)
         : QObject(parent),
           m_src(src)
@@ -39,9 +39,9 @@ QDeclarativePlace::~QDeclarativePlace()
 {
 }
 
-void QDeclarativePlace::setPlace(const QPlace &src)
+void QDeclarativePlace::setPlace(const QGeoPlace &src)
 {
-    QPlace previous = m_src;
+    QGeoPlace previous = m_src;
     m_src = src;
 
     if (previous.additionalData() != m_src.additionalData()) {
@@ -117,7 +117,7 @@ void QDeclarativePlace::setPlace(const QPlace &src)
     }
 }
 
-QPlace QDeclarativePlace::place() const
+QGeoPlace QDeclarativePlace::place() const
 {
     return m_src;
 }

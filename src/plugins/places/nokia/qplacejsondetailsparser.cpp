@@ -52,9 +52,9 @@
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
 
-#include <qgeocoordinate.h>
 #include <qgeoaddress.h>
-#include <qplace.h>
+#include <qgeocoordinate.h>
+#include <qgeoplace.h>
 #include <qplacecontact.h>
 #include <qplacecategory.h>
 #include <qplacedescription.h>
@@ -199,16 +199,16 @@ QPlaceJSonDetailsParser::~QPlaceJSonDetailsParser()
 {
 }
 
-QPlace QPlaceJSonDetailsParser::buildPlace(const QScriptValue &placeValue)
+QGeoPlace QPlaceJSonDetailsParser::buildPlace(const QScriptValue &placeValue)
 {
-    QPlace newPlace;
+    QGeoPlace newPlace;
     if (placeValue.isValid()) {
         buildPlace(placeValue, &newPlace);
     }
     return newPlace;
 }
 
-QPlace QPlaceJSonDetailsParser::result()
+QGeoPlace QPlaceJSonDetailsParser::result()
 {
     return place;
 }
@@ -228,7 +228,7 @@ void QPlaceJSonDetailsParser::processData(const QString &data)
     }
 }
 
-void QPlaceJSonDetailsParser::buildPlace(const QScriptValue &placeValue, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::buildPlace(const QScriptValue &placeValue, QGeoPlace*targetPlace)
 {
     if (placeValue.isValid()) {
         QScriptValue value = placeValue.property(place_id_element);
@@ -271,7 +271,7 @@ void QPlaceJSonDetailsParser::buildPlace(const QScriptValue &placeValue, QPlace 
     }
 }
 
-void QPlaceJSonDetailsParser::processMainProvider(const QScriptValue &placeValue, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processMainProvider(const QScriptValue &placeValue, QGeoPlace*targetPlace)
 {
     QPlaceSupplier sup;
     QScriptValue value = placeValue.property(place_provider);
@@ -290,7 +290,7 @@ void QPlaceJSonDetailsParser::processMainProvider(const QScriptValue &placeValue
     targetPlace->setSuppliers(list);
 }
 
-void QPlaceJSonDetailsParser::processContacts(const QScriptValue &contactsValue, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processContacts(const QScriptValue &contactsValue, QGeoPlace*targetPlace)
 {
     QList<QPlaceContact> contacts;
     QScriptValueIterator it(contactsValue);
@@ -318,12 +318,12 @@ void QPlaceJSonDetailsParser::processContacts(const QScriptValue &contactsValue,
     targetPlace->setContacts(contacts);
 }
 
-void QPlaceJSonDetailsParser::processCategories(const QScriptValue &categories, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processCategories(const QScriptValue &categories, QGeoPlace*targetPlace)
 {
     targetPlace->setCategories(QPlaceJSonCategoriesParser::processCategories(categories));
 }
 
-void QPlaceJSonDetailsParser::processRatings(const QScriptValue &ratings, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processRatings(const QScriptValue &ratings, QGeoPlace*targetPlace)
 {
     QPlaceRating *rating = NULL;
     QScriptValue value = ratings.property(place_rating_element);
@@ -420,7 +420,7 @@ void QPlaceJSonDetailsParser::processAddress(const QScriptValue &address, QPlace
     location->setAddress(newAddress);
 }
 
-void QPlaceJSonDetailsParser::processLocations(const QScriptValue &locations, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processLocations(const QScriptValue &locations, QGeoPlace*targetPlace)
 {
     if (locations.isArray()) {
         QList<QPlaceLocation> list;
@@ -477,7 +477,7 @@ QPlaceLocation QPlaceJSonDetailsParser::processLocation(const QScriptValue &loca
     return newLocation;
 }
 
-void QPlaceJSonDetailsParser::processTags(const QScriptValue &tags, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processTags(const QScriptValue &tags, QGeoPlace*targetPlace)
 {
     QStringList newTags;
     if (tags.isValid()) {
@@ -500,7 +500,7 @@ void QPlaceJSonDetailsParser::processTags(const QScriptValue &tags, QPlace *targ
     targetPlace->setTags(newTags);
 }
 
-void QPlaceJSonDetailsParser::processNames(const QScriptValue &names, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processNames(const QScriptValue &names, QGeoPlace*targetPlace)
 {
     QScriptValue value = names.property(place_alternativenames_element);
     if (value.isValid()) {
@@ -558,7 +558,7 @@ QPlaceAlternativeValue *QPlaceJSonDetailsParser::processName(const QScriptValue 
     return name;
 }
 
-void QPlaceJSonDetailsParser::processPremiumContents(const QScriptValue &premiumContent, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processPremiumContents(const QScriptValue &premiumContent, QGeoPlace*targetPlace)
 {
     QScriptValue value = premiumContent.property(place_premiumcontent_version_element);
     if (value.isValid()) {
@@ -577,7 +577,7 @@ void QPlaceJSonDetailsParser::processPremiumContents(const QScriptValue &premium
     }
 }
 
-void QPlaceJSonDetailsParser::processPremiumVersion(const QScriptValue &content, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processPremiumVersion(const QScriptValue &content, QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_premiumcontent_content_element);
     if (value.isValid()) {
@@ -596,7 +596,7 @@ void QPlaceJSonDetailsParser::processPremiumVersion(const QScriptValue &content,
     }
 }
 
-void QPlaceJSonDetailsParser::processPremiumContent(const QScriptValue &content, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processPremiumContent(const QScriptValue &content, QGeoPlace*targetPlace)
 {
     QString name, id, iconURL;
     QScriptValue value = content.property(place_premiumcontent_content_providername_element);
@@ -624,7 +624,7 @@ void QPlaceJSonDetailsParser::processPremiumContent(const QScriptValue &content,
 
 void QPlaceJSonDetailsParser::processPremiumContentDescription(const QScriptValue &content,
                                                                const QPlaceSupplier &supplier,
-                                                               QPlace *targetPlace)
+                                                               QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_premiumcontent_content_desc_element);
     QPlaceDescription desc;
@@ -660,7 +660,7 @@ void QPlaceJSonDetailsParser::processPremiumContentDescription(const QScriptValu
 
 void QPlaceJSonDetailsParser::processPremiumContentMediaObjects(const QScriptValue &content,
                                                                 const QPlaceSupplier &supplier,
-                                                                QPlace *targetPlace)
+                                                                QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_premiumcontent_content_media_element);
     if (value.isValid()) {
@@ -711,7 +711,7 @@ QPlaceMediaObject *QPlaceJSonDetailsParser::processPremiumContentMediaObject(con
     return obj;
 }
 
-void QPlaceJSonDetailsParser::processAdContent(const QScriptValue &content, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processAdContent(const QScriptValue &content, QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_adcontent_descriptions_element);
     if (value.isValid()) {
@@ -735,7 +735,7 @@ void QPlaceJSonDetailsParser::processAdContent(const QScriptValue &content, QPla
     }
 }
 
-void QPlaceJSonDetailsParser::processAdContentPackages(const QScriptValue &content, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processAdContentPackages(const QScriptValue &content, QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_adcontent_package_element);
     if (value.isValid()) {
@@ -753,7 +753,7 @@ void QPlaceJSonDetailsParser::processAdContentPackages(const QScriptValue &conte
     }
 }
 
-void QPlaceJSonDetailsParser::processAdContentDescriptions(const QScriptValue &content, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processAdContentDescriptions(const QScriptValue &content, QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_adcontent_description_element);
     if (value.isValid()) {
@@ -801,7 +801,7 @@ QPlaceDescription *QPlaceJSonDetailsParser::processAdContentDescription(const QS
     return description;
 }
 
-void QPlaceJSonDetailsParser::processAdContentMediaObjects(const QScriptValue &content, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processAdContentMediaObjects(const QScriptValue &content, QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_adcontent_media_element);
     if (value.isValid()) {
@@ -857,7 +857,7 @@ QPlaceMediaObject *QPlaceJSonDetailsParser::processAdContentMediaObject(const QS
     return obj;
 }
 
-void QPlaceJSonDetailsParser::processAdContentPaymentMethods(const QScriptValue &content, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processAdContentPaymentMethods(const QScriptValue &content, QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_adcontent_paymentmethod_element);
     if (value.isValid()) {
@@ -898,7 +898,7 @@ QString QPlaceJSonDetailsParser::processAdContentPaymentMethod(const QScriptValu
     return obj;
 }
 
-void QPlaceJSonDetailsParser::processAdContentBusinessHours(const QScriptValue &content, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processAdContentBusinessHours(const QScriptValue &content, QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_adcontent_hours_annualclosingsnotes_element);
     if (value.isValid()) {
@@ -914,7 +914,7 @@ void QPlaceJSonDetailsParser::processAdContentBusinessHours(const QScriptValue &
     }
 }
 
-void QPlaceJSonDetailsParser::processAdContentClosingsNotes(const QScriptValue &content, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processAdContentClosingsNotes(const QScriptValue &content, QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_adcontent_hours_annualclosingsnote_element);
     if (value.isValid()) {
@@ -955,7 +955,7 @@ QString QPlaceJSonDetailsParser::processAdContentClosingsNote(const QScriptValue
     return ret;
 }
 
-void QPlaceJSonDetailsParser::processAdContentOpeningHours(const QScriptValue &content, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processAdContentOpeningHours(const QScriptValue &content, QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_adcontent_hours_open_hours_element);
     if (value.isValid()) {
@@ -1024,7 +1024,7 @@ QPlaceWeekdayHours *QPlaceJSonDetailsParser::processAdContentOpeningHoursElement
     return openH;
 }
 
-void QPlaceJSonDetailsParser::processAdContentOpeningNotes(const QScriptValue &content, QPlace *targetPlace)
+void QPlaceJSonDetailsParser::processAdContentOpeningNotes(const QScriptValue &content, QGeoPlace*targetPlace)
 {
     QScriptValue value = content.property(place_adcontent_hours_openingnote_element);
     if (value.isValid()) {

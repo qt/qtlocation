@@ -230,7 +230,7 @@ void QPlaceSearchResult::setType(const QPlaceSearchResult::SearchResultType &typ
 /*!
     Returns the place.
 */
-QPlace QPlaceSearchResult::place() const
+QGeoPlace QPlaceSearchResult::place() const
 {
     return d->place;
 }
@@ -238,7 +238,7 @@ QPlace QPlaceSearchResult::place() const
 /*!
     Sets the \a place.
 */
-void QPlaceSearchResult::setPlace(const QPlace &place)
+void QPlaceSearchResult::setPlace(const QGeoPlace &place)
 {
     d->place = place;
 }
