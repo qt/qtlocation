@@ -7,7 +7,6 @@ SOURCES += \
     declarativeplaces/qdeclarativetextpredictionmodel.cpp \
     declarativeplaces/qdeclarativesearchresultmodel.cpp \
 #data
-    declarativeplaces/qdeclarativeaddress.cpp \
     declarativeplaces/qdeclarativealternativevalue.cpp \
     declarativeplaces/qdeclarativebusinessfeature.cpp \
     declarativeplaces/qdeclarativebusinessinformation.cpp \
@@ -34,7 +33,6 @@ HEADERS += \
     declarativeplaces/qdeclarativetextpredictionmodel_p.h \
     declarativeplaces/qdeclarativesearchresultmodel_p.h \
 #data
-    declarativeplaces/qdeclarativeaddress_p.h \
     declarativeplaces/qdeclarativealternativevalue_p.h \
     declarativeplaces/qdeclarativebusinessfeature_p.h \
     declarativeplaces/qdeclarativebusinessinformation_p.h \

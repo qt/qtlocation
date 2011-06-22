@@ -97,7 +97,7 @@ QVariantHash QDeclarativeLocation::additionalData() const
 
     This property holds address of the location.
 */
-void QDeclarativeLocation::setAddress(QDeclarativeAddress *address)
+void QDeclarativeLocation::setAddress(QDeclarativeGeoAddress *address)
 {
     if (m_src.address() != address->address()) {
         m_address.setAddress(address->address());
@@ -106,7 +106,7 @@ void QDeclarativeLocation::setAddress(QDeclarativeAddress *address)
     }
 }
 
-QDeclarativeAddress *QDeclarativeLocation::address()
+QDeclarativeGeoAddress *QDeclarativeLocation::address()
 {
     return &m_address;
 }
