@@ -71,8 +71,8 @@ QPlaceTextPreditionReplyImpl::QPlaceTextPreditionReplyImpl(QPlaceRestReply *repl
                 parser, SLOT(processData(const QString &)));
         connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
-        connect(parser, SIGNAL(finished(QPlaceJSonTextPredictionParser::Error,QString)),
-                this, SLOT(predictionsReady(QPlaceJSonTextPredictionParser::Error,QString)));
+        connect(parser, SIGNAL(finished(QPlaceJSonParser::Error,QString)),
+                this, SLOT(resultReady(QPlaceJSonParser::Error,QString)));
     }
 }
 
@@ -103,12 +103,12 @@ void QPlaceTextPreditionReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceTextPreditionReplyImpl::predictionsReady(const QPlaceJSonTextPredictionParser::Error &errorId,
+void QPlaceTextPreditionReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
-    if (errorId == QPlaceJSonTextPredictionParser::NoError) {
+    if (errorId == QPlaceJSonParser::NoError) {
         setTextPredictions(parser->predictions());
-    } else if (errorId == QPlaceJSonTextPredictionParser::ParsingError) {
+    } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());
         emit processingError(this, ParseError, errorMessage);

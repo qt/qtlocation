@@ -70,7 +70,7 @@ public:
     QString title;
     QString userId;
     QString userName;
-    QString originatorURL;
+    QString originatorUrl;
 };
 
 QTM_END_NAMESPACE

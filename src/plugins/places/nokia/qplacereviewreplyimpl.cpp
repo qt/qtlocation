@@ -69,8 +69,8 @@ QPlaceReviewReplyImpl::QPlaceReviewReplyImpl(QPlaceRestReply *reply, QObject *pa
                 parser, SLOT(processData(const QString &)));
         connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
-        connect(parser, SIGNAL(finished(QPlaceJSonReviewParser::Error,QString)),
-                this, SLOT(predictionsReady(QPlaceJSonReviewParser::Error,QString)));
+        connect(parser, SIGNAL(finished(QPlaceJSonParser::Error,QString)),
+                this, SLOT(resultReady(QPlaceJSonParser::Error,QString)));
     }
 }
 
@@ -106,13 +106,13 @@ void QPlaceReviewReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceReviewReplyImpl::predictionsReady(const QPlaceJSonReviewParser::Error &errorId,
+void QPlaceReviewReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
-    if (errorId == QPlaceJSonReviewParser::NoError) {
+    if (errorId == QPlaceJSonParser::NoError) {
         setReviews(parser->results());
         setTotalCount(parser->allReviewsCount());
-    } else if (errorId == QPlaceJSonReviewParser::ParsingError) {
+    } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());
         emit processingError(this, ParseError, errorMessage);

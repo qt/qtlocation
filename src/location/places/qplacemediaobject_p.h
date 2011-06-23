@@ -59,7 +59,7 @@ public:
     bool operator==(const QPlaceMediaObjectPrivate &other) const;
 
     QString url;
-    QString thumbnailURL;
+    QString thumbnailUrl;
     QString id;
     QString metaInfo;
     QString mimeType;

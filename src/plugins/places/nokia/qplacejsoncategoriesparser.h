@@ -54,21 +54,17 @@
 #include <QHash>
 
 #include <qplacecategory.h>
+#include "qplacejsonparser_p.h"
 
 class QScriptEngine;
 class QScriptValue;
 
 QTM_BEGIN_NAMESPACE
 
-class QPlaceJSonCategoriesParser : public QObject
+class QPlaceJSonCategoriesParser : public QPlaceJSonParser
 {
     Q_OBJECT
 public:
-    enum Error {
-        NoError,
-        ParsingError
-    };
-
     explicit QPlaceJSonCategoriesParser(QObject *parent = 0);
     virtual ~QPlaceJSonCategoriesParser();
 
@@ -76,18 +72,12 @@ public:
 
     QList<QPlaceCategory> resultCategories();
 
-signals:
-    void finished(const QPlaceJSonCategoriesParser::Error &error, const QString &errorMessage);
-
-public slots:
-    void processData(const QString &data);
-
 private:
+    void processJSonData(const QScriptValue &sv);
     static QPlaceCategory processCategory(const QScriptValue &categoryValue);
     static QList<QPlaceCategory> processGroups(const QScriptValue &categories);
     static QList<QPlaceCategory> processGroup(const QScriptValue &group);
 private:
-    QScriptEngine *engine;
     QList<QPlaceCategory> allCategories;
 };
 

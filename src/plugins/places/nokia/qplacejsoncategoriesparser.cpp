@@ -60,7 +60,6 @@
 static const char *place_categories_element = "categories";
 static const char *place_category_element = "category";
 static const char *place_category_name_element = "displayName";
-static const char *place_category_systemname_element = "categorySystemName";
 static const char *place_category_id_element = "name";
 
 static const char *place_group_element = "group";
@@ -69,8 +68,7 @@ static const char *place_groupingcategory_element = "groupingCategory";
 QTM_USE_NAMESPACE
 
 QPlaceJSonCategoriesParser::QPlaceJSonCategoriesParser(QObject *parent) :
-    QObject(parent),
-    engine(NULL)
+    QPlaceJSonParser(parent)
 {
 }
 
@@ -84,18 +82,14 @@ QList<QPlaceCategory> QPlaceJSonCategoriesParser::resultCategories()
     return allCategories;
 }
 
-void QPlaceJSonCategoriesParser::processData(const QString &data)
+void QPlaceJSonCategoriesParser::processJSonData(const QScriptValue &sv)
 {
-    if (!engine) {
-        engine = new QScriptEngine(this);
-    }
     allCategories.clear();
 
-    QScriptValue sv = engine->evaluate("(" + data + ")");
     if (sv.isValid()) {
-        sv = sv.property(place_categories_element);
-        if (sv.isValid()) {
-            allCategories = processCategories(sv);
+        QScriptValue sv2 = sv.property(place_categories_element);
+        if (sv2.isValid()) {
+            allCategories = processCategories(sv2);
             emit finished(NoError, QString());
         }
     } else {

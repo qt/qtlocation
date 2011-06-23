@@ -41,11 +41,11 @@ void QDeclarativeSupplier::setSupplier(const QPlaceSupplier &src)
     if (previous.supplierId() != m_src.supplierId()) {
         emit supplierIdChanged();
     }
-    if (previous.URL() != m_src.URL()) {
-        emit URLChanged();
+    if (previous.url() != m_src.url()) {
+        emit urlChanged();
     }
-    if (previous.supplierIconURL() != m_src.supplierIconURL()) {
-        emit supplierIconURLChanged();
+    if (previous.supplierIconUrl() != m_src.supplierIconUrl()) {
+        emit supplierIconUrlChanged();
     }
 }
 
@@ -93,39 +93,39 @@ QString QDeclarativeSupplier::name() const
 }
 
 /*!
-    \qmlproperty string Supplier::supplierIconURL
+    \qmlproperty string Supplier::supplierIconUrl
 
     This property holds icon URL.
 */
 
-void QDeclarativeSupplier::setSupplierIconURL(const QString &supplierIconURL)
+void QDeclarativeSupplier::setSupplierIconUrl(const QString &supplierIconUrl)
 {
-    if (m_src.supplierIconURL() != supplierIconURL) {
-        m_src.setSupplierIconURL(supplierIconURL);
-        emit supplierIconURLChanged();
+    if (m_src.supplierIconUrl() != supplierIconUrl) {
+        m_src.setSupplierIconUrl(supplierIconUrl);
+        emit supplierIconUrlChanged();
     }
 }
 
-QString QDeclarativeSupplier::supplierIconURL() const
+QString QDeclarativeSupplier::supplierIconUrl() const
 {
-    return m_src.supplierIconURL();
+    return m_src.supplierIconUrl();
 }
 
 /*!
-    \qmlproperty string Supplier::URL
+    \qmlproperty string Supplier::url
 
     This property holds supplier URL.
 */
 
-void QDeclarativeSupplier::setURL(const QString &URL)
+void QDeclarativeSupplier::setUrl(const QString &url)
 {
-    if (m_src.URL() != URL) {
-        m_src.setURL(URL);
-        emit URLChanged();
+    if (m_src.url() != url) {
+        m_src.setUrl(url);
+        emit urlChanged();
     }
 }
 
-QString QDeclarativeSupplier::URL() const
+QString QDeclarativeSupplier::url() const
 {
-    return m_src.URL();
+    return m_src.url();
 }

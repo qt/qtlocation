@@ -56,7 +56,7 @@ public:
     enum ContactType {
         Phone,
         Email,
-        URL,
+        Url,
         Fax,
         IM,
         Undefined

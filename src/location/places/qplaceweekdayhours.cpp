@@ -44,7 +44,9 @@
 
 QTM_USE_NAMESPACE
 
-QPlaceWeekdayHoursPrivate::QPlaceWeekdayHoursPrivate() : QSharedData()
+QPlaceWeekdayHoursPrivate::QPlaceWeekdayHoursPrivate()
+    : QSharedData(),
+      weekday(Qt::Monday)
 {
 }
 

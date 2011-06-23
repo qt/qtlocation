@@ -69,8 +69,8 @@ QPlaceDetailsReplyImpl::QPlaceDetailsReplyImpl(QPlaceRestReply *reply, QObject *
                 parser, SLOT(processData(const QString &data)));
         connect(restReply, SIGNAL(error(QPlaceRestReply::Error error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
-        connect(parser, SIGNAL(finished(QPlaceJSonDetailsParser::Error,QString)),
-                this, SLOT(predictionsReady(QPlaceJSonDetailsParser::Error,QString)));
+        connect(parser, SIGNAL(finished(QPlaceJSonParser::Error,QString)),
+                this, SLOT(resultReady(QPlaceJSonParser::Error,QString)));
     }
 }
 
@@ -101,12 +101,12 @@ void QPlaceDetailsReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceDetailsReplyImpl::predictionsReady(const QPlaceJSonDetailsParser::Error &errorId,
+void QPlaceDetailsReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
-    if (errorId == QPlaceJSonDetailsParser::NoError) {
+    if (errorId == QPlaceJSonParser::NoError) {
         setResult(parser->result());
-    } else if (errorId == QPlaceJSonDetailsParser::ParsingError) {
+    } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());
         emit processingError(this, ParseError, errorMessage);

@@ -132,8 +132,14 @@ QPlaceRestReply *QPlaceRestManager::sendPlaceRequest(const QString &placeId)
 
 QPlaceRestReply *QPlaceRestManager::sendPlaceImagesRequest(const QString &placeId, const QPlaceQuery &params)
 {
-    Q_UNUSED(params)
-    return sendGeneralRequest(placeServer + placeId + images);
+    QString query = placeServer + placeId + images;
+    if (params.offset() > -1) {
+        query += const_review_start + QString::number(params.offset());
+    }
+    if (params.limit() > 0) {
+        query += const_review_limit + QString::number(params.limit());
+    }
+    return sendGeneralRequest(query);
 }
 
 /*!

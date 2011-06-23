@@ -53,34 +53,25 @@
 #include <QList>
 
 #include <qgeoplace.h>
+#include "qplacejsonparser_p.h"
 
 class QScriptEngine;
 class QScriptValue;
 
 QTM_BEGIN_NAMESPACE
 
-class QPlaceJSonDetailsParser : public QObject
+class QPlaceJSonDetailsParser : public QPlaceJSonParser
 {
     Q_OBJECT
 public:
-    enum Error {
-        NoError,
-        ParsingError
-    };
-
     explicit QPlaceJSonDetailsParser(QObject *parent = 0);
     virtual ~QPlaceJSonDetailsParser();
 
     static QGeoPlace buildPlace(const QScriptValue &place);
     QGeoPlace result();
 
-signals:
-    void finished(const QPlaceJSonDetailsParser::Error &error, const QString &errorMessage);
-
-public slots:
-    void processData(const QString &data);
-
 private:
+    void processJSonData(const QScriptValue &sv);
     static void buildPlace(const QScriptValue &place, QGeoPlace *targetPlace);
     static void processMainProvider(const QScriptValue &place, QGeoPlace *targetPlace);
     static void processContacts(const QScriptValue &contacts, QGeoPlace *targetPlace);
@@ -121,7 +112,6 @@ private:
     static QString processAdContentOpeningNote(const QScriptValue &content);
 
 private:
-    QScriptEngine *engine;
     QGeoPlace place;
 };
 

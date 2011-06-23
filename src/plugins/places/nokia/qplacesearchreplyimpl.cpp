@@ -69,8 +69,8 @@ QPlaceSearchReplyImpl::QPlaceSearchReplyImpl(QPlaceRestReply *reply, QObject *pa
                 parser, SLOT(processData(const QString &)));
         connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
-        connect(parser, SIGNAL(finished(QPlaceJSonSearchParser::Error,QString)),
-                this, SLOT(predictionsReady(QPlaceJSonSearchParser::Error,QString)));
+        connect(parser, SIGNAL(finished(QPlaceJSonParser::Error,QString)),
+                this, SLOT(resultReady(QPlaceJSonParser::Error,QString)));
     }
 }
 
@@ -101,12 +101,12 @@ void QPlaceSearchReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceSearchReplyImpl::predictionsReady(const QPlaceJSonSearchParser::Error &errorId,
+void QPlaceSearchReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
-    if (errorId == QPlaceJSonSearchParser::NoError) {
+    if (errorId == QPlaceJSonParser::NoError) {
         setResults(filterSecondSearchCenter(parser->searchResults()));
-    } else if (errorId == QPlaceJSonSearchParser::ParsingError) {
+    } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());
         emit processingError(this, ParseError, errorMessage);

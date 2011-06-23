@@ -16,7 +16,7 @@ class QDeclarativeDescription : public QObject
     Q_PROPERTY(QString contentTitle READ contentTitle WRITE setContentTitle NOTIFY contentTitleChanged);
     Q_PROPERTY(QString contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged);
     Q_PROPERTY(QDeclarativeSupplier* supplier READ supplier WRITE setSupplier NOTIFY supplierChanged);
-    Q_PROPERTY(QString sourceURL READ sourceURL WRITE setSourceURL NOTIFY sourceURLChanged);
+    Q_PROPERTY(QString sourceUrl READ sourceUrl WRITE setSourceUrl NOTIFY sourceUrlChanged);
     Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY languageChanged);
 
 public:
@@ -35,8 +35,8 @@ public:
     void setContentType(const QString &data);
     QDeclarativeSupplier *supplier();
     void setSupplier(QDeclarativeSupplier *data);
-    QString sourceURL() const;
-    void setSourceURL(const QString &data);
+    QString sourceUrl() const;
+    void setSourceUrl(const QString &data);
     QString language() const;
     void setLanguage(const QString &data);
 
@@ -45,7 +45,7 @@ signals:
     void contentTitleChanged();
     void contentTypeChanged();
     void supplierChanged();
-    void sourceURLChanged();
+    void sourceUrlChanged();
     void languageChanged();
 
 private:

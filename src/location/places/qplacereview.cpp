@@ -67,7 +67,7 @@ QPlaceReviewPrivate::QPlaceReviewPrivate(const QPlaceReviewPrivate &other)
     this->title = other.title;
     this->userId = other.userId;
     this->userName = other.userName;
-    this->originatorURL = other.originatorURL;
+    this->originatorUrl = other.originatorUrl;
 }
 
 QPlaceReviewPrivate::~QPlaceReviewPrivate()
@@ -89,7 +89,7 @@ bool QPlaceReviewPrivate::operator==(const QPlaceReviewPrivate &other) const
             && this->title == other.title
             && this->userId == other.userId
             && this->userName == other.userName
-            && this->originatorURL == other.originatorURL
+            && this->originatorUrl == other.originatorUrl
     );
 }
 
@@ -340,15 +340,15 @@ void QPlaceReview::setUserName(const QString &data)
 /*!
     Returns originator URL.
 */
-QString QPlaceReview::originatorURL() const
+QString QPlaceReview::originatorUrl() const
 {
-    return d->originatorURL;
+    return d->originatorUrl;
 }
 
 /*!
-    Sets originator URL.
+    Sets originator \a url of the review.
 */
-void QPlaceReview::setOriginatorURL(const QString &data)
+void QPlaceReview::setOriginatorUrl(const QString &url)
 {
-    d->originatorURL = data;
+    d->originatorUrl = url;
 }

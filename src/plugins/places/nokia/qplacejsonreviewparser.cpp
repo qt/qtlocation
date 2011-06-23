@@ -80,8 +80,7 @@ static const char *review_vendoricon_element = "vendorIconUrl";
 QTM_USE_NAMESPACE
 
 QPlaceJSonReviewParser::QPlaceJSonReviewParser(QObject *parent) :
-    QObject(parent),
-    engine(NULL),
+    QPlaceJSonParser(parent),
     allReviews(0)
 {
 }
@@ -129,7 +128,7 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review)
     }
     value = review.property(review_originator_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newReview.setOriginatorURL(value.toString());
+        newReview.setOriginatorUrl(value.toString());
     }
     value = review.property(review_description_element);
     if (value.isValid() && !value.toString().isEmpty()) {
@@ -165,7 +164,7 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review)
         QPlaceSupplier sup;
         sup.setName(name);
         sup.setSupplierId(id);
-        sup.setSupplierIconURL(icon);
+        sup.setSupplierIconUrl(icon);
         newReview.setSupplier(QPlaceSuppliersRepository::instance()->addSupplier(sup));
     }
 
@@ -180,18 +179,14 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review)
     return newReview;
 }
 
-void QPlaceJSonReviewParser::processData(const QString &data)
+void QPlaceJSonReviewParser::processJSonData(const QScriptValue &sv)
 {
-    if (!engine) {
-        engine = new QScriptEngine(this);
-    }
     reviews.clear();
 
-    QScriptValue sv = engine->evaluate("(" + data + ")");
     if (sv.isValid()) {
-        sv = sv.property(reviews_element);
-        if (sv.isValid()) {
-            processReviews(sv);
+        QScriptValue sv2 = sv.property(reviews_element);
+        if (sv2.isValid()) {
+            processReviews(sv2);
             emit finished(NoError, QString());
         } else {
             emit finished(ParsingError, QString("JSON data are invalid"));

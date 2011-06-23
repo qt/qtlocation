@@ -99,7 +99,7 @@ public:
     /*!
         Returns index of last item on current page.
     */
-    int stop() { return startIndx + dataList.count(); }
+    int stop() { return startIndx + dataList.count() - 1; }
     /*!
         Returns items list on current page.
     */

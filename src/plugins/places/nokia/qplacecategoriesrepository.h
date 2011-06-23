@@ -50,12 +50,14 @@
 #define QPLACECATEGORIESREPOSITORY_H
 
 #include <QObject>
+#include <QPointer>
 #include <QList>
 
 #include <qmobilityglobal.h>
 #include <qplacecategory.h>
 #include <qplacereply.h>
 #include "qplacejsoncategoriesparser.h"
+#include "qplacecategoriesreplyimpl.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -75,7 +77,7 @@ public:
     QPlaceCategory findCategoryById(const QString &id);
 
 public slots:
-    void categoriesReady(const QPlaceJSonCategoriesParser::Error &error, const QString &errorMessage);
+    void replyFinished();
 
 private:
     void setupCategoriesMapper();
@@ -85,7 +87,7 @@ private:
 
     QHash<QString, QPlaceCategory> allCategories;
     static QPlaceCategoriesRepository *repositoryInstance;
-    QPlaceJSonCategoriesParser *categoriesParser;
+    QPointer<QPlaceCategoriesReplyImpl> categoriesReply;
 };
 
 QTM_END_NAMESPACE

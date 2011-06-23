@@ -53,21 +53,17 @@
 #include <QList>
 
 #include <qplacemediaobject.h>
+#include "qplacejsonparser_p.h"
 
 class QScriptEngine;
 class QScriptValue;
 
 QTM_BEGIN_NAMESPACE
 
-class QPlaceJSonMediaParser : public QObject
+class QPlaceJSonMediaParser : public QPlaceJSonParser
 {
     Q_OBJECT
 public:
-    enum Error {
-        NoError,
-        ParsingError
-    };
-
     explicit QPlaceJSonMediaParser(QObject *parent = 0);
     virtual ~QPlaceJSonMediaParser();
 
@@ -75,17 +71,11 @@ public:
     int allMediaCount();
     static QPlaceMediaObject buildMediaObject(const QScriptValue &place);
 
-signals:
-    void finished(const QPlaceJSonMediaParser::Error &error, const QString &errorMessage);
-
-public slots:
-    void processData(const QString &data);
-
 private:
+    void processJSonData(const QScriptValue &sv);
     void processMedia(const QScriptValue &contacts);
 
 private:
-    QScriptEngine *engine;
     QList<QPlaceMediaObject> media;
     int allMedia;
 };

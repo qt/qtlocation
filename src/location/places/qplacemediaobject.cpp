@@ -52,7 +52,7 @@ QPlaceMediaObjectPrivate::QPlaceMediaObjectPrivate(const QPlaceMediaObjectPrivat
     : QSharedData()
 {
     this->url = other.url;
-    this->thumbnailURL = other.thumbnailURL;
+    this->thumbnailUrl = other.thumbnailUrl;
     this->id = other.id;
     this->metaInfo = other.metaInfo;
     this->mimeType = other.mimeType;
@@ -67,7 +67,7 @@ bool QPlaceMediaObjectPrivate::operator==(const QPlaceMediaObjectPrivate &other)
 {
     return (
             this->url == other.url
-            && this->thumbnailURL == other.thumbnailURL
+            && this->thumbnailUrl == other.thumbnailUrl
             && this->id == other.id
             && this->metaInfo == other.metaInfo
             && this->mimeType == other.mimeType
@@ -147,7 +147,7 @@ void QPlaceMediaObject::setUrl(const QString &data)
 */
 QString QPlaceMediaObject::thumbnailUrl() const
 {
-    return d->thumbnailURL;
+    return d->thumbnailUrl;
 }
 
 /*!
@@ -155,7 +155,7 @@ QString QPlaceMediaObject::thumbnailUrl() const
 */
 void QPlaceMediaObject::setThumbnailUrl(const QString &data)
 {
-    d->thumbnailURL = data;
+    d->thumbnailUrl = data;
 }
 
 /*!

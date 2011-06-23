@@ -49,9 +49,9 @@
 #include "qplacecategoriesrepository.h"
 #include "qplacejsoncategoriesparser.h"
 
-QTM_USE_NAMESPACE
+#include "qplacerestmanager.h"
 
-static const char *supportedCategories = "{\"categories\":{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"Accommodation\",\"language\":\"en\",\"name\":\"accommodation\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Administrative Areas & Buildings\",\"language\":\"en\",\"name\":\"administrative-areas-buildings\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Business & Services\",\"language\":\"en\",\"name\":\"business-services\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Eat & Drink\",\"language\":\"en\",\"name\":\"eat-drink\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Facilities\",\"language\":\"en\",\"name\":\"facilities\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Going Out\",\"language\":\"en\",\"name\":\"going-out\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Leisure & Outdoor\",\"language\":\"en\",\"name\":\"leisure-outdoor\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Natural & Geographical\",\"language\":\"en\",\"name\":\"natural-geographical\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Shopping\",\"language\":\"en\",\"name\":\"shopping\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Sights & Museums\",\"language\":\"en\",\"name\":\"sights-museums\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Public Toilet \\/ Rest Area\",\"language\":\"en\",\"name\":\"toilet-rest-area\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Transport\",\"language\":\"en\",\"name\":\"transport\"}],\"group\":[{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"Administrative Region\",\"language\":\"en\",\"name\":\"administrative-region\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Building\",\"language\":\"en\",\"name\":\"building\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"City, Town or Village\",\"language\":\"en\",\"name\":\"city-town-village\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Outdoor Area \\/ Complex\",\"language\":\"en\",\"name\":\"outdoor-area-complex\"}],\"groupingCategory\":{\"displayName\":\"Administrative Areas & Buildings\",\"language\":\"en\",\"name\":\"administrative-areas-buildings\"}},{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"Airport\",\"language\":\"en\",\"name\":\"airport\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Ferry Terminal\",\"language\":\"en\",\"name\":\"ferry-terminal\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Public Transport\",\"language\":\"en\",\"name\":\"public-transport\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Train Station\",\"language\":\"en\",\"name\":\"railway-station\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Taxi Stand\",\"language\":\"en\",\"name\":\"taxi-stand\"}],\"groupingCategory\":{\"displayName\":\"Transport\",\"language\":\"en\",\"name\":\"transport\"}},{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"Amusement or Holiday Park\",\"language\":\"en\",\"name\":\"amusement-holiday-park\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Recreation\",\"language\":\"en\",\"name\":\"recreation\"}],\"groupingCategory\":{\"displayName\":\"Leisure & Outdoor\",\"language\":\"en\",\"name\":\"leisure-outdoor\"}},{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"ATM \\/ Bank Exchange\",\"language\":\"en\",\"name\":\"atm-bank-exchange\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Business \\/ Industry\",\"language\":\"en\",\"name\":\"business-industry\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Car Dealer \\/ Repair\",\"language\":\"en\",\"name\":\"car-dealer-repair\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Car Rental\",\"language\":\"en\",\"name\":\"car-rental\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Communication \\/ Media\",\"language\":\"en\",\"name\":\"communication-media\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Petrol Station\",\"language\":\"en\",\"name\":\"petrol-station\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Police \\/ Emergency\",\"language\":\"en\",\"name\":\"police-emergency\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Post Office\",\"language\":\"en\",\"name\":\"post-office\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Service\",\"language\":\"en\",\"name\":\"service\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Tourist Information\",\"language\":\"en\",\"name\":\"tourist-information\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Travel Agency\",\"language\":\"en\",\"name\":\"travel-agency\"}],\"groupingCategory\":{\"displayName\":\"Business & Services\",\"language\":\"en\",\"name\":\"business-services\"}},{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"Bar \\/ Pub\",\"language\":\"en\",\"name\":\"bar-pub\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Coffee \\/ Tea\",\"language\":\"en\",\"name\":\"coffee-tea\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Restaurant\",\"language\":\"en\",\"name\":\"restaurant\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Snacks \\/ Fast food\",\"language\":\"en\",\"name\":\"snacks-fast-food\"}],\"groupingCategory\":{\"displayName\":\"Eat & Drink\",\"language\":\"en\",\"name\":\"eat-drink\"}},{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"Body of Water\",\"language\":\"en\",\"name\":\"body-of-water\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Forest, Heath or Other Vegetation\",\"language\":\"en\",\"name\":\"forest-heath-vegetation\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Mountain or Hill\",\"language\":\"en\",\"name\":\"mountain-hill\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Undersea Feature\",\"language\":\"en\",\"name\":\"undersea-feature\"}],\"groupingCategory\":{\"displayName\":\"Natural & Geographical\",\"language\":\"en\",\"name\":\"natural-geographical\"}},{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"Bookshop\",\"language\":\"en\",\"name\":\"bookshop\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Clothing & Accessories\",\"language\":\"en\",\"name\":\"clothing-accessories-shop\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Department Store\",\"language\":\"en\",\"name\":\"department-store\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Electronics\",\"language\":\"en\",\"name\":\"electronics-shop\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Food & Drink\",\"language\":\"en\",\"name\":\"food-drink\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Hardware, House & Garden\",\"language\":\"en\",\"name\":\"hardware-house-garden-shop\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Kiosk \\/ 24\\/7 \\/ Convenience Store\",\"language\":\"en\",\"name\":\"kiosk-convenience-store\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Mall\",\"language\":\"en\",\"name\":\"mall\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Pharmacy\",\"language\":\"en\",\"name\":\"pharmacy\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Sport & Outdoor\",\"language\":\"en\",\"name\":\"sport-outdoor-shop\"}],\"groupingCategory\":{\"displayName\":\"Shopping\",\"language\":\"en\",\"name\":\"shopping\"}},{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"Camping\",\"language\":\"en\",\"name\":\"camping\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Hostel\",\"language\":\"en\",\"name\":\"hostel\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Hotel\",\"language\":\"en\",\"name\":\"hotel\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Motel\",\"language\":\"en\",\"name\":\"motel\"}],\"groupingCategory\":{\"displayName\":\"Accommodation\",\"language\":\"en\",\"name\":\"accommodation\"}},{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"Casino\",\"language\":\"en\",\"name\":\"casino\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Movie Theater\",\"language\":\"en\",\"name\":\"cinema\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Dance or Night Club\",\"language\":\"en\",\"name\":\"dance-night-club\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Theater, Music & Culture\",\"language\":\"en\",\"name\":\"theatre-music-culture\"}],\"groupingCategory\":{\"displayName\":\"Going Out\",\"language\":\"en\",\"name\":\"going-out\"}},{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"Education Facility\",\"language\":\"en\",\"name\":\"education-facility\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Fair & Convention Facility\",\"language\":\"en\",\"name\":\"fair-convention-facility\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Government or Community Facility\",\"language\":\"en\",\"name\":\"government-community-facility\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Hospital or Health Care Facility\",\"language\":\"en\",\"name\":\"hospital-health-care-facility\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Library\",\"language\":\"en\",\"name\":\"library\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Parking Facility\",\"language\":\"en\",\"name\":\"parking-facility\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Sports Facility \\/ Venue\",\"language\":\"en\",\"name\":\"sports-facility-venue\"}],\"groupingCategory\":{\"displayName\":\"Facilities\",\"language\":\"en\",\"name\":\"facilities\"}},{\"category\":[{\"categorySystemName\":\"find-places\",\"displayName\":\"Landmark \\/ Attraction\",\"language\":\"en\",\"name\":\"landmark-attraction\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Museum\",\"language\":\"en\",\"name\":\"museum\"},{\"categorySystemName\":\"find-places\",\"displayName\":\"Religious Place\",\"language\":\"en\",\"name\":\"religious-place\"}],\"groupingCategory\":{\"displayName\":\"Sights & Museums\",\"language\":\"en\",\"name\":\"sights-museums\"}}]}}";
+QTM_USE_NAMESPACE
 
 static QMap<QString, QString> categoriesMap;
 static QPlaceCategory *secondSearchCenter = NULL;
@@ -68,16 +68,9 @@ QPlaceCategoriesRepository *QPlaceCategoriesRepository::instance()
 
 QPlaceCategoriesRepository::QPlaceCategoriesRepository(QObject *parent)
     : QObject(parent),
-      categoriesParser(NULL)
+      categoriesReply(NULL)
 {
     setupCategoriesMapper();
-
-    if (!categoriesParser) {
-        categoriesParser = new QPlaceJSonCategoriesParser(this);
-    }
-    connect(categoriesParser, SIGNAL(finished(const QPlaceJSonCategoriesParser::Error &, const QString &)),
-            this, SLOT(categoriesReady(const QPlaceJSonCategoriesParser::Error &, const QString &)));
-    categoriesParser->processData(supportedCategories);
 }
 
 QPlaceCategoriesRepository::~QPlaceCategoriesRepository()
@@ -86,8 +79,14 @@ QPlaceCategoriesRepository::~QPlaceCategoriesRepository()
 
 QPlaceReply *QPlaceCategoriesRepository::initializeCategories()
 {
-    // TODO: to be implemented
-    return NULL;
+    QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendCategoriesTreeRequest();
+    if (restReply) {
+        categoriesReply = new QPlaceCategoriesReplyImpl(restReply);
+        connect(categoriesReply, SIGNAL(finished()),
+                this, SLOT(replyFinished()));
+
+    }
+    return categoriesReply;
 }
 
 QList<QPlaceCategory> QPlaceCategoriesRepository::categories() const
@@ -120,17 +119,14 @@ QPlaceCategory QPlaceCategoriesRepository::findCategoryById(const QString &id)
     return allCategories.value(id, QPlaceCategory());
 }
 
-void QPlaceCategoriesRepository::categoriesReady(const QPlaceJSonCategoriesParser::Error &error, const QString &errorMessage)
+void QPlaceCategoriesRepository::replyFinished()
 {
-    Q_UNUSED(errorMessage);
-
-    if (!error) {
-        foreach (QPlaceCategory cat, categoriesParser->resultCategories()) {
+    if (!categoriesReply.isNull()) {
+        foreach (QPlaceCategory cat, categoriesReply->categories()) {
             allCategories.insert(cat.categoryId(), cat);
         }
     }
-    delete categoriesParser;
-    categoriesParser = NULL;
+    categoriesReply = NULL;
 }
 
 void QPlaceCategoriesRepository::setupCategoriesMapper()

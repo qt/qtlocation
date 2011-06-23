@@ -3,8 +3,8 @@ import Qt.location 5.0
 
 Rectangle {
     id: fullView
-    width: 360
-    height: 640
+    width: 640
+    height: 360
 
     SearchResultModel {
         id: resultModel
@@ -35,24 +35,24 @@ Rectangle {
         anchors.right: categoriesList.left
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.topMargin: 10
+        anchors.topMargin: 20
         model: resultModel
         delegate: Component {
             Item {
-                width: 180; height: 240
+                width: parent.width; height: 170
                 Column {
-                    Text { text: searchResult.type == SearchResult.Place ? '<b>Name: </b> ' + searchResult.place.name : '<b>DYM: </b> ' + searchResult.didYouMeanSuggestion; }
-                    Text { text: '<b>Street: </b> ' + searchResult.place.location.address.street }
-                    Text { text: '<b>Latitude: </b> ' + searchResult.place.location.displayPosition.latitude }
-                    Text { text: '<b>Longitude: </b> ' + searchResult.place.location.displayPosition.longitude }
-                    Text { text: '<b>Cat[0] id: </b> ' + searchResult.place.categories[0].categoryId }
-                    Text { text: '<b>Media count: </b> ' + searchResult.place.media.data.length }
-                    Text { text: '<b>All media count: </b> ' + searchResult.place.mediaCount }
-                    Text { text: '<b>Descriptions count: </b> ' + searchResult.place.descriptions.length }
-                    Text { text: '<b>Reviews count: </b> ' + searchResult.place.reviews.data.length }
-                    Text { text: '<b>All reviews count: </b> ' + searchResult.place.reviewCount }
-                    Text { text: '<b>Tags: </b> ' + searchResult.place.tags }
-                    Text { text: '<b>Suppliers: </b> ' + JSON.stringify(searchResult.place.suppliers) }
+                    Text { text: searchResult.type == SearchResult.Place ? '<b>Name: </b> ' + searchResult.place.name : '<b>DYM: </b> ' + searchResult.didYouMeanSuggestion; font.pixelSize: 16 }
+                    Text { text: '<b>Street: </b> ' + searchResult.place.location.address.street; font.pixelSize: 16 }
+                    Text { text: '<b>Latitude: </b> ' + searchResult.place.location.displayPosition.latitude; font.pixelSize: 16 }
+                    Text { text: '<b>Longitude: </b> ' + searchResult.place.location.displayPosition.longitude; font.pixelSize: 16 }
+                    Text { text: '<b>Cat[0] id: </b> ' + searchResult.place.categories[0].categoryId; font.pixelSize: 16 }
+                    Text { text: '<b>Media count: </b> ' + searchResult.place.media.data.length; font.pixelSize: 16 }
+                    //Text { text: '<b>All media count: </b> ' + searchResult.place.mediaCount; font.pixelSize: 16 }
+                    Text { text: '<b>Descriptions count: </b> ' + searchResult.place.descriptions.length; font.pixelSize: 16 }
+                    //Text { text: '<b>Reviews count: </b> ' + searchResult.place.reviews.data.length; font.pixelSize: 16 }
+                    //Text { text: '<b>All reviews count: </b> ' + searchResult.place.reviewCount; font.pixelSize: 16 }
+                    Text { text: '<b>Tags: </b> ' + searchResult.place.tags; font.pixelSize: 16 }
+                    //Text { text: '<b>Suppliers: </b> ' + JSON.stringify(searchResult.place.suppliers); font.pixelSize: 16 }
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -217,15 +217,16 @@ Rectangle {
         model: resultSuggestion
         delegate: Component {
             Item {
-                width: 180; height: 20
+                width: parent.width; height: 15
                 Column {
-                    Text { text: '<b>Suggestion:</b> ' + textPrediction }
+                    Text { text: '<b>Suggestion:</b> ' + textPrediction; font.pixelSize: 16 }
                 }
             }
         }
-        height: 80
+        height: 60
         anchors.top: queryText.bottom
         anchors.topMargin: 10
+        anchors.bottomMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 10
         anchors.right: categoriesList.left
@@ -236,7 +237,7 @@ Rectangle {
         id: categoriesText
         x: 226
         y: 10
-        width: 125
+        width: 150
         height: 20
         text: "Categories tree:"
         horizontalAlignment: Text.AlignHCenter
@@ -264,12 +265,11 @@ Rectangle {
         model: categoriesModel
         delegate: Component {
             Item {
-                width: 180; height: 130
+                height: 40
+                width: parent.width
                 Column {
-                    Text { text: '<b>name:</b> ' + category.name }
-                    Text { text: '<b>id:</b> ' + category.categoryId }
-                    Text { text: '<b>system:</b> ' + category.categorySystemId }
-                    Text { text: '<b>description:</b> ' + category.description }
+                    Text { text: '<b>name:</b> ' + category.name; font.pixelSize: 16 }
+                    Text { text: '<b>id:</b> ' + category.categoryId; font.pixelSize: 16 }
                 }
                 MouseArea {
                     anchors.fill: parent

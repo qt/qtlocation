@@ -57,8 +57,7 @@
 QTM_USE_NAMESPACE
 
 QPlaceJSonTextPredictionParser::QPlaceJSonTextPredictionParser(QObject *parent) :
-    QObject(parent),
-    engine(NULL)
+    QPlaceJSonParser(parent)
 {
 }
 
@@ -67,14 +66,10 @@ QStringList QPlaceJSonTextPredictionParser::predictions()
     return suggestions;
 }
 
-void QPlaceJSonTextPredictionParser::processData(const QString &data)
+void QPlaceJSonTextPredictionParser::processJSonData(const QScriptValue &sv)
 {
-    if (!engine) {
-        engine = new QScriptEngine(this);
-    }
     suggestions.clear();
 
-    QScriptValue sv = engine->evaluate(data);
     if (sv.isValid() && sv.isArray()) {
         qScriptValueToSequence(sv, suggestions);
 

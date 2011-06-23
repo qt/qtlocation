@@ -92,43 +92,6 @@ QPlacePeriod::QPlacePeriod()
 {
 }
 
-QPlacePeriod::QPlacePeriod(int startHour, int startMinute, int endHour, int endMinute)
-    : d(new QPlacePeriodPrivate)
-{
-    QTime startTime(startHour, startMinute);
-    d->begin.setTime(startTime);
-    QTime endTime(endHour, endMinute);
-    d->end.setTime(endTime);
-}
-
-QPlacePeriod::QPlacePeriod(int startMonth, int startDay, int startHour, int startMinute,
-            int endMonth, int endDay, int endHour, int endMinute)
-    : d(new QPlacePeriodPrivate)
-{
-    QTime startTime(startHour, startMinute);
-    QDate startDate(0, startMonth, startDay);
-    d->begin.setTime(startTime);
-    d->begin.setDate(startDate);
-    QTime endTime(endHour, endMinute);
-    QDate endDate(0, endMonth, endDay);
-    d->end.setTime(endTime);
-    d->end.setDate(endDate);
-}
-
-QPlacePeriod::QPlacePeriod(int startYear, int startMonth, int startDay, int startHour, int startMinute,
-            int endYear, int endMonth, int endDay, int endHour, int endMinute)
-    : d(new QPlacePeriodPrivate)
-{
-    QTime startTime(startHour, startMinute);
-    QDate startDate(startYear, startMonth, startDay);
-    d->begin.setTime(startTime);
-    d->begin.setDate(startDate);
-    QTime endTime(endHour, endMinute);
-    QDate endDate(endYear, endMonth, endDay);
-    d->end.setTime(endTime);
-    d->end.setDate(endDate);
-}
-
 /*!
     Constructs a copy of \a other
 */

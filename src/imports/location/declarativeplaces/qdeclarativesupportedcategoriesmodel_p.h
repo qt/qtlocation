@@ -7,6 +7,7 @@
 
 #include <qplacecategory.h>
 #include <qplacemanager.h>
+#include <qplacereply.h>
 
 #include "qdeclarativecategory_p.h"
 
@@ -39,12 +40,15 @@ public:
 signals:
     void categoriesChanged();
 
+private slots:
+    void replyFinished();
+    void replyError(QPlaceReply::Error error, const QString &errorString);
+
 private:
     void convertCategoriesToDeclarative();
 
-private:
     QPlaceManager *m_manager;
-    //QPlaceReply *m_response;
+    QPlaceReply *m_response;
     QList<QPlaceCategory> m_categories;
     QMap<QString, QDeclarativeCategory*> m_categoryMap;
 };

@@ -68,10 +68,10 @@ public:
     void setName(const QString &data);
     QString supplierId() const;
     void setSupplierId(const QString &data);
-    QString URL() const;
-    void setURL(const QString &data);
-    QString supplierIconURL() const;
-    void setSupplierIconURL(const QString &data);
+    QString url() const;
+    void setUrl(const QString &data);
+    QString supplierIconUrl() const;
+    void setSupplierIconUrl(const QString &data);
 
 private:
     QSharedDataPointer<QPlaceSupplierPrivate> d;

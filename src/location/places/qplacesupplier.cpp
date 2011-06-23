@@ -54,7 +54,7 @@ QPlaceSupplierPrivate::QPlaceSupplierPrivate(const QPlaceSupplierPrivate &other)
     this->name = other.name;
     this->supplierId = other.supplierId;
     this->url = other.url;
-    this->supplierIconURL = other.supplierIconURL;
+    this->supplierIconUrl = other.supplierIconUrl;
 }
 
 QPlaceSupplierPrivate::~QPlaceSupplierPrivate()
@@ -67,7 +67,7 @@ bool QPlaceSupplierPrivate::operator==(const QPlaceSupplierPrivate &other) const
             this->name == other.name
             && this->supplierId == other.supplierId
             && this->url == other.url
-            && this->supplierIconURL == other.supplierIconURL
+            && this->supplierIconUrl == other.supplierIconUrl
     );
 }
 
@@ -149,33 +149,33 @@ void QPlaceSupplier::setSupplierId(const QString &data)
 }
 
 /*!
-    Returns URL.
+    Returns the URL of the supplier.
 */
-QString QPlaceSupplier::URL() const
+QString QPlaceSupplier::url() const
 {
     return d->url;
 }
 
 /*!
-    Sets URL of the icon.
+    Sets \a url of the supplier.
 */
-void QPlaceSupplier::setURL(const QString &data)
+void QPlaceSupplier::setUrl(const QString &url)
 {
-    d->url = data;
+    d->url = url;
 }
 
 /*!
-    Returns URL of the icon.
+    Returns the supplier's icon URL.
 */
-QString QPlaceSupplier::supplierIconURL() const
+QString QPlaceSupplier::supplierIconUrl() const
 {
-    return d->supplierIconURL;
+    return d->supplierIconUrl;
 }
 
 /*!
-    Sets URL of the icon.
+    Sets \a url of the icon of the supplier.
 */
-void QPlaceSupplier::setSupplierIconURL(const QString &data)
+void QPlaceSupplier::setSupplierIconUrl(const QString &url)
 {
-    d->supplierIconURL = data;
+    d->supplierIconUrl = url;
 }

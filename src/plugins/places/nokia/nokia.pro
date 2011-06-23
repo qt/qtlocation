@@ -11,6 +11,7 @@ DESTDIR = $$QT.location.plugins/places
 HEADERS += \
 #data classes
 #parsers
+    qplacejsonparser_p.h \
     qplacejsoncategoriesparser.h \
     qplacejsondetailsparser.h \
     qplacejsonmediaparser.h \
@@ -20,6 +21,7 @@ HEADERS += \
     qplacejsontextpredictionparser.h \
 #query classes
 #reply classes
+    qplacecategoriesreplyimpl.h \
     qplacemediareplyimpl.h \
     qplacedetailsreplyimpl.h \
     qplaceratingreplyimpl.h \
@@ -38,6 +40,7 @@ HEADERS += \
 SOURCES += \
 #data classes
 #parsers
+    qplacejsonparser.cpp \
     qplacejsoncategoriesparser.cpp \
     qplacejsondetailsparser.cpp \
     qplacejsonmediaparser.cpp \
@@ -47,6 +50,7 @@ SOURCES += \
     qplacejsontextpredictionparser.cpp \
 #query classes
 #reply classes
+    qplacecategoriesreplyimpl.cpp \
     qplacedetailsreplyimpl.cpp \
     qplacemediareplyimpl.cpp \
     qplaceratingreplyimpl.cpp \

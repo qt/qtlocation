@@ -108,8 +108,7 @@ static const char *search_properties_address_house_number = "addrHouseNumber";
 QTM_USE_NAMESPACE
 
 QPlaceJSonSearchParser::QPlaceJSonSearchParser(QObject *parent) :
-    QObject(parent),
-    engine(NULL)
+    QPlaceJSonParser(parent)
 {
 }
 
@@ -123,14 +122,10 @@ QList<QPlaceSearchResult> QPlaceJSonSearchParser::searchResults()
     return searchResultsList;
 }
 
-void QPlaceJSonSearchParser::processData(const QString &data)
+void QPlaceJSonSearchParser::processJSonData(const QScriptValue &sv)
 {
-    if (!engine) {
-        engine = new QScriptEngine(this);
-    }
     searchResultsList.clear();
 
-    QScriptValue sv = engine->evaluate("(" + data + ")");
     if (sv.isValid()) {
         QScriptValueIterator it(sv.property(search_results_element));
             while (it.hasNext()) {
@@ -236,7 +231,7 @@ void QPlaceJSonSearchParser::processContacts(const QScriptValue &properties, QGe
     QScriptValue value = properties.property(search_properties_url_value);
     if (value.isValid() && !value.toString().isEmpty()) {
         QPlaceContact contact;
-        contact.setType(QPlaceContact::URL);
+        contact.setType(QPlaceContact::Url);
         contact.setValue(value.toString());
         contacts.append(contact);
     }

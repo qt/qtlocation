@@ -70,8 +70,7 @@ static const char *media_provider_name = "providerDisplayName";
 QTM_USE_NAMESPACE
 
 QPlaceJSonMediaParser::QPlaceJSonMediaParser(QObject *parent) :
-    QObject(parent),
-    engine(NULL),
+    QPlaceJSonParser(parent),
     allMedia(0)
 {
 }
@@ -118,18 +117,14 @@ QPlaceMediaObject QPlaceJSonMediaParser::buildMediaObject(const QScriptValue &me
     return newMedia;
 }
 
-void QPlaceJSonMediaParser::processData(const QString &data)
+void QPlaceJSonMediaParser::processJSonData(const QScriptValue &sv)
 {
-    if (!engine) {
-        engine = new QScriptEngine(this);
-    }
     media.clear();
 
-    QScriptValue sv = engine->evaluate("(" + data + ")");
     if (sv.isValid()) {
-        sv = sv.property(media_objects_element);
-        if (sv.isValid()) {
-            processMedia(sv);
+        QScriptValue sv2 = sv.property(media_objects_element);
+        if (sv2.isValid()) {
+            processMedia(sv2);
             emit finished(NoError, QString());
         } else {
             emit finished(ParsingError, QString("JSON data are invalid"));

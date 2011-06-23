@@ -20,7 +20,7 @@ class QDeclarativeReview : public QObject
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged);
     Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged);
     Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged);
-    Q_PROPERTY(QString originatorURL READ originatorURL WRITE setOriginatorURL NOTIFY originatorURLChanged);
+    Q_PROPERTY(QString originatorUrl READ originatorUrl WRITE setOriginatorUrl NOTIFY originatorUrlChanged);
     Q_PROPERTY(int helpfulVotings READ helpfulVotings WRITE setHelpfulVotings NOTIFY helpfulVotingsChanged);
     Q_PROPERTY(int unhelpfulVotings READ unhelpfulVotings WRITE setUnhelpfulVotings NOTIFY unhelpfulVotingsChanged);
     Q_PROPERTY(double rating READ rating WRITE setRating NOTIFY ratingChanged);
@@ -56,8 +56,8 @@ public:
     void setUserId(const QString &data);
     QString userName() const;
     void setUserName(const QString &data);
-    QString originatorURL() const;
-    void setOriginatorURL(const QString &data);
+    QString originatorUrl() const;
+    void setOriginatorUrl(const QString &data);
     QDeclarativeSupplier *supplier();
     void setSupplier(QDeclarativeSupplier *data);
 
@@ -70,7 +70,7 @@ signals:
     void userIdChanged();
     void userNameChanged();
     void titleChanged();
-    void originatorURLChanged();
+    void originatorUrlChanged();
     void helpfulVotingsChanged();
     void unhelpfulVotingsChanged();
     void ratingChanged();

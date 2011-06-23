@@ -48,8 +48,8 @@ void QDeclarativeDescription::setDescription(const QPlaceDescription &src)
     if (previous.language() != m_src.language()) {
         emit languageChanged();
     }
-    if (previous.sourceURL() != m_src.sourceURL()) {
-        emit sourceURLChanged();
+    if (previous.sourceUrl() != m_src.sourceUrl()) {
+        emit sourceUrlChanged();
     }
     if (previous.supplier() != m_src.supplier()) {
         m_declarativeSupplier.setSupplier(src.supplier());
@@ -139,22 +139,22 @@ QString QDeclarativeDescription::language() const
 }
 
 /*!
-    \qmlproperty string Description::sourceURL
+    \qmlproperty string Description::sourceUrl
 
     This property holds source URL.
 */
 
-void QDeclarativeDescription::setSourceURL(const QString &sourceURL)
+void QDeclarativeDescription::setSourceUrl(const QString &sourceUrl)
 {
-    if (m_src.sourceURL() != sourceURL) {
-        m_src.setSourceURL(sourceURL);
-        emit sourceURLChanged();
+    if (m_src.sourceUrl() != sourceUrl) {
+        m_src.setSourceUrl(sourceUrl);
+        emit sourceUrlChanged();
     }
 }
 
-QString QDeclarativeDescription::sourceURL() const
+QString QDeclarativeDescription::sourceUrl() const
 {
-    return m_src.sourceURL();
+    return m_src.sourceUrl();
 }
 
 /*!

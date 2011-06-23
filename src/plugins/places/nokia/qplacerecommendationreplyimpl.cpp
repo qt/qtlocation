@@ -69,8 +69,8 @@ QPlaceRecommendationReplyImpl::QPlaceRecommendationReplyImpl(QPlaceRestReply *re
                 parser, SLOT(processData(const QString &)));
         connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
-        connect(parser, SIGNAL(finished(QPlaceJSonRecommendationParser::Error,QString)),
-                this, SLOT(predictionsReady(QPlaceJSonRecommendationParser::Error,QString)));
+        connect(parser, SIGNAL(finished(QPlaceJSonParser::Error,QString)),
+                this, SLOT(resultReady(QPlaceJSonParser::Error,QString)));
     }
 }
 
@@ -101,12 +101,12 @@ void QPlaceRecommendationReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceRecommendationReplyImpl::predictionsReady(const QPlaceJSonRecommendationParser::Error &errorId,
+void QPlaceRecommendationReplyImpl::resultReady(const QPlaceJSonRecommendationParser::Error &errorId,
                       const QString &errorMessage)
 {
-    if (errorId == QPlaceJSonRecommendationParser::NoError) {
+    if (errorId == QPlaceJSonParser::NoError) {
         setResults(parser->results());
-    } else if (errorId == QPlaceJSonRecommendationParser::ParsingError) {
+    } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());
         emit processingError(this, ParseError, errorMessage);

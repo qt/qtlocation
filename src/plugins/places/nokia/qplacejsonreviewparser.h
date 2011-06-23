@@ -53,21 +53,17 @@
 #include <QList>
 
 #include <qplacesearchresult.h>
+#include "qplacejsonparser_p.h"
 
 class QScriptEngine;
 class QScriptValue;
 
 QTM_BEGIN_NAMESPACE
 
-class QPlaceJSonReviewParser : public QObject
+class QPlaceJSonReviewParser : public QPlaceJSonParser
 {
     Q_OBJECT
 public:
-    enum Error {
-        NoError,
-        ParsingError
-    };
-
     explicit QPlaceJSonReviewParser(QObject *parent = 0);
     virtual ~QPlaceJSonReviewParser();
 
@@ -75,17 +71,11 @@ public:
     int allReviewsCount();
     static QPlaceReview buildReview(const QScriptValue &place);
 
-signals:
-    void finished(const QPlaceJSonReviewParser::Error &error, const QString &errorMessage);
-
-public slots:
-    void processData(const QString &data);
-
 private:
+    void processJSonData(const QScriptValue &sv);
     void processReviews(const QScriptValue &contacts);
 
 private:
-    QScriptEngine *engine;
     QList<QPlaceReview> reviews;
     int allReviews;
 };

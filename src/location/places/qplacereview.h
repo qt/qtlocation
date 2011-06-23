@@ -90,8 +90,8 @@ public:
     void setUserId(const QString &data);
     QString userName() const;
     void setUserName(const QString &data);
-    QString originatorURL() const;
-    void setOriginatorURL(const QString &data);
+    QString originatorUrl() const;
+    void setOriginatorUrl(const QString &data);
 
 private:
     QSharedDataPointer<QPlaceReviewPrivate> d;

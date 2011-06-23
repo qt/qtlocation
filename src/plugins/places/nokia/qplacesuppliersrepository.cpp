@@ -97,10 +97,10 @@ void QPlaceSuppliersRepository::copyMissingData(const QPlaceSupplier &src,
     if (target.supplierId().isEmpty() && !src.supplierId().isEmpty()) {
         target.setSupplierId(src.supplierId());
     }
-    if (target.URL().isEmpty() && !src.URL().isEmpty()) {
-        target.setURL(src.URL());
+    if (target.url().isEmpty() && !src.url().isEmpty()) {
+        target.setUrl(src.url());
     }
-    if (target.supplierIconURL().isEmpty() && !src.supplierIconURL().isEmpty()) {
-        target.setSupplierIconURL(src.supplierIconURL());
+    if (target.supplierIconUrl().isEmpty() && !src.supplierIconUrl().isEmpty()) {
+        target.setSupplierIconUrl(src.supplierIconUrl());
     }
 }

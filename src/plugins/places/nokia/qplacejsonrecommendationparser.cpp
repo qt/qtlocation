@@ -67,8 +67,7 @@ static const char *recommendations_place_element = "place";
 QTM_USE_NAMESPACE
 
 QPlaceJSonRecommendationParser::QPlaceJSonRecommendationParser(QObject *parent) :
-    QObject(parent),
-    engine(NULL)
+    QPlaceJSonParser(parent)
 {
 }
 
@@ -81,18 +80,14 @@ QList<QPlaceSearchResult> QPlaceJSonRecommendationParser::results()
     return searchResults;
 }
 
-void QPlaceJSonRecommendationParser::processData(const QString &data)
+void QPlaceJSonRecommendationParser::processJSonData(const QScriptValue &sv)
 {
-    if (!engine) {
-        engine = new QScriptEngine(this);
-    }
     searchResults.clear();
 
-    QScriptValue sv = engine->evaluate("(" + data + ")");
     if (sv.isValid()) {
-        sv = sv.property(recommendations_element);
-        if (sv.isValid()) {
-            QScriptValueIterator it(sv.property(recommendations_nearby_element));
+        QScriptValue sv2 = sv.property(recommendations_element);
+        if (sv2.isValid()) {
+            QScriptValueIterator it(sv2.property(recommendations_nearby_element));
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element

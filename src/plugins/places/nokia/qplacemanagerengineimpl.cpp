@@ -228,7 +228,15 @@ QPlaceReply *QPlaceManagerEngineImpl::removePlace(const QGeoPlace &place) {
 
 QPlaceReply *QPlaceManagerEngineImpl::initializeCategories()
 {
-    return QPlaceCategoriesRepository::instance()->initializeCategories();
+    QPlaceReply *reply = QPlaceCategoriesRepository::instance()->initializeCategories();
+    if (reply) {
+        reply->setParent(this);
+        connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
+                this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
+        connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
+                this, SLOT(processingFinished(QPlaceReply*)));
+    }
+    return reply;
 }
 
 QList<QPlaceCategory> QPlaceManagerEngineImpl::categories() const

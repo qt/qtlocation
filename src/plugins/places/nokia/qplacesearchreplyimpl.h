@@ -72,7 +72,7 @@ Q_SIGNALS:
 
 private slots:
     void restError(QPlaceRestReply::Error error);
-    void predictionsReady(const QPlaceJSonSearchParser::Error &error,
+    void resultReady(const QPlaceJSonParser::Error &error,
                           const QString &errorMessage);
 
 private:

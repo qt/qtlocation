@@ -63,7 +63,7 @@ QPlaceMediaObject QDeclarativeMediaObject::mediaObject() const
 }
 
 /*!
-    \qmlproperty string MediaObject::URL
+    \qmlproperty string MediaObject::url
 
     This property holds URL of the media.
 */

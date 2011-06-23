@@ -45,8 +45,8 @@ void QDeclarativeReview::setReview(const QPlaceReview &src)
     if (previous.language() != m_src.language()) {
         emit languageChanged();
     }
-    if (previous.originatorURL() != m_src.originatorURL()) {
-        emit originatorURLChanged();
+    if (previous.originatorUrl() != m_src.originatorUrl()) {
+        emit originatorUrlChanged();
     }
     if (previous.reviewId() != m_src.reviewId()) {
         emit reviewIdChanged();
@@ -141,22 +141,22 @@ QString QDeclarativeReview::language() const
 }
 
 /*!
-    \qmlproperty string Review::originatorURL
+    \qmlproperty string Review::originatorUrl
 
     This property holds originator URL.
 */
 
-void QDeclarativeReview::setOriginatorURL(const QString &originatorURL)
+void QDeclarativeReview::setOriginatorUrl(const QString &originatorUrl)
 {
-    if (m_src.originatorURL() != originatorURL) {
-        m_src.setOriginatorURL(originatorURL);
-        emit originatorURLChanged();
+    if (m_src.originatorUrl() != originatorUrl) {
+        m_src.setOriginatorUrl(originatorUrl);
+        emit originatorUrlChanged();
     }
 }
 
-QString QDeclarativeReview::originatorURL() const
+QString QDeclarativeReview::originatorUrl() const
 {
-    return m_src.originatorURL();
+    return m_src.originatorUrl();
 }
 
 /*!
@@ -286,7 +286,7 @@ int QDeclarativeReview::helpfulVotings() const
 }
 
 /*!
-    \qmlproperty int Review::unHelpfulVotings
+    \qmlproperty int Review::unhelpfulVotings
 
     This property holds not helpful votings count.
 */

@@ -53,29 +53,22 @@
 #include <QStringList>
 
 #include <qmobilityglobal.h>
+#include "qplacejsonparser_p.h"
 
 class QScriptEngine;
 
 QTM_BEGIN_NAMESPACE
 
-class QPlaceJSonTextPredictionParser : public QObject
+class QPlaceJSonTextPredictionParser : public QPlaceJSonParser
 {
     Q_OBJECT
 public:
-    enum Error {
-        NoError,
-        ParsingError
-    };
-
     explicit QPlaceJSonTextPredictionParser(QObject *parent = 0);
 
     QStringList predictions();
-signals:
-    void finished(const QPlaceJSonTextPredictionParser::Error &error, const QString &errorMessage);
-public slots:
-    void processData(const QString &data);
+
 private:
-    QScriptEngine *engine;
+    void processJSonData(const QScriptValue &sv);
     QStringList suggestions;
 };
 

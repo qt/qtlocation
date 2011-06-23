@@ -52,6 +52,13 @@ QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObje
     m_manager = new QPlaceManager(this);
     m_categories = m_manager->categories();
     convertCategoriesToDeclarative();
+
+    m_response = m_manager->initializeCategories();
+    if (m_response) {
+        connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
+        connect(m_response, SIGNAL(error(QPlaceReply::Error,QString)),
+                this, SLOT(replyError(QPlaceReply::Error,QString)));
+    }
 }
 
 QDeclarativeSupportedCategoriesModel::~QDeclarativeSupportedCategoriesModel()
@@ -145,6 +152,26 @@ QDeclarativeCategory* QDeclarativeSupportedCategoriesModel::categories_at(QDecla
 void QDeclarativeSupportedCategoriesModel::categories_clear(QDeclarativeListProperty<QDeclarativeCategory> *prop)
 {
     Q_UNUSED(prop)
+}
+
+void QDeclarativeSupportedCategoriesModel::replyFinished()
+{
+    if (m_response) {
+        beginResetModel();
+        m_categories = m_manager->categories();
+        convertCategoriesToDeclarative();
+        endResetModel();
+        emit categoriesChanged();
+        m_response->deleteLater();
+        m_response = NULL;
+    }
+}
+
+void QDeclarativeSupportedCategoriesModel::replyError(QPlaceReply::Error error,
+                                                 const QString &errorString)
+{
+    Q_UNUSED(error);
+    Q_UNUSED(errorString);
 }
 
 void QDeclarativeSupportedCategoriesModel::convertCategoriesToDeclarative()

@@ -164,7 +164,7 @@ int QPlaceQuery::limit() const
 /*!
     Sets the maximum number of places to be fetched to \a limit.
 
-    A limit of -1 indicates that the default limit of the backend should used.
+    A negative limit indicates that the default limit of the backend should used.
     If the backend maximum limit is less than \a limit, then only the
     backend maximum limit number of places are retrieved.
 

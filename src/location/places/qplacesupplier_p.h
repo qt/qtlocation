@@ -62,7 +62,7 @@ public:
     QString name;
     QString supplierId;
     QString url;
-    QString supplierIconURL;
+    QString supplierIconUrl;
 };
 
 QTM_END_NAMESPACE

@@ -62,7 +62,7 @@ public:
     QString contentTitle;
     QString contentType;
     QPlaceSupplier supplier;
-    QString sourceURL;
+    QString sourceUrl;
     QString language;
 };
 

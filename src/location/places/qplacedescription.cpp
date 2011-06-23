@@ -55,7 +55,7 @@ QPlaceDescriptionPrivate::QPlaceDescriptionPrivate(const QPlaceDescriptionPrivat
     this->contentTitle = other.contentTitle;
     this->contentType = other.contentType;
     this->supplier = other.supplier;
-    this->sourceURL = other.sourceURL;
+    this->sourceUrl = other.sourceUrl;
     this->language = other.language;
 }
 
@@ -70,7 +70,7 @@ bool QPlaceDescriptionPrivate::operator==(const QPlaceDescriptionPrivate &other)
             && this->contentTitle == other.contentTitle
             && this->contentType == other.contentType
             && this->supplier == other.supplier
-            && this->sourceURL == other.sourceURL
+            && this->sourceUrl == other.sourceUrl
             && this->language == other.language
     );
 }
@@ -190,17 +190,17 @@ void QPlaceDescription::setSupplier(const QPlaceSupplier &data)
 /*!
     Returns source url.
 */
-QString QPlaceDescription::sourceURL() const
+QString QPlaceDescription::sourceUrl() const
 {
-    return d->sourceURL;
+    return d->sourceUrl;
 }
 
 /*!
     Sets source url.
 */
-void QPlaceDescription::setSourceURL(const QString &data)
+void QPlaceDescription::setSourceUrl(const QString &data)
 {
-    d->sourceURL = data;
+    d->sourceUrl = data;
 }
 
 /*!

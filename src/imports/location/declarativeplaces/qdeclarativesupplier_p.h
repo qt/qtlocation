@@ -13,8 +13,8 @@ class QDeclarativeSupplier : public QObject
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString supplierId READ supplierId WRITE setSupplierId NOTIFY supplierIdChanged);
-    Q_PROPERTY(QString URL READ URL WRITE setURL NOTIFY URLChanged);
-    Q_PROPERTY(QString supplierIconURL READ supplierIconURL WRITE setSupplierIconURL NOTIFY supplierIconURLChanged);
+    Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY urlChanged);
+    Q_PROPERTY(QString supplierIconUrl READ supplierIconUrl WRITE setSupplierIconUrl NOTIFY supplierIconUrlChanged);
 
 public:
     explicit QDeclarativeSupplier(QObject* parent = 0);
@@ -28,16 +28,16 @@ public:
     void setName(const QString &data);
     QString supplierId() const;
     void setSupplierId(const QString &data);
-    QString URL() const;
-    void setURL(const QString &data);
-    QString supplierIconURL() const;
-    void setSupplierIconURL(const QString &data);
+    QString url() const;
+    void setUrl(const QString &data);
+    QString supplierIconUrl() const;
+    void setSupplierIconUrl(const QString &data);
 
 signals:
     void nameChanged();
     void supplierIdChanged();
-    void URLChanged();
-    void supplierIconURLChanged();
+    void urlChanged();
+    void supplierIconUrlChanged();
 
 private:
     QPlaceSupplier m_src;

@@ -190,8 +190,7 @@ static const char *place_premiumcontent_content_sunday = "SUN";
 QTM_USE_NAMESPACE
 
 QPlaceJSonDetailsParser::QPlaceJSonDetailsParser(QObject *parent) :
-    QObject(parent),
-    engine(NULL)
+    QPlaceJSonParser(parent)
 {
 }
 
@@ -213,13 +212,8 @@ QGeoPlace QPlaceJSonDetailsParser::result()
     return place;
 }
 
-void QPlaceJSonDetailsParser::processData(const QString &data)
+void QPlaceJSonDetailsParser::processJSonData(const QScriptValue &sv)
 {
-    if (!engine) {
-        engine = new QScriptEngine(this);
-    }
-
-    QScriptValue sv = engine->evaluate("(" + data + ")");
     if (sv.isValid()) {
         buildPlace(sv.property(place_place_element), &place);
         emit finished(QPlaceJSonDetailsParser::NoError, QString());
@@ -283,7 +277,7 @@ void QPlaceJSonDetailsParser::processMainProvider(const QScriptValue &placeValue
     }
     value = placeValue.property(place_provider_url);
     if (value.isValid() && !value.toString().isEmpty()){
-        sup.setSupplierIconURL(value.toString());
+        sup.setSupplierIconUrl(value.toString());
     }
     QList<QPlaceSupplier> list;
     list.append(QPlaceSuppliersRepository::instance()->addSupplier(sup));
@@ -298,7 +292,7 @@ void QPlaceJSonDetailsParser::processContacts(const QScriptValue &contactsValue,
         it.next();
         QPlaceContact contact;
         if (it.name() == place_contact_website_element) {
-            contact.setType(QPlaceContact::URL);
+            contact.setType(QPlaceContact::Url);
         }
         if (it.name() == place_contact_phone_element) {
             contact.setType(QPlaceContact::Phone);
@@ -598,7 +592,7 @@ void QPlaceJSonDetailsParser::processPremiumVersion(const QScriptValue &content,
 
 void QPlaceJSonDetailsParser::processPremiumContent(const QScriptValue &content, QGeoPlace*targetPlace)
 {
-    QString name, id, iconURL;
+    QString name, id, iconUrl;
     QScriptValue value = content.property(place_premiumcontent_content_providername_element);
     if (value.isValid() && !value.toString().isEmpty()) {
         name = value.toString();
@@ -609,13 +603,13 @@ void QPlaceJSonDetailsParser::processPremiumContent(const QScriptValue &content,
     }
     value = content.property(place_premiumcontent_content_providerIconUrl_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        iconURL = value.toString();
+        iconUrl = value.toString();
     }
     QPlaceSupplier supplier;
     if (!name.isEmpty() || !id.isEmpty()) {
         supplier.setName(name);
         supplier.setSupplierId(id);
-        supplier.setSupplierIconURL(iconURL);
+        supplier.setSupplierIconUrl(iconUrl);
         supplier = QPlaceSuppliersRepository::instance()->addSupplier(supplier);
     }
     processPremiumContentDescription(content, supplier, targetPlace);
@@ -646,7 +640,7 @@ void QPlaceJSonDetailsParser::processPremiumContentDescription(const QScriptValu
     }
     value = content.property(place_premiumcontent_content_vendorurl_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        desc.setSourceURL(value.toString());
+        desc.setSourceUrl(value.toString());
     }
     value = content.property(place_premiumcontent_content_language_element);
     if (value.isValid() && !value.toString().isEmpty()) {
@@ -1019,7 +1013,14 @@ QPlaceWeekdayHours *QPlaceJSonDetailsParser::processAdContentOpeningHoursElement
     if (value.isValid() && !value.toString().isEmpty()) {
         end = QTime::fromString(value.toString(),"hh:mm");
     }
-    QPlacePeriod period(start.hour(), start.minute(), end.hour(), end.minute());
+
+    QTime startTime;
+    startTime.setHMS(start.hour(), start.minute(), 0);
+    QTime endTime;
+    endTime.setHMS(end.hour(), end.minute(), 0);
+    QPlacePeriod period;
+    period.setStartTime(startTime);
+    period.setEndTime(endTime);
     openH->setPeriod(period);
     return openH;
 }

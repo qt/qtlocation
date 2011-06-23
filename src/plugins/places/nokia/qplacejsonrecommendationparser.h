@@ -53,37 +53,27 @@
 #include <QList>
 
 #include <qplacesearchresult.h>
+#include "qplacejsonparser_p.h"
 
 class QScriptEngine;
 class QScriptValue;
 
 QTM_BEGIN_NAMESPACE
 
-class QPlaceJSonRecommendationParser : public QObject
+class QPlaceJSonRecommendationParser : public QPlaceJSonParser
 {
     Q_OBJECT
 public:
-    enum Error {
-        NoError,
-        ParsingError
-    };
-
     explicit QPlaceJSonRecommendationParser(QObject *parent = 0);
     virtual ~QPlaceJSonRecommendationParser();
 
     QList<QPlaceSearchResult> results();
 
-signals:
-    void finished(const QPlaceJSonRecommendationParser::Error &error, const QString &errorMessage);
-
-public slots:
-    void processData(const QString &data);
-
 private:
+    void processJSonData(const QScriptValue &sv);
     void processResultElement(const QScriptValue &value);
 
 private:
-    QScriptEngine *engine;
     QList<QPlaceSearchResult> searchResults;
 };
 

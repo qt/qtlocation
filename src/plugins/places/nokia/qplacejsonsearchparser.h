@@ -55,32 +55,24 @@
 #include <qplacecategory.h>
 #include <qplacesearchresult.h>
 
+#include "qplacejsonparser_p.h"
+
 class QScriptEngine;
 class QScriptValue;
 
 QTM_BEGIN_NAMESPACE
 
-class QPlaceJSonSearchParser : public QObject
+class QPlaceJSonSearchParser : public QPlaceJSonParser
 {
     Q_OBJECT
 public:
-    enum Error {
-        NoError,
-        ParsingError
-    };
-
     explicit QPlaceJSonSearchParser(QObject *parent = 0);
     virtual ~QPlaceJSonSearchParser();
 
     QList<QPlaceSearchResult> searchResults();
 
-signals:
-    void finished(const QPlaceJSonSearchParser::Error &error, const QString &errorMessage);
-
-public slots:
-    void processData(const QString &data);
-
 private:
+    void processJSonData(const QScriptValue &sv);
     void processResultElement(const QScriptValue &value);
     QPlaceSearchResult processPlaceElement(const QScriptValue &value);
     void processContacts(const QScriptValue &properties, QGeoPlace *place);
@@ -89,7 +81,6 @@ private:
     void processAddress(const QScriptValue &properties, QPlaceLocation *location);
     void processLocation(const QScriptValue &properties, QGeoPlace *place);
 private:
-    QScriptEngine *engine;
     QList<QPlaceSearchResult> searchResultsList;
 };
 

@@ -69,8 +69,8 @@ QPlaceMediaReplyImpl::QPlaceMediaReplyImpl(QPlaceRestReply *reply, QObject *pare
                 parser, SLOT(processData(const QString &)));
         connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
-        connect(parser, SIGNAL(finished(QPlaceJSonMediaParser::Error,QString)),
-                this, SLOT(predictionsReady(QPlaceJSonMediaParser::Error,QString)));
+        connect(parser, SIGNAL(finished(QPlaceJSonParser::Error,QString)),
+                this, SLOT(resultReady(QPlaceJSonParser::Error,QString)));
     }
 }
 
@@ -106,13 +106,13 @@ void QPlaceMediaReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceMediaReplyImpl::predictionsReady(const QPlaceJSonMediaParser::Error &errorId,
+void QPlaceMediaReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
-    if (errorId == QPlaceJSonMediaParser::NoError) {
+    if (errorId == QPlaceJSonParser::NoError) {
         setMediaObjects(parser->resultMedia());
         setTotalCount(parser->allMediaCount());
-    } else if (errorId == QPlaceJSonMediaParser::ParsingError) {
+    } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());
         emit processingError(this, ParseError, errorMessage);
