@@ -91,6 +91,8 @@ void QPlaceJSonCategoriesParser::processJSonData(const QScriptValue &sv)
         if (sv2.isValid()) {
             allCategories = processCategories(sv2);
             emit finished(NoError, QString());
+        } else {
+            emit finished(ParsingError, QString("JSON data are invalid"));
         }
     } else {
         emit finished(ParsingError, QString("JSON data are invalid"));

@@ -135,6 +135,8 @@ QList<QPlaceSearchResult> QPlaceSearchReplyImpl::filterSecondSearchCenter(const 
             if (isNotSeconSearchCenter) {
                 newList.append(res);
             }
+        } else if (res.type() == QPlaceSearchResult::DidYouMeanSuggestion) {
+            newList.append(res);
         }
     }
     return newList;
