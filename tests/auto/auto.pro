@@ -16,4 +16,5 @@ SUBDIRS += qgeoaddress \
            qplacedescription \
            qplacelocation \
            qplacemediaobject \
+           qplacequery \
            qplacerating
