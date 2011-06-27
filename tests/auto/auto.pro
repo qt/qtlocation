@@ -7,4 +7,5 @@ TEMPLATE = subdirs
 
 SUBDIRS += qgeoaddress \
            qgeoplace \
-           qplacealternativevalue
+           qplacealternativevalue \
+           qplacebusinessfeature
