@@ -6,7 +6,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp
 
-OTHER_FILES = qmlplaces.qml
+OTHER_FILES = qmlplaces.qml \
+    PlaceDelegate.qml \
+    DidYouMeanDelegate.qml \
+    Button.qml \
+    CategoryDelegate.qml
 
 RESOURCES += qmlplaces.qrc
 
@@ -16,3 +20,7 @@ symbian {
     TARGET.CAPABILITY = NetworkServices
     TARGET.EPOCALLOWDLLDATA = 1
 }
+
+
+
+

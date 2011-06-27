@@ -1,5 +1,9 @@
 <RCC>
-<qresource prefix="/">
-<file>qmlplaces.qml</file>
-</qresource>
+    <qresource prefix="/">
+        <file>qmlplaces.qml</file>
+        <file>PlaceDelegate.qml</file>
+        <file>DidYouMeanDelegate.qml</file>
+        <file>Button.qml</file>
+        <file>CategoryDelegate.qml</file>
+    </qresource>
 </RCC>
