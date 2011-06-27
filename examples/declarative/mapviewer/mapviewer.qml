@@ -45,8 +45,10 @@ import "common" as Common
 FocusScope {
     anchors.fill: parent
     id: page
+    focus: true
 
     Rectangle {
+        id: backgroundRect
         anchors.fill: parent
         color: "darkgrey"
         z:2
@@ -54,36 +56,18 @@ FocusScope {
 
 
     Common.TitleBar {
-        id: titleBar; z: 4; width: parent.width; height: 40; opacity: 0.9; text: "QML mapviewer example"
+        id: titleBar; z: mainMenu.z; width: parent.width; height: 40; opacity: 0.9; text: "QML mapviewer example"
         onClicked: { Qt.quit() }
     }
 
-    Common.Slider {
-        id: zoomSlider;
-        minimum: map.minimumZoomLevel;
-        maximum: map.maximumZoomLevel;
-        opacity: 1
-        z: 4
-        anchors {
-            bottom: mainMenu.top;
-            bottomMargin: 5; rightMargin: 5; leftMargin: 5
-            left: parent.left
-        }
-        width: parent.width - anchors.rightMargin - anchors.leftMargin
-        value: map.zoomLevel
-        onValueChanged: {
-            map.zoomLevel = value
-        }
-    }
-
-    // Menus
+//=====================Menus=====================
     Common.Menu {
         id: mainMenu
         itemHeight: 40
         itemWidth: page.width / count
         anchors.bottom: parent.bottom
         orientation: ListView.Horizontal
-        z: 5
+        z: map.z + 3
         Component.onCompleted: {
             setModel(["Options","Settings"])
         }
@@ -141,7 +125,7 @@ FocusScope {
         orientation: ListView.Vertical
         z: mainMenu.z - 1
         Component.onCompleted: {
-            setModel(["Map type", "Connectivity", "Provider"])
+            setModel([ settingsMenu.nestedMenuSign + " Map type", settingsMenu.nestedMenuSign + " Connectivity", "  Provider"])
         }
 
         itemHeight: 30;
@@ -160,7 +144,8 @@ FocusScope {
                     break;
                 }
                 case 2: {
-                    page.state = "ProviderInfo"
+                    messageDialog.state = "Provider"
+                    page.state = "Message"
                     break;
                 }
             }
@@ -253,54 +238,167 @@ FocusScope {
     }
 
 
-    // Dialogs
-
+//=====================Dialogs=====================
     Message {
-        id: providerInfoDialog
-        title: "Provider"
-        text: "Nokia OVI <a href=\http://doc.qt.nokia.com/qtmobility-1.2/location-overview.html#the-nokia-plugin\">map plugin</a>."
-        z: 5
-        opacity: 0
+        id: messageDialog
+        z: mainMenu.z + 1
         onOkButtonClicked: {
             page.state = ""
         }
         onCancelButtonClicked: {
             page.state = ""
         }
+
+        states: [
+            State{
+                name: "Provider"
+                PropertyChanges { target: messageDialog; title: "Provider" }
+                PropertyChanges { target: messageDialog; text: "Nokia OVI <a href=\http://doc.qt.nokia.com/qtmobility-1.2/location-overview.html#the-nokia-plugin\">map plugin</a>." }
+            },
+            State{
+                name: "GeocodeError"
+                PropertyChanges { target: messageDialog; title: "Geocode Error" }
+                PropertyChanges { target: messageDialog; text: "Unable to find location for the given address." }
+            },
+            State{
+                name: "UnknownGeocodeError"
+                PropertyChanges { target: messageDialog; title: "Geocode Error" }
+                PropertyChanges { target: messageDialog; text: "Unknown geocode error. Try again" }
+            },
+            State{
+                name: "AmbiguousGeocode"
+                PropertyChanges { target: messageDialog; title: "Ambiguous geocode" }
+                PropertyChanges { target: messageDialog; text: "Several results found for the given address, please specify location" }
+            },
+            State{
+                name: "Coordinates"
+                PropertyChanges { target: messageDialog; title: "Coordinates" }
+                PropertyChanges { target: messageDialog; text: "Several results found for the given address, please specify location" }
+            },
+            State{
+                name: "LatitudeNotANumber"
+                PropertyChanges { target: messageDialog; title: "Input Error" }
+                PropertyChanges { target: messageDialog; text: "Latitude is not a number" }
+            },
+            State{
+                name: "LatitudeOutOfScope"
+                PropertyChanges { target: messageDialog; title: "Input Error" }
+                PropertyChanges { target: messageDialog; text: "Latitude should be in a range (-90,90)" }
+            },
+            State{
+                name: "LongitudeNotANumber"
+                PropertyChanges { target: messageDialog; title: "Input Error" }
+                PropertyChanges { target: messageDialog; text: "Longitude is not a number" }
+            },
+            State{
+                name: "LongitudeOutOfScope"
+                PropertyChanges { target: messageDialog; title: "Input Error" }
+                PropertyChanges { target: messageDialog; text: "Longitude should be in a range (-180,180)" }
+            },
+            State{
+                name: "NoAddress"
+                PropertyChanges { target: messageDialog; title: "Address" }
+                PropertyChanges { target: messageDialog; text: "Current location doesn't have address" }
+            },
+            State{
+                name: "LocationInfo"
+                PropertyChanges { target: messageDialog; title: "Location" }
+                PropertyChanges { target: messageDialog; text: geocodeMessage() }
+            }
+        ]
     }
 
-    Dialog {
+//Route Dialog
+    RouteDialog {
         id: routeDialog
-        title: "Routing from map center to"
-        z: 5
-        opacity: 0
+        z: mainMenu.z + 1
 
-        Component.onCompleted: {
-            var obj = [["latitude:", "51.2207"],["and longitude:", "0.1"]]
-            setModel(obj)
+        Coordinate { id: endCoordinate }
+        Coordinate { id: startCoordinate }
+        Address { id:startAddress }
+        Address { id:endAddress }
+
+        GeocodeModel {
+            id: tempGeocodeModel
+            plugin : map.plugin
+            property int successfulGeocodeCount: 0
+            onStatusChanged:{
+                if ((status == GeocodeModel.Ready) && (successfulGeocodeCount == 0)) {
+                    ++successfulGeocodeCount
+                    startCoordinate = tempGeocodeModel.get(0).coordinate
+
+                    query = endAddress
+                    update();
+                }
+                else if ((status == GeocodeModel.Ready) && (successfulGeocodeCount == 1)) {
+                    ++successfulGeocodeCount
+                    endCoordinate = tempGeocodeModel.get(0).coordinate
+
+                    map.routeQuery.clearWaypoints();
+                    map.center = startCoordinate
+                    map.routeQuery.addWaypoint(startCoordinate)
+                    map.routeQuery.addWaypoint(endCoordinate)
+                    map.routeQuery.travelModes = routeDialog.travelMode
+                    map.routeQuery.routeOptimizations = routeDialog.routeOptimization
+                    map.routeModel.update();
+                }
+                else if ((status == GeocodeModel.Ready) && (count == 0 )){
+                    messageDialog.state = "GeocodeError"
+                    page.state = "Message"
+                }
+                else if ((status == GeocodeModel.Ready) && (count > 1 )){
+                    messageDialog.state = "AmbiguousGeocode"
+                    page.state = "Message"
+                }
+                else if (status == GeocodeModel.Error) {
+                    messageDialog.state = "UnknownGeocodeError"
+                    page.state = "Message"
+                }
+            }
         }
-        Coordinate {
-            id: endCoordinate
-        }
+
         onGoButtonClicked: {
+            var status = true
+
+            if (routeDialog.byCoordinates) {
+                startCoordinate.latitude = routeDialog.startLatitude
+                startCoordinate.longitude = routeDialog.startLongitude
+                endCoordinate.latitude = routeDialog.endLatitude
+                endCoordinate.longitude = routeDialog.endLongitude
+
+                map.routeQuery.clearWaypoints();
+                map.center = startCoordinate
+                map.routeQuery.addWaypoint(startCoordinate)
+                map.routeQuery.addWaypoint(endCoordinate)
+                map.routeQuery.travelModes = routeDialog.travelMode
+                map.routeQuery.routeOptimizations = routeDialog.routeOptimization
+                map.routeModel.update();
+            }
+            else {
+                startAddress.country = routeDialog.startCountry
+                startAddress.street = routeDialog.startStreet
+                startAddress.district = routeDialog.startCity
+
+                endAddress.country = routeDialog.endCountry
+                endAddress.street = routeDialog.endStreet
+                endAddress.district = routeDialog.endCity
+
+                tempGeocodeModel.query = startAddress
+                tempGeocodeModel.update();
+            }
             page.state = ""
-            endCoordinate.latitude = dialogModel.get(0).inputText
-            endCoordinate.longitude = dialogModel.get(1).inputText
-            routeQuery.clearWaypoints();
-            routeQuery.addWaypoint(map.center)    // Starting coordinate
-            routeQuery.addWaypoint(endCoordinate) // Ending coordinate
-            routeModel.update();
         }
+
         onCancelButtonClicked: {
             page.state = ""
         }
     }
 
+//Search Dialog
     Dialog {
         id: searchDialog
         title: "Search"
-        z: 5
-        opacity: 0
+        z: mainMenu.z + 1
 
         onGoButtonClicked: {
             page.state = ""
@@ -316,206 +414,211 @@ FocusScope {
         }
     }
 
+//Geocode Dialog
     Dialog {
         id: geocodeDialog
         title: "Geocode"
-        z: 5
-        opacity: 0
+        z: mainMenu.z + 1
 
         Component.onCompleted: {
-            var obj = [["Country:","Australia"],["Street:", "Brandl St 53"],["District:","Eight Mile Plains"]]
+            var obj = [["Street", "Brandl St"],["District",""],["City", "Eight Mile Plains"], ["County", ""],["State", ""],["Country code",""],["Country","Australia"]]
             setModel(obj)
         }
+
+        Address {
+            id: geocodeAddress
+        }
+
         onGoButtonClicked: {
             page.state = ""
-            geocodeAddress.country = dialogModel.get(0).inputText
-            geocodeAddress.street = dialogModel.get(1).inputText
-            geocodeAddress.district = dialogModel.get(2).inputText
-            geocodeModel.query = geocodeAddress
-            geocodeModel.update();
+            geocodeAddress.street = dialogModel.get(0).inputText
+            geocodeAddress.district = dialogModel.get(1).inputText
+            geocodeAddress.city = dialogModel.get(2).inputText
+            geocodeAddress.county = dialogModel.get(3).inputText
+            geocodeAddress.state = dialogModel.get(4).inputText
+            geocodeAddress.countryCode = dialogModel.get(5).inputText
+            geocodeAddress.country = dialogModel.get(6).inputText
+            map.geocodeModel.query = geocodeAddress
+            map.geocodeModel.update();
         }
         onCancelButtonClicked: {
             page.state = ""
         }
     }
 
+//Reverse Geocode Dialog
     Dialog {
         id: reverseGeocodeDialog
         title: "Reverse Geocode"
-        z: 5
-        opacity: 0
+        z: mainMenu.z + 1
 
         Component.onCompleted: {
-            var obj = [["Latitude:","51"],["Longitude:", "0"]]
+            var obj = [["Latitude","-27.575"],["Longitude", "153.088"]]
             setModel(obj)
         }
+
+        Coordinate {
+            id: reverseGeocodeCoordinate
+        }
+
         onGoButtonClicked: {
             page.state = ""
-            reverseGeocodeCoordinate.latitude = dialogModel.get(0).inputText
-            reverseGeocodeCoordinate.longitude = dialogModel.get(1).inputText
-            geocodeModel.query = reverseGeocodeCoordinate
-            geocodeModel.update();
+            messageDialog.state = ""
+            var latitude = dialogModel.get(0).inputText
+            var longtitude = dialogModel.get(1).inputText
+
+            verifyLatitude(latitude)
+            verifyLongitude(longtitude)
+
+            if (messageDialog.state == "") {
+                reverseGeocodeCoordinate.latitude = latitude
+                reverseGeocodeCoordinate.longitude = longtitude
+                map.geocodeModel.query = reverseGeocodeCoordinate
+                map.geocodeModel.update();
+            }
         }
+
         onCancelButtonClicked: {
             page.state = ""
         }
     }
-    RouteModel {
-        id : routeModel
-        plugin : Plugin { name : "nokia"}
-        query: RouteQuery {
-            id: routeQuery
-        }
-    }
 
-    Address {
-        id: geocodeAddress
-    }
-    Coordinate {
-        id: reverseGeocodeCoordinate
-    }
-    GeocodeModel {
-        id: geocodeModel
-        plugin : Plugin { name : "nokia"}
-        onPlacesChanged: {
-            if (geocodeModel.count > 0) {
-                console.log('setting the coordinate as places changed in model.')
-                map.center = geocodeModel.get(0).coordinate
-            }
-        }
-    }
-
-    Map {
+//=====================Map=====================
+    MapComponent{
         id: map
-        z : 3
-        plugin : Plugin {name : "nokia"}
+        z : backgroundRect.z + 1
         size.width: parent.width
-        size.height: parent.height
-        zoomLevel: 9
-        focus : true
-        center: Coordinate {
-            latitude: 51.5
-            longitude: -0.11
+        size.height: parent.height - mainMenu.height
+
+        onMousePressed: {
+            page.state = ""
         }
 
-        MapObjectView {
-            model: routeModel
-            delegate: Component {
-                MapRoute {
-                    // TODO this interface is bit unclear
-                    route: path
-                }
-            }
+        onSliderUpdated: {
+            page.state = ""
         }
 
-        MapObjectView {
-            model: geocodeModel
-            delegate: Component {
-                MapCircle {
-                    radius: 10000
-                    color: "red"
-                    center: place.coordinate
-                }
-            }
+        onCoordinatesCaptured: {
+            messageDialog.title = "Coordinates"
+            messageDialog.text = "<b>Latitude:</b> " + roundNumber(latitude,4) + "<br/><b>Longitude:</b> " + roundNumber(longitude,4);
+            page.state = "Message"
         }
 
-        MapCircle {
-            id : circle
-            center : Coordinate {
-                        latitude : 51.5
-                        longitude : -0.11
-                    }
-            color : "#80FF0000"
-            radius : 1000.0
-            MapMouseArea {
-                onPositionChanged: {
-                    if (mouse.button == Qt.LeftButton)
-                        circle.center = mouse.coordinate
-                    if (mouse.button == Qt.RightButton)
-                        circle.radius = circle.center.distanceTo(mouse.coordinate)
-                }
-            }
+        onShowRouteInfo: {
+            var value = map.routeModel.get(0).travelTime
+            var seconds = value % 60
+            value /= 60
+            value = Math.round(value)
+            var minutes = value % 60
+            value /= 60
+            value = Math.round(value)
+            var hours = value
+            var dist = roundNumber(map.routeModel.get(0).distance,0)
+
+            if (dist>1000) dist = dist/1000 + " km"
+            else dist = dist + " m"
+
+            messageDialog.title = "Route info"
+            messageDialog.text = "<b>Travel time:</b> " + hours + "h:"+ minutes + "m:" + seconds +"s<br/><b>Distance:</b> " + dist;
+
+            page.state = "Message"
         }
 
-        MapMouseArea {
-            property int lastX : -1
-            property int lastY : -1
+        onGeocodeFinished:{
+            var street, district, city, county, state, countryCode, country, latitude, longitude, text
 
-            onPressed : {
-                if (page.state != "") page.state =""
-                else {
-                    lastX = mouse.x
-                    lastY = mouse.y
-                }
-            }
-            onReleased : {
-                lastX = -1
-                lastY = -1
-            }
-            onPositionChanged: {
-                if (mouse.button == Qt.LeftButton) {
-                    if ((lastX != -1) && (lastY != -1)) {
-                        var dx = mouse.x - lastX
-                        var dy = mouse.y - lastY
-                        map.pan(-dx, -dy)
-                    }
-                    lastX = mouse.x
-                    lastY = mouse.y
-                }
-            }
-            onDoubleClicked: {
-                map.center = mouse.coordinate
-                if (mouse.button == Qt.LeftButton){
-                    map.zoomLevel += 1
-                } else if (mouse.button == Qt.RightButton){
-                    map.zoomLevel -= 1
-                }
-                lastX = -1
-                lastY = -1
-            }
+            if (map.geocodeModel.count == 0) messageDialog.state = "GeocodeError"
+            else if (map.geocodeModel.count > 1) messageDialog.state = "AmbiguousGeocode"
+            else if (map.status == GeocodeModel.Error) messageDialog.state = "UnknownGeocodeError"
+            else messageDialog.state = "LocationInfo"
+            page.state = "Message"
         }
-    } // Map
 
-    Keys.onPressed: {
-        if ((event.key == Qt.Key_Plus) || (event.key == Qt.Key_VolumeUp)) {
-            map.zoomLevel += 1
-        } else if ((event.key == Qt.Key_Minus) || (event.key == Qt.Key_VolumeDown)){
-            map.zoomLevel -= 1
-        } else if (event.key == Qt.Key_T) {
-            if (map.mapType == Map.StreetMap) {
-                map.mapType = Map.SatelliteMapDay
-            } else if (map.mapType == Map.SatelliteMapDay) {
-                map.mapType = Map.StreetMap
+        onShowGeocodeInfo:{
+            messageDialog.state = "LocationInfo"
+            page.state = "Message"
+        }
+    }
+
+    function geocodeMessage(){
+        var street, district, city, county, state, countryCode, country, latitude, longitude, text
+        map.center = map.geocodeModel.get(0).coordinate
+        latitude = map.geocodeModel.get(0).coordinate.latitude
+        longitude = map.geocodeModel.get(0).coordinate.longitude
+        street = map.geocodeModel.get(0).address.street
+        district = map.geocodeModel.get(0).address.district
+        city = map.geocodeModel.get(0).address.city
+        county = map.geocodeModel.get(0).address.county
+        state = map.geocodeModel.get(0).address.state
+        countryCode = map.geocodeModel.get(0).address.countryCode
+        country = map.geocodeModel.get(0).address.country
+
+        text = "<b>Latitude:</b> " + latitude + "<br/>"
+        text +="<b>Longitude:</b> " + longitude + "<br/>" + "<br/>"
+        if (street) text +="<b>Street: </b>"+ street + " <br/>"
+        if (district) text +="<b>District: </b>"+ district +" <br/>"
+        if (city) text +="<b>City: </b>"+ city + " <br/>"
+        if (county) text +="<b>County: </b>"+ county + " <br/>"
+        if (state) text +="<b>State: </b>"+ state + " <br/>"
+        if (countryCode) text +="<b>Country code: </b>"+ countryCode + " <br/>"
+        if (country) text +="<b>Country: </b>"+ country + " <br/>"
+        return text
+    }
+
+
+    function roundNumber(number, digits) {
+            var multiple = Math.pow(10, digits);
+            var rndedNum = Math.round(number * multiple) / multiple;
+            return rndedNum;
+    }
+
+    function verifyLongitude(longitude){
+        var lng
+        if (isNaN(longitude)) messageDialog.state = "LongitudeNotANumber"
+        else {
+            lng = parseFloat(longitude)
+            if ((lng> 180) || (lng<-180)) {
+                messageDialog.state = "LongitudeOutOfScope"
             }
         }
     }
 
-    // states of page
+    function verifyLatitude(latitude){
+        var lat
+        if (isNaN(latitude)) messageDialog.state = "LatitudeNotANumber"
+        else {
+            lat = parseFloat(latitude)
+            if ((lat> 90) || (lat<-90)) {
+                messageDialog.state = "LatitudeOutOfScope"
+            }
+        }
+    }
+
+//=====================States of page=====================
     states: [
+       State {
+            name: ""
+            PropertyChanges { target: map; focus: true }
+        },
         State {
             name: "RevGeocode"
             PropertyChanges { target: reverseGeocodeDialog; opacity: 1 }
-            PropertyChanges { target: titleBar; hoverEnabled: false }
         },
         State {
             name: "Route"
             PropertyChanges { target: routeDialog; opacity: 1 }
-            PropertyChanges { target: titleBar; hoverEnabled: false }
         },
         State {
             name: "Search"
             PropertyChanges { target: searchDialog; opacity: 1 }
-            PropertyChanges { target: titleBar; hoverEnabled: false }
         },
         State {
             name: "Geocode"
             PropertyChanges { target: geocodeDialog; opacity: 1 }
-            PropertyChanges { target: titleBar; hoverEnabled: false }
         },
         State {
-            name: "ProviderInfo"
-            PropertyChanges { target: providerInfoDialog; opacity: 1 }
-            PropertyChanges { target: titleBar; hoverEnabled: false }
+            name: "Message"
+            PropertyChanges { target: messageDialog; opacity: 1 }
         },
         State {
             name : "Options"
@@ -537,7 +640,7 @@ FocusScope {
         }
     ]
 
-    // state-transition animations for page
+//=====================State-transition animations for page=====================
     transitions: [
         Transition {
             to: "RevGeocode"
@@ -556,7 +659,11 @@ FocusScope {
             NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
         },
         Transition {
-            to: "ProviderInfo"
+            to: "Message"
+            NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
+        },
+        Transition {
+            to: ""
             NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
         },
         Transition {

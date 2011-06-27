@@ -40,69 +40,45 @@
 
 import Qt 4.7
 
-Item {
-    id: slider;
-    height: 40
-    property int value // value is read/write.
-    property real minimum: 0
-    property real maximum: 1
-    property int xMin: 2
-    property int xMax: width - handle.width-xMin
+Row {
+    id: textWithLabel
+    height: inputRectangle.height
 
-    Rectangle {
-        anchors.fill: parent
-        border.width: 0;
-        radius: 8
-        color: "dimgrey"
-        opacity: 0.6
-    }
+    property alias label: label.text
+    property alias text: inputField.text
+    property alias labelWidth: label.width
 
-    Rectangle {
-        id: handle; smooth: true
-        width: 30;
-        y: slider.xMin;
-        x: slider.xMin + (slider.value - slider.minimum) * slider.xMax / (slider.maximum - slider.minimum)
-
-        height: slider.height-4; radius: 6
-        gradient: normalGradient
-
-        Gradient {
-            id: normalGradient
-            GradientStop { position: 0.0; color: "lightgrey" }
-            GradientStop { position: 1.0; color: "gray" }
-        }
-
-        Gradient {
-            id: pressedGradient
-            GradientStop { position: 0.0; color: "lightgray" }
-            GradientStop { position: 1.0; color: "black" }
-        }
-
-        Gradient {
-            id: hoveredGradient
-            GradientStop { position: 0.0; color: "lightgrey" }
-            GradientStop { position: 1.0; color: "dimgrey" }
-        }
-
-        MouseArea {
-            id: mouseRegion
-            hoverEnabled: true
-            anchors.fill: parent; drag.target: parent
-            drag.axis: Drag.XAxis; drag.minimumX: slider.xMin; drag.maximumX: slider.xMax
-            onPositionChanged: { value = (maximum - minimum) * (handle.x-slider.xMin) / (slider.xMax - slider.xMin) + minimum; }
+    Text {
+        id: label;
+        width:55;
+        enabled: textWithLabel.enabled
+        color: enabled ? "black" : "grey"
+        anchors {
+            top: parent.top;
+            topMargin: (inputRectangle.height-height)/2
         }
     }
 
-    states: [
-        State {
-            name: "Pressed"
-            when: mouseRegion.pressed
-            PropertyChanges { target: handle; gradient: pressedGradient }
-        },
-        State {
-            name: "Hovered"
-            when: mouseRegion.containsMouse
-            PropertyChanges { target: handle; gradient: hoveredGradient }
+    Rectangle {
+        id: inputRectangle
+        width: textWithLabel.width - label.width; height: 30
+        color: enabled ? "whitesmoke" : "gainsboro"
+        border.width: 1
+        border.color: enabled ? "black" : "grey"
+        radius: 5
+        TextInput {
+            id: inputField
+            focus: true
+            width: parent.width - anchors.leftMargin
+            enabled: textWithLabel.enabled
+            color: enabled ? "black" : "grey"
+            horizontalAlignment: Text.AlignLeft
+
+            anchors {
+                left: parent.left;
+                verticalCenter: parent.verticalCenter;
+                leftMargin: 5
+            }
         }
-    ]
+    }
 }

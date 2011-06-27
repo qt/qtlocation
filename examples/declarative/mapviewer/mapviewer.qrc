@@ -21,5 +21,10 @@
         <file>resources/button_hovered.png</file>
         <file>Message.qml</file>
         <file>common/Fader.qml</file>
+        <file>RouteDialog.qml</file>
+        <file>TextWithLabel.qml</file>
+        <file>resources/option_button_selected.png</file>
+        <file>resources/option_button.png</file>
+        <file>MapComponent.qml</file>
     </qresource>
 </RCC>
