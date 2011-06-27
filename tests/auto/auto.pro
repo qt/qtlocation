@@ -6,6 +6,7 @@ TEMPLATE = subdirs
 #SUBDIRS += declarative
 
 SUBDIRS += qgeoaddress \
+           qgeoboundingbox \
            qgeoplace \
            qplacealternativevalue \
            qplacebusinessfeature \
