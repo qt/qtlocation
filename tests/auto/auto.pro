@@ -10,4 +10,5 @@ SUBDIRS += qgeoaddress \
            qplacealternativevalue \
            qplacebusinessfeature \
            qplacecategory \
-           qplacecontact
+           qplacecontact \
+           qplacedescription
