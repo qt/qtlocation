@@ -20,4 +20,5 @@ SUBDIRS += qgeoaddress \
            qplacerating \
            qplacereview \
            qplacesearchquery \
-           qplacesupplier 
+           qplacesupplier \
+           qplaceweekdayhours
