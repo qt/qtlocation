@@ -6,4 +6,5 @@ TEMPLATE = subdirs
 #SUBDIRS += declarative
 
 SUBDIRS += qgeoaddress \
-           qgeoplace
+           qgeoplace \
+           qplacealternativevalue
