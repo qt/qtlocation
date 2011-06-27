@@ -589,7 +589,11 @@ void QGeoPlace::setTags(const QStringList &tags)
 
 QGeoPlacePrivate::QGeoPlacePrivate()
         : QSharedData(),
-        type(QGeoPlacePrivate::GeoPlaceType) {}
+        type(QGeoPlacePrivate::GeoPlaceType),
+        mediaCount(0),
+        reviewCount(0)
+{
+}
 
 QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         : QSharedData(other),

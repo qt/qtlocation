@@ -5,4 +5,5 @@ TEMPLATE = subdirs
 #in the main branch of qt declarative
 #SUBDIRS += declarative
 
-SUBDIRS += qgeoaddress
+SUBDIRS += qgeoaddress \
+           qgeoplace
