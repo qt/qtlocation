@@ -461,8 +461,116 @@ testcase = {
     | Tap on Plus button | Verify that map is zoomed in |
     | Tap on Plus button | Verify that zoom level is decreased and map is displayed correctly with new zoom level |'
         ));
-    }
+/*    },
 
+    // \groups BAT,5.0,MOBILITY-2893,RESEARCH
+    qml_route_for_two_close_points: function()
+    {
+//1. Use qml_mapviewer to test. Find a route for 2 close enough locations, like from CBD to Eight Mile Plains: (-27.575, 153.088)->(-27.465, 153.023)
+//2. Use qml_mapviewer to test. Find a route for 2 close enough locations (like from CBD to Eight Mile Plains).(Street: Brandl st,City: Eight Mile Plains, country: Australia)->(Street: Ann st, City: Brisbane, Country: Australia)
+    },
+
+    // \groups BAT,5.0,MOBILITY-2893,RESEARCH
+    qml_route_for_two_distant_points: function()
+    {
+//1. Use qml_mapviewer to test. Find a route for 2 distant locations, like from Brisbane to Sydney: (-27.4709,153.0235)->(-33.8689,151.2071)
+//2. Use qml_mapviewer to test. Find a route for 2 distant locations (like from Brisbane to Sydney)
+    },
+
+    // \groups BAT,5.0,MOBILITY-2893,RESEARCH
+    qml_route_for_multiple_points: function()
+    {
+// Use qml_mapviewer to test. Find a route for >2 way points, like Eight Mile Plains->CBD->Aspley: (-27.575, 153.088)->(-27.465, 153.023)->(-27.3614,153.0043)
+    },
+
+    // \groups BAT,5.0,MOBILITY-2893,RESEARCH
+    qml_route_travel_mode: function()
+    {
+// 1. Travel mode: pedestrian. Use qml_mapviewer to test. (55 Bordeaux Street, Eight Mile Plains QLD)->(53 Brandl St, Eight Mile Plains QLD 4113) or (-27.5784,153.0934)->(-27.5798,153.1003)
+// 2. Travel mode: bicycle
+// 3. Travel mode: public transport
+// 4. Travel mode: by truck
+    },
+
+    // \groups BAT,5.0,MOBILITY-2893,RESEARCH
+    qml_route_feature_type: function()
+    {
+// 1. Feature type: no feature
+// 2. Feature type: toll
+// 3. Feature type: highway
+// 4. Feature type: public transit
+// 5. Feature type: ferry
+// 6. Feature type: tunnel
+// 7. Feature type: dirt road
+// 8. Feature type: parks
+// 9. Feature type: motor pool lane
+    },
+
+    // \groups BAT,5.0,MOBILITY-2893,RESEARCH
+    qml_route_optimization: function()
+    {
+// 1. Route optimization: shortest
+// 2. Route optimization: fastest
+// 3. Route optimization: most economic
+// 4. Route optimization: most scenic
+    },
+
+    // \groups BAT,5.0,MOBILITY-2900,RESEARCH
+    qml_geocode_australian_location: function()
+    {
+// Use qml_mapviewer to test. Get coordinates for an Australian location (53 Brandl St, Eight Mile Plains, QLD for example)
+    },
+
+    // \groups BAT,5.0,MOBILITY-2900,RESEARCH
+    qml_geocode_russian_location: function()
+    {
+// Use qml_mapviewer to test. Get coordinates for a location of country which uses non-English languages (Minina I Pozharskogo Ploshchad, Nizhniy Novgorod, Russian Federation)
+    },
+
+    // \groups BAT,5.0,MOBILITY-2900,RESEARCH
+    qml_geocode_fictional_location: function()
+    {
+// city: TheBestCity
+    },
+
+    // \groups BAT,5.0,MOBILITY-2900,RESEARCH
+    qml_geocode_not_unique_location: function()
+    {
+// city: Moscow
+    },
+
+    // \groups BAT,5.0,MOBILITY-2900,RESEARCH
+    qml_geocode: function()
+    {
+// 1. Use qml_mapviewer to test. Get coordinates for an Australian location (Street number: 53, Street: Brandl St, City: Brisbane)
+// 2. Use qml_mapviewer to test. Get coordinates for an Australian location (Contry code: 61, District:Fortitude Valley, Street: Wickham St)
+// 3. Use qml_mapviewer to test. Get coordinates for a city name which is not uniqe in the world, but unique in the country (City: Moscow, Country: Russia)
+// 4. Use qml_mapviewer to test. Get coordinates for a county: (County: West Midlands, Country: United Kingdom)
+    },
+
+    // \groups BAT,5.0,MOBILITY-2901,RESEARCH
+    qml_reverse_geocode_australian_place: function()
+    {
+// Use qml_mapviewer to test. Geocode some Brisbane's coordinates (-27.5789,153.0995)
+    },
+
+    // \groups BAT,5.0,MOBILITY-2901,RESEARCH
+    qml_reverse_geocode_russian_place: function()
+    {
+// Use qml_mapviewer to test. Geocode some Russian's coordinates (56.3264,44.0048)
+    },
+
+    // \groups BAT,5.0,MOBILITY-2901,RESEARCH
+    qml_reverse_geocode_uninhabited_place: function()
+    {
+// Use qml_mapviewer to test. Geocode some coordinates from Pacific Ocean (-27.1911,153.2428)
+    },
+
+    // \groups BAT,5.0,MOBILITY-2902,RESEARCH
+    qml_searching: function()
+    {
+// Seacrh for landmarks*/
+    }
 
 }  // end of testcase
 
