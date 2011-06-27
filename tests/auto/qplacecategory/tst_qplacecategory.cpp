@@ -18,7 +18,6 @@ private Q_SLOTS:
     void categoryIdTest();
     void descriptionTest();
     void nameTest();
-    void isEmptyTest();
     void operatorsTest();
 };
 
@@ -75,14 +74,6 @@ void tst_QPlaceCategory::nameTest()
     QVERIFY2(testObj.name() == QString(), "Wrong default value");
     testObj.setName("testText");
     QVERIFY2(testObj.name() == "testText", "Wrong value returned");
-}
-
-void tst_QPlaceCategory::isEmptyTest()
-{
-    QPlaceCategory testObj;
-    QVERIFY2(testObj.isEmpty() == true, "Wrong default value");
-    testObj.setCategoryId("testText");
-    QVERIFY2(testObj.isEmpty() == false, "Wrong value returned");
 }
 
 void tst_QPlaceCategory::operatorsTest()

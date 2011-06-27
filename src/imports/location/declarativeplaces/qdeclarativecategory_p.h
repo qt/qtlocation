@@ -40,8 +40,6 @@ public:
     QString name() const;
     void setName(const QString &name);
 
-    Q_INVOKABLE bool isEmpty() const;
-
 signals:
     void categoryIdChanged();
     void descriptionChanged();

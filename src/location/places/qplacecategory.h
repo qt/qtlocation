@@ -77,7 +77,6 @@ public:
     QString name() const;
     void setName(const QString &name);
 
-    bool isEmpty() const;
 private:
     QSharedDataPointer<QPlaceCategoryPrivate> d;
 };

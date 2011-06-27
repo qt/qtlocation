@@ -258,7 +258,7 @@ void QPlaceJSonSearchParser::processCategories(const QScriptValue &categories, Q
             if (value.isValid() && !value.toString().isEmpty()) {
                 QPlaceCategory category = QPlaceCategoriesRepository::instance()->mapCategory(
                             value.toString());
-                if (!category.isEmpty()) {
+                if (!category.categoryId().isEmpty()) {
                     categoriesList.append(category);
                 }
             }

@@ -112,14 +112,14 @@ QList<QPlaceCategory> QPlaceJSonCategoriesParser::processCategories(const QScrip
                 // array contains count as last element
                 if (it.name() != "length") {
                     cat = processCategory(it.value());
-                    if (!cat.isEmpty() && !results.contains(cat.categoryId())) {
+                    if (!cat.categoryId().isEmpty() && !results.contains(cat.categoryId())) {
                         results.insert(cat.categoryId(), cat);
                     }
                 }
             }
         } else {
             cat = processCategory(value);
-            if (!cat.isEmpty() && !results.contains(cat.categoryId())) {
+            if (!cat.categoryId().isEmpty() && !results.contains(cat.categoryId())) {
                 results.insert(cat.categoryId(), cat);
             }
         }
@@ -177,7 +177,7 @@ QList<QPlaceCategory> QPlaceJSonCategoriesParser::processGroup(const QScriptValu
     if (value.isValid()) {
         parentCategory = processCategory(value);
     }
-    if (!parentCategory.isEmpty()) {
+    if (!parentCategory.categoryId().isEmpty()) {
         results = processCategories(group);
         results.append(parentCategory);
     }

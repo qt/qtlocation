@@ -188,11 +188,3 @@ void QPlaceCategory::setName(const QString &name)
 {
     d->name = name;
 }
-
-/*!
-    Returns true if category is empty.
-*/
-bool QPlaceCategory::isEmpty() const
-{
-    return d->categoryId.isEmpty();
-}

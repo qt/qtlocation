@@ -108,16 +108,6 @@ QString QDeclarativeCategory::name() const
 }
 
 /*!
-    \qmlfunction bool Category::isEmpty
-
-    Returns true if category is valid.
-*/
-bool QDeclarativeCategory::isEmpty() const
-{
-    return m_category.isEmpty();
-}
-
-/*!
     \qmlproperty QVariantHash Address::alternativeAttributes
 
     This property alternative values for label property.
