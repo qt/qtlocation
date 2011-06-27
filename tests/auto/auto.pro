@@ -18,4 +18,5 @@ SUBDIRS += qgeoaddress \
            qplacemediaobject \
            qplacequery \
            qplacerating \
-           qplacereview
+           qplacereview \
+           qplacesupplier
