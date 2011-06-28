@@ -68,15 +68,13 @@ void QPlaceManagerPrivate::createEngine(const QString &managerName, const QMap<Q
 
     if (!q->availableManagers().contains(managerName)) {
         errorCode = QPlaceManager::NotSupportedError;
-        errorString = QString("The places manager, %1, was not found").arg(managerName);
+        errorString = QString::fromLatin1("The places manager, %1, was not found").arg(managerName);
         qWarning() << errorString;
         engine = 0;
         return;
     }
 
     QList<QPlaceManagerEngineFactory *> candidates = QPlaceManagerPrivate::factories().values(managerName);
-
-    bool ok;
 
     foreach (QPlaceManagerEngineFactory *f, candidates)
     {
@@ -88,7 +86,7 @@ void QPlaceManagerPrivate::createEngine(const QString &managerName, const QMap<Q
     if (!engine) {
         if (errorCode == QPlaceManager::NoError) {
             errorCode = QPlaceManager::NotSupportedError;
-            errorString = "The place manager could not return the requested engine instance";
+            errorString = QLatin1String("The place manager could not return the requested engine instance");
         }
     }
 }

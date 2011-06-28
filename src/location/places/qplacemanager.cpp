@@ -98,9 +98,8 @@
 QPlaceManager::QPlaceManager(QObject *parent)
     : QObject(parent),d(new QPlaceManagerPrivate)
 {
-    QString managerName = "nokia";
     d->q_ptr = this;
-    d->createEngine(managerName);
+    d->createEngine(QLatin1String("nokia"));
 }
 
 /*!
