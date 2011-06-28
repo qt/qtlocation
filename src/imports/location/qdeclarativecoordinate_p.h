@@ -47,7 +47,7 @@
 
 #include <QObject>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeCoordinate : public QObject
 {
@@ -85,8 +85,8 @@ private:
     QGeoCoordinate m_coordinate;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeCoordinate));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeCoordinate));
 
 #endif

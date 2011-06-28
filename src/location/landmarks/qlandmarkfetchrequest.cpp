@@ -46,7 +46,7 @@
 #include "qlandmarksortorder.h"
 #include "qlandmark.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkFetchRequest
@@ -213,4 +213,4 @@ QList<QLandmark> QLandmarkFetchRequest::landmarks() const
 
 #include "moc_qlandmarkfetchrequest.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

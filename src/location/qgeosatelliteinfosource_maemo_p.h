@@ -57,7 +57,7 @@
 #include "qgeosatelliteinfo.h"
 #include "dbuscomm_maemo_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
 {
@@ -91,7 +91,7 @@ private:
     Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif
 

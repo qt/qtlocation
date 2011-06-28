@@ -50,7 +50,7 @@
 
 #include "qgeomaprectangleobject.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoTiledMapRectangleObjectInfo::QGeoTiledMapRectangleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoTiledMapObjectInfo(mapData, mapObject)
@@ -142,6 +142,6 @@ void QGeoTiledMapRectangleObjectInfo::regenPolygon()
 
 #include "moc_qgeotiledmaprectangleobjectinfo_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 

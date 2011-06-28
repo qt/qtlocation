@@ -42,7 +42,7 @@
 #include "qdeclarativelandmarkfilters_p.h"
 #include "qdeclarativeposition_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass LandmarkNameFilter QDeclarativeLandmarkNameFilter
@@ -442,4 +442,4 @@ QLandmarkFilter* QDeclarativeLandmarkIntersectionFilter::filter()
 
 #include "moc_qdeclarativelandmarkfilters_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

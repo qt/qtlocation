@@ -47,7 +47,7 @@
 #include <QObject>
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMapGroupObject;
 
@@ -68,6 +68,6 @@ private:
     QGeoMapGroupObject *q_ptr;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

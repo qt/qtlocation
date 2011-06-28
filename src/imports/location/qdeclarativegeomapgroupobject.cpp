@@ -41,7 +41,7 @@
 
 #include "qdeclarativegeomapgroupobject_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass MapGroup
@@ -241,5 +241,5 @@ void QDeclarativeGeoMapGroupObject::moveEvent(QDeclarativeGeoMapMouseEvent *even
 
 #include "moc_qdeclarativegeomapgroupobject_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -57,10 +57,10 @@
 #include "qgeomapobjectinfo.h"
 #include "qgeocoordinate.h"
 
+
+QT_BEGIN_NAMESPACE
+
 class QGraphicsItem;
-
-QTM_BEGIN_NAMESPACE
-
 class QGeoMapObject;
 class QGeoMapData;
 
@@ -85,6 +85,6 @@ public:
     Q_DISABLE_COPY(QGeoMapObjectPrivate)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

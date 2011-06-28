@@ -49,7 +49,7 @@
 #include <QPointer>
 #include <QtDeclarative/qdeclarative.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoBoundingCircle : public QObject
 {
@@ -78,7 +78,7 @@ private:
     QGeoBoundingCircle circle_;
 };
 
-QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoBoundingCircle));
+QT_END_NAMESPACE
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoBoundingCircle));
 
 #endif

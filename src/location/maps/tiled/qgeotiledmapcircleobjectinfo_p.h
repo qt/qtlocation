@@ -59,10 +59,9 @@
 #include <QPen>
 #include <QBrush>
 
+QT_BEGIN_NAMESPACE
+
 class QGraphicsEllipseItem;
-
-QTM_BEGIN_NAMESPACE
-
 class QGeoMapCircleObject;
 
 class QGeoTiledMapCircleObjectInfo : public QGeoTiledMapObjectInfo
@@ -81,6 +80,6 @@ public slots:
     void brushChanged(const QBrush &brush);
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif //QGEOTILEDMAPCIRCLEOBJECT_INFO_P_H

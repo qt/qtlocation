@@ -61,7 +61,7 @@
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoPlacePrivate : public QSharedData
 {
@@ -86,19 +86,19 @@ public:
     QGeoAddress address;
 };
 
-QTM_END_NAMESPACE
 
 #if defined(Q_CC_MWERKS)
 // This results in multiple symbol definition errors on all other compilers
 // but not having a definition here results in an attempt to use the unspecialized
 // clone (which fails because of the pure virtuals above)
-template<> QTM_PREPEND_NAMESPACE(QGeoPlacePrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QGeoPlacePrivate)>::clone()
+template<> QGeoPlacePrivate *QSharedDataPointer<QGeoPlacePrivate>::clone()
 {
     return d->clone();
 }
 #else
-template<> QTM_PREPEND_NAMESPACE(QGeoPlacePrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QGeoPlacePrivate)>::clone();
+template<> QGeoPlacePrivate *QSharedDataPointer<QGeoPlacePrivate>::clone();
 #endif
 
+QT_END_NAMESPACE
 #endif
 

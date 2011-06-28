@@ -46,7 +46,7 @@
 #include <QSharedData>
 #include <Qt>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 #define Q_DECLARE_LANDMARKFILTER_PRIVATE(Class) \
     inline Class##Private* d_func(); \
@@ -100,9 +100,10 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QLandmarkFilter::MatchFlags);
 const Q_LOCATION_EXPORT QLandmarkFilter operator&(const QLandmarkFilter &left, const QLandmarkFilter &right);
 const Q_LOCATION_EXPORT QLandmarkFilter operator|(const QLandmarkFilter &left, const QLandmarkFilter &right);
 
-QTM_END_NAMESPACE
+Q_DECLARE_TYPEINFO(QLandmarkFilter, Q_MOVABLE_TYPE);
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QLandmarkFilter), Q_MOVABLE_TYPE);
+QT_END_NAMESPACE
+
 
 
 #endif

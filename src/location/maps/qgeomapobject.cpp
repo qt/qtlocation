@@ -51,7 +51,7 @@
 
 #include <QtAlgorithms>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapObject
@@ -531,4 +531,4 @@ QGeoMapObjectPrivate::~QGeoMapObjectPrivate()
 
 #include "moc_qgeomapobject.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

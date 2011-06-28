@@ -42,7 +42,7 @@
 #include "qlandmarkintersectionfilter.h"
 #include "qlandmarkintersectionfilter_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkIntersectionFilter
@@ -181,4 +181,4 @@ QLandmarkIntersectionFilterPrivate::QLandmarkIntersectionFilterPrivate(const QLa
 
 QLandmarkIntersectionFilterPrivate::~QLandmarkIntersectionFilterPrivate() {}
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

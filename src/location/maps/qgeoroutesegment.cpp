@@ -45,7 +45,7 @@
 #include "qgeocoordinate.h"
 #include <QDateTime>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRouteSegment
@@ -273,5 +273,5 @@ bool QGeoRouteSegmentPrivate::operator ==(const QGeoRouteSegmentPrivate &other) 
 /*******************************************************************************
 *******************************************************************************/
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

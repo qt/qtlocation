@@ -41,7 +41,7 @@
 
 #include "qgeoserviceproviderfactory.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoServiceProviderFactory
@@ -163,4 +163,4 @@ QGeoRoutingManagerEngine* QGeoServiceProviderFactory::createRoutingManagerEngine
     return 0;
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

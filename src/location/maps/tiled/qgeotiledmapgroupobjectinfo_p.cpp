@@ -54,7 +54,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPathItem>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoTiledMapGroupObjectInfo::QGeoTiledMapGroupObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoTiledMapObjectInfo(mapData, mapObject)
@@ -134,4 +134,4 @@ void QGeoTiledMapGroupObjectInfo::childRemoved(QGeoMapObject *childObject)
 
 #include "moc_qgeotiledmapgroupobjectinfo_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

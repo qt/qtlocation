@@ -51,7 +51,7 @@
 #include "qgeomapdata.h"
 #include "qgeomapdata_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapGroupObject
@@ -312,5 +312,5 @@ void QGeoMapGroupObjectPrivate::childChangedZValue(int zValue)
 #include "moc_qgeomapgroupobject.cpp"
 #include "moc_qgeomapgroupobject_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

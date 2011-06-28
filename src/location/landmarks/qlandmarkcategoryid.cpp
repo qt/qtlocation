@@ -43,7 +43,7 @@
 #include "qlandmarkcategoryid_p.h"
 #include <QString>
 
-QTM_USE_NAMESPACE
+
 
 /*!
     \class QLandmarkCategoryId

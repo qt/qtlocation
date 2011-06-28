@@ -80,6 +80,8 @@
 
 #include <math.h>
 
+QT_BEGIN_NAMESPACE
+
 uint qHash(const QRectF& key)
 {
     uint result = qHash(qRound(key.x()));
@@ -89,7 +91,6 @@ uint qHash(const QRectF& key)
     return result;
 }
 
-QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoTiledMapData
@@ -1000,8 +1001,8 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoM
     : QGeoMapDataPrivate(parent, engine),
       oe(new QGeoMapObjectEngine(parent, this)),
       zoomFactor(0),
-      spherical("+proj=latlon +ellps=sphere"),
-      wgs84("+proj=latlon +ellps=WGS84") {}
+      spherical(QLatin1String("+proj=latlon +ellps=sphere")),
+      wgs84(QLatin1String("+proj=latlon +ellps=WGS84")) {}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
@@ -1427,4 +1428,4 @@ QGeoTiledMapRequest QGeoTileIterator::next()
 
 #include "moc_qgeotiledmapdata.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

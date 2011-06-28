@@ -45,7 +45,7 @@
 
 using namespace std;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent): QGeoPositionInfoSource(parent)
 {
@@ -202,5 +202,5 @@ void QGeoPositionInfoSourceMaemo::shutdownRequestSession()
 }
 
 #include "moc_qgeopositioninfosource_maemo_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

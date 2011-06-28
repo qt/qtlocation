@@ -52,14 +52,16 @@ Item {
     property alias dialogModel: dialogModel
     property alias length: dialogModel.count
     property int gap: 20
-    property int listItemHeight: 54
+    property int listItemHeight: 30
+
+    opacity: 0
 
     function setModel(objects)
     {
         dialogModel.clear()
 
         for (var i=0; i< objects.length; i++){
-            dialogModel.append({"label": objects[i][0], "inputText": objects[i][1]})
+            dialogModel.append({"labelText": objects[i][0], "inputText": objects[i][1]})
         }
     }
 
@@ -69,7 +71,7 @@ Item {
         id: dialogRectangle
 
         color: "lightsteelblue"
-        opacity: 1
+        opacity: parent.opacity
         width: parent.width - gap;
         height: listview.height + titleBar.height + buttonGo.height + gap*2
 
@@ -101,42 +103,20 @@ Item {
             Column {
                 id: column1
                 height: listItemHeight
-                Text { id: fieldTitle; text: label; height: 24;}
-                Rectangle {
-                    id: inputRectangle
-                    width: dialogRectangle.width - gap; height: 30
-                    color: "whitesmoke"
-                    border.width: 1
-                    radius: 5
-                    TextInput {
-                        id: inputField
-                        focus: true
-                        width: parent.width - anchors.leftMargin
+                TextWithLabel {
+                    id: textWithLabel
+                    label: labelText
+                    text: inputText
+                    width: dialogRectangle.width - gap
+                    labelWidth: 75
 
-                        anchors {
-                            left: parent.left;
-                            verticalCenter: parent.verticalCenter;
-                            leftMargin: 5
-                        }
-
-                        Component.onCompleted: {
-                            text = inputText
-                        }
-
-                        onTextChanged:
-                        {
-                            dialogModel.set(index, {"inputText": text})
-                        }
-                    }
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: inputField.forceActiveFocus();
+                    onTextChanged:
+                    {
+                        dialogModel.set(index, {"inputText": text})
                     }
                 }
             }
         }
-
-
 
         ListView {
             id: listview
@@ -148,10 +128,10 @@ Item {
             }
             model: dialogModel
             delegate: listDelegate
-            spacing: gap
+            spacing: gap/2
             interactive: false
             Component.onCompleted: {
-                height = (listItemHeight + gap)*length
+                height = (listItemHeight + gap/2)*length + gap/2
             }
         }
 
@@ -167,4 +147,3 @@ Item {
         }
     }
 }
-

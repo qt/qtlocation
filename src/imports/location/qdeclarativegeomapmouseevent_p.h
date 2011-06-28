@@ -46,7 +46,7 @@
 
 #include <QtDeclarative/qdeclarative.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoMapMouseEvent : public QObject
 {
@@ -95,8 +95,8 @@ private:
     QDeclarativeCoordinate *coordinate_;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapMouseEvent));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapMouseEvent));
 
 #endif

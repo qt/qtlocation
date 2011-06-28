@@ -1,6 +1,6 @@
-/*/****************************************************************************
+/****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,8 +43,7 @@ import Qt 4.7
 Item {
     id: slider;
     height: 40
-    // value is read/write.
-    property int value
+    property int value // value is read/write.
     property real minimum: 0
     property real maximum: 1
     property int xMin: 2

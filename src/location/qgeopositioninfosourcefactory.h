@@ -47,7 +47,7 @@
 #include "qgeosatelliteinfosource.h"
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QGeoPositionInfoSourceFactory
 {
@@ -62,7 +62,7 @@ public:
     virtual QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) = 0;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 #define QT_POSITION_SOURCE_INTERFACE "com.nokia.qt.mobility.position.sourcefactory/1.0"

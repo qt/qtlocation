@@ -54,8 +54,6 @@
 #include <QString>
 #include <QXmlStreamReader>
 
-class QIODevice;
-
 #include <qgeoroute.h>
 #include <qgeoroutesegment.h>
 #include <qgeocoordinate.h>
@@ -63,7 +61,9 @@ class QIODevice;
 #include <qgeorouterequest.h>
 #include <qgeomaneuver.h>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
+class QIODevice;
+
 
 class QGeoManeuverContainer
 {
@@ -114,4 +114,5 @@ private:
     QList<QGeoRouteSegmentContainer> segments;
 };
 
+QT_END_NAMESPACE
 #endif

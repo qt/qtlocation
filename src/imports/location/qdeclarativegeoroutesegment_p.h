@@ -48,7 +48,7 @@
 
 #include <QObject>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoRouteSegment : public QObject
 {
@@ -79,6 +79,6 @@ private:
     QList<QDeclarativeCoordinate*> path_;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

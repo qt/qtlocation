@@ -42,7 +42,7 @@
 #include "qlandmarkunionfilter.h"
 #include "qlandmarkunionfilter_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkUnionFilter
@@ -183,4 +183,4 @@ QLandmarkUnionFilterPrivate::QLandmarkUnionFilterPrivate(const QLandmarkUnionFil
 
 QLandmarkUnionFilterPrivate::~QLandmarkUnionFilterPrivate() {}
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

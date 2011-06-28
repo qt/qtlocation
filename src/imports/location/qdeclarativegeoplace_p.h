@@ -50,7 +50,7 @@
 #include <QVariant>
 #include <QtDeclarative/qdeclarative.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoPlace : public QObject
 {
@@ -85,10 +85,10 @@ private:
     QDeclarativeGeoAddress m_declarativeAddress;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGeoPlace))
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QGeoPlace))
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoPlace));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoPlace));
 
 #endif // QDECLARATIVEGEOPLACE_P_H

@@ -55,7 +55,7 @@
 
 #include "qlandmarkfilter_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkCategoryId;
 
@@ -77,6 +77,6 @@ public:
     Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkCategoryFilter, QLandmarkFilter::CategoryFilter)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

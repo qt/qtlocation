@@ -46,7 +46,7 @@
 #include "qlandmarkmanager.h"
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkManagerEngine;
 class Q_LOCATION_EXPORT QLandmarkManagerEngineFactory
@@ -60,7 +60,7 @@ public:
     virtual QString managerName() const = 0;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 #define QT_LANDMARKS_BACKEND_INTERFACE "com.nokia.qt.mobility.landmarks.enginefactory/1.0"

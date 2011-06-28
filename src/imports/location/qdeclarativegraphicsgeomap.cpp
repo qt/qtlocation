@@ -58,7 +58,7 @@
 
 #include <QDebug>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass Map
@@ -912,4 +912,4 @@ int QDeclarativeGraphicsGeoMap::testGetDeclarativeMapObjectCount()
 
 #include "moc_qdeclarativegraphicsgeomap_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

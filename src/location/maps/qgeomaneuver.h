@@ -46,11 +46,11 @@
 
 #include <QExplicitlySharedDataPointer>
 
-class QString;
 
 QT_BEGIN_HEADER
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
+class QString;
 
 class QGeoCoordinate;
 class QGeoManeuverPrivate;
@@ -107,7 +107,7 @@ private:
     QExplicitlySharedDataPointer<QGeoManeuverPrivate> d_ptr;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_END_HEADER
 

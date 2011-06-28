@@ -58,9 +58,9 @@
 #include <QPen>
 #include <QBrush>
 
-class QGraphicsPolygonItem;
+QT_BEGIN_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+class QGraphicsPolygonItem;
 
 class QGeoMapRectangleObject;
 
@@ -84,7 +84,7 @@ private:
     void regenPolygon();
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif //QGEOTILEDMAPRECTANGLEOBJECT_INFO_P_H
 

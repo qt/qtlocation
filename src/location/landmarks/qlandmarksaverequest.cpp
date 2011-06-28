@@ -44,7 +44,7 @@
 #include "qlandmark.h"
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkSaveRequest
@@ -136,6 +136,6 @@ QMap<int, QLandmarkManager::Error> QLandmarkSaveRequest::errorMap() const
 
 #include "moc_qlandmarksaverequest.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 

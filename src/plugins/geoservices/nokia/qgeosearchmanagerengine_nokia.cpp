@@ -56,6 +56,8 @@
 #include <QUrl>
 #include <QMap>
 
+QT_BEGIN_NAMESPACE
+
 QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoSearchManagerEngine(parameters),
         m_host("loc.desktop.maps.svc.ovi.com"),
@@ -315,3 +317,5 @@ QString QGeoSearchManagerEngineNokia::languageToMarc(QLocale::Language language)
 
     return code;
 }
+
+QT_END_NAMESPACE

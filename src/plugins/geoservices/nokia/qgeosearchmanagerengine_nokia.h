@@ -58,7 +58,7 @@
 #include <QLocale>
 
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoSearchManagerEngineNokia : public QGeoSearchManagerEngine
 {
@@ -94,5 +94,7 @@ private:
     QString m_token;
     QString m_referer;
 };
+
+QT_END_NAMESPACE
 
 #endif

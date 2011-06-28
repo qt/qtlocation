@@ -44,7 +44,7 @@
 
 #include "qgeomapdata.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapOverlay
@@ -111,4 +111,4 @@ QGeoMapOverlayPrivate::~QGeoMapOverlayPrivate() {}
 /*******************************************************************************
 *******************************************************************************/
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

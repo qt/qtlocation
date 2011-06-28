@@ -43,7 +43,8 @@
 #include "qlandmarkid_p.h"
 #include <QString>
 
-QTM_USE_NAMESPACE
+
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkId
@@ -181,3 +182,4 @@ bool QLandmarkId::operator!=(const QLandmarkId &other) const
 }
 
 
+QT_END_NAMESPACE

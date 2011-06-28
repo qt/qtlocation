@@ -42,7 +42,7 @@
 #include <qnumeric.h>
 #include "qdeclarativegeoboundingcircle_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass Yippiaiee! TODO
@@ -109,4 +109,4 @@ void QDeclarativeGeoBoundingCircle::setRadius(const qreal radius)
 
 #include "moc_qdeclarativegeoboundingcircle_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

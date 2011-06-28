@@ -56,7 +56,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 static const double qgeocoordinate_EARTH_MEAN_RADIUS = 6371.0072;
 
@@ -521,11 +521,11 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
         case DegreesMinutesWithHemisphere: {
             double latMin = (absLat - int(absLat)) * 60;
             double lngMin = (absLng - int(absLng)) * 60;
-            latStr = QString("%1%2 %3'")
+            latStr = QString::fromLatin1("%1%2 %3'")
                      .arg(QString::number(int(absLat)))
                      .arg(symbol)
                      .arg(QString::number(latMin, 'f', 3));
-            longStr = QString("%1%2 %3'")
+            longStr = QString::fromLatin1("%1%2 %3'")
                       .arg(QString::number(int(absLng)))
                       .arg(symbol)
                       .arg(QString::number(lngMin, 'f', 3));
@@ -538,12 +538,12 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
             double latSec = (latMin - int(latMin)) * 60;
             double lngSec = (lngMin - int(lngMin)) * 60;
 
-            latStr = QString("%1%2 %3' %4\"")
+            latStr = QString::fromLatin1("%1%2 %3' %4\"")
                      .arg(QString::number(int(absLat)))
                      .arg(symbol)
                      .arg(QString::number(int(latMin)))
                      .arg(QString::number(latSec, 'f', 1));
-            longStr = QString("%1%2 %3' %4\"")
+            longStr = QString::fromLatin1("%1%2 %3' %4\"")
                       .arg(QString::number(int(absLng)))
                       .arg(symbol)
                       .arg(QString::number(int(lngMin)))
@@ -558,29 +558,29 @@ QString QGeoCoordinate::toString(CoordinateFormat format) const
         case DegreesMinutes:
         case DegreesMinutesSeconds: {
             if (d->lat < 0)
-                latStr.insert(0, "-");
+                latStr.insert(0, QLatin1String("-"));
             if (d->lng < 0)
-                longStr.insert(0, "-");
+                longStr.insert(0, QLatin1String("-"));
             break;
         }
         case DegreesWithHemisphere:
         case DegreesMinutesWithHemisphere:
         case DegreesMinutesSecondsWithHemisphere: {
             if (d->lat < 0)
-                latStr.append(" S");
+                latStr.append(QString::fromLatin1(" S"));
             else if (d->lat > 0)
-                latStr.append(" N");
+                latStr.append(QString::fromLatin1(" N"));
             if (d->lng < 0)
-                longStr.append(" W");
+                longStr.append(QString::fromLatin1(" W"));
             else if (d->lng > 0)
-                longStr.append(" E");
+                longStr.append(QString::fromLatin1(" E"));
             break;
         }
     }
 
     if (qIsNaN(d->alt))
-        return QString("%1, %2").arg(latStr, longStr);
-    return QString("%1, %2, %3m").arg(latStr, longStr, QString::number(d->alt));
+        return QString::fromLatin1("%1, %2").arg(latStr, longStr);
+    return QString::fromLatin1("%1, %2, %3m").arg(latStr, longStr, QString::number(d->alt));
 }
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -654,4 +654,4 @@ QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate)
 }
 #endif
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

@@ -53,6 +53,8 @@
 #include <QString>
 #include <QRegExp>
 
+QT_BEGIN_NAMESPACE
+
 class JSONParser
 {
 public:
@@ -237,5 +239,7 @@ public:
         return ret;
     }
 };
+
+QT_END_NAMESPACE
 
 #endif // JSONPARSER_H

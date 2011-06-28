@@ -51,7 +51,7 @@
 
 class QFile;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativePositionSource : public QObject
 {
@@ -111,7 +111,7 @@ private:
     int m_updateInterval;
 };
 
-QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativePositionSource));
+QT_END_NAMESPACE
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePositionSource));
 
 #endif

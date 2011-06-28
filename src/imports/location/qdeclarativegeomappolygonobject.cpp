@@ -47,7 +47,7 @@
 
 #include <QtDeclarative/qdeclarativeinfo.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass MapPolygon
@@ -323,5 +323,5 @@ Q_INVOKABLE void QDeclarativeGeoMapPolygonObject::clearCoordinates()
 
 #include "moc_qdeclarativegeomappolygonobject_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

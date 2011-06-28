@@ -45,7 +45,7 @@
 #include <QPen>
 #include <QBrush>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass MapText
@@ -402,5 +402,5 @@ void QDeclarativeGeoMapTextObject::setVerticalAlignment(QDeclarativeGeoMapTextOb
 
 #include "moc_qdeclarativegeomaptextobject_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -56,7 +56,8 @@
 #include "qlandmarkmanagerenginefactory.h"
 #include "qlandmarkidfilter.h"
 
-QTM_USE_NAMESPACE
+
+QT_BEGIN_NAMESPACE
 
 /*!
    \variable QLandmarkManager::Gpx
@@ -229,11 +230,11 @@ QLandmarkManager::QLandmarkManager(QObject *parent)
     QString managerName;
 
 #ifdef Q_OS_SYMBIAN
-     managerName = "com.nokia.qt.landmarks.engines.symbian";
+     managerName = QLatin1String("com.nokia.qt.landmarks.engines.symbian");
 #elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
-     managerName = "com.nokia.qt.landmarks.engines.qsparql";
+     managerName = QLatin1String("com.nokia.qt.landmarks.engines.qsparql");
 #else
-    managerName = "com.nokia.qt.landmarks.engines.sqlite";
+    managerName = QLatin1String("com.nokia.qt.landmarks.engines.sqlite");
 #endif
 
     d->createEngine(managerName);
@@ -298,7 +299,7 @@ bool QLandmarkManager::saveLandmark(QLandmark *landmark)
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->saveLandmark(landmark,
@@ -329,7 +330,7 @@ bool QLandmarkManager::saveLandmarks(QList<QLandmark> *landmarks)
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->saveLandmarks(landmarks,
@@ -354,7 +355,7 @@ bool QLandmarkManager::removeLandmark(const QLandmarkId &landmarkId)
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->removeLandmark(landmarkId,
@@ -379,7 +380,7 @@ bool QLandmarkManager::removeLandmark(const QLandmark &landmark)
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->removeLandmark(landmark.landmarkId(),
@@ -410,7 +411,7 @@ bool QLandmarkManager::removeLandmarks(const QList<QLandmarkId> &landmarkIds)
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
 
@@ -444,7 +445,7 @@ bool QLandmarkManager::removeLandmarks(const QList<QLandmark> &landmarks)
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     QList<QLandmarkId> landmarkIds;
@@ -489,7 +490,7 @@ bool QLandmarkManager::saveCategory(QLandmarkCategory *category)
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->saveCategory(category,
@@ -513,7 +514,7 @@ bool QLandmarkManager::removeCategory(const QLandmarkCategoryId &categoryId)
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->removeCategory(categoryId,
@@ -537,7 +538,7 @@ bool QLandmarkManager::removeCategory(const QLandmarkCategory &category)
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->removeCategory(category.categoryId(),
@@ -558,7 +559,7 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     QLandmarkCategory cat = d->engine->category(categoryId,
@@ -589,7 +590,7 @@ QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCateg
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     QList<QLandmarkCategory> cats = d->engine->categories(categoryIds,
@@ -617,7 +618,7 @@ QList<QLandmarkCategory> QLandmarkManager::categories(int limit, int offset, con
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     QList<QLandmarkCategory> cats = d->engine->categories(limit, offset, nameSort,
@@ -647,7 +648,7 @@ QList<QLandmarkCategoryId> QLandmarkManager::categoryIds(int limit, int offset, 
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     QList<QLandmarkCategoryId> ids = d->engine->categoryIds(limit, offset, nameSort,
@@ -673,7 +674,7 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     QLandmark lm = d->engine->landmark(landmarkId,
@@ -702,7 +703,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int 
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
@@ -735,7 +736,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, int 
     }
 
      d->errorCode = QLandmarkManager::NoError;
-     d->errorString = "";
+     d->errorString = QLatin1String("");
      d->errorMap.clear();
 
     QList<QLandmarkSortOrder> sortOrders;
@@ -774,7 +775,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     }
 
      d->errorCode = QLandmarkManager::NoError;
-     d->errorString = "";
+     d->errorString = QLatin1String("");
      d->errorMap.clear();
 
     QList<QLandmark> lms = d->engine->landmarks(landmarkIds,
@@ -803,7 +804,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     }
 
      d->errorCode = QLandmarkManager::NoError;
-     d->errorString = "";
+     d->errorString = QLatin1String("");
      d->errorMap.clear();
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
@@ -840,7 +841,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     }
 
      d->errorCode = QLandmarkManager::NoError;
-     d->errorString = "";
+     d->errorString = QLatin1String("");
      d->errorMap.clear();
 
     QList<QLandmarkSortOrder> sortOrders;
@@ -885,7 +886,7 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QString &format,
     }
 
      d->errorCode = QLandmarkManager::NoError;
-     d->errorString = "";
+     d->errorString = QLatin1String("");
      d->errorMap.clear();
 
     return d->engine->importLandmarks(device,
@@ -945,7 +946,7 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, const QString &format,
     }
 
      d->errorCode = QLandmarkManager::NoError;
-     d->errorString = "";
+     d->errorString = QLatin1String("");
      d->errorMap.clear();
 
     return d->engine->exportLandmarks(device,
@@ -993,7 +994,7 @@ QStringList QLandmarkManager::supportedFormats(QLandmarkManager::TransferOperati
     }
 
      d->errorCode = QLandmarkManager::NoError;
-     d->errorString = "";
+     d->errorString = QLatin1String("");
      d->errorMap.clear();
 
     return d->engine->supportedFormats(operation, &(d->errorCode), &(d->errorString));
@@ -1052,7 +1053,7 @@ bool QLandmarkManager::isFeatureSupported(QLandmarkManager::ManagerFeature featu
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->isFeatureSupported(feature, &(d->errorCode), &(d->errorString));
@@ -1073,7 +1074,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::filterSupportLevel(const QLandm
     }
 
      d->errorCode = QLandmarkManager::NoError;
-     d->errorString = "";
+     d->errorString = QLatin1String("");
      d->errorMap.clear();
 
     return d->engine->filterSupportLevel(filter, &(d->errorCode), &(d->errorString));
@@ -1092,7 +1093,7 @@ QLandmarkManager::SupportLevel QLandmarkManager::sortOrderSupportLevel(const QLa
     }
 
      d->errorCode = QLandmarkManager::NoError;
-     d->errorString = "";
+     d->errorString = QLatin1String("");
      d->errorMap.clear();
 
     return d->engine->sortOrderSupportLevel(sortOrder, &(d->errorCode), &(d->errorString));
@@ -1111,7 +1112,7 @@ bool QLandmarkManager::isReadOnly() const
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->isReadOnly(&(d->errorCode), &(d->errorString));
@@ -1133,7 +1134,7 @@ bool QLandmarkManager::isReadOnly(const QLandmarkId &landmarkId) const
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->isReadOnly(landmarkId, &(d->errorCode), &(d->errorString));
@@ -1155,7 +1156,7 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->isReadOnly(categoryId, &(d->errorCode), &(d->errorString));
@@ -1174,7 +1175,7 @@ QStringList QLandmarkManager::searchableLandmarkAttributeKeys() const
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
 
     return d->engine->searchableLandmarkAttributeKeys(&(d->errorCode), &(d->errorString));
@@ -1196,7 +1197,7 @@ QString QLandmarkManager::managerName() const
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
     return d->engine->managerName();
 }
@@ -1217,7 +1218,7 @@ QMap<QString, QString> QLandmarkManager::managerParameters() const
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
     return d->engine->managerParameters();
 }
@@ -1235,7 +1236,7 @@ QString QLandmarkManager::managerUri() const
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
     return d->engine->managerUri();
 }
@@ -1253,7 +1254,7 @@ int QLandmarkManager::managerVersion() const
     }
 
     d->errorCode = QLandmarkManager::NoError;
-    d->errorString = "";
+    d->errorString = QLatin1String("");
     d->errorMap.clear();
     return d->engine->managerVersion();
 }
@@ -1389,14 +1390,14 @@ void QLandmarkManager::connectNotify(const char *signal)
 
     if (!d_ptr->isConnected) {
         if (d_ptr->engine) {
-            if (QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>))
-                || (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(dataChanged()))) {
+            if (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksAdded(QList<QLandmarkId>)))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksChanged(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksRemoved(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksChanged(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(dataChanged())))) {
                 connect(d_ptr->engine,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
                         this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
                 connect(d_ptr->engine,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
@@ -1426,13 +1427,13 @@ void QLandmarkManager::disconnectNotify(const char *signal)
 {
     if (d_ptr->isConnected) {
         if (d_ptr->engine) {
-            if ((QLatin1String(signal) == SIGNAL(landmarksAdded(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(landmarksChanged(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(landmarksRemoved(QList<QLandmarkId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)))
-                || (QLatin1String(signal) == SIGNAL(dataChanged()))) {
+            if ((QLatin1String(signal) == QLatin1String(SIGNAL(landmarksAdded(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksChanged(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(landmarksRemoved(QList<QLandmarkId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>))))
+                || (QLatin1String(signal) == QLatin1String(SIGNAL(dataChanged())))) {
                 disconnect(d_ptr->engine,SIGNAL(landmarksAdded(QList<QLandmarkId>)),
                            this, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
                 disconnect(d_ptr->engine,SIGNAL(landmarksChanged(QList<QLandmarkId>)),
@@ -1524,3 +1525,5 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 */
 
 #include "moc_qlandmarkmanager.cpp"
+
+QT_END_NAMESPACE

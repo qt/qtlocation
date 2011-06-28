@@ -63,7 +63,7 @@
 #include "qgeomapobject_p.h"
 #include <private/projwrapper_p.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapData
@@ -785,9 +785,9 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEn
       containerObject(0),
       zoomLevel(-1.0),
       shiftSinceLastInval(0, 0),
-      windowSize(0, 0),
       bearing(0.0),
       tilt(0.0),
+      windowSize(0, 0),
       blockPropertyChangeSignals(false),
       q_ptr(parent)
 {}
@@ -833,4 +833,4 @@ void QGeoMapDataPrivate::emitUpdateMapDisplay(const QRectF &target)
 #include "moc_qgeomapdata.cpp"
 #include "moc_qgeomapdata_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

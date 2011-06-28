@@ -46,7 +46,7 @@
 #include <qgeoroutingmanager.h>
 #include <QtDeclarative/qdeclarativeinfo.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
     : QAbstractListModel(parent),
@@ -697,4 +697,4 @@ QGeoRouteRequest& QDeclarativeGeoRouteQuery::routeRequest()
 
 #include "moc_qdeclarativegeoroutemodel_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

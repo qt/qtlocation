@@ -46,7 +46,7 @@
 
 #define DEFAULT_ROUTE_DETAIL_LEVEL 6
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapRouteObject
@@ -220,5 +220,5 @@ QGeoMapRouteObjectPrivate::~QGeoMapRouteObjectPrivate() {}
 
 #include "moc_qgeomaprouteobject.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

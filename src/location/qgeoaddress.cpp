@@ -47,7 +47,7 @@
 #include <QDebug>
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoAddressPrivate::QGeoAddressPrivate()
         : QSharedData()
@@ -340,5 +340,5 @@ void QGeoAddress::clear()
     d->sPostCode.clear();
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

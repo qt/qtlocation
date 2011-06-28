@@ -49,7 +49,7 @@
 
 #include <QGraphicsItem>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMapCustomObjectPrivate;
 
@@ -89,6 +89,6 @@ private:
     Q_DISABLE_COPY(QGeoMapCustomObject)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

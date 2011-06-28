@@ -46,7 +46,7 @@
 #include <QtCore>
 #include <QtDeclarative/qdeclarative.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoAddress : public QObject
 {
@@ -97,7 +97,7 @@ private:
     QGeoAddress m_address;
 };
 
-QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoAddress));
+QT_END_NAMESPACE
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoAddress));
 
 #endif // QDECLARATIVEGEOADDRESS_P_H

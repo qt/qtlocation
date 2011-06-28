@@ -45,7 +45,7 @@
 
 #include <QLocale>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRoutingManager
@@ -416,4 +416,4 @@ QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
 
 #include "moc_qgeoroutingmanager.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

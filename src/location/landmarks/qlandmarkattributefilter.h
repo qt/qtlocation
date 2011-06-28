@@ -47,7 +47,7 @@
 #include <QString>
 #include <QStringList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QLandmark;
 
 class QLandmarkAttributeFilterPrivate;
@@ -76,6 +76,6 @@ private:
     Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

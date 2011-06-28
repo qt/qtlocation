@@ -44,7 +44,7 @@
 
 #include "qlandmarkabstractrequest.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkSaveRequestPrivate;
 class Q_LOCATION_EXPORT QLandmarkSaveRequest : public QLandmarkAbstractRequest
@@ -65,7 +65,7 @@ private:
     friend class QLandmarkManagerEngine;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif
 

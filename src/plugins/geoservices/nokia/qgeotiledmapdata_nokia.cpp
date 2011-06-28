@@ -55,7 +55,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
  Constructs a new tiled map data object, which stores the map data required by
@@ -185,7 +185,7 @@ QString QGeoTiledMapDataNokia::getViewCopyright()
 /*!
  \reimp
  */
-void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem *option)
+void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/)
 {
     QRect viewport = painter->combinedTransform().inverted().mapRect(painter->viewport());
 
@@ -234,3 +234,5 @@ void QGeoTiledMapDataNokia::paintProviderNotices(QPainter *painter, const QStyle
         lastCopyright
     );
 }
+
+QT_END_NAMESPACE

@@ -47,7 +47,7 @@
 #include <lbtsessiontrigger.h>
 #include <lbttriggerentry.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 //Design chnages
 
@@ -346,4 +346,4 @@ void QMLBackendTriggerChangeAO::ConstructL(RLbtServer& aLbtServ)
     }
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

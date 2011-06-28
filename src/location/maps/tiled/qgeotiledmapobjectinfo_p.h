@@ -57,11 +57,11 @@
 
 #include <QRectF>
 
+QT_BEGIN_NAMESPACE
+
 class QGraphicsItem;
 class QRect;
 class QPolygonF;
-
-QTM_BEGIN_NAMESPACE
 
 class QGeoTiledMapData;
 class QGeoBoundingBox;
@@ -103,7 +103,7 @@ protected:
     QGeoTiledMapDataPrivate *tiledMapDataPrivate;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif //QGEOTILEDMAPOBJECT_INFO_P_H
 

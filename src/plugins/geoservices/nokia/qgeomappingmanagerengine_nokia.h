@@ -54,10 +54,10 @@
 #include <qgeoserviceprovider.h>
 #include <qgeotiledmappingmanagerengine.h>
 
+QT_BEGIN_NAMESPACE
+
 class QNetworkAccessManager;
 class QNetworkDiskCache;
-
-QTM_USE_NAMESPACE
 
 class QGeoMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
 {
@@ -88,5 +88,7 @@ private:
     QString m_token;
     QString m_referer;
 };
+
+QT_END_NAMESPACE
 
 #endif

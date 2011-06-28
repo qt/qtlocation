@@ -47,7 +47,7 @@
 #include <QList>
 #include <QPen>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMapPolylineObjectPrivate
 {
@@ -59,6 +59,6 @@ public:
     QPen pen;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -50,7 +50,7 @@
 #include <QtDeclarative/qdeclarativeitem.h>
 class QAbstractItemModel;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeGraphicsGeoMap;
 class QDeclarativeGeoMapMouseArea;
@@ -152,8 +152,8 @@ private:
     QList<QDeclarativeGeoMapObject*> declarativeObjectList_;
 };
 
-QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapObject));
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapObjectView));
+QT_END_NAMESPACE
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapObject));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapObjectView));
 
 #endif

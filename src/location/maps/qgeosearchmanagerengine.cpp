@@ -46,7 +46,7 @@
 #include "qgeocoordinate.h"
 #include "qlandmarkmanager.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoSearchManagerEngine
@@ -196,7 +196,7 @@ QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoAddress &address,
     Q_UNUSED(address)
     Q_UNUSED(bounds)
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-                               "Geocoding is not supported by this service provider.", this);
+                               QLatin1String("Geocoding is not supported by this service provider."), this);
 }
 
 /*!
@@ -241,7 +241,7 @@ QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &c
     Q_UNUSED(coordinate)
     Q_UNUSED(bounds)
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-                               "Reverse geocoding is not supported by this service provider.", this);
+                               QLatin1String("Reverse geocoding is not supported by this service provider."), this);
 }
 
 /*!
@@ -312,7 +312,7 @@ QGeoSearchReply* QGeoSearchManagerEngine::search(const QString &searchString,
     Q_UNUSED(bounds)
 
     return new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError,
-                               "Searching is not supported by this service provider.", this);
+                               QLatin1String("Searching is not supported by this service provider."), this);
 }
 
 /*!
@@ -512,4 +512,4 @@ QGeoSearchManagerEnginePrivate::~QGeoSearchManagerEnginePrivate()
 
 #include "moc_qgeosearchmanagerengine.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

@@ -42,7 +42,7 @@
 #include "qgeosearchreply.h"
 #include "qgeosearchreply_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 /*!
     \class QGeoSearchReply
 
@@ -322,7 +322,7 @@ void QGeoSearchReply::setOffset(int offset)
 
 QGeoSearchReplyPrivate::QGeoSearchReplyPrivate()
     : error(QGeoSearchReply::NoError),
-      errorString(""),
+      errorString(QLatin1String("")),
       isFinished(false),
       viewport(0),
       limit(-1),
@@ -341,4 +341,4 @@ QGeoSearchReplyPrivate::~QGeoSearchReplyPrivate() {}
 
 #include "moc_qgeosearchreply.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

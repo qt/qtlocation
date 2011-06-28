@@ -47,7 +47,7 @@
 #include "qdeclarativegeoroute_p.h"
 #include "qgeomaprouteobject.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoMapRouteObject : public QDeclarativeGeoMapObject
 {
@@ -83,8 +83,8 @@ private:
     QColor color_;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoMapRouteObject));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapRouteObject));
 
 #endif

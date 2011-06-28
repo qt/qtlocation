@@ -59,10 +59,8 @@
 
 #include <QPen>
 
+QT_BEGIN_NAMESPACE
 class QGraphicsPathItem;
-
-QTM_BEGIN_NAMESPACE
-
 class QGeoMapRouteObject;
 
 class QGeoTiledMapRouteObjectInfo : public QGeoTiledMapObjectInfo
@@ -84,7 +82,7 @@ private:
     void regenPath();
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif //QGEOTILEDMAPROUTEOBJECT_INFO_P_H
 

@@ -50,7 +50,7 @@
 
 #include <QPointF>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoTiledMapRouteObjectInfo::QGeoTiledMapRouteObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoTiledMapObjectInfo(mapData, mapObject)
@@ -140,5 +140,5 @@ void QGeoTiledMapRouteObjectInfo::regenPath()
 
 #include "moc_qgeotiledmaprouteobjectinfo_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

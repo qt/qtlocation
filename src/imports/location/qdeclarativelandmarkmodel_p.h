@@ -55,7 +55,7 @@
 #include <QDeclarativeParserStatus>
 #include <QAbstractListModel>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 class QDeclarativeLandmarkAbstractModel : public QAbstractListModel, public QDeclarativeParserStatus
@@ -225,7 +225,7 @@ private:
     QSet<QString> m_landmarkIdSet; // For faster lookups when updating items
 };
 
-QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeLandmarkModel));
+QT_END_NAMESPACE
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeLandmarkModel));
 
 #endif // QDECLARATIVELANDMARKMODEL_P_H

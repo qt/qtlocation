@@ -45,7 +45,8 @@
 #include <QDebug>
 #include <QMutexLocker>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
+
 
 QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManager *mgr)
     : type(QLandmarkAbstractRequest::InvalidRequest),
@@ -324,14 +325,14 @@ bool QLandmarkAbstractRequest::start()
     QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
-        d_ptr->errorString = "No manager assigned to landmark request object";
+        d_ptr->errorString = QLatin1String("No manager assigned to landmark request object");
         qWarning() << d_ptr->errorString;
         return false;
     }
     QLandmarkManagerEngine *engine = d_ptr->manager->engine();
     if (!engine) {
         d_ptr->error = QLandmarkManager::InvalidManagerError;
-        d_ptr->errorString = "The manager is invalid";
+        d_ptr->errorString = QLatin1String("The manager is invalid");
         return false;
     }
 
@@ -361,7 +362,7 @@ bool QLandmarkAbstractRequest::cancel()
     QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
-        d_ptr->errorString = "No manager assigned to landmark request object";
+        d_ptr->errorString = QLatin1String("No manager assigned to landmark request object");
         qWarning() << d_ptr->errorString;
         return false;
     }
@@ -400,7 +401,7 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
     QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
-        d_ptr->errorString = "No manager assigned to landmark request object";
+        d_ptr->errorString = QLatin1String("No manager assigned to landmark request object");
         qWarning() << d_ptr->errorString;
         return false;
     }
@@ -436,6 +437,8 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
 */
 
 #include "moc_qlandmarkabstractrequest.cpp"
+
+QT_END_NAMESPACE
 
 
 

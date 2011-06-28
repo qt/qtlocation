@@ -51,6 +51,8 @@
 #include <QNetworkCacheMetaData>
 #include <QDateTime>
 
+QT_BEGIN_NAMESPACE
+
 QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
         m_reply(reply)
@@ -135,3 +137,5 @@ void QGeoMapReplyNokia::networkError(QNetworkReply::NetworkError error)
     m_reply->deleteLater();
     m_reply = 0;
 }
+
+QT_END_NAMESPACE

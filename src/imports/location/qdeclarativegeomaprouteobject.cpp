@@ -42,7 +42,7 @@
 #include <QPen>
 #include "qdeclarativegeomaprouteobject_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapRouteObject::QDeclarativeGeoMapRouteObject(QDeclarativeItem *parent)
     : QDeclarativeGeoMapObject(parent), route_(0)
@@ -104,4 +104,4 @@ quint32 QDeclarativeGeoMapRouteObject::detailLevel() const
 
 #include "moc_qdeclarativegeomaprouteobject_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

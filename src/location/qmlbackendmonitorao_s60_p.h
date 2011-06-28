@@ -61,7 +61,7 @@
 
 #include "qgeoareamonitor.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class CBackendMonitorInfo;
 
@@ -114,6 +114,6 @@ private:
     RLbt iLbt;  //subsession
 
 };
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif /* QMLBACKENDMONITORAO_H_ */

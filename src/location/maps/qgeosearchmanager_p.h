@@ -60,7 +60,7 @@
 
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkManager;
 class QGeoSearchManagerEngine;
@@ -95,7 +95,7 @@ private:
     QList<QLandmarkFetchRequest*> fetchRequests;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif
 

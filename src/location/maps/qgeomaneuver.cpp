@@ -44,7 +44,7 @@
 
 #include "qgeocoordinate.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoManeuver
@@ -318,4 +318,4 @@ bool QGeoManeuverPrivate::operator ==(const QGeoManeuverPrivate &other) const
             && (waypoint == other.waypoint));
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

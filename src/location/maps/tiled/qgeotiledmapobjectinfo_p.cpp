@@ -52,13 +52,13 @@
 
 #include <QDebug>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoMapObjectInfo(mapData, mapObject),
-      graphicsItem(0),
       inited(false),
-      updateAfterInit(false)
+      updateAfterInit(false),
+      graphicsItem(0)
 {
     tiledMapData = mapData;
     tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(mapData->d_ptr);
@@ -118,19 +118,19 @@ void QGeoTiledMapObjectInfo::selectedChanged(bool /*selected*/)
 //    }
 }
 
-void QGeoTiledMapObjectInfo::originChanged(const QGeoCoordinate &origin)
+void QGeoTiledMapObjectInfo::originChanged(const QGeoCoordinate &/*origin*/)
 {
     if (graphicsItem)
         updateItem();
 }
 
-void QGeoTiledMapObjectInfo::unitsChanged(QGeoMapObject::CoordinateUnit units)
+void QGeoTiledMapObjectInfo::unitsChanged(QGeoMapObject::CoordinateUnit /*units*/)
 {
     if (graphicsItem)
         updateItem();
 }
 
-void QGeoTiledMapObjectInfo::transformTypeChanged(QGeoMapObject::TransformType transformType)
+void QGeoTiledMapObjectInfo::transformTypeChanged(QGeoMapObject::TransformType /*transformType*/)
 {
     if (graphicsItem)
         updateItem();
@@ -255,5 +255,5 @@ void QGeoTiledMapObjectInfo::updateItem(const QRectF& target)
 
 #include "moc_qgeotiledmapobjectinfo_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -48,7 +48,7 @@
 
 QT_BEGIN_HEADER
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoPositionInfoSourcePrivate;
 class Q_LOCATION_EXPORT QGeoPositionInfoSource : public QObject
@@ -100,7 +100,7 @@ private:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoPositionInfoSource::PositioningMethods)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_END_HEADER
 

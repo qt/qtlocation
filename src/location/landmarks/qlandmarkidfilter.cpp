@@ -42,7 +42,7 @@
 #include "qlandmarkidfilter.h"
 #include "qlandmarkidfilter_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkIdFilter
@@ -158,4 +158,4 @@ QLandmarkIdFilterPrivate::QLandmarkIdFilterPrivate(const QLandmarkIdFilterPrivat
 
 QLandmarkIdFilterPrivate::~QLandmarkIdFilterPrivate() {}
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

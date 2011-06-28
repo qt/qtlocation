@@ -62,13 +62,12 @@
 #include <QDebug>
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 uint qHash(const QLandmarkCategoryId& key) {
    return qHash(key.localId()) + qHash(key.managerUri());
 }
-QTM_END_NAMESPACE
 
-QTM_USE_NAMESPACE
+
 
 // ----- QLandmarkPrivate -----
 
@@ -522,3 +521,4 @@ void QLandmark::clear()
     d->id = QLandmarkId();
 }
 
+QT_END_NAMESPACE

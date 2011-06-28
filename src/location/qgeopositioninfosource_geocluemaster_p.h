@@ -60,7 +60,7 @@
 
 //#define Q_LOCATION_GEOCLUE_DEBUG
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoPositionInfoSourceGeoclueMaster : public QGeoPositionInfoSource
 {
@@ -136,6 +136,6 @@ private:
     PositioningMethods m_methods;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QGEOPOSITIONINFOSOURCE_GEOCLUEMASTER_H

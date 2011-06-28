@@ -41,7 +41,7 @@
 
 #include "qgeosatelliteinfosource_maemo_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoSatelliteInfoSourceMaemo::QGeoSatelliteInfoSourceMaemo(QObject *parent) : QGeoSatelliteInfoSource(parent),
                                                                               running(false), satInViewSeen(false)
@@ -149,5 +149,5 @@ void QGeoSatelliteInfoSourceMaemo::onServiceConnect()
 
 
 #include "moc_qgeosatelliteinfosource_maemo_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

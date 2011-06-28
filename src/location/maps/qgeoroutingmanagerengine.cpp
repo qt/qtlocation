@@ -42,7 +42,7 @@
 #include "qgeoroutingmanagerengine.h"
 #include "qgeoroutingmanagerengine_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRoutingManagerEngine
@@ -207,7 +207,7 @@ QGeoRouteReply* QGeoRoutingManagerEngine::updateRoute(const QGeoRoute &route, co
     Q_UNUSED(route)
     Q_UNUSED(position)
     return new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError,
-                              "The updating of routes is not supported by this service provider.", this);
+                              QLatin1String("The updating of routes is not supported by this service provider."), this);
 }
 
 /*!
@@ -465,4 +465,4 @@ QGeoRoutingManagerEnginePrivate::~QGeoRoutingManagerEnginePrivate() {}
 
 #include "moc_qgeoroutingmanagerengine.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

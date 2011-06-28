@@ -41,7 +41,7 @@
 
 #include "qdeclarativelandmarkcategory_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass LandmarkCategory QDeclarativeLandmarkCategory
@@ -121,4 +121,4 @@ void QDeclarativeLandmarkCategory::setCategory(const QLandmarkCategory& category
 
 #include "moc_qdeclarativelandmarkcategory_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

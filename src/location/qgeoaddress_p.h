@@ -58,7 +58,7 @@
 
 #include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoAddressPrivate : public QSharedData
 {
@@ -77,6 +77,6 @@ public:
     QString sPostCode; //!< post code field
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

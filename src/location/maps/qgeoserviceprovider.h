@@ -48,12 +48,12 @@
 #include <QVariant>
 #include <QString>
 
-class QStringList;
 
 QT_BEGIN_HEADER
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
+class QStringList;
 class QGeoSearchManager;
 class QGeoMappingManager;
 class QGeoRoutingManager;
@@ -89,7 +89,7 @@ private:
     QGeoServiceProviderPrivate* d_ptr;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_END_HEADER
 

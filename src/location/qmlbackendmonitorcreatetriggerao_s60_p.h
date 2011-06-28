@@ -62,7 +62,7 @@
 #include <lbttriggerconditionarea.h>
 #include <lbttriggerentry.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoAreaMonitorS60;
 
@@ -108,6 +108,6 @@ private:
 
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif /* QMLBACKENDMONITORCREATETRIGGER_H_ */

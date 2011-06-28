@@ -42,7 +42,7 @@
 #include "qgeoareamonitor_polling_p.h"
 #include "qgeocoordinate.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 #define UPDATE_INTERVAL_5S  5000
 
@@ -120,4 +120,4 @@ void QGeoAreaMonitorPolling::positionUpdated(const QGeoPositionInfo &info)
 }
 
 #include "moc_qgeoareamonitor_polling_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

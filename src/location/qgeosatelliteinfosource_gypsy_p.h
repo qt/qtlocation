@@ -63,7 +63,7 @@
 
 // #define Q_LOCATION_GYPSY_DEBUG
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 // An engine that encapsulates all symbols we want
 // to be able to mock (for unit/autotest purposes).
@@ -135,6 +135,6 @@ private:
       bool m_requestOngoing;
   };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QGEOSATELLITEINFOSOURCE_GYPSY_H

@@ -48,7 +48,7 @@
 
 QT_BEGIN_HEADER
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkBoxFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
@@ -74,7 +74,7 @@ private:
     Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkBoxFilter)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_END_HEADER
 

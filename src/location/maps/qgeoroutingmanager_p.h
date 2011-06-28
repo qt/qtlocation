@@ -55,7 +55,7 @@
 
 #include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoRoutingManagerEngine;
 
@@ -71,6 +71,6 @@ private:
     Q_DISABLE_COPY(QGeoRoutingManagerPrivate)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

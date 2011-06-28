@@ -60,7 +60,7 @@
 #include <QDateTime>
 #include <QMap>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoRouteRequestPrivate : public QSharedData
 {
@@ -82,6 +82,6 @@ public:
     QGeoRouteRequest::ManeuverDetail maneuverDetail;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -53,6 +53,8 @@
 // http://www.loc.gov/marc/languages/language_code.html
 // Order matches QLocale::Language
 
+QT_BEGIN_NAMESPACE
+
 static const unsigned char marc_language_code_list[] =
     "\0\0\0" // Unused
     "\0\0\0" // C
@@ -271,5 +273,6 @@ static const unsigned char marc_language_code_list[] =
     "\0\0\0" // Shambala
     ;
 
+QT_END_NAMESPACE
 
 #endif /* MARCLANGUAGECODES_H_ */

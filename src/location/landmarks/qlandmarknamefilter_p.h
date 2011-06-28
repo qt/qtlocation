@@ -58,7 +58,7 @@
 #include "qnamespace.h"
 #include <QString>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkNameFilterPrivate : public QLandmarkFilterPrivate
 {
@@ -80,6 +80,6 @@ public:
     QLandmarkFilter::MatchFlags flags;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

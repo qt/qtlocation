@@ -46,7 +46,7 @@
 
 #include "qdeclarativecoordinate_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeReverseGeocodeModel : public QDeclarativeGeoSearchModel
 {
@@ -79,6 +79,6 @@ private:
     QDeclarativeCoordinate coordinate_;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

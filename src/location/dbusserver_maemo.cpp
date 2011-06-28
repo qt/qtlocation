@@ -41,7 +41,7 @@
 
 #include "dbusserver_maemo_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 DBusServer::DBusServer(QObject *obj, DBusServerIF *iface) : QDBusAbstractAdaptor(obj), 
                                                             interface(iface) 
@@ -86,5 +86,5 @@ Q_NOREPLY void DBusServer::satellitesInUseUpdate(const QByteArray &message)
 }
 
 #include "moc_dbusserver_maemo_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

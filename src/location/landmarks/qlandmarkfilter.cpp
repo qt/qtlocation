@@ -50,13 +50,13 @@
 #include "qgeocoordinate.h"
 
 #if !defined(Q_CC_MWERKS)
-template<> QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate)>::clone()
+template<> QT_PREPEND_NAMESPACE(QLandmarkFilterPrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QLandmarkFilterPrivate)>::clone()
 {
     return d->clone();
 }
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QLandmarkFilterPrivate::QLandmarkFilterPrivate()
         : QSharedData(),
@@ -231,4 +231,4 @@ const QLandmarkFilter operator|(const QLandmarkFilter &left, const QLandmarkFilt
     return nuf;
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

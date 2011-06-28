@@ -42,7 +42,7 @@
 #include "qgeoroutereply.h"
 #include "qgeoroutereply_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRouteReply
@@ -255,7 +255,7 @@ void QGeoRouteReply::abort()
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteRequest &request)
     : error(QGeoRouteReply::NoError),
-      errorString(""),
+      errorString(QLatin1String("")),
       isFinished(false),
       request(request) {}
 
@@ -268,4 +268,4 @@ QGeoRouteReplyPrivate::~QGeoRouteReplyPrivate() {}
 
 #include "moc_qgeoroutereply.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

@@ -52,6 +52,7 @@ Item {
 
     signal okButtonClicked
     signal cancelButtonClicked
+    opacity: 0
 
     Common.Fader {}
 
@@ -59,10 +60,8 @@ Item {
         id: dialogRectangle
 
         color: "lightsteelblue"
-        opacity: 1
         width: parent.width - gap;
         height: titleBar.height + message.height + okButton.height + gap*3
-
         anchors {
             top: parent.top
             topMargin: 50
@@ -90,7 +89,7 @@ Item {
             width: dialogRectangle.width - gap
             anchors.topMargin: gap
             textFormat: Text.RichText
-            wrapMode: Text.WrapAnywhere
+            wrapMode: Text.Wrap
             onLinkActivated: {
                 Qt.openUrlExternally(link)
             }
@@ -109,4 +108,3 @@ Item {
         }
     }
 }
-

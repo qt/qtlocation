@@ -45,7 +45,7 @@
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRouteRequest
@@ -485,4 +485,4 @@ bool QGeoRouteRequestPrivate::operator ==(const QGeoRouteRequestPrivate &other) 
             && (maneuverDetail == other.maneuverDetail));
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

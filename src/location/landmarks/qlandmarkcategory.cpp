@@ -50,7 +50,7 @@
 #include <QDebug>
 #endif
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 // ----- QLandmarkCategoryPrivate -----
 
@@ -255,3 +255,5 @@ void QLandmarkCategory::clear()
     d->iconUrl.clear();
     d->id = QLandmarkCategoryId();
 }
+
+QT_END_NAMESPACE

@@ -42,7 +42,7 @@
 #include "qlandmarknamesort.h"
 #include "qlandmarknamesort_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkNameSort
@@ -120,4 +120,4 @@ QLandmarkNameSortPrivate::QLandmarkNameSortPrivate(const QLandmarkNameSortPrivat
 QLandmarkNameSortPrivate::~QLandmarkNameSortPrivate() {}
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

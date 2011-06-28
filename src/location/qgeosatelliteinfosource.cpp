@@ -65,7 +65,7 @@
 #endif
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoSatelliteInfoSourcePrivate
 {
@@ -113,9 +113,9 @@ void QGeoSatelliteInfoSourcePrivate::loadDynamicPlugins(QHash<QString, QGeoPosit
     QString blockName;
 
     QSettings settings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
-    QVariant value = settings.value("position.plugin.operator.whitelist");
+    QVariant value = settings.value(QLatin1String("position.plugin.operator.whitelist"));
     if (value.isValid()) {
-        QStringList parts = value.toString().split(",");
+        QStringList parts = value.toString().split(QLatin1String(","));
         if (parts.size() == 4) {
             QFile file(parts.at(1));
             file.open(QIODevice::ReadOnly);
@@ -263,9 +263,9 @@ QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {
     QSettings pluginSettings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
-    QVariant value = pluginSettings.value("position.plugin.operator.whitelist");
+    QVariant value = pluginSettings.value(QLatin1String("position.plugin.operator.whitelist"));
     if (value.isValid()) {
-        QStringList parts = value.toString().split(",");
+        QStringList parts = value.toString().split(QLatin1String(","));
         if (parts.size() == 4) {
             QGeoSatelliteInfoSource *source = createSource(parts.at(0), parent);
             if (source)
@@ -417,4 +417,4 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
 #include "moc_qgeosatelliteinfosource.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
