@@ -56,9 +56,9 @@ QT_BEGIN_NAMESPACE
 
 QGeoTiledMapObjectInfo::QGeoTiledMapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoMapObjectInfo(mapData, mapObject),
-      graphicsItem(0),
       inited(false),
-      updateAfterInit(false)
+      updateAfterInit(false),
+      graphicsItem(0)
 {
     tiledMapData = mapData;
     tiledMapDataPrivate = static_cast<QGeoTiledMapDataPrivate*>(mapData->d_ptr);

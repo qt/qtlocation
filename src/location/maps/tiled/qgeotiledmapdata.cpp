@@ -1001,8 +1001,8 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoM
     : QGeoMapDataPrivate(parent, engine),
       oe(new QGeoMapObjectEngine(parent, this)),
       zoomFactor(0),
-      spherical("+proj=latlon +ellps=sphere"),
-      wgs84("+proj=latlon +ellps=WGS84") {}
+      spherical(QLatin1String("+proj=latlon +ellps=sphere")),
+      wgs84(QLatin1String("+proj=latlon +ellps=WGS84")) {}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {

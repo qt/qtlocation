@@ -68,7 +68,7 @@ void QLandmarkManagerPrivate::createEngine(const QString &managerName, const QMa
 
     if (!q->availableManagers().contains(managerName)) {
         errorCode = QLandmarkManager::InvalidManagerError;
-        errorString = QString("The landmark manager, %1, was not found").arg(managerName);
+        errorString = QString::fromLatin1("The landmark manager, %1, was not found").arg(managerName);
         qWarning() << errorString;
         engine = 0;
         return;
@@ -77,7 +77,7 @@ void QLandmarkManagerPrivate::createEngine(const QString &managerName, const QMa
     QList<QLandmarkManagerEngineFactory *> factories = QLandmarkManagerPrivate::factories().values(managerName);
 
     bool ok;
-    int implementationVersion = parameters.value(QTLANDMARKS_IMPLEMENTATION_VERSION_NAME).toInt(&ok);
+    int implementationVersion = parameters.value(QLatin1String(QTLANDMARKS_IMPLEMENTATION_VERSION_NAME)).toInt(&ok);
     if (!ok)
         implementationVersion = -1;
 
@@ -95,7 +95,7 @@ void QLandmarkManagerPrivate::createEngine(const QString &managerName, const QMa
     if (!engine) {
         if (errorCode == QLandmarkManager::NoError) {
             errorCode = QLandmarkManager::InvalidManagerError;
-            errorString = "The landmark manager could not return the requested engine instance";
+            errorString = QLatin1String("The landmark manager could not return the requested engine instance");
         }
     }
 }

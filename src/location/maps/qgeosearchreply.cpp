@@ -322,7 +322,7 @@ void QGeoSearchReply::setOffset(int offset)
 
 QGeoSearchReplyPrivate::QGeoSearchReplyPrivate()
     : error(QGeoSearchReply::NoError),
-      errorString(""),
+      errorString(QLatin1String("")),
       isFinished(false),
       viewport(0),
       limit(-1),

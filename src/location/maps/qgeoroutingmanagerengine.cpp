@@ -207,7 +207,7 @@ QGeoRouteReply* QGeoRoutingManagerEngine::updateRoute(const QGeoRoute &route, co
     Q_UNUSED(route)
     Q_UNUSED(position)
     return new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError,
-                              "The updating of routes is not supported by this service provider.", this);
+                              QLatin1String("The updating of routes is not supported by this service provider."), this);
 }
 
 /*!

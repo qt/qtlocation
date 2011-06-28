@@ -69,7 +69,7 @@ class ProjCoordinateSystemPrivate;
 class ProjCoordinateSystem
 {
 public:
-    ProjCoordinateSystem(const QString &projection = QString("+proj=latlon +ellps=WGS84"), bool latLon=true);
+    ProjCoordinateSystem(const QString &projection = QString::fromLatin1("+proj=latlon +ellps=WGS84"), bool latLon=true);
     ProjCoordinateSystem(const ProjCoordinateSystem &other);
     ~ProjCoordinateSystem();
 

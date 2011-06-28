@@ -785,9 +785,9 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMapData *parent, QGeoMappingManagerEn
       containerObject(0),
       zoomLevel(-1.0),
       shiftSinceLastInval(0, 0),
-      windowSize(0, 0),
       bearing(0.0),
       tilt(0.0),
+      windowSize(0, 0),
       blockPropertyChangeSignals(false),
       q_ptr(parent)
 {}

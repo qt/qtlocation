@@ -102,44 +102,44 @@ bool matchString(const QString &sourceString, const QString &matchString, QLandm
 
 QVariant getLandmarkAttribute(const QString key, const QLandmark &landmark)
 {
-    if (key == "name") {
+    if (key == QLatin1String("name")) {
         return landmark.name();
-    } else if (key == "description") {
+    } else if (key == QLatin1String("description")) {
         return landmark.description();
-    } else if (key == "countryCode") {
+    } else if (key == QLatin1String("countryCode")) {
         return landmark.address().countryCode();
-    } else if (key == "country") {
+    } else if (key == QLatin1String("country")) {
         return landmark.address().country();
-    } else if (key == "state") {
+    } else if (key == QLatin1String("state")) {
         return landmark.address().state();
-    } else if (key == "city") {
+    } else if (key == QLatin1String("city")) {
         return landmark.address().city();
-    } else if (key == "district") {
+    } else if (key == QLatin1String("district")) {
         return landmark.address().district();
-    }  else if (key == "district") {
+    }  else if (key == QLatin1String("district")) {
         return landmark.address().district();
-    } else if (key == "street") {
+    } else if (key == QLatin1String("street")) {
         return landmark.address().street();
-    } else if (key == "postcode") {
+    } else if (key == QLatin1String("postcode")) {
         return landmark.address().postcode();
-    } else if (key == "phoneNumber") {
+    } else if (key == QLatin1String("phoneNumber")) {
         return landmark.phoneNumber();
     } else {
         return QVariant(); // shouldn't be possible
     }
 }
 
-QStringList commonLandmarkKeys = QStringList() << "name"
-                                << "description"
-                                << "countryCode"
-                                << "country"
-                                << "state"
-                                << "county"
-                                << "city"
-                                << "district"
-                                << "street"
-                                << "postcode"
-                                << "phoneNumber";
+QStringList commonLandmarkKeys = QStringList() << QLatin1String("name")
+                                << QLatin1String("description")
+                                << QLatin1String("countryCode")
+                                << QLatin1String("country")
+                                << QLatin1String("state")
+                                << QLatin1String("county")
+                                << QLatin1String("city")
+                                << QLatin1String("district")
+                                << QLatin1String("street")
+                                << QLatin1String("postcode")
+                                << QLatin1String("phoneNumber");
 
 /*!
     \class QLandmarkManagerEngine
@@ -503,7 +503,7 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice* /*device*/, const QStrin
     Q_ASSERT(error);
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NotSupportedError;
-    *errorString ="Not supported";
+    *errorString = QLatin1String("Not supported");
     return false;
 }
 
@@ -532,7 +532,7 @@ bool QLandmarkManagerEngine::exportLandmarks(QIODevice * /*device*/, const QStri
     Q_ASSERT(error);
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NotSupportedError;
-    *errorString = "Not supported";
+    *errorString = QLatin1String("Not supported");
     return false;
 }
 
@@ -546,7 +546,7 @@ QStringList QLandmarkManagerEngine::supportedFormats(QLandmarkManager::TransferO
     Q_ASSERT(error);
     Q_ASSERT(errorString);
     *error = QLandmarkManager::NoError;
-    *errorString = "";
+    *errorString = QLatin1String("");
     return QStringList();
 }
 

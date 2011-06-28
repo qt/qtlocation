@@ -311,7 +311,7 @@ void QGeoTiledMapReply::abort()
 
 QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(const QGeoTiledMapRequest &request)
     : error(QGeoTiledMapReply::NoError),
-      errorString(""),
+      errorString(QLatin1String("")),
       isFinished(false),
       isCached(false),
       request(request) {}

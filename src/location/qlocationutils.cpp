@@ -133,7 +133,7 @@ static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo 
         *hasFix = (parts[2][0] == 'A');
 
     if (parts.count() > 9 && parts[9].count() == 6) {
-        date = QDate::fromString(parts[9], "ddMMyy");
+        date = QDate::fromString(parts[9], QLatin1String("ddMMyy"));
         if (date.isValid())
             date = date.addYears(100);     // otherwise starts from 1900
         else
@@ -305,9 +305,9 @@ bool QLocationUtils::getNmeaTime(const QByteArray &bytes, QTime *time)
     QTime tempTime;
 
     if (dotIndex < 0) {
-        tempTime = QTime::fromString(bytes, "hhmmss");
+        tempTime = QTime::fromString(bytes, QLatin1String("hhmmss"));
     } else {
-        tempTime = QTime::fromString(bytes.mid(0, dotIndex), "hhmmss");
+        tempTime = QTime::fromString(bytes.mid(0, dotIndex), QLatin1String("hhmmss"));
         bool hasMsecs = false;
         int midLen = qMin(3, bytes.size() - dotIndex - 1);
         int msecs = bytes.mid(dotIndex + 1, midLen).toUInt(&hasMsecs);

@@ -182,7 +182,7 @@ QGeoSearchManager* QGeoServiceProvider::searchManager() const
             d_ptr->searchManager = new QGeoSearchManager(engine);
         } else {
             d_ptr->searchError = QGeoServiceProvider::NotSupportedError;
-            d_ptr->searchErrorString = "The service provider does not support searchManager().";
+            d_ptr->searchErrorString = QLatin1String("The service provider does not support searchManager().");
         }
 
         if (d_ptr->searchError != QGeoServiceProvider::NoError) {
@@ -229,7 +229,7 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
             d_ptr->mappingManager = new QGeoMappingManager(engine);
         } else {
             d_ptr->mappingError = QGeoServiceProvider::NotSupportedError;
-            d_ptr->mappingErrorString = "The service provider does not support mappingManager().";
+            d_ptr->mappingErrorString = QLatin1String("The service provider does not support mappingManager().");
         }
 
         if (d_ptr->mappingError != QGeoServiceProvider::NoError) {
@@ -276,7 +276,7 @@ QGeoRoutingManager* QGeoServiceProvider::routingManager() const
             d_ptr->routingManager = new QGeoRoutingManager(engine);
         } else {
             d_ptr->routingError = QGeoServiceProvider::NotSupportedError;
-            d_ptr->routingErrorString = "The service provider does not support routingManager().";
+            d_ptr->routingErrorString = QLatin1String("The service provider does not support routingManager().");
         }
 
         if (d_ptr->routingError != QGeoServiceProvider::NoError) {
@@ -340,7 +340,7 @@ void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const Q
 
     if (!QGeoServiceProviderPrivate::plugins().keys().contains(providerName)) {
         error = QGeoServiceProvider::NotSupportedError;
-        errorString = QString("The geoservices provider %1 is not supported.").arg(providerName);
+        errorString = QString(QLatin1String("The geoservices provider %1 is not supported.")).arg(providerName);
         factory = 0;
         return;
     }
@@ -348,7 +348,7 @@ void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const Q
     factory = 0;
 
     error = QGeoServiceProvider::NoError;
-    errorString = "";
+    errorString = QLatin1String("");
 
     QList<QGeoServiceProviderFactory*> candidates = QGeoServiceProviderPrivate::plugins().values(providerName);
 
