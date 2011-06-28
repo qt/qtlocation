@@ -65,9 +65,8 @@ QPlaceDetailsReplyImpl::QPlaceDetailsReplyImpl(QPlaceRestReply *reply, QObject *
 
     if (restReply) {
         restReply->setParent(this);
-        connect(restReply, SIGNAL(finished(const QString &reply)),
-                parser, SLOT(processData(const QString &data)));
-        connect(restReply, SIGNAL(error(QPlaceRestReply::Error error)),
+        connect(restReply, SIGNAL(finished(QString)), parser, SLOT(processData(QString)));
+        connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
         connect(parser, SIGNAL(finished(QPlaceJSonParser::Error,QString)),
                 this, SLOT(resultReady(QPlaceJSonParser::Error,QString)));
