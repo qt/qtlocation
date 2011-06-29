@@ -328,11 +328,6 @@ void QDeclarativeSearchResultModel::executeQuery()
         m_manager = new QPlaceManager(this);
     }
     cancelPreviousRequest();
-    beginResetModel();
-    qDeleteAll(m_results);
-    m_results.clear();
-    endResetModel();
-    emit resultsChanged();
     connectNewResponse(m_manager->searchForPlaces(m_queryParameters, QPlaceManager::PublicScope));
 }
 
