@@ -171,6 +171,9 @@ void QGeoMapObjectEngine::removeObject(QGeoMapObject *object)
 
         foreach (QRectF rect, rectsToUpdate)
             mdp->emitUpdateMapDisplay(rect);
+
+        objectsForLatLonUpdate.removeAll(object);
+        objectsForPixelUpdate.removeAll(object);
     }
 }
 
