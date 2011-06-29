@@ -162,7 +162,7 @@ QVariant QDeclarativeSearchResultModel::data(const QModelIndex& index, int role)
             }
         case SearchResultRole:
             if (result) {
-                return QVariant::fromValue(result);
+                return QVariant::fromValue(static_cast<QObject *>(result));
             } else {
                 return QVariant();
             }
