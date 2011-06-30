@@ -530,22 +530,23 @@ testcase = {
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode_fictional_location: function()
     {
-// city: TheBestCity
+// city: TheBestCity, country: Australia
     },
 
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode_not_unique_location: function()
     {
-// city: Moscow
+//1. Name is not unique in the world. city: Moscow
+//2. Name is not unique in the country. city: Moscow, country: USA
     },
 
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode: function()
     {
-// 1. Use qml_mapviewer to test. Get coordinates for an Australian location (Street number: 53, Street: Brandl St, City: Brisbane)
-// 2. Use qml_mapviewer to test. Get coordinates for an Australian location (Contry code: 61, District:Fortitude Valley, Street: Wickham St)
+// 1. Use qml_mapviewer to test. Get coordinates for an Australian location (Street: 53 Brandl St, City: Eight Mile Plains)
+// 2. Use qml_mapviewer to test. Get coordinates for a district (Contry code: RUS, City:Nizhniy Novgorod, District: Nizhegorodskiy Rayon)
 // 3. Use qml_mapviewer to test. Get coordinates for a city name which is not uniqe in the world, but unique in the country (City: Moscow, Country: Russia)
-// 4. Use qml_mapviewer to test. Get coordinates for a county: (County: West Midlands, Country: United Kingdom)
+// 4. Use qml_mapviewer to test. Get coordinates for a county: (County: Norfolk, Country: United Kingdom)
     },
 
     // \groups BAT,5.0,MOBILITY-2901,RESEARCH
@@ -563,7 +564,7 @@ testcase = {
     // \groups BAT,5.0,MOBILITY-2901,RESEARCH
     qml_reverse_geocode_uninhabited_place: function()
     {
-// Use qml_mapviewer to test. Geocode some coordinates from Pacific Ocean (-27.1911,153.2428)
+// Use qml_mapviewer to test. Geocode some coordinates from Pacific Ocean (-26.8890, 154.6696)
     },
 
     // \groups BAT,5.0,MOBILITY-2902,RESEARCH
