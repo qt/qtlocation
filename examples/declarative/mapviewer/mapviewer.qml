@@ -237,7 +237,6 @@ FocusScope {
         }
     }
 
-
 //=====================Dialogs=====================
     Message {
         id: messageDialog
@@ -247,6 +246,13 @@ FocusScope {
         }
         onCancelButtonClicked: {
             page.state = ""
+        }
+        onOpacityChanged: {
+            if (opacity == 0 ) state = ""
+        }
+
+        onStateChanged: {
+            console.log ("message state = " + state)
         }
 
         states: [
@@ -258,47 +264,27 @@ FocusScope {
             State{
                 name: "GeocodeError"
                 PropertyChanges { target: messageDialog; title: "Geocode Error" }
-                PropertyChanges { target: messageDialog; text: "Unable to find location for the given address." }
+                PropertyChanges { target: messageDialog; text: "Unable to find location for the given address" }
             },
             State{
                 name: "UnknownGeocodeError"
                 PropertyChanges { target: messageDialog; title: "Geocode Error" }
-                PropertyChanges { target: messageDialog; text: "Unknown geocode error. Try again" }
+                PropertyChanges { target: messageDialog; text: "Unsuccessful geocode" }
             },
             State{
                 name: "AmbiguousGeocode"
                 PropertyChanges { target: messageDialog; title: "Ambiguous geocode" }
-                PropertyChanges { target: messageDialog; text: "Several results found for the given address, please specify location" }
+                PropertyChanges { target: messageDialog; text: map.geocodeModel.count + " results found for the given address, please specify location" }
             },
+//            State{
+//                name: "NoAddress"
+//                PropertyChanges { target: messageDialog; title: "Address" }
+//                PropertyChanges { target: messageDialog; text: "Current location doesn't have address" }
+//            },
             State{
-                name: "Coordinates"
-                PropertyChanges { target: messageDialog; title: "Coordinates" }
-                PropertyChanges { target: messageDialog; text: "Several results found for the given address, please specify location" }
-            },
-            State{
-                name: "LatitudeNotANumber"
-                PropertyChanges { target: messageDialog; title: "Input Error" }
-                PropertyChanges { target: messageDialog; text: "Latitude is not a number" }
-            },
-            State{
-                name: "LatitudeOutOfScope"
-                PropertyChanges { target: messageDialog; title: "Input Error" }
-                PropertyChanges { target: messageDialog; text: "Latitude should be in a range (-90,90)" }
-            },
-            State{
-                name: "LongitudeNotANumber"
-                PropertyChanges { target: messageDialog; title: "Input Error" }
-                PropertyChanges { target: messageDialog; text: "Longitude is not a number" }
-            },
-            State{
-                name: "LongitudeOutOfScope"
-                PropertyChanges { target: messageDialog; title: "Input Error" }
-                PropertyChanges { target: messageDialog; text: "Longitude should be in a range (-180,180)" }
-            },
-            State{
-                name: "NoAddress"
-                PropertyChanges { target: messageDialog; title: "Address" }
-                PropertyChanges { target: messageDialog; text: "Current location doesn't have address" }
+                name: "RouteError"
+                PropertyChanges { target: messageDialog; title: "Route Error" }
+                PropertyChanges { target: messageDialog; text: "Unable to find a route for the given points"}
             },
             State{
                 name: "LocationInfo"
@@ -464,24 +450,48 @@ FocusScope {
         onGoButtonClicked: {
             page.state = ""
             messageDialog.state = ""
-            var latitude = dialogModel.get(0).inputText
-            var longtitude = dialogModel.get(1).inputText
 
-            verifyLatitude(latitude)
-            verifyLongitude(longtitude)
-
-            if (messageDialog.state == "") {
-                reverseGeocodeCoordinate.latitude = latitude
-                reverseGeocodeCoordinate.longitude = longtitude
-                map.geocodeModel.query = reverseGeocodeCoordinate
-                map.geocodeModel.update();
-            }
+            reverseGeocodeCoordinate.latitude = dialogModel.get(0).inputText
+            reverseGeocodeCoordinate.longtitude = dialogModel.get(1).inputText
+            map.geocodeModel.query = reverseGeocodeCoordinate
+            map.geocodeModel.update();
         }
 
         onCancelButtonClicked: {
             page.state = ""
         }
     }
+
+//Get new coordinates for marker
+    Dialog {
+        id: coordinatesDialog
+        title: "New coordinates"
+        z: mainMenu.z + 1
+
+        Component.onCompleted: {
+            var obj = [["Latitude", ""],["Longitude", ""]]
+            setModel(obj)
+        }
+
+        Coordinate {
+            id: newCoordinate
+        }
+
+        onGoButtonClicked: {
+            page.state = ""
+            messageDialog.state = ""
+            newCoordinate.latitude = dialogModel.get(0).inputText
+            newCoordinate.longitude =  dialogModel.get(1).inputText
+
+            map.currentMarker.coordinate = newCoordinate
+            map.center = newCoordinate
+        }
+
+        onCancelButtonClicked: {
+            page.state = ""
+        }
+    }
+
 
 //=====================Map=====================
     MapComponent{
@@ -519,7 +529,7 @@ FocusScope {
             else dist = dist + " m"
 
             messageDialog.title = "Route info"
-            messageDialog.text = "<b>Travel time:</b> " + hours + "h:"+ minutes + "m:" + seconds +"s<br/><b>Distance:</b> " + dist;
+            messageDialog.text = "<b>Travel time:</b> " + hours + "h:"+ minutes + "m<br/><b>Distance:</b> " + dist;
 
             page.state = "Message"
         }
@@ -527,10 +537,12 @@ FocusScope {
         onGeocodeFinished:{
             var street, district, city, county, state, countryCode, country, latitude, longitude, text
 
-            if (map.geocodeModel.count == 0) messageDialog.state = "GeocodeError"
-            else if (map.geocodeModel.count > 1) messageDialog.state = "AmbiguousGeocode"
-            else if (map.status == GeocodeModel.Error) messageDialog.state = "UnknownGeocodeError"
-            else messageDialog.state = "LocationInfo"
+            if (map.geocodeModel.status == GeocodeModel.Ready){
+                if (map.geocodeModel.count == 0) messageDialog.state = "UnknownGeocodeError"
+                else if (map.geocodeModel.count > 1) messageDialog.state = "AmbiguousGeocode"
+                else messageDialog.state = "LocationInfo";
+            }
+            else if (map.geocodeModel.status == GeocodeModel.Error) messageDialog.state = "GeocodeError"
             page.state = "Message"
         }
 
@@ -538,11 +550,18 @@ FocusScope {
             messageDialog.state = "LocationInfo"
             page.state = "Message"
         }
+
+        onMoveMarker: {
+            page.state = "Coordinates"
+        }
+
+        onRouteError: {
+            messageDialog.state = "RouteError"
+        }
     }
 
     function geocodeMessage(){
         var street, district, city, county, state, countryCode, country, latitude, longitude, text
-        map.center = map.geocodeModel.get(0).coordinate
         latitude = map.geocodeModel.get(0).coordinate.latitude
         longitude = map.geocodeModel.get(0).coordinate.longitude
         street = map.geocodeModel.get(0).address.street
@@ -572,28 +591,6 @@ FocusScope {
             return rndedNum;
     }
 
-    function verifyLongitude(longitude){
-        var lng
-        if (isNaN(longitude)) messageDialog.state = "LongitudeNotANumber"
-        else {
-            lng = parseFloat(longitude)
-            if ((lng> 180) || (lng<-180)) {
-                messageDialog.state = "LongitudeOutOfScope"
-            }
-        }
-    }
-
-    function verifyLatitude(latitude){
-        var lat
-        if (isNaN(latitude)) messageDialog.state = "LatitudeNotANumber"
-        else {
-            lat = parseFloat(latitude)
-            if ((lat> 90) || (lat<-90)) {
-                messageDialog.state = "LatitudeOutOfScope"
-            }
-        }
-    }
-
 //=====================States of page=====================
     states: [
        State {
@@ -615,6 +612,10 @@ FocusScope {
         State {
             name: "Geocode"
             PropertyChanges { target: geocodeDialog; opacity: 1 }
+        },
+        State {
+            name: "Coordinates"
+            PropertyChanges { target: coordinatesDialog; opacity: 1 }
         },
         State {
             name: "Message"
@@ -656,6 +657,10 @@ FocusScope {
         },
         Transition {
             to: "Geocode"
+            NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
+        },
+        Transition {
+            to: "Coordinates"
             NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
         },
         Transition {

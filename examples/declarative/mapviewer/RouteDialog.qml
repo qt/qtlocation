@@ -74,7 +74,7 @@ Item {
         color: "lightsteelblue"
         opacity: 1
         width: parent.width - gap*2;
-        height: options.height + gap*3 + buttonGo.height + titleBar.height
+        height: options.height + gap*3 + buttons.height + titleBar.height
 
         anchors {
             top: parent.top
@@ -366,15 +366,40 @@ Item {
             }
         }
 
-        Common.Button {
-            id: buttonGo
-            text: "Go!"
+        Row {
+            id: buttons
             anchors.top: options.bottom
             anchors.topMargin: gap
-            width: 80; height: 32
             anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: {
-                dialog.goButtonClicked ()
+            spacing: gap/3
+            height: 32
+            Common.Button {
+                text: "Clear"
+                width: 80; height: parent.height
+                onClicked: {
+                    if (byCoordinates == true){
+                        latFrom.text = ""
+                        longFrom.text = ""
+                        latTo.text = ""
+                        longTo.text = ""
+                    }
+                    else {
+                        streetFrom.text = ""
+                        cityFrom.text = ""
+                        countryFrom.text = ""
+                        streetTo.text = ""
+                        cityTo.text = ""
+                        countryTo.text = ""
+                    }
+                }
+            }
+
+            Common.Button {
+                text: "Go!"
+                width: 80; height: parent.height
+                onClicked: {
+                    dialog.goButtonClicked ()
+                }
             }
         }
     }

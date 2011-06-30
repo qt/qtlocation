@@ -26,5 +26,9 @@
         <file>resources/option_button_selected.png</file>
         <file>resources/option_button.png</file>
         <file>MapComponent.qml</file>
+        <file>Marker.qml</file>
+        <file>resources/marker.png</file>
+        <file>resources/marker_selected.png</file>
+        <file>resources/marker_hovered.png</file>
     </qresource>
 </RCC>
