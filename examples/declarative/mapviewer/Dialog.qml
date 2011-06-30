@@ -73,7 +73,7 @@ Item {
         color: "lightsteelblue"
         opacity: parent.opacity
         width: parent.width - gap;
-        height: listview.height + titleBar.height + buttonGo.height + gap*2
+        height: listview.height + titleBar.height + buttons.height + gap*2
 
         anchors {
             top: parent.top
@@ -135,14 +135,29 @@ Item {
             }
         }
 
-        Common.Button {
-            id: buttonGo
-            text: "Go!"
+        Row {
+            id: buttons
             anchors.top: listview.bottom
-            width: 80; height: 32
             anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: {
-                dialog.goButtonClicked ()
+            spacing: gap/3
+            height: 32
+            Common.Button {
+                id: buttonClearAll
+                text: "Clear All"
+                width: 80; height: parent.height
+                onClicked: {
+                    for (var i = 0; i<length; i++){
+                       dialogModel.set(i, {"inputText": ""})
+                    }
+                }
+            }
+            Common.Button {
+                id: buttonGo
+                text: "Go!"
+                width: 80; height: parent.height
+                onClicked: {
+                    dialog.goButtonClicked ()
+                }
             }
         }
     }

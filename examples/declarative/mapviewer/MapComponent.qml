@@ -51,13 +51,21 @@ Map {
     center: defaultCoordinates
     property int longPressDuration: 1000
 
+    property list<Marker> markers
+    property int numberOfMarkers: 0 //actual length of markers array
+    property int counter: 0 // counter for total amount of markers. Resets to 0 when numberOfMarkers = 0
+    property Marker currentMarker
+
     property RouteQuery routeQuery: RouteQuery {}
     property RouteModel routeModel: RouteModel {
-                                        plugin : map.plugin;
+                                        plugin : map.plugin
                                         query: routeQuery
                                         onStatusChanged:{
                                             if (status == RouteModel.Ready){
                                                 if (count == 1) showRouteInfo()
+                                            }
+                                            else if (status == RouteModel.Error){
+                                                map.routeError()
                                             }
                                         }
                                     }
@@ -65,6 +73,10 @@ Map {
                                             plugin : map.plugin;
                                             onStatusChanged:{
                                                 if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)) map.geocodeFinished()
+                                            }
+                                            onPlacesChanged:
+                                            {
+                                                if (count == 1) map.center = get(0).coordinate
                                             }
                                         }
 
@@ -76,6 +88,16 @@ Map {
     signal showRouteInfo()
     signal geocodeFinished()
     signal showGeocodeInfo()
+    signal moveMarker()
+    signal routeError()
+
+    Component.onCompleted: {
+        markers = []
+    }
+
+    onNumberOfMarkersChanged: {
+        if (numberOfMarkers == 0) counter = 0
+    }
 
     Component {
         id: routeDelegate
@@ -85,7 +107,7 @@ Map {
             MapMouseArea {
                 id: routeMouseArea
                 hoverEnabled: true
-                onPressed : {routeTimer.start()}
+                onPressed : {routeTimer.start(); map.state = ""}
                 onReleased : { if (routeTimer.running) routeTimer.stop() }//SHORT PRESS
                 onPositionChanged: { if (routeTimer.running) routeTimer.stop()}
 
@@ -107,9 +129,9 @@ Map {
             color: circleMouseArea.containsMouse ? "lime" : "#80FF0000"
             center: place.coordinate
             MapMouseArea {
-                id: circleMouseArea
+                id: cstringsircleMouseArea
                 hoverEnabled: true
-                onPressed : { circleTimer.start()}
+                onPressed : { circleTimer.start(); map.state = ""}
                 onReleased : { if (circleTimer.running) circleTimer.stop() }//SHORT PRESS
                 onPositionChanged: {
                     if (circleTimer.running) circleTimer.stop()
@@ -120,7 +142,7 @@ Map {
                     id: circleTimer
                     interval: longPressDuration; running: false; repeat: false
                     onTriggered: { //LONG PRESS
-                        map.geocodeFinished()
+                        map.showGeocodeInfo()
                     }
                 }
             }
@@ -154,7 +176,7 @@ Map {
         minimum: map.minimumZoomLevel;
         maximum: map.maximumZoomLevel;
         opacity: 1
-        z: map.z + 1
+        z: map.z
         anchors {
             bottom: parent.bottom;
             bottomMargin: 50; rightMargin: 5; leftMargin: 5
@@ -169,9 +191,42 @@ Map {
     }
 
     Common.Menu {
+        id: markerMenu
+        orientation: ListView.Vertical
+        z: map.z + 2
+        opacity: 0
+
+        itemHeight: 30;
+        itemWidth: 150
+        x: 0
+        y: 0
+        onClicked: {
+            map.state = ""
+            switch (button) {
+                case 0: {//remove marker
+                    map.removeMarker(currentMarker)
+                    break;
+                }
+                case 1: {//move marker
+                    map.moveMarker()
+                    break;
+                }
+                case 2: {//show marker's coordinates
+                    map.coordinatesCaptured(currentMarker.coordinate.latitude, currentMarker.coordinate.longitude)
+                    break;
+                }
+                case 3: {//calculate route
+                    map.calculateRoute(currentMarker)
+                    break;
+                }
+            }
+        }
+    }
+
+    Common.Menu {
         id: popupMenu
         orientation: ListView.Vertical
-        z: map.z + 1
+        z: map.z +2
         opacity: 0
 
         itemHeight: 30;
@@ -180,12 +235,97 @@ Map {
         y: 0
 
         Component.onCompleted: {
-            setModel(["Capture"])
+            setModel(["Set Marker","Capture"])
         }
+
         onClicked: {
-            map.coordinatesCaptured(mouseArea.lastCoordinate.latitude, mouseArea.lastCoordinate.longitude)
+            switch (button) {
+                case 0: { //add Marker
+                    addMarker()
+                    break;
+                }
+                case 1: {
+                    map.coordinatesCaptured(mouseArea.lastCoordinate.latitude, mouseArea.lastCoordinate.longitude)
+                    break;
+                }
+            }
             map.state = ""
         }
+    }
+
+    function addMarker(){
+
+        var marker, myArray
+        counter++
+        marker = Qt.createQmlObject ('Marker {}', map)
+        map.addMapObject(marker)
+
+        //update list of markers
+        myArray = new Array()
+        for (var i = 0; i<numberOfMarkers; i++){
+            myArray.push(markers[i])
+        }
+        myArray.push(marker)
+        markers = myArray
+        ++numberOfMarkers
+    }
+
+    function removeMarker(marker){
+        //update list of markers
+        var myArray = new Array()
+        for (var i = 0; i<map.numberOfMarkers; i++){
+            if (marker != map.markers[i]) myArray.push(map.markers[i])
+        }
+
+        map.removeMapObject(marker)
+        marker.destroy()
+        --map.numberOfMarkers
+        map.markers = myArray
+    }
+
+    function markerLongPress(){
+        var array
+
+        if (currentMarker == markers[numberOfMarkers-1]) array = ["Remove", "Move to", "Coordinates"]
+        else if (numberOfMarkers > 2){
+            if (currentMarker == markers[numberOfMarkers-2]) array = ["Remove", "Move to", "Coordinates", "Route to next point"]
+            else array = ["Remove", "Move to", "Coordinates", "Route to next points"]
+        }
+        else array = ["Remove", "Move to", "Coordinates", "Route to next point"]
+
+        markerMenu.setModel(array)
+        map.state = "MarkerPopupMenu"
+    }
+
+    function updateMarkers(){
+        for (var i = 0; i<map.numberOfMarkers; i++){
+            map.markers[i].update()
+        }
+    }
+
+    function calculateRoute(marker){
+        routeQuery.clearWaypoints();
+        var startPointFound = false
+        for (var i = 0; i< numberOfMarkers; i++){
+            if (startPointFound != true){
+                if (markers[i] == marker){
+                    startPointFound = true
+                    routeQuery.addWaypoint(marker.coordinate)
+                }
+            }
+            else routeQuery.addWaypoint(markers[i].coordinate)
+        }
+        routeQuery.travelModes = RouteQuery.CarTravel
+        routeQuery.routeOptimizations = RouteQuery.ShortestRoute
+        routeModel.update();
+    }
+
+    onCenterChanged: {
+        map.updateMarkers()
+    }
+
+    onZoomLevelChanged:{
+        map.updateMarkers()
     }
 
     MapMouseArea {
@@ -203,10 +343,9 @@ Map {
             map.mousePressed()
         }
         onReleased : {
-            if (mapTimer.running) { //SHORT PRESS
-                mapTimer.stop()
-                lastX = -1
-                lastY = -1
+            if (mapTimer.running) { mapTimer.stop() //SHORT PRESS
+            lastX = -1
+            lastY = -1
             }
         }
         onPositionChanged: {
@@ -255,6 +394,12 @@ Map {
             PropertyChanges { target: popupMenu; opacity: 1}
             PropertyChanges { target: popupMenu; x: ((mouseArea.lastX + popupMenu.width > map.width) ? map.width - popupMenu.width : mouseArea.lastX)}
             PropertyChanges { target: popupMenu; y: ((mouseArea.lastY + popupMenu.height > map.height) ? map.height - popupMenu.height : mouseArea.lastY)}
+        },
+        State {
+            name: "MarkerPopupMenu"
+            PropertyChanges { target: markerMenu; opacity: 1}
+            PropertyChanges { target: markerMenu; x: ((currentMarker.lastMouseX + markerMenu.width > map.width) ? map.width - markerMenu.width : currentMarker.lastMouseX )}
+            PropertyChanges { target: markerMenu; y: ((currentMarker.lastMouseY + markerMenu.height > map.height) ? map.height - markerMenu.height : currentMarker.lastMouseY)}
         }
     ]
 }
