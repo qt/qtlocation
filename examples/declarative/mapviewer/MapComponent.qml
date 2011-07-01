@@ -129,7 +129,7 @@ Map {
             color: circleMouseArea.containsMouse ? "lime" : "#80FF0000"
             center: place.coordinate
             MapMouseArea {
-                id: cstringsircleMouseArea
+                id: circleMouseArea
                 hoverEnabled: true
                 onPressed : { circleTimer.start(); map.state = ""}
                 onReleased : { if (circleTimer.running) circleTimer.stop() }//SHORT PRESS
@@ -234,10 +234,6 @@ Map {
         x: 0
         y: 0
 
-        Component.onCompleted: {
-            setModel(["Set Marker","Capture"])
-        }
-
         onClicked: {
             switch (button) {
                 case 0: { //add Marker
@@ -248,9 +244,22 @@ Map {
                     map.coordinatesCaptured(mouseArea.lastCoordinate.latitude, mouseArea.lastCoordinate.longitude)
                     break;
                 }
+                case 2: {
+                    map.deleteAllMarkers()
+                    break;
+                }
             }
             map.state = ""
         }
+    }
+
+    function deleteAllMarkers(){
+        for (var i = 0; i<numberOfMarkers; i++){
+            map.removeMapObject(map.markers[i])
+            map.markers[i].destroy()
+        }
+        map.numberOfMarkers = 0
+        map.markers = []
     }
 
     function addMarker(){
@@ -286,12 +295,12 @@ Map {
     function markerLongPress(){
         var array
 
-        if (currentMarker == markers[numberOfMarkers-1]) array = ["Remove", "Move to", "Coordinates"]
+        if (currentMarker == markers[numberOfMarkers-1]) array = ["Delete", "Move to", "Coordinates"]
         else if (numberOfMarkers > 2){
-            if (currentMarker == markers[numberOfMarkers-2]) array = ["Remove", "Move to", "Coordinates", "Route to next point"]
-            else array = ["Remove", "Move to", "Coordinates", "Route to next points"]
+            if (currentMarker == markers[numberOfMarkers-2]) array = ["Delete", "Move to", "Coordinates", "Route to next point"]
+            else array = ["Delete", "Move to", "Coordinates", "Route to next points"]
         }
-        else array = ["Remove", "Move to", "Coordinates", "Route to next point"]
+        else array = ["Delete", "Move to", "Coordinates", "Route to next point"]
 
         markerMenu.setModel(array)
         map.state = "MarkerPopupMenu"
@@ -326,6 +335,7 @@ Map {
 
     onZoomLevelChanged:{
         map.updateMarkers()
+        zoomSlider.value = map.zoomLevel
     }
 
     MapMouseArea {
@@ -374,6 +384,9 @@ Map {
             id: mapTimer
             interval: longPressDuration; running: false; repeat: false
             onTriggered: { //LONG PRESS
+                if (numberOfMarkers != 0)  popupMenu.setModel(["Set Marker","Capture","Delete all markers"])
+                else popupMenu.setModel(["Set Marker","Capture"])
+
                 map.state = "PopupMenu"
             }
         }

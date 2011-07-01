@@ -96,9 +96,9 @@ Item {
                 text: label;
                 elide: Text.ElideLeft
                 font.bold: true;
-                color: index == menuView.currentIndex ? "crimson" :"white"
+                color: enabledItem ? ((index == menuView.currentIndex) ? "crimson" :"white") : "dimgrey"
                 style: Text.Raised;
-                styleColor: "dimgrey"
+                styleColor:"dimgrey"
                 anchors.verticalCenter: parent.verticalCenter
                 Component.onCompleted: {
                     if (menuView.orientation == ListView.Horizontal){

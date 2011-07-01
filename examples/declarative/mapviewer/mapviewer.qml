@@ -54,7 +54,6 @@ FocusScope {
         z:2
     }
 
-
     Common.TitleBar {
         id: titleBar; z: mainMenu.z; width: parent.width; height: 40; opacity: 0.9; text: "QML mapviewer example"
         onClicked: { Qt.quit() }
@@ -247,13 +246,6 @@ FocusScope {
         onCancelButtonClicked: {
             page.state = ""
         }
-        onOpacityChanged: {
-            if (opacity == 0 ) state = ""
-        }
-
-        onStateChanged: {
-            console.log ("message state = " + state)
-        }
 
         states: [
             State{
@@ -276,11 +268,6 @@ FocusScope {
                 PropertyChanges { target: messageDialog; title: "Ambiguous geocode" }
                 PropertyChanges { target: messageDialog; text: map.geocodeModel.count + " results found for the given address, please specify location" }
             },
-//            State{
-//                name: "NoAddress"
-//                PropertyChanges { target: messageDialog; title: "Address" }
-//                PropertyChanges { target: messageDialog; text: "Current location doesn't have address" }
-//            },
             State{
                 name: "RouteError"
                 PropertyChanges { target: messageDialog; title: "Route Error" }
@@ -298,6 +285,7 @@ FocusScope {
     RouteDialog {
         id: routeDialog
         z: mainMenu.z + 1
+//        property int success: 0
 
         Coordinate { id: endCoordinate }
         Coordinate { id: startCoordinate }
@@ -307,37 +295,31 @@ FocusScope {
         GeocodeModel {
             id: tempGeocodeModel
             plugin : map.plugin
-            property int successfulGeocodeCount: 0
+            property int success: 0
             onStatusChanged:{
-                if ((status == GeocodeModel.Ready) && (successfulGeocodeCount == 0)) {
-                    ++successfulGeocodeCount
-                    startCoordinate = tempGeocodeModel.get(0).coordinate
+                if ((status == GeocodeModel.Ready) && (count == 1)) {
+                    success++
+                    if (success == 1){
+                        startCoordinate.latitude = get(0).coordinate.latitude
+                        startCoordinate.longitude = get(0).coordinate.longitude
+                        clear()
+                        query = endAddress
+                        update();
+                    }
+                    if (success == 2)
+                    {
+                        endCoordinate.latitude = get(0).coordinate.latitude
+                        endCoordinate.longitude = get(0).coordinate.longitude
+                        success = 0
+                        routeDialog.calculateRoute()
+                    }
+                }
+                else if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)){
+                    if ((status == GeocodeModel.Ready) && (count == 0 )) messageDialog.state = "GeocodeError"
+                    else if ((status == GeocodeModel.Ready) && (count > 1 )) messageDialog.state = "AmbiguousGeocode"
+                    else if (status == GeocodeModel.Error) messageDialog.state = "UnknownGeocodeError"
 
-                    query = endAddress
-                    update();
-                }
-                else if ((status == GeocodeModel.Ready) && (successfulGeocodeCount == 1)) {
-                    ++successfulGeocodeCount
-                    endCoordinate = tempGeocodeModel.get(0).coordinate
-
-                    map.routeQuery.clearWaypoints();
-                    map.center = startCoordinate
-                    map.routeQuery.addWaypoint(startCoordinate)
-                    map.routeQuery.addWaypoint(endCoordinate)
-                    map.routeQuery.travelModes = routeDialog.travelMode
-                    map.routeQuery.routeOptimizations = routeDialog.routeOptimization
-                    map.routeModel.update();
-                }
-                else if ((status == GeocodeModel.Ready) && (count == 0 )){
-                    messageDialog.state = "GeocodeError"
-                    page.state = "Message"
-                }
-                else if ((status == GeocodeModel.Ready) && (count > 1 )){
-                    messageDialog.state = "AmbiguousGeocode"
-                    page.state = "Message"
-                }
-                else if (status == GeocodeModel.Error) {
-                    messageDialog.state = "UnknownGeocodeError"
+                    success = 0
                     page.state = "Message"
                 }
             }
@@ -352,22 +334,16 @@ FocusScope {
                 endCoordinate.latitude = routeDialog.endLatitude
                 endCoordinate.longitude = routeDialog.endLongitude
 
-                map.routeQuery.clearWaypoints();
-                map.center = startCoordinate
-                map.routeQuery.addWaypoint(startCoordinate)
-                map.routeQuery.addWaypoint(endCoordinate)
-                map.routeQuery.travelModes = routeDialog.travelMode
-                map.routeQuery.routeOptimizations = routeDialog.routeOptimization
-                map.routeModel.update();
+                calculateRoute()
             }
             else {
                 startAddress.country = routeDialog.startCountry
                 startAddress.street = routeDialog.startStreet
-                startAddress.district = routeDialog.startCity
+                startAddress.city = routeDialog.startCity
 
                 endAddress.country = routeDialog.endCountry
                 endAddress.street = routeDialog.endStreet
-                endAddress.district = routeDialog.endCity
+                endAddress.city = routeDialog.endCity
 
                 tempGeocodeModel.query = startAddress
                 tempGeocodeModel.update();
@@ -377,6 +353,16 @@ FocusScope {
 
         onCancelButtonClicked: {
             page.state = ""
+        }
+
+        function calculateRoute(){
+            map.routeQuery.clearWaypoints();
+            map.center = startCoordinate
+            map.routeQuery.addWaypoint(startCoordinate)
+            map.routeQuery.addWaypoint(endCoordinate)
+            map.routeQuery.travelModes = routeDialog.travelMode
+            map.routeQuery.routeOptimizations = routeDialog.routeOptimization
+            map.routeModel.update();
         }
     }
 
@@ -417,6 +403,7 @@ FocusScope {
 
         onGoButtonClicked: {
             page.state = ""
+            messageDialog.state = ""
             geocodeAddress.street = dialogModel.get(0).inputText
             geocodeAddress.district = dialogModel.get(1).inputText
             geocodeAddress.city = dialogModel.get(2).inputText
@@ -424,6 +411,7 @@ FocusScope {
             geocodeAddress.state = dialogModel.get(4).inputText
             geocodeAddress.countryCode = dialogModel.get(5).inputText
             geocodeAddress.country = dialogModel.get(6).inputText
+            map.geocodeModel.clear()
             map.geocodeModel.query = geocodeAddress
             map.geocodeModel.update();
         }
@@ -452,7 +440,8 @@ FocusScope {
             messageDialog.state = ""
 
             reverseGeocodeCoordinate.latitude = dialogModel.get(0).inputText
-            reverseGeocodeCoordinate.longtitude = dialogModel.get(1).inputText
+            reverseGeocodeCoordinate.longitude = dialogModel.get(1).inputText
+            map.geocodeModel.clear()
             map.geocodeModel.query = reverseGeocodeCoordinate
             map.geocodeModel.update();
         }
@@ -473,18 +462,12 @@ FocusScope {
             setModel(obj)
         }
 
-        Coordinate {
-            id: newCoordinate
-        }
-
         onGoButtonClicked: {
             page.state = ""
             messageDialog.state = ""
-            newCoordinate.latitude = dialogModel.get(0).inputText
-            newCoordinate.longitude =  dialogModel.get(1).inputText
-
-            map.currentMarker.coordinate = newCoordinate
-            map.center = newCoordinate
+            map.currentMarker.coordinate.latitude = dialogModel.get(0).inputText
+            map.currentMarker.coordinate.longitude = dialogModel.get(1).inputText
+            map.center = map.currentMarker.coordinate
         }
 
         onCancelButtonClicked: {
@@ -557,6 +540,7 @@ FocusScope {
 
         onRouteError: {
             messageDialog.state = "RouteError"
+            page.state = "Message"
         }
     }
 
