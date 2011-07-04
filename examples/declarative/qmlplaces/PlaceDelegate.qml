@@ -24,12 +24,13 @@ Rectangle {
         Text { text: '<b>Longitude: </b> ' + place.location.coordinate.longitude; font.pixelSize: 16 }
         Text { text: '<b>Categories: </b> ' + categoryNames(place.categories); font.pixelSize: 16 }
         Text { text: '<b>Media count: </b> ' + place.media.data.length; font.pixelSize: 16 }
-        //Text { text: '<b>All media count: </b> ' + place.mediaCount; font.pixelSize: 16 }
+        Text { text: '<b>All media count: </b> ' + place.mediaCount; font.pixelSize: 16 }
         Text { text: '<b>Descriptions count: </b> ' + place.descriptions.length; font.pixelSize: 16 }
-        //Text { text: '<b>Reviews count: </b> ' + place.reviews.data.length; font.pixelSize: 16 }
-        //Text { text: '<b>All reviews count: </b> ' + place.reviewCount; font.pixelSize: 16 }
+        Text { text: '<b>All reviews count: </b> ' + place.reviewModel.totalCount; font.pixelSize: 16 }
         Text { text: '<b>Tags: </b> ' + place.tags; font.pixelSize: 16 }
-        //Text { text: '<b>Suppliers: </b> ' + JSON.stringify(place.suppliers); font.pixelSize: 16 }
+        Text { text: '<b>Suppliers: </b> ' + JSON.stringify(place.suppliers); font.pixelSize: 16 }
+        Text { text: '<b>Short Desc: </b> ' + place.shortDescription; font.pixelSize: 16 }
+        Text { text: '<b>Tags: </b> ' + place.tags.join(", "); font.pixelSize: 16 }
     }
 
     function categoryNames(categories) {

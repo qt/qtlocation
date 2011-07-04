@@ -4,5 +4,6 @@
         <file>Button.qml</file>
         <file>CategoryDelegate.qml</file>
         <file>SearchResultDelegate.qml</file>
+        <file>ReviewDelegate.qml</file>
     </qresource>
 </RCC>

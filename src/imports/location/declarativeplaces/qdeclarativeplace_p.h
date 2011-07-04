@@ -12,7 +12,7 @@
 #include "qdeclarativerating_p.h"
 #include "qdeclarativedescription_p.h"
 #include "qdeclarativemediapaginationlist_p.h"
-#include "qdeclarativereviewpaginationlist_p.h"
+#include "qdeclarativereviewmodel_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -33,16 +33,17 @@ class QDeclarativePlace : public QObject
     Q_PROPERTY(QDeclarativeMediaPaginationList* media READ media WRITE setMedia NOTIFY mediaChanged);
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged);
-    Q_PROPERTY(int reviewCount READ reviewCount WRITE setReviewCount NOTIFY reviewCountChanged);
-    Q_PROPERTY(QDeclarativeReviewPaginationList* reviews READ reviews WRITE setReviews NOTIFY reviewsChanged);
     Q_PROPERTY(QString shortDescription READ shortDescription WRITE setShortDescription NOTIFY shortDescriptionChanged);
     Q_PROPERTY(QStringList tags READ tags WRITE setTags NOTIFY tagsChanged);
     Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
+    Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged())
 
 public:
     explicit QDeclarativePlace(QObject* parent = 0);
     explicit QDeclarativePlace(const QGeoPlace &src, QObject* parent = 0);
     ~QDeclarativePlace();
+
+    QDeclarativeReviewModel *reviewModel();
 
     QGeoPlace place();
     void setPlace(const QGeoPlace &src);
@@ -89,10 +90,6 @@ public:
     void setPlaceId(const QString &placeId);
     QDeclarativeBusinessInformation *businessInformation();
     void setBusinessInformation(QDeclarativeBusinessInformation *business);
-    int reviewCount() const;
-    void setReviewCount(const int &data);
-    QDeclarativeReviewPaginationList *reviews();
-    void setReviews(QDeclarativeReviewPaginationList *reviews);
     QString shortDescription() const;
     void setShortDescription(const QString &description);
     QStringList tags() const;
@@ -114,11 +111,10 @@ signals:
     void nameChanged();
     void placeIdChanged();
     void businessInformationChanged();
-    void reviewCountChanged();
-    void reviewsChanged();
     void shortDescriptionChanged();
     void tagsChanged();
     void detailsFetchedChanged();
+    void reviewModelChanged();
 
 private:
     void synchronizeCategories();
@@ -134,8 +130,8 @@ private:
     QDeclarativeRating m_rating;
     QList<QDeclarativeSupplier*> m_suppliers;
     QDeclarativeMediaPaginationList m_mediaList;
-    QDeclarativeReviewPaginationList m_reviewList;
     QDeclarativeBusinessInformation m_businessInformation;
+    QDeclarativeReviewModel *m_reviewModel;
 
     QGeoPlace m_src;
 };

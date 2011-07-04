@@ -69,9 +69,23 @@ Rectangle {
         anchors.left: parent.left
         anchors.topMargin: 10
         clip: true
+        visible: !reviewList.visible
+
         snapMode: ListView.SnapToItem
         model: resultModel
         delegate: SearchResultDelegate { result: searchResult }
+    }
+
+    ListView {
+        id: reviewList
+        anchors.fill: placesList
+        clip: true
+        snapMode: ListView.SnapToItem
+
+        visible: model != undefined
+        delegate: ReviewDelegate {
+            review: model.review
+        }
     }
 
     Text {

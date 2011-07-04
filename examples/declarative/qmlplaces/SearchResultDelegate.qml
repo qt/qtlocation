@@ -45,8 +45,7 @@ Rectangle {
                 Text { text: '<b>Media count: </b> ' + result.place.media.data.length; font.pixelSize: 16 }
                 //Text { text: '<b>All media count: </b> ' + place.mediaCount; font.pixelSize: 16 }
                 Text { text: '<b>Descriptions count: </b> ' + result.place.descriptions.length; font.pixelSize: 16 }
-                //Text { text: '<b>Reviews count: </b> ' + place.reviews.data.length; font.pixelSize: 16 }
-                //Text { text: '<b>All reviews count: </b> ' + place.reviewCount; font.pixelSize: 16 }
+                Text { text: '<b>Review count: </b> ' + result.place.reviewModel.totalCount; font.pixelSize: 16 }
                 Text { text: '<b>Tags: </b> ' + result.place.tags; font.pixelSize: 16 }
                 //Text { text: '<b>Suppliers: </b> ' + JSON.stringify(place.suppliers); font.pixelSize: 16 }
                 Text { id: detailsFetched; text:'<b>Details Fetched: </b> ' + result.place.detailsFetched; font.pixelSize: 16 }

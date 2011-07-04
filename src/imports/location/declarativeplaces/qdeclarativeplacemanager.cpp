@@ -113,38 +113,6 @@ void QDeclarativePlaceManager::getPlaceMedia(QDeclarativePlace *place, int offse
 }
 
 /*!
-    \qmlmethod PlaceManager::getPlaceDetails()
-    Gets additional data for place object. When reviews list will be available
-    user object will be updated.
-*/
-void QDeclarativePlaceManager::getPlaceReviews(QDeclarativePlace *place)
-{
-    getPlaceReviews(place, 0, 0);
-}
-
-/*!
-    \qmlmethod PlaceManager::getPlaceDetails()
-    Gets additional data for place object. When reviews list will be available
-    user object will be updated.
-*/
-void QDeclarativePlaceManager::getPlaceReviews(QDeclarativePlace *place, int offset, int limit)
-{
-    if (!m_manager) {
-        m_manager = new QPlaceManager(this);
-    }
-    cancelPreviousRequest();
-    QPlaceQuery query;
-    query.setLimit(limit);
-    query.setOffset(offset);
-    connectNewResponse(m_manager->getReviews(place->place(), query));
-    if (m_place != place) {
-        m_place = place;
-        emit placeChanged();
-    }
-}
-
-
-/*!
     \qmlmethod PlaceManager::ratePlace()
     Gets additional data for place object. When data will be available
     user object will be updated.
@@ -186,12 +154,6 @@ void QDeclarativePlaceManager::replyFinished()
         m_place->setMedia(newList);
         delete newList;
         m_place->setMediaCount(reply->totalCount());
-    } else if (m_response->type() == QPlaceReply::ReviewReply) {
-        QPlaceReviewReply *reply = qobject_cast<QPlaceReviewReply*>(m_response);
-        QDeclarativeReviewPaginationList *newList = new QDeclarativeReviewPaginationList(reply->reviews());
-        m_place->setReviews(newList);
-        delete newList;
-        m_place->setReviewCount(reply->totalCount());
     }
     m_response->deleteLater();
     m_response = NULL;

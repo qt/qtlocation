@@ -9,7 +9,8 @@ SOURCES += main.cpp
 OTHER_FILES = qmlplaces.qml \
     Button.qml \
     CategoryDelegate.qml \
-    SearchResultDelegate.qml
+    SearchResultDelegate.qml \
+    ReviewDelegate.qml
 
 RESOURCES += qmlplaces.qrc
 

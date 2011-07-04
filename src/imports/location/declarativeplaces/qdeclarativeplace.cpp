@@ -15,14 +15,12 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
-        : QObject(parent)
+:   QObject(parent), m_reviewModel(0)
 {
 }
 
-QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src,
-        QObject *parent)
-        : QObject(parent),
-          m_src(src)
+QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src, QObject *parent)
+:   QObject(parent), m_reviewModel(0), m_src(src)
 {
     synchronizeCategories();
     synchronizeContacts();
@@ -35,6 +33,16 @@ QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src,
 
 QDeclarativePlace::~QDeclarativePlace()
 {
+}
+
+QDeclarativeReviewModel *QDeclarativePlace::reviewModel()
+{
+    if (!m_reviewModel) {
+        m_reviewModel = new QDeclarativeReviewModel(this);
+        m_reviewModel->setPlace(this);
+    }
+
+    return m_reviewModel;
 }
 
 void QDeclarativePlace::setPlace(const QGeoPlace &src)
@@ -89,13 +97,6 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
     if (previous.placeId() != m_src.placeId()) {
         emit placeIdChanged();
     }
-    if (previous.reviewCount() != m_src.reviewCount()) {
-        emit reviewCountChanged();
-    }
-    if (previous.reviews() != m_src.reviews()) {
-        m_reviewList.setPaginationList(m_src.reviews());
-        emit reviewsChanged();
-    }
     if (previous.shortDescription() != m_src.shortDescription()) {
         emit shortDescriptionChanged();
     }
@@ -105,6 +106,8 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
     if (previous.detailsFetched() != m_src.detailsFetched()) {
         emit detailsFetchedChanged();
     }
+
+    m_reviewModel->clear();
 }
 
 QGeoPlace QDeclarativePlace::place()
@@ -132,7 +135,6 @@ QGeoPlace QDeclarativePlace::place()
     }
     m_src.setSuppliers(suppliers);
     m_src.setMedia(m_mediaList.paginationList());
-    m_src.setReviews(m_reviewList.paginationList());
     m_src.setBusinessInformation(m_businessInformation.businessInformation());
     return m_src;
 }
@@ -370,46 +372,6 @@ void QDeclarativePlace::setFeeds(const QStringList &feeds)
 QStringList QDeclarativePlace::feeds() const
 {
     return m_src.feeds();
-}
-
-/*!
-    \qmlproperty int Place::reviewCount
-
-    This property holds number of all reviews.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-void QDeclarativePlace::setReviewCount(const int &reviewCount)
-{
-    if (m_src.reviewCount() != reviewCount) {
-        m_src.setReviewCount(reviewCount);
-        emit reviewCountChanged();
-    }
-}
-
-int QDeclarativePlace::reviewCount() const
-{
-    return m_src.reviewCount();
-}
-
-/*!
-    \qmlproperty string Place::reviews
-
-    This property holds reviews list of the place.
-*/
-void QDeclarativePlace::setReviews(QDeclarativeReviewPaginationList *obj)
-{
-    if (m_src.reviews() != obj->paginationList()) {
-        m_reviewList.setPaginationList(obj->paginationList());
-        m_src.setReviews(obj->paginationList());
-        emit reviewsChanged();
-    }
-}
-
-QDeclarativeReviewPaginationList *QDeclarativePlace::reviews()
-{
-    return &m_reviewList;
 }
 
 /*!

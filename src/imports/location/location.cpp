@@ -86,7 +86,6 @@
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativerating_p.h"
 #include "qdeclarativereview_p.h"
-#include "qdeclarativereviewpaginationlist_p.h"
 #include "qdeclarativesearchresult_p.h"
 #include "qdeclarativesupplier_p.h"
 
@@ -208,7 +207,7 @@ public:
             qmlRegisterType<QDeclarativePlace>(uri, 5, 0, "Place");
             qmlRegisterType<QDeclarativeRating>(uri, 5, 0, "Rating");
             qmlRegisterType<QDeclarativeReview>(uri, 5, 0, "Review");
-            qmlRegisterType<QDeclarativeReviewPaginationList>(uri, 5, 0, "ReviewPaginationList");
+            qmlRegisterType<QDeclarativeReviewModel>(uri, 5, 0, "ReviewModel");
             qmlRegisterType<QDeclarativeSearchResult>(uri, 5, 0, "SearchResult");
             qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");
             qmlRegisterType<QDeclarativeWeekdayHours>(uri, 5, 0, "WeekdayHours");

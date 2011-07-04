@@ -25,8 +25,6 @@ public:
     Q_INVOKABLE void getPlaceDetails(QDeclarativePlace *place);
     Q_INVOKABLE void getPlaceMedia(QDeclarativePlace *place);
     Q_INVOKABLE void getPlaceMedia(QDeclarativePlace *place, int offset, int limit);
-    Q_INVOKABLE void getPlaceReviews(QDeclarativePlace *place);
-    Q_INVOKABLE void getPlaceReviews(QDeclarativePlace *place, int offset, int limit);
 
     Q_INVOKABLE void ratePlace(QDeclarativePlace *place, qreal rateValue, const QString &userName);
 
