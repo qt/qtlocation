@@ -65,8 +65,8 @@ bool QLocationTestUtils::hasDefaultSource()
     return true;
 #elif defined (Q_OS_WINCE)
     return true;
-#else 
-    return false;    
+#else
+    return false;
 #endif
 }
 
