@@ -442,136 +442,341 @@ testcase = {
     // \groups BAT,1.2,QTMOBILITY-796
     qml_display_map: function()
     {
-        prompt(twiki('---+++ Map is displayed
+        prompt(twiki('---+++ QML: Map is displayed
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
-    | Run the qml_mapviewer application (sources are in examples/declarative-location/mapviewer) | Verify that map is loaded for the default location (lat 51.5, long -0.11) |'
+    | Run the qml_mapviewer application (sources are in examples/declarative/mapviewer) | Verify that map is loaded for the default location (lat -27.575, long 153.088) in Street view |
+    | Press Settings button | |
+    | Press Map Type | |
+    | Select Satelite view | Verify that map is displayed in satellite view |
+    | Press Settings button | |
+    | Press Map Type | |
+    | Select Terrain view | Verify that map is displayed in terrain view |'
         ));
     },
 
     // \groups BAT,1.2,QTMOBILITY-796
     qml_zoom_a_map: function()
     {
-        prompt(twiki('---+++ Zoom in and out the map
-    Note that GPS and internet connection is required for this test case
+        prompt(twiki('---+++ QML: Zoom in and out the map
+    Note that internet connection is required for this test case
     | *Step* | *Verification* |
-    | Run the qml_mapviewer application | |
-    | Select the MapNavigation.qml | |
-    | Tap on the Mode button | Verify that map is loaded |
-    | Tap on Plus button | Verify that map is zoomed in |
-    | Tap on Plus button | Verify that zoom level is decreased and map is displayed correctly with new zoom level |'
+    | Run the qml_mapviewer application | Verify that map is loaded with the center next to Brisbane |
+    | Move slider to the right | Verify that map is zoomed in |
+    | Move slider to the left | Verify that map is zoomed out |'
         ));
-/*    },
+    },
 
     // \groups BAT,5.0,MOBILITY-2893,RESEARCH
     qml_route_for_two_close_points: function()
     {
-//1. Use qml_mapviewer to test. Find a route for 2 close enough locations, like from CBD to Eight Mile Plains: (-27.575, 153.088)->(-27.465, 153.023)
-//2. Use qml_mapviewer to test. Find a route for 2 close enough locations (like from CBD to Eight Mile Plains).(Street: Brandl st,City: Eight Mile Plains, country: Australia)->(Street: Ann st, City: Brisbane, Country: Australia)
+        prompt(twiki('---+++ QML: Route for two close points
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Route menu item | |
+    | Make sure that coordinates are (-27.575, 153.088)->(-27.465, 153.023) | |
+    | Press Go button | |
+    | Wait for message appears on the screen | Verify that distance is 15.901km |
+    | Press Ok button | Verify that the route looks correct and does not have strange loops |
+    | Press Options button | |
+    | Select Route menu item | |
+    | Select second option group to enter start and end points as address | |
+    | Use default addresses and Press Go button | |
+    | Wait for message appears on the screen | Verify that distance is 18.676km |
+    | Press Ok button | Verify that the route looks correct and does not have strange loops |'
+        ));
     },
 
     // \groups BAT,5.0,MOBILITY-2893,RESEARCH
     qml_route_for_two_distant_points: function()
     {
-//1. Use qml_mapviewer to test. Find a route for 2 distant locations, like from Brisbane to Sydney: (-27.4709,153.0235)->(-33.8689,151.2071)
-//2. Use qml_mapviewer to test. Find a route for 2 distant locations (like from Brisbane to Sydney)
+        prompt(twiki('---+++ QML: Route for two distant points
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Route menu item | |
+    | Selec first option group | |
+    | Fill in -27.4709 in From Latitude field | |
+    | Fill in 153.0235 in From Longitude filed | |
+    | Fill in -33.8689 in To Latitude field | |
+    | Fill in 151.2071 in To Longitude filed | |
+    | Press Go button | |
+    | Wait for message appears on the screen | Verify that distance is 927.209km |
+    | Press Ok button | Verify that the route looks correct and does not have strange loops |
+    | Press Options button | |
+    | Select Route menu item | |
+    | Selec second option group | |
+    | Press Clear button | |
+    | Fill in Moscow in From City field | |
+    | Fill in Russia in From Country filed | |
+    | Fill in Eight Mile Plains in To City filed | |
+    | Fill in Australia in To Country filed | |
+    | Press Go button | |
+    | Wait for message appears on the screen | Verify that route is not found |
+    | Press Ok button | |
+    | Press Options button | |
+    | Select Route menu item | |
+    | Selec second option group | |
+    | Press Clear button | |
+    | Fill in Eight Mile Plains in From City field | |
+    | Fill in Australia in From Country filed | |
+    | Fill in Byron Bay in To City filed | |
+    | Fill in Australia in To Country filed | |
+    | Press Go button | |
+    | Wait for message appears on the screen | Verify that distance is 151.318km |
+    | Press Ok button | Verify that the route looks correct and does not have strange loops |'
+        ));
     },
 
     // \groups BAT,5.0,MOBILITY-2893,RESEARCH
     qml_route_for_multiple_points: function()
     {
-// Use qml_mapviewer to test. Find a route for >2 way points, like Eight Mile Plains->CBD->Aspley: (-27.575, 153.088)->(-27.465, 153.023)->(-27.3614,153.0043)
+        prompt(twiki('---+++ QML: Route for multiple waypoints
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Long press on the map | |
+    | Press Set Marker menu item | |
+    | Create another Marker via Long Press | |
+    | Create third Marker | |
+    | Long Press on the first marker | |
+    | Select Move To menu item | |
+    | Fill in -27.575 in Latitude filed | |
+    | Fill in 153.088 in Longitude | |
+    | Press Go! button | |
+    | Long Press on the second marker | |
+    | Select Move To menu item | |
+    | Fill in -27.465 in Latitude filed | |
+    | Fill in 153.023 in Longitude | |
+    | Press Go! button | |
+    | Long Press on the third marker | |
+    | Select Move To menu item | |
+    | Fill in -27.3614 in Latitude filed | |
+    | Fill in 153.0043 in Longitude | |
+    | Press Go! button | |
+    | Long Press on the first marker | |
+    | Select Route To The Next Points | |
+    | Wait for message appears on the screen | Verify that distance is 29.491km |
+    | Press Ok button | Verify that the route looks correct, goes through all waypoints and does not have strange loops |'
+        ));
     },
-
+/*
     // \groups BAT,5.0,MOBILITY-2893,RESEARCH
     qml_route_travel_mode: function()
     {
-// 1. Travel mode: pedestrian. Use qml_mapviewer to test. (55 Bordeaux Street, Eight Mile Plains QLD)->(53 Brandl St, Eight Mile Plains QLD 4113) or (-27.5784,153.0934)->(-27.5798,153.1003)
-// 2. Travel mode: bicycle
-// 3. Travel mode: public transport
-// 4. Travel mode: by truck
+        prompt(twiki('---+++ QML: Travel mode
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+1. Travel mode: pedestrian. Use qml_mapviewer to test. (55 Bordeaux Street, Eight Mile Plains QLD)->(53 Brandl St, Eight Mile Plains QLD 4113) or (-27.5784,153.0934)->(-27.5798,153.1003)
+2. Travel mode: bicycle
+3. Travel mode: public transport
+4. Travel mode: by truck'
     },
 
     // \groups BAT,5.0,MOBILITY-2893,RESEARCH
     qml_route_feature_type: function()
     {
-// 1. Feature type: no feature
-// 2. Feature type: toll
-// 3. Feature type: highway
-// 4. Feature type: public transit
-// 5. Feature type: ferry
-// 6. Feature type: tunnel
-// 7. Feature type: dirt road
-// 8. Feature type: parks
-// 9. Feature type: motor pool lane
+        prompt(twiki('---+++ QML: Route features
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+1. Feature type: no feature
+2. Feature type: toll
+3. Feature type: highway
+4. Feature type: public transit
+5. Feature type: ferry
+6. Feature type: tunnel
+7. Feature type: dirt road
+8. Feature type: parks
+9. Feature type: motor pool lane'
     },
 
     // \groups BAT,5.0,MOBILITY-2893,RESEARCH
     qml_route_optimization: function()
     {
-// 1. Route optimization: shortest
-// 2. Route optimization: fastest
-// 3. Route optimization: most economic
-// 4. Route optimization: most scenic
+        prompt(twiki('---+++ QML: Route optimization
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+1. Route optimization: shortest
+2. Route optimization: fastest
+3. Route optimization: most economic
+4. Route optimization: most scenic'
     },
-
+*/
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode_australian_location: function()
     {
-// Use qml_mapviewer to test. Get coordinates for an Australian location (53 Brandl St, Eight Mile Plains, QLD for example)
+        prompt(twiki('---+++ QML: Geocode
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Geocode menu item | |
+    | Press Clear All button | |
+    | Fill in Brandl st in Street filed | |
+    | Fill in Eight Mile Plains in City field | |
+    | Fill in Australia in Country field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that geocode was successful with latitude = -27.5798, longitude = 153.1 |'
+        ));
     },
 
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode_russian_location: function()
     {
-// Use qml_mapviewer to test. Get coordinates for a location of country which uses non-English languages (Minina I Pozharskogo Ploshchad, Nizhniy Novgorod, Russian Federation)
+        prompt(twiki('---+++ QML: Geocode
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Geocode menu item | |
+    | Press Clear All button | |
+    | Fill in Minina I Pozharskogo Ploshchad in Street filed | |
+    | Fill in Nizhniy Novgorod in City field | |
+    | Fill in Russia in Country field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that geocode was successful with latitude = 56.3294, longitude = 44.0089 |'
+        ));
     },
 
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode_fictional_location: function()
     {
-// city: TheBestCity, country: Australia
+        prompt(twiki('---+++ QML: Geocode a fictional location
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Geocode menu item | |
+    | Press Clear All button | |
+    | Fill in The Best City in City field | |
+    | Fill in Australia in Country field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that location is not found |'
+        ));
     },
 
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode_not_unique_location: function()
     {
-//1. Name is not unique in the world. city: Moscow
-//2. Name is not unique in the country. city: Moscow, country: USA
+        prompt(twiki('---+++ QML: Geocode not unique location
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Geocode menu item | |
+    | Press Clear All button | |
+    | Fill in Moscow in City field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that several results were found |
+    | Press Ok button |
+    | Press Options button | |
+    | Select Geocode menu item | |
+    | Fill in USA in Country field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that 19 points were found |'
+        ));
     },
 
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode: function()
     {
-// 1. Use qml_mapviewer to test. Get coordinates for an Australian location (Street: 53 Brandl St, City: Eight Mile Plains)
-// 2. Use qml_mapviewer to test. Get coordinates for a district (Contry code: RUS, City:Nizhniy Novgorod, District: Nizhegorodskiy Rayon)
-// 3. Use qml_mapviewer to test. Get coordinates for a city name which is not uniqe in the world, but unique in the country (City: Moscow, Country: Russia)
-// 4. Use qml_mapviewer to test. Get coordinates for a county: (County: Norfolk, Country: United Kingdom)
+        prompt(twiki('---+++ QML: Geocode
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Geocode menu item | |
+    | Press Clear All button | |
+    | Fill in 53 Brandl st in Street filed | |
+    | Fill in Eight Mile Plains in City field | |
+    | Fill in QLD in State field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that geocode was successful |
+    | Press Ok button | |
+    | Press Options button | |
+    | Select Geocode menu item | |
+    | Press Clear All button | |
+    | Fill in Nizhniy Novgorod in City filed | |
+    | Fill in RUS in Country Code field | |
+    | Fill in Nizhegorodskiy Rayon in District field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that geocode was successful with latitude 56.3217, longitude 44.0331 |
+    | Press Ok button | |
+    | Press Options button | |
+    | Select Geocode menu item | |
+    | Press Clear All button | |
+    | Fill in Moscow in City filed | |
+    | Fill in Russia in Country field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that geocode was successful with latitude 55.7569, longitude 37.615 |
+    | Press Ok button | |
+    | Press Options button | |
+    | Select Geocode menu item | |
+    | Press Clear All button | |
+    | Fill in Norfolk in County filed | |
+    | Fill in United Kingdom in Country field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that geocode was successful with latitude 52.614, longitude 0.8864 |'
+        ));
     },
 
     // \groups BAT,5.0,MOBILITY-2901,RESEARCH
     qml_reverse_geocode_australian_place: function()
     {
-// Use qml_mapviewer to test. Geocode some Brisbane's coordinates (-27.5789,153.0995)
+        prompt(twiki('---+++ QML: Reverse geocode
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Reverse Geocode | |
+    | Fill in -27.575 in Latitude filed | |
+    | Fill in 153.088 in Longitude field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: 230 Padstow Rd, City: Eight Mile Plains, State: AUS-QLD, Country code: AUS, Country: AUSTRALIA) |'
+        ));
     },
 
     // \groups BAT,5.0,MOBILITY-2901,RESEARCH
     qml_reverse_geocode_russian_place: function()
     {
-// Use qml_mapviewer to test. Geocode some Russian's coordinates (56.3264,44.0048)
+        prompt(twiki('---+++ QML: Reverse geocode
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Reverse Geocode | |
+    | Fill in 56.3264 in Latitude filed | |
+    | Fill in 44.0048 in Longitude field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: Minina I Pozharskogo Ploshad, district: Nizhegorodskiy Rayon, City: Nizhniy Novgorod, Country code: RUS, Country: Russian Federation) |'
+        ));
     },
 
     // \groups BAT,5.0,MOBILITY-2901,RESEARCH
     qml_reverse_geocode_uninhabited_place: function()
     {
-// Use qml_mapviewer to test. Geocode some coordinates from Pacific Ocean (-26.8890, 154.6696)
-    },
+        prompt(twiki('---+++ QML: Reverse geocode
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Reverse Geocode | |
+    | Fill in -26.8890 in Latitude filed | |
+    | Fill in 154.6696 in Longitude field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that location is not found |'
+        ));
+/*    },
+
 
     // \groups BAT,5.0,MOBILITY-2902,RESEARCH
     qml_searching: function()
     {
-// Seacrh for landmarks*/
-    }
+// Seacrh for landmarks
+*/    }
 
 }  // end of testcase
 

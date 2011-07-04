@@ -256,7 +256,7 @@ FocusScope {
             State{
                 name: "GeocodeError"
                 PropertyChanges { target: messageDialog; title: "Geocode Error" }
-                PropertyChanges { target: messageDialog; text: "Unable to find location for the given address" }
+                PropertyChanges { target: messageDialog; text: "Unable to find location for the given point" }
             },
             State{
                 name: "UnknownGeocodeError"
@@ -285,7 +285,6 @@ FocusScope {
     RouteDialog {
         id: routeDialog
         z: mainMenu.z + 1
-//        property int success: 0
 
         Coordinate { id: endCoordinate }
         Coordinate { id: startCoordinate }
@@ -315,10 +314,18 @@ FocusScope {
                     }
                 }
                 else if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)){
-                    if ((status == GeocodeModel.Ready) && (count == 0 )) messageDialog.state = "GeocodeError"
-                    else if ((status == GeocodeModel.Ready) && (count > 1 )) messageDialog.state = "AmbiguousGeocode"
-                    else if (status == GeocodeModel.Error) messageDialog.state = "UnknownGeocodeError"
-
+                    var st = (success == 0 ) ? "start" : "end"
+                    messageDialog.state = ""
+                    if ((status == GeocodeModel.Ready) && (count == 0 )) messageDialog.state = "UnknownGeocodeError"
+                    else if (status == GeocodeModel.Error) {
+                        messageDialog.state = "GeocodeError"
+                        messageDialog.text = "Unable to find location for the " + st + " point"
+                    }
+                    else if ((status == GeocodeModel.Ready) && (count > 1 )){
+                        messageDialog.state = "AmbiguousGeocode"
+                        messageDialog.text = count + " results found for the " + st + " point, please specify location"
+                    }
+                    console.log("    state = " + messageDialog.state)
                     success = 0
                     page.state = "Message"
                 }
@@ -328,6 +335,7 @@ FocusScope {
         onGoButtonClicked: {
             var status = true
 
+            messageDialog.state = ""
             if (routeDialog.byCoordinates) {
                 startCoordinate.latitude = routeDialog.startLatitude
                 startCoordinate.longitude = routeDialog.startLongitude

@@ -63,6 +63,7 @@ import "common" as Common
             property int dY: 0
             property int lastX: -1
             property int lastY: -1
+            property bool longPress: false
             hoverEnabled: true
             onPressed: {
                 marker.z++
@@ -83,12 +84,13 @@ import "common" as Common
             onReleased: {
                 if (markerTimer.running) markerTimer.stop();
                 marker.z--
+                longPress = false
             }
 
             onPositionChanged: {
                 var newX, newY
                 if (markerTimer.running) markerTimer.stop();
-                if (mouse.button == Qt.LeftButton){
+                if ((mouse.button == Qt.LeftButton) && (longPress != true)){
                     lastX = mouse.x
                     lastY = mouse.y
                     newX = map.toScreenPosition(mouse.coordinate).x + dX
@@ -105,6 +107,7 @@ import "common" as Common
                 running: false
                 repeat: false
                 onTriggered: {
+                    markerMouseArea.longPress = true
                     map.markerLongPress()
                 }
             }
