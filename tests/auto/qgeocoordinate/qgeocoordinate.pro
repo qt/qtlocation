@@ -1,7 +1,8 @@
-TEMPLATE = app
-CONFIG += testcase
-TARGET = tst_qgeocoordinate
 
-SOURCES += tst_qgeocoordinate.cpp
+load(qttest_p4)
 
-QT += location testlib
+HEADERS += qlocationtestutils_p.h
+SOURCES += tst_qgeocoordinate.cpp \
+           qlocationtestutils.cpp
+
+QT += location
