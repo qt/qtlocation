@@ -42,6 +42,7 @@
 #include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativelandmark_p.h"
+#include "qdeclarativegeomapgroupobject_p.h"
 #include "qgeomapdata.h"
 
 #include <QDeclarativeParserStatus>
@@ -345,7 +346,10 @@ void QDeclarativeGeoMapObjectView::removeInstantiatedItems()
     if (!mapObjects.isEmpty()) {
         for (int i = 0; i < mapObjects.size(); i++) {
             group_.removeChildObject(mapObjects.at(i));
-            delete map_->objectMap_.take(mapObjects.at(i));
+
+            QDeclarativeGeoMapObject *mapObject = map_->objectMap_.value(mapObjects.at(i));
+            map_->recursiveRemoveFromObjectMap(mapObjects.at(i));
+            delete mapObject;
         }
     }
     declarativeObjectList_.clear();
@@ -373,7 +377,7 @@ void QDeclarativeGeoMapObjectView::repopulate()
         mapObject->setMap(map_);
         group_.addChildObject(mapObject->mapObject());
         // Needed in order for mouse areas to work.
-        map_->objectMap_.insert(mapObject->mapObject(), mapObject);
+        map_->recursiveAddToObjectMap(mapObject);
     }
 }
 

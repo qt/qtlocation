@@ -177,6 +177,8 @@ private Q_SLOTS:
 private:
     void setupMapView(QDeclarativeGeoMapObjectView *view);
     void populateMap();
+    void recursiveAddToObjectMap(QDeclarativeGeoMapObject *mapObject);
+    void recursiveRemoveFromObjectMap(QGeoMapObject *mapObject);
 
     QDeclarativeGeoMapObject* createItem(int modelIndex);
     QDeclarativeGeoMapMouseEvent* createMapMouseEvent(QGraphicsSceneMouseEvent *event);

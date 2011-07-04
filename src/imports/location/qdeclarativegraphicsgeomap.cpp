@@ -45,6 +45,7 @@
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativelandmark_p.h"
+#include "qdeclarativegeomapgroupobject_p.h"
 
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
@@ -150,6 +151,36 @@ void QDeclarativeGraphicsGeoMap::componentComplete()
     populateMap();
 }
 
+void QDeclarativeGraphicsGeoMap::recursiveAddToObjectMap(QDeclarativeGeoMapObject *mapObject)
+{
+    objectMap_.insert(mapObject->mapObject(), mapObject);
+
+    QDeclarativeGeoMapGroupObject *groupObject =
+        qobject_cast<QDeclarativeGeoMapGroupObject *>(mapObject);
+
+    if (groupObject) {
+        QDeclarativeListReference ref(groupObject, "objects");
+        for (int i = 0; i < ref.count(); ++i) {
+            QDeclarativeGeoMapObject *subObject =
+                qobject_cast<QDeclarativeGeoMapObject *>(ref.at(i));
+
+            if (subObject)
+                recursiveAddToObjectMap(subObject);
+        }
+    }
+}
+
+void QDeclarativeGraphicsGeoMap::recursiveRemoveFromObjectMap(QGeoMapObject *mapObject)
+{
+    objectMap_.remove(mapObject);
+
+    QGeoMapGroupObject *groupObject = qobject_cast<QGeoMapGroupObject *>(mapObject);
+    if (groupObject) {
+        foreach (QGeoMapObject *subObject, groupObject->childObjects())
+            recursiveRemoveFromObjectMap(subObject);
+    }
+}
+
 void QDeclarativeGraphicsGeoMap::populateMap()
 {
     if (!mapData_ || !componentCompleted_)
@@ -166,7 +197,7 @@ void QDeclarativeGraphicsGeoMap::populateMap()
         QDeclarativeGeoMapObject *mapObject = qobject_cast<QDeclarativeGeoMapObject*>(kids.at(i));
         if (mapObject) {
             mapObjects_.append(mapObject);
-            objectMap_.insert(mapObject->mapObject(), mapObject);
+            recursiveAddToObjectMap(mapObject);
             mapData_->addMapObject(mapObject->mapObject());
             mapObject->setMap(this);
             continue;
@@ -863,7 +894,7 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
     if (!mapData_ || !object || objectMap_.contains(object->mapObject()))
         return;
     mapObjects_.append(object);
-    objectMap_.insert(object->mapObject(), object);
+    recursiveAddToObjectMap(object);
     mapData_->addMapObject(object->mapObject());
     object->setMap(this);
 }
@@ -889,7 +920,7 @@ void QDeclarativeGraphicsGeoMap::removeMapObject(QDeclarativeGeoMapObject *objec
         qmlInfo(this) << tr("Map plugin is not set, map object cannot be removed.");
     if (!mapData_ || !object || !objectMap_.contains(object->mapObject()))
         return;
-    objectMap_.remove(object->mapObject());
+    recursiveRemoveFromObjectMap(object->mapObject());
     mapObjects_.removeOne(object);
     mapData_->removeMapObject(object->mapObject());
 }
