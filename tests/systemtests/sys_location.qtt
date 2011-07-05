@@ -84,21 +84,21 @@ testcase = {
     | *Step* | *Verification* |
     | Run the testQtLocation application | |
     | Select the MapNavigation | |
-    | Fill in "0" in to Start Latitude field | |
-    | Fill in "100" in to Start Longitude field | |
+    | Fill in 0 in to Start Latitude field | |
+    | Fill in *100* in to Start Longitude field | |
     | Select Distance/Bearing from pre-defined dropdown list | |
-    | Fill "1000000, 90" in to the given field | |
-    | Press the Ok button | Verify that Destination fields are updated with 5.48417e-16 latitude and 108.9932 longitude |
-    | Fill in "60" in to Start Latitude field | |
-    | Fill in "100" in to Start Longitude field | |
+    | Fill *1000000, 90* in to the given field | |
+    | Press the Ok button | Verify that Destination fields are updated with *5.48417e-16* latitude and *108.9932* longitude |
+    | Fill in *60* in to Start Latitude field | |
+    | Fill in *100* in to Start Longitude field | |
     | Select Distance/Bearing from pre-defined dropdown list | |
-    | Fill "1000000, 180" in to the given field | |
-    | Press the Ok button | Verify that Destination fields are updated with 51.0068 latitude and 100 longitude |
-    | Fill in "60" in to Start Latitude field | |
-    | Fill in "100" in to Start Longitude field | |
+    | Fill *1000000, 180* in to the given field | |
+    | Press the Ok button | Verify that Destination fields are updated with *51.0068* latitude and *100* longitude |
+    | Fill in *60* in to Start Latitude field | |
+    | Fill in *100* in to Start Longitude field | |
     | Select Distance/Bearing from pre-defined dropdown list | |
-    | Fill "1000000, 20" in to the given field | |
-    | Press the Ok button | Verify that Destination fields are updated with 68.2523 latitude and 108.296 longitude |'
+    | Fill *1000000, 20* in to the given field | |
+    | Press the Ok button | Verify that Destination fields are updated with *68.2523* latitude and *108.296* longitude |'
         ));
     },
 
@@ -149,13 +149,13 @@ testcase = {
     | Create Accomodation category | |
     | Create Businesses category | |
     | Run the landmarkbrowser application | |
-    | Create A1 landmark  in Accomodation category | |
-    | Create A2 landmark  in Accomodation category | |
-    | Create BB landmark in Businesses category | |
+    | Create *A1* landmark in *Accomodation* category | |
+    | Create *A2* landmark  in *Accomodation* category | |
+    | Create *BB* landmark in *Businesses* category | |
     | Press the Set Filter button | |
     | Select the Category checkbox | |
     | Select Accomodation category | |
-    | Press Ok button | Verify that only A1 and A2 landmark is in the list and they are present in alphabetical order |
+    | Press Ok button | Verify that *only A1 and A2* landmark is in the list and they are present in alphabetical order |
     | Press the Set Filter button | |
     | Select Education category | |
     | Press Ok button | Verify that no landmarks are in the list |'
@@ -168,19 +168,19 @@ testcase = {
         prompt(twiki('---+++ Nearest landmarks are displayed
     | *Step* | *Verification* |
     | Run the landmarkbrowser application | |
-    | Create landmark A(12;0) | |
-    | Create landmark B(10;0) | |
-    | Create landmark C(8;0) | |
-    | Create landmark D(8;0) | |
+    | Create landmark *A(12;0)* | |
+    | Create landmark *B(10;0)* | |
+    | Create landmark *C(8;0)* | |
+    | Create landmark *D(8;0)* | |
     | Press Set Filter button | |
     | Select Proximity checkbox | |
     | Fill in 0 in to Lat field | |
     | Fill in 0 in to Long field | |
-    | Fill in 10000000 in to Radius field| |
-    | Press Ok button | Verify that C, D, B, A landmarks are in the list (not in alphabetical order) |
+    | Fill in *10000000* in to *Radius* field | |
+    | Press Ok button | Verify that *C, D, B, A* landmarks are in the list (not in alphabetical order) |
     | Press Set Filter button | |
-    | Change radius value to 1000000 | |
-    | Press Ok button | Verify that only C and D landmarks are in the list |
+    | Change radius value to *1000000* | |
+    | Press Ok button | Verify that only *C and D* landmarks are in the list |
     | Press Set Filter button | |
     | Deselect Proximity checkbox | |
     | Press Ok button | Verify that landmarks appear in alphabetical order from A to Z |'
@@ -193,17 +193,17 @@ testcase = {
         prompt(twiki('---+++ Landmarks within range are displayed
     | *Step* | *Verification* |
     | Run the landmarkbrowser application | |
-    | Create landmark A(12;0) | |
-    | Create landmark B(10;0) | |
-    | Create landmark C(8;0) | |
-    | Create landmark D(8;0) | |
+    | Create landmark *A(12;0)* | |
+    | Create landmark *B(10;0)* | |
+    | Create landmark *C(8;0)* | |
+    | Create landmark *D(8;0)* | |
     | Press Set Filter button | |
     | Select Box checkbox | |
     | Fill in 9 in to Top Left Lat field | |
     | Fill in 0 in to Top Left Long field | |
     | Fill in 0 i to Bottom Right Lat filed | |
     | Fill in 1 in to Bottom Right Long field | |
-    | Press Ok button | Verify that only C and D landmarks are in the list and landmarks appear in alphabetical order |'
+    | Press Ok button | Verify that only *C and D* landmarks are in the list and landmarks appear in alphabetical order |'
        ));
     },
 
@@ -215,23 +215,23 @@ testcase = {
     | *Step* | *Verification* |
     | Run the landmarkbrowser application | |
     | Press Add Landmark button | |
-    | Fill in AAA in to Name field | |
-    | Fill in 30 into Latitude field | |
-    | Fill in 30 into Longitude field | |
+    | Fill in *AAA* in to *Name* field | |
+    | Fill in *30* into *Latitude* field | |
+    | Fill in *30* into *Longitude* field | |
     | Press Ok button | Verify that message "Landmark(s) have been added" appears on the screen |
-    | Press Ok button | Verify that AAA landmark is in the landmarks list |
-    | Select AAA landmark | |
+    | Press Ok button | Verify that *AAA* landmark is in the landmarks list |
+    | Select *AAA* landmark | |
     | Press Edit Landmark button | |
-    | Change Latitude value to 40 | |
-    | Change Longitude value to 40 | |
-    | Change Name value to BBB | |
+    | Change *Latitude* value to *40* | |
+    | Change *Longitude* value to *40* | |
+    | Change *Name* value to *BBB* | |
     | Press Ok button | Verify that message "Landmark(s) have been edited" appears on the screen |
-    | Press Ok button | Verify that BBB landmark has new latitude and longitude |
-    | Select BBB landmark | |
+    | Press Ok button | Verify that *BBB* landmark has new latitude and longitude |
+    | Select *BBB* landmark | |
     | Press Delete Landmarks button | Verify that message "Landmark(s) have been removed" appears on the screen |
     | Press Ok button | Verify that only BBB landmark has been deleted |
-    | Create 2 new landmarks A1 and A2 | |
-    | Select both A1 and A2 landmarks |
+    | Create 2 new landmarks *A1* and *A2* | |
+    | Select both *A1 and A2* landmarks |
     | Press Delete Landmarks button | Verify that message "Landmark(s) have been removed" appears on the screen |
     | Press Ok button | Verify that only A1 and A2 landmarks have been deleted |'
         ));
@@ -258,21 +258,21 @@ testcase = {
     | Run the landmarkbrowser application | |
     | Select Category tab | |
     | Press Add Category button | |
-    | Fill in AAA in to Name field | |
+    | Fill in *AAA* in to *Name* field | |
     | Press Ok button | Verify that message "Category(ies) have been added" |
     | Press Ok button | Verify that AAA is added in list of categories in alphabetical order |
     | Press Add Category button | |
-    | Fill in AAA in to Name field | |
+    | Fill in *AAA* in to Name field | |
     | Press Ok button | Verify that message "Add Category Failed: category already Exists" appears on the screen |
     | Press Ok button | |
     | Press Add Category button | |
     | Press Ok button | Verify that message "Category name must not be empty" appears on the screen |
     | Press Ok button | |
-    | Select AAA category | |
+    | Select *AAA* category | |
     | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
     | Press Ok button | Verify that list of categories does not contain AAA category only |
-    | Add A1 and A2 categories | |
-    | Select A1 and A2 categories | |
+    | Add *A1* and *A2* categories | |
+    | Select *A1 and A2* categories | |
     | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
     | Press Ok button | Verify that list of categories does not contain A1 and A2 categories only |
     | Select some of predefined categories | |
@@ -334,13 +334,13 @@ testcase = {
     | Run the GeoServiceDemo application (sources are /tests/location-testing-tools/geoservicedemo) | |
     | Select Search By Adress tab | |
     | Select One-box Search checkbox | |
-    | Fill in "Brandl st, Eight Mile Plains, Australia" in search field | |
+    | Fill in *Brandl st, Eight Mile Plains, Australia* in search field | |
     | Select Geocoding search | |
     | Press Ok button | |
     | Wait until data is recieved | |
     | Select places | Verify that count = 1 |
-    | Select place | Verify that latitude is -27.5798, longitude is 153.1 |
-    | Select address | Verify that Country is AUSTRALIA, country code is AUS, city is Eight Mile Plains, street name is Branl St, post code is 4113 |'
+    | Select place | Verify that latitude is *-27.5798*, longitude is *153.1* |
+    | Select address | Verify that Country is *AUSTRALIA*, country code is *AUS*, city is *Eight Mile Plains*, street name is *Branl St*, post code is *4113* |'
         ));
 
     },
@@ -354,11 +354,11 @@ testcase = {
     | Run the GeoServiceDemo application | |
     | Select Reverse Geocoding tab | |
     | Press Search By Coordinates button | |
-    | Fill in -27.5798 in Latitude field | |
-    | Fill in 153.1 in Longitude field | |
+    | Fill in *-27.5798* in Latitude field | |
+    | Fill in *153.1* in Longitude field | |
     | Press Ok button | |
     | Wait until data is recieved | |
-    | Select places/place/adress | Verify that Country is AUSTRALIA, country code is AUS, city is Eight Mile Plains, street name is 54 Branl St, post code is 4113 |'
+    | Select places/place/adress | Verify that Country is *AUSTRALIA*, country code is *AUS*, city is *Eight Mile Plains*, street name is *54 Branl St*, post code is *4113* |'
         ));
    },
 
@@ -409,9 +409,9 @@ testcase = {
     | *Step* | *Verification* |
     | Run the MapViewer application | Map is displayed on the screen |
     | Navigate and/or zoom in the map to see Brisbane | |
-    | Right mouse click on the square which represents Brisbane | |
+    | Right mouse click on the square which represents *Brisbane* | |
     | Select Coordinates menu item | |
-    | Select Capture menu item | Verify that dialog with coordinates appears on the screen. Latitude is about -27.46, longitude is about 153.02 |'
+    | Select Capture menu item | Verify that dialog with coordinates appears on the screen. Latitude is *about -27.46*, longitude is *about 153.02* |'
         ));
     },
 
@@ -445,7 +445,7 @@ testcase = {
         prompt(twiki('---+++ QML: Map is displayed
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
-    | Run the qml_mapviewer application (sources are in examples/declarative/mapviewer) | Verify that map is loaded for the default location (lat -27.575, long 153.088) in Street view |
+    | Run the qml_mapviewer application (sources are in examples/declarative/mapviewer) | Verify that map is loaded in Street view with the center next to Brisbane |
     | Press Settings button | |
     | Press Map Type | |
     | Select Satelite view | Verify that map is displayed in satellite view |
@@ -476,15 +476,15 @@ testcase = {
     | Run the qml_mapviewer application | |
     | Press Options button | |
     | Select Route menu item | |
-    | Make sure that coordinates are (-27.575, 153.088)->(-27.465, 153.023) | |
+    | Make sure that coordinates are *(-27.575,153.088)->(-27.465,153.023)* | |
     | Press Go button | |
-    | Wait for message appears on the screen | Verify that distance is 15.901km |
+    | Wait for message appears on the screen | Verify that distance is *15.901*km |
     | Press Ok button | Verify that the route looks correct and does not have strange loops |
     | Press Options button | |
     | Select Route menu item | |
     | Select second option group to enter start and end points as address | |
     | Use default addresses and Press Go button | |
-    | Wait for message appears on the screen | Verify that distance is 18.676km |
+    | Wait for message appears on the screen | Verify that distance is *18.676km* |
     | Press Ok button | Verify that the route looks correct and does not have strange loops |'
         ));
     },
@@ -499,21 +499,21 @@ testcase = {
     | Press Options button | |
     | Select Route menu item | |
     | Selec first option group | |
-    | Fill in -27.4709 in From Latitude field | |
-    | Fill in 153.0235 in From Longitude filed | |
-    | Fill in -33.8689 in To Latitude field | |
-    | Fill in 151.2071 in To Longitude filed | |
+    | Fill in *-27.4709* in From Latitude field | |
+    | Fill in *153.0235* in From Longitude filed | |
+    | Fill in *-33.8689* in To Latitude field | |
+    | Fill in *151.2071* in To Longitude filed | |
     | Press Go button | |
-    | Wait for message appears on the screen | Verify that distance is 927.209km |
+    | Wait for message appears on the screen | Verify that distance is *927.209km* |
     | Press Ok button | Verify that the route looks correct and does not have strange loops |
     | Press Options button | |
     | Select Route menu item | |
     | Selec second option group | |
     | Press Clear button | |
-    | Fill in Moscow in From City field | |
-    | Fill in Russia in From Country filed | |
-    | Fill in Eight Mile Plains in To City filed | |
-    | Fill in Australia in To Country filed | |
+    | Fill in *Moscow* in From City field | |
+    | Fill in *Russia* in From Country filed | |
+    | Fill in *Eight Mile Plains* in To City filed | |
+    | Fill in *Australia* in To Country filed | |
     | Press Go button | |
     | Wait for message appears on the screen | Verify that route is not found |
     | Press Ok button | |
@@ -521,12 +521,12 @@ testcase = {
     | Select Route menu item | |
     | Selec second option group | |
     | Press Clear button | |
-    | Fill in Eight Mile Plains in From City field | |
-    | Fill in Australia in From Country filed | |
-    | Fill in Byron Bay in To City filed | |
-    | Fill in Australia in To Country filed | |
+    | Fill in *Eight Mile Plains* in From City field | |
+    | Fill in *Australia* in From Country filed | |
+    | Fill in *Byron Bay* in To City filed | |
+    | Fill in *Australia* in To Country filed | |
     | Press Go button | |
-    | Wait for message appears on the screen | Verify that distance is 151.318km |
+    | Wait for message appears on the screen | Verify that distance is *151.318km* |
     | Press Ok button | Verify that the route looks correct and does not have strange loops |'
         ));
     },
@@ -544,22 +544,22 @@ testcase = {
     | Create third Marker | |
     | Long Press on the first marker | |
     | Select Move To menu item | |
-    | Fill in -27.575 in Latitude filed | |
-    | Fill in 153.088 in Longitude | |
+    | Fill in *-27.575* in Latitude filed | |
+    | Fill in *153.088* in Longitude | |
     | Press Go! button | |
     | Long Press on the second marker | |
     | Select Move To menu item | |
-    | Fill in -27.465 in Latitude filed | |
-    | Fill in 153.023 in Longitude | |
+    | Fill in *-27.465* in Latitude filed | |
+    | Fill in *153.023* in Longitude | |
     | Press Go! button | |
     | Long Press on the third marker | |
     | Select Move To menu item | |
-    | Fill in -27.3614 in Latitude filed | |
-    | Fill in 153.0043 in Longitude | |
+    | Fill in *-27.3614* in Latitude filed | |
+    | Fill in *153.0043* in Longitude | |
     | Press Go! button | |
     | Long Press on the first marker | |
     | Select Route To The Next Points | |
-    | Wait for message appears on the screen | Verify that distance is 29.491km |
+    | Wait for message appears on the screen | Verify that distance is *29.491km* |
     | Press Ok button | Verify that the route looks correct, goes through all waypoints and does not have strange loops |'
         ));
     },
@@ -608,36 +608,36 @@ testcase = {
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode_australian_location: function()
     {
-        prompt(twiki('---+++ QML: Geocode
+        prompt(twiki('---+++ QML: Geocode australian location
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
     | Run the qml_mapviewer application | |
     | Press Options button | |
     | Select Geocode menu item | |
     | Press Clear All button | |
-    | Fill in Brandl st in Street filed | |
-    | Fill in Eight Mile Plains in City field | |
-    | Fill in Australia in Country field | |
+    | Fill in *Brandl st* in Street filed | |
+    | Fill in *Eight Mile Plains* in City field | |
+    | Fill in *Australia* in Country field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that geocode was successful with latitude = -27.5798, longitude = 153.1 |'
+    | Wait for message appears on the screen | Verify that geocode was successful with latitude *-27.5798*, longitude *153.1* |'
         ));
     },
 
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode_russian_location: function()
     {
-        prompt(twiki('---+++ QML: Geocode
+        prompt(twiki('---+++ QML: Geocode russian location
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
     | Run the qml_mapviewer application | |
     | Press Options button | |
     | Select Geocode menu item | |
     | Press Clear All button | |
-    | Fill in Minina I Pozharskogo Ploshchad in Street filed | |
-    | Fill in Nizhniy Novgorod in City field | |
-    | Fill in Russia in Country field | |
+    | Fill in *Minina I Pozharskogo Ploshchad* in Street filed | |
+    | Fill in *Nizhniy Novgorod* in City field | |
+    | Fill in *Russia* in Country field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that geocode was successful with latitude = 56.3294, longitude = 44.0089 |'
+    | Wait for message appears on the screen | Verify that geocode was successful with latitude *56.3294*, longitude *44.0089* |'
         ));
     },
 
@@ -651,8 +651,8 @@ testcase = {
     | Press Options button | |
     | Select Geocode menu item | |
     | Press Clear All button | |
-    | Fill in The Best City in City field | |
-    | Fill in Australia in Country field | |
+    | Fill in *The Best City* in City field | |
+    | Fill in *Australia* in Country field | |
     | Press Go! button | |
     | Wait for message appears on the screen | Verify that location is not found |'
         ));
@@ -668,104 +668,145 @@ testcase = {
     | Press Options button | |
     | Select Geocode menu item | |
     | Press Clear All button | |
-    | Fill in Moscow in City field | |
+    | Fill in *Moscow* in City field | |
     | Press Go! button | |
     | Wait for message appears on the screen | Verify that several results were found |
     | Press Ok button |
     | Press Options button | |
     | Select Geocode menu item | |
-    | Fill in USA in Country field | |
+    | Fill in *USA* in Country field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that 19 points were found |'
+    | Wait for message appears on the screen | Verify that *19* points were found |'
         ));
     },
 
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
-    qml_geocode: function()
+    qml_geocode_popular_request: function()
     {
-        prompt(twiki('---+++ QML: Geocode
+        prompt(twiki('---+++ QML: Geocode a popular request
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
     | Run the qml_mapviewer application | |
     | Press Options button | |
     | Select Geocode menu item | |
     | Press Clear All button | |
-    | Fill in 53 Brandl st in Street filed | |
-    | Fill in Eight Mile Plains in City field | |
-    | Fill in QLD in State field | |
+    | Fill in *53 Brandl st* in Street filed | |
+    | Fill in *Eight Mile Plains* in City field | |
+    | Fill in *QLD* in State field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that geocode was successful |
-    | Press Ok button | |
+    | Wait for message appears on the screen | Verify that geocode was successful |'
+        ));
+    },
+
+    // \groups BAT,5.0,MOBILITY-2900,RESEARCH
+    qml_geocode_request_with_district: function()
+    {
+        prompt(twiki('---+++ QML: Geocode district
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
     | Press Options button | |
     | Select Geocode menu item | |
     | Press Clear All button | |
-    | Fill in Nizhniy Novgorod in City filed | |
-    | Fill in RUS in Country Code field | |
-    | Fill in Nizhegorodskiy Rayon in District field | |
+    | Fill in *Nizhniy Novgorod* in City filed | |
+    | Fill in *Russia* in Country field | |
+    | Fill in *Nizhegorodskiy Rayon* in District field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that geocode was successful with latitude 56.3217, longitude 44.0331 |
-    | Press Ok button | |
+    | Wait for message appears on the screen | Verify that geocode was successful with latitude *56.3217*, longitude *44.0331* |'
+        ));
+    },
+
+    // \groups BAT,5.0,MOBILITY-2900,RESEARCH
+    qml_geocode_unique_city_in_a_country: function()
+    {
+        prompt(twiki('---+++ QML: Geocode city which is unique in a country, but not a unique in the world
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
     | Press Options button | |
     | Select Geocode menu item | |
     | Press Clear All button | |
-    | Fill in Moscow in City filed | |
-    | Fill in Russia in Country field | |
+    | Fill in *Moscow* in City filed | |
+    | Fill in *Russia* in Country field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that geocode was successful with latitude 55.7569, longitude 37.615 |
-    | Press Ok button | |
+    | Wait for message appears on the screen | Verify that geocode was successful with latitude *55.7569*, longitude *37.615* |'
+        ));
+    },
+
+    // \groups BAT,5.0,MOBILITY-2900,RESEARCH
+    qml_geocode_request_with_county: function()
+    {
+        prompt(twiki('---+++ QML: Geocode county
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
     | Press Options button | |
     | Select Geocode menu item | |
     | Press Clear All button | |
-    | Fill in Norfolk in County filed | |
-    | Fill in United Kingdom in Country field | |
+    | Fill in *Norfolk* in County filed | |
+    | Fill in *United Kingdom* in Country field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that geocode was successful with latitude 52.614, longitude 0.8864 |'
+    | Wait for message appears on the screen | Verify that geocode was successful with latitude *52.614*, longitude *0.8864* |'
+        ));
+    },
+
+    // \groups BAT,5.0,MOBILITY-2900,RESEARCH
+    qml_geocode_request_with_country_code: function()
+    {
+        prompt(twiki('---+++ QML: Geocode country code
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Clear All button | |
+    | Fill in *AUS* in Country code field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that geocode was successful |'
         ));
     },
 
     // \groups BAT,5.0,MOBILITY-2901,RESEARCH
     qml_reverse_geocode_australian_place: function()
     {
-        prompt(twiki('---+++ QML: Reverse geocode
+        prompt(twiki('---+++ QML: Reverse geocode of an australian place
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
     | Run the qml_mapviewer application | |
     | Press Options button | |
     | Select Reverse Geocode | |
-    | Fill in -27.575 in Latitude filed | |
-    | Fill in 153.088 in Longitude field | |
+    | Fill in *-27.575* in Latitude filed | |
+    | Fill in *153.088* in Longitude field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: 230 Padstow Rd, City: Eight Mile Plains, State: AUS-QLD, Country code: AUS, Country: AUSTRALIA) |'
+    | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: *230 Padstow Rd*, City: *Eight Mile Plains*, State: *AUS-QLD*, Country code: *AUS*, Country: *AUSTRALIA*) |'
         ));
     },
 
     // \groups BAT,5.0,MOBILITY-2901,RESEARCH
     qml_reverse_geocode_russian_place: function()
     {
-        prompt(twiki('---+++ QML: Reverse geocode
+        prompt(twiki('---+++ QML: Reverse geocode of a russian place
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
     | Run the qml_mapviewer application | |
     | Press Options button | |
     | Select Reverse Geocode | |
-    | Fill in 56.3264 in Latitude filed | |
-    | Fill in 44.0048 in Longitude field | |
+    | Fill in *56.3264* in Latitude filed | |
+    | Fill in *44.0048* in Longitude field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: Minina I Pozharskogo Ploshad, district: Nizhegorodskiy Rayon, City: Nizhniy Novgorod, Country code: RUS, Country: Russian Federation) |'
+    | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: *Minina I Pozharskogo Ploshchad\'*, district: *Nizhegorodskiy Rayon*, City: *Nizhniy Novgorod*, Country code: *RUS*, Country: *Russian Federation*) |'
         ));
     },
 
     // \groups BAT,5.0,MOBILITY-2901,RESEARCH
     qml_reverse_geocode_uninhabited_place: function()
     {
-        prompt(twiki('---+++ QML: Reverse geocode
+        prompt(twiki('---+++ QML: Reverse geocode of uninhabited place
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
     | Run the qml_mapviewer application | |
     | Press Options button | |
     | Select Reverse Geocode | |
-    | Fill in -26.8890 in Latitude filed | |
-    | Fill in 154.6696 in Longitude field | |
+    | Fill in *-26.8890* in Latitude filed | |
+    | Fill in *154.6696* in Longitude field | |
     | Press Go! button | |
     | Wait for message appears on the screen | Verify that location is not found |'
         ));
