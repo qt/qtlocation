@@ -1,2 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS += declarative
+SUBDIRS += declarative \
+           maps

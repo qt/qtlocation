@@ -59,7 +59,7 @@ testcase = {
         prompt(twiki('---+++ Position changes are detected
         Note that GPS and internet connection is required for this test case.
     | *Step* | *Verification* |
-    | Run the lightmaps_with_location app (sources are in demos/lightmaps). | Verify that map is displayed and centered with the current position |
+    | Run the lightmaps_with_location app (sources are in qtbase/examples/embedded/lightmaps). | Verify that map is displayed and centered with the current position |
     | Move to a different location | Verify that map is updated and centered with new location |'
        ));
     },

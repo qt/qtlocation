@@ -15,10 +15,10 @@ RESOURCES += \
     landmarkmap.qrc
 
 install_files.files += nmealog.txt mylm.lmx landmarkmapcommon landmarkmapmobile landmarkmap.qml
-install_files.path = $$[QT_INSTALL_DEMOS]/qtlocation/declarative/landmark
+install_files.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/landmark
 
-target.path = $$[QT_INSTALL_DEMOS]/qtlocation/declarative/landmark
+target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/landmark
 sources.files = $$SOURCES $$HEADERS $$RESOURCES $$FORMS *.pro
-sources.path = $$[QT_INSTALL_DEMOS]/qtlocation/declarative/landmark
+sources.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/landmark
 
 INSTALLS += target sources install_files
