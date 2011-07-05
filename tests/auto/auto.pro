@@ -7,6 +7,7 @@ TEMPLATE = subdirs
 
 CONFIG += ordered
 SUBDIRS += geotestplugin \
+           qgeosearchmanagerplugins \
            qgeoaddress \
            qgeoboundingbox \
            qgeocoordinate \
