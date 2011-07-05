@@ -70,6 +70,7 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
                 m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, 
+
                     proxyUrl.host(),
                     proxyUrl.port(8080),
                     proxyUrl.userName(),
@@ -98,10 +99,6 @@ QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, Q
 
     setSupportsGeocoding(true);
     setSupportsReverseGeocoding(true);
-
-    QGeoSearchManager::SearchTypes supportedSearchTypes;
-    supportedSearchTypes |= QGeoSearchManager::SearchGeocode;
-    setSupportedSearchTypes(supportedSearchTypes);
 
     if (error)
         *error = QGeoServiceProvider::NoError;
@@ -194,21 +191,10 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::reverseGeocode(const QGeoCoordina
 }
 
 QGeoSearchReply* QGeoSearchManagerEngineNokia::search(const QString &searchString,
-        QGeoSearchManager::SearchTypes searchTypes,
         int limit,
         int offset,
         QGeoBoundingArea *bounds)
 {
-    // NOTE this will eventually replaced by a much improved implementation
-    // which will make use of the additionLandmarkManagers()
-    if ((searchTypes != QGeoSearchManager::SearchTypes(QGeoSearchManager::SearchAll))
-            && ((searchTypes & supportedSearchTypes()) != searchTypes)) {
-
-        QGeoSearchReply *reply = new QGeoSearchReply(QGeoSearchReply::UnsupportedOptionError, "The selected search type is not supported by this service provider.", this);
-        emit error(reply, reply->error(), reply->errorString());
-        return reply;
-    }
-
     QString requestString = "http://";
     requestString += m_host;
     requestString += "/geocoder/gc/1.0?referer=" + m_referer;

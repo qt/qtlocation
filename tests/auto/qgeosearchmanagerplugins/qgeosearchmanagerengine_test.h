@@ -81,16 +81,12 @@ public:
     {
         Q_UNUSED(error)
         Q_UNUSED(errorString)
-        setSupportedSearchTypes(QGeoSearchManager::SearchGeocode);
         setSupportsGeocoding(true);
         setSupportsReverseGeocoding(true);
         setLocale(*(new QLocale (QLocale::German, QLocale::Germany)));
-
-        QLandmarkManager *landmarkmanager = new QLandmarkManager();
-        setDefaultLandmarkManager(landmarkmanager);
     }
 
-    QGeoSearchReply*  search ( const QString & searchString, QGeoSearchManager::SearchTypes searchTypes, int limit, int offset, QGeoBoundingArea * bounds )
+    QGeoSearchReply*  search ( const QString & searchString, int limit, int offset, QGeoBoundingArea * bounds )
     {
         SearchReplyTest *searchreply = new SearchReplyTest();
         searchreply->callSetLimit(limit);

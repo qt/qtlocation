@@ -75,7 +75,6 @@ public:
                                     QGeoBoundingArea *bounds);
 
     QGeoSearchReply* search(const QString &searchString,
-                            QGeoSearchManager::SearchTypes searchTypes,
                             int limit,
                             int offset,
                             QGeoBoundingArea *bounds);

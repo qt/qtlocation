@@ -43,16 +43,8 @@
 #include "qgeosearchmanager_p.h"
 #include "qgeosearchmanagerengine.h"
 
-#include "qlandmarkmanager.h"
-
 #include "qgeoboundingbox.h"
 #include "qgeoboundingcircle.h"
-
-#include "qlandmarkboxfilter.h"
-#include "qlandmarkfetchrequest.h"
-#include "qlandmarkintersectionfilter.h"
-#include "qlandmarknamefilter.h"
-#include "qlandmarkproximityfilter.h"
 
 #include <QLocale>
 
@@ -376,7 +368,6 @@ QGeoSearchReply* QGeoSearchManager::reverseGeocode(const QGeoCoordinate &coordin
     QGeoSearchReply::error() with deleteLater().
 */
 QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
-        QGeoSearchManager::SearchTypes searchTypes,
         int limit,
         int offset,
         QGeoBoundingArea *bounds)
@@ -385,64 +376,10 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
 //        return new QGeoSearchReply(QGeoSearchReply::EngineNotSetError, "The search manager was not created with a valid engine.", this);
 
     QGeoSearchReply *reply = d_ptr->engine->search(searchString,
-                             searchTypes,
                              limit,
                              offset,
                              bounds);
-
-    if ((d_ptr->engine->additionalLandmarkManagers().size() == 0)
-            || (searchTypes == QGeoSearchManager::SearchNone)
-            || (searchTypes == QGeoSearchManager::SearchGeocode))
-        return reply;
-
-    // TODO add default LM to this list and change doc?
-
-    QList<QLandmarkFetchRequest*> fetchRequests;
-
-
-    // TODO replace with free text search filter when it becomes available
-    QLandmarkNameFilter searchFilter;
-    searchFilter.setName(searchString);
-    searchFilter.setMatchFlags(QLandmarkFilter::MatchContains);
-
-    QLandmarkIntersectionFilter intersectFilter;
-    intersectFilter.append(searchFilter);
-    if (bounds) {
-        QGeoBoundingBox* box = 0;
-        QGeoBoundingCircle* circle = 0;
-        switch (bounds->type()) {
-            case QGeoBoundingArea::BoxType:
-                box = static_cast<QGeoBoundingBox*>(bounds);
-                if (box->isValid() && !box->isEmpty()) {
-                    QLandmarkBoxFilter boxFilter;
-                    boxFilter.setBoundingBox(*box);
-                    intersectFilter.append(boxFilter);
-                }
-                break;
-            case QGeoBoundingArea::CircleType:
-                circle = static_cast<QGeoBoundingCircle*>(bounds);
-                if (circle->isValid() && !circle->isEmpty()) {
-                    QLandmarkProximityFilter proximityFilter(circle->center(),
-                            circle->radius());
-                    intersectFilter.append(proximityFilter);
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    for (int i = 0; i < d_ptr->engine->additionalLandmarkManagers().size(); ++i) {
-        QLandmarkManager* lm = d_ptr->engine->additionalLandmarkManagers().at(i);
-
-        QLandmarkFetchRequest* fetchRequest = new QLandmarkFetchRequest(lm, this);
-        fetchRequest->setFilter(intersectFilter);
-        fetchRequest->setLimit(limit);
-        fetchRequest->setOffset(offset);
-        fetchRequests.append(fetchRequest);
-    }
-
-    return new QGeoCombiningSearchReply(reply, fetchRequests);
+    return reply;
 }
 
 /*!
@@ -462,74 +399,6 @@ bool QGeoSearchManager::supportsGeocoding() const
 bool QGeoSearchManager::supportsReverseGeocoding() const
 {
     return d_ptr->engine->supportsReverseGeocoding();
-}
-
-/*!
-    Returns the search types supported by the search() function with this manager.
-*/
-QGeoSearchManager::SearchTypes QGeoSearchManager::supportedSearchTypes() const
-{
-//    if (!d_ptr->engine)
-//        return QGeoSearchManager::SearchTypes();
-
-    return d_ptr->engine->supportedSearchTypes();
-}
-
-/*!
-    Returns the landmark manager provided by the service provider for
-    use with search().
-
-    Will return 0 if the no landmark manager is associated with the service
-    provider. This does not indicate that search() does not support
-    landmark searching, only that any landmark searching which occurs within in
-    search() is done without the use of a QLandmarkManager.
-*/
-QLandmarkManager* QGeoSearchManager::defaultLandmarkManager() const
-{
-//    if (!d_ptr->engine)
-//        return 0;
-
-    return d_ptr->engine->defaultLandmarkManager();
-}
-
-/*!
-    Sets the landmark managers to be used with search() to \a landmarkManagers.
-
-    These landmark managers will be used along with the landmark manager returned
-    by defaultLandmarkManager().
-*/
-void QGeoSearchManager::setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
-{
-//    if (d_ptr->engine)
-    d_ptr->engine->setAdditionalLandmarkManagers(landmarkManagers);
-}
-
-/*!
-    Returns the landmark managers that will be used with search().
-
-    These landmark managers will be used along with the landmark manager returned
-    by defaultLandmarkManager().
-*/
-QList<QLandmarkManager *> QGeoSearchManager::additionalLandmarkManagers() const
-{
-//    if (!d_ptr->engine)
-//        return QList<QLandmarkManager *>();
-
-    return d_ptr->engine->additionalLandmarkManagers();
-}
-
-/*!
-    Adds \a landmarkManager to the list of landmark managers that will be used
-    with search().
-
-    These landmark managers will be used along with the landmark manager returned
-    by defaultLandmarkManager().
-*/
-void QGeoSearchManager::addAdditionalLandmarkManager(QLandmarkManager *landmarkManager)
-{
-//    if (d_ptr->engine && landmarkManager)
-    if (landmarkManager)
-        d_ptr->engine->addAdditionalLandmarkManager(landmarkManager);
 }
 
 /*!
@@ -599,84 +468,6 @@ QGeoSearchManagerPrivate::~QGeoSearchManagerPrivate()
 /*******************************************************************************
 *******************************************************************************/
 
-
-QGeoCombiningSearchReply::QGeoCombiningSearchReply(QGeoSearchReply* searchReply,
-        QList<QLandmarkFetchRequest*> fetchRequests,
-        QObject *parent)
-    : QGeoSearchReply(parent),
-      searchReply(searchReply),
-      fetchRequests(fetchRequests)
-{
-    connect(searchReply,
-            SIGNAL(finished()),
-            this,
-            SLOT(searchReplyFinished()));
-
-    for (int i = 0; i < fetchRequests.size(); ++i)
-        connect(fetchRequests[i],
-                SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
-                this,
-                SLOT(landmarkFetchStateChanged(QLandmarkAbstractRequest::State)));
-}
-
-QGeoCombiningSearchReply::~QGeoCombiningSearchReply()
-{
-    if (searchReply)
-        delete searchReply;
-
-    qDeleteAll(fetchRequests);
-}
-
-void QGeoCombiningSearchReply::searchReplyFinished()
-{
-    if (searchReply->error() == QGeoSearchReply::NoError) {
-        QList<QGeoPlace> searchReplyPlaces = searchReply->places();
-        for (int i = 0; i < searchReplyPlaces.size(); ++i)
-            addPlace(searchReplyPlaces.at(i));
-
-        if (fetchRequests.size() == 0)
-            emit finished();
-    } else {
-        emit error(error(), errorString());
-        qDeleteAll(fetchRequests);
-        fetchRequests.clear();
-    }
-
-    delete searchReply;
-    searchReply = 0;
-}
-
-void QGeoCombiningSearchReply::landmarkFetchStateChanged(QLandmarkAbstractRequest::State newState)
-{
-    if (newState == QLandmarkAbstractRequest::FinishedState) {
-        QLandmarkFetchRequest *req = qobject_cast<QLandmarkFetchRequest*>(sender());
-        if (req->error() == QLandmarkManager::NoError) {
-
-            QList<QLandmark> landmarks = req->landmarks();
-            for (int i = 0; i < landmarks.size(); ++i)
-                addPlace(landmarks.at(i));
-
-            fetchRequests.removeAll(req);
-            delete req;
-
-            if (!searchReply && (fetchRequests.size() == 0))
-                emit finished();
-        } else {
-
-            emit error(QGeoSearchReply::CombinationError, req->errorString());
-
-            delete searchReply;
-            searchReply = 0;
-            qDeleteAll(fetchRequests);
-            fetchRequests.clear();
-        }
-    }
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
 #include "moc_qgeosearchmanager.cpp"
-#include "moc_qgeosearchmanager_p.cpp"
 
 QTM_END_NAMESPACE

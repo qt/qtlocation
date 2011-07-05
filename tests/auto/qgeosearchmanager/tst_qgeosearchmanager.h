@@ -77,12 +77,10 @@ private Q_SLOTS:
     void init();
     void cleanup();
     void supports();
-    void landmarkManager();
     void locale();
     void name();
     void version();
     void search();
-    void search_data();
     void geocode();
     void reverseGeocode();
 
@@ -96,7 +94,6 @@ private:
 };
 Q_DECLARE_METATYPE( QGeoSearchReply*);
 Q_DECLARE_METATYPE( QGeoSearchReply::Error);
-Q_DECLARE_METATYPE( QGeoSearchManager::SearchType);
 
 #endif
 

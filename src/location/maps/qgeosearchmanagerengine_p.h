@@ -60,8 +60,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkManager;
-
 class QGeoSearchManagerEnginePrivate
 {
 public:
@@ -71,12 +69,8 @@ public:
     QString managerName;
     int managerVersion;
 
-    QLandmarkManager *defaultLandmarkManager;
-    QList<QLandmarkManager*> additionalLandmarkManagers;
-
     bool supportsGeocoding;
     bool supportsReverseGeocoding;
-    QGeoSearchManager::SearchTypes supportedSearchTypes;
 
     QLocale locale;
 

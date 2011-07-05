@@ -53,8 +53,6 @@ class QLocale;
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkManager;
-
 class QGeoSearchManagerEngine;
 class QGeoSearchManagerPrivate;
 
@@ -62,14 +60,6 @@ class Q_LOCATION_EXPORT QGeoSearchManager : public QObject
 {
     Q_OBJECT
 public:
-    enum SearchType {
-        SearchNone = 0x0000,
-        SearchGeocode = 0x0001,
-        SearchLandmarks = 0x0002,
-        SearchAll = 0xFFFF
-    };
-    Q_DECLARE_FLAGS(SearchTypes, SearchType)
-
     ~QGeoSearchManager();
 
     QString managerName() const;
@@ -81,20 +71,12 @@ public:
                                     QGeoBoundingArea *bounds = 0);
 
     QGeoSearchReply* search(const QString &searchString,
-                            SearchTypes searchTypes = SearchTypes(SearchAll),
                             int limit = -1,
                             int offset = 0,
                             QGeoBoundingArea *bounds = 0);
 
     bool supportsGeocoding() const;
     bool supportsReverseGeocoding() const;
-    SearchTypes supportedSearchTypes() const;
-
-    QLandmarkManager* defaultLandmarkManager() const;
-
-    void setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers);
-    QList<QLandmarkManager *> additionalLandmarkManagers() const;
-    void addAdditionalLandmarkManager(QLandmarkManager *landmarkManager);
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
@@ -111,8 +93,6 @@ private:
 
     friend class QGeoServiceProvider;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoSearchManager::SearchTypes)
 
 QTM_END_NAMESPACE
 

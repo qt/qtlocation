@@ -221,7 +221,6 @@ void MarkerManager::search(QString query, qreal radius)
         QGeoBoundingCircle *boundingCircle = new QGeoBoundingCircle(
                     d->myLocation->coordinate(), radius);
         reply = d->searchManager->search(query,
-                                        QGeoSearchManager::SearchAll,
                                         -1, 0,
                                         boundingCircle);
     } else {

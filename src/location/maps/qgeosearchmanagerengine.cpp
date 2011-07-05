@@ -44,7 +44,6 @@
 
 #include "qgeoaddress.h"
 #include "qgeocoordinate.h"
-#include "qlandmarkmanager.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -300,13 +299,11 @@ QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &c
     QGeoSearchReply::error() with deleteLater().
 */
 QGeoSearchReply* QGeoSearchManagerEngine::search(const QString &searchString,
-        QGeoSearchManager::SearchTypes searchTypes,
         int limit,
         int offset,
         QGeoBoundingArea *bounds)
 {
     Q_UNUSED(searchString)
-    Q_UNUSED(searchTypes)
     Q_UNUSED(limit)
     Q_UNUSED(offset)
     Q_UNUSED(bounds)
@@ -353,92 +350,6 @@ void QGeoSearchManagerEngine::setSupportsReverseGeocoding(bool supported)
 bool QGeoSearchManagerEngine::supportsReverseGeocoding() const
 {
     return d_ptr->supportsReverseGeocoding;
-}
-
-/*!
-    Sets the search types supported by the search() with this engine to \a searchTypes.
-
-    It is important that subclasses use this method to ensure that the engine
-    reports its capabilities correctly.  If this function is not used the
-    engine will report that it does not support any search types.
-*/
-void QGeoSearchManagerEngine::setSupportedSearchTypes(QGeoSearchManager::SearchTypes searchTypes)
-{
-    d_ptr->supportedSearchTypes = searchTypes;
-}
-
-/*!
-    Returns the search types supported by the search() with this engine.
-*/
-QGeoSearchManager::SearchTypes QGeoSearchManagerEngine::supportedSearchTypes() const
-{
-    return d_ptr->supportedSearchTypes;
-}
-
-/*!
-    Sets the landmark manager provided by the service provider for
-    use with search() to \a landmarkManager.
-
-    This should only be set if search() makes use of a QLandmarkManager
-    instance to provide landmark searching functionality.
-
-    It is important that subclasses use this method to ensure that the engine
-    is able to carry out landmark searches.  If this function is not used the
-    engine will not be able to use or return the default landmark manager.
-*/
-void QGeoSearchManagerEngine::setDefaultLandmarkManager(QLandmarkManager *landmarkManager)
-{
-    d_ptr->defaultLandmarkManager = landmarkManager;
-}
-
-/*!
-    Returns the landmark manager provided by the service provider for
-    use with search().
-
-    Will return 0 if the no landmark manager is associated with the service
-    provider. This does not indicate that search() does not support
-    landmark searching, only that any landmark searching which occurs within in
-    search() is done without the use of a QLandmarkManager.
-*/
-QLandmarkManager* QGeoSearchManagerEngine::defaultLandmarkManager() const
-{
-    return d_ptr->defaultLandmarkManager;
-}
-
-/*!
-    Sets the landmark managers to be used with search() to \a landmarkManagers.
-
-    These landmark managers will be used along with the landmark manager returned
-    by defaultLandmarkManager().
-*/
-void QGeoSearchManagerEngine::setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
-{
-    for (int i = 0; i < landmarkManagers.size(); ++i)
-        if (landmarkManagers.at(i))
-            d_ptr->additionalLandmarkManagers.append(landmarkManagers.at(i));
-}
-
-/*!
-    Returns the landmark managers that will be used with search().
-
-    These landmark managers will be used along with the landmark manager returned
-    by defaultLandmarkManager().
-*/
-QList<QLandmarkManager *> QGeoSearchManagerEngine::additionalLandmarkManagers() const
-{
-    return d_ptr->additionalLandmarkManagers;
-}
-
-/*!
-    Adds \a landmarkManager to the list of landmark managers that will be used with search().
-
-    These landmark managers will be used along with the landmark manager returned
-    by defaultLandmarkManager().
-*/
-void QGeoSearchManagerEngine::addAdditionalLandmarkManager(QLandmarkManager *landmarkManager)
-{
-    if (landmarkManager)
-        d_ptr->additionalLandmarkManagers.append(landmarkManager);
 }
 
 /*!
@@ -498,16 +409,11 @@ QLocale QGeoSearchManagerEngine::locale() const
 
 QGeoSearchManagerEnginePrivate::QGeoSearchManagerEnginePrivate()
     : managerVersion(-1),
-      defaultLandmarkManager(0),
       supportsGeocoding(false),
       supportsReverseGeocoding(false) {}
 
 QGeoSearchManagerEnginePrivate::~QGeoSearchManagerEnginePrivate()
 {
-    if (defaultLandmarkManager)
-        delete defaultLandmarkManager;
-    // TODO check for null? or do that in the setter?
-    qDeleteAll(additionalLandmarkManagers);
 }
 
 #include "moc_qgeosearchmanagerengine.cpp"

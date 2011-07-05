@@ -51,8 +51,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkManager;
-
 class QGeoSearchManagerEnginePrivate;
 
 class Q_LOCATION_EXPORT QGeoSearchManagerEngine : public QObject
@@ -71,20 +69,12 @@ public:
                                             QGeoBoundingArea *bounds);
 
     virtual QGeoSearchReply* search(const QString &searchString,
-                                    QGeoSearchManager::SearchTypes searchTypes,
                                     int limit,
                                     int offset,
                                     QGeoBoundingArea *bounds);
 
     bool supportsGeocoding() const;
     bool supportsReverseGeocoding() const;
-    QGeoSearchManager::SearchTypes supportedSearchTypes() const;
-
-    QLandmarkManager* defaultLandmarkManager() const;
-
-    void setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers);
-    QList<QLandmarkManager *> additionalLandmarkManagers() const;
-    void addAdditionalLandmarkManager(QLandmarkManager *landmarkManager);
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
@@ -94,10 +84,8 @@ Q_SIGNALS:
     void error(QGeoSearchReply* reply, QGeoSearchReply::Error error, QString errorString = QString());
 
 protected:
-    void setDefaultLandmarkManager(QLandmarkManager *landmarkManager);
     void setSupportsGeocoding(bool supported);
     void setSupportsReverseGeocoding(bool supported);
-    void setSupportedSearchTypes(QGeoSearchManager::SearchTypes searchTypes);
 
 private:
     void setManagerName(const QString &managerName);

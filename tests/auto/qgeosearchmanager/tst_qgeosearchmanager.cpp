@@ -90,23 +90,6 @@ void tst_QGeoSearchManager::supports()
 {
     QVERIFY(qgeosearchmanager->supportsGeocoding());
     QVERIFY(qgeosearchmanager->supportsReverseGeocoding());
-    QCOMPARE(qgeosearchmanager->supportedSearchTypes(),QGeoSearchManager::SearchGeocode);
-}
-
-void tst_QGeoSearchManager::landmarkManager()
-{
-    QVERIFY(qgeosearchmanager->defaultLandmarkManager());
-
-    QString managerName;
-#ifdef Q_OS_SYMBIAN
-    managerName = "com.nokia.qt.landmarks.engines.symbian";
-#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MEEGO)
-    managerName = "com.nokia.qt.landmarks.engines.qsparql";
-#else
-    managerName = "com.nokia.qt.landmarks.engines.sqlite";
-#endif
-
-    QCOMPARE(qgeosearchmanager->defaultLandmarkManager()->managerName(),managerName);
 }
 
 void tst_QGeoSearchManager::locale()
@@ -145,14 +128,12 @@ void tst_QGeoSearchManager::search()
     QCOMPARE(signalerror->count(),0);
     QCOMPARE(signalfinished->count(),0);
 
-    QFETCH(QGeoSearchManager::SearchType,type);
-
     QString search = "Berlin. Invaliendenstrasse";
     int limit = 10;
     int offset = 2;
     QGeoBoundingBox *bounds = new QGeoBoundingBox ();
 
-    QGeoSearchReply * reply = qgeosearchmanager->search(search,type,limit,offset,bounds);
+    QGeoSearchReply * reply = qgeosearchmanager->search(search, limit,offset,bounds);
 
     QCOMPARE(reply->errorString(),search);
     QCOMPARE(signalfinished->count(),1);
@@ -161,15 +142,6 @@ void tst_QGeoSearchManager::search()
     delete reply;
     delete bounds;
 
-}
-void tst_QGeoSearchManager::search_data()
-{
-    QTest::addColumn<QGeoSearchManager::SearchType>("type");
-
-    QTest::newRow("type1") << QGeoSearchManager::SearchAll;
-    QTest::newRow("type2") << QGeoSearchManager::SearchGeocode;
-    QTest::newRow("type3") << QGeoSearchManager::SearchLandmarks;
-    QTest::newRow("type4") << QGeoSearchManager::SearchNone;
 }
 
 void tst_QGeoSearchManager::geocode()
