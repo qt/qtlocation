@@ -10,6 +10,7 @@ SUBDIRS += qgeoaddress \
            qgeocoordinate \
            qgeolocation \
            qgeoplace \
+           qgeosearchreply \
            qplacealternativevalue \
            qplacebusinessfeature \
            qplacecategory \
