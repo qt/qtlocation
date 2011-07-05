@@ -1,4 +1,3 @@
-
 load(qttest_p4)
 
 HEADERS += qlocationtestutils_p.h

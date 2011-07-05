@@ -642,6 +642,25 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
     qDebug() << "viewport" << (viewport == other.viewport);
     qDebug() << "coordinate:" <<  (coordinate == other.coordinate);
     qDebug() << "address:" << (address == other.address);
+    qDebug() << "additionalData: " << (additionalData == other.additionalData);
+    qDebug() << "alternativeNames: " << (alternativeNames == other.alternativeNames);
+    qDebug() << "placeScore: " << (placeScore == other.placeScore);
+    qDebug() << "businessInfo: " << (businessInfo == other.businessInfo);
+    qDebug() << "categories: " << (categories == other.categories);
+    qDebug() << "descriptions: " << (descriptions == other.descriptions);
+    qDebug() << "location:" << (location == other.location);
+    qDebug() << "alternativeLocations:" << (alternativeLocations == other.alternativeLocations);
+    qDebug() << "rating" << (rating == other.rating);
+    qDebug() << "suppliers" << (suppliers == other.suppliers);
+    qDebug() << "feeds " << (feeds == other.feeds);
+    qDebug() << "media " << (media == other.media);
+    qDebug() << "mediaCount " << (mediaCount == other.mediaCount);
+    qDebug() << "name " << (name == other.name);
+    qDebug() << "placeId" << (placeId == other.placeId);
+    qDebug() << "reviews" << (reviews == other.reviews);
+    qDebug() << "review count" << (reviewCount == other.reviewCount);
+    qDebug() << "shortDescription" << (shortDescription == other.shortDescription);
+    qDebug() << "tags" << (tags == other.tags);
 #endif
 
     return (type == other.type
