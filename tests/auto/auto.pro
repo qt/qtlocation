@@ -5,7 +5,9 @@ TEMPLATE = subdirs
 #in the main branch of qt declarative
 #SUBDIRS += declarative
 
-SUBDIRS += qgeoaddress \
+CONFIG += ordered
+SUBDIRS += geotestplugin \
+           qgeoaddress \
            qgeoboundingbox \
            qgeocoordinate \
            qgeolocation \
