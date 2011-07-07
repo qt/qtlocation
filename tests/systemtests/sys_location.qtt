@@ -565,7 +565,7 @@ testcase = {
     },
 /*
     // \groups BAT,5.0,MOBILITY-2893,RESEARCH
-    qml_route_travel_mode: function()
+    qml_travel_mode: function()
     {
         prompt(twiki('---+++ QML: Travel mode
     Note that internet connection is required for this test case
@@ -676,7 +676,15 @@ testcase = {
     | Select Geocode menu item | |
     | Fill in *USA* in Country field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that *19* points were found |'
+    | Wait for message appears on the screen | Verify that *19* points were found |
+    | Press Ok button |
+    | Press Options button | |
+    | Select Geocode menu item | |
+    | Press Clear All button | |
+    | Fill in *Moscow* in City filed | |
+    | Fill in *Russia* in Country field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that geocode was successful with latitude *55.7569*, longitude *37.615* |'
         ));
     },
 
@@ -717,23 +725,6 @@ testcase = {
     },
 
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
-    qml_geocode_unique_city_in_a_country: function()
-    {
-        prompt(twiki('---+++ QML: Geocode city which is unique in a country, but not a unique in the world
-    Note that internet connection is required for this test case
-    | *Step* | *Verification* |
-    | Run the qml_mapviewer application | |
-    | Press Options button | |
-    | Select Geocode menu item | |
-    | Press Clear All button | |
-    | Fill in *Moscow* in City filed | |
-    | Fill in *Russia* in Country field | |
-    | Press Go! button | |
-    | Wait for message appears on the screen | Verify that geocode was successful with latitude *55.7569*, longitude *37.615* |'
-        ));
-    },
-
-    // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode_request_with_county: function()
     {
         prompt(twiki('---+++ QML: Geocode county
@@ -760,7 +751,25 @@ testcase = {
     | Press Clear All button | |
     | Fill in *AUS* in Country code field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that geocode was successful |'
+    | Wait for message appears on the screen | Verify that geocode is successful |'
+        ));
+    },
+
+    // \groups BAT,5.0,MOBILITY-2900,RESEARCH
+    qml_geocode_request_with_post_code: function()
+    {
+        prompt(twiki('---+++ QML: Geocode post code
+    Note that internet connection is required for this test case
+    | *Step* | *Verification* |
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Geocode menu item | |
+    | Press Clear All button | |
+    | Fill in *Brandl st* in Street filed | |
+    | Fill in *4113* in Post Code field | |
+    | Fill in *Australia* in Country field | |
+    | Press Go! button | |
+    | Wait for message appears on the screen | Verify that geocode is successful with latitude *-27.5798*, longitude *153.1* |'
         ));
     },
 
@@ -776,7 +785,7 @@ testcase = {
     | Fill in *-27.575* in Latitude filed | |
     | Fill in *153.088* in Longitude field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: *230 Padstow Rd*, City: *Eight Mile Plains*, State: *AUS-QLD*, Country code: *AUS*, Country: *AUSTRALIA*) |'
+    | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: *230 Padstow Rd*, City: *Eight Mile Plains*, State: *AUS-QLD*, Country code: *AUS*, Country: *AUSTRALIA*, Postcode: *4113*) |'
         ));
     },
 
@@ -792,7 +801,7 @@ testcase = {
     | Fill in *56.3264* in Latitude filed | |
     | Fill in *44.0048* in Longitude field | |
     | Press Go! button | |
-    | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: *Minina I Pozharskogo Ploshchad\'*, district: *Nizhegorodskiy Rayon*, City: *Nizhniy Novgorod*, Country code: *RUS*, Country: *Russian Federation*) |'
+    | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: *Minina I Pozharskogo Ploshchad\'*, district: *Nizhegorodskiy Rayon*, City: *Nizhniy Novgorod*, Country code: *RUS*, Country: *Russian Federation*, Postcode: *603005*) |'
         ));
     },
 
