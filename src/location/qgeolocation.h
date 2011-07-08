@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACELOCATION_H
-#define QPLACELOCATION_H
+#ifndef QGEOLOCATION_H
+#define QGEOLOCATION_H
 
 #include <QSharedDataPointer>
 #include <QString>
@@ -54,20 +54,20 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QPlaceLocationPrivate;
+class QGeoLocationPrivate;
 
-class Q_LOCATION_EXPORT QPlaceLocation
+class Q_LOCATION_EXPORT QGeoLocation
 {
 public:
-    QPlaceLocation();
-    QPlaceLocation(const QPlaceLocation &other);
+    QGeoLocation();
+    QGeoLocation(const QGeoLocation &other);
 
-    virtual ~QPlaceLocation();
+    virtual ~QGeoLocation();
 
-    QPlaceLocation &operator=(const QPlaceLocation &other);
+    QGeoLocation &operator=(const QGeoLocation &other);
 
-    bool operator==(const QPlaceLocation &other) const;
-    bool operator!=(const QPlaceLocation &other) const {
+    bool operator==(const QGeoLocation &other) const;
+    bool operator!=(const QGeoLocation &other) const {
         return !(other == *this);
     }
 
@@ -77,23 +77,23 @@ public:
     void setAddress(const QGeoAddress &address);
     QList<QPlaceAlternativeValue> alternativeLabels() const;
     void setAlternativeLabels(const QList<QPlaceAlternativeValue> &labels);
-    QGeoCoordinate displayPosition() const;
-    void setDisplayPosition(const QGeoCoordinate &position);
+    QGeoCoordinate coordinate() const;
+    void setCoordinate(const QGeoCoordinate &position);
     QList<QGeoCoordinate> navigationPositions() const;
     void setNavigationPositions(const QList<QGeoCoordinate> &positions);
     QString label() const;
     void setLabel(const QString &label);
     QString locationId() const;
     void setLocationId(const QString &locationId);
-    int locationScore() const;
-    void setLocationScore(const int &score);
-    QGeoBoundingBox mapView() const;
-    void setMapView(const QGeoBoundingBox &coordinate);
+    qreal locationScore() const;
+    void setLocationScore(const qreal &score);
+    QGeoBoundingBox viewport() const;
+    void setViewport(const QGeoBoundingBox &coordinate);
 
 private:
-    QSharedDataPointer<QPlaceLocationPrivate> d;
+    QSharedDataPointer<QGeoLocationPrivate> d;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QPLACELOCATION_H
+#endif

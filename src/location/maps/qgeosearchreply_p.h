@@ -61,7 +61,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoPlace;
+class QGeoLocation;
 
 class QGeoSearchReplyPrivate
 {
@@ -75,7 +75,7 @@ public:
     bool isFinished;
 
     QGeoBoundingArea* viewport;
-    QList<QGeoPlace> places;
+    QList<QGeoLocation> locations;
 
     int limit;
     int offset;

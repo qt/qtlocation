@@ -20,8 +20,8 @@ Rectangle {
         clip: true
         Text { text: '<b>Name: </b> ' + place.name; font.pixelSize: 16 }
         Text { text: '<b>Street: </b> ' + place.location.address.street; font.pixelSize: 16 }
-        Text { text: '<b>Latitude: </b> ' + place.location.displayPosition.latitude; font.pixelSize: 16 }
-        Text { text: '<b>Longitude: </b> ' + place.location.displayPosition.longitude; font.pixelSize: 16 }
+        Text { text: '<b>Latitude: </b> ' + place.location.coordinate.latitude; font.pixelSize: 16 }
+        Text { text: '<b>Longitude: </b> ' + place.location.coordinate.longitude; font.pixelSize: 16 }
         Text { text: '<b>Categories: </b> ' + categoryNames(place.categories); font.pixelSize: 16 }
         Text { text: '<b>Media count: </b> ' + place.media.data.length; font.pixelSize: 16 }
         //Text { text: '<b>All media count: </b> ' + place.mediaCount; font.pixelSize: 16 }

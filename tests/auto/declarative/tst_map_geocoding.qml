@@ -209,40 +209,40 @@ Item {
     }
 
     GeocodeModel {id: testModel; plugin: testPlugin}
-    SignalSpy {id: placesSpy; target: testModel; signalName: "placesChanged"}
+    SignalSpy {id: locationsSpy; target: testModel; signalName: "locationsChanged"}
     SignalSpy {id: countSpy; target: testModel; signalName: "countChanged"}
     SignalSpy {id: testQuerySpy; target: testModel; signalName: "queryChanged"}
     SignalSpy {id: testStatusSpy; target: testModel; signalName: "statusChanged"}
 
     GeocodeModel {id: slackModel; plugin: slackPlugin; }
-    SignalSpy {id: placesSlackSpy; target: slackModel; signalName: "placesChanged"}
+    SignalSpy {id: locationsSlackSpy; target: slackModel; signalName: "locationsChanged"}
     SignalSpy {id: countSlackSpy; target: slackModel; signalName: "countChanged"}
     SignalSpy {id: querySlackSpy; target: slackModel; signalName: "queryChanged"}
     SignalSpy {id: errorSlackSpy; target: slackModel; signalName: "errorChanged"}
     SignalSpy {id: pluginSlackSpy; target: slackModel; signalName: "pluginChanged"}
 
     GeocodeModel {id: immediateModel; plugin: immediatePlugin}
-    SignalSpy {id: placesImmediateSpy; target: immediateModel; signalName: "placesChanged"}
+    SignalSpy {id: locationsImmediateSpy; target: immediateModel; signalName: "locationsChanged"}
     SignalSpy {id: countImmediateSpy; target: immediateModel; signalName: "countChanged"}
     SignalSpy {id: queryImmediateSpy; target: immediateModel; signalName: "queryChanged"}
     SignalSpy {id: statusImmediateSpy; target: immediateModel; signalName: "statusChanged"}
     SignalSpy {id: errorImmediateSpy; target: immediateModel; signalName: "errorChanged"}
 
     GeocodeModel {id: automaticModel; plugin: slackPlugin; query: automaticAddress1; autoUpdate: true}
-    SignalSpy {id: automaticPlacesSpy; target: automaticModel; signalName: "placesChanged"}
+    SignalSpy {id: automaticLocationsSpy; target: automaticModel; signalName: "locationsChanged"}
 
     TestCase {
         name: "Map GeocodeModel basic (reverse) geocoding"
         function clear_slack_model() {
             slackModel.clear()
-            placesSlackSpy.clear()
+            locationsSlackSpy.clear()
             countSlackSpy.clear()
             querySlackSpy.clear()
             errorSlackSpy.clear()
         }
         function clear_immediate_model() {
             immediateModel.clear()
-            placesImmediateSpy.clear()
+            locationsImmediateSpy.clear()
             countImmediateSpy.clear()
             queryImmediateSpy.clear()
             errorImmediateSpy.clear()
@@ -266,12 +266,12 @@ Item {
             slackModel.update()
             wait (100)
             compare (countSlackSpy.count, 0)
-            compare (placesSlackSpy.count, 0)
+            compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
             slackModel.reset()
             wait (200)
             compare (countSlackSpy.count, 0)
-            compare (placesSlackSpy.count, 0)
+            compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
             // Check that results are cleared
             slackModel.update()
@@ -362,17 +362,17 @@ Item {
         }
         function test_basic_geocode() {
             testQuerySpy.clear()
-            placesSpy.clear()
+            locationsSpy.clear()
             testStatusSpy.clear()
             testModel.clear()
             countSpy.clear()
-            compare (placesSpy.count, 0)
+            compare (locationsSpy.count, 0)
             compare (testModel.error, "")
             compare (testModel.count, 0)
             testModel.query = address1
             compare (testQuerySpy.count, 1)
             testModel.update()
-            tryCompare (placesSpy, "count", 1) // 5 sec
+            tryCompare (locationsSpy, "count", 1) // 5 sec
             compare (testModel.error, "")
             compare (testModel.count, 2)
             compare (testQuerySpy.count, 1)
@@ -384,23 +384,23 @@ Item {
 
         function test_geocode_auto_updates() {
             compare (automaticModel.count, 4) // should be something already
-            compare (automaticPlacesSpy.count, 1)
+            compare (automaticLocationsSpy.count, 1)
             // change query and its contents and verify that autoupdate occurs
             automaticAddress1.county = 6
             wait (300)
-            compare (automaticPlacesSpy.count, 2)
+            compare (automaticLocationsSpy.count, 2)
             compare (automaticModel.count, 6)
             automaticAddress1.street = "The Avenue"
             wait (300)
-            compare (automaticPlacesSpy.count, 3)
+            compare (automaticLocationsSpy.count, 3)
             compare (automaticModel.count, 6)
             automaticModel.query = automaticCoordinate1
             wait (300)
-            compare (automaticPlacesSpy.count, 4)
+            compare (automaticLocationsSpy.count, 4)
             compare (automaticModel.count, 3)
             automaticCoordinate1.longitude = 7
             wait (300)
-            compare (automaticPlacesSpy.count, 5)
+            compare (automaticLocationsSpy.count, 5)
             compare (automaticModel.count, 7)
         }
 
@@ -409,47 +409,47 @@ Item {
             slackModel.clear()
             querySlackSpy.clear()
             countSlackSpy.clear()
-            placesSlackSpy.clear()
+            locationsSlackSpy.clear()
             slackModel.query = slackAddress1
             slackAddress1.county = "7"
             compare (querySlackSpy.count, 1)
             slackModel.update()
             wait (100)
             compare (countSlackSpy.count, 0)
-            compare (placesSlackSpy.count, 0)
+            compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
             wait (200)
             compare (countSlackSpy.count, 1)
-            compare (placesSlackSpy.count, 1)
+            compare (locationsSlackSpy.count, 1)
             compare (slackModel.count, 7) //  slackAddress1.county)
             // Frequent updates, previous requests are aborted
             slackModel.clear()
-            placesSlackSpy.clear()
+            locationsSlackSpy.clear()
             countSlackSpy.clear()
             slackModel.update()
             wait (100)
-            compare(placesSlackSpy.count, 0)
+            compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
             wait (100)
-            compare(placesSlackSpy.count, 0)
+            compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
             wait (100)
-            compare(placesSlackSpy.count, 0)
+            compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
             wait (100)
-            compare(placesSlackSpy.count, 0)
+            compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
             wait (200)
-            compare (placesSlackSpy.count, 1)
+            compare (locationsSlackSpy.count, 1)
             compare(countSlackSpy.count, 1)
             compare(slackModel.count, 7) // slackAddress1.county
         }
         function test_basic_reverse_geocode() {
             testQuerySpy.clear()
-            placesSpy.clear()
+            locationsSpy.clear()
             testStatusSpy.clear()
             countSpy.clear()
             testModel.clear()
@@ -459,7 +459,7 @@ Item {
             testModel.query = rcoordinate1
             compare (testQuerySpy.count, 1)
             testModel.update()
-            tryCompare (placesSpy, "count", 1) // 5 sec
+            tryCompare (locationsSpy, "count", 1) // 5 sec
             tryCompare(countSpy, "count", 1)
             compare (testModel.error, "")
             compare (testModel.count, 2)
@@ -471,40 +471,40 @@ Item {
             slackModel.clear()
             querySlackSpy.clear()
             countSlackSpy.clear()
-            placesSlackSpy.clear()
+            locationsSlackSpy.clear()
             slackModel.query = slackCoordinate1
             compare (querySlackSpy.count, 1)
             slackModel.update()
             wait (100)
             compare (countSlackSpy.count, 0)
-            compare (placesSlackSpy.count, 0)
+            compare (locationsSlackSpy.count, 0)
             compare (slackModel.count, 0)
             wait (200)
             compare (countSlackSpy.count, 1)
-            compare (placesSlackSpy.count, 1)
+            compare (locationsSlackSpy.count, 1)
             compare (slackModel.count, 3) //  slackCoordinate1.longitude
             // Frequent updates, previous requests are aborted
             slackModel.clear()
-            placesSlackSpy.clear()
+            locationsSlackSpy.clear()
             countSlackSpy.clear()
             slackModel.update()
             wait (100)
-            compare(placesSlackSpy.count, 0)
+            compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
             wait (100)
-            compare(placesSlackSpy.count, 0)
+            compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
             wait (100)
-            compare(placesSlackSpy.count, 0)
+            compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
             slackModel.update()
             wait (100)
-            compare(placesSlackSpy.count, 0)
+            compare(locationsSlackSpy.count, 0)
             compare(countSlackSpy.count, 0)
             wait (200)
-            compare (placesSlackSpy.count, 1)
+            compare (locationsSlackSpy.count, 1)
             compare(countSlackSpy.count, 1)
             compare(slackModel.count, 3) // slackCoordinate1.longitude
         }

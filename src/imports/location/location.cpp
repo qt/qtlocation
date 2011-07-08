@@ -80,7 +80,7 @@
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativecontact_p.h"
 #include "qdeclarativedescription_p.h"
-#include "qdeclarativelocation_p.h"
+#include "qdeclarativegeolocation_p.h"
 #include "qdeclarativemediaobject_p.h"
 #include "qdeclarativemediapaginationlist_p.h"
 #include "qdeclarativeplace_p.h"
@@ -202,7 +202,7 @@ public:
             qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
             qmlRegisterType<QDeclarativeContact>(uri, 5, 0, "Contact");
             qmlRegisterType<QDeclarativeDescription>(uri, 5, 0, "Description");
-            qmlRegisterType<QDeclarativeLocation>(uri, 5, 0, "Location");
+            qmlRegisterType<QDeclarativeGeoLocation>(uri, 5, 0, "Location");
             qmlRegisterType<QDeclarativeMediaObject>(uri, 5, 0, "MediaObject");
             qmlRegisterType<QDeclarativeMediaPaginationList>(uri, 5, 0, "MediaPaginationList");
             qmlRegisterType<QDeclarativePeriod>(uri, 5, 0, "Period");

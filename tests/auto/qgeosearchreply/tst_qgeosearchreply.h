@@ -51,7 +51,7 @@
 #include "../qgeocoordinate/qlocationtestutils_p.h"
 
 #include <qgeosearchreply.h>
-#include <qgeoplace.h>
+#include <qgeolocation.h>
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
 #include <qgeoboundingbox.h>
@@ -63,12 +63,12 @@ class SubSearchReply : public QGeoSearchReply
 public:
     SubSearchReply():QGeoSearchReply() {}
 
-    void  callAddPlace ( const QGeoPlace & place ) {addPlace(place);}
+    void  callAddLocation ( const QGeoLocation & location ) {addLocation(location);}
     void  callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}
     void  callSetFinished ( bool finished ) {setFinished(finished);}
     void  callSetLimit ( int limit ) {setLimit(limit);}
     void  callSetOffset ( int offset ) {setOffset(offset);}
-    void  callSetPlaces ( const QList<QGeoPlace> & places ) {setPlaces(places);}
+    void  callSetLocations ( const QList<QGeoLocation> & locations ) {setLocations(locations);}
     void  callSetViewport ( QGeoBoundingArea * viewport ) {setViewport(viewport);}
 
 };
@@ -96,7 +96,7 @@ private slots:
     void finished();
     void limit();
     void offset();
-    void places();
+    void locations();
     void viewport();
 
     //End Unit Test for QGeoSearchReply
@@ -107,7 +107,7 @@ private:
     QSignalSpy *signalerror;
     QSignalSpy *signalfinished;
     SubSearchReply* reply;
-    QGeoPlace *qgeoplace;
+    QGeoLocation *qgeolocation;
     QGeoBoundingBox *qgeoboundingbox;
 };
 

@@ -39,79 +39,78 @@
 **
 ****************************************************************************/
 
-#include "qplacelocation.h"
-#include "qplacelocation_p.h"
+#include "qgeolocation.h"
+#include "qgeolocation_p.h"
 
 QTM_USE_NAMESPACE
 
-QPlaceLocationPrivate::QPlaceLocationPrivate()
+QGeoLocationPrivate::QGeoLocationPrivate()
     : QSharedData(),
       locationScore(0)
 {
 }
 
-QPlaceLocationPrivate::QPlaceLocationPrivate(const QPlaceLocationPrivate &other)
+QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
     : QSharedData()
 {
     this->additionalData = other.additionalData;
     this->address = other.address;
     this->alternativeLabels = other.alternativeLabels;
-    this->displayPosition = other.displayPosition;
+    this->coordinate = other.coordinate;
     this->navigationPositions = other.navigationPositions;
     this->label = other.label;
     this->locationId = other.locationId;
     this->locationScore = other.locationScore;
-    this->mapView = other.mapView;
+    this->viewport = other.viewport;
 }
 
-QPlaceLocationPrivate::~QPlaceLocationPrivate()
+QGeoLocationPrivate::~QGeoLocationPrivate()
 {
 }
 
-bool QPlaceLocationPrivate::operator==(const QPlaceLocationPrivate &other) const
+bool QGeoLocationPrivate::operator==(const QGeoLocationPrivate &other) const
 {
-    return (
-            this->additionalData == other.additionalData
+    return  (this->additionalData == other.additionalData
             && this->address == other.address
             && this->alternativeLabels == other.alternativeLabels
-            && this->displayPosition == other.displayPosition
+            && this->coordinate == other.coordinate
             && this->navigationPositions == other.navigationPositions
             && this->label == other.label
             && this->locationId == other.locationId
             && this->locationScore == other.locationScore
-            && this->mapView == other.mapView
-    );
+            && this->viewport == other.viewport);
+
 }
 
 /*!
-    \class QPlaceLocation
+    \class QGeoLocation
 
     \inmodule QPlaces
 
-    \brief The QPlaceLocation class represents a location object.
+    \brief The QGeoLocation class represents a location object.
 
-    Each QPlaceLocation represents a location object with a number of attributes
-    such as label, display position etc. Each QPlaceLocation is associated with place.
+    Each QGeoLocation represents a location object with a number of attributes
+    such as label, display position etc. Each QGeoLocation is associated with place.
 
     Location objects are read-only, e.g. user of API might get location object
     associated to specific place but can not edit its content. User might also create new
     location object and add it to place.
 
-    QPlaceLocation is an in memory representation of a location object.
+    QGeoLocation is an in memory representation of a location object.
 */
 
 /*!
     Default constructor. Constructs an new location object.
 */
-QPlaceLocation::QPlaceLocation()
-    : d(new QPlaceLocationPrivate)
+QGeoLocation::QGeoLocation()
+    : d(new QGeoLocationPrivate)
 {
 }
 
 /*!
     Constructs a copy of \a other
 */
-QPlaceLocation::QPlaceLocation(const QPlaceLocation &other)
+QGeoLocation::QGeoLocation(const QGeoLocation &other)
     :d(other.d)
 {
 }
@@ -119,16 +118,16 @@ QPlaceLocation::QPlaceLocation(const QPlaceLocation &other)
 /*!
     Destructor.
 */
-QPlaceLocation::~QPlaceLocation()
+QGeoLocation::~QGeoLocation()
 {
 }
 
-QPlaceLocation &QPlaceLocation::operator =(const QPlaceLocation &other) {
+QGeoLocation &QGeoLocation::operator =(const QGeoLocation &other) {
     d = other.d;
     return *this;
 }
 
-bool QPlaceLocation::operator==(const QPlaceLocation &other) const
+bool QGeoLocation::operator==(const QGeoLocation &other) const
 {
     return (*(d.constData()) == *(other.d.constData()));
 }
@@ -136,7 +135,7 @@ bool QPlaceLocation::operator==(const QPlaceLocation &other) const
 /*!
     Returns additional data.
 */
-QVariantHash QPlaceLocation::additionalData() const
+QVariantHash QGeoLocation::additionalData() const
 {
     return d->additionalData;
 }
@@ -144,7 +143,7 @@ QVariantHash QPlaceLocation::additionalData() const
 /*!
     Sets additional data.
 */
-void QPlaceLocation::setAdditionalData(const QVariantHash &data)
+void QGeoLocation::setAdditionalData(const QVariantHash &data)
 {
     d->additionalData = data;
 }
@@ -152,7 +151,7 @@ void QPlaceLocation::setAdditionalData(const QVariantHash &data)
 /*!
     Returns address.
 */
-QGeoAddress QPlaceLocation::address() const
+QGeoAddress QGeoLocation::address() const
 {
     return d->address;
 }
@@ -160,7 +159,7 @@ QGeoAddress QPlaceLocation::address() const
 /*!
     Sets address.
 */
-void QPlaceLocation::setAddress(const QGeoAddress &address)
+void QGeoLocation::setAddress(const QGeoAddress &address)
 {
     d->address = address;
 }
@@ -168,7 +167,7 @@ void QPlaceLocation::setAddress(const QGeoAddress &address)
 /*!
     Returns alternative labels.
 */
-QList<QPlaceAlternativeValue> QPlaceLocation::alternativeLabels() const
+QList<QPlaceAlternativeValue> QGeoLocation::alternativeLabels() const
 {
     return d->alternativeLabels;
 }
@@ -176,31 +175,31 @@ QList<QPlaceAlternativeValue> QPlaceLocation::alternativeLabels() const
 /*!
     Sets alternative labels.
 */
-void QPlaceLocation::setAlternativeLabels(const QList<QPlaceAlternativeValue> &labels)
+void QGeoLocation::setAlternativeLabels(const QList<QPlaceAlternativeValue> &labels)
 {
     d->alternativeLabels = labels;
 }
 
 /*!
-    Returns display position.
+    Returns the location's coordinate.
 */
-QGeoCoordinate QPlaceLocation::displayPosition() const
+QGeoCoordinate QGeoLocation::coordinate() const
 {
-    return d->displayPosition;
+    return d->coordinate;
 }
 
 /*!
-    Sets display position.
+    Sets the location's \a coordinate.
 */
-void QPlaceLocation::setDisplayPosition(const QGeoCoordinate &position)
+void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    d->displayPosition = position;
+    d->coordinate = coordinate;
 }
 
 /*!
     Returns navigation positions.
 */
-QList<QGeoCoordinate> QPlaceLocation::navigationPositions() const
+QList<QGeoCoordinate> QGeoLocation::navigationPositions() const
 {
     return d->navigationPositions;
 }
@@ -208,7 +207,7 @@ QList<QGeoCoordinate> QPlaceLocation::navigationPositions() const
 /*!
     Sets navigation positions.
 */
-void QPlaceLocation::setNavigationPositions(const QList<QGeoCoordinate> &positions)
+void QGeoLocation::setNavigationPositions(const QList<QGeoCoordinate> &positions)
 {
     d->navigationPositions = positions;
 }
@@ -216,7 +215,7 @@ void QPlaceLocation::setNavigationPositions(const QList<QGeoCoordinate> &positio
 /*!
     Returns label.
 */
-QString QPlaceLocation::label() const
+QString QGeoLocation::label() const
 {
     return d->label;
 }
@@ -224,7 +223,7 @@ QString QPlaceLocation::label() const
 /*!
     Sets label.
 */
-void QPlaceLocation::setLabel(const QString &label)
+void QGeoLocation::setLabel(const QString &label)
 {
     d->label = label;
 }
@@ -232,7 +231,7 @@ void QPlaceLocation::setLabel(const QString &label)
 /*!
     Returns location id.
 */
-QString QPlaceLocation::locationId() const
+QString QGeoLocation::locationId() const
 {
     return d->locationId;
 }
@@ -240,7 +239,7 @@ QString QPlaceLocation::locationId() const
 /*!
     Sets location id.
 */
-void QPlaceLocation::setLocationId(const QString &locationId)
+void QGeoLocation::setLocationId(const QString &locationId)
 {
     d->locationId = locationId;
 }
@@ -248,7 +247,7 @@ void QPlaceLocation::setLocationId(const QString &locationId)
 /*!
     Returns location score.
 */
-int QPlaceLocation::locationScore() const
+qreal QGeoLocation::locationScore() const
 {
     return d->locationScore;
 }
@@ -256,7 +255,7 @@ int QPlaceLocation::locationScore() const
 /*!
     Sets location score.
 */
-void QPlaceLocation::setLocationScore(const int &score)
+void QGeoLocation::setLocationScore(const qreal &score)
 {
     d->locationScore = score;
 }
@@ -264,15 +263,15 @@ void QPlaceLocation::setLocationScore(const int &score)
 /*!
     Returns view port.
 */
-QGeoBoundingBox QPlaceLocation::mapView() const
+QGeoBoundingBox QGeoLocation::viewport() const
 {
-    return d->mapView;
+    return d->viewport;
 }
 
 /*!
     Sets view port.
 */
-void QPlaceLocation::setMapView(const QGeoBoundingBox &coordinate)
+void QGeoLocation::setViewport(const QGeoBoundingBox &viewport)
 {
-    d->mapView = coordinate;
+    d->viewport = viewport;
 }

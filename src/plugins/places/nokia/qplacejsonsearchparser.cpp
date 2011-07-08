@@ -54,9 +54,9 @@
 
 #include <qgeocoordinate.h>
 #include <qgeoaddress.h>
+#include <qgeolocation.h>
 #include <qgeoplace.h>
 #include <qplacecontact.h>
-#include <qplacelocation.h>
 #include <qplacerating.h>
 #include <qplacecategory.h>
 #include <qplacesupplier.h>
@@ -281,7 +281,7 @@ void QPlaceJSonSearchParser::processRating(const QScriptValue &properties, QGeoP
     }
 }
 
-void QPlaceJSonSearchParser::processAddress(const QScriptValue &properties, QPlaceLocation *location)
+void QPlaceJSonSearchParser::processAddress(const QScriptValue &properties, QGeoLocation *location)
 {
     QGeoAddress newAddress;
     QScriptValue value = properties.property(search_properties_address_country);
@@ -327,7 +327,7 @@ void QPlaceJSonSearchParser::processAddress(const QScriptValue &properties, QPla
 
 void QPlaceJSonSearchParser::processLocation(const QScriptValue &properties, QGeoPlace *place)
 {
-    QPlaceLocation location;
+    QGeoLocation location;
 
     bool latOK(false);
     bool lonOK(false);
@@ -347,7 +347,7 @@ void QPlaceJSonSearchParser::processLocation(const QScriptValue &properties, QGe
         QGeoCoordinate pos;
         pos.setLatitude(latitude);
         pos.setLongitude(longitude);
-        location.setDisplayPosition(pos);
+        location.setCoordinate(pos);
     }
 
     // bounding box
@@ -387,7 +387,7 @@ void QPlaceJSonSearchParser::processLocation(const QScriptValue &properties, QGe
         QGeoBoundingBox boundingBox;
         boundingBox.setTopLeft(topLeft);
         boundingBox.setBottomRight(bottomRight);
-        location.setMapView(boundingBox);
+        location.setViewport(boundingBox);
     }
 
     processAddress(properties, &location);

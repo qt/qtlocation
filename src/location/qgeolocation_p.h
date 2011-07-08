@@ -39,36 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACELOCATION_P_H
-#define QPLACELOCATION_P_H
+#ifndef QGEOLOCATION_P_H
+#define QGEOLOCATION_P_H
 
 #include <QSharedData>
 
-#include "qplacelocation.h"
+#include "qgeolocation.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QPlaceLocationPrivate : public QSharedData
+class QGeoLocationPrivate : public QSharedData
 {
 public:
-    QPlaceLocationPrivate();
-    QPlaceLocationPrivate(const QPlaceLocationPrivate &other);
+    QGeoLocationPrivate();
+    QGeoLocationPrivate(const QGeoLocationPrivate &other);
 
-    ~QPlaceLocationPrivate();
+    ~QGeoLocationPrivate();
 
-    bool operator==(const QPlaceLocationPrivate &other) const;
+    bool operator==(const QGeoLocationPrivate &other) const;
 
     QVariantHash additionalData;
     QGeoAddress address;
     QList<QPlaceAlternativeValue> alternativeLabels;
-    QGeoCoordinate displayPosition;
+    QGeoCoordinate coordinate;
     QList<QGeoCoordinate> navigationPositions;
     QString label;
     QString locationId;
-    int locationScore;
-    QGeoBoundingBox mapView;
+    qreal locationScore;
+    QGeoBoundingBox viewport;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QPLACELOCATION_P_H
+#endif

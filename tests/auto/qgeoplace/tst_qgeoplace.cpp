@@ -48,10 +48,10 @@ void tst_QGeoPlace::constructorTest()
     QPlaceBusinessInformation obj;
     obj.setOpeningNote("10");
     testObj.setBusinessInformation(obj);
-    QPlaceLocation sup;
+    QGeoLocation sup;
     sup.setLabel("testName1");
     sup.setLocationId("testId");
-    QList<QPlaceLocation> list;
+    QList<QGeoLocation> list;
     list.append(sup);
     sup.setLocationId("testName2");
     list.append(sup);
@@ -153,8 +153,8 @@ void tst_QGeoPlace::ratingTest()
 void tst_QGeoPlace::locationTest()
 {
     QGeoPlace testObj;
-    QVERIFY2(testObj.location() == QPlaceLocation(), "Wrong default value");
-    QPlaceLocation obj;
+    QVERIFY2(testObj.location() == QGeoLocation(), "Wrong default value");
+    QGeoLocation obj;
     obj.setLocationScore(10);
     testObj.setLocation(obj);
     QVERIFY2(testObj.location() == obj, "Wrong value returned");
@@ -254,10 +254,10 @@ void tst_QGeoPlace::alternativeLocationsTest()
 {
     QGeoPlace testObj;
     QVERIFY2(testObj.alternativeLocations().count() == 0, "Wrong default value");
-    QPlaceLocation sup;
+    QGeoLocation sup;
     sup.setLabel("testName1");
     sup.setLocationId("testId");
-    QList<QPlaceLocation> list;
+    QList<QGeoLocation> list;
     list.append(sup);
     sup.setLocationId("testName2");
     list.append(sup);
@@ -309,10 +309,10 @@ void tst_QGeoPlace::operatorsTest()
     QPlaceBusinessInformation obj;
     obj.setOpeningNote("10");
     testObj.setBusinessInformation(obj);
-    QPlaceLocation sup;
+    QGeoLocation sup;
     sup.setLabel("testName1");
     sup.setLocationId("testId");
-    QList<QPlaceLocation> list;
+    QList<QGeoLocation> list;
     list.append(sup);
     sup.setLocationId("testName2");
     list.append(sup);
@@ -320,7 +320,7 @@ void tst_QGeoPlace::operatorsTest()
     QStringList tags;
     tags << "1" << "2" << "3";
     testObj.setTags(tags);
-    QPlaceLocation loc;
+    QGeoLocation loc;
     loc.setLocationScore(10);
     testObj.setLocation(loc);
 

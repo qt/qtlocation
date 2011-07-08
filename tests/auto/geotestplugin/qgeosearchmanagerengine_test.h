@@ -47,7 +47,7 @@
 #include <QLocale>
 #include <qlandmarkmanager.h>
 #include <qgeoaddress.h>
-#include <qgeoplace.h>
+#include <qgeolocation.h>
 #include <qgeosearchreply.h>
 
 #include <QTimer>
@@ -62,12 +62,12 @@ class SearchReplyTest :public QGeoSearchReply
 public:
     SearchReplyTest(QObject *parent=0):QGeoSearchReply (parent) {}
 
-    void  callAddPlace ( const QGeoPlace & place ) {addPlace(place);}
+    void  callAddLocation ( const QGeoLocation & location ) {addLocation(location);}
     void  callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}
     void  callSetFinished ( bool finished ) {setFinished(finished);}
     void  callSetLimit ( int limit ) {setLimit(limit);}
     void  callSetOffset ( int offset ) {setOffset(offset);}
-    void  callSetPlaces ( const QList<QGeoPlace> & places ) {setPlaces(places);}
+    void  callSetLocations ( const QList<QGeoLocation> & locations ) {setLocations(locations);}
     void  callSetViewport ( QGeoBoundingArea * viewport ) {setViewport(viewport);}
     void abort() {
         emit aborted();
@@ -127,8 +127,8 @@ public:
             }
         }
 
-        // 2. Set the places into the reply
-        setPlaces(searchReply_, address);
+        // 2. Set the locations into the reply
+        setLocations(searchReply_, address);
 
         // 3. Finish the request
         if (finishRequestImmediately_) {
@@ -158,34 +158,34 @@ public Q_SLOTS:
     }
 
 public:
-    void setPlaces(SearchReplyTest* reply, const QString searchString, int limit )
+    void setLocations(SearchReplyTest* reply, const QString searchString, int limit )
     {
         for (int i = 0; i < limit; ++i) {
-            QGeoPlace place;
+            QGeoLocation location;
             QGeoAddress address;
             address.setStreet(searchString);
-            place.setAddress(address);
-            reply->callAddPlace(place);
+            location.setAddress(address);
+            reply->callAddLocation(location);
         }
     }
 
-    void setPlaces(SearchReplyTest* reply, const QGeoAddress& address)
+    void setLocations(SearchReplyTest* reply, const QGeoAddress& address)
     {
         int count = address.county().toInt();
 
         for (int i = 0; i < count; ++i) {
-            QGeoPlace place;
-            place.setAddress(address);
-            reply->callAddPlace(place);
+            QGeoLocation location;
+            location.setAddress(address);
+            reply->callAddLocation(location);
         }
     }
 
-    void setPlaces(SearchReplyTest* reply, const QGeoCoordinate & coordinate)
+    void setLocations(SearchReplyTest* reply, const QGeoCoordinate & coordinate)
     {
         for (int i = 0; i < coordinate.longitude(); ++i) {
-            QGeoPlace place;
-            place.setCoordinate(coordinate);
-            reply->callAddPlace(place);
+            QGeoLocation location;
+            location.setCoordinate(coordinate);
+            reply->callAddLocation(location);
         }
     }
 
@@ -194,7 +194,7 @@ public:
         searchReply_ = new SearchReplyTest();
         connect(searchReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
 
-        setPlaces(searchReply_, coordinate);
+        setLocations(searchReply_, coordinate);
         searchReply_->callSetViewport(bounds);
 
         if (coordinate.latitude() > 70) {

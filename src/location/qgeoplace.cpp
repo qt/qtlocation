@@ -352,7 +352,7 @@ void QGeoPlace::setDescriptions(const QList<QPlaceDescription> &descriptions)
 /*!
     Returns location.
 */
-QPlaceLocation QGeoPlace::location() const
+QGeoLocation QGeoPlace::location() const
 {
     Q_D(const QGeoPlace);
     return d->location;
@@ -361,7 +361,7 @@ QPlaceLocation QGeoPlace::location() const
 /*!
     Sets location.
 */
-void QGeoPlace::setLocation(const QPlaceLocation &location)
+void QGeoPlace::setLocation(const QGeoLocation &location)
 {
     Q_D(QGeoPlace);
     d->location = location;
@@ -370,7 +370,7 @@ void QGeoPlace::setLocation(const QPlaceLocation &location)
 /*!
     Returns alternative locations.
 */
-QList<QPlaceLocation> QGeoPlace::alternativeLocations() const
+QList<QGeoLocation> QGeoPlace::alternativeLocations() const
 {
     Q_D(const QGeoPlace);
     return d->alternativeLocations;
@@ -379,7 +379,7 @@ QList<QPlaceLocation> QGeoPlace::alternativeLocations() const
 /*!
     Sets alternative locations.
 */
-void QGeoPlace::setAlternativeLocations(const QList<QPlaceLocation> &locations)
+void QGeoPlace::setAlternativeLocations(const QList<QGeoLocation> &locations)
 {
     Q_D(QGeoPlace);
     d->alternativeLocations = locations;

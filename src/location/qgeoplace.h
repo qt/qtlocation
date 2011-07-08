@@ -49,12 +49,12 @@
 #include "qgeoaddress.h"
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
+#include "qgeolocation.h"
 #include "qplacealternativevalue.h"
 #include "qplacebusinessinformation.h"
 #include "qplacecategory.h"
 #include "qplacecontact.h"
 #include "qplacedescription.h"
-#include "qplacelocation.h"
 #include "qplacerating.h"
 #include "qplacepaginationlist.h"
 #include "qplacemediaobject.h"
@@ -105,10 +105,10 @@ public:
     void setContacts(const QList<QPlaceContact> &contacts);
     QList<QPlaceDescription> descriptions() const;
     void setDescriptions(const QList<QPlaceDescription> &descriptions);
-    QPlaceLocation location() const;
-    void setLocation(const QPlaceLocation &location);
-    QList<QPlaceLocation> alternativeLocations() const;
-    void setAlternativeLocations(const QList<QPlaceLocation> &locations);
+    QGeoLocation location() const;
+    void setLocation(const QGeoLocation &location);
+    QList<QGeoLocation> alternativeLocations() const;
+    void setAlternativeLocations(const QList<QGeoLocation> &locations);
     QPlaceRating rating() const;
     void setRating(const QPlaceRating &rating);
     QList<QPlaceSupplier> suppliers() const;

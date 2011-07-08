@@ -20,7 +20,6 @@ SUBDIRS += geotestplugin \
            qplacecategory \
            qplacecontact \
            qplacedescription \
-           qplacelocation \
            qplacemediaobject \
            qplaceperiod \
            qplacequery \
@@ -28,4 +27,5 @@ SUBDIRS += geotestplugin \
            qplacereview \
            qplacesearchquery \
            qplacesupplier \
-           qplaceweekdayhours
+           qplaceweekdayhours \
+           declarative

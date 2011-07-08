@@ -278,9 +278,9 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
     if (!d->reverseReplies.contains(reply))
         return;
 
-    if (reply->places().size() > 0) {
-        QGeoPlace place = reply->places().first();
-        d->myLocation->setAddress(place.address());
+    if (reply->locations().isEmpty() > 0) {
+        QGeoLocation location = reply->locations().first();
+        d->myLocation->setAddress(location.address());
     }
 
     d->revGeocodeRunning = false;
@@ -297,18 +297,13 @@ void MarkerManager::replyFinished(QGeoSearchReply *reply)
         return;
 
     // generate the markers and add them to the map
-    foreach (QGeoPlace place, reply->places()) {
+    foreach (const QGeoLocation &location, reply->locations()) {
         Marker *m = new Marker(Marker::SearchMarker);
-        m->setCoordinate(place.coordinate());
+        m->setCoordinate(location.coordinate());
 
-        if (place.isLandmark()) {
-            QLandmark lm(place);
-            m->setName(lm.name());
-        } else {
-            m->setName(QString("%1, %2").arg(place.address().street())
-                                        .arg(place.address().city()));
-        }
-        m->setAddress(place.address());
+        m->setName(QString("%1, %2").arg(location.address().street())
+                                        .arg(location.address().city()));
+        m->setAddress(location.address());
         m->setMoveable(false);
 
         d->searchMarkers.append(m);
@@ -316,7 +311,7 @@ void MarkerManager::replyFinished(QGeoSearchReply *reply)
         if (d->map) {
             d->map->addMapObject(m);
             // also zoom out until marker is visible
-            while (!d->map->viewport().contains(place.coordinate()))
+            while (!d->map->viewport().contains(location.coordinate()))
                 d->map->setZoomLevel(d->map->zoomLevel()-1);
         }
     }

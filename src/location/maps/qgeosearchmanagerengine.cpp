@@ -72,19 +72,6 @@ QTM_BEGIN_NAMESPACE
     setSupportsReverseGeocoding(true) at some point in time before
     reverseGeoocode() is called.
 
-    The search() function will make use of the QLandmarkManager instances
-    returned by additionalLandmarkManagers(). If a QLandmarkManager is used
-    internally to query the service providers landmark data the
-    QLandmarkManager can be made available to the users with
-    setDefaultLandmarkManager().
-
-    The subclass should call setSupportedSearchTypes() at some point in time
-    before search() is called.
-
-    If the service supports searching for places the subclass should provide
-    an implementetation of search() and call setSupportedSearchTypes() at
-    some point in time before search() is called.
-
     A subclass of QGeoSearchManagerEngine will often make use of a subclass
     fo QGeoSearchReply internally, in order to add any engine-specific
     data (such as a QNetworkReply object for network-based services) to the
@@ -171,8 +158,8 @@ int QGeoSearchManagerEngine::managerVersion() const
     If supportsGeocoding() returns false an
     QGeoSearchReply::UnsupportedOptionError will occur.
 
-    Once the operation has completed, QGeoSearchReply::places() can be used to
-    retrieve the results, which will consist of a list of QGeoPlace objects.
+    Once the operation has completed, QGeoSearchReply::locations() can be used to
+    retrieve the results, which will consist of a list of QGeoLocation objects.
     These object represent a combination of coordinate and address data.
 
     The address data returned in the results may be different from \a address.
@@ -211,8 +198,8 @@ QGeoSearchReply* QGeoSearchManagerEngine::geocode(const QGeoAddress &address,
     If supportsReverseGeocoding() returns false an
     QGeoSearchReply::UnsupportedOptionError will occur.
 
-    At that point QGeoSearchReply::places() can be used to retrieve the
-    results, which will consist of a list of QGeoPlace objects. These object
+    At that point QGeoSearchReply::locations() can be used to retrieve the
+    results, which will consist of a list of QGeoLocation objects. These object
     represent a combination of coordinate and address data.
 
     The coordinate data returned in the results may be different from \a
@@ -244,9 +231,7 @@ QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &c
 }
 
 /*!
-    Begins searching for a place matching \a searchString.  The value of
-    \a searchTypes will determine whether the search is for addresses only,
-    for landmarks only or for both.
+    Begins searching for a location matching \a searchString.
 
     A QGeoSearchReply object will be returned, which can be used to manage the
     geocoding operation and to return the results of the operation.
@@ -254,27 +239,9 @@ QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &c
     This engine and the returned QGeoSearchReply object will emit signals
     indicating if the operation completes or if errors occur.
 
-    If supportsGeocoding() returns false and \a searchTypes is
-    QGeoSearchManagerEngine::SearchGeocode an
-    QGeoSearchReply::UnsupportedOptionError will occur.
-
-    Once the operation has completed, QGeoSearchReply::places() can be used to
-    retrieve the results, which will consist of a list of QGeoPlace objects.
+    Once the operation has completed, QGeoSearchReply::locations() can be used to
+    retrieve the results, which will consist of a list of QGeoLocation objects.
     These object represent a combination of coordinate and address data.
-
-    If any of the QGeoPlace instances in the results have landmark associated
-    data, QGeoPlace::isLandmark() will return true and
-    QLandmark::QLandmark(const QGeoPlace &place) can be used to convert the
-    QGeoPlace instance into a QLandmark instance.
-
-    If \a searchTypes is QGeoSearchManagerEngine::SearchLandmarks or
-    QGeoSearchManagerEngine::SearchAll, a free text landmark search will be
-    performed. The results will be a combination of the backend specific
-    landmark search and the same free text search applied to each of the
-    QLandmarkManager instances in additionalLandmarkManagers().
-
-    \note At present the additional landmark managers only search for the
-    search string in the name of the landmarks.
 
     If \a limit is -1 the entire result set will be returned, otherwise at most
     \a limit results will be returned.
@@ -283,12 +250,6 @@ QGeoSearchReply* QGeoSearchManagerEngine::reverseGeocode(const QGeoCoordinate &c
     first \a offset results.
 
     The \a limit and \a offset results are used together to implement paging.
-
-    If additional landmark managers have been setup the number of results
-    returned will be at most (1 + number of additional landmark managers) *
-    \a limit.  This happens because the results are requested from all sources, combined, and returned once
-    all sources have responded.
-
 
     If \a bounds is non-null and a valid QGeoBoundingArea it will be used to
     limit the results to those that are contained by \a bounds.

@@ -78,7 +78,7 @@ private:
     void processContacts(const QScriptValue &properties, QGeoPlace *place);
     void processCategories(const QScriptValue &categories, QGeoPlace *place);
     void processRating(const QScriptValue &properties, QGeoPlace *place);
-    void processAddress(const QScriptValue &properties, QPlaceLocation *location);
+    void processAddress(const QScriptValue &properties, QGeoLocation *location);
     void processLocation(const QScriptValue &properties, QGeoPlace *place);
 private:
     QList<QPlaceSearchResult> searchResultsList;

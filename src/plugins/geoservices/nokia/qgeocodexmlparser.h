@@ -57,7 +57,7 @@ class QIODevice;
 
 #include <qgeocoordinate.h>
 #include <qgeoboundingbox.h>
-#include <qgeoplace.h>
+#include <qgeolocation.h>
 #include <qgeoaddress.h>
 
 QTM_USE_NAMESPACE
@@ -70,20 +70,20 @@ public:
 
     bool parse(QIODevice* source);
 
-    QList<QGeoPlace> results() const;
+    QList<QGeoLocation> results() const;
     QString errorString() const;
 
 private:
     bool parseRootElement();
-    bool parsePlace(QGeoPlace *place);
-    bool parseLocation(QGeoPlace *place);
+    bool parsePlace(QGeoLocation *location);
+    bool parseLocation(QGeoLocation *location);
     bool parseAddress(QGeoAddress *address);
     bool parseBoundingBox(QGeoBoundingBox *bounds);
     bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
 
     QXmlStreamReader *m_reader;
 
-    QList<QGeoPlace> m_results;
+    QList<QGeoLocation> m_results;
     QString m_errorString;
 };
 

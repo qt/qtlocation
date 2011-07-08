@@ -53,7 +53,7 @@ void tst_QGeoSearchReply::cleanupTestCase()
 {
 
     delete reply;
-    delete qgeoplace;
+    delete qgeolocation;
 }
 
 void tst_QGeoSearchReply::init()
@@ -231,47 +231,47 @@ void tst_QGeoSearchReply::offset()
     QCOMPARE(reply->offset(),offset);
 }
 
-void tst_QGeoSearchReply::places()
+void tst_QGeoSearchReply::locations()
 {
-    QList <QGeoPlace> geoplaces;
-    geoplaces = reply->places();
+    QList <QGeoLocation> geolocations;
+    geolocations = reply->locations();
 
-    QCOMPARE(geoplaces.size(),0);
+    QCOMPARE(geolocations.size(),0);
 
     QGeoAddress *qgeoaddress = new QGeoAddress ();
     qgeoaddress->setCity("Berlin");
 
     QGeoCoordinate *qgeocoordinate = new QGeoCoordinate (12.12 , 54.43);
 
-    qgeoplace = new QGeoPlace ();
-    qgeoplace->setAddress(*qgeoaddress);
-    qgeoplace->setCoordinate(*qgeocoordinate);
+    qgeolocation = new QGeoLocation ();
+    qgeolocation->setAddress(*qgeoaddress);
+    qgeolocation->setCoordinate(*qgeocoordinate);
 
-    reply->callAddPlace(*qgeoplace);
+    reply->callAddLocation(*qgeolocation);
 
-    geoplaces = reply->places();
-    QCOMPARE(geoplaces.size(),1);
-    QCOMPARE(geoplaces.at(0),*qgeoplace);
+    geolocations = reply->locations();
+    QCOMPARE(geolocations.size(),1);
+    QCOMPARE(geolocations.at(0),*qgeolocation);
 
-    QGeoPlace *qgeoplacecopy = new QGeoPlace (*qgeoplace);
+    QGeoLocation *qgeolocationcopy = new QGeoLocation (*qgeolocation);
 
-    QList <QGeoPlace> qgeoplaces;
-    qgeoplaces.append(*qgeoplace);
-    qgeoplaces.append(*qgeoplacecopy);
+    QList <QGeoLocation> qgeolocations;
+    qgeolocations.append(*qgeolocation);
+    qgeolocations.append(*qgeolocationcopy);
 
-    reply->callSetPlaces(qgeoplaces);
+    reply->callSetLocations(qgeolocations);
 
-    geoplaces = reply->places();
+    geolocations = reply->locations();
 
-    QCOMPARE(geoplaces.size(),qgeoplaces.size());
-    for (int i = 0 ; i < geoplaces.size(); i++)
+    QCOMPARE(geolocations.size(),qgeolocations.size());
+    for (int i = 0 ; i < geolocations.size(); i++)
     {
-        QCOMPARE(geoplaces.at(i),qgeoplaces.at(i));
+        QCOMPARE(geolocations.at(i),qgeolocations.at(i));
     }
 
     delete qgeoaddress;
     delete qgeocoordinate;
-    delete qgeoplacecopy;
+    delete qgeolocationcopy;
 }
 
 void tst_QGeoSearchReply::viewport()

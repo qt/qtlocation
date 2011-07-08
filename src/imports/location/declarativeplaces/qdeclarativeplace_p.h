@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QDeclarativeListProperty>
 #include <qgeoplace.h>
-#include "qdeclarativelocation_p.h"
+#include "qdeclarativegeolocation_p.h"
 #include "qdeclarativebusinessinformation_p.h"
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativesupplier_p.h"
@@ -27,8 +27,8 @@ class QDeclarativePlace : public QObject
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContact> contacts READ contacts NOTIFY contactsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeDescription> descriptions READ descriptions NOTIFY descriptionsChanged)
-    Q_PROPERTY(QDeclarativeLocation* location READ location WRITE setLocation NOTIFY locationChanged);
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeLocation> alternativeLocations READ alternativeLocations NOTIFY alternativeLocationsChanged)
+    Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoLocation> alternativeLocations READ alternativeLocations NOTIFY alternativeLocationsChanged)
     Q_PROPERTY(QDeclarativeBusinessInformation* businessInformation READ businessInformation WRITE setBusinessInformation NOTIFY businessInformationChanged);
     Q_PROPERTY(QDeclarativeRating* rating READ rating WRITE setRating NOTIFY ratingChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSupplier> suppliers READ suppliers NOTIFY suppliersChanged)
@@ -78,14 +78,14 @@ public:
     static int descriptions_count(QDeclarativeListProperty<QDeclarativeDescription> *prop);
     static QDeclarativeDescription* descriptions_at(QDeclarativeListProperty<QDeclarativeDescription> *prop, int index);
     static void descriptions_clear(QDeclarativeListProperty<QDeclarativeDescription> *prop);
-    QDeclarativeLocation *location();
-    void setLocation(QDeclarativeLocation *location);
-    QDeclarativeListProperty<QDeclarativeLocation> alternativeLocations();
-    static void alternativeLocations_append(QDeclarativeListProperty<QDeclarativeLocation> *prop,
-                                  QDeclarativeLocation* value);
-    static int alternativeLocations_count(QDeclarativeListProperty<QDeclarativeLocation> *prop);
-    static QDeclarativeLocation* alternativeLocations_at(QDeclarativeListProperty<QDeclarativeLocation> *prop, int index);
-    static void alternativeLocations_clear(QDeclarativeListProperty<QDeclarativeLocation> *prop);
+    QDeclarativeGeoLocation *location();
+    void setLocation(QDeclarativeGeoLocation *location);
+    QDeclarativeListProperty<QDeclarativeGeoLocation> alternativeLocations();
+    static void alternativeLocations_append(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop,
+                                  QDeclarativeGeoLocation* value);
+    static int alternativeLocations_count(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop);
+    static QDeclarativeGeoLocation* alternativeLocations_at(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop, int index);
+    static void alternativeLocations_clear(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop);
     QDeclarativeRating *rating();
     void setRating(QDeclarativeRating *rating);
     QDeclarativeListProperty<QDeclarativeSupplier> suppliers();
@@ -150,8 +150,8 @@ private:
     QList<QDeclarativeCategory*> m_categories;
     QList<QDeclarativeContact*> m_contacts;
     QList<QDeclarativeDescription*> m_descriptions;
-    QDeclarativeLocation m_location;
-    QList<QDeclarativeLocation*> m_alternativeLocations;
+    QDeclarativeGeoLocation m_location;
+    QList<QDeclarativeGeoLocation*> m_alternativeLocations;
     QDeclarativeRating m_rating;
     QList<QDeclarativeSupplier*> m_suppliers;
     QDeclarativeMediaPaginationList m_mediaList;

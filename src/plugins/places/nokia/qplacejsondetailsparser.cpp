@@ -60,7 +60,7 @@
 #include <qplacedescription.h>
 #include <qplacerating.h>
 #include <qplacebusinessinformation.h>
-#include <qplacelocation.h>
+#include <qgeolocation.h>
 #include <qplacealternativevalue.h>
 #include <qplacemediaobject.h>
 #include <qplaceperiod.h>
@@ -372,7 +372,7 @@ QPlaceRating *QPlaceJSonDetailsParser::processRating(const QScriptValue &ratingE
     return rating;
 }
 
-void QPlaceJSonDetailsParser::processAddress(const QScriptValue &address, QPlaceLocation *location)
+void QPlaceJSonDetailsParser::processAddress(const QScriptValue &address, QGeoLocation *location)
 {
     QGeoAddress newAddress;
     QScriptValue value = address.property(place_address_street);
@@ -417,14 +417,14 @@ void QPlaceJSonDetailsParser::processAddress(const QScriptValue &address, QPlace
 void QPlaceJSonDetailsParser::processLocations(const QScriptValue &locations, QGeoPlace*targetPlace)
 {
     if (locations.isArray()) {
-        QList<QPlaceLocation> list;
+        QList<QGeoLocation> list;
         bool isFirst = true;
         QScriptValueIterator it(locations);
         while (it.hasNext()) {
             it.next();
             // array contains count as last element
             if (it.name() != "length") {
-                QPlaceLocation loc = processLocation(it.value());
+                QGeoLocation loc = processLocation(it.value());
                 if (isFirst) {
                     targetPlace->setLocation(loc);
                     isFirst = false;
@@ -435,14 +435,14 @@ void QPlaceJSonDetailsParser::processLocations(const QScriptValue &locations, QG
         }
         targetPlace->setAlternativeLocations(list);
     } else {
-        QPlaceLocation loc = processLocation(locations);
+        QGeoLocation loc = processLocation(locations);
         targetPlace->setLocation(loc);
     }
 }
 
-QPlaceLocation QPlaceJSonDetailsParser::processLocation(const QScriptValue &location)
+QGeoLocation QPlaceJSonDetailsParser::processLocation(const QScriptValue &location)
 {
-    QPlaceLocation newLocation;
+    QGeoLocation newLocation;
     QScriptValue property = location.property(place_geoCoordinates_element);
     if (property.isValid()) {
         QGeoCoordinate pos;
@@ -462,7 +462,7 @@ QPlaceLocation QPlaceJSonDetailsParser::processLocation(const QScriptValue &loca
                 pos.setLatitude(latitude);
             }
         }
-        newLocation.setDisplayPosition(pos);
+        newLocation.setCoordinate(pos);
     }
     property = location.property(place_address_element);
     if (property.isValid()) {

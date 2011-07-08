@@ -31,6 +31,7 @@ PUBLIC_HEADERS += \
                     qgeoboundingbox.h \
                     qgeoboundingcircle.h \
                     qgeocoordinate.h \
+                    qgeolocation.h \
                     qgeoplace.h \
                     qgeopositioninfo.h \
                     qgeopositioninfosource.h \
@@ -43,6 +44,7 @@ PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
                     qgeoboundingbox_p.h \
                     qgeoboundingcircle_p.h \
+                    qgeolocation_p.h \
                     qgeoplace_p.h \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h \
@@ -132,6 +134,7 @@ SOURCES += \
             qgeoboundingbox.cpp \
             qgeoboundingcircle.cpp \
             qgeocoordinate.cpp \
+            qgeolocation.cpp \
             qgeoplace.cpp \
             qgeopositioninfo.cpp \
             qgeopositioninfosource.cpp \

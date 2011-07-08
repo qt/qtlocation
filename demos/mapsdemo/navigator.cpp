@@ -98,15 +98,15 @@ void Navigator::start()
 
 void Navigator::on_addressSearchFinished()
 {
-    if (addressReply->places().size() <= 0) {
+    if (addressReply->locations().isEmpty() <= 0) {
         addressReply->deleteLater();
         return;
     }
 
-    QGeoPlace place = addressReply->places().at(0);
+    QGeoLocation location = addressReply->locations().at(0);
 
     QList<QGeoCoordinate> waypoints = request.waypoints();
-    waypoints.append(place.coordinate());
+    waypoints.append(location.coordinate());
     request.setWaypoints(waypoints);
 
     routeReply = routingManager->calculateRoute(request);
@@ -120,8 +120,8 @@ void Navigator::on_addressSearchFinished()
     }
 
     endMarker = new Marker(Marker::EndMarker);
-    endMarker->setCoordinate(place.coordinate());
-    endMarker->setAddress(place.address());
+    endMarker->setCoordinate(location.coordinate());
+    endMarker->setAddress(location.address());
     endMarker->setName("Destination");
     mapsWidget->map()->addMapObject(endMarker);
 

@@ -1,4 +1,4 @@
-#include "qdeclarativelocation_p.h"
+#include "qdeclarativegeolocation_p.h"
 
 QTM_USE_NAMESPACE
 
@@ -14,25 +14,31 @@ QTM_USE_NAMESPACE
     \ingroup qml-places
 */
 
-QDeclarativeLocation::QDeclarativeLocation(QObject* parent)
+QDeclarativeGeoLocation::QDeclarativeGeoLocation(QObject* parent)
         : QObject(parent)
 {
 }
 
-QDeclarativeLocation::QDeclarativeLocation(const QPlaceLocation &src,
+QDeclarativeGeoLocation::QDeclarativeGeoLocation(const QGeoLocation &src,
         QObject *parent)
         : QObject(parent),
-          m_src(src)
+          m_src(src),
+          m_address(src.address()),
+          m_coordinate(src.coordinate()),
+          m_boundingBox(src.viewport())
+{
+    for (int i = 0; i < src.navigationPositions().count(); ++i) {
+        m_navigationPositions.append(new QDeclarativeCoordinate(src.navigationPositions().at(i)));
+    }
+}
+
+QDeclarativeGeoLocation::~QDeclarativeGeoLocation()
 {
 }
 
-QDeclarativeLocation::~QDeclarativeLocation()
+void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
 {
-}
-
-void QDeclarativeLocation::setLocation(const QPlaceLocation &src)
-{
-    QPlaceLocation previous = m_src;
+    QGeoLocation previous = m_src;
     m_src = src;
 
     if (previous.additionalData() != m_src.additionalData()) {
@@ -46,9 +52,9 @@ void QDeclarativeLocation::setLocation(const QPlaceLocation &src)
         m_address.setAddress(m_src.address());
         emit addressChanged();
     }
-    if (previous.displayPosition() != m_src.displayPosition()) {
-        m_displayPosition.setCoordinate(m_src.displayPosition());
-        emit displayPositionChanged();
+    if (previous.coordinate() != m_src.coordinate()) {
+        m_coordinate.setCoordinate(m_src.coordinate());
+        emit coordinateChanged();
     }
     if (previous.navigationPositions() != m_src.navigationPositions()) {
         synchronizeNavigationPositions();
@@ -63,12 +69,12 @@ void QDeclarativeLocation::setLocation(const QPlaceLocation &src)
     if (previous.locationScore() != m_src.locationScore()) {
         emit locationScoreChanged();
     }
-    if (previous.mapView() != m_src.mapView()) {
-        emit mapViewChanged();
+    if (previous.viewport() != m_src.viewport()) {
+        emit viewport();
     }
 }
 
-QPlaceLocation QDeclarativeLocation::location() const
+QGeoLocation QDeclarativeGeoLocation::location() const
 {
     return m_src;
 }
@@ -79,7 +85,7 @@ QPlaceLocation QDeclarativeLocation::location() const
     This property holds additional data for location. Those are pairs of strings (key/value).
 */
 
-void QDeclarativeLocation::setAdditionalData(const QVariantHash &additionalData)
+void QDeclarativeGeoLocation::setAdditionalData(const QVariantHash &additionalData)
 {
     if (m_src.additionalData() != additionalData) {
         m_src.setAdditionalData(additionalData);
@@ -87,7 +93,7 @@ void QDeclarativeLocation::setAdditionalData(const QVariantHash &additionalData)
     }
 }
 
-QVariantHash QDeclarativeLocation::additionalData() const
+QVariantHash QDeclarativeGeoLocation::additionalData() const
 {
     return m_src.additionalData();
 }
@@ -97,7 +103,7 @@ QVariantHash QDeclarativeLocation::additionalData() const
 
     This property holds address of the location.
 */
-void QDeclarativeLocation::setAddress(QDeclarativeGeoAddress *address)
+void QDeclarativeGeoLocation::setAddress(QDeclarativeGeoAddress *address)
 {
     if (m_src.address() != address->address()) {
         m_address.setAddress(address->address());
@@ -106,28 +112,28 @@ void QDeclarativeLocation::setAddress(QDeclarativeGeoAddress *address)
     }
 }
 
-QDeclarativeGeoAddress *QDeclarativeLocation::address()
+QDeclarativeGeoAddress *QDeclarativeGeoLocation::address()
 {
     return &m_address;
 }
 
 /*!
-    \qmlproperty string Location::displayPosition
+    \qmlproperty string Location::coordinate
 
     This property holds display coordinates of the location.
 */
-void QDeclarativeLocation::setDisplayPosition(QDeclarativeCoordinate *displayPosition)
+void QDeclarativeGeoLocation::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
-    if (m_src.displayPosition() != displayPosition->coordinate()) {
-        m_displayPosition.setCoordinate(displayPosition->coordinate());
-        m_src.setDisplayPosition(displayPosition->coordinate());
-        emit displayPositionChanged();
+    if (m_src.coordinate() != coordinate->coordinate()) {
+        m_coordinate.setCoordinate(coordinate->coordinate());
+        m_src.setCoordinate(coordinate->coordinate());
+        emit coordinateChanged();
     }
 }
 
-QDeclarativeCoordinate *QDeclarativeLocation::displayPosition()
+QDeclarativeCoordinate *QDeclarativeGeoLocation::coordinate()
 {
-    return &m_displayPosition;
+    return &m_coordinate;
 }
 
 /*!
@@ -135,7 +141,7 @@ QDeclarativeCoordinate *QDeclarativeLocation::displayPosition()
 
     This property holds label.
 */
-void QDeclarativeLocation::setLabel(const QString &label)
+void QDeclarativeGeoLocation::setLabel(const QString &label)
 {
     if (m_src.label() != label) {
         m_src.setLabel(label);
@@ -143,7 +149,7 @@ void QDeclarativeLocation::setLabel(const QString &label)
     }
 }
 
-QString QDeclarativeLocation::label() const
+QString QDeclarativeGeoLocation::label() const
 {
     return m_src.label();
 }
@@ -153,7 +159,7 @@ QString QDeclarativeLocation::label() const
 
     This property holds location id.
 */
-void QDeclarativeLocation::setLocationId(const QString &locationId)
+void QDeclarativeGeoLocation::setLocationId(const QString &locationId)
 {
     if (m_src.locationId() != locationId) {
         m_src.setLocationId(locationId);
@@ -161,7 +167,7 @@ void QDeclarativeLocation::setLocationId(const QString &locationId)
     }
 }
 
-QString QDeclarativeLocation::locationId() const
+QString QDeclarativeGeoLocation::locationId() const
 {
     return m_src.locationId();
 }
@@ -171,7 +177,7 @@ QString QDeclarativeLocation::locationId() const
 
     This property holds location score.
 */
-void QDeclarativeLocation::setLocationScore(const int &locationScore)
+void QDeclarativeGeoLocation::setLocationScore(const int &locationScore)
 {
     if (m_src.locationScore() != locationScore) {
         m_src.setLocationScore(locationScore);
@@ -179,26 +185,26 @@ void QDeclarativeLocation::setLocationScore(const int &locationScore)
     }
 }
 
-int QDeclarativeLocation::locationScore() const
+int QDeclarativeGeoLocation::locationScore() const
 {
     return m_src.locationScore();
 }
 
 /*!
-    \qmlproperty string Location::mapView
+    \qmlproperty string Location::viewport
 
     This property holds bouding box of area on map ocupied by location.
 */
-void QDeclarativeLocation::setMapView(QDeclarativeGeoBoundingBox *mapView)
+void QDeclarativeGeoLocation::setViewport(QDeclarativeGeoBoundingBox *viewport)
 {
-    if (m_src.mapView() != mapView->box()) {
-        m_boundingBox.setBox(mapView->box());
-        m_src.setMapView(mapView->box());
-        emit mapViewChanged();
+    if (m_src.viewport() != viewport->box()) {
+        m_boundingBox.setBox(viewport->box());
+        m_src.setViewport(viewport->box());
+        emit viewportChanged();
     }
 }
 
-QDeclarativeGeoBoundingBox *QDeclarativeLocation::mapView()
+QDeclarativeGeoBoundingBox *QDeclarativeGeoLocation::viewport()
 {
     return &m_boundingBox;
 }
@@ -208,7 +214,7 @@ QDeclarativeGeoBoundingBox *QDeclarativeLocation::mapView()
 
     This property alternative values for label property.
 */
-QDeclarativeListProperty<QDeclarativeAlternativeValue> QDeclarativeLocation::alternativeLabels()
+QDeclarativeListProperty<QDeclarativeAlternativeValue> QDeclarativeGeoLocation::alternativeLabels()
 {
     return QDeclarativeListProperty<QDeclarativeAlternativeValue>(this,
                                                           0, // opaque data parameter
@@ -218,10 +224,10 @@ QDeclarativeListProperty<QDeclarativeAlternativeValue> QDeclarativeLocation::alt
                                                           alternativeValue_clear);
 }
 
-void QDeclarativeLocation::alternativeValue_append(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop,
+void QDeclarativeGeoLocation::alternativeValue_append(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop,
                                                   QDeclarativeAlternativeValue *value)
 {
-    QDeclarativeLocation* object = static_cast<QDeclarativeLocation*>(prop->object);
+    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
     QDeclarativeAlternativeValue *altValue = new QDeclarativeAlternativeValue(object);
     altValue->setValueObject(value->valueObject());
     object->m_alternativeValues.append(altValue);
@@ -231,15 +237,15 @@ void QDeclarativeLocation::alternativeValue_append(QDeclarativeListProperty<QDec
     emit object->alternativeLabelsChanged();
 }
 
-int QDeclarativeLocation::alternativeValue_count(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop)
+int QDeclarativeGeoLocation::alternativeValue_count(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop)
 {
-    return static_cast<QDeclarativeLocation*>(prop->object)->m_alternativeValues.count();
+    return static_cast<QDeclarativeGeoLocation*>(prop->object)->m_alternativeValues.count();
 }
 
-QDeclarativeAlternativeValue* QDeclarativeLocation::alternativeValue_at(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop,
+QDeclarativeAlternativeValue* QDeclarativeGeoLocation::alternativeValue_at(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop,
                                                                           int index)
 {
-    QDeclarativeLocation* object = static_cast<QDeclarativeLocation*>(prop->object);
+    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
     QDeclarativeAlternativeValue *res = NULL;
     if (object->m_alternativeValues.count() > index && index > -1) {
         res = object->m_alternativeValues[index];
@@ -247,9 +253,9 @@ QDeclarativeAlternativeValue* QDeclarativeLocation::alternativeValue_at(QDeclara
     return res;
 }
 
-void QDeclarativeLocation::alternativeValue_clear(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop)
+void QDeclarativeGeoLocation::alternativeValue_clear(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop)
 {
-    QDeclarativeLocation* object = static_cast<QDeclarativeLocation*>(prop->object);
+    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
     qDeleteAll(object->m_alternativeValues);
     object->m_alternativeValues.clear();
     object->m_src.setAlternativeLabels(QList<QPlaceAlternativeValue>());
@@ -261,7 +267,7 @@ void QDeclarativeLocation::alternativeValue_clear(QDeclarativeListProperty<QDecl
 
     This property navigation coordinates for location.
 */
-QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeLocation::navigationPositions()
+QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoLocation::navigationPositions()
 {
     return QDeclarativeListProperty<QDeclarativeCoordinate>(this,
                                                           0, // opaque data parameter
@@ -271,10 +277,10 @@ QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeLocation::navigatio
                                                           navigationPosition_clear);
 }
 
-void QDeclarativeLocation::navigationPosition_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop,
+void QDeclarativeGeoLocation::navigationPosition_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop,
                                                   QDeclarativeCoordinate *value)
 {
-    QDeclarativeLocation* object = static_cast<QDeclarativeLocation*>(prop->object);
+    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
     QDeclarativeCoordinate *altValue = new QDeclarativeCoordinate(object);
     altValue->setCoordinate(value->coordinate());
     object->m_navigationPositions.append(altValue);
@@ -284,15 +290,15 @@ void QDeclarativeLocation::navigationPosition_append(QDeclarativeListProperty<QD
     emit object->navigationPositionsChanged();
 }
 
-int QDeclarativeLocation::navigationPosition_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
+int QDeclarativeGeoLocation::navigationPosition_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
 {
-    return static_cast<QDeclarativeLocation*>(prop->object)->m_navigationPositions.count();
+    return static_cast<QDeclarativeGeoLocation*>(prop->object)->m_navigationPositions.count();
 }
 
-QDeclarativeCoordinate* QDeclarativeLocation::navigationPosition_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop,
+QDeclarativeCoordinate* QDeclarativeGeoLocation::navigationPosition_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop,
                                                                           int index)
 {
-    QDeclarativeLocation* object = static_cast<QDeclarativeLocation*>(prop->object);
+    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
     QDeclarativeCoordinate *res = NULL;
     if (object->m_navigationPositions.count() > index && index > -1) {
         res = object->m_navigationPositions[index];
@@ -300,16 +306,16 @@ QDeclarativeCoordinate* QDeclarativeLocation::navigationPosition_at(QDeclarative
     return res;
 }
 
-void QDeclarativeLocation::navigationPosition_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
+void QDeclarativeGeoLocation::navigationPosition_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
 {
-    QDeclarativeLocation* object = static_cast<QDeclarativeLocation*>(prop->object);
+    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
     qDeleteAll(object->m_navigationPositions);
     object->m_navigationPositions.clear();
     object->m_src.setNavigationPositions(QList<QGeoCoordinate>());
     emit object->navigationPositionsChanged();
 }
 
-void QDeclarativeLocation::synchronizeAlternativeValues()
+void QDeclarativeGeoLocation::synchronizeAlternativeValues()
 {
     qDeleteAll(m_alternativeValues);
     m_alternativeValues.clear();
@@ -319,7 +325,7 @@ void QDeclarativeLocation::synchronizeAlternativeValues()
     }
 }
 
-void QDeclarativeLocation::synchronizeNavigationPositions()
+void QDeclarativeGeoLocation::synchronizeNavigationPositions()
 {
     qDeleteAll(m_navigationPositions);
     m_navigationPositions.clear();

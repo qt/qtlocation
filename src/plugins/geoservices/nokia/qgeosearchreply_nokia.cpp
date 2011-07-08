@@ -99,15 +99,15 @@ void QGeoSearchReplyNokia::networkFinished()
 
     QGeoCodeXmlParser parser;
     if (parser.parse(m_reply)) {
-        QList<QGeoPlace> places = parser.results();
+        QList<QGeoLocation> locations = parser.results();
         QGeoBoundingArea *bounds = viewport();
         if (bounds) {
-            for (int i = places.size() - 1; i >= 0; --i) {
-                if (!bounds->contains(places[i].coordinate()))
-                    places.removeAt(i);
+            for (int i = locations.size() - 1; i >= 0; --i) {
+                if (!bounds->contains(locations[i].coordinate()))
+                    locations.removeAt(i);
             }
         }
-        setPlaces(places);
+        setLocations(locations);
         setFinished(true);
     } else {
         setError(QGeoSearchReply::ParseError, parser.errorString());

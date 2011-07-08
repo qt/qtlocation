@@ -13,7 +13,6 @@ SOURCES += \
     declarativeplaces/qdeclarativecategory.cpp \
     declarativeplaces/qdeclarativecontact.cpp \
     declarativeplaces/qdeclarativedescription.cpp \
-    declarativeplaces/qdeclarativelocation.cpp \
     declarativeplaces/qdeclarativemediaobject.cpp \
     declarativeplaces/qdeclarativemediapaginationlist.cpp \
     declarativeplaces/qdeclarativeperiod.cpp \
@@ -39,7 +38,6 @@ HEADERS += \
     declarativeplaces/qdeclarativecategory_p.h \
     declarativeplaces/qdeclarativecontact_p.h \
     declarativeplaces/qdeclarativedescription_p.h \
-    declarativeplaces/qdeclarativelocation_p.h \
     declarativeplaces/qdeclarativemediaobject_p.h \
     declarativeplaces/qdeclarativemediapaginationlist_p.h \
     declarativeplaces/qdeclarativeperiod_p.h \

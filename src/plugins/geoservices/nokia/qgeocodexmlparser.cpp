@@ -78,7 +78,7 @@ bool QGeoCodeXmlParser::parse(QIODevice* source)
     return true;
 }
 
-QList<QGeoPlace> QGeoCodeXmlParser::results() const
+QList<QGeoLocation> QGeoCodeXmlParser::results() const
 {
     return m_results;
 }
@@ -130,12 +130,12 @@ bool QGeoCodeXmlParser::parseRootElement()
 
             while (m_reader->readNextStartElement()) {
                 if (m_reader->name() == "place") {
-                    QGeoPlace place;
+                    QGeoLocation location;
 
-                    if (!parsePlace(&place))
+                    if (!parsePlace(&location))
                         return false;
 
-                    m_results.append(place);
+                    m_results.append(location);
                 } else {
                     m_reader->raiseError(QString("The element \"places\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
                     return false;
@@ -158,7 +158,10 @@ bool QGeoCodeXmlParser::parseRootElement()
     return true;
 }
 
-bool QGeoCodeXmlParser::parsePlace(QGeoPlace *place)
+
+//Note: the term Place here is semi-confusing since
+//      the xml 'place' is actually a location ie coord + address
+bool QGeoCodeXmlParser::parsePlace(QGeoLocation *location)
 {
     /*
     <xsd:complexType name="Place">
@@ -209,7 +212,7 @@ bool QGeoCodeXmlParser::parsePlace(QGeoPlace *place)
                 return false;
             }
 
-            if (!parseLocation(place))
+            if (!parseLocation(location))
                 return false;
 
             parsedLocation = true;
@@ -223,9 +226,9 @@ bool QGeoCodeXmlParser::parsePlace(QGeoPlace *place)
             if (!parseAddress(&address))
                 return false;
             else
-                place->setAddress(address);
+                location->setAddress(address);
 
-            place->setAddress(address);
+            location->setAddress(address);
 
             parsedAddress = true;
         } else if (name == "alternatives") {
@@ -254,7 +257,10 @@ bool QGeoCodeXmlParser::parsePlace(QGeoPlace *place)
     return true;
 }
 
-bool QGeoCodeXmlParser::parseLocation(QGeoPlace *place)
+//Note: the term Place here is semi-confusing since
+//      the xml 'location' is actually a parital location i.e coord
+//      as opposed to coord + address
+bool QGeoCodeXmlParser::parseLocation(QGeoLocation *location)
 {
     /*
     <xsd:complexType name="Location">
@@ -289,7 +295,7 @@ bool QGeoCodeXmlParser::parseLocation(QGeoPlace *place)
             if (!parseCoordinate(&coord, "position"))
                 return false;
 
-            place->setCoordinate(coord);
+            location->setCoordinate(coord);
 
             parsedPosition = true;
         } else if (name == "boundingBox") {
@@ -303,7 +309,7 @@ bool QGeoCodeXmlParser::parseLocation(QGeoPlace *place)
             if (!parseBoundingBox(&bounds))
                 return false;
 
-            place->setViewport(bounds);
+            location->setViewport(bounds);
 
             parsedBounds = true;
         } else {

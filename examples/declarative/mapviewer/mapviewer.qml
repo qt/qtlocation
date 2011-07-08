@@ -275,9 +275,9 @@ FocusScope {
     GeocodeModel {
         id: geocodeModel
         plugin : Plugin { name : "nokia"}
-        onPlacesChanged: {
+        onLocationsChanged: {
             if (geocodeModel.count > 0) {
-                console.log('setting the coordinate as places changed in model.')
+                console.log('setting the coordinate as locations changed in model.')
                 map.center = geocodeModel.get(0).coordinate
             }
         }
@@ -312,7 +312,7 @@ FocusScope {
                 MapCircle {
                     radius: 10000
                     color: "red"
-                    center: place.coordinate
+                    center: location.coordinate
                 }
             }
         }

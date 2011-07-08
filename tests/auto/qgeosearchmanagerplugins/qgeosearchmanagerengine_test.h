@@ -47,7 +47,7 @@
 #include <QLocale>
 #include <qlandmarkmanager.h>
 #include <qgeoaddress.h>
-#include <qgeoplace.h>
+#include <qgeolocation.h>
 #include <qgeosearchreply.h>
 
 
@@ -60,12 +60,12 @@ class SearchReplyTest :public QGeoSearchReply
 public:
     SearchReplyTest(QObject *parent=0):QGeoSearchReply (parent) {}
 
-    void  callAddPlace ( const QGeoPlace & place ) {addPlace(place);}
+    void  callAddLocation ( const QGeoLocation & location ) {addLocation(location);}
     void  callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}
     void  callSetFinished ( bool finished ) {setFinished(finished);}
     void  callSetLimit ( int limit ) {setLimit(limit);}
     void  callSetOffset ( int offset ) {setOffset(offset);}
-    void  callSetPlaces ( const QList<QGeoPlace> & places ) {setPlaces(places);}
+    void  callSetLocations ( const QList<QGeoLocation> & locations ) {setLocations(locations);}
     void  callSetViewport ( QGeoBoundingArea * viewport ) {setViewport(viewport);}
 
 };

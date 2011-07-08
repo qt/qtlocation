@@ -92,8 +92,8 @@ public:
     QList<QPlaceCategory> categories;
     QList<QPlaceContact> contacts;
     QList<QPlaceDescription> descriptions;
-    QPlaceLocation location;
-    QList<QPlaceLocation> alternativeLocations;
+    QGeoLocation location;
+    QList<QGeoLocation> alternativeLocations;
     QPlaceRating rating;
     QList<QPlaceSupplier> suppliers;
     QStringList feeds;

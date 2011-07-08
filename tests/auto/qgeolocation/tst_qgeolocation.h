@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef TST_QGEOPLACE_H
-#define TST_QGEOPLACE_H
+#ifndef TST_QGEOLOCATION_H
+#define TST_QGEOLOCATION_H
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
@@ -50,17 +50,17 @@
 #include "../qgeocoordinate/qlocationtestutils_p.h"
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
-#include <qgeoplace.h>
+#include <qgeolocation.h>
 #include <qgeoboundingbox.h>
 
 QTM_USE_NAMESPACE
 
-class tst_QGeoPlace : public QObject
+class tst_QGeoLocation : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_QGeoPlace();
+    tst_QGeoLocation();
 
 private Q_SLOTS:
     void initTestCase();
@@ -68,25 +68,37 @@ private Q_SLOTS:
     void init();
     void cleanup();
 
-   //Start Unit Tests for qgeoplace.h
+   //Start Unit Tests for qgeolocation.h
     void constructor();
     void copy_constructor();
     void destructor();
     void address();
     void coordinate();
     void viewport();
-    void isLandmark();
+    void additionalData();
+    void alternativeLabels();
+    void navigationPositions();
+    void label();
+    void locationId();
+    void locationScore();
     void operators();
-    //End Unit Tests for qgeoplace.h
-
+    void comparison();
+    void comparison_data();
+    //End Unit Tests for qgeolocation.h
 
 private:
+    QGeoLocation m_location;
 
-    QGeoAddress *qgeoaddress;
-    QGeoCoordinate *qgeocoordinate;
-    QGeoPlace *qgeoplace;
-    QGeoBoundingBox *qgeoboundingbox;
+    QGeoAddress m_address;
+    QGeoCoordinate m_coordinate;
+    QGeoBoundingBox m_viewport;
 
+    QVariantHash m_additionalData;
+    QList<QPlaceAlternativeValue> m_alternativeLabels;
+    QList<QGeoCoordinate> m_navigationPositions;
+    QString m_label;
+    QString m_locationId;
+    qreal m_locationScore;
 };
 
 Q_DECLARE_METATYPE( QGeoCoordinate::CoordinateFormat);

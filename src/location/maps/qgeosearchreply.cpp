@@ -73,7 +73,7 @@ QTM_BEGIN_NAMESPACE
     this might be carried out.
 
     If the operation completes successfully the results will be able to be
-    accessed with places().
+    accessed with locations().
 */
 
 /*!
@@ -126,7 +126,7 @@ QGeoSearchReply::~QGeoSearchReply()
     If \a finished is true, this will cause the finished() signal to be
     emitted.
 
-    If the operation completed successfully, QGeoSearchReply::setPlaces()
+    If the operation completed successfully, QGeoSearchReply::setLocations()
     should be called before this function. If an error occurred,
     QGeoSearchReply::setError() should be used instead.
 */
@@ -206,30 +206,30 @@ QGeoBoundingArea* QGeoSearchReply::viewport() const
 }
 
 /*!
-    Returns a list of places.
+    Returns a list of locations.
 
-    The places are the results of the operation corresponding to the
+    The locations are the results of the operation corresponding to the
     QGeoSearchManager function which created this reply.
 */
-QList<QGeoPlace> QGeoSearchReply::places() const
+QList<QGeoLocation> QGeoSearchReply::locations() const
 {
-    return d_ptr->places;
+    return d_ptr->locations;
 }
 
 /*!
-    Adds \a place to the list of places in this reply.
+    Adds \a location to the list of locations in this reply.
 */
-void QGeoSearchReply::addPlace(const QGeoPlace &place)
+void QGeoSearchReply::addLocation(const QGeoLocation &location)
 {
-    d_ptr->places.append(place);
+    d_ptr->locations.append(location);
 }
 
 /*!
-    Sets the list of \a places in the reply.
+    Sets the list of \a locations in the reply.
 */
-void QGeoSearchReply::setPlaces(const QList<QGeoPlace> &places)
+void QGeoSearchReply::setLocations(const QList<QGeoLocation> &locations)
 {
-    d_ptr->places = places;
+    d_ptr->locations = locations;
 }
 
 /*!
@@ -248,7 +248,7 @@ void QGeoSearchReply::abort()
 
     If no limit was set this function will return -1.
 
-    This may be more than places().length() if the number of responses
+    This may be more than locations().length() if the number of responses
     was less than the number requested.
 
     If QGeoSearchManager::search() is used along with

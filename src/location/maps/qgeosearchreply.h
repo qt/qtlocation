@@ -42,7 +42,7 @@
 #ifndef QGEOSEARCHREPLY_H
 #define QGEOSEARCHREPLY_H
 
-#include "qgeoplace.h"
+#include "qgeolocation.h"
 
 #include <QObject>
 #include <QList>
@@ -74,7 +74,7 @@ public:
     QString errorString() const;
 
     QGeoBoundingArea* viewport() const;
-    QList<QGeoPlace> places() const;
+    QList<QGeoLocation>locations() const;
 
     int limit() const;
     int offset() const;
@@ -92,8 +92,8 @@ protected:
     void setFinished(bool finished);
 
     void setViewport(QGeoBoundingArea *viewport);
-    void addPlace(const QGeoPlace &place);
-    void setPlaces(const QList<QGeoPlace> &places);
+    void addLocation(const QGeoLocation &location);
+    void setLocations(const QList<QGeoLocation> &locations);
 
     void setLimit(int limit);
     void setOffset(int offset);

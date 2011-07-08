@@ -41,7 +41,7 @@
 
 #include "qdeclarativegeocodemodel_p.h"
 
-#include "qdeclarativegeoplace_p.h"
+#include "qdeclarativegeolocation_p.h"
 #include <QtDeclarative/qdeclarativeinfo.h>
 
 #include <qgeoserviceprovider.h>
@@ -64,18 +64,16 @@ QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject* parent)
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(PlaceRole, "place");
+    roleNames.insert(LocationRole, "location");
     setRoleNames(roleNames);
 }
 
 QDeclarativeGeocodeModel::~QDeclarativeGeocodeModel()
 {
-    if (serviceProvider_)
-        delete serviceProvider_;
-    qDeleteAll(declarativePlaces_);
-    declarativePlaces_.clear();
-    if (reply_)
-        delete reply_;
+    delete serviceProvider_;
+    qDeleteAll(declarativeLocations_);
+    declarativeLocations_.clear();
+    delete reply_;
 }
 
 // From QDeclarativeParserStatus
@@ -158,19 +156,19 @@ void QDeclarativeGeocodeModel::queryContentChanged()
 int QDeclarativeGeocodeModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return declarativePlaces_.count();
+    return declarativeLocations_.count();
 }
 
 QVariant QDeclarativeGeocodeModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    if (index.row() >= declarativePlaces_.count())
+    if (index.row() >= declarativeLocations_.count())
         return QVariant();
-    if (role == QDeclarativeGeocodeModel::PlaceRole) {
-        QObject* placeObject = declarativePlaces_.at(index.row());
-        Q_ASSERT(placeObject);
-        return QVariant::fromValue(placeObject);
+    if (role == QDeclarativeGeocodeModel::LocationRole) {
+        QObject* locationObject = declarativeLocations_.at(index.row());
+        Q_ASSERT(locationObject);
+        return QVariant::fromValue(locationObject);
     }
     return QVariant();
 }
@@ -232,14 +230,14 @@ void QDeclarativeGeocodeModel::searchFinished(QGeoSearchReply *reply)
     if (reply->error() != QGeoSearchReply::NoError) {
         return;
     }
-    int oldCount = declarativePlaces_.count();
-    setPlaces(reply->places());
+    int oldCount = declarativeLocations_.count();
+    setLocations(reply->locations());
     setError("");
     setStatus(QDeclarativeGeocodeModel::Ready);
     reply->deleteLater();
     reply_ = 0;
-    emit placesChanged();
-    if (oldCount != declarativePlaces_.count())
+    emit locationsChanged();
+    if (oldCount != declarativeLocations_.count())
         emit countChanged();
 }
 
@@ -280,35 +278,38 @@ void QDeclarativeGeocodeModel::setError(const QString &error)
     emit errorChanged();
 }
 
-void QDeclarativeGeocodeModel::setPlaces(const QList<QGeoPlace> &places)
+void QDeclarativeGeocodeModel::setLocations(const QList<QGeoLocation> &locations)
 {
     beginResetModel();
-    qDeleteAll(declarativePlaces_);
-    declarativePlaces_.clear();
-    for (int i = 0;  i < places.count(); ++i) {
-        QDeclarativeGeoPlace* place = new QDeclarativeGeoPlace(places.at(i), this);
-        declarativePlaces_.append(place);
+    qDeleteAll(declarativeLocations_);
+    declarativeLocations_.clear();
+    for (int i = 0;  i < locations.count(); ++i) {
+        QDeclarativeGeoLocation* location = new QDeclarativeGeoLocation(locations.at(i), this);
+        declarativeLocations_.append(location);
     }
     endResetModel();
 }
 
 int QDeclarativeGeocodeModel::count() const
 {
-    return declarativePlaces_.count();
+    return declarativeLocations_.count();
 }
 
-Q_INVOKABLE QDeclarativeGeoPlace* QDeclarativeGeocodeModel::get(int index)
+Q_INVOKABLE QDeclarativeGeoLocation* QDeclarativeGeocodeModel::get(int index)
 {
-    if (index < 0 || index >= declarativePlaces_.count()) {
+    if (index < 0 || index >= declarativeLocations_.count()) {
         qmlInfo(this) << tr("Error, too big or small index in get(): ") << index;
         return 0;
     }
-    return declarativePlaces_.at(index);
+    return declarativeLocations_.at(index);
 }
 
 Q_INVOKABLE void QDeclarativeGeocodeModel::clear()
 {
-    setPlaces(QList<QGeoPlace>());
+    bool hasChanged = !declarativeLocations_.isEmpty();
+    setLocations(QList<QGeoLocation>());
+    if (hasChanged)
+        emit countChanged();
 }
 
 Q_INVOKABLE void QDeclarativeGeocodeModel::reset()

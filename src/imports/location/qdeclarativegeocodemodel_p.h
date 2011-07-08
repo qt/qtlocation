@@ -49,7 +49,7 @@
 
 #include <QtDeclarative/qdeclarative.h>
 #include <QDeclarativeParserStatus>
-#include "qdeclarativegeoplace_p.h"
+#include "qdeclarativegeolocation_p.h"
 #include <QAbstractListModel>
 #include <QPointer>
 
@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoServiceProvider;
 class QGeoSearchManager;
-class QDeclarativeGeoPlace;
+class QDeclarativeGeoLocation;
 
 class QDeclarativeGeocodeModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
@@ -82,7 +82,7 @@ public:
     };
 
     enum Roles {
-        PlaceRole = Qt::UserRole + 499
+        LocationRole = Qt::UserRole + 1
     };
 
     explicit QDeclarativeGeocodeModel(QObject* parent = 0);
@@ -109,7 +109,7 @@ public:
     void setAutoUpdate(bool update);
 
     int count() const;
-    Q_INVOKABLE QDeclarativeGeoPlace* get(int index);
+    Q_INVOKABLE QDeclarativeGeoLocation* get(int index);
 
     QVariant query() const;
     void setQuery(const QVariant& query);
@@ -121,7 +121,7 @@ Q_SIGNALS:
     void pluginChanged();
     void statusChanged();
     void errorChanged();
-    void placesChanged();
+    void locationsChanged();
     void autoUpdateChanged();
     void boundsChanged();
     void queryChanged();
@@ -144,7 +144,7 @@ protected:
     bool complete_;
 
 private:
-    void setPlaces(const QList<QGeoPlace> &places);
+    void setLocations(const QList<QGeoLocation> &locations);
     QGeoBoundingArea* boundingArea();
     void abortRequest();
     QGeoSearchReply* reply_;
@@ -156,7 +156,7 @@ private:
     QGeoBoundingBox boundingBox_;
     QGeoBoundingCircle boundingCircle_;
 
-    QList<QDeclarativeGeoPlace*> declarativePlaces_;
+    QList<QDeclarativeGeoLocation*> declarativeLocations_;
 
     Status status_;
     QString error_;
