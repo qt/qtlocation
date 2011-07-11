@@ -264,7 +264,7 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
 {
 
 #ifdef QGEOPLACE_DEBUG
-    qDebug() << "typoe" << (type == other.type);
+    qDebug() << "type" << (type == other.type);
     qDebug() << "viewport" << (viewport == other.viewport);
     qDebug() << "coordinate:" <<  (coordinate == other.coordinate);
     qDebug() << "address:" << (address == other.address);
