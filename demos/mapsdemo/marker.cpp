@@ -278,7 +278,7 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
     if (!d->reverseReplies.contains(reply))
         return;
 
-    if (reply->locations().isEmpty() > 0) {
+    if (!reply->locations().isEmpty()) {
         QGeoLocation location = reply->locations().first();
         d->myLocation->setAddress(location.address());
     }

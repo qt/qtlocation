@@ -98,7 +98,7 @@ void Navigator::start()
 
 void Navigator::on_addressSearchFinished()
 {
-    if (addressReply->locations().isEmpty() <= 0) {
+    if (addressReply->locations().isEmpty()) {
         addressReply->deleteLater();
         return;
     }
