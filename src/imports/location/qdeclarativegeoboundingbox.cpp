@@ -57,12 +57,12 @@ QTM_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoBoundingBox::QDeclarativeGeoBoundingBox(QObject* parent) :
-        QObject(parent), m_height(qQNaN()), m_width(qQNaN())
+        QDeclarativeGeoBoundingArea(parent), m_height(qQNaN()), m_width(qQNaN())
 {
 }
 
 QDeclarativeGeoBoundingBox::QDeclarativeGeoBoundingBox(const QGeoBoundingBox& box, QObject* parent) :
-    QObject(parent),
+    QDeclarativeGeoBoundingArea(parent),
     m_declarativeBottomLeft(box.bottomLeft()),
     m_declarativeBottomRight(box.bottomRight()),
     m_declarativeTopLeft(box.topLeft()),

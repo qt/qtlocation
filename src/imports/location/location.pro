@@ -47,6 +47,7 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegraphicsgeomap_p.h \
            qdeclarativegeoplace_p.h \
            qdeclarativegeoaddress_p.h \
+           qdeclarativegeoboundingarea_p.h \
            qdeclarativegeoboundingbox_p.h \
            qdeclarativegeocodemodel_p.h \
            qdeclarativegeoroutemodel_p.h \

@@ -42,6 +42,7 @@
 #ifndef QDECLARATIVEGEOBOUNDINGBOX_P_H
 #define QDECLARATIVEGEOBOUNDINGBOX_P_H
 
+#include "qdeclarativegeoboundingarea_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include <qgeoboundingbox.h>
 
@@ -50,7 +51,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoBoundingBox : public QObject
+class QDeclarativeGeoBoundingBox : public QDeclarativeGeoBoundingArea
 {
     Q_OBJECT
     Q_PROPERTY(QDeclarativeCoordinate* bottomLeft READ bottomLeft WRITE setBottomLeft NOTIFY bottomLeftChanged)

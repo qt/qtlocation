@@ -39,12 +39,10 @@
 **
 ***************************************************************************/
 
-#ifndef QDECLARATIVEGEOBOUNDINGCIRCLE_P_H
-#define QDECLARATIVEGEOBOUNDINGCIRCLE_P_H
+#ifndef QDECLARATIVEGEOBOUNDINGAREA_P_H
+#define QDECLARATIVEGEOBOUNDINGAREA_P_H
 
-#include "qdeclarativegeoboundingarea_p.h"
-#include "qdeclarativecoordinate_p.h"
-#include <qgeoboundingcircle.h>
+#include <qgeoboundingarea.h>
 
 #include <QtCore>
 #include <QPointer>
@@ -52,34 +50,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QDeclarativeGeoBoundingCircle : public QDeclarativeGeoBoundingArea
+class QDeclarativeGeoBoundingArea : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
-    Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
 
 public:
-    explicit QDeclarativeGeoBoundingCircle(QObject* parent = 0);
-    QDeclarativeGeoBoundingCircle(const QGeoBoundingCircle& circle, QObject* parent = 0);
-    void setCircle(const QGeoBoundingCircle& circle);
-    QGeoBoundingCircle circle();
-
-    Q_INVOKABLE bool contains(QDeclarativeCoordinate* coordinate);
-    QDeclarativeCoordinate* center();
-    void setCenter(QDeclarativeCoordinate* coordinate);
-    qreal radius() const;
-    void setRadius(const qreal radius);
-
-signals:
-    void centerChanged();
-    void radiusChanged();
-
-private:
-    QPointer<QDeclarativeCoordinate> center_;
-    QGeoBoundingCircle circle_;
+    QDeclarativeGeoBoundingArea(QObject *parent) :QObject(parent){}
 };
 
 QTM_END_NAMESPACE
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoBoundingCircle));
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeGeoBoundingArea));
 
 #endif

@@ -47,6 +47,7 @@
 #include "qdeclarativelandmarkcategorymodel_p.h"
 
 #include "qgeomapobject.h"
+#include "qdeclarativegeoboundingarea_p.h"
 #include "qdeclarativegeoboundingbox_p.h"
 #include "qdeclarativegeoboundingcircle_p.h"
 #include "qdeclarativegeoaddress_p.h"
@@ -166,7 +167,9 @@ public:
             qmlRegisterUncreatableType<QDeclarativeLandmarkFilterBase>(uri, 5, 0, "LandmarkFilterBase", QDeclarativeLandmarkFilterBase::tr("LandmarkFilterBase is an abstract class"));
             qmlRegisterUncreatableType<QDeclarativeLandmarkAbstractModel>(uri, 5, 0, "LandmarkAbstractModel", QDeclarativeLandmarkAbstractModel::tr("LandmarkAbstractModel is an abstract class"));
             qmlRegisterType<QDeclarativeCoordinate>(uri, 5, 0, "Coordinate");
+            qmlRegisterType<QDeclarativeGeoBoundingArea>();
             qmlRegisterType<QDeclarativeGeoBoundingBox>(uri, 5, 0, "BoundingBox");
+            qmlRegisterType<QDeclarativeGeoBoundingCircle>(uri, 5, 0, "BoundingCircle");
             qmlRegisterType<QDeclarativeGeoPlace>(uri, 5, 0, "Place");
             qmlRegisterType<QDeclarativeGeoAddress>(uri, 5, 0, "Address");
 
@@ -194,7 +197,6 @@ public:
             qmlRegisterType<QDeclarativeGeoMapRouteObject>(uri, 5, 0, "MapRoute");   // graphical presentation
             qmlRegisterType<QDeclarativeGeoRouteSegment>(uri, 5, 0, "RouteSegment");
             qmlRegisterType<QDeclarativeGeoManeuver>(uri, 5, 0, "RouteManeuver");
-            qmlRegisterType<QDeclarativeGeoBoundingCircle>(uri, 5, 0, "BoundingCircle");
 
             qmlRegisterType<QDeclarativeAlternativeValue>(uri, 5, 0, "AlternativeValue");
             qmlRegisterType<QDeclarativeBusinessFeature>(uri, 5, 0, "BusinessFeature");

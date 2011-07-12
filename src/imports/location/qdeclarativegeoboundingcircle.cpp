@@ -49,12 +49,12 @@ QTM_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(QObject* parent) :
-        QObject(parent)
+        QDeclarativeGeoBoundingArea(parent)
 {
 }
 
 QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(const QGeoBoundingCircle& circle, QObject* parent) :
-    QObject(parent),
+    QDeclarativeGeoBoundingArea(parent),
     center_(0),
     circle_(circle)
 {
