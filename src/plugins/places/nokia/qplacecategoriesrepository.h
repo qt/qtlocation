@@ -59,7 +59,7 @@
 #include "qplacejsoncategoriesparser.h"
 #include "qplacecategoriesreplyimpl.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceCategoriesRepository : public QObject
 {
@@ -90,6 +90,6 @@ private:
     QPointer<QPlaceCategoriesReplyImpl> categoriesReply;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACECATEGORIESREPOSITORY_H

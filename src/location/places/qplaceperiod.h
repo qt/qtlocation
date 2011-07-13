@@ -46,7 +46,7 @@
 #include <QSharedDataPointer>
 #include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlacePeriodPrivate;
 
@@ -78,6 +78,6 @@ private:
     QSharedDataPointer<QPlacePeriodPrivate> d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEPERIOD_H

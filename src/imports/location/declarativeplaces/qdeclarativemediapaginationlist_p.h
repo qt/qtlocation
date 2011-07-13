@@ -6,7 +6,7 @@
 #include <qplacepaginationlist.h>
 #include "qdeclarativemediaobject_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeMediaPaginationList : public QObject
 {
@@ -51,8 +51,8 @@ private:
     QPlacePaginationList<QPlaceMediaObject> m_src;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeMediaPaginationList));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeMediaPaginationList));
 
 #endif // QDECLARATIVEMEDIAPAGINATIONLIST_P_H

@@ -42,7 +42,7 @@
 #include "qplaceweekdayhours.h"
 #include "qplaceweekdayhours_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceWeekdayHoursPrivate::QPlaceWeekdayHoursPrivate()
     : QSharedData(),

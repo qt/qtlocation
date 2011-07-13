@@ -77,7 +77,7 @@ static const char *review_vendor_element = "vendor";
 static const char *review_vendorname_element = "vendorDisplayName";
 static const char *review_vendoricon_element = "vendorIconUrl";
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceJSonReviewParser::QPlaceJSonReviewParser(QObject *parent) :
     QPlaceJSonParser(parent),

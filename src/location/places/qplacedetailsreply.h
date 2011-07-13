@@ -45,7 +45,7 @@
 #include "qplacereply.h"
 #include "qgeoplace.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceDetailsReplyPrivate;
 class Q_LOCATION_EXPORT QPlaceDetailsReply : public QPlaceReply
@@ -66,6 +66,6 @@ private:
     Q_DECLARE_PRIVATE(QPlaceDetailsReply)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEDETAILSREPLY_H

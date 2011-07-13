@@ -45,7 +45,7 @@
 #include "qmobilityglobal.h"
 #include <QObject>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceReplyPrivate;
 class Q_LOCATION_EXPORT QPlaceReply : public QObject
@@ -100,6 +100,6 @@ private:
     Q_DISABLE_COPY(QPlaceReply)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEREPLY_H

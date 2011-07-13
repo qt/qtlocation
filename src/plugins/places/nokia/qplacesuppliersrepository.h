@@ -55,7 +55,7 @@
 #include <qplacesupplier.h>
 #include <qmobilityglobal.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceSuppliersRepository : public QObject
 {
@@ -73,6 +73,6 @@ private:
     QList<QPlaceSupplier> suppliers;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACESUPPLIERSREPOSITORY_H

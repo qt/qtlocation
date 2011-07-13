@@ -59,7 +59,7 @@
 #include "qplacerestmanager.h"
 #include "qplacerestreply.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 const char *MANAGER_NAME = "com.nokia.places/0.9";
 

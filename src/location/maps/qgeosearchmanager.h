@@ -95,8 +95,6 @@ private:
     friend class QGeoServiceProvider;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoSearchManager::SearchTypes)
-
 QT_END_NAMESPACE
 
 #endif

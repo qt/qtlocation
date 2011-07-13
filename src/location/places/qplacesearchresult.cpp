@@ -42,7 +42,7 @@
 #include "qplacesearchresult.h"
 #include "qplacesearchresult_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceSearchResultPrivate::QPlaceSearchResultPrivate()
     : QSharedData(),

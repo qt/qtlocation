@@ -59,7 +59,7 @@
 #include <qplacesearchquery.h>
 #include "qplacerestreply.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceRestManager : public QObject
 {
@@ -94,6 +94,6 @@ private:
     static QPlaceRestManager *mInstance;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACERESTMANAGER_H

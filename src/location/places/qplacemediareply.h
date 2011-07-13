@@ -48,7 +48,7 @@
 
 #include <QStringList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceMediaReplyPrivate;
 class Q_LOCATION_EXPORT QPlaceMediaReply : public QPlaceReply
@@ -74,6 +74,6 @@ private:
     Q_DECLARE_PRIVATE(QPlaceMediaReply)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

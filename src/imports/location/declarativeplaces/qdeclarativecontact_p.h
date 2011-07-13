@@ -6,7 +6,7 @@
 
 #include <QObject>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeContact : public QObject
 {
@@ -51,8 +51,8 @@ private:
     QPlaceContact m_value;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeContact));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeContact));
 
 #endif // QDECLARATIVECONTACT_P_H

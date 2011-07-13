@@ -6,7 +6,7 @@
 #include <qplacepaginationlist.h>
 #include "qdeclarativereview_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeReviewPaginationList : public QObject
 {
@@ -51,8 +51,8 @@ private:
     QPlacePaginationList<QPlaceReview> m_src;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeReviewPaginationList));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeReviewPaginationList));
 
 #endif // QDECLARATIVEREVIEWPAGINATIONLIST_P_H

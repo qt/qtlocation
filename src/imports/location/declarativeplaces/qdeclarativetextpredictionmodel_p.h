@@ -11,7 +11,7 @@
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoboundingbox_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeTextPredictionModel : public QAbstractListModel
 {
@@ -82,8 +82,8 @@ private:
     QPlaceTextPredictionReply *m_response;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeTextPredictionModel));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeTextPredictionModel));
 
 #endif // QDECLARATIVETEXTPREDICTIONMODEL_P_H

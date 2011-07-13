@@ -46,7 +46,7 @@
 
 #include "qplacerating.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceRatingPrivate : public QSharedData
 {
@@ -62,6 +62,6 @@ public:
     int count;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACERATING_P_H

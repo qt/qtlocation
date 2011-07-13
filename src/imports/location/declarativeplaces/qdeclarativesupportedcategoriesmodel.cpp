@@ -2,7 +2,7 @@
 
 #include <qplacemanager.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 /*!
     \qmlclass SupportedCategoryModel QDeclarativeSupportedCategoriesModel

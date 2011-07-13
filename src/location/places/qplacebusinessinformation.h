@@ -52,7 +52,7 @@
 #include "qplaceperiod.h"
 #include "qplaceweekdayhours.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceBusinessInformationPrivate;
 
@@ -90,7 +90,7 @@ private:
     QSharedDataPointer<QPlaceBusinessInformationPrivate> d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 
 #endif // QPLACEBUSINESSINFORMATION_H

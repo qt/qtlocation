@@ -42,7 +42,7 @@
 #include "qplacereview.h"
 #include "qplacereview_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceReviewPrivate::QPlaceReviewPrivate()
     : QSharedData(),

@@ -76,6 +76,6 @@ private:
     QSharedDataPointer<QPlaceBusinessFeaturePrivate> d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEBUSINESSFEATURE_H

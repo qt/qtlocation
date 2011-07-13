@@ -56,7 +56,7 @@
 #include "qplacerestreply.h"
 #include "qplacejsonmediaparser.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceMediaReplyImpl : public QPlaceMediaReply
 {
@@ -81,6 +81,6 @@ private:
     QPlaceJSonMediaParser *parser;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEMEDIAREPLYIMPL_H

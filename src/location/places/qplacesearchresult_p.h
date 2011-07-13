@@ -46,7 +46,7 @@
 
 #include <QSharedData>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceSearchResultPrivate : public QSharedData
 {
@@ -68,6 +68,6 @@ public:
     QString dymString;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACESEARCHRESULT_P_H

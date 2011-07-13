@@ -57,7 +57,7 @@
 
 #include <qmobilityglobal.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceRestReply : public QObject
 {
@@ -89,6 +89,6 @@ private:
 friend class QRestManager;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACERESTREPLY_H

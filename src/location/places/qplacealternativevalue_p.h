@@ -47,7 +47,7 @@
 
 #include "qplacealternativevalue.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceAlternativeValuePrivate : public QSharedData
 {
@@ -66,6 +66,6 @@ public:
     QString value;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEALTERNATIVEVALUE_P_H

@@ -5,7 +5,7 @@
 #include <QtDeclarative/qdeclarative.h>
 #include <qplacesupplier.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeSupplier : public QObject
 {
@@ -43,8 +43,8 @@ private:
     QPlaceSupplier m_src;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeSupplier));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeSupplier));
 
 #endif // QDECLARATIVESUPPLIER_P_H

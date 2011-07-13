@@ -47,7 +47,7 @@
 #include "qplacemanagerengine.h"
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceManagerEngine;
 class Q_LOCATION_EXPORT QPlaceManagerEngineFactory
@@ -60,7 +60,7 @@ public:
     virtual QString managerName() const = 0;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 #define QT_PLACES_BACKEND_INTERFACE "com.nokia.qt.places.enginefactory/1.0"

@@ -6,7 +6,7 @@
 #include <qplacesearchresult.h>
 #include "qdeclarativeplace_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeSearchResult : public QObject
 {
@@ -76,8 +76,8 @@ private:
     QPlaceSearchResult m_src;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeSearchResult));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeSearchResult));
 
 #endif // QDECLARATIVESEARCHRESULT_P_H

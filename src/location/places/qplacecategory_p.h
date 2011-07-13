@@ -46,7 +46,7 @@
 
 #include "qplacecategory.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceCategoryPrivate : public QSharedData
 {
@@ -64,6 +64,6 @@ public:
     QString name;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACECATEGORY_P_H

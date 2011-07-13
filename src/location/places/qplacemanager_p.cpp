@@ -52,7 +52,7 @@
 
 #include "qmobilitypluginsearch.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceManagerPrivate::QPlaceManagerPrivate()
         : engine(0),

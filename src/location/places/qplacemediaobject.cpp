@@ -42,7 +42,7 @@
 #include "qplacemediaobject.h"
 #include "qplacemediaobject_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceMediaObjectPrivate::QPlaceMediaObjectPrivate() : QSharedData()
 {

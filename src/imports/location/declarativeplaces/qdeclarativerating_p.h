@@ -6,7 +6,7 @@
 
 #include <QObject>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeRating : public QObject
 {
@@ -36,8 +36,8 @@ private:
     QPlaceRating m_rating;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeRating));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeRating));
 
 #endif // QDECLARATIVERATING_P_H

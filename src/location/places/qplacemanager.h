@@ -56,7 +56,7 @@
 #include <QString>
 #include <QObject>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceManagerEngine;
 
@@ -146,6 +146,6 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::VisibilityScopes);
 Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::ConnectivityModes);
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEMANAGER_H

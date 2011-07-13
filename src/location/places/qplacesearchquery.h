@@ -50,7 +50,7 @@
 
 #include <QString>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceSearchQueryPrivate;
 
@@ -96,6 +96,6 @@ private:
     QSharedDataPointer<QPlaceSearchQueryPrivate> d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACESEARCHQUERY_H

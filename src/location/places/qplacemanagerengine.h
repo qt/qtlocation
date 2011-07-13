@@ -44,7 +44,7 @@
 
 #include "qplacemanager.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_LOCATION_EXPORT QPlaceManagerEngine : public QObject
 {
@@ -88,6 +88,6 @@ Q_SIGNALS:
 
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

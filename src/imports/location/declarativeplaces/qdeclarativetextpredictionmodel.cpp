@@ -3,7 +3,7 @@
 #include <qplacemanager.h>
 #include <qplacesearchquery.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 /*!
     \qmlclass TextPredictionModel QDeclarativeTextPredictionModel

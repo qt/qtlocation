@@ -42,7 +42,7 @@
 #include "qplacesupplier.h"
 #include "qplacesupplier_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceSupplierPrivate::QPlaceSupplierPrivate() : QSharedData()
 {

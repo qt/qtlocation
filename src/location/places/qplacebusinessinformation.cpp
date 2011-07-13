@@ -42,7 +42,7 @@
 #include "qplacebusinessinformation.h"
 #include "qplacebusinessinformation_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceBusinessInformationPrivate::QPlaceBusinessInformationPrivate() : QSharedData()
 {

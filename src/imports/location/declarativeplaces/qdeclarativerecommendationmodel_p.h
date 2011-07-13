@@ -11,7 +11,7 @@
 #include "qdeclarativegeoboundingbox_p.h"
 #include "qdeclarativesearchresult_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeRecommendationModel : public QAbstractListModel
 {
@@ -86,8 +86,8 @@ private:
     QPlaceSearchReply *m_response;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeRecommendationModel));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeRecommendationModel));
 
 #endif // QDECLARATIVERECOMMENDATIONMODEL_P_H

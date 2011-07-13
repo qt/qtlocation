@@ -47,7 +47,7 @@
 #include "qmobilityglobal.h"
 #include "qplacesupplier.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceReviewPrivate;
 
@@ -97,6 +97,6 @@ private:
     QSharedDataPointer<QPlaceReviewPrivate> d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEREVIEW_H

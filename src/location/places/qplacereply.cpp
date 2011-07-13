@@ -42,7 +42,7 @@
 #include "qplacereply.h"
 #include "qplacereply_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 /*!
     \class QPlaceReply

@@ -8,7 +8,7 @@
 
 #include "qdeclarativeplace_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativePlaceManager : public QObject
 {
@@ -51,8 +51,8 @@ private:
     QPlaceReply *m_response;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativePlaceManager));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePlaceManager));
 
 #endif // QDECLARATIVETEXTPREDICTIONMODEL_P_H

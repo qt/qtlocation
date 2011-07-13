@@ -49,7 +49,7 @@
 #include <QString>
 #include "qgeoplace.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceSearchResultPrivate;
 
@@ -108,6 +108,6 @@ private:
     QSharedDataPointer<QPlaceSearchResultPrivate> d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACESEARCHRESULT_H

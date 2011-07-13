@@ -42,7 +42,7 @@
 #include "qgeolocation.h"
 #include "qgeolocation_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QGeoLocationPrivate::QGeoLocationPrivate()
     : QSharedData(),

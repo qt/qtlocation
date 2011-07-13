@@ -48,7 +48,7 @@
 
 #include <QStringList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceReviewReplyPrivate;
 class Q_LOCATION_EXPORT QPlaceReviewReply : public QPlaceReply
@@ -73,6 +73,6 @@ private:
     Q_DECLARE_PRIVATE(QPlaceReviewReply)
 };
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 #endif

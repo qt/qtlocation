@@ -42,7 +42,7 @@
 #include "qplacealternativevalue.h"
 #include "qplacealternativevalue_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceAlternativeValuePrivate::QPlaceAlternativeValuePrivate()
     : QSharedData(),

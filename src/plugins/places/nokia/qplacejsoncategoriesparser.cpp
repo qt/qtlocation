@@ -65,7 +65,7 @@ static const char *place_category_id_element = "name";
 static const char *place_group_element = "group";
 static const char *place_groupingcategory_element = "groupingCategory";
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceJSonCategoriesParser::QPlaceJSonCategoriesParser(QObject *parent) :
     QPlaceJSonParser(parent)

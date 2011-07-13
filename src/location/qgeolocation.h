@@ -52,7 +52,7 @@
 #include "qmobilityglobal.h"
 #include "qplacealternativevalue.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoLocationPrivate;
 
@@ -94,6 +94,6 @@ private:
     QSharedDataPointer<QGeoLocationPrivate> d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

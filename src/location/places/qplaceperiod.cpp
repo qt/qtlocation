@@ -42,7 +42,7 @@
 #include "qplaceperiod.h"
 #include "qplaceperiod_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlacePeriodPrivate::QPlacePeriodPrivate()
     : QSharedData()

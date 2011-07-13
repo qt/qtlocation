@@ -8,7 +8,7 @@
 #include "qdeclarativeperiod_p.h"
 #include "qdeclarativeweekdayhours_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeBusinessInformation : public QObject
 {
@@ -80,8 +80,8 @@ private:
     QPlaceBusinessInformation m_src;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeBusinessInformation));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeBusinessInformation));
 
 #endif // QDECLARATIVEBUSINESSINFORMATION_P_H

@@ -42,7 +42,7 @@
 #include "qplacecontact.h"
 #include "qplacecontact_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceContactPrivate::QPlaceContactPrivate() : QSharedData()
 {

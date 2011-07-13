@@ -43,7 +43,7 @@
 
 #include "qplacecategory_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceManagerEngine::QPlaceManagerEngine(QObject *parent)
     : QObject(parent)

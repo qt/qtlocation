@@ -67,7 +67,7 @@ static const char *media_url = "url";
 static const char *media_provider_id = "provider";
 static const char *media_provider_name = "providerDisplayName";
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceJSonMediaParser::QPlaceJSonMediaParser(QObject *parent) :
     QPlaceJSonParser(parent),

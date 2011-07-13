@@ -6,7 +6,7 @@
 #include <qplacemediaobject.h>
 #include "qdeclarativesupplier_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeMediaObject : public QObject
 {
@@ -53,8 +53,8 @@ private:
     QPlaceMediaObject m_src;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeMediaObject));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeMediaObject));
 
 #endif // QDECLARATIVEMEDIAOBJECT_P_H

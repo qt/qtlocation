@@ -6,7 +6,7 @@
 #include <qplacedescription.h>
 #include "qdeclarativesupplier_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeDescription : public QObject
 {
@@ -53,8 +53,8 @@ private:
     QPlaceDescription m_src;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeDescription));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeDescription));
 
 #endif // QDECLARATIVEDESCRIPTION_P_H

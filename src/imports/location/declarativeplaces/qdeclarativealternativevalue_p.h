@@ -6,7 +6,7 @@
 
 #include <QObject>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeAlternativeValue : public QObject
 {
@@ -69,8 +69,8 @@ private:
     QPlaceAlternativeValue m_value;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeAlternativeValue));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeAlternativeValue));
 
 #endif // QDECLARATIVEALTERNATIVEVALUE_P_H

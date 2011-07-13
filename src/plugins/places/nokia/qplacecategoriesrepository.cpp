@@ -51,7 +51,7 @@
 
 #include "qplacerestmanager.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 static QMap<QString, QString> categoriesMap;
 static QPlaceCategory *secondSearchCenter = NULL;

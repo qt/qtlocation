@@ -44,7 +44,7 @@
 
 #include "qplacemanagerengine.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceCategoryPrivate::QPlaceCategoryPrivate()
     : QSharedData()

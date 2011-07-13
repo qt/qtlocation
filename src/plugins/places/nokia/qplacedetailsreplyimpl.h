@@ -56,7 +56,7 @@
 #include "qplacerestreply.h"
 #include "qplacejsondetailsparser.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceDetailsReplyImpl : public QPlaceDetailsReply
 {
@@ -80,6 +80,6 @@ private:
     QPlaceJSonDetailsParser *parser;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEDETAILSREPLYIMPL_H

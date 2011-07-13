@@ -42,7 +42,7 @@
 #include "qplacedescription.h"
 #include "qplacedescription_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceDescriptionPrivate::QPlaceDescriptionPrivate() : QSharedData()
 {

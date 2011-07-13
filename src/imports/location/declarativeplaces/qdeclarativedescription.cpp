@@ -1,6 +1,6 @@
 #include "qdeclarativedescription_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 /*!
     \qmlclass Description

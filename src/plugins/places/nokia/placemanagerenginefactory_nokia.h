@@ -52,7 +52,7 @@
 #include <qplacemanagerenginefactory.h>
 #include <QObject>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class PlaceManagerEngineFactoryNokia : public QObject, public QPlaceManagerEngineFactory
 {

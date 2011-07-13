@@ -50,7 +50,7 @@
 
 #include <qplacesupplier.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceSuppliersRepository *QPlaceSuppliersRepository::instance()
 {

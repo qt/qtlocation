@@ -46,7 +46,7 @@
 
 #include "qplacemediaobject.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceMediaObjectPrivate : public QSharedData
 {
@@ -66,6 +66,6 @@ public:
     QPlaceSupplier supplier;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEMEDIAOBJECT_P_H

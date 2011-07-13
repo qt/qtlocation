@@ -46,7 +46,7 @@
 
 #include "qplacedescription.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceDescriptionPrivate : public QSharedData
 {
@@ -66,6 +66,6 @@ public:
     QString language;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEDESCRIPTION_P_H

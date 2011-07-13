@@ -6,7 +6,7 @@
 #include <qplacereview.h>
 #include "qdeclarativesupplier_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativeReview : public QObject
 {
@@ -81,8 +81,8 @@ private:
     QPlaceReview m_src;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativeReview));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeReview));
 
 #endif // QDECLARATIVEREVIEW_P_H

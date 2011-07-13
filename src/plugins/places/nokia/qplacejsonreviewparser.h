@@ -58,7 +58,7 @@
 class QScriptEngine;
 class QScriptValue;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceJSonReviewParser : public QPlaceJSonParser
 {
@@ -80,6 +80,6 @@ private:
     int allReviews;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACEJSONREVIEWPARSER_H

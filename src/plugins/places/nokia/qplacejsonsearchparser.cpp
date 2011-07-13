@@ -105,7 +105,7 @@ static const char *search_properties_address_district = "addrDistrictName";
 static const char *search_properties_address_street = "addrStreetName";
 static const char *search_properties_address_house_number = "addrHouseNumber";
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceJSonSearchParser::QPlaceJSonSearchParser(QObject *parent) :
     QPlaceJSonParser(parent)

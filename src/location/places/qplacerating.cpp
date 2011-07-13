@@ -42,7 +42,7 @@
 #include "qplacerating.h"
 #include "qplacerating_p.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceRatingPrivate::QPlaceRatingPrivate()
     : QSharedData(),

@@ -56,7 +56,7 @@
 #include "qplacerestreply.h"
 #include "qplacejsonrecommendationparser.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QPlaceRecommendationReplyImpl : public QPlaceSearchReply
 {
@@ -80,6 +80,6 @@ private:
     QPlaceJSonRecommendationParser *parser;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QPLACERECOMMENDATIONREPLYIMPL_H

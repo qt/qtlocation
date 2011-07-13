@@ -64,7 +64,7 @@ static const char *recommendations_nearby_element = "nearby";
 static const char *recommendations_distance_element = "distance";
 static const char *recommendations_place_element = "place";
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QPlaceJSonRecommendationParser::QPlaceJSonRecommendationParser(QObject *parent) :
     QPlaceJSonParser(parent)

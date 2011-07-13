@@ -15,7 +15,7 @@
 #include "qdeclarativemediapaginationlist_p.h"
 #include "qdeclarativereviewpaginationlist_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QDeclarativePlace : public QObject
 {
@@ -161,8 +161,8 @@ private:
     QGeoPlace m_src;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDeclarativePlace));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePlace));
 
 #endif // QDECLARATIVEPLACE_P_H
