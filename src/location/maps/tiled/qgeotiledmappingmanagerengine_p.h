@@ -58,7 +58,7 @@
 
 #include <QSize>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoTiledMappingManagerEngine;
 class QGeoTiledMapRequestHandler;
@@ -77,6 +77,6 @@ private:
     Q_DISABLE_COPY(QGeoTiledMappingManagerEnginePrivate)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

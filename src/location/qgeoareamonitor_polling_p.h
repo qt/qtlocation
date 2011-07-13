@@ -56,7 +56,7 @@
 #include "qgeoareamonitor.h"
 #include "qgeopositioninfosource.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /**
  *  QGeoAreaMonitorPolling
@@ -87,5 +87,5 @@ private:
     void checkStartStop();
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 #endif // QGEOAREAMONITORPOLLING_H

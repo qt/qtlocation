@@ -48,9 +48,9 @@
 #include <QObject>
 #include <QMap>
 
-class QLocale;
+QT_BEGIN_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+class QLocale;
 
 class QGeoRoutingManagerEnginePrivate;
 
@@ -105,6 +105,6 @@ private:
     friend class QGeoServiceProvider;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -45,7 +45,8 @@
 #include <QDebug>
 #include <QMutexLocker>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
+
 
 QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManager *mgr)
     : type(QLandmarkAbstractRequest::InvalidRequest),
@@ -193,6 +194,7 @@ QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPriva
     the enine implementation, even though the request itself has been destroyed.
     The sqlite engine continues the operation behind the scenes if the
     request is destroyed whilst active.  For the symbian engine see the note below.
+    \since 1.1
 */
 QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 {
@@ -202,6 +204,7 @@ QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 
 /*!
     Returns the type of this asynchronous request.
+    \since 1.1
 */
 QLandmarkAbstractRequest::RequestType QLandmarkAbstractRequest::type() const
 {
@@ -211,6 +214,7 @@ QLandmarkAbstractRequest::RequestType QLandmarkAbstractRequest::type() const
 
 /*!
     Returns the state of the request
+    \since 1.1
 */
 QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 {
@@ -221,6 +225,7 @@ QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 /*!
     Returns true if the request is in the \c QLandmarkAbstractRequest::Inactive state;
     otherwise, returns false.
+    \since 1.1
     \sa state()
 */
 bool QLandmarkAbstractRequest::isInactive() const
@@ -232,6 +237,7 @@ bool QLandmarkAbstractRequest::isInactive() const
 /*!
     Returns true if the request is in the \c QLandmarkAbstractRequest::Active state;
     otherwise, returns false.
+    \since 1.1
     \sa state()
 */
 bool QLandmarkAbstractRequest::isActive() const
@@ -243,6 +249,7 @@ bool QLandmarkAbstractRequest::isActive() const
 /*!
     Returns true if the request is in the \c QLandmarkAbstractRequest::Finished state;
     otherwise, returns false.
+    \since 1.1
     \sa state()
 */
 bool QLandmarkAbstractRequest::isFinished() const
@@ -253,6 +260,7 @@ bool QLandmarkAbstractRequest::isFinished() const
 
 /*!
     Returns the overall error of the most recent asynchronous operation.
+    \since 1.1
     \sa errorString()
 */
 QLandmarkManager::Error QLandmarkAbstractRequest::error() const
@@ -265,6 +273,7 @@ QLandmarkManager::Error QLandmarkAbstractRequest::error() const
     Returns a human readable string of the last error
     that occurred.  This error string is intended to be used
     by developers only and should not be seen by end users.
+    \since 1.1
     \sa error()
 */
 QString QLandmarkAbstractRequest::errorString() const
@@ -276,6 +285,7 @@ QString QLandmarkAbstractRequest::errorString() const
 /*!
     Returns a pointer to the landmark manager which
     this request operates on.
+    \since 1.1
 */
 QLandmarkManager *QLandmarkAbstractRequest::manager() const
 {
@@ -292,6 +302,7 @@ QLandmarkManager *QLandmarkAbstractRequest::manager() const
 
     A manager cannot be assigned while the request is in the
     QLandmarkAbstractRequest::ActiveState.
+    \since 1.1
 */
 void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
 {
@@ -306,6 +317,7 @@ void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
 
     Returns true if the request was started, otherwise false. Trying to start a
     request that is already active returns false.
+    \since 1.1
     \sa cancel().
 */
 bool QLandmarkAbstractRequest::start()
@@ -313,14 +325,14 @@ bool QLandmarkAbstractRequest::start()
     QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
-        d_ptr->errorString = "No manager assigned to landmark request object";
+        d_ptr->errorString = QLatin1String("No manager assigned to landmark request object");
         qWarning() << d_ptr->errorString;
         return false;
     }
     QLandmarkManagerEngine *engine = d_ptr->manager->engine();
     if (!engine) {
         d_ptr->error = QLandmarkManager::InvalidManagerError;
-        d_ptr->errorString = "The manager is invalid";
+        d_ptr->errorString = QLatin1String("The manager is invalid");
         return false;
     }
 
@@ -342,6 +354,7 @@ bool QLandmarkAbstractRequest::start()
     could not be made or the request is not in the
     QLandmarkManager::Active state.
 
+    \since 1.1
     \sa start()
 */
 bool QLandmarkAbstractRequest::cancel()
@@ -349,7 +362,7 @@ bool QLandmarkAbstractRequest::cancel()
     QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
-        d_ptr->errorString = "No manager assigned to landmark request object";
+        d_ptr->errorString = QLatin1String("No manager assigned to landmark request object");
         qWarning() << d_ptr->errorString;
         return false;
     }
@@ -380,6 +393,7 @@ bool QLandmarkAbstractRequest::cancel()
     the calling thread's event loop is dispatched.  If your code depends on
     your slots being invoked, you may need to process events after calling
     this function.
+    \since 1.1
 */
 bool QLandmarkAbstractRequest::waitForFinished(int msecs)
 {
@@ -387,7 +401,7 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
     QMutexLocker ml(&d_ptr->mutex);
     if (!d_ptr->manager) {
         d_ptr->error = QLandmarkManager::BadArgumentError;
-        d_ptr->errorString = "No manager assigned to landmark request object";
+        d_ptr->errorString = QLatin1String("No manager assigned to landmark request object");
         qWarning() << d_ptr->errorString;
         return false;
     }
@@ -411,6 +425,7 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
   or derived-class specific results which are accessible through
   the derived class API.
 
+    \since 1.1
   \sa error()
 */
 
@@ -418,9 +433,12 @@ bool QLandmarkAbstractRequest::waitForFinished(int msecs)
     \fn void QLandmarkAbstractRequest::stateChanged(QLandmarkAbstractRequest::State newState)
     This signal is emitted when the state of the request is changed.  The new state of
     the request will be contained in \a newState.
+    \since 1.1
 */
 
 #include "moc_qlandmarkabstractrequest.cpp"
+
+QT_END_NAMESPACE
 
 
 

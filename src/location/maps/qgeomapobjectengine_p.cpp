@@ -58,7 +58,7 @@
 
 #include <QDebug>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*
   A quick note about how the transforms are set up:
@@ -171,6 +171,9 @@ void QGeoMapObjectEngine::removeObject(QGeoMapObject *object)
 
         foreach (QRectF rect, rectsToUpdate)
             mdp->emitUpdateMapDisplay(rect);
+
+        objectsForLatLonUpdate.removeAll(object);
+        objectsForPixelUpdate.removeAll(object);
     }
 }
 
@@ -285,12 +288,12 @@ bool QGeoMapObjectEngine::exactMetersToSeconds(const QGeoCoordinate &origin,
                                               QGraphicsItem *item,
                                               QList<QPolygonF> &polys)
 {
-    QString projStr = "+proj=tmerc +lat_0=%1 +lon_0=%2 +k=1.0 +x_0=0 +y_0=0 +ellps=WGS84";
+    QString projStr = QLatin1String("+proj=tmerc +lat_0=%1 +lon_0=%2 +k=1.0 +x_0=0 +y_0=0 +ellps=WGS84");
     projStr = projStr.arg(origin.latitude(), 0, 'f', 12)
                      .arg(origin.longitude(), 0, 'f', 12);
 
     ProjCoordinateSystem localSys(projStr, false);
-    ProjCoordinateSystem wgs84("+proj=latlon +ellps=WGS84");
+    ProjCoordinateSystem wgs84(QLatin1String("+proj=latlon +ellps=WGS84"));
 
     QTransform west;
     west.translate(360.0 * 3600.0, 0.0);
@@ -491,12 +494,12 @@ void QGeoMapObjectEngine::bilinearMetersToSeconds(const QGeoCoordinate &origin,
                                                  QPolygonF &local,
                                                  QTransform &latLon)
 {
-    QString projStr = "+proj=tmerc +lat_0=%1 +lon_0=%2 +k=1.0 +x_0=0 +y_0=0 +ellps=WGS84";
+    QString projStr = QLatin1String("+proj=tmerc +lat_0=%1 +lon_0=%2 +k=1.0 +x_0=0 +y_0=0 +ellps=WGS84");
     projStr = projStr.arg(origin.latitude(), 0, 'f', 12)
                      .arg(origin.longitude(), 0, 'f', 12);
 
     ProjCoordinateSystem localSys(projStr, false);
-    ProjCoordinateSystem wgs84("+proj=latlon +ellps=WGS84");
+    ProjCoordinateSystem wgs84(QLatin1String("+proj=latlon +ellps=WGS84"));
 
     ProjPolygon p(local, localSys);
     if (!p.convert(wgs84)) {
@@ -1134,7 +1137,7 @@ QPolygonF QGeoMapObjectEngine::latLonViewport()
     c = viewport.bottomLeft();
     view << QPointF(c.longitude() * 3600.0, c.latitude() * 3600.0);
     c2 = viewport.bottomRight();
-    if (c2.longitude() < c.longitude())
+    if (c2.longitude() <= c.longitude())
         offset = 360.0 * 3600.0;
     view << QPointF(c2.longitude() * 3600.0 + offset, c2.latitude() * 3600.0);
     c = viewport.topRight();
@@ -1176,4 +1179,4 @@ QGraphicsItem* QGeoMapObjectEngine::graphicsItemFromMapObject(QGeoMapObject *obj
 
 #include "moc_qgeomapobjectengine_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

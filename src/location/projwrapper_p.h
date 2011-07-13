@@ -60,7 +60,7 @@
 #include <QList>
 #include <QPolygonF>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class ProjCoordinate;
 class QGeoCoordinate;
@@ -69,7 +69,7 @@ class ProjCoordinateSystemPrivate;
 class ProjCoordinateSystem
 {
 public:
-    ProjCoordinateSystem(const QString &projection = QString("+proj=latlon +ellps=WGS84"), bool latLon=true);
+    ProjCoordinateSystem(const QString &projection = QString::fromLatin1("+proj=latlon +ellps=WGS84"), bool latLon=true);
     ProjCoordinateSystem(const ProjCoordinateSystem &other);
     ~ProjCoordinateSystem();
 
@@ -124,6 +124,6 @@ private:
     ProjPolygonPrivate *d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // PROJWRAPPER_P_H

@@ -58,7 +58,7 @@
 #include <e32base.h>    // For CActive, link against: euser.lib
 #include <lbs.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class INotificationMonitorCallback
 {
@@ -68,6 +68,6 @@ public:
 
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif /* NOTIFICATIONMONITORCALLBACK_H_ */

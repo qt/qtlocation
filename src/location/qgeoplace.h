@@ -60,10 +60,10 @@
 #include "qplacemediaobject.h"
 #include "qplacereview.h"
 
+
+QT_BEGIN_NAMESPACE
+
 class QString;
-
-QTM_BEGIN_NAMESPACE
-
 class QLandmark;
 
 class QGeoPlacePrivate;
@@ -142,6 +142,6 @@ private:
     friend class QLandmark;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

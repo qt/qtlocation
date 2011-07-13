@@ -52,7 +52,7 @@
 #include <QPixmap>
 #include <QNetworkReply>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMappingManagerEngineNokia;
 
@@ -91,5 +91,7 @@ private:
 private slots:
     void copyrightReplyFinished(QNetworkReply*);
 };
+
+QT_END_NAMESPACE
 
 #endif // QGEOMAPDATA_NOKIA_H

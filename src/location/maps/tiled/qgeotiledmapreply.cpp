@@ -46,7 +46,7 @@
 
 #include <qdebug.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 /*!
     \class QGeoTiledMapReply
 
@@ -311,7 +311,7 @@ void QGeoTiledMapReply::abort()
 
 QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(const QGeoTiledMapRequest &request)
     : error(QGeoTiledMapReply::NoError),
-      errorString(""),
+      errorString(QLatin1String("")),
       isFinished(false),
       isCached(false),
       request(request) {}
@@ -326,4 +326,4 @@ QGeoTiledMapReplyPrivate::~QGeoTiledMapReplyPrivate() {}
 
 #include "moc_qgeotiledmapreply.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

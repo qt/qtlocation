@@ -58,7 +58,7 @@
 #include <QUrl>
 #include <QSharedData>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkCategoryPrivate : public QSharedData
 {
@@ -79,6 +79,6 @@ public:
 };
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

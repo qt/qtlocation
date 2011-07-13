@@ -54,6 +54,8 @@
 #include <QUrl>
 #include <qgeoboundingbox.h>
 
+QT_BEGIN_NAMESPACE
+
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoRoutingManagerEngine(parameters),
         m_host("prd.lbsp.navteq.com"),
@@ -434,7 +436,7 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
     return requestString;
 }
 
-QString QGeoRoutingManagerEngineNokia::trimDouble(qreal degree, int decimalDigits)
+QString QGeoRoutingManagerEngineNokia::trimDouble(double degree, int decimalDigits)
 {
     QString sDegree = QString::number(degree, 'g', decimalDigits);
 
@@ -475,3 +477,5 @@ void QGeoRoutingManagerEngineNokia::routeError(QGeoRouteReply::Error error, cons
 
     emit this->error(reply, error, errorString);
 }
+
+QT_END_NAMESPACE

@@ -55,7 +55,7 @@
 #include <qgeoroutingmanagerengine.h>
 #include <QNetworkAccessManager>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoRoutingManagerEngineNokia : public QGeoRoutingManagerEngine
 {
@@ -81,12 +81,14 @@ private:
                             QGeoRouteRequest::TravelModes travelModes) const;
     QString modesRequestString(const QGeoRouteRequest &request,
                                QGeoRouteRequest::TravelModes travelModes) const;
-    static QString trimDouble(qreal degree, int decimalDigits = 10);
+    static QString trimDouble(double degree, int decimalDigits = 10);
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;
     QString m_token;
     QString m_referer;
 };
+
+QT_END_NAMESPACE
 
 #endif

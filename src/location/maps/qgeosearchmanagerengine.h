@@ -49,7 +49,7 @@
 #include <QObject>
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoSearchManagerEnginePrivate;
 
@@ -97,6 +97,6 @@ private:
     friend class QGeoServiceProvider;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

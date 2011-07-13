@@ -50,7 +50,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsEllipseItem>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoTiledMapCircleObjectInfo::QGeoTiledMapCircleObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoTiledMapObjectInfo(mapData, mapObject)
@@ -103,4 +103,4 @@ void QGeoTiledMapCircleObjectInfo::brushChanged(const QBrush &brush)
 
 #include "moc_qgeotiledmapcircleobjectinfo_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

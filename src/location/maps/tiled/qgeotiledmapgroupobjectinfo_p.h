@@ -55,9 +55,8 @@
 
 #include "qgeotiledmapobjectinfo_p.h"
 
+QT_BEGIN_NAMESPACE
 class QGraphicsPathItem;
-
-QTM_BEGIN_NAMESPACE
 
 class QGeoMapGroupObject;
 
@@ -77,6 +76,6 @@ public slots:
     void childRemoved(QGeoMapObject *childObject);
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif //QGEOTILEDMAPGROUPOBJECT_INFO_P_H

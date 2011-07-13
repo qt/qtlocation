@@ -48,7 +48,7 @@
 #include "qgeomapobject_p.h"
 #include "qgeoboundingbox.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapObjectInfo
@@ -261,4 +261,4 @@ QGeoMapObjectInfoPrivate::~QGeoMapObjectInfoPrivate() {}
 
 #include "moc_qgeomapobjectinfo.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

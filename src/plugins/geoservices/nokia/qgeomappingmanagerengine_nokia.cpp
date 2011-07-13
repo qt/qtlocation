@@ -69,8 +69,12 @@
 #define DISK_CACHE_ENABLED 1
 #endif
 
+QT_BEGIN_NAMESPACE
+
 #if defined(Q_OS_SYMBIAN)
 #include <f32file.h>
+
+
 QChar QGeoMappingManagerEngineNokia::findFirstInternalFlashDrive()
 {
     QChar flashDrive;
@@ -300,3 +304,4 @@ QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGraphicsGeoMap::MapType typ
         return "normal.day";
 }
 
+QT_END_NAMESPACE

@@ -47,7 +47,7 @@
 
 #include <QPen>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMapRouteObjectPrivate;
 class QGeoRoute;
@@ -87,6 +87,6 @@ private:
     Q_DISABLE_COPY(QGeoMapRouteObject)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

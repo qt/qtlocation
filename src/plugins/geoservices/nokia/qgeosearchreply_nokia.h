@@ -52,7 +52,7 @@
 #include <qgeosearchreply.h>
 #include <QNetworkReply>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoSearchReplyNokia : public QGeoSearchReply
 {
@@ -70,5 +70,7 @@ private slots:
 private:
     QNetworkReply *m_reply;
 };
+
+QT_END_NAMESPACE
 
 #endif

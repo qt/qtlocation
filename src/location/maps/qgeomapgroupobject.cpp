@@ -51,7 +51,7 @@
 #include "qgeomapdata.h"
 #include "qgeomapdata_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapGroupObject
@@ -260,8 +260,15 @@ void QGeoMapGroupObject::setMapData(QGeoMapData *mapData)
 /*!
 \fn void QGeoMapGroupObject::childUpdated(QGeoMapObject *childObject)
 
-    This signal will be emitted when the map object \a childObject
-    belonging to the group is updated.
+    This signal will be emitted if the map object \a childObject has
+    changed such that the corresponding QGeoMapObjectInfo class that handles
+    the map-specific behaviours of the object needs to be informed of
+    the change.
+
+    The map object \a childObject must belong to this group.
+
+    At the moment this is only emitted when the z-value of the
+    child-objects are changed.
 */
 
 /*!
@@ -305,5 +312,5 @@ void QGeoMapGroupObjectPrivate::childChangedZValue(int zValue)
 #include "moc_qgeomapgroupobject.cpp"
 #include "moc_qgeomapgroupobject_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

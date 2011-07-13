@@ -52,7 +52,7 @@
 #include <qgeoserviceproviderfactory.h>
 #include <QObject>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProviderFactory
 {
@@ -78,5 +78,7 @@ public:
     static const QString defaultToken;
     static const QString defaultReferer;
 };
+
+QT_END_NAMESPACE
 
 #endif

@@ -49,6 +49,8 @@
 #include "qgeosearchreply_nokia.h"
 #include "qgeocodexmlparser.h"
 
+QT_BEGIN_NAMESPACE
+
 QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, int limit, int offset, QGeoBoundingArea *viewport, QObject *parent)
         : QGeoSearchReply(parent),
         m_reply(reply)
@@ -129,3 +131,5 @@ void QGeoSearchReplyNokia::networkError(QNetworkReply::NetworkError error)
     m_reply->deleteLater();
     m_reply = 0;
 }
+
+QT_END_NAMESPACE

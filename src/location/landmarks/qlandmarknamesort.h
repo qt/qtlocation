@@ -46,7 +46,7 @@
 
 QT_BEGIN_HEADER
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkNameSortPrivate;
 class Q_LOCATION_EXPORT QLandmarkNameSort : public QLandmarkSortOrder
@@ -62,7 +62,7 @@ private:
     Q_DECLARE_LANDMARKSORTORDER_PRIVATE(QLandmarkNameSort)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_END_HEADER
 

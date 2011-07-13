@@ -19,5 +19,16 @@
         <file>resources/menuItem_hovered.png</file>
         <file>resources/button_pressed.png</file>
         <file>resources/button_hovered.png</file>
+        <file>Message.qml</file>
+        <file>common/Fader.qml</file>
+        <file>RouteDialog.qml</file>
+        <file>TextWithLabel.qml</file>
+        <file>resources/option_button_selected.png</file>
+        <file>resources/option_button.png</file>
+        <file>MapComponent.qml</file>
+        <file>Marker.qml</file>
+        <file>resources/marker.png</file>
+        <file>resources/marker_selected.png</file>
+        <file>resources/marker_hovered.png</file>
     </qresource>
 </RCC>

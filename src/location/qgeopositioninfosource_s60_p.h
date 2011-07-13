@@ -64,7 +64,7 @@
 
 #define MAX_SIZE 25
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 // CLASS DECLARATION
 //forward declaration
@@ -299,12 +299,15 @@ private:
 
     TBool mRegularUpdateTimedOut;
 
+    // To check if update interval is already set from application
+    TBool mUpdateIntervalSet;
+
     /*
      * flags for the modules
      */
     TUint8 mModuleFlags;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // CQGEOPOSITIONINFOSOURCES60_H

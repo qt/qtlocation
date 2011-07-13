@@ -10,7 +10,9 @@ QT = core gui network
 
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
-include($$QT_SOURCE_TREE/src/qbase.pri)
+INCLUDEPATH += $$QT.location.private_includes/QtLocation
+
+load(qt_module_config)
 
 HEADERS += qtlocationversion.h
 

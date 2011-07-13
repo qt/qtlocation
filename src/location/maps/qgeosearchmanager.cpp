@@ -48,7 +48,7 @@
 
 #include <QLocale>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoSearchManager
@@ -367,4 +367,4 @@ QGeoSearchManagerPrivate::~QGeoSearchManagerPrivate()
 
 #include "moc_qgeosearchmanager.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

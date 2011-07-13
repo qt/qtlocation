@@ -44,7 +44,7 @@
 
 #include "qgeocoordinate.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapPolygonObject
@@ -106,7 +106,10 @@ void QGeoMapPolygonObject::setPath(const QList<QGeoCoordinate> &path)
 {
     if (d_ptr->path != path) {
         d_ptr->path = path;
-        setOrigin(path.at(0));
+        if (path.size() != 0)
+            setOrigin(path.at(0));
+        else
+            setOrigin(QGeoCoordinate());
         emit pathChanged(emit d_ptr->path);
     }
 }
@@ -205,5 +208,5 @@ QGeoMapPolygonObjectPrivate::~QGeoMapPolygonObjectPrivate() {}
 
 #include "moc_qgeomappolygonobject.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

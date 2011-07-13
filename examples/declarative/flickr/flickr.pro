@@ -12,8 +12,8 @@ symbian {
 RESOURCES += \
     flickr.qrc
 
-target.path = $$[QT_INSTALL_DEMOS]/qtlocation/declarative/flickr
+target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/flickr
 sources.files = $$SOURCES $$HEADERS $$RESOURCES $$FORMS *.pro *.qml flickrcommon flickrmobile
-sources.path = $$[QT_INSTALL_DEMOS]/qtlocation/declarative/flickr
+sources.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/flickr
 
 INSTALLS += target sources

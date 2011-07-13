@@ -46,7 +46,7 @@
 
 #include "qgeomappixmapobject.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoTiledMapPixmapObjectInfo::QGeoTiledMapPixmapObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoTiledMapObjectInfo(mapData, mapObject)
@@ -81,11 +81,16 @@ void QGeoTiledMapPixmapObjectInfo::pixmapChanged(const QPixmap &/*pixmap*/)
 
 void QGeoTiledMapPixmapObjectInfo::offsetChanged(const QPoint &/*offset*/)
 {
-    pixmapItem->setOffset(pixmap->offset());
+    QPoint offset = pixmap->offset();
+
+    QTransform trans;
+    trans.translate(offset.x(), offset.y());
+    pixmapItem->setTransform(trans);
+
     updateItem();
 }
 
 #include "moc_qgeotiledmappixmapobjectinfo_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

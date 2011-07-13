@@ -45,9 +45,7 @@
 #include "qgeocoordinate.h"
 #include "qnumeric.h"
 
-#include <QDebug>
-
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoBoundingBox
@@ -93,6 +91,7 @@ QGeoBoundingBox::QGeoBoundingBox()
     only extends up to the pole. The center of the bounding box will be
     unchanged, and the height will be adjusted such that the center point is at
     the center of the truncated bounding box.
+    \since 1.1
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &center, double degreesWidth, double degreesHeight)
         : d_ptr(new QGeoBoundingBoxPrivate(center, center))
@@ -104,12 +103,14 @@ QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &center, double degreesWid
 /*!
     Constructs a new bounding box with a top left coordinate \a
     topLeft and a bottom right coordinate \a bottomRight.
+    \since 1.1
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
         : d_ptr(new QGeoBoundingBoxPrivate(topLeft, bottomRight)) {}
 
 /*!
     Constructs a bounding box from the contents of \a other.
+    \since 1.1
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingBox &other)
         : QGeoBoundingArea(other),
@@ -123,6 +124,7 @@ QGeoBoundingBox::~QGeoBoundingBox() {}
 /*!
     Assigns \a other to this bounding box and returns a reference to this
     bounding box.
+    \since 1.1
 */
 QGeoBoundingBox& QGeoBoundingBox::operator = (const QGeoBoundingBox & other)
 {
@@ -133,6 +135,7 @@ QGeoBoundingBox& QGeoBoundingBox::operator = (const QGeoBoundingBox & other)
 
 /*!
     Returns whether this bounding box is equal to \a other.
+    \since 1.1
 */
 bool QGeoBoundingBox::operator == (const QGeoBoundingBox &other) const
 {
@@ -141,6 +144,7 @@ bool QGeoBoundingBox::operator == (const QGeoBoundingBox &other) const
 
 /*!
     Returns whether this bounding box is not equal to \a other.
+    \since 1.1
 */
 bool QGeoBoundingBox::operator != (const QGeoBoundingBox &other) const
 {
@@ -153,6 +157,7 @@ bool QGeoBoundingBox::operator != (const QGeoBoundingBox &other) const
 
     This function is provided to help find the specific type of
     aQGeoBoundingArea instance.
+    \since 1.1
 */
 QGeoBoundingArea::AreaType QGeoBoundingBox::type() const
 {
@@ -165,6 +170,7 @@ QGeoBoundingArea::AreaType QGeoBoundingBox::type() const
     A valid bounding box has valid top left and bottom right coordinates and
     has a top left coordinate with latitude greater than or equal to the
     latitude of the bottom right coordinate.
+    \since 1.1
 */
 bool QGeoBoundingBox::isValid() const
 {
@@ -177,6 +183,7 @@ bool QGeoBoundingBox::isValid() const
     Returns whether this bounding box has a geometrical area of 0.
 
     Returns true if this bounding box is invalid.
+    \since 1.1
 */
 bool QGeoBoundingBox::isEmpty() const
 {
@@ -187,6 +194,7 @@ bool QGeoBoundingBox::isEmpty() const
 
 /*!
     Sets the top left coordinate of this bounding box to \a topLeft.
+    \since 1.1
 */
 void QGeoBoundingBox::setTopLeft(const QGeoCoordinate &topLeft)
 {
@@ -195,6 +203,7 @@ void QGeoBoundingBox::setTopLeft(const QGeoCoordinate &topLeft)
 
 /*!
     Returns the top left coordinate of this bounding box.
+    \since 1.1
 */
 QGeoCoordinate QGeoBoundingBox::topLeft() const
 {
@@ -203,6 +212,7 @@ QGeoCoordinate QGeoBoundingBox::topLeft() const
 
 /*!
     Sets the top right coordinate of this bounding box to \a topRight.
+    \since 1.1
 */
 void QGeoBoundingBox::setTopRight(const QGeoCoordinate &topRight)
 {
@@ -212,6 +222,7 @@ void QGeoBoundingBox::setTopRight(const QGeoCoordinate &topRight)
 
 /*!
     Returns the top right coordinate of this bounding box.
+    \since 1.1
 */
 QGeoCoordinate QGeoBoundingBox::topRight() const
 {
@@ -224,6 +235,7 @@ QGeoCoordinate QGeoBoundingBox::topRight() const
 
 /*!
     Sets the bottom left coordinate of this bounding box to \a bottomLeft.
+    \since 1.1
 */
 void QGeoBoundingBox::setBottomLeft(const QGeoCoordinate &bottomLeft)
 {
@@ -233,6 +245,7 @@ void QGeoBoundingBox::setBottomLeft(const QGeoCoordinate &bottomLeft)
 
 /*!
     Returns the bottom left coordinate of this bounding box.
+    \since 1.1
 */
 QGeoCoordinate QGeoBoundingBox::bottomLeft() const
 {
@@ -245,6 +258,7 @@ QGeoCoordinate QGeoBoundingBox::bottomLeft() const
 
 /*!
     Sets the bottom right coordinate of this bounding box to \a bottomRight.
+    \since 1.1
 */
 void QGeoBoundingBox::setBottomRight(const QGeoCoordinate &bottomRight)
 {
@@ -253,6 +267,7 @@ void QGeoBoundingBox::setBottomRight(const QGeoCoordinate &bottomRight)
 
 /*!
     Returns the bottom right coordinate of this bounding box.
+    \since 1.1
 */
 QGeoCoordinate QGeoBoundingBox::bottomRight() const
 {
@@ -267,6 +282,8 @@ QGeoCoordinate QGeoBoundingBox::bottomRight() const
     to the pole. The center of the bounding box will be unchanged, and the
     height will be adjusted such that the center point is at the center of the
     truncated bounding box.
+
+    \since 1.1
 */
 void QGeoBoundingBox::setCenter(const QGeoCoordinate &center)
 {
@@ -319,6 +336,7 @@ void QGeoBoundingBox::setCenter(const QGeoCoordinate &center)
 
 /*!
     Returns the center of this bounding box.
+    \since 1.1
 */
 QGeoCoordinate QGeoBoundingBox::center() const
 {
@@ -351,6 +369,7 @@ QGeoCoordinate QGeoBoundingBox::center() const
     If \a degreesWidth is greater than 360.0 then 360.0 is used as the width,
     the leftmost longitude of the bounding box is set to -180.0 degrees and the
     rightmost longitude of the bounding box is set to 180.0 degrees.
+    \since 1.1
 */
 void QGeoBoundingBox::setWidth(double degreesWidth)
 {
@@ -393,6 +412,7 @@ void QGeoBoundingBox::setWidth(double degreesWidth)
     Returns the width of this bounding box in degrees.
 
     The return value is undefined if this bounding box is invalid.
+    \since 1.1
 */
 double QGeoBoundingBox::width() const
 {
@@ -424,6 +444,7 @@ double QGeoBoundingBox::width() const
     a smaller height than might otherwise be expected.
 
     If \a degreesHeight is greater than 180.0 then 180.0 is used as the height.
+    \since 1.1
 */
 void QGeoBoundingBox::setHeight(double degreesHeight)
 {
@@ -473,6 +494,7 @@ void QGeoBoundingBox::setHeight(double degreesHeight)
     Returns the height of this bounding box in degrees.
 
     The return value is undefined if this bounding box is invalid.
+    \since 1.1
 */
 double QGeoBoundingBox::height() const
 {
@@ -488,6 +510,7 @@ double QGeoBoundingBox::height() const
 /*!
     Returns whether the coordinate \a coordinate is contained within this
     bounding box.
+    \since 1.1
 */
 bool QGeoBoundingBox::contains(const QGeoCoordinate &coordinate) const
 {
@@ -528,6 +551,7 @@ bool QGeoBoundingBox::contains(const QGeoCoordinate &coordinate) const
 /*!
     Returns whether the bounding box \a boundingBox is contained within this
     bounding box.
+    \since 1.1
 */
 bool QGeoBoundingBox::contains(const QGeoBoundingBox &boundingBox) const
 {
@@ -544,6 +568,7 @@ bool QGeoBoundingBox::contains(const QGeoBoundingBox &boundingBox) const
     If the top or bottom edges of both bounding boxes are at one of the poles
     the bounding boxes are considered to be intersecting, since the longitude
     is irrelevant when the edges are at the pole.
+    \since 1.1
 */
 bool QGeoBoundingBox::intersects(const QGeoBoundingBox &boundingBox) const
 {
@@ -599,6 +624,7 @@ bool QGeoBoundingBox::intersects(const QGeoBoundingBox &boundingBox) const
     If the translation would have caused the bounding box to cross a pole the
     bounding box will be translated until the top or bottom edge of bounding
     box touches the pole but not further.
+    \since 1.1
 */
 void QGeoBoundingBox::translate(double degreesLatitude, double degreesLongitude)
 {
@@ -652,6 +678,7 @@ void QGeoBoundingBox::translate(double degreesLatitude, double degreesLongitude)
     Negative values of \a degreesLatitude and \a degreesLongitude correspond to
     southward and westward translation respectively.
 
+    \since 1.1
     \sa translate()
 */
 QGeoBoundingBox QGeoBoundingBox::translated(double degreesLatitude, double degreesLongitude) const
@@ -663,6 +690,13 @@ QGeoBoundingBox QGeoBoundingBox::translated(double degreesLatitude, double degre
 
 /*!
     Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+
+    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the
+    width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
+    rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is
+    independent of the order of the operands.
+
+    \since 1.1
 */
 QGeoBoundingBox QGeoBoundingBox::united(const QGeoBoundingBox &boundingBox) const
 {
@@ -675,10 +709,24 @@ QGeoBoundingBox QGeoBoundingBox::united(const QGeoBoundingBox &boundingBox) cons
     \fn QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &boundingBox) const
 
     Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+
+    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the
+    width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
+    rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is
+    independent of the order of the operands.
+
+    \since 1.1
 */
 
 /*!
     Returns the smallest bounding box which contains both this bounding box and \a boundingBox.
+
+    If the centers of the two bounding boxes are separated by exactly 180.0 degrees then the
+    width is set to 360.0 degrees with the leftmost longitude set to -180.0 degrees and the
+    rightmost longitude set to 180.0 degrees.  This is done to ensure that the result is
+    independent of the order of the operands.
+
+    \since 1.1
 */
 QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingBox)
 {
@@ -704,8 +752,20 @@ QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingB
     bool wrap2 = (left2 > right2);
 
     if ((wrap1 && wrap2) || (!wrap1 && !wrap2)) {
-        left = qMin(left1, left2);
-        right = qMax(right1, right2);
+
+        double w = qAbs((left1 + right1 - left2 - right2) / 2.0);
+
+        if (w < 180.0) {
+            left = qMin(left1, left2);
+            right = qMax(right1, right2);
+        } else if (w > 180.0) {
+            left = qMax(left1, left2);
+            right = qMin(right1, right2);
+        } else {
+            left = -180.0;
+            right = 180.0;
+        }
+
     } else {
         double wrapLeft = 0.0;
         double wrapRight = 0.0;
@@ -800,5 +860,5 @@ bool QGeoBoundingBoxPrivate::operator== (const QGeoBoundingBoxPrivate &other) co
     return ((topLeft == other.topLeft) && (bottomRight == other.bottomRight));
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

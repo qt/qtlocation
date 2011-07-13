@@ -48,9 +48,9 @@
 #include <QSize>
 #include <QPair>
 
-class QLocale;
+QT_BEGIN_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+class QLocale;
 
 class QGeoBoundingBox;
 class QGeoCoordinate;
@@ -98,6 +98,6 @@ private:
     friend class QGeoServiceProvider;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

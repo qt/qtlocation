@@ -50,7 +50,7 @@
 
 QT_BEGIN_HEADER
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 #define Q_DECLARE_LANDMARKSORTORDER_PRIVATE(Class) \
     inline Class##Private* d_func(); \
@@ -87,7 +87,7 @@ protected:
     QSharedDataPointer<QLandmarkSortOrderPrivate> d_ptr;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 QT_END_HEADER
 

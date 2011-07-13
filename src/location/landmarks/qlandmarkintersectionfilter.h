@@ -45,7 +45,7 @@
 #include "qlandmarkfilter.h"
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkIntersectionFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkIntersectionFilter : public QLandmarkFilter
@@ -69,6 +69,6 @@ private:
     Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkIntersectionFilter)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -47,7 +47,7 @@
 #include <QPointF>
 #include "qgeocoordinate.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class ProjCoordinateSystemPrivate : public QSharedData
 {
@@ -264,4 +264,4 @@ QPolygonF ProjPolygon::toPolygonF(double scale) const
     return poly;
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

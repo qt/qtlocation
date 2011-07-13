@@ -56,7 +56,7 @@
 #include "qmobilityglobal.h"
 #include <QSharedData>
 #include <QString>
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkIdPrivate : public QSharedData
 {
@@ -81,6 +81,6 @@ public:
 };
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

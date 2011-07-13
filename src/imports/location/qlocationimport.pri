@@ -1,6 +1,6 @@
 load(qt_module)
 
-symbian:include($$QT_SOURCE_TREE/src/plugins/qpluginbase.pri)
+symbian:load(qt_plugin)
 TEMPLATE = lib
 CONFIG += qt plugin
 
@@ -15,7 +15,7 @@ isEmpty(TARGET) {
 
 QMLDIRFILE = $${_PRO_FILE_PWD_}/qmldir
 copy2build.input = QMLDIRFILE
-copy2build.output = $$QT.declarative.imports/$$TARGETPATH/qmldir
+copy2build.output = $$QT.location.imports/$$TARGETPATH/qmldir
 !contains(TEMPLATE_PREFIX, vc):copy2build.variable_out = PRE_TARGETDEPS
 copy2build.commands = $$QMAKE_COPY ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
 copy2build.name = COPY ${QMAKE_FILE_IN}
@@ -27,7 +27,7 @@ QMAKE_EXTRA_COMPILERS += copy2build
 TARGET = $$qtLibraryTarget($$TARGET)
 contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 
-include($$QT_SOURCE_TREE/src/qt_targets.pri)
+load(qt_targets)
 
 wince*:LIBS += $$QMAKE_LIBS_GUI
 

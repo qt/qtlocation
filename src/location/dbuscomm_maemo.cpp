@@ -44,7 +44,7 @@
 #include <iostream>
 using namespace std;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 const QString DBusComm::positioningdService   = QString("com.nokia.positioningd.client");
 const QString DBusComm::positioningdPath      = QString("/com/nokia/positioningd/client");
@@ -253,5 +253,5 @@ bool DBusComm::createUniqueName()
 }
 
 #include "moc_dbuscomm_maemo_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

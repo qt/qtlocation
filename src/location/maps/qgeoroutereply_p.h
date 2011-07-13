@@ -58,7 +58,7 @@
 
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoRoute;
 
@@ -80,6 +80,6 @@ private:
     Q_DISABLE_COPY(QGeoRouteReplyPrivate)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

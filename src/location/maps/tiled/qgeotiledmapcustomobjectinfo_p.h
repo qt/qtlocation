@@ -60,7 +60,7 @@
 
 class QGraphicsPixmapItem;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMapCustomObject;
 
@@ -79,7 +79,7 @@ public slots:
     void offsetChanged(const QPoint &offset);
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif //QGEOTILEDMAPCUSTOMOBJECT_INFO_P_H
 

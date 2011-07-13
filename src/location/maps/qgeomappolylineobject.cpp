@@ -44,7 +44,7 @@
 
 #include "qgeocoordinate.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapPolylineObject
@@ -105,7 +105,10 @@ void QGeoMapPolylineObject::setPath(const QList<QGeoCoordinate> &path)
 {
     if (d_ptr->path != path) {
         d_ptr->path = path;
-        setOrigin(path.at(0));
+        if (path.size() != 0)
+            setOrigin(path.at(0));
+        else
+            setOrigin(QGeoCoordinate());
         emit pathChanged(d_ptr->path);
     }
 }
@@ -171,5 +174,5 @@ QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}
 
 #include "moc_qgeomappolylineobject.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

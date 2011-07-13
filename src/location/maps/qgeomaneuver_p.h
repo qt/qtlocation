@@ -59,7 +59,7 @@
 #include <QSharedData>
 #include <QString>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoManeuverPrivate : public QSharedData
 {
@@ -80,6 +80,6 @@ public:
     QGeoCoordinate waypoint;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -61,7 +61,7 @@
 
 #define QTLANDMARKS_IMPLEMENTATION_VERSION_NAME "com.nokia.qtmobility.landmarks.implementation.version"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkManagerEngine;
 class QLandmarkManagerEngineFactory;
@@ -87,6 +87,6 @@ public:
     Q_DECLARE_PUBLIC(QLandmarkManager)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QLANDMARKMANAGER_P_H

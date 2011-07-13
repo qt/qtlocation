@@ -7,29 +7,29 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
 ** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
-**
-**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
 **
 **
 **
@@ -45,6 +45,7 @@
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativelandmark_p.h"
+#include "qdeclarativegeomapgroupobject_p.h"
 
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
@@ -58,7 +59,7 @@
 
 #include <QDebug>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass Map
@@ -150,6 +151,36 @@ void QDeclarativeGraphicsGeoMap::componentComplete()
     populateMap();
 }
 
+void QDeclarativeGraphicsGeoMap::recursiveAddToObjectMap(QDeclarativeGeoMapObject *mapObject)
+{
+    objectMap_.insert(mapObject->mapObject(), mapObject);
+
+    QDeclarativeGeoMapGroupObject *groupObject =
+        qobject_cast<QDeclarativeGeoMapGroupObject *>(mapObject);
+
+    if (groupObject) {
+        QDeclarativeListReference ref(groupObject, "objects");
+        for (int i = 0; i < ref.count(); ++i) {
+            QDeclarativeGeoMapObject *subObject =
+                qobject_cast<QDeclarativeGeoMapObject *>(ref.at(i));
+
+            if (subObject)
+                recursiveAddToObjectMap(subObject);
+        }
+    }
+}
+
+void QDeclarativeGraphicsGeoMap::recursiveRemoveFromObjectMap(QGeoMapObject *mapObject)
+{
+    objectMap_.remove(mapObject);
+
+    QGeoMapGroupObject *groupObject = qobject_cast<QGeoMapGroupObject *>(mapObject);
+    if (groupObject) {
+        foreach (QGeoMapObject *subObject, groupObject->childObjects())
+            recursiveRemoveFromObjectMap(subObject);
+    }
+}
+
 void QDeclarativeGraphicsGeoMap::populateMap()
 {
     if (!mapData_ || !componentCompleted_)
@@ -166,7 +197,7 @@ void QDeclarativeGraphicsGeoMap::populateMap()
         QDeclarativeGeoMapObject *mapObject = qobject_cast<QDeclarativeGeoMapObject*>(kids.at(i));
         if (mapObject) {
             mapObjects_.append(mapObject);
-            objectMap_.insert(mapObject->mapObject(), mapObject);
+            recursiveAddToObjectMap(mapObject);
             mapData_->addMapObject(mapObject->mapObject());
             mapObject->setMap(this);
             continue;
@@ -863,7 +894,7 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
     if (!mapData_ || !object || objectMap_.contains(object->mapObject()))
         return;
     mapObjects_.append(object);
-    objectMap_.insert(object->mapObject(), object);
+    recursiveAddToObjectMap(object);
     mapData_->addMapObject(object->mapObject());
     object->setMap(this);
 }
@@ -889,7 +920,7 @@ void QDeclarativeGraphicsGeoMap::removeMapObject(QDeclarativeGeoMapObject *objec
         qmlInfo(this) << tr("Map plugin is not set, map object cannot be removed.");
     if (!mapData_ || !object || !objectMap_.contains(object->mapObject()))
         return;
-    objectMap_.remove(object->mapObject());
+    recursiveRemoveFromObjectMap(object->mapObject());
     mapObjects_.removeOne(object);
     mapData_->removeMapObject(object->mapObject());
 }
@@ -912,4 +943,4 @@ int QDeclarativeGraphicsGeoMap::testGetDeclarativeMapObjectCount()
 
 #include "moc_qdeclarativegraphicsgeomap_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

@@ -47,7 +47,7 @@
 #include <qgeoserviceprovider.h>
 #include <qgeosearchmanager.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoSearchModel::QDeclarativeGeoSearchModel(QObject* parent)
     : QAbstractListModel(parent),
@@ -218,4 +218,4 @@ void QDeclarativeGeoSearchModel::setPlaces(const QList<QGeoPlace> &places)
 
 #include "moc_qdeclarativegeosearchmodel_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

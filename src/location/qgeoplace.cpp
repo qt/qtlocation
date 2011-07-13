@@ -48,13 +48,13 @@
 #endif
 
 #if !defined(Q_CC_MWERKS)
-template<> QTM_PREPEND_NAMESPACE(QGeoPlacePrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QGeoPlacePrivate)>::clone()
+template<> QT_PREPEND_NAMESPACE(QGeoPlacePrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QGeoPlacePrivate)>::clone()
 {
     return d->clone();
 }
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoPlace
@@ -100,6 +100,7 @@ QGeoPlace::QGeoPlace(QGeoPlacePrivate *dd)
 
 /*!
     Constructs a copy of \a other.
+    \since 1.1
 */
 QGeoPlace::QGeoPlace(const QGeoPlace &other)
         : d_ptr(other.d_ptr)
@@ -116,6 +117,7 @@ QGeoPlace::~QGeoPlace()
 /*!
     Assigns \a other to this place and returns a reference
     to this place.
+    \since 1.1
 */
 QGeoPlace &QGeoPlace::operator= (const QGeoPlace & other)
 {
@@ -136,6 +138,7 @@ inline const QGeoPlacePrivate* QGeoPlace::d_func() const
 /*!
     Returns true if \a other is equal to this place,
     otherwise returns false.
+    \since 1.1
 */
 bool QGeoPlace::operator== (const QGeoPlace &other) const
 {
@@ -145,6 +148,7 @@ bool QGeoPlace::operator== (const QGeoPlace &other) const
 /*!
     Returns true if \a other is not equal to this place,
     otherwise returns false.
+    \since 1.1
 */
 bool QGeoPlace::operator!= (const QGeoPlace &other) const
 {
@@ -157,6 +161,7 @@ bool QGeoPlace::operator!= (const QGeoPlace &other) const
 
     If so, the QLandmark(const QGeoPlace &place) constructor can be used to
     restore access to the landmark data.
+    \since 1.1
 */
 bool QGeoPlace::isLandmark() const
 {
@@ -168,6 +173,7 @@ bool QGeoPlace::isLandmark() const
 
     The viewport is a suggestion for a size and position of a map window
     which aims to view this palce.
+    \since 1.1
 */
 QGeoBoundingBox QGeoPlace::viewport() const
 {
@@ -180,6 +186,7 @@ QGeoBoundingBox QGeoPlace::viewport() const
 
     The viewport is a suggestion for a size and position of a map window
     which aims to view this palce.
+    \since 1.1
 */
 void QGeoPlace::setViewport(const QGeoBoundingBox &viewport)
 {
@@ -189,6 +196,7 @@ void QGeoPlace::setViewport(const QGeoBoundingBox &viewport)
 
 /*!
     Returns the coordinate that this place is located at.
+    \since 1.1
 */
 QGeoCoordinate QGeoPlace::coordinate() const
 {
@@ -198,6 +206,7 @@ QGeoCoordinate QGeoPlace::coordinate() const
 
 /*!
     Sets the \a coordinate that this place is located at.
+    \since 1.1
 */
 void QGeoPlace::setCoordinate(const QGeoCoordinate &coordinate)
 {
@@ -207,6 +216,7 @@ void QGeoPlace::setCoordinate(const QGeoCoordinate &coordinate)
 
 /*!
     Returns the address of this place.
+    \since 1.1
 */
 QGeoAddress QGeoPlace::address() const
 {
@@ -216,6 +226,7 @@ QGeoAddress QGeoPlace::address() const
 
 /*!
     Sets the \a address of this place.
+    \since 1.1
 */
 void QGeoPlace::setAddress(const QGeoAddress &address)
 {
@@ -639,7 +650,7 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
 {
 
 #ifdef QGEOPLACE_DEBUG
-    qDebug() << "typoe" << (type == other.type);
+    qDebug() << "type" << (type == other.type);
     qDebug() << "viewport" << (viewport == other.viewport);
     qDebug() << "coordinate:" <<  (coordinate == other.coordinate);
     qDebug() << "address:" << (address == other.address);
@@ -691,5 +702,5 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
             );
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

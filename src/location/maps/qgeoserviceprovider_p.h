@@ -57,7 +57,7 @@
 
 #include <QHash>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoSearchManager;
 class QGeoRoutingManager;
@@ -97,6 +97,6 @@ public:
     static void loadStaticPlugins(QHash<QString, QGeoServiceProviderFactory*> *plugins);
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

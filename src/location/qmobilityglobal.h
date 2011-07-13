@@ -48,20 +48,20 @@
 //#define QTM_NAMESPACE QtMobility
 //#define QTM_NAMESPACE
 
-#ifdef QTM_NAMESPACE
+/*#ifdef QTM_NAMESPACE
 # define QTM_PREPEND_NAMESPACE(name) ::QTM_NAMESPACE::name
-# define QTM_BEGIN_NAMESPACE namespace QTM_NAMESPACE {
-# define QTM_END_NAMESPACE }
+# define QT_BEGIN_NAMESPACE namespace QTM_NAMESPACE {
+# define QT_END_NAMESPACE }
 # define QTM_USE_NAMESPACE using namespace QTM_NAMESPACE;
 #else
 # define QTM_PREPEND_NAMESPACE(name) ::name
-# define QTM_BEGIN_NAMESPACE
-# define QTM_END_NAMESPACE
+# define QT_BEGIN_NAMESPACE
+# define QT_END_NAMESPACE
 # define QTM_USE_NAMESPACE
-#endif
+#endif*/
 
 //in case Qt is in namespace
-QT_USE_NAMESPACE
+//QT_USE_NAMESPACE
 
 #endif // QMOBILITYGLOBAL_H
 

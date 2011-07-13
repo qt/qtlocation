@@ -47,7 +47,7 @@
 
 #include <QDateTime>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRoute
@@ -320,4 +320,4 @@ bool QGeoRoutePrivate::operator ==(const QGeoRoutePrivate &other) const
             && (path == other.path));
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

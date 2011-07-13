@@ -46,7 +46,7 @@
 #include <QNetworkProxy>
 #include <QLocale>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMappingManager
@@ -261,4 +261,4 @@ QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 
 #include "moc_qgeomappingmanager.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

@@ -55,10 +55,10 @@
 #include <qlatin1constant.h>
 #include <QObject>
 #include <QMap>
+
+QT_BEGIN_NAMESPACE
 class QIODevice;
 class QStringList;
-
-QTM_BEGIN_NAMESPACE
 class QLandmarkManagerPrivate;
 class QLandmarkManagerEngine;
 
@@ -215,6 +215,6 @@ private:
     QLandmarkManagerEngine *engine();
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

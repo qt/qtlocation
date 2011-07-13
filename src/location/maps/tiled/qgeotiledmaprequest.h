@@ -47,7 +47,7 @@
 #include <QRect>
 #include <QExplicitlySharedDataPointer>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoTiledMapData;
 class QGeoTiledMapRequestPrivate;
@@ -85,6 +85,6 @@ private:
 
 Q_LOCATION_EXPORT uint qHash(const QGeoTiledMapRequest &key);
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

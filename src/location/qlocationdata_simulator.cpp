@@ -43,7 +43,7 @@
 
 #include <QtCore/QDataStream>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 void qt_registerLocationTypes()
 {
@@ -94,4 +94,4 @@ QDataStream &operator>>(QDataStream &in, QGeoSatelliteInfoData::SatelliteInfo &s
     return in;
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

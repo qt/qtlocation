@@ -42,7 +42,7 @@
 #include "qlandmarknamefilter.h"
 #include "qlandmarknamefilter_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkNameFilter
@@ -65,6 +65,7 @@ Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkNameFilter)
 
 /*!
     Creates a filter that selects landmarks by \a name.
+    \since 1.1
 */
 QLandmarkNameFilter::QLandmarkNameFilter(const QString &name)
         : QLandmarkFilter(new QLandmarkNameFilterPrivate(name)) {}
@@ -84,6 +85,7 @@ QLandmarkNameFilter::~QLandmarkNameFilter()
 
 /*!
     Returns the name that the filter will use to determine matches.
+    \since 1.1
 */
 QString QLandmarkNameFilter::name() const
 {
@@ -93,6 +95,7 @@ QString QLandmarkNameFilter::name() const
 
 /*!
     Sets the \a name that the filter will use to determine matches.
+    \since 1.1
 */
 void QLandmarkNameFilter::setName(const QString &name)
 {
@@ -102,6 +105,7 @@ void QLandmarkNameFilter::setName(const QString &name)
 
 /*!
     Returns the matching criteria of the filter.
+    \since 1.1
 */
 QLandmarkFilter::MatchFlags QLandmarkNameFilter::matchFlags() const
 {
@@ -111,6 +115,7 @@ QLandmarkFilter::MatchFlags QLandmarkNameFilter::matchFlags() const
 
 /*!
     Sets the matching criteria to those defined in \a flags.
+    \since 1.1
 */
 void QLandmarkNameFilter::setMatchFlags(QLandmarkFilter::MatchFlags flags)
 {
@@ -135,4 +140,4 @@ QLandmarkNameFilterPrivate::QLandmarkNameFilterPrivate(const QLandmarkNameFilter
 
 QLandmarkNameFilterPrivate::~QLandmarkNameFilterPrivate() {}
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

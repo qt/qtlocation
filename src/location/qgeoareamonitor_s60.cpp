@@ -45,7 +45,7 @@
 #include "qmlbackendmonitorinfo_s60_p.h"
 #include "qmlbackendmonitorcreatetriggerao_s60_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 TInt QGeoAreaMonitorS60::refCount = 0;
 
@@ -285,5 +285,5 @@ void QGeoAreaMonitorS60::disconnectNotify(const char* signal)
     }
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

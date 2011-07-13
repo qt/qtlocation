@@ -43,7 +43,7 @@
 #include "qlocationconnection_simulator_p.h"
 #include "qlocationdata_simulator_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoSatelliteInfoSourceSimulator::QGeoSatelliteInfoSourceSimulator(QObject *parent)
     : QGeoSatelliteInfoSource(parent)
@@ -102,5 +102,5 @@ void QGeoSatelliteInfoSourceSimulator::updateData()
 }
 
 #include "moc_qgeosatelliteinfosource_simulator_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

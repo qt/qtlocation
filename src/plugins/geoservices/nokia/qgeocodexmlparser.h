@@ -53,15 +53,15 @@
 #include <QList>
 #include <QXmlStreamReader>
 
-class QIODevice;
 
 #include <qgeocoordinate.h>
 #include <qgeoboundingbox.h>
 #include <qgeolocation.h>
 #include <qgeoaddress.h>
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
+class QIODevice;
 class QGeoCodeXmlParser
 {
 public:
@@ -86,5 +86,7 @@ private:
     QList<QGeoLocation> m_results;
     QString m_errorString;
 };
+
+QT_END_NAMESPACE
 
 #endif

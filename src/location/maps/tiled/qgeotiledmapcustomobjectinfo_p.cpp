@@ -46,7 +46,7 @@
 
 #include "qgeomapcustomobject.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QGeoTiledMapCustomObjectInfo::QGeoTiledMapCustomObjectInfo(QGeoTiledMapData *mapData, QGeoMapObject *mapObject)
     : QGeoTiledMapObjectInfo(mapData, mapObject)
@@ -90,11 +90,12 @@ void QGeoTiledMapCustomObjectInfo::graphicsItemChanged(QGraphicsItem * /*graphic
 
 void QGeoTiledMapCustomObjectInfo::offsetChanged(const QPoint &/*offset*/)
 {
-    graphicsItem->setPos(custom->offset());
+    QPoint offset = custom->offset();
+    graphicsItem->translate(offset.x(), offset.y());
     updateItem();
 }
 
 #include "moc_qgeotiledmapcustomobjectinfo_p.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

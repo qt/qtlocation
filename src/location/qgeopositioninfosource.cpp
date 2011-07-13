@@ -66,7 +66,7 @@
 #endif
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoPositionInfoSource
@@ -172,9 +172,9 @@ void QGeoPositionInfoSourcePrivate::loadDynamicPlugins(QHash<QString, QGeoPositi
     QString blockName;
 
     QSettings settings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
-    QVariant value = settings.value("position.plugin.operator.whitelist");
+    QVariant value = settings.value(QLatin1String("position.plugin.operator.whitelist"));
     if (value.isValid()) {
-        QStringList parts = value.toString().split(",");
+        QStringList parts = value.toString().split(QLatin1String(","));
         if (parts.size() == 4) {
             QFile file(parts.at(1));
             file.open(QIODevice::ReadOnly);
@@ -314,6 +314,7 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
 
     Note: Subclass implementations must call the base implementation of
     setUpdateInterval() so that updateInterval() returns the correct value.
+    \since 1.0
 */
 void QGeoPositionInfoSource::setUpdateInterval(int msec)
 {
@@ -337,6 +338,7 @@ int QGeoPositionInfoSource::updateInterval() const
     \bold {Note:} When reimplementing this method, subclasses must call the
     base method implementation to ensure preferredPositioningMethods() returns the correct value.
 
+    \since 1.0
     \sa supportedPositioningMethods()
 */
 void QGeoPositionInfoSource::setPreferredPositioningMethods(PositioningMethods methods)
@@ -349,6 +351,7 @@ void QGeoPositionInfoSource::setPreferredPositioningMethods(PositioningMethods m
 
 /*!
     Returns the positioning methods set by setPreferredPositioningMethods().
+    \since 1.0
 */
 QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPositioningMethods() const
 {
@@ -365,14 +368,15 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
 
     Note: Symbian applications will need to have the Location capability
     otherwise this will return 0.
+    \since 1.0
 */
 
 QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)
 {
     QSettings pluginSettings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
-    QVariant value = pluginSettings.value("position.plugin.operator.whitelist");
+    QVariant value = pluginSettings.value(QLatin1String("position.plugin.operator.whitelist"));
     if (value.isValid()) {
-        QStringList parts = value.toString().split(",");
+        QStringList parts = value.toString().split(QLatin1String(","));
         if (parts.size() == 4) {
             QGeoPositionInfoSource *source = createSource(parts.at(0), parent);
             if (source)
@@ -399,7 +403,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 #elif defined(Q_WS_MEEGO)
     // Use Maemo6 backend if its available, otherwise use Geoclue backend
     QSettings maemo6Settings(QSettings::UserScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSatMaemo6"));
-    if (!maemo6Settings.value("maemo6positioningavailable").isValid()) {
+    if (!maemo6Settings.value(QLatin1String("maemo6positioningavailable")).isValid()) {
         QGeoPositionInfoSourceMaemo* maemo6Source = new QGeoPositionInfoSourceMaemo(parent);
         int status = maemo6Source->init();
         if (status == -1) {
@@ -465,6 +469,7 @@ QStringList QGeoPositionInfoSource::availableSources()
     If \a fromSatellitePositioningMethodsOnly is true, this returns the last
     known position received from a satellite positioning method; if none
     is available, a null update is returned.
+    \since 1.0
 */
 
 /*!
@@ -472,6 +477,7 @@ QStringList QGeoPositionInfoSource::availableSources()
 
     Returns the positioning methods available to this source.
 
+    \since 1.0
     \sa setPreferredPositioningMethods()
 */
 
@@ -482,6 +488,7 @@ QStringList QGeoPositionInfoSource::availableSources()
 
     This is the minimum value accepted by setUpdateInterval() and
     requestUpdate().
+    \since 1.0
 */
 
 
@@ -498,12 +505,14 @@ QStringList QGeoPositionInfoSource::availableSources()
     lost or if a hardware error is detected.  Position updates will recommence if the data becomes
     available later on.  The updateTimout() signal will not be emitted again until after the
     periodic updates resume.
+    \since 1.0
 */
 
 /*!
     \fn virtual void QGeoPositionInfoSource::stopUpdates() = 0;
 
     Stops emitting updates at regular intervals.
+    \since 1.0
 */
 
 /*!
@@ -524,6 +533,7 @@ QStringList QGeoPositionInfoSource::availableSources()
     If the source uses multiple positioning methods, it tries to gets the
     current position from the most accurate positioning method within the
     given timeout.
+    \since 1.0
 */
 
 /*!
@@ -533,6 +543,7 @@ QStringList QGeoPositionInfoSource::availableSources()
     when an update becomes available.
 
     The \a update value holds the value of the new update.
+    \since 1.0
 */
 
 /*!
@@ -544,8 +555,9 @@ QStringList QGeoPositionInfoSource::availableSources()
     If startUpdates() has been called, this signal will be emitted if this QGeoPositionInfoSource
     subclass determines that it will not be able to provide further regular updates.  This signal
     will not be emitted again until after the regular updates resume.
+    \since 1.0
 */
 
 #include "moc_qgeopositioninfosource.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

@@ -4,7 +4,7 @@ TARGETPATH = Qt/location
 # Compatibility demands old path too.
 #TARGETPATH = QtMobility/location
 
-include(../qimportbase.pri)
+include(qlocationimport.pri)
 
 QT += declarative network location
 

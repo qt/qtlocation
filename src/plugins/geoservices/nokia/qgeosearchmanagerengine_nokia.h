@@ -58,7 +58,7 @@
 #include <QLocale>
 
 
-QTM_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoSearchManagerEngineNokia : public QGeoSearchManagerEngine
 {
@@ -84,7 +84,7 @@ private slots:
     void placesError(QGeoSearchReply::Error error, const QString &errorString);
 
 private:
-    static QString trimDouble(qreal degree, int decimalDigits = 10);
+    static QString trimDouble(double degree, int decimalDigits = 10);
     QGeoSearchReply* search(QString requestString, QGeoBoundingArea *bounds, int limit = -1, int offset = 0);
     QString languageToMarc(QLocale::Language language);
 
@@ -93,5 +93,7 @@ private:
     QString m_token;
     QString m_referer;
 };
+
+QT_END_NAMESPACE
 
 #endif

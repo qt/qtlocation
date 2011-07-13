@@ -46,7 +46,7 @@
 #endif
 #include <QFile>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 #define UPDATE_TIMEOUT_COLD_START 120000
 
@@ -366,4 +366,4 @@ void QGeoSatelliteInfoSourceGypsy::requestUpdateTimeout()
 }
 
 #include "moc_qgeosatelliteinfosource_gypsy_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

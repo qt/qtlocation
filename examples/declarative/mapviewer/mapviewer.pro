@@ -12,8 +12,8 @@ symbian {
 RESOURCES += \
     mapviewer.qrc
 
-target.path = $$[QT_INSTALL_DEMOS]/qtlocation/declarative/mapviewer
+target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/mapviewer
 sources.files = $$SOURCES $$HEADERS $$RESOURCES $$FORMS *.pro *.qml *.png *.sci
-sources.path = $$[QT_INSTALL_DEMOS]/qtlocation/declarative/mapviewer
+sources.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/mapviewer
 
 INSTALLS += target sources

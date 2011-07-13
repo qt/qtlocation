@@ -1,12 +1,12 @@
 TEMPLATE = app
-TARGET = mapsdemo
+TARGET = maps
 
 CONFIG += qt warn_on
 
 QT += network location
 
 
-RESOURCES += mapsdemo.qrc
+RESOURCES += maps.qrc
 
 symbian: {
     TARGET.CAPABILITY = Location \
@@ -35,7 +35,7 @@ SOURCES += \
     navigator.cpp
 
 #install
-target.path = $$[QT_INSTALL_DEMOS]/qtlocation/mapsdemo
+target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/maps
 sources.files = $$SOURCES $HEADERS $$RESOURCES $$FORMS *.pro
-sources.path = $$[QT_INSTALL_DEMOS]/qtlocation/mapsdemo
+sources.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/maps
 INSTALLS += target sources

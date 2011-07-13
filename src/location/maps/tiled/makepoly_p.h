@@ -61,7 +61,7 @@
 #include <QPolygonF>
 #include <QGraphicsPolygonItem>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 // TODO: replace boolean parameter by enum
 static inline void makepoly(QPolygonF &points, const QList<QGeoCoordinate> & path, const QGeoTiledMapDataPrivate * mapData, bool closedPath, qreal ypole = -100)
@@ -133,6 +133,6 @@ static inline void makepoly(QPolygonF &points, const QList<QGeoCoordinate> & pat
     }
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif //MAKEPOLY_P_H

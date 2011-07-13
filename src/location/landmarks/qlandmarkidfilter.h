@@ -46,7 +46,7 @@
 #include "qlandmarkfilter.h"
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkIdFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkIdFilter : public QLandmarkFilter
@@ -68,6 +68,6 @@ private:
     Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkIdFilter)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

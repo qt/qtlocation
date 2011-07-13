@@ -46,7 +46,7 @@
 
 #include <QPen>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMapRouteObjectPrivate
 {
@@ -59,6 +59,6 @@ public:
     quint32 detailLevel;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

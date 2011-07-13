@@ -58,7 +58,7 @@
 #include <QList>
 #include <QLocale>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoSearchManagerEnginePrivate
 {
@@ -78,6 +78,6 @@ private:
     Q_DISABLE_COPY(QGeoSearchManagerEnginePrivate)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

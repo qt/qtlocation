@@ -59,10 +59,10 @@
 #include <QBrush>
 #include <QPolygonF>
 
+
+QT_BEGIN_NAMESPACE
+
 class QGraphicsPolygonItem;
-
-QTM_BEGIN_NAMESPACE
-
 class QGeoMapPolygonObject;
 
 class QGeoTiledMapPolygonObjectInfo : public QGeoTiledMapObjectInfo
@@ -84,7 +84,7 @@ private:
     void genPoly();
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif //QGEOTILEDMAPPOLYGONOBJECT_INFO_P_H
 

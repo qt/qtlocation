@@ -56,6 +56,8 @@
 #include <QUrl>
 #include <QMap>
 
+QT_BEGIN_NAMESPACE
+
 QGeoSearchManagerEngineNokia::QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoSearchManagerEngine(parameters),
         m_host("loc.desktop.maps.svc.ovi.com"),
@@ -242,7 +244,7 @@ QGeoSearchReply* QGeoSearchManagerEngineNokia::search(QString requestString,
     return reply;
 }
 
-QString QGeoSearchManagerEngineNokia::trimDouble(qreal degree, int decimalDigits)
+QString QGeoSearchManagerEngineNokia::trimDouble(double degree, int decimalDigits)
 {
     QString sDegree = QString::number(degree, 'g', decimalDigits);
 
@@ -301,3 +303,5 @@ QString QGeoSearchManagerEngineNokia::languageToMarc(QLocale::Language language)
 
     return code;
 }
+
+QT_END_NAMESPACE

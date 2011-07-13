@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,37 +40,45 @@
 
 import Qt 4.7
 
-Item {
-    id: titleBar
-    BorderImage { source: "titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
+Row {
+    id: textWithLabel
+    height: inputRectangle.height
 
-    Item {
-        id: container
-        width: (parent.width * 2) - 55 ; height: parent.height
+    property alias label: label.text
+    property alias text: inputField.text
+    property alias labelWidth: label.width
 
-        Image {
-            id: quitButton
-            anchors.left: parent.left//; anchors.leftMargin: 0
-            anchors.verticalCenter: parent.verticalCenter
-            source: "quit.png"
-            MouseArea {
-                anchors.fill: parent
-                onClicked: Qt.quit()
-            }
-        }
-
-        Text {
-            id: categoryText
-            anchors {
-                left: quitButton.right; leftMargin: 10; rightMargin: 10
-                verticalCenter: parent.verticalCenter
-            }
-            elide: Text.ElideLeft
-            text: "Mapviewer example"
-            font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
+    Text {
+        id: label;
+        width:55;
+        enabled: textWithLabel.enabled
+        color: enabled ? "black" : "grey"
+        anchors {
+            top: parent.top;
+            topMargin: (inputRectangle.height-height)/2
         }
     }
-    transitions: Transition {
-        NumberAnimation { properties: "x"; easing.type: Easing.InOutQuad }
+
+    Rectangle {
+        id: inputRectangle
+        width: textWithLabel.width - label.width; height: 30
+        color: enabled ? "whitesmoke" : "gainsboro"
+        border.width: 1
+        border.color: enabled ? "black" : "grey"
+        radius: 5
+        TextInput {
+            id: inputField
+            focus: true
+            width: parent.width - anchors.leftMargin
+            enabled: textWithLabel.enabled
+            color: enabled ? "black" : "grey"
+            horizontalAlignment: Text.AlignLeft
+
+            anchors {
+                left: parent.left;
+                verticalCenter: parent.verticalCenter;
+                leftMargin: 5
+            }
+        }
     }
 }

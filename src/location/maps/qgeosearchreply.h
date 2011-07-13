@@ -47,7 +47,7 @@
 #include <QObject>
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoSearchReplyPrivate;
 
@@ -103,6 +103,6 @@ private:
     Q_DISABLE_COPY(QGeoSearchReply)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

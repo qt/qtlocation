@@ -45,10 +45,10 @@
 #include "qmobilityglobal.h"
 #include <QSharedDataPointer>
 
+
+QT_BEGIN_NAMESPACE
+
 class QString;
-
-QTM_BEGIN_NAMESPACE
-
 class QGeoAddressPrivate;
 class Q_LOCATION_EXPORT QGeoAddress
 {
@@ -104,6 +104,6 @@ private:
     QSharedDataPointer<QGeoAddressPrivate> d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

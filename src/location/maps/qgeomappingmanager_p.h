@@ -58,7 +58,7 @@
 #include <QSize>
 #include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoMappingManagerEngine;
 
@@ -74,6 +74,6 @@ private:
     Q_DISABLE_COPY(QGeoMappingManagerPrivate)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

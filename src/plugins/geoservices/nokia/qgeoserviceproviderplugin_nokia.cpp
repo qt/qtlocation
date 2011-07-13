@@ -55,6 +55,8 @@
 #include <QtPlugin>
 #include <QNetworkProxy>
 
+QT_BEGIN_NAMESPACE
+
 QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia() {}
 
 QGeoServiceProviderFactoryNokia::~QGeoServiceProviderFactoryNokia() {}
@@ -94,3 +96,5 @@ const QString QGeoServiceProviderFactoryNokia::defaultToken("152022572f0e44e0748
 const QString QGeoServiceProviderFactoryNokia::defaultReferer("qtlocationapi");
 
 Q_EXPORT_PLUGIN2(qtgeoservices_nokia, QGeoServiceProviderFactoryNokia)
+
+QT_END_NAMESPACE

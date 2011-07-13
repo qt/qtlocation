@@ -49,7 +49,7 @@
 
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 // constructor
 CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject* aParent) : QGeoPositionInfoSource(aParent),
@@ -64,6 +64,7 @@ CQGeoPositionInfoSourceS60::CQGeoPositionInfoSourceS60(QObject* aParent) : QGeoP
         mMinUpdateInterval(100),
         mStartUpdates(FALSE),
         mRegularUpdateTimedOut(FALSE),
+        mUpdateIntervalSet(FALSE),
         mModuleFlags(0)
 {
     memset(mList, 0 , MAX_SIZE * sizeof(CPosMethodInfo));
@@ -107,10 +108,12 @@ CQGeoPositionInfoSourceS60* CQGeoPositionInfoSourceS60::NewL(QObject * aParent)
     CleanupStack::Pop();
 
     //check if the second phase construction is successful
-    if (!self->isValid()) {
-        delete self;
-        self = NULL;
-    }
+    // commented to return the pointer and the application can check if it
+    //is valid or not
+    /* if (!self->isValid()) {
+         delete self;
+         self = NULL;
+     }*/
 
     return self;
 }
@@ -823,6 +826,10 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
 // starts the regular updates
 void CQGeoPositionInfoSourceS60::startUpdates()
 {
+    //SetUpdateInterval if it is not already set from application
+    if (!mUpdateIntervalSet)
+        setUpdateInterval(1000);
+
     if (mRegUpdateAO == NULL || mCurrentModuleId == TUid::Null()) {
         emit updateTimeout();
         return;
@@ -931,6 +938,8 @@ void CQGeoPositionInfoSourceS60::setUpdateInterval(int aMilliSec)
         // as the above set value can be minimum value so
         // assigning to the base class data member
         QGeoPositionInfoSource::setUpdateInterval(interval);
+
+        mUpdateIntervalSet = true;
     }
 }
 
@@ -951,4 +960,4 @@ void CQGeoPositionInfoSourceS60::disconnectNotify(const char *aSignal)
 
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

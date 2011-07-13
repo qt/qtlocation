@@ -57,7 +57,7 @@
 #include <QSharedData>
 #include <QString>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLandmarkCategoryIdPrivate : public QSharedData
 {
@@ -79,6 +79,6 @@ public:
     QString m_uri;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif
