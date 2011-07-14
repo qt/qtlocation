@@ -3,7 +3,7 @@
 
 #include <qgeoplace.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class tst_QGeoPlace : public QObject
 {

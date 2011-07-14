@@ -3,7 +3,7 @@
 
 #include <qplacealternativevalue.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class tst_QPlaceAlternativeValue : public QObject
 {

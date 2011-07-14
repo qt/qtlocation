@@ -3,7 +3,7 @@
 
 #include <qplacesearchquery.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class tst_QPlaceSearchQuery : public QObject
 {

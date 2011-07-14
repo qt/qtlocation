@@ -3,7 +3,7 @@
 
 #include <qplaceperiod.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class tst_QPlacePeriod : public QObject
 {

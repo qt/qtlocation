@@ -54,7 +54,7 @@
 #include <QTimer>
 #include <QTimerEvent>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 
 class RouteReplyTest :public QGeoRouteReply

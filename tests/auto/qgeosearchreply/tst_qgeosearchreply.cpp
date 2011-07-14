@@ -41,7 +41,7 @@
 
 #include "tst_qgeosearchreply.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 void tst_QGeoSearchReply::initTestCase()
 {

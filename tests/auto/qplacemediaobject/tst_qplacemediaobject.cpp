@@ -3,7 +3,7 @@
 
 #include <qplacemediaobject.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class tst_QPlaceMediaObject : public QObject
 {

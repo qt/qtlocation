@@ -41,7 +41,7 @@
 
 #include "tst_qgeolocation.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 tst_QGeoLocation::tst_QGeoLocation()
     : m_locationScore(0)

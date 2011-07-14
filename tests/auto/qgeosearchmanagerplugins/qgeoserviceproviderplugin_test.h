@@ -45,7 +45,7 @@
 #include <qgeoserviceproviderfactory.h>
 #include <QObject>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGeoServiceProviderFactoryTest: public QObject, public QGeoServiceProviderFactory
 {

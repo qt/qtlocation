@@ -56,7 +56,7 @@
 #include <qgeocoordinate.h>
 #include <qgeoboundingbox.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class SubSearchReply : public QGeoSearchReply
 {
     Q_OBJECT

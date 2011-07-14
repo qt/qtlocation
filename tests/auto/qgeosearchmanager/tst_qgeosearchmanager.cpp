@@ -43,7 +43,7 @@
 
 #include "tst_qgeosearchmanager.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 
 void tst_QGeoSearchManager::initTestCase()
