@@ -52,6 +52,8 @@
 #include <QHash>
 
 #include <qplacesearchquery.h>
+#include <qgeoboundingcircle.h>
+#include <qgeoboundingbox.h>
 #include "qplacerestreply.h"
 
 #if defined(QT_PLACES_LOGGING)
@@ -259,17 +261,18 @@ QString QPlaceRestManager::prepareSearchRequest(const QPlaceSearchQuery &query)
     searchString += const_views;
     searchString += const_deviceproductid;
     // process search center
-    QGeoCoordinate searchCentre = query.searchCenter();
-    if (searchCentre.isValid()) {
-        searchString += const_lat + QString::number(searchCentre.latitude());
-        searchString += const_lon + QString::number(searchCentre.longitude());
-    }
-    // process view port
-    if (query.boundingBox().isValid()) {
-        searchString += const_top + QString::number(query.boundingBox().topLeft().latitude());
-        searchString += const_left + QString::number(query.boundingBox().topLeft().longitude());
-        searchString += const_bottom + QString::number(query.boundingBox().bottomRight().latitude());
-        searchString += const_right + QString::number(query.boundingBox().bottomRight().longitude());
+    if (query.searchArea() != NULL) {
+        if (query.searchArea()->type() == QGeoBoundingArea::CircleType) {
+            QGeoBoundingCircle * circle = static_cast<QGeoBoundingCircle *>(query.searchArea());
+            searchString += const_lat + QString::number(circle->center().latitude());
+            searchString += const_lon + QString::number(circle->center().longitude());
+        } else if (query.searchArea()->type() == QGeoBoundingArea::BoxType) {
+            QGeoBoundingBox *box = static_cast<QGeoBoundingBox *> (query.searchArea());
+            searchString += const_top + QString::number(box->topLeft().latitude());
+            searchString += const_left + QString::number(box->topLeft().longitude());
+            searchString += const_bottom + QString::number(box->bottomRight().latitude());
+            searchString += const_right + QString::number(box->bottomRight().longitude());
+        }
     }
 
     // processing limit

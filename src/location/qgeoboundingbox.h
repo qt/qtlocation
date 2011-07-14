@@ -105,6 +105,8 @@ public:
     QGeoBoundingBox operator | (const QGeoBoundingBox &boundingBox) const;
     QGeoBoundingBox& operator |= (const QGeoBoundingBox &boundingBox);
 
+    QGeoBoundingArea *clone() const;
+
 private:
     QSharedDataPointer<QGeoBoundingBoxPrivate> d_ptr;
 };

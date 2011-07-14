@@ -2,6 +2,8 @@
 #include <QtTest/QtTest>
 
 #include <qplacesearchquery.h>
+#include <qgeoboundingcircle.h>
+#include <qgeoboundingbox.h>
 
 QT_USE_NAMESPACE
 
@@ -16,8 +18,9 @@ private Q_SLOTS:
     void constructorTest();
     void searchTermTest();
     void categoriesTest();
-    void searchCenterTest();
+    void boundingCircleTest();
     void boundingBoxTest();
+    void searchAreaTest();
     void didYouMeanSuggestionNumberTest();
     void operatorsTest();
 };
@@ -56,33 +59,63 @@ void tst_QPlaceSearchQuery::categoriesTest()
     QVERIFY2(testObj.categories()[0] == cat, "Wrong category returned");
 }
 
-void tst_QPlaceSearchQuery::searchCenterTest()
+void tst_QPlaceSearchQuery::boundingCircleTest()
 {
-    QPlaceSearchQuery testObj;
-    QVERIFY2(testObj.searchCenter().isValid() == false, "Wrong default value");
-    QGeoCoordinate coordinate;
-    coordinate.setLatitude(30);
-    coordinate.setLongitude(20);
-    testObj.setSearchCenter(coordinate);
-    QVERIFY2(testObj.searchCenter() == coordinate, "Wrong value returned");
-    testObj.clear();
-    QVERIFY2(testObj.searchCenter().isValid() == false, "Wrong cleared value returned");
+    QPlaceSearchQuery query;
+    QVERIFY2(query.searchArea() == NULL, "Wrong default value");
+    QGeoBoundingCircle *circle = new QGeoBoundingCircle;
+    circle->setCenter(QGeoCoordinate(30,20));
+    circle->setRadius(500.0);
+    query.setSearchArea(circle);
+
+    QVERIFY(query.searchArea() != NULL);
+    QVERIFY(query.searchArea()->type() == QGeoBoundingArea::CircleType);
+    QVERIFY(query.searchArea() == circle);
+
+    QGeoBoundingCircle *retrievedCircle =  static_cast<QGeoBoundingCircle *>(query.searchArea());
+    QVERIFY2(retrievedCircle->center() == QGeoCoordinate(30,20), "Wrong value returned");
+    QVERIFY2(retrievedCircle->radius() == 500.0, "Wrong value returned");
+    query.clear();
+    QVERIFY2(query.searchArea() == NULL, "Search area not cleared");
 }
 
 void tst_QPlaceSearchQuery::boundingBoxTest()
 {
-    QPlaceSearchQuery testObj;
-    QVERIFY2(testObj.boundingBox().isValid() == false, "Wrong default value");
-    QGeoCoordinate coordinate;
-    coordinate.setLatitude(30);
-    coordinate.setLongitude(20);
-    QGeoBoundingBox box;
-    box.setTopLeft(coordinate);
-    box.setBottomRight(coordinate);
-    testObj.setBoundingBox(box);
-    QVERIFY2(testObj.boundingBox() == box, "Wrong value returned");
-    testObj.clear();
-    QVERIFY2(testObj.boundingBox().isValid() == false, "Wrong cleared value returned");
+    QPlaceSearchQuery query;
+    QVERIFY2(query.searchArea() == NULL, "Wrong default value");
+    QGeoBoundingBox *box = new QGeoBoundingBox;
+
+    box->setTopLeft(QGeoCoordinate(30,20));
+    box->setBottomRight(QGeoCoordinate(10,50));
+    query.setSearchArea(box);
+
+    QVERIFY(query.searchArea() != NULL);
+    QVERIFY(query.searchArea()->type() == QGeoBoundingArea::BoxType);
+    QVERIFY(query.searchArea() == box);
+
+    QGeoBoundingBox *retrievedBox = static_cast<QGeoBoundingBox*>(query.searchArea());
+    QVERIFY2(retrievedBox->topLeft() == QGeoCoordinate(30,20), "Wrong value returned");
+    QVERIFY2(retrievedBox->bottomRight() == QGeoCoordinate(10,50), "Wrong value returned");
+
+    query.clear();
+    QVERIFY2(query.searchArea() == NULL, "Wrong cleared value returned");
+}
+
+void tst_QPlaceSearchQuery::searchAreaTest()
+{
+    //test assignment of new search area over an old search area
+    QPlaceSearchQuery *query = new QPlaceSearchQuery;
+    QGeoBoundingCircle *circle = new QGeoBoundingCircle;
+    circle->setCenter(QGeoCoordinate(30,20));
+    circle->setRadius(500.0);
+    query->setSearchArea(circle);
+
+    QVERIFY(query->searchArea() == circle);
+    QGeoBoundingBox *box = new QGeoBoundingBox;
+    box->setTopLeft(QGeoCoordinate(30,20));
+    box->setBottomRight(QGeoCoordinate(10,50));
+    query->setSearchArea(box);
+    QVERIFY2(query->searchArea() == box, "New search area not assigned");
 }
 
 void tst_QPlaceSearchQuery::didYouMeanSuggestionNumberTest()

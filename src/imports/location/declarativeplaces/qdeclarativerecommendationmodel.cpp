@@ -31,11 +31,13 @@ QT_USE_NAMESPACE
 
     RecommenadationModel {
         id: searchModel
-        searchCenter:
-                GeoCoordinates {
-                    latitude: 53
-                    longitude: 10
-                }
+        searchArea: BoundingCircle {
+            center: Coordinate {
+                longitude: 53
+                latitude: 100
+            }
+            radius:5000
+        }
         start: 0
         limit: 15
     }
@@ -191,49 +193,24 @@ void QDeclarativeRecommendationModel::setPlaceId(const QString &placeId)
 }
 
 /*!
-    \qmlproperty GeoCoordinate RecommenadationModel::searchCenter
+    \qmlproperty GeoCoordinate SearchResultModel::searchArea
 
-    This element holds search center.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-QDeclarativeCoordinate *QDeclarativeRecommendationModel::searchCenter()
-{
-    return &m_center;
-}
-
-void QDeclarativeRecommendationModel::setSearchCenter(QDeclarativeCoordinate *searchCenter)
-{
-    if (m_queryParameters.searchCenter() == searchCenter->coordinate()) {
-        return;
-    }
-    m_queryParameters.setSearchCenter(searchCenter->coordinate());
-    m_center.setCoordinate(m_queryParameters.searchCenter());
-    emit searchCenterChanged();
-}
-
-/*!
-    \qmlproperty GeoBoundingBox RecommenadationModel::boundingBox
-
-    This element holds bounding box of text prediction search.
+    This element holds the search area.
 
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.
 */
-QDeclarativeGeoBoundingBox *QDeclarativeRecommendationModel::boundingBox()
+QDeclarativeGeoBoundingArea *QDeclarativeRecommendationModel::searchArea() const
 {
-    return &m_boundingBox;
+    return m_searchArea;
 }
 
-void QDeclarativeRecommendationModel::setBoundingBox(QDeclarativeGeoBoundingBox *boundingBox)
+void QDeclarativeRecommendationModel::setSearchArea(QDeclarativeGeoBoundingArea *searchArea)
 {
-    if (m_queryParameters.boundingBox() == boundingBox->box()) {
+    if (m_searchArea == searchArea)
         return;
-    }
-    m_queryParameters.setBoundingBox(boundingBox->box());
-    m_boundingBox.setBox(m_queryParameters.boundingBox());
-    emit boundingBoxChanged();
+    m_searchArea = searchArea;
+    emit searchAreaChanged();
 }
 
 /*!
@@ -288,13 +265,10 @@ void QDeclarativeRecommendationModel::executeQuery()
         m_manager = new QPlaceManager(this);
     }
     cancelPreviousRequest();
-    beginResetModel();
-    qDeleteAll(m_results);
-    m_results.clear();
-    endResetModel();
-    emit resultsChanged();
+
     QGeoPlace target;
     target.setPlaceId(m_queryParameters.searchTerm());
+    m_queryParameters.setSearchArea(m_searchArea->area());
     connectNewResponse(m_manager->recommendations(target, m_queryParameters));
 }
 

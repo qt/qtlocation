@@ -7,8 +7,7 @@
 
 #include <qplacemanager.h>
 
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeoboundingbox_p.h"
+#include "qdeclarativegeoboundingarea_p.h"
 #include "qdeclarativesearchresult_p.h"
 
 QT_BEGIN_NAMESPACE
@@ -19,13 +18,13 @@ class QDeclarativeSearchResultModel : public QAbstractListModel
 
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged);
     Q_PROPERTY(QDeclarativeCategory* searchCategory READ searchCategory WRITE setSearchCategory NOTIFY searchCategoryChanged);
-    Q_PROPERTY(QDeclarativeCoordinate* searchCenter READ searchCenter WRITE setSearchCenter NOTIFY searchCenterChanged);
-    Q_PROPERTY(QDeclarativeGeoBoundingBox* boundingBox READ boundingBox WRITE setBoundingBox NOTIFY boundingBoxChanged);
+    Q_PROPERTY(QDeclarativeGeoBoundingArea *searchArea READ searchArea WRITE setSearchArea NOTIFY searchAreaChanged);
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged);
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged);
     Q_PROPERTY(int didYouMean READ didYouMean WRITE setDidYouMean NOTIFY didYouMeanChanged);
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSearchResult> results READ results NOTIFY resultsChanged)
+
 public:
     explicit QDeclarativeSearchResultModel(QObject *parent = 0);
     ~QDeclarativeSearchResultModel();
@@ -48,10 +47,8 @@ public:
     void setSearchTerm(const QString &searchTerm);
     QDeclarativeCategory *searchCategory();
     void setSearchCategory(QDeclarativeCategory *searchCategory);
-    QDeclarativeCoordinate *searchCenter();
-    void setSearchCenter(QDeclarativeCoordinate *searchCenter);
-    QDeclarativeGeoBoundingBox *boundingBox();
-    void setBoundingBox(QDeclarativeGeoBoundingBox *boundingBox);
+    QDeclarativeGeoBoundingArea *searchArea() const;
+    void setSearchArea(QDeclarativeGeoBoundingArea *searchArea);
     int offset() const;
     void setOffset(const int &offset);
     int limit() const;
@@ -70,8 +67,7 @@ signals:
 
     void searchTermChanged();
     void searchCategoryChanged();
-    void searchCenterChanged();
-    void boundingBoxChanged();
+    void searchAreaChanged();
     void offsetChanged();
     void limitChanged();
     void didYouMeanChanged();
@@ -88,7 +84,7 @@ private:
 
 private:
     QDeclarativeCoordinate m_center;
-    QDeclarativeGeoBoundingBox m_boundingBox;
+    QDeclarativeGeoBoundingArea *m_searchArea;
     QDeclarativeCategory m_category;
     QList<QDeclarativeSearchResult*> m_results;
 

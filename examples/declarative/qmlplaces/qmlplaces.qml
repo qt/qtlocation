@@ -6,12 +6,6 @@ Rectangle {
     width: 640
     height: 360
 
-    property Coordinate searchCoordinate: Coordinate {
-        // Brisbane
-        longitude: 153.02778
-        latitude: -27.46778
-    }
-
     Text {
         id: queryText
         text: "Query:"
@@ -202,7 +196,16 @@ Rectangle {
 
     SearchResultModel {
         id: resultModel
-        searchCenter: searchCoordinate
+        searchArea: BoundingCircle {
+            id: proximity
+            center: Coordinate {
+                id: searchCoordinate
+                // Brisbane
+                longitude: 153.02778
+                latitude: -27.46778
+            }
+            radius:5000
+        }
         didYouMean: 5
         //onQueryFinished: console.log("datareceived " + error)
     }
@@ -227,7 +230,7 @@ Rectangle {
 
     TextPredictionModel {
         id: resultSuggestion
-        searchCenter: searchCoordinate
+        searchArea: proximity
         offset: 0
         limit: 15
         searchTerm: search_term.text
@@ -235,7 +238,7 @@ Rectangle {
 
     RecommendationModel {
         id: recommendationModel
-        searchCenter: searchCoordinate
+        searchArea: proximity
         offset: 0
         limit: 15
         //onQueryFinished: console.log("datareceived " + error)

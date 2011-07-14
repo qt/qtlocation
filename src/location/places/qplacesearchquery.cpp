@@ -56,8 +56,7 @@ public:
 
     QString searchTerm;
     QList<QPlaceCategory> categories;
-    QGeoCoordinate searchCenter;
-    QGeoBoundingBox boundingBox;
+    QGeoBoundingArea  *searchArea;
     int dymNumber;
 };
 
@@ -67,7 +66,8 @@ QT_USE_NAMESPACE
 
 QPlaceSearchQueryPrivate::QPlaceSearchQueryPrivate()
     : QSharedData(),
-      dymNumber(0)
+      dymNumber(0),
+      searchArea(0)
 {
 }
 
@@ -76,13 +76,14 @@ QPlaceSearchQueryPrivate::QPlaceSearchQueryPrivate(const QPlaceSearchQueryPrivat
 {
     this->searchTerm = other.searchTerm;
     this->categories = other.categories;
-    this->searchCenter = other.searchCenter;
-    this->boundingBox = other.boundingBox;
+    this->searchArea = other.searchArea;
     this->dymNumber = other.dymNumber;
 }
 
 QPlaceSearchQueryPrivate::~QPlaceSearchQueryPrivate()
 {
+    delete searchArea;
+    searchArea = 0;
 }
 
 bool QPlaceSearchQueryPrivate::operator==(const QPlaceSearchQueryPrivate &other) const
@@ -90,8 +91,7 @@ bool QPlaceSearchQueryPrivate::operator==(const QPlaceSearchQueryPrivate &other)
     return (
             this->searchTerm == other.searchTerm
             && this->categories == other.categories
-            && this->searchCenter == other.searchCenter
-            && this->boundingBox == other.boundingBox
+            && this->searchArea == other.searchArea
             && this->dymNumber == other.dymNumber
     );
 }
@@ -196,35 +196,24 @@ void QPlaceSearchQuery::setCategory(const QPlaceCategory &category)
 }
 
 /*!
-    Returns search center.
+    Returns search area.  The default search area is a null pointer.
 */
-QGeoCoordinate QPlaceSearchQuery::searchCenter() const
+QGeoBoundingArea *QPlaceSearchQuery::searchArea() const
 {
-    return d->searchCenter;
+    return d->searchArea;
 }
 
 /*!
-    Sets the search query to search with search \a center.
+    Sets the search query to search within the given \a area.  Ownership of the is
+    transferred to the place query who is responsible for pointer deletion.  If a new \a area
+    is being assigned, the old area is deleted.
 */
-void QPlaceSearchQuery::setSearchCenter(const QGeoCoordinate &center)
+void QPlaceSearchQuery::setSearchArea(QGeoBoundingArea *area)
 {
-    d->searchCenter = center;
-}
+    if (d->searchArea != area)
+        delete d->searchArea;
 
-/*!
-    Returns search bounding box.
-*/
-QGeoBoundingBox QPlaceSearchQuery::boundingBox() const
-{
-    return d->boundingBox;
-}
-
-/*!
-    Sets the search query to search with bounding box.
-*/
-void QPlaceSearchQuery::setBoundingBox(const QGeoBoundingBox &boundingBox)
-{
-    d->boundingBox = boundingBox;
+    d->searchArea = area;
 }
 
 /*!
@@ -251,7 +240,6 @@ void QPlaceSearchQuery::clear()
     QPlaceQuery::clear();
     d->searchTerm.clear();
     d->categories.clear();
-    d->boundingBox = QGeoBoundingBox();
-    d->searchCenter = QGeoCoordinate();
+    d->searchArea = 0;
     d->dymNumber = 0;
 }

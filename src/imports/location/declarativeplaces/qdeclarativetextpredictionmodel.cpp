@@ -28,11 +28,13 @@ QT_USE_NAMESPACE
 
     TextPredictionModel {
         id: textPredictionModel
-        searchCenter:
-                GeoCoordinates {
-                    latitude: 53
-                    longitude: 10
-                }
+        searchArea: BoundingCircle {
+            center: Coordinate {
+                longitude: 53
+                latitude: 100
+            }
+            radius:5000
+        }
         start: 0
         limit: 15
     }
@@ -137,49 +139,24 @@ void QDeclarativeTextPredictionModel::setSearchTerm(const QString &searchTerm)
 }
 
 /*!
-    \qmlproperty GeoCoordinate TextPredictionModel::searchCenter
+    \qmlproperty GeoCoordinate TextPredictionModel::searchArea
 
-    This element holds search center.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-QDeclarativeCoordinate *QDeclarativeTextPredictionModel::searchCenter()
-{
-    return &m_center;
-}
-
-void QDeclarativeTextPredictionModel::setSearchCenter(QDeclarativeCoordinate *searchCenter)
-{
-    if (m_queryParameters.searchCenter() == searchCenter->coordinate()) {
-        return;
-    }
-    m_queryParameters.setSearchCenter(searchCenter->coordinate());
-    m_center.setCoordinate(m_queryParameters.searchCenter());
-    emit searchCenterChanged();
-}
-
-/*!
-    \qmlproperty GeoBoundingBox TextPredictionModel::boundingBox
-
-    This element holds bounding box of text prediction search.
+    This element holds the search area.
 
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.
 */
-QDeclarativeGeoBoundingBox *QDeclarativeTextPredictionModel::boundingBox()
+QDeclarativeGeoBoundingArea *QDeclarativeTextPredictionModel::searchArea() const
 {
-    return &m_boundingBox;
+    return m_searchArea;
 }
 
-void QDeclarativeTextPredictionModel::setBoundingBox(QDeclarativeGeoBoundingBox *boundingBox)
+void QDeclarativeTextPredictionModel::setSearchArea(QDeclarativeGeoBoundingArea *searchArea)
 {
-    if (m_queryParameters.boundingBox() == boundingBox->box()) {
+    if (m_searchArea == searchArea)
         return;
-    }
-    m_queryParameters.setBoundingBox(boundingBox->box());
-    m_boundingBox.setBox(m_queryParameters.boundingBox());
-    emit boundingBoxChanged();
+    m_searchArea = searchArea;
+    emit searchAreaChanged();
 }
 
 /*!
@@ -237,9 +214,7 @@ void QDeclarativeTextPredictionModel::executeQuery()
         m_manager = new QPlaceManager(this);
     }
     cancelPreviousRequest();
-    // empty old data
-    beginResetModel();
-    endResetModel();
+    m_queryParameters.setSearchArea(m_searchArea->area());
     connectNewResponse(m_manager->textPredictions(m_queryParameters));
 }
 

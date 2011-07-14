@@ -31,11 +31,15 @@ QT_USE_NAMESPACE
 
     SearchResultModel {
         id: searchModel
-        searchCenter:
-                GeoCoordinates {
-                    latitude: 53
-                    longitude: 10
-                }
+        searchArea: BoundingCircle {
+            id: proximity
+            center: Coordinate {
+                longitude: 53
+                latitude: 100
+            }
+            radius:5000
+        }
+
         start: 0
         limit: 15
     }
@@ -212,49 +216,24 @@ void QDeclarativeSearchResultModel::setSearchCategory(QDeclarativeCategory *sear
 }
 
 /*!
-    \qmlproperty GeoCoordinate SearchResultModel::searchCenter
+    \qmlproperty GeoCoordinate SearchResultModel::searchArea
 
-    This element holds search center.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-QDeclarativeCoordinate *QDeclarativeSearchResultModel::searchCenter()
-{
-    return &m_center;
-}
-
-void QDeclarativeSearchResultModel::setSearchCenter(QDeclarativeCoordinate *searchCenter)
-{
-    if (m_queryParameters.searchCenter() == searchCenter->coordinate()) {
-        return;
-    }
-    m_queryParameters.setSearchCenter(searchCenter->coordinate());
-    m_center.setCoordinate(m_queryParameters.searchCenter());
-    emit searchCenterChanged();
-}
-
-/*!
-    \qmlproperty GeoBoundingBox SearchResultModel::boundingBox
-
-    This element holds bounding box of text prediction search.
+    This element holds the search area.
 
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.
 */
-QDeclarativeGeoBoundingBox *QDeclarativeSearchResultModel::boundingBox()
+QDeclarativeGeoBoundingArea *QDeclarativeSearchResultModel::searchArea() const
 {
-    return &m_boundingBox;
+    return m_searchArea;
 }
 
-void QDeclarativeSearchResultModel::setBoundingBox(QDeclarativeGeoBoundingBox *boundingBox)
+void QDeclarativeSearchResultModel::setSearchArea(QDeclarativeGeoBoundingArea *searchArea)
 {
-    if (m_queryParameters.boundingBox() == boundingBox->box()) {
+    if (m_searchArea == searchArea)
         return;
-    }
-    m_queryParameters.setBoundingBox(boundingBox->box());
-    m_boundingBox.setBox(m_queryParameters.boundingBox());
-    emit boundingBoxChanged();
+    m_searchArea = searchArea;
+    emit searchAreaChanged();
 }
 
 /*!
@@ -328,6 +307,7 @@ void QDeclarativeSearchResultModel::executeQuery()
         m_manager = new QPlaceManager(this);
     }
     cancelPreviousRequest();
+    m_queryParameters.setSearchArea(m_searchArea->area());
     connectNewResponse(m_manager->searchForPlaces(m_queryParameters, QPlaceManager::PublicScope));
 }
 

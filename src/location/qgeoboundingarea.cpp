@@ -110,4 +110,10 @@ area.
 \since 1.1
 */
 
+/*!
+\fn QGeoBoundingArea* QGeoBoundingArea::clone() const
+
+Creates a new QGeoBoundingArea that is a deep copy of this bounding area.
+*/
+
 QT_END_NAMESPACE

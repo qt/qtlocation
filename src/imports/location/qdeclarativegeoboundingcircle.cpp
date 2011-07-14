@@ -70,6 +70,11 @@ QGeoBoundingCircle QDeclarativeGeoBoundingCircle::circle()
     return circle_;
 }
 
+QGeoBoundingArea *QDeclarativeGeoBoundingCircle::area() const
+{
+    return circle_.clone();
+}
+
 Q_INVOKABLE bool QDeclarativeGeoBoundingCircle::contains(QDeclarativeCoordinate* coordinate)
 {
     if (!coordinate)

@@ -273,6 +273,14 @@ QGeoBoundingCircle QGeoBoundingCircle::translated(double degreesLatitude, double
     return result;
 }
 
+/*!
+    Returns a pointer to a deep copy of this bounding circle.
+*/
+QGeoBoundingArea *QGeoBoundingCircle::clone() const
+{
+    return new QGeoBoundingCircle(*this);
+}
+
 /*******************************************************************************
 *******************************************************************************/
 

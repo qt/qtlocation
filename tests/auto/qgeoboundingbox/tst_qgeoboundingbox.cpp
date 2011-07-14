@@ -95,6 +95,8 @@ private slots:
 
     void unite();
     void unite_data();
+
+    void clone();
 };
 
 void tst_QGeoBoundingBox::default_constructor()
@@ -2119,6 +2121,37 @@ void tst_QGeoBoundingBox::unite_data()
                                 QGeoCoordinate(-30.0, -80.0))
             <<  QGeoBoundingBox(QGeoCoordinate(30.0,  -180.0),
                                 QGeoCoordinate(-30.0, 180.0));
+}
+
+void tst_QGeoBoundingBox::clone()
+{
+    //check that the clone copies the same data as the original
+    QGeoBoundingBox originalBox;
+    originalBox.setTopLeft(QGeoCoordinate(20,20));
+    originalBox.setBottomRight(QGeoCoordinate(10,30));
+
+    QGeoBoundingArea *areaPtr = originalBox.clone();
+    QVERIFY(areaPtr->type() == QGeoBoundingArea::BoxType);
+    QGeoBoundingBox *clonedBoxPtr;
+    clonedBoxPtr = static_cast<QGeoBoundingBox*>(areaPtr);
+    QVERIFY2(clonedBoxPtr->topLeft() == QGeoCoordinate(20,20),
+             "Clone's top left coord does not match original");
+    QVERIFY2(clonedBoxPtr->bottomRight() == QGeoCoordinate(10,30),
+             "Clone's bottom right coord does not match original");
+
+    //check that when the original is altered, the clone remains unaltered.
+    originalBox.setTopLeft(QGeoCoordinate(80,30));
+    originalBox.setBottomRight(QGeoCoordinate(10,40));
+
+    QVERIFY2(originalBox.topLeft() == QGeoCoordinate(80,30),
+             "Original's top left coord has not changed");
+    QVERIFY2(originalBox.bottomRight() == QGeoCoordinate(10,40),
+             "Original's bottom right coord has not changed");
+
+    QVERIFY2(clonedBoxPtr->topLeft() == QGeoCoordinate(20,20),
+             "Clone's top left coord references the original's");
+    QVERIFY2(clonedBoxPtr->bottomRight() == QGeoCoordinate(10,30),
+             "Clone's bottom right coord references the original's");
 }
 
 QTEST_MAIN(tst_QGeoBoundingBox)

@@ -72,6 +72,8 @@ private slots:
 
     void contains_data();
     void contains();
+
+    void clone();
 };
 
 void tst_QGeoBoundingCircle::defaultConstructor()
@@ -244,6 +246,36 @@ void tst_QGeoBoundingCircle::contains()
 
     QGeoBoundingCircle c(center, radius);
     QCOMPARE(c.contains(probe), result);
+}
+
+void tst_QGeoBoundingCircle::clone()
+{
+    //check that the clone copies the same data as the original
+    QGeoBoundingCircle originalCircle;
+    originalCircle.setCenter(QGeoCoordinate(1,1));
+    originalCircle.setRadius(500.0);
+    QGeoBoundingArea *areaPtr = originalCircle.clone();
+    QVERIFY(areaPtr->type() == QGeoBoundingArea::CircleType);
+    QGeoBoundingCircle *clonedCirclePtr;
+    clonedCirclePtr = static_cast<QGeoBoundingCircle*>(areaPtr);
+    QVERIFY2(clonedCirclePtr->center() == QGeoCoordinate(1,1),
+             "Center of clone does not match original");
+    QVERIFY2(clonedCirclePtr->radius() == 500.0,
+             "Radius of clone does not match original");
+
+    //check that when the original is altered, the clone remains unaltered.
+    originalCircle.setCenter(QGeoCoordinate(9,9));
+    originalCircle.setRadius(99.9);
+
+    QVERIFY2(originalCircle.center() == QGeoCoordinate(9,9),
+             "Center of original has not changed");
+    QVERIFY2(originalCircle.radius() == 99.9,
+             "Radius of original has not changed");
+
+    QVERIFY2(clonedCirclePtr->center() == QGeoCoordinate(1,1),
+             "Center of clone references center of original");
+    QVERIFY2(clonedCirclePtr->radius() == 500.0,
+             "Radius of clone references radius of original");
 }
 
 QTEST_MAIN(tst_QGeoBoundingCircle)

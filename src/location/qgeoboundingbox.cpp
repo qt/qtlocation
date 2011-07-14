@@ -829,6 +829,14 @@ QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingB
     return *this;
 }
 
+/*!
+    Returns a pointer to a deep copy of this bounding box.
+*/
+QGeoBoundingArea *QGeoBoundingBox::clone() const
+{
+    return new QGeoBoundingBox(*this);
+}
+
 /*******************************************************************************
 *******************************************************************************/
 

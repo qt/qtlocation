@@ -18,8 +18,7 @@ class QDeclarativeTextPredictionModel : public QAbstractListModel
     Q_OBJECT
 
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged);
-    Q_PROPERTY(QDeclarativeCoordinate* searchCenter READ searchCenter WRITE setSearchCenter NOTIFY searchCenterChanged);
-    Q_PROPERTY(QDeclarativeGeoBoundingBox* boundingBox READ boundingBox WRITE setBoundingBox NOTIFY boundingBoxChanged);
+    Q_PROPERTY(QDeclarativeGeoBoundingArea* searchArea READ searchArea WRITE setSearchArea NOTIFY searchAreaChanged);
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged);
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged);
 
@@ -39,10 +38,8 @@ public:
 
     QString searchTerm() const;
     void setSearchTerm(const QString &searchTerm);
-    QDeclarativeCoordinate *searchCenter();
-    void setSearchCenter(QDeclarativeCoordinate *searchCenter);
-    QDeclarativeGeoBoundingBox *boundingBox();
-    void setBoundingBox(QDeclarativeGeoBoundingBox *boundingBox);
+    QDeclarativeGeoBoundingArea *searchArea() const;
+    void setSearchArea(QDeclarativeGeoBoundingArea *area);
     int offset() const;
     void setOffset(const int &offset);
     int limit() const;
@@ -57,8 +54,7 @@ signals:
     void queryFinished(const int &error);
 
     void searchTermChanged();
-    void searchCenterChanged();
-    void boundingBoxChanged();
+    void searchAreaChanged();
     void offsetChanged();
     void limitChanged();
     void predictionsChanged();
@@ -73,9 +69,7 @@ private:
     void connectNewResponse(QPlaceTextPredictionReply *newResponse);
 
 private:
-    QDeclarativeCoordinate m_center;
-    QDeclarativeGeoBoundingBox m_boundingBox;
-
+    QDeclarativeGeoBoundingArea *m_searchArea;
     QPlaceSearchQuery m_queryParameters;
 
     QPlaceManager *m_manager;

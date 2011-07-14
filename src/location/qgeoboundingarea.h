@@ -66,6 +66,7 @@ public:
     virtual bool isValid() const = 0;
     virtual bool isEmpty() const = 0;
     virtual bool contains(const QGeoCoordinate &coordinate) const = 0;
+    virtual QGeoBoundingArea *clone() const = 0;
 };
 
 QT_END_NAMESPACE

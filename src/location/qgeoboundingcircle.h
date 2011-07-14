@@ -82,6 +82,8 @@ public:
 
     void translate(double degreesLatitude, double degreesLongitude);
     QGeoBoundingCircle translated(double degreesLatitude, double degreesLongitude) const;
+
+    QGeoBoundingArea *clone() const;
 private:
     QSharedDataPointer<QGeoBoundingCirclePrivate> d_ptr;
 };
