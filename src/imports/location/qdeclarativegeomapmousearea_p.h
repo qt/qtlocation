@@ -46,7 +46,7 @@
 #include "qdeclarativegraphicsgeomap_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 
-#include <QtDeclarative/qdeclarativeitem.h>
+#include <QtQuick1/qdeclarativeitem.h>
 
 QT_BEGIN_NAMESPACE
 

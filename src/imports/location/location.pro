@@ -6,7 +6,7 @@ TARGETPATH = Qt/location
 
 include(qlocationimport.pri)
 
-QT += declarative network location
+QT += declarative qtquick1 network location
 
 DESTDIR = $$QT.location.imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH

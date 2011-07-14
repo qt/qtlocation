@@ -44,7 +44,7 @@
 
 #include <qgraphicsgeomap.h>
 #include <QPointer>
-#include <QtDeclarative/qdeclarativeitem.h>
+#include <QtQuick1/qdeclarativeitem.h>
 
 #include "qdeclarativegeomapobject_p.h"
 
