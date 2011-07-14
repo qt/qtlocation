@@ -10,6 +10,7 @@ SUBDIRS += geotestplugin \
            qgeosearchmanagerplugins \
            qgeoaddress \
            qgeoboundingbox \
+           qgeoboundingcircle \
            qgeocoordinate \
            qgeolocation \
            qgeoplace \
