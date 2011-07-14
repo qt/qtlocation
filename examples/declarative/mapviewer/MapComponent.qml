@@ -127,7 +127,7 @@ Map {
         MapCircle {
             radius: 1000
             color: circleMouseArea.containsMouse ? "lime" : "#80FF0000"
-            center: place.coordinate
+            center: location.coordinate
             MapMouseArea {
                 id: circleMouseArea
                 hoverEnabled: true
