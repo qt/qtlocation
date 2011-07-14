@@ -47,7 +47,8 @@
 #include "qgeomapgroupobject.h"
 #include "QModelIndex"
 
-#include <QtDeclarative/qdeclarativeitem.h>
+#include <QtQuick1/qdeclarativeitem.h>
+
 class QAbstractItemModel;
 
 QT_BEGIN_NAMESPACE

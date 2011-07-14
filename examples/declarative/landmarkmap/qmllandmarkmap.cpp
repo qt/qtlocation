@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 #include <QtGui/QApplication>
-#include <QtDeclarative/QDeclarativeView>
+#include <QtQuick1/QDeclarativeView>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QDir>
 
