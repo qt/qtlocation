@@ -448,11 +448,11 @@ Item {
             compare(slackModel.count, 7) // slackAddress1.county
         }
         function test_basic_reverse_geocode() {
+            testModel.clear()
             testQuerySpy.clear()
             locationsSpy.clear()
             testStatusSpy.clear()
             countSpy.clear()
-            testModel.clear()
             compare (testModel.error, "")
             compare (testModel.count, 0)
             compare (testQuerySpy.count, 0)
@@ -464,7 +464,7 @@ Item {
             compare (testModel.error, "")
             compare (testModel.count, 2)
             testModel.clear()
-            tryCompare(countSpy, "count", 1)
+            tryCompare(countSpy, "count", 2)
             compare (testModel.count, 0)
         }
         function test_delayed_reverse_geocode() {
