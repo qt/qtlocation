@@ -106,7 +106,6 @@ void QGeoTiledMapPolygonObjectInfo::genPoly()
         double oy = origin.latitude() * 3600.0;
 
         double oldx = ox;
-        double oldy = oy;
 
         poly << QPointF(0,0);
         for (int i = 0; i < path.size(); ++i) {
@@ -125,7 +124,6 @@ void QGeoTiledMapPolygonObjectInfo::genPoly()
             poly << QPointF(x - ox, y - oy);
 
             oldx = x;
-            oldy = y;
         }
     }
 
