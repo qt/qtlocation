@@ -100,6 +100,9 @@ private:
 class QDeclarativeGeoMapObjectView : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
+
+    Q_INTERFACES(QDeclarativeParserStatus)
+
     Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(QDeclarativeComponent* delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
     Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
