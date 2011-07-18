@@ -147,7 +147,7 @@ QPlaceSearchReply *QPlaceManagerEngineImpl::searchForPlaces(const QPlaceSearchQu
     QPlaceSearchQuery newQuery = query;
     // search by category
     if (newQuery.categories().count()) {
-        newQuery.setSearchTerm(query.categories().at(0).categoryId());
+        newQuery.setSearchTerm(query.categories().at(0).name());
     }
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSearchRequest(newQuery);
 
@@ -184,10 +184,10 @@ QPlaceSearchReply *QPlaceManagerEngineImpl::recommendations(const QGeoPlace &pla
 
 QPlaceTextPredictionReply *QPlaceManagerEngineImpl::textPredictions(const QPlaceSearchQuery &query)
 {
-    QPlaceTextPreditionReplyImpl *reply = NULL;
+    QPlaceTextPredictionReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSuggestionRequest(query);
     if (restReply) {
-        reply = new QPlaceTextPreditionReplyImpl(restReply, this);
+        reply = new QPlaceTextPredictionReplyImpl(restReply, this);
         connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
                 this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
         connect(reply, SIGNAL(processingFinished(QPlaceReply*)),

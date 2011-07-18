@@ -78,8 +78,8 @@ public:
     void setMediaIds(const QStringList &data);
     int unhelpfulVotings() const;
     void setUnhelpfulVotings(const int &votes);
-    double rating() const;
-    void setRating(const double &data);
+    qreal rating() const;
+    void setRating(const qreal &data);
     QString reviewId() const;
     void setReviewId(const QString &data);
     QPlaceSupplier supplier() const;

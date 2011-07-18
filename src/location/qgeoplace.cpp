@@ -273,7 +273,7 @@ void QGeoPlace::setAlternativeNames(const QList<QPlaceAlternativeValue> &alterna
 /*!
     Returns place score.
 */
-double QGeoPlace::placeScore() const
+qreal QGeoPlace::placeScore() const
 {
     Q_D(const QGeoPlace);
     return d->placeScore;
@@ -282,10 +282,10 @@ double QGeoPlace::placeScore() const
 /*!
     Sets place score.
 */
-void QGeoPlace::setPlaceScore(const double &data)
+void QGeoPlace::setPlaceScore(const qreal &score)
 {
     Q_D(QGeoPlace);
-    d->placeScore = data;
+    d->placeScore = score;
 }
 
 /*!

@@ -37,8 +37,9 @@ void QDeclarativeWeekdayHours::setWeekdayHours(const QPlaceWeekdayHours &weekday
     }
 }
 
-QPlaceWeekdayHours QDeclarativeWeekdayHours::weekdayHours() const
+QPlaceWeekdayHours QDeclarativeWeekdayHours::weekdayHours()
 {
+    m_weekdayHours.setPeriod(m_period.period());
     return m_weekdayHours;
 }
 
@@ -46,6 +47,9 @@ QPlaceWeekdayHours QDeclarativeWeekdayHours::weekdayHours() const
     \qmlproperty Qt::DayOfWeek WeekdayHours::weekday
 
     This property holds the day of the week.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 
 void QDeclarativeWeekdayHours::setWeekday(const Qt::DayOfWeek &weekday)

@@ -57,8 +57,9 @@ void QDeclarativeDescription::setDescription(const QPlaceDescription &src)
     }
 }
 
-QPlaceDescription QDeclarativeDescription::description() const
+QPlaceDescription QDeclarativeDescription::description()
 {
+    m_src.setSupplier(m_declarativeSupplier.supplier());
     return m_src;
 }
 
@@ -161,6 +162,9 @@ QString QDeclarativeDescription::sourceUrl() const
     \qmlproperty string Description::supplier
 
     This property holds supplier info.
+
+   Note: this property's changed() signal is currently emitted only if the
+   whole element changes, not if only the contents of the element change.
 */
 
 void QDeclarativeDescription::setSupplier(QDeclarativeSupplier *src)

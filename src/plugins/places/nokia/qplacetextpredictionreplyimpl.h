@@ -58,12 +58,12 @@
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceTextPreditionReplyImpl : public QPlaceTextPredictionReply
+class QPlaceTextPredictionReplyImpl : public QPlaceTextPredictionReply
 {
     Q_OBJECT
 public:
-    explicit QPlaceTextPreditionReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
-    ~QPlaceTextPreditionReplyImpl();
+    explicit QPlaceTextPredictionReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
+    ~QPlaceTextPredictionReplyImpl();
     void abort();
 
 Q_SIGNALS:

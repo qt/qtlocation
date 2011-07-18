@@ -95,8 +95,8 @@ public:
     void setAdditionalData(const QVariantHash &data);
     QList<QPlaceAlternativeValue> alternativeNames() const;
     void setAlternativeNames(const QList<QPlaceAlternativeValue> &alternativeNames);
-    double placeScore() const;
-    void setPlaceScore(const double &data);
+    qreal placeScore() const;
+    void setPlaceScore(const qreal &data);
     QPlaceBusinessInformation businessInformation() const;
     void setBusinessInformation(const QPlaceBusinessInformation &business);
     QList<QPlaceCategory> categories() const;

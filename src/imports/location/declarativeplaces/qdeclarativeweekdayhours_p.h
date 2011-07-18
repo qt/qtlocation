@@ -21,7 +21,7 @@ public:
     explicit QDeclarativeWeekdayHours(const QPlaceWeekdayHours &weekdayHours, QObject* parent = 0);
     ~QDeclarativeWeekdayHours();
 
-    QPlaceWeekdayHours weekdayHours() const;
+    QPlaceWeekdayHours weekdayHours();
     void setWeekdayHours(const QPlaceWeekdayHours &weekdayHours);
 
     QDeclarativePeriod *period();

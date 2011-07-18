@@ -87,7 +87,7 @@ public:
 
     QVariantHash additionalData;
     QList<QPlaceAlternativeValue> alternativeNames;
-    double placeScore;
+    qreal placeScore;
     QPlaceBusinessInformation businessInfo;
     QList<QPlaceCategory> categories;
     QList<QPlaceContact> contacts;

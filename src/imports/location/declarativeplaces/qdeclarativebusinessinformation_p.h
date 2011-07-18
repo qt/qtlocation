@@ -28,7 +28,7 @@ public:
                                              QObject* parent = 0);
     ~QDeclarativeBusinessInformation();
 
-    QPlaceBusinessInformation businessInformation() const;
+    QPlaceBusinessInformation businessInformation();
     void setBusinessInformation(const QPlaceBusinessInformation &src);
 
     QVariantHash additionalData() const;

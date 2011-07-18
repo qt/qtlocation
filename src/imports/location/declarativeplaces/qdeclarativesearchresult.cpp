@@ -62,8 +62,9 @@ void QDeclarativeSearchResult::setSearchResult(const QPlaceSearchResult &src)
     }
 }
 
-QPlaceSearchResult QDeclarativeSearchResult::searchResult() const
+QPlaceSearchResult QDeclarativeSearchResult::searchResult()
 {
+    m_place.setPlace(m_place.place());
     return m_src;
 }
 
@@ -197,6 +198,9 @@ QString QDeclarativeSearchResult::didYouMeanSuggestion() const
     \qmlproperty Place SearchResult::place
 
     This property holds place result.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 void QDeclarativeSearchResult::setPlace(QDeclarativePlace *place)
 {

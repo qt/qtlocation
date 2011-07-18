@@ -70,7 +70,6 @@ const char *images = "/images";
 const char *categoriesTree = "categories/find-places/grouped";
 
 const char *const_query = "&q=";
-const char *const_tag = "&ta=";
 const char *const_lat = "&lat=";
 const char *const_lon = "&lon=";
 const char *const_top = "&vpn=";
@@ -193,12 +192,6 @@ QPlaceRestReply *QPlaceRestManager::sendSearchRequest(const QPlaceSearchQuery &q
 {
     return sendGeneralRequest(prepareSearchRequest(query)
             + const_query + query.searchTerm());
-}
-
-QPlaceRestReply *QPlaceRestManager::sendSearchByCategoryRequest(const QPlaceSearchQuery &query)
-{
-    return sendGeneralRequest(prepareSearchRequest(query)
-            + const_tag + query.searchTerm());
 }
 
 QPlaceRestReply *QPlaceRestManager::postRatingRequest(const QString &placeId, const QString &userId, const int &value)

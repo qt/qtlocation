@@ -66,6 +66,9 @@ QDeclarativeRecommendationModel::QDeclarativeRecommendationModel(QObject *parent
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(SearchResultRole, "searchResult");
     setRoleNames(roleNames);
+
+    m_manager = new QPlaceManager(this);
+    m_manager->initializeCategories();
 }
 
 QDeclarativeRecommendationModel::~QDeclarativeRecommendationModel()

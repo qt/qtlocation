@@ -244,7 +244,7 @@ void QPlaceReview::setUnhelpfulVotings(const int &votes)
 /*!
     Returns rating.
 */
-double QPlaceReview::rating() const
+qreal QPlaceReview::rating() const
 {
     return d->rating;
 }
@@ -252,7 +252,7 @@ double QPlaceReview::rating() const
 /*!
     Sets rating.
 */
-void QPlaceReview::setRating(const double &data)
+void QPlaceReview::setRating(const qreal &data)
 {
     d->rating = data;
 }

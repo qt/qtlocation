@@ -23,7 +23,7 @@ class QDeclarativeReview : public QObject
     Q_PROPERTY(QString originatorUrl READ originatorUrl WRITE setOriginatorUrl NOTIFY originatorUrlChanged);
     Q_PROPERTY(int helpfulVotings READ helpfulVotings WRITE setHelpfulVotings NOTIFY helpfulVotingsChanged);
     Q_PROPERTY(int unhelpfulVotings READ unhelpfulVotings WRITE setUnhelpfulVotings NOTIFY unhelpfulVotingsChanged);
-    Q_PROPERTY(double rating READ rating WRITE setRating NOTIFY ratingChanged);
+    Q_PROPERTY(qreal rating READ rating WRITE setRating NOTIFY ratingChanged);
     Q_PROPERTY(QStringList mediaIds READ mediaIds WRITE setMediaIds NOTIFY mediaIdsChanged);
 
 public:
@@ -31,7 +31,7 @@ public:
     explicit QDeclarativeReview(const QPlaceReview &src, QObject* parent = 0);
     ~QDeclarativeReview();
 
-    QPlaceReview review() const;
+    QPlaceReview review();
     void setReview(const QPlaceReview &src);
 
     QString date() const;
@@ -46,8 +46,8 @@ public:
     void setMediaIds(const QStringList &data);
     int unhelpfulVotings() const;
     void setUnhelpfulVotings(const int &data);
-    double rating() const;
-    void setRating(const double &data);
+    qreal rating() const;
+    void setRating(const qreal &data);
     QString reviewId() const;
     void setReviewId(const QString &data);
     QString title() const;

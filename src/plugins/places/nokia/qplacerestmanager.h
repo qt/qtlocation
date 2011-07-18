@@ -74,7 +74,6 @@ public:
     QPlaceRestReply *sendRecommendationRequest(const QPlaceSearchQuery &query, const QString &userId);
     QPlaceRestReply *sendCategoriesTreeRequest();
     QPlaceRestReply *sendSearchRequest(const QPlaceSearchQuery &query);
-    QPlaceRestReply *sendSearchByCategoryRequest(const QPlaceSearchQuery &query);
     QPlaceRestReply *sendSuggestionRequest(const QPlaceSearchQuery &query);
 
     QPlaceRestReply *postRatingRequest(const QString &placeId, const QString &userId, const int &value);

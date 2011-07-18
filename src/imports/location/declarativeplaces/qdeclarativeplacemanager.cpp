@@ -36,6 +36,8 @@ QDeclarativePlaceManager::QDeclarativePlaceManager(QObject *parent) :
     m_manager(NULL),
     m_response(NULL)
 {
+    m_manager = new QPlaceManager(this);
+    m_manager->initializeCategories();
 }
 
 QDeclarativePlaceManager::~QDeclarativePlaceManager()
@@ -172,7 +174,7 @@ void QDeclarativePlaceManager::cancelRequest()
 
 void QDeclarativePlaceManager::replyFinished()
 {
-    if (!m_response) {
+    if (!m_response || m_response->error()) {
         return;
     }
     if (m_response->type() == QPlaceReply::PlaceDetailsReply) {

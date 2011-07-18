@@ -120,8 +120,43 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
     }
 }
 
-QGeoPlace QDeclarativePlace::place() const
+QGeoPlace QDeclarativePlace::place()
 {
+    QList<QPlaceAlternativeValue> list;
+    foreach (QDeclarativeAlternativeValue *value, m_alternativeValues) {
+        list.append(value->valueObject());
+    }
+    m_src.setAlternativeNames(list);
+    QList<QPlaceCategory> categories;
+    foreach (QDeclarativeCategory *value, m_categories) {
+        categories.append(value->category());
+    }
+    m_src.setCategories(categories);
+    QList<QPlaceContact> contacts;
+    foreach (QDeclarativeContact *value, m_contacts) {
+        contacts.append(value->contact());
+    }
+    m_src.setContacts(contacts);
+    QList<QPlaceDescription> descriptions;
+    foreach (QDeclarativeDescription *value, m_descriptions) {
+        descriptions.append(value->description());
+    }
+    m_src.setDescriptions(descriptions);
+    m_src.setLocation(m_location.location());
+    QList<QGeoLocation> alternativeLocations;
+    foreach (QDeclarativeGeoLocation *value, m_alternativeLocations) {
+        alternativeLocations.append(value->location());
+    }
+    m_src.setAlternativeLocations(alternativeLocations);
+    m_src.setRating(m_rating.rating());
+    QList<QPlaceSupplier> suppliers;
+    foreach (QDeclarativeSupplier *value, m_suppliers) {
+        suppliers.append(value->supplier());
+    }
+    m_src.setSuppliers(suppliers);
+    m_src.setMedia(m_mediaList.paginationList());
+    m_src.setReviews(m_reviewList.paginationList());
+    m_src.setBusinessInformation(m_businessInformation.businessInformation());
     return m_src;
 }
 
@@ -148,6 +183,9 @@ QVariantHash QDeclarativePlace::additionalData() const
     \qmlproperty string Place::location
 
     This property holds location of the place.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 void QDeclarativePlace::setLocation(QDeclarativeGeoLocation *location)
 {
@@ -167,6 +205,9 @@ QDeclarativeGeoLocation *QDeclarativePlace::location()
     \qmlproperty Rating Place::rating
 
     This property holds rating of the place.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 void QDeclarativePlace::setRating(QDeclarativeRating *obj)
 {
@@ -186,6 +227,9 @@ QDeclarativeRating *QDeclarativePlace::rating()
     \qmlproperty BusinessInformation Place::businessInformation
 
     This property holds business information of the place.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 void QDeclarativePlace::setBusinessInformation(QDeclarativeBusinessInformation *obj)
 {
@@ -256,11 +300,11 @@ QString QDeclarativePlace::shortDescription() const
 }
 
 /*!
-    \qmlproperty double Place::placeScore
+    \qmlproperty qreal Place::placeScore
 
     This property holds place score.
 */
-void QDeclarativePlace::setPlaceScore(const double &placeScore)
+void QDeclarativePlace::setPlaceScore(const qreal &placeScore)
 {
     if (m_src.placeScore() != placeScore) {
         m_src.setPlaceScore(placeScore);
@@ -268,7 +312,7 @@ void QDeclarativePlace::setPlaceScore(const double &placeScore)
     }
 }
 
-double QDeclarativePlace::placeScore() const
+qreal QDeclarativePlace::placeScore() const
 {
     return m_src.placeScore();
 }
@@ -295,6 +339,9 @@ int QDeclarativePlace::mediaCount() const
     \qmlproperty string Place::media
 
     This property holds media list of the place.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 void QDeclarativePlace::setMedia(QDeclarativeMediaPaginationList *obj)
 {
@@ -370,6 +417,9 @@ QStringList QDeclarativePlace::feeds() const
     \qmlproperty int Place::reviewCount
 
     This property holds number of all reviews.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 void QDeclarativePlace::setReviewCount(const int &reviewCount)
 {
@@ -407,6 +457,9 @@ QDeclarativeReviewPaginationList *QDeclarativePlace::reviews()
     \qmlproperty QDeclarativeListProperty<QDeclarativeAlternativeValue> Place::alternativeNames
 
     This property holds alternative values for name property.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeAlternativeValue> QDeclarativePlace::alternativeNames()
 {
@@ -470,6 +523,9 @@ void QDeclarativePlace::synchronizeAlternativeValues()
     \qmlproperty QDeclarativeListProperty<QDeclarativeCategory> Place::categories
 
     This property categories list.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeCategory> QDeclarativePlace::categories()
 {
@@ -533,6 +589,9 @@ void QDeclarativePlace::synchronizeCategories()
     \qmlproperty QDeclarativeListProperty<QDeclarativeContact> Place::contacts
 
     This property contacts list.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeContact> QDeclarativePlace::contacts()
 {
@@ -596,6 +655,9 @@ void QDeclarativePlace::synchronizeContacts()
     \qmlproperty QDeclarativeListProperty<QDeclarativeDescription> Place::descriptions
 
     This property descriptions list.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeDescription> QDeclarativePlace::descriptions()
 {
@@ -659,6 +721,9 @@ void QDeclarativePlace::synchronizeDescriptions()
     \qmlproperty QDeclarativeListProperty<QDeclarativeGeoLocation> Place::alternativeLocations
 
     This property alternative locations list.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeGeoLocation> QDeclarativePlace::alternativeLocations()
 {
@@ -722,6 +787,9 @@ void QDeclarativePlace::synchronizeAlternativeLocations()
     \qmlproperty QDeclarativeListProperty<QDeclarativeSupplier> Place::suppliers
 
     This property suppliers list.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeSupplier> QDeclarativePlace::suppliers()
 {

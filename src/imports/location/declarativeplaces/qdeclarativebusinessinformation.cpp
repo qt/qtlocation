@@ -64,8 +64,23 @@ void QDeclarativeBusinessInformation::setBusinessInformation(const QPlaceBusines
     }
 }
 
-QPlaceBusinessInformation QDeclarativeBusinessInformation::businessInformation() const
+QPlaceBusinessInformation QDeclarativeBusinessInformation::businessInformation()
 {
+    QList<QPlaceBusinessFeature> featureList;
+    foreach (QDeclarativeBusinessFeature *value, m_features) {
+        featureList.append(value->businessFeature());
+    }
+    m_src.setFeatures(featureList);
+    QList<QPlaceWeekdayHours> openingList;
+    foreach (QDeclarativeWeekdayHours *value, m_openingHours) {
+        openingList.append(value->weekdayHours());
+    }
+    m_src.setOpeningHours(openingList);
+    QList<QPlacePeriod> annualClosingsList;
+    foreach (QDeclarativePeriod *value, m_annualClosings) {
+        annualClosingsList.append(value->period());
+    }
+    m_src.setAnnualClosings(annualClosingsList);
     return m_src;
 }
 
@@ -147,6 +162,9 @@ QStringList QDeclarativeBusinessInformation::paymentMethods() const
     \qmlproperty QDeclarativeListProperty<QDeclarativeBusinessFeature> BusinessInformation::features
 
     This property holds business featyres list.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeBusinessFeature> QDeclarativeBusinessInformation::features()
 {
@@ -210,6 +228,9 @@ void QDeclarativeBusinessInformation::synchronizeFeatures()
     \qmlproperty QDeclarativeListProperty<QDeclarativeWeekdayHours> BusinessInformation::openingHours
 
     This property opening hours list.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeWeekdayHours> QDeclarativeBusinessInformation::openingHours()
 {
@@ -273,6 +294,9 @@ void QDeclarativeBusinessInformation::synchronizeOpeningHours()
     \qmlproperty QDeclarativeListProperty<QDeclarativePeriod> BusinessInformation::annualClosings
 
     This property annual closings list.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativePeriod> QDeclarativeBusinessInformation::annualClosings()
 {

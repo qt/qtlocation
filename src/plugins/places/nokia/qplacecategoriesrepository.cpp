@@ -79,12 +79,13 @@ QPlaceCategoriesRepository::~QPlaceCategoriesRepository()
 
 QPlaceReply *QPlaceCategoriesRepository::initializeCategories()
 {
-    QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendCategoriesTreeRequest();
-    if (restReply) {
-        categoriesReply = new QPlaceCategoriesReplyImpl(restReply);
-        connect(categoriesReply, SIGNAL(finished()),
-                this, SLOT(replyFinished()));
-
+    if (!categoriesReply) {
+        QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendCategoriesTreeRequest();
+        if (restReply) {
+            categoriesReply = new QPlaceCategoriesReplyImpl(restReply);
+            connect(categoriesReply, SIGNAL(finished()),
+                    this, SLOT(replyFinished()));
+        }
     }
     return categoriesReply;
 }

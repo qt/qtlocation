@@ -64,10 +64,10 @@ public:
         return !(other == *this);
     }
 
-    double value() const;
-    void setValue(const double &data);
+    qreal value() const;
+    void setValue(const qreal &value);
     int count() const;
-    void setCount(const int &dcount);
+    void setCount(const int &count);
 
 private:
     QSharedDataPointer<QPlaceRatingPrivate> d;

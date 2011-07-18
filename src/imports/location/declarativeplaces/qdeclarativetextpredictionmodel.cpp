@@ -64,6 +64,9 @@ QDeclarativeTextPredictionModel::QDeclarativeTextPredictionModel(QObject *parent
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(TextPredictionRole, "textPrediction");
     setRoleNames(roleNames);
+
+    m_manager = new QPlaceManager(this);
+    m_manager->initializeCategories();
 }
 
 QDeclarativeTextPredictionModel::~QDeclarativeTextPredictionModel()
@@ -214,6 +217,7 @@ void QDeclarativeTextPredictionModel::executeQuery()
         m_manager = new QPlaceManager(this);
     }
     cancelPreviousRequest();
+
     m_queryParameters.setSearchArea(m_searchArea->area());
     connectNewResponse(m_manager->textPredictions(m_queryParameters));
 }

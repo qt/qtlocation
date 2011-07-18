@@ -64,7 +64,7 @@ public:
     int helpfulVotings;
     QStringList mediaIds;
     int unhelpfulVotings;
-    double rating;
+    qreal rating;
     QString reviewId;
     QPlaceSupplier supplier;
     QString title;

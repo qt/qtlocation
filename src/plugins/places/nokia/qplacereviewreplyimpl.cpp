@@ -95,7 +95,7 @@ void QPlaceReviewReplyImpl::setStartNumber(int number)
 void QPlaceReviewReplyImpl::restError(QPlaceRestReply::Error errorId)
 {
     if (errorId == QPlaceRestReply::Canceled) {
-        this->setError(CancelError, "ReauestCanceled");
+        this->setError(CancelError, "RequestCanceled");
     } else if (errorId == QPlaceRestReply::NetworkError) {
         this->setError(CommunicationError, "Network error");
     }

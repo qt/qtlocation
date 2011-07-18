@@ -24,7 +24,7 @@ public:
     explicit QDeclarativeDescription(const QPlaceDescription &src, QObject* parent = 0);
     ~QDeclarativeDescription();
 
-    QPlaceDescription description() const;
+    QPlaceDescription description();
     void setDescription(const QPlaceDescription &src);
 
     QString content() const;

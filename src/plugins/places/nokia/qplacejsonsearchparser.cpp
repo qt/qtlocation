@@ -127,15 +127,20 @@ void QPlaceJSonSearchParser::processJSonData(const QScriptValue &sv)
     searchResultsList.clear();
 
     if (sv.isValid()) {
-        QScriptValueIterator it(sv.property(search_results_element));
+        QScriptValue results = sv.property(search_results_element);
+        if (results.isValid()) {
+            QScriptValueIterator it(results);
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element
-                if (it.name() != "length") {
+                if (it.name() != QLatin1String("length")) {
                     processResultElement(it.value());
                 }
             }
-        emit finished(NoError, QString());
+            emit finished(NoError, QString());
+        } else {
+            emit finished(ParsingError, QString("JSON data are invalid"));
+        }
     } else {
         emit finished(ParsingError, QString("JSON data are invalid"));
     }

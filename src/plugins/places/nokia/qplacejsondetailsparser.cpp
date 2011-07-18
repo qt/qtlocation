@@ -215,8 +215,13 @@ QGeoPlace QPlaceJSonDetailsParser::result()
 void QPlaceJSonDetailsParser::processJSonData(const QScriptValue &sv)
 {
     if (sv.isValid()) {
-        buildPlace(sv.property(place_place_element), &place);
-        emit finished(QPlaceJSonDetailsParser::NoError, QString());
+        QScriptValue placeProperty = sv.property(place_place_element);
+        if (placeProperty.isValid()) {
+            buildPlace(placeProperty, &place);
+            emit finished(NoError, QString());
+        } else {
+            emit finished(ParsingError, QString("JSON data are invalid"));
+        }
     } else {
         emit finished(ParsingError, QString("JSON data are invalid"));
     }

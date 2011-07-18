@@ -39,18 +39,17 @@ QT_USE_NAMESPACE
             }
             radius:5000
         }
-
         start: 0
         limit: 15
     }
 
     ...
-    resultModel.executeQuery()
+    searchModel.executeQuery()
     ...
 
     ListView {
         id: suggestionList
-        model: suggestionModel
+        model: searchModel
         delegate: Text {
             text: 'Name: ' + searchResult.place.name }
         }
@@ -68,6 +67,9 @@ QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent) :
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(SearchResultRole, "searchResult");
     setRoleNames(roleNames);
+
+    m_manager = new QPlaceManager(this);
+    m_manager->initializeCategories();
 }
 
 QDeclarativeSearchResultModel::~QDeclarativeSearchResultModel()
@@ -198,6 +200,9 @@ void QDeclarativeSearchResultModel::setSearchTerm(const QString &searchTerm)
     \qmlproperty Category SearchResultModel::searchCategory
 
     This element holds search category. Search Category is used instead of search term.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeCategory *QDeclarativeSearchResultModel::searchCategory()
 {
@@ -307,6 +312,7 @@ void QDeclarativeSearchResultModel::executeQuery()
         m_manager = new QPlaceManager(this);
     }
     cancelPreviousRequest();
+
     m_queryParameters.setSearchArea(m_searchArea->area());
     connectNewResponse(m_manager->searchForPlaces(m_queryParameters, QPlaceManager::PublicScope));
 }
@@ -328,6 +334,7 @@ void QDeclarativeSearchResultModel::clearCategories()
 {
     if (m_queryParameters.categories().count()) {
         m_queryParameters.setCategory(QPlaceCategory());
+        m_category.setCategory(QPlaceCategory());
         emit searchCategoryChanged();
     }
 }

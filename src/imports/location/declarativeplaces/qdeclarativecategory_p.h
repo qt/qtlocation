@@ -23,7 +23,7 @@ public:
     explicit QDeclarativeCategory(const QPlaceCategory &category, QObject* parent = 0);
     ~QDeclarativeCategory();
 
-    QPlaceCategory category() const;
+    QPlaceCategory category();
     void setCategory(const QPlaceCategory &category);
 
     QDeclarativeListProperty<QDeclarativeAlternativeValue> alternativeNames();

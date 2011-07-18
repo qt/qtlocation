@@ -24,7 +24,7 @@ public:
     explicit QDeclarativeMediaObject(const QPlaceMediaObject &src, QObject* parent = 0);
     ~QDeclarativeMediaObject();
 
-    QPlaceMediaObject mediaObject() const;
+    QPlaceMediaObject mediaObject();
     void setMediaObject(const QPlaceMediaObject &src);
 
     QString url() const;

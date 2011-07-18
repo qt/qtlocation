@@ -22,7 +22,7 @@ class QDeclarativeGeoLocation : public QObject
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> navigationPositions READ navigationPositions NOTIFY navigationPositionsChanged)
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged);
     Q_PROPERTY(QString locationId READ locationId WRITE setLocationId NOTIFY locationIdChanged);
-    Q_PROPERTY(int locationScore READ locationScore WRITE setLocationScore NOTIFY locationScoreChanged);
+    Q_PROPERTY(qreal locationScore READ locationScore WRITE setLocationScore NOTIFY locationScoreChanged);
     Q_PROPERTY(QDeclarativeGeoBoundingBox* viewport READ viewport WRITE setViewport NOTIFY viewportChanged);
 
 public:
@@ -30,7 +30,7 @@ public:
     explicit QDeclarativeGeoLocation(const QGeoLocation &src, QObject* parent = 0);
     ~QDeclarativeGeoLocation();
 
-    QGeoLocation location() const;
+    QGeoLocation location() ;
     void setLocation(const QGeoLocation &src);
 
     QVariantHash additionalData() const;
@@ -55,8 +55,8 @@ public:
     void setLabel(const QString &label);
     QString locationId() const;
     void setLocationId(const QString &locationId);
-    int locationScore() const;
-    void setLocationScore(const int &score);
+    qreal locationScore() const;
+    void setLocationScore(const qreal &score);
     QDeclarativeGeoBoundingBox *viewport();
     void setViewport(QDeclarativeGeoBoundingBox *boundingBox);
 

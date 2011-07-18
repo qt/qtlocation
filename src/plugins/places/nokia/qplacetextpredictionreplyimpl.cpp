@@ -59,7 +59,7 @@ QT_USE_NAMESPACE
 /*!
     Constructor.
 */
-QPlaceTextPreditionReplyImpl::QPlaceTextPreditionReplyImpl(QPlaceRestReply *reply, QObject *parent) :
+QPlaceTextPredictionReplyImpl::QPlaceTextPredictionReplyImpl(QPlaceRestReply *reply, QObject *parent) :
     QPlaceTextPredictionReply(parent),
     restReply(reply)
 {
@@ -79,20 +79,20 @@ QPlaceTextPreditionReplyImpl::QPlaceTextPreditionReplyImpl(QPlaceRestReply *repl
 /*!
     Destructor.
 */
-QPlaceTextPreditionReplyImpl::~QPlaceTextPreditionReplyImpl()
+QPlaceTextPredictionReplyImpl::~QPlaceTextPredictionReplyImpl()
 {
 }
 
-void QPlaceTextPreditionReplyImpl::abort()
+void QPlaceTextPredictionReplyImpl::abort()
 {
     if (restReply)
         restReply->cancelProcessing();
 }
 
-void QPlaceTextPreditionReplyImpl::restError(QPlaceRestReply::Error errorId)
+void QPlaceTextPredictionReplyImpl::restError(QPlaceRestReply::Error errorId)
 {
     if (errorId == QPlaceRestReply::Canceled) {
-        this->setError(CancelError, "ReauestCanceled");
+        this->setError(CancelError, "RequestCanceled");
     } else if (errorId == QPlaceRestReply::NetworkError) {
         this->setError(CommunicationError, "Network error");
     }
@@ -103,7 +103,7 @@ void QPlaceTextPreditionReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceTextPreditionReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
+void QPlaceTextPredictionReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {

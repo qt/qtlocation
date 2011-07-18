@@ -57,8 +57,9 @@ void QDeclarativeMediaObject::setMediaObject(const QPlaceMediaObject &src)
     }
 }
 
-QPlaceMediaObject QDeclarativeMediaObject::mediaObject() const
+QPlaceMediaObject QDeclarativeMediaObject::mediaObject()
 {
+    m_src.setSupplier(m_declarativeSupplier.supplier());
     return m_src;
 }
 
@@ -161,8 +162,10 @@ QString QDeclarativeMediaObject::id() const
     \qmlproperty string MediaObject::supplier
 
     This property holds supplier info.
-*/
 
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
+*/
 void QDeclarativeMediaObject::setSupplier(QDeclarativeSupplier *src)
 {
     if (m_declarativeSupplier.supplier() != src->supplier()) {

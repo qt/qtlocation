@@ -41,7 +41,7 @@ public:
     explicit QDeclarativeSearchResult(const QPlaceSearchResult &src, QObject* parent = 0);
     ~QDeclarativeSearchResult();
 
-    QPlaceSearchResult searchResult() const;
+    QPlaceSearchResult searchResult();
     void setSearchResult(const QPlaceSearchResult &src);
 
     qreal relevance() const;

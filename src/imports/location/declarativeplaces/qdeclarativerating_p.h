@@ -12,7 +12,7 @@ class QDeclarativeRating : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged)
+    Q_PROPERTY(qreal value READ value WRITE setValue NOTIFY valueChanged)
     Q_PROPERTY(int count READ count WRITE setCount NOTIFY countChanged)
 
 public:
@@ -23,8 +23,8 @@ public:
     QPlaceRating rating() const;
     void setRating(const QPlaceRating &src);
 
-    double value() const;
-    void setValue(const double &data);
+    qreal value() const;
+    void setValue(const qreal &data);
     int count() const;
     void setCount(const int &data);
 

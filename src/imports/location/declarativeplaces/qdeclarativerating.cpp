@@ -40,12 +40,12 @@ QPlaceRating QDeclarativeRating::rating() const
 }
 
 /*!
-    \qmlproperty double Rating::value
+    \qmlproperty qreal Rating::value
 
     This property holds the value of rating
 */
 
-void QDeclarativeRating::setValue(const double &value)
+void QDeclarativeRating::setValue(const qreal &value)
 {
     if (m_rating.value() != value) {
         m_rating.setValue(value);
@@ -53,7 +53,7 @@ void QDeclarativeRating::setValue(const double &value)
     }
 }
 
-double QDeclarativeRating::value() const
+qreal QDeclarativeRating::value() const
 {
     return m_rating.value();
 }

@@ -74,8 +74,21 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
     }
 }
 
-QGeoLocation QDeclarativeGeoLocation::location() const
+QGeoLocation QDeclarativeGeoLocation::location()
 {
+    QList<QPlaceAlternativeValue> list;
+    foreach (QDeclarativeAlternativeValue *value, m_alternativeValues) {
+        list.append(value->valueObject());
+    }
+    m_src.setAlternativeLabels(list);
+    QList<QGeoCoordinate> navigationList;
+    foreach (QDeclarativeCoordinate *value, m_navigationPositions) {
+        navigationList.append(value->coordinate());
+    }
+    m_src.setNavigationPositions(navigationList);
+    m_src.setAddress(m_address.address());
+    m_src.setCoordinate(m_coordinate.coordinate());
+    m_src.setViewport(m_boundingBox.box());
     return m_src;
 }
 
@@ -121,6 +134,9 @@ QDeclarativeGeoAddress *QDeclarativeGeoLocation::address()
     \qmlproperty string Location::coordinate
 
     This property holds display coordinates of the location.
+
+   Note: this property's changed() signal is currently emitted only if the
+   whole element changes, not if only the contents of the element change.
 */
 void QDeclarativeGeoLocation::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
@@ -173,11 +189,11 @@ QString QDeclarativeGeoLocation::locationId() const
 }
 
 /*!
-    \qmlproperty string Location::locationScore
+    \qmlproperty qreal Location::locationScore
 
     This property holds location score.
 */
-void QDeclarativeGeoLocation::setLocationScore(const int &locationScore)
+void QDeclarativeGeoLocation::setLocationScore(const qreal &locationScore)
 {
     if (m_src.locationScore() != locationScore) {
         m_src.setLocationScore(locationScore);
@@ -185,15 +201,18 @@ void QDeclarativeGeoLocation::setLocationScore(const int &locationScore)
     }
 }
 
-int QDeclarativeGeoLocation::locationScore() const
+qreal QDeclarativeGeoLocation::locationScore() const
 {
     return m_src.locationScore();
 }
 
 /*!
-    \qmlproperty string Location::viewport
+    \qmlproperty BoundingBox Location::viewport
 
     This property holds bouding box of area on map ocupied by location.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 void QDeclarativeGeoLocation::setViewport(QDeclarativeGeoBoundingBox *viewport)
 {
@@ -213,6 +232,9 @@ QDeclarativeGeoBoundingBox *QDeclarativeGeoLocation::viewport()
     \qmlproperty QDeclarativeListProperty<QDeclarativeAlternativeValue> Location::alternativeLabels
 
     This property alternative values for label property.
+
+     Note: this property's changed() signal is currently emitted only if the
+     whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeAlternativeValue> QDeclarativeGeoLocation::alternativeLabels()
 {
@@ -266,6 +288,9 @@ void QDeclarativeGeoLocation::alternativeValue_clear(QDeclarativeListProperty<QD
     \qmlproperty QDeclarativeListProperty<QDeclarativeCoordinate> Location::navigationPositions
 
     This property navigation coordinates for location.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoLocation::navigationPositions()
 {

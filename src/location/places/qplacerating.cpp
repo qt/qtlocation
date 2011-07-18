@@ -118,7 +118,7 @@ bool QPlaceRating::operator==(const QPlaceRating &other) const
 /*!
     Returns value.
 */
-double QPlaceRating::value() const
+qreal QPlaceRating::value() const
 {
     return d->value;
 }
@@ -126,7 +126,7 @@ double QPlaceRating::value() const
 /*!
     Sets the \a value.
 */
-void QPlaceRating::setValue(const double &value)
+void QPlaceRating::setValue(const qreal &value)
 {
     d->value = value;
 }

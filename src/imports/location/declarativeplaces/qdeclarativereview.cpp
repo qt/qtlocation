@@ -78,8 +78,9 @@ void QDeclarativeReview::setReview(const QPlaceReview &src)
     }
 }
 
-QPlaceReview QDeclarativeReview::review() const
+QPlaceReview QDeclarativeReview::review()
 {
+    m_src.setSupplier(m_declarativeSupplier.supplier());
     return m_src;
 }
 
@@ -250,11 +251,11 @@ QStringList QDeclarativeReview::mediaIds() const
 }
 
 /*!
-    \qmlproperty string Review::rating
+    \qmlproperty qreal Review::rating
 
     This property holds rating value.
 */
-void QDeclarativeReview::setRating(const double &rating)
+void QDeclarativeReview::setRating(const qreal &rating)
 {
     if (m_src.rating() != rating) {
         m_src.setRating(rating);
@@ -262,7 +263,7 @@ void QDeclarativeReview::setRating(const double &rating)
     }
 }
 
-double QDeclarativeReview::rating() const
+qreal QDeclarativeReview::rating() const
 {
     return m_src.rating();
 }
@@ -307,6 +308,9 @@ int QDeclarativeReview::unhelpfulVotings() const
     \qmlproperty string Review::supplier
 
     This property holds supplier info.
+
+   Note: this property's changed() signal is currently emitted only if the
+   whole element changes, not if only the contents of the element change.
 */
 void QDeclarativeReview::setSupplier(QDeclarativeSupplier *src)
 {

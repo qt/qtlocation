@@ -78,7 +78,7 @@ signals:
     void finished(const QString &reply);
     void error(QPlaceRestReply::Error error);
 
-private slots:
+public slots:
     void replyFinished();
     void replyError(QNetworkReply::NetworkError error);
 

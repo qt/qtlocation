@@ -23,7 +23,7 @@ class QDeclarativePlace : public QObject
 
     Q_PROPERTY(QVariantHash additionalData READ additionalData WRITE setAdditionalData NOTIFY additionalDataChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeAlternativeValue> alternativeNames READ alternativeNames NOTIFY alternativeNamesChanged)
-    Q_PROPERTY(double placeScore READ placeScore WRITE setPlaceScore NOTIFY placeScoreChanged);
+    Q_PROPERTY(qreal placeScore READ placeScore WRITE setPlaceScore NOTIFY placeScoreChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContact> contacts READ contacts NOTIFY contactsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeDescription> descriptions READ descriptions NOTIFY descriptionsChanged)
@@ -48,7 +48,7 @@ public:
     explicit QDeclarativePlace(const QGeoPlace &src, QObject* parent = 0);
     ~QDeclarativePlace();
 
-    QGeoPlace place() const;
+    QGeoPlace place();
     void setPlace(const QGeoPlace &src);
 
     QVariantHash additionalData() const;
@@ -59,8 +59,8 @@ public:
     static int alternativeValue_count(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop);
     static QDeclarativeAlternativeValue* alternativeValue_at(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop, int index);
     static void alternativeValue_clear(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop);
-    double placeScore() const;
-    void setPlaceScore(const double &data);
+    qreal placeScore() const;
+    void setPlaceScore(const qreal &data);
     QDeclarativeListProperty<QDeclarativeCategory> categories();
     static void category_append(QDeclarativeListProperty<QDeclarativeCategory> *prop,
                                   QDeclarativeCategory* value);

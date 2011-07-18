@@ -179,7 +179,6 @@ QList<QPlaceCategory> QPlaceJSonCategoriesParser::processGroup(const QScriptValu
     }
     if (!parentCategory.categoryId().isEmpty()) {
         results = processCategories(group);
-        results.append(parentCategory);
     }
 
     return results;

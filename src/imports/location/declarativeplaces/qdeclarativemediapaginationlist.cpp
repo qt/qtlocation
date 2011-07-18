@@ -54,6 +54,11 @@ void QDeclarativeMediaPaginationList::setPaginationList(const QPlacePaginationLi
 
 QPlacePaginationList<QPlaceMediaObject> QDeclarativeMediaPaginationList::paginationList()
 {
+    QList<QPlaceMediaObject> list;
+    foreach (QDeclarativeMediaObject *value, m_objects) {
+        list.append(value->mediaObject());
+    }
+    m_src.setData(list);
     return m_src;
 }
 
@@ -102,6 +107,9 @@ int QDeclarativeMediaPaginationList::stop()
     \qmlproperty QDeclarativeListProperty<QDeclarativeMediaObject> MediaPaginationList::data
 
     This property contains of list of items.
+
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeMediaObject> QDeclarativeMediaPaginationList::data()
 {

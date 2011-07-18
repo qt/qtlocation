@@ -45,8 +45,14 @@ void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
     }
 }
 
-QPlaceCategory QDeclarativeCategory::category() const
+QPlaceCategory QDeclarativeCategory::category()
 {
+    QList<QPlaceAlternativeValue> list;
+    foreach (QDeclarativeAlternativeValue *value, m_alternativeValues) {
+        list.append(value->valueObject());
+    }
+    m_category.setAlternativeNames(list);
+
     return m_category;
 }
 
@@ -111,6 +117,8 @@ QString QDeclarativeCategory::name() const
     \qmlproperty QVariantHash Address::alternativeAttributes
 
     This property alternative values for label property.
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 QDeclarativeListProperty<QDeclarativeAlternativeValue> QDeclarativeCategory::alternativeNames()
 {
