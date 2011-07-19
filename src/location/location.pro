@@ -23,6 +23,7 @@ contains(proj_enabled, yes) {
   LIBS += -lproj
 } else {
   include($$PWD/../3rdparty/proj.pri)
+  LIBS += -L$$OUT_PWD/../3rdparty -lproj
 }
 
 PUBLIC_HEADERS += \

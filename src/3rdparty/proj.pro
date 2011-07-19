@@ -1,7 +1,6 @@
 TEMPLATE=lib
 CONFIG+=static
 
-BUILD_PROJ=true
 include(proj.pri)
 
 CONFIG += warn_off
