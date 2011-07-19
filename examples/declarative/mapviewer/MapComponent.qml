@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
+import QtQuick 1.1
 import Qt.location 5.0
 import "common" as Common
 
@@ -126,7 +126,7 @@ Map {
         id: pointDelegate
         MapCircle {
             radius: 1000
-            color: circleMouseArea.containsMouse ? "lime" : "#80FF0000"
+            color: circleMouseArea.containsMouse ? "#8000FF00" : "#80FF0000"
             center: place.coordinate
             MapMouseArea {
                 id: circleMouseArea
@@ -306,12 +306,6 @@ Map {
         map.state = "MarkerPopupMenu"
     }
 
-    function updateMarkers(){
-        for (var i = 0; i<map.numberOfMarkers; i++){
-            map.markers[i].update()
-        }
-    }
-
     function calculateRoute(marker){
         routeQuery.clearWaypoints();
         var startPointFound = false
@@ -329,12 +323,7 @@ Map {
         routeModel.update();
     }
 
-    onCenterChanged: {
-        map.updateMarkers()
-    }
-
     onZoomLevelChanged:{
-        map.updateMarkers()
         zoomSlider.value = map.zoomLevel
     }
 

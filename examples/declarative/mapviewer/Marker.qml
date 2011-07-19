@@ -38,20 +38,24 @@
 **
 ****************************************************************************/
 
-import Qt 4.7;
+import QtQuick 1.1
 import Qt.location 5.0
 import "common" as Common
 
-    MapImage { //to be used inside MapComponent only
-        id: marker
+MapGroup {  //to be used inside MapComponent only
+    id: marker
+    property alias coordinate: markerImage.coordinate
+    property alias lastMouseX: markerMouseArea.lastX
+    property alias lastMouseY: markerMouseArea.lastY
+    property alias text: markerIndex.text
+
+    MapImage {
+        id: markerImage
         source: markerMouseArea.pressed ? "resources/marker_selected.png" : "resources/marker.png" //TODO replace with following lane when QTBUG-20096 fixed
 //        source: markerMouseArea.containsMouse ? (markerMouseArea.pressed  ? "resources/marker_selected.png" :"resources/marker_hovered.png") : "resources/marker.png"
         coordinate: Coordinate { latitude : 0; longitude : 0 }
         offset.x: -13
         offset.y: -32
-        property alias lastMouseX: markerMouseArea.lastX
-        property alias lastMouseY: markerMouseArea.lastY
-        property alias text: markerIndex.text
 
         Component.onCompleted: {
             coordinate = mouseArea.lastCoordinate
@@ -66,12 +70,12 @@ import "common" as Common
             property bool longPress: false
             hoverEnabled: true
             onPressed: {
-                marker.z++
+                ++marker.z
                 var newX, newY, oldX, oldY
                 newX = map.toScreenPosition(mouse.coordinate).x
                 newY = map.toScreenPosition(mouse.coordinate).y
-                oldX = map.toScreenPosition(marker.coordinate).x
-                oldY = map.toScreenPosition(marker.coordinate).y
+                oldX = map.toScreenPosition(markerImage.coordinate).x
+                oldY = map.toScreenPosition(markerImage.coordinate).y
                 dX = oldX - newX
                 dY = oldY - newY
                 lastX = mouse.x
@@ -95,15 +99,13 @@ import "common" as Common
                     lastY = mouse.y
                     newX = map.toScreenPosition(mouse.coordinate).x + dX
                     newY = map.toScreenPosition(mouse.coordinate).y + dY
-                    marker.coordinate = map.toCoordinate(Qt.point(newX,newY))
-                    textArea.x = map.toScreenPosition(marker.coordinate).x + offset.x
-                    textArea.y = map.toScreenPosition(marker.coordinate).y + offset.y
+                    markerImage.coordinate = map.toCoordinate(Qt.point(newX,newY))
                 }
             }
 
             Timer {
                 id: markerTimer
-                interval: 1000
+                interval: map.longPressDuration
                 running: false
                 repeat: false
                 onTriggered: {
@@ -112,28 +114,16 @@ import "common" as Common
                 }
             }
         }
+    }
 
-        Item {
-            id: textArea
-            width: 26
-            height: 32
-            x: map.toScreenPosition(marker.coordinate).x + offset.x
-            y: map.toScreenPosition(marker.coordinate).y + offset.y
-            Text {
-                id: markerIndex
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                z: marker.z
-                color: "white"
-                font.bold: true
-                Component.onCompleted: {
-                    text = map.counter
-                }
-            }
-        }
-
-        function update(){
-            textArea.x = map.toScreenPosition(marker.coordinate).x + marker.offset.x
-            textArea.y = map.toScreenPosition(marker.coordinate).y + marker.offset.y
+    MapText {
+        id: markerIndex
+        offset.y : -16
+        coordinate: markerImage.coordinate
+        color: "white"
+        font.bold: true
+        Component.onCompleted: {
+            text = map.counter
         }
     }
+}

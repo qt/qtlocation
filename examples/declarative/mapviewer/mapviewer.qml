@@ -38,14 +38,13 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
+import QtQuick 1.1
 import Qt.location 5.0
 import "common" as Common
 
-FocusScope {
+Item {
     anchors.fill: parent
     id: page
-    focus: true
 
     Rectangle {
         id: backgroundRect
