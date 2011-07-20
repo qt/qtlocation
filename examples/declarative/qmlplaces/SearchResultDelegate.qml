@@ -42,8 +42,7 @@ Rectangle {
                 Text { text: '<b>Latitude: </b> ' + result.place.location.coordinate.latitude; font.pixelSize: 16 }
                 Text { text: '<b>Longitude: </b> ' + result.place.location.coordinate.longitude; font.pixelSize: 16 }
                 Text { text: '<b>Categories: </b> ' + categoryNames(result.place.categories); font.pixelSize: 16 }
-                Text { text: '<b>Media count: </b> ' + result.place.media.data.length; font.pixelSize: 16 }
-                //Text { text: '<b>All media count: </b> ' + place.mediaCount; font.pixelSize: 16 }
+                Text { text: '<b>Media count: </b> ' + result.place.mediaModel.totalCount; font.pixelSize: 16 }
                 Text { text: '<b>Descriptions count: </b> ' + result.place.descriptions.length; font.pixelSize: 16 }
                 Text { text: '<b>Review count: </b> ' + result.place.reviewModel.totalCount; font.pixelSize: 16 }
                 Text { text: '<b>Tags: </b> ' + result.place.tags; font.pixelSize: 16 }

@@ -129,7 +129,7 @@ bool QPlaceMediaObject::operator==(const QPlaceMediaObject &other) const
 /*!
     Returns media url.
 */
-QString QPlaceMediaObject::url() const
+QUrl QPlaceMediaObject::url() const
 {
     return d->url;
 }
@@ -137,15 +137,15 @@ QString QPlaceMediaObject::url() const
 /*!
     Sets media url.
 */
-void QPlaceMediaObject::setUrl(const QString &data)
+void QPlaceMediaObject::setUrl(const QUrl &url)
 {
-    d->url = data;
+    d->url = url;
 }
 
 /*!
     Returns media url for thumbnail.
 */
-QString QPlaceMediaObject::thumbnailUrl() const
+QUrl QPlaceMediaObject::thumbnailUrl() const
 {
     return d->thumbnailUrl;
 }
@@ -153,9 +153,9 @@ QString QPlaceMediaObject::thumbnailUrl() const
 /*!
     Sets media url for thumbnail.
 */
-void QPlaceMediaObject::setThumbnailUrl(const QString &data)
+void QPlaceMediaObject::setThumbnailUrl(const QUrl &url)
 {
-    d->thumbnailUrl = data;
+    d->thumbnailUrl = url;
 }
 
 /*!

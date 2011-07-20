@@ -82,37 +82,6 @@ void QDeclarativePlaceManager::getPlaceDetails(QDeclarativePlace *place)
 }
 
 /*!
-    \qmlmethod PlaceManager::getPlaceDetails()
-    Gets additional data for place object. When media list will be available
-    user object will be updated.
-*/
-void QDeclarativePlaceManager::getPlaceMedia(QDeclarativePlace *place)
-{
-    getPlaceMedia(place, 0, 0);
-}
-
-/*!
-    \qmlmethod PlaceManager::getPlaceDetails()
-    Gets additional data for place object. When media list will be available
-    user object will be updated.
-*/
-void QDeclarativePlaceManager::getPlaceMedia(QDeclarativePlace *place, int offset, int limit)
-{
-    if (!m_manager) {
-        m_manager = new QPlaceManager(this);
-    }
-    cancelPreviousRequest();
-    QPlaceQuery query;
-    query.setLimit(limit);
-    query.setOffset(offset);
-    connectNewResponse(m_manager->getMedia(place->place(), query));
-    if (m_place != place) {
-        m_place = place;
-        emit placeChanged();
-    }
-}
-
-/*!
     \qmlmethod PlaceManager::ratePlace()
     Gets additional data for place object. When data will be available
     user object will be updated.
@@ -148,12 +117,6 @@ void QDeclarativePlaceManager::replyFinished()
     if (m_response->type() == QPlaceReply::PlaceDetailsReply) {
         QPlaceDetailsReply *reply = qobject_cast<QPlaceDetailsReply*>(m_response);
         m_place->setPlace(reply->result());
-    } else if (m_response->type() == QPlaceReply::MediaReply) {
-        QPlaceMediaReply *reply = qobject_cast<QPlaceMediaReply*>(m_response);
-        QDeclarativeMediaPaginationList *newList = new QDeclarativeMediaPaginationList(reply->mediaObjects());
-        m_place->setMedia(newList);
-        delete newList;
-        m_place->setMediaCount(reply->totalCount());
     }
     m_response->deleteLater();
     m_response = NULL;

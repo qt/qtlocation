@@ -42,7 +42,8 @@
 #ifndef QPLACEMEDIAOBJECT_P_H
 #define QPLACEMEDIAOBJECT_P_H
 
-#include <QSharedData>
+#include <QtCore/QSharedData>
+#include <QtCore/QUrl>
 
 #include "qplacemediaobject.h"
 
@@ -58,8 +59,8 @@ public:
 
     bool operator==(const QPlaceMediaObjectPrivate &other) const;
 
-    QString url;
-    QString thumbnailUrl;
+    QUrl url;
+    QUrl thumbnailUrl;
     QString id;
     QString metaInfo;
     QString mimeType;

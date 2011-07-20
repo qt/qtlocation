@@ -23,8 +23,7 @@ Rectangle {
         Text { text: '<b>Latitude: </b> ' + place.location.coordinate.latitude; font.pixelSize: 16 }
         Text { text: '<b>Longitude: </b> ' + place.location.coordinate.longitude; font.pixelSize: 16 }
         Text { text: '<b>Categories: </b> ' + categoryNames(place.categories); font.pixelSize: 16 }
-        Text { text: '<b>Media count: </b> ' + place.media.data.length; font.pixelSize: 16 }
-        Text { text: '<b>All media count: </b> ' + place.mediaCount; font.pixelSize: 16 }
+        Text { text: '<b>Media count: </b> ' + place.mediaModel.totalCount; font.pixelSize: 16 }
         Text { text: '<b>Descriptions count: </b> ' + place.descriptions.length; font.pixelSize: 16 }
         Text { text: '<b>All reviews count: </b> ' + place.reviewModel.totalCount; font.pixelSize: 16 }
         Text { text: '<b>Tags: </b> ' + place.tags; font.pixelSize: 16 }

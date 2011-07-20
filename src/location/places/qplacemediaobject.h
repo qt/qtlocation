@@ -50,6 +50,7 @@
 QT_BEGIN_NAMESPACE
 
 class QPlaceMediaObjectPrivate;
+class QUrl;
 
 class Q_LOCATION_EXPORT QPlaceMediaObject
 {
@@ -66,10 +67,10 @@ public:
         return !(other == *this);
     }
 
-    QString url() const;
-    void setUrl(const QString &data);
-    QString thumbnailUrl() const;
-    void setThumbnailUrl(const QString &data);
+    QUrl url() const;
+    void setUrl(const QUrl &url);
+    QUrl thumbnailUrl() const;
+    void setThumbnailUrl(const QUrl &url);
     QString id() const;
     void setId(const QString &data);
     QString metaInfo() const;

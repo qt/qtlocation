@@ -50,18 +50,22 @@ void tst_QPlaceMediaObject::supplierTest()
 
 void tst_QPlaceMediaObject::urlTest()
 {
+    QUrl mediaUrl("testText");
+
     QPlaceMediaObject testObj;
     QVERIFY2(testObj.url() == QString(), "Wrong default value");
-    testObj.setUrl("testText");
-    QVERIFY2(testObj.url() == "testText", "Wrong value returned");
+    testObj.setUrl(mediaUrl);
+    QVERIFY2(testObj.url() == mediaUrl, "Wrong value returned");
 }
 
 void tst_QPlaceMediaObject::thumbnailUrlTest()
 {
+    QUrl thumbnailUrl("testText");
+
     QPlaceMediaObject testObj;
     QVERIFY2(testObj.thumbnailUrl() == QString(), "Wrong default value");
-    testObj.setThumbnailUrl("testText");
-    QVERIFY2(testObj.thumbnailUrl() == "testText", "Wrong value returned");
+    testObj.setThumbnailUrl(thumbnailUrl);
+    QVERIFY2(testObj.thumbnailUrl() == thumbnailUrl, "Wrong value returned");
 }
 
 void tst_QPlaceMediaObject::idTest()

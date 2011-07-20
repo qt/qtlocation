@@ -165,20 +165,23 @@ void tst_QGeoPlace::detailsFetchedTest()
 
 void tst_QGeoPlace::mediaTest()
 {
+    QUrl thumbnailUrl("testId");
+    QUrl mediaUrl("testName2");
+
     QGeoPlace testObj;
     QVERIFY2(testObj.media().items() == 0, "Wrong default value");
     QPlaceMediaObject sup;
-    sup.setThumbnailUrl("testId");
+    sup.setThumbnailUrl(thumbnailUrl);
     QList<QPlaceMediaObject> list;
     list.append(sup);
-    sup.setUrl("testName2");
+    sup.setUrl(mediaUrl);
     list.append(sup);
     QPlacePaginationList<QPlaceMediaObject> mediaList;
     mediaList.setStart(20);
     mediaList.setData(list);
     testObj.setMedia(mediaList);
     QVERIFY2(testObj.media().items() == 2, "Wrong value returned");
-    QVERIFY2(testObj.media().data()[1].url() == "testName2", "Wrong value returned");
+    QVERIFY2(testObj.media().data().at(1).url() == mediaUrl, "Wrong value returned");
     QVERIFY2(testObj.media().stop() == 21, "Wrong value returned");
 }
 

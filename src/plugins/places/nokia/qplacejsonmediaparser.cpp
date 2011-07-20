@@ -48,6 +48,7 @@
 
 #include "qplacejsonmediaparser.h"
 
+#include <QtCore/QUrl>
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
@@ -55,6 +56,8 @@
 #include <qplacemediaobject.h>
 #include <qplacesupplier.h>
 #include "qplacesuppliersrepository.h"
+
+#include <QtCore/QDebug>
 
 #if defined(QT_PLACE_LIBRARY)
     #include <QDebug>
@@ -94,7 +97,7 @@ QPlaceMediaObject QPlaceJSonMediaParser::buildMediaObject(const QScriptValue &me
     QPlaceMediaObject newMedia;
     QScriptValue value = media.property(media_url);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newMedia.setUrl(value.toString());
+        newMedia.setUrl(QUrl::fromEncoded(value.toString().toAscii()));
         newMedia.setId(value.toString());
     }
 

@@ -15,12 +15,12 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
-:   QObject(parent), m_reviewModel(0)
+:   QObject(parent), m_reviewModel(0), m_mediaModel(0)
 {
 }
 
 QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src, QObject *parent)
-:   QObject(parent), m_reviewModel(0), m_src(src)
+:   QObject(parent), m_reviewModel(0), m_mediaModel(0), m_src(src)
 {
     synchronizeCategories();
     synchronizeContacts();
@@ -43,6 +43,16 @@ QDeclarativeReviewModel *QDeclarativePlace::reviewModel()
     }
 
     return m_reviewModel;
+}
+
+QDeclarativeMediaModel *QDeclarativePlace::mediaModel()
+{
+    if (!m_mediaModel) {
+        m_mediaModel = new QDeclarativeMediaModel(this);
+        m_mediaModel->setPlace(this);
+    }
+
+    return m_mediaModel;
 }
 
 void QDeclarativePlace::setPlace(const QGeoPlace &src)
@@ -84,13 +94,6 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
     if (previous.feeds() != m_src.feeds()) {
         emit feedsChanged();
     }
-    if (previous.mediaCount() != m_src.mediaCount()) {
-        emit mediaCountChanged();
-    }
-    if (previous.media() != m_src.media()) {
-        m_mediaList.setPaginationList(m_src.media());
-        emit mediaChanged();
-    }
     if (previous.name() != m_src.name()) {
         emit nameChanged();
     }
@@ -108,6 +111,7 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
     }
 
     m_reviewModel->clear();
+    m_mediaModel->clear();
 }
 
 QGeoPlace QDeclarativePlace::place()
@@ -134,7 +138,6 @@ QGeoPlace QDeclarativePlace::place()
         suppliers.append(value->supplier());
     }
     m_src.setSuppliers(suppliers);
-    m_src.setMedia(m_mediaList.paginationList());
     m_src.setBusinessInformation(m_businessInformation.businessInformation());
     return m_src;
 }
@@ -276,46 +279,6 @@ void QDeclarativePlace::setShortDescription(const QString &shortDescription)
 QString QDeclarativePlace::shortDescription() const
 {
     return m_src.shortDescription();
-}
-
-/*!
-    \qmlproperty int Place::mediaCount
-
-    This property holds number of all media.
-*/
-void QDeclarativePlace::setMediaCount(const int &mediaCount)
-{
-    if (m_src.mediaCount() != mediaCount) {
-        m_src.setMediaCount(mediaCount);
-        emit mediaCountChanged();
-    }
-}
-
-int QDeclarativePlace::mediaCount() const
-{
-    return m_src.mediaCount();
-}
-
-/*!
-    \qmlproperty string Place::media
-
-    This property holds media list of the place.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-void QDeclarativePlace::setMedia(QDeclarativeMediaPaginationList *obj)
-{
-    if (m_src.media() != obj->paginationList()) {
-        m_mediaList.setPaginationList(obj->paginationList());
-        m_src.setMedia(obj->paginationList());
-        emit mediaChanged();
-    }
-}
-
-QDeclarativeMediaPaginationList *QDeclarativePlace::media()
-{
-    return &m_mediaList;
 }
 
 /*!

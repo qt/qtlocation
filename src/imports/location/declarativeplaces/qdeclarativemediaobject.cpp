@@ -1,5 +1,7 @@
 #include "qdeclarativemediaobject_p.h"
 
+#include <QtCore/QUrl>
+
 QT_USE_NAMESPACE
 
 /*!
@@ -69,7 +71,7 @@ QPlaceMediaObject QDeclarativeMediaObject::mediaObject()
     This property holds URL of the media.
 */
 
-void QDeclarativeMediaObject::setUrl(const QString &url)
+void QDeclarativeMediaObject::setUrl(const QUrl &url)
 {
     if (m_src.url() != url) {
         m_src.setUrl(url);
@@ -77,7 +79,7 @@ void QDeclarativeMediaObject::setUrl(const QString &url)
     }
 }
 
-QString QDeclarativeMediaObject::url() const
+QUrl QDeclarativeMediaObject::url() const
 {
     return m_src.url();
 }
@@ -88,7 +90,7 @@ QString QDeclarativeMediaObject::url() const
     This property holds thumbnail URL.
 */
 
-void QDeclarativeMediaObject::setThumbnailUrl(const QString &thumbnailUrl)
+void QDeclarativeMediaObject::setThumbnailUrl(const QUrl &thumbnailUrl)
 {
     if (m_src.thumbnailUrl() != thumbnailUrl) {
         m_src.setThumbnailUrl(thumbnailUrl);
@@ -96,7 +98,7 @@ void QDeclarativeMediaObject::setThumbnailUrl(const QString &thumbnailUrl)
     }
 }
 
-QString QDeclarativeMediaObject::thumbnailUrl() const
+QUrl QDeclarativeMediaObject::thumbnailUrl() const
 {
     return m_src.thumbnailUrl();
 }

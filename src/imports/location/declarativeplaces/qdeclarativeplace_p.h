@@ -11,8 +11,8 @@
 #include "qdeclarativecontact_p.h"
 #include "qdeclarativerating_p.h"
 #include "qdeclarativedescription_p.h"
-#include "qdeclarativemediapaginationlist_p.h"
 #include "qdeclarativereviewmodel_p.h"
+#include "qdeclarativemediamodel_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -29,14 +29,13 @@ class QDeclarativePlace : public QObject
     Q_PROPERTY(QDeclarativeRating* rating READ rating WRITE setRating NOTIFY ratingChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSupplier> suppliers READ suppliers NOTIFY suppliersChanged)
     Q_PROPERTY(QStringList feeds READ feeds WRITE setFeeds NOTIFY feedsChanged);
-    Q_PROPERTY(int mediaCount READ mediaCount WRITE setMediaCount NOTIFY mediaCountChanged);
-    Q_PROPERTY(QDeclarativeMediaPaginationList* media READ media WRITE setMedia NOTIFY mediaChanged);
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged);
     Q_PROPERTY(QString shortDescription READ shortDescription WRITE setShortDescription NOTIFY shortDescriptionChanged);
     Q_PROPERTY(QStringList tags READ tags WRITE setTags NOTIFY tagsChanged);
     Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
-    Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged())
+    Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged)
+    Q_PROPERTY(QDeclarativeMediaModel *mediaModel READ mediaModel NOTIFY mediaModelChanged)
 
 public:
     explicit QDeclarativePlace(QObject* parent = 0);
@@ -44,6 +43,7 @@ public:
     ~QDeclarativePlace();
 
     QDeclarativeReviewModel *reviewModel();
+    QDeclarativeMediaModel *mediaModel();
 
     QGeoPlace place();
     void setPlace(const QGeoPlace &src);
@@ -80,10 +80,6 @@ public:
     static void suppliers_clear(QDeclarativeListProperty<QDeclarativeSupplier> *prop);
     QStringList feeds() const;
     void setFeeds(const QStringList &feeds);
-    int mediaCount() const;
-    void setMediaCount(const int &data);
-    QDeclarativeMediaPaginationList *media();
-    void setMedia(QDeclarativeMediaPaginationList *media);
     QString name() const;
     void setName(const QString &name);
     QString placeId() const;
@@ -106,8 +102,6 @@ signals:
     void ratingChanged();
     void suppliersChanged();
     void feedsChanged();
-    void mediaCountChanged();
-    void mediaChanged();
     void nameChanged();
     void placeIdChanged();
     void businessInformationChanged();
@@ -115,6 +109,7 @@ signals:
     void tagsChanged();
     void detailsFetchedChanged();
     void reviewModelChanged();
+    void mediaModelChanged();
 
 private:
     void synchronizeCategories();
@@ -129,9 +124,9 @@ private:
     QDeclarativeGeoLocation m_location;
     QDeclarativeRating m_rating;
     QList<QDeclarativeSupplier*> m_suppliers;
-    QDeclarativeMediaPaginationList m_mediaList;
     QDeclarativeBusinessInformation m_businessInformation;
     QDeclarativeReviewModel *m_reviewModel;
+    QDeclarativeMediaModel *m_mediaModel;
 
     QGeoPlace m_src;
 };

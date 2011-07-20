@@ -48,6 +48,7 @@
 
 #include "qplacejsondetailsparser.h"
 
+#include <QtCore/QUrl>
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
@@ -665,7 +666,7 @@ QPlaceMediaObject *QPlaceJSonDetailsParser::processPremiumContentMediaObject(con
     QScriptValue value = content.property(place_premiumcontent_content_mediaurl_element);
     if (value.isValid() && !value.toString().isEmpty()) {
         obj = new QPlaceMediaObject();
-        obj->setUrl(value.toString());
+        obj->setUrl(QUrl::fromEncoded(value.toString().toAscii()));
         obj->setId(value.toString());
         value = content.property(place_premiumcontent_content_mediamimetype_element);
         if (value.isValid() && !value.toString().isEmpty()) {
@@ -814,7 +815,7 @@ QPlaceMediaObject *QPlaceJSonDetailsParser::processAdContentMediaObject(const QS
     }
     if (!mediaMimeType.isEmpty() || !mediaUrl.isEmpty()) {
         obj = new QPlaceMediaObject();
-        obj->setUrl(mediaUrl);
+        obj->setUrl(QUrl::fromEncoded(mediaUrl.toAscii()));
         obj->setId(mediaUrl);
         obj->setMimeType(mediaMimeType);
     }
