@@ -51,6 +51,7 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+class QGeoBoundingAreaPrivate;
 class Q_LOCATION_EXPORT QGeoBoundingArea
 {
 public:
@@ -67,6 +68,11 @@ public:
     virtual bool isEmpty() const = 0;
     virtual bool contains(const QGeoCoordinate &coordinate) const = 0;
     virtual QGeoBoundingArea *clone() const = 0;
+    virtual bool operator == (const QGeoBoundingArea &other) const = 0;
+    virtual bool operator != (const QGeoBoundingArea &other) const = 0;
+
+private:
+    QGeoBoundingAreaPrivate *d_ptr;
 };
 
 QT_END_NAMESPACE

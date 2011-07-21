@@ -64,7 +64,10 @@ public:
 
     QGeoBoundingCircle& operator = (const QGeoBoundingCircle &other);
 
+    bool operator == (const QGeoBoundingArea &other) const;
     bool operator == (const QGeoBoundingCircle &other) const;
+
+    bool operator != (const QGeoBoundingArea &other) const;
     bool operator != (const QGeoBoundingCircle &other) const;
 
     QGeoBoundingArea::AreaType type() const;

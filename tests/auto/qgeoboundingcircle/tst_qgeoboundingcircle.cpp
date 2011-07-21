@@ -41,6 +41,7 @@
 
 #include <QtTest/QtTest>
 #include <qgeoboundingcircle.h>
+#include <qgeoboundingbox.h>
 #include <qgeocoordinate.h>
 
 QT_USE_NAMESPACE
@@ -98,9 +99,28 @@ void tst_QGeoBoundingCircle::comparison()
     QGeoBoundingCircle c4(QGeoCoordinate(1,2), qreal(50.0));
 
     QVERIFY(c1 == c2);
+    QVERIFY(!(c1 != c2));
+
+    QVERIFY(!(c1 == c3));
     QVERIFY(c1 != c3);
+
+    QVERIFY(!(c1 == c4));
     QVERIFY(c1 != c4);
+
+    QVERIFY(!(c2 == c3));
     QVERIFY(c2 != c3);
+
+    QGeoBoundingBox b1(QGeoCoordinate(20,20),QGeoCoordinate(10,30));
+    QVERIFY(!(c1 == b1));
+    QVERIFY(c1 != b1);
+
+    QGeoBoundingArea *c2Ptr = &c2;
+    QVERIFY(c1 == *c2Ptr);
+    QVERIFY(!(c1 != *c2Ptr));
+
+    QGeoBoundingArea *c3Ptr = &c3;
+    QVERIFY(!(c1 == *c3Ptr));
+    QVERIFY(c1 != *c3Ptr);
 }
 
 void tst_QGeoBoundingCircle::type()

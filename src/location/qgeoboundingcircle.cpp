@@ -107,11 +107,31 @@ QGeoBoundingCircle& QGeoBoundingCircle::operator = (const QGeoBoundingCircle & o
 
 /*!
     Returns whether this bounding circle is equal to \a other.
+*/
+bool QGeoBoundingCircle::operator == (const QGeoBoundingArea &other) const
+{
+    if (other.type() == QGeoBoundingArea::CircleType) {
+        const QGeoBoundingCircle *otherPointer = static_cast<const QGeoBoundingCircle*>(&other);
+        return ((*(d_ptr.constData()) == *(otherPointer->d_ptr.constData())));
+    } else {
+        return false;
+    }
+}
+
+/*!
+    Returns whether this bounding circle is equal to \a other.
     \since 1.1
 */
 bool QGeoBoundingCircle::operator == (const QGeoBoundingCircle &other) const
 {
     return ((*(d_ptr.constData()) == *(other.d_ptr.constData())));
+}
+
+/*!
+    Returns whether this bounding circle is not equal to \a other.
+*/
+bool QGeoBoundingCircle::operator != (const QGeoBoundingArea &other) const {
+    return !(*this == other);
 }
 
 /*!

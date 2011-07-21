@@ -72,11 +72,13 @@ QPlaceSearchQueryPrivate::QPlaceSearchQueryPrivate()
 }
 
 QPlaceSearchQueryPrivate::QPlaceSearchQueryPrivate(const QPlaceSearchQueryPrivate &other)
-    : QSharedData()
+    : QSharedData(),
+       dymNumber(0)
 {
     this->searchTerm = other.searchTerm;
     this->categories = other.categories;
-    this->searchArea = other.searchArea;
+    if (other.searchArea)
+        this->searchArea = other.searchArea->clone();
     this->dymNumber = other.dymNumber;
 }
 
@@ -88,11 +90,23 @@ QPlaceSearchQueryPrivate::~QPlaceSearchQueryPrivate()
 
 bool QPlaceSearchQueryPrivate::operator==(const QPlaceSearchQueryPrivate &other) const
 {
+    bool searchAreaMatch = false;
+    if ((this->searchArea == 0) && (other.searchArea == 0)) {
+        searchAreaMatch = true;
+    } else if (this->searchArea && other.searchArea) {
+        if ((*this->searchArea) == (*other.searchArea))
+            searchAreaMatch = true;
+        else
+            searchAreaMatch = false;
+    } else {
+        searchAreaMatch = false;
+    }
+
     return (
             this->searchTerm == other.searchTerm
             && this->categories == other.categories
-            && this->searchArea == other.searchArea
             && this->dymNumber == other.dymNumber
+            && searchAreaMatch
     );
 }
 

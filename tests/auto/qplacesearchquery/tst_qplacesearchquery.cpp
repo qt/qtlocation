@@ -137,6 +137,41 @@ void tst_QPlaceSearchQuery::operatorsTest()
     QVERIFY2(testObj == testObj2, "Not copied correctly");
     testObj2.setDidYouMeanSuggestionNumber(-5);
     QVERIFY2(testObj != testObj2, "Object should be different");
+    testObj2.setDidYouMeanSuggestionNumber(0);
+    QVERIFY(testObj == testObj2);
+
+    QGeoBoundingBox *b1 = new QGeoBoundingBox(QGeoCoordinate(20,20), QGeoCoordinate(10,30));
+    QGeoBoundingBox *b2 = new QGeoBoundingBox(QGeoCoordinate(20,20), QGeoCoordinate(10,30));
+    QGeoBoundingBox *b3 = new QGeoBoundingBox(QGeoCoordinate(40,40), QGeoCoordinate(10,40));
+
+    //testing that identical boxes match
+    testObj.setSearchArea(b1);
+    testObj2.setSearchArea(b2);
+    QVERIFY2(testObj == testObj2, "Identical box areas are not identified as matching");
+
+    //test that different boxes do not match
+    testObj2.setSearchArea(b3);
+    QVERIFY2(testObj != testObj2, "Different box areas identified as matching");
+
+    QGeoBoundingCircle *c1 = new QGeoBoundingCircle(QGeoCoordinate(5,5),500);
+    QGeoBoundingCircle *c2 = new QGeoBoundingCircle(QGeoCoordinate(5,5),500);
+    QGeoBoundingCircle *c3 = new QGeoBoundingCircle(QGeoCoordinate(9,9),600);
+
+    //test that identical cirlces match
+    testObj.setSearchArea(c1);
+    testObj2.setSearchArea(c2);
+    QVERIFY2(testObj == testObj2, "Identical circle areas are not identified as matching");
+
+    //test that different circle don't match
+    testObj2.setSearchArea(c3);
+    QVERIFY2(testObj != testObj2, "Different circle areas identified as matching");
+
+    //test that circles and boxes do not match
+    QGeoBoundingBox *b4 = new QGeoBoundingBox(QGeoCoordinate(20,20),QGeoCoordinate(10,30));
+    QGeoBoundingCircle *c4 = new QGeoBoundingCircle(QGeoCoordinate(20,20),500);
+    testObj.setSearchArea(b4);
+    testObj2.setSearchArea(c4);
+    QVERIFY2(testObj != testObj2, "Circle and box identified as matching");
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceSearchQuery);

@@ -65,7 +65,10 @@ public:
 
     QGeoBoundingBox& operator = (const QGeoBoundingBox &other);
 
+    bool operator == (const QGeoBoundingArea &other) const;
     bool operator == (const QGeoBoundingBox &other) const;
+
+    bool operator != (const QGeoBoundingArea &other) const;
     bool operator != (const QGeoBoundingBox &other) const;
 
     QGeoBoundingArea::AreaType type() const;

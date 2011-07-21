@@ -134,12 +134,33 @@ QGeoBoundingBox& QGeoBoundingBox::operator = (const QGeoBoundingBox & other)
 }
 
 /*!
+    Returns whether this bounding box is equal to the \a other area.
+*/
+bool QGeoBoundingBox::operator == (const QGeoBoundingArea &other) const
+{
+    if (other.type() == QGeoBoundingArea::BoxType) {
+        const QGeoBoundingBox *otherPointer = static_cast<const QGeoBoundingBox*>(&other);
+        return ((*(d_ptr.constData()) == *(otherPointer->d_ptr.constData())));
+    } else {
+        return false;
+    }
+}
+
+/*!
     Returns whether this bounding box is equal to \a other.
     \since 1.1
 */
 bool QGeoBoundingBox::operator == (const QGeoBoundingBox &other) const
 {
     return ((*(d_ptr.constData()) == *(other.d_ptr.constData())));
+}
+
+/*!
+    Returns whether this bounding box is not equal to \a other.
+    \since 1.1
+*/
+bool QGeoBoundingBox::operator != (const QGeoBoundingArea &other) const {
+    return !(*this == other);
 }
 
 /*!

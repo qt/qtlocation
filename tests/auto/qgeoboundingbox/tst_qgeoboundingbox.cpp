@@ -43,6 +43,7 @@
 
 #include <QtTest/QtTest>
 #include <qgeoboundingbox.h>
+#include <qgeoboundingcircle.h>
 #include <qgeocoordinate.h>
 
 QT_USE_NAMESPACE
@@ -97,6 +98,7 @@ private slots:
     void unite_data();
 
     void clone();
+    void areaComparison();
 };
 
 void tst_QGeoBoundingBox::default_constructor()
@@ -2152,6 +2154,31 @@ void tst_QGeoBoundingBox::clone()
              "Clone's top left coord references the original's");
     QVERIFY2(clonedBoxPtr->bottomRight() == QGeoCoordinate(10,30),
              "Clone's bottom right coord references the original's");
+}
+
+void tst_QGeoBoundingBox::areaComparison()
+{
+    QGeoBoundingBox b1(QGeoCoordinate(20,20), QGeoCoordinate(10,30));
+    QGeoBoundingBox b2(QGeoCoordinate(20,20), QGeoCoordinate(10,30));
+    QGeoBoundingBox b3(QGeoCoordinate(40,40), QGeoCoordinate(10,30));
+
+    QVERIFY(b1 == b2);
+    QVERIFY(!(b1 != b2));
+
+    QVERIFY(!(b1 == b3));
+    QVERIFY(b1 != b3);
+
+    QGeoBoundingCircle c1(QGeoCoordinate(20,20), 5000);
+    QVERIFY(!(b1 == c1));
+    QVERIFY(b1 != c1);
+
+    QGeoBoundingArea *b2Ptr = &b2;
+    QVERIFY(b1 == *b2Ptr);
+    QVERIFY(!(b1 != *b2Ptr));
+
+    QGeoBoundingArea *b3Ptr = &b3;
+    QVERIFY(!(b1 == *b3Ptr));
+    QVERIFY(b1 != *b3Ptr);
 }
 
 QTEST_MAIN(tst_QGeoBoundingBox)
