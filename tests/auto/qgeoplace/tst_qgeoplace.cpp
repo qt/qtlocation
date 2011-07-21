@@ -21,6 +21,7 @@ private Q_SLOTS:
     void categoriesTest();
     void contactsTest();
     void descriptionsTest();
+    void detailsFetchedTest();
     void locationTest();
     void alternativeLocationsTest();
     void ratingTest();
@@ -182,6 +183,16 @@ void tst_QGeoPlace::descriptionsTest()
     list.append(sup);
     testObj.setDescriptions(list);
     QVERIFY2(testObj.descriptions().count() == 2, "Wrong value returned");
+}
+
+void tst_QGeoPlace::detailsFetchedTest()
+{
+    QGeoPlace testPlace;
+    QVERIFY2(testPlace.detailsFetched() == false, "Wrong default value");
+    testPlace.setDetailsFetched(true);
+    QVERIFY2(testPlace.detailsFetched() == true, "Wrong value returned");
+    testPlace.setDetailsFetched(false);
+    QVERIFY2(testPlace.detailsFetched() == false, "Wrong value returned");
 }
 
 void tst_QGeoPlace::mediaTest()

@@ -105,6 +105,8 @@ public:
     int reviewCount;
     QString shortDescription;
     QStringList tags;
+
+    bool detailsFetched;
 };
 
 

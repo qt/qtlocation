@@ -71,58 +71,7 @@ Rectangle {
         clip: true
         snapMode: ListView.SnapToItem
         model: resultModel
-        delegate: Component {
-            Item {
-                id: thisItem
-                width: parent.width
-
-                Component.onCompleted: {
-                    var object;
-                    if (searchResult.type == SearchResult.Place) {
-                        object = placeDelegate.createObject(thisItem, { "place": searchResult.place });
-                    } else {
-                        object = didYouMeanDelegate.createObject(thisItem, { "text": searchResult.didYouMeanSuggestion });
-                    }
-                    height = object.height;
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-
-                    onClicked: {
-                        if (searchResult.type == SearchResult.Place) {
-                            console.log("clicked " + searchResult.place.name)
-                            placeManager.getPlaceDetails(searchResult.place)
-                            //placeManager.getPlaceReviews(searchResult.place, 10, 50)
-                            //placeManager.getPlaceMedia(searchResult.place)
-                        } else if (searchResult.type == SearchResult.DidYouMeanSuggestion) {
-                            search_term.text = searchResult.didYouMeanSuggestion;
-                            searchTerm(searchResult.didYouMeanSuggestion);
-                        }
-                    }
-
-                    onPressAndHold: {
-                        if (searchResult.type == SearchResult.Place) {
-                            console.log("longpress " + searchResult.place.name);
-                            placesList.model = recommendationModel;
-                            recommendationModel.placeId = searchResult.place.placeId;
-                            recommendationModel.executeQuery();
-                        }
-                    }
-                }
-            }
-        }
-
-        Component {
-            id: placeDelegate
-
-            PlaceDelegate { }
-        }
-        Component {
-            id: didYouMeanDelegate
-            DidYouMeanDelegate { }
-        }
-
+        delegate: SearchResultDelegate { result: searchResult }
     }
 
     Text {
@@ -200,9 +149,9 @@ Rectangle {
             id: proximity
             center: Coordinate {
                 id: searchCoordinate
-                // Brisbane
-                longitude: 153.02778
-                latitude: -27.46778
+                // Paris
+                longitude: 2.296
+                latitude: 48.87
             }
             radius:5000
         }

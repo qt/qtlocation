@@ -1,9 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>qmlplaces.qml</file>
-        <file>PlaceDelegate.qml</file>
-        <file>DidYouMeanDelegate.qml</file>
         <file>Button.qml</file>
         <file>CategoryDelegate.qml</file>
+        <file>SearchResultDelegate.qml</file>
     </qresource>
 </RCC>

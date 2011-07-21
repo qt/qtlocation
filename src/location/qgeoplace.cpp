@@ -594,6 +594,23 @@ void QGeoPlace::setTags(const QStringList &tags)
     d->tags = tags;
 }
 
+/*!
+    Returns whether the details of this place have been fetched or not.
+*/
+bool QGeoPlace::detailsFetched() const
+{
+    Q_D(const QGeoPlace);
+    return d->detailsFetched;
+}
+
+/*!
+    Sets whether the details of this place have been \a fetched or not.
+*/
+void QGeoPlace::setDetailsFetched(bool fetched)
+{
+    Q_D(QGeoPlace);
+    d->detailsFetched = fetched;
+}
 
 /*******************************************************************************
 *******************************************************************************/
@@ -603,7 +620,8 @@ QGeoPlacePrivate::QGeoPlacePrivate()
         type(QGeoPlacePrivate::GeoPlaceType),
         placeScore(0.0),
         mediaCount(0),
-        reviewCount(0)
+        reviewCount(0),
+        detailsFetched(false)
 {
 }
 
@@ -630,7 +648,8 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         reviews(other.reviews),
         reviewCount(other.reviewCount),
         shortDescription(other.shortDescription),
-        tags(other.tags)
+        tags(other.tags),
+        detailsFetched(other.detailsFetched)
 {
 }
 

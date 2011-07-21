@@ -104,7 +104,9 @@ void QPlaceDetailsReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {
-        setResult(parser->result());
+        QGeoPlace place = parser->result();
+        place.setDetailsFetched(true);
+        setResult(place);
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());

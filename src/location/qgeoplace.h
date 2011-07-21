@@ -132,6 +132,9 @@ public:
     QStringList tags() const;
     void setTags(const QStringList &tags);
 
+    bool detailsFetched() const;
+    void setDetailsFetched(bool fetched);
+
 protected:
     QGeoPlace(QGeoPlacePrivate *dd);
     QSharedDataPointer<QGeoPlacePrivate> d_ptr;

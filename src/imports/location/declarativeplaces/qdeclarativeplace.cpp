@@ -115,6 +115,9 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
     if (previous.tags() != m_src.tags()) {
         emit tagsChanged();
     }
+    if (previous.detailsFetched() != m_src.detailsFetched()) {
+        emit detailsFetchedChanged();
+    }
 }
 
 QGeoPlace QDeclarativePlace::place() const
@@ -323,6 +326,26 @@ void QDeclarativePlace::setTags(const QStringList &tags)
 QStringList QDeclarativePlace::tags() const
 {
     return m_src.tags();
+}
+
+/*!
+    \qmlproperty qint64 Place::detailsFetched()
+
+    This property holds a boolean indicating
+    whether the details of the place have been fetched
+    or not.
+*/
+void QDeclarativePlace::setDetailsFetched(bool fetched)
+{
+    if (m_src.detailsFetched() != fetched) {
+        m_src.setDetailsFetched(fetched);
+        emit detailsFetchedChanged();
+    }
+}
+
+bool QDeclarativePlace::detailsFetched() const
+{
+    return m_src.detailsFetched();
 }
 
 /*!

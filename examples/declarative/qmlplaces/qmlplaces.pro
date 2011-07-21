@@ -7,10 +7,9 @@ TEMPLATE = app
 SOURCES += main.cpp
 
 OTHER_FILES = qmlplaces.qml \
-    PlaceDelegate.qml \
-    DidYouMeanDelegate.qml \
     Button.qml \
-    CategoryDelegate.qml
+    CategoryDelegate.qml \
+    SearchResultDelegate.qml
 
 RESOURCES += qmlplaces.qrc
 

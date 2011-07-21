@@ -41,6 +41,7 @@ class QDeclarativePlace : public QObject
     Q_PROPERTY(QDeclarativeReviewPaginationList* reviews READ reviews WRITE setReviews NOTIFY reviewsChanged);
     Q_PROPERTY(QString shortDescription READ shortDescription WRITE setShortDescription NOTIFY shortDescriptionChanged);
     Q_PROPERTY(QStringList tags READ tags WRITE setTags NOTIFY tagsChanged);
+    Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
 
 public:
     explicit QDeclarativePlace(QObject* parent = 0);
@@ -114,6 +115,8 @@ public:
     void setShortDescription(const QString &description);
     QStringList tags() const;
     void setTags(const QStringList &tags);
+    bool detailsFetched() const;
+    void setDetailsFetched(bool fetched);
 
 signals:
     void additionalDataChanged();
@@ -136,6 +139,7 @@ signals:
     void reviewsChanged();
     void shortDescriptionChanged();
     void tagsChanged();
+    void detailsFetchedChanged();
 
 private:
     void synchronizeAlternativeValues();
