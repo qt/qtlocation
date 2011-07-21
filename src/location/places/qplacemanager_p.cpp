@@ -89,6 +89,11 @@ void QPlaceManagerPrivate::createEngine(const QString &managerName, const QMap<Q
             errorString = QLatin1String("The place manager could not return the requested engine instance");
         }
     }
+
+    // connect signals from engine to public class
+    q_ptr->connect(engine, SIGNAL(finished(QPlaceReply*)), SIGNAL(finished(QPlaceReply*)));
+    q_ptr->connect(engine, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)),
+                   SIGNAL(error(QPlaceReply*,QPlaceReply::Error)));
 }
 
 QPlaceManagerEngine* QPlaceManagerPrivate::getEngine(const QPlaceManager* manager)
