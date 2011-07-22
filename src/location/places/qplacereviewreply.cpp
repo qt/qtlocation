@@ -48,7 +48,10 @@ QT_BEGIN_NAMESPACE
 class QPlaceReviewReplyPrivate : public QPlaceReplyPrivate
 {
 public:
-    QPlaceReviewReplyPrivate() {}
+    QPlaceReviewReplyPrivate()
+    :   totalCount(0)
+    { }
+
     QPlacePaginationList<QPlaceReview> reviews;
     int totalCount;
 };

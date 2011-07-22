@@ -47,7 +47,10 @@ QT_BEGIN_NAMESPACE
 class QPlaceMediaReplyPrivate : public QPlaceReplyPrivate
 {
 public:
-    QPlaceMediaReplyPrivate() {}
+    QPlaceMediaReplyPrivate()
+    :   totalCount(0)
+    { }
+
     QPlacePaginationList<QPlaceMediaObject> mediaObjects;
     int totalCount;
 };
