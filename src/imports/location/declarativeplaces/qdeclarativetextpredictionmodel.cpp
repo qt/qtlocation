@@ -1,4 +1,8 @@
 #include "qdeclarativetextpredictionmodel_p.h"
+#include "qdeclarativegeoserviceprovider_p.h"
+
+#include <QtDeclarative/QDeclarativeInfo>
+#include <QtLocation/QGeoServiceProvider>
 
 #include <qplacemanager.h>
 #include <qplacesearchquery.h>
@@ -55,22 +59,43 @@ QT_USE_NAMESPACE
 
     \sa {QPlaceManager}
 */
-QDeclarativeTextPredictionModel::QDeclarativeTextPredictionModel(QObject *parent) :
-    QAbstractListModel(parent),
-    m_manager(NULL),
-    m_response(NULL)
+QDeclarativeTextPredictionModel::QDeclarativeTextPredictionModel(QObject *parent)
+:   QAbstractListModel(parent), m_response(0), m_plugin(0), m_complete(false)
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(TextPredictionRole, "textPrediction");
     setRoleNames(roleNames);
-
-    m_manager = new QPlaceManager(this);
-    m_manager->initializeCategories();
 }
 
 QDeclarativeTextPredictionModel::~QDeclarativeTextPredictionModel()
 {
+}
+
+/*!
+    \qmlproperty Plugin MediaModel::plugin
+
+    This property holds the provider Plugin used by this model.
+*/
+void QDeclarativeTextPredictionModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
+{
+    if (m_plugin == plugin)
+        return;
+    reset(); // reset the model
+    m_plugin = plugin;
+    if (m_complete)
+        emit pluginChanged();
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+        return;
+    }
+}
+
+QDeclarativeGeoServiceProvider* QDeclarativeTextPredictionModel::plugin() const
+{
+    return m_plugin;
 }
 
 /*!
@@ -213,13 +238,25 @@ void QDeclarativeTextPredictionModel::setLimit(const int &limit)
 */
 void QDeclarativeTextPredictionModel::executeQuery()
 {
-    if (!m_manager) {
-        m_manager = new QPlaceManager(this);
+    if (!m_plugin) {
+        qmlInfo(this) << "plugin not set.";
+        return;
     }
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager) {
+        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        return;
+    }
+
     cancelPreviousRequest();
 
     m_queryParameters.setSearchArea(m_searchArea->area());
-    connectNewResponse(m_manager->textPredictions(m_queryParameters));
+    connectNewResponse(placeManager->textPredictions(m_queryParameters));
 }
 
 /*!
@@ -272,4 +309,13 @@ void QDeclarativeTextPredictionModel::connectNewResponse(QPlaceTextPredictionRep
     } else {
         emit queryFinished(-1);
     }
+}
+
+void QDeclarativeTextPredictionModel::classBegin()
+{
+}
+
+void QDeclarativeTextPredictionModel::componentComplete()
+{
+    m_complete = true;
 }

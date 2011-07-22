@@ -91,7 +91,7 @@ Rectangle {
             if (textFields.item.state == 'place-core') {
                 textFields.item.state = 'place-details'
                 if (!result.place.detailsFetched)
-                    placeManager.getPlaceDetails(result.place)
+                    result.place.getDetails()
             } else if (textFields.item.state == 'place-details') {
                 textFields.item.state = 'place-core'
             }

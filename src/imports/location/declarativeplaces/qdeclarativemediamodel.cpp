@@ -1,5 +1,9 @@
 #include "qdeclarativemediamodel_p.h"
-#include <qdeclarativeplace_p.h>
+#include "qdeclarativegeoserviceprovider_p.h"
+#include "qdeclarativeplace_p.h"
+
+#include <QtDeclarative/QDeclarativeInfo>
+#include <QtLocation/QGeoServiceProvider>
 
 QT_USE_NAMESPACE
 
@@ -20,8 +24,8 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeMediaModel::QDeclarativeMediaModel(QObject* parent)
-:   QAbstractListModel(parent), m_place(0), m_batchSize(1), m_mediaCount(-1),
-    m_manager(new QPlaceManager(this)), m_reply(0)
+:   QAbstractListModel(parent), m_place(0), m_batchSize(1), m_mediaCount(-1), m_reply(0),
+    m_plugin(0), m_complete(false)
 {
     QHash<int, QByteArray> roleNames;
     roleNames.insert(MediaRole, "media");
@@ -31,6 +35,33 @@ QDeclarativeMediaModel::QDeclarativeMediaModel(QObject* parent)
 QDeclarativeMediaModel::~QDeclarativeMediaModel()
 {
     qDeleteAll(m_mediaObjects);
+}
+
+/*!
+    \qmlproperty Plugin MediaModel::plugin
+
+    This property holds the provider Plugin used by this model.
+*/
+void QDeclarativeMediaModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
+{
+    if (m_plugin == plugin)
+        return;
+
+    reset(); // reset the model
+    m_plugin = plugin;
+    if (m_complete)
+        emit pluginChanged();
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+        return;
+    }
+}
+
+QDeclarativeGeoServiceProvider* QDeclarativeMediaModel::plugin() const
+{
+    return m_plugin;
 }
 
 /*!
@@ -53,10 +84,15 @@ void QDeclarativeMediaModel::setPlace(QDeclarativePlace *place)
             m_reply = 0;
         }
         qDeleteAll(m_mediaObjects);
+        m_mediaObjects.clear();
         endResetModel();
 
-        m_mediaCount = -1;
-        emit totalCountChanged();
+        if (m_mediaCount != -1) {
+            m_mediaCount = -1;
+            emit totalCountChanged();
+        }
+
+        setPlugin(place->plugin());
 
         m_place = place;
         emit placeChanged();
@@ -135,6 +171,21 @@ void QDeclarativeMediaModel::fetchMore(const QModelIndex &parent)
     if (m_reply)
         return;
 
+    if (!m_plugin) {
+        qmlInfo(this) << tr("plugin not set.");
+        return;
+    }
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager) {
+        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        return;
+    }
+
     QPlaceQuery query;
 
     if (m_mediaCount == -1) {
@@ -149,7 +200,7 @@ void QDeclarativeMediaModel::fetchMore(const QModelIndex &parent)
             query.setLimit(qMin(m_batchSize, missing.second - missing.first + 1));
     }
 
-    m_reply = m_manager->getMedia(m_place->place(), query);
+    m_reply = placeManager->getMedia(m_place->place(), query);
     connect(m_reply, SIGNAL(finished()), this, SLOT(fetchFinished()), Qt::QueuedConnection);
 }
 
@@ -170,6 +221,7 @@ void QDeclarativeMediaModel::classBegin()
 
 void QDeclarativeMediaModel::componentComplete()
 {
+    m_complete = true;
     fetchMore(QModelIndex());
 }
 

@@ -1,4 +1,7 @@
 #include "qdeclarativesearchresult_p.h"
+#include "qdeclarativegeoserviceprovider_p.h"
+
+#include <QtDeclarative/QDeclarativeProperty>
 
 QT_USE_NAMESPACE
 
@@ -16,6 +19,9 @@ QT_USE_NAMESPACE
 QDeclarativeSearchResult::QDeclarativeSearchResult(QObject* parent)
         : QObject(parent)
 {
+    QDeclarativeProperty pluginProp(parent, "plugin");
+    if (pluginProp.isValid())
+        m_place.setPlugin(qobject_cast<QDeclarativeGeoServiceProvider *>(pluginProp.read().value<QObject *>()));
 }
 
 QDeclarativeSearchResult::QDeclarativeSearchResult(const QPlaceSearchResult &src,
@@ -24,6 +30,9 @@ QDeclarativeSearchResult::QDeclarativeSearchResult(const QPlaceSearchResult &src
           m_place(src.place()),
           m_src(src)
 {
+    QDeclarativeProperty pluginProp(parent, "plugin");
+    if (pluginProp.isValid())
+        m_place.setPlugin(qobject_cast<QDeclarativeGeoServiceProvider *>(pluginProp.read().value<QObject *>()));
 }
 
 QDeclarativeSearchResult::~QDeclarativeSearchResult()

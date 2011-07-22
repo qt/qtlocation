@@ -16,10 +16,13 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativePlace : public QObject
+class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
+    Q_ENUMS(Status)
+
+    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QVariantHash additionalData READ additionalData WRITE setAdditionalData NOTIFY additionalDataChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContact> contacts READ contacts NOTIFY contactsChanged)
@@ -34,13 +37,23 @@ class QDeclarativePlace : public QObject
     Q_PROPERTY(QString shortDescription READ shortDescription WRITE setShortDescription NOTIFY shortDescriptionChanged);
     Q_PROPERTY(QStringList tags READ tags WRITE setTags NOTIFY tagsChanged);
     Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
+    Q_PROPERTY(bool fetchingDetails READ fetchingDetails WRITE setFetchingDetails NOTIFY fetchingDetailsChanged)
     Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged)
     Q_PROPERTY(QDeclarativeMediaModel *mediaModel READ mediaModel NOTIFY mediaModelChanged)
+
+    Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
     explicit QDeclarativePlace(QObject* parent = 0);
     explicit QDeclarativePlace(const QGeoPlace &src, QObject* parent = 0);
     ~QDeclarativePlace();
+
+    // From QDeclarativeParserStatus
+    virtual void classBegin() {}
+    virtual void componentComplete();
+
+    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
+    QDeclarativeGeoServiceProvider* plugin() const;
 
     QDeclarativeReviewModel *reviewModel();
     QDeclarativeMediaModel *mediaModel();
@@ -92,8 +105,14 @@ public:
     void setTags(const QStringList &tags);
     bool detailsFetched() const;
     void setDetailsFetched(bool fetched);
+    bool fetchingDetails() const;
+    void setFetchingDetails(bool fetching);
+
+    Q_INVOKABLE void getDetails();
+    Q_INVOKABLE void ratePlace(qreal rating);
 
 signals:
+    void pluginChanged();
     void additionalDataChanged();
     void categoriesChanged();
     void contactsChanged();
@@ -108,8 +127,13 @@ signals:
     void shortDescriptionChanged();
     void tagsChanged();
     void detailsFetchedChanged();
+    void fetchingDetailsChanged();
     void reviewModelChanged();
     void mediaModelChanged();
+
+private slots:
+    void detailsFetchedFinished();
+    void detailsError(QPlaceReply::Error error);
 
 private:
     void synchronizeCategories();
@@ -129,6 +153,11 @@ private:
     QDeclarativeMediaModel *m_mediaModel;
 
     QGeoPlace m_src;
+
+    QPlaceDetailsReply *m_detailsReply;
+
+    QDeclarativeGeoServiceProvider *m_plugin;
+    bool m_complete;
 };
 
 QT_END_NAMESPACE

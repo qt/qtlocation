@@ -46,21 +46,24 @@
 
 QT_BEGIN_NAMESPACE
 
+class QPlaceManagerEnginePrivate;
+
 class Q_LOCATION_EXPORT QPlaceManagerEngine : public QObject
 {
     Q_OBJECT
 public:
 
-    QPlaceManagerEngine(QObject *parent = 0);
+    QPlaceManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
     virtual ~QPlaceManagerEngine();
 
-    virtual QString managerName() const = 0;
+    QString managerName() const;
+    int managerVersion() const;
 
     virtual QPlaceDetailsReply *getPlaceDetails(const QString &placeId) = 0;
 
     virtual QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceQuery &query) = 0;
 
-    virtual QPlaceReply *postRating(const QGeoPlace &place, qreal value) = 0;
+    virtual QPlaceReply *postRating(const QString &placeId, qreal value) = 0;
 
     virtual QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceQuery &query) = 0;
 
@@ -86,6 +89,14 @@ Q_SIGNALS:
     void finished(QPlaceReply *reply);
     void error(QPlaceReply *, QPlaceReply::Error error, QString errorString = QString());
 
+private:
+    void setManagerName(const QString &managerName);
+    void setManagerVersion(int managerVersion);
+
+    QPlaceManagerEnginePrivate *d_ptr;
+    Q_DISABLE_COPY(QPlaceManagerEngine)
+
+    friend class QGeoServiceProvider;
 };
 
 QT_END_NAMESPACE

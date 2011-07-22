@@ -1,5 +1,9 @@
 #include "qdeclarativereviewmodel_p.h"
-#include <qdeclarativeplace_p.h>
+#include "qdeclarativegeoserviceprovider_p.h"
+#include "qdeclarativeplace_p.h"
+
+#include <QtDeclarative/QDeclarativeInfo>
+#include <QtLocation/QGeoServiceProvider>
 
 QT_USE_NAMESPACE
 
@@ -19,8 +23,8 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeReviewModel::QDeclarativeReviewModel(QObject* parent)
-:   QAbstractListModel(parent), m_place(0), m_batchSize(1), m_reviewCount(-1),
-    m_manager(new QPlaceManager(this)), m_reply(0)
+:   QAbstractListModel(parent), m_place(0), m_batchSize(1), m_reviewCount(-1), m_reply(0),
+    m_plugin(0), m_complete(false)
 {
     QHash<int, QByteArray> roleNames;
     roleNames.insert(ReviewRole, "review");
@@ -30,6 +34,28 @@ QDeclarativeReviewModel::QDeclarativeReviewModel(QObject* parent)
 QDeclarativeReviewModel::~QDeclarativeReviewModel()
 {
     qDeleteAll(m_reviews);
+}
+
+void QDeclarativeReviewModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
+{
+    if (m_plugin == plugin)
+        return;
+
+    reset(); // reset the model
+    m_plugin = plugin;
+    if (m_complete)
+        emit pluginChanged();
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+        return;
+    }
+}
+
+QDeclarativeGeoServiceProvider* QDeclarativeReviewModel::plugin() const
+{
+    return m_plugin;
 }
 
 /*!
@@ -52,10 +78,15 @@ void QDeclarativeReviewModel::setPlace(QDeclarativePlace *place)
             m_reply = 0;
         }
         qDeleteAll(m_reviews);
+        m_reviews.clear();
         endResetModel();
 
-        m_reviewCount = -1;
-        emit totalCountChanged();
+        if (m_reviewCount != -1) {
+            m_reviewCount = -1;
+            emit totalCountChanged();
+        }
+
+        setPlugin(place->plugin());
 
         m_place = place;
         emit placeChanged();
@@ -134,6 +165,21 @@ void QDeclarativeReviewModel::fetchMore(const QModelIndex &parent)
     if (m_reply)
         return;
 
+    if (!m_plugin) {
+        qmlInfo(this) << "plugin not set.";
+        return;
+    }
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager) {
+        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        return;
+    }
+
     QPlaceQuery query;
 
     if (m_reviewCount == -1) {
@@ -148,7 +194,7 @@ void QDeclarativeReviewModel::fetchMore(const QModelIndex &parent)
             query.setLimit(qMin(m_batchSize, missing.second - missing.first + 1));
     }
 
-    m_reply = m_manager->getReviews(m_place->place(), query);
+    m_reply = placeManager->getReviews(m_place->place(), query);
     connect(m_reply, SIGNAL(finished()), this, SLOT(fetchFinished()), Qt::QueuedConnection);
 }
 
@@ -169,6 +215,7 @@ void QDeclarativeReviewModel::classBegin()
 
 void QDeclarativeReviewModel::componentComplete()
 {
+    m_complete = true;
     fetchMore(QModelIndex());
 }
 

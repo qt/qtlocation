@@ -33,6 +33,8 @@ SOURCES += \
             qgeoserviceproviderplugin_nokia.cpp \
             qgeotiledmapdata_nokia.cpp
 
+include(places/places.pri)
+
 RESOURCES += resource.qrc
 
 INCLUDEPATH += $$QT.location.includes

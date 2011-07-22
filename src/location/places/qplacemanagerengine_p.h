@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -37,35 +37,39 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef PLACEMANAGERENGINEFACTORY_NOKIA_H
-#define PLACEMANAGERENGINEFACTORY_NOKIA_H
+#ifndef QPLACEMANAGERENGINE_P_H
+#define QPLACEMANAGERENGINE_P_H
 
-#include <qplacemanagerenginefactory.h>
-#include <QObject>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QT_USE_NAMESPACE
+#include <QtCore/QString>
 
-class PlaceManagerEngineFactoryNokia : public QObject, public QPlaceManagerEngineFactory
+QT_BEGIN_NAMESPACE
+
+class QPlaceManagerEnginePrivate
 {
-    Q_OBJECT
-    Q_INTERFACES(QPlaceManagerEngineFactory)
 public:
-    PlaceManagerEngineFactoryNokia();
-    ~PlaceManagerEngineFactoryNokia();
+    QPlaceManagerEnginePrivate();
+    ~QPlaceManagerEnginePrivate();
 
-    QString managerName() const;
+    QString managerName;
+    int managerVersion;
 
-    QPlaceManagerEngine* engine(const QMap<QString, QString> &parameters,
-                                QPlaceManager::Error *error, QString *errorString);
+private:
+    Q_DISABLE_COPY(QPlaceManagerEnginePrivate)
 };
 
-#endif
+QT_END_NAMESPACE
+
+#endif // QPLACEMANAGERENGINE_P_H

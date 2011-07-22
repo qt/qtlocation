@@ -160,4 +160,29 @@ QGeoRoutingManagerEngine* QGeoServiceProviderFactory::createRoutingManagerEngine
     return 0;
 }
 
+/*!
+    Returns a new QPlaceManagerEngine instance, initialized with \a
+    parameters, which implements the place searching functionality.
+
+    If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
+    success or an appropriate QGeoServiceProvider::Error on failure.
+
+    If \a errorString is not 0 it should be set to a string describing any
+    error which occurred.
+
+    The default implementation returns 0, which causes a
+    QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
+*/
+QPlaceManagerEngine* QGeoServiceProviderFactory::createPlaceManagerEngine(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error,
+        QString *errorString) const
+
+{
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+
+    return 0;
+}
+
 QT_END_NAMESPACE

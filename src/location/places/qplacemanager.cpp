@@ -95,11 +95,19 @@
     users should acquire instances of QGeoRoutingManager with
     QGeoServiceProvider::routingManager();
 */
-QPlaceManager::QPlaceManager(QObject *parent)
-    : QObject(parent),d(new QPlaceManagerPrivate)
+QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
+    : QObject(parent), d(new QPlaceManagerPrivate)
 {
-    d->q_ptr = this;
-    d->createEngine(QLatin1String("nokia"));
+    d->engine = engine;
+    if (d->engine) {
+        d->engine->setParent(this);
+
+        connect(d->engine, SIGNAL(finished(QPlaceReply*)), this, SIGNAL(finished(QPlaceReply*)));
+        connect(d->engine, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)),
+                this, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)));
+    } else {
+        qFatal("The place manager engine that was set for this place manager was NULL.");
+    }
 }
 
 /*!
@@ -137,9 +145,9 @@ QPlaceMediaReply *QPlaceManager::getMedia(const QGeoPlace &place, const QPlaceQu
 /*!
     Posts a \a rating to a \a place.
 */
-QPlaceReply* QPlaceManager::postRating(const QGeoPlace &place, qreal rating)
+QPlaceReply* QPlaceManager::postRating(const QString &placeId, qreal rating)
 {
-    return d->engine->postRating(place, rating);
+    return d->engine->postRating(placeId, rating);
 }
 
 /*!

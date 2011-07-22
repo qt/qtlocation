@@ -1,4 +1,7 @@
 #include "qdeclarativesupportedcategoriesmodel_p.h"
+#include "qgeoserviceprovider.h"
+
+#include <QtDeclarative/QDeclarativeInfo>
 
 #include <qplacemanager.h>
 
@@ -38,8 +41,8 @@ QT_USE_NAMESPACE
 
     \sa SearchResultModel, SuggestionModel, {QPlaceManager}
 */
-QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent) :
-    QAbstractListModel(parent)
+QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent)
+:   QAbstractListModel(parent), m_plugin(0), m_complete(false)
 {
 #if defined(QT_PLACESPLUGIN_LOGGING)
     qDebug() << "QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel";
@@ -48,17 +51,6 @@ QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObje
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(CategoryRole, "category");
     setRoleNames(roleNames);
-
-    m_manager = new QPlaceManager(this);
-    m_categories = m_manager->categories();
-    convertCategoriesToDeclarative();
-
-    m_response = m_manager->initializeCategories();
-    if (m_response) {
-        connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
-        connect(m_response, SIGNAL(error(QPlaceReply::Error,QString)),
-                this, SLOT(replyError(QPlaceReply::Error,QString)));
-    }
 }
 
 QDeclarativeSupportedCategoriesModel::~QDeclarativeSupportedCategoriesModel()
@@ -70,6 +62,12 @@ QDeclarativeSupportedCategoriesModel::~QDeclarativeSupportedCategoriesModel()
         delete m_categoryMap.value(id);
         m_categoryMap.remove(id);
     }
+}
+
+// From QDeclarativeParserStatus
+void QDeclarativeSupportedCategoriesModel::componentComplete()
+{
+    m_complete = true;
 }
 
 /*!
@@ -107,6 +105,38 @@ QVariant QDeclarativeSupportedCategoriesModel::data(const QModelIndex& index, in
             }
         }
     return QVariant();
+}
+
+void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
+{
+    if (m_plugin == plugin)
+        return;
+
+    reset(); // reset the model
+    m_plugin = plugin;
+    if (m_complete)
+        emit pluginChanged();
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+        return;
+    }
+
+    m_categories = placeManager->categories();
+    convertCategoriesToDeclarative();
+
+    m_response = placeManager->initializeCategories();
+    if (m_response) {
+        connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
+        connect(m_response, SIGNAL(error(QPlaceReply::Error,QString)),
+                this, SLOT(replyError(QPlaceReply::Error,QString)));
+    }
+}
+
+QDeclarativeGeoServiceProvider* QDeclarativeSupportedCategoriesModel::plugin() const
+{
+    return m_plugin;
 }
 
 /*!
@@ -156,15 +186,32 @@ void QDeclarativeSupportedCategoriesModel::categories_clear(QDeclarativeListProp
 
 void QDeclarativeSupportedCategoriesModel::replyFinished()
 {
-    if (m_response) {
-        beginResetModel();
-        m_categories = m_manager->categories();
-        convertCategoriesToDeclarative();
-        endResetModel();
-        emit categoriesChanged();
-        m_response->deleteLater();
-        m_response = NULL;
+    if (!m_response)
+        return;
+
+    m_response->deleteLater();
+    m_response = 0;
+
+    if (!m_plugin) {
+        qmlInfo(this) << "plugin not set.";
+        return;
     }
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager) {
+        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        return;
+    }
+
+    beginResetModel();
+    m_categories = placeManager->categories();
+    convertCategoriesToDeclarative();
+    endResetModel();
+    emit categoriesChanged();
 }
 
 void QDeclarativeSupportedCategoriesModel::replyError(QPlaceReply::Error error,

@@ -1,6 +1,5 @@
 INCLUDEPATH +=  declarativeplaces
 SOURCES += \
-    declarativeplaces/qdeclarativeplacemanager.cpp \
 #models
     declarativeplaces/qdeclarativerecommendationmodel.cpp \
     declarativeplaces/qdeclarativesupportedcategoriesmodel.cpp \
@@ -24,7 +23,6 @@ SOURCES += \
     declarativeplaces/qdeclarativeweekdayhours.cpp
 
 HEADERS += \
-    declarativeplaces/qdeclarativeplacemanager_p.h \
 #models
     declarativeplaces/qdeclarativerecommendationmodel_p.h \
     declarativeplaces/qdeclarativesupportedcategoriesmodel_p.h \
@@ -46,5 +44,7 @@ HEADERS += \
     declarativeplaces/qdeclarativesearchresult_p.h \
     declarativeplaces/qdeclarativesupplier_p.h \
     declarativeplaces/qdeclarativeweekdayhours_p.h
+
+
 
 

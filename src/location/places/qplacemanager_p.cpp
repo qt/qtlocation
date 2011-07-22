@@ -55,45 +55,8 @@
 QT_USE_NAMESPACE
 
 QPlaceManagerPrivate::QPlaceManagerPrivate()
-        : engine(0),
-        errorCode(QPlaceManager::NoError),
-        isConnected(false),
-        q_ptr(0)
+:   engine(0), errorCode(QPlaceManager::NoError), isConnected(false)
 {
-}
-
-void QPlaceManagerPrivate::createEngine(const QString &managerName, const QMap<QString,QString> &parameters)
-{
-    Q_Q(QPlaceManager);
-
-    if (!q->availableManagers().contains(managerName)) {
-        errorCode = QPlaceManager::NotSupportedError;
-        errorString = QString::fromLatin1("The places manager, %1, was not found").arg(managerName);
-        qWarning() << errorString;
-        engine = 0;
-        return;
-    }
-
-    QList<QPlaceManagerEngineFactory *> candidates = QPlaceManagerPrivate::factories().values(managerName);
-
-    foreach (QPlaceManagerEngineFactory *f, candidates)
-    {
-        engine = f->engine(parameters, &errorCode, &errorString);
-        if (engine)
-            break;
-    }
-
-    if (!engine) {
-        if (errorCode == QPlaceManager::NoError) {
-            errorCode = QPlaceManager::NotSupportedError;
-            errorString = QLatin1String("The place manager could not return the requested engine instance");
-        }
-    }
-
-    // connect signals from engine to public class
-    q_ptr->connect(engine, SIGNAL(finished(QPlaceReply*)), SIGNAL(finished(QPlaceReply*)));
-    q_ptr->connect(engine, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)),
-                   SIGNAL(error(QPlaceReply*,QPlaceReply::Error)));
 }
 
 QPlaceManagerEngine* QPlaceManagerPrivate::getEngine(const QPlaceManager* manager)

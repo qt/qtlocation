@@ -1,6 +1,8 @@
 #ifndef QDECLARATIVESUPPORTEDCATEGORIESMODEL_H
 #define QDECLARATIVESUPPORTEDCATEGORIESMODEL_H
 
+#include "qdeclarativegeoserviceprovider_p.h"
+
 #include <QObject>
 #include <QAbstractListModel>
 #include <QDeclarativeListProperty>
@@ -13,14 +15,24 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeSupportedCategoriesModel : public QAbstractListModel
+class QGeoServiceProvider;
+
+class QDeclarativeSupportedCategoriesModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
+    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
+
+    Q_INTERFACES(QDeclarativeParserStatus)
+
 public:
     explicit QDeclarativeSupportedCategoriesModel(QObject *parent = 0);
     virtual ~QDeclarativeSupportedCategoriesModel();
+
+    // From QDeclarativeParserStatus
+    virtual void classBegin() {}
+    virtual void componentComplete();
 
     QDeclarativeListProperty<QDeclarativeCategory> categories();
     static void categories_append(QDeclarativeListProperty<QDeclarativeCategory> *prop,
@@ -37,8 +49,13 @@ public:
     enum Roles {
         CategoryRole = Qt::UserRole + 500
     };
+
+    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
+    QDeclarativeGeoServiceProvider* plugin() const;
+
 signals:
     void categoriesChanged();
+    void pluginChanged();
 
 private slots:
     void replyFinished();
@@ -47,10 +64,12 @@ private slots:
 private:
     void convertCategoriesToDeclarative();
 
-    QPlaceManager *m_manager;
     QPlaceReply *m_response;
     QList<QPlaceCategory> m_categories;
     QMap<QString, QDeclarativeCategory*> m_categoryMap;
+
+    QDeclarativeGeoServiceProvider *m_plugin;
+    bool m_complete;
 };
 
 QT_END_NAMESPACE

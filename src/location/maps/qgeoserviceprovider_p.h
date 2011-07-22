@@ -80,14 +80,17 @@ public:
     QGeoSearchManager *searchManager;
     QGeoRoutingManager *routingManager;
     QGeoMappingManager *mappingManager;
+    QPlaceManager *placeManager;
 
     QGeoServiceProvider::Error searchError;
     QGeoServiceProvider::Error routingError;
     QGeoServiceProvider::Error mappingError;
+    QGeoServiceProvider::Error placeError;
 
     QString searchErrorString;
     QString routingErrorString;
     QString mappingErrorString;
+    QString placeErrorString;
 
     QGeoServiceProvider::Error error;
     QString errorString;

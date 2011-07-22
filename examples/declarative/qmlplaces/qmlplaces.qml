@@ -153,12 +153,15 @@ Rectangle {
         }
     }
 
-    PlaceManager {
-        id: placeManager
+    Plugin {
+        id: geoServices
+        name: "nokia"
     }
 
     SearchResultModel {
         id: resultModel
+        plugin: geoServices
+
         searchArea: BoundingCircle {
             id: proximity
             center: Coordinate {
@@ -193,6 +196,8 @@ Rectangle {
 
     TextPredictionModel {
         id: resultSuggestion
+        plugin: geoServices
+
         searchArea: proximity
         offset: 0
         limit: 15
@@ -201,6 +206,8 @@ Rectangle {
 
     RecommendationModel {
         id: recommendationModel
+        plugin: geoServices
+
         searchArea: proximity
         offset: 0
         limit: 15
@@ -209,5 +216,6 @@ Rectangle {
 
     SupportedCategoriesModel {
         id: categoriesModel
+        plugin: geoServices
     }
 }

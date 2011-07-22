@@ -46,24 +46,55 @@
 **
 ****************************************************************************/
 
-#include "placemanagerenginefactory_nokia.h"
-#include <QtPlugin>
-#include "qplacemanagerengineimpl.h"
+#ifndef QPLACEMANAGERENGINE_NOKIA_H
+#define QPLACEMANAGERENGINE_NOKIA_H
 
-PlaceManagerEngineFactoryNokia::PlaceManagerEngineFactoryNokia() {}
+#include <qplacemanagerengine.h>
+#include <qgeoserviceprovider.h>
 
-PlaceManagerEngineFactoryNokia::~PlaceManagerEngineFactoryNokia() {}
+QT_BEGIN_NAMESPACE
 
-QString PlaceManagerEngineFactoryNokia::managerName() const
+class QPlaceManagerEngineNokia : public QPlaceManagerEngine
 {
-    return "nokia";
-}
+    Q_OBJECT
+public:
 
-QPlaceManagerEngine * PlaceManagerEngineFactoryNokia::engine(const QMap<QString, QString> &parameters,
-                                                             QPlaceManager::Error *error,
-                                                             QString *errorString) {
-    return new QPlaceManagerEngineImpl;
-}
+    QPlaceManagerEngineNokia(const QMap<QString, QVariant> &parameters,
+                             QGeoServiceProvider::Error *error,
+                             QString *errorString);
+    ~QPlaceManagerEngineNokia();
 
+    QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
 
-Q_EXPORT_PLUGIN2(qtplaces_nokia, PlaceManagerEngineFactoryNokia)
+    QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceQuery &query);
+
+    QPlaceReply *postRating(const QString &placeId, qreal value);
+
+    QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceQuery &query);
+
+    QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query, QPlaceManager::VisibilityScope scope);
+    QPlaceManager::VisibilityScopes supportedSearchVisibilityScopes() const;
+
+    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query);
+    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchQuery &query);
+
+    QPlaceManager::ConnectivityModes connectivityMode() const;
+    void setConnectivityMode(QPlaceManager::ConnectivityModes connectivityMode);
+    QPlaceManager::ConnectivityModes supportedConnectivityModes() const;
+
+    QPlaceReply *savePlace(QGeoPlace *place, QPlaceManager::VisibilityScope scope);
+    QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const;
+
+    QPlaceReply *removePlace(const QGeoPlace &place);
+
+    QPlaceReply *initializeCategories();
+    QList<QPlaceCategory> categories() const;
+
+private slots:
+    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
+    void processingFinished(QPlaceReply *reply);
+};
+
+QT_END_NAMESPACE
+
+#endif // QPLACEMANAGERENGINEIMPL_H

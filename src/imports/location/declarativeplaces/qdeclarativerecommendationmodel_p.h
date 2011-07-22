@@ -13,19 +13,29 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeRecommendationModel : public QAbstractListModel
+class QDeclarativeRecommendationModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
+    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged);
     Q_PROPERTY(QDeclarativeGeoBoundingArea* searchArea READ searchArea WRITE setSearchArea NOTIFY searchAreaChanged);
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged);
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged);
-
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSearchResult> results READ results NOTIFY resultsChanged)
+
+    Q_INTERFACES(QDeclarativeParserStatus)
+
 public:
     explicit QDeclarativeRecommendationModel(QObject *parent = 0);
     ~QDeclarativeRecommendationModel();
+
+    // From QDeclarativeParserStatus
+    virtual void classBegin() {}
+    virtual void componentComplete();
+
+    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
+    QDeclarativeGeoServiceProvider* plugin() const;
 
     QDeclarativeListProperty<QDeclarativeSearchResult> results();
     static void results_append(QDeclarativeListProperty<QDeclarativeSearchResult> *prop,
@@ -54,6 +64,7 @@ public:
     Q_INVOKABLE void cancelRequest();
 
 signals:
+    void pluginChanged();
     void queryFinished(const int &error);
 
     void placeIdChanged();
@@ -77,8 +88,10 @@ private:
 
     QPlaceSearchQuery m_queryParameters;
 
-    QPlaceManager *m_manager;
     QPlaceSearchReply *m_response;
+
+    QDeclarativeGeoServiceProvider *m_plugin;
+    bool m_complete;
 };
 
 QT_END_NAMESPACE

@@ -46,9 +46,11 @@
 #include "qgeosearchmanager.h"
 #include "qgeomappingmanager.h"
 #include "qgeoroutingmanager.h"
+#include "qplacemanager.h"
 #include "qgeosearchmanagerengine.h"
 #include "qgeomappingmanagerengine.h"
 #include "qgeoroutingmanagerengine.h"
+#include "qplacemanagerengine.h"
 
 #include <QList>
 #include <QString>
@@ -292,6 +294,52 @@ QGeoRoutingManager* QGeoServiceProvider::routingManager() const
 }
 
 /*!
+    Returns the QPlaceManager made available by the service provider.
+
+    This function will return 0 if the service provider does not provide
+    any place searching services.
+
+    This function will attempt to construct a QPlaceManager instance
+    when it is called for the first time.  If the attempt is successful the
+    QPlaceManager will be cached, otherwise each call of this function
+    will attempt to construct a QPlace instance until the
+    construction is successful.
+
+    After this function has been called, error() and errorString() will
+    report any errors which occurred during the construction of the QPlaceManager.
+*/
+QPlaceManager *QGeoServiceProvider::placeManager() const
+{
+    if (!d_ptr->factory || (d_ptr->placeError != QGeoServiceProvider::NoError))
+        return 0;
+
+    if (!d_ptr->placeManager) {
+        QPlaceManagerEngine *engine = d_ptr->factory->createPlaceManagerEngine(d_ptr->parameterMap,
+                                           &(d_ptr->placeError),
+                                           &(d_ptr->placeErrorString));
+
+        if (engine) {
+            engine->setManagerName(d_ptr->factory->providerName());
+            engine->setManagerVersion(d_ptr->factory->providerVersion());
+            d_ptr->placeManager = new QPlaceManager(engine);
+        } else {
+            d_ptr->placeError = QGeoServiceProvider::NotSupportedError;
+            d_ptr->placeErrorString = QLatin1String("The service provider does not support placeManager().");
+        }
+
+        if (d_ptr->placeError != QGeoServiceProvider::NoError) {
+            if (d_ptr->placeManager)
+                delete d_ptr->placeManager;
+            d_ptr->placeManager = 0;
+            d_ptr->error = d_ptr->placeError;
+            d_ptr->errorString = d_ptr->placeErrorString;
+        }
+    }
+
+    return d_ptr->placeManager;
+}
+
+/*!
     Returns an error code describing the error which occurred during the
     last operation that was performed by this class.
 */
@@ -317,9 +365,11 @@ QGeoServiceProviderPrivate::QGeoServiceProviderPrivate()
       searchManager(0),
       routingManager(0),
       mappingManager(0),
+      placeManager(0),
       searchError(QGeoServiceProvider::NoError),
       routingError(QGeoServiceProvider::NoError),
       mappingError(QGeoServiceProvider::NoError),
+      placeError(QGeoServiceProvider::NoError),
       error(QGeoServiceProvider::NoError) {}
 
 QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
@@ -332,6 +382,9 @@ QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
 
     if (mappingManager)
         delete mappingManager;
+
+    if (placeManager)
+        delete placeManager;
 }
 
 void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const QMap<QString, QVariant> &parameters)

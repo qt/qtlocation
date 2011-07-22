@@ -57,9 +57,11 @@ class QStringList;
 class QGeoSearchManager;
 class QGeoMappingManager;
 class QGeoRoutingManager;
+class QPlaceManager;
 class QGeoSearchManagerEngine;
 class QGeoMappingManagerEngine;
 class QGeoRoutingManagerEngine;
+class QPlaceManagerEngine;
 class QGeoServiceProviderPrivate;
 
 class Q_LOCATION_EXPORT QGeoServiceProvider
@@ -81,6 +83,7 @@ public:
     QGeoSearchManager* searchManager() const;
     QGeoMappingManager* mappingManager() const;
     QGeoRoutingManager* routingManager() const;
+    QPlaceManager *placeManager() const;
 
     Error error() const;
     QString errorString() const;

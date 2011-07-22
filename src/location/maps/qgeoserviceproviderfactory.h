@@ -68,6 +68,9 @@ public:
     virtual QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
+    virtual QPlaceManagerEngine *createPlaceManagerEngine(const QMap<QString, QVariant> &parameters,
+            QGeoServiceProvider::Error *error,
+            QString *errorString) const;
 };
 
 QT_END_NAMESPACE

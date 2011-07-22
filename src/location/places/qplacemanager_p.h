@@ -68,7 +68,6 @@ class QPlaceManagerPrivate
 {
 public:
     QPlaceManagerPrivate();
-    void createEngine(const QString &managerName, const QMap<QString,QString> &parameters = (QMap<QString, QString>()));
 
     QPlaceManagerEngine *engine;
     mutable QPlaceManager::Error errorCode;
@@ -81,8 +80,8 @@ public:
     static  void loadStaticFactories (QHash<QString, QPlaceManagerEngineFactory*> *factories);
     bool isConnected;//identifies whether connections have been made to the notification signals
 
-    QPlaceManager *q_ptr;
-    Q_DECLARE_PUBLIC(QPlaceManager)
+private:
+    Q_DISABLE_COPY(QPlaceManagerPrivate)
 };
 
 QT_END_NAMESPACE

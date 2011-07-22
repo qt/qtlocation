@@ -13,19 +13,28 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeTextPredictionModel : public QAbstractListModel
+class QDeclarativeGeoServiceProvider;
+class QGeoServiceProvider;
+
+class QDeclarativeTextPredictionModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
+    Q_INTERFACES(QDeclarativeParserStatus)
+
+    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged);
     Q_PROPERTY(QDeclarativeGeoBoundingArea* searchArea READ searchArea WRITE setSearchArea NOTIFY searchAreaChanged);
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged);
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged);
-
     Q_PROPERTY(QStringList predictions READ predictions NOTIFY predictionsChanged)
+
 public:
     explicit QDeclarativeTextPredictionModel(QObject *parent = 0);
     ~QDeclarativeTextPredictionModel();
+
+    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
+    QDeclarativeGeoServiceProvider* plugin() const;
 
     QStringList getSuggestions() const;
 
@@ -50,7 +59,12 @@ public:
     Q_INVOKABLE void executeQuery();
     Q_INVOKABLE void cancelRequest();
 
+    void classBegin();
+    void componentComplete();
+
 signals:
+    void pluginChanged();
+
     void queryFinished(const int &error);
 
     void searchTermChanged();
@@ -72,8 +86,10 @@ private:
     QDeclarativeGeoBoundingArea *m_searchArea;
     QPlaceSearchQuery m_queryParameters;
 
-    QPlaceManager *m_manager;
     QPlaceTextPredictionReply *m_response;
+
+    QDeclarativeGeoServiceProvider *m_plugin;
+    bool m_complete;
 };
 
 QT_END_NAMESPACE

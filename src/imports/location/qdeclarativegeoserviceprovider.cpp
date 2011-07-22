@@ -64,12 +64,9 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
-    : QObject(parent),
-      supportsGeocoding_(false),
-      supportsReverseGeocoding_(false),
-      supportsRouting_(false),
-      supportsMapping_(false),
-      complete_(false)
+:   QObject(parent), sharedProvider_(0), supportsGeocoding_(false),
+    supportsReverseGeocoding_(false), supportsRouting_(false), supportsMapping_(false),
+    supportsPlaces_(false), complete_(false)
 {
 }
 
@@ -127,6 +124,12 @@ void QDeclarativeGeoServiceProvider::updateSupportStatus()
         setSupportsMapping(false);
     else
         setSupportsMapping(true);
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError)
+        setSupportsPlaces(false);
+    else
+        setSupportsPlaces(true);
 }
 
 QStringList QDeclarativeGeoServiceProvider::availableServiceProviders()
@@ -164,6 +167,14 @@ void QDeclarativeGeoServiceProvider::setSupportsMapping(bool supports)
         return;
     supportsMapping_ = supports;
     emit supportsMappingChanged();
+}
+
+void QDeclarativeGeoServiceProvider::setSupportsPlaces(bool supports)
+{
+    if (supports == supportsPlaces_)
+        return;
+    supportsPlaces_ = supports;
+    emit supportsPlacesChanged();
 }
 
 void QDeclarativeGeoServiceProvider::componentComplete()
@@ -218,6 +229,16 @@ bool QDeclarativeGeoServiceProvider::supportsRouting() const
 bool QDeclarativeGeoServiceProvider::supportsMapping() const
 {
     return supportsMapping_;
+}
+
+/*!
+    \qmlproperty bool Plugin::supportsPlaces
+
+    This property holds whether plugin supports places.
+*/
+bool QDeclarativeGeoServiceProvider::supportsPlaces() const
+{
+    return supportsPlaces_;
 }
 
 QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider()

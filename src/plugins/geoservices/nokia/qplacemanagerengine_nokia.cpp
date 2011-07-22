@@ -46,38 +46,38 @@
 **
 ****************************************************************************/
 
-#include "qplacemanagerengineimpl.h"
+#include "qplacemanagerengine_nokia.h"
 
-#include "qplacecategoriesrepository.h"
-#include "qplacetextpredictionreplyimpl.h"
-#include "qplacesearchreplyimpl.h"
-#include "qplacereviewreplyimpl.h"
-#include "qplacemediareplyimpl.h"
-#include "qplacerecommendationreplyimpl.h"
-#include "qplacedetailsreplyimpl.h"
-#include "qplaceratingreplyimpl.h"
-#include "qplacerestmanager.h"
-#include "qplacerestreply.h"
+#include "places/qplacecategoriesrepository.h"
+#include "places/qplacetextpredictionreplyimpl.h"
+#include "places/qplacesearchreplyimpl.h"
+#include "places/qplacereviewreplyimpl.h"
+#include "places/qplacemediareplyimpl.h"
+#include "places/qplacerecommendationreplyimpl.h"
+#include "places/qplacedetailsreplyimpl.h"
+#include "places/qplaceratingreplyimpl.h"
+#include "places/qplacerestmanager.h"
+#include "places/qplacerestreply.h"
 
 QT_USE_NAMESPACE
 
-const char *MANAGER_NAME = "com.nokia.places/0.9";
+QPlaceManagerEngineNokia::QPlaceManagerEngineNokia(const QMap<QString, QVariant> &parameters,
+                                                 QGeoServiceProvider::Error *error,
+                                                 QString *errorString)
+:   QPlaceManagerEngine(parameters)
+{
+    if (error)
+        *error = QGeoServiceProvider::NoError;
 
-QPlaceManagerEngineImpl::QPlaceManagerEngineImpl(QObject *parent)
-    : QPlaceManagerEngine(parent)
+    if (errorString)
+        errorString->clear();
+}
+
+QPlaceManagerEngineNokia::~QPlaceManagerEngineNokia()
 {
 }
 
-QPlaceManagerEngineImpl::~QPlaceManagerEngineImpl()
-{
-}
-
-QString QPlaceManagerEngineImpl::managerName() const
-{
-    return MANAGER_NAME;
-}
-
-QPlaceDetailsReply *QPlaceManagerEngineImpl::getPlaceDetails(const QString &placeId)
+QPlaceDetailsReply *QPlaceManagerEngineNokia::getPlaceDetails(const QString &placeId)
 {
     QPlaceDetailsReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceRequest(placeId);
@@ -91,7 +91,7 @@ QPlaceDetailsReply *QPlaceManagerEngineImpl::getPlaceDetails(const QString &plac
     return reply;
 }
 
-QPlaceMediaReply *QPlaceManagerEngineImpl::getMedia(const QGeoPlace &place, const QPlaceQuery &query)
+QPlaceMediaReply *QPlaceManagerEngineNokia::getMedia(const QGeoPlace &place, const QPlaceQuery &query)
 {
     QPlaceMediaReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceImagesRequest(place.placeId(),
@@ -107,11 +107,11 @@ QPlaceMediaReply *QPlaceManagerEngineImpl::getMedia(const QGeoPlace &place, cons
     return reply;
 }
 
-QPlaceReply *QPlaceManagerEngineImpl::postRating(const QGeoPlace &place, qreal value)
+QPlaceReply *QPlaceManagerEngineNokia::postRating(const QString &placeId, qreal value)
 {
     QPlaceRatingReplyImpl *reply = NULL;
     //TODO: need to post user name
-    QPlaceRestReply *restReply = QPlaceRestManager::instance()->postRatingRequest(place.placeId(),
+    QPlaceRestReply *restReply = QPlaceRestManager::instance()->postRatingRequest(placeId,
                                                                                   QString(),
                                                                                   value);
     if (restReply) {
@@ -124,7 +124,7 @@ QPlaceReply *QPlaceManagerEngineImpl::postRating(const QGeoPlace &place, qreal v
     return reply;
 }
 
-QPlaceReviewReply *QPlaceManagerEngineImpl::getReviews(const QGeoPlace &place, const QPlaceQuery &query)
+QPlaceReviewReply *QPlaceManagerEngineNokia::getReviews(const QGeoPlace &place, const QPlaceQuery &query)
 {
     QPlaceReviewReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceReviewRequest(place.placeId(),
@@ -140,7 +140,7 @@ QPlaceReviewReply *QPlaceManagerEngineImpl::getReviews(const QGeoPlace &place, c
     return reply;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineImpl::searchForPlaces(const QPlaceSearchQuery &query, QPlaceManager::VisibilityScope scope)
+QPlaceSearchReply *QPlaceManagerEngineNokia::searchForPlaces(const QPlaceSearchQuery &query, QPlaceManager::VisibilityScope scope)
 {
     //TODO: handling of scope
     QPlaceSearchReplyImpl *reply = NULL;
@@ -161,12 +161,12 @@ QPlaceSearchReply *QPlaceManagerEngineImpl::searchForPlaces(const QPlaceSearchQu
     return reply;
 }
 
-QPlaceManager::VisibilityScopes QPlaceManagerEngineImpl::supportedSearchVisibilityScopes() const
+QPlaceManager::VisibilityScopes QPlaceManagerEngineNokia::supportedSearchVisibilityScopes() const
 {
     return QPlaceManager::PublicScope;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineImpl::recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query)
+QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query)
 {
     QPlaceRecommendationReplyImpl *reply = NULL;
     QPlaceSearchQuery newQuery = query;
@@ -182,7 +182,7 @@ QPlaceSearchReply *QPlaceManagerEngineImpl::recommendations(const QGeoPlace &pla
     return reply;
 }
 
-QPlaceTextPredictionReply *QPlaceManagerEngineImpl::textPredictions(const QPlaceSearchQuery &query)
+QPlaceTextPredictionReply *QPlaceManagerEngineNokia::textPredictions(const QPlaceSearchQuery &query)
 {
     QPlaceTextPredictionReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSuggestionRequest(query);
@@ -196,37 +196,37 @@ QPlaceTextPredictionReply *QPlaceManagerEngineImpl::textPredictions(const QPlace
     return reply;
 }
 
-QPlaceManager::ConnectivityModes QPlaceManagerEngineImpl::connectivityMode() const
+QPlaceManager::ConnectivityModes QPlaceManagerEngineNokia::connectivityMode() const
 {
     return QPlaceManager::OnlineMode;
 }
 
-void QPlaceManagerEngineImpl::setConnectivityMode(QPlaceManager::ConnectivityModes mode)
+void QPlaceManagerEngineNokia::setConnectivityMode(QPlaceManager::ConnectivityModes mode)
 {
     Q_UNUSED(mode)
     // only QPlaceManager::OnlineMode is suppoerted
 }
 
-QPlaceManager::ConnectivityModes QPlaceManagerEngineImpl::supportedConnectivityModes() const
+QPlaceManager::ConnectivityModes QPlaceManagerEngineNokia::supportedConnectivityModes() const
 {
     return QPlaceManager::OnlineMode;
 }
 
-QPlaceReply *QPlaceManagerEngineImpl::savePlace(QGeoPlace *place, QPlaceManager::VisibilityScope scope) {
+QPlaceReply *QPlaceManagerEngineNokia::savePlace(QGeoPlace *place, QPlaceManager::VisibilityScope scope) {
     //TODO: implementation
     return NULL;
 }
 
-QPlaceManager::VisibilityScopes QPlaceManagerEngineImpl::supportedSaveVisibilityScopes() const {
+QPlaceManager::VisibilityScopes QPlaceManagerEngineNokia::supportedSaveVisibilityScopes() const {
     return QPlaceManager::NoScope;
 }
 
-QPlaceReply *QPlaceManagerEngineImpl::removePlace(const QGeoPlace &place) {
+QPlaceReply *QPlaceManagerEngineNokia::removePlace(const QGeoPlace &place) {
     //TODO: implementation
     return NULL;
 }
 
-QPlaceReply *QPlaceManagerEngineImpl::initializeCategories()
+QPlaceReply *QPlaceManagerEngineNokia::initializeCategories()
 {
     QPlaceReply *reply = QPlaceCategoriesRepository::instance()->initializeCategories();
     if (reply) {
@@ -239,19 +239,19 @@ QPlaceReply *QPlaceManagerEngineImpl::initializeCategories()
     return reply;
 }
 
-QList<QPlaceCategory> QPlaceManagerEngineImpl::categories() const
+QList<QPlaceCategory> QPlaceManagerEngineNokia::categories() const
 {
     return QPlaceCategoriesRepository::instance()->categories();
 }
 
-void QPlaceManagerEngineImpl::processingError(QPlaceReply *reply,
+void QPlaceManagerEngineNokia::processingError(QPlaceReply *reply,
                                               const QPlaceReply::Error &errorId,
                                               const QString &errorMessage)
 {
     emit error(reply, errorId, errorMessage);
 }
 
-void QPlaceManagerEngineImpl::processingFinished(QPlaceReply *reply)
+void QPlaceManagerEngineNokia::processingFinished(QPlaceReply *reply)
 {
     emit finished(reply);
 }

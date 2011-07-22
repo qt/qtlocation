@@ -1,4 +1,8 @@
 #include "qdeclarativesearchresultmodel_p.h"
+#include "qdeclarativegeoserviceprovider_p.h"
+
+#include <QtDeclarative/QDeclarativeInfo>
+#include <QtLocation/QGeoServiceProvider>
 
 QT_USE_NAMESPACE
 
@@ -58,22 +62,45 @@ QT_USE_NAMESPACE
 
     \sa SuggestionModel, SupportedCategoryModel, {QPlaceManager}
 */
-QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent) :
-    QAbstractListModel(parent),
-    m_manager(NULL),
-    m_response(NULL)
+QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
+:   QAbstractListModel(parent), m_response(0), m_plugin(0), m_complete(false)
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(SearchResultRole, "searchResult");
     setRoleNames(roleNames);
-
-    m_manager = new QPlaceManager(this);
-    m_manager->initializeCategories();
 }
 
 QDeclarativeSearchResultModel::~QDeclarativeSearchResultModel()
 {
+}
+
+// From QDeclarativeParserStatus
+void QDeclarativeSearchResultModel::componentComplete()
+{
+    m_complete = true;
+}
+
+void QDeclarativeSearchResultModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
+{
+    if (m_plugin == plugin)
+        return;
+
+    reset(); // reset the model
+    m_plugin = plugin;
+    if (m_complete)
+        emit pluginChanged();
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+        return;
+    }
+}
+
+QDeclarativeGeoServiceProvider* QDeclarativeSearchResultModel::plugin() const
+{
+    return m_plugin;
 }
 
 /*!
@@ -308,13 +335,26 @@ void QDeclarativeSearchResultModel::setDidYouMean(const int &didYouMeanSuggestio
 */
 void QDeclarativeSearchResultModel::executeQuery()
 {
-    if (!m_manager) {
-        m_manager = new QPlaceManager(this);
+    if (!m_plugin) {
+        qmlInfo(this) << "plugin not set.";
+        return;
     }
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager) {
+        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        return;
+    }
+
     cancelPreviousRequest();
 
     m_queryParameters.setSearchArea(m_searchArea->area());
-    connectNewResponse(m_manager->searchForPlaces(m_queryParameters, QPlaceManager::PublicScope));
+    connectNewResponse(placeManager->searchForPlaces(m_queryParameters,
+                                                     QPlaceManager::PublicScope));
 }
 
 /*!

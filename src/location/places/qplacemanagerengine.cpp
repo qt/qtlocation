@@ -40,16 +40,112 @@
 ****************************************************************************/
 
 #include "qplacemanagerengine.h"
+#include "qplacemanagerengine_p.h"
 
 #include "qplacecategory_p.h"
 
 QT_USE_NAMESPACE
 
-QPlaceManagerEngine::QPlaceManagerEngine(QObject *parent)
-    : QObject(parent)
+/*!
+    \class QPlaceManagerEngine
+
+    \brief The QPlaceManagerEngine class provides an interface and convenience methods to
+    implementers of QGeoServiceProvider plugins who want to provide access to place search
+    functionality.
+
+    \inmodule QtLocation
+    \since 5.0
+
+    \ingroup maps-impl
+
+    Subclasses of QPlaceManagerEngine need to provide an implementation of getPlaceDetails(),
+    getMedia(), postRating(), getReviews(), searchForPlaces(), supportedSearchVisibilityScopes(),
+    recommendations(), textPredictions(), connectivityMode(), setConnectivityMode(),
+    supportedConnectivityModes(), savePlace(), supportedSaveVisibilityScopes(), removePlace(),
+    initializeCategories() and categories().
+
+    \sa QPlaceManager
+*/
+
+/*!
+    Constructs a new engine with the specified \a parent, using \a parameters to pass any
+    implementation specific data to the engine.
+*/
+QPlaceManagerEngine::QPlaceManagerEngine(const QMap<QString, QVariant> &parameters,
+                                         QObject *parent)
+:   QObject(parent), d_ptr(new QPlaceManagerEnginePrivate)
+{
+    Q_UNUSED(parameters)
+}
+
+/*!
+    Destroys this engine.
+*/
+QPlaceManagerEngine::~QPlaceManagerEngine()
+{
+    delete d_ptr;
+}
+
+/*!
+    Sets the name which this engine implementation uses to distinguish itself
+    from the implementations provided by other plugins to \a managerName.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
+*/
+void QPlaceManagerEngine::setManagerName(const QString &managerName)
+{
+    d_ptr->managerName = managerName;
+}
+
+/*!
+    Returns the name which this engine implementation uses to distinguish
+    itself from the implementations provided by other plugins.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
+*/
+QString QPlaceManagerEngine::managerName() const
+{
+    return d_ptr->managerName;
+}
+
+/*!
+    Sets the version of this engine implementation to \a managerVersion.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
+*/
+void QPlaceManagerEngine::setManagerVersion(int managerVersion)
+{
+    d_ptr->managerVersion = managerVersion;
+}
+
+/*!
+    Returns the version of this engine implementation.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
+*/
+int QPlaceManagerEngine::managerVersion() const
+{
+    return d_ptr->managerVersion;
+}
+
+
+
+
+
+QPlaceManagerEnginePrivate::QPlaceManagerEnginePrivate()
+:   managerVersion(-1)
 {
 }
 
-QPlaceManagerEngine::~QPlaceManagerEngine()
+QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 {
 }
+
+#include "moc_qplacemanagerengine.cpp"
+
+QT_END_NAMESPACE
+

@@ -100,12 +100,13 @@ public:
         NotSupportedError
     };
 
-    QPlaceManager(QObject *parent = 0);
     ~QPlaceManager();
+
     QString managerName() const;
+    int managerVersion() const;
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId) const;
-    QPlaceReply *postRating(const QGeoPlace &place, qreal value);
+    QPlaceReply *postRating(const QString &placeId, qreal value);
 
     QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceQuery &query) const;
 
@@ -138,9 +139,13 @@ Q_SIGNALS:
     void error(QPlaceReply *, QPlaceReply::Error error, const QString &errorString = QString());
 
 private:
+    QPlaceManager(QPlaceManagerEngine *engine, QObject *parent = 0);
+
     Q_DISABLE_COPY(QPlaceManager)
     QPlaceManagerPrivate* d;
     Q_DECLARE_PRIVATE(QPlaceManager)
+
+    friend class QGeoServiceProvider;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::VisibilityScopes);

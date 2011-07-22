@@ -51,6 +51,7 @@
 #include "qgeosearchmanagerengine_nokia.h"
 #include "qgeoroutingmanagerengine_nokia.h"
 #include "qgeomappingmanagerengine_nokia.h"
+#include "qplacemanagerengine_nokia.h"
 
 #include <QtPlugin>
 #include <QNetworkProxy>
@@ -90,6 +91,13 @@ QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerE
         QString *errorString) const
 {
     return new QGeoRoutingManagerEngineNokia(parameters, error, errorString);
+}
+
+QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(const QMap<QString, QVariant> &parameters,
+                                                                               QGeoServiceProvider::Error *error,
+                                                                               QString *errorString) const
+{
+    return new QPlaceManagerEngineNokia(parameters, error, errorString);
 }
 
 const QString QGeoServiceProviderFactoryNokia::defaultToken("152022572f0e44e07489c35cd46fa246");

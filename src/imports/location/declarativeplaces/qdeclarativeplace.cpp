@@ -1,4 +1,8 @@
 #include "qdeclarativeplace_p.h"
+#include "qdeclarativegeoserviceprovider_p.h"
+
+#include <QtDeclarative/QDeclarativeInfo>
+#include <QtLocation/QGeoServiceProvider>
 
 QT_USE_NAMESPACE
 
@@ -15,12 +19,14 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
-:   QObject(parent), m_reviewModel(0), m_mediaModel(0)
+:   QObject(parent), m_reviewModel(0), m_mediaModel(0), m_detailsReply(0), m_plugin(0),
+    m_complete(false)
 {
 }
 
 QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src, QObject *parent)
-:   QObject(parent), m_reviewModel(0), m_mediaModel(0), m_src(src)
+:   QObject(parent), m_reviewModel(0), m_mediaModel(0), m_src(src), m_detailsReply(0), m_plugin(0),
+    m_complete(false)
 {
     synchronizeCategories();
     synchronizeContacts();
@@ -33,6 +39,33 @@ QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src, QObject *parent)
 
 QDeclarativePlace::~QDeclarativePlace()
 {
+}
+
+// From QDeclarativeParserStatus
+void QDeclarativePlace::componentComplete()
+{
+    m_complete = true;
+}
+
+void QDeclarativePlace::setPlugin(QDeclarativeGeoServiceProvider *plugin)
+{
+    if (m_plugin == plugin)
+        return;
+
+    m_plugin = plugin;
+    if (m_complete)
+        emit pluginChanged();
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+        return;
+    }
+}
+
+QDeclarativeGeoServiceProvider* QDeclarativePlace::plugin() const
+{
+    return m_plugin;
 }
 
 QDeclarativeReviewModel *QDeclarativePlace::reviewModel()
@@ -300,7 +333,7 @@ QStringList QDeclarativePlace::tags() const
 }
 
 /*!
-    \qmlproperty qint64 Place::detailsFetched()
+    \qmlproperty bool Place::detailsFetched
 
     This property holds a boolean indicating
     whether the details of the place have been fetched
@@ -320,6 +353,56 @@ bool QDeclarativePlace::detailsFetched() const
 }
 
 /*!
+    \qmlproperty bool Place::fetchingDetails
+
+    This property holds a boolean indicating whether the details are currently being fetched.
+*/
+void QDeclarativePlace::setFetchingDetails(bool fetching)
+{
+    if (fetching && m_detailsReply)
+        return;
+
+    if (!fetching && !m_detailsReply)
+        return;
+
+    if (!fetching && m_detailsReply) {
+        m_detailsReply->abort();
+        m_detailsReply->deleteLater();
+        m_detailsReply = 0;
+        emit fetchingDetailsChanged();
+        return;
+    }
+
+    if (!m_plugin) {
+        qmlInfo(this) << "plugin not set.";
+        return;
+    }
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager) {
+        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        return;
+    }
+
+    m_detailsReply = placeManager->getPlaceDetails(placeId());
+
+    connect(m_detailsReply, SIGNAL(finished()), this, SLOT(detailsFetchedFinished()));
+    connect(m_detailsReply, SIGNAL(error(QPlaceReply::Error)),
+            this, SLOT(detailsError(QPlaceReply::Error)));
+
+    emit fetchingDetailsChanged();
+}
+
+bool QDeclarativePlace::fetchingDetails() const
+{
+    return m_detailsReply;
+}
+
+/*!
     \qmlproperty stringlist Place::feeds
 
     This property holds feeds list.
@@ -335,6 +418,58 @@ void QDeclarativePlace::setFeeds(const QStringList &feeds)
 QStringList QDeclarativePlace::feeds() const
 {
     return m_src.feeds();
+}
+
+void QDeclarativePlace::detailsFetchedFinished()
+{
+    QGeoPlace details = m_detailsReply->result();
+
+    setPlace(details);
+
+    m_detailsReply->deleteLater();
+    m_detailsReply = 0;
+    emit fetchingDetailsChanged();
+}
+
+void QDeclarativePlace::detailsError(QPlaceReply::Error error)
+{
+    Q_UNUSED(error);
+
+    m_detailsReply->deleteLater();
+    m_detailsReply = 0;
+    emit fetchingDetailsChanged();
+}
+
+/*!
+    \qmlmethod void Place::getDetails()
+
+    This methods starts fetching place details.
+
+    \sa Place::fetchingDetails
+*/
+void QDeclarativePlace::getDetails()
+{
+    setFetchingDetails(true);
+}
+
+void QDeclarativePlace::ratePlace(qreal rating)
+{
+    if (!m_plugin) {
+        qmlInfo(this) << tr("plugin not set.");
+        return;
+    }
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager) {
+        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        return;
+    }
+
+    placeManager->postRating(placeId(), rating);
 }
 
 /*!

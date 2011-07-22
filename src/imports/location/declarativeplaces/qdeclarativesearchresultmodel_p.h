@@ -12,22 +12,28 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeSearchResultModel : public QAbstractListModel
+class QDeclarativeSearchResultModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
+    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged);
     Q_PROPERTY(QDeclarativeCategory* searchCategory READ searchCategory WRITE setSearchCategory NOTIFY searchCategoryChanged);
     Q_PROPERTY(QDeclarativeGeoBoundingArea *searchArea READ searchArea WRITE setSearchArea NOTIFY searchAreaChanged);
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged);
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged);
     Q_PROPERTY(int didYouMean READ didYouMean WRITE setDidYouMean NOTIFY didYouMeanChanged);
-
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSearchResult> results READ results NOTIFY resultsChanged)
+
+    Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
     explicit QDeclarativeSearchResultModel(QObject *parent = 0);
     ~QDeclarativeSearchResultModel();
+
+    // From QDeclarativeParserStatus
+    virtual void classBegin() {}
+    virtual void componentComplete();
 
     QDeclarativeListProperty<QDeclarativeSearchResult> results();
     static void results_append(QDeclarativeListProperty<QDeclarativeSearchResult> *prop,
@@ -42,6 +48,9 @@ public:
     enum Roles {
         SearchResultRole = Qt::UserRole + 500
     };
+
+    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
+    QDeclarativeGeoServiceProvider* plugin() const;
 
     QString searchTerm() const;
     void setSearchTerm(const QString &searchTerm);
@@ -63,6 +72,7 @@ public:
     Q_INVOKABLE void clearSearchTerm();
 
 signals:
+    void pluginChanged();
     void queryFinished(const int &error);
 
     void searchTermChanged();
@@ -90,8 +100,10 @@ private:
 
     QPlaceSearchQuery m_queryParameters;
 
-    QPlaceManager *m_manager;
     QPlaceSearchReply *m_response;
+
+    QDeclarativeGeoServiceProvider *m_plugin;
+    bool m_complete;
 };
 
 QT_END_NAMESPACE

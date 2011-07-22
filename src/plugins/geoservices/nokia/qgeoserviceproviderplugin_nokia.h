@@ -74,6 +74,9 @@ public:
     QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
+    QPlaceManagerEngine *createPlaceManagerEngine(const QMap<QString, QVariant> &parameters,
+                                                  QGeoServiceProvider::Error *error,
+                                                  QString *errorString) const;
 
     static const QString defaultToken;
     static const QString defaultReferer;

@@ -93,8 +93,6 @@
 #include "qdeclarativesearchresultmodel_p.h"
 #include "qdeclarativetextpredictionmodel_p.h"
 
-#include "qdeclarativeplacemanager_p.h"
-
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
 #include <QDebug>
@@ -215,8 +213,6 @@ public:
             qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "SupportedCategoriesModel");
             qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "SearchResultModel");
             qmlRegisterType<QDeclarativeTextPredictionModel>(uri, 5, 0, "TextPredictionModel");
-
-            qmlRegisterType<QDeclarativePlaceManager>(uri, 5, 0, "PlaceManager");
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }

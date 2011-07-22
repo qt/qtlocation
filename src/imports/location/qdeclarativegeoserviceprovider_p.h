@@ -89,6 +89,7 @@ class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParser
     Q_PROPERTY(bool supportsReverseGeocoding READ supportsReverseGeocoding NOTIFY supportsReverseGeocodingChanged)
     Q_PROPERTY(bool supportsRouting READ supportsRouting NOTIFY supportsRoutingChanged)
     Q_PROPERTY(bool supportsMapping READ supportsMapping NOTIFY supportsMappingChanged)
+    Q_PROPERTY(bool supportsPlaces READ supportsPlaces NOTIFY supportsPlacesChanged)
     Q_CLASSINFO("DefaultProperty", "parameters")
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -111,6 +112,7 @@ public:
     bool supportsReverseGeocoding() const;
     bool supportsRouting() const;
     bool supportsMapping() const;
+    bool supportsPlaces() const;
 
     QGeoServiceProvider *sharedGeoServiceProvider();
 
@@ -120,6 +122,7 @@ Q_SIGNALS:
     void supportsReverseGeocodingChanged();
     void supportsRoutingChanged();
     void supportsMappingChanged();
+    void supportsPlacesChanged();
 
 private:
     static void parameter_append(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *mapObject);
@@ -131,6 +134,7 @@ private:
     void setSupportsReverseGeocoding(bool supports);
     void setSupportsRouting(bool supports);
     void setSupportsMapping(bool supports);
+    void setSupportsPlaces(bool supports);
 
     QGeoServiceProvider *sharedProvider_;
     QString name_;
@@ -139,6 +143,7 @@ private:
     bool supportsReverseGeocoding_;
     bool supportsRouting_;
     bool supportsMapping_;
+    bool supportsPlaces_;
     bool complete_;
     Q_DISABLE_COPY(QDeclarativeGeoServiceProvider)
 };
