@@ -44,7 +44,6 @@
 QT_USE_NAMESPACE
 
 tst_QGeoLocation::tst_QGeoLocation()
-    : m_locationScore(0)
 {
 }
 
@@ -77,7 +76,6 @@ void tst_QGeoLocation::constructor()
     QCOMPARE(m_location.alternativeLabels(), m_alternativeLabels);
     QCOMPARE(m_location.label(), m_label);
     QCOMPARE(m_location.locationId(), m_locationId);
-    QCOMPARE(m_location.locationScore(), m_locationScore);
 }
 
 void tst_QGeoLocation::copy_constructor()
@@ -214,16 +212,6 @@ void tst_QGeoLocation::locationId()
     m_location.setLocationId(m_locationId);
 }
 
-void tst_QGeoLocation::locationScore()
-{
-    m_locationScore = 4.5;
-    m_location.setLocationScore(m_locationScore);
-    QCOMPARE(m_location.locationScore(), m_locationScore);
-
-    m_locationScore = 2;
-    QVERIFY(m_location.locationScore() != m_locationScore);
-}
-
 void tst_QGeoLocation::operators()
 {
     QGeoAddress qgeoaddresscopy;
@@ -306,9 +294,6 @@ void tst_QGeoLocation::comparison()
     //set locationId
     location.setLocationId("id");
 
-    //set locationScore
-    location.setLocationScore(2.5);
-
     QGeoLocation otherLocation(location);
 
     if (dataField == "no change") {
@@ -339,9 +324,7 @@ void tst_QGeoLocation::comparison()
             otherLocation.setLabel("otherLabel");
         } else if (dataField == "locationId") {
             otherLocation.setLocationId("otherId");
-        } else if (dataField == "locationScore") {
-            otherLocation.setLocationScore(1);
-        }else {
+        } else {
             qFatal("Unknown data field to test");
         }
 
@@ -360,7 +343,6 @@ void tst_QGeoLocation::comparison_data()
     QTest::newRow("navigationPositions") << "navigationPositions";
     QTest::newRow("label") << "label";
     QTest::newRow("locationId") << "locationId";
-    QTest::newRow("locationScore") << "locationScore";
 }
 
 QTEST_MAIN(tst_QGeoLocation);

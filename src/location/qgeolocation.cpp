@@ -45,8 +45,7 @@
 QT_USE_NAMESPACE
 
 QGeoLocationPrivate::QGeoLocationPrivate()
-    : QSharedData(),
-      locationScore(0)
+    : QSharedData()
 {
 }
 
@@ -60,7 +59,6 @@ QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
     this->navigationPositions = other.navigationPositions;
     this->label = other.label;
     this->locationId = other.locationId;
-    this->locationScore = other.locationScore;
     this->viewport = other.viewport;
 }
 
@@ -77,7 +75,6 @@ bool QGeoLocationPrivate::operator==(const QGeoLocationPrivate &other) const
             && this->navigationPositions == other.navigationPositions
             && this->label == other.label
             && this->locationId == other.locationId
-            && this->locationScore == other.locationScore
             && this->viewport == other.viewport);
 
 }
@@ -242,22 +239,6 @@ QString QGeoLocation::locationId() const
 void QGeoLocation::setLocationId(const QString &locationId)
 {
     d->locationId = locationId;
-}
-
-/*!
-    Returns location score.
-*/
-qreal QGeoLocation::locationScore() const
-{
-    return d->locationScore;
-}
-
-/*!
-    Sets location score.
-*/
-void QGeoLocation::setLocationScore(const qreal &score)
-{
-    d->locationScore = score;
 }
 
 /*!

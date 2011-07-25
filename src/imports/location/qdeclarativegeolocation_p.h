@@ -22,7 +22,6 @@ class QDeclarativeGeoLocation : public QObject
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> navigationPositions READ navigationPositions NOTIFY navigationPositionsChanged)
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged);
     Q_PROPERTY(QString locationId READ locationId WRITE setLocationId NOTIFY locationIdChanged);
-    Q_PROPERTY(qreal locationScore READ locationScore WRITE setLocationScore NOTIFY locationScoreChanged);
     Q_PROPERTY(QDeclarativeGeoBoundingBox* viewport READ viewport WRITE setViewport NOTIFY viewportChanged);
 
 public:
@@ -55,8 +54,6 @@ public:
     void setLabel(const QString &label);
     QString locationId() const;
     void setLocationId(const QString &locationId);
-    qreal locationScore() const;
-    void setLocationScore(const qreal &score);
     QDeclarativeGeoBoundingBox *viewport();
     void setViewport(QDeclarativeGeoBoundingBox *boundingBox);
 
@@ -68,7 +65,6 @@ signals:
     void navigationPositionsChanged();
     void labelChanged();
     void locationIdChanged();
-    void locationScoreChanged();
     void viewportChanged();
 
 private:

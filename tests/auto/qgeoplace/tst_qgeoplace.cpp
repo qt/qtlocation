@@ -147,7 +147,7 @@ void tst_QGeoPlace::locationTest()
     QGeoPlace testObj;
     QVERIFY2(testObj.location() == QGeoLocation(), "Wrong default value");
     QGeoLocation obj;
-    obj.setLocationScore(10);
+    obj.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(obj);
     QVERIFY2(testObj.location() == obj, "Wrong value returned");
 }

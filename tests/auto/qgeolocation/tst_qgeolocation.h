@@ -80,7 +80,6 @@ private Q_SLOTS:
     void navigationPositions();
     void label();
     void locationId();
-    void locationScore();
     void operators();
     void comparison();
     void comparison_data();
@@ -98,7 +97,6 @@ private:
     QList<QGeoCoordinate> m_navigationPositions;
     QString m_label;
     QString m_locationId;
-    qreal m_locationScore;
 };
 
 Q_DECLARE_METATYPE( QGeoCoordinate::CoordinateFormat);

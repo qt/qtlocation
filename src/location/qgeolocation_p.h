@@ -65,7 +65,6 @@ public:
     QList<QGeoCoordinate> navigationPositions;
     QString label;
     QString locationId;
-    qreal locationScore;
     QGeoBoundingBox viewport;
 };
 

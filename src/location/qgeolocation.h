@@ -85,8 +85,6 @@ public:
     void setLabel(const QString &label);
     QString locationId() const;
     void setLocationId(const QString &locationId);
-    qreal locationScore() const;
-    void setLocationScore(const qreal &score);
     QGeoBoundingBox viewport() const;
     void setViewport(const QGeoBoundingBox &coordinate);
 

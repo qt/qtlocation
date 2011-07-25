@@ -66,9 +66,6 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
     if (previous.locationId() != m_src.locationId()) {
         emit locationIdChanged();
     }
-    if (previous.locationScore() != m_src.locationScore()) {
-        emit locationScoreChanged();
-    }
     if (previous.viewport() != m_src.viewport()) {
         emit viewport();
     }
@@ -186,24 +183,6 @@ void QDeclarativeGeoLocation::setLocationId(const QString &locationId)
 QString QDeclarativeGeoLocation::locationId() const
 {
     return m_src.locationId();
-}
-
-/*!
-    \qmlproperty qreal Location::locationScore
-
-    This property holds location score.
-*/
-void QDeclarativeGeoLocation::setLocationScore(const qreal &locationScore)
-{
-    if (m_src.locationScore() != locationScore) {
-        m_src.setLocationScore(locationScore);
-        emit locationScoreChanged();
-    }
-}
-
-qreal QDeclarativeGeoLocation::locationScore() const
-{
-    return m_src.locationScore();
 }
 
 /*!
