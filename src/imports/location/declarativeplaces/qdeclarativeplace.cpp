@@ -28,7 +28,6 @@ QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src,
     synchronizeCategories();
     synchronizeContacts();
     synchronizeDescriptions();
-    synchronizeAlternativeLocations();
     synchronizeSuppliers();
     m_rating.setRating(m_src.rating());
     m_location.setLocation(m_src.location());
@@ -70,10 +69,6 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
     if (previous.location() != m_src.location()) {
         m_location.setLocation(src.location());
         emit locationChanged();
-    }
-    if (previous.alternativeLocations() != m_src.alternativeLocations()) {
-        synchronizeAlternativeLocations();
-        emit alternativeLocationsChanged();
     }
     if (previous.rating() != m_src.rating()) {
         m_rating.setRating(src.rating());
@@ -140,11 +135,6 @@ QGeoPlace QDeclarativePlace::place()
     }
     m_src.setDescriptions(descriptions);
     m_src.setLocation(m_location.location());
-    QList<QGeoLocation> alternativeLocations;
-    foreach (QDeclarativeGeoLocation *value, m_alternativeLocations) {
-        alternativeLocations.append(value->location());
-    }
-    m_src.setAlternativeLocations(alternativeLocations);
     m_src.setRating(m_rating.rating());
     QList<QPlaceSupplier> suppliers;
     foreach (QDeclarativeSupplier *value, m_suppliers) {
@@ -693,72 +683,6 @@ void QDeclarativePlace::synchronizeDescriptions()
     foreach (QPlaceDescription value, m_src.descriptions()) {
         QDeclarativeDescription* declarativeValue = new QDeclarativeDescription(value, this);
         m_descriptions.append(declarativeValue);
-    }
-}
-
-/*!
-    \qmlproperty QDeclarativeListProperty<QDeclarativeGeoLocation> Place::alternativeLocations
-
-    This property alternative locations list.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-QDeclarativeListProperty<QDeclarativeGeoLocation> QDeclarativePlace::alternativeLocations()
-{
-    return QDeclarativeListProperty<QDeclarativeGeoLocation>(this,
-                                                          0, // opaque data parameter
-                                                          alternativeLocations_append,
-                                                          alternativeLocations_count,
-                                                          alternativeLocations_at,
-                                                          alternativeLocations_clear);
-}
-
-void QDeclarativePlace::alternativeLocations_append(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop,
-                                                  QDeclarativeGeoLocation *value)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    QDeclarativeGeoLocation *altValue = new QDeclarativeGeoLocation(object);
-    altValue->setLocation(value->location());
-    object->m_alternativeLocations.append(altValue);
-    QList<QGeoLocation> list = object->m_src.alternativeLocations();
-    list.append(value->location());
-    object->m_src.setAlternativeLocations(list);
-    emit object->alternativeLocationsChanged();
-}
-
-int QDeclarativePlace::alternativeLocations_count(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop)
-{
-    return static_cast<QDeclarativePlace*>(prop->object)->m_alternativeLocations.count();
-}
-
-QDeclarativeGeoLocation* QDeclarativePlace::alternativeLocations_at(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop,
-                                                                          int index)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    QDeclarativeGeoLocation *res = NULL;
-    if (object->m_alternativeLocations.count() > index && index > -1) {
-        res = object->m_alternativeLocations[index];
-    }
-    return res;
-}
-
-void QDeclarativePlace::alternativeLocations_clear(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    qDeleteAll(object->m_alternativeLocations);
-    object->m_alternativeLocations.clear();
-    object->m_src.setAlternativeLocations(QList<QGeoLocation>());
-    emit object->alternativeLocationsChanged();
-}
-
-void QDeclarativePlace::synchronizeAlternativeLocations()
-{
-    qDeleteAll(m_alternativeLocations);
-    m_alternativeLocations.clear();
-    foreach (QGeoLocation value, m_src.alternativeLocations()) {
-        QDeclarativeGeoLocation* declarativeValue = new QDeclarativeGeoLocation(value, this);
-        m_alternativeLocations.append(declarativeValue);
     }
 }
 

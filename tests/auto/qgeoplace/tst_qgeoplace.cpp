@@ -22,7 +22,6 @@ private Q_SLOTS:
     void descriptionsTest();
     void detailsFetchedTest();
     void locationTest();
-    void alternativeLocationsTest();
     void ratingTest();
     void suppliersTest();
     void feedsTest();
@@ -48,15 +47,9 @@ void tst_QGeoPlace::constructorTest()
     QPlaceBusinessInformation obj;
     obj.setOpeningNote("10");
     testObj.setBusinessInformation(obj);
-    QGeoLocation sup;
-    sup.setLabel("testName1");
-    sup.setLocationId("testId");
-    QList<QGeoLocation> list;
-    list.append(sup);
-    sup.setLocationId("testName2");
-    list.append(sup);
-    testObj.setAlternativeLocations(list);
-
+    QGeoLocation loc;
+    loc.setCoordinate(QGeoCoordinate(10,20));
+    testObj.setLocation(loc);
     QGeoPlace *testObjPtr = new QGeoPlace(testObj);
 
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
@@ -252,21 +245,6 @@ void tst_QGeoPlace::categoriesTest()
     QVERIFY2(testObj.categories().count() == 2, "Wrong value returned");
 }
 
-void tst_QGeoPlace::alternativeLocationsTest()
-{
-    QGeoPlace testObj;
-    QVERIFY2(testObj.alternativeLocations().count() == 0, "Wrong default value");
-    QGeoLocation sup;
-    sup.setLabel("testName1");
-    sup.setLocationId("testId");
-    QList<QGeoLocation> list;
-    list.append(sup);
-    sup.setLocationId("testName2");
-    list.append(sup);
-    testObj.setAlternativeLocations(list);
-    QVERIFY2(testObj.alternativeLocations().count() == 2, "Wrong value returned");
-}
-
 void tst_QGeoPlace::suppliersTest()
 {
     QGeoPlace testObj;
@@ -311,14 +289,6 @@ void tst_QGeoPlace::operatorsTest()
     QPlaceBusinessInformation obj;
     obj.setOpeningNote("10");
     testObj.setBusinessInformation(obj);
-    QGeoLocation sup;
-    sup.setLabel("testName1");
-    sup.setLocationId("testId");
-    QList<QGeoLocation> list;
-    list.append(sup);
-    sup.setLocationId("testName2");
-    list.append(sup);
-    testObj.setAlternativeLocations(list);
     QStringList tags;
     tags << "1" << "2" << "3";
     testObj.setTags(tags);

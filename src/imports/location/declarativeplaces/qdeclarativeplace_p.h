@@ -27,7 +27,6 @@ class QDeclarativePlace : public QObject
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContact> contacts READ contacts NOTIFY contactsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeDescription> descriptions READ descriptions NOTIFY descriptionsChanged)
     Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoLocation> alternativeLocations READ alternativeLocations NOTIFY alternativeLocationsChanged)
     Q_PROPERTY(QDeclarativeBusinessInformation* businessInformation READ businessInformation WRITE setBusinessInformation NOTIFY businessInformationChanged);
     Q_PROPERTY(QDeclarativeRating* rating READ rating WRITE setRating NOTIFY ratingChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSupplier> suppliers READ suppliers NOTIFY suppliersChanged)
@@ -78,12 +77,6 @@ public:
     static void descriptions_clear(QDeclarativeListProperty<QDeclarativeDescription> *prop);
     QDeclarativeGeoLocation *location();
     void setLocation(QDeclarativeGeoLocation *location);
-    QDeclarativeListProperty<QDeclarativeGeoLocation> alternativeLocations();
-    static void alternativeLocations_append(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop,
-                                  QDeclarativeGeoLocation* value);
-    static int alternativeLocations_count(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop);
-    static QDeclarativeGeoLocation* alternativeLocations_at(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop, int index);
-    static void alternativeLocations_clear(QDeclarativeListProperty<QDeclarativeGeoLocation> *prop);
     QDeclarativeRating *rating();
     void setRating(QDeclarativeRating *rating);
     QDeclarativeListProperty<QDeclarativeSupplier> suppliers();
@@ -122,7 +115,6 @@ signals:
     void contactsChanged();
     void descriptionsChanged();
     void locationChanged();
-    void alternativeLocationsChanged();
     void ratingChanged();
     void suppliersChanged();
     void feedsChanged();
@@ -142,7 +134,6 @@ private:
     void synchronizeCategories();
     void synchronizeContacts();
     void synchronizeDescriptions();
-    void synchronizeAlternativeLocations();
     void synchronizeSuppliers();
 
 private:
@@ -151,7 +142,6 @@ private:
     QList<QDeclarativeContact*> m_contacts;
     QList<QDeclarativeDescription*> m_descriptions;
     QDeclarativeGeoLocation m_location;
-    QList<QDeclarativeGeoLocation*> m_alternativeLocations;
     QDeclarativeRating m_rating;
     QList<QDeclarativeSupplier*> m_suppliers;
     QDeclarativeMediaPaginationList m_mediaList;

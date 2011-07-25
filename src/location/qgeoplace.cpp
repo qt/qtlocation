@@ -361,24 +361,6 @@ void QGeoPlace::setLocation(const QGeoLocation &location)
 }
 
 /*!
-    Returns alternative locations.
-*/
-QList<QGeoLocation> QGeoPlace::alternativeLocations() const
-{
-    Q_D(const QGeoPlace);
-    return d->alternativeLocations;
-}
-
-/*!
-    Sets alternative locations.
-*/
-void QGeoPlace::setAlternativeLocations(const QList<QGeoLocation> &locations)
-{
-    Q_D(QGeoPlace);
-    d->alternativeLocations = locations;
-}
-
-/*!
     Returns rating.
 */
 QPlaceRating QGeoPlace::rating() const
@@ -618,7 +600,6 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         contacts(other.contacts),
         descriptions(other.descriptions),
         location(other.location),
-        alternativeLocations(other.alternativeLocations),
         rating(other.rating),
         suppliers(other.suppliers),
         feeds(other.feeds),
@@ -659,7 +640,6 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
     qDebug() << "categories: " << (categories == other.categories);
     qDebug() << "descriptions: " << (descriptions == other.descriptions);
     qDebug() << "location:" << (location == other.location);
-    qDebug() << "alternativeLocations:" << (alternativeLocations == other.alternativeLocations);
     qDebug() << "rating" << (rating == other.rating);
     qDebug() << "suppliers" << (suppliers == other.suppliers);
     qDebug() << "feeds " << (feeds == other.feeds);
@@ -684,7 +664,6 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
             && contacts == other.contacts
             && descriptions == other.descriptions
             && location == other.location
-            && alternativeLocations == other.alternativeLocations
             && rating == other.rating
             && suppliers == other.suppliers
             && feeds == other.feeds

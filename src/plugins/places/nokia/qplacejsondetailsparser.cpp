@@ -257,7 +257,7 @@ void QPlaceJSonDetailsParser::buildPlace(const QScriptValue &placeValue, QGeoPla
         }
         value = placeValue.property(place_location_element);
         if (value.isValid()) {
-            processLocations(value, targetPlace);
+            processLocation(value, targetPlace);
         }
         value = placeValue.property(place_adcontent_element);
         if (value.isValid()) {
@@ -419,33 +419,7 @@ void QPlaceJSonDetailsParser::processAddress(const QScriptValue &address, QGeoLo
     location->setAddress(newAddress);
 }
 
-void QPlaceJSonDetailsParser::processLocations(const QScriptValue &locations, QGeoPlace*targetPlace)
-{
-    if (locations.isArray()) {
-        QList<QGeoLocation> list;
-        bool isFirst = true;
-        QScriptValueIterator it(locations);
-        while (it.hasNext()) {
-            it.next();
-            // array contains count as last element
-            if (it.name() != "length") {
-                QGeoLocation loc = processLocation(it.value());
-                if (isFirst) {
-                    targetPlace->setLocation(loc);
-                    isFirst = false;
-                } else {
-                    list.append(loc);
-                }
-            }
-        }
-        targetPlace->setAlternativeLocations(list);
-    } else {
-        QGeoLocation loc = processLocation(locations);
-        targetPlace->setLocation(loc);
-    }
-}
-
-QGeoLocation QPlaceJSonDetailsParser::processLocation(const QScriptValue &location)
+void QPlaceJSonDetailsParser::processLocation(const QScriptValue &location, QGeoPlace *targetPlace)
 {
     QGeoLocation newLocation;
     QScriptValue property = location.property(place_geoCoordinates_element);
@@ -473,7 +447,7 @@ QGeoLocation QPlaceJSonDetailsParser::processLocation(const QScriptValue &locati
     if (property.isValid()) {
         processAddress(property, &newLocation);
     }
-    return newLocation;
+    targetPlace->setLocation(newLocation);
 }
 
 void QPlaceJSonDetailsParser::processTags(const QScriptValue &tags, QGeoPlace*targetPlace)

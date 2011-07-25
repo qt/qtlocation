@@ -105,8 +105,6 @@ public:
     void setDescriptions(const QList<QPlaceDescription> &descriptions);
     QGeoLocation location() const;
     void setLocation(const QGeoLocation &location);
-    QList<QGeoLocation> alternativeLocations() const;
-    void setAlternativeLocations(const QList<QGeoLocation> &locations);
     QPlaceRating rating() const;
     void setRating(const QPlaceRating &rating);
     QList<QPlaceSupplier> suppliers() const;
