@@ -44,10 +44,6 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
     if (previous.additionalData() != m_src.additionalData()) {
         emit additionalDataChanged();
     }
-    if (previous.alternativeLabels() != m_src.alternativeLabels()) {
-        synchronizeAlternativeValues();
-        emit alternativeLabelsChanged();
-    }
     if (previous.address() != m_src.address()) {
         m_address.setAddress(m_src.address());
         emit addressChanged();
@@ -73,11 +69,6 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
 
 QGeoLocation QDeclarativeGeoLocation::location()
 {
-    QList<QPlaceAlternativeValue> list;
-    foreach (QDeclarativeAlternativeValue *value, m_alternativeValues) {
-        list.append(value->valueObject());
-    }
-    m_src.setAlternativeLabels(list);
     QList<QGeoCoordinate> navigationList;
     foreach (QDeclarativeCoordinate *value, m_navigationPositions) {
         navigationList.append(value->coordinate());
@@ -208,62 +199,6 @@ QDeclarativeGeoBoundingBox *QDeclarativeGeoLocation::viewport()
 }
 
 /*!
-    \qmlproperty QDeclarativeListProperty<QDeclarativeAlternativeValue> Location::alternativeLabels
-
-    This property alternative values for label property.
-
-     Note: this property's changed() signal is currently emitted only if the
-     whole element changes, not if only the contents of the element change.
-*/
-QDeclarativeListProperty<QDeclarativeAlternativeValue> QDeclarativeGeoLocation::alternativeLabels()
-{
-    return QDeclarativeListProperty<QDeclarativeAlternativeValue>(this,
-                                                          0, // opaque data parameter
-                                                          alternativeValue_append,
-                                                          alternativeValue_count,
-                                                          alternativeValue_at,
-                                                          alternativeValue_clear);
-}
-
-void QDeclarativeGeoLocation::alternativeValue_append(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop,
-                                                  QDeclarativeAlternativeValue *value)
-{
-    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
-    QDeclarativeAlternativeValue *altValue = new QDeclarativeAlternativeValue(object);
-    altValue->setValueObject(value->valueObject());
-    object->m_alternativeValues.append(altValue);
-    QList<QPlaceAlternativeValue> list = object->m_src.alternativeLabels();
-    list.append(value->valueObject());
-    object->m_src.setAlternativeLabels(list);
-    emit object->alternativeLabelsChanged();
-}
-
-int QDeclarativeGeoLocation::alternativeValue_count(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop)
-{
-    return static_cast<QDeclarativeGeoLocation*>(prop->object)->m_alternativeValues.count();
-}
-
-QDeclarativeAlternativeValue* QDeclarativeGeoLocation::alternativeValue_at(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop,
-                                                                          int index)
-{
-    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
-    QDeclarativeAlternativeValue *res = NULL;
-    if (object->m_alternativeValues.count() > index && index > -1) {
-        res = object->m_alternativeValues[index];
-    }
-    return res;
-}
-
-void QDeclarativeGeoLocation::alternativeValue_clear(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop)
-{
-    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
-    qDeleteAll(object->m_alternativeValues);
-    object->m_alternativeValues.clear();
-    object->m_src.setAlternativeLabels(QList<QPlaceAlternativeValue>());
-    emit object->alternativeLabelsChanged();
-}
-
-/*!
     \qmlproperty QDeclarativeListProperty<QDeclarativeCoordinate> Location::navigationPositions
 
     This property navigation coordinates for location.
@@ -317,16 +252,6 @@ void QDeclarativeGeoLocation::navigationPosition_clear(QDeclarativeListProperty<
     object->m_navigationPositions.clear();
     object->m_src.setNavigationPositions(QList<QGeoCoordinate>());
     emit object->navigationPositionsChanged();
-}
-
-void QDeclarativeGeoLocation::synchronizeAlternativeValues()
-{
-    qDeleteAll(m_alternativeValues);
-    m_alternativeValues.clear();
-    foreach (QPlaceAlternativeValue value, m_src.alternativeLabels()) {
-        QDeclarativeAlternativeValue* declarativeValue = new QDeclarativeAlternativeValue(value, this);
-        m_alternativeValues.append(declarativeValue);
-    }
 }
 
 void QDeclarativeGeoLocation::synchronizeNavigationPositions()

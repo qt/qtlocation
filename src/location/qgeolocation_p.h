@@ -44,8 +44,6 @@
 
 #include <QSharedData>
 
-#include "qgeolocation.h"
-
 QT_BEGIN_NAMESPACE
 
 class QGeoLocationPrivate : public QSharedData
@@ -60,7 +58,6 @@ public:
 
     QVariantHash additionalData;
     QGeoAddress address;
-    QList<QPlaceAlternativeValue> alternativeLabels;
     QGeoCoordinate coordinate;
     QList<QGeoCoordinate> navigationPositions;
     QString label;

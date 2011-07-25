@@ -61,7 +61,6 @@
 #include <qplacerating.h>
 #include <qplacebusinessinformation.h>
 #include <qgeolocation.h>
-#include <qplacealternativevalue.h>
 #include <qplacemediaobject.h>
 #include <qplaceperiod.h>
 #include <qplaceweekdayhours.h>
@@ -479,54 +478,46 @@ void QPlaceJSonDetailsParser::processNames(const QScriptValue &names, QGeoPlace*
     if (value.isValid()) {
         value = value.property(place_name_localized_element);
         if (value.isValid()) {
-            QList<QPlaceAlternativeValue> list;
+            QStringList list;
             if (value.isArray()) {
                 QScriptValueIterator it(value);
                 while (it.hasNext()) {
                     it.next();
                     // array contains count as last element
                     if (it.name() != "length") {
-                        QPlaceAlternativeValue *name = processName(it.value());
-                        if (name) {
-                            list.append(*name);
-                            delete name;
-                            name = NULL;
+                        QString name = processName(it.value());
+                        if (!name.isEmpty()) {
+                            list.append(name);
                         }
                     }
                 }
             } else {
-                QPlaceAlternativeValue *name = processName(value);
-                if (name) {
-                    list.append(*name);
-                    delete name;
-                    name = NULL;
+                QString name = processName(value);
+                if (!name.isEmpty()) {
+                    list.append(name);
                 }
             }
-            targetPlace->setAlternativeNames(list);
+            //The JSON data specification defines
+            //an alternative names element,
+            //but our api doesn't expose alternative names
+            //so we parse and skip assignment to a place here.
         }
     }
     value = names.property(place_name_default_element);
     if (value.isValid()) {
-        QPlaceAlternativeValue *name = processName(value);
-        if (name) {
-            targetPlace->setName(name->value());
-            delete name;
-            name = NULL;
+        QString name = processName(value);
+        if (!name.isEmpty()) {
+            targetPlace->setName(name);
         }
     }
 }
 
-QPlaceAlternativeValue *QPlaceJSonDetailsParser::processName(const QScriptValue &nameValue)
+QString QPlaceJSonDetailsParser::processName(const QScriptValue &nameValue)
 {
-    QPlaceAlternativeValue *name = NULL;
+    QString name;
     QScriptValue value = nameValue.property(place_name_value_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        name = new QPlaceAlternativeValue();
-        name->setValue(value.toString());
-        value = nameValue.property(place_name_language_element);
-        if (value.isValid() && !value.toString().isEmpty()) {
-            name->setLanguage(value.toString());
-        }
+        name = value.toString();
     }
     return name;
 }

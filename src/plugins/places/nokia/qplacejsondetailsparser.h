@@ -83,7 +83,7 @@ private:
     static void processLocation(const QScriptValue &location, QGeoPlace *targetPlace);
     static void processTags(const QScriptValue &locations, QGeoPlace *targetPlace);
     static void processNames(const QScriptValue &locations, QGeoPlace *targetPlace);
-    static QPlaceAlternativeValue *processName(const QScriptValue &nameValue);
+    static QString processName(const QScriptValue &nameValue);
     static void processPremiumContents(const QScriptValue &content, QGeoPlace *targetPlace);
     static void processPremiumVersion(const QScriptValue &content, QGeoPlace *targetPlace);
     static void processPremiumContent(const QScriptValue &content, QGeoPlace *targetPlace);

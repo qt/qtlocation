@@ -75,7 +75,6 @@
 #include "qdeclarativegeomaneuver_p.h"
 
 //Place includes
-#include "qdeclarativealternativevalue_p.h"
 #include "qdeclarativebusinessfeature_p.h"
 #include "qdeclarativebusinessinformation_p.h"
 #include "qdeclarativecategory_p.h"
@@ -197,7 +196,6 @@ public:
             qmlRegisterType<QDeclarativeGeoRouteSegment>(uri, 5, 0, "RouteSegment");
             qmlRegisterType<QDeclarativeGeoManeuver>(uri, 5, 0, "RouteManeuver");
 
-            qmlRegisterType<QDeclarativeAlternativeValue>(uri, 5, 0, "AlternativeValue");
             qmlRegisterType<QDeclarativeBusinessFeature>(uri, 5, 0, "BusinessFeature");
             qmlRegisterType<QDeclarativeBusinessInformation>(uri, 5, 0, "BusinessInformation");
             qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");

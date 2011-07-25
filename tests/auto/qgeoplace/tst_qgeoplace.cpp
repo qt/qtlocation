@@ -15,7 +15,6 @@ public:
 private Q_SLOTS:
     void constructorTest();
     void additionalDataTest();
-    void alternativeNamesTest();
     void businessInformationTest();
     void categoriesTest();
     void contactsTest();
@@ -68,21 +67,6 @@ void tst_QGeoPlace::additionalDataTest()
     testObj.setAdditionalData(list);
     QVERIFY2(testObj.additionalData().count() == 2, "Wrong value returned");
     QVERIFY2(testObj.additionalData()["key1"] == "value1", "Wrong value[1] returned");
-}
-
-void tst_QGeoPlace::alternativeNamesTest()
-{
-    QGeoPlace testObj;
-    QVERIFY2(testObj.alternativeNames().count() == 0, "Wrong default value");
-    QList<QPlaceAlternativeValue> list;
-    QPlaceAlternativeValue altValue;
-    list.append(altValue);
-    altValue.setKey("testData");
-    list.append(altValue);
-    testObj.setAlternativeNames(list);
-    QVERIFY2(testObj.alternativeNames().count() == 2, "Wrong value returned");
-    QVERIFY2(testObj.alternativeNames()[0].key() == QString(), "Wrong key[0] returned");
-    QVERIFY2(testObj.alternativeNames()[1].key() == "testData", "Wrong key[1] returned");
 }
 
 void tst_QGeoPlace::nameTest()

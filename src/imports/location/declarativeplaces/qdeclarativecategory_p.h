@@ -5,7 +5,6 @@
 #include <QObject>
 
 #include <qplacecategory.h>
-#include "qdeclarativealternativevalue_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -16,7 +15,6 @@ class QDeclarativeCategory : public QObject
     Q_PROPERTY(QString categoryId READ categoryId WRITE setCategoryId NOTIFY categoryIdChanged)
     Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeAlternativeValue> alternativeNames READ alternativeNames NOTIFY alternativeNamesChanged)
 
 public:
     explicit QDeclarativeCategory(QObject* parent = 0);
@@ -25,13 +23,6 @@ public:
 
     QPlaceCategory category();
     void setCategory(const QPlaceCategory &category);
-
-    QDeclarativeListProperty<QDeclarativeAlternativeValue> alternativeNames();
-    static void alternativeValue_append(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop,
-                                  QDeclarativeAlternativeValue* value);
-    static int alternativeValue_count(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop);
-    static QDeclarativeAlternativeValue* alternativeValue_at(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop, int index);
-    static void alternativeValue_clear(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop);
 
     QString categoryId() const;
     void setCategoryId(const QString &catID);
@@ -44,13 +35,8 @@ signals:
     void categoryIdChanged();
     void descriptionChanged();
     void nameChanged();
-    void alternativeNamesChanged();
 
 private:
-    void synchronizeAlternativeValues();
-
-private:
-    QList<QDeclarativeAlternativeValue*> m_alternativeValues;
     QPlaceCategory m_category;
 };
 

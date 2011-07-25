@@ -7,7 +7,6 @@
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoboundingbox_p.h"
 #include "qdeclarativegeoaddress_p.h"
-#include "qdeclarativealternativevalue_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -16,7 +15,6 @@ class QDeclarativeGeoLocation : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QVariantHash additionalData READ additionalData WRITE setAdditionalData NOTIFY additionalDataChanged);
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeAlternativeValue> alternativeLabels READ alternativeLabels NOTIFY alternativeLabelsChanged)
     Q_PROPERTY(QDeclarativeGeoAddress* address READ address WRITE setAddress NOTIFY addressChanged);
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> navigationPositions READ navigationPositions NOTIFY navigationPositionsChanged)
@@ -34,12 +32,6 @@ public:
 
     QVariantHash additionalData() const;
     void setAdditionalData(const QVariantHash &data);
-    QDeclarativeListProperty<QDeclarativeAlternativeValue> alternativeLabels();
-    static void alternativeValue_append(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop,
-                                  QDeclarativeAlternativeValue* value);
-    static int alternativeValue_count(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop);
-    static QDeclarativeAlternativeValue* alternativeValue_at(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop, int index);
-    static void alternativeValue_clear(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop);
     QDeclarativeGeoAddress *address();
     void setAddress(QDeclarativeGeoAddress *address);
     QDeclarativeCoordinate *coordinate();
@@ -59,7 +51,6 @@ public:
 
 signals:
     void additionalDataChanged();
-    void alternativeLabelsChanged();
     void addressChanged();
     void coordinateChanged();
     void navigationPositionsChanged();
@@ -68,11 +59,9 @@ signals:
     void viewportChanged();
 
 private:
-    void synchronizeAlternativeValues();
     void synchronizeNavigationPositions();
 
 private:
-    QList<QDeclarativeAlternativeValue*> m_alternativeValues;
     QDeclarativeGeoAddress m_address;
     QDeclarativeCoordinate m_coordinate;
     QDeclarativeGeoBoundingBox m_boundingBox;

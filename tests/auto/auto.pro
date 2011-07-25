@@ -16,7 +16,6 @@ SUBDIRS += geotestplugin \
            qgeoplace \
            qgeosearchreply \
            qgeosearchmanager \
-           qplacealternativevalue \
            qplacebusinessfeature \
            qplacecategory \
            qplacecontact \

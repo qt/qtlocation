@@ -54,7 +54,6 @@ QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
 {
     this->additionalData = other.additionalData;
     this->address = other.address;
-    this->alternativeLabels = other.alternativeLabels;
     this->coordinate = other.coordinate;
     this->navigationPositions = other.navigationPositions;
     this->label = other.label;
@@ -70,7 +69,6 @@ bool QGeoLocationPrivate::operator==(const QGeoLocationPrivate &other) const
 {
     return  (this->additionalData == other.additionalData
             && this->address == other.address
-            && this->alternativeLabels == other.alternativeLabels
             && this->coordinate == other.coordinate
             && this->navigationPositions == other.navigationPositions
             && this->label == other.label
@@ -159,22 +157,6 @@ QGeoAddress QGeoLocation::address() const
 void QGeoLocation::setAddress(const QGeoAddress &address)
 {
     d->address = address;
-}
-
-/*!
-    Returns alternative labels.
-*/
-QList<QPlaceAlternativeValue> QGeoLocation::alternativeLabels() const
-{
-    return d->alternativeLabels;
-}
-
-/*!
-    Sets alternative labels.
-*/
-void QGeoLocation::setAlternativeLabels(const QList<QPlaceAlternativeValue> &labels)
-{
-    d->alternativeLabels = labels;
 }
 
 /*!

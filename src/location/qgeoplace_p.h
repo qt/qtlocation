@@ -86,7 +86,6 @@ public:
     QGeoAddress address;
 
     QVariantHash additionalData;
-    QList<QPlaceAlternativeValue> alternativeNames;
     QPlaceBusinessInformation businessInfo;
     QList<QPlaceCategory> categories;
     QList<QPlaceContact> contacts;

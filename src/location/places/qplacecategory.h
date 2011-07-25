@@ -46,7 +46,6 @@
 #include <QString>
 #include <QVariant>
 #include <QList>
-#include "qplacealternativevalue.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -68,8 +67,6 @@ public:
         return !(other == *this);
     }
 
-    QList<QPlaceAlternativeValue> alternativeNames() const;
-    void setAlternativeNames(const QList<QPlaceAlternativeValue> &names);
     QString categoryId() const;
     void setCategoryId(const QString &catID);
     QString description() const;

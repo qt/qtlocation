@@ -54,7 +54,6 @@ QPlaceCategoryPrivate::QPlaceCategoryPrivate()
 QPlaceCategoryPrivate::QPlaceCategoryPrivate(const QPlaceCategoryPrivate &other)
     : QSharedData()
 {
-    this->alternativeNames = other.alternativeNames;
     this->categoryId = other.categoryId;
     this->description = other.description;
     this->name = other.name;
@@ -66,9 +65,7 @@ QPlaceCategoryPrivate::~QPlaceCategoryPrivate()
 
 bool QPlaceCategoryPrivate::operator==(const QPlaceCategoryPrivate &other) const
 {
-    return (
-            this->alternativeNames == other.alternativeNames
-            && this->categoryId == other.categoryId
+    return (this->categoryId == other.categoryId
             && this->description == other.description
             && this->name == other.name
     );
@@ -123,22 +120,6 @@ QPlaceCategory &QPlaceCategory::operator =(const QPlaceCategory &other) {
 bool QPlaceCategory::operator==(const QPlaceCategory &other) const
 {
     return (*(d.constData()) == *(other.d.constData()));
-}
-
-/*!
-    Returns alternative names.
-*/
-QList<QPlaceAlternativeValue> QPlaceCategory::alternativeNames() const
-{
-    return d->alternativeNames;
-}
-
-/*!
-    Sets alternative names.
-*/
-void QPlaceCategory::setAlternativeNames(const QList<QPlaceAlternativeValue> &names)
-{
-    d->alternativeNames = names;
 }
 
 /*!

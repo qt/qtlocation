@@ -48,33 +48,6 @@ void tst_QGeoAddress::constructorTest()
     delete testObjPtr;
 }
 
-//void tst_QGeoAddress::additionalDataTest()
-//{
-//    QGeoAddress testObj;
-//    QVERIFY2(testObj.additionalData().count() == 0, "Wrong default value");
-//    QVariantHash list;
-//    list.insert("key1", "value1");
-//    list.insert("key2", "value2");
-//    testObj.setAdditionalData(list);
-//    QVERIFY2(testObj.additionalData().count() == 2, "Wrong value returned");
-//    QVERIFY2(testObj.additionalData()["key1"] == "value1", "Wrong value[1] returned");
-//}
-
-//void tst_QGeoAddress::alternativeAttributesTest()
-//{
-//    QGeoAddress testObj;
-//    QVERIFY2(testObj.alternativeAttributes().count() == 0, "Wrong default value");
-//    QList<QPlaceAlternativeValue> list;
-//    QPlaceAlternativeValue altValue;
-//    list.append(altValue);
-//    altValue.setKey("testData");
-//    list.append(altValue);
-//    testObj.setAlternativeAttributes(list);
-//    QVERIFY2(testObj.alternativeAttributes().count() == 2, "Wrong value returned");
-//    QVERIFY2(testObj.alternativeAttributes()[0].key() == QString(), "Wrong key[0] returned");
-//    QVERIFY2(testObj.alternativeAttributes()[1].key() == "testData", "Wrong key[1] returned");
-//}
-
 void tst_QGeoAddress::cityTest()
 {
     QGeoAddress testObj;

@@ -11,7 +11,6 @@
 #include "qdeclarativecontact_p.h"
 #include "qdeclarativerating_p.h"
 #include "qdeclarativedescription_p.h"
-#include "qdeclarativealternativevalue_p.h"
 #include "qdeclarativemediapaginationlist_p.h"
 #include "qdeclarativereviewpaginationlist_p.h"
 
@@ -22,7 +21,6 @@ class QDeclarativePlace : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QVariantHash additionalData READ additionalData WRITE setAdditionalData NOTIFY additionalDataChanged);
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeAlternativeValue> alternativeNames READ alternativeNames NOTIFY alternativeNamesChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContact> contacts READ contacts NOTIFY contactsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeDescription> descriptions READ descriptions NOTIFY descriptionsChanged)
@@ -51,12 +49,6 @@ public:
 
     QVariantHash additionalData() const;
     void setAdditionalData(const QVariantHash &data);
-    QDeclarativeListProperty<QDeclarativeAlternativeValue> alternativeNames();
-    static void alternativeValue_append(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop,
-                                  QDeclarativeAlternativeValue* value);
-    static int alternativeValue_count(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop);
-    static QDeclarativeAlternativeValue* alternativeValue_at(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop, int index);
-    static void alternativeValue_clear(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop);
     QDeclarativeListProperty<QDeclarativeCategory> categories();
     static void category_append(QDeclarativeListProperty<QDeclarativeCategory> *prop,
                                   QDeclarativeCategory* value);
@@ -110,7 +102,6 @@ public:
 
 signals:
     void additionalDataChanged();
-    void alternativeNamesChanged();
     void categoriesChanged();
     void contactsChanged();
     void descriptionsChanged();
@@ -130,14 +121,12 @@ signals:
     void detailsFetchedChanged();
 
 private:
-    void synchronizeAlternativeValues();
     void synchronizeCategories();
     void synchronizeContacts();
     void synchronizeDescriptions();
     void synchronizeSuppliers();
 
 private:
-    QList<QDeclarativeAlternativeValue*> m_alternativeValues;
     QList<QDeclarativeCategory*> m_categories;
     QList<QDeclarativeContact*> m_contacts;
     QList<QDeclarativeDescription*> m_descriptions;

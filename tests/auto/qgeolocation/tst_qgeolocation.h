@@ -76,7 +76,6 @@ private Q_SLOTS:
     void coordinate();
     void viewport();
     void additionalData();
-    void alternativeLabels();
     void navigationPositions();
     void label();
     void locationId();
@@ -93,7 +92,6 @@ private:
     QGeoBoundingBox m_viewport;
 
     QVariantHash m_additionalData;
-    QList<QPlaceAlternativeValue> m_alternativeLabels;
     QList<QGeoCoordinate> m_navigationPositions;
     QString m_label;
     QString m_locationId;

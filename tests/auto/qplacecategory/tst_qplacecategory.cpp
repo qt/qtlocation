@@ -14,7 +14,6 @@ public:
 
 private Q_SLOTS:
     void constructorTest();
-    void alternativeNamesTest();
     void categoryIdTest();
     void descriptionTest();
     void nameTest();
@@ -35,21 +34,6 @@ void tst_QPlaceCategory::constructorTest()
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
     delete testObjPtr;
-}
-
-void tst_QPlaceCategory::alternativeNamesTest()
-{
-    QPlaceCategory testObj;
-    QVERIFY2(testObj.alternativeNames().count() == 0, "Wrong default value");
-    QList<QPlaceAlternativeValue> list;
-    QPlaceAlternativeValue altValue;
-    list.append(altValue);
-    altValue.setKey("testData");
-    list.append(altValue);
-    testObj.setAlternativeNames(list);
-    QVERIFY2(testObj.alternativeNames().count() == 2, "Wrong value returned");
-    QVERIFY2(testObj.alternativeNames()[0].key() == QString(), "Wrong key[0] returned");
-    QVERIFY2(testObj.alternativeNames()[1].key() == "testData", "Wrong key[1] returned");
 }
 
 void tst_QPlaceCategory::categoryIdTest()

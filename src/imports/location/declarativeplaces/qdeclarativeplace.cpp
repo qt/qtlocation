@@ -24,7 +24,6 @@ QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src,
         : QObject(parent),
           m_src(src)
 {
-    synchronizeAlternativeValues();
     synchronizeCategories();
     synchronizeContacts();
     synchronizeDescriptions();
@@ -45,10 +44,6 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
 
     if (previous.additionalData() != m_src.additionalData()) {
         emit additionalDataChanged();
-    }
-    if (previous.alternativeNames() != m_src.alternativeNames()) {
-        synchronizeAlternativeValues();
-        emit alternativeNamesChanged();
     }
     if (previous.businessInformation() != m_src.businessInformation()) {
         m_businessInformation.setBusinessInformation(m_src.businessInformation());
@@ -114,11 +109,6 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
 
 QGeoPlace QDeclarativePlace::place()
 {
-    QList<QPlaceAlternativeValue> list;
-    foreach (QDeclarativeAlternativeValue *value, m_alternativeValues) {
-        list.append(value->valueObject());
-    }
-    m_src.setAlternativeNames(list);
     QList<QPlaceCategory> categories;
     foreach (QDeclarativeCategory *value, m_categories) {
         categories.append(value->category());
@@ -420,72 +410,6 @@ void QDeclarativePlace::setReviews(QDeclarativeReviewPaginationList *obj)
 QDeclarativeReviewPaginationList *QDeclarativePlace::reviews()
 {
     return &m_reviewList;
-}
-
-/*!
-    \qmlproperty QDeclarativeListProperty<QDeclarativeAlternativeValue> Place::alternativeNames
-
-    This property holds alternative values for name property.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-QDeclarativeListProperty<QDeclarativeAlternativeValue> QDeclarativePlace::alternativeNames()
-{
-    return QDeclarativeListProperty<QDeclarativeAlternativeValue>(this,
-                                                          0, // opaque data parameter
-                                                          alternativeValue_append,
-                                                          alternativeValue_count,
-                                                          alternativeValue_at,
-                                                          alternativeValue_clear);
-}
-
-void QDeclarativePlace::alternativeValue_append(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop,
-                                                  QDeclarativeAlternativeValue *value)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    QDeclarativeAlternativeValue *altValue = new QDeclarativeAlternativeValue(object);
-    altValue->setValueObject(value->valueObject());
-    object->m_alternativeValues.append(altValue);
-    QList<QPlaceAlternativeValue> list = object->m_src.alternativeNames();
-    list.append(value->valueObject());
-    object->m_src.setAlternativeNames(list);
-    emit object->alternativeNamesChanged();
-}
-
-int QDeclarativePlace::alternativeValue_count(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop)
-{
-    return static_cast<QDeclarativePlace*>(prop->object)->m_alternativeValues.count();
-}
-
-QDeclarativeAlternativeValue* QDeclarativePlace::alternativeValue_at(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop,
-                                                                          int index)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    QDeclarativeAlternativeValue *res = NULL;
-    if (object->m_alternativeValues.count() > index && index > -1) {
-        res = object->m_alternativeValues[index];
-    }
-    return res;
-}
-
-void QDeclarativePlace::alternativeValue_clear(QDeclarativeListProperty<QDeclarativeAlternativeValue> *prop)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    qDeleteAll(object->m_alternativeValues);
-    object->m_alternativeValues.clear();
-    object->m_src.setAlternativeNames(QList<QPlaceAlternativeValue>());
-    emit object->alternativeNamesChanged();
-}
-
-void QDeclarativePlace::synchronizeAlternativeValues()
-{
-    qDeleteAll(m_alternativeValues);
-    m_alternativeValues.clear();
-    foreach (QPlaceAlternativeValue value, m_src.alternativeNames()) {
-        QDeclarativeAlternativeValue* declarativeValue = new QDeclarativeAlternativeValue(value, this);
-        m_alternativeValues.append(declarativeValue);
-    }
 }
 
 /*!

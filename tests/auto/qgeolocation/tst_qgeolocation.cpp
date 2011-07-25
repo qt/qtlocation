@@ -72,8 +72,6 @@ void tst_QGeoLocation::constructor()
     QCOMPARE(m_location.viewport(), m_viewport);
     QCOMPARE(m_location.additionalData().count(), 0);
     QCOMPARE(m_location.additionalData(), m_additionalData );
-    QCOMPARE(m_location.alternativeLabels().count(), 0);
-    QCOMPARE(m_location.alternativeLabels(), m_alternativeLabels);
     QCOMPARE(m_location.label(), m_label);
     QCOMPARE(m_location.locationId(), m_locationId);
 }
@@ -157,23 +155,6 @@ void tst_QGeoLocation::additionalData()
 
     m_additionalData.insert("key3", "value3");
     QVERIFY(m_location.additionalData() != m_additionalData);
-}
-
-void tst_QGeoLocation::alternativeLabels()
-{
-    QPlaceAlternativeValue altValue;
-    m_alternativeLabels.append(altValue);
-
-    altValue.setKey("testData");
-    altValue.setValue("value");
-    m_alternativeLabels.append(altValue);
-
-    m_location.setAlternativeLabels(m_alternativeLabels);
-    QCOMPARE(m_location.alternativeLabels(), m_alternativeLabels);
-
-    altValue.setKey("newKey");
-    m_alternativeLabels.append(altValue);
-    QVERIFY(m_location.alternativeLabels() != m_alternativeLabels);
 }
 
 void tst_QGeoLocation::navigationPositions()
@@ -275,14 +256,6 @@ void tst_QGeoLocation::comparison()
     additionalData.insert("key", "value");
     location.setAdditionalData(additionalData);
 
-    //set alternative labels
-    QPlaceAlternativeValue altValue;
-    QList<QPlaceAlternativeValue> alternativeLabels;
-
-    altValue.setKey("testData");
-    altValue.setValue("value");
-    alternativeLabels.append(altValue);
-
     //set navigation positions
     QList<QGeoCoordinate> navPos;
     navPos.append(QGeoCoordinate(10,2));
@@ -311,11 +284,6 @@ void tst_QGeoLocation::comparison()
         } else if (dataField == "additionalData") {
             additionalData.insert("key", "otherValue");
             otherLocation.setAdditionalData(additionalData);
-        } else if (dataField == "alternativeLabels") {
-            altValue.setKey("otherKey");
-            alternativeLabels.clear();
-            alternativeLabels.append(altValue);
-            otherLocation.setAlternativeLabels(alternativeLabels);
         } else if (dataField == "navigationPositions") {
             navPos.clear();
             navPos.append(QGeoCoordinate(-5, -5));
@@ -339,7 +307,6 @@ void tst_QGeoLocation::comparison_data()
     QTest::newRow("address") << "address";
     QTest::newRow("coordinate") << "coordinate";
     QTest::newRow("additionalData") << "additionalData";
-    QTest::newRow("alternativeLabels") << "alternativeLabels";
     QTest::newRow("navigationPositions") << "navigationPositions";
     QTest::newRow("label") << "label";
     QTest::newRow("locationId") << "locationId";

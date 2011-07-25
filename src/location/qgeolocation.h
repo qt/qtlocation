@@ -50,7 +50,6 @@
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
 #include "qmobilityglobal.h"
-#include "qplacealternativevalue.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -75,8 +74,6 @@ public:
     void setAdditionalData(const QVariantHash &data);
     QGeoAddress address() const;
     void setAddress(const QGeoAddress &address);
-    QList<QPlaceAlternativeValue> alternativeLabels() const;
-    void setAlternativeLabels(const QList<QPlaceAlternativeValue> &labels);
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &position);
     QList<QGeoCoordinate> navigationPositions() const;

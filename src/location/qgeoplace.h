@@ -50,7 +50,6 @@
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
 #include "qgeolocation.h"
-#include "qplacealternativevalue.h"
 #include "qplacebusinessinformation.h"
 #include "qplacecategory.h"
 #include "qplacecontact.h"
@@ -93,8 +92,6 @@ public:
 
     QVariantHash additionalData() const;
     void setAdditionalData(const QVariantHash &data);
-    QList<QPlaceAlternativeValue> alternativeNames() const;
-    void setAlternativeNames(const QList<QPlaceAlternativeValue> &alternativeNames);
     QPlaceBusinessInformation businessInformation() const;
     void setBusinessInformation(const QPlaceBusinessInformation &business);
     QList<QPlaceCategory> categories() const;
