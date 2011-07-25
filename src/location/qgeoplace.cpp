@@ -271,24 +271,6 @@ void QGeoPlace::setAlternativeNames(const QList<QPlaceAlternativeValue> &alterna
 }
 
 /*!
-    Returns place score.
-*/
-qreal QGeoPlace::placeScore() const
-{
-    Q_D(const QGeoPlace);
-    return d->placeScore;
-}
-
-/*!
-    Sets place score.
-*/
-void QGeoPlace::setPlaceScore(const qreal &score)
-{
-    Q_D(QGeoPlace);
-    d->placeScore = score;
-}
-
-/*!
     Returns business info.
 */
 QPlaceBusinessInformation QGeoPlace::businessInformation() const
@@ -618,7 +600,6 @@ void QGeoPlace::setDetailsFetched(bool fetched)
 QGeoPlacePrivate::QGeoPlacePrivate()
         : QSharedData(),
         type(QGeoPlacePrivate::GeoPlaceType),
-        placeScore(0.0),
         mediaCount(0),
         reviewCount(0),
         detailsFetched(false)
@@ -632,7 +613,6 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         coordinate(other.coordinate),
         address(other.address),
         additionalData(other.additionalData),
-        placeScore(other.placeScore),
         businessInfo(other.businessInfo),
         categories(other.categories),
         contacts(other.contacts),
@@ -675,7 +655,6 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
     qDebug() << "address:" << (address == other.address);
     qDebug() << "additionalData: " << (additionalData == other.additionalData);
     qDebug() << "alternativeNames: " << (alternativeNames == other.alternativeNames);
-    qDebug() << "placeScore: " << (placeScore == other.placeScore);
     qDebug() << "businessInfo: " << (businessInfo == other.businessInfo);
     qDebug() << "categories: " << (categories == other.categories);
     qDebug() << "descriptions: " << (descriptions == other.descriptions);
@@ -700,7 +679,6 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
             && address == other.address
             && additionalData == other.additionalData
             && alternativeNames == other.alternativeNames
-            && placeScore == other.placeScore
             && businessInfo == other.businessInfo
             && categories == other.categories
             && contacts == other.contacts

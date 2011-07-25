@@ -51,9 +51,6 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
         synchronizeAlternativeValues();
         emit alternativeNamesChanged();
     }
-    if (previous.placeScore() != m_src.placeScore()) {
-        emit placeScoreChanged();
-    }
     if (previous.businessInformation() != m_src.businessInformation()) {
         m_businessInformation.setBusinessInformation(m_src.businessInformation());
         emit businessInformationChanged();
@@ -297,24 +294,6 @@ void QDeclarativePlace::setShortDescription(const QString &shortDescription)
 QString QDeclarativePlace::shortDescription() const
 {
     return m_src.shortDescription();
-}
-
-/*!
-    \qmlproperty qreal Place::placeScore
-
-    This property holds place score.
-*/
-void QDeclarativePlace::setPlaceScore(const qreal &placeScore)
-{
-    if (m_src.placeScore() != placeScore) {
-        m_src.setPlaceScore(placeScore);
-        emit placeScoreChanged();
-    }
-}
-
-qreal QDeclarativePlace::placeScore() const
-{
-    return m_src.placeScore();
 }
 
 /*!

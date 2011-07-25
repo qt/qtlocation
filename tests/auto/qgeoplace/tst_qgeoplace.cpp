@@ -16,7 +16,6 @@ private Q_SLOTS:
     void constructorTest();
     void additionalDataTest();
     void alternativeNamesTest();
-    void placeScoreTest();
     void businessInformationTest();
     void categoriesTest();
     void contactsTest();
@@ -131,14 +130,6 @@ void tst_QGeoPlace::reviewCountTest()
     QVERIFY2(testObj.reviewCount() == 0, "Wrong default value");
     testObj.setReviewCount(10);
     QVERIFY2(testObj.reviewCount() == 10, "Wrong value returned");
-}
-
-void tst_QGeoPlace::placeScoreTest()
-{
-    QGeoPlace testObj;
-    QVERIFY2(testObj.placeScore() == 0, "Wrong default value");
-    testObj.setPlaceScore(10.123);
-    QVERIFY2(testObj.placeScore() == 10.123, "Wrong value returned");
 }
 
 void tst_QGeoPlace::ratingTest()
@@ -338,7 +329,7 @@ void tst_QGeoPlace::operatorsTest()
     QGeoPlace testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
-    testObj2.setPlaceScore(10.1234);
+    testObj2.setPlaceId("342-456");
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 
