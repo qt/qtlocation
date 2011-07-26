@@ -13,7 +13,6 @@ class QDeclarativeCategory : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString categoryId READ categoryId WRITE setCategoryId NOTIFY categoryIdChanged)
-    Q_PROPERTY(QString description READ description WRITE setDescription NOTIFY descriptionChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
 public:
@@ -26,14 +25,11 @@ public:
 
     QString categoryId() const;
     void setCategoryId(const QString &catID);
-    QString description() const;
-    void setDescription(const QString &description);
     QString name() const;
     void setName(const QString &name);
 
 signals:
     void categoryIdChanged();
-    void descriptionChanged();
     void nameChanged();
 
 private:

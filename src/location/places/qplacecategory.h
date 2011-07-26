@@ -69,8 +69,6 @@ public:
 
     QString categoryId() const;
     void setCategoryId(const QString &catID);
-    QString description() const;
-    void setDescription(const QString &description);
     QString name() const;
     void setName(const QString &name);
 

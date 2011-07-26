@@ -35,9 +35,6 @@ void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
     if (category.categoryId() != previous.categoryId()) {
         emit categoryIdChanged();
     }
-    if (category.description() != previous.description()) {
-        emit descriptionChanged();
-    }
 }
 
 QPlaceCategory QDeclarativeCategory::category()
@@ -62,25 +59,6 @@ void QDeclarativeCategory::setCategoryId(const QString &id)
 QString QDeclarativeCategory::categoryId() const
 {
     return m_category.categoryId();
-}
-
-/*!
-    \qmlproperty string Category::description
-
-    This property holds the description of the category
-*/
-
-void QDeclarativeCategory::setDescription(const QString &description)
-{
-    if (m_category.description() != description) {
-        m_category.setDescription(description);
-        emit descriptionChanged();
-    }
-}
-
-QString QDeclarativeCategory::description() const
-{
-    return m_category.description();
 }
 
 /*!

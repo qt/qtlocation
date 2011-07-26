@@ -55,7 +55,6 @@ QPlaceCategoryPrivate::QPlaceCategoryPrivate(const QPlaceCategoryPrivate &other)
     : QSharedData()
 {
     this->categoryId = other.categoryId;
-    this->description = other.description;
     this->name = other.name;
 }
 
@@ -65,10 +64,8 @@ QPlaceCategoryPrivate::~QPlaceCategoryPrivate()
 
 bool QPlaceCategoryPrivate::operator==(const QPlaceCategoryPrivate &other) const
 {
-    return (this->categoryId == other.categoryId
-            && this->description == other.description
-            && this->name == other.name
-    );
+    return (this->categoryId == other.categoryId)
+            && (this->name == other.name);
 }
 
 /*!
@@ -79,7 +76,7 @@ bool QPlaceCategoryPrivate::operator==(const QPlaceCategoryPrivate &other) const
     \brief The QPlaceCategory class represents a category object.
 
     Each QPlaceCategory represents a category object with a number of attributes
-    such as description, name, id etc. Each QPlaceCategory is associated with place.
+    such as name, id etc. Each QPlaceCategory is associated with place.
 
     Category objects are read-only, e.g. user of API might get business info object
     associated to specific place but can not edit its content. User might also create new
@@ -131,27 +128,11 @@ QString QPlaceCategory::categoryId() const
 }
 
 /*!
-    Sets description.
+    Sets category id to \a catID.
 */
 void QPlaceCategory::setCategoryId(const QString &catID)
 {
     d->categoryId = catID;
-}
-
-/*!
-    Returns description.
-*/
-QString QPlaceCategory::description() const
-{
-    return d->description;
-}
-
-/*!
-    Sets category description.
-*/
-void QPlaceCategory::setDescription(const QString &description)
-{
-    d->description = description;
 }
 
 /*!

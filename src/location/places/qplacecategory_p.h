@@ -59,7 +59,6 @@ public:
     bool operator==(const QPlaceCategoryPrivate &other) const;
 
     QString categoryId;
-    QString description;
     QString name;
 };
 

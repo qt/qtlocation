@@ -53,7 +53,7 @@ void tst_QPlaceSearchQuery::categoriesTest()
     QPlaceSearchQuery testObj;
     QVERIFY2(testObj.categories().count() == 0, "Wrong default value");
     QPlaceCategory cat;
-    cat.setDescription("testDescription");
+    cat.setCategoryId("45346");
     testObj.setCategory(cat);
     QVERIFY2(testObj.categories().count() == 1, "Wrong categories count returned");
     QVERIFY2(testObj.categories()[0] == cat, "Wrong category returned");

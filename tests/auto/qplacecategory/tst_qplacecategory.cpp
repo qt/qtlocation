@@ -15,7 +15,6 @@ public:
 private Q_SLOTS:
     void constructorTest();
     void categoryIdTest();
-    void descriptionTest();
     void nameTest();
     void operatorsTest();
 };
@@ -44,14 +43,6 @@ void tst_QPlaceCategory::categoryIdTest()
     QVERIFY2(testObj.categoryId() == "testText", "Wrong value returned");
 }
 
-void tst_QPlaceCategory::descriptionTest()
-{
-    QPlaceCategory testObj;
-    QVERIFY2(testObj.description() == QString(), "Wrong default value");
-    testObj.setDescription("testText");
-    QVERIFY2(testObj.description() == "testText", "Wrong value returned");
-}
-
 void tst_QPlaceCategory::nameTest()
 {
     QPlaceCategory testObj;
@@ -67,7 +58,7 @@ void tst_QPlaceCategory::operatorsTest()
     QPlaceCategory testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
-    testObj2.setDescription("testValue2");
+    testObj2.setCategoryId("a3rfg");
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 
