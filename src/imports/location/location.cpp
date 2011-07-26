@@ -78,7 +78,6 @@
 #include "qdeclarativebusinessfeature_p.h"
 #include "qdeclarativebusinessinformation_p.h"
 #include "qdeclarativecategory_p.h"
-#include "qdeclarativecontact_p.h"
 #include "qdeclarativedescription_p.h"
 #include "qdeclarativegeolocation_p.h"
 #include "qdeclarativemediaobject_p.h"
@@ -195,7 +194,6 @@ public:
             qmlRegisterType<QDeclarativeBusinessFeature>(uri, 5, 0, "BusinessFeature");
             qmlRegisterType<QDeclarativeBusinessInformation>(uri, 5, 0, "BusinessInformation");
             qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
-            qmlRegisterType<QDeclarativeContact>(uri, 5, 0, "Contact");
             qmlRegisterType<QDeclarativeDescription>(uri, 5, 0, "Description");
             qmlRegisterType<QDeclarativeGeoLocation>(uri, 5, 0, "Location");
             qmlRegisterType<QDeclarativeMediaObject>(uri, 5, 0, "MediaObject");

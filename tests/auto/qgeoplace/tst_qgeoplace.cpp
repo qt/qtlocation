@@ -17,7 +17,6 @@ private Q_SLOTS:
     void additionalDataTest();
     void businessInformationTest();
     void categoriesTest();
-    void contactsTest();
     void descriptionsTest();
     void detailsFetchedTest();
     void locationTest();
@@ -202,20 +201,6 @@ void tst_QGeoPlace::reviewsTest()
     QVERIFY2(testObj.reviews().data()[1].language() == "testName2", "Wrong value returned");
     QVERIFY2(testObj.reviews().start() == 0, "Wrong value returned");
     QVERIFY2(testObj.reviews().stop() == 1, "Wrong value returned");
-}
-
-void tst_QGeoPlace::contactsTest()
-{
-    QGeoPlace testObj;
-    QVERIFY2(testObj.contacts().count() == 0, "Wrong default value");
-    QPlaceContact sup;
-    sup.setDescription("testId");
-    QList<QPlaceContact> list;
-    list.append(sup);
-    sup.setDescription("testName2");
-    list.append(sup);
-    testObj.setContacts(list);
-    QVERIFY2(testObj.contacts().count() == 2, "Wrong value returned");
 }
 
 void tst_QGeoPlace::categoriesTest()

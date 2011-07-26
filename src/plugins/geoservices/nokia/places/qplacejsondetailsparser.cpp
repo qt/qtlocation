@@ -56,7 +56,6 @@
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
 #include <qgeoplace.h>
-#include <qplacecontact.h>
 #include <qplacecategory.h>
 #include <qplacedescription.h>
 #include <qplacerating.h>
@@ -291,30 +290,23 @@ void QPlaceJSonDetailsParser::processMainProvider(const QScriptValue &placeValue
 
 void QPlaceJSonDetailsParser::processContacts(const QScriptValue &contactsValue, QGeoPlace*targetPlace)
 {
-    QList<QPlaceContact> contacts;
     QScriptValueIterator it(contactsValue);
     while (it.hasNext()) {
         it.next();
-        QPlaceContact contact;
         if (it.name() == place_contact_website_element) {
-            contact.setType(QPlaceContact::Url);
         }
         if (it.name() == place_contact_phone_element) {
-            contact.setType(QPlaceContact::Phone);
+
         }
         if (it.name() == place_contact_fax_element) {
-            contact.setType(QPlaceContact::Fax);
         }
         if (it.name() == place_contact_im_element) {
-            contact.setType(QPlaceContact::IM);
         }
         if (it.name() == place_contact_email_element) {
-            contact.setType(QPlaceContact::Email);
         }
-        contact.setValue(it.value().toString());
-        contacts.append(contact);
     }
-    targetPlace->setContacts(contacts);
+    //The JSON data specification still has contacts
+    //for now parse and skip.
 }
 
 void QPlaceJSonDetailsParser::processCategories(const QScriptValue &categories, QGeoPlace*targetPlace)

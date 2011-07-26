@@ -56,7 +56,6 @@
 #include <qgeoaddress.h>
 #include <qgeolocation.h>
 #include <qgeoplace.h>
-#include <qplacecontact.h>
 #include <qplacerating.h>
 #include <qplacecategory.h>
 #include <qplacesupplier.h>
@@ -232,22 +231,14 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValu
 
 void QPlaceJSonSearchParser::processContacts(const QScriptValue &properties, QGeoPlace *place)
 {
-    QList<QPlaceContact> contacts;
     QScriptValue value = properties.property(search_properties_url_value);
     if (value.isValid() && !value.toString().isEmpty()) {
-        QPlaceContact contact;
-        contact.setType(QPlaceContact::Url);
-        contact.setValue(value.toString());
-        contacts.append(contact);
     }
     value = properties.property(search_properties_phone_value);
     if (value.isValid() && !value.toString().isEmpty()) {
-        QPlaceContact contact;
-        contact.setType(QPlaceContact::Phone);
-        contact.setValue(value.toString());
-        contacts.append(contact);
     }
-    place->setContacts(contacts);
+    //The JSON data specification still has contacts so for now
+    //parse and skip
 }
 
 

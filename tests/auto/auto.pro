@@ -18,7 +18,6 @@ SUBDIRS += geotestplugin \
            qgeosearchmanager \
            qplacebusinessfeature \
            qplacecategory \
-           qplacecontact \
            qplacedescription \
            qplacemediaobject \
            qplaceperiod \

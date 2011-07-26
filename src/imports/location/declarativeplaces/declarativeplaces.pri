@@ -11,7 +11,6 @@ SOURCES += \
     declarativeplaces/qdeclarativebusinessfeature.cpp \
     declarativeplaces/qdeclarativebusinessinformation.cpp \
     declarativeplaces/qdeclarativecategory.cpp \
-    declarativeplaces/qdeclarativecontact.cpp \
     declarativeplaces/qdeclarativedescription.cpp \
     declarativeplaces/qdeclarativemediaobject.cpp \
     declarativeplaces/qdeclarativeperiod.cpp \
@@ -34,7 +33,6 @@ HEADERS += \
     declarativeplaces/qdeclarativebusinessfeature_p.h \
     declarativeplaces/qdeclarativebusinessinformation_p.h \
     declarativeplaces/qdeclarativecategory_p.h \
-    declarativeplaces/qdeclarativecontact_p.h \
     declarativeplaces/qdeclarativedescription_p.h \
     declarativeplaces/qdeclarativemediaobject_p.h \
     declarativeplaces/qdeclarativeperiod_p.h \

@@ -13,7 +13,7 @@ QT_USE_NAMESPACE
     \inherits QObject
 
     Place cointains many properties holding data of the place like location,
-    id, contacts etc.
+    id, name etc.
 
     \ingroup qml-places
 */
@@ -29,7 +29,6 @@ QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src, QObject *parent)
     m_complete(false)
 {
     synchronizeCategories();
-    synchronizeContacts();
     synchronizeDescriptions();
     synchronizeSuppliers();
     m_rating.setRating(m_src.rating());
@@ -104,10 +103,6 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
         synchronizeCategories();
         emit categoriesChanged();
     }
-    if (previous.contacts() != m_src.contacts()) {
-        synchronizeContacts();
-        emit contactsChanged();
-    }
     if (previous.descriptions() != m_src.descriptions()) {
         synchronizeDescriptions();
         emit descriptionsChanged();
@@ -156,11 +151,6 @@ QGeoPlace QDeclarativePlace::place()
         categories.append(value->category());
     }
     m_src.setCategories(categories);
-    QList<QPlaceContact> contacts;
-    foreach (QDeclarativeContact *value, m_contacts) {
-        contacts.append(value->contact());
-    }
-    m_src.setContacts(contacts);
     QList<QPlaceDescription> descriptions;
     foreach (QDeclarativeDescription *value, m_descriptions) {
         descriptions.append(value->description());
@@ -537,72 +527,6 @@ void QDeclarativePlace::synchronizeCategories()
     foreach (QPlaceCategory value, m_src.categories()) {
         QDeclarativeCategory* declarativeValue = new QDeclarativeCategory(value, this);
         m_categories.append(declarativeValue);
-    }
-}
-
-/*!
-    \qmlproperty QDeclarativeListProperty<QDeclarativeContact> Place::contacts
-
-    This property contacts list.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-QDeclarativeListProperty<QDeclarativeContact> QDeclarativePlace::contacts()
-{
-    return QDeclarativeListProperty<QDeclarativeContact>(this,
-                                                          0, // opaque data parameter
-                                                          contact_append,
-                                                          contact_count,
-                                                          contact_at,
-                                                          contact_clear);
-}
-
-void QDeclarativePlace::contact_append(QDeclarativeListProperty<QDeclarativeContact> *prop,
-                                                  QDeclarativeContact *value)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    QDeclarativeContact *altValue = new QDeclarativeContact(object);
-    altValue->setContact(value->contact());
-    object->m_contacts.append(altValue);
-    QList<QPlaceContact> list = object->m_src.contacts();
-    list.append(value->contact());
-    object->m_src.setContacts(list);
-    emit object->contactsChanged();
-}
-
-int QDeclarativePlace::contact_count(QDeclarativeListProperty<QDeclarativeContact> *prop)
-{
-    return static_cast<QDeclarativePlace*>(prop->object)->m_contacts.count();
-}
-
-QDeclarativeContact* QDeclarativePlace::contact_at(QDeclarativeListProperty<QDeclarativeContact> *prop,
-                                                                          int index)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    QDeclarativeContact *res = NULL;
-    if (object->m_contacts.count() > index && index > -1) {
-        res = object->m_contacts[index];
-    }
-    return res;
-}
-
-void QDeclarativePlace::contact_clear(QDeclarativeListProperty<QDeclarativeContact> *prop)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    qDeleteAll(object->m_contacts);
-    object->m_contacts.clear();
-    object->m_src.setContacts(QList<QPlaceContact>());
-    emit object->contactsChanged();
-}
-
-void QDeclarativePlace::synchronizeContacts()
-{
-    qDeleteAll(m_contacts);
-    m_contacts.clear();
-    foreach (QPlaceContact value, m_src.contacts()) {
-        QDeclarativeContact* declarativeValue = new QDeclarativeContact(value, this);
-        m_contacts.append(declarativeValue);
     }
 }
 

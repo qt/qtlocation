@@ -8,7 +8,6 @@
 #include "qdeclarativebusinessinformation_p.h"
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativesupplier_p.h"
-#include "qdeclarativecontact_p.h"
 #include "qdeclarativerating_p.h"
 #include "qdeclarativedescription_p.h"
 #include "qdeclarativereviewmodel_p.h"
@@ -25,7 +24,6 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QVariantHash additionalData READ additionalData WRITE setAdditionalData NOTIFY additionalDataChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeContact> contacts READ contacts NOTIFY contactsChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeDescription> descriptions READ descriptions NOTIFY descriptionsChanged)
     Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
     Q_PROPERTY(QDeclarativeBusinessInformation* businessInformation READ businessInformation WRITE setBusinessInformation NOTIFY businessInformationChanged);
@@ -69,12 +67,6 @@ public:
     static int category_count(QDeclarativeListProperty<QDeclarativeCategory> *prop);
     static QDeclarativeCategory* category_at(QDeclarativeListProperty<QDeclarativeCategory> *prop, int index);
     static void category_clear(QDeclarativeListProperty<QDeclarativeCategory> *prop);
-    QDeclarativeListProperty<QDeclarativeContact> contacts();
-    static void contact_append(QDeclarativeListProperty<QDeclarativeContact> *prop,
-                                  QDeclarativeContact* value);
-    static int contact_count(QDeclarativeListProperty<QDeclarativeContact> *prop);
-    static QDeclarativeContact* contact_at(QDeclarativeListProperty<QDeclarativeContact> *prop, int index);
-    static void contact_clear(QDeclarativeListProperty<QDeclarativeContact> *prop);
     QDeclarativeListProperty<QDeclarativeDescription> descriptions();
     static void descriptions_append(QDeclarativeListProperty<QDeclarativeDescription> *prop,
                                   QDeclarativeDescription* value);
@@ -115,7 +107,6 @@ signals:
     void pluginChanged();
     void additionalDataChanged();
     void categoriesChanged();
-    void contactsChanged();
     void descriptionsChanged();
     void locationChanged();
     void ratingChanged();
@@ -137,13 +128,11 @@ private slots:
 
 private:
     void synchronizeCategories();
-    void synchronizeContacts();
     void synchronizeDescriptions();
     void synchronizeSuppliers();
 
 private:
     QList<QDeclarativeCategory*> m_categories;
-    QList<QDeclarativeContact*> m_contacts;
     QList<QDeclarativeDescription*> m_descriptions;
     QDeclarativeGeoLocation m_location;
     QDeclarativeRating m_rating;

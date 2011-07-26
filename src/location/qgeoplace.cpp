@@ -289,24 +289,6 @@ void QGeoPlace::setCategories(const QList<QPlaceCategory> &categories)
 }
 
 /*!
-    Returns contacts.
-*/
-QList<QPlaceContact> QGeoPlace::contacts() const
-{
-    Q_D(const QGeoPlace);
-    return d->contacts;
-}
-
-/*!
-    Sets contacts.
-*/
-void QGeoPlace::setContacts(const QList<QPlaceContact> &contacts)
-{
-    Q_D(QGeoPlace);
-    d->contacts = contacts;
-}
-
-/*!
     Returns descriptions.
 */
 QList<QPlaceDescription> QGeoPlace::descriptions() const
@@ -579,7 +561,6 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         additionalData(other.additionalData),
         businessInfo(other.businessInfo),
         categories(other.categories),
-        contacts(other.contacts),
         descriptions(other.descriptions),
         location(other.location),
         rating(other.rating),
@@ -641,7 +622,6 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
             && additionalData == other.additionalData
             && businessInfo == other.businessInfo
             && categories == other.categories
-            && contacts == other.contacts
             && descriptions == other.descriptions
             && location == other.location
             && rating == other.rating

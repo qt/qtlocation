@@ -52,7 +52,6 @@
 #include "qgeolocation.h"
 #include "qplacebusinessinformation.h"
 #include "qplacecategory.h"
-#include "qplacecontact.h"
 #include "qplacedescription.h"
 #include "qplacerating.h"
 #include "qplacepaginationlist.h"
@@ -96,8 +95,6 @@ public:
     void setBusinessInformation(const QPlaceBusinessInformation &business);
     QList<QPlaceCategory> categories() const;
     void setCategories(const QList<QPlaceCategory> &categories);
-    QList<QPlaceContact> contacts() const;
-    void setContacts(const QList<QPlaceContact> &contacts);
     QList<QPlaceDescription> descriptions() const;
     void setDescriptions(const QList<QPlaceDescription> &descriptions);
     QGeoLocation location() const;

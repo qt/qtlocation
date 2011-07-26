@@ -88,7 +88,6 @@ public:
     QVariantHash additionalData;
     QPlaceBusinessInformation businessInfo;
     QList<QPlaceCategory> categories;
-    QList<QPlaceContact> contacts;
     QList<QPlaceDescription> descriptions;
     QGeoLocation location;
     QPlaceRating rating;

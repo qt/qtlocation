@@ -6,7 +6,6 @@ PUBLIC_HEADERS += \
     places/qplacebusinessfeature.h \
     places/qplacebusinessinformation.h \
     places/qplacecategory.h \
-    places/qplacecontact.h \
     places/qplacedescription.h \
     places/qplacemediaobject.h \
     places/qplacepaginationlist.h \
@@ -36,7 +35,6 @@ PRIVATE_HEADERS += \
     places/qplacebusinessfeature_p.h \
     places/qplacebusinessinformation_p.h \
     places/qplacecategory_p.h \
-    places/qplacecontact_p.h \
     places/qplacedescription_p.h \
     places/qplacemediaobject_p.h \
     places/qplaceperiod_p.h \
@@ -54,7 +52,6 @@ SOURCES += \
     places/qplacebusinessfeature.cpp \
     places/qplacebusinessinformation.cpp \
     places/qplacecategory.cpp \
-    places/qplacecontact.cpp \
     places/qplacedescription.cpp \
     places/qplacemediaobject.cpp \
     places/qplaceperiod.cpp \
