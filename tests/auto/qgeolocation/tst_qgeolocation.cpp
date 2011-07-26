@@ -156,23 +156,6 @@ void tst_QGeoLocation::additionalData()
     QVERIFY(m_location.additionalData() != m_additionalData);
 }
 
-void tst_QGeoLocation::navigationPositions()
-{
-    QGeoCoordinate coordinate1, coordinate2;
-    coordinate1.setLatitude(10);
-    coordinate1.setLongitude(10);
-    coordinate2.setLatitude(2);
-    coordinate2.setLongitude(2);
-    m_navigationPositions.append(coordinate1);
-    m_navigationPositions.append(coordinate2);
-
-    m_location.setNavigationPositions(m_navigationPositions);
-    QCOMPARE(m_location.navigationPositions(), m_navigationPositions);
-
-    m_navigationPositions.append(coordinate1);
-    QVERIFY(m_location.navigationPositions() != m_navigationPositions);
-}
-
 void tst_QGeoLocation::locationId()
 {
     m_locationId = "id";
@@ -245,11 +228,6 @@ void tst_QGeoLocation::comparison()
     additionalData.insert("key", "value");
     location.setAdditionalData(additionalData);
 
-    //set navigation positions
-    QList<QGeoCoordinate> navPos;
-    navPos.append(QGeoCoordinate(10,2));
-    location.setNavigationPositions(navPos);
-
     //set locationId
     location.setLocationId("id");
 
@@ -270,10 +248,6 @@ void tst_QGeoLocation::comparison()
         } else if (dataField == "additionalData") {
             additionalData.insert("key", "otherValue");
             otherLocation.setAdditionalData(additionalData);
-        } else if (dataField == "navigationPositions") {
-            navPos.clear();
-            navPos.append(QGeoCoordinate(-5, -5));
-            otherLocation.setNavigationPositions(navPos);
         } else if (dataField == "locationId") {
             otherLocation.setLocationId("otherId");
         } else {
@@ -291,7 +265,6 @@ void tst_QGeoLocation::comparison_data()
     QTest::newRow("address") << "address";
     QTest::newRow("coordinate") << "coordinate";
     QTest::newRow("additionalData") << "additionalData";
-    QTest::newRow("navigationPositions") << "navigationPositions";
     QTest::newRow("locationId") << "locationId";
 }
 

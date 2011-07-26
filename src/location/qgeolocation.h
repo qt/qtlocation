@@ -76,8 +76,6 @@ public:
     void setAddress(const QGeoAddress &address);
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &position);
-    QList<QGeoCoordinate> navigationPositions() const;
-    void setNavigationPositions(const QList<QGeoCoordinate> &positions);
     QString locationId() const;
     void setLocationId(const QString &locationId);
     QGeoBoundingBox viewport() const;

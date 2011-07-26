@@ -59,7 +59,6 @@ public:
     QVariantHash additionalData;
     QGeoAddress address;
     QGeoCoordinate coordinate;
-    QList<QGeoCoordinate> navigationPositions;
     QString locationId;
     QGeoBoundingBox viewport;
 };

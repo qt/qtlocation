@@ -27,9 +27,6 @@ QDeclarativeGeoLocation::QDeclarativeGeoLocation(const QGeoLocation &src,
           m_coordinate(src.coordinate()),
           m_boundingBox(src.viewport())
 {
-    for (int i = 0; i < src.navigationPositions().count(); ++i) {
-        m_navigationPositions.append(new QDeclarativeCoordinate(src.navigationPositions().at(i)));
-    }
 }
 
 QDeclarativeGeoLocation::~QDeclarativeGeoLocation()
@@ -52,10 +49,6 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
         m_coordinate.setCoordinate(m_src.coordinate());
         emit coordinateChanged();
     }
-    if (previous.navigationPositions() != m_src.navigationPositions()) {
-        synchronizeNavigationPositions();
-        emit navigationPositionsChanged();
-    }
     if (previous.locationId() != m_src.locationId()) {
         emit locationIdChanged();
     }
@@ -66,11 +59,6 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
 
 QGeoLocation QDeclarativeGeoLocation::location()
 {
-    QList<QGeoCoordinate> navigationList;
-    foreach (QDeclarativeCoordinate *value, m_navigationPositions) {
-        navigationList.append(value->coordinate());
-    }
-    m_src.setNavigationPositions(navigationList);
     m_src.setAddress(m_address.address());
     m_src.setCoordinate(m_coordinate.coordinate());
     m_src.setViewport(m_boundingBox.box());
@@ -175,70 +163,4 @@ void QDeclarativeGeoLocation::setViewport(QDeclarativeGeoBoundingBox *viewport)
 QDeclarativeGeoBoundingBox *QDeclarativeGeoLocation::viewport()
 {
     return &m_boundingBox;
-}
-
-/*!
-    \qmlproperty QDeclarativeListProperty<QDeclarativeCoordinate> Location::navigationPositions
-
-    This property navigation coordinates for location.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoLocation::navigationPositions()
-{
-    return QDeclarativeListProperty<QDeclarativeCoordinate>(this,
-                                                          0, // opaque data parameter
-                                                          navigationPosition_append,
-                                                          navigationPosition_count,
-                                                          navigationPosition_at,
-                                                          navigationPosition_clear);
-}
-
-void QDeclarativeGeoLocation::navigationPosition_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop,
-                                                  QDeclarativeCoordinate *value)
-{
-    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
-    QDeclarativeCoordinate *altValue = new QDeclarativeCoordinate(object);
-    altValue->setCoordinate(value->coordinate());
-    object->m_navigationPositions.append(altValue);
-    QList<QGeoCoordinate> list = object->m_src.navigationPositions();
-    list.append(value->coordinate());
-    object->m_src.setNavigationPositions(list);
-    emit object->navigationPositionsChanged();
-}
-
-int QDeclarativeGeoLocation::navigationPosition_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
-{
-    return static_cast<QDeclarativeGeoLocation*>(prop->object)->m_navigationPositions.count();
-}
-
-QDeclarativeCoordinate* QDeclarativeGeoLocation::navigationPosition_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop,
-                                                                          int index)
-{
-    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
-    QDeclarativeCoordinate *res = NULL;
-    if (object->m_navigationPositions.count() > index && index > -1) {
-        res = object->m_navigationPositions[index];
-    }
-    return res;
-}
-
-void QDeclarativeGeoLocation::navigationPosition_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
-{
-    QDeclarativeGeoLocation* object = static_cast<QDeclarativeGeoLocation*>(prop->object);
-    qDeleteAll(object->m_navigationPositions);
-    object->m_navigationPositions.clear();
-    object->m_src.setNavigationPositions(QList<QGeoCoordinate>());
-    emit object->navigationPositionsChanged();
-}
-
-void QDeclarativeGeoLocation::synchronizeNavigationPositions()
-{
-    qDeleteAll(m_navigationPositions);
-    m_navigationPositions.clear();
-    foreach (QGeoCoordinate value, m_src.navigationPositions()) {
-        QDeclarativeCoordinate* declarativeValue = new QDeclarativeCoordinate(value, this);
-        m_navigationPositions.append(declarativeValue);
-    }
 }

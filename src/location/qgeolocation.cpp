@@ -55,7 +55,6 @@ QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
     this->additionalData = other.additionalData;
     this->address = other.address;
     this->coordinate = other.coordinate;
-    this->navigationPositions = other.navigationPositions;
     this->locationId = other.locationId;
     this->viewport = other.viewport;
 }
@@ -69,7 +68,6 @@ bool QGeoLocationPrivate::operator==(const QGeoLocationPrivate &other) const
     return  (this->additionalData == other.additionalData
             && this->address == other.address
             && this->coordinate == other.coordinate
-            && this->navigationPositions == other.navigationPositions
             && this->locationId == other.locationId
             && this->viewport == other.viewport);
 
@@ -167,22 +165,6 @@ QGeoCoordinate QGeoLocation::coordinate() const
 void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
 {
     d->coordinate = coordinate;
-}
-
-/*!
-    Returns navigation positions.
-*/
-QList<QGeoCoordinate> QGeoLocation::navigationPositions() const
-{
-    return d->navigationPositions;
-}
-
-/*!
-    Sets navigation positions.
-*/
-void QGeoLocation::setNavigationPositions(const QList<QGeoCoordinate> &positions)
-{
-    d->navigationPositions = positions;
 }
 
 /*!
