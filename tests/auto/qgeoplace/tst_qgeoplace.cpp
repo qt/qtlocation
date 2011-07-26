@@ -323,7 +323,7 @@ void tst_QGeoPlace::operatorsTest()
     tags << "1" << "2" << "3";
     testObj.setTags(tags);
     QGeoLocation loc;
-    loc.setLocationScore(10);
+    loc.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(loc);
 
     QGeoPlace testObj2;
