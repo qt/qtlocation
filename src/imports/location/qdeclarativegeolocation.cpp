@@ -56,9 +56,6 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
         synchronizeNavigationPositions();
         emit navigationPositionsChanged();
     }
-    if (previous.label() != m_src.label()) {
-        emit labelChanged();
-    }
     if (previous.locationId() != m_src.locationId()) {
         emit locationIdChanged();
     }
@@ -138,24 +135,6 @@ void QDeclarativeGeoLocation::setCoordinate(QDeclarativeCoordinate *coordinate)
 QDeclarativeCoordinate *QDeclarativeGeoLocation::coordinate()
 {
     return &m_coordinate;
-}
-
-/*!
-    \qmlproperty string Location::label
-
-    This property holds label.
-*/
-void QDeclarativeGeoLocation::setLabel(const QString &label)
-{
-    if (m_src.label() != label) {
-        m_src.setLabel(label);
-        emit labelChanged();
-    }
-}
-
-QString QDeclarativeGeoLocation::label() const
-{
-    return m_src.label();
 }
 
 /*!

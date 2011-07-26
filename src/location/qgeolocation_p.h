@@ -60,7 +60,6 @@ public:
     QGeoAddress address;
     QGeoCoordinate coordinate;
     QList<QGeoCoordinate> navigationPositions;
-    QString label;
     QString locationId;
     QGeoBoundingBox viewport;
 };

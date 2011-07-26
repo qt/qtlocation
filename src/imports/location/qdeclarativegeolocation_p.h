@@ -18,7 +18,6 @@ class QDeclarativeGeoLocation : public QObject
     Q_PROPERTY(QDeclarativeGeoAddress* address READ address WRITE setAddress NOTIFY addressChanged);
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> navigationPositions READ navigationPositions NOTIFY navigationPositionsChanged)
-    Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged);
     Q_PROPERTY(QString locationId READ locationId WRITE setLocationId NOTIFY locationIdChanged);
     Q_PROPERTY(QDeclarativeGeoBoundingBox* viewport READ viewport WRITE setViewport NOTIFY viewportChanged);
 
@@ -42,8 +41,6 @@ public:
     static int navigationPosition_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
     static QDeclarativeCoordinate* navigationPosition_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index);
     static void navigationPosition_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
-    QString label() const;
-    void setLabel(const QString &label);
     QString locationId() const;
     void setLocationId(const QString &locationId);
     QDeclarativeGeoBoundingBox *viewport();
@@ -54,7 +51,6 @@ signals:
     void addressChanged();
     void coordinateChanged();
     void navigationPositionsChanged();
-    void labelChanged();
     void locationIdChanged();
     void viewportChanged();
 

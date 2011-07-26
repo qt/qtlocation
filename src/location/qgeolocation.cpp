@@ -56,7 +56,6 @@ QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
     this->address = other.address;
     this->coordinate = other.coordinate;
     this->navigationPositions = other.navigationPositions;
-    this->label = other.label;
     this->locationId = other.locationId;
     this->viewport = other.viewport;
 }
@@ -71,7 +70,6 @@ bool QGeoLocationPrivate::operator==(const QGeoLocationPrivate &other) const
             && this->address == other.address
             && this->coordinate == other.coordinate
             && this->navigationPositions == other.navigationPositions
-            && this->label == other.label
             && this->locationId == other.locationId
             && this->viewport == other.viewport);
 
@@ -85,11 +83,7 @@ bool QGeoLocationPrivate::operator==(const QGeoLocationPrivate &other) const
     \brief The QGeoLocation class represents a location object.
 
     Each QGeoLocation represents a location object with a number of attributes
-    such as label, display position etc. Each QGeoLocation is associated with place.
-
-    Location objects are read-only, e.g. user of API might get location object
-    associated to specific place but can not edit its content. User might also create new
-    location object and add it to place.
+    such as address, display position etc.
 
     QGeoLocation is an in memory representation of a location object.
 */
@@ -189,22 +183,6 @@ QList<QGeoCoordinate> QGeoLocation::navigationPositions() const
 void QGeoLocation::setNavigationPositions(const QList<QGeoCoordinate> &positions)
 {
     d->navigationPositions = positions;
-}
-
-/*!
-    Returns label.
-*/
-QString QGeoLocation::label() const
-{
-    return d->label;
-}
-
-/*!
-    Sets label.
-*/
-void QGeoLocation::setLabel(const QString &label)
-{
-    d->label = label;
 }
 
 /*!
