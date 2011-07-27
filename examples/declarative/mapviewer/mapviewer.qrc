@@ -30,5 +30,9 @@
         <file>resources/marker.png</file>
         <file>resources/marker_selected.png</file>
         <file>resources/marker_hovered.png</file>
+        <file>resources/node.png</file>
+        <file>resources/node_selected.png</file>
+        <file>resources/catch.png</file>
+        <file>resources/scale.png</file>
     </qresource>
 </RCC>

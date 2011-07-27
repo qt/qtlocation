@@ -505,26 +505,6 @@ Item {
             page.state = "Message"
         }
 
-        onShowRouteInfo: {
-            var value = map.routeModel.get(0).travelTime
-            var seconds = value % 60
-            value /= 60
-            value = Math.round(value)
-            var minutes = value % 60
-            value /= 60
-            value = Math.round(value)
-            var hours = value
-            var dist = roundNumber(map.routeModel.get(0).distance,0)
-
-            if (dist>1000) dist = dist/1000 + " km"
-            else dist = dist + " m"
-
-            messageDialog.title = "Route info"
-            messageDialog.text = "<b>Travel time:</b> " + hours + "h:"+ minutes + "m<br/><b>Distance:</b> " + dist;
-
-            page.state = "Message"
-        }
-
         onGeocodeFinished:{
             var street, district, city, county, state, countryCode, country, latitude, longitude, text
 
@@ -576,13 +556,6 @@ Item {
         if (country) text +="<b>Country: </b>"+ country + " <br/>"
         if (postcode) text +="<b>Postcode: </b>"+ postcode + " <br/>"
         return text
-    }
-
-
-    function roundNumber(number, digits) {
-            var multiple = Math.pow(10, digits);
-            var rndedNum = Math.round(number * multiple) / multiple;
-            return rndedNum;
     }
 
 //=====================States of page=====================
