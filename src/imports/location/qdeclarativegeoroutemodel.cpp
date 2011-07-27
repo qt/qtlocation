@@ -53,8 +53,6 @@ QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
       complete_(false),
       plugin_(0),
       routeQuery_(0),
-      serviceProvider_(0),
-      routingManager_(0),
       reply_(0),
       autoUpdate_(false),
       status_(QDeclarativeGeoRouteModel::Null)
@@ -68,8 +66,6 @@ QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
 
 QDeclarativeGeoRouteModel::~QDeclarativeGeoRouteModel()
 {
-    if (serviceProvider_)
-        delete serviceProvider_;
     if (!routes_.empty()) {
         qDeleteAll(routes_);
         routes_.clear();
@@ -163,22 +159,16 @@ void QDeclarativeGeoRouteModel::setPlugin(QDeclarativeGeoServiceProvider *plugin
     plugin_ = plugin;
     if (complete_)
         emit pluginChanged();
-    serviceProvider_ = new QGeoServiceProvider(plugin_->name(),
-                                               plugin_->parameterMap());
-    routingManager_ = serviceProvider_->routingManager();
-    if (!routingManager_ || serviceProvider_->error() != QGeoServiceProvider::NoError) {
+    QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
+    QGeoRoutingManager *routingManager = serviceProvider->routingManager();
+    if (!routingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
         qmlInfo(this) << tr("Warning: Plugin does not support routing.");
-        routingManager_ = 0;
         return;
     }
-    connect(routingManager_,
-            SIGNAL(finished(QGeoRouteReply*)),
-            this,
-            SLOT(routingFinished(QGeoRouteReply*)));
-    connect(routingManager_,
-            SIGNAL(error(QGeoRouteReply*, QGeoRouteReply::Error, QString)),
-            this,
-            SLOT(routingError(QGeoRouteReply*, QGeoRouteReply::Error, QString)));
+    connect(routingManager, SIGNAL(finished(QGeoRouteReply*)),
+            this, SLOT(routingFinished(QGeoRouteReply*)));
+    connect(routingManager, SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
+            this, SLOT(routingError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
 }
 
 void QDeclarativeGeoRouteModel::queryDetailsChanged()
@@ -262,7 +252,18 @@ void QDeclarativeGeoRouteModel::update()
 {
     if (!complete_)
         return;
-    if (!routingManager_) {
+
+    if (!plugin_) {
+        qmlInfo(this) << tr("Plugin not set, cannot route.");
+        return;
+    }
+
+    QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QGeoRoutingManager *routingManager = serviceProvider->routingManager();
+    if (!routingManager) {
         qmlInfo(this) << tr("No routing manager available, cannot route.");
         return;
     }
@@ -279,7 +280,7 @@ void QDeclarativeGeoRouteModel::update()
 
     setError("");   // clear previous error string
 
-    reply_ = routingManager_->calculateRoute(request);
+    reply_ = routingManager->calculateRoute(request);
     setStatus(QDeclarativeGeoRouteModel::Loading);
     if (reply_->isFinished()) {
         if (reply_->error() == QGeoRouteReply::NoError) {

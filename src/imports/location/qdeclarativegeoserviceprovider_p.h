@@ -51,6 +51,8 @@
 
 QT_BEGIN_NAMESPACE
 
+class QGeoServiceProvider;
+
 class QDeclarativeGeoServiceProviderParameter : public QObject
 {
     Q_OBJECT
@@ -110,6 +112,8 @@ public:
     bool supportsRouting() const;
     bool supportsMapping() const;
 
+    QGeoServiceProvider *sharedGeoServiceProvider();
+
 Q_SIGNALS:
     void nameChanged(const QString &name);
     void supportsGeocodingChanged();
@@ -128,6 +132,7 @@ private:
     void setSupportsRouting(bool supports);
     void setSupportsMapping(bool supports);
 
+    QGeoServiceProvider *sharedProvider_;
     QString name_;
     QList<QDeclarativeGeoServiceProviderParameter*> parameters_;
     bool supportsGeocoding_;

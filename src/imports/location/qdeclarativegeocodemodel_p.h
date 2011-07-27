@@ -150,8 +150,6 @@ private:
     QGeoSearchReply* reply_;
 
     QDeclarativeGeoServiceProvider* plugin_;
-    QGeoServiceProvider* serviceProvider_;
-    QGeoSearchManager* searchManager_;
     QPointer<QObject> boundingArea_;
     QGeoBoundingBox boundingBox_;
     QGeoBoundingCircle boundingCircle_;

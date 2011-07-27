@@ -185,8 +185,6 @@ private:
     QDeclarativeGeoMapMouseEvent* createMapMouseEvent(QGraphicsSceneHoverEvent *event);
 
     QDeclarativeGeoServiceProvider* plugin_;
-    QGeoServiceProvider* serviceProvider_;
-    QGeoMappingManager* mappingManager_;
     QGeoMapData* mapData_;
 
     qreal zoomLevel_;

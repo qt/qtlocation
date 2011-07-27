@@ -144,8 +144,6 @@ private:
 
     QDeclarativeGeoServiceProvider* plugin_;
     QDeclarativeGeoRouteQuery* routeQuery_;
-    QGeoServiceProvider* serviceProvider_;
-    QGeoRoutingManager* routingManager_;
     QGeoRouteReply* reply_;
 
     QList<QDeclarativeGeoRoute*> routes_;

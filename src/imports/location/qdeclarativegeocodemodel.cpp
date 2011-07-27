@@ -55,8 +55,6 @@ QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject* parent)
       complete_(false),
       reply_(0),
       plugin_(0),
-      serviceProvider_(0),
-      searchManager_(0),
       boundingArea_(0),
       status_(QDeclarativeGeocodeModel::Null),
       coordinate_(0),
@@ -70,7 +68,6 @@ QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject* parent)
 
 QDeclarativeGeocodeModel::~QDeclarativeGeocodeModel()
 {
-    delete serviceProvider_;
     qDeleteAll(declarativeLocations_);
     declarativeLocations_.clear();
     delete reply_;
@@ -98,7 +95,18 @@ void QDeclarativeGeocodeModel::update()
 {
     if (!complete_)
         return;
-    if (!searchManager_) {
+
+    if (!plugin_) {
+        qmlInfo(this) << tr("Cannot geocode, plugin not set.");
+        return;
+    }
+
+    QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QGeoSearchManager *searchManager = serviceProvider->searchManager();
+    if (!searchManager) {
         qmlInfo(this) << tr("Cannot geocode, search manager (/plugin) not set.");
         return;
     }
@@ -112,9 +120,7 @@ void QDeclarativeGeocodeModel::update()
 
     if (coordinate_) {
         setStatus(QDeclarativeGeocodeModel::Loading);
-        reply_ = searchManager_->reverseGeocode(
-                    coordinate_->coordinate(),
-                    boundingArea());
+        reply_ = searchManager->reverseGeocode(coordinate_->coordinate(), boundingArea());
         if (reply_->isFinished()) {
             if (reply_->error() == QGeoSearchReply::NoError) {
                 searchFinished(reply_);
@@ -124,9 +130,7 @@ void QDeclarativeGeocodeModel::update()
         }
     } else if (address_) {
         setStatus(QDeclarativeGeocodeModel::Loading);
-        reply_ = searchManager_->geocode(
-                    address_->address(),
-                    boundingArea());
+        reply_ = searchManager->geocode(address_->address(), boundingArea());
         if (reply_->isFinished()) {
             if (reply_->error() == QGeoSearchReply::NoError) {
                 searchFinished(reply_);
@@ -181,22 +185,16 @@ void QDeclarativeGeocodeModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     plugin_ = plugin;
     if (complete_)
         emit pluginChanged();
-    serviceProvider_ = new QGeoServiceProvider(plugin_->name(),
-                                               plugin_->parameterMap());
-    searchManager_ = serviceProvider_->searchManager();
-    if (!searchManager_ || serviceProvider_->error() != QGeoServiceProvider::NoError) {
+    QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
+    QGeoSearchManager *searchManager = serviceProvider->searchManager();
+    if (!searchManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
         qmlInfo(this) << tr("Warning: Plugin does not support (reverse) geocoding.");
-        searchManager_ = 0;
         return;
     }
-    connect(searchManager_,
-            SIGNAL(finished(QGeoSearchReply*)),
-            this,
-            SLOT(searchFinished(QGeoSearchReply*)));
-    connect(searchManager_,
-            SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)),
-            this,
-            SLOT(searchError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
+    connect(searchManager, SIGNAL(finished(QGeoSearchReply*)),
+            this, SLOT(searchFinished(QGeoSearchReply*)));
+    connect(searchManager, SIGNAL(error(QGeoSearchReply*,QGeoSearchReply::Error,QString)),
+            this, SLOT(searchError(QGeoSearchReply*,QGeoSearchReply::Error,QString)));
 }
 
 QDeclarativeGeoServiceProvider* QDeclarativeGeocodeModel::plugin() const
