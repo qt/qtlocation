@@ -291,22 +291,36 @@ void QPlaceJSonDetailsParser::processMainProvider(const QScriptValue &placeValue
 void QPlaceJSonDetailsParser::processContacts(const QScriptValue &contactsValue, QGeoPlace*targetPlace)
 {
     QScriptValueIterator it(contactsValue);
+    bool phoneRetrieved = false;
+    bool faxRetrieved = false;
+    bool emailRetrieved = false;
+    bool urlRetrieved = false;
     while (it.hasNext()) {
         it.next();
         if (it.name() == place_contact_website_element) {
-        }
-        if (it.name() == place_contact_phone_element) {
-
-        }
-        if (it.name() == place_contact_fax_element) {
-        }
-        if (it.name() == place_contact_im_element) {
-        }
-        if (it.name() == place_contact_email_element) {
+            if (!urlRetrieved) {
+                targetPlace->setPrimaryUrl(QUrl::fromEncoded(it.value().toString().toAscii()));
+                urlRetrieved = true;
+            }
+        } else if (it.name() == place_contact_phone_element) {
+            if (!phoneRetrieved) {
+                targetPlace->setPrimaryPhone(it.value().toString());
+                phoneRetrieved = true;
+            }
+        } else if (it.name() == place_contact_fax_element) {
+            if (!faxRetrieved) {
+                targetPlace->setPrimaryFax(it.value().toString());
+                faxRetrieved = true;
+            }
+        } else if (it.name() == place_contact_email_element) {
+            if (!emailRetrieved) {
+                targetPlace->setPrimaryEmail(it.value().toString());
+                faxRetrieved = true;
+            }
+        } else {
+            //unknown contact element, do nothing
         }
     }
-    //The JSON data specification still has contacts
-    //for now parse and skip.
 }
 
 void QPlaceJSonDetailsParser::processCategories(const QScriptValue &categories, QGeoPlace*targetPlace)

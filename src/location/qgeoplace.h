@@ -122,6 +122,18 @@ public:
     QStringList tags() const;
     void setTags(const QStringList &tags);
 
+    QString primaryPhone() const;
+    void setPrimaryPhone(const QString &phone);
+
+    QString primaryFax() const;
+    void setPrimaryFax(const QString fax);
+
+    QString primaryEmail() const;
+    void setPrimaryEmail(const QString &email);
+
+    QUrl primaryUrl() const;
+    void setPrimaryUrl(const QUrl &url);
+
     bool detailsFetched() const;
     void setDetailsFetched(bool fetched);
 

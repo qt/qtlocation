@@ -31,6 +31,10 @@ private Q_SLOTS:
     void reviewCountTest();
     void shortDescriptionTest();
     void tagsTest();
+    void primaryPhoneTest();
+    void primaryFaxTest();
+    void primaryEmailTest();
+    void primaryUrlTest();
     void operatorsTest();
 };
 
@@ -252,6 +256,55 @@ void tst_QGeoPlace::tagsTest()
     testObj.setTags(list);
     QVERIFY2(testObj.tags().count() == 3, "Wrong value returned");
     QVERIFY2(testObj.tags()[1] == "2", "Wrong [1] value returned");
+}
+
+void tst_QGeoPlace::primaryPhoneTest()
+{
+    QGeoPlace place;
+    QVERIFY2(place.primaryPhone().isEmpty(), "Wrong default value");
+
+    place.setPrimaryPhone("555-5555");
+    QCOMPARE(place.primaryPhone(), QString("555-5555"));
+
+    place.setPrimaryPhone(QString());
+    QCOMPARE(place.primaryPhone(), QString());
+}
+
+void tst_QGeoPlace::primaryFaxTest()
+{
+    QGeoPlace place;
+    QVERIFY2(place.primaryFax().isEmpty(), "Wrong default value");
+
+    place.setPrimaryFax("555-5555");
+    QCOMPARE(place.primaryFax(), QString("555-5555"));
+
+    place.setPrimaryFax(QString());
+    QCOMPARE(place.primaryFax(), QString());
+}
+
+void tst_QGeoPlace::primaryEmailTest()
+{
+    QGeoPlace place;
+    QVERIFY2(place.primaryEmail().isEmpty(), "Wrong default value");
+
+    place.setPrimaryEmail("test@test.com");
+    QCOMPARE(place.primaryEmail(), QString("test@test.com"));
+
+
+    place.setPrimaryEmail(QString());
+    QCOMPARE(place.primaryEmail(), QString());
+}
+
+void tst_QGeoPlace::primaryUrlTest()
+{
+    QGeoPlace place;
+    QVERIFY2(place.primaryUrl().isEmpty(), "Wron default value");
+
+    place.setPrimaryUrl(QUrl("www.winterfell.com"));
+    QCOMPARE(place.primaryUrl(), QUrl("www.winterfell.com"));
+
+    place.setPrimaryUrl(QUrl());
+    QCOMPARE(place.primaryUrl(), QUrl());
 }
 
 void tst_QGeoPlace::operatorsTest()

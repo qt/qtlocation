@@ -523,6 +523,78 @@ void QGeoPlace::setTags(const QStringList &tags)
 }
 
 /*!
+    Returns the primary phone number for this place.
+*/
+QString QGeoPlace::primaryPhone() const
+{
+    Q_D(const QGeoPlace);
+    return d->primaryPhone;
+}
+
+/*!
+    Sets the primary \a phone number of this place.
+*/
+void QGeoPlace::setPrimaryPhone(const QString &phone)
+{
+    Q_D(QGeoPlace);
+    d->primaryPhone = phone;
+}
+
+/*!
+    Returns the primary fax number for this place.
+*/
+QString QGeoPlace::primaryFax() const
+{
+    Q_D(const QGeoPlace);
+    return d->primaryFax;
+}
+
+/*!
+    Sets the primary \a fax number for this place
+*/
+void QGeoPlace::setPrimaryFax(const QString fax)
+{
+    Q_D(QGeoPlace);
+    d->primaryFax = fax;
+}
+
+/*!
+    Returns the primary email address for this place.
+*/
+QString QGeoPlace::primaryEmail() const
+{
+    Q_D(const QGeoPlace);
+    return d->primaryEmail;
+}
+
+/*!
+    Sets the primary \a email address for this place.
+*/
+void QGeoPlace::setPrimaryEmail(const QString &email)
+{
+    Q_D(QGeoPlace);
+    d->primaryEmail = email;
+}
+
+/*!
+    Returns the primary URL of this place.
+*/
+QUrl QGeoPlace::primaryUrl() const
+{
+    Q_D(const QGeoPlace);
+    return d->primaryUrl;
+}
+
+/*!
+    Sets the primary \a url of this place.
+*/
+void QGeoPlace::setPrimaryUrl(const QUrl &url)
+{
+    Q_D(QGeoPlace);
+    d->primaryUrl = url;
+}
+
+/*!
     Returns whether the details of this place have been fetched or not.
 */
 bool QGeoPlace::detailsFetched() const
@@ -573,7 +645,11 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         reviewCount(other.reviewCount),
         shortDescription(other.shortDescription),
         tags(other.tags),
-        detailsFetched(other.detailsFetched)
+        detailsFetched(other.detailsFetched),
+        primaryPhone(other.primaryPhone),
+        primaryFax(other.primaryFax),
+        primaryEmail(other.primaryEmail),
+        primaryUrl(other.primaryUrl)
 {
 }
 
@@ -613,6 +689,10 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
     qDebug() << "review count" << (reviewCount == other.reviewCount);
     qDebug() << "shortDescription" << (shortDescription == other.shortDescription);
     qDebug() << "tags" << (tags == other.tags);
+    qDebug() << "phone" << (primaryPhone == other.primaryPhone);
+    qDebug() << "fax" << (primaryFax == other.primaryFax);
+    qDebug() << "email" << (primaryEmail == other.primaryEmail);
+    qDebug() << "url" << (primaryUrl == other.primaryUrl);
 #endif
 
     return (type == other.type
@@ -635,6 +715,10 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
             && reviewCount == other.reviewCount
             && shortDescription == other.shortDescription
             && tags == other.tags
+            && primaryPhone == other.primaryPhone
+            && primaryFax == other.primaryFax
+            && primaryEmail == other.primaryEmail
+            && primaryUrl == other.primaryUrl
             );
 }
 

@@ -233,12 +233,12 @@ void QPlaceJSonSearchParser::processContacts(const QScriptValue &properties, QGe
 {
     QScriptValue value = properties.property(search_properties_url_value);
     if (value.isValid() && !value.toString().isEmpty()) {
+        place->setPrimaryUrl(QUrl::fromEncoded(value.toString().toAscii()));
     }
     value = properties.property(search_properties_phone_value);
     if (value.isValid() && !value.toString().isEmpty()) {
+        place->setPrimaryPhone(value.toString());
     }
-    //The JSON data specification still has contacts so for now
-    //parse and skip
 }
 
 

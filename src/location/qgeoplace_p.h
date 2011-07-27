@@ -55,6 +55,7 @@
 
 #include <QRectF>
 #include <QSharedData>
+#include <QUrl>
 
 #include "qgeoplace.h"
 #include "qgeoaddress.h"
@@ -101,6 +102,11 @@ public:
     int reviewCount;
     QString shortDescription;
     QStringList tags;
+
+    QString primaryPhone;
+    QString primaryFax;
+    QString primaryEmail;
+    QUrl primaryUrl;
 
     bool detailsFetched;
 };

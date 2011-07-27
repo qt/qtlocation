@@ -137,6 +137,18 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
     if (previous.detailsFetched() != m_src.detailsFetched()) {
         emit detailsFetchedChanged();
     }
+    if (previous.primaryPhone() != m_src.primaryPhone()) {
+        emit primaryPhoneChanged();
+    }
+    if (previous.primaryFax() != m_src.primaryFax()) {
+        emit primaryFaxChanged();
+    }
+    if (previous.primaryEmail() != m_src.primaryEmail()) {
+        emit primaryEmailChanged();
+    }
+    if (previous.primaryUrl() != m_src.primaryUrl()) {
+        emit primaryUrlChanged();
+    }
 
     if (previous.placeId() != m_src.placeId()) {
         m_reviewModel->clear();
@@ -462,6 +474,78 @@ void QDeclarativePlace::ratePlace(qreal rating)
     }
 
     placeManager->postRating(placeId(), rating);
+}
+
+/*!
+    \qmlproperty string Place::primaryPhone
+
+    This property holds the primary phone number of the place.
+*/
+void QDeclarativePlace::setPrimaryPhone(const QString &phone)
+{
+    if (m_src.primaryPhone() != phone) {
+        m_src.setPrimaryPhone(phone);
+        emit primaryPhoneChanged();
+    }
+}
+
+QString QDeclarativePlace::primaryPhone() const
+{
+    return m_src.primaryPhone();
+}
+
+/*!
+    \qmlproperty string Place::primaryFax
+
+    This property holds the primary fax number of the place.
+*/
+void QDeclarativePlace::setPrimaryFax(const QString &fax)
+{
+    if (m_src.primaryFax() != fax) {
+        m_src.setPrimaryFax(fax);
+        emit primaryFaxChanged();
+    }
+}
+
+QString QDeclarativePlace::primaryFax() const
+{
+    return m_src.primaryFax();
+}
+
+/*!
+    \qmlproperty string Place::primaryEmail
+
+    This property holds the primary email address of the place.
+*/
+void QDeclarativePlace::setPrimaryEmail(const QString &email)
+{
+    if (m_src.primaryEmail() != email) {
+        m_src.setPrimaryEmail(email);
+        emit primaryEmailChanged();
+    }
+}
+
+QString QDeclarativePlace::primaryEmail() const
+{
+    return m_src.primaryEmail();
+}
+
+/*!
+    \qmlproperty string Place::primaryUrl
+
+    This property holds the primary website address of the place.
+*/
+void QDeclarativePlace::setPrimaryUrl(const QUrl &url)
+{
+    if (m_src.primaryUrl() != url) {
+        m_src.setPrimaryUrl(url);
+        emit primaryUrlChanged();
+    }
+}
+
+QUrl QDeclarativePlace::primaryUrl() const
+{
+    return m_src.primaryUrl();
 }
 
 /*!

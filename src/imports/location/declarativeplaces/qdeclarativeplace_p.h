@@ -40,6 +40,10 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QDeclarativeMediaModel *mediaModel READ mediaModel NOTIFY mediaModelChanged)
 
     Q_INTERFACES(QDeclarativeParserStatus)
+    Q_PROPERTY(QString primaryPhone READ primaryPhone WRITE setPrimaryPhone NOTIFY primaryPhoneChanged);
+    Q_PROPERTY(QString primaryFax READ primaryFax WRITE setPrimaryFax NOTIFY primaryFaxChanged);
+    Q_PROPERTY(QString primaryEmail READ primaryEmail WRITE setPrimaryEmail NOTIFY primaryEmailChanged);
+    Q_PROPERTY(QUrl primaryUrl READ primaryUrl WRITE setPrimaryUrl NOTIFY primaryUrlChanged);
 
 public:
     explicit QDeclarativePlace(QObject* parent = 0);
@@ -103,6 +107,18 @@ public:
     Q_INVOKABLE void getDetails();
     Q_INVOKABLE void ratePlace(qreal rating);
 
+    QString primaryPhone() const;
+    void setPrimaryPhone(const QString &phone);
+
+    QString primaryFax() const;
+    void setPrimaryFax(const QString &fax);
+
+    QString primaryEmail() const;
+    void setPrimaryEmail(const QString &email);
+
+    QUrl primaryUrl() const;
+    void setPrimaryUrl(const QUrl &url);
+
 signals:
     void pluginChanged();
     void additionalDataChanged();
@@ -121,6 +137,11 @@ signals:
     void fetchingDetailsChanged();
     void reviewModelChanged();
     void mediaModelChanged();
+
+    void primaryPhoneChanged();
+    void primaryFaxChanged();
+    void primaryEmailChanged();
+    void primaryUrlChanged();
 
 private slots:
     void detailsFetchedFinished();

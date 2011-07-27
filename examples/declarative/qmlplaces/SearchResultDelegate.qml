@@ -45,6 +45,10 @@ Rectangle {
                 Text { text: '<b>Media count: </b> ' + result.place.mediaModel.totalCount; font.pixelSize: 16 }
                 Text { text: '<b>Descriptions count: </b> ' + result.place.descriptions.length; font.pixelSize: 16 }
                 Text { text: '<b>Review count: </b> ' + result.place.reviewModel.totalCount; font.pixelSize: 16 }
+                Text { text: result.place.primaryPhone.length == 0  ? '':'<b>Phone: </b> ' + result.place.primaryPhone; font.pixelSize: 16 }
+                Text { text: result.place.primaryFax.length == 0  ? '':'<b>Fax: </b> ' + result.place.primaryFax; font.pixelSize: 16 }
+                Text { text: result.place.primaryEmail.length == 0  ? '':'<b>Email: </b> ' + result.place.primaryEmail; font.pixelSize: 16 }
+                Text { text: String(result.place.primaryUrl).length == 0  ? '':'<b>Website: </b> ' + result.place.primaryUrl; font.pixelSize: 16 }
                 Text { text: '<b>Tags: </b> ' + result.place.tags; font.pixelSize: 16 }
                 //Text { text: '<b>Suppliers: </b> ' + JSON.stringify(place.suppliers); font.pixelSize: 16 }
                 Text { id: detailsFetched; text:'<b>Details Fetched: </b> ' + result.place.detailsFetched; font.pixelSize: 16 }
