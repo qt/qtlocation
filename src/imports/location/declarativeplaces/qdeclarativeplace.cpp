@@ -426,6 +426,9 @@ QStringList QDeclarativePlace::feeds() const
 
 void QDeclarativePlace::detailsFetchedFinished()
 {
+    if (!m_detailsReply)
+        return;
+
     QGeoPlace details = m_detailsReply->result();
 
     setPlace(details);
