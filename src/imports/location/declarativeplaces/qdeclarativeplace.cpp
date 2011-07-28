@@ -143,8 +143,10 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
         emit detailsFetchedChanged();
     }
 
-    m_reviewModel->clear();
-    m_mediaModel->clear();
+    if (previous.placeId() != m_src.placeId()) {
+        m_reviewModel->clear();
+        m_mediaModel->clear();
+    }
 }
 
 QGeoPlace QDeclarativePlace::place()
