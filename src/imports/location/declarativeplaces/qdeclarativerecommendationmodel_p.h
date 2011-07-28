@@ -6,6 +6,7 @@
 #include <QDeclarativeListProperty>
 
 #include <qplacemanager.h>
+#include <qplacesearchquery.h>
 
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoboundingbox_p.h"

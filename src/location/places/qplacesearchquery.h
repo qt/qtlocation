@@ -47,6 +47,7 @@
 #include "qmobilityglobal.h"
 #include "qplacecategory.h"
 #include "qplacequery.h"
+#include "qplacemanager.h"
 
 #include <QString>
 
@@ -86,6 +87,9 @@ public:
 
     int didYouMeanSuggestionNumber() const;
     void setDidYouMeanSuggestionNumber(const int &number);
+
+    QPlaceManager::VisibilityScopes visibilityScope() const;
+    void setVisibilityScope(QPlaceManager::VisibilityScopes scope);
 
     void clear();
 

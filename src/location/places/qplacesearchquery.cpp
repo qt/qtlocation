@@ -58,6 +58,7 @@ public:
     QList<QPlaceCategory> categories;
     QGeoBoundingArea  *searchArea;
     int dymNumber;
+    QPlaceManager::VisibilityScopes scope;
 };
 
 QT_END_NAMESPACE
@@ -67,7 +68,8 @@ QT_USE_NAMESPACE
 QPlaceSearchQueryPrivate::QPlaceSearchQueryPrivate()
     : QSharedData(),
       dymNumber(0),
-      searchArea(0)
+      searchArea(0),
+      scope(QPlaceManager::NoScope)
 {
 }
 
@@ -80,6 +82,7 @@ QPlaceSearchQueryPrivate::QPlaceSearchQueryPrivate(const QPlaceSearchQueryPrivat
     if (other.searchArea)
         this->searchArea = other.searchArea->clone();
     this->dymNumber = other.dymNumber;
+    this->scope = other.scope;
 }
 
 QPlaceSearchQueryPrivate::~QPlaceSearchQueryPrivate()
@@ -107,6 +110,7 @@ bool QPlaceSearchQueryPrivate::operator==(const QPlaceSearchQueryPrivate &other)
             && this->categories == other.categories
             && this->dymNumber == other.dymNumber
             && searchAreaMatch
+            && this->scope == other.scope
     );
 }
 
@@ -247,6 +251,25 @@ void QPlaceSearchQuery::setDidYouMeanSuggestionNumber(const int &number)
 }
 
 /*!
+    Returns the visibility scope used when searching for places.  The default value
+    is QPlaceManager::NoScope meaning no explicit scope has been assigned.
+    It is up to the manager implementation to decide what scope it searches
+    by default.
+*/
+QPlaceManager::VisibilityScopes QPlaceSearchQuery::visibilityScope() const
+{
+    return d->scope;
+}
+
+/*!
+    Sets the \a scope used when searching for places.
+*/
+void QPlaceSearchQuery::setVisibilityScope(QPlaceManager::VisibilityScopes scope)
+{
+    d->scope = scope;
+}
+
+/*!
     Clears the parameters of the search query.
 */
 void QPlaceSearchQuery::clear()
@@ -256,4 +279,5 @@ void QPlaceSearchQuery::clear()
     d->categories.clear();
     d->searchArea = 0;
     d->dymNumber = 0;
+    d->scope = QPlaceManager::NoScope;
 }

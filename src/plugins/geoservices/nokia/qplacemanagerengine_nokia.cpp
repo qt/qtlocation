@@ -60,12 +60,15 @@
 #include "places/qplacerestreply.h"
 
 QT_USE_NAMESPACE
+Q_DECLARE_METATYPE(QPlaceReply::Error)
 
 QPlaceManagerEngineNokia::QPlaceManagerEngineNokia(const QMap<QString, QVariant> &parameters,
                                                  QGeoServiceProvider::Error *error,
                                                  QString *errorString)
 :   QPlaceManagerEngine(parameters)
 {
+    qRegisterMetaType<QPlaceReply::Error>();
+
     if (error)
         *error = QGeoServiceProvider::NoError;
 
@@ -140,7 +143,7 @@ QPlaceReviewReply *QPlaceManagerEngineNokia::getReviews(const QGeoPlace &place, 
     return reply;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineNokia::searchForPlaces(const QPlaceSearchQuery &query, QPlaceManager::VisibilityScope scope)
+QPlaceSearchReply *QPlaceManagerEngineNokia::searchForPlaces(const QPlaceSearchQuery &query)
 {
     //TODO: handling of scope
     QPlaceSearchReplyImpl *reply = NULL;
@@ -149,21 +152,29 @@ QPlaceSearchReply *QPlaceManagerEngineNokia::searchForPlaces(const QPlaceSearchQ
     if (newQuery.categories().count()) {
         newQuery.setSearchTerm(query.categories().at(0).name());
     }
-    QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSearchRequest(newQuery);
 
-    if (restReply) {
-        reply = new QPlaceSearchReplyImpl(restReply, this);
-        connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
-                this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
-        connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
-                this, SLOT(processingFinished(QPlaceReply*)));
+    if ((query.visibilityScope() == QPlaceManager::NoScope
+         || query.visibilityScope() & QPlaceManager::PublicScope)) {
+
+        QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSearchRequest(newQuery);
+
+        if (restReply) {
+            reply = new QPlaceSearchReplyImpl(restReply, this);
+            connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
+                    this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
+            connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
+                    this, SLOT(processingFinished(QPlaceReply*)));
+        }
+    } else {
+        reply = new QPlaceSearchReplyImpl(0,this);
+        QMetaObject::invokeMethod(reply,
+                                  "setError",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
+                                  Q_ARG(QString, "Searching for places with unsupported visibility scope"));
+
     }
     return reply;
-}
-
-QPlaceManager::VisibilityScopes QPlaceManagerEngineNokia::supportedSearchVisibilityScopes() const
-{
-    return QPlaceManager::PublicScope;
 }
 
 QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query)

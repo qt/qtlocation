@@ -353,8 +353,7 @@ void QDeclarativeSearchResultModel::executeQuery()
     cancelPreviousRequest();
 
     m_queryParameters.setSearchArea(m_searchArea->area());
-    connectNewResponse(placeManager->searchForPlaces(m_queryParameters,
-                                                     QPlaceManager::PublicScope));
+    connectNewResponse(placeManager->searchForPlaces(m_queryParameters));
 }
 
 /*!

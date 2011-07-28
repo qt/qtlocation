@@ -67,8 +67,7 @@ public:
 
     virtual QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceQuery &query) = 0;
 
-    virtual QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query, QPlaceManager::VisibilityScope scope) = 0;
-    virtual QPlaceManager::VisibilityScopes supportedSearchVisibilityScopes() const = 0;
+    virtual QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query) = 0;
 
     virtual QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query) = 0;
     virtual QPlaceTextPredictionReply *textPredictions(const QPlaceSearchQuery &query) = 0;

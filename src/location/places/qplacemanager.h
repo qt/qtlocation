@@ -45,8 +45,8 @@
 #include "qmobilityglobal.h"
 #include "qplacemediaobject.h"
 #include "qplacemediareply.h"
+#include "qplacequery.h"
 #include "qplacereply.h"
-#include "qplacesearchquery.h"
 #include "qplacesearchreply.h"
 #include "qplacedetailsreply.h"
 #include "qplacereviewreply.h"
@@ -59,6 +59,7 @@
 QT_BEGIN_NAMESPACE
 
 class QPlaceManagerEngine;
+class QPlaceSearchQuery;
 
 class QPlaceManagerPrivate;
 class Q_LOCATION_EXPORT QPlaceManager : public QObject
@@ -112,8 +113,7 @@ public:
 
     QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceQuery &query) const;
 
-    QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query, VisibilityScope scope) const;
-    VisibilityScopes supportedSearchVisibilityScopes() const;
+    QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query) const;
 
     QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query) const;
 

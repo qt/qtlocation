@@ -22,6 +22,7 @@ private Q_SLOTS:
     void boundingBoxTest();
     void searchAreaTest();
     void didYouMeanSuggestionNumberTest();
+    void visibilityScopeTest();
     void operatorsTest();
 };
 
@@ -128,6 +129,17 @@ void tst_QPlaceSearchQuery::didYouMeanSuggestionNumberTest()
     QVERIFY2(testObj.didYouMeanSuggestionNumber() == 0, "Wrong cleared value returned");
 }
 
+void tst_QPlaceSearchQuery::visibilityScopeTest()
+{
+    QPlaceSearchQuery query;
+    QVERIFY2(query.visibilityScope() == QPlaceManager::NoScope, "Wrong default value");
+    query.setVisibilityScope(QPlaceManager::PublicScope);
+    QCOMPARE(query.visibilityScope(), QPlaceManager::PublicScope);
+    query.setVisibilityScope(QPlaceManager::PublicAndPrivateScope);
+    QVERIFY(query.visibilityScope() & QPlaceManager::PublicScope);
+    QVERIFY(query.visibilityScope() & QPlaceManager::PrivateScope);
+}
+
 void tst_QPlaceSearchQuery::operatorsTest()
 {
     QPlaceSearchQuery testObj;
@@ -172,6 +184,17 @@ void tst_QPlaceSearchQuery::operatorsTest()
     testObj.setSearchArea(b4);
     testObj2.setSearchArea(c4);
     QVERIFY2(testObj != testObj2, "Circle and box identified as matching");
+
+    //test that identical visibility scopes match
+    testObj.clear();
+    testObj2.clear();
+    testObj.setVisibilityScope(QPlaceManager::PublicScope);
+    testObj2.setVisibilityScope(QPlaceManager::PublicScope);
+    QVERIFY2(testObj == testObj2, "Identical scopes not identified as matching");
+
+    //test that different scopes do not match
+    testObj2.setVisibilityScope(QPlaceManager::PublicScope | QPlaceManager::PrivateScope);
+    QVERIFY2(testObj != testObj2, "Different scopes identified as matching");
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceSearchQuery);

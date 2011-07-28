@@ -70,7 +70,8 @@ Q_SIGNALS:
     void processingFinished(QPlaceReply *reply);
     void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
 
-private slots:
+public slots:
+    void setError(QPlaceReply::Error error, const QString &errorString);
     void restError(QPlaceRestReply::Error error);
     void resultReady(const QPlaceJSonParser::Error &error,
                           const QString &errorMessage);

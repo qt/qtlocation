@@ -159,19 +159,11 @@ QPlaceReviewReply *QPlaceManager::getReviews(const QGeoPlace &place, const QPlac
 }
 
 /*!
-    Searches for places according to a given \a query and at the given \a scope.
+    Searches for places according to a given \a query.
 */
-QPlaceSearchReply *QPlaceManager::searchForPlaces(const QPlaceSearchQuery &query, VisibilityScope scope) const
+QPlaceSearchReply *QPlaceManager::searchForPlaces(const QPlaceSearchQuery &query) const
 {
-    return d->engine->searchForPlaces(query, scope);
-}
-
-/*!
-    Returns the available scopes in which places can be searched
-*/
-QPlaceManager::VisibilityScopes QPlaceManager::supportedSearchVisibilityScopes() const
-{
-    return d->engine->supportedSearchVisibilityScopes();
+    return d->engine->searchForPlaces(query);
 }
 
 /*!

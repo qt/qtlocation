@@ -87,6 +87,16 @@ void QPlaceSearchReplyImpl::abort()
         restReply->cancelProcessing();
 }
 
+void QPlaceSearchReplyImpl::setError(QPlaceReply::Error errorId, const QString &errorString)
+{
+    QPlaceReply::setError(errorId, errorString);
+    emit error(this->error(), this->errorString());
+    emit processingError(this, this->error(), this->errorString());
+    setFinished(true);
+    emit finished();
+    emit processingFinished(this);
+}
+
 void QPlaceSearchReplyImpl::restError(QPlaceRestReply::Error errorId)
 {
     if (errorId == QPlaceRestReply::Canceled) {

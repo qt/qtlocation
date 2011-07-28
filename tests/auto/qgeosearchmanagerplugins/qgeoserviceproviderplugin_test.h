@@ -60,7 +60,6 @@ public:
 
     QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error, QString *errorString) const;
-
 };
 
 #endif
