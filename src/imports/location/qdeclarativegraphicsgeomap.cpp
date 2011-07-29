@@ -103,8 +103,6 @@ QT_BEGIN_NAMESPACE
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     : QDeclarativeItem(parent),
       plugin_(0),
-      serviceProvider_(0),
-      mappingManager_(0),
       mapData_(0),
       center_(0),
       initialCoordinate(0),
@@ -136,8 +134,6 @@ QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
         }
         delete mapData_;
     }
-    if (serviceProvider_)
-        delete serviceProvider_;
 
     if (initialCoordinate) {
         delete initialCoordinate;
@@ -249,25 +245,17 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
     }
     plugin_ = plugin;
     emit pluginChanged(plugin_);
-    serviceProvider_ = new QGeoServiceProvider(plugin_->name(),
-            plugin_->parameterMap());
-
-    if (serviceProvider_->error() != QGeoServiceProvider::NoError) {
-        qWarning() << serviceProvider_->errorString();
-        delete serviceProvider_;
-        serviceProvider_ = 0;
+    QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
+    if (serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qWarning() << serviceProvider->errorString();
         return;
     }
-    mappingManager_ = serviceProvider_->mappingManager();
-    if (!mappingManager_ || serviceProvider_->error() != QGeoServiceProvider::NoError) {
-        qWarning() << serviceProvider_->errorString();
-        delete serviceProvider_;
-        serviceProvider_ = 0;
-        delete mappingManager_;
-        mappingManager_ = 0;
+    QGeoMappingManager *mappingManager = serviceProvider->mappingManager();
+    if (!mappingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qWarning() << serviceProvider->errorString();
         return;
     }
-    mapData_ = mappingManager_->createMapData();
+    mapData_ = mappingManager->createMapData();
     mapData_->init();
     //mapData_->setParentItem(this);
 
@@ -334,10 +322,16 @@ QDeclarativeGeoServiceProvider* QDeclarativeGraphicsGeoMap::plugin() const
 */
 qreal QDeclarativeGraphicsGeoMap::minimumZoomLevel() const
 {
-    if (mappingManager_)
-        return mappingManager_->minimumZoomLevel();
-    else
-        return -1.0;
+    if (plugin_) {
+        QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
+        if (serviceProvider) {
+            QGeoMappingManager *mappingManager = serviceProvider->mappingManager();
+            if (mappingManager)
+                return mappingManager->minimumZoomLevel();
+        }
+    }
+
+    return -1.0;
 }
 
 /*!
@@ -347,10 +341,16 @@ qreal QDeclarativeGraphicsGeoMap::minimumZoomLevel() const
 */
 qreal QDeclarativeGraphicsGeoMap::maximumZoomLevel() const
 {
-    if (mappingManager_)
-        return mappingManager_->maximumZoomLevel();
-    else
-        return -1.0;
+    if (plugin_) {
+        QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
+        if (serviceProvider) {
+            QGeoMappingManager *mappingManager = serviceProvider->mappingManager();
+            if (mappingManager)
+                return mappingManager->maximumZoomLevel();
+        }
+    }
+
+    return -1.0;
 }
 
 // TODO make these more QML like

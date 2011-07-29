@@ -73,7 +73,10 @@ QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
 {
 }
 
-QDeclarativeGeoServiceProvider::~QDeclarativeGeoServiceProvider() {}
+QDeclarativeGeoServiceProvider::~QDeclarativeGeoServiceProvider()
+{
+    delete sharedProvider_;
+}
 
 /*!
     \qmlproperty string Plugin::name
@@ -86,6 +89,8 @@ void QDeclarativeGeoServiceProvider::setName(const QString &name)
         return;
 
     name_ = name;
+    delete sharedProvider_;
+    sharedProvider_ = 0;
     if (complete_)
         updateSupportStatus();
     emit nameChanged(name_);
@@ -93,7 +98,7 @@ void QDeclarativeGeoServiceProvider::setName(const QString &name)
 
 void QDeclarativeGeoServiceProvider::updateSupportStatus()
 {
-    QGeoServiceProvider* serviceProvider = new QGeoServiceProvider(name(), parameterMap());
+    QGeoServiceProvider *serviceProvider = sharedGeoServiceProvider();
     if (!serviceProvider  || serviceProvider->error() != QGeoServiceProvider::NoError) {
         setSupportsGeocoding(false);
         setSupportsReverseGeocoding(false);
@@ -122,8 +127,6 @@ void QDeclarativeGeoServiceProvider::updateSupportStatus()
         setSupportsMapping(false);
     else
         setSupportsMapping(true);
-
-    delete serviceProvider;
 }
 
 QStringList QDeclarativeGeoServiceProvider::availableServiceProviders()
@@ -217,6 +220,14 @@ bool QDeclarativeGeoServiceProvider::supportsMapping() const
     return supportsMapping_;
 }
 
+QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider()
+{
+    if (!sharedProvider_)
+        sharedProvider_ = new QGeoServiceProvider(name(), parameterMap());
+
+    return sharedProvider_;
+}
+
 /*!
     \qmlproperty list<PluginParameter> Plugin::parameters
     \default
@@ -236,6 +247,8 @@ QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> QDeclarativeGe
 void QDeclarativeGeoServiceProvider::parameter_append(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *parameter)
 {
     static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->parameters_.append(parameter);
+    delete static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->sharedProvider_;
+    static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->sharedProvider_ = 0;
 }
 
 int QDeclarativeGeoServiceProvider::parameter_count(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop)
@@ -251,6 +264,8 @@ QDeclarativeGeoServiceProviderParameter* QDeclarativeGeoServiceProvider::paramet
 void QDeclarativeGeoServiceProvider::parameter_clear(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop)
 {
     static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->parameters_.clear();
+    delete static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->sharedProvider_;
+    static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->sharedProvider_ = 0;
 }
 
 QMap<QString, QVariant> QDeclarativeGeoServiceProvider::parameterMap() const
