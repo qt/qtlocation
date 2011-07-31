@@ -235,15 +235,60 @@ void QDeclarativeMediaModel::fetchFinished()
         emit totalCountChanged();
     }
 
-    if (reply->mediaObjects().items() > 0) {
-        int startIndex = reply->mediaObjects().start();
+    if (!reply->mediaObjects().isEmpty()) {
+        PlaceMediaCollection medias = reply->mediaObjects();
 
-        QList<QPlaceMediaObject> medias = reply->mediaObjects().data();
+        //find out which indexes are new and which ones have changed.
+        QMapIterator<int, QPlaceMediaObject> mediasIter(medias);
+        QList<int> changedIndexes;
+        QList<int> newIndexes;
+        while (mediasIter.hasNext()) {
+            mediasIter.next();
+            if (!m_mediaObjects.contains(mediasIter.key())) {
+                newIndexes.append(mediasIter.key());
+            } else if (mediasIter.value() != m_mediaObjects.value(mediasIter.key())->mediaObject()) {
+                changedIndexes.append(mediasIter.key());
+            } else {
+                //media at given index has not changed, do nothing
+            }
+        }
 
-        beginInsertRows(QModelIndex(), startIndex, startIndex + medias.length() - 1);
-        for (int i = 0; i < medias.length(); ++i)
-            m_mediaObjects.insert(startIndex + i, new QDeclarativeMediaObject(medias.at(i), this));
-        endInsertRows();
+        //insert new indexes in blocks where within each
+        //block, the indexes are consecutive.
+        QListIterator<int> newIndexesIter(newIndexes);
+        int startIndex = -1;
+        while (newIndexesIter.hasNext()) {
+            int currentIndex = newIndexesIter.next();
+            if (startIndex == -1)
+                startIndex = currentIndex;
+
+            if (!newIndexesIter.hasNext() || (newIndexesIter.hasNext() && (newIndexesIter.peekNext() > (currentIndex + 1)))) {
+                beginInsertRows(QModelIndex(),startIndex,currentIndex);
+                for (int i = startIndex; i <= currentIndex; ++i)
+                    m_mediaObjects.insert(i, new QDeclarativeMediaObject(medias.value(i), this));
+                endInsertRows();
+                startIndex = -1;
+            }
+        }
+
+        //modify changed indexes in blocks where within each
+        //block, the indexes are consecutive.
+        startIndex = -1;
+        QListIterator<int> changedIndexesIter(changedIndexes);
+        while (changedIndexesIter.hasNext()) {
+            int currentIndex = changedIndexesIter.next();
+            if (startIndex == -1)
+                startIndex = currentIndex;
+
+            if (!changedIndexesIter.hasNext() || (changedIndexesIter.hasNext() && changedIndexesIter.peekNext() > (currentIndex +1))) {
+                for (int i = startIndex; i <= currentIndex; ++i) {
+                    m_mediaObjects.remove(i);
+                    m_mediaObjects.insert(i, new QDeclarativeMediaObject(medias.value(i), this));
+                }
+                emit dataChanged(index(startIndex),index(currentIndex));
+                startIndex = -1;
+            }
+        }
     }
 
     reply->deleteLater();

@@ -379,39 +379,57 @@ void QGeoPlace::setFeeds(const QStringList &feeds)
 }
 
 /*!
-    Returns list with media objects connected to this place.
+    Returns a collection of media associated with a place.
+    This collection a map with the key being the index of the media
+    and value being the media object itself.
 */
-QPlacePaginationList<QPlaceMediaObject> QGeoPlace::media() const
+PlaceMediaCollection QGeoPlace::media(const QString &mediaType) const
 {
     Q_D(const QGeoPlace);
-    return d->media;
+    return d->media.value(mediaType);
 }
 
 /*!
-    Sets list with media objects connected to this place.
+    Sets a collection of \a media for the given \a mediaType.
 */
-void QGeoPlace::setMedia(const QPlacePaginationList<QPlaceMediaObject> &media)
+void QGeoPlace::setMedia(const QString &mediaType, const PlaceMediaCollection &media)
 {
     Q_D(QGeoPlace);
-    d->media = media;
+    d->media.insert(mediaType, media);
 }
 
 /*!
-    Returns media count.
+    Adds a list of \a media to the given \a mediaType.  Any index in \a media
+    that already exists is overwritten.
 */
-int QGeoPlace::mediaCount() const
+void QGeoPlace::addMedia(const QString &mediaType, const PlaceMediaCollection &media)
+{
+    Q_D(QGeoPlace);
+    QMapIterator<int, QPlaceMediaObject> iter(media);
+    while (iter.hasNext()) {
+        iter.next();
+        d->media[mediaType].insert(iter.key(), iter.value());
+    }
+}
+
+/*!
+    Returns the total count of media objects of the given \a mediaType.
+    This total count indicates how many the manager should have available.
+    (As opposed to how many objects this place instance is currently assigned).
+*/
+int QGeoPlace::mediaCount(const QString &mediaType) const
 {
     Q_D(const QGeoPlace);
-    return d->mediaCount;
+    return d->mediaCounts.value(mediaType, 0);
 }
 
 /*!
-    Sets media count.
+    Sets the total count of media objects of the given \a mediaType.
 */
-void QGeoPlace::setMediaCount(const int &count)
+void QGeoPlace::setMediaCount(const QString &mediaType, int totalCount)
 {
     Q_D(QGeoPlace);
-    d->mediaCount = count;
+    d->mediaCounts.insert(mediaType, totalCount);
 }
 
 /*!
@@ -618,7 +636,6 @@ void QGeoPlace::setDetailsFetched(bool fetched)
 QGeoPlacePrivate::QGeoPlacePrivate()
         : QSharedData(),
         type(QGeoPlacePrivate::GeoPlaceType),
-        mediaCount(0),
         reviewCount(0),
         detailsFetched(false)
 {
@@ -639,6 +656,7 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         suppliers(other.suppliers),
         feeds(other.feeds),
         media(other.media),
+        mediaCounts(other.mediaCounts),
         name(other.name),
         placeId(other.placeId),
         reviews(other.reviews),
@@ -682,7 +700,7 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
     qDebug() << "suppliers" << (suppliers == other.suppliers);
     qDebug() << "feeds " << (feeds == other.feeds);
     qDebug() << "media " << (media == other.media);
-    qDebug() << "mediaCount " << (mediaCount == other.mediaCount);
+    qDebug() << "mediaCount " << (mediaCounts == other.mediaCounts);
     qDebug() << "name " << (name == other.name);
     qDebug() << "placeId" << (placeId == other.placeId);
     qDebug() << "reviews" << (reviews == other.reviews);
@@ -708,7 +726,7 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
             && suppliers == other.suppliers
             && feeds == other.feeds
             && media == other.media
-            && mediaCount == other.mediaCount
+            && mediaCounts == other.mediaCounts
             && name == other.name
             && placeId == other.placeId
             && reviews == other.reviews

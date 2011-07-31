@@ -79,6 +79,7 @@ private slots:
 private:
     QPlaceRestReply *restReply;
     QPlaceJSonMediaParser *parser;
+    int startNumber;
 };
 
 QT_END_NAMESPACE

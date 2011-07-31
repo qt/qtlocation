@@ -44,6 +44,7 @@
 
 #include <QSharedDataPointer>
 #include <QString>
+#include <qlatin1constant.h>
 #include "qmobilityglobal.h"
 #include "qplacesupplier.h"
 
@@ -55,6 +56,13 @@ class QUrl;
 class Q_LOCATION_EXPORT QPlaceMediaObject
 {
 public:
+
+#ifdef Q_QDOC
+    static const QLatin1Constant Image;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(Image, "Image");
+#endif
+
     QPlaceMediaObject();
     QPlaceMediaObject(const QPlaceMediaObject &other);
 
@@ -83,6 +91,8 @@ public:
 private:
     QSharedDataPointer<QPlaceMediaObjectPrivate> d;
 };
+
+typedef QMap<int, QPlaceMediaObject> PlaceMediaCollection;
 
 QT_END_NAMESPACE
 

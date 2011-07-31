@@ -89,7 +89,7 @@ void QPlaceMediaReplyImpl::abort()
 
 void QPlaceMediaReplyImpl::setStartNumber(int number)
 {
-    setOffset(number);
+    startNumber = number;
 }
 
 void QPlaceMediaReplyImpl::restError(QPlaceRestReply::Error errorId)
@@ -110,7 +110,11 @@ void QPlaceMediaReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {
-        setMediaObjects(parser->resultMedia());
+        QList<QPlaceMediaObject> mediaObjects = parser->resultMedia();
+        PlaceMediaCollection collection;
+        for (int i=0; i < mediaObjects.count(); ++i)
+            collection.insert(startNumber +i, mediaObjects.at(i));
+        setMediaObjects(collection);
         setTotalCount(parser->allMediaCount());
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);

@@ -57,6 +57,7 @@
 #include "qplacepaginationlist.h"
 #include "qplacemediaobject.h"
 #include "qplacereview.h"
+#include "qplacemediaobject.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -105,10 +106,13 @@ public:
     void setSuppliers(const QList<QPlaceSupplier> &data);
     QStringList feeds() const;
     void setFeeds(const QStringList &feeds);
-    QPlacePaginationList<QPlaceMediaObject> media() const;
-    void setMedia(const QPlacePaginationList<QPlaceMediaObject> &media);
-    int mediaCount() const;
-    void setMediaCount(const int &count);
+
+    PlaceMediaCollection media(const QString &mediaType) const;
+    void setMedia(const QString &mediaType, const PlaceMediaCollection &media);
+    void addMedia(const QString &mediaType, const PlaceMediaCollection &media);
+    int mediaCount(const QString &mediaType) const;
+    void setMediaCount(const QString &mediaType, int);
+
     QString name() const;
     void setName(const QString &name);
     QString placeId() const;

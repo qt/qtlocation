@@ -60,14 +60,14 @@ public:
 
     QPlaceReply::Type type() const;
 
-    QPlacePaginationList<QPlaceMediaObject> mediaObjects() const;
+    PlaceMediaCollection mediaObjects() const;
 
     int totalCount() const;
 
 protected:
-    void setMediaObjects(const QList<QPlaceMediaObject> &objects);
+    void setMediaObjects(const PlaceMediaCollection &mediaObjects);
     void setTotalCount(int total);
-    void setOffset(int offset);
+
 
 private:
     Q_DISABLE_COPY(QPlaceMediaReply)

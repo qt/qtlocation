@@ -94,6 +94,12 @@ bool QPlaceMediaObjectPrivate::operator==(const QPlaceMediaObjectPrivate &other)
 */
 
 /*!
+   \variable QPlaceMediaObject::Image
+   The constant used to define the type of media.
+*/
+Q_DEFINE_LATIN1_CONSTANT(QPlaceMediaObject::Image, "Image");
+
+/*!
     Constructs an new media object.
 */
 QPlaceMediaObject::QPlaceMediaObject()

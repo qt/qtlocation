@@ -637,6 +637,12 @@ void QPlaceJSonDetailsParser::processPremiumContentMediaObjects(const QScriptVal
     if (value.isValid()) {
         if (value.isArray()) {
             QScriptValueIterator it(value);
+            //Note: Currently only image types are supported by the server
+            PlaceMediaCollection images = targetPlace->media(QPlaceMediaObject::Image);
+            int insertionIndex = 0;
+            if (!images.keys().isEmpty())
+                insertionIndex = images.keys().last() + 1;
+
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element
@@ -644,23 +650,24 @@ void QPlaceJSonDetailsParser::processPremiumContentMediaObjects(const QScriptVal
                     QPlaceMediaObject *obj = processPremiumContentMediaObject(it.value());
                     if (obj) {
                         obj->setSupplier(supplier);
-                        QPlacePaginationList<QPlaceMediaObject> list = targetPlace->media();
-                        list.addItem(*obj);
-                        targetPlace->setMedia(list);
+                        images.insert(insertionIndex, *obj);
+                        insertionIndex++;
                         delete obj;
-                        obj = NULL;
                     }
                 }
             }
+            targetPlace->setMedia(QPlaceMediaObject::Image, images);
         } else {
             QPlaceMediaObject *obj = processPremiumContentMediaObject(value);
             if (obj) {
                 obj->setSupplier(supplier);
-                QPlacePaginationList<QPlaceMediaObject> list = targetPlace->media();
-                list.addItem(*obj);
-                targetPlace->setMedia(list);
+                PlaceMediaCollection images = targetPlace->media(QPlaceMediaObject::Image);
+                int insertionIndex = 0;
+                if (!images.keys().isEmpty())
+                    insertionIndex = images.keys().last() + 1;
+                images.insert(insertionIndex,*obj);
+                targetPlace->setMedia(QPlaceMediaObject::Image, images);
                 delete obj;
-                obj = NULL;
             }
         }
     }
@@ -778,28 +785,35 @@ void QPlaceJSonDetailsParser::processAdContentMediaObjects(const QScriptValue &c
     if (value.isValid()) {
         if (value.isArray()) {
             QScriptValueIterator it(value);
+            //The server only has images for now.
+            PlaceMediaCollection images =targetPlace->media(QPlaceMediaObject::Image);
+            int insertionIndex = 0;
+            if (!images.keys().isEmpty())
+                insertionIndex = images.keys().last() + 1;
+
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element
                 if (it.name() != "length") {
                     QPlaceMediaObject *obj = processAdContentMediaObject(it.value());
                     if (obj) {
-                        QPlacePaginationList<QPlaceMediaObject> list = targetPlace->media();
-                        list.addItem(*obj);
-                        targetPlace->setMedia(list);
+                        images.insert(insertionIndex,*obj);
+                        insertionIndex++;
                         delete obj;
-                        obj = NULL;
                     }
                 }
             }
+            targetPlace->setMedia(QPlaceMediaObject::Image, images);
         } else {
             QPlaceMediaObject *obj = processAdContentMediaObject(value);
             if (obj) {
-                QPlacePaginationList<QPlaceMediaObject> list = targetPlace->media();
-                list.addItem(*obj);
-                targetPlace->setMedia(list);
+                PlaceMediaCollection images = targetPlace->media(QPlaceMediaObject::Image);
+                int insertionIndex = 0;
+                if (!images.keys().isEmpty())
+                    insertionIndex = images.keys().last() + 1;
+                images.insert(insertionIndex, *obj);
+                targetPlace->setMedia(QPlaceMediaObject::Image, images);
                 delete obj;
-                obj = NULL;
             }
         }
     }

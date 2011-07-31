@@ -94,14 +94,16 @@ public:
     QPlaceRating rating;
     QList<QPlaceSupplier> suppliers;
     QStringList feeds;
-    QPlacePaginationList<QPlaceMediaObject> media;
-    int mediaCount;
+
     QString name;
     QString placeId;
     QPlacePaginationList<QPlaceReview> reviews;
     int reviewCount;
     QString shortDescription;
     QStringList tags;
+
+    QMap<QString, PlaceMediaCollection> media;
+    QMap<QString, int> mediaCounts;
 
     QString primaryPhone;
     QString primaryFax;

@@ -51,7 +51,7 @@ public:
     :   totalCount(0)
     { }
 
-    QPlacePaginationList<QPlaceMediaObject> mediaObjects;
+    PlaceMediaCollection mediaObjects;
     int totalCount;
 };
 
@@ -88,7 +88,7 @@ QPlaceMediaReply::~QPlaceMediaReply()
  /*!
     Returns the media objects.
 */
-QPlacePaginationList<QPlaceMediaObject> QPlaceMediaReply::mediaObjects() const
+PlaceMediaCollection QPlaceMediaReply::mediaObjects() const
 {
     Q_D(const QPlaceMediaReply);
     return d->mediaObjects;
@@ -105,19 +105,10 @@ QPlaceReply::Type QPlaceMediaReply::type() const
 /*!
     Sets the media \a objects.
 */
-void QPlaceMediaReply::setMediaObjects(const QList<QPlaceMediaObject> &objects)
+void QPlaceMediaReply::setMediaObjects(const PlaceMediaCollection &mediaObjects)
 {
     Q_D(QPlaceMediaReply);
-    d->mediaObjects.setData(objects);
-}
-
-/*!
-    Set the \a offst number of the first media objects on the current page.
-*/
-void QPlaceMediaReply::setOffset(int offset)
-{
-    Q_D(QPlaceMediaReply);
-    d->mediaObjects.setStart(offset);
+    d->mediaObjects = mediaObjects;
 }
 
 /*!
