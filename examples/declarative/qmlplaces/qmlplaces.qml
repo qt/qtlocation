@@ -218,4 +218,8 @@ Rectangle {
         id: categoriesModel
         plugin: geoServices
     }
+
+    Loader {
+        id: mediaDisplayLoader;
+    }
 }

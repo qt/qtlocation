@@ -1,4 +1,4 @@
-import QtQuick 1.0
+import QtQuick 1.1
 import Qt.location 5.0
 
 Rectangle {
@@ -34,7 +34,8 @@ Rectangle {
         id: placeFields
         Item {
             focus:true
-            height: col.height + 10
+            height: col.height + mediaButton.height + 10
+            width:parent.width
             Column {
                 id: col
                 Text { text: '<b>Name: </b> ' + result.place.name; font.pixelSize: 16 }
@@ -53,6 +54,40 @@ Rectangle {
                 //Text { text: '<b>Suppliers: </b> ' + JSON.stringify(place.suppliers); font.pixelSize: 16 }
                 Text { id: detailsFetched; text:'<b>Details Fetched: </b> ' + result.place.detailsFetched; font.pixelSize: 16 }
                 Text { id: paymentMethods; font.pixelSize: 16 }
+            }
+
+            Rectangle {
+                id: mediaButton
+                anchors.top: col.bottom
+                height: (result.place.mediaModel.totalCount > 0) ? showMedia.height : 0
+
+                Text {
+                    id: showMedia
+                    text: (result.place.mediaModel.totalCount > 0) ? '<a href=\"dummy\">Show Media</a>':''
+                    onLinkActivated: {
+                        mediaDisplayLoader.sourceComponent = mediaDisplay
+                        mediaDisplayLoader.item.model = result.place.mediaModel
+                    }
+                }
+            }
+
+            MouseArea {
+                anchors.fill: col
+                onClicked: {
+                    if (textFields.item.state == 'place-core') {
+                        textFields.item.state = 'place-details'
+                        if (!result.place.detailsFetched)
+                            result.place.getDetails()
+                        } else if (textFields.item.state == 'place-details') {
+                        textFields.item.state = 'place-core'
+                    }
+                }
+
+                onPressAndHold: {
+                    placesList.model = recommendationModel
+                    recommendationModel.placeId = result.place.placeId
+                    recommendationModel.executeQuery()
+                }
             }
 
             state: 'place-core'
@@ -84,28 +119,67 @@ Rectangle {
         }
     }
 
+    Component {
+          id: mediaDisplay
+        Rectangle {
+            property alias model: mediaList.model
+            height: fullView.height
+            width: fullView.width
+            z: 1
+
+            ListView {
+                id: mediaList
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: closeMediaButton.top
+
+                delegate: Component {
+                    Rectangle {
+                        height: mediaUrl.height
+                        width: parent.width
+                        radius:10
+                        border.color: 'black'
+
+                        Text { id: mediaUrl; text: media.url}
+
+                        gradient: Gradient {
+                            GradientStop { position: 0.0; color: 'lightblue' }
+                            GradientStop { position: 0.5; color: 'white'}
+                            GradientStop { position: 1.0; color: 'lightblue'}
+                        }
+                    }
+                }
+            }
+            Rectangle {
+                id: closeMediaButton
+                height: mediaClose.height
+                width: parent.width
+                anchors.bottom: parent.bottom
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: 'red' }
+                    GradientStop { position: 0.5; color: 'white'}
+                    GradientStop { position: 1.0; color: 'red'}
+                }
+
+                Text {
+                    id: mediaClose;
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: 'Close';
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        mediaDisplayLoader.sourceComponent = undefined
+                    }
+                }
+            }
+        }
+    }
+
     Loader {
         id: textFields
         sourceComponent: (result.type == SearchResult.Place) ? placeFields : didYouMeanField
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            if (textFields.item.state == 'place-core') {
-                textFields.item.state = 'place-details'
-                if (!result.place.detailsFetched)
-                    result.place.getDetails()
-            } else if (textFields.item.state == 'place-details') {
-                textFields.item.state = 'place-core'
-            }
-        }
-        onPressAndHold: {
-            if (textFields.item.state != 'didYouMean') {
-                placesList.model = recommendationModel
-                recommendationModel.placeId = result.place.placeId
-                recommendationModel.executeQuery()
-            }
-        }
     }
 }
