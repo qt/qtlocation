@@ -39,48 +39,63 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSEARCHREPLY_P_H
-#define QGEOSEARCHREPLY_P_H
+#ifndef QGEOCODINGMANAGERENGINE_H
+#define QGEOCODINGMANAGERENGINE_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qgeocodingmanager.h"
+#include "qgeocodereply.h"
+#include "qgeoboundingbox.h"
 
-#include "qgeosearchreply.h"
-
-#include "qgeoboundingarea.h"
-
+#include <QObject>
 #include <QList>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoLocation;
+class QGeocodingManagerEnginePrivate;
 
-class QGeoSearchReplyPrivate
+class Q_LOCATION_EXPORT QGeocodingManagerEngine : public QObject
 {
+    Q_OBJECT
 public:
-    QGeoSearchReplyPrivate();
-    QGeoSearchReplyPrivate(QGeoSearchReply::Error error, const QString& errorString);
-    ~QGeoSearchReplyPrivate();
+    QGeocodingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
+    virtual ~QGeocodingManagerEngine();
 
-    QGeoSearchReply::Error error;
-    QString errorString;
-    bool isFinished;
+    QString managerName() const;
+    int managerVersion() const;
 
-    QGeoBoundingArea* viewport;
-    QList<QGeoLocation> locations;
+    virtual QGeocodeReply* geocode(const QGeoAddress &address,
+                                     QGeoBoundingArea *bounds);
+    virtual QGeocodeReply* geocode(const QString &address,
+                                    int limit,
+                                    int offset,
+                                    QGeoBoundingArea *bounds);
+    virtual QGeocodeReply* reverseGeocode(const QGeoCoordinate &coordinate,
+                                            QGeoBoundingArea *bounds);
 
-    int limit;
-    int offset;
+
+
+    bool supportsGeocoding() const;
+    bool supportsReverseGeocoding() const;
+
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
+
+Q_SIGNALS:
+    void finished(QGeocodeReply* reply);
+    void error(QGeocodeReply* reply, QGeocodeReply::Error error, QString errorString = QString());
+
+protected:
+    void setSupportsGeocoding(bool supported);
+    void setSupportsReverseGeocoding(bool supported);
+
 private:
-    Q_DISABLE_COPY(QGeoSearchReplyPrivate)
+    void setManagerName(const QString &managerName);
+    void setManagerVersion(int managerVersion);
+
+    QGeocodingManagerEnginePrivate *d_ptr;
+    Q_DISABLE_COPY(QGeocodingManagerEngine)
+
+    friend class QGeoServiceProvider;
 };
 
 QT_END_NAMESPACE

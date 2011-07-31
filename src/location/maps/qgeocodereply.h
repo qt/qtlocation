@@ -39,43 +39,70 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSEARCHMANAGER_P_H
-#define QGEOSEARCHMANAGER_P_H
+#ifndef QGEOCODEREPLY_H
+#define QGEOCODEREPLY_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qgeolocation.h"
 
-#include "qgeosearchmanager.h"
-
-#include "qgeosearchreply.h"
-
+#include <QObject>
 #include <QList>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoSearchManagerEngine;
+class QGeocodeReplyPrivate;
 
-class QGeoSearchManagerPrivate
+class Q_LOCATION_EXPORT QGeocodeReply : public QObject
 {
-public:
-    QGeoSearchManagerPrivate();
-    ~QGeoSearchManagerPrivate();
+    Q_OBJECT
 
-    QGeoSearchManagerEngine *engine;
+public:
+    enum Error {
+        NoError,
+        EngineNotSetError,
+        CommunicationError,
+        ParseError,
+        UnsupportedOptionError,
+        CombinationError,
+        UnknownError
+    };
+
+    QGeocodeReply(Error error, const QString &errorString, QObject *parent = 0);
+    virtual ~QGeocodeReply();
+
+    bool isFinished() const;
+    Error error() const;
+    QString errorString() const;
+
+    QGeoBoundingArea* viewport() const;
+    QList<QGeoLocation>locations() const;
+
+    int limit() const;
+    int offset() const;
+
+    virtual void abort();
+
+Q_SIGNALS:
+    void finished();
+    void error(QGeocodeReply::Error error, const QString &errorString = QString());
+
+protected:
+    QGeocodeReply(QObject* parent = 0);
+
+    void setError(Error error, const QString &errorString);
+    void setFinished(bool finished);
+
+    void setViewport(QGeoBoundingArea *viewport);
+    void addLocation(const QGeoLocation &location);
+    void setLocations(const QList<QGeoLocation> &locations);
+
+    void setLimit(int limit);
+    void setOffset(int offset);
 
 private:
-    Q_DISABLE_COPY(QGeoSearchManagerPrivate)
+    QGeocodeReplyPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeocodeReply)
 };
 
 QT_END_NAMESPACE
 
 #endif
-

@@ -41,7 +41,7 @@
 
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qgeoserviceprovider.h"
-#include "qgeosearchmanager.h"
+#include "qgeocodingmanager.h"
 #include "qgeomappingmanager.h"
 #include "qgeoroutingmanager.h"
 
@@ -104,13 +104,13 @@ void QDeclarativeGeoServiceProvider::updateSupportStatus()
         return;
     }
 
-    QGeoSearchManager* searchManager = serviceProvider->searchManager();
-    if (!searchManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+    QGeocodingManager* geocodingManager = serviceProvider->geocodingManager();
+    if (!geocodingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
         setSupportsGeocoding(false);
         setSupportsReverseGeocoding(false);
     } else {
-        setSupportsGeocoding(searchManager->supportsGeocoding());
-        setSupportsReverseGeocoding(searchManager->supportsReverseGeocoding());
+        setSupportsGeocoding(geocodingManager->supportsGeocoding());
+        setSupportsReverseGeocoding(geocodingManager->supportsReverseGeocoding());
     }
 
     QGeoRoutingManager* routingManager = serviceProvider->routingManager();

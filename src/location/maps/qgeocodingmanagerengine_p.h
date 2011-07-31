@@ -39,33 +39,45 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderplugin_test.h"
-#include "qgeosearchmanagerengine_test.h"
+#ifndef QGEOCODINGMANAGERENGINE_P_H
+#define QGEOCODINGMANAGERENGINE_P_H
 
-#include <QtPlugin>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QGeoServiceProviderFactoryTest::QGeoServiceProviderFactoryTest()
+#include "qgeocodingmanagerengine.h"
+
+#include <QList>
+#include <QLocale>
+
+QT_BEGIN_NAMESPACE
+
+class QGeocodingManagerEnginePrivate
 {
-}
+public:
+    QGeocodingManagerEnginePrivate();
+    ~QGeocodingManagerEnginePrivate();
 
-QGeoServiceProviderFactoryTest::~QGeoServiceProviderFactoryTest()
-{
-}
+    QString managerName;
+    int managerVersion;
 
-QString QGeoServiceProviderFactoryTest::providerName() const
-{
-    return "static.geosearch.test.plugin";
-}
+    bool supportsGeocoding;
+    bool supportsReverseGeocoding;
 
-int QGeoServiceProviderFactoryTest::providerVersion() const
-{
-    return 3;
-}
+    QLocale locale;
 
-QGeoSearchManagerEngine* QGeoServiceProviderFactoryTest::createSearchManagerEngine(const QMap<
-    QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
-{
-    return new QGeoSearchManagerEngineTest(parameters, error, errorString);
-}
+private:
+    Q_DISABLE_COPY(QGeocodingManagerEnginePrivate)
+};
 
-Q_EXPORT_PLUGIN2(qtgeoservices_staticsearchplugin, QGeoServiceProviderFactoryTest)
+QT_END_NAMESPACE
+
+#endif

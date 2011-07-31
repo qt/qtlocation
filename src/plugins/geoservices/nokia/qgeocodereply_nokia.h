@@ -37,64 +37,38 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
-#ifndef QGEOSEARCHMANAGERENGINE_H
-#define QGEOSEARCHMANAGERENGINE_H
+#ifndef QGEOPLACESREPLY_NOKIA_H
+#define QGEOPLACESREPLY_NOKIA_H
 
-#include "qgeosearchmanager.h"
-#include "qgeosearchreply.h"
-#include "qgeoboundingbox.h"
-
-#include <QObject>
-#include <QList>
+#include <qgeocodereply.h>
+#include <QNetworkReply>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoSearchManagerEnginePrivate;
-
-class Q_LOCATION_EXPORT QGeoSearchManagerEngine : public QObject
+class QGeocodeReplyNokia : public QGeocodeReply
 {
     Q_OBJECT
 public:
-    QGeoSearchManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
-    virtual ~QGeoSearchManagerEngine();
+    QGeocodeReplyNokia(QNetworkReply *reply, int limit, int offset, QGeoBoundingArea *viewport, QObject *parent = 0);
+    ~QGeocodeReplyNokia();
 
-    QString managerName() const;
-    int managerVersion() const;
+    void abort();
 
-    virtual QGeoSearchReply* geocode(const QGeoAddress &address,
-                                     QGeoBoundingArea *bounds);
-    virtual QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
-                                            QGeoBoundingArea *bounds);
-
-    virtual QGeoSearchReply* search(const QString &searchString,
-                                    int limit,
-                                    int offset,
-                                    QGeoBoundingArea *bounds);
-
-    bool supportsGeocoding() const;
-    bool supportsReverseGeocoding() const;
-
-    void setLocale(const QLocale &locale);
-    QLocale locale() const;
-
-Q_SIGNALS:
-    void finished(QGeoSearchReply* reply);
-    void error(QGeoSearchReply* reply, QGeoSearchReply::Error error, QString errorString = QString());
-
-protected:
-    void setSupportsGeocoding(bool supported);
-    void setSupportsReverseGeocoding(bool supported);
+private slots:
+    void networkFinished();
+    void networkError(QNetworkReply::NetworkError error);
 
 private:
-    void setManagerName(const QString &managerName);
-    void setManagerVersion(int managerVersion);
-
-    QGeoSearchManagerEnginePrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoSearchManagerEngine)
-
-    friend class QGeoServiceProvider;
+    QNetworkReply *m_reply;
 };
 
 QT_END_NAMESPACE

@@ -39,62 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSEARCHMANAGER_H
-#define QGEOSEARCHMANAGER_H
+#include "qgeoserviceproviderplugin_test.h"
+#include "qgeocodingmanagerengine_test.h"
 
-#include "qgeosearchreply.h"
-#include "qgeoboundingbox.h"
+#include <QtPlugin>
 
-#include <QObject>
-#include <QList>
-#include <QMap>
-
-QT_BEGIN_NAMESPACE
-class QLocale;
-
-class QLandmarkManager;
-
-class QGeoSearchManagerEngine;
-class QGeoSearchManagerPrivate;
-
-class Q_LOCATION_EXPORT QGeoSearchManager : public QObject
+QGeoServiceProviderFactoryTest::QGeoServiceProviderFactoryTest()
 {
-    Q_OBJECT
-public:
-    ~QGeoSearchManager();
+}
 
-    QString managerName() const;
-    int managerVersion() const;
+QGeoServiceProviderFactoryTest::~QGeoServiceProviderFactoryTest()
+{
+}
 
-    QGeoSearchReply* geocode(const QGeoAddress &address,
-                             QGeoBoundingArea *bounds = 0);
-    QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
-                                    QGeoBoundingArea *bounds = 0);
+QString QGeoServiceProviderFactoryTest::providerName() const
+{
+    return "static.geocode.test.plugin";
+}
 
-    QGeoSearchReply* search(const QString &searchString,
-                            int limit = -1,
-                            int offset = 0,
-                            QGeoBoundingArea *bounds = 0);
+int QGeoServiceProviderFactoryTest::providerVersion() const
+{
+    return 3;
+}
 
-    bool supportsGeocoding() const;
-    bool supportsReverseGeocoding() const;
+QGeocodingManagerEngine* QGeoServiceProviderFactoryTest::createGeocodingManagerEngine(const QMap<
+    QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
+{
+    return new QGeocodingManagerEngineTest(parameters, error, errorString);
+}
 
-    void setLocale(const QLocale &locale);
-    QLocale locale() const;
-
-Q_SIGNALS:
-    void finished(QGeoSearchReply* reply);
-    void error(QGeoSearchReply* reply, QGeoSearchReply::Error error, QString errorString = QString());
-
-private:
-    QGeoSearchManager(QGeoSearchManagerEngine *engine, QObject *parent = 0);
-
-    QGeoSearchManagerPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoSearchManager)
-
-    friend class QGeoServiceProvider;
-};
-
-QT_END_NAMESPACE
-
-#endif
+Q_EXPORT_PLUGIN2(qtgeoservices_staticgeocodingplugin, QGeoServiceProviderFactoryTest)

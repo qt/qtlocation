@@ -76,7 +76,7 @@ private slots:
     void updateMyPosition(QGeoPositionInfo info);
     void disableTracking();
 
-    void showErrorMessage(QGeoSearchReply::Error err, QString msg);
+    void showErrorMessage(QGeocodeReply::Error err, QString msg);
     void showErrorMessage(QGeoRouteReply::Error err, QString msg);
 
     void openNetworkSession();

@@ -39,29 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_TEST_H
-#define QGEOSERVICEPROVIDER_TEST_H
+#ifndef QGEOCODEREPLY_P_H
+#define QGEOCODEREPLY_P_H
 
-#include <qgeoserviceproviderfactory.h>
-#include <QObject>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QT_USE_NAMESPACE
+#include "qgeocodereply.h"
 
-class QGeoServiceProviderFactoryTest: public QObject, public QGeoServiceProviderFactory
+#include "qgeoboundingarea.h"
+
+#include <QList>
+
+QT_BEGIN_NAMESPACE
+
+class QGeoLocation;
+
+class QGeocodeReplyPrivate
 {
-    Q_OBJECT
-    Q_INTERFACES(QGeoServiceProviderFactory)
 public:
-    QGeoServiceProviderFactoryTest();
-    ~QGeoServiceProviderFactoryTest();
+    QGeocodeReplyPrivate();
+    QGeocodeReplyPrivate(QGeocodeReply::Error error, const QString& errorString);
+    ~QGeocodeReplyPrivate();
 
-    QString providerName() const;
-    int providerVersion() const;
+    QGeocodeReply::Error error;
+    QString errorString;
+    bool isFinished;
 
-    QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QVariant> &parameters,
-        QGeoServiceProvider::Error *error, QString *errorString) const;
+    QGeoBoundingArea* viewport;
+    QList<QGeoLocation> locations;
+
+    int limit;
+    int offset;
+private:
+    Q_DISABLE_COPY(QGeocodeReplyPrivate)
 };
 
+QT_END_NAMESPACE
+
 #endif
-
-

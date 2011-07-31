@@ -41,17 +41,17 @@
 
 //TESTED_COMPONENT=src/location
 
-#ifndef TST_QGEOSEARCHMANAGER_H
-#define TST_QGEOSEARCHMANAGER_H
+#ifndef TST_QGEOCODINGMANAGER_H
+#define TST_QGEOCODINGMANAGER_H
 
 #include <QLocale>
 #include <QtTest/QtTest>
 #include <QSignalSpy>
 
 #include <qgeoserviceprovider.h>
-#include <qgeosearchmanager.h>
+#include <qgeocodingmanager.h>
 #include <qlandmarkmanager.h>
-#include <qgeosearchreply.h>
+#include <qgeocodereply.h>
 #include <qgeoboundingbox.h>
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
@@ -67,7 +67,7 @@ public:
     QString name;
 };
 
-class tst_QGeoSearchManager: public QObject
+class tst_QGeocodingManager: public QObject
 {
     Q_OBJECT
 
@@ -86,14 +86,14 @@ private Q_SLOTS:
 
 private:
     QGeoServiceProvider *qgeoserviceprovider;
-    QGeoSearchManager *qgeosearchmanager;
+    QGeocodingManager *qgeocodingmanager;
     QSignalSpy *signalerror;
     QSignalSpy *signalfinished;
-    void loadSearchManager();
+    void loadGeocodingManager();
 
 };
-Q_DECLARE_METATYPE( QGeoSearchReply*);
-Q_DECLARE_METATYPE( QGeoSearchReply::Error);
+Q_DECLARE_METATYPE( QGeocodeReply*);
+Q_DECLARE_METATYPE( QGeocodeReply::Error);
 
 #endif
 

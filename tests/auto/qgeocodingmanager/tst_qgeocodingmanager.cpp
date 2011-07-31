@@ -41,89 +41,89 @@
 
 //TESTED_COMPONENT=src/location
 
-#include "tst_qgeosearchmanager.h"
+#include "tst_qgeocodingmanager.h"
 
 QT_USE_NAMESPACE
 
 
-void tst_QGeoSearchManager::initTestCase()
+void tst_QGeocodingManager::initTestCase()
 {
-    tst_QGeoSearchManager::loadSearchManager();
+    tst_QGeocodingManager::loadGeocodingManager();
 }
 
-void tst_QGeoSearchManager::cleanupTestCase()
+void tst_QGeocodingManager::cleanupTestCase()
 {
     delete qgeoserviceprovider;
 }
 
-void tst_QGeoSearchManager::init()
+void tst_QGeocodingManager::init()
 {
-    qRegisterMetaType<QGeoSearchReply::Error>("Error");
-    qRegisterMetaType<QGeoSearchReply*>();
+    qRegisterMetaType<QGeocodeReply::Error>("Error");
+    qRegisterMetaType<QGeocodeReply*>();
 
-    signalerror = new QSignalSpy(qgeosearchmanager, SIGNAL(error(QGeoSearchReply*,QGeoSearchReply::Error,QString)));
-    signalfinished = new QSignalSpy(qgeosearchmanager, SIGNAL(finished(QGeoSearchReply*)));
+    signalerror = new QSignalSpy(qgeocodingmanager, SIGNAL(error(QGeocodeReply*,QGeocodeReply::Error,QString)));
+    signalfinished = new QSignalSpy(qgeocodingmanager, SIGNAL(finished(QGeocodeReply*)));
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
 }
 
-void tst_QGeoSearchManager::cleanup()
+void tst_QGeocodingManager::cleanup()
 {
     delete signalerror;
     delete signalfinished;
 }
 
-void tst_QGeoSearchManager::loadSearchManager()
+void tst_QGeocodingManager::loadGeocodingManager()
 {
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
-    QVERIFY(providers.contains("static.geosearch.test.plugin"));
+    QVERIFY(providers.contains("static.geocode.test.plugin"));
 
-    qgeoserviceprovider = new QGeoServiceProvider("static.geosearch.test.plugin");
+    qgeoserviceprovider = new QGeoServiceProvider("static.geocode.test.plugin");
     QVERIFY(qgeoserviceprovider);
     QCOMPARE(qgeoserviceprovider->error(), QGeoServiceProvider::NoError);
 
-    qgeosearchmanager = qgeoserviceprovider->searchManager();
-    QVERIFY(qgeosearchmanager);
+    qgeocodingmanager = qgeoserviceprovider->geocodingManager();
+    QVERIFY(qgeocodingmanager);
 }
 
-void tst_QGeoSearchManager::supports()
+void tst_QGeocodingManager::supports()
 {
-    QVERIFY(qgeosearchmanager->supportsGeocoding());
-    QVERIFY(qgeosearchmanager->supportsReverseGeocoding());
+    QVERIFY(qgeocodingmanager->supportsGeocoding());
+    QVERIFY(qgeocodingmanager->supportsReverseGeocoding());
 }
 
-void tst_QGeoSearchManager::locale()
+void tst_QGeocodingManager::locale()
 {
     QLocale *german = new QLocale (QLocale::German, QLocale::Germany);
     QLocale *english = new QLocale (QLocale::C, QLocale::AnyCountry);
 
     //Default Locale from the Search Engine
-    QCOMPARE(qgeosearchmanager->locale(),*german);
+    QCOMPARE(qgeocodingmanager->locale(),*german);
 
-    qgeosearchmanager->setLocale(*english);
+    qgeocodingmanager->setLocale(*english);
 
-    QCOMPARE(qgeosearchmanager->locale(),*english);
+    QCOMPARE(qgeocodingmanager->locale(),*english);
 
-    QVERIFY(qgeosearchmanager->locale() != *german);
+    QVERIFY(qgeocodingmanager->locale() != *german);
 
     delete german;
     delete english;
 }
 
-void tst_QGeoSearchManager::name()
+void tst_QGeocodingManager::name()
 {
-    QString name = "static.geosearch.test.plugin";
-    QCOMPARE(qgeosearchmanager->managerName(),name);
+    QString name = "static.geocode.test.plugin";
+    QCOMPARE(qgeocodingmanager->managerName(),name);
 }
 
-void tst_QGeoSearchManager::version()
+void tst_QGeocodingManager::version()
 {
     int version=3;
-    QCOMPARE(qgeosearchmanager->managerVersion(),version);
+    QCOMPARE(qgeocodingmanager->managerVersion(),version);
 
 }
 
-void tst_QGeoSearchManager::search()
+void tst_QGeocodingManager::search()
 {
     QCOMPARE(signalerror->count(),0);
     QCOMPARE(signalfinished->count(),0);
@@ -133,7 +133,7 @@ void tst_QGeoSearchManager::search()
     int offset = 2;
     QGeoBoundingBox *bounds = new QGeoBoundingBox ();
 
-    QGeoSearchReply * reply = qgeosearchmanager->search(search, limit,offset,bounds);
+    QGeocodeReply * reply = qgeocodingmanager->geocode(search, limit,offset,bounds);
 
     QCOMPARE(reply->errorString(),search);
     QCOMPARE(signalfinished->count(),1);
@@ -144,7 +144,7 @@ void tst_QGeoSearchManager::search()
 
 }
 
-void tst_QGeoSearchManager::geocode()
+void tst_QGeocodingManager::geocode()
 {
     QCOMPARE(signalerror->count(),0);
     QCOMPARE(signalfinished->count(),0);
@@ -155,7 +155,7 @@ void tst_QGeoSearchManager::geocode()
 
     QGeoBoundingBox *bounds = new QGeoBoundingBox ();
 
-    QGeoSearchReply *reply = qgeosearchmanager->geocode(*address,bounds);
+    QGeocodeReply *reply = qgeocodingmanager->geocode(*address,bounds);
 
     QCOMPARE(reply->errorString(),city);
     QCOMPARE(signalfinished->count(),1);
@@ -166,7 +166,7 @@ void tst_QGeoSearchManager::geocode()
     delete reply;
 }
 
-void tst_QGeoSearchManager::reverseGeocode()
+void tst_QGeocodingManager::reverseGeocode()
 {
     QCOMPARE(signalerror->count(),0);
     QCOMPARE(signalfinished->count(),0);
@@ -174,7 +174,7 @@ void tst_QGeoSearchManager::reverseGeocode()
     QGeoCoordinate *coordinate = new QGeoCoordinate (34.34 , 56.65);
     QGeoBoundingBox *bounds = new QGeoBoundingBox ();
 
-    QGeoSearchReply *reply = qgeosearchmanager->reverseGeocode(*coordinate,bounds);
+    QGeocodeReply *reply = qgeocodingmanager->reverseGeocode(*coordinate,bounds);
 
     QCOMPARE(reply->errorString(),coordinate->toString());
     QCOMPARE(signalfinished->count(),1);
@@ -188,5 +188,5 @@ void tst_QGeoSearchManager::reverseGeocode()
 }
 
 
-QTEST_MAIN(tst_QGeoSearchManager)
+QTEST_MAIN(tst_QGeocodingManager)
 

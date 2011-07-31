@@ -134,7 +134,7 @@ void MainWindow::initialize()
     foreach (QString provider, providers) {
         serviceProvider = new QGeoServiceProvider(provider);
         if (serviceProvider->mappingManager() &&
-                serviceProvider->searchManager() &&
+                serviceProvider->geocodingManager() &&
                 serviceProvider->routingManager())
             break;
     }
@@ -147,7 +147,7 @@ void MainWindow::initialize()
     }
 
     if (!serviceProvider->mappingManager() ||
-            !serviceProvider->searchManager() ||
+            !serviceProvider->geocodingManager() ||
             !serviceProvider->routingManager()) {
         QMessageBox::information(this, tr("Maps Demo"),
                                  tr("No geoservice found with mapping/search/routing"));
@@ -161,11 +161,11 @@ void MainWindow::initialize()
 
     if (markerManager)
         delete markerManager;
-    markerManager = new MarkerManager(serviceProvider->searchManager());
+    markerManager = new MarkerManager(serviceProvider->geocodingManager());
     mapsWidget->setMarkerManager(markerManager);
 
-    connect(markerManager, SIGNAL(searchError(QGeoSearchReply::Error,QString)),
-            this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));
+    connect(markerManager, SIGNAL(searchError(QGeocodeReply::Error,QString)),
+            this, SLOT(showErrorMessage(QGeocodeReply::Error,QString)));
     connect(mapsWidget, SIGNAL(markerClicked(Marker*)),
             this, SLOT(showMarkerDialog(Marker*)));
     connect(mapsWidget, SIGNAL(mapPanned()),
@@ -224,14 +224,14 @@ void MainWindow::showNavigateDialog()
                 lastNavigator->deleteLater();
 
             Navigator *nvg = new Navigator(serviceProvider->routingManager(),
-                                           serviceProvider->searchManager(),
+                                           serviceProvider->geocodingManager(),
                                            mapsWidget, nd.destinationAddress(),
                                            req);
 
             lastNavigator = nvg;
 
-            connect(nvg, SIGNAL(searchError(QGeoSearchReply::Error,QString)),
-                    this, SLOT(showErrorMessage(QGeoSearchReply::Error,QString)));
+            connect(nvg, SIGNAL(searchError(QGeocodeReply::Error,QString)),
+                    this, SLOT(showErrorMessage(QGeocodeReply::Error,QString)));
             connect(nvg, SIGNAL(routingError(QGeoRouteReply::Error,QString)),
                     this, SLOT(showErrorMessage(QGeoRouteReply::Error,QString)));
 
@@ -260,7 +260,7 @@ void MainWindow::showSearchDialog()
     }
 }
 
-void MainWindow::showErrorMessage(QGeoSearchReply::Error err, QString msg)
+void MainWindow::showErrorMessage(QGeocodeReply::Error err, QString msg)
 {
     Q_UNUSED(err)
     QMessageBox::critical(this, tr("Error"), msg);

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSEARCHMANAGERENGINE_P_H
-#define QGEOSEARCHMANAGERENGINE_P_H
+#ifndef QGEOCODINGMANAGER_P_H
+#define QGEOCODINGMANAGER_P_H
 
 //
 //  W A R N I N G
@@ -53,31 +53,29 @@
 // We mean it.
 //
 
-#include "qgeosearchmanagerengine.h"
+#include "qgeocodingmanager.h"
+
+#include "qgeocodereply.h"
 
 #include <QList>
-#include <QLocale>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoSearchManagerEnginePrivate
+class QGeocodingManagerEngine;
+
+class QGeocodingManagerPrivate
 {
 public:
-    QGeoSearchManagerEnginePrivate();
-    ~QGeoSearchManagerEnginePrivate();
+    QGeocodingManagerPrivate();
+    ~QGeocodingManagerPrivate();
 
-    QString managerName;
-    int managerVersion;
-
-    bool supportsGeocoding;
-    bool supportsReverseGeocoding;
-
-    QLocale locale;
+    QGeocodingManagerEngine *engine;
 
 private:
-    Q_DISABLE_COPY(QGeoSearchManagerEnginePrivate)
+    Q_DISABLE_COPY(QGeocodingManagerPrivate)
 };
 
 QT_END_NAMESPACE
 
 #endif
+

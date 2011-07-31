@@ -45,7 +45,7 @@
 #include "qdeclarativegeoserviceprovider_p.h"
 
 #include "qdeclarativegeoboundingcircle_p.h"
-#include <qgeosearchreply.h>
+#include <qgeocodereply.h>
 
 #include <QtDeclarative/qdeclarative.h>
 #include <QDeclarativeParserStatus>
@@ -56,7 +56,7 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoServiceProvider;
-class QGeoSearchManager;
+class QGeocodingManager;
 class QDeclarativeGeoLocation;
 
 class QDeclarativeGeocodeModel : public QAbstractListModel, public QDeclarativeParserStatus
@@ -131,13 +131,13 @@ public Q_SLOTS:
 
 protected Q_SLOTS:
     void queryContentChanged();
-    void searchFinished(QGeoSearchReply *reply);
-    void searchError(QGeoSearchReply *reply,
-                     QGeoSearchReply::Error error,
+    void geocodeFinished(QGeocodeReply *reply);
+    void geocodeError(QGeocodeReply *reply,
+                     QGeocodeReply::Error error,
                      const QString &errorString);
 
 protected:
-    QGeoSearchManager* searchManager();
+    QGeocodingManager* searchManager();
     void setStatus(Status status);
     void setError(const QString &error);
     bool autoUpdate_;
@@ -147,7 +147,7 @@ private:
     void setLocations(const QList<QGeoLocation> &locations);
     QGeoBoundingArea* boundingArea();
     void abortRequest();
-    QGeoSearchReply* reply_;
+    QGeocodeReply* reply_;
 
     QDeclarativeGeoServiceProvider* plugin_;
     QPointer<QObject> boundingArea_;

@@ -43,11 +43,11 @@
 #define NAVIGATOR_H
 
 #include <qgeoroutingmanager.h>
-#include <qgeosearchmanager.h>
+#include <qgeocodingmanager.h>
 
 #include <qgeoroutereply.h>
 #include <qgeoroutereply.h>
-#include <qgeosearchreply.h>
+#include <qgeocodereply.h>
 #include <qgeomaprouteobject.h>
 
 #include "marker.h"
@@ -58,7 +58,7 @@ class Navigator : public QObject
 {
     Q_OBJECT
 public:
-    Navigator(QGeoRoutingManager *routingManager, QGeoSearchManager *searchManager,
+    Navigator(QGeoRoutingManager *routingManager, QGeocodingManager *searchManager,
               MapsWidget *mapsWidget, const QString &address,
               const QGeoRouteRequest &requestTemplate);
     ~Navigator();
@@ -68,7 +68,7 @@ public:
 
 signals:
     void finished();
-    void searchError(QGeoSearchReply::Error error, QString errorString);
+    void searchError(QGeocodeReply::Error error, QString errorString);
     void routingError(QGeoRouteReply::Error error, QString errorString);
 
 private slots:
@@ -80,10 +80,10 @@ private:
     QGeoRouteRequest request;
 
     QGeoRoutingManager *routingManager;
-    QGeoSearchManager *searchManager;
+    QGeocodingManager *searchManager;
     MapsWidget *mapsWidget;
 
-    QGeoSearchReply *addressReply;
+    QGeocodeReply *addressReply;
     QGeoRouteReply *routeReply;
 
     QGeoMapRouteObject *routeObject;

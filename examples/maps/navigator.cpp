@@ -44,7 +44,7 @@
 #include "marker.h"
 
 Navigator::Navigator(QGeoRoutingManager *routingManager,
-                     QGeoSearchManager *searchManager,
+                     QGeocodingManager *searchManager,
                      MapsWidget *mapsWidget, const QString &address,
                      const QGeoRouteRequest &requestTemplate) :
     address(address),
@@ -85,12 +85,12 @@ void Navigator::start()
     startMarker->setName("Start point");
     mapsWidget->map()->addMapObject(startMarker);
 
-    addressReply = searchManager->search(address);
+    addressReply = searchManager->geocode(address);
     if (addressReply->isFinished()) {
         on_addressSearchFinished();
     } else {
-        connect(addressReply, SIGNAL(error(QGeoSearchReply::Error,QString)),
-                this, SIGNAL(searchError(QGeoSearchReply::Error,QString)));
+        connect(addressReply, SIGNAL(error(QGeocodeReply::Error,QString)),
+                this, SIGNAL(searchError(QGeocodeReply::Error,QString)));
         connect(addressReply, SIGNAL(finished()),
                 this, SLOT(on_addressSearchFinished()));
     }

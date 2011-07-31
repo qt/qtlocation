@@ -7,15 +7,15 @@ TEMPLATE = subdirs
 
 CONFIG += ordered
 SUBDIRS += geotestplugin \
-           qgeosearchmanagerplugins \
+           qgeocodingmanagerplugins \
            qgeoaddress \
            qgeoboundingbox \
            qgeoboundingcircle \
            qgeocoordinate \
            qgeolocation \
            qgeoplace \
-           qgeosearchreply \
-           qgeosearchmanager \
+           qgeocodereply \
+           qgeocodingmanager \
            qplacebusinessfeature \
            qplacecategory \
            qplacedescription \

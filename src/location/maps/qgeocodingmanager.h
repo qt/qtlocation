@@ -37,38 +37,60 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QGEOPLACESREPLY_NOKIA_H
-#define QGEOPLACESREPLY_NOKIA_H
+#ifndef QGEOCODINGMANAGER_H
+#define QGEOCODINGMANAGER_H
 
-#include <qgeosearchreply.h>
-#include <QNetworkReply>
+#include "qgeocodereply.h"
+#include "qgeoboundingbox.h"
+
+#include <QObject>
+#include <QList>
+#include <QMap>
 
 QT_BEGIN_NAMESPACE
+class QLocale;
 
-class QGeoSearchReplyNokia : public QGeoSearchReply
+class QGeocodingManagerEngine;
+class QGeocodingManagerPrivate;
+
+class Q_LOCATION_EXPORT QGeocodingManager : public QObject
 {
     Q_OBJECT
 public:
-    QGeoSearchReplyNokia(QNetworkReply *reply, int limit, int offset, QGeoBoundingArea *viewport, QObject *parent = 0);
-    ~QGeoSearchReplyNokia();
+    ~QGeocodingManager();
 
-    void abort();
+    QString managerName() const;
+    int managerVersion() const;
 
-private slots:
-    void networkFinished();
-    void networkError(QNetworkReply::NetworkError error);
+    QGeocodeReply* geocode(const QGeoAddress &address,
+                             QGeoBoundingArea *bounds = 0);
+    QGeocodeReply* geocode(const QString &searchString,
+                            int limit = -1,
+                            int offset = 0,
+                            QGeoBoundingArea *bounds = 0);
+
+    QGeocodeReply* reverseGeocode(const QGeoCoordinate &coordinate,
+                                    QGeoBoundingArea *bounds = 0);
+
+    bool supportsGeocoding() const;
+    bool supportsReverseGeocoding() const;
+
+    void setLocale(const QLocale &locale);
+    QLocale locale() const;
+
+Q_SIGNALS:
+    void finished(QGeocodeReply* reply);
+    void error(QGeocodeReply* reply, QGeocodeReply::Error error, QString errorString = QString());
 
 private:
-    QNetworkReply *m_reply;
+    QGeocodingManager(QGeocodingManagerEngine *engine, QObject *parent = 0);
+
+    QGeocodingManagerPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeocodingManager)
+
+    friend class QGeoServiceProvider;
 };
 
 QT_END_NAMESPACE

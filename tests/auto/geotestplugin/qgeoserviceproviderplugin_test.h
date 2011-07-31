@@ -65,7 +65,7 @@ public:
     QGeoRoutingManagerEngine* createRoutingManagerEngine (
                 const QMap<QString, QVariant> & parameters,
                 QGeoServiceProvider::Error * error, QString * errorString ) const;
-    QGeoSearchManagerEngine* createSearchManagerEngine(
+    QGeocodingManagerEngine* createGeocodingManagerEngine(
                 const QMap<QString, QVariant> &parameters,
                 QGeoServiceProvider::Error *error, QString *errorString) const;
 

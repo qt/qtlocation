@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qgeoserviceproviderplugin_test.h"
-#include "qgeosearchmanagerengine_test.h"
+#include "qgeocodingmanagerengine_test.h"
 #include "qgeoroutingmanagerengine_test.h"
 
 #include <QtPlugin>
@@ -71,10 +71,10 @@ QGeoRoutingManagerEngine* QGeoServiceProviderFactoryTest::createRoutingManagerEn
 }
 
 
-QGeoSearchManagerEngine* QGeoServiceProviderFactoryTest::createSearchManagerEngine(const QMap<
+QGeocodingManagerEngine* QGeoServiceProviderFactoryTest::createGeocodingManagerEngine(const QMap<
     QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
 {
-    return new QGeoSearchManagerEngineTest(parameters, error, errorString);
+    return new QGeocodingManagerEngineTest(parameters, error, errorString);
 }
 
 

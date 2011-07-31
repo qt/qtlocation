@@ -45,11 +45,11 @@
 #include <QSignalMapper>
 
 #include "qgeomappixmapobject.h"
-#include "qgeosearchmanager.h"
+#include "qgeocodingmanager.h"
 #include "qgeocoordinate.h"
 #include "qgraphicsgeomap.h"
 #include "qgeoaddress.h"
-#include "qgeosearchreply.h"
+#include "qgeocodereply.h"
 
 
 class StatusBarItem;
@@ -102,7 +102,7 @@ class MarkerManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit MarkerManager(QGeoSearchManager *sm, QObject *parent=0);
+    explicit MarkerManager(QGeocodingManager *sm, QObject *parent=0);
     ~MarkerManager();
 
     QGeoCoordinate myLocation() const;
@@ -115,16 +115,16 @@ public slots:
     void removeSearchMarkers();
 
 signals:
-    void searchError(QGeoSearchReply::Error error, QString errorString);
+    void searchError(QGeocodeReply::Error error, QString errorString);
     void searchFinished();
 
 private:
     MarkerManagerPrivate *d;
 
 private slots:
-    void replyFinished(QGeoSearchReply *reply);
+    void replyFinished(QGeocodeReply *reply);
     void myLocationChanged(QGeoCoordinate location);
-    void reverseReplyFinished(QGeoSearchReply *reply);
+    void reverseReplyFinished(QGeocodeReply *reply);
 };
 
 #endif // MARKER_H

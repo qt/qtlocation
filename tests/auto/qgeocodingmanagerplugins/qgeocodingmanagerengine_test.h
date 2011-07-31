@@ -39,26 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSEARCHMANAGERENGINE_TEST_H
-#define QGEOSEARCHMANAGERENGINE_TEST_H
+#ifndef QGEOCODINGMANAGERENGINE_TEST_H
+#define QGEOCODINGMANAGERENGINE_TEST_H
 
 #include <qgeoserviceprovider.h>
-#include <qgeosearchmanagerengine.h>
+#include <qgeocodingmanagerengine.h>
 #include <QLocale>
 #include <qlandmarkmanager.h>
 #include <qgeoaddress.h>
 #include <qgeolocation.h>
-#include <qgeosearchreply.h>
+#include <qgeocodereply.h>
 
 
 QT_USE_NAMESPACE
 
 
-class SearchReplyTest :public QGeoSearchReply
+class GeocodeReplyTest :public QGeocodeReply
 {
     Q_OBJECT
 public:
-    SearchReplyTest(QObject *parent=0):QGeoSearchReply (parent) {}
+    GeocodeReplyTest(QObject *parent=0):QGeocodeReply (parent) {}
 
     void  callAddLocation ( const QGeoLocation & location ) {addLocation(location);}
     void  callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}
@@ -70,14 +70,14 @@ public:
 
 };
 
-class QGeoSearchManagerEngineTest: public QGeoSearchManagerEngine
+class QGeocodingManagerEngineTest: public QGeocodingManagerEngine
 
 {
 Q_OBJECT
 public:
-    QGeoSearchManagerEngineTest(const QMap<QString, QVariant> &parameters,
+    QGeocodingManagerEngineTest(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error, QString *errorString) :
-        QGeoSearchManagerEngine(parameters)
+        QGeocodingManagerEngine(parameters)
     {
         Q_UNUSED(error)
         Q_UNUSED(errorString)
@@ -86,38 +86,38 @@ public:
         setLocale(*(new QLocale (QLocale::German, QLocale::Germany)));
     }
 
-    QGeoSearchReply*  search ( const QString & searchString, int limit, int offset, QGeoBoundingArea * bounds )
+    QGeocodeReply*  geocode ( const QString & searchString, int limit, int offset, QGeoBoundingArea * bounds )
     {
-        SearchReplyTest *searchreply = new SearchReplyTest();
-        searchreply->callSetLimit(limit);
-        searchreply->callSetOffset(offset);
-        searchreply->callSetViewport(bounds);
-        searchreply->callSetError(QGeoSearchReply::NoError,searchString);
-        searchreply->callSetFinished(true);
-        emit(this->finished(searchreply));
+        GeocodeReplyTest *geocodereply = new GeocodeReplyTest();
+        geocodereply->callSetLimit(limit);
+        geocodereply->callSetOffset(offset);
+        geocodereply->callSetViewport(bounds);
+        geocodereply->callSetError(QGeocodeReply::NoError,searchString);
+        geocodereply->callSetFinished(true);
+        emit(this->finished(geocodereply));
 
-        return static_cast<QGeoSearchReply*>(searchreply);
+        return static_cast<QGeocodeReply*>(geocodereply);
     }
 
-    QGeoSearchReply*  geocode ( const QGeoAddress & address, QGeoBoundingArea * bounds )
+    QGeocodeReply*  geocode ( const QGeoAddress & address, QGeoBoundingArea * bounds )
     {
-        SearchReplyTest *searchreply = new SearchReplyTest();
-        searchreply->callSetViewport(bounds);
-        searchreply->callSetError(QGeoSearchReply::NoError,address.city());
-        searchreply->callSetFinished(true);
-        emit(this->finished(searchreply));
+        GeocodeReplyTest *geocodereply = new GeocodeReplyTest();
+        geocodereply->callSetViewport(bounds);
+        geocodereply->callSetError(QGeocodeReply::NoError,address.city());
+        geocodereply->callSetFinished(true);
+        emit(this->finished(geocodereply));
 
-        return static_cast<QGeoSearchReply*>(searchreply);
+        return static_cast<QGeocodeReply*>(geocodereply);
     }
 
-    QGeoSearchReply*  reverseGeocode ( const QGeoCoordinate & coordinate, QGeoBoundingArea * bounds )
+    QGeocodeReply*  reverseGeocode ( const QGeoCoordinate & coordinate, QGeoBoundingArea * bounds )
     {
-        SearchReplyTest *searchreply = new SearchReplyTest();
-        searchreply->callSetViewport(bounds);
-        searchreply->callSetError(QGeoSearchReply::NoError,coordinate.toString());
-        searchreply->callSetFinished(true);
-        emit(this->finished(searchreply));
-        return static_cast<QGeoSearchReply*>(searchreply);
+        GeocodeReplyTest *geocodereply = new GeocodeReplyTest();
+        geocodereply->callSetViewport(bounds);
+        geocodereply->callSetError(QGeocodeReply::NoError,coordinate.toString());
+        geocodereply->callSetFinished(true);
+        emit(this->finished(geocodereply));
+        return static_cast<QGeocodeReply*>(geocodereply);
     }
 };
 

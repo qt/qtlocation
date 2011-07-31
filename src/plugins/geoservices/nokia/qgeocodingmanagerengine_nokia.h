@@ -46,13 +46,13 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSEARCHMANAGER_NOKIA_H
-#define QGEOSEARCHMANAGER_NOKIA_H
+#ifndef QGEOCODINGMANAGER_NOKIA_H
+#define QGEOCODINGMANAGER_NOKIA_H
 
 #include "qgeoserviceproviderplugin_nokia.h"
 
 #include <qgeoserviceprovider.h>
-#include <qgeosearchmanagerengine.h>
+#include <qgeocodingmanagerengine.h>
 
 #include <QNetworkAccessManager>
 #include <QLocale>
@@ -60,32 +60,32 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoSearchManagerEngineNokia : public QGeoSearchManagerEngine
+class QGeocodingManagerEngineNokia : public QGeocodingManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoSearchManagerEngineNokia(const QMap<QString, QVariant> &parameters,
+    QGeocodingManagerEngineNokia(const QMap<QString, QVariant> &parameters,
                                  QGeoServiceProvider::Error *error,
                                  QString *errorString);
-    ~QGeoSearchManagerEngineNokia();
+    ~QGeocodingManagerEngineNokia();
 
-    QGeoSearchReply* geocode(const QGeoAddress &address,
+    QGeocodeReply* geocode(const QGeoAddress &address,
                              QGeoBoundingArea *bounds);
-    QGeoSearchReply* reverseGeocode(const QGeoCoordinate &coordinate,
+    QGeocodeReply* reverseGeocode(const QGeoCoordinate &coordinate,
                                     QGeoBoundingArea *bounds);
 
-    QGeoSearchReply* search(const QString &searchString,
+    QGeocodeReply* geocode(const QString &searchString,
                             int limit,
                             int offset,
                             QGeoBoundingArea *bounds);
 
 private slots:
     void placesFinished();
-    void placesError(QGeoSearchReply::Error error, const QString &errorString);
+    void placesError(QGeocodeReply::Error error, const QString &errorString);
 
 private:
     static QString trimDouble(double degree, int decimalDigits = 10);
-    QGeoSearchReply* search(QString requestString, QGeoBoundingArea *bounds, int limit = -1, int offset = 0);
+    QGeocodeReply* geocode(QString requestString, QGeoBoundingArea *bounds, int limit = -1, int offset = 0);
     QString languageToMarc(QLocale::Language language);
 
     QNetworkAccessManager *m_networkManager;

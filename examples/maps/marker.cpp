@@ -163,13 +163,13 @@ public:
 
     QGraphicsGeoMap *map;
     StatusBarItem *status;
-    QGeoSearchManager *searchManager;
+    QGeocodingManager *searchManager;
 
-    QSet<QGeoSearchReply*> forwardReplies;
-    QSet<QGeoSearchReply*> reverseReplies;
+    QSet<QGeocodeReply*> forwardReplies;
+    QSet<QGeocodeReply*> reverseReplies;
 };
 
-MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) :
+MarkerManager::MarkerManager(QGeocodingManager *searchManager, QObject *parent) :
     QObject(parent),
     d(new MarkerManagerPrivate)
 {
@@ -185,10 +185,10 @@ MarkerManager::MarkerManager(QGeoSearchManager *searchManager, QObject *parent) 
     connect(d->myLocation, SIGNAL(coordinateChanged(QGeoCoordinate)),
             this, SLOT(myLocationChanged(QGeoCoordinate)));
 
-    connect(d->searchManager, SIGNAL(finished(QGeoSearchReply*)),
-            this, SLOT(replyFinished(QGeoSearchReply*)));
-    connect(d->searchManager, SIGNAL(finished(QGeoSearchReply*)),
-            this, SLOT(reverseReplyFinished(QGeoSearchReply*)));
+    connect(d->searchManager, SIGNAL(finished(QGeocodeReply*)),
+            this, SLOT(replyFinished(QGeocodeReply*)));
+    connect(d->searchManager, SIGNAL(finished(QGeocodeReply*)),
+            this, SLOT(reverseReplyFinished(QGeocodeReply*)));
 }
 
 MarkerManager::~MarkerManager()
@@ -216,15 +216,15 @@ void MarkerManager::setMyLocation(QGeoCoordinate coord)
 
 void MarkerManager::search(QString query, qreal radius)
 {
-    QGeoSearchReply *reply;
+    QGeocodeReply *reply;
     if (radius > 0) {
         QGeoBoundingCircle *boundingCircle = new QGeoBoundingCircle(
                     d->myLocation->coordinate(), radius);
-        reply = d->searchManager->search(query,
+        reply = d->searchManager->geocode(query,
                                         -1, 0,
                                         boundingCircle);
     } else {
-        reply = d->searchManager->search(query);
+        reply = d->searchManager->geocode(query);
     }
 
     d->forwardReplies.insert(reply);
@@ -237,8 +237,8 @@ void MarkerManager::search(QString query, qreal radius)
     if (reply->isFinished()) {
         replyFinished(reply);
     } else {
-        connect(reply, SIGNAL(error(QGeoSearchReply::Error,QString)),
-                this, SIGNAL(searchError(QGeoSearchReply::Error,QString)));
+        connect(reply, SIGNAL(error(QGeocodeReply::Error,QString)),
+                this, SIGNAL(searchError(QGeocodeReply::Error,QString)));
     }
 }
 
@@ -260,7 +260,7 @@ void MarkerManager::myLocationChanged(QGeoCoordinate location)
     if (d->revGeocodeRunning) {
         d->myLocHasMoved = true;
     } else {
-        QGeoSearchReply *reply = d->searchManager->reverseGeocode(location);
+        QGeocodeReply *reply = d->searchManager->reverseGeocode(location);
         d->reverseReplies.insert(reply);
         d->myLocHasMoved = false;
 
@@ -273,7 +273,7 @@ void MarkerManager::myLocationChanged(QGeoCoordinate location)
     }
 }
 
-void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
+void MarkerManager::reverseReplyFinished(QGeocodeReply *reply)
 {
     if (!d->reverseReplies.contains(reply))
         return;
@@ -291,7 +291,7 @@ void MarkerManager::reverseReplyFinished(QGeoSearchReply *reply)
     reply->deleteLater();
 }
 
-void MarkerManager::replyFinished(QGeoSearchReply *reply)
+void MarkerManager::replyFinished(QGeocodeReply *reply)
 {
     if (!d->forwardReplies.contains(reply))
         return;

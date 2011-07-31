@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef TST_QGEOSEARCHREPLY_H
-#define TST_QGEOSEARCHREPLY_H
+#ifndef TST_QGEOCODEREPLY_H
+#define TST_QGEOCODEREPLY_H
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
@@ -50,18 +50,18 @@
 
 #include "../qgeocoordinate/qlocationtestutils_p.h"
 
-#include <qgeosearchreply.h>
+#include <qgeocodereply.h>
 #include <qgeolocation.h>
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
 #include <qgeoboundingbox.h>
 
 QT_USE_NAMESPACE
-class SubSearchReply : public QGeoSearchReply
+class SubGeocodeReply : public QGeocodeReply
 {
     Q_OBJECT
 public:
-    SubSearchReply():QGeoSearchReply() {}
+    SubGeocodeReply():QGeocodeReply() {}
 
     void  callAddLocation ( const QGeoLocation & location ) {addLocation(location);}
     void  callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}
@@ -73,7 +73,7 @@ public:
 
 };
 
-class tst_QGeoSearchReply :public QObject
+class tst_QGeocodeReply :public QObject
 {
     Q_OBJECT
 
@@ -83,7 +83,7 @@ public slots:
     void init();
     void cleanup();
 
-    //Start Unit Test for QGeoSearchReply
+    //Start Unit Test for QGeoCodeReply
 private slots:
     void constructor();
     void constructor_error();
@@ -99,20 +99,20 @@ private slots:
     void locations();
     void viewport();
 
-    //End Unit Test for QGeoSearchReply
+    //End Unit Test for QGeoCodeReply
 
 
 
 private:
     QSignalSpy *signalerror;
     QSignalSpy *signalfinished;
-    SubSearchReply* reply;
+    SubGeocodeReply* reply;
     QGeoLocation *qgeolocation;
     QGeoBoundingBox *qgeoboundingbox;
 };
 
 Q_DECLARE_METATYPE( QList<double>);
-Q_DECLARE_METATYPE( QGeoSearchReply::Error);
+Q_DECLARE_METATYPE( QGeocodeReply::Error);
 
-#endif // TST_QGEOSEARCHREPLY_H
+#endif // TST_QGEOCODEREPLY_H
 

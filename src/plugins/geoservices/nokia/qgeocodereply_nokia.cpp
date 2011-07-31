@@ -46,13 +46,13 @@
 **
 ****************************************************************************/
 
-#include "qgeosearchreply_nokia.h"
+#include "qgeocodereply_nokia.h"
 #include "qgeocodexmlparser.h"
 
 QT_BEGIN_NAMESPACE
 
-QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, int limit, int offset, QGeoBoundingArea *viewport, QObject *parent)
-        : QGeoSearchReply(parent),
+QGeocodeReplyNokia::QGeocodeReplyNokia(QNetworkReply *reply, int limit, int offset, QGeoBoundingArea *viewport, QObject *parent)
+        : QGeocodeReply(parent),
         m_reply(reply)
 {
     connect(m_reply,
@@ -70,12 +70,12 @@ QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, int limit, int 
     setViewport(viewport);
 }
 
-QGeoSearchReplyNokia::~QGeoSearchReplyNokia()
+QGeocodeReplyNokia::~QGeocodeReplyNokia()
 {
     //TODO: possible mem leak -> m_reply->deleteLater() ?
 }
 
-void QGeoSearchReplyNokia::abort()
+void QGeocodeReplyNokia::abort()
 {
     if (!m_reply)
         return;
@@ -86,14 +86,14 @@ void QGeoSearchReplyNokia::abort()
     m_reply = 0;
 }
 
-void QGeoSearchReplyNokia::networkFinished()
+void QGeocodeReplyNokia::networkFinished()
 {
     if (!m_reply)
         return;
 
     if (m_reply->error() != QNetworkReply::NoError) {
         // Removed because this is already done in networkError, which previously caused _two_ errors to be raised for every error.
-        //setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
+        //setError(QGeoCodeReply::CommunicationError, m_reply->errorString());
         //m_reply->deleteLater();
         //m_reply = 0;
         return;
@@ -112,21 +112,21 @@ void QGeoSearchReplyNokia::networkFinished()
         setLocations(locations);
         setFinished(true);
     } else {
-        setError(QGeoSearchReply::ParseError, parser.errorString());
+        setError(QGeocodeReply::ParseError, parser.errorString());
     }
 
     m_reply->deleteLater();
     m_reply = 0;
 }
 
-void QGeoSearchReplyNokia::networkError(QNetworkReply::NetworkError error)
+void QGeocodeReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
     Q_UNUSED(error)
 
     if (!m_reply)
         return;
 
-    setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
+    setError(QGeocodeReply::CommunicationError, m_reply->errorString());
 
     m_reply->deleteLater();
     m_reply = 0;

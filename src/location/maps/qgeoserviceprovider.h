@@ -54,11 +54,11 @@ QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
 class QStringList;
-class QGeoSearchManager;
+class QGeocodingManager;
 class QGeoMappingManager;
 class QGeoRoutingManager;
 class QPlaceManager;
-class QGeoSearchManagerEngine;
+class QGeocodingManagerEngine;
 class QGeoMappingManagerEngine;
 class QGeoRoutingManagerEngine;
 class QPlaceManagerEngine;
@@ -80,7 +80,7 @@ public:
 
     ~QGeoServiceProvider();
 
-    QGeoSearchManager* searchManager() const;
+    QGeocodingManager* geocodingManager() const;
     QGeoMappingManager* mappingManager() const;
     QGeoRoutingManager* routingManager() const;
     QPlaceManager *placeManager() const;

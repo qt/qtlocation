@@ -39,70 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSEARCHREPLY_H
-#define QGEOSEARCHREPLY_H
+#ifndef QGEOSERVICEPROVIDER_TEST_H
+#define QGEOSERVICEPROVIDER_TEST_H
 
-#include "qgeolocation.h"
-
+#include <qgeoserviceproviderfactory.h>
 #include <QObject>
-#include <QList>
 
-QT_BEGIN_NAMESPACE
+QT_USE_NAMESPACE
 
-class QGeoSearchReplyPrivate;
-
-class Q_LOCATION_EXPORT QGeoSearchReply : public QObject
+class QGeoServiceProviderFactoryTest: public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
-
+    Q_INTERFACES(QGeoServiceProviderFactory)
 public:
-    enum Error {
-        NoError,
-        EngineNotSetError,
-        CommunicationError,
-        ParseError,
-        UnsupportedOptionError,
-        CombinationError,
-        UnknownError
-    };
+    QGeoServiceProviderFactoryTest();
+    ~QGeoServiceProviderFactoryTest();
 
-    QGeoSearchReply(Error error, const QString &errorString, QObject *parent = 0);
-    virtual ~QGeoSearchReply();
+    QString providerName() const;
+    int providerVersion() const;
 
-    bool isFinished() const;
-    Error error() const;
-    QString errorString() const;
-
-    QGeoBoundingArea* viewport() const;
-    QList<QGeoLocation>locations() const;
-
-    int limit() const;
-    int offset() const;
-
-    virtual void abort();
-
-Q_SIGNALS:
-    void finished();
-    void error(QGeoSearchReply::Error error, const QString &errorString = QString());
-
-protected:
-    QGeoSearchReply(QObject* parent = 0);
-
-    void setError(Error error, const QString &errorString);
-    void setFinished(bool finished);
-
-    void setViewport(QGeoBoundingArea *viewport);
-    void addLocation(const QGeoLocation &location);
-    void setLocations(const QList<QGeoLocation> &locations);
-
-    void setLimit(int limit);
-    void setOffset(int offset);
-
-private:
-    QGeoSearchReplyPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoSearchReply)
+    QGeocodingManagerEngine* createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error, QString *errorString) const;
 };
 
-QT_END_NAMESPACE
-
 #endif
+
+

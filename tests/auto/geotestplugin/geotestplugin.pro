@@ -10,7 +10,7 @@ include($$QT_SOURCE_TREE/src/plugins/qpluginbase.pri)
 # TODO not sure where to put test plugins in Qt 5
 DESTDIR = $$QT.location.plugins/geoservices
 
-HEADERS += qgeosearchmanagerengine_test.h \
+HEADERS += qgeocodingmanagerengine_test.h \
            qgeoserviceproviderplugin_test.h \
            qgeoroutingmanagerengine_test.h
 

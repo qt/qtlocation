@@ -4,6 +4,9 @@ INCLUDEPATH += maps
 include(tiled/tiled.pri)
 
 PUBLIC_HEADERS += \
+                    maps/qgeocodingmanager.h \
+                    maps/qgeocodingmanagerengine.h \
+                    maps/qgeocodereply.h \
                     maps/qgeomaneuver.h \
                     maps/qgeomapcircleobject.h \
                     maps/qgeomapcustomobject.h \
@@ -26,14 +29,14 @@ PUBLIC_HEADERS += \
                     maps/qgeoroutesegment.h \
                     maps/qgeoroutingmanager.h \
                     maps/qgeoroutingmanagerengine.h \
-                    maps/qgeosearchmanager.h \
-                    maps/qgeosearchmanagerengine.h \
-                    maps/qgeosearchreply.h \
                     maps/qgeoserviceprovider.h \
                     maps/qgeoserviceproviderfactory.h \
                     maps/qgraphicsgeomap.h
 
 PRIVATE_HEADERS += \
+                    maps/qgeocodingmanager_p.h \
+                    maps/qgeocodingmanagerengine_p.h \
+                    maps/qgeocodereply_p.h \
                     maps/qgeomaneuver_p.h \
                     maps/qgeomapcircleobject_p.h \
                     maps/qgeomapcustomobject_p.h \
@@ -56,14 +59,14 @@ PRIVATE_HEADERS += \
                     maps/qgeoroutesegment_p.h \
                     maps/qgeoroutingmanager_p.h \
                     maps/qgeoroutingmanagerengine_p.h \
-                    maps/qgeosearchmanager_p.h \
-                    maps/qgeosearchmanagerengine_p.h \
-                    maps/qgeosearchreply_p.h \
                     maps/qgeoserviceprovider_p.h \
                     maps/qgraphicsgeomap_p.h \
                     maps/qgeomapobjectengine_p.h
 
 SOURCES += \
+            maps/qgeocodingmanager.cpp \
+            maps/qgeocodingmanagerengine.cpp \
+            maps/qgeocodereply.cpp \
             maps/qgeomaneuver.cpp \
             maps/qgeomapcircleobject.cpp \
             maps/qgeomapcustomobject.cpp \
@@ -85,9 +88,6 @@ SOURCES += \
             maps/qgeoroutesegment.cpp \
             maps/qgeoroutingmanager.cpp \
             maps/qgeoroutingmanagerengine.cpp \
-            maps/qgeosearchmanager.cpp \
-            maps/qgeosearchmanagerengine.cpp \
-            maps/qgeosearchreply.cpp \
             maps/qgeoserviceprovider.cpp \
             maps/qgeoserviceproviderfactory.cpp \
             maps/qgraphicsgeomap.cpp \

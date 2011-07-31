@@ -39,15 +39,15 @@
 **
 ****************************************************************************/
 
-#include "qgeosearchreply.h"
-#include "qgeosearchreply_p.h"
+#include "qgeocodereply.h"
+#include "qgeocodereply_p.h"
 
 QT_BEGIN_NAMESPACE
 /*!
-    \class QGeoSearchReply
+    \class QGeocodeReply
 
-    \brief The QGeoSearchReply class manages an operation started by an
-    instance of QGeoSearchManager.
+    \brief The QGeocodeReply class manages an operation started by an
+    instance of QGeocodingManager.
 
 
     \inmodule QtLocation
@@ -55,21 +55,21 @@ QT_BEGIN_NAMESPACE
 
     \ingroup maps-places
 
-    Instances of QGeoSearchReply manage the state and results of these
+    Instances of QGeocodeReply manage the state and results of these
     operations.
 
     The isFinished(), error() and errorString() methods provide information
     on whether the operation has completed and if it completed successfully.
 
-    The finished() and error(QGeoSearchReply::Error,QString)
+    The finished() and error(QGeocodeReply::Error,QString)
     signals can be used to monitor the progress of the operation.
 
-    It is possible that a newly created QGeoSearchReply may be in a finished
+    It is possible that a newly created QGeocodeReply may be in a finished
     state, most commonly because an error has occurred. Since such an instance
     will never emit the finished() or
-    error(QGeoSearchReply::Error,QString) signals, it is
+    error(QGeocodeReply::Error,QString) signals, it is
     important to check the result of isFinished() before making the connections
-    to the signals. The documentation for QGeoSearchManager demonstrates how
+    to the signals. The documentation for QGeocodingManager demonstrates how
     this might be carried out.
 
     If the operation completes successfully the results will be able to be
@@ -77,14 +77,14 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QGeoSearchReply::Error
+    \enum QGeocodeReply::Error
 
     Describes an error which prevented the completion of the operation.
 
     \value NoError
         No error has occurred.
     \value EngineNotSetError
-        The search manager that was used did not have a QGeoSearchManagerEngine instance associated with it.
+        The geocoding manager that was used did not have a QGeocodingManagerEngine instance associated with it.
     \value CommunicationError
         An error occurred while communicating with the service provider.
     \value ParseError
@@ -99,23 +99,23 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a search reply with the specified \a parent.
+    Constructs a geocode reply with the specified \a parent.
 */
-QGeoSearchReply::QGeoSearchReply(QObject *parent)
+QGeocodeReply::QGeocodeReply(QObject *parent)
     : QObject(parent),
-      d_ptr(new QGeoSearchReplyPrivate()) {}
+      d_ptr(new QGeocodeReplyPrivate()) {}
 
 /*!
-    Constructs a search reply with a given \a error and \a errorString and the specified \a parent.
+    Constructs a geocode reply with a given \a error and \a errorString and the specified \a parent.
 */
-QGeoSearchReply::QGeoSearchReply(Error error, const QString &errorString, QObject *parent)
+QGeocodeReply::QGeocodeReply(Error error, const QString &errorString, QObject *parent)
     : QObject(parent),
-      d_ptr(new QGeoSearchReplyPrivate(error, errorString)) {}
+      d_ptr(new QGeocodeReplyPrivate(error, errorString)) {}
 
 /*!
-    Destroys this search reply object.
+    Destroys this reply object.
 */
-QGeoSearchReply::~QGeoSearchReply()
+QGeocodeReply::~QGeocodeReply()
 {
     delete d_ptr;
 }
@@ -126,11 +126,11 @@ QGeoSearchReply::~QGeoSearchReply()
     If \a finished is true, this will cause the finished() signal to be
     emitted.
 
-    If the operation completed successfully, QGeoSearchReply::setLocations()
+    If the operation completed successfully, QGeocodeReply::setLocations()
     should be called before this function. If an error occurred,
-    QGeoSearchReply::setError() should be used instead.
+    QGeocodeReply::setError() should be used instead.
 */
-void QGeoSearchReply::setFinished(bool finished)
+void QGeocodeReply::setFinished(bool finished)
 {
     d_ptr->isFinished = finished;
     if (d_ptr->isFinished)
@@ -141,7 +141,7 @@ void QGeoSearchReply::setFinished(bool finished)
     Return true if the operation completed successfully or encountered an
     error which cause the operation to come to a halt.
 */
-bool QGeoSearchReply::isFinished() const
+bool QGeocodeReply::isFinished() const
 {
     return d_ptr->isFinished;
 }
@@ -153,7 +153,7 @@ bool QGeoSearchReply::isFinished() const
     This wil also cause error() and finished() signals to be emitted, in that
     order.
 */
-void QGeoSearchReply::setError(QGeoSearchReply::Error error, const QString &errorString)
+void QGeocodeReply::setError(QGeocodeReply::Error error, const QString &errorString)
 {
     d_ptr->error = error;
     d_ptr->errorString = errorString;
@@ -164,9 +164,9 @@ void QGeoSearchReply::setError(QGeoSearchReply::Error error, const QString &erro
 /*!
     Returns the error state of this reply.
 
-    If the result is QGeoSearchReply::NoError then no error has occurred.
+    If the result is QGeocodeReply::NoError then no error has occurred.
 */
-QGeoSearchReply::Error QGeoSearchReply::error() const
+QGeocodeReply::Error QGeocodeReply::error() const
 {
     return d_ptr->error;
 }
@@ -179,9 +179,9 @@ QGeoSearchReply::Error QGeoSearchReply::error() const
     which case this will also return an empty string.
 
     To determine whether an error has occurred, check to see if
-    QGeoSearchReply::error() is equal to QGeoSearchReply::NoError.
+    QGeocodeReply::error() is equal to QGeocodeReply::NoError.
 */
-QString QGeoSearchReply::errorString() const
+QString QGeocodeReply::errorString() const
 {
     return d_ptr->errorString;
 }
@@ -189,7 +189,7 @@ QString QGeoSearchReply::errorString() const
 /*!
     Sets the viewport which contains the results to \a viewport.
 */
-void QGeoSearchReply::setViewport(QGeoBoundingArea *viewport)
+void QGeocodeReply::setViewport(QGeoBoundingArea *viewport)
 {
     d_ptr->viewport = viewport;
 }
@@ -198,9 +198,9 @@ void QGeoSearchReply::setViewport(QGeoBoundingArea *viewport)
     Returns the viewport which contains the results.
 
     This function will return 0 if no viewport bias
-    was specified in the QGeoSearchManager function which created this reply.
+    was specified in the QGeocodingManager function which created this reply.
 */
-QGeoBoundingArea* QGeoSearchReply::viewport() const
+QGeoBoundingArea* QGeocodeReply::viewport() const
 {
     return d_ptr->viewport;
 }
@@ -209,9 +209,9 @@ QGeoBoundingArea* QGeoSearchReply::viewport() const
     Returns a list of locations.
 
     The locations are the results of the operation corresponding to the
-    QGeoSearchManager function which created this reply.
+    QGeocodingManager function which created this reply.
 */
-QList<QGeoLocation> QGeoSearchReply::locations() const
+QList<QGeoLocation> QGeocodeReply::locations() const
 {
     return d_ptr->locations;
 }
@@ -219,7 +219,7 @@ QList<QGeoLocation> QGeoSearchReply::locations() const
 /*!
     Adds \a location to the list of locations in this reply.
 */
-void QGeoSearchReply::addLocation(const QGeoLocation &location)
+void QGeocodeReply::addLocation(const QGeoLocation &location)
 {
     d_ptr->locations.append(location);
 }
@@ -227,7 +227,7 @@ void QGeoSearchReply::addLocation(const QGeoLocation &location)
 /*!
     Sets the list of \a locations in the reply.
 */
-void QGeoSearchReply::setLocations(const QList<QGeoLocation> &locations)
+void QGeocodeReply::setLocations(const QList<QGeoLocation> &locations)
 {
     d_ptr->locations = locations;
 }
@@ -237,7 +237,7 @@ void QGeoSearchReply::setLocations(const QList<QGeoLocation> &locations)
 
     This will do nothing if the reply is finished.
 */
-void QGeoSearchReply::abort()
+void QGeocodeReply::abort()
 {
     if (!isFinished())
         setFinished(true);
@@ -250,12 +250,8 @@ void QGeoSearchReply::abort()
 
     This may be more than locations().length() if the number of responses
     was less than the number requested.
-
-    If QGeoSearchManager::search() is used along with
-    QGeoSearchManager::setAdditionalLandmarkManagers the number of results can
-    be as high as limit * (1 + number of additional landmark managers).
 */
-int QGeoSearchReply::limit() const
+int QGeocodeReply::limit() const
 {
     return d_ptr->limit;
 }
@@ -264,7 +260,7 @@ int QGeoSearchReply::limit() const
     Returns the offset into the entire result set at which to start
     fetching results.
 */
-int QGeoSearchReply::offset() const
+int QGeocodeReply::offset() const
 {
     return d_ptr->offset;
 }
@@ -274,7 +270,7 @@ int QGeoSearchReply::offset() const
 
     If \a limit is -1 then all available responses will be returned.
 */
-void QGeoSearchReply::setLimit(int limit)
+void QGeocodeReply::setLimit(int limit)
 {
     d_ptr->limit = limit;
 }
@@ -283,27 +279,27 @@ void QGeoSearchReply::setLimit(int limit)
     Sets the offset in the entire result set at which to start
     fetching result to \a offset.
 */
-void QGeoSearchReply::setOffset(int offset)
+void QGeocodeReply::setOffset(int offset)
 {
     d_ptr->offset = offset;
 }
 
 /*!
-    \fn void QGeoSearchReply::finished()
+    \fn void QGeocodeReply::finished()
 
     This signal is emitted when this reply has finished processing.
 
-    If error() equals QGeoSearchReply::NoError then the processing
+    If error() equals QGeocodeReply::NoError then the processing
     finished successfully.
 
-    This signal and QGeoSearchManager::finished() will be
+    This signal and QGeocodingManager::finished() will be
     emitted at the same time.
 
     \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 /*!
-    \fn void QGeoSearchReply::error(QGeoSearchReply::Error error, const QString &errorString)
+    \fn void QGeocodeReply::error(QGeocodeReply::Error error, const QString &errorString)
 
     This signal is emitted when an error has been detected in the processing of
     this reply. The finished() signal will probably follow.
@@ -311,7 +307,7 @@ void QGeoSearchReply::setOffset(int offset)
     The error will be described by the error code \a error. If \a errorString is
     not empty it will contain a textual description of the error.
 
-    This signal and QGeoSearchManager::error() will be emitted at the same time.
+    This signal and QGeocodingManager::error() will be emitted at the same time.
 
     \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
@@ -320,15 +316,15 @@ void QGeoSearchReply::setOffset(int offset)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoSearchReplyPrivate::QGeoSearchReplyPrivate()
-    : error(QGeoSearchReply::NoError),
+QGeocodeReplyPrivate::QGeocodeReplyPrivate()
+    : error(QGeocodeReply::NoError),
       errorString(QLatin1String("")),
       isFinished(false),
       viewport(0),
       limit(-1),
       offset(0) {}
 
-QGeoSearchReplyPrivate::QGeoSearchReplyPrivate(QGeoSearchReply::Error error, const QString &errorString)
+QGeocodeReplyPrivate::QGeocodeReplyPrivate(QGeocodeReply::Error error, const QString &errorString)
     : error(error),
       errorString(errorString),
       isFinished(true),
@@ -336,9 +332,9 @@ QGeoSearchReplyPrivate::QGeoSearchReplyPrivate(QGeoSearchReply::Error error, con
       limit(-1),
       offset(0) {}
 
-QGeoSearchReplyPrivate::~QGeoSearchReplyPrivate() {}
+QGeocodeReplyPrivate::~QGeocodeReplyPrivate() {}
 
 
-#include "moc_qgeosearchreply.cpp"
+#include "moc_qgeocodereply.cpp"
 
 QT_END_NAMESPACE

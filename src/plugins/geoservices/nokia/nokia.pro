@@ -9,27 +9,27 @@ DESTDIR = $$QT.location.plugins/geoservices
 #QTDIR_build:REQUIRES += "contains(QT_CONFIG, location)"
 
 HEADERS += \
+            qgeocodereply_nokia.h \
             qgeocodexmlparser.h \
+            qgeocodingmanagerengine_nokia.h \
             qgeomappingmanagerengine_nokia.h \
             qgeomapreply_nokia.h \
             qgeoroutereply_nokia.h \
             qgeoroutexmlparser.h \
             qgeoroutingmanagerengine_nokia.h \
-            qgeosearchmanagerengine_nokia.h \
-            qgeosearchreply_nokia.h \
             qgeoserviceproviderplugin_nokia.h \
             marclanguagecodes.h \
             qgeotiledmapdata_nokia.h
 
 SOURCES += \
+            qgeocodereply_nokia.cpp \
             qgeocodexmlparser.cpp \
+            qgeocodingmanagerengine_nokia.cpp \
             qgeomappingmanagerengine_nokia.cpp \
             qgeomapreply_nokia.cpp \
             qgeoroutereply_nokia.cpp \
             qgeoroutexmlparser.cpp \
             qgeoroutingmanagerengine_nokia.cpp \
-            qgeosearchmanagerengine_nokia.cpp \
-            qgeosearchreply_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp \
             qgeotiledmapdata_nokia.cpp
 
@@ -45,7 +45,7 @@ symbian {
     TARGET.UID3 = 0x2002BFCA
     pluginDep.sources = $${TARGET}.dll
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
-    DEPLOYMENT += pluginDep      
+    DEPLOYMENT += pluginDep
     LIBS += -lefsrv
 }
 

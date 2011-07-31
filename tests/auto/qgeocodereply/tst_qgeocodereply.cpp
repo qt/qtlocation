@@ -39,43 +39,43 @@
 **
 ****************************************************************************/
 
-#include "tst_qgeosearchreply.h"
+#include "tst_qgeocodereply.h"
 
 QT_USE_NAMESPACE
 
-void tst_QGeoSearchReply::initTestCase()
+void tst_QGeocodeReply::initTestCase()
 {
 
-    reply = new SubSearchReply();
+    reply = new SubGeocodeReply();
 }
 
-void tst_QGeoSearchReply::cleanupTestCase()
+void tst_QGeocodeReply::cleanupTestCase()
 {
 
     delete reply;
     delete qgeolocation;
 }
 
-void tst_QGeoSearchReply::init()
+void tst_QGeocodeReply::init()
 {
-    qRegisterMetaType<QGeoSearchReply::Error>("Error");
-    signalerror = new QSignalSpy(reply, SIGNAL(error(QGeoSearchReply::Error,const QString)));
+    qRegisterMetaType<QGeocodeReply::Error>("Error");
+    signalerror = new QSignalSpy(reply, SIGNAL(error(QGeocodeReply::Error,const QString)));
     signalfinished = new QSignalSpy(reply, SIGNAL(finished()));
 }
 
-void tst_QGeoSearchReply::cleanup()
+void tst_QGeocodeReply::cleanup()
 {
     delete signalerror;
     delete signalfinished;
 }
 
-void tst_QGeoSearchReply::constructor()
+void tst_QGeocodeReply::constructor()
 {
     QVERIFY(!reply->isFinished());
 
     QCOMPARE(reply->limit(),-1);
     QCOMPARE(reply->offset(),0);
-    QCOMPARE(reply->error(),QGeoSearchReply::NoError);
+    QCOMPARE(reply->error(),QGeocodeReply::NoError);
 
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
@@ -84,58 +84,58 @@ void tst_QGeoSearchReply::constructor()
     QCOMPARE(signalfinished->count(),0);
 }
 
-void tst_QGeoSearchReply::constructor_error()
+void tst_QGeocodeReply::constructor_error()
 {
-    QFETCH(QGeoSearchReply::Error,error);
+    QFETCH(QGeocodeReply::Error,error);
     QFETCH(QString,msg);
 
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
 
-    QGeoSearchReply *qgeosearchreplycopy = new QGeoSearchReply (error,msg,0);
+    QGeocodeReply *qgeocodereplycopy = new QGeocodeReply (error,msg,0);
 
     QCOMPARE(signalerror->count(),0);
     QCOMPARE(signalfinished->count(),0);
 
-    QCOMPARE (qgeosearchreplycopy->error(),error);
-    QCOMPARE (qgeosearchreplycopy->errorString(),msg);
+    QCOMPARE (qgeocodereplycopy->error(),error);
+    QCOMPARE (qgeocodereplycopy->errorString(),msg);
 
-    delete qgeosearchreplycopy;
+    delete qgeocodereplycopy;
 }
 
-void tst_QGeoSearchReply::constructor_error_data()
+void tst_QGeocodeReply::constructor_error_data()
 {
-    QTest::addColumn<QGeoSearchReply::Error>("error");
+    QTest::addColumn<QGeocodeReply::Error>("error");
     QTest::addColumn<QString>("msg");
 
-    QTest::newRow("error1") << QGeoSearchReply::NoError << "No error.";
-    QTest::newRow("error2") << QGeoSearchReply::EngineNotSetError << "Engine Not Set Error.";
-    QTest::newRow("error3") << QGeoSearchReply::CommunicationError << "Communication Error.";
-    QTest::newRow("error4") << QGeoSearchReply::ParseError << "Parse Error.";
-    QTest::newRow("error5") << QGeoSearchReply::UnsupportedOptionError << "Unsupported Option Error.";
-    QTest::newRow("error6") << QGeoSearchReply::UnknownError << "Unknown Error.";
+    QTest::newRow("error1") << QGeocodeReply::NoError << "No error.";
+    QTest::newRow("error2") << QGeocodeReply::EngineNotSetError << "Engine Not Set Error.";
+    QTest::newRow("error3") << QGeocodeReply::CommunicationError << "Communication Error.";
+    QTest::newRow("error4") << QGeocodeReply::ParseError << "Parse Error.";
+    QTest::newRow("error5") << QGeocodeReply::UnsupportedOptionError << "Unsupported Option Error.";
+    QTest::newRow("error6") << QGeocodeReply::UnknownError << "Unknown Error.";
 
 }
 
-void tst_QGeoSearchReply::destructor()
+void tst_QGeocodeReply::destructor()
 {
-    QGeoSearchReply *qgeosearchreplycopy;
-    QFETCH(QGeoSearchReply::Error,error);
+    QGeocodeReply *qgeocodereplycopy;
+    QFETCH(QGeocodeReply::Error,error);
     QFETCH(QString,msg);
 
     QLocationTestUtils::uheap_mark();
-    qgeosearchreplycopy = new QGeoSearchReply (error,msg,0);
-    delete qgeosearchreplycopy;
+    qgeocodereplycopy = new QGeocodeReply (error,msg,0);
+    delete qgeocodereplycopy;
     QLocationTestUtils::uheap_mark_end();
 
 }
 
-void tst_QGeoSearchReply::destructor_data()
+void tst_QGeocodeReply::destructor_data()
 {
-    tst_QGeoSearchReply::constructor_error_data();
+    tst_QGeocodeReply::constructor_error_data();
 }
 
-void tst_QGeoSearchReply::abort()
+void tst_QGeocodeReply::abort()
 {
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
@@ -157,9 +157,9 @@ void tst_QGeoSearchReply::abort()
     QCOMPARE (signalfinished->count(),2);
 }
 
-void tst_QGeoSearchReply::error()
+void tst_QGeocodeReply::error()
 {
-    QFETCH(QGeoSearchReply::Error,error);
+    QFETCH(QGeocodeReply::Error,error);
     QFETCH(QString,msg);
 
     QVERIFY( signalerror->isValid() );
@@ -176,20 +176,20 @@ void tst_QGeoSearchReply::error()
 
 }
 
-void tst_QGeoSearchReply::error_data()
+void tst_QGeocodeReply::error_data()
 {
-    QTest::addColumn<QGeoSearchReply::Error>("error");
+    QTest::addColumn<QGeocodeReply::Error>("error");
     QTest::addColumn<QString>("msg");
 
-    QTest::newRow("error1") << QGeoSearchReply::NoError << "No error.";
-    QTest::newRow("error2") << QGeoSearchReply::EngineNotSetError << "Engine Not Set Error.";
-    QTest::newRow("error3") << QGeoSearchReply::CommunicationError << "Communication Error.";
-    QTest::newRow("error4") << QGeoSearchReply::ParseError << "Parse Error.";
-    QTest::newRow("error5") << QGeoSearchReply::UnsupportedOptionError << "Unsupported Option Error.";
-    QTest::newRow("error6") << QGeoSearchReply::UnknownError << "Unknown Error.";
+    QTest::newRow("error1") << QGeocodeReply::NoError << "No error.";
+    QTest::newRow("error2") << QGeocodeReply::EngineNotSetError << "Engine Not Set Error.";
+    QTest::newRow("error3") << QGeocodeReply::CommunicationError << "Communication Error.";
+    QTest::newRow("error4") << QGeocodeReply::ParseError << "Parse Error.";
+    QTest::newRow("error5") << QGeocodeReply::UnsupportedOptionError << "Unsupported Option Error.";
+    QTest::newRow("error6") << QGeocodeReply::UnknownError << "Unknown Error.";
 }
 
-void tst_QGeoSearchReply::finished()
+void tst_QGeocodeReply::finished()
 {
     QVERIFY( signalerror->isValid() );
     QVERIFY( signalfinished->isValid() );
@@ -217,21 +217,21 @@ void tst_QGeoSearchReply::finished()
 
 
 
-void tst_QGeoSearchReply::limit()
+void tst_QGeocodeReply::limit()
 {
     int limit =30;
     reply->callSetLimit(limit);
     QCOMPARE(reply->limit(),limit);
 }
 
-void tst_QGeoSearchReply::offset()
+void tst_QGeocodeReply::offset()
 {
     int offset = 2;
     reply->callSetOffset(offset);
     QCOMPARE(reply->offset(),offset);
 }
 
-void tst_QGeoSearchReply::locations()
+void tst_QGeocodeReply::locations()
 {
     QList <QGeoLocation> geolocations;
     geolocations = reply->locations();
@@ -274,7 +274,7 @@ void tst_QGeoSearchReply::locations()
     delete qgeolocationcopy;
 }
 
-void tst_QGeoSearchReply::viewport()
+void tst_QGeocodeReply::viewport()
 {
     QGeoCoordinate *qgeocoordinate = new QGeoCoordinate (12.12 , 54.43);
 
@@ -288,4 +288,4 @@ void tst_QGeoSearchReply::viewport()
     delete qgeoboundingbox;
 }
 
-QTEST_MAIN(tst_QGeoSearchReply);
+QTEST_MAIN(tst_QGeocodeReply);

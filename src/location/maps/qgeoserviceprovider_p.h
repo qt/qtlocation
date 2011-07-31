@@ -59,7 +59,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoSearchManager;
+class QGeocodingManager;
 class QGeoRoutingManager;
 class QGeoMappingManager;
 
@@ -77,17 +77,17 @@ public:
 
     QMap<QString, QVariant> parameterMap;
 
-    QGeoSearchManager *searchManager;
+    QGeocodingManager *geocodingManager;
     QGeoRoutingManager *routingManager;
     QGeoMappingManager *mappingManager;
     QPlaceManager *placeManager;
 
-    QGeoServiceProvider::Error searchError;
+    QGeoServiceProvider::Error geocodeError;
     QGeoServiceProvider::Error routingError;
     QGeoServiceProvider::Error mappingError;
     QGeoServiceProvider::Error placeError;
 
-    QString searchErrorString;
+    QString geocodeErrorString;
     QString routingErrorString;
     QString mappingErrorString;
     QString placeErrorString;

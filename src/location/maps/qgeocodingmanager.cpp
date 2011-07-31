@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include "qgeosearchmanager.h"
-#include "qgeosearchmanager_p.h"
-#include "qgeosearchmanagerengine.h"
+#include "qgeocodingmanager.h"
+#include "qgeocodingmanager_p.h"
+#include "qgeocodingmanagerengine.h"
 
 #include "qgeoboundingbox.h"
 #include "qgeoboundingcircle.h"
@@ -51,10 +51,10 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \class QGeoSearchManager
+    \class QGeocodingManager
 
-    \brief The QGeoSearchManager class provides support for searching
-    operations related to geographic information.
+    \brief The QGeocodingManager class provides support for geocoding
+    operations.
 
 
     \inmodule QtLocation
@@ -63,18 +63,18 @@ QT_BEGIN_NAMESPACE
     \ingroup maps-places
 
     The geocode(), reverseGeocode() and search() functions return
-    QGeoSearchReply objects, which manage these operations and report on the
+    QGeocodeReply objects, which manage these operations and report on the
     result of the operations and any errors which may have occurred.
 
     The geocode() and reverseGeocode() functions can be used to convert
     QGeoAddress instances to QGeoCoordinate instances and vice-versa.
 
-    The search() function allows a user to perform a free text search
-    for location information.  If the string provided can be interpreted as
+    The geocode() function is also overloaded to allow a user to perform a free text
+    geocoding operation, if the string provided can be interpreted as
     an address it can be geocoded to coordinate information.
 
-    Instances of QGeoSearchManager can be accessed with
-    QGeoServiceProvider::searchManager().
+    Instances of QGeocodingManager can be accessed with
+    QGeoServiceProvider::geocodingManager().
 */
 
 /*!
@@ -82,47 +82,47 @@ QT_BEGIN_NAMESPACE
     implementation provided by \a engine.
 
     This constructor is used interally by QGeoServiceProviderFactory. Regular
-    users should acquire instances of QGeoSearchManager with
-    QGeoServiceProvider::searchManager();
+    users should acquire instances of QGeocodingManager with
+    QGeoServiceProvider::geocodingManager();
 */
-QGeoSearchManager::QGeoSearchManager(QGeoSearchManagerEngine *engine, QObject *parent)
+QGeocodingManager::QGeocodingManager(QGeocodingManagerEngine *engine, QObject *parent)
     : QObject(parent),
-      d_ptr(new QGeoSearchManagerPrivate())
+      d_ptr(new QGeocodingManagerPrivate())
 {
     d_ptr->engine = engine;
     if (d_ptr->engine) {
         d_ptr->engine->setParent(this);
 
         connect(d_ptr->engine,
-                SIGNAL(finished(QGeoSearchReply*)),
+                SIGNAL(finished(QGeocodeReply*)),
                 this,
-                SIGNAL(finished(QGeoSearchReply*)));
+                SIGNAL(finished(QGeocodeReply*)));
 
         connect(d_ptr->engine,
-                SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)),
+                SIGNAL(error(QGeocodeReply*, QGeocodeReply::Error, QString)),
                 this,
-                SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
+                SIGNAL(error(QGeocodeReply*, QGeocodeReply::Error, QString)));
     } else {
-        qFatal("The search manager engine that was set for this search manager was NULL.");
+        qFatal("The geocoding manager engine that was set for this geocoding manager was NULL.");
     }
 }
 
 /*!
     Destroys this manager.
 */
-QGeoSearchManager::~QGeoSearchManager()
+QGeocodingManager::~QGeocodingManager()
 {
     delete d_ptr;
 }
 
 /*!
     Returns the name of the engine which implements the behaviour of this
-    search manager.
+    geocoding manager.
 
     The combination of managerName() and managerVersion() should be unique
     amongst the plugin implementations.
 */
-QString QGeoSearchManager::managerName() const
+QString QGeocodingManager::managerName() const
 {
 //    if (!d_ptr->engine)
 //        return QString();
@@ -132,12 +132,12 @@ QString QGeoSearchManager::managerName() const
 
 /*!
     Returns the version of the engine which implements the behaviour of this
-    search manager.
+    geocoding manager.
 
     The combination of managerName() and managerVersion() should be unique
     amongst the plugin implementations.
 */
-int QGeoSearchManager::managerVersion() const
+int QGeocodingManager::managerVersion() const
 {
 //    if (!d_ptr->engine)
 //        return -1;
@@ -149,16 +149,16 @@ int QGeoSearchManager::managerVersion() const
     Begins the geocoding of \a address. Geocoding is the process of finding a
     coordinate that corresponds to a given address.
 
-    A QGeoSearchReply object will be returned, which can be used to manage the
+    A QGeocodeReply object will be returned, which can be used to manage the
     geocoding operation and to return the results of the operation.
 
-    This manager and the returned QGeoSearchReply object will emit signals
+    This manager and the returned QGeocodeReply object will emit signals
     indicating if the operation completes or if errors occur.
 
     If supportsGeocoding() returns false an
-    QGeoSearchReply::UnsupportedOptionError will occur.
+    QGeocodeReply::UnsupportedOptionError will occur.
 
-    Once the operation has completed, QGeoSearchReply::locations() can be used to
+    Once the operation has completed, QGeocodeReply::locations() can be used to
     retrieve the results, which will consist of a list of QGeoLocation objects.
     These object represent a combination of coordinate and address data.
 
@@ -172,14 +172,14 @@ int QGeoSearchManager::managerVersion() const
     service will attempt to geocode all matches for the specified data.
 
     The user is responsible for deleting the returned reply object, although
-    this can be done in the slot connected to QGeoSearchManager::finished(),
-    QGeoSearchManager::error(), QGeoSearchReply::finished() or
-    QGeoSearchReply::error() with deleteLater().
+    this can be done in the slot connected to QGeocodingManager::finished(),
+    QGeocodingManager::error(), QGeocodeReply::finished() or
+    QGeocodeReply::error() with deleteLater().
 */
-QGeoSearchReply* QGeoSearchManager::geocode(const QGeoAddress &address, QGeoBoundingArea *bounds)
+QGeocodeReply* QGeocodingManager::geocode(const QGeoAddress &address, QGeoBoundingArea *bounds)
 {
 //    if (!d_ptr->engine)
-//        return new QGeoSearchReply(QGeoSearchReply::EngineNotSetError, "The search manager was not created with a valid engine.", this);
+//        return new QGeocodeReply(QGeocodeReply::EngineNotSetError, "The geocoding manager was not created with a valid engine.", this);
 
     return d_ptr->engine->geocode(address, bounds);
 }
@@ -189,16 +189,16 @@ QGeoSearchReply* QGeoSearchManager::geocode(const QGeoAddress &address, QGeoBoun
     Begins the reverse geocoding of \a coordinate. Reverse geocoding is the
     process of finding an address that corresponds to a given coordinate.
 
-    A QGeoSearchReply object will be returned, which can be used to manage the
+    A QGeocodeReply object will be returned, which can be used to manage the
     reverse geocoding operation and to return the results of the operation.
 
-    This manager and the returned QGeoSearchReply object will emit signals
+    This manager and the returned QGeocodeReply object will emit signals
     indicating if the operation completes or if errors occur.
 
     If supportsReverseGeocoding() returns false an
-    QGeoSearchReply::UnsupportedOptionError will occur.
+    QGeocodeReply::UnsupportedOptionError will occur.
 
-    At that point QGeoSearchReply::locations() can be used to retrieve the
+    At that point QGeocodeReply::locations() can be used to retrieve the
     results, which will consist of a list of QGeoLocation objects. These object
     represent a combination of coordinate and address data.
 
@@ -217,41 +217,35 @@ QGeoSearchReply* QGeoSearchManager::geocode(const QGeoAddress &address, QGeoBoun
     limit the results to thos that are contained within \a bounds.
 
     The user is responsible for deleting the returned reply object, although
-    this can be done in the slot connected to QGeoSearchManager::finished(),
-    QGeoSearchManager::error(), QGeoSearchReply::finished() or
-    QGeoSearchReply::error() with deleteLater().
+    this can be done in the slot connected to QGeocodingManager::finished(),
+    QGeocodingManager::error(), QGeocodeReply::finished() or
+    QGeocodeReply::error() with deleteLater().
 */
-QGeoSearchReply* QGeoSearchManager::reverseGeocode(const QGeoCoordinate &coordinate, QGeoBoundingArea *bounds)
+QGeocodeReply* QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinate, QGeoBoundingArea *bounds)
 {
 //    if (!d_ptr->engine)
-//        return new QGeoSearchReply(QGeoSearchReply::EngineNotSetError, "The search manager was not created with a valid engine.", this);
+//        return new QGeocodeReply(QGeocodeReply::EngineNotSetError, "The geocoding manager was not created with a valid engine.", this);
 
     return d_ptr->engine->reverseGeocode(coordinate, bounds);
 }
 
 /*!
-    Begins searching for a location matching \a searchString.  The value of
-    \a searchTypes will determine whether the search is for addresses only,
-    for landmarks only or for both.
+    Begins geocoding for a location matching \a address.
 
-    A QGeoSearchReply object will be returned, which can be used to manage the
+    A QGeocodeReply object will be returned, which can be used to manage the
     geocoding operation and to return the results of the operation.
 
-    This manager and the returned QGeoSearchReply object will emit signals
+    This manager and the returned QGeocodeReply object will emit signals
     indicating if the operation completes or if errors occur.
 
-    If supportsGeocoding() returns false and \a searchTypes is
-    QGeoSearchManager::SearchGeocode an
-    QGeoSearchReply::UnsupportedOptionError will occur.
-
-    Once the operation has completed, QGeoSearchReply::locations() can be used to
+    Once the operation has completed, QGeocodeReply::locations() can be used to
     retrieve the results, which will consist of a list of QGeoLocation objects.
     These object represent a combination of coordinate and address data.
 
     If \a limit is -1 the entire result set will be returned, otherwise at most
     \a limit results will be returned.
 
-    The \a offset parameter is used to ask the search service to not return the
+    The \a offset parameter is used to ask the geocoding service to not return the
     first \a offset results.
 
     The \a limit and \a offset results are used together to implement paging.
@@ -260,19 +254,19 @@ QGeoSearchReply* QGeoSearchManager::reverseGeocode(const QGeoCoordinate &coordin
     limit the results to thos that are contained within \a bounds.
 
     The user is responsible for deleting the returned reply object, although
-    this can be done in the slot connected to QGeoSearchManager::finished(),
-    QGeoSearchManager::error(), QGeoSearchReply::finished() or
-    QGeoSearchReply::error() with deleteLater().
+    this can be done in the slot connected to QGeocodingManager::finished(),
+    QGeocodingManager::error(), QGeocodeReply::finished() or
+    QGeocodeReply::error() with deleteLater().
 */
-QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
+QGeocodeReply* QGeocodingManager::geocode(const QString &address,
         int limit,
         int offset,
         QGeoBoundingArea *bounds)
 {
 //    if (!d_ptr->engine)
-//        return new QGeoSearchReply(QGeoSearchReply::EngineNotSetError, "The search manager was not created with a valid engine.", this);
+//        return new QGeocodeReply(QGeocodeReply::EngineNotSetError, "The geocoding manager was not created with a valid engine.", this);
 
-    QGeoSearchReply *reply = d_ptr->engine->search(searchString,
+    QGeocodeReply *reply = d_ptr->engine->geocode(address,
                              limit,
                              offset,
                              bounds);
@@ -282,7 +276,7 @@ QGeoSearchReply* QGeoSearchManager::search(const QString &searchString,
 /*!
     Returns whether this manager supports geocoding.
 */
-bool QGeoSearchManager::supportsGeocoding() const
+bool QGeocodingManager::supportsGeocoding() const
 {
 //    if (!d_ptr->engine)
 //        return false;
@@ -293,7 +287,7 @@ bool QGeoSearchManager::supportsGeocoding() const
 /*!
     Returns whether this manager supports reverse geocoding.
 */
-bool QGeoSearchManager::supportsReverseGeocoding() const
+bool QGeocodingManager::supportsReverseGeocoding() const
 {
     return d_ptr->engine->supportsReverseGeocoding();
 }
@@ -301,34 +295,34 @@ bool QGeoSearchManager::supportsReverseGeocoding() const
 /*!
     Sets the locale to be used by the this manager to \a locale.
 
-    If this search manager supports returning the results
+    If this geocoding manager supports returning the results
     in different languages, they will be returned in the language of \a locale.
 
     The locale used defaults to the system locale if this is not set.
 */
-void QGeoSearchManager::setLocale(const QLocale &locale)
+void QGeocodingManager::setLocale(const QLocale &locale)
 {
     d_ptr->engine->setLocale(locale);
 }
 
 /*!
-    Returns the locale used to hint to this search manager about what
+    Returns the locale used to hint to this geocoding manager about what
     language to use for the results.
 */
-QLocale QGeoSearchManager::locale() const
+QLocale QGeocodingManager::locale() const
 {
     return d_ptr->engine->locale();
 }
 
 /*!
-\fn void QGeoSearchManager::finished(QGeoSearchReply* reply)
+\fn void QGeocodingManager::finished(QGeocodeReply* reply)
 
     This signal is emitted when \a reply has finished processing.
 
-    If reply::error() equals QGeoSearchReply::NoError then the processing
+    If reply::error() equals QGeocodeReply::NoError then the processing
     finished successfully.
 
-    This signal and QGeoSearchReply::finished() will be emitted at the same
+    This signal and QGeocodeReply::finished() will be emitted at the same
     time.
 
     \note Do no delete the \a reply object in the slot connected to this
@@ -336,15 +330,15 @@ QLocale QGeoSearchManager::locale() const
 */
 
 /*!
-\fn void QGeoSearchManager::error(QGeoSearchReply* reply, QGeoSearchReply::Error error, QString errorString)
+\fn void QGeocodingManager::error(QGeocodeReply* reply, QGeocodeReply::Error error, QString errorString)
 
     This signal is emitted when an error has been detected in the processing of
-    \a reply. The QGeoSearchManager::finished() signal will probably follow.
+    \a reply. The QGeocodingManager::finished() signal will probably follow.
 
     The error will be described by the error code \a error. If \a errorString is
     not empty it will contain a textual description of the error.
 
-    This signal and QGeoSearchReply::error() will be emitted at the same time.
+    This signal and QGeocodeReply::error() will be emitted at the same time.
 
     \note Do no delete the \a reply object in the slot connected to this
     signal. Use deleteLater() instead.
@@ -353,10 +347,10 @@ QLocale QGeoSearchManager::locale() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoSearchManagerPrivate::QGeoSearchManagerPrivate()
+QGeocodingManagerPrivate::QGeocodingManagerPrivate()
     : engine(0) {}
 
-QGeoSearchManagerPrivate::~QGeoSearchManagerPrivate()
+QGeocodingManagerPrivate::~QGeocodingManagerPrivate()
 {
     if (engine)
         delete engine;
@@ -365,6 +359,6 @@ QGeoSearchManagerPrivate::~QGeoSearchManagerPrivate()
 /*******************************************************************************
 *******************************************************************************/
 
-#include "moc_qgeosearchmanager.cpp"
+#include "moc_qgeocodingmanager.cpp"
 
 QT_END_NAMESPACE

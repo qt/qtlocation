@@ -88,8 +88,8 @@ amongst the plugins.
 */
 
 /*!
-    Returns a new QGeoSearchManagerEngine instance, initialized with \a
-    parameters, which implements the location searching functionality.
+    Returns a new QGeocodingManagerEngine instance, initialized with \a
+    parameters, which implements the location geocoding functionality.
 
     If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
@@ -100,7 +100,7 @@ amongst the plugins.
     The default implementation returns 0, which causes a
     QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-QGeoSearchManagerEngine* QGeoServiceProviderFactory::createSearchManagerEngine(const QMap<QString, QVariant> &parameters,
+QGeocodingManagerEngine* QGeoServiceProviderFactory::createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
@@ -113,7 +113,7 @@ QGeoSearchManagerEngine* QGeoServiceProviderFactory::createSearchManagerEngine(c
 
 /*!
     Returns a new QGeoMappingManagerEngine instance, initialized with \a
-    parameters, which implements the location searching functionality.
+    parameters, which implements mapping functionality.
 
     If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
@@ -137,7 +137,7 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine
 
 /*!
     Returns a new QGeoRoutingManagerEngine instance, initialized with \a
-    parameters, which implements the location searching functionality.
+    parameters, which implements routing functionality.
 
     If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.

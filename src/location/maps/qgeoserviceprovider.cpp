@@ -43,11 +43,11 @@
 #include "qgeoserviceprovider_p.h"
 #include "qgeoserviceproviderfactory.h"
 
-#include "qgeosearchmanager.h"
+#include "qgeocodingmanager.h"
 #include "qgeomappingmanager.h"
 #include "qgeoroutingmanager.h"
 #include "qplacemanager.h"
-#include "qgeosearchmanagerengine.h"
+#include "qgeocodingmanagerengine.h"
 #include "qgeomappingmanagerengine.h"
 #include "qgeoroutingmanagerengine.h"
 #include "qplacemanagerengine.h"
@@ -153,50 +153,50 @@ QGeoServiceProvider::~QGeoServiceProvider()
 }
 
 /*!
-    Returns the QGeoSearchManager made available by the service
+    Returns the QGeocodingManager made available by the service
     provider.
 
     This function will return 0 if the service provider does not provide
     any geocoding services.
 
-    This function will attempt to construct a QGeoSearchManager instance
+    This function will attempt to construct a QGeocodingManager instance
     when it is called for the first time.  If the attempt is successful the
-    QGeoSearchManager will be cached, otherwise each call of this function
-    will attempt to construct a QGeoSearchManager instance until the
+    QGeocodingManager will be cached, otherwise each call of this function
+    will attempt to construct a QGeocodingManager instance until the
     construction is successful.
 
     After this function has been called, error() and errorString() will
     report any errors which occurred during the construction of the
-    QGeoSearchManager.
+    QGeocodingManager.
 */
-QGeoSearchManager* QGeoServiceProvider::searchManager() const
+QGeocodingManager* QGeoServiceProvider::geocodingManager() const
 {
-    if (!d_ptr->factory || (d_ptr->searchError != QGeoServiceProvider::NoError))
+    if (!d_ptr->factory || (d_ptr->geocodeError != QGeoServiceProvider::NoError))
         return 0;
 
-    if (!d_ptr->searchManager) {
-        QGeoSearchManagerEngine *engine = d_ptr->factory->createSearchManagerEngine(d_ptr->parameterMap,
-                                          &(d_ptr->searchError),
-                                          &(d_ptr->searchErrorString));
+    if (!d_ptr->geocodingManager) {
+        QGeocodingManagerEngine *engine = d_ptr->factory->createGeocodingManagerEngine(d_ptr->parameterMap,
+                                          &(d_ptr->geocodeError),
+                                          &(d_ptr->geocodeErrorString));
         if (engine) {
             engine->setManagerName(d_ptr->factory->providerName());
             engine->setManagerVersion(d_ptr->factory->providerVersion());
-            d_ptr->searchManager = new QGeoSearchManager(engine);
+            d_ptr->geocodingManager = new QGeocodingManager(engine);
         } else {
-            d_ptr->searchError = QGeoServiceProvider::NotSupportedError;
-            d_ptr->searchErrorString = QLatin1String("The service provider does not support searchManager().");
+            d_ptr->geocodeError = QGeoServiceProvider::NotSupportedError;
+            d_ptr->geocodeErrorString = QLatin1String("The service provider does not support geocodingManager().");
         }
 
-        if (d_ptr->searchError != QGeoServiceProvider::NoError) {
-            if (d_ptr->searchManager)
-                delete d_ptr->searchManager;
-            d_ptr->searchManager = 0;
-            d_ptr->error = d_ptr->searchError;
-            d_ptr->errorString = d_ptr->searchErrorString;
+        if (d_ptr->geocodeError != QGeoServiceProvider::NoError) {
+            if (d_ptr->geocodingManager)
+                delete d_ptr->geocodingManager;
+            d_ptr->geocodingManager = 0;
+            d_ptr->error = d_ptr->geocodeError;
+            d_ptr->errorString = d_ptr->geocodeErrorString;
         }
     }
 
-    return d_ptr->searchManager;
+    return d_ptr->geocodingManager;
 }
 
 /*!
@@ -362,11 +362,11 @@ QString QGeoServiceProvider::errorString() const
 
 QGeoServiceProviderPrivate::QGeoServiceProviderPrivate()
     : factory(0),
-      searchManager(0),
+      geocodingManager(0),
       routingManager(0),
       mappingManager(0),
       placeManager(0),
-      searchError(QGeoServiceProvider::NoError),
+      geocodeError(QGeoServiceProvider::NoError),
       routingError(QGeoServiceProvider::NoError),
       mappingError(QGeoServiceProvider::NoError),
       placeError(QGeoServiceProvider::NoError),
@@ -374,8 +374,8 @@ QGeoServiceProviderPrivate::QGeoServiceProviderPrivate()
 
 QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
 {
-    if (searchManager)
-        delete searchManager;
+    if (geocodingManager)
+        delete geocodingManager;
 
     if (routingManager)
         delete routingManager;

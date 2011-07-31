@@ -39,16 +39,16 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSEARCHMANAGERENGINE_TEST_H
-#define QGEOSEARCHMANAGERENGINE_TEST_H
+#ifndef QGEOCODINGMANAGERENGINE_TEST_H
+#define QGECODINGMANAGERENGINE_TEST_H
 
 #include <qgeoserviceprovider.h>
-#include <qgeosearchmanagerengine.h>
+#include <qgeocodingmanagerengine.h>
 #include <QLocale>
 #include <qlandmarkmanager.h>
 #include <qgeoaddress.h>
 #include <qgeolocation.h>
-#include <qgeosearchreply.h>
+#include <qgeocodereply.h>
 
 #include <QTimer>
 #include <QTimerEvent>
@@ -56,11 +56,11 @@
 QT_USE_NAMESPACE
 
 
-class SearchReplyTest :public QGeoSearchReply
+class GeocodeReplyTest :public QGeocodeReply
 {
     Q_OBJECT
 public:
-    SearchReplyTest(QObject *parent=0):QGeoSearchReply (parent) {}
+    GeocodeReplyTest(QObject *parent=0):QGeocodeReply (parent) {}
 
     void  callAddLocation ( const QGeoLocation & location ) {addLocation(location);}
     void  callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}
@@ -76,20 +76,20 @@ Q_SIGNALS:
     void aborted();
 };
 
-class QGeoSearchManagerEngineTest: public QGeoSearchManagerEngine
+class QGeocodingManagerEngineTest: public QGeocodingManagerEngine
 
 {
 Q_OBJECT
 public:
-    QGeoSearchManagerEngineTest(const QMap<QString, QVariant> &parameters,
+    QGeocodingManagerEngineTest(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error, QString *errorString) :
-        QGeoSearchManagerEngine(parameters),
+        QGeocodingManagerEngine(parameters),
         validateWellKnownValues_(false),
         finishRequestImmediately_(true),
         supported_(true),
-        searchReply_(0),
+        geocodeReply_(0),
         timerId_(0),
-        errorCode_(QGeoSearchReply::NoError)
+        errorCode_(QGeocodeReply::NoError)
     {
         Q_UNUSED(error)
         Q_UNUSED(errorString)
@@ -105,45 +105,45 @@ public:
         setLocale(*(new QLocale (QLocale::German, QLocale::Germany)));
     }
 
-    QGeoSearchReply*  geocode ( const QGeoAddress & address, QGeoBoundingArea * bounds )
+    QGeocodeReply*  geocode ( const QGeoAddress & address, QGeoBoundingArea * bounds )
     {
-        searchReply_ = new SearchReplyTest();
-        connect(searchReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
-        searchReply_->callSetViewport(bounds);
+        geocodeReply_ = new GeocodeReplyTest();
+        connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
+        geocodeReply_->callSetViewport(bounds);
 
         if (address.street().startsWith("error")) {
             errorString_ = address.street();
-            errorCode_ = (QGeoSearchReply::Error)address.county().toInt();
+            errorCode_ = (QGeocodeReply::Error)address.county().toInt();
         } else {
             errorString_ = "";
-            errorCode_ = QGeoSearchReply::NoError;
+            errorCode_ = QGeocodeReply::NoError;
         }
         // 1. Check if we are to validate values
         if (validateWellKnownValues_) {
             if (address.street() != "wellknown street") {
-                 searchReply_->callSetError(QGeoSearchReply::EngineNotSetError, address.street());
+                 geocodeReply_->callSetError(QGeocodeReply::EngineNotSetError, address.street());
             } else {
-                searchReply_->callSetError(QGeoSearchReply::NoError,address.street());
+                geocodeReply_->callSetError(QGeocodeReply::NoError,address.street());
             }
         }
 
         // 2. Set the locations into the reply
-        setLocations(searchReply_, address);
+        setLocations(geocodeReply_, address);
 
         // 3. Finish the request
         if (finishRequestImmediately_) {
             // check if we should finish with error
             if (errorCode_) {
-                searchReply_->callSetError(errorCode_, errorString_);
+                geocodeReply_->callSetError(errorCode_, errorString_);
             } else {
-                searchReply_->callSetFinished(true);
+                geocodeReply_->callSetFinished(true);
             }
         } else {
             // we only allow serialized requests in QML - previous must have been aborted
             Q_ASSERT(timerId_ == 0);
             timerId_ = startTimer(200);
         }
-        return static_cast<QGeoSearchReply*>(searchReply_);
+        return static_cast<QGeocodeReply*>(geocodeReply_);
     }
 
 public Q_SLOTS:
@@ -154,11 +154,11 @@ public Q_SLOTS:
             timerId_ = 0;
         }
         errorString_ = "";
-        errorCode_ = QGeoSearchReply::NoError;
+        errorCode_ = QGeocodeReply::NoError;
     }
 
 public:
-    void setLocations(SearchReplyTest* reply, const QString searchString, int limit )
+    void setLocations(GeocodeReplyTest* reply, const QString searchString, int limit )
     {
         for (int i = 0; i < limit; ++i) {
             QGeoLocation location;
@@ -169,7 +169,7 @@ public:
         }
     }
 
-    void setLocations(SearchReplyTest* reply, const QGeoAddress& address)
+    void setLocations(GeocodeReplyTest* reply, const QGeoAddress& address)
     {
         int count = address.county().toInt();
 
@@ -180,7 +180,7 @@ public:
         }
     }
 
-    void setLocations(SearchReplyTest* reply, const QGeoCoordinate & coordinate)
+    void setLocations(GeocodeReplyTest* reply, const QGeoCoordinate & coordinate)
     {
         for (int i = 0; i < coordinate.longitude(); ++i) {
             QGeoLocation location;
@@ -189,60 +189,60 @@ public:
         }
     }
 
-    QGeoSearchReply*  reverseGeocode ( const QGeoCoordinate & coordinate, QGeoBoundingArea * bounds )
+    QGeocodeReply*  reverseGeocode ( const QGeoCoordinate & coordinate, QGeoBoundingArea * bounds )
     {
-        searchReply_ = new SearchReplyTest();
-        connect(searchReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
+        geocodeReply_ = new GeocodeReplyTest();
+        connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
 
-        setLocations(searchReply_, coordinate);
-        searchReply_->callSetViewport(bounds);
+        setLocations(geocodeReply_, coordinate);
+        geocodeReply_->callSetViewport(bounds);
 
         if (coordinate.latitude() > 70) {
             errorString_ = "error";
-            errorCode_ = (QGeoSearchReply::Error) (coordinate.latitude() - 70);
+            errorCode_ = (QGeocodeReply::Error) (coordinate.latitude() - 70);
         } else {
             errorString_ = "";
-            errorCode_ = QGeoSearchReply::NoError;
+            errorCode_ = QGeocodeReply::NoError;
         }
         if (finishRequestImmediately_) {
             if (errorCode_) {
-                searchReply_->callSetError(errorCode_, errorString_);
+                geocodeReply_->callSetError(errorCode_, errorString_);
             } else {
-                searchReply_->callSetError(QGeoSearchReply::NoError,coordinate.toString());
-                searchReply_->callSetFinished(true);
+                geocodeReply_->callSetError(QGeocodeReply::NoError,coordinate.toString());
+                geocodeReply_->callSetFinished(true);
             }
         } else {
             // we only allow serialized requests in QML - previous must have been aborted or finished
             Q_ASSERT(timerId_ == 0);
             timerId_ = startTimer(200);
         }
-        return static_cast<QGeoSearchReply*>(searchReply_);
+        return static_cast<QGeocodeReply*>(geocodeReply_);
     }
 
 protected:
      void timerEvent(QTimerEvent *event)
      {
          Q_ASSERT(timerId_ == event->timerId());
-         Q_ASSERT(searchReply_);
+         Q_ASSERT(geocodeReply_);
          killTimer(timerId_);
          timerId_ = 0;
          if (errorCode_) {
-             searchReply_->callSetError(errorCode_, errorString_);
-             emit error(searchReply_, errorCode_, errorString_);
+             geocodeReply_->callSetError(errorCode_, errorString_);
+             emit error(geocodeReply_, errorCode_, errorString_);
         } else {
-             searchReply_->callSetError(QGeoSearchReply::NoError, "no error");
-             searchReply_->callSetFinished(true);
+             geocodeReply_->callSetError(QGeocodeReply::NoError, "no error");
+             geocodeReply_->callSetFinished(true);
          }
-         emit finished(searchReply_);
+         emit finished(geocodeReply_);
      }
 
 private:
     bool validateWellKnownValues_;
     bool finishRequestImmediately_;
     bool supported_;
-    SearchReplyTest* searchReply_;
+    GeocodeReplyTest* geocodeReply_;
     int timerId_;
-    QGeoSearchReply::Error errorCode_;
+    QGeocodeReply::Error errorCode_;
     QString errorString_;
 };
 
