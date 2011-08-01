@@ -130,7 +130,6 @@ public:
 
     QPlaceReply *initializeCategories();
     QList<QPlaceCategory> categories() const;
-    QPlaceCategory createCategory() const;
 
     static QStringList availableManagers();
 
