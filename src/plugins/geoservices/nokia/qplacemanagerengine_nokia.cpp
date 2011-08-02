@@ -255,6 +255,16 @@ QList<QPlaceCategory> QPlaceManagerEngineNokia::categories() const
     return QPlaceCategoriesRepository::instance()->categories();
 }
 
+QLocale QPlaceManagerEngineNokia::locale() const
+{
+    return QPlaceRestManager::instance()->locale();
+}
+
+void QPlaceManagerEngineNokia::setLocale(const QLocale &locale)
+{
+    QPlaceRestManager::instance()->setLocale(locale);
+}
+
 void QPlaceManagerEngineNokia::processingError(QPlaceReply *reply,
                                               const QPlaceReply::Error &errorId,
                                               const QString &errorMessage)

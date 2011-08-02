@@ -89,6 +89,9 @@ public:
     QPlaceReply *initializeCategories();
     QList<QPlaceCategory> categories() const;
 
+    QLocale locale() const;
+    void setLocale(const QLocale &locale);
+
 private slots:
     void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
     void processingFinished(QPlaceReply *reply);

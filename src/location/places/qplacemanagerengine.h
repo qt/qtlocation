@@ -84,6 +84,9 @@ public:
     virtual QPlaceReply *initializeCategories() = 0;
     virtual QList<QPlaceCategory> categories() const = 0;
 
+    virtual QLocale locale() const = 0;
+    virtual void setLocale(const QLocale &locale) = 0;
+
 Q_SIGNALS:
     void finished(QPlaceReply *reply);
     void error(QPlaceReply *, QPlaceReply::Error error, QString errorString = QString());

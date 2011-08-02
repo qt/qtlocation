@@ -247,6 +247,24 @@ QStringList QPlaceManager::availableManagers() {
 }
 
 /*!
+    Returns the locale of the manager.
+    The locale is used as a hint to determine
+    what language place details should be returned in.
+*/
+QLocale QPlaceManager::locale() const
+{
+    return d->engine->locale();
+}
+
+/*!
+    Sets the locale of the manager.
+*/
+void QPlaceManager::setLocale(const QLocale &locale)
+{
+    d->engine->setLocale(locale);
+}
+
+/*!
 \fn void QPlaceManager::finished(QPlaceReply* reply)
 
 This signal is emitted when \a reply has finished processing.

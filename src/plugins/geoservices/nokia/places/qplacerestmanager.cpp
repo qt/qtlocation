@@ -94,7 +94,8 @@ QPlaceRestManager *QPlaceRestManager::mInstance = NULL;
     Constructor.
 */
 QPlaceRestManager::QPlaceRestManager(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    mLocale(QLocale())
 {
     mManager = new QNetworkAccessManager(this);
 
@@ -202,9 +203,9 @@ QPlaceRestReply *QPlaceRestManager::postRatingRequest(const QString &placeId, co
     request.setUrl(url);
 
     QByteArray language;
-    language.append(QLocale::system().name().toLatin1());
+    language.append(mLocale.name().toLatin1());
     language.append(",");
-    language.append(QLocale::system().name().left(2).toLatin1());
+    language.append(mLocale.name().left(2).toLatin1());
 
     request.setRawHeader("Accept-Language", language);
     request.setRawHeader("Content-Type", "application/json");
@@ -218,6 +219,16 @@ QPlaceRestReply *QPlaceRestManager::postRatingRequest(const QString &placeId, co
     return new QPlaceRestReply(mManager->post(request, data));
 }
 
+QLocale QPlaceRestManager::locale() const
+{
+    return mLocale;
+}
+
+void QPlaceRestManager::setLocale(const QLocale &locale)
+{
+    mLocale = locale;
+}
+
 /*!
     Sends a general predefined request. Is private.
 */
@@ -227,9 +238,9 @@ QPlaceRestReply *QPlaceRestManager::sendGeneralRequest(const QUrl &url)
     request.setUrl(url);
 
     QByteArray language;
-    language.append(QLocale::system().name().toLatin1());
+    language.append(mLocale.name().toLatin1());
     language.append(",");
-    language.append(QLocale::system().name().toLatin1());
+    language.append(mLocale.name().left(2).toLatin1());
 
 #if defined(QPLACES_LOGGING)
     qDebug() << "QRestDataProvider::sendGeneralRequest: Language - " + language;

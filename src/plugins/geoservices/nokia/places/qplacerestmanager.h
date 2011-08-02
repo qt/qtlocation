@@ -77,6 +77,8 @@ public:
     QPlaceRestReply *sendSuggestionRequest(const QPlaceSearchQuery &query);
 
     QPlaceRestReply *postRatingRequest(const QString &placeId, const QString &userId, const int &value);
+    QLocale locale() const;
+    void setLocale(const QLocale &locale);
 
 private:
     explicit QPlaceRestManager(QObject *parent = 0);
@@ -91,6 +93,7 @@ private:
 private:
     QNetworkAccessManager *mManager;
     static QPlaceRestManager *mInstance;
+    QLocale mLocale;
 };
 
 QT_END_NAMESPACE

@@ -52,6 +52,7 @@
 #include "qplacereviewreply.h"
 #include "qplacetextpredictionreply.h"
 
+#include <QLocale>
 #include <QVector>
 #include <QString>
 #include <QObject>
@@ -132,6 +133,9 @@ public:
     QList<QPlaceCategory> categories() const;
 
     static QStringList availableManagers();
+
+    QLocale locale() const;
+    void setLocale(const QLocale &locale);
 
 Q_SIGNALS:
     void finished(QPlaceReply *reply);
