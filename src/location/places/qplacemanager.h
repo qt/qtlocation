@@ -57,6 +57,7 @@
 #include <QVector>
 #include <QString>
 #include <QObject>
+#include <QAuthenticator>
 
 QT_BEGIN_NAMESPACE
 
@@ -141,6 +142,7 @@ public:
 Q_SIGNALS:
     void finished(QPlaceReply *reply);
     void error(QPlaceReply *, QPlaceReply::Error error, const QString &errorString = QString());
+    void authenticationRequired(QAuthenticator *authenticator);
 
 private:
     QPlaceManager(QPlaceManagerEngine *engine, QObject *parent = 0);

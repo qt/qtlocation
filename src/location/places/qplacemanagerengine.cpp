@@ -133,8 +133,16 @@ int QPlaceManagerEngine::managerVersion() const
 }
 
 
+/*!
+    \fn void QPlaceManagerEngine::authenticationRequired(QAuthenticator *authenticator)
 
+    This signal is emitted if authentication details are required by the manager engine
+    to peform certain operations.  If the authentication was successful, the next time
+    the operations are performed, the same credentials are used and the
+    authenticationRequired signal is not emitted again.
 
+    If authentication is unsuccessful, the manager engine will emit the signal again.
+*/
 
 QPlaceManagerEnginePrivate::QPlaceManagerEnginePrivate()
 :   managerVersion(-1)

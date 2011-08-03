@@ -105,6 +105,8 @@ QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
         connect(d->engine, SIGNAL(finished(QPlaceReply*)), this, SIGNAL(finished(QPlaceReply*)));
         connect(d->engine, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)),
                 this, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)));
+        connect(d->engine,SIGNAL(authenticationRequired(QAuthenticator*)),
+                this, SIGNAL(authenticationRequired(QAuthenticator*)));
     } else {
         qFatal("The place manager engine that was set for this place manager was NULL.");
     }
@@ -293,4 +295,15 @@ This signal and QPlaceReply::error() will be emitted at the same time.
 
 \note Do no delete the \a reply object in the slot connected to this signal.
 Use deleteLater() instead.
+*/
+
+/*!
+    \fn void QPlaceManager::authenticationRequired(QAuthenticator *authenticator)
+
+    This signal is emitted if authentication details are required by the manager
+    to peform certain operations.  If the authentication was successful, the next time
+    the operations are performed, the same credentials are used and the
+    authenticationRequired signal is not emitted again.
+
+    If authentication is unsuccessful, the manager will emit the signal again.
 */

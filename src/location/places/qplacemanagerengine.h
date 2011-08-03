@@ -90,6 +90,7 @@ public:
 Q_SIGNALS:
     void finished(QPlaceReply *reply);
     void error(QPlaceReply *, QPlaceReply::Error error, QString errorString = QString());
+    void authenticationRequired(QAuthenticator *authenticator);
 
 private:
     void setManagerName(const QString &managerName);
