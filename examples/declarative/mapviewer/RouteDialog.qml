@@ -64,8 +64,8 @@ Item {
     property alias endCountry: countryTo.text
     property alias byCoordinates: coord.enabled
     property int travelMode: RouteQuery.CarTravel             // CarTravel, PedestrianTravel, BicycleTravel, PublicTransitTravel, TruckTravel
-    property int routeOptimization: RouteQuery.ShortestRoute  // ShortestRoute, FastestRoute, MostEconomicRoute, MostScenicRoute
-                                                              // TODO NoFeature, TollFeature, HighwayFeature, PublicTransitFeature, FerryFeature, TunnelFeature, DirtRoadFeature, ParksFeature, MotorPoolLaneFeature
+    property int routeOptimization: RouteQuery.FastestRoute   // ShortestRoute, FastestRoute, MostEconomicRoute, MostScenicRoute
+    property variant features: []                             // NoFeature, TollFeature, HighwayFeature, PublicTransitFeature, FerryFeature, TunnelFeature, DirtRoadFeature, ParksFeature, MotorPoolLaneFeature
 
     Common.Fader {}
 
@@ -74,7 +74,7 @@ Item {
         color: "lightsteelblue"
         opacity: 1
         width: parent.width - gap*2;
-        height: options.height + gap*3 + buttons.height + titleBar.height
+        height: options.height + gap*4 + buttons.height + titleBar.height + routeOptions.height
 
         anchors {
             top: parent.top
@@ -361,14 +361,104 @@ Item {
                             topMargin:gap/3
                         }
                     }
-
                 }
             }
         }
 
         Row {
-            id: buttons
+            id: routeOptions
             anchors.top: options.bottom
+            anchors.topMargin: gap
+            anchors.left: parent.left
+            anchors.leftMargin: gap
+            width: parent.width - gap
+            height: checkboxToll.height*2 + gap
+            spacing: gap
+            Column {//travel mode
+                spacing: gap/3
+                height: parent.height
+                width: parent.width/3 - gap
+                Common.Optionbutton {
+                    id: optionbuttonVehicle
+                    width: parent.width
+                    text: "Vehicle"
+                    selected: true
+                    onClicked: {
+                        travelMode = RouteQuery.CarTravel
+                        optionbuttonPedestrian.selected = false
+                    }
+                }
+                Common.Optionbutton {
+                    id: optionbuttonPedestrian
+                    width: parent.width
+                    text: "Pedestrian"
+                    onClicked: {
+                        travelMode = RouteQuery.PedestrianTravel
+                        optionbuttonVehicle.selected = false
+                    }
+                }
+            }
+
+            Column {//Optimization
+                spacing: gap/3
+                height: parent.height
+                width: parent.width/3 - gap
+                Common.Optionbutton {
+                    id: optionbuttonFastest
+                    width: parent.width
+                    text: "Fastest"
+                    selected: true
+                    onClicked: {
+                        routeOptimization = RouteQuery.FastestRoute
+                        optionbuttonShortest.selected = false
+                    }
+                }
+                Common.Optionbutton {
+                    id: optionbuttonShortest
+                    width: parent.width
+                    text: "Shortest"
+                    onClicked: {
+                        routeOptimization = RouteQuery.ShortestRoute
+                        optionbuttonFastest.selected = false
+                    }
+                }
+            }
+
+            Column {//Route features
+                id: routeFeatures
+                spacing: gap/3
+                height: parent.height
+                width: parent.width/3 - gap
+                Common.Checkbox {
+                    id: checkboxToll
+                    width: parent.width
+                    text: "Avoid toll roads"
+                    onSelectedChanged: {routeFeatures.updateRouteFeatures()}
+                }
+
+                Common.Checkbox {
+                    id: checkboxHighways
+                    width: parent.width
+                    text: "Avoid highways"
+                    onSelectedChanged: {routeFeatures.updateRouteFeatures()}
+                }
+
+                function updateRouteFeatures(){
+                    features = []
+                    var myArray = new Array()
+
+                    if (checkboxToll.selected) myArray.push(RouteQuery.TollFeature)
+                    if (checkboxHighways.selected) myArray.push(RouteQuery.HighwayFeature)
+
+                    features = myArray
+                }
+            }
+        }
+
+
+        Row {
+            id: buttons
+            anchors.top: routeOptions.bottom
             anchors.topMargin: gap
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: gap/3

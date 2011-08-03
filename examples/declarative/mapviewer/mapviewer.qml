@@ -273,6 +273,10 @@ Item {
                 PropertyChanges { target: messageDialog; text: "Unable to find a route for the given points"}
             },
             State{
+                name: "Coordinates"
+                PropertyChanges { target: messageDialog; title: "Coordinates" }
+            },
+            State{
                 name: "LocationInfo"
                 PropertyChanges { target: messageDialog; title: "Location" }
                 PropertyChanges { target: messageDialog; text: geocodeMessage() }
@@ -324,9 +328,9 @@ Item {
                         messageDialog.state = "AmbiguousGeocode"
                         messageDialog.text = count + " results found for the " + st + " point, please specify location"
                     }
-                    console.log("    state = " + messageDialog.state)
                     success = 0
                     page.state = "Message"
+                    map.routeModel.clearAll()
                 }
             }
         }
@@ -369,6 +373,15 @@ Item {
             map.routeQuery.addWaypoint(endCoordinate)
             map.routeQuery.travelModes = routeDialog.travelMode
             map.routeQuery.routeOptimizations = routeDialog.routeOptimization
+
+            for (var i=0; i<9; i++) {
+                map.routeQuery.setFeatureWeight(i, 0)
+            }
+
+            for (var i=0; i<routeDialog.features.length; i++) {
+                map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
+            }
+
             map.routeModel.update();
         }
     }
@@ -500,7 +513,7 @@ Item {
         }
 
         onCoordinatesCaptured: {
-            messageDialog.title = "Coordinates"
+            messageDialog.state = "Coordinates"
             messageDialog.text = "<b>Latitude:</b> " + roundNumber(latitude,4) + "<br/><b>Longitude:</b> " + roundNumber(longitude,4);
             page.state = "Message"
         }

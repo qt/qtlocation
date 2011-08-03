@@ -437,8 +437,6 @@ testcase = {
         skip( "Nothing tested", SkipAll );
     },
 
-    //TESTED_COMPONENT=plugins/declarative/location
-
     // \groups BAT,1.2,QTMOBILITY-796
     qml_display_map: function()
     {
@@ -478,14 +476,15 @@ testcase = {
     | Select Route menu item | |
     | Make sure that coordinates are *(-27.575,153.088)->(-27.465,153.023)* | |
     | Press Go button | |
-    | Wait for message appears on the screen | Verify that distance is *15.901*km |
-    | Press Ok button | Verify that the route looks correct and does not have strange loops |
+    | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
+    | Click on the catch on the left side of the screen | Verify that distance is *15.9km* |
+    | Click on the catch | |
     | Press Options button | |
     | Select Route menu item | |
     | Select second option group to enter start and end points as address | |
     | Use default addresses and Press Go button | |
-    | Wait for message appears on the screen | Verify that distance is *18.676km* |
-    | Press Ok button | Verify that the route looks correct and does not have strange loops |'
+    | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
+    | Click on the catch on the left side of the screen | Verify that distance is *19.6km* |'
         ));
     },
 
@@ -498,21 +497,22 @@ testcase = {
     | Run the qml_mapviewer application | |
     | Press Options button | |
     | Select Route menu item | |
-    | Selec first option group | |
+    | Selec coordinate option group | |
     | Fill in *-27.4709* in From Latitude field | |
     | Fill in *153.0235* in From Longitude filed | |
     | Fill in *-33.8689* in To Latitude field | |
     | Fill in *151.2071* in To Longitude filed | |
     | Press Go button | |
-    | Wait for message appears on the screen | Verify that distance is *927.209km* |
-    | Press Ok button | Verify that the route looks correct and does not have strange loops |
+    | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
+    | Click on the catch on the left side of the screen | Verify that distance is *930km* |
+    | Click on the catch | |
     | Press Options button | |
     | Select Route menu item | |
     | Selec second option group | |
     | Press Clear button | |
-    | Fill in *Moscow* in From City field | |
-    | Fill in *Russia* in From Country filed | |
-    | Fill in *Eight Mile Plains* in To City filed | |
+    | Fill in *Eight Mile Plains* in From City field | |
+    | Fill in *Australia* in From Country filed | |
+    | Fill in *Moscow* in To City filed | |
     | Fill in *Australia* in To Country filed | |
     | Press Go button | |
     | Wait for message appears on the screen | Verify that route is not found |
@@ -520,14 +520,11 @@ testcase = {
     | Press Options button | |
     | Select Route menu item | |
     | Selec second option group | |
-    | Press Clear button | |
-    | Fill in *Eight Mile Plains* in From City field | |
-    | Fill in *Australia* in From Country filed | |
     | Fill in *Byron Bay* in To City filed | |
     | Fill in *Australia* in To Country filed | |
     | Press Go button | |
-    | Wait for message appears on the screen | Verify that distance is *151.318km* |
-    | Press Ok button | Verify that the route looks correct and does not have strange loops |'
+    | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
+    | Click on the catch on the left side of the screen | Verify that distance is *151km* |'
         ));
     },
 
@@ -559,52 +556,86 @@ testcase = {
     | Press Go! button | |
     | Long Press on the first marker | |
     | Select Route To The Next Points | |
-    | Wait for message appears on the screen | Verify that distance is *29.491km* |
-    | Press Ok button | Verify that the route looks correct, goes through all waypoints and does not have strange loops |'
+    | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
+    | Click on the catch on the left side of the screen | Verify that distance is *29.5km* |'
         ));
     },
-/*
+
     // \groups BAT,5.0,MOBILITY-2893,RESEARCH
     qml_travel_mode: function()
     {
-        prompt(twiki('---+++ QML: Travel mode
+        prompt(twiki('---+++ QML: Travel modes: Vechile Fastest and Pedestrian Fastest
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
-1. Travel mode: pedestrian. Use qml_mapviewer to test. (55 Bordeaux Street, Eight Mile Plains QLD)->(53 Brandl St, Eight Mile Plains QLD 4113) or (-27.5784,153.0934)->(-27.5798,153.1003)
-2. Travel mode: bicycle
-3. Travel mode: public transport
-4. Travel mode: by truck'
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Route menu item | |
+    | Selec first option group | |
+    | Fill in *-27.5789* in From Latitude field | |
+    | Fill in *153.0919* in From Longitude filed | |
+    | Fill in *-27.5792* in To Latitude field | |
+    | Fill in *153.096* in To Longitude filed | |
+    | Press Go button | |
+    | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
+    | Click on the catch on the left side of the screen | Verify that distance is *2.6km* |
+    | Click on the catch | |
+    | Press Options button | |
+    | Select Route menu item | |
+    | Select *Pedestrian* option button | |
+    | Press Go button | |
+    | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
+    | Click on the catch on the left side of the screen | Verify that distance is *1.7km* |'
+        ));
     },
 
     // \groups BAT,5.0,MOBILITY-2893,RESEARCH
     qml_route_feature_type: function()
     {
-        prompt(twiki('---+++ QML: Route features
+        prompt(twiki('---+++ QML: Route features: Avoid Highways and Avoid Tool Roads
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
-1. Feature type: no feature
-2. Feature type: toll
-3. Feature type: highway
-4. Feature type: public transit
-5. Feature type: ferry
-6. Feature type: tunnel
-7. Feature type: dirt road
-8. Feature type: parks
-9. Feature type: motor pool lane'
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Route menu item | |
+    | Selec first option group | |
+    | Fill in *-27.5013* in From Latitude field | |
+    | Fill in *153.1002* in From Longitude filed | |
+    | Fill in *-27.4395* in To Latitude field | |
+    | Fill in *153.0504* in To Longitude filed | |
+    | Select *Avoid toll roads* checkbox | |
+    | Press Go button | |
+    | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
+    | Click on the catch on the left side of the screen | Verify that distance is *18km* |
+    | Click on the catch | |
+    | Press Options button | |
+    | Select *Avoid highways* checkbox | |
+    | Press Go button | |
+    | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
+    | Click on the catch on the left side of the screen | Verify that distance is *15km* |'
+        ));
     },
 
     // \groups BAT,5.0,MOBILITY-2893,RESEARCH
     qml_route_optimization: function()
     {
-        prompt(twiki('---+++ QML: Route optimization
+        prompt(twiki('---+++ QML: Travel optimization: Vechile Shortest
     Note that internet connection is required for this test case
     | *Step* | *Verification* |
-1. Route optimization: shortest
-2. Route optimization: fastest
-3. Route optimization: most economic
-4. Route optimization: most scenic'
+    | Run the qml_mapviewer application | |
+    | Press Options button | |
+    | Select Route menu item | |
+    | Selec first option group | |
+    | Fill in *-27.5789* in From Latitude field | |
+    | Fill in *153.0919* in From Longitude filed | |
+    | Fill in *-27.5792* in To Latitude field | |
+    | Fill in *153.096* in To Longitude filed | |
+    | Select *Shortest* option button | |
+    | Press Go button | |
+    | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
+    | Click on the catch on the left side of the screen | Verify that distance is *2.2km* |'
+        ));
     },
-*/
+
     // \groups BAT,5.0,MOBILITY-2900,RESEARCH
     qml_geocode_australian_location: function()
     {

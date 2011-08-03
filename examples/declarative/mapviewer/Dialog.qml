@@ -143,7 +143,7 @@ Item {
             height: 32
             Common.Button {
                 id: buttonClearAll
-                text: "Clear All"
+                text: "Clear"
                 width: 80; height: parent.height
                 onClicked: {
                     for (var i = 0; i<length; i++){

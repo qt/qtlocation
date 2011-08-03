@@ -61,11 +61,16 @@ Map {
                                         query: routeQuery
                                         onStatusChanged:{
                                             if (status == RouteModel.Ready){
-                                                if (count == 1) { routeInfoModel.update();}
+                                                if (count == 1) { routeInfoModel.update()}
                                             }
                                             else if (status == RouteModel.Error){
+                                                clearAll()
                                                 map.routeError()
                                             }
+                                        }
+                                        function clearAll(){
+                                            clear()
+                                            routeInfoModel.update()
                                         }
                                     }
     property GeocodeModel geocodeModel: GeocodeModel {
@@ -286,7 +291,7 @@ Map {
 
     Coordinate {
         id: defaultCoordinates
-        latitude : -27.575
+        latitude : -27.53
         longitude : 153.088
     }
 
@@ -696,7 +701,7 @@ Map {
     {
          var dist = Math.round(meters)
          if (dist > 1000 ){
-             if (dist > 10000){
+             if (dist > 100000){
                  dist = Math.round(dist / 1000)
              }
              else{

@@ -34,5 +34,9 @@
         <file>resources/node_selected.png</file>
         <file>resources/catch.png</file>
         <file>resources/scale.png</file>
+        <file>resources/checkbox_selected.png</file>
+        <file>resources/checkbox.png</file>
+        <file>common/Checkbox.qml</file>
+        <file>common/Optionbutton.qml</file>
     </qresource>
 </RCC>
