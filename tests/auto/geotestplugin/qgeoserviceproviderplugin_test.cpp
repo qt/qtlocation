@@ -42,6 +42,7 @@
 #include "qgeoserviceproviderplugin_test.h"
 #include "qgeocodingmanagerengine_test.h"
 #include "qgeoroutingmanagerengine_test.h"
+#include "qplacemanagerengine_test.h"
 
 #include <QtPlugin>
 
@@ -86,6 +87,15 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactoryTest::createMappingManagerEn
     Q_UNUSED(error);
     Q_UNUSED(errorString);
     return 0;
+}
+
+QPlaceManagerEngine* QGeoServiceProviderFactoryTest::createPlaceManagerEngine(
+        const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error, QString *errorString) const
+{
+    Q_UNUSED(error);
+    Q_UNUSED(errorString);
+    return new QPlaceManagerEngineTest(parameters);
 }
 
 Q_EXPORT_PLUGIN2(qtgeoservices_qmltestplugin, QGeoServiceProviderFactoryTest)

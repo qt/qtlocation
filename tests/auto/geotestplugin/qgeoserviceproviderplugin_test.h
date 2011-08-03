@@ -68,7 +68,9 @@ public:
     QGeocodingManagerEngine* createGeocodingManagerEngine(
                 const QMap<QString, QVariant> &parameters,
                 QGeoServiceProvider::Error *error, QString *errorString) const;
-
+    QPlaceManagerEngine* createPlaceManagerEngine(
+                const QMap<QString, QVariant> &parameters,
+                QGeoServiceProvider::Error *error, QString *errorString) const;
 };
 
 #endif

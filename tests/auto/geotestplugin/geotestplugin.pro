@@ -12,7 +12,8 @@ DESTDIR = $$QT.location.plugins/geoservices
 
 HEADERS += qgeocodingmanagerengine_test.h \
            qgeoserviceproviderplugin_test.h \
-           qgeoroutingmanagerengine_test.h
+           qgeoroutingmanagerengine_test.h \
+           qplacemanagerengine_test.h
 
 SOURCES += qgeoserviceproviderplugin_test.cpp
 
