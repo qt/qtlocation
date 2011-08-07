@@ -466,6 +466,15 @@ Item {
         ]
     }
 
+    Plugin {
+        id: bacicRoutingPlugin_slacker;
+        name: "qmlgeo.test.plugin"
+        parameters: [
+            // Parms to guide the test plugin
+            PluginParameter { name: "gc_finishRequestImmediately"; value: false}
+        ]
+    }
+
     Coordinate {id: rcoordinate1; latitude: 50; longitude: 50}
     Coordinate {id: rcoordinate2; latitude: 51; longitude: 52}
     Coordinate {id: rcoordinate3; latitude: 53; longitude: 54}
@@ -500,7 +509,7 @@ Item {
     SignalSpy {id: testErrorSpy; target: routeModel; signalName: "errorChanged"}
     SignalSpy {id: testWaypointsSpy; target: routeQuery; signalName: "waypointsChanged"}
 
-    RouteModel {id: routeModelSlack; plugin: testPlugin_slacker; query: routeQuery }
+    RouteModel {id: routeModelSlack; plugin: bacicRoutingPlugin_slacker; query: routeQuery }
     SignalSpy {id: testRoutesSlackSpy; target: routeModelSlack; signalName: "routesChanged"}
     SignalSpy {id: testCountSlackSpy; target: routeModelSlack; signalName: "countChanged" }
     SignalSpy {id: testStatusSlackSpy; target: routeModelSlack; signalName: "statusChanged"}

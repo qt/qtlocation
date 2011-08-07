@@ -208,6 +208,17 @@ Item {
         ]
     }
 
+    Plugin {
+        id: autoPlugin;
+        name: "qmlgeo.test.plugin"
+        parameters: [
+            // Parms to guide the test plugin
+            PluginParameter { name: "supported"; value: true},
+            PluginParameter { name: "finishRequestImmediately"; value: false},
+            PluginParameter { name: "validateWellKnownValues"; value: false}
+        ]
+    }
+
     GeocodeModel {id: testModel; plugin: testPlugin}
     SignalSpy {id: locationsSpy; target: testModel; signalName: "locationsChanged"}
     SignalSpy {id: countSpy; target: testModel; signalName: "countChanged"}
@@ -228,7 +239,7 @@ Item {
     SignalSpy {id: statusImmediateSpy; target: immediateModel; signalName: "statusChanged"}
     SignalSpy {id: errorImmediateSpy; target: immediateModel; signalName: "errorChanged"}
 
-    GeocodeModel {id: automaticModel; plugin: slackPlugin; query: automaticAddress1; autoUpdate: true}
+    GeocodeModel {id: automaticModel; plugin: autoPlugin; query: automaticAddress1; autoUpdate: true}
     SignalSpy {id: automaticLocationsSpy; target: automaticModel; signalName: "locationsChanged"}
 
     TestCase {
