@@ -209,7 +209,7 @@ QPlaceManager::ConnectivityModes QPlaceManager::supportedConnectivityModes() con
 /*!
     Saves a \a place at the given \a scope.
 */
-QPlaceReply *QPlaceManager::savePlace(QGeoPlace *place, VisibilityScope scope)
+QPlaceSaveReply *QPlaceManager::savePlace(const QGeoPlace &place, VisibilityScope scope)
 {
     return d->engine->savePlace(place, scope);
 }

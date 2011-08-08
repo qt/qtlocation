@@ -46,6 +46,7 @@
 #include "qplacemediaobject.h"
 #include "qplacemediareply.h"
 #include "qplacequery.h"
+#include "qplacesavereply.h"
 #include "qplacereply.h"
 #include "qplacesearchreply.h"
 #include "qplacedetailsreply.h"
@@ -124,7 +125,7 @@ public:
     void setConnectivityMode(ConnectivityModes connectivityMode);
     ConnectivityModes supportedConnectivityModes() const;
 
-    QPlaceReply *savePlace(QGeoPlace *place, VisibilityScope scope);
+    QPlaceSaveReply *savePlace(const QGeoPlace &place, VisibilityScope scope = QPlaceManager::NoScope);
     VisibilityScopes supportedSaveVisibilityScopes();
 
     QPlaceReply *removePlace(const QGeoPlace &place);

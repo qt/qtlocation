@@ -39,68 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEREPLY_H
-#define QPLACEREPLY_H
+#ifndef QPLACESAVEREPLY_H
+#define QPLACESAVEREPLY_H
 
-#include "qmobilityglobal.h"
-#include <QObject>
+#include "qplacereply.h"
+#include "qgeoplace.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceReply : public QObject
+class QPlaceSaveReplyPrivate;
+class Q_LOCATION_EXPORT QPlaceSaveReply : public QPlaceReply
 {
     Q_OBJECT
 public:
-    enum Error {
-        NoError,
-        DoesNotExistError,
-        PlaceDoesNotExistError,
-        CategoryDoesNotExistError,
-        CommunicationError,
-        ParseError,
-        PermissionsError,
-        UnsupportedError,
-        CancelError,
-        UnknownError
-    };
+    QPlaceSaveReply(QObject *parent =0);
+    virtual ~QPlaceSaveReply();
 
-    enum Type {
-        Reply,
-        PlaceDetailsReply,
-        PlaceSearchReply,
-        TextPredictionReply,
-        ReviewReply,
-        MediaReply,
-        SaveReply
-    };
+    QPlaceReply::Type type() const;
 
-    QPlaceReply(QObject *parent);
-    virtual ~QPlaceReply();
-
-    bool isFinished() const;
-
-    virtual Type type() const;
-
-    QString errorString() const;
-    QPlaceReply::Error error() const;
-
-public Q_SLOTS:
-    virtual void abort();
-
-Q_SIGNALS:
-    void finished();
-    void error(QPlaceReply::Error error, const QString &errorString = QString());
+    QGeoPlace place() const;
 
 protected:
-    QPlaceReply(QPlaceReplyPrivate *, QObject *parent = 0);
-    void setFinished(bool finished);
-    void setError(QPlaceReply::Error error, const QString &errorString);
-    QPlaceReplyPrivate *d_ptr;
+    void setPlace(const QGeoPlace &place);
 private:
-    Q_DISABLE_COPY(QPlaceReply)
+    Q_DISABLE_COPY(QPlaceSaveReply)
+    Q_DECLARE_PRIVATE(QPlaceSaveReply)
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACEREPLY_H
+#endif // QPLACEDETAILSREPLY_H

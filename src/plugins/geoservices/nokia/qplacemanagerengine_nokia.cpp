@@ -223,7 +223,7 @@ QPlaceManager::ConnectivityModes QPlaceManagerEngineNokia::supportedConnectivity
     return QPlaceManager::OnlineMode;
 }
 
-QPlaceReply *QPlaceManagerEngineNokia::savePlace(QGeoPlace *place, QPlaceManager::VisibilityScope scope) {
+QPlaceSaveReply *QPlaceManagerEngineNokia::savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope) {
     //TODO: implementation
     return NULL;
 }

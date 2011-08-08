@@ -39,68 +39,72 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEREPLY_H
-#define QPLACEREPLY_H
-
-#include "qmobilityglobal.h"
-#include <QObject>
+#include "qplacesavereply.h"
+#include "qplacereply_p.h"
 
 QT_BEGIN_NAMESPACE
-
-class QPlaceReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceReply : public QObject
+class QPlaceSaveReplyPrivate : public QPlaceReplyPrivate
 {
-    Q_OBJECT
 public:
-    enum Error {
-        NoError,
-        DoesNotExistError,
-        PlaceDoesNotExistError,
-        CategoryDoesNotExistError,
-        CommunicationError,
-        ParseError,
-        PermissionsError,
-        UnsupportedError,
-        CancelError,
-        UnknownError
-    };
-
-    enum Type {
-        Reply,
-        PlaceDetailsReply,
-        PlaceSearchReply,
-        TextPredictionReply,
-        ReviewReply,
-        MediaReply,
-        SaveReply
-    };
-
-    QPlaceReply(QObject *parent);
-    virtual ~QPlaceReply();
-
-    bool isFinished() const;
-
-    virtual Type type() const;
-
-    QString errorString() const;
-    QPlaceReply::Error error() const;
-
-public Q_SLOTS:
-    virtual void abort();
-
-Q_SIGNALS:
-    void finished();
-    void error(QPlaceReply::Error error, const QString &errorString = QString());
-
-protected:
-    QPlaceReply(QPlaceReplyPrivate *, QObject *parent = 0);
-    void setFinished(bool finished);
-    void setError(QPlaceReply::Error error, const QString &errorString);
-    QPlaceReplyPrivate *d_ptr;
-private:
-    Q_DISABLE_COPY(QPlaceReply)
+    QPlaceSaveReplyPrivate() {}
+    ~QPlaceSaveReplyPrivate() {}
+    QGeoPlace place;
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACEREPLY_H
+QT_USE_NAMESPACE
+
+/*!
+    \class QPlaceSaveReply
+
+    \brief The QPlaceSaveReply class manages a place save operation started by an
+    instance of QPlaceManager.
+
+    \inmodule QtPlaces
+
+    \ingroup places-main
+*/
+
+/*!
+    Constructs a save reply with a given \a parent.
+*/
+QPlaceSaveReply::QPlaceSaveReply(QObject *parent)
+    : QPlaceReply(new QPlaceSaveReplyPrivate, parent)
+{
+}
+
+/*!
+    Destroys the save reply.
+*/
+QPlaceSaveReply::~QPlaceSaveReply()
+{
+}
+
+/*!
+    Returns the type of reply.
+*/
+QPlaceReply::Type QPlaceSaveReply::type() const
+{
+    return QPlaceReply::SaveReply;
+}
+
+ /*!
+    Returns the saved place.  One should ensure that the reply
+    is finished before calling this function, otherwise
+    a default place is returned.
+*/
+QGeoPlace QPlaceSaveReply::place() const
+{
+    Q_D(const QPlaceSaveReply);
+    return d->place;
+}
+
+/*!
+    Sets the saved \a place.
+*/
+void QPlaceSaveReply::setPlace(const QGeoPlace &place)
+{
+    Q_D(QPlaceSaveReply);
+    d->place = place;
+}

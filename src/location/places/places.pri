@@ -24,6 +24,7 @@ PUBLIC_HEADERS += \
     places/qplacedetailsreply.h \
     places/qplacemediareply.h \
     places/qplacereviewreply.h \
+    places/qplacesavereply.h \
     places/qplacesearchreply.h \
     places/qplacetextpredictionreply.h \
 #manager and engine
@@ -57,6 +58,7 @@ SOURCES += \
     places/qplaceperiod.cpp \
     places/qplacerating.cpp \
     places/qplacereview.cpp \
+    places/qplacesavereply.cpp \
     places/qplacesupplier.cpp \
     places/qplaceweekdayhours.cpp \
 #result
