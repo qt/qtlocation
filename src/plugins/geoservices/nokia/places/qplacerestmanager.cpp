@@ -65,8 +65,8 @@ QT_USE_NAMESPACE
 const char *placesServerUrl = "http://places.maps.ovi.com/rest/v1/places/";
 const char *searchServerUrl = "http://where.desktop.mos.svc.ovi.com/NOSe/json";
 const char *recomendation = "/recommendations/nearby";
-const char *reviews = "/reviews";
-const char *images = "/images";
+const char *reviews = "/reviews?";
+const char *images = "/images?";
 const char *categoriesTree = "categories/find-places/grouped";
 
 const char *const_query = "&q=";
@@ -82,8 +82,8 @@ const char *const_dym = "&dym=";
 const char *const_views = "?vi=where"; // address, poi or where (both)
 const char *const_deviceproductid = "&dv=oviMaps"; // oviMaps, ml, rv
 
-const char *const_review_start = ";start=";
-const char *const_review_limit = ";limit=";
+const char *const_review_start = "&start=";
+const char *const_review_limit = "&limit=";
 
 static QString searchServer;
 static QString placeServer;
