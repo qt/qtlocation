@@ -72,36 +72,54 @@ public:
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId)
     {
+        Q_UNUSED(placeId)
+
         return 0;
     }
 
     QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceQuery &query)
     {
+        Q_UNUSED(place)
+        Q_UNUSED(query)
+
         return 0;
     }
 
     QPlaceReply *postRating(const QString &placeId, qreal value)
     {
+        Q_UNUSED(placeId)
+        Q_UNUSED(value)
+
         return 0;
     }
 
     QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceQuery &query)
     {
+        Q_UNUSED(place)
+        Q_UNUSED(query)
+
         return 0;
     }
 
     QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query)
     {
+        Q_UNUSED(query)
+
         return 0;
     }
 
     QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query)
     {
+        Q_UNUSED(place)
+        Q_UNUSED(query)
+
         return 0;
     }
 
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchQuery &query)
     {
+        Q_UNUSED(query)
+
         return 0;
     }
 
@@ -112,6 +130,7 @@ public:
 
     void setConnectivityMode(QPlaceManager::ConnectivityModes mode)
     {
+        Q_UNUSED(mode)
     }
 
     QPlaceManager::ConnectivityModes supportedConnectivityModes() const
@@ -121,6 +140,9 @@ public:
 
     QPlaceSaveReply *savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope)
     {
+        Q_UNUSED(place)
+        Q_UNUSED(scope)
+
         return 0;
     }
 
@@ -131,6 +153,8 @@ public:
 
     QPlaceReply *removePlace(const QGeoPlace &place)
     {
+        Q_UNUSED(place)
+
         return 0;
     }
 
@@ -151,11 +175,7 @@ public:
 
     void setLocale(const QLocale &locale)
     {
-    }
-
-    QUrl iconUrl(const QPlaceIcon &icon) const
-    {
-        return QUrl();
+        Q_UNUSED(locale)
     }
 };
 
