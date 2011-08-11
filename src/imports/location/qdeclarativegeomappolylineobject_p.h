@@ -62,7 +62,7 @@ class QDeclarativeGeoMapPolylineObject : public QDeclarativeGeoMapObject
     Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
 
 public:
-    QDeclarativeGeoMapPolylineObject(QDeclarativeItem *parent = 0);
+    QDeclarativeGeoMapPolylineObject(QSGItem *parent = 0);
     ~QDeclarativeGeoMapPolylineObject();
 
     Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate* coordinate);

@@ -211,6 +211,7 @@ public:
             qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "SupportedCategoriesModel");
             qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "SearchResultModel");
             qmlRegisterType<QDeclarativeTextPredictionModel>(uri, 5, 0, "TextPredictionModel");
+
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }

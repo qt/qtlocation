@@ -77,7 +77,7 @@ QT_BEGIN_NAMESPACE
     The MapImage element is part of the \bold{QtMobility.location 1.2} module.
 */
 
-QDeclarativeGeoMapPixmapObject::QDeclarativeGeoMapPixmapObject(QDeclarativeItem *parent)
+QDeclarativeGeoMapPixmapObject::QDeclarativeGeoMapPixmapObject(QSGItem *parent)
     : QDeclarativeGeoMapObject(parent),
       pixmap_(0),
       reply_(0),

@@ -46,11 +46,23 @@
 #include "qdeclarativegraphicsgeomap_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 
-#include <QtQuick1/qdeclarativeitem.h>
+
+// !!! IMPORTANT !!!
+//
+// Inheriting from QSGItem here
+// is just a workaround to have non-gui related (ie where visualization is not
+// the main thing) autotests to pass in QML2 environment.
+// Real QML2 Map support (and related map object is a work in progress elsewhere.
+// This Map element instantiates but does not do anything meaningful from app dev
+// perspective.
+//
+// !!! IMPORTANT !!!
+
+#include <QtDeclarative/QSGItem>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoMapMouseArea : public QDeclarativeItem
+class QDeclarativeGeoMapMouseArea : public QSGItem
 {
     Q_OBJECT
 
@@ -64,7 +76,7 @@ class QDeclarativeGeoMapMouseArea : public QDeclarativeItem
     Q_PROPERTY(bool hoverEnabled READ hoverEnabled WRITE setHoverEnabled NOTIFY hoverEnabledChanged)
 
 public:
-    QDeclarativeGeoMapMouseArea(QDeclarativeItem *parent = 0);
+    QDeclarativeGeoMapMouseArea(QSGItem *parent = 0);
     ~QDeclarativeGeoMapMouseArea();
 
     void setMap(QDeclarativeGraphicsGeoMap *map);

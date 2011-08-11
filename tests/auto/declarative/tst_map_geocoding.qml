@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
+import QtQuick 2.0
 import QtTest 1.0
 import Qt.location 5.0
 
@@ -63,6 +63,8 @@ Item {
     SignalSpy {id: autoUpdateSpy; target: emptyModel; signalName: "autoUpdateChanged"}
     SignalSpy {id: pluginSpy; target: emptyModel ; signalName: "pluginChanged"}
     SignalSpy {id: boundsSpy; target: emptyModel; signalName: "boundsChanged"}
+    SignalSpy {id: limitSpy; target: emptyModel; signalName: "limitChanged"}
+    SignalSpy {id: offsetSpy; target: emptyModel; signalName: "offsetChanged"}
 
     TestCase {
         id: testCase1
@@ -76,13 +78,34 @@ Item {
             emptyModel.query = address1
             compare (querySpy.count, 1)
             compare (emptyModel.query.street, address1.street)
-            // Query:: coordinate
+            // Query: coordinate
             emptyModel.query = coordinate1
             compare (querySpy.count, 2)
             compare (emptyModel.query.latitude, coordinate1.latitude)
             emptyModel.query = coordinate1
             compare (querySpy.count, 2)
             compare (emptyModel.query.latitude, coordinate1.latitude)
+            // Query: string
+            emptyModel.query = "Kuortane, Finland"
+            compare (querySpy.count, 3)
+            compare (emptyModel.query, "Kuortane, Finland")
+            emptyModel.query = "Kuortane, Finland"
+            compare (querySpy.count, 3)
+            compare (emptyModel.query, "Kuortane, Finland")
+
+            // limit and offset
+            compare (limitSpy.count, 0)
+            compare (offsetSpy.count, 0)
+            compare(emptyModel.limit, -1)
+            compare(emptyModel.offset, 0)
+            emptyModel.limit = 2
+            compare (limitSpy.count, 1)
+            emptyModel.limit = 2
+            compare (limitSpy.count, 1)
+            emptyModel.offset = 10
+            compare (offsetSpy.count, 1)
+            emptyModel.offset = 10
+            compare (offsetSpy.count, 1)
 
             // bounding box
             compare(boundsSpy.count, 0)
@@ -98,7 +121,7 @@ Item {
             compare(boundsSpy.count, 2)
             compare(emptyModel.bounds.topLeft.latitude, boundingBox2.topLeft.latitude)
             compare(emptyModel.bounds.bottomRight.longitude, boundingBox2.bottomRight.longitude)
-            var dynamicBox = Qt.createQmlObject("import QtQuick 1.0; import Qt.location 5.0; BoundingBox { id: dynBox}", testCase1)
+            var dynamicBox = Qt.createQmlObject("import QtQuick 2.0; import Qt.location 5.0; BoundingBox { id: dynBox}", testCase1)
             emptyModel.bounds = dynamicBox
             compare(boundsSpy.count, 3)
 
@@ -114,7 +137,7 @@ Item {
             emptyModel.bounds = boundingCircle2
             compare(boundsSpy.count, 2)
             compare(emptyModel.bounds.center.latitude, coordinate2.latitude)
-            var dynamicCircle = Qt.createQmlObject("import QtQuick 1.0; import Qt.location 5.0; BoundingCircle { id: dynCircle; center: Coordinate {id: dynCoord; latitude: 8; longitude: 9}}", testCase1)
+            var dynamicCircle = Qt.createQmlObject("import QtQuick 2.0; import Qt.location 5.0; BoundingCircle { id: dynCircle; center: Coordinate {id: dynCoord; latitude: 8; longitude: 9}}", testCase1)
             emptyModel.bounds = dynamicCircle
             compare(boundsSpy.count, 3)
             compare(emptyModel.bounds.center.latitude, dynamicCircle.center.latitude)
@@ -250,6 +273,8 @@ Item {
             countSlackSpy.clear()
             querySlackSpy.clear()
             errorSlackSpy.clear()
+            slackModel.limit = -1
+            slackModel.offset = 0
         }
         function clear_immediate_model() {
             immediateModel.clear()
@@ -258,6 +283,8 @@ Item {
             queryImmediateSpy.clear()
             errorImmediateSpy.clear()
             statusImmediateSpy.clear()
+            immediateModel.limit = -1
+            immediateModel.offset = 0
         }
         function test_reset() {
             clear_immediate_model();
@@ -371,7 +398,7 @@ Item {
             compare (errorSlackSpy.count, 2)
             compare (slackModel.error, "")
         }
-        function test_basic_geocode() {
+        function test_basic_address_geocode() {
             testQuerySpy.clear()
             locationsSpy.clear()
             testStatusSpy.clear()
@@ -391,6 +418,80 @@ Item {
             compare (testModel.status, GeocodeModel.Ready)
             compare (testModel.get(0).address.street, "wellknown street")
             compare (testModel.get(0).address.city, "expected city")
+        }
+
+        function test_basic_freetext_geocode() {
+            testQuerySpy.clear()
+            locationsSpy.clear()
+            testStatusSpy.clear()
+            testModel.clear()
+            countSpy.clear()
+            compare (locationsSpy.count, 0)
+            compare (testModel.error, "")
+            compare (testModel.count, 0)
+            testModel.limit = 5  // number of places echoed back
+            testModel.offset = 10 // 'county' set in the places
+            // Test successful case
+            testModel.query = "Freetext geocode"
+            compare(testQuerySpy.count, 1)
+            testModel.update();
+            tryCompare (locationsSpy, "count", 1) // 5 sec
+            tryCompare(countSpy, "count", 1)
+            tryCompare(testModel, "count", 5)
+            compare(testModel.get(0).address.county, "10")
+            // Test error case
+            testModel.query = "2" // tells plugin to echo error '2'
+            compare(testQuerySpy.count, 2)
+            testModel.update();
+            tryCompare (locationsSpy, "count", 2) // 5 sec
+            tryCompare(countSpy, "count", 2)
+            tryCompare(testModel, "count", 0)
+            compare(testModel.error, "2")
+            testModel.clear()
+            tryCompare(countSpy, "count", 2)
+            compare (testModel.count, 0)
+        }
+
+        function test_delayed_freetext_geocode() {
+            clear_slack_model()
+            slackModel.limit = 5  // number of places echoed back
+            slackModel.offset = 10 // 'county' set in the places
+            // Basic successful case
+            slackModel.query = "freetext geocode"
+            compare (querySlackSpy.count, 1)
+            slackModel.update()
+            wait (100)
+            compare (countSlackSpy.count, 0)
+            compare (locationsSlackSpy.count, 0)
+            compare (slackModel.count, 0)
+            wait (200)
+            compare (slackModel.count, 5)
+            compare (countSlackSpy.count, 1)
+            compare (locationsSlackSpy.count, 1)
+            // Frequent updates, previous requests are aborted
+            slackModel.clear()
+            locationsSlackSpy.clear()
+            countSlackSpy.clear()
+            slackModel.update()
+            wait (100)
+            compare(locationsSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            slackModel.update()
+            wait (100)
+            compare(locationsSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            slackModel.update()
+            wait (100)
+            compare(locationsSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            slackModel.update()
+            wait (100)
+            compare(locationsSlackSpy.count, 0)
+            compare(countSlackSpy.count, 0)
+            wait (200)
+            compare (locationsSlackSpy.count, 1)
+            compare(countSlackSpy.count, 1)
+            compare(slackModel.count, 5) // limit
         }
 
         function test_geocode_auto_updates() {
@@ -459,7 +560,7 @@ Item {
             compare(slackModel.count, 7) // slackAddress1.county
         }
         function test_basic_reverse_geocode() {
-            testModel.clear()
+            testModel.reset()
             testQuerySpy.clear()
             locationsSpy.clear()
             testStatusSpy.clear()
@@ -479,10 +580,7 @@ Item {
             compare (testModel.count, 0)
         }
         function test_delayed_reverse_geocode() {
-            slackModel.clear()
-            querySlackSpy.clear()
-            countSlackSpy.clear()
-            locationsSlackSpy.clear()
+            clear_slack_model()
             slackModel.query = slackCoordinate1
             compare (querySlackSpy.count, 1)
             slackModel.update()

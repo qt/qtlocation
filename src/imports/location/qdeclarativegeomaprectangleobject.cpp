@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
     The MapRectangle element is part of the \bold{QtMobility.location 1.2} module.
 */
 
-QDeclarativeGeoMapRectangleObject::QDeclarativeGeoMapRectangleObject(QDeclarativeItem *parent)
+QDeclarativeGeoMapRectangleObject::QDeclarativeGeoMapRectangleObject(QSGItem *parent)
     : QDeclarativeGeoMapObject(parent), rectangle_(0), topLeft_(0), bottomRight_(0)
 {
     rectangle_ = new QGeoMapRectangleObject();

@@ -50,6 +50,17 @@
 class QColor;
 class QBrush;
 
+// !!! IMPORTANT !!!
+//
+// Inheriting from QSGItem here
+// is just a workaround to have non-gui related (ie where visualization is not
+// the main thing) autotests to pass in QML2 environment.
+// Real QML2 Map support (and related map object is a work in progress elsewhere.
+// This Map element instantiates but does not do anything meaningful from app dev
+// perspective.
+//
+// !!! IMPORTANT !!!
+
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoMapCircleObject : public QDeclarativeGeoMapObject
@@ -62,7 +73,7 @@ class QDeclarativeGeoMapCircleObject : public QDeclarativeGeoMapObject
     Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
 
 public:
-    QDeclarativeGeoMapCircleObject(QDeclarativeItem *parent = 0);
+    QDeclarativeGeoMapCircleObject(QSGItem *parent = 0);
     ~QDeclarativeGeoMapCircleObject();
 
     QDeclarativeCoordinate* center();

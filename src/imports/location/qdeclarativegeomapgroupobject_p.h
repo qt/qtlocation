@@ -48,6 +48,17 @@
 #include <QtDeclarative/qdeclarative.h>
 #include <QDeclarativeListProperty>
 
+// !!! IMPORTANT !!!
+//
+// Inheriting from QSGItem here
+// is just a workaround to have non-gui related (ie where visualization is not
+// the main thing) autotests to pass in QML2 environment.
+// Real QML2 Map support (and related map object is a work in progress elsewhere.
+// This Map element instantiates but does not do anything meaningful from app dev
+// perspective.
+//
+// !!! IMPORTANT !!!
+
 QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
@@ -59,7 +70,7 @@ class QDeclarativeGeoMapGroupObject : public QDeclarativeGeoMapObject
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoMapObject> objects READ objects)
 
 public:
-    QDeclarativeGeoMapGroupObject(QDeclarativeItem *parent = 0);
+    QDeclarativeGeoMapGroupObject(QSGItem *parent = 0);
     ~QDeclarativeGeoMapGroupObject();
 
     virtual void componentComplete();

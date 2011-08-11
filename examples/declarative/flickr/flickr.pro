@@ -1,7 +1,7 @@
 TEMPLATE=app
 TARGET = qml_location_flickr
 
-QT += qtquick1 declarative network location
+QT += declarative network location
 SOURCES += qmllocationflickr.cpp
 
 symbian {

@@ -39,9 +39,10 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
+import QtQuick 2.0
 import QtTest 1.0
 import Qt.location 5.0
+import Qt.location.test 5.0
 
 Item {
     id: masterItem
@@ -51,29 +52,24 @@ Item {
     Plugin { id: testPlugin; name : "nokia"; PluginParameter {name: "mapping.host"; value: "for.nonexistent"}}
     Coordinate{ id: mapDefaultCenter; latitude: 10; longitude: 30}
 
-    // This model results in 7 landmarks
-    LandmarkModel {
-        id: landmarkModelAll
-        autoUpdate: true
-        //onLandmarksChanged: console.log('all landmarks changed, count: ' + count)
-    }
-    // This model results in 2 landmarks
-    LandmarkModel {
-        id: landmarkModelNearMe
-        autoUpdate: true
-        //onLandmarksChanged: console.log('nearme landmarks changed, count: ' + count)
-        filter: proximityFilter
-    }
-    LandmarkProximityFilter {
-        id: proximityFilter
-        center: mapDefaultCenter
-        radius: 6000000
-    }
-
     MapCircle {
         id: externalCircle
         radius: 2000000
         center: mapDefaultCenter
+    }
+
+    TestModel {
+        id: testModel
+        datatype: 'coordinate'
+        datacount: 7
+        delay: 0
+    }
+
+    TestModel {
+        id: testModel2
+        datatype: 'coordinate'
+        datacount: 3
+        delay: 0
     }
 
     Map {
@@ -86,11 +82,14 @@ Item {
         }
         MapObjectView {
             id: theObjectView
-            model: landmarkModelAll
+            model: testModel
             delegate: Component {
                 MapCircle {
                     radius: 1500000
-                    center: landmark.coordinate
+                    center: Coordinate {
+                        latitude: modeldata.coordinate.latitude;
+                        longitude: modeldata.coordinate.longitude;
+                    }
                 }
             }
         }
@@ -105,11 +104,14 @@ Item {
         }
         MapObjectView {
             id: theObjectView2
-            model: landmarkModelAll
+            model: testModel
             delegate: Component {
                 MapCircle {
                     radius: 1500000
-                    center: landmark.coordinate
+                    center: Coordinate {
+                        latitude: modeldata.coordinate.latitude;
+                        longitude: modeldata.coordinate.longitude;
+                    }
                 }
             }
         }
@@ -119,46 +121,44 @@ Item {
         name: "MapObjectView"
         function test_a_add_and_remove() {
             // Basic adding and removing of static object
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 1)
+            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 8)
             mapWithPlugin.addMapObject(internalCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 1)
+            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 8)
             mapWithPlugin.removeMapObject(internalCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 0)
+            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
             mapWithPlugin.removeMapObject(internalCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 0)
+            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
             // Basic adding and removing of dynamic object
-            var dynamicCircle = Qt.createQmlObject( "import QtQuick 1.0; import Qt.location 5.0; MapCircle {radius: 4000; center: mapDefaultCenter}", mapWithPlugin, "");
+            var dynamicCircle = Qt.createQmlObject( "import QtQuick 2.0; import Qt.location 5.0; MapCircle {radius: 4000; center: mapDefaultCenter}", mapWithPlugin, "");
             mapWithPlugin.addMapObject(dynamicCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 1)
+            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 8)
             mapWithPlugin.removeMapObject(dynamicCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 0)
+            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
             mapWithPlugin.removeMapObject(dynamicCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 0)
+            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
         }
-        SignalSpy {id: allCountSpy; target: landmarkModelAll; signalName: "countChanged"}
-        SignalSpy {id: nearMeCountSpy; target: landmarkModelNearMe; signalName: "countChanged"}
+
+        SignalSpy {id: model1Spy; target: testModel; signalName: "modelChanged"}
+        SignalSpy {id: model2Spy; target: testModel2; signalName: "modelChanged"}
         function test_b_model_change() {
             // Change the model of an MapObjectView on the fly
             // and verify that object counts change accordingly.
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 0)
-            landmarkModelAll.setDbFileName("landmarks.db")
-            landmarkModelNearMe.setDbFileName("landmarks.db")
-            tryCompare(allCountSpy, "count", 1, 1000)
-            tryCompare(nearMeCountSpy, "count", 1, 1000)
-            compare(landmarkModelAll.count, 7)
-            compare(landmarkModelNearMe.count, 2)
             compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
-            theObjectView.model = landmarkModelNearMe
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 2)
-            theObjectView.model = landmarkModelAll
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
+            testModel.datacount += 2
+            testModel2.datacount += 1
+            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 9)
+            theObjectView.model = testModel
+            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 9)
+            theObjectView.model = testModel2
+            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 4)
         }
+
         SignalSpy {id: pluginChangedSpy; target: mapWithoutPlugin; signalName: "pluginChanged"}
         function test_c_plugin_set_later() {
             compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0)
             mapWithoutPlugin.plugin = testPlugin
             tryCompare(pluginChangedSpy, "count", 1, 1000)
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 8) // 7 + 1
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 10) // 9 from testModel, + 1 from mapcircle
         }
     }
 }

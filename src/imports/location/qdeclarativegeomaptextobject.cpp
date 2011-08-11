@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
     The MapText element is part of the \bold{QtMobility.location 1.2} module.
 */
 
-QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject(QDeclarativeItem *parent)
+QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject(QSGItem *parent)
     : QDeclarativeGeoMapObject(parent),
       text_(0), coordinate_(0)
 {

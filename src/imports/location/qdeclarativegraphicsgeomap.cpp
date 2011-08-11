@@ -65,7 +65,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass Map
 
     \brief The Map element displays a map.
-    \inherits QDeclarativeItem
+    \inherits QSGItem
 
     \ingroup qml-location-maps
 
@@ -100,8 +100,10 @@ QT_BEGIN_NAMESPACE
 
     The Map element is part of the \bold{QtMobility.location 1.2} module.
 */
-QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
-    : QDeclarativeItem(parent),
+//QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QSGItem *parent)
+QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QSGItem *parent)
+    //: QSGItem(parent),
+    : QSGItem(parent),
       plugin_(0),
       mapData_(0),
       center_(0),
@@ -113,11 +115,12 @@ QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent)
     initialCoordinate = new QGeoCoordinate(-27.0, 153.0);
     zoomLevel_ = 8;
     size_ = QSizeF(100.0, 100.0);
-    setAcceptsHoverEvents(true);
+    //setAcceptsHoverEvents(true);
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
-    setFlag(QGraphicsItem::ItemHasNoContents, false);
-    setFlag(QGraphicsItem::ItemAcceptsInputMethod);
+    setFlag(QSGItem::ItemHasContents, true);
+    //setFlag(QGraphicsItem::ItemHasNoContents, false);
+    //setFlag(QGraphicsItem::ItemAcceptsInputMethod);
 }
 
 QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
@@ -142,8 +145,10 @@ QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
 
 void QDeclarativeGraphicsGeoMap::componentComplete()
 {
+    qmlInfo(this) << tr("!WARNING! Current Map element is undergoing Qt5 (QML2) changes.");
+    qmlInfo(this) << tr("!WARNING! In its current state, the Map is not usable as a visual element.");
     componentCompleted_ = true;
-    QDeclarativeItem::componentComplete();
+    QSGItem::componentComplete();
     populateMap();
 }
 
@@ -307,7 +312,8 @@ void QDeclarativeGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugi
 
 void QDeclarativeGraphicsGeoMap::updateMapDisplay(const QRectF &target)
 {
-    update(target);
+    Q_UNUSED(target);
+    //update(target);
 }
 
 QDeclarativeGeoServiceProvider* QDeclarativeGraphicsGeoMap::plugin() const
@@ -699,7 +705,8 @@ void QDeclarativeGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event
 
     delete mouseEvent;
 
-    QDeclarativeItem::mousePressEvent(event);
+    //QSGItem::mousePressEvent(event);
+    QSGItem::mousePressEvent(event);
 }
 
 void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -717,7 +724,7 @@ void QDeclarativeGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *eve
     if (accepted)
         return;
 
-    QDeclarativeItem::mouseReleaseEvent(event);
+    QSGItem::mouseReleaseEvent(event);
 }
 
 void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -761,7 +768,7 @@ void QDeclarativeGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent 
     if (accepted)
         return;
 
-    QDeclarativeItem::mouseDoubleClickEvent(event);
+    QSGItem::mouseDoubleClickEvent(event);
 }
 
 void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -778,7 +785,7 @@ void QDeclarativeGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (accepted)
         return;
 
-    QDeclarativeItem::mouseMoveEvent(event);
+    QSGItem::mouseMoveEvent(event);
 }
 
 void QDeclarativeGraphicsGeoMap::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

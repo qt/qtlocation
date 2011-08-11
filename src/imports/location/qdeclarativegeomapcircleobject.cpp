@@ -68,7 +68,7 @@ QT_BEGIN_NAMESPACE
     The MapCircle element is part of the \bold{QtMobility.location 1.2} module.
 */
 
-QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject(QDeclarativeItem *parent)
+QDeclarativeGeoMapCircleObject::QDeclarativeGeoMapCircleObject(QSGItem *parent)
     : QDeclarativeGeoMapObject(parent), circle_(0), center_(0)
 {
     circle_ = new QGeoMapCircleObject();

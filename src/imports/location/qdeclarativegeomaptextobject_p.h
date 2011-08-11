@@ -77,7 +77,7 @@ public:
         AlignBottom = Qt::AlignBottom
     };
 
-    QDeclarativeGeoMapTextObject(QDeclarativeItem *parent = 0);
+    QDeclarativeGeoMapTextObject(QSGItem *parent = 0);
     ~QDeclarativeGeoMapTextObject();
 
     QDeclarativeCoordinate* coordinate();

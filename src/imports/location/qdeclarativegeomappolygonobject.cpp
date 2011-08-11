@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
     The MapPolygon element is part of the \bold{QtMobility.location 1.2} module.
 */
 
-QDeclarativeGeoMapPolygonObject::QDeclarativeGeoMapPolygonObject(QDeclarativeItem *parent)
+QDeclarativeGeoMapPolygonObject::QDeclarativeGeoMapPolygonObject(QSGItem *parent)
     : QDeclarativeGeoMapObject(parent), polygon_(0), componentCompleted_(false)
 {
     polygon_ = new QGeoMapPolygonObject();

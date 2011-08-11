@@ -47,7 +47,7 @@
 #include "qgeomapgroupobject.h"
 #include "QModelIndex"
 
-#include <QtQuick1/qdeclarativeitem.h>
+#include <QtDeclarative/QSGItem>
 
 class QAbstractItemModel;
 
@@ -56,14 +56,25 @@ QT_BEGIN_NAMESPACE
 class QDeclarativeGraphicsGeoMap;
 class QDeclarativeGeoMapMouseArea;
 
-class QDeclarativeGeoMapObject : public QDeclarativeItem
+// !!! IMPORTANT !!!
+//
+// Inheriting from QSGItem here
+// is just a workaround to have non-gui related (ie where visualization is not
+// the main thing) autotests to pass in QML2 environment.
+// Real QML2 Map support (and related map object is a work in progress elsewhere.
+// This Map element instantiates but does not do anything meaningful from app dev
+// perspective.
+//
+// !!! IMPORTANT !!!
+
+class QDeclarativeGeoMapObject : public QSGItem
 {
     Q_OBJECT
 
     Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
 
 public:
-    QDeclarativeGeoMapObject(QDeclarativeItem *parent = 0);
+    QDeclarativeGeoMapObject(QSGItem *parent = 0);
     ~QDeclarativeGeoMapObject();
 
     virtual void componentComplete();
@@ -107,7 +118,7 @@ class QDeclarativeGeoMapObjectView : public QObject, public QDeclarativeParserSt
     Q_PROPERTY(qreal z READ zValue WRITE setZValue NOTIFY zChanged)
 
 public:
-    QDeclarativeGeoMapObjectView(QDeclarativeItem *parent = 0);
+    QDeclarativeGeoMapObjectView(QSGItem *parent = 0);
     ~QDeclarativeGeoMapObjectView();
 
     QVariant model() const;

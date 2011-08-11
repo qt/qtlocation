@@ -1,4 +1,4 @@
-QT       += core network declarative qtquick1
+QT       += core network declarative
 
 TARGET = qmlplaces
 

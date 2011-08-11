@@ -58,7 +58,7 @@ class QDeclarativeGeoMapRouteObject : public QDeclarativeGeoMapObject
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
 
 public:
-    QDeclarativeGeoMapRouteObject(QDeclarativeItem *parent = 0);
+    QDeclarativeGeoMapRouteObject(QSGItem *parent = 0);
     ~QDeclarativeGeoMapRouteObject();
 
     QDeclarativeGeoRoute* route();

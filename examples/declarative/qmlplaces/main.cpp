@@ -1,7 +1,7 @@
 #include <QApplication>
-#include <QDeclarativeView>
-#include <QDeclarativeEngine>
-#include <QDeclarativeContext>
+#include <QtDeclarative/QSGView>
+#include <QtDeclarative/QDeclarativeEngine>
+#include <QtDeclarative/QDeclarativeContext>
 #include <QtNetwork>
 
 #include <QDebug>
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
         QNetworkProxyFactory::setUseSystemConfiguration(true);
     }
 
-    QDeclarativeView view;
+    QSGView view;
     view.setSource(QString("qrc:/qmlplaces.qml"));
     view.show();
     return a.exec();

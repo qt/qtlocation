@@ -41,12 +41,3 @@
 
 #include <QtQuickTest/quicktest.h>
 QUICK_TEST_MAIN(qmlmapsandnav)
-//QTQUICK1_TEST_MAIN(qmlmapsandnav)
-
-// temproray hack: put '-qtuick1' into argument vector
-// to enforce QML1 testing until location QML elements are QML2
-// compatible. TODO
-//int main(int argc, char **argv)
-//    {  
-//    return quick_test_main(argc, argv, #name, 0, QUICK_TEST_SOURCE_DIR);
-		//    }

@@ -241,6 +241,7 @@ public:
     void setNumberAlternativeRoutes(int numberAlternativeRoutes);
     int numberAlternativeRoutes() const;
 
+    //QList<FeatureType> featureTypes();
     QList<int> featureTypes();
 
     // READ functions for list properties

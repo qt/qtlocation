@@ -44,7 +44,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDeclarativeGeoMapRouteObject::QDeclarativeGeoMapRouteObject(QDeclarativeItem *parent)
+QDeclarativeGeoMapRouteObject::QDeclarativeGeoMapRouteObject(QSGItem *parent)
     : QDeclarativeGeoMapObject(parent), route_(0)
 {
     route_ = new QGeoMapRouteObject(); // graphical object

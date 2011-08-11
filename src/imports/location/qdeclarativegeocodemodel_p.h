@@ -69,6 +69,8 @@ class QDeclarativeGeocodeModel : public QAbstractListModel, public QDeclarativeP
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(QString error READ error NOTIFY errorChanged)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
+    Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
+    Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(QVariant query READ query WRITE setQuery NOTIFY queryChanged)
     Q_PROPERTY(QObject* bounds READ bounds WRITE setBounds NOTIFY boundsChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -111,6 +113,11 @@ public:
     int count() const;
     Q_INVOKABLE QDeclarativeGeoLocation* get(int index);
 
+    int limit() const;
+    void setLimit(int limit);
+    int offset() const;
+    void setOffset(int offset);
+
     QVariant query() const;
     void setQuery(const QVariant& query);
     Q_INVOKABLE void clear();
@@ -125,6 +132,8 @@ Q_SIGNALS:
     void autoUpdateChanged();
     void boundsChanged();
     void queryChanged();
+    void limitChanged();
+    void offsetChanged();
 
 public Q_SLOTS:
     void update();
@@ -161,6 +170,10 @@ private:
     QVariant queryVariant_;
     QDeclarativeCoordinate* coordinate_;
     QDeclarativeGeoAddress* address_;
+    QString searchString_;
+
+    int limit_;
+    int offset_;
 };
 
 QT_END_NAMESPACE

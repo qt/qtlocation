@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
     The MapPolyline element is part of the \bold{QtMobility.location 1.2} module.
 */
 
-QDeclarativeGeoMapPolylineObject::QDeclarativeGeoMapPolylineObject(QDeclarativeItem *parent)
+QDeclarativeGeoMapPolylineObject::QDeclarativeGeoMapPolylineObject(QSGItem *parent)
     : QDeclarativeGeoMapObject(parent), polyline_(0), componentCompleted_(false)
 {
     polyline_ = new QGeoMapPolylineObject();

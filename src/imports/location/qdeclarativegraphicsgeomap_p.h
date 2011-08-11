@@ -44,7 +44,8 @@
 
 #include <qgraphicsgeomap.h>
 #include <QPointer>
-#include <QtQuick1/qdeclarativeitem.h>
+//#include <QtQuick1/qdeclarativeitem.h>
+#include <QtDeclarative/qsgitem.h>
 
 #include "qdeclarativegeomapobject_p.h"
 
@@ -57,7 +58,17 @@ class QGeoServiceProvider;
 class QDeclarativeCoordinate;
 class QDeclarativeGeoServiceProvider;
 
-class QDeclarativeGraphicsGeoMap : public QDeclarativeItem
+// !!! IMPORTANT !!!
+//
+// Inheriting from QSGItem here
+// is just a workaround to have non-gui location declarative autotests
+// pass in QML2 environment. Real QML2 Map support (and related map object support)
+// is a work in progress elsewhere. This Map object instantiates but does not do
+// anything meaningful as a map.
+//
+// !!! IMPORTANT !!!
+
+class QDeclarativeGraphicsGeoMap : public QSGItem
 {
     Q_OBJECT
 
@@ -91,7 +102,8 @@ public:
     };
 
 public:
-    QDeclarativeGraphicsGeoMap(QDeclarativeItem *parent = 0);
+    //QDeclarativeGraphicsGeoMap(QSGItem *parent = 0);
+    QDeclarativeGraphicsGeoMap(QSGItem *parent = 0);
     ~QDeclarativeGraphicsGeoMap();
 
     // From QDeclarativeParserStatus

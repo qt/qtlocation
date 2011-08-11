@@ -39,16 +39,16 @@
 ****************************************************************************/
 
 #include <QtGui/QApplication>
-#include <QtQuick1/QDeclarativeView>
+#include <QtDeclarative/QSGView>
 #include <QtDeclarative/QDeclarativeEngine>
 
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
     const QString mainQmlApp = QLatin1String("qrc:///flickr.qml");
-    QDeclarativeView view;
+    QSGView view;
     view.setSource(QUrl(mainQmlApp));
-    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    view.setResizeMode(QSGView::SizeRootObjectToView);
     // Qt.quit() called in embedded .qml by default only emits
     // quit() signal, so do this (optionally use Qt.exit()).
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));

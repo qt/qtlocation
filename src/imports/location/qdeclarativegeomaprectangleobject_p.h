@@ -62,7 +62,7 @@ class QDeclarativeGeoMapRectangleObject : public QDeclarativeGeoMapObject
     Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
 
 public:
-    QDeclarativeGeoMapRectangleObject(QDeclarativeItem *parent = 0);
+    QDeclarativeGeoMapRectangleObject(QSGItem *parent = 0);
     ~QDeclarativeGeoMapRectangleObject();
 
     QDeclarativeCoordinate* topLeft();

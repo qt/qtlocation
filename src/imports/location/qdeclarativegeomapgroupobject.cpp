@@ -63,7 +63,7 @@ QT_BEGIN_NAMESPACE
     The MapGroup element is part of the \bold{QtMobility.location 1.2} module.
 */
 
-QDeclarativeGeoMapGroupObject::QDeclarativeGeoMapGroupObject(QDeclarativeItem *parent)
+QDeclarativeGeoMapGroupObject::QDeclarativeGeoMapGroupObject(QSGItem *parent)
     : QDeclarativeGeoMapObject(parent)
 {
     group_ = new QGeoMapGroupObject();
@@ -84,7 +84,9 @@ QDeclarativeGeoMapGroupObject::~QDeclarativeGeoMapGroupObject()
 
 void QDeclarativeGeoMapGroupObject::componentComplete()
 {
-    QList<QGraphicsItem*> children = childItems();
+    //QList<QGraphicsItem*> children = childItems();
+    // TODO
+    QList<QSGItem*> children = childItems();
     for (int i = 0; i < children.size(); ++i) {
         QDeclarativeGeoMapObject *mapObject
         = qobject_cast<QDeclarativeGeoMapObject*>(children.at(i));

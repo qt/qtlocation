@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.0
+import QtQuick 2.0
 import QtTest 1.0
 import Qt.location 5.0
 
@@ -361,6 +361,20 @@ Item {
             compare(emptyQuery.featureWeight(RouteQuery.HighwayFeature), RouteQuery.PreferFeatureWeight);
             compare(emptyQuery.featureTypes[0], RouteQuery.HighwayFeature)
             compare(emptyQuery.featureWeight(emptyQuery.featureTypes[0]), RouteQuery.PreferFeatureWeight)
+            compare(featureTypesSpy.count, 3)
+            compare(queryDetailsChangedSpy.count, 3)
+            compare(emptyQuery.featureTypes.length, 1)
+
+            // Put some feature weights and then reset them with NoFeature
+            emptyQuery.setFeatureWeight(RouteQuery.FerryFeature, RouteQuery.RequireFeatureWeight);
+            emptyQuery.setFeatureWeight(RouteQuery.MotorPoolLaneFeature, RouteQuery.DisallowFeatureWeight);
+            compare(featureTypesSpy.count, 5)
+            compare(queryDetailsChangedSpy.count, 5)
+            compare(emptyQuery.featureTypes.length, 3)
+            emptyQuery.setFeatureWeight(RouteQuery.NoFeature, RouteQuery.NeutralFeatureWeight)
+            compare(featureTypesSpy.count, 6)
+            compare(queryDetailsChangedSpy.count, 6)
+            compare(emptyQuery.featureTypes.length, 0)
 
             // Segment details
             queryDetailsChangedSpy.clear()

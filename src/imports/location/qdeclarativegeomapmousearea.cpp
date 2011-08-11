@@ -78,8 +78,8 @@ QT_BEGIN_NAMESPACE
     \sa MapMouseEvent
 */
 
-QDeclarativeGeoMapMouseArea::QDeclarativeGeoMapMouseArea(QDeclarativeItem *parent)
-    : QDeclarativeItem(parent),
+QDeclarativeGeoMapMouseArea::QDeclarativeGeoMapMouseArea(QSGItem *parent)
+    : QSGItem(parent),
       enabled_(true),
       hoverEnabled_(false) {}
 
@@ -265,7 +265,7 @@ void QDeclarativeGeoMapMouseArea::setHoverEnabled(bool hoverEnabled)
         return;
 
     hoverEnabled_ = hoverEnabled;
-    setAcceptsHoverEvents(hoverEnabled_);
+    //setAcceptsHoverEvents(hoverEnabled_);
     setAcceptHoverEvents(hoverEnabled_);
     setAcceptedMouseButtons(Qt::LeftButton);
     emit hoverEnabledChanged(hoverEnabled_);
@@ -281,7 +281,7 @@ void QDeclarativeGeoMapMouseArea::setHoverEnabled(bool hoverEnabled)
 void QDeclarativeGeoMapMouseArea::doubleClickEvent(QDeclarativeGeoMapMouseEvent *event)
 {
     if (!enabled_) {
-        //TODO QDeclarativeItem::mouseDoubleClickEvent(convert event to regular event here)
+        //TODO QSGItem::mouseDoubleClickEvent(convert event to regular event here)
         return;
     }
     // TODO check this properly
@@ -292,7 +292,7 @@ void QDeclarativeGeoMapMouseArea::doubleClickEvent(QDeclarativeGeoMapMouseEvent 
     // TODO save event
     event->setAccepted(doubleClickConnected);
     emit doubleClicked(event);
-    // TODO QDeclarativeItem::mouseDoubleClickEvent(convert event to regular event here)
+    // TODO QSGItem::mouseDoubleClickEvent(convert event to regular event here)
 
     map_->setActiveMouseArea(0);
 }
@@ -300,7 +300,7 @@ void QDeclarativeGeoMapMouseArea::doubleClickEvent(QDeclarativeGeoMapMouseEvent 
 void QDeclarativeGeoMapMouseArea::pressEvent(QDeclarativeGeoMapMouseEvent *event)
 {
     if (!enabled_) {
-        //TODO QDeclarativeItem::mousePressEvent(convert event to regular event here)
+        //TODO QSGItem::mousePressEvent(convert event to regular event here)
         return;
     }
 
@@ -324,7 +324,7 @@ void QDeclarativeGeoMapMouseArea::pressEvent(QDeclarativeGeoMapMouseEvent *event
 void QDeclarativeGeoMapMouseArea::releaseEvent(QDeclarativeGeoMapMouseEvent *event)
 {
     if (!enabled_) {
-        //TODO QDeclarativeItem::mouseReleaseEvent(convert event to regular event here)
+        //TODO QSGItem::mouseReleaseEvent(convert event to regular event here)
         return;
     }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,7 +58,9 @@ QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject* parent)
       boundingArea_(0),
       status_(QDeclarativeGeocodeModel::Null),
       coordinate_(0),
-      address_(0)
+      address_(0),
+      limit_(-1),
+      offset_(0)
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
@@ -111,7 +113,8 @@ void QDeclarativeGeocodeModel::update()
         return;
     }
     if ((!coordinate_ || !coordinate_->coordinate().isValid()) &&
-            (!address_ || address_->address().isEmpty())) {
+            (!address_ || address_->address().isEmpty()) &&
+            (searchString_.isEmpty())) {
         qmlInfo(this) << tr("Cannot geocode, valid query not set.");
         return;
     }
@@ -131,6 +134,16 @@ void QDeclarativeGeocodeModel::update()
     } else if (address_) {
         setStatus(QDeclarativeGeocodeModel::Loading);
         reply_ = geocodingManager->geocode(address_->address(), boundingArea());
+        if (reply_->isFinished()) {
+            if (reply_->error() == QGeocodeReply::NoError) {
+                geocodeFinished(reply_);
+            } else {
+                geocodeError(reply_, reply_->error(), reply_->errorString());
+            }
+        }
+    } else if (!searchString_.isEmpty()) {
+        setStatus(QDeclarativeGeocodeModel::Loading);
+        reply_ = geocodingManager->geocode(searchString_, limit_, offset_, boundingArea());
         if (reply_->isFinished()) {
             if (reply_->error() == QGeocodeReply::NoError) {
                 geocodeFinished(reply_);
@@ -244,6 +257,13 @@ void QDeclarativeGeocodeModel::geocodeError(QGeocodeReply *reply,
         const QString &errorString)
 {
     Q_UNUSED(error);
+    int oldCount = declarativeLocations_.count();
+    if (oldCount > 0) {
+        // Reset the model
+        setLocations(reply->locations());
+        emit locationsChanged();
+        emit countChanged();
+    }
     setError(errorString);
     setStatus(QDeclarativeGeocodeModel::Error);
     reply->deleteLater();
@@ -302,6 +322,40 @@ Q_INVOKABLE QDeclarativeGeoLocation* QDeclarativeGeocodeModel::get(int index)
     return declarativeLocations_.at(index);
 }
 
+
+int QDeclarativeGeocodeModel::limit() const
+{
+    return limit_;
+}
+
+void QDeclarativeGeocodeModel::setLimit(int limit)
+{
+    if (limit == limit_)
+        return;
+    limit_ = limit;
+    if (autoUpdate_) {
+        update();
+    }
+    emit limitChanged();
+}
+
+int QDeclarativeGeocodeModel::offset() const
+{
+    return offset_;
+}
+
+void QDeclarativeGeocodeModel::setOffset(int offset)
+{
+    if (offset == offset_)
+        return;
+    offset_ = offset;
+    if (autoUpdate_) {
+        update();
+    }
+    emit offsetChanged();
+}
+
+
 Q_INVOKABLE void QDeclarativeGeocodeModel::clear()
 {
     bool hasChanged = !declarativeLocations_.isEmpty();
@@ -334,10 +388,11 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant& query)
         if (address_)
             address_->disconnect(this);
         coordinate_ = qobject_cast<QDeclarativeCoordinate*>(object);
-        address_ = 0;
         connect(coordinate_, SIGNAL(latitudeChanged(double)), this, SLOT(queryContentChanged()));
         connect(coordinate_, SIGNAL(longitudeChanged(double)), this, SLOT(queryContentChanged()));
         connect(coordinate_, SIGNAL(altitudeChanged(double)), this, SLOT(queryContentChanged()));
+        address_ = 0;
+        searchString_.clear();
     } else if (qobject_cast<QDeclarativeGeoAddress*>(object)) {
         if (address_)
             address_->disconnect(this);
@@ -353,8 +408,17 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant& query)
         connect(address_, SIGNAL(streetChanged()), this, SLOT(queryContentChanged()));
         connect(address_, SIGNAL(postcodeChanged()), this, SLOT(queryContentChanged()));
         coordinate_ = 0;
+        searchString_.clear();
+    } else if (query.type() == QVariant::String) {
+        searchString_ = query.toString();
+        if (address_)
+            address_->disconnect(this);
+        if (coordinate_)
+            coordinate_->disconnect(this);
+        address_ = 0;
+        coordinate_ = 0;
     } else {
-        qmlInfo(this) << tr("Unsupported query type for geocode model (Coordinate and Address supported).");
+        qmlInfo(this) << tr("Unsupported query type for geocode model (Coordinate, string and Address supported).");
         return;
     }
     queryVariant_ = query;

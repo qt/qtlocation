@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
- import Qt 4.7
+ import QtQuick 2.0
 
  Component {
      id: photoDelegate

@@ -112,7 +112,7 @@ void QDeclarativeGeoRouteModel::abortRequest()
 Q_INVOKABLE QDeclarativeGeoRoute* QDeclarativeGeoRouteModel::get(int index)
 {
     if (index < 0 || index >= routes_.count()) {
-        qmlInfo(this) << tr("Error, too big index in get(): ") << index;
+        qmlInfo(this) << tr("Error, invalid index for get(): ") << index;
         return 0;
     }
     return routes_.at(index);
@@ -352,8 +352,9 @@ void QDeclarativeGeoRouteQuery::componentComplete()
 QList<int> QDeclarativeGeoRouteQuery::featureTypes()
 {
     QList<int> list;
+
     for (int i = 0; i < request_.featureTypes().count(); i++) {
-        list.append(request_.featureTypes().at(i));
+        list.append(static_cast<int>(request_.featureTypes().at(i)));
     }
     return list;
 }
@@ -543,6 +544,19 @@ Q_INVOKABLE void QDeclarativeGeoRouteQuery::clearWaypoints()
 
 Q_INVOKABLE void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType featureType, FeatureWeight featureWeight)
 {
+    if (featureType == NoFeature && !request_.featureTypes().isEmpty()) {
+        // reset all feature types.
+        QList<QGeoRouteRequest::FeatureType> featureTypes = request_.featureTypes();
+        for (int i = 0; i < featureTypes.count(); ++i) {
+            request_.setFeatureWeight(featureTypes.at(i), QGeoRouteRequest::NeutralFeatureWeight);
+        }
+        if (complete_) {
+            emit featureTypesChanged();
+            emit queryDetailsChanged();
+        }
+        return;
+    }
+
     // Check if the weight changes, as we need to signal it
     FeatureWeight originalWeight = static_cast<FeatureWeight>(request_.featureWeight(static_cast<QGeoRouteRequest::FeatureType>(featureType)));
     if (featureWeight == originalWeight)

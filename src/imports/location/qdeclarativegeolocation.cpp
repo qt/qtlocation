@@ -22,10 +22,10 @@ QDeclarativeGeoLocation::QDeclarativeGeoLocation(QObject* parent)
 QDeclarativeGeoLocation::QDeclarativeGeoLocation(const QGeoLocation &src,
         QObject *parent)
         : QObject(parent),
-          m_src(src),
           m_address(src.address()),
           m_coordinate(src.coordinate()),
-          m_boundingBox(src.viewport())
+          m_boundingBox(src.viewport()),
+          m_src(src)
 {
 }
 

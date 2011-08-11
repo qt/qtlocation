@@ -70,7 +70,7 @@ public:
         Error
     };
 
-    QDeclarativeGeoMapPixmapObject(QDeclarativeItem *parent = 0);
+    QDeclarativeGeoMapPixmapObject(QSGItem *parent = 0);
     ~QDeclarativeGeoMapPixmapObject();
 
     QDeclarativeCoordinate* coordinate();

@@ -51,8 +51,8 @@
 
 QT_BEGIN_NAMESPACE
 
-QDeclarativeGeoMapObject::QDeclarativeGeoMapObject(QDeclarativeItem *parent)
-    : QDeclarativeItem(parent),
+QDeclarativeGeoMapObject::QDeclarativeGeoMapObject(QSGItem *parent)
+    : QSGItem(parent),
       object_(0),
       visible_(true)
 {
@@ -62,9 +62,11 @@ QDeclarativeGeoMapObject::~QDeclarativeGeoMapObject() {}
 
 void QDeclarativeGeoMapObject::componentComplete()
 {
-    QDeclarativeItem::componentComplete();
+    QSGItem::componentComplete();
 
-    QList<QGraphicsItem*> children = childItems();
+    // TODO check QML2 impact
+    //QList<QGraphicsItem*> children = childItems();
+    QList<QSGItem*> children = childItems();
     for (int i = 0; i < children.size(); ++i) {
         QDeclarativeGeoMapMouseArea *mouseArea
         = qobject_cast<QDeclarativeGeoMapMouseArea*>(children.at(i));
@@ -149,12 +151,16 @@ void QDeclarativeGeoMapObject::setMapObject(QGeoMapObject *object)
     object_ = object;
     object_->setVisible(visible_);
 
+    // TODO check QML2 impact
+    /*
     connect(this,
             SIGNAL(zChanged()),
             this,
             SLOT(parentZChanged()));
 
+
     object_->setZValue(zValue());
+    */
 }
 
 QGeoMapObject* QDeclarativeGeoMapObject::mapObject()
@@ -164,7 +170,8 @@ QGeoMapObject* QDeclarativeGeoMapObject::mapObject()
 
 void QDeclarativeGeoMapObject::parentZChanged()
 {
-    object_->setZValue(zValue());
+    // TODO check QML2 impact
+    //object_->setZValue(zValue());
 }
 
 void QDeclarativeGeoMapObject::setVisible(bool visible)
@@ -189,7 +196,7 @@ bool QDeclarativeGeoMapObject::isVisible() const
     \qmlclass MapObjectView
 
     \brief The MapObjectView is used to populate Map from a model.
-    \inherits QDeclarativeItem
+    \inherits QSGItem
 
     \ingroup qml-location-maps
 
@@ -206,7 +213,7 @@ bool QDeclarativeGeoMapObject::isVisible() const
     The MapObjectView element is part of the \bold{QtMobility.location 1.2} module.
 */
 
-QDeclarativeGeoMapObjectView::QDeclarativeGeoMapObjectView(QDeclarativeItem *parent)
+QDeclarativeGeoMapObjectView::QDeclarativeGeoMapObjectView(QSGItem *parent)
     : QObject(parent), visible_(true), componentCompleted_(false), delegate_(0),
       model_(0), map_(0)
 {

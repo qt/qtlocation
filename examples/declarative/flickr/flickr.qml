@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
+import QtQuick 2.0
 import "flickrcommon" as Common
 import "flickrmobile" as Mobile
 

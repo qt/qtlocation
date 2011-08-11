@@ -63,7 +63,7 @@ class QDeclarativeGeoMapPolygonObject : public QDeclarativeGeoMapObject
     Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
 
 public:
-    QDeclarativeGeoMapPolygonObject(QDeclarativeItem *parent = 0);
+    QDeclarativeGeoMapPolygonObject(QSGItem *parent = 0);
     ~QDeclarativeGeoMapPolygonObject();
 
     QDeclarativeListProperty<QDeclarativeCoordinate> declarativePath();

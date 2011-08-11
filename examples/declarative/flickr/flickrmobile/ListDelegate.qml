@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-import Qt 4.7
+import QtQuick 2.0
     Component {
     Item {
         id: wrapper; width: wrapper.ListView.view.width; height: 86

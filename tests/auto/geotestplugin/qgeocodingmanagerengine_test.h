@@ -51,6 +51,7 @@
 #include <qgeocodereply.h>
 
 #include <QTimer>
+#include <QDebug>
 #include <QTimerEvent>
 
 QT_USE_NAMESPACE
@@ -103,6 +104,41 @@ public:
         setSupportsGeocoding(supported_);
         setSupportsReverseGeocoding(supported_);
         setLocale(*(new QLocale (QLocale::German, QLocale::Germany)));
+    }
+
+    QGeocodeReply* geocode(const QString &searchString,
+                            int limit = -1,
+                            int offset = 0,
+                            QGeoBoundingArea *bounds = 0)
+    {
+        geocodeReply_ = new GeocodeReplyTest();
+        connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
+        geocodeReply_->callSetViewport(bounds);
+
+        if (searchString.length() == 1) {
+            errorString_ = searchString;
+            errorCode_ = (QGeocodeReply::Error)searchString.toInt();
+        } else {
+            errorString_ = "";
+            errorCode_ = QGeocodeReply::NoError;
+        }
+
+        if (errorCode_ == QGeocodeReply::NoError)
+            setLocations(geocodeReply_, searchString, limit, offset);
+
+        if (finishRequestImmediately_) {
+            // check if we should finish with error
+            if (errorCode_) {
+                geocodeReply_->callSetError(errorCode_, errorString_);
+            } else {
+                geocodeReply_->callSetFinished(true);
+            }
+        } else {
+            // we only allow serialized requests in QML - previous must have been aborted
+            Q_ASSERT(timerId_ == 0);
+            timerId_ = startTimer(200);
+        }
+        return static_cast<QGeocodeReply*>(geocodeReply_);
     }
 
     QGeocodeReply*  geocode ( const QGeoAddress & address, QGeoBoundingArea * bounds )
@@ -158,12 +194,15 @@ public Q_SLOTS:
     }
 
 public:
-    void setLocations(GeocodeReplyTest* reply, const QString searchString, int limit )
+    void setLocations(GeocodeReplyTest* reply, const QString searchString, int limit, int offset)
     {
+        if (limit < 0)
+            limit = 0;
         for (int i = 0; i < limit; ++i) {
             QGeoLocation location;
             QGeoAddress address;
             address.setStreet(searchString);
+            address.setCounty(QString::number(offset));
             location.setAddress(address);
             reply->callAddLocation(location);
         }
