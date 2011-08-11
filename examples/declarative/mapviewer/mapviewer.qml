@@ -88,8 +88,7 @@ Item {
         orientation: ListView.Vertical
         z: mainMenu.z - 1
         Component.onCompleted: {
-            setModel(["Reverse geocode", "Geocode","Search", "Route"])
-            disableItem(2)
+            setModel(["Reverse geocode", "Geocode", "Route"])
         }
         itemHeight: 30;
         itemWidth: mainMenu.itemWidth
@@ -107,10 +106,6 @@ Item {
                     break;
                 }
                 case 2: {
-                    page.state = "Search"
-                    break;
-                }
-                case 3: {
                     page.state = "Route"
                     break;
                 }
@@ -386,26 +381,6 @@ Item {
         }
     }
 
-//Search Dialog
-    Dialog {
-        id: searchDialog
-        title: "Search"
-        z: mainMenu.z + 1
-
-        onGoButtonClicked: {
-            page.state = ""
-//            searchModel.searchString = dialogModel.get(0).inputText
-//            searchModel.update();
-        }
-        Component.onCompleted: {
-            var obj = [["Please enter thing to search:","53 Brandl St, Eight Mile Plains, Australia"]]
-            setModel(obj)
-        }
-        onCancelButtonClicked: {
-            page.state = ""
-        }
-    }
-
 //Geocode Dialog
     Dialog {
         id: geocodeDialog
@@ -586,10 +561,6 @@ Item {
             PropertyChanges { target: routeDialog; opacity: 1 }
         },
         State {
-            name: "Search"
-            PropertyChanges { target: searchDialog; opacity: 1 }
-        },
-        State {
             name: "Geocode"
             PropertyChanges { target: geocodeDialog; opacity: 1 }
         },
@@ -629,10 +600,6 @@ Item {
         },
         Transition {
             to: "Route"
-            NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
-        },
-        Transition {
-            to: "Search"
             NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
         },
         Transition {

@@ -675,6 +675,9 @@ Map {
         }
         routeQuery.travelModes = RouteQuery.CarTravel
         routeQuery.routeOptimizations = RouteQuery.ShortestRoute
+        for (i=0; i<9; i++) {
+            routeQuery.setFeatureWeight(i, 0)
+        }
         routeModel.update();
     }
 
