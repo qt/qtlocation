@@ -58,7 +58,7 @@
 #include "qplacemediaobject.h"
 #include "qplacereview.h"
 #include "qplacemediaobject.h"
-
+#include "qplaceattribute.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -70,6 +70,8 @@ class QGeoPlacePrivate;
 class Q_LOCATION_EXPORT QGeoPlace
 {
 public:
+    typedef QMap<QString, QPlaceAttribute> ExtendedAttributes;
+
     QGeoPlace();
     QGeoPlace(const QGeoPlace &other);
     virtual ~QGeoPlace();
@@ -140,6 +142,10 @@ public:
 
     bool detailsFetched() const;
     void setDetailsFetched(bool fetched);
+
+    QGeoPlace::ExtendedAttributes extendedAttributes() const;
+    void setExtendedAttributes(const QGeoPlace::ExtendedAttributes &attributes);
+    void insertExtendedAttribute(const QString &key, const QPlaceAttribute &);
 
 protected:
     QGeoPlace(QGeoPlacePrivate *dd);

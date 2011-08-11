@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACE_P_H
-#define QGEOPLACE_P_H
+#ifndef QPLACEATTRIBUTE_P_H
+#define QPLACEATTRIBUTE_P_H
 
 //
 //  W A R N I N G
@@ -53,81 +53,40 @@
 // We mean it.
 //
 
-#include <QRectF>
 #include <QSharedData>
-#include <QUrl>
-
-#include "qgeoplace.h"
-#include "qgeoaddress.h"
-#include "qgeoboundingbox.h"
-#include "qgeocoordinate.h"
+#include <QString>
+#include <QVariant>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoPlacePrivate : public QSharedData
+class QPlaceAttributePrivate : public QSharedData
 {
 public:
-    enum PlaceType {
-        GeoPlaceType,
-        LandmarkType
-    };
+    QPlaceAttributePrivate(){}
+    QPlaceAttributePrivate(const QPlaceAttributePrivate &other);
+    virtual ~QPlaceAttributePrivate(){}
 
-    QGeoPlacePrivate();
-    QGeoPlacePrivate(const QGeoPlacePrivate &other);
-    virtual ~QGeoPlacePrivate();
 
-    QGeoPlacePrivate& operator= (const QGeoPlacePrivate &other);
+    virtual bool operator== (const QPlaceAttributePrivate &other) const;
+    virtual QPlaceAttributePrivate* clone() const { return new QPlaceAttributePrivate(*this); }
 
-    virtual bool operator== (const QGeoPlacePrivate &other) const;
-
-    virtual QGeoPlacePrivate* clone() const { return new QGeoPlacePrivate(*this); }
-    PlaceType type;
-    QGeoBoundingBox viewport;
-    QGeoCoordinate coordinate;
-    QGeoAddress address;
-
-    QVariantHash additionalData;
-    QPlaceBusinessInformation businessInfo;
-    QList<QPlaceCategory> categories;
-    QList<QPlaceDescription> descriptions;
-    QGeoLocation location;
-    QPlaceRating rating;
-    QList<QPlaceSupplier> suppliers;
-    QStringList feeds;
-
-    QString name;
-    QString placeId;
-    QPlacePaginationList<QPlaceReview> reviews;
-    int reviewCount;
-    QString shortDescription;
-    QStringList tags;
-
-    QMap<QString, PlaceMediaCollection> media;
-    QMap<QString, int> mediaCounts;
-
-    QString primaryPhone;
-    QString primaryFax;
-    QString primaryEmail;
-    QUrl primaryUrl;
-
-    QGeoPlace::ExtendedAttributes extendedAttributes;
-
-    bool detailsFetched;
+    QString label;
+    QString text;
 };
-
 
 #if defined(Q_CC_MWERKS)
 // This results in multiple symbol definition errors on all other compilers
 // but not having a definition here results in an attempt to use the unspecialized
 // clone (which fails because of the pure virtuals above)
-template<> QGeoPlacePrivate *QSharedDataPointer<QGeoPlacePrivate>::clone()
+template<> QPlaceAttributePrivate *QSharedDataPointer<QPlaceAttributePrivate>::clone()
 {
     return d->clone();
 }
 #else
-template<> QGeoPlacePrivate *QSharedDataPointer<QGeoPlacePrivate>::clone();
+template<> QPlaceAttributePrivate *QSharedDataPointer<QPlaceAttributePrivate>::clone();
 #endif
 
 QT_END_NAMESPACE
+
 #endif
 

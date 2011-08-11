@@ -132,7 +132,8 @@ Rectangle {
                 State {
                     name: "place-details"
                     PropertyChanges { target: gradStop; color:"lightskyblue" }
-                    PropertyChanges { target: paymentMethods; text: '<b>Payment methods: </b> ' + result.place.businessInformation.paymentMethods}
+                    PropertyChanges { target: paymentMethods; text: '<b>Payment methods: </b> '
+                        + ((result.place.extendedAttributes.paymentMethods)?result.place.extendedAttributes.paymentMethods.text:"No payment methods")}
                 }
             ]
         }

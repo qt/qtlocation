@@ -12,6 +12,7 @@
 #include "qdeclarativedescription_p.h"
 #include "qdeclarativereviewmodel_p.h"
 #include "qdeclarativemediamodel_p.h"
+#include <QDeclarativePropertyMap>
 
 QT_BEGIN_NAMESPACE
 
@@ -38,6 +39,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(bool fetchingDetails READ fetchingDetails WRITE setFetchingDetails NOTIFY fetchingDetailsChanged)
     Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged)
     Q_PROPERTY(QDeclarativeMediaModel *mediaModel READ mediaModel NOTIFY mediaModelChanged)
+    Q_PROPERTY(QDeclarativePropertyMap *extendedAttributes READ extendedAttributes WRITE setExtendedAttributes NOTIFY extendedAttributesChanged);
 
     Q_INTERFACES(QDeclarativeParserStatus)
     Q_PROPERTY(QString primaryPhone READ primaryPhone WRITE setPrimaryPhone NOTIFY primaryPhoneChanged);
@@ -119,6 +121,9 @@ public:
     QUrl primaryUrl() const;
     void setPrimaryUrl(const QUrl &url);
 
+    QDeclarativePropertyMap *extendedAttributes() const;
+    void setExtendedAttributes(QDeclarativePropertyMap *attrib);
+
 signals:
     void pluginChanged();
     void additionalDataChanged();
@@ -143,6 +148,8 @@ signals:
     void primaryEmailChanged();
     void primaryUrlChanged();
 
+    void extendedAttributesChanged();
+
 private slots:
     void detailsFetchedFinished();
     void detailsError(QPlaceReply::Error error);
@@ -151,6 +158,7 @@ private:
     void synchronizeCategories();
     void synchronizeDescriptions();
     void synchronizeSuppliers();
+    void synchronizeExtendedAttributes();
 
 private:
     QList<QDeclarativeCategory*> m_categories;
@@ -161,6 +169,7 @@ private:
     QDeclarativeBusinessInformation m_businessInformation;
     QDeclarativeReviewModel *m_reviewModel;
     QDeclarativeMediaModel *m_mediaModel;
+    QDeclarativePropertyMap *m_extendedAttributes;
 
     QGeoPlace m_src;
 

@@ -3,6 +3,7 @@
 
 #include <qgeoplace.h>
 #include <qplacemediaobject.h>
+#include <qplaceattribute.h>
 
 QT_USE_NAMESPACE
 
@@ -37,6 +38,7 @@ private Q_SLOTS:
     void primaryEmailTest();
     void primaryUrlTest();
     void operatorsTest();
+    void extendedAttributeTest();
 };
 
 tst_QGeoPlace::tst_QGeoPlace()
@@ -366,6 +368,69 @@ void tst_QGeoPlace::operatorsTest()
     QVERIFY2(testObj == testObj2, "Not copied correctly");
     testObj2.setPlaceId("342-456");
     QVERIFY2(testObj != testObj2, "Object should be different");
+}
+
+void tst_QGeoPlace::extendedAttributeTest()
+{
+    QGeoPlace place;
+    QVERIFY2(place.extendedAttributes().isEmpty(), "Invalid default attributes");
+    QPlaceAttribute smoking;
+    smoking.setLabel("Public Smoking");
+    smoking.setText("No");
+
+    //test insertion of an attribution
+    place.insertExtendedAttribute("Smoking", smoking);
+    QVERIFY(place.extendedAttributes().contains("Smoking"));
+    QCOMPARE(place.extendedAttributes().value("Smoking").label(), QLatin1String("Public Smoking"));
+    QCOMPARE(place.extendedAttributes().value("Smoking").text(), QLatin1String("No"));
+    QCOMPARE(place.extendedAttributes().count(), 1);
+
+    QPlaceAttribute shelter;
+    shelter.setLabel("Outdoor shelter");
+    shelter.setText("Yes");
+
+    //test insertion again
+    place.insertExtendedAttribute("Shelter", shelter);
+    QVERIFY(place.extendedAttributes().contains("Shelter"));
+    QCOMPARE(place.extendedAttributes().value("Shelter").label(), QLatin1String("Outdoor shelter"));
+    QCOMPARE(place.extendedAttributes().value("Shelter").text(), QLatin1String("Yes"));
+
+    QCOMPARE(place.extendedAttributes().count(), 2);
+
+    //test overwriting an attribute using an insertion
+    shelter.setText("No");
+    place.insertExtendedAttribute("Shelter", shelter);
+
+    QPlaceAttribute wireless;
+    wireless.setLabel("Wifi");
+    wireless.setText("None");
+
+    QPlaceAttribute lan;
+    lan.setLabel("Lan");
+    lan.setText("Available");
+
+    //test setting a new set of attributes
+    QGeoPlace::ExtendedAttributes attributes;
+    attributes.insert("Wireless", wireless);
+    attributes.insert("Lan", lan);
+
+    place.setExtendedAttributes(attributes);
+
+    QVERIFY(place.extendedAttributes().contains("Wireless"));
+    QVERIFY(place.extendedAttributes().contains("Lan"));
+    QCOMPARE(place.extendedAttributes().value("Wireless").label(), QLatin1String("Wifi"));
+    QCOMPARE(place.extendedAttributes().value("Wireless").text(), QLatin1String("None"));
+    QCOMPARE(place.extendedAttributes().value("Lan").label(), QLatin1String("Lan"));
+    QCOMPARE(place.extendedAttributes().value("Lan").text(), QLatin1String("Available"));
+
+    QVERIFY(!place.extendedAttributes().contains("Shelter"));
+    QVERIFY(!place.extendedAttributes().contains("Smoking"));
+    QCOMPARE(place.extendedAttributes().count(), 2);
+
+    //test clearing of attributes
+    QGeoPlace::ExtendedAttributes noAttributes;
+    place.setExtendedAttributes(noAttributes);
+    QCOMPARE(place.extendedAttributes().count(), 0);
 }
 
 QTEST_APPLESS_MAIN(tst_QGeoPlace);

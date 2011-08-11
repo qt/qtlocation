@@ -15,6 +15,7 @@ SOURCES += \
     declarativeplaces/qdeclarativemediaobject.cpp \
     declarativeplaces/qdeclarativeperiod.cpp \
     declarativeplaces/qdeclarativeplace.cpp \
+    declarativeplaces/qdeclarativeplaceattribute.cpp \
     declarativeplaces/qdeclarativerating.cpp \
     declarativeplaces/qdeclarativereview.cpp \
     declarativeplaces/qdeclarativesearchresult.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     declarativeplaces/qdeclarativemediaobject_p.h \
     declarativeplaces/qdeclarativeperiod_p.h \
     declarativeplaces/qdeclarativeplace_p.h \
+    declarativeplaces/qdeclarativeplaceattribute_p.h \
     declarativeplaces/qdeclarativerating_p.h \
     declarativeplaces/qdeclarativereview_p.h \
     declarativeplaces/qdeclarativesearchresult_p.h \

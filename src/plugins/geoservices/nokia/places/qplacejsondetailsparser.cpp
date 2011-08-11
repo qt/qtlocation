@@ -869,6 +869,9 @@ void QPlaceJSonDetailsParser::processAdContentPaymentMethods(const QScriptValue 
             QPlaceBusinessInformation busInfo = targetPlace->businessInformation();
             busInfo.setPaymentMethods(list);
             targetPlace->setBusinessInformation(busInfo);
+            QPlaceAttribute paymentMethods;
+            paymentMethods.setText(list.join(","));
+            targetPlace->insertExtendedAttribute("paymentMethods", paymentMethods);
         }
     }
 }

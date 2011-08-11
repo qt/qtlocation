@@ -630,6 +630,34 @@ void QGeoPlace::setDetailsFetched(bool fetched)
     d->detailsFetched = fetched;
 }
 
+/*!
+    Returns the extended attributes of the place
+*/
+QGeoPlace::ExtendedAttributes QGeoPlace::extendedAttributes() const
+{
+    Q_D(const QGeoPlace);
+    return d->extendedAttributes;
+}
+
+/*!
+    Sets the extended attributes of the place.
+*/
+void QGeoPlace::setExtendedAttributes(const ExtendedAttributes &attributes)
+{
+    Q_D(QGeoPlace);
+    d->extendedAttributes = attributes;
+}
+
+/*!
+    Adds a single attribute to the place.  If the attribute already
+    exists then the old value is overwritten.
+*/
+void QGeoPlace::insertExtendedAttribute(const QString &key, const QPlaceAttribute &value)
+{
+    Q_D(QGeoPlace);
+    d->extendedAttributes.insert(key, value);
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -667,7 +695,8 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         primaryPhone(other.primaryPhone),
         primaryFax(other.primaryFax),
         primaryEmail(other.primaryEmail),
-        primaryUrl(other.primaryUrl)
+        primaryUrl(other.primaryUrl),
+        extendedAttributes(other.extendedAttributes)
 {
 }
 
@@ -711,6 +740,7 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
     qDebug() << "fax" << (primaryFax == other.primaryFax);
     qDebug() << "email" << (primaryEmail == other.primaryEmail);
     qDebug() << "url" << (primaryUrl == other.primaryUrl);
+    qDebug() << "extendedAttributes" << (extendedAttributes == other.extendedAttributes);
 #endif
 
     return (type == other.type
@@ -737,6 +767,7 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
             && primaryFax == other.primaryFax
             && primaryEmail == other.primaryEmail
             && primaryUrl == other.primaryUrl
+            && extendedAttributes == other.extendedAttributes
             );
 }
 

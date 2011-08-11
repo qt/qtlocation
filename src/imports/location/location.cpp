@@ -82,6 +82,7 @@
 #include "qdeclarativegeolocation_p.h"
 #include "qdeclarativemediaobject_p.h"
 #include "qdeclarativeplace_p.h"
+#include "qdeclarativeplaceattribute_p.h"
 #include "qdeclarativerating_p.h"
 #include "qdeclarativereview_p.h"
 #include "qdeclarativesearchresult_p.h"
@@ -94,6 +95,7 @@
 
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
+#include <qdeclarativepropertymap.h>
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -211,7 +213,8 @@ public:
             qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "SupportedCategoriesModel");
             qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "SearchResultModel");
             qmlRegisterType<QDeclarativeTextPredictionModel>(uri, 5, 0, "TextPredictionModel");
-
+            qmlRegisterType<QDeclarativePropertyMap>(uri, 5,0,"ExtendedAttributes");
+            qmlRegisterType<QDeclarativePlaceAttribute>(uri, 5,0, "PlaceAttribute");
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }

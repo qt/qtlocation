@@ -1,5 +1,6 @@
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
+#include "qdeclarativeplaceattribute_p.h"
 
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
@@ -20,17 +21,19 @@ QT_USE_NAMESPACE
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
 :   QObject(parent), m_reviewModel(0), m_mediaModel(0), m_detailsReply(0), m_plugin(0),
-    m_complete(false)
+    m_complete(false), m_extendedAttributes(new QDeclarativePropertyMap())
 {
 }
 
 QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src, QObject *parent)
 :   QObject(parent), m_reviewModel(0), m_mediaModel(0), m_src(src), m_detailsReply(0), m_plugin(0),
-    m_complete(false)
+    m_complete(false), m_extendedAttributes(new QDeclarativePropertyMap())
 {
     synchronizeCategories();
     synchronizeDescriptions();
     synchronizeSuppliers();
+    synchronizeExtendedAttributes();
+
     m_rating.setRating(m_src.rating());
     m_location.setLocation(m_src.location());
     m_businessInformation.setBusinessInformation(m_src.businessInformation());
@@ -153,6 +156,12 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
     if (previous.placeId() != m_src.placeId()) {
         m_reviewModel->clear();
         m_mediaModel->clear();
+    }
+
+    if (previous.extendedAttributes() != m_src.extendedAttributes())
+    {
+        synchronizeExtendedAttributes();
+        emit extendedAttributesChanged();
     }
 }
 
@@ -552,6 +561,47 @@ QUrl QDeclarativePlace::primaryUrl() const
 }
 
 /*!
+    \qmlproperty ExtendedAttributes extendedAttributes
+
+    This property holds the extended attributes of a place.
+    Note: this property's changed() signal is currently only emitted
+    if the whole element changes, not if only the contents of
+    the element changes.
+*/
+void QDeclarativePlace::setExtendedAttributes(QDeclarativePropertyMap *attribs)
+{
+    QStringList otherKeys = attribs->keys();
+    bool isSame = true;
+    if (otherKeys.count() == m_src.extendedAttributes().count()) {
+        foreach (const QString &key, otherKeys) {
+            if (m_src.extendedAttributes().value(key) !=
+                    qvariant_cast<QDeclarativePlaceAttribute*>(attribs->value(key))->attribute()) {
+                isSame = false;
+                break;
+            }
+        }
+    } else {
+        isSame = false;
+    }
+
+    if (!isSame) {
+        m_src.extendedAttributes().clear();
+        QGeoPlace::ExtendedAttributes extendedAttributes;
+        foreach (const QString &key, otherKeys)
+            extendedAttributes.insert(key, (qvariant_cast<QDeclarativePlaceAttribute*>(attribs->value(key)))->attribute());
+        m_src.setExtendedAttributes(extendedAttributes);
+
+        synchronizeExtendedAttributes();
+        emit extendedAttributesChanged();
+    }
+}
+
+QDeclarativePropertyMap *QDeclarativePlace::extendedAttributes() const
+{
+    return m_extendedAttributes;
+}
+
+/*!
     \qmlproperty QDeclarativeListProperty<QDeclarativeCategory> Place::categories
 
     This property categories list.
@@ -746,5 +796,19 @@ void QDeclarativePlace::synchronizeSuppliers()
     foreach (QPlaceSupplier value, m_src.suppliers()) {
         QDeclarativeSupplier* declarativeValue = new QDeclarativeSupplier(value, this);
         m_suppliers.append(declarativeValue);
+    }
+}
+
+void QDeclarativePlace::synchronizeExtendedAttributes()
+{
+    QStringList keys = m_extendedAttributes->keys();
+    foreach (const QString &key, keys)
+        m_extendedAttributes->clear(key);
+
+    QMapIterator<QString, QPlaceAttribute> attribIter(m_src.extendedAttributes());
+    while (attribIter.hasNext()) {
+        attribIter.next();
+        m_extendedAttributes->insert(attribIter.key(),
+            qVariantFromValue(new QDeclarativePlaceAttribute(attribIter.value())));
     }
 }
