@@ -7,6 +7,9 @@ Rectangle {
 
     signal clicked()
 
+    width: buttonText.width + 20
+    height: buttonText.height + 6
+
     border.color: "#2b1ae2"
 
     MouseArea {
@@ -17,7 +20,7 @@ Rectangle {
     Text {
         id: buttonText
         color: "#fbf8f8"
-        anchors.fill: parent
+        anchors.centerIn: parent
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.family: "MS UI Gothic"

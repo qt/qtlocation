@@ -250,9 +250,21 @@ QPlaceReply *QPlaceManagerEngineNokia::initializeCategories()
     return reply;
 }
 
-QList<QPlaceCategory> QPlaceManagerEngineNokia::categories() const
+QList<QPlaceCategory> QPlaceManagerEngineNokia::categories(const QPlaceCategory &parent) const
 {
-    return QPlaceCategoriesRepository::instance()->categories();
+    QPlaceCategoryTree tree = QPlaceCategoriesRepository::instance()->categories();
+    tree = tree.findCategoryTreeById(parent.categoryId());
+
+    QList<QPlaceCategory> results;
+
+    QHashIterator<QString, QPlaceCategoryTree> it(tree.subCategories);
+    while (it.hasNext()) {
+        it.next();
+
+        results.append(it.value().category);
+    }
+
+    return results;
 }
 
 QLocale QPlaceManagerEngineNokia::locale() const

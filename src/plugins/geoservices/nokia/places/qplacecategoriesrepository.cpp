@@ -90,9 +90,9 @@ QPlaceReply *QPlaceCategoriesRepository::initializeCategories()
     return categoriesReply;
 }
 
-QList<QPlaceCategory> QPlaceCategoriesRepository::categories() const
+QPlaceCategoryTree QPlaceCategoriesRepository::categories() const
 {
-    return allCategories.values();
+    return m_categoryTree;
 }
 
 QPlaceCategory QPlaceCategoriesRepository::mapCategory(const QString &number)
@@ -117,17 +117,15 @@ QString QPlaceCategoriesRepository::getCategoryTagId(const QPlaceCategory &categ
 
 QPlaceCategory QPlaceCategoriesRepository::findCategoryById(const QString &id)
 {
-    return allCategories.value(id, QPlaceCategory());
+    return m_categoryTree.findCategoryById(id);
 }
 
 void QPlaceCategoriesRepository::replyFinished()
 {
-    if (!categoriesReply.isNull()) {
-        foreach (QPlaceCategory cat, categoriesReply->categories()) {
-            allCategories.insert(cat.categoryId(), cat);
-        }
-    }
-    categoriesReply = NULL;
+    if (!categoriesReply.isNull())
+        m_categoryTree = categoriesReply->categories();
+
+    categoriesReply = 0;
 }
 
 void QPlaceCategoriesRepository::setupCategoriesMapper()

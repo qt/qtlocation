@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -37,59 +37,27 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QPLACECATEGORIESREPOSITORY_H
-#define QPLACECATEGORIESREPOSITORY_H
+#ifndef QPLACECATEGORYTREE_H
+#define QPLACECATEGORYTREE_H
 
-#include <QObject>
-#include <QPointer>
-#include <QList>
+#include <QtLocation/QPlaceCategory>
 
-#include <qmobilityglobal.h>
-#include <qplacecategory.h>
-#include <qplacereply.h>
-#include "qplacejsoncategoriesparser.h"
-#include "qplacecategoriesreplyimpl.h"
-
-QT_BEGIN_NAMESPACE
-
-class QPlaceCategoriesRepository : public QObject
+class QPlaceCategoryTree
 {
-    Q_OBJECT
 public:
-    static QPlaceCategoriesRepository *instance();
+    QPlaceCategoryTree();
+    ~QPlaceCategoryTree();
 
-    ~QPlaceCategoriesRepository();
+    void clear();
 
-    QPlaceReply *initializeCategories();
-    QPlaceCategoryTree categories() const;
+    QPlaceCategory findCategoryById(const QString &id) const;
+    QPlaceCategoryTree findCategoryTreeById(const QString &id) const;
+    QList<QPlaceCategory> toList() const;
 
-    QPlaceCategory mapCategory(const QString &number);
-    QString getCategoryTagId(const QPlaceCategory &category);
-    QPlaceCategory findCategoryById(const QString &id);
-
-public slots:
-    void replyFinished();
-
-private:
-    void setupCategoriesMapper();
-
-private:
-    QPlaceCategoriesRepository(QObject *parent = 0);
-
-    QPlaceCategoryTree m_categoryTree;
-    static QPlaceCategoriesRepository *repositoryInstance;
-    QPointer<QPlaceCategoriesReplyImpl> categoriesReply;
+    QPlaceCategory category;
+    QHash<QString, QPlaceCategoryTree> subCategories;
 };
 
-QT_END_NAMESPACE
-
-#endif // QPLACECATEGORIESREPOSITORY_H
+#endif // QPLACECATEGORYTREE_H

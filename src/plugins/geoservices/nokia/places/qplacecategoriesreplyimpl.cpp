@@ -31,9 +31,14 @@ QPlaceCategoriesReplyImpl::~QPlaceCategoriesReplyImpl()
 {
 }
 
-QList<QPlaceCategory> QPlaceCategoriesReplyImpl::categories()
+QPlaceCategoryTree QPlaceCategoriesReplyImpl::categories() const
 {
-    return m_categories;
+    return m_categoryTree;
+}
+
+QList<QPlaceCategory> QPlaceCategoriesReplyImpl::categoriesFlat() const
+{
+    return m_categoryTree.toList();
 }
 
 void QPlaceCategoriesReplyImpl::abort()
@@ -61,7 +66,7 @@ void QPlaceCategoriesReplyImpl::resultReady(const QPlaceJSonParser::Error &error
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {
-        m_categories = parser->resultCategories();
+        m_categoryTree = parser->resultCategories();
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());

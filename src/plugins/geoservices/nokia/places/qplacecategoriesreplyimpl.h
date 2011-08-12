@@ -15,7 +15,8 @@ public:
     explicit QPlaceCategoriesReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
     ~QPlaceCategoriesReplyImpl();
 
-    QList<QPlaceCategory> categories();
+    QPlaceCategoryTree categories() const;
+    QList<QPlaceCategory> categoriesFlat() const;
 
     void abort();
 
@@ -32,7 +33,7 @@ private:
     QPlaceRestReply *restReply;
     QPlaceJSonCategoriesParser *parser;
 
-    QList<QPlaceCategory> m_categories;
+    QPlaceCategoryTree m_categoryTree;
 };
 
 #endif // QPLACECATEGORIESREPLYIMPL_H

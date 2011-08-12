@@ -17,12 +17,22 @@ QT_BEGIN_NAMESPACE
 
 class QGeoServiceProvider;
 
-class QDeclarativeSupportedCategoriesModel : public QAbstractListModel, public QDeclarativeParserStatus
+class PlaceCategoryTree
+{
+public:
+    PlaceCategoryTree();
+    ~PlaceCategoryTree();
+
+    QSharedPointer<QDeclarativeCategory> category;
+    QHash<QString, PlaceCategoryTree> subCategories;
+};
+
+class QDeclarativeSupportedCategoriesModel : public QAbstractItemModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
+    Q_PROPERTY(bool hierarchical READ hierarchical WRITE setHierarchical NOTIFY hierarchicalChanged)
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -34,15 +44,13 @@ public:
     virtual void classBegin() {}
     virtual void componentComplete();
 
-    QDeclarativeListProperty<QDeclarativeCategory> categories();
-    static void categories_append(QDeclarativeListProperty<QDeclarativeCategory> *prop,
-                                  QDeclarativeCategory* category);
-    static int categories_count(QDeclarativeListProperty<QDeclarativeCategory> *prop);
-    static QDeclarativeCategory* categories_at(QDeclarativeListProperty<QDeclarativeCategory> *prop, int index);
-    static void categories_clear(QDeclarativeListProperty<QDeclarativeCategory> *prop);
-
-    // From QAbstractListModel
+    // From QAbstractItemModel
     int rowCount(const QModelIndex &parent) const;
+    int columnCount(const QModelIndex &parent) const;
+
+    QModelIndex index(int row, int column, const QModelIndex &parent) const;
+    QModelIndex parent(const QModelIndex &child) const;
+
     QVariant data(const QModelIndex &index, int role) const;
     // Roles for exposing data via model. Only one role because
     // everything can be accessed via QDeclarativeLandmark
@@ -53,22 +61,28 @@ public:
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider* plugin() const;
 
+    void setHierarchical(bool hierarchical);
+    bool hierarchical() const;
+
 signals:
-    void categoriesChanged();
     void pluginChanged();
+    void hierarchicalChanged();
 
 private slots:
     void replyFinished();
     void replyError(QPlaceReply::Error error, const QString &errorString);
 
 private:
-    void convertCategoriesToDeclarative();
+    void updateCategories();
+    QHash<QString, PlaceCategoryTree> populatedCategories(QPlaceManager *manager, const QPlaceCategory &parent = QPlaceCategory());
+    PlaceCategoryTree findCategoryTreeByCategory(QDeclarativeCategory *category, const PlaceCategoryTree &tree) const;
+    QDeclarativeCategory *findParentCategoryByCategory(QDeclarativeCategory *category, const PlaceCategoryTree &tree) const;
 
     QPlaceReply *m_response;
-    QList<QPlaceCategory> m_categories;
-    QMap<QString, QDeclarativeCategory*> m_categoryMap;
+    PlaceCategoryTree m_categoryTree;
 
     QDeclarativeGeoServiceProvider *m_plugin;
+    bool m_hierarchical;
     bool m_complete;
 };
 

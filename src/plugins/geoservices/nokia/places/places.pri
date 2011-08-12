@@ -26,7 +26,8 @@ HEADERS += \
     places/qplacecategoriesrepository.h \
     places/qplacerestreply.h \
     places/qplacerestmanager.h \
-    places/qplacesuppliersrepository.h
+    places/qplacesuppliersrepository.h \
+    places/qplacecategorytree.h
 
 SOURCES += \
 #data classes
@@ -54,6 +55,9 @@ SOURCES += \
     places/qplacecategoriesrepository.cpp \
     places/qplacerestreply.cpp \
     places/qplacerestmanager.cpp \
-    places/qplacesuppliersrepository.cpp
+    places/qplacesuppliersrepository.cpp \
+    places/qplacecategorytree.cpp
+
+
 
 

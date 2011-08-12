@@ -87,7 +87,7 @@ public:
     QPlaceReply *removePlace(const QGeoPlace &place);
 
     QPlaceReply *initializeCategories();
-    QList<QPlaceCategory> categories() const;
+    QList<QPlaceCategory> categories(const QPlaceCategory &parent) const;
 
     QLocale locale() const;
     void setLocale(const QLocale &locale);

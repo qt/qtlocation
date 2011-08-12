@@ -231,11 +231,12 @@ QPlaceReply *QPlaceManager::initializeCategories()
 }
 
 /*!
-    Returns a list of top level categories.
+    Returns a list of top level categories if \a parent is default contstructed; otherwise returns
+    a list of subcategories of \a parent.
 */
-QList<QPlaceCategory> QPlaceManager::categories() const
+QList<QPlaceCategory> QPlaceManager::categories(const QPlaceCategory &parent) const
 {
-    return d->engine->categories();
+    return d->engine->categories(parent);
 }
 
 /*!

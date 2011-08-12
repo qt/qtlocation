@@ -82,7 +82,7 @@ public:
     virtual QPlaceReply *removePlace(const QGeoPlace &place) = 0;
 
     virtual QPlaceReply *initializeCategories() = 0;
-    virtual QList<QPlaceCategory> categories() const = 0;
+    virtual QList<QPlaceCategory> categories(const QPlaceCategory &parent) const = 0;
 
     virtual QLocale locale() const = 0;
     virtual void setLocale(const QLocale &locale) = 0;

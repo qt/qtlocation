@@ -74,22 +74,31 @@ QPlaceJSonCategoriesParser::QPlaceJSonCategoriesParser(QObject *parent) :
 
 QPlaceJSonCategoriesParser::~QPlaceJSonCategoriesParser()
 {
-    allCategories.clear();
 }
 
-QList<QPlaceCategory> QPlaceJSonCategoriesParser::resultCategories()
+QList<QPlaceCategory> QPlaceJSonCategoriesParser::parseFlatCategoryList(const QScriptValue &categories)
 {
-    return allCategories;
+    return processCategories(categories).toList();
+}
+
+QPlaceCategoryTree QPlaceJSonCategoriesParser::resultCategories() const
+{
+    return m_categoryTree;
+}
+
+QList<QPlaceCategory> QPlaceJSonCategoriesParser::resultCategoriesFlat() const
+{
+    return m_categoryTree.toList();
 }
 
 void QPlaceJSonCategoriesParser::processJSonData(const QScriptValue &sv)
 {
-    allCategories.clear();
+    m_categoryTree.clear();
 
     if (sv.isValid()) {
         QScriptValue sv2 = sv.property(place_categories_element);
         if (sv2.isValid()) {
-            allCategories = processCategories(sv2);
+            m_categoryTree = processCategories(sv2);
             emit finished(NoError, QString());
         } else {
             emit finished(ParsingError, QString("JSON data are invalid"));
@@ -99,10 +108,10 @@ void QPlaceJSonCategoriesParser::processJSonData(const QScriptValue &sv)
     }
 }
 
-QList<QPlaceCategory> QPlaceJSonCategoriesParser::processCategories(const QScriptValue &categories)
+QPlaceCategoryTree QPlaceJSonCategoriesParser::processCategories(const QScriptValue &categories)
 {
-    QHash<QString, QPlaceCategory> results;
-    QPlaceCategory cat;
+    QPlaceCategoryTree results;
+
     QScriptValue value = categories.property(place_category_element);
     if (value.isValid()) {
         if (value.isArray()) {
@@ -110,27 +119,62 @@ QList<QPlaceCategory> QPlaceJSonCategoriesParser::processCategories(const QScrip
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element
-                if (it.name() != "length") {
-                    cat = processCategory(it.value());
-                    if (!cat.categoryId().isEmpty() && !results.contains(cat.categoryId())) {
-                        results.insert(cat.categoryId(), cat);
+                if (it.name() != QLatin1String("length")) {
+                    QPlaceCategoryTree catTree;
+                    catTree.category = processCategory(it.value());
+                    if (!catTree.category.categoryId().isEmpty() &&
+                        !results.subCategories.contains(catTree.category.categoryId())) {
+                        results.subCategories.insert(catTree.category.categoryId(), catTree);
                     }
                 }
             }
         } else {
-            cat = processCategory(value);
-            if (!cat.categoryId().isEmpty() && !results.contains(cat.categoryId())) {
-                results.insert(cat.categoryId(), cat);
+            QPlaceCategoryTree catTree;
+            catTree.category = processCategory(value);
+            if (!catTree.category.categoryId().isEmpty() &&
+                !results.subCategories.contains(catTree.category.categoryId())) {
+                results.subCategories.insert(catTree.category.categoryId(), catTree);
             }
         }
     }
-    foreach (cat, processGroups(categories)) {
-        if (!results.contains(cat.categoryId())) {
-            results.insert(cat.categoryId(), cat);
+
+    value = categories.property(place_group_element);
+    if (value.isValid()) {
+        if (value.isArray()) {
+            QScriptValueIterator it(value);
+            while (it.hasNext()) {
+                it.next();
+                // array contains count as last element
+                if (it.name() != QLatin1String("length")) {
+                    QPlaceCategoryTree catTree = processGroup(it.value());
+                    if (!results.subCategories.contains(catTree.category.categoryId())) {
+                        results.subCategories.insert(catTree.category.categoryId(), catTree);
+                    } else {
+                        QHashIterator<QString, QPlaceCategoryTree> treeIt(catTree.subCategories);
+                        while (treeIt.hasNext()) {
+                            treeIt.next();
+
+                            results.subCategories[catTree.category.categoryId()].subCategories.insert(treeIt.key(), treeIt.value());
+                        }
+                    }
+                }
+            }
+        } else {
+            QPlaceCategoryTree catTree = processGroup(value);
+            if (!results.subCategories.contains(catTree.category.categoryId())) {
+                results.subCategories.insert(catTree.category.categoryId(), catTree);
+            } else {
+                QHashIterator<QString, QPlaceCategoryTree> treeIt(catTree.subCategories);
+                while (treeIt.hasNext()) {
+                    treeIt.next();
+
+                    results.subCategories[catTree.category.categoryId()].subCategories.insert(treeIt.key(), treeIt.value());
+                }
+            }
         }
     }
 
-    return results.values();
+    return results;
 }
 
 QPlaceCategory QPlaceJSonCategoriesParser::processCategory(const QScriptValue &categoryValue)
@@ -147,39 +191,18 @@ QPlaceCategory QPlaceJSonCategoriesParser::processCategory(const QScriptValue &c
     return category;
 }
 
-QList<QPlaceCategory> QPlaceJSonCategoriesParser::processGroups(const QScriptValue &categories)
+QPlaceCategoryTree QPlaceJSonCategoriesParser::processGroup(const QScriptValue &group)
 {
-    QList<QPlaceCategory> results;
-    QScriptValue value = categories.property(place_group_element);
-    if (value.isValid()) {
-        if (value.isArray()) {
-            QScriptValueIterator it(value);
-            while (it.hasNext()) {
-                it.next();
-                // array contains count as last element
-                if (it.name() != "length") {
-                    results.append(processGroup(it.value()));
-                }
-            }
-        } else {
-            results.append(processGroup(value));
-        }
-    }
-    return results;
-}
-
-QList<QPlaceCategory> QPlaceJSonCategoriesParser::processGroup(const QScriptValue &group)
-{
-    QList<QPlaceCategory> results;
-    QPlaceCategory parentCategory;
-
     QScriptValue value = group.property(place_groupingcategory_element);
-    if (value.isValid()) {
-        parentCategory = processCategory(value);
-    }
-    if (!parentCategory.categoryId().isEmpty()) {
-        results = processCategories(group);
-    }
+    if (!value.isValid())
+        return QPlaceCategoryTree();
+
+    QPlaceCategoryTree results;
+    results.category = processCategory(value);
+    if (results.category.categoryId().isEmpty())
+        return QPlaceCategoryTree();
+
+    results.subCategories = processCategories(group).subCategories;
 
     return results;
 }

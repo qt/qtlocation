@@ -9,25 +9,25 @@ QT_USE_NAMESPACE
 
 /*!
     \qmlclass SupportedCategoryModel QDeclarativeSupportedCategoriesModel
-    \brief The SupportedCategoryModel element provides access to suported categories list.
+    \brief The SupportedCategoryModel element provides access to supported categories list.
     \inherits QAbstractListModel
     \ingroup qml-places
+    \since QtLocation 5.0
 
-    SupportedCategoryModel provides a model of categories from the supported categories list.
-    The contents of the model can contains parent categories. All categories might have childrens.
+    SupportedCategoryModel provides a model of categories from the supported categories list.  The
+    model can provide both a flat list of categories or a hierarchical tree representing category
+    grouping.  This can be controlled by the \l hierarchy property.
 
-    There are two ways of accessing the category data: through model by using views and delegates,
-    or alternatively via \l category list property. Of the two, the model access is preferred.
-
-    At the moment only data role provided by the model is \c category (\l Category).
-    Through that one can access any data provided by the Category element.
+    The model provides a single data role, \c category (\l Category).
 
     To use SupportedCategoryModel user need to create it in qml file and connect it to some view
     \code
-    import places 1.0
+    import QtQuick 2.0
+    import Qt.location 5.0
 
     SupportedCategoriesModel {
         id: categoriesModel
+        hierarchical: false
     }
 
     ListView {
@@ -39,14 +39,36 @@ QT_USE_NAMESPACE
     }
     \endcode
 
+    To access the hierarchical category model it is necessary to use a VisualDataModel to access
+    the child items.
+
     \sa SearchResultModel, SuggestionModel, {QPlaceManager}
 */
-QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent)
-:   QAbstractListModel(parent), m_plugin(0), m_complete(false)
+
+/*!
+    \qmlproperty Plugin SupportedCategoriesModel::plugin
+
+    this property holds the provider Plugin used by this model.
+*/
+
+/*!
+    \qmlproperty bool SupportedCategoriesModel::hierarchical
+
+    This property holds whether the model provides a hierarchical tree of categories or a flat
+    list.  The default is true.
+*/
+
+PlaceCategoryTree::PlaceCategoryTree()
 {
-#if defined(QT_PLACESPLUGIN_LOGGING)
-    qDebug() << "QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel";
-#endif
+}
+
+PlaceCategoryTree::~PlaceCategoryTree()
+{
+}
+
+QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent)
+:   QAbstractItemModel(parent), m_plugin(0), m_hierarchical(true), m_complete(false)
+{
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(CategoryRole, "category");
@@ -55,13 +77,6 @@ QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObje
 
 QDeclarativeSupportedCategoriesModel::~QDeclarativeSupportedCategoriesModel()
 {
-#if defined(QT_PLACESPLUGIN_LOGGING)
-    qDebug() << "QDeclarativeSupportedCategoriesModel::~QDeclarativeSupportedCategoriesModel";
-#endif
-    foreach (const QString id, m_categoryMap.keys()) {
-        delete m_categoryMap.value(id);
-        m_categoryMap.remove(id);
-    }
 }
 
 // From QDeclarativeParserStatus
@@ -70,41 +85,74 @@ void QDeclarativeSupportedCategoriesModel::componentComplete()
     m_complete = true;
 }
 
-/*!
-    \qmlsignal SupportedCategoryModel::categoriesChanged()
-
-    This handler is called when the list of categories is changed and
-    client should take new data.
-*/
-
 int QDeclarativeSupportedCategoriesModel::rowCount(const QModelIndex& parent) const
 {
-    Q_UNUSED(parent);
-    return m_categories.count();
+    PlaceCategoryTree tree = findCategoryTreeByCategory(static_cast<QDeclarativeCategory *>(parent.internalPointer()), m_categoryTree);
+    return tree.subCategories.count();
 }
 
-QVariant QDeclarativeSupportedCategoriesModel::data(const QModelIndex& index, int role) const
+int QDeclarativeSupportedCategoriesModel::columnCount(const QModelIndex &parent) const
 {
-    QPlaceCategory item = m_categories[index.row()];
-    QDeclarativeCategory *res = NULL;
-    if (m_categoryMap.contains(item.categoryId())) {
-        res = m_categoryMap[item.categoryId()];
+    Q_UNUSED(parent)
+
+    return 1;
+}
+
+QModelIndex QDeclarativeSupportedCategoriesModel::index(int row, int column, const QModelIndex &parent) const
+{
+    if (column != 0 || row < 0)
+        return QModelIndex();
+
+    PlaceCategoryTree tree = findCategoryTreeByCategory(static_cast<QDeclarativeCategory *>(parent.internalPointer()), m_categoryTree);
+
+    if (row > tree.subCategories.count())
+        return QModelIndex();
+
+    QMap<QString, QDeclarativeCategory *> sortedCategories;
+    QHashIterator<QString, PlaceCategoryTree> it(tree.subCategories);
+    while (it.hasNext()) {
+        it.next();
+        sortedCategories.insert(it.value().category->name(), it.value().category.data());
     }
+
+    return createIndex(row, 0, sortedCategories.values().at(row));
+}
+
+QModelIndex QDeclarativeSupportedCategoriesModel::parent(const QModelIndex &child) const
+{
+    QDeclarativeCategory *parentCategory = findParentCategoryByCategory(static_cast<QDeclarativeCategory *>(child.internalPointer()), m_categoryTree);
+    if (!parentCategory)
+        return QModelIndex();
+
+    QDeclarativeCategory *grandParentCategory = findParentCategoryByCategory(parentCategory, m_categoryTree);
+    PlaceCategoryTree tree = findCategoryTreeByCategory(grandParentCategory, m_categoryTree);
+
+    QMap<QString, QDeclarativeCategory *> sortedCategories;
+    QHashIterator<QString, PlaceCategoryTree> it(tree.subCategories);
+    while (it.hasNext()) {
+        it.next();
+        sortedCategories.insert(it.value().category->name(), it.value().category.data());
+    }
+
+    return createIndex(sortedCategories.values().indexOf(parentCategory), 0, parentCategory);
+}
+
+QVariant QDeclarativeSupportedCategoriesModel::data(const QModelIndex &index, int role) const
+{
+    PlaceCategoryTree tree = findCategoryTreeByCategory(static_cast<QDeclarativeCategory *>(index.internalPointer()), m_categoryTree);
+    QDeclarativeCategory *category = tree.category.data();
+
+    if (!category)
+        return QVariant();
+
     switch (role) {
-        case Qt::DisplayRole:
-            if (res) {
-                return res->name();
-            } else {
-                return QString();
-            }
-        case CategoryRole:
-            if (res) {
-                return QVariant::fromValue(res);
-            } else {
-                return QVariant();
-            }
-        }
-    return QVariant();
+    case Qt::DisplayRole:
+        return category->name();
+    case CategoryRole:
+        return QVariant::fromValue(category);
+    default:
+        return QVariant();
+    }
 }
 
 void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
@@ -123,8 +171,7 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
         return;
     }
 
-    m_categories = placeManager->categories();
-    convertCategoriesToDeclarative();
+    m_categoryTree.subCategories = populatedCategories(placeManager);
 
     m_response = placeManager->initializeCategories();
     if (m_response) {
@@ -139,49 +186,20 @@ QDeclarativeGeoServiceProvider* QDeclarativeSupportedCategoriesModel::plugin() c
     return m_plugin;
 }
 
-/*!
-    \qmlproperty QDeclarativeListProperty SupportedCategoryModel::categories
-
-    This element holds the list of \l Category elements that the model currently has.
-*/
-
-QDeclarativeListProperty<QDeclarativeCategory> QDeclarativeSupportedCategoriesModel::categories()
+void QDeclarativeSupportedCategoriesModel::setHierarchical(bool hierarchical)
 {
-    return QDeclarativeListProperty<QDeclarativeCategory>(this,
-                                                          0, // opaque data parameter
-                                                          categories_append,
-                                                          categories_count,
-                                                          categories_at,
-                                                          categories_clear);
+    if (m_hierarchical == hierarchical)
+        return;
+
+    m_hierarchical = hierarchical;
+    emit hierarchicalChanged();
+
+    updateCategories();
 }
 
-void QDeclarativeSupportedCategoriesModel::categories_append(QDeclarativeListProperty<QDeclarativeCategory> *prop,
-                                                             QDeclarativeCategory* category)
+bool QDeclarativeSupportedCategoriesModel::hierarchical() const
 {
-    Q_UNUSED(prop);
-    Q_UNUSED(category);
-}
-
-int QDeclarativeSupportedCategoriesModel::categories_count(QDeclarativeListProperty<QDeclarativeCategory> *prop)
-{
-    return static_cast<QDeclarativeSupportedCategoriesModel*>(prop->object)->m_categories.count();
-}
-
-QDeclarativeCategory* QDeclarativeSupportedCategoriesModel::categories_at(QDeclarativeListProperty<QDeclarativeCategory> *prop,
-                                                                          int index)
-{
-    QDeclarativeSupportedCategoriesModel* model = static_cast<QDeclarativeSupportedCategoriesModel*>(prop->object);
-    QPlaceCategory item = model->m_categories[index];
-    QDeclarativeCategory *res = NULL;
-    if (model->m_categoryMap.contains(item.categoryId())) {
-        res = model->m_categoryMap[item.categoryId()];
-    }
-    return res;
-}
-
-void QDeclarativeSupportedCategoriesModel::categories_clear(QDeclarativeListProperty<QDeclarativeCategory> *prop)
-{
-    Q_UNUSED(prop)
+    return m_hierarchical;
 }
 
 void QDeclarativeSupportedCategoriesModel::replyFinished()
@@ -192,10 +210,20 @@ void QDeclarativeSupportedCategoriesModel::replyFinished()
     m_response->deleteLater();
     m_response = 0;
 
-    if (!m_plugin) {
-        qmlInfo(this) << "plugin not set.";
+    updateCategories();
+}
+
+void QDeclarativeSupportedCategoriesModel::replyError(QPlaceReply::Error error,
+                                                 const QString &errorString)
+{
+    Q_UNUSED(error);
+    Q_UNUSED(errorString);
+}
+
+void QDeclarativeSupportedCategoriesModel::updateCategories()
+{
+    if (!m_plugin)
         return;
-    }
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     if (!serviceProvider)
@@ -208,29 +236,72 @@ void QDeclarativeSupportedCategoriesModel::replyFinished()
     }
 
     beginResetModel();
-    m_categories = placeManager->categories();
-    convertCategoriesToDeclarative();
+    m_categoryTree.subCategories = populatedCategories(placeManager);
     endResetModel();
-    emit categoriesChanged();
 }
 
-void QDeclarativeSupportedCategoriesModel::replyError(QPlaceReply::Error error,
-                                                 const QString &errorString)
+QHash<QString, PlaceCategoryTree> QDeclarativeSupportedCategoriesModel::populatedCategories(QPlaceManager *manager, const QPlaceCategory &parent)
 {
-    Q_UNUSED(error);
-    Q_UNUSED(errorString);
+    QHash<QString, PlaceCategoryTree> declarativeTree;
+
+    foreach (const QPlaceCategory &category, manager->categories(parent)) {
+        PlaceCategoryTree dt;
+        dt.category = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(category, this));
+        if (m_hierarchical)
+            dt.subCategories = populatedCategories(manager, category);
+        declarativeTree.insert(category.categoryId(), dt);
+
+        if (!m_hierarchical) {
+            QHash<QString, PlaceCategoryTree> sub = populatedCategories(manager, category);
+            QHashIterator<QString, PlaceCategoryTree> it(sub);
+            while (it.hasNext()) {
+                it.next();
+                dt.category = QSharedPointer<QDeclarativeCategory>(it.value().category);
+                Q_ASSERT(it.value().subCategories.isEmpty());
+                declarativeTree.insert(it.key(), dt);
+            }
+        }
+    }
+
+    return declarativeTree;
 }
 
-void QDeclarativeSupportedCategoriesModel::convertCategoriesToDeclarative()
+PlaceCategoryTree QDeclarativeSupportedCategoriesModel::findCategoryTreeByCategory(QDeclarativeCategory *category, const PlaceCategoryTree &tree) const
 {
-    foreach (const QString id, m_categoryMap.keys()) {
-        delete m_categoryMap.value(id);
-        m_categoryMap.remove(id);
-    }
-    m_categoryMap.clear();
+    if (tree.category == category)
+        return tree;
 
-    foreach (const QPlaceCategory& category, m_categories) {
-        QDeclarativeCategory* declarativeCategory = new QDeclarativeCategory(category, this);
-        m_categoryMap.insert(category.categoryId(), declarativeCategory);
+    QHashIterator<QString, PlaceCategoryTree> it(tree.subCategories);
+    while (it.hasNext()) {
+        it.next();
+
+        if (it.value().category == category)
+            return it.value();
+
+        PlaceCategoryTree t = findCategoryTreeByCategory(category, it.value());
+        if (t.category == category)
+            return t;
     }
+
+    return PlaceCategoryTree();
+}
+
+QDeclarativeCategory *QDeclarativeSupportedCategoriesModel::findParentCategoryByCategory(QDeclarativeCategory *category, const PlaceCategoryTree &tree) const
+{
+    if (tree.category == category)
+        return 0;
+
+    QHashIterator<QString, PlaceCategoryTree> it(tree.subCategories);
+    while (it.hasNext()) {
+        it.next();
+
+        if (it.value().category == category)
+            return tree.category.data();
+
+        QDeclarativeCategory *p = findParentCategoryByCategory(category, it.value());
+        if (p)
+            return p;
+    }
+
+    return 0;
 }

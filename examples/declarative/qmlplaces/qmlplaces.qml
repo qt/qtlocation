@@ -3,7 +3,7 @@ import Qt.location 5.0
 
 Rectangle {
     id: fullView
-    width: 640
+    width: 800
     height: 360
 
     Text {
@@ -47,7 +47,6 @@ Rectangle {
     Button {
         id: searchButton
 
-        width: 70
         text: "Search"
 
         anchors.bottom: searchTermRect.bottom
@@ -97,9 +96,10 @@ Rectangle {
         font.pixelSize: 18
     }
 
-    ListView {
+    CategoryView {
         id: categoriesList
-        width: 200
+
+        width: 300
         anchors.topMargin: 10
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -107,19 +107,8 @@ Rectangle {
         anchors.bottomMargin: 10
         anchors.rightMargin: 10
         model: categoriesModel
-        clip: true
-        snapMode: ListView.SnapToItem
-        delegate: CategoryDelegate {
-            category_: category
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    //console.log("clicked = " + category.categoryId)
-                    //console.log("clicked = " + JSON.stringify(modelData))
-                    searchCategory(category);
-                }
-            }
-        }
+
+        onCategorySelected: searchCategory(category);
     }
 
     Rectangle {
@@ -217,6 +206,7 @@ Rectangle {
     SupportedCategoriesModel {
         id: categoriesModel
         plugin: geoServices
+        hierarchical: true
     }
 
     Loader {

@@ -163,8 +163,10 @@ public:
         return 0;
     }
 
-    QList<QPlaceCategory> categories() const
+    QList<QPlaceCategory> categories(const QPlaceCategory &parent) const
     {
+        Q_UNUSED(parent)
+
         return QList<QPlaceCategory>();
     }
 

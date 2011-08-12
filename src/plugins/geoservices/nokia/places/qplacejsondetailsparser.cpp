@@ -325,7 +325,7 @@ void QPlaceJSonDetailsParser::processContacts(const QScriptValue &contactsValue,
 
 void QPlaceJSonDetailsParser::processCategories(const QScriptValue &categories, QGeoPlace*targetPlace)
 {
-    targetPlace->setCategories(QPlaceJSonCategoriesParser::processCategories(categories));
+    targetPlace->setCategories(QPlaceJSonCategoriesParser::parseFlatCategoryList(categories));
 }
 
 void QPlaceJSonDetailsParser::processRatings(const QScriptValue &ratings, QGeoPlace*targetPlace)
