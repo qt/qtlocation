@@ -11,7 +11,8 @@ OTHER_FILES = qmlplaces.qml \
     CategoryDelegate.qml \
     SearchResultDelegate.qml \
     ReviewDelegate.qml \
-    CategoryView.qml
+    CategoryView.qml \
+    MediaGrid.qml
 
 RESOURCES += qmlplaces.qrc
 

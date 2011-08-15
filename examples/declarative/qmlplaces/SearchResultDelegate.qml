@@ -65,8 +65,7 @@ Rectangle {
                     id: showMedia
                     text: (result.place.mediaModel.totalCount > 0) ? '<a href=\"dummy\">Show Media</a>':''
                     onLinkActivated: {
-                        mediaDisplayLoader.sourceComponent = mediaDisplay
-                        mediaDisplayLoader.item.model = result.place.mediaModel
+                        mediaGrid.model = result.place.mediaModel
                     }
                 }
             }
@@ -116,65 +115,6 @@ Rectangle {
                     PropertyChanges { target:gradStop; color: 'palegreen'}
                 }
             ]
-        }
-    }
-
-    Component {
-          id: mediaDisplay
-        Rectangle {
-            property alias model: mediaList.model
-            height: fullView.height
-            width: fullView.width
-            z: 1
-
-            ListView {
-                id: mediaList
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: closeMediaButton.top
-
-                delegate: Component {
-                    Rectangle {
-                        height: mediaUrl.height
-                        width: parent.width
-                        radius:10
-                        border.color: 'black'
-
-                        Text { id: mediaUrl; text: media.url}
-
-                        gradient: Gradient {
-                            GradientStop { position: 0.0; color: 'lightblue' }
-                            GradientStop { position: 0.5; color: 'white'}
-                            GradientStop { position: 1.0; color: 'lightblue'}
-                        }
-                    }
-                }
-            }
-            Rectangle {
-                id: closeMediaButton
-                height: mediaClose.height
-                width: parent.width
-                anchors.bottom: parent.bottom
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: 'red' }
-                    GradientStop { position: 0.5; color: 'white'}
-                    GradientStop { position: 1.0; color: 'red'}
-                }
-
-                Text {
-                    id: mediaClose;
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: 'Close';
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        mediaDisplayLoader.sourceComponent = undefined
-                    }
-                }
-            }
         }
     }
 

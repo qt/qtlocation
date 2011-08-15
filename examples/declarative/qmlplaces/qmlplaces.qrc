@@ -6,5 +6,6 @@
         <file>SearchResultDelegate.qml</file>
         <file>ReviewDelegate.qml</file>
         <file>CategoryView.qml</file>
+        <file>MediaGrid.qml</file>
     </qresource>
 </RCC>

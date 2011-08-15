@@ -209,7 +209,10 @@ Rectangle {
         hierarchical: true
     }
 
-    Loader {
-        id: mediaDisplayLoader;
+    MediaGrid {
+        id: mediaGrid
+
+        anchors.fill: parent
+        visible: model != undefined
     }
 }
