@@ -4,8 +4,6 @@ INCLUDEPATH += places
 PUBLIC_HEADERS += \
 #data classes
     places/qplaceattribute.h \
-    places/qplacebusinessfeature.h \
-    places/qplacebusinessinformation.h \
     places/qplacecategory.h \
     places/qplacedescription.h \
     places/qplacemediaobject.h \
@@ -14,7 +12,6 @@ PUBLIC_HEADERS += \
     places/qplacerating.h \
     places/qplacereview.h \
     places/qplacesupplier.h \
-    places/qplaceweekdayhours.h \
 #result
     places/qplacesearchresult.h \
 #query classes
@@ -35,8 +32,6 @@ PUBLIC_HEADERS += \
 
 PRIVATE_HEADERS += \
     places/qplaceattribute_p.h \
-    places/qplacebusinessfeature_p.h \
-    places/qplacebusinessinformation_p.h \
     places/qplacecategory_p.h \
     places/qplacedescription_p.h \
     places/qplacemediaobject_p.h \
@@ -44,7 +39,6 @@ PRIVATE_HEADERS += \
     places/qplacerating_p.h \
     places/qplacereview_p.h \
     places/qplacesupplier_p.h \
-    places/qplaceweekdayhours_p.h \
     places/qplacesearchresult_p.h \
     places/qplacereply_p.h \
     places/qplacemanager_p.h \
@@ -53,17 +47,15 @@ PRIVATE_HEADERS += \
 SOURCES += \
 #data classes
     places/qplaceattribute.cpp \
-    places/qplacebusinessfeature.cpp \
-    places/qplacebusinessinformation.cpp \
     places/qplacecategory.cpp \
     places/qplacedescription.cpp \
+#result
     places/qplacemediaobject.cpp \
     places/qplaceperiod.cpp \
     places/qplacerating.cpp \
     places/qplacereview.cpp \
     places/qplacesavereply.cpp \
     places/qplacesupplier.cpp \
-    places/qplaceweekdayhours.cpp \
 #result
     places/qplacesearchresult.cpp \
 #query classes

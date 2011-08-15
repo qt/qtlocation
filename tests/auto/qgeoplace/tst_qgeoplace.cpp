@@ -17,7 +17,6 @@ public:
 private Q_SLOTS:
     void constructorTest();
     void additionalDataTest();
-    void businessInformationTest();
     void categoriesTest();
     void descriptionsTest();
     void detailsFetchedTest();
@@ -49,9 +48,10 @@ void tst_QGeoPlace::constructorTest()
 {
     QGeoPlace testObj;
     testObj.setPlaceId("testId");
-    QPlaceBusinessInformation obj;
-    obj.setOpeningNote("10");
-    testObj.setBusinessInformation(obj);
+    QPlaceAttribute paymentMethods;
+    paymentMethods.setLabel("Payment methods");
+    paymentMethods.setText("Visa");
+    testObj.insertExtendedAttribute(QPlaceAttribute::PaymentMethods, paymentMethods);
     QGeoLocation loc;
     loc.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(loc);
@@ -135,16 +135,6 @@ void tst_QGeoPlace::locationTest()
     obj.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(obj);
     QVERIFY2(testObj.location() == obj, "Wrong value returned");
-}
-
-void tst_QGeoPlace::businessInformationTest()
-{
-    QGeoPlace testObj;
-    QVERIFY2(testObj.businessInformation() == QPlaceBusinessInformation(), "Wrong default value");
-    QPlaceBusinessInformation obj;
-    obj.setOpeningNote("10");
-    testObj.setBusinessInformation(obj);
-    QVERIFY2(testObj.businessInformation() == obj, "Wrong value returned");
 }
 
 void tst_QGeoPlace::descriptionsTest()
@@ -353,9 +343,10 @@ void tst_QGeoPlace::operatorsTest()
 {
     QGeoPlace testObj;
     testObj.setPlaceId("testId");
-    QPlaceBusinessInformation obj;
-    obj.setOpeningNote("10");
-    testObj.setBusinessInformation(obj);
+    QPlaceAttribute paymentMethods;
+    paymentMethods.setLabel("Payment methods");
+    paymentMethods.setText("Visa");
+    testObj.insertExtendedAttribute(QPlaceAttribute::PaymentMethods, paymentMethods);
     QStringList tags;
     tags << "1" << "2" << "3";
     testObj.setTags(tags);

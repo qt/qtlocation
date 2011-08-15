@@ -36,7 +36,6 @@ QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src, QObject *parent)
 
     m_rating.setRating(m_src.rating());
     m_location.setLocation(m_src.location());
-    m_businessInformation.setBusinessInformation(m_src.businessInformation());
 }
 
 QDeclarativePlace::~QDeclarativePlace()
@@ -97,10 +96,6 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
 
     if (previous.additionalData() != m_src.additionalData()) {
         emit additionalDataChanged();
-    }
-    if (previous.businessInformation() != m_src.businessInformation()) {
-        m_businessInformation.setBusinessInformation(m_src.businessInformation());
-        emit businessInformationChanged();
     }
     if (previous.categories() != m_src.categories()) {
         synchronizeCategories();
@@ -184,7 +179,6 @@ QGeoPlace QDeclarativePlace::place()
         suppliers.append(value->supplier());
     }
     m_src.setSuppliers(suppliers);
-    m_src.setBusinessInformation(m_businessInformation.businessInformation());
     return m_src;
 }
 
@@ -249,28 +243,6 @@ void QDeclarativePlace::setRating(QDeclarativeRating *obj)
 QDeclarativeRating *QDeclarativePlace::rating()
 {
     return &m_rating;
-}
-
-/*!
-    \qmlproperty BusinessInformation Place::businessInformation
-
-    This property holds business information of the place.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-void QDeclarativePlace::setBusinessInformation(QDeclarativeBusinessInformation *obj)
-{
-    if (m_src.businessInformation() != obj->businessInformation()) {
-        m_businessInformation.setBusinessInformation(obj->businessInformation());
-        m_src.setBusinessInformation(obj->businessInformation());
-        emit businessInformationChanged();
-    }
-}
-
-QDeclarativeBusinessInformation *QDeclarativePlace::businessInformation()
-{
-    return &m_businessInformation;
 }
 
 /*!

@@ -75,8 +75,6 @@
 #include "qdeclarativegeomaneuver_p.h"
 
 //Place includes
-#include "qdeclarativebusinessfeature_p.h"
-#include "qdeclarativebusinessinformation_p.h"
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativedescription_p.h"
 #include "qdeclarativegeolocation_p.h"
@@ -193,21 +191,17 @@ public:
             qmlRegisterType<QDeclarativeGeoRouteSegment>(uri, 5, 0, "RouteSegment");
             qmlRegisterType<QDeclarativeGeoManeuver>(uri, 5, 0, "RouteManeuver");
 
-            qmlRegisterType<QDeclarativeBusinessFeature>(uri, 5, 0, "BusinessFeature");
-            qmlRegisterType<QDeclarativeBusinessInformation>(uri, 5, 0, "BusinessInformation");
             qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
             qmlRegisterType<QDeclarativeDescription>(uri, 5, 0, "Description");
             qmlRegisterType<QDeclarativeGeoLocation>(uri, 5, 0, "Location");
             qmlRegisterType<QDeclarativeMediaObject>(uri, 5, 0, "MediaObject");
             qmlRegisterType<QDeclarativeMediaModel>(uri, 5, 0, "MediaModel");
-            qmlRegisterType<QDeclarativePeriod>(uri, 5, 0, "Period");
             qmlRegisterType<QDeclarativePlace>(uri, 5, 0, "Place");
             qmlRegisterType<QDeclarativeRating>(uri, 5, 0, "Rating");
             qmlRegisterType<QDeclarativeReview>(uri, 5, 0, "Review");
             qmlRegisterType<QDeclarativeReviewModel>(uri, 5, 0, "ReviewModel");
             qmlRegisterType<QDeclarativeSearchResult>(uri, 5, 0, "SearchResult");
             qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");
-            qmlRegisterType<QDeclarativeWeekdayHours>(uri, 5, 0, "WeekdayHours");
 
             qmlRegisterType<QDeclarativeRecommendationModel>(uri, 5, 0, "RecommendationModel");
             qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "SupportedCategoriesModel");

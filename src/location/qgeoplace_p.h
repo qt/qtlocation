@@ -87,7 +87,6 @@ public:
     QGeoAddress address;
 
     QVariantHash additionalData;
-    QPlaceBusinessInformation businessInfo;
     QList<QPlaceCategory> categories;
     QList<QPlaceDescription> descriptions;
     QGeoLocation location;

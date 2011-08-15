@@ -59,11 +59,9 @@
 #include <qplacecategory.h>
 #include <qplacedescription.h>
 #include <qplacerating.h>
-#include <qplacebusinessinformation.h>
 #include <qgeolocation.h>
 #include <qplacemediaobject.h>
 #include <qplaceperiod.h>
-#include <qplaceweekdayhours.h>
 #include <qplacesupplier.h>
 #include "qplacejsoncategoriesparser.h"
 #include "qplacesuppliersrepository.h"
@@ -866,12 +864,9 @@ void QPlaceJSonDetailsParser::processAdContentPaymentMethods(const QScriptValue 
             }
         }
         if (list.count()) {
-            QPlaceBusinessInformation busInfo = targetPlace->businessInformation();
-            busInfo.setPaymentMethods(list);
-            targetPlace->setBusinessInformation(busInfo);
             QPlaceAttribute paymentMethods;
             paymentMethods.setText(list.join(","));
-            targetPlace->insertExtendedAttribute("paymentMethods", paymentMethods);
+            targetPlace->insertExtendedAttribute(QPlaceAttribute::PaymentMethods, paymentMethods);
         }
     }
 }
@@ -914,9 +909,10 @@ void QPlaceJSonDetailsParser::processAdContentClosingsNotes(const QScriptValue &
                 if (it.name() != "length") {
                     QString obj = processAdContentClosingsNote(it.value());
                     if (!obj.isEmpty()) {
-                        QPlaceBusinessInformation busInfo = targetPlace->businessInformation();
-                        busInfo.setAnnualClosingNote(obj);
-                        targetPlace->setBusinessInformation(busInfo);
+                        //The JSON data specification defines closing notes
+                        //but our API doesn't expose this so we
+                        //parse and skip assignment
+
                         //! @todo only one is used
                         break;
                     }
@@ -925,9 +921,9 @@ void QPlaceJSonDetailsParser::processAdContentClosingsNotes(const QScriptValue &
         } else {
             QString obj = processAdContentClosingsNote(value);
             if (!obj.isEmpty()) {
-                QPlaceBusinessInformation busInfo = targetPlace->businessInformation();
-                busInfo.setAnnualClosingNote(obj);
-                targetPlace->setBusinessInformation(busInfo);
+                //The JSON data specification defines closing notes
+                //but our API doesn't expose this so we
+                //parse and skip assignment
             }
         }
     }
@@ -947,55 +943,46 @@ void QPlaceJSonDetailsParser::processAdContentOpeningHours(const QScriptValue &c
 {
     QScriptValue value = content.property(place_adcontent_hours_open_hours_element);
     if (value.isValid()) {
-        QList<QPlaceWeekdayHours> list;
         if (value.isArray()) {
             QScriptValueIterator it(value);
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element
                 if (it.name() != "length") {
-                    QPlaceWeekdayHours *obj = processAdContentOpeningHoursElement(it.value());
-                    if (obj) {
-                        list.append(*obj);
-                        delete obj;
-                        obj = NULL;
-                    }
+                    processAdContentOpeningHoursElement(it.value());
+                    //The JSON data specification defines
+                    //structured opening hour elements
+                    //but our API doesn't expose this so we
+                    //parse and skip assignment
                 }
             }
         } else {
-            QPlaceWeekdayHours *obj = processAdContentOpeningHoursElement(value);
-            if (obj) {
-                list.append(*obj);
-                delete obj;
-                obj = NULL;
-            }
+            processAdContentOpeningHoursElement(value);
+            //The JSON data specification defines
+            //structured opening hour elements
+            //but our API doesn't expose this so we
+            //parse and skip assignment
         }
-        QPlaceBusinessInformation busInfo = targetPlace->businessInformation();
-        busInfo.setOpeningHours(list);
-        targetPlace->setBusinessInformation(busInfo);
     }
 }
 
-QPlaceWeekdayHours *QPlaceJSonDetailsParser::processAdContentOpeningHoursElement(const QScriptValue &content)
+void QPlaceJSonDetailsParser::processAdContentOpeningHoursElement(const QScriptValue &content)
 {
-    QPlaceWeekdayHours *openH = new QPlaceWeekdayHours();
+    //The JSON data specification defines
+    //structured opening hour elements
+    //but our API doesn't expose this so we
+    //parse but do nothing else
+
     QScriptValue value = content.property(place_adcontent_hours_open_day_element);
     if (value.isValid() && !value.toString().isEmpty()) {
         QString day = value.toString();
         if (place_premiumcontent_content_monday == day) {
-            openH->setWeekday(Qt::Monday);
         } else if (place_premiumcontent_content_tuesday == day) {
-            openH->setWeekday(Qt::Tuesday);
         } else if (place_premiumcontent_content_wednesday == day) {
-            openH->setWeekday(Qt::Wednesday);
         } else if (place_premiumcontent_content_thursday == day) {
-            openH->setWeekday(Qt::Thursday);
         } else if (place_premiumcontent_content_friday == day) {
-            openH->setWeekday(Qt::Friday);
         } else if (place_premiumcontent_content_saturday == day) {
-            openH->setWeekday(Qt::Saturday);
         } else if (place_premiumcontent_content_sunday == day) {
-            openH->setWeekday(Qt::Sunday);
         }
     }
     QTime start, end;
@@ -1007,16 +994,7 @@ QPlaceWeekdayHours *QPlaceJSonDetailsParser::processAdContentOpeningHoursElement
     if (value.isValid() && !value.toString().isEmpty()) {
         end = QTime::fromString(value.toString(),"hh:mm");
     }
-
-    QTime startTime;
-    startTime.setHMS(start.hour(), start.minute(), 0);
-    QTime endTime;
-    endTime.setHMS(end.hour(), end.minute(), 0);
-    QPlacePeriod period;
-    period.setStartTime(startTime);
-    period.setEndTime(endTime);
-    openH->setPeriod(period);
-    return openH;
+    return;
 }
 
 void QPlaceJSonDetailsParser::processAdContentOpeningNotes(const QScriptValue &content, QGeoPlace*targetPlace)
@@ -1031,9 +1009,9 @@ void QPlaceJSonDetailsParser::processAdContentOpeningNotes(const QScriptValue &c
                 if (it.name() != "length") {
                     QString obj = processAdContentOpeningNote(it.value());
                     if (!obj.isEmpty()) {
-                        QPlaceBusinessInformation busInfo = targetPlace->businessInformation();
-                        busInfo.setOpeningNote(obj);
-                        targetPlace->setBusinessInformation(busInfo);
+                        QPlaceAttribute openingNote;
+                        openingNote.setText(obj);
+                        targetPlace->insertExtendedAttribute(QPlaceAttribute::OpeningNote, openingNote);
                         //! @todo only one is used
                         break;
                     }
@@ -1042,9 +1020,9 @@ void QPlaceJSonDetailsParser::processAdContentOpeningNotes(const QScriptValue &c
         } else {
             QString obj = processAdContentOpeningNote(value);
             if (!obj.isEmpty()) {
-                QPlaceBusinessInformation busInfo = targetPlace->businessInformation();
-                busInfo.setOpeningNote(obj);
-                targetPlace->setBusinessInformation(busInfo);
+                QPlaceAttribute openingNote;
+                openingNote.setText(obj);
+                targetPlace->insertExtendedAttribute(QPlaceAttribute::OpeningNote, openingNote);
             }
         }
     }

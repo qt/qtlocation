@@ -106,7 +106,7 @@ private:
     static void processAdContentClosingsNotes(const QScriptValue &content, QGeoPlace *targetPlace);
     static QString processAdContentClosingsNote(const QScriptValue &content);
     static void processAdContentOpeningHours(const QScriptValue &content, QGeoPlace *targetPlace);
-    static QPlaceWeekdayHours *processAdContentOpeningHoursElement(const QScriptValue &content);
+    static void processAdContentOpeningHoursElement(const QScriptValue &content);
     static void processAdContentOpeningNotes(const QScriptValue &content, QGeoPlace *targetPlace);
     static QString processAdContentOpeningNote(const QScriptValue &content);
 

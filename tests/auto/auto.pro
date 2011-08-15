@@ -16,16 +16,13 @@ SUBDIRS += geotestplugin \
            qgeoplace \
            qgeocodereply \
            qgeocodingmanager \
-           qplacebusinessfeature \
            qplacecategory \
            qplacedescription \
            qplacemanager \
            qplacemediaobject \
-           qplaceperiod \
            qplacerequest \
            qplacerating \
            qplacereview \
            qplacesearchrequest \
            qplacesupplier \
-           qplaceweekdayhours \
            declarative

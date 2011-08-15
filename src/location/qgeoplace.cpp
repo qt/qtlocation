@@ -252,23 +252,6 @@ void QGeoPlace::setAdditionalData(const QVariantHash &data)
     d->additionalData = data;
 }
 
-/*!
-    Returns business info.
-*/
-QPlaceBusinessInformation QGeoPlace::businessInformation() const
-{
-    Q_D(const QGeoPlace);
-    return d->businessInfo;
-}
-
-/*!
-    Sets business info.
-*/
-void QGeoPlace::setBusinessInformation(const QPlaceBusinessInformation &business)
-{
-    Q_D(QGeoPlace);
-    d->businessInfo = business;
-}
 
 /*!
     Returns categories.
@@ -676,7 +659,6 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         coordinate(other.coordinate),
         address(other.address),
         additionalData(other.additionalData),
-        businessInfo(other.businessInfo),
         categories(other.categories),
         descriptions(other.descriptions),
         location(other.location),
@@ -721,7 +703,6 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
     qDebug() << "coordinate:" <<  (coordinate == other.coordinate);
     qDebug() << "address:" << (address == other.address);
     qDebug() << "additionalData: " << (additionalData == other.additionalData);
-    qDebug() << "businessInfo: " << (businessInfo == other.businessInfo);
     qDebug() << "categories: " << (categories == other.categories);
     qDebug() << "descriptions: " << (descriptions == other.descriptions);
     qDebug() << "location:" << (location == other.location);
@@ -748,7 +729,6 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
             && coordinate == other.coordinate
             && address == other.address
             && additionalData == other.additionalData
-            && businessInfo == other.businessInfo
             && categories == other.categories
             && descriptions == other.descriptions
             && location == other.location

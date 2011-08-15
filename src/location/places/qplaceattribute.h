@@ -46,6 +46,8 @@
 #include <QVariant>
 #include <QSharedDataPointer>
 
+#include <qlatin1constant.h>
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -54,6 +56,14 @@ class QPlaceAttributePrivate;
 class Q_LOCATION_EXPORT QPlaceAttribute
 {
 public:
+#ifdef Q_QDOC
+    static const QLatin1Constant OpeningNote;
+    static const QLatin1Constant PaymentMethods;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(OpeningNote, "openingNote");
+    Q_DECLARE_LATIN1_CONSTANT(PaymentMethods, "paymentMethods");
+#endif
+
     QPlaceAttribute();
     QPlaceAttribute(const QPlaceAttribute &other);
     virtual ~QPlaceAttribute();

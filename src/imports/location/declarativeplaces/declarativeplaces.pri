@@ -8,19 +8,15 @@ SOURCES += \
     declarativeplaces/qdeclarativereviewmodel.cpp \
     declarativeplaces/qdeclarativemediamodel.cpp \
 #data
-    declarativeplaces/qdeclarativebusinessfeature.cpp \
-    declarativeplaces/qdeclarativebusinessinformation.cpp \
     declarativeplaces/qdeclarativecategory.cpp \
     declarativeplaces/qdeclarativedescription.cpp \
     declarativeplaces/qdeclarativemediaobject.cpp \
-    declarativeplaces/qdeclarativeperiod.cpp \
     declarativeplaces/qdeclarativeplace.cpp \
     declarativeplaces/qdeclarativeplaceattribute.cpp \
     declarativeplaces/qdeclarativerating.cpp \
     declarativeplaces/qdeclarativereview.cpp \
     declarativeplaces/qdeclarativesearchresult.cpp \
-    declarativeplaces/qdeclarativesupplier.cpp \
-    declarativeplaces/qdeclarativeweekdayhours.cpp
+    declarativeplaces/qdeclarativesupplier.cpp
 
 HEADERS += \
 #models
@@ -31,19 +27,15 @@ HEADERS += \
     declarativeplaces/qdeclarativereviewmodel_p.h \
     declarativeplaces/qdeclarativemediamodel_p.h \
 #data
-    declarativeplaces/qdeclarativebusinessfeature_p.h \
-    declarativeplaces/qdeclarativebusinessinformation_p.h \
     declarativeplaces/qdeclarativecategory_p.h \
     declarativeplaces/qdeclarativedescription_p.h \
     declarativeplaces/qdeclarativemediaobject_p.h \
-    declarativeplaces/qdeclarativeperiod_p.h \
     declarativeplaces/qdeclarativeplace_p.h \
     declarativeplaces/qdeclarativeplaceattribute_p.h \
     declarativeplaces/qdeclarativerating_p.h \
     declarativeplaces/qdeclarativereview_p.h \
     declarativeplaces/qdeclarativesearchresult_p.h \
-    declarativeplaces/qdeclarativesupplier_p.h \
-    declarativeplaces/qdeclarativeweekdayhours_p.h
+    declarativeplaces/qdeclarativesupplier_p.h
 
 
 

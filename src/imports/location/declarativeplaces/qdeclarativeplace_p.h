@@ -5,7 +5,6 @@
 #include <QDeclarativeListProperty>
 #include <qgeoplace.h>
 #include "qdeclarativegeolocation_p.h"
-#include "qdeclarativebusinessinformation_p.h"
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativesupplier_p.h"
 #include "qdeclarativerating_p.h"
@@ -27,7 +26,6 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeDescription> descriptions READ descriptions NOTIFY descriptionsChanged)
     Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
-    Q_PROPERTY(QDeclarativeBusinessInformation* businessInformation READ businessInformation WRITE setBusinessInformation NOTIFY businessInformationChanged);
     Q_PROPERTY(QDeclarativeRating* rating READ rating WRITE setRating NOTIFY ratingChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSupplier> suppliers READ suppliers NOTIFY suppliersChanged)
     Q_PROPERTY(QStringList feeds READ feeds WRITE setFeeds NOTIFY feedsChanged);
@@ -95,8 +93,6 @@ public:
     void setName(const QString &name);
     QString placeId() const;
     void setPlaceId(const QString &placeId);
-    QDeclarativeBusinessInformation *businessInformation();
-    void setBusinessInformation(QDeclarativeBusinessInformation *business);
     QString shortDescription() const;
     void setShortDescription(const QString &description);
     QStringList tags() const;
@@ -166,7 +162,6 @@ private:
     QDeclarativeGeoLocation m_location;
     QDeclarativeRating m_rating;
     QList<QDeclarativeSupplier*> m_suppliers;
-    QDeclarativeBusinessInformation m_businessInformation;
     QDeclarativeReviewModel *m_reviewModel;
     QDeclarativeMediaModel *m_mediaModel;
     QDeclarativePropertyMap *m_extendedAttributes;
