@@ -87,7 +87,7 @@ private:
 
     QPlaceCategoryTree m_categoryTree;
     static QPlaceCategoriesRepository *repositoryInstance;
-    QPointer<QPlaceCategoriesReplyImpl> categoriesReply;
+    QPlaceCategoriesReplyImpl *m_categoriesReply;
 };
 
 QT_END_NAMESPACE
