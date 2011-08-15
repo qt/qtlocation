@@ -59,6 +59,9 @@ Rectangle {
             Column {
                 id: col
                 Text { text: '<b>Name: </b> ' + result.place.name; font.pixelSize: 16 }
+
+                RatingView { rating: result.place.rating.value }
+
                 Text { text: '<b>Street: </b> ' + result.place.location.address.street; font.pixelSize: 16 }
                 Text { text: '<b>Latitude: </b> ' + result.place.location.coordinate.latitude; font.pixelSize: 16 }
                 Text { text: '<b>Longitude: </b> ' + result.place.location.coordinate.longitude; font.pixelSize: 16 }
@@ -66,21 +69,21 @@ Rectangle {
 
                 Text {
                     text: '<b>Descriptions count: </b> ' + result.place.descriptions.length +
-                          (result.place.descriptions.length == 0 ? '' : ', <a href=\"dummy\">show descriptions</a>')
+                          (result.place.descriptions.length <= 0 ? '' : ', <a href=\"dummy\">show descriptions</a>')
                     font.pixelSize: 16
                     onLinkActivated: descriptionList.model = result.place.descriptions
                 }
 
                 Text {
                     text: '<b>Review count: </b> ' + result.place.reviewModel.totalCount +
-                          ((result.place.reviewModel.totalCount == 0) ? '' : ', <a href=\"dummy\">show reviews</a>')
+                          ((result.place.reviewModel.totalCount <= 0) ? '' : ', <a href=\"dummy\">show reviews</a>')
                     font.pixelSize: 16
                     onLinkActivated: reviewList.model = result.place.reviewModel
                 }
 
                 Text {
                     text: '<b>Media count: </b> ' + result.place.mediaModel.totalCount +
-                          ((result.place.mediaModel.totalCount == 0) ? '' : ', <a href=\"dummy\">show media</a>')
+                          ((result.place.mediaModel.totalCount <= 0) ? '' : ', <a href=\"dummy\">show media</a>')
                     font.pixelSize: 16
                     onLinkActivated: mediaGrid.model = result.place.mediaModel
                 }

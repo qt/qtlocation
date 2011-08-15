@@ -4,7 +4,7 @@ import Qt.location 5.0
 Rectangle {
     property Description description
 
-    height: c.height + 10
+    height: childrenRect.height + 10
     width: parent.width
 
     radius: 10
@@ -14,20 +14,22 @@ Rectangle {
     }
 
     Column {
-        id: c
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: 5
         y: 5
-        x: 5
-        width: parent.width - 10
-        clip: true
+        spacing: 5
 
         Text {
-            text: '<b>' + description.contentTitle + '</b>'
+            text: description.contentTitle
             font.pixelSize: 16
+            font.bold: true
             width: parent.width
+            visible: description.contentTitle.length > 0
         }
+
         Text {
             text: description.content
-            font.pixelSize: 16
             wrapMode: Text.WordWrap
             width: parent.width
         }

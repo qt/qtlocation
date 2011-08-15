@@ -4,7 +4,7 @@ import Qt.location 5.0
 Rectangle {
     property Review review
 
-    height: c.height + 10
+    height: childrenRect.height + 10
     width: parent.width
 
     radius: 10
@@ -14,20 +14,30 @@ Rectangle {
     }
 
     Column {
-        id: c
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: 5
         y: 5
-        x: 5
-        width: parent.width - 10
-        clip: true
+        spacing: 5
 
         Text {
-            text: '<b>' + review.title + '</b>'
+            text: review.title
             font.pixelSize: 16
+            font.bold: true
             width: parent.width
         }
+
+        RatingView {
+            rating: review.rating
+            size: 16
+        }
+
+        Text {
+            text: Qt.formatDate(review.date, "d MMMM yyyy")
+        }
+
         Text {
             text: review.description
-            font.pixelSize: 16
             wrapMode: Text.WordWrap
             width: parent.width
         }

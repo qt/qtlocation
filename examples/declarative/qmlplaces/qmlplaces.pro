@@ -13,7 +13,8 @@ OTHER_FILES = qmlplaces.qml \
     ReviewDelegate.qml \
     CategoryView.qml \
     MediaGrid.qml \
-    DescriptionDelegate.qml
+    DescriptionDelegate.qml \
+    RatingView.qml
 
 RESOURCES += qmlplaces.qrc
 
@@ -23,4 +24,3 @@ symbian {
     TARGET.CAPABILITY = NetworkServices
     TARGET.EPOCALLOWDLLDATA = 1
 }
-

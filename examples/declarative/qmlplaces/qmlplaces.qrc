@@ -8,5 +8,7 @@
         <file>CategoryView.qml</file>
         <file>MediaGrid.qml</file>
         <file>DescriptionDelegate.qml</file>
+        <file>RatingView.qml</file>
+        <file>star.png</file>
     </qresource>
 </RCC>
