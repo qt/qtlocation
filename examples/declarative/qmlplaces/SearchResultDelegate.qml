@@ -88,10 +88,31 @@ Rectangle {
                     onLinkActivated: mediaGrid.model = result.place.mediaModel
                 }
 
-                Text { text: result.place.primaryPhone.length == 0  ? '':'<b>Phone: </b> ' + result.place.primaryPhone; font.pixelSize: 16 }
-                Text { text: result.place.primaryFax.length == 0  ? '':'<b>Fax: </b> ' + result.place.primaryFax; font.pixelSize: 16 }
-                Text { text: result.place.primaryEmail.length == 0  ? '':'<b>Email: </b> ' + result.place.primaryEmail; font.pixelSize: 16 }
-                Text { text: String(result.place.primaryUrl).length == 0  ? '':'<b>Website: </b> ' + result.place.primaryUrl; font.pixelSize: 16 }
+                Text {
+                    text: '<b>Phone: </b> ' + result.place.primaryPhone
+                    font.pixelSize: 16
+                    visible: result.place.primaryPhone.length > 0
+                }
+
+                Text {
+                    text: '<b>Fax: </b> ' + result.place.primaryFax
+                    font.pixelSize: 16
+                    visible: result.place.primaryFax.length > 0
+                }
+
+                Text {
+                    text: '<b>Email: </b> ' + result.place.primaryEmail
+                    font.pixelSize: 16
+                    visible: result.place.primaryEmail.length > 0
+                }
+
+                Text {
+                    text: '<b>Website: </b> <a href=\"' + result.place.primaryUrl + '\">' + result.place.primaryUrl + '</a>'
+                    font.pixelSize: 16
+                    visible: String(result.place.primaryUrl).length > 0
+                    onLinkActivated: Qt.openUrlExternally(result.place.primaryUrl)
+                }
+
                 Text { text: '<b>Tags: </b> ' + result.place.tags; font.pixelSize: 16 }
                 //Text { text: '<b>Suppliers: </b> ' + JSON.stringify(place.suppliers); font.pixelSize: 16 }
                 Text { id: detailsFetched; text:'<b>Details Fetched: </b> ' + result.place.detailsFetched; font.pixelSize: 16 }
