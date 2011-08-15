@@ -210,7 +210,9 @@ QList<QPlaceCategory> QPlaceSearchQuery::categories() const
 void QPlaceSearchQuery::setCategory(const QPlaceCategory &category)
 {
     d->categories.clear();
-    d->categories.append(category);
+
+    if (!category.categoryId().isEmpty())
+        d->categories.append(category);
 }
 
 /*!

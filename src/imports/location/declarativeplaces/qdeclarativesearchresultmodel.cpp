@@ -371,11 +371,12 @@ void QDeclarativeSearchResultModel::cancelRequest()
 */
 void QDeclarativeSearchResultModel::clearCategories()
 {
-    if (m_queryParameters.categories().count()) {
-        m_queryParameters.setCategory(QPlaceCategory());
-        m_category.setCategory(QPlaceCategory());
-        emit searchCategoryChanged();
-    }
+    if (m_queryParameters.categories().isEmpty())
+        return;
+
+    m_queryParameters.setCategory(QPlaceCategory());
+    m_category.setCategory(QPlaceCategory());
+    emit searchCategoryChanged();
 }
 
 /*!
@@ -392,7 +393,7 @@ void QDeclarativeSearchResultModel::clearSearchTerm()
 
 void QDeclarativeSearchResultModel::replyFinished()
 {
-    if (m_response && m_response->results().count()) {
+    if (m_response) {
         beginResetModel();
         convertResultsToDeclarative();
         endResetModel();

@@ -58,6 +58,9 @@ void tst_QPlaceSearchQuery::categoriesTest()
     testObj.setCategory(cat);
     QVERIFY2(testObj.categories().count() == 1, "Wrong categories count returned");
     QVERIFY2(testObj.categories()[0] == cat, "Wrong category returned");
+
+    testObj.setCategory(QPlaceCategory());
+    QVERIFY(testObj.categories().isEmpty());
 }
 
 void tst_QPlaceSearchQuery::boundingCircleTest()
