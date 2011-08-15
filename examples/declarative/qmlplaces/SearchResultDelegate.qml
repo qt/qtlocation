@@ -6,7 +6,7 @@ Rectangle {
     id: thisItem
     width: parent.width
     radius: 10
-    height: textFields.height
+    height: textFields.height + 10
     Behavior on height { PropertyAnimation{} }
 
     gradient: Gradient {
@@ -34,8 +34,10 @@ Rectangle {
         id: placeFields
         Item {
             focus:true
-            height: col.height + 10
-            width:parent.width
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: childrenRect.height
 
             MouseArea {
                 anchors.fill: col
@@ -58,6 +60,9 @@ Rectangle {
 
             Column {
                 id: col
+
+                anchors.left: parent.left
+                anchors.right: parent.right
                 Text { text: '<b>Name: </b> ' + result.place.name; font.pixelSize: 16 }
 
                 RatingView { rating: result.place.rating.value }
@@ -150,6 +155,13 @@ Rectangle {
 
     Loader {
         id: textFields
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: 5
+        y: 5
+        clip: true
+
         sourceComponent: (result.type == SearchResult.Place) ? placeFields : didYouMeanField
     }
 }
