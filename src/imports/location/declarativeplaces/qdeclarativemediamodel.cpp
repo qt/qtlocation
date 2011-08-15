@@ -25,7 +25,7 @@ QT_USE_NAMESPACE
 
 QDeclarativeMediaModel::QDeclarativeMediaModel(QObject* parent)
 :   QAbstractListModel(parent), m_place(0), m_batchSize(1), m_mediaCount(-1), m_reply(0),
-    m_plugin(0), m_complete(false)
+    m_complete(false)
 {
     QHash<int, QByteArray> roleNames;
     roleNames.insert(MediaRole, "media");
@@ -35,33 +35,6 @@ QDeclarativeMediaModel::QDeclarativeMediaModel(QObject* parent)
 QDeclarativeMediaModel::~QDeclarativeMediaModel()
 {
     qDeleteAll(m_mediaObjects);
-}
-
-/*!
-    \qmlproperty Plugin MediaModel::plugin
-
-    This property holds the provider Plugin used by this model.
-*/
-void QDeclarativeMediaModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
-{
-    if (m_plugin == plugin)
-        return;
-
-    reset(); // reset the model
-    m_plugin = plugin;
-    if (m_complete)
-        emit pluginChanged();
-    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support places.");
-        return;
-    }
-}
-
-QDeclarativeGeoServiceProvider* QDeclarativeMediaModel::plugin() const
-{
-    return m_plugin;
 }
 
 /*!
@@ -92,10 +65,10 @@ void QDeclarativeMediaModel::setPlace(QDeclarativePlace *place)
             emit totalCountChanged();
         }
 
-        setPlugin(place->plugin());
-
         m_place = place;
         emit placeChanged();
+
+        reset();
 
         fetchMore(QModelIndex());
     }
@@ -171,18 +144,15 @@ void QDeclarativeMediaModel::fetchMore(const QModelIndex &parent)
     if (m_reply)
         return;
 
-    if (!m_plugin) {
-        qmlInfo(this) << tr("plugin not set.");
-        return;
-    }
+    QDeclarativeGeoServiceProvider *plugin = m_place->plugin();
 
-    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    QGeoServiceProvider *serviceProvider = plugin->sharedGeoServiceProvider();
     if (!serviceProvider)
         return;
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
-        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(plugin->name());
         return;
     }
 

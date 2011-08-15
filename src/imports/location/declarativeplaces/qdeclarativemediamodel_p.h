@@ -18,7 +18,6 @@ class QDeclarativeMediaModel : public QAbstractListModel, public QDeclarativePar
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
-    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QDeclarativePlace *place READ place WRITE setPlace NOTIFY placeChanged)
     Q_PROPERTY(int batchSize READ batchSize WRITE setBatchSize NOTIFY batchSizeChanged)
     Q_PROPERTY(int totalCount READ totalCount NOTIFY totalCountChanged)
@@ -26,9 +25,6 @@ class QDeclarativeMediaModel : public QAbstractListModel, public QDeclarativePar
 public:
     explicit QDeclarativeMediaModel(QObject* parent = 0);
     ~QDeclarativeMediaModel();
-
-    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
-    QDeclarativeGeoServiceProvider* plugin() const;
 
     QDeclarativePlace *place() const;
     void setPlace(QDeclarativePlace *place);
@@ -53,7 +49,6 @@ public:
     void componentComplete();
 
 signals:
-    void pluginChanged();
     void placeChanged();
     void batchSizeChanged();
     void totalCountChanged();
@@ -68,7 +63,6 @@ private:
     QMap<int, QDeclarativeMediaObject *> m_mediaObjects;
     QPlaceMediaReply *m_reply;
 
-    QDeclarativeGeoServiceProvider *m_plugin;
     bool m_complete;
 };
 

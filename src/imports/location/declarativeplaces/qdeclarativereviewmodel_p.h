@@ -18,7 +18,6 @@ class QDeclarativeReviewModel : public QAbstractListModel, public QDeclarativePa
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
-    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QDeclarativePlace *place READ place WRITE setPlace NOTIFY placeChanged)
     Q_PROPERTY(int batchSize READ batchSize WRITE setBatchSize NOTIFY batchSizeChanged)
     Q_PROPERTY(int totalCount READ totalCount NOTIFY totalCountChanged)
@@ -26,9 +25,6 @@ class QDeclarativeReviewModel : public QAbstractListModel, public QDeclarativePa
 public:
     explicit QDeclarativeReviewModel(QObject* parent = 0);
     ~QDeclarativeReviewModel();
-
-    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
-    QDeclarativeGeoServiceProvider* plugin() const;
 
     QDeclarativePlace *place() const;
     void setPlace(QDeclarativePlace *place);
@@ -53,7 +49,6 @@ public:
     void componentComplete();
 
 signals:
-    void pluginChanged();
     void placeChanged();
     void batchSizeChanged();
     void totalCountChanged();
@@ -68,7 +63,6 @@ private:
     QMap<int, QDeclarativeReview *> m_reviews;
     QPlaceReviewReply *m_reply;
 
-    QDeclarativeGeoServiceProvider *m_plugin;
     bool m_complete;
 };
 
