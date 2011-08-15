@@ -7,5 +7,6 @@
         <file>ReviewDelegate.qml</file>
         <file>CategoryView.qml</file>
         <file>MediaGrid.qml</file>
+        <file>DescriptionDelegate.qml</file>
     </qresource>
 </RCC>

@@ -87,6 +87,18 @@ Rectangle {
         }
     }
 
+    ListView {
+        id: descriptionList
+        anchors.fill: placesList
+        clip: true
+        snapMode: ListView.SnapToItem
+
+        visible: model != undefined
+        delegate: DescriptionDelegate {
+            description: model.modelData
+        }
+    }
+
     Text {
         id: categoriesText
         text: "Categories tree:"
@@ -167,7 +179,6 @@ Rectangle {
 
     function searchTerm(term)
     {
-        placesList.model = resultModel;
         resultModel.clearCategories();
         resultModel.searchTerm = term;
         resultModel.executeQuery();
@@ -176,7 +187,6 @@ Rectangle {
 
     function searchCategory(category)
     {
-        placesList.model = resultModel;
         resultModel.clearSearchTerm();
         resultModel.searchCategory = category;
         resultModel.executeQuery();

@@ -34,41 +34,8 @@ Rectangle {
         id: placeFields
         Item {
             focus:true
-            height: col.height + mediaButton.height + 10
+            height: col.height + 10
             width:parent.width
-            Column {
-                id: col
-                Text { text: '<b>Name: </b> ' + result.place.name; font.pixelSize: 16 }
-                Text { text: '<b>Street: </b> ' + result.place.location.address.street; font.pixelSize: 16 }
-                Text { text: '<b>Latitude: </b> ' + result.place.location.coordinate.latitude; font.pixelSize: 16 }
-                Text { text: '<b>Longitude: </b> ' + result.place.location.coordinate.longitude; font.pixelSize: 16 }
-                Text { text: '<b>Categories: </b> ' + categoryNames(result.place.categories); font.pixelSize: 16 }
-                Text { text: '<b>Media count: </b> ' + result.place.mediaModel.totalCount; font.pixelSize: 16 }
-                Text { text: '<b>Descriptions count: </b> ' + result.place.descriptions.length; font.pixelSize: 16 }
-                Text { text: '<b>Review count: </b> ' + result.place.reviewModel.totalCount; font.pixelSize: 16 }
-                Text { text: result.place.primaryPhone.length == 0  ? '':'<b>Phone: </b> ' + result.place.primaryPhone; font.pixelSize: 16 }
-                Text { text: result.place.primaryFax.length == 0  ? '':'<b>Fax: </b> ' + result.place.primaryFax; font.pixelSize: 16 }
-                Text { text: result.place.primaryEmail.length == 0  ? '':'<b>Email: </b> ' + result.place.primaryEmail; font.pixelSize: 16 }
-                Text { text: String(result.place.primaryUrl).length == 0  ? '':'<b>Website: </b> ' + result.place.primaryUrl; font.pixelSize: 16 }
-                Text { text: '<b>Tags: </b> ' + result.place.tags; font.pixelSize: 16 }
-                //Text { text: '<b>Suppliers: </b> ' + JSON.stringify(place.suppliers); font.pixelSize: 16 }
-                Text { id: detailsFetched; text:'<b>Details Fetched: </b> ' + result.place.detailsFetched; font.pixelSize: 16 }
-                Text { id: paymentMethods; font.pixelSize: 16 }
-            }
-
-            Rectangle {
-                id: mediaButton
-                anchors.top: col.bottom
-                height: (result.place.mediaModel.totalCount > 0) ? showMedia.height : 0
-
-                Text {
-                    id: showMedia
-                    text: (result.place.mediaModel.totalCount > 0) ? '<a href=\"dummy\">Show Media</a>':''
-                    onLinkActivated: {
-                        mediaGrid.model = result.place.mediaModel
-                    }
-                }
-            }
 
             MouseArea {
                 anchors.fill: col
@@ -77,7 +44,7 @@ Rectangle {
                         textFields.item.state = 'place-details'
                         if (!result.place.detailsFetched)
                             result.place.getDetails()
-                        } else if (textFields.item.state == 'place-details') {
+                    } else if (textFields.item.state == 'place-details') {
                         textFields.item.state = 'place-core'
                     }
                 }
@@ -87,6 +54,45 @@ Rectangle {
                     recommendationModel.placeId = result.place.placeId
                     recommendationModel.executeQuery()
                 }
+            }
+
+            Column {
+                id: col
+                Text { text: '<b>Name: </b> ' + result.place.name; font.pixelSize: 16 }
+                Text { text: '<b>Street: </b> ' + result.place.location.address.street; font.pixelSize: 16 }
+                Text { text: '<b>Latitude: </b> ' + result.place.location.coordinate.latitude; font.pixelSize: 16 }
+                Text { text: '<b>Longitude: </b> ' + result.place.location.coordinate.longitude; font.pixelSize: 16 }
+                Text { text: '<b>Categories: </b> ' + categoryNames(result.place.categories); font.pixelSize: 16 }
+
+                Text {
+                    text: '<b>Descriptions count: </b> ' + result.place.descriptions.length +
+                          (result.place.descriptions.length == 0 ? '' : ', <a href=\"dummy\">show descriptions</a>')
+                    font.pixelSize: 16
+                    onLinkActivated: descriptionList.model = result.place.descriptions
+                }
+
+                Text {
+                    text: '<b>Review count: </b> ' + result.place.reviewModel.totalCount +
+                          ((result.place.reviewModel.totalCount == 0) ? '' : ', <a href=\"dummy\">show reviews</a>')
+                    font.pixelSize: 16
+                    onLinkActivated: reviewList.model = result.place.reviewModel
+                }
+
+                Text {
+                    text: '<b>Media count: </b> ' + result.place.mediaModel.totalCount +
+                          ((result.place.mediaModel.totalCount == 0) ? '' : ', <a href=\"dummy\">show media</a>')
+                    font.pixelSize: 16
+                    onLinkActivated: mediaGrid.model = result.place.mediaModel
+                }
+
+                Text { text: result.place.primaryPhone.length == 0  ? '':'<b>Phone: </b> ' + result.place.primaryPhone; font.pixelSize: 16 }
+                Text { text: result.place.primaryFax.length == 0  ? '':'<b>Fax: </b> ' + result.place.primaryFax; font.pixelSize: 16 }
+                Text { text: result.place.primaryEmail.length == 0  ? '':'<b>Email: </b> ' + result.place.primaryEmail; font.pixelSize: 16 }
+                Text { text: String(result.place.primaryUrl).length == 0  ? '':'<b>Website: </b> ' + result.place.primaryUrl; font.pixelSize: 16 }
+                Text { text: '<b>Tags: </b> ' + result.place.tags; font.pixelSize: 16 }
+                //Text { text: '<b>Suppliers: </b> ' + JSON.stringify(place.suppliers); font.pixelSize: 16 }
+                Text { id: detailsFetched; text:'<b>Details Fetched: </b> ' + result.place.detailsFetched; font.pixelSize: 16 }
+                Text { id: paymentMethods; font.pixelSize: 16 }
             }
 
             state: 'place-core'
