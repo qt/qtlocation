@@ -53,6 +53,7 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapObject::QDeclarativeGeoMapObject(QSGItem *parent)
     : QSGItem(parent),
+      map_(0),
       object_(0),
       visible_(true)
 {

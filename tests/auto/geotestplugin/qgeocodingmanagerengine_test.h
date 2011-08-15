@@ -103,7 +103,7 @@ public:
 
         setSupportsGeocoding(supported_);
         setSupportsReverseGeocoding(supported_);
-        setLocale(*(new QLocale (QLocale::German, QLocale::Germany)));
+        setLocale(QLocale (QLocale::German, QLocale::Germany));
     }
 
     QGeocodeReply* geocode(const QString &searchString,

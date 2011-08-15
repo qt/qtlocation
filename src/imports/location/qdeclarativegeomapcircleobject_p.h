@@ -100,7 +100,7 @@ private Q_SLOTS:
     void centerAltitudeChanged(double altitude);
 
 private:
-    QGeoMapCircleObject* circle_;
+    QPointer<QGeoMapCircleObject> circle_;
     QDeclarativeCoordinate *center_;
     QColor color_;
     QDeclarativeGeoMapObjectBorder border_;

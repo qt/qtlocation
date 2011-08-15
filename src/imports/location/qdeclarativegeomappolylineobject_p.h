@@ -59,7 +59,7 @@ class QDeclarativeGeoMapPolylineObject : public QDeclarativeGeoMapObject
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
-    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
+    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border CONSTANT)
 
 public:
     QDeclarativeGeoMapPolylineObject(QSGItem *parent = 0);
@@ -90,7 +90,7 @@ private:
     static void path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
     void pathPropertyChanged();
 
-    QGeoMapPolylineObject* polyline_;
+    QPointer<QGeoMapPolylineObject> polyline_;
     QList<QDeclarativeCoordinate*> path_;
     QDeclarativeGeoMapObjectBorder border_;
     bool componentCompleted_;

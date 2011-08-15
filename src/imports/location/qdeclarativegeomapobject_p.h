@@ -48,6 +48,7 @@
 #include "QModelIndex"
 
 #include <QtDeclarative/QSGItem>
+#include <QtCore/QPointer>
 
 class QAbstractItemModel;
 
@@ -98,13 +99,15 @@ public:
 Q_SIGNALS:
     void visibleChanged(bool visible);
 
+protected:
+    QPointer<QDeclarativeGraphicsGeoMap> map_;
+
 private Q_SLOTS:
     void parentZChanged();
 
 private:
-    QGeoMapObject *object_;
+    QPointer<QGeoMapObject> object_;
     bool visible_;
-    QDeclarativeGraphicsGeoMap* map_;
     QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
 };
 

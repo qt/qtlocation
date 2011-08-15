@@ -40,6 +40,8 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapgroupobject_p.h"
+#include "qdeclarativegraphicsgeomap_p.h"
+#include "qgeomapdata.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -75,6 +77,8 @@ QDeclarativeGeoMapGroupObject::~QDeclarativeGeoMapGroupObject()
     // Remove all objects from the group before deleting it.
     // These objects are owned by their declarative counterparts
     // and they'll delete them.
+    if (map_)
+        map_->removeMapObject(this);
     QList<QGeoMapObject*> objects = group_->childObjects();
     for (int i = 0; i < objects.size(); ++i) {
         group_->removeChildObject(objects.at(i));

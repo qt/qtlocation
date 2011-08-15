@@ -54,6 +54,8 @@ public:
     QString datatype() const;
     void setDatatype(QString datatype);
 
+    //Q_INVOKABLE void clear();
+    Q_INVOKABLE void reset();
     //Q_INVOKABLE void reset();
 
 signals:

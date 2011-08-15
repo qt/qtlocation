@@ -44,7 +44,7 @@
 
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
-#include "qdeclarativelandmark_p.h"
+//#include "qdeclarativelandmark_p.h"
 #include "qdeclarativegeomapgroupobject_p.h"
 
 #include <qgeoserviceprovider.h>
@@ -100,9 +100,8 @@ QT_BEGIN_NAMESPACE
 
     The Map element is part of the \bold{QtMobility.location 1.2} module.
 */
-//QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QSGItem *parent)
+
 QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QSGItem *parent)
-    //: QSGItem(parent),
     : QSGItem(parent),
       plugin_(0),
       mapData_(0),
@@ -125,22 +124,20 @@ QDeclarativeGraphicsGeoMap::QDeclarativeGraphicsGeoMap(QSGItem *parent)
 
 QDeclarativeGraphicsGeoMap::~QDeclarativeGraphicsGeoMap()
 {
-    if (mapData_) {
+    QList<QDeclarativeGeoMapObject*> objects = mapObjects_;
+    // Remove all map objects (map does not manage their allocation)
+    for (int i = 0; i < objects.count(); ++i) {
+        removeMapObject(objects.at(i));
+    }
+    // Note: delete map object view before the map data,
+    // so that it removes its map objects from the qgeomapdata,
+    // otherwise qgeomapdata will delete data it doesn't own.
+    if (!mapViews_.isEmpty())
         qDeleteAll(mapViews_);
-        // Remove map objects, we can't allow mapObject
-        // to delete the objects because they are owned
-        // by the declarative elements.
-        //QList<QGeoMapObject*> objects = objectMap_.keys();
-        QList<QDeclarativeGeoMapObject*> objects = mapObjects_;
-        for (int i = 0; i < objects.size(); ++i) {
-            mapData_->removeMapObject(objects.at(i)->mapObject());
-        }
+    if (mapData_)
         delete mapData_;
-    }
-
-    if (initialCoordinate) {
+    if (initialCoordinate)
         delete initialCoordinate;
-    }
 }
 
 void QDeclarativeGraphicsGeoMap::componentComplete()
@@ -201,6 +198,7 @@ void QDeclarativeGraphicsGeoMap::populateMap()
             recursiveAddToObjectMap(mapObject);
             mapData_->addMapObject(mapObject->mapObject());
             mapObject->setMap(this);
+            emit objectsChanged();
             continue;
         }
         QDeclarativeGeoMapMouseArea *mouseArea
@@ -521,6 +519,41 @@ QDeclarativeGraphicsGeoMap::MapType QDeclarativeGraphicsGeoMap::mapType() const
     } else {
         return mapType_;
     }
+}
+
+// TODO document this (list has objects managed by add/removeMapObject and
+// those declared as part of the class.
+QDeclarativeListProperty<QDeclarativeGeoMapObject> QDeclarativeGraphicsGeoMap::objects()
+{
+    return QDeclarativeListProperty<QDeclarativeGeoMapObject>(this,
+                                                          0, // opaque data parameter
+                                                          objects_append,
+                                                          objects_count,
+                                                          objects_at,
+                                                          objects_clear);
+}
+
+// not supported
+void QDeclarativeGraphicsGeoMap::objects_append(QDeclarativeListProperty<QDeclarativeGeoMapObject>* prop, QDeclarativeGeoMapObject* object)
+{
+    Q_UNUSED(prop);
+    Q_UNUSED(object);
+}
+
+int QDeclarativeGraphicsGeoMap::objects_count(QDeclarativeListProperty<QDeclarativeGeoMapObject>* prop)
+{
+    return static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->mapObjects_.count();
+}
+
+QDeclarativeGeoMapObject* QDeclarativeGraphicsGeoMap::objects_at(QDeclarativeListProperty<QDeclarativeGeoMapObject>* prop, int index)
+{
+    return static_cast<QDeclarativeGraphicsGeoMap*>(prop->object)->mapObjects_.at(index);
+}
+
+// not supported
+void QDeclarativeGraphicsGeoMap::objects_clear(QDeclarativeListProperty<QDeclarativeGeoMapObject>* prop)
+{
+    Q_UNUSED(prop);
 }
 
 /*!
@@ -904,6 +937,7 @@ void QDeclarativeGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
     recursiveAddToObjectMap(object);
     mapData_->addMapObject(object->mapObject());
     object->setMap(this);
+    emit objectsChanged();
 }
 
 /*!
@@ -930,6 +964,26 @@ void QDeclarativeGraphicsGeoMap::removeMapObject(QDeclarativeGeoMapObject *objec
     recursiveRemoveFromObjectMap(object->mapObject());
     mapObjects_.removeOne(object);
     mapData_->removeMapObject(object->mapObject());
+    object->setMap(0);
+    emit objectsChanged();
+}
+
+// TODO document. Removes all map items that are added with addMapObject,
+// leaves objects from model intact.
+void QDeclarativeGraphicsGeoMap::clearMapObjects()
+{
+    if (!mapData_ || mapObjects_.isEmpty())
+        return;
+    QList<QDeclarativeGeoMapObject*> mapObjects = mapObjects_;
+    for (int i = 0; i < mapObjects.count(); ++ i) {
+        if (!objectMap_.contains(mapObjects.at(i)->mapObject()))
+            continue;
+        recursiveRemoveFromObjectMap(mapObjects.at(i)->mapObject());
+        mapObjects_.removeOne(mapObjects.at(i));
+        mapData_->removeMapObject(mapObjects.at(i)->mapObject());
+        mapObjects.at(i)->setMap(0);
+    }
+    emit objectsChanged();
 }
 
 void QDeclarativeGraphicsGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseArea *area)

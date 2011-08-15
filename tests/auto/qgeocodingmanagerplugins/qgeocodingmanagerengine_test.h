@@ -83,7 +83,7 @@ public:
         Q_UNUSED(errorString)
         setSupportsGeocoding(true);
         setSupportsReverseGeocoding(true);
-        setLocale(*(new QLocale (QLocale::German, QLocale::Germany)));
+        setLocale(QLocale(QLocale::German, QLocale::Germany));
     }
 
     QGeocodeReply*  geocode ( const QString & searchString, int limit, int offset, QGeoBoundingArea * bounds )

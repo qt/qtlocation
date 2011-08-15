@@ -116,7 +116,7 @@ private Q_SLOTS:
     void coordinateAltitudeChanged(double altitude);
 
 private:
-    QGeoMapTextObject* text_;
+    QPointer<QGeoMapTextObject> text_;
     QDeclarativeCoordinate *coordinate_;
     QColor color_;
     HorizontalAlignment hAlignment_;

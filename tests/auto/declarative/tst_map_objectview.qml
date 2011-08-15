@@ -53,9 +53,32 @@ Item {
     Coordinate{ id: mapDefaultCenter; latitude: 10; longitude: 30}
 
     MapCircle {
+        objectName: "externalCircle"
         id: externalCircle
         radius: 2000000
         center: mapDefaultCenter
+    }
+
+    MapRectangle {
+        objectName: "externalRectangle"
+        id: externalRectangle
+    }
+
+    MapPolygon {
+        objectName: "externalPolygon"
+        id: externalPolygon
+    }
+
+    MapText {
+        id: externalText
+    }
+
+    MapImage {
+        id: externalImage
+    }
+
+    MapPolyline {
+        id: externalPolyline
     }
 
     TestModel {
@@ -94,6 +117,7 @@ Item {
             }
         }
     }
+
     Map {
         id: mapWithoutPlugin; center: mapDefaultCenter;
         anchors.fill: parent; size.width: parent.width; size.height: parent.height; zoomLevel: 2
@@ -112,6 +136,15 @@ Item {
                         latitude: modeldata.coordinate.latitude;
                         longitude: modeldata.coordinate.longitude;
                     }
+                }
+            }
+        }
+        MapObjectView {
+            id: routeObjectView
+            model: routeModel
+            delegate: Component {
+                MapRoute {
+                    route:  routeData
                 }
             }
         }
@@ -159,6 +192,124 @@ Item {
             mapWithoutPlugin.plugin = testPlugin
             tryCompare(pluginChangedSpy, "count", 1, 1000)
             compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 10) // 9 from testModel, + 1 from mapcircle
+            mapWithoutPlugin.clearMapObjects();
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 9)  // 9 from testModel
+            testModel.reset();
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0)
+        }
+        Plugin {
+            id: testPlugin_immediate;
+            name: "qmlgeo.test.plugin"
+            parameters: [
+                // Parms to guide the test plugin
+                PluginParameter { name: "gc_supported"; value: true},
+                PluginParameter { name: "gc_finishRequestImmediately"; value: true},
+                PluginParameter { name: "gc_validateWellKnownValues"; value: true}
+            ]
+        }
+        RouteQuery {id: routeQuery;
+            waypoints: [
+                Coordinate {id: fcoordinate1; latitude: 60; longitude: 60},
+                Coordinate {id: fcoordinate2; latitude: 61; longitude: 62},
+                Coordinate {id: fcoordinate3; latitude: 63; longitude: 64},
+                Coordinate {id: fcoordinate4; latitude: 65; longitude: 66},
+                Coordinate {id: fcoordinate5; latitude: 67; longitude: 68}
+            ]
+        }
+        // Test routemodel and object list of map
+        RouteModel {id: routeModel; plugin: testPlugin_immediate; query: routeQuery }
+        SignalSpy {id: objectsChangedSpy; target: mapWithoutPlugin; signalName: "objectsChanged"}
+        function test_d_routemodel() {
+            objectsChangedSpy.clear()
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0) // precondition
+            compare(mapWithoutPlugin.objects.length, 0)
+            compare(objectsChangedSpy.count, 0)
+            routeQuery.numberAlternativeRoutes = 4
+            routeModel.update();
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 4)
+            compare(mapWithoutPlugin.objects.length, 0)
+            routeQuery.numberAlternativeRoutes = 3
+            routeModel.update();
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 3)
+            compare(mapWithoutPlugin.objects.length, 0)
+            routeModel.clear();
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0)
+            compare(mapWithoutPlugin.objects.length, 0)
+            routeModel.clear(); // clear empty model
+            routeQuery.numberAlternativeRoutes = 3
+            routeModel.update();
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 3)
+            compare(mapWithoutPlugin.objects.length, 0)
+            compare(objectsChangedSpy.count, 0)
+            mapWithoutPlugin.addMapObject(externalCircle)
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 4)
+            compare(mapWithoutPlugin.objects.length, 1)
+            compare(objectsChangedSpy.count, 1)
+            compare(mapWithoutPlugin.objects[0], externalCircle)
+            routeModel.reset(); // all map objects based on model will be cleared
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 1)
+            compare(mapWithoutPlugin.objects.length, 1)
+            mapWithoutPlugin.clearMapObjects() // clears objects not stemming from model
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0)
+            compare(mapWithoutPlugin.objects.length, 0)
+            compare(objectsChangedSpy.count, 2)
+
+            // Test the objects list
+            mapWithoutPlugin.addMapObject(externalCircle)
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 1)
+            compare(mapWithoutPlugin.objects.length, 1)
+            compare(objectsChangedSpy.count, 3)
+            compare(mapWithoutPlugin.objects[0], externalCircle)
+
+            mapWithoutPlugin.addMapObject(externalRectangle)
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 2)
+            compare(mapWithoutPlugin.objects.length, 2)
+            compare(objectsChangedSpy.count, 4)
+            compare(mapWithoutPlugin.objects[1], externalRectangle)
+
+            mapWithoutPlugin.addMapObject(externalRectangle)
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 2)
+            compare(mapWithoutPlugin.objects.length, 2)
+            compare(objectsChangedSpy.count, 4)
+            compare(mapWithoutPlugin.objects[1], externalRectangle)
+
+            mapWithoutPlugin.addMapObject(externalPolygon)
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 3)
+            compare(mapWithoutPlugin.objects.length, 3)
+            compare(objectsChangedSpy.count, 5)
+            compare(mapWithoutPlugin.objects[1], externalRectangle)
+
+            mapWithoutPlugin.removeMapObject(externalCircle)
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 2)
+            compare(mapWithoutPlugin.objects.length, 2)
+            compare(objectsChangedSpy.count, 6)
+            compare(mapWithoutPlugin.objects[0], externalRectangle)
+
+            mapWithoutPlugin.removeMapObject(externalRectangle)
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 1)
+            compare(mapWithoutPlugin.objects.length, 1)
+            compare(objectsChangedSpy.count, 7)
+            compare(mapWithoutPlugin.objects[0], externalPolygon)
+
+            mapWithoutPlugin.clearMapObjects()
+            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0)
+            compare(mapWithoutPlugin.objects.length, 0)
+            compare(objectsChangedSpy.count, 8)
+        }
+        function test_e_map_objects_on_delete() {
+            // Test that dynamic map & map object creation works
+            var dynamicMap = Qt.createQmlObject("import QtQuick 2.0; import Qt.location 5.0; Map {plugin: testPlugin;}", masterItem, "");
+            var dynamicCircle = Qt.createQmlObject("import QtQuick 2.0; import Qt.location 5.0; MapCircle {}", masterItem, "");
+            compare (dynamicMap.objects.length, 0)
+            dynamicMap.addMapObject(dynamicCircle)
+            compare (dynamicMap.objects.length, 1)
+            dynamicCircle.destroy(2); wait(100) // circle should remove itself from the map
+            compare (dynamicMap.objects.length, 0)
+
+            var dynamicRectangle = Qt.createQmlObject("import QtQuick 2.0; import Qt.location 5.0; MapRectangle {}", masterItem, "");
+            dynamicMap.addMapObject(dynamicRectangle)
+            dynamicMap.destroy(2); wait(100) // must act gracefully although has objects when destroyed
         }
     }
 }
+

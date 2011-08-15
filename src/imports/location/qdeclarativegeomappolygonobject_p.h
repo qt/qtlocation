@@ -60,7 +60,7 @@ class QDeclarativeGeoMapPolygonObject : public QDeclarativeGeoMapObject
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
-    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border)
+    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border CONSTANT)
 
 public:
     QDeclarativeGeoMapPolygonObject(QSGItem *parent = 0);
@@ -96,7 +96,7 @@ private:
     static void path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
     void pathPropertyChanged();
 
-    QGeoMapPolygonObject* polygon_;
+    QPointer<QGeoMapPolygonObject> polygon_;
     QList<QDeclarativeCoordinate*> path_;
     QColor color_;
     QDeclarativeGeoMapObjectBorder border_;

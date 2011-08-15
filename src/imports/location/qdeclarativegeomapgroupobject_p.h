@@ -92,7 +92,7 @@ private:
     static QDeclarativeGeoMapObject* child_at(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop, int index);
     static void child_clear(QDeclarativeListProperty<QDeclarativeGeoMapObject> *prop);
 
-    QGeoMapGroupObject* group_;
+    QPointer<QGeoMapGroupObject> group_;
     QList<QDeclarativeGeoMapObject*> objects_;
 };
 

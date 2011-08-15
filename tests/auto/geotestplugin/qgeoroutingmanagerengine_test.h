@@ -100,7 +100,7 @@ public:
             finishRequestImmediately_ = qvariant_cast<bool>(parameters.value("gc_finishRequestImmediately"));
         }
 
-        setLocale(*(new QLocale (QLocale::German, QLocale::Germany)));
+        setLocale(QLocale (QLocale::German, QLocale::Germany));
         setSupportedFeatureTypes (
                     QGeoRouteRequest::NoFeature | QGeoRouteRequest::TollFeature |
                     QGeoRouteRequest::HighwayFeature | QGeoRouteRequest::PublicTransitFeature |
@@ -158,9 +158,11 @@ public:
     void setRoutes(const QGeoRouteRequest& request, RouteReplyTest* reply)
     {
         QList<QGeoRoute> routes;
-        QGeoRoute route;
-        route.setPath(request.waypoints());
-        routes.append(route);
+        for (int i = 0; i < request.numberAlternativeRoutes(); ++i) {
+            QGeoRoute route;
+            route.setPath(request.waypoints());
+            routes.append(route);
+        }
         reply->callSetRoutes(routes);
     }
 

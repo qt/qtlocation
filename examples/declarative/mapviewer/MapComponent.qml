@@ -103,7 +103,8 @@ Map {
         id: routeDelegate
         MapRoute {
             route: path
-            color: routeMouseArea.containsMouse ? "lime" :"red"
+            border.color: routeMouseArea.containsMouse ? "lime" :"red"
+            border.width: 5
             MapMouseArea {
                 id: routeMouseArea
                 hoverEnabled: true

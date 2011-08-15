@@ -94,7 +94,7 @@ private Q_SLOTS:
     void borderWidthChanged(int width);
 
 private:
-    QGeoMapRectangleObject* rectangle_;
+    QPointer<QGeoMapRectangleObject> rectangle_;
     QDeclarativeCoordinate *topLeft_;
     QDeclarativeCoordinate *bottomRight_;
     QColor color_;

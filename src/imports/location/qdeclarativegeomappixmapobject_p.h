@@ -101,7 +101,7 @@ private:
     void setStatus(const QDeclarativeGeoMapPixmapObject::Status status);
     void load();
 
-    QGeoMapPixmapObject* pixmap_;
+    QPointer<QGeoMapPixmapObject> pixmap_;
     QDeclarativeCoordinate *coordinate_;
     QUrl source_;
     QNetworkReply *reply_;

@@ -74,25 +74,39 @@ Item {
         Coordinate {id: emptyCoordinate}
 
         SignalSpy {id: mapRouteDetailLevelSpy; target: emptyMapRoute; signalName: "detailLevelChanged"}
-        SignalSpy {id: mapRouteColorSpy; target: emptyMapRoute; signalName: "colorChanged"}
+        SignalSpy {id: mapRouteColorSpy; target: emptyMapRoute.border; signalName: "colorChanged"}
+        SignalSpy {id: mapRouteWidthSpy; target: emptyMapRoute.border; signalName: "widthChanged"}
         SignalSpy {id: mapRouteRouteSpy; target: emptyMapRoute; signalName: "routeChanged"}
         function test_maproute_defaults() {
             compare(mapRouteRouteSpy.count, 0)
             compare(mapRouteColorSpy.count, 0)
             compare(mapRouteDetailLevelSpy.count, 0)
             compare (emptyMapRoute.detailLevel, 6)
-            emptyMapRoute.color = 'green'
+            emptyMapRoute.border.color = 'green'
             emptyMapRoute.detailLevel = 3
             compare(mapRouteRouteSpy.count, 0)
             compare(mapRouteColorSpy.count, 1)
             compare(mapRouteDetailLevelSpy.count, 1)
-            emptyMapRoute.color = 'green'
+            emptyMapRoute.border.color = 'green'
             emptyMapRoute.detailLevel = 3
             compare(mapRouteColorSpy.count, 1)
             compare(mapRouteDetailLevelSpy.count, 1)
             emptyMapRoute.route = emptyRoute
             compare(mapRouteRouteSpy.count, 1)
             compare(emptyMapRoute.route, emptyRoute)
+            // width
+            compare(mapRouteWidthSpy.count, 0)
+            emptyMapRoute.border.width = 123
+            compare(mapRouteWidthSpy.count, 1)
+            compare(emptyMapRoute.border.width, 123)
+            emptyMapRoute.border.width = 123
+            compare(mapRouteWidthSpy.count, 1)
+            emptyMapRoute.border.width = -1
+            compare(mapRouteWidthSpy.count, 1)
+            compare(emptyMapRoute.border.width, 123)
+            emptyMapRoute.border.width = 0
+            compare(mapRouteWidthSpy.count, 1)
+            compare(emptyMapRoute.border.width, 123)
         }
 
         function test_route_defaults() {
@@ -497,6 +511,7 @@ Item {
 
     RouteQuery {id: routeQuery}
     RouteQuery {id: filledRouteQuery;
+        numberAlternativeRoutes: 1
         waypoints: [
             Coordinate {id: fcoordinate1; latitude: 60; longitude: 60},
             Coordinate {id: fcoordinate2; latitude: 61; longitude: 62},
@@ -512,8 +527,13 @@ Item {
             Coordinate {id: f2coordinate3; latitude: 63; longitude: 64}
         ]
     }
+    RouteModel {
+        id: routeModelAutomatic;
+        plugin: testPlugin_slacker;
+        query: filledRouteQuery;
+        autoUpdate: true
+    }
 
-    RouteModel {id: routeModelAutomatic; plugin: testPlugin_slacker; query: filledRouteQuery; autoUpdate: true}
     SignalSpy {id: automaticRoutesSpy; target: routeModelAutomatic; signalName: "routesChanged" }
 
     RouteModel {id: routeModel; plugin: testPlugin_immediate; query: routeQuery }
@@ -570,7 +590,7 @@ Item {
             // Check that results are cleared
             routeModelSlack.update()
             wait (300)
-            compare (routeModelSlack.count, 1)
+            compare (routeModelSlack.count, 3) // numberALternativeRoutes
             routeModelSlack.reset()
             compare (routeModelSlack.count, 0)
             // Check that changing plugin resets any ongoing requests
@@ -585,7 +605,7 @@ Item {
             compare (testPluginSlackSpy.count, 1)
             // test that works
             routeModelSlack.update()
-            compare (routeModelSlack.count, 1)
+            compare (routeModelSlack.count, 3)
             // return back
             routeModelSlack.plugin = testPlugin_slacker
         }
@@ -632,6 +652,7 @@ Item {
             routeQuery.addWaypoint(rcoordinate5)
             compare (testWaypointsSpy.count, 5)
             compare (routeQuery.waypoints.length, 5)
+            routeQuery.numberAlternativeRoutes = 1 // how many routes to get back, > 70 indicates error
             routeModel.update()
             tryCompare (testRoutesSpy, "count", 1) // 5 sec
             tryCompare (testCountSpy, "count", 1)
@@ -688,16 +709,20 @@ Item {
             compare(routeModelSlack.count, 1)
 
             // Autoupdate
+            filledRouteQuery.numberAlternativeRoutes = 1 // 'altroutes - 70' is the echoed errorcode
+            wait (300)
             automaticRoutesSpy.clear()
             compare(routeModelAutomatic.count, 1) // There should be a route already
             compare (routeModelAutomatic.get(0).path.length, 5)
             compare (routeModelAutomatic.get(0).path[0].latitude, filledRouteQuery.waypoints[0].latitude)
+
             // Remove a waypoint and check that autoupdate works
             filledRouteQuery.removeWaypoint(fcoordinate2)
             wait(300)
             compare (routeModelAutomatic.get(0).path.length, 4)
             compare (routeModelAutomatic.get(0).path[0].latitude, fcoordinate1.latitude)
             compare (automaticRoutesSpy.count, 1)
+
             // Change contents of a coordinate and check that autoupdate works
             fcoordinate1.latitude++
             wait(300)
@@ -705,6 +730,7 @@ Item {
             compare (automaticRoutesSpy.count, 2)
             // Change query
             routeModelAutomatic.query = filledRouteQuery2
+            filledRouteQuery2.numberAlternativeRoutes = 3
             wait(300)
             compare (routeModelAutomatic.get(0).path.length, 3)
             compare (automaticRoutesSpy.count, 3)

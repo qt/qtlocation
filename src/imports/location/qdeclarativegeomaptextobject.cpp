@@ -41,6 +41,8 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomaptextobject_p.h"
+#include "qdeclarativegraphicsgeomap_p.h"
+#include "qgeomapdata.h"
 
 #include <QPen>
 #include <QBrush>
@@ -101,6 +103,13 @@ QDeclarativeGeoMapTextObject::QDeclarativeGeoMapTextObject(QSGItem *parent)
 
 QDeclarativeGeoMapTextObject::~QDeclarativeGeoMapTextObject()
 {
+    // Memory management is bit tricky because we do not know
+    // which will be deleted first, the Map or some/all of the
+    // MapObjects. Hence we need to make sure that the internal
+    // c++ map objects are removed from QGeoMapData in either place
+    // (but not both).
+    if (map_)
+        map_->removeMapObject(this);
     delete text_;
 }
 

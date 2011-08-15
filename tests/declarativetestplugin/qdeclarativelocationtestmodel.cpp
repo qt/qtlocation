@@ -97,6 +97,16 @@ void QDeclarativeLocationTestModel::repopulate()
     endResetModel();
 }
 
+void QDeclarativeLocationTestModel::reset()
+{
+    beginResetModel();
+    if (!dataobjects_.isEmpty()) {
+        qDeleteAll(dataobjects_);
+        dataobjects_.clear();
+    }
+    endResetModel();
+}
+
 void QDeclarativeLocationTestModel::scheduleRepopulation()
 {
     if (!componentCompleted_)

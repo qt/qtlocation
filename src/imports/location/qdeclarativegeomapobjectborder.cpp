@@ -68,7 +68,7 @@ QColor QDeclarativeGeoMapObjectBorder::color() const
 
 void QDeclarativeGeoMapObjectBorder::setWidth(int width)
 {
-    if (m_width == width)
+    if (m_width == width || width <= 0)
         return;
 
     m_width = width;

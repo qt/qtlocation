@@ -49,26 +49,20 @@ QDeclarativeGeoMapRouteObject::QDeclarativeGeoMapRouteObject(QSGItem *parent)
 {
     route_ = new QGeoMapRouteObject(); // graphical object
     setMapObject(route_);
+
+    connect(&border_,
+            SIGNAL(colorChanged(QColor)),
+            this,
+            SLOT(borderColorChanged(QColor)));
+    connect(&border_,
+            SIGNAL(widthChanged(int)),
+            this,
+            SLOT(borderWidthChanged(int)));
 }
 
 QDeclarativeGeoMapRouteObject::~QDeclarativeGeoMapRouteObject()
 {
     delete route_;
-}
-
-void QDeclarativeGeoMapRouteObject::setColor(const QColor &color)
-{
-    if (color_ == color)
-        return;
-    color_ = color;
-    QPen pen(color);
-    route_->setPen(pen);
-    emit colorChanged();
-}
-
-QColor QDeclarativeGeoMapRouteObject::color() const
-{
-    return color_;
 }
 
 void QDeclarativeGeoMapRouteObject::setRoute(QDeclarativeGeoRoute* route)
@@ -100,6 +94,29 @@ void QDeclarativeGeoMapRouteObject::setDetailLevel(quint32 detailLevel)
 quint32 QDeclarativeGeoMapRouteObject::detailLevel() const
 {
     return route_->detailLevel();
+}
+
+QDeclarativeGeoMapObjectBorder* QDeclarativeGeoMapRouteObject::border()
+{
+    return &border_;
+}
+
+void QDeclarativeGeoMapRouteObject::borderColorChanged(const QColor &color)
+{
+    QPen p = route_->pen();
+    p.setColor(color);
+    route_->setPen(p);
+}
+
+void QDeclarativeGeoMapRouteObject::borderWidthChanged(int width)
+{
+    QPen p = route_->pen();
+    p.setWidth(width);
+    if (width == 0)
+        p.setStyle(Qt::NoPen);
+    else
+        p.setStyle(Qt::SolidLine);
+    route_->setPen(p);
 }
 
 #include "moc_qdeclarativegeomaprouteobject_p.cpp"

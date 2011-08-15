@@ -60,7 +60,7 @@ QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(RouteRole, "path");
+    roleNames.insert(RouteRole, "routeData");
     setRoleNames(roleNames);
 }
 
@@ -79,7 +79,7 @@ int QDeclarativeGeoRouteModel::count() const
     return routes_.count();
 }
 
-Q_INVOKABLE void QDeclarativeGeoRouteModel::clear()
+void QDeclarativeGeoRouteModel::clear()
 {
     int oldCount = routes_.count();
     beginResetModel();
@@ -92,7 +92,7 @@ Q_INVOKABLE void QDeclarativeGeoRouteModel::clear()
     endResetModel();
 }
 
-Q_INVOKABLE void QDeclarativeGeoRouteModel::reset()
+void QDeclarativeGeoRouteModel::reset()
 {
     clear();
     abortRequest();
@@ -109,7 +109,7 @@ void QDeclarativeGeoRouteModel::abortRequest()
     }
 }
 
-Q_INVOKABLE QDeclarativeGeoRoute* QDeclarativeGeoRouteModel::get(int index)
+QDeclarativeGeoRoute* QDeclarativeGeoRouteModel::get(int index)
 {
     if (index < 0 || index >= routes_.count()) {
         qmlInfo(this) << tr("Error, invalid index for get(): ") << index;

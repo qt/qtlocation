@@ -45,6 +45,7 @@
 #include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoroute_p.h"
+#include "qdeclarativegeomapobjectborder_p.h"
 #include "qgeomaprouteobject.h"
 
 QT_BEGIN_NAMESPACE
@@ -55,7 +56,7 @@ class QDeclarativeGeoMapRouteObject : public QDeclarativeGeoMapObject
 
     Q_PROPERTY(QDeclarativeGeoRoute* route READ route WRITE setRoute NOTIFY routeChanged)
     Q_PROPERTY(quint32 detailLevel READ detailLevel WRITE setDetailLevel NOTIFY detailLevelChanged)
-    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeGeoMapObjectBorder* border READ border CONSTANT)
 
 public:
     QDeclarativeGeoMapRouteObject(QSGItem *parent = 0);
@@ -67,19 +68,23 @@ public:
     quint32 detailLevel() const;
     void setDetailLevel(quint32 radius);
 
-    QColor color() const;
-    void setColor(const QColor &color);
+    QDeclarativeGeoMapObjectBorder* border();
 
 Q_SIGNALS:
     void routeChanged();
     void detailLevelChanged();
     void colorChanged();
 
+private Q_SLOTS:
+    void borderColorChanged(const QColor &color);
+    void borderWidthChanged(int width);
+
 private:
     // The declarative route (datatype)
     QDeclarativeGeoRoute* declarativeRoute_;
     // Used internally as the visual map object
     QGeoMapRouteObject* route_;
+    QDeclarativeGeoMapObjectBorder border_;
     QColor color_;
 };
 

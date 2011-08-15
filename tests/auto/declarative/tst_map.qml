@@ -83,6 +83,8 @@ Item {
             MapPolyline {id: polyline2; Coordinate{latitude: 0;longitude:1} Coordinate{latitude: 2;longitude:3} }
         }
         SignalSpy {id: polygon2PathSpy; target: polygon2; signalName: "pathChanged"}
+        SignalSpy {id: polygon2ColorSpy; target: polygon2.border; signalName: "colorChanged"}
+        SignalSpy {id: polygon2WidthSpy; target: polygon2.border; signalName: "widthChanged"}
         function test_polygons() {
             compare(polygon1.path.length, 0)
             compare(polygon2.path.length, 2)
@@ -117,8 +119,35 @@ Item {
             polygon2.clearCoordinates()
             compare(polygon2.path.length, 0)
             compare(polygon2PathSpy.count, 7)
+            // Check border properties
+            // Width
+            compare(polygon2WidthSpy.count, 0)
+            polygon2.border.width = 123
+            compare(polygon2WidthSpy.count, 1)
+            compare(polygon2.border.width, 123)
+            polygon2.border.width = 123
+            compare(polygon2WidthSpy.count, 1)
+            polygon2.border.width = -1
+            compare(polygon2WidthSpy.count, 1)
+            compare(polygon2.border.width, 123)
+            polygon2.border.width = 0
+            compare(polygon2WidthSpy.count, 1)
+            compare(polygon2.border.width, 123)
+            // Color
+            compare(polygon2ColorSpy.count, 0)
+            polygon2.border.color = "#008000"
+            compare(polygon2ColorSpy.count, 1)
+            verify (polygon2.border.color == "#008000")
+            compare(polygon2.border.color, "#008000")
+            polygon2.border.color = "#008000"
+            compare(polygon2ColorSpy.count, 1)
+            polygon2.border.color = "#008000"
+            compare(polygon2ColorSpy.count, 1)
+            compare(polygon2.border.color, "#008000")
         }
         SignalSpy {id: polyline2PathSpy; target: polyline2; signalName: "pathChanged"}
+        SignalSpy {id: polyline2ColorSpy; target: polyline2.border; signalName: "colorChanged"}
+        SignalSpy {id: polyline2WidthSpy; target: polyline2.border; signalName: "widthChanged"}
         function test_polylines() {
             compare(polyline1.path.length, 0)
             compare(polyline2.path.length, 2)
@@ -153,9 +182,32 @@ Item {
             polyline2.clearCoordinates()
             compare(polyline2.path.length, 0)
             compare(polyline2PathSpy.count, 7)
+            // Check border properties
+            // Width
+            compare(polyline2WidthSpy.count, 0)
+            polyline2.border.width = 123
+            compare(polyline2WidthSpy.count, 1)
+            compare(polyline2.border.width, 123)
+            polyline2.border.width = 123
+            compare(polyline2WidthSpy.count, 1)
+            polyline2.border.width = -1
+            compare(polyline2WidthSpy.count, 1)
+            compare(polyline2.border.width, 123)
+            polyline2.border.width = 0
+            compare(polyline2WidthSpy.count, 1)
+            compare(polyline2.border.width, 123)
+            // Color
+            compare(polyline2ColorSpy.count, 0)
+            polyline2.border.color = "#008000"
+            compare(polyline2ColorSpy.count, 1)
+            verify (polyline2.border.color == "#008000")
+            compare(polyline2.border.color, "#008000")
+            polyline2.border.color = "#008000"
+            compare(polyline2ColorSpy.count, 1)
+            polyline2.border.color = "#008000"
+            compare(polyline2ColorSpy.count, 1)
+            compare(polyline2.border.color, "#008000")
         }
     }
 }
-
-
 
