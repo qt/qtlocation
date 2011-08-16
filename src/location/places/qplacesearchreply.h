@@ -59,9 +59,11 @@ public:
     QPlaceReply::Type type() const;
 
     QList<QPlaceSearchResult> results() const;
+    QPlaceSearchRequest request() const;
 
 protected:
     void setResults(const QList<QPlaceSearchResult> &results);
+    void setRequest(const QPlaceSearchRequest &request);
 private:
     Q_DISABLE_COPY(QPlaceSearchReply)
     Q_DECLARE_PRIVATE(QPlaceSearchReply)

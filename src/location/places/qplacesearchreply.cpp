@@ -49,6 +49,7 @@ class QPlaceSearchReplyPrivate : public QPlaceReplyPrivate
 public:
     QPlaceSearchReplyPrivate(){}
     QList<QPlaceSearchResult> results;
+    QPlaceSearchRequest searchRequest;
 };
 
 QT_END_NAMESPACE
@@ -105,4 +106,22 @@ void QPlaceSearchReply::setResults(const QList<QPlaceSearchResult> &results)
 {
     Q_D(QPlaceSearchReply);
     d->results = results;
+}
+
+/*!
+    Returns the search request that was used to generate this reply.
+*/
+QPlaceSearchRequest QPlaceSearchReply::request() const
+{
+    Q_D(const QPlaceSearchReply);
+    return d->searchRequest;
+}
+
+/*!
+    Sets the search request used to generate this this reply.
+*/
+void QPlaceSearchReply::setRequest(const QPlaceSearchRequest &request)
+{
+    Q_D(QPlaceSearchReply);
+    d->searchRequest = request;
 }
