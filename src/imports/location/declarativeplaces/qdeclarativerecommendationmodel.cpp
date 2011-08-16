@@ -4,6 +4,8 @@
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
 
+#include <qplacesearchreply.h>
+
 QT_USE_NAMESPACE
 
 /*!

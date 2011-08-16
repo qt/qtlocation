@@ -51,7 +51,6 @@
 #include <QtNetwork>
 #include <QHash>
 
-#include <qplacesearchquery.h>
 #include <qgeoboundingcircle.h>
 #include <qgeoboundingbox.h>
 #include "qplacerestreply.h"
@@ -132,7 +131,7 @@ QPlaceRestReply *QPlaceRestManager::sendPlaceRequest(const QString &placeId)
     return sendGeneralRequest(placeServer + placeId);
 }
 
-QPlaceRestReply *QPlaceRestManager::sendPlaceImagesRequest(const QString &placeId, const QPlaceQuery &params)
+QPlaceRestReply *QPlaceRestManager::sendPlaceImagesRequest(const QString &placeId, const QPlaceRequest &params)
 {
     QString query = placeServer + placeId + images;
     if (params.offset() > -1) {
@@ -147,7 +146,7 @@ QPlaceRestReply *QPlaceRestManager::sendPlaceImagesRequest(const QString &placeI
 /*!
     Predefines a review request and executes sendGeneralRequest().
 */
-QPlaceRestReply *QPlaceRestManager::sendPlaceReviewRequest(const QString &placeId, const QPlaceQuery &params)
+QPlaceRestReply *QPlaceRestManager::sendPlaceReviewRequest(const QString &placeId, const QPlaceRequest &params)
 {
     QString query = placeServer + placeId + reviews;
     if (params.offset() > -1) {
@@ -163,7 +162,7 @@ QPlaceRestReply *QPlaceRestManager::sendPlaceReviewRequest(const QString &placeI
 /*!
     Predefines a recomendation request and executes sendGeneralRequest().
 */
-QPlaceRestReply *QPlaceRestManager::sendRecommendationRequest(const QPlaceSearchQuery &query, const QString &userId)
+QPlaceRestReply *QPlaceRestManager::sendRecommendationRequest(const QPlaceSearchRequest &query, const QString &userId)
 {
     Q_UNUSED(userId);
     return sendGeneralRequest(placeServer + query.searchTerm() + recomendation);
@@ -180,7 +179,7 @@ QPlaceRestReply *QPlaceRestManager::sendCategoriesTreeRequest()
 /*!
     Predefines a suggestion request and executes sendGeneralRequest().
 */
-QPlaceRestReply *QPlaceRestManager::sendSuggestionRequest(const QPlaceSearchQuery &query)
+QPlaceRestReply *QPlaceRestManager::sendSuggestionRequest(const QPlaceSearchRequest &query)
 {
     return sendGeneralRequest(prepareSearchRequest(query)
             + const_query + query.searchTerm() + "&lh=1");
@@ -189,7 +188,7 @@ QPlaceRestReply *QPlaceRestManager::sendSuggestionRequest(const QPlaceSearchQuer
 /*!
     Predefines a search request and executes sendGeneralRequest().
 */
-QPlaceRestReply *QPlaceRestManager::sendSearchRequest(const QPlaceSearchQuery &query)
+QPlaceRestReply *QPlaceRestManager::sendSearchRequest(const QPlaceSearchRequest &query)
 {
     return sendGeneralRequest(prepareSearchRequest(query)
             + const_query + query.searchTerm());
@@ -258,7 +257,7 @@ QPlaceRestReply *QPlaceRestManager::sendGeneralRequest(const QUrl &url)
 /*!
     Returns prepared search string.
 */
-QString QPlaceRestManager::prepareSearchRequest(const QPlaceSearchQuery &query)
+QString QPlaceRestManager::prepareSearchRequest(const QPlaceSearchRequest &query)
 {
     QString searchString(searchServer);
     // add view and device parameters

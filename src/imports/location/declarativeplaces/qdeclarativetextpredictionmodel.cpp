@@ -5,7 +5,7 @@
 #include <QtLocation/QGeoServiceProvider>
 
 #include <qplacemanager.h>
-#include <qplacesearchquery.h>
+#include <qplacesearchrequest.h>
 
 QT_USE_NAMESPACE
 

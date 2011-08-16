@@ -17,8 +17,8 @@ PUBLIC_HEADERS += \
 #result
     places/qplacesearchresult.h \
 #query classes
-    places/qplacequery.h \
-    places/qplacesearchquery.h \
+    places/qplacerequest.h \
+    places/qplacesearchrequest.h \
 #reply classes
     places/qplacereply.h \
     places/qplacedetailsreply.h \
@@ -64,8 +64,8 @@ SOURCES += \
 #result
     places/qplacesearchresult.cpp \
 #query classes
-    places/qplacequery.cpp \
-    places/qplacesearchquery.cpp \
+    places/qplacerequest.cpp \
+    places/qplacesearchrequest.cpp \
 #reply classes
     places/qplacereply.cpp \
     places/qplacedetailsreply.cpp \

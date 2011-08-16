@@ -66,16 +66,16 @@ public:
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
 
-    QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceQuery &query);
+    QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceRequest &query);
 
     QPlaceReply *postRating(const QString &placeId, qreal value);
 
-    QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceQuery &query);
+    QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceRequest &query);
 
-    QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query);
+    QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &query);
 
-    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query);
-    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchQuery &query);
+    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchRequest &query);
+    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &query);
 
     QPlaceManager::ConnectivityModes connectivityMode() const;
     void setConnectivityMode(QPlaceManager::ConnectivityModes connectivityMode);

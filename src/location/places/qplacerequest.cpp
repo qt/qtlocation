@@ -39,19 +39,19 @@
 **
 ****************************************************************************/
 
-#include "qplacequery.h"
+#include "qplacerequest.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceQueryPrivate : public QSharedData
+class QPlaceRequestPrivate : public QSharedData
 {
 public:
-    QPlaceQueryPrivate();
-    QPlaceQueryPrivate(const QPlaceQueryPrivate &other);
+    QPlaceRequestPrivate();
+    QPlaceRequestPrivate(const QPlaceRequestPrivate &other);
 
-    ~QPlaceQueryPrivate();
+    ~QPlaceRequestPrivate();
 
-    bool operator==(const QPlaceQueryPrivate &other) const;
+    bool operator==(const QPlaceRequestPrivate &other) const;
 
     int offset;
     int limit;
@@ -61,25 +61,25 @@ QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
 
-QPlaceQueryPrivate::QPlaceQueryPrivate()
+QPlaceRequestPrivate::QPlaceRequestPrivate()
     : QSharedData(),
       offset(0),
       limit(-1)
 {
 }
 
-QPlaceQueryPrivate::QPlaceQueryPrivate(const QPlaceQueryPrivate &other)
+QPlaceRequestPrivate::QPlaceRequestPrivate(const QPlaceRequestPrivate &other)
     : QSharedData()
 {
     this->offset = other.offset;
     this->limit = other.limit;
 }
 
-QPlaceQueryPrivate::~QPlaceQueryPrivate()
+QPlaceRequestPrivate::~QPlaceRequestPrivate()
 {
 }
 
-bool QPlaceQueryPrivate::operator==(const QPlaceQueryPrivate &other) const
+bool QPlaceRequestPrivate::operator==(const QPlaceRequestPrivate &other) const
 {
     return (
             this->offset == other.offset
@@ -101,15 +101,15 @@ bool QPlaceQueryPrivate::operator==(const QPlaceQueryPrivate &other) const
 /*!
     Default constructor. Constructs an new query object.
 */
-QPlaceQuery::QPlaceQuery()
-    : d(new QPlaceQueryPrivate)
+QPlaceRequest::QPlaceRequest()
+    : d(new QPlaceRequestPrivate)
 {
 }
 
 /*!
     Constructs a copy of \a other
 */
-QPlaceQuery::QPlaceQuery(const QPlaceQuery &other)
+QPlaceRequest::QPlaceRequest(const QPlaceRequest &other)
     :d(other.d)
 {
 }
@@ -117,16 +117,16 @@ QPlaceQuery::QPlaceQuery(const QPlaceQuery &other)
 /*!
     Destructor.
 */
-QPlaceQuery::~QPlaceQuery()
+QPlaceRequest::~QPlaceRequest()
 {
 }
 
-QPlaceQuery &QPlaceQuery::operator =(const QPlaceQuery &other) {
+QPlaceRequest &QPlaceRequest::operator =(const QPlaceRequest &other) {
     d = other.d;
     return *this;
 }
 
-bool QPlaceQuery::operator==(const QPlaceQuery &other) const
+bool QPlaceRequest::operator==(const QPlaceRequest &other) const
 {
     return (*(d.constData()) == *(other.d.constData()));
 }
@@ -138,7 +138,7 @@ bool QPlaceQuery::operator==(const QPlaceQuery &other) const
 
     Negative offests are treated as an offset of 0;
 */
-int QPlaceQuery::offset() const
+int QPlaceRequest::offset() const
 {
     return d->offset;
 }
@@ -146,7 +146,7 @@ int QPlaceQuery::offset() const
 /*!
     Sets the \a offset.
 */
-void QPlaceQuery::setOffset(int offset)
+void QPlaceRequest::setOffset(int offset)
 {
     d->offset = offset;
 }
@@ -156,7 +156,7 @@ void QPlaceQuery::setOffset(int offset)
     value of this limit is -1, indicating that the default limit of the
     backend should be used.
 */
-int QPlaceQuery::limit() const
+int QPlaceRequest::limit() const
 {
     return d->limit;
 }
@@ -170,7 +170,7 @@ int QPlaceQuery::limit() const
 
     (A limit of 0 will retrieve no places).
 */
-void QPlaceQuery::setLimit(int limit)
+void QPlaceRequest::setLimit(int limit)
 {
     d->limit = limit;
 }
@@ -178,7 +178,7 @@ void QPlaceQuery::setLimit(int limit)
 /*!
     Clears the parameters of the search query.
 */
-void QPlaceQuery::clear()
+void QPlaceRequest::clear()
 {
     d->offset = 0;
     d->limit = -1;

@@ -156,7 +156,7 @@ void QDeclarativeMediaModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
-    QPlaceQuery query;
+    QPlaceRequest query;
 
     if (m_mediaCount == -1) {
         query.setOffset(0);

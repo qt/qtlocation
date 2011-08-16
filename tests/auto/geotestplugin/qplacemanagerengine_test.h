@@ -77,7 +77,7 @@ public:
         return 0;
     }
 
-    QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceQuery &query)
+    QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceRequest &query)
     {
         Q_UNUSED(place)
         Q_UNUSED(query)
@@ -93,7 +93,7 @@ public:
         return 0;
     }
 
-    QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceQuery &query)
+    QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceRequest &query)
     {
         Q_UNUSED(place)
         Q_UNUSED(query)
@@ -101,14 +101,14 @@ public:
         return 0;
     }
 
-    QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query)
+    QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &query)
     {
         Q_UNUSED(query)
 
         return 0;
     }
 
-    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query)
+    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchRequest &query)
     {
         Q_UNUSED(place)
         Q_UNUSED(query)
@@ -116,7 +116,7 @@ public:
         return 0;
     }
 
-    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchQuery &query)
+    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &query)
     {
         Q_UNUSED(query)
 

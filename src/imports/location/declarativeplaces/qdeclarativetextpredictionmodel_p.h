@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QAbstractListModel>
 
-#include <qplacesearchquery.h>
+#include <qplacesearchrequest.h>
 #include <qplacemanager.h>
 #include <qplacetextpredictionreply.h>
 
@@ -84,7 +84,7 @@ private:
 
 private:
     QDeclarativeGeoBoundingArea *m_searchArea;
-    QPlaceSearchQuery m_queryParameters;
+    QPlaceSearchRequest m_queryParameters;
 
     QPlaceTextPredictionReply *m_response;
 

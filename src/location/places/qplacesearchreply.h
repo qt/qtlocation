@@ -44,6 +44,7 @@
 
 #include "qplacereply.h"
 #include "qplacesearchresult.h"
+#include "qplacesearchrequest.h"
 
 QT_BEGIN_NAMESPACE
 

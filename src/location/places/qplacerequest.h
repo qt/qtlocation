@@ -39,64 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACESEARCHQUERY_H
-#define QPLACESEARCHQUERY_H
+#ifndef QPLACEQUERY_H
+#define QPLACEQUERY_H
 
 #include <QSharedDataPointer>
-#include "qgeoboundingarea.h"
 #include "qmobilityglobal.h"
-#include "qplacecategory.h"
-#include "qplacequery.h"
-#include "qplacemanager.h"
-
-#include <QString>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceSearchQueryPrivate;
+class QPlaceRequestPrivate;
 
-class Q_LOCATION_EXPORT QPlaceSearchQuery : public QPlaceQuery
+class Q_LOCATION_EXPORT QPlaceRequest
 {
 public:
-    enum RelevanceHint {
-        DistanceHint,
-        RatingHint,
-        AlphabetHint
-    };
+    QPlaceRequest();
+    QPlaceRequest(const QPlaceRequest &other);
 
-    QPlaceSearchQuery();
-    QPlaceSearchQuery(const QPlaceSearchQuery &other);
+    virtual ~QPlaceRequest();
 
-    virtual ~QPlaceSearchQuery();
+    QPlaceRequest &operator=(const QPlaceRequest &other);
 
-    QPlaceSearchQuery &operator=(const QPlaceSearchQuery &other);
-
-    bool operator==(const QPlaceSearchQuery &other) const;
-    bool operator!=(const QPlaceSearchQuery &other) const {
+    bool operator==(const QPlaceRequest &other) const;
+    bool operator!=(const QPlaceRequest &other) const {
         return !(other == *this);
     }
 
-    QString searchTerm() const;
-    void setSearchTerm(const QString &term);
+    int offset() const;
+    void setOffset(int offset);
+    int limit() const;
+    void setLimit(int limit);
 
-    QList<QPlaceCategory> categories() const;
-    void setCategory(const QPlaceCategory &category);
-
-    QGeoBoundingArea *searchArea() const;
-    void setSearchArea(QGeoBoundingArea *area);
-
-    int didYouMeanSuggestionNumber() const;
-    void setDidYouMeanSuggestionNumber(const int &number);
-
-    QPlaceManager::VisibilityScopes visibilityScope() const;
-    void setVisibilityScope(QPlaceManager::VisibilityScopes scope);
-
-    void clear();
+    virtual void clear();
 
 private:
-    QSharedDataPointer<QPlaceSearchQueryPrivate> d;
+    QSharedDataPointer<QPlaceRequestPrivate> d;
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACESEARCHQUERY_H
+#endif

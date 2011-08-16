@@ -56,7 +56,7 @@
 #include <QtNetwork/QNetworkReply>
 
 #include <qmobilityglobal.h>
-#include <qplacesearchquery.h>
+#include <qplacesearchrequest.h>
 #include "qplacerestreply.h"
 
 QT_BEGIN_NAMESPACE
@@ -69,12 +69,12 @@ public:
     static QPlaceRestManager *instance();
 
     QPlaceRestReply *sendPlaceRequest(const QString &placeId);
-    QPlaceRestReply *sendPlaceImagesRequest(const QString &placeId, const QPlaceQuery &params);
-    QPlaceRestReply *sendPlaceReviewRequest(const QString &placeId, const QPlaceQuery &params);
-    QPlaceRestReply *sendRecommendationRequest(const QPlaceSearchQuery &query, const QString &userId);
+    QPlaceRestReply *sendPlaceImagesRequest(const QString &placeId, const QPlaceRequest &params);
+    QPlaceRestReply *sendPlaceReviewRequest(const QString &placeId, const QPlaceRequest &params);
+    QPlaceRestReply *sendRecommendationRequest(const QPlaceSearchRequest &query, const QString &userId);
     QPlaceRestReply *sendCategoriesTreeRequest();
-    QPlaceRestReply *sendSearchRequest(const QPlaceSearchQuery &query);
-    QPlaceRestReply *sendSuggestionRequest(const QPlaceSearchQuery &query);
+    QPlaceRestReply *sendSearchRequest(const QPlaceSearchRequest &query);
+    QPlaceRestReply *sendSuggestionRequest(const QPlaceSearchRequest &query);
 
     QPlaceRestReply *postRatingRequest(const QString &placeId, const QString &userId, const int &value);
     QLocale locale() const;
@@ -88,7 +88,7 @@ private:
         return sendGeneralRequest(QUrl(url));
     }
 
-    QString prepareSearchRequest(const QPlaceSearchQuery &query);
+    QString prepareSearchRequest(const QPlaceSearchRequest &query);
 
 private:
     QNetworkAccessManager *mManager;

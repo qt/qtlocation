@@ -1,18 +1,18 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include <qplacesearchquery.h>
+#include <qplacesearchrequest.h>
 #include <qgeoboundingcircle.h>
 #include <qgeoboundingbox.h>
 
 QT_USE_NAMESPACE
 
-class tst_QPlaceSearchQuery : public QObject
+class tst_QPlaceSearchRequest : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_QPlaceSearchQuery();
+    tst_QPlaceSearchRequest();
 
 private Q_SLOTS:
     void constructorTest();
@@ -26,32 +26,32 @@ private Q_SLOTS:
     void operatorsTest();
 };
 
-tst_QPlaceSearchQuery::tst_QPlaceSearchQuery()
+tst_QPlaceSearchRequest::tst_QPlaceSearchRequest()
 {
 }
 
-void tst_QPlaceSearchQuery::constructorTest()
+void tst_QPlaceSearchRequest::constructorTest()
 {
-    QPlaceSearchQuery testObj;
+    QPlaceSearchRequest testObj;
     Q_UNUSED(testObj);
 
-    QPlaceSearchQuery *testObjPtr = new QPlaceSearchQuery(testObj);
+    QPlaceSearchRequest *testObjPtr = new QPlaceSearchRequest(testObj);
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
     delete testObjPtr;
 }
 
-void tst_QPlaceSearchQuery::searchTermTest()
+void tst_QPlaceSearchRequest::searchTermTest()
 {
-    QPlaceSearchQuery testObj;
+    QPlaceSearchRequest testObj;
     QVERIFY2(testObj.searchTerm() == QString(), "Wrong default value");
     testObj.setSearchTerm("testText");
     QVERIFY2(testObj.searchTerm() == "testText", "Wrong value returned");
 }
 
-void tst_QPlaceSearchQuery::categoriesTest()
+void tst_QPlaceSearchRequest::categoriesTest()
 {
-    QPlaceSearchQuery testObj;
+    QPlaceSearchRequest testObj;
     QVERIFY2(testObj.categories().count() == 0, "Wrong default value");
     QPlaceCategory cat;
     cat.setCategoryId("45346");
@@ -63,9 +63,9 @@ void tst_QPlaceSearchQuery::categoriesTest()
     QVERIFY(testObj.categories().isEmpty());
 }
 
-void tst_QPlaceSearchQuery::boundingCircleTest()
+void tst_QPlaceSearchRequest::boundingCircleTest()
 {
-    QPlaceSearchQuery query;
+    QPlaceSearchRequest query;
     QVERIFY2(query.searchArea() == NULL, "Wrong default value");
     QGeoBoundingCircle *circle = new QGeoBoundingCircle;
     circle->setCenter(QGeoCoordinate(30,20));
@@ -83,9 +83,9 @@ void tst_QPlaceSearchQuery::boundingCircleTest()
     QVERIFY2(query.searchArea() == NULL, "Search area not cleared");
 }
 
-void tst_QPlaceSearchQuery::boundingBoxTest()
+void tst_QPlaceSearchRequest::boundingBoxTest()
 {
-    QPlaceSearchQuery query;
+    QPlaceSearchRequest query;
     QVERIFY2(query.searchArea() == NULL, "Wrong default value");
     QGeoBoundingBox *box = new QGeoBoundingBox;
 
@@ -105,10 +105,10 @@ void tst_QPlaceSearchQuery::boundingBoxTest()
     QVERIFY2(query.searchArea() == NULL, "Wrong cleared value returned");
 }
 
-void tst_QPlaceSearchQuery::searchAreaTest()
+void tst_QPlaceSearchRequest::searchAreaTest()
 {
     //test assignment of new search area over an old search area
-    QPlaceSearchQuery *query = new QPlaceSearchQuery;
+    QPlaceSearchRequest *query = new QPlaceSearchRequest;
     QGeoBoundingCircle *circle = new QGeoBoundingCircle;
     circle->setCenter(QGeoCoordinate(30,20));
     circle->setRadius(500.0);
@@ -122,9 +122,9 @@ void tst_QPlaceSearchQuery::searchAreaTest()
     QVERIFY2(query->searchArea() == box, "New search area not assigned");
 }
 
-void tst_QPlaceSearchQuery::didYouMeanSuggestionNumberTest()
+void tst_QPlaceSearchRequest::didYouMeanSuggestionNumberTest()
 {
-    QPlaceSearchQuery testObj;
+    QPlaceSearchRequest testObj;
     QVERIFY2(testObj.didYouMeanSuggestionNumber() == 0, "Wrong default value");
     testObj.setDidYouMeanSuggestionNumber(10);
     QVERIFY2(testObj.didYouMeanSuggestionNumber() == 10, "Wrong value returned");
@@ -132,9 +132,9 @@ void tst_QPlaceSearchQuery::didYouMeanSuggestionNumberTest()
     QVERIFY2(testObj.didYouMeanSuggestionNumber() == 0, "Wrong cleared value returned");
 }
 
-void tst_QPlaceSearchQuery::visibilityScopeTest()
+void tst_QPlaceSearchRequest::visibilityScopeTest()
 {
-    QPlaceSearchQuery query;
+    QPlaceSearchRequest query;
     QVERIFY2(query.visibilityScope() == QPlaceManager::NoScope, "Wrong default value");
     query.setVisibilityScope(QPlaceManager::PublicScope);
     QCOMPARE(query.visibilityScope(), QPlaceManager::PublicScope);
@@ -143,11 +143,11 @@ void tst_QPlaceSearchQuery::visibilityScopeTest()
     QVERIFY(query.visibilityScope() & QPlaceManager::PrivateScope);
 }
 
-void tst_QPlaceSearchQuery::operatorsTest()
+void tst_QPlaceSearchRequest::operatorsTest()
 {
-    QPlaceSearchQuery testObj;
+    QPlaceSearchRequest testObj;
     testObj.setSearchTerm("testValue");
-    QPlaceSearchQuery testObj2;
+    QPlaceSearchRequest testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
     testObj2.setDidYouMeanSuggestionNumber(-5);
@@ -200,6 +200,6 @@ void tst_QPlaceSearchQuery::operatorsTest()
     QVERIFY2(testObj != testObj2, "Different scopes identified as matching");
 }
 
-QTEST_APPLESS_MAIN(tst_QPlaceSearchQuery);
+QTEST_APPLESS_MAIN(tst_QPlaceSearchRequest);
 
-#include "tst_qplacesearchquery.moc"
+#include "tst_qplacesearchrequest.moc"

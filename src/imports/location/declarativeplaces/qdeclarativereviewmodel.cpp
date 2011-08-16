@@ -155,7 +155,7 @@ void QDeclarativeReviewModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
-    QPlaceQuery query;
+    QPlaceRequest query;
 
     if (m_reviewCount == -1) {
         query.setOffset(0);

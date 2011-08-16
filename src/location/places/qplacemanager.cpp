@@ -137,11 +137,11 @@ QPlaceDetailsReply *QPlaceManager::getPlaceDetails(const QString &placeId) const
 }
 
 /*!
-    Retrieves media from a given \a place according to the parameters specified in \a query.
+    Retrieves media from a given \a place according to the parameters specified in \a request.
 */
-QPlaceMediaReply *QPlaceManager::getMedia(const QGeoPlace &place, const QPlaceQuery &query) const
+QPlaceMediaReply *QPlaceManager::getMedia(const QGeoPlace &place, const QPlaceRequest &request) const
 {
-    return d->engine->getMedia(place, query);
+    return d->engine->getMedia(place, request);
 }
 
 /*!
@@ -153,35 +153,35 @@ QPlaceReply* QPlaceManager::postRating(const QString &placeId, qreal rating)
 }
 
 /*!
-    Returns reviews for a given \a place according to the parameters specified in \a query.
+    Returns reviews for a given \a place according to the parameters specified in \a request.
 */
-QPlaceReviewReply *QPlaceManager::getReviews(const QGeoPlace &place, const QPlaceQuery &query) const
+QPlaceReviewReply *QPlaceManager::getReviews(const QGeoPlace &place, const QPlaceRequest &request) const
 {
-    return d->engine->getReviews(place, query);
+    return d->engine->getReviews(place, request);
 }
 
 /*!
-    Searches for places according to a given \a query.
+    Searches for places according to a given \a request.
 */
-QPlaceSearchReply *QPlaceManager::searchForPlaces(const QPlaceSearchQuery &query) const
+QPlaceSearchReply *QPlaceManager::searchForPlaces(const QPlaceSearchRequest &request) const
 {
-    return d->engine->searchForPlaces(query);
+    return d->engine->searchForPlaces(request);
 }
 
 /*!
-    Provides recommendation based on a given \a place.
+    Provides recommendation based on a given \a request.
 */
-QPlaceSearchReply *QPlaceManager::recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query) const
+QPlaceSearchReply *QPlaceManager::recommendations(const QGeoPlace &place, const QPlaceSearchRequest &request) const
 {
-    return d->engine->recommendations(place, query);
+    return d->engine->recommendations(place, request);
 }
 
 /*!
-    Requests a set of text predictions for a given \a query string.
+    Requests a set of text predictions for a given \a request
 */
-QPlaceTextPredictionReply *QPlaceManager::textPredictions(const QPlaceSearchQuery &query) const
+QPlaceTextPredictionReply *QPlaceManager::textPredictions(const QPlaceSearchRequest &request) const
 {
-    return d->engine->textPredictions(query);
+    return d->engine->textPredictions(request);
 }
 
 /*!

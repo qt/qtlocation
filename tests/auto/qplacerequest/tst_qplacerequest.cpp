@@ -1,16 +1,16 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include <qplacequery.h>
+#include <qplacerequest.h>
 
 QT_USE_NAMESPACE
 
-class tst_QPlaceQuery : public QObject
+class tst_QPlaceRequest : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_QPlaceQuery();
+    tst_QPlaceRequest();
 
 private Q_SLOTS:
     void constructorTest();
@@ -19,16 +19,16 @@ private Q_SLOTS:
     void operatorsTest();
 };
 
-tst_QPlaceQuery::tst_QPlaceQuery()
+tst_QPlaceRequest::tst_QPlaceRequest()
 {
 }
 
-void tst_QPlaceQuery::constructorTest()
+void tst_QPlaceRequest::constructorTest()
 {
-    QPlaceQuery testObj;
+    QPlaceRequest testObj;
     Q_UNUSED(testObj);
 
-    QPlaceQuery *testObjPtr = new QPlaceQuery(testObj);
+    QPlaceRequest *testObjPtr = new QPlaceRequest(testObj);
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(testObjPtr->offset() == 0, "Copy constructor - wrong count");
     QVERIFY2(testObjPtr->limit() == -1, "Copy constructor - wrong value");
@@ -36,9 +36,9 @@ void tst_QPlaceQuery::constructorTest()
     delete testObjPtr;
 }
 
-void tst_QPlaceQuery::offsetTest()
+void tst_QPlaceRequest::offsetTest()
 {
-    QPlaceQuery testObj;
+    QPlaceRequest testObj;
     QVERIFY2(testObj.offset() == 0, "Wrong default value");
     testObj.setOffset(-10);
     QVERIFY2(testObj.offset() == -10, "Wrong negative value returned");
@@ -48,9 +48,9 @@ void tst_QPlaceQuery::offsetTest()
     QVERIFY2(testObj.offset() == 0, "Wrong cleared value returned");
 }
 
-void tst_QPlaceQuery::limitTest()
+void tst_QPlaceRequest::limitTest()
 {
-    QPlaceQuery testObj;
+    QPlaceRequest testObj;
     QVERIFY2(testObj.limit() == -1, "Wrong default value");
     testObj.setLimit(-10);
     QVERIFY2(testObj.limit() == -10, "Wrong negative value returned");
@@ -60,17 +60,17 @@ void tst_QPlaceQuery::limitTest()
     QVERIFY2(testObj.limit() == -1, "Wrong cleared value returned");
 }
 
-void tst_QPlaceQuery::operatorsTest()
+void tst_QPlaceRequest::operatorsTest()
 {
-    QPlaceQuery testObj;
+    QPlaceRequest testObj;
     testObj.setOffset(2);
-    QPlaceQuery testObj2;
+    QPlaceRequest testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
     testObj2.setLimit(-10);
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 
-QTEST_APPLESS_MAIN(tst_QPlaceQuery);
+QTEST_APPLESS_MAIN(tst_QPlaceRequest);
 
-#include "tst_qplacequery.moc"
+#include "tst_qplacerequest.moc"

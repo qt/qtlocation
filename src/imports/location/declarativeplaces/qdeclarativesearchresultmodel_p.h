@@ -6,7 +6,7 @@
 #include <QDeclarativeListProperty>
 
 #include <qplacemanager.h>
-#include <qplacesearchquery.h>
+#include <qplacesearchrequest.h>
 
 #include "qdeclarativegeoboundingarea_p.h"
 #include "qdeclarativesearchresult_p.h"
@@ -99,7 +99,7 @@ private:
     QDeclarativeCategory m_category;
     QList<QDeclarativeSearchResult*> m_results;
 
-    QPlaceSearchQuery m_queryParameters;
+    QPlaceSearchRequest m_queryParameters;
 
     QPlaceSearchReply *m_response;
 

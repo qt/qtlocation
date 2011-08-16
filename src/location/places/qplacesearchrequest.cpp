@@ -39,20 +39,20 @@
 **
 ****************************************************************************/
 
-#include "qplacesearchquery.h"
+#include "qplacesearchrequest.h"
 #include "qgeocoordinate.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceSearchQueryPrivate : public QSharedData
+class QPlaceSearchRequestPrivate : public QSharedData
 {
 public:
-    QPlaceSearchQueryPrivate();
-    QPlaceSearchQueryPrivate(const QPlaceSearchQueryPrivate &other);
+    QPlaceSearchRequestPrivate();
+    QPlaceSearchRequestPrivate(const QPlaceSearchRequestPrivate &other);
 
-    ~QPlaceSearchQueryPrivate();
+    ~QPlaceSearchRequestPrivate();
 
-    bool operator==(const QPlaceSearchQueryPrivate &other) const;
+    bool operator==(const QPlaceSearchRequestPrivate &other) const;
 
     QString searchTerm;
     QList<QPlaceCategory> categories;
@@ -65,7 +65,7 @@ QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
 
-QPlaceSearchQueryPrivate::QPlaceSearchQueryPrivate()
+QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
     : QSharedData(),
       dymNumber(0),
       searchArea(0),
@@ -73,7 +73,7 @@ QPlaceSearchQueryPrivate::QPlaceSearchQueryPrivate()
 {
 }
 
-QPlaceSearchQueryPrivate::QPlaceSearchQueryPrivate(const QPlaceSearchQueryPrivate &other)
+QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequestPrivate &other)
     : QSharedData(),
        dymNumber(0)
 {
@@ -85,13 +85,13 @@ QPlaceSearchQueryPrivate::QPlaceSearchQueryPrivate(const QPlaceSearchQueryPrivat
     this->scope = other.scope;
 }
 
-QPlaceSearchQueryPrivate::~QPlaceSearchQueryPrivate()
+QPlaceSearchRequestPrivate::~QPlaceSearchRequestPrivate()
 {
     delete searchArea;
     searchArea = 0;
 }
 
-bool QPlaceSearchQueryPrivate::operator==(const QPlaceSearchQueryPrivate &other) const
+bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &other) const
 {
     bool searchAreaMatch = false;
     if ((this->searchArea == 0) && (other.searchArea == 0)) {
@@ -115,20 +115,21 @@ bool QPlaceSearchQueryPrivate::operator==(const QPlaceSearchQueryPrivate &other)
 }
 
 /*!
-    \class QPlaceSearchQuery
+    \class QPlaceSearchRequest
 
     \inmodule Location
 
-    \brief The QPlaceSearchQuery class represents a query parameters object.
+    \brief The QPlaceSearchRequest class represents the query parameters
+    of a search request.
 
     \ingroup places-main
 
-    The QSearchQuery class represents a query parameters object. Each
-    QSearchQuery cointans search query parameters like search term.
+    The QPlaceSearchRequest class represents a query parameters object. Each
+    QPlaceSearchRequest cointans search query parameters like search term.
 */
 
 /*!
-    \enum QPlaceSearchQuery::RelevanceHint
+    \enum QPlaceSearchRequest::RelevanceHint
 
     Defines hints to help rank place results.
     \value DistanceHint
@@ -141,19 +142,19 @@ bool QPlaceSearchQueryPrivate::operator==(const QPlaceSearchQueryPrivate &other)
 */
 
 /*!
-    Default constructor. Constructs an new query object.
+    Default constructor. Constructs an new request object.
 */
-QPlaceSearchQuery::QPlaceSearchQuery()
-    : QPlaceQuery(),
-      d(new QPlaceSearchQueryPrivate)
+QPlaceSearchRequest::QPlaceSearchRequest()
+    : QPlaceRequest(),
+      d(new QPlaceSearchRequestPrivate)
 {
 }
 
 /*!
     Constructs a copy of \a other
 */
-QPlaceSearchQuery::QPlaceSearchQuery(const QPlaceSearchQuery &other)
-    : QPlaceQuery(other),
+QPlaceSearchRequest::QPlaceSearchRequest(const QPlaceSearchRequest &other)
+    : QPlaceRequest(other),
       d(other.d)
 {
 }
@@ -161,19 +162,19 @@ QPlaceSearchQuery::QPlaceSearchQuery(const QPlaceSearchQuery &other)
 /*!
     Destructor.
 */
-QPlaceSearchQuery::~QPlaceSearchQuery()
+QPlaceSearchRequest::~QPlaceSearchRequest()
 {
 }
 
-QPlaceSearchQuery &QPlaceSearchQuery::operator =(const QPlaceSearchQuery &other) {
-    this->QPlaceQuery::operator =(other);
+QPlaceSearchRequest &QPlaceSearchRequest::operator =(const QPlaceSearchRequest &other) {
+    this->QPlaceRequest::operator =(other);
     d = other.d;
     return *this;
 }
 
-bool QPlaceSearchQuery::operator==(const QPlaceSearchQuery &other) const
+bool QPlaceSearchRequest::operator==(const QPlaceSearchRequest &other) const
 {
-    return (this->QPlaceQuery::operator ==(other)
+    return (this->QPlaceRequest::operator ==(other)
             && (*(d.constData()) == *(other.d.constData())));
 }
 
@@ -181,7 +182,7 @@ bool QPlaceSearchQuery::operator==(const QPlaceSearchQuery &other) const
 /*!
     Returns the search term.
 */
-QString QPlaceSearchQuery::searchTerm() const
+QString QPlaceSearchRequest::searchTerm() const
 {
     return d->searchTerm;
 }
@@ -189,25 +190,25 @@ QString QPlaceSearchQuery::searchTerm() const
 /*!
     Sets the search \a term.
 */
-void QPlaceSearchQuery::setSearchTerm(const QString &term)
+void QPlaceSearchRequest::setSearchTerm(const QString &term)
 {
     d->searchTerm = term;
 }
 
 /*!
-    Return the categories to be used in the search query.
+    Return the categories to be used in the search request.
     Places need only to belong to one of the categories
-    to be considered a match by the query.
+    to be considered a match by the request.
 */
-QList<QPlaceCategory> QPlaceSearchQuery::categories() const
+QList<QPlaceCategory> QPlaceSearchRequest::categories() const
 {
     return d->categories;
 }
 
 /*!
-    Sets the search query to search by a single \a category
+    Sets the search request to search by a single \a category
 */
-void QPlaceSearchQuery::setCategory(const QPlaceCategory &category)
+void QPlaceSearchRequest::setCategory(const QPlaceCategory &category)
 {
     d->categories.clear();
 
@@ -218,17 +219,17 @@ void QPlaceSearchQuery::setCategory(const QPlaceCategory &category)
 /*!
     Returns search area.  The default search area is a null pointer.
 */
-QGeoBoundingArea *QPlaceSearchQuery::searchArea() const
+QGeoBoundingArea *QPlaceSearchRequest::searchArea() const
 {
     return d->searchArea;
 }
 
 /*!
-    Sets the search query to search within the given \a area.  Ownership of the is
-    transferred to the place query who is responsible for pointer deletion.  If a new \a area
+    Sets the search request to search within the given \a area.  Ownership of the \a area is
+    transferred to the request  who is responsible for pointer deletion.  If a new \a area
     is being assigned, the old area is deleted.
 */
-void QPlaceSearchQuery::setSearchArea(QGeoBoundingArea *area)
+void QPlaceSearchRequest::setSearchArea(QGeoBoundingArea *area)
 {
     if (d->searchArea != area)
         delete d->searchArea;
@@ -237,17 +238,17 @@ void QPlaceSearchQuery::setSearchArea(QGeoBoundingArea *area)
 }
 
 /*!
-    Returns maximum number of "did you mean" suggestions returned by search query.
+    Returns maximum number of "did you mean" suggestions returned by search request.
 */
-int QPlaceSearchQuery::didYouMeanSuggestionNumber() const
+int QPlaceSearchRequest::didYouMeanSuggestionNumber() const
 {
     return d->dymNumber;
 }
 
 /*!
-    Sets maximum \a number of "did you mean" suggestions returned by search query.
+    Sets maximum \a number of "did you mean" suggestions returned by search request.
 */
-void QPlaceSearchQuery::setDidYouMeanSuggestionNumber(const int &number)
+void QPlaceSearchRequest::setDidYouMeanSuggestionNumber(const int &number)
 {
     d->dymNumber = number;
 }
@@ -258,7 +259,7 @@ void QPlaceSearchQuery::setDidYouMeanSuggestionNumber(const int &number)
     It is up to the manager implementation to decide what scope it searches
     by default.
 */
-QPlaceManager::VisibilityScopes QPlaceSearchQuery::visibilityScope() const
+QPlaceManager::VisibilityScopes QPlaceSearchRequest::visibilityScope() const
 {
     return d->scope;
 }
@@ -266,19 +267,21 @@ QPlaceManager::VisibilityScopes QPlaceSearchQuery::visibilityScope() const
 /*!
     Sets the \a scope used when searching for places.
 */
-void QPlaceSearchQuery::setVisibilityScope(QPlaceManager::VisibilityScopes scope)
+void QPlaceSearchRequest::setVisibilityScope(QPlaceManager::VisibilityScopes scope)
 {
     d->scope = scope;
 }
 
 /*!
-    Clears the parameters of the search query.
+    Clears the parameters of the search request.
 */
-void QPlaceSearchQuery::clear()
+void QPlaceSearchRequest::clear()
 {
-    QPlaceQuery::clear();
+    QPlaceRequest::clear();
     d->searchTerm.clear();
     d->categories.clear();
+    if (d->searchArea)
+        delete d->searchArea;
     d->searchArea = 0;
     d->dymNumber = 0;
     d->scope = QPlaceManager::NoScope;

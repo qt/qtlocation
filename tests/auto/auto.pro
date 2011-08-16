@@ -22,10 +22,10 @@ SUBDIRS += geotestplugin \
            qplacemanager \
            qplacemediaobject \
            qplaceperiod \
-           qplacequery \
+           qplacerequest \
            qplacerating \
            qplacereview \
-           qplacesearchquery \
+           qplacesearchrequest \
            qplacesupplier \
            qplaceweekdayhours \
            declarative

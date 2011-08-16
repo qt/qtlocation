@@ -45,10 +45,9 @@
 #include "qmobilityglobal.h"
 #include "qplacemediaobject.h"
 #include "qplacemediareply.h"
-#include "qplacequery.h"
+#include "qplacerequest.h"
 #include "qplacesavereply.h"
 #include "qplacereply.h"
-#include "qplacesearchreply.h"
 #include "qplacedetailsreply.h"
 #include "qplacereviewreply.h"
 #include "qplacetextpredictionreply.h"
@@ -62,7 +61,8 @@
 QT_BEGIN_NAMESPACE
 
 class QPlaceManagerEngine;
-class QPlaceSearchQuery;
+class QPlaceSearchRequest;
+class QPlaceSearchReply;
 
 class QPlaceManagerPrivate;
 class Q_LOCATION_EXPORT QPlaceManager : public QObject
@@ -112,15 +112,15 @@ public:
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId) const;
     QPlaceReply *postRating(const QString &placeId, qreal value);
 
-    QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceQuery &query) const;
+    QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceRequest &query) const;
 
-    QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceQuery &query) const;
+    QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceRequest &query) const;
 
-    QPlaceSearchReply *searchForPlaces(const QPlaceSearchQuery &query) const;
+    QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &query) const;
 
-    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query) const;
+    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchRequest &query) const;
 
-    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchQuery &query) const;
+    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &query) const;
 
     ConnectivityModes connectivityMode() const;
     void setConnectivityMode(ConnectivityModes connectivityMode);

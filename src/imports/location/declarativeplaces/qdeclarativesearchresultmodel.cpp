@@ -1,5 +1,6 @@
 #include "qdeclarativesearchresultmodel_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
+#include <qplacesearchreply.h>
 
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>

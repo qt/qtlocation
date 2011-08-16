@@ -94,7 +94,7 @@ QPlaceDetailsReply *QPlaceManagerEngineNokia::getPlaceDetails(const QString &pla
     return reply;
 }
 
-QPlaceMediaReply *QPlaceManagerEngineNokia::getMedia(const QGeoPlace &place, const QPlaceQuery &query)
+QPlaceMediaReply *QPlaceManagerEngineNokia::getMedia(const QGeoPlace &place, const QPlaceRequest &query)
 {
     QPlaceMediaReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceImagesRequest(place.placeId(),
@@ -127,7 +127,7 @@ QPlaceReply *QPlaceManagerEngineNokia::postRating(const QString &placeId, qreal 
     return reply;
 }
 
-QPlaceReviewReply *QPlaceManagerEngineNokia::getReviews(const QGeoPlace &place, const QPlaceQuery &query)
+QPlaceReviewReply *QPlaceManagerEngineNokia::getReviews(const QGeoPlace &place, const QPlaceRequest &query)
 {
     QPlaceReviewReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceReviewRequest(place.placeId(),
@@ -143,11 +143,11 @@ QPlaceReviewReply *QPlaceManagerEngineNokia::getReviews(const QGeoPlace &place, 
     return reply;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineNokia::searchForPlaces(const QPlaceSearchQuery &query)
+QPlaceSearchReply *QPlaceManagerEngineNokia::searchForPlaces(const QPlaceSearchRequest &query)
 {
     //TODO: handling of scope
     QPlaceSearchReplyImpl *reply = NULL;
-    QPlaceSearchQuery newQuery = query;
+    QPlaceSearchRequest newQuery = query;
     // search by category
     if (newQuery.categories().count()) {
         newQuery.setSearchTerm(query.categories().at(0).name());
@@ -177,10 +177,10 @@ QPlaceSearchReply *QPlaceManagerEngineNokia::searchForPlaces(const QPlaceSearchQ
     return reply;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QGeoPlace &place, const QPlaceSearchQuery &query)
+QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QGeoPlace &place, const QPlaceSearchRequest &query)
 {
     QPlaceRecommendationReplyImpl *reply = NULL;
-    QPlaceSearchQuery newQuery = query;
+    QPlaceSearchRequest newQuery = query;
     newQuery.setSearchTerm(place.placeId());
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendRecommendationRequest(newQuery, QString());
     if (restReply) {
@@ -193,7 +193,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QGeoPlace &pl
     return reply;
 }
 
-QPlaceTextPredictionReply *QPlaceManagerEngineNokia::textPredictions(const QPlaceSearchQuery &query)
+QPlaceTextPredictionReply *QPlaceManagerEngineNokia::textPredictions(const QPlaceSearchRequest &query)
 {
     QPlaceTextPredictionReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSuggestionRequest(query);
