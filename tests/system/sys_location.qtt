@@ -46,39 +46,42 @@ testcase = {
     current_position: function()
     {
         // Test meta data
-        testApplication = "Location - Current Position";
-        testBinary = "weatherinfo_with_location";
+        testTitle = "Location - Current Position";
+        testBinary = "weatherinfo";
+        testSource = "$QTDIR/qtsvg/examples/embedded/weatherinfo"
         testGoal = "Verify that current position is detected and displayed.";
         testPreconditions = "GPS connection is required for this test case";
-        testGroups = "BAT,1.1,MOBILITY-65";
+        testGroups = "BAT,1.1";
         testRequirements = "MOBILITY-65: Basic Location Functionality";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-          *Goal:* " + testGoal + "<br>
-          *Pre-Requisites:* " + testPreconditions + "<br>
-          *Tested Binary:* " + testBinary + "<br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
-          | *Step* | *Verification* |
-          | Launch " + testBinary + " | Verify that weather information for your local area is displayed |"
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | Verify that weather information for your local area is displayed |"
         ));
     },
 
     location_is_updated: function()
     {
         // Test meta data
-        testApplication = "Location - Location Updates";
+        testTitle = "Location - Location Updates";
         testBinary = "lightmaps_with_location"; //sources are in demos\lightmaps
         testGoal = "Verify that location data is received and map is updated after changing location.";
         testPreconditions = "GPS and internet connection is required for this test case";
-        testGroups = "BAT,1.1,MOBILITY-65";
+        testGroups = "BAT,1.1";
         testRequirements = "MOBILITY-65: Basic Location Functionality";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | Verify that map is displayed and centered with the current position. |
@@ -89,18 +92,19 @@ testcase = {
     third_party_position_source: function()
     {
         // Test meta data
-        testApplication = "Location - Position Detection via Custom Plugin";
+        testTitle = "Location - Position Detection via Custom Plugin";
         testBinary = "testQtLocation"; // this is part of BlueWeel project, sources are in git@scm.dev.nokia.troll.no:qtmobility/qtmobility-tests.git
         testGoal = "Verify that positions can be detected using third party plugins";
         testPreconditions = "GPS and internet connection is required for this test case";
-        testGroups = "BAT,1.2,QTMOBILITY-873";
+        testGroups = "BAT,1.2";
         testRequirements = "QTMOBILITY-873: Allow 3rd party position sources";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -112,316 +116,51 @@ testcase = {
     shift_to_the_given_offset: function()
     {
         // Test meta data
-        testApplication = "Location - Shift To Given Offset";
+        testTitle = "Location - Shift To Given Offset";
         testBinary = "testQtLocation";
         testGoal = "Verify that coordinates can be calculated as an offset to another position.";
         testPreconditions = "None";
-        testGroups = "BAT,1.2,QTMOBILITY-658";
+        testGroups = "BAT,1.2";
         testRequirements = "QTMOBILITY-658: Add a method to QGeoCoordinate which takes an offset and returns another QGeoCoordinate";
 
         // Note that significand precision should be taken into account during comparing real numbers, that is why we consider 5.48417e-16 value equal to zero
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
-
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Select the MapNavigation | |
-         | Fill in <b>0</b> in to Start Latitude field | |
-         | Fill in *100* in to Start Longitude field | |
-         | Select Distance/Bearing from pre-defined dropdown list | |
-         | Fill *1000000, 90* in to the given field | |
-         | Press the Ok button | Verify that Destination fields are updated with *5.48417e-16* latitude and *108.9932* longitude |
-         | Fill in *60* in to Start Latitude field | |
-         | Fill in *100* in to Start Longitude field | |
-         | Select Distance/Bearing from pre-defined dropdown list | |
-         | Fill *1000000, 180* in to the given field | |
-         | Press the Ok button | Verify that Destination fields are updated with *51.0068* latitude and *100* longitude |
-         | Fill in *60* in to Start Latitude field | |
-         | Fill in *100* in to Start Longitude field | |
-         | Select Distance/Bearing from pre-defined dropdown list | |
-         | Fill *1000000, 20* in to the given field | |
-         | Press the Ok button | Verify that Destination fields are updated with *68.2523* latitude and *108.296* longitude |"
-        ));
-    },
-
-    store_and_load_a_landmark_data: {
-        // Valid landmarks are -90~90 latitude, and -180~180 longitude
-        landmark : ["landmark", "20", "120"]
-    },
-
-    store_and_load_a_landmark: function(name, latitude, longitude)
-    {
-        // Test meta data
-        testApplication = "Landmark - Store and Load Landmarks";
-        testBinary = "landmarkbrowser";
-        testGoal = "Verify that a landmark can be created (and stored)";
-        testPreconditions = "None";
-        testGroups = "BAT,1.1,MOBILITY-66";
-        testRequirements = "MOBILITY-66: Landmark API";
-
-        // Test steps
-        startApplication(testBinary);
-        select("Add Landmark");
-        enter("Latitude", latitude);
-        enter("Longitude", longitude);
-        enter("Name", name);
-        select("Ok");
-
-        prompt("Verify that the landmark record is created");
-    },
-
-    negative_store_and_load_a_landmark_data: {
-        // Landmarks outside the ranges -90~90 latitude, and -180~180 longitude
-        bad_landmark_lat : ["bad_landmark", "100", "120"],
-        bad_landmark_long : ["bad_landmark", "80", "300"]
-    },
-
-    negative_store_and_load_a_landmark: function(name, latitude, longitude)
-    {
-        // Test meta data
-        testApplication = "Landmark - Handling Invalid Landmark";
-        testBinary = "landmarkbrowser";
-        testGoal = "Verify that invalid landmarks are detected and handled gracefully.";
-        testPreconditions = "None";
-        testGroups = "BAT,1.1,MOBILITY-66";
-        testRequirements = "MOBILITY-66: Landmark API";
-
-        // Test steps
-        startApplication(testApplication);
-        select("Add Landmark");
-        enter("Latitude", latitude);
-        enter("Longitude", longitude);
-        enter("Name", name);
-        //expectMessageBox("Invalid");
-        prompt("Verify a message box is shown indicating the values are ouside the valid range")
-        select("Ok");
-        select("Cancel");
-    },
-
-    sorted_search_based_on_category: function()
-    {
-        // Test meta data
-        testApplication = "Landmark - Search on Category";
-        testBinary = "landmarkbrowser";
-        testGoal = "Verify that landmarks can be sorted and filtered.";
-        testPreconditions = "None";
-        testGroups = "BAT,1.1,MOBILITY-66";
-        testRequirements = "MOBILITY-66: Landmark API";
-
-        // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
-        | Create Accomodation category | |
-        | Create Businesses category | |
-        | Run the landmarkbrowser application | |
-        | Create *A1* landmark  in *Accomodation* category | |
-        | Create *A2* landmark  in *Accomodation* category | |
-        | Create *BB* landmark in *Businesses* category | |
-        | Press the Set Filter button | |
-        | Select the Category checkbox | |
-        | Select *Accomodation* category | |
-        | Press Ok button | Verify that only *A1 and A2* landmark is in the list and they are present in alphabetical order |
-        | Press the Set Filter button | |
-        | Select *Education* category | |
-        | Press Ok button | Verify that *no landmarks* are in the list |"
-       ));
-    },
-
-    sort_landmarks_in_alphabetical_and_nearest: function()
-    {
-        // Test meta data
-        testApplication = "Landmark - Nearest Landmarks";
-        testBinary = "landmarkbrowser";
-        testGoal = "Verify that landmarks can be displayed in sorted order with nearest first.";
-        testPreconditions = "None";
-        testGroups = "BAT,1.1,MOBILITY-66";
-        testRequirements = "MOBILITY-66: Landmark API";
-
-        // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-          *Goal:* " + testGoal + "<br>
-          *Pre-Requisites:* " + testPreconditions + "<br>
-          *Tested Binary:* " + testBinary + "<br>
-
-          | *Step* | *Verification* |
-          | Launch " + testBinary + " | App launches normally |
-          | Create landmark *A(12;0)* | |
-          | Create landmark *B(10;0)* | |
-          | Create landmark *C(8;0)* | |
-          | Create landmark *D(8;0)* | |
-          | Press Set Filter button | |
-          | Select Proximity checkbox | |
-          | Fill in <b>0</b> in to Lat field | |
-          | Fill in <b>0</b> in to Long field | |
-          | Fill in *10000000* in to Radius field| |
-          | Press Ok button | Verify that *C, D, B, A* landmarks are in the list (not in alphabetical order) |
-          | Press Set Filter button | |
-          | Change radius value to *1000000* | |
-          | Press Ok button | Verify that only *C and D* landmarks are in the list |
-          | Press Set Filter button | |
-          | Deselect Proximity checkbox | |
-          | Press Ok button | Verify that landmarks appear in alphabetical order from A to Z |"
-       ));
-    },
-
-    landmarks_within_range_of_a_position: function()
-    {
-        // Test meta data
-        testApplication = "Landmark - Within Range of Position";
-        testBinary = "landmarkbrowser";
-        testGoal = "Verify that landmarks within range of a position can be shown";
-        testPreconditions = "None";
-        testGroups = "BAT,1.1,MOBILITY-66";
-        testRequirements = "MOBILITY-66: Landmark API";
-
-        // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Create landmark *A(12;0)* | |
-        | Create landmark *B(10;0)* | |
-        | Create landmark *C(8;0)* | |
-        | Create landmark *D(8;0)* | |
-        | Press Set Filter button | |
-        | Select Box checkbox | |
-        | Fill in <b>9</b> in to Top Left Lat field | |
-        | Fill in <b>0</b> in to Top Left Long field | |
-        | Fill in <b>0</b> i to Bottom Right Lat filed | |
-        | Fill in <b>1</b> in to Bottom Right Long field | |
-        | Press Ok button | Verify that only *C and D* landmarks are in the list and landmarks appear in alphabetical order |"
-       ));
-    },
-
-    create_edit_and_delete_a_landmark: function()
-    {
-        // Test meta data
-        testApplication = "Landmark - Edit and Delete Landmarks";
-        testBinary = "landmarkbrowser";
-        testGoal = "Verify that notifications can be send whenever landmarks are added, updated or deleted.";
-        testPreconditions = "None";
-        testGroups = "BAT,1.1,MOBILITY-66";
-        testRequirements = "MOBILITY-66: Landmark API";
-
-        // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
-
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Press Add Landmark button | |
-         | Fill in *AAA* in to Name field | |
-         | Fill in *30* into Latitude field | |
-         | Fill in *30* into Longitude field | |
-         | Press Ok button | Verify that message 'Landmark(s) have been added' appears on the screen |
-         | Press Ok button | Verify that *AAA* landmark is in the landmarks list |
-         | Select *AAA* landmark | |
-         | Press Edit Landmark button | |
-         | Change Latitude value to *40* | |
-         | Change Longitude value to *40* | |
-         | Change Name value to *BBB* | |
-         | Press Ok button | Verify that message 'Landmark(s) have been edited' appears on the screen |
-         | Press Ok button | Verify that *BBB* landmark has new latitude and longitude |
-         | Select *BBB* landmark | |
-         | Press Delete Landmarks button | Verify that message 'Landmark(s) have been removed' appears on the screen |
-         | Press Ok button | Verify that only *BBB* landmark has been deleted |
-         | Create 2 new landmarks *A1 and A2* | |
-         | Select both A1 and A2 landmarks |
-         | Press Delete Landmarks button | Verify that message 'Landmark(s) have been removed' appears on the screen |
-         | Press Ok button | Verify that only *A1 and A2* landmarks have been deleted |"
-        ));
-    },
-
-    enumerate_categories: function()
-    {
-        // Test meta data
-        testApplication = "Landmark - Enumerate";
-        testBinary = "landmarkbrowser";
-        testGoal = "Verify that created categories can be showed in a list.";
-        testPreconditions = "None";
-        testGroups = "BAT,1.1,MOBILITY-66";
-        testRequirements = "MOBILITY-66: Landmark API";
-
-        // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Category tab | |
-        | Create several categories | |
-        | Swith to the Landmark tab and back to the Category tab | Verify that the created categories are present in the list |"
-        ));
-    },
-
-    add_and_delete_a_category: function()
-    {
-        //Landmark manager provides notifications whenever categories are added, updated or deleted
-        // Test meta data
-        testApplication = "Landmark - Add and Delete Categories ";
-        testBinary = "landmarkbrowser";
-        testGoal = "Verify that the system sends notifications when categories are added or deleted.";
-        testPreconditions = "None";
-        testGroups = "BAT,1.1,MOBILITY-66";
-        testRequirements = "MOBILITY-66: Landmark API";
-
-        // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Category tab | |
-        | Press Add Category button | |
-        | Fill in *AAA* in to Name field | |
-        | Press Ok button | Verify that message 'Category(ies) have been added' |
-        | Press Ok button | Verify that *AAA* is added in list of categories in alphabetical order |
-        | Press Add Category button | |
-        | Fill in *AAA* in to Name field | |
-        | Press Ok button | Verify that message 'Add Category Failed: category already Exists' appears on the screen |
-        | Press Ok button | |
-        | Press Add Category button | |
-        | Press Ok button | Verify that message 'Category name must not be empty' appears on the screen |
-        | Press Ok button | |
-        | Select *AAA* category | |
-        | Press Delete Categories button | Verify that message 'Categoty(ies) have been removed' appears on the screen |
-        | Press Ok button | Verify that list of categories does not contain *AAA* category only|
-        | Add *A1 and A2* categories | |
-        | Select A1 and A2 categories | |
-        | Press Delete Categories button | Verify that message 'Categoty(ies) have been removed' appears on the screen |
-        | Press Ok button | Verify that list of categories does not contain *A1 and A2* categories only |
-        | Select some of predefined categories | |
-        | Press Delete Category button | Verify tha message 'Cannot delete a global category' appears on the screen |
-        | Press Ok button | Verify that no categories have been deleted |"
+        | Select the MapNavigation | |
+        | Fill in <b>0</b> in to Start Latitude field | |
+        | Fill in *100* in to Start Longitude field | |
+        | Select Distance/Bearing from pre-defined dropdown list | |
+        | Fill *1000000, 90* in to the given field | |
+        | Press the Ok button | Verify that Destination fields are updated with *5.48417e-16* latitude and *108.9932* longitude |
+        | Fill in *60* in to Start Latitude field | |
+        | Fill in *100* in to Start Longitude field | |
+        | Select Distance/Bearing from pre-defined dropdown list | |
+        | Fill *1000000, 180* in to the given field | |
+        | Press the Ok button | Verify that Destination fields are updated with *51.0068* latitude and *100* longitude |
+        | Fill in *60* in to Start Latitude field | |
+        | Fill in *100* in to Start Longitude field | |
+        | Select Distance/Bearing from pre-defined dropdown list | |
+        | Fill *1000000, 20* in to the given field | |
+        | Press the Ok button | Verify that Destination fields are updated with *68.2523* latitude and *108.296* longitude |"
         ));
     },
 
     select_service_provider: function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Select Service Provider";
+        testTitle = "Maps and Navigation - Select Service Provider";
         testBinary = "geoservicedemo";
         testGoal = "Verify that service provider can be selected";
         testPreconditions = "None";
-        testGroups = "BAT,1.1,MOBILITY-538";
+        testGroups = "BAT,1.1";
         testRequirements = "MOBILITY-538: Maps and Navigation";
 
         // Test steps
@@ -430,13 +169,14 @@ testcase = {
         select("nokia");
         select("Set Service Provider");
 
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | | Verify selected service provider is indicated as current service provider |"));
+        | *Step* | *Verification* |
+        | | Verify selected service provider is indicated as current service provider |"));
     },
 
     request_route_from_one_GPS_location_to_another_data: {
@@ -446,11 +186,11 @@ testcase = {
     request_route_from_one_GPS_location_to_another: function(lat1, long1, lat2, long2, distance1, distance2)
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Route Calculation";
+        testTitle = "Maps and Navigation - Route Calculation";
         testBinary = "geoservicedemo";
         testGoal = "Verify that routes can be calculated from one GPS location to another.";
         testPreconditions = "Testing via proxy is not recommended, incorrect settings can be a cause of the 'Socket operation timed out' error";
-        testGroups = "BAT,1.1,MOBILITY-538";
+        testGroups = "BAT,1.1";
         testRequirements = "MOBILITY-538: Maps and Navigation";
 
         // Test steps
@@ -466,13 +206,14 @@ testcase = {
         enter(long2);
         select("Ok");
 
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Wait until the route is calculated (should be less than 10 seconds) | Verify the there are 8 segments, first and last instructions indicate to 'Head toward Logan rd' and 'Turn right onto Bartley St'"));
+        | *Step* | *Verification* |
+        | Wait until the route is calculated (should be less than 10 seconds) | Verify the there are 8 segments, first and last instructions indicate to 'Head toward Logan rd' and 'Turn right onto Bartley St'"));
 
         select("routes/route");
         compare(getText("distance"), distance1);
@@ -483,13 +224,14 @@ testcase = {
         enter(long1);
         select("Ok");
 
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Wait until the route is calculated (should be less than 10 seconds) | Verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st"));
+        | *Step* | *Verification* |
+        | Wait until the route is calculated (should be less than 10 seconds) | Verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st"));
 
         compare(getText("distance"), distance2);
     },
@@ -497,30 +239,31 @@ testcase = {
     geocoding: function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Geocoding";
+        testTitle = "Maps and Navigation - Geocoding";
         testBinary = "geoservicedemo"; // (sources are /tests/location-testing-tools/geoservicedemo)
         testGoal = "Verify that geocoding searches are supported.";
         testPreconditions = "Testing via proxy is not recommended, incorrect settings can be a cause of the 'Socket operation timed out' error";
-        testGroups = "BAT,1.1,MOBILITY-538";
+        testGroups = "BAT,1.1";
         testRequirements = "MOBILITY-538: Maps and Navigation";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Select Search By Adress tab | |
-         | Select One-box Search checkbox | |
-         | Fill in *Brandl st, Eight Mile Plains, Australia* in search field | |
-         | Select Geocoding search | |
-         | Press Ok button | |
-         | Wait until data is recieved | |
-         | Select places | Verify that count = 1 |
-         | Select place | Verify that latitude is *-27.5798*, longitude is *153.1* |
-         | Select address | Verify that Country is *AUSTRALIA*, country code is *AUS*, city is *Eight Mile Plains*, street name is *Branl St*, post code is *4113* |"
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Search By Adress tab | |
+        | Select One-box Search checkbox | |
+        | Fill in *Brandl st, Eight Mile Plains, Australia* in search field | |
+        | Select Geocoding search | |
+        | Press Ok button | |
+        | Wait until data is recieved | |
+        | Select places | Verify that count = 1 |
+        | Select place | Verify that latitude is *-27.5798*, longitude is *153.1* |
+        | Select address | Verify that Country is *AUSTRALIA*, country code is *AUS*, city is *Eight Mile Plains*, street name is *Branl St*, post code is *4113* |"
         ));
 
     },
@@ -528,46 +271,48 @@ testcase = {
     reverse_geocoding: function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Reverse Geocoding";
+        testTitle = "Maps and Navigation - Reverse Geocoding";
         testBinary = "geoservicedemo";
         testGoal = "Verify that a geocode can be calculated from a given position.";
         testPreconditions = "Testing via proxy is not recommended, incorrect settings can be a cause of the 'Socket operation timed out' error";
-        testGroups = "BAT,1.1,MOBILITY-538";
+        testGroups = "BAT,1.1";
         testRequirements = "MOBILITY-538: Maps and Navigation";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Select Reverse Geocoding tab | |
-         | Press Search By Coordinates button | |
-         | Fill in *-27.5798* in Latitude field | |
-         | Fill in *153.1* in Longitude field | |
-         | Press Ok button | |
-         | Wait until data is recieved | |
-         | Select places/place/adress | Verify that Country is *AUSTRALIA*, country code is *AUS*, city is *Eight Mile Plains*, street name is *54 Brandl St*, post code is *4113* |"
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Reverse Geocoding tab | |
+        | Press Search By Coordinates button | |
+        | Fill in *-27.5798* in Latitude field | |
+        | Fill in *153.1* in Longitude field | |
+        | Press Ok button | |
+        | Wait until data is recieved | |
+        | Select places/place/adress | Verify that Country is *AUSTRALIA*, country code is *AUS*, city is *Eight Mile Plains*, street name is *54 Brandl St*, post code is *4113* |"
         ));
    },
 
     displaying_a_map: function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Map View Options";
+        testTitle = "Maps and Navigation - Map View Options";
         testBinary = "mapviewer"; // (sources are /tests/location-testing-tools/mapviewer)
         testGoal = "Verify that maps can be shown different mode.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,1.1,MOBILITY-538";
+        testGroups = "BAT,1.1";
         testRequirements = "MOBILITY-538: Maps and Navigation";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally and map for current location is displayed on the screen |
@@ -583,41 +328,43 @@ testcase = {
     zooming_support:function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Zooming";
+        testTitle = "Maps and Navigation - Zooming";
         testBinary = "mapsdemo"; // (sources are /examples/mapsdemo)
         testGoal = "Verify that maps can be zoomed in and out.";
         testPreconditions = "internet connection is required for this test case.";
-        testGroups = "BAT,1.1,MOBILITY-538";
+        testGroups = "BAT,1.1";
         testRequirements = "MOBILITY-538: Maps and Navigation";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-          *Goal:* " + testGoal + "<br>
-          *Pre-Requisites:* " + testPreconditions + "<br>
-          *Tested Binary:* " + testBinary + "<br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
-          | *Step* | *Verification* |
-          | Launch " + testBinary + " | App launches normally |
-          | Press - button | Map is zoomed out correctly |
-          | Press + button | Map is zoomed in correctly |"
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Press - button | Map is zoomed out correctly |
+        | Press + button | Map is zoomed in correctly |"
         ));
     },
 
     capturing_coordinates:function()
     {
         // Test meta data
-        testApplication = "Maps and Navigation - Coordinate Capturing";
+        testTitle = "Maps and Navigation - Coordinate Capturing";
         testBinary = "mapviewer"; // (sources are /tests/location-testing-tools/mapviewer)
         testGoal = "Verify that coordinates can be captured when selecting a location on the map.";
         testPreconditions = "internet connection is required for this test case.";
-        testGroups = "BAT,1.1,MOBILITY-538";
+        testGroups = "BAT,1.1";
         testRequirements = "MOBILITY-538: Maps and Navigation";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
@@ -635,47 +382,50 @@ testcase = {
         //and 2 types of transforms (BilinearTransform, ExactTransform)). New set of tests has to be created as soon as testqtLocation is improved.
 
         // Test meta data
-        testApplication = "Maps and Navigation - Pixmap Object Zooming";
+        testTitle = "Maps and Navigation - Pixmap Object Zooming";
         testBinary = "testQtLocation";
         testGoal = "Verify that pixmap objects are not scaled";
         testPreconditions = "GPS and internet connection is required for this test case";
-        testGroups = "BAT,1.2,QTMOBILITY-757,QTMOBILITY-701";
+        testGroups = "BAT,1.2";
         testRequirements = "QTMOBILITY-757: Be able to prevent a QGeoMapPixmapObject from being scaled when zooming occurs<br>
                             QTMOBILITY-701: Add a QGraphicsItem based map object.";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
-         *Goal:* " + testGoal + "<br>
-         *Pre-Requisites:* " + testPreconditions + "<br>
-         *Tested Binary:* " + testBinary + "<br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
-         | *Step* | *Verification* |
-         | Launch " + testBinary + " | App launches normally |
-         | Select the MapNavigation | |
-         | Go to Map tab | Verify that map is loaded for current position |
-         | Swith to MapObject mode | |
-         | Tap on the screen to create pixmap object | Verify that blue square appears on the screen in place of touch |
-         | Switch to Pan/Zoom mode | |
-         | Increase zoom level | Verify that the blue square is not scaled |
-         | Decrease zoom level | Verify that the blue square is not scaled |"
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select the MapNavigation | |
+        | Go to Map tab | Verify that map is loaded for current position |
+        | Swith to MapObject mode | |
+        | Tap on the screen to create pixmap object | Verify that blue square appears on the screen in place of touch |
+        | Switch to Pan/Zoom mode | |
+        | Increase zoom level | Verify that the blue square is not scaled |
+        | Decrease zoom level | Verify that the blue square is not scaled |"
         ));
     },
 
     qml_display_map: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Map View options";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Map View options";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that maps can be shown in different modes.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,1.2,QTMOBILITY-796";
+        testGroups = "BAT,1.2";
         testRequirements = "QTMOBILITY-796: QML for Maps & Navigation: mapping";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | Verify that map is loaded in *Street* view with the center next to Brisbane |
@@ -691,18 +441,20 @@ testcase = {
     qml_zoom_a_map: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Zooming";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Zooming";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that maps can be zoomed in and out.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,1.2,QTMOBILITY-796";
+        testGroups = "BAT,1.2";
         testRequirements = "QTMOBILITY-796: QML for Maps & Navigation: mapping";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | Verify that map is loaded with the center next to Brisbane  |
@@ -714,18 +466,20 @@ testcase = {
     qml_route_for_two_close_points: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Route for two close points";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Route for two close points";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-235";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -748,18 +502,20 @@ testcase = {
     qml_route_for_two_distant_points: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Route for two distant points";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Route for two distant points";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-235";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -799,18 +555,20 @@ testcase = {
     qml_route_for_multiple_points: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Route for several waypoints";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Route for several waypoints";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-235";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -843,18 +601,20 @@ testcase = {
     qml_travel_mode: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Travel mode (Car and Pedestrian)";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Travel mode (Car and Pedestrian)";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-235";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -881,18 +641,20 @@ testcase = {
     qml_route_feature_type: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Route features (Avoid Highways and Avoid Tool Road)";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Route features (Avoid Highways and Avoid Tool Road)";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-235";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -919,18 +681,20 @@ testcase = {
     qml_route_optimization: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Route optimization (Shortest way)";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Route optimization (Shortest way)";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-235";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -951,18 +715,20 @@ testcase = {
     qml_geocode_australian_location: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Geocoding of an australian location";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Geocoding of an australian location";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-236";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -980,18 +746,20 @@ testcase = {
     qml_geocode_russian_location: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Geocoding of non-english address";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Geocoding of non-english address";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-236";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -1009,18 +777,20 @@ testcase = {
     qml_geocode_fictional_location: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Geocoding of fictional address";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Geocoding of fictional address";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location is not founs.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-236";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -1037,18 +807,20 @@ testcase = {
     qml_geocode_not_unique_location: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Geocoding of non-unique address";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Geocoding of non-unique address";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-236";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -1077,18 +849,20 @@ testcase = {
     qml_geocode_popular_request: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Geocoding of short form of address";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Geocoding of short form of address";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-236";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -1106,18 +880,20 @@ testcase = {
     qml_geocode_request_with_district: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Geocode district";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Geocode district";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-236";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -1135,18 +911,20 @@ testcase = {
     qml_geocode_request_with_county: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Geocode county";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Geocode county";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-236";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -1163,18 +941,20 @@ testcase = {
     qml_geocode_request_with_country_code: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Geocode country code";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Geocode country code";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-236";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -1190,18 +970,20 @@ testcase = {
     qml_geocode_request_with_post_code: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Geocode post code";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Geocode post code";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-236";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -1219,18 +1001,20 @@ testcase = {
     qml_reverse_geocode_australian_place: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Reverse geocode of an australian place";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Reverse geocode of an australian place";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-237";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-237:QML Reverse geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -1246,18 +1030,20 @@ testcase = {
     qml_reverse_geocode_russian_place: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Reverse geocode of non-english address";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Reverse geocode of non-english address";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-237";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-237:QML Reverse geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -1273,18 +1059,20 @@ testcase = {
     qml_reverse_geocode_uninhabited_place: function()
     {
         // Test meta data
-        testApplication = "QML: Maps and Navigation - Reverse geocode of uninhabited place";
-        testBinary = "qml_mapviewer";
+        testTitle = "QML: Maps and Navigation - Reverse geocode of uninhabited place";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location is not found.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0,MTMW-237";
+        testGroups = "BAT,5.0";
         testRequirements = "MTMW-237:QML Reverse geocoding";
 
         // Test steps
-        prompt(twiki("---+++ " + testApplication + "<br><br>
+        prompt(twiki("---+++ " + testTitle + "<br><br>
         *Goal:* " + testGoal + "<br>
         *Pre-Requisites:* " + testPreconditions + "<br>
         *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
@@ -1298,10 +1086,10 @@ testcase = {
 /*    },
 
 
-    // \groups BAT,5.0,MOBILITY-2902,RESEARCH
+    // \groups BAT,5.0,MOBILITY-2902
     qml_searching: function()
     {
-// Seacrh for landmarks
+// Seacrh for places
 */    }
 
 }  // end of testcase
@@ -1310,14 +1098,6 @@ testcase = {
 /*
 
 ----Maps And Navigation use cases
-
-    list_of_way_points: function() {    },
-
-    distinguish_pedestrian_and_car_navigation: function() {    },
-
-    find_matching_landmarks_for_given_search_criteria_with_geocoding: function() {    },
-
-    provide_map_for_given_coordinate: function() {    },
 
     online_and_offline: function() {    }
 
