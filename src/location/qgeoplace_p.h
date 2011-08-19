@@ -67,11 +67,6 @@ QT_BEGIN_NAMESPACE
 class QGeoPlacePrivate : public QSharedData
 {
 public:
-    enum PlaceType {
-        GeoPlaceType,
-        LandmarkType
-    };
-
     QGeoPlacePrivate();
     QGeoPlacePrivate(const QGeoPlacePrivate &other);
     virtual ~QGeoPlacePrivate();
@@ -81,10 +76,6 @@ public:
     virtual bool operator== (const QGeoPlacePrivate &other) const;
 
     virtual QGeoPlacePrivate* clone() const { return new QGeoPlacePrivate(*this); }
-    PlaceType type;
-    QGeoBoundingBox viewport;
-    QGeoCoordinate coordinate;
-    QGeoAddress address;
 
     QVariantHash additionalData;
     QList<QPlaceCategory> categories;

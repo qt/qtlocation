@@ -61,8 +61,6 @@
 QT_BEGIN_NAMESPACE
 
 class QString;
-class QLandmark;
-
 class QGeoPlacePrivate;
 
 class Q_LOCATION_EXPORT QGeoPlace
@@ -78,17 +76,6 @@ public:
 
     bool operator==(const QGeoPlace &other) const;
     bool operator!=(const QGeoPlace &other) const;
-
-    bool isLandmark() const;
-
-    QGeoBoundingBox viewport() const;
-    void setViewport(const QGeoBoundingBox &viewport);
-
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
-
-    QGeoAddress address() const;
-    void setAddress(const QGeoAddress &address);
 
     QVariantHash additionalData() const;
     void setAdditionalData(const QVariantHash &data);
@@ -150,7 +137,6 @@ protected:
 private:
     QGeoPlacePrivate* d_func();
     const QGeoPlacePrivate* d_func() const;
-    friend class QLandmark;
 };
 
 QT_END_NAMESPACE

@@ -57,9 +57,6 @@ QT_BEGIN_NAMESPACE
 
     \ingroup qml-location-maps
 
-    An example of setting the Plugin in the Map element:
-    \snippet examples/declarative-location/landmarkmap/landmarkmap.qml Map Plugin
-
     The Plugin element is part of the \bold{QtMobility.location 1.2} module.
 */
 

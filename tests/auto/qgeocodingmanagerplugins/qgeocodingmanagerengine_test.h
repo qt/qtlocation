@@ -45,7 +45,6 @@
 #include <qgeoserviceprovider.h>
 #include <qgeocodingmanagerengine.h>
 #include <QLocale>
-#include <qlandmarkmanager.h>
 #include <qgeoaddress.h>
 #include <qgeolocation.h>
 #include <qgeocodereply.h>

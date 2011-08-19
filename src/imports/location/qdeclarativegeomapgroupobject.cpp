@@ -59,9 +59,6 @@ QT_BEGIN_NAMESPACE
     It also allows users to specify an ordering of objects local to the
     group via the z-values and insertion order of the objects in the group.
 
-    An example of group having a small red circle on top of bigger green circle:
-    \snippet examples/declarative-location/landmarkmap/landmarkmap.qml MapGroup
-
     The MapGroup element is part of the \bold{QtMobility.location 1.2} module.
 */
 

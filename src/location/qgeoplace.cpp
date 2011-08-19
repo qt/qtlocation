@@ -41,7 +41,6 @@
 
 #include "qgeoplace.h"
 #include "qgeoplace_p.h"
-#include "qlandmark.h"
 
 #ifdef QGEOPLACE_DEBUG
 #include <QDebug>
@@ -64,24 +63,6 @@ QT_BEGIN_NAMESPACE
     \since 1.1
 
     \ingroup location
-
-    A QGeoPlace contains a coordinate and the corresponding address, along
-    with an optional bounding box describing the minimum viewport necessary
-    to display the entirety of the place.
-
-    A QGeoPlace may contain an QLandmark instance.  The isLandmark() function
-    can be used to determine if this is the case, and the
-    QLandmark(const QGeoPlace &place) constructor can be used to restore
-    access to the landmark data.
-
-    For example:
-    \code
-    QGeoPlace p;
-    QLandmark l;
-    ...
-    if (p.isLandmark())
-        l = QLandmark(p)
-    \endcode
 */
 
 /*!
@@ -153,85 +134,6 @@ bool QGeoPlace::operator== (const QGeoPlace &other) const
 bool QGeoPlace::operator!= (const QGeoPlace &other) const
 {
     return (!this->operator ==(other));
-}
-
-/*!
-    This function returns whether this QGeoPlace instance contain all of the
-    information required to construct a QLandmark instance.
-
-    If so, the QLandmark(const QGeoPlace &place) constructor can be used to
-    restore access to the landmark data.
-    \since 1.1
-*/
-bool QGeoPlace::isLandmark() const
-{
-    return (d_ptr->type == QGeoPlacePrivate::LandmarkType);
-}
-
-/*!
-    Returns the viewport associated with this place.
-
-    The viewport is a suggestion for a size and position of a map window
-    which aims to view this palce.
-    \since 1.1
-*/
-QGeoBoundingBox QGeoPlace::viewport() const
-{
-    Q_D(const QGeoPlace);
-    return d->viewport;
-}
-
-/*!
-    Sets the viewport associated with this place to \a viewport.
-
-    The viewport is a suggestion for a size and position of a map window
-    which aims to view this palce.
-    \since 1.1
-*/
-void QGeoPlace::setViewport(const QGeoBoundingBox &viewport)
-{
-    Q_D(QGeoPlace);
-    d->viewport = viewport;
-}
-
-/*!
-    Returns the coordinate that this place is located at.
-    \since 1.1
-*/
-QGeoCoordinate QGeoPlace::coordinate() const
-{
-    Q_D(const QGeoPlace);
-    return d->coordinate;
-}
-
-/*!
-    Sets the \a coordinate that this place is located at.
-    \since 1.1
-*/
-void QGeoPlace::setCoordinate(const QGeoCoordinate &coordinate)
-{
-    Q_D(QGeoPlace);
-    d->coordinate = coordinate;
-}
-
-/*!
-    Returns the address of this place.
-    \since 1.1
-*/
-QGeoAddress QGeoPlace::address() const
-{
-    Q_D(const QGeoPlace);
-    return d->address;
-}
-
-/*!
-    Sets the \a address of this place.
-    \since 1.1
-*/
-void QGeoPlace::setAddress(const QGeoAddress &address)
-{
-    Q_D(QGeoPlace);
-    d->address = address;
 }
 
 /*!
@@ -649,7 +551,6 @@ void QGeoPlace::insertExtendedAttribute(const QString &key, const QPlaceAttribut
 
 QGeoPlacePrivate::QGeoPlacePrivate()
         : QSharedData(),
-        type(QGeoPlacePrivate::GeoPlaceType),
         reviewCount(0),
         detailsFetched(false)
 {
@@ -657,10 +558,6 @@ QGeoPlacePrivate::QGeoPlacePrivate()
 
 QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         : QSharedData(other),
-        type(other.type),
-        viewport(other.viewport),
-        coordinate(other.coordinate),
-        address(other.address),
         additionalData(other.additionalData),
         categories(other.categories),
         descriptions(other.descriptions),
@@ -689,10 +586,23 @@ QGeoPlacePrivate::~QGeoPlacePrivate() {}
 
 QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
 {
-    type = other.type;
-    viewport = other.viewport;
-    coordinate = other.coordinate;
-    address = other.address;
+    additionalData = other.additionalData;
+    categories = other.categories;
+    descriptions = other.descriptions;
+    location = other.location;
+    rating = other.rating;
+    suppliers = other.suppliers;
+    feeds = other.feeds;
+    name = other.name;
+    placeId = other.placeId;
+    reviews = other.reviews;
+    reviewCount = other.reviewCount;
+    shortDescription = other.shortDescription;
+    tags = other.tags;
+    primaryPhone = other.primaryPhone;
+    primaryFax = other.primaryFax;
+    primaryEmail = other.primaryEmail;
+    primaryUrl = other.primaryUrl;
 
     return *this;
 }
@@ -701,10 +611,6 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
 {
 
 #ifdef QGEOPLACE_DEBUG
-    qDebug() << "type" << (type == other.type);
-    qDebug() << "viewport" << (viewport == other.viewport);
-    qDebug() << "coordinate:" <<  (coordinate == other.coordinate);
-    qDebug() << "address:" << (address == other.address);
     qDebug() << "additionalData: " << (additionalData == other.additionalData);
     qDebug() << "categories: " << (categories == other.categories);
     qDebug() << "descriptions: " << (descriptions == other.descriptions);
@@ -727,11 +633,7 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
     qDebug() << "extendedAttributes" << (extendedAttributes == other.extendedAttributes);
 #endif
 
-    return (type == other.type
-            && viewport == other.viewport
-            && coordinate == other.coordinate
-            && address == other.address
-            && additionalData == other.additionalData
+    return (additionalData == other.additionalData
             && categories == other.categories
             && descriptions == other.descriptions
             && location == other.location

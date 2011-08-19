@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     This element is part of the \bold{QtMobility.location 1.1} module.
     For behavioral details, please see \l QGeoBoundingBox.
 
-    \sa Landmark, Place, Address, {QGeoBoundingBox}
+    \sa {QGeoBoundingBox}
 */
 
 QDeclarativeGeoBoundingBox::QDeclarativeGeoBoundingBox(QObject* parent) :

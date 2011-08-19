@@ -19,8 +19,7 @@ SOURCES += qgeoserviceproviderplugin_test.cpp
 
 
 INCLUDEPATH += ../../../src/location \
-               ../../../src/location/maps \
-               ../../../src/location/landmarks
+               ../../../src/location/maps
 
 target.path += $$[QT_INSTALL_PLUGINS]/geoservices
 INSTALLS += target

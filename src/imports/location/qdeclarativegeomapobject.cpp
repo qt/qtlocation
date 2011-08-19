@@ -41,10 +41,10 @@
 
 #include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
-#include "qdeclarativelandmark_p.h"
 #include "qdeclarativegeomapgroupobject_p.h"
 #include "qgeomapdata.h"
 
+#include <QDebug>
 #include <QDeclarativeParserStatus>
 #include <QAbstractItemModel>
 #include <QDeclarativeContext>
@@ -205,13 +205,7 @@ bool QDeclarativeGeoMapObject::isVisible() const
     The MapObjectView element only makes sense when contained in a Map object,
     meaning that it has no standalone presentation.
 
-    Note: For model data, currently only LandmarkModel is supported. Using other types
-    of models results in undefined behavior.
-
-    Assuming you have a LandmarkModel identified by landmarkModel, an example usage:
-    \snippet doc/src/snippets/declarative/testpolymapobjects.qml MapObjectView
-
-    The MapObjectView element is part of the \bold{QtMobility.location 1.2} module.
+    The MapObjectView element is part of the \bold{Qt.Location 5.0} module.
 */
 
 QDeclarativeGeoMapObjectView::QDeclarativeGeoMapObjectView(QSGItem *parent)
@@ -246,10 +240,6 @@ QVariant QDeclarativeGeoMapObjectView::model() const
 
     This property holds the model that provides data for
     populating data with delegates.
-
-    Note: Currently only LandmarkModel is supported. Using other
-    models results in undefined behavior.
-
 */
 
 void QDeclarativeGeoMapObjectView::setModel(const QVariant &model)
@@ -372,9 +362,6 @@ void QDeclarativeGeoMapObjectView::repopulate()
     removeInstantiatedItems();
 
     // Iterate model data and instantiate delegates.
-    // We could use more specialized landmark model calls here too,
-    // but hopefully the support will be leveraged to a general model
-    // level.
     QDeclarativeGeoMapObject* mapObject;
     for (int i = 0; i < model_->rowCount(); ++i) {
         mapObject = createItem(i);
@@ -389,8 +376,6 @@ void QDeclarativeGeoMapObjectView::repopulate()
     }
 }
 
-// Currently item creation is tightly bound to landmark model. Some day
-// this may be leveraged to any user defined model or e.g. XML model.
 QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
 {
     if (!delegate_ || !model_)
@@ -417,9 +402,6 @@ QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
         itemContext->setContextProperty(QLatin1String("model"), data_ptr);
         // To avoid name collisions (delegate has same named attribute as model's role)
         // one can add here that the data is accessible also e.g. via 'model'.
-        // In case of landmarks, two of the following are then equivalent:
-        // latitude : landmark.coordinate.latitude
-        // latitude : model.landmark.coordinate.latitude
         // However this requires instantiating a dynamic qobject and assigning it the
         // dynamic property as property. Dynamic meta object code from declarative
         // code should be reused. In mobility, e.g. contacts should have an example.

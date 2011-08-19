@@ -50,7 +50,6 @@
 
 #include <qgeoserviceprovider.h>
 #include <qgeocodingmanager.h>
-#include <qlandmarkmanager.h>
 #include <qgeocodereply.h>
 #include <qgeoboundingbox.h>
 #include <qgeoaddress.h>
@@ -58,14 +57,6 @@
 
 
 QT_USE_NAMESPACE
-
-class SubLandmarkManager :public QLandmarkManager
-{
-    Q_OBJECT
-public:
-    SubLandmarkManager (QString name):QLandmarkManager(){this->name=name;}
-    QString name;
-};
 
 class tst_QGeocodingManager: public QObject
 {

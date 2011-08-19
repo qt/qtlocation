@@ -16,20 +16,8 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 # versions are incompatible
 #win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release
 
-# Where to search for the #include'd files
-#INCLUDEPATH += ../../../src/global
-#INCLUDEPATH += ../../../src/location
-#INCLUDEPATH += ../../../src/location/landmarks
-#INCLUDEPATH += ../../../src/location/maps
-#INCLUDEPATH += .
-
 HEADERS += qdeclarativeposition_p.h \
            qdeclarativepositionsource_p.h \
-           qdeclarativelandmark_p.h \
-           qdeclarativelandmarkmodel_p.h \
-           qdeclarativelandmarkcategorymodel_p.h \
-           qdeclarativelandmarkcategory_p.h \
-           qdeclarativelandmarkfilters_p.h \
            qdeclarativecoordinate_p.h \
            qdeclarativegeolocation_p.h \
            qdeclarativegeomapobjectborder_p.h \
@@ -45,7 +33,6 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeomapmousearea_p.h \
            qdeclarativegeoserviceprovider_p.h \
            qdeclarativegraphicsgeomap_p.h \
-           qdeclarativegeoplace_p.h \
            qdeclarativegeoaddress_p.h \
            qdeclarativegeoboundingarea_p.h \
            qdeclarativegeoboundingbox_p.h \
@@ -60,11 +47,6 @@ HEADERS += qdeclarativeposition_p.h \
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
            qdeclarativepositionsource.cpp \
-           qdeclarativelandmark.cpp \
-           qdeclarativelandmarkmodel.cpp \
-           qdeclarativelandmarkcategorymodel.cpp \
-           qdeclarativelandmarkcategory.cpp \
-           qdeclarativelandmarkfilters.cpp \
            qdeclarativecoordinate.cpp \
            qdeclarativegeolocation.cpp \
            qdeclarativegeomapobjectborder.cpp \
@@ -80,7 +62,6 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomapmousearea.cpp \
            qdeclarativegeoserviceprovider.cpp \
            qdeclarativegraphicsgeomap.cpp \
-           qdeclarativegeoplace.cpp \
            qdeclarativegeoaddress.cpp \
            qdeclarativegeoboundingbox.cpp \
            qdeclarativegeocodemodel.cpp \

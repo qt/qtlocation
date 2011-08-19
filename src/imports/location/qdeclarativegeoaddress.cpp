@@ -49,9 +49,9 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-location
 
     The Address element presents an address of a location.
-    This element is part of the \bold{QtMobility.location 1.1} module.
+    This element is part of the \bold{QtLocation 5.0} module.
 
-    \sa Landmark, Place, {QGeoAddress}
+    \sa {QGeoAddress}
 */
 
 QDeclarativeGeoAddress::QDeclarativeGeoAddress(QObject* parent) :

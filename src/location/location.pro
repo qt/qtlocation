@@ -16,7 +16,6 @@ load(qt_module_config)
 
 HEADERS += qtlocationversion.h
 
-include(landmarks/landmarks.pri)
 include(maps/maps.pri)
 include(places/places.pri)
 

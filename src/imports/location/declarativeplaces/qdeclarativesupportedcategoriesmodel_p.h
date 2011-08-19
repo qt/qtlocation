@@ -53,7 +53,7 @@ public:
 
     QVariant data(const QModelIndex &index, int role) const;
     // Roles for exposing data via model. Only one role because
-    // everything can be accessed via QDeclarativeLandmark
+    // everything can be accessed via QDeclarativeCategory
     enum Roles {
         CategoryRole = Qt::UserRole + 500
     };

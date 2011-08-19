@@ -102,184 +102,6 @@ testcase = {
         ));
     },
 
-    // Landmarks
-
-    store_and_load_a_landmark_data: {
-        // Valid landmarks are -90~90 latitude, and -180~180 longitude
-        landmark : ["landmark", "20", "120"]
-    },
-
-    // \groups BAT,1.1,MOBILITY-66
-    store_and_load_a_landmark: function(name, latitude, longitude)
-    {
-        startApplication("landmarkbrowser");
-        select("Add Landmark");
-        enter("Latitude", latitude);
-        enter("Longitude", longitude);
-        enter("Name", name);
-        select("Ok");
-        prompt("Verify that the landmark record is created");
-    },
-
-    negative_store_and_load_a_landmark_data: {
-        // Landmarks outside the ranges -90~90 latitude, and -180~180 longitude
-        bad_landmark_lat : ["bad_landmark", "100", "120"],
-        bad_landmark_long : ["bad_landmark", "80", "300"]
-    },
-
-    // \groups BAT,1.1,MOBILITY-66
-    negative_store_and_load_a_landmark: function(name, latitude, longitude)
-    {
-        startApplication("landmarkbrowser");
-        select("Add Landmark");
-        enter("Latitude", latitude);
-        enter("Longitude", longitude);
-        enter("Name", name);
-        //expectMessageBox("Invalid");
-        prompt("Verify a message box is shown indicating the values are ouside the valid range")
-        select("Ok");
-        select("Cancel");
-    },
-
-    // \groups BAT,1.1,MOBILITY-66
-    sorted_search_based_on_category: function()
-    {
-        prompt(twiki('---+++ Landmarks for the specified category are displayed
-    | *Step* | *Verification* |
-    | Create Accomodation category | |
-    | Create Businesses category | |
-    | Run the landmarkbrowser application | |
-    | Create *A1* landmark in *Accomodation* category | |
-    | Create *A2* landmark  in *Accomodation* category | |
-    | Create *BB* landmark in *Businesses* category | |
-    | Press the Set Filter button | |
-    | Select the Category checkbox | |
-    | Select Accomodation category | |
-    | Press Ok button | Verify that *only A1 and A2* landmark is in the list and they are present in alphabetical order |
-    | Press the Set Filter button | |
-    | Select Education category | |
-    | Press Ok button | Verify that no landmarks are in the list |'
-       ));
-    },
-
-    // \groups BAT,1.1,MOBILITY-66
-    sort_landmarks_in_alphabetical_and_nearest: function()
-    {
-        prompt(twiki('---+++ Nearest landmarks are displayed
-    | *Step* | *Verification* |
-    | Run the landmarkbrowser application | |
-    | Create landmark *A(12;0)* | |
-    | Create landmark *B(10;0)* | |
-    | Create landmark *C(8;0)* | |
-    | Create landmark *D(8;0)* | |
-    | Press Set Filter button | |
-    | Select Proximity checkbox | |
-    | Fill in 0 in to Lat field | |
-    | Fill in 0 in to Long field | |
-    | Fill in *10000000* in to *Radius* field | |
-    | Press Ok button | Verify that *C, D, B, A* landmarks are in the list (not in alphabetical order) |
-    | Press Set Filter button | |
-    | Change radius value to *1000000* | |
-    | Press Ok button | Verify that only *C and D* landmarks are in the list |
-    | Press Set Filter button | |
-    | Deselect Proximity checkbox | |
-    | Press Ok button | Verify that landmarks appear in alphabetical order from A to Z |'
-       ));
-    },
-
-    // \groups BAT,1.1,MOBILITY-66
-    landmarks_within_range_of_a_position: function()
-    {
-        prompt(twiki('---+++ Landmarks within range are displayed
-    | *Step* | *Verification* |
-    | Run the landmarkbrowser application | |
-    | Create landmark *A(12;0)* | |
-    | Create landmark *B(10;0)* | |
-    | Create landmark *C(8;0)* | |
-    | Create landmark *D(8;0)* | |
-    | Press Set Filter button | |
-    | Select Box checkbox | |
-    | Fill in 9 in to Top Left Lat field | |
-    | Fill in 0 in to Top Left Long field | |
-    | Fill in 0 i to Bottom Right Lat filed | |
-    | Fill in 1 in to Bottom Right Long field | |
-    | Press Ok button | Verify that only *C and D* landmarks are in the list and landmarks appear in alphabetical order |'
-       ));
-    },
-
-    // \groups BAT,1.1,MOBILITY-66
-    create_edit_and_delete_a_landmark: function()
-    {
-    //Landmark manager provides notifications whenever landmarks are added, updated or deleted
-        prompt(twiki('---+++ Landmarks are added, edited and deleted
-    | *Step* | *Verification* |
-    | Run the landmarkbrowser application | |
-    | Press Add Landmark button | |
-    | Fill in *AAA* in to *Name* field | |
-    | Fill in *30* into *Latitude* field | |
-    | Fill in *30* into *Longitude* field | |
-    | Press Ok button | Verify that message "Landmark(s) have been added" appears on the screen |
-    | Press Ok button | Verify that *AAA* landmark is in the landmarks list |
-    | Select *AAA* landmark | |
-    | Press Edit Landmark button | |
-    | Change *Latitude* value to *40* | |
-    | Change *Longitude* value to *40* | |
-    | Change *Name* value to *BBB* | |
-    | Press Ok button | Verify that message "Landmark(s) have been edited" appears on the screen |
-    | Press Ok button | Verify that *BBB* landmark has new latitude and longitude |
-    | Select *BBB* landmark | |
-    | Press Delete Landmarks button | Verify that message "Landmark(s) have been removed" appears on the screen |
-    | Press Ok button | Verify that only BBB landmark has been deleted |
-    | Create 2 new landmarks *A1* and *A2* | |
-    | Select both *A1 and A2* landmarks |
-    | Press Delete Landmarks button | Verify that message "Landmark(s) have been removed" appears on the screen |
-    | Press Ok button | Verify that only A1 and A2 landmarks have been deleted |'
-        ));
-    },
-
-    // \groups BAT,1.1,MOBILITY-66
-    enumerate_categories: function()
-    {
-        prompt(twiki('---+++ Categories are displayed
-    | *Step* | *Verification* |
-    | Run the landmarkbrowser application | |
-    | Select Category tab | |
-    | Create several categories | |
-    | Swith to the Landmark tab and back to the Category tab | Verify that the created categories are present in the list |'
-        ));
-    },
-
-    // \groups BAT,1.1,MOBILITY-66
-    add_and_delete_a_category: function()
-    {
-    //Landmark manager provides notifications whenever categories are added, updated or deleted
-        prompt(twiki('---+++ Categories are added, edited and deleted
-    | *Step* | *Verification* |
-    | Run the landmarkbrowser application | |
-    | Select Category tab | |
-    | Press Add Category button | |
-    | Fill in *AAA* in to *Name* field | |
-    | Press Ok button | Verify that message "Category(ies) have been added" |
-    | Press Ok button | Verify that AAA is added in list of categories in alphabetical order |
-    | Press Add Category button | |
-    | Fill in *AAA* in to Name field | |
-    | Press Ok button | Verify that message "Add Category Failed: category already Exists" appears on the screen |
-    | Press Ok button | |
-    | Press Add Category button | |
-    | Press Ok button | Verify that message "Category name must not be empty" appears on the screen |
-    | Press Ok button | |
-    | Select *AAA* category | |
-    | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
-    | Press Ok button | Verify that list of categories does not contain AAA category only |
-    | Add *A1* and *A2* categories | |
-    | Select *A1 and A2* categories | |
-    | Press Delete Categories button | Verify that message "Categoty(ies) have been removed" appears on the screen |
-    | Press Ok button | Verify that list of categories does not contain A1 and A2 categories only |
-    | Select some of predefined categories | |
-    | Press Delete Category button | Verify tha message "Cannot delete a global category" appears on the screen |
-    | Press Ok button | Verify that no categories have been deleted |'
-        ));
-    },
 
     // Maps and Navigation
     // \groups BAT,1.1,MOBILITY-538
@@ -432,7 +254,7 @@ testcase = {
         ));
     },
 
-    request_landmarks_for_given_coordinate_with_reverse_geocoding: function()
+    request_address_for_given_coordinate_with_reverse_geocoding: function()
     {
         skip( "Nothing tested", SkipAll );
     },
@@ -821,16 +643,6 @@ testcase = {
         ));
 /*    },
 
-
-    // \groups BAT,5.0,MOBILITY-2902,RESEARCH
-    qml_searching: function()
-    {
-// Seacrh for landmarks
-*/    }
-
-}  // end of testcase
-
-
 /*
 
 ----Maps And Navigation use cases
@@ -838,8 +650,6 @@ testcase = {
     list_of_way_points: function() {    },
 
     distinguish_pedestrian_and_car_navigation: function() {    },
-
-    find_matching_landmarks_for_given_search_criteria_with_geocoding: function() {    },
 
     provide_map_for_given_coordinate: function() {    },
 

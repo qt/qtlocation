@@ -44,7 +44,6 @@
 
 #include <QPixmap>
 
-#include "qlandmark.h"
 #include "qgeoboundingcircle.h"
 
 class MarkerPrivate

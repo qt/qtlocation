@@ -73,9 +73,6 @@ QT_BEGIN_NAMESPACE
 
     The status of the image loading can be monitored via \l status.
 
-    An example of map image:
-    \snippet examples/declarative-location/landmarkmap/landmarkmap.qml MapImage
-
     The MapImage element is part of the \bold{QtMobility.location 1.2} module.
 */
 

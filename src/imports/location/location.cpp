@@ -41,17 +41,12 @@
 
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
-#include "qdeclarativelandmark_p.h"
-#include "qdeclarativelandmarkcategory_p.h"
-#include "qdeclarativelandmarkmodel_p.h"
-#include "qdeclarativelandmarkcategorymodel_p.h"
 
 #include "qgeomapobject.h"
 #include "qdeclarativegeoboundingarea_p.h"
 #include "qdeclarativegeoboundingbox_p.h"
 #include "qdeclarativegeoboundingcircle_p.h"
 #include "qdeclarativegeoaddress_p.h"
-#include "qdeclarativegeoplace_p.h"
 #include "qdeclarativecoordinate_p.h"
 
 #include "qdeclarativegeoserviceprovider_p.h"
@@ -107,21 +102,8 @@ public:
             // Elements available since Qt mobility 1.1:
             qmlRegisterType<QDeclarativePosition>(uri, 1, 1, "Position");
             qmlRegisterType<QDeclarativePositionSource>(uri, 1, 1, "PositionSource");
-            qmlRegisterType<QDeclarativeLandmark>(uri, 1, 1, "Landmark");
-            qmlRegisterType<QDeclarativeLandmarkModel>(uri, 1, 1, "LandmarkModel");
-            qmlRegisterType<QDeclarativeLandmarkNameFilter>(uri, 1, 1, "LandmarkNameFilter");
-            qmlRegisterType<QDeclarativeLandmarkCategoryFilter>(uri, 1, 1, "LandmarkCategoryFilter");
-            qmlRegisterType<QDeclarativeLandmarkBoxFilter>(uri, 1, 1, "LandmarkBoxFilter");
-            qmlRegisterType<QDeclarativeLandmarkProximityFilter>(uri, 1, 1, "LandmarkProximityFilter");
-            qmlRegisterType<QDeclarativeLandmarkUnionFilter>(uri, 1, 1, "LandmarkUnionFilter");
-            qmlRegisterType<QDeclarativeLandmarkIntersectionFilter>(uri, 1, 1, "LandmarkIntersectionFilter");
-            qmlRegisterType<QDeclarativeLandmarkCategory>(uri, 1, 1, "LandmarkCategory");
-            qmlRegisterType<QDeclarativeLandmarkCategoryModel>(uri, 1, 1, "LandmarkCategoryModel");
-            qmlRegisterUncreatableType<QDeclarativeLandmarkFilterBase>(uri, 1, 1, "LandmarkFilterBase", QDeclarativeLandmarkFilterBase::tr("LandmarkFilterBase is an abstract class"));
-            qmlRegisterUncreatableType<QDeclarativeLandmarkAbstractModel>(uri, 1, 1, "LandmarkAbstractModel", QDeclarativeLandmarkAbstractModel::tr("LandmarkAbstractModel is an abstract class"));
             qmlRegisterType<QDeclarativeCoordinate>(uri, 1, 1, "Coordinate");
             qmlRegisterType<QDeclarativeGeoBoundingBox>(uri, 1, 1, "BoundingBox");
-            qmlRegisterType<QDeclarativeGeoPlace>(uri, 1, 1, "Place");
             qmlRegisterType<QDeclarativeGeoAddress>(uri, 1, 1, "Address");
 
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 1, 2, "Plugin");
@@ -146,23 +128,10 @@ public:
             // until the proper versioning scheme of QML plugins in Qt5 is agreed upon.
             qmlRegisterType<QDeclarativePosition>(uri, 5, 0, "Position");
             qmlRegisterType<QDeclarativePositionSource>(uri, 5, 0, "PositionSource");
-            qmlRegisterType<QDeclarativeLandmark>(uri, 5, 0, "Landmark");
-            qmlRegisterType<QDeclarativeLandmarkModel>(uri, 5, 0, "LandmarkModel");
-            qmlRegisterType<QDeclarativeLandmarkNameFilter>(uri, 5, 0, "LandmarkNameFilter");
-            qmlRegisterType<QDeclarativeLandmarkCategoryFilter>(uri, 5, 0, "LandmarkCategoryFilter");
-            qmlRegisterType<QDeclarativeLandmarkBoxFilter>(uri, 5, 0, "LandmarkBoxFilter");
-            qmlRegisterType<QDeclarativeLandmarkProximityFilter>(uri, 5, 0, "LandmarkProximityFilter");
-            qmlRegisterType<QDeclarativeLandmarkUnionFilter>(uri, 5, 0, "LandmarkUnionFilter");
-            qmlRegisterType<QDeclarativeLandmarkIntersectionFilter>(uri, 5, 0, "LandmarkIntersectionFilter");
-            qmlRegisterType<QDeclarativeLandmarkCategory>(uri, 5, 0, "LandmarkCategory");
-            qmlRegisterType<QDeclarativeLandmarkCategoryModel>(uri, 5, 0, "LandmarkCategoryModel");
-            qmlRegisterUncreatableType<QDeclarativeLandmarkFilterBase>(uri, 5, 0, "LandmarkFilterBase", QDeclarativeLandmarkFilterBase::tr("LandmarkFilterBase is an abstract class"));
-            qmlRegisterUncreatableType<QDeclarativeLandmarkAbstractModel>(uri, 5, 0, "LandmarkAbstractModel", QDeclarativeLandmarkAbstractModel::tr("LandmarkAbstractModel is an abstract class"));
             qmlRegisterType<QDeclarativeCoordinate>(uri, 5, 0, "Coordinate");
             qmlRegisterType<QDeclarativeGeoBoundingArea>();
             qmlRegisterType<QDeclarativeGeoBoundingBox>(uri, 5, 0, "BoundingBox");
             qmlRegisterType<QDeclarativeGeoBoundingCircle>(uri, 5, 0, "BoundingCircle");
-            qmlRegisterType<QDeclarativeGeoPlace>(uri, 5, 0, "Place");
             qmlRegisterType<QDeclarativeGeoAddress>(uri, 5, 0, "Address");
 
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 5, 0, "Plugin");

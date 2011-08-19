@@ -44,7 +44,6 @@
 
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
-//#include "qdeclarativelandmark_p.h"
 #include "qdeclarativegeomapgroupobject_p.h"
 
 #include <qgeoserviceprovider.h>
@@ -618,10 +617,6 @@ QDeclarativeGraphicsGeoMap::ConnectivityMode QDeclarativeGraphicsGeoMap::connect
 
     Returns an invalid coordinate if \a screenPosition is not within
     the current viewport.
-
-    An example to constraint landmarks of a model to just those
-    currently on Map:
-    \snippet examples/declarative-location/landmarkmap/landmarkmap.qml Map toCoordinate
 
 */
 
