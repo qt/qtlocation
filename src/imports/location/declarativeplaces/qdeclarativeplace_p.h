@@ -31,7 +31,6 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QStringList feeds READ feeds WRITE setFeeds NOTIFY feedsChanged);
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged);
-    Q_PROPERTY(QString shortDescription READ shortDescription WRITE setShortDescription NOTIFY shortDescriptionChanged);
     Q_PROPERTY(QStringList tags READ tags WRITE setTags NOTIFY tagsChanged);
     Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
     Q_PROPERTY(bool fetchingDetails READ fetchingDetails WRITE setFetchingDetails NOTIFY fetchingDetailsChanged)
@@ -93,8 +92,6 @@ public:
     void setName(const QString &name);
     QString placeId() const;
     void setPlaceId(const QString &placeId);
-    QString shortDescription() const;
-    void setShortDescription(const QString &description);
     QStringList tags() const;
     void setTags(const QStringList &tags);
     bool detailsFetched() const;
@@ -132,7 +129,6 @@ signals:
     void nameChanged();
     void placeIdChanged();
     void businessInformationChanged();
-    void shortDescriptionChanged();
     void tagsChanged();
     void detailsFetchedChanged();
     void fetchingDetailsChanged();

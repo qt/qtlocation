@@ -206,7 +206,9 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValu
         }
         value = properties.property(search_properties_description_value);
         if (value.isValid() && !value.toString().isEmpty()) {
-            newPlace.setShortDescription(value.toString());
+            //The JSON data specification defines short description
+            //but our API doesn't expose this so we
+            //parse and skip assignment
         }
         value = properties.property(search_properties_supliers_value);
         if (value.isValid() && !value.toString().isEmpty()) {

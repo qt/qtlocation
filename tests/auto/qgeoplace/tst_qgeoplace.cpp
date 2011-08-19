@@ -30,7 +30,6 @@ private Q_SLOTS:
     void placeIdTest();
     void reviewsTest();
     void reviewCountTest();
-    void shortDescriptionTest();
     void tagsTest();
     void primaryPhoneTest();
     void primaryFaxTest();
@@ -89,14 +88,6 @@ void tst_QGeoPlace::placeIdTest()
     QVERIFY2(testObj.placeId() == QString(), "Wrong default value");
     testObj.setPlaceId("testText");
     QVERIFY2(testObj.placeId() == "testText", "Wrong value returned");
-}
-
-void tst_QGeoPlace::shortDescriptionTest()
-{
-    QGeoPlace testObj;
-    QVERIFY2(testObj.shortDescription() == QString(), "Wrong default value");
-    testObj.setShortDescription("testText");
-    QVERIFY2(testObj.shortDescription() == "testText", "Wrong value returned");
 }
 
 void tst_QGeoPlace::contentCountTest()

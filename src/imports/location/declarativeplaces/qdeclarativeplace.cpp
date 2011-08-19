@@ -126,9 +126,6 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
     if (previous.placeId() != m_src.placeId()) {
         emit placeIdChanged();
     }
-    if (previous.shortDescription() != m_src.shortDescription()) {
-        emit shortDescriptionChanged();
-    }
     if (previous.tags() != m_src.tags()) {
         emit tagsChanged();
     }
@@ -279,24 +276,6 @@ void QDeclarativePlace::setPlaceId(const QString &placeId)
 QString QDeclarativePlace::placeId() const
 {
     return m_src.placeId();
-}
-
-/*!
-    \qmlproperty string Place::shortDescription
-
-    This property holds short description.
-*/
-void QDeclarativePlace::setShortDescription(const QString &shortDescription)
-{
-    if (m_src.shortDescription() != shortDescription) {
-        m_src.setShortDescription(shortDescription);
-        emit shortDescriptionChanged();
-    }
-}
-
-QString QDeclarativePlace::shortDescription() const
-{
-    return m_src.shortDescription();
 }
 
 /*!

@@ -106,8 +106,6 @@ public:
     void setReviews(const QPlacePaginationList<QPlaceReview> &reviews);
     int reviewCount() const;
     void setReviewCount(const int &count);
-    QString shortDescription() const;
-    void setShortDescription(const QString &description);
     QStringList tags() const;
     void setTags(const QStringList &tags);
 

@@ -84,12 +84,10 @@ public:
     QPlaceRating rating;
     QList<QPlaceSupplier> suppliers;
     QStringList feeds;
-
     QString name;
     QString placeId;
     QPlacePaginationList<QPlaceReview> reviews;
     int reviewCount;
-    QString shortDescription;
     QStringList tags;
 
     QMap<QPlaceContent::Type, QPlaceContent::Collection> contentCollections;
