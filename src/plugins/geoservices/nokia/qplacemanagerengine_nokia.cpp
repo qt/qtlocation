@@ -69,6 +69,20 @@ QPlaceManagerEngineNokia::QPlaceManagerEngineNokia(const QMap<QString, QVariant>
 {
     qRegisterMetaType<QPlaceReply::Error>();
 
+    if (parameters.contains(QLatin1String("places.proxy"))) {
+        QString proxy = parameters.value("places.proxy").toString();
+        if (!proxy.isEmpty()) {
+            QUrl proxyUrl(proxy);
+            if (proxyUrl.isValid()) {
+                QPlaceRestManager::instance()->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
+                                                                      proxyUrl.host(),
+                                                                      proxyUrl.port(8080),
+                                                                      proxyUrl.userName(),
+                                                                      proxyUrl.password()));
+            }
+        }
+    }
+
     if (error)
         *error = QGeoServiceProvider::NoError;
 

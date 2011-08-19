@@ -68,6 +68,8 @@ class QPlaceRestManager : public QObject
 public:
     static QPlaceRestManager *instance();
 
+    void setProxy(const QNetworkProxy &proxy);
+
     QPlaceRestReply *sendPlaceRequest(const QString &placeId);
     QPlaceRestReply *sendPlaceImagesRequest(const QString &placeId, const QPlaceRequest &params);
     QPlaceRestReply *sendPlaceReviewRequest(const QString &placeId, const QPlaceRequest &params);

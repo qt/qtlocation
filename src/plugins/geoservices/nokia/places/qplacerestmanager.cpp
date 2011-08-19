@@ -124,6 +124,14 @@ QPlaceRestManager *QPlaceRestManager::instance()
 }
 
 /*!
+    Sets the proxy used for requests.
+*/
+void QPlaceRestManager::setProxy(const QNetworkProxy &proxy)
+{
+    mManager->setProxy(proxy);
+}
+
+/*!
     Predefines a places request and executes sendGeneralRequest().
 */
 QPlaceRestReply *QPlaceRestManager::sendPlaceRequest(const QString &placeId)
