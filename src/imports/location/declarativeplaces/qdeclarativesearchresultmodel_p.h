@@ -25,6 +25,7 @@ class QDeclarativeSearchResultModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged);
     Q_PROPERTY(int didYouMean READ didYouMean WRITE setDidYouMean NOTIFY didYouMeanChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSearchResult> results READ results NOTIFY resultsChanged)
+    Q_PROPERTY(bool executing READ executing NOTIFY executingChanged)
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -66,6 +67,8 @@ public:
     int didYouMean() const;
     void setDidYouMean(const int &dym);
 
+    bool executing() const;
+
     Q_INVOKABLE void executeQuery();
     Q_INVOKABLE void cancelRequest();
 
@@ -83,6 +86,7 @@ signals:
     void limitChanged();
     void didYouMeanChanged();
     void resultsChanged();
+    void executingChanged();
 
 private slots:
     void replyFinished();
