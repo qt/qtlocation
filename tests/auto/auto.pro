@@ -19,7 +19,7 @@ SUBDIRS += geotestplugin \
            qplacecategory \
            qplacedescription \
            qplacemanager \
-           qplacemediaobject \
+           qplaceimage \
            qplacerequest \
            qplacerating \
            qplacereview \

@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -21,7 +21,7 @@
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU General
-** Public License version 3.0 as published by the Free Software Foundation
+** Public License version 3.0 as published by tOhe Free Software Foundation
 ** and appearing in the file LICENSE.GPL included in the packaging of this
 ** file. Please review the following information to ensure the GNU General
 ** Public License version 3.0 requirements will be met:
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACE_P_H
-#define QGEOPLACE_P_H
+#ifndef QPLACECONTENT_P_H
+#define QPLACECONTENT_P_H
 
 //
 //  W A R N I N G
@@ -53,80 +53,60 @@
 // We mean it.
 //
 
-#include <QRectF>
-#include <QSharedData>
-#include <QUrl>
+#include "qplacecontent.h"
 
-#include "qgeoplace.h"
-#include "qgeoaddress.h"
-#include "qgeoboundingbox.h"
-#include "qgeocoordinate.h"
+#include <QSharedData>
+#include <QString>
+
 
 QT_BEGIN_NAMESPACE
 
-class QGeoPlacePrivate : public QSharedData
+
+#define Q_IMPLEMENT_CONTENT_D_FUNC(Class) \
+    Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
+    const Class##Private* Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); } \
+
+#define Q_IMPLEMENT_CONTENT_COPY_CTOR(Class) \
+    Class::Class(const QPlaceContent& other) : QPlaceContent() { Class##Private::copyIfPossible(d_ptr, other); }
+
+#define Q_DEFINE_CONTENT_PRIVATE_HELPER(Class, ContentType) \
+    QPlaceContentPrivate* clone() const { return new Class##Private(*this); } \
+    virtual QPlaceContent::Type type() const {return ContentType;} \
+    static void copyIfPossible(QSharedDataPointer<QPlaceContentPrivate>& d_ptr, const QPlaceContent& other) \
+    { \
+        if (other.type() == ContentType) \
+            d_ptr = extract_d(other); \
+        else \
+            d_ptr = new Class##Private; \
+    }
+
+class QPlaceContentPrivate : public QSharedData
 {
 public:
-    enum PlaceType {
-        GeoPlaceType,
-        LandmarkType
-    };
+    QPlaceContentPrivate(){}
+    virtual ~QPlaceContentPrivate(){}
 
-    QGeoPlacePrivate();
-    QGeoPlacePrivate(const QGeoPlacePrivate &other);
-    virtual ~QGeoPlacePrivate();
+    virtual bool compare(const QPlaceContentPrivate *other) const =0;
+    virtual QPlaceContentPrivate* clone() const = 0;
+    virtual QPlaceContent::Type type() const = 0;
 
-    QGeoPlacePrivate& operator= (const QGeoPlacePrivate &other);
-
-    virtual bool operator== (const QGeoPlacePrivate &other) const;
-
-    virtual QGeoPlacePrivate* clone() const { return new QGeoPlacePrivate(*this); }
-    PlaceType type;
-    QGeoBoundingBox viewport;
-    QGeoCoordinate coordinate;
-    QGeoAddress address;
-
-    QVariantHash additionalData;
-    QList<QPlaceCategory> categories;
-    QList<QPlaceDescription> descriptions;
-    QGeoLocation location;
-    QPlaceRating rating;
-    QList<QPlaceSupplier> suppliers;
-    QStringList feeds;
-
-    QString name;
-    QString placeId;
-    QPlacePaginationList<QPlaceReview> reviews;
-    int reviewCount;
-    QString shortDescription;
-    QStringList tags;
-
-    QMap<QPlaceContent::Type, QPlaceContent::Collection> contentCollections;
-    QMap<QPlaceContent::Type, int> contentCounts;
-
-    QString primaryPhone;
-    QString primaryFax;
-    QString primaryEmail;
-    QUrl primaryUrl;
-
-    QGeoPlace::ExtendedAttributes extendedAttributes;
-
-    bool detailsFetched;
+    /* Helper functions for C++ protection rules */
+    static const QSharedDataPointer<QPlaceContentPrivate>& extract_d(const QPlaceContent& other) {return other.d_ptr;}
 };
-
 
 #if defined(Q_CC_MWERKS)
 // This results in multiple symbol definition errors on all other compilers
 // but not having a definition here results in an attempt to use the unspecialized
 // clone (which fails because of the pure virtuals above)
-template<> QGeoPlacePrivate *QSharedDataPointer<QGeoPlacePrivate>::clone()
+template<> QPlaceContentPrivate *QSharedDataPointer<QPlaceContentPrivate>::clone()
 {
     return d->clone();
 }
 #else
-template<> QGeoPlacePrivate *QSharedDataPointer<QGeoPlacePrivate>::clone();
+template<> QPlaceContentPrivate *QSharedDataPointer<QPlaceContentPrivate>::clone();
 #endif
 
 QT_END_NAMESPACE
+
 #endif
 

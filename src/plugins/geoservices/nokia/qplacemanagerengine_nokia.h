@@ -66,7 +66,7 @@ public:
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
 
-    QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceRequest &query);
+    QPlaceContentReply *getContent(QPlaceContent::Type contentType, const QGeoPlace &place, const QPlaceRequest &request);
 
     QPlaceReply *postRating(const QString &placeId, qreal value);
 

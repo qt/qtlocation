@@ -60,7 +60,6 @@
 #include <qplacedescription.h>
 #include <qplacerating.h>
 #include <qgeolocation.h>
-#include <qplacemediaobject.h>
 #include <qplaceperiod.h>
 #include <qplacesupplier.h>
 #include "qplacejsoncategoriesparser.h"
@@ -636,7 +635,7 @@ void QPlaceJSonDetailsParser::processPremiumContentMediaObjects(const QScriptVal
         if (value.isArray()) {
             QScriptValueIterator it(value);
             //Note: Currently only image types are supported by the server
-            PlaceMediaCollection images = targetPlace->media(QPlaceMediaObject::Image);
+            QPlaceContent::Collection images = targetPlace->content(QPlaceContent::ImageType);
             int insertionIndex = 0;
             if (!images.keys().isEmpty())
                 insertionIndex = images.keys().last() + 1;
@@ -645,7 +644,7 @@ void QPlaceJSonDetailsParser::processPremiumContentMediaObjects(const QScriptVal
                 it.next();
                 // array contains count as last element
                 if (it.name() != "length") {
-                    QPlaceMediaObject *obj = processPremiumContentMediaObject(it.value());
+                    QPlaceImage *obj = processPremiumContentMediaObject(it.value());
                     if (obj) {
                         obj->setSupplier(supplier);
                         images.insert(insertionIndex, *obj);
@@ -654,29 +653,29 @@ void QPlaceJSonDetailsParser::processPremiumContentMediaObjects(const QScriptVal
                     }
                 }
             }
-            targetPlace->setMedia(QPlaceMediaObject::Image, images);
+            targetPlace->setContent(QPlaceContent::ImageType, images);
         } else {
-            QPlaceMediaObject *obj = processPremiumContentMediaObject(value);
+            QPlaceImage *obj = processPremiumContentMediaObject(value);
             if (obj) {
                 obj->setSupplier(supplier);
-                PlaceMediaCollection images = targetPlace->media(QPlaceMediaObject::Image);
+                QPlaceContent::Collection images = targetPlace->content(QPlaceContent::ImageType);
                 int insertionIndex = 0;
                 if (!images.keys().isEmpty())
                     insertionIndex = images.keys().last() + 1;
                 images.insert(insertionIndex,*obj);
-                targetPlace->setMedia(QPlaceMediaObject::Image, images);
+                targetPlace->setContent(QPlaceContent::ImageType, images);
                 delete obj;
             }
         }
     }
 }
 
-QPlaceMediaObject *QPlaceJSonDetailsParser::processPremiumContentMediaObject(const QScriptValue &content)
+QPlaceImage *QPlaceJSonDetailsParser::processPremiumContentMediaObject(const QScriptValue &content)
 {
-    QPlaceMediaObject *obj = NULL;
+    QPlaceImage *obj = NULL;
     QScriptValue value = content.property(place_premiumcontent_content_mediaurl_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        obj = new QPlaceMediaObject();
+        obj = new QPlaceImage();
         obj->setUrl(QUrl::fromEncoded(value.toString().toAscii()));
         obj->setId(value.toString());
         value = content.property(place_premiumcontent_content_mediamimetype_element);
@@ -784,7 +783,7 @@ void QPlaceJSonDetailsParser::processAdContentMediaObjects(const QScriptValue &c
         if (value.isArray()) {
             QScriptValueIterator it(value);
             //The server only has images for now.
-            PlaceMediaCollection images =targetPlace->media(QPlaceMediaObject::Image);
+            QPlaceContent::Collection images =targetPlace->content(QPlaceContent::ImageType);
             int insertionIndex = 0;
             if (!images.keys().isEmpty())
                 insertionIndex = images.keys().last() + 1;
@@ -793,7 +792,7 @@ void QPlaceJSonDetailsParser::processAdContentMediaObjects(const QScriptValue &c
                 it.next();
                 // array contains count as last element
                 if (it.name() != "length") {
-                    QPlaceMediaObject *obj = processAdContentMediaObject(it.value());
+                    QPlaceImage *obj = processAdContentMediaObject(it.value());
                     if (obj) {
                         images.insert(insertionIndex,*obj);
                         insertionIndex++;
@@ -801,25 +800,25 @@ void QPlaceJSonDetailsParser::processAdContentMediaObjects(const QScriptValue &c
                     }
                 }
             }
-            targetPlace->setMedia(QPlaceMediaObject::Image, images);
+            targetPlace->setContent(QPlaceContent::ImageType, images);
         } else {
-            QPlaceMediaObject *obj = processAdContentMediaObject(value);
+            QPlaceImage *obj = processAdContentMediaObject(value);
             if (obj) {
-                PlaceMediaCollection images = targetPlace->media(QPlaceMediaObject::Image);
+                QPlaceContent::Collection images = targetPlace->content(QPlaceContent::ImageType);
                 int insertionIndex = 0;
                 if (!images.keys().isEmpty())
                     insertionIndex = images.keys().last() + 1;
                 images.insert(insertionIndex, *obj);
-                targetPlace->setMedia(QPlaceMediaObject::Image, images);
+                targetPlace->setContent(QPlaceContent::ImageType,images);
                 delete obj;
             }
         }
     }
 }
 
-QPlaceMediaObject *QPlaceJSonDetailsParser::processAdContentMediaObject(const QScriptValue &content)
+QPlaceImage *QPlaceJSonDetailsParser::processAdContentMediaObject(const QScriptValue &content)
 {
-    QPlaceMediaObject *obj = NULL;
+    QPlaceImage *obj = NULL;
     QString mediaMimeType;
     QString mediaUrl;
 
@@ -832,7 +831,7 @@ QPlaceMediaObject *QPlaceJSonDetailsParser::processAdContentMediaObject(const QS
         mediaUrl = value.toString();
     }
     if (!mediaMimeType.isEmpty() || !mediaUrl.isEmpty()) {
-        obj = new QPlaceMediaObject();
+        obj = new QPlaceImage();
         obj->setUrl(QUrl::fromEncoded(mediaUrl.toAscii()));
         obj->setId(mediaUrl);
         obj->setMimeType(mediaMimeType);

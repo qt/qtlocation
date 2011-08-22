@@ -10,7 +10,7 @@
 #include "qdeclarativerating_p.h"
 #include "qdeclarativedescription_p.h"
 #include "qdeclarativereviewmodel_p.h"
-#include "qdeclarativemediamodel_p.h"
+#include "qdeclarativeplaceimagemodel_p.h"
 #include <QDeclarativePropertyMap>
 
 QT_BEGIN_NAMESPACE
@@ -36,7 +36,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
     Q_PROPERTY(bool fetchingDetails READ fetchingDetails WRITE setFetchingDetails NOTIFY fetchingDetailsChanged)
     Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged)
-    Q_PROPERTY(QDeclarativeMediaModel *mediaModel READ mediaModel NOTIFY mediaModelChanged)
+    Q_PROPERTY(QDeclarativePlaceImageModel *imageModel READ imageModel NOTIFY imageModelChanged)
     Q_PROPERTY(QDeclarativePropertyMap *extendedAttributes READ extendedAttributes WRITE setExtendedAttributes NOTIFY extendedAttributesChanged);
 
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -58,7 +58,7 @@ public:
     QDeclarativeGeoServiceProvider* plugin() const;
 
     QDeclarativeReviewModel *reviewModel();
-    QDeclarativeMediaModel *mediaModel();
+    QDeclarativePlaceImageModel *imageModel();
 
     QGeoPlace place();
     void setPlace(const QGeoPlace &src);
@@ -137,7 +137,7 @@ signals:
     void detailsFetchedChanged();
     void fetchingDetailsChanged();
     void reviewModelChanged();
-    void mediaModelChanged();
+    void imageModelChanged();
 
     void primaryPhoneChanged();
     void primaryFaxChanged();
@@ -163,7 +163,7 @@ private:
     QDeclarativeRating m_rating;
     QList<QDeclarativeSupplier*> m_suppliers;
     QDeclarativeReviewModel *m_reviewModel;
-    QDeclarativeMediaModel *m_mediaModel;
+    QDeclarativePlaceImageModel *m_imageModel;
     QDeclarativePropertyMap *m_extendedAttributes;
 
     QGeoPlace m_src;

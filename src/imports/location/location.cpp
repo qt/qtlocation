@@ -78,7 +78,7 @@
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativedescription_p.h"
 #include "qdeclarativegeolocation_p.h"
-#include "qdeclarativemediaobject_p.h"
+#include "qdeclarativeplaceimage_p.h"
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativeplaceattribute_p.h"
 #include "qdeclarativerating_p.h"
@@ -194,8 +194,8 @@ public:
             qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
             qmlRegisterType<QDeclarativeDescription>(uri, 5, 0, "Description");
             qmlRegisterType<QDeclarativeGeoLocation>(uri, 5, 0, "Location");
-            qmlRegisterType<QDeclarativeMediaObject>(uri, 5, 0, "MediaObject");
-            qmlRegisterType<QDeclarativeMediaModel>(uri, 5, 0, "MediaModel");
+            qmlRegisterType<QDeclarativePlaceImage>(uri, 5, 0, "PlaceImage");
+            qmlRegisterType<QDeclarativePlaceImageModel>(uri, 5, 0, "PlaceImageModel");
             qmlRegisterType<QDeclarativePlace>(uri, 5, 0, "Place");
             qmlRegisterType<QDeclarativeRating>(uri, 5, 0, "Rating");
             qmlRegisterType<QDeclarativeReview>(uri, 5, 0, "Review");

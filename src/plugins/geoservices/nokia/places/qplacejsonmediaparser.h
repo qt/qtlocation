@@ -52,7 +52,7 @@
 #include <QObject>
 #include <QList>
 
-#include <qplacemediaobject.h>
+#include <qplaceimage.h>
 #include "qplacejsonparser_p.h"
 
 class QScriptEngine;
@@ -67,16 +67,16 @@ public:
     explicit QPlaceJSonMediaParser(QObject *parent = 0);
     virtual ~QPlaceJSonMediaParser();
 
-    QList<QPlaceMediaObject> resultMedia();
+    QList<QPlaceImage> resultMedia();
     int allMediaCount();
-    static QPlaceMediaObject buildMediaObject(const QScriptValue &place);
+    static QPlaceImage buildMediaObject(const QScriptValue &place);
 
 private:
     void processJSonData(const QScriptValue &sv);
     void processMedia(const QScriptValue &contacts);
 
 private:
-    QList<QPlaceMediaObject> media;
+    QList<QPlaceImage> media;
     int allMedia;
 };
 

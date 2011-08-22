@@ -113,7 +113,7 @@ void QPlaceReviewReply::setReviews(const QList<QPlaceReview> &reviews)
 }
 
 /*!
-    Sets the \a offset number of the first media objects on the current page.
+    Sets the \a offset number of the first review.
 */
 void QPlaceReviewReply::setOffset(int offset)
 {
@@ -132,7 +132,7 @@ int QPlaceReviewReply::totalCount() const
 }
 
 /*!
-    Sets the \a total number of media objects for a place.
+    Sets the \a total number of reviews for a place.
 */
 void QPlaceReviewReply::setTotalCount(int total)
 {

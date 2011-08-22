@@ -9,7 +9,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: closeMediaButton.top
+        anchors.bottom: closeImagesButton.top
 
         cellHeight: 200
         cellWidth: 200
@@ -21,15 +21,15 @@ Rectangle {
             Image {
                 anchors.fill: parent
                 anchors.margins: 5
-                source: media.url
+                source: image.url
                 fillMode: Image.PreserveAspectFit
             }
         }
     }
 
     Rectangle {
-        id: closeMediaButton
-        height: mediaClose.height
+        id: closeImagesButton
+        height: imagesClose.height
         width: parent.width
         anchors.bottom: parent.bottom
         gradient: Gradient {
@@ -39,7 +39,7 @@ Rectangle {
         }
 
         Text {
-            id: mediaClose;
+            id: imagesClose;
             anchors.horizontalCenter: parent.horizontalCenter
             text: 'Close';
         }

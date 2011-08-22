@@ -77,8 +77,9 @@ public:
         return 0;
     }
 
-    QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceRequest &query)
+    QPlaceContentReply *getContent(QPlaceContent::Type type, const QGeoPlace &place, const QPlaceRequest &query)
     {
+        Q_UNUSED(type)
         Q_UNUSED(place)
         Q_UNUSED(query)
 

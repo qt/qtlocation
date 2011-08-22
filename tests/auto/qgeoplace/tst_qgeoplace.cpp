@@ -2,7 +2,7 @@
 #include <QtTest/QtTest>
 
 #include <qgeoplace.h>
-#include <qplacemediaobject.h>
+#include <qplaceimage.h>
 #include <qplaceattribute.h>
 
 QT_USE_NAMESPACE
@@ -24,8 +24,8 @@ private Q_SLOTS:
     void ratingTest();
     void suppliersTest();
     void feedsTest();
-    void mediaTest();
-    void mediaCountTest();
+    void contentTest();
+    void contentCountTest();
     void nameTest();
     void placeIdTest();
     void reviewsTest();
@@ -99,14 +99,15 @@ void tst_QGeoPlace::shortDescriptionTest()
     QVERIFY2(testObj.shortDescription() == "testText", "Wrong value returned");
 }
 
-void tst_QGeoPlace::mediaCountTest()
+void tst_QGeoPlace::contentCountTest()
 {
     QGeoPlace testObj;
-    QVERIFY2(testObj.mediaCount(QPlaceMediaObject::Image) == 0, "Wrong default value");
-    QVERIFY2(testObj.mediaCount("Video") == 0, "Wrong default value");
-    testObj.setMediaCount(QPlaceMediaObject::Image, 50);
-    QVERIFY2(testObj.mediaCount(QPlaceMediaObject::Image) == 50, "Wrong value returned");
-    QVERIFY2(testObj.mediaCount("Video") == 0, "Wrong value returned");
+    QVERIFY2(testObj.contentCount(QPlaceContent::ImageType) == 0, "Wrong default value");
+    testObj.setContentCount(QPlaceContent::ImageType, 50);
+    QVERIFY2(testObj.contentCount(QPlaceContent::ImageType) == 50, "Wrong value returned");
+
+    testObj.setContentCount(QPlaceContent::ImageType,0);
+    QVERIFY2(testObj.contentCount(QPlaceContent::ImageType) == 0, "Wrong value returned");
 }
 
 void tst_QGeoPlace::reviewCountTest()
@@ -161,63 +162,56 @@ void tst_QGeoPlace::detailsFetchedTest()
     QVERIFY2(testPlace.detailsFetched() == false, "Wrong value returned");
 }
 
-void tst_QGeoPlace::mediaTest()
+void tst_QGeoPlace::contentTest()
 {
     QUrl thumbnailUrl("testId");
-    QUrl mediaUrl("testName2");
 
     QGeoPlace place;
-    QVERIFY2(place.media(QPlaceMediaObject::Image).count() ==0,"Wrong default value");
-    QVERIFY2(place.media(QPlaceMediaObject::Image).count() ==0,"Wrong default value");
-    QVERIFY2(place.media("Video").count() ==0,"Wrong default value");
+    QVERIFY2(place.content(QPlaceContent::ImageType).count() ==0,"Wrong default value");
 
-
-    QPlaceMediaObject dummyImage;
+    QPlaceImage dummyImage;
     dummyImage.setUrl(QUrl("www.dummy.one"));
 
-    QPlaceMediaObject dummyImage2;
+    QPlaceImage dummyImage2;
     dummyImage2.setUrl(QUrl("www.dummy.two"));
 
-    QPlaceMediaObject dummyImage3;
+    QPlaceImage dummyImage3;
     dummyImage3.setUrl(QUrl("www.dummy.three"));
 
-    PlaceMediaCollection imageCollection;
+    QPlaceContent::Collection imageCollection;
     imageCollection.insert(0,dummyImage);
     imageCollection.insert(1, dummyImage2);
     imageCollection.insert(2, dummyImage3);
 
-    place.setMedia(QPlaceMediaObject::Image, imageCollection);
-    PlaceMediaCollection retrievedCollection = place.media(QPlaceMediaObject::Image);
+    place.setContent(QPlaceContent::ImageType, imageCollection);
+    QPlaceContent::Collection retrievedCollection = place.content(QPlaceContent::ImageType);
 
     QCOMPARE(retrievedCollection.count(), 3);
-    QCOMPARE(retrievedCollection.value(0), dummyImage);
-    QCOMPARE(retrievedCollection.value(1), dummyImage2);
-    QCOMPARE(retrievedCollection.value(2), dummyImage3);
-    QCOMPARE(place.media("Video").count(), 0);
-
+    QCOMPARE(QPlaceImage(retrievedCollection.value(0)), dummyImage);
+    QCOMPARE(QPlaceImage(retrievedCollection.value(1)), dummyImage2);
+    QCOMPARE(QPlaceImage(retrievedCollection.value(2)), dummyImage3);
 
     //replace the second and insert a sixth image
     //indexes 4 and 5 are "missing"
-    QPlaceMediaObject dummyImage2New;
+    QPlaceImage dummyImage2New;
     dummyImage2.setUrl(QUrl("www.dummy.two.new"));
 
-    QPlaceMediaObject dummyImage6;
+    QPlaceImage dummyImage6;
     dummyImage6.setUrl(QUrl("www.dummy.six"));
 
     imageCollection.clear();
     imageCollection.insert(1, dummyImage2New);
     imageCollection.insert(5, dummyImage6);
-    place.addMedia(QPlaceMediaObject::Image, imageCollection);
+    place.addContent(QPlaceContent::ImageType, imageCollection);
 
-    retrievedCollection = place.media(QPlaceMediaObject::Image);
+    retrievedCollection = place.content(QPlaceContent::ImageType);
     QCOMPARE(retrievedCollection.count(), 4);
-    QCOMPARE(retrievedCollection.value(0), dummyImage);
-    QCOMPARE(retrievedCollection.value(1), dummyImage2New);
-    QCOMPARE(retrievedCollection.value(2), dummyImage3);
-    QCOMPARE(retrievedCollection.value(3), QPlaceMediaObject());
-    QCOMPARE(retrievedCollection.value(4), QPlaceMediaObject());
-    QCOMPARE(retrievedCollection.value(5), dummyImage6);
-    QCOMPARE(place.media("Video").count(), 0);
+    QCOMPARE(QPlaceImage(retrievedCollection.value(0)), dummyImage);
+    QCOMPARE(QPlaceImage(retrievedCollection.value(1)), dummyImage2New);
+    QCOMPARE(QPlaceImage(retrievedCollection.value(2)), dummyImage3);
+    QCOMPARE(QPlaceImage(retrievedCollection.value(3)), QPlaceImage());
+    QCOMPARE(QPlaceImage(retrievedCollection.value(4)), QPlaceImage());
+    QCOMPARE(QPlaceImage(retrievedCollection.value(5)), dummyImage6);
 }
 
 void tst_QGeoPlace::reviewsTest()

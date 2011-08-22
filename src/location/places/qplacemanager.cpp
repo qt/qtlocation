@@ -78,7 +78,6 @@
     \value ImportFeature The manager supports import operations
     \value ExportFeature The manager supports export operations
     \value CheckInFeature The manaager supports check-in operations
-    \value PostMediaFeature The manager supports posting media for places
     \value PostRatingFeature The manager supports posting ratings for places
     \value SuggestionFeature The manager supports the providing of suggestions
     \value ReportPlaceFeature The manager supports reporting a place if it is incorrect/inappropriate.
@@ -137,11 +136,12 @@ QPlaceDetailsReply *QPlaceManager::getPlaceDetails(const QString &placeId) const
 }
 
 /*!
-    Retrieves media from a given \a place according to the parameters specified in \a request.
+    Retrieves content of type \a contentType from a given \a place according to thes parameters specified in
+    \a request.
 */
-QPlaceMediaReply *QPlaceManager::getMedia(const QGeoPlace &place, const QPlaceRequest &request) const
+QPlaceContentReply *QPlaceManager::getContent(QPlaceContent::Type contentType, const QGeoPlace &place, const QPlaceRequest &request) const
 {
-    return d->engine->getMedia(place, request);
+    return d->engine->getContent(contentType, place, request);
 }
 
 /*!

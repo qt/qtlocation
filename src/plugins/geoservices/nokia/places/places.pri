@@ -14,7 +14,7 @@ HEADERS += \
 #query classes
 #reply classes
     places/qplacecategoriesreplyimpl.h \
-    places/qplacemediareplyimpl.h \
+    places/qplaceimagereplyimpl.h \
     places/qplacedetailsreplyimpl.h \
     places/qplaceratingreplyimpl.h \
     places/qplacerecommendationreplyimpl.h \
@@ -44,7 +44,7 @@ SOURCES += \
 #reply classes
     places/qplacecategoriesreplyimpl.cpp \
     places/qplacedetailsreplyimpl.cpp \
-    places/qplacemediareplyimpl.cpp \
+    places/qplaceimagereplyimpl.cpp \
     places/qplaceratingreplyimpl.cpp \
     places/qplacerecommendationreplyimpl.cpp \
     places/qplacereviewreplyimpl.cpp \

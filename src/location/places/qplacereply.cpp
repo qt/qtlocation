@@ -91,8 +91,8 @@ QT_USE_NAMESPACE
         Thi is the reply for a text prediction operation.
     \value ReviewReply
         This is a reply for the retrieval of place reviews.
-    \value MediaReply
-        This is a reply for the retrieval of place media.
+    \value ContentReply
+        This is a reply for the retrieval of place content.
     \value PlaceDetailsReply
         This is a reply for the retrieval of place details.
     \value PlaceSearchReply

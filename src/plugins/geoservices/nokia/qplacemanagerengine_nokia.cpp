@@ -52,7 +52,7 @@
 #include "places/qplacetextpredictionreplyimpl.h"
 #include "places/qplacesearchreplyimpl.h"
 #include "places/qplacereviewreplyimpl.h"
-#include "places/qplacemediareplyimpl.h"
+#include "places/qplaceimagereplyimpl.h"
 #include "places/qplacerecommendationreplyimpl.h"
 #include "places/qplacedetailsreplyimpl.h"
 #include "places/qplaceratingreplyimpl.h"
@@ -108,20 +108,34 @@ QPlaceDetailsReply *QPlaceManagerEngineNokia::getPlaceDetails(const QString &pla
     return reply;
 }
 
-QPlaceMediaReply *QPlaceManagerEngineNokia::getMedia(const QGeoPlace &place, const QPlaceRequest &query)
+QPlaceContentReply *QPlaceManagerEngineNokia::getContent(QPlaceContent::Type type, const QGeoPlace &place, const QPlaceRequest &query)
 {
-    QPlaceMediaReplyImpl *reply = NULL;
-    QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceImagesRequest(place.placeId(),
-                                                                                       query);
-    if (restReply) {
-        reply = new QPlaceMediaReplyImpl(restReply, this);
-        reply->setStartNumber(query.offset());
+    QPlaceImageReplyImpl *reply = 0;
+    if (type == QPlaceContent::ImageType) {
+        QPlaceImageReplyImpl *reply = NULL;
+        QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceImagesRequest(place.placeId(),
+                                                                                           query);
+        if (restReply) {
+            reply = new QPlaceImageReplyImpl(restReply, this);
+            reply->setStartNumber(query.offset());
+            connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
+                    this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
+            connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
+                    this, SLOT(processingFinished(QPlaceReply*)));
+        }
+        return reply;
+    } else  {
+        reply = new QPlaceImageReplyImpl(0, 0);
         connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
                 this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
         connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
                 this, SLOT(processingFinished(QPlaceReply*)));
+
+        QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
+                                  Q_ARG(QString, QString("Retrieval of given content type not supported")));
+        return reply;
     }
-    return reply;
 }
 
 QPlaceReply *QPlaceManagerEngineNokia::postRating(const QString &placeId, qreal value)

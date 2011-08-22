@@ -53,6 +53,7 @@
 #include <QList>
 
 #include <qgeoplace.h>
+#include <qplaceimage.h>
 #include "qplacejsonparser_p.h"
 
 class QScriptEngine;
@@ -93,13 +94,13 @@ private:
     static void processPremiumContentMediaObjects(const QScriptValue &content,
                                                   const QPlaceSupplier &supplier,
                                                   QGeoPlace *targetPlace);
-    static QPlaceMediaObject *processPremiumContentMediaObject(const QScriptValue &content);
+    static QPlaceImage *processPremiumContentMediaObject(const QScriptValue &content);
     static void processAdContent(const QScriptValue &content, QGeoPlace *targetPlace);
     static void processAdContentPackages(const QScriptValue &content, QGeoPlace *targetPlace);
     static void processAdContentDescriptions(const QScriptValue &content, QGeoPlace *targetPlace);
     static QPlaceDescription *processAdContentDescription(const QScriptValue &content);
     static void processAdContentMediaObjects(const QScriptValue &content, QGeoPlace *targetPlace);
-    static QPlaceMediaObject *processAdContentMediaObject(const QScriptValue &content);
+    static QPlaceImage *processAdContentMediaObject(const QScriptValue &content);
     static void processAdContentPaymentMethods(const QScriptValue &content, QGeoPlace *targetPlace);
     static QString processAdContentPaymentMethod(const QScriptValue &content);
     static void processAdContentBusinessHours(const QScriptValue &content, QGeoPlace *targetPlace);

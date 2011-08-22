@@ -1,16 +1,16 @@
-#ifndef QDECLARATIVEMEDIAOBJECT_P_H
-#define QDECLARATIVEMEDIAOBJECT_P_H
+#ifndef QDECLARATIVEPLACEIMAGE_P_H
+#define QDECLARATIVEPLACEIMAGE_P_H
 
 #include <QtCore/QObject>
 #include <QtCore/QUrl>
 #include <QtDeclarative/QDeclarativeListProperty>
 
-#include <qplacemediaobject.h>
 #include "qdeclarativesupplier_p.h"
+#include <qplaceimage.h>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeMediaObject : public QObject
+class QDeclarativePlaceImage : public QObject
 {
     Q_OBJECT
 
@@ -22,12 +22,12 @@ class QDeclarativeMediaObject : public QObject
     Q_PROPERTY(QString metaInfo READ metaInfo WRITE setMetaInfo NOTIFY metaInfoChanged);
 
 public:
-    explicit QDeclarativeMediaObject(QObject* parent = 0);
-    explicit QDeclarativeMediaObject(const QPlaceMediaObject &src, QObject* parent = 0);
-    ~QDeclarativeMediaObject();
+    explicit QDeclarativePlaceImage(QObject* parent = 0);
+    explicit QDeclarativePlaceImage(const QPlaceImage &src, QObject* parent = 0);
+    ~QDeclarativePlaceImage();
 
-    QPlaceMediaObject mediaObject();
-    void setMediaObject(const QPlaceMediaObject &src);
+    QPlaceImage image();
+    void setImage(const QPlaceImage &src);
 
     QUrl url() const;
     void setUrl(const QUrl &url);
@@ -52,11 +52,11 @@ signals:
 
 private:
     QDeclarativeSupplier m_declarativeSupplier;
-    QPlaceMediaObject m_src;
+    QPlaceImage m_src;
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeMediaObject));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePlaceImage));
 
-#endif // QDECLARATIVEMEDIAOBJECT_P_H
+#endif

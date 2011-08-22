@@ -51,12 +51,11 @@
 #include "qgeocoordinate.h"
 #include "qgeolocation.h"
 #include "qplacecategory.h"
+#include "qplacecontent.h"
 #include "qplacedescription.h"
 #include "qplacerating.h"
 #include "qplacepaginationlist.h"
-#include "qplacemediaobject.h"
 #include "qplacereview.h"
-#include "qplacemediaobject.h"
 #include "qplaceattribute.h"
 
 QT_BEGIN_NAMESPACE
@@ -106,11 +105,11 @@ public:
     QStringList feeds() const;
     void setFeeds(const QStringList &feeds);
 
-    PlaceMediaCollection media(const QString &mediaType) const;
-    void setMedia(const QString &mediaType, const PlaceMediaCollection &media);
-    void addMedia(const QString &mediaType, const PlaceMediaCollection &media);
-    int mediaCount(const QString &mediaType) const;
-    void setMediaCount(const QString &mediaType, int);
+    QPlaceContent::Collection content(QPlaceContent::Type type) const;
+    void setContent(QPlaceContent::Type type, const QPlaceContent::Collection &content);
+    void addContent(QPlaceContent::Type type, const QPlaceContent::Collection &content);
+    int contentCount(QPlaceContent::Type type) const;
+    void setContentCount(QPlaceContent::Type type, int);
 
     QString name() const;
     void setName(const QString &name);

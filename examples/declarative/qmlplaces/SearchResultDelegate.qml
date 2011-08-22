@@ -87,10 +87,10 @@ Rectangle {
                 }
 
                 Text {
-                    text: '<b>Media count: </b> ' + result.place.mediaModel.totalCount +
-                          ((result.place.mediaModel.totalCount <= 0) ? '' : ', <a href=\"dummy\">show media</a>')
+                    text: '<b>Image count: </b> ' + result.place.imageModel.totalCount +
+                          ((result.place.imageModel.totalCount <= 0) ? '' : ', <a href=\"dummy\">show images</a>')
                     font.pixelSize: 16
-                    onLinkActivated: mediaGrid.model = result.place.mediaModel
+                    onLinkActivated: imageGrid.model = result.place.imageModel
                 }
 
                 Text {

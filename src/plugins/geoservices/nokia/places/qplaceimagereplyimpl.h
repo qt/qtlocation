@@ -37,36 +37,52 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
-#ifndef QPLACEMEDIAOBJECT_P_H
-#define QPLACEMEDIAOBJECT_P_H
+#ifndef QPLACEIMAGEREPLYIMPL_H
+#define QPLACEIMAGEREPLYIMPL_H
 
-#include <QtCore/QSharedData>
-#include <QtCore/QUrl>
+#include <QObject>
+#include <QHash>
 
-#include "qplacemediaobject.h"
+#include <qplacecontentreply.h>
+#include "qplacerestreply.h"
+#include "qplacejsonmediaparser.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceMediaObjectPrivate : public QSharedData
+class QPlaceImageReplyImpl : public QPlaceContentReply
 {
+    Q_OBJECT
 public:
-    QPlaceMediaObjectPrivate();
-    QPlaceMediaObjectPrivate(const QPlaceMediaObjectPrivate &other);
+    explicit QPlaceImageReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
+    ~QPlaceImageReplyImpl();
+    void abort();
+    void setStartNumber(int number);
 
-    ~QPlaceMediaObjectPrivate();
+Q_SIGNALS:
+    void processingFinished(QPlaceReply *reply);
+    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
 
-    bool operator==(const QPlaceMediaObjectPrivate &other) const;
+public slots:
+    void restError(QPlaceReply::Error error, const QString &errorString);
+    void restError(QPlaceRestReply::Error error);
+    void resultReady(const QPlaceJSonParser::Error &error,
+                          const QString &errorMessage);
 
-    QUrl url;
-    QUrl thumbnailUrl;
-    QString id;
-    QString metaInfo;
-    QString mimeType;
-    QPlaceSupplier supplier;
+private:
+    QPlaceRestReply *restReply;
+    QPlaceJSonMediaParser *parser;
+    int startNumber;
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACEMEDIAOBJECT_P_H
+#endif

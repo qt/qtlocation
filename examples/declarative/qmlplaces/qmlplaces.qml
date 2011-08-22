@@ -219,8 +219,8 @@ Rectangle {
         hierarchical: true
     }
 
-    MediaGrid {
-        id: mediaGrid
+    ImageGrid {
+        id: imageGrid
 
         anchors.fill: parent
         visible: model != undefined

@@ -1,9 +1,9 @@
-#ifndef QDECLARATIVEMEDIAMODEL_P_H
-#define QDECLARATIVEMEDIAMODEL_P_H
+#ifndef QDECLARATIVEPLACEIMAGEMODEL_P_H
+#define QDECLARATIVEPLACEIMAGEMODEL_P_H
 
 #include <QtCore/QObject>
 #include <QtCore/QAbstractListModel>
-#include "qdeclarativemediaobject_p.h"
+#include "qdeclarativeplaceimage_p.h"
 #include <qplacemanager.h>
 
 QT_BEGIN_NAMESPACE
@@ -12,7 +12,7 @@ class QDeclarativePlace;
 class QDeclarativeGeoServiceProvider;
 class QGeoServiceProvider;
 
-class QDeclarativeMediaModel : public QAbstractListModel, public QDeclarativeParserStatus
+class QDeclarativePlaceImageModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
@@ -23,8 +23,8 @@ class QDeclarativeMediaModel : public QAbstractListModel, public QDeclarativePar
     Q_PROPERTY(int totalCount READ totalCount NOTIFY totalCountChanged)
 
 public:
-    explicit QDeclarativeMediaModel(QObject* parent = 0);
-    ~QDeclarativeMediaModel();
+    explicit QDeclarativePlaceImageModel(QObject* parent = 0);
+    ~QDeclarativePlaceImageModel();
 
     QDeclarativePlace *place() const;
     void setPlace(QDeclarativePlace *place);
@@ -37,7 +37,7 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
-        MediaRole = Qt::UserRole
+        ImageRole = Qt::UserRole
     };
 
     bool canFetchMore(const QModelIndex &parent) const;
@@ -59,15 +59,15 @@ private slots:
 private:
     QDeclarativePlace *m_place;
     int m_batchSize;
-    int m_mediaCount;
-    QMap<int, QDeclarativeMediaObject *> m_mediaObjects;
-    QPlaceMediaReply *m_reply;
+    int m_imageCount;
+    QMap<int, QDeclarativePlaceImage *> m_images;
+    QPlaceContentReply *m_reply;
 
     bool m_complete;
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeMediaModel));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePlaceImageModel));
 
-#endif // QDECLARATIVEMEDIAMODEL_P_H
+#endif

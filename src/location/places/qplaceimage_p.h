@@ -39,61 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEMEDIAOBJECT_H
-#define QPLACEMEDIAOBJECT_H
+#ifndef QPLACEIMAGE_P_H
+#define QPLACEIMAGE_P_H
 
-#include <QSharedDataPointer>
-#include <QString>
-#include <qlatin1constant.h>
-#include "qmobilityglobal.h"
-#include "qplacesupplier.h"
+#include <QtCore/QSharedData>
+#include <QtCore/QUrl>
+
+#include "qplaceimage.h"
+#include "qplacecontent_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceMediaObjectPrivate;
-class QUrl;
-
-class Q_LOCATION_EXPORT QPlaceMediaObject
+class QPlaceImagePrivate : public QPlaceContentPrivate
 {
 public:
+    QPlaceImagePrivate();
+    QPlaceImagePrivate(const QPlaceImagePrivate &other);
 
-#ifdef Q_QDOC
-    static const QLatin1Constant Image;
-#else
-    Q_DECLARE_LATIN1_CONSTANT(Image, "Image");
-#endif
+    ~QPlaceImagePrivate();
 
-    QPlaceMediaObject();
-    QPlaceMediaObject(const QPlaceMediaObject &other);
+    bool compare(const QPlaceContentPrivate *other) const;
 
-    virtual ~QPlaceMediaObject();
+    Q_DEFINE_CONTENT_PRIVATE_HELPER(QPlaceImage, QPlaceContent::ImageType);
 
-    QPlaceMediaObject &operator=(const QPlaceMediaObject &other);
-
-    bool operator==(const QPlaceMediaObject &other) const;
-    bool operator!=(const QPlaceMediaObject &other) const {
-        return !(other == *this);
-    }
-
-    QUrl url() const;
-    void setUrl(const QUrl &url);
-    QUrl thumbnailUrl() const;
-    void setThumbnailUrl(const QUrl &url);
-    QString id() const;
-    void setId(const QString &data);
-    QString metaInfo() const;
-    void setMetaInfo(const QString &data);
-    QString mimeType() const;
-    void setMimeType(const QString &data);
-    QPlaceSupplier supplier() const;
-    void setSupplier(const QPlaceSupplier &data);
-
-private:
-    QSharedDataPointer<QPlaceMediaObjectPrivate> d;
+    QUrl url;
+    QUrl thumbnailUrl;
+    QString id;
+    QString metaInfo;
+    QString mimeType;
+    QPlaceSupplier supplier;
 };
-
-typedef QMap<int, QPlaceMediaObject> PlaceMediaCollection;
 
 QT_END_NAMESPACE
 
-#endif // QPLACEMEDIAOBJECT_H
+#endif

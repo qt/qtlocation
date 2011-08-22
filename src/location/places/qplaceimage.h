@@ -39,68 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEREPLY_H
-#define QPLACEREPLY_H
+#ifndef QPLACEIMAGE_H
+#define QPLACEIMAGE_H
 
+#include <QSharedDataPointer>
+#include <QString>
+#include <qlatin1constant.h>
 #include "qmobilityglobal.h"
-#include <QObject>
+#include "qplacesupplier.h"
+#include "qplacecontent.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceReply : public QObject
+class QPlaceImagePrivate;
+class QUrl;
+
+class Q_LOCATION_EXPORT QPlaceImage : public QPlaceContent
 {
-    Q_OBJECT
 public:
-    enum Error {
-        NoError,
-        DoesNotExistError,
-        PlaceDoesNotExistError,
-        CategoryDoesNotExistError,
-        CommunicationError,
-        ParseError,
-        PermissionsError,
-        UnsupportedError,
-        CancelError,
-        UnknownError
-    };
+    QPlaceImage();
+    Q_DECLARE_CONTENT_COPY_CTOR(QPlaceImage)
 
-    enum Type {
-        Reply,
-        PlaceDetailsReply,
-        PlaceSearchReply,
-        TextPredictionReply,
-        ReviewReply,
-        ContentReply,
-        SaveReply
-    };
+    virtual ~QPlaceImage();
 
-    QPlaceReply(QObject *parent);
-    virtual ~QPlaceReply();
+    QUrl url() const;
+    void setUrl(const QUrl &url);
+    QUrl thumbnailUrl() const;
+    void setThumbnailUrl(const QUrl &url);
+    QString id() const;
+    void setId(const QString &data);
+    QString metaInfo() const;
+    void setMetaInfo(const QString &data);
+    QString mimeType() const;
+    void setMimeType(const QString &data);
+    QPlaceSupplier supplier() const;
+    void setSupplier(const QPlaceSupplier &data);
 
-    bool isFinished() const;
-
-    virtual Type type() const;
-
-    QString errorString() const;
-    QPlaceReply::Error error() const;
-
-public Q_SLOTS:
-    virtual void abort();
-
-Q_SIGNALS:
-    void finished();
-    void error(QPlaceReply::Error error, const QString &errorString = QString());
-
-protected:
-    QPlaceReply(QPlaceReplyPrivate *, QObject *parent = 0);
-    void setFinished(bool finished);
-    void setError(QPlaceReply::Error error, const QString &errorString);
-    QPlaceReplyPrivate *d_ptr;
 private:
-    Q_DISABLE_COPY(QPlaceReply)
+    Q_DECLARE_CONTENT_D_FUNC(QPlaceImage)
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACEREPLY_H
+#endif

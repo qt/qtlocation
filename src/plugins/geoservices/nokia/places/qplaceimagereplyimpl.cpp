@@ -46,7 +46,7 @@
 **
 ****************************************************************************/
 
-#include "qplacemediareplyimpl.h"
+#include "qplaceimagereplyimpl.h"
 
 #if defined(QT_PLACES_LOGGING)
     #include <QDebug>
@@ -57,8 +57,8 @@ QT_USE_NAMESPACE
 /*!
     Constructor.
 */
-QPlaceMediaReplyImpl::QPlaceMediaReplyImpl(QPlaceRestReply *reply, QObject *parent) :
-    QPlaceMediaReply(parent),
+QPlaceImageReplyImpl::QPlaceImageReplyImpl(QPlaceRestReply *reply, QObject *parent) :
+    QPlaceContentReply(parent),
     restReply(reply)
 {
     parser = new QPlaceJSonMediaParser(this);
@@ -77,22 +77,33 @@ QPlaceMediaReplyImpl::QPlaceMediaReplyImpl(QPlaceRestReply *reply, QObject *pare
 /*!
     Destructor.
 */
-QPlaceMediaReplyImpl::~QPlaceMediaReplyImpl()
+QPlaceImageReplyImpl::~QPlaceImageReplyImpl()
 {
 }
 
-void QPlaceMediaReplyImpl::abort()
+void QPlaceImageReplyImpl::abort()
 {
     if (restReply)
         restReply->cancelProcessing();
 }
 
-void QPlaceMediaReplyImpl::setStartNumber(int number)
+void QPlaceImageReplyImpl::setStartNumber(int number)
 {
     startNumber = number;
 }
 
-void QPlaceMediaReplyImpl::restError(QPlaceRestReply::Error errorId)
+void QPlaceImageReplyImpl::restError(QPlaceReply::Error errorId, const QString &errorString)
+{
+    setError(errorId, errorString);
+
+    emit error(this->error(), this->errorString());
+    emit processingError(this, this->error(), this->errorString());
+    setFinished(true);
+    emit finished();
+    emit processingFinished(this);
+}
+
+void QPlaceImageReplyImpl::restError(QPlaceRestReply::Error errorId)
 {
     if (errorId == QPlaceRestReply::Canceled) {
         this->setError(CancelError, "RequestCanceled");
@@ -106,15 +117,15 @@ void QPlaceMediaReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceMediaReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
+void QPlaceImageReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {
-        QList<QPlaceMediaObject> mediaObjects = parser->resultMedia();
-        PlaceMediaCollection collection;
-        for (int i=0; i < mediaObjects.count(); ++i)
-            collection.insert(startNumber +i, mediaObjects.at(i));
-        setMediaObjects(collection);
+        QList<QPlaceImage> imageOjects = parser->resultMedia();
+        QPlaceContent::Collection collection;
+        for (int i=0; i < imageOjects.count(); ++i)
+            collection.insert(startNumber +i, imageOjects.at(i));
+        setContent(collection);
         setTotalCount(parser->allMediaCount());
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);

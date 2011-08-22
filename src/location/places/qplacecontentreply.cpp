@@ -39,19 +39,18 @@
 **
 ****************************************************************************/
 
-#include "qplacemediareply.h"
+#include "qplacecontentreply.h"
 #include "qplacereply_p.h"
-#include "qplacepaginationlist.h"
 
 QT_BEGIN_NAMESPACE
-class QPlaceMediaReplyPrivate : public QPlaceReplyPrivate
+class QPlaceContentReplyPrivate : public QPlaceReplyPrivate
 {
 public:
-    QPlaceMediaReplyPrivate()
+    QPlaceContentReplyPrivate()
     :   totalCount(0)
     { }
 
-    PlaceMediaCollection mediaObjects;
+    QPlaceContent::Collection contentCollection;
     int totalCount;
 };
 
@@ -60,9 +59,9 @@ QT_END_NAMESPACE
 QT_USE_NAMESPACE
 
 /*!
-    \class QPlaceMediaReply
+    \class QPlaceConentReply
 
-    \brief The QPlaceMediaReply class manages a media retrieval operation started by an
+    \brief The QPlaceContentReply class manages a content retrieval operation started by an
     instance of QPlaceManager.
 
     \inmodule QtLocation
@@ -71,61 +70,63 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    Constructs a media reply with a given \a parent.
+    Constructs a content reply with a given \a parent.
 */
-QPlaceMediaReply::QPlaceMediaReply(QObject *parent)
-    : QPlaceReply(new QPlaceMediaReplyPrivate, parent)
+QPlaceContentReply::QPlaceContentReply(QObject *parent)
+    : QPlaceReply(new QPlaceContentReplyPrivate, parent)
 {
 }
 
 /*!
     Destroys the reply.
 */
-QPlaceMediaReply::~QPlaceMediaReply()
+QPlaceContentReply::~QPlaceContentReply()
 {
 }
 
  /*!
-    Returns the media objects.
+    Returns the collection of content retrieved.
 */
-PlaceMediaCollection QPlaceMediaReply::mediaObjects() const
+QPlaceContent::Collection QPlaceContentReply::content() const
 {
-    Q_D(const QPlaceMediaReply);
-    return d->mediaObjects;
+    Q_D(const QPlaceContentReply);
+    return d->contentCollection;
 }
 
 /*!
     Returns the type of reply.
 */
-QPlaceReply::Type QPlaceMediaReply::type() const
+QPlaceReply::Type QPlaceContentReply::type() const
 {
-    return QPlaceReply::MediaReply;
+    return QPlaceReply::ContentReply;
 }
 
 /*!
-    Sets the media \a objects.
+    Sets the \a content of the reply.
 */
-void QPlaceMediaReply::setMediaObjects(const PlaceMediaCollection &mediaObjects)
+void QPlaceContentReply::setContent(const QPlaceContent::Collection &content)
 {
-    Q_D(QPlaceMediaReply);
-    d->mediaObjects = mediaObjects;
+    Q_D(QPlaceContentReply);
+    d->contentCollection = content;
 }
 
 /*!
-    Returns the total number of media objects for a place.  If the total number of
-    media objects cannot be counted a value of -1 is returned.
+    Returns the total number of content objects for a place.  If the total number of
+    content objects cannot be counted, a value of -1 is returned.  This count only
+    refers to the total count for a single content type i.e. the content type that
+    was specified when content was requested with the QPlaceManager.
 */
-int QPlaceMediaReply::totalCount() const
+int QPlaceContentReply::totalCount() const
 {
-    Q_D(const QPlaceMediaReply);
+    Q_D(const QPlaceContentReply);
     return d->totalCount;
 }
 
 /*!
-    Sets the \a total number of media objects for a place.
+    Sets the \a total number of content objects for a place.
 */
-void QPlaceMediaReply::setTotalCount(int total)
+void QPlaceContentReply::setTotalCount(int total)
 {
-    Q_D(QPlaceMediaReply);
+    Q_D(QPlaceContentReply);
     d->totalCount = total;
 }

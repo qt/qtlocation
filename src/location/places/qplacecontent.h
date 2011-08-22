@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -21,7 +21,7 @@
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU General
-** Public License version 3.0 as published by the Free Software Foundation
+** Public License version 3.0 as published by tOhe Free Software Foundation
 ** and appearing in the file LICENSE.GPL included in the packaging of this
 ** file. Please review the following information to ensure the GNU General
 ** Public License version 3.0 requirements will be met:
@@ -38,42 +38,60 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QPLACECONTENT_H
+#define QPLACECONTENT_H
 
-#ifndef QPLACEMEDIAREPLY_H
-#define QPLACEMEDIAREPLY_H
+#include <QMap>
+#include <QMetaType>
+#include <QSharedDataPointer>
 
-#include "qplacereply.h"
-#include "qplacemediaobject.h"
-#include "qplacepaginationlist.h"
-
-#include <QStringList>
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceMediaReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceMediaReply : public QPlaceReply
+#define Q_DECLARE_CONTENT_D_FUNC(Class) \
+    inline Class##Private* d_func(); \
+    inline const Class##Private* d_func() const;\
+    friend class Class##Private;
+
+#define Q_DECLARE_CONTENT_COPY_CTOR(Class) \
+    Class(const QPlaceContent &other);
+
+class QPlaceContentPrivate;
+class Q_LOCATION_EXPORT QPlaceContent
 {
-    Q_OBJECT
 public:
-    QPlaceMediaReply(QObject *parent =0);
-    virtual ~QPlaceMediaReply();
+    typedef QMap<int, QPlaceContent> Collection;
 
-    QPlaceReply::Type type() const;
+    enum Type {
+        ImageType,
+        ReviewType,
+        EditorialType,
+        InvalidType
+    };
 
-    PlaceMediaCollection mediaObjects() const;
+    QPlaceContent();
+    QPlaceContent(const QPlaceContent &other);
+    virtual ~QPlaceContent();
 
-    int totalCount() const;
+    QPlaceContent &operator=(const QPlaceContent &other);
+
+    bool operator==(const QPlaceContent &other) const;
+    bool operator!=(const QPlaceContent &other) const;
+
+    QPlaceContent::Type type() const;
 
 protected:
-    void setMediaObjects(const PlaceMediaCollection &mediaObjects);
-    void setTotalCount(int total);
-
-
-private:
-    Q_DISABLE_COPY(QPlaceMediaReply)
-    Q_DECLARE_PRIVATE(QPlaceMediaReply)
+    explicit QPlaceContent(QPlaceContentPrivate *d);
+    QSharedDataPointer<QPlaceContentPrivate> d_ptr;
+    friend class QPlaceContentPrivate;
 };
 
 QT_END_NAMESPACE
 
+QT_END_HEADER
+
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceContent))
+
 #endif
+

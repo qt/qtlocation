@@ -59,7 +59,7 @@ QT_USE_NAMESPACE
     \ingroup maps-impl
 
     Subclasses of QPlaceManagerEngine need to provide an implementation of getPlaceDetails(),
-    getMedia(), postRating(), getReviews(), searchForPlaces(), supportedSearchVisibilityScopes(),
+    getContent(), postRating(), getReviews(), searchForPlaces(), supportedSearchVisibilityScopes(),
     recommendations(), textPredictions(), connectivityMode(), setConnectivityMode(),
     supportedConnectivityModes(), savePlace(), supportedSaveVisibilityScopes(), removePlace(),
     initializeCategories() and categories().

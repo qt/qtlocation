@@ -43,8 +43,7 @@
 #define QPLACEMANAGER_H
 
 #include "qmobilityglobal.h"
-#include "qplacemediaobject.h"
-#include "qplacemediareply.h"
+#include "qplacecontentreply.h"
 #include "qplacerequest.h"
 #include "qplacesavereply.h"
 #include "qplacereply.h"
@@ -90,7 +89,6 @@ public:
         ImportFeature,
         ExportFeature,
         CheckInFeature,
-        PostMediaFeature,
         PostRatingFeature,
         SuggestionFeature,
         ReportPlaceFeature,
@@ -114,7 +112,7 @@ public:
 
     QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceRequest &query) const;
 
-    QPlaceMediaReply *getMedia(const QGeoPlace &place, const QPlaceRequest &query) const;
+    QPlaceContentReply *getContent(QPlaceContent::Type type, const QGeoPlace &place, const QPlaceRequest &query) const;
 
     QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &query) const;
 

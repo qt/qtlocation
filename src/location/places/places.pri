@@ -5,8 +5,10 @@ PUBLIC_HEADERS += \
 #data classes
     places/qplaceattribute.h \
     places/qplacecategory.h \
+    places/qplacecontent.h \
+    places/qplacecontentreply.h \
     places/qplacedescription.h \
-    places/qplacemediaobject.h \
+    places/qplaceimage.h \
     places/qplacepaginationlist.h \
     places/qplaceperiod.h \
     places/qplacerating.h \
@@ -20,7 +22,6 @@ PUBLIC_HEADERS += \
 #reply classes
     places/qplacereply.h \
     places/qplacedetailsreply.h \
-    places/qplacemediareply.h \
     places/qplacereviewreply.h \
     places/qplacesavereply.h \
     places/qplacesearchreply.h \
@@ -33,8 +34,9 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
     places/qplaceattribute_p.h \
     places/qplacecategory_p.h \
+    places/qplacecontent_p.h \
     places/qplacedescription_p.h \
-    places/qplacemediaobject_p.h \
+    places/qplaceimage_p.h \
     places/qplaceperiod_p.h \
     places/qplacerating_p.h \
     places/qplacereview_p.h \
@@ -48,9 +50,11 @@ SOURCES += \
 #data classes
     places/qplaceattribute.cpp \
     places/qplacecategory.cpp \
+    places/qplacecontent.cpp \
+    places/qplacecontentreply.cpp \
     places/qplacedescription.cpp \
 #result
-    places/qplacemediaobject.cpp \
+    places/qplaceimage.cpp \
     places/qplaceperiod.cpp \
     places/qplacerating.cpp \
     places/qplacereview.cpp \
@@ -64,7 +68,6 @@ SOURCES += \
 #reply classes
     places/qplacereply.cpp \
     places/qplacedetailsreply.cpp \
-    places/qplacemediareply.cpp \
     places/qplacereviewreply.cpp \
     places/qplacesearchreply.cpp \
     places/qplacetextpredictionreply.cpp \

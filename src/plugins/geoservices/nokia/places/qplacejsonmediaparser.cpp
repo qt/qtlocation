@@ -53,7 +53,6 @@
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
 
-#include <qplacemediaobject.h>
 #include <qplacesupplier.h>
 #include "qplacesuppliersrepository.h"
 
@@ -82,7 +81,7 @@ QPlaceJSonMediaParser::~QPlaceJSonMediaParser()
 {
 }
 
-QList<QPlaceMediaObject> QPlaceJSonMediaParser::resultMedia()
+QList<QPlaceImage> QPlaceJSonMediaParser::resultMedia()
 {
     return media;
 }
@@ -92,9 +91,9 @@ int QPlaceJSonMediaParser::allMediaCount()
     return allMedia;
 }
 
-QPlaceMediaObject QPlaceJSonMediaParser::buildMediaObject(const QScriptValue &media)
+QPlaceImage QPlaceJSonMediaParser::buildMediaObject(const QScriptValue &media)
 {
-    QPlaceMediaObject newMedia;
+    QPlaceImage newMedia;
     QScriptValue value = media.property(media_url);
     if (value.isValid() && !value.toString().isEmpty()) {
         newMedia.setUrl(QUrl::fromEncoded(value.toString().toAscii()));

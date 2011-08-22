@@ -1,16 +1,16 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include <qplacemediaobject.h>
+#include <qplaceimage.h>
 
 QT_USE_NAMESPACE
 
-class tst_QPlaceMediaObject : public QObject
+class tst_QPlaceImage : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_QPlaceMediaObject();
+    tst_QPlaceImage();
 
 private Q_SLOTS:
     void constructorTest();
@@ -23,23 +23,23 @@ private Q_SLOTS:
     void operatorsTest();
 };
 
-tst_QPlaceMediaObject::tst_QPlaceMediaObject()
+tst_QPlaceImage::tst_QPlaceImage()
 {
 }
 
-void tst_QPlaceMediaObject::constructorTest()
+void tst_QPlaceImage::constructorTest()
 {
-    QPlaceMediaObject testObj;
+    QPlaceImage testObj;
     testObj.setId("testId");
-    QPlaceMediaObject *testObjPtr = new QPlaceMediaObject(testObj);
+    QPlaceImage *testObjPtr = new QPlaceImage(testObj);
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
     delete testObjPtr;
 }
 
-void tst_QPlaceMediaObject::supplierTest()
+void tst_QPlaceImage::supplierTest()
 {
-    QPlaceMediaObject testObj;
+    QPlaceImage testObj;
     QVERIFY2(testObj.supplier().supplierId() == QString(), "Wrong default value");
     QPlaceSupplier sup;
     sup.setName("testName1");
@@ -48,61 +48,61 @@ void tst_QPlaceMediaObject::supplierTest()
     QVERIFY2(testObj.supplier() == sup, "Wrong value returned");
 }
 
-void tst_QPlaceMediaObject::urlTest()
+void tst_QPlaceImage::urlTest()
 {
-    QUrl mediaUrl("testText");
+    QUrl imageUrl("testText");
 
-    QPlaceMediaObject testObj;
+    QPlaceImage testObj;
     QVERIFY2(testObj.url() == QString(), "Wrong default value");
-    testObj.setUrl(mediaUrl);
-    QVERIFY2(testObj.url() == mediaUrl, "Wrong value returned");
+    testObj.setUrl(imageUrl);
+    QVERIFY2(testObj.url() == imageUrl, "Wrong value returned");
 }
 
-void tst_QPlaceMediaObject::thumbnailUrlTest()
+void tst_QPlaceImage::thumbnailUrlTest()
 {
     QUrl thumbnailUrl("testText");
 
-    QPlaceMediaObject testObj;
+    QPlaceImage testObj;
     QVERIFY2(testObj.thumbnailUrl() == QString(), "Wrong default value");
     testObj.setThumbnailUrl(thumbnailUrl);
     QVERIFY2(testObj.thumbnailUrl() == thumbnailUrl, "Wrong value returned");
 }
 
-void tst_QPlaceMediaObject::idTest()
+void tst_QPlaceImage::idTest()
 {
-    QPlaceMediaObject testObj;
+    QPlaceImage testObj;
     QVERIFY2(testObj.id() == QString(), "Wrong default value");
     testObj.setId("testText");
     QVERIFY2(testObj.id() == "testText", "Wrong value returned");
 }
 
-void tst_QPlaceMediaObject::metaInfoTest()
+void tst_QPlaceImage::metaInfoTest()
 {
-    QPlaceMediaObject testObj;
+    QPlaceImage testObj;
     QVERIFY2(testObj.metaInfo() == QString(), "Wrong default value");
     testObj.setMetaInfo("testText");
     QVERIFY2(testObj.metaInfo() == "testText", "Wrong value returned");
 }
 
-void tst_QPlaceMediaObject::mimeTypeTest()
+void tst_QPlaceImage::mimeTypeTest()
 {
-    QPlaceMediaObject testObj;
+    QPlaceImage testObj;
     QVERIFY2(testObj.mimeType() == QString(), "Wrong default value");
     testObj.setMimeType("testText");
     QVERIFY2(testObj.mimeType() == "testText", "Wrong value returned");
 }
 
-void tst_QPlaceMediaObject::operatorsTest()
+void tst_QPlaceImage::operatorsTest()
 {
-    QPlaceMediaObject testObj;
+    QPlaceImage testObj;
     testObj.setMimeType("testValue");
-    QPlaceMediaObject testObj2;
+    QPlaceImage testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
     testObj2.setId("testValue2");
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 
-QTEST_APPLESS_MAIN(tst_QPlaceMediaObject);
+QTEST_APPLESS_MAIN(tst_QPlaceImage);
 
-#include "tst_qplacemediaobject.moc"
+#include "tst_qplaceimage.moc"

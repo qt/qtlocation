@@ -362,57 +362,60 @@ void QGeoPlace::setFeeds(const QStringList &feeds)
 }
 
 /*!
-    Returns a collection of media associated with a place.
-    This collection a map with the key being the index of the media
-    and value being the media object itself.
+    Returns a collection of content associated with a place.
+    This collection is a map with the key being the index of the content object
+    and value being the content object itself.
+
+    The \a type specifies which kind of content is to be retrieved.
 */
-PlaceMediaCollection QGeoPlace::media(const QString &mediaType) const
+QPlaceContent::Collection QGeoPlace::content(QPlaceContent::Type type) const
 {
     Q_D(const QGeoPlace);
-    return d->media.value(mediaType);
+    return d->contentCollections.value(type);
 }
 
 /*!
-    Sets a collection of \a media for the given \a mediaType.
+    Sets a collection of \a content for the given \a type.
 */
-void QGeoPlace::setMedia(const QString &mediaType, const PlaceMediaCollection &media)
+void QGeoPlace::setContent(QPlaceContent::Type type, const QPlaceContent::Collection &content)
 {
     Q_D(QGeoPlace);
-    d->media.insert(mediaType, media);
+    d->contentCollections.insert(type, content);
 }
 
 /*!
-    Adds a list of \a media to the given \a mediaType.  Any index in \a media
+    Adds a collection of \a content of the given \a type to the place.  Any index in \a content
     that already exists is overwritten.
 */
-void QGeoPlace::addMedia(const QString &mediaType, const PlaceMediaCollection &media)
+void QGeoPlace::addContent(QPlaceContent::Type type, const QPlaceContent::Collection &content)
 {
     Q_D(QGeoPlace);
-    QMapIterator<int, QPlaceMediaObject> iter(media);
+    QMapIterator<int, QPlaceContent> iter(content);
     while (iter.hasNext()) {
         iter.next();
-        d->media[mediaType].insert(iter.key(), iter.value());
+        d->contentCollections[type].insert(iter.key(), iter.value());
     }
 }
 
 /*!
-    Returns the total count of media objects of the given \a mediaType.
+    Returns the total count of content objects of the given \a type.
     This total count indicates how many the manager should have available.
     (As opposed to how many objects this place instance is currently assigned).
+    A negative count indicates that the total number of items is unknown.
 */
-int QGeoPlace::mediaCount(const QString &mediaType) const
+int QGeoPlace::contentCount(QPlaceContent::Type type) const
 {
     Q_D(const QGeoPlace);
-    return d->mediaCounts.value(mediaType, 0);
+    return d->contentCounts.value(type, 0);
 }
 
 /*!
-    Sets the total count of media objects of the given \a mediaType.
+    Sets the \a totalCount of content objects of the given \a type.
 */
-void QGeoPlace::setMediaCount(const QString &mediaType, int totalCount)
+void QGeoPlace::setContentCount(QPlaceContent::Type type, int totalCount)
 {
     Q_D(QGeoPlace);
-    d->mediaCounts.insert(mediaType, totalCount);
+    d->contentCounts.insert(type, totalCount);
 }
 
 /*!
@@ -665,8 +668,8 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         rating(other.rating),
         suppliers(other.suppliers),
         feeds(other.feeds),
-        media(other.media),
-        mediaCounts(other.mediaCounts),
+        contentCollections(other.contentCollections),
+        contentCounts(other.contentCounts),
         name(other.name),
         placeId(other.placeId),
         reviews(other.reviews),
@@ -709,8 +712,8 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
     qDebug() << "rating" << (rating == other.rating);
     qDebug() << "suppliers" << (suppliers == other.suppliers);
     qDebug() << "feeds " << (feeds == other.feeds);
-    qDebug() << "media " << (media == other.media);
-    qDebug() << "mediaCount " << (mediaCounts == other.mediaCounts);
+    qDebug() << "contentCollections " << (contentCollections == other.contentCollections);
+    qDebug() << "contentCounts " << (contentCounts == other.contentCounts);
     qDebug() << "name " << (name == other.name);
     qDebug() << "placeId" << (placeId == other.placeId);
     qDebug() << "reviews" << (reviews == other.reviews);
@@ -735,8 +738,8 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
             && rating == other.rating
             && suppliers == other.suppliers
             && feeds == other.feeds
-            && media == other.media
-            && mediaCounts == other.mediaCounts
+            && contentCollections == other.contentCollections
+            && contentCounts == other.contentCounts
             && name == other.name
             && placeId == other.placeId
             && reviews == other.reviews

@@ -37,51 +37,41 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QPLACEMEDIAREPLYIMPL_H
-#define QPLACEMEDIAREPLYIMPL_H
+#ifndef QPLACECONTENTREPLY_H
+#define QPLACECONTENTREPLY_H
 
-#include <QObject>
-#include <QHash>
+#include "qplacereply.h"
+#include "qplacecontent.h"
 
-#include <qplacemediareply.h>
-#include "qplacerestreply.h"
-#include "qplacejsonmediaparser.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceMediaReplyImpl : public QPlaceMediaReply
+class QPlaceContentReplyPrivate;
+class Q_LOCATION_EXPORT QPlaceContentReply : public QPlaceReply
 {
     Q_OBJECT
 public:
-    explicit QPlaceMediaReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
-    ~QPlaceMediaReplyImpl();
-    void abort();
-    void setStartNumber(int number);
+    QPlaceContentReply(QObject *parent =0);
+    virtual ~QPlaceContentReply();
 
-Q_SIGNALS:
-    void processingFinished(QPlaceReply *reply);
-    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
+    QPlaceReply::Type type() const;
 
-private slots:
-    void restError(QPlaceRestReply::Error error);
-    void resultReady(const QPlaceJSonParser::Error &error,
-                          const QString &errorMessage);
+    QPlaceContent::Collection content() const;
 
+    int totalCount() const;
+
+protected:
+    void setContent(const QPlaceContent::Collection &content);
+    void setTotalCount(int total);
+
+\
 private:
-    QPlaceRestReply *restReply;
-    QPlaceJSonMediaParser *parser;
-    int startNumber;
+    Q_DISABLE_COPY(QPlaceContentReply)
+    Q_DECLARE_PRIVATE(QPlaceContentReply)
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACEMEDIAREPLYIMPL_H
+#endif

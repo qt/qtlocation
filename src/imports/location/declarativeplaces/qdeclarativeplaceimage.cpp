@@ -1,27 +1,27 @@
-#include "qdeclarativemediaobject_p.h"
+#include "qdeclarativeplaceimage_p.h"
 
 #include <QtCore/QUrl>
 
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass MediaObject
+    \qmlclass PlaceImage
 
-    \brief The MediaObject element holds media data.
+    \brief The PlaceImage element holds image meta-data.
     \inherits QObject
 
-    MediaObject cointains many properties holding data of the media like URL,
-    type, etc.
+    PlaceImage cointains many properties holding data of the image like URL,
+    thumbnail URL etc.
 
     \ingroup qml-places
 */
 
-QDeclarativeMediaObject::QDeclarativeMediaObject(QObject* parent)
+QDeclarativePlaceImage::QDeclarativePlaceImage(QObject* parent)
         : QObject(parent)
 {
 }
 
-QDeclarativeMediaObject::QDeclarativeMediaObject(const QPlaceMediaObject &src,
+QDeclarativePlaceImage::QDeclarativePlaceImage(const QPlaceImage &src,
         QObject *parent)
         : QObject(parent),
           m_declarativeSupplier(src.supplier()),
@@ -29,13 +29,13 @@ QDeclarativeMediaObject::QDeclarativeMediaObject(const QPlaceMediaObject &src,
 {
 }
 
-QDeclarativeMediaObject::~QDeclarativeMediaObject()
+QDeclarativePlaceImage::~QDeclarativePlaceImage()
 {
 }
 
-void QDeclarativeMediaObject::setMediaObject(const QPlaceMediaObject &src)
+void QDeclarativePlaceImage::setImage(const QPlaceImage &src)
 {
-    QPlaceMediaObject previous = m_src;
+    QPlaceImage previous = m_src;
     m_src = src;
 
     if (previous.url() != m_src.url()) {
@@ -59,19 +59,19 @@ void QDeclarativeMediaObject::setMediaObject(const QPlaceMediaObject &src)
     }
 }
 
-QPlaceMediaObject QDeclarativeMediaObject::mediaObject()
+QPlaceImage QDeclarativePlaceImage::image()
 {
     m_src.setSupplier(m_declarativeSupplier.supplier());
     return m_src;
 }
 
 /*!
-    \qmlproperty string MediaObject::url
+    \qmlproperty string PlaceImage::url
 
-    This property holds URL of the media.
+    This property holds URL of the image.
 */
 
-void QDeclarativeMediaObject::setUrl(const QUrl &url)
+void QDeclarativePlaceImage::setUrl(const QUrl &url)
 {
     if (m_src.url() != url) {
         m_src.setUrl(url);
@@ -79,18 +79,18 @@ void QDeclarativeMediaObject::setUrl(const QUrl &url)
     }
 }
 
-QUrl QDeclarativeMediaObject::url() const
+QUrl QDeclarativePlaceImage::url() const
 {
     return m_src.url();
 }
 
 /*!
-    \qmlproperty string MediaObject::thumbnailURL
+    \qmlproperty string PlaceImage::thumbnailURL
 
     This property holds thumbnail URL.
 */
 
-void QDeclarativeMediaObject::setThumbnailUrl(const QUrl &thumbnailUrl)
+void QDeclarativePlaceImage::setThumbnailUrl(const QUrl &thumbnailUrl)
 {
     if (m_src.thumbnailUrl() != thumbnailUrl) {
         m_src.setThumbnailUrl(thumbnailUrl);
@@ -98,18 +98,18 @@ void QDeclarativeMediaObject::setThumbnailUrl(const QUrl &thumbnailUrl)
     }
 }
 
-QUrl QDeclarativeMediaObject::thumbnailUrl() const
+QUrl QDeclarativePlaceImage::thumbnailUrl() const
 {
     return m_src.thumbnailUrl();
 }
 
 /*!
-    \qmlproperty string MediaObject::mimeType
+    \qmlproperty string PlaceImage::mimeType
 
     This property holds mime type.
 */
 
-void QDeclarativeMediaObject::setMimeType(const QString &mimeType)
+void QDeclarativePlaceImage::setMimeType(const QString &mimeType)
 {
     if (m_src.mimeType() != mimeType) {
         m_src.setMimeType(mimeType);
@@ -117,18 +117,18 @@ void QDeclarativeMediaObject::setMimeType(const QString &mimeType)
     }
 }
 
-QString QDeclarativeMediaObject::mimeType() const
+QString QDeclarativePlaceImage::mimeType() const
 {
     return m_src.mimeType();
 }
 
 /*!
-    \qmlproperty string MediaObject::metaInfo
+    \qmlproperty string PlaceImage::metaInfo
 
     This property holds meta information.
 */
 
-void QDeclarativeMediaObject::setMetaInfo(const QString &metaInfo)
+void QDeclarativePlaceImage::setMetaInfo(const QString &metaInfo)
 {
     if (m_src.metaInfo() != metaInfo) {
         m_src.setMetaInfo(metaInfo);
@@ -136,18 +136,18 @@ void QDeclarativeMediaObject::setMetaInfo(const QString &metaInfo)
     }
 }
 
-QString QDeclarativeMediaObject::metaInfo() const
+QString QDeclarativePlaceImage::metaInfo() const
 {
     return m_src.metaInfo();
 }
 
 /*!
-    \qmlproperty string MediaObject::id
+    \qmlproperty string PlaceImage::id
 
-    This property holds id of media.
+    This property holds id of image.
 */
 
-void QDeclarativeMediaObject::setId(const QString &id)
+void QDeclarativePlaceImage::setId(const QString &id)
 {
     if (m_src.id() != id) {
         m_src.setId(id);
@@ -155,20 +155,20 @@ void QDeclarativeMediaObject::setId(const QString &id)
     }
 }
 
-QString QDeclarativeMediaObject::id() const
+QString QDeclarativePlaceImage::id() const
 {
     return m_src.id();
 }
 
 /*!
-    \qmlproperty string MediaObject::supplier
+    \qmlproperty string PlaceImage::supplier
 
     This property holds supplier info.
 
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.
 */
-void QDeclarativeMediaObject::setSupplier(QDeclarativeSupplier *src)
+void QDeclarativePlaceImage::setSupplier(QDeclarativeSupplier *src)
 {
     if (m_declarativeSupplier.supplier() != src->supplier()) {
         m_declarativeSupplier.setSupplier(src->supplier());
@@ -176,7 +176,7 @@ void QDeclarativeMediaObject::setSupplier(QDeclarativeSupplier *src)
     }
 }
 
-QDeclarativeSupplier *QDeclarativeMediaObject::supplier()
+QDeclarativeSupplier *QDeclarativePlaceImage::supplier()
 {
     return &m_declarativeSupplier;
 }

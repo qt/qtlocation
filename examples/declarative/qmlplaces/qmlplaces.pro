@@ -12,7 +12,7 @@ OTHER_FILES = qmlplaces.qml \
     SearchResultDelegate.qml \
     ReviewDelegate.qml \
     CategoryView.qml \
-    MediaGrid.qml \
+    ImageGrid.qml \
     DescriptionDelegate.qml \
     RatingView.qml
 

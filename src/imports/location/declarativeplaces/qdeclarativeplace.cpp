@@ -20,13 +20,13 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
-:   QObject(parent), m_reviewModel(0), m_mediaModel(0), m_detailsReply(0), m_plugin(0),
+:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_detailsReply(0), m_plugin(0),
     m_complete(false), m_extendedAttributes(new QDeclarativePropertyMap())
 {
 }
 
 QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src, QObject *parent)
-:   QObject(parent), m_reviewModel(0), m_mediaModel(0), m_src(src), m_detailsReply(0), m_plugin(0),
+:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_src(src), m_detailsReply(0), m_plugin(0),
     m_complete(false), m_extendedAttributes(new QDeclarativePropertyMap())
 {
     synchronizeCategories();
@@ -79,14 +79,14 @@ QDeclarativeReviewModel *QDeclarativePlace::reviewModel()
     return m_reviewModel;
 }
 
-QDeclarativeMediaModel *QDeclarativePlace::mediaModel()
+QDeclarativePlaceImageModel *QDeclarativePlace::imageModel()
 {
-    if (!m_mediaModel) {
-        m_mediaModel = new QDeclarativeMediaModel(this);
-        m_mediaModel->setPlace(this);
+    if (!m_imageModel) {
+        m_imageModel = new QDeclarativePlaceImageModel(this);
+        m_imageModel->setPlace(this);
     }
 
-    return m_mediaModel;
+    return m_imageModel;
 }
 
 void QDeclarativePlace::setPlace(const QGeoPlace &src)
@@ -150,7 +150,7 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
 
     if (previous.placeId() != m_src.placeId()) {
         m_reviewModel->clear();
-        m_mediaModel->clear();
+        m_imageModel->clear();
     }
 
     if (previous.extendedAttributes() != m_src.extendedAttributes())
