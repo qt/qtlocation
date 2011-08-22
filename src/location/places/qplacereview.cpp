@@ -45,7 +45,7 @@
 QT_USE_NAMESPACE
 
 QPlaceReviewPrivate::QPlaceReviewPrivate()
-    : QSharedData(),
+    : QPlaceContentPrivate(),
       helpfulVotings(0),
       unhelpfulVotings(0),
       rating(0)
@@ -53,7 +53,7 @@ QPlaceReviewPrivate::QPlaceReviewPrivate()
 }
 
 QPlaceReviewPrivate::QPlaceReviewPrivate(const QPlaceReviewPrivate &other)
-    : QSharedData()
+    : QPlaceContentPrivate(other)
 {
     this->date = other.date;
     this->description = other.description;
@@ -74,22 +74,23 @@ QPlaceReviewPrivate::~QPlaceReviewPrivate()
 {
 }
 
-bool QPlaceReviewPrivate::operator==(const QPlaceReviewPrivate &other) const
+bool QPlaceReviewPrivate::compare(const QPlaceContentPrivate *other) const
 {
+    const QPlaceReviewPrivate *od = static_cast<const QPlaceReviewPrivate *>(other);
     return (
-            this->date == other.date
-            && this->description == other.description
-            && this->language == other.language
-            && this->helpfulVotings == other.helpfulVotings
-            && this->mediaIds == other.mediaIds
-            && this->unhelpfulVotings == other.unhelpfulVotings
-            && this->rating == other.rating
-            && this->reviewId == other.reviewId
-            && this->supplier == other.supplier
-            && this->title == other.title
-            && this->userId == other.userId
-            && this->userName == other.userName
-            && this->originatorUrl == other.originatorUrl
+            this->date == od->date
+            && this->description == od->description
+            && this->language == od->language
+            && this->helpfulVotings == od->helpfulVotings
+            && this->mediaIds == od->mediaIds
+            && this->unhelpfulVotings == od->unhelpfulVotings
+            && this->rating == od->rating
+            && this->reviewId == od->reviewId
+            && this->supplier == od->supplier
+            && this->title == od->title
+            && this->userId == od->userId
+            && this->userName == od->userName
+            && this->originatorUrl == od->originatorUrl
     );
 }
 
@@ -116,17 +117,12 @@ bool QPlaceReviewPrivate::operator==(const QPlaceReviewPrivate &other) const
     Constructs an new review object.
 */
 QPlaceReview::QPlaceReview()
-    : d(new QPlaceReviewPrivate)
+    : QPlaceContent(new QPlaceReviewPrivate)
 {
 }
 
-/*!
-    Constructs a copy of \a other
-*/
-QPlaceReview::QPlaceReview(const QPlaceReview &other)
-    :d(other.d)
-{
-}
+Q_IMPLEMENT_CONTENT_COPY_CTOR(QPlaceReview)
+
 
 /*!
     Destructor.
@@ -135,21 +131,14 @@ QPlaceReview::~QPlaceReview()
 {
 }
 
-QPlaceReview &QPlaceReview::operator =(const QPlaceReview &other) {
-    d = other.d;
-    return *this;
-}
-
-bool QPlaceReview::operator==(const QPlaceReview &other) const
-{
-    return (*(d.constData()) == *(other.d.constData()));
-}
+Q_IMPLEMENT_CONTENT_D_FUNC(QPlaceReview)
 
 /*!
     Returns review date.
 */
 QString QPlaceReview::date() const
 {
+    Q_D(const QPlaceReview);
     return d->date;
 }
 
@@ -158,6 +147,7 @@ QString QPlaceReview::date() const
 */
 void QPlaceReview::setDate(const QString &data)
 {
+    Q_D(QPlaceReview);
     d->date = data;
 }
 
@@ -166,6 +156,7 @@ void QPlaceReview::setDate(const QString &data)
 */
 QString QPlaceReview::description() const
 {
+    Q_D(const QPlaceReview);
     return d->description;
 }
 
@@ -174,6 +165,7 @@ QString QPlaceReview::description() const
 */
 void QPlaceReview::setDescription(const QString &data)
 {
+    Q_D(QPlaceReview);
     d->description = data;
 }
 
@@ -182,6 +174,7 @@ void QPlaceReview::setDescription(const QString &data)
 */
 QString QPlaceReview::language() const
 {
+    Q_D(const QPlaceReview);
     return d->language;
 }
 
@@ -190,6 +183,7 @@ QString QPlaceReview::language() const
 */
 void QPlaceReview::setLanguage(const QString &data)
 {
+    Q_D(QPlaceReview);
     d->language = data;
 }
 
@@ -198,6 +192,7 @@ void QPlaceReview::setLanguage(const QString &data)
 */
 int QPlaceReview::helpfulVotings() const
 {
+    Q_D(const QPlaceReview);
     return d->helpfulVotings;
 }
 
@@ -206,6 +201,7 @@ int QPlaceReview::helpfulVotings() const
 */
 void QPlaceReview::setHelpfulVotings(const int &votes)
 {
+    Q_D(QPlaceReview);
     d->helpfulVotings = votes;
 }
 
@@ -214,6 +210,7 @@ void QPlaceReview::setHelpfulVotings(const int &votes)
 */
 QStringList QPlaceReview::mediaIds() const
 {
+    Q_D(const QPlaceReview);
     return d->mediaIds;
 }
 
@@ -222,6 +219,7 @@ QStringList QPlaceReview::mediaIds() const
 */
 void QPlaceReview::setMediaIds(const QStringList &data)
 {
+    Q_D(QPlaceReview);
     d->mediaIds = data;
 }
 
@@ -230,6 +228,7 @@ void QPlaceReview::setMediaIds(const QStringList &data)
 */
 int QPlaceReview::unhelpfulVotings() const
 {
+    Q_D(const QPlaceReview);
     return d->unhelpfulVotings;
 }
 
@@ -238,6 +237,7 @@ int QPlaceReview::unhelpfulVotings() const
 */
 void QPlaceReview::setUnhelpfulVotings(const int &votes)
 {
+    Q_D(QPlaceReview);
     d->unhelpfulVotings = votes;
 }
 
@@ -246,6 +246,7 @@ void QPlaceReview::setUnhelpfulVotings(const int &votes)
 */
 qreal QPlaceReview::rating() const
 {
+    Q_D(const QPlaceReview);
     return d->rating;
 }
 
@@ -254,6 +255,7 @@ qreal QPlaceReview::rating() const
 */
 void QPlaceReview::setRating(const qreal &data)
 {
+    Q_D(QPlaceReview);
     d->rating = data;
 }
 
@@ -262,6 +264,7 @@ void QPlaceReview::setRating(const qreal &data)
 */
 QString QPlaceReview::reviewId() const
 {
+    Q_D(const QPlaceReview);
     return d->reviewId;
 }
 
@@ -270,6 +273,7 @@ QString QPlaceReview::reviewId() const
 */
 void QPlaceReview::setReviewId(const QString &data)
 {
+    Q_D(QPlaceReview);
     d->reviewId = data;
 }
 
@@ -278,6 +282,7 @@ void QPlaceReview::setReviewId(const QString &data)
 */
 QPlaceSupplier QPlaceReview::supplier() const
 {
+    Q_D(const QPlaceReview);
     return d->supplier;
 }
 
@@ -286,6 +291,7 @@ QPlaceSupplier QPlaceReview::supplier() const
 */
 void QPlaceReview::setSupplier(const QPlaceSupplier &data)
 {
+    Q_D(QPlaceReview);
     d->supplier = data;
 }
 
@@ -294,6 +300,7 @@ void QPlaceReview::setSupplier(const QPlaceSupplier &data)
 */
 QString QPlaceReview::title() const
 {
+    Q_D(const QPlaceReview);
     return d->title;
 }
 
@@ -302,6 +309,7 @@ QString QPlaceReview::title() const
 */
 void QPlaceReview::setTitle(const QString &data)
 {
+    Q_D(QPlaceReview);
     d->title = data;
 }
 
@@ -310,6 +318,7 @@ void QPlaceReview::setTitle(const QString &data)
 */
 QString QPlaceReview::userId() const
 {
+    Q_D(const QPlaceReview);
     return d->userId;
 }
 
@@ -318,6 +327,7 @@ QString QPlaceReview::userId() const
 */
 void QPlaceReview::setUserId(const QString &data)
 {
+    Q_D(QPlaceReview);
     d->userId = data;
 }
 
@@ -326,6 +336,7 @@ void QPlaceReview::setUserId(const QString &data)
 */
 QString QPlaceReview::userName() const
 {
+    Q_D(const QPlaceReview);
     return d->userName;
 }
 
@@ -334,6 +345,7 @@ QString QPlaceReview::userName() const
 */
 void QPlaceReview::setUserName(const QString &data)
 {
+    Q_D(QPlaceReview);
     d->userName = data;
 }
 
@@ -342,6 +354,7 @@ void QPlaceReview::setUserName(const QString &data)
 */
 QString QPlaceReview::originatorUrl() const
 {
+    Q_D(const QPlaceReview);
     return d->originatorUrl;
 }
 
@@ -350,5 +363,6 @@ QString QPlaceReview::originatorUrl() const
 */
 void QPlaceReview::setOriginatorUrl(const QString &url)
 {
+    Q_D(QPlaceReview);
     d->originatorUrl = url;
 }

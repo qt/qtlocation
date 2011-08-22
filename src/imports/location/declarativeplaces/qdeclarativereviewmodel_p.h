@@ -61,7 +61,7 @@ private:
     int m_batchSize;
     int m_reviewCount;
     QMap<int, QDeclarativeReview *> m_reviews;
-    QPlaceReviewReply *m_reply;
+    QPlaceContentReply *m_reply;
 
     bool m_complete;
 };

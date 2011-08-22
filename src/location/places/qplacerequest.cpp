@@ -40,26 +40,16 @@
 ****************************************************************************/
 
 #include "qplacerequest.h"
+#include "qplacerequest_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceRequestPrivate : public QSharedData
+#if !defined(Q_CC_MWERKS)
+template<> QT_PREPEND_NAMESPACE(QPlaceRequestPrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QPlaceRequestPrivate)>::clone()
 {
-public:
-    QPlaceRequestPrivate();
-    QPlaceRequestPrivate(const QPlaceRequestPrivate &other);
-
-    ~QPlaceRequestPrivate();
-
-    bool operator==(const QPlaceRequestPrivate &other) const;
-
-    int offset;
-    int limit;
-};
-
-QT_END_NAMESPACE
-
-QT_USE_NAMESPACE
+    return d->clone();
+}
+#endif
 
 QPlaceRequestPrivate::QPlaceRequestPrivate()
     : QSharedData(),
@@ -79,12 +69,18 @@ QPlaceRequestPrivate::~QPlaceRequestPrivate()
 {
 }
 
-bool QPlaceRequestPrivate::operator==(const QPlaceRequestPrivate &other) const
+QPlaceRequestPrivate *QPlaceRequestPrivate::clone() const { return new QPlaceRequestPrivate(*this);}
+
+bool QPlaceRequestPrivate::compare(const QPlaceRequestPrivate *other) const
 {
-    return (
-            this->offset == other.offset
-            && this->limit == other.limit
-    );
+    return (this->offset == other->offset
+            && this->limit == other->limit);
+}
+
+void QPlaceRequestPrivate::clear()
+{
+    this->offset =0;
+    this->limit = -1;
 }
 
 /*!
@@ -102,7 +98,7 @@ bool QPlaceRequestPrivate::operator==(const QPlaceRequestPrivate &other) const
     Default constructor. Constructs an new query object.
 */
 QPlaceRequest::QPlaceRequest()
-    : d(new QPlaceRequestPrivate)
+    : d_ptr(new QPlaceRequestPrivate)
 {
 }
 
@@ -110,7 +106,7 @@ QPlaceRequest::QPlaceRequest()
     Constructs a copy of \a other
 */
 QPlaceRequest::QPlaceRequest(const QPlaceRequest &other)
-    :d(other.d)
+    :d_ptr(other.d_ptr)
 {
 }
 
@@ -122,13 +118,24 @@ QPlaceRequest::~QPlaceRequest()
 }
 
 QPlaceRequest &QPlaceRequest::operator =(const QPlaceRequest &other) {
-    d = other.d;
+    d_ptr = other.d_ptr;
     return *this;
 }
 
 bool QPlaceRequest::operator==(const QPlaceRequest &other) const
 {
-    return (*(d.constData()) == *(other.d.constData()));
+    if (!d_ptr)
+        return !other.d_ptr;
+
+    if (requestType() != other.requestType())
+        return false;
+
+    return d_ptr->compare(other.d_ptr);
+}
+
+QPlaceRequest::Type QPlaceRequest::requestType() const
+{
+    return d_ptr->type();
 }
 
 /*!
@@ -140,7 +147,7 @@ bool QPlaceRequest::operator==(const QPlaceRequest &other) const
 */
 int QPlaceRequest::offset() const
 {
-    return d->offset;
+    return d_ptr->offset;
 }
 
 /*!
@@ -148,7 +155,7 @@ int QPlaceRequest::offset() const
 */
 void QPlaceRequest::setOffset(int offset)
 {
-    d->offset = offset;
+    d_ptr->offset = offset;
 }
 
 /*!
@@ -158,7 +165,7 @@ void QPlaceRequest::setOffset(int offset)
 */
 int QPlaceRequest::limit() const
 {
-    return d->limit;
+    return d_ptr->limit;
 }
 
 /*!
@@ -172,7 +179,7 @@ int QPlaceRequest::limit() const
 */
 void QPlaceRequest::setLimit(int limit)
 {
-    d->limit = limit;
+    d_ptr->limit = limit;
 }
 
 /*!
@@ -180,6 +187,12 @@ void QPlaceRequest::setLimit(int limit)
 */
 void QPlaceRequest::clear()
 {
-    d->offset = 0;
-    d->limit = -1;
+    d_ptr->clear();
 }
+
+QPlaceRequest::QPlaceRequest(QPlaceRequestPrivate *d)
+    : d_ptr(d)
+{
+}
+
+QT_END_NAMESPACE

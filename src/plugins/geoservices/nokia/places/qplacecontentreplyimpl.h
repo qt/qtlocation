@@ -37,43 +37,53 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
-#ifndef QPLACEREVIEW_P_H
-#define QPLACEREVIEW_P_H
+#ifndef QPLACEIMAGEREPLYIMPL_H
+#define QPLACEIMAGEREPLYIMPL_H
 
-#include <QSharedData>
+#include <QObject>
+#include <QHash>
 
-#include "qplacereview.h"
-#include "qplacecontent_p.h"
+#include <qplacecontentreply.h>
+#include "qplacerestreply.h"
+#include "qplacejsonmediaparser.h"
+#include "qplacejsonreviewparser.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceReviewPrivate : public QPlaceContentPrivate
+class QPlaceContentReplyImpl : public QPlaceContentReply
 {
+    Q_OBJECT
 public:
-    QPlaceReviewPrivate();
-    QPlaceReviewPrivate(const QPlaceReviewPrivate &other);
+    QPlaceContentReplyImpl(QPlaceContent::Type type, QPlaceRestReply *reply, QObject *parent = 0);
+    ~QPlaceContentReplyImpl();
+    void abort();
+    void setStartNumber(int number);
 
-    ~QPlaceReviewPrivate();
+Q_SIGNALS:
+    void processingFinished(QPlaceReply *reply);
+    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
 
-    bool compare(const QPlaceContentPrivate *other) const;
+public slots:
+    void restError(QPlaceReply::Error error, const QString &errorString);
+    void restError(QPlaceRestReply::Error error);
+    void resultReady(const QPlaceJSonParser::Error &error,
+                          const QString &errorMessage);
 
-    Q_DEFINE_CONTENT_PRIVATE_HELPER(QPlaceReview, QPlaceContent::ReviewType);
+private:
+    QPlaceRestReply *restReply;
+    QPlaceJSonParser *parser;
+    QPlaceContent::Type contentType;
 
-    QString date;
-    QString description;
-    QString language;
-    int helpfulVotings;
-    QStringList mediaIds;
-    int unhelpfulVotings;
-    qreal rating;
-    QString reviewId;
-    QPlaceSupplier supplier;
-    QString title;
-    QString userId;
-    QString userName;
-    QString originatorUrl;
+    int startNumber;
 };
 
 QT_END_NAMESPACE

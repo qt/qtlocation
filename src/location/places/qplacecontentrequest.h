@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -37,50 +37,36 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QPLACEREVIEWREPLYIMPL_H
-#define QPLACEREVIEWREPLYIMPL_H
+#ifndef QPLACECONTENTREQUEST_H
+#define QPLACECONTENTREQUEST_H
 
-#include <QObject>
-#include <QHash>
+#include <QSharedDataPointer>
 
-#include <qplacereviewreply.h>
-#include "qplacerestreply.h"
-#include "qplacejsonreviewparser.h"
+#include "qplacecontent.h"
+#include "qplacerequest.h"
+#include "placemacro.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceReviewReplyImpl : public QPlaceReviewReply
+class QPlaceContentRequestPrivate;
+
+class Q_LOCATION_EXPORT QPlaceContentRequest : public QPlaceRequest
 {
-    Q_OBJECT
 public:
-    explicit QPlaceReviewReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
-    ~QPlaceReviewReplyImpl();
-    void abort();
-    void setStartNumber(int number);
+    QPlaceContentRequest();
+    Q_DECLARE_COPY_CTOR(QPlaceContentRequest, QPlaceRequest)
 
-Q_SIGNALS:
-    void processingFinished(QPlaceReply *reply);
-    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
+    virtual ~QPlaceContentRequest();
 
-private slots:
-    void restError(QPlaceRestReply::Error error);
-    void resultReady(const QPlaceJSonParser::Error &error,
-                          const QString &errorMessage);
+    QPlaceContent::Type contentType() const;
+    void setContentType(QPlaceContent::Type type);
 
 private:
-    QPlaceRestReply *restReply;
-    QPlaceJSonReviewParser *parser;
+    Q_DECLARE_D_FUNC(QPlaceContentRequest)
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACEREVIEWREPLYIMPL_H
+#endif

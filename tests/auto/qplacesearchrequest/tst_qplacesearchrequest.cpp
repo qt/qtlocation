@@ -24,6 +24,7 @@ private Q_SLOTS:
     void didYouMeanSuggestionNumberTest();
     void visibilityScopeTest();
     void operatorsTest();
+    void clearTest();
 };
 
 tst_QPlaceSearchRequest::tst_QPlaceSearchRequest()
@@ -198,6 +199,27 @@ void tst_QPlaceSearchRequest::operatorsTest()
     //test that different scopes do not match
     testObj2.setVisibilityScope(QPlaceManager::PublicScope | QPlaceManager::PrivateScope);
     QVERIFY2(testObj != testObj2, "Different scopes identified as matching");
+}
+
+void tst_QPlaceSearchRequest::clearTest()
+{
+    QPlaceSearchRequest req;
+    req.setSearchTerm("pizza");
+    req.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(1,1), 5000));
+    QPlaceCategory category;
+    category.setName("Fast Food");
+    req.setCategory(category);
+    req.setDidYouMeanSuggestionNumber(5);
+    req.setLimit(100);
+    req.setOffset(5);
+
+    req.clear();
+    QVERIFY(req.searchTerm().isEmpty());
+    QVERIFY(req.searchArea() == 0);
+    QVERIFY(req.categories().isEmpty());
+    QVERIFY(req.didYouMeanSuggestionNumber() == 0);
+    QVERIFY(req.limit() == -1);
+    QVERIFY(req.offset() == 0);
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceSearchRequest);

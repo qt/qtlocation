@@ -14,11 +14,10 @@ HEADERS += \
 #query classes
 #reply classes
     places/qplacecategoriesreplyimpl.h \
-    places/qplaceimagereplyimpl.h \
+    places/qplacecontentreplyimpl.h \
     places/qplacedetailsreplyimpl.h \
     places/qplaceratingreplyimpl.h \
     places/qplacerecommendationreplyimpl.h \
-    places/qplacereviewreplyimpl.h \
     places/qplacesearchreplyimpl.h \
     places/qplacetextpredictionreplyimpl.h \
 #manager and engine
@@ -44,10 +43,9 @@ SOURCES += \
 #reply classes
     places/qplacecategoriesreplyimpl.cpp \
     places/qplacedetailsreplyimpl.cpp \
-    places/qplaceimagereplyimpl.cpp \
+    places/qplacecontentreplyimpl.cpp \
     places/qplaceratingreplyimpl.cpp \
     places/qplacerecommendationreplyimpl.cpp \
-    places/qplacereviewreplyimpl.cpp \
     places/qplacesearchreplyimpl.cpp \
     places/qplacetextpredictionreplyimpl.cpp \
 #manager and engine

@@ -54,7 +54,6 @@
 #include "qplacecontent.h"
 #include "qplacedescription.h"
 #include "qplacerating.h"
-#include "qplacepaginationlist.h"
 #include "qplacereview.h"
 #include "qplaceattribute.h"
 
@@ -102,8 +101,6 @@ public:
     void setName(const QString &name);
     QString placeId() const;
     void setPlaceId(const QString &placeId);
-    QPlacePaginationList<QPlaceReview> reviews() const;
-    void setReviews(const QPlacePaginationList<QPlaceReview> &reviews);
     int reviewCount() const;
     void setReviewCount(const int &count);
     QStringList tags() const;

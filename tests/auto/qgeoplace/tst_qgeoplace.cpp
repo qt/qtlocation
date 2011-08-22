@@ -24,12 +24,11 @@ private Q_SLOTS:
     void ratingTest();
     void suppliersTest();
     void feedsTest();
-    void contentTest();
+    void imageContentTest();
+    void reviewContentTest();
     void contentCountTest();
     void nameTest();
     void placeIdTest();
-    void reviewsTest();
-    void reviewCountTest();
     void tagsTest();
     void primaryPhoneTest();
     void primaryFaxTest();
@@ -101,14 +100,6 @@ void tst_QGeoPlace::contentCountTest()
     QVERIFY2(testObj.contentCount(QPlaceContent::ImageType) == 0, "Wrong value returned");
 }
 
-void tst_QGeoPlace::reviewCountTest()
-{
-    QGeoPlace testObj;
-    QVERIFY2(testObj.reviewCount() == 0, "Wrong default value");
-    testObj.setReviewCount(10);
-    QVERIFY2(testObj.reviewCount() == 10, "Wrong value returned");
-}
-
 void tst_QGeoPlace::ratingTest()
 {
     QGeoPlace testObj;
@@ -153,7 +144,7 @@ void tst_QGeoPlace::detailsFetchedTest()
     QVERIFY2(testPlace.detailsFetched() == false, "Wrong value returned");
 }
 
-void tst_QGeoPlace::contentTest()
+void tst_QGeoPlace::imageContentTest()
 {
     QUrl thumbnailUrl("testId");
 
@@ -205,23 +196,54 @@ void tst_QGeoPlace::contentTest()
     QCOMPARE(QPlaceImage(retrievedCollection.value(5)), dummyImage6);
 }
 
-void tst_QGeoPlace::reviewsTest()
+void tst_QGeoPlace::reviewContentTest()
 {
-    QGeoPlace testObj;
-    QVERIFY2(testObj.reviews().items() == 0, "Wrong default value");
-    QPlaceReview sup;
-    sup.setDescription("testId");
-    QList<QPlaceReview> list;
-    list.append(sup);
-    sup.setLanguage("testName2");
-    list.append(sup);
-    QPlacePaginationList<QPlaceReview> reviewsList;
-    reviewsList.setData(list);
-    testObj.setReviews(reviewsList);
-    QVERIFY2(testObj.reviews().items() == 2, "Wrong value returned");
-    QVERIFY2(testObj.reviews().data()[1].language() == "testName2", "Wrong value returned");
-    QVERIFY2(testObj.reviews().start() == 0, "Wrong value returned");
-    QVERIFY2(testObj.reviews().stop() == 1, "Wrong value returned");
+    QGeoPlace place;
+    QVERIFY2(place.content(QPlaceContent::ReviewType).count() ==0,"Wrong default value");
+
+    QPlaceReview dummyReview;
+    dummyReview.setTitle(QLatin1String("Review 1"));
+
+    QPlaceReview dummyReview2;
+    dummyReview2.setTitle(QLatin1String("Review 2"));
+
+    QPlaceReview dummyReview3;
+    dummyReview3.setTitle(QLatin1String("Review 3"));
+
+    QPlaceContent::Collection reviewCollection;
+    reviewCollection.insert(0,dummyReview);
+    reviewCollection.insert(1, dummyReview2);
+    reviewCollection.insert(2, dummyReview3);
+
+    place.setContent(QPlaceContent::ReviewType, reviewCollection);
+    QPlaceContent::Collection retrievedCollection = place.content(QPlaceContent::ReviewType);
+
+    QCOMPARE(retrievedCollection.count(), 3);
+    QCOMPARE(QPlaceReview(retrievedCollection.value(0)), dummyReview);
+    QCOMPARE(QPlaceReview(retrievedCollection.value(1)), dummyReview2);
+    QCOMPARE(QPlaceReview(retrievedCollection.value(2)), dummyReview3);
+
+    //replace the second and insert a sixth review
+    //indexes 4 and 5 are "missing"
+    QPlaceReview dummyReview2New;
+    dummyReview2.setTitle(QLatin1String("Review 2 new"));
+
+    QPlaceReview dummyReview6;
+    dummyReview6.setTitle(QLatin1String("Review 6"));
+
+    reviewCollection.clear();
+    reviewCollection.insert(1, dummyReview2New);
+    reviewCollection.insert(5, dummyReview6);
+    place.addContent(QPlaceContent::ReviewType, reviewCollection);
+
+    retrievedCollection = place.content(QPlaceContent::ReviewType);
+    QCOMPARE(retrievedCollection.count(), 4);
+    QCOMPARE(QPlaceReview(retrievedCollection.value(0)), dummyReview);
+    QCOMPARE(QPlaceReview(retrievedCollection.value(1)), dummyReview2New);
+    QCOMPARE(QPlaceReview(retrievedCollection.value(2)), dummyReview3);
+    QCOMPARE(QPlaceReview(retrievedCollection.value(3)), QPlaceReview());
+    QCOMPARE(QPlaceReview(retrievedCollection.value(4)), QPlaceReview());
+    QCOMPARE(QPlaceReview(retrievedCollection.value(5)), dummyReview6);
 }
 
 void tst_QGeoPlace::categoriesTest()

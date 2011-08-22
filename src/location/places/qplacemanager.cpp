@@ -136,12 +136,12 @@ QPlaceDetailsReply *QPlaceManager::getPlaceDetails(const QString &placeId) const
 }
 
 /*!
-    Retrieves content of type \a contentType from a given \a place according to thes parameters specified in
+    Retrieves content from a given \a place according to thes parameters specified in
     \a request.
 */
-QPlaceContentReply *QPlaceManager::getContent(QPlaceContent::Type contentType, const QGeoPlace &place, const QPlaceRequest &request) const
+QPlaceContentReply *QPlaceManager::getContent(const QGeoPlace &place, const QPlaceContentRequest &request) const
 {
-    return d->engine->getContent(contentType, place, request);
+    return d->engine->getContent(place, request);
 }
 
 /*!
@@ -150,14 +150,6 @@ QPlaceContentReply *QPlaceManager::getContent(QPlaceContent::Type contentType, c
 QPlaceReply* QPlaceManager::postRating(const QString &placeId, qreal rating)
 {
     return d->engine->postRating(placeId, rating);
-}
-
-/*!
-    Returns reviews for a given \a place according to the parameters specified in \a request.
-*/
-QPlaceReviewReply *QPlaceManager::getReviews(const QGeoPlace &place, const QPlaceRequest &request) const
-{
-    return d->engine->getReviews(place, request);
 }
 
 /*!

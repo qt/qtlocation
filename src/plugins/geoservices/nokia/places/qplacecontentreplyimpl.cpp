@@ -46,7 +46,7 @@
 **
 ****************************************************************************/
 
-#include "qplaceimagereplyimpl.h"
+#include "qplacecontentreplyimpl.h"
 
 #if defined(QT_PLACES_LOGGING)
     #include <QDebug>
@@ -57,11 +57,14 @@ QT_USE_NAMESPACE
 /*!
     Constructor.
 */
-QPlaceImageReplyImpl::QPlaceImageReplyImpl(QPlaceRestReply *reply, QObject *parent) :
-    QPlaceContentReply(parent),
+QPlaceContentReplyImpl::QPlaceContentReplyImpl(QPlaceContent::Type type, QPlaceRestReply *reply, QObject *parent) :
+    QPlaceContentReply(parent), contentType(type),
     restReply(reply)
 {
-    parser = new QPlaceJSonMediaParser(this);
+    if (contentType == QPlaceContent::ImageType)
+        parser = new QPlaceJSonMediaParser(this);
+    else if (contentType == QPlaceContent::ReviewType)
+        parser = new QPlaceJSonReviewParser(this);
 
     if (restReply) {
         restReply->setParent(this);
@@ -77,22 +80,22 @@ QPlaceImageReplyImpl::QPlaceImageReplyImpl(QPlaceRestReply *reply, QObject *pare
 /*!
     Destructor.
 */
-QPlaceImageReplyImpl::~QPlaceImageReplyImpl()
+QPlaceContentReplyImpl::~QPlaceContentReplyImpl()
 {
 }
 
-void QPlaceImageReplyImpl::abort()
+void QPlaceContentReplyImpl::abort()
 {
     if (restReply)
         restReply->cancelProcessing();
 }
 
-void QPlaceImageReplyImpl::setStartNumber(int number)
+void QPlaceContentReplyImpl::setStartNumber(int number)
 {
     startNumber = number;
 }
 
-void QPlaceImageReplyImpl::restError(QPlaceReply::Error errorId, const QString &errorString)
+void QPlaceContentReplyImpl::restError(QPlaceReply::Error errorId, const QString &errorString)
 {
     setError(errorId, errorString);
 
@@ -103,7 +106,7 @@ void QPlaceImageReplyImpl::restError(QPlaceReply::Error errorId, const QString &
     emit processingFinished(this);
 }
 
-void QPlaceImageReplyImpl::restError(QPlaceRestReply::Error errorId)
+void QPlaceContentReplyImpl::restError(QPlaceRestReply::Error errorId)
 {
     if (errorId == QPlaceRestReply::Canceled) {
         this->setError(CancelError, "RequestCanceled");
@@ -117,16 +120,27 @@ void QPlaceImageReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceImageReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
+void QPlaceContentReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {
-        QList<QPlaceImage> imageOjects = parser->resultMedia();
-        QPlaceContent::Collection collection;
-        for (int i=0; i < imageOjects.count(); ++i)
-            collection.insert(startNumber +i, imageOjects.at(i));
-        setContent(collection);
-        setTotalCount(parser->allMediaCount());
+        if (contentType == QPlaceContent::ImageType) {
+            QPlaceJSonMediaParser * mediaParser = qobject_cast<QPlaceJSonMediaParser*>(parser);
+            QList<QPlaceImage> imageOjects = mediaParser->resultMedia();
+            QPlaceContent::Collection collection;
+            for (int i=0; i < imageOjects.count(); ++i)
+                collection.insert(startNumber +i, imageOjects.at(i));
+            setContent(collection);
+            setTotalCount(mediaParser->allMediaCount());
+        } else if (contentType == QPlaceContent::ReviewType) {
+            QPlaceJSonReviewParser *reviewParser = qobject_cast<QPlaceJSonReviewParser*>(parser);
+            QList<QPlaceReview> reviewObjects = reviewParser->results();
+            QPlaceContent::Collection collection;
+            for (int i=0; i < reviewObjects.count(); ++i)
+                collection.insert(startNumber + i, reviewObjects.at(i));
+            setContent(collection);
+            setTotalCount(reviewParser->allReviewsCount());
+        }
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());

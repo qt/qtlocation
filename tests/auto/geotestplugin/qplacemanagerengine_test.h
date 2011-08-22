@@ -77,9 +77,8 @@ public:
         return 0;
     }
 
-    QPlaceContentReply *getContent(QPlaceContent::Type type, const QGeoPlace &place, const QPlaceRequest &query)
+    QPlaceContentReply *getContent(const QGeoPlace &place, const QPlaceContentRequest &query)
     {
-        Q_UNUSED(type)
         Q_UNUSED(place)
         Q_UNUSED(query)
 
@@ -90,14 +89,6 @@ public:
     {
         Q_UNUSED(placeId)
         Q_UNUSED(value)
-
-        return 0;
-    }
-
-    QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceRequest &query)
-    {
-        Q_UNUSED(place)
-        Q_UNUSED(query)
 
         return 0;
     }

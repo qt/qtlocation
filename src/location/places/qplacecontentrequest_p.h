@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,40 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEREVIEWREPLY_H
-#define QPLACEREVIEWREPLY_H
+#ifndef QPLACECONTENTREQUEST_P_H
+#define QPLACECONTENTREQUEST_P_H
 
-#include "qplacereply.h"
-#include "qplacereview.h"
-#include "qplacepaginationlist.h"
-
-#include <QStringList>
+#include "placemacro.h"
+#include "qplacecontent_p.h"
+#include "qplacerequest_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceReviewReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceReviewReply : public QPlaceReply
+class QPlaceContentRequestPrivate : public QPlaceRequestPrivate
 {
-    Q_OBJECT
 public:
-    QPlaceReviewReply(QObject *parent = 0);
-    virtual ~QPlaceReviewReply();
+    QPlaceContentRequestPrivate();
+    QPlaceContentRequestPrivate(const QPlaceContentRequestPrivate &other);
+    ~QPlaceContentRequestPrivate();
 
-    QPlaceReply::Type type() const;
+    bool compare(const QPlaceRequestPrivate *other) const;
+    Q_DEFINE_PRIVATE_HELPER(QPlaceContentRequest, QPlaceRequest, QPlaceRequest::ContentType, request)
+    void clear();
 
-    QPlacePaginationList<QPlaceReview> reviews() const;
-
-    int totalCount() const;
-
-protected:
-    void setOffset(int offset);
-    void setReviews(const QList<QPlaceReview> &objects);
-    void setTotalCount(int total);
-private:
-    Q_DISABLE_COPY(QPlaceReviewReply)
-    Q_DECLARE_PRIVATE(QPlaceReviewReply)
+    QPlaceContent::Type contentType;
 };
 
-QT_BEGIN_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

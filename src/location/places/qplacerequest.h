@@ -42,8 +42,8 @@
 #ifndef QPLACEQUERY_H
 #define QPLACEQUERY_H
 
+#include <QMetaType>
 #include <QSharedDataPointer>
-#include "qmobilityglobal.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -52,10 +52,16 @@ class QPlaceRequestPrivate;
 class Q_LOCATION_EXPORT QPlaceRequest
 {
 public:
+    enum Type {
+        DefaultType,
+        ContentType,
+        SearchType
+    };
+
     QPlaceRequest();
     QPlaceRequest(const QPlaceRequest &other);
 
-    virtual ~QPlaceRequest();
+    ~QPlaceRequest();
 
     QPlaceRequest &operator=(const QPlaceRequest &other);
 
@@ -69,12 +75,18 @@ public:
     int limit() const;
     void setLimit(int limit);
 
-    virtual void clear();
+    QPlaceRequest::Type requestType() const;
 
-private:
-    QSharedDataPointer<QPlaceRequestPrivate> d;
+    void clear();
+
+protected:
+    explicit QPlaceRequest(QPlaceRequestPrivate *d);
+    QSharedDataPointer<QPlaceRequestPrivate> d_ptr;
+    friend class QPlaceRequestPrivate;
 };
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceRequest))
 
 #endif

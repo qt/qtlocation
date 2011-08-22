@@ -155,21 +155,22 @@ void QDeclarativeReviewModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
-    QPlaceRequest query;
+    QPlaceContentRequest request;
+    request.setContentType(QPlaceContent::ReviewType);
 
     if (m_reviewCount == -1) {
-        query.setOffset(0);
-        query.setLimit(m_batchSize);
+        request.setOffset(0);
+        request.setLimit(m_batchSize);
     } else {
         QPair<int, int> missing = findMissingKey(m_reviews);
-        query.setOffset(missing.first);
+        request.setOffset(missing.first);
         if (missing.second == -1)
-            query.setLimit(m_batchSize);
+            request.setLimit(m_batchSize);
         else
-            query.setLimit(qMin(m_batchSize, missing.second - missing.first + 1));
+            request.setLimit(qMin(m_batchSize, missing.second - missing.first + 1));
     }
 
-    m_reply = placeManager->getReviews(m_place->place(), query);
+    m_reply = placeManager->getContent(m_place->place(), request);
     connect(m_reply, SIGNAL(finished()), this, SLOT(fetchFinished()), Qt::QueuedConnection);
 }
 
@@ -196,7 +197,7 @@ void QDeclarativeReviewModel::componentComplete()
 
 void QDeclarativeReviewModel::fetchFinished()
 {
-    QPlaceReviewReply *reply = m_reply;
+    QPlaceContentReply *reply = m_reply;
     m_reply = 0;
 
     if (m_reviewCount != reply->totalCount()) {
@@ -204,15 +205,60 @@ void QDeclarativeReviewModel::fetchFinished()
         emit totalCountChanged();
     }
 
-    if (reply->reviews().items() > 0) {
-        int startIndex = reply->reviews().start();
+    if (!reply->content().isEmpty()) {
+        QPlaceContent::Collection reviews = reply->content();
 
-        QList<QPlaceReview> reviews = reply->reviews().data();
+        //find out which indexes are new and which ones have changed.
+        QMapIterator<int, QPlaceContent> reviewsIter(reviews);
+        QList<int> changedIndexes;
+        QList<int> newIndexes;
+        while (reviewsIter.hasNext()) {
+            reviewsIter.next();
+            if (!m_reviews.contains(reviewsIter.key())) {
+                newIndexes.append(reviewsIter.key());
+            } else if (reviewsIter.value() != m_reviews.value(reviewsIter.key())->review()) {
+                changedIndexes.append(reviewsIter.key());
+            } else {
+                //review item at given index has not changed, do nothing
+            }
+        }
 
-        beginInsertRows(QModelIndex(), startIndex, startIndex + reviews.length() - 1);
-        for (int i = 0; i < reviews.length(); ++i)
-            m_reviews.insert(startIndex + i, new QDeclarativeReview(reviews.at(i), this));
-        endInsertRows();
+        //insert new indexes in blocks where within each
+        //block, the indexes are consecutive.
+        QListIterator<int> newIndexesIter(newIndexes);
+        int startIndex = -1;
+        while (newIndexesIter.hasNext()) {
+            int currentIndex = newIndexesIter.next();
+            if (startIndex == -1)
+                startIndex = currentIndex;
+
+            if (!newIndexesIter.hasNext() || (newIndexesIter.hasNext() && (newIndexesIter.peekNext() > (currentIndex + 1)))) {
+                beginInsertRows(QModelIndex(),startIndex,currentIndex);
+                for (int i = startIndex; i <= currentIndex; ++i)
+                    m_reviews.insert(i, new QDeclarativeReview(reviews.value(i), this));
+                endInsertRows();
+                startIndex = -1;
+            }
+        }
+
+        //modify changed indexes in blocks where within each
+        //block, the indexes are consecutive.
+        startIndex = -1;
+        QListIterator<int> changedIndexesIter(changedIndexes);
+        while (changedIndexesIter.hasNext()) {
+            int currentIndex = changedIndexesIter.next();
+            if (startIndex == -1)
+                startIndex = currentIndex;
+
+            if (!changedIndexesIter.hasNext() || (changedIndexesIter.hasNext() && changedIndexesIter.peekNext() > (currentIndex +1))) {
+                for (int i = startIndex; i <= currentIndex; ++i) {
+                    m_reviews.remove(i);
+                    m_reviews.insert(i, new QDeclarativeReview(reviews.value(i), this));
+                }
+                emit dataChanged(index(startIndex),index(currentIndex));
+                startIndex = -1;
+            }
+        }
     }
 
     reply->deleteLater();

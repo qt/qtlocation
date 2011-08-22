@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -21,7 +21,7 @@
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU General
-** Public License version 3.0 as published by the Free Software Foundation
+** Public License version 3.0 as published by tOhe Free Software Foundation
 ** and appearing in the file LICENSE.GPL included in the packaging of this
 ** file. Please review the following information to ensure the GNU General
 ** Public License version 3.0 requirements will be met:
@@ -37,51 +37,44 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QPLACEIMAGEREPLYIMPL_H
-#define QPLACEIMAGEREPLYIMPL_H
+#ifndef QPLACEREQUEST_P_H
+#define QPLACEREQUEST_P_H
 
-#include <QObject>
-#include <QHash>
-
-#include <qplacecontentreply.h>
-#include "qplacerestreply.h"
-#include "qplacejsonmediaparser.h"
+#include "qplacerequest.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceImageReplyImpl : public QPlaceContentReply
+class QPlaceRequestPrivate : public QSharedData
 {
-    Q_OBJECT
 public:
-    explicit QPlaceImageReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
-    ~QPlaceImageReplyImpl();
-    void abort();
-    void setStartNumber(int number);
+    QPlaceRequestPrivate();
+    QPlaceRequestPrivate(const QPlaceRequestPrivate &other);
+    virtual ~QPlaceRequestPrivate();
 
-Q_SIGNALS:
-    void processingFinished(QPlaceReply *reply);
-    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
+    virtual bool compare(const QPlaceRequestPrivate *other) const;
+    virtual QPlaceRequestPrivate *clone() const;
+    virtual QPlaceRequest::Type type() const { return QPlaceRequest::ContentType; }
+    virtual void clear();
 
-public slots:
-    void restError(QPlaceReply::Error error, const QString &errorString);
-    void restError(QPlaceRestReply::Error error);
-    void resultReady(const QPlaceJSonParser::Error &error,
-                          const QString &errorMessage);
-
-private:
-    QPlaceRestReply *restReply;
-    QPlaceJSonMediaParser *parser;
-    int startNumber;
+    /* Helper functions for C++ protection rules */
+    static const QSharedDataPointer<QPlaceRequestPrivate>& extract_d(const QPlaceRequest& other) {return other.d_ptr;}
+    int offset;
+    int limit;
 };
+
+#if defined(Q_CC_MWERKS)
+// This results in multiple symbol definition errors on all other compilers
+// but not having a definition here results in an attempt to use the unspecialized
+// clone (which fails because of the pure virtuals above)
+template<> QPlaceRequestPrivate *QSharedDataPointer<QPlaceRequestPrivate>::clone()
+{
+    return d->clone();
+}
+#else
+template<> QPlaceRequestPrivate *QSharedDataPointer<QPlaceRequestPrivate>::clone();
+#endif
 
 QT_END_NAMESPACE
 

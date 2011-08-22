@@ -60,7 +60,7 @@ public:
 
     bool compare(const QPlaceContentPrivate *other) const;
 
-    Q_DEFINE_CONTENT_PRIVATE_HELPER(QPlaceImage, QPlaceContent::ImageType);
+    Q_DEFINE_CONTENT_PRIVATE_HELPER(QPlaceImage, QPlaceContent::ImageType)
 
     QUrl url;
     QUrl thumbnailUrl;

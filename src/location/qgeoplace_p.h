@@ -86,8 +86,6 @@ public:
     QStringList feeds;
     QString name;
     QString placeId;
-    QPlacePaginationList<QPlaceReview> reviews;
-    int reviewCount;
     QStringList tags;
 
     QMap<QPlaceContent::Type, QPlaceContent::Collection> contentCollections;

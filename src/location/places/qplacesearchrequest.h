@@ -65,16 +65,8 @@ public:
     };
 
     QPlaceSearchRequest();
-    QPlaceSearchRequest(const QPlaceSearchRequest &other);
-
+    Q_DECLARE_COPY_CTOR(QPlaceSearchRequest, QPlaceRequest)
     virtual ~QPlaceSearchRequest();
-
-    QPlaceSearchRequest &operator=(const QPlaceSearchRequest &other);
-
-    bool operator==(const QPlaceSearchRequest &other) const;
-    bool operator!=(const QPlaceSearchRequest &other) const {
-        return !(other == *this);
-    }
 
     QString searchTerm() const;
     void setSearchTerm(const QString &term);
@@ -94,7 +86,7 @@ public:
     void clear();
 
 private:
-    QSharedDataPointer<QPlaceSearchRequestPrivate> d;
+    Q_DECLARE_D_FUNC(QPlaceSearchRequest)
 };
 
 QT_END_NAMESPACE

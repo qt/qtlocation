@@ -156,21 +156,22 @@ void QDeclarativePlaceImageModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
-    QPlaceRequest query;
+    QPlaceContentRequest request;
+    request.setContentType(QPlaceContent::ImageType);
 
     if (m_imageCount == -1) {
-        query.setOffset(0);
-        query.setLimit(m_batchSize);
+        request.setOffset(0);
+        request.setLimit(m_batchSize);
     } else {
         QPair<int, int> missing = findMissingKey(m_images);
-        query.setOffset(missing.first);
+        request.setOffset(missing.first);
         if (missing.second == -1)
-            query.setLimit(m_batchSize);
+            request.setLimit(m_batchSize);
         else
-            query.setLimit(qMin(m_batchSize, missing.second - missing.first + 1));
+            request.setLimit(qMin(m_batchSize, missing.second - missing.first + 1));
     }
 
-    m_reply = placeManager->getContent(QPlaceContent::ImageType, m_place->place(), query);
+    m_reply = placeManager->getContent(m_place->place(), request);
     connect(m_reply, SIGNAL(finished()), this, SLOT(fetchFinished()), Qt::QueuedConnection);
 }
 

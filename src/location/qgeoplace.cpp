@@ -357,42 +357,6 @@ void QGeoPlace::setPlaceId(const QString &placeId)
 }
 
 /*!
-    Returns reviews.
-*/
-QPlacePaginationList<QPlaceReview> QGeoPlace::reviews() const
-{
-    Q_D(const QGeoPlace);
-    return d->reviews;
-}
-
-/*!
-    Sets reviews.
-*/
-void QGeoPlace::setReviews(const QPlacePaginationList<QPlaceReview> &reviews)
-{
-    Q_D(QGeoPlace);
-    d->reviews = reviews;
-}
-
-/*!
-    Returns review count.
-*/
-int QGeoPlace::reviewCount() const
-{
-    Q_D(const QGeoPlace);
-    return d->reviewCount;
-}
-
-/*!
-    Sets review count.
-*/
-void QGeoPlace::setReviewCount(const int &count)
-{
-    Q_D(QGeoPlace);
-    d->reviewCount = count;
-}
-
-/*!
     Returns list of tags.
 */
 QStringList QGeoPlace::tags() const
@@ -533,7 +497,6 @@ void QGeoPlace::insertExtendedAttribute(const QString &key, const QPlaceAttribut
 
 QGeoPlacePrivate::QGeoPlacePrivate()
         : QSharedData(),
-        reviewCount(0),
         detailsFetched(false)
 {
 }
@@ -551,8 +514,6 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         contentCounts(other.contentCounts),
         name(other.name),
         placeId(other.placeId),
-        reviews(other.reviews),
-        reviewCount(other.reviewCount),
         tags(other.tags),
         detailsFetched(other.detailsFetched),
         primaryPhone(other.primaryPhone),
@@ -576,8 +537,6 @@ QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
     feeds = other.feeds;
     name = other.name;
     placeId = other.placeId;
-    reviews = other.reviews;
-    reviewCount = other.reviewCount;
     tags = other.tags;
     primaryPhone = other.primaryPhone;
     primaryFax = other.primaryFax;
@@ -602,8 +561,6 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
     qDebug() << "contentCounts " << (contentCounts == other.contentCounts);
     qDebug() << "name " << (name == other.name);
     qDebug() << "placeId" << (placeId == other.placeId);
-    qDebug() << "reviews" << (reviews == other.reviews);
-    qDebug() << "review count" << (reviewCount == other.reviewCount);
     qDebug() << "tags" << (tags == other.tags);
     qDebug() << "phone" << (primaryPhone == other.primaryPhone);
     qDebug() << "fax" << (primaryFax == other.primaryFax);
@@ -623,8 +580,6 @@ bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
             && contentCounts == other.contentCounts
             && name == other.name
             && placeId == other.placeId
-            && reviews == other.reviews
-            && reviewCount == other.reviewCount
             && tags == other.tags
             && primaryPhone == other.primaryPhone
             && primaryFax == other.primaryFax

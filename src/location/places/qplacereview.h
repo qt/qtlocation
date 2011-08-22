@@ -46,25 +46,19 @@
 #include <QStringList>
 #include "qmobilityglobal.h"
 #include "qplacesupplier.h"
+#include "qplacecontent.h"
 
 QT_BEGIN_NAMESPACE
 
 class QPlaceReviewPrivate;
 
-class Q_LOCATION_EXPORT QPlaceReview
+class Q_LOCATION_EXPORT QPlaceReview : public QPlaceContent
 {
 public:
     QPlaceReview();
-    QPlaceReview(const QPlaceReview &other);
+    Q_DECLARE_CONTENT_COPY_CTOR(QPlaceReview)
 
     virtual ~QPlaceReview();
-
-    QPlaceReview &operator=(const QPlaceReview &other);
-
-    bool operator==(const QPlaceReview &other) const;
-    bool operator!=(const QPlaceReview &other) const {
-        return !(other == *this);
-    }
 
     QString date() const;
     void setDate(const QString &data);
@@ -94,7 +88,7 @@ public:
     void setOriginatorUrl(const QString &data);
 
 private:
-    QSharedDataPointer<QPlaceReviewPrivate> d;
+    Q_DECLARE_CONTENT_D_FUNC(QPlaceReview)
 };
 
 QT_END_NAMESPACE

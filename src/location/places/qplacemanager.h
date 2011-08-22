@@ -44,11 +44,11 @@
 
 #include "qmobilityglobal.h"
 #include "qplacecontentreply.h"
+#include "qplacecontentrequest.h"
 #include "qplacerequest.h"
 #include "qplacesavereply.h"
 #include "qplacereply.h"
 #include "qplacedetailsreply.h"
-#include "qplacereviewreply.h"
 #include "qplacetextpredictionreply.h"
 
 #include <QLocale>
@@ -110,9 +110,7 @@ public:
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId) const;
     QPlaceReply *postRating(const QString &placeId, qreal value);
 
-    QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceRequest &query) const;
-
-    QPlaceContentReply *getContent(QPlaceContent::Type type, const QGeoPlace &place, const QPlaceRequest &query) const;
+    QPlaceContentReply *getContent(const QGeoPlace &place, const QPlaceContentRequest &request) const;
 
     QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &query) const;
 

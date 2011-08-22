@@ -2,6 +2,7 @@
 #include <QtTest/QtTest>
 
 #include <qplacerequest.h>
+#include <qplacecontentrequest.h>
 
 QT_USE_NAMESPACE
 

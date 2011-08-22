@@ -61,11 +61,9 @@ public:
 
     virtual QPlaceDetailsReply *getPlaceDetails(const QString &placeId) = 0;
 
-    virtual QPlaceContentReply *getContent(QPlaceContent::Type, const QGeoPlace &place, const QPlaceRequest &request) = 0;
+    virtual QPlaceContentReply *getContent(const QGeoPlace &place, const QPlaceContentRequest &request) = 0;
 
     virtual QPlaceReply *postRating(const QString &placeId, qreal value) = 0;
-
-    virtual QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceRequest &request) = 0;
 
     virtual QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &request) = 0;
 

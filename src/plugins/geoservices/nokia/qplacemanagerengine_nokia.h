@@ -49,10 +49,12 @@
 #ifndef QPLACEMANAGERENGINE_NOKIA_H
 #define QPLACEMANAGERENGINE_NOKIA_H
 
+#include <qplacecontent.h>
 #include <qplacemanagerengine.h>
 #include <qgeoserviceprovider.h>
 
 QT_BEGIN_NAMESPACE
+class QPlaceContentReply;
 
 class QPlaceManagerEngineNokia : public QPlaceManagerEngine
 {
@@ -66,11 +68,9 @@ public:
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
 
-    QPlaceContentReply *getContent(QPlaceContent::Type contentType, const QGeoPlace &place, const QPlaceRequest &request);
+    QPlaceContentReply *getContent(const QGeoPlace &place, const QPlaceContentRequest &request);
 
     QPlaceReply *postRating(const QString &placeId, qreal value);
-
-    QPlaceReviewReply *getReviews(const QGeoPlace &place, const QPlaceRequest &query);
 
     QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &query);
 

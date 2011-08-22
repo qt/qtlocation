@@ -39,20 +39,22 @@
 **
 ****************************************************************************/
 
+#include "qplacerequest_p.h"
 #include "qplacesearchrequest.h"
 #include "qgeocoordinate.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceSearchRequestPrivate : public QSharedData
+class QPlaceSearchRequestPrivate : public QPlaceRequestPrivate
 {
 public:
     QPlaceSearchRequestPrivate();
     QPlaceSearchRequestPrivate(const QPlaceSearchRequestPrivate &other);
-
     ~QPlaceSearchRequestPrivate();
 
-    bool operator==(const QPlaceSearchRequestPrivate &other) const;
+    bool compare(const QPlaceRequestPrivate *other) const;
+    Q_DEFINE_PRIVATE_HELPER(QPlaceSearchRequest, QPlaceRequest, QPlaceRequest::SearchType, request)
+    void clear();
 
     QString searchTerm;
     QList<QPlaceCategory> categories;
@@ -61,12 +63,8 @@ public:
     QPlaceManager::VisibilityScopes scope;
 };
 
-QT_END_NAMESPACE
-
-QT_USE_NAMESPACE
-
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
-    : QSharedData(),
+    : QPlaceRequestPrivate(),
       dymNumber(0),
       searchArea(0),
       scope(QPlaceManager::NoScope)
@@ -74,7 +72,7 @@ QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
 }
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequestPrivate &other)
-    : QSharedData(),
+    : QPlaceRequestPrivate(other),
        dymNumber(0)
 {
     this->searchTerm = other.searchTerm;
@@ -88,16 +86,16 @@ QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequest
 QPlaceSearchRequestPrivate::~QPlaceSearchRequestPrivate()
 {
     delete searchArea;
-    searchArea = 0;
 }
 
-bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &other) const
+bool QPlaceSearchRequestPrivate::compare(const QPlaceRequestPrivate *other) const
 {
+    const QPlaceSearchRequestPrivate *od = static_cast<const QPlaceSearchRequestPrivate *>(other);
     bool searchAreaMatch = false;
-    if ((this->searchArea == 0) && (other.searchArea == 0)) {
+    if ((this->searchArea == 0) && (od->searchArea == 0)) {
         searchAreaMatch = true;
-    } else if (this->searchArea && other.searchArea) {
-        if ((*this->searchArea) == (*other.searchArea))
+    } else if (this->searchArea && od->searchArea) {
+        if ((*this->searchArea) == (*od->searchArea))
             searchAreaMatch = true;
         else
             searchAreaMatch = false;
@@ -106,12 +104,25 @@ bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &ot
     }
 
     return (
-            this->searchTerm == other.searchTerm
-            && this->categories == other.categories
-            && this->dymNumber == other.dymNumber
+            this->searchTerm == od->searchTerm
+            && this->categories == od->categories
+            && this->dymNumber == od->dymNumber
             && searchAreaMatch
-            && this->scope == other.scope
+            && this->scope == od->scope
     );
+}
+
+void QPlaceSearchRequestPrivate::clear()
+{
+    QPlaceRequestPrivate::clear();
+    searchTerm.clear();
+    categories.clear();
+    if (searchArea) {
+        delete searchArea;
+        searchArea = 0;
+    }
+    dymNumber = 0;
+    scope = QPlaceManager::NoScope;
 }
 
 /*!
@@ -145,19 +156,11 @@ bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &ot
     Default constructor. Constructs an new request object.
 */
 QPlaceSearchRequest::QPlaceSearchRequest()
-    : QPlaceRequest(),
-      d(new QPlaceSearchRequestPrivate)
+    : QPlaceRequest(new QPlaceSearchRequestPrivate)
 {
 }
 
-/*!
-    Constructs a copy of \a other
-*/
-QPlaceSearchRequest::QPlaceSearchRequest(const QPlaceSearchRequest &other)
-    : QPlaceRequest(other),
-      d(other.d)
-{
-}
+Q_IMPLEMENT_COPY_CTOR(QPlaceSearchRequest, QPlaceRequest)
 
 /*!
     Destructor.
@@ -166,24 +169,14 @@ QPlaceSearchRequest::~QPlaceSearchRequest()
 {
 }
 
-QPlaceSearchRequest &QPlaceSearchRequest::operator =(const QPlaceSearchRequest &other) {
-    this->QPlaceRequest::operator =(other);
-    d = other.d;
-    return *this;
-}
-
-bool QPlaceSearchRequest::operator==(const QPlaceSearchRequest &other) const
-{
-    return (this->QPlaceRequest::operator ==(other)
-            && (*(d.constData()) == *(other.d.constData())));
-}
-
+Q_IMPLEMENT_D_FUNC(QPlaceSearchRequest)
 
 /*!
     Returns the search term.
 */
 QString QPlaceSearchRequest::searchTerm() const
 {
+    Q_D(const QPlaceSearchRequest);
     return d->searchTerm;
 }
 
@@ -192,6 +185,7 @@ QString QPlaceSearchRequest::searchTerm() const
 */
 void QPlaceSearchRequest::setSearchTerm(const QString &term)
 {
+    Q_D(QPlaceSearchRequest);
     d->searchTerm = term;
 }
 
@@ -202,6 +196,7 @@ void QPlaceSearchRequest::setSearchTerm(const QString &term)
 */
 QList<QPlaceCategory> QPlaceSearchRequest::categories() const
 {
+    Q_D(const QPlaceSearchRequest);
     return d->categories;
 }
 
@@ -210,6 +205,7 @@ QList<QPlaceCategory> QPlaceSearchRequest::categories() const
 */
 void QPlaceSearchRequest::setCategory(const QPlaceCategory &category)
 {
+    Q_D(QPlaceSearchRequest);
     d->categories.clear();
 
     if (!category.categoryId().isEmpty())
@@ -221,6 +217,7 @@ void QPlaceSearchRequest::setCategory(const QPlaceCategory &category)
 */
 QGeoBoundingArea *QPlaceSearchRequest::searchArea() const
 {
+    Q_D(const QPlaceSearchRequest);
     return d->searchArea;
 }
 
@@ -231,6 +228,7 @@ QGeoBoundingArea *QPlaceSearchRequest::searchArea() const
 */
 void QPlaceSearchRequest::setSearchArea(QGeoBoundingArea *area)
 {
+    Q_D(QPlaceSearchRequest);
     if (d->searchArea != area)
         delete d->searchArea;
 
@@ -242,6 +240,7 @@ void QPlaceSearchRequest::setSearchArea(QGeoBoundingArea *area)
 */
 int QPlaceSearchRequest::didYouMeanSuggestionNumber() const
 {
+    Q_D(const QPlaceSearchRequest);
     return d->dymNumber;
 }
 
@@ -250,6 +249,7 @@ int QPlaceSearchRequest::didYouMeanSuggestionNumber() const
 */
 void QPlaceSearchRequest::setDidYouMeanSuggestionNumber(const int &number)
 {
+    Q_D(QPlaceSearchRequest);
     d->dymNumber = number;
 }
 
@@ -261,6 +261,7 @@ void QPlaceSearchRequest::setDidYouMeanSuggestionNumber(const int &number)
 */
 QPlaceManager::VisibilityScopes QPlaceSearchRequest::visibilityScope() const
 {
+    Q_D(const QPlaceSearchRequest);
     return d->scope;
 }
 
@@ -269,6 +270,7 @@ QPlaceManager::VisibilityScopes QPlaceSearchRequest::visibilityScope() const
 */
 void QPlaceSearchRequest::setVisibilityScope(QPlaceManager::VisibilityScopes scope)
 {
+    Q_D(QPlaceSearchRequest);
     d->scope = scope;
 }
 
@@ -277,6 +279,8 @@ void QPlaceSearchRequest::setVisibilityScope(QPlaceManager::VisibilityScopes sco
 */
 void QPlaceSearchRequest::clear()
 {
+    Q_D(QPlaceSearchRequest);
+
     QPlaceRequest::clear();
     d->searchTerm.clear();
     d->categories.clear();
@@ -286,3 +290,5 @@ void QPlaceSearchRequest::clear()
     d->dymNumber = 0;
     d->scope = QPlaceManager::NoScope;
 }
+
+QT_END_NAMESPACE
