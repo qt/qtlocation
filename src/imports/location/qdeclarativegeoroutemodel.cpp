@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,6 +48,22 @@
 
 QT_BEGIN_NAMESPACE
 
+
+/*!
+    \qmlclass RouteModel
+
+    \brief The RouteModel element provides access to routes.
+    \ingroup qml-routing
+    \since 5.0
+
+    The RouteModel is model used to fetch routes. The routing result provider is determined
+    by the \l plugin. The route data is set in \l query.
+
+    The model provides a single data role, the "routeData" role which
+    returns a Route object.
+*/
+
+
 QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
     : QAbstractListModel(parent),
       complete_(false),
@@ -55,7 +71,8 @@ QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
       routeQuery_(0),
       reply_(0),
       autoUpdate_(false),
-      status_(QDeclarativeGeoRouteModel::Null)
+      status_(QDeclarativeGeoRouteModel::Null),
+      error_(QDeclarativeGeoRouteModel::NoError)
 {
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
@@ -74,10 +91,25 @@ QDeclarativeGeoRouteModel::~QDeclarativeGeoRouteModel()
         delete reply_;
 }
 
+/*!
+    \qmlproperty int RouteModel::count
+
+    This property holds how many routes the model currently has.
+    Amongst other uses, you can use this value when accessing routes
+    via the RouteModel::get -method.
+*/
+
 int QDeclarativeGeoRouteModel::count() const
 {
     return routes_.count();
 }
+
+/*!
+    \qmlmethod RouteModel::clear()
+
+    Clears the route data of the model. Any outstanding requests or
+    errors remain intact.
+*/
 
 void QDeclarativeGeoRouteModel::clear()
 {
@@ -92,11 +124,20 @@ void QDeclarativeGeoRouteModel::clear()
     endResetModel();
 }
 
+/*!
+    \qmlmethod RouteModel::reset()
+
+    Resets the model. All route data is cleared, any outstanding requests
+    are aborted and possible errors are cleared. Model status will be set
+    to RouteModel.Null.
+*/
+
 void QDeclarativeGeoRouteModel::reset()
 {
     clear();
     abortRequest();
-    setError("");
+    setErrorString("");
+    setError(NoError);
     setStatus(QDeclarativeGeoRouteModel::Null);
 }
 
@@ -108,6 +149,17 @@ void QDeclarativeGeoRouteModel::abortRequest()
         reply_ = 0;
     }
 }
+
+
+/*!
+    \qmlmethod RouteModel::get(int)
+
+    Returns the Route at given index. Use \l count property to check the
+    amount of routes available. The routes are indexed from zero, so the accessible range
+    is 0...(count - 1).
+
+    If you access out of bounds, a zero (null object) is returned and a warning is issued.
+*/
 
 QDeclarativeGeoRoute* QDeclarativeGeoRouteModel::get(int index)
 {
@@ -177,6 +229,16 @@ void QDeclarativeGeoRouteModel::queryDetailsChanged()
         update();
 }
 
+/*!
+    \qmlproperty Plugin RouteModel::plugin
+
+    This property holds the plugin that providers the actual
+    routing service. Note that all plugins do not necessarily
+    provide routing (could e.g. provide only geocoding or maps).
+
+    \sa Plugin
+*/
+
 QDeclarativeGeoServiceProvider* QDeclarativeGeoRouteModel::plugin() const
 {
     return plugin_;
@@ -197,6 +259,14 @@ void QDeclarativeGeoRouteModel::setQuery(QDeclarativeGeoRouteQuery* query)
     }
 }
 
+/*!
+    \qmlproperty RouteQuery RouteModel::query
+
+    This property holds the data of the route request.
+    The primary data are the waypoint coordinates and possible further
+    preferences (means of traveling, things to avoid on route etc).
+*/
+
 QDeclarativeGeoRouteQuery* QDeclarativeGeoRouteModel::query() const
 {
     return routeQuery_;
@@ -210,6 +280,17 @@ void QDeclarativeGeoRouteModel::setAutoUpdate(bool autoUpdate)
     if (complete_)
         emit autoUpdateChanged();
 }
+
+/*!
+    \qmlproperty bool RouteModel::autoUpdate
+
+    This property instructs how the model should react on query changes -
+    should it automatically update the model or do nothing.
+
+    Caution: If setting this value to 'true', take also care that your application
+    does not accidentally trigger huge amounts of unnecessary route requests.
+    In another words, be aware where in your application the query might change.
+*/
 
 bool QDeclarativeGeoRouteModel::autoUpdate() const
 {
@@ -227,25 +308,76 @@ void QDeclarativeGeoRouteModel::setStatus(QDeclarativeGeoRouteModel::Status stat
         emit statusChanged();
 }
 
+/*!
+    \qmlproperty enumeration RouteModel::status
+
+    This read-only property holds the current status of the model.
+
+    \list
+    \o RouteModel.Null - No route requests have been issued or \l reset has been called.
+    \o RouteModel.Ready - Route request(s) have finished successfully.
+    \o RouteModel.Loading - Route request has been issued but not yet finished
+    \o RouteModel.Error - Routing error has occured, details are in \l error and \l errorString
+    \endlist
+*/
+
 QDeclarativeGeoRouteModel::Status QDeclarativeGeoRouteModel::status() const
 {
     return status_;
 }
 
-void QDeclarativeGeoRouteModel::setError(const QString &error)
+void QDeclarativeGeoRouteModel::setErrorString(const QString &error)
+{
+    if (errorString_ == error)
+        return;
+
+    errorString_ = error;
+
+    if (complete_)
+        emit errorStringChanged();
+}
+
+/*!
+    \qmlproperty string RouteModel::errorString
+
+    This read-only property holds the textual presentation of latest routing error.
+    If no error has occured or the model has been reset, an empty string is returned.
+
+    It is possible that an error occurred which has no associated textual representation,
+    in which case this will also return an empty string.
+*/
+
+QString QDeclarativeGeoRouteModel::errorString() const
+{
+    return errorString_;
+}
+
+/*!
+    \qmlproperty enumeration RouteModel::error
+
+    This read-only property holds the latest error value of the routing request.
+
+    \list
+    \o RouteModel.NoError - No error has occurred
+    \o RouteModel.EngineNotSetError - The plugin/service provider used does not support routing
+    \o RouteModel.CommunicationError - An error occurred while communicating with the service provider
+    \o RouteModel.ParseError - The response from the service provider was in an unrecognizable format
+    \o RouteModel.UnsupportedOptionError - The requested operation or one of the options for the operation are not supported by the service provider.
+    \o RouteModel.UnknownError - An error occurred which does not fit into any of the other categories
+    \endlist
+*/
+
+QDeclarativeGeoRouteModel::RouteError QDeclarativeGeoRouteModel::error() const
+{
+    return error_;
+}
+
+void QDeclarativeGeoRouteModel::setError(RouteError error)
 {
     if (error_ == error)
         return;
-
     error_ = error;
-
-    if (complete_)
     emit errorChanged();
-}
-
-QString QDeclarativeGeoRouteModel::error() const
-{
-    return error_;
 }
 
 void QDeclarativeGeoRouteModel::update()
@@ -278,7 +410,8 @@ void QDeclarativeGeoRouteModel::update()
         return;
     }
 
-    setError("");   // clear previous error string
+    setErrorString("");   // clear previous error string
+    setError(NoError);
 
     reply_ = routingManager->calculateRoute(request);
     setStatus(QDeclarativeGeoRouteModel::Loading);
@@ -305,7 +438,8 @@ void QDeclarativeGeoRouteModel::routingFinished(QGeoRouteReply *reply)
         routes_.append(new QDeclarativeGeoRoute(reply->routes().at(i), this));
     endResetModel();
 
-    setError("");
+    setErrorString("");
+    setError(NoError);
     setStatus(QDeclarativeGeoRouteModel::Ready);
 
     reply->deleteLater();
@@ -321,8 +455,8 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
                                                QGeoRouteReply::Error error,
                                                const QString &errorString)
 {
-    Q_UNUSED(error)
-    setError(errorString);
+    setErrorString(errorString);
+    setError(static_cast<QDeclarativeGeoRouteModel::RouteError>(error));
     setStatus(QDeclarativeGeoRouteModel::Error);
     reply->deleteLater();
     reply_ = 0;
@@ -349,6 +483,27 @@ void QDeclarativeGeoRouteQuery::componentComplete()
     complete_ = true;
 }
 
+/*!
+    \qmlproperty QList<FeatureType> RouteQuery::featureTypes
+
+    List of features that will be considered when planning the
+    route. Features with a weight of NeutralFeatureWeight will not be returned.
+
+    \list
+    \o RouteModel.NoFeature - No features will be taken into account when planning the route
+    \o RouteModel.TollFeature - Consider tollways when planning the route
+    \o RouteModel.HighwayFeature - Consider highways when planning the route
+    \o RouteModel.PublicTransitFeature - Consider public transit when planning the route
+    \o RouteModel.FerryFeature - Consider ferries when planning the route
+    \o RouteModel.TunnelFeature - Consider tunnels when planning the route
+    \o RouteModel.DirtRoadFeature - Consider dirt roads when planning the route
+    \o RouteModel.ParksFeature - Consider parks when planning the route
+    \o RouteModel.MotorPoolLaneFeature - Consider motor pool lanes when planning the route
+    \endlist
+
+    \sa setFeatureWeight featureWeight
+*/
+
 QList<int> QDeclarativeGeoRouteQuery::featureTypes()
 {
     QList<int> list;
@@ -372,10 +527,32 @@ void QDeclarativeGeoRouteQuery::setNumberAlternativeRoutes(int numberAlternative
     }
 }
 
+/*!
+    \qmlproperty int RouteQuery::numberAlternativeRoutes
+
+    The number of alternative routes requested when requesting routes.
+    The default value is 0.
+*/
+
+
 int QDeclarativeGeoRouteQuery::numberAlternativeRoutes() const
 {
     return request_.numberAlternativeRoutes();
 }
+
+/*!
+    \qmlproperty QDeclarativeListProperty<Coordinate> RouteQuery::waypoints
+
+
+    The waypoint coordinates of the desired route.
+    The waypoints should be given in order from origin to destination.
+    Two or more coordinates are needed.
+
+    Waypoints can be set as part of the RouteQuery element declaration or
+    dynamically with the functions provided.
+
+    \sa addWaypoint removeWaypoint clearWaypoints
+*/
 
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoRouteQuery::waypoints()
 {
@@ -412,6 +589,17 @@ void QDeclarativeGeoRouteQuery::waypoints_clear(QDeclarativeListProperty<QDeclar
     model->clearWaypoints();
 }
 
+/*!
+    \qmlproperty QDeclarativeListProperty<BoundingBox> RouteQuery::excludedAreas
+
+    Areas that the route must not cross.
+
+    Excluded areas can be set as part of the RouteQuery element declaration or
+    dynamically with the functions provided.
+
+    \sa addExcludedArea removeExcludedArea clearExcludedAreas
+*/
+
 QDeclarativeListProperty<QDeclarativeGeoBoundingBox> QDeclarativeGeoRouteQuery::excludedAreas()
 {
     return QDeclarativeListProperty<QDeclarativeGeoBoundingBox>(this,
@@ -447,20 +635,29 @@ void QDeclarativeGeoRouteQuery::exclusions_clear(QDeclarativeListProperty<QDecla
     model->clearExcludedAreas();
 }
 
+/*!
+    \qmlmethod RouteModel::addExcludedArea(BoundingBox)
 
-Q_INVOKABLE void QDeclarativeGeoRouteQuery::addExcludedArea(QDeclarativeGeoBoundingBox* area)
+    Adds the given area to excluded areas (areas that the route must not cross).
+    Same area can only be added once.
+
+    \sa removeExcludedArea clearExcludedAreas
+*/
+
+
+void QDeclarativeGeoRouteQuery::addExcludedArea(QDeclarativeGeoBoundingBox* area)
 {
     if (!area)
         return;
-    if (!exclusions_.contains(area)) {
-        connect(area, SIGNAL(bottomLeftChanged()), this, SIGNAL(queryDetailsChanged()));
-        connect(area, SIGNAL(bottomRightChanged()), this, SIGNAL(queryDetailsChanged()));
-        connect(area, SIGNAL(topLeftChanged()), this, SIGNAL(queryDetailsChanged()));
-        connect(area, SIGNAL(topRightChanged()), this, SIGNAL(queryDetailsChanged()));
-        connect(area, SIGNAL(centerChanged()), this, SIGNAL(queryDetailsChanged()));
-        connect(area, SIGNAL(widthChanged()), this, SIGNAL(queryDetailsChanged()));
-        connect(area, SIGNAL(heightChanged()), this, SIGNAL(queryDetailsChanged()));
-    }
+    if (exclusions_.contains(area))
+        return;
+    connect(area, SIGNAL(bottomLeftChanged()), this, SIGNAL(queryDetailsChanged()));
+    connect(area, SIGNAL(bottomRightChanged()), this, SIGNAL(queryDetailsChanged()));
+    connect(area, SIGNAL(topLeftChanged()), this, SIGNAL(queryDetailsChanged()));
+    connect(area, SIGNAL(topRightChanged()), this, SIGNAL(queryDetailsChanged()));
+    connect(area, SIGNAL(centerChanged()), this, SIGNAL(queryDetailsChanged()));
+    connect(area, SIGNAL(widthChanged()), this, SIGNAL(queryDetailsChanged()));
+    connect(area, SIGNAL(heightChanged()), this, SIGNAL(queryDetailsChanged()));
     exclusions_.append(area);
     if (complete_) {
         emit excludedAreasChanged();
@@ -468,7 +665,15 @@ Q_INVOKABLE void QDeclarativeGeoRouteQuery::addExcludedArea(QDeclarativeGeoBound
     }
 }
 
-Q_INVOKABLE void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoBoundingBox* area)
+/*!
+    \qmlmethod RouteModel::removeExcludedArea(BoundingBox)
+
+    Removes the given area to excluded areas (areas that the route must not cross).
+
+    \sa addExcludedArea clearExcludedAreas
+*/
+
+void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoBoundingBox* area)
 {
     if (!area)
         return;
@@ -479,14 +684,20 @@ Q_INVOKABLE void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoBo
         return;
     }
     exclusions_.removeAt(index);
-    if (!exclusions_.contains(area)) {
-        area->disconnect(this);
-    }
+    area->disconnect(this);
     emit excludedAreasChanged();
     emit queryDetailsChanged();
 }
 
-Q_INVOKABLE void QDeclarativeGeoRouteQuery::clearExcludedAreas()
+/*!
+    \qmlmethod RouteModel::clearExcludedAreas()
+
+    Clears all excluded areas (areas that the route must not cross).
+
+    \sa addExcludedArea removeExcludedAreas
+*/
+
+void QDeclarativeGeoRouteQuery::clearExcludedAreas()
 {
     if (!exclusions_.count())
         return;
@@ -497,7 +708,16 @@ Q_INVOKABLE void QDeclarativeGeoRouteQuery::clearExcludedAreas()
     emit queryDetailsChanged();
 }
 
-Q_INVOKABLE void QDeclarativeGeoRouteQuery::addWaypoint(QDeclarativeCoordinate* waypoint)
+/*!
+    \qmlmethod RouteModel::addWaypoint(Coordinate)
+
+    Appends a coordinate to the list of waypoints. Same coordinate
+    can be set multiple times.
+
+    \sa removeWaypoint clearWaypoints
+*/
+
+void QDeclarativeGeoRouteQuery::addWaypoint(QDeclarativeCoordinate* waypoint)
 {
     if (!waypoint)
         return;
@@ -513,7 +733,17 @@ Q_INVOKABLE void QDeclarativeGeoRouteQuery::addWaypoint(QDeclarativeCoordinate* 
     }
 }
 
-Q_INVOKABLE void QDeclarativeGeoRouteQuery::removeWaypoint(QDeclarativeCoordinate* waypoint)
+/*!
+    \qmlmethod RouteModel::removeWaypoint(Coordinate)
+
+    Removes the given from the list of waypoints. In case same coordinate
+    appears multiple times, the most recently added coordinate instance is
+    removed.
+
+    \sa addWaypoint clearWaypoints
+*/
+
+void QDeclarativeGeoRouteQuery::removeWaypoint(QDeclarativeCoordinate* waypoint)
 {
     if (!waypoint)
         return;
@@ -531,7 +761,15 @@ Q_INVOKABLE void QDeclarativeGeoRouteQuery::removeWaypoint(QDeclarativeCoordinat
     emit queryDetailsChanged();
 }
 
-Q_INVOKABLE void QDeclarativeGeoRouteQuery::clearWaypoints()
+/*!
+    \qmlmethod RouteModel::clearWaypoints
+
+    Clear all waypoints.
+
+    \sa removeWaypoint addWaypoints
+*/
+
+void QDeclarativeGeoRouteQuery::clearWaypoints()
 {
     if (!waypoints_.count())
         return;
@@ -542,7 +780,26 @@ Q_INVOKABLE void QDeclarativeGeoRouteQuery::clearWaypoints()
     emit queryDetailsChanged();
 }
 
-Q_INVOKABLE void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType featureType, FeatureWeight featureWeight)
+/*!
+    \qmlmethod RouteModel::setFeatureWeight(FeatureType, FeatureWeight)
+
+    Defines the weight to associate with a feature during the planning of a route.
+
+    Following lists the possible feature weights:
+
+    \list
+    \o RouteModel.NeutralFeatureWeight - The presence or absence of the feature will not affect the planning of the route
+    \o RouteModel.PreferFeatureWeight - Routes which contain the feature will be preferred over those that do not
+    \o RouteModel.RequireFeatureWeight - Only routes which contain the feature will be considered, otherwise no route will be returned
+    \o RouteModel.AvoidFeatureWeight - Routes which do not contain the feature will be preferred over those that do
+    \o RouteModel.DisallowFeatureWeight - Only routes which do not contain the feature will be considered, otherwise no route will be returned
+    \endlist
+
+    \sa featureTypes
+
+*/
+
+void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType featureType, FeatureWeight featureWeight)
 {
     if (featureType == NoFeature && !request_.featureTypes().isEmpty()) {
         // reset all feature types.
@@ -572,7 +829,7 @@ Q_INVOKABLE void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType feature
     }
 }
 
-Q_INVOKABLE int QDeclarativeGeoRouteQuery::featureWeight(FeatureType featureType)
+int QDeclarativeGeoRouteQuery::featureWeight(FeatureType featureType)
 {
     return request_.featureWeight(static_cast<QGeoRouteRequest::FeatureType>(featureType));
 }
@@ -603,6 +860,21 @@ void QDeclarativeGeoRouteQuery::setTravelModes(QDeclarativeGeoRouteQuery::Travel
     }
 }
 
+
+/*!
+    \qmlproperty SegmentDetail RouteQuery::segmentDetails
+
+    The level of detail which will be used in the representation of routing segments.
+    Values can be combined with OR ('|') -operator.
+
+    \list
+    \o RouteModel.NoSegmentData - No segment data should be included with the route
+    \o RouteModel.BasicSegmentData - Basic segment data will be included with the route
+    \endlist
+
+    The default value is RouteModel.BasicSegmentData
+*/
+
 void QDeclarativeGeoRouteQuery::setSegmentDetail(SegmentDetail segmentDetail)
 {
     if (static_cast<QGeoRouteRequest::SegmentDetail>(segmentDetail) == request_.segmentDetail())
@@ -619,6 +891,20 @@ QDeclarativeGeoRouteQuery::SegmentDetail QDeclarativeGeoRouteQuery::segmentDetai
     return static_cast<QDeclarativeGeoRouteQuery::SegmentDetail>(request_.segmentDetail());
 }
 
+/*!
+    \qmlproperty ManeuverDetail RouteQuery::maneuverDetails
+
+    The level of detail which will be used in the representation of routing maneuvers.
+    Values can be combined with OR ('|') -operator.
+
+    \list
+    \o RouteModel.NoManeuvers - No maneuvers should be included with the route
+    \o RouteModel.BasicManeuvers - Basic manevuers will be included with the route
+    \endlist
+
+    The default value is RouteModel.BasicManeuvers
+*/
+
 void QDeclarativeGeoRouteQuery::setManeuverDetail(ManeuverDetail maneuverDetail)
 {
     if (static_cast<QGeoRouteRequest::ManeuverDetail>(maneuverDetail) == request_.maneuverDetail())
@@ -634,6 +920,23 @@ QDeclarativeGeoRouteQuery::ManeuverDetail QDeclarativeGeoRouteQuery::maneuverDet
 {
     return static_cast<QDeclarativeGeoRouteQuery::ManeuverDetail>(request_.maneuverDetail());
 }
+
+/*!
+    \qmlproperty enumeration RouteQuery::travelModes
+
+    The travel modes which should be considered during the planning of the route.
+    Values can be combined with OR ('|') -operator.
+
+    \list
+    \o RouteModel.CarTravel - The route will be optimized for someone who is driving a car
+    \o RouteModel.PedestrianTravel - The route will be optimized for someone who is walking
+    \o RouteModel.BicycleTravel - The route will be optimized for someone who is riding a bicycle
+    \o RouteModel.PublicTransitTravel - The route will be optimized for someone who is making use of public transit
+    \o RouteModel.TruckTravel - The route will be optimized for someone who is driving a truck
+    \endlist
+
+    The default value is RouteQuery.CarTravel
+*/
 
 QDeclarativeGeoRouteQuery::TravelModes QDeclarativeGeoRouteQuery::travelModes() const
 {
@@ -677,6 +980,22 @@ void QDeclarativeGeoRouteQuery::setRouteOptimizations(QDeclarativeGeoRouteQuery:
         emit queryDetailsChanged();
     }
 }
+
+/*!
+    \qmlproperty RouteOptimizations RouteQuery::routeOptimizations
+
+    The route optimizations which should be considered during the planning of the route.
+    Values can be combined with OR ('|') -operator.
+
+    \list
+    \o RouteModel.ShortestRoute - Minimize the length of the journey
+    \o RouteModel.FastestRoute - Minimize the traveling time for the journey
+    \o RouteModel.MostEconomicRoute - Minimize the cost of the journey
+    \o RouteModel.MostScenicRoute - Maximize the scenic potential of the journey
+    \endlist
+
+    The default value is RouteQuery.FastestRoute
+*/
 
 QDeclarativeGeoRouteQuery::RouteOptimizations QDeclarativeGeoRouteQuery::routeOptimizations() const
 {

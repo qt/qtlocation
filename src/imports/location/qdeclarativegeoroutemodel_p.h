@@ -67,13 +67,15 @@ class QDeclarativeGeoRouteModel : public QAbstractListModel, public QDeclarative
 {
     Q_OBJECT
     Q_ENUMS(Status)
+    Q_ENUMS(RouteError)
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QDeclarativeGeoRouteQuery* query READ query WRITE setQuery NOTIFY queryChanged)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-    Q_PROPERTY(QString error READ error NOTIFY errorChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
+    Q_PROPERTY(RouteError error READ error NOTIFY errorChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
@@ -86,6 +88,15 @@ public:
         Ready,
         Loading,
         Error
+    };
+
+    enum RouteError {
+        NoError = QGeoRouteReply::NoError,
+        EngineNotSetError = QGeoRouteReply::EngineNotSetError,
+        CommunicationError = QGeoRouteReply::CommunicationError,
+        ParseError = QGeoRouteReply::ParseError,
+        UnsupportedOptionError = QGeoRouteReply::UnsupportedOptionError,
+        UnknownError = QGeoRouteReply::UnknownError
     };
 
     QDeclarativeGeoRouteModel(QObject *parent = 0);
@@ -109,7 +120,8 @@ public:
     bool autoUpdate() const;
 
     Status status() const;
-    QString error() const;
+    QString errorString() const;
+    RouteError error() const;
 
     int count() const;
     Q_INVOKABLE QDeclarativeGeoRoute* get(int index);
@@ -122,6 +134,7 @@ Q_SIGNALS:
     void queryChanged();
     void autoUpdateChanged();
     void statusChanged();
+    void errorStringChanged();
     void errorChanged();
     void routesChanged();
 
@@ -137,7 +150,8 @@ private Q_SLOTS:
 
 private:
     void setStatus(Status status);
-    void setError(const QString &error);
+    void setErrorString(const QString &error);
+    void setError(RouteError error);
     void abortRequest();
 
     bool complete_;
@@ -149,7 +163,8 @@ private:
     QList<QDeclarativeGeoRoute*> routes_;
     bool autoUpdate_;
     Status status_;
-    QString error_;
+    QString errorString_;
+    RouteError error_;
 };
 
 class QDeclarativeGeoRouteQuery : public QObject, public QDeclarativeParserStatus

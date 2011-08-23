@@ -146,7 +146,8 @@ Item {
         function test_model_default_properties() {
             compare (emptyModel.autoUpdate, false, "Automatic update")
             compare (emptyModel.status, RouteModel.Null, "Model status")
-            compare (emptyModel.error, "", "Model error")
+            compare (emptyModel.errorString, "", "Model error")
+            compare (emptyModel.error, RouteModel.NoError)
             compare (emptyModel.count, 0, "Model count")
             emptyModel.get(192) // don't do stupid
 
@@ -277,37 +278,31 @@ Item {
             compare(exclusionSpy.count, 1)
             compare(queryDetailsChangedSpy.count, 1)
             emptyQuery.addExcludedArea(boundingBox1)
+            // doesn't make sense to put same area twice
+            compare(exclusionSpy.count, 1)
+            compare(queryDetailsChangedSpy.count, 1)
+            compare(emptyQuery.excludedAreas.length, 1)
+            emptyQuery.removeExcludedArea(boundingBox1)
             compare(exclusionSpy.count, 2)
             compare(queryDetailsChangedSpy.count, 2)
-            compare(emptyQuery.excludedAreas.length, 2)
-            emptyQuery.removeExcludedArea(boundingBox1)
-            compare(exclusionSpy.count, 3)
-            compare(queryDetailsChangedSpy.count, 3)
-            compare(emptyQuery.excludedAreas.length, 1)
-            emptyQuery.removeExcludedArea(boundingBox2) // boundingBox2 isn't in the list, must not impact
-            compare(exclusionSpy.count, 3)
-            compare(queryDetailsChangedSpy.count, 3)
-            emptyQuery.removeExcludedArea(boundingBox1)
-            compare(exclusionSpy.count, 4)
-            compare(queryDetailsChangedSpy.count, 4)
-            emptyQuery.removeExcludedArea(boundingBox1) // doesn't exist anymore, must not impact
-            compare(exclusionSpy.count, 4)
             compare(emptyQuery.excludedAreas.length, 0)
+            emptyQuery.removeExcludedArea(boundingBox2) // boundingBox2 isn't in the list, must not impact
+            compare(exclusionSpy.count, 2)
+            compare(queryDetailsChangedSpy.count, 2)
+            emptyQuery.removeExcludedArea(boundingBox1) // doesn't exist anymore, must not impact
+            compare(exclusionSpy.count, 2)
+            compare(queryDetailsChangedSpy.count, 2)
             // Check correct ordering of exclusion
             exclusionSpy.clear()
             emptyQuery.addExcludedArea(boundingBox1)
             emptyQuery.addExcludedArea(boundingBox2)
             emptyQuery.addExcludedArea(boundingBox1)
             emptyQuery.addExcludedArea(boundingBox2)
-            compare(exclusionSpy.count, 4)
+            compare(exclusionSpy.count, 2)
             compare(emptyQuery.excludedAreas[0], boundingBox1)
             compare(emptyQuery.excludedAreas[1], boundingBox2)
-            compare(emptyQuery.excludedAreas[2], boundingBox1)
-            compare(emptyQuery.excludedAreas[3], boundingBox2)
-            emptyQuery.removeExcludedArea(boundingBox1) // remove one from the middle, check that one added last is removed
-            compare(emptyQuery.excludedAreas[0], boundingBox1)
-            compare(emptyQuery.excludedAreas[1], boundingBox2)
-            compare(emptyQuery.excludedAreas[2], boundingBox2)
+            emptyQuery.removeExcludedArea(boundingBox1) // remove first and check all geos ok
+            compare(emptyQuery.excludedAreas[0], boundingBox2)
             exclusionSpy.clear()
             emptyQuery.clearExcludedAreas()
             compare(emptyQuery.excludedAreas.length, 0)
@@ -333,22 +328,19 @@ Item {
             compare (emptyQuery.excludedAreas.length, 0)
             emptyQuery.addExcludedArea(unitBox)
             emptyQuery.addExcludedArea(unitBox)
-            compare (emptyQuery.excludedAreas.length, 2)
+            compare (emptyQuery.excludedAreas.length, 1)
             queryDetailsChangedSpy.clear()
             unitBox.width = 777
             compare (queryDetailsChangedSpy.count, 1)
-            // verify that removing duplicat coordinate leaves remaining ones correctly connected
-            emptyQuery.removeExcludedArea(unitBox)
-            compare (queryDetailsChangedSpy.count, 2)
             compare (emptyQuery.excludedAreas.length, 1)
             unitBox.width = 200
-            compare (queryDetailsChangedSpy.count, 3)
+            compare (queryDetailsChangedSpy.count, 2)
             // verify that clearing works
             emptyQuery.clearExcludedAreas()
-            compare (queryDetailsChangedSpy.count, 4)
+            compare (queryDetailsChangedSpy.count, 3)
             compare (emptyQuery.excludedAreas.length, 0)
-            unitBox.width = 777
-            compare (queryDetailsChangedSpy.count, 4)
+            unitBox.width = 717
+            compare (queryDetailsChangedSpy.count, 3)
 
             // Feature types and weights
             queryDetailsChangedSpy.clear()
@@ -540,6 +532,7 @@ Item {
     SignalSpy {id: testRoutesSpy; target: routeModel; signalName: "routesChanged"}
     SignalSpy {id: testCountSpy; target: routeModel; signalName: "countChanged" }
     SignalSpy {id: testStatusSpy; target: routeModel; signalName: "statusChanged"}
+    SignalSpy {id: testErrorStringSpy; target: routeModel; signalName: "errorStringChanged"}
     SignalSpy {id: testErrorSpy; target: routeModel; signalName: "errorChanged"}
     SignalSpy {id: testWaypointsSpy; target: routeQuery; signalName: "waypointsChanged"}
 
@@ -547,6 +540,7 @@ Item {
     SignalSpy {id: testRoutesSlackSpy; target: routeModelSlack; signalName: "routesChanged"}
     SignalSpy {id: testCountSlackSpy; target: routeModelSlack; signalName: "countChanged" }
     SignalSpy {id: testStatusSlackSpy; target: routeModelSlack; signalName: "statusChanged"}
+    SignalSpy {id: testErrorStringSlackSpy; target: routeModelSlack; signalName: "errorStringChanged"}
     SignalSpy {id: testErrorSlackSpy; target: routeModelSlack; signalName: "errorChanged"}
     SignalSpy {id: testPluginSlackSpy; target: routeModelSlack; signalName: "pluginChanged"}
 
@@ -557,6 +551,7 @@ Item {
             testRoutesSpy.clear()
             testCountSpy.clear()
             testStatusSpy.clear()
+            testErrorStringSpy.clear()
             testErrorSpy.clear()
         }
         function clear_slacker_model() {
@@ -564,6 +559,7 @@ Item {
             testRoutesSlackSpy.clear()
             testCountSlackSpy.clear()
             testStatusSlackSpy.clear()
+            testErrorStringSlackSpy.clear()
             testErrorSlackSpy.clear()
         }
 
@@ -571,14 +567,17 @@ Item {
             clear_immediate_model();
             routeQuery.numberAlternativeRoutes = 72 // 'altroutes - 70' is the echoed errorcode
             routeModel.update()
+            verify (testErrorStringSpy.count > 0)
             verify (testErrorSpy.count > 0)
-            compare (routeModel.error, "error")
+            compare (routeModel.errorString, "error")
+            compare (routeModel.error, RouteModel.CommunicationError)
             compare (routeModel.count, 0)
             compare (testStatusSpy.count, 2)
             compare (routeModel.status, RouteModel.Error)
             routeModel.reset()
             compare (routeModel.status, RouteModel.Null)
-            compare (routeModel.error, "")
+            compare (routeModel.errorString, "")
+            compare (routeModel.error, RouteModel.NoError)
             // Check that ongoing req is aborted
             clear_slacker_model()
             routeQuery.numberAlternativeRoutes = 3
@@ -615,32 +614,38 @@ Item {
             clear_immediate_model();
             routeQuery.numberAlternativeRoutes = 72 // 'altroutes - 70' is the echoed errorcode
             routeModel.update()
+            compare (testErrorStringSpy.count, 1)
             compare (testErrorSpy.count, 1)
-            compare (routeModel.error, "error")
+            compare (routeModel.errorString, "error")
+            compare (routeModel.error, RouteModel.CommunicationError)
             compare (routeModel.count, 0)
             compare (testStatusSpy.count, 2)
             compare (routeModel.status, RouteModel.Error)
             // Basic delayed error
             clear_slacker_model()
-            routeQuery.numberAlternativeRoutes = 73
+            routeQuery.numberAlternativeRoutes = 72
             routeModelSlack.update()
+            compare (testErrorStringSlackSpy.count, 0)
             compare (testErrorSlackSpy.count, 0)
-            if (routeModelSlack.error == "")
-                tryCompare(testErrorSlackSpy, "count", 1)
+            if (routeModelSlack.errorString == "")
+                tryCompare(testErrorStringSlackSpy, "count", 1)
             else
-                tryCompare(testErrorSlackSpy, "count", 2)
-            compare (routeModelSlack.error, "error")
+                tryCompare(testErrorStringSlackSpy, "count", 2)
+            compare (routeModelSlack.errorString, "error")
+            compare (routeModelSlack.error, RouteModel.CommunicationError)
             compare (routeModelSlack.count, 0)
             // check that we recover
             routeQuery.numberAlternativeRoutes = 1
             routeModelSlack.update()
             tryCompare(routeModelSlack, "count", 1)
             compare (testCountSlackSpy.count, 1)
-            compare (routeModelSlack.error, "")
+            compare (routeModelSlack.errorString, "")
+            compare (routeModelSlack.error, RouteModel.NoError)
         }
         function test_basic_routing() {
             compare (testRoutesSpy.count, 0)
-            compare (routeModel.error, "")
+            compare (routeModel.errorString, "")
+            compare (routeModel.error, RouteModel.NoError)
             compare (testCountSpy.count, 0)
             compare (routeModel.count, 0)
             compare (routeQuery.waypoints.length, 0)
@@ -669,7 +674,8 @@ Item {
 
             // delayed responses
             compare (testRoutesSlackSpy.count, 0)
-            compare (routeModelSlack.error, "")
+            compare (routeModelSlack.errorString, "")
+            compare (routeModel.error, RouteModel.NoError)
             compare (testCountSlackSpy.count, 0)
             compare (routeModelSlack.count, 0)
             routeModelSlack.update()
