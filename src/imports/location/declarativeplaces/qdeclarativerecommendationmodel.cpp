@@ -287,6 +287,16 @@ void QDeclarativeRecommendationModel::setLimit(const int &limit)
 }
 
 /*!
+    \qmlproperty bool RecommendationModel::executing
+
+    This property indicates whether a search query is currently being executed.
+*/
+bool QDeclarativeRecommendationModel::executing() const
+{
+    return m_response;
+}
+
+/*!
     \qmlmethod RecommenadationModel::executeQuery()
     Parameter placeId should contain string for which search should be
     started.
@@ -333,6 +343,10 @@ void QDeclarativeRecommendationModel::replyFinished()
         convertResultsToDeclarative();
         endResetModel();
         emit resultsChanged();
+
+        m_response->deleteLater();
+        m_response = 0;
+        emit executingChanged();
     }
     emit queryFinished(0);
 }
@@ -353,7 +367,8 @@ void QDeclarativeRecommendationModel::cancelPreviousRequest()
             m_response->abort();
         }
         m_response->deleteLater();
-        m_response = NULL;
+        m_response = 0;
+        emit executingChanged();
     }
 }
 
@@ -365,6 +380,8 @@ void QDeclarativeRecommendationModel::connectNewResponse(QPlaceSearchReply *newR
         connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
         connect(m_response, SIGNAL(error(QPlaceReply::Error,QString)),
                 this, SLOT(replyError(QPlaceReply::Error,QString)));
+
+        emit executingChanged();
     } else {
         emit queryFinished(-1);
     }

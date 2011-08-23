@@ -24,6 +24,7 @@ class QDeclarativeRecommendationModel : public QAbstractListModel, public QDecla
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged);
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSearchResult> results READ results NOTIFY resultsChanged)
+    Q_PROPERTY(bool executing READ executing NOTIFY executingChanged)
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -61,6 +62,8 @@ public:
     int limit() const;
     void setLimit(const int &limit);
 
+    bool executing() const;
+
     Q_INVOKABLE void executeQuery();
     Q_INVOKABLE void cancelRequest();
 
@@ -73,6 +76,7 @@ signals:
     void offsetChanged();
     void limitChanged();
     void resultsChanged();
+    void executingChanged();
 
 private slots:
     void replyFinished();
