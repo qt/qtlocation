@@ -72,7 +72,7 @@ Rectangle {
 
         snapMode: ListView.SnapToItem
         model: resultModel
-        delegate: SearchResultDelegate { result: searchResult }
+        delegate: SearchResultDelegate { }
     }
 
     ListView {

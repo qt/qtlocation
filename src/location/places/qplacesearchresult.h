@@ -71,13 +71,13 @@ public:
     enum LocationMatchType {
         PointAddress,
         Interpolated,
-        Undefined
+        UndefinedLocationMatch
     };
 
     enum SearchResultType {
         Place,
         DidYouMeanSuggestion,
-        Unassigned
+        UnknownSearchResult
     };
 
     qreal relevance() const;

@@ -1,15 +1,14 @@
 #ifndef QDECLARATIVESEARCHRESULTMODEL_P_H
 #define QDECLARATIVESEARCHRESULTMODEL_P_H
 
-#include <QObject>
-#include <QAbstractListModel>
-#include <QDeclarativeListProperty>
-
-#include <qplacemanager.h>
-#include <qplacesearchrequest.h>
+#include <QtCore/QMap>
+#include <QtCore/QAbstractListModel>
+#include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceSearchRequest>
+#include <QtLocation/QPlaceSearchResult>
 
 #include "qdeclarativegeoboundingarea_p.h"
-#include "qdeclarativesearchresult_p.h"
+#include "qdeclarativeplace_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -24,12 +23,25 @@ class QDeclarativeSearchResultModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged);
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged);
     Q_PROPERTY(int didYouMean READ didYouMean WRITE setDidYouMean NOTIFY didYouMeanChanged);
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSearchResult> results READ results NOTIFY resultsChanged)
     Q_PROPERTY(bool executing READ executing NOTIFY executingChanged)
+
+    Q_ENUMS(SearchResultType LocationMatchType)
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
+    enum SearchResultType {
+        Place = QPlaceSearchResult::Place,
+        DidYouMeanSuggestion = QPlaceSearchResult::DidYouMeanSuggestion,
+        UnknownSearchResult = QPlaceSearchResult::UnknownSearchResult
+    };
+
+    enum LocationMatchType {
+        PointAddress = QPlaceSearchResult::PointAddress,
+        Interpolated = QPlaceSearchResult::Interpolated,
+        UndefinedLocationMatch = QPlaceSearchResult::UndefinedLocationMatch
+    };
+
     explicit QDeclarativeSearchResultModel(QObject *parent = 0);
     ~QDeclarativeSearchResultModel();
 
@@ -37,18 +49,18 @@ public:
     virtual void classBegin() {}
     virtual void componentComplete();
 
-    QDeclarativeListProperty<QDeclarativeSearchResult> results();
-    static void results_append(QDeclarativeListProperty<QDeclarativeSearchResult> *prop,
-                                  QDeclarativeSearchResult* result);
-    static int results_count(QDeclarativeListProperty<QDeclarativeSearchResult> *prop);
-    static QDeclarativeSearchResult* results_at(QDeclarativeListProperty<QDeclarativeSearchResult> *prop, int index);
-    static void results_clear(QDeclarativeListProperty<QDeclarativeSearchResult> *prop);
-
     // From QAbstractListModel
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
-        SearchResultRole = Qt::UserRole + 500
+        SearchResultType = Qt::UserRole,
+        SearchResultRelevance,
+        SearchResultDistance,
+        SearchResultHeading,
+        SearchResultMatchType,
+        SearchResultAdditionalData,
+        SearchResultPlace,
+        SearchResultDidYouMean
     };
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
@@ -85,7 +97,6 @@ signals:
     void offsetChanged();
     void limitChanged();
     void didYouMeanChanged();
-    void resultsChanged();
     void executingChanged();
 
 private slots:
@@ -95,13 +106,14 @@ private slots:
 private:
     void cancelPreviousRequest();
     void connectNewResponse(QPlaceSearchReply *newResponse);
-    void convertResultsToDeclarative();
 
 private:
     QDeclarativeCoordinate m_center;
     QDeclarativeGeoBoundingArea *m_searchArea;
     QDeclarativeCategory m_category;
-    QList<QDeclarativeSearchResult*> m_results;
+
+    QList<QPlaceSearchResult> m_results;
+    QMap<QString, QDeclarativePlace *> m_places;
 
     QPlaceSearchRequest m_queryParameters;
 

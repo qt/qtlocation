@@ -9,66 +9,104 @@ QT_USE_NAMESPACE
 
 /*!
     \qmlclass SearchResultModel QDeclarativeSearchResultModel
-    \brief The SearchResultModel element provides access to search results.
+    \brief The SearchResultModel element provides access to place search results.
     \inherits QAbstractListModel
     \ingroup qml-places
 
-    SearchResultModel provides a model of search results from PlaceManager.
-    The contents of the model is SearchResult list. User can add additional parameters
-    which make search more satisfactory. At least position of search center
-    should be set. Other parameters are start and limit of returned items, and bounding box
-    for the items returned. Also user might set \l dym property if "did you mean"
-    items should be returned.
+    SearchResultModel provides a model of place search results within the \l searchArea.  The
+    \l searchTerm and \l searchCategory properties can be set to restrict the search results to
+    places matching those criteria.
 
-    There are two ways of accessing the data: through model by using views and delegates,
-    or alternatively via \l results list property. Of the two, the model access is preferred.
+    The \l didYouMean property can be used to limit the maximum number of "did you mean" results
+    that may be returned.  Settings \l didYouMean to 0 will prevent any "did you mean" results from
+    being returned.
 
-    At the moment only data role provided by the model is \c searchResult.
+    The \l executing property indicates whether a query is currently executing.
 
-    Model might be use for different kind of requests. It mighe be used for search request
-    with search term where user gives string with query. It might be used for category search.
-    User might also use it for recomendation search (search similar places in requested area).
-    In that case user pass place id as an input parameter.
+    The model returns data for the following roles:
 
-    To use SearchResultModel user need to create it in qml file and connect it to some view
+    \table
+        \header
+            \o Role
+            \o Type
+            \o Description
+        \row
+            \o type
+            \o SearchResultModel.SearchResultType
+            \o The type of search result.
+        \row
+            \o relevance
+            \o real
+            \o The relevence score of the result.
+        \row
+            \o distance
+            \o real
+            \o The distance to the place.
+        \row
+            \o heading
+            \o real
+            \o The heading to the place.
+        \row
+            \o matchType
+            \o SearchResultModel.LocationMatchType
+            \o The location match type of the result.
+        \row
+            \o additionalData
+            \o
+            \o Additional data related to the search result.
+        \row
+            \o place
+            \o Place
+            \o The Place.
+        \row
+            \o didYouMean
+            \o string
+            \o Valid only for did you mean search results, a suggested corrected search term.
+    \endtable
+
+    The following example shows how to use the SearchResultModel to search for Pizza restaurants
+    within a 5km radius:
+
     \code
-    import places 1.0
+    import Qt.location 5.0
 
     SearchResultModel {
         id: searchModel
+
+        searchTerm: "Pizza"
         searchArea: BoundingCircle {
-            id: proximity
             center: Coordinate {
                 longitude: 53
                 latitude: 100
             }
             radius:5000
         }
-        start: 0
-        limit: 15
+
+        Component.onCompleted: executeQuery()
     }
 
-    ...
-    searchModel.executeQuery()
-    ...
-
     ListView {
-        id: suggestionList
         model: searchModel
-        delegate: Text {
-            text: 'Name: ' + searchResult.place.name }
-        }
+        delegate: Text { text: 'Name: ' + place.name }
     }
     \endcode
 
-    \sa SuggestionModel, SupportedCategoryModel, {QPlaceManager}
+    \sa RecommendationModel, SupportedCategoryModel, {QPlaceManager}
 */
+
 QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
 :   QAbstractListModel(parent), m_response(0), m_plugin(0), m_complete(false)
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(SearchResultRole, "searchResult");
+    roleNames.insert(SearchResultType, "type");
+    roleNames.insert(SearchResultRelevance, "relevance");
+    roleNames.insert(SearchResultDistance, "distance");
+    roleNames.insert(SearchResultHeading, "heading");
+    roleNames.insert(SearchResultMatchType, "matchType");
+    roleNames.insert(SearchResultAdditionalData, "additionalData");
+    roleNames.insert(SearchResultPlace, "place");
+    roleNames.insert(SearchResultDidYouMean, "didYouMean");
     setRoleNames(roleNames);
 }
 
@@ -112,95 +150,54 @@ QDeclarativeGeoServiceProvider* QDeclarativeSearchResultModel::plugin() const
     available.
 */
 
-/*!
-    \qmlproperty QDeclarativeListProperty<QDeclarativeSearchResult> SearchResultModel::results
-
-    This element holds the list of search results (place or "did you mean" strings)
-    that the model currently has.
-*/
-QDeclarativeListProperty<QDeclarativeSearchResult> QDeclarativeSearchResultModel::results()
-{
-    return QDeclarativeListProperty<QDeclarativeSearchResult>(this,
-                                                          0, // opaque data parameter
-                                                          results_append,
-                                                          results_count,
-                                                          results_at,
-                                                          results_clear);
-}
-
-void QDeclarativeSearchResultModel::results_append(QDeclarativeListProperty<QDeclarativeSearchResult> *prop,
-                                                             QDeclarativeSearchResult* category)
-{
-    Q_UNUSED(prop);
-    Q_UNUSED(category);
-}
-
-int QDeclarativeSearchResultModel::results_count(QDeclarativeListProperty<QDeclarativeSearchResult> *prop)
-{
-    return static_cast<QDeclarativeSearchResultModel*>(prop->object)->m_results.count();
-}
-
-QDeclarativeSearchResult* QDeclarativeSearchResultModel::results_at(QDeclarativeListProperty<QDeclarativeSearchResult> *prop,
-                                                                          int index)
-{
-    QDeclarativeSearchResultModel* model = static_cast<QDeclarativeSearchResultModel*>(prop->object);
-    QDeclarativeSearchResult *res = NULL;
-    if (model->m_results.count() > index && index > -1) {
-        res = model->m_results[index];
-    }
-    return res;
-}
-
-void QDeclarativeSearchResultModel::results_clear(QDeclarativeListProperty<QDeclarativeSearchResult> *prop)
-{
-    Q_UNUSED(prop)
-}
-
-void QDeclarativeSearchResultModel::convertResultsToDeclarative()
-{
-    qDeleteAll(m_results);
-    m_results.clear();
-
-    foreach (const QPlaceSearchResult& result, m_response->results()) {
-        QDeclarativeSearchResult* declarative = new QDeclarativeSearchResult(result, this);
-        m_results.append(declarative);
-    }
-}
-
-int QDeclarativeSearchResultModel::rowCount(const QModelIndex& parent) const
+int QDeclarativeSearchResultModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    if (m_response) {
-        return m_response->results().count();
-    } else {
-        return 0;
-    }
+
+    return m_results.count();
 }
 
 // Returns the stored under the given role for the item referred to by the index.
-QVariant QDeclarativeSearchResultModel::data(const QModelIndex& index, int role) const
+QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role) const
 {
-    QDeclarativeSearchResult *result = NULL;
-    if (m_response && m_response->results().count() > index.row()) {
-       result = m_results[index.row()];
+    if (index.row() > m_results.count())
+        return QVariant();
+
+    const QPlaceSearchResult &result = m_results.at(index.row());
+
+    if (result.type() == QPlaceSearchResult::Place) {
+        switch (role) {
+        case Qt::DisplayRole:
+            return result.place().name();
+        case SearchResultType:
+            return result.type();
+        case SearchResultRelevance:
+            return result.relevance();
+        case SearchResultDistance:
+            return result.distance();
+        case SearchResultHeading:
+            return result.heading();
+        case SearchResultMatchType:
+            return result.matchType();
+        case SearchResultAdditionalData:
+            return result.additionalData();
+        case SearchResultPlace:
+            return QVariant::fromValue(static_cast<QObject *>(m_places.value(result.place().placeId())));
+        default:
+            return QVariant();
+        }
+    } else if (result.type() == QPlaceSearchResult::DidYouMeanSuggestion) {
+        switch (role) {
+        case Qt::DisplayRole:
+        case SearchResultDidYouMean:
+            return result.didYouMeanSuggestion();
+        case SearchResultType:
+            return result.type();
+        default:
+            return QVariant();
+        }
     }
 
-    switch (role) {
-        case Qt::DisplayRole:
-            if (result && result->type() == QDeclarativeSearchResult::Place) {
-                return result->place()->name();
-            } else if (result && result->type() == QDeclarativeSearchResult::DidYouMeanSuggestion) {
-                return result->didYouMeanSuggestion();
-            } else {
-                return QString();
-            }
-        case SearchResultRole:
-            if (result) {
-                return QVariant::fromValue(static_cast<QObject *>(result));
-            } else {
-                return QVariant();
-            }
-        }
     return QVariant();
 }
 
@@ -406,9 +403,20 @@ void QDeclarativeSearchResultModel::replyFinished()
 {
     if (m_response) {
         beginResetModel();
-        convertResultsToDeclarative();
+
+        qDeleteAll(m_places);
+        m_places.clear();
+
+        m_results = m_response->results();
+
+        foreach (const QPlaceSearchResult &result, m_results) {
+            const QString id = result.place().placeId();
+            QDeclarativePlace *place = new QDeclarativePlace(result.place(), this);
+            place->setPlugin(m_plugin);
+            m_places.insert(id, place);
+        }
+
         endResetModel();
-        emit resultsChanged();
 
         m_response->deleteLater();
         m_response = 0;

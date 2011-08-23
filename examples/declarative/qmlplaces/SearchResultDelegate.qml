@@ -2,7 +2,6 @@ import QtQuick 2.0
 import Qt.location 5.0
 
 Rectangle {
-    property SearchResult result
     id: thisItem
     width: parent.width
     radius: 10
@@ -31,7 +30,7 @@ Rectangle {
     }
 
     Component {
-        id: placeFields
+        id: placeComponent
         Item {
             focus:true
 
@@ -44,8 +43,8 @@ Rectangle {
                 onClicked: {
                     if (textFields.item.state == 'place-core') {
                         textFields.item.state = 'place-details'
-                        if (!result.place.detailsFetched)
-                            result.place.getDetails()
+                        if (!place.detailsFetched)
+                            place.getDetails()
                     } else if (textFields.item.state == 'place-details') {
                         textFields.item.state = 'place-core'
                     }
@@ -53,7 +52,7 @@ Rectangle {
 
                 onPressAndHold: {
                     placesList.model = recommendationModel
-                    recommendationModel.placeId = result.place.placeId
+                    recommendationModel.placeId = place.placeId
                     recommendationModel.executeQuery()
                 }
             }
@@ -63,64 +62,64 @@ Rectangle {
 
                 anchors.left: parent.left
                 anchors.right: parent.right
-                Text { text: '<b>Name: </b> ' + result.place.name; font.pixelSize: 16 }
+                Text { text: '<b>Name: </b> ' + place.name; font.pixelSize: 16 }
 
-                RatingView { rating: result.place.rating.value }
+                RatingView { rating: place.rating.value }
 
-                Text { text: '<b>Street: </b> ' + result.place.location.address.street; font.pixelSize: 16 }
-                Text { text: '<b>Latitude: </b> ' + result.place.location.coordinate.latitude; font.pixelSize: 16 }
-                Text { text: '<b>Longitude: </b> ' + result.place.location.coordinate.longitude; font.pixelSize: 16 }
-                Text { text: '<b>Categories: </b> ' + categoryNames(result.place.categories); font.pixelSize: 16 }
+                Text { text: '<b>Street: </b> ' + place.location.address.street; font.pixelSize: 16 }
+                Text { text: '<b>Latitude: </b> ' + place.location.coordinate.latitude; font.pixelSize: 16 }
+                Text { text: '<b>Longitude: </b> ' + place.location.coordinate.longitude; font.pixelSize: 16 }
+                Text { text: '<b>Categories: </b> ' + categoryNames(place.categories); font.pixelSize: 16 }
 
                 Text {
-                    text: '<b>Descriptions count: </b> ' + result.place.descriptions.length +
-                          (result.place.descriptions.length <= 0 ? '' : ', <a href=\"dummy\">show descriptions</a>')
+                    text: '<b>Descriptions count: </b> ' + place.descriptions.length +
+                          (place.descriptions.length <= 0 ? '' : ', <a href=\"dummy\">show descriptions</a>')
                     font.pixelSize: 16
-                    onLinkActivated: descriptionList.model = result.place.descriptions
+                    onLinkActivated: descriptionList.model = place.descriptions
                 }
 
                 Text {
-                    text: '<b>Review count: </b> ' + result.place.reviewModel.totalCount +
-                          ((result.place.reviewModel.totalCount <= 0) ? '' : ', <a href=\"dummy\">show reviews</a>')
+                    text: '<b>Review count: </b> ' + place.reviewModel.totalCount +
+                          ((place.reviewModel.totalCount <= 0) ? '' : ', <a href=\"dummy\">show reviews</a>')
                     font.pixelSize: 16
-                    onLinkActivated: reviewList.model = result.place.reviewModel
+                    onLinkActivated: reviewList.model = place.reviewModel
                 }
 
                 Text {
-                    text: '<b>Image count: </b> ' + result.place.imageModel.totalCount +
-                          ((result.place.imageModel.totalCount <= 0) ? '' : ', <a href=\"dummy\">show images</a>')
+                    text: '<b>Image count: </b> ' + place.imageModel.totalCount +
+                          ((place.imageModel.totalCount <= 0) ? '' : ', <a href=\"dummy\">show images</a>')
                     font.pixelSize: 16
-                    onLinkActivated: imageGrid.model = result.place.imageModel
+                    onLinkActivated: imageGrid.model = place.imageModel
                 }
 
                 Text {
-                    text: '<b>Phone: </b> ' + result.place.primaryPhone
+                    text: '<b>Phone: </b> ' + place.primaryPhone
                     font.pixelSize: 16
-                    visible: result.place.primaryPhone.length > 0
+                    visible: place.primaryPhone.length > 0
                 }
 
                 Text {
-                    text: '<b>Fax: </b> ' + result.place.primaryFax
+                    text: '<b>Fax: </b> ' + place.primaryFax
                     font.pixelSize: 16
-                    visible: result.place.primaryFax.length > 0
+                    visible: place.primaryFax.length > 0
                 }
 
                 Text {
-                    text: '<b>Email: </b> ' + result.place.primaryEmail
+                    text: '<b>Email: </b> ' + place.primaryEmail
                     font.pixelSize: 16
-                    visible: result.place.primaryEmail.length > 0
+                    visible: place.primaryEmail.length > 0
                 }
 
                 Text {
-                    text: '<b>Website: </b> <a href=\"' + result.place.primaryUrl + '\">' + result.place.primaryUrl + '</a>'
+                    text: '<b>Website: </b> <a href=\"' + place.primaryUrl + '\">' + place.primaryUrl + '</a>'
                     font.pixelSize: 16
-                    visible: String(result.place.primaryUrl).length > 0
-                    onLinkActivated: Qt.openUrlExternally(result.place.primaryUrl)
+                    visible: String(place.primaryUrl).length > 0
+                    onLinkActivated: Qt.openUrlExternally(place.primaryUrl)
                 }
 
-                Text { text: '<b>Tags: </b> ' + result.place.tags; font.pixelSize: 16 }
+                Text { text: '<b>Tags: </b> ' + place.tags; font.pixelSize: 16 }
                 //Text { text: '<b>Suppliers: </b> ' + JSON.stringify(place.suppliers); font.pixelSize: 16 }
-                Text { id: detailsFetched; text:'<b>Details Fetched: </b> ' + result.place.detailsFetched; font.pixelSize: 16 }
+                Text { id: detailsFetched; text:'<b>Details Fetched: </b> ' + place.detailsFetched; font.pixelSize: 16 }
                 Text { id: paymentMethods; font.pixelSize: 16 }
             }
 
@@ -133,17 +132,23 @@ Rectangle {
                     name: "place-details"
                     PropertyChanges { target: gradStop; color:"lightskyblue" }
                     PropertyChanges { target: paymentMethods; text: '<b>Payment methods: </b> '
-                        + ((result.place.extendedAttributes.paymentMethods)?result.place.extendedAttributes.paymentMethods.text:"No payment methods")}
+                        + ((place.extendedAttributes.paymentMethods) ? place.extendedAttributes.paymentMethods.text : "No payment methods")}
                 }
             ]
         }
     }
 
     Component {
-        id: didYouMeanField
+        id: didYouMeanComponent
         Item {
-            height: didYouMeanField.height
-            Text { id:didYouMeanField; text:'<b>Did you mean ' + result.didYouMeanSuggestion + '?</b>'; font.pixelSize: 16 }
+            height: childrenRect.height
+            width: parent.width
+
+            Text {
+                text:'<b>Did you mean ' + didYouMean + '?</b>';
+                font.pixelSize: 16
+            }
+
             state: 'didYouMean'
             states: [
                 State {
@@ -163,6 +168,6 @@ Rectangle {
         y: 5
         clip: true
 
-        sourceComponent: (result.type == SearchResult.Place) ? placeFields : didYouMeanField
+        sourceComponent: (type == SearchResultModel.Place) ? placeComponent : didYouMeanComponent
     }
 }
