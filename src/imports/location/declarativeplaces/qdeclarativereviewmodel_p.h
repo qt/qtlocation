@@ -3,14 +3,16 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QAbstractListModel>
-#include "qdeclarativereview_p.h"
-#include <qplacemanager.h>
+#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceReview>
 
 QT_BEGIN_NAMESPACE
 
 class QDeclarativePlace;
 class QDeclarativeGeoServiceProvider;
 class QGeoServiceProvider;
+class QDeclarativeSupplier;
 
 class QDeclarativeReviewModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
@@ -37,7 +39,19 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
-        ReviewRole = Qt::UserRole
+        DateRole = Qt::UserRole,
+        DescriptionRole,
+        LanguageRole,
+        HelpfulVotingsRole,
+        UnhelpfulVotingsRole,
+        RatingRole,
+        MediaIdsRole,
+        ReviewIdRole,
+        SupplierRole,
+        TitleRole,
+        UserIdRole,
+        UserNameRole,
+        OriginatorUrlRole
     };
 
     bool canFetchMore(const QModelIndex &parent) const;
@@ -60,14 +74,15 @@ private:
     QDeclarativePlace *m_place;
     int m_batchSize;
     int m_reviewCount;
-    QMap<int, QDeclarativeReview *> m_reviews;
+
+    QMap<int, QPlaceReview> m_reviews;
+    QMap<QString, QDeclarativeSupplier *> m_suppliers;
+
     QPlaceContentReply *m_reply;
 
     bool m_complete;
 };
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeReviewModel));
 
 #endif // QDECLARATIVEREVIEWMODEL_P_H

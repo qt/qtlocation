@@ -2,8 +2,6 @@ import QtQuick 2.0
 import Qt.location 5.0
 
 Rectangle {
-    property Review review
-
     height: childrenRect.height + 10
     width: parent.width
 
@@ -21,23 +19,23 @@ Rectangle {
         spacing: 5
 
         Text {
-            text: review.title
+            text: title
             font.pixelSize: 16
             font.bold: true
             width: parent.width
         }
 
         RatingView {
-            rating: review.rating
+            rating: model.rating
             size: 16
         }
 
         Text {
-            text: Qt.formatDate(review.date, "d MMMM yyyy")
+            text: Qt.formatDate(date, "d MMMM yyyy")
         }
 
         Text {
-            text: review.description
+            text: description
             wrapMode: Text.WordWrap
             width: parent.width
         }

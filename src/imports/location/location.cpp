@@ -77,7 +77,6 @@
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativeplaceattribute_p.h"
 #include "qdeclarativerating_p.h"
-#include "qdeclarativereview_p.h"
 #include "qdeclarativesupplier_p.h"
 
 #include "qdeclarativerecommendationmodel_p.h"
@@ -166,7 +165,6 @@ public:
             qmlRegisterType<QDeclarativePlaceImageModel>(uri, 5, 0, "PlaceImageModel");
             qmlRegisterType<QDeclarativePlace>(uri, 5, 0, "Place");
             qmlRegisterType<QDeclarativeRating>(uri, 5, 0, "Rating");
-            qmlRegisterType<QDeclarativeReview>(uri, 5, 0, "Review");
             qmlRegisterType<QDeclarativeReviewModel>(uri, 5, 0, "ReviewModel");
             qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");
 

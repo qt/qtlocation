@@ -82,9 +82,7 @@ Rectangle {
         snapMode: ListView.SnapToItem
 
         visible: model != undefined
-        delegate: ReviewDelegate {
-            review: model.review
-        }
+        delegate: ReviewDelegate { }
     }
 
     ListView {

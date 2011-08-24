@@ -14,7 +14,6 @@ SOURCES += \
     declarativeplaces/qdeclarativeplace.cpp \
     declarativeplaces/qdeclarativeplaceattribute.cpp \
     declarativeplaces/qdeclarativerating.cpp \
-    declarativeplaces/qdeclarativereview.cpp \
     declarativeplaces/qdeclarativesupplier.cpp
 
 HEADERS += \
@@ -32,7 +31,6 @@ HEADERS += \
     declarativeplaces/qdeclarativeplace_p.h \
     declarativeplaces/qdeclarativeplaceattribute_p.h \
     declarativeplaces/qdeclarativerating_p.h \
-    declarativeplaces/qdeclarativereview_p.h \
     declarativeplaces/qdeclarativesupplier_p.h
 
 

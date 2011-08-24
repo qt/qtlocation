@@ -1,6 +1,7 @@
 #include "qdeclarativereviewmodel_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativeplace_p.h"
+#include "qdeclarativesupplier_p.h"
 
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
@@ -19,7 +20,65 @@ QT_USE_NAMESPACE
     by the batchSize property.  The total number of reviews available can be accessed via the
     totalCount property and the number of fetched reviews via the count property.
 
-    The model provides a single data role, the "review" role, which returns a Review object.
+    The model returns data for the following roles:
+    \table
+        \header
+            \o Role
+            \o Type
+            \o Description
+        \row
+            \o date
+            \o string
+            \o The date that the review was posted.
+        \row
+            \o description
+            \o string
+            \o The content of the review.
+        \row
+            \o language
+            \o string
+            \o The language that the review is written in.
+        \row
+            \o helpfulVotings
+            \o int
+            \o The number of votings indicating that the review was helpful.
+        \row
+            \o unhelpfulVotings
+            \o int
+            \o The number of votings indicating that the review was not helpful.
+        \row
+            \o rating
+            \o real
+            \o The rating that the reviewer gave to the place.
+        \row
+            \o mediaIds
+            \o list
+            \o The list of media ids associated with the review.
+        \row
+            \o reviewId
+            \o string
+            \o The id of the review.
+        \row
+            \o supplier
+            \o Supplier
+            \o The source of the review.
+        \row
+            \o title
+            \o string
+            \o The title of the review.
+        \row
+            \o userId
+            \o string
+            \o The id of the user who posted the review.
+        \row
+            \o userName
+            \o string
+            \o The name of the user who posted the review.
+        \row
+            \o originatorUrl
+            \o string
+            \o The URL of the review.
+    \endtable
 */
 
 QDeclarativeReviewModel::QDeclarativeReviewModel(QObject* parent)
@@ -27,13 +86,25 @@ QDeclarativeReviewModel::QDeclarativeReviewModel(QObject* parent)
     m_complete(false)
 {
     QHash<int, QByteArray> roleNames;
-    roleNames.insert(ReviewRole, "review");
+    roleNames.insert(DateRole, "date");
+    roleNames.insert(DescriptionRole, "description");
+    roleNames.insert(LanguageRole, "language");
+    roleNames.insert(HelpfulVotingsRole, "helpfulVotings");
+    roleNames.insert(UnhelpfulVotingsRole, "unhelpfulVotings");
+    roleNames.insert(RatingRole, "rating");
+    roleNames.insert(MediaIdsRole, "mediaIds");
+    roleNames.insert(ReviewIdRole, "reviewId");
+    roleNames.insert(SupplierRole, "supplier");
+    roleNames.insert(TitleRole, "title");
+    roleNames.insert(UserIdRole, "userId");
+    roleNames.insert(UserNameRole, "userName");
+    roleNames.insert(OriginatorUrlRole, "originatorUrl");
     setRoleNames(roleNames);
 }
 
 QDeclarativeReviewModel::~QDeclarativeReviewModel()
 {
-    qDeleteAll(m_reviews);
+    qDeleteAll(m_suppliers);
 }
 
 /*!
@@ -55,8 +126,10 @@ void QDeclarativeReviewModel::setPlace(QDeclarativePlace *place)
             m_reply->deleteLater();
             m_reply = 0;
         }
-        qDeleteAll(m_reviews);
+
         m_reviews.clear();
+        qDeleteAll(m_suppliers);
+        m_suppliers.clear();
         endResetModel();
 
         if (m_reviewCount != -1) {
@@ -101,18 +174,18 @@ int QDeclarativeReviewModel::totalCount() const
     return m_reviewCount;
 }
 
-static QPair<int, int> findMissingKey(const QMap<int, QDeclarativeReview *> &map)
+static QPair<int, int> findMissingKey(const QMap<int, QPlaceReview> &map)
 {
     int start = 0;
-    while (map.value(start, 0) != 0)
+    while (map.contains(start))
         ++start;
 
-    QMap<int, QDeclarativeReview *>::const_iterator it = map.lowerBound(start);
+    QMap<int, QPlaceReview>::const_iterator it = map.lowerBound(start);
     if (it == map.end())
         return qMakePair(start, -1);
 
     int end = start;
-    while (map.value(end, 0) == 0)
+    while (!map.contains(end))
         ++end;
 
     return qMakePair(start, end - 1);
@@ -178,8 +251,9 @@ void QDeclarativeReviewModel::clear()
 {
     beginResetModel();
     m_reviewCount = -1;
-    qDeleteAll(m_reviews);
     m_reviews.clear();
+    qDeleteAll(m_suppliers);
+    m_suppliers.clear();
     delete m_reply;
     m_reply = 0;
     endResetModel();
@@ -216,7 +290,7 @@ void QDeclarativeReviewModel::fetchFinished()
             reviewsIter.next();
             if (!m_reviews.contains(reviewsIter.key())) {
                 newIndexes.append(reviewsIter.key());
-            } else if (reviewsIter.value() != m_reviews.value(reviewsIter.key())->review()) {
+            } else if (reviewsIter.value() != m_reviews.value(reviewsIter.key())) {
                 changedIndexes.append(reviewsIter.key());
             } else {
                 //review item at given index has not changed, do nothing
@@ -234,8 +308,15 @@ void QDeclarativeReviewModel::fetchFinished()
 
             if (!newIndexesIter.hasNext() || (newIndexesIter.hasNext() && (newIndexesIter.peekNext() > (currentIndex + 1)))) {
                 beginInsertRows(QModelIndex(),startIndex,currentIndex);
-                for (int i = startIndex; i <= currentIndex; ++i)
-                    m_reviews.insert(i, new QDeclarativeReview(reviews.value(i), this));
+                for (int i = startIndex; i <= currentIndex; ++i) {
+                    const QPlaceReview &review = reviews.value(i);
+
+                    m_reviews.insert(i, review);
+                    if (!m_suppliers.contains(review.supplier().supplierId())) {
+                        m_suppliers.insert(review.supplier().supplierId(),
+                                           new QDeclarativeSupplier(review.supplier(), this));
+                    }
+                }
                 endInsertRows();
                 startIndex = -1;
             }
@@ -252,8 +333,13 @@ void QDeclarativeReviewModel::fetchFinished()
 
             if (!changedIndexesIter.hasNext() || (changedIndexesIter.hasNext() && changedIndexesIter.peekNext() > (currentIndex +1))) {
                 for (int i = startIndex; i <= currentIndex; ++i) {
-                    m_reviews.remove(i);
-                    m_reviews.insert(i, new QDeclarativeReview(reviews.value(i), this));
+                    const QPlaceReview &review = reviews.value(i);
+
+                    m_reviews.insert(i, review);
+                    if (!m_suppliers.contains(review.supplier().supplierId())) {
+                        m_suppliers.insert(review.supplier().supplierId(),
+                                           new QDeclarativeSupplier(review.supplier(), this));
+                    }
                 }
                 emit dataChanged(index(startIndex),index(currentIndex));
                 startIndex = -1;
@@ -280,8 +366,36 @@ QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
     if (index.row() >= rowCount(index.parent()) || index.row() < 0)
         return QVariant();
 
-    if (role == ReviewRole)
-        return QVariant::fromValue(static_cast<QObject *>(m_reviews.value(index.row())));
+    const QPlaceReview &review = m_reviews.value(index.row());
 
-    return QVariant();
+    switch (role) {
+    case DateRole:
+        return review.date();
+    case DescriptionRole:
+        return review.description();
+    case LanguageRole:
+        return review.language();
+    case HelpfulVotingsRole:
+        return review.helpfulVotings();
+    case UnhelpfulVotingsRole:
+        return review.unhelpfulVotings();
+    case RatingRole:
+        return review.rating();
+    case MediaIdsRole:
+        return review.mediaIds();
+    case ReviewIdRole:
+        return review.reviewId();
+    case SupplierRole:
+        return QVariant::fromValue(static_cast<QObject *>(m_suppliers.value(review.supplier().supplierId())));
+    case TitleRole:
+        return review.title();
+    case UserIdRole:
+        return review.userId();
+    case UserNameRole:
+        return review.userName();
+    case OriginatorUrlRole:
+        return review.originatorUrl();
+    default:
+        return QVariant();
+    }
 }
