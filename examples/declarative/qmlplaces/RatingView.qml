@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 Row {
-    property double rating: 0
+    property real rating: 0
     property int size: 32
 
     Repeater {
