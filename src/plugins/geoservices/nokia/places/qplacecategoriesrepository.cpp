@@ -67,7 +67,7 @@ QPlaceCategoriesRepository *QPlaceCategoriesRepository::instance()
 }
 
 QPlaceCategoriesRepository::QPlaceCategoriesRepository(QObject *parent)
-:   QObject(parent), m_categoriesReply(0)
+:   QObject(parent)
 {
     setupCategoriesMapper();
 }
@@ -79,15 +79,16 @@ QPlaceCategoriesRepository::~QPlaceCategoriesRepository()
 QPlaceReply *QPlaceCategoriesRepository::initializeCategories()
 {
     if (m_categoriesReply)
-        return m_categoriesReply;
+        return m_categoriesReply.data();
 
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendCategoriesTreeRequest();
     if (restReply) {
         m_categoriesReply = new QPlaceCategoriesReplyImpl(restReply);
-        connect(m_categoriesReply, SIGNAL(finished()), this, SLOT(replyFinished()));
+        connect(m_categoriesReply.data(), SIGNAL(finished()),
+                this, SLOT(replyFinished()));
     }
 
-    return m_categoriesReply;
+    return m_categoriesReply.data();
 }
 
 QPlaceCategoryTree QPlaceCategoriesRepository::categories() const
@@ -125,10 +126,9 @@ void QPlaceCategoriesRepository::replyFinished()
     if (!m_categoriesReply)
         return;
 
-    m_categoryTree = m_categoriesReply->categories();
+    m_categoryTree = m_categoriesReply.data()->categories();
 
-    m_categoriesReply->deleteLater();
-    m_categoriesReply = 0;
+    m_categoriesReply.clear();
 }
 
 void QPlaceCategoriesRepository::setupCategoriesMapper()

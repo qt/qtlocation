@@ -50,7 +50,7 @@
 #define QPLACECATEGORIESREPOSITORY_H
 
 #include <QObject>
-#include <QPointer>
+#include <QWeakPointer>
 #include <QList>
 
 #include <qmobilityglobal.h>
@@ -87,7 +87,7 @@ private:
 
     QPlaceCategoryTree m_categoryTree;
     static QPlaceCategoriesRepository *repositoryInstance;
-    QPlaceCategoriesReplyImpl *m_categoriesReply;
+    QWeakPointer<QPlaceCategoriesReplyImpl> m_categoriesReply;
 };
 
 QT_END_NAMESPACE
