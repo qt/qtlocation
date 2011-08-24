@@ -578,7 +578,6 @@ QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
     placeId = other.placeId;
     reviews = other.reviews;
     reviewCount = other.reviewCount;
-    shortDescription = other.shortDescription;
     tags = other.tags;
     primaryPhone = other.primaryPhone;
     primaryFax = other.primaryFax;
