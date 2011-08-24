@@ -178,6 +178,8 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
         connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
         connect(m_response, SIGNAL(error(QPlaceReply::Error,QString)),
                 this, SLOT(replyError(QPlaceReply::Error,QString)));
+
+        emit updatingChanged();
     }
 }
 
@@ -202,6 +204,11 @@ bool QDeclarativeSupportedCategoriesModel::hierarchical() const
     return m_hierarchical;
 }
 
+bool QDeclarativeSupportedCategoriesModel::updating() const
+{
+    return m_response;
+}
+
 void QDeclarativeSupportedCategoriesModel::replyFinished()
 {
     if (!m_response)
@@ -211,6 +218,8 @@ void QDeclarativeSupportedCategoriesModel::replyFinished()
     m_response = 0;
 
     updateCategories();
+
+    emit updatingChanged();
 }
 
 void QDeclarativeSupportedCategoriesModel::replyError(QPlaceReply::Error error,
@@ -218,6 +227,10 @@ void QDeclarativeSupportedCategoriesModel::replyError(QPlaceReply::Error error,
 {
     Q_UNUSED(error);
     Q_UNUSED(errorString);
+
+    m_response->deleteLater();
+    m_response = 0;
+    emit updatingChanged();
 }
 
 void QDeclarativeSupportedCategoriesModel::updateCategories()

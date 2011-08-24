@@ -33,6 +33,7 @@ class QDeclarativeSupportedCategoriesModel : public QAbstractItemModel, public Q
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(bool hierarchical READ hierarchical WRITE setHierarchical NOTIFY hierarchicalChanged)
+    Q_PROPERTY(bool updating READ updating NOTIFY updatingChanged)
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -64,9 +65,12 @@ public:
     void setHierarchical(bool hierarchical);
     bool hierarchical() const;
 
+    bool updating() const;
+
 signals:
     void pluginChanged();
     void hierarchicalChanged();
+    void updatingChanged();
 
 private slots:
     void replyFinished();
