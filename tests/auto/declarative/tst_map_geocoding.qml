@@ -146,7 +146,8 @@ Item {
             compare (emptyModel.status, RouteModel.Null)
 
             // error
-            compare (emptyModel.error, "")
+            compare (emptyModel.errorString, "")
+            compare (emptyModel.error, GeocodeModel.NoError)
 
             // count
             compare( emptyModel.count, 0)
@@ -252,6 +253,7 @@ Item {
     SignalSpy {id: locationsSlackSpy; target: slackModel; signalName: "locationsChanged"}
     SignalSpy {id: countSlackSpy; target: slackModel; signalName: "countChanged"}
     SignalSpy {id: querySlackSpy; target: slackModel; signalName: "queryChanged"}
+    SignalSpy {id: errorStringSlackSpy; target: slackModel; signalName: "errorStringChanged"}
     SignalSpy {id: errorSlackSpy; target: slackModel; signalName: "errorChanged"}
     SignalSpy {id: pluginSlackSpy; target: slackModel; signalName: "pluginChanged"}
 
@@ -260,6 +262,7 @@ Item {
     SignalSpy {id: countImmediateSpy; target: immediateModel; signalName: "countChanged"}
     SignalSpy {id: queryImmediateSpy; target: immediateModel; signalName: "queryChanged"}
     SignalSpy {id: statusImmediateSpy; target: immediateModel; signalName: "statusChanged"}
+    SignalSpy {id: errorStringImmediateSpy; target: immediateModel; signalName: "errorStringChanged"}
     SignalSpy {id: errorImmediateSpy; target: immediateModel; signalName: "errorChanged"}
 
     GeocodeModel {id: automaticModel; plugin: autoPlugin; query: automaticAddress1; autoUpdate: true}
@@ -272,6 +275,7 @@ Item {
             locationsSlackSpy.clear()
             countSlackSpy.clear()
             querySlackSpy.clear()
+            errorStringSlackSpy.clear()
             errorSlackSpy.clear()
             slackModel.limit = -1
             slackModel.offset = 0
@@ -281,6 +285,7 @@ Item {
             locationsImmediateSpy.clear()
             countImmediateSpy.clear()
             queryImmediateSpy.clear()
+            errorStringImmediateSpy.clear()
             errorImmediateSpy.clear()
             statusImmediateSpy.clear()
             immediateModel.limit = -1
@@ -290,12 +295,14 @@ Item {
             clear_immediate_model();
             immediateModel.query = errorAddress1
             immediateModel.update()
-            compare (immediateModel.error, errorAddress1.street)
+            compare (immediateModel.errorString, errorAddress1.street)
+            compare (immediateModel.error, RouteModel.CommunicationError)
             compare (immediateModel.count, 0)
             compare (statusImmediateSpy.count, 2)
             compare (immediateModel.status, GeocodeModel.Error)
             immediateModel.reset()
-            compare (immediateModel.error, "")
+            compare (immediateModel.errorString, "")
+            compare (immediateModel.error, GeocodeModel.NoError)
             compare (immediateModel.status, GeocodeModel.Null)
             // Check that ongoing req is aborted
             clear_slack_model()
@@ -343,8 +350,9 @@ Item {
             clear_immediate_model()
             immediateModel.query = errorAddress1
             immediateModel.update()
-            compare (errorImmediateSpy.count, 1)
-            compare (immediateModel.error, errorAddress1.street)
+            compare (errorStringImmediateSpy.count, 1)
+            compare (immediateModel.errorString, errorAddress1.street)
+            compare (immediateModel.error, GeocodeModel.CommunicationError) // county of the address (2)
             compare (immediateModel.count, 0)
             compare (statusImmediateSpy.count, 2)
             compare (immediateModel.status, GeocodeModel.Error)
@@ -353,17 +361,22 @@ Item {
             slackModel.query = errorAddress1
             errorAddress1.street = "error code 2"
             slackModel.update()
+            compare (errorStringSlackSpy.count, 0)
             compare (errorSlackSpy.count, 0)
+            tryCompare (errorStringSlackSpy, "count", 1)
             tryCompare (errorSlackSpy, "count", 1)
-            compare (slackModel.error, errorAddress1.street)
+            compare (slackModel.errorString, errorAddress1.street)
+            compare (slackModel.error, GeocodeModel.CommunicationError)
             compare (slackModel.count, 0)
             // Check that we recover
             slackModel.query = address1
             slackModel.update()
             tryCompare(countSlackSpy, "count", 1)
             compare (slackModel.count, 2)
+            compare (errorStringSlackSpy.count, 2)
             compare (errorSlackSpy.count, 2)
-            compare (slackModel.error, "")
+            compare (slackModel.errorString, "")
+            compare (slackModel.error, GeocodeModel.NoError)
         }
 
         function test_error_reverse_geocode() {
@@ -371,11 +384,12 @@ Item {
             clear_immediate_model()
             immediateModel.query = errorCoordinate1
             immediateModel.update()
-            if (immediateModel.error != "")
-                compare (errorImmediateSpy.count, 2) // the previous error is cleared upon update()
+            if (immediateModel.errorString != "")
+                compare (errorStringImmediateSpy.count, 2) // the previous error is cleared upon update()
             else
                 compare (errorImmediateSpy.count, 1)
-            compare (immediateModel.error, "error")
+            compare (immediateModel.errorString, "error")
+            compare (immediateModel.error, GeocodeModel.ParseError)
             compare (immediateModel.count, 0)
             compare (statusImmediateSpy.count, 2)
             compare (immediateModel.status, GeocodeModel.Error)
@@ -383,20 +397,24 @@ Item {
             clear_slack_model()
             slackModel.query = errorCoordinate1
             slackModel.update()
+            compare (errorStringSlackSpy.count, 0)
             compare (errorSlackSpy.count, 0)
-            if (slackModel.error != "")
-                tryCompare (errorSlackSpy, "count", 2)
+            if (slackModel.errorString != "")
+                tryCompare (errorStringSlackSpy, "count", 2)
             else
-                tryCompare (errorSlackSpy, "count", 1)
-            compare (slackModel.error, "error")
+                tryCompare (errorStringSlackSpy, "count", 1)
+            compare (slackModel.errorString, "error")
+            compare (slackModel.error, GeocodeModel.ParseError)
             compare (slackModel.count, 0)
             // Check that we recover
             slackModel.query = rcoordinate1
             slackModel.update()
             tryCompare(countSlackSpy, "count", 1)
             compare (slackModel.count, 2)
+            compare (errorStringSlackSpy.count, 2)
             compare (errorSlackSpy.count, 2)
-            compare (slackModel.error, "")
+            compare (slackModel.errorString, "")
+            compare (slackModel.error, GeocodeModel.NoError)
         }
         function test_basic_address_geocode() {
             testQuerySpy.clear()
@@ -405,13 +423,15 @@ Item {
             testModel.clear()
             countSpy.clear()
             compare (locationsSpy.count, 0)
-            compare (testModel.error, "")
+            compare (testModel.errorString, "")
+            compare (testModel.error, GeocodeModel.NoError)
             compare (testModel.count, 0)
             testModel.query = address1
             compare (testQuerySpy.count, 1)
             testModel.update()
             tryCompare (locationsSpy, "count", 1) // 5 sec
-            compare (testModel.error, "")
+            compare (testModel.errorString, "")
+            compare (testModel.error, GeocodeModel.NoError)
             compare (testModel.count, 2)
             compare (testQuerySpy.count, 1)
             compare (testStatusSpy.count, 2)
@@ -427,7 +447,8 @@ Item {
             testModel.clear()
             countSpy.clear()
             compare (locationsSpy.count, 0)
-            compare (testModel.error, "")
+            compare (testModel.errorString, "")
+            compare (testModel.error, GeocodeModel.NoError)
             compare (testModel.count, 0)
             testModel.limit = 5  // number of places echoed back
             testModel.offset = 10 // 'county' set in the places
@@ -446,7 +467,8 @@ Item {
             tryCompare (locationsSpy, "count", 2) // 5 sec
             tryCompare(countSpy, "count", 2)
             tryCompare(testModel, "count", 0)
-            compare(testModel.error, "2")
+            compare(testModel.errorString, "2")
+            compare (testModel.error, GeocodeModel.CommunicationError)
             testModel.clear()
             tryCompare(countSpy, "count", 2)
             compare (testModel.count, 0)
@@ -565,7 +587,8 @@ Item {
             locationsSpy.clear()
             testStatusSpy.clear()
             countSpy.clear()
-            compare (testModel.error, "")
+            compare (testModel.errorString, "")
+            compare (testModel.error, GeocodeModel.NoError)
             compare (testModel.count, 0)
             compare (testQuerySpy.count, 0)
             testModel.query = rcoordinate1
@@ -573,7 +596,8 @@ Item {
             testModel.update()
             tryCompare (locationsSpy, "count", 1) // 5 sec
             tryCompare(countSpy, "count", 1)
-            compare (testModel.error, "")
+            compare (testModel.errorString, "")
+            compare (testModel.error, GeocodeModel.NoError)
             compare (testModel.count, 2)
             testModel.clear()
             tryCompare(countSpy, "count", 2)

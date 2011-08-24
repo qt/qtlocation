@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -63,16 +63,18 @@ class QDeclarativeGeocodeModel : public QAbstractListModel, public QDeclarativeP
 {
     Q_OBJECT
     Q_ENUMS(Status)
+    Q_ENUMS(GeocodeError)
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-    Q_PROPERTY(QString error READ error NOTIFY errorChanged)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(QVariant query READ query WRITE setQuery NOTIFY queryChanged)
     Q_PROPERTY(QObject* bounds READ bounds WRITE setBounds NOTIFY boundsChanged)
+    Q_PROPERTY(GeocodeError error READ error NOTIFY errorChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
@@ -81,6 +83,16 @@ public:
         Ready,
         Loading,
         Error
+    };
+
+    enum GeocodeError {
+        NoError = QGeocodeReply::NoError,
+        EngineNotSetError = QGeocodeReply::EngineNotSetError,
+        CommunicationError = QGeocodeReply::CommunicationError,
+        ParseError = QGeocodeReply::ParseError,
+        UnsupportedOptionError = QGeocodeReply::UnsupportedOptionError,
+        CombinationError = QGeocodeReply::CombinationError,
+        UnknownError = QGeocodeReply::UnknownError
     };
 
     enum Roles {
@@ -105,7 +117,8 @@ public:
     QObject* bounds() const;
 
     Status status() const;
-    QString error() const;
+    QString errorString() const;
+    GeocodeError error() const;
 
     bool autoUpdate() const;
     void setAutoUpdate(bool update);
@@ -127,6 +140,7 @@ Q_SIGNALS:
     void countChanged();
     void pluginChanged();
     void statusChanged();
+    void errorStringChanged();
     void errorChanged();
     void locationsChanged();
     void autoUpdateChanged();
@@ -148,7 +162,8 @@ protected Q_SLOTS:
 protected:
     QGeocodingManager* searchManager();
     void setStatus(Status status);
-    void setError(const QString &error);
+    void setErrorString(const QString &error);
+    void setError(GeocodeError error);
     bool autoUpdate_;
     bool complete_;
 
@@ -166,7 +181,8 @@ private:
     QList<QDeclarativeGeoLocation*> declarativeLocations_;
 
     Status status_;
-    QString error_;
+    QString errorString_;
+    GeocodeError error_;
     QVariant queryVariant_;
     QDeclarativeCoordinate* coordinate_;
     QDeclarativeGeoAddress* address_;

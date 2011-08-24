@@ -43,6 +43,23 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass Route
+
+    \brief The Route element represents one geographical route.
+    \ingroup qml-routing
+    \since 5.0
+
+    A Route element contains high level information about a route, such
+    as the length the route, the estimated travel time for the route,
+    and enough information to render a basic image of the route on a map.
+
+    The QGeoRoute object also contains a list of \l RouteSegment elements which
+    describe subsections of the route in greater detail.
+
+    The primary means of acquiring Route elements is \l RouteModel.
+*/
+
 QDeclarativeGeoRoute::QDeclarativeGeoRoute(QObject *parent)
     : QObject(parent)
 {
@@ -73,20 +90,55 @@ void QDeclarativeGeoRoute::init()
     }
 }
 
+/*!
+    \qmlproperty BoundingBox Route::bounds
+
+    Read-only property which holds a bounding box which encompasses the entire route.
+
+*/
+
 QDeclarativeGeoBoundingBox* QDeclarativeGeoRoute::bounds() const
 {
     return bounds_;
 }
+
+/*!
+    \qmlproperty int Route::travelTime
+
+    Read-only property which holds the estimated amount of time it will take to
+    traverse this route, in seconds.
+
+*/
 
 int QDeclarativeGeoRoute::travelTime() const
 {
     return route_.travelTime();
 }
 
+/*!
+    \qmlproperty int Route::distance
+
+    Read-only property which holds distance covered by this route, in metres.
+*/
+
 qreal QDeclarativeGeoRoute::distance() const
 {
     return route_.distance();
 }
+
+/*
+    \qmlproperty QDeclarativeListProperty<Coordinate> Route::path
+
+    Read-only property which holds the geographical coordinates of this route.
+    Coordinates are listed in the order in which they would be traversed by someone
+    traveling along this segment of the route.
+
+    To access individual segments you can use standard list accessors: 'path.length'
+    indicates the number of elements and 'path[index starting from zero]' gives
+    the actual element.
+
+    \sa Coordinate
+*/
 
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoRoute::path()
 {
@@ -117,6 +169,18 @@ void QDeclarativeGeoRoute::path_clear(QDeclarativeListProperty<QDeclarativeCoord
 {
     static_cast<QDeclarativeGeoRoute*>(prop->object)->path_.clear();
 }
+
+/*
+    \qmlproperty QDeclarativeListProperty<RouteSegment> Route::segments
+
+    Read-only property which holds the list of \l RouteSegment elements of this route.
+
+    To access individual segments you can use standard list accessors: 'segments.length'
+    indicates the number of elements and 'segments[index starting from zero]' gives
+    the actual element.
+
+    \sa RouteSegment
+*/
 
 QDeclarativeListProperty<QDeclarativeGeoRouteSegment> QDeclarativeGeoRoute::segments()
 {

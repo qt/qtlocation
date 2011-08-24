@@ -43,6 +43,25 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass RouteSegment
+
+    \brief The RouteSegment element represents a segment of a Route.
+    \ingroup qml-routing
+    \since 5.0
+
+    A RouteSegment instance has information about the physcial layout
+    of the route segment, the length of the route and estimated time required
+    to traverse the route segment and optional RouteManeuvers associated with
+    the end of the route segment.
+
+    RouteSegment instances can be thought of as edges on a routing
+    graph, with RouteManeuver instances as optional labels attached to the
+    vertices of the graph.
+
+    The primary means of acquiring Route elements is via Routes via \l RouteModel.
+*/
+
 QDeclarativeGeoRouteSegment::QDeclarativeGeoRouteSegment(QObject *parent)
     : QObject(parent)
 {
@@ -62,20 +81,58 @@ QDeclarativeGeoRouteSegment::QDeclarativeGeoRouteSegment(const QGeoRouteSegment 
 
 QDeclarativeGeoRouteSegment::~QDeclarativeGeoRouteSegment() {}
 
+/*!
+    \qmlproperty int RouteSegment::travelTime
+
+    Read-only property which holds the estimated amount of time it will take to
+    traverse this segment, in seconds.
+
+*/
+
 int QDeclarativeGeoRouteSegment::travelTime() const
 {
     return segment_.travelTime();
 }
+
+/*!
+    \qmlproperty int RouteSegment::distance
+
+    Read-only property which holds the distance covered by this segment of the route, in metres.
+
+*/
 
 qreal QDeclarativeGeoRouteSegment::distance() const
 {
     return segment_.distance();
 }
 
+/*!
+    \qmlproperty int RouteSegment::maneuver
+
+    Read-only property which holds the manevuer for this route segment.
+
+    Will return invalid maneuver if no information has been attached to the endpoint
+    of this route segment.
+*/
+
 QDeclarativeGeoManeuver* QDeclarativeGeoRouteSegment::maneuver() const
 {
     return maneuver_;
 }
+
+/*
+    \qmlproperty QDeclarativeListProperty<Coordinate> RouteSegment::path
+
+    Read-only property which holds the geographical coordinates of this segment.
+    Coordinates are listed in the order in which they would be traversed by someone
+    traveling along this segment of the route.
+
+    To access individual segments you can use standard list accessors: 'path.length'
+    indicates the number of elements and 'path[index starting from zero]' gives
+    the actual element.
+
+    \sa Coordinate
+*/
 
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoRouteSegment::path()
 {
@@ -89,7 +146,6 @@ QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoRouteSegment::pa
 
 void QDeclarativeGeoRouteSegment::path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate)
 {
-    //static_cast<QDeclarativeGeoRouteSegment*>(prop->object)->segment_.path().append(coordinate->coordinate());
     static_cast<QDeclarativeGeoRouteSegment*>(prop->object)->path_.append(coordinate);
 }
 
@@ -105,7 +161,6 @@ QDeclarativeCoordinate* QDeclarativeGeoRouteSegment::path_at(QDeclarativeListPro
 
 void QDeclarativeGeoRouteSegment::path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
 {
-    //static_cast<QDeclarativeGeoRouteSegment*>(prop->object)->segment_.path().clear();
     static_cast<QDeclarativeGeoRouteSegment*>(prop->object)->path_.clear();
 }
 

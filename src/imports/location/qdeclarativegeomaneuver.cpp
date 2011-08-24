@@ -43,6 +43,23 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass RouteManeuver
+
+    \brief The RouteManeuver element represents the information relevant to the
+    point at which two RouteSegments meet.
+    \ingroup qml-routing
+    \since 5.0
+
+    RouteSegment instances can be thought of as edges on a routing
+    graph, with RouteManeuver instances as optional labels attached to the
+    vertices of the graph.
+
+    The most interesting information held in a RouteManeuver instance is
+    normally the textual navigation to provide and the position at which to
+    provide it, accessible by \l instructionText and \l position respectively.
+*/
+
 QDeclarativeGeoManeuver::QDeclarativeGeoManeuver(QObject *parent)
     : QObject(parent)
 {
@@ -60,39 +77,120 @@ QDeclarativeGeoManeuver::QDeclarativeGeoManeuver(const QGeoManeuver &maneuver, Q
 
 QDeclarativeGeoManeuver::~QDeclarativeGeoManeuver() {}
 
+/*!
+    \qmlproperty bool RouteManeuver::valid
+
+    This read-only property holds whether this maneuver is valid or not.
+
+    Invalid maneuvers are used when there is no information
+    that needs to be attached to the endpoint of a QGeoRouteSegment instance.
+*/
+
 bool QDeclarativeGeoManeuver::valid() const
 {
     return maneuver_.isValid();
 }
+
+/*!
+    \qmlproperty Coordinate RouteManeuver::position
+
+    This read-only property holds where the \l instructionText should be displayed.
+
+*/
 
 QDeclarativeCoordinate* QDeclarativeGeoManeuver::position() const
 {
     return position_;
 }
 
+/*!
+    \qmlproperty string RouteManeuver::instructionText
+
+    This read-only property holds textual navigation instruction.
+*/
+
 QString QDeclarativeGeoManeuver::instructionText() const
 {
     return maneuver_.instructionText();
 }
+
+/*!
+    \qmlproperty enumeration RouteManeuver::direction
+
+    Describes the change in direction associated with the instruction text
+    that is associated with a RouteManeuver.
+
+    \list
+    \o RouteModel.NoDirection - There is no direction associated with the instruction text
+    \o RouteModel.DirectionForward - The instruction indicates that the direction of travel does not need to change
+    \o RouteModel.DirectionBearRight - The instruction indicates that the direction of travel should bear to the right
+    \o RouteModel.DirectionLightRight - The instruction indicates that a light turn to the right is required
+    \o RouteModel.DirectionRight - The instruction indicates that a turn to the right is required
+    \o RouteModel.DirectionHardRight - The instruction indicates that a hard turn to the right is required
+    \o RouteModel.DirectionUTurnRight - The instruction indicates that a u-turn to the right is required
+    \o RouteModel.DirectionUTurnLeft - The instruction indicates that a u-turn to the left is required
+    \o RouteModel.DirectionHardLeft - The instruction indicates that a hard turn to the left is required
+    \o RouteModel.DirectionLeft - The instruction indicates that a turn to the left is required
+    \o RouteModel.DirectionLightLeft - The instruction indicates that a light turn to the left is required
+    \o RouteModel.DirectionBearLeft - The instruction indicates that the direction of travel should bear to the left
+    \endlist
+*/
 
 QDeclarativeGeoManeuver::Direction QDeclarativeGeoManeuver::direction() const
 {
     return QDeclarativeGeoManeuver::Direction(maneuver_.direction());
 }
 
+/*!
+    \qmlproperty int RouteManeuver::timeToNextInstruction
+
+    This read-only property holds the estimated time it will take to travel
+    from the point at which the associated instruction was issued and the
+    point that the next instruction should be issued, in seconds.
+*/
+
 int QDeclarativeGeoManeuver::timeToNextInstruction() const
 {
     return maneuver_.timeToNextInstruction();
 }
+
+/*!
+    \qmlproperty qreal RouteManeuver::distanceToNextInstruction
+
+    This read-only property holds the distance, in metres, between the point at which
+    the associated instruction was issued and the point that the next instruction should
+    be issued.
+*/
 
 qreal QDeclarativeGeoManeuver::distanceToNextInstruction() const
 {
     return maneuver_.distanceToNextInstruction();
 }
 
+/*!
+    \qmlproperty Coordinate RouteManeuver::waypoint
+
+    This property holds the waypoint associated with this maneuver.
+    All maneuvers do not have a waypoint associated with them, this
+    can be checked with \l waypointValid.
+
+*/
+
 QDeclarativeCoordinate* QDeclarativeGeoManeuver::waypoint() const
 {
     return waypoint_;
+}
+
+/*!
+    \qmlproperty bool RouteManeuver::waypointValid
+
+    This read-only property holds whether this the \l waypoint associated with this
+    maneuver is valid.
+*/
+
+bool QDeclarativeGeoManeuver::waypointValid() const
+{
+    return waypoint_->coordinate().isValid();
 }
 
 #include "moc_qdeclarativegeomaneuver_p.cpp"

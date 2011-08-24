@@ -124,6 +124,7 @@ Item {
             compare(emptySegment.path.length, 0)
             compare(emptySegment.maneuver.valid, emptyManeuver.valid)
             compare(emptySegment.maneuver.instructionText, emptyManeuver.instructionText)
+            compare(emptySegment.maneuver.waypointValid, emptyManeuver.waypointValid)
         }
         function test_maneuver_defaults() {
             compare(emptyManeuver.valid, false)

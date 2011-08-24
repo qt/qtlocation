@@ -48,7 +48,6 @@
 
 QT_BEGIN_NAMESPACE
 
-
 /*!
     \qmlclass RouteModel
 
@@ -62,7 +61,6 @@ QT_BEGIN_NAMESPACE
     The model provides a single data role, the "routeData" role which
     returns a Route object.
 */
-
 
 QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
     : QAbstractListModel(parent),
@@ -129,7 +127,7 @@ void QDeclarativeGeoRouteModel::clear()
 
     Resets the model. All route data is cleared, any outstanding requests
     are aborted and possible errors are cleared. Model status will be set
-    to RouteModel.Null.
+    to RouteModel.Null
 */
 
 void QDeclarativeGeoRouteModel::reset()
@@ -343,8 +341,8 @@ void QDeclarativeGeoRouteModel::setErrorString(const QString &error)
     This read-only property holds the textual presentation of latest routing error.
     If no error has occured or the model has been reset, an empty string is returned.
 
-    It is possible that an error occurred which has no associated textual representation,
-    in which case this will also return an empty string.
+    An empty string may also be returned if an error occurred which has no associated
+    textual representation.
 */
 
 QString QDeclarativeGeoRouteModel::errorString() const
