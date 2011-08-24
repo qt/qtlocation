@@ -10,7 +10,6 @@ SOURCES += \
 #data
     declarativeplaces/qdeclarativecategory.cpp \
     declarativeplaces/qdeclarativedescription.cpp \
-    declarativeplaces/qdeclarativeplaceimage.cpp \
     declarativeplaces/qdeclarativeplace.cpp \
     declarativeplaces/qdeclarativeplaceattribute.cpp \
     declarativeplaces/qdeclarativerating.cpp \
@@ -27,11 +26,12 @@ HEADERS += \
 #data
     declarativeplaces/qdeclarativecategory_p.h \
     declarativeplaces/qdeclarativedescription_p.h \
-    declarativeplaces/qdeclarativeplaceimage_p.h \
     declarativeplaces/qdeclarativeplace_p.h \
     declarativeplaces/qdeclarativeplaceattribute_p.h \
     declarativeplaces/qdeclarativerating_p.h \
     declarativeplaces/qdeclarativesupplier_p.h
+
+
 
 
 

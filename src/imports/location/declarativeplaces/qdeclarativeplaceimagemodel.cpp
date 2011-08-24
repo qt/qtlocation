@@ -1,6 +1,7 @@
 #include "qdeclarativeplaceimagemodel_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativeplace_p.h"
+#include "qdeclarativesupplier_p.h"
 
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
@@ -20,7 +21,38 @@ QT_USE_NAMESPACE
     accessed via the totalCount property and the number of fetched images via the count
     property.
 
-    The model provides a single data role, the "image" role, which returns a \l PlaceImage object.
+    The model returns data for the following roles:
+
+    \table
+        \header
+            \o Role
+            \o Type
+            \o Description
+        \row
+            \o url
+            \o url
+            \o The URL of the image.
+        \row
+            \o thumbnailUrl
+            \o url
+            \o The URL of the image thumbnail.
+        \row
+            \o imageId
+            \o string
+            \o The id of the image.
+        \row
+            \o metaInfo
+            \o string
+            \o Meta information about the image.
+        \row
+            \o mimeType
+            \o string
+            \o The MIME type of the image.
+        \row
+            \o supplier
+            \o Supplier
+            \o The source of the image.
+    \endtable
 */
 
 QDeclarativePlaceImageModel::QDeclarativePlaceImageModel(QObject* parent)
@@ -28,13 +60,18 @@ QDeclarativePlaceImageModel::QDeclarativePlaceImageModel(QObject* parent)
     m_complete(false)
 {
     QHash<int, QByteArray> roleNames;
-    roleNames.insert(ImageRole, "image");
+    roleNames.insert(UrlRole, "url");
+    roleNames.insert(ThumbnailUrlRole, "thumbnailUrl");
+    roleNames.insert(ImageIdRole, "imageId");
+    roleNames.insert(MetaInfoRole, "metaInfo");
+    roleNames.insert(MimeTypeRole, "mimeType");
+    roleNames.insert(SupplierRole, "supplier");
     setRoleNames(roleNames);
 }
 
 QDeclarativePlaceImageModel::~QDeclarativePlaceImageModel()
 {
-    qDeleteAll(m_images);
+    qDeleteAll(m_suppliers);
 }
 
 /*!
@@ -56,8 +93,10 @@ void QDeclarativePlaceImageModel::setPlace(QDeclarativePlace *place)
             m_reply->deleteLater();
             m_reply = 0;
         }
-        qDeleteAll(m_images);
+
         m_images.clear();
+        qDeleteAll(m_suppliers);
+        m_suppliers.clear();
         endResetModel();
 
         if (m_imageCount != -1) {
@@ -102,18 +141,18 @@ int QDeclarativePlaceImageModel::totalCount() const
     return m_imageCount;
 }
 
-static QPair<int, int> findMissingKey(const QMap<int, QDeclarativePlaceImage *> &map)
+static QPair<int, int> findMissingKey(const QMap<int, QPlaceImage> &map)
 {
     int start = 0;
-    while (map.value(start, 0) != 0)
+    while (map.contains(start))
         ++start;
 
-    QMap<int, QDeclarativePlaceImage *>::const_iterator it = map.lowerBound(start);
+    QMap<int, QPlaceImage>::const_iterator it = map.lowerBound(start);
     if (it == map.end())
         return qMakePair(start, -1);
 
     int end = start;
-    while (map.value(end, 0) == 0)
+    while (!map.contains(end))
         ++end;
 
     return qMakePair(start, end - 1);
@@ -179,8 +218,9 @@ void QDeclarativePlaceImageModel::clear()
 {
     beginResetModel();
     m_imageCount = -1;
-    qDeleteAll(m_images);
     m_images.clear();
+    qDeleteAll(m_suppliers);
+    m_suppliers.clear();
     delete m_reply;
     m_reply = 0;
     endResetModel();
@@ -217,7 +257,7 @@ void QDeclarativePlaceImageModel::fetchFinished()
             imagesIter.next();
             if (!m_images.contains(imagesIter.key())) {
                 newIndexes.append(imagesIter.key());
-            } else if (imagesIter.value() != m_images.value(imagesIter.key())->image()) {
+            } else if (imagesIter.value() != m_images.value(imagesIter.key())) {
                 changedIndexes.append(imagesIter.key());
             } else {
                 //image item at given index has not changed, do nothing
@@ -235,8 +275,15 @@ void QDeclarativePlaceImageModel::fetchFinished()
 
             if (!newIndexesIter.hasNext() || (newIndexesIter.hasNext() && (newIndexesIter.peekNext() > (currentIndex + 1)))) {
                 beginInsertRows(QModelIndex(),startIndex,currentIndex);
-                for (int i = startIndex; i <= currentIndex; ++i)
-                    m_images.insert(i, new QDeclarativePlaceImage(images.value(i), this));
+                for (int i = startIndex; i <= currentIndex; ++i) {
+                    const QPlaceImage &image = images.value(i);
+
+                    m_images.insert(i, image);
+                    if (!m_suppliers.contains(image.supplier().supplierId())) {
+                        m_suppliers.insert(image.supplier().supplierId(),
+                                           new QDeclarativeSupplier(image.supplier(), this));
+                    }
+                }
                 endInsertRows();
                 startIndex = -1;
             }
@@ -253,8 +300,12 @@ void QDeclarativePlaceImageModel::fetchFinished()
 
             if (!changedIndexesIter.hasNext() || (changedIndexesIter.hasNext() && changedIndexesIter.peekNext() > (currentIndex +1))) {
                 for (int i = startIndex; i <= currentIndex; ++i) {
-                    m_images.remove(i);
-                    m_images.insert(i, new QDeclarativePlaceImage(images.value(i), this));
+                    const QPlaceImage &image = images.value(i);
+                    m_images.insert(i, image);
+                    if (!m_suppliers.contains(image.supplier().supplierId())) {
+                        m_suppliers.insert(image.supplier().supplierId(),
+                                           new QDeclarativeSupplier(image.supplier(), this));
+                    }
                 }
                 emit dataChanged(index(startIndex),index(currentIndex));
                 startIndex = -1;
@@ -281,8 +332,22 @@ QVariant QDeclarativePlaceImageModel::data(const QModelIndex &index, int role) c
     if (index.row() >= rowCount(index.parent()) || index.row() < 0)
         return QVariant();
 
-    if (role == ImageRole)
-        return QVariant::fromValue(static_cast<QObject *>(m_images.value(index.row())));
+    const QPlaceImage &image = m_images.value(index.row());
 
-    return QVariant();
+    switch (role) {
+    case UrlRole:
+        return image.url();
+    case ThumbnailUrlRole:
+        return image.thumbnailUrl();
+    case ImageIdRole:
+        return image.id();
+    case MetaInfoRole:
+        return image.metaInfo();
+    case MimeTypeRole:
+        return image.mimeType();
+    case SupplierRole:
+        return QVariant::fromValue(static_cast<QObject *>(m_suppliers.value(image.supplier().supplierId())));
+    default:
+        return QVariant();
+    }
 }

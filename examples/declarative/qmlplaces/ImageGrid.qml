@@ -21,7 +21,7 @@ Rectangle {
             Image {
                 anchors.fill: parent
                 anchors.margins: 5
-                source: image.url
+                source: url
                 fillMode: Image.PreserveAspectFit
             }
         }

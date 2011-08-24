@@ -3,14 +3,16 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QAbstractListModel>
-#include "qdeclarativeplaceimage_p.h"
-#include <qplacemanager.h>
+#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceImage>
 
 QT_BEGIN_NAMESPACE
 
 class QDeclarativePlace;
 class QDeclarativeGeoServiceProvider;
 class QGeoServiceProvider;
+class QDeclarativeSupplier;
 
 class QDeclarativePlaceImageModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
@@ -37,7 +39,12 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
-        ImageRole = Qt::UserRole
+        UrlRole = Qt::UserRole,
+        ThumbnailUrlRole,
+        ImageIdRole,
+        MetaInfoRole,
+        MimeTypeRole,
+        SupplierRole
     };
 
     bool canFetchMore(const QModelIndex &parent) const;
@@ -60,14 +67,14 @@ private:
     QDeclarativePlace *m_place;
     int m_batchSize;
     int m_imageCount;
-    QMap<int, QDeclarativePlaceImage *> m_images;
+    QMap<int, QPlaceImage> m_images;
+    QMap<QString, QDeclarativeSupplier *> m_suppliers;
+
     QPlaceContentReply *m_reply;
 
     bool m_complete;
 };
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePlaceImageModel));
 
 #endif
