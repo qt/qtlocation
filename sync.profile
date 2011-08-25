@@ -27,3 +27,8 @@
     "qtxmlpatterns" => "refs/heads/master",
     "qtdeclarative" => "refs/heads/master",
 );
+
+# compile tests
+%configtests = (
+    "jsondb" => {}
+);

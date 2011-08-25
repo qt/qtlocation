@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,70 +39,23 @@
 **
 ****************************************************************************/
 
-#include "qplacedetailsreply.h"
-#include "qplacereply_p.h"
+#include "searchreply.h"
 
-QT_BEGIN_NAMESPACE
-class QPlaceDetailsReplyPrivate : public QPlaceReplyPrivate
-{
-public:
-    QPlaceDetailsReplyPrivate() {}
-    ~QPlaceDetailsReplyPrivate() {}
-    QGeoPlace result;
-};
-
-QT_END_NAMESPACE
-
-QT_USE_NAMESPACE
-
-/*!
-    \class QPlaceDetailsReply
-
-    \brief The QPlaceDetailsReply class manages a place datails operation started by an
-    instance of QPlaceManager.
-
-    \inmodule QtPlaces
-
-    \ingroup places-main
-*/
-
-/*!
-    Constructs a search reply with a given \a parent.
-*/
-QPlaceDetailsReply::QPlaceDetailsReply(QObject *parent)
-    : QPlaceReply(new QPlaceDetailsReplyPrivate, parent)
+SearchReply::SearchReply(QPlaceManagerEngineJsonDb *engine)
+    : QPlaceSearchReply(engine), m_engine(engine)
 {
 }
 
-/*!
-    Destroys the search reply.
-*/
-QPlaceDetailsReply::~QPlaceDetailsReply()
+SearchReply::~SearchReply()
 {
 }
 
-/*!
-    Returns the type of reply.
-*/
-QPlaceReply::Type QPlaceDetailsReply::type() const
+void SearchReply::setResults(const QList<QPlaceSearchResult> &results)
 {
-    return QPlaceReply::PlaceDetailsReply;
+    QPlaceSearchReply::setResults(results);
 }
 
- /*!
-    Returns a place result
-*/
-QGeoPlace QPlaceDetailsReply::result() const
+void SearchReply::setRequest(const QPlaceSearchRequest &request)
 {
-    Q_D(const QPlaceDetailsReply);
-    return d->result;
-}
-
-/*!
-    Sets the \a place
-*/
-void QPlaceDetailsReply::setResult(const QGeoPlace &place)
-{
-    Q_D(QPlaceDetailsReply);
-    d->result = place;
+    QPlaceSearchReply::setRequest(request);
 }

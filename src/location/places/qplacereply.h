@@ -61,6 +61,7 @@ public:
         ParseError,
         PermissionsError,
         UnsupportedError,
+        BadArgumentError,
         CancelError,
         UnknownError
     };

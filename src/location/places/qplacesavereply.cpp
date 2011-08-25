@@ -48,7 +48,7 @@ class QPlaceSaveReplyPrivate : public QPlaceReplyPrivate
 public:
     QPlaceSaveReplyPrivate() {}
     ~QPlaceSaveReplyPrivate() {}
-    QGeoPlace place;
+    QString placeId;
 };
 
 QT_END_NAMESPACE
@@ -90,21 +90,21 @@ QPlaceReply::Type QPlaceSaveReply::type() const
 }
 
  /*!
-    Returns the saved place.  One should ensure that the reply
-    is finished before calling this function, otherwise
-    a default place is returned.
+    Returns the id of the saved place.  One should ensure that the reply
+    is finished before calling this function, otherwise an
+    empty string is returned.
 */
-QGeoPlace QPlaceSaveReply::place() const
+QString QPlaceSaveReply::placeId() const
 {
     Q_D(const QPlaceSaveReply);
-    return d->place;
+    return d->placeId;
 }
 
 /*!
-    Sets the saved \a place.
+    Sets the saved \a placeId
 */
-void QPlaceSaveReply::setPlace(const QGeoPlace &place)
+void QPlaceSaveReply::setPlaceId(const QString &placeId)
 {
     Q_D(QPlaceSaveReply);
-    d->place = place;
+    d->placeId = placeId;
 }

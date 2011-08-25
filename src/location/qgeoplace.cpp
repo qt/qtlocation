@@ -548,7 +548,6 @@ QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
 
 bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
 {
-
 #ifdef QGEOPLACE_DEBUG
     qDebug() << "additionalData: " << (additionalData == other.additionalData);
     qDebug() << "categories: " << (categories == other.categories);

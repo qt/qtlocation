@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -38,71 +38,30 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef SEARCHREPLY_H
+#define SEARCHREPLY_H
 
-#include "qplacedetailsreply.h"
-#include "qplacereply_p.h"
+#include <qplacesearchreply.h>
 
-QT_BEGIN_NAMESPACE
-class QPlaceDetailsReplyPrivate : public QPlaceReplyPrivate
-{
-public:
-    QPlaceDetailsReplyPrivate() {}
-    ~QPlaceDetailsReplyPrivate() {}
-    QGeoPlace result;
-};
-
-QT_END_NAMESPACE
+#include "macro.h"
+#include "qplacemanagerengine_jsondb.h"
 
 QT_USE_NAMESPACE
 
-/*!
-    \class QPlaceDetailsReply
-
-    \brief The QPlaceDetailsReply class manages a place datails operation started by an
-    instance of QPlaceManager.
-
-    \inmodule QtPlaces
-
-    \ingroup places-main
-*/
-
-/*!
-    Constructs a search reply with a given \a parent.
-*/
-QPlaceDetailsReply::QPlaceDetailsReply(QObject *parent)
-    : QPlaceReply(new QPlaceDetailsReplyPrivate, parent)
+class SearchReply : public QPlaceSearchReply
 {
-}
+    Q_OBJECT
+public:
+    SearchReply(QPlaceManagerEngineJsonDb *engine);
+    virtual ~SearchReply();
+    void setResults(const QList<QPlaceSearchResult> &results);
+    void setRequest(const QPlaceSearchRequest &request);
 
-/*!
-    Destroys the search reply.
-*/
-QPlaceDetailsReply::~QPlaceDetailsReply()
-{
-}
+    DECLARE_TRIGGER_DONE_FN
 
-/*!
-    Returns the type of reply.
-*/
-QPlaceReply::Type QPlaceDetailsReply::type() const
-{
-    return QPlaceReply::PlaceDetailsReply;
-}
+private:
+    QPlaceManagerEngineJsonDb *m_engine;
 
- /*!
-    Returns a place result
-*/
-QGeoPlace QPlaceDetailsReply::result() const
-{
-    Q_D(const QPlaceDetailsReply);
-    return d->result;
-}
+};
 
-/*!
-    Sets the \a place
-*/
-void QPlaceDetailsReply::setResult(const QGeoPlace &place)
-{
-    Q_D(QPlaceDetailsReply);
-    d->result = place;
-}
+#endif

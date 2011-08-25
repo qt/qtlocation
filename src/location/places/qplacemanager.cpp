@@ -208,6 +208,14 @@ QPlaceSaveReply *QPlaceManager::savePlace(const QGeoPlace &place, VisibilityScop
     return d->engine->savePlace(place, scope);
 }
 
+/*!
+    Removes a \a place from the manager
+*/
+QPlaceReply *QPlaceManager::removePlace(const QGeoPlace &place)
+{
+    return d->engine->removePlace(place);
+}
+
 /*
     Returns the available scopes in which places can be saved.
 */

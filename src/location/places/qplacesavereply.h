@@ -57,10 +57,10 @@ public:
 
     QPlaceReply::Type type() const;
 
-    QGeoPlace place() const;
+    QString placeId() const;
 
 protected:
-    void setPlace(const QGeoPlace &place);
+    void setPlaceId(const QString &placeId);
 private:
     Q_DISABLE_COPY(QPlaceSaveReply)
     Q_DECLARE_PRIVATE(QPlaceSaveReply)

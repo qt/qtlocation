@@ -79,6 +79,8 @@ QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequest
     this->categories = other.categories;
     if (other.searchArea)
         this->searchArea = other.searchArea->clone();
+    else
+        this->searchArea = 0;
     this->dymNumber = other.dymNumber;
     this->scope = other.scope;
 }

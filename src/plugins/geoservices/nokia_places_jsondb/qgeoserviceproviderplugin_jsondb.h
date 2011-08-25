@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -21,7 +21,7 @@
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU General
-** Public License version 3.0 as published by the Free Software Foundation
+** Public License version 3.0 as published by tOhe Free Software Foundation
 ** and appearing in the file LICENSE.GPL included in the packaging of this
 ** file. Please review the following information to ensure the GNU General
 ** Public License version 3.0 requirements will be met:
@@ -39,70 +39,38 @@
 **
 ****************************************************************************/
 
-#include "qplacedetailsreply.h"
-#include "qplacereply_p.h"
+#ifndef QGEOSERVICEPROVIDER_JSON_H
+#define QGEOSERVICEPROVIDER_JSON_H
 
-QT_BEGIN_NAMESPACE
-class QPlaceDetailsReplyPrivate : public QPlaceReplyPrivate
-{
-public:
-    QPlaceDetailsReplyPrivate() {}
-    ~QPlaceDetailsReplyPrivate() {}
-    QGeoPlace result;
-};
-
-QT_END_NAMESPACE
+#include <qgeoserviceproviderfactory.h>
+#include <QObject>
 
 QT_USE_NAMESPACE
 
-/*!
-    \class QPlaceDetailsReply
-
-    \brief The QPlaceDetailsReply class manages a place datails operation started by an
-    instance of QPlaceManager.
-
-    \inmodule QtPlaces
-
-    \ingroup places-main
-*/
-
-/*!
-    Constructs a search reply with a given \a parent.
-*/
-QPlaceDetailsReply::QPlaceDetailsReply(QObject *parent)
-    : QPlaceReply(new QPlaceDetailsReplyPrivate, parent)
+class QGeoServiceProviderFactoryJsonDb : public QObject, public QGeoServiceProviderFactory
 {
-}
+    Q_OBJECT
+    Q_INTERFACES(QGeoServiceProviderFactory)
+public:
+    QGeoServiceProviderFactoryJsonDb();
+    ~QGeoServiceProviderFactoryJsonDb();
 
-/*!
-    Destroys the search reply.
-*/
-QPlaceDetailsReply::~QPlaceDetailsReply()
-{
-}
+    QString providerName() const;
+    int providerVersion() const;
 
-/*!
-    Returns the type of reply.
-*/
-QPlaceReply::Type QPlaceDetailsReply::type() const
-{
-    return QPlaceReply::PlaceDetailsReply;
-}
+    QGeocodingManagerEngine* createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
+            QGeoServiceProvider::Error *error,
+            QString *errorString) const;
+    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+            QGeoServiceProvider::Error *error,
+            QString *errorString) const;
+    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
+            QGeoServiceProvider::Error *error,
+            QString *errorString) const;
+    QPlaceManagerEngine *createPlaceManagerEngine(const QMap<QString, QVariant> &parameters,
+                                                  QGeoServiceProvider::Error *error,
+                                                  QString *errorString) const;
 
- /*!
-    Returns a place result
-*/
-QGeoPlace QPlaceDetailsReply::result() const
-{
-    Q_D(const QPlaceDetailsReply);
-    return d->result;
-}
+};
 
-/*!
-    Sets the \a place
-*/
-void QPlaceDetailsReply::setResult(const QGeoPlace &place)
-{
-    Q_D(QPlaceDetailsReply);
-    d->result = place;
-}
+#endif

@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the FOO module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -38,71 +38,37 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef JSONDBCLEANER_H
+#define JSONDBCLEANER_H
 
-#include "qplacedetailsreply.h"
-#include "qplacereply_p.h"
+#include <QObject>
+#include <QMap>
+#include <QVariant>
 
-QT_BEGIN_NAMESPACE
-class QPlaceDetailsReplyPrivate : public QPlaceReplyPrivate
+#include <jsondb-global.h>
+Q_ADDON_JSONDB_BEGIN_NAMESPACE
+class JsonDbClient;
+Q_ADDON_JSONDB_END_NAMESPACE
+Q_USE_JSONDB_NAMESPACE
+
+class JsonDbCleaner : public QObject
 {
+    Q_OBJECT
 public:
-    QPlaceDetailsReplyPrivate() {}
-    ~QPlaceDetailsReplyPrivate() {}
-    QGeoPlace result;
+    JsonDbCleaner(QObject *parent = 0);
+    void cleanDb();
+
+public slots:
+    void jsonDbResponse( int id, const QVariant& data);
+    void jsonDbError( int id, int code, const QString& data);
+
+signals:
+    void dbCleaned();
+
+private:
+    JsonDbClient *mDb;
+    QList<int> cleanReqId;
+    QList<int> removeReqId;
 };
 
-QT_END_NAMESPACE
-
-QT_USE_NAMESPACE
-
-/*!
-    \class QPlaceDetailsReply
-
-    \brief The QPlaceDetailsReply class manages a place datails operation started by an
-    instance of QPlaceManager.
-
-    \inmodule QtPlaces
-
-    \ingroup places-main
-*/
-
-/*!
-    Constructs a search reply with a given \a parent.
-*/
-QPlaceDetailsReply::QPlaceDetailsReply(QObject *parent)
-    : QPlaceReply(new QPlaceDetailsReplyPrivate, parent)
-{
-}
-
-/*!
-    Destroys the search reply.
-*/
-QPlaceDetailsReply::~QPlaceDetailsReply()
-{
-}
-
-/*!
-    Returns the type of reply.
-*/
-QPlaceReply::Type QPlaceDetailsReply::type() const
-{
-    return QPlaceReply::PlaceDetailsReply;
-}
-
- /*!
-    Returns a place result
-*/
-QGeoPlace QPlaceDetailsReply::result() const
-{
-    Q_D(const QPlaceDetailsReply);
-    return d->result;
-}
-
-/*!
-    Sets the \a place
-*/
-void QPlaceDetailsReply::setResult(const QGeoPlace &place)
-{
-    Q_D(QPlaceDetailsReply);
-    d->result = place;
-}
+#endif

@@ -114,9 +114,9 @@ public:
 
     QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &query) const;
 
-    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchRequest &query) const;
+    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchRequest &request) const;
 
-    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &query) const;
+    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request) const;
 
     ConnectivityModes connectivityMode() const;
     void setConnectivityMode(ConnectivityModes connectivityMode);

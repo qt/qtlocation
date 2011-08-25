@@ -27,3 +27,7 @@ SUBDIRS += geotestplugin \
            qplacesearchrequest \
            qplacesupplier \
            declarative
+
+contains(config_test_jsondb, yes) {
+    SUBDIRS += qplacemanager_jsondb
+}
