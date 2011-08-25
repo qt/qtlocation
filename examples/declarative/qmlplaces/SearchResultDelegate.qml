@@ -51,9 +51,9 @@ Rectangle {
                 }
 
                 onPressAndHold: {
-                    placesList.model = recommendationModel
-                    recommendationModel.placeId = place.placeId
-                    recommendationModel.executeQuery()
+                    recommendationModel.placeId = place.placeId;
+                    recommendationModel.executeQuery();
+                    placesList.model = recommendationModel;
                 }
             }
 

@@ -38,6 +38,7 @@ Rectangle {
 
             onAccepted: searchTerm(text)
             onTextChanged: {
+                resultSuggestion.searchTerm = text;
                 resultSuggestion.executeQuery();
                 suggestions.visible = true;
             }
@@ -180,6 +181,7 @@ Rectangle {
         resultModel.clearCategories();
         resultModel.searchTerm = term;
         resultModel.executeQuery();
+        placesList.model = resultModel;
         suggestions.visible = false;
     }
 
@@ -188,6 +190,7 @@ Rectangle {
         resultModel.clearSearchTerm();
         resultModel.searchCategory = category;
         resultModel.executeQuery();
+        placesList.model = resultModel;
         suggestions.visible = false;
     }
 
