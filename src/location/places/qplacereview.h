@@ -84,8 +84,8 @@ public:
     void setUserId(const QString &data);
     QString userName() const;
     void setUserName(const QString &data);
-    QString originatorUrl() const;
-    void setOriginatorUrl(const QString &data);
+    QUrl originatorUrl() const;
+    void setOriginatorUrl(const QUrl &data);
 
 private:
     Q_DECLARE_CONTENT_D_FUNC(QPlaceReview)

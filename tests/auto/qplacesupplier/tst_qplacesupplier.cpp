@@ -55,23 +55,26 @@ void tst_QPlaceSupplier::supplierIdTest()
 void tst_QPlaceSupplier::urlTest()
 {
     QPlaceSupplier testObj;
+    const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
     QVERIFY2(testObj.url() == QString(), "Wrong default value");
-    testObj.setUrl("testText");
-    QVERIFY2(testObj.url() == "testText", "Wrong value returned");
+    testObj.setUrl(testUrl);
+    QVERIFY2(testObj.url() == testUrl, "Wrong value returned");
 }
 
 void tst_QPlaceSupplier::supplierIconUrlTest()
 {
     QPlaceSupplier testObj;
+    const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
     QVERIFY2(testObj.supplierIconUrl() == QString(), "Wrong default value");
-    testObj.setSupplierIconUrl("testText");
-    QVERIFY2(testObj.supplierIconUrl() == "testText", "Wrong value returned");
+    testObj.setSupplierIconUrl(testUrl);
+    QVERIFY2(testObj.supplierIconUrl() == testUrl, "Wrong value returned");
 }
 
 void tst_QPlaceSupplier::operatorsTest()
 {
     QPlaceSupplier testObj;
-    testObj.setSupplierIconUrl("testValue");
+    const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
+    testObj.setSupplierIconUrl(testUrl);
     QPlaceSupplier testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");

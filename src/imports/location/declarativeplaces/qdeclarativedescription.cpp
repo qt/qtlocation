@@ -3,15 +3,14 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass Description
+    \qmlclass Description QDeclarativeDescription
 
     \brief The Description element holds description data.
-    \inherits QObject
+    \ingroup qml-places
+    \since 5.0
 
     Description cointains many properties holding data of the description like content,
     language, title, etc.
-
-    \ingroup qml-places
 */
 
 QDeclarativeDescription::QDeclarativeDescription(QObject* parent)
@@ -140,12 +139,12 @@ QString QDeclarativeDescription::language() const
 }
 
 /*!
-    \qmlproperty string Description::sourceUrl
+    \qmlproperty url Description::sourceUrl
 
     This property holds source URL.
 */
 
-void QDeclarativeDescription::setSourceUrl(const QString &sourceUrl)
+void QDeclarativeDescription::setSourceUrl(const QUrl &sourceUrl)
 {
     if (m_src.sourceUrl() != sourceUrl) {
         m_src.setSourceUrl(sourceUrl);
@@ -153,7 +152,7 @@ void QDeclarativeDescription::setSourceUrl(const QString &sourceUrl)
     }
 }
 
-QString QDeclarativeDescription::sourceUrl() const
+QUrl QDeclarativeDescription::sourceUrl() const
 {
     return m_src.sourceUrl();
 }

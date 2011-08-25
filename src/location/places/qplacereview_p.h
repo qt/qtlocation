@@ -42,9 +42,9 @@
 #ifndef QPLACEREVIEW_P_H
 #define QPLACEREVIEW_P_H
 
-#include <QSharedData>
+#include <QtCore/QUrl>
+#include <QtCore/QSharedData>
 
-#include "qplacereview.h"
 #include "qplacecontent_p.h"
 
 QT_BEGIN_NAMESPACE
@@ -73,7 +73,7 @@ public:
     QString title;
     QString userId;
     QString userName;
-    QString originatorUrl;
+    QUrl originatorUrl;
 };
 
 QT_END_NAMESPACE

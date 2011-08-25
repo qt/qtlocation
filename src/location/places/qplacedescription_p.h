@@ -42,9 +42,8 @@
 #ifndef QPLACEDESCRIPTION_P_H
 #define QPLACEDESCRIPTION_P_H
 
-#include <QSharedData>
-
-#include "qplacedescription.h"
+#include <QtCore/QUrl>
+#include <QtCore/QSharedData>
 
 QT_BEGIN_NAMESPACE
 
@@ -62,7 +61,7 @@ public:
     QString contentTitle;
     QString contentType;
     QPlaceSupplier supplier;
-    QString sourceUrl;
+    QUrl sourceUrl;
     QString language;
 };
 

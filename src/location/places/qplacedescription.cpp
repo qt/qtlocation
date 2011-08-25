@@ -80,7 +80,7 @@ bool QPlaceDescriptionPrivate::operator==(const QPlaceDescriptionPrivate &other)
 
     \inmodule QPlaces
 
-    \brief The QDescription class represents a address object.
+    \brief The QPlaceDescription class represents a address object.
 
     Each QPlaceDescription represents a description object with a number of attributes
     such as title, value etc. Each QPlaceDescription is associated with place.
@@ -190,7 +190,7 @@ void QPlaceDescription::setSupplier(const QPlaceSupplier &data)
 /*!
     Returns source url.
 */
-QString QPlaceDescription::sourceUrl() const
+QUrl QPlaceDescription::sourceUrl() const
 {
     return d->sourceUrl;
 }
@@ -198,7 +198,7 @@ QString QPlaceDescription::sourceUrl() const
 /*!
     Sets source url.
 */
-void QPlaceDescription::setSourceUrl(const QString &data)
+void QPlaceDescription::setSourceUrl(const QUrl &data)
 {
     d->sourceUrl = data;
 }

@@ -75,9 +75,10 @@ void tst_QPlaceDescription::contentTypeTest()
 void tst_QPlaceDescription::sourceUrlTest()
 {
     QPlaceDescription testObj;
-    QVERIFY2(testObj.sourceUrl() == QString(), "Wrong default value");
-    testObj.setSourceUrl("testText");
-    QVERIFY2(testObj.sourceUrl() == "testText", "Wrong value returned");
+    const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
+    QVERIFY2(testObj.sourceUrl() == QUrl(), "Wrong default value");
+    testObj.setSourceUrl(testUrl);
+    QVERIFY2(testObj.sourceUrl() == testUrl, "Wrong value returned");
 }
 
 void tst_QPlaceDescription::languageTest()

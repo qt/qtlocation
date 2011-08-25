@@ -162,9 +162,10 @@ void tst_QPlaceReview::userNameTest()
 void tst_QPlaceReview::originatorUrlTest()
 {
     QPlaceReview testObj;
-    QVERIFY2(testObj.originatorUrl() == QString(), "Wrong default value");
-    testObj.setOriginatorUrl("testText");
-    QVERIFY2(testObj.originatorUrl() == "testText", "Wrong value returned");
+    const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
+    QVERIFY2(testObj.originatorUrl() == QUrl(), "Wrong default value");
+    testObj.setOriginatorUrl(testUrl);
+    QVERIFY2(testObj.originatorUrl() == testUrl, "Wrong value returned");
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceReview);

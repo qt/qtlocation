@@ -1,17 +1,18 @@
 #include "qdeclarativesupplier_p.h"
 
+#include <QtCore/QUrl>
+
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass Supplier
+    \qmlclass Supplier QDeclarativeSupplier
 
     \brief The Supplier element holds supplier data.
-    \inherits QObject
+    \ingroup qml-places
+    \since 5.0
 
     Supplier cointains many properties holding data of the supplier like name,
     id, etc.
-
-    \ingroup qml-places
 */
 
 QDeclarativeSupplier::QDeclarativeSupplier(QObject* parent)
@@ -93,12 +94,12 @@ QString QDeclarativeSupplier::name() const
 }
 
 /*!
-    \qmlproperty string Supplier::supplierIconUrl
+    \qmlproperty url Supplier::supplierIconUrl
 
     This property holds icon URL.
 */
 
-void QDeclarativeSupplier::setSupplierIconUrl(const QString &supplierIconUrl)
+void QDeclarativeSupplier::setSupplierIconUrl(const QUrl &supplierIconUrl)
 {
     if (m_src.supplierIconUrl() != supplierIconUrl) {
         m_src.setSupplierIconUrl(supplierIconUrl);
@@ -106,18 +107,18 @@ void QDeclarativeSupplier::setSupplierIconUrl(const QString &supplierIconUrl)
     }
 }
 
-QString QDeclarativeSupplier::supplierIconUrl() const
+QUrl QDeclarativeSupplier::supplierIconUrl() const
 {
     return m_src.supplierIconUrl();
 }
 
 /*!
-    \qmlproperty string Supplier::url
+    \qmlproperty url Supplier::url
 
     This property holds supplier URL.
 */
 
-void QDeclarativeSupplier::setUrl(const QString &url)
+void QDeclarativeSupplier::setUrl(const QUrl &url)
 {
     if (m_src.url() != url) {
         m_src.setUrl(url);
@@ -125,7 +126,7 @@ void QDeclarativeSupplier::setUrl(const QString &url)
     }
 }
 
-QString QDeclarativeSupplier::url() const
+QUrl QDeclarativeSupplier::url() const
 {
     return m_src.url();
 }

@@ -48,7 +48,8 @@
 
 #include "qplacesuppliersrepository.h"
 
-#include <qplacesupplier.h>
+#include <QtCore/QUrl>
+#include <QtLocation/QPlaceSupplier>
 
 QT_USE_NAMESPACE
 

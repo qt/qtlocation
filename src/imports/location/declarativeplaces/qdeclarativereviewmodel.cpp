@@ -114,7 +114,7 @@ QT_BEGIN_NAMESPACE
             \o The name of the user who posted the review.
         \row
             \o originatorUrl
-            \o string
+            \o url
             \o The URL of the review.
     \endtable
 */

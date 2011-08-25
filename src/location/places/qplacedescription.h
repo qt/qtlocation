@@ -74,8 +74,8 @@ public:
     void setContentType(const QString &data);
     QPlaceSupplier supplier() const;
     void setSupplier(const QPlaceSupplier &data);
-    QString sourceUrl() const;
-    void setSourceUrl(const QString &data);
+    QUrl sourceUrl() const;
+    void setSourceUrl(const QUrl &data);
     QString language() const;
     void setLanguage(const QString &data);
 

@@ -47,6 +47,7 @@
 
 QT_BEGIN_NAMESPACE
 
+class QUrl;
 class QPlaceSupplierPrivate;
 
 class Q_LOCATION_EXPORT QPlaceSupplier
@@ -68,10 +69,10 @@ public:
     void setName(const QString &data);
     QString supplierId() const;
     void setSupplierId(const QString &data);
-    QString url() const;
-    void setUrl(const QString &data);
-    QString supplierIconUrl() const;
-    void setSupplierIconUrl(const QString &data);
+    QUrl url() const;
+    void setUrl(const QUrl &data);
+    QUrl supplierIconUrl() const;
+    void setSupplierIconUrl(const QUrl &data);
 
 private:
     QSharedDataPointer<QPlaceSupplierPrivate> d;

@@ -48,6 +48,7 @@
 
 #include "qplacejsonreviewparser.h"
 
+#include <QtCore/QUrl>
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
@@ -164,7 +165,7 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review)
         QPlaceSupplier sup;
         sup.setName(name);
         sup.setSupplierId(id);
-        sup.setSupplierIconUrl(icon);
+        sup.setSupplierIconUrl(QUrl::fromEncoded(icon.toAscii()));
         newReview.setSupplier(QPlaceSuppliersRepository::instance()->addSupplier(sup));
     }
 

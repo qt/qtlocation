@@ -2,6 +2,7 @@
 #define QDECLARATIVESUPPLIER_P_H
 
 #include <QObject>
+#include <QtCore/QUrl>
 #include <QtDeclarative/qdeclarative.h>
 #include <qplacesupplier.h>
 
@@ -13,8 +14,8 @@ class QDeclarativeSupplier : public QObject
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString supplierId READ supplierId WRITE setSupplierId NOTIFY supplierIdChanged);
-    Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY urlChanged);
-    Q_PROPERTY(QString supplierIconUrl READ supplierIconUrl WRITE setSupplierIconUrl NOTIFY supplierIconUrlChanged);
+    Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
+    Q_PROPERTY(QUrl supplierIconUrl READ supplierIconUrl WRITE setSupplierIconUrl NOTIFY supplierIconUrlChanged)
 
 public:
     explicit QDeclarativeSupplier(QObject* parent = 0);
@@ -28,10 +29,10 @@ public:
     void setName(const QString &data);
     QString supplierId() const;
     void setSupplierId(const QString &data);
-    QString url() const;
-    void setUrl(const QString &data);
-    QString supplierIconUrl() const;
-    void setSupplierIconUrl(const QString &data);
+    QUrl url() const;
+    void setUrl(const QUrl &data);
+    QUrl supplierIconUrl() const;
+    void setSupplierIconUrl(const QUrl &data);
 
 signals:
     void nameChanged();

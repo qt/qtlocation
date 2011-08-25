@@ -44,8 +44,7 @@
 
 #include <QString>
 #include <QSharedData>
-
-#include "qplacesupplier.h"
+#include <QUrl>
 
 QT_BEGIN_NAMESPACE
 
@@ -61,8 +60,8 @@ public:
 
     QString name;
     QString supplierId;
-    QString url;
-    QString supplierIconUrl;
+    QUrl url;
+    QUrl supplierIconUrl;
 };
 
 QT_END_NAMESPACE

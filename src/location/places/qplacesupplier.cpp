@@ -151,7 +151,7 @@ void QPlaceSupplier::setSupplierId(const QString &data)
 /*!
     Returns the URL of the supplier.
 */
-QString QPlaceSupplier::url() const
+QUrl QPlaceSupplier::url() const
 {
     return d->url;
 }
@@ -159,7 +159,7 @@ QString QPlaceSupplier::url() const
 /*!
     Sets \a url of the supplier.
 */
-void QPlaceSupplier::setUrl(const QString &url)
+void QPlaceSupplier::setUrl(const QUrl &url)
 {
     d->url = url;
 }
@@ -167,7 +167,7 @@ void QPlaceSupplier::setUrl(const QString &url)
 /*!
     Returns the supplier's icon URL.
 */
-QString QPlaceSupplier::supplierIconUrl() const
+QUrl QPlaceSupplier::supplierIconUrl() const
 {
     return d->supplierIconUrl;
 }
@@ -175,7 +175,7 @@ QString QPlaceSupplier::supplierIconUrl() const
 /*!
     Sets \a url of the icon of the supplier.
 */
-void QPlaceSupplier::setSupplierIconUrl(const QString &url)
+void QPlaceSupplier::setSupplierIconUrl(const QUrl &url)
 {
     d->supplierIconUrl = url;
 }

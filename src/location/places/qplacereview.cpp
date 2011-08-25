@@ -352,7 +352,7 @@ void QPlaceReview::setUserName(const QString &data)
 /*!
     Returns originator URL.
 */
-QString QPlaceReview::originatorUrl() const
+QUrl QPlaceReview::originatorUrl() const
 {
     Q_D(const QPlaceReview);
     return d->originatorUrl;
@@ -361,7 +361,7 @@ QString QPlaceReview::originatorUrl() const
 /*!
     Sets originator \a url of the review.
 */
-void QPlaceReview::setOriginatorUrl(const QString &url)
+void QPlaceReview::setOriginatorUrl(const QUrl &url)
 {
     Q_D(QPlaceReview);
     d->originatorUrl = url;
