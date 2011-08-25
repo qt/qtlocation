@@ -1,6 +1,7 @@
 INCLUDEPATH +=  declarativeplaces
 SOURCES += \
 #models
+    declarativeplaces/qdeclarativeplacecontentmodel.cpp \
     declarativeplaces/qdeclarativerecommendationmodel.cpp \
     declarativeplaces/qdeclarativesupportedcategoriesmodel.cpp \
     declarativeplaces/qdeclarativetextpredictionmodel.cpp \
@@ -17,6 +18,7 @@ SOURCES += \
 
 HEADERS += \
 #models
+    declarativeplaces/qdeclarativeplacecontentmodel.h \
     declarativeplaces/qdeclarativerecommendationmodel_p.h \
     declarativeplaces/qdeclarativesupportedcategoriesmodel_p.h \
     declarativeplaces/qdeclarativetextpredictionmodel_p.h \

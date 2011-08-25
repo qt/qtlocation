@@ -1,12 +1,51 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtLocation module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by tOhe Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include "qdeclarativeplaceimagemodel_p.h"
-#include "qdeclarativegeoserviceprovider_p.h"
-#include "qdeclarativeplace_p.h"
 #include "qdeclarativesupplier_p.h"
 
-#include <QtDeclarative/QDeclarativeInfo>
-#include <QtLocation/QGeoServiceProvider>
+#include <QtCore/QUrl>
+#include <QtLocation/QPlaceImage>
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass PlaceImageModel QDeclarativePlaceImage
@@ -55,9 +94,26 @@ QT_USE_NAMESPACE
     \endtable
 */
 
+/*!
+    \qmlproperty Place PlaceImageModel::place
+
+    This property holds the Place that the images are for.
+*/
+
+/*!
+    \qmlproperty int PlaceImageModel::batchSize
+
+    This property holds the batch size to use when fetching more image items.
+*/
+
+/*!
+    \qmlproperty int PlaceImageModel::totalCount
+
+    This property holds the total number of image items for the place.
+*/
+
 QDeclarativePlaceImageModel::QDeclarativePlaceImageModel(QObject* parent)
-:   QAbstractListModel(parent), m_place(0), m_batchSize(1), m_imageCount(-1), m_reply(0),
-    m_complete(false)
+:   QDeclarativePlaceContentModel(QPlaceContent::ImageType, parent)
 {
     QHash<int, QByteArray> roleNames;
     roleNames.insert(UrlRole, "url");
@@ -74,254 +130,23 @@ QDeclarativePlaceImageModel::~QDeclarativePlaceImageModel()
     qDeleteAll(m_suppliers);
 }
 
-/*!
-    \qmlproperty Place PlaceImageModel::place
-
-    This property holds the Place that the images are for.
-*/
-QDeclarativePlace *QDeclarativePlaceImageModel::place() const
+void QDeclarativePlaceImageModel::clearData()
 {
-    return m_place;
-}
-
-void QDeclarativePlaceImageModel::setPlace(QDeclarativePlace *place)
-{
-    if (m_place != place) {
-        beginResetModel();
-        if (m_reply) {
-            m_reply->abort();
-            m_reply->deleteLater();
-            m_reply = 0;
-        }
-
-        m_images.clear();
-        qDeleteAll(m_suppliers);
-        m_suppliers.clear();
-        endResetModel();
-
-        if (m_imageCount != -1) {
-            m_imageCount = -1;
-            emit totalCountChanged();
-        }
-
-        m_place = place;
-        emit placeChanged();
-
-        reset();
-
-        fetchMore(QModelIndex());
-    }
-}
-
-/*!
-    \qmlproperty int PlaceImageModel::batchSize
-
-    This property holds the batch size to use when fetching more image items.
-*/
-int QDeclarativePlaceImageModel::batchSize() const
-{
-    return m_batchSize;
-}
-
-void QDeclarativePlaceImageModel::setBatchSize(int batchSize)
-{
-    if (m_batchSize != batchSize) {
-        m_batchSize = batchSize;
-        emit batchSizeChanged();
-    }
-}
-
-/*!
-    \qmlproperty int PlaceImageModel::totalCount
-
-    This property holds the total number of image items for the place.
-*/
-int QDeclarativePlaceImageModel::totalCount() const
-{
-    return m_imageCount;
-}
-
-static QPair<int, int> findMissingKey(const QMap<int, QPlaceImage> &map)
-{
-    int start = 0;
-    while (map.contains(start))
-        ++start;
-
-    QMap<int, QPlaceImage>::const_iterator it = map.lowerBound(start);
-    if (it == map.end())
-        return qMakePair(start, -1);
-
-    int end = start;
-    while (!map.contains(end))
-        ++end;
-
-    return qMakePair(start, end - 1);
-}
-
-bool QDeclarativePlaceImageModel::canFetchMore(const QModelIndex &parent) const
-{
-    if (parent.isValid())
-        return false;
-
-    if (!m_place)
-        return false;
-
-    if (m_imageCount == -1)
-        return true;
-
-    return m_images.count() != m_imageCount;
-}
-
-void QDeclarativePlaceImageModel::fetchMore(const QModelIndex &parent)
-{
-    if (parent.isValid())
-        return;
-
-    if (!m_place)
-        return;
-
-    if (m_reply)
-        return;
-
-    QDeclarativeGeoServiceProvider *plugin = m_place->plugin();
-
-    QGeoServiceProvider *serviceProvider = plugin->sharedGeoServiceProvider();
-    if (!serviceProvider)
-        return;
-
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager) {
-        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(plugin->name());
-        return;
-    }
-
-    QPlaceContentRequest request;
-    request.setContentType(QPlaceContent::ImageType);
-
-    if (m_imageCount == -1) {
-        request.setOffset(0);
-        request.setLimit(m_batchSize);
-    } else {
-        QPair<int, int> missing = findMissingKey(m_images);
-        request.setOffset(missing.first);
-        if (missing.second == -1)
-            request.setLimit(m_batchSize);
-        else
-            request.setLimit(qMin(m_batchSize, missing.second - missing.first + 1));
-    }
-
-    m_reply = placeManager->getContent(m_place->place(), request);
-    connect(m_reply, SIGNAL(finished()), this, SLOT(fetchFinished()), Qt::QueuedConnection);
-}
-
-void QDeclarativePlaceImageModel::clear()
-{
-    beginResetModel();
-    m_imageCount = -1;
-    m_images.clear();
     qDeleteAll(m_suppliers);
     m_suppliers.clear();
-    delete m_reply;
-    m_reply = 0;
-    endResetModel();
+    QDeclarativePlaceContentModel::clearData();
 }
 
-void QDeclarativePlaceImageModel::classBegin()
+void QDeclarativePlaceImageModel::processContent(const QPlaceContent &content, int index)
 {
-}
+    Q_UNUSED(index);
 
-void QDeclarativePlaceImageModel::componentComplete()
-{
-    m_complete = true;
-    fetchMore(QModelIndex());
-}
+    QPlaceImage image(content);
 
-void QDeclarativePlaceImageModel::fetchFinished()
-{
-    QPlaceContentReply *reply = m_reply;
-    m_reply = 0;
-
-    if (m_imageCount != reply->totalCount()) {
-        m_imageCount = reply->totalCount();
-        emit totalCountChanged();
+    if (!m_suppliers.contains(image.supplier().supplierId())) {
+        m_suppliers.insert(image.supplier().supplierId(),
+                           new QDeclarativeSupplier(image.supplier(), this));
     }
-
-    if (!reply->content().isEmpty()) {
-        QPlaceContent::Collection images = reply->content();
-
-        //find out which indexes are new and which ones have changed.
-        QMapIterator<int, QPlaceContent> imagesIter(images);
-        QList<int> changedIndexes;
-        QList<int> newIndexes;
-        while (imagesIter.hasNext()) {
-            imagesIter.next();
-            if (!m_images.contains(imagesIter.key())) {
-                newIndexes.append(imagesIter.key());
-            } else if (imagesIter.value() != m_images.value(imagesIter.key())) {
-                changedIndexes.append(imagesIter.key());
-            } else {
-                //image item at given index has not changed, do nothing
-            }
-        }
-
-        //insert new indexes in blocks where within each
-        //block, the indexes are consecutive.
-        QListIterator<int> newIndexesIter(newIndexes);
-        int startIndex = -1;
-        while (newIndexesIter.hasNext()) {
-            int currentIndex = newIndexesIter.next();
-            if (startIndex == -1)
-                startIndex = currentIndex;
-
-            if (!newIndexesIter.hasNext() || (newIndexesIter.hasNext() && (newIndexesIter.peekNext() > (currentIndex + 1)))) {
-                beginInsertRows(QModelIndex(),startIndex,currentIndex);
-                for (int i = startIndex; i <= currentIndex; ++i) {
-                    const QPlaceImage &image = images.value(i);
-
-                    m_images.insert(i, image);
-                    if (!m_suppliers.contains(image.supplier().supplierId())) {
-                        m_suppliers.insert(image.supplier().supplierId(),
-                                           new QDeclarativeSupplier(image.supplier(), this));
-                    }
-                }
-                endInsertRows();
-                startIndex = -1;
-            }
-        }
-
-        //modify changed indexes in blocks where within each
-        //block, the indexes are consecutive.
-        startIndex = -1;
-        QListIterator<int> changedIndexesIter(changedIndexes);
-        while (changedIndexesIter.hasNext()) {
-            int currentIndex = changedIndexesIter.next();
-            if (startIndex == -1)
-                startIndex = currentIndex;
-
-            if (!changedIndexesIter.hasNext() || (changedIndexesIter.hasNext() && changedIndexesIter.peekNext() > (currentIndex +1))) {
-                for (int i = startIndex; i <= currentIndex; ++i) {
-                    const QPlaceImage &image = images.value(i);
-                    m_images.insert(i, image);
-                    if (!m_suppliers.contains(image.supplier().supplierId())) {
-                        m_suppliers.insert(image.supplier().supplierId(),
-                                           new QDeclarativeSupplier(image.supplier(), this));
-                    }
-                }
-                emit dataChanged(index(startIndex),index(currentIndex));
-                startIndex = -1;
-            }
-        }
-    }
-
-    reply->deleteLater();
-}
-
-int QDeclarativePlaceImageModel::rowCount(const QModelIndex &parent) const
-{
-    if (parent.isValid())
-        return 0;
-
-    return m_images.count();
 }
 
 QVariant QDeclarativePlaceImageModel::data(const QModelIndex &index, int role) const
@@ -332,7 +157,7 @@ QVariant QDeclarativePlaceImageModel::data(const QModelIndex &index, int role) c
     if (index.row() >= rowCount(index.parent()) || index.row() < 0)
         return QVariant();
 
-    const QPlaceImage &image = m_images.value(index.row());
+    const QPlaceImage &image = m_content.value(index.row());
 
     switch (role) {
     case UrlRole:
@@ -351,3 +176,5 @@ QVariant QDeclarativePlaceImageModel::data(const QModelIndex &index, int role) c
         return QVariant();
     }
 }
+
+QT_END_NAMESPACE

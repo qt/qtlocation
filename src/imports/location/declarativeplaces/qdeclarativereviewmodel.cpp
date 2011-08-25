@@ -1,12 +1,50 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtLocation module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by tOhe Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include "qdeclarativereviewmodel_p.h"
-#include "qdeclarativegeoserviceprovider_p.h"
-#include "qdeclarativeplace_p.h"
 #include "qdeclarativesupplier_p.h"
 
-#include <QtDeclarative/QDeclarativeInfo>
-#include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QPlaceReview>
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass ReviewModel QDeclarativeReviewModel
@@ -81,9 +119,26 @@ QT_USE_NAMESPACE
     \endtable
 */
 
+/*!
+    \qmlproperty Place ReviewModel::place
+
+    This property holds the Place that the reviews are for.
+*/
+
+/*!
+    \qmlproperty int ReviewModel::batchSize
+
+    This property holds the batch size to use when fetching more reviews.
+*/
+
+/*!
+    \qmlproperty int ReviewModel::totalCount
+
+    This property holds the total number of reviews for the place.
+*/
+
 QDeclarativeReviewModel::QDeclarativeReviewModel(QObject* parent)
-:   QAbstractListModel(parent), m_place(0), m_batchSize(1), m_reviewCount(-1), m_reply(0),
-    m_complete(false)
+:   QDeclarativePlaceContentModel(QPlaceContent::ReviewType, parent)
 {
     QHash<int, QByteArray> roleNames;
     roleNames.insert(DateRole, "date");
@@ -107,255 +162,23 @@ QDeclarativeReviewModel::~QDeclarativeReviewModel()
     qDeleteAll(m_suppliers);
 }
 
-/*!
-    \qmlproperty Place ReviewModel::place
-
-    This property holds the Place that the reviews are for.
-*/
-QDeclarativePlace *QDeclarativeReviewModel::place() const
+void QDeclarativeReviewModel::clearData()
 {
-    return m_place;
-}
-
-void QDeclarativeReviewModel::setPlace(QDeclarativePlace *place)
-{
-    if (m_place != place) {
-        beginResetModel();
-        if (m_reply) {
-            m_reply->abort();
-            m_reply->deleteLater();
-            m_reply = 0;
-        }
-
-        m_reviews.clear();
-        qDeleteAll(m_suppliers);
-        m_suppliers.clear();
-        endResetModel();
-
-        if (m_reviewCount != -1) {
-            m_reviewCount = -1;
-            emit totalCountChanged();
-        }
-
-        m_place = place;
-        emit placeChanged();
-
-        reset();
-
-        fetchMore(QModelIndex());
-    }
-}
-
-/*!
-    \qmlproperty int ReviewModel::batchSize
-
-    This property holds the batch size to use when fetching more reviews.
-*/
-int QDeclarativeReviewModel::batchSize() const
-{
-    return m_batchSize;
-}
-
-void QDeclarativeReviewModel::setBatchSize(int batchSize)
-{
-    if (m_batchSize != batchSize) {
-        m_batchSize = batchSize;
-        emit batchSizeChanged();
-    }
-}
-
-/*!
-    \qmlproperty int ReviewModel::totalCount
-
-    This property holds the total number of reviews for the place.
-*/
-int QDeclarativeReviewModel::totalCount() const
-{
-    return m_reviewCount;
-}
-
-static QPair<int, int> findMissingKey(const QMap<int, QPlaceReview> &map)
-{
-    int start = 0;
-    while (map.contains(start))
-        ++start;
-
-    QMap<int, QPlaceReview>::const_iterator it = map.lowerBound(start);
-    if (it == map.end())
-        return qMakePair(start, -1);
-
-    int end = start;
-    while (!map.contains(end))
-        ++end;
-
-    return qMakePair(start, end - 1);
-}
-
-bool QDeclarativeReviewModel::canFetchMore(const QModelIndex &parent) const
-{
-    if (parent.isValid())
-        return false;
-
-    if (!m_place)
-        return false;
-
-    if (m_reviewCount == -1)
-        return true;
-
-    return m_reviews.count() != m_reviewCount;
-}
-
-void QDeclarativeReviewModel::fetchMore(const QModelIndex &parent)
-{
-    if (parent.isValid())
-        return;
-
-    if (!m_place)
-        return;
-
-    if (m_reply)
-        return;
-
-    QDeclarativeGeoServiceProvider *plugin = m_place->plugin();
-
-    QGeoServiceProvider *serviceProvider = plugin->sharedGeoServiceProvider();
-    if (!serviceProvider)
-        return;
-
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager) {
-        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(plugin->name());
-        return;
-    }
-
-    QPlaceContentRequest request;
-    request.setContentType(QPlaceContent::ReviewType);
-
-    if (m_reviewCount == -1) {
-        request.setOffset(0);
-        request.setLimit(m_batchSize);
-    } else {
-        QPair<int, int> missing = findMissingKey(m_reviews);
-        request.setOffset(missing.first);
-        if (missing.second == -1)
-            request.setLimit(m_batchSize);
-        else
-            request.setLimit(qMin(m_batchSize, missing.second - missing.first + 1));
-    }
-
-    m_reply = placeManager->getContent(m_place->place(), request);
-    connect(m_reply, SIGNAL(finished()), this, SLOT(fetchFinished()), Qt::QueuedConnection);
-}
-
-void QDeclarativeReviewModel::clear()
-{
-    beginResetModel();
-    m_reviewCount = -1;
-    m_reviews.clear();
     qDeleteAll(m_suppliers);
     m_suppliers.clear();
-    delete m_reply;
-    m_reply = 0;
-    endResetModel();
+    QDeclarativePlaceContentModel::clearData();
 }
 
-void QDeclarativeReviewModel::classBegin()
+void QDeclarativeReviewModel::processContent(const QPlaceContent &content, int index)
 {
-}
+    Q_UNUSED(index);
 
-void QDeclarativeReviewModel::componentComplete()
-{
-    m_complete = true;
-    fetchMore(QModelIndex());
-}
+    QPlaceReview review(content);
 
-void QDeclarativeReviewModel::fetchFinished()
-{
-    QPlaceContentReply *reply = m_reply;
-    m_reply = 0;
-
-    if (m_reviewCount != reply->totalCount()) {
-        m_reviewCount = reply->totalCount();
-        emit totalCountChanged();
+    if (!m_suppliers.contains(review.supplier().supplierId())) {
+        m_suppliers.insert(review.supplier().supplierId(),
+                           new QDeclarativeSupplier(review.supplier(), this));
     }
-
-    if (!reply->content().isEmpty()) {
-        QPlaceContent::Collection reviews = reply->content();
-
-        //find out which indexes are new and which ones have changed.
-        QMapIterator<int, QPlaceContent> reviewsIter(reviews);
-        QList<int> changedIndexes;
-        QList<int> newIndexes;
-        while (reviewsIter.hasNext()) {
-            reviewsIter.next();
-            if (!m_reviews.contains(reviewsIter.key())) {
-                newIndexes.append(reviewsIter.key());
-            } else if (reviewsIter.value() != m_reviews.value(reviewsIter.key())) {
-                changedIndexes.append(reviewsIter.key());
-            } else {
-                //review item at given index has not changed, do nothing
-            }
-        }
-
-        //insert new indexes in blocks where within each
-        //block, the indexes are consecutive.
-        QListIterator<int> newIndexesIter(newIndexes);
-        int startIndex = -1;
-        while (newIndexesIter.hasNext()) {
-            int currentIndex = newIndexesIter.next();
-            if (startIndex == -1)
-                startIndex = currentIndex;
-
-            if (!newIndexesIter.hasNext() || (newIndexesIter.hasNext() && (newIndexesIter.peekNext() > (currentIndex + 1)))) {
-                beginInsertRows(QModelIndex(),startIndex,currentIndex);
-                for (int i = startIndex; i <= currentIndex; ++i) {
-                    const QPlaceReview &review = reviews.value(i);
-
-                    m_reviews.insert(i, review);
-                    if (!m_suppliers.contains(review.supplier().supplierId())) {
-                        m_suppliers.insert(review.supplier().supplierId(),
-                                           new QDeclarativeSupplier(review.supplier(), this));
-                    }
-                }
-                endInsertRows();
-                startIndex = -1;
-            }
-        }
-
-        //modify changed indexes in blocks where within each
-        //block, the indexes are consecutive.
-        startIndex = -1;
-        QListIterator<int> changedIndexesIter(changedIndexes);
-        while (changedIndexesIter.hasNext()) {
-            int currentIndex = changedIndexesIter.next();
-            if (startIndex == -1)
-                startIndex = currentIndex;
-
-            if (!changedIndexesIter.hasNext() || (changedIndexesIter.hasNext() && changedIndexesIter.peekNext() > (currentIndex +1))) {
-                for (int i = startIndex; i <= currentIndex; ++i) {
-                    const QPlaceReview &review = reviews.value(i);
-
-                    m_reviews.insert(i, review);
-                    if (!m_suppliers.contains(review.supplier().supplierId())) {
-                        m_suppliers.insert(review.supplier().supplierId(),
-                                           new QDeclarativeSupplier(review.supplier(), this));
-                    }
-                }
-                emit dataChanged(index(startIndex),index(currentIndex));
-                startIndex = -1;
-            }
-        }
-    }
-
-    reply->deleteLater();
-}
-
-int QDeclarativeReviewModel::rowCount(const QModelIndex &parent) const
-{
-    if (parent.isValid())
-        return 0;
-
-    return m_reviews.count();
 }
 
 QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
@@ -366,7 +189,7 @@ QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
     if (index.row() >= rowCount(index.parent()) || index.row() < 0)
         return QVariant();
 
-    const QPlaceReview &review = m_reviews.value(index.row());
+    const QPlaceReview &review = m_content.value(index.row());
 
     switch (role) {
     case DateRole:
@@ -399,3 +222,5 @@ QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 }
+
+QT_END_NAMESPACE
