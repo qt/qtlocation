@@ -1,33 +1,61 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtLocation module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #ifndef QDECLARATIVESEARCHRESULTMODEL_P_H
 #define QDECLARATIVESEARCHRESULTMODEL_P_H
 
-#include <QtCore/QMap>
-#include <QtCore/QAbstractListModel>
-#include <QtLocation/QPlaceManager>
-#include <QtLocation/QPlaceSearchRequest>
-#include <QtLocation/QPlaceSearchResult>
-
-#include "qdeclarativegeoboundingarea_p.h"
-#include "qdeclarativeplace_p.h"
+#include "qdeclarativesearchmodelbase.h"
+#include "qdeclarativecategory_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeSearchResultModel : public QAbstractListModel, public QDeclarativeParserStatus
+class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
-    Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged);
-    Q_PROPERTY(QDeclarativeCategory* searchCategory READ searchCategory WRITE setSearchCategory NOTIFY searchCategoryChanged);
-    Q_PROPERTY(QDeclarativeGeoBoundingArea *searchArea READ searchArea WRITE setSearchArea NOTIFY searchAreaChanged);
-    Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged);
-    Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged);
+    Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
+    Q_PROPERTY(QDeclarativeCategory *searchCategory READ searchCategory WRITE setSearchCategory NOTIFY searchCategoryChanged)
     Q_PROPERTY(int didYouMean READ didYouMean WRITE setDidYouMean NOTIFY didYouMeanChanged);
-    Q_PROPERTY(bool executing READ executing NOTIFY executingChanged)
 
     Q_ENUMS(SearchResultType LocationMatchType)
-
-    Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
     enum SearchResultType {
@@ -45,9 +73,20 @@ public:
     explicit QDeclarativeSearchResultModel(QObject *parent = 0);
     ~QDeclarativeSearchResultModel();
 
-    // From QDeclarativeParserStatus
-    virtual void classBegin() {}
-    virtual void componentComplete();
+    QString searchTerm() const;
+    void setSearchTerm(const QString &searchTerm);
+    Q_INVOKABLE void clearSearchTerm();
+
+    QDeclarativeCategory *searchCategory();
+    void setSearchCategory(QDeclarativeCategory *searchCategory);
+    Q_INVOKABLE void clearCategories();
+
+    int didYouMean() const;
+    void setDidYouMean(int dym);
+
+    void clearData();
+    void updateSearchRequest();
+    void processReply(QPlaceReply *reply);
 
     // From QAbstractListModel
     int rowCount(const QModelIndex &parent) const;
@@ -63,64 +102,18 @@ public:
         SearchResultDidYouMean
     };
 
-    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
-    QDeclarativeGeoServiceProvider* plugin() const;
-
-    QString searchTerm() const;
-    void setSearchTerm(const QString &searchTerm);
-    QDeclarativeCategory *searchCategory();
-    void setSearchCategory(QDeclarativeCategory *searchCategory);
-    QDeclarativeGeoBoundingArea *searchArea() const;
-    void setSearchArea(QDeclarativeGeoBoundingArea *searchArea);
-    int offset() const;
-    void setOffset(const int &offset);
-    int limit() const;
-    void setLimit(const int &limit);
-    int didYouMean() const;
-    void setDidYouMean(const int &dym);
-
-    bool executing() const;
-
-    Q_INVOKABLE void executeQuery();
-    Q_INVOKABLE void cancelRequest();
-
-    Q_INVOKABLE void clearCategories();
-    Q_INVOKABLE void clearSearchTerm();
-
 signals:
-    void pluginChanged();
-    void queryFinished(const int &error);
-
     void searchTermChanged();
     void searchCategoryChanged();
-    void searchAreaChanged();
-    void offsetChanged();
-    void limitChanged();
     void didYouMeanChanged();
-    void executingChanged();
 
-private slots:
-    void replyFinished();
-    void replyError(QPlaceReply::Error error, const QString &errorString);
+protected:
+    QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
 
 private:
-    void cancelPreviousRequest();
-    void connectNewResponse(QPlaceSearchReply *newResponse);
-
-private:
-    QDeclarativeCoordinate m_center;
-    QDeclarativeGeoBoundingArea *m_searchArea;
-    QDeclarativeCategory m_category;
-
     QList<QPlaceSearchResult> m_results;
     QMap<QString, QDeclarativePlace *> m_places;
-
-    QPlaceSearchRequest m_queryParameters;
-
-    QPlaceSearchReply *m_response;
-
-    QDeclarativeGeoServiceProvider *m_plugin;
-    bool m_complete;
+    QDeclarativeCategory m_category;
 };
 
 QT_END_NAMESPACE

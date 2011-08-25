@@ -1,99 +1,92 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtLocation module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #ifndef QDECLARATIVETEXTPREDICTIONMODEL_P_H
 #define QDECLARATIVETEXTPREDICTIONMODEL_P_H
 
-#include <QObject>
-#include <QAbstractListModel>
-
-#include <qplacesearchrequest.h>
-#include <qplacemanager.h>
-#include <qplacetextpredictionreply.h>
-
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeoboundingbox_p.h"
+#include "qdeclarativesearchmodelbase.h"
 
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoServiceProvider;
 class QGeoServiceProvider;
 
-class QDeclarativeTextPredictionModel : public QAbstractListModel, public QDeclarativeParserStatus
+class QDeclarativeTextPredictionModel : public QDeclarativeSearchModelBase
 {
     Q_OBJECT
 
-    Q_INTERFACES(QDeclarativeParserStatus)
-
-    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
-    Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged);
-    Q_PROPERTY(QDeclarativeGeoBoundingArea* searchArea READ searchArea WRITE setSearchArea NOTIFY searchAreaChanged);
-    Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged);
-    Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged);
+    Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
     Q_PROPERTY(QStringList predictions READ predictions NOTIFY predictionsChanged)
 
 public:
     explicit QDeclarativeTextPredictionModel(QObject *parent = 0);
     ~QDeclarativeTextPredictionModel();
 
-    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
-    QDeclarativeGeoServiceProvider* plugin() const;
+    QString searchTerm() const;
+    void setSearchTerm(const QString &searchTerm);
 
-    QStringList getSuggestions() const;
+    QStringList predictions() const;
+
+    void clearData();
+    void updateSearchRequest();
+    void processReply(QPlaceReply *reply);
 
     // From QAbstractListModel
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
-        TextPredictionRole = Qt::UserRole + 500
+        TextPredictionRole = Qt::UserRole
     };
 
-    QString searchTerm() const;
-    void setSearchTerm(const QString &searchTerm);
-    QDeclarativeGeoBoundingArea *searchArea() const;
-    void setSearchArea(QDeclarativeGeoBoundingArea *area);
-    int offset() const;
-    void setOffset(const int &offset);
-    int limit() const;
-    void setLimit(const int &limit);
-
-    QStringList predictions() const;
-
-    Q_INVOKABLE void executeQuery();
-    Q_INVOKABLE void cancelRequest();
-
-    void classBegin();
-    void componentComplete();
-
 signals:
-    void pluginChanged();
-
-    void queryFinished(const int &error);
-
     void searchTermChanged();
-    void searchAreaChanged();
-    void offsetChanged();
-    void limitChanged();
     void predictionsChanged();
 
-private slots:
-    void replyFinished();
-    void replyError(QPlaceReply::Error error, const QString &errorString);
+protected:
+    QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
 
 private:
-    void resetModel();
-    void cancelPreviousRequest();
-    void connectNewResponse(QPlaceTextPredictionReply *newResponse);
-
-private:
-    QDeclarativeGeoBoundingArea *m_searchArea;
-    QPlaceSearchRequest m_queryParameters;
-
-    QPlaceTextPredictionReply *m_response;
-
-    QDeclarativeGeoServiceProvider *m_plugin;
-    bool m_complete;
+    QStringList m_predictions;
 };
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeTextPredictionModel));
 
 #endif // QDECLARATIVETEXTPREDICTIONMODEL_P_H

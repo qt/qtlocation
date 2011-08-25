@@ -59,8 +59,51 @@ QT_USE_NAMESPACE
 
     \sa {QPlaceManager}
 */
+
+/*!
+    \qmlproperty Plugin TextPredictionModel::plugin
+
+    This property holds the provider Plugin used by this model.
+*/
+
+/*!
+    \qmlproperty GeoCoordinate TextPredictionModel::searchArea
+
+    This element holds the search area.
+
+    Note: this property's changed() signal is currently emitted only if the whole element changes,
+    not if only the contents of the element change.
+*/
+
+/*!
+    \qmlproperty int TextPredictionModel::offset
+
+    This element holds offset for items that would be returned.  Less then 0 means that it is
+    undefined.
+*/
+
+/*!
+    \qmlproperty int TextPredictionModel::limit
+
+    This element holds limit of items that would be returned. Less then -1 means that limit is
+    undefined.
+*/
+
+/*!
+    \qmlmethod TextPredictionModel::executeQuery()
+
+    Parameter searchTerm should contain string for which suggestion search should be started.
+    Updates the items represented by the model from the underlying provider.
+*/
+
+/*!
+    \qmlmethod TextPredictionModel::cancelRequest()
+
+    Cancels ongoing request.
+*/
+
 QDeclarativeTextPredictionModel::QDeclarativeTextPredictionModel(QObject *parent)
-:   QAbstractListModel(parent), m_response(0), m_plugin(0), m_complete(false)
+:   QDeclarativeSearchModelBase(parent)
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
@@ -73,38 +116,23 @@ QDeclarativeTextPredictionModel::~QDeclarativeTextPredictionModel()
 }
 
 /*!
-    \qmlproperty Plugin MediaModel::plugin
+    \qmlproperty string TextPredictionModel::searchTerm
 
-    This property holds the provider Plugin used by this model.
+    This element holds search term used in query.
 */
-void QDeclarativeTextPredictionModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
+QString QDeclarativeTextPredictionModel::searchTerm() const
 {
-    if (m_plugin == plugin)
-        return;
-    reset(); // reset the model
-    m_plugin = plugin;
-    if (m_complete)
-        emit pluginChanged();
-    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support places.");
-        return;
-    }
+    return m_request.searchTerm();
 }
 
-QDeclarativeGeoServiceProvider* QDeclarativeTextPredictionModel::plugin() const
+void QDeclarativeTextPredictionModel::setSearchTerm(const QString &searchTerm)
 {
-    return m_plugin;
+    if (m_request.searchTerm() == searchTerm)
+        return;
+
+    m_request.setSearchTerm(searchTerm);
+    emit searchTermChanged();
 }
-
-/*!
-    \qmlsignal TextPredictionModel::queryFinished(const int &error)
-
-    This handler is called when the request processing is finished.
-    0 means that no error occurs during processing and new list is
-    available.
-*/
 
 /*!
     \qmlproperty QStringList TextPredictionModel::predictions
@@ -113,209 +141,52 @@ QDeclarativeGeoServiceProvider* QDeclarativeTextPredictionModel::plugin() const
 */
 QStringList QDeclarativeTextPredictionModel::predictions() const
 {
-    if (m_response) {
-        return m_response->textPredictions();
-    } else {
-        return QStringList();
-    }
+    return m_predictions;
+}
+
+void QDeclarativeTextPredictionModel::clearData()
+{
+    m_predictions.clear();
+}
+
+void QDeclarativeTextPredictionModel::updateSearchRequest()
+{
+    QDeclarativeSearchModelBase::updateSearchRequest();
+}
+
+void QDeclarativeTextPredictionModel::processReply(QPlaceReply *reply)
+{
+    QPlaceTextPredictionReply *predictionReply = qobject_cast<QPlaceTextPredictionReply *>(reply);
+    m_predictions = predictionReply->textPredictions();
+    emit predictionsChanged();
 }
 
 int QDeclarativeTextPredictionModel::rowCount(const QModelIndex& parent) const
 {
-    Q_UNUSED(parent);
-    if (m_response) {
-        return m_response->textPredictions().count();
-    } else {
-        return 0;
-    }
+    Q_UNUSED(parent)
+
+    return m_predictions.count();
 }
 
-// Returns the stored under the given role for the item referred to by the index.
 QVariant QDeclarativeTextPredictionModel::data(const QModelIndex& index, int role) const
 {
-    QString result;
-    if (m_response && m_response->textPredictions().count() > index.row()) {
-       result = m_response->textPredictions()[index.row()];
-    }
+    if (!index.isValid())
+        return QVariant();
+
+    if (index.row() >= rowCount(index.parent()) || index.row() < 0)
+        return QVariant();
 
     switch (role) {
-        case Qt::DisplayRole:
-        case TextPredictionRole:
-            return result;
-        }
+    case Qt::DisplayRole:
+    case TextPredictionRole:
+        return m_predictions.at(index.row());
+    }
+
     return QVariant();
 }
 
-/*!
-    \qmlproperty string TextPredictionModel::searchTerm
-
-    This element holds search term used in query.
-*/
-
-QString QDeclarativeTextPredictionModel::searchTerm() const
+QPlaceReply *QDeclarativeTextPredictionModel::sendQuery(QPlaceManager *manager,
+                                                        const QPlaceSearchRequest &request)
 {
-    return m_queryParameters.searchTerm();
-}
-
-void QDeclarativeTextPredictionModel::setSearchTerm(const QString &searchTerm)
-{
-    if (m_queryParameters.searchTerm() == searchTerm) {
-        return;
-    }
-    m_queryParameters.setSearchTerm(searchTerm);
-    emit searchTermChanged();
-}
-
-/*!
-    \qmlproperty GeoCoordinate TextPredictionModel::searchArea
-
-    This element holds the search area.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-QDeclarativeGeoBoundingArea *QDeclarativeTextPredictionModel::searchArea() const
-{
-    return m_searchArea;
-}
-
-void QDeclarativeTextPredictionModel::setSearchArea(QDeclarativeGeoBoundingArea *searchArea)
-{
-    if (m_searchArea == searchArea)
-        return;
-    m_searchArea = searchArea;
-    emit searchAreaChanged();
-}
-
-/*!
-    \qmlproperty int TextPredictionModel::offset
-
-    This element holds offset for items that would be returned.
-    Less then 0 means that it is undefined.
-*/
-int QDeclarativeTextPredictionModel::offset() const
-{
-    return m_queryParameters.offset();
-}
-
-/*!
-    Sets offset.
-*/
-void QDeclarativeTextPredictionModel::setOffset(const int &offsetValue)
-{
-    if (m_queryParameters.offset() == offsetValue){
-        return;
-    }
-    m_queryParameters.setOffset(offsetValue);
-    emit offsetChanged();
-}
-
-/*!
-    \qmlproperty int TextPredictionModel::limit
-
-    This element holds limit of items that would be returned.
-    Less then -1 means that limit is undefined.
-*/
-int QDeclarativeTextPredictionModel::limit() const
-{
-    return m_queryParameters.limit();
-}
-
-void QDeclarativeTextPredictionModel::setLimit(const int &limit)
-{
-    if (m_queryParameters.limit() == limit){
-        return;
-    }
-    m_queryParameters.setLimit(limit);
-    emit limitChanged();
-}
-
-/*!
-    \qmlmethod TextPredictionModel::executeQuery()
-    Parameter searchTerm should contain string for which suggestion search should be
-    started.
-    Updates the items represented by the model from the underlying proivider.
-*/
-void QDeclarativeTextPredictionModel::executeQuery()
-{
-    if (!m_plugin) {
-        qmlInfo(this) << "plugin not set.";
-        return;
-    }
-
-    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    if (!serviceProvider)
-        return;
-
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager) {
-        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
-        return;
-    }
-
-    cancelPreviousRequest();
-
-    m_queryParameters.setSearchArea(m_searchArea->area());
-    connectNewResponse(placeManager->textPredictions(m_queryParameters));
-}
-
-/*!
-    \qmlmethod TextPredictionModel::cancelRequest()
-    Cancels ongoing request.
-*/
-void QDeclarativeTextPredictionModel::cancelRequest()
-{
-    cancelPreviousRequest();
-}
-
-void QDeclarativeTextPredictionModel::replyFinished()
-{
-    if (m_response && m_response->textPredictions().count()) {
-        beginResetModel();
-        endResetModel();
-        emit predictionsChanged();
-    }
-    emit queryFinished(0);
-}
-
-void QDeclarativeTextPredictionModel::replyError(QPlaceReply::Error error,
-                                                 const QString &errorString)
-{
-    Q_UNUSED(error);
-    Q_UNUSED(errorString);
-
-    emit queryFinished(-1);
-}
-
-void QDeclarativeTextPredictionModel::cancelPreviousRequest()
-{
-    if (m_response) {
-        if (!m_response->isFinished()) {
-            m_response->abort();
-        }
-        m_response->deleteLater();
-        m_response = NULL;
-    }
-}
-
-void QDeclarativeTextPredictionModel::connectNewResponse(QPlaceTextPredictionReply *newResponse)
-{
-    if (newResponse) {
-        m_response = newResponse;
-        m_response->setParent(this);
-        connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
-        connect(m_response, SIGNAL(error(QPlaceReply::Error,QString)),
-                this, SLOT(replyError(QPlaceReply::Error,QString)));
-    } else {
-        emit queryFinished(-1);
-    }
-}
-
-void QDeclarativeTextPredictionModel::classBegin()
-{
-}
-
-void QDeclarativeTextPredictionModel::componentComplete()
-{
-    m_complete = true;
+    return manager->textPredictions(request);
 }
