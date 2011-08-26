@@ -54,10 +54,10 @@
 //
 
 #include "qplacecontent.h"
+#include "qplacesupplier.h"
 
 #include <QSharedData>
 #include <QString>
-
 
 QT_BEGIN_NAMESPACE
 
@@ -92,6 +92,8 @@ public:
 
     /* Helper functions for C++ protection rules */
     static const QSharedDataPointer<QPlaceContentPrivate>& extract_d(const QPlaceContent& other) {return other.d_ptr;}
+
+    QPlaceSupplier supplier;
 };
 
 #if defined(Q_CC_MWERKS)

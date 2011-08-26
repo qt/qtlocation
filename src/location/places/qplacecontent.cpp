@@ -73,6 +73,16 @@ bool QPlaceContent::operator!=(const QPlaceContent &other) const
     return !(*this == other);
 }
 
+QPlaceSupplier QPlaceContent::supplier() const
+{
+    return d_ptr->supplier;
+}
+
+void QPlaceContent::setSupplier(const QPlaceSupplier &supplier)
+{
+    d_ptr->supplier = supplier;
+}
+
 /*!
     \internal
     Constructs a new content object from the given pointer \a d.

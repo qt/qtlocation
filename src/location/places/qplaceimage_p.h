@@ -67,7 +67,6 @@ public:
     QString id;
     QString metaInfo;
     QString mimeType;
-    QPlaceSupplier supplier;
 };
 
 QT_END_NAMESPACE

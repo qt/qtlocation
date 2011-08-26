@@ -57,6 +57,7 @@ QT_BEGIN_NAMESPACE
 #define Q_DECLARE_CONTENT_COPY_CTOR(Class) \
     Class(const QPlaceContent &other);
 
+class QPlaceSupplier;
 class QPlaceContentPrivate;
 class Q_LOCATION_EXPORT QPlaceContent
 {
@@ -80,6 +81,9 @@ public:
     bool operator!=(const QPlaceContent &other) const;
 
     QPlaceContent::Type type() const;
+
+    QPlaceSupplier supplier() const;
+    void setSupplier(const QPlaceSupplier &supplier);
 
 protected:
     explicit QPlaceContent(QPlaceContentPrivate *d);

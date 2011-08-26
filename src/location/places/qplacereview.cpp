@@ -278,24 +278,6 @@ void QPlaceReview::setReviewId(const QString &data)
 }
 
 /*!
-    Returns supplier. Do not remove it.
-*/
-QPlaceSupplier QPlaceReview::supplier() const
-{
-    Q_D(const QPlaceReview);
-    return d->supplier;
-}
-
-/*!
-    Sets supplier.
-*/
-void QPlaceReview::setSupplier(const QPlaceSupplier &data)
-{
-    Q_D(QPlaceReview);
-    d->supplier = data;
-}
-
-/*!
     Returns review title.
 */
 QString QPlaceReview::title() const

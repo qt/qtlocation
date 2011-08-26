@@ -69,7 +69,6 @@ public:
     int unhelpfulVotings;
     qreal rating;
     QString reviewId;
-    QPlaceSupplier supplier;
     QString title;
     QString userId;
     QString userName;

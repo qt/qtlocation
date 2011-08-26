@@ -197,21 +197,3 @@ void QPlaceImage::setMimeType(const QString &data)
     Q_D(QPlaceImage);
     d->mimeType = data;
 }
-
-/*!
-    Returns supplier.
-*/
-QPlaceSupplier QPlaceImage::supplier() const
-{
-    Q_D(const QPlaceImage);
-    return d->supplier;
-}
-
-/*!
-    Sets supplier.
-*/
-void QPlaceImage::setSupplier(const QPlaceSupplier &data)
-{
-    Q_D(QPlaceImage);
-    d->supplier = data;
-}

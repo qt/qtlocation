@@ -72,8 +72,6 @@ public:
     void setMetaInfo(const QString &data);
     QString mimeType() const;
     void setMimeType(const QString &data);
-    QPlaceSupplier supplier() const;
-    void setSupplier(const QPlaceSupplier &data);
 
 private:
     Q_DECLARE_CONTENT_D_FUNC(QPlaceImage)
