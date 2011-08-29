@@ -58,7 +58,7 @@ JsonDbHandler::JsonDbHandler(QPlaceManagerEngineJsonDb *engine)
     : QObject(engine), m_engine(engine)
 {
     m_db = new JsonDbClient(m_engine);
-    if (!m_db->connected()) {
+    if (!m_db->isConnected()) {
         qWarning() << "JsonDb not connected";
     } else  {
         connect(m_db, SIGNAL(response(int, const QVariant&)),
@@ -187,6 +187,6 @@ QGeoPlace JsonDbHandler::convertJsonVariantToPlace(const QVariant &variant)
 
 bool JsonDbHandler::isConnected()
 {
-    return m_db->connected();
+    return m_db->isConnected();
 }
 

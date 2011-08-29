@@ -49,6 +49,7 @@
 #include "qplacejsondetailsparser.h"
 
 #include <QtCore/QUrl>
+#include <QtCore/QTime>
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
@@ -60,7 +61,6 @@
 #include <qplacedescription.h>
 #include <qplacerating.h>
 #include <qgeolocation.h>
-#include <qplaceperiod.h>
 #include <qplacesupplier.h>
 #include "qplacejsoncategoriesparser.h"
 #include "qplacesuppliersrepository.h"
