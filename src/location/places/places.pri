@@ -10,7 +10,6 @@ PUBLIC_HEADERS += \
     places/qplacecontentreply.h \
     places/qplacedescription.h \
     places/qplaceimage.h \
-    places/qplaceperiod.h \
     places/qplacerating.h \
     places/qplacereview.h \
     places/qplacesupplier.h \
@@ -57,7 +56,6 @@ SOURCES += \
     places/qplacedescription.cpp \
 #result
     places/qplaceimage.cpp \
-    places/qplaceperiod.cpp \
     places/qplacerating.cpp \
     places/qplacereview.cpp \
     places/qplacesavereply.cpp \
