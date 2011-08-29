@@ -74,4 +74,5 @@ SOURCES += \
 #manager and engine
     places/qplacemanager.cpp \
     places/qplacemanagerengine.cpp \
+    places/qplacemanagerenginefactory.cpp \
     places/qplacemanager_p.cpp

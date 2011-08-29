@@ -40,12 +40,11 @@
 ****************************************************************************/
 
 #include "qplacemanagerenginefactory.h"
-#include <QList>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
-    \class QP
+    \class QPlaceManagerEngineFactory
     \brief The QPlaceManagerEngineFactory class provides the interface for
     plugins that implement QPlaceManagerEngine functionality.
 
@@ -77,8 +76,9 @@ QPlaceManagerEngineFactory::~QPlaceManagerEngineFactory()
 */
 
 /*!
-    \fn QPlaceManagerEngineFactory::engine(const QMap<QString, QString>& parameters, QPlaceManager::Error *error,
-                                                QString *errorString)
+    \fn QPlaceManagerEngineFactory::engine(const QMap<QString, QString>& parameters,
+                                           QPlaceManager::Error *error,
+                                           QString *errorString)
 
     This function is called by the QPlaceManager implementation to
     create an instance of the engine provided by this factory.
@@ -90,6 +90,6 @@ QPlaceManagerEngineFactory::~QPlaceManagerEngineFactory()
     invalid QPlaceManager in return.  Errors are stored in \a error and \a errorString.
  */
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 

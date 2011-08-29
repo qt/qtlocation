@@ -42,10 +42,7 @@
 #ifndef QPLACEMANAGERENGINEFACTORY_H
 #define QPLACEMANAGERENGINEFACTORY_H
 
-#include "qmobilityglobal.h"
-#include "qplacemanager.h"
-#include "qplacemanagerengine.h"
-#include <QList>
+#include <QtLocation/QPlaceManager>
 
 QT_BEGIN_NAMESPACE
 
@@ -53,7 +50,7 @@ class QPlaceManagerEngine;
 class Q_LOCATION_EXPORT QPlaceManagerEngineFactory
 {
 public:
-    virtual ~QPlaceManagerEngineFactory(){}
+    virtual ~QPlaceManagerEngineFactory();
     virtual QPlaceManagerEngine *engine(const QMap<QString, QString> &parameters,
                                            QPlaceManager::Error *error,
                                            QString *errorString) = 0;
