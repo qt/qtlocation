@@ -119,7 +119,18 @@ Rectangle {
 
                 Text { text: '<b>Tags: </b> ' + place.tags; font.pixelSize: 16 }
                 //Text { text: '<b>Suppliers: </b> ' + JSON.stringify(place.suppliers); font.pixelSize: 16 }
-                Text { id: detailsFetched; text:'<b>Details Fetched: </b> ' + place.detailsFetched; font.pixelSize: 16 }
+                Text { id: status;
+                       text: {
+                            var str='<b>Status: </b> ';
+                            switch (place.status) {
+                                 case (Place.Ready):
+                                        return str + 'Ready';
+                                 case (Place.Fetching):
+                                   return str + 'Fetching';
+                             }
+                        }
+                       font.pixelSize: 16
+                }
                 Text { id: paymentMethods; font.pixelSize: 16 }
             }
 

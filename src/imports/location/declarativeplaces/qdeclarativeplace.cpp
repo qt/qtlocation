@@ -47,6 +47,8 @@
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceDetailsReply>
+#include <QtLocation/QPlaceReply>
+#include <QtLocation/QPlaceSaveReply>
 
 QT_USE_NAMESPACE
 
@@ -63,14 +65,15 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
-:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_detailsReply(0), m_plugin(0),
-    m_complete(false), m_extendedAttributes(new QDeclarativePropertyMap())
+:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_extendedAttributes(new QDeclarativePropertyMap()),
+    m_reply(0), m_plugin(0),m_complete(false), m_status(QDeclarativePlace::Ready)
 {
 }
 
 QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src, QObject *parent)
-:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_src(src), m_detailsReply(0), m_plugin(0),
-    m_complete(false), m_extendedAttributes(new QDeclarativePropertyMap())
+:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_extendedAttributes(new QDeclarativePropertyMap()),
+    m_src(src), m_reply(0), m_plugin(0), m_complete(false),
+    m_status(QDeclarativePlace::Ready)
 {
     synchronizeCategories();
     synchronizeDescriptions();
@@ -360,53 +363,33 @@ bool QDeclarativePlace::detailsFetched() const
 }
 
 /*!
-    \qmlproperty bool Place::fetchingDetails
+    \qmlproperty enumeration Place::status
 
-    This property holds a boolean indicating whether the details are currently being fetched.
+    This property holds the status of the place.  It can be one of:
+    \list
+    \o Place.Ready - No Error occurred during the last operation,
+                     further operations may be performed on the place.
+    \o Place.Saving - The place is currently being saved, no other operations
+                      may be perfomed until complete.
+    \o Place.Fetching - The place details are currently being fetched, no
+                        other operations may be performed until complete.
+    \o Place.Removing - The place is currently being removed, no other
+                        operations can be performed until complete.
+    \o Place.Error - An error occurred during the last operation,
+                     further operations can still be performed on the place.
+    \endlist
 */
-void QDeclarativePlace::setFetchingDetails(bool fetching)
+void QDeclarativePlace::setStatus(Status status)
 {
-    if (fetching && m_detailsReply)
-        return;
-
-    if (!fetching && !m_detailsReply)
-        return;
-
-    if (!fetching && m_detailsReply) {
-        m_detailsReply->abort();
-        m_detailsReply->deleteLater();
-        m_detailsReply = 0;
-        emit fetchingDetailsChanged();
-        return;
+    if (m_status != status) {
+        m_status = status;
+        emit statusChanged();
     }
-
-    if (!m_plugin) {
-        qmlInfo(this) << "plugin not set.";
-        return;
-    }
-
-    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    if (!serviceProvider)
-        return;
-
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager) {
-        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
-        return;
-    }
-
-    m_detailsReply = placeManager->getPlaceDetails(placeId());
-
-    connect(m_detailsReply, SIGNAL(finished()), this, SLOT(detailsFetchedFinished()));
-    connect(m_detailsReply, SIGNAL(error(QPlaceReply::Error)),
-            this, SLOT(detailsError(QPlaceReply::Error)));
-
-    emit fetchingDetailsChanged();
 }
 
-bool QDeclarativePlace::fetchingDetails() const
+QDeclarativePlace::Status QDeclarativePlace::status() const
 {
-    return m_detailsReply;
+    return m_status;
 }
 
 /*!
@@ -427,59 +410,109 @@ QStringList QDeclarativePlace::feeds() const
     return m_src.feeds();
 }
 
-void QDeclarativePlace::detailsFetchedFinished()
+void QDeclarativePlace::finished()
 {
-    if (!m_detailsReply)
+    if (!m_reply)
         return;
 
-    QGeoPlace details = m_detailsReply->result();
+    if (m_reply->error() == QPlaceReply::NoError) {
+        switch (m_reply->type()) {
+        case (QPlaceReply::SaveReply) : {
+                QPlaceSaveReply *saveReply = qobject_cast<QPlaceSaveReply *>(m_reply);
+                setPlaceId(saveReply->placeId());
+                break;
+            }
+        case (QPlaceReply::PlaceDetailsReply): {
+                QPlaceDetailsReply *detailsReply = qobject_cast<QPlaceDetailsReply *>(m_reply);
+                setPlace(detailsReply->result());
+                break;
+            }
+        default: //must've been a removal operation
+            setPlaceId(QString());
+        }
 
-    setPlace(details);
+        m_errorString.clear();
 
-    m_detailsReply->deleteLater();
-    m_detailsReply = 0;
-    emit fetchingDetailsChanged();
-}
+        m_reply->deleteLater();
+        m_reply = 0;
 
-void QDeclarativePlace::detailsError(QPlaceReply::Error error)
-{
-    Q_UNUSED(error);
+        setStatus(QDeclarativePlace::Ready);
+    } else {
+        m_errorString = m_reply->errorString();
 
-    m_detailsReply->deleteLater();
-    m_detailsReply = 0;
-    emit fetchingDetailsChanged();
+        m_reply->deleteLater();
+        m_reply = 0;
+
+        setStatus(QDeclarativePlace::Error);
+    }
 }
 
 /*!
     \qmlmethod void Place::getDetails()
 
     This methods starts fetching place details.
-
-    \sa Place::fetchingDetails
 */
 void QDeclarativePlace::getDetails()
 {
-    setFetchingDetails(true);
+    QPlaceManager *placeManager = manager();
+    if (!placeManager)
+        return;
+
+    m_reply = placeManager->getPlaceDetails(placeId());
+    connect(m_reply, SIGNAL(finished()), this, SLOT(finished()));
+    setStatus(QDeclarativePlace::Fetching);
 }
 
 void QDeclarativePlace::ratePlace(qreal rating)
 {
-    if (!m_plugin) {
-        qmlInfo(this) << tr("plugin not set.");
+    QPlaceManager *placeManager = manager();
+    if (!placeManager)
         return;
-    }
-
-    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    if (!serviceProvider)
-        return;
-
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager) {
-        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
-        return;
-    }
 
     placeManager->postRating(placeId(), rating);
+}
+
+/*!
+    \qmlmethod void Place::savePlace()
+
+    This method performs a save operation on the place.
+*/
+void QDeclarativePlace::savePlace()
+{
+    QPlaceManager *placeManager = manager();
+    if (!placeManager)
+        return;
+
+    m_reply = placeManager->savePlace(place());
+    connect(m_reply, SIGNAL(finished()), this, SLOT(finished()));
+    setStatus(QDeclarativePlace::Saving);
+}
+
+/*!
+    \qmlmethod void Place::removePlace()
+
+    This method performs a remove operation on the place.
+*/
+void QDeclarativePlace::removePlace()
+{
+    QPlaceManager *placeManager = manager();
+    if (!placeManager)
+        return;
+
+    m_reply = placeManager->removePlace(place());
+    connect(m_reply, SIGNAL(finished()), this, SLOT(finished()));
+    setStatus(QDeclarativePlace::Removing);
+}
+
+/*!
+    \qmlmethod string Place::errorString()
+
+    Returns a string description of the error of the last operation.
+    If the last operation completed successfully then the string is empty.
+*/
+QString QDeclarativePlace::errorString() const
+{
+    return m_errorString;
 }
 
 /*!
@@ -805,4 +838,39 @@ void QDeclarativePlace::synchronizeExtendedAttributes()
         m_extendedAttributes->insert(attribIter.key(),
             qVariantFromValue(new QDeclarativePlaceAttribute(attribIter.value())));
     }
+}
+
+/*
+    Helper function to return the manager, this manager is intended to be used
+    to perform the next operation.  If a an operation is currently underway
+    then return a null pointer.
+*/
+QPlaceManager *QDeclarativePlace::manager()
+{
+    if (m_status != QDeclarativePlace::Ready && m_status != QDeclarativePlace::Error)
+        return 0;
+
+    if (m_reply) {
+        m_reply->abort();
+        m_reply->deleteLater();
+        m_reply = 0;
+    }
+
+    if (!m_plugin) {
+           qmlInfo(this) << tr("Plugin not assigned to place");
+           return 0;
+    }
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return 0;
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+
+    if (!placeManager) {
+        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        return 0;
+    }
+
+    return placeManager;
 }

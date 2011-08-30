@@ -56,7 +56,9 @@
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceDetailsReply;
+class QPlaceReply;
+
+class QPlaceManager;
 
 class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
 {
@@ -75,13 +77,15 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged);
     Q_PROPERTY(QStringList tags READ tags WRITE setTags NOTIFY tagsChanged);
-    Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
-    Q_PROPERTY(bool fetchingDetails READ fetchingDetails WRITE setFetchingDetails NOTIFY fetchingDetailsChanged)
+
     Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged)
     Q_PROPERTY(QDeclarativePlaceImageModel *imageModel READ imageModel NOTIFY imageModelChanged)
     Q_PROPERTY(QDeclarativePropertyMap *extendedAttributes READ extendedAttributes WRITE setExtendedAttributes NOTIFY extendedAttributesChanged);
+    Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged);
 
     Q_INTERFACES(QDeclarativeParserStatus)
+
     Q_PROPERTY(QString primaryPhone READ primaryPhone WRITE setPrimaryPhone NOTIFY primaryPhoneChanged);
     Q_PROPERTY(QString primaryFax READ primaryFax WRITE setPrimaryFax NOTIFY primaryFaxChanged);
     Q_PROPERTY(QString primaryEmail READ primaryEmail WRITE setPrimaryEmail NOTIFY primaryEmailChanged);
@@ -92,7 +96,9 @@ public:
     explicit QDeclarativePlace(const QGeoPlace &src, QObject* parent = 0);
     ~QDeclarativePlace();
 
-    // From QDeclarativeParserStatus
+    enum Status {Ready, Saving, Fetching, Removing, Error};
+
+    //From QDeclarativeParserStatus
     virtual void classBegin() {}
     virtual void componentComplete();
 
@@ -139,11 +145,15 @@ public:
     void setTags(const QStringList &tags);
     bool detailsFetched() const;
     void setDetailsFetched(bool fetched);
-    bool fetchingDetails() const;
-    void setFetchingDetails(bool fetching);
+
+    Status status() const;
+    void setStatus(Status status);
 
     Q_INVOKABLE void getDetails();
     Q_INVOKABLE void ratePlace(qreal rating);
+    Q_INVOKABLE void savePlace();
+    Q_INVOKABLE void removePlace();
+    Q_INVOKABLE QString errorString() const;
 
     QString primaryPhone() const;
     void setPrimaryPhone(const QString &phone);
@@ -184,10 +194,10 @@ signals:
     void primaryUrlChanged();
 
     void extendedAttributesChanged();
+    void statusChanged();
 
 private slots:
-    void detailsFetchedFinished();
-    void detailsError(QPlaceReply::Error error);
+    void finished();
 
 private:
     void synchronizeCategories();
@@ -196,6 +206,8 @@ private:
     void synchronizeExtendedAttributes();
 
 private:
+    QPlaceManager *manager();
+
     QList<QDeclarativeCategory*> m_categories;
     QList<QDeclarativeDescription*> m_descriptions;
     QDeclarativeGeoLocation m_location;
@@ -207,10 +219,13 @@ private:
 
     QGeoPlace m_src;
 
-    QPlaceDetailsReply *m_detailsReply;
+    QPlaceReply *m_reply;
 
     QDeclarativeGeoServiceProvider *m_plugin;
     bool m_complete;
+
+    Status m_status;
+    QString m_errorString;
 };
 
 QT_END_NAMESPACE
