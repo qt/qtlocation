@@ -56,21 +56,14 @@ public:
     explicit QDeclarativePlaceImageModel(QObject* parent = 0);
     ~QDeclarativePlaceImageModel();
 
-    void clearData();
-    void processContent(const QPlaceContent &content, int index);
-
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
-        UrlRole = Qt::UserRole,
+        UrlRole = UserRole,
         ThumbnailUrlRole,
         ImageIdRole,
         MetaInfoRole,
-        MimeTypeRole,
-        SupplierRole
+        MimeTypeRole
     };
-
-private:
-    QMap<QString, QDeclarativeSupplier *> m_suppliers;
 };
 
 QT_END_NAMESPACE

@@ -139,17 +139,14 @@ void QDeclarativePlaceContentModel::clear()
 
 void QDeclarativePlaceContentModel::clearData()
 {
+    qDeleteAll(m_suppliers);
+    m_suppliers.clear();
+
     m_contentCount = -1;
     m_content.clear();
 
     delete m_reply;
     m_reply = 0;
-}
-
-void QDeclarativePlaceContentModel::processContent(const QPlaceContent &content, int index)
-{
-    Q_UNUSED(content);
-    Q_UNUSED(index);
 }
 
 int QDeclarativePlaceContentModel::rowCount(const QModelIndex &parent) const
@@ -158,6 +155,24 @@ int QDeclarativePlaceContentModel::rowCount(const QModelIndex &parent) const
         return 0;
 
     return m_content.count();
+}
+
+QVariant QDeclarativePlaceContentModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid())
+        return QVariant();
+
+    if (index.row() >= rowCount(index.parent()) || index.row() < 0)
+        return QVariant();
+
+    const QPlaceContent &content = m_content.value(index.row());
+
+    switch (role) {
+    case SupplierRole:
+        return QVariant::fromValue(static_cast<QObject *>(m_suppliers.value(content.supplier().supplierId())));
+    default:
+        return QVariant();
+    }
 }
 
 bool QDeclarativePlaceContentModel::canFetchMore(const QModelIndex &parent) const
@@ -266,7 +281,10 @@ void QDeclarativePlaceContentModel::fetchFinished()
                     const QPlaceContent &content = contents.value(i);
 
                     m_content.insert(i, content);
-                    processContent(content, i);
+                    if (!m_suppliers.contains(content.supplier().supplierId())) {
+                        m_suppliers.insert(content.supplier().supplierId(),
+                                           new QDeclarativeSupplier(content.supplier(), this));
+                    }
                 }
                 endInsertRows();
                 startIndex = -1;
@@ -286,7 +304,10 @@ void QDeclarativePlaceContentModel::fetchFinished()
                 for (int i = startIndex; i <= currentIndex; ++i) {
                     const QPlaceContent &content = contents.value(i);
                     m_content.insert(i, content);
-                    processContent(content, i);
+                    if (!m_suppliers.contains(content.supplier().supplierId())) {
+                        m_suppliers.insert(content.supplier().supplierId(),
+                                           new QDeclarativeSupplier(content.supplier(), this));
+                    }
                 }
                 emit dataChanged(index(startIndex),index(currentIndex));
                 startIndex = -1;

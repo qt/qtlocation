@@ -130,25 +130,6 @@ QDeclarativePlaceImageModel::~QDeclarativePlaceImageModel()
     qDeleteAll(m_suppliers);
 }
 
-void QDeclarativePlaceImageModel::clearData()
-{
-    qDeleteAll(m_suppliers);
-    m_suppliers.clear();
-    QDeclarativePlaceContentModel::clearData();
-}
-
-void QDeclarativePlaceImageModel::processContent(const QPlaceContent &content, int index)
-{
-    Q_UNUSED(index);
-
-    QPlaceImage image(content);
-
-    if (!m_suppliers.contains(image.supplier().supplierId())) {
-        m_suppliers.insert(image.supplier().supplierId(),
-                           new QDeclarativeSupplier(image.supplier(), this));
-    }
-}
-
 QVariant QDeclarativePlaceImageModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
@@ -170,11 +151,9 @@ QVariant QDeclarativePlaceImageModel::data(const QModelIndex &index, int role) c
         return image.metaInfo();
     case MimeTypeRole:
         return image.mimeType();
-    case SupplierRole:
-        return QVariant::fromValue(static_cast<QObject *>(m_suppliers.value(image.supplier().supplierId())));
-    default:
-        return QVariant();
     }
+
+    return QDeclarativePlaceContentModel::data(index, role);
 }
 
 QT_END_NAMESPACE

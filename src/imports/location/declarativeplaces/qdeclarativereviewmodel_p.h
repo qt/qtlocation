@@ -46,8 +46,6 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeSupplier;
-
 class QDeclarativeReviewModel : public QDeclarativePlaceContentModel
 {
     Q_OBJECT
@@ -56,12 +54,9 @@ public:
     explicit QDeclarativeReviewModel(QObject* parent = 0);
     ~QDeclarativeReviewModel();
 
-    void clearData();
-    void processContent(const QPlaceContent &content, int index);
-
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
-        DateRole = Qt::UserRole,
+        DateRole = UserRole,
         DescriptionRole,
         LanguageRole,
         HelpfulVotingsRole,
@@ -69,15 +64,11 @@ public:
         RatingRole,
         MediaIdsRole,
         ReviewIdRole,
-        SupplierRole,
         TitleRole,
         UserIdRole,
         UserNameRole,
         OriginatorUrlRole
     };
-
-private:
-    QMap<QString, QDeclarativeSupplier *> m_suppliers;
 };
 
 QT_END_NAMESPACE

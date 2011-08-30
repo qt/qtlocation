@@ -162,25 +162,6 @@ QDeclarativeReviewModel::~QDeclarativeReviewModel()
     qDeleteAll(m_suppliers);
 }
 
-void QDeclarativeReviewModel::clearData()
-{
-    qDeleteAll(m_suppliers);
-    m_suppliers.clear();
-    QDeclarativePlaceContentModel::clearData();
-}
-
-void QDeclarativeReviewModel::processContent(const QPlaceContent &content, int index)
-{
-    Q_UNUSED(index);
-
-    QPlaceReview review(content);
-
-    if (!m_suppliers.contains(review.supplier().supplierId())) {
-        m_suppliers.insert(review.supplier().supplierId(),
-                           new QDeclarativeSupplier(review.supplier(), this));
-    }
-}
-
 QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
@@ -208,8 +189,6 @@ QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
         return review.mediaIds();
     case ReviewIdRole:
         return review.reviewId();
-    case SupplierRole:
-        return QVariant::fromValue(static_cast<QObject *>(m_suppliers.value(review.supplier().supplierId())));
     case TitleRole:
         return review.title();
     case UserIdRole:
@@ -218,9 +197,9 @@ QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
         return review.userName();
     case OriginatorUrlRole:
         return review.originatorUrl();
-    default:
-        return QVariant();
     }
+
+    return QDeclarativePlaceContentModel::data(index, role);
 }
 
 QT_END_NAMESPACE

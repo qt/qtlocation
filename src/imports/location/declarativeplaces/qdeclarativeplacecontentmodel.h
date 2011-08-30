@@ -52,6 +52,7 @@ QT_BEGIN_NAMESPACE
 class QDeclarativePlace;
 class QDeclarativeGeoServiceProvider;
 class QGeoServiceProvider;
+class QDeclarativeSupplier;
 
 class QDeclarativePlaceContentModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
@@ -76,11 +77,15 @@ public:
     int totalCount() const;
 
     void clear();
-    virtual void clearData();
-    virtual void processContent(const QPlaceContent &content, int index);
+    void clearData();
 
     // from QAbstractListModel
     int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    enum Roles {
+        SupplierRole = Qt::UserRole,
+        UserRole
+    };
 
     bool canFetchMore(const QModelIndex &parent) const;
     void fetchMore(const QModelIndex &parent);
@@ -99,6 +104,7 @@ private slots:
 
 protected:
     QMap<int, QPlaceContent> m_content;
+    QMap<QString, QDeclarativeSupplier *> m_suppliers;
 
 private:
     QDeclarativePlace *m_place;
