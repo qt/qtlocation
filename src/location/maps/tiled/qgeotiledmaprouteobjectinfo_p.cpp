@@ -111,7 +111,6 @@ void QGeoTiledMapRouteObjectInfo::regenPath()
 
     if (path.size() > 0) {
         double oldx = 0.0;
-        double oldy = 0.0;
 
         for (int i = 0; i < path.size(); ++i) {
             double x = path.at(i).longitude() * 3600.0;
@@ -131,7 +130,6 @@ void QGeoTiledMapRouteObjectInfo::regenPath()
             }
 
             oldx = x;
-            oldy = y;
         }
     }
 

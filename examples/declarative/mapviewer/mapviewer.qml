@@ -42,10 +42,9 @@ import QtQuick 2.0
 import Qt.location 5.0
 import "common" as Common
 
-FocusScope {
+Item {
     anchors.fill: parent
     id: page
-    focus: true
 
     Rectangle {
         id: backgroundRect
@@ -89,8 +88,7 @@ FocusScope {
         orientation: ListView.Vertical
         z: mainMenu.z - 1
         Component.onCompleted: {
-            setModel(["Reverse geocode", "Geocode","Search", "Route"])
-            disableItem(2)
+            setModel(["Reverse geocode", "Geocode", "Route"])
         }
         itemHeight: 30;
         itemWidth: mainMenu.itemWidth
@@ -108,10 +106,6 @@ FocusScope {
                     break;
                 }
                 case 2: {
-                    page.state = "Search"
-                    break;
-                }
-                case 3: {
                     page.state = "Route"
                     break;
                 }
@@ -274,6 +268,10 @@ FocusScope {
                 PropertyChanges { target: messageDialog; text: "Unable to find a route for the given points"}
             },
             State{
+                name: "Coordinates"
+                PropertyChanges { target: messageDialog; title: "Coordinates" }
+            },
+            State{
                 name: "LocationInfo"
                 PropertyChanges { target: messageDialog; title: "Location" }
                 PropertyChanges { target: messageDialog; text: geocodeMessage() }
@@ -325,9 +323,9 @@ FocusScope {
                         messageDialog.state = "AmbiguousGeocode"
                         messageDialog.text = count + " results found for the " + st + " point, please specify location"
                     }
-                    console.log("    state = " + messageDialog.state)
                     success = 0
                     page.state = "Message"
+                    map.routeModel.clearAll()
                 }
             }
         }
@@ -370,27 +368,16 @@ FocusScope {
             map.routeQuery.addWaypoint(endCoordinate)
             map.routeQuery.travelModes = routeDialog.travelMode
             map.routeQuery.routeOptimizations = routeDialog.routeOptimization
+
+            for (var i=0; i<9; i++) {
+                map.routeQuery.setFeatureWeight(i, 0)
+            }
+
+            for (var i=0; i<routeDialog.features.length; i++) {
+                map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
+            }
+
             map.routeModel.update();
-        }
-    }
-
-//Search Dialog
-    Dialog {
-        id: searchDialog
-        title: "Search"
-        z: mainMenu.z + 1
-
-        onGoButtonClicked: {
-            page.state = ""
-//            searchModel.searchString = dialogModel.get(0).inputText
-//            searchModel.update();
-        }
-        Component.onCompleted: {
-            var obj = [["Please enter thing to search:","53 Brandl St, Eight Mile Plains, Australia"]]
-            setModel(obj)
-        }
-        onCancelButtonClicked: {
-            page.state = ""
         }
     }
 
@@ -523,28 +510,8 @@ FocusScope {
         }
 
         onCoordinatesCaptured: {
-            messageDialog.title = "Coordinates"
+            messageDialog.state = "Coordinates"
             messageDialog.text = "<b>Latitude:</b> " + roundNumber(latitude,4) + "<br/><b>Longitude:</b> " + roundNumber(longitude,4);
-            page.state = "Message"
-        }
-
-        onShowRouteInfo: {
-            var value = map.routeModel.get(0).travelTime
-            var seconds = value % 60
-            value /= 60
-            value = Math.round(value)
-            var minutes = value % 60
-            value /= 60
-            value = Math.round(value)
-            var hours = value
-            var dist = roundNumber(map.routeModel.get(0).distance,0)
-
-            if (dist>1000) dist = dist/1000 + " km"
-            else dist = dist + " m"
-
-            messageDialog.title = "Route info"
-            messageDialog.text = "<b>Travel time:</b> " + hours + "h:"+ minutes + "m<br/><b>Distance:</b> " + dist;
-
             page.state = "Message"
         }
 
@@ -601,13 +568,6 @@ FocusScope {
         return text
     }
 
-
-    function roundNumber(number, digits) {
-            var multiple = Math.pow(10, digits);
-            var rndedNum = Math.round(number * multiple) / multiple;
-            return rndedNum;
-    }
-
 //=====================States of page=====================
     states: [
        State {
@@ -621,10 +581,6 @@ FocusScope {
         State {
             name: "Route"
             PropertyChanges { target: routeDialog; opacity: 1 }
-        },
-        State {
-            name: "Search"
-            PropertyChanges { target: searchDialog; opacity: 1 }
         },
         State {
             name: "Geocode"
@@ -666,10 +622,6 @@ FocusScope {
         },
         Transition {
             to: "Route"
-            NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
-        },
-        Transition {
-            to: "Search"
             NumberAnimation { properties: "opacity" ; duration: 500; easing.type: Easing.Linear }
         },
         Transition {

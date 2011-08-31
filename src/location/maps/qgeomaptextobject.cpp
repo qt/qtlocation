@@ -241,7 +241,6 @@ QPoint QGeoMapTextObject::offset() const
 
 void QGeoMapTextObject::setOffset(const QPoint &off)
 {
-    QPointF offset = off;
     if (d_ptr->offset != off) {
         d_ptr->offset = off;
         emit offsetChanged(off);

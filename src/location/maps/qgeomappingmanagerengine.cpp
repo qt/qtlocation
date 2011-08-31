@@ -373,7 +373,7 @@ void QGeoMappingManagerEngine::setSupportsTilting(bool supportsTilting)
 bool QGeoMappingManagerEngine::supportsCustomMapObjects() const
 {
     Q_D(const QGeoMappingManagerEngine);
-    return d_ptr->supportsCustomMapObjects;
+    return d->supportsCustomMapObjects;
 }
 
 /*!
@@ -386,7 +386,7 @@ bool QGeoMappingManagerEngine::supportsCustomMapObjects() const
 void QGeoMappingManagerEngine::setSupportsCustomMapObjects(bool supportsCustomMapObjects)
 {
     Q_D(QGeoMappingManagerEngine);
-    d_ptr->supportsCustomMapObjects = supportsCustomMapObjects;
+    d->supportsCustomMapObjects = supportsCustomMapObjects;
 }
 
 /*!
