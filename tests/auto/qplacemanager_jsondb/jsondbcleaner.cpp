@@ -28,32 +28,8 @@ JsonDbCleaner::JsonDbCleaner(QObject *parent)
 
 void JsonDbCleaner::jsonDbResponse(int id, const QVariant& data)
 {
-    if (cleanReqId.contains(id)) {
-        QVariantMap jsonMap  = data.toMap();
-        QList<QVariant> dataList = jsonMap.value("data").toList();
-        if (!dataList.isEmpty()) {
-            bool placesFound = false;
-            foreach (const QVariant &var, dataList) {
-                QVariantMap placeJson = var.toMap();
-                if (placeJson.value(TYPE).toString() == QLatin1String(PLACE_TYPE)) {
-                    placesFound = true;
-                    QVariantMap removeMap;
-                    removeMap.insert(UUID,placeJson.value(UUID).toString());
-                    removeReqId.append(mDb->remove(removeMap));
-                }
-            }
-
-            if (!placesFound)
-                emit dbCleaned();
-        }
-        cleanReqId.removeAll(id);
-    }
-
-    if (removeReqId.contains(id)) {
-        removeReqId.removeAll(id);
-        if (removeReqId.isEmpty())
-            emit dbCleaned();
-    }
+    if (id == cleanReqId)
+        emit dbCleaned();
 }
 
 void JsonDbCleaner::jsonDbError(int id, int code, const QString& data)
@@ -63,7 +39,7 @@ void JsonDbCleaner::jsonDbError(int id, int code, const QString& data)
 
 void JsonDbCleaner::cleanDb()
 {
-    cleanReqId.append(mDb->query(QString("[*]")));
+    cleanReqId = mDb->remove(QString::fromLatin1("[?%1=\"%2\"]").arg(TYPE).arg(PLACE_TYPE));
 }
 
 

@@ -67,8 +67,7 @@ signals:
 
 private:
     JsonDbClient *mDb;
-    QList<int> cleanReqId;
-    QList<int> removeReqId;
+    int cleanReqId;
 };
 
 #endif
