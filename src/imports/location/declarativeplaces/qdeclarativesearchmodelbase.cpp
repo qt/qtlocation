@@ -49,7 +49,8 @@
 #include <QtLocation/QPlaceSearchReply>
 
 QDeclarativeSearchModelBase::QDeclarativeSearchModelBase(QObject *parent)
-:   QAbstractListModel(parent), m_plugin(0), m_reply(0), m_complete(false)
+    :   QAbstractListModel(parent), m_plugin(0), m_reply(0), m_searchArea(0),
+        m_complete(false)
 {
 }
 
@@ -179,7 +180,8 @@ void QDeclarativeSearchModelBase::clearData()
 
 void QDeclarativeSearchModelBase::updateSearchRequest()
 {
-    m_request.setSearchArea(m_searchArea->area());
+    if (m_searchArea)
+        m_request.setSearchArea(m_searchArea->area());
 }
 
 void QDeclarativeSearchModelBase::classBegin()
