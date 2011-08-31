@@ -303,6 +303,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
 
                 QList<QPlaceSearchResult> results;
                 QPlaceSearchResult result;
+                result.setType(QPlaceSearchResult::Place);
                 foreach (const QGeoPlace &place, places) {
                     result.setPlace(place);
                     results.append(result);

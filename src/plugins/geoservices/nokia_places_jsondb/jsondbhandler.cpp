@@ -127,7 +127,7 @@ QVariant JsonDbHandler::convertToJsonVariant(const QPlaceSearchRequest &request)
     QVariantMap queryMap;
     QString queryString;
     if (!request.searchTerm().isEmpty())
-        queryString += QString("[?name =~ \"/%1.*/i\"]").arg(request.searchTerm());
+        queryString += QString::fromLatin1("[?%1=\"%2\"][?%3 =~ \"/%4.*/i\"]").arg(TYPE).arg(PLACE_TYPE).arg(PLACE_NAME).arg(request.searchTerm());
 
     if (queryString.isEmpty()) {
         queryString = QLatin1String("[?_type = \"place\"]");
