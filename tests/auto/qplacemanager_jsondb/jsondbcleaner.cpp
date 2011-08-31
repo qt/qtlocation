@@ -16,7 +16,7 @@ JsonDbCleaner::JsonDbCleaner(QObject *parent)
     : QObject(parent)
 {
     mDb = new JsonDbClient(this);
-    if (!mDb->connected()) {
+    if (!mDb->isConnected()) {
         qWarning() << "JsonDb not connected";
     } else  {
         connect(mDb, SIGNAL(response(int, const QVariant&)),

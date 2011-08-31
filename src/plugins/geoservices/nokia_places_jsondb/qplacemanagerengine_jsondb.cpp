@@ -348,7 +348,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbError(int id, int code, const QStri
         case QPlaceReply::SaveReply: {
                 SaveReply *saveReply = qobject_cast<SaveReply *>(placeReply);
                 switch (code) {
-                case JsonDbError::InvalidRequest:
+                case JsonDbError::MissingObject:
                     error = QPlaceReply::PlaceDoesNotExistError;
                     errorString = tr("Trying to update place which does not exist");
                     break;
