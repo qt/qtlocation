@@ -64,16 +64,12 @@ public:
 };
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
-    : QPlaceRequestPrivate(),
-      dymNumber(0),
-      searchArea(0),
-      scope(QPlaceManager::NoScope)
+:   QPlaceRequestPrivate(), searchArea(0), dymNumber(0), scope(QPlaceManager::NoScope)
 {
 }
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequestPrivate &other)
-    : QPlaceRequestPrivate(other),
-       dymNumber(0)
+:   QPlaceRequestPrivate(other)
 {
     this->searchTerm = other.searchTerm;
     this->categories = other.categories;

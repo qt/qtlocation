@@ -896,8 +896,11 @@ void QPlaceJSonDetailsParser::processAdContentBusinessHours(const QScriptValue &
     }
 }
 
-void QPlaceJSonDetailsParser::processAdContentClosingsNotes(const QScriptValue &content, QGeoPlace*targetPlace)
+void QPlaceJSonDetailsParser::processAdContentClosingsNotes(const QScriptValue &content,
+                                                            QGeoPlace *targetPlace)
 {
+    Q_UNUSED(targetPlace)
+
     QScriptValue value = content.property(place_adcontent_hours_annualclosingsnote_element);
     if (value.isValid()) {
         if (value.isArray()) {
@@ -938,8 +941,11 @@ QString QPlaceJSonDetailsParser::processAdContentClosingsNote(const QScriptValue
     return ret;
 }
 
-void QPlaceJSonDetailsParser::processAdContentOpeningHours(const QScriptValue &content, QGeoPlace*targetPlace)
+void QPlaceJSonDetailsParser::processAdContentOpeningHours(const QScriptValue &content,
+                                                           QGeoPlace *targetPlace)
 {
+    Q_UNUSED(targetPlace)
+
     QScriptValue value = content.property(place_adcontent_hours_open_hours_element);
     if (value.isValid()) {
         if (value.isArray()) {

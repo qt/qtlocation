@@ -57,14 +57,17 @@ QT_USE_NAMESPACE
 /*!
     Constructor.
 */
-QPlaceContentReplyImpl::QPlaceContentReplyImpl(QPlaceContent::Type type, QPlaceRestReply *reply, QObject *parent) :
-    QPlaceContentReply(parent), contentType(type),
-    restReply(reply)
+QPlaceContentReplyImpl::QPlaceContentReplyImpl(QPlaceContent::Type type, QPlaceRestReply *reply,
+                                               QObject *parent)
+:   QPlaceContentReply(parent), restReply(reply), contentType(type), startNumber(0)
+
 {
     if (contentType == QPlaceContent::ImageType)
         parser = new QPlaceJSonMediaParser(this);
     else if (contentType == QPlaceContent::ReviewType)
         parser = new QPlaceJSonReviewParser(this);
+    else
+        parser = 0;
 
     if (restReply) {
         restReply->setParent(this);

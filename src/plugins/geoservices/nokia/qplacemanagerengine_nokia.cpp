@@ -246,18 +246,26 @@ QPlaceManager::ConnectivityModes QPlaceManagerEngineNokia::supportedConnectivity
     return QPlaceManager::OnlineMode;
 }
 
-QPlaceSaveReply *QPlaceManagerEngineNokia::savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope) {
+QPlaceSaveReply *QPlaceManagerEngineNokia::savePlace(const QGeoPlace &place,
+                                                     QPlaceManager::VisibilityScope scope)
+{
+    Q_UNUSED(place)
+    Q_UNUSED(scope)
+
     //TODO: implementation
-    return NULL;
+    return 0;
 }
 
 QPlaceManager::VisibilityScopes QPlaceManagerEngineNokia::supportedSaveVisibilityScopes() const {
     return QPlaceManager::NoScope;
 }
 
-QPlaceReply *QPlaceManagerEngineNokia::removePlace(const QGeoPlace &place) {
+QPlaceReply *QPlaceManagerEngineNokia::removePlace(const QGeoPlace &place)
+{
+    Q_UNUSED(place)
+
     //TODO: implementation
-    return NULL;
+    return 0;
 }
 
 QPlaceReply *QPlaceManagerEngineNokia::initializeCategories()

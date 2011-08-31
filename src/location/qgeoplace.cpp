@@ -510,17 +510,17 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
         rating(other.rating),
         suppliers(other.suppliers),
         feeds(other.feeds),
-        contentCollections(other.contentCollections),
-        contentCounts(other.contentCounts),
         name(other.name),
         placeId(other.placeId),
         tags(other.tags),
-        detailsFetched(other.detailsFetched),
+        contentCollections(other.contentCollections),
+        contentCounts(other.contentCounts),
         primaryPhone(other.primaryPhone),
         primaryFax(other.primaryFax),
         primaryEmail(other.primaryEmail),
         primaryUrl(other.primaryUrl),
-        extendedAttributes(other.extendedAttributes)
+        extendedAttributes(other.extendedAttributes),
+        detailsFetched(other.detailsFetched)
 {
 }
 
