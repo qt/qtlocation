@@ -336,6 +336,9 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(const QGeoRouteRequest
             case QGeoRouteRequest::DisallowFeatureWeight:
                 weightString = "-3";
                 break;
+            case QGeoRouteRequest::NeutralFeatureWeight:
+            case QGeoRouteRequest::RequireFeatureWeight:
+                break;
         }
 
         if (weightString.isEmpty())
@@ -357,6 +360,11 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(const QGeoRouteRequest
                 break;
             case QGeoRouteRequest::DirtRoadFeature:
                 featureStrings.append("dirtRoad:" + weightString);
+                break;
+            case QGeoRouteRequest::PublicTransitFeature:
+            case QGeoRouteRequest::ParksFeature:
+            case QGeoRouteRequest::MotorPoolLaneFeature:
+            case QGeoRouteRequest::NoFeature:
                 break;
         }
     }

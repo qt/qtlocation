@@ -1,7 +1,7 @@
 TARGET = qml_location_mapviewer
 TEMPLATE=app
 
-QT += declarative network
+QT += qtquick1 declarative network
 SOURCES += qmlmapviewer.cpp
 
 symbian {
