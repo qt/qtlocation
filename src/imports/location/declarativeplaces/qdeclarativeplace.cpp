@@ -48,7 +48,7 @@
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceDetailsReply>
 #include <QtLocation/QPlaceReply>
-#include <QtLocation/QPlaceSaveReply>
+#include <QtLocation/QPlaceIdReply>
 
 QT_USE_NAMESPACE
 
@@ -417,9 +417,9 @@ void QDeclarativePlace::finished()
 
     if (m_reply->error() == QPlaceReply::NoError) {
         switch (m_reply->type()) {
-        case (QPlaceReply::SaveReply) : {
-                QPlaceSaveReply *saveReply = qobject_cast<QPlaceSaveReply *>(m_reply);
-                setPlaceId(saveReply->placeId());
+        case (QPlaceReply::IdReply) : {
+                QPlaceIdReply *saveReply = qobject_cast<QPlaceIdReply *>(m_reply);
+                setPlaceId(saveReply->id());
                 break;
             }
         case (QPlaceReply::PlaceDetailsReply): {

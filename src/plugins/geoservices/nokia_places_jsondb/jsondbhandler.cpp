@@ -42,12 +42,9 @@
 #include "jsondbhandler.h"
 #include "qgeoboundingcircle.h"
 #include "qplacemanagerengine_jsondb.h"
-#include "reply.h"
-#include "savereply.h"
-#include "searchreply.h"
-#include "detailsreply.h"
 
-#include <qplacesearchrequest.h>
+#include <QtLocation/QPlaceSearchRequest>
+
 #include <jsondb-client.h>
 
 #include <QDebug>

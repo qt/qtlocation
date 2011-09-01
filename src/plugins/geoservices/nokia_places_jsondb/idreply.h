@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -38,73 +38,27 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef IDREPLY_H
+#define IDREPLY_H
 
-#include "qplacesavereply.h"
-#include "qplacereply_p.h"
+#include <qplaceidreply.h>
 
-QT_BEGIN_NAMESPACE
-class QPlaceSaveReplyPrivate : public QPlaceReplyPrivate
-{
-public:
-    QPlaceSaveReplyPrivate() {}
-    ~QPlaceSaveReplyPrivate() {}
-    QString placeId;
-};
-
-QT_END_NAMESPACE
+#include "macro.h"
+#include "qplacemanagerengine_jsondb.h"
 
 QT_USE_NAMESPACE
 
-/*!
-    \class QPlaceSaveReply
-
-    \brief The QPlaceSaveReply class manages a place save operation started by an
-    instance of QPlaceManager.
-
-    \inmodule QtPlaces
-
-    \ingroup places-main
-*/
-
-/*!
-    Constructs a save reply with a given \a parent.
-*/
-QPlaceSaveReply::QPlaceSaveReply(QObject *parent)
-    : QPlaceReply(new QPlaceSaveReplyPrivate, parent)
+class IdReply : public QPlaceIdReply
 {
-}
+    Q_OBJECT
+public:
+    IdReply(QPlaceIdReply::OperationType operationType, QPlaceManagerEngineJsonDb *engine);
+    virtual ~IdReply();
+    void setId(const QString &id);
+    DECLARE_TRIGGER_DONE_FN
 
-/*!
-    Destroys the save reply.
-*/
-QPlaceSaveReply::~QPlaceSaveReply()
-{
-}
+private:
+    QPlaceManagerEngineJsonDb *m_engine;
+};
 
-/*!
-    Returns the type of reply.
-*/
-QPlaceReply::Type QPlaceSaveReply::type() const
-{
-    return QPlaceReply::SaveReply;
-}
-
- /*!
-    Returns the id of the saved place.  One should ensure that the reply
-    is finished before calling this function, otherwise an
-    empty string is returned.
-*/
-QString QPlaceSaveReply::placeId() const
-{
-    Q_D(const QPlaceSaveReply);
-    return d->placeId;
-}
-
-/*!
-    Sets the saved \a placeId
-*/
-void QPlaceSaveReply::setPlaceId(const QString &placeId)
-{
-    Q_D(QPlaceSaveReply);
-    d->placeId = placeId;
-}
+#endif

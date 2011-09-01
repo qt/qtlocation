@@ -74,7 +74,7 @@ public:
     virtual void setConnectivityMode(QPlaceManager::ConnectivityModes mode) = 0;
     virtual QPlaceManager::ConnectivityModes supportedConnectivityModes() const = 0;
 
-    virtual QPlaceSaveReply *savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope) = 0;
+    virtual QPlaceIdReply *savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope) = 0;
     virtual QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const = 0;
 
     virtual QPlaceReply *removePlace(const QGeoPlace &place) = 0;

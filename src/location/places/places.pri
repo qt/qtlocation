@@ -22,7 +22,7 @@ PUBLIC_HEADERS += \
 #reply classes
     places/qplacereply.h \
     places/qplacedetailsreply.h \
-    places/qplacesavereply.h \
+    places/qplaceidreply.h \
     places/qplacesearchreply.h \
     places/qplacetextpredictionreply.h \
 #manager and engine
@@ -58,7 +58,7 @@ SOURCES += \
     places/qplaceimage.cpp \
     places/qplacerating.cpp \
     places/qplacereview.cpp \
-    places/qplacesavereply.cpp \
+    places/qplaceidreply.cpp \
     places/qplacesupplier.cpp \
 #result
     places/qplacesearchresult.cpp \

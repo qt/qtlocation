@@ -45,7 +45,7 @@
 
 Q_DECLARE_METATYPE(QPlaceReply::Error);
 Q_DECLARE_METATYPE(QPlaceReply *);
-Q_DECLARE_METATYPE(QPlaceSaveReply *);
+Q_DECLARE_METATYPE(QPlaceIdReply *);
 
 QT_USE_NAMESPACE
 
@@ -110,7 +110,7 @@ void tst_QPlaceManagerJsonDb::initTestCase()
 {
     qRegisterMetaType<QPlaceReply::Error>();
     qRegisterMetaType<QPlaceReply *>();
-    qRegisterMetaType<QPlaceSaveReply *>();
+    qRegisterMetaType<QPlaceIdReply *>();
 
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
     providers.contains("nokia_places_jsondb");
@@ -649,17 +649,17 @@ bool tst_QPlaceManagerJsonDb::doSavePlace(const QGeoPlace &place,
                                           QString *placeId,
                                           QPlaceManager::VisibilityScope scope)
 {
-    QPlaceSaveReply *saveReply = placeManager->savePlace(place,scope);
+    QPlaceIdReply *saveReply = placeManager->savePlace(place,scope);
     bool isSuccessful = false;
     isSuccessful = checkSignals(saveReply, expectedError);
     if (placeId != 0)
-        *placeId = saveReply->placeId();
+        *placeId = saveReply->id();
     return isSuccessful;
 }
 
 void tst_QPlaceManagerJsonDb::doSavePlaces(QList<QGeoPlace> &places)
 {
-    QPlaceSaveReply *saveReply;
+    QPlaceIdReply *saveReply;
 
     foreach (QGeoPlace place, places) {
         saveReply = placeManager->savePlace(place);

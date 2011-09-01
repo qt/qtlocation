@@ -38,27 +38,44 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef SAVEREPLY_H
-#define SAVEREPLY_H
 
-#include <qplacesavereply.h>
+#ifndef QPLACEIDREPLY_H
+#define QPLACEIDREPLY_H
 
-#include "macro.h"
-#include "qplacemanagerengine_jsondb.h"
+#include "qplacereply.h"
+#include "qgeoplace.h"
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class SaveReply : public QPlaceSaveReply
+class QPlaceIdReplyPrivate;
+class Q_LOCATION_EXPORT QPlaceIdReply : public QPlaceReply
 {
     Q_OBJECT
 public:
-    SaveReply(QPlaceManagerEngineJsonDb *engine);
-    virtual ~SaveReply();
-    void setPlaceId(const QString &placeId);
-    DECLARE_TRIGGER_DONE_FN
+    enum OperationType
+    {
+        SavePlace,
+        SaveCategory,
+        RemovePlace,
+        RemoveCategory
+    };
 
+    QPlaceIdReply(OperationType operationType,
+                  QObject *parent =0);
+    virtual ~QPlaceIdReply();
+
+    QPlaceReply::Type type() const;
+    OperationType operationType() const;
+
+    QString id() const;
+
+protected:
+    void setId(const QString &id);
 private:
-    QPlaceManagerEngineJsonDb *m_engine;
+    Q_DISABLE_COPY(QPlaceIdReply)
+    Q_DECLARE_PRIVATE(QPlaceIdReply)
 };
+
+QT_END_NAMESPACE
 
 #endif

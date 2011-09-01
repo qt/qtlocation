@@ -246,7 +246,7 @@ QPlaceManager::ConnectivityModes QPlaceManagerEngineNokia::supportedConnectivity
     return QPlaceManager::OnlineMode;
 }
 
-QPlaceSaveReply *QPlaceManagerEngineNokia::savePlace(const QGeoPlace &place,
+QPlaceIdReply *QPlaceManagerEngineNokia::savePlace(const QGeoPlace &place,
                                                      QPlaceManager::VisibilityScope scope)
 {
     Q_UNUSED(place)

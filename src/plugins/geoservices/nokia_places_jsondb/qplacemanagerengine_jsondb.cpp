@@ -47,13 +47,14 @@
 
 #include "detailsreply.h"
 #include "reply.h"
-#include "savereply.h"
+#include "idreply.h"
 #include "searchreply.h"
 #include "unsupportedreplies.h"
 
 QT_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceReply::Error)
+Q_DECLARE_METATYPE(QPlaceReply *)
 
 QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVariant> &parameters,
                                                      QGeoServiceProvider::Error *error,
@@ -66,6 +67,7 @@ QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVarian
     Q_UNUSED(errorString)
 
     qRegisterMetaType<QPlaceReply::Error>();
+    qRegisterMetaType<QPlaceReply *>();
 
     connect(&m_jsonDbHandler, SIGNAL(jsonDbResponse(int,QVariant)),
             this, SLOT(processJsonDbResponse(int,QVariant)));
@@ -169,10 +171,9 @@ QPlaceManager::ConnectivityModes QPlaceManagerEngineJsonDb::supportedConnectivit
     return QPlaceManager::OfflineMode;
 }
 
-QPlaceSaveReply *QPlaceManagerEngineJsonDb::savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope)
+QPlaceIdReply *QPlaceManagerEngineJsonDb::savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope)
 {
-
-    SaveReply *saveReply = new SaveReply(this);
+    IdReply *saveReply = new IdReply(QPlaceIdReply::SavePlace, this);
     if (!m_jsonDbHandler.isConnected()) {
         saveReply->triggerDone(QPlaceReply::CommunicationError, "No connection to jsondb database");
         return saveReply;
@@ -240,7 +241,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
     QPlaceReply *reply = m_idReplyMap.value(id,0);
     if (reply) {
         switch (reply->type()) {
-        case QPlaceReply::SaveReply: {
+        case QPlaceReply::IdReply: {
 
                 /*
                 Expected data format
@@ -249,9 +250,9 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                 "_version": <version>
                 }
             */
-                SaveReply *saveReply = qobject_cast<SaveReply *>(reply);
-                saveReply->setPlaceId(data.toMap().value(UUID).toString());
-                saveReply->triggerDone();
+                IdReply *idReply = qobject_cast<IdReply *>(reply);
+                idReply->setId(data.toMap().value(UUID).toString());
+                idReply->triggerDone();
                 break;
             }
         case QPlaceReply::PlaceSearchReply: {
@@ -346,17 +347,21 @@ void QPlaceManagerEngineJsonDb::processJsonDbError(int id, int code, const QStri
     QPlaceReply *placeReply = m_idReplyMap.value(id,0);
     if (placeReply) {
         switch (placeReply->type()) {
-        case QPlaceReply::SaveReply: {
-                SaveReply *saveReply = qobject_cast<SaveReply *>(placeReply);
+        case QPlaceReply::IdReply: {
+            IdReply *idReply = qobject_cast<IdReply *>(placeReply);
+            switch (idReply->operationType()) {
+            case (QPlaceIdReply::SavePlace):
                 switch (code) {
                 case JsonDbError::MissingObject:
                     error = QPlaceReply::PlaceDoesNotExistError;
                     errorString = tr("Trying to update place which does not exist");
                     break;
                 }
-                saveReply->triggerDone(error, errorString);
+                idReply->triggerDone(error, errorString);
                 break;
             }
+            break;
+        }
         case QPlaceReply::PlaceSearchReply: {
                 SearchReply *searchReply = qobject_cast<SearchReply*>(placeReply);
                 searchReply->triggerDone(error, errorString);

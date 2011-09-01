@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,33 +39,19 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACESAVEREPLY_H
-#define QPLACESAVEREPLY_H
+#include "idreply.h"
 
-#include "qplacereply.h"
-#include "qgeoplace.h"
-
-QT_BEGIN_NAMESPACE
-
-class QPlaceSaveReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceSaveReply : public QPlaceReply
+IdReply::IdReply(QPlaceIdReply::OperationType operationType,
+                 QPlaceManagerEngineJsonDb *engine)
+    : QPlaceIdReply(operationType, engine),m_engine(engine)
 {
-    Q_OBJECT
-public:
-    QPlaceSaveReply(QObject *parent =0);
-    virtual ~QPlaceSaveReply();
+}
 
-    QPlaceReply::Type type() const;
+IdReply::~IdReply()
+{
+}
 
-    QString placeId() const;
-
-protected:
-    void setPlaceId(const QString &placeId);
-private:
-    Q_DISABLE_COPY(QPlaceSaveReply)
-    Q_DECLARE_PRIVATE(QPlaceSaveReply)
-};
-
-QT_END_NAMESPACE
-
-#endif // QPLACEDETAILSREPLY_H
+void IdReply::setId(const QString &id)
+{
+    QPlaceIdReply::setId(id);
+}

@@ -46,7 +46,7 @@
 #include "qplacecontentreply.h"
 #include "qplacecontentrequest.h"
 #include "qplacerequest.h"
-#include "qplacesavereply.h"
+#include "qplaceidreply.h"
 #include "qplacereply.h"
 #include "qplacedetailsreply.h"
 #include "qplacetextpredictionreply.h"
@@ -122,7 +122,7 @@ public:
     void setConnectivityMode(ConnectivityModes connectivityMode);
     ConnectivityModes supportedConnectivityModes() const;
 
-    QPlaceSaveReply *savePlace(const QGeoPlace &place, VisibilityScope scope = QPlaceManager::NoScope);
+    QPlaceIdReply *savePlace(const QGeoPlace &place, VisibilityScope scope = QPlaceManager::NoScope);
     VisibilityScopes supportedSaveVisibilityScopes();
 
     QPlaceReply *removePlace(const QGeoPlace &place);

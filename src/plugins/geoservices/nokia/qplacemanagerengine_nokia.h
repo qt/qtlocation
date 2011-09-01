@@ -81,7 +81,7 @@ public:
     void setConnectivityMode(QPlaceManager::ConnectivityModes connectivityMode);
     QPlaceManager::ConnectivityModes supportedConnectivityModes() const;
 
-    QPlaceSaveReply *savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope);
+    QPlaceIdReply *savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope);
     QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const;
 
     QPlaceReply *removePlace(const QGeoPlace &place);

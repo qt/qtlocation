@@ -73,7 +73,7 @@ public:
         TextPredictionReply,
         ReviewReply,
         ContentReply,
-        SaveReply
+        IdReply
     };
 
     QPlaceReply(QObject *parent);

@@ -13,21 +13,21 @@ HEADERS += \
             qgeoserviceproviderplugin_jsondb.h \
             qplacemanagerengine_jsondb.h \
             jsondbhandler.h \
-            savereply.h \
             searchreply.h \
             detailsreply.h \
             reply.h \
             unsupportedreplies.h \
-            macro.h
+            macro.h \
+            idreply.h
 
 SOURCES += \
             qgeoserviceproviderplugin_jsondb.cpp \
             qplacemanagerengine_jsondb.cpp \
             jsondbhandler.cpp \
-            savereply.cpp \
             searchreply.cpp \
             detailsreply.cpp \
-            reply.cpp
+            reply.cpp \
+            idreply.cpp
 
 INCLUDEPATH += $$QT.location.includes
 
@@ -47,4 +47,3 @@ symbian {
 
 target.path += $$[QT_INSTALL_PLUGINS]/geoservices
 INSTALLS += target
-

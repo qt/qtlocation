@@ -39,18 +39,85 @@
 **
 ****************************************************************************/
 
-#include "savereply.h"
+#include "qplaceidreply.h"
+#include "qplacereply_p.h"
 
-SaveReply::SaveReply(QPlaceManagerEngineJsonDb *engine)
-    : QPlaceSaveReply(engine),m_engine(engine)
+QT_BEGIN_NAMESPACE
+class QPlaceIdReplyPrivate : public QPlaceReplyPrivate
+{
+public:
+    QPlaceIdReplyPrivate() {}
+    ~QPlaceIdReplyPrivate() {}
+    QString id;
+    QPlaceIdReply::OperationType operationType;
+};
+
+QT_END_NAMESPACE
+
+QT_USE_NAMESPACE
+
+/*!
+    \class QPlaceIdReply
+
+    \brief The QPlaceIdReply class manages operations which return an id such as
+           saving and removal operations of places and categories.
+
+    \inmodule QtLocation
+
+    \ingroup places-main
+*/
+
+/*!
+    Constructs an id reply with a given \a operationType and \a parent.
+*/
+QPlaceIdReply::QPlaceIdReply(QPlaceIdReply::OperationType operationType, QObject *parent)
+    : QPlaceReply(new QPlaceIdReplyPrivate, parent)
+{
+    Q_D(QPlaceIdReply);
+    d->operationType = operationType;
+}
+
+/*!
+    Destroys the reply.
+*/
+QPlaceIdReply::~QPlaceIdReply()
 {
 }
 
-SaveReply::~SaveReply()
+/*!
+    Returns the type of reply.  This is an indication of the content
+    of the reply.
+*/
+QPlaceReply::Type QPlaceIdReply::type() const
 {
+    return QPlaceReply::IdReply;
 }
 
-void SaveReply::setPlaceId(const QString &placeId)
+/*!
+    Returns the operation type of the reply.
+*/
+QPlaceIdReply::OperationType QPlaceIdReply::operationType() const
 {
-    QPlaceSaveReply::setPlaceId(placeId);
+    Q_D(const QPlaceIdReply);
+    return d->operationType;
+}
+
+/*!
+    Returns the relevant id for the opeation. Eg for a save place operation,
+    the id is that of the saved place.  For a category removal operation,
+    it is the category id.
+*/
+QString QPlaceIdReply::id() const
+{
+    Q_D(const QPlaceIdReply);
+    return d->id;
+}
+
+/*!
+    Sets the \a id of the reply.
+*/
+void QPlaceIdReply::setId(const QString &id)
+{
+    Q_D(QPlaceIdReply);
+    d->id = id;
 }

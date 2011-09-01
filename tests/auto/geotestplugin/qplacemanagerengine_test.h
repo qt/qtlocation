@@ -130,7 +130,7 @@ public:
         return QPlaceManager::OnlineMode;
     }
 
-    QPlaceSaveReply *savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope)
+    QPlaceIdReply *savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope)
     {
         Q_UNUSED(place)
         Q_UNUSED(scope)
