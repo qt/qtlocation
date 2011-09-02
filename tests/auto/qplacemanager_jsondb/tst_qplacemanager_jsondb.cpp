@@ -72,6 +72,10 @@ private:
                 QString *placeId = 0,
                 QPlaceManager::VisibilityScope = QPlaceManager::NoScope);
     void doSavePlaces(QList<QGeoPlace> &places);
+
+    bool doRemovePlace(const QGeoPlace &place,
+                       QPlaceReply::Error expectedError = QPlaceReply::NoError);
+
     bool doSearch(const QPlaceSearchRequest &request,
                   QList<QPlaceSearchResult> *results,
              QPlaceReply::Error expectedError = QPlaceReply::NoError);
@@ -150,14 +154,15 @@ void tst_QPlaceManagerJsonDb::saveAndRemove()
     place.setPlaceId(placeId);
     QVERIFY(retrievedPlace == place);
 
-    //try remvoing a place
-    QPlaceReply *reply = placeManager->removePlace(place);
-    QSignalSpy removeSpy(reply, SIGNAL(finished()));
-    QTRY_VERIFY(removeSpy.count() == 1);
+    //try removing a place
+    QVERIFY(doRemovePlace(place, QPlaceReply::NoError));
 
     //ensure it is actually deleted
     QVERIFY(doFetchDetails(placeId, &retrievedPlace, QPlaceReply::PlaceDoesNotExistError));
     QCOMPARE(retrievedPlace, QGeoPlace());
+
+    //try removing a place that does not exist;
+    QVERIFY(doRemovePlace(place, QPlaceReply::PlaceDoesNotExistError));
 
     QVERIFY(doSavePlace(place, QPlaceReply::UnsupportedError,0, QPlaceManager::PublicScope));
 }
@@ -650,10 +655,16 @@ bool tst_QPlaceManagerJsonDb::doSavePlace(const QGeoPlace &place,
                                           QPlaceManager::VisibilityScope scope)
 {
     QPlaceIdReply *saveReply = placeManager->savePlace(place,scope);
-    bool isSuccessful = false;
-    isSuccessful = checkSignals(saveReply, expectedError);
-    if (placeId != 0)
+    bool isSuccessful = checkSignals(saveReply, expectedError);
+    if (placeId != 0) {
         *placeId = saveReply->id();
+    }
+
+    if (saveReply->id().isEmpty() && expectedError == QPlaceReply::NoError) {
+        qWarning("ID is empty in reply for save operation");
+        isSuccessful = false;
+    }
+
     return isSuccessful;
 }
 
@@ -668,6 +679,16 @@ void tst_QPlaceManagerJsonDb::doSavePlaces(QList<QGeoPlace> &places)
         QCOMPARE(saveReply->error(), QPlaceReply::NoError);
         saveSpy.clear();
     }
+}
+
+bool tst_QPlaceManagerJsonDb::doRemovePlace(const QGeoPlace &place,
+                                            QPlaceReply::Error expectedError)
+{
+    QPlaceIdReply *removeReply = placeManager->removePlace(place);
+    bool isSuccessful = false;
+    isSuccessful = checkSignals(removeReply, expectedError)
+                    && (removeReply->id() == place.placeId());
+    return isSuccessful;
 }
 
 bool tst_QPlaceManagerJsonDb::doSearch(const QPlaceSearchRequest &request,

@@ -76,7 +76,7 @@ public:
     QPlaceIdReply *savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope);
     QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const;
 
-    QPlaceReply *removePlace(const QGeoPlace &place);
+    QPlaceIdReply *removePlace(const QGeoPlace &place);
 
     QPlaceReply *initializeCategories();
     QList<QPlaceCategory> categories(const QPlaceCategory &parent) const;

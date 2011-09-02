@@ -47,6 +47,8 @@
 
 QT_BEGIN_NAMESPACE
 
+class QDeclarativeGeoServiceProvider;
+
 class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
 {
     Q_OBJECT
@@ -109,11 +111,14 @@ signals:
 
 protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
+    virtual void initializePlugin(QDeclarativeGeoServiceProvider *oldPlugin,
+                                  QDeclarativeGeoServiceProvider *newPlugin);
 
 private:
     QList<QPlaceSearchResult> m_results;
     QMap<QString, QDeclarativePlace *> m_places;
     QDeclarativeCategory m_category;
+    QPlaceManager *m_placeManager;
 };
 
 QT_END_NAMESPACE

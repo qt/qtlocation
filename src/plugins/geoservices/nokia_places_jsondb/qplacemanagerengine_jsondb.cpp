@@ -199,18 +199,19 @@ QPlaceManager::VisibilityScopes QPlaceManagerEngineJsonDb::supportedSaveVisibili
     return QPlaceManager::NoScope | QPlaceManager::PrivateScope;
 }
 
-QPlaceReply *QPlaceManagerEngineJsonDb::removePlace(const QGeoPlace &place)
+QPlaceIdReply *QPlaceManagerEngineJsonDb::removePlace(const QGeoPlace &place)
 {
-    Reply *reply = new Reply(this);
+    IdReply *removeReply = new IdReply(QPlaceIdReply::RemovePlace, this);
 
     if (!m_jsonDbHandler.isConnected()) {
-        reply->triggerDone(QPlaceReply::CommunicationError, "No connection to jsondb database");
-        return reply;
+        removeReply->triggerDone(QPlaceReply::CommunicationError, "No connection to jsondb database");
+        return removeReply;
     }
 
     int reqId = m_jsonDbHandler.remove(place.placeId());
-    m_idReplyMap.insert(reqId, reply);
-    return reply;
+    removeReply->setId(place.placeId());
+    m_idReplyMap.insert(reqId, removeReply);
+    return removeReply;
 }
 
 QPlaceReply *QPlaceManagerEngineJsonDb::initializeCategories()
@@ -242,17 +243,76 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
     if (reply) {
         switch (reply->type()) {
         case QPlaceReply::IdReply: {
-
-                /*
-                Expected data format
-                {
-                "uuid":<uuid>,
-                "_version": <version>
-                }
-            */
                 IdReply *idReply = qobject_cast<IdReply *>(reply);
-                idReply->setId(data.toMap().value(UUID).toString());
-                idReply->triggerDone();
+
+                switch (idReply->operationType()) {
+                case QPlaceIdReply::SavePlace:
+                case QPlaceIdReply::SaveCategory:
+                        /*
+                        Expected data format
+                        {
+                        "uuid":<uuid>,
+                        "_version": <version>
+                        }*/
+                    idReply->setId(data.toMap().value(UUID).toString());
+                    break;
+                case QPlaceIdReply::RemovePlace:
+                case QPlaceIdReply::RemoveCategory: {
+                    /*
+                    Expected data format example
+                    {
+                    "count":1,
+                    "data":[
+                        {
+                        "_uuid":"8c196304-509c-5c45-0a07-0ea25a280f10523d"
+                        }],
+                    "error":[]
+                    }*/
+                    QVariantMap jsonResponse = data.toMap();
+                    if (jsonResponse.value(QLatin1String("count")).toInt() >= 0) {
+                        QVariantMap jsonResponse = data.toMap();
+                        QString uuid = jsonResponse.value(QLatin1String("data"))
+                                .toList().at(0).toMap().value(UUID).toString();
+                        if (uuid != idReply->id()) {
+                            idReply->triggerDone(QPlaceReply::UnknownError,
+                                                 tr("JsonDb Response UUID does not match that in request"
+                                                    "for a removal operation\n"
+                                                    "JsonDb UUID: %1"
+                                                    "Request UUID: %2").arg(uuid).arg(idReply->id()));
+                        }
+                    } else {
+                        idReply->triggerDone(QPlaceReply::UnknownError,
+                                             tr("JsonDb response does not contain a uuid"
+                                                "for a removal request"));
+                    }
+
+                    if (!jsonResponse.value(QLatin1String("error")).toStringList().isEmpty()
+                            && idReply->error() == QPlaceReply::NoError) {
+                        idReply->triggerDone(QPlaceReply::UnknownError,
+                                             tr("JsonDb response had unexpected errors: %1")
+                                             .arg(jsonResponse.value(QLatin1String("error"))
+                                                    .toStringList().join(QLatin1String(","))));
+                    }
+
+                    //id should've already been set
+                    break;
+                }
+                default:
+                    //Other types should not be possible
+                    break;
+                }
+
+                if (idReply->error() == QPlaceReply::NoError)
+                    idReply->triggerDone();
+
+                //TODO: This is workaround code, it is intended that we use
+                //       jsondb notifications to emit the added, updated
+                //       and removed signals.
+                if (idReply->operationType() == QPlaceIdReply::RemovePlace) {
+                    emit placeRemoved(idReply->id());
+                } else if (idReply->operationType() == QPlaceIdReply::SavePlace) {
+                    emit placeAdded(idReply->id());
+                }
                 break;
             }
         case QPlaceReply::PlaceSearchReply: {
@@ -349,17 +409,16 @@ void QPlaceManagerEngineJsonDb::processJsonDbError(int id, int code, const QStri
         switch (placeReply->type()) {
         case QPlaceReply::IdReply: {
             IdReply *idReply = qobject_cast<IdReply *>(placeReply);
-            switch (idReply->operationType()) {
-            case (QPlaceIdReply::SavePlace):
-                switch (code) {
-                case JsonDbError::MissingObject:
+            switch (code) {
+            case JsonDbError::MissingObject:
+                switch (idReply->operationType()) {
+                case QPlaceIdReply::SavePlace:
+                case QPlaceIdReply::RemovePlace:
                     error = QPlaceReply::PlaceDoesNotExistError;
-                    errorString = tr("Trying to update place which does not exist");
-                    break;
+                    errorString = tr("Place does not exist");
                 }
-                idReply->triggerDone(error, errorString);
-                break;
             }
+            idReply->triggerDone(error, errorString);
             break;
         }
         case QPlaceReply::PlaceSearchReply: {

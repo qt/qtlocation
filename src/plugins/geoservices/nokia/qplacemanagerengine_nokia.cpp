@@ -260,7 +260,7 @@ QPlaceManager::VisibilityScopes QPlaceManagerEngineNokia::supportedSaveVisibilit
     return QPlaceManager::NoScope;
 }
 
-QPlaceReply *QPlaceManagerEngineNokia::removePlace(const QGeoPlace &place)
+QPlaceIdReply *QPlaceManagerEngineNokia::removePlace(const QGeoPlace &place)
 {
     Q_UNUSED(place)
 

@@ -106,6 +106,13 @@ QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
                 this, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)));
         connect(d->engine,SIGNAL(authenticationRequired(QAuthenticator*)),
                 this, SIGNAL(authenticationRequired(QAuthenticator*)));
+
+        connect(d->engine, SIGNAL(placeAdded(QString)),
+                this, SIGNAL(placeAdded(QString)), Qt::QueuedConnection);
+        connect(d->engine, SIGNAL(placeUpdated(QString)),
+                this, SIGNAL(placeUpdated(QString)), Qt::QueuedConnection);
+        connect(d->engine, SIGNAL(placeRemoved(QString)),
+                this, SIGNAL(placeRemoved(QString)), Qt::QueuedConnection);
     } else {
         qFatal("The place manager engine that was set for this place manager was NULL.");
     }
@@ -211,7 +218,7 @@ QPlaceIdReply *QPlaceManager::savePlace(const QGeoPlace &place, VisibilityScope 
 /*!
     Removes a \a place from the manager
 */
-QPlaceReply *QPlaceManager::removePlace(const QGeoPlace &place)
+QPlaceIdReply *QPlaceManager::removePlace(const QGeoPlace &place)
 {
     return d->engine->removePlace(place);
 }
@@ -306,4 +313,29 @@ Use deleteLater() instead.
     authenticationRequired signal is not emitted again.
 
     If authentication is unsuccessful, the manager will emit the signal again.
+*/
+
+/*!
+    \fn void QPlaceManager::placeAdded(const QString&placeId)
+
+    This signal is emitted if a place has been added to the manager's datastore.
+
+    It is generally only emitted by managers that store places locally.
+
+*/
+
+/*!
+    \fn void QPlaceManager::placeUpdated(const QString&placeId)
+
+    This signal is emitted if a place has been modified in the manager's datastore.
+
+    It is generally only emitted by managers that store places locally.
+*/
+
+/*!
+    \fn void QPlaceManager::placeRemoved(const QString&placeId)
+
+    This signal is emitted if a place has been removed from the manager's datastore.
+
+    It is generally only emitted by managers that store places locally.
 */

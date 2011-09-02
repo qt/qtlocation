@@ -68,6 +68,8 @@ void QDeclarativeSearchModelBase::setPlugin(QDeclarativeGeoServiceProvider *plug
     if (m_plugin == plugin)
         return;
 
+    initializePlugin(m_plugin, plugin);
+
     reset(); // reset the model
     m_plugin = plugin;
     if (m_complete)
@@ -191,6 +193,13 @@ void QDeclarativeSearchModelBase::classBegin()
 void QDeclarativeSearchModelBase::componentComplete()
 {
     m_complete = true;
+}
+
+void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvider *oldPlugin,
+                                                   QDeclarativeGeoServiceProvider *newPlugin)
+{
+    Q_UNUSED(oldPlugin);
+    Q_UNUSED(newPlugin);
 }
 
 void QDeclarativeSearchModelBase::queryFinished()

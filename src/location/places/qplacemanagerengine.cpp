@@ -153,6 +153,31 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 {
 }
 
+/*!
+    \fn void QPlaceManagerEngine::placeAdded(const QString&placeId)
+
+    This signal is emitted if a place has been added to the manager engine's datastore.
+
+    It is generally only emitted by managers that store places locally.
+
+*/
+
+/*!
+    \fn void QPlaceManagerEngine::placeUpdated(const QString&placeId)
+
+    This signal is emitted if a place has been modified in the manager engine's datastore.
+
+    It is generally only emitted by managers that store places locally.
+*/
+
+/*!
+    \fn void QPlaceManagerEngine::placeRemoved(const QString&placeId)
+
+    This signal is emitted if a place has been removed from the manager engine's datastore.
+
+    It is generally only emitted by managers that store places locally.
+*/
+
 #include "moc_qplacemanagerengine.cpp"
 
 QT_END_NAMESPACE

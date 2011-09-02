@@ -418,17 +418,29 @@ void QDeclarativePlace::finished()
     if (m_reply->error() == QPlaceReply::NoError) {
         switch (m_reply->type()) {
         case (QPlaceReply::IdReply) : {
-                QPlaceIdReply *saveReply = qobject_cast<QPlaceIdReply *>(m_reply);
-                setPlaceId(saveReply->id());
+            QPlaceIdReply *idReply = qobject_cast<QPlaceIdReply *>(m_reply);
+
+            switch (idReply->operationType()) {
+            case QPlaceIdReply::SavePlace:
+                setPlaceId(idReply->id());
+                break;
+            case QPlaceIdReply::RemovePlace:
+                setPlaceId(QString());
+                break;
+            default:
+                //Other operation types shouldn't ever be received.
                 break;
             }
+            break;
+        }
         case (QPlaceReply::PlaceDetailsReply): {
-                QPlaceDetailsReply *detailsReply = qobject_cast<QPlaceDetailsReply *>(m_reply);
-                setPlace(detailsReply->result());
-                break;
-            }
-        default: //must've been a removal operation
-            setPlaceId(QString());
+            QPlaceDetailsReply *detailsReply = qobject_cast<QPlaceDetailsReply *>(m_reply);
+            setPlace(detailsReply->result());
+            break;
+        }
+        default:
+            //other types of replies shouldn't ever be received.
+            break;
         }
 
         m_errorString.clear();

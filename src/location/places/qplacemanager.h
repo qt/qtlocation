@@ -125,7 +125,7 @@ public:
     QPlaceIdReply *savePlace(const QGeoPlace &place, VisibilityScope scope = QPlaceManager::NoScope);
     VisibilityScopes supportedSaveVisibilityScopes();
 
-    QPlaceReply *removePlace(const QGeoPlace &place);
+    QPlaceIdReply *removePlace(const QGeoPlace &place);
 
     QPlaceReply *initializeCategories();
     QList<QPlaceCategory> categories(const QPlaceCategory &parent = QPlaceCategory()) const;
@@ -139,6 +139,10 @@ Q_SIGNALS:
     void finished(QPlaceReply *reply);
     void error(QPlaceReply *, QPlaceReply::Error error, const QString &errorString = QString());
     void authenticationRequired(QAuthenticator *authenticator);
+
+    void placeAdded(const QString &placeId);
+    void placeUpdated(const QString &placeId);
+    void placeRemoved(const QString &placeId);
 
 private:
     QPlaceManager(QPlaceManagerEngine *engine, QObject *parent = 0);

@@ -103,6 +103,10 @@ signals:
     void limitChanged();
     void executingChanged();
 
+protected:
+    virtual void initializePlugin(QDeclarativeGeoServiceProvider *oldPlugin,
+                                  QDeclarativeGeoServiceProvider *newPlugin);
+
 private slots:
     void queryFinished();
     void queryError(QPlaceReply::Error error, const QString &errorString);

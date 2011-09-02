@@ -138,7 +138,7 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
-:   QDeclarativeSearchModelBase(parent)
+    : QDeclarativeSearchModelBase(parent), m_placeManager(0)
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
@@ -329,5 +329,45 @@ QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role)
 QPlaceReply *QDeclarativeSearchResultModel::sendQuery(QPlaceManager *manager,
                                                       const QPlaceSearchRequest &request)
 {
+    Q_ASSERT(manager);
     return manager->searchForPlaces(request);
+}
+
+void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvider *oldPlugin,
+                                                     QDeclarativeGeoServiceProvider *newPlugin)
+{
+    //The purpose of initialization is to connect to the place manager's signals
+    //for place notifications so we can rexecute the query
+
+    //disconnect the manager of the old plugin if we have one
+    if (oldPlugin) {
+        QGeoServiceProvider *serviceProvider = oldPlugin->sharedGeoServiceProvider();
+        if (serviceProvider) {
+            QPlaceManager *placeManager = serviceProvider->placeManager();
+            if (placeManager) {
+                disconnect(placeManager, SIGNAL(placeAdded(QString)),
+                           this, SLOT(executeQuery()));
+                disconnect(placeManager, SIGNAL(placeUpdated(QString)),
+                           this, SLOT(executeQuery()));
+                disconnect(placeManager, SIGNAL(placeRemoved(QString)),
+                           this, SLOT(executeQuery()));
+            }
+        }
+    }
+
+    //connect to the manager of the new plugin.
+    if (newPlugin) {
+        QGeoServiceProvider *serviceProvider = newPlugin->sharedGeoServiceProvider();
+        if (serviceProvider) {
+            QPlaceManager *placeManager = serviceProvider->placeManager();
+            if (placeManager) {
+                connect(placeManager, SIGNAL(placeAdded(QString)),
+                           this, SLOT(executeQuery()));
+                connect(placeManager, SIGNAL(placeUpdated(QString)),
+                           this, SLOT(executeQuery()));
+                connect(placeManager, SIGNAL(placeRemoved(QString)),
+                           this, SLOT(executeQuery()));
+            }
+        }
+    }
 }
