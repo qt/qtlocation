@@ -5,7 +5,7 @@ SOURCES += tst_qmlmapsandnav.cpp
 
 QT += declarative location
 
-OTHERFILES += *.qml
+OTHER_FILES += *.qml
 
 #qml.path = $$DESTDIR
 #qml.files = *.qml

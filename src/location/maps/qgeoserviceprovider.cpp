@@ -196,6 +196,11 @@ QGeocodingManager* QGeoServiceProvider::geocodingManager() const
         }
     }
 
+    if (d_ptr->geocodingManager) {
+        d_ptr->error = QGeoServiceProvider::NoError;
+        d_ptr->errorString.clear();
+    }
+
     return d_ptr->geocodingManager;
 }
 
@@ -241,6 +246,11 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
             d_ptr->error = d_ptr->mappingError;
             d_ptr->errorString = d_ptr->mappingErrorString;
         }
+    }
+
+    if (d_ptr->mappingManager) {
+        d_ptr->error = QGeoServiceProvider::NoError;
+        d_ptr->errorString.clear();
     }
 
     return d_ptr->mappingManager;
@@ -290,6 +300,11 @@ QGeoRoutingManager* QGeoServiceProvider::routingManager() const
         }
     }
 
+    if (d_ptr->routingManager) {
+        d_ptr->error = QGeoServiceProvider::NoError;
+        d_ptr->errorString.clear();
+    }
+
     return d_ptr->routingManager;
 }
 
@@ -334,6 +349,11 @@ QPlaceManager *QGeoServiceProvider::placeManager() const
             d_ptr->error = d_ptr->placeError;
             d_ptr->errorString = d_ptr->placeErrorString;
         }
+    }
+
+    if (d_ptr->placeManager) {
+        d_ptr->error = QGeoServiceProvider::NoError;
+        d_ptr->errorString.clear();
     }
 
     return d_ptr->placeManager;

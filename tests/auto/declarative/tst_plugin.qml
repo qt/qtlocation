@@ -71,18 +71,21 @@ Item {
             compare (invalidPlugin.supportsReverseGeocoding, false )
             compare (invalidPlugin.supportsRouting, false )
             compare (invalidPlugin.supportsMapping, false )
+            compare (invalidPlugin.supportsPlaces, false )
             // if nokia plugin present
             if (invalidPlugin.availableServiceProviders.indexOf('qmlgeo.test.plugin') > -1) {
                 compare (nokiaPlugin.supportsGeocoding, true )
                 compare (nokiaPlugin.supportsReverseGeocoding, true )
                 compare (nokiaPlugin.supportsRouting, true )
                 compare (nokiaPlugin.supportsMapping, true )
+                compare (nokiaPlugin.supportsPlaces, true )
             }
             // test plugin does not do mapping
             compare (testPlugin.supportsGeocoding, true )
             compare (testPlugin.supportsReverseGeocoding, true )
             compare (testPlugin.supportsRouting, true )
             compare (testPlugin.supportsMapping, false )
+            compare (testPlugin.supportsPlaces, true )
             // test changing name of plugin
             compare (invalidGeocodeSpy.count, 0)
             compare (invalidReverseGeocodeSpy.count, 0)
@@ -97,6 +100,7 @@ Item {
             compare (invalidPlugin.supportsReverseGeocoding, true )
             compare (invalidPlugin.supportsRouting, true )
             compare (invalidPlugin.supportsMapping, false )
+            compare (invalidPlugin.supportsPlaces, true )
             invalidPlugin.name = ''
             compare (invalidGeocodeSpy.count, 2)
             compare (invalidReverseGeocodeSpy.count, 2)
@@ -106,6 +110,7 @@ Item {
             compare (invalidPlugin.supportsReverseGeocoding, false )
             compare (invalidPlugin.supportsRouting, false )
             compare (invalidPlugin.supportsMapping, false )
+            compare (invalidPlugin.supportsPlaces, true )
         }
     }
 }
