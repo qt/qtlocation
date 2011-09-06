@@ -130,8 +130,19 @@ Rectangle {
                              }
                         }
                        font.pixelSize: 16
+                   }
+
+                Repeater {
+                    id: extendedAttributes
+                    model: place.extendedAttributes.keys()
+                    delegate: Text {
+                        text: "<b>" + place.extendedAttributes[modelData].label + ": </b>" +
+                              place.extendedAttributes[modelData].text
+                        width: parent.width
+                        font.pixelSize: 16
+                        wrapMode: Text.WordWrap
+                    }
                 }
-                Text { id: paymentMethods; font.pixelSize: 16 }
             }
 
             state: 'place-core'
@@ -142,8 +153,6 @@ Rectangle {
                 State {
                     name: "place-details"
                     PropertyChanges { target: gradStop; color:"lightskyblue" }
-                    PropertyChanges { target: paymentMethods; text: '<b>Payment methods: </b> '
-                        + ((place.extendedAttributes.paymentMethods) ? place.extendedAttributes.paymentMethods.text : "No payment methods")}
                 }
             ]
         }

@@ -864,6 +864,7 @@ void QPlaceJSonDetailsParser::processAdContentPaymentMethods(const QScriptValue 
         }
         if (list.count()) {
             QPlaceAttribute paymentMethods;
+            paymentMethods.setLabel(tr("Payment methods"));
             paymentMethods.setText(list.join(","));
             targetPlace->insertExtendedAttribute(QPlaceAttribute::PaymentMethods, paymentMethods);
         }
@@ -1015,6 +1016,7 @@ void QPlaceJSonDetailsParser::processAdContentOpeningNotes(const QScriptValue &c
                     QString obj = processAdContentOpeningNote(it.value());
                     if (!obj.isEmpty()) {
                         QPlaceAttribute openingNote;
+                        openingNote.setLabel(tr("Opening note"));
                         openingNote.setText(obj);
                         targetPlace->insertExtendedAttribute(QPlaceAttribute::OpeningNote, openingNote);
                         //! @todo only one is used
@@ -1026,6 +1028,7 @@ void QPlaceJSonDetailsParser::processAdContentOpeningNotes(const QScriptValue &c
             QString obj = processAdContentOpeningNote(value);
             if (!obj.isEmpty()) {
                 QPlaceAttribute openingNote;
+                openingNote.setLabel(tr("Opening note"));
                 openingNote.setText(obj);
                 targetPlace->insertExtendedAttribute(QPlaceAttribute::OpeningNote, openingNote);
             }
