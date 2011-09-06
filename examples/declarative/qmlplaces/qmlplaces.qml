@@ -15,7 +15,6 @@ Rectangle {
         anchors.topMargin: 10
         font.pixelSize: 18
     }
-
     Rectangle {
         id: searchTermRect
         color: "#ffffff"
@@ -82,7 +81,7 @@ Rectangle {
         clip: true
         snapMode: ListView.SnapToItem
 
-        visible: model != undefined
+        visible: model !== undefined
         delegate: ReviewDelegate { }
     }
 
@@ -92,7 +91,7 @@ Rectangle {
         clip: true
         snapMode: ListView.SnapToItem
 
-        visible: model != undefined
+        visible: model !== undefined
         delegate: DescriptionDelegate {
             description: model.modelData
         }
@@ -224,6 +223,6 @@ Rectangle {
         id: imageGrid
 
         anchors.fill: parent
-        visible: model != undefined
+        visible: imageGrid.model !== undefined
     }
 }

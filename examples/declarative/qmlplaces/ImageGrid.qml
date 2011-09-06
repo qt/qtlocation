@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 Rectangle {
-    property alias model: grid.model
+    property variant model
 
     GridView {
         id: grid
@@ -13,6 +13,8 @@ Rectangle {
 
         cellHeight: 200
         cellWidth: 200
+
+        model: parent.model
 
         delegate: Rectangle {
             width: grid.cellWidth
