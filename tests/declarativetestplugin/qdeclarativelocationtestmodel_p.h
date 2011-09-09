@@ -26,6 +26,8 @@ class QDeclarativeLocationTestModel : public QAbstractListModel, public QDeclara
     Q_OBJECT
     Q_PROPERTY(int datacount READ datacount WRITE setDatacount NOTIFY datacountChanged)
     Q_PROPERTY(int delay READ delay WRITE setDelay NOTIFY delayChanged)
+    Q_PROPERTY(bool crazyMode READ crazyMode WRITE setCrazyMode NOTIFY crazyModeChanged)
+    Q_PROPERTY(int crazyLevel READ crazyLevel WRITE setCrazyLevel NOTIFY crazyLevelChanged)
     Q_PROPERTY(QString datatype READ datatype WRITE setDatatype NOTIFY datatypeChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -51,6 +53,12 @@ public:
     int delay() const;
     void setDelay(int delay);
 
+    int crazyLevel() const;
+    void setCrazyLevel(int level);
+
+    bool crazyMode() const;
+    void setCrazyMode(bool mode);
+
     QString datatype() const;
     void setDatatype(QString datatype);
 
@@ -64,9 +72,12 @@ signals:
     void datatypeChanged();
     void delayChanged();
     void modelChanged();
+    void crazyLevelChanged();
+    void crazyModeChanged();
 
 private slots:
     void repopulate();
+    void timerFired();
 
 private:
     void scheduleRepopulation();
@@ -78,6 +89,8 @@ private:
     QString datatype_;
     QTimer timer_;
     QList<DataObject*> dataobjects_;
+    int crazyLevel_;
+    bool crazyMode_;
 };
 
 #endif

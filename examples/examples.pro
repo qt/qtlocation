@@ -1,3 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += declarative \
-           maps
+SUBDIRS += declarative map3d

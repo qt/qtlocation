@@ -42,19 +42,20 @@
 #ifndef QDECLARATIVEGEOMAPOBJECT_H
 #define QDECLARATIVEGEOMAPOBJECT_H
 
-#include "qgeomapobject.h"
+//#include "qgeomapobject.h"
 #include "qdeclarativegeomapmouseevent_p.h"
-#include "qgeomapgroupobject.h"
+//#include "qgeomapgroupobject.h"
 #include "QModelIndex"
 
 #include <QtDeclarative/QSGItem>
 #include <QtCore/QPointer>
 
-class QAbstractItemModel;
-
 QT_BEGIN_NAMESPACE
 
+class QAbstractItemModel;
 class QDeclarativeGraphicsGeoMap;
+class QDeclarative3DGraphicsGeoMap;
+class QDeclarativeGeoMapItem;
 class QDeclarativeGeoMapMouseArea;
 
 // !!! IMPORTANT !!!
@@ -83,8 +84,8 @@ public:
     virtual void setMap(QDeclarativeGraphicsGeoMap *map);
     QDeclarativeGraphicsGeoMap* map() const;
 
-    void setMapObject(QGeoMapObject *object);
-    QGeoMapObject* mapObject();
+//    void setMapObject(QGeoMapObject *object);
+//    QGeoMapObject* mapObject();
 
     void setVisible(bool visible);
     bool isVisible() const;
@@ -106,7 +107,7 @@ private Q_SLOTS:
     void parentZChanged();
 
 private:
-    QPointer<QGeoMapObject> object_;
+    //QPointer<QGeoMapObject> object_;
     bool visible_;
     QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
 };
@@ -133,7 +134,8 @@ public:
     QDeclarativeComponent *delegate() const;
     void setDelegate(QDeclarativeComponent*);
 
-    void setMapData(QDeclarativeGraphicsGeoMap*);
+//    void setMapData(QDeclarativeGraphicsGeoMap*);
+    void setMapData(QDeclarative3DGraphicsGeoMap*);
     void repopulate();
     void removeInstantiatedItems();
 
@@ -143,7 +145,7 @@ public:
     void setVisible(bool visible);
     bool isVisible() const;
 
-    QDeclarativeGeoMapObject* createItem(int modelRow);
+    QDeclarativeGeoMapItem* createItem(int modelRow);
     // From QDeclarativeParserStatus
     virtual void componentComplete();
     void classBegin() {}
@@ -165,9 +167,10 @@ private:
     QDeclarativeComponent *delegate_;
     QVariant modelVariant_;
     QAbstractItemModel* model_;
-    QDeclarativeGraphicsGeoMap *map_;
-    QGeoMapGroupObject group_;
-    QList<QDeclarativeGeoMapObject*> declarativeObjectList_;
+    QDeclarative3DGraphicsGeoMap *map_;
+    //QGeoMapGroupObject group_;
+    QList<QDeclarativeGeoMapItem*> mapItemList_;
+    //QList<QDeclarativeGeoMapObject*> declarativeObjectList_;
 };
 
 QT_END_NAMESPACE

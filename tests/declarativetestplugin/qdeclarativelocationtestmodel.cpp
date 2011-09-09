@@ -1,15 +1,21 @@
 #include "qdeclarativelocationtestmodel_p.h"
 #include <qgeocoordinate.h>
 #include <QtGui/QApplication>
+#include <QtCore/QTime>
+#include <QtCore>
 
 QDeclarativeLocationTestModel::QDeclarativeLocationTestModel(QObject *parent):
      QAbstractListModel(parent),
     delay_(0),
     datacount_(0),
-    componentCompleted_(false)
+    componentCompleted_(false),
+    crazyLevel_(0),
+    crazyMode_(false)
 {
+    // seed crazy random generator
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()) + QCoreApplication::applicationPid());
     timer_.setSingleShot(true);
-    connect(&timer_, SIGNAL(timeout()), this, SLOT(repopulate()));
+    connect(&timer_, SIGNAL(timeout()), this, SLOT(timerFired()));
     // Establish role names so that they can be queried from this model
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
@@ -24,6 +30,19 @@ QDeclarativeLocationTestModel::~QDeclarativeLocationTestModel()
     if (!dataobjects_.isEmpty()) {
         qDeleteAll(dataobjects_);
         dataobjects_.clear();
+    }
+}
+
+void QDeclarativeLocationTestModel::timerFired()
+{
+    //qDebug() << "timer fired" ;
+    repopulate();
+    if (crazyMode_) {
+        //qDebug() << "raw randomw value: " << qrand();
+        int delay = (qAbs(qrand()) % crazyLevel_); // writing software is exact science
+        delay = qMax(1000, delay); // 3 ms at minimum
+        qDebug() << "starting timer with : " << delay;
+        timer_.start(delay);
     }
 }
 
@@ -75,30 +94,71 @@ void QDeclarativeLocationTestModel::setDatatype(QString datatype)
     scheduleRepopulation();
 }
 
+int QDeclarativeLocationTestModel::crazyLevel() const
+{
+    return crazyLevel_;
+}
+
+void QDeclarativeLocationTestModel::setCrazyLevel(int level)
+{
+    if (level == crazyLevel_)
+        return;
+    crazyLevel_ = level;
+    reset();
+    scheduleRepopulation();
+    emit crazyLevelChanged();
+}
+
+bool QDeclarativeLocationTestModel::crazyMode() const
+{
+    return crazyMode_;
+}
+
+void QDeclarativeLocationTestModel::setCrazyMode(bool mode)
+{
+    if (mode == crazyMode_)
+        return;
+    crazyMode_ = mode;
+    //if (!crazyMode_)
+        //reset();
+    //else
+    if (crazyMode_)
+        scheduleRepopulation();
+    emit crazyModeChanged();
+}
+
 // only coordinate datatype for now to get started with,
 // refactor if more usecases for the model emerge.
 void QDeclarativeLocationTestModel::repopulate()
 {
-    double latitude = 0.0;
-    double longitude = 1.0;
+    double latitude = -30;
+    double longitude = 153;
     beginResetModel();
     if (!dataobjects_.isEmpty()) {
         qDeleteAll(dataobjects_);
         dataobjects_.clear();
     }
-    for (int i = 0; i < datacount_; ++i) {
+    int datacount = datacount_;
+    if (crazyMode_)
+        datacount = (qAbs(qrand()) % datacount_);
+
+    qDebug() << "generating random content: " << datacount;
+
+    for (int i = 0; i < datacount; ++i) {
         DataObject* dataobject = new DataObject;
         QDeclarativeCoordinate* coordinate = new QDeclarativeCoordinate(QGeoCoordinate(latitude,longitude));
         dataobject->coordinate_ = coordinate;
         dataobjects_.append(dataobject);
-        longitude += 1.0;
-        latitude += 1.0;
+        longitude -= 0.2;
+        latitude += 0.2;
     }
     endResetModel();
 }
 
 void QDeclarativeLocationTestModel::reset()
 {
+    if (timer_.isActive())
+        timer_.stop();
     beginResetModel();
     if (!dataobjects_.isEmpty()) {
         qDeleteAll(dataobjects_);
@@ -111,12 +171,27 @@ void QDeclarativeLocationTestModel::scheduleRepopulation()
 {
     if (!componentCompleted_)
         return;
+    if (datacount_ <= 0) {
+        qDebug() << __FUNCTION__ << "won't schedule model, invalid datacount: " << datacount_;
+        return;
+    }
+
     if (timer_.isActive())
         timer_.stop();
-    if (delay_ > 0)
-        timer_.start(delay_);
-    else
-        repopulate();
+
+    if (crazyMode_) {
+        // start generating arbitrary amount of data at arbitrary intervals
+        int delay = (qAbs(qrand()) % crazyLevel_); // writing software is exact science
+        delay = qMax(3, delay); // 3 ms at minimum
+        qDebug() << "starting timer with : " << delay;
+        timer_.start(delay);
+    } else {
+        // just update
+        if (delay_ > 0)
+            timer_.start(delay_);
+        else
+            repopulate();
+    }
 }
 
 int QDeclarativeLocationTestModel::rowCount(const QModelIndex& parent) const

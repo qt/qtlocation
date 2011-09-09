@@ -52,14 +52,17 @@
 #include "qgeoserviceproviderplugin_nokia.h"
 
 #include <qgeoserviceprovider.h>
-#include <qgeotiledmappingmanagerengine.h>
+#include <qgeomappingmanagerengine.h>
 
 QT_BEGIN_NAMESPACE
 
 class QNetworkAccessManager;
 class QNetworkDiskCache;
 
-class QGeoMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
+class QGeoTiledMapReply;
+class TileSpec;
+
+class QGeoMappingManagerEngineNokia : public QGeoMappingManagerEngine
 {
     Q_OBJECT
 public:
@@ -68,16 +71,17 @@ public:
                                   QString *errorString);
     ~QGeoMappingManagerEngineNokia();
 
-    QGeoMapData* createMapData();
-    QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
+    void init();
+
+    QGeoTiledMapReply* getTileImage(const TileSpec &spec);
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
 
-    QString getRequestString(const QGeoTiledMapRequest &request) const;
+    QString getRequestString(const TileSpec &spec) const;
 
     static QString sizeToStr(const QSize &size);
-    static QString mapTypeToStr(QGraphicsGeoMap::MapType type);
+//    static QString mapTypeToStr(QGraphicsGeoMap::MapType type);
 #if defined(Q_OS_SYMBIAN)
     QChar findFirstInternalFlashDrive();
 #endif //Q_OS_SYMBIAN

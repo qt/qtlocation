@@ -49,6 +49,7 @@
 #ifndef QGEOMAPREPLY_NOKIA_H
 #define QGEOMAPREPLY_NOKIA_H
 
+#include <tilespec.h>
 #include <qgeotiledmapreply.h>
 #include <QNetworkReply>
 
@@ -59,7 +60,7 @@ class QGeoMapReplyNokia : public QGeoTiledMapReply
     Q_OBJECT
 
 public:
-    QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent = 0);
+    QGeoMapReplyNokia(QNetworkReply *reply, const TileSpec &spec, QObject *parent = 0);
     ~QGeoMapReplyNokia();
 
     void abort();

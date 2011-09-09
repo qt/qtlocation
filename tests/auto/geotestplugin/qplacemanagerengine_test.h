@@ -143,7 +143,7 @@ public:
         return QPlaceManager::PublicScope;
     }
 
-    QPlaceReply *removePlace(const QGeoPlace &place)
+    QPlaceIdReply *removePlace(const QGeoPlace &place)
     {
         Q_UNUSED(place)
 

@@ -53,10 +53,11 @@
 // We mean it.
 //
 
-#include "qgraphicsgeomap.h"
+#include "qmobilityglobal.h"
 
 #include <QSize>
 #include <QList>
+#include <QThread>
 
 QT_BEGIN_NAMESPACE
 
@@ -68,6 +69,7 @@ public:
     QGeoMappingManagerPrivate();
     ~QGeoMappingManagerPrivate();
 
+    QThread *thread;
     QGeoMappingManagerEngine *engine;
 
 private:

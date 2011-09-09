@@ -42,7 +42,9 @@
 #include "qgeomappingmanager.h"
 #include "qgeomappingmanager_p.h"
 #include "qgeomappingmanagerengine.h"
+#include "qgeotiledmapreply.h"
 
+#include <QTimer>
 #include <QNetworkProxy>
 #include <QLocale>
 
@@ -90,11 +92,36 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
       d_ptr(new QGeoMappingManagerPrivate)
 {
     d_ptr->engine = engine;
-    if (d_ptr->engine) {
-        d_ptr->engine->setParent(this);
-    } else {
+    if (!d_ptr->engine) {
         qFatal("The mapping manager engine that was set for this mapping manager was NULL.");
     }
+
+    d_ptr->thread= new QThread;
+
+    connect(d_ptr->engine,
+            SIGNAL(tileFinished(TileSpec,QByteArray)),
+            this,
+            SIGNAL(tileFinished(TileSpec,QByteArray)),
+            Qt::QueuedConnection);
+    connect(d_ptr->engine,
+            SIGNAL(tileError(TileSpec,QString)),
+            this,
+            SIGNAL(tileError(TileSpec,QString)),
+            Qt::QueuedConnection);
+    connect(d_ptr->engine,
+            SIGNAL(queueFinished()),
+            this,
+            SIGNAL(queueFinished()),
+            Qt::QueuedConnection);
+
+    connect(d_ptr->thread,
+            SIGNAL(started()),
+            d_ptr->engine,
+            SLOT(threadStarted()),
+            Qt::QueuedConnection);
+
+    d_ptr->engine->moveToThread(d_ptr->thread);
+    QTimer::singleShot(0, d_ptr->thread, SLOT(start()));
 }
 
 /*!
@@ -129,29 +156,47 @@ int QGeoMappingManager::managerVersion() const
     return d_ptr->engine->managerVersion();
 }
 
-/*!
-    Returns a new QGeoMapData instance which will be managed by this manager.
-*/
-QGeoMapData* QGeoMappingManager::createMapData()
+void QGeoMappingManager::requestTiles(const QList<TileSpec> &tiles)
 {
-    return d_ptr->engine->createMapData();
+    QMetaObject::invokeMethod(d_ptr->engine, "requestTiles",
+                              Qt::QueuedConnection,
+                              Q_ARG(QList<TileSpec>, tiles));
 }
 
-/*!
-    Returns a list of the map types supported by this manager.
-*/
-QList<QGraphicsGeoMap::MapType> QGeoMappingManager::supportedMapTypes() const
-{
-    return d_ptr->engine->supportedMapTypes();
-}
+//QGeoTiledMapReply* QGeoMappingManager::getTileImage(const TileSpec &spec)
+//{
+//    qWarning() << d_ptr->engine->minimumZoomLevel() << d_ptr->engine->maximumZoomLevel();
+//    QGeoTiledMapReply* reply = d_ptr->engine->getTileImage(spec);
 
-/*!
-    Returns a list of the connectivity modes supported by this manager.
-*/
-QList<QGraphicsGeoMap::ConnectivityMode> QGeoMappingManager::supportedConnectivityModes() const
-{
-    return d_ptr->engine->supportedConnectivityModes();
-}
+//    connect(reply, SIGNAL(finished()), this, SLOT(tileFinished()));
+
+//    return reply;
+//}
+
+//void QGeoMappingManager::tileFinished()
+//{
+//    QGeoTiledMapReply *reply = qobject_cast<QGeoTiledMapReply*>(sender());
+//    if (!reply)
+//        return;
+
+//    emit finished(reply);
+//}
+
+///*!
+//    Returns a list of the map types supported by this manager.
+//*/
+//QList<QGraphicsGeoMap::MapType> QGeoMappingManager::supportedMapTypes() const
+//{
+//    return d_ptr->engine->supportedMapTypes();
+//}
+
+///*!
+//    Returns a list of the connectivity modes supported by this manager.
+//*/
+//QList<QGraphicsGeoMap::ConnectivityMode> QGeoMappingManager::supportedConnectivityModes() const
+//{
+//    return d_ptr->engine->supportedConnectivityModes();
+//}
 
 /*!
     Returns the minimum zoom level supported by this manager.
@@ -214,18 +259,6 @@ qreal QGeoMappingManager::maximumTilt() const
 }
 
 /*!
-    Returns whether custom map objects are supported by this engine.
-
-    Custom map objects are map objects based on QGraphicsItem instances, which
-    are hard to support in cases where the map rendering is not being
-    performed by the Qt Graphics View framwork.
-*/
-bool QGeoMappingManager::supportsCustomMapObjects() const
-{
-    return d_ptr->engine->supportsCustomMapObjects();
-}
-
-/*!
     Sets the locale to be used by the this manager to \a locale.
 
     If this mapping manager supports returning map labels
@@ -257,6 +290,7 @@ QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 {
     if (engine)
         delete engine;
+    delete thread;
 }
 
 #include "moc_qgeomappingmanager.cpp"

@@ -53,11 +53,16 @@
 // We mean it.
 //
 
-#include "qgraphicsgeomap.h"
+//#include "qgraphicsgeomap.h"
 
 #include <QSize>
 #include <QList>
+#include <QMap>
 #include <QLocale>
+#include <QTimer>
+
+class TileSpec;
+class QGeoTiledMapReply;
 
 QT_BEGIN_NAMESPACE
 
@@ -67,20 +72,28 @@ public:
     QGeoMappingManagerEnginePrivate();
     virtual ~QGeoMappingManagerEnginePrivate();
 
+    QMap<QString, QVariant> parameters;
+
     QString managerName;
     int managerVersion;
 
-    QList<QGraphicsGeoMap::MapType> supportedMapTypes;
-    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes;
+//    QList<QGraphicsGeoMap::MapType> supportedMapTypes;
+//    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes;
+    QSize tileSize;
     qreal minimumZoomLevel;
     qreal maximumZoomLevel;
     bool supportsBearing;
     bool supportsTilting;
     qreal minimumTilt;
     qreal maximumTilt;
-    bool supportsCustomMapObjects;
 
     QLocale locale;
+
+    bool started_;
+    QTimer *timer_;
+    QList<TileSpec> queue_;
+    QHash<QGeoTiledMapReply*, TileSpec> map_;
+    QHash<TileSpec, QGeoTiledMapReply*> invmap_;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEnginePrivate)

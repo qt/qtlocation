@@ -42,7 +42,9 @@
 #ifndef QGEOMAPPINGMANAGERENGINE_H
 #define QGEOMAPPINGMANAGERENGINE_H
 
-#include "qgraphicsgeomap.h"
+//#include "qgraphicsgeomap.h"
+
+#include "qmobilityglobal.h"
 
 #include <QObject>
 #include <QSize>
@@ -60,6 +62,9 @@ class QGeoMapRequestOptions;
 
 class QGeoMappingManagerEnginePrivate;
 
+class QGeoTiledMapReply;
+class TileSpec;
+
 class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
 {
     Q_OBJECT
@@ -68,13 +73,15 @@ public:
     QGeoMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
     virtual ~QGeoMappingManagerEngine();
 
+    QMap<QString, QVariant> parameters() const;
+
     QString managerName() const;
     int managerVersion() const;
 
-    virtual QGeoMapData* createMapData() = 0;
+//    QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
+//    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
 
-    QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
-    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
+    QSize tileSize() const;
 
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
@@ -85,16 +92,31 @@ public:
     qreal minimumTilt() const;
     qreal maximumTilt() const;
 
-    bool supportsCustomMapObjects() const;
-
     void setLocale(const QLocale &locale);
     QLocale locale() const;
+
+    virtual void init();
+
+public slots:
+    void threadStarted();
+    void requestTiles(const QList<TileSpec> &tiles);
+
+private slots:
+    void requestNextTile();
+    void finished();
+
+signals:
+    void tileFinished(const TileSpec &spec, const QByteArray &bytes);
+    void tileError(const TileSpec &spec, const QString &errorString);
+    void queueFinished();
 
 protected:
     QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
 
-    void setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes);
-    void setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes);
+//    void setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes);
+//    void setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes);
+
+    void setTileSize(const QSize &tileSize);
 
     void setMinimumZoomLevel(qreal minimumZoom);
     void setMaximumZoomLevel(qreal maximumZoom);
@@ -105,11 +127,13 @@ protected:
     void setSupportsBearing(bool supportsBearing);
     void setSupportsTilting(bool supportsTilting);
 
-    void setSupportsCustomMapObjects(bool supportsCustomMapObjects);
-
     QGeoMappingManagerEnginePrivate* d_ptr;
 
 private:
+    virtual QGeoTiledMapReply* getTileImage(const TileSpec &spec) = 0;
+
+    void handleReply(QGeoTiledMapReply *reply, const TileSpec &spec);
+
     void setManagerName(const QString &managerName);
     void setManagerVersion(int managerVersion);
 

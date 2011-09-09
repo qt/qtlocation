@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVEGRAPHICSGEOMAP_H
 #define QDECLARATIVEGRAPHICSGEOMAP_H
 
-#include <qgraphicsgeomap.h>
+//#include <qgraphicsgeomap.h>
 #include <QPointer>
 #include <QtDeclarative/qsgitem.h>
 #include <QtDeclarative/QDeclarativeListProperty>
@@ -52,11 +52,11 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-class QGeoMapObject;
-class QGeoMapData;
+class QGeoMappingManager;
 class QGeoServiceProvider;
 class QDeclarativeCoordinate;
 class QDeclarativeGeoServiceProvider;
+class QStyleOptionGraphicsItem;
 
 // !!! IMPORTANT !!!
 //
@@ -80,27 +80,27 @@ class QDeclarativeGraphicsGeoMap : public QSGItem
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel CONSTANT)
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel CONSTANT)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
-    Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
+//    Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
     Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY declarativeCenterChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoMapObject> objects READ objects NOTIFY objectsChanged)
-    Q_PROPERTY(ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode NOTIFY connectivityModeChanged)
+    //Q_PROPERTY(ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode NOTIFY connectivityModeChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
-    enum MapType {
-        NoMap = QGraphicsGeoMap::NoMap,
-        StreetMap = QGraphicsGeoMap::StreetMap,
-        SatelliteMapDay = QGraphicsGeoMap::SatelliteMapDay,
-        SatelliteMapNight = QGraphicsGeoMap::SatelliteMapNight,
-        TerrainMap = QGraphicsGeoMap::TerrainMap
-    };
+//    enum MapType {
+//        NoMap = QGraphicsGeoMap::NoMap,
+//        StreetMap = QGraphicsGeoMap::StreetMap,
+//        SatelliteMapDay = QGraphicsGeoMap::SatelliteMapDay,
+//        SatelliteMapNight = QGraphicsGeoMap::SatelliteMapNight,
+//        TerrainMap = QGraphicsGeoMap::TerrainMap
+//    };
 
-    enum ConnectivityMode {
-        NoConnectivity = QGraphicsGeoMap::NoConnectivity,
-        OfflineMode = QGraphicsGeoMap::OfflineMode,
-        OnlineMode = QGraphicsGeoMap::OnlineMode,
-        HybridMode = QGraphicsGeoMap::HybridMode
-    };
+//    enum ConnectivityMode {
+//        NoConnectivity = QGraphicsGeoMap::NoConnectivity,
+//        OfflineMode = QGraphicsGeoMap::OfflineMode,
+//        OnlineMode = QGraphicsGeoMap::OnlineMode,
+//        HybridMode = QGraphicsGeoMap::HybridMode
+//    };
 
 public:
     QDeclarativeGraphicsGeoMap(QSGItem *parent = 0);
@@ -133,11 +133,11 @@ public:
     void setCenter(QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* center();
 
-    void setMapType(MapType mapType);
-    MapType mapType() const;
+//    void setMapType(MapType mapType);
+//    MapType mapType() const;
 
-    void setConnectivityMode(ConnectivityMode connectivityMode);
-    ConnectivityMode connectivityMode() const;
+//    void setConnectivityMode(ConnectivityMode connectivityMode);
+//    ConnectivityMode connectivityMode() const;
 
     QDeclarativeListProperty<QDeclarativeGeoMapObject> objects();
     static void objects_append(QDeclarativeListProperty<QDeclarativeGeoMapObject>* prop, QDeclarativeGeoMapObject* object);
@@ -160,7 +160,7 @@ public:
     void setActiveMouseArea(QDeclarativeGeoMapMouseArea *area);
     QDeclarativeGeoMapMouseArea* activeMouseArea() const;
 
-    QGeoMapData* mapData() {return mapData_;}
+    //QGeoMapData* mapData() {return mapData_;}
 
 public Q_SLOTS:
     void pan(int dx, int dy);
@@ -182,14 +182,14 @@ Q_SIGNALS:
     void sizeChanged(const QSizeF &size);
     void zoomLevelChanged(qreal zoomLevel);
     void declarativeCenterChanged(const QDeclarativeCoordinate *coordinate);
-    void mapTypeChanged(QDeclarativeGraphicsGeoMap::MapType mapType);
-    void connectivityModeChanged(QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode);
+//    void mapTypeChanged(QDeclarativeGraphicsGeoMap::MapType mapType);
+//    void connectivityModeChanged(QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode);
 
 private Q_SLOTS:
     void updateMapDisplay(const QRectF& target);
     void internalCenterChanged(const QGeoCoordinate &coordinate);
-    void internalMapTypeChanged(QGraphicsGeoMap::MapType mapType);
-    void internalConnectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode);
+//    void internalMapTypeChanged(QGraphicsGeoMap::MapType mapType);
+//    void internalConnectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode);
     void centerLatitudeChanged(double latitude);
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
@@ -198,25 +198,25 @@ private:
     void setupMapView(QDeclarativeGeoMapObjectView *view);
     void populateMap();
     void recursiveAddToObjectMap(QDeclarativeGeoMapObject *mapObject);
-    void recursiveRemoveFromObjectMap(QGeoMapObject *mapObject);
+    //void recursiveRemoveFromObjectMap(QGeoMapObject *mapObject);
 
     QDeclarativeGeoMapObject* createItem(int modelIndex);
     QDeclarativeGeoMapMouseEvent* createMapMouseEvent(QGraphicsSceneMouseEvent *event);
     QDeclarativeGeoMapMouseEvent* createMapMouseEvent(QGraphicsSceneHoverEvent *event);
 
     QDeclarativeGeoServiceProvider* plugin_;
-    QGeoMapData* mapData_;
+//    QGeoMapData* mapData_;
 
     qreal zoomLevel_;
     QPointer<QDeclarativeCoordinate> center_;
 
     QGeoCoordinate* initialCoordinate;
-    QDeclarativeGraphicsGeoMap::MapType mapType_;
-    QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode_;
+//    QDeclarativeGraphicsGeoMap::MapType mapType_;
+//    QDeclarativeGraphicsGeoMap::ConnectivityMode connectivityMode_;
     QSizeF size_;
 
     QList<QDeclarativeGeoMapObject*> mapObjects_;
-    QHash<QGeoMapObject*, QDeclarativeGeoMapObject*> objectMap_;
+//    QHash<QGeoMapObject*, QDeclarativeGeoMapObject*> objectMap_;
 
     bool componentCompleted_;
     QList<QDeclarativeGeoMapObjectView*> mapViews_;

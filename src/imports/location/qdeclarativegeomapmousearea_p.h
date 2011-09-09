@@ -46,7 +46,6 @@
 #include "qdeclarativegraphicsgeomap_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 
-
 // !!! IMPORTANT !!!
 //
 // Inheriting from QSGItem here

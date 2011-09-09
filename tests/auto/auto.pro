@@ -1,11 +1,5 @@
 TEMPLATE = subdirs
 
-#TODO: disable for now since
-#declarative testing classes are not yet
-#in the main branch of qt declarative
-#SUBDIRS += declarative
-
-CONFIG += ordered
 SUBDIRS += geotestplugin \
            qgeocodingmanagerplugins \
            qgeoaddress \
@@ -26,7 +20,8 @@ SUBDIRS += geotestplugin \
            qplacereview \
            qplacesearchrequest \
            qplacesupplier \
-           declarative
+           declarative \
+           sphere
 
 contains(config_test_jsondb, yes) {
     SUBDIRS += qplacemanager_jsondb

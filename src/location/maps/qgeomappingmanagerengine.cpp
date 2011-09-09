@@ -41,6 +41,8 @@
 
 #include "qgeomappingmanagerengine.h"
 #include "qgeomappingmanagerengine_p.h"
+#include "qgeotiledmapreply.h"
+#include "tilespec.h"
 
 #include <QNetworkProxy>
 
@@ -76,7 +78,7 @@ QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QVariant>
     : QObject(parent),
       d_ptr(new QGeoMappingManagerEnginePrivate())
 {
-    Q_UNUSED(parameters)
+    d_ptr->parameters = parameters;
 }
 
 /*!
@@ -93,6 +95,124 @@ QGeoMappingManagerEngine::~QGeoMappingManagerEngine()
 {
     Q_D(QGeoMappingManagerEngine);
     delete d;
+}
+
+QMap<QString, QVariant> QGeoMappingManagerEngine::parameters() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->parameters;
+}
+
+void QGeoMappingManagerEngine::init()
+{
+}
+
+void QGeoMappingManagerEngine::threadStarted()
+{
+    Q_D(QGeoMappingManagerEngine);
+
+    init();
+
+    d->timer_ = new QTimer(this);
+
+    d->timer_->setInterval(0);
+
+    connect(d->timer_,
+            SIGNAL(timeout()),
+            this,
+            SLOT(requestNextTile()));
+
+    d->started_ = true;
+    if (!d->queue_.isEmpty())
+        d->timer_->start();
+}
+
+
+void QGeoMappingManagerEngine::requestTiles(const QList<TileSpec> &tiles)
+{
+    Q_D(QGeoMappingManagerEngine);
+
+    if (!d->started_) {
+        d->queue_ = tiles;
+        return;
+    }
+
+    for (int i = 0; i < d->queue_.size(); ++i) {
+        QGeoTiledMapReply* reply = d->invmap_.value(d->queue_.at(i), 0);
+        if (reply) {
+            reply->abort();
+            d->map_.remove(reply);
+            d->invmap_.remove(d->queue_.at(i));
+            reply->deleteLater();
+        }
+    }
+
+    d->queue_ = tiles;
+
+    if (!d->queue_.empty())
+        d->timer_->start();
+}
+
+void QGeoMappingManagerEngine::requestNextTile()
+{
+    Q_D(QGeoMappingManagerEngine);
+
+    TileSpec ts = d->queue_.takeFirst();
+
+    QGeoTiledMapReply *reply = getTileImage(ts);
+
+    if (reply->isFinished()) {
+        handleReply(reply, ts);
+    } else {
+        connect(reply,
+                SIGNAL(finished()),
+                this,
+                SLOT(finished()));
+
+        d->map_.insert(reply, ts);
+        d->invmap_.insert(ts, reply);
+    }
+
+    if (d->queue_.isEmpty())
+        d->timer_->stop();
+}
+
+void QGeoMappingManagerEngine::finished()
+{
+    Q_D(QGeoMappingManagerEngine);
+
+    QGeoTiledMapReply *reply = qobject_cast<QGeoTiledMapReply*>(sender());
+    if (!reply)
+        return;
+
+    if (!d->map_.contains(reply)) {
+        reply->deleteLater();
+        return;
+    }
+
+    TileSpec spec = d->map_.value(reply);
+
+    d->map_.remove(reply);
+    d->invmap_.remove(spec);
+
+    handleReply(reply, spec);
+}
+
+void QGeoMappingManagerEngine::handleReply(QGeoTiledMapReply *reply, const TileSpec &spec)
+{
+    Q_D(QGeoMappingManagerEngine);
+
+    if (reply->error() == QGeoTiledMapReply::NoError) {
+        QByteArray bytes = reply->mapImageData();
+        emit tileFinished(spec, bytes);
+    } else {
+        emit tileError(spec, reply->errorString());
+    }
+
+    if (d->queue_.isEmpty())
+        emit queueFinished();
+
+    reply->deleteLater();
 }
 
 /*!
@@ -141,42 +261,23 @@ int QGeoMappingManagerEngine::managerVersion() const
     return d_ptr->managerVersion;
 }
 
-/*!
-\fn QGeoMapData* QGeoMappingManagerEngine::createMapData()
+///*!
+//    Returns a list of the map types supported by this engine.
+//*/
+//QList<QGraphicsGeoMap::MapType> QGeoMappingManagerEngine::supportedMapTypes() const
+//{
+//    Q_D(const QGeoMappingManagerEngine);
+//    return d->supportedMapTypes;
+//}
 
-    Returns a new QGeoMapData instance which will be managed by
-    this manager.
-
-    A QGeoMapData instance contains and manages the information about
-    what a QGraphicsGeoMap is looking at.  A  single manager can be used by several
-    QGraphicsGeoMap instances since each instance has an associated QGeoMapData instance.
-
-    The QGeoMapData instance can be treated as a kind of session object, or
-    as a model in a model-view-controller architecture, with QGraphicsGeoMap
-    as the view and QGeoMappingManagerEngine as the controller.
-
-    Subclasses of QGeoMappingManagerEngine are free to override this function
-    to return subclasses of QGeoMapData in order to customize the
-    map.
-*/
-
-/*!
-    Returns a list of the map types supported by this engine.
-*/
-QList<QGraphicsGeoMap::MapType> QGeoMappingManagerEngine::supportedMapTypes() const
-{
-    Q_D(const QGeoMappingManagerEngine);
-    return d->supportedMapTypes;
-}
-
-/*!
-    Returns a list of the connectivity modes supported by this engine.
-*/
-QList<QGraphicsGeoMap::ConnectivityMode> QGeoMappingManagerEngine::supportedConnectivityModes() const
-{
-    Q_D(const QGeoMappingManagerEngine);
-    return d->supportedConnectivityModes;
-}
+///*!
+//    Returns a list of the connectivity modes supported by this engine.
+//*/
+//QList<QGraphicsGeoMap::ConnectivityMode> QGeoMappingManagerEngine::supportedConnectivityModes() const
+//{
+//    Q_D(const QGeoMappingManagerEngine);
+//    return d->supportedConnectivityModes;
+//}
 
 /*!
     Returns the minimum zoom level supported by this engine.
@@ -203,32 +304,44 @@ qreal QGeoMappingManagerEngine::maximumZoomLevel() const
     return d->maximumZoomLevel;
 }
 
-/*!
-    Sets the list of map types supported by this engine to \a mapTypes.
+///*!
+//    Sets the list of map types supported by this engine to \a mapTypes.
 
-    Subclasses of QGeoMappingManagerEngine should use this function to ensure
-    that supportedMapTypes() provides accurate information.
-*/
-void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes)
+//    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+//    that supportedMapTypes() provides accurate information.
+//*/
+//void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes)
+//{
+//    Q_D(QGeoMappingManagerEngine);
+//    d->supportedMapTypes = mapTypes;
+//}
+
+///*!
+//    Sets the list of connectivity modes supported by this engine to \a connectivityModes.
+
+//    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+//    that supportedConnectivityModes() provides accurate information.
+
+//    If createMapData does not specify a connectivity mode the first mode from
+//    \a connectivityModes will be used, or QGraphicsGeoMap::NoConnectivity will
+//    be used if \a connectivityModes is empty.
+//*/
+//void QGeoMappingManagerEngine::setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes)
+//{
+//    Q_D(QGeoMappingManagerEngine);
+//    d->supportedConnectivityModes = connectivityModes;
+//}
+
+void QGeoMappingManagerEngine::setTileSize(const QSize &tileSize)
 {
     Q_D(QGeoMappingManagerEngine);
-    d->supportedMapTypes = mapTypes;
+    d->tileSize = tileSize;
 }
 
-/*!
-    Sets the list of connectivity modes supported by this engine to \a connectivityModes.
-
-    Subclasses of QGeoMappingManagerEngine should use this function to ensure
-    that supportedConnectivityModes() provides accurate information.
-
-    If createMapData does not specify a connectivity mode the first mode from
-    \a connectivityModes will be used, or QGraphicsGeoMap::NoConnectivity will
-    be used if \a connectivityModes is empty.
-*/
-void QGeoMappingManagerEngine::setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes)
+QSize QGeoMappingManagerEngine::tileSize() const
 {
-    Q_D(QGeoMappingManagerEngine);
-    d->supportedConnectivityModes = connectivityModes;
+    Q_D(const QGeoMappingManagerEngine);
+    return d->tileSize;
 }
 
 /*!
@@ -364,32 +477,6 @@ void QGeoMappingManagerEngine::setSupportsTilting(bool supportsTilting)
 }
 
 /*!
-    Returns whether custom map objects are supported by this engine.
-
-    Custom map objects are map objects based on QGraphicsItem instances, which
-    are hard to support in cases where the map rendering is not being
-    performed by the Qt Graphics View framwork.
-*/
-bool QGeoMappingManagerEngine::supportsCustomMapObjects() const
-{
-    Q_D(const QGeoMappingManagerEngine);
-    return d->supportsCustomMapObjects;
-}
-
-/*!
-    Sets whether custom map objects are supported by this engine to \a supportsCustomMapObjects.
-
-    Custom map objects are map objects based on QGraphicsItem instances, which
-    are hard to support in cases where the map rendering is not being
-    performed by the Qt Graphics View framwork.
-*/
-void QGeoMappingManagerEngine::setSupportsCustomMapObjects(bool supportsCustomMapObjects)
-{
-    Q_D(QGeoMappingManagerEngine);
-    d->supportsCustomMapObjects = supportsCustomMapObjects;
-}
-
-/*!
     Sets the locale to be used by the this manager to \a locale.
 
     If this mapping manager supports returning map labels
@@ -422,7 +509,7 @@ QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
     supportsTilting(false),
     minimumTilt(0.0),
     maximumTilt(0.0),
-    supportsCustomMapObjects(false) {}
+    started_(false) {}
 
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 

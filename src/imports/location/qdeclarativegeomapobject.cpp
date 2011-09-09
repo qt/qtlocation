@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,8 +41,10 @@
 
 #include "qdeclarativegeomapobject_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
-#include "qdeclarativegeomapgroupobject_p.h"
-#include "qgeomapdata.h"
+#include "qdeclarativegraphicsgeomap_p.h"
+#include "qdeclarative3dgraphicsgeomap_p.h"
+#include "qdeclarativegeomapitem_p.h"
+//#include "qgeomapdata.h"
 
 #include <QDebug>
 #include <QDeclarativeParserStatus>
@@ -54,7 +56,6 @@ QT_BEGIN_NAMESPACE
 QDeclarativeGeoMapObject::QDeclarativeGeoMapObject(QSGItem *parent)
     : QSGItem(parent),
       map_(0),
-      object_(0),
       visible_(true)
 {
 }
@@ -144,13 +145,13 @@ void QDeclarativeGeoMapObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
         mouseAreas_.at(i)->moveEvent(event);
 }
 
-void QDeclarativeGeoMapObject::setMapObject(QGeoMapObject *object)
-{
-    if (!object)
-        return;
+//void QDeclarativeGeoMapObject::setMapObject(QGeoMapObject *object)
+//{
+//    if (!object)
+//        return;
 
-    object_ = object;
-    object_->setVisible(visible_);
+//    object_ = object;
+//    object_->setVisible(visible_);
 
     // TODO check QML2 impact
     /*
@@ -162,12 +163,12 @@ void QDeclarativeGeoMapObject::setMapObject(QGeoMapObject *object)
 
     object_->setZValue(zValue());
     */
-}
+//}
 
-QGeoMapObject* QDeclarativeGeoMapObject::mapObject()
-{
-    return object_;
-}
+//QGeoMapObject* QDeclarativeGeoMapObject::mapObject()
+//{
+//    return object_;
+//}
 
 void QDeclarativeGeoMapObject::parentZChanged()
 {
@@ -182,8 +183,8 @@ void QDeclarativeGeoMapObject::setVisible(bool visible)
 
     visible_ = visible;
 
-    if (object_)
-        object_->setVisible(visible);
+//    if (object_)
+//        object_->setVisible(visible);
 
     emit visibleChanged(visible_);
 }
@@ -216,13 +217,18 @@ QDeclarativeGeoMapObjectView::QDeclarativeGeoMapObjectView(QSGItem *parent)
 
 QDeclarativeGeoMapObjectView::~QDeclarativeGeoMapObjectView()
 {
+    if (map_)
+        removeInstantiatedItems();
     // Remove group from map, and items from the group. This is to
     // prevent their deletion. The objects are owned by the
     // declarative objects and are to be deleted by them.
+    // TODO the concept of group objects need to be analyzed - is it needed anymore?
+    /*
     if (map_ && map_->mapData_) {
         map_->mapData_->removeMapObject(&group_);
         removeInstantiatedItems();
     }
+    */
 }
 
 void QDeclarativeGeoMapObjectView::componentComplete()
@@ -269,6 +275,21 @@ void QDeclarativeGeoMapObjectView::modelReset()
 
 void QDeclarativeGeoMapObjectView::modelRowsInserted(QModelIndex, int start, int end)
 {
+    if (!componentCompleted_ || !map_ || !delegate_ || !model_) {
+        QDeclarativeGeoMapItem* mapItem;
+        for (int i = start; i <= end; ++i) {
+            mapItem = createItem(i);
+            if (!mapItem) {
+                break;
+            }
+            mapItemList_.append(mapItem);
+            // TODO visibility factors need to be solved
+            //mapItem->setVisible(visible_);
+            map_->addMapItem(mapItem);
+            // TODO mouse areas are omitted atm
+        }
+    }
+    /*
     if (!componentCompleted_ || !map_ || !map_->mapData_ || !delegate_ || !model_)
         return;
     Q_ASSERT(declarativeObjectList_.count() == group_.childObjects().count());
@@ -286,10 +307,23 @@ void QDeclarativeGeoMapObjectView::modelRowsInserted(QModelIndex, int start, int
         map_->objectMap_.insert(mapObject->mapObject(), mapObject);
     }
     Q_ASSERT(declarativeObjectList_.count() == group_.childObjects().count());
+    */
 }
 
 void QDeclarativeGeoMapObjectView::modelRowsRemoved(QModelIndex, int start, int end)
 {
+    if (!componentCompleted_ || !map_ || !delegate_ || !model_)
+        return;
+    for (int i = end; i >= start; --i) {
+        QDeclarativeGeoMapItem *mapItem = mapItemList_.takeAt(i);
+        Q_ASSERT(mapItem);
+        if (!mapItem) // bad
+            break;
+        map_->removeMapItem(mapItem);
+        delete mapItem;
+    }
+
+    /*
     if (!componentCompleted_ || !map_ || !map_->mapData_ || !delegate_ || !model_)
         return;
     Q_ASSERT(declarativeObjectList_.count() == group_.childObjects().count());
@@ -302,6 +336,7 @@ void QDeclarativeGeoMapObjectView::modelRowsRemoved(QModelIndex, int start, int 
         delete object;
     }
     Q_ASSERT(declarativeObjectList_.count() == group_.childObjects().count());
+    */
 }
 
 QDeclarativeComponent* QDeclarativeGeoMapObjectView::delegate() const
@@ -328,18 +363,31 @@ void QDeclarativeGeoMapObjectView::setDelegate(QDeclarativeComponent *delegate)
     emit delegateChanged();
 }
 
-void QDeclarativeGeoMapObjectView::setMapData(QDeclarativeGraphicsGeoMap* map)
+//void QDeclarativeGeoMapObjectView::setMapData(QDeclarativeGraphicsGeoMap* map)
+void QDeclarativeGeoMapObjectView::setMapData(QDeclarative3DGraphicsGeoMap* map)
 {
+    if (!map || map_) // changing map on the fly not supported
+        return;
+    map_ = map;
+    /*
     if (!map || !map->mapData_ || map_) // changing map on the fly not supported
         return;
     map_ = map;
     map_->mapData_->addMapObject(&group_);
+    */
 }
 
 void QDeclarativeGeoMapObjectView::removeInstantiatedItems()
 {
+    if (!map_)
+        return;
+    for (int i = 0; i < mapItemList_.count(); ++ i) {
+        map_->removeMapItem(mapItemList_.at(i));
+    }
+    mapItemList_.clear();
     // Delete the declarative components we have instantiated.
     // They will also delete the actual qgeomapobjects
+    /*
     QList<QGeoMapObject*> mapObjects = group_.childObjects();
     if (!mapObjects.isEmpty()) {
         for (int i = 0; i < mapObjects.size(); i++) {
@@ -351,11 +399,34 @@ void QDeclarativeGeoMapObjectView::removeInstantiatedItems()
         }
     }
     declarativeObjectList_.clear();
+    */
 }
 
 // Removes and repopulates all items.
 void QDeclarativeGeoMapObjectView::repopulate()
 {
+    if (!componentCompleted_ || !map_ || !delegate_ || !model_)
+        return;
+    // Free any earlier instances
+    removeInstantiatedItems();
+
+    // Iterate model data and instantiate delegates.
+    // We could use more specialized landmark model calls here too,
+    // but hopefully the support will be leveraged to a general model
+    // level.
+    QDeclarativeGeoMapItem* mapItem;
+    for (int i = 0; i < model_->rowCount(); ++i) {
+        mapItem = createItem(i);
+        Q_ASSERT(mapItem);
+        if (!mapItem) // bad
+            break;
+        mapItemList_.append(mapItem);
+        // TODO what to do with visibility
+        //mapObject->setVisible(visible_);
+        map_->addMapItem(mapItem);
+    }
+
+    /*
     if (!componentCompleted_ || !map_ || !map_->mapData_ || !delegate_ || !model_)
         return;
     // Free any earlier instances
@@ -374,9 +445,14 @@ void QDeclarativeGeoMapObjectView::repopulate()
         // Needed in order for mouse areas to work.
         map_->recursiveAddToObjectMap(mapObject);
     }
+    */
 }
 
-QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
+// Currently item creation is tightly bound to models providing
+// QObject* as data. Some day this may be leveraged to any user defined
+// model or e.g. XML model.
+//QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
+QDeclarativeGeoMapItem* QDeclarativeGeoMapObjectView::createItem(int modelRow)
 {
     if (!delegate_ || !model_)
         return NULL;
@@ -413,7 +489,8 @@ QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
         delete itemContext;
         return 0;
     }
-    QDeclarativeGeoMapObject *declMapObj =  qobject_cast<QDeclarativeGeoMapObject*>(obj);
+    QDeclarativeGeoMapItem *declMapObj =  qobject_cast<QDeclarativeGeoMapItem*>(obj);
+    //QDeclarativeGeoMapObject *declMapObj =  qobject_cast<QDeclarativeGeoMapObject*>(obj);
     if (!declMapObj) {
         qWarning() << "QDeclarativeGeoMapObject map object delegate is of unsupported type.";
         delete itemContext;
@@ -433,6 +510,8 @@ QDeclarativeGeoMapObject* QDeclarativeGeoMapObjectView::createItem(int modelRow)
 
 void QDeclarativeGeoMapObjectView::setVisible(bool visible)
 {
+    // TODO visibility
+    /*
     if (visible_ == visible)
         return;
     visible_ = visible;
@@ -444,6 +523,7 @@ void QDeclarativeGeoMapObjectView::setVisible(bool visible)
         }
     }
     emit visibleChanged();
+    */
 }
 
 bool QDeclarativeGeoMapObjectView::isVisible() const
@@ -464,13 +544,16 @@ bool QDeclarativeGeoMapObjectView::isVisible() const
 
 void QDeclarativeGeoMapObjectView::setZValue(qreal zValue)
 {
-    group_.setZValue(zValue);
-    emit zChanged();
+    // TODO z values
+    // group_.setZValue(zValue);
+    // emit zChanged();
 }
 
 qreal QDeclarativeGeoMapObjectView::zValue()
 {
-    return group_.zValue();
+    // TODO z values what to do
+    return 1.0;
+    //return group_.zValue();
 }
 
 #include "moc_qdeclarativegeomapobject_p.cpp"

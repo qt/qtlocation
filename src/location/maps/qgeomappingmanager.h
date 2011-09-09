@@ -42,7 +42,9 @@
 #ifndef QGEOMAPPINGMANAGER_H
 #define QGEOMAPPINGMANAGER_H
 
-#include "qgraphicsgeomap.h"
+//#include "qgraphicsgeomap.h"
+
+#include "qmobilityglobal.h"
 
 #include <QObject>
 #include <QSize>
@@ -54,11 +56,13 @@ class QLocale;
 
 class QGeoBoundingBox;
 class QGeoCoordinate;
-class QGeoMapData;
 class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
 
 class QGeoMappingManagerEngine;
+
+class QGeoTiledMapReply;
+class TileSpec;
 
 class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
 {
@@ -70,10 +74,20 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    QGeoMapData* createMapData();
+    void requestTiles(const QList<TileSpec> &tiles);
 
-    QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
-    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
+    /*
+      Possibly replace the MapType enum with some kind of struct / class
+        MapLayer {
+            enum? type
+            QString key;
+            QString description;
+        }
+        where enum includes things like street, satellite (day), satellite (night), traffic
+        but _really_ needs to include custom so people can go wild with layers
+    */
+//    QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
+//    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
 
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
@@ -84,10 +98,13 @@ public:
     qreal minimumTilt() const;
     qreal maximumTilt() const;
 
-    bool supportsCustomMapObjects() const;
-
     void setLocale(const QLocale &locale);
     QLocale locale() const;
+
+signals:
+    void tileFinished(const TileSpec &spec, const QByteArray &bytes);
+    void tileError(const TileSpec &spec, const QString &errorString);
+    void queueFinished();
 
 private:
     QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);

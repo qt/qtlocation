@@ -48,9 +48,8 @@
 
 #include "qgeomappingmanagerengine_nokia.h"
 #include "qgeomapreply_nokia.h"
-#include "qgeotiledmapdata_nokia.h"
 
-#include <qgeotiledmaprequest.h>
+#include <tilespec.h>
 
 #include <QNetworkAccessManager>
 #include <QNetworkDiskCache>
@@ -69,12 +68,15 @@
 #define DISK_CACHE_ENABLED 1
 #endif
 
+#undef DISK_CACHE_ENABLED
+
+#ifdef Q_OS_SYMBIAN
+#include <f32file.h>
+#endif
+
 QT_BEGIN_NAMESPACE
 
 #if defined(Q_OS_SYMBIAN)
-#include <f32file.h>
-
-
 QChar QGeoMappingManagerEngineNokia::findFirstInternalFlashDrive()
 {
     QChar flashDrive;
@@ -105,7 +107,7 @@ QChar QGeoMappingManagerEngineNokia::findFirstInternalFlashDrive()
 #endif //Q_OS_SYMBIAN
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-        : QGeoTiledMappingManagerEngine(parameters),
+        : QGeoMappingManagerEngine(parameters),
         m_cache(0),
         m_host("maptile.maps.svc.ovi.com"),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
@@ -113,22 +115,29 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
+}
 
+QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
+
+void QGeoMappingManagerEngineNokia::init()
+{
     setTileSize(QSize(256, 256));
     setMinimumZoomLevel(0.0);
-    setMaximumZoomLevel(18.0);
+    setMaximumZoomLevel(20.0);
 
-    QList<QGraphicsGeoMap::MapType> types;
-    types << QGraphicsGeoMap::StreetMap;
-    types << QGraphicsGeoMap::SatelliteMapDay;
-    types << QGraphicsGeoMap::TerrainMap;
-    setSupportedMapTypes(types);
+//    QList<QGraphicsGeoMap::MapType> types;
+//    types << QGraphicsGeoMap::StreetMap;
+//    types << QGraphicsGeoMap::SatelliteMapDay;
+//    types << QGraphicsGeoMap::TerrainMap;
+//    setSupportedMapTypes(types);
 
-    QList<QGraphicsGeoMap::ConnectivityMode> modes;
-    modes << QGraphicsGeoMap::OnlineMode;
-    setSupportedConnectivityModes(modes);
+//    QList<QGraphicsGeoMap::ConnectivityMode> modes;
+//    modes << QGraphicsGeoMap::OnlineMode;
+//    setSupportedConnectivityModes(modes);
 
     m_networkManager = new QNetworkAccessManager(this);
+
+    QMap<QString, QVariant> parameters = this->parameters();
 
     if (parameters.contains("mapping.proxy")) {
         QString proxy = parameters.value("mapping.proxy").toString();
@@ -199,22 +208,10 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 #endif
 }
 
-QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
-
-QGeoMapData* QGeoMappingManagerEngineNokia::createMapData()
-{
-    QGeoMapData *data = new QGeoTiledMapDataNokia(this);
-    if (!data)
-        return 0;
-
-    data->setConnectivityMode(QGraphicsGeoMap::OnlineMode);
-    return data;
-}
-
-QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMapRequest &request)
+QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const TileSpec &spec)
 {
     // TODO add error detection for if request.connectivityMode() != QGraphicsGeoMap::OnlineMode
-    QString rawRequest = getRequestString(request);
+    QString rawRequest = getRequestString(spec);
 
     QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
     netRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
@@ -225,7 +222,7 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
 
     QNetworkReply* netReply = m_networkManager->get(netRequest);
 
-    QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request);
+    QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, spec);
 
     // TODO goes badly on linux
     //qDebug() << "request: " << QString::number(reinterpret_cast<int>(mapReply), 16) << " " << request.row() << "," << request.column();
@@ -234,10 +231,10 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTiledMa
     return mapReply;
 }
 
-QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapRequest &request) const
+QString QGeoMappingManagerEngineNokia::getRequestString(const TileSpec &spec) const
 {
     const int maxDomains = 11; // TODO: hmmm....
-    const char subdomain = 'a' + (request.row() + request.column()) % maxDomains; // a...k
+    const char subdomain = 'a' + (spec.x() + spec.y()) % maxDomains; // a...k
     static const QString http("http://");
     static const QString path("/maptiler/maptile/newest/");
     static const QChar dot('.');
@@ -248,13 +245,14 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTiledMapReques
     requestString += dot;
     requestString += m_host;
     requestString += path;
-    requestString += mapTypeToStr(request.mapType());
+    //requestString += mapTypeToStr(request.mapType());
+    requestString += QLatin1String("normal.day");
     requestString += slash;
-    requestString += QString::number(request.zoomLevel());
+    requestString += QString::number(spec.zoom());
     requestString += slash;
-    requestString += QString::number(request.column());
+    requestString += QString::number(spec.x());
     requestString += slash;
-    requestString += QString::number(request.row());
+    requestString += QString::number(spec.y());
     requestString += slash;
     requestString += sizeToStr(tileSize());
 //#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
@@ -291,17 +289,17 @@ QString QGeoMappingManagerEngineNokia::sizeToStr(const QSize &size)
         return s128;
 }
 
-QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGraphicsGeoMap::MapType type)
-{
-    if (type == QGraphicsGeoMap::StreetMap)
-        return "normal.day";
-    else if (type == QGraphicsGeoMap::SatelliteMapDay ||
-             type == QGraphicsGeoMap::SatelliteMapNight) {
-        return "satellite.day";
-    } else if (type == QGraphicsGeoMap::TerrainMap)
-        return "terrain.day";
-    else
-        return "normal.day";
-}
+//QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGraphicsGeoMap::MapType type)
+//{
+//    if (type == QGraphicsGeoMap::StreetMap)
+//        return "normal.day";
+//    else if (type == QGraphicsGeoMap::SatelliteMapDay ||
+//             type == QGraphicsGeoMap::SatelliteMapNight) {
+//        return "satellite.day";
+//    } else if (type == QGraphicsGeoMap::TerrainMap)
+//        return "terrain.day";
+//    else
+//        return "normal.day";
+//}
 
 QT_END_NAMESPACE

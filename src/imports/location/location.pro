@@ -6,11 +6,15 @@ TARGETPATH = Qt/location
 
 include(qlocationimport.pri)
 
-QT += declarative network location
+QT += declarative-private network location qtquick1 declarative
+CONFIG += qt3d
 
 DESTDIR = $$QT.location.imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
+#INCLUDEPATH += ../../../../qtdeclarative/include
+INCLUDEPATH += ../../../../qtdeclarative/include/QtDeclarative/5.0.0/QtDeclarative
+INCLUDEPATH += ../../../../qtdeclarative/include/QtDeclarative/5.0.0/QtDeclarative/private
 
 # On some platforms, build both versions because debug and release
 # versions are incompatible
@@ -20,15 +24,7 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativepositionsource_p.h \
            qdeclarativecoordinate_p.h \
            qdeclarativegeolocation_p.h \
-           qdeclarativegeomapobjectborder_p.h \
-           qdeclarativegeomapcircleobject_p.h \
-           qdeclarativegeomapgroupobject_p.h \
            qdeclarativegeomapobject_p.h \
-           qdeclarativegeomappixmapobject_p.h \
-           qdeclarativegeomappolygonobject_p.h \
-           qdeclarativegeomappolylineobject_p.h \
-           qdeclarativegeomaprectangleobject_p.h \
-           qdeclarativegeomaptextobject_p.h \
            qdeclarativegeomapmouseevent_p.h \
            qdeclarativegeomapmousearea_p.h \
            qdeclarativegeoserviceprovider_p.h \
@@ -41,23 +37,18 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeoroute_p.h \
            qdeclarativegeoroutesegment_p.h \
            qdeclarativegeomaneuver_p.h \
-           qdeclarativegeomaprouteobject_p.h \
-           qdeclarativegeoboundingcircle_p.h
+           qdeclarativegeoboundingcircle_p.h \
+           qdeclarative3dgraphicsgeomap_p.h \
+           qdeclarativegeomapflickable_p.h \
+           qdeclarativegeomappincharea_p.h \
+           qdeclarativegeomapitem_p.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
            qdeclarativepositionsource.cpp \
            qdeclarativecoordinate.cpp \
            qdeclarativegeolocation.cpp \
-           qdeclarativegeomapobjectborder.cpp \
-           qdeclarativegeomapcircleobject.cpp \
-           qdeclarativegeomapgroupobject.cpp \
            qdeclarativegeomapobject.cpp \
-           qdeclarativegeomappixmapobject.cpp \
-           qdeclarativegeomappolygonobject.cpp \
-           qdeclarativegeomappolylineobject.cpp \
-           qdeclarativegeomaprectangleobject.cpp \
-           qdeclarativegeomaptextobject.cpp \
            qdeclarativegeomapmouseevent.cpp \
            qdeclarativegeomapmousearea.cpp \
            qdeclarativegeoserviceprovider.cpp \
@@ -69,8 +60,11 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeoroute.cpp \
            qdeclarativegeoroutesegment.cpp \
            qdeclarativegeomaneuver.cpp \
-           qdeclarativegeomaprouteobject.cpp \
-           qdeclarativegeoboundingcircle.cpp
+           qdeclarativegeoboundingcircle.cpp \
+           qdeclarative3dgraphicsgeomap.cpp \
+           qdeclarativegeomapflickable.cpp \
+           qdeclarativegeomappincharea.cpp \
+           qdeclarativegeomapitem.cpp
 
 include(declarativeplaces/declarativeplaces.pri)
 
@@ -83,3 +77,20 @@ qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INSTALLS += target qmldir
+
+# This is interim hack until the QSGMouseArea and QSGPinchArea are enabled.
+# Hack makes code compile, but for anything useful you want the
+# QSGMOUSEAREA_AVAILABLE
+if (exists($$PWD/qsgmousearea_p.h)) {
+   message('Will try to build QML Map 3D with QML2 user interaction elements and Map Items.')
+   DEFINES += QSGMOUSEAREA_AVAILABLE
+   DEFINES += QSGSHADEREFFECTSOURCE_AVAILABLE
+} else {
+   message('QML2 3D Map user interaction elements and MapItems not available. Check location.pro - file for instructions.')
+#  1) Modify qsgmousearea_p.h at qtdeclaratice/src/declarative/items
+#  Make the QSGMouseArea exported instead of autotest exported, i.e. the file should have:
+#  class Q_DECLARATIVE_EXPORT QSGMouseArea : public QSGItem
+#  2) Also export the QSGShaderEffectSource in qsgshadereffectsource_p.h
+#  3) Make the declarative module.
+#  4) Rerun qmake and make
+}

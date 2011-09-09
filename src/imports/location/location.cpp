@@ -42,7 +42,6 @@
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
 
-#include "qgeomapobject.h"
 #include "qdeclarativegeoboundingarea_p.h"
 #include "qdeclarativegeoboundingbox_p.h"
 #include "qdeclarativegeoboundingcircle_p.h"
@@ -51,23 +50,18 @@
 
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativegraphicsgeomap_p.h"
-#include "qdeclarativegeomapgroupobject_p.h"
-#include "qdeclarativegeomapobjectborder_p.h"
-#include "qdeclarativegeomapcircleobject_p.h"
-#include "qdeclarativegeomappixmapobject_p.h"
-#include "qdeclarativegeomappolygonobject_p.h"
-#include "qdeclarativegeomappolylineobject_p.h"
-#include "qdeclarativegeomaprectangleobject_p.h"
-#include "qdeclarativegeomaptextobject_p.h"
+#include "qdeclarative3dgraphicsgeomap_p.h"
 
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 
 #include "qdeclarativegeoroute_p.h"
-#include "qdeclarativegeomaprouteobject_p.h"
 #include "qdeclarativegeoroutemodel_p.h"
 #include "qdeclarativegeocodemodel_p.h"
 #include "qdeclarativegeomaneuver_p.h"
+#include "qdeclarativegeomapflickable_p.h"
+#include "qdeclarativegeomappincharea_p.h"
+#include "qdeclarativegeomapitem_p.h"
 
 //Place includes
 #include "qdeclarativecategory_p.h"
@@ -107,17 +101,8 @@ public:
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 1, 2, "Plugin");
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 1, 2, "PluginParameter");
             qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 2, "Map");
-            qmlRegisterType<QDeclarativeGeoMapObjectBorder>(); // used as grouped property
-            qmlRegisterType<QGeoMapObject>(uri, 1, 2, "QGeoMapObject");
             qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 2, "MapObject");
             qmlRegisterType<QDeclarativeGeoMapObjectView>(uri, 1, 2, "MapObjectView");
-            qmlRegisterType<QDeclarativeGeoMapGroupObject>(uri, 1, 2, "MapGroup");
-            qmlRegisterType<QDeclarativeGeoMapCircleObject>(uri, 1, 2, "MapCircle");
-            qmlRegisterType<QDeclarativeGeoMapPolygonObject>(uri, 1, 2, "MapPolygon");
-            qmlRegisterType<QDeclarativeGeoMapPolylineObject>(uri, 1, 2, "MapPolyline");
-            qmlRegisterType<QDeclarativeGeoMapRectangleObject>(uri, 1, 2, "MapRectangle");
-            qmlRegisterType<QDeclarativeGeoMapTextObject>(uri, 1, 2, "MapText");
-            qmlRegisterType<QDeclarativeGeoMapPixmapObject>(uri, 1, 2, "MapImage");
             qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 1, 2, "MapMouseArea");
             qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 1, 2, "MapMouseEvent");
 
@@ -134,18 +119,10 @@ public:
 
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 5, 0, "Plugin");
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
-            qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 5, 0, "Map");
-            qmlRegisterType<QDeclarativeGeoMapObjectBorder>(); // used as grouped property
-            qmlRegisterType<QGeoMapObject>(uri, 5, 0, "QGeoMapObject");
+            qmlRegisterType<QDeclarative3DGraphicsGeoMap>(uri, 5, 0, "Map3D");
             qmlRegisterType<QDeclarativeGeoMapObject>(uri, 5, 0, "MapObject");
+            qmlRegisterType<QDeclarativeGeoMapItem>(uri, 5, 0, "MapItem");
             qmlRegisterType<QDeclarativeGeoMapObjectView>(uri, 5, 0, "MapObjectView");
-            qmlRegisterType<QDeclarativeGeoMapGroupObject>(uri, 5, 0, "MapGroup");
-            qmlRegisterType<QDeclarativeGeoMapCircleObject>(uri, 5, 0, "MapCircle");
-            qmlRegisterType<QDeclarativeGeoMapPolygonObject>(uri, 5, 0, "MapPolygon");
-            qmlRegisterType<QDeclarativeGeoMapPolylineObject>(uri, 5, 0, "MapPolyline");
-            qmlRegisterType<QDeclarativeGeoMapRectangleObject>(uri, 5, 0, "MapRectangle");
-            qmlRegisterType<QDeclarativeGeoMapTextObject>(uri, 5, 0, "MapText");
-            qmlRegisterType<QDeclarativeGeoMapPixmapObject>(uri, 5, 0, "MapImage");
             qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 5, 0, "MapMouseArea");
             qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 5, 0, "MapMouseEvent");
 
@@ -153,9 +130,12 @@ public:
             qmlRegisterType<QDeclarativeGeoRouteModel>(uri, 5, 0, "RouteModel");
             qmlRegisterType<QDeclarativeGeoRouteQuery>(uri, 5, 0, "RouteQuery");
             qmlRegisterType<QDeclarativeGeoRoute>(uri, 5, 0, "Route"); // data type
-            qmlRegisterType<QDeclarativeGeoMapRouteObject>(uri, 5, 0, "MapRoute");   // graphical presentation
             qmlRegisterType<QDeclarativeGeoRouteSegment>(uri, 5, 0, "RouteSegment");
             qmlRegisterType<QDeclarativeGeoManeuver>(uri, 5, 0, "RouteManeuver");
+            qmlRegisterType<QDeclarativeGeoBoundingCircle>(uri, 5, 0, "BoundingCircle");
+            qmlRegisterUncreatableType<QDeclarativeGeoMapFlickable>(uri, 5, 0, "MapFlickable", QDeclarativeGeoMapFlickable::tr("(Map)Flickable is not intended instantiable by developer."));
+            qmlRegisterUncreatableType<QDeclarativeGeoMapPinchArea>(uri, 5, 0, "MapPinch", QDeclarativeGeoMapPinchArea::tr("(Map)PinchArea is not intended instantiable by developer."));
+            qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent>(uri, 5, 0, "", QDeclarativeGeoMapPinchEvent::tr("(Map)PinchEvent is not intended instantiable by developer."));
 
             qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
             qmlRegisterType<QDeclarativeDescription>(uri, 5, 0, "Description");
@@ -178,7 +158,8 @@ public:
     }
 };
 
-QT_END_NAMESPACE
 #include "location.moc"
+
+QT_END_NAMESPACE
 
 Q_EXPORT_PLUGIN2(declarative_location, QT_PREPEND_NAMESPACE(QLocationDeclarativeModule));

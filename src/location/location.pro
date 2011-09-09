@@ -17,14 +17,8 @@ load(qt_module_config)
 HEADERS += qtlocationversion.h
 
 include(maps/maps.pri)
+include(mapsgl/mapsgl.pri)
 include(places/places.pri)
-
-contains(proj_enabled, yes) {
-  LIBS += -lproj
-} else {
-  include($$PWD/../3rdparty/proj.pri)
-  LIBS += -L$$OUT_PWD/../3rdparty -lproj
-}
 
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
@@ -51,7 +45,6 @@ PRIVATE_HEADERS += \
                     qlocationutils_p.h \
                     qnmeapositioninfosource_p.h \
                     qgeoareamonitor_polling_p.h \
-                    projwrapper_p.h \
                     qgeocoordinate_p.h
 
 symbian {
@@ -145,7 +138,6 @@ SOURCES += \
             qlocationutils.cpp \
             qnmeapositioninfosource.cpp \
             qgeoareamonitor_polling.cpp \
-            projwrapper_p.cpp \
             qgeopositioninfosourcefactory.cpp
 
 symbian {
