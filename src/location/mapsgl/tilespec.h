@@ -41,7 +41,8 @@
 #ifndef TILESPEC_H
 #define TILESPEC_H
 
-#include "qglobal.h"
+#include <QtCore/qglobal.h>
+#include <QtCore/QMetaType>
 
 QT_BEGIN_NAMESPACE
 
@@ -74,5 +75,7 @@ unsigned int qHash(const TileSpec &spec);
 QDebug operator<<(QDebug, const TileSpec &);
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(TileSpec)
 
 #endif // TILESPEC_H

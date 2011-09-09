@@ -54,7 +54,6 @@
 #include <Qt3D/qgltexture2d.h>
 #include <Qt3D/qglscenenode.h>
 
-Q_DECLARE_METATYPE(TileSpec)
 Q_DECLARE_METATYPE(QList<TileSpec>)
 
 struct TileDisk

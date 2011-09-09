@@ -43,6 +43,7 @@
 #include "qgeomappingmanager_p.h"
 #include "qgeomappingmanagerengine.h"
 #include "qgeotiledmapreply.h"
+#include "tilespec.h"
 
 #include <QTimer>
 #include <QNetworkProxy>
@@ -97,6 +98,8 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
     }
 
     d_ptr->thread= new QThread;
+
+    qRegisterMetaType<TileSpec>();
 
     connect(d_ptr->engine,
             SIGNAL(tileFinished(TileSpec,QByteArray)),
