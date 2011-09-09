@@ -338,42 +338,371 @@ void Map2DPrivate::updateFrustum(Frustum &frustum)
     frustum.update(glCamera(), cameraData().aspectRatio());
 }
 
+QList<QVector3D> Map2DPrivate::pointsOnLineWithX(const QVector3D &p1, const QVector3D &p2, double x) const
+{
+    QList<QVector3D> results;
+
+    if (p1.x() == p2.x()) {
+        if (p1.x() == x) {
+            results.append(p1);
+            results.append(p2);
+        }
+    } else {
+        double f = (p1.x() - x) / (p1.x() - p2.x());
+        if ((0 <= f) && (f <= 1.0))
+            results.append((1 - f) * p1 + f * p2);
+    }
+
+    return results;
+}
+
+QList<QVector3D> Map2DPrivate::pointsOnLineWithY(const QVector3D &p1, const QVector3D &p2, double y) const
+{
+    QList<QVector3D> results;
+
+    if (p1.y() == p2.y()) {
+        if (p1.y() == y) {
+            results.append(p1);
+            results.append(p2);
+        }
+    } else {
+        double f = (p1.y() - y) / (p1.y() - p2.y());
+        if ((0 <= f) && (f <= 1.0))
+            results.append((1 - f) * p1 + f * p2);
+    }
+
+    return results;
+}
+
+QList<QVector3D> Map2DPrivate::pointsOnLineWithZ(const QVector3D &p1, const QVector3D &p2, double z) const
+{
+    QList<QVector3D> results;
+
+    if (p1.z() == p2.z()) {
+        if (p1.z() == z) {
+            results.append(p1);
+            results.append(p2);
+        }
+    } else {
+        double f = (p1.z() - z) / (p1.z() - p2.z());
+        if ((0 <= f) && (f <= 1.0))
+            results.append((1 - f) * p1 + f * p2);
+    }
+
+    return results;
+}
+
+QList<QVector3D> Map2DPrivate::clipPolygonToMap(const QList<QVector3D> &points) const
+{
+    bool clipX0 = false;
+    bool clipX1 = false;
+    bool clipY0 = false;
+    bool clipY1 = false;
+    int size = points.size();
+    for (int i = 0; i < size; ++i) {
+        QVector3D p = points.at(i);
+        if (p.x() < 0.0)
+            clipX0 = true;
+        if (sideLength_ < p.x())
+            clipX1 = true;
+        if (p.y() < 0.0)
+            clipY0 = true;
+        if (sideLength_ < p.y())
+            clipY1 = true;
+
+    }
+
+    QList<QVector3D> results = points;
+
+    if (clipX0) {
+        results = splitPolygonX(results, 0.0).second;
+    }
+
+    if (clipX1) {
+        results = splitPolygonX(results, sideLength_).first;
+    }
+
+    if (clipY0) {
+        results = splitPolygonY(results, 0.0).second;
+    }
+
+    if (clipY1) {
+        results = splitPolygonY(results, sideLength_).first;
+    }
+
+    return results;
+}
+
+QPair<QList<QVector3D>,QList<QVector3D> > Map2DPrivate::splitPolygonY(const QList<QVector3D> &points, double y) const
+{
+    QList<QVector3D> pointsBelow;
+    QList<QVector3D> pointsAbove;
+
+    int size = points.size();
+
+    if (size == 0) {
+        return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, pointsAbove);
+    }
+
+    bool allAbove = true;
+    bool allBelow = true;
+
+    for (int i = 0; i < size; ++i) {
+        double py = points.at(i).y();
+        if (py < y)
+            allAbove = false;
+        if (y < py)
+            allBelow = false;
+    }
+
+    if (allAbove) {
+        if (allBelow) {
+            return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, pointsAbove);
+        } else {
+            return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, points);
+        }
+    } else {
+        if (allBelow) {
+            return QPair<QList<QVector3D>,QList<QVector3D> >(points, pointsAbove);
+        }
+    }
+
+
+    int intersect1 = -1;
+    int intersect2 = -1;
+
+    // add intersects
+
+    QList<QVector3D> tmpPoints = points;
+
+    for (int i1 = 0; i1 < size; ++i1) {
+        int i2 = (i1 + 1) % size;
+
+        QVector3D p1 = tmpPoints.at(i1);
+        QVector3D p2 = tmpPoints.at(i2);
+
+        if (p1.y() == y) {
+            if (intersect1 == -1)
+                intersect1 = i1;
+            else if (intersect2 == -1)
+                intersect2 = i1;
+            else
+                qDebug() << __FUNCTION__ << " more than 2 intersections";
+        }
+
+        if (((p1.y() < y) && (y < p2.y()))
+                || ((p2.y() < y) && (y < p1.y()))) {
+            QList<QVector3D> newPoints = pointsOnLineWithY(p1, p2, y);
+            if (newPoints.size() == 1) {
+                tmpPoints.insert(i1 + 1, newPoints.at(0));
+                ++size;
+                // will get added to intersect1 or intersect 2 in next iteration
+            }
+        }
+    }
+
+    // split at intersects
+    if ((intersect1 != -1) && (intersect2 != -1)) {
+
+        size = tmpPoints.size();
+
+        bool firstBelow = true;
+
+        for (int i = intersect1; i <= intersect2; ++i) {
+            QVector3D p = tmpPoints.at(i);
+            if (y < p.y())
+                firstBelow = false;
+            pointsBelow.append(p);
+        }
+
+        for (int i = intersect2; i <= intersect1 + size; ++i) {
+            pointsAbove.append(tmpPoints.at(i % size));
+        }
+
+        if (firstBelow)
+            return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, pointsAbove);
+        else
+            return QPair<QList<QVector3D>,QList<QVector3D> >(pointsAbove, pointsBelow);
+
+    } else {
+        qDebug() << __FUNCTION__ << " less than 2 intersections";
+    }
+
+    return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, pointsAbove);
+}
+
+QPair<QList<QVector3D>,QList<QVector3D> > Map2DPrivate::splitPolygonX(const QList<QVector3D> &points, double x) const
+{
+    QList<QVector3D> pointsBelow;
+    QList<QVector3D> pointsAbove;
+
+    int size = points.size();
+
+    if (size == 0) {
+        return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, pointsAbove);
+    }
+
+    bool allAbove = true;
+    bool allBelow = true;
+
+    for (int i = 0; i < size; ++i) {
+        double px = points.at(i).x();
+        if (px < x)
+            allAbove = false;
+        if (x < px)
+            allBelow = false;
+    }
+
+    if (allAbove) {
+        if (allBelow) {
+            return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, pointsAbove);
+        } else {
+            return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, points);
+        }
+    } else {
+        if (allBelow) {
+            return QPair<QList<QVector3D>,QList<QVector3D> >(points, pointsAbove);
+        }
+    }
+
+    int intersect1 = -1;
+    int intersect2 = -1;
+
+    // add intersects
+
+    QList<QVector3D> tmpPoints = points;
+
+    for (int i1 = 0; i1 < size; ++i1) {
+        int i2 = (i1 + 1) % size;
+
+        QVector3D p1 = tmpPoints.at(i1);
+        QVector3D p2 = tmpPoints.at(i2);
+
+        if (p1.x() == x) {
+            if (intersect1 == -1)
+                intersect1 = i1;
+            else if (intersect2 == -1)
+                intersect2 = i1;
+            else
+                qDebug() << __FUNCTION__ << " more than 2 intersections";
+        }
+
+        if (((p1.x() < x) && (x < p2.x()))
+                || ((p2.x() < x) && (x < p1.x()))) {
+            QList<QVector3D> newPoints = pointsOnLineWithX(p1, p2, x);
+            if (newPoints.size() == 1) {
+                tmpPoints.insert(i1 + 1, newPoints.at(0));
+                ++size;
+                // will get added to intersect1 or intersect 2 in next iteration
+            }
+        }
+    }
+
+    // split at intersects
+    if ((intersect1 != -1) && (intersect2 != -1)) {
+
+        size = tmpPoints.size();
+
+        bool firstBelow = true;
+
+        for (int i = intersect1; i <= intersect2; ++i) {
+            QVector3D p = tmpPoints.at(i);
+            if (x < p.x())
+                firstBelow = false;
+            pointsBelow.append(p);
+        }
+
+        for (int i = intersect2; i <= intersect1 + size; ++i) {
+            pointsAbove.append(tmpPoints.at(i % size));
+        }
+
+        if (firstBelow)
+            return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, pointsAbove);
+        else
+            return QPair<QList<QVector3D>,QList<QVector3D> >(pointsAbove, pointsBelow);
+
+    } else {
+        qDebug() << __FUNCTION__ << " less than 2 intersections";
+    }
+
+    return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, pointsAbove);
+}
+
 QList<TileSpec> Map2DPrivate::updateVisibleTiles()
 {
     Frustum f = frustum();
 
-    QPolygonF poly(4);
+    QList<QVector3D> points;
 
-    QVector3D tln = f.topLeftNear();
-    QVector3D tlf = f.topLeftFar();
-    double tl = (tln.z() - baseHeight_) / (tln.z() - tlf.z());
+    points.append(pointsOnLineWithZ(f.topLeftNear(), f.topLeftFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(f.topRightNear(), f.topRightFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(f.bottomLeftNear(), f.bottomLeftFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(f.bottomRightNear(), f.bottomRightFar(), baseHeight_));
 
-    poly[0] = ((1 - tl) * tln + tl * tlf).toPointF();
+    points.append(pointsOnLineWithZ(f.topLeftNear(), f.bottomLeftNear(), baseHeight_));
+    points.append(pointsOnLineWithZ(f.bottomLeftNear(), f.bottomRightNear(), baseHeight_));
+    points.append(pointsOnLineWithZ(f.bottomRightNear(), f.topRightNear(), baseHeight_));
+    points.append(pointsOnLineWithZ(f.topRightNear(), f.topLeftNear(), baseHeight_));
 
-    QVector3D bln = f.bottomLeftNear();
-    QVector3D blf = f.bottomLeftFar();
-    double bl = (bln.z() - baseHeight_) / (bln.z() - blf.z());
+    points.append(pointsOnLineWithZ(f.topLeftFar(), f.bottomLeftFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(f.bottomLeftFar(), f.bottomRightFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(f.bottomRightFar(), f.topRightFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(f.topRightFar(), f.topLeftFar(), baseHeight_));
 
-    poly[1] = ((1 - bl) * bln + bl * blf).toPointF();
+    QList<TileSpec> tiles;
 
-    QVector3D brn = f.bottomRightNear();
-    QVector3D brf = f.bottomRightFar();
-    double br = (brn.z() - baseHeight_) / (brn.z() - brf.z());
+    if (points.isEmpty())
+        return tiles;
 
-    poly[2] = ((1 - br) * brn + br * brf).toPointF();
+    // sort points into a right handed polygon
 
-    QVector3D trn = f.topRightNear();
-    QVector3D trf = f.topRightFar();
-    double tr = (trn.z() - baseHeight_) / (trn.z() - trf.z());
+    LengthSorter sorter;
 
-    poly[3] = ((1 - tr) * trn + tr * trf).toPointF();
+    // - initial sort to remove duplicates
+    sorter.base = points.first();
+    qSort(points.begin(), points.end(), sorter);
+    for (int i = points.size() - 1; i > 0; --i) {
+        if (points.at(i) == points.at(i - 1))
+            points.removeAt(i);
+    }
 
-    bool widePoly = false;
+    // - proper sort
+    //   - start with the first point, put it in the sorted part of the list
+    //   - add the nearest unsorted point to the last sorted point to the end
+    //     of the sorted points
+    QList<QVector3D>::iterator i;
+    for (i = points.begin(); i != points.end(); ++i) {
+        sorter.base = *i;
+        if (i + 1 != points.end())
+            qSort(i + 1, points.end(), sorter);
+    }
+
+    // - determine if what we have is right handed
+    if (points.size() >= 3) {
+        QVector3D normal = QVector3D::normal(points.at(1) - points.at(0),
+                                             points.at(2) - points.at(1));
+        // - if not, reverse the list
+        if (normal.z() < 0.0) {
+            int s = points.size();
+            int s2 = s / 2;
+            for (int i = 0; i < s2; ++i) {
+                points.swap(i, s - 1 - i);
+            }
+        }
+    }
+
+    // work out if the polygon needs clipping
+    // - if we go off the far right edge we need to clip into
+    //   two regions - one which rounds down now and one which rounds up
+    // - otherwise if we cross an edge of the map we just need to clip
+    //   to the map square
+
+    bool round = false;
     bool clip = false;
-    for (int i = 0; i < poly.size(); ++i) {
-        QPointF p = poly.at(i);
+    for (int i = 0; i < points.size(); ++i) {
+        QVector3D p = points.at(i);
         if (p.x() >= sideLength_) {
-            widePoly = true;
+            round = true;
             break;
         }
         if ((p.x() < 0)
@@ -384,92 +713,25 @@ QList<TileSpec> Map2DPrivate::updateVisibleTiles()
         }
     }
 
-    if (!widePoly) {
+    if (!round) {
         if (!clip) {
-            QVector<QVector3D> points(poly.size());
-
-            for (int i = 0; i < poly.size(); ++i)
-                points[i] = QVector3D(poly.at(i));
-
-            return tilesFromPoints(points, false);
+            tiles.append(tilesFromPoints(points.toVector(), false));
         } else {
-            QPolygonF clipped = intersection(poly, screenPoly_);
-
-            QList<TileSpec> tiles;
-
-            if (!clipped.isEmpty()) {
-                QVector<QVector3D> points(clipped.size() - 1);
-
-                for (int i = 0; i < clipped.size() - 1; ++i)
-                    points[i] = QVector3D(clipped.at(i));
-
-                return tilesFromPoints(points, false);
-            }
-
-            return tiles;
+            points = clipPolygonToMap(points);
+            tiles.append(tilesFromPoints(points.toVector(), false));
         }
-
     } else {
-        QPolygonF clippedLeft = intersection(poly, screenPolyLeft_);
-        QPolygonF clippedRight = intersection(poly, screenPolyRight_);
-
-        QList<TileSpec> tiles;
-
-        if (!clippedLeft.isEmpty()) {
-            QVector<QVector3D> pointsLeft(clippedLeft.size() - 1);
-
-            for (int i = 0; i < clippedLeft.size() - 1; ++i)
-                pointsLeft[i] = QVector3D(clippedLeft.at(i));
-
-            if (clippedRight.isEmpty())
-                return tilesFromPoints(pointsLeft, false);
-            else
-                tiles.append(tilesFromPoints(pointsLeft, false));
+        points = clipPolygonToMap(points);
+        QPair<QList<QVector3D>, QList<QVector3D> > split = splitPolygonX(points, sideLength_ / 2.0);
+        if (!split.first.isEmpty()) {
+            tiles.append(tilesFromPoints(split.first.toVector(), false));
         }
-
-        if (!clippedRight.isEmpty()) {
-            QVector<QVector3D> pointsRight(clippedRight.size() - 1);
-
-            for (int i = 0; i < clippedRight.size() - 1; ++i)
-                pointsRight[i] = QVector3D(clippedRight.at(i));
-
-            if (tiles.isEmpty())
-                return tilesFromPoints(pointsRight, true);
-            else
-                tiles.append(tilesFromPoints(pointsRight, true));
+        if (!split.second.isEmpty()) {
+            tiles.append(tilesFromPoints(split.second.toVector(), true));
         }
-
-        return tiles;
     }
-}
 
-QPolygonF Map2DPrivate::intersection(const QPolygonF &p1, const QPolygonF &p2) const
-{
-    QVector<double> x(4);
-    QVector<double> y(4);
-
-    x[0] = p1.at(0).x();
-    x[1] = p1.at(2).x();
-    x[2] = p2.at(0).x();
-    x[3] = p2.at(2).x();
-
-    y[0] = p1.at(0).y();
-    y[1] = p1.at(2).y();
-    y[2] = p2.at(0).y();
-    y[3] = p2.at(2).y();
-
-    qSort(x);
-    qSort(y);
-
-    QPolygonF result(5);
-
-    result[0] = QPointF(x.at(1), y.at(1));
-    result[1] = QPointF(x.at(2), y.at(1));
-    result[2] = QPointF(x.at(2), y.at(2));
-    result[3] = QPointF(x.at(1), y.at(2));
-    result[4] = QPointF(x.at(1), y.at(1));
-
-    return result;
+    return tiles;
 }
 
 void Map2DPrivate::tilesFromLine(const QVector3D &p1,

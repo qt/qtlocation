@@ -140,9 +140,24 @@ private:
                        int zoomLevel,
                        TileMap &map) const;
 
-    QPolygonF intersection(const QPolygonF &p1, const QPolygonF &p2) const;
-
     QList<TileSpec> tilesFromPoints(const QVector<QVector3D> &points, bool roundUp) const;
+
+    QList<QVector3D> clipPolygonToMap(const QList<QVector3D> &points) const;
+
+    class LengthSorter {
+    public:
+        QVector3D base;
+        bool operator()(const QVector3D &lhs, const QVector3D &rhs) {
+            return (lhs - base).lengthSquared() < (rhs - base).lengthSquared();
+        }
+    };
+
+    QList<QVector3D> pointsOnLineWithX(const QVector3D &p1, const QVector3D &p2, double x) const;
+    QList<QVector3D> pointsOnLineWithY(const QVector3D &p1, const QVector3D &p2, double y) const;
+    QList<QVector3D> pointsOnLineWithZ(const QVector3D &p1, const QVector3D &p2, double z) const;
+
+    QPair<QList<QVector3D>,QList<QVector3D> > splitPolygonX(const QList<QVector3D> &points, double x) const;
+    QPair<QList<QVector3D>,QList<QVector3D> > splitPolygonY(const QList<QVector3D> &points, double y) const;
 
     int maxZoom_;
     int tileSize_;
