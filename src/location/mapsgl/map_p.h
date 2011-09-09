@@ -90,6 +90,9 @@ public:
     void setCameraData(const CameraData &cameraData);
     CameraData cameraData() const;
 
+    void setAutoUpdate(bool autoUpdate);
+    bool autoUpdate() const;
+
     void resize(int width, int height);
 
     virtual QGLSceneNode* createTileNode(const Tile &tile) = 0;
@@ -127,6 +130,8 @@ private:
     virtual QList<TileSpec> updateVisibleTiles() = 0;
     virtual void updateMapItemSceneNode(MapItem *item) = 0;
     void GLContextAvailable();
+
+    bool autoUpdate_;
 
     int width_;
     int height_;

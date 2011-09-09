@@ -33,7 +33,6 @@ TileView::TileView(TileCache *tileCache, QWidget *parent) :
     serviceProvider_ = new QGeoServiceProvider("nokia");
     map_ = new Map(tileCache, this);
     map_->setMappingManager(serviceProvider_->mappingManager());
-    map_->setAutoUpdate(false);
 
     connect(map_,
             SIGNAL(updateRequired()),

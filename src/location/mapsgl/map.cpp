@@ -61,8 +61,7 @@
 #include <cmath>
 
 Map::Map(TileCache *cache, QObject *parent)
-    : QObject(parent),
-      autoUpdate_(true)
+    : QObject(parent)
 {
 //    d_ptr = new Map3DPrivate(this, cache, 20000.0);
 
@@ -97,12 +96,12 @@ void Map::resize(int width, int height)
 
 void Map::setAutoUpdate(bool autoUpdate)
 {
-    autoUpdate_ = autoUpdate;
+    d_ptr->setAutoUpdate(autoUpdate);
 }
 
 bool Map::autoUpdate() const
 {
-    return autoUpdate_;
+    return d_ptr->autoUpdate();
 }
 
 void Map::clearCache()
@@ -117,7 +116,7 @@ void Map::setCameraData(const CameraData &cameraData)
 
     d_ptr->setCameraData(cameraData);
 
-        if (autoUpdate_)
+    if (d_ptr->autoUpdate())
             update();
 
     emit cameraDataChanged(d_ptr->cameraData());
@@ -177,7 +176,8 @@ QPointF Map::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 //------------------------------------------------------------//
 
 MapPrivate::MapPrivate(Map *parent, TileCache *cache)
-    : manager_(0)
+    : autoUpdate_(true),
+      manager_(0)
 {
     sphere_ = new MapSphere(parent, this, cache);
     mapSceneNode_ = new QGLSceneNode();
@@ -230,7 +230,8 @@ void MapPrivate::setCameraData(const CameraData &cameraData)
     updateGlCamera(glCamera_);
     updateFrustum(frustum_);
     visibleTiles_ = updateVisibleTiles();
-    sphere_->update(visibleTiles_);
+    if (autoUpdate_)
+        sphere_->update(visibleTiles_);
 }
 
 CameraData MapPrivate::cameraData() const
@@ -241,6 +242,16 @@ CameraData MapPrivate::cameraData() const
 void MapPrivate::update()
 {
     sphere_->update(visibleTiles_);
+}
+
+void MapPrivate::setAutoUpdate(bool autoUpdate)
+{
+    autoUpdate_ = autoUpdate;
+}
+
+bool MapPrivate::autoUpdate() const
+{
+    return autoUpdate_;
 }
 
 void MapPrivate::resize(int width, int height)

@@ -104,8 +104,6 @@ signals:
 
 private:
     MapPrivate *d_ptr;
-
-    bool autoUpdate_;
 };
 
 QT_END_NAMESPACE
