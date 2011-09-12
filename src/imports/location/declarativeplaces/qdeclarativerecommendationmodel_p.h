@@ -52,7 +52,7 @@ class QDeclarativeRecommendationModel : public QDeclarativeSearchModelBase
 
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
 
-    Q_ENUMS(SearchResultType LocationMatchType)
+    Q_ENUMS(SearchResultType)
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -61,12 +61,6 @@ public:
         Place = QPlaceSearchResult::Place,
         DidYouMeanSuggestion = QPlaceSearchResult::DidYouMeanSuggestion,
         UnknownSearchResult = QPlaceSearchResult::UnknownSearchResult
-    };
-
-    enum LocationMatchType {
-        PointAddress = QPlaceSearchResult::PointAddress,
-        Interpolated = QPlaceSearchResult::Interpolated,
-        UndefinedLocationMatch = QPlaceSearchResult::UndefinedLocationMatch
     };
 
     explicit QDeclarativeRecommendationModel(QObject *parent = 0);
@@ -87,7 +81,6 @@ public:
         SearchResultRelevance,
         SearchResultDistance,
         SearchResultHeading,
-        SearchResultMatchType,
         SearchResultAdditionalData,
         SearchResultPlace,
         SearchResultDidYouMean

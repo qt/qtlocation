@@ -61,7 +61,6 @@ public:
     qreal relevance;
     qreal distance;
     qreal heading;
-    QPlaceSearchResult::LocationMatchType matchType;
     QVariantHash additionalData;
     QPlaceSearchResult::SearchResultType type;
     QPlace place;

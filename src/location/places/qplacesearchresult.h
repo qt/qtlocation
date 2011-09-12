@@ -68,12 +68,6 @@ public:
         return !(other == *this);
     }
 
-    enum LocationMatchType {
-        PointAddress,
-        Interpolated,
-        UndefinedLocationMatch
-    };
-
     enum SearchResultType {
         Place,
         DidYouMeanSuggestion,
@@ -88,9 +82,6 @@ public:
 
     qreal heading() const;
     void setHeading(const qreal &heading);
-
-    LocationMatchType matchType() const;
-    void setMatchType(const LocationMatchType &matchType);
 
     QVariantHash additionalData() const;
     void setAdditionalData(const QVariantHash &data);

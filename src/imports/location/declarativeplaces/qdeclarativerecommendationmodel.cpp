@@ -43,10 +43,6 @@ QT_USE_NAMESPACE
             \o real
             \o The heading to the place.
         \row
-            \o matchType
-            \o RecommendationModel.LocationMatchType
-            \o The location match type of the result.
-        \row
             \o additionalData
             \o
             \o Additional data related to the search result.
@@ -150,7 +146,6 @@ QDeclarativeRecommendationModel::QDeclarativeRecommendationModel(QObject *parent
     roleNames.insert(SearchResultRelevance, "relevance");
     roleNames.insert(SearchResultDistance, "distance");
     roleNames.insert(SearchResultHeading, "heading");
-    roleNames.insert(SearchResultMatchType, "matchType");
     roleNames.insert(SearchResultAdditionalData, "additionalData");
     roleNames.insert(SearchResultPlace, "place");
     roleNames.insert(SearchResultDidYouMean, "didYouMean");
@@ -234,8 +229,6 @@ QVariant QDeclarativeRecommendationModel::data(const QModelIndex& index, int rol
             return result.distance();
         case SearchResultHeading:
             return result.heading();
-        case SearchResultMatchType:
-            return result.matchType();
         case SearchResultAdditionalData:
             return result.additionalData();
         case SearchResultPlace:

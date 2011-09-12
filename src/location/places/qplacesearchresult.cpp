@@ -49,7 +49,6 @@ QPlaceSearchResultPrivate::QPlaceSearchResultPrivate()
       relevance(0),
       distance(0),
       heading(0),
-      matchType(QPlaceSearchResult::UndefinedLocationMatch),
       type(QPlaceSearchResult::UnknownSearchResult)
 {
 }
@@ -61,7 +60,6 @@ QPlaceSearchResultPrivate::QPlaceSearchResultPrivate(const QPlaceSearchResultPri
     this->relevance = other.relevance;
     this->distance = other.distance;
     this->heading = other.heading;
-    this->matchType = other.matchType;
     this->type = other.type;
     this->place = other.place;
     this->dymString = other.dymString;
@@ -78,7 +76,6 @@ bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &othe
             && this->relevance == other.relevance
             && this->distance == other.distance
             && this->heading == other.heading
-            && this->matchType == other.matchType
             && this->type == other.type
             && this->place == other.place
             && this->dymString == other.dymString
@@ -177,22 +174,6 @@ qreal QPlaceSearchResult::heading() const
 void QPlaceSearchResult::setHeading(const qreal &heading)
 {
     d->heading = heading;
-}
-
-/*!
-    Returns location match type.
-*/
-QPlaceSearchResult::LocationMatchType QPlaceSearchResult::matchType() const
-{
-    return d->matchType;
-}
-
-/*!
-    Sets the location \a matchType.
-*/
-void QPlaceSearchResult::setMatchType(const QPlaceSearchResult::LocationMatchType &matchType)
-{
-    d->matchType = matchType;
 }
 
 /*!

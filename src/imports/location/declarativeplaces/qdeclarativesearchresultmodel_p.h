@@ -57,19 +57,13 @@ class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
     Q_PROPERTY(QDeclarativeCategory *searchCategory READ searchCategory WRITE setSearchCategory NOTIFY searchCategoryChanged)
     Q_PROPERTY(int didYouMean READ didYouMean WRITE setDidYouMean NOTIFY didYouMeanChanged);
 
-    Q_ENUMS(SearchResultType LocationMatchType)
+    Q_ENUMS(SearchResultType)
 
 public:
     enum SearchResultType {
         Place = QPlaceSearchResult::Place,
         DidYouMeanSuggestion = QPlaceSearchResult::DidYouMeanSuggestion,
         UnknownSearchResult = QPlaceSearchResult::UnknownSearchResult
-    };
-
-    enum LocationMatchType {
-        PointAddress = QPlaceSearchResult::PointAddress,
-        Interpolated = QPlaceSearchResult::Interpolated,
-        UndefinedLocationMatch = QPlaceSearchResult::UndefinedLocationMatch
     };
 
     explicit QDeclarativeSearchResultModel(QObject *parent = 0);
@@ -98,7 +92,6 @@ public:
         SearchResultRelevance,
         SearchResultDistance,
         SearchResultHeading,
-        SearchResultMatchType,
         SearchResultAdditionalData,
         SearchResultPlace,
         SearchResultDidYouMean
