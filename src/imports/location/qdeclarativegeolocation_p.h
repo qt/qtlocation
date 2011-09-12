@@ -14,7 +14,6 @@ class QDeclarativeGeoLocation : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QVariantHash additionalData READ additionalData WRITE setAdditionalData NOTIFY additionalDataChanged);
     Q_PROPERTY(QDeclarativeGeoAddress* address READ address WRITE setAddress NOTIFY addressChanged);
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged);
     Q_PROPERTY(QString locationId READ locationId WRITE setLocationId NOTIFY locationIdChanged);
@@ -28,8 +27,6 @@ public:
     QGeoLocation location() ;
     void setLocation(const QGeoLocation &src);
 
-    QVariantHash additionalData() const;
-    void setAdditionalData(const QVariantHash &data);
     QDeclarativeGeoAddress *address();
     void setAddress(QDeclarativeGeoAddress *address);
     QDeclarativeCoordinate *coordinate();
@@ -40,7 +37,6 @@ public:
     void setViewport(QDeclarativeGeoBoundingBox *boundingBox);
 
 signals:
-    void additionalDataChanged();
     void addressChanged();
     void coordinateChanged();
     void locationIdChanged();

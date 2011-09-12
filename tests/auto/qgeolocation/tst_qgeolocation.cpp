@@ -70,8 +70,6 @@ void tst_QGeoLocation::constructor()
     QCOMPARE(m_location.address(), m_address);
     QCOMPARE(m_location.coordinate(), m_coordinate);
     QCOMPARE(m_location.viewport(), m_viewport);
-    QCOMPARE(m_location.additionalData().count(), 0);
-    QCOMPARE(m_location.additionalData(), m_additionalData );
     QCOMPARE(m_location.locationId(), m_locationId);
 }
 
@@ -143,19 +141,6 @@ void tst_QGeoLocation::viewport()
     QVERIFY(m_location.viewport() != qgeoboundingboxcopy);
 }
 
-void tst_QGeoLocation::additionalData()
-{
-    m_additionalData.insert("key1", "value1");
-    m_additionalData.insert("key2", "value2");
-
-    m_location.setAdditionalData(m_additionalData);
-    QCOMPARE(m_location.additionalData().count(), 2);
-    QCOMPARE(m_location.additionalData(), m_additionalData);
-
-    m_additionalData.insert("key3", "value3");
-    QVERIFY(m_location.additionalData() != m_additionalData);
-}
-
 void tst_QGeoLocation::locationId()
 {
     m_locationId = "id";
@@ -223,11 +208,6 @@ void tst_QGeoLocation::comparison()
     //set viewport
     location.setViewport(QGeoBoundingBox(QGeoCoordinate(5,5),0.4,0.4));
 
-    //set additionalData
-    QVariantHash additionalData;
-    additionalData.insert("key", "value");
-    location.setAdditionalData(additionalData);
-
     //set locationId
     location.setLocationId("id");
 
@@ -245,9 +225,6 @@ void tst_QGeoLocation::comparison()
             otherLocation.setCoordinate(QGeoCoordinate(12,13));
         } else if (dataField == "viewport"){
             otherLocation.setViewport(QGeoBoundingBox(QGeoCoordinate(1,2), 0.5,0.5));
-        } else if (dataField == "additionalData") {
-            additionalData.insert("key", "otherValue");
-            otherLocation.setAdditionalData(additionalData);
         } else if (dataField == "locationId") {
             otherLocation.setLocationId("otherId");
         } else {
@@ -264,9 +241,8 @@ void tst_QGeoLocation::comparison_data()
     QTest::newRow("no change") << "no change";
     QTest::newRow("address") << "address";
     QTest::newRow("coordinate") << "coordinate";
-    QTest::newRow("additionalData") << "additionalData";
     QTest::newRow("locationId") << "locationId";
 }
 
-QTEST_MAIN(tst_QGeoLocation);
+QTEST_APPLESS_MAIN(tst_QGeoLocation);
 

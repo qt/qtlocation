@@ -38,9 +38,6 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
     QGeoLocation previous = m_src;
     m_src = src;
 
-    if (previous.additionalData() != m_src.additionalData()) {
-        emit additionalDataChanged();
-    }
     if (previous.address() != m_src.address()) {
         m_address.setAddress(m_src.address());
         emit addressChanged();
@@ -63,25 +60,6 @@ QGeoLocation QDeclarativeGeoLocation::location()
     m_src.setCoordinate(m_coordinate.coordinate());
     m_src.setViewport(m_boundingBox.box());
     return m_src;
-}
-
-/*!
-    \qmlproperty QVariantHash Location::additionalData
-
-    This property holds additional data for location. Those are pairs of strings (key/value).
-*/
-
-void QDeclarativeGeoLocation::setAdditionalData(const QVariantHash &additionalData)
-{
-    if (m_src.additionalData() != additionalData) {
-        m_src.setAdditionalData(additionalData);
-        emit additionalDataChanged();
-    }
-}
-
-QVariantHash QDeclarativeGeoLocation::additionalData() const
-{
-    return m_src.additionalData();
 }
 
 /*!

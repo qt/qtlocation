@@ -52,7 +52,6 @@ QGeoLocationPrivate::QGeoLocationPrivate()
 QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
     : QSharedData()
 {
-    this->additionalData = other.additionalData;
     this->address = other.address;
     this->coordinate = other.coordinate;
     this->locationId = other.locationId;
@@ -65,8 +64,7 @@ QGeoLocationPrivate::~QGeoLocationPrivate()
 
 bool QGeoLocationPrivate::operator==(const QGeoLocationPrivate &other) const
 {
-    return  (this->additionalData == other.additionalData
-            && this->address == other.address
+    return  (this->address == other.address
             && this->coordinate == other.coordinate
             && this->locationId == other.locationId
             && this->viewport == other.viewport);
@@ -117,22 +115,6 @@ QGeoLocation &QGeoLocation::operator =(const QGeoLocation &other) {
 bool QGeoLocation::operator==(const QGeoLocation &other) const
 {
     return (*(d.constData()) == *(other.d.constData()));
-}
-
-/*!
-    Returns additional data.
-*/
-QVariantHash QGeoLocation::additionalData() const
-{
-    return d->additionalData;
-}
-
-/*!
-    Sets additional data.
-*/
-void QGeoLocation::setAdditionalData(const QVariantHash &data)
-{
-    d->additionalData = data;
 }
 
 /*!

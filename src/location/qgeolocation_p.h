@@ -56,7 +56,6 @@ public:
 
     bool operator==(const QGeoLocationPrivate &other) const;
 
-    QVariantHash additionalData;
     QGeoAddress address;
     QGeoCoordinate coordinate;
     QString locationId;

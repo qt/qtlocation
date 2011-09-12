@@ -70,8 +70,6 @@ public:
         return !(other == *this);
     }
 
-    QVariantHash additionalData() const;
-    void setAdditionalData(const QVariantHash &data);
     QGeoAddress address() const;
     void setAddress(const QGeoAddress &address);
     QGeoCoordinate coordinate() const;
