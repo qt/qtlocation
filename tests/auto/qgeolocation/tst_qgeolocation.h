@@ -97,5 +97,5 @@ Q_DECLARE_METATYPE( QGeoCoordinate::CoordinateFormat);
 Q_DECLARE_METATYPE( QGeoCoordinate::CoordinateType);
 Q_DECLARE_METATYPE( QList<double>);
 
-#endif // TST_QGEOPLACE_H
+#endif
 

@@ -61,23 +61,23 @@ public:
 
     virtual QPlaceDetailsReply *getPlaceDetails(const QString &placeId) = 0;
 
-    virtual QPlaceContentReply *getContent(const QGeoPlace &place, const QPlaceContentRequest &request) = 0;
+    virtual QPlaceContentReply *getContent(const QPlace &place, const QPlaceContentRequest &request) = 0;
 
     virtual QPlaceReply *postRating(const QString &placeId, qreal value) = 0;
 
     virtual QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &request) = 0;
 
-    virtual QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchRequest &request) = 0;
+    virtual QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &request) = 0;
     virtual QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request) = 0;
 
     virtual QPlaceManager::ConnectivityModes connectivityMode() const = 0;
     virtual void setConnectivityMode(QPlaceManager::ConnectivityModes mode) = 0;
     virtual QPlaceManager::ConnectivityModes supportedConnectivityModes() const = 0;
 
-    virtual QPlaceIdReply *savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope) = 0;
+    virtual QPlaceIdReply *savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope) = 0;
     virtual QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const = 0;
 
-    virtual QPlaceIdReply *removePlace(const QGeoPlace &place) = 0;
+    virtual QPlaceIdReply *removePlace(const QPlace &place) = 0;
 
     virtual QPlaceReply *initializeCategories() = 0;
     virtual QList<QPlaceCategory> categories(const QPlaceCategory &parent) const = 0;

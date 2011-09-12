@@ -146,7 +146,7 @@ QPlaceDetailsReply *QPlaceManager::getPlaceDetails(const QString &placeId) const
     Retrieves content from a given \a place according to thes parameters specified in
     \a request.
 */
-QPlaceContentReply *QPlaceManager::getContent(const QGeoPlace &place, const QPlaceContentRequest &request) const
+QPlaceContentReply *QPlaceManager::getContent(const QPlace &place, const QPlaceContentRequest &request) const
 {
     return d->engine->getContent(place, request);
 }
@@ -170,7 +170,7 @@ QPlaceSearchReply *QPlaceManager::searchForPlaces(const QPlaceSearchRequest &req
 /*!
     Provides recommendation based on a given \a request.
 */
-QPlaceSearchReply *QPlaceManager::recommendations(const QGeoPlace &place, const QPlaceSearchRequest &request) const
+QPlaceSearchReply *QPlaceManager::recommendations(const QPlace &place, const QPlaceSearchRequest &request) const
 {
     return d->engine->recommendations(place, request);
 }
@@ -210,7 +210,7 @@ QPlaceManager::ConnectivityModes QPlaceManager::supportedConnectivityModes() con
 /*!
     Saves a \a place at the given \a scope.
 */
-QPlaceIdReply *QPlaceManager::savePlace(const QGeoPlace &place, VisibilityScope scope)
+QPlaceIdReply *QPlaceManager::savePlace(const QPlace &place, VisibilityScope scope)
 {
     return d->engine->savePlace(place, scope);
 }
@@ -218,7 +218,7 @@ QPlaceIdReply *QPlaceManager::savePlace(const QGeoPlace &place, VisibilityScope 
 /*!
     Removes a \a place from the manager
 */
-QPlaceIdReply *QPlaceManager::removePlace(const QGeoPlace &place)
+QPlaceIdReply *QPlaceManager::removePlace(const QPlace &place)
 {
     return d->engine->removePlace(place);
 }

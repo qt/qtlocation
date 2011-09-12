@@ -55,7 +55,7 @@
 #include <qgeocoordinate.h>
 #include <qgeoaddress.h>
 #include <qgeolocation.h>
-#include <qgeoplace.h>
+#include <qplace.h>
 #include <qplacerating.h>
 #include <qplacecategory.h>
 #include <qplacesupplier.h>
@@ -174,7 +174,7 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValu
 {
     QPlaceSearchResult result;
     result.setType(QPlaceSearchResult::Place);
-    QGeoPlace newPlace;
+    QPlace newPlace;
 
     // Processing properties
     QScriptValue properties = results.property(search_properties_element);
@@ -231,7 +231,7 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValu
     return result;
 }
 
-void QPlaceJSonSearchParser::processContacts(const QScriptValue &properties, QGeoPlace *place)
+void QPlaceJSonSearchParser::processContacts(const QScriptValue &properties, QPlace *place)
 {
     QScriptValue value = properties.property(search_properties_url_value);
     if (value.isValid() && !value.toString().isEmpty()) {
@@ -244,7 +244,7 @@ void QPlaceJSonSearchParser::processContacts(const QScriptValue &properties, QGe
 }
 
 
-void QPlaceJSonSearchParser::processCategories(const QScriptValue &categories, QGeoPlace *place)
+void QPlaceJSonSearchParser::processCategories(const QScriptValue &categories, QPlace *place)
 {
     QList<QPlaceCategory> categoriesList;
     QScriptValueIterator it(categories);
@@ -265,7 +265,7 @@ void QPlaceJSonSearchParser::processCategories(const QScriptValue &categories, Q
     place->setCategories(categoriesList);
 }
 
-void QPlaceJSonSearchParser::processRating(const QScriptValue &properties, QGeoPlace *place)
+void QPlaceJSonSearchParser::processRating(const QScriptValue &properties, QPlace *place)
 {
     QScriptValue value = properties.property(search_properties_rating_value);
     if (value.isValid() && !value.toString().isEmpty()) {
@@ -323,7 +323,7 @@ void QPlaceJSonSearchParser::processAddress(const QScriptValue &properties, QGeo
     location->setAddress(newAddress);
 }
 
-void QPlaceJSonSearchParser::processLocation(const QScriptValue &properties, QGeoPlace *place)
+void QPlaceJSonSearchParser::processLocation(const QScriptValue &properties, QPlace *place)
 {
     QGeoLocation location;
 

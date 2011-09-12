@@ -77,7 +77,7 @@ public:
         return 0;
     }
 
-    QPlaceContentReply *getContent(const QGeoPlace &place, const QPlaceContentRequest &query)
+    QPlaceContentReply *getContent(const QPlace &place, const QPlaceContentRequest &query)
     {
         Q_UNUSED(place)
         Q_UNUSED(query)
@@ -100,7 +100,7 @@ public:
         return 0;
     }
 
-    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchRequest &query)
+    QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &query)
     {
         Q_UNUSED(place)
         Q_UNUSED(query)
@@ -130,7 +130,7 @@ public:
         return QPlaceManager::OnlineMode;
     }
 
-    QPlaceIdReply *savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope)
+    QPlaceIdReply *savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope)
     {
         Q_UNUSED(place)
         Q_UNUSED(scope)
@@ -143,7 +143,7 @@ public:
         return QPlaceManager::PublicScope;
     }
 
-    QPlaceIdReply *removePlace(const QGeoPlace &place)
+    QPlaceIdReply *removePlace(const QPlace &place)
     {
         Q_UNUSED(place)
 

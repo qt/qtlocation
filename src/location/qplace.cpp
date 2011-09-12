@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,15 +39,15 @@
 **
 ****************************************************************************/
 
-#include "qgeoplace.h"
-#include "qgeoplace_p.h"
+#include "qplace.h"
+#include "qplace_p.h"
 
-#ifdef QGEOPLACE_DEBUG
+#ifdef QPLACE_DEBUG
 #include <QDebug>
 #endif
 
 #if !defined(Q_CC_MWERKS)
-template<> QT_PREPEND_NAMESPACE(QGeoPlacePrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QGeoPlacePrivate)>::clone()
+template<> QT_PREPEND_NAMESPACE(QPlacePrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QPlacePrivate)>::clone()
 {
     return d->clone();
 }
@@ -56,8 +56,8 @@ template<> QT_PREPEND_NAMESPACE(QGeoPlacePrivate) *QSharedDataPointer<QT_PREPEND
 QT_BEGIN_NAMESPACE
 
 /*!
-    \class QGeoPlace
-    \brief The QGeoPlace class represents basic information about a place.
+    \class QPlace
+    \brief The QPlace class represents basic information about a place.
 
     \inmodule QtLocation
     \since 1.1
@@ -68,22 +68,22 @@ QT_BEGIN_NAMESPACE
 /*!
     Constructs an empty place object.
 */
-QGeoPlace::QGeoPlace()
-        : d_ptr(new QGeoPlacePrivate())
+QPlace::QPlace()
+        : d_ptr(new QPlacePrivate())
 {
 }
 
 /*!
     \internal
 */
-QGeoPlace::QGeoPlace(QGeoPlacePrivate *dd)
+QPlace::QPlace(QPlacePrivate *dd)
         : d_ptr(dd) {}
 
 /*!
     Constructs a copy of \a other.
     \since 1.1
 */
-QGeoPlace::QGeoPlace(const QGeoPlace &other)
+QPlace::QPlace(const QPlace &other)
         : d_ptr(other.d_ptr)
 {
 }
@@ -91,7 +91,7 @@ QGeoPlace::QGeoPlace(const QGeoPlace &other)
 /*!
     Destroys this place.
 */
-QGeoPlace::~QGeoPlace()
+QPlace::~QPlace()
 {
 }
 
@@ -100,20 +100,20 @@ QGeoPlace::~QGeoPlace()
     to this place.
     \since 1.1
 */
-QGeoPlace &QGeoPlace::operator= (const QGeoPlace & other)
+QPlace &QPlace::operator= (const QPlace & other)
 {
     d_ptr = other.d_ptr;
     return *this;
 }
 
-inline QGeoPlacePrivate* QGeoPlace::d_func()
+inline QPlacePrivate* QPlace::d_func()
 {
-    return reinterpret_cast<QGeoPlacePrivate*>(d_ptr.data());
+    return reinterpret_cast<QPlacePrivate*>(d_ptr.data());
 }
 
-inline const QGeoPlacePrivate* QGeoPlace::d_func() const
+inline const QPlacePrivate* QPlace::d_func() const
 {
-    return reinterpret_cast<const QGeoPlacePrivate*>(d_ptr.constData());
+    return reinterpret_cast<const QPlacePrivate*>(d_ptr.constData());
 }
 
 /*!
@@ -121,7 +121,7 @@ inline const QGeoPlacePrivate* QGeoPlace::d_func() const
     otherwise returns false.
     \since 1.1
 */
-bool QGeoPlace::operator== (const QGeoPlace &other) const
+bool QPlace::operator== (const QPlace &other) const
 {
     return ( *(d_ptr.constData()) == *(other.d_ptr.constData()));
 }
@@ -131,7 +131,7 @@ bool QGeoPlace::operator== (const QGeoPlace &other) const
     otherwise returns false.
     \since 1.1
 */
-bool QGeoPlace::operator!= (const QGeoPlace &other) const
+bool QPlace::operator!= (const QPlace &other) const
 {
     return (!this->operator ==(other));
 }
@@ -139,18 +139,18 @@ bool QGeoPlace::operator!= (const QGeoPlace &other) const
 /*!
     Returns additional data.
 */
-QVariantHash QGeoPlace::additionalData() const
+QVariantHash QPlace::additionalData() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->additionalData;
 }
 
 /*!
     Sets additional data.
 */
-void QGeoPlace::setAdditionalData(const QVariantHash &data)
+void QPlace::setAdditionalData(const QVariantHash &data)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->additionalData = data;
 }
 
@@ -158,108 +158,108 @@ void QGeoPlace::setAdditionalData(const QVariantHash &data)
 /*!
     Returns categories.
 */
-QList<QPlaceCategory> QGeoPlace::categories() const
+QList<QPlaceCategory> QPlace::categories() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->categories;
 }
 
 /*!
     Sets categories.
 */
-void QGeoPlace::setCategories(const QList<QPlaceCategory> &categories)
+void QPlace::setCategories(const QList<QPlaceCategory> &categories)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->categories = categories;
 }
 
 /*!
     Returns descriptions.
 */
-QList<QPlaceDescription> QGeoPlace::descriptions() const
+QList<QPlaceDescription> QPlace::descriptions() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->descriptions;
 }
 
 /*!
     Sets descriptions.
 */
-void QGeoPlace::setDescriptions(const QList<QPlaceDescription> &descriptions)
+void QPlace::setDescriptions(const QList<QPlaceDescription> &descriptions)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->descriptions = descriptions;
 }
 
 /*!
     Returns location.
 */
-QGeoLocation QGeoPlace::location() const
+QGeoLocation QPlace::location() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->location;
 }
 
 /*!
     Sets location.
 */
-void QGeoPlace::setLocation(const QGeoLocation &location)
+void QPlace::setLocation(const QGeoLocation &location)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->location = location;
 }
 
 /*!
     Returns rating.
 */
-QPlaceRating QGeoPlace::rating() const
+QPlaceRating QPlace::rating() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->rating;
 }
 
 /*!
     Sets rating.
 */
-void QGeoPlace::setRating(const QPlaceRating &rating)
+void QPlace::setRating(const QPlaceRating &rating)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->rating = rating;
 }
 
 /*!
     Returns suppliers.
 */
-QList<QPlaceSupplier> QGeoPlace::suppliers() const
+QList<QPlaceSupplier> QPlace::suppliers() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->suppliers;
 }
 
 /*!
     Sets suppliers.
 */
-void QGeoPlace::setSuppliers(const QList<QPlaceSupplier> &data)
+void QPlace::setSuppliers(const QList<QPlaceSupplier> &data)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->suppliers = data;
 }
 
 /*!
     Returns feeds list.
 */
-QStringList QGeoPlace::feeds() const
+QStringList QPlace::feeds() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->feeds;
 }
 
 /*!
     Sets feeds list.
 */
-void QGeoPlace::setFeeds(const QStringList &feeds)
+void QPlace::setFeeds(const QStringList &feeds)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->feeds = feeds;
 }
 
@@ -270,18 +270,18 @@ void QGeoPlace::setFeeds(const QStringList &feeds)
 
     The \a type specifies which kind of content is to be retrieved.
 */
-QPlaceContent::Collection QGeoPlace::content(QPlaceContent::Type type) const
+QPlaceContent::Collection QPlace::content(QPlaceContent::Type type) const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->contentCollections.value(type);
 }
 
 /*!
     Sets a collection of \a content for the given \a type.
 */
-void QGeoPlace::setContent(QPlaceContent::Type type, const QPlaceContent::Collection &content)
+void QPlace::setContent(QPlaceContent::Type type, const QPlaceContent::Collection &content)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->contentCollections.insert(type, content);
 }
 
@@ -289,9 +289,9 @@ void QGeoPlace::setContent(QPlaceContent::Type type, const QPlaceContent::Collec
     Adds a collection of \a content of the given \a type to the place.  Any index in \a content
     that already exists is overwritten.
 */
-void QGeoPlace::addContent(QPlaceContent::Type type, const QPlaceContent::Collection &content)
+void QPlace::addContent(QPlaceContent::Type type, const QPlaceContent::Collection &content)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     QMapIterator<int, QPlaceContent> iter(content);
     while (iter.hasNext()) {
         iter.next();
@@ -305,180 +305,180 @@ void QGeoPlace::addContent(QPlaceContent::Type type, const QPlaceContent::Collec
     (As opposed to how many objects this place instance is currently assigned).
     A negative count indicates that the total number of items is unknown.
 */
-int QGeoPlace::contentCount(QPlaceContent::Type type) const
+int QPlace::contentCount(QPlaceContent::Type type) const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->contentCounts.value(type, 0);
 }
 
 /*!
     Sets the \a totalCount of content objects of the given \a type.
 */
-void QGeoPlace::setContentCount(QPlaceContent::Type type, int totalCount)
+void QPlace::setContentCount(QPlaceContent::Type type, int totalCount)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->contentCounts.insert(type, totalCount);
 }
 
 /*!
     Returns name.
 */
-QString QGeoPlace::name() const
+QString QPlace::name() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->name;
 }
 
 /*!
     Sets name.
 */
-void QGeoPlace::setName(const QString &name)
+void QPlace::setName(const QString &name)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->name = name;
 }
 
 /*!
     Returns placeId.
 */
-QString QGeoPlace::placeId() const
+QString QPlace::placeId() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->placeId;
 }
 
 /*!
     Sets placeId.
 */
-void QGeoPlace::setPlaceId(const QString &placeId)
+void QPlace::setPlaceId(const QString &placeId)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->placeId = placeId;
 }
 
 /*!
     Returns list of tags.
 */
-QStringList QGeoPlace::tags() const
+QStringList QPlace::tags() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->tags;
 }
 
 /*!
     Sets tags.
 */
-void QGeoPlace::setTags(const QStringList &tags)
+void QPlace::setTags(const QStringList &tags)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->tags = tags;
 }
 
 /*!
     Returns the primary phone number for this place.
 */
-QString QGeoPlace::primaryPhone() const
+QString QPlace::primaryPhone() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->primaryPhone;
 }
 
 /*!
     Sets the primary \a phone number of this place.
 */
-void QGeoPlace::setPrimaryPhone(const QString &phone)
+void QPlace::setPrimaryPhone(const QString &phone)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->primaryPhone = phone;
 }
 
 /*!
     Returns the primary fax number for this place.
 */
-QString QGeoPlace::primaryFax() const
+QString QPlace::primaryFax() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->primaryFax;
 }
 
 /*!
     Sets the primary \a fax number for this place
 */
-void QGeoPlace::setPrimaryFax(const QString fax)
+void QPlace::setPrimaryFax(const QString fax)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->primaryFax = fax;
 }
 
 /*!
     Returns the primary email address for this place.
 */
-QString QGeoPlace::primaryEmail() const
+QString QPlace::primaryEmail() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->primaryEmail;
 }
 
 /*!
     Sets the primary \a email address for this place.
 */
-void QGeoPlace::setPrimaryEmail(const QString &email)
+void QPlace::setPrimaryEmail(const QString &email)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->primaryEmail = email;
 }
 
 /*!
     Returns the primary URL of this place.
 */
-QUrl QGeoPlace::primaryUrl() const
+QUrl QPlace::primaryUrl() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->primaryUrl;
 }
 
 /*!
     Sets the primary \a url of this place.
 */
-void QGeoPlace::setPrimaryUrl(const QUrl &url)
+void QPlace::setPrimaryUrl(const QUrl &url)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->primaryUrl = url;
 }
 
 /*!
     Returns whether the details of this place have been fetched or not.
 */
-bool QGeoPlace::detailsFetched() const
+bool QPlace::detailsFetched() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->detailsFetched;
 }
 
 /*!
     Sets whether the details of this place have been \a fetched or not.
 */
-void QGeoPlace::setDetailsFetched(bool fetched)
+void QPlace::setDetailsFetched(bool fetched)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->detailsFetched = fetched;
 }
 
 /*!
     Returns the extended attributes of the place
 */
-QGeoPlace::ExtendedAttributes QGeoPlace::extendedAttributes() const
+QPlace::ExtendedAttributes QPlace::extendedAttributes() const
 {
-    Q_D(const QGeoPlace);
+    Q_D(const QPlace);
     return d->extendedAttributes;
 }
 
 /*!
     Sets the extended attributes of the place.
 */
-void QGeoPlace::setExtendedAttributes(const ExtendedAttributes &attributes)
+void QPlace::setExtendedAttributes(const ExtendedAttributes &attributes)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->extendedAttributes = attributes;
 }
 
@@ -486,22 +486,22 @@ void QGeoPlace::setExtendedAttributes(const ExtendedAttributes &attributes)
     Adds a single attribute to the place.  If the attribute already
     exists then the old value is overwritten.
 */
-void QGeoPlace::insertExtendedAttribute(const QString &key, const QPlaceAttribute &value)
+void QPlace::insertExtendedAttribute(const QString &key, const QPlaceAttribute &value)
 {
-    Q_D(QGeoPlace);
+    Q_D(QPlace);
     d->extendedAttributes.insert(key, value);
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoPlacePrivate::QGeoPlacePrivate()
+QPlacePrivate::QPlacePrivate()
         : QSharedData(),
         detailsFetched(false)
 {
 }
 
-QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
+QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
         : QSharedData(other),
         additionalData(other.additionalData),
         categories(other.categories),
@@ -524,9 +524,9 @@ QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
 {
 }
 
-QGeoPlacePrivate::~QGeoPlacePrivate() {}
+QPlacePrivate::~QPlacePrivate() {}
 
-QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
+QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
 {
     additionalData = other.additionalData;
     categories = other.categories;
@@ -546,9 +546,9 @@ QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
     return *this;
 }
 
-bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
+bool QPlacePrivate::operator== (const QPlacePrivate &other) const
 {
-#ifdef QGEOPLACE_DEBUG
+#ifdef QPLACE_DEBUG
     qDebug() << "additionalData: " << (additionalData == other.additionalData);
     qDebug() << "categories: " << (categories == other.categories);
     qDebug() << "descriptions: " << (descriptions == other.descriptions);

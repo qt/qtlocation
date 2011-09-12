@@ -51,7 +51,7 @@ DetailsReply::~DetailsReply()
 {
 }
 
-void DetailsReply::setResult(const QGeoPlace &place)
+void DetailsReply::setResult(const QPlace &place)
 {
     QPlaceDetailsReply::setResult(place);
 }

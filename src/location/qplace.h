@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACE_H
-#define QGEOPLACE_H
+#ifndef QPLACE_H
+#define QPLACE_H
 
 #include "qmobilityglobal.h"
 #include <QSharedDataPointer>
@@ -60,21 +60,21 @@
 QT_BEGIN_NAMESPACE
 
 class QString;
-class QGeoPlacePrivate;
+class QPlacePrivate;
 
-class Q_LOCATION_EXPORT QGeoPlace
+class Q_LOCATION_EXPORT QPlace
 {
 public:
     typedef QMap<QString, QPlaceAttribute> ExtendedAttributes;
 
-    QGeoPlace();
-    QGeoPlace(const QGeoPlace &other);
-    virtual ~QGeoPlace();
+    QPlace();
+    QPlace(const QPlace &other);
+    ~QPlace();
 
-    QGeoPlace& operator=(const QGeoPlace &other);
+    QPlace& operator=(const QPlace &other);
 
-    bool operator==(const QGeoPlace &other) const;
-    bool operator!=(const QGeoPlace &other) const;
+    bool operator==(const QPlace &other) const;
+    bool operator!=(const QPlace &other) const;
 
     QVariantHash additionalData() const;
     void setAdditionalData(const QVariantHash &data);
@@ -121,17 +121,17 @@ public:
     bool detailsFetched() const;
     void setDetailsFetched(bool fetched);
 
-    QGeoPlace::ExtendedAttributes extendedAttributes() const;
-    void setExtendedAttributes(const QGeoPlace::ExtendedAttributes &attributes);
+    QPlace::ExtendedAttributes extendedAttributes() const;
+    void setExtendedAttributes(const QPlace::ExtendedAttributes &attributes);
     void insertExtendedAttribute(const QString &key, const QPlaceAttribute &);
 
 protected:
-    QGeoPlace(QGeoPlacePrivate *dd);
-    QSharedDataPointer<QGeoPlacePrivate> d_ptr;
+    QPlace(QPlacePrivate *dd);
+    QSharedDataPointer<QPlacePrivate> d_ptr;
 
 private:
-    QGeoPlacePrivate* d_func();
-    const QGeoPlacePrivate* d_func() const;
+    QPlacePrivate* d_func();
+    const QPlacePrivate* d_func() const;
 };
 
 QT_END_NAMESPACE

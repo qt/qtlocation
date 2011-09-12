@@ -107,7 +107,7 @@ QPlaceDetailsReply *QPlaceManagerEngineNokia::getPlaceDetails(const QString &pla
     return reply;
 }
 
-QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QGeoPlace &place, const QPlaceContentRequest &request)
+QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, const QPlaceContentRequest &request)
 {
     QPlaceContentReplyImpl *reply;
     switch (request.contentType()) {
@@ -200,7 +200,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokia::searchForPlaces(const QPlaceSearchR
     return reply;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QGeoPlace &place, const QPlaceSearchRequest &query)
+QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QPlace &place, const QPlaceSearchRequest &query)
 {
     QPlaceRecommendationReplyImpl *reply = NULL;
     QPlaceSearchRequest newQuery = query;
@@ -246,8 +246,8 @@ QPlaceManager::ConnectivityModes QPlaceManagerEngineNokia::supportedConnectivity
     return QPlaceManager::OnlineMode;
 }
 
-QPlaceIdReply *QPlaceManagerEngineNokia::savePlace(const QGeoPlace &place,
-                                                     QPlaceManager::VisibilityScope scope)
+QPlaceIdReply *QPlaceManagerEngineNokia::savePlace(const QPlace &place,
+                                                   QPlaceManager::VisibilityScope scope)
 {
     Q_UNUSED(place)
     Q_UNUSED(scope)
@@ -260,7 +260,7 @@ QPlaceManager::VisibilityScopes QPlaceManagerEngineNokia::supportedSaveVisibilit
     return QPlaceManager::NoScope;
 }
 
-QPlaceIdReply *QPlaceManagerEngineNokia::removePlace(const QGeoPlace &place)
+QPlaceIdReply *QPlaceManagerEngineNokia::removePlace(const QPlace &place)
 {
     Q_UNUSED(place)
 

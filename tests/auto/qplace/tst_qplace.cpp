@@ -1,18 +1,18 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include <qgeoplace.h>
+#include <qplace.h>
 #include <qplaceimage.h>
 #include <qplaceattribute.h>
 
 QT_USE_NAMESPACE
 
-class tst_QGeoPlace : public QObject
+class tst_Place : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_QGeoPlace();
+    tst_Place();
 
 private Q_SLOTS:
     void constructorTest();
@@ -38,13 +38,13 @@ private Q_SLOTS:
     void extendedAttributeTest();
 };
 
-tst_QGeoPlace::tst_QGeoPlace()
+tst_Place::tst_Place()
 {
 }
 
-void tst_QGeoPlace::constructorTest()
+void tst_Place::constructorTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     testObj.setPlaceId("testId");
     QPlaceAttribute paymentMethods;
     paymentMethods.setLabel("Payment methods");
@@ -53,7 +53,7 @@ void tst_QGeoPlace::constructorTest()
     QGeoLocation loc;
     loc.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(loc);
-    QGeoPlace *testObjPtr = new QGeoPlace(testObj);
+    QPlace *testObjPtr = new QPlace(testObj);
 
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
@@ -61,9 +61,9 @@ void tst_QGeoPlace::constructorTest()
     delete testObjPtr;
 }
 
-void tst_QGeoPlace::additionalDataTest()
+void tst_Place::additionalDataTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     QVERIFY2(testObj.additionalData().count() == 0, "Wrong default value");
     QVariantHash list;
     list.insert("key1", "value1");
@@ -73,25 +73,25 @@ void tst_QGeoPlace::additionalDataTest()
     QVERIFY2(testObj.additionalData()["key1"] == "value1", "Wrong value[1] returned");
 }
 
-void tst_QGeoPlace::nameTest()
+void tst_Place::nameTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     QVERIFY2(testObj.name() == QString(), "Wrong default value");
     testObj.setName("testText");
     QVERIFY2(testObj.name() == "testText", "Wrong value returned");
 }
 
-void tst_QGeoPlace::placeIdTest()
+void tst_Place::placeIdTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     QVERIFY2(testObj.placeId() == QString(), "Wrong default value");
     testObj.setPlaceId("testText");
     QVERIFY2(testObj.placeId() == "testText", "Wrong value returned");
 }
 
-void tst_QGeoPlace::contentCountTest()
+void tst_Place::contentCountTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     QVERIFY2(testObj.contentCount(QPlaceContent::ImageType) == 0, "Wrong default value");
     testObj.setContentCount(QPlaceContent::ImageType, 50);
     QVERIFY2(testObj.contentCount(QPlaceContent::ImageType) == 50, "Wrong value returned");
@@ -100,9 +100,9 @@ void tst_QGeoPlace::contentCountTest()
     QVERIFY2(testObj.contentCount(QPlaceContent::ImageType) == 0, "Wrong value returned");
 }
 
-void tst_QGeoPlace::ratingTest()
+void tst_Place::ratingTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     QVERIFY2(testObj.rating() == QPlaceRating(), "Wrong default value");
     QPlaceRating obj;
     obj.setCount(10);
@@ -110,9 +110,9 @@ void tst_QGeoPlace::ratingTest()
     QVERIFY2(testObj.rating() == obj, "Wrong value returned");
 }
 
-void tst_QGeoPlace::locationTest()
+void tst_Place::locationTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     QVERIFY2(testObj.location() == QGeoLocation(), "Wrong default value");
     QGeoLocation obj;
     obj.setCoordinate(QGeoCoordinate(10,20));
@@ -120,9 +120,9 @@ void tst_QGeoPlace::locationTest()
     QVERIFY2(testObj.location() == obj, "Wrong value returned");
 }
 
-void tst_QGeoPlace::descriptionsTest()
+void tst_Place::descriptionsTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     QVERIFY2(testObj.descriptions().count() == 0, "Wrong default value");
     QPlaceDescription sup;
     sup.setContent("testId");
@@ -134,9 +134,9 @@ void tst_QGeoPlace::descriptionsTest()
     QVERIFY2(testObj.descriptions().count() == 2, "Wrong value returned");
 }
 
-void tst_QGeoPlace::detailsFetchedTest()
+void tst_Place::detailsFetchedTest()
 {
-    QGeoPlace testPlace;
+    QPlace testPlace;
     QVERIFY2(testPlace.detailsFetched() == false, "Wrong default value");
     testPlace.setDetailsFetched(true);
     QVERIFY2(testPlace.detailsFetched() == true, "Wrong value returned");
@@ -144,11 +144,11 @@ void tst_QGeoPlace::detailsFetchedTest()
     QVERIFY2(testPlace.detailsFetched() == false, "Wrong value returned");
 }
 
-void tst_QGeoPlace::imageContentTest()
+void tst_Place::imageContentTest()
 {
     QUrl thumbnailUrl("testId");
 
-    QGeoPlace place;
+    QPlace place;
     QVERIFY2(place.content(QPlaceContent::ImageType).count() ==0,"Wrong default value");
 
     QPlaceImage dummyImage;
@@ -196,9 +196,9 @@ void tst_QGeoPlace::imageContentTest()
     QCOMPARE(QPlaceImage(retrievedCollection.value(5)), dummyImage6);
 }
 
-void tst_QGeoPlace::reviewContentTest()
+void tst_Place::reviewContentTest()
 {
-    QGeoPlace place;
+    QPlace place;
     QVERIFY2(place.content(QPlaceContent::ReviewType).count() ==0,"Wrong default value");
 
     QPlaceReview dummyReview;
@@ -246,9 +246,9 @@ void tst_QGeoPlace::reviewContentTest()
     QCOMPARE(QPlaceReview(retrievedCollection.value(5)), dummyReview6);
 }
 
-void tst_QGeoPlace::categoriesTest()
+void tst_Place::categoriesTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     QVERIFY2(testObj.categories().count() == 0, "Wrong default value");
     QPlaceCategory sup;
     sup.setCategoryId("testId");
@@ -260,9 +260,9 @@ void tst_QGeoPlace::categoriesTest()
     QVERIFY2(testObj.categories().count() == 2, "Wrong value returned");
 }
 
-void tst_QGeoPlace::suppliersTest()
+void tst_Place::suppliersTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     QVERIFY2(testObj.suppliers().count() == 0, "Wrong default value");
     QPlaceSupplier sup;
     sup.setName("testName1");
@@ -275,9 +275,9 @@ void tst_QGeoPlace::suppliersTest()
     QVERIFY2(testObj.suppliers().count() == 2, "Wrong value returned");
 }
 
-void tst_QGeoPlace::feedsTest()
+void tst_Place::feedsTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     QVERIFY2(testObj.feeds().count() == 0, "Wrong default value");
     QStringList list;
     list << "1" << "2" << "3";
@@ -286,9 +286,9 @@ void tst_QGeoPlace::feedsTest()
     QVERIFY2(testObj.feeds()[1] == "2", "Wrong [1] value returned");
 }
 
-void tst_QGeoPlace::tagsTest()
+void tst_Place::tagsTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     QVERIFY2(testObj.tags().count() == 0, "Wrong default value");
     QStringList list;
     list << "1" << "2" << "3";
@@ -297,9 +297,9 @@ void tst_QGeoPlace::tagsTest()
     QVERIFY2(testObj.tags()[1] == "2", "Wrong [1] value returned");
 }
 
-void tst_QGeoPlace::primaryPhoneTest()
+void tst_Place::primaryPhoneTest()
 {
-    QGeoPlace place;
+    QPlace place;
     QVERIFY2(place.primaryPhone().isEmpty(), "Wrong default value");
 
     place.setPrimaryPhone("555-5555");
@@ -309,9 +309,9 @@ void tst_QGeoPlace::primaryPhoneTest()
     QCOMPARE(place.primaryPhone(), QString());
 }
 
-void tst_QGeoPlace::primaryFaxTest()
+void tst_Place::primaryFaxTest()
 {
-    QGeoPlace place;
+    QPlace place;
     QVERIFY2(place.primaryFax().isEmpty(), "Wrong default value");
 
     place.setPrimaryFax("555-5555");
@@ -321,9 +321,9 @@ void tst_QGeoPlace::primaryFaxTest()
     QCOMPARE(place.primaryFax(), QString());
 }
 
-void tst_QGeoPlace::primaryEmailTest()
+void tst_Place::primaryEmailTest()
 {
-    QGeoPlace place;
+    QPlace place;
     QVERIFY2(place.primaryEmail().isEmpty(), "Wrong default value");
 
     place.setPrimaryEmail("test@test.com");
@@ -334,9 +334,9 @@ void tst_QGeoPlace::primaryEmailTest()
     QCOMPARE(place.primaryEmail(), QString());
 }
 
-void tst_QGeoPlace::primaryUrlTest()
+void tst_Place::primaryUrlTest()
 {
-    QGeoPlace place;
+    QPlace place;
     QVERIFY2(place.primaryUrl().isEmpty(), "Wron default value");
 
     place.setPrimaryUrl(QUrl("www.winterfell.com"));
@@ -346,9 +346,9 @@ void tst_QGeoPlace::primaryUrlTest()
     QCOMPARE(place.primaryUrl(), QUrl());
 }
 
-void tst_QGeoPlace::operatorsTest()
+void tst_Place::operatorsTest()
 {
-    QGeoPlace testObj;
+    QPlace testObj;
     testObj.setPlaceId("testId");
     QPlaceAttribute paymentMethods;
     paymentMethods.setLabel("Payment methods");
@@ -361,16 +361,16 @@ void tst_QGeoPlace::operatorsTest()
     loc.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(loc);
 
-    QGeoPlace testObj2;
+    QPlace testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
     testObj2.setPlaceId("342-456");
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 
-void tst_QGeoPlace::extendedAttributeTest()
+void tst_Place::extendedAttributeTest()
 {
-    QGeoPlace place;
+    QPlace place;
     QVERIFY2(place.extendedAttributes().isEmpty(), "Invalid default attributes");
     QPlaceAttribute smoking;
     smoking.setLabel("Public Smoking");
@@ -408,7 +408,7 @@ void tst_QGeoPlace::extendedAttributeTest()
     lan.setText("Available");
 
     //test setting a new set of attributes
-    QGeoPlace::ExtendedAttributes attributes;
+    QPlace::ExtendedAttributes attributes;
     attributes.insert("Wireless", wireless);
     attributes.insert("Lan", lan);
 
@@ -426,11 +426,11 @@ void tst_QGeoPlace::extendedAttributeTest()
     QCOMPARE(place.extendedAttributes().count(), 2);
 
     //test clearing of attributes
-    QGeoPlace::ExtendedAttributes noAttributes;
+    QPlace::ExtendedAttributes noAttributes;
     place.setExtendedAttributes(noAttributes);
     QCOMPARE(place.extendedAttributes().count(), 0);
 }
 
-QTEST_APPLESS_MAIN(tst_QGeoPlace);
+QTEST_APPLESS_MAIN(tst_Place);
 
-#include "tst_qgeoplace.moc"
+#include "tst_qplace.moc"

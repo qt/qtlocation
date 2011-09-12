@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACE_P_H
-#define QGEOPLACE_P_H
+#ifndef QPLACE_P_H
+#define QPLACE_P_H
 
 //
 //  W A R N I N G
@@ -57,25 +57,25 @@
 #include <QSharedData>
 #include <QUrl>
 
-#include "qgeoplace.h"
+#include "qplace.h"
 #include "qgeoaddress.h"
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoPlacePrivate : public QSharedData
+class QPlacePrivate : public QSharedData
 {
 public:
-    QGeoPlacePrivate();
-    QGeoPlacePrivate(const QGeoPlacePrivate &other);
-    virtual ~QGeoPlacePrivate();
+    QPlacePrivate();
+    QPlacePrivate(const QPlacePrivate &other);
+    virtual ~QPlacePrivate();
 
-    QGeoPlacePrivate& operator= (const QGeoPlacePrivate &other);
+    QPlacePrivate &operator= (const QPlacePrivate &other);
 
-    virtual bool operator== (const QGeoPlacePrivate &other) const;
+    virtual bool operator== (const QPlacePrivate &other) const;
 
-    virtual QGeoPlacePrivate* clone() const { return new QGeoPlacePrivate(*this); }
+    virtual QPlacePrivate *clone() const { return new QPlacePrivate(*this); }
 
     QVariantHash additionalData;
     QList<QPlaceCategory> categories;
@@ -96,7 +96,7 @@ public:
     QString primaryEmail;
     QUrl primaryUrl;
 
-    QGeoPlace::ExtendedAttributes extendedAttributes;
+    QPlace::ExtendedAttributes extendedAttributes;
 
     bool detailsFetched;
 };
@@ -106,12 +106,12 @@ public:
 // This results in multiple symbol definition errors on all other compilers
 // but not having a definition here results in an attempt to use the unspecialized
 // clone (which fails because of the pure virtuals above)
-template<> QGeoPlacePrivate *QSharedDataPointer<QGeoPlacePrivate>::clone()
+template<> QPlacePrivate *QSharedDataPointer<QPlacePrivate>::clone()
 {
     return d->clone();
 }
 #else
-template<> QGeoPlacePrivate *QSharedDataPointer<QGeoPlacePrivate>::clone();
+template<> QPlacePrivate *QSharedDataPointer<QPlacePrivate>::clone();
 #endif
 
 QT_END_NAMESPACE

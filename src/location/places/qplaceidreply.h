@@ -43,7 +43,7 @@
 #define QPLACEIDREPLY_H
 
 #include "qplacereply.h"
-#include "qgeoplace.h"
+#include "qplace.h"
 
 QT_BEGIN_NAMESPACE
 

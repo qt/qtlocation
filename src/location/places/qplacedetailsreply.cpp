@@ -48,7 +48,7 @@ class QPlaceDetailsReplyPrivate : public QPlaceReplyPrivate
 public:
     QPlaceDetailsReplyPrivate() {}
     ~QPlaceDetailsReplyPrivate() {}
-    QGeoPlace result;
+    QPlace result;
 };
 
 QT_END_NAMESPACE
@@ -92,7 +92,7 @@ QPlaceReply::Type QPlaceDetailsReply::type() const
  /*!
     Returns a place result
 */
-QGeoPlace QPlaceDetailsReply::result() const
+QPlace QPlaceDetailsReply::result() const
 {
     Q_D(const QPlaceDetailsReply);
     return d->result;
@@ -101,7 +101,7 @@ QGeoPlace QPlaceDetailsReply::result() const
 /*!
     Sets the \a place
 */
-void QPlaceDetailsReply::setResult(const QGeoPlace &place)
+void QPlaceDetailsReply::setResult(const QPlace &place)
 {
     Q_D(QPlaceDetailsReply);
     d->result = place;

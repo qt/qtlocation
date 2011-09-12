@@ -110,11 +110,11 @@ public:
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId) const;
     QPlaceReply *postRating(const QString &placeId, qreal value);
 
-    QPlaceContentReply *getContent(const QGeoPlace &place, const QPlaceContentRequest &request) const;
+    QPlaceContentReply *getContent(const QPlace &place, const QPlaceContentRequest &request) const;
 
     QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &query) const;
 
-    QPlaceSearchReply *recommendations(const QGeoPlace &place, const QPlaceSearchRequest &request) const;
+    QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &request) const;
 
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request) const;
 
@@ -122,10 +122,10 @@ public:
     void setConnectivityMode(ConnectivityModes connectivityMode);
     ConnectivityModes supportedConnectivityModes() const;
 
-    QPlaceIdReply *savePlace(const QGeoPlace &place, VisibilityScope scope = QPlaceManager::NoScope);
+    QPlaceIdReply *savePlace(const QPlace &place, VisibilityScope scope = QPlaceManager::NoScope);
     VisibilityScopes supportedSaveVisibilityScopes();
 
-    QPlaceIdReply *removePlace(const QGeoPlace &place);
+    QPlaceIdReply *removePlace(const QPlace &place);
 
     QPlaceReply *initializeCategories();
     QList<QPlaceCategory> categories(const QPlaceCategory &parent = QPlaceCategory()) const;

@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG += testcase
-TARGET = tst_qgeoplace
+TARGET = tst_qplace
 
-SOURCES += tst_qgeoplace.cpp
+SOURCES += tst_qplace.cpp
 
 QT += location testlib

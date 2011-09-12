@@ -75,7 +75,7 @@ Q_ADDON_JSONDB_END_NAMESPACE
 Q_USE_JSONDB_NAMESPACE
 
 class QPlaceManagerEngineJsonDb;
-class QGeoPlace;
+class QPlace;
 class QPlaceSearchRequest;
 
 class JsonDbHandler : public QObject
@@ -90,10 +90,10 @@ public:
     int queryPlaceDetails(const QString &placeId);
     int remove(const QString &uuid);
 
-    static QVariant convertToJsonVariant(const QGeoPlace &place);
+    static QVariant convertToJsonVariant(const QPlace &place);
     static QVariant convertToJsonVariant(const QPlaceSearchRequest &query);
-    static QList<QGeoPlace> convertJsonResponseToPlaces(const QVariant &response);
-    static QGeoPlace convertJsonVariantToPlace(const QVariant &variant);
+    static QList<QPlace> convertJsonResponseToPlaces(const QVariant &response);
+    static QPlace convertJsonVariantToPlace(const QVariant &variant);
 
     bool isConnected();
 signals:

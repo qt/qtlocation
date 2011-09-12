@@ -67,13 +67,13 @@ private Q_SLOTS:
     void unsupportedFunctions();
 
 private:
-    bool doSavePlace(const QGeoPlace &place,
+    bool doSavePlace(const QPlace &place,
                 QPlaceReply::Error expectedError = QPlaceReply::NoError,
                 QString *placeId = 0,
                 QPlaceManager::VisibilityScope = QPlaceManager::NoScope);
-    void doSavePlaces(QList<QGeoPlace> &places);
+    void doSavePlaces(QList<QPlace> &places);
 
-    bool doRemovePlace(const QGeoPlace &place,
+    bool doRemovePlace(const QPlace &place,
                        QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
     bool doSearch(const QPlaceSearchRequest &request,
@@ -81,17 +81,17 @@ private:
              QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
     bool doSearch(const QPlaceSearchRequest &request,
-                  QList<QGeoPlace> *results,
+                  QList<QPlace> *results,
              QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
     bool doFetchDetails(QString placeId,
-                        QGeoPlace *place,
+                        QPlace *place,
                         QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
     bool checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError);
 
 
-    bool compareResults(const QList<QPlaceSearchResult> &results, const QList<QGeoPlace> &expectedResults);
+    bool compareResults(const QList<QPlaceSearchResult> &results, const QList<QPlace> &expectedResults);
 
     QGeoServiceProvider *provider;
     QPlaceManager *placeManager;
@@ -130,7 +130,7 @@ void tst_QPlaceManagerJsonDb::initTestCase()
 
 void tst_QPlaceManagerJsonDb::saveAndRemove()
 {
-    QGeoPlace place;
+    QPlace place;
     place.setName("Char");
     QGeoLocation location;
 
@@ -149,7 +149,7 @@ void tst_QPlaceManagerJsonDb::saveAndRemove()
     QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
 
     //ensure we can retrieve it's details
-    QGeoPlace retrievedPlace;
+    QPlace retrievedPlace;
     QVERIFY(doFetchDetails(placeId, &retrievedPlace));
     place.setPlaceId(placeId);
     QVERIFY(retrievedPlace == place);
@@ -159,7 +159,7 @@ void tst_QPlaceManagerJsonDb::saveAndRemove()
 
     //ensure it is actually deleted
     QVERIFY(doFetchDetails(placeId, &retrievedPlace, QPlaceReply::PlaceDoesNotExistError));
-    QCOMPARE(retrievedPlace, QGeoPlace());
+    QCOMPARE(retrievedPlace, QPlace());
 
     //try removing a place that does not exist;
     QVERIFY(doRemovePlace(place, QPlaceReply::PlaceDoesNotExistError));
@@ -170,7 +170,7 @@ void tst_QPlaceManagerJsonDb::saveAndRemove()
 void tst_QPlaceManagerJsonDb::updatePlace()
 {
     //save a place and check that we can retrieve it
-    QGeoPlace place;
+    QPlace place;
     place.setName("Sydney");
     QGeoAddress address;
     address.setStreet("original street");
@@ -189,7 +189,7 @@ void tst_QPlaceManagerJsonDb::updatePlace()
     location.setAddress(address);
     place.setLocation(location);
 
-    QGeoPlace retrievedPlace;
+    QPlace retrievedPlace;
     QVERIFY(doSavePlace(place, QPlaceReply::NoError));
     QVERIFY(doFetchDetails(place.placeId(), &retrievedPlace));
     QCOMPARE(retrievedPlace.name(), QLatin1String("Brisbane"));
@@ -203,13 +203,13 @@ void tst_QPlaceManagerJsonDb::updatePlace()
 
 void tst_QPlaceManagerJsonDb::searchByName()
 {
-    QGeoPlace adelaide, adel, ad, brisbane;
+    QPlace adelaide, adel, ad, brisbane;
     adelaide.setName("Adelaide");
     adel.setName("adel");
     ad.setName("ad");
     brisbane.setName("brisbane");
 
-    QList<QGeoPlace> places;
+    QList<QPlace> places;
     places << adelaide << adel << ad << brisbane;
     doSavePlaces(places);
 
@@ -342,9 +342,9 @@ void tst_QPlaceManagerJsonDb::searchByBox()
     coords.append(inBox4);
     coords.append(inBox5);
 
-    QList<QGeoPlace> places;
+    QList<QPlace> places;
     for (int i = 0; i < coords.size(); ++i) {
-        QGeoPlace place;
+        QPlace place;
         QGeoLocation location;
         location.setCoordinate(coords.at(i));
         place.setLocation(location);
@@ -357,7 +357,7 @@ void tst_QPlaceManagerJsonDb::searchByBox()
 
     QList<QPlaceSearchResult> results1;
     doSearch(request, &results1);
-    QList<QGeoPlace> places1;
+    QList<QPlace> places1;
     foreach (const QPlaceSearchResult  &result, results1)
         places1.append(result.place());
 
@@ -374,7 +374,7 @@ void tst_QPlaceManagerJsonDb::searchByBox()
     QCOMPARE(testSet1, inBoxSet1);
 
     request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(5.0, 10.0), QGeoCoordinate(-5.0, 20.0)));
-    QList<QGeoPlace> places2;
+    QList<QPlace> places2;
     doSearch(request, &places2);
     QCOMPARE(places2.size(), inBox2.size());
 
@@ -389,7 +389,7 @@ void tst_QPlaceManagerJsonDb::searchByBox()
     QCOMPARE(testSet2, inBoxSet2);
 
     request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(20.0, -5.0), QGeoCoordinate(10.0, 5.0)));
-    QList<QGeoPlace> places3;
+    QList<QPlace> places3;
     doSearch(request, &places3);
 
     QCOMPARE(places3.size(), inBox3.size());
@@ -405,7 +405,7 @@ void tst_QPlaceManagerJsonDb::searchByBox()
     QCOMPARE(testSet3, inBoxSet3);
 
     request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(20.0, 10.0), QGeoCoordinate(10.0, 20.0)));
-    QList<QGeoPlace> places4;
+    QList<QPlace> places4;
     doSearch(request, &places4);
     QCOMPARE(places4.size(), inBox4.size());
 
@@ -420,7 +420,7 @@ void tst_QPlaceManagerJsonDb::searchByBox()
     QCOMPARE(testSet4, inBoxSet4);
 
     request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(5.0, 175.0), QGeoCoordinate(-5.0, -175.0)));
-    QList<QGeoPlace> places5;
+    QList<QPlace> places5;
     doSearch(request, &places5);
     QCOMPARE(places5.size(), inBox5.size());
 
@@ -542,7 +542,7 @@ void tst_QPlaceManagerJsonDb::searchByCircle()
     for (int i = 0; i < coords.size(); ++i) {
         QList<QGeoCoordinate> c = coords.at(i);
         for (int j = 0; j < c.size(); ++j) {
-            QGeoPlace place;
+            QPlace place;
             QGeoLocation location;
             location.setCoordinate(c.at(j));
             place.setLocation(location);
@@ -564,7 +564,7 @@ void tst_QPlaceManagerJsonDb::searchByCircle()
     qreal dist = QGeoCoordinate(0.0, 0.0).distanceTo(QGeoCoordinate(5.0, 5.0));
 
     QList<QPlaceSearchResult> results;
-    QList<QGeoPlace> places;
+    QList<QPlace> places;
     for (int i = 0; i < testSets.size(); ++i) {
         QList<QGeoCoordinate> filterCoords = testSets.at(i).first;
         QList<QGeoCoordinate> plCoords = testSets.at(i).second;
@@ -623,7 +623,7 @@ void tst_QPlaceManagerJsonDb::searchByCircle()
 
 void tst_QPlaceManagerJsonDb::unsupportedFunctions()
 {
-    QGeoPlace place;
+    QPlace place;
     place.setPlaceId("id");
     QPlaceContentRequest request;
     request.setContentType(QPlaceContent::ImageType);
@@ -649,7 +649,7 @@ void tst_QPlaceManagerJsonDb::cleanup()
     QTRY_VERIFY(cleanSpy.count() == 1);
 }
 
-bool tst_QPlaceManagerJsonDb::doSavePlace(const QGeoPlace &place,
+bool tst_QPlaceManagerJsonDb::doSavePlace(const QPlace &place,
                                           QPlaceReply::Error expectedError,
                                           QString *placeId,
                                           QPlaceManager::VisibilityScope scope)
@@ -668,11 +668,11 @@ bool tst_QPlaceManagerJsonDb::doSavePlace(const QGeoPlace &place,
     return isSuccessful;
 }
 
-void tst_QPlaceManagerJsonDb::doSavePlaces(QList<QGeoPlace> &places)
+void tst_QPlaceManagerJsonDb::doSavePlaces(QList<QPlace> &places)
 {
     QPlaceIdReply *saveReply;
 
-    foreach (QGeoPlace place, places) {
+    foreach (QPlace place, places) {
         saveReply = placeManager->savePlace(place);
         QSignalSpy saveSpy(saveReply, SIGNAL(finished()));
         QTRY_VERIFY(saveSpy.count() == 1);
@@ -681,7 +681,7 @@ void tst_QPlaceManagerJsonDb::doSavePlaces(QList<QGeoPlace> &places)
     }
 }
 
-bool tst_QPlaceManagerJsonDb::doRemovePlace(const QGeoPlace &place,
+bool tst_QPlaceManagerJsonDb::doRemovePlace(const QPlace &place,
                                             QPlaceReply::Error expectedError)
 {
     QPlaceIdReply *removeReply = placeManager->removePlace(place);
@@ -701,7 +701,7 @@ bool tst_QPlaceManagerJsonDb::doSearch(const QPlaceSearchRequest &request,
 }
 
 bool tst_QPlaceManagerJsonDb::doSearch(const QPlaceSearchRequest &request,
-                                       QList<QGeoPlace> *results, QPlaceReply::Error expectedError)
+                                       QList<QPlace> *results, QPlaceReply::Error expectedError)
 {
     bool success = false;
     results->clear();
@@ -712,7 +712,7 @@ bool tst_QPlaceManagerJsonDb::doSearch(const QPlaceSearchRequest &request,
     return success;
 }
 
-bool tst_QPlaceManagerJsonDb::doFetchDetails(QString placeId, QGeoPlace *place, QPlaceReply::Error expectedError)
+bool tst_QPlaceManagerJsonDb::doFetchDetails(QString placeId, QPlace *place, QPlaceReply::Error expectedError)
 {
     QPlaceDetailsReply *detailsReply = placeManager->getPlaceDetails(placeId);
     bool success = checkSignals(detailsReply, expectedError);
@@ -804,13 +804,13 @@ bool tst_QPlaceManagerJsonDb::checkSignals(QPlaceReply *reply, QPlaceReply::Erro
 }
 
 bool tst_QPlaceManagerJsonDb::compareResults(const QList<QPlaceSearchResult> &results,
-                                             const QList<QGeoPlace> &expectedResults)
+                                             const QList<QPlace> &expectedResults)
 {
     QSet<QString> actualPlaceCoords;
     foreach (const QPlaceSearchResult &result, results)
         actualPlaceCoords.insert(result.place().location().coordinate().toString());
     QSet<QString> expectedPlaceCoords;
-    foreach (const QGeoPlace &place, expectedResults) {
+    foreach (const QPlace &place, expectedResults) {
         expectedPlaceCoords.insert(place.location().coordinate().toString());
     }
     return actualPlaceCoords == expectedPlaceCoords;

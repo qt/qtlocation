@@ -75,11 +75,11 @@ private:
     void processJSonData(const QScriptValue &sv);
     void processResultElement(const QScriptValue &value);
     QPlaceSearchResult processPlaceElement(const QScriptValue &value);
-    void processContacts(const QScriptValue &properties, QGeoPlace *place);
-    void processCategories(const QScriptValue &categories, QGeoPlace *place);
-    void processRating(const QScriptValue &properties, QGeoPlace *place);
+    void processContacts(const QScriptValue &properties, QPlace *place);
+    void processCategories(const QScriptValue &categories, QPlace *place);
+    void processRating(const QScriptValue &properties, QPlace *place);
     void processAddress(const QScriptValue &properties, QGeoLocation *location);
-    void processLocation(const QScriptValue &properties, QGeoPlace *place);
+    void processLocation(const QScriptValue &properties, QPlace *place);
 private:
     QList<QPlaceSearchResult> searchResultsList;
 };

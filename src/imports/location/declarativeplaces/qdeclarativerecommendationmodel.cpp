@@ -261,7 +261,7 @@ QVariant QDeclarativeRecommendationModel::data(const QModelIndex& index, int rol
 QPlaceReply *QDeclarativeRecommendationModel::sendQuery(QPlaceManager *manager,
                                                         const QPlaceSearchRequest &request)
 {
-    QGeoPlace target;
+    QPlace target;
     target.setPlaceId(request.searchTerm());
     return manager->recommendations(target, request);
 }

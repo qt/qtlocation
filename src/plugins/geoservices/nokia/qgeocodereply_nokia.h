@@ -46,8 +46,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESREPLY_NOKIA_H
-#define QGEOPLACESREPLY_NOKIA_H
+#ifndef QGEOCODEREPLY_NOKIA_H
+#define QGEOCODEREPLY_NOKIA_H
 
 #include <qgeocodereply.h>
 #include <QNetworkReply>

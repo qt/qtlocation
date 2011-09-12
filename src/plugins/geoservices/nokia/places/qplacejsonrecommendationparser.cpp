@@ -53,7 +53,7 @@
 #include <QtScript/QScriptValueIterator>
 
 #include "qplacejsondetailsparser.h"
-#include <qgeoplace.h>
+#include <qplace.h>
 
 #if defined(QT_PLACES_LOGGING)
     #include <QDebug>
@@ -118,7 +118,7 @@ void QPlaceJSonRecommendationParser::processResultElement(const QScriptValue &va
     }
     QScriptValue place = value.property(recommendations_place_element);
     if (place.isValid()) {
-        QGeoPlace newPlace = QPlaceJSonDetailsParser::buildPlace(place);
+        QPlace newPlace = QPlaceJSonDetailsParser::buildPlace(place);
         result.setPlace(newPlace);
         searchResults.append(result);
     }

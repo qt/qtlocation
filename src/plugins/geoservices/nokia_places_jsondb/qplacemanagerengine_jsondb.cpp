@@ -88,7 +88,7 @@ QPlaceDetailsReply *QPlaceManagerEngineJsonDb::getPlaceDetails(const QString &pl
     return detailsReply;
 }
 
-QPlaceContentReply *QPlaceManagerEngineJsonDb::getContent(const QGeoPlace &place, const QPlaceContentRequest &request)
+QPlaceContentReply *QPlaceManagerEngineJsonDb::getContent(const QPlace &place, const QPlaceContentRequest &request)
 {
     ContentReply *contentReply = new ContentReply(this);
     contentReply->triggerDone(QPlaceReply::UnsupportedError, tr("Fetching content is unsupported"));
@@ -142,7 +142,7 @@ QPlaceSearchReply *QPlaceManagerEngineJsonDb::searchForPlaces(const QPlaceSearch
     return searchReply;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineJsonDb::recommendations(const QGeoPlace &place, const QPlaceSearchRequest &request)
+QPlaceSearchReply *QPlaceManagerEngineJsonDb::recommendations(const QPlace &place, const QPlaceSearchRequest &request)
 {
     SearchReply *searchReply = new SearchReply(this);
     searchReply->triggerDone(QPlaceReply::UnsupportedError, tr("Recommendations is unsupported"));
@@ -171,7 +171,7 @@ QPlaceManager::ConnectivityModes QPlaceManagerEngineJsonDb::supportedConnectivit
     return QPlaceManager::OfflineMode;
 }
 
-QPlaceIdReply *QPlaceManagerEngineJsonDb::savePlace(const QGeoPlace &place, QPlaceManager::VisibilityScope scope)
+QPlaceIdReply *QPlaceManagerEngineJsonDb::savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope)
 {
     IdReply *saveReply = new IdReply(QPlaceIdReply::SavePlace, this);
     if (!m_jsonDbHandler.isConnected()) {
@@ -199,7 +199,7 @@ QPlaceManager::VisibilityScopes QPlaceManagerEngineJsonDb::supportedSaveVisibili
     return QPlaceManager::NoScope | QPlaceManager::PrivateScope;
 }
 
-QPlaceIdReply *QPlaceManagerEngineJsonDb::removePlace(const QGeoPlace &place)
+QPlaceIdReply *QPlaceManagerEngineJsonDb::removePlace(const QPlace &place)
 {
     IdReply *removeReply = new IdReply(QPlaceIdReply::RemovePlace, this);
 
@@ -317,12 +317,12 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
             }
         case QPlaceReply::PlaceSearchReply: {
                 SearchReply *searchReply = qobject_cast<SearchReply *>(reply);
-                QList<QGeoPlace> places = JsonDbHandler::convertJsonResponseToPlaces(data);
+                QList<QPlace> places = JsonDbHandler::convertJsonResponseToPlaces(data);
                 if (searchReply->request().searchArea() != 0) {
                     QGeoBoundingArea *searchArea = searchReply->request().searchArea();
                     if (searchArea->type() == QGeoBoundingArea::CircleType) {
                         QGeoBoundingCircle *circle = static_cast<QGeoBoundingCircle*>(searchArea);
-                        foreach (const QGeoPlace &place, places) {
+                        foreach (const QPlace &place, places) {
                             double dist = circle->center().distanceTo(place.location().coordinate());
                             if (dist > circle->radius())
                                 places.removeAll(place);
@@ -340,7 +340,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                         double brx = box->bottomRight().longitude();
 
                         QGeoCoordinate coord;
-                        foreach (const QGeoPlace &place, places) {
+                        foreach (const QPlace &place, places) {
                             coord = place.location().coordinate();
                             if (coord.latitude() > tly)
                                 places.removeAll(place);
@@ -365,7 +365,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                 QList<QPlaceSearchResult> results;
                 QPlaceSearchResult result;
                 result.setType(QPlaceSearchResult::Place);
-                foreach (const QGeoPlace &place, places) {
+                foreach (const QPlace &place, places) {
                     result.setPlace(place);
                     results.append(result);
                 }
@@ -381,7 +381,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                     detailsReply->triggerDone(QPlaceReply::PlaceDoesNotExistError,
                                               tr("Specified place does not exist"));
                 } else {
-                    QList<QGeoPlace> places = JsonDbHandler::convertJsonResponseToPlaces(data);
+                    QList<QPlace> places = JsonDbHandler::convertJsonResponseToPlaces(data);
                     Q_ASSERT(!places.isEmpty());
                     detailsReply->setResult(places.first());
                     detailsReply->triggerDone();

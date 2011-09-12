@@ -46,7 +46,6 @@
 #include <qgeoroutingmanagerengine.h>
 #include <QLocale>
 #include <qgeoaddress.h>
-#include <qgeoplace.h>
 #include <qgeoroutereply.h>
 
 #include <QDebug>

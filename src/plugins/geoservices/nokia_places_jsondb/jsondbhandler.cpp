@@ -92,7 +92,7 @@ int JsonDbHandler::remove(const QString &uuid)
     return m_db->remove(jsonMap);
 }
 
-QVariant JsonDbHandler::convertToJsonVariant(const QGeoPlace &place)
+QVariant JsonDbHandler::convertToJsonVariant(const QPlace &place)
 {
     QVariantMap map;
     map.insert("_type", PLACE_TYPE);
@@ -141,21 +141,21 @@ QVariant JsonDbHandler::convertToJsonVariant(const QPlaceSearchRequest &request)
    "offset": <integer>
    }
 */
-QList<QGeoPlace> JsonDbHandler::convertJsonResponseToPlaces(const QVariant &response)
+QList<QPlace> JsonDbHandler::convertJsonResponseToPlaces(const QVariant &response)
 {
     QList<QVariant> data = response.toMap().value("data").toList();
-    QList<QGeoPlace> places;
+    QList<QPlace> places;
     foreach (const QVariant&var, data)
         places.append(JsonDbHandler::convertJsonVariantToPlace(var));
 
     return places;
 }
 
-QGeoPlace JsonDbHandler::convertJsonVariantToPlace(const QVariant &variant)
+QPlace JsonDbHandler::convertJsonVariantToPlace(const QVariant &variant)
 {
     QVariantMap placeJson = variant.toMap();
 
-    QGeoPlace place;
+    QPlace place;
     place.setName(placeJson.value(PLACE_NAME).toString());
     place.setPlaceId(placeJson.value(UUID).toString());
 

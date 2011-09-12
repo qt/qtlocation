@@ -70,7 +70,7 @@ QDeclarativePlace::QDeclarativePlace(QObject* parent)
 {
 }
 
-QDeclarativePlace::QDeclarativePlace(const QGeoPlace &src, QObject *parent)
+QDeclarativePlace::QDeclarativePlace(const QPlace &src, QObject *parent)
 :   QObject(parent), m_reviewModel(0), m_imageModel(0), m_extendedAttributes(new QDeclarativePropertyMap()),
     m_src(src), m_reply(0), m_plugin(0), m_complete(false),
     m_status(QDeclarativePlace::Ready)
@@ -135,9 +135,9 @@ QDeclarativePlaceImageModel *QDeclarativePlace::imageModel()
     return m_imageModel;
 }
 
-void QDeclarativePlace::setPlace(const QGeoPlace &src)
+void QDeclarativePlace::setPlace(const QPlace &src)
 {
-    QGeoPlace previous = m_src;
+    QPlace previous = m_src;
     m_src = src;
 
     if (previous.additionalData() != m_src.additionalData()) {
@@ -203,7 +203,7 @@ void QDeclarativePlace::setPlace(const QGeoPlace &src)
     }
 }
 
-QGeoPlace QDeclarativePlace::place()
+QPlace QDeclarativePlace::place()
 {
     QList<QPlaceCategory> categories;
     foreach (QDeclarativeCategory *value, m_categories) {
@@ -625,7 +625,7 @@ void QDeclarativePlace::setExtendedAttributes(QDeclarativePropertyMap *attribs)
 
     if (!isSame) {
         m_src.extendedAttributes().clear();
-        QGeoPlace::ExtendedAttributes extendedAttributes;
+        QPlace::ExtendedAttributes extendedAttributes;
         foreach (const QString &key, otherKeys)
             extendedAttributes.insert(key, (qvariant_cast<QDeclarativePlaceAttribute*>(attribs->value(key)))->attribute());
         m_src.setExtendedAttributes(extendedAttributes);

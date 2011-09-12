@@ -44,7 +44,7 @@
 
 #include <QObject>
 #include <QDeclarativeListProperty>
-#include <qgeoplace.h>
+#include <qplace.h>
 #include "qdeclarativegeolocation_p.h"
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativesupplier_p.h"
@@ -93,7 +93,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
 
 public:
     explicit QDeclarativePlace(QObject* parent = 0);
-    explicit QDeclarativePlace(const QGeoPlace &src, QObject* parent = 0);
+    explicit QDeclarativePlace(const QPlace &src, QObject* parent = 0);
     ~QDeclarativePlace();
 
     enum Status {Ready, Saving, Fetching, Removing, Error};
@@ -108,8 +108,8 @@ public:
     QDeclarativeReviewModel *reviewModel();
     QDeclarativePlaceImageModel *imageModel();
 
-    QGeoPlace place();
-    void setPlace(const QGeoPlace &src);
+    QPlace place();
+    void setPlace(const QPlace &src);
 
     QVariantHash additionalData() const;
     void setAdditionalData(const QVariantHash &data);
@@ -217,7 +217,7 @@ private:
     QDeclarativePlaceImageModel *m_imageModel;
     QDeclarativePropertyMap *m_extendedAttributes;
 
-    QGeoPlace m_src;
+    QPlace m_src;
 
     QPlaceReply *m_reply;
 

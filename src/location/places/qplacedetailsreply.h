@@ -43,7 +43,7 @@
 #define QPLACEDETAILSREPLY_H
 
 #include "qplacereply.h"
-#include "qgeoplace.h"
+#include "qplace.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -57,10 +57,10 @@ public:
 
     QPlaceReply::Type type() const;
 
-    QGeoPlace result() const;
+    QPlace result() const;
 
 protected:
-    void setResult(const QGeoPlace &result);
+    void setResult(const QPlace &result);
 private:
     Q_DISABLE_COPY(QPlaceDetailsReply)
     Q_DECLARE_PRIVATE(QPlaceDetailsReply)
