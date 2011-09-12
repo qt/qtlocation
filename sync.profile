@@ -26,6 +26,7 @@
     "qtsvg" => "refs/heads/master",
     "qtxmlpatterns" => "refs/heads/master",
     "qtdeclarative" => "refs/heads/master",
+    "qtquick3d" => "refs/heads/qml2"
 );
 
 # compile tests
