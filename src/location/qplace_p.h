@@ -77,7 +77,6 @@ public:
 
     virtual QPlacePrivate *clone() const { return new QPlacePrivate(*this); }
 
-    QVariantHash additionalData;
     QList<QPlaceCategory> categories;
     QList<QPlaceDescription> descriptions;
     QGeoLocation location;

@@ -704,28 +704,6 @@ void QPlaceJSonDetailsParser::processAdContent(const QScriptValue &content, QPla
     if (value.isValid()) {
         processAdContentBusinessHours(value, targetPlace);
     }
-    value = content.property(place_adcontent_packages_element);
-    if (value.isValid()) {
-        processAdContentPackages(value, targetPlace);
-    }
-}
-
-void QPlaceJSonDetailsParser::processAdContentPackages(const QScriptValue &content, QPlace *targetPlace)
-{
-    QScriptValue value = content.property(place_adcontent_package_element);
-    if (value.isValid()) {
-        value = value.property(place_adcontent_package_type_element);
-        if (value.isValid() && !value.toString().isEmpty()) {
-            QString package = value.toString();
-            QVariantHash data = targetPlace->additionalData();
-            if (package == place_adcontent_package_type_plus_value) {
-                data[place_package_type] = place_package_type_ad_place_prime_plus;
-            } else if (package == place_adcontent_package_type_plus_plus_value) {
-                data[place_package_type] = place_package_type_ad_place_prime_plus_plus;
-            }
-            targetPlace->setAdditionalData(data);
-        }
-    }
 }
 
 void QPlaceJSonDetailsParser::processAdContentDescriptions(const QScriptValue &content, QPlace *targetPlace)

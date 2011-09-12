@@ -67,7 +67,6 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_ENUMS(Status)
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
-    Q_PROPERTY(QVariantHash additionalData READ additionalData WRITE setAdditionalData NOTIFY additionalDataChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeDescription> descriptions READ descriptions NOTIFY descriptionsChanged)
     Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
@@ -111,8 +110,6 @@ public:
     QPlace place();
     void setPlace(const QPlace &src);
 
-    QVariantHash additionalData() const;
-    void setAdditionalData(const QVariantHash &data);
     QDeclarativeListProperty<QDeclarativeCategory> categories();
     static void category_append(QDeclarativeListProperty<QDeclarativeCategory> *prop,
                                   QDeclarativeCategory* value);
@@ -172,7 +169,6 @@ public:
 
 signals:
     void pluginChanged();
-    void additionalDataChanged();
     void categoriesChanged();
     void descriptionsChanged();
     void locationChanged();

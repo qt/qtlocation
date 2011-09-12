@@ -193,13 +193,6 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValu
         if (value.isValid() && !value.toString().isEmpty()) {
             newPlace.setName(value.toString());
         }
-        value = properties.property(search_type_element);
-        if (value.isValid() && !value.toString().isEmpty()) {
-            QVariantHash addData;
-            QString type = value.toString();
-            addData.insert(search_type_element, type);
-            newPlace.setAdditionalData(addData);
-        }
         value = properties.property(search_properties_placeid_value);
         if (value.isValid() && !value.toString().isEmpty()) {
             newPlace.setPlaceId(value.toString());

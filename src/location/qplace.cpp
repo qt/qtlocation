@@ -137,25 +137,6 @@ bool QPlace::operator!= (const QPlace &other) const
 }
 
 /*!
-    Returns additional data.
-*/
-QVariantHash QPlace::additionalData() const
-{
-    Q_D(const QPlace);
-    return d->additionalData;
-}
-
-/*!
-    Sets additional data.
-*/
-void QPlace::setAdditionalData(const QVariantHash &data)
-{
-    Q_D(QPlace);
-    d->additionalData = data;
-}
-
-
-/*!
     Returns categories.
 */
 QList<QPlaceCategory> QPlace::categories() const
@@ -503,7 +484,6 @@ QPlacePrivate::QPlacePrivate()
 
 QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
         : QSharedData(other),
-        additionalData(other.additionalData),
         categories(other.categories),
         descriptions(other.descriptions),
         location(other.location),
@@ -528,7 +508,6 @@ QPlacePrivate::~QPlacePrivate() {}
 
 QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
 {
-    additionalData = other.additionalData;
     categories = other.categories;
     descriptions = other.descriptions;
     location = other.location;
@@ -549,7 +528,6 @@ QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
 bool QPlacePrivate::operator== (const QPlacePrivate &other) const
 {
 #ifdef QPLACE_DEBUG
-    qDebug() << "additionalData: " << (additionalData == other.additionalData);
     qDebug() << "categories: " << (categories == other.categories);
     qDebug() << "descriptions: " << (descriptions == other.descriptions);
     qDebug() << "location:" << (location == other.location);
@@ -568,8 +546,7 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
     qDebug() << "extendedAttributes" << (extendedAttributes == other.extendedAttributes);
 #endif
 
-    return (additionalData == other.additionalData
-            && categories == other.categories
+    return (categories == other.categories
             && descriptions == other.descriptions
             && location == other.location
             && rating == other.rating

@@ -140,9 +140,6 @@ void QDeclarativePlace::setPlace(const QPlace &src)
     QPlace previous = m_src;
     m_src = src;
 
-    if (previous.additionalData() != m_src.additionalData()) {
-        emit additionalDataChanged();
-    }
     if (previous.categories() != m_src.categories()) {
         synchronizeCategories();
         emit categoriesChanged();
@@ -223,25 +220,6 @@ QPlace QDeclarativePlace::place()
     }
     m_src.setSuppliers(suppliers);
     return m_src;
-}
-
-/*!
-    \qmlproperty QVariantHash Place::additionalData
-
-    This property holds additional data for place. Those are pairs of strings (key/value).
-*/
-
-void QDeclarativePlace::setAdditionalData(const QVariantHash &additionalData)
-{
-    if (m_src.additionalData() != additionalData) {
-        m_src.setAdditionalData(additionalData);
-        emit additionalDataChanged();
-    }
-}
-
-QVariantHash QDeclarativePlace::additionalData() const
-{
-    return m_src.additionalData();
 }
 
 /*!

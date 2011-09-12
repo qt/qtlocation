@@ -96,7 +96,6 @@ private:
                                                   QPlace *targetPlace);
     static QPlaceImage *processPremiumContentMediaObject(const QScriptValue &content);
     static void processAdContent(const QScriptValue &content, QPlace *targetPlace);
-    static void processAdContentPackages(const QScriptValue &content, QPlace *targetPlace);
     static void processAdContentDescriptions(const QScriptValue &content, QPlace *targetPlace);
     static QPlaceDescription *processAdContentDescription(const QScriptValue &content);
     static void processAdContentMediaObjects(const QScriptValue &content, QPlace *targetPlace);

@@ -76,8 +76,6 @@ public:
     bool operator==(const QPlace &other) const;
     bool operator!=(const QPlace &other) const;
 
-    QVariantHash additionalData() const;
-    void setAdditionalData(const QVariantHash &data);
     QList<QPlaceCategory> categories() const;
     void setCategories(const QList<QPlaceCategory> &categories);
     QList<QPlaceDescription> descriptions() const;

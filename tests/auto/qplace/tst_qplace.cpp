@@ -16,7 +16,6 @@ public:
 
 private Q_SLOTS:
     void constructorTest();
-    void additionalDataTest();
     void categoriesTest();
     void descriptionsTest();
     void detailsFetchedTest();
@@ -59,18 +58,6 @@ void tst_Place::constructorTest()
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
 
     delete testObjPtr;
-}
-
-void tst_Place::additionalDataTest()
-{
-    QPlace testObj;
-    QVERIFY2(testObj.additionalData().count() == 0, "Wrong default value");
-    QVariantHash list;
-    list.insert("key1", "value1");
-    list.insert("key2", "value2");
-    testObj.setAdditionalData(list);
-    QVERIFY2(testObj.additionalData().count() == 2, "Wrong value returned");
-    QVERIFY2(testObj.additionalData()["key1"] == "value1", "Wrong value[1] returned");
 }
 
 void tst_Place::nameTest()
