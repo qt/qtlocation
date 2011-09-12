@@ -101,8 +101,7 @@ public:
     void setName(const QString &name);
     QString placeId() const;
     void setPlaceId(const QString &placeId);
-    int reviewCount() const;
-    void setReviewCount(const int &count);
+
     QStringList tags() const;
     void setTags(const QStringList &tags);
 
