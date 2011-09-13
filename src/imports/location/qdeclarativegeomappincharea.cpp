@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include "qdeclarativegeomappincharea_p.h"
 #include "qdeclarative3dgraphicsgeomap_p.h"
 #include <QGraphicsSceneMouseEvent>

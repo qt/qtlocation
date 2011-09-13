@@ -42,9 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPOBJECT_H
 #define QDECLARATIVEGEOMAPOBJECT_H
 
-//#include "qgeomapobject.h"
 #include "qdeclarativegeomapmouseevent_p.h"
-//#include "qgeomapgroupobject.h"
 #include "QModelIndex"
 
 #include <QtDeclarative/QSGItem>
@@ -57,61 +55,6 @@ class QDeclarativeGraphicsGeoMap;
 class QDeclarative3DGraphicsGeoMap;
 class QDeclarativeGeoMapItem;
 class QDeclarativeGeoMapMouseArea;
-
-// !!! IMPORTANT !!!
-//
-// Inheriting from QSGItem here
-// is just a workaround to have non-gui related (ie where visualization is not
-// the main thing) autotests to pass in QML2 environment.
-// Real QML2 Map support (and related map object is a work in progress elsewhere.
-// This Map element instantiates but does not do anything meaningful from app dev
-// perspective.
-//
-// !!! IMPORTANT !!!
-
-class QDeclarativeGeoMapObject : public QSGItem
-{
-    Q_OBJECT
-
-    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
-
-public:
-    QDeclarativeGeoMapObject(QSGItem *parent = 0);
-    ~QDeclarativeGeoMapObject();
-
-    virtual void componentComplete();
-
-    virtual void setMap(QDeclarativeGraphicsGeoMap *map);
-    QDeclarativeGraphicsGeoMap* map() const;
-
-//    void setMapObject(QGeoMapObject *object);
-//    QGeoMapObject* mapObject();
-
-    void setVisible(bool visible);
-    bool isVisible() const;
-
-    virtual void doubleClickEvent(QDeclarativeGeoMapMouseEvent *event);
-    virtual void pressEvent(QDeclarativeGeoMapMouseEvent *event);
-    virtual void releaseEvent(QDeclarativeGeoMapMouseEvent *event);
-    virtual void enterEvent();
-    virtual void exitEvent();
-    virtual void moveEvent(QDeclarativeGeoMapMouseEvent *event);
-
-Q_SIGNALS:
-    void visibleChanged(bool visible);
-
-protected:
-    QPointer<QDeclarativeGraphicsGeoMap> map_;
-
-private Q_SLOTS:
-    void parentZChanged();
-
-private:
-    //QPointer<QGeoMapObject> object_;
-    bool visible_;
-    QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
-};
-
 
 class QDeclarativeGeoMapObjectView : public QObject, public QDeclarativeParserStatus
 {
@@ -134,7 +77,6 @@ public:
     QDeclarativeComponent *delegate() const;
     void setDelegate(QDeclarativeComponent*);
 
-//    void setMapData(QDeclarativeGraphicsGeoMap*);
     void setMapData(QDeclarative3DGraphicsGeoMap*);
     void repopulate();
     void removeInstantiatedItems();
@@ -168,13 +110,10 @@ private:
     QVariant modelVariant_;
     QAbstractItemModel* model_;
     QDeclarative3DGraphicsGeoMap *map_;
-    //QGeoMapGroupObject group_;
     QList<QDeclarativeGeoMapItem*> mapItemList_;
-    //QList<QDeclarativeGeoMapObject*> declarativeObjectList_;
 };
 
 QT_END_NAMESPACE
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapObject));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapObjectView));
 
 #endif

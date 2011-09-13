@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <QtDeclarative/QSGView>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QNetworkProxy>

@@ -44,6 +44,7 @@
 #include "qgeocodingmanager.h"
 #include "qgeomappingmanager.h"
 #include "qgeoroutingmanager.h"
+#include <QtCore/QStringList>
 
 #include <QDebug>
 

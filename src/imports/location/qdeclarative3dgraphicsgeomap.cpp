@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -60,8 +60,6 @@
 
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
-//#include <qgeomapdata.h>
-//#include <qgeomapobject.h>
 
 #include <QGraphicsSceneMouseEvent>
 #include <QDeclarativeContext>
@@ -244,16 +242,6 @@ void QDeclarative3DGraphicsGeoMap::populateMap()
             setupMapView(mapView);
             continue;
         }
-        QDeclarativeGeoMapObject *mapObject = qobject_cast<QDeclarativeGeoMapObject*>(kids.at(i));
-        if (mapObject) {
-            mapObjects_.append(mapObject);
-//            objectMap_.insert(mapObject->mapObject(), mapObject);
-//            mapData_->addMapObject(mapObject->mapObject());
-            // to solve when we have map object support
-            //mapObject->setMap(this);
-            continue;
-        }
-
         QDeclarativeGeoMapItem* mapItem = qobject_cast<QDeclarativeGeoMapItem*>(kids.at(i));
         if (mapItem) {
             addMapItem(mapItem);
@@ -944,11 +932,11 @@ void QDeclarative3DGraphicsGeoMap::centerAltitudeChanged(double /*altitude*/)
 
 QDeclarativeCoordinate* QDeclarative3DGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
 {
+    Q_UNUSED(screenPosition);
     QGeoCoordinate coordinate;
-
+    qWarning() << __FUNCTION__ << " not implemented."; // TODO
 //    if (mapData_)
 //        coordinate = mapData_->screenPositionToCoordinate(screenPosition);
-
     return new QDeclarativeCoordinate(coordinate,
                                       const_cast<QDeclarative3DGraphicsGeoMap *>(this));
 }
@@ -964,8 +952,9 @@ QDeclarativeCoordinate* QDeclarative3DGraphicsGeoMap::toCoordinate(QPointF scree
 */
 QPointF QDeclarative3DGraphicsGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate) const
 {
+    Q_UNUSED(coordinate);
     QPointF point;
-
+    qWarning() << __FUNCTION__ << " not implemented."; // TODO
 //    if (mapData_)
 //        point = mapData_->coordinateToScreenPosition(coordinate->coordinate());
 
@@ -974,8 +963,9 @@ QPointF QDeclarative3DGraphicsGeoMap::toScreenPosition(QDeclarativeCoordinate* c
 
 void QDeclarative3DGraphicsGeoMap::pan(int dx, int dy)
 {
-    Q_UNUSED(dx); // TODO panning support
+    Q_UNUSED(dx);
     Q_UNUSED(dy);
+    qWarning() << __FUNCTION__ << " not implemented."; // TODO
     //qDebug() << "pan: " << dx << dy;
     //if (mapData_) {
     //    mapData_->pan(dx, dy);
@@ -1014,7 +1004,6 @@ void QDeclarative3DGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *eve
         flickable_->mousePressEvent(event);
     if (pinchArea_)
         pinchArea_->mousePressEvent(event);
-
     //QSGItem::mousePressEvent(event);
 }
 
@@ -1027,7 +1016,6 @@ void QDeclarative3DGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *e
         flickable_->mouseReleaseEvent(event);
     if (pinchArea_)
         pinchArea_->mouseReleaseEvent(event);
-
     //QSGItem::mouseReleaseEvent(event);
 }
 
@@ -1165,6 +1153,13 @@ void QDeclarative3DGraphicsGeoMap::clearMapItems()
     map_->clearMapItems();
 }
 
+void QDeclarative3DGraphicsGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseArea *area)
+{
+    Q_UNUSED(area); // TODO
+    // to be done when the item picking is clear
+}
+
+
 /*!
     \qmlmethod Map::removeMapObject(MapObject)
 
@@ -1196,7 +1191,7 @@ void QDeclarative3DGraphicsGeoMap::removeMapObject(QDeclarativeGeoMapObject *obj
 // This function is strictly for testing purposes
 int QDeclarative3DGraphicsGeoMap::testGetDeclarativeMapObjectCount()
 {
-    return objectMap_.values().count();
+    return mapItems_.count();
 }
 
 #include "moc_qdeclarative3dgraphicsgeomap_p.cpp"

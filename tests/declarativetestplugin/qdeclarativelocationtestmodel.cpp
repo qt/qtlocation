@@ -1,6 +1,6 @@
 #include "qdeclarativelocationtestmodel_p.h"
 #include <qgeocoordinate.h>
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <QtCore/QTime>
 #include <QtCore>
 

@@ -39,12 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativegeomapobject_p.h"
+#include "qdeclarativegeomapobjectview_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
-#include "qdeclarativegraphicsgeomap_p.h"
 #include "qdeclarative3dgraphicsgeomap_p.h"
 #include "qdeclarativegeomapitem_p.h"
-//#include "qgeomapdata.h"
 
 #include <QDebug>
 #include <QDeclarativeParserStatus>
@@ -52,147 +50,6 @@
 #include <QDeclarativeContext>
 
 QT_BEGIN_NAMESPACE
-
-QDeclarativeGeoMapObject::QDeclarativeGeoMapObject(QSGItem *parent)
-    : QSGItem(parent),
-      map_(0),
-      visible_(true)
-{
-}
-
-QDeclarativeGeoMapObject::~QDeclarativeGeoMapObject() {}
-
-void QDeclarativeGeoMapObject::componentComplete()
-{
-    QSGItem::componentComplete();
-
-    // TODO check QML2 impact
-    //QList<QGraphicsItem*> children = childItems();
-    QList<QSGItem*> children = childItems();
-    for (int i = 0; i < children.size(); ++i) {
-        QDeclarativeGeoMapMouseArea *mouseArea
-        = qobject_cast<QDeclarativeGeoMapMouseArea*>(children.at(i));
-        if (mouseArea) {
-            mouseArea->setMap(map_);
-            mouseAreas_.append(mouseArea);
-        }
-    }
-}
-
-void QDeclarativeGeoMapObject::setMap(QDeclarativeGraphicsGeoMap *map)
-{
-    map_ = map;
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_[i]->setMap(map_);
-}
-
-QDeclarativeGraphicsGeoMap* QDeclarativeGeoMapObject::map() const
-{
-    return map_;
-}
-
-void QDeclarativeGeoMapObject::doubleClickEvent(QDeclarativeGeoMapMouseEvent *event)
-{
-    if (event->accepted())
-        return;
-
-    for (int i = 0; i < mouseAreas_.size(); ++i) {
-        mouseAreas_.at(i)->doubleClickEvent(event);
-        if (event->accepted())
-            return;
-    }
-}
-
-void QDeclarativeGeoMapObject::pressEvent(QDeclarativeGeoMapMouseEvent *event)
-{
-    if (event->accepted())
-        return;
-
-    for (int i = 0; i < mouseAreas_.size(); ++i) {
-        mouseAreas_.at(i)->pressEvent(event);
-        if (event->accepted())
-            return;
-    }
-}
-
-void QDeclarativeGeoMapObject::releaseEvent(QDeclarativeGeoMapMouseEvent *event)
-{
-    if (event->accepted())
-        return;
-
-    for (int i = 0; i < mouseAreas_.size(); ++i) {
-        mouseAreas_.at(i)->releaseEvent(event);
-        if (event->accepted())
-            return;
-    }
-}
-
-void QDeclarativeGeoMapObject::enterEvent()
-{
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->enterEvent();
-}
-
-void QDeclarativeGeoMapObject::exitEvent()
-{
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->exitEvent();
-}
-
-void QDeclarativeGeoMapObject::moveEvent(QDeclarativeGeoMapMouseEvent *event)
-{
-    for (int i = 0; i < mouseAreas_.size(); ++i)
-        mouseAreas_.at(i)->moveEvent(event);
-}
-
-//void QDeclarativeGeoMapObject::setMapObject(QGeoMapObject *object)
-//{
-//    if (!object)
-//        return;
-
-//    object_ = object;
-//    object_->setVisible(visible_);
-
-    // TODO check QML2 impact
-    /*
-    connect(this,
-            SIGNAL(zChanged()),
-            this,
-            SLOT(parentZChanged()));
-
-
-    object_->setZValue(zValue());
-    */
-//}
-
-//QGeoMapObject* QDeclarativeGeoMapObject::mapObject()
-//{
-//    return object_;
-//}
-
-void QDeclarativeGeoMapObject::parentZChanged()
-{
-    // TODO check QML2 impact
-    //object_->setZValue(zValue());
-}
-
-void QDeclarativeGeoMapObject::setVisible(bool visible)
-{
-    if (visible_ == visible)
-        return;
-
-    visible_ = visible;
-
-//    if (object_)
-//        object_->setVisible(visible);
-
-    emit visibleChanged(visible_);
-}
-
-bool QDeclarativeGeoMapObject::isVisible() const
-{
-    return visible_;
-}
 
 /*!
     \qmlclass MapObjectView
@@ -510,6 +367,8 @@ QDeclarativeGeoMapItem* QDeclarativeGeoMapObjectView::createItem(int modelRow)
 
 void QDeclarativeGeoMapObjectView::setVisible(bool visible)
 {
+    // TODO!
+    Q_UNUSED(visible);
     // TODO visibility
     /*
     if (visible_ == visible)
@@ -545,6 +404,7 @@ bool QDeclarativeGeoMapObjectView::isVisible() const
 void QDeclarativeGeoMapObjectView::setZValue(qreal zValue)
 {
     // TODO z values
+    Q_UNUSED(zValue);
     // group_.setZValue(zValue);
     // emit zChanged();
 }
@@ -556,6 +416,6 @@ qreal QDeclarativeGeoMapObjectView::zValue()
     //return group_.zValue();
 }
 
-#include "moc_qdeclarativegeomapobject_p.cpp"
+#include "moc_qdeclarativegeomapobjectview_p.cpp"
 
 QT_END_NAMESPACE

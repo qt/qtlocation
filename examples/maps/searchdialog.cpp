@@ -41,9 +41,9 @@
 
 #include "searchdialog.h"
 
-#include <QFormLayout>
-#include <QDialogButtonBox>
-#include <QVBoxLayout>
+#include <QtWidgets/QFormLayout>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QVBoxLayout>
 
 SearchDialog::SearchDialog(QWidget *parent) :
     QDialog(parent)

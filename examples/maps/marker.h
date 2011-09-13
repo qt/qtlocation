@@ -42,7 +42,7 @@
 #ifndef MARKER_H
 #define MARKER_H
 
-#include <QSignalMapper>
+#include <QtCore/QSignalMapper>
 
 #include "qgeomappixmapobject.h"
 #include "qgeocodingmanager.h"

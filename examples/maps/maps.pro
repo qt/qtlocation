@@ -15,24 +15,27 @@ symbian: {
                         WriteUserData
 }
 
-HEADERS += \
-    mapswidget.h \
-    marker.h \
-    mainwindow.h \
-    searchdialog.h \
-    markerdialog.h \
-    navigatedialog.h \
-    navigator.h
+# TODO this example needs to be converted to work with Qt5
+# when the c++ headers are available.
 
-SOURCES += \
-    mapswidget.cpp \
-    main.cpp \
-    marker.cpp \
-    mainwindow.cpp \
-    searchdialog.cpp \
-    markerdialog.cpp \
-    navigatedialog.cpp \
-    navigator.cpp
+#HEADERS += \
+#    mapswidget.h \
+#    marker.h \
+#    mainwindow.h \
+#    searchdialog.h \
+#    markerdialog.h \
+#    navigatedialog.h \
+#    navigator.h
+
+SOURCES += main.cpp
+
+    #mapswidget.cpp \
+    #marker.cpp \
+    #mainwindow.cpp \
+    #searchdialog.cpp \
+    #markerdialog.cpp \
+    #navigatedialog.cpp \
+    #navigator.cpp
 
 #install
 target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/maps

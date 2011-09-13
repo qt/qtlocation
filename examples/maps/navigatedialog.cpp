@@ -41,9 +41,9 @@
 
 #include "navigatedialog.h"
 
-#include <QFormLayout>
-#include <QDialogButtonBox>
-#include <QVBoxLayout>
+#include <QtWidgets/QFormLayout>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QVBoxLayout>
 #include <QMetaObject>
 
 Q_DECLARE_METATYPE(QGeoRouteRequest::TravelMode)

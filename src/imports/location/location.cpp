@@ -49,7 +49,6 @@
 #include "qdeclarativecoordinate_p.h"
 
 #include "qdeclarativegeoserviceprovider_p.h"
-#include "qdeclarativegraphicsgeomap_p.h"
 #include "qdeclarative3dgraphicsgeomap_p.h"
 
 #include "qdeclarativegeomapmousearea_p.h"
@@ -62,6 +61,7 @@
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
 #include "qdeclarativegeomapitem_p.h"
+#include "qdeclarativegeomapobjectview_p.h"
 
 //Place includes
 #include "qdeclarativecategory_p.h"
@@ -91,21 +91,7 @@ class QLocationDeclarativeModule: public QDeclarativeExtensionPlugin
 public:
     virtual void registerTypes(const char* uri) {
         if (QLatin1String(uri) == QLatin1String("QtMobility.location")) {
-            // Elements available since Qt mobility 1.1:
-            qmlRegisterType<QDeclarativePosition>(uri, 1, 1, "Position");
-            qmlRegisterType<QDeclarativePositionSource>(uri, 1, 1, "PositionSource");
-            qmlRegisterType<QDeclarativeCoordinate>(uri, 1, 1, "Coordinate");
-            qmlRegisterType<QDeclarativeGeoBoundingBox>(uri, 1, 1, "BoundingBox");
-            qmlRegisterType<QDeclarativeGeoAddress>(uri, 1, 1, "Address");
-
-            qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 1, 2, "Plugin");
-            qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 1, 2, "PluginParameter");
-            qmlRegisterType<QDeclarativeGraphicsGeoMap>(uri, 1, 2, "Map");
-            qmlRegisterType<QDeclarativeGeoMapObject>(uri, 1, 2, "MapObject");
-            qmlRegisterType<QDeclarativeGeoMapObjectView>(uri, 1, 2, "MapObjectView");
-            qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 1, 2, "MapMouseArea");
-            qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 1, 2, "MapMouseEvent");
-
+            qWarning("QtMobility.location is not supported. Use Qt.location instead.");
         } else if (QLatin1String(uri) == QLatin1String("Qt.location")) {
             // This version numbering is not correct. It is just something to get going
             // until the proper versioning scheme of QML plugins in Qt5 is agreed upon.
@@ -119,8 +105,7 @@ public:
 
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 5, 0, "Plugin");
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
-            qmlRegisterType<QDeclarative3DGraphicsGeoMap>(uri, 5, 0, "Map3D");
-            qmlRegisterType<QDeclarativeGeoMapObject>(uri, 5, 0, "MapObject");
+            qmlRegisterType<QDeclarative3DGraphicsGeoMap>(uri, 5, 0, "Map");
             qmlRegisterType<QDeclarativeGeoMapItem>(uri, 5, 0, "MapItem");
             qmlRegisterType<QDeclarativeGeoMapObjectView>(uri, 5, 0, "MapObjectView");
             qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 5, 0, "MapMouseArea");

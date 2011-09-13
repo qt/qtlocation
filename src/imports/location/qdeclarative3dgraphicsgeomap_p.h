@@ -42,13 +42,12 @@
 #ifndef QDECLARATIVE3DGRAPHICSGEOMAP_H
 #define QDECLARATIVE3DGRAPHICSGEOMAP_H
 
-//#include <qgraphicsgeomap.h>
 #include <QPointer>
 #include <QTouchEvent>
 #include <QtDeclarative/qsgitem.h>
 #include <QtQuick1/QDeclarativeItem>
-//#include <QGeoMapData>
-#include "qdeclarativegeomapobject_p.h"
+
+#include "qdeclarativegeomapobjectview_p.h"
 #include <QtCore/QCoreApplication>
 
 // Check $$pwd/location.pro how to enable these
@@ -159,7 +158,7 @@ public:
 //    void setConnectivityMode(ConnectivityMode connectivityMode);
 //    ConnectivityMode connectivityMode() const;
 
-    QDeclarativeListProperty<QDeclarativeGeoMapObject> objects();
+    QDeclarativeListProperty<QDeclarativeGeoMapItem> items();
 
     //Q_INVOKABLE void addMapObject(QDeclarativeGeoMapObject* object);
     //Q_INVOKABLE void removeMapObject(QDeclarativeGeoMapObject* object);
@@ -175,7 +174,7 @@ public:
     // any time without any notice (hence also the obscure naming to avoid
     // accidental usage):
     Q_INVOKABLE int testGetDeclarativeMapObjectCount();
-    //void setActiveMouseArea(QDeclarativeGeoMapMouseArea *area);
+    void setActiveMouseArea(QDeclarativeGeoMapMouseArea *area);
     //QDeclarativeGeoMapMouseArea* activeMouseArea() const;
 
     QDeclarativeGeoMapPinchArea* pinch() {return pinchArea_;}
@@ -235,12 +234,9 @@ private:
     void updateAspectRatio();
     void populateMap();
 
-    QDeclarativeGeoMapObject* createItem(int modelIndex);
-
     QDeclarativeGeoServiceProvider* plugin_;
     QGeoServiceProvider* serviceProvider_;
     QGeoMappingManager* mappingManager_;
-//    QGeoMapData* mapData_;
 
     qreal zoomLevel_;
     QPointer<QDeclarativeCoordinate> center_;
@@ -249,9 +245,6 @@ private:
 //    QDeclarative3DGraphicsGeoMap::MapType mapType_;
 //    QDeclarative3DGraphicsGeoMap::ConnectivityMode connectivityMode_;
     QSizeF size_;
-
-    QList<QDeclarativeGeoMapObject*> mapObjects_;
-    QHash<QGeoMapObject*, QDeclarativeGeoMapObject*> objectMap_;
 
     bool componentCompleted_;
     QList<QDeclarativeGeoMapObjectView*> mapViews_;

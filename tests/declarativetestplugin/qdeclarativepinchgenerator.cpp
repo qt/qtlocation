@@ -1,5 +1,5 @@
 #include "qdeclarativepinchgenerator_p.h"
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <qsgengine.h>
 
 

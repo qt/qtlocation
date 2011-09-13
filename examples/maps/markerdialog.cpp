@@ -41,10 +41,10 @@
 
 #include "markerdialog.h"
 
-#include <QFormLayout>
-#include <QLabel>
-#include <QDialogButtonBox>
-#include <QVBoxLayout>
+#include <QtWidgets/QFormLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QVBoxLayout>
 
 MarkerDialog::MarkerDialog(Marker *marker) :
     marker(marker)

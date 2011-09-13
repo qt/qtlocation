@@ -40,10 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapmousearea_p.h"
-
 #include <QDebug>
-
-#include "qdeclarativegeomapobject_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -87,12 +84,12 @@ QDeclarativeGeoMapMouseArea::~QDeclarativeGeoMapMouseArea()
 {
 }
 
-void QDeclarativeGeoMapMouseArea::setMap(QDeclarativeGraphicsGeoMap *map)
+void QDeclarativeGeoMapMouseArea::setMap(QDeclarative3DGraphicsGeoMap *map)
 {
     map_ = map;
 }
 
-QDeclarativeGraphicsGeoMap* QDeclarativeGeoMapMouseArea::map() const
+QDeclarative3DGraphicsGeoMap* QDeclarativeGeoMapMouseArea::map() const
 {
     return map_;
 }

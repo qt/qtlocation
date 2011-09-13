@@ -42,11 +42,11 @@
 #ifndef MAPSWIDGET_H
 #define MAPSWIDGET_H
 
-#include <QGraphicsView>
-#include <QGraphicsScene>
-#include <QWidget>
-#include <QGraphicsRectItem>
-#include <QGraphicsSimpleTextItem>
+#include <QtWidgets/QGraphicsView>
+#include <QtWidgets/QGraphicsScene>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QGraphicsRectItem>
+#include <QtWidgets/QGraphicsSimpleTextItem>
 
 #include "qgraphicsgeomap.h"
 #include "qgeomappingmanager.h"

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,7 +38,8 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
+#include <QtCore/QStringList>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QNetworkProxy>
 #include <QtDeclarative/qsgview.h>
@@ -48,14 +49,8 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    // For internal testing purposes
-    //qmlRegisterType<PinchGenerator>("QtQuick", 2, 0, "PinchGenerator");
 
-    QGLFormat f = QGLFormat::defaultFormat();
-    f.setSampleBuffers(true);
-    //f.setSwapInterval(1);
-    QSGView view(f);
-
+    QSGView view;
     const QString mainQmlApp = QLatin1String("qrc:///map3d.qml");
     view.setSource(QUrl(mainQmlApp));
     // Temporary development-time proxy setting. TODO improve later.

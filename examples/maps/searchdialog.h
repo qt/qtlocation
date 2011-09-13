@@ -42,9 +42,9 @@
 #ifndef SEARCHDIALOG_H
 #define SEARCHDIALOG_H
 
-#include <QDialog>
-#include <QLineEdit>
-#include <QComboBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QComboBox>
 
 class SearchDialog : public QDialog
 {

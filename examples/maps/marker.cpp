@@ -42,7 +42,7 @@
 #include "marker.h"
 #include "mapswidget.h"
 
-#include <QPixmap>
+#include <QtWidgets/QPixmap>
 
 #include "qgeoboundingcircle.h"
 

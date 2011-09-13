@@ -43,9 +43,11 @@
 /* You probably want to read it first, look under Tutorials in
    the Mobility documentation */
 
-#include "mainwindow.h"
+// TODO this app needs to be modified to work with qt5
+// when new c++ headers are available
+//#include "mainwindow.h"
 
-#include <QApplication>
+#include <QtWidgets/QApplication>
 #include <QList>
 #include <QString>
 #include <QUrl>
@@ -78,12 +80,13 @@ int main(int argc, char *argv[])
     }
 
     // launch the main window
-    MainWindow mw;
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-    mw.showMaximized();
-#else
-    mw.resize(360,640);
-    mw.show();
-#endif
+    qWarning("Warning: MapsDemo has not yet been migrated to Qt5. Nothing will be shown.");
+//MainWindow mw;
+//#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
+//    mw.showMaximized();
+//#else
+//    mw.resize(360,640);
+//    mw.show();
+//#endif
     return a.exec();
 }

@@ -42,9 +42,9 @@
 #ifndef NAVIGATEDIALOG_H
 #define NAVIGATEDIALOG_H
 
-#include <QDialog>
-#include <QLineEdit>
-#include <QComboBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QComboBox>
 
 #include "qgeorouterequest.h"
 #include "qgeocoordinate.h"

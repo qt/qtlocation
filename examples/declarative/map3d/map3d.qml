@@ -206,7 +206,7 @@ Item {
         longitude: 140
     }
 
-    Map3D {
+    Map {
         id: map
         z: 3
 

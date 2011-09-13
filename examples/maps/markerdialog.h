@@ -42,10 +42,10 @@
 #ifndef MARKERDIALOG_H
 #define MARKERDIALOG_H
 
-#include <QDialog>
-#include <QLineEdit>
-#include <QLabel>
-#include <QDoubleSpinBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QDoubleSpinBox>
 
 #include "qgeoaddress.h"
 

@@ -42,12 +42,12 @@
 #include "mainwindow.h"
 #include "navigator.h"
 
-#include <QCoreApplication>
-#include <QMenuBar>
-#include <QMenu>
-#include <QMessageBox>
-#include <QAction>
-#include <QVBoxLayout>
+#include <QtWidgets/QCoreApplication>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QVBoxLayout>
 
 MainWindow::MainWindow() :
     serviceProvider(0),

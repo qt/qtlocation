@@ -43,7 +43,7 @@
 #define QDECLARATIVEGEOMAPMOUSEAREA_H
 
 #include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegraphicsgeomap_p.h"
+#include "qdeclarative3dgraphicsgeomap_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 
 // !!! IMPORTANT !!!
@@ -78,8 +78,8 @@ public:
     QDeclarativeGeoMapMouseArea(QSGItem *parent = 0);
     ~QDeclarativeGeoMapMouseArea();
 
-    void setMap(QDeclarativeGraphicsGeoMap *map);
-    QDeclarativeGraphicsGeoMap* map() const;
+    void setMap(QDeclarative3DGraphicsGeoMap *map);
+    QDeclarative3DGraphicsGeoMap* map() const;
 
     qreal mouseX() const;
     qreal mouseY() const;
@@ -147,7 +147,7 @@ private:
 //    Qt::MouseButtons lastButtons_;
 //    Qt::KeyboardModifiers lastModifiers_;
 
-    QDeclarativeGraphicsGeoMap* map_;
+    QDeclarative3DGraphicsGeoMap* map_;
 };
 
 QT_END_NAMESPACE

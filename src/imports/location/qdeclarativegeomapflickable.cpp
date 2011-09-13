@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QPropertyAnimation>
 #include <QEasingCurve>

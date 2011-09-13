@@ -59,7 +59,7 @@ class QDeclarativeGeoMapItem : public QSGItem
 {
     Q_OBJECT
 public:
-    QDeclarativeGeoMapItem(QSGItem *parent = 0) {};
+    QDeclarativeGeoMapItem(QSGItem *parent = 0) { Q_UNUSED(parent);};
     ~QDeclarativeGeoMapItem() {};
 };
 
