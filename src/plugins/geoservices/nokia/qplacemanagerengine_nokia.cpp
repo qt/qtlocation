@@ -133,6 +133,20 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
                                           Q_ARG(QString, QString("Could not create rest reply for review content request")));
             break;
         }
+    case QPlaceContent::EditorialType: {
+        QPlaceRestReply *restReply =
+            QPlaceRestManager::instance()->sendPlaceRequest(place.placeId());
+
+        reply = new QPlaceContentReplyImpl(request.contentType(), restReply, this);
+
+        if (!restReply) {
+            QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
+                                      Q_ARG(QPlaceReply::Error, QPlaceReply::UnknownError),
+                                      Q_ARG(QString, QString("Could not create rest reply for editorial content request")));
+        }
+
+        break;
+    }
     default: {
             reply = new QPlaceContentReplyImpl(request.contentType(), 0, this);
             QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,

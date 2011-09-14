@@ -112,10 +112,10 @@ Rectangle {
                 Text { text: '<b>Categories: </b> ' + categoryNames(place.categories); font.pixelSize: 16 }
 
                 Text {
-                    text: '<b>Descriptions count: </b> ' + place.descriptions.length +
-                          (place.descriptions.length <= 0 ? '' : ', <a href=\"dummy\">show descriptions</a>')
+                    text: '<b>Editorial count: </b> ' + place.editorialModel.totalCount +
+                          (place.editorialModel.totalCount <= 0 ? '' : ', <a href=\"dummy\">show editorials</a>')
                     font.pixelSize: 16
-                    onLinkActivated: descriptionList.model = place.descriptions
+                    onLinkActivated: editorialList.model = place.editorialModel
                 }
 
                 Text {

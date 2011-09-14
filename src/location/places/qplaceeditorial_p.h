@@ -43,23 +43,26 @@
 #define QPLACEDESCRIPTION_P_H
 
 #include <QtCore/QUrl>
-#include <QtCore/QSharedData>
+#include <QtLocation/QPlaceSupplier>
+
+#include "qplacecontent_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceDescriptionPrivate : public QSharedData
+class QPlaceEditorialPrivate : public QPlaceContentPrivate
 {
 public:
-    QPlaceDescriptionPrivate();
-    QPlaceDescriptionPrivate(const QPlaceDescriptionPrivate &other);
+    QPlaceEditorialPrivate();
+    QPlaceEditorialPrivate(const QPlaceEditorialPrivate &other);
 
-    ~QPlaceDescriptionPrivate();
+    ~QPlaceEditorialPrivate();
 
-    bool operator==(const QPlaceDescriptionPrivate &other) const;
+    bool compare(const QPlaceContentPrivate *other) const;
+
+    Q_DEFINE_CONTENT_PRIVATE_HELPER(QPlaceEditorial, QPlaceContent::EditorialType)
 
     QString content;
     QString contentTitle;
-    QString contentType;
     QPlaceSupplier supplier;
     QUrl sourceUrl;
     QString language;

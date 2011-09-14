@@ -126,15 +126,13 @@ Rectangle {
     }
 
     ListView {
-        id: descriptionList
+        id: editorialList
         anchors.fill: placesList
         clip: true
         snapMode: ListView.SnapToItem
 
         visible: model !== undefined
-        delegate: DescriptionDelegate {
-            description: model.modelData
-        }
+        delegate: EditorialDelegate { }
     }
 
     Text {

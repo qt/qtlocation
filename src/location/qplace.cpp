@@ -155,24 +155,6 @@ void QPlace::setCategories(const QList<QPlaceCategory> &categories)
 }
 
 /*!
-    Returns descriptions.
-*/
-QList<QPlaceDescription> QPlace::descriptions() const
-{
-    Q_D(const QPlace);
-    return d->descriptions;
-}
-
-/*!
-    Sets descriptions.
-*/
-void QPlace::setDescriptions(const QList<QPlaceDescription> &descriptions)
-{
-    Q_D(QPlace);
-    d->descriptions = descriptions;
-}
-
-/*!
     Returns location.
 */
 QGeoLocation QPlace::location() const
@@ -449,7 +431,6 @@ QPlacePrivate::QPlacePrivate()
 QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
         : QSharedData(other),
         categories(other.categories),
-        descriptions(other.descriptions),
         location(other.location),
         rating(other.rating),
         suppliers(other.suppliers),
@@ -471,7 +452,6 @@ QPlacePrivate::~QPlacePrivate() {}
 QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
 {
     categories = other.categories;
-    descriptions = other.descriptions;
     location = other.location;
     rating = other.rating;
     suppliers = other.suppliers;
@@ -489,7 +469,6 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
 {
 #ifdef QPLACE_DEBUG
     qDebug() << "categories: " << (categories == other.categories);
-    qDebug() << "descriptions: " << (descriptions == other.descriptions);
     qDebug() << "location:" << (location == other.location);
     qDebug() << "rating" << (rating == other.rating);
     qDebug() << "suppliers" << (suppliers == other.suppliers);
@@ -505,7 +484,6 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
 #endif
 
     return (categories == other.categories
-            && descriptions == other.descriptions
             && location == other.location
             && rating == other.rating
             && suppliers == other.suppliers

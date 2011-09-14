@@ -42,8 +42,6 @@ import QtQuick 2.0
 import Qt.location 5.0
 
 Rectangle {
-    property Description description
-
     height: childrenRect.height + 10
     width: parent.width
 
@@ -61,15 +59,15 @@ Rectangle {
         spacing: 5
 
         Text {
-            text: description.contentTitle
+            text: title
             font.pixelSize: 16
             font.bold: true
             width: parent.width
-            visible: description.contentTitle.length > 0
+            visible: title.length > 0
         }
 
         Text {
-            text: description.content
+            text: content
             wrapMode: Text.WordWrap
             width: parent.width
         }

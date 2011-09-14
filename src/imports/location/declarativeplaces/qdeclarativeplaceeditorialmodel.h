@@ -39,50 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEDESCRIPTION_H
-#define QPLACEDESCRIPTION_H
+#ifndef QDECLARATIVEPLACEEDITORIALMODEL_H
+#define QDECLARATIVEPLACEEDITORIALMODEL_H
 
-#include <QSharedDataPointer>
-#include <QStringList>
-#include "qmobilityglobal.h"
-#include "qplacesupplier.h"
+#include "qdeclarativeplacecontentmodel.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceDescriptionPrivate;
-
-class Q_LOCATION_EXPORT QPlaceDescription
+class QDeclarativePlaceEditorialModel : public QDeclarativePlaceContentModel
 {
+    Q_OBJECT
+
 public:
-    QPlaceDescription();
-    QPlaceDescription(const QPlaceDescription &other);
+    explicit QDeclarativePlaceEditorialModel(QObject *parent = 0);
+    ~QDeclarativePlaceEditorialModel();
 
-    virtual ~QPlaceDescription();
-
-    QPlaceDescription &operator=(const QPlaceDescription &other);
-
-    bool operator==(const QPlaceDescription &other) const;
-    bool operator!=(const QPlaceDescription &other) const {
-        return !(other == *this);
-    }
-
-    QString content() const;
-    void setContent(const QString &data);
-    QString contentTitle() const;
-    void setContentTitle(const QString &data);
-    QString contentType() const;
-    void setContentType(const QString &data);
-    QPlaceSupplier supplier() const;
-    void setSupplier(const QPlaceSupplier &data);
-    QUrl sourceUrl() const;
-    void setSourceUrl(const QUrl &data);
-    QString language() const;
-    void setLanguage(const QString &data);
-
-private:
-    QSharedDataPointer<QPlaceDescriptionPrivate> d;
+    QVariant data(const QModelIndex &index, int role) const;
+    enum Roles {
+        ContentRole = UserRole,
+        TitleRole,
+        UrlRole,
+        LanguageRole
+    };
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACEDESCRIPTION_H
+#endif // QDECLARATIVEPLACEEDITORIALMODEL_H

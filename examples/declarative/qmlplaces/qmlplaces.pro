@@ -13,7 +13,7 @@ OTHER_FILES = qmlplaces.qml \
     ReviewDelegate.qml \
     CategoryView.qml \
     ImageGrid.qml \
-    DescriptionDelegate.qml \
+    EditorialDelegate.qml \
     RatingView.qml
 
 RESOURCES += qmlplaces.qrc

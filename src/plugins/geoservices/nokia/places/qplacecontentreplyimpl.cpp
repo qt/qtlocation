@@ -66,6 +66,8 @@ QPlaceContentReplyImpl::QPlaceContentReplyImpl(QPlaceContent::Type type, QPlaceR
         parser = new QPlaceJSonMediaParser(this);
     else if (contentType == QPlaceContent::ReviewType)
         parser = new QPlaceJSonReviewParser(this);
+    else if (contentType == QPlaceContent::EditorialType)
+        parser = new QPlaceJSonDetailsParser(this);
     else
         parser = 0;
 
@@ -143,6 +145,14 @@ void QPlaceContentReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                 collection.insert(startNumber + i, reviewObjects.at(i));
             setContent(collection);
             setTotalCount(reviewParser->allReviewsCount());
+        } else if (contentType == QPlaceContent::EditorialType) {
+            QPlaceJSonDetailsParser *detailsParser =
+                qobject_cast<QPlaceJSonDetailsParser *>(parser);
+
+            const QPlace place = detailsParser->result();
+            QPlaceContent::Collection collection = place.content(QPlaceContent::EditorialType);
+            setContent(collection);
+            setTotalCount(collection.count());
         }
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);

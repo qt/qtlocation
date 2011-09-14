@@ -58,7 +58,7 @@
 #include <qgeocoordinate.h>
 #include <qplace.h>
 #include <qplacecategory.h>
-#include <qplacedescription.h>
+#include <qplaceeditorial.h>
 #include <qplacerating.h>
 #include <qgeolocation.h>
 #include <qplacesupplier.h>
@@ -597,7 +597,7 @@ void QPlaceJSonDetailsParser::processPremiumContentDescription(const QScriptValu
                                                                QPlace *targetPlace)
 {
     QScriptValue value = content.property(place_premiumcontent_content_desc_element);
-    QPlaceDescription desc;
+    QPlaceEditorial desc;
     if (value.isValid() && !value.toString().isEmpty()) {
         desc.setContent(value.toString());
     } else {
@@ -612,7 +612,7 @@ void QPlaceJSonDetailsParser::processPremiumContentDescription(const QScriptValu
     }
     value = content.property(place_premiumcontent_content_name_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        desc.setContentTitle(value.toString());
+        desc.setTitle(value.toString());
     }
     value = content.property(place_premiumcontent_content_vendorurl_element);
     if (value.isValid() && !value.toString().isEmpty()) {
@@ -623,9 +623,15 @@ void QPlaceJSonDetailsParser::processPremiumContentDescription(const QScriptValu
         desc.setLanguage(value.toString());
     }
     desc.setSupplier(supplier);
-    QList<QPlaceDescription> list = targetPlace->descriptions();
-    list.append(desc);
-    targetPlace->setDescriptions(list);
+
+    QPlaceContent::Collection editorials = targetPlace->content(QPlaceContent::EditorialType);
+
+    int insertionIndex = 0;
+    if (!editorials.isEmpty())
+        insertionIndex = editorials.keys().last() + 1;
+
+    editorials.insert(insertionIndex, desc);
+    targetPlace->setContent(QPlaceContent::EditorialType, editorials);
 }
 
 void QPlaceJSonDetailsParser::processPremiumContentMediaObjects(const QScriptValue &content,
@@ -714,39 +720,51 @@ void QPlaceJSonDetailsParser::processAdContentDescriptions(const QScriptValue &c
     if (value.isValid()) {
         if (value.isArray()) {
             QScriptValueIterator it(value);
+
+            QPlaceContent::Collection editorials =
+                targetPlace->content(QPlaceContent::EditorialType);
+
+            int insertionIndex = 0;
+            if (!editorials.isEmpty())
+                insertionIndex = editorials.keys().last() + 1;
+
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element
                 if (it.name() != "length") {
-                    QPlaceDescription *des = processAdContentDescription(it.value());
+                    QPlaceEditorial *des = processAdContentDescription(it.value());
                     if (des) {
-                        QList<QPlaceDescription> list = targetPlace->descriptions();
-                        list.append(*des);
-                        targetPlace->setDescriptions(list);
+                        editorials.insert(insertionIndex, *des);
+                        ++insertionIndex;
                         delete des;
-                        des = NULL;
                     }
                 }
             }
+            targetPlace->setContent(QPlaceContent::EditorialType, editorials);
         } else {
-            QPlaceDescription *des = processAdContentDescription(value);
+            QPlaceEditorial *des = processAdContentDescription(value);
             if (des) {
-                QList<QPlaceDescription> list = targetPlace->descriptions();
-                list.append(*des);
-                targetPlace->setDescriptions(list);
+                QPlaceContent::Collection editorials =
+                    targetPlace->content(QPlaceContent::EditorialType);
+
+                int insertionIndex = 0;
+                if (!editorials.isEmpty())
+                    insertionIndex = editorials.keys().last() + 1;
+
+                editorials.insert(insertionIndex, *des);
+                targetPlace->setContent(QPlaceContent::EditorialType, editorials);
                 delete des;
-                des = NULL;
             }
         }
     }
 }
 
-QPlaceDescription *QPlaceJSonDetailsParser::processAdContentDescription(const QScriptValue &content)
+QPlaceEditorial *QPlaceJSonDetailsParser::processAdContentDescription(const QScriptValue &content)
 {
-    QPlaceDescription *description = NULL;
+    QPlaceEditorial *description = NULL;
     QScriptValue value = content.property(place_adcontent_localizedDescription_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        description = new QPlaceDescription();
+        description = new QPlaceEditorial();
         description->setContent(value.toString());
         value = content.property(place_adcontent_descriptionLanguage_element);
         if (value.isValid() && !value.toString().isEmpty()) {

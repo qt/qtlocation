@@ -8,7 +8,7 @@ PUBLIC_HEADERS += \
     places/qplacecategory.h \
     places/qplacecontent.h \
     places/qplacecontentreply.h \
-    places/qplacedescription.h \
+    places/qplaceeditorial.h \
     places/qplaceimage.h \
     places/qplacerating.h \
     places/qplacereview.h \
@@ -33,7 +33,7 @@ PRIVATE_HEADERS += \
     places/qplaceattribute_p.h \
     places/qplacecategory_p.h \
     places/qplacecontent_p.h \
-    places/qplacedescription_p.h \
+    places/qplaceeditorial_p.h \
     places/qplaceimage_p.h \
     places/qplaceperiod_p.h \
     places/qplacerating_p.h \
@@ -51,7 +51,7 @@ SOURCES += \
     places/qplacecategory.cpp \
     places/qplacecontent.cpp \
     places/qplacecontentreply.cpp \
-    places/qplacedescription.cpp \
+    places/qplaceeditorial.cpp \
 #result
     places/qplaceimage.cpp \
     places/qplacerating.cpp \

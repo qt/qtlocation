@@ -49,9 +49,9 @@
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativesupplier_p.h"
 #include "qdeclarativerating_p.h"
-#include "qdeclarativedescription_p.h"
 #include "qdeclarativereviewmodel_p.h"
 #include "qdeclarativeplaceimagemodel_p.h"
+#include "qdeclarativeplaceeditorialmodel.h"
 #include <QDeclarativePropertyMap>
 
 QT_BEGIN_NAMESPACE
@@ -68,7 +68,6 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeDescription> descriptions READ descriptions NOTIFY descriptionsChanged)
     Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
     Q_PROPERTY(QDeclarativeRating* rating READ rating WRITE setRating NOTIFY ratingChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSupplier> suppliers READ suppliers NOTIFY suppliersChanged)
@@ -77,6 +76,8 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
 
     Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged)
     Q_PROPERTY(QDeclarativePlaceImageModel *imageModel READ imageModel NOTIFY imageModelChanged)
+    Q_PROPERTY(QDeclarativePlaceEditorialModel *editorialModel READ editorialModel NOTIFY editorialModelChanged)
+
     Q_PROPERTY(QDeclarativePropertyMap *extendedAttributes READ extendedAttributes WRITE setExtendedAttributes NOTIFY extendedAttributesChanged);
     Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
     Q_PROPERTY(Status status READ status NOTIFY statusChanged);
@@ -104,6 +105,7 @@ public:
 
     QDeclarativeReviewModel *reviewModel();
     QDeclarativePlaceImageModel *imageModel();
+    QDeclarativePlaceEditorialModel *editorialModel();
 
     QPlace place();
     void setPlace(const QPlace &src);
@@ -114,12 +116,7 @@ public:
     static int category_count(QDeclarativeListProperty<QDeclarativeCategory> *prop);
     static QDeclarativeCategory* category_at(QDeclarativeListProperty<QDeclarativeCategory> *prop, int index);
     static void category_clear(QDeclarativeListProperty<QDeclarativeCategory> *prop);
-    QDeclarativeListProperty<QDeclarativeDescription> descriptions();
-    static void descriptions_append(QDeclarativeListProperty<QDeclarativeDescription> *prop,
-                                  QDeclarativeDescription* value);
-    static int descriptions_count(QDeclarativeListProperty<QDeclarativeDescription> *prop);
-    static QDeclarativeDescription* descriptions_at(QDeclarativeListProperty<QDeclarativeDescription> *prop, int index);
-    static void descriptions_clear(QDeclarativeListProperty<QDeclarativeDescription> *prop);
+
     QDeclarativeGeoLocation *location();
     void setLocation(QDeclarativeGeoLocation *location);
     QDeclarativeRating *rating();
@@ -164,7 +161,6 @@ public:
 signals:
     void pluginChanged();
     void categoriesChanged();
-    void descriptionsChanged();
     void locationChanged();
     void ratingChanged();
     void suppliersChanged();
@@ -175,6 +171,7 @@ signals:
     void fetchingDetailsChanged();
     void reviewModelChanged();
     void imageModelChanged();
+    void editorialModelChanged();
 
     void primaryPhoneChanged();
     void primaryFaxChanged();
@@ -189,7 +186,6 @@ private slots:
 
 private:
     void synchronizeCategories();
-    void synchronizeDescriptions();
     void synchronizeSuppliers();
     void synchronizeExtendedAttributes();
 
@@ -197,12 +193,12 @@ private:
     QPlaceManager *manager();
 
     QList<QDeclarativeCategory*> m_categories;
-    QList<QDeclarativeDescription*> m_descriptions;
     QDeclarativeGeoLocation m_location;
     QDeclarativeRating m_rating;
     QList<QDeclarativeSupplier*> m_suppliers;
     QDeclarativeReviewModel *m_reviewModel;
     QDeclarativePlaceImageModel *m_imageModel;
+    QDeclarativePlaceEditorialModel *m_editorialModel;
     QDeclarativePropertyMap *m_extendedAttributes;
 
     QPlace m_src;

@@ -8,9 +8,9 @@ SOURCES += \
     declarativeplaces/qdeclarativesearchresultmodel.cpp \
     declarativeplaces/qdeclarativereviewmodel.cpp \
     declarativeplaces/qdeclarativeplaceimagemodel.cpp \
+    declarativeplaces/qdeclarativeplaceeditorialmodel.cpp \
 #data
     declarativeplaces/qdeclarativecategory.cpp \
-    declarativeplaces/qdeclarativedescription.cpp \
     declarativeplaces/qdeclarativeplace.cpp \
     declarativeplaces/qdeclarativeplaceattribute.cpp \
     declarativeplaces/qdeclarativerating.cpp \
@@ -26,9 +26,9 @@ HEADERS += \
     declarativeplaces/qdeclarativesearchresultmodel_p.h \
     declarativeplaces/qdeclarativereviewmodel_p.h \
     declarativeplaces/qdeclarativeplaceimagemodel_p.h \
+    declarativeplaces/qdeclarativeplaceeditorialmodel.h \
 #data
     declarativeplaces/qdeclarativecategory_p.h \
-    declarativeplaces/qdeclarativedescription_p.h \
     declarativeplaces/qdeclarativeplace_p.h \
     declarativeplaces/qdeclarativeplaceattribute_p.h \
     declarativeplaces/qdeclarativerating_p.h \

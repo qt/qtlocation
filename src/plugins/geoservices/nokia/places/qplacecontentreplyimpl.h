@@ -56,6 +56,7 @@
 #include "qplacerestreply.h"
 #include "qplacejsonmediaparser.h"
 #include "qplacejsonreviewparser.h"
+#include "qplacejsondetailsparser.h"
 
 QT_BEGIN_NAMESPACE
 

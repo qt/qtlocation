@@ -65,18 +65,19 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
-:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_extendedAttributes(new QDeclarativePropertyMap()),
+:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
+    m_extendedAttributes(new QDeclarativePropertyMap()),
     m_reply(0), m_plugin(0),m_complete(false), m_status(QDeclarativePlace::Ready)
 {
 }
 
 QDeclarativePlace::QDeclarativePlace(const QPlace &src, QObject *parent)
-:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_extendedAttributes(new QDeclarativePropertyMap()),
+:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
+    m_extendedAttributes(new QDeclarativePropertyMap()),
     m_src(src), m_reply(0), m_plugin(0), m_complete(false),
     m_status(QDeclarativePlace::Ready)
 {
     synchronizeCategories();
-    synchronizeDescriptions();
     synchronizeSuppliers();
     synchronizeExtendedAttributes();
 
@@ -135,6 +136,16 @@ QDeclarativePlaceImageModel *QDeclarativePlace::imageModel()
     return m_imageModel;
 }
 
+QDeclarativePlaceEditorialModel *QDeclarativePlace::editorialModel()
+{
+    if (!m_editorialModel) {
+        m_editorialModel = new QDeclarativePlaceEditorialModel(this);
+        m_editorialModel->setPlace(this);
+    }
+
+    return m_editorialModel;
+}
+
 void QDeclarativePlace::setPlace(const QPlace &src)
 {
     QPlace previous = m_src;
@@ -143,10 +154,6 @@ void QDeclarativePlace::setPlace(const QPlace &src)
     if (previous.categories() != m_src.categories()) {
         synchronizeCategories();
         emit categoriesChanged();
-    }
-    if (previous.descriptions() != m_src.descriptions()) {
-        synchronizeDescriptions();
-        emit descriptionsChanged();
     }
     if (previous.location() != m_src.location()) {
         m_location.setLocation(src.location());
@@ -185,6 +192,7 @@ void QDeclarativePlace::setPlace(const QPlace &src)
     if (previous.placeId() != m_src.placeId()) {
         m_reviewModel->clear();
         m_imageModel->clear();
+        m_editorialModel->clear();
     }
 
     if (previous.extendedAttributes() != m_src.extendedAttributes())
@@ -201,11 +209,6 @@ QPlace QDeclarativePlace::place()
         categories.append(value->category());
     }
     m_src.setCategories(categories);
-    QList<QPlaceDescription> descriptions;
-    foreach (QDeclarativeDescription *value, m_descriptions) {
-        descriptions.append(value->description());
-    }
-    m_src.setDescriptions(descriptions);
     m_src.setLocation(m_location.location());
     m_src.setRating(m_rating.rating());
     QList<QPlaceSupplier> suppliers;
@@ -639,72 +642,6 @@ void QDeclarativePlace::synchronizeCategories()
     foreach (QPlaceCategory value, m_src.categories()) {
         QDeclarativeCategory* declarativeValue = new QDeclarativeCategory(value, this);
         m_categories.append(declarativeValue);
-    }
-}
-
-/*!
-    \qmlproperty QDeclarativeListProperty<QDeclarativeDescription> Place::descriptions
-
-    This property descriptions list.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-QDeclarativeListProperty<QDeclarativeDescription> QDeclarativePlace::descriptions()
-{
-    return QDeclarativeListProperty<QDeclarativeDescription>(this,
-                                                          0, // opaque data parameter
-                                                          descriptions_append,
-                                                          descriptions_count,
-                                                          descriptions_at,
-                                                          descriptions_clear);
-}
-
-void QDeclarativePlace::descriptions_append(QDeclarativeListProperty<QDeclarativeDescription> *prop,
-                                                  QDeclarativeDescription *value)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    QDeclarativeDescription *altValue = new QDeclarativeDescription(object);
-    altValue->setDescription(value->description());
-    object->m_descriptions.append(altValue);
-    QList<QPlaceDescription> list = object->m_src.descriptions();
-    list.append(value->description());
-    object->m_src.setDescriptions(list);
-    emit object->descriptionsChanged();
-}
-
-int QDeclarativePlace::descriptions_count(QDeclarativeListProperty<QDeclarativeDescription> *prop)
-{
-    return static_cast<QDeclarativePlace*>(prop->object)->m_descriptions.count();
-}
-
-QDeclarativeDescription* QDeclarativePlace::descriptions_at(QDeclarativeListProperty<QDeclarativeDescription> *prop,
-                                                                          int index)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    QDeclarativeDescription *res = NULL;
-    if (object->m_descriptions.count() > index && index > -1) {
-        res = object->m_descriptions[index];
-    }
-    return res;
-}
-
-void QDeclarativePlace::descriptions_clear(QDeclarativeListProperty<QDeclarativeDescription> *prop)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    qDeleteAll(object->m_descriptions);
-    object->m_descriptions.clear();
-    object->m_src.setDescriptions(QList<QPlaceDescription>());
-    emit object->descriptionsChanged();
-}
-
-void QDeclarativePlace::synchronizeDescriptions()
-{
-    qDeleteAll(m_descriptions);
-    m_descriptions.clear();
-    foreach (QPlaceDescription value, m_src.descriptions()) {
-        QDeclarativeDescription* declarativeValue = new QDeclarativeDescription(value, this);
-        m_descriptions.append(declarativeValue);
     }
 }
 

@@ -12,7 +12,7 @@ SUBDIRS += geotestplugin \
            qgeocodingmanager \
            qplacecategory \
            qplacecontentrequest \
-           qplacedescription \
+           qplaceeditorial \
            qplacemanager \
            qplaceimage \
            qplacerequest \

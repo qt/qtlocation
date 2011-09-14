@@ -39,63 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEDESCRIPTION_P_H
-#define QDECLARATIVEDESCRIPTION_P_H
+#ifndef QPLACEEDITORIAL_H
+#define QPLACEEDITORIAL_H
 
-#include <QObject>
-#include <QDeclarativeListProperty>
-#include <qplacedescription.h>
-#include "qdeclarativesupplier_p.h"
+#include <QtLocation/QPlaceContent>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeDescription : public QObject
+class QPlaceEditorialPrivate;
+
+class Q_LOCATION_EXPORT QPlaceEditorial : public QPlaceContent
 {
-    Q_OBJECT
-
-    Q_PROPERTY(QString content READ content WRITE setContent NOTIFY contentChanged);
-    Q_PROPERTY(QString contentTitle READ contentTitle WRITE setContentTitle NOTIFY contentTitleChanged);
-    Q_PROPERTY(QString contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged);
-    Q_PROPERTY(QDeclarativeSupplier* supplier READ supplier WRITE setSupplier NOTIFY supplierChanged);
-    Q_PROPERTY(QUrl sourceUrl READ sourceUrl WRITE setSourceUrl NOTIFY sourceUrlChanged);
-    Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY languageChanged);
-
 public:
-    explicit QDeclarativeDescription(QObject* parent = 0);
-    explicit QDeclarativeDescription(const QPlaceDescription &src, QObject* parent = 0);
-    ~QDeclarativeDescription();
+    QPlaceEditorial();
+    Q_DECLARE_CONTENT_COPY_CTOR(QPlaceEditorial)
 
-    QPlaceDescription description();
-    void setDescription(const QPlaceDescription &src);
+    virtual ~QPlaceEditorial();
 
     QString content() const;
     void setContent(const QString &data);
-    QString contentTitle() const;
-    void setContentTitle(const QString &data);
-    QString contentType() const;
-    void setContentType(const QString &data);
-    QDeclarativeSupplier *supplier();
-    void setSupplier(QDeclarativeSupplier *data);
+    QString title() const;
+    void setTitle(const QString &data);
+    QPlaceSupplier supplier() const;
+    void setSupplier(const QPlaceSupplier &data);
     QUrl sourceUrl() const;
     void setSourceUrl(const QUrl &data);
     QString language() const;
     void setLanguage(const QString &data);
 
-signals:
-    void contentChanged();
-    void contentTitleChanged();
-    void contentTypeChanged();
-    void supplierChanged();
-    void sourceUrlChanged();
-    void languageChanged();
-
 private:
-    QDeclarativeSupplier m_declarativeSupplier;
-    QPlaceDescription m_src;
+    Q_DECLARE_CONTENT_D_FUNC(QPlaceEditorial)
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeDescription));
-
-#endif // QDECLARATIVEDESCRIPTION_P_H
+#endif // QPLACEEDITORIAL_H

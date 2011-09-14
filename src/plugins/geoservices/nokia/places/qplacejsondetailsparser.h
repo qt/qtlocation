@@ -56,10 +56,11 @@
 #include <qplaceimage.h>
 #include "qplacejsonparser_p.h"
 
+QT_BEGIN_NAMESPACE
+
 class QScriptEngine;
 class QScriptValue;
-
-QT_BEGIN_NAMESPACE
+class QPlaceEditorial;
 
 class QPlaceJSonDetailsParser : public QPlaceJSonParser
 {
@@ -97,7 +98,7 @@ private:
     static QPlaceImage *processPremiumContentMediaObject(const QScriptValue &content);
     static void processAdContent(const QScriptValue &content, QPlace *targetPlace);
     static void processAdContentDescriptions(const QScriptValue &content, QPlace *targetPlace);
-    static QPlaceDescription *processAdContentDescription(const QScriptValue &content);
+    static QPlaceEditorial *processAdContentDescription(const QScriptValue &content);
     static void processAdContentMediaObjects(const QScriptValue &content, QPlace *targetPlace);
     static QPlaceImage *processAdContentMediaObject(const QScriptValue &content);
     static void processAdContentPaymentMethods(const QScriptValue &content, QPlace *targetPlace);

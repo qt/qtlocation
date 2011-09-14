@@ -6,9 +6,9 @@
         <file>SearchResultDelegate.qml</file>
         <file>ReviewDelegate.qml</file>
         <file>CategoryView.qml</file>
-        <file>DescriptionDelegate.qml</file>
         <file>RatingView.qml</file>
         <file>star.png</file>
         <file>ImageGrid.qml</file>
+        <file>EditorialDelegate.qml</file>
     </qresource>
 </RCC>

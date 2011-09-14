@@ -45,6 +45,7 @@
 #include <qplace.h>
 #include <qplaceimage.h>
 #include <qplaceattribute.h>
+#include <QtLocation/QPlaceEditorial>
 
 QT_USE_NAMESPACE
 
@@ -58,13 +59,13 @@ public:
 private Q_SLOTS:
     void constructorTest();
     void categoriesTest();
-    void descriptionsTest();
     void detailsFetchedTest();
     void locationTest();
     void ratingTest();
     void suppliersTest();
     void imageContentTest();
     void reviewContentTest();
+    void editorialContentTest();
     void contentCountTest();
     void nameTest();
     void placeIdTest();
@@ -144,20 +145,6 @@ void tst_Place::locationTest()
     obj.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(obj);
     QVERIFY2(testObj.location() == obj, "Wrong value returned");
-}
-
-void tst_Place::descriptionsTest()
-{
-    QPlace testObj;
-    QVERIFY2(testObj.descriptions().count() == 0, "Wrong default value");
-    QPlaceDescription sup;
-    sup.setContent("testId");
-    QList<QPlaceDescription> list;
-    list.append(sup);
-    sup.setContent("testName2");
-    list.append(sup);
-    testObj.setDescriptions(list);
-    QVERIFY2(testObj.descriptions().count() == 2, "Wrong value returned");
 }
 
 void tst_Place::detailsFetchedTest()
@@ -270,6 +257,56 @@ void tst_Place::reviewContentTest()
     QCOMPARE(QPlaceReview(retrievedCollection.value(3)), QPlaceReview());
     QCOMPARE(QPlaceReview(retrievedCollection.value(4)), QPlaceReview());
     QCOMPARE(QPlaceReview(retrievedCollection.value(5)), dummyReview6);
+}
+
+void tst_Place::editorialContentTest()
+{
+    QPlace place;
+    QVERIFY2(place.content(QPlaceContent::EditorialType).count() == 0, "Wrong default value");
+
+    QPlaceEditorial dummyEditorial;
+    dummyEditorial.setTitle(QLatin1String("Editorial 1"));
+
+    QPlaceEditorial dummyEditorial2;
+    dummyEditorial2.setTitle(QLatin1String("Editorial 2"));
+
+    QPlaceEditorial dummyEditorial3;
+    dummyEditorial3.setTitle(QLatin1String("Editorial 3"));
+
+    QPlaceContent::Collection editorialCollection;
+    editorialCollection.insert(0,dummyEditorial);
+    editorialCollection.insert(1, dummyEditorial2);
+    editorialCollection.insert(2, dummyEditorial3);
+
+    place.setContent(QPlaceContent::EditorialType, editorialCollection);
+    QPlaceContent::Collection retrievedCollection = place.content(QPlaceContent::EditorialType);
+
+    QCOMPARE(retrievedCollection.count(), 3);
+    QCOMPARE(QPlaceEditorial(retrievedCollection.value(0)), dummyEditorial);
+    QCOMPARE(QPlaceEditorial(retrievedCollection.value(1)), dummyEditorial2);
+    QCOMPARE(QPlaceEditorial(retrievedCollection.value(2)), dummyEditorial3);
+
+    //replace the second and insert a sixth editorial
+    //indexes 4 and 5 are "missing"
+    QPlaceEditorial dummyEditorial2New;
+    dummyEditorial2.setTitle(QLatin1String("Editorial 2 new"));
+
+    QPlaceEditorial dummyEditorial6;
+    dummyEditorial6.setTitle(QLatin1String("Editorial 6"));
+
+    editorialCollection.clear();
+    editorialCollection.insert(1, dummyEditorial2New);
+    editorialCollection.insert(5, dummyEditorial6);
+    place.addContent(QPlaceContent::EditorialType, editorialCollection);
+
+    retrievedCollection = place.content(QPlaceContent::EditorialType);
+    QCOMPARE(retrievedCollection.count(), 4);
+    QCOMPARE(QPlaceEditorial(retrievedCollection.value(0)), dummyEditorial);
+    QCOMPARE(QPlaceEditorial(retrievedCollection.value(1)), dummyEditorial2New);
+    QCOMPARE(QPlaceEditorial(retrievedCollection.value(2)), dummyEditorial3);
+    QCOMPARE(QPlaceEditorial(retrievedCollection.value(3)), QPlaceEditorial());
+    QCOMPARE(QPlaceEditorial(retrievedCollection.value(4)), QPlaceEditorial());
+    QCOMPARE(QPlaceEditorial(retrievedCollection.value(5)), dummyEditorial6);
 }
 
 void tst_Place::categoriesTest()

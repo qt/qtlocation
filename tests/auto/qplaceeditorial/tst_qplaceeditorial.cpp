@@ -42,45 +42,45 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include <qplacedescription.h>
+#include <QtLocation/QPlaceEditorial>
+#include <QtLocation/QPlaceSupplier>
 
 QT_USE_NAMESPACE
 
-class tst_QPlaceDescription : public QObject
+class tst_QPlaceEditorial : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_QPlaceDescription();
+    tst_QPlaceEditorial();
 
 private Q_SLOTS:
     void constructorTest();
     void supplierTest();
     void contentTest();
     void contentTitleTest();
-    void contentTypeTest();
     void sourceUrlTest();
     void languageTest();
     void operatorsTest();
 };
 
-tst_QPlaceDescription::tst_QPlaceDescription()
+tst_QPlaceEditorial::tst_QPlaceEditorial()
 {
 }
 
-void tst_QPlaceDescription::constructorTest()
+void tst_QPlaceEditorial::constructorTest()
 {
-    QPlaceDescription testObj;
+    QPlaceEditorial testObj;
     testObj.setContent("testId");
-    QPlaceDescription *testObjPtr = new QPlaceDescription(testObj);
+    QPlaceEditorial *testObjPtr = new QPlaceEditorial(testObj);
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
     delete testObjPtr;
 }
 
-void tst_QPlaceDescription::supplierTest()
+void tst_QPlaceEditorial::supplierTest()
 {
-    QPlaceDescription testObj;
+    QPlaceEditorial testObj;
     QVERIFY2(testObj.supplier().supplierId() == QString(), "Wrong default value");
     QPlaceSupplier sup;
     sup.setName("testName1");
@@ -89,58 +89,50 @@ void tst_QPlaceDescription::supplierTest()
     QVERIFY2(testObj.supplier() == sup, "Wrong value returned");
 }
 
-void tst_QPlaceDescription::contentTest()
+void tst_QPlaceEditorial::contentTest()
 {
-    QPlaceDescription testObj;
+    QPlaceEditorial testObj;
     QVERIFY2(testObj.content() == QString(), "Wrong default value");
     testObj.setContent("testText");
     QVERIFY2(testObj.content() == "testText", "Wrong value returned");
 }
 
-void tst_QPlaceDescription::contentTitleTest()
+void tst_QPlaceEditorial::contentTitleTest()
 {
-    QPlaceDescription testObj;
-    QVERIFY2(testObj.contentTitle() == QString(), "Wrong default value");
-    testObj.setContentTitle("testText");
-    QVERIFY2(testObj.contentTitle() == "testText", "Wrong value returned");
+    QPlaceEditorial testObj;
+    QVERIFY2(testObj.title() == QString(), "Wrong default value");
+    testObj.setTitle("testText");
+    QVERIFY2(testObj.title() == "testText", "Wrong value returned");
 }
 
-void tst_QPlaceDescription::contentTypeTest()
+void tst_QPlaceEditorial::sourceUrlTest()
 {
-    QPlaceDescription testObj;
-    QVERIFY2(testObj.contentType() == QString(), "Wrong default value");
-    testObj.setContentType("testText");
-    QVERIFY2(testObj.contentType() == "testText", "Wrong value returned");
-}
-
-void tst_QPlaceDescription::sourceUrlTest()
-{
-    QPlaceDescription testObj;
+    QPlaceEditorial testObj;
     const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
     QVERIFY2(testObj.sourceUrl() == QUrl(), "Wrong default value");
     testObj.setSourceUrl(testUrl);
     QVERIFY2(testObj.sourceUrl() == testUrl, "Wrong value returned");
 }
 
-void tst_QPlaceDescription::languageTest()
+void tst_QPlaceEditorial::languageTest()
 {
-    QPlaceDescription testObj;
+    QPlaceEditorial testObj;
     QVERIFY2(testObj.language() == QString(), "Wrong default value");
     testObj.setLanguage("testText");
     QVERIFY2(testObj.language() == "testText", "Wrong value returned");
 }
 
-void tst_QPlaceDescription::operatorsTest()
+void tst_QPlaceEditorial::operatorsTest()
 {
-    QPlaceDescription testObj;
+    QPlaceEditorial testObj;
     testObj.setLanguage("testValue");
-    QPlaceDescription testObj2;
+    QPlaceEditorial testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
     testObj2.setContent("testValue2");
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 
-QTEST_APPLESS_MAIN(tst_QPlaceDescription);
+QTEST_APPLESS_MAIN(tst_QPlaceEditorial);
 
-#include "tst_qplacedescription.moc"
+#include "tst_qplaceeditorial.moc"

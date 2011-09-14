@@ -78,7 +78,6 @@ public:
     virtual QPlacePrivate *clone() const { return new QPlacePrivate(*this); }
 
     QList<QPlaceCategory> categories;
-    QList<QPlaceDescription> descriptions;
     QGeoLocation location;
     QPlaceRating rating;
     QList<QPlaceSupplier> suppliers;
