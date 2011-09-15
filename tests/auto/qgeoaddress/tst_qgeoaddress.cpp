@@ -72,6 +72,7 @@ private Q_SLOTS:
     void streetTest();
 //    void suiteTest();
     void operatorsTest();
+    void emptyClearTest();
 };
 
 tst_QGeoAddress::tst_QGeoAddress()
@@ -200,6 +201,46 @@ void tst_QGeoAddress::operatorsTest()
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 
-QTEST_APPLESS_MAIN(tst_QGeoAddress);
+void tst_QGeoAddress::emptyClearTest()
+{
+    QGeoAddress testObj;
+    QVERIFY(testObj.isEmpty());
+
+    testObj.setCountry(QLatin1String("country"));
+    QVERIFY(!testObj.isEmpty());
+    testObj.clear();
+
+    testObj.setCountryCode(QLatin1String("countryCode"));
+    QVERIFY(!testObj.isEmpty());
+    testObj.clear();
+
+    testObj.setState(QLatin1String("state"));
+    QVERIFY(!testObj.isEmpty());
+    testObj.clear();
+
+    testObj.setCounty(QLatin1String("county"));
+    QVERIFY(!testObj.isEmpty());
+    testObj.clear();
+
+    testObj.setCity(QLatin1String("city"));
+    QVERIFY(!testObj.isEmpty());
+    testObj.clear();
+
+    testObj.setDistrict(QLatin1String("district"));
+    QVERIFY(!testObj.isEmpty());
+    testObj.clear();
+
+    testObj.setPostcode(QLatin1String("postcode"));
+    QVERIFY(!testObj.isEmpty());
+    testObj.clear();
+
+    testObj.setStreet(QLatin1String("street"));
+    QVERIFY(!testObj.isEmpty());
+    testObj.clear();
+
+    QVERIFY(testObj.isEmpty());
+}
+
+QTEST_APPLESS_MAIN(tst_QGeoAddress)
 
 #include "tst_qgeoaddress.moc"
