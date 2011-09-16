@@ -63,7 +63,6 @@ class QPlaceManagerEngine;
 class QPlaceSearchRequest;
 class QPlaceSearchReply;
 
-class QPlaceManagerPrivate;
 class Q_LOCATION_EXPORT QPlaceManager : public QObject
 {
     Q_OBJECT
@@ -130,8 +129,6 @@ public:
     QPlaceReply *initializeCategories();
     QList<QPlaceCategory> categories(const QPlaceCategory &parent = QPlaceCategory()) const;
 
-    static QStringList availableManagers();
-
     QLocale locale() const;
     void setLocale(const QLocale &locale);
 
@@ -148,8 +145,8 @@ private:
     QPlaceManager(QPlaceManagerEngine *engine, QObject *parent = 0);
 
     Q_DISABLE_COPY(QPlaceManager)
-    QPlaceManagerPrivate* d;
-    Q_DECLARE_PRIVATE(QPlaceManager)
+
+    QPlaceManagerEngine *d;
 
     friend class QGeoServiceProvider;
 };

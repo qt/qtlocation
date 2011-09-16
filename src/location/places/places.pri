@@ -27,8 +27,7 @@ PUBLIC_HEADERS += \
     places/qplacetextpredictionreply.h \
 #manager and engine
     places/qplacemanager.h \
-    places/qplacemanagerengine.h \
-    places/qplacemanagerenginefactory.h
+    places/qplacemanagerengine.h
 
 PRIVATE_HEADERS += \
     places/qplaceattribute_p.h \
@@ -42,7 +41,6 @@ PRIVATE_HEADERS += \
     places/qplacesupplier_p.h \
     places/qplacesearchresult_p.h \
     places/qplacereply_p.h \
-    places/qplacemanager_p.h \
     places/qplacemanagerengine_p.h \
     places/qplacerequest_p.h \
     places/qplacecontentrequest_p.h
@@ -73,6 +71,5 @@ SOURCES += \
     places/qplacetextpredictionreply.cpp \
 #manager and engine
     places/qplacemanager.cpp \
-    places/qplacemanagerengine.cpp \
-    places/qplacemanagerenginefactory.cpp \
-    places/qplacemanager_p.cpp
+    places/qplacemanagerengine.cpp
+

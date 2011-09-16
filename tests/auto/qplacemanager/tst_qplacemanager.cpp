@@ -50,31 +50,50 @@ QT_USE_NAMESPACE
 class tst_QPlaceManager : public QObject
 {
     Q_OBJECT
-public:
-    tst_QPlaceManager();
 
 private Q_SLOTS:
     void initTestCase();
+    void cleanupTestCase();
+
+    void testMetadata();
+    void testLocale();
 
 private:
     QGeoServiceProvider *provider;
     QPlaceManager *placeManager;
 };
 
-tst_QPlaceManager::tst_QPlaceManager()
-{
-}
-
 void tst_QPlaceManager::initTestCase()
 {
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
-    providers.contains("qmlgeo.test.plugin");
+    QVERIFY(providers.contains("qmlgeo.test.plugin"));
 
     provider = new QGeoServiceProvider("qmlgeo.test.plugin");
     placeManager = provider->placeManager();
     QVERIFY(placeManager);
+}
+
+void tst_QPlaceManager::testMetadata()
+{
+    QCOMPARE(placeManager->managerName(), QLatin1String("qmlgeo.test.plugin"));
+    QCOMPARE(placeManager->managerVersion(), 3);
 
     QVERIFY(placeManager->connectivityMode() == QPlaceManager::OnlineMode);
+}
+
+void tst_QPlaceManager::testLocale()
+{
+    QCOMPARE(placeManager->locale(), QLocale());
+
+    QLocale locale(QLocale::Norwegian, QLocale::Norway);
+    placeManager->setLocale(locale);
+
+    QCOMPARE(placeManager->locale(), locale);
+}
+
+void tst_QPlaceManager::cleanupTestCase()
+{
+    delete provider;
 }
 
 QTEST_MAIN(tst_QPlaceManager)

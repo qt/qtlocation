@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qplacemanager.h"
-#include "qplacemanager_p.h"
 #include "qplacemanagerengine.h"
 
 /*!
@@ -95,23 +94,22 @@
     QGeoServiceProvider::routingManager();
 */
 QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
-    : QObject(parent), d(new QPlaceManagerPrivate)
+    : QObject(parent), d(engine)
 {
-    d->engine = engine;
-    if (d->engine) {
-        d->engine->setParent(this);
+    if (d) {
+        d->setParent(this);
 
-        connect(d->engine, SIGNAL(finished(QPlaceReply*)), this, SIGNAL(finished(QPlaceReply*)));
-        connect(d->engine, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)),
+        connect(d, SIGNAL(finished(QPlaceReply*)), this, SIGNAL(finished(QPlaceReply*)));
+        connect(d, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)),
                 this, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)));
-        connect(d->engine,SIGNAL(authenticationRequired(QAuthenticator*)),
+        connect(d,SIGNAL(authenticationRequired(QAuthenticator*)),
                 this, SIGNAL(authenticationRequired(QAuthenticator*)));
 
-        connect(d->engine, SIGNAL(placeAdded(QString)),
+        connect(d, SIGNAL(placeAdded(QString)),
                 this, SIGNAL(placeAdded(QString)), Qt::QueuedConnection);
-        connect(d->engine, SIGNAL(placeUpdated(QString)),
+        connect(d, SIGNAL(placeUpdated(QString)),
                 this, SIGNAL(placeUpdated(QString)), Qt::QueuedConnection);
-        connect(d->engine, SIGNAL(placeRemoved(QString)),
+        connect(d, SIGNAL(placeRemoved(QString)),
                 this, SIGNAL(placeRemoved(QString)), Qt::QueuedConnection);
     } else {
         qFatal("The place manager engine that was set for this place manager was NULL.");
@@ -131,7 +129,15 @@ QPlaceManager::~QPlaceManager()
 */
 QString QPlaceManager::managerName() const
 {
-    return d->engine->managerName();
+    return d->managerName();
+}
+
+/*!
+    Returns the manager version.
+*/
+int QPlaceManager::managerVersion() const
+{
+    return d->managerVersion();
 }
 
 /*!
@@ -139,7 +145,7 @@ QString QPlaceManager::managerName() const
 */
 QPlaceDetailsReply *QPlaceManager::getPlaceDetails(const QString &placeId) const
 {
-    return d->engine->getPlaceDetails(placeId);
+    return d->getPlaceDetails(placeId);
 }
 
 /*!
@@ -148,7 +154,7 @@ QPlaceDetailsReply *QPlaceManager::getPlaceDetails(const QString &placeId) const
 */
 QPlaceContentReply *QPlaceManager::getContent(const QPlace &place, const QPlaceContentRequest &request) const
 {
-    return d->engine->getContent(place, request);
+    return d->getContent(place, request);
 }
 
 /*!
@@ -156,7 +162,7 @@ QPlaceContentReply *QPlaceManager::getContent(const QPlace &place, const QPlaceC
 */
 QPlaceReply* QPlaceManager::postRating(const QString &placeId, qreal rating)
 {
-    return d->engine->postRating(placeId, rating);
+    return d->postRating(placeId, rating);
 }
 
 /*!
@@ -164,7 +170,7 @@ QPlaceReply* QPlaceManager::postRating(const QString &placeId, qreal rating)
 */
 QPlaceSearchReply *QPlaceManager::searchForPlaces(const QPlaceSearchRequest &request) const
 {
-    return d->engine->searchForPlaces(request);
+    return d->searchForPlaces(request);
 }
 
 /*!
@@ -172,7 +178,7 @@ QPlaceSearchReply *QPlaceManager::searchForPlaces(const QPlaceSearchRequest &req
 */
 QPlaceSearchReply *QPlaceManager::recommendations(const QPlace &place, const QPlaceSearchRequest &request) const
 {
-    return d->engine->recommendations(place, request);
+    return d->recommendations(place, request);
 }
 
 /*!
@@ -180,7 +186,7 @@ QPlaceSearchReply *QPlaceManager::recommendations(const QPlace &place, const QPl
 */
 QPlaceTextPredictionReply *QPlaceManager::textPredictions(const QPlaceSearchRequest &request) const
 {
-    return d->engine->textPredictions(request);
+    return d->textPredictions(request);
 }
 
 /*!
@@ -188,7 +194,7 @@ QPlaceTextPredictionReply *QPlaceManager::textPredictions(const QPlaceSearchRequ
 */
 QPlaceManager::ConnectivityModes QPlaceManager::connectivityMode() const
 {
-    return d->engine->connectivityMode();
+    return d->connectivityMode();
 }
 
 /*!
@@ -196,7 +202,7 @@ QPlaceManager::ConnectivityModes QPlaceManager::connectivityMode() const
 */
 void QPlaceManager::setConnectivityMode(QPlaceManager::ConnectivityModes mode)
 {
-    d->engine->setConnectivityMode(mode);
+    d->setConnectivityMode(mode);
 }
 
 /*!
@@ -204,7 +210,7 @@ void QPlaceManager::setConnectivityMode(QPlaceManager::ConnectivityModes mode)
 */
 QPlaceManager::ConnectivityModes QPlaceManager::supportedConnectivityModes() const
 {
-    return d->engine->supportedConnectivityModes();
+    return d->supportedConnectivityModes();
 }
 
 /*!
@@ -212,7 +218,7 @@ QPlaceManager::ConnectivityModes QPlaceManager::supportedConnectivityModes() con
 */
 QPlaceIdReply *QPlaceManager::savePlace(const QPlace &place, VisibilityScope scope)
 {
-    return d->engine->savePlace(place, scope);
+    return d->savePlace(place, scope);
 }
 
 /*!
@@ -220,7 +226,7 @@ QPlaceIdReply *QPlaceManager::savePlace(const QPlace &place, VisibilityScope sco
 */
 QPlaceIdReply *QPlaceManager::removePlace(const QPlace &place)
 {
-    return d->engine->removePlace(place);
+    return d->removePlace(place);
 }
 
 /*
@@ -228,7 +234,7 @@ QPlaceIdReply *QPlaceManager::removePlace(const QPlace &place)
 */
 QPlaceManager::VisibilityScopes QPlaceManager::supportedSaveVisibilityScopes()
 {
-    return d->engine->supportedSaveVisibilityScopes();
+    return d->supportedSaveVisibilityScopes();
 }
 
 /*!
@@ -236,7 +242,7 @@ QPlaceManager::VisibilityScopes QPlaceManager::supportedSaveVisibilityScopes()
 */
 QPlaceReply *QPlaceManager::initializeCategories()
 {
-    return d->engine->initializeCategories();
+    return d->initializeCategories();
 }
 
 /*!
@@ -245,15 +251,7 @@ QPlaceReply *QPlaceManager::initializeCategories()
 */
 QList<QPlaceCategory> QPlaceManager::categories(const QPlaceCategory &parent) const
 {
-    return d->engine->categories(parent);
-}
-
-/*!
-    Returns a list of names of available managers that
-    can be used to instantiate manager instances.
-*/
-QStringList QPlaceManager::availableManagers() {
-    return QPlaceManagerPrivate::factories().keys();
+    return d->categories(parent);
 }
 
 /*!
@@ -263,7 +261,7 @@ QStringList QPlaceManager::availableManagers() {
 */
 QLocale QPlaceManager::locale() const
 {
-    return d->engine->locale();
+    return d->locale();
 }
 
 /*!
@@ -271,7 +269,7 @@ QLocale QPlaceManager::locale() const
 */
 void QPlaceManager::setLocale(const QLocale &locale)
 {
-    d->engine->setLocale(locale);
+    d->setLocale(locale);
 }
 
 /*!

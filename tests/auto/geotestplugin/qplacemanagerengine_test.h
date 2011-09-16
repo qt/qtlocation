@@ -164,13 +164,16 @@ public:
 
     QLocale locale() const
     {
-        return QLocale(QLocale::French);
+        return m_locale;
     }
 
     void setLocale(const QLocale &locale)
     {
-        Q_UNUSED(locale)
+        m_locale = locale;
     }
+
+private:
+    QLocale m_locale;
 };
 
 #endif
