@@ -20,6 +20,7 @@ SUBDIRS += geotestplugin \
            qplacereview \
            qplacesearchrequest \
            qplacesupplier \
+           qplacesearchresult \
            declarative \
            sphere
 
