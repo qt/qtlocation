@@ -122,6 +122,17 @@ meego {
     }
 }
 
+contains(config_test_jsondb, yes): contains(config_test_mtcore, yes) {
+    DEFINES += NPE_BACKEND
+    QT += jsondb-private
+    SOURCES += qgeopositioninfosource_npe_backend.cpp
+    PRIVATE_HEADERS += qgeopositioninfosource_npe_backend_p.h
+    unix{
+      CONFIG += link_pkgconfig
+      PKGCONFIG += mtcore
+    }
+}
+
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 SOURCES += \

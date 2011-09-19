@@ -57,6 +57,8 @@
 #   include "qgeopositioninfosource_maemo_p.h"
 #elif defined(Q_WS_MAEMO_5)
 #   include "qgeopositioninfosource_maemo5_p.h"
+#elif defined (NPE_BACKEND)
+#   include "qgeopositioninfosource_npe_backend_p.h"
 #endif
 
 #if defined (Q_WS_MEEGO)
@@ -421,6 +423,12 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
        return geoclueSource;
     delete geoclueSource;
 #endif // GEOCLUE_MASTER_AVAILABLE
+#elif defined(NPE_BACKEND)
+    QGeoPositionInfoSourceNpeBackend* npeBackendSource = new QGeoPositionInfoSourceNpeBackend(parent);
+    if (npeBackendSource->init())
+        return npeBackendSource;
+    else
+        delete npeBackendSource;
 #endif
     // no good platform source, try plugins
     foreach (QGeoPositionInfoSourceFactory *f, QGeoPositionInfoSourcePrivate::pluginsSorted()) {
