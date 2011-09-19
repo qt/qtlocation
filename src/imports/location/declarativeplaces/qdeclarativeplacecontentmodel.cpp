@@ -200,6 +200,9 @@ void QDeclarativePlaceContentModel::fetchMore(const QModelIndex &parent)
     if (m_reply)
         return;
 
+    if (!m_place->plugin())
+        return;
+
     QDeclarativeGeoServiceProvider *plugin = m_place->plugin();
 
     QGeoServiceProvider *serviceProvider = plugin->sharedGeoServiceProvider();
