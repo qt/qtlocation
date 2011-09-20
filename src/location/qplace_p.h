@@ -82,10 +82,8 @@ public:
     QGeoLocation location;
     QPlaceRating rating;
     QList<QPlaceSupplier> suppliers;
-    QStringList feeds;
     QString name;
     QString placeId;
-    QStringList tags;
 
     QMap<QPlaceContent::Type, QPlaceContent::Collection> contentCollections;
     QMap<QPlaceContent::Type, int> contentCounts;

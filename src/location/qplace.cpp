@@ -227,24 +227,6 @@ void QPlace::setSuppliers(const QList<QPlaceSupplier> &data)
 }
 
 /*!
-    Returns feeds list.
-*/
-QStringList QPlace::feeds() const
-{
-    Q_D(const QPlace);
-    return d->feeds;
-}
-
-/*!
-    Sets feeds list.
-*/
-void QPlace::setFeeds(const QStringList &feeds)
-{
-    Q_D(QPlace);
-    d->feeds = feeds;
-}
-
-/*!
     Returns a collection of content associated with a place.
     This collection is a map with the key being the index of the content object
     and value being the content object itself.
@@ -335,24 +317,6 @@ void QPlace::setPlaceId(const QString &placeId)
 {
     Q_D(QPlace);
     d->placeId = placeId;
-}
-
-/*!
-    Returns list of tags.
-*/
-QStringList QPlace::tags() const
-{
-    Q_D(const QPlace);
-    return d->tags;
-}
-
-/*!
-    Sets tags.
-*/
-void QPlace::setTags(const QStringList &tags)
-{
-    Q_D(QPlace);
-    d->tags = tags;
 }
 
 /*!
@@ -489,10 +453,8 @@ QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
         location(other.location),
         rating(other.rating),
         suppliers(other.suppliers),
-        feeds(other.feeds),
         name(other.name),
         placeId(other.placeId),
-        tags(other.tags),
         contentCollections(other.contentCollections),
         contentCounts(other.contentCounts),
         primaryPhone(other.primaryPhone),
@@ -513,10 +475,8 @@ QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
     location = other.location;
     rating = other.rating;
     suppliers = other.suppliers;
-    feeds = other.feeds;
     name = other.name;
     placeId = other.placeId;
-    tags = other.tags;
     primaryPhone = other.primaryPhone;
     primaryFax = other.primaryFax;
     primaryEmail = other.primaryEmail;
@@ -533,12 +493,10 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
     qDebug() << "location:" << (location == other.location);
     qDebug() << "rating" << (rating == other.rating);
     qDebug() << "suppliers" << (suppliers == other.suppliers);
-    qDebug() << "feeds " << (feeds == other.feeds);
     qDebug() << "contentCollections " << (contentCollections == other.contentCollections);
     qDebug() << "contentCounts " << (contentCounts == other.contentCounts);
     qDebug() << "name " << (name == other.name);
     qDebug() << "placeId" << (placeId == other.placeId);
-    qDebug() << "tags" << (tags == other.tags);
     qDebug() << "phone" << (primaryPhone == other.primaryPhone);
     qDebug() << "fax" << (primaryFax == other.primaryFax);
     qDebug() << "email" << (primaryEmail == other.primaryEmail);
@@ -551,12 +509,10 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
             && location == other.location
             && rating == other.rating
             && suppliers == other.suppliers
-            && feeds == other.feeds
             && contentCollections == other.contentCollections
             && contentCounts == other.contentCounts
             && name == other.name
             && placeId == other.placeId
-            && tags == other.tags
             && primaryPhone == other.primaryPhone
             && primaryFax == other.primaryFax
             && primaryEmail == other.primaryEmail

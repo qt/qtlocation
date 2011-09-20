@@ -72,10 +72,8 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
     Q_PROPERTY(QDeclarativeRating* rating READ rating WRITE setRating NOTIFY ratingChanged);
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSupplier> suppliers READ suppliers NOTIFY suppliersChanged)
-    Q_PROPERTY(QStringList feeds READ feeds WRITE setFeeds NOTIFY feedsChanged);
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged);
-    Q_PROPERTY(QStringList tags READ tags WRITE setTags NOTIFY tagsChanged);
 
     Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged)
     Q_PROPERTY(QDeclarativePlaceImageModel *imageModel READ imageModel NOTIFY imageModelChanged)
@@ -132,14 +130,10 @@ public:
     static int suppliers_count(QDeclarativeListProperty<QDeclarativeSupplier> *prop);
     static QDeclarativeSupplier* suppliers_at(QDeclarativeListProperty<QDeclarativeSupplier> *prop, int index);
     static void suppliers_clear(QDeclarativeListProperty<QDeclarativeSupplier> *prop);
-    QStringList feeds() const;
-    void setFeeds(const QStringList &feeds);
     QString name() const;
     void setName(const QString &name);
     QString placeId() const;
     void setPlaceId(const QString &placeId);
-    QStringList tags() const;
-    void setTags(const QStringList &tags);
     bool detailsFetched() const;
     void setDetailsFetched(bool fetched);
 
@@ -174,11 +168,9 @@ signals:
     void locationChanged();
     void ratingChanged();
     void suppliersChanged();
-    void feedsChanged();
     void nameChanged();
     void placeIdChanged();
     void businessInformationChanged();
-    void tagsChanged();
     void detailsFetchedChanged();
     void fetchingDetailsChanged();
     void reviewModelChanged();

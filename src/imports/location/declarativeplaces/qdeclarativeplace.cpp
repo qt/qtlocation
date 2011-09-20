@@ -160,17 +160,11 @@ void QDeclarativePlace::setPlace(const QPlace &src)
         synchronizeSuppliers();
         emit suppliersChanged();
     }
-    if (previous.feeds() != m_src.feeds()) {
-        emit feedsChanged();
-    }
     if (previous.name() != m_src.name()) {
         emit nameChanged();
     }
     if (previous.placeId() != m_src.placeId()) {
         emit placeIdChanged();
-    }
-    if (previous.tags() != m_src.tags()) {
-        emit tagsChanged();
     }
     if (previous.detailsFetched() != m_src.detailsFetched()) {
         emit detailsFetchedChanged();
@@ -303,24 +297,6 @@ QString QDeclarativePlace::placeId() const
 }
 
 /*!
-    \qmlproperty stringlist Place::tags
-
-    This property holds tag list.
-*/
-void QDeclarativePlace::setTags(const QStringList &tags)
-{
-    if (m_src.tags() != tags) {
-        m_src.setTags(tags);
-        emit tagsChanged();
-    }
-}
-
-QStringList QDeclarativePlace::tags() const
-{
-    return m_src.tags();
-}
-
-/*!
     \qmlproperty bool Place::detailsFetched
 
     This property holds a boolean indicating
@@ -368,24 +344,6 @@ void QDeclarativePlace::setStatus(Status status)
 QDeclarativePlace::Status QDeclarativePlace::status() const
 {
     return m_status;
-}
-
-/*!
-    \qmlproperty stringlist Place::feeds
-
-    This property holds feeds list.
-*/
-void QDeclarativePlace::setFeeds(const QStringList &feeds)
-{
-    if (m_src.feeds() != feeds) {
-        m_src.setFeeds(feeds);
-        emit feedsChanged();
-    }
-}
-
-QStringList QDeclarativePlace::feeds() const
-{
-    return m_src.feeds();
 }
 
 void QDeclarativePlace::finished()

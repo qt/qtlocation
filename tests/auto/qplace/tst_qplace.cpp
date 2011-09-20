@@ -63,13 +63,11 @@ private Q_SLOTS:
     void locationTest();
     void ratingTest();
     void suppliersTest();
-    void feedsTest();
     void imageContentTest();
     void reviewContentTest();
     void contentCountTest();
     void nameTest();
     void placeIdTest();
-    void tagsTest();
     void primaryPhoneTest();
     void primaryFaxTest();
     void primaryEmailTest();
@@ -303,28 +301,6 @@ void tst_Place::suppliersTest()
     QVERIFY2(testObj.suppliers().count() == 2, "Wrong value returned");
 }
 
-void tst_Place::feedsTest()
-{
-    QPlace testObj;
-    QVERIFY2(testObj.feeds().count() == 0, "Wrong default value");
-    QStringList list;
-    list << "1" << "2" << "3";
-    testObj.setFeeds(list);
-    QVERIFY2(testObj.feeds().count() == 3, "Wrong value returned");
-    QVERIFY2(testObj.feeds()[1] == "2", "Wrong [1] value returned");
-}
-
-void tst_Place::tagsTest()
-{
-    QPlace testObj;
-    QVERIFY2(testObj.tags().count() == 0, "Wrong default value");
-    QStringList list;
-    list << "1" << "2" << "3";
-    testObj.setTags(list);
-    QVERIFY2(testObj.tags().count() == 3, "Wrong value returned");
-    QVERIFY2(testObj.tags()[1] == "2", "Wrong [1] value returned");
-}
-
 void tst_Place::primaryPhoneTest()
 {
     QPlace place;
@@ -382,9 +358,6 @@ void tst_Place::operatorsTest()
     paymentMethods.setLabel("Payment methods");
     paymentMethods.setText("Visa");
     testObj.insertExtendedAttribute(QPlaceAttribute::PaymentMethods, paymentMethods);
-    QStringList tags;
-    tags << "1" << "2" << "3";
-    testObj.setTags(tags);
     QGeoLocation loc;
     loc.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(loc);

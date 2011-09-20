@@ -42,7 +42,6 @@
 #ifndef QPLACE_H
 #define QPLACE_H
 
-#include "qmobilityglobal.h"
 #include <QSharedDataPointer>
 #include <QVariant>
 
@@ -86,8 +85,6 @@ public:
     void setRating(const QPlaceRating &rating);
     QList<QPlaceSupplier> suppliers() const;
     void setSuppliers(const QList<QPlaceSupplier> &data);
-    QStringList feeds() const;
-    void setFeeds(const QStringList &feeds);
 
     QPlaceContent::Collection content(QPlaceContent::Type type) const;
     void setContent(QPlaceContent::Type type, const QPlaceContent::Collection &content);
@@ -99,9 +96,6 @@ public:
     void setName(const QString &name);
     QString placeId() const;
     void setPlaceId(const QString &placeId);
-
-    QStringList tags() const;
-    void setTags(const QStringList &tags);
 
     QString primaryPhone() const;
     void setPrimaryPhone(const QString &phone);

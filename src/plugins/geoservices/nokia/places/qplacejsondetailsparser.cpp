@@ -473,7 +473,9 @@ void QPlaceJSonDetailsParser::processTags(const QScriptValue &tags, QPlace *targ
             }
         }
     }
-    targetPlace->setTags(newTags);
+
+    // The JSON data specification defines a tags element, but our API doesn't expose tags so we
+    // parse and skip assignment.
 }
 
 void QPlaceJSonDetailsParser::processNames(const QScriptValue &names, QPlace *targetPlace)
