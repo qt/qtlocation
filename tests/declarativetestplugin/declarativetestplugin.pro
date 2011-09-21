@@ -3,7 +3,7 @@ TARGETPATH = Qt/location/test
 
 include(../../src/imports/location/qlocationimport.pri)
 
-QT += declarative location
+QT += declarative location widgets
 
 DESTDIR = $$QT.location.imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH

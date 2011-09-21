@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-#include <QtWidgets/QApplication>
+#include <QtGui/QGuiApplication>
 #include <QtCore/QStringList>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QNetworkProxy>
@@ -48,7 +48,7 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
 
     QSGView view;
     const QString mainQmlApp = QLatin1String("qrc:///map3d.qml");
@@ -62,9 +62,9 @@ int main(int argc, char *argv[])
     // Qt.quit() called in embedded .qml by default only emits
     // quit() signal, so do this (optionally use Qt.exit()).
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
-    if (QApplication::arguments().contains(QLatin1String("-maximize"))) {
+    if (QCoreApplication::arguments().contains(QLatin1String("-maximize"))) {
         view.showMaximized();
-    } else if (QApplication::arguments().contains(QLatin1String("-fullscreen"))) {
+    } else if (QCoreApplication::arguments().contains(QLatin1String("-fullscreen"))) {
         view.showFullScreen();
     } else {
          //view.setGeometry(QRect(100, 100, 360, 640));

@@ -38,14 +38,14 @@
 **
 ****************************************************************************/
 
-#include <QtWidgets/QApplication>
+#include <QtGui/QGuiApplication>
 #include <QtDeclarative/QSGView>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QNetworkProxy>
 
 int main(int argc, char *argv[])
 {
-    QApplication application(argc, argv);
+    QGuiApplication application(argc, argv);
     const QString mainQmlApp = QLatin1String("qrc:///mapviewer.qml");
     QSGView view;
     view.setSource(QUrl(mainQmlApp));

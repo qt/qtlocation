@@ -1,4 +1,4 @@
-#include <QApplication>
+#include <QGuiApplication>
 #include <QtDeclarative/QSGView>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
@@ -8,7 +8,7 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QGuiApplication a(argc, argv);
 
     // setting proxy for application. It will be used in all clients.
     QString urlEnv = getenv("HTTP_PROXY");
