@@ -54,16 +54,6 @@
 */
 
 /*!
-    \enum QPlaceManager::ConnectivityMode
-
-    Defines the method of obtaining place data
-    \value NoConnectivity There is no place data.
-    \value OfflineMode The places data will come from an offline source.
-    \value OnlineMode The place data will come from an online source.
-    \value HybridMode The place data will come from a combination of offline and online sources.
-*/
-
-/*!
     \enum QPlaceManager::SearchVisibilityScope
     Defines the scope for searching places according to visibility.
     \value PublicSearch Searches will only be conducted on public places.
@@ -187,30 +177,6 @@ QPlaceSearchReply *QPlaceManager::recommendations(const QPlace &place, const QPl
 QPlaceTextPredictionReply *QPlaceManager::textPredictions(const QPlaceSearchRequest &request) const
 {
     return d->textPredictions(request);
-}
-
-/*!
-    Returns the connectivity mode of the manager.
-*/
-QPlaceManager::ConnectivityModes QPlaceManager::connectivityMode() const
-{
-    return d->connectivityMode();
-}
-
-/*!
-    Sets the connectivity \a mode of the manager.
-*/
-void QPlaceManager::setConnectivityMode(QPlaceManager::ConnectivityModes mode)
-{
-    d->setConnectivityMode(mode);
-}
-
-/*!
-    Returns the list of connectivity modes that the manager supports.
-*/
-QPlaceManager::ConnectivityModes QPlaceManager::supportedConnectivityModes() const
-{
-    return d->supportedConnectivityModes();
 }
 
 /*!

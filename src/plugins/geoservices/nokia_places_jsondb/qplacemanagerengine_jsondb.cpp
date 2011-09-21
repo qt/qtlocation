@@ -156,21 +156,6 @@ QPlaceTextPredictionReply *QPlaceManagerEngineJsonDb::textPredictions(const QPla
     return textPredictionReply;
 }
 
-QPlaceManager::ConnectivityModes QPlaceManagerEngineJsonDb::connectivityMode() const
-{
-    return QPlaceManager::OfflineMode;
-}
-
-void QPlaceManagerEngineJsonDb::setConnectivityMode(QPlaceManager::ConnectivityModes mode)
-{
-    Q_UNUSED(mode)
-}
-
-QPlaceManager::ConnectivityModes QPlaceManagerEngineJsonDb::supportedConnectivityModes() const
-{
-    return QPlaceManager::OfflineMode;
-}
-
 QPlaceIdReply *QPlaceManagerEngineJsonDb::savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope)
 {
     IdReply *saveReply = new IdReply(QPlaceIdReply::SavePlace, this);

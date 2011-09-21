@@ -115,21 +115,6 @@ public:
         return 0;
     }
 
-    QPlaceManager::ConnectivityModes connectivityMode() const
-    {
-        return QPlaceManager::OnlineMode;
-    }
-
-    void setConnectivityMode(QPlaceManager::ConnectivityModes mode)
-    {
-        Q_UNUSED(mode)
-    }
-
-    QPlaceManager::ConnectivityModes supportedConnectivityModes() const
-    {
-        return QPlaceManager::OnlineMode;
-    }
-
     QPlaceIdReply *savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope)
     {
         Q_UNUSED(place)

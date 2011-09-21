@@ -70,14 +70,6 @@ class Q_LOCATION_EXPORT QPlaceManager : public QObject
 {
     Q_OBJECT
 public:
-    enum ConnectivityMode {
-        OfflineMode = 0x0001,
-        OnlineMode = 0x0002,
-        HybridMode = 0x0003
-    };
-
-    Q_DECLARE_FLAGS(ConnectivityModes, ConnectivityMode)
-
     enum VisibilityScope {
         NoScope = 0x0000,
         PublicScope = 0x0001,
@@ -120,10 +112,6 @@ public:
 
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request) const;
 
-    ConnectivityModes connectivityMode() const;
-    void setConnectivityMode(ConnectivityModes connectivityMode);
-    ConnectivityModes supportedConnectivityModes() const;
-
     QPlaceIdReply *savePlace(const QPlace &place, VisibilityScope scope = QPlaceManager::NoScope);
     VisibilityScopes supportedSaveVisibilityScopes();
 
@@ -155,7 +143,6 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::VisibilityScopes);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::ConnectivityModes);
 
 QT_END_NAMESPACE
 

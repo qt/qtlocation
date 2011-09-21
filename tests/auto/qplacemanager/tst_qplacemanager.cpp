@@ -77,8 +77,6 @@ void tst_QPlaceManager::testMetadata()
 {
     QCOMPARE(placeManager->managerName(), QLatin1String("qmlgeo.test.plugin"));
     QCOMPARE(placeManager->managerVersion(), 3);
-
-    QVERIFY(placeManager->connectivityMode() == QPlaceManager::OnlineMode);
 }
 
 void tst_QPlaceManager::testLocale()

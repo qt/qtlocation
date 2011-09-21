@@ -244,22 +244,6 @@ QPlaceTextPredictionReply *QPlaceManagerEngineNokia::textPredictions(const QPlac
     return reply;
 }
 
-QPlaceManager::ConnectivityModes QPlaceManagerEngineNokia::connectivityMode() const
-{
-    return QPlaceManager::OnlineMode;
-}
-
-void QPlaceManagerEngineNokia::setConnectivityMode(QPlaceManager::ConnectivityModes mode)
-{
-    Q_UNUSED(mode)
-    // only QPlaceManager::OnlineMode is suppoerted
-}
-
-QPlaceManager::ConnectivityModes QPlaceManagerEngineNokia::supportedConnectivityModes() const
-{
-    return QPlaceManager::OnlineMode;
-}
-
 QPlaceIdReply *QPlaceManagerEngineNokia::savePlace(const QPlace &place,
                                                    QPlaceManager::VisibilityScope scope)
 {

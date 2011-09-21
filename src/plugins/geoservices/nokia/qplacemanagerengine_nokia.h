@@ -77,10 +77,6 @@ public:
     QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &query);
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &query);
 
-    QPlaceManager::ConnectivityModes connectivityMode() const;
-    void setConnectivityMode(QPlaceManager::ConnectivityModes connectivityMode);
-    QPlaceManager::ConnectivityModes supportedConnectivityModes() const;
-
     QPlaceIdReply *savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope);
     QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const;
 

@@ -112,6 +112,6 @@ void tst_QPlaceContentRequest::clearTest()
     QVERIFY(req.offset() == 0);
 }
 
-QTEST_APPLESS_MAIN(tst_QPlaceContentRequest);
+QTEST_APPLESS_MAIN(tst_QPlaceContentRequest)
 
 #include "tst_qplacecontentrequest.moc"

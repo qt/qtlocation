@@ -115,10 +115,8 @@ void QPlaceSearchRequestPrivate::clear()
     QPlaceRequestPrivate::clear();
     searchTerm.clear();
     categories.clear();
-    if (searchArea) {
-        delete searchArea;
-        searchArea = 0;
-    }
+    delete searchArea;
+    searchArea = 0;
     dymNumber = 0;
     scope = QPlaceManager::NoScope;
 }
@@ -270,23 +268,6 @@ void QPlaceSearchRequest::setVisibilityScope(QPlaceManager::VisibilityScopes sco
 {
     Q_D(QPlaceSearchRequest);
     d->scope = scope;
-}
-
-/*!
-    Clears the parameters of the search request.
-*/
-void QPlaceSearchRequest::clear()
-{
-    Q_D(QPlaceSearchRequest);
-
-    QPlaceRequest::clear();
-    d->searchTerm.clear();
-    d->categories.clear();
-    if (d->searchArea)
-        delete d->searchArea;
-    d->searchArea = 0;
-    d->dymNumber = 0;
-    d->scope = QPlaceManager::NoScope;
 }
 
 QT_END_NAMESPACE

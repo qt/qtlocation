@@ -86,8 +86,6 @@ public:
     QPlaceManager::VisibilityScopes visibilityScope() const;
     void setVisibilityScope(QPlaceManager::VisibilityScopes scope);
 
-    void clear();
-
 private:
     Q_DECLARE_D_FUNC(QPlaceSearchRequest)
 };

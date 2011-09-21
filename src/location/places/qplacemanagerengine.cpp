@@ -60,8 +60,7 @@ QT_USE_NAMESPACE
 
     Subclasses of QPlaceManagerEngine need to provide an implementation of getPlaceDetails(),
     getContent(), postRating(), getReviews(), searchForPlaces(), supportedSearchVisibilityScopes(),
-    recommendations(), textPredictions(), connectivityMode(), setConnectivityMode(),
-    supportedConnectivityModes(), savePlace(), supportedSaveVisibilityScopes(), removePlace(),
+    recommendations(), textPredictions(), savePlace(), supportedSaveVisibilityScopes(), removePlace(),
     initializeCategories() and categories().
 
     \sa QPlaceManager
