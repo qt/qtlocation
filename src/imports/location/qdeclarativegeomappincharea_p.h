@@ -188,9 +188,9 @@ public:
     void setMaximumTiltChange(qreal tilt);
 
     // TODO likely we only need touchEvent, not mouseEvents.
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
     void touchEvent(QTouchEvent *event);
 
 signals:

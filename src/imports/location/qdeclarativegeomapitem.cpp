@@ -65,7 +65,7 @@ QDeclarativeGeoMapItem::QDeclarativeGeoMapItem(QSGItem *parent)
       componentCompleted_(false)
 {
     connect(this, SIGNAL(sourceItemChanged()), this, SIGNAL(sourceChanged()));
-    connect(this->texture(), SIGNAL(textureChanged()), this, SLOT(textureChangedSlot()));
+    connect(this->textureProvider(), SIGNAL(textureChanged()), this, SLOT(textureChangedSlot()));
 }
 
 QDeclarativeGeoMapItem::~QDeclarativeGeoMapItem()
@@ -77,12 +77,12 @@ QDeclarativeGeoMapItem::~QDeclarativeGeoMapItem()
 
 void QDeclarativeGeoMapItem::textureChangedSlot()
 {
-    if (!texture()) {
+    if (!textureProvider()->texture()) {
         mapItem_.setTextureId(0); // invalidate
         return;
     }
-    mapItem_.setTextureId(texture()->textureId());
-    mapItem_.setSize(texture()->textureSize());
+    mapItem_.setTextureId(textureProvider()->texture()->textureId());
+    mapItem_.setSize(textureProvider()->texture()->textureSize());
 }
 
 MapItem* QDeclarativeGeoMapItem::mapItem()
@@ -169,8 +169,8 @@ void QDeclarativeGeoMapItem::updateItem()
 {
     // we seem to not always get texture changed -signals when
     // adding static map items with add
-    if (!mapItem_.textureId() && texture()) {
-        mapItem_.setTextureId(texture()->textureId());
+    if (!mapItem_.textureId() && textureProvider()->texture()) {
+        mapItem_.setTextureId(textureProvider()->texture()->textureId());
     }
     mapItem_.update();
 }

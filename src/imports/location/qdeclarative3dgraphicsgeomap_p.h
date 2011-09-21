@@ -50,13 +50,21 @@
 #include "qdeclarativegeomapobjectview_p.h"
 #include <QtCore/QCoreApplication>
 
-// Check $$pwd/location.pro how to enable these
-#ifdef QSGMOUSEAREA_AVAILABLE
-#include "qsgmousearea_p.h"
-#endif
 #include "qsgtexture.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
+
+//#define QT_DECLARATIVE_LOCATION_TRACE 1
+
+#ifdef QT_DECLARATIVE_LOCATION_TRACE
+#define QLOC_TRACE0 qDebug() << __FILE__ << __FUNCTION__;
+#define QLOC_TRACE1(msg1) qDebug() << __FILE__ << __FUNCTION__ << msg1;
+#define QLOC_TRACE2(msg1, msg2) qDebug() << __FILE__ << __FUNCTION__ << msg1 << msg2;
+#else
+#define QLOC_TRACE0
+#define QLOC_TRACE1(msg1)
+#define QLOC_TRACE2(msg1, msg2)
+#endif
 
 #include "cameradata.h"
 #include "map.h"
@@ -78,9 +86,6 @@ class QDeclarativeCoordinate;
 class QDeclarativeGeoServiceProvider;
 class QDeclarative3DGraphicsGeoMap;
 class QDeclarativeGeoMapItem;
-#ifdef QSGMOUSEAREA_AVAILABLE
-class QSGMouseEvent;
-#endif
 
 class QDeclarative3DGraphicsGeoMap : public QSGItem
 {
@@ -140,12 +145,6 @@ public:
 
     QDeclarativeGeoMapFlickable* flick();
 
-    void setMouseEnabled(bool enabled);
-    bool mouseEnabled() const;
-    void setMouseHoverEnabled(bool enabled);
-    bool mouseHoverEnabled() const;
-    bool containsMouse() const;
-
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
@@ -188,26 +187,19 @@ public Q_SLOTS:
 protected:
     void touchEvent(QTouchEvent *event);
     void wheelEvent(QWheelEvent *event);
-    void geometryChanged(const QRectF &newGeometry,
-                         const QRectF &oldGeometry);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    // hover is just a placeholder
+    //void hoverEnterEvent(QHoverEvent *event);
+    //void hoverMoveEvent(QHoverEvent *event);
+    //void hoverLeaveEvent(QHoverEvent *event);
     void keyPressEvent(QKeyEvent *e);
-    void closeEvent(QCloseEvent *e);
-    //void enterEvent(QEvent *e);
-    //void leaveEvent(QEvent *e);
-    void showEvent(QShowEvent *e);
-    void resizeEvent(QResizeEvent *e);
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
 Q_SIGNALS:
-    // wheel
     void wheel(qreal delta);
-
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
     void sizeChanged(const QSizeF &size);
     void zoomLevelChanged(qreal zoomLevel);
@@ -225,14 +217,30 @@ private Q_SLOTS:
     void centerAltitudeChanged(double altitude);
     void sceneGraphInitialized();
     void beforeRendering();
-    void mouseChanged();
-    void mapItemTextureChanged();
     void cameraZoomLevelChanged(double zoomLevel);
 
 private:
     void setupMapView(QDeclarativeGeoMapObjectView *view);
     void updateAspectRatio();
     void populateMap();
+
+    /* hover placeholder (works to an extent but would need more work)
+    void hoverEvent(QHoverEvent* event);
+    bool clearHover();
+    bool deliverHoverEvent(QDeclarativeGeoMapMouseArea* ma,
+                           const QPointF &scenePos,
+                           const QPointF &lastScenePos,
+                           Qt::KeyboardModifiers modifiers,
+                           bool &accepted);
+    bool sendHoverEvent(QEvent::Type type, QSGItem *item,
+                        const QPointF &scenePos, const QPointF &lastScenePos,
+                        Qt::KeyboardModifiers modifiers, bool accepted);
+    QDeclarativeGeoMapMouseArea* hoverItem_;
+    */
+
+    QList<QDeclarativeGeoMapMouseArea*> mouseAreasAt(QPoint pos);
+    bool deliverMouseEvent(QMouseEvent* event);
+    bool deliverInitialMousePressEvent(QDeclarativeGeoMapMouseArea* ma, QMouseEvent* event);
 
     QDeclarativeGeoServiceProvider* plugin_;
     QGeoServiceProvider* serviceProvider_;
@@ -249,11 +257,12 @@ private:
     bool componentCompleted_;
     QList<QDeclarativeGeoMapObjectView*> mapViews_;
 
-#ifdef QSGMOUSEAREA_AVAILABLE
-    QSGMouseArea* mouseArea_;
-#endif
     QDeclarativeGeoMapFlickable* flickable_;
     QDeclarativeGeoMapPinchArea* pinchArea_;
+    QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
+
+    QDeclarativeGeoMapMouseArea* mouseGrabberItem_;
+    QPointF lastMousePosition_;
 
     void paintGL(QGLPainter *painter);
     void earlyDraw(QGLPainter *painter);

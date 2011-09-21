@@ -36,7 +36,7 @@ void QDeclarativePinchGenerator::componentComplete()
     QSGItem::componentComplete();
 }
 
-void QDeclarativePinchGenerator::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarativePinchGenerator::mousePressEvent(QMouseEvent *event)
 {
     if (state_ != Idle || !enabled_) {
         event->ignore();
@@ -77,17 +77,20 @@ void QDeclarativePinchGenerator::setEnabled(bool enabled)
     emit enabledChanged();
 }
 
-QTouchEvent::TouchPoint QDeclarativePinchGenerator::mouseEventToTouchPoint(QGraphicsSceneMouseEvent *event)
+QTouchEvent::TouchPoint QDeclarativePinchGenerator::mouseEventToTouchPoint(QMouseEvent *event)
 {
     QTouchEvent::TouchPoint touchPoint;
     switch (event->type()) {
-    case QEvent::GraphicsSceneMousePress:
+    //case QEvent::GraphicsSceneMousePress:
+    case QEvent::MouseButtonPress:
         touchPoint.setState(Qt::TouchPointPressed);
         break;
-    case QEvent::GraphicsSceneMouseMove:
+    //case QEvent::GraphicsSceneMouseMove:
+    case QEvent::MouseMove:
         touchPoint.setState(Qt::TouchPointMoved);
         break;
-    case QEvent::GraphicsSceneMouseRelease:
+    //case QEvent::GraphicsSceneMouseRelease:
+    case QEvent::MouseButtonRelease:
         touchPoint.setState(Qt::TouchPointReleased);
         break;
     default:
@@ -97,9 +100,9 @@ QTouchEvent::TouchPoint QDeclarativePinchGenerator::mouseEventToTouchPoint(QGrap
     touchPoint.setId(0);
     touchPoint.setPressure(0.75);
     touchPoint.setPos(event->pos());
-    touchPoint.setLastPos(event->lastPos());
+    touchPoint.setLastPos(event->pos());
     touchPoint.setScenePos(target_->mapToScene(event->pos()));
-    touchPoint.setLastScenePos(target_->mapToScene(event->lastPos()));
+    touchPoint.setLastScenePos(target_->mapToScene(event->pos()));
     return touchPoint;
 }
 
@@ -118,7 +121,7 @@ QTouchEvent::TouchPoint QDeclarativePinchGenerator::convertToPrimary(QTouchEvent
 
 }
 
-void QDeclarativePinchGenerator::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarativePinchGenerator::mouseMoveEvent(QMouseEvent *event)
 {
     if (state_ != Recording || !enabled_) {
         event->ignore();
@@ -137,7 +140,7 @@ void QDeclarativePinchGenerator::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-void QDeclarativePinchGenerator::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarativePinchGenerator::mouseReleaseEvent(QMouseEvent *event)
 {
     if (state_ != Recording || !enabled_) {
         event->ignore();
@@ -211,7 +214,7 @@ void QDeclarativePinchGenerator::setReplaySpeedFactor(qreal factor)
     emit replaySpeedFactorChanged();
 }
 
-void QDeclarativePinchGenerator::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarativePinchGenerator::mouseDoubleClickEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
     if (!enabled_) {
@@ -388,10 +391,6 @@ Q_INVOKABLE void QDeclarativePinchGenerator::replay()
     replayTimer_ = startTimer(swipes_.at(masterSwipe_)->touchPointDurations.at(0) / replaySpeedFactor_);
     replayBookmark_ = 0;
     setState(Replaying);
-    //qDebug() << "Started replay. Master total duration, first timeout, swipe counts respectively: "
-    //            << swipes_.at(masterSwipe_)->totalDuration << swipes_.at(masterSwipe_)->touchPointDurations.at(0)
-    //            << swipes_.at(0)->touchPoints.count()
-    //            << swipes_.at(1)->touchPoints.count();
 }
 
 Q_INVOKABLE void QDeclarativePinchGenerator::clear()

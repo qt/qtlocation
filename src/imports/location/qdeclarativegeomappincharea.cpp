@@ -42,7 +42,7 @@
 #include <QtWidgets/QApplication>
 #include "qdeclarativegeomappincharea_p.h"
 #include "qdeclarative3dgraphicsgeomap_p.h"
-#include <QGraphicsSceneMouseEvent>
+#include <QtGui/qevent.h>
 #include <QDebug>
 #include "math.h"
 #include "map.h"
@@ -247,21 +247,21 @@ void QDeclarativeGeoMapPinchArea::setMaximumTiltChange(qreal tilt)
     emit maximumTiltChangeChanged();
 }
 
-void QDeclarativeGeoMapPinchArea::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarativeGeoMapPinchArea::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event); // TODO may not be needed at all
     if (!enabled_)
         return;
 }
 
-void QDeclarativeGeoMapPinchArea::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarativeGeoMapPinchArea::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event); // TODO may not be needed at all
     if (!enabled_)
         return;
 }
 
-void QDeclarativeGeoMapPinchArea::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarativeGeoMapPinchArea::mouseMoveEvent(QMouseEvent *event)
 {
     Q_UNUSED(event); // TODO may not be needed at all
     if (!enabled_)

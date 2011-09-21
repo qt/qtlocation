@@ -69,6 +69,7 @@
 #include <QSGCanvas>
 #include <QSGEngine>
 #include <QDesktopWidget>
+#include <QtGui/QGuiApplication>
 
 #include <QDebug>
 
@@ -111,28 +112,24 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGItem *parent)
       plugin_(0),
       serviceProvider_(0),
       mappingManager_(0),
-//      mapData_(0),
       center_(0),
       initialCoordinate(0),
 //      mapType_(NoMap),
 //      connectivityMode_(NoConnectivity),
       componentCompleted_(false),
-#ifdef QSGMOUSEAREA_AVAILABLE
-      mouseArea_(0),
-#endif
       flickable_(0),
       pinchArea_(0),
+      //hoverItem_(0),
+      mouseGrabberItem_(0),
       canvas_(0),
       touchTimer_(-1),
       tileCache_(0)
-
-    //  ses_(0),
-    //  texture_(0)
 {
+    QLOC_TRACE0;
     initialCoordinate = new QGeoCoordinate(-27.0, 153.0);
     zoomLevel_ = 8;
     size_ = QSizeF(100.0, 100.0);
-    setAcceptHoverEvents(true);
+    setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
     setFlags(QSGItem::ItemHasContents);
 
@@ -142,11 +139,9 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGItem *parent)
             SIGNAL(updateRequired()),
             this,
             SLOT(update()));
-    //connect(map_->mapCamera(), SIGNAL(zoomChanged(double)), this, SLOT(cameraZoomLevelChanged(double)));
     // Create internal flickable and pinch area.
     flickable_ = new QDeclarativeGeoMapFlickable(map_, this);
     pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
-    qDebug() << __FUNCTION__ << "Created.============================================================";
 }
 
 QSGNode* QDeclarative3DGraphicsGeoMap::updatePaintNode(QSGNode* node, UpdatePaintNodeData* data)
@@ -171,19 +166,17 @@ QDeclarative3DGraphicsGeoMap::~QDeclarative3DGraphicsGeoMap()
 //        }
 //        delete mapData_;
 //    }
+    mouseAreas_.clear();
     if (serviceProvider_)
         delete serviceProvider_;
     if (initialCoordinate) {
         delete initialCoordinate;
     }
-#ifdef QSGMOUSEAREA_AVAILABLE
-    delete mouseArea_;
-#endif
 }
 
 void QDeclarative3DGraphicsGeoMap::componentComplete()
 {
-    qDebug() << __FUNCTION__ << "Completed =====-===-==================================================";
+    QLOC_TRACE0;
     componentCompleted_ = true;
     populateMap();
     map_->resize(width(), height());
@@ -206,8 +199,8 @@ void QDeclarative3DGraphicsGeoMap::itemChange(ItemChange change, const ItemChang
             canvas_->sceneGraphEngine()->disconnect(this);
         }
         canvas_ = data.canvas;
-        if (canvas_->sceneGraphEngine()) {
-            qDebug() << __FUNCTION__ << "Engine exists. Connecting to beforeRendering() " << canvas_->sceneGraphEngine();
+        if (canvas_ && canvas_->sceneGraphEngine()) {
+            QLOC_TRACE1("QSGEngine exists, connecting directly.");
             QSGEngine* engine =  canvas_->sceneGraphEngine();
             connect((QObject*)engine, SIGNAL(beforeRendering()), this, SLOT(beforeRendering()), Qt::DirectConnection);
             engine->setClearBeforeRendering(false);
@@ -229,12 +222,10 @@ void QDeclarative3DGraphicsGeoMap::sceneGraphInitialized()
 
 void QDeclarative3DGraphicsGeoMap::populateMap()
 {
-//    if (!mapData_ || !componentCompleted_)
     if (!componentCompleted_)
         return;
     QObjectList kids = children();
     for (int i = 0; i < kids.size(); ++i) {
-        //qDebug() << "Looping through..: " << kids.at(i)->metaObject()->className() << kids.at(i)->objectName();
         // dispatch items appropriately
         QDeclarativeGeoMapObjectView* mapView = qobject_cast<QDeclarativeGeoMapObjectView*>(kids.at(i));
         if (mapView) {
@@ -246,56 +237,12 @@ void QDeclarative3DGraphicsGeoMap::populateMap()
         if (mapItem) {
             addMapItem(mapItem);
         }
-#ifdef QSGMOUSEAREA_AVAILABLE
-        QSGMouseArea *mouseArea = qobject_cast<QSGMouseArea*>(kids.at(i));
-        if (mouseArea && !mouseArea_) {
-            //qDebug() << "Got mouse area.";
-            mouseArea_ = mouseArea;
-            // This is the trick to get mouse events reach Map element;
-            // if visible is true then the MouseArea will consume events
-            // before Map has chance to use it.
-            mouseArea_->setVisible(false);
-            connect(mouseArea_, SIGNAL(visibleChanged()), this, SLOT(mouseChanged()));
-            connect(mouseArea_, SIGNAL(enabledChanged()), this, SLOT(mouseChanged()));
-            connect(mouseArea_, SIGNAL(widthChanged()), this, SLOT(mouseChanged()));
-            connect(mouseArea_, SIGNAL(heightChanged()), this, SLOT(mouseChanged()));
-        } else if (mouseArea && mouseArea_) {
-            qmlInfo(this) <<  tr("Warning: only one MouseArea / Map supported. Extra MouseArea ignored.");
-        }
-#endif
         QDeclarativeGeoMapMouseArea *mapMouseArea = qobject_cast<QDeclarativeGeoMapMouseArea*>(kids.at(i));
         if (mapMouseArea) {
-            qmlInfo(this) << tr("Warning: MapMouseArea is no longer supported. Use normal MouseArea instead.");
+            mapMouseArea->setMap(this);
+            mouseAreas_.append(mapMouseArea);
         }
     }
-}
-
-void QDeclarative3DGraphicsGeoMap::mapItemTextureChanged()
-{
-#ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
-    for (int i = mapItemsPending_.count() - 1; i >= 0; --i) {
-        if (mapItemsPending_.at(i)->hasValidTexture()) {
-            disconnect(mapItemsPending_.at(i), SIGNAL(textureChanged()), this, SLOT(mapItemTextureChanged()));
-            mapItemsPending_.at(i)->setMap(this);
-            mapItems_.append(mapItemsPending_.at(i));
-            map_->addMapItem(mapItemsPending_.at(i)->mapItem());
-            mapItemsPending_.removeAt(i);
-        }
-    }
-#endif
-}
-
-void QDeclarative3DGraphicsGeoMap::mouseChanged()
-{
-#ifdef QSGMOUSEAREA_AVAILABLE
-    if (mouseArea_
-            && mouseArea_->isVisible()
-            && mouseArea_->isEnabled()
-            && mouseArea_->width() > 0
-            && mouseArea_->height() > 0) {
-        qmlInfo(this) << tr("Warning: MouseArea in Map visible, enabled and has geometry. Map unable to intercept & dispatch mouse to map objects.");
-    }
-#endif
 }
 
 void QDeclarative3DGraphicsGeoMap::setupMapView(QDeclarativeGeoMapObjectView *view)
@@ -324,16 +271,6 @@ qreal ViewportSubsurface::aspectRatio() const
     return QGLSubsurface::aspectRatio() * m_adjust;
 }
 
-void QDeclarative3DGraphicsGeoMap::closeEvent(QCloseEvent *)
-{
-    qApp->quit();
-}
-
-void QDeclarative3DGraphicsGeoMap::showEvent(QShowEvent *)
-{
-    updateAspectRatio();
-}
-
 void QDeclarative3DGraphicsGeoMap::updateAspectRatio()
 {
     map_->resize(width(), height());
@@ -341,28 +278,16 @@ void QDeclarative3DGraphicsGeoMap::updateAspectRatio()
         map_->update();
 }
 
-void QDeclarative3DGraphicsGeoMap::resizeEvent(QResizeEvent *event)
+void QDeclarative3DGraphicsGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    Q_UNUSED(event);
+    setSize(QSizeF(newGeometry.width(), newGeometry.height()));
     updateAspectRatio();
+    QSGItem::geometryChanged(newGeometry, oldGeometry);
 }
-
-/*
-void QDeclarative3DGraphicsGeoMap::enterEvent(QEvent *)
-{
-    setFocus(true);
-    //grabKeyboard();
-}
-
-void QDeclarative3DGraphicsGeoMap::leaveEvent(QEvent *e)
-{
-    setFocus(false);
-    //releaseKeyboard();
-}
-*/
 
 void QDeclarative3DGraphicsGeoMap::keyPressEvent(QKeyEvent *e)
 {
+    QLOC_TRACE2(" key: ", e->key());
     CameraData cameraData = map_->cameraData();
     if (e->key() == Qt::Key_Left) {
         if (e->modifiers() & Qt::ShiftModifier) {
@@ -433,6 +358,19 @@ void QDeclarative3DGraphicsGeoMap::beforeRendering()
 {
     if (!isVisible())
         return;
+
+    // temporary check until refactor branch is fully functional again
+    static bool render = true;
+    if (!render)
+        return;
+    const QGLContext* context = QGLContext::currentContext();
+    if (!context || !context->device()) {
+        render = false;
+        qmlInfo(this) << tr("GL paint device is NULL. Will not render the map.");
+        return;
+    }
+    // end of temporary check
+
     QGLPainter painter;
     if (!painter.begin()) {
         qmlInfo(this) << tr("GL graphics system is not active; cannot use 3D items");
@@ -544,23 +482,8 @@ void QDeclarative3DGraphicsGeoMap::earlyDraw(QGLPainter *painter)
 
 void QDeclarative3DGraphicsGeoMap::paintGL(QGLPainter *painter)
 {
-    if (map_) {
-        // QGLSceneNode *node = map_->sceneNode();
+    if (map_)
         map_->paintGL(painter);
-//        QGLSceneNode *node = map_->sceneNodeForRendering();
-//        if (node) {
-//            node->draw(painter);
-//            map_->sceneNodeRenderingDone();
-//        } else {
-//            qDebug() << "=-=-=-=-=-=-=-=- WILL MISS A MAP FRAME =-=-=-=-=-=-=-=-=-=-=-=-=";
-//        }
-    }
-}
-
-void QDeclarative3DGraphicsGeoMap::geometryChanged(const QRectF &newGeometry,
-                                                   const QRectF & /*oldGeometry*/)
-{
-    setSize(newGeometry.size());
 }
 
 /*!
@@ -932,13 +855,12 @@ void QDeclarative3DGraphicsGeoMap::centerAltitudeChanged(double /*altitude*/)
 
 QDeclarativeCoordinate* QDeclarative3DGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
 {
-    Q_UNUSED(screenPosition);
     QGeoCoordinate coordinate;
-    qWarning() << __FUNCTION__ << " not implemented."; // TODO
-//    if (mapData_)
-//        coordinate = mapData_->screenPositionToCoordinate(screenPosition);
-    return new QDeclarativeCoordinate(coordinate,
-                                      const_cast<QDeclarative3DGraphicsGeoMap *>(this));
+    if (map_)
+        coordinate = map_->screenPositionToCoordinate(screenPosition);
+    // by default objects returned from method call get javascript ownership,
+    // so we don't need to worry about this as long as we don't set the parent
+    return new QDeclarativeCoordinate(coordinate);
 }
 
 /*!
@@ -950,14 +872,12 @@ QDeclarativeCoordinate* QDeclarative3DGraphicsGeoMap::toCoordinate(QPointF scree
     Returns an invalid QPointF if \a coordinate is not within the
     current viewport.
 */
+
 QPointF QDeclarative3DGraphicsGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate) const
 {
-    Q_UNUSED(coordinate);
     QPointF point;
-    qWarning() << __FUNCTION__ << " not implemented."; // TODO
-//    if (mapData_)
-//        point = mapData_->coordinateToScreenPosition(coordinate->coordinate());
-
+    if (map_)
+        point = map_->coordinateToScreenPosition(coordinate->coordinate());
     return point;
 }
 
@@ -965,114 +885,277 @@ void QDeclarative3DGraphicsGeoMap::pan(int dx, int dy)
 {
     Q_UNUSED(dx);
     Q_UNUSED(dy);
-    qWarning() << __FUNCTION__ << " not implemented."; // TODO
-    //qDebug() << "pan: " << dx << dy;
-    //if (mapData_) {
-    //    mapData_->pan(dx, dy);
-    //    update();
-    if (map_) {
-        // TODO zzz map_->
-    } else {
-        qmlInfo(this) << tr("Map plugin is not set, cannot pan.");
-    }
+    qWarning() << __FUNCTION__ << " of Map not implemented."; // TODO
 }
 
 void QDeclarative3DGraphicsGeoMap::touchEvent(QTouchEvent *event)
 {
-    //qDebug() << "touchEvent in Map3D, enter, sending touchEvent to pinch area.";
-    if (pinchArea_)
-        pinchArea_->touchEvent(event);
+    QLOC_TRACE0;
+    event->accept();
+    pinchArea_->touchEvent(event);
 }
 
 void QDeclarative3DGraphicsGeoMap::wheelEvent(QWheelEvent *event)
 {
+    QLOC_TRACE0;
+    event->accept();
     emit wheel(event->delta());
-    //QSGItem::wheelEvent(event);
 }
 
-void QDeclarative3DGraphicsGeoMap::mousePressEvent(QGraphicsSceneMouseEvent *event)
+// event delivery helpers
+bool QDeclarative3DGraphicsGeoMap::deliverMouseEvent(QMouseEvent* event)
 {
-    //qDebug() << "mousePressEvent in Map3D, enter +------------------------------------------------------------------";
-//    if (!mapData_) {
-//        qmlInfo(this) << tr("Map plugin is not set, mouse event cannot be processed.");
-//        return;
-//    }
-#ifdef QSGMOUSEAREA_AVAILABLE
-    canvas()->sendEvent(mouseArea_, event);
-#endif
+    QLOC_TRACE2("mouse grabber item: ", mouseGrabberItem_);
+    // todo deliver first for map items
+
+    // mouse grabber item is an item that has received the initial
+    // press event. all events will be given to that item (can be
+    // outside of mouse area) until mouse is released. this enables
+    // for example entered() exited() -signals whilst mouse is pressed
+    lastMousePosition_ = event->windowPos();
+
+    if (!mouseGrabberItem_ &&
+            event->type() == QEvent::MouseButtonPress &&
+            (event->button() & event->buttons()) == event->buttons()) {
+        QList<QDeclarativeGeoMapMouseArea*> mouseAreas = mouseAreasAt(event->pos());
+        for (int i = 0; i < mouseAreas.count(); ++i) {
+            QDeclarativeGeoMapMouseArea* item = mouseAreas.at(i);
+            QLOC_TRACE2("delivering initial mouse press for: ", item->objectName());
+            if (deliverInitialMousePressEvent(item, event)) {
+                QLOC_TRACE2("initial mouse press accepted by: ", item->objectName());
+                return true;
+            }
+        }
+        QLOC_TRACE1("no item found for initial mouse press");
+        return false;
+    }
+    if (mouseGrabberItem_) {
+        bool transformOk;
+        const QTransform &transform = itemTransform(mouseGrabberItem_, &transformOk);
+        QMouseEvent me(event->type(),                     // event type
+                       transform.map(event->windowPos()), // pos coordinates translated into that of mapmousearea (local coords)
+                       event->windowPos(),                // window position (coords relative to window)
+                       event->screenPos(),                // global position (absolute coords)
+                       event->button(),                   // button causing the event
+                       event->buttons(),                  // buttons pressed when event was caused
+                       event->modifiers());               // any keyboard modifiers held when event was triggered
+        me.accept();
+        mouseGrabberItem_->mouseEvent(&me);
+        QLOC_TRACE2("mouse grabber accepted event: ", me.isAccepted());
+        event->setAccepted(me.isAccepted());
+        if (me.isAccepted())
+            return true;
+    }
+    return false;
+}
+
+bool QDeclarative3DGraphicsGeoMap::deliverInitialMousePressEvent(QDeclarativeGeoMapMouseArea* ma, QMouseEvent* event)
+{
+    if (ma->acceptedMouseButtons() & event->button()) {
+        QPointF p = ma->mapFromScene(event->windowPos());
+        if (QRectF(0, 0, ma->width(), ma->height()).contains(p)) {
+            QMouseEvent me(event->type(), p, event->windowPos(), event->screenPos(),
+                           event->button(), event->buttons(), event->modifiers());
+                me.accept();
+                mouseGrabberItem_ = ma;
+                // canvas_->sendEvent(item, &me);
+                ma->mouseEvent(&me);
+                event->setAccepted(me.isAccepted());
+                QLOC_TRACE2("the initial mouse press accepted: ", me.isAccepted());
+                if (me.isAccepted())
+                    return true;
+                QLOC_TRACE1("nulling the mouse grabber");
+                mouseGrabberItem_ = 0;
+            }
+        }
+    return false;
+}
+
+void QDeclarative3DGraphicsGeoMap::mousePressEvent(QMouseEvent *event)
+{
+    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
+    deliverMouseEvent(event);
     if (flickable_)
         flickable_->mousePressEvent(event);
     if (pinchArea_)
         pinchArea_->mousePressEvent(event);
-    //QSGItem::mousePressEvent(event);
 }
 
-void QDeclarative3DGraphicsGeoMap::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+// returns list of mouse areas under 'pos'. returned list is in the priority order in which the
+// mouse events should be provided (currently does not consider 'z')
+QList<QDeclarativeGeoMapMouseArea*> QDeclarative3DGraphicsGeoMap::mouseAreasAt(QPoint pos)
 {
-#ifdef QSGMOUSEAREA_AVAILABLE
-    canvas()->sendEvent(mouseArea_, event);
-#endif
+    QList<QDeclarativeGeoMapMouseArea*> list;
+    for (int i = mouseAreas_.count() - 1; i >= 0; --i) {
+        if (mouseAreas_.at(i)->boundingRect().contains(mouseAreas_.at(i)->mapFromScene(pos))) {
+            list.append(mouseAreas_.at(i));
+        }
+    }
+    return list;
+}
+
+void QDeclarative3DGraphicsGeoMap::mouseReleaseEvent(QMouseEvent *event)
+{
+    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
+    if (!mouseGrabberItem_) {
+        QSGItem::mouseReleaseEvent(event);
+        return;
+    }
+    deliverMouseEvent(event);
+    QLOC_TRACE1("nulling mouse grabber");
+
+    mouseGrabberItem_ = 0;
     if (flickable_)
         flickable_->mouseReleaseEvent(event);
     if (pinchArea_)
         pinchArea_->mouseReleaseEvent(event);
-    //QSGItem::mouseReleaseEvent(event);
 }
 
-void QDeclarative3DGraphicsGeoMap::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarative3DGraphicsGeoMap::mouseDoubleClickEvent(QMouseEvent *event)
 {
-//    if (!mapData_) {
-//        qmlInfo(this) << tr("Map plugin is not set, mouse event cannot be processed.");
-//        return;
-//    }
-#ifdef QSGMOUSEAREA_AVAILABLE
-    canvas()->sendEvent(mouseArea_, event);
-#endif
-    //QSGItem::mouseDoubleClickEvent(event);
+    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
+    if (!mouseGrabberItem_ && (event->button() & event->buttons()) == event->buttons()) {
+        QList<QDeclarativeGeoMapMouseArea*> mouseAreas = mouseAreasAt(event->pos());
+        for (int i = 0; i < mouseAreas.count(); ++i) {
+            if (deliverInitialMousePressEvent(mouseAreas.at(i), event)) {
+                event->accept();
+                return;
+            }
+        }
+        event->ignore();
+        return;
+    }
+    deliverMouseEvent(event);
 }
 
-void QDeclarative3DGraphicsGeoMap::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarative3DGraphicsGeoMap::mouseMoveEvent(QMouseEvent *event)
 {
-#ifdef QSGMOUSEAREA_AVAILABLE
-    canvas()->sendEvent(mouseArea_, event);
-#endif
+    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
+    /* hover placeholder
+    if (!mouseGrabberItem_) {
+        if (lastMousePosition_.isNull())
+            lastMousePosition_ = event->windowPos();
+        QPointF last = lastMousePosition_;
+        lastMousePosition_ = event->windowPos();
+        bool accepted = event->isAccepted();
+        bool delivered = deliverHoverEvent(mouseAreaAt(event->pos()), event->windowPos(), last, event->modifiers(), accepted);
+        // exit any hover areas if we're out of bounds
+        if (!delivered)
+            accepted = clearHover();
+        event->setAccepted(accepted);
+        return;
+    }
+    */
+    if (!mouseGrabberItem_)
+        return;
+
+    deliverMouseEvent(event);
     if (flickable_)
         flickable_->mouseMoveEvent(event);
     if (pinchArea_)
         pinchArea_->mouseMoveEvent(event);
-    //QSGItem::mouseMoveEvent(event);
 }
 
-void QDeclarative3DGraphicsGeoMap::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+// hover functions are a placeholder. It works to an extent but
+// will need more work and testing if will be supported officially
+/*
+
+bool QDeclarative3DGraphicsGeoMap::deliverHoverEvent(QDeclarativeGeoMapMouseArea* ma, const QPointF &scenePos, const QPointF &lastScenePos,
+                                         Qt::KeyboardModifiers modifiers, bool &accepted)
 {
-//    if (!mapData_)
-//        return;
-#ifdef QSGMOUSEAREA_AVAILABLE
-    if (mouseArea_ && mouseArea_->hoverEnabled()) {
-        canvas()->sendEvent(mouseArea_, event);
+    if (hoverItem_ && ma == hoverItem_) {
+        // hovering on the same item as before
+        QLOC_TRACE2(" deliver hover for same item: ", ma->objectName());
+        accepted = sendHoverEvent(QEvent::HoverMove, ma, scenePos, lastScenePos, modifiers, accepted);
+        return true;
+    } else {
+        // leave previous hover item since it is different
+        if (hoverItem_) {
+            sendHoverEvent(QEvent::HoverLeave, hoverItem_, scenePos, lastScenePos, modifiers, accepted);
+            QLOC_TRACE2("exiting previous hover area: ", hoverItem_->objectName());
+            hoverItem_ = 0;
+        }
+        // enter new hover item if any
+        if (ma && ma->hoverEnabled()) {
+            QLOC_TRACE2("entering new hover area: ",  ma->objectName());
+            sendHoverEvent(QEvent::HoverEnter, ma, scenePos, lastScenePos, modifiers, accepted);
+            hoverItem_ = ma;
+        } else {
+            if (ma) {
+                QLOC_TRACE2("no hover area, hovering disabled: ",  ma->objectName());
+            } else {
+                QLOC_TRACE1("no hover area");
+            }
+        }
+        return true;
     }
-#endif
+    return false;
 }
 
-void QDeclarative3DGraphicsGeoMap::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+
+void QDeclarative3DGraphicsGeoMap::hoverEvent(QHoverEvent* event)
 {
-#ifdef QSGMOUSEAREA_AVAILABLE
-    if (mouseArea_ && mouseArea_->hoverEnabled()) {
-        canvas()->sendEvent(mouseArea_, event);
+    QDeclarativeGeoMapMouseArea* ma = mouseAreaAt(event->pos());
+    if (ma) {
+        QLOC_TRACE2("for mouse area: ", ma->objectName());
+    } else {
+        QLOC_TRACE1("no mouse area");
     }
-#endif
+    if (lastMousePosition_.isNull())
+        lastMousePosition_ = event->pos(); // hmmm todo was windowPos
+    QPointF last = lastMousePosition_;
+    lastMousePosition_ = event->pos(); // hmmm todo was windowPos
+    bool accepted = event->isAccepted();
+    (bool)deliverHoverEvent(ma, event->pos(), last, event->modifiers(), accepted);
 }
 
-void QDeclarative3DGraphicsGeoMap::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+
+bool QDeclarative3DGraphicsGeoMap::clearHover()
 {
-//    if (!mapData_)
-//        return;
-#ifdef QSGMOUSEAREA_AVAILABLE
-    if (mouseArea_ && mouseArea_->hoverEnabled()) {
-        canvas()->sendEvent(mouseArea_, event);
-    }
-#endif
+    QLOC_TRACE0;
+    if (!hoverItem_)
+        return false;
+    QPointF pos = QCursor::pos();
+    bool accepted = sendHoverEvent(QEvent::HoverLeave, hoverItem_, pos, pos, QGuiApplication::keyboardModifiers(), true);
+    hoverItem_ = 0;
+    return accepted;
 }
+
+bool QDeclarative3DGraphicsGeoMap::sendHoverEvent(QEvent::Type type, QSGItem *item,
+                                      const QPointF &scenePos, const QPointF &lastScenePos,
+                                      Qt::KeyboardModifiers modifiers, bool accepted)
+{
+    bool transformOk;
+    const QTransform &transform = itemTransform(item, &transformOk);
+    //create copy of event
+    QHoverEvent hoverEvent(type, transform.map(scenePos), transform.map(lastScenePos), modifiers);
+    hoverEvent.setAccepted(accepted);
+    QDeclarativeGeoMapMouseArea* ma = static_cast<QDeclarativeGeoMapMouseArea*>(item);
+    ma->hoverEvent(&hoverEvent);
+    return hoverEvent.isAccepted();
+}
+
+void QDeclarative3DGraphicsGeoMap::hoverEnterEvent(QHoverEvent *event)
+{
+    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
+    QLOC_TRACE2(" type: ", event->type());
+    hoverEvent(event);
+}
+
+void QDeclarative3DGraphicsGeoMap::hoverMoveEvent(QHoverEvent *event)
+{
+    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
+    QLOC_TRACE2(" type: ", event->type());
+    hoverEvent(event);
+}
+
+void QDeclarative3DGraphicsGeoMap::hoverLeaveEvent(QHoverEvent *event)
+{
+    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
+    QLOC_TRACE2(" type: ", event->type());
+    hoverEvent(event);
+}
+*/
 
 void QDeclarative3DGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &coordinate)
 {
@@ -1127,6 +1210,8 @@ void QDeclarative3DGraphicsGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
     item->setMap(this);
     mapItems_.append(item);
     map_->addMapItem(item->mapItem());
+#else
+    Q_UNUSED(item);
 #endif
 }
 
@@ -1140,6 +1225,8 @@ void QDeclarative3DGraphicsGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
     mapItems_.removeOne(item);
     mapItemsPending_.removeOne(item);
     map_->removeMapItem(item->mapItem());
+#else
+    Q_UNUSED(item);
 #endif
 }
 

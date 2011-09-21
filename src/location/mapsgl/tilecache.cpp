@@ -396,16 +396,17 @@ void TileCache::loadTiles()
     //QStringList files = dir.entryList(formats, QDir::Files, QDir::Time | QDir::Reversed);
     QStringList files = dir.entryList(formats, QDir::Files);
 
-    qDebug() << __FUNCTION__ << "tiles: " << files.size();
+    int tiles = 0;
     for (int i = 0; i < files.size(); ++i) {
-
         TileSpec spec = filenameToTileSpec(files.at(i));
         if (spec.zoom() == -1)
             continue;
         QString filename = dir.filePath(files.at(i));
-        qDebug() << __FUNCTION__ << "tile iteration: " << i;
         addToDiskCache(spec, filename);
+        tiles++;
     }
+    qDebug() << __FUNCTION__ << " loaded this many map tiles to cache: " << tiles;
+
 }
 
 QString TileCache::tileSpecToFilename(const TileSpec &spec, const QString &directory)

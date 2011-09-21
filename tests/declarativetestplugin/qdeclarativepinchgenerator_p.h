@@ -2,7 +2,7 @@
 #define QDECLARATIVEPINCHGENERATOR_H
 
 #include <QtDeclarative/QSGItem>
-#include <QGraphicsSceneMouseEvent>
+#include <QMouseEvent>
 #include <QElapsedTimer>
 #include <QTouchEvent>
 #include <QSGCanvas>
@@ -93,16 +93,16 @@ public:
     void itemChange(ItemChange change, const ItemChangeData & data);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void timerEvent(QTimerEvent *event);
 
 private:
     void setState(GeneratorState state);
-    QTouchEvent::TouchPoint mouseEventToTouchPoint(QGraphicsSceneMouseEvent* event);
+    QTouchEvent::TouchPoint mouseEventToTouchPoint(QMouseEvent* event);
     QTouchEvent::TouchPoint convertToPrimary(QTouchEvent::TouchPoint original);
 
 private:

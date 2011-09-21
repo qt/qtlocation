@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>map3d.qml</file>
+        <file>map3d_mousetest.qml</file>
         <file>Dialog.qml</file>
         <file>common/TitleBar.qml</file>
         <file>common/Button.qml</file>

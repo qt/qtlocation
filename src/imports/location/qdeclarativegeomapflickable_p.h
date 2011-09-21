@@ -49,6 +49,7 @@
 #endif
 
 #include <QtDeclarative/qdeclarative.h>
+#include <QtGui/qevent.h>
 #include <QElapsedTimer>
 #include <QVector>
 #include <QObject>
@@ -79,9 +80,9 @@ public:
     bool enabled() const;
     void setEnabled(bool enabled);
 
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mouseMoveEvent(QMouseEvent *event);
+    virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void timerEvent(QTimerEvent *event);
 
 signals:

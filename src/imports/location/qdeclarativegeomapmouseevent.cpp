@@ -61,7 +61,11 @@ QDeclarativeGeoMapMouseEvent::QDeclarativeGeoMapMouseEvent(QObject *parent)
     : QObject(parent),
       accepted_(false),
       button_(Qt::NoButton),
-      coordinate_(0)
+      modifiers_(Qt::NoModifier),
+      wasHeld_(false),
+      x_(0),
+      y_(0),
+      buttons_(Qt::NoButton)
 {
 }
 
@@ -76,8 +80,7 @@ QDeclarativeGeoMapMouseEvent::~QDeclarativeGeoMapMouseEvent()
     propagated to items below this item.
 
     Generally, if the item acts on the mouse event then it should be accepted
-    so that items lower in the stacking order do not also respond to the same ev
-ent.
+    so that items lower in the stacking order do not also respond to the same event.
 */
 
 void QDeclarativeGeoMapMouseEvent::setAccepted(bool accepted)
@@ -94,11 +97,14 @@ bool QDeclarativeGeoMapMouseEvent::accepted() const
     \qmlproperty enumeration MapMouseEvent::button
 
     This property holds the button that caused the event.  It can be one of:
+
     \list
     \o Qt.LeftButton
     \o Qt.RightButton
     \o Qt.MiddleButton
     \endlist
+
+    \sa buttons
 */
 
 void QDeclarativeGeoMapMouseEvent::setButton(int button)
@@ -109,6 +115,36 @@ void QDeclarativeGeoMapMouseEvent::setButton(int button)
 int QDeclarativeGeoMapMouseEvent::button() const
 {
     return button_;
+}
+
+/*!
+    \qmlproperty enumeration MapMouseEvent::buttons
+
+    This property holds the mouse buttons pressed when the event was
+    generated. For mouse move events, this is all buttons that are pressed
+    down. For mouse press and double click events this includes the button
+    that caused the event. For mouse release events this excludes the button
+    that caused the event.
+
+    It contains a bitwise combination of:
+
+    \list
+    \o Qt.LeftButton
+    \o Qt.RightButton
+    \o Qt.MiddleButton
+    \endlist
+
+    \sa button
+*/
+
+void QDeclarativeGeoMapMouseEvent::setButtons(int buttons)
+{
+    buttons_ = buttons;
+}
+
+int QDeclarativeGeoMapMouseEvent::buttons() const
+{
+    return buttons_;
 }
 
 /*!
@@ -138,15 +174,21 @@ int QDeclarativeGeoMapMouseEvent::modifiers() const
     return modifiers_;
 }
 
-//void QDeclarativeGeoMapMouseEvent::setWasHeld(bool wasHeld)
-//{
-//    wasHeld_ = wasHeld;
-//}
+/*!
+    \qmlproperty bool MapMouseEvent::wasHeld
 
-//bool QDeclarativeGeoMapMouseEvent::wasHeld() const
-//{
-//    return wasHeld_;
-//}
+     This property is true if the mouse button has been held pressed longer the threshold (800ms).
+*/
+
+void QDeclarativeGeoMapMouseEvent::setWasHeld(bool wasHeld)
+{
+    wasHeld_ = wasHeld;
+}
+
+bool QDeclarativeGeoMapMouseEvent::wasHeld() const
+{
+    return wasHeld_;
+}
 
 /*!
     \qmlproperty int MapMouseEvent::x
@@ -184,17 +226,14 @@ int QDeclarativeGeoMapMouseEvent::y() const
     occurred.
 */
 
-void QDeclarativeGeoMapMouseEvent::setCoordinate(QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoMapMouseEvent::setCoordinate(QGeoCoordinate coordinate)
 {
-    if (!coordinate || (coordinate == coordinate_))
-        return;
-
-    coordinate_ = coordinate;
+    coordinate_.setCoordinate(coordinate);
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoMapMouseEvent::coordinate()
 {
-    return coordinate_;
+    return &coordinate_;
 }
 
 #include "moc_qdeclarativegeomapmouseevent_p.cpp"

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,40 +46,50 @@
 #include "qdeclarative3dgraphicsgeomap_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 
-// !!! IMPORTANT !!!
-//
-// Inheriting from QSGItem here
-// is just a workaround to have non-gui related (ie where visualization is not
-// the main thing) autotests to pass in QML2 environment.
-// Real QML2 Map support (and related map object is a work in progress elsewhere.
-// This Map element instantiates but does not do anything meaningful from app dev
-// perspective.
-//
-// !!! IMPORTANT !!!
-
 #include <QtDeclarative/QSGItem>
 
 QT_BEGIN_NAMESPACE
+
+#ifndef QSGMOUSEAREA_AVAILABLE
 
 class QDeclarativeGeoMapMouseArea : public QSGItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(qreal mouseX READ mouseX NOTIFY mousePositionChanged)
-    Q_PROPERTY(qreal mouseY READ mouseY NOTIFY mousePositionChanged)
+public:
+    void setMap(QDeclarative3DGraphicsGeoMap *map) {Q_UNUSED(map);}
+    bool mouseEvent(QMouseEvent* event) {Q_UNUSED(event); return false;}
+
+    QDeclarativeGeoMapMouseArea(QSGItem *parent = 0) { Q_UNUSED(parent); qWarning("=================== using map mouse area stub ===============");}
+    ~QDeclarativeGeoMapMouseArea() {}
+};
+
+#else
+
+class QSGMouseArea;
+class QSGMouseEvent;
+
+class QDeclarativeGeoMapMouseArea : public QSGItem
+{
+    Q_OBJECT
+    Q_PROPERTY(qreal mouseX READ mouseX NOTIFY positionChanged)
+    Q_PROPERTY(qreal mouseY READ mouseY NOTIFY positionChanged)
     Q_PROPERTY(bool containsMouse READ hovered NOTIFY hoveredChanged)
     Q_PROPERTY(bool pressed READ pressed NOTIFY pressedChanged)
     Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
-    Q_PROPERTY(Qt::MouseButton pressedButton READ pressedButton NOTIFY pressedButtonChanged)
+    Q_PROPERTY(Qt::MouseButtons pressedButtons READ pressedButtons NOTIFY pressedChanged)
     Q_PROPERTY(Qt::MouseButtons acceptedButtons READ acceptedButtons WRITE setAcceptedButtons NOTIFY acceptedButtonsChanged)
-    Q_PROPERTY(bool hoverEnabled READ hoverEnabled WRITE setHoverEnabled NOTIFY hoverEnabledChanged)
+    // placeholder (if hover will be enabled)
+    //Q_PROPERTY(bool hoverEnabled READ hoverEnabled WRITE setHoverEnabled NOTIFY hoverEnabledChanged)
 
 public:
     QDeclarativeGeoMapMouseArea(QSGItem *parent = 0);
     ~QDeclarativeGeoMapMouseArea();
 
+    // From QDeclarativeParserStatus
+    virtual void componentComplete();
+
     void setMap(QDeclarative3DGraphicsGeoMap *map);
-    QDeclarative3DGraphicsGeoMap* map() const;
 
     qreal mouseX() const;
     qreal mouseY() const;
@@ -89,67 +99,63 @@ public:
     bool isEnabled() const;
     void setEnabled(bool enabled);
 
-    Qt::MouseButton pressedButton() const;
+    Qt::MouseButtons pressedButtons() const;
 
-    bool hoverEnabled() const;
-    void setHoverEnabled(bool hoverEnabled);
+    //bool hoverEnabled() const;
+    //void setHoverEnabled(bool hoverEnabled);
 
     void setAcceptedButtons(Qt::MouseButtons acceptedButtons);
     Qt::MouseButtons acceptedButtons() const;
 
-    void doubleClickEvent(QDeclarativeGeoMapMouseEvent *event);
-    void pressEvent(QDeclarativeGeoMapMouseEvent *event);
-    void releaseEvent(QDeclarativeGeoMapMouseEvent *event);
-    void enterEvent();
-    void exitEvent();
-    void moveEvent(QDeclarativeGeoMapMouseEvent *event);
+    bool mouseEvent(QMouseEvent* event);
+    //bool hoverEvent(QHoverEvent* event);
 
 Q_SIGNALS:
-    void mousePositionChanged();
+    // publicly supported (i.e. documented) signals:
+    void clicked(QDeclarativeGeoMapMouseEvent *mouse);
+    void doubleClicked(QDeclarativeGeoMapMouseEvent *mouse);
+    void pressed(QDeclarativeGeoMapMouseEvent *mouse);
+    void released(QDeclarativeGeoMapMouseEvent *mouse);
+    void positionChanged(QDeclarativeGeoMapMouseEvent *mouse);
+    void pressAndHold(QDeclarativeGeoMapMouseEvent *mouse);
+    void entered();
+    void exited();
+    // internal signals (non documented, used as property notifiers):
     void hoveredChanged(bool hovered);
     void pressedChanged(bool pressed);
     void enabledChanged(bool enabled);
-    void pressedButtonChanged(Qt::MouseButtons pressedButton);
     void acceptedButtonsChanged(Qt::MouseButtons acceptedButtons);
-    void hoverEnabledChanged(bool hoverEnabled);
+    //void hoverEnabledChanged(bool hoverEnabled);
 
-    void positionChanged(QDeclarativeGeoMapMouseEvent *mouse);
-    void pressed(QDeclarativeGeoMapMouseEvent *mouse);
-//    void pressAndHold(QDeclarativeGeoMapMouseEvent *mouse);
-    void released(QDeclarativeGeoMapMouseEvent *mouse);
-    void clicked(QDeclarativeGeoMapMouseEvent *mouse);
-    void doubleClicked(QDeclarativeGeoMapMouseEvent *mouse);
-    void entered();
-    void exited();
-//    void cancelled();
+protected:
+    // from QSGItem
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
+
+private slots:
+    void pressedHandler(QSGMouseEvent* event);
+    void releasedHandler(QSGMouseEvent* event);
+    void clickedHandler(QSGMouseEvent* event);
+    void doubleClickedHandler(QSGMouseEvent* event);
+    void positionChangedHandler(QSGMouseEvent* event);
+    void pressAndHoldHandler(QSGMouseEvent* event);
+    void enteredHandler();
+    void exitedHandler();
+    void canceledHandler();
+    void enabledChangedHandler();
+    void acceptedButtonsChangedHandler();
+    //void hoverEnabledChangedHandler();
+    void pressedChangedHandler();
+    void hoveredChangedHandler();
 
 private:
-    bool setPressed(bool pressed, QDeclarativeGeoMapMouseEvent *event);
-    void setHovered(bool hovered);
-
-    bool hovered_;
-    bool enabled_;
-    bool hoverEnabled_;
-    qreal mouseX_;
-    qreal mouseY_;
-    bool pressed_;
-    bool longPress_;
-    bool doubleClick_;
-    Qt::MouseButtons acceptedButtons_;
-    Qt::MouseButton pressedButton_;
-    Qt::KeyboardModifiers modifiers_;
-
-//    qreal startX_;
-//    qreal startY_;
-//    QPointF lastPos_;
-//    QPointF lastScenePos_;
-//    Qt::MouseButton lastButton_;
-//    Qt::MouseButtons lastButtons_;
-//    Qt::KeyboardModifiers lastModifiers_;
-
+    void mapMouseEvent(QSGMouseEvent* event);
+    QDeclarativeGeoMapMouseEvent* mouseEvent_;
     QDeclarative3DGraphicsGeoMap* map_;
+    QSGMouseArea* mouseArea_;
+    bool componentCompleted_;
 };
 
+#endif // QSGMOUSEAREA_AVAILABLE
 QT_END_NAMESPACE
 
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapMouseArea));

@@ -122,7 +122,7 @@ void QDeclarativeGeoMapFlickable::setDeceleration(qreal deceleration)
     emit decelerationChanged();
 }
 
-void QDeclarativeGeoMapFlickable::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarativeGeoMapFlickable::mousePressEvent(QMouseEvent *event)
 {
     if (!enabled_)
         return;
@@ -158,7 +158,7 @@ void QDeclarativeGeoMapFlickable::stop()
     velocityTime_.invalidate();
 }
 
-void QDeclarativeGeoMapFlickable::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarativeGeoMapFlickable::mouseMoveEvent(QMouseEvent *event)
 {
     if (!enabled_) {
         return;
@@ -284,7 +284,7 @@ bool QDeclarativeGeoMapFlickable::enabled() const
     return enabled_;
 }
 
-void QDeclarativeGeoMapFlickable::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void QDeclarativeGeoMapFlickable::mouseReleaseEvent(QMouseEvent *event)
 {
     if (!pressed_ || !enabled_)
         return;
