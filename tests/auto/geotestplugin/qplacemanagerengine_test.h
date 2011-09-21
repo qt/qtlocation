@@ -42,9 +42,13 @@
 #ifndef QPLACEMANAGERENGINE_TEST_H
 #define QPLACEMANAGERENGINE_TEST_H
 
+#include <QtCore/QUuid>
+
 #include <qplacemanager.h>
 #include <qplacemanagerengine.h>
 #include <qplacereply.h>
+
+#include <QtCore/QDebug>
 
 QT_USE_NAMESPACE
 
@@ -61,6 +65,50 @@ Q_SIGNALS:
     void aborted();
 };
 
+class DetailsReply : public QPlaceDetailsReply
+{
+    Q_OBJECT
+
+    friend class QPlaceManagerEngineTest;
+
+public:
+    DetailsReply(QObject *parent = 0)
+    :   QPlaceDetailsReply(parent)
+    { }
+
+    Q_INVOKABLE void emitError()
+    {
+        emit error(error(), errorString());
+    }
+
+    Q_INVOKABLE void emitFinished()
+    {
+        emit finished();
+    }
+};
+
+class IdReply : public QPlaceIdReply
+{
+    Q_OBJECT
+
+    friend class QPlaceManagerEngineTest;
+
+public:
+    IdReply(QPlaceIdReply::OperationType type, QObject *parent = 0)
+    :   QPlaceIdReply(type, parent)
+    { }
+
+    Q_INVOKABLE void emitError()
+    {
+        emit error(error(), errorString());
+    }
+
+    Q_INVOKABLE void emitFinished()
+    {
+        emit finished();
+    }
+};
+
 class QPlaceManagerEngineTest : public QPlaceManagerEngine
 {
     Q_OBJECT
@@ -72,9 +120,18 @@ public:
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId)
     {
-        Q_UNUSED(placeId)
+        DetailsReply *reply = new DetailsReply(this);
 
-        return 0;
+        if (placeId.isEmpty() || !m_places.contains(placeId)) {
+            reply->setError(QPlaceReply::PlaceDoesNotExistError, tr("Place does not exist"));
+            QMetaObject::invokeMethod(reply, "emitError", Qt::QueuedConnection);
+        } else {
+            reply->setResult(m_places.value(placeId));
+        }
+
+        QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
+
+        return reply;
     }
 
     QPlaceContentReply *getContent(const QPlace &place, const QPlaceContentRequest &query)
@@ -117,10 +174,27 @@ public:
 
     QPlaceIdReply *savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope)
     {
-        Q_UNUSED(place)
         Q_UNUSED(scope)
 
-        return 0;
+        IdReply *reply = new IdReply(QPlaceIdReply::SavePlace, this);
+
+        if (!place.placeId().isEmpty() && !m_places.contains(place.placeId())) {
+            reply->setError(QPlaceReply::PlaceDoesNotExistError, tr("Place does not exist"));
+            QMetaObject::invokeMethod(reply, "emitError", Qt::QueuedConnection);
+        } else if (!place.placeId().isEmpty()) {
+            m_places.insert(place.placeId(), place);
+            reply->setId(place.placeId());
+        } else {
+            QPlace p = place;
+            p.setPlaceId(QUuid::createUuid().toString());
+            m_places.insert(p.placeId(), p);
+
+            reply->setId(p.placeId());
+        }
+
+        QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
+
+        return reply;
     }
 
     QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const
@@ -130,9 +204,19 @@ public:
 
     QPlaceIdReply *removePlace(const QPlace &place)
     {
-        Q_UNUSED(place)
+        IdReply *reply = new IdReply(QPlaceIdReply::RemovePlace, this);
+        reply->setId(place.placeId());
 
-        return 0;
+        if (!m_places.contains(place.placeId())) {
+            reply->setError(QPlaceReply::PlaceDoesNotExistError, tr("Place does not exist"));
+            QMetaObject::invokeMethod(reply, "emitError", Qt::QueuedConnection);
+        } else {
+            m_places.remove(place.placeId());
+        }
+
+        QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
+
+        return reply;
     }
 
     QPlaceReply *initializeCategories()
@@ -159,6 +243,7 @@ public:
 
 private:
     QLocale m_locale;
+    QMap<QString, QPlace> m_places;
 };
 
 #endif

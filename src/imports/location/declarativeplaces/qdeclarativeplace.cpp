@@ -65,24 +65,23 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
-:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
-    m_extendedAttributes(new QDeclarativePropertyMap()),
+:   QObject(parent), m_location(0), m_rating(0),
+    m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
+    m_extendedAttributes(new QDeclarativePropertyMap(this)),
     m_reply(0), m_plugin(0),m_complete(false), m_status(QDeclarativePlace::Ready)
 {
 }
 
 QDeclarativePlace::QDeclarativePlace(const QPlace &src, QObject *parent)
-:   QObject(parent), m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
-    m_extendedAttributes(new QDeclarativePropertyMap()),
+:   QObject(parent), m_location(0), m_rating(0),
+    m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
+    m_extendedAttributes(new QDeclarativePropertyMap(this)),
     m_src(src), m_reply(0), m_plugin(0), m_complete(false),
     m_status(QDeclarativePlace::Ready)
 {
     synchronizeCategories();
     synchronizeSuppliers();
     synchronizeExtendedAttributes();
-
-    m_rating.setRating(m_src.rating());
-    m_location.setLocation(m_src.location());
 }
 
 QDeclarativePlace::~QDeclarativePlace()
@@ -155,14 +154,21 @@ void QDeclarativePlace::setPlace(const QPlace &src)
         synchronizeCategories();
         emit categoriesChanged();
     }
-    if (previous.location() != m_src.location()) {
-        m_location.setLocation(src.location());
+
+    if (m_location && m_location->parent() == this) {
+        m_location->setLocation(m_src.location());
+    } else if (!m_location || m_location->parent() != this) {
+        m_location = new QDeclarativeGeoLocation(m_src.location(), this);
         emit locationChanged();
     }
-    if (previous.rating() != m_src.rating()) {
-        m_rating.setRating(src.rating());
+
+    if (m_rating && m_rating->parent() == this) {
+        m_rating->setRating(m_src.rating());
+    } else if (!m_rating || m_rating->parent() != this) {
+        m_rating = new QDeclarativeRating(m_src.rating(), this);
         emit ratingChanged();
     }
+
     if (previous.suppliers() != m_src.suppliers()) {
         synchronizeSuppliers();
         emit suppliersChanged();
@@ -190,13 +196,18 @@ void QDeclarativePlace::setPlace(const QPlace &src)
     }
 
     if (previous.placeId() != m_src.placeId()) {
-        m_reviewModel->clear();
-        m_imageModel->clear();
-        m_editorialModel->clear();
+        if (m_reviewModel)
+            m_reviewModel->clear();
+        if (m_imageModel)
+            m_imageModel->clear();
+        if (m_editorialModel)
+            m_editorialModel->clear();
     }
 
-    if (previous.extendedAttributes() != m_src.extendedAttributes())
-    {
+    if (m_extendedAttributes && m_extendedAttributes->parent() == this) {
+        synchronizeExtendedAttributes();
+    } else if (!m_extendedAttributes || m_extendedAttributes->parent() != this) {
+        m_extendedAttributes = new QDeclarativePropertyMap(this);
         synchronizeExtendedAttributes();
         emit extendedAttributesChanged();
     }
@@ -204,19 +215,32 @@ void QDeclarativePlace::setPlace(const QPlace &src)
 
 QPlace QDeclarativePlace::place()
 {
+    // The following properties are not stored in m_src but instead stored in QDeclarative* objects
+
+    QPlace result = m_src;
+
+    // Categories
     QList<QPlaceCategory> categories;
-    foreach (QDeclarativeCategory *value, m_categories) {
+    foreach (QDeclarativeCategory *value, m_categories)
         categories.append(value->category());
-    }
-    m_src.setCategories(categories);
-    m_src.setLocation(m_location.location());
-    m_src.setRating(m_rating.rating());
+
+    result.setCategories(categories);
+
+    // Location
+    result.setLocation(m_location ? m_location->location() : QGeoLocation());
+
+    // Rating
+    result.setRating(m_rating ? m_rating->rating() : QPlaceRating());
+
+    // Suppliers
     QList<QPlaceSupplier> suppliers;
-    foreach (QDeclarativeSupplier *value, m_suppliers) {
+    foreach (QDeclarativeSupplier *value, m_suppliers)
         suppliers.append(value->supplier());
-    }
-    m_src.setSuppliers(suppliers);
-    return m_src;
+
+    result.setSuppliers(suppliers);
+
+    // Extended Attributes
+    return result;
 }
 
 /*!
@@ -229,16 +253,19 @@ QPlace QDeclarativePlace::place()
 */
 void QDeclarativePlace::setLocation(QDeclarativeGeoLocation *location)
 {
-    if (m_src.location() != location->location()) {
-        m_location.setLocation(location->location());
-        m_src.setLocation(location->location());
-        emit locationChanged();
-    }
+    if (m_location == location)
+        return;
+
+    if (m_location && m_location->parent() == this)
+        delete m_location;
+
+    m_location = location;
+    emit locationChanged();
 }
 
 QDeclarativeGeoLocation *QDeclarativePlace::location()
 {
-    return &m_location;
+    return m_location;
 }
 
 /*!
@@ -249,18 +276,22 @@ QDeclarativeGeoLocation *QDeclarativePlace::location()
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.
 */
-void QDeclarativePlace::setRating(QDeclarativeRating *obj)
+void QDeclarativePlace::setRating(QDeclarativeRating *rating)
 {
-    if (m_src.rating() != obj->rating()) {
-        m_rating.setRating(obj->rating());
-        m_src.setRating(obj->rating());
-        emit ratingChanged();
-    }
+    if (m_rating == rating)
+        return;
+
+    if (m_rating && m_rating->parent() == this)
+        delete m_rating;
+
+    m_rating = rating;
+    emit ratingChanged();
 }
 
 QDeclarativeRating *QDeclarativePlace::rating()
 {
-    return &m_rating;
+
+    return m_rating;
 }
 
 /*!
@@ -548,30 +579,14 @@ QUrl QDeclarativePlace::primaryUrl() const
 */
 void QDeclarativePlace::setExtendedAttributes(QDeclarativePropertyMap *attribs)
 {
-    QStringList otherKeys = attribs->keys();
-    bool isSame = true;
-    if (otherKeys.count() == m_src.extendedAttributes().count()) {
-        foreach (const QString &key, otherKeys) {
-            if (m_src.extendedAttributes().value(key) !=
-                    qvariant_cast<QDeclarativePlaceAttribute*>(attribs->value(key))->attribute()) {
-                isSame = false;
-                break;
-            }
-        }
-    } else {
-        isSame = false;
-    }
+    if (m_extendedAttributes == attribs)
+        return;
 
-    if (!isSame) {
-        m_src.extendedAttributes().clear();
-        QPlace::ExtendedAttributes extendedAttributes;
-        foreach (const QString &key, otherKeys)
-            extendedAttributes.insert(key, (qvariant_cast<QDeclarativePlaceAttribute*>(attribs->value(key)))->attribute());
-        m_src.setExtendedAttributes(extendedAttributes);
+    if (m_extendedAttributes && m_extendedAttributes->parent() == this)
+        delete m_extendedAttributes;
 
-        synchronizeExtendedAttributes();
-        emit extendedAttributesChanged();
-    }
+    m_extendedAttributes = attribs;
+    emit extendedAttributesChanged();
 }
 
 QDeclarativePropertyMap *QDeclarativePlace::extendedAttributes() const
@@ -629,6 +644,9 @@ QDeclarativeCategory* QDeclarativePlace::category_at(QDeclarativeListProperty<QD
 void QDeclarativePlace::category_clear(QDeclarativeListProperty<QDeclarativeCategory> *prop)
 {
     QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
+    if (object->m_categories.isEmpty())
+        return;
+
     qDeleteAll(object->m_categories);
     object->m_categories.clear();
     object->m_src.setCategories(QList<QPlaceCategory>());
@@ -695,6 +713,9 @@ QDeclarativeSupplier* QDeclarativePlace::suppliers_at(QDeclarativeListProperty<Q
 void QDeclarativePlace::suppliers_clear(QDeclarativeListProperty<QDeclarativeSupplier> *prop)
 {
     QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
+    if (object->m_suppliers.isEmpty())
+        return;
+
     qDeleteAll(object->m_suppliers);
     object->m_suppliers.clear();
     object->m_src.setSuppliers(QList<QPlaceSupplier>());
@@ -723,6 +744,8 @@ void QDeclarativePlace::synchronizeExtendedAttributes()
         m_extendedAttributes->insert(attribIter.key(),
             qVariantFromValue(new QDeclarativePlaceAttribute(attribIter.value())));
     }
+
+    emit extendedAttributesChanged();
 }
 
 /*

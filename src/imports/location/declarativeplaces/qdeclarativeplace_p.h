@@ -193,8 +193,8 @@ private:
     QPlaceManager *manager();
 
     QList<QDeclarativeCategory*> m_categories;
-    QDeclarativeGeoLocation m_location;
-    QDeclarativeRating m_rating;
+    QDeclarativeGeoLocation *m_location;
+    QDeclarativeRating *m_rating;
     QList<QDeclarativeSupplier*> m_suppliers;
     QDeclarativeReviewModel *m_reviewModel;
     QDeclarativePlaceImageModel *m_imageModel;
