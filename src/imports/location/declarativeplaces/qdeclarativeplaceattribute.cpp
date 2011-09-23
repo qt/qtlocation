@@ -74,6 +74,11 @@ void QDeclarativePlaceAttribute::setAttribute(const QPlaceAttribute &src)
         emit textChanged();
 }
 
+QPlaceAttribute QDeclarativePlaceAttribute::attribute() const
+{
+    return m_attribute;
+}
+
 /*!
     \qmlproperty string PlaceAttribute::label
 
