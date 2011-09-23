@@ -42,6 +42,14 @@
 #ifndef PLACE_MACRO_H
 #define PLACE_MACRO_H
 
+#include <QtCore/QtGlobal>
+
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
+
 #define Q_DECLARE_D_FUNC(Class) \
     inline Class##Private* d_func(); \
     inline const Class##Private* d_func() const;\
@@ -69,3 +77,7 @@
     }
 
 #endif
+
+QT_END_NAMESPACE
+
+QT_END_HEADER

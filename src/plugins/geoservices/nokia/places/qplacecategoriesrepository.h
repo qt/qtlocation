@@ -53,13 +53,16 @@
 #include <QWeakPointer>
 #include <QList>
 
-#include <qmobilityglobal.h>
 #include <qplacecategory.h>
 #include <qplacereply.h>
 #include "qplacejsoncategoriesparser.h"
 #include "qplacecategoriesreplyimpl.h"
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QPlaceCategoriesRepository : public QObject
 {
@@ -91,5 +94,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QPLACECATEGORIESREPOSITORY_H

@@ -42,14 +42,17 @@
 #ifndef QGEOSERVICEPROVIDERFACTORY_H
 #define QGEOSERVICEPROVIDERFACTORY_H
 
-#include "qmobilityglobal.h"
 #include "qgeoserviceprovider.h"
 
 #include <QtPlugin>
 #include <QMap>
 #include <QString>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class Q_LOCATION_EXPORT QGeoServiceProviderFactory
 {
@@ -73,11 +76,11 @@ public:
             QString *errorString) const;
 };
 
-QT_END_NAMESPACE
-
-QT_BEGIN_NAMESPACE
 #define QT_GEOSERVICE_BACKEND_INTERFACE "com.nokia.qt.mobility.geoservice.serviceproviderfactory/1.0"
 Q_DECLARE_INTERFACE(QGeoServiceProviderFactory, QT_GEOSERVICE_BACKEND_INTERFACE);
+
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

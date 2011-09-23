@@ -41,8 +41,6 @@
 #ifndef CAMERADATA_H
 #define CAMERADATA_H
 
-#include "qmobilityglobal.h"
-
 #include "qgeocoordinate.h"
 
 #include <QMetaType>
@@ -50,7 +48,11 @@
 #include <QSharedPointer>
 #include <QSharedDataPointer>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class Projection;
 class CameraDataPrivate;
@@ -101,5 +103,7 @@ private:
 Q_DECLARE_METATYPE(CameraData)
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // CAMERADATA_H

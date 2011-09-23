@@ -41,16 +41,16 @@
 #ifndef QGEOSATELLITEINFOSOURCE_H
 #define QGEOSATELLITEINFOSOURCE_H
 
-#include "qmobilityglobal.h"
 #include "qgeosatelliteinfo.h"
 
 #include <QObject>
 #include <QList>
 
-
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QGeoSatelliteInfoSourcePrivate;
 class Q_LOCATION_EXPORT QGeoSatelliteInfoSource : public QObject

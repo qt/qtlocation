@@ -42,12 +42,15 @@
 #ifndef QGEOPOSITIONINFOSOURCEFACTORY_H
 #define QGEOPOSITIONINFOSOURCEFACTORY_H
 
-#include "qmobilityglobal.h"
 #include "qgeopositioninfosource.h"
 #include "qgeosatelliteinfosource.h"
 #include <QList>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class Q_LOCATION_EXPORT QGeoPositionInfoSourceFactory
 {
@@ -62,11 +65,11 @@ public:
     virtual QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) = 0;
 };
 
-QT_END_NAMESPACE
-
-QT_BEGIN_NAMESPACE
 #define QT_POSITION_SOURCE_INTERFACE "com.nokia.qt.mobility.position.sourcefactory/1.0"
 Q_DECLARE_INTERFACE(QGeoPositionInfoSourceFactory, QT_POSITION_SOURCE_INTERFACE);
+
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QGEOPOSITIONINFOSOURCEFACTORY_H

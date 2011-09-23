@@ -42,15 +42,15 @@
 #ifndef QGEOMAPPINGMANAGERENGINE_H
 #define QGEOMAPPINGMANAGERENGINE_H
 
-//#include "qgraphicsgeomap.h"
-
-#include "qmobilityglobal.h"
-
 #include <QObject>
 #include <QSize>
 #include <QPair>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QLocale;
 
@@ -97,15 +97,15 @@ public:
 
     virtual void init();
 
-public slots:
+public Q_SLOTS:
     void threadStarted();
     void requestTiles(const QList<TileSpec> &tiles);
 
-private slots:
+private Q_SLOTS:
     void requestNextTile();
     void finished();
 
-signals:
+Q_SIGNALS:
     void tileFinished(const TileSpec &spec, const QByteArray &bytes);
     void tileError(const TileSpec &spec, const QString &errorString);
     void queueFinished();
@@ -144,5 +144,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

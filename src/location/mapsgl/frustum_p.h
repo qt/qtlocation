@@ -52,8 +52,6 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
-
 #include <QVector3D>
 #include <QHash>
 

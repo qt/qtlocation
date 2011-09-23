@@ -45,7 +45,11 @@
 
 #include "cameradata.h"
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QGeoCoordinate;
 
@@ -93,11 +97,11 @@ public:
     QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
 
-public slots:
+public Q_SLOTS:
     void clearCache();
     void update();
 
-signals:
+Q_SIGNALS:
     void updateRequired();
     void updatesFinished();
     void cameraDataChanged(const CameraData &cameraData);
@@ -107,5 +111,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // MAP_H

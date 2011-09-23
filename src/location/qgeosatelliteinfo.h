@@ -41,13 +41,16 @@
 #ifndef QGEOSATELLITEINFO_H
 #define QGEOSATELLITEINFO_H
 
-#include "qmobilityglobal.h"
+#include <QtCore/QtGlobal>
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
-QT_BEGIN_HEADER
+
+QT_MODULE(Location)
+
 class QDebug;
 class QDataStream;
-
 
 class QGeoSatelliteInfoPrivate;
 class Q_LOCATION_EXPORT QGeoSatelliteInfo

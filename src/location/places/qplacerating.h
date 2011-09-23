@@ -43,9 +43,12 @@
 #define QPLACERATING_H
 
 #include <QSharedDataPointer>
-#include "qmobilityglobal.h"
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QPlaceRatingPrivate;
 
@@ -74,5 +77,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QPLACERATING_H

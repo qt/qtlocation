@@ -53,8 +53,6 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
-
 QT_BEGIN_NAMESPACE
 
 class QGeoRoutingManagerEngine;

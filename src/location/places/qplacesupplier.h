@@ -43,9 +43,12 @@
 #define QPLACESUPPLIER_H
 
 #include <QSharedDataPointer>
-#include "qmobilityglobal.h"
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QUrl;
 class QPlaceSupplierPrivate;
@@ -79,5 +82,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QPLACESUPPLIER_H

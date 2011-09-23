@@ -42,16 +42,15 @@
 #ifndef QGEOSERVICEPROVIDER_H
 #define QGEOSERVICEPROVIDER_H
 
-#include "qmobilityglobal.h"
-
 #include <QMap>
 #include <QVariant>
 #include <QString>
 
-
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QStringList;
 class QGeocodingManager;

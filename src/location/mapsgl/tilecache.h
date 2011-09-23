@@ -41,11 +41,15 @@
 #ifndef TILECACHE_H
 #define TILECACHE_H
 
-#include "qmobilityglobal.h"
-
 #include <QObject>
 #include <QCache>
 #include <QSet>
+
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QGeoMappingManager;
 
@@ -95,11 +99,11 @@ public:
     void evictFromMemoryCache(TileMemory *tm);
     void evictFromTextureCache(TileTexture *tt);
 
-private slots:
+private Q_SLOTS:
     void insert(const TileSpec &spec, const QByteArray &bytes);
     void handleError(const TileSpec &spec, const QString &errorString);
 
-signals:
+Q_SIGNALS:
     void beginPrefetch(const QList<TileSpec> &tiles);
     void tileFetched(const TileSpec &spec);
     void prefetchingFinished();
@@ -130,5 +134,8 @@ private:
     QGeoMappingManager *manager_;
 };
 
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // TILECACHE_H

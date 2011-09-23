@@ -49,9 +49,12 @@
 #include "qgeoaddress.h"
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
-#include "qmobilityglobal.h"
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QGeoLocationPrivate;
 
@@ -84,5 +87,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

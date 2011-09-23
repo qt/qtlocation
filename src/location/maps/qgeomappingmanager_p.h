@@ -53,8 +53,6 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
-
 #include <QSize>
 #include <QList>
 #include <QThread>

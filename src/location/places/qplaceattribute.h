@@ -52,6 +52,8 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+QT_MODULE(Location)
+
 class QPlaceAttributePrivate;
 class Q_LOCATION_EXPORT QPlaceAttribute
 {

@@ -53,7 +53,6 @@
 #include <QList>
 
 #include <qplacesupplier.h>
-#include <qmobilityglobal.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -41,7 +41,6 @@
 #ifndef QGEOAREAMONITOR_H
 #define QGEOAREAMONITOR_H
 
-#include "qmobilityglobal.h"
 #include "qgeocoordinate.h"
 
 #include <QObject>
@@ -49,6 +48,8 @@
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QGeoPositionInfo;
 class QGeoAreaMonitorPrivate;

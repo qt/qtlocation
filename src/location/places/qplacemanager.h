@@ -42,7 +42,6 @@
 #ifndef QPLACEMANAGER_H
 #define QPLACEMANAGER_H
 
-#include "qmobilityglobal.h"
 #include "qplacecontentreply.h"
 #include "qplacecontentrequest.h"
 #include "qplacerequest.h"
@@ -57,7 +56,11 @@
 #include <QObject>
 #include <QAuthenticator>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QPlaceManagerEngine;
 class QPlaceSearchRequest;
@@ -155,5 +158,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::VisibilityScopes);
 Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::ConnectivityModes);
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QPLACEMANAGER_H

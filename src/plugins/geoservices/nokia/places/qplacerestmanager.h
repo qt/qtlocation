@@ -55,7 +55,6 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 
-#include <qmobilityglobal.h>
 #include <qplacesearchrequest.h>
 #include "qplacerestreply.h"
 

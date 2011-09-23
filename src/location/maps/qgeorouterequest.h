@@ -42,8 +42,6 @@
 #ifndef QGEOROUTEREQUEST_H
 #define QGEOROUTEREQUEST_H
 
-#include "qmobilityglobal.h"
-
 #include <QList>
 #include <QExplicitlySharedDataPointer>
 #include <QDateTime>
@@ -51,6 +49,8 @@
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QGeoCoordinate;
 class QGeoBoundingBox;

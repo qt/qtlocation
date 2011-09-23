@@ -44,11 +44,14 @@
 
 #include <QSharedDataPointer>
 #include <QStringList>
-#include "qmobilityglobal.h"
 #include "qplacesupplier.h"
 #include "qplacecontent.h"
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QPlaceReviewPrivate;
 
@@ -90,5 +93,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QPLACEREVIEW_H

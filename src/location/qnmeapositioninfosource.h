@@ -41,11 +41,13 @@
 #ifndef QNMEAPOSITIONINFOSOURCE_H
 #define QNMEAPOSITIONINFOSOURCE_H
 
-#include "qmobilityglobal.h"
 #include "qgeopositioninfosource.h"
 
 QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QIODevice;
 

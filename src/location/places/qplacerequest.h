@@ -45,7 +45,11 @@
 #include <QMetaType>
 #include <QSharedDataPointer>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QPlaceRequestPrivate;
 
@@ -88,5 +92,7 @@ protected:
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceRequest))
+
+QT_END_HEADER
 
 #endif

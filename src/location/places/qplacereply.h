@@ -42,10 +42,13 @@
 #ifndef QPLACEREPLY_H
 #define QPLACEREPLY_H
 
-#include "qmobilityglobal.h"
 #include <QObject>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QPlaceReplyPrivate;
 class Q_LOCATION_EXPORT QPlaceReply : public QObject
@@ -103,5 +106,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QPLACEREPLY_H

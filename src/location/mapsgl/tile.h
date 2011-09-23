@@ -45,7 +45,11 @@
 
 #include "tilespec.h"
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QGLTexture2D;
 class QGLSceneNode;
@@ -79,5 +83,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // TILE_H

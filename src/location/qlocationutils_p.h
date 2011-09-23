@@ -52,7 +52,7 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
+#include <QtCore/QtGlobal>
 
 QT_BEGIN_NAMESPACE
 class QTime;

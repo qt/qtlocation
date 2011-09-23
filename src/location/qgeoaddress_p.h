@@ -56,8 +56,6 @@
 #include <QString>
 #include <QSharedData>
 
-#include "qmobilityglobal.h"
-
 QT_BEGIN_NAMESPACE
 
 class QGeoAddressPrivate : public QSharedData

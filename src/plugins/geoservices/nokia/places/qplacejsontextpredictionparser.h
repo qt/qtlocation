@@ -52,7 +52,6 @@
 #include <QObject>
 #include <QStringList>
 
-#include <qmobilityglobal.h>
 #include "qplacejsonparser_p.h"
 
 class QScriptEngine;

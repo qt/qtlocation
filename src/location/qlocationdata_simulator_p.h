@@ -53,7 +53,6 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
 #include <QtCore/QMetaType>
 #include <QtCore/QDateTime>
 #include <QtCore/QList>

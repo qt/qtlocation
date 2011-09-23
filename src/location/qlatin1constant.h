@@ -45,7 +45,11 @@
 #include <QString>
 #include <QVariant>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 /*
  * QLatin1Constant
@@ -159,5 +163,7 @@ template<int N> bool operator!=(const QString& b, const QLatin1Constant<N>& a)
 #define Q_DEFINE_LATIN1_CONSTANT(varname, str) const QLatin1Constant<sizeof(str)> varname = {str}
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

@@ -42,14 +42,14 @@
 #ifndef QGEOMANEUVER_H
 #define QGEOMANEUVER_H
 
-#include "qmobilityglobal.h"
-
 #include <QExplicitlySharedDataPointer>
-
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
+
 class QString;
 
 class QGeoCoordinate;

@@ -42,14 +42,14 @@
 #ifndef QGEOROUTESEGMENT_H
 #define QGEOROUTESEGMENT_H
 
-#include "qmobilityglobal.h"
-
 #include <QExplicitlySharedDataPointer>
 #include <QList>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QGeoCoordinate;
 class QGeoManeuver;

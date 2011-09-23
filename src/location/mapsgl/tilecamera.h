@@ -38,12 +38,17 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef TILECAMERA_H
 #define TILECAMERA_H
 
 #include "qglobal.h"
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class SphereGeometry;
 class QGLCamera;
@@ -92,5 +97,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // TILECAMERA_H

@@ -44,7 +44,11 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/QMetaType>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class Q_LOCATION_EXPORT TileSpec
 {
@@ -74,8 +78,10 @@ unsigned int qHash(const TileSpec &spec);
 
 QDebug operator<<(QDebug, const TileSpec &);
 
+Q_DECLARE_METATYPE(TileSpec)
+
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(TileSpec)
+QT_END_HEADER
 
 #endif // TILESPEC_H

@@ -53,7 +53,6 @@
 // We mean it.
 //
 
-#include "qmobilityglobal.h"
 #include "qgeocoordinate.h"
 
 QT_BEGIN_NAMESPACE

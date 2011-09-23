@@ -38,15 +38,17 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QGEOCOORDINATE_H
 #define QGEOCOORDINATE_H
-
-#include "qmobilityglobal.h"
 
 #include <QString>
 
 QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QDebug;
 class QDataStream;

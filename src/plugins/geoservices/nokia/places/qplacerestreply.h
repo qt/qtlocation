@@ -55,8 +55,6 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 
-#include <qmobilityglobal.h>
-
 QT_BEGIN_NAMESPACE
 
 class QPlaceRestReply : public QObject

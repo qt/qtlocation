@@ -41,7 +41,6 @@
 #ifndef QGEOPOSITIONINFOSOURCE_H
 #define QGEOPOSITIONINFOSOURCE_H
 
-#include "qmobilityglobal.h"
 #include "qgeopositioninfo.h"
 
 #include <QObject>
@@ -49,6 +48,8 @@
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QGeoPositionInfoSourcePrivate;
 class Q_LOCATION_EXPORT QGeoPositionInfoSource : public QObject

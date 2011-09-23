@@ -53,7 +53,6 @@
 // We mean it.
 //
 
-#include <qmobilityglobal.h>
 #include <e32base.h>    // For CActive, link against: euser.lib
 #include <lbs.h>
 #include <lbscommon.h>

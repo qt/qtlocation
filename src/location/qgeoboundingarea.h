@@ -42,7 +42,6 @@
 #ifndef QGEOBOUNDINGAREA_H
 #define QGEOBOUNDINGAREA_H
 
-#include "qmobilityglobal.h"
 #include "qgeocoordinate.h"
 
 #include <QSharedDataPointer>
@@ -50,6 +49,8 @@
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
+
+QT_MODULE(Location)
 
 class QGeoBoundingAreaPrivate;
 class Q_LOCATION_EXPORT QGeoBoundingArea

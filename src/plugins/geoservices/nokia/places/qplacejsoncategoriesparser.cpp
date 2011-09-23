@@ -51,7 +51,6 @@
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
-#include <qmobilityglobal.h>
 
 #if defined(QT_PLACES_LOGGING)
     #include <QDebug>
