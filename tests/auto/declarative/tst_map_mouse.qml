@@ -129,9 +129,9 @@ Item {
             onClicked: lastMouseEvent = mouse
             onDoubleClicked: lastMouseEvent = mouse
             onPressed: lastMouseEvent = mouse
-            onReleased: { console.log('overlapper released'); lastMouseEvent = mouse }
+            onReleased: { lastMouseEvent = mouse }
             onPositionChanged: lastMouseEvent = mouse
-            onPressAndHold: { console.log('overlapper pressandhold'); lastMouseEvent = mouse }
+            onPressAndHold: { lastMouseEvent = mouse }
         }
     }
 

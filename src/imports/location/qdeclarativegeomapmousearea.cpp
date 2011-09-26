@@ -159,7 +159,7 @@ void QDeclarativeGeoMapMouseArea::geometryChanged(const QRectF &newGeometry, con
 
 void QDeclarativeGeoMapMouseArea::hoveredChangedHandler()
 {
-    emit hoveredChanged(mouseArea_->hovered());
+    emit hoveredChanged(mouseArea_->property("containsMouse").toBool());
 }
 
 void QDeclarativeGeoMapMouseArea::pressAndHoldHandler(QSGMouseEvent* event)
@@ -177,12 +177,12 @@ void QDeclarativeGeoMapMouseArea::hoverEnabledChangedHandler()
 
 void QDeclarativeGeoMapMouseArea::acceptedButtonsChangedHandler()
 {
-    emit acceptedButtonsChanged(mouseArea_->acceptedButtons());
+    emit acceptedButtonsChanged(static_cast<Qt::MouseButtons>(mouseArea_->property("acceptedButtons").toInt()));
 }
 
 void QDeclarativeGeoMapMouseArea::enabledChangedHandler()
 {
-    emit enabledChanged(mouseArea_->isEnabled());
+    emit enabledChanged(mouseArea_->property("enabled").toBool());
 }
 
 void QDeclarativeGeoMapMouseArea::pressedHandler(QSGMouseEvent* event)
@@ -193,7 +193,7 @@ void QDeclarativeGeoMapMouseArea::pressedHandler(QSGMouseEvent* event)
 
 void QDeclarativeGeoMapMouseArea::pressedChangedHandler()
 {
-    emit pressedChanged(mouseArea_->pressed());
+    emit pressedChanged(mouseArea_->property("pressed").toBool());
 }
 
 void QDeclarativeGeoMapMouseArea::enteredHandler()
@@ -266,12 +266,12 @@ void QDeclarativeGeoMapMouseArea::setMap(QDeclarative3DGraphicsGeoMap *map)
 
 qreal QDeclarativeGeoMapMouseArea::mouseX() const
 {
-    return mouseArea_->mouseX();
+    return mouseArea_->property("mouseX").toReal();
 }
 
 qreal QDeclarativeGeoMapMouseArea::mouseY() const
 {
-    return mouseArea_->mouseY();
+    return mouseArea_->property("mouseY").toReal();
 }
 
 /*!
@@ -284,7 +284,7 @@ qreal QDeclarativeGeoMapMouseArea::mouseY() const
 
 bool QDeclarativeGeoMapMouseArea::hovered() const
 {
-    return mouseArea_->hovered();
+    return mouseArea_->property("containsMouse").toBool();
 }
 
 /*!
@@ -294,7 +294,7 @@ bool QDeclarativeGeoMapMouseArea::hovered() const
 
 bool QDeclarativeGeoMapMouseArea::pressed() const
 {
-    return mouseArea_->pressed();
+    return mouseArea_->property("pressed").toBool();
 }
 
 /*!
@@ -306,12 +306,12 @@ bool QDeclarativeGeoMapMouseArea::pressed() const
 
 bool QDeclarativeGeoMapMouseArea::isEnabled() const
 {
-    return mouseArea_->isEnabled();
+    return mouseArea_->property("enabled").toBool();
 }
 
 void QDeclarativeGeoMapMouseArea::setEnabled(bool enabled)
 {
-    mouseArea_->setEnabled(enabled);
+    mouseArea_->setProperty("enabled", QVariant(enabled));
 }
 
 /*!
@@ -356,13 +356,13 @@ Qt::MouseButtons QDeclarativeGeoMapMouseArea::pressedButtons() const
 
 void QDeclarativeGeoMapMouseArea::setAcceptedButtons(Qt::MouseButtons acceptedButtons)
 {
-    mouseArea_->setAcceptedButtons(acceptedButtons);
+    mouseArea_->setProperty("acceptedButtons", QVariant(acceptedButtons));
     setAcceptedMouseButtons(acceptedButtons);
 }
 
 Qt::MouseButtons QDeclarativeGeoMapMouseArea::acceptedButtons() const
 {
-    return mouseArea_->acceptedButtons();
+    return static_cast<Qt::MouseButtons>(mouseArea_->property("acceptedButtons").toInt());
 }
 
 /* hover is currently not supported
@@ -408,7 +408,7 @@ bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
         qmlInfo(this)  << "Warning: no qsgcanvas available, cannot dispatch the mouse event";
         return false;
     }
-    if (!mouseArea_->isEnabled()) {
+    if (!mouseArea_->property("enabled").toBool()) {
         QLOC_TRACE2("mouse area not enabled.", objectName());
         event->ignore();
         return false;
