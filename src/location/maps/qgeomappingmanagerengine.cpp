@@ -503,8 +503,8 @@ QLocale QGeoMappingManagerEngine::locale() const
 
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
     : managerVersion(-1),
-    minimumZoomLevel(0.0),
-    maximumZoomLevel(0.0),
+    minimumZoomLevel(1.0),
+    maximumZoomLevel(20.0), // todo fixme, this needs to come from plugin
     supportsBearing(false),
     supportsTilting(false),
     minimumTilt(0.0),

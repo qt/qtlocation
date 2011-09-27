@@ -54,8 +54,8 @@ QDeclarativeGeoMapPinchArea::QDeclarativeGeoMapPinchArea(QDeclarative3DGraphicsG
       map_(map),
       enabled_(true),
       active_(false),
-      minimumZoomLevel_(1.0),
-      maximumZoomLevel_(1.0),
+      minimumZoomLevel_(0.0),
+      maximumZoomLevel_(100.0),
       minimumRotation_(0.0),
       maximumRotation_(0.0),
       inPinch_(false),
@@ -92,7 +92,6 @@ QDeclarativeGeoMapPinchArea::ActiveGestures QDeclarativeGeoMapPinchArea::activeG
 
 void QDeclarativeGeoMapPinchArea::setActiveGestures(ActiveGestures activeGestures)
 {
-    qDebug() << metaObject()->className() <<  __FUNCTION__ << activeGestures;
     if (activeGestures == activeGestures_)
         return;
     activeGestures_ = activeGestures;
@@ -132,9 +131,7 @@ qreal QDeclarativeGeoMapPinchArea::minimumZoomLevel() const
 
 void QDeclarativeGeoMapPinchArea::setMinimumZoomLevel(qreal zoomLevel)
 {
-    if (zoomLevel < map_->minimumZoomLevel())
-        zoomLevel = map_->minimumZoomLevel();
-    if (zoomLevel == minimumZoomLevel_)
+    if (zoomLevel == minimumZoomLevel_ || zoomLevel < map_->minimumZoomLevel())
         return;
     minimumZoomLevel_ = zoomLevel;
     emit minimumZoomLevelChanged();
@@ -147,14 +144,22 @@ qreal QDeclarativeGeoMapPinchArea::maximumZoomLevel() const
 
 void QDeclarativeGeoMapPinchArea::setMaximumZoomLevel(qreal zoomLevel)
 {
-    if (zoomLevel > map_->maximumZoomLevel())
-        zoomLevel = map_->maximumZoomLevel();
-    if (zoomLevel == maximumZoomLevel_)
+    if (zoomLevel == maximumZoomLevel_ || zoomLevel > map_->maximumZoomLevel())
         return;
     maximumZoomLevel_ = zoomLevel;
     emit maximumZoomLevelChanged();
 }
 
+// called internally when plugin's limits change. somewhat dodgy but
+// initialization order complicates the zoom limit settings a bit (e.g. when is
+// it possible to check against mapping plugins' limits)
+void QDeclarativeGeoMapPinchArea::zoomLevelLimits(qreal min, qreal max)
+{
+    if (min > minimumZoomLevel_)
+        setMinimumZoomLevel(min);
+    if (max < maximumZoomLevel_)
+        setMaximumZoomLevel(max);
+}
 
 qreal QDeclarativeGeoMapPinchArea::maximumZoomLevelChange() const
 {
@@ -247,27 +252,6 @@ void QDeclarativeGeoMapPinchArea::setMaximumTiltChange(qreal tilt)
     emit maximumTiltChangeChanged();
 }
 
-void QDeclarativeGeoMapPinchArea::mousePressEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event); // TODO may not be needed at all
-    if (!enabled_)
-        return;
-}
-
-void QDeclarativeGeoMapPinchArea::mouseReleaseEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event); // TODO may not be needed at all
-    if (!enabled_)
-        return;
-}
-
-void QDeclarativeGeoMapPinchArea::mouseMoveEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event); // TODO may not be needed at all
-    if (!enabled_)
-        return;
-}
-
 void QDeclarativeGeoMapPinchArea::touchEvent(QTouchEvent *event)
 {
     // Keep processing if gesture(s) are in progress. Otherwise we might
@@ -336,7 +320,7 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
         qreal dist = sqrt(dx*dx + dy*dy);
         QPointF sceneCenter = (p1 + p2)/2;
         qreal angle = QLineF(p1, p2).angle();
-        qDebug() << "angle between point1, point2, s: " << p1 <<  p2 << angle;
+        //qDebug() << "angle between point1, point2, s: " << p1 <<  p2 << angle;
         if (touchPoints_.count() == 1) {
             // If we only have one point then just move the center. TODO do we need this anymore.
             if (id1_ == touchPoint1.id())
@@ -384,7 +368,6 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
                     pinchStartZoomLevel_ = map_->cameraData().zoomFactor();
                     pinchStartRotation_ = map_->cameraData().bearing();
                     pinchStartTilt_ = map_->cameraData().tilt();
-                    qDebug() << "set starting tilt to : " << pinchStartTilt_;
                     setActive(true);
                 } else {
                     pinchRejected_ = true;
@@ -407,7 +390,6 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
                 da -= 360;
             else if (da < -180)
                 da += 360;
-            qDebug() << "pinch rotaiton will be update from, to, da is: " << pinchRotation_ << da - pinchRotation_ << da;
             pinchRotation_ -= da;
             // TODO check how this impacts is this needed
             QPointF pinchCenter = map_->mapFromScene(sceneCenter);
@@ -428,7 +410,6 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
             lastPoint1_ = touchPoint1.scenePos();
             lastPoint2_ = touchPoint2.scenePos();
             emit pinchUpdated(&pe);
-
             if (activeGestures_ & ZoomGesture) {
                 // Take maximum and minimumzoomlevel into account
                 qreal perPinchMinimumZoomLevel = qMax(pinchStartZoomLevel_ - maximumZoomLevelChange_, minimumZoomLevel_);
@@ -439,7 +420,7 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
                 cam.setZoomFactor(newZoomLevel);
                 map_->map()->setCameraData(cam);
             }
-            if (activeGestures_ & TiltGesture) {
+            if (activeGestures_ & TiltGesture && minimumZoomLevel_ >= 0 && maximumZoomLevel_ >= 0) {
                 // TODO zzz
                 qreal newTilt = pinchLastTilt_;
                 if (dist) {
@@ -456,7 +437,6 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
                 newTilt = qMin(qMax(perPinchMinimumTilt, newTilt), perPinchMaximumTilt);
                 pinchLastTilt_ = newTilt;
 
-                qDebug() << "tilting pinchStartTilt, pinchLastTilt, resulting newTilt: " << pinchStartTilt_ << pinchLastTilt_ << newTilt;
                 CameraData cam = map_->map()->cameraData();
                 cam.setTilt(newTilt);
                 map_->map()->setCameraData(cam);

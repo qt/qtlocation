@@ -208,7 +208,12 @@ Item {
 
     Map {
         id: map
-        z: 3
+
+        MapMouseArea {
+            id: mapMouseArea
+            onDoubleClicked: console.log('mapmousearea got clicked')
+            anchors.fill: parent
+        }
 
         /*
         MapItem {
@@ -379,34 +384,6 @@ Item {
         center: Coordinate {
             latitude: 51.5
             longitude: -0.11
-        }
-//        MouseArea {
-//            id: mapMouse
-//            objectName: "mouse area in map within Map"
-//            anchors.fill: parent // should not be set
-//            enabled: true
-
-//            onCanceled: {console.log('mouse area in map canceled')}
-//            onEntered: {console.log('mouse area in map entered')}
-//            onExited: {console.log('mouse area in map exited')}
-//            //onPositionChanged: {console.log('mouse area in map position changed')}
-//            onReleased: {console.log('mouse area in map released')}
-
-//            onPressed: {console.log('mouse area in map in map pressed')}
-//            onDoubleClicked: {console.log('mouse area in map in map doubleclicked')}
-//            onPressAndHold: {console.log('mouse area in map press and hold signal received')}
-//            onClicked: {console.log('mouse area in map in map clicked')}
-
-//            //drag.target: map
-//            //drag.axis: Drag.XandYAxis
-//            //drag.minimumX: 0
-//            //drag.maximumX: page.width - map.width
-//            //drag.minimumY: 0
-//            //drag.maximumY: page.height - map.height
-//        }
-
-        MouseArea {
-            id: excessiveMouseAreaGeneratesWarningForTestPurposes
         }
 
         // <unsupported so far>

@@ -80,9 +80,9 @@ public:
     bool enabled() const;
     void setEnabled(bool enabled);
 
-    virtual void mousePressEvent(QMouseEvent *event);
-    virtual void mouseMoveEvent(QMouseEvent *event);
-    virtual void mouseReleaseEvent(QMouseEvent *event);
+    bool mousePressEvent(QMouseEvent *event);
+    bool mouseMoveEvent(QMouseEvent *event);
+    bool mouseReleaseEvent(QMouseEvent *event);
     virtual void timerEvent(QTimerEvent *event);
 
 signals:

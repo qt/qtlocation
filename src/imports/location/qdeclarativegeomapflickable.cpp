@@ -122,12 +122,10 @@ void QDeclarativeGeoMapFlickable::setDeceleration(qreal deceleration)
     emit decelerationChanged();
 }
 
-void QDeclarativeGeoMapFlickable::mousePressEvent(QMouseEvent *event)
+bool QDeclarativeGeoMapFlickable::mousePressEvent(QMouseEvent *event)
 {
     if (!enabled_)
-        return;
-    //Q_ASSERT(!pressed_);
-
+        return false;
     stop();
     pressed_ = true;
     lastPos_ = QPointF();
@@ -135,6 +133,7 @@ void QDeclarativeGeoMapFlickable::mousePressEvent(QMouseEvent *event)
     lastPosTime_.start();
     pressTime_.start();
     velocityTime_.start();
+    return true;
 }
 
 void QDeclarativeGeoMapFlickable::stop()
@@ -158,18 +157,10 @@ void QDeclarativeGeoMapFlickable::stop()
     velocityTime_.invalidate();
 }
 
-void QDeclarativeGeoMapFlickable::mouseMoveEvent(QMouseEvent *event)
+bool QDeclarativeGeoMapFlickable::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!enabled_) {
-        return;
-    }
-    if (!pressed_) {
-        return;
-    }
-    if (!lastPosTime_.isValid()) {
-        return;
-    }
-
+    if (!enabled_ || !pressed_ || !lastPosTime_.isValid())
+        return false;
     // Check if thresholds for normal panning are met.
     // (normal panning vs flicking: flicking will start from mouse release event).
     int dyFromPress = int(event->pos().y() - pressPos_.y());
@@ -197,12 +188,13 @@ void QDeclarativeGeoMapFlickable::mouseMoveEvent(QMouseEvent *event)
     if (!lastPos_.isNull()) {
         qreal elapsed = qreal(lastPosTime_.elapsed()) / 1000.;
         if (elapsed <= 0)
-            return;
+            return false;
         lastPosTime_.restart();
         addVelocitySample(velocityBufferY_, double(dyFromLastPos)/elapsed);
         addVelocitySample(velocityBufferX_, double(dxFromLastPos)/elapsed);
     }
     lastPos_ = event->pos();
+    return true;
 }
 
 // FIXME coordinate pan with a sleeve-constant (zoom level is not considered appropriately)
@@ -284,10 +276,10 @@ bool QDeclarativeGeoMapFlickable::enabled() const
     return enabled_;
 }
 
-void QDeclarativeGeoMapFlickable::mouseReleaseEvent(QMouseEvent *event)
+bool QDeclarativeGeoMapFlickable::mouseReleaseEvent(QMouseEvent *event)
 {
     if (!pressed_ || !enabled_)
-        return;
+        return false;
     pressed_ = false;
 
     // if we drag then pause before release we should not cause a flick.
@@ -340,6 +332,7 @@ void QDeclarativeGeoMapFlickable::mouseReleaseEvent(QMouseEvent *event)
     lastPosTime_.invalidate();
     pressTime_.invalidate();
     velocityTime_.invalidate();
+    return true;
 }
 
 void QDeclarativeGeoMapFlickable::flickAnimationFinished()

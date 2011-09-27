@@ -183,6 +183,8 @@ void QDeclarative3DGraphicsGeoMap::componentComplete()
     CameraData cameraData = map_->cameraData();
     map_->setCameraData(cameraData);
     map_->update();
+    if (mappingManager_)
+        pinchArea_->zoomLevelLimits(mappingManager_->minimumZoomLevel(), mappingManager_->maximumZoomLevel());
     QSGItem::componentComplete();
 }
 
@@ -577,6 +579,7 @@ QDeclarativeGeoServiceProvider* QDeclarative3DGraphicsGeoMap::plugin() const
 
     This property holds the minimum valid zoom level for the map.
 */
+
 qreal QDeclarative3DGraphicsGeoMap::minimumZoomLevel() const
 {
     if (mappingManager_)
@@ -590,6 +593,7 @@ qreal QDeclarative3DGraphicsGeoMap::minimumZoomLevel() const
 
     This property holds the maximum valid zoom level for the map.
 */
+
 qreal QDeclarative3DGraphicsGeoMap::maximumZoomLevel() const
 {
     if (mappingManager_)
@@ -946,7 +950,6 @@ bool QDeclarative3DGraphicsGeoMap::deliverInitialMousePressEvent(QDeclarativeGeo
                            event->button(), event->buttons(), event->modifiers());
                 me.accept();
                 mouseGrabberItem_ = ma;
-                // canvas_->sendEvent(item, &me);
                 ma->mouseEvent(&me);
                 event->setAccepted(me.isAccepted());
                 QLOC_TRACE2("the initial mouse press accepted: ", me.isAccepted());
@@ -962,11 +965,12 @@ bool QDeclarative3DGraphicsGeoMap::deliverInitialMousePressEvent(QDeclarativeGeo
 void QDeclarative3DGraphicsGeoMap::mousePressEvent(QMouseEvent *event)
 {
     QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
-    deliverMouseEvent(event);
-    if (flickable_)
-        flickable_->mousePressEvent(event);
-    if (pinchArea_)
-        pinchArea_->mousePressEvent(event);
+    bool consumed = deliverMouseEvent(event);
+    consumed |= flickable_->mousePressEvent(event);
+    if (consumed)
+        event->accept();
+    else
+        event->ignore();
 }
 
 // returns list of mouse areas under 'pos'. returned list is in the priority order in which the
@@ -985,18 +989,16 @@ QList<QDeclarativeGeoMapMouseArea*> QDeclarative3DGraphicsGeoMap::mouseAreasAt(Q
 void QDeclarative3DGraphicsGeoMap::mouseReleaseEvent(QMouseEvent *event)
 {
     QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
-    if (!mouseGrabberItem_) {
-        QSGItem::mouseReleaseEvent(event);
-        return;
+    bool consumed = false;
+    if (mouseGrabberItem_) {
+        consumed = deliverMouseEvent(event);
+        mouseGrabberItem_ = 0;
     }
-    deliverMouseEvent(event);
-    QLOC_TRACE1("nulling mouse grabber");
-
-    mouseGrabberItem_ = 0;
-    if (flickable_)
-        flickable_->mouseReleaseEvent(event);
-    if (pinchArea_)
-        pinchArea_->mouseReleaseEvent(event);
+    consumed |= flickable_->mouseReleaseEvent(event);
+    if (consumed)
+        event->accept();
+    else
+        event->ignore();
 }
 
 void QDeclarative3DGraphicsGeoMap::mouseDoubleClickEvent(QMouseEvent *event)
@@ -1013,7 +1015,10 @@ void QDeclarative3DGraphicsGeoMap::mouseDoubleClickEvent(QMouseEvent *event)
         event->ignore();
         return;
     }
-    deliverMouseEvent(event);
+    if (deliverMouseEvent(event))
+        event->accept();
+    else
+        event->ignore();
 }
 
 void QDeclarative3DGraphicsGeoMap::mouseMoveEvent(QMouseEvent *event)
@@ -1034,14 +1039,14 @@ void QDeclarative3DGraphicsGeoMap::mouseMoveEvent(QMouseEvent *event)
         return;
     }
     */
-    if (!mouseGrabberItem_)
-        return;
-
-    deliverMouseEvent(event);
-    if (flickable_)
-        flickable_->mouseMoveEvent(event);
-    if (pinchArea_)
-        pinchArea_->mouseMoveEvent(event);
+    bool consumed = false;
+    if (mouseGrabberItem_)
+        consumed = deliverMouseEvent(event);
+    consumed |= flickable_->mouseMoveEvent(event);
+    if (consumed)
+        event->accept();
+    else
+        event->ignore();
 }
 
 // hover functions are a placeholder. It works to an extent but
