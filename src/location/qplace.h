@@ -118,7 +118,6 @@ public:
     void insertExtendedAttribute(const QString &key, const QPlaceAttribute &);
 
 protected:
-    QPlace(QPlacePrivate *dd);
     QSharedDataPointer<QPlacePrivate> d_ptr;
 
 private:

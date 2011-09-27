@@ -74,12 +74,6 @@ QPlace::QPlace()
 }
 
 /*!
-    \internal
-*/
-QPlace::QPlace(QPlacePrivate *dd)
-        : d_ptr(dd) {}
-
-/*!
     Constructs a copy of \a other.
     \since 1.1
 */
