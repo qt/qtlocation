@@ -62,7 +62,7 @@ public:
     explicit QDeclarativeGeoBoundingCircle(QObject* parent = 0);
     QDeclarativeGeoBoundingCircle(const QGeoBoundingCircle& circle, QObject* parent = 0);
     void setCircle(const QGeoBoundingCircle& circle);
-    QGeoBoundingCircle circle();
+    QGeoBoundingCircle circle() const;
     virtual QGeoBoundingArea *area() const;
 
     Q_INVOKABLE bool contains(QDeclarativeCoordinate* coordinate);
@@ -76,8 +76,8 @@ signals:
     void radiusChanged();
 
 private:
-    QPointer<QDeclarativeCoordinate> center_;
-    QGeoBoundingCircle circle_;
+    QDeclarativeCoordinate *m_center;
+    mutable QGeoBoundingCircle m_circle;
 };
 
 QT_END_NAMESPACE

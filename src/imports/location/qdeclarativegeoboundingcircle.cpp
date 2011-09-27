@@ -48,68 +48,84 @@ QT_BEGIN_NAMESPACE
     \qmlclass Yippiaiee! TODO
 */
 
-QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(QObject* parent) :
-        QDeclarativeGeoBoundingArea(parent)
+QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(QObject* parent)
+    : QDeclarativeGeoBoundingArea(parent),
+      m_center(0)
 {
 }
 
 QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(const QGeoBoundingCircle& circle, QObject* parent) :
     QDeclarativeGeoBoundingArea(parent),
-    center_(0),
-    circle_(circle)
+    m_circle(circle), m_center(new QDeclarativeCoordinate(circle.center(), this))
 {
 }
 
 void QDeclarativeGeoBoundingCircle::setCircle(const QGeoBoundingCircle& circle)
 {
-    circle_ = circle;
+    if ((m_center && m_center->coordinate() != circle.center()) || !m_center) {
+        if (m_center && m_center->parent() == this)
+            m_center->setCoordinate(m_circle.center());
+        else
+            m_center = new QDeclarativeCoordinate(circle.center(), this);
+        m_circle.setCenter(circle.center());
+
+        emit centerChanged();
+    }
+
+    if (!qFuzzyCompare(m_circle.radius(), circle.radius())) {
+        m_circle.setRadius(circle.radius());
+        emit radiusChanged();
+    }
 }
 
-QGeoBoundingCircle QDeclarativeGeoBoundingCircle::circle()
+QGeoBoundingCircle QDeclarativeGeoBoundingCircle::circle() const
 {
-    return circle_;
+    if (m_center)
+        m_circle.setCenter(m_center->coordinate());
+    else
+        m_circle.setCenter(QGeoCoordinate());
+    return m_circle;
 }
 
 QGeoBoundingArea *QDeclarativeGeoBoundingCircle::area() const
 {
-    return circle_.clone();
+    return circle().clone();
 }
 
 Q_INVOKABLE bool QDeclarativeGeoBoundingCircle::contains(QDeclarativeCoordinate* coordinate)
 {
-    if (!coordinate)
+    if (!coordinate || !m_center)
         return false;
-    return circle_.contains(coordinate->coordinate());
+
+    return m_circle.contains(coordinate->coordinate());
 }
 
 QDeclarativeCoordinate* QDeclarativeGeoBoundingCircle::center()
 {
-    return center_;
+    return m_center;
 }
 
 void QDeclarativeGeoBoundingCircle::setCenter(QDeclarativeCoordinate *coordinate)
 {
-    if (coordinate == center_)
-        return;
-    center_ = coordinate;
-    if (center_)
-        circle_.setCenter(center_->coordinate());
-    else
-        circle_.setCenter(QGeoCoordinate());
-    emit centerChanged();
+    if (m_center != coordinate) {
+        if (m_center && m_center->parent() == this)
+            delete m_center;
+        m_center = coordinate;
+        emit centerChanged();
+    }
 }
 
 qreal QDeclarativeGeoBoundingCircle::radius() const
 {
-    return circle_.radius();
+    return m_circle.radius();
 }
 
 void QDeclarativeGeoBoundingCircle::setRadius(const qreal radius)
 {
-    if (radius == circle_.radius())
-        return;
-    circle_.setRadius(radius);
-    emit radiusChanged();
+    if (!qFuzzyCompare(m_circle.radius(),radius)) {
+        m_circle.setRadius(radius);
+        emit radiusChanged();
+    }
 }
 
 #include "moc_qdeclarativegeoboundingcircle_p.cpp"
