@@ -164,8 +164,6 @@ void tst_QPlaceManagerJsonDb::initTestCase()
     placeManager = provider->placeManager();
     QVERIFY(placeManager);
 
-    QVERIFY(placeManager->connectivityMode() == QPlaceManager::OfflineMode);
-
     cleanup();
 }
 
