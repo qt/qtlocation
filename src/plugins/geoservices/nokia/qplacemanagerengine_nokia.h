@@ -82,8 +82,14 @@ public:
 
     QPlaceIdReply *removePlace(const QPlace &place);
 
+    QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId);
+    QPlaceIdReply *removeCategory(const QString &categoryId);
+
     QPlaceReply *initializeCategories();
-    QList<QPlaceCategory> categories(const QPlaceCategory &parent) const;
+    QString parentCategoryId(const QString &categoryId) const {return QString();}
+    virtual QStringList childrenCategoryIds(const QString &categoryId) const {return QStringList();}
+    virtual QPlaceCategory category(const QString &categoryId) const {return QPlaceCategory();}
+    QList<QPlaceCategory> childCategories(const QString &parentId) const;
 
     QLocale locale() const;
     void setLocale(const QLocale &locale);

@@ -55,10 +55,18 @@ public:
     IdReply(QPlaceIdReply::OperationType operationType, QPlaceManagerEngineJsonDb *engine);
     virtual ~IdReply();
     void setId(const QString &id);
+
     DECLARE_TRIGGER_DONE_FN
 
+    void setIsUpdate();
+    bool isUpdate() const;
+
+    QString parentCategoryId() const;
+    void setParentCategoryId(const QString &parentId);
 private:
     QPlaceManagerEngineJsonDb *m_engine;
+    bool m_isUpdate;
+    QString m_parentCategoryId;
 };
 
 #endif

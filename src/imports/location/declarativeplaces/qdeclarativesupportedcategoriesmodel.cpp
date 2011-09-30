@@ -43,8 +43,7 @@
 #include "qgeoserviceprovider.h"
 
 #include <QtDeclarative/QDeclarativeInfo>
-
-#include <qplacemanager.h>
+#include <QtLocation/QPlaceManager>
 
 QT_USE_NAMESPACE
 
@@ -99,20 +98,14 @@ QT_USE_NAMESPACE
     list.  The default is true.
 */
 
-PlaceCategoryTree::PlaceCategoryTree()
-{
-}
-
-PlaceCategoryTree::~PlaceCategoryTree()
-{
-}
-
 QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent)
 :   QAbstractItemModel(parent), m_plugin(0), m_hierarchical(true), m_complete(false)
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(CategoryRole, "category");
+    roleNames.insert(CategoryIdRole, "categoryId");
+    roleNames.insert(NameRole, "name");
     setRoleNames(roleNames);
 }
 
@@ -128,8 +121,16 @@ void QDeclarativeSupportedCategoriesModel::componentComplete()
 
 int QDeclarativeSupportedCategoriesModel::rowCount(const QModelIndex& parent) const
 {
-    PlaceCategoryTree tree = findCategoryTreeByCategory(static_cast<QDeclarativeCategory *>(parent.internalPointer()), m_categoryTree);
-    return tree.subCategories.count();
+    if (m_categoriesTree.keys().isEmpty())
+        return 0;
+
+    PlaceCategoryNode *node = static_cast<PlaceCategoryNode *>(parent.internalPointer());
+    if (!node)
+        node = m_categoriesTree.value(QString());
+    else if (m_categoriesTree.keys(node).isEmpty())
+        return 0;
+
+    return node->childIds.count();
 }
 
 int QDeclarativeSupportedCategoriesModel::columnCount(const QModelIndex &parent) const
@@ -144,53 +145,49 @@ QModelIndex QDeclarativeSupportedCategoriesModel::index(int row, int column, con
     if (column != 0 || row < 0)
         return QModelIndex();
 
-    PlaceCategoryTree tree = findCategoryTreeByCategory(static_cast<QDeclarativeCategory *>(parent.internalPointer()), m_categoryTree);
+    PlaceCategoryNode *node = static_cast<PlaceCategoryNode *>(parent.internalPointer());
 
-    if (row > tree.subCategories.count())
+    if (!node)
+        node = m_categoriesTree.value(QString());
+    else if (m_categoriesTree.keys(node).isEmpty()) //return root index if parent is non-existent
         return QModelIndex();
 
-    QMap<QString, QDeclarativeCategory *> sortedCategories;
-    QHashIterator<QString, PlaceCategoryTree> it(tree.subCategories);
-    while (it.hasNext()) {
-        it.next();
-        sortedCategories.insert(it.value().category->name(), it.value().category.data());
-    }
+    if (row > node->childIds.count())
+        return QModelIndex();
 
-    return createIndex(row, 0, sortedCategories.values().at(row));
+    QString id = node->childIds.at(row);
+    Q_ASSERT(m_categoriesTree.contains(id));
+
+    return createIndex(row, 0, m_categoriesTree.value(id));
 }
 
 QModelIndex QDeclarativeSupportedCategoriesModel::parent(const QModelIndex &child) const
 {
-    QDeclarativeCategory *parentCategory = findParentCategoryByCategory(static_cast<QDeclarativeCategory *>(child.internalPointer()), m_categoryTree);
-    if (!parentCategory)
+    PlaceCategoryNode *childNode = static_cast<PlaceCategoryNode *>(child.internalPointer());
+    if (m_categoriesTree.keys(childNode).isEmpty())
         return QModelIndex();
 
-    QDeclarativeCategory *grandParentCategory = findParentCategoryByCategory(parentCategory, m_categoryTree);
-    PlaceCategoryTree tree = findCategoryTreeByCategory(grandParentCategory, m_categoryTree);
-
-    QMap<QString, QDeclarativeCategory *> sortedCategories;
-    QHashIterator<QString, PlaceCategoryTree> it(tree.subCategories);
-    while (it.hasNext()) {
-        it.next();
-        sortedCategories.insert(it.value().category->name(), it.value().category.data());
-    }
-
-    return createIndex(sortedCategories.values().indexOf(parentCategory), 0, parentCategory);
+    return index(childNode->parentId);
 }
 
 QVariant QDeclarativeSupportedCategoriesModel::data(const QModelIndex &index, int role) const
 {
-    PlaceCategoryTree tree = findCategoryTreeByCategory(static_cast<QDeclarativeCategory *>(index.internalPointer()), m_categoryTree);
-    QDeclarativeCategory *category = tree.category.data();
-
-    if (!category)
+    PlaceCategoryNode *node = static_cast<PlaceCategoryNode*>(index.internalPointer());
+    if (!node)
+        node = m_categoriesTree.value(QString());
+    else if (m_categoriesTree.keys(node).isEmpty())
         return QVariant();
+
+   QDeclarativeCategory *category = node->declCategory.data();
 
     switch (role) {
     case Qt::DisplayRole:
+    case NameRole:
         return category->name();
     case CategoryRole:
         return QVariant::fromValue(category);
+    case CategoryIdRole:
+        return category->categoryId();
     default:
         return QVariant();
     }
@@ -201,26 +198,61 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
     if (m_plugin == plugin)
         return;
 
+    QPlaceManager *placeManager;
+    //The purpose of the connections below is to listen to any category notifications
+    //so that we can reupdate the categories model.
+
+    //disconnect the manager of the old plugin if we have one
+    if (m_plugin) {
+        QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+        if (serviceProvider) {
+            placeManager = serviceProvider->placeManager();
+            if (placeManager) {
+                disconnect(placeManager, SIGNAL(categoryAdded(QPlaceCategory, QString)),
+                           this, SLOT(addedCategory(QPlaceCategory, QString)));
+                disconnect(placeManager, SIGNAL(categoryUpdated(QPlaceCategory, QString)),
+                           this, SLOT(updatedCategory(QPlaceCategory, QString)));
+                disconnect(placeManager, SIGNAL(categoryRemoved(QString, QString)),
+                           this, SLOT(removedCategory(QString, QString)));
+            }
+        }
+    }
+
+    //connect to the manager of the new plugin.
+    if (plugin) {
+        QGeoServiceProvider *serviceProvider = plugin->sharedGeoServiceProvider();
+        if (serviceProvider) {
+            placeManager = serviceProvider->placeManager();
+            if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+                qmlInfo(this) << tr("Warning: Plugin does not support places.");
+                return;
+            }
+
+            if (placeManager) {
+                connect(placeManager, SIGNAL(categoryAdded(QPlaceCategory, QString)),
+                        this, SLOT(addedCategory(QPlaceCategory, QString)));
+                connect(placeManager, SIGNAL(categoryUpdated(QPlaceCategory, QString)),
+                        this, SLOT(updatedCategory(QPlaceCategory, QString)));
+                connect(placeManager, SIGNAL(categoryRemoved(QString, QString)),
+                        this, SLOT(removedCategory(QString, QString)));
+            }
+        }
+    }
+
     reset(); // reset the model
     m_plugin = plugin;
     if (m_complete)
         emit pluginChanged();
-    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support places.");
-        return;
-    }
 
-    m_categoryTree.subCategories = populatedCategories(placeManager);
-
-    m_response = placeManager->initializeCategories();
-    if (m_response) {
-        connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
-        connect(m_response, SIGNAL(error(QPlaceReply::Error,QString)),
-                this, SLOT(replyError(QPlaceReply::Error,QString)));
-
-        emit updatingChanged();
+    if (placeManager) {
+        m_response = placeManager->initializeCategories();
+        if (m_response) {
+            connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
+            setStatus(QDeclarativeSupportedCategoriesModel::Updating);
+        } else {
+            setStatus(QDeclarativeSupportedCategoriesModel::Error);
+            m_errorString = tr("Unable to initialize categories");
+        }
     }
 }
 
@@ -245,33 +277,174 @@ bool QDeclarativeSupportedCategoriesModel::hierarchical() const
     return m_hierarchical;
 }
 
-bool QDeclarativeSupportedCategoriesModel::updating() const
-{
-    return m_response;
-}
-
 void QDeclarativeSupportedCategoriesModel::replyFinished()
 {
     if (!m_response)
         return;
 
-    m_response->deleteLater();
-    m_response = 0;
+    if (m_response->error() == QPlaceReply::NoError) {
+        m_errorString.clear();
 
-    updateCategories();
+        m_response->deleteLater();
+        m_response = 0;
 
-    emit updatingChanged();
+        updateCategories();
+        setStatus(QDeclarativeSupportedCategoriesModel::Ready);
+    } else {
+        m_errorString = m_response->errorString();
+
+        m_response->deleteLater();
+        m_response = 0;
+
+        setStatus(QDeclarativeSupportedCategoriesModel::Error);
+    }
 }
 
-void QDeclarativeSupportedCategoriesModel::replyError(QPlaceReply::Error error,
-                                                 const QString &errorString)
+void QDeclarativeSupportedCategoriesModel::addedCategory(const QPlaceCategory &category,
+                                                         const QString &parentId)
 {
-    Q_UNUSED(error);
-    Q_UNUSED(errorString);
+    if (!m_categoriesTree.contains(parentId))
+        return;
 
-    m_response->deleteLater();
-    m_response = 0;
-    emit updatingChanged();
+    if (category.categoryId().isEmpty())
+        return;
+
+    PlaceCategoryNode *parentNode = m_categoriesTree.value(parentId);
+    if (!parentNode)
+        return;
+
+    int rowToBeAdded = rowToAddChild(parentNode, category);
+    QModelIndex parentIndex = index(parentId);
+    beginInsertRows(parentIndex, rowToBeAdded, rowToBeAdded);
+    PlaceCategoryNode *categoryNode = new PlaceCategoryNode;
+    categoryNode->parentId = parentId;
+    categoryNode->declCategory = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(category, this));
+    m_categoriesTree.insert(category.categoryId(), categoryNode);
+    parentNode->childIds.insert(rowToBeAdded,category.categoryId());
+    endInsertRows();
+
+    //this is a workaround to deal with the fact that the hasModelChildren field of VisualDataodel
+    //does not get updated when a child is added to a model
+    reset();
+}
+
+void QDeclarativeSupportedCategoriesModel::updatedCategory(const QPlaceCategory &category,
+                                                           const QString &parentId)
+{
+    QString categoryId = category.categoryId();
+
+    if (!m_categoriesTree.contains(parentId))
+        return;
+
+    if (category.categoryId().isEmpty() || !m_categoriesTree.contains(categoryId))
+        return;
+
+    PlaceCategoryNode *newParentNode = m_categoriesTree.value(parentId);
+    if (!newParentNode)
+        return;
+
+    PlaceCategoryNode *categoryNode = m_categoriesTree.value(categoryId);
+    if (!categoryNode)
+        return;
+
+    if (categoryNode->parentId == parentId) { //reparenting to same parent
+        QModelIndex parentIndex = index(parentId);
+        int rowToBeAdded = rowToAddChild(newParentNode, category);
+        int oldRow = newParentNode->childIds.indexOf(categoryId);
+
+        //check if we are changing the position of the category
+        if (qAbs(rowToBeAdded - newParentNode->childIds.indexOf(categoryId)) > 1) {
+            //if the position has changed we are moving rows
+            beginMoveRows(parentIndex, oldRow, oldRow,
+                          parentIndex, rowToBeAdded);
+
+            newParentNode->childIds.removeAll(categoryId);
+            newParentNode->childIds.insert(rowToBeAdded, categoryId);
+            categoryNode->declCategory->setCategory(category);
+            endMoveRows();
+        } else {// if the position has not changed we modifying an existing row
+            QModelIndex categoryIndex = index(categoryId);
+            categoryNode->declCategory->setCategory(category);
+            emit dataChanged(categoryIndex, categoryIndex);
+        }
+    } else { //reparenting to different parents
+        QPlaceCategory oldCategory = categoryNode->declCategory->category();
+        PlaceCategoryNode *oldParentNode = m_categoriesTree.value(categoryNode->parentId);
+        if (!oldParentNode)
+            return;
+        QModelIndex oldParentIndex = index(categoryNode->parentId);
+        QModelIndex newParentIndex = index(parentId);
+        QModelIndex removedIndex = index(categoryId);
+
+        int rowToBeAdded = rowToAddChild(newParentNode, category);
+        beginMoveRows(oldParentIndex, oldParentNode->childIds.indexOf(categoryId),
+                      oldParentNode->childIds.indexOf(categoryId), newParentIndex, rowToBeAdded);
+        oldParentNode->childIds.removeAll(oldCategory.categoryId());
+        newParentNode->childIds.insert(rowToBeAdded, categoryId);
+        categoryNode->declCategory->setCategory(category);
+        categoryNode->parentId = parentId;
+        endMoveRows();
+
+        //this is a workaround to deal with the fact that the hasModelChildren field of VisualDataodel
+        //does not get updated when an index is updated to contain children
+        reset();
+    }
+}
+
+void QDeclarativeSupportedCategoriesModel::removedCategory(const QString &categoryId, const QString &parentId)
+{
+    if (!m_categoriesTree.contains(categoryId) || !m_categoriesTree.contains(parentId))
+        return;
+
+    QModelIndex parentIndex = index(parentId);
+    QModelIndex categoryIndex = index(categoryId);
+
+    beginRemoveRows(parentIndex, categoryIndex.row(), categoryIndex.row());
+    PlaceCategoryNode *parentNode = m_categoriesTree.value(parentId);
+    parentNode->childIds.removeAll(categoryId);
+    delete m_categoriesTree.take(categoryId);
+    endRemoveRows();
+}
+
+void QDeclarativeSupportedCategoriesModel::saveCategory(const QVariantMap &categoryMap,
+                                                        const QString &parentId)
+{
+    QPlaceManager *placeManager = manager();
+    if (!placeManager)
+        return;
+
+    QPlaceCategory category;
+    if (categoryMap.contains(QLatin1String("categoryId"))
+            && m_categoriesTree.contains(categoryMap.value(QLatin1String("categoryId")).toString())) {
+        category = m_categoriesTree.value(categoryMap.value(QLatin1String("categoryId")).toString())->declCategory->category();
+    }
+
+    if (categoryMap.contains(QLatin1String("name")))
+        category.setName(categoryMap.value(QLatin1String("name")).toString());
+
+    QPlaceCategory parentCategory;
+    if (m_categoriesTree.contains(parentId))
+        parentCategory = m_categoriesTree.value(parentId)->declCategory->category();
+    else {
+        m_errorString= tr("Saving category with unknown parent id");
+        setStatus(QDeclarativeSupportedCategoriesModel::Error);
+        return;
+    }
+
+    placeManager->saveCategory(category, parentId);
+}
+
+void QDeclarativeSupportedCategoriesModel::removeCategory(const QModelIndex &index)
+{
+    QPlaceManager *placeManager = manager();
+    if (!placeManager)
+        return;
+
+    PlaceCategoryNode *node = static_cast<PlaceCategoryNode *>(index.internalPointer());
+    if (m_categoriesTree.keys(node).isEmpty())
+        return;
+
+    placeManager->removeCategory(node->declCategory->category().categoryId());
 }
 
 void QDeclarativeSupportedCategoriesModel::updateCategories()
@@ -285,77 +458,150 @@ void QDeclarativeSupportedCategoriesModel::updateCategories()
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
-        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        qmlInfo(this) << tr("Places not  by %1 Plugin.").arg(m_plugin->name());
         return;
     }
 
     beginResetModel();
-    m_categoryTree.subCategories = populatedCategories(placeManager);
+    qDeleteAll(m_categoriesTree);
+    m_categoriesTree.clear();
+    PlaceCategoryNode *node = new PlaceCategoryNode;
+    node->childIds = populateCategories(placeManager, QPlaceCategory());
+    m_categoriesTree.insert(QString(), node);
+    node->declCategory = QSharedPointer<QDeclarativeCategory>
+                            (new QDeclarativeCategory(QPlaceCategory(), this));
     endResetModel();
 }
 
-QHash<QString, PlaceCategoryTree> QDeclarativeSupportedCategoriesModel::populatedCategories(QPlaceManager *manager, const QPlaceCategory &parent)
+QString QDeclarativeSupportedCategoriesModel::errorString() const
 {
-    QHash<QString, PlaceCategoryTree> declarativeTree;
+    return m_errorString;
+}
 
-    foreach (const QPlaceCategory &category, manager->categories(parent)) {
-        PlaceCategoryTree dt;
-        dt.category = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(category, this));
+/*!
+    \qmlproperty enumeration SupportedCategoryModel::status
+
+    This property holds the status of the place.  It can be one of:
+    \list
+    \o SupportedCategoriesModel.Ready - No Error occurred during the last operation,
+                     further operations may be performed on the model.
+    \o SupportedCategoriesModel.Saving - A category is currently being saved, no other operations
+                      may be perfomed until complete.
+    \o SupportedCategoriesModel.Updating - The model is being updated, no
+                        other operations may be performed until complete.
+    \o SupportedCategriesModel.Removing - A category is currently being removed, no other
+                        operations can be performed until complete.
+    \o SupportedCategoriesModel.Error - An error occurred during the last operation,
+                     further operations can still be performed on the model.
+    \endlist
+*/
+void QDeclarativeSupportedCategoriesModel::setStatus(Status status)
+{
+    if (m_status != status) {
+        m_status = status;
+        emit statusChanged();
+    }
+}
+
+QDeclarativeSupportedCategoriesModel::Status QDeclarativeSupportedCategoriesModel::status() const
+{
+    return m_status;
+}
+
+QStringList QDeclarativeSupportedCategoriesModel::populateCategories(QPlaceManager *manager, const QPlaceCategory &parent)
+{
+    Q_ASSERT(manager);
+
+    QStringList childIds;
+    PlaceCategoryNode *node;
+
+    QMap<QString, QPlaceCategory> sortedCategories;
+    foreach ( const QPlaceCategory &category, manager->childCategories(parent.categoryId()))
+        sortedCategories.insert(category.name(), category);
+
+    QMapIterator<QString, QPlaceCategory> iter(sortedCategories);
+    while (iter.hasNext()) {
+        iter.next();
+        node = new PlaceCategoryNode;
+        node->parentId = parent.categoryId();
+        node->declCategory = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(iter.value(), this));
+
         if (m_hierarchical)
-            dt.subCategories = populatedCategories(manager, category);
-        declarativeTree.insert(category.categoryId(), dt);
+            node->childIds = populateCategories(manager, iter.value());
+
+        m_categoriesTree.insert(node->declCategory->categoryId(), node);
+        childIds.append(iter.value().categoryId());
 
         if (!m_hierarchical) {
-            QHash<QString, PlaceCategoryTree> sub = populatedCategories(manager, category);
-            QHashIterator<QString, PlaceCategoryTree> it(sub);
-            while (it.hasNext()) {
-                it.next();
-                dt.category = QSharedPointer<QDeclarativeCategory>(it.value().category);
-                Q_ASSERT(it.value().subCategories.isEmpty());
-                declarativeTree.insert(it.key(), dt);
-            }
+            childIds.append(populateCategories(manager,node->declCategory->category()));
         }
     }
-
-    return declarativeTree;
+    return childIds;
 }
 
-PlaceCategoryTree QDeclarativeSupportedCategoriesModel::findCategoryTreeByCategory(QDeclarativeCategory *category, const PlaceCategoryTree &tree) const
+QModelIndex QDeclarativeSupportedCategoriesModel::index(const QString &categoryId) const
 {
-    if (tree.category == category)
-        return tree;
+    if (categoryId.isEmpty())
+        return QModelIndex();
 
-    QHashIterator<QString, PlaceCategoryTree> it(tree.subCategories);
-    while (it.hasNext()) {
-        it.next();
+    if (!m_categoriesTree.contains(categoryId))
+        return QModelIndex();
 
-        if (it.value().category == category)
-            return it.value();
+    PlaceCategoryNode *categoryNode = m_categoriesTree.value(categoryId);
+    if (!categoryNode)
+        return QModelIndex();
 
-        PlaceCategoryTree t = findCategoryTreeByCategory(category, it.value());
-        if (t.category == category)
-            return t;
+    QString parentCategoryId = categoryNode->parentId;
+
+    PlaceCategoryNode *parentNode = m_categoriesTree.value(parentCategoryId);
+
+    return createIndex(parentNode->childIds.indexOf(categoryId), 0, categoryNode);
+}
+
+int QDeclarativeSupportedCategoriesModel::rowToAddChild(PlaceCategoryNode *node, const QPlaceCategory &category)
+{
+    Q_ASSERT(node);
+    for (int i=0 ; i < node->childIds.count(); ++i) {
+        if (category.name() < m_categoriesTree.value(node->childIds.at(i))->declCategory->name())
+            return i;
+    }
+    return node->childIds.count();
+}
+
+/*
+    Helper function to return the manager, this manager is intended to be used
+    to perform the next operation.  If the checkState parameter is true,
+    the model is checked to see if an operation is underway and if so
+    a null pointer is returned.
+*/
+QPlaceManager *QDeclarativeSupportedCategoriesModel::manager(bool checkState)
+{
+    if (checkState) {
+        if (m_status != QDeclarativeSupportedCategoriesModel::Ready && m_status != QDeclarativeSupportedCategoriesModel::Error)
+            return 0;
     }
 
-    return PlaceCategoryTree();
-}
+    if (m_response) {
+        m_response->abort();
+        m_response->deleteLater();
+        m_response = 0;
+    }
 
-QDeclarativeCategory *QDeclarativeSupportedCategoriesModel::findParentCategoryByCategory(QDeclarativeCategory *category, const PlaceCategoryTree &tree) const
-{
-    if (tree.category == category)
+    if (!m_plugin) {
+           qmlInfo(this) << tr("Plugin not assigned to place");
+           return 0;
+    }
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
         return 0;
 
-    QHashIterator<QString, PlaceCategoryTree> it(tree.subCategories);
-    while (it.hasNext()) {
-        it.next();
+    QPlaceManager *placeManager = serviceProvider->placeManager();
 
-        if (it.value().category == category)
-            return tree.category.data();
-
-        QDeclarativeCategory *p = findParentCategoryByCategory(category, it.value());
-        if (p)
-            return p;
+    if (!placeManager) {
+        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        return 0;
     }
 
-    return 0;
+    return placeManager;
 }

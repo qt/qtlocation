@@ -41,14 +41,16 @@
 
 #define DECLARE_TRIGGER_DONE_FN inline void triggerDone(QPlaceReply::Error error = QPlaceReply::NoError, \
                                          const QString &errorString = QString()) { \
-    this->setError(error,errorString); \
-    QMetaObject::invokeMethod(m_engine, "error", Qt::QueuedConnection, \
-                              Q_ARG(QPlaceReply *,this), \
-                              Q_ARG(QPlaceReply::Error, error),\
-                              Q_ARG(QString, errorString)); \
-    QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection, \
-                              Q_ARG(QPlaceReply::Error, error), \
-                              Q_ARG(QString, errorString)); \
+    if (error != QPlaceReply::NoError) { \
+        this->setError(error,errorString); \
+        QMetaObject::invokeMethod(m_engine, "error", Qt::QueuedConnection, \
+                                  Q_ARG(QPlaceReply *,this), \
+                                  Q_ARG(QPlaceReply::Error, error),\
+                                  Q_ARG(QString, errorString)); \
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection, \
+                                  Q_ARG(QPlaceReply::Error, error), \
+                                  Q_ARG(QString, errorString)); \
+    } \
     this->setFinished(true); \
     QMetaObject::invokeMethod(m_engine, "finished", Qt::QueuedConnection, \
                               Q_ARG(QPlaceReply *,this)); \

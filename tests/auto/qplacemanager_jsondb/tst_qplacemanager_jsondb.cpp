@@ -47,6 +47,7 @@
 #include <qgeoboundingcircle.h>
 #include <qgeoserviceprovider.h>
 #include <qplacemanager.h>
+#include <qplacecategory.h>
 #include <qplacecontentreply.h>
 #include <qplacetextpredictionreply.h>
 #include <qplacesearchrequest.h>
@@ -100,8 +101,10 @@ private Q_SLOTS:
     void initTestCase();
     void cleanup();
 
-    void saveAndRemove();
+    void saveAndRemovePlace();
     void updatePlace();
+    void saveAndRemoveCategory();
+    void updateCategory();
     void searchByName();
     void searchByBox();
     void searchByCircle();
@@ -128,6 +131,18 @@ private:
     bool doFetchDetails(QString placeId,
                         QPlace *place,
                         QPlaceReply::Error expectedError = QPlaceReply::NoError);
+
+    bool doSaveCategory(const QPlaceCategory &category,
+                        QPlaceReply::Error expectedError = QPlaceReply::NoError,
+                        QString *categoryId = 0);
+
+    bool doSaveCategory(const QPlaceCategory &category,
+                        const QString &parentId,
+                        QPlaceReply::Error expectedError = QPlaceReply::NoError,
+                        QString *categoryId = 0);
+
+    bool doRemoveCategory(const QPlaceCategory &category,
+                          QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
     bool checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError);
 
@@ -167,7 +182,7 @@ void tst_QPlaceManagerJsonDb::initTestCase()
     cleanup();
 }
 
-void tst_QPlaceManagerJsonDb::saveAndRemove()
+void tst_QPlaceManagerJsonDb::saveAndRemovePlace()
 {
     QPlace place;
     place.setName("Char");
@@ -238,6 +253,152 @@ void tst_QPlaceManagerJsonDb::updatePlace()
     //try updating a non-existent place
     place.setPlaceId("Non-existent id");
     QVERIFY(doSavePlace(place, QPlaceReply::PlaceDoesNotExistError));
+}
+
+void tst_QPlaceManagerJsonDb::saveAndRemoveCategory()
+{
+    QString categoryId;
+    QPlaceCategory restaurant;
+    restaurant.setName("Restaurant");
+    QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
+    restaurant.setCategoryId(categoryId);
+
+    QPlaceCategory fastFood;
+    fastFood.setName("Fast Food");
+    QVERIFY(doSaveCategory(fastFood, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
+    fastFood.setCategoryId(categoryId);
+
+    QPlaceCategory fineDining;
+    fineDining.setName("Fine dining");
+    QVERIFY(doSaveCategory(fineDining, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
+    fineDining.setCategoryId(categoryId);
+
+    QPlaceCategory pancakes;
+    pancakes.setName("Pancakes");
+    QVERIFY(doSaveCategory(pancakes, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
+    pancakes.setCategoryId(categoryId);
+
+    QPlaceCategory pizza;
+    pizza.setName("Pizza");
+    QVERIFY(doSaveCategory(pizza, fastFood.categoryId(), QPlaceReply::NoError, &categoryId));
+    pizza.setCategoryId(categoryId);
+
+    QPlaceCategory burgers;
+    burgers.setName("burgers");
+    QVERIFY(doSaveCategory(burgers, fastFood.categoryId(), QPlaceReply::NoError, &categoryId));
+    burgers.setCategoryId(categoryId);
+
+    QPlaceCategory accommodation;
+    accommodation.setName("Accommodation");
+    QVERIFY(doSaveCategory(accommodation, QPlaceReply::NoError,&categoryId));
+    accommodation.setCategoryId(categoryId);
+
+    QPlaceCategory hotel;
+    hotel.setName("Hotel");
+    QVERIFY(doSaveCategory(hotel, accommodation.categoryId(), QPlaceReply::NoError, &categoryId));
+    hotel.setCategoryId(categoryId);
+
+    QPlaceCategory motel;
+    motel.setName("Motel");
+    QVERIFY(doSaveCategory(motel, accommodation.categoryId(), QPlaceReply::NoError, &categoryId));
+    motel.setCategoryId(categoryId);
+
+    QList<QPlaceCategory> topLevelCategories = placeManager->childCategories();
+
+    QVERIFY(topLevelCategories.contains(restaurant));
+    QVERIFY(topLevelCategories.contains(accommodation));
+    QVERIFY(topLevelCategories.count() == 2);
+
+    QList<QPlaceCategory> categories = placeManager->childCategories(restaurant.categoryId());
+    QVERIFY(categories.contains(fastFood));
+    QVERIFY(categories.contains(fineDining));
+    QVERIFY(categories.contains(pancakes));
+    QCOMPARE(categories.count(), 3);
+
+    categories = placeManager->childCategories(fastFood.categoryId());
+    QVERIFY(categories.contains(pizza));
+    QVERIFY(categories.contains(burgers));
+    QCOMPARE(categories.count(), 2);
+
+    categories = placeManager->childCategories(accommodation.categoryId());
+    QVERIFY(categories.contains(hotel));
+    QVERIFY(categories.contains(motel));
+    QCOMPARE(categories.count(), 2);
+
+    QVERIFY(doRemoveCategory(fastFood));
+    categories = placeManager->childCategories(restaurant.categoryId());
+    QVERIFY(categories.contains(fineDining));
+    QVERIFY(categories.contains(pancakes));
+    QCOMPARE(categories.count(), 2);
+
+    QVERIFY(doRemoveCategory(accommodation));
+    categories = placeManager->childCategories();
+    QVERIFY(categories.contains(restaurant));
+    QCOMPARE(categories.count(), 1);
+}
+
+void tst_QPlaceManagerJsonDb::updateCategory()
+{
+    //Test updating a category name
+    QPlaceCategory category;
+    category.setName("Foood");
+    QString categoryId;
+    QVERIFY(doSaveCategory(category, QPlaceReply::NoError, &categoryId));
+    category.setCategoryId(categoryId);
+
+    QList<QPlaceCategory> categories;
+    categories = placeManager->childCategories();
+    QVERIFY(categories.contains(category));
+
+    category.setName("Food");
+    QVERIFY(doSaveCategory(category, QPlaceReply::NoError, &categoryId));
+    categories = placeManager->childCategories();
+    QVERIFY(categories.contains(category));
+    QCOMPARE(categories.count(), 1);
+
+    //Test updating a category's parent
+    QPlaceCategory restaurant;
+    restaurant.setName("Restaurant");
+    QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
+    restaurant.setCategoryId(categoryId);
+
+    QPlaceCategory fastFood;
+    fastFood.setName("Fast Food");
+    QVERIFY(doSaveCategory(fastFood, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
+    fastFood.setCategoryId(categoryId);
+
+    QPlaceCategory fineDining;
+    fineDining.setName("Fine dining");
+    QVERIFY(doSaveCategory(fineDining, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
+    fineDining.setCategoryId(categoryId);
+
+    QPlaceCategory pancakes;
+    pancakes.setName("Pancakes");
+    QVERIFY(doSaveCategory(pancakes, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
+    pancakes.setCategoryId(categoryId);
+
+    QPlaceCategory pizza;
+    pizza.setName("Pizza");
+    QVERIFY(doSaveCategory(pizza, fastFood.categoryId(), QPlaceReply::NoError, &categoryId));
+    pizza.setCategoryId(categoryId);
+
+    QPlaceCategory burgers;
+    burgers.setName("burgers");
+    QVERIFY(doSaveCategory(burgers, fastFood.categoryId(), QPlaceReply::NoError, &categoryId));
+    burgers.setCategoryId(categoryId);
+
+    //resave pizza as a child of fine dining
+    QVERIFY(doSaveCategory(pizza, fineDining.categoryId()));
+
+    //check that fast food no longer has  pizza as a child
+    categories = placeManager->childCategories(fastFood.categoryId());
+    QVERIFY(categories.contains(burgers));
+    QCOMPARE(categories.count(), 1);
+
+    //check that fine dining has pizza as a child
+    categories = placeManager->childCategories(fineDining.categoryId());
+    QVERIFY(categories.contains(pizza));
+    QCOMPARE(categories.count(), 1);
 }
 
 void tst_QPlaceManagerJsonDb::searchByName()
@@ -757,6 +918,42 @@ bool tst_QPlaceManagerJsonDb::doFetchDetails(QString placeId, QPlace *place, QPl
     bool success = checkSignals(detailsReply, expectedError);
     *place = detailsReply->result();
     return success;
+}
+
+bool tst_QPlaceManagerJsonDb::doSaveCategory(const QPlaceCategory &category,
+                                          QPlaceReply::Error expectedError,
+                                          QString *categoryId)
+{
+    QPlaceIdReply *saveReply = placeManager->saveCategory(category);
+    bool isSuccessful = false;
+    isSuccessful = checkSignals(saveReply, expectedError);
+    if (categoryId != 0)
+        *categoryId = saveReply->id();
+    return isSuccessful;
+}
+
+bool tst_QPlaceManagerJsonDb::doSaveCategory(const QPlaceCategory &category,
+                                             const QString &parentId,
+                                          QPlaceReply::Error expectedError,
+                                          QString *categoryId)
+{
+    QPlaceIdReply *idReply = placeManager->saveCategory(category, parentId);
+    bool isSuccessful = checkSignals(idReply, expectedError)
+                        && (idReply->error() == expectedError);
+
+    if (categoryId != 0)
+        *categoryId = idReply->id();
+    return isSuccessful;
+}
+
+bool tst_QPlaceManagerJsonDb::doRemoveCategory(const QPlaceCategory &category,
+                                          QPlaceReply::Error expectedError)
+{
+    QPlaceIdReply *idReply = placeManager->removeCategory(category.categoryId());
+
+    bool isSuccessful = checkSignals(idReply, expectedError) &&
+                        (idReply->error() == expectedError);
+    return isSuccessful;
 }
 
 bool tst_QPlaceManagerJsonDb::checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError)

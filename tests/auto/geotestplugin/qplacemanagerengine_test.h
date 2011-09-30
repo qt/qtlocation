@@ -219,15 +219,45 @@ public:
         return reply;
     }
 
+    QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId)
+    {
+        Q_UNUSED(category);
+        Q_UNUSED(parentId);
+
+        return 0;
+    }
+
+    QPlaceIdReply *removeCategory(const QString &categoryId)
+    {
+        Q_UNUSED(categoryId);
+
+        return 0;
+    }
+
     QPlaceReply *initializeCategories()
     {
         return 0;
     }
 
-    QList<QPlaceCategory> categories(const QPlaceCategory &parent) const
+    QString parentCategoryId(const QString &categoryId) const
     {
-        Q_UNUSED(parent)
+        Q_UNUSED(categoryId)
+        return QString();
+    }
 
+    virtual QStringList childrenCategoryIds(const QString &categoryId) const
+    {
+        Q_UNUSED(categoryId)
+        return QStringList();
+    }
+
+    virtual QPlaceCategory category(const QString &categoryId) const {
+        Q_UNUSED(categoryId)
+        return QPlaceCategory();
+    }
+
+    QList<QPlaceCategory> childCategories(const QString &parentId) const {
+        Q_UNUSED(parentId);
         return QList<QPlaceCategory>();
     }
 

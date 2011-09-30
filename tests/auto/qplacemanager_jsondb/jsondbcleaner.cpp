@@ -52,6 +52,7 @@
 #define TYPE "_type"
 
 #define PLACE_TYPE "place"
+#define PLACE_CATEGORY_TYPE "com.nokia.mp.location.PlaceCategory"
 
 JsonDbCleaner::JsonDbCleaner(QObject *parent)
     : QObject(parent)
@@ -80,7 +81,5 @@ void JsonDbCleaner::jsonDbError(int id, int code, const QString& data)
 
 void JsonDbCleaner::cleanDb()
 {
-    cleanReqId = mDb->remove(QString::fromLatin1("[?%1=\"%2\"]").arg(TYPE).arg(PLACE_TYPE));
+    cleanReqId = mDb->remove(QString::fromLatin1("[?%1=\"%2\" | %1 =\"%3\"]").arg(TYPE).arg(PLACE_TYPE).arg(PLACE_CATEGORY_TYPE));
 }
-
-

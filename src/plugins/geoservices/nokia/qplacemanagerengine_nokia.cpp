@@ -254,15 +254,30 @@ QPlaceIdReply *QPlaceManagerEngineNokia::savePlace(const QPlace &place,
     return 0;
 }
 
-QPlaceManager::VisibilityScopes QPlaceManagerEngineNokia::supportedSaveVisibilityScopes() const {
-    return QPlaceManager::NoScope;
-}
-
 QPlaceIdReply *QPlaceManagerEngineNokia::removePlace(const QPlace &place)
 {
     Q_UNUSED(place)
 
     //TODO: implementation
+    return 0;
+}
+
+QPlaceManager::VisibilityScopes QPlaceManagerEngineNokia::supportedSaveVisibilityScopes() const {
+    return QPlaceManager::NoScope;
+}
+
+QPlaceIdReply *QPlaceManagerEngineNokia::saveCategory(const QPlaceCategory &category, const QString &parentId)
+{
+    Q_UNUSED(category)
+    Q_UNUSED(parentId)
+
+    return 0;
+}
+
+QPlaceIdReply *QPlaceManagerEngineNokia::removeCategory(const QString &categoryId)
+{
+    Q_UNUSED(categoryId)
+
     return 0;
 }
 
@@ -279,10 +294,10 @@ QPlaceReply *QPlaceManagerEngineNokia::initializeCategories()
     return reply;
 }
 
-QList<QPlaceCategory> QPlaceManagerEngineNokia::categories(const QPlaceCategory &parent) const
+QList<QPlaceCategory> QPlaceManagerEngineNokia::childCategories(const QString &parentId) const
 {
     QPlaceCategoryTree tree = QPlaceCategoriesRepository::instance()->categories();
-    tree = tree.findCategoryTreeById(parent.categoryId());
+    tree = tree.findCategoryTreeById(parentId);
 
     QList<QPlaceCategory> results;
 

@@ -43,7 +43,7 @@
 
 IdReply::IdReply(QPlaceIdReply::OperationType operationType,
                  QPlaceManagerEngineJsonDb *engine)
-    : QPlaceIdReply(operationType, engine),m_engine(engine)
+    : QPlaceIdReply(operationType, engine),m_engine(engine), m_isUpdate(false)
 {
 }
 
@@ -55,3 +55,24 @@ void IdReply::setId(const QString &id)
 {
     QPlaceIdReply::setId(id);
 }
+
+bool IdReply::isUpdate() const
+{
+    return m_isUpdate;
+}
+
+void IdReply::setIsUpdate()
+{
+    m_isUpdate = true;
+}
+
+QString IdReply::parentCategoryId() const
+{
+    return m_parentCategoryId;
+}
+
+void IdReply::setParentCategoryId(const QString &parentId)
+{
+    m_parentCategoryId = parentId;
+}
+

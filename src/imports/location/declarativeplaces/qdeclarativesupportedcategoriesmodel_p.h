@@ -45,38 +45,40 @@
 #include "qdeclarativegeoserviceprovider_p.h"
 
 #include <QObject>
+#include <QtCore/QStringList>
 #include <QAbstractListModel>
 #include <QDeclarativeListProperty>
 
-#include <qplacecategory.h>
-#include <qplacemanager.h>
-#include <qplacereply.h>
+#include <QtLocation/QPlaceCategory>
 
 #include "qdeclarativecategory_p.h"
 
 QT_BEGIN_NAMESPACE
 
 class QGeoServiceProvider;
+class QPlaceManager;
+class QPlaceReply;
 
-class PlaceCategoryTree
+class PlaceCategoryNode
 {
 public:
-    PlaceCategoryTree();
-    ~PlaceCategoryTree();
-
-    QSharedPointer<QDeclarativeCategory> category;
-    QHash<QString, PlaceCategoryTree> subCategories;
+    QString parentId;
+    QStringList childIds;
+    QSharedPointer<QDeclarativeCategory> declCategory;
 };
 
 class QDeclarativeSupportedCategoriesModel : public QAbstractItemModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
+    Q_ENUMS(Status)
+
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(bool hierarchical READ hierarchical WRITE setHierarchical NOTIFY hierarchicalChanged)
-    Q_PROPERTY(bool updating READ updating NOTIFY updatingChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged);
 
     Q_INTERFACES(QDeclarativeParserStatus)
+    Q_ENUMS(Roles)
 
 public:
     explicit QDeclarativeSupportedCategoriesModel(QObject *parent = 0);
@@ -93,12 +95,17 @@ public:
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &child) const;
 
-    QVariant data(const QModelIndex &index, int role) const;
+    Q_INVOKABLE QVariant data(const QModelIndex &index, int role) const;
+
     // Roles for exposing data via model. Only one role because
     // everything can be accessed via QDeclarativeCategory
     enum Roles {
-        CategoryRole = Qt::UserRole + 500
+        CategoryRole = Qt::UserRole,
+        CategoryIdRole,
+        NameRole
     };
+
+    enum Status {Ready, Saving, Updating, Removing, Error};
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider* plugin() const;
@@ -106,29 +113,42 @@ public:
     void setHierarchical(bool hierarchical);
     bool hierarchical() const;
 
-    bool updating() const;
+    Q_INVOKABLE void saveCategory(const QVariantMap &categoryMap,
+                                  const QString &parentId);
+    Q_INVOKABLE void removeCategory(const QModelIndex &index);
+    Q_INVOKABLE void updateCategories();
+    Q_INVOKABLE QString errorString() const;
+
+    Status status() const;
+    void setStatus(Status status);
 
 signals:
     void pluginChanged();
     void hierarchicalChanged();
-    void updatingChanged();
+    void statusChanged();
 
 private slots:
     void replyFinished();
-    void replyError(QPlaceReply::Error error, const QString &errorString);
+    void addedCategory(const QPlaceCategory &category, const QString &parentId);
+    void updatedCategory(const QPlaceCategory &category, const QString &parentId);
+    void removedCategory(const QString &categoryId, const QString &parentId);
 
 private:
-    void updateCategories();
-    QHash<QString, PlaceCategoryTree> populatedCategories(QPlaceManager *manager, const QPlaceCategory &parent = QPlaceCategory());
-    PlaceCategoryTree findCategoryTreeByCategory(QDeclarativeCategory *category, const PlaceCategoryTree &tree) const;
-    QDeclarativeCategory *findParentCategoryByCategory(QDeclarativeCategory *category, const PlaceCategoryTree &tree) const;
+    QStringList populateCategories(QPlaceManager *, const QPlaceCategory &parent);
+    QModelIndex index(const QString &categoryId) const;
+    int rowToAddChild(PlaceCategoryNode *, const QPlaceCategory &category);
+
+    QPlaceManager *manager(bool stateCheck = true);
 
     QPlaceReply *m_response;
-    PlaceCategoryTree m_categoryTree;
 
     QDeclarativeGeoServiceProvider *m_plugin;
     bool m_hierarchical;
     bool m_complete;
+    Status m_status;
+    QString m_errorString;
+
+    QHash<QString, PlaceCategoryNode *> m_categoriesTree;
 };
 
 QT_END_NAMESPACE

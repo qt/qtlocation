@@ -75,12 +75,18 @@ public:
     virtual QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request) = 0;
 
     virtual QPlaceIdReply *savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope) = 0;
+    virtual QPlaceIdReply *removePlace(const QPlace &place) = 0;
     virtual QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const = 0;
 
-    virtual QPlaceIdReply *removePlace(const QPlace &place) = 0;
+    virtual QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId) = 0;
+    virtual QPlaceIdReply *removeCategory(const QString &categoryId) = 0;
 
     virtual QPlaceReply *initializeCategories() = 0;
-    virtual QList<QPlaceCategory> categories(const QPlaceCategory &parent) const = 0;
+    virtual QString parentCategoryId(const QString &categoryId) const = 0;
+    virtual QStringList childrenCategoryIds(const QString &categoryId) const = 0;
+    virtual QPlaceCategory category(const QString &categoryId) const = 0;
+
+    virtual QList<QPlaceCategory> childCategories(const QString &parentId) const = 0;
 
     virtual QLocale locale() const = 0;
     virtual void setLocale(const QLocale &locale) = 0;
@@ -93,6 +99,10 @@ Q_SIGNALS:
     void placeAdded(const QString &placeId);
     void placeUpdated(const QString &placeId);
     void placeRemoved(const QString &placeId);
+
+    void categoryAdded(const QPlaceCategory &category, const QString &parentCategoryId);
+    void categoryUpdated(const QPlaceCategory &category, const QString &parentCategoryId);
+    void categoryRemoved(const QString &categoryId, const QString &parentCategoryId);
 
 private:
     void setManagerName(const QString &managerName);

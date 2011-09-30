@@ -51,6 +51,11 @@
 #include "searchreply.h"
 #include "unsupportedreplies.h"
 
+
+//Json db response key constants
+#define LENGTH QLatin1String("length")
+#define DATA QLatin1String("data")
+
 QT_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceReply::Error)
@@ -63,16 +68,16 @@ QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVarian
     m_jsonDbHandler(this)
 
 {
-    Q_UNUSED(error)
-    Q_UNUSED(errorString)
-
     qRegisterMetaType<QPlaceReply::Error>();
     qRegisterMetaType<QPlaceReply *>();
+    qRegisterMetaType<QPlaceCategory>();
 
     connect(&m_jsonDbHandler, SIGNAL(jsonDbResponse(int,QVariant)),
             this, SLOT(processJsonDbResponse(int,QVariant)));
     connect(&m_jsonDbHandler, SIGNAL(jsonDbError(int,int,QString)),
             this, SLOT(processJsonDbError(int,int,QString)));
+    *error = QGeoServiceProvider::NoError;
+    errorString->clear();
 
 }
 
@@ -83,7 +88,7 @@ QPlaceManagerEngineJsonDb::~QPlaceManagerEngineJsonDb()
 QPlaceDetailsReply *QPlaceManagerEngineJsonDb::getPlaceDetails(const QString &placeId)
 {
     DetailsReply *detailsReply = new DetailsReply(this);
-    int reqId = m_jsonDbHandler.queryPlaceDetails(placeId);
+    int reqId = m_jsonDbHandler.queryByUuid(placeId);
     m_idReplyMap.insert(reqId, detailsReply);
     return detailsReply;
 }
@@ -136,8 +141,8 @@ QPlaceSearchReply *QPlaceManagerEngineJsonDb::searchForPlaces(const QPlaceSearch
         }
     }
 
-    QVariant searchJson = JsonDbHandler::convertToJsonVariant(request);
-    int reqId = m_jsonDbHandler.query(searchJson);
+    QString searchQuery = JsonDbHandler::convertToQueryString(request);
+    int reqId = m_jsonDbHandler.query(searchQuery);
     m_idReplyMap.insert(reqId, searchReply);
     return searchReply;
 }
@@ -179,6 +184,99 @@ QPlaceIdReply *QPlaceManagerEngineJsonDb::savePlace(const QPlace &place, QPlaceM
     return saveReply;
 }
 
+QPlaceIdReply *QPlaceManagerEngineJsonDb::saveCategory(const QPlaceCategory &category, const QString &parentId)
+{
+    IdReply *saveReply = new IdReply(QPlaceIdReply:: SaveCategory ,this);
+    if (!m_jsonDbHandler.isConnected()) {
+        saveReply->triggerDone(QPlaceReply::CommunicationError, "No connection to jsondb database");
+        return saveReply;
+    }
+
+    QVariantMap categoryMap;
+    QVariantMap parentMap;
+
+    bool isUpdate = false;
+    bool isSameParent = false;
+
+    int reqId;
+
+    categoryMap = m_jsonDbHandler.findCategoryJson(category.categoryId());
+    if (!categoryMap.isEmpty()) {
+        isUpdate = true;
+        //check if the existing parent is different from the new one
+        //if it is, then resave the old parent without the category as a child
+        parentMap = m_jsonDbHandler.findParentCategoryJson(category.categoryId());
+        if (!parentMap.isEmpty()) {
+            if (parentMap.value(UUID) != parentId) {
+                QList<QVariant> siblingUuids = parentMap.value(CHILDREN_UUIDS).toList();
+                siblingUuids.removeAll(QVariant(category.categoryId()));
+                parentMap.insert(CHILDREN_UUIDS, siblingUuids);
+                reqId = m_jsonDbHandler.update(parentMap);
+                m_jsonDbHandler.waitForRequest(reqId);
+            } else {
+                isSameParent = true;
+            }
+        }
+    }
+
+    //check if the parent category exists
+    bool isTopLevel = parentId.isEmpty();
+    if (!isTopLevel) {
+        if (!isSameParent) {
+            parentMap = m_jsonDbHandler.findCategoryJson(parentId);
+            if (parentMap.isEmpty()) {
+                saveReply->triggerDone(QPlaceReply::CategoryDoesNotExistError, tr("Parent category does not exist"));
+                return saveReply;
+            }
+        }
+    } else {
+        parentMap.clear();
+    }
+
+    if (!isUpdate) {
+        reqId = m_jsonDbHandler.write(JsonDbHandler::convertToJsonVariant(category, isTopLevel));
+    } else {
+        categoryMap.insert(DISPLAY_NAME, category.name());
+        reqId = m_jsonDbHandler.update(categoryMap);
+        saveReply->setIsUpdate();
+    }
+
+    QVariantMap responseMap = m_jsonDbHandler.waitForRequest(reqId);
+    if (!responseMap.contains(UUID)) {
+        saveReply->triggerDone(QPlaceReply::UnknownError, tr("Could not save category"));
+        return saveReply;
+    }
+
+    QString categoryUuid = responseMap.value(UUID).toString();
+    saveReply->setId(categoryUuid);
+
+    if (!isTopLevel) {
+        //if the specified parent is a new parent, save the specified parent with it's new child
+        if (!isSameParent) {
+            QList<QVariant> childrenUuids = parentMap.value(CHILDREN_UUIDS).toList();
+            childrenUuids.append(categoryUuid);
+            parentMap.insert(CHILDREN_UUIDS, childrenUuids);
+            reqId = m_jsonDbHandler.update(parentMap);
+            m_idReplyMap.insert(reqId, saveReply);
+            return saveReply;
+        }
+    }
+
+    //TODO: this variable is only needed for for the workaround for emitting signals
+    // when jsondb notifications are introduced this should be removed.
+    QPlaceCategory category_ = m_jsonDbHandler.findCategory(saveReply->id());
+
+    saveReply->setId(categoryUuid);
+    saveReply->triggerDone();
+
+    if (!saveReply->isUpdate())
+        emit categoryAdded(category_, parentMap.value(UUID).toString());
+    else
+        emit categoryUpdated(category_, parentMap.value(UUID).toString());
+
+    return saveReply;
+}
+
 QPlaceManager::VisibilityScopes QPlaceManagerEngineJsonDb::supportedSaveVisibilityScopes() const
 {
     return QPlaceManager::NoScope | QPlaceManager::PrivateScope;
@@ -199,17 +297,80 @@ QPlaceIdReply *QPlaceManagerEngineJsonDb::removePlace(const QPlace &place)
     return removeReply;
 }
 
+QPlaceIdReply *QPlaceManagerEngineJsonDb::removeCategory(const QString &categoryId)
+{
+    IdReply *removeReply = new IdReply(QPlaceIdReply::RemoveCategory, this);
+    removeReply->setId(categoryId);
+    if (categoryId.isEmpty()) {
+        removeReply->triggerDone(QPlaceReply::CategoryDoesNotExistError, tr("Trying to remove category with empty category id"));
+        return removeReply;
+    }
+
+    //check if category exists
+    QVariantMap categoryMap = m_jsonDbHandler.findCategoryJson(categoryId);
+    if (categoryMap.isEmpty()) {
+        removeReply->triggerDone(QPlaceReply::CategoryDoesNotExistError, tr("Trying to remove non-existent category"));
+        return removeReply;
+    }
+
+    QVariantMap parentCategoryMap = m_jsonDbHandler.findParentCategoryJson(categoryId);
+    recursiveRemoveHelper(categoryId, parentCategoryMap.value(UUID).toString());
+
+    removeReply->setParentCategoryId(parentCategoryMap.value(UUID).toString());
+    removeReply->setId(categoryId);
+
+    //resave the parent without the given category as a child
+    int reqId;
+    if (!parentCategoryMap.isEmpty()) {
+        QStringList childrenUuids;
+        childrenUuids = parentCategoryMap.value(CHILDREN_UUIDS).toStringList();
+        childrenUuids.removeAll(categoryId);
+        parentCategoryMap.insert(CHILDREN_UUIDS, childrenUuids);
+        reqId = m_jsonDbHandler.update(parentCategoryMap);
+        m_idReplyMap.insert(reqId, removeReply);
+    } else {
+        //trigger the reply as done
+        removeReply->triggerDone();
+        emit categoryRemoved(removeReply->id(), removeReply->parentCategoryId());
+    }
+
+    return removeReply;
+}
+
 QPlaceReply *QPlaceManagerEngineJsonDb::initializeCategories()
 {
     Reply *reply = new Reply(this);
-    reply->triggerDone(QPlaceReply::UnsupportedError, tr("Categories are unsupported"));
+    reply->triggerDone();
     return reply;
 }
 
-QList<QPlaceCategory> QPlaceManagerEngineJsonDb::categories(const QPlaceCategory &parent) const
+QList<QPlaceCategory> QPlaceManagerEngineJsonDb::childCategories(const QString &parentId) const
 {
-    Q_UNUSED(parent);
-    return QList<QPlaceCategory>();
+    int reqId;
+
+    if (parentId.isEmpty()) {
+        reqId= m_jsonDbHandler.query(QString("[?") + TYPE + QLatin1String(" = \"") + PLACE_CATEGORY_TYPE + QLatin1String("\"]")
+                                               + QLatin1String("[?") + TOP_LEVEL_CATEGORY + QLatin1String(" = true]"));
+    } else {
+        reqId= m_jsonDbHandler.query(QString("[?") + TYPE + QLatin1String(" = \"") + PLACE_CATEGORY_TYPE + QLatin1String("\"]")
+                                               + QLatin1String("[?") + UUID + QLatin1String(" = \"") + parentId + QLatin1String("\"]"));
+
+        QVariantMap responseMap = m_jsonDbHandler.waitForRequest(reqId);
+
+        if (responseMap.value(LENGTH).toInt() <= 0)
+            return QList<QPlaceCategory>();
+
+        QVariantMap categoryMap = responseMap.value("data").toList().at(0).toMap();
+        QStringList childUuids = categoryMap.value(CHILDREN_UUIDS).toStringList();
+        for (int i=0; i < childUuids.count(); ++i)
+            childUuids[i].prepend("\"").append("\"");
+        QString queryString = QString("[?") + TYPE + QLatin1String(" = \"") + PLACE_CATEGORY_TYPE + QLatin1String("\"]")
+                        + QLatin1String("[?") + UUID + QLatin1String(" in [") + childUuids.join(",") + QLatin1String("]]");
+        reqId= m_jsonDbHandler.query(queryString);
+    }
+
+    QVariantMap responseMap = m_jsonDbHandler.waitForRequest(reqId);
+    return JsonDbHandler::convertJsonResponseToCategories(responseMap);
 }
 
 QLocale QPlaceManagerEngineJsonDb::locale() const
@@ -232,7 +393,6 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
 
                 switch (idReply->operationType()) {
                 case QPlaceIdReply::SavePlace:
-                case QPlaceIdReply::SaveCategory:
                         /*
                         Expected data format
                         {
@@ -241,8 +401,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                         }*/
                     idReply->setId(data.toMap().value(UUID).toString());
                     break;
-                case QPlaceIdReply::RemovePlace:
-                case QPlaceIdReply::RemoveCategory: {
+                case QPlaceIdReply::RemovePlace:{
                     /*
                     Expected data format example
                     {
@@ -279,9 +438,14 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                                                     .toStringList().join(QLatin1String(","))));
                     }
 
-                    //id should've already been set
                     break;
                 }
+                case QPlaceIdReply::RemoveCategory:
+                case QPlaceIdReply::SaveCategory:
+                    //id should've already been set, note the ids from the response
+                    //won't match those from the reply since the response might be
+                    //be changes to the parent category
+                    break;
                 default:
                     //Other types should not be possible
                     break;
@@ -293,10 +457,27 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                 //TODO: This is workaround code, it is intended that we use
                 //       jsondb notifications to emit the added, updated
                 //       and removed signals.
-                if (idReply->operationType() == QPlaceIdReply::RemovePlace) {
-                    emit placeRemoved(idReply->id());
-                } else if (idReply->operationType() == QPlaceIdReply::SavePlace) {
-                    emit placeAdded(idReply->id());
+                switch (idReply->operationType()) {
+                    case QPlaceIdReply::RemovePlace:
+                        emit placeRemoved(idReply->id());
+                        break;
+                    case QPlaceIdReply::SavePlace:
+                        emit placeAdded(idReply->id());
+                        break;
+                    case QPlaceIdReply::RemoveCategory:
+                        emit categoryRemoved(idReply->id(), idReply->parentCategoryId());
+                        break;
+                    case QPlaceIdReply::SaveCategory:
+                        //the uuid in the response here is expected to be that of the parent
+                        //the child uuid is already set in the reply.
+                        if (idReply->isUpdate())
+                            emit categoryUpdated(m_jsonDbHandler.findCategory(idReply->id()), data.toMap().value(UUID).toString());
+                        else
+                            emit categoryAdded(m_jsonDbHandler.findCategory(idReply->id()), data.toMap().value(UUID).toString());
+                        break;
+                default:
+                    //no other cases should exist
+                    break;
                 }
                 break;
             }
@@ -379,8 +560,8 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                 break;
             }
         }
+        m_idReplyMap.remove(id);
     }
-    m_idReplyMap.remove(id);
 }
 
 void QPlaceManagerEngineJsonDb::processJsonDbError(int id, int code, const QString &jsonDbErrorString)
@@ -401,6 +582,11 @@ void QPlaceManagerEngineJsonDb::processJsonDbError(int id, int code, const QStri
                 case QPlaceIdReply::RemovePlace:
                     error = QPlaceReply::PlaceDoesNotExistError;
                     errorString = tr("Place does not exist");
+                    break;
+                case QPlaceIdReply::SaveCategory:
+                case QPlaceIdReply::RemoveCategory:
+                    error = QPlaceReply::CategoryDoesNotExistError;
+                    errorString = tr("Category does not exist");
                 }
             }
             idReply->triggerDone(error, errorString);
@@ -419,4 +605,20 @@ void QPlaceManagerEngineJsonDb::processJsonDbError(int id, int code, const QStri
         }
         m_idReplyMap.remove(id);
     }
+}
+
+void QPlaceManagerEngineJsonDb::recursiveRemoveHelper(const QString &categoryId, const QString &parentId)
+{
+
+    QVariantMap categoryMap = m_jsonDbHandler.findCategoryJson(categoryId);
+    if (categoryMap.isEmpty())
+        return;
+
+    QStringList childUuids = categoryMap.value(CHILDREN_UUIDS).toStringList();
+    foreach (const QString &uuid, childUuids)
+        recursiveRemoveHelper(uuid, categoryId);
+
+    int reqId = m_jsonDbHandler.remove(categoryId);
+    m_jsonDbHandler.waitForRequest(reqId);
+    emit categoryRemoved(categoryId, parentId);
 }

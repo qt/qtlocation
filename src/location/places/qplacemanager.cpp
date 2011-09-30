@@ -42,6 +42,10 @@
 #include "qplacemanager.h"
 #include "qplacemanagerengine.h"
 
+#include <QtCore/QDebug>
+
+QT_BEGIN_NAMESPACE
+
 /*!
     \class QPlaceManager
 
@@ -89,6 +93,8 @@ QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
     if (d) {
         d->setParent(this);
 
+        qRegisterMetaType<QPlaceCategory>("QPlaceCategory");
+
         connect(d, SIGNAL(finished(QPlaceReply*)), this, SIGNAL(finished(QPlaceReply*)));
         connect(d, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)),
                 this, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)));
@@ -101,6 +107,13 @@ QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
                 this, SIGNAL(placeUpdated(QString)), Qt::QueuedConnection);
         connect(d, SIGNAL(placeRemoved(QString)),
                 this, SIGNAL(placeRemoved(QString)), Qt::QueuedConnection);
+
+        connect(d, SIGNAL(categoryAdded(QPlaceCategory,QString)),
+                this, SIGNAL(categoryAdded(QPlaceCategory,QString)), Qt::QueuedConnection);
+        connect(d, SIGNAL(categoryUpdated(QPlaceCategory,QString)),
+                this, SIGNAL(categoryUpdated(QPlaceCategory,QString)), Qt::QueuedConnection);
+        connect(d, SIGNAL(categoryRemoved(QString,QString)),
+                this, SIGNAL(categoryRemoved(QString,QString)), Qt::QueuedConnection);
     } else {
         qFatal("The place manager engine that was set for this place manager was NULL.");
     }
@@ -179,6 +192,14 @@ QPlaceTextPredictionReply *QPlaceManager::textPredictions(const QPlaceSearchRequ
     return d->textPredictions(request);
 }
 
+/*
+    Returns the available scopes in which places can be saved.
+*/
+QPlaceManager::VisibilityScopes QPlaceManager::supportedSaveVisibilityScopes()
+{
+    return d->supportedSaveVisibilityScopes();
+}
+
 /*!
     Saves a \a place at the given \a scope.
 */
@@ -195,12 +216,20 @@ QPlaceIdReply *QPlaceManager::removePlace(const QPlace &place)
     return d->removePlace(place);
 }
 
-/*
-    Returns the available scopes in which places can be saved.
+/*!
+    Saves a \a category that is a child of \a parent.
 */
-QPlaceManager::VisibilityScopes QPlaceManager::supportedSaveVisibilityScopes()
+QPlaceIdReply *QPlaceManager::saveCategory(const QPlaceCategory &category, const QString &parentId)
 {
-    return d->supportedSaveVisibilityScopes();
+    return d->saveCategory(category, parentId);
+}
+
+/*!
+    Remove \a category from the manager.
+*/
+QPlaceIdReply *QPlaceManager::removeCategory(const QString &categoryId)
+{
+    return d->removeCategory(categoryId);
 }
 
 /*!
@@ -212,13 +241,39 @@ QPlaceReply *QPlaceManager::initializeCategories()
 }
 
 /*!
-    Returns a list of top level categories if \a parent is default contstructed; otherwise returns
-    a list of subcategories of \a parent.
+    Returns the parent category id of the category corresponding to \a categoryId.
 */
-QList<QPlaceCategory> QPlaceManager::categories(const QPlaceCategory &parent) const
+QString QPlaceManager::parentCategoryId(const QString &categoryId) const
 {
-    return d->categories(parent);
+    return d->parentCategoryId(categoryId);
 }
+
+/*!
+    Returns the children category ids of the category corresponding to \a categoryId.
+    If \a categoryId is empty than all top level category ids are returned.
+*/
+QStringList QPlaceManager::childrenCategoryIds(const QString &categoryId) const
+{
+    return d->childrenCategoryIds(categoryId);
+}
+
+/*!
+    Returns the category corresponding to the given \a categoryId.
+*/
+QPlaceCategory QPlaceManager::category(const QString &categoryId) const
+{
+    return d->category(categoryId);
+}
+
+/*!
+    Returns a list of categories that are children of the category corresponding to \a parentId.
+    If \a parentId is empty, all the top level categories are returned.
+*/
+QList<QPlaceCategory> QPlaceManager::childCategories(const QString &parentId) const
+{
+    return d->childCategories(parentId);
+}
+
 
 /*!
     Returns the locale of the manager.
@@ -303,3 +358,30 @@ Use deleteLater() instead.
 
     It is generally only emitted by managers that store places locally.
 */
+
+/*!
+    \fn void QPlaceManager::categoryAdded(const QString&categoryId)
+
+    This signal is emitted if a category has been added to the manager's datastore.
+
+    It is generally only emitted by managers that store categories locally.
+
+*/
+
+/*!
+    \fn void QPlaceManager::categoryUpdated(const QString&categoryId)
+
+    This signal is emitted if a category has been modified in the manager's datastore.
+
+    It is generally only emitted by managers that store categories locally.
+*/
+
+/*!
+    \fn void QPlaceManager::categoryRemoved(const QString&categoryId)
+
+    This signal is emitted if a category has been removed from the manager's datastore.
+
+    It is generally only emitted by managers that store categories locally.
+*/
+
+QT_END_NAMESPACE

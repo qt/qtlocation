@@ -41,8 +41,9 @@
 #ifndef JSONHANDLER_H
 #define JSONHANDLER_H
 
-#include <QObject>
-#include <QVariant>
+#include <QtCore/QObject>
+#include <QtCore/QVariant>
+#include <QtCore/QEventLoop>
 
 #include <jsondb-global.h>
 
@@ -50,7 +51,10 @@
 #define TYPE "_type"
 
 #define PLACE_TYPE "place"
-#define PLACE_NAME "name"
+#define DISPLAY_NAME "displayName"
+#define PLACE_CATEGORY_TYPE "com.nokia.mp.location.PlaceCategory"
+#define TOP_LEVEL_CATEGORY "topLevel"
+#define CHILDREN_UUIDS "childrenUuids"
 #define COORDINATE "coordinate"
 
 //coord
@@ -77,32 +81,52 @@ Q_USE_JSONDB_NAMESPACE
 class QPlaceManagerEngineJsonDb;
 class QPlace;
 class QPlaceSearchRequest;
+class QPlaceCategory;
 
 class JsonDbHandler : public QObject
 {
     Q_OBJECT
+#include <QVariant>
 public:
     JsonDbHandler(QPlaceManagerEngineJsonDb *manager);
 
     int write(const QVariant &jsonObj);
     int update(const QVariant &jsonObj);
     int query(const QVariant &jsonObj);
-    int queryPlaceDetails(const QString &placeId);
+    int queryByUuid(const QString &uuid);
     int remove(const QString &uuid);
+    int query(const QString &query);
+
 
     static QVariant convertToJsonVariant(const QPlace &place);
-    static QVariant convertToJsonVariant(const QPlaceSearchRequest &query);
+    static QVariant convertToJsonVariant(const QPlaceCategory &category, bool isTopLevel);
+    static QString convertToQueryString(const QPlaceSearchRequest &query);
+
     static QList<QPlace> convertJsonResponseToPlaces(const QVariant &response);
+    static QList<QPlaceCategory> convertJsonResponseToCategories(const QVariant &response);
     static QPlace convertJsonVariantToPlace(const QVariant &variant);
+    static QPlaceCategory convertJsonVariantToCategory(const QVariant &variant);
 
     bool isConnected();
+
+    QVariantMap waitForRequest(int reqId);
+    QVariantMap findParentCategoryJson(const QString &categoryId);
+    QVariantMap findCategoryJson(const QString &categoryId);
+    QPlaceCategory findCategory(const QString &categoryId);
+
 signals:
     void jsonDbResponse( int id, const QVariant& data);
     void jsonDbError( int id, int code, const QString& data);
 
+private slots:
+    void processJsonDbResponse(int id, const QVariant &data);
+    void processJsonDbError(int id, int code, const QString &data);
+
 private:
     JsonDbClient *m_db;
     QPlaceManagerEngineJsonDb *m_engine;
+    QMap<int, QVariant> m_helperMap;
+    QEventLoop m_eventLoop;
 };
 
 #endif

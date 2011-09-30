@@ -177,6 +177,31 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     It is generally only emitted by managers that store places locally.
 */
 
+/*!
+    \fn void QPlaceManagerEngine::categoryAdded(const QString&categoryId)
+
+    This signal is emitted if a category has been added to the manager engine's datastore.
+
+    It is generally only emitted by managers that store categories locally.
+
+*/
+
+/*!
+    \fn void QPlaceManagerEngine::categoryUpdated(const QString&categoryId)
+
+    This signal is emitted if a category has been modified in the manager engine's datastore.
+
+    It is generally only emitted by managers that store categories locally.
+*/
+
+/*!
+    \fn void QPlaceManagerEngine::categoryRemoved(const QString&categoryId)
+
+    This signal is emitted if a category has been removed from the manager engine's datastore.
+
+    It is generally only emitted by managers that store categories locally.
+*/
+
 #include "moc_qplacemanagerengine.cpp"
 
 QT_END_NAMESPACE

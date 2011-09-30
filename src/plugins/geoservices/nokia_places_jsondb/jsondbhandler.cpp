@@ -44,7 +44,7 @@
 #include "qplacemanagerengine_jsondb.h"
 
 #include <QtLocation/QPlaceSearchRequest>
-
+#include <QtLocation/QPlaceCategory>
 #include <jsondb-client.h>
 
 #include <QDebug>
@@ -62,6 +62,10 @@ JsonDbHandler::JsonDbHandler(QPlaceManagerEngineJsonDb *engine)
                 this, SIGNAL(jsonDbResponse(int, const QVariant&)), Qt::QueuedConnection);
         connect(m_db, SIGNAL(error(int, int, const QString&)),
                 this, SIGNAL(jsonDbError(int, int, const QString&)), Qt::QueuedConnection);
+        connect(m_db, SIGNAL(response(int, const QVariant&)),
+                this, SLOT(processJsonDbResponse(int,QVariant)), Qt::QueuedConnection);
+        connect(m_db, SIGNAL(error(int, int, const QString&)),
+                this, SLOT(processJsonDbError(int,int,QString)), Qt::QueuedConnection);
     }
 }
 
@@ -80,9 +84,9 @@ int JsonDbHandler::query(const QVariant &jsonObj)
     return m_db->find(jsonObj);
 }
 
-int JsonDbHandler::queryPlaceDetails(const QString &placeId)
+int JsonDbHandler::queryByUuid(const QString &uuid)
 {
-    return m_db->query(QString("[?_uuid = \"%1\"]").arg(placeId));
+    return m_db->query(QString("[?_uuid = \"%1\"]").arg(uuid));
 }
 
 int JsonDbHandler::remove(const QString &uuid)
@@ -92,13 +96,19 @@ int JsonDbHandler::remove(const QString &uuid)
     return m_db->remove(jsonMap);
 }
 
+
+int JsonDbHandler::query(const QString &query)
+{
+    return m_db->query(query);
+}
+
 QVariant JsonDbHandler::convertToJsonVariant(const QPlace &place)
 {
     QVariantMap map;
     map.insert("_type", PLACE_TYPE);
     if (!place.placeId().isEmpty())
         map.insert("_uuid", place.placeId());
-    map.insert(PLACE_NAME, place.name());
+    map.insert(DISPLAY_NAME, place.name());
 
     QVariantMap coordMap;
     coordMap.insert(LATITUDE, place.location().coordinate().latitude());
@@ -119,18 +129,27 @@ QVariant JsonDbHandler::convertToJsonVariant(const QPlace &place)
     return map;
 }
 
-QVariant JsonDbHandler::convertToJsonVariant(const QPlaceSearchRequest &request)
+QVariant JsonDbHandler::convertToJsonVariant(const QPlaceCategory &category, bool isTopLevel)
 {
-    QVariantMap queryMap;
-    QString queryString;
-    if (!request.searchTerm().isEmpty())
-        queryString += QString::fromLatin1("[?%1=\"%2\"][?%3 =~ \"/%4.*/i\"]").arg(TYPE).arg(PLACE_TYPE).arg(PLACE_NAME).arg(request.searchTerm());
+    QVariantMap map;
+    map.insert(TYPE, PLACE_CATEGORY_TYPE);
+    map.insert(DISPLAY_NAME, category.name());
+    map.insert(TOP_LEVEL_CATEGORY, isTopLevel);
+    return map;
+}
 
-    if (queryString.isEmpty()) {
-        queryString = QLatin1String("[?_type = \"place\"]");
+QString JsonDbHandler::convertToQueryString(const QPlaceSearchRequest &request)
+{
+    QString queryString;
+    if (!request.searchTerm().isEmpty()) {
+        queryString += QString::fromLatin1("[?%1=\"%2\"][?%3 =~ \"/%4.*/i\"]")
+                        .arg(TYPE).arg(PLACE_TYPE).arg(DISPLAY_NAME).arg(request.searchTerm());
     }
-    queryMap.insert(QLatin1String("query"), queryString);
-    return queryMap;
+
+    if (queryString.isEmpty())
+        queryString = QString::fromLatin1("[?%1 = \"%2\"]").arg(TYPE).arg(PLACE_TYPE);
+
+    return queryString;
 }
 
 /* Expected response format
@@ -151,12 +170,22 @@ QList<QPlace> JsonDbHandler::convertJsonResponseToPlaces(const QVariant &respons
     return places;
 }
 
+QList<QPlaceCategory> JsonDbHandler::convertJsonResponseToCategories(const QVariant &response)
+{
+    QList<QVariant> data = response.toMap().value("data").toList();
+    QList<QPlaceCategory> categories;
+    foreach (const QVariant &var, data)
+        categories.append(JsonDbHandler::convertJsonVariantToCategory(var));
+
+    return categories;
+}
+
 QPlace JsonDbHandler::convertJsonVariantToPlace(const QVariant &variant)
 {
     QVariantMap placeJson = variant.toMap();
 
     QPlace place;
-    place.setName(placeJson.value(PLACE_NAME).toString());
+    place.setName(placeJson.value(DISPLAY_NAME).toString());
     place.setPlaceId(placeJson.value(UUID).toString());
 
     QVariantMap coordMap = placeJson.value(COORDINATE).toMap();
@@ -182,8 +211,82 @@ QPlace JsonDbHandler::convertJsonVariantToPlace(const QVariant &variant)
     return place;
 }
 
+QPlaceCategory JsonDbHandler::convertJsonVariantToCategory(const QVariant &variant)
+{
+    QVariantMap categoryMap = variant.toMap();
+    QPlaceCategory category;
+    category.setName(categoryMap.value(DISPLAY_NAME).toString());
+    category.setCategoryId(categoryMap.value(UUID).toString());
+    return category;
+}
+
 bool JsonDbHandler::isConnected()
 {
     return m_db->isConnected();
 }
 
+QVariantMap JsonDbHandler::waitForRequest(int reqId)
+{
+    m_helperMap.insert(reqId, QVariant());
+    m_eventLoop.exec(QEventLoop::AllEvents);
+    QVariantMap response = m_helperMap.value(reqId).toMap();
+    m_helperMap.remove(reqId);
+    return response;
+}
+
+QVariantMap JsonDbHandler::findParentCategoryJson(const QString &categoryId)
+{
+    QVariantMap parentMap;
+    int reqId = query(QString("[?%1 = \"%2\"]").arg(TYPE).arg(PLACE_CATEGORY_TYPE));
+    QVariantMap responseMap = waitForRequest(reqId);
+    QList<QVariant> categoriesJson = responseMap.value(QLatin1String("data")).toList();
+    foreach (const QVariant &categoryJson, categoriesJson) {
+        QStringList childrenUuids = categoryJson.toMap().value(CHILDREN_UUIDS).toStringList();
+        if (childrenUuids.contains(categoryId)) {
+            parentMap = categoryJson.toMap();
+            break;
+        }
+    }
+    return parentMap;
+}
+
+QVariantMap JsonDbHandler::findCategoryJson(const QString &categoryId)
+{
+    int reqId = queryByUuid(categoryId);
+    QVariantMap responseMap = waitForRequest(reqId);
+    if (responseMap.value(QLatin1String("length")).toInt() <= 0)
+        return QVariantMap();
+    else
+        return responseMap.value(QLatin1String("data")).toList().at(0).toMap();
+}
+
+QPlaceCategory JsonDbHandler::findCategory(const QString &categoryId)
+{
+    if (categoryId.isEmpty())
+        return QPlaceCategory();
+
+    int reqId = queryByUuid(categoryId);
+    QVariantMap response = waitForRequest(reqId);
+
+    if (response.value(QLatin1String("length")).toInt() <=0 ) {
+        return QPlaceCategory();
+    }
+
+    return convertJsonVariantToCategory(response.value(QLatin1String("data")).toList().at(0));
+}
+
+void JsonDbHandler::processJsonDbResponse(int id, const QVariant &data)
+{
+    if (m_helperMap.contains(id)) {
+        m_helperMap.insert(id, data);
+        m_eventLoop.exit();
+    }
+}
+
+void JsonDbHandler::processJsonDbError(int id, int code, const QString &jsonDbErrorString)
+{
+    if (m_helperMap.contains(id)) {
+        m_helperMap.insert(id, false);
+        m_eventLoop.exit();
+    }
+}
