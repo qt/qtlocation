@@ -87,6 +87,9 @@ public:
     QList<QPlaceSupplier> suppliers() const;
     void setSuppliers(const QList<QPlaceSupplier> &data);
 
+    QString attribution() const;
+    void setAttribution(const QString &attribution);
+
     QPlaceContent::Collection content(QPlaceContent::Type type) const;
     void setContent(QPlaceContent::Type type, const QPlaceContent::Collection &content);
     void addContent(QPlaceContent::Type type, const QPlaceContent::Collection &content);

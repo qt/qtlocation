@@ -83,6 +83,7 @@ public:
     QList<QPlaceSupplier> suppliers;
     QString name;
     QString placeId;
+    QString attribution;
 
     QMap<QPlaceContent::Type, QPlaceContent::Collection> contentCollections;
     QMap<QPlaceContent::Type, int> contentCounts;

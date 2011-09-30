@@ -73,6 +73,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSupplier> suppliers READ suppliers NOTIFY suppliersChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged);
+    Q_PROPERTY(QString attribution READ attribution WRITE setAttribution NOTIFY attributionChanged)
 
     Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged)
     Q_PROPERTY(QDeclarativePlaceImageModel *imageModel READ imageModel NOTIFY imageModelChanged)
@@ -131,6 +132,8 @@ public:
     void setName(const QString &name);
     QString placeId() const;
     void setPlaceId(const QString &placeId);
+    QString attribution() const;
+    void setAttribution(const QString &attribution);
     bool detailsFetched() const;
     void setDetailsFetched(bool fetched);
 
@@ -167,6 +170,7 @@ signals:
     void nameChanged();
     void placeIdChanged();
     void businessInformationChanged();
+    void attributionChanged();
     void detailsFetchedChanged();
     void fetchingDetailsChanged();
     void reviewModelChanged();

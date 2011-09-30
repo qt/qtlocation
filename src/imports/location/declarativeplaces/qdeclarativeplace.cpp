@@ -179,6 +179,9 @@ void QDeclarativePlace::setPlace(const QPlace &src)
     if (previous.placeId() != m_src.placeId()) {
         emit placeIdChanged();
     }
+    if (previous.attribution() != m_src.attribution()) {
+        emit attributionChanged();
+    }
     if (previous.detailsFetched() != m_src.detailsFetched()) {
         emit detailsFetchedChanged();
     }
@@ -328,6 +331,27 @@ void QDeclarativePlace::setPlaceId(const QString &placeId)
 QString QDeclarativePlace::placeId() const
 {
     return m_src.placeId();
+}
+
+/*!
+    \qmlproperty string Place::attribution
+
+    This property holds a rich text attribution string
+    for the place.  Some providers may require that the
+    attribution be shown whenever a place is displayed
+    to an end user.
+*/
+void QDeclarativePlace::setAttribution(const QString &attribution)
+{
+    if (m_src.attribution() != attribution) {
+        m_src.setAttribution(attribution);
+        emit attributionChanged();
+    }
+}
+
+QString QDeclarativePlace::attribution() const
+{
+    return m_src.attribution();
 }
 
 /*!

@@ -296,6 +296,25 @@ void QPlace::setPlaceId(const QString &placeId)
 }
 
 /*!
+    Returns a rich text attribution string of the place.  Note, some providers may have a
+    requirement where the attribution must be shown whenever a place is displayed to an end user.
+*/
+QString QPlace::attribution() const
+{
+    Q_D(const QPlace);
+    return d->attribution;
+}
+
+/*!
+    Sets the attribution string of the place.
+*/
+void QPlace::setAttribution(const QString &attribution)
+{
+    Q_D(QPlace);
+    d->attribution = attribution;
+}
+
+/*!
     Returns the primary phone number for this place.
 */
 QString QPlace::primaryPhone() const
@@ -430,6 +449,7 @@ QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
         suppliers(other.suppliers),
         name(other.name),
         placeId(other.placeId),
+        attribution(other.attribution),
         contentCollections(other.contentCollections),
         contentCounts(other.contentCounts),
         primaryPhone(other.primaryPhone),
@@ -451,6 +471,7 @@ QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
     suppliers = other.suppliers;
     name = other.name;
     placeId = other.placeId;
+    attribution = other.attribution;
     primaryPhone = other.primaryPhone;
     primaryFax = other.primaryFax;
     primaryEmail = other.primaryEmail;
@@ -470,6 +491,7 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
     qDebug() << "contentCounts " << (contentCounts == other.contentCounts);
     qDebug() << "name " << (name == other.name);
     qDebug() << "placeId" << (placeId == other.placeId);
+    qDebug() << "attribution" << (attribution == other.attribution);
     qDebug() << "phone" << (primaryPhone == other.primaryPhone);
     qDebug() << "fax" << (primaryFax == other.primaryFax);
     qDebug() << "email" << (primaryEmail == other.primaryEmail);
@@ -485,6 +507,7 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
             && contentCounts == other.contentCounts
             && name == other.name
             && placeId == other.placeId
+            && attribution == other.attribution
             && primaryPhone == other.primaryPhone
             && primaryFax == other.primaryFax
             && primaryEmail == other.primaryEmail

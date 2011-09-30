@@ -69,6 +69,7 @@ private Q_SLOTS:
     void contentCountTest();
     void nameTest();
     void placeIdTest();
+    void attributionTest();
     void primaryPhoneTest();
     void primaryFaxTest();
     void primaryEmailTest();
@@ -336,6 +337,16 @@ void tst_Place::suppliersTest()
     list.append(sup);
     testObj.setSuppliers(list);
     QVERIFY2(testObj.suppliers().count() == 2, "Wrong value returned");
+}
+
+void tst_Place::attributionTest()
+{
+    QPlace testPlace;
+    QVERIFY(testPlace.attribution().isEmpty());
+    testPlace.setAttribution(QLatin1String("attribution"));
+    QCOMPARE(testPlace.attribution(), QLatin1String("attribution"));
+    testPlace.setAttribution(QString());
+    QVERIFY(testPlace.attribution().isEmpty());
 }
 
 void tst_Place::primaryPhoneTest()
