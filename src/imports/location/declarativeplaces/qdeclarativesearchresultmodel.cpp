@@ -267,6 +267,37 @@ void QDeclarativeSearchResultModel::clearCategories()
 }
 
 /*!
+    \qmlproperty enumeration SearchResultModel::relevanceHint
+
+    This property holds a relevance hint for the search model.  The hint is given
+    to the provider to help but not dictate the ranking of results. e.g a distance
+    hint may give closer places a higher ranking but it does not neccessarily mean
+    the results will be strictly ordered according to distance. A provider
+    may ignore the hint altogether.
+
+    \list
+    \o SearchResultModel.NoHint - No relevance hint is given to the provider.
+    \o SearchResultModel.DistanceHint - The distance to the user's curent location
+        is important to the user.  This is only useful if a circular search area is used.
+        Closer places are more highly ranked.
+    \o SearchResultModel.LexicalPlaceNameHint - The lexical ordering of place names
+        (in ascending alphabetical order) is relevant to the user.
+    \endlist
+*/
+QDeclarativeSearchResultModel::RelevanceHint QDeclarativeSearchResultModel::relevanceHint() const
+{
+    return static_cast<QDeclarativeSearchResultModel::RelevanceHint>(m_request.relevanceHint());
+}
+
+void QDeclarativeSearchResultModel::setRelevanceHint(QDeclarativeSearchResultModel::RelevanceHint hint)
+{
+    if (m_request.relevanceHint() != hint) {
+        m_request.setRelevanceHint(static_cast<QPlaceSearchRequest::RelevanceHint>(hint));
+        emit relevanceHintChanged();
+    }
+}
+
+/*!
     \qmlproperty int SearchResultModel::didYouMean
 
     This element holds maximum number of "did you mean" suggestions returned by search query.

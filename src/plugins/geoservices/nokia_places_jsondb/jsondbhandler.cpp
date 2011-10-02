@@ -149,6 +149,9 @@ QString JsonDbHandler::convertToQueryString(const QPlaceSearchRequest &request)
     if (queryString.isEmpty())
         queryString = QString::fromLatin1("[?%1 = \"%2\"]").arg(TYPE).arg(PLACE_TYPE);
 
+    if (request.relevanceHint() == QPlaceSearchRequest::LexicalPlaceNameHint)
+        queryString += QString::fromLatin1("[/") + DISPLAY_NAME + QLatin1String("]");
+
     return queryString;
 }
 

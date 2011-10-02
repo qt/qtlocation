@@ -55,15 +55,22 @@ class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
 
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
     Q_PROPERTY(QDeclarativeCategory *searchCategory READ searchCategory WRITE setSearchCategory NOTIFY searchCategoryChanged)
-    Q_PROPERTY(int didYouMean READ didYouMean WRITE setDidYouMean NOTIFY didYouMeanChanged);
+    Q_PROPERTY(int didYouMean READ didYouMean WRITE setDidYouMean NOTIFY didYouMeanChanged)
+    Q_PROPERTY(RelevanceHint relevanceHint READ relevanceHint WRITE setRelevanceHint NOTIFY relevanceHintChanged)
 
-    Q_ENUMS(SearchResultType)
+    Q_ENUMS(SearchResultType RelevanceHint)
 
 public:
     enum SearchResultType {
         Place = QPlaceSearchResult::Place,
         DidYouMeanSuggestion = QPlaceSearchResult::DidYouMeanSuggestion,
         UnknownSearchResult = QPlaceSearchResult::UnknownSearchResult
+    };
+
+    enum RelevanceHint {
+        NoHint = QPlaceSearchRequest::NoHint,
+        DistanceHint = QPlaceSearchRequest::DistanceHint,
+        LexicalPlaceNameHint = QPlaceSearchRequest::LexicalPlaceNameHint
     };
 
     explicit QDeclarativeSearchResultModel(QObject *parent = 0);
@@ -76,6 +83,9 @@ public:
     QDeclarativeCategory *searchCategory();
     void setSearchCategory(QDeclarativeCategory *searchCategory);
     Q_INVOKABLE void clearCategories();
+
+    QDeclarativeSearchResultModel::RelevanceHint relevanceHint() const;
+    void setRelevanceHint(QDeclarativeSearchResultModel::RelevanceHint hint);
 
     int didYouMean() const;
     void setDidYouMean(int dym);
@@ -101,6 +111,7 @@ signals:
     void searchTermChanged();
     void searchCategoryChanged();
     void didYouMeanChanged();
+    void relevanceHintChanged();
 
 protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);

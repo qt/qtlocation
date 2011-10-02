@@ -62,9 +62,9 @@ class Q_LOCATION_EXPORT QPlaceSearchRequest : public QPlaceRequest
 {
 public:
     enum RelevanceHint {
+        NoHint,
         DistanceHint,
-        RatingHint,
-        AlphabetHint
+        LexicalPlaceNameHint
     };
 
     QPlaceSearchRequest();
@@ -85,6 +85,11 @@ public:
 
     QPlaceManager::VisibilityScopes visibilityScope() const;
     void setVisibilityScope(QPlaceManager::VisibilityScopes scope);
+
+    RelevanceHint relevanceHint() const;
+    void setRelevanceHint(RelevanceHint hint);
+
+    void clear();
 
 private:
     Q_DECLARE_D_FUNC(QPlaceSearchRequest)

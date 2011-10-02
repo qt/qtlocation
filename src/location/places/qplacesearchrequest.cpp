@@ -61,10 +61,12 @@ public:
     QGeoBoundingArea  *searchArea;
     int dymNumber;
     QPlaceManager::VisibilityScopes scope;
+    QPlaceSearchRequest::RelevanceHint relevanceHint;
 };
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
-:   QPlaceRequestPrivate(), searchArea(0), dymNumber(0), scope(QPlaceManager::NoScope)
+:   QPlaceRequestPrivate(), searchArea(0), dymNumber(0), scope(QPlaceManager::NoScope),
+  relevanceHint(QPlaceSearchRequest::NoHint)
 {
 }
 
@@ -79,6 +81,7 @@ QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequest
         this->searchArea = 0;
     this->dymNumber = other.dymNumber;
     this->scope = other.scope;
+    this->relevanceHint = other.relevanceHint;
 }
 
 QPlaceSearchRequestPrivate::~QPlaceSearchRequestPrivate()
@@ -107,6 +110,7 @@ bool QPlaceSearchRequestPrivate::compare(const QPlaceRequestPrivate *other) cons
             && this->dymNumber == od->dymNumber
             && searchAreaMatch
             && this->scope == od->scope
+            && this->relevanceHint == od->relevanceHint
     );
 }
 
@@ -119,6 +123,7 @@ void QPlaceSearchRequestPrivate::clear()
     searchArea = 0;
     dymNumber = 0;
     scope = QPlaceManager::NoScope;
+    relevanceHint = QPlaceSearchRequest::NoHint;
 }
 
 /*!
@@ -268,6 +273,44 @@ void QPlaceSearchRequest::setVisibilityScope(QPlaceManager::VisibilityScopes sco
 {
     Q_D(QPlaceSearchRequest);
     d->scope = scope;
+}
+
+/*!
+    Returns the relevance hint of the request.  The hint is given to the provider
+    to help but not dictate the ranking of results.  eg providng a distance hint
+    may give closer places a higher ranking but it doesn't necessarily mean
+    that he results will be ordered strictly according to distance.
+*/
+QPlaceSearchRequest::RelevanceHint QPlaceSearchRequest::relevanceHint() const
+{
+    Q_D(const QPlaceSearchRequest);
+    return d->relevanceHint;
+}
+
+/*!
+    Sets the relevance \a hint to be used when searching for a place.
+*/
+void QPlaceSearchRequest::setRelevanceHint(QPlaceSearchRequest::RelevanceHint hint)
+{
+    Q_D(QPlaceSearchRequest);
+    d->relevanceHint = hint;
+}
+
+/*!
+    Clears the parameters of the search request.
+*/
+void QPlaceSearchRequest::clear()
+{
+    Q_D(QPlaceSearchRequest);
+
+    QPlaceRequest::clear();
+    d->searchTerm.clear();
+    d->categories.clear();
+    if (d->searchArea)
+        delete d->searchArea;
+    d->searchArea = 0;
+    d->dymNumber = 0;
+    d->scope = QPlaceManager::NoScope;
 }
 
 QT_END_NAMESPACE

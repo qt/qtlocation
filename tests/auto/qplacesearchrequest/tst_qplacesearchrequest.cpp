@@ -64,6 +64,7 @@ private Q_SLOTS:
     void searchAreaTest();
     void didYouMeanSuggestionNumberTest();
     void visibilityScopeTest();
+    void relevanceHintTest();
     void operatorsTest();
     void clearTest();
 };
@@ -183,6 +184,16 @@ void tst_QPlaceSearchRequest::visibilityScopeTest()
     query.setVisibilityScope(QPlaceManager::PublicAndPrivateScope);
     QVERIFY(query.visibilityScope() & QPlaceManager::PublicScope);
     QVERIFY(query.visibilityScope() & QPlaceManager::PrivateScope);
+}
+
+void tst_QPlaceSearchRequest::relevanceHintTest()
+{
+    QPlaceSearchRequest request;
+    QCOMPARE(request.relevanceHint(), QPlaceSearchRequest::NoHint);
+    request.setRelevanceHint(QPlaceSearchRequest::DistanceHint);
+    QCOMPARE(request.relevanceHint(), QPlaceSearchRequest::DistanceHint);
+    request.setRelevanceHint(QPlaceSearchRequest::NoHint);
+    QCOMPARE(request.relevanceHint(), QPlaceSearchRequest::NoHint);
 }
 
 void tst_QPlaceSearchRequest::operatorsTest()

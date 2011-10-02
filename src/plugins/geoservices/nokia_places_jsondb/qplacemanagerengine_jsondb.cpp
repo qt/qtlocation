@@ -42,6 +42,7 @@
 #include "qplacemanagerengine_jsondb.h"
 
 #include <QDebug>
+#include <QtCore/qnumeric.h>
 #include <qgeoboundingcircle.h>
 #include <jsondb-error.h>
 
@@ -128,7 +129,7 @@ QPlaceSearchReply *QPlaceManagerEngineJsonDb::searchForPlaces(const QPlaceSearch
             }
         } else if (searchArea->type() == QGeoBoundingArea::CircleType) {
             QGeoBoundingCircle *circle = static_cast<QGeoBoundingCircle *>(searchArea);
-            if (!circle->center().isValid()) {
+            if (!circle->center().isValid() || qIsNaN(circle->center().latitude()) || qIsNaN(circle->center().longitude())) {
                 searchReply->triggerDone(QPlaceReply::BadArgumentError,
                                          tr("The center of the search area is an invalid coordinate"));
                 return searchReply;
@@ -484,15 +485,40 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
         case QPlaceReply::PlaceSearchReply: {
                 SearchReply *searchReply = qobject_cast<SearchReply *>(reply);
                 QList<QPlace> places = JsonDbHandler::convertJsonResponseToPlaces(data);
+                QList<QPlaceSearchResult> results;
+                QPlaceSearchResult result;
+                result.setType(QPlaceSearchResult::Place);
+                bool resultsAlreadySet = false;
+
                 if (searchReply->request().searchArea() != 0) {
                     QGeoBoundingArea *searchArea = searchReply->request().searchArea();
                     if (searchArea->type() == QGeoBoundingArea::CircleType) {
                         QGeoBoundingCircle *circle = static_cast<QGeoBoundingCircle*>(searchArea);
                         foreach (const QPlace &place, places) {
-                            double dist = circle->center().distanceTo(place.location().coordinate());
-                            if (dist > circle->radius())
-                                places.removeAll(place);
+                            qreal dist = circle->center().distanceTo(place.location().coordinate());
+                            if (dist < circle->radius() || qFuzzyCompare(dist, circle->radius()) || circle->radius() < 0.0) {
+                                result.setDistance(dist);
+                                result.setPlace(place);
+
+                                if (searchReply->request().relevanceHint() == QPlaceSearchRequest::DistanceHint) {
+                                    //TODO: we can optimize this insertion sort
+                                    bool added = false;
+                                    for (int i=0; i < results.count(); ++i) {
+                                        if (result.distance() < results.at(i).distance() || qFuzzyCompare(result.distance(),results.at(i).distance())) {
+                                            results.insert(i, result);
+                                            added = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!added)
+                                        results.append(result);
+                                } else {
+                                    results.append(result);
+                                }
+                            }
                         }
+                        resultsAlreadySet = true;
+
                         //TODO: we can optimize this using a bounding box to cull candidates
                         //      and then use distance comparisons for the rest.
 
@@ -528,12 +554,12 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                     }
                 }
 
-                QList<QPlaceSearchResult> results;
-                QPlaceSearchResult result;
-                result.setType(QPlaceSearchResult::Place);
-                foreach (const QPlace &place, places) {
-                    result.setPlace(place);
-                    results.append(result);
+                //if we haven't already filled in the results, fill them in now
+                if (!resultsAlreadySet) {
+                    foreach (const QPlace &place, places) {
+                        result.setPlace(place);
+                        results.append(result);
+                    }
                 }
 
                 searchReply->setResults(results);

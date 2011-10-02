@@ -59,7 +59,7 @@ class Q_LOCATION_EXPORT QGeoBoundingCircle : public QGeoBoundingArea
 {
 public:
     QGeoBoundingCircle();
-    QGeoBoundingCircle(const QGeoCoordinate &center, qreal radius);
+    QGeoBoundingCircle(const QGeoCoordinate &center, qreal radius = -1.0);
 
     QGeoBoundingCircle(const QGeoBoundingCircle &other);
     ~QGeoBoundingCircle();

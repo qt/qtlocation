@@ -108,6 +108,8 @@ private Q_SLOTS:
     void searchByName();
     void searchByBox();
     void searchByCircle();
+    void searchWithLexicalPlaceNameHint();
+    void searchWithDistanceHint();
     void unsupportedFunctions();
 
 private:
@@ -116,6 +118,7 @@ private:
                 QString *placeId = 0,
                 QPlaceManager::VisibilityScope = QPlaceManager::NoScope);
     void doSavePlaces(QList<QPlace> &places);
+    void doSavePlaces(const QList<QPlace *> &places);
 
     bool doRemovePlace(const QPlace &place,
                        QPlaceReply::Error expectedError = QPlaceReply::NoError);
@@ -799,7 +802,6 @@ void tst_QPlaceManagerJsonDb::searchByCircle()
         }
     }
 
-
     //--- Test error conditions and edge cases
     //try a circle that covers the north pole
     QPlaceSearchRequest request;
@@ -819,6 +821,144 @@ void tst_QPlaceManagerJsonDb::searchByCircle()
     //try a circle that's close to but does not cover the south pole
     request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(-89.91,180),9000));
     QVERIFY(doSearch(request, &places, QPlaceReply::NoError));
+
+    //try a radius of 0
+    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(11.0,11.0), 0));
+    QVERIFY(doSearch(request, &places));
+    QCOMPARE(places.count(), 1);
+    QCOMPARE(places.at(0).location().coordinate().latitude(), 11.0);
+    QCOMPARE(places.at(0).location().coordinate().longitude(), 11.0);
+
+    //try an invalid center
+    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(), 5000));
+    QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
+    QVERIFY(places.isEmpty());
+
+    //try an invalid latitude for the center
+    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(qQNaN(),50), 5000));
+    QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
+    QVERIFY(places.isEmpty());
+
+    //try a proximity filter with an out of range latitude
+    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(90,10), 5000));
+    QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
+    QVERIFY(places.isEmpty());
+
+    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(150,10), 5000));
+    QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
+    QVERIFY(places.isEmpty());
+
+    //try a proximity filter with an out of range longitude
+    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(-12,180.1),5000));
+    QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
+    QVERIFY(places.isEmpty());
+
+    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(-12,-180.1),5000));
+    QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
+    QVERIFY(places.isEmpty());
+}
+
+void tst_QPlaceManagerJsonDb::searchWithLexicalPlaceNameHint()
+{
+    QPlace melbourne, sydney, adelaide, brisbane;
+    melbourne.setName(QLatin1String("Melbourne"));
+    sydney.setName(QLatin1String("Sydney"));
+    adelaide.setName(QLatin1String("Adelaide"));
+    brisbane.setName(QLatin1String("Brisbane"));
+
+    QList<QPlace *> places;
+    places << &melbourne << &sydney << &adelaide << &brisbane;
+    doSavePlaces(places);
+
+    QPlaceSearchRequest searchRequest;
+    searchRequest.setRelevanceHint(QPlaceSearchRequest::LexicalPlaceNameHint);
+    QList<QPlace> results;
+    QVERIFY(doSearch(searchRequest, &results));
+    QCOMPARE(results.count(), places.count());
+    QCOMPARE(results.at(0), adelaide);
+    QCOMPARE(results.at(1), brisbane);
+    QCOMPARE(results.at(2), melbourne);
+    QCOMPARE(results.at(3), sydney);
+}
+
+void tst_QPlaceManagerJsonDb::searchWithDistanceHint()
+{
+    QList<QPlace *> places;
+
+    QPlace place1;
+    place1.setName(QLatin1String("LM1"));
+    QGeoLocation location;
+    location.setCoordinate(QGeoCoordinate(20,19));
+    place1.setLocation(location);
+    places << &place1;
+
+    QPlace place2;
+    place2.setName(QLatin1String("LM2"));
+    location.setCoordinate(QGeoCoordinate(20,50));
+    place2.setLocation(location);
+    places << &place2;
+
+    QPlace place3;
+    place3.setName(QLatin1String("LM3"));
+    location.setCoordinate(QGeoCoordinate(20, 30));
+    place3.setLocation(location);
+    places << &place3;
+
+    QPlace place4;
+    place4.setName(QLatin1String("LM4"));
+    location.setCoordinate(QGeoCoordinate(5,20));
+    place4.setLocation(location);
+    places << &place4;
+
+    QPlace place5;
+    place5.setName(QLatin1String("LM5"));
+    location.setCoordinate(QGeoCoordinate(80,20));
+    place5.setLocation(location);
+    places << &place5;
+
+    QPlace place6;
+    place6.setName(QLatin1String("LM6"));
+    location.setCoordinate(QGeoCoordinate(60,20));
+    place6.setLocation(location);
+    places << &place6;
+
+    doSavePlaces(places);
+
+    QPlaceSearchRequest searchRequest;
+    QGeoBoundingCircle *circle = new QGeoBoundingCircle(QGeoCoordinate(20,20));
+    searchRequest.setSearchArea(circle);
+    searchRequest.setRelevanceHint(QPlaceSearchRequest::DistanceHint);
+    QList<QPlace> results;
+    QVERIFY(doSearch(searchRequest, &results));
+    QCOMPARE(results.count(), 6);
+    QCOMPARE(results.at(0), place1);
+    QCOMPARE(results.at(1), place3);
+    QCOMPARE(results.at(2), place4);
+    QCOMPARE(results.at(3), place2);
+    QCOMPARE(results.at(4), place6);
+    QCOMPARE(results.at(5), place5);
+
+    qreal radius = QGeoCoordinate(20,20).distanceTo(QGeoCoordinate(20,50));
+    circle->setRadius(radius);
+
+    QVERIFY(doSearch(searchRequest, &results));
+    QCOMPARE(results.count(),4);
+    QCOMPARE(results.at(0), place1);
+    QCOMPARE(results.at(1), place3);
+    QCOMPARE(results.at(2), place4);
+    QCOMPARE(results.at(3), place2);
+
+    //try radius less than 1
+    circle->setRadius(-5);
+    QVERIFY(doSearch(searchRequest, &results));
+    QCOMPARE(results.count(), 6);
+    QCOMPARE(results.at(0), place1);
+    QCOMPARE(results.at(1), place3);
+    QCOMPARE(results.at(2), place4);
+    QCOMPARE(results.at(3), place2);
+    QCOMPARE(results.at(4), place6);
+    QCOMPARE(results.at(5), place5);
+
 }
 
 void tst_QPlaceManagerJsonDb::unsupportedFunctions()
@@ -877,6 +1017,22 @@ void tst_QPlaceManagerJsonDb::doSavePlaces(QList<QPlace> &places)
         QSignalSpy saveSpy(saveReply, SIGNAL(finished()));
         QTRY_VERIFY(saveSpy.count() == 1);
         QCOMPARE(saveReply->error(), QPlaceReply::NoError);
+        saveSpy.clear();
+    }
+}
+
+void tst_QPlaceManagerJsonDb::doSavePlaces(const QList<QPlace *> &places)
+{
+    QPlaceIdReply *saveReply;
+
+    static int count= 0;
+    foreach (QPlace *place, places) {
+        count++;
+        saveReply = placeManager->savePlace(*place);
+        QSignalSpy saveSpy(saveReply, SIGNAL(finished()));
+        QTRY_VERIFY(saveSpy.count() == 1);
+        QCOMPARE(saveReply->error(), QPlaceReply::NoError);
+        place->setPlaceId(saveReply->id());
         saveSpy.clear();
     }
 }
