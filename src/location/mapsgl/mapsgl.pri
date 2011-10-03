@@ -28,6 +28,7 @@ PUBLIC_HEADERS += \
 
 PRIVATE_HEADERS += \
     mapsgl/frustum_p.h \
+    mapsgl/intervaltree_p.h \
     mapsgl/map_p.h \
     mapsgl/mapsphere_p.h \
     mapsgl/projection_p.h

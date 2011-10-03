@@ -46,6 +46,8 @@
 #include <QSizeF>
 #include <QtOpenGL/qgl.h>
 
+#include "intervaltree_p.h"
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -82,16 +84,46 @@ public:
     void setSceneNode(QGLSceneNode *sceneNode);
     QGLSceneNode* sceneNode() const;
 
+    void setBounds(const QRect &bounds);
+    QRect bounds() const;
+
+    void setVisibleFromViewport(bool visible);
+    bool visibleFromViewport() const;
+
 private:
     QGeoCoordinate coordinate_;
     QPointF anchor_;
     QSizeF size_;
     double zoom_;
+    QRect bounds_;
+    bool visible_;
     QGLSceneNode* sceneNode_;
     GLuint textureId_;
     bool textureDirty_;
     QGLTexture2D* texture_;
     QGLMaterial* defaultMaterial_;
+};
+
+class Q_LOCATION_EXPORT MapItemTree
+{
+public:
+    MapItemTree();
+    ~MapItemTree();
+
+    void insert(MapItem *item);
+    void remove(MapItem *item);
+
+    bool isEmpty() const;
+    int size() const;
+
+    QList<MapItem*> items() const;
+    QList<MapItem*> itemsAt(const QPoint &point) const;
+    QList<MapItem*> itemsWithin(const QRect &viewport) const;
+    void makeVisible(const QRect& viewport, QList<MapItem*> &added, QList<MapItem*> &removed);
+private:
+
+    QRect viewport_;
+    AAInterval2DTree<MapItem*> *root_;
 };
 
 QT_END_NAMESPACE

@@ -22,6 +22,8 @@ SUBDIRS += geotestplugin \
            qplacesupplier \
            qplacesearchresult \
            declarative \
+           intervaltree \
+           mapitemtree \
            sphere
 
 contains(config_test_jsondb, yes) {
