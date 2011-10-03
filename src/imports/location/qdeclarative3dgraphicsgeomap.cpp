@@ -359,18 +359,6 @@ void QDeclarative3DGraphicsGeoMap::beforeRendering()
     if (!isVisible())
         return;
 
-    // temporary check until refactor branch is fully functional again
-    static bool render = true;
-    if (!render)
-        return;
-    const QGLContext* context = QGLContext::currentContext();
-    if (!context || !context->device()) {
-        render = false;
-        qmlInfo(this) << tr("GL paint device is NULL. Will not render the map.");
-        return;
-    }
-    // end of temporary check
-
     QGLPainter painter;
     if (!painter.begin()) {
         qmlInfo(this) << tr("GL graphics system is not active; cannot use 3D items");
