@@ -42,30 +42,20 @@
 #include "qplacecategory.h"
 #include "qplacecategory_p.h"
 
-#include "qplacemanagerengine.h"
-
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QPlaceCategoryPrivate::QPlaceCategoryPrivate()
-    : QSharedData()
+:   visibility(QtLocation::UnspecifiedVisibility)
 {
 }
 
 QPlaceCategoryPrivate::QPlaceCategoryPrivate(const QPlaceCategoryPrivate &other)
-    : QSharedData()
+:   categoryId(other.categoryId), name(other.name), visibility(other.visibility)
 {
-    this->categoryId = other.categoryId;
-    this->name = other.name;
 }
 
 QPlaceCategoryPrivate::~QPlaceCategoryPrivate()
 {
-}
-
-bool QPlaceCategoryPrivate::operator==(const QPlaceCategoryPrivate &other) const
-{
-    return (this->categoryId == other.categoryId)
-            && (this->name == other.name);
 }
 
 /*!
@@ -116,7 +106,9 @@ QPlaceCategory &QPlaceCategory::operator =(const QPlaceCategory &other) {
 
 bool QPlaceCategory::operator==(const QPlaceCategory &other) const
 {
-    return (*(d.constData()) == *(other.d.constData()));
+    return d->categoryId == other.d->categoryId &&
+           d->name == other.d->name &&
+           d->visibility == other.d->visibility;
 }
 
 /*!
@@ -150,3 +142,21 @@ void QPlaceCategory::setName(const QString &name)
 {
     d->name = name;
 }
+
+/*!
+    Sets the visibility of the category to \a visibility.
+*/
+void QPlaceCategory::setVisibility(QtLocation::Visibility visibility)
+{
+    d->visibility = visibility;
+}
+
+/*!
+    Returns the visibility of the category.
+*/
+QtLocation::Visibility QPlaceCategory::visibility() const
+{
+    return d->visibility;
+}
+
+QT_END_NAMESPACE

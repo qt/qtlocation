@@ -42,13 +42,11 @@
 #ifndef QPLACESEARCHREQUEST_H
 #define QPLACESEARCHREQUEST_H
 
-#include <QSharedDataPointer>
-#include "qgeoboundingarea.h"
-#include "qplacecategory.h"
-#include "qplacerequest.h"
-#include "qplacemanager.h"
-
-#include <QString>
+#include <QtCore/QSharedDataPointer>
+#include <QtLocation/QPlaceRequest>
+#include <QtLocation/placemacro.h>
+#include <QtLocation/QPlaceCategory>
+#include <QtLocation/qtlocation.h>
 
 QT_BEGIN_HEADER
 
@@ -56,6 +54,7 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Location)
 
+class QGeoBoundingArea;
 class QPlaceSearchRequestPrivate;
 
 class Q_LOCATION_EXPORT QPlaceSearchRequest : public QPlaceRequest
@@ -83,13 +82,11 @@ public:
     int didYouMeanSuggestionNumber() const;
     void setDidYouMeanSuggestionNumber(const int &number);
 
-    QPlaceManager::VisibilityScopes visibilityScope() const;
-    void setVisibilityScope(QPlaceManager::VisibilityScopes scope);
+    QtLocation::VisibilityScope visibilityScope() const;
+    void setVisibilityScope(QtLocation::VisibilityScope visibilityScopes);
 
     RelevanceHint relevanceHint() const;
     void setRelevanceHint(RelevanceHint hint);
-
-    void clear();
 
 private:
     Q_DECLARE_D_FUNC(QPlaceSearchRequest)

@@ -95,6 +95,8 @@ public:
 
     QPlace::ExtendedAttributes extendedAttributes;
 
+    QtLocation::Visibility visibility;
+
     bool detailsFetched;
 };
 

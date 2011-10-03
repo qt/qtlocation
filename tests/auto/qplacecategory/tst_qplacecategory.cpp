@@ -57,6 +57,7 @@ private Q_SLOTS:
     void constructorTest();
     void categoryIdTest();
     void nameTest();
+    void visibilityTest();
     void operatorsTest();
 };
 
@@ -90,6 +91,17 @@ void tst_QPlaceCategory::nameTest()
     QVERIFY2(testObj.name() == QString(), "Wrong default value");
     testObj.setName("testText");
     QVERIFY2(testObj.name() == "testText", "Wrong value returned");
+}
+
+void tst_QPlaceCategory::visibilityTest()
+{
+    QPlaceCategory category;
+
+    QCOMPARE(category.visibility(), QtLocation::UnspecifiedVisibility);
+
+    category.setVisibility(QtLocation::DeviceVisibility);
+
+    QCOMPARE(category.visibility(), QtLocation::DeviceVisibility);
 }
 
 void tst_QPlaceCategory::operatorsTest()

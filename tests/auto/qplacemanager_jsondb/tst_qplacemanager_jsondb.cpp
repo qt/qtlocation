@@ -115,8 +115,7 @@ private Q_SLOTS:
 private:
     bool doSavePlace(const QPlace &place,
                 QPlaceReply::Error expectedError = QPlaceReply::NoError,
-                QString *placeId = 0,
-                QPlaceManager::VisibilityScope = QPlaceManager::NoScope);
+                QString *placeId = 0);
     void doSavePlaces(QList<QPlace> &places);
     void doSavePlaces(const QList<QPlace *> &places);
 
@@ -221,7 +220,10 @@ void tst_QPlaceManagerJsonDb::saveAndRemovePlace()
     //try removing a place that does not exist;
     QVERIFY(doRemovePlace(place, QPlaceReply::PlaceDoesNotExistError));
 
-    QVERIFY(doSavePlace(place, QPlaceReply::UnsupportedError,0, QPlaceManager::PublicScope));
+
+    place.setVisibility(QtLocation::PublicVisibility);
+
+    QVERIFY(doSavePlace(place, QPlaceReply::UnsupportedError, 0));
 }
 
 void tst_QPlaceManagerJsonDb::updatePlace()
@@ -991,10 +993,9 @@ void tst_QPlaceManagerJsonDb::cleanup()
 
 bool tst_QPlaceManagerJsonDb::doSavePlace(const QPlace &place,
                                           QPlaceReply::Error expectedError,
-                                          QString *placeId,
-                                          QPlaceManager::VisibilityScope scope)
+                                          QString *placeId)
 {
-    QPlaceIdReply *saveReply = placeManager->savePlace(place,scope);
+    QPlaceIdReply *saveReply = placeManager->savePlace(place);
     bool isSuccessful = checkSignals(saveReply, expectedError);
     if (placeId != 0) {
         *placeId = saveReply->id();

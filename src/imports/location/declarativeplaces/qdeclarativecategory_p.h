@@ -53,13 +53,23 @@ class QDeclarativeCategory : public QObject
 {
     Q_OBJECT
 
+    Q_ENUMS(Visibility)
+
     Q_PROPERTY(QString categoryId READ categoryId WRITE setCategoryId NOTIFY categoryIdChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
 
 public:
     explicit QDeclarativeCategory(QObject* parent = 0);
     explicit QDeclarativeCategory(const QPlaceCategory &category, QObject* parent = 0);
     ~QDeclarativeCategory();
+
+    enum Visibility {
+        UnspecifiedVisibility = QtLocation::UnspecifiedVisibility,
+        DeviceVisibility = QtLocation::DeviceVisibility,
+        PrivateVisibility = QtLocation::PrivateVisibility,
+        PublicVisibility = QtLocation::PublicVisibility
+    };
 
     QPlaceCategory category();
     void setCategory(const QPlaceCategory &category);
@@ -69,9 +79,13 @@ public:
     QString name() const;
     void setName(const QString &name);
 
+    Visibility visibility() const;
+    void setVisibility(Visibility visibility);
+
 signals:
     void categoryIdChanged();
     void nameChanged();
+    void visibilityChanged();
 
 private:
     QPlaceCategory m_category;

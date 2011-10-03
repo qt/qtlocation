@@ -47,6 +47,8 @@
 #include <qplacemanager.h>
 #include <qplacemanagerengine.h>
 #include <qplacereply.h>
+#include <QtLocation/QPlaceDetailsReply>
+#include <QtLocation/QPlaceIdReply>
 
 #include <QtCore/QDebug>
 
@@ -172,10 +174,8 @@ public:
         return 0;
     }
 
-    QPlaceIdReply *savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope)
+    QPlaceIdReply *savePlace(const QPlace &place)
     {
-        Q_UNUSED(scope)
-
         IdReply *reply = new IdReply(QPlaceIdReply::SavePlace, this);
 
         if (!place.placeId().isEmpty() && !m_places.contains(place.placeId())) {
@@ -195,11 +195,6 @@ public:
         QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
 
         return reply;
-    }
-
-    QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const
-    {
-        return QPlaceManager::PublicScope;
     }
 
     QPlaceIdReply *removePlace(const QPlace &place)

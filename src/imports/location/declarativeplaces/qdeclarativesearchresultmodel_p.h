@@ -44,6 +44,7 @@
 
 #include "qdeclarativesearchmodelbase.h"
 #include "qdeclarativecategory_p.h"
+#include "qdeclarativeplace_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -57,6 +58,7 @@ class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
     Q_PROPERTY(QDeclarativeCategory *searchCategory READ searchCategory WRITE setSearchCategory NOTIFY searchCategoryChanged)
     Q_PROPERTY(int didYouMean READ didYouMean WRITE setDidYouMean NOTIFY didYouMeanChanged)
     Q_PROPERTY(RelevanceHint relevanceHint READ relevanceHint WRITE setRelevanceHint NOTIFY relevanceHintChanged)
+    Q_PROPERTY(QDeclarativePlace::Visibility visibilityScope READ visibilityScope WRITE setVisibilityScope NOTIFY visibilityScopeChanged)
 
     Q_ENUMS(SearchResultType RelevanceHint)
 
@@ -90,6 +92,9 @@ public:
     int didYouMean() const;
     void setDidYouMean(int dym);
 
+    QDeclarativePlace::Visibility visibilityScope() const;
+    void setVisibilityScope(QDeclarativePlace::Visibility visibilityScope);
+
     void clearData();
     void updateSearchRequest();
     void processReply(QPlaceReply *reply);
@@ -112,6 +117,7 @@ signals:
     void searchCategoryChanged();
     void didYouMeanChanged();
     void relevanceHintChanged();
+    void visibilityScopeChanged();
 
 protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
@@ -122,6 +128,7 @@ private:
     QList<QPlaceSearchResult> m_results;
     QMap<QString, QDeclarativePlace *> m_places;
     QDeclarativeCategory m_category;
+    QtLocation::VisibilityScope m_visibilityScope;
     QPlaceManager *m_placeManager;
 };
 

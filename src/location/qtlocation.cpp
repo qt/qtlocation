@@ -39,26 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACECATEGORYTREE_H
-#define QPLACECATEGORYTREE_H
+#include <QtLocation/qtlocation.h>
 
-#include <QtCore/QHash>
-#include <QtLocation/QPlaceCategory>
+QT_BEGIN_NAMESPACE
 
-class QPlaceCategoryTree
-{
-public:
-    QPlaceCategoryTree();
-    ~QPlaceCategoryTree();
+namespace QtLocation {
+/*!
+    \enum QtLocation::Visibility
 
-    void clear();
+    Defines the visibility of a QPlace or QPlaceCategory.
 
-    QPlaceCategory findCategoryById(const QString &id) const;
-    QPlaceCategoryTree findCategoryTreeById(const QString &id) const;
-    QList<QPlaceCategory> toList() const;
+    \value UnspecifiedVisibility    Only used when search for places and categories.  Indicates
+                                    that results with any visibility should be returned.
+    \value DeviceVisibility         Places and categories with DeviceVisibility are only stored on
+                                    the local device.
+    \value PrivateVisibility        Places and categories with PrivateVisibility are only visible
+                                    to the current user.  The data may be stored either locally or
+                                    on a remote service or both.
+    \value PublicVisibility         Places and categories with PublicVisibility are visible to
+                                    everyone.
+*/
+}
 
-    QPlaceCategory category;
-    QHash<QString, QPlaceCategoryTree> subCategories;
-};
-
-#endif // QPLACECATEGORYTREE_H
+QT_END_NAMESPACE

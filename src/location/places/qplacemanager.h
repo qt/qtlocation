@@ -70,15 +70,6 @@ class Q_LOCATION_EXPORT QPlaceManager : public QObject
 {
     Q_OBJECT
 public:
-    enum VisibilityScope {
-        NoScope = 0x0000,
-        PublicScope = 0x0001,
-        PrivateScope = 0x0002,
-        PublicAndPrivateScope = 0x0007
-    };
-
-    Q_DECLARE_FLAGS(VisibilityScopes, VisibilityScope)
-
     enum ManagerFeature {
         ImportFeature,
         ExportFeature,
@@ -112,9 +103,8 @@ public:
 
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request) const;
 
-    QPlaceIdReply *savePlace(const QPlace &place, VisibilityScope scope = QPlaceManager::NoScope);
+    QPlaceIdReply *savePlace(const QPlace &place);
     QPlaceIdReply *removePlace(const QPlace &place);
-    VisibilityScopes supportedSaveVisibilityScopes();
 
     QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId = QString());
     QPlaceIdReply *removeCategory(const QString &categoryId);
@@ -151,8 +141,6 @@ private:
 
     friend class QGeoServiceProvider;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::VisibilityScopes);
 
 QT_END_NAMESPACE
 

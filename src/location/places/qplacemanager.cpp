@@ -58,14 +58,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QPlaceManager::SearchVisibilityScope
-    Defines the scope for searching places according to visibility.
-    \value PublicSearch Searches will only be conducted on public places.
-    \value PrivateSearch Searches will only be conducted on private places.
-    \value PublicAndPrivateSearch Searches will be conducted on both public and private places
-*/
-
-/*!
     \enum QPlaceManager::ManagerFeature
     Defines the possible features that the place manager can possible.
     \value ImportFeature The manager supports import operations
@@ -192,20 +184,12 @@ QPlaceTextPredictionReply *QPlaceManager::textPredictions(const QPlaceSearchRequ
     return d->textPredictions(request);
 }
 
-/*
-    Returns the available scopes in which places can be saved.
-*/
-QPlaceManager::VisibilityScopes QPlaceManager::supportedSaveVisibilityScopes()
-{
-    return d->supportedSaveVisibilityScopes();
-}
-
 /*!
     Saves a \a place at the given \a scope.
 */
-QPlaceIdReply *QPlaceManager::savePlace(const QPlace &place, VisibilityScope scope)
+QPlaceIdReply *QPlaceManager::savePlace(const QPlace &place)
 {
-    return d->savePlace(place, scope);
+    return d->savePlace(place);
 }
 
 /*!

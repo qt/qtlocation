@@ -46,11 +46,13 @@
 #include <QtDeclarative/QDeclarativeParserStatus>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceSearchResult>
+#include <QtLocation/QPlaceReply>
 
 #include "qdeclarativegeoserviceprovider_p.h"
 
 QT_BEGIN_NAMESPACE
 
+class QPlaceManager;
 class QPlaceSearchRequest;
 class QPlaceSearchReply;
 class QDeclarativePlace;

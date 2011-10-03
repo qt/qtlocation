@@ -42,6 +42,7 @@
 #include "qplacerequest_p.h"
 #include "qplacesearchrequest.h"
 #include "qgeocoordinate.h"
+#include "qgeoboundingarea.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -60,13 +61,13 @@ public:
     QList<QPlaceCategory> categories;
     QGeoBoundingArea  *searchArea;
     int dymNumber;
-    QPlaceManager::VisibilityScopes scope;
+    QtLocation::VisibilityScope visibilityScope;
     QPlaceSearchRequest::RelevanceHint relevanceHint;
 };
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
-:   QPlaceRequestPrivate(), searchArea(0), dymNumber(0), scope(QPlaceManager::NoScope),
-  relevanceHint(QPlaceSearchRequest::NoHint)
+:   QPlaceRequestPrivate(), searchArea(0), dymNumber(0),
+    visibilityScope(QtLocation::UnspecifiedVisibility), relevanceHint(QPlaceSearchRequest::NoHint)
 {
 }
 
@@ -80,7 +81,7 @@ QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequest
     else
         this->searchArea = 0;
     this->dymNumber = other.dymNumber;
-    this->scope = other.scope;
+    visibilityScope = other.visibilityScope;
     this->relevanceHint = other.relevanceHint;
 }
 
@@ -109,7 +110,7 @@ bool QPlaceSearchRequestPrivate::compare(const QPlaceRequestPrivate *other) cons
             && this->categories == od->categories
             && this->dymNumber == od->dymNumber
             && searchAreaMatch
-            && this->scope == od->scope
+            && visibilityScope == od->visibilityScope
             && this->relevanceHint == od->relevanceHint
     );
 }
@@ -122,7 +123,7 @@ void QPlaceSearchRequestPrivate::clear()
     delete searchArea;
     searchArea = 0;
     dymNumber = 0;
-    scope = QPlaceManager::NoScope;
+    visibilityScope = QtLocation::UnspecifiedVisibility;
     relevanceHint = QPlaceSearchRequest::NoHint;
 }
 
@@ -255,24 +256,23 @@ void QPlaceSearchRequest::setDidYouMeanSuggestionNumber(const int &number)
 }
 
 /*!
-    Returns the visibility scope used when searching for places.  The default value
-    is QPlaceManager::NoScope meaning no explicit scope has been assigned.
-    It is up to the manager implementation to decide what scope it searches
-    by default.
+    Returns the visibility scope used when searching for places.  The default value is
+    QtLocation::UnspecifiedVisibility meaning that no explicit scope has been assigned.  It is up
+    to the manager implementation to decide what scope it searches by default.
 */
-QPlaceManager::VisibilityScopes QPlaceSearchRequest::visibilityScope() const
+QtLocation::VisibilityScope QPlaceSearchRequest::visibilityScope() const
 {
     Q_D(const QPlaceSearchRequest);
-    return d->scope;
+    return d->visibilityScope;
 }
 
 /*!
     Sets the \a scope used when searching for places.
 */
-void QPlaceSearchRequest::setVisibilityScope(QPlaceManager::VisibilityScopes scope)
+void QPlaceSearchRequest::setVisibilityScope(QtLocation::VisibilityScope visibilityScope)
 {
     Q_D(QPlaceSearchRequest);
-    d->scope = scope;
+    d->visibilityScope = visibilityScope;
 }
 
 /*!
@@ -294,23 +294,6 @@ void QPlaceSearchRequest::setRelevanceHint(QPlaceSearchRequest::RelevanceHint hi
 {
     Q_D(QPlaceSearchRequest);
     d->relevanceHint = hint;
-}
-
-/*!
-    Clears the parameters of the search request.
-*/
-void QPlaceSearchRequest::clear()
-{
-    Q_D(QPlaceSearchRequest);
-
-    QPlaceRequest::clear();
-    d->searchTerm.clear();
-    d->categories.clear();
-    if (d->searchArea)
-        delete d->searchArea;
-    d->searchArea = 0;
-    d->dymNumber = 0;
-    d->scope = QPlaceManager::NoScope;
 }
 
 QT_END_NAMESPACE

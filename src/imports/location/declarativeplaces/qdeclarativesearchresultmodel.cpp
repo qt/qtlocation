@@ -45,6 +45,7 @@
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceSearchReply>
+#include <QtLocation/QPlaceManager>
 
 QT_USE_NAMESPACE
 
@@ -314,6 +315,27 @@ void QDeclarativeSearchResultModel::setDidYouMean(int didYouMeanSuggestionNumber
 
     m_request.setDidYouMeanSuggestionNumber(didYouMeanSuggestionNumber);
     emit didYouMeanChanged();
+}
+
+/*!
+    \qmlproperty QDeclarativePlace::Visibility SearchResultModel::visibilityScope
+
+    This property holds the visibility scope of the places to search.
+*/
+QDeclarativePlace::Visibility QDeclarativeSearchResultModel::visibilityScope() const
+{
+    return QDeclarativePlace::Visibility(int(m_visibilityScope));
+}
+
+void QDeclarativeSearchResultModel::setVisibilityScope(QDeclarativePlace::Visibility visibilityScope)
+{
+    QtLocation::VisibilityScope scope = QtLocation::VisibilityScope(visibilityScope);
+
+    if (m_visibilityScope == scope)
+        return;
+
+    m_visibilityScope = scope;
+    emit visibilityScopeChanged();
 }
 
 void QDeclarativeSearchResultModel::clearData()

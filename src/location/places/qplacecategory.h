@@ -42,18 +42,16 @@
 #ifndef QPLACECATEGORY_H
 #define QPLACECATEGORY_H
 
-#include <QSharedDataPointer>
-#include <QString>
-#include <QVariant>
-#include <QList>
+#include <QtCore/QSharedDataPointer>
+#include <QtCore/QString>
+#include <QtCore/QMetaType>
+#include <QtLocation/qtlocation.h>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
 QT_MODULE(Location)
-
-class QPlaceManagerEngine;
 
 class QPlaceCategoryPrivate;
 class Q_LOCATION_EXPORT QPlaceCategory
@@ -75,6 +73,9 @@ public:
     void setCategoryId(const QString &catID);
     QString name() const;
     void setName(const QString &name);
+
+    QtLocation::Visibility visibility() const;
+    void setVisibility(QtLocation::Visibility visibility);
 
 private:
     QSharedDataPointer<QPlaceCategoryPrivate> d;

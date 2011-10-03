@@ -74,9 +74,8 @@ public:
     virtual QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &request) = 0;
     virtual QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request) = 0;
 
-    virtual QPlaceIdReply *savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope) = 0;
+    virtual QPlaceIdReply *savePlace(const QPlace &place) = 0;
     virtual QPlaceIdReply *removePlace(const QPlace &place) = 0;
-    virtual QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const = 0;
 
     virtual QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId) = 0;
     virtual QPlaceIdReply *removeCategory(const QString &categoryId) = 0;

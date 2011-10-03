@@ -54,6 +54,7 @@
 //
 
 #include <QtCore/QString>
+#include <QtLocation/qtlocation.h>
 
 QT_BEGIN_NAMESPACE
 

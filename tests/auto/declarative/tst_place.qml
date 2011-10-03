@@ -69,6 +69,8 @@ TestCase {
         primaryEmail: "test-place@example.com"
         primaryUrl: "http://www.example.com/test-place"
 
+        visibility: Place.DeviceVisibility
+
         location: Location {
             locationId: "test-place-location-id"
 
@@ -155,7 +157,7 @@ TestCase {
     function compare_place(place1, place2) {
         // check simple properties
         var simpleProperties = ["name", "placeId", "primaryPhone", "primaryFax", "primaryEmail",
-                                "primaryUrl"];
+                                "primaryUrl", "visibility"];
         for (x in simpleProperties) {
             if (place1[simpleProperties[x]] !== place2[simpleProperties[x]])
                 return false;
@@ -270,6 +272,7 @@ TestCase {
         compare(emptyPlace.primaryFax, "");
         compare(emptyPlace.primaryEmail, "");
         compare(emptyPlace.primaryUrl, "");
+        compare(emptyPlace.visibility, Place.UnspecifiedVisibility);
 
         // complex properties
         compare(emptyPlace.rating, null);
@@ -292,6 +295,7 @@ TestCase {
             { tag: "primaryFax", property: "primaryFax", signal: "primaryFaxChanged", value: "22222222", reset: "" },
             { tag: "primaryEmail", property: "primaryEmail", signal: "primaryEmailChanged", value: "test@example.com", reset: "" },
             { tag: "primaryUrl", property: "primaryUrl", signal: "primaryUrlChanged", value: "http://www.example.com/test-place-id-1", reset: "" },
+            { tag: "visibility", property: "visibility", signal: "visibilityChanged", value: Place.PublicVisibility, reset: Place.UnspecifiedVisibility },
         ];
     }
 

@@ -42,8 +42,6 @@
 #include "qplacemanagerengine.h"
 #include "qplacemanagerengine_p.h"
 
-#include "qplacecategory_p.h"
-
 QT_USE_NAMESPACE
 
 /*!
@@ -130,7 +128,6 @@ int QPlaceManagerEngine::managerVersion() const
 {
     return d_ptr->managerVersion;
 }
-
 
 /*!
     \fn void QPlaceManagerEngine::authenticationRequired(QAuthenticator *authenticator)

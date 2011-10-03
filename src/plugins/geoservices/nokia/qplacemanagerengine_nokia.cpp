@@ -48,6 +48,8 @@
 
 #include "qplacemanagerengine_nokia.h"
 
+#include <QtLocation/QPlaceContentRequest>
+
 #include "places/qplacecategoriesrepository.h"
 #include "places/qplacecontentreplyimpl.h"
 #include "places/qplacetextpredictionreplyimpl.h"
@@ -190,8 +192,8 @@ QPlaceSearchReply *QPlaceManagerEngineNokia::searchForPlaces(const QPlaceSearchR
         newQuery.setSearchTerm(query.categories().at(0).name());
     }
 
-    if ((query.visibilityScope() == QPlaceManager::NoScope
-         || query.visibilityScope() & QPlaceManager::PublicScope)) {
+    if (query.visibilityScope() == QtLocation::UnspecifiedVisibility ||
+        query.visibilityScope() == QtLocation::PublicVisibility) {
 
         QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSearchRequest(newQuery);
 
@@ -244,11 +246,9 @@ QPlaceTextPredictionReply *QPlaceManagerEngineNokia::textPredictions(const QPlac
     return reply;
 }
 
-QPlaceIdReply *QPlaceManagerEngineNokia::savePlace(const QPlace &place,
-                                                   QPlaceManager::VisibilityScope scope)
+QPlaceIdReply *QPlaceManagerEngineNokia::savePlace(const QPlace &place)
 {
     Q_UNUSED(place)
-    Q_UNUSED(scope)
 
     //TODO: implementation
     return 0;
@@ -260,10 +260,6 @@ QPlaceIdReply *QPlaceManagerEngineNokia::removePlace(const QPlace &place)
 
     //TODO: implementation
     return 0;
-}
-
-QPlaceManager::VisibilityScopes QPlaceManagerEngineNokia::supportedSaveVisibilityScopes() const {
-    return QPlaceManager::NoScope;
 }
 
 QPlaceIdReply *QPlaceManagerEngineNokia::saveCategory(const QPlaceCategory &category, const QString &parentId)

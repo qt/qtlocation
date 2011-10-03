@@ -39,26 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACECATEGORYTREE_H
-#define QPLACECATEGORYTREE_H
+#ifndef QTLOCATION_H
+#define QTLOCATION_H
 
-#include <QtCore/QHash>
-#include <QtLocation/QPlaceCategory>
+#include <QtCore/QtGlobal>
 
-class QPlaceCategoryTree
-{
-public:
-    QPlaceCategoryTree();
-    ~QPlaceCategoryTree();
+QT_BEGIN_HEADER
 
-    void clear();
+QT_BEGIN_NAMESPACE
 
-    QPlaceCategory findCategoryById(const QString &id) const;
-    QPlaceCategoryTree findCategoryTreeById(const QString &id) const;
-    QList<QPlaceCategory> toList() const;
+namespace QtLocation {
 
-    QPlaceCategory category;
-    QHash<QString, QPlaceCategoryTree> subCategories;
+enum Visibility {
+    UnspecifiedVisibility = 0x00,
+    DeviceVisibility = 0x01,
+    PrivateVisibility = 0x02,
+    PublicVisibility = 0x04
 };
 
-#endif // QPLACECATEGORYTREE_H
+Q_DECLARE_FLAGS(VisibilityScope, Visibility)
+
+}
+
+QT_END_NAMESPACE
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QtLocation::VisibilityScope))
+
+QT_END_HEADER
+
+#endif // QTLOCATION_H

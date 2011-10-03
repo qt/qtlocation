@@ -42,9 +42,9 @@
 #ifndef QPLACECATEGORY_P_H
 #define QPLACECATEGORY_P_H
 
-#include <QSharedData>
-
-#include "qplacecategory.h"
+#include <QtCore/QSharedData>
+#include <QtCore/QString>
+#include <QtLocation/qtlocation.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -56,10 +56,9 @@ public:
 
     ~QPlaceCategoryPrivate();
 
-    bool operator==(const QPlaceCategoryPrivate &other) const;
-
     QString categoryId;
     QString name;
+    QtLocation::Visibility visibility;
 };
 
 QT_END_NAMESPACE

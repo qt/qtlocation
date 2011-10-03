@@ -746,6 +746,20 @@ void QDeclarativePlace::suppliers_clear(QDeclarativeListProperty<QDeclarativeSup
     emit object->suppliersChanged();
 }
 
+QDeclarativePlace::Visibility QDeclarativePlace::visibility() const
+{
+    return static_cast<QDeclarativePlace::Visibility>(m_src.visibility());
+}
+
+void QDeclarativePlace::setVisibility(Visibility visibility)
+{
+    if (static_cast<QDeclarativePlace::Visibility>(m_src.visibility()) == visibility)
+        return;
+
+    m_src.setVisibility(static_cast<QtLocation::Visibility>(visibility));
+    emit visibilityChanged();
+}
+
 void QDeclarativePlace::synchronizeSuppliers()
 {
     qDeleteAll(m_suppliers);

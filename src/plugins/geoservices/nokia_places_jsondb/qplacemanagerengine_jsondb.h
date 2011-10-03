@@ -69,9 +69,7 @@ public:
     QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &request);
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request);
 
-    QPlaceIdReply *savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope);
-    QPlaceManager::VisibilityScopes supportedSaveVisibilityScopes() const;
-
+    QPlaceIdReply *savePlace(const QPlace &place);
     QPlaceIdReply *removePlace(const QPlace &place);
 
     QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId);

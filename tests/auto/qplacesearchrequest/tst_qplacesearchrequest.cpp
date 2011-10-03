@@ -178,12 +178,15 @@ void tst_QPlaceSearchRequest::didYouMeanSuggestionNumberTest()
 void tst_QPlaceSearchRequest::visibilityScopeTest()
 {
     QPlaceSearchRequest query;
-    QVERIFY2(query.visibilityScope() == QPlaceManager::NoScope, "Wrong default value");
-    query.setVisibilityScope(QPlaceManager::PublicScope);
-    QCOMPARE(query.visibilityScope(), QPlaceManager::PublicScope);
-    query.setVisibilityScope(QPlaceManager::PublicAndPrivateScope);
-    QVERIFY(query.visibilityScope() & QPlaceManager::PublicScope);
-    QVERIFY(query.visibilityScope() & QPlaceManager::PrivateScope);
+    QVERIFY2(query.visibilityScope() == QtLocation::UnspecifiedVisibility, "Wrong default value");
+
+    query.setVisibilityScope(QtLocation::DeviceVisibility);
+    QCOMPARE(query.visibilityScope(), QtLocation::DeviceVisibility);
+
+    query.setVisibilityScope(QtLocation::DeviceVisibility | QtLocation::PublicVisibility);
+    QVERIFY(query.visibilityScope() & QtLocation::DeviceVisibility);
+    QVERIFY(!(query.visibilityScope() & QtLocation::PrivateVisibility));
+    QVERIFY(query.visibilityScope() & QtLocation::PublicVisibility);
 }
 
 void tst_QPlaceSearchRequest::relevanceHintTest()
@@ -244,12 +247,12 @@ void tst_QPlaceSearchRequest::operatorsTest()
     //test that identical visibility scopes match
     testObj.clear();
     testObj2.clear();
-    testObj.setVisibilityScope(QPlaceManager::PublicScope);
-    testObj2.setVisibilityScope(QPlaceManager::PublicScope);
+    testObj.setVisibilityScope(QtLocation::PublicVisibility);
+    testObj2.setVisibilityScope(QtLocation::PublicVisibility);
     QVERIFY2(testObj == testObj2, "Identical scopes not identified as matching");
 
     //test that different scopes do not match
-    testObj2.setVisibilityScope(QPlaceManager::PublicScope | QPlaceManager::PrivateScope);
+    testObj2.setVisibilityScope(QtLocation::PrivateVisibility);
     QVERIFY2(testObj != testObj2, "Different scopes identified as matching");
 }
 

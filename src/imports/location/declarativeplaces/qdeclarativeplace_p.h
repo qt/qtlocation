@@ -64,7 +64,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
-    Q_ENUMS(Status)
+    Q_ENUMS(Status Visibility)
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
@@ -83,12 +83,14 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
     Q_PROPERTY(Status status READ status NOTIFY statusChanged);
 
-    Q_INTERFACES(QDeclarativeParserStatus)
-
     Q_PROPERTY(QString primaryPhone READ primaryPhone WRITE setPrimaryPhone NOTIFY primaryPhoneChanged);
     Q_PROPERTY(QString primaryFax READ primaryFax WRITE setPrimaryFax NOTIFY primaryFaxChanged);
     Q_PROPERTY(QString primaryEmail READ primaryEmail WRITE setPrimaryEmail NOTIFY primaryEmailChanged);
     Q_PROPERTY(QUrl primaryUrl READ primaryUrl WRITE setPrimaryUrl NOTIFY primaryUrlChanged);
+
+    Q_PROPERTY(Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
+
+    Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
     explicit QDeclarativePlace(QObject* parent = 0);
@@ -96,6 +98,12 @@ public:
     ~QDeclarativePlace();
 
     enum Status {Ready, Saving, Fetching, Removing, Error};
+    enum Visibility {
+        UnspecifiedVisibility = QtLocation::UnspecifiedVisibility,
+        DeviceVisibility = QtLocation::DeviceVisibility,
+        PrivateVisibility = QtLocation::PrivateVisibility,
+        PublicVisibility = QtLocation::PublicVisibility
+    };
 
     //From QDeclarativeParserStatus
     virtual void classBegin() {}
@@ -161,6 +169,9 @@ public:
     QDeclarativePropertyMap *extendedAttributes() const;
     void setExtendedAttributes(QDeclarativePropertyMap *attrib);
 
+    Visibility visibility() const;
+    void setVisibility(Visibility visibility);
+
 signals:
     void pluginChanged();
     void categoriesChanged();
@@ -184,6 +195,7 @@ signals:
 
     void extendedAttributesChanged();
     void statusChanged();
+    void visibilityChanged();
 
 private slots:
     void finished();

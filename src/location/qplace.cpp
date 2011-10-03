@@ -432,12 +432,29 @@ void QPlace::insertExtendedAttribute(const QString &key, const QPlaceAttribute &
     d->extendedAttributes.insert(key, value);
 }
 
+/*!
+    Sets the visibility of the place to \a visibility.
+*/
+void QPlace::setVisibility(QtLocation::Visibility visibility)
+{
+    Q_D(QPlace);
+    d->visibility = visibility;
+}
+
+/*!
+    Returns the visibility of the place.
+*/
+QtLocation::Visibility QPlace::visibility() const
+{
+    Q_D(const QPlace);
+    return d->visibility;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
 QPlacePrivate::QPlacePrivate()
-        : QSharedData(),
-        detailsFetched(false)
+:   QSharedData(), visibility(QtLocation::UnspecifiedVisibility), detailsFetched(false)
 {
 }
 
@@ -457,6 +474,7 @@ QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
         primaryEmail(other.primaryEmail),
         primaryUrl(other.primaryUrl),
         extendedAttributes(other.extendedAttributes),
+        visibility(other.visibility),
         detailsFetched(other.detailsFetched)
 {
 }
@@ -472,10 +490,15 @@ QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
     name = other.name;
     placeId = other.placeId;
     attribution = other.attribution;
+    contentCollections = other.contentCollections;
+    contentCounts = other.contentCounts;
     primaryPhone = other.primaryPhone;
     primaryFax = other.primaryFax;
     primaryEmail = other.primaryEmail;
     primaryUrl = other.primaryUrl;
+    extendedAttributes = other.extendedAttributes;
+    visibility = other.visibility;
+    detailsFetched = other.detailsFetched;
 
     return *this;
 }
@@ -497,6 +520,7 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
     qDebug() << "email" << (primaryEmail == other.primaryEmail);
     qDebug() << "url" << (primaryUrl == other.primaryUrl);
     qDebug() << "extendedAttributes" << (extendedAttributes == other.extendedAttributes);
+    qDebug() << "visibility" << (visibility == other.visibility);
 #endif
 
     return (categories == other.categories
@@ -513,6 +537,7 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
             && primaryEmail == other.primaryEmail
             && primaryUrl == other.primaryUrl
             && extendedAttributes == other.extendedAttributes
+            && visibility == other.visibility
             );
 }
 

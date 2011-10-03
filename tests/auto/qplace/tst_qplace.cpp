@@ -76,6 +76,7 @@ private Q_SLOTS:
     void primaryUrlTest();
     void operatorsTest();
     void extendedAttributeTest();
+    void visibilityTest();
 };
 
 tst_Place::tst_Place()
@@ -480,6 +481,17 @@ void tst_Place::extendedAttributeTest()
     QCOMPARE(place.extendedAttributes().count(), 0);
 }
 
-QTEST_APPLESS_MAIN(tst_Place);
+void tst_Place::visibilityTest()
+{
+    QPlace place;
+
+    QCOMPARE(place.visibility(), QtLocation::UnspecifiedVisibility);
+
+    place.setVisibility(QtLocation::DeviceVisibility);
+
+    QCOMPARE(place.visibility(), QtLocation::DeviceVisibility);
+}
+
+QTEST_APPLESS_MAIN(tst_Place)
 
 #include "tst_qplace.moc"

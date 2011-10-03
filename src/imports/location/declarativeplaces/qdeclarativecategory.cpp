@@ -120,3 +120,17 @@ QString QDeclarativeCategory::name() const
 {
     return m_category.name();
 }
+
+QDeclarativeCategory::Visibility QDeclarativeCategory::visibility() const
+{
+    return static_cast<QDeclarativeCategory::Visibility>(m_category.visibility());
+}
+
+void QDeclarativeCategory::setVisibility(Visibility visibility)
+{
+    if (static_cast<QDeclarativeCategory::Visibility>(m_category.visibility()) == visibility)
+        return;
+
+    m_category.setVisibility(static_cast<QtLocation::Visibility>(visibility));
+    emit visibilityChanged();
+}

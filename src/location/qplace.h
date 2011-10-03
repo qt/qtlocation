@@ -42,8 +42,8 @@
 #ifndef QPLACE_H
 #define QPLACE_H
 
-#include <QSharedDataPointer>
-#include <QVariant>
+#include <QtCore/QSharedDataPointer>
+#include <QtLocation/qtlocation.h>
 
 #include "qgeoaddress.h"
 #include "qgeoboundingbox.h"
@@ -119,6 +119,9 @@ public:
     QPlace::ExtendedAttributes extendedAttributes() const;
     void setExtendedAttributes(const QPlace::ExtendedAttributes &attributes);
     void insertExtendedAttribute(const QString &key, const QPlaceAttribute &);
+
+    QtLocation::Visibility visibility() const;
+    void setVisibility(QtLocation::Visibility visibility);
 
 protected:
     QSharedDataPointer<QPlacePrivate> d_ptr;

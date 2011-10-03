@@ -44,6 +44,7 @@
 
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QPlaceManager>
 
 #include <qplacesearchreply.h>
 

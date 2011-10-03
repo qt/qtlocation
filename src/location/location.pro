@@ -36,7 +36,8 @@ PUBLIC_HEADERS += \
                     qnmeapositioninfosource.h \
                     qgeopositioninfosourcefactory.h \
                     qlatin1constant.h \
-                    qmobilitypluginsearch.h
+                    qmobilitypluginsearch.h \
+                    qtlocation.h
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
@@ -151,7 +152,8 @@ SOURCES += \
             qlocationutils.cpp \
             qnmeapositioninfosource.cpp \
             qgeoareamonitor_polling.cpp \
-            qgeopositioninfosourcefactory.cpp
+            qgeopositioninfosourcefactory.cpp \
+            qtlocation.cpp
 
 symbian {
     INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE

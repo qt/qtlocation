@@ -162,7 +162,7 @@ QPlaceTextPredictionReply *QPlaceManagerEngineJsonDb::textPredictions(const QPla
     return textPredictionReply;
 }
 
-QPlaceIdReply *QPlaceManagerEngineJsonDb::savePlace(const QPlace &place, QPlaceManager::VisibilityScope scope)
+QPlaceIdReply *QPlaceManagerEngineJsonDb::savePlace(const QPlace &place)
 {
     IdReply *saveReply = new IdReply(QPlaceIdReply::SavePlace, this);
     if (!m_jsonDbHandler.isConnected()) {
@@ -170,7 +170,7 @@ QPlaceIdReply *QPlaceManagerEngineJsonDb::savePlace(const QPlace &place, QPlaceM
         return saveReply;
     }
 
-    if (scope == QPlaceManager::PublicScope) {
+    if (place.visibility() & QtLocation::PublicVisibility) {
         saveReply->triggerDone(QPlaceReply::UnsupportedError, tr("Saving to public scope in unsupported"));
     } else {
         QVariant jsonPlace = JsonDbHandler::convertToJsonVariant(place);
@@ -276,11 +276,6 @@ QPlaceIdReply *QPlaceManagerEngineJsonDb::saveCategory(const QPlaceCategory &cat
         emit categoryUpdated(category_, parentMap.value(UUID).toString());
 
     return saveReply;
-}
-
-QPlaceManager::VisibilityScopes QPlaceManagerEngineJsonDb::supportedSaveVisibilityScopes() const
-{
-    return QPlaceManager::NoScope | QPlaceManager::PrivateScope;
 }
 
 QPlaceIdReply *QPlaceManagerEngineJsonDb::removePlace(const QPlace &place)
