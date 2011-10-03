@@ -66,7 +66,7 @@ MainWidget::MainWidget(QWidget *parent, int bm)
     TileCache *cache = new TileCache();
 
     tileView_ = new TileView(cache);
-    tileView_->setMinimumSize(450, 450);
+    tileView_->setMinimumSize(QSize(450, 450));
 
     camera1_ = new CameraWidget();
 
@@ -185,7 +185,11 @@ MainWidget::MainWidget(QWidget *parent, int bm)
 
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addLayout(cameraLayout, 0);
-    layout->addWidget(tileView_, 1);
+    // TODO FIXME does not work anymore, QGLView is not a widget anymore
+    // show() should show the map as a separate window, but for some reason
+    // the paintGL won't be called
+    // layout->addWidget(tileView_, 1);
+    tileView_->show();
 
     CameraData c1;
     camera1_->setCamera(c1);

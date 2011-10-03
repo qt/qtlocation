@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = auto declarativetestplugin
+SUBDIRS = auto plugins/declarativetestplugin

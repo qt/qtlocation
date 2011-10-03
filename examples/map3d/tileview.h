@@ -59,7 +59,7 @@ class TileView : public QGLView
 {
     Q_OBJECT
 public:
-    explicit TileView(TileCache *tileCache, QWidget *parent = 0);
+    explicit TileView(TileCache *tileCache);
     ~TileView();
 
     Map *map();
@@ -69,8 +69,6 @@ public:
 protected:
     void showEvent(QShowEvent *);
     void resizeEvent(QResizeEvent *);
-    void enterEvent(QEvent *);
-    void leaveEvent(QEvent *e);
     void keyPressEvent(QKeyEvent *e);
     void closeEvent(QCloseEvent *);
 

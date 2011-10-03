@@ -66,8 +66,20 @@
 
 #include <QDebug>
 
-TileView::TileView(TileCache *tileCache, QWidget *parent) :
-        QGLView(parent),
+
+static void ensureContext(QWindow &win, QOpenGLContext &ctx)
+{
+    QSurfaceFormat format;
+    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+    ctx.setFormat(format);
+    ctx.create();
+    // TODO: is it possible that the platform will downgrade the actual
+    // format, or will it just fail if it can't deliver the actual format
+    format = ctx.format();
+    ctx.makeCurrent(&win);
+}
+
+TileView::TileView(TileCache *tileCache) :
         tileCache_(tileCache)
 {
     serviceProvider_ = new QGeoServiceProvider("nokia");
@@ -120,12 +132,21 @@ void TileView::closeEvent(QCloseEvent *)
 
 void TileView::paintGL(QGLPainter *painter)
 {
-    map_->paintGL(painter);
-//    QGLSceneNode *node = map_->sceneNodeForRendering();
-//    if (node) {
-//        node->draw(painter);
-//        map_->sceneNodeRenderingDone();
-//    }
+    Q_UNUSED(painter);
+    qDebug() << "-----------------------" << __FUNCTION__;
+    // TODO fixme
+
+    QWindow glw;
+    glw.setSurfaceType(QWindow::OpenGLSurface);
+    QOpenGLContext ctx;
+    ensureContext(glw, ctx);
+    if (!ctx.isValid()) {
+        qWarning("Example will not render; GL implementation not valid.");
+        return;
+    }
+    QGLPainter glpainter(&glw);
+    glpainter.begin();
+    map_->paintGL(&glpainter);
 }
 
 void TileView::showEvent(QShowEvent *)
@@ -142,17 +163,6 @@ void TileView::resizeEvent(QResizeEvent *event)
 void TileView::updateAspectRatio()
 {
     map_->resize(width(), height());
-}
-
-void TileView::enterEvent(QEvent *)
-{
-    setFocus();
-    grabKeyboard();
-}
-
-void TileView::leaveEvent(QEvent *)
-{
-    releaseKeyboard();
 }
 
 void TileView::keyPressEvent(QKeyEvent *e)
