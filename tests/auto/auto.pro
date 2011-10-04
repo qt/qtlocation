@@ -6,8 +6,9 @@ SUBDIRS += geotestplugin \
            qgeoboundingbox \
            qgeoboundingcircle \
            qgeocoordinate \
-           qgeomaneuver \
            qgeolocation \
+           qgeomaneuver \
+           qgeopositioninfo \
            qplace \
            qgeocodereply \
            qgeocodingmanager \
