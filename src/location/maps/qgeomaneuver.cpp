@@ -52,7 +52,6 @@ QT_BEGIN_NAMESPACE
     point at which two QGeoRouteSegments meet.
 
     \inmodule QtLocation
-    \since 1.1
 
     \ingroup maps-routing
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,76 +39,59 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMANEUVER_H
-#define QGEOMANEUVER_H
+#ifndef TST_QGEOMANEUVER_H
+#define TST_QGEOMANEUVER_H
 
-#include <qshareddata.h>
 
-QT_BEGIN_HEADER
+#include <QtCore/QString>
+#include <QtTest/QtTest>
+#include <QtCore/QCoreApplication>
+#include <QMetaType>
+#include <QSignalSpy>
 
-QT_BEGIN_NAMESPACE
+#include "../qgeocoordinate/qlocationtestutils_p.h"
+#include <qgeomaneuver.h>
+#include <qgeocoordinate.h>
 
-QT_MODULE(Location)
 
-class QString;
-
-class QGeoCoordinate;
-class QGeoManeuverPrivate;
-
-class Q_LOCATION_EXPORT QGeoManeuver
+class tst_QGeoManeuver : public QObject
 {
+    Q_OBJECT
 
 public:
-    enum InstructionDirection {
-        NoDirection,
-        DirectionForward,
-        DirectionBearRight,
-        DirectionLightRight,
-        DirectionRight,
-        DirectionHardRight,
-        DirectionUTurnRight,
-        DirectionUTurnLeft,
-        DirectionHardLeft,
-        DirectionLeft,
-        DirectionLightLeft,
-        DirectionBearLeft
-    };
+    tst_QGeoManeuver();
 
-    QGeoManeuver();
-    QGeoManeuver(const QGeoManeuver &other);
-    ~QGeoManeuver();
+private Q_SLOTS:
+    void initTestCase();
+    void cleanupTestCase();
+    void init();
+    void cleanup();
 
-    QGeoManeuver& operator= (const QGeoManeuver &other);
-
-    bool operator== (const QGeoManeuver &other) const;
-    bool operator!= (const QGeoManeuver &other) const;
-
-    bool isValid() const;
-
-    void setPosition(const QGeoCoordinate &position);
-    QGeoCoordinate position() const;
-
-    void setInstructionText(const QString &instructionText);
-    QString instructionText() const;
-
-    void setDirection(InstructionDirection direction);
-    InstructionDirection direction() const;
-
-    void setTimeToNextInstruction(int secs);
-    int timeToNextInstruction() const;
-
-    void setDistanceToNextInstruction(qreal distance);
-    qreal distanceToNextInstruction() const;
-
-    void setWaypoint(const QGeoCoordinate &coordinate);
-    QGeoCoordinate waypoint() const;
+    //Start unit test for QGeoRouteManeuver
+    void constructor();
+    void copy_constructor();
+    void destructor();
+    void direction();
+    void direction_data();
+    void distanceToNextInstruction();
+    void instructionText();
+    void position();
+    void position_data();
+    void timeToNextInstruction();
+    void waypoint();
+    void waypoint_data();
+    void isValid();
+    void operators();
+    //End Unit Test for QGeoRouteManeuver
 
 private:
-    QSharedDataPointer<QGeoManeuverPrivate> d_ptr;
+    QGeoManeuver *qgeomaneuver;
+    QGeoCoordinate *qgeocoordinate;
+
 };
 
-QT_END_NAMESPACE
+Q_DECLARE_METATYPE( QList<double>);
+Q_DECLARE_METATYPE (QGeoManeuver::InstructionDirection);
 
-QT_END_HEADER
+#endif // TST_QGEOMANEUVER_H
 
-#endif
