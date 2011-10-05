@@ -894,5 +894,5 @@ private slots:
     }
 };
 
-QTEST_MAIN(tst_QGeoCoordinate)
+QTEST_GUILESS_MAIN(tst_QGeoCoordinate)
 #include "tst_qgeocoordinate.moc"

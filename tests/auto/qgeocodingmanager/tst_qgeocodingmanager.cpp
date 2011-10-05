@@ -188,5 +188,5 @@ void tst_QGeocodingManager::reverseGeocode()
 }
 
 
-QTEST_MAIN(tst_QGeocodingManager)
+QTEST_GUILESS_MAIN(tst_QGeocodingManager)
 

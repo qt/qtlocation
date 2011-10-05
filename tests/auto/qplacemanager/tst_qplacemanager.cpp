@@ -96,6 +96,6 @@ void tst_QPlaceManager::cleanupTestCase()
     delete provider;
 }
 
-QTEST_MAIN(tst_QPlaceManager)
+QTEST_GUILESS_MAIN(tst_QPlaceManager)
 
 #include "tst_qplacemanager.moc"
