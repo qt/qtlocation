@@ -483,7 +483,7 @@ QString AAIntervalTreeNode<D>::print(const QString &indent)
 }
 
 template <class D>
-class Q_LOCATION_EXPORT AAIntervalTree
+class AAIntervalTree
 {
 public:
     AAIntervalTree();
@@ -607,7 +607,7 @@ QString AAIntervalTree<D>::print()
 }
 
 template <class D>
-class Q_LOCATION_EXPORT AAInterval2DTree
+class AAInterval2DTree
 {
 public:
     AAInterval2DTree();

@@ -39,10 +39,11 @@
 **
 ****************************************************************************/
 
-#include <QtWidgets/QApplication>
+#include <QtGui/QGuiApplication>
 #include "qdeclarativegeomappincharea_p.h"
 #include "qdeclarative3dgraphicsgeomap_p.h"
 #include <QtGui/qevent.h>
+#include <QtGui/QStyleHints>
 #include <QDebug>
 #include "math.h"
 #include "map.h"
@@ -312,7 +313,7 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
         pinchRejected_ = false;
         pinchActivated_ = true;
     } else if (pinchActivated_ && !pinchRejected_){
-        const int dragThreshold = QApplication::startDragDistance();
+        const int dragThreshold = qApp->styleHints()->startDragDistance();
         QPointF p1 = touchPoint1.scenePos();
         QPointF p2 = touchPoint2.scenePos();
         qreal dx = p1.x() - p2.x();

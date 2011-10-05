@@ -1,4 +1,4 @@
-INCLUDEPATH +=  declarativeplaces
+INCLUDEPATH *= $$PWD
 SOURCES += \
 #models
     declarativeplaces/qdeclarativeplacecontentmodel.cpp \

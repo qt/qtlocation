@@ -39,7 +39,8 @@
 **
 ****************************************************************************/
 
-#include <QtWidgets/QApplication>
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
 #include <QGraphicsSceneMouseEvent>
 #include <QPropertyAnimation>
 #include <QEasingCurve>
@@ -173,8 +174,9 @@ bool QDeclarativeGeoMapFlickable::mouseMoveEvent(QMouseEvent *event)
     }
 
     // Simple pan (drag) while being pressed
-    if ((qAbs(dyFromPress) > QApplication::startDragDistance()
-            || qAbs(dxFromPress) > QApplication::startDragDistance()
+    const int startDragDistance = qApp->styleHints()->startDragDistance();
+    if ((qAbs(dyFromPress) > startDragDistance
+            || qAbs(dxFromPress) > startDragDistance
             || pressTime_.elapsed() > 200) && !lastPos_.isNull()) {
 
         if (!moving_) {

@@ -50,7 +50,7 @@ QPlaceCategoryPrivate::QPlaceCategoryPrivate()
 }
 
 QPlaceCategoryPrivate::QPlaceCategoryPrivate(const QPlaceCategoryPrivate &other)
-:   categoryId(other.categoryId), name(other.name), visibility(other.visibility)
+:   QSharedData(other), categoryId(other.categoryId), name(other.name), visibility(other.visibility)
 {
 }
 

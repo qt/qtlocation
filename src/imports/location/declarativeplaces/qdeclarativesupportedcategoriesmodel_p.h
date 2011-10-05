@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVESUPPORTEDCATEGORIESMODEL_H
 #define QDECLARATIVESUPPORTEDCATEGORIESMODEL_H
 
-#include "qdeclarativegeoserviceprovider_p.h"
+#include <qdeclarativegeoserviceprovider_p.h>
 
 #include <QObject>
 #include <QtCore/QStringList>
