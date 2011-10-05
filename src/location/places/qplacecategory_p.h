@@ -46,6 +46,8 @@
 #include <QtCore/QString>
 #include <QtLocation/qtlocation.h>
 
+#include "qplaceicon.h"
+
 QT_BEGIN_NAMESPACE
 
 class QPlaceCategoryPrivate : public QSharedData
@@ -55,10 +57,14 @@ public:
     QPlaceCategoryPrivate(const QPlaceCategoryPrivate &other);
 
     ~QPlaceCategoryPrivate();
+    QPlaceCategoryPrivate &operator= (const QPlaceCategoryPrivate &other);
+    bool operator==(const QPlaceCategoryPrivate &other) const;
+
 
     QString categoryId;
     QString name;
     QtLocation::Visibility visibility;
+    QPlaceIcon icon;
 };
 
 QT_END_NAMESPACE

@@ -130,6 +130,14 @@ int QPlaceManagerEngine::managerVersion() const
 }
 
 /*!
+    Returns the manager instance used to create this engine.
+*/
+QPlaceManager *QPlaceManagerEngine::manager() const
+{
+    return d_ptr->manager;
+}
+
+/*!
     \fn void QPlaceManagerEngine::authenticationRequired(QAuthenticator *authenticator)
 
     This signal is emitted if authentication details are required by the manager engine
@@ -141,7 +149,7 @@ int QPlaceManagerEngine::managerVersion() const
 */
 
 QPlaceManagerEnginePrivate::QPlaceManagerEnginePrivate()
-:   managerVersion(-1)
+    :   managerVersion(-1), manager(0)
 {
 }
 

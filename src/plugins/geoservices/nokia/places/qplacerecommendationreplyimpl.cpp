@@ -57,11 +57,11 @@ QT_USE_NAMESPACE
 /*!
     Constructor.
 */
-QPlaceRecommendationReplyImpl::QPlaceRecommendationReplyImpl(QPlaceRestReply *reply, QObject *parent) :
+QPlaceRecommendationReplyImpl::QPlaceRecommendationReplyImpl(QPlaceRestReply *reply, QPlaceManager * manager, QObject *parent) :
     QPlaceSearchReply(parent),
     restReply(reply)
 {
-    parser = new QPlaceJSonRecommendationParser(this);
+    parser = new QPlaceJSonRecommendationParser(manager, this);
 
     if (restReply) {
         restReply->setParent(this);

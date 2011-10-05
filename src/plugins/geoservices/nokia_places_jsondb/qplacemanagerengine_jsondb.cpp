@@ -230,8 +230,7 @@ QPlaceIdReply *QPlaceManagerEngineJsonDb::saveCategory(const QPlaceCategory &cat
     if (!isUpdate) {
         reqId = m_jsonDbHandler.write(JsonDbHandler::convertToJsonVariant(category, isTopLevel));
     } else {
-        categoryMap.insert(DISPLAY_NAME, category.name());
-        reqId = m_jsonDbHandler.update(categoryMap);
+        reqId = m_jsonDbHandler.update(JsonDbHandler::convertToJsonVariant(category, isTopLevel));
         saveReply->setIsUpdate();
     }
 
@@ -359,7 +358,7 @@ QList<QPlaceCategory> QPlaceManagerEngineJsonDb::childCategories(const QString &
     }
 
     QVariantMap responseMap = m_jsonDbHandler.waitForRequest(reqId);
-    return JsonDbHandler::convertJsonResponseToCategories(responseMap);
+    return m_jsonDbHandler.convertJsonResponseToCategories(responseMap);
 }
 
 QLocale QPlaceManagerEngineJsonDb::locale() const
@@ -370,6 +369,11 @@ QLocale QPlaceManagerEngineJsonDb::locale() const
 void QPlaceManagerEngineJsonDb::setLocale(const QLocale &locale)
 {
     Q_UNUSED(locale);
+}
+
+QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)
+{
+    return icon.fullUrl();
 }
 
 void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &data)
@@ -472,7 +476,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
             }
         case QPlaceReply::SearchReply: {
                 SearchReply *searchReply = qobject_cast<SearchReply *>(reply);
-                QList<QPlace> places = JsonDbHandler::convertJsonResponseToPlaces(data);
+                QList<QPlace> places = m_jsonDbHandler.convertJsonResponseToPlaces(data);
                 QList<QPlaceSearchResult> results;
                 QPlaceSearchResult result;
                 result.setType(QPlaceSearchResult::PlaceResult);
@@ -561,7 +565,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                     detailsReply->triggerDone(QPlaceReply::PlaceDoesNotExistError,
                                               tr("Specified place does not exist"));
                 } else {
-                    QList<QPlace> places = JsonDbHandler::convertJsonResponseToPlaces(data);
+                    QList<QPlace> places = m_jsonDbHandler.convertJsonResponseToPlaces(data);
                     Q_ASSERT(!places.isEmpty());
                     detailsReply->setPlace(places.first());
                     detailsReply->triggerDone();

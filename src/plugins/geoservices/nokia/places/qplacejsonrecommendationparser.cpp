@@ -66,8 +66,8 @@ static const char *recommendations_place_element = "place";
 
 QT_USE_NAMESPACE
 
-QPlaceJSonRecommendationParser::QPlaceJSonRecommendationParser(QObject *parent) :
-    QPlaceJSonParser(parent)
+QPlaceJSonRecommendationParser::QPlaceJSonRecommendationParser(QPlaceManager *manager, QObject *parent) :
+    QPlaceJSonParser(parent), m_manager(manager)
 {
 }
 
@@ -118,7 +118,7 @@ void QPlaceJSonRecommendationParser::processResultElement(const QScriptValue &va
     }
     QScriptValue place = value.property(recommendations_place_element);
     if (place.isValid()) {
-        QPlace newPlace = QPlaceJSonDetailsParser::buildPlace(place);
+        QPlace newPlace = QPlaceJSonDetailsParser::buildPlace(place, m_manager);
         result.setPlace(newPlace);
         searchResults.append(result);
     }

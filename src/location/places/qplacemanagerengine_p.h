@@ -66,6 +66,7 @@ public:
 
     QString managerName;
     int managerVersion;
+    QPlaceManager *manager;
 
 private:
     Q_DISABLE_COPY(QPlaceManagerEnginePrivate)

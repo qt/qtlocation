@@ -270,6 +270,14 @@ void QPlaceManager::setLocale(const QLocale &locale)
 }
 
 /*!
+    Constructs an icon url from a given \a icon, \a size and \a flags.
+*/
+QUrl QPlaceManager::constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)
+{
+    return d->constructIconUrl(icon, size, flags);
+}
+
+/*!
 \fn void QPlaceManager::finished(QPlaceReply* reply)
 
 This signal is emitted when \a reply has finished processing.

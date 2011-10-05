@@ -47,21 +47,29 @@
 
 #include <qplacecategory.h>
 
+#include "qdeclarativegeoserviceprovider_p.h"
+
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeCategory : public QObject
+class QDeclarativePlaceIcon;
+
+class QDeclarativeCategory : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
     Q_ENUMS(Visibility)
 
+    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QString categoryId READ categoryId WRITE setCategoryId NOTIFY categoryIdChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
+    Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
+
+    Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
     explicit QDeclarativeCategory(QObject* parent = 0);
-    explicit QDeclarativeCategory(const QPlaceCategory &category, QObject* parent = 0);
+    QDeclarativeCategory(const QPlaceCategory &category, QDeclarativeGeoServiceProvider *plugin, QObject* parent = 0);
     ~QDeclarativeCategory();
 
     enum Visibility {
@@ -71,7 +79,14 @@ public:
         PublicVisibility = QtLocation::PublicVisibility
     };
 
-    QPlaceCategory category() const;
+    //From QDeclarativeParserStatus
+    virtual void classBegin() {}
+    virtual void componentComplete();
+
+    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
+    QDeclarativeGeoServiceProvider* plugin() const;
+
+    QPlaceCategory category();
     void setCategory(const QPlaceCategory &category);
 
     QString categoryId() const;
@@ -82,13 +97,21 @@ public:
     Visibility visibility() const;
     void setVisibility(Visibility visibility);
 
+    QDeclarativePlaceIcon *icon() const;
+    void setIcon(QDeclarativePlaceIcon *icon);
+
 signals:
+    void pluginChanged();
     void categoryIdChanged();
     void nameChanged();
     void visibilityChanged();
+    void iconChanged();
 
 private:
     QPlaceCategory m_category;
+    QDeclarativePlaceIcon *m_icon;
+    QDeclarativeGeoServiceProvider *m_plugin;
+    bool m_complete;
 };
 
 QT_END_NAMESPACE

@@ -258,6 +258,14 @@ public:
         m_locale = locale;
     }
 
+    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags) {
+        Q_UNUSED(icon)
+        Q_UNUSED(size)
+        Q_UNUSED(flags)
+
+        return QUrl();
+    }
+
 private:
     QLocale m_locale;
     QMap<QString, QPlace> m_places;

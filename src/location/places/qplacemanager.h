@@ -55,6 +55,7 @@
 #include <QString>
 #include <QObject>
 #include <QAuthenticator>
+#include <QtLocation/QPlaceIcon>
 
 QT_BEGIN_HEADER
 
@@ -110,6 +111,8 @@ public:
 
     QLocale locale() const;
     void setLocale(const QLocale &locale);
+
+    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags);
 
 Q_SIGNALS:
     void finished(QPlaceReply *reply);

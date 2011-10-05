@@ -59,6 +59,7 @@ QT_BEGIN_NAMESPACE
 class QPlaceReply;
 
 class QPlaceManager;
+class QDeclarativePlaceIcon;
 
 class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
 {
@@ -71,6 +72,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
     Q_PROPERTY(QDeclarativeRating* rating READ rating WRITE setRating NOTIFY ratingChanged);
     Q_PROPERTY(QDeclarativeSupplier *supplier READ supplier WRITE setSupplier NOTIFY supplierChanged)
+    Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged);
     Q_PROPERTY(QString attribution READ attribution WRITE setAttribution NOTIFY attributionChanged)
@@ -94,7 +96,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
 
 public:
     explicit QDeclarativePlace(QObject* parent = 0);
-    explicit QDeclarativePlace(const QPlace &src, QObject* parent = 0);
+    QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject* parent = 0);
     ~QDeclarativePlace();
 
     enum Status {Ready, Saving, Fetching, Removing, Error};
@@ -132,7 +134,8 @@ public:
     void setRating(QDeclarativeRating *rating);
     QDeclarativeSupplier *supplier() const;
     void setSupplier(QDeclarativeSupplier *supplier);
-
+    QDeclarativePlaceIcon *icon() const;
+    void setIcon(QDeclarativePlaceIcon *icon);
     QString name() const;
     void setName(const QString &name);
     QString placeId() const;
@@ -174,6 +177,7 @@ signals:
     void locationChanged();
     void ratingChanged();
     void supplierChanged();
+    void iconChanged();
     void nameChanged();
     void placeIdChanged();
     void attributionChanged();
@@ -205,6 +209,7 @@ private:
     QDeclarativeGeoLocation *m_location;
     QDeclarativeRating *m_rating;
     QDeclarativeSupplier *m_supplier;
+    QDeclarativePlaceIcon *m_icon;
     QDeclarativeReviewModel *m_reviewModel;
     QDeclarativePlaceImageModel *m_imageModel;
     QDeclarativePlaceEditorialModel *m_editorialModel;

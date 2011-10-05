@@ -40,10 +40,12 @@
 ****************************************************************************/
 
 #include "qdeclarativesupportedcategoriesmodel_p.h"
+#include "qdeclarativeplaceicon_p.h"
 #include "qgeoserviceprovider.h"
 
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceIcon>
 
 QT_USE_NAMESPACE
 
@@ -313,7 +315,8 @@ void QDeclarativeSupportedCategoriesModel::addedCategory(const QPlaceCategory &c
     beginInsertRows(parentIndex, rowToBeAdded, rowToBeAdded);
     PlaceCategoryNode *categoryNode = new PlaceCategoryNode;
     categoryNode->parentId = parentId;
-    categoryNode->declCategory = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(category));
+    categoryNode->declCategory = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(category, m_plugin, this));
+
     m_categoriesTree.insert(category.categoryId(), categoryNode);
     parentNode->childIds.insert(rowToBeAdded,category.categoryId());
     endInsertRows();
@@ -342,6 +345,8 @@ void QDeclarativeSupportedCategoriesModel::updatedCategory(const QPlaceCategory 
     if (!categoryNode)
         return;
 
+    categoryNode->declCategory->setCategory(category);
+
     if (categoryNode->parentId == parentId) { //reparenting to same parent
         QModelIndex parentIndex = index(parentId);
         int rowToBeAdded = rowToAddChild(newParentNode, category);
@@ -355,11 +360,9 @@ void QDeclarativeSupportedCategoriesModel::updatedCategory(const QPlaceCategory 
 
             newParentNode->childIds.removeAll(categoryId);
             newParentNode->childIds.insert(rowToBeAdded, categoryId);
-            categoryNode->declCategory->setCategory(category);
             endMoveRows();
         } else {// if the position has not changed we modifying an existing row
             QModelIndex categoryIndex = index(categoryId);
-            categoryNode->declCategory->setCategory(category);
             emit dataChanged(categoryIndex, categoryIndex);
         }
     } else { //reparenting to different parents
@@ -376,7 +379,6 @@ void QDeclarativeSupportedCategoriesModel::updatedCategory(const QPlaceCategory 
                       oldParentNode->childIds.indexOf(categoryId), newParentIndex, rowToBeAdded);
         oldParentNode->childIds.removeAll(oldCategory.categoryId());
         newParentNode->childIds.insert(rowToBeAdded, categoryId);
-        categoryNode->declCategory->setCategory(category);
         categoryNode->parentId = parentId;
         endMoveRows();
 
@@ -416,6 +418,16 @@ void QDeclarativeSupportedCategoriesModel::saveCategory(const QVariantMap &categ
 
     if (categoryMap.contains(QLatin1String("name")))
         category.setName(categoryMap.value(QLatin1String("name")).toString());
+
+
+    QDeclarativePlaceIcon *declIcon = qobject_cast<QDeclarativePlaceIcon *>(categoryMap.value(QLatin1String("icon")).value<QObject *>());
+    if (declIcon) {
+        QPlaceIcon icon;
+        icon.setBaseUrl(declIcon->baseUrl());
+        icon.setFullUrl(declIcon->fullUrl());
+        icon.setManager(placeManager);
+        category.setIcon(icon);
+    }
 
     QPlaceCategory parentCategory;
     if (m_categoriesTree.contains(parentId))
@@ -463,8 +475,8 @@ void QDeclarativeSupportedCategoriesModel::update()
     PlaceCategoryNode *node = new PlaceCategoryNode;
     node->childIds = populateCategories(placeManager, QPlaceCategory());
     m_categoriesTree.insert(QString(), node);
-    node->declCategory =
-        QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(QPlaceCategory()));
+    node->declCategory = QSharedPointer<QDeclarativeCategory>
+                            (new QDeclarativeCategory(QPlaceCategory(), m_plugin, this));
     endResetModel();
 }
 
@@ -519,7 +531,7 @@ QStringList QDeclarativeSupportedCategoriesModel::populateCategories(QPlaceManag
         iter.next();
         node = new PlaceCategoryNode;
         node->parentId = parent.categoryId();
-        node->declCategory = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(iter.value()));
+        node->declCategory = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(iter.value(), m_plugin ,this));
 
         if (m_hierarchical)
             node->childIds = populateCategories(manager, iter.value());

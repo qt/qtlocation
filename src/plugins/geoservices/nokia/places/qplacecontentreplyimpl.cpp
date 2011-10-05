@@ -58,16 +58,16 @@ QT_USE_NAMESPACE
     Constructor.
 */
 QPlaceContentReplyImpl::QPlaceContentReplyImpl(QPlaceContent::Type type, QPlaceRestReply *reply,
-                                               QObject *parent)
+                                               QPlaceManager *manager, QObject *parent)
 :   QPlaceContentReply(parent), restReply(reply), contentType(type), startNumber(0)
 
 {
     if (contentType == QPlaceContent::ImageType)
         parser = new QPlaceJSonMediaParser(this);
     else if (contentType == QPlaceContent::ReviewType)
-        parser = new QPlaceJSonReviewParser(this);
+        parser = new QPlaceJSonReviewParser(manager, this);
     else if (contentType == QPlaceContent::EditorialType)
-        parser = new QPlaceJSonDetailsParser(this);
+        parser = new QPlaceJSonDetailsParser(manager, this);
     else
         parser = 0;
 

@@ -66,10 +66,10 @@ class QPlaceJSonDetailsParser : public QPlaceJSonParser
 {
     Q_OBJECT
 public:
-    explicit QPlaceJSonDetailsParser(QObject *parent = 0);
+    explicit QPlaceJSonDetailsParser(QPlaceManager *manager, QObject *parent = 0);
     virtual ~QPlaceJSonDetailsParser();
 
-    static QPlace buildPlace(const QScriptValue &place);
+    static QPlace buildPlace(const QScriptValue &place, QPlaceManager *manager);
     QPlace result();
 
 private:
@@ -113,6 +113,7 @@ private:
 
 private:
     QPlace place;
+    QPlaceManager *m_manager;
 };
 
 QT_END_NAMESPACE

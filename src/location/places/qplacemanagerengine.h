@@ -88,6 +88,8 @@ public:
     virtual QLocale locale() const = 0;
     virtual void setLocale(const QLocale &locale) = 0;
 
+    virtual QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags) = 0;
+
 Q_SIGNALS:
     void finished(QPlaceReply *reply);
     void error(QPlaceReply *, QPlaceReply::Error error, QString errorString = QString());
@@ -100,6 +102,9 @@ Q_SIGNALS:
     void categoryAdded(const QPlaceCategory &category, const QString &parentCategoryId);
     void categoryUpdated(const QPlaceCategory &category, const QString &parentCategoryId);
     void categoryRemoved(const QString &categoryId, const QString &parentCategoryId);
+
+protected:
+    QPlaceManager *manager() const;
 
 private:
     void setManagerName(const QString &managerName);

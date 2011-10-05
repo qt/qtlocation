@@ -59,17 +59,18 @@ class QScriptEngine;
 class QScriptValue;
 
 QT_BEGIN_NAMESPACE
+class QPlaceManager;
 
 class QPlaceJSonReviewParser : public QPlaceJSonParser
 {
     Q_OBJECT
 public:
-    explicit QPlaceJSonReviewParser(QObject *parent = 0);
+    explicit QPlaceJSonReviewParser(QPlaceManager *manager, QObject *parent = 0);
     virtual ~QPlaceJSonReviewParser();
 
     QList<QPlaceReview> results();
     int allReviewsCount();
-    static QPlaceReview buildReview(const QScriptValue &place);
+    static QPlaceReview buildReview(const QScriptValue &place, QPlaceManager *manager);
 
 private:
     void processJSonData(const QScriptValue &sv);
@@ -78,6 +79,7 @@ private:
 private:
     QList<QPlaceReview> reviews;
     int allReviews;
+    QPlaceManager *m_manager;
 };
 
 QT_END_NAMESPACE

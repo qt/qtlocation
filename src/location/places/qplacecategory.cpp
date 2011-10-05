@@ -50,12 +50,28 @@ QPlaceCategoryPrivate::QPlaceCategoryPrivate()
 }
 
 QPlaceCategoryPrivate::QPlaceCategoryPrivate(const QPlaceCategoryPrivate &other)
-:   QSharedData(other), categoryId(other.categoryId), name(other.name), visibility(other.visibility)
+:   QSharedData(other), categoryId(other.categoryId), name(other.name), visibility(other.visibility),
+    icon(other.icon)
 {
 }
 
 QPlaceCategoryPrivate::~QPlaceCategoryPrivate()
 {
+}
+
+QPlaceCategoryPrivate &QPlaceCategoryPrivate::operator=(const QPlaceCategoryPrivate &other)
+{
+    categoryId = other.categoryId;
+    name = other.name;
+    icon = other.icon;
+    return *this;
+}
+
+bool QPlaceCategoryPrivate::operator==(const QPlaceCategoryPrivate &other) const
+{
+    return (categoryId == other.categoryId)
+            && (icon == other.icon)
+            && (name == other.name);
 }
 
 /*!
@@ -157,6 +173,22 @@ void QPlaceCategory::setVisibility(QtLocation::Visibility visibility)
 QtLocation::Visibility QPlaceCategory::visibility() const
 {
     return d->visibility;
+}
+
+/*!
+    Returns the category icon
+*/
+QPlaceIcon QPlaceCategory::icon() const
+{
+    return d->icon;
+}
+
+/*!
+    Sets the category icon
+*/
+void QPlaceCategory::setIcon(const QPlaceIcon &icon)
+{
+    d->icon = icon;
 }
 
 QT_END_NAMESPACE

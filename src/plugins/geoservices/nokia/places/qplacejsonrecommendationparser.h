@@ -60,11 +60,13 @@ class QScriptValue;
 
 QT_BEGIN_NAMESPACE
 
+class QPlaceManager;
+
 class QPlaceJSonRecommendationParser : public QPlaceJSonParser
 {
     Q_OBJECT
 public:
-    explicit QPlaceJSonRecommendationParser(QObject *parent = 0);
+    explicit QPlaceJSonRecommendationParser(QPlaceManager *manager, QObject *parent = 0);
     virtual ~QPlaceJSonRecommendationParser();
 
     QList<QPlaceSearchResult> results();
@@ -75,6 +77,7 @@ private:
 
 private:
     QList<QPlaceSearchResult> searchResults;
+    QPlaceManager *m_manager;
 };
 
 QT_END_NAMESPACE

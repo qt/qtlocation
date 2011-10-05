@@ -57,15 +57,19 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeSupplier::QDeclarativeSupplier(QObject* parent)
-        : QObject(parent)
+    : QObject(parent), m_icon(0)
 {
 }
 
 QDeclarativeSupplier::QDeclarativeSupplier(const QPlaceSupplier &src,
         QObject *parent)
         : QObject(parent),
-          m_src(src)
+          m_src(src),
+          m_icon(0)
 {
+    //Note: icon needs to be assigned externally
+    //to the QDeclarativeSupplier since the icon needs
+    //to know which plugin it comes from.
 }
 
 QDeclarativeSupplier::~QDeclarativeSupplier()
@@ -86,13 +90,15 @@ void QDeclarativeSupplier::setSupplier(const QPlaceSupplier &src)
     if (previous.url() != m_src.url()) {
         emit urlChanged();
     }
-    if (previous.supplierIconUrl() != m_src.supplierIconUrl()) {
-        emit supplierIconUrlChanged();
-    }
+
+    //Note: icon needs to be assigned externally
+    //to the QDeclarativeSupplier since the icon needs
+    //to know which plugin it comes from.
 }
 
-QPlaceSupplier QDeclarativeSupplier::supplier() const
+QPlaceSupplier QDeclarativeSupplier::supplier()
 {
+    m_src.setIcon(m_icon ? m_icon->icon() : QPlaceIcon());
     return m_src;
 }
 
@@ -135,25 +141,6 @@ QString QDeclarativeSupplier::name() const
 }
 
 /*!
-    \qmlproperty url Supplier::supplierIconUrl
-
-    This property holds icon URL.
-*/
-
-void QDeclarativeSupplier::setSupplierIconUrl(const QUrl &supplierIconUrl)
-{
-    if (m_src.supplierIconUrl() != supplierIconUrl) {
-        m_src.setSupplierIconUrl(supplierIconUrl);
-        emit supplierIconUrlChanged();
-    }
-}
-
-QUrl QDeclarativeSupplier::supplierIconUrl() const
-{
-    return m_src.supplierIconUrl();
-}
-
-/*!
     \qmlproperty url Supplier::url
 
     This property holds supplier URL.
@@ -170,4 +157,26 @@ void QDeclarativeSupplier::setUrl(const QUrl &url)
 QUrl QDeclarativeSupplier::url() const
 {
     return m_src.url();
+}
+
+/*!
+    \qmlproperty PlaceIcon Supplier::icon
+
+    This property holds the icon of the supplier.
+*/
+QDeclarativePlaceIcon *QDeclarativeSupplier::icon() const
+{
+    return m_icon;
+}
+
+void QDeclarativeSupplier::setIcon(QDeclarativePlaceIcon *icon)
+{
+    if (m_icon == icon)
+        return;
+
+    if (m_icon && m_icon->parent() == this)
+        delete m_icon;
+
+    m_icon = icon;
+    emit iconChanged();
 }

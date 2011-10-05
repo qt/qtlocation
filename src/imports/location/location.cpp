@@ -68,6 +68,7 @@
 #include "qdeclarativegeolocation_p.h"
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativeplaceattribute_p.h"
+#include "qdeclarativeplaceicon_p.h"
 #include "qdeclarativerating_p.h"
 #include "qdeclarativesupplier_p.h"
 
@@ -129,6 +130,7 @@ public:
             qmlRegisterType<QDeclarativeGeoLocation>(uri, 5, 0, "Location");
             qmlRegisterType<QDeclarativePlaceImageModel>(uri, 5, 0, "ImageModel");
             qmlRegisterType<QDeclarativePlace>(uri, 5, 0, "Place");
+            qmlRegisterType<QDeclarativePlaceIcon>(uri, 5, 0, "PlaceIcon");
             qmlRegisterType<QDeclarativeRating>(uri, 5, 0, "Rating");
             qmlRegisterType<QDeclarativeReviewModel>(uri, 5, 0, "ReviewModel");
             qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");

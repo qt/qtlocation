@@ -58,7 +58,7 @@ private Q_SLOTS:
     void nameTest();
     void supplierIdTest();
     void urlTest();
-    void supplierIconUrlTest();
+    void iconTest();
     void operatorsTest();
 };
 
@@ -102,24 +102,34 @@ void tst_QPlaceSupplier::urlTest()
     QVERIFY2(testObj.url() == testUrl, "Wrong value returned");
 }
 
-void tst_QPlaceSupplier::supplierIconUrlTest()
+void tst_QPlaceSupplier::iconTest()
 {
     QPlaceSupplier testObj;
-    const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
-    QVERIFY2(testObj.supplierIconUrl() == QString(), "Wrong default value");
-    testObj.setSupplierIconUrl(testUrl);
-    QVERIFY2(testObj.supplierIconUrl() == testUrl, "Wrong value returned");
+    QVERIFY(testObj.icon().isEmpty());
+    QPlaceIcon icon;
+    icon.setFullUrl(QUrl::fromEncoded("http://example.com/icon.png"));
+    testObj.setIcon(icon);
+    QCOMPARE(testObj.icon(), icon);
+    QCOMPARE(testObj.icon().fullUrl(), QUrl::fromEncoded("http://example.com/icon.png"));
+
+    testObj.setIcon(QPlaceIcon());
+    QVERIFY(testObj.icon().isEmpty());
+    QCOMPARE(testObj.icon().fullUrl(), QUrl());
 }
 
 void tst_QPlaceSupplier::operatorsTest()
 {
     QPlaceSupplier testObj;
-    const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
-    testObj.setSupplierIconUrl(testUrl);
+    testObj.setName(QLatin1String("Acme"));
+    QPlaceIcon icon;
+    icon.setFullUrl(QUrl::fromEncoded("http://example.com/testUrl"));
+    testObj.setIcon(icon);
+    testObj.setSupplierId(QLatin1String("34292"));
+
     QPlaceSupplier testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
-    testObj2.setSupplierId("testValue2");
+    testObj2.setSupplierId(QLatin1String("testValue2"));
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 

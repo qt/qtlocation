@@ -40,6 +40,11 @@
 ****************************************************************************/
 
 #include "qdeclarativecategory_p.h"
+#include "qdeclarativeplaceicon_p.h"
+#include "qdeclarativegeoserviceprovider_p.h"
+
+#include <QtDeclarative/QDeclarativeInfo>
+#include <QtLocation/QGeoServiceProvider>
 
 QT_USE_NAMESPACE
 
@@ -54,16 +59,55 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeCategory::QDeclarativeCategory(QObject* parent)
-        : QObject(parent) {}
-
-QDeclarativeCategory::QDeclarativeCategory(const QPlaceCategory &category,
-        QObject *parent)
-        : QObject(parent),
-        m_category(category)
+    : QObject(parent), m_icon(0)
 {
 }
 
+QDeclarativeCategory::QDeclarativeCategory(const QPlaceCategory &category,
+                                           QDeclarativeGeoServiceProvider *plugin,
+                                           QObject *parent)
+        : QObject(parent),
+          m_category(category),
+          m_icon(0), m_plugin(plugin)
+{
+    Q_ASSERT(plugin);
+    if (!category.icon().isEmpty())
+        m_icon = new QDeclarativePlaceIcon(category.icon(), m_plugin, this);
+}
+
 QDeclarativeCategory::~QDeclarativeCategory() {}
+
+// From QDeclarativeParserStatus
+void QDeclarativeCategory::componentComplete()
+{
+    m_complete = true;
+}
+
+/*!
+    \qmlproperty Plugin Category::plugin
+
+    This property holds the plugin to which the category belongs.
+*/
+void QDeclarativeCategory::setPlugin(QDeclarativeGeoServiceProvider *plugin)
+{
+    if (m_plugin == plugin)
+        return;
+
+    m_plugin = plugin;
+    if (m_complete)
+        emit pluginChanged();
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+        return;
+    }
+}
+
+QDeclarativeGeoServiceProvider* QDeclarativeCategory::plugin() const
+{
+    return m_plugin;
+}
 
 void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
 {
@@ -76,10 +120,34 @@ void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
     if (category.categoryId() != previous.categoryId()) {
         emit categoryIdChanged();
     }
+
+    if (m_icon) {
+        if (m_icon->plugin() != m_plugin
+                || m_icon->baseUrl() != category.icon().baseUrl()
+                || m_icon->fullUrl() != category.icon().fullUrl()) {
+            if (m_icon->parent() == this) {
+                if (category.icon().isEmpty()) {
+                    delete m_icon;
+                    m_icon = 0;
+                } else {
+                    m_icon->setPlugin(m_plugin);
+                    m_icon->setBaseUrl(category.icon().baseUrl());
+                    m_icon->setFullUrl(category.icon().fullUrl());
+                }
+            } else {
+                m_icon = new QDeclarativePlaceIcon(category.icon(), m_plugin, this);
+            }
+            emit iconChanged();
+        }
+    } else {
+        m_icon = new QDeclarativePlaceIcon(category.icon(), m_plugin, this);
+        emit iconChanged();
+    }
 }
 
-QPlaceCategory QDeclarativeCategory::category() const
+QPlaceCategory QDeclarativeCategory::category()
 {
+    m_category.setIcon(m_icon ? m_icon->icon() : QPlaceIcon());
     return m_category;
 }
 
@@ -88,7 +156,6 @@ QPlaceCategory QDeclarativeCategory::category() const
 
     This property holds the id of the category
 */
-
 void QDeclarativeCategory::setCategoryId(const QString &id)
 {
     if (m_category.categoryId() != id) {
@@ -133,4 +200,26 @@ void QDeclarativeCategory::setVisibility(Visibility visibility)
 
     m_category.setVisibility(static_cast<QtLocation::Visibility>(visibility));
     emit visibilityChanged();
+}
+
+/*!
+    \qmlproperty PlaceIcon Category::icon
+
+    This property holds the icon of the category.
+*/
+QDeclarativePlaceIcon *QDeclarativeCategory::icon() const
+{
+    return m_icon;
+}
+
+void QDeclarativeCategory::setIcon(QDeclarativePlaceIcon *icon)
+{
+    if (m_icon == icon)
+        return;
+
+    if (m_icon && m_icon->parent() == this)
+        delete m_icon;
+
+    m_icon = icon;
+    emit iconChanged();
 }

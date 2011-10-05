@@ -62,7 +62,7 @@ class QPlaceRecommendationReplyImpl : public QPlaceSearchReply
 {
     Q_OBJECT
 public:
-    explicit QPlaceRecommendationReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
+    QPlaceRecommendationReplyImpl(QPlaceRestReply *reply, QPlaceManager *manager, QObject *parent = 0);
     ~QPlaceRecommendationReplyImpl();
     void abort();
 

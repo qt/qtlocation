@@ -73,6 +73,8 @@
 #define COUNTY "county"
 #define COUNTRY "country"
 
+#define ICON_URL "iconUrl"
+
 Q_ADDON_JSONDB_BEGIN_NAMESPACE
 class JsonDbClient;
 Q_ADDON_JSONDB_END_NAMESPACE
@@ -86,7 +88,7 @@ class QPlaceCategory;
 class JsonDbHandler : public QObject
 {
     Q_OBJECT
-#include <QVariant>
+
 public:
     JsonDbHandler(QPlaceManagerEngineJsonDb *manager);
 
@@ -102,10 +104,10 @@ public:
     static QVariant convertToJsonVariant(const QPlaceCategory &category, bool isTopLevel);
     static QString convertToQueryString(const QPlaceSearchRequest &query);
 
-    static QList<QPlace> convertJsonResponseToPlaces(const QVariant &response);
-    static QList<QPlaceCategory> convertJsonResponseToCategories(const QVariant &response);
-    static QPlace convertJsonVariantToPlace(const QVariant &variant);
-    static QPlaceCategory convertJsonVariantToCategory(const QVariant &variant);
+    QList<QPlace> convertJsonResponseToPlaces(const QVariant &response);
+    QList<QPlaceCategory> convertJsonResponseToCategories(const QVariant &response);
+    QPlace convertJsonVariantToPlace(const QVariant &variant);
+    QPlaceCategory convertJsonVariantToCategory(const QVariant &variant);
 
     bool isConnected();
 

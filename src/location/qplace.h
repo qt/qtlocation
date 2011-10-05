@@ -62,6 +62,7 @@ QT_BEGIN_NAMESPACE
 QT_MODULE(Location)
 
 class QString;
+class QPlaceIcon;
 class QPlacePrivate;
 
 class Q_LOCATION_EXPORT QPlace
@@ -89,6 +90,9 @@ public:
 
     QString attribution() const;
     void setAttribution(const QString &attribution);
+
+    QPlaceIcon icon() const;
+    void setIcon(const QPlaceIcon &icon);
 
     QPlaceContent::Collection content(QPlaceContent::Type type) const;
     void setContent(QPlaceContent::Type type, const QPlaceContent::Collection &content);

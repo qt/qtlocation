@@ -100,7 +100,7 @@ QPlaceDetailsReply *QPlaceManagerEngineNokia::getPlaceDetails(const QString &pla
     QPlaceDetailsReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceRequest(placeId);
     if (restReply) {
-        reply = new QPlaceDetailsReplyImpl(restReply, this);
+        reply = new QPlaceDetailsReplyImpl(restReply, manager(), this);
         connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
                 this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
         connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
@@ -116,7 +116,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
     case QPlaceContent::ImageType: {
             QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceImagesRequest(place.placeId(),
                                                                                                request);
-            reply = new QPlaceContentReplyImpl(request.contentType(), restReply, this);
+            reply = new QPlaceContentReplyImpl(request.contentType(), restReply, manager(), this);
 
             if (!restReply)
                 QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
@@ -127,7 +127,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
     case QPlaceContent::ReviewType: {
             QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceReviewRequest(place.placeId(),
                                                                                                request);
-            reply = new QPlaceContentReplyImpl(request.contentType(), restReply, this);
+            reply = new QPlaceContentReplyImpl(request.contentType(), restReply, manager(), this);
 
             if (!restReply)
                 QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
@@ -139,7 +139,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
         QPlaceRestReply *restReply =
             QPlaceRestManager::instance()->sendPlaceRequest(place.placeId());
 
-        reply = new QPlaceContentReplyImpl(request.contentType(), restReply, this);
+        reply = new QPlaceContentReplyImpl(request.contentType(), restReply, manager(), this);
 
         if (!restReply) {
             QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
@@ -150,7 +150,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
         break;
     }
     default: {
-            reply = new QPlaceContentReplyImpl(request.contentType(), 0, this);
+            reply = new QPlaceContentReplyImpl(request.contentType(), 0, manager(), this);
             QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
                                       Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
                                       Q_ARG(QString, QString("Retrieval of given content type not supported")));
@@ -207,7 +207,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QPlace &place
     newQuery.setSearchTerm(place.placeId());
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendRecommendationRequest(newQuery, QString());
     if (restReply) {
-        reply = new QPlaceRecommendationReplyImpl(restReply, this);
+        reply = new QPlaceRecommendationReplyImpl(restReply, manager(), this);
         connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
                 this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
         connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
@@ -299,6 +299,14 @@ QLocale QPlaceManagerEngineNokia::locale() const
 void QPlaceManagerEngineNokia::setLocale(const QLocale &locale)
 {
     QPlaceRestManager::instance()->setLocale(locale);
+}
+
+QUrl QPlaceManagerEngineNokia::constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)
+{
+    Q_UNUSED(icon)
+    Q_UNUSED(size)
+    Q_UNUSED(flags)
+    return QUrl();
 }
 
 void QPlaceManagerEngineNokia::processingError(QPlaceReply *reply,

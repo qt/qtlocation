@@ -47,6 +47,8 @@
 #include <QtDeclarative/qdeclarative.h>
 #include <qplacesupplier.h>
 
+#include "qdeclarativeplaceicon_p.h"
+
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeSupplier : public QObject
@@ -56,14 +58,14 @@ class QDeclarativeSupplier : public QObject
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString supplierId READ supplierId WRITE setSupplierId NOTIFY supplierIdChanged);
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
-    Q_PROPERTY(QUrl supplierIconUrl READ supplierIconUrl WRITE setSupplierIconUrl NOTIFY supplierIconUrlChanged)
+    Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
 
 public:
     explicit QDeclarativeSupplier(QObject* parent = 0);
     explicit QDeclarativeSupplier(const QPlaceSupplier &src, QObject* parent = 0);
     ~QDeclarativeSupplier();
 
-    QPlaceSupplier supplier() const;
+    QPlaceSupplier supplier();
     void setSupplier(const QPlaceSupplier &src);
 
     QString name() const;
@@ -72,17 +74,19 @@ public:
     void setSupplierId(const QString &data);
     QUrl url() const;
     void setUrl(const QUrl &data);
-    QUrl supplierIconUrl() const;
-    void setSupplierIconUrl(const QUrl &data);
+
+    QDeclarativePlaceIcon *icon() const;
+    void setIcon(QDeclarativePlaceIcon *icon);
 
 signals:
     void nameChanged();
     void supplierIdChanged();
     void urlChanged();
-    void supplierIconUrlChanged();
+    void iconChanged();
 
 private:
     QPlaceSupplier m_src;
+    QDeclarativePlaceIcon *m_icon;
 };
 
 QT_END_NAMESPACE

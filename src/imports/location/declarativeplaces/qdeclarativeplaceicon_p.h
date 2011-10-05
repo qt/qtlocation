@@ -39,58 +39,74 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACECATEGORY_H
-#define QPLACECATEGORY_H
+#ifndef QDECLARATIVEPLACEICON_P_H
+#define QDECLARATIVEPLACEICON_P_H
 
-#include <QtCore/QSharedDataPointer>
-#include <QtCore/QString>
-#include <QtCore/QMetaType>
-#include <QtLocation/qtlocation.h>
+#include "qdeclarativegeoserviceprovider_p.h"
 
-QT_BEGIN_HEADER
+#include <qplaceicon.h>
+#include <QtDeclarative/qdeclarative.h>
+
+#include <QObject>
 
 QT_BEGIN_NAMESPACE
 
-QT_MODULE(Location)
-
-class QPlaceIcon;
-
-class QPlaceCategoryPrivate;
-class Q_LOCATION_EXPORT QPlaceCategory
+class QDeclarativePlaceIcon : public QObject
 {
+    Q_OBJECT
+    Q_ENUMS(IconFlag)
+    Q_FLAGS(IconFlags)
+
+    Q_PROPERTY(QUrl baseUrl READ baseUrl WRITE setBaseUrl NOTIFY baseUrlChanged)
+    Q_PROPERTY(QUrl fullUrl READ fullUrl WRITE setFullUrl NOTIFY fullUrlChanged)
+    Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
+
 public:
-    QPlaceCategory();
-    QPlaceCategory(const QPlaceCategory &other);
+    enum IconFlag {
+        Normal = QPlaceIcon::Normal,
+        Disabled = QPlaceIcon::Disabled,
+        Active = QPlaceIcon::Active,
+        Selected = QPlaceIcon::Selected,
 
-    virtual ~QPlaceCategory();
+        Map = QPlaceIcon::Map,
+        List = QPlaceIcon::List
+    };
 
-    QPlaceCategory &operator=(const QPlaceCategory &other);
+    Q_DECLARE_FLAGS(IconFlags, IconFlag)
 
-    bool operator==(const QPlaceCategory &other) const;
-    bool operator!=(const QPlaceCategory &other) const {
-        return !(other == *this);
-    }
-
-    QString categoryId() const;
-    void setCategoryId(const QString &catID);
-
-    QString name() const;
-    void setName(const QString &name);
-
-    QtLocation::Visibility visibility() const;
-    void setVisibility(QtLocation::Visibility visibility);
+    explicit QDeclarativePlaceIcon(QObject* parent = 0);
+    QDeclarativePlaceIcon(const QPlaceIcon &src, QDeclarativeGeoServiceProvider *plugin, QObject* parent = 0);
+    ~QDeclarativePlaceIcon();
 
     QPlaceIcon icon() const;
-    void setIcon(const QPlaceIcon &icon);
+    void setIcon(const QPlaceIcon &src);
+
+    Q_INVOKABLE QUrl url(const QSize &size = QSize(), QDeclarativePlaceIcon::IconFlags flags = Normal) const;
+
+    QUrl fullUrl() const;
+    void setFullUrl(const QUrl &fullUrl);
+
+    QUrl baseUrl() const;
+    void setBaseUrl(const QUrl &baseUrl);
+
+    void setPlugin(QDeclarativeGeoServiceProvider *plugin);
+    QDeclarativeGeoServiceProvider *plugin() const;
+
+signals:
+    void baseUrlChanged();
+    void fullUrlChanged();
+    void pluginChanged();
 
 private:
-    QSharedDataPointer<QPlaceCategoryPrivate> d;
+    QPlaceManager *manager() const;
+    QUrl m_baseUrl;
+    QUrl m_fullUrl;
+    QDeclarativeGeoServiceProvider *m_plugin;
 };
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceCategory))
+Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QDeclarativePlaceIcon::IconFlags))
 
-QT_END_HEADER
+#endif
 
-#endif // QPLACECATEGORY_H

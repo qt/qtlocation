@@ -90,6 +90,8 @@ public:
     QLocale locale() const;
     void setLocale(const QLocale &locale);
 
+    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags);
+
 private slots:
     void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
     void processingFinished(QPlaceReply *reply);

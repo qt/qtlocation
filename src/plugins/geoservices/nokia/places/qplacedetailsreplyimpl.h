@@ -55,6 +55,7 @@
 #include <qplacedetailsreply.h>
 #include "qplacerestreply.h"
 #include "qplacejsondetailsparser.h"
+#include <QtLocation/QPlaceManager>
 
 QT_BEGIN_NAMESPACE
 
@@ -62,7 +63,7 @@ class QPlaceDetailsReplyImpl : public QPlaceDetailsReply
 {
     Q_OBJECT
 public:
-    explicit QPlaceDetailsReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
+    QPlaceDetailsReplyImpl(QPlaceRestReply *reply, QPlaceManager *manager, QObject *parent = 0);
     ~QPlaceDetailsReplyImpl();
     void abort();
 

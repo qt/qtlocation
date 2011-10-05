@@ -310,6 +310,24 @@ void QPlace::setAttribution(const QString &attribution)
 }
 
 /*!
+    Returns the icon of the place.
+*/
+QPlaceIcon QPlace::icon() const
+{
+    Q_D(const QPlace);
+    return d->icon;
+}
+
+/*!
+    Sets the icon of the place.
+*/
+void QPlace::setIcon(const QPlaceIcon &icon)
+{
+    Q_D(QPlace);
+    d->icon = icon;
+}
+
+/*!
     Returns the primary phone number for this place.
 */
 QString QPlace::primaryPhone() const

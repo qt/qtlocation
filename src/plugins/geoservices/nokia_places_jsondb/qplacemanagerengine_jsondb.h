@@ -83,6 +83,7 @@ public:
     QLocale locale() const;
     void setLocale(const QLocale &locale);
 
+    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags);
 public slots:
     void processJsonDbResponse(int id, const QVariant &data);
     void processJsonDbError(int id, int code, const QString &data);

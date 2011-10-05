@@ -92,16 +92,15 @@ QPlaceSupplier QPlaceSuppliersRepository::addSupplier(const QPlaceSupplier &src)
 void QPlaceSuppliersRepository::copyMissingData(const QPlaceSupplier &src,
                                                 QPlaceSupplier &target)
 {
-    if (target.name().isEmpty() && !src.name().isEmpty()) {
+    if (target.name().isEmpty() && !src.name().isEmpty())
         target.setName(src.name());
-    }
-    if (target.supplierId().isEmpty() && !src.supplierId().isEmpty()) {
+
+    if (target.supplierId().isEmpty() && !src.supplierId().isEmpty())
         target.setSupplierId(src.supplierId());
-    }
-    if (target.url().isEmpty() && !src.url().isEmpty()) {
+
+    if (target.url().isEmpty() && !src.url().isEmpty())
         target.setUrl(src.url());
-    }
-    if (target.supplierIconUrl().isEmpty() && !src.supplierIconUrl().isEmpty()) {
-        target.setSupplierIconUrl(src.supplierIconUrl());
-    }
+
+    if (target.icon().isEmpty() && !src.icon().isEmpty())
+        target.setIcon(src.icon());
 }

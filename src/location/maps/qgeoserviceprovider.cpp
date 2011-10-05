@@ -51,6 +51,7 @@
 #include "qgeomappingmanagerengine.h"
 #include "qgeoroutingmanagerengine.h"
 #include "qplacemanagerengine.h"
+#include "qplacemanagerengine_p.h"
 
 #include <QList>
 #include <QString>
@@ -337,6 +338,8 @@ QPlaceManager *QGeoServiceProvider::placeManager() const
             engine->setManagerName(d_ptr->factory->providerName());
             engine->setManagerVersion(d_ptr->factory->providerVersion());
             d_ptr->placeManager = new QPlaceManager(engine);
+            engine->d_ptr->manager = d_ptr->placeManager;
+
         } else {
             d_ptr->placeError = QGeoServiceProvider::NotSupportedError;
             d_ptr->placeErrorString = QLatin1String("The service provider does not support placeManager().");

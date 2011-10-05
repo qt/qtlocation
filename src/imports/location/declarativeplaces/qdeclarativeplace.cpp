@@ -42,6 +42,7 @@
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativeplaceattribute_p.h"
+#include "qdeclarativeplaceicon_p.h"
 
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
@@ -65,20 +66,24 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
-:   QObject(parent), m_location(0), m_rating(0), m_supplier(0),
+:   QObject(parent), m_location(0), m_rating(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QDeclarativePropertyMap(this)),
     m_reply(0), m_plugin(0),m_complete(false), m_status(QDeclarativePlace::Ready)
 {
 }
 
-QDeclarativePlace::QDeclarativePlace(const QPlace &src, QObject *parent)
-:   QObject(parent), m_location(0), m_rating(0), m_supplier(0),
+QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent)
+:   QObject(parent), m_location(0), m_rating(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QDeclarativePropertyMap(this)),
-    m_src(src), m_reply(0), m_plugin(0), m_complete(false),
+    m_src(src), m_reply(0), m_plugin(plugin), m_complete(false),
     m_status(QDeclarativePlace::Ready)
 {
+    Q_ASSERT(plugin);
+    if (!m_src.icon().isEmpty())
+        m_icon = new QDeclarativePlaceIcon(m_src.icon(), m_plugin, this);
+
     setPlace(src);
 }
 
@@ -174,6 +179,29 @@ void QDeclarativePlace::setPlace(const QPlace &src)
         emit supplierChanged();
     }
 
+    if (m_icon) {
+        if (m_icon->plugin() != m_plugin
+                || m_icon->baseUrl() != m_src.icon().baseUrl()
+                || m_icon->fullUrl() != m_src.icon().fullUrl()) {
+            if (m_icon->parent() == this) {
+                if (m_src.icon().isEmpty()) {
+                    delete m_icon;
+                    m_icon = 0;
+                } else {
+                    m_icon->setPlugin(m_plugin);
+                    m_icon->setBaseUrl(m_src.icon().baseUrl());
+                    m_icon->setFullUrl(m_src.icon().fullUrl());
+                }
+            } else {
+                m_icon = new QDeclarativePlaceIcon(m_src.icon(), m_plugin, this);
+            }
+            emit iconChanged();
+        }
+    } else {
+        m_icon = new QDeclarativePlaceIcon(m_src.icon(), m_plugin, this);
+        emit iconChanged();
+    }
+
     if (previous.name() != m_src.name()) {
         emit nameChanged();
     }
@@ -238,6 +266,9 @@ QPlace QDeclarativePlace::place()
 
     // Supplier
     result.setSupplier(m_supplier ? m_supplier->supplier() : QPlaceSupplier());
+
+    // Icon
+    result.setIcon(m_icon ? m_icon->icon() : QPlaceIcon());
 
     // Extended Attributes
     return result;
@@ -314,6 +345,28 @@ void QDeclarativePlace::setSupplier(QDeclarativeSupplier *supplier)
 QDeclarativeSupplier *QDeclarativePlace::supplier() const
 {
     return m_supplier;
+}
+
+/*!
+    \qmlproperty PlaceIcon Place::icon
+
+    This property holds the icon of the place.
+*/
+QDeclarativePlaceIcon *QDeclarativePlace::icon() const
+{
+    return m_icon;
+}
+
+void QDeclarativePlace::setIcon(QDeclarativePlaceIcon *icon)
+{
+    if (m_icon == icon)
+        return;
+
+    if (m_icon && m_icon->parent() == this)
+        delete m_icon;
+
+    m_icon = icon;
+    emit iconChanged();
 }
 
 /*!
@@ -692,7 +745,7 @@ void QDeclarativePlace::synchronizeCategories()
     qDeleteAll(m_categories);
     m_categories.clear();
     foreach (QPlaceCategory value, m_src.categories()) {
-        QDeclarativeCategory* declarativeValue = new QDeclarativeCategory(value, this);
+        QDeclarativeCategory* declarativeValue = new QDeclarativeCategory(value, m_plugin, this);
         m_categories.append(declarativeValue);
     }
 }

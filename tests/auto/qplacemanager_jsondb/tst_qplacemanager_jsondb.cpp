@@ -110,6 +110,7 @@ private Q_SLOTS:
     void searchByCircle();
     void searchWithLexicalPlaceNameHint();
     void searchWithDistanceHint();
+    void icons();
     void unsupportedFunctions();
 
 private:
@@ -961,6 +962,58 @@ void tst_QPlaceManagerJsonDb::searchWithDistanceHint()
     QCOMPARE(results.at(4), place6);
     QCOMPARE(results.at(5), place5);
 
+}
+
+void tst_QPlaceManagerJsonDb::icons()
+{
+    QPlaceIcon icon;
+    icon.setManager(placeManager);
+    icon.setFullUrl(QUrl(QLatin1String("/icons/placeicon.jpg")));
+
+    //check that we can get the url from the icon
+    QCOMPARE(icon.url(), QUrl(QLatin1String("/icons/placeicon.jpg")));
+
+    //check that we can save and retrieve a place with the icon
+    //intact.
+    QPlace place;
+    place.setIcon(icon);
+    QString placeId;
+    QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.icon().url(),  QUrl(QLatin1String("/icons/placeicon.jpg")));
+
+    QPlaceIcon categoryIcon;
+    categoryIcon.setManager(placeManager);
+    categoryIcon.setFullUrl(QUrl(QLatin1String("/icons/motel.jpg")));
+
+    QPlaceCategory motel;
+    motel.setIcon(categoryIcon);
+    QString categoryId;
+    QVERIFY(doSaveCategory(motel, "", QPlaceReply::NoError, &categoryId));
+    motel.setCategoryId(categoryId);
+
+    QList<QPlaceCategory> categories = placeManager->childCategories();
+    QCOMPARE(categories.count(), 1);
+    QCOMPARE(categories.at(0).icon().url(), QUrl(QLatin1String("/icons/motel.jpg")));
+
+    //test modification of an icon of an existin category
+    categoryIcon.setFullUrl(QUrl(QLatin1String("/icons/motel2.jpg")));
+    motel.setIcon(categoryIcon);
+    QVERIFY(doSaveCategory(motel, "", QPlaceReply::NoError, &categoryId));
+
+    categories = placeManager->childCategories();
+    QCOMPARE(categories.count(), 1);
+    QCOMPARE(categories.at(0).icon().url(), QUrl(QLatin1String("/icons/motel2.jpg")));
+
+    //try saving an empty icon to the category
+    motel.setIcon(QPlaceIcon());
+    QVERIFY(doSaveCategory(motel, "", QPlaceReply::NoError, &categoryId));
+    categories = placeManager->childCategories();
+    QCOMPARE(categories.count(), 1);
+    QCOMPARE(categories.at(0).icon().url(), QUrl());
+    QVERIFY(categories.at(0).icon().isEmpty());
 }
 
 void tst_QPlaceManagerJsonDb::unsupportedFunctions()

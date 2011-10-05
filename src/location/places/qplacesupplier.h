@@ -43,6 +43,7 @@
 #define QPLACESUPPLIER_H
 
 #include <QSharedDataPointer>
+#include <QtLocation/QPlaceIcon>
 
 QT_BEGIN_HEADER
 
@@ -69,12 +70,15 @@ public:
 
     QString name() const;
     void setName(const QString &data);
+
     QString supplierId() const;
     void setSupplierId(const QString &data);
+
     QUrl url() const;
     void setUrl(const QUrl &data);
-    QUrl supplierIconUrl() const;
-    void setSupplierIconUrl(const QUrl &data);
+
+    QPlaceIcon icon() const;
+    void setIcon(const QPlaceIcon &icon);
 
 private:
     QSharedDataPointer<QPlaceSupplierPrivate> d;

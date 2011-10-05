@@ -46,6 +46,8 @@
 #include <QSharedData>
 #include <QUrl>
 
+#include "qplaceicon.h"
+
 QT_BEGIN_NAMESPACE
 
 class QPlaceSupplierPrivate : public QSharedData
@@ -61,7 +63,7 @@ public:
     QString name;
     QString supplierId;
     QUrl url;
-    QUrl supplierIconUrl;
+    QPlaceIcon icon;
 };
 
 QT_END_NAMESPACE

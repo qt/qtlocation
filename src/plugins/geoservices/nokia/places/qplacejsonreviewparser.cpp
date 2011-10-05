@@ -53,6 +53,8 @@
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
+#include <QtLocation/QPlaceIcon>
+#include <QtLocation/QPlaceManager>
 
 #include <qplacereview.h>
 #include <qplacesupplier.h>
@@ -81,9 +83,9 @@ static const char *review_vendoricon_element = "vendorIconUrl";
 
 QT_USE_NAMESPACE
 
-QPlaceJSonReviewParser::QPlaceJSonReviewParser(QObject *parent) :
+QPlaceJSonReviewParser::QPlaceJSonReviewParser(QPlaceManager *manager, QObject *parent) :
     QPlaceJSonParser(parent),
-    allReviews(0)
+    allReviews(0),m_manager(manager)
 {
 }
 
@@ -101,7 +103,7 @@ int QPlaceJSonReviewParser::allReviewsCount()
     return allReviews;
 }
 
-QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review)
+QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review, QPlaceManager *manager)
 {
     QPlaceReview newReview;
     QScriptValue value = review.property(review_id_element);
@@ -150,7 +152,12 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review)
         QPlaceSupplier sup;
         sup.setName(name);
         sup.setSupplierId(id);
-        sup.setSupplierIconUrl(QUrl::fromEncoded(icon.toAscii()));
+        if (!icon.toAscii().isEmpty()) {
+            QPlaceIcon supplierIcon;
+            supplierIcon.setBaseUrl(QUrl::fromEncoded(icon.toAscii()));
+            supplierIcon.setManager(manager);
+            sup.setIcon(supplierIcon);
+        }
         newReview.setSupplier(QPlaceSuppliersRepository::instance()->addSupplier(sup));
     }
 
@@ -192,11 +199,11 @@ void QPlaceJSonReviewParser::processReviews(const QScriptValue &reviewsElement)
                 it.next();
                 // array contains count as last element
                 if (it.name() != "length") {
-                    reviews.append(buildReview(it.value()));
+                    reviews.append(buildReview(it.value(), m_manager));
                 }
             }
         } else {
-            reviews.append(buildReview(value));
+            reviews.append(buildReview(value, m_manager));
         }
     }
     value = reviewsElement.property(review_count);

@@ -185,8 +185,8 @@ static const char *place_premiumcontent_content_sunday = "SUN";
 
 QT_USE_NAMESPACE
 
-QPlaceJSonDetailsParser::QPlaceJSonDetailsParser(QObject *parent) :
-    QPlaceJSonParser(parent)
+QPlaceJSonDetailsParser::QPlaceJSonDetailsParser(QPlaceManager *manager, QObject *parent) :
+    QPlaceJSonParser(parent), m_manager(manager)
 {
 }
 
@@ -194,12 +194,19 @@ QPlaceJSonDetailsParser::~QPlaceJSonDetailsParser()
 {
 }
 
-QPlace QPlaceJSonDetailsParser::buildPlace(const QScriptValue &placeValue)
+QPlace QPlaceJSonDetailsParser::buildPlace(const QScriptValue &placeValue, QPlaceManager *manager)
 {
     QPlace newPlace;
     if (placeValue.isValid()) {
         buildPlace(placeValue, &newPlace);
     }
+
+    if (!newPlace.icon().baseUrl().isEmpty() || !newPlace.icon().fullUrl().isEmpty()) {
+        QPlaceIcon icon = newPlace.icon();
+        icon.setManager(manager);
+        newPlace.setIcon(icon);
+    }
+
     return newPlace;
 }
 
@@ -213,7 +220,7 @@ void QPlaceJSonDetailsParser::processJSonData(const QScriptValue &sv)
     if (sv.isValid()) {
         QScriptValue placeProperty = sv.property(place_place_element);
         if (placeProperty.isValid()) {
-            buildPlace(placeProperty, &place);
+            place = buildPlace(placeProperty, m_manager);
             emit finished(NoError, QString());
         } else {
             emit finished(ParsingError, QString("JSON data are invalid"));
@@ -278,7 +285,10 @@ void QPlaceJSonDetailsParser::processMainProvider(const QScriptValue &placeValue
     }
     value = placeValue.property(place_provider_url);
     if (value.isValid() && !value.toString().isEmpty()){
-        sup.setSupplierIconUrl(value.toString());
+        QPlaceIcon icon;
+        icon.setBaseUrl(value.toString());
+        //Note: the icon manager is set in QPlaceJSonDetailsParser::buildPlace()
+        sup.setIcon(icon);
     }
 
     targetPlace->setSupplier(QPlaceSuppliersRepository::instance()->addSupplier(sup));
@@ -584,7 +594,13 @@ void QPlaceJSonDetailsParser::processPremiumContent(const QScriptValue &content,
     if (!name.isEmpty() || !id.isEmpty()) {
         supplier.setName(name);
         supplier.setSupplierId(id);
-        supplier.setSupplierIconUrl(iconUrl);
+        if (!iconUrl.isEmpty()) {
+            QPlaceIcon icon;
+            icon.setBaseUrl(iconUrl);
+            //note: the icon manager is set in QPlaceJSonDetailsParser::buildPlace()
+            supplier.setIcon(icon);
+        }
+
         supplier = QPlaceSuppliersRepository::instance()->addSupplier(supplier);
     }
     processPremiumContentDescription(content, supplier, targetPlace);

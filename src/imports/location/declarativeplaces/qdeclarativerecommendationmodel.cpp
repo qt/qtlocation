@@ -213,8 +213,7 @@ void QDeclarativeRecommendationModel::processReply(QPlaceReply *reply)
     m_results = searchReply->results();
 
     foreach (const QPlaceSearchResult &result, m_results) {
-        QDeclarativePlace *place = new QDeclarativePlace(result.place(), this);
-        place->setPlugin(plugin());
+        QDeclarativePlace *place = new QDeclarativePlace(result.place(), plugin(), this);
         m_places.insert(result.place().placeId(), place);
     }
 }

@@ -57,11 +57,11 @@ QT_USE_NAMESPACE
 /*!
     Constructor.
 */
-QPlaceDetailsReplyImpl::QPlaceDetailsReplyImpl(QPlaceRestReply *reply, QObject *parent) :
+QPlaceDetailsReplyImpl::QPlaceDetailsReplyImpl(QPlaceRestReply *reply, QPlaceManager *manager, QObject *parent) :
     QPlaceDetailsReply(parent),
     restReply(reply)
 {
-    parser = new QPlaceJSonDetailsParser(this);
+    parser = new QPlaceJSonDetailsParser(manager, this);
 
     if (restReply) {
         restReply->setParent(this);

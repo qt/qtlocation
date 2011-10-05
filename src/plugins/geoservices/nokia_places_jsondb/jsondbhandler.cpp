@@ -126,15 +126,21 @@ QVariant JsonDbHandler::convertToJsonVariant(const QPlace &place)
     map.insert(COORDINATE, coordMap);
     map.insert(ADDRESS, addressMap);
 
+    map.insert(ICON_URL, place.icon().fullUrl().toString());
+
     return map;
 }
 
 QVariant JsonDbHandler::convertToJsonVariant(const QPlaceCategory &category, bool isTopLevel)
 {
     QVariantMap map;
+    if (!category.categoryId().isEmpty())
+        map.insert(UUID, category.categoryId());
+
     map.insert(TYPE, PLACE_CATEGORY_TYPE);
     map.insert(DISPLAY_NAME, category.name());
     map.insert(TOP_LEVEL_CATEGORY, isTopLevel);
+    map.insert(ICON_URL, category.icon().fullUrl().toString());
     return map;
 }
 
@@ -211,6 +217,13 @@ QPlace JsonDbHandler::convertJsonVariantToPlace(const QVariant &variant)
 
     place.setLocation(location);
 
+    if (placeJson.keys().contains(ICON_URL) && !placeJson.value(ICON_URL).toString().isEmpty()) {
+        QPlaceIcon icon;
+        icon.setFullUrl(QUrl(placeJson.value(ICON_URL).toUrl()));
+        icon.setManager(m_engine->manager());
+        place.setIcon(icon);
+    }
+
     return place;
 }
 
@@ -220,6 +233,14 @@ QPlaceCategory JsonDbHandler::convertJsonVariantToCategory(const QVariant &varia
     QPlaceCategory category;
     category.setName(categoryMap.value(DISPLAY_NAME).toString());
     category.setCategoryId(categoryMap.value(UUID).toString());
+
+    if (categoryMap.keys().contains(ICON_URL) && !categoryMap.value(ICON_URL).toString().isEmpty()) {
+        QPlaceIcon icon;
+        icon.setFullUrl(QUrl(categoryMap.value(ICON_URL).toUrl()));
+        icon.setManager(m_engine->manager());
+        category.setIcon(icon);
+    }
+
     return category;
 }
 

@@ -39,67 +39,68 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACE_P_H
-#define QPLACE_P_H
+#ifndef QPLACEICON_H
+#define QPLACEICON_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
 
-#include <QSharedData>
-#include <QUrl>
-
-#include "qplace.h"
-#include "qgeoaddress.h"
-#include "qgeoboundingbox.h"
-#include "qgeocoordinate.h"
-#include "qplacesupplier.h"
-#include <QtLocation/QPlaceIcon>
+#include <QtCore/QUrl>
+#include <QtCore/QFlags>
+#include <QtCore/QMetaType>
+#include <QtCore/QSize>
+#include <QtCore/QSharedDataPointer>
 
 QT_BEGIN_NAMESPACE
 
-class QPlacePrivate : public QSharedData
+class QPlaceManager;
+
+class QPlaceIconPrivate;
+class Q_LOCATION_EXPORT QPlaceIcon
 {
 public:
-    QPlacePrivate();
-    QPlacePrivate(const QPlacePrivate &other);
-    ~QPlacePrivate();
+    Q_ENUMS(QPlaceIcon::IconType)
 
-    QPlacePrivate &operator= (const QPlacePrivate &other);
+    enum IconFlag {
+        Normal = 0,
+        Disabled = 1,
+        Active = 2,
+        Selected = 4,
 
-    bool operator==(const QPlacePrivate &other) const;
+        Map = 8,
+        List = 16
+    };
 
-    QList<QPlaceCategory> categories;
-    QGeoLocation location;
-    QPlaceRating rating;
-    QPlaceSupplier supplier;
-    QString name;
-    QString placeId;
-    QString attribution;
+    Q_DECLARE_FLAGS(IconFlags, IconFlag)
 
-    QMap<QPlaceContent::Type, QPlaceContent::Collection> contentCollections;
-    QMap<QPlaceContent::Type, int> contentCounts;
+    QPlaceIcon();
+    QPlaceIcon(const QPlaceIcon &other);
 
-    QString primaryPhone;
-    QString primaryFax;
-    QString primaryEmail;
-    QUrl primaryUrl;
+    ~QPlaceIcon();
 
-    QPlace::ExtendedAttributes extendedAttributes;
+    QPlaceIcon &operator=(const QPlaceIcon &other);
+    bool operator == (const QPlaceIcon &other) const;
+    bool operator != (const QPlaceIcon &other) const {
+        return !(*this == other);
+    }
 
-    QtLocation::Visibility visibility;
-    QPlaceIcon icon;
-    bool detailsFetched;
+    QUrl url(const QSize &size = QSize(), IconFlags flags = 0) const;
+
+    void setFullUrl(const QUrl &url);
+    QUrl fullUrl() const;
+
+    QUrl baseUrl() const;
+    void setBaseUrl(const QUrl &url);
+
+    QPlaceManager *manager() const;
+    void setManager(QPlaceManager *manager);
+
+    bool isEmpty() const;
+
+private:
+    QSharedDataPointer<QPlaceIconPrivate> d;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QPlaceIcon::IconFlags))
 
 QT_END_NAMESPACE
 
 #endif
-

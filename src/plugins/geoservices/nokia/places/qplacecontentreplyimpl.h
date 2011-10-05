@@ -64,7 +64,8 @@ class QPlaceContentReplyImpl : public QPlaceContentReply
 {
     Q_OBJECT
 public:
-    QPlaceContentReplyImpl(QPlaceContent::Type type, QPlaceRestReply *reply, QObject *parent = 0);
+    QPlaceContentReplyImpl(QPlaceContent::Type type, QPlaceRestReply *reply,
+                           QPlaceManager *manager, QObject *parent = 0);
     ~QPlaceContentReplyImpl();
     void abort();
     void setStartNumber(int number);
