@@ -5,13 +5,14 @@ SUBDIRS += geotestplugin \
            qgeoaddress \
            qgeoboundingbox \
            qgeoboundingcircle \
+           qgeocodereply \
+           qgeocodingmanager \
            qgeocoordinate \
            qgeolocation \
            qgeomaneuver \
            qgeopositioninfo \
+           qgeosatelliteinfo \
            qplace \
-           qgeocodereply \
-           qgeocodingmanager \
            qplacecategory \
            qplacecontentrequest \
            qplaceeditorial \
