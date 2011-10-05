@@ -449,7 +449,7 @@ void QDeclarative3DGraphicsGeoMap::restoreDefaults(QGLPainter *painter)
 
 void QDeclarative3DGraphicsGeoMap::earlyDraw(QGLPainter *painter)
 {
-    glClearColor(0.0,255,0.0,0.0);
+    glClearColor(0.0,0.0,0.0,0.0);
     // Depth buffer has been cleared already, but color buffer hasn't
     glClear(GL_COLOR_BUFFER_BIT);
     // Force the effect to be updated.
