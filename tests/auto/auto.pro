@@ -1,6 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS += geotestplugin \
+           positionplugin \
+           positionplugintest \
            qgeocodingmanagerplugins \
            qgeoaddress \
            qgeoboundingbox \
