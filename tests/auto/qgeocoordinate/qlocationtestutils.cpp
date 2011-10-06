@@ -63,8 +63,6 @@ bool QLocationTestUtils::hasDefaultSource()
 {
 #if defined(Q_OS_SYMBIAN)
     return true;
-#elif defined (Q_OS_WINCE)
-    return true;
 #else
     return false;
 #endif

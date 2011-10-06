@@ -78,18 +78,6 @@
     }      }                                     \
     QCOMPARE(a, e)
 
-#if defined(Q_OS_WINCE)
-    #define EXPECT_FAIL_WINCE_SEE_MOBILITY_337 { QEXPECT_FAIL("", "MOBILITY-337: This test will fail on the test farm for WinCE", Continue); }
-#else
-    #define EXPECT_FAIL_WINCE_SEE_MOBILITY_337
-#endif
-
-#if defined(Q_OS_WINCE)
-    #define EXPECT_FAIL_WINCE_SEE_MOBILITY_337_ABORT { QEXPECT_FAIL("", "MOBILITY-337: This test will fail on the test farm for WinCE", Abort); }
-#else
-    #define EXPECT_FAIL_WINCE_SEE_MOBILITY_337_ABORT
-#endif
-
 
 class QLocationTestUtils
 {

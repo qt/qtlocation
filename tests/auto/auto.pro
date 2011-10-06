@@ -13,6 +13,7 @@ SUBDIRS += geotestplugin \
            qgeolocation \
            qgeomaneuver \
            qgeopositioninfo \
+           qgeopositioninfosource \
            qgeosatelliteinfo \
            qplace \
            qplacecategory \
