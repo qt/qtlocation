@@ -59,7 +59,7 @@ QT_END_NAMESPACE
 QT_USE_NAMESPACE
 
 /*!
-    \class QPlaceConentReply
+    \class QPlaceContentReply
 
     \brief The QPlaceContentReply class manages a content retrieval operation started by an
     instance of QPlaceManager.

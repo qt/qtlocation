@@ -1,0 +1,242 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of
+** this file.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms
+** and conditions contained in a signed written agreement between you
+** and Nokia.
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+
+/*!
+\page location-maps.html
+\title Maps
+\previouspage QtLocation
+
+\brief Maps is the part of the Location API that deals with maps,
+their contents and navigation through the maps.
+
+\section1 Maps and Navigation
+
+The Maps and Navigation API is based on plugins.
+
+Since most providers of mapping, geocoding and routing information offer
+no guarantees that their data is interoperable with the data provided by
+other services, the plugins are used to group the functionality per
+service provider.
+
+The plugins are accessed via QGeoServiceProvider, and a Nokia based plugin.
+See the section \l{The Nokia plugin} for more details.
+
+\code
+    QGeoMappingManager *mappingManager = 0;
+    QGeoRoutingManager *routingManager = 0;
+    QGeoSearchManager *searchManager = 0;
+
+    QGeoServiceProvider serviceProvider("plugin name");
+
+    if (serviceProvider.error() == QGeoServiceProvider::NoError) {
+        mappingManager = serviceProvider.mappingManager();
+        routingManager = serviceProvider.routingManager();
+        searchManager = serviceProvider.searchManager();
+    }
+\endcode
+
+\bold {Important notice:} \e {The map data provided by the offline plug-in is
+place-shifted for the area of the People’s Republic of China. To provide
+un-shifted maps of China in an application, the application developer must
+first obtain permission from Chinese officials. The Qt Location
+API cannot offer this on the API level.}
+
+
+\section2 Common classes
+
+\annotatedlist maps
+
+\section2 Mapping
+
+The QGraphicsGeoMap class is the main class used for displaying and interacting
+with maps. It is designed for use within the Graphics View Framework, and is
+a subclass of QGraphicsWidget.
+
+The QGeoMappingManager provides most of the functionality required by
+QGraphicsGeoMap.  The details of QGeoMappingManager are mostly only important
+to plugin implementers, as regular users should not need to make use of
+QGeoMappingManager outside of the QGraphicsGeoMap constructor:
+\code
+    QGraphicsGeoMap *map = new QGraphicsGeoMap(mappingManager);
+\endcode
+
+\annotatedlist maps-mapping
+
+\section3 \bold{Map objects}
+
+QGeoMapObject and its subclasses provide the ability to add graphics to the map
+specified in terms of coordinates and distances. QGeoMapObject instances can
+also be grouped into hierarchies in order to simplify the process of creating
+compound objects and managing groups of objects.
+
+\annotatedlist maps-mapping-objects
+
+\section2 Routing
+
+QGeoRoutingManager handles requests for routing information.
+
+The requests are created as QGeoRouteRequest instances, which are
+passed to QGeoRoutingManager::calculateRoute().  The returned
+QGeoRouteReply instance will contain the result of the request when
+it is completed.
+
+The QGeoRoute class describes the resulting route.  Each route is
+broken up into a number of QGeoRouteSegment instances, with the division
+usually occurring at either user specified waypoints or at changes in the
+mode of transport, like when changing from a train to a bus.
+
+Each QGeoRouteSegment has a QGeoNavigationInstruction instance which
+describes the instructions that would be issued to a user attempting
+to follow a route.  These instructions a location, which is typically
+somewhere near the end of the associated QGeoRouteSegment, and
+instruction text describing how the next QGeoRouteSegment should be reached.
+
+\annotatedlist maps-routing
+
+\section2 Geocoding and searching for places
+
+QGeoSearchManager handles geocoding, reverse geocoding and free-text
+search for places.
+
+The free-text search will attempt to geocode text that looks like an
+address while simultaneously searching any landmark databases that the
+service provides.
+
+\annotatedlist maps-places
+
+\section2 The Nokia plugin
+
+Included with the Qt Location API is a Maps and Navigation API plugin which accesses
+the relevant Ovi services provided Nokia.  The use of these services
+is governed by the terms and conditions available in the file
+plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt.
+
+The Ovi services plugin can be loaded by using the plugin key "nokia".
+
+Note that accepting the terms and conditions only applies those terms and conditions to the use of the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API plugins that may be included with Qt.
+
+On Symbian platforms the applications using the Nokia plugin will need NetworkServices capability to access the online services.
+
+The online plugin uses the tiled map classes, which cache tile data in heap memory (currently up to 10 MB on Symbian and Maemo5 and Harmattan platforms). Because default heap size for Qt application on Symbian is 4 MB, it may be good idea to increase the application's heap size (depending on the app of course). Otherwise somewhat misleading error popups may appear, e.g. "<application name>: Memory full. Close some applications and try again." See e.g.  \l {http://library.forum.nokia.com/index.jsp?topic=/Qt_for_Symbian_Developers_Library/GUID-4427F6F8-AB72-489B-BB9C-3261A0568E4E.html}{Forum Nokia documentation.}
+
+The following table lists optional parameters that can be passed to the Nokia plugin.
+\table
+\header
+    \o Parameter
+    \o Description
+\row
+    \o mapping.proxy
+    \o Proxy server URL used by mapping manager.
+\row
+    \o mapping.host
+    \o Map tile service URL used by mapping manager.
+\row
+    \o mapping.referer
+    \o Referer for the mapping token used for authentication by mapping manager.
+\row
+    \o mapping.token
+    \o Client token for the service used for authentication by mapping manager.
+\row
+    \o mapping.cache.directory
+    \o Map tile cache directory used as network disk cache.
+
+    Default place for the cache is "maptiles" directory in system temp.
+
+    On Symbian platform by default the cache is placed into internal mass memory drive directory "/data/nokia/maptiles".
+
+    If no internal mass memory is present on Symbian device caching is not used by default.
+
+    Changing the cache directory on Symbian may cause additional capability needs depending on where the new directory is placed.
+
+    Map tile caching is disabled on Maemo, Meego and Windows CE platforms. Using the parameter on these platforms will have no effect.
+
+    Map tiles will expire and are refetched 14 days after download.
+\row
+    \o mapping.cache.size
+    \o Map tile cache size. Maximum size of the cache is 50MB.
+\row
+    \o routing.proxy
+    \o Proxy server URL used by routing manager.
+\row
+    \o routing.host
+    \o Routing service URL used by routing manager.
+\row
+    \o routing.referer
+    \o Referer for the routing token used for authentication by routing manager.
+\row
+    \o routing.token
+    \o Client token for the service used for authentication by routing manager.
+\row
+    \o places.proxy
+    \o Proxy server URL used by search manager.
+\row
+    \o places.host
+    \o Search service URL used by search manager.
+\row
+    \o places.referer
+    \o Referer for the places token used for authentication by search manager.
+\row
+    \o places.token
+    \o Client token for the service used for authentication by search manager.
+\endtable
+
+\section2 Implementing plugins
+
+A plugin implementer needs to subclass QGeoServiceProviderFactory and as
+many of the ManagerEngine classes as they want to provide implementations for.
+
+Subclassing QGeoServiceProviderFactory will only involve exposing a name and
+a version by overriding QGeoServiceProviderFactory::providerName() and
+QGeoServiceProviderFactory::providerVersion(), and overriding
+QGeoServiceProviderFactory::createSearchManagerEngine(),
+QGeoServiceProviderFactory::createMappingManagerEngine() and
+QGeoServiceProviderFactory::createRoutingManagerEngine() as appropriate.
+
+\annotatedlist maps-impl
+
+\section3 Tile-based map convenience classes
+
+Most of the current tile based mapping APIs are very similar, and so we
+provide a number of classes intended to make writing tile based mapping
+plugins much simpler.
+
+If the Mercator projection and the most common tile addressing scheme is used this will mainly involve subclassing QGeoTiledMappingManagerEngine and providing an implementation of QGeoTiledMappingManagerEngine::getTileImage().
+
+\annotatedlist maps-impl-tiled
+
+\section1 QML Elements
+
+For details on the QML support provided for the Location API see the documentation for the \l {Location QML Plugin}.
+
+\section1 Map Examples
+
+\l {Declarative Map Viewer Example}
+
+\l {LightMaps Example}
+
+*/

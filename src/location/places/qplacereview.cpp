@@ -92,11 +92,13 @@ bool QPlaceReviewPrivate::compare(const QPlaceContentPrivate *other) const
     associated to specific place but can not edit its content. User might also create new review.
 
     QPlaceReview is an in memory representation of a review object.
+
+    \ingroup places-main
 */
 
 
 /*!
-    Constructs an new review object.
+    Constructs a new review object.
 */
 QPlaceReview::QPlaceReview()
     : QPlaceContent(new QPlaceReviewPrivate)

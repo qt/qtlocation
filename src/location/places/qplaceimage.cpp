@@ -72,6 +72,8 @@ bool QPlaceImagePrivate::compare(const QPlaceContentPrivate *other) const
 
     \inmodule QPlaces
 
+    \ingroup places-main
+
     \brief The QPlaceImage class represents an image.
 
 

@@ -1,0 +1,192 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of
+** this file.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms
+** and conditions contained in a signed written agreement between you
+** and Nokia.
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+
+/*!
+    \page location-places.html
+    \title Places
+    \previouspage QtLocation
+
+    \brief Places enables places of interest to be identified and retrieved by
+    position and metadata.
+
+    \section1 Overview
+
+    The Places API allows users to identify and search for places based on
+    metadata.
+
+    Using the API requires at least an instance of QPlace to hold the
+    location we are interested in and a QPlaceManager to handle our search
+    requests and retrieval of location details.
+
+    A QPlace object describes the place by acting as a container for various
+    information, including:
+
+    \list
+        \o a QMap of various attributes
+        \o a list category tags for the place
+        \o a physical location
+        \o a supplier url and icon url
+        \o a name and id
+        \o contact information for the place, if any
+        \o a url
+        \o a list of suppliers of content
+    \endlist
+
+    A developer who wishes to use the API to save a place of interest could
+    write a minimal piece of code as follows. In this code the developer
+    wishes to record a favorite place for ice cream. She places the name in a
+    QPlace object and details of the position of the place are recorded in a
+    QGeoLocation object. The QGeoLocation object is then passed to the QPlace
+    object to initialize it
+
+    \code
+        QPlace  place;
+        place.setName( "Fred's Ice Cream Parlor" );
+
+        QGeoLocation  location(latitude, longitude);
+        location.setCoordinate(12.34, 56.78);
+
+        QGeoAddress address;
+        address.setStreet("111 Nother Street");
+        ...
+        location.setAddress(address);
+
+        place.setLocation(location);
+    \endcode
+
+    The \e place now has some identification and location information to specify
+    it. To save it we need to use the QPlaceManager and monitor the signal
+    that indicates a successful save
+
+    \code
+        QPlaceIdReply *saveReply = placeManager.savePlace( place );
+
+        connect(saveReply, SIGNAL( finished() ), handler, SLOT( processFinished() ));
+    \endcode
+
+    The slot that handles the completion will be \e {processFinished()} in
+    a \e handler object (not shown).
+
+    \note replies are only valid for one use, do not re-use them.
+
+    \code
+        void handler:processFinished() {
+            if (saveReply->error() == QPlaceReply::NoError)
+                qDebug() << "Place successfully saved";
+            else
+                qDebug() << "Place failed to save";
+
+            // replies cannot be used again for another operation, they're for 'single shot' usage
+            saveReply->deleteLater();
+            saveReply =0;
+        }
+    \endcode
+
+    To look for a place we can submit search requests based on text if
+    we know the name, or part of the name if we wish to use the predictive text
+    search features. We could also search within a region, a bounding box
+    of geographical coordinates or within a given radius of a location. Perhaps
+    we want to find a particular restaurant or landmark near to our location
+    or a named place in a given city.
+
+    Here we try searching for "brisbane" expecting that this substring will
+    be sufficient to reduce the list of search hits.
+
+    First we set up a QPlaceManager object, this will require us to select a
+    QGeoServiceProvider.
+
+    \code
+
+        QGeoServiceProvider *provider = new QGeoServiceProvider( "some_provider" );
+        QPlaceManager *placeManager = provider->placeManager() ;
+    \endcode
+
+    Next we need a QPlaceSearchRequest object to contain the details of the
+    search request.
+
+    \code
+        QPlaceSearchRequest request;
+        request.setSearchTerm("brisbane");
+    \endcode
+
+    Now we use the QPlaceManager to submit the search request and the returned
+    QPlaceSearchReply object to extract the list of \l {QPlaceSearchResult}s.
+
+    \code
+        QPlaceSearchReply *searchReply = placeManager->searchForPlaces( request );
+        QList<QPlaceSearchResult> searchResults = searchReply->results();
+    \endcode
+
+    The QPlaceSearchResult class can provide various pieces of information,
+    including a QPlace object, or information on the distance and heading
+    to the place. The code below just extracts the QPlace objects which
+    could be used to update a map with names of places of interest.
+
+    \code
+        // Then extract the 'results' to a form that the user can select from.
+
+        QList<QPlace>  results;
+        foreach (const QPlaceSearchResult &searchResult, searchResults)
+            results.append(searchResult.place());
+        ...
+    \endcode
+
+    If we wish to search within an area, say a 200 meter radius of our
+    current position then we could do the following
+
+    \code
+        QGeoCoordinate  here( myLat, myLong );
+        radius = 200 ;
+
+        QPlaceSearchRequest request;
+
+        request.setSearchArea( new QGeoBoundingCircle( here, radius ) );
+
+        ...
+
+        QPlaceSearchReply *searchReply = placeManager->searchForPlaces( request );
+        QList<QPlaceSearchResult> searchResults = searchReply->results();
+
+        // Similar code as used for the text search to extract results.
+        ...
+    \endcode
+
+    For more information about the place there may be a supplier url available.
+    This would mean we could show a link to information about the place of interest.
+    A supplier icon url may also be supplied which can be used to display a
+    pleasing icon representing the landmark on a map or a list.
+
+    \section1 Places Examples
+
+
+    \section1 Classes in Places
+
+    \annotatedlist places-main
+
+*/
+

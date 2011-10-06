@@ -72,6 +72,7 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
 \since 1.1
 
 \ingroup location
+\ingroup places-main
 */
 
 /*!

@@ -56,6 +56,7 @@ QT_BEGIN_NAMESPACE
     \since 1.1
 
     \ingroup location
+    \ingroup places-main
 */
 
 /*!

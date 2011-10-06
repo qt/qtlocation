@@ -89,6 +89,9 @@ bool QPlaceCategoryPrivate::operator==(const QPlaceCategoryPrivate &other) const
     contact object and add it to place.
 
     QPlaceCategory is an in memory representation of a contact object.
+
+    \ingroup location
+    \ingroup places-main
 */
 
 

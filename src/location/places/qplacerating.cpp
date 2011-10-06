@@ -73,6 +73,8 @@ bool QPlaceRatingPrivate::operator==(const QPlaceRatingPrivate &other) const
     Each QPlaceRating represents a rating object with a count and value.
 
     QPlaceRating is an in memory representation of a rating object.
+
+    \ingroup places-main
 */
 
 /*!

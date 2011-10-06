@@ -81,6 +81,8 @@ bool QPlaceEditorialPrivate::compare(const QPlaceContentPrivate *other) const
 
     Editorial objects are read-only, e.g. user of API might get editorial objects associated to
     specific place but can not edit its content. User might also create new editorial.
+
+    \ingroup places-main
 */
 
 /*!
