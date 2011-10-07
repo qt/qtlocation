@@ -127,15 +127,15 @@ public:
             qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
             qmlRegisterType<QDeclarativePlaceEditorialModel>(uri, 5, 0, "EditorialModel");
             qmlRegisterType<QDeclarativeGeoLocation>(uri, 5, 0, "Location");
-            qmlRegisterType<QDeclarativePlaceImageModel>(uri, 5, 0, "PlaceImageModel");
+            qmlRegisterType<QDeclarativePlaceImageModel>(uri, 5, 0, "ImageModel");
             qmlRegisterType<QDeclarativePlace>(uri, 5, 0, "Place");
             qmlRegisterType<QDeclarativeRating>(uri, 5, 0, "Rating");
             qmlRegisterType<QDeclarativeReviewModel>(uri, 5, 0, "ReviewModel");
             qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");
 
             qmlRegisterType<QDeclarativeRecommendationModel>(uri, 5, 0, "RecommendationModel");
-            qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "SupportedCategoriesModel");
-            qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "SearchResultModel");
+            qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "CategoriesModel");
+            qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "PlaceSearchModel");
             qmlRegisterType<QDeclarativeTextPredictionModel>(uri, 5, 0, "TextPredictionModel");
             qmlRegisterType<QDeclarativePropertyMap>(uri, 5,0,"ExtendedAttributes");
             qmlRegisterType<QDeclarativePlaceAttribute>(uri, 5,0, "PlaceAttribute");

@@ -56,21 +56,21 @@ class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
 
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
     Q_PROPERTY(QDeclarativeCategory *searchCategory READ searchCategory WRITE setSearchCategory NOTIFY searchCategoryChanged)
-    Q_PROPERTY(int didYouMean READ didYouMean WRITE setDidYouMean NOTIFY didYouMeanChanged)
+    Q_PROPERTY(int maximumCorrections READ maximumCorrections WRITE setMaximumCorrections NOTIFY maximumCorrectionsChanged)
     Q_PROPERTY(RelevanceHint relevanceHint READ relevanceHint WRITE setRelevanceHint NOTIFY relevanceHintChanged)
     Q_PROPERTY(QDeclarativePlace::Visibility visibilityScope READ visibilityScope WRITE setVisibilityScope NOTIFY visibilityScopeChanged)
 
-    Q_ENUMS(SearchResultType RelevanceHint)
+    Q_ENUMS(SearchResultTypeRole RelevanceHint)
 
 public:
-    enum SearchResultType {
-        Place = QPlaceSearchResult::Place,
-        DidYouMeanSuggestion = QPlaceSearchResult::DidYouMeanSuggestion,
+    enum SearchResultTypeRole {
+        PlaceResult = QPlaceSearchResult::PlaceResult,
+        CorrectionResult = QPlaceSearchResult::CorrectionResult,
         UnknownSearchResult = QPlaceSearchResult::UnknownSearchResult
     };
 
     enum RelevanceHint {
-        NoHint = QPlaceSearchRequest::NoHint,
+        UnspecifiedHint = QPlaceSearchRequest::UnspecifiedHint,
         DistanceHint = QPlaceSearchRequest::DistanceHint,
         LexicalPlaceNameHint = QPlaceSearchRequest::LexicalPlaceNameHint
     };
@@ -89,8 +89,8 @@ public:
     QDeclarativeSearchResultModel::RelevanceHint relevanceHint() const;
     void setRelevanceHint(QDeclarativeSearchResultModel::RelevanceHint hint);
 
-    int didYouMean() const;
-    void setDidYouMean(int dym);
+    int maximumCorrections() const;
+    void setMaximumCorrections(int corrections);
 
     QDeclarativePlace::Visibility visibilityScope() const;
     void setVisibilityScope(QDeclarativePlace::Visibility visibilityScope);
@@ -103,19 +103,16 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
-        SearchResultType = Qt::UserRole,
-        SearchResultRelevance,
-        SearchResultDistance,
-        SearchResultHeading,
-        SearchResultAdditionalData,
-        SearchResultPlace,
-        SearchResultDidYouMean
+        SearchResultTypeRole = Qt::UserRole,
+        DistanceRole,
+        PlaceRole,
+        CorrectionRole
     };
 
 signals:
     void searchTermChanged();
     void searchCategoryChanged();
-    void didYouMeanChanged();
+    void maximumCorrectionsChanged();
     void relevanceHintChanged();
     void visibilityScopeChanged();
 

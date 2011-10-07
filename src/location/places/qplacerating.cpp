@@ -45,17 +45,13 @@
 QT_USE_NAMESPACE
 
 QPlaceRatingPrivate::QPlaceRatingPrivate()
-    : QSharedData(),
-      value(0),
-      count(0)
+:   QSharedData(), value(0), maximum(0), count(0)
 {
 }
 
 QPlaceRatingPrivate::QPlaceRatingPrivate(const QPlaceRatingPrivate &other)
-    : QSharedData()
+:   QSharedData(), value(other.value), maximum(other.maximum), count(other.count)
 {
-    this->value = other.value;
-    this->count = other.count;
 }
 
 QPlaceRatingPrivate::~QPlaceRatingPrivate()
@@ -64,10 +60,7 @@ QPlaceRatingPrivate::~QPlaceRatingPrivate()
 
 bool QPlaceRatingPrivate::operator==(const QPlaceRatingPrivate &other) const
 {
-    return (
-            this->value == other.value
-            && this->count == other.count
-    );
+    return value == other.value && maximum == other.maximum && count == other.count;
 }
 
 /*!
@@ -126,9 +119,25 @@ qreal QPlaceRating::value() const
 /*!
     Sets the \a value.
 */
-void QPlaceRating::setValue(const qreal &value)
+void QPlaceRating::setValue(qreal value)
 {
     d->value = value;
+}
+
+/*!
+    Returns the maximum possible rating value.
+*/
+qreal QPlaceRating::maximum() const
+{
+    return d->maximum;
+}
+
+/*!
+    Sets the maximum possible rating value to \a max.
+*/
+void QPlaceRating::setMaximum(qreal max)
+{
+    d->maximum = max;
 }
 
 /*!
@@ -142,7 +151,7 @@ int QPlaceRating::count() const
 /*!
     Sets the \a count.
 */
-void QPlaceRating::setCount(const int &count)
+void QPlaceRating::setCount(int count)
 {
     d->count = count;
 }

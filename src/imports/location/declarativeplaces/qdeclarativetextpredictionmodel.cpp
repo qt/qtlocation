@@ -131,14 +131,14 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod TextPredictionModel::executeQuery()
+    \qmlmethod TextPredictionModel::execute()
 
     Parameter searchTerm should contain string for which suggestion search should be started.
     Updates the items represented by the model from the underlying provider.
 */
 
 /*!
-    \qmlmethod TextPredictionModel::cancelRequest()
+    \qmlmethod TextPredictionModel::cancel()
 
     Cancels ongoing request.
 */
@@ -180,7 +180,7 @@ void QDeclarativeTextPredictionModel::setSearchTerm(const QString &searchTerm)
 
     This element holds the list of string that the model currently has.
 */
-QStringList QDeclarativeTextPredictionModel::predictions() const
+QStringList QDeclarativeTextPredictionModel::textPredictions() const
 {
     return m_predictions;
 }
@@ -199,7 +199,7 @@ void QDeclarativeTextPredictionModel::processReply(QPlaceReply *reply)
 {
     QPlaceTextPredictionReply *predictionReply = qobject_cast<QPlaceTextPredictionReply *>(reply);
     m_predictions = predictionReply->textPredictions();
-    emit predictionsChanged();
+    emit textPredictionsChanged();
 }
 
 int QDeclarativeTextPredictionModel::rowCount(const QModelIndex& parent) const

@@ -70,7 +70,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
     Q_PROPERTY(QDeclarativeRating* rating READ rating WRITE setRating NOTIFY ratingChanged);
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeSupplier> suppliers READ suppliers NOTIFY suppliersChanged)
+    Q_PROPERTY(QDeclarativeSupplier *supplier READ supplier WRITE setSupplier NOTIFY supplierChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged);
     Q_PROPERTY(QString attribution READ attribution WRITE setAttribution NOTIFY attributionChanged)
@@ -130,12 +130,9 @@ public:
     void setLocation(QDeclarativeGeoLocation *location);
     QDeclarativeRating *rating();
     void setRating(QDeclarativeRating *rating);
-    QDeclarativeListProperty<QDeclarativeSupplier> suppliers();
-    static void suppliers_append(QDeclarativeListProperty<QDeclarativeSupplier> *prop,
-                                  QDeclarativeSupplier* value);
-    static int suppliers_count(QDeclarativeListProperty<QDeclarativeSupplier> *prop);
-    static QDeclarativeSupplier* suppliers_at(QDeclarativeListProperty<QDeclarativeSupplier> *prop, int index);
-    static void suppliers_clear(QDeclarativeListProperty<QDeclarativeSupplier> *prop);
+    QDeclarativeSupplier *supplier() const;
+    void setSupplier(QDeclarativeSupplier *supplier);
+
     QString name() const;
     void setName(const QString &name);
     QString placeId() const;
@@ -149,9 +146,8 @@ public:
     void setStatus(Status status);
 
     Q_INVOKABLE void getDetails();
-    Q_INVOKABLE void ratePlace(qreal rating);
-    Q_INVOKABLE void savePlace();
-    Q_INVOKABLE void removePlace();
+    Q_INVOKABLE void save();
+    Q_INVOKABLE void remove();
     Q_INVOKABLE QString errorString() const;
 
     QString primaryPhone() const;
@@ -177,13 +173,11 @@ signals:
     void categoriesChanged();
     void locationChanged();
     void ratingChanged();
-    void suppliersChanged();
+    void supplierChanged();
     void nameChanged();
     void placeIdChanged();
-    void businessInformationChanged();
     void attributionChanged();
     void detailsFetchedChanged();
-    void fetchingDetailsChanged();
     void reviewModelChanged();
     void imageModelChanged();
     void editorialModelChanged();
@@ -202,7 +196,6 @@ private slots:
 
 private:
     void synchronizeCategories();
-    void synchronizeSuppliers();
     void synchronizeExtendedAttributes();
 
 private:
@@ -211,7 +204,7 @@ private:
     QList<QDeclarativeCategory*> m_categories;
     QDeclarativeGeoLocation *m_location;
     QDeclarativeRating *m_rating;
-    QList<QDeclarativeSupplier*> m_suppliers;
+    QDeclarativeSupplier *m_supplier;
     QDeclarativeReviewModel *m_reviewModel;
     QDeclarativePlaceImageModel *m_imageModel;
     QDeclarativePlaceEditorialModel *m_editorialModel;

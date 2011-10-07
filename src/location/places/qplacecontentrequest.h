@@ -61,8 +61,7 @@ class Q_LOCATION_EXPORT QPlaceContentRequest : public QPlaceRequest
 public:
     QPlaceContentRequest();
     Q_DECLARE_COPY_CTOR(QPlaceContentRequest, QPlaceRequest)
-
-    virtual ~QPlaceContentRequest();
+    ~QPlaceContentRequest();
 
     QPlaceContent::Type contentType() const;
     void setContentType(QPlaceContent::Type type);

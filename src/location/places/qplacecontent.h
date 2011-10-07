@@ -87,9 +87,22 @@ public:
     QPlaceSupplier supplier() const;
     void setSupplier(const QPlaceSupplier &supplier);
 
+    QUrl sourceUrl() const;
+    void setSourceUrl(const QUrl &url);
+
+    QString userId() const;
+    void setUserId(const QString &id);
+    QString userName() const;
+    void setUserName(const QString &name);
+
 protected:
     explicit QPlaceContent(QPlaceContentPrivate *d);
     QSharedDataPointer<QPlaceContentPrivate> d_ptr;
+
+private:
+    inline QPlaceContentPrivate *d_func();
+    inline const QPlaceContentPrivate *d_func() const;
+
     friend class QPlaceContentPrivate;
 };
 

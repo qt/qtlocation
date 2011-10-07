@@ -86,7 +86,7 @@ QPlaceRating QDeclarativeRating::rating() const
     This property holds the value of rating
 */
 
-void QDeclarativeRating::setValue(const qreal &value)
+void QDeclarativeRating::setValue(qreal value)
 {
     if (m_rating.value() != value) {
         m_rating.setValue(value);
@@ -100,12 +100,31 @@ qreal QDeclarativeRating::value() const
 }
 
 /*!
+    \qmlproperty qreal Rating::maximum
+
+    This property holds the maximum rating value.
+*/
+void QDeclarativeRating::setMaximum(qreal max)
+{
+    if (m_rating.maximum() == max)
+        return;
+
+    m_rating.setMaximum(max);
+    emit maximumChanged();
+}
+
+qreal QDeclarativeRating::maximum() const
+{
+    return m_rating.maximum();
+}
+
+/*!
     \qmlproperty int Rating::count
 
     This property holds number of votes with rate.
 */
 
-void QDeclarativeRating::setCount(const int &count)
+void QDeclarativeRating::setCount(int count)
 {
     if (m_rating.count() != count) {
         m_rating.setCount(count);

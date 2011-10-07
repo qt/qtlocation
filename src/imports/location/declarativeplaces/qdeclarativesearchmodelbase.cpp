@@ -49,8 +49,8 @@
 #include <QtLocation/QPlaceSearchReply>
 
 QDeclarativeSearchModelBase::QDeclarativeSearchModelBase(QObject *parent)
-    :   QAbstractListModel(parent), m_plugin(0), m_reply(0), m_searchArea(0),
-        m_complete(false)
+:   QAbstractListModel(parent), m_plugin(0), m_reply(0), m_searchArea(0), m_complete(false),
+    m_status(Ready)
 {
 }
 
@@ -124,12 +124,21 @@ void QDeclarativeSearchModelBase::setLimit(int limit)
     emit limitChanged();
 }
 
-bool QDeclarativeSearchModelBase::executing() const
+QDeclarativeSearchModelBase::Status QDeclarativeSearchModelBase::status() const
 {
-    return m_reply;
+    return m_status;
 }
 
-void QDeclarativeSearchModelBase::executeQuery()
+void QDeclarativeSearchModelBase::setStatus(Status status)
+{
+    if (m_status == status)
+        return;
+
+    m_status = status;
+    emit statusChanged();
+}
+
+void QDeclarativeSearchModelBase::execute()
 {
     if (!m_plugin) {
         qmlInfo(this) << "plugin not set.";
@@ -146,22 +155,24 @@ void QDeclarativeSearchModelBase::executeQuery()
         return;
     }
 
-    cancelRequest();
+    cancel();
 
     updateSearchRequest();
     m_reply = sendQuery(placeManager, m_request);
-    if (!m_reply)
+    if (!m_reply) {
+        setStatus(Error);
         return;
+    }
 
     m_reply->setParent(this);
     connect(m_reply, SIGNAL(finished()), this, SLOT(queryFinished()));
     connect(m_reply, SIGNAL(error(QPlaceReply::Error,QString)),
             this, SLOT(queryError(QPlaceReply::Error,QString)));
 
-    emit executingChanged();
+    setStatus(Executing);
 }
 
-void QDeclarativeSearchModelBase::cancelRequest()
+void QDeclarativeSearchModelBase::cancel()
 {
     if (!m_reply)
         return;
@@ -173,7 +184,12 @@ void QDeclarativeSearchModelBase::cancelRequest()
 
     reply->deleteLater();
     reply = 0;
-    emit executingChanged();
+    setStatus(Ready);
+}
+
+QString QDeclarativeSearchModelBase::errorString() const
+{
+    return m_errorString;
 }
 
 void QDeclarativeSearchModelBase::clearData()
@@ -219,10 +235,12 @@ void QDeclarativeSearchModelBase::queryFinished()
     endResetModel();
 
     reply->deleteLater();
-    emit executingChanged();
+    setStatus(Ready);
 }
 
 void QDeclarativeSearchModelBase::queryError(QPlaceReply::Error error, const QString &errorString)
 {
-    qmlInfo(this) << error << errorString;
+    Q_UNUSED(error)
+
+    m_errorString = errorString;
 }

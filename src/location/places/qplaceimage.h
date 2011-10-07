@@ -66,12 +66,10 @@ public:
 
     QUrl url() const;
     void setUrl(const QUrl &url);
-    QUrl thumbnailUrl() const;
-    void setThumbnailUrl(const QUrl &url);
-    QString id() const;
-    void setId(const QString &data);
-    QString metaInfo() const;
-    void setMetaInfo(const QString &data);
+
+    QString imageId() const;
+    void setImageId(const QString &id);
+
     QString mimeType() const;
     void setMimeType(const QString &data);
 

@@ -49,6 +49,7 @@
 #include "qplacejsonreviewparser.h"
 
 #include <QtCore/QUrl>
+#include <QtCore/QDateTime>
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
@@ -109,31 +110,15 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review)
     }
     value = review.property(review_date_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newReview.setDate(value.toString());
-    }
-    value = review.property(review_minus_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
-        bool isConverted;
-        int number = value.toString().toInt(&isConverted);
-        if (isConverted) {
-            newReview.setUnhelpfulVotings(number);
-        }
-    }
-    value = review.property(review_plus_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
-        bool isConverted;
-        int number = value.toString().toInt(&isConverted);
-        if (isConverted) {
-            newReview.setHelpfulVotings(number);
-        }
+        newReview.setDateTime(QDateTime::fromString(value.toString()));
     }
     value = review.property(review_originator_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newReview.setOriginatorUrl(value.toString());
+        newReview.setSourceUrl(value.toString());
     }
     value = review.property(review_description_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newReview.setDescription(value.toString());
+        newReview.setContent(value.toString());
     }
     value = review.property(review_title_element);
     if (value.isValid() && !value.toString().isEmpty()) {

@@ -58,8 +58,8 @@ class Q_LOCATION_EXPORT QPlaceTextPredictionReply : public QPlaceReply
 {
     Q_OBJECT
 public:
-    QPlaceTextPredictionReply(QObject *parent =0);
-    virtual ~QPlaceTextPredictionReply();
+    explicit QPlaceTextPredictionReply(QObject *parent = 0);
+    ~QPlaceTextPredictionReply();
 
     QStringList textPredictions() const;
     Type type() const;

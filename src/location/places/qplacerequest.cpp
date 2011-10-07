@@ -51,10 +51,8 @@ template<> QT_PREPEND_NAMESPACE(QPlaceRequestPrivate) *QSharedDataPointer<QT_PRE
 }
 #endif
 
-QPlaceRequestPrivate::QPlaceRequestPrivate()
-    : QSharedData(),
-      offset(0),
-      limit(-1)
+QPlaceRequestPrivate::QPlaceRequestPrivate(QPlaceRequest::Type type)
+:   QSharedData(), offset(0), limit(-1), requestType(type)
 {
 }
 
@@ -98,7 +96,7 @@ void QPlaceRequestPrivate::clear()
     Default constructor. Constructs an new query object.
 */
 QPlaceRequest::QPlaceRequest()
-    : d_ptr(new QPlaceRequestPrivate)
+:   d_ptr(new QPlaceRequestPrivate(QPlaceRequest::Request))
 {
 }
 
@@ -127,15 +125,15 @@ bool QPlaceRequest::operator==(const QPlaceRequest &other) const
     if (!d_ptr)
         return !other.d_ptr;
 
-    if (requestType() != other.requestType())
+    if (d_ptr->requestType != other.d_ptr->requestType)
         return false;
 
     return d_ptr->compare(other.d_ptr);
 }
 
-QPlaceRequest::Type QPlaceRequest::requestType() const
+QPlaceRequest::Type QPlaceRequest::type() const
 {
-    return d_ptr->type();
+    return d_ptr->requestType;
 }
 
 /*!

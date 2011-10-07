@@ -64,7 +64,7 @@ public:
     QGeoLocation();
     QGeoLocation(const QGeoLocation &other);
 
-    virtual ~QGeoLocation();
+    ~QGeoLocation();
 
     QGeoLocation &operator=(const QGeoLocation &other);
 
@@ -79,8 +79,8 @@ public:
     void setCoordinate(const QGeoCoordinate &position);
     QString locationId() const;
     void setLocationId(const QString &locationId);
-    QGeoBoundingBox viewport() const;
-    void setViewport(const QGeoBoundingBox &coordinate);
+    QGeoBoundingBox boundingBox() const;
+    void setBoundingBox(const QGeoBoundingBox &box);
 
 private:
     QSharedDataPointer<QGeoLocationPrivate> d;

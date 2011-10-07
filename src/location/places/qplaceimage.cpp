@@ -51,12 +51,9 @@ QPlaceImagePrivate::QPlaceImagePrivate() : QPlaceContentPrivate()
 QPlaceImagePrivate::QPlaceImagePrivate(const QPlaceImagePrivate &other)
     : QPlaceContentPrivate(other)
 {
-    this->url = other.url;
-    this->thumbnailUrl = other.thumbnailUrl;
-    this->id = other.id;
-    this->metaInfo = other.metaInfo;
-    this->mimeType = other.mimeType;
-    this->supplier = other.supplier;
+    url = other.url;
+    id = other.id;
+    mimeType = other.mimeType;
 }
 
 QPlaceImagePrivate::~QPlaceImagePrivate()
@@ -66,13 +63,7 @@ QPlaceImagePrivate::~QPlaceImagePrivate()
 bool QPlaceImagePrivate::compare(const QPlaceContentPrivate *other) const
 {
     const QPlaceImagePrivate *od = static_cast<const QPlaceImagePrivate *>(other);
-    return (this->url == od->url
-            && this->thumbnailUrl == od->thumbnailUrl
-            && this->id == od->id
-            && this->metaInfo == od->metaInfo
-            && this->mimeType == od->mimeType
-            && this->supplier == od->supplier
-    );
+    return url == od->url && id == od->id && mimeType == od->mimeType;
 }
 
 /*!
@@ -127,27 +118,9 @@ void QPlaceImage::setUrl(const QUrl &url)
 }
 
 /*!
-    Returns the thumbnail url.
-*/
-QUrl QPlaceImage::thumbnailUrl() const
-{
-    Q_D(const QPlaceImage);
-    return d->thumbnailUrl;
-}
-
-/*!
-    Sets the thumbnail \a url.
-*/
-void QPlaceImage::setThumbnailUrl(const QUrl &url)
-{
-    Q_D(QPlaceImage);
-    d->thumbnailUrl = url;
-}
-
-/*!
     Returns image id.
 */
-QString QPlaceImage::id() const
+QString QPlaceImage::imageId() const
 {
     Q_D(const QPlaceImage);
     return d->id;
@@ -156,28 +129,10 @@ QString QPlaceImage::id() const
 /*!
     Sets image id.
 */
-void QPlaceImage::setId(const QString &data)
+void QPlaceImage::setImageId(const QString &data)
 {
     Q_D(QPlaceImage);
     d->id = data;
-}
-
-/*!
-    Returns image meta info.
-*/
-QString QPlaceImage::metaInfo() const
-{
-    Q_D(const QPlaceImage);
-    return d->metaInfo;
-}
-
-/*!
-    Sets image meta info.
-*/
-void QPlaceImage::setMetaInfo(const QString &data)
-{
-    Q_D(QPlaceImage);
-    d->metaInfo = data;
 }
 
 /*!

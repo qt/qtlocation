@@ -153,19 +153,11 @@ QPlaceContentReply *QPlaceManager::getContent(const QPlace &place, const QPlaceC
 }
 
 /*!
-    Posts a \a rating to a \a place.
-*/
-QPlaceReply* QPlaceManager::postRating(const QString &placeId, qreal rating)
-{
-    return d->postRating(placeId, rating);
-}
-
-/*!
     Searches for places according to a given \a request.
 */
-QPlaceSearchReply *QPlaceManager::searchForPlaces(const QPlaceSearchRequest &request) const
+QPlaceSearchReply *QPlaceManager::search(const QPlaceSearchRequest &request) const
 {
-    return d->searchForPlaces(request);
+    return d->search(request);
 }
 
 /*!

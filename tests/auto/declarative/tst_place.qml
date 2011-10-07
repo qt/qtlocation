@@ -91,7 +91,7 @@ TestCase {
                 altitude: 100
             }
 
-            viewport: BoundingBox {
+            boundingBox: BoundingBox {
                 center: Coordinate {
                     latitude: 10
                     longitude: 10
@@ -107,20 +107,12 @@ TestCase {
             count: 10
         }
 
-        suppliers: [
-            Supplier {
-                name: "Supplier 1"
-                supplierId: "supplier-id-1"
-                url: "http://www.example.com/supplier-id-1/"
-                supplierIconUrl: "http://www.example.com/supplier-id-1/icon"
-            },
-            Supplier {
-                name: "Supplier 2"
-                supplierId: "supplier-id-2"
-                url: "http://www.example.com/supplier-id-2/"
-                supplierIconUrl: "http://www.example.com/supplier-id-2/icon"
-            }
-        ]
+        supplier: Supplier {
+            name: "Supplier 1"
+            supplierId: "supplier-id-1"
+            url: "http://www.example.com/supplier-id-1/"
+            supplierIconUrl: "http://www.example.com/supplier-id-1/icon"
+        }
 
         categories: [
             Category {
@@ -174,18 +166,19 @@ TestCase {
                 return false;
         }
 
-        // check suppliers
-        if (place1.suppliers.length !== place2.suppliers.length)
+        // check supplier
+        if (place1.supplier === null && place2.supplier !== null)
             return false;
-        for (i = 0; i < place1.suppliers.length; ++i) {
-            // fixme, what if the order of the two lists are not the same
-            if (place1.suppliers[i].supplierId !== place2.suppliers[i].supplierId)
+        if (place1.supplier !== null && place2.supplier === null)
+            return false;
+        if (place1.supplier !== null && place2.supplier !== null) {
+            if (place1.supplier.supplierId !== place2.supplier.supplierId)
                 return false;
-            if (place1.suppliers[i].name !== place2.suppliers[i].name)
+            if (place1.supplier.name !== place2.supplier.name)
                 return false;
-            if (place1.suppliers[i].url !== place2.suppliers[i].url)
+            if (place1.supplier.url !== place2.supplier.url)
                 return false;
-            if (place1.suppliers[i].supplierIconUrl !== place2.suppliers[i].supplierIconUrl)
+            if (place1.supplier.supplierIconUrl !== place2.supplier.supplierIconUrl)
                 return false;
         }
 
@@ -230,28 +223,28 @@ TestCase {
             if (!compare_coordinate(place1.location.coordinate, place2.location.coordinate))
                 return false;
             console.log("location.coordinate is equal");
-            if (!compare_coordinate(place1.location.viewport.bottomLeft, place2.location.viewport.bottomLeft))
+            if (!compare_coordinate(place1.location.boundingBox.bottomLeft, place2.location.boundingBox.bottomLeft))
                 return false;
-            console.log("location.viewport.bottomLeft is equal");
-            if (!compare_coordinate(place1.location.viewport.bottomRight, place2.location.viewport.bottomRight))
+            console.log("location.boundingBox.bottomLeft is equal");
+            if (!compare_coordinate(place1.location.boundingBox.bottomRight, place2.location.boundingBox.bottomRight))
                 return false;
-            console.log("location.viewport.bottomRight is equal");
-            if (!compare_coordinate(place1.location.viewport.topLeft, place2.location.viewport.topLeft))
+            console.log("location.boundingBox.bottomRight is equal");
+            if (!compare_coordinate(place1.location.boundingBox.topLeft, place2.location.boundingBox.topLeft))
                 return false;
-            console.log("location.viewport.topLeft is equal");
-            if (!compare_coordinate(place1.location.viewport.topRight, place2.location.viewport.topRight))
+            console.log("location.boundingBox.topLeft is equal");
+            if (!compare_coordinate(place1.location.boundingBox.topRight, place2.location.boundingBox.topRight))
                 return false;
-            console.log("location.viewport.topRight is equal");
-            if (!compare_coordinate(place1.location.viewport.center, place2.location.viewport.center))
+            console.log("location.boundingBox.topRight is equal");
+            if (!compare_coordinate(place1.location.boundingBox.center, place2.location.boundingBox.center))
                 return false;
-            console.log("location.viewport.center is equal");
-            console.log(place1.location.viewport.height + " eq " + place2.location.viewport.height);
-            if (place1.location.viewport.height !== place2.location.viewport.height)
+            console.log("location.boundingBox.center is equal");
+            console.log(place1.location.boundingBox.height + " eq " + place2.location.boundingBox.height);
+            if (place1.location.boundingBox.height !== place2.location.boundingBox.height)
                 return false;
-            console.log(place1.location.viewport.width + " eq " + place2.location.viewport.width);
-            if (place1.location.viewport.width !== place2.location.viewport.width)
+            console.log(place1.location.boundingBox.width + " eq " + place2.location.boundingBox.width);
+            if (place1.location.boundingBox.width !== place2.location.boundingBox.width)
                 return false;
-            console.log("location.viewport is equal");
+            console.log("location.boundingBox is equal");
             */
         }
 
@@ -277,7 +270,7 @@ TestCase {
         // complex properties
         compare(emptyPlace.rating, null);
         compare(emptyPlace.location, null);
-        compare(emptyPlace.suppliers.length, 0);
+        compare(emptyPlace.supplier, null);
         compare(emptyPlace.reviewModel.totalCount, -1);
         compare(emptyPlace.imageModel.totalCount, -1);
         compare(emptyPlace.editorialModel.totalCount, -1);
@@ -361,41 +354,35 @@ TestCase {
         signalSpy.destroy();
     }
 
-    function test_suppliers() {
-        var suppliers = new Array(2);
-        suppliers[0] = Qt.createQmlObject('import QtLocation 5.0; Supplier { supplierId: "sup-id-1"; name: "Category 1" }', testCase, "Supplier1");
-        suppliers[1] = Qt.createQmlObject('import QtLocation 5.0; Supplier { supplierId: "sup-id-2"; name: "Category 2" }', testCase, "Supplier2");
+    function test_supplier() {
+        var supplier = Qt.createQmlObject('import QtLocation 5.0; Supplier { supplierId: "sup-id-1"; name: "Category 1" }', testCase, "Supplier1");
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = testPlace;
-        signalSpy.signalName = "suppliersChanged";
+        signalSpy.signalName = "supplierChanged";
 
-        // set suppliers to something new
-        testPlace.suppliers = suppliers;
-        compare(testPlace.suppliers.length, suppliers.length);
+        // set supplier to something new
+        testPlace.supplier = supplier;
+        compare(testPlace.supplier, supplier);
 
-        for (var i = 0; i < suppliers.length; ++i) {
-            compare(testPlace.suppliers[i].supplierId, suppliers[i].supplierId);
-            compare(testPlace.suppliers[i].name, suppliers[i].name);
-        }
+        compare(testPlace.supplier.supplierId, supplier.supplierId);
+        compare(testPlace.supplier.name, supplier.name);
 
-        compare(signalSpy.count, 2);
+        compare(signalSpy.count, 1);
 
-        // set suppliers to the same (signal spy should not increase?)
-        testPlace.suppliers = suppliers;
-        compare(testPlace.suppliers.length, suppliers.length);
+        // set supplier to the same
+        testPlace.supplier = supplier;
+        compare(testPlace.supplier, supplier);
 
-        for (var i = 0; i < suppliers.length; ++i) {
-            compare(testPlace.suppliers[i].supplierId, suppliers[i].supplierId);
-            compare(testPlace.suppliers[i].name, suppliers[i].name);
-        }
+        compare(testPlace.supplier.supplierId, supplier.supplierId);
+        compare(testPlace.supplier.name, supplier.name);
 
-        compare(signalSpy.count, 5);    // clear + append + append
+        compare(signalSpy.count, 1);
 
         // reset by assignment
-        testPlace.suppliers = new Array(0);
-        compare(testPlace.suppliers.length, 0);
-        compare(signalSpy.count, 6);
+        testPlace.supplier = null;
+        compare(testPlace.supplier, null);
+        compare(signalSpy.count, 2);
 
         signalSpy.destroy();
     }
@@ -482,7 +469,7 @@ TestCase {
         savePlace.plugin = testPlugin;
         savePlace.placeId = "invalid-place-id";
 
-        savePlace.savePlace();
+        savePlace.save();
 
         compare(savePlace.status, Place.Saving);
 
@@ -494,7 +481,7 @@ TestCase {
 
         // try again without an invalid placeId
         savePlace.placeId = "";
-        savePlace.savePlace();
+        savePlace.save();
 
         compare(savePlace.status, Place.Saving);
 
@@ -562,7 +549,7 @@ TestCase {
 
         removePlace.plugin = testPlugin;
 
-        removePlace.removePlace();
+        removePlace.remove();
 
         compare(removePlace.status, Place.Removing);
 
@@ -572,7 +559,7 @@ TestCase {
 
         removePlace.placeId = "invalid-id";
 
-        removePlace.removePlace();
+        removePlace.remove();
 
         compare(removePlace.status, Place.Removing);
 
@@ -582,7 +569,7 @@ TestCase {
 
         removePlace.placeId = savePlace.placeId;
 
-        removePlace.removePlace();
+        removePlace.remove();
 
         compare(removePlace.status, Place.Removing);
 

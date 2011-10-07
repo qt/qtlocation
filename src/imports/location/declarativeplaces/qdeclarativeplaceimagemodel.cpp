@@ -115,14 +115,11 @@ QT_BEGIN_NAMESPACE
 QDeclarativePlaceImageModel::QDeclarativePlaceImageModel(QObject* parent)
 :   QDeclarativePlaceContentModel(QPlaceContent::ImageType, parent)
 {
-    QHash<int, QByteArray> roleNames;
-    roleNames.insert(UrlRole, "url");
-    roleNames.insert(ThumbnailUrlRole, "thumbnailUrl");
-    roleNames.insert(ImageIdRole, "imageId");
-    roleNames.insert(MetaInfoRole, "metaInfo");
-    roleNames.insert(MimeTypeRole, "mimeType");
-    roleNames.insert(SupplierRole, "supplier");
-    setRoleNames(roleNames);
+    QHash<int, QByteArray> roles = roleNames();
+    roles.insert(UrlRole, "url");
+    roles.insert(ImageIdRole, "imageId");
+    roles.insert(MimeTypeRole, "mimeType");
+    setRoleNames(roles);
 }
 
 QDeclarativePlaceImageModel::~QDeclarativePlaceImageModel()
@@ -143,12 +140,8 @@ QVariant QDeclarativePlaceImageModel::data(const QModelIndex &index, int role) c
     switch (role) {
     case UrlRole:
         return image.url();
-    case ThumbnailUrlRole:
-        return image.thumbnailUrl();
     case ImageIdRole:
-        return image.id();
-    case MetaInfoRole:
-        return image.metaInfo();
+        return image.imageId();
     case MimeTypeRole:
         return image.mimeType();
     }

@@ -168,7 +168,7 @@ void QGeoLocation::setLocationId(const QString &locationId)
 /*!
     Returns view port.
 */
-QGeoBoundingBox QGeoLocation::viewport() const
+QGeoBoundingBox QGeoLocation::boundingBox() const
 {
     return d->viewport;
 }
@@ -176,7 +176,7 @@ QGeoBoundingBox QGeoLocation::viewport() const
 /*!
     Sets view port.
 */
-void QGeoLocation::setViewport(const QGeoBoundingBox &viewport)
+void QGeoLocation::setBoundingBox(const QGeoBoundingBox &viewport)
 {
     d->viewport = viewport;
 }

@@ -280,9 +280,8 @@ void QPlaceJSonDetailsParser::processMainProvider(const QScriptValue &placeValue
     if (value.isValid() && !value.toString().isEmpty()){
         sup.setSupplierIconUrl(value.toString());
     }
-    QList<QPlaceSupplier> list;
-    list.append(QPlaceSuppliersRepository::instance()->addSupplier(sup));
-    targetPlace->setSuppliers(list);
+
+    targetPlace->setSupplier(QPlaceSuppliersRepository::instance()->addSupplier(sup));
 }
 
 void QPlaceJSonDetailsParser::processContacts(const QScriptValue &contactsValue, QPlace *targetPlace)
@@ -685,7 +684,7 @@ QPlaceImage *QPlaceJSonDetailsParser::processPremiumContentMediaObject(const QSc
     if (value.isValid() && !value.toString().isEmpty()) {
         obj = new QPlaceImage();
         obj->setUrl(QUrl::fromEncoded(value.toString().toAscii()));
-        obj->setId(value.toString());
+        obj->setImageId(value.toString());
         value = content.property(place_premiumcontent_content_mediamimetype_element);
         if (value.isValid() && !value.toString().isEmpty()) {
             obj->setMimeType(value.toString());
@@ -831,7 +830,7 @@ QPlaceImage *QPlaceJSonDetailsParser::processAdContentMediaObject(const QScriptV
     if (!mediaMimeType.isEmpty() || !mediaUrl.isEmpty()) {
         obj = new QPlaceImage();
         obj->setUrl(QUrl::fromEncoded(mediaUrl.toAscii()));
-        obj->setId(mediaUrl);
+        obj->setImageId(mediaUrl);
         obj->setMimeType(mediaMimeType);
     }
     return obj;
@@ -864,7 +863,7 @@ void QPlaceJSonDetailsParser::processAdContentPaymentMethods(const QScriptValue 
             QPlaceAttribute paymentMethods;
             paymentMethods.setLabel(tr("Payment methods"));
             paymentMethods.setText(list.join(","));
-            targetPlace->insertExtendedAttribute(QPlaceAttribute::PaymentMethods, paymentMethods);
+            targetPlace->insertExtendedAttribute(QLatin1String("paymentMethods"), paymentMethods);
         }
     }
 }
@@ -1016,7 +1015,7 @@ void QPlaceJSonDetailsParser::processAdContentOpeningNotes(const QScriptValue &c
                         QPlaceAttribute openingNote;
                         openingNote.setLabel(tr("Opening note"));
                         openingNote.setText(obj);
-                        targetPlace->insertExtendedAttribute(QPlaceAttribute::OpeningNote, openingNote);
+                        targetPlace->insertExtendedAttribute(QLatin1String("openingNote"), openingNote);
                         //! @todo only one is used
                         break;
                     }
@@ -1028,7 +1027,7 @@ void QPlaceJSonDetailsParser::processAdContentOpeningNotes(const QScriptValue &c
                 QPlaceAttribute openingNote;
                 openingNote.setLabel(tr("Opening note"));
                 openingNote.setText(obj);
-                targetPlace->insertExtendedAttribute(QPlaceAttribute::OpeningNote, openingNote);
+                targetPlace->insertExtendedAttribute(QLatin1String("openingNote"), openingNote);
             }
         }
     }

@@ -35,7 +35,6 @@ PRIVATE_HEADERS += \
     places/qplacecontent_p.h \
     places/qplaceeditorial_p.h \
     places/qplaceimage_p.h \
-    places/qplaceperiod_p.h \
     places/qplacerating_p.h \
     places/qplacereview_p.h \
     places/qplacesupplier_p.h \

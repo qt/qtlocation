@@ -64,10 +64,6 @@ public:
     void setContent(const QString &data);
     QString title() const;
     void setTitle(const QString &data);
-    QPlaceSupplier supplier() const;
-    void setSupplier(const QPlaceSupplier &data);
-    QUrl sourceUrl() const;
-    void setSourceUrl(const QUrl &data);
     QString language() const;
     void setLanguage(const QString &data);
 

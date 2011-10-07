@@ -69,33 +69,13 @@ QT_USE_NAMESPACE
             \o Type
             \o Description
         \row
-            \o type
-            \o RecommendationModel.SearchResultType
-            \o The type of search result.
-        \row
-            \o relevance
-            \o real
-            \o The relevence score of the result.
-        \row
             \o distance
             \o real
             \o The distance to the place.
         \row
-            \o heading
-            \o real
-            \o The heading to the place.
-        \row
-            \o additionalData
-            \o
-            \o Additional data related to the search result.
-        \row
             \o place
             \o Place
             \o The Place.
-        \row
-            \o didYouMean
-            \o string
-            \o Valid only for did you mean search results, a suggested corrected search term.
     \endtable
 
     The following example shows how to use the RecommendationModel to search for recommendations
@@ -123,7 +103,7 @@ QT_USE_NAMESPACE
     }
 
     ...
-    resultModel.executeQuery()
+    resultModel.execute()
     ...
 
     ListView {
@@ -167,7 +147,7 @@ QT_USE_NAMESPACE
 
 
 /*!
-    \qmlmethod RecommendationModel::executeQuery()
+    \qmlmethod RecommendationModel::execute()
     Parameter placeId should contain string for which search should be
     started.
     Updates the items represented by the model from the underlying proivider.
@@ -175,23 +155,17 @@ QT_USE_NAMESPACE
 
 
 /*!
-    \qmlmethod RecommendationModel::cancelRequest()
+    \qmlmethod RecommendationModel::cancel()
     Cancels ongoing request.
 */
 
 QDeclarativeRecommendationModel::QDeclarativeRecommendationModel(QObject *parent)
 :   QDeclarativeSearchModelBase(parent)
 {
-    QHash<int, QByteArray> roleNames;
-    roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(SearchResultType, "type");
-    roleNames.insert(SearchResultRelevance, "relevance");
-    roleNames.insert(SearchResultDistance, "distance");
-    roleNames.insert(SearchResultHeading, "heading");
-    roleNames.insert(SearchResultAdditionalData, "additionalData");
-    roleNames.insert(SearchResultPlace, "place");
-    roleNames.insert(SearchResultDidYouMean, "didYouMean");
-    setRoleNames(roleNames);
+    QHash<int, QByteArray> roles = roleNames();
+    roles.insert(DistanceRole, "distance");
+    roles.insert(PlaceRole, "place");
+    setRoleNames(roles);
 }
 
 QDeclarativeRecommendationModel::~QDeclarativeRecommendationModel()
@@ -259,35 +233,18 @@ QVariant QDeclarativeRecommendationModel::data(const QModelIndex& index, int rol
 
     const QPlaceSearchResult &result = m_results.at(index.row());
 
-    if (result.type() == QPlaceSearchResult::Place) {
-        switch (role) {
-        case Qt::DisplayRole:
-            return result.place().name();
-        case SearchResultType:
-            return result.type();
-        case SearchResultRelevance:
-            return result.relevance();
-        case SearchResultDistance:
-            return result.distance();
-        case SearchResultHeading:
-            return result.heading();
-        case SearchResultAdditionalData:
-            return result.additionalData();
-        case SearchResultPlace:
-            return QVariant::fromValue(static_cast<QObject *>(m_places.value(result.place().placeId())));
-        default:
-            return QVariant();
-        }
-    } else if (result.type() == QPlaceSearchResult::DidYouMeanSuggestion) {
-        switch (role) {
-        case Qt::DisplayRole:
-        case SearchResultDidYouMean:
-            return result.didYouMeanSuggestion();
-        case SearchResultType:
-            return result.type();
-        default:
-            return QVariant();
-        }
+    if (result.type() != QPlaceSearchResult::PlaceResult)
+        return QVariant();
+
+    switch (role) {
+    case Qt::DisplayRole:
+        return result.place().name();
+    case DistanceRole:
+        return result.distance();
+    case PlaceRole:
+        return QVariant::fromValue(static_cast<QObject *>(m_places.value(result.place().placeId())));
+    default:
+        return QVariant();
     }
 
     return QVariant();

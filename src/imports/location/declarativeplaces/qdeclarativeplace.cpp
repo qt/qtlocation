@@ -65,7 +65,7 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
-:   QObject(parent), m_location(0), m_rating(0),
+:   QObject(parent), m_location(0), m_rating(0), m_supplier(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QDeclarativePropertyMap(this)),
     m_reply(0), m_plugin(0),m_complete(false), m_status(QDeclarativePlace::Ready)
@@ -73,15 +73,13 @@ QDeclarativePlace::QDeclarativePlace(QObject* parent)
 }
 
 QDeclarativePlace::QDeclarativePlace(const QPlace &src, QObject *parent)
-:   QObject(parent), m_location(0), m_rating(0),
+:   QObject(parent), m_location(0), m_rating(0), m_supplier(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QDeclarativePropertyMap(this)),
     m_src(src), m_reply(0), m_plugin(0), m_complete(false),
     m_status(QDeclarativePlace::Ready)
 {
-    synchronizeCategories();
-    synchronizeSuppliers();
-    synchronizeExtendedAttributes();
+    setPlace(src);
 }
 
 QDeclarativePlace::~QDeclarativePlace()
@@ -169,10 +167,13 @@ void QDeclarativePlace::setPlace(const QPlace &src)
         emit ratingChanged();
     }
 
-    if (previous.suppliers() != m_src.suppliers()) {
-        synchronizeSuppliers();
-        emit suppliersChanged();
+    if (m_supplier && m_supplier->parent() == this) {
+        m_supplier->setSupplier(m_src.supplier());
+    } else if (!m_supplier || m_supplier->parent() != this) {
+        m_supplier = new QDeclarativeSupplier(m_src.supplier(), this);
+        emit supplierChanged();
     }
+
     if (previous.name() != m_src.name()) {
         emit nameChanged();
     }
@@ -235,12 +236,8 @@ QPlace QDeclarativePlace::place()
     // Rating
     result.setRating(m_rating ? m_rating->rating() : QPlaceRating());
 
-    // Suppliers
-    QList<QPlaceSupplier> suppliers;
-    foreach (QDeclarativeSupplier *value, m_suppliers)
-        suppliers.append(value->supplier());
-
-    result.setSuppliers(suppliers);
+    // Supplier
+    result.setSupplier(m_supplier ? m_supplier->supplier() : QPlaceSupplier());
 
     // Extended Attributes
     return result;
@@ -295,6 +292,28 @@ QDeclarativeRating *QDeclarativePlace::rating()
 {
 
     return m_rating;
+}
+
+/*!
+    \qmlproperty Supplier Place::supplier
+
+    This property holds the supplier of the place data.
+*/
+void QDeclarativePlace::setSupplier(QDeclarativeSupplier *supplier)
+{
+    if (m_supplier == supplier)
+        return;
+
+    if (m_supplier && m_supplier->parent() == this)
+        delete m_supplier;
+
+    m_supplier = supplier;
+    emit supplierChanged();
+}
+
+QDeclarativeSupplier *QDeclarativePlace::supplier() const
+{
+    return m_supplier;
 }
 
 /*!
@@ -427,9 +446,9 @@ void QDeclarativePlace::finished()
             }
             break;
         }
-        case (QPlaceReply::PlaceDetailsReply): {
+        case (QPlaceReply::DetailsReply): {
             QPlaceDetailsReply *detailsReply = qobject_cast<QPlaceDetailsReply *>(m_reply);
-            setPlace(detailsReply->result());
+            setPlace(detailsReply->place());
             break;
         }
         default:
@@ -469,21 +488,12 @@ void QDeclarativePlace::getDetails()
     setStatus(QDeclarativePlace::Fetching);
 }
 
-void QDeclarativePlace::ratePlace(qreal rating)
-{
-    QPlaceManager *placeManager = manager();
-    if (!placeManager)
-        return;
-
-    placeManager->postRating(placeId(), rating);
-}
-
 /*!
-    \qmlmethod void Place::savePlace()
+    \qmlmethod void Place::save()
 
     This method performs a save operation on the place.
 */
-void QDeclarativePlace::savePlace()
+void QDeclarativePlace::save()
 {
     QPlaceManager *placeManager = manager();
     if (!placeManager)
@@ -495,11 +505,11 @@ void QDeclarativePlace::savePlace()
 }
 
 /*!
-    \qmlmethod void Place::removePlace()
+    \qmlmethod void Place::remove()
 
     This method performs a remove operation on the place.
 */
-void QDeclarativePlace::removePlace()
+void QDeclarativePlace::remove()
 {
     QPlaceManager *placeManager = manager();
     if (!placeManager)
@@ -687,65 +697,6 @@ void QDeclarativePlace::synchronizeCategories()
     }
 }
 
-/*!
-    \qmlproperty QDeclarativeListProperty<QDeclarativeSupplier> Place::suppliers
-
-    This property suppliers list.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
-*/
-QDeclarativeListProperty<QDeclarativeSupplier> QDeclarativePlace::suppliers()
-{
-    return QDeclarativeListProperty<QDeclarativeSupplier>(this,
-                                                          0, // opaque data parameter
-                                                          suppliers_append,
-                                                          suppliers_count,
-                                                          suppliers_at,
-                                                          suppliers_clear);
-}
-
-void QDeclarativePlace::suppliers_append(QDeclarativeListProperty<QDeclarativeSupplier> *prop,
-                                                  QDeclarativeSupplier *value)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    QDeclarativeSupplier *altValue = new QDeclarativeSupplier(object);
-    altValue->setSupplier(value->supplier());
-    object->m_suppliers.append(altValue);
-    QList<QPlaceSupplier> list = object->m_src.suppliers();
-    list.append(value->supplier());
-    object->m_src.setSuppliers(list);
-    emit object->suppliersChanged();
-}
-
-int QDeclarativePlace::suppliers_count(QDeclarativeListProperty<QDeclarativeSupplier> *prop)
-{
-    return static_cast<QDeclarativePlace*>(prop->object)->m_suppliers.count();
-}
-
-QDeclarativeSupplier* QDeclarativePlace::suppliers_at(QDeclarativeListProperty<QDeclarativeSupplier> *prop,
-                                                                          int index)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    QDeclarativeSupplier *res = NULL;
-    if (object->m_suppliers.count() > index && index > -1) {
-        res = object->m_suppliers[index];
-    }
-    return res;
-}
-
-void QDeclarativePlace::suppliers_clear(QDeclarativeListProperty<QDeclarativeSupplier> *prop)
-{
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    if (object->m_suppliers.isEmpty())
-        return;
-
-    qDeleteAll(object->m_suppliers);
-    object->m_suppliers.clear();
-    object->m_src.setSuppliers(QList<QPlaceSupplier>());
-    emit object->suppliersChanged();
-}
-
 QDeclarativePlace::Visibility QDeclarativePlace::visibility() const
 {
     return static_cast<QDeclarativePlace::Visibility>(m_src.visibility());
@@ -758,16 +709,6 @@ void QDeclarativePlace::setVisibility(Visibility visibility)
 
     m_src.setVisibility(static_cast<QtLocation::Visibility>(visibility));
     emit visibilityChanged();
-}
-
-void QDeclarativePlace::synchronizeSuppliers()
-{
-    qDeleteAll(m_suppliers);
-    m_suppliers.clear();
-    foreach (QPlaceSupplier value, m_src.suppliers()) {
-        QDeclarativeSupplier* declarativeValue = new QDeclarativeSupplier(value, this);
-        m_suppliers.append(declarativeValue);
-    }
 }
 
 void QDeclarativePlace::synchronizeExtendedAttributes()

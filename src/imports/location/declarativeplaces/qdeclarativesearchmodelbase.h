@@ -66,11 +66,19 @@ class QDeclarativeSearchModelBase : public QAbstractListModel, public QDeclarati
     Q_PROPERTY(QDeclarativeGeoBoundingArea *searchArea READ searchArea WRITE setSearchArea NOTIFY searchAreaChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
-    Q_PROPERTY(bool executing READ executing NOTIFY executingChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
+
+    Q_ENUMS(Status)
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
+    enum Status {
+        Ready,
+        Executing,
+        Error
+    };
+
     explicit QDeclarativeSearchModelBase(QObject *parent = 0);
     ~QDeclarativeSearchModelBase();
 
@@ -86,9 +94,13 @@ public:
     int limit() const;
     void setLimit(int limit);
 
-    bool executing() const;
-    Q_INVOKABLE void executeQuery();
-    Q_INVOKABLE void cancelRequest();
+    Status status() const;
+    void setStatus(Status status);
+
+    Q_INVOKABLE void execute();
+    Q_INVOKABLE void cancel();
+
+    Q_INVOKABLE QString errorString() const;
 
     virtual void clearData();
     virtual void updateSearchRequest();
@@ -103,7 +115,7 @@ signals:
     void searchAreaChanged();
     void offsetChanged();
     void limitChanged();
-    void executingChanged();
+    void statusChanged();
 
 protected:
     virtual void initializePlugin(QDeclarativeGeoServiceProvider *oldPlugin,
@@ -124,7 +136,10 @@ private:
 
     QDeclarativeGeoBoundingArea *m_searchArea;
 
+    QString m_errorString;
+
     bool m_complete;
+    Status m_status;
 };
 
 QT_END_NAMESPACE

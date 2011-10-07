@@ -69,7 +69,7 @@ void tst_QGeoLocation::constructor()
 {
     QCOMPARE(m_location.address(), m_address);
     QCOMPARE(m_location.coordinate(), m_coordinate);
-    QCOMPARE(m_location.viewport(), m_viewport);
+    QCOMPARE(m_location.boundingBox(), m_viewport);
     QCOMPARE(m_location.locationId(), m_locationId);
 }
 
@@ -132,13 +132,13 @@ void tst_QGeoLocation::viewport()
     m_coordinate.setLongitude(52.5312);
 
     QGeoBoundingBox qgeoboundingboxcopy(m_coordinate, 0.4, 0.4);
-    m_location.setViewport(qgeoboundingboxcopy);
+    m_location.setBoundingBox(qgeoboundingboxcopy);
 
-    QCOMPARE(m_location.viewport(),qgeoboundingboxcopy);
+    QCOMPARE(m_location.boundingBox(),qgeoboundingboxcopy);
 
     qgeoboundingboxcopy.setHeight(1);
 
-    QVERIFY(m_location.viewport() != qgeoboundingboxcopy);
+    QVERIFY(m_location.boundingBox() != qgeoboundingboxcopy);
 }
 
 void tst_QGeoLocation::locationId()
@@ -206,7 +206,7 @@ void tst_QGeoLocation::comparison()
     location.setCoordinate(QGeoCoordinate(5,10));
 
     //set viewport
-    location.setViewport(QGeoBoundingBox(QGeoCoordinate(5,5),0.4,0.4));
+    location.setBoundingBox(QGeoBoundingBox(QGeoCoordinate(5,5),0.4,0.4));
 
     //set locationId
     location.setLocationId("id");
@@ -224,7 +224,7 @@ void tst_QGeoLocation::comparison()
         } else if (dataField == "coordinate") {
             otherLocation.setCoordinate(QGeoCoordinate(12,13));
         } else if (dataField == "viewport"){
-            otherLocation.setViewport(QGeoBoundingBox(QGeoCoordinate(1,2), 0.5,0.5));
+            otherLocation.setBoundingBox(QGeoBoundingBox(QGeoCoordinate(1,2), 0.5,0.5));
         } else if (dataField == "locationId") {
             otherLocation.setLocationId("otherId");
         } else {

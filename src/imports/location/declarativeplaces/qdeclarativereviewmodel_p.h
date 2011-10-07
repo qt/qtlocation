@@ -56,18 +56,12 @@ public:
 
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
-        DateRole = UserRole,
-        DescriptionRole,
+        DateTimeRole = UserRole,
+        ContentRole,
         LanguageRole,
-        HelpfulVotingsRole,
-        UnhelpfulVotingsRole,
         RatingRole,
-        MediaIdsRole,
         ReviewIdRole,
-        TitleRole,
-        UserIdRole,
-        UserNameRole,
-        OriginatorUrlRole
+        TitleRole
     };
 };
 

@@ -65,7 +65,7 @@ QDeclarativeGeoLocation::QDeclarativeGeoLocation(const QGeoLocation &src,
         : QObject(parent),
           m_address(src.address()),
           m_coordinate(src.coordinate()),
-          m_boundingBox(src.viewport()),
+          m_boundingBox(src.boundingBox()),
           m_src(src)
 {
 }
@@ -90,8 +90,8 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
     if (previous.locationId() != m_src.locationId()) {
         emit locationIdChanged();
     }
-    if (previous.viewport() != m_src.viewport()) {
-        emit viewport();
+    if (previous.boundingBox() != m_src.boundingBox()) {
+        emit boundingBox();
     }
 }
 
@@ -99,7 +99,7 @@ QGeoLocation QDeclarativeGeoLocation::location()
 {
     m_src.setAddress(m_address.address());
     m_src.setCoordinate(m_coordinate.coordinate());
-    m_src.setViewport(m_boundingBox.box());
+    m_src.setBoundingBox(m_boundingBox.box());
     return m_src;
 }
 
@@ -163,23 +163,24 @@ QString QDeclarativeGeoLocation::locationId() const
 }
 
 /*!
-    \qmlproperty BoundingBox Location::viewport
+    \qmlproperty BoundingBox Location::boundingBox
 
     This property holds bouding box of area on map ocupied by location.
 
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.
 */
-void QDeclarativeGeoLocation::setViewport(QDeclarativeGeoBoundingBox *viewport)
+void QDeclarativeGeoLocation::setBoundingBox(QDeclarativeGeoBoundingBox *boundingBox)
 {
-    if (m_src.viewport() != viewport->box()) {
-        m_boundingBox.setBox(viewport->box());
-        m_src.setViewport(viewport->box());
-        emit viewportChanged();
-    }
+    if (m_src.boundingBox() == boundingBox->box())
+        return;
+
+    m_boundingBox.setBox(boundingBox->box());
+    m_src.setBoundingBox(boundingBox->box());
+    emit boundingBoxChanged();
 }
 
-QDeclarativeGeoBoundingBox *QDeclarativeGeoLocation::viewport()
+QDeclarativeGeoBoundingBox *QDeclarativeGeoLocation::boundingBox()
 {
     return &m_boundingBox;
 }

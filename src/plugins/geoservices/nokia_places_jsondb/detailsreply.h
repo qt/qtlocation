@@ -54,7 +54,7 @@ class DetailsReply : public QPlaceDetailsReply
 public:
     DetailsReply(QPlaceManagerEngineJsonDb *engine);
     virtual ~DetailsReply();
-    void setResult(const QPlace &place);
+    void setPlace(const QPlace &place);
 
     DECLARE_TRIGGER_DONE_FN
 

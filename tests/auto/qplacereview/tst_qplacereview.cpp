@@ -42,7 +42,8 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include <qplacereview.h>
+#include <QtLocation/QPlaceReview>
+#include <QtLocation/QPlaceSupplier>
 
 QT_USE_NAMESPACE
 
@@ -59,15 +60,12 @@ private Q_SLOTS:
     void dateTest();
     void descriptionTest();
     void languageTest();
-    void helpfulVotingsTest();
-    void mediaIdsTest();
-    void unhelpfulVotingsTest();
     void ratingTest();
     void reviewIdTest();
     void titleTest();
     void userIdTest();
     void userNameTest();
-    void originatorUrlTest();
+    void sourceUrlTest();
     void operatorsTest();
 };
 
@@ -99,17 +97,19 @@ void tst_QPlaceReview::supplierTest()
 void tst_QPlaceReview::dateTest()
 {
     QPlaceReview testObj;
-    QVERIFY2(testObj.date() == QString(), "Wrong default value");
-    testObj.setDate("testText");
-    QVERIFY2(testObj.date() == "testText", "Wrong value returned");
+    QCOMPARE(testObj.dateTime(), QDateTime());
+
+    QDateTime dt = QDateTime::currentDateTime();
+    testObj.setDateTime(dt);
+    QCOMPARE(testObj.dateTime(), dt);
 }
 
 void tst_QPlaceReview::descriptionTest()
 {
     QPlaceReview testObj;
-    QVERIFY2(testObj.description() == QString(), "Wrong default value");
-    testObj.setDescription("testText");
-    QVERIFY2(testObj.description() == "testText", "Wrong value returned");
+    QVERIFY2(testObj.content() == QString(), "Wrong default value");
+    testObj.setContent("testText");
+    QVERIFY2(testObj.content() == "testText", "Wrong value returned");
 }
 
 void tst_QPlaceReview::languageTest()
@@ -118,37 +118,6 @@ void tst_QPlaceReview::languageTest()
     QVERIFY2(testObj.language() == QString(), "Wrong default value");
     testObj.setLanguage("testText");
     QVERIFY2(testObj.language() == "testText", "Wrong value returned");
-}
-
-void tst_QPlaceReview::helpfulVotingsTest()
-{
-    QPlaceReview testObj;
-    QVERIFY2(testObj.helpfulVotings() == 0, "Wrong default value");
-    testObj.setHelpfulVotings(-10);
-    QVERIFY2(testObj.helpfulVotings() == -10, "Wrong value returned");
-    testObj.setHelpfulVotings(3);
-    QVERIFY2(testObj.helpfulVotings() == 3, "Wrong value returned");
-}
-
-void tst_QPlaceReview::mediaIdsTest()
-{
-    QPlaceReview testObj;
-    QVERIFY2(testObj.mediaIds().count() == 0, "Wrong default value");
-    QStringList list;
-    list << "1" << "2" << "3";
-    testObj.setMediaIds(list);
-    QVERIFY2(testObj.mediaIds().count() == 3, "Wrong value returned");
-    QVERIFY2(testObj.mediaIds()[1] == "2", "Wrong [1] value returned");
-}
-
-void tst_QPlaceReview::unhelpfulVotingsTest()
-{
-    QPlaceReview testObj;
-    QVERIFY2(testObj.unhelpfulVotings() == 0, "Wrong default value");
-    testObj.setUnhelpfulVotings(-10);
-    QVERIFY2(testObj.unhelpfulVotings() == -10, "Wrong value returned");
-    testObj.setUnhelpfulVotings(3);
-    QVERIFY2(testObj.unhelpfulVotings() == 3, "Wrong value returned");
 }
 
 void tst_QPlaceReview::ratingTest()
@@ -164,7 +133,7 @@ void tst_QPlaceReview::ratingTest()
 void tst_QPlaceReview::operatorsTest()
 {
     QPlaceReview testObj;
-    testObj.setDescription("testValue");
+    testObj.setContent("testValue");
     QPlaceReview testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
@@ -200,15 +169,15 @@ void tst_QPlaceReview::userNameTest()
     testObj.setUserName("testText");
     QVERIFY2(testObj.userName() == "testText", "Wrong value returned");
 }
-void tst_QPlaceReview::originatorUrlTest()
+void tst_QPlaceReview::sourceUrlTest()
 {
     QPlaceReview testObj;
+    QVERIFY2(testObj.sourceUrl().isEmpty(), "Wrong default value");
     const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
-    QVERIFY2(testObj.originatorUrl() == QUrl(), "Wrong default value");
-    testObj.setOriginatorUrl(testUrl);
-    QVERIFY2(testObj.originatorUrl() == testUrl, "Wrong value returned");
+    testObj.setSourceUrl(testUrl);
+    QCOMPARE(testObj.sourceUrl(), testUrl);
 }
 
-QTEST_APPLESS_MAIN(tst_QPlaceReview);
+QTEST_APPLESS_MAIN(tst_QPlaceReview)
 
 #include "tst_qplacereview.moc"

@@ -67,9 +67,7 @@ public:
 
     virtual QPlaceContentReply *getContent(const QPlace &place, const QPlaceContentRequest &request) = 0;
 
-    virtual QPlaceReply *postRating(const QString &placeId, qreal value) = 0;
-
-    virtual QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &request) = 0;
+    virtual QPlaceSearchReply *search(const QPlaceSearchRequest &request) = 0;
 
     virtual QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &request) = 0;
     virtual QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request) = 0;

@@ -78,7 +78,7 @@ Rectangle {
             onAccepted: searchTerm(text)
             onTextChanged: {
                 resultSuggestion.searchTerm = text;
-                resultSuggestion.executeQuery();
+                resultSuggestion.execute();
                 suggestions.visible = true;
             }
         }
@@ -111,7 +111,7 @@ Rectangle {
         visible: !reviewList.visible
 
         snapMode: ListView.SnapToItem
-        model: resultModel
+        model: searchModel
         delegate: SearchResultDelegate { }
     }
 
@@ -164,7 +164,7 @@ Rectangle {
         anchors.left: searchTermRect.left
         anchors.right: searchTermRect.right
         anchors.top: searchTermRect.bottom
-        height: Math.min(4, resultSuggestion.predictions.length) * 19
+        height: Math.min(4, resultSuggestion.textPredictions.length) * 19
         visible: false
         color: "#f0f0f0"
         clip: true
@@ -195,8 +195,8 @@ Rectangle {
         name: "nokia"
     }
 
-    SearchResultModel {
-        id: resultModel
+    PlaceSearchModel {
+        id: searchModel
         plugin: geoServices
 
         searchArea: BoundingCircle {
@@ -209,25 +209,24 @@ Rectangle {
             }
             radius:5000
         }
-        didYouMean: 5
-        //onQueryFinished: console.log("datareceived " + error)
+        maximumCorrections: 5
     }
 
     function searchTerm(term)
     {
-        resultModel.clearCategories();
-        resultModel.searchTerm = term;
-        resultModel.executeQuery();
-        placesList.model = resultModel;
+        searchModel.clearCategories();
+        searchModel.searchTerm = term;
+        searchModel.execute();
+        placesList.model = searchModel;
         suggestions.visible = false;
     }
 
     function searchCategory(category)
     {
-        resultModel.clearSearchTerm();
-        resultModel.searchCategory = category;
-        resultModel.executeQuery();
-        placesList.model = resultModel;
+        searchModel.clearSearchTerm();
+        searchModel.searchCategory = category;
+        searchModel.execute();
+        placesList.model = searchModel;
         suggestions.visible = false;
     }
 
@@ -251,7 +250,7 @@ Rectangle {
         //onQueryFinished: console.log("datareceived " + error)
     }
 
-    SupportedCategoriesModel {
+    CategoriesModel {
         id: categoriesModel
         plugin: geoServices
         hierarchical: true

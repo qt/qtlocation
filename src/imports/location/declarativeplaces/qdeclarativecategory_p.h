@@ -71,7 +71,7 @@ public:
         PublicVisibility = QtLocation::PublicVisibility
     };
 
-    QPlaceCategory category();
+    QPlaceCategory category() const;
     void setCategory(const QPlaceCategory &category);
 
     QString categoryId() const;

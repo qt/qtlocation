@@ -42,6 +42,8 @@
 #include "qplacecontent.h"
 #include "qplacecontent_p.h"
 
+#include <QtCore/QUrl>
+
 #if !defined(Q_CC_MWERKS)
 template<> QT_PREPEND_NAMESPACE(QPlaceContentPrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QPlaceContentPrivate)>::clone()
 {
@@ -50,6 +52,16 @@ template<> QT_PREPEND_NAMESPACE(QPlaceContentPrivate) *QSharedDataPointer<QT_PRE
 #endif
 
 QT_USE_NAMESPACE
+
+inline QPlaceContentPrivate *QPlaceContent::d_func()
+{
+    return static_cast<QPlaceContentPrivate *>(d_ptr.data());
+}
+
+inline const QPlaceContentPrivate *QPlaceContent::d_func() const
+{
+    return static_cast<const QPlaceContentPrivate *>(d_ptr.constData());
+}
 
 /* Constructs an empty content object */
 QPlaceContent::QPlaceContent()
@@ -114,15 +126,81 @@ bool QPlaceContent::operator!=(const QPlaceContent &other) const
     return !(*this == other);
 }
 
+/*!
+    Returns the supplier of the content.
+*/
 QPlaceSupplier QPlaceContent::supplier() const
 {
-    return d_ptr->supplier;
+    Q_D(const QPlaceContent);
+
+    return d->supplier;
 }
 
+/*!
+    Sets the supplier of the content to \a supplier.
+*/
 void QPlaceContent::setSupplier(const QPlaceSupplier &supplier)
 {
-    d_ptr->supplier = supplier;
+    Q_D(QPlaceContent);
+
+    d->supplier = supplier;
 }
+
+/*!
+    Returns the source url of the content.
+*/
+QUrl QPlaceContent::sourceUrl() const
+{
+    Q_D(const QPlaceContent);
+
+    return d->sourceUrl;
+}
+
+/*!
+    Sets source url of the content to \a url.
+*/
+void QPlaceContent::setSourceUrl(const QUrl &url)
+{
+    Q_D(QPlaceContent);
+    d->sourceUrl = url;
+}
+
+/*!
+    Returns user id of the user who contributed this content.
+*/
+QString QPlaceContent::userId() const
+{
+    Q_D(const QPlaceContent);
+    return d->userId;
+}
+
+/*!
+    Sets user id to \a id.
+*/
+void QPlaceContent::setUserId(const QString &id)
+{
+    Q_D(QPlaceContent);
+    d->userId = id;
+}
+
+/*!
+    Returns user name of the user who contributed this content.
+*/
+QString QPlaceContent::userName() const
+{
+    Q_D(const QPlaceContent);
+    return d->userName;
+}
+
+/*!
+    Sets user name to \a name.
+*/
+void QPlaceContent::setUserName(const QString &name)
+{
+    Q_D(QPlaceContent);
+    d->userName = name;
+}
+
 
 /*!
     \internal

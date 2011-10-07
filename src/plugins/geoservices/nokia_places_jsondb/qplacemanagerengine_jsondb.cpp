@@ -477,12 +477,12 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                 }
                 break;
             }
-        case QPlaceReply::PlaceSearchReply: {
+        case QPlaceReply::SearchReply: {
                 SearchReply *searchReply = qobject_cast<SearchReply *>(reply);
                 QList<QPlace> places = JsonDbHandler::convertJsonResponseToPlaces(data);
                 QList<QPlaceSearchResult> results;
                 QPlaceSearchResult result;
-                result.setType(QPlaceSearchResult::Place);
+                result.setType(QPlaceSearchResult::PlaceResult);
                 bool resultsAlreadySet = false;
 
                 if (searchReply->request().searchArea() != 0) {
@@ -561,7 +561,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                 searchReply->triggerDone();
                 break;
             }
-        case QPlaceReply::PlaceDetailsReply: {
+        case QPlaceReply::DetailsReply: {
                 QVariantMap jsonMap = data.toMap();
                 DetailsReply *detailsReply = qobject_cast<DetailsReply *>(reply);
                 if (jsonMap.value("length").toInt() <= 0) {
@@ -570,7 +570,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                 } else {
                     QList<QPlace> places = JsonDbHandler::convertJsonResponseToPlaces(data);
                     Q_ASSERT(!places.isEmpty());
-                    detailsReply->setResult(places.first());
+                    detailsReply->setPlace(places.first());
                     detailsReply->triggerDone();
                 }
                 break;
@@ -613,7 +613,7 @@ void QPlaceManagerEngineJsonDb::processJsonDbError(int id, int code, const QStri
             idReply->triggerDone(error, errorString);
             break;
         }
-        case QPlaceReply::PlaceSearchReply: {
+        case QPlaceReply::SearchReply: {
                 SearchReply *searchReply = qobject_cast<SearchReply*>(placeReply);
                 searchReply->triggerDone(error, errorString);
                 break;

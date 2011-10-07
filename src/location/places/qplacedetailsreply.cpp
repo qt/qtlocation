@@ -86,13 +86,13 @@ QPlaceDetailsReply::~QPlaceDetailsReply()
 */
 QPlaceReply::Type QPlaceDetailsReply::type() const
 {
-    return QPlaceReply::PlaceDetailsReply;
+    return QPlaceReply::DetailsReply;
 }
 
  /*!
     Returns a place result
 */
-QPlace QPlaceDetailsReply::result() const
+QPlace QPlaceDetailsReply::place() const
 {
     Q_D(const QPlaceDetailsReply);
     return d->result;
@@ -101,7 +101,7 @@ QPlace QPlaceDetailsReply::result() const
 /*!
     Sets the \a place
 */
-void QPlaceDetailsReply::setResult(const QPlace &place)
+void QPlaceDetailsReply::setPlace(const QPlace &place)
 {
     Q_D(QPlaceDetailsReply);
     d->result = place;

@@ -52,17 +52,9 @@ class QDeclarativeRecommendationModel : public QDeclarativeSearchModelBase
 
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
 
-    Q_ENUMS(SearchResultType)
-
     Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
-    enum SearchResultType {
-        Place = QPlaceSearchResult::Place,
-        DidYouMeanSuggestion = QPlaceSearchResult::DidYouMeanSuggestion,
-        UnknownSearchResult = QPlaceSearchResult::UnknownSearchResult
-    };
-
     explicit QDeclarativeRecommendationModel(QObject *parent = 0);
     ~QDeclarativeRecommendationModel();
 
@@ -77,13 +69,8 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
-        SearchResultType = Qt::UserRole,
-        SearchResultRelevance,
-        SearchResultDistance,
-        SearchResultHeading,
-        SearchResultAdditionalData,
-        SearchResultPlace,
-        SearchResultDidYouMean
+        DistanceRole = Qt::UserRole,
+        PlaceRole
     };
 
 signals:

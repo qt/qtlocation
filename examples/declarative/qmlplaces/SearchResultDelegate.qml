@@ -92,7 +92,7 @@ Rectangle {
 
                 onPressAndHold: {
                     recommendationModel.placeId = place.placeId;
-                    recommendationModel.executeQuery();
+                    recommendationModel.execute();
                     placesList.model = recommendationModel;
                 }
             }
@@ -178,7 +178,7 @@ Rectangle {
                     delegate: Text {
                         text: "<b>" + place.extendedAttributes[modelData].label + ": </b>" +
                               place.extendedAttributes[modelData].text
-                        width: parent.width
+                        width: col.width
                         font.pixelSize: 16
                         wrapMode: Text.WordWrap
                     }
@@ -205,7 +205,7 @@ Rectangle {
             width: parent.width
 
             Text {
-                text:'<b>Did you mean ' + didYouMean + '?</b>';
+                text:'<b>Did you mean ' + correction + '?</b>';
                 font.pixelSize: 16
             }
 
@@ -228,6 +228,6 @@ Rectangle {
         y: 5
         clip: true
 
-        sourceComponent: (type == SearchResultModel.Place) ? placeComponent : didYouMeanComponent
+        sourceComponent: (type === PlaceSearchModel.PlaceResult) ? placeComponent : didYouMeanComponent
     }
 }

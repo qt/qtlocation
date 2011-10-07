@@ -71,11 +71,11 @@ Rectangle {
         }
 
         Text {
-            text: Qt.formatDate(date, "d MMMM yyyy")
+            text: Qt.formatDate(dateTime, "d MMMM yyyy")
         }
 
         Text {
-            text: description
+            text: content
             wrapMode: Text.WordWrap
             width: parent.width
         }

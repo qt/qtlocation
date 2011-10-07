@@ -59,9 +59,9 @@ QT_USE_NAMESPACE
     \l searchTerm and \l searchCategory properties can be set to restrict the search results to
     places matching those criteria.
 
-    The \l didYouMean property can be used to limit the maximum number of "did you mean" results
-    that may be returned.  Settings \l didYouMean to 0 will prevent any "did you mean" results from
-    being returned.
+    The \l correction property can be used to limit the maximum number of search term correction
+    results that may be returned.  Settings \l correction to 0 will prevent any search term
+    correction results from being returned.
 
     The \l executing property indicates whether a query is currently executing.
 
@@ -77,27 +77,15 @@ QT_USE_NAMESPACE
             \o SearchResultModel.SearchResultType
             \o The type of search result.
         \row
-            \o relevance
-            \o real
-            \o The relevence score of the result.
-        \row
             \o distance
             \o real
             \o The distance to the place.
-        \row
-            \o heading
-            \o real
-            \o The heading to the place.
-        \row
-            \o additionalData
-            \o
-            \o Additional data related to the search result.
         \row
             \o place
             \o Place
             \o The Place.
         \row
-            \o didYouMean
+            \o correction
             \o string
             \o Valid only for did you mean search results, a suggested corrected search term.
     \endtable
@@ -120,7 +108,7 @@ QT_USE_NAMESPACE
             radius:5000
         }
 
-        Component.onCompleted: executeQuery()
+        Component.onCompleted: execute()
     }
 
     ListView {
@@ -163,14 +151,14 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod SearchResultModel::executeQuery()
+    \qmlmethod SearchResultModel::execute()
 
     Parameter searchTerm should contain string for which search should be started.  Updates the
     items represented by the model from the underlying proivider.
 */
 
 /*!
-    \qmlmethod SearchResultModel::cancelRequest()
+    \qmlmethod SearchResultModel::cancel()
 
     Cancels ongoing request.
 */
@@ -178,16 +166,12 @@ QT_USE_NAMESPACE
 QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
     : QDeclarativeSearchModelBase(parent), m_placeManager(0)
 {
-    QHash<int, QByteArray> roleNames;
-    roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(SearchResultType, "type");
-    roleNames.insert(SearchResultRelevance, "relevance");
-    roleNames.insert(SearchResultDistance, "distance");
-    roleNames.insert(SearchResultHeading, "heading");
-    roleNames.insert(SearchResultAdditionalData, "additionalData");
-    roleNames.insert(SearchResultPlace, "place");
-    roleNames.insert(SearchResultDidYouMean, "didYouMean");
-    setRoleNames(roleNames);
+    QHash<int, QByteArray> roles = roleNames();
+    roles.insert(SearchResultTypeRole, "type");
+    roles.insert(DistanceRole, "distance");
+    roles.insert(PlaceRole, "place");
+    roles.insert(CorrectionRole, "correction");
+    setRoleNames(roles);
 }
 
 QDeclarativeSearchResultModel::~QDeclarativeSearchResultModel()
@@ -299,22 +283,22 @@ void QDeclarativeSearchResultModel::setRelevanceHint(QDeclarativeSearchResultMod
 }
 
 /*!
-    \qmlproperty int SearchResultModel::didYouMean
+    \qmlproperty int SearchResultModel::maximumCorrections
 
-    This element holds maximum number of "did you mean" suggestions returned by search query.
+    This element holds maximum number of search term corrections that may be returned.
 */
-int QDeclarativeSearchResultModel::didYouMean() const
+int QDeclarativeSearchResultModel::maximumCorrections() const
 {
-    return m_request.didYouMeanSuggestionNumber();
+    return m_request.maximumCorrections();
 }
 
-void QDeclarativeSearchResultModel::setDidYouMean(int didYouMeanSuggestionNumber)
+void QDeclarativeSearchResultModel::setMaximumCorrections(int corrections)
 {
-    if (m_request.didYouMeanSuggestionNumber() == didYouMeanSuggestionNumber)
+    if (m_request.maximumCorrections() == corrections)
         return;
 
-    m_request.setDidYouMeanSuggestionNumber(didYouMeanSuggestionNumber);
-    emit didYouMeanChanged();
+    m_request.setMaximumCorrections(corrections);
+    emit maximumCorrectionsChanged();
 }
 
 /*!
@@ -379,31 +363,25 @@ QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role)
 
     const QPlaceSearchResult &result = m_results.at(index.row());
 
-    if (result.type() == QPlaceSearchResult::Place) {
+    if (result.type() == QPlaceSearchResult::PlaceResult) {
         switch (role) {
         case Qt::DisplayRole:
             return result.place().name();
-        case SearchResultType:
+        case SearchResultTypeRole:
             return result.type();
-        case SearchResultRelevance:
-            return result.relevance();
-        case SearchResultDistance:
+        case DistanceRole:
             return result.distance();
-        case SearchResultHeading:
-            return result.heading();
-        case SearchResultAdditionalData:
-            return result.additionalData();
-        case SearchResultPlace:
+        case PlaceRole:
             return QVariant::fromValue(static_cast<QObject *>(m_places.value(result.place().placeId())));
         default:
             return QVariant();
         }
-    } else if (result.type() == QPlaceSearchResult::DidYouMeanSuggestion) {
+    } else if (result.type() == QPlaceSearchResult::CorrectionResult) {
         switch (role) {
         case Qt::DisplayRole:
-        case SearchResultDidYouMean:
-            return result.didYouMeanSuggestion();
-        case SearchResultType:
+        case CorrectionRole:
+            return result.correction();
+        case SearchResultTypeRole:
             return result.type();
         default:
             return QVariant();
@@ -417,7 +395,7 @@ QPlaceReply *QDeclarativeSearchResultModel::sendQuery(QPlaceManager *manager,
                                                       const QPlaceSearchRequest &request)
 {
     Q_ASSERT(manager);
-    return manager->searchForPlaces(request);
+    return manager->search(request);
 }
 
 void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvider *oldPlugin,
@@ -432,12 +410,9 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
         if (serviceProvider) {
             QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
-                disconnect(placeManager, SIGNAL(placeAdded(QString)),
-                           this, SLOT(executeQuery()));
-                disconnect(placeManager, SIGNAL(placeUpdated(QString)),
-                           this, SLOT(executeQuery()));
-                disconnect(placeManager, SIGNAL(placeRemoved(QString)),
-                           this, SLOT(executeQuery()));
+                disconnect(placeManager, SIGNAL(placeAdded(QString)), this, SLOT(execute()));
+                disconnect(placeManager, SIGNAL(placeUpdated(QString)), this, SLOT(execute()));
+                disconnect(placeManager, SIGNAL(placeRemoved(QString)), this, SLOT(execute()));
             }
         }
     }
@@ -448,12 +423,9 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
         if (serviceProvider) {
             QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
-                connect(placeManager, SIGNAL(placeAdded(QString)),
-                           this, SLOT(executeQuery()));
-                connect(placeManager, SIGNAL(placeUpdated(QString)),
-                           this, SLOT(executeQuery()));
-                connect(placeManager, SIGNAL(placeRemoved(QString)),
-                           this, SLOT(executeQuery()));
+                connect(placeManager, SIGNAL(placeAdded(QString)), this, SLOT(execute()));
+                connect(placeManager, SIGNAL(placeUpdated(QString)), this, SLOT(execute()));
+                connect(placeManager, SIGNAL(placeRemoved(QString)), this, SLOT(execute()));
             }
         }
     }

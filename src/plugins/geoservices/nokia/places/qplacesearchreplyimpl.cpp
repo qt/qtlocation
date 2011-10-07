@@ -134,7 +134,7 @@ QList<QPlaceSearchResult> QPlaceSearchReplyImpl::filterSecondSearchCenter(const 
 {
     QList<QPlaceSearchResult> newList;
     foreach (QPlaceSearchResult res, list) {
-        if (res.type() == QPlaceSearchResult::Place) {
+        if (res.type() == QPlaceSearchResult::PlaceResult) {
             bool isNotSeconSearchCenter = true;
             foreach (QPlaceCategory cat, res.place().categories()) {
                 if (cat.categoryId() == "second-search-center") {
@@ -145,7 +145,7 @@ QList<QPlaceSearchResult> QPlaceSearchReplyImpl::filterSecondSearchCenter(const 
             if (isNotSeconSearchCenter) {
                 newList.append(res);
             }
-        } else if (res.type() == QPlaceSearchResult::DidYouMeanSuggestion) {
+        } else if (res.type() == QPlaceSearchResult::CorrectionResult) {
             newList.append(res);
         }
     }

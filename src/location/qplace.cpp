@@ -46,13 +46,6 @@
 #include <QDebug>
 #endif
 
-#if !defined(Q_CC_MWERKS)
-template<> QT_PREPEND_NAMESPACE(QPlacePrivate) *QSharedDataPointer<QT_PREPEND_NAMESPACE(QPlacePrivate)>::clone()
-{
-    return d->clone();
-}
-#endif
-
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -102,12 +95,12 @@ QPlace &QPlace::operator= (const QPlace & other)
 
 inline QPlacePrivate* QPlace::d_func()
 {
-    return reinterpret_cast<QPlacePrivate*>(d_ptr.data());
+    return static_cast<QPlacePrivate *>(d_ptr.data());
 }
 
 inline const QPlacePrivate* QPlace::d_func() const
 {
-    return reinterpret_cast<const QPlacePrivate*>(d_ptr.constData());
+    return static_cast<const QPlacePrivate *>(d_ptr.constData());
 }
 
 /*!
@@ -117,7 +110,8 @@ inline const QPlacePrivate* QPlace::d_func() const
 */
 bool QPlace::operator== (const QPlace &other) const
 {
-    return ( *(d_ptr.constData()) == *(other.d_ptr.constData()));
+    Q_D(const QPlace);
+    return *d == *other.d_func();
 }
 
 /*!
@@ -127,7 +121,8 @@ bool QPlace::operator== (const QPlace &other) const
 */
 bool QPlace::operator!= (const QPlace &other) const
 {
-    return (!this->operator ==(other));
+    Q_D(const QPlace);
+    return !(*d == *other.d_func());
 }
 
 /*!
@@ -185,21 +180,21 @@ void QPlace::setRating(const QPlaceRating &rating)
 }
 
 /*!
-    Returns suppliers.
+    Returns the supplier of this place data.
 */
-QList<QPlaceSupplier> QPlace::suppliers() const
+QPlaceSupplier QPlace::supplier() const
 {
     Q_D(const QPlace);
-    return d->suppliers;
+    return d->supplier;
 }
 
 /*!
-    Sets suppliers.
+    Sets the supplier of this place data to \a supplier.
 */
-void QPlace::setSuppliers(const QList<QPlaceSupplier> &data)
+void QPlace::setSupplier(const QPlaceSupplier &supplier)
 {
     Q_D(QPlace);
-    d->suppliers = data;
+    d->supplier = supplier;
 }
 
 /*!
@@ -228,7 +223,7 @@ void QPlace::setContent(QPlaceContent::Type type, const QPlaceContent::Collectio
     Adds a collection of \a content of the given \a type to the place.  Any index in \a content
     that already exists is overwritten.
 */
-void QPlace::addContent(QPlaceContent::Type type, const QPlaceContent::Collection &content)
+void QPlace::insertContent(QPlaceContent::Type type, const QPlaceContent::Collection &content)
 {
     Q_D(QPlace);
     QMapIterator<int, QPlaceContent> iter(content);
@@ -244,7 +239,7 @@ void QPlace::addContent(QPlaceContent::Type type, const QPlaceContent::Collectio
     (As opposed to how many objects this place instance is currently assigned).
     A negative count indicates that the total number of items is unknown.
 */
-int QPlace::contentCount(QPlaceContent::Type type) const
+int QPlace::totalContentCount(QPlaceContent::Type type) const
 {
     Q_D(const QPlace);
     return d->contentCounts.value(type, 0);
@@ -253,7 +248,7 @@ int QPlace::contentCount(QPlaceContent::Type type) const
 /*!
     Sets the \a totalCount of content objects of the given \a type.
 */
-void QPlace::setContentCount(QPlaceContent::Type type, int totalCount)
+void QPlace::setTotalContentCount(QPlaceContent::Type type, int totalCount)
 {
     Q_D(QPlace);
     d->contentCounts.insert(type, totalCount);
@@ -463,7 +458,7 @@ QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
         categories(other.categories),
         location(other.location),
         rating(other.rating),
-        suppliers(other.suppliers),
+        supplier(other.supplier),
         name(other.name),
         placeId(other.placeId),
         attribution(other.attribution),
@@ -486,7 +481,7 @@ QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
     categories = other.categories;
     location = other.location;
     rating = other.rating;
-    suppliers = other.suppliers;
+    supplier = other.supplier;
     name = other.name;
     placeId = other.placeId;
     attribution = other.attribution;
@@ -526,7 +521,7 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
     return (categories == other.categories
             && location == other.location
             && rating == other.rating
-            && suppliers == other.suppliers
+            && supplier == other.supplier
             && contentCollections == other.contentCollections
             && contentCounts == other.contentCounts
             && name == other.name

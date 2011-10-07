@@ -66,20 +66,6 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
 }
 
 /*!
-   \variable QPlaceAttribute::OpeningNote
-   The key for the attribute that holds special instructions during opening hours
-   e.g. "use buzzer for entry"
-*/
-Q_DEFINE_LATIN1_CONSTANT(QPlaceAttribute::OpeningNote, "openingNote");
-
-/*!
-   \variable QPlaceAttribute::PaymentMethods
-   The key for the attribute that holds accepted payment methods such
-   as visa or mastercard.
-*/
-Q_DEFINE_LATIN1_CONSTANT(QPlaceAttribute::PaymentMethods, "paymentMethods");
-
-/*!
 \class QPlaceAttribute
 \brief The QPlaceAttribute class represents generic attribute information about a place.
 \inmodule QtLocation

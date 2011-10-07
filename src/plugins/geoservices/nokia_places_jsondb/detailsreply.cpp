@@ -51,7 +51,7 @@ DetailsReply::~DetailsReply()
 {
 }
 
-void DetailsReply::setResult(const QPlace &place)
+void DetailsReply::setPlace(const QPlace &place)
 {
-    QPlaceDetailsReply::setResult(place);
+    QPlaceDetailsReply::setPlace(place);
 }

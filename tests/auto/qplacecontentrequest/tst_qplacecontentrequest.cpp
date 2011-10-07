@@ -65,6 +65,7 @@ tst_QPlaceContentRequest::tst_QPlaceContentRequest()
 void tst_QPlaceContentRequest::contentTest()
 {
     QPlaceContentRequest req;
+    QCOMPARE(req.type(), QPlaceRequest::ContentRequest);
     QCOMPARE(req.limit(), -1);
     QCOMPARE(req.offset(), 0);
     QCOMPARE(req.contentType(), QPlaceContent::InvalidType);
@@ -93,7 +94,7 @@ void tst_QPlaceContentRequest::contentTest()
 
     //check assignment from base class to derived class
     QPlaceContentRequest contentReq = plainReq;
-    QVERIFY(contentReq == req);
+    QCOMPARE(contentReq, req);
 
    //check that comparison will fail if one the fields are different
     contentReq.setLimit(9000);

@@ -58,7 +58,8 @@ public:
 
     bool operator==(const QPlaceRatingPrivate &other) const;
 
-    double value;
+    qreal value;
+    qreal maximum;
     int count;
 };
 

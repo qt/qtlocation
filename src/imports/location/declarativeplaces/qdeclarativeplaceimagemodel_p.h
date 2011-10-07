@@ -59,9 +59,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
         UrlRole = UserRole,
-        ThumbnailUrlRole,
         ImageIdRole,
-        MetaInfoRole,
         MimeTypeRole
     };
 };

@@ -63,9 +63,7 @@ public:
     Q_DEFINE_CONTENT_PRIVATE_HELPER(QPlaceImage, QPlaceContent::ImageType)
 
     QUrl url;
-    QUrl thumbnailUrl;
     QString id;
-    QString metaInfo;
     QString mimeType;
 };
 

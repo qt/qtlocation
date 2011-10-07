@@ -44,6 +44,8 @@
 
 #include "qdeclarativesearchmodelbase.h"
 
+#include <QtCore/QStringList>
+
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoServiceProvider;
@@ -54,7 +56,7 @@ class QDeclarativeTextPredictionModel : public QDeclarativeSearchModelBase
     Q_OBJECT
 
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
-    Q_PROPERTY(QStringList predictions READ predictions NOTIFY predictionsChanged)
+    Q_PROPERTY(QStringList textPredictions READ textPredictions NOTIFY textPredictionsChanged)
 
 public:
     explicit QDeclarativeTextPredictionModel(QObject *parent = 0);
@@ -63,7 +65,7 @@ public:
     QString searchTerm() const;
     void setSearchTerm(const QString &searchTerm);
 
-    QStringList predictions() const;
+    QStringList textPredictions() const;
 
     void clearData();
     void updateSearchRequest();
@@ -78,7 +80,7 @@ public:
 
 signals:
     void searchTermChanged();
-    void predictionsChanged();
+    void textPredictionsChanged();
 
 protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);

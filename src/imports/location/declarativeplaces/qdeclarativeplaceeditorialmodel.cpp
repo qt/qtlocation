@@ -113,7 +113,7 @@ QDeclarativePlaceEditorialModel::QDeclarativePlaceEditorialModel(QObject *parent
     roleNames.insert(ContentRole, "content");
     roleNames.insert(TitleRole, "title");
     roleNames.insert(SupplierRole, "supplier");
-    roleNames.insert(UrlRole, "url");
+    roleNames.insert(SourceUrlRole, "url");
     roleNames.insert(LanguageRole, "language");
     setRoleNames(roleNames);
 }
@@ -137,7 +137,7 @@ QVariant QDeclarativePlaceEditorialModel::data(const QModelIndex &index, int rol
         return description.content();
     case TitleRole:
         return description.title();
-    case UrlRole:
+    case SourceUrlRole:
         return description.sourceUrl();
     case LanguageRole:
         return description.language();

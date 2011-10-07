@@ -62,7 +62,7 @@ private Q_SLOTS:
     void detailsFetchedTest();
     void locationTest();
     void ratingTest();
-    void suppliersTest();
+    void supplierTest();
     void imageContentTest();
     void reviewContentTest();
     void editorialContentTest();
@@ -90,7 +90,7 @@ void tst_Place::constructorTest()
     QPlaceAttribute paymentMethods;
     paymentMethods.setLabel("Payment methods");
     paymentMethods.setText("Visa");
-    testObj.insertExtendedAttribute(QPlaceAttribute::PaymentMethods, paymentMethods);
+    testObj.insertExtendedAttribute(QLatin1String("paymentMethods"), paymentMethods);
     QGeoLocation loc;
     loc.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(loc);
@@ -121,12 +121,12 @@ void tst_Place::placeIdTest()
 void tst_Place::contentCountTest()
 {
     QPlace testObj;
-    QVERIFY2(testObj.contentCount(QPlaceContent::ImageType) == 0, "Wrong default value");
-    testObj.setContentCount(QPlaceContent::ImageType, 50);
-    QVERIFY2(testObj.contentCount(QPlaceContent::ImageType) == 50, "Wrong value returned");
+    QVERIFY2(testObj.totalContentCount(QPlaceContent::ImageType) == 0, "Wrong default value");
+    testObj.setTotalContentCount(QPlaceContent::ImageType, 50);
+    QVERIFY2(testObj.totalContentCount(QPlaceContent::ImageType) == 50, "Wrong value returned");
 
-    testObj.setContentCount(QPlaceContent::ImageType,0);
-    QVERIFY2(testObj.contentCount(QPlaceContent::ImageType) == 0, "Wrong value returned");
+    testObj.setTotalContentCount(QPlaceContent::ImageType,0);
+    QVERIFY2(testObj.totalContentCount(QPlaceContent::ImageType) == 0, "Wrong value returned");
 }
 
 void tst_Place::ratingTest()
@@ -161,8 +161,6 @@ void tst_Place::detailsFetchedTest()
 
 void tst_Place::imageContentTest()
 {
-    QUrl thumbnailUrl("testId");
-
     QPlace place;
     QVERIFY2(place.content(QPlaceContent::ImageType).count() ==0,"Wrong default value");
 
@@ -199,7 +197,7 @@ void tst_Place::imageContentTest()
     imageCollection.clear();
     imageCollection.insert(1, dummyImage2New);
     imageCollection.insert(5, dummyImage6);
-    place.addContent(QPlaceContent::ImageType, imageCollection);
+    place.insertContent(QPlaceContent::ImageType, imageCollection);
 
     retrievedCollection = place.content(QPlaceContent::ImageType);
     QCOMPARE(retrievedCollection.count(), 4);
@@ -249,7 +247,7 @@ void tst_Place::reviewContentTest()
     reviewCollection.clear();
     reviewCollection.insert(1, dummyReview2New);
     reviewCollection.insert(5, dummyReview6);
-    place.addContent(QPlaceContent::ReviewType, reviewCollection);
+    place.insertContent(QPlaceContent::ReviewType, reviewCollection);
 
     retrievedCollection = place.content(QPlaceContent::ReviewType);
     QCOMPARE(retrievedCollection.count(), 4);
@@ -299,7 +297,7 @@ void tst_Place::editorialContentTest()
     editorialCollection.clear();
     editorialCollection.insert(1, dummyEditorial2New);
     editorialCollection.insert(5, dummyEditorial6);
-    place.addContent(QPlaceContent::EditorialType, editorialCollection);
+    place.insertContent(QPlaceContent::EditorialType, editorialCollection);
 
     retrievedCollection = place.content(QPlaceContent::EditorialType);
     QCOMPARE(retrievedCollection.count(), 4);
@@ -325,19 +323,18 @@ void tst_Place::categoriesTest()
     QVERIFY2(testObj.categories().count() == 2, "Wrong value returned");
 }
 
-void tst_Place::suppliersTest()
+void tst_Place::supplierTest()
 {
     QPlace testObj;
-    QVERIFY2(testObj.suppliers().count() == 0, "Wrong default value");
+    QCOMPARE(testObj.supplier(), QPlaceSupplier());
+
     QPlaceSupplier sup;
     sup.setName("testName1");
     sup.setSupplierId("testId");
-    QList<QPlaceSupplier> list;
-    list.append(sup);
-    sup.setName("testName2");
-    list.append(sup);
-    testObj.setSuppliers(list);
-    QVERIFY2(testObj.suppliers().count() == 2, "Wrong value returned");
+
+    testObj.setSupplier(sup);
+
+    QCOMPARE(testObj.supplier(), sup);
 }
 
 void tst_Place::attributionTest()
@@ -406,7 +403,7 @@ void tst_Place::operatorsTest()
     QPlaceAttribute paymentMethods;
     paymentMethods.setLabel("Payment methods");
     paymentMethods.setText("Visa");
-    testObj.insertExtendedAttribute(QPlaceAttribute::PaymentMethods, paymentMethods);
+    testObj.insertExtendedAttribute(QLatin1String("paymentMethods"), paymentMethods);
     QGeoLocation loc;
     loc.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(loc);

@@ -58,7 +58,7 @@ public:
     QPlaceRating();
     QPlaceRating(const QPlaceRating &other);
 
-    virtual ~QPlaceRating();
+    ~QPlaceRating();
 
     QPlaceRating &operator=(const QPlaceRating &other);
 
@@ -68,9 +68,13 @@ public:
     }
 
     qreal value() const;
-    void setValue(const qreal &value);
+    void setValue(qreal value);
+
     int count() const;
-    void setCount(const int &count);
+    void setCount(int count);
+
+    qreal maximum() const;
+    void setMaximum(qreal max);
 
 private:
     QSharedDataPointer<QPlaceRatingPrivate> d;

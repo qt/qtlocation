@@ -62,7 +62,7 @@ private Q_SLOTS:
     void boundingCircleTest();
     void boundingBoxTest();
     void searchAreaTest();
-    void didYouMeanSuggestionNumberTest();
+    void maximumCorrectionsTest();
     void visibilityScopeTest();
     void relevanceHintTest();
     void operatorsTest();
@@ -165,14 +165,14 @@ void tst_QPlaceSearchRequest::searchAreaTest()
     QVERIFY2(query->searchArea() == box, "New search area not assigned");
 }
 
-void tst_QPlaceSearchRequest::didYouMeanSuggestionNumberTest()
+void tst_QPlaceSearchRequest::maximumCorrectionsTest()
 {
     QPlaceSearchRequest testObj;
-    QVERIFY2(testObj.didYouMeanSuggestionNumber() == 0, "Wrong default value");
-    testObj.setDidYouMeanSuggestionNumber(10);
-    QVERIFY2(testObj.didYouMeanSuggestionNumber() == 10, "Wrong value returned");
+    QVERIFY2(testObj.maximumCorrections() == 0, "Wrong default value");
+    testObj.setMaximumCorrections(10);
+    QVERIFY2(testObj.maximumCorrections() == 10, "Wrong value returned");
     testObj.clear();
-    QVERIFY2(testObj.didYouMeanSuggestionNumber() == 0, "Wrong cleared value returned");
+    QVERIFY2(testObj.maximumCorrections() == 0, "Wrong cleared value returned");
 }
 
 void tst_QPlaceSearchRequest::visibilityScopeTest()
@@ -192,11 +192,11 @@ void tst_QPlaceSearchRequest::visibilityScopeTest()
 void tst_QPlaceSearchRequest::relevanceHintTest()
 {
     QPlaceSearchRequest request;
-    QCOMPARE(request.relevanceHint(), QPlaceSearchRequest::NoHint);
+    QCOMPARE(request.relevanceHint(), QPlaceSearchRequest::UnspecifiedHint);
     request.setRelevanceHint(QPlaceSearchRequest::DistanceHint);
     QCOMPARE(request.relevanceHint(), QPlaceSearchRequest::DistanceHint);
-    request.setRelevanceHint(QPlaceSearchRequest::NoHint);
-    QCOMPARE(request.relevanceHint(), QPlaceSearchRequest::NoHint);
+    request.setRelevanceHint(QPlaceSearchRequest::UnspecifiedHint);
+    QCOMPARE(request.relevanceHint(), QPlaceSearchRequest::UnspecifiedHint);
 }
 
 void tst_QPlaceSearchRequest::operatorsTest()
@@ -206,9 +206,9 @@ void tst_QPlaceSearchRequest::operatorsTest()
     QPlaceSearchRequest testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
-    testObj2.setDidYouMeanSuggestionNumber(-5);
+    testObj2.setMaximumCorrections(-5);
     QVERIFY2(testObj != testObj2, "Object should be different");
-    testObj2.setDidYouMeanSuggestionNumber(0);
+    testObj2.setMaximumCorrections(0);
     QVERIFY(testObj == testObj2);
 
     QGeoBoundingBox *b1 = new QGeoBoundingBox(QGeoCoordinate(20,20), QGeoCoordinate(10,30));
@@ -264,7 +264,7 @@ void tst_QPlaceSearchRequest::clearTest()
     QPlaceCategory category;
     category.setName("Fast Food");
     req.setCategory(category);
-    req.setDidYouMeanSuggestionNumber(5);
+    req.setMaximumCorrections(5);
     req.setLimit(100);
     req.setOffset(5);
 
@@ -272,7 +272,7 @@ void tst_QPlaceSearchRequest::clearTest()
     QVERIFY(req.searchTerm().isEmpty());
     QVERIFY(req.searchArea() == 0);
     QVERIFY(req.categories().isEmpty());
-    QVERIFY(req.didYouMeanSuggestionNumber() == 0);
+    QVERIFY(req.maximumCorrections() == 0);
     QVERIFY(req.limit() == -1);
     QVERIFY(req.offset() == 0);
 }

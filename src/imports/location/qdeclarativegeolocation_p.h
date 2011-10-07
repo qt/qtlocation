@@ -58,7 +58,7 @@ class QDeclarativeGeoLocation : public QObject
     Q_PROPERTY(QDeclarativeGeoAddress* address READ address WRITE setAddress NOTIFY addressChanged);
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged);
     Q_PROPERTY(QString locationId READ locationId WRITE setLocationId NOTIFY locationIdChanged);
-    Q_PROPERTY(QDeclarativeGeoBoundingBox* viewport READ viewport WRITE setViewport NOTIFY viewportChanged);
+    Q_PROPERTY(QDeclarativeGeoBoundingBox *boundingBox READ boundingBox WRITE setBoundingBox NOTIFY boundingBoxChanged)
 
 public:
     explicit QDeclarativeGeoLocation(QObject* parent = 0);
@@ -74,14 +74,15 @@ public:
     void setCoordinate(QDeclarativeCoordinate *coordinate);
     QString locationId() const;
     void setLocationId(const QString &locationId);
-    QDeclarativeGeoBoundingBox *viewport();
-    void setViewport(QDeclarativeGeoBoundingBox *boundingBox);
+
+    QDeclarativeGeoBoundingBox *boundingBox();
+    void setBoundingBox(QDeclarativeGeoBoundingBox *boundingBox);
 
 signals:
     void addressChanged();
     void coordinateChanged();
     void locationIdChanged();
-    void viewportChanged();
+    void boundingBoxChanged();
 
 private:
     QDeclarativeGeoAddress m_address;

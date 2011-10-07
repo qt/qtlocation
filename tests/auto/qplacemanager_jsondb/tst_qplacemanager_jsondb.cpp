@@ -1051,7 +1051,7 @@ bool tst_QPlaceManagerJsonDb::doRemovePlace(const QPlace &place,
 bool tst_QPlaceManagerJsonDb::doSearch(const QPlaceSearchRequest &request,
                                        QList<QPlaceSearchResult> *results, QPlaceReply::Error expectedError)
 {
-    QPlaceSearchReply *searchReply= placeManager->searchForPlaces(request);
+    QPlaceSearchReply *searchReply= placeManager->search(request);
     bool success = checkSignals(searchReply, expectedError);
     *results = searchReply->results();
     return success;
@@ -1073,7 +1073,7 @@ bool tst_QPlaceManagerJsonDb::doFetchDetails(QString placeId, QPlace *place, QPl
 {
     QPlaceDetailsReply *detailsReply = placeManager->getPlaceDetails(placeId);
     bool success = checkSignals(detailsReply, expectedError);
-    *place = detailsReply->result();
+    *place = detailsReply->place();
     return success;
 }
 

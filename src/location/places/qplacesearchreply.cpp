@@ -87,7 +87,7 @@ QPlaceSearchReply::~QPlaceSearchReply()
 */
 QPlaceReply::Type QPlaceSearchReply::type() const
 {
-    return QPlaceReply::PlaceSearchReply;
+    return QPlaceReply::SearchReply;
 }
 
  /*!

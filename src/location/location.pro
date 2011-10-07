@@ -187,4 +187,3 @@ simulator {
     INCLUDEPATH += ../mobilitysimulator
     qtAddLibrary(QtMobilitySimulator)
 }
-

@@ -54,7 +54,7 @@ public:
     ~QPlaceSearchRequestPrivate();
 
     bool compare(const QPlaceRequestPrivate *other) const;
-    Q_DEFINE_PRIVATE_HELPER(QPlaceSearchRequest, QPlaceRequest, QPlaceRequest::SearchType, request)
+    Q_DEFINE_PRIVATE_HELPER(QPlaceSearchRequest, QPlaceRequest, QPlaceRequest::SearchRequest)
     void clear();
 
     QString searchTerm;
@@ -66,8 +66,8 @@ public:
 };
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
-:   QPlaceRequestPrivate(), searchArea(0), dymNumber(0),
-    visibilityScope(QtLocation::UnspecifiedVisibility), relevanceHint(QPlaceSearchRequest::NoHint)
+:   QPlaceRequestPrivate(QPlaceRequest::SearchRequest), searchArea(0), dymNumber(0),
+    visibilityScope(QtLocation::UnspecifiedVisibility), relevanceHint(QPlaceSearchRequest::UnspecifiedHint)
 {
 }
 
@@ -124,7 +124,7 @@ void QPlaceSearchRequestPrivate::clear()
     searchArea = 0;
     dymNumber = 0;
     visibilityScope = QtLocation::UnspecifiedVisibility;
-    relevanceHint = QPlaceSearchRequest::NoHint;
+    relevanceHint = QPlaceSearchRequest::UnspecifiedHint;
 }
 
 /*!
@@ -238,18 +238,18 @@ void QPlaceSearchRequest::setSearchArea(QGeoBoundingArea *area)
 }
 
 /*!
-    Returns maximum number of "did you mean" suggestions returned by search request.
+    Returns the maximum number of search term corrections that may be returned.
 */
-int QPlaceSearchRequest::didYouMeanSuggestionNumber() const
+int QPlaceSearchRequest::maximumCorrections() const
 {
     Q_D(const QPlaceSearchRequest);
     return d->dymNumber;
 }
 
 /*!
-    Sets maximum \a number of "did you mean" suggestions returned by search request.
+    Sets maximum \a number of search term corrections that may be returned.
 */
-void QPlaceSearchRequest::setDidYouMeanSuggestionNumber(const int &number)
+void QPlaceSearchRequest::setMaximumCorrections(int number)
 {
     Q_D(QPlaceSearchRequest);
     d->dymNumber = number;

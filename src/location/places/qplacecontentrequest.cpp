@@ -46,7 +46,7 @@
 QT_BEGIN_NAMESPACE
 
 QPlaceContentRequestPrivate::QPlaceContentRequestPrivate()
-    : QPlaceRequestPrivate(), contentType(QPlaceContent::InvalidType)
+:   QPlaceRequestPrivate(QPlaceRequest::ContentRequest), contentType(QPlaceContent::InvalidType)
 {
 }
 
@@ -63,8 +63,7 @@ QPlaceContentRequestPrivate::QPlaceContentRequestPrivate(const QPlaceContentRequ
 bool QPlaceContentRequestPrivate::compare(const QPlaceRequestPrivate *other) const
 {
     const QPlaceContentRequestPrivate *od = static_cast<const QPlaceContentRequestPrivate *>(other);
-    return (QPlaceRequestPrivate::compare(other)
-            && this->contentType ==od->contentType);
+    return contentType == od->contentType && QPlaceRequestPrivate::compare(other);
 }
 
 void QPlaceContentRequestPrivate::clear()

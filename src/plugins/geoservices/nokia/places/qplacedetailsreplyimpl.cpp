@@ -106,7 +106,7 @@ void QPlaceDetailsReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
     if (errorId == QPlaceJSonParser::NoError) {
         QPlace place = parser->result();
         place.setDetailsFetched(true);
-        setResult(place);
+        setPlace(place);
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());

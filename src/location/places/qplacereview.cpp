@@ -42,32 +42,22 @@
 #include "qplacereview.h"
 #include "qplacereview_p.h"
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QPlaceReviewPrivate::QPlaceReviewPrivate()
-    : QPlaceContentPrivate(),
-      helpfulVotings(0),
-      unhelpfulVotings(0),
-      rating(0)
+:   QPlaceContentPrivate(), rating(0)
 {
 }
 
 QPlaceReviewPrivate::QPlaceReviewPrivate(const QPlaceReviewPrivate &other)
     : QPlaceContentPrivate(other)
 {
-    this->date = other.date;
-    this->description = other.description;
-    this->language = other.language;
-    this->helpfulVotings = other.helpfulVotings;
-    this->mediaIds = other.mediaIds;
-    this->unhelpfulVotings = other.unhelpfulVotings;
-    this->rating = other.rating;
-    this->reviewId = other.reviewId;
-    this->supplier = other.supplier;
-    this->title = other.title;
-    this->userId = other.userId;
-    this->userName = other.userName;
-    this->originatorUrl = other.originatorUrl;
+    dateTime = other.dateTime;
+    content = other.content;
+    language = other.language;
+    rating = other.rating;
+    reviewId = other.reviewId;
+    title = other.title;
 }
 
 QPlaceReviewPrivate::~QPlaceReviewPrivate()
@@ -77,21 +67,12 @@ QPlaceReviewPrivate::~QPlaceReviewPrivate()
 bool QPlaceReviewPrivate::compare(const QPlaceContentPrivate *other) const
 {
     const QPlaceReviewPrivate *od = static_cast<const QPlaceReviewPrivate *>(other);
-    return (
-            this->date == od->date
-            && this->description == od->description
-            && this->language == od->language
-            && this->helpfulVotings == od->helpfulVotings
-            && this->mediaIds == od->mediaIds
-            && this->unhelpfulVotings == od->unhelpfulVotings
-            && this->rating == od->rating
-            && this->reviewId == od->reviewId
-            && this->supplier == od->supplier
-            && this->title == od->title
-            && this->userId == od->userId
-            && this->userName == od->userName
-            && this->originatorUrl == od->originatorUrl
-    );
+    return dateTime == od->dateTime &&
+           content == od->content &&
+           language == od->language &&
+           rating == od->rating &&
+           reviewId == od->reviewId &&
+           title == od->title;
 }
 
 /*!
@@ -134,39 +115,39 @@ QPlaceReview::~QPlaceReview()
 Q_IMPLEMENT_CONTENT_D_FUNC(QPlaceReview)
 
 /*!
-    Returns review date.
+    Returns the date and time that the review was written.
 */
-QString QPlaceReview::date() const
+QDateTime QPlaceReview::dateTime() const
 {
     Q_D(const QPlaceReview);
-    return d->date;
+    return d->dateTime;
 }
 
 /*!
-    Sets review date.
+    Sets the date and time that the review was written to \a dt.
 */
-void QPlaceReview::setDate(const QString &data)
+void QPlaceReview::setDateTime(const QDateTime &dt)
 {
     Q_D(QPlaceReview);
-    d->date = data;
+    d->dateTime = dt;
 }
 
 /*!
     Returns description.
 */
-QString QPlaceReview::description() const
+QString QPlaceReview::content() const
 {
     Q_D(const QPlaceReview);
-    return d->description;
+    return d->content;
 }
 
 /*!
     Sets description.
 */
-void QPlaceReview::setDescription(const QString &data)
+void QPlaceReview::setContent(const QString &data)
 {
     Q_D(QPlaceReview);
-    d->description = data;
+    d->content = data;
 }
 
 /*!
@@ -188,60 +169,6 @@ void QPlaceReview::setLanguage(const QString &data)
 }
 
 /*!
-    Returns the number of helpful votings or "thumbs up"
-*/
-int QPlaceReview::helpfulVotings() const
-{
-    Q_D(const QPlaceReview);
-    return d->helpfulVotings;
-}
-
-/*!
-    Sets the number of helpful \a votes or "thumbs up".
-*/
-void QPlaceReview::setHelpfulVotings(const int &votes)
-{
-    Q_D(QPlaceReview);
-    d->helpfulVotings = votes;
-}
-
-/*!
-    Returns media ids associated with review.
-*/
-QStringList QPlaceReview::mediaIds() const
-{
-    Q_D(const QPlaceReview);
-    return d->mediaIds;
-}
-
-/*!
-    Sets media ids.
-*/
-void QPlaceReview::setMediaIds(const QStringList &data)
-{
-    Q_D(QPlaceReview);
-    d->mediaIds = data;
-}
-
-/*!
-    Returns the number of uhelpful votings or "thumbs down".
-*/
-int QPlaceReview::unhelpfulVotings() const
-{
-    Q_D(const QPlaceReview);
-    return d->unhelpfulVotings;
-}
-
-/*!
-    Sets the number of unhelpful votings or "thumbs down"
-*/
-void QPlaceReview::setUnhelpfulVotings(const int &votes)
-{
-    Q_D(QPlaceReview);
-    d->unhelpfulVotings = votes;
-}
-
-/*!
     Returns rating.
 */
 qreal QPlaceReview::rating() const
@@ -253,7 +180,7 @@ qreal QPlaceReview::rating() const
 /*!
     Sets rating.
 */
-void QPlaceReview::setRating(const qreal &data)
+void QPlaceReview::setRating(qreal data)
 {
     Q_D(QPlaceReview);
     d->rating = data;
@@ -295,56 +222,4 @@ void QPlaceReview::setTitle(const QString &data)
     d->title = data;
 }
 
-/*!
-    Returns user id.
-*/
-QString QPlaceReview::userId() const
-{
-    Q_D(const QPlaceReview);
-    return d->userId;
-}
-
-/*!
-    Sets user id.
-*/
-void QPlaceReview::setUserId(const QString &data)
-{
-    Q_D(QPlaceReview);
-    d->userId = data;
-}
-
-/*!
-    Returns user name.
-*/
-QString QPlaceReview::userName() const
-{
-    Q_D(const QPlaceReview);
-    return d->userName;
-}
-
-/*!
-    Sets user name.
-*/
-void QPlaceReview::setUserName(const QString &data)
-{
-    Q_D(QPlaceReview);
-    d->userName = data;
-}
-
-/*!
-    Returns originator URL.
-*/
-QUrl QPlaceReview::originatorUrl() const
-{
-    Q_D(const QPlaceReview);
-    return d->originatorUrl;
-}
-
-/*!
-    Sets originator \a url of the review.
-*/
-void QPlaceReview::setOriginatorUrl(const QUrl &url)
-{
-    Q_D(QPlaceReview);
-    d->originatorUrl = url;
-}
+QT_END_NAMESPACE

@@ -42,9 +42,6 @@
 #ifndef QPLACEREVIEW_H
 #define QPLACEREVIEW_H
 
-#include <QSharedDataPointer>
-#include <QStringList>
-#include "qplacesupplier.h"
 #include "qplacecontent.h"
 
 QT_BEGIN_HEADER
@@ -53,6 +50,7 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Location)
 
+class QDateTime;
 class QPlaceReviewPrivate;
 
 class Q_LOCATION_EXPORT QPlaceReview : public QPlaceContent
@@ -63,30 +61,19 @@ public:
 
     virtual ~QPlaceReview();
 
-    QString date() const;
-    void setDate(const QString &data);
-    QString description() const;
-    void setDescription(const QString &data);
+    QDateTime dateTime() const;
+    void setDateTime(const QDateTime &dt);
+    QString content() const;
+    void setContent(const QString &content);
     QString language() const;
     void setLanguage(const QString &data);
-    int helpfulVotings() const;
-    void setHelpfulVotings(const int &votes);
-    QStringList mediaIds() const;
-    void setMediaIds(const QStringList &data);
-    int unhelpfulVotings() const;
-    void setUnhelpfulVotings(const int &votes);
+
     qreal rating() const;
-    void setRating(const qreal &data);
+    void setRating(qreal data);
     QString reviewId() const;
     void setReviewId(const QString &data);
     QString title() const;
     void setTitle(const QString &data);
-    QString userId() const;
-    void setUserId(const QString &data);
-    QString userName() const;
-    void setUserName(const QString &data);
-    QUrl originatorUrl() const;
-    void setOriginatorUrl(const QUrl &data);
 
 private:
     Q_DECLARE_CONTENT_D_FUNC(QPlaceReview)

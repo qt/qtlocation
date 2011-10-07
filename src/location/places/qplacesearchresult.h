@@ -71,31 +71,22 @@ public:
     }
 
     enum SearchResultType {
-        Place,
-        DidYouMeanSuggestion,
+        PlaceResult,
+        CorrectionResult,
         UnknownSearchResult
     };
 
-    qreal relevance() const;
-    void setRelevance(const qreal &relevance);
-
     qreal distance() const;
-    void setDistance(const qreal &distance);
-
-    qreal heading() const;
-    void setHeading(const qreal &heading);
-
-    QVariantHash additionalData() const;
-    void setAdditionalData(const QVariantHash &data);
+    void setDistance(qreal distance);
 
     SearchResultType type() const;
-    void setType(const SearchResultType &type);
+    void setType(SearchResultType type);
 
     QPlace place() const;
     void setPlace(const QPlace &place);
 
-    QString didYouMeanSuggestion() const;
-    void setDidYouMeanSuggestion(const QString &didYouMeanSuggestion);
+    QString correction() const;
+    void setCorrection(const QString &correction);
 
 private:
     QSharedDataPointer<QPlaceSearchResultPrivate> d;

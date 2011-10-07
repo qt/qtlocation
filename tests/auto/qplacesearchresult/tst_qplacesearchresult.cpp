@@ -58,38 +58,27 @@ void tst_QPlaceSearchResult::test()
     QPlaceSearchResult result;
 
     QCOMPARE(result.type(), QPlaceSearchResult::UnknownSearchResult);
-    QCOMPARE(result.relevance(), 0.0);
     QCOMPARE(result.distance(), 0.0);
-    QCOMPARE(result.heading(), 0.0);
-    QVERIFY(result.additionalData().isEmpty());
     QCOMPARE(result.place(), QPlace());
-    QVERIFY(result.didYouMeanSuggestion().isEmpty());
+    QVERIFY(result.correction().isEmpty());
 
-    result.setType(QPlaceSearchResult::Place);
-    result.setRelevance(1.0);
+    result.setType(QPlaceSearchResult::PlaceResult);
     result.setDistance(2.0);
-    result.setHeading(3.0);
-    QVariantHash additionalData;
-    additionalData.insert(QLatin1String("key"), 4);
-    result.setAdditionalData(additionalData);
     result.setPlace(QPlace());
-    result.setDidYouMeanSuggestion(QLatin1String("suggestion"));
+    result.setCorrection(QLatin1String("suggestion"));
 
-    QCOMPARE(result.type(), QPlaceSearchResult::Place);
-    QCOMPARE(result.relevance(), 1.0);
+    QCOMPARE(result.type(), QPlaceSearchResult::PlaceResult);
     QCOMPARE(result.distance(), 2.0);
-    QCOMPARE(result.heading(), 3.0);
-    QCOMPARE(result.additionalData(), additionalData);
     QCOMPARE(result.place(), QPlace());
-    QCOMPARE(result.didYouMeanSuggestion(), QLatin1String("suggestion"));
+    QCOMPARE(result.correction(), QLatin1String("suggestion"));
 
     QPlaceSearchResult result2(result);
 
     QCOMPARE(result2, result);
 
-    result2.setType(QPlaceSearchResult::DidYouMeanSuggestion);
+    result2.setType(QPlaceSearchResult::CorrectionResult);
 
-    QCOMPARE(result2.type(), QPlaceSearchResult::DidYouMeanSuggestion);
+    QCOMPARE(result2.type(), QPlaceSearchResult::CorrectionResult);
 
     QVERIFY(result2 != result);
 
@@ -100,9 +89,9 @@ void tst_QPlaceSearchResult::test()
     result3 = result;
 
     QCOMPARE(result3, result);
-    QCOMPARE(result3.type(), QPlaceSearchResult::Place);
+    QCOMPARE(result3.type(), QPlaceSearchResult::PlaceResult);
 }
 
-QTEST_APPLESS_MAIN(tst_QPlaceSearchResult);
+QTEST_APPLESS_MAIN(tst_QPlaceSearchResult)
 
 #include "tst_qplacesearchresult.moc"

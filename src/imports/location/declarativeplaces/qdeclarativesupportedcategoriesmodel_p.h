@@ -97,12 +97,8 @@ public:
 
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role) const;
 
-    // Roles for exposing data via model. Only one role because
-    // everything can be accessed via QDeclarativeCategory
     enum Roles {
-        CategoryRole = Qt::UserRole,
-        CategoryIdRole,
-        NameRole
+        CategoryRole = Qt::UserRole
     };
 
     enum Status {Ready, Saving, Updating, Removing, Error};
@@ -113,10 +109,9 @@ public:
     void setHierarchical(bool hierarchical);
     bool hierarchical() const;
 
-    Q_INVOKABLE void saveCategory(const QVariantMap &categoryMap,
-                                  const QString &parentId);
+    Q_INVOKABLE void saveCategory(const QVariantMap &categoryMap, const QString &parentId);
     Q_INVOKABLE void removeCategory(const QModelIndex &index);
-    Q_INVOKABLE void updateCategories();
+    Q_INVOKABLE void update();
     Q_INVOKABLE QString errorString() const;
 
     Status status() const;

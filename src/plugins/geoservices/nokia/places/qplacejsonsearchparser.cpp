@@ -159,8 +159,8 @@ void QPlaceJSonSearchParser::processResultElement(const QScriptValue &value)
                 if (type.isValid()) {
                     result = processPlaceElement(value);
                 }
-                result.setType(QPlaceSearchResult::DidYouMeanSuggestion);
-                result.setDidYouMeanSuggestion(title.toString());
+                result.setType(QPlaceSearchResult::CorrectionResult);
+                result.setCorrection(title.toString());
                 searchResultsList.append(result);
             }
         }
@@ -173,7 +173,7 @@ void QPlaceJSonSearchParser::processResultElement(const QScriptValue &value)
 QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValue &results)
 {
     QPlaceSearchResult result;
-    result.setType(QPlaceSearchResult::Place);
+    result.setType(QPlaceSearchResult::PlaceResult);
     QPlace newPlace;
 
     // Processing properties
@@ -207,9 +207,7 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValu
         if (value.isValid() && !value.toString().isEmpty()) {
             QPlaceSupplier sup;
             sup.setName(value.toString());
-            QList<QPlaceSupplier> list;
-            list.append(QPlaceSuppliersRepository::instance()->addSupplier(sup));
-            newPlace.setSuppliers(list);
+            newPlace.setSupplier(QPlaceSuppliersRepository::instance()->addSupplier(sup));
         }
         processContacts(properties, &newPlace);
         processRating(properties, &newPlace);
@@ -378,7 +376,7 @@ void QPlaceJSonSearchParser::processLocation(const QScriptValue &properties, QPl
         QGeoBoundingBox boundingBox;
         boundingBox.setTopLeft(topLeft);
         boundingBox.setBottomRight(bottomRight);
-        location.setViewport(boundingBox);
+        location.setBoundingBox(boundingBox);
     }
 
     processAddress(properties, &location);

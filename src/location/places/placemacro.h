@@ -65,12 +65,11 @@ QT_MODULE(Location)
 #define Q_IMPLEMENT_COPY_CTOR(Class, BaseClass) \
     Class::Class(const BaseClass& other) : BaseClass() { Class##Private::copyIfPossible(d_ptr, other); }
 
-#define Q_DEFINE_PRIVATE_HELPER(Class, BaseClass, ClassType, basename) \
+#define Q_DEFINE_PRIVATE_HELPER(Class, BaseClass, ClassType) \
     BaseClass##Private* clone() const { return new Class##Private(*this); } \
-            virtual BaseClass::Type type() const {return ClassType;} \
     static void copyIfPossible(QSharedDataPointer<BaseClass##Private>& d_ptr, const BaseClass &other) \
     { \
-        if (other.basename##Type() == ClassType) \
+        if (other.type() == ClassType) \
             d_ptr = extract_d(other); \
         else \
             d_ptr = new Class##Private; \

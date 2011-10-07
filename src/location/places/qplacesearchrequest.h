@@ -61,14 +61,14 @@ class Q_LOCATION_EXPORT QPlaceSearchRequest : public QPlaceRequest
 {
 public:
     enum RelevanceHint {
-        NoHint,
+        UnspecifiedHint,
         DistanceHint,
         LexicalPlaceNameHint
     };
 
     QPlaceSearchRequest();
     Q_DECLARE_COPY_CTOR(QPlaceSearchRequest, QPlaceRequest)
-    virtual ~QPlaceSearchRequest();
+    ~QPlaceSearchRequest();
 
     QString searchTerm() const;
     void setSearchTerm(const QString &term);
@@ -79,8 +79,8 @@ public:
     QGeoBoundingArea *searchArea() const;
     void setSearchArea(QGeoBoundingArea *area);
 
-    int didYouMeanSuggestionNumber() const;
-    void setDidYouMeanSuggestionNumber(const int &number);
+    int maximumCorrections() const;
+    void setMaximumCorrections(int number);
 
     QtLocation::VisibilityScope visibilityScope() const;
     void setVisibilityScope(QtLocation::VisibilityScope visibilityScopes);

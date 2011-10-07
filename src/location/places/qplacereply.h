@@ -65,22 +65,22 @@ public:
         PermissionsError,
         UnsupportedError,
         BadArgumentError,
+        AuthenticationFailedError,
         CancelError,
         UnknownError
     };
 
     enum Type {
         Reply,
-        PlaceDetailsReply,
-        PlaceSearchReply,
+        DetailsReply,
+        SearchReply,
         TextPredictionReply,
-        ReviewReply,
         ContentReply,
         IdReply
     };
 
-    QPlaceReply(QObject *parent);
-    virtual ~QPlaceReply();
+    explicit QPlaceReply(QObject *parent = 0);
+    ~QPlaceReply();
 
     bool isFinished() const;
 
@@ -101,6 +101,7 @@ protected:
     void setFinished(bool finished);
     void setError(QPlaceReply::Error error, const QString &errorString);
     QPlaceReplyPrivate *d_ptr;
+
 private:
     Q_DISABLE_COPY(QPlaceReply)
 };

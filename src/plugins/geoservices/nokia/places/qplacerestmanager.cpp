@@ -202,7 +202,7 @@ QPlaceRestReply *QPlaceRestManager::sendSearchRequest(const QPlaceSearchRequest 
             + const_query + query.searchTerm());
 }
 
-QPlaceRestReply *QPlaceRestManager::postRatingRequest(const QString &placeId, const QString &userId, const int &value)
+QPlaceRestReply *QPlaceRestManager::postRatingRequest(const QString &placeId, const QString &userId, int value)
 {
     QNetworkRequest request;
 
@@ -295,8 +295,8 @@ QString QPlaceRestManager::prepareSearchRequest(const QPlaceSearchRequest &query
         searchString += const_offset + QString::number(query.offset());
     }
     // process DYM
-    if (query.didYouMeanSuggestionNumber() > 0){
-        searchString += const_dym + QString::number(query.didYouMeanSuggestionNumber());
+    if (query.maximumCorrections() > 0){
+        searchString += const_dym + QString::number(query.maximumCorrections());
     }
 
 #if defined(QPLACES_LOGGING)

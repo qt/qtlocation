@@ -58,13 +58,10 @@ public:
 
     bool operator==(const QPlaceSearchResultPrivate &other) const;
 
-    qreal relevance;
     qreal distance;
-    qreal heading;
-    QVariantHash additionalData;
     QPlaceSearchResult::SearchResultType type;
     QPlace place;
-    QString dymString;
+    QString correction;
 };
 
 QT_END_NAMESPACE

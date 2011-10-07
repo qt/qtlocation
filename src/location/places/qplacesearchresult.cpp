@@ -45,24 +45,17 @@
 QT_USE_NAMESPACE
 
 QPlaceSearchResultPrivate::QPlaceSearchResultPrivate()
-    : QSharedData(),
-      relevance(0),
-      distance(0),
-      heading(0),
-      type(QPlaceSearchResult::UnknownSearchResult)
+:   QSharedData(), distance(0), type(QPlaceSearchResult::UnknownSearchResult)
 {
 }
 
 QPlaceSearchResultPrivate::QPlaceSearchResultPrivate(const QPlaceSearchResultPrivate &other)
     : QSharedData()
 {
-    this->additionalData = other.additionalData;
-    this->relevance = other.relevance;
-    this->distance = other.distance;
-    this->heading = other.heading;
-    this->type = other.type;
-    this->place = other.place;
-    this->dymString = other.dymString;
+    distance = other.distance;
+    type = other.type;
+    place = other.place;
+    correction = other.correction;
 }
 
 QPlaceSearchResultPrivate::~QPlaceSearchResultPrivate()
@@ -71,15 +64,10 @@ QPlaceSearchResultPrivate::~QPlaceSearchResultPrivate()
 
 bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &other) const
 {
-    return (
-            this->additionalData == other.additionalData
-            && this->relevance == other.relevance
-            && this->distance == other.distance
-            && this->heading == other.heading
-            && this->type == other.type
-            && this->place == other.place
-            && this->dymString == other.dymString
-    );
+    return distance == other.distance &&
+           type == other.type &&
+           place == other.place &&
+           correction == other.correction;
 }
 
 /*!
@@ -129,22 +117,6 @@ bool QPlaceSearchResult::operator==(const QPlaceSearchResult &other) const
 }
 
 /*!
-    Returns relevance.
-*/
-qreal QPlaceSearchResult::relevance() const
-{
-    return d->relevance;
-}
-
-/*!
-    Sets the \a relevance.
-*/
-void QPlaceSearchResult::setRelevance(const qreal &relevance)
-{
-    d->relevance = relevance;
-}
-
-/*!
     Returns the distance.
 */
 qreal QPlaceSearchResult::distance() const
@@ -155,41 +127,9 @@ qreal QPlaceSearchResult::distance() const
 /*!
     Sets the \a distance.
 */
-void QPlaceSearchResult::setDistance(const qreal &distance)
+void QPlaceSearchResult::setDistance(qreal distance)
 {
     d->distance = distance;
-}
-
-/*!
-    Returns heading.
-*/
-qreal QPlaceSearchResult::heading() const
-{
-    return d->heading;
-}
-
-/*!
-    Sets the \a heading.
-*/
-void QPlaceSearchResult::setHeading(const qreal &heading)
-{
-    d->heading = heading;
-}
-
-/*!
-    Returns additional data.
-*/
-QVariantHash QPlaceSearchResult::additionalData() const
-{
-    return d->additionalData;
-}
-
-/*!
-    Sets additional \a data.
-*/
-void QPlaceSearchResult::setAdditionalData(const QVariantHash &data)
-{
-    d->additionalData = data;
 }
 
 /*!
@@ -203,7 +143,7 @@ QPlaceSearchResult::SearchResultType QPlaceSearchResult::type() const
 /*!
     Sets the \a place.
 */
-void QPlaceSearchResult::setType(const QPlaceSearchResult::SearchResultType &type)
+void QPlaceSearchResult::setType(QPlaceSearchResult::SearchResultType type)
 {
     d->type = type;
 }
@@ -225,17 +165,17 @@ void QPlaceSearchResult::setPlace(const QPlace &place)
 }
 
 /*!
-    Returns the "did you mean" string.
+    Returns the suggested search term correction.
 */
-QString QPlaceSearchResult::didYouMeanSuggestion() const
+QString QPlaceSearchResult::correction() const
 {
-    return d->dymString;
+    return d->correction;
 }
 
 /*!
     Sets the "did you mean" \a string.
 */
-void QPlaceSearchResult::setDidYouMeanSuggestion(const QString &dymString)
+void QPlaceSearchResult::setCorrection(const QString &correction)
 {
-    d->dymString = dymString;
+    d->correction = correction;
 }

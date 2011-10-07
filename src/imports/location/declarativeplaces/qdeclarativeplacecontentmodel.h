@@ -84,7 +84,10 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
         SupplierRole = Qt::UserRole,
-        UserRole
+        SourceUrlRole,
+        UserIdRole,
+        UserNameRole,
+        UserRole //indicator for next conten type specific role
     };
 
     bool canFetchMore(const QModelIndex &parent) const;
@@ -103,7 +106,7 @@ private slots:
     void fetchFinished();
 
 protected:
-    QMap<int, QPlaceContent> m_content;
+    QPlaceContent::Collection m_content;
     QMap<QString, QDeclarativeSupplier *> m_suppliers;
 
 private:

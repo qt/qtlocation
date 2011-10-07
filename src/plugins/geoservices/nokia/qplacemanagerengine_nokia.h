@@ -70,9 +70,7 @@ public:
 
     QPlaceContentReply *getContent(const QPlace &place, const QPlaceContentRequest &request);
 
-    QPlaceReply *postRating(const QString &placeId, qreal value);
-
-    QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &query);
+    QPlaceSearchReply *search(const QPlaceSearchRequest &query);
 
     QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &query);
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &query);

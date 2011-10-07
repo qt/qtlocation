@@ -51,7 +51,7 @@ QPlaceEditorialPrivate::QPlaceEditorialPrivate()
 
 QPlaceEditorialPrivate::QPlaceEditorialPrivate(const QPlaceEditorialPrivate &other)
 :   QPlaceContentPrivate(), content(other.content), contentTitle(other.contentTitle),
-    supplier(other.supplier), sourceUrl(other.sourceUrl), language(other.language)
+    language(other.language)
 {
 }
 
@@ -136,42 +136,6 @@ void QPlaceEditorial::setTitle(const QString &data)
 {
     Q_D(QPlaceEditorial);
     d->contentTitle = data;
-}
-
-/*!
-    Returns supplier. Do not remove it.
-*/
-QPlaceSupplier QPlaceEditorial::supplier() const
-{
-    Q_D(const QPlaceEditorial);
-    return d->supplier;
-}
-
-/*!
-    Sets supplier.
-*/
-void QPlaceEditorial::setSupplier(const QPlaceSupplier &data)
-{
-    Q_D(QPlaceEditorial);
-    d->supplier = data;
-}
-
-/*!
-    Returns source url.
-*/
-QUrl QPlaceEditorial::sourceUrl() const
-{
-    Q_D(const QPlaceEditorial);
-    return d->sourceUrl;
-}
-
-/*!
-    Sets source url.
-*/
-void QPlaceEditorial::setSourceUrl(const QUrl &data)
-{
-    Q_D(QPlaceEditorial);
-    d->sourceUrl = data;
 }
 
 /*!

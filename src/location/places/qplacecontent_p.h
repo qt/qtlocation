@@ -56,8 +56,9 @@
 #include "qplacecontent.h"
 #include "qplacesupplier.h"
 
-#include <QSharedData>
-#include <QString>
+#include <QtCore/QSharedData>
+#include <QtCore/QString>
+#include <QtCore/QUrl>
 
 QT_BEGIN_NAMESPACE
 
@@ -94,6 +95,9 @@ public:
     static const QSharedDataPointer<QPlaceContentPrivate>& extract_d(const QPlaceContent& other) {return other.d_ptr;}
 
     QPlaceSupplier supplier;
+    QUrl sourceUrl;
+    QString userId;
+    QString userName;
 };
 
 #if defined(Q_CC_MWERKS)

@@ -56,7 +56,7 @@ public:
     ~QPlaceContentRequestPrivate();
 
     bool compare(const QPlaceRequestPrivate *other) const;
-    Q_DEFINE_PRIVATE_HELPER(QPlaceContentRequest, QPlaceRequest, QPlaceRequest::ContentType, request)
+    Q_DEFINE_PRIVATE_HELPER(QPlaceContentRequest, QPlaceRequest, QPlaceRequest::ContentRequest)
     void clear();
 
     QPlaceContent::Type contentType;

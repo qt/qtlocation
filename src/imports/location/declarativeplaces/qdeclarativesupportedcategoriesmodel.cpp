@@ -101,12 +101,10 @@ QT_USE_NAMESPACE
 QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent)
 :   QAbstractItemModel(parent), m_plugin(0), m_hierarchical(true), m_complete(false)
 {
-    QHash<int, QByteArray> roleNames;
-    roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(CategoryRole, "category");
-    roleNames.insert(CategoryIdRole, "categoryId");
-    roleNames.insert(NameRole, "name");
-    setRoleNames(roleNames);
+    QHash<int, QByteArray> roles = roleNames();
+    roles = QAbstractItemModel::roleNames();
+    roles.insert(CategoryRole, "category");
+    setRoleNames(roles);
 }
 
 QDeclarativeSupportedCategoriesModel::~QDeclarativeSupportedCategoriesModel()
@@ -182,12 +180,9 @@ QVariant QDeclarativeSupportedCategoriesModel::data(const QModelIndex &index, in
 
     switch (role) {
     case Qt::DisplayRole:
-    case NameRole:
         return category->name();
     case CategoryRole:
         return QVariant::fromValue(category);
-    case CategoryIdRole:
-        return category->categoryId();
     default:
         return QVariant();
     }
@@ -269,7 +264,7 @@ void QDeclarativeSupportedCategoriesModel::setHierarchical(bool hierarchical)
     m_hierarchical = hierarchical;
     emit hierarchicalChanged();
 
-    updateCategories();
+    update();
 }
 
 bool QDeclarativeSupportedCategoriesModel::hierarchical() const
@@ -288,7 +283,7 @@ void QDeclarativeSupportedCategoriesModel::replyFinished()
         m_response->deleteLater();
         m_response = 0;
 
-        updateCategories();
+        update();
         setStatus(QDeclarativeSupportedCategoriesModel::Ready);
     } else {
         m_errorString = m_response->errorString();
@@ -318,7 +313,7 @@ void QDeclarativeSupportedCategoriesModel::addedCategory(const QPlaceCategory &c
     beginInsertRows(parentIndex, rowToBeAdded, rowToBeAdded);
     PlaceCategoryNode *categoryNode = new PlaceCategoryNode;
     categoryNode->parentId = parentId;
-    categoryNode->declCategory = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(category, this));
+    categoryNode->declCategory = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(category));
     m_categoriesTree.insert(category.categoryId(), categoryNode);
     parentNode->childIds.insert(rowToBeAdded,category.categoryId());
     endInsertRows();
@@ -447,7 +442,7 @@ void QDeclarativeSupportedCategoriesModel::removeCategory(const QModelIndex &ind
     placeManager->removeCategory(node->declCategory->category().categoryId());
 }
 
-void QDeclarativeSupportedCategoriesModel::updateCategories()
+void QDeclarativeSupportedCategoriesModel::update()
 {
     if (!m_plugin)
         return;
@@ -468,8 +463,8 @@ void QDeclarativeSupportedCategoriesModel::updateCategories()
     PlaceCategoryNode *node = new PlaceCategoryNode;
     node->childIds = populateCategories(placeManager, QPlaceCategory());
     m_categoriesTree.insert(QString(), node);
-    node->declCategory = QSharedPointer<QDeclarativeCategory>
-                            (new QDeclarativeCategory(QPlaceCategory(), this));
+    node->declCategory =
+        QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(QPlaceCategory()));
     endResetModel();
 }
 
@@ -524,7 +519,7 @@ QStringList QDeclarativeSupportedCategoriesModel::populateCategories(QPlaceManag
         iter.next();
         node = new PlaceCategoryNode;
         node->parentId = parent.categoryId();
-        node->declCategory = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(iter.value(), this));
+        node->declCategory = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(iter.value()));
 
         if (m_hierarchical)
             node->childIds = populateCategories(manager, iter.value());

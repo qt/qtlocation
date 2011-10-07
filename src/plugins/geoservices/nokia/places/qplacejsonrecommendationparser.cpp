@@ -105,7 +105,7 @@ void QPlaceJSonRecommendationParser::processJSonData(const QScriptValue &sv)
 void QPlaceJSonRecommendationParser::processResultElement(const QScriptValue &value)
 {
     QPlaceSearchResult result;
-    result.setType(QPlaceSearchResult::Place);
+    result.setType(QPlaceSearchResult::PlaceResult);
 
     // Processing properties
     QScriptValue distance = value.property(recommendations_distance_element);

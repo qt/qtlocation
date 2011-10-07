@@ -57,15 +57,14 @@ class Q_LOCATION_EXPORT QPlaceRequest
 {
 public:
     enum Type {
-        DefaultType,
-        ContentType,
-        SearchType
+        Request,
+        ContentRequest,
+        SearchRequest
     };
 
     QPlaceRequest();
     QPlaceRequest(const QPlaceRequest &other);
-
-    ~QPlaceRequest();
+    virtual ~QPlaceRequest();
 
     QPlaceRequest &operator=(const QPlaceRequest &other);
 
@@ -79,7 +78,7 @@ public:
     int limit() const;
     void setLimit(int limit);
 
-    QPlaceRequest::Type requestType() const;
+    QPlaceRequest::Type type() const;
 
     void clear();
 

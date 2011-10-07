@@ -53,7 +53,6 @@
 // We mean it.
 //
 
-#include <QRectF>
 #include <QSharedData>
 #include <QUrl>
 
@@ -61,6 +60,7 @@
 #include "qgeoaddress.h"
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
+#include "qplacesupplier.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -69,18 +69,16 @@ class QPlacePrivate : public QSharedData
 public:
     QPlacePrivate();
     QPlacePrivate(const QPlacePrivate &other);
-    virtual ~QPlacePrivate();
+    ~QPlacePrivate();
 
     QPlacePrivate &operator= (const QPlacePrivate &other);
 
-    virtual bool operator== (const QPlacePrivate &other) const;
-
-    virtual QPlacePrivate *clone() const { return new QPlacePrivate(*this); }
+    bool operator==(const QPlacePrivate &other) const;
 
     QList<QPlaceCategory> categories;
     QGeoLocation location;
     QPlaceRating rating;
-    QList<QPlaceSupplier> suppliers;
+    QPlaceSupplier supplier;
     QString name;
     QString placeId;
     QString attribution;
@@ -100,19 +98,7 @@ public:
     bool detailsFetched;
 };
 
-
-#if defined(Q_CC_MWERKS)
-// This results in multiple symbol definition errors on all other compilers
-// but not having a definition here results in an attempt to use the unspecialized
-// clone (which fails because of the pure virtuals above)
-template<> QPlacePrivate *QSharedDataPointer<QPlacePrivate>::clone()
-{
-    return d->clone();
-}
-#else
-template<> QPlacePrivate *QSharedDataPointer<QPlacePrivate>::clone();
-#endif
-
 QT_END_NAMESPACE
+
 #endif
 

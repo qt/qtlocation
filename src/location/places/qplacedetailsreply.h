@@ -56,15 +56,16 @@ class Q_LOCATION_EXPORT QPlaceDetailsReply : public QPlaceReply
 {
     Q_OBJECT
 public:
-    QPlaceDetailsReply(QObject *parent =0);
+    explicit QPlaceDetailsReply(QObject *parent = 0);
     virtual ~QPlaceDetailsReply();
 
     QPlaceReply::Type type() const;
 
-    QPlace result() const;
+    QPlace place() const;
 
 protected:
-    void setResult(const QPlace &result);
+    void setPlace(const QPlace &place);
+
 private:
     Q_DISABLE_COPY(QPlaceDetailsReply)
     Q_DECLARE_PRIVATE(QPlaceDetailsReply)

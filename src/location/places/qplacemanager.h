@@ -71,20 +71,13 @@ class Q_LOCATION_EXPORT QPlaceManager : public QObject
     Q_OBJECT
 public:
     enum ManagerFeature {
-        ImportFeature,
-        ExportFeature,
-        CheckInFeature,
-        PostRatingFeature,
         SuggestionFeature,
-        ReportPlaceFeature,
         AuthenticationFeature,
-        CreatePlaceFeature,
-        UpdatePlaceFeature
-    };
-
-    enum Error {
-        NoError,
-        NotSupportedError
+        PlaceEditingFeature,
+        SavePlaceFeature,
+        SaveCategoryFeature,
+        RecommendationsFeature,
+        LocaleFeature
     };
 
     ~QPlaceManager();
@@ -93,11 +86,10 @@ public:
     int managerVersion() const;
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId) const;
-    QPlaceReply *postRating(const QString &placeId, qreal value);
 
     QPlaceContentReply *getContent(const QPlace &place, const QPlaceContentRequest &request) const;
 
-    QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &query) const;
+    QPlaceSearchReply *search(const QPlaceSearchRequest &query) const;
 
     QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &request) const;
 

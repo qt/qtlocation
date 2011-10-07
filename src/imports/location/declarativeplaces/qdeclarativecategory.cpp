@@ -78,7 +78,7 @@ void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
     }
 }
 
-QPlaceCategory QDeclarativeCategory::category()
+QPlaceCategory QDeclarativeCategory::category() const
 {
     return m_category;
 }

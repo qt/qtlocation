@@ -62,7 +62,6 @@ public:
     enum Roles {
         ContentRole = UserRole,
         TitleRole,
-        UrlRole,
         LanguageRole
     };
 };

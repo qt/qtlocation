@@ -89,16 +89,6 @@ public:
     QString street() const;
     void setStreet(const QString &street);
 
-//    QString streetNumber() const;
-//    void setStreetNumber(QString &streetNumber);
-
-//  TODO:
-//    QString floor() const;
-//    void setFloor(const QString &floor);
-
-//    QString suite() const;
-//    void setSuite(const QString &suite);
-
     bool isEmpty() const;
     void clear();
 

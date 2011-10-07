@@ -77,7 +77,7 @@ public:
     QPlaceRestReply *sendSearchRequest(const QPlaceSearchRequest &query);
     QPlaceRestReply *sendSuggestionRequest(const QPlaceSearchRequest &query);
 
-    QPlaceRestReply *postRatingRequest(const QString &placeId, const QString &userId, const int &value);
+    QPlaceRestReply *postRatingRequest(const QString &placeId, const QString &userId, int value);
     QLocale locale() const;
     void setLocale(const QLocale &locale);
 

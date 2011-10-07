@@ -58,8 +58,7 @@ class Q_LOCATION_EXPORT QPlaceSupplier
 public:
     QPlaceSupplier();
     QPlaceSupplier(const QPlaceSupplier &other);
-
-    virtual ~QPlaceSupplier();
+    ~QPlaceSupplier();
 
     QPlaceSupplier &operator=(const QPlaceSupplier &other);
 

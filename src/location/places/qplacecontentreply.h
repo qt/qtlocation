@@ -56,7 +56,7 @@ class Q_LOCATION_EXPORT QPlaceContentReply : public QPlaceReply
 {
     Q_OBJECT
 public:
-    QPlaceContentReply(QObject *parent =0);
+    explicit QPlaceContentReply(QObject *parent = 0);
     virtual ~QPlaceContentReply();
 
     QPlaceReply::Type type() const;

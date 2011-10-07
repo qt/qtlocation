@@ -128,7 +128,7 @@ public:
             reply->setError(QPlaceReply::PlaceDoesNotExistError, tr("Place does not exist"));
             QMetaObject::invokeMethod(reply, "emitError", Qt::QueuedConnection);
         } else {
-            reply->setResult(m_places.value(placeId));
+            reply->setPlace(m_places.value(placeId));
         }
 
         QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
@@ -144,15 +144,7 @@ public:
         return 0;
     }
 
-    QPlaceReply *postRating(const QString &placeId, qreal value)
-    {
-        Q_UNUSED(placeId)
-        Q_UNUSED(value)
-
-        return 0;
-    }
-
-    QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &query)
+    QPlaceSearchReply *search(const QPlaceSearchRequest &query)
     {
         Q_UNUSED(query)
 

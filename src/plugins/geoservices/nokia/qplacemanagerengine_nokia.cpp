@@ -165,24 +165,8 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
 
     return reply;
 }
-QPlaceReply *QPlaceManagerEngineNokia::postRating(const QString &placeId, qreal value)
-{
-    QPlaceRatingReplyImpl *reply = NULL;
-    //TODO: need to post user name
-    QPlaceRestReply *restReply = QPlaceRestManager::instance()->postRatingRequest(placeId,
-                                                                                  QString(),
-                                                                                  value);
-    if (restReply) {
-        reply = new QPlaceRatingReplyImpl(restReply, this);
-        connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
-                this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
-        connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
-                this, SLOT(processingFinished(QPlaceReply*)));
-    }
-    return reply;
-}
 
-QPlaceSearchReply *QPlaceManagerEngineNokia::searchForPlaces(const QPlaceSearchRequest &query)
+QPlaceSearchReply *QPlaceManagerEngineNokia::search(const QPlaceSearchRequest &query)
 {
     //TODO: handling of scope
     QPlaceSearchReplyImpl *reply = NULL;

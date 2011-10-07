@@ -49,19 +49,19 @@ QT_BEGIN_NAMESPACE
 class QPlaceRequestPrivate : public QSharedData
 {
 public:
-    QPlaceRequestPrivate();
+    QPlaceRequestPrivate(QPlaceRequest::Type type);
     QPlaceRequestPrivate(const QPlaceRequestPrivate &other);
     virtual ~QPlaceRequestPrivate();
 
     virtual bool compare(const QPlaceRequestPrivate *other) const;
     virtual QPlaceRequestPrivate *clone() const;
-    virtual QPlaceRequest::Type type() const { return QPlaceRequest::ContentType; }
     virtual void clear();
 
     /* Helper functions for C++ protection rules */
     static const QSharedDataPointer<QPlaceRequestPrivate>& extract_d(const QPlaceRequest& other) {return other.d_ptr;}
     int offset;
     int limit;
+    QPlaceRequest::Type requestType;
 };
 
 #if defined(Q_CC_MWERKS)

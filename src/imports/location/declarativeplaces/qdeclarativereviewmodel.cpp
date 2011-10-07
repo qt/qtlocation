@@ -42,6 +42,7 @@
 #include "qdeclarativereviewmodel_p.h"
 #include "qdeclarativesupplier_p.h"
 
+#include <QtCore/QDateTime>
 #include <QtLocation/QPlaceReview>
 
 QT_BEGIN_NAMESPACE
@@ -140,21 +141,14 @@ QT_BEGIN_NAMESPACE
 QDeclarativeReviewModel::QDeclarativeReviewModel(QObject* parent)
 :   QDeclarativePlaceContentModel(QPlaceContent::ReviewType, parent)
 {
-    QHash<int, QByteArray> roleNames;
-    roleNames.insert(DateRole, "date");
-    roleNames.insert(DescriptionRole, "description");
-    roleNames.insert(LanguageRole, "language");
-    roleNames.insert(HelpfulVotingsRole, "helpfulVotings");
-    roleNames.insert(UnhelpfulVotingsRole, "unhelpfulVotings");
-    roleNames.insert(RatingRole, "rating");
-    roleNames.insert(MediaIdsRole, "mediaIds");
-    roleNames.insert(ReviewIdRole, "reviewId");
-    roleNames.insert(SupplierRole, "supplier");
-    roleNames.insert(TitleRole, "title");
-    roleNames.insert(UserIdRole, "userId");
-    roleNames.insert(UserNameRole, "userName");
-    roleNames.insert(OriginatorUrlRole, "originatorUrl");
-    setRoleNames(roleNames);
+    QHash<int, QByteArray> roles = roleNames();
+    roles.insert(DateTimeRole, "dateTime");
+    roles.insert(ContentRole, "content");
+    roles.insert(LanguageRole, "language");
+    roles.insert(RatingRole, "rating");
+    roles.insert(ReviewIdRole, "reviewId");
+    roles.insert(TitleRole, "title");
+    setRoleNames(roles);
 }
 
 QDeclarativeReviewModel::~QDeclarativeReviewModel()
@@ -173,30 +167,18 @@ QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
     const QPlaceReview &review = m_content.value(index.row());
 
     switch (role) {
-    case DateRole:
-        return review.date();
-    case DescriptionRole:
-        return review.description();
+    case DateTimeRole:
+        return review.dateTime();
+    case ContentRole:
+        return review.content();
     case LanguageRole:
         return review.language();
-    case HelpfulVotingsRole:
-        return review.helpfulVotings();
-    case UnhelpfulVotingsRole:
-        return review.unhelpfulVotings();
     case RatingRole:
         return review.rating();
-    case MediaIdsRole:
-        return review.mediaIds();
     case ReviewIdRole:
         return review.reviewId();
     case TitleRole:
         return review.title();
-    case UserIdRole:
-        return review.userId();
-    case UserNameRole:
-        return review.userName();
-    case OriginatorUrlRole:
-        return review.originatorUrl();
     }
 
     return QDeclarativePlaceContentModel::data(index, role);

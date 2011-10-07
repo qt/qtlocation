@@ -43,7 +43,7 @@
 #define QPLACEREVIEW_P_H
 
 #include <QtCore/QUrl>
-#include <QtCore/QSharedData>
+#include <QtCore/QDateTime>
 
 #include "qplacecontent_p.h"
 
@@ -61,18 +61,12 @@ public:
 
     Q_DEFINE_CONTENT_PRIVATE_HELPER(QPlaceReview, QPlaceContent::ReviewType);
 
-    QString date;
-    QString description;
+    QDateTime dateTime;
+    QString content;
     QString language;
-    int helpfulVotings;
-    QStringList mediaIds;
-    int unhelpfulVotings;
     qreal rating;
     QString reviewId;
     QString title;
-    QString userId;
-    QString userName;
-    QUrl originatorUrl;
 };
 
 QT_END_NAMESPACE

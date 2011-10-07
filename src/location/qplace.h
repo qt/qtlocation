@@ -84,17 +84,18 @@ public:
     void setLocation(const QGeoLocation &location);
     QPlaceRating rating() const;
     void setRating(const QPlaceRating &rating);
-    QList<QPlaceSupplier> suppliers() const;
-    void setSuppliers(const QList<QPlaceSupplier> &data);
+    QPlaceSupplier supplier() const;
+    void setSupplier(const QPlaceSupplier &supplier);
 
     QString attribution() const;
     void setAttribution(const QString &attribution);
 
     QPlaceContent::Collection content(QPlaceContent::Type type) const;
     void setContent(QPlaceContent::Type type, const QPlaceContent::Collection &content);
-    void addContent(QPlaceContent::Type type, const QPlaceContent::Collection &content);
-    int contentCount(QPlaceContent::Type type) const;
-    void setContentCount(QPlaceContent::Type type, int);
+    void insertContent(QPlaceContent::Type type, const QPlaceContent::Collection &content);
+
+    int totalContentCount(QPlaceContent::Type type) const;
+    void setTotalContentCount(QPlaceContent::Type type, int total);
 
     QString name() const;
     void setName(const QString &name);
@@ -123,12 +124,11 @@ public:
     QtLocation::Visibility visibility() const;
     void setVisibility(QtLocation::Visibility visibility);
 
-protected:
+private:
     QSharedDataPointer<QPlacePrivate> d_ptr;
 
-private:
-    QPlacePrivate* d_func();
-    const QPlacePrivate* d_func() const;
+    inline QPlacePrivate *d_func();
+    inline const QPlacePrivate *d_func() const;
 };
 
 QT_END_NAMESPACE

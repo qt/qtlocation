@@ -54,6 +54,7 @@ class QDeclarativeRating : public QObject
     Q_OBJECT
 
     Q_PROPERTY(qreal value READ value WRITE setValue NOTIFY valueChanged)
+    Q_PROPERTY(qreal maximum READ maximum WRITE setMaximum NOTIFY maximumChanged)
     Q_PROPERTY(int count READ count WRITE setCount NOTIFY countChanged)
 
 public:
@@ -65,12 +66,17 @@ public:
     void setRating(const QPlaceRating &src);
 
     qreal value() const;
-    void setValue(const qreal &data);
+    void setValue(qreal value);
+
+    qreal maximum() const;
+    void setMaximum(qreal max);
+
     int count() const;
-    void setCount(const int &data);
+    void setCount(int count);
 
 signals:
     void valueChanged();
+    void maximumChanged();
     void countChanged();
 
 private:

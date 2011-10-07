@@ -63,8 +63,6 @@ public:
 
     QString content;
     QString contentTitle;
-    QPlaceSupplier supplier;
-    QUrl sourceUrl;
     QString language;
 };
 

@@ -57,9 +57,7 @@ private Q_SLOTS:
     void constructorTest();
     void supplierTest();
     void urlTest();
-    void thumbnailUrlTest();
     void idTest();
-    void metaInfoTest();
     void mimeTypeTest();
     void operatorsTest();
 };
@@ -71,7 +69,7 @@ tst_QPlaceImage::tst_QPlaceImage()
 void tst_QPlaceImage::constructorTest()
 {
     QPlaceImage testObj;
-    testObj.setId("testId");
+    testObj.setImageId("testId");
     QPlaceImage *testObjPtr = new QPlaceImage(testObj);
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
@@ -94,35 +92,17 @@ void tst_QPlaceImage::urlTest()
     QUrl imageUrl("testText");
 
     QPlaceImage testObj;
-    QVERIFY2(testObj.url() == QString(), "Wrong default value");
-    testObj.setUrl(imageUrl);
-    QVERIFY2(testObj.url() == imageUrl, "Wrong value returned");
-}
-
-void tst_QPlaceImage::thumbnailUrlTest()
-{
-    QUrl thumbnailUrl("testText");
-
-    QPlaceImage testObj;
-    QVERIFY2(testObj.thumbnailUrl() == QString(), "Wrong default value");
-    testObj.setThumbnailUrl(thumbnailUrl);
-    QVERIFY2(testObj.thumbnailUrl() == thumbnailUrl, "Wrong value returned");
+    QVERIFY2(testObj.sourceUrl() == QString(), "Wrong default value");
+    testObj.setSourceUrl(imageUrl);
+    QVERIFY2(testObj.sourceUrl() == imageUrl, "Wrong value returned");
 }
 
 void tst_QPlaceImage::idTest()
 {
     QPlaceImage testObj;
-    QVERIFY2(testObj.id() == QString(), "Wrong default value");
-    testObj.setId("testText");
-    QVERIFY2(testObj.id() == "testText", "Wrong value returned");
-}
-
-void tst_QPlaceImage::metaInfoTest()
-{
-    QPlaceImage testObj;
-    QVERIFY2(testObj.metaInfo() == QString(), "Wrong default value");
-    testObj.setMetaInfo("testText");
-    QVERIFY2(testObj.metaInfo() == "testText", "Wrong value returned");
+    QVERIFY2(testObj.imageId() == QString(), "Wrong default value");
+    testObj.setImageId("testText");
+    QVERIFY2(testObj.imageId() == "testText", "Wrong value returned");
 }
 
 void tst_QPlaceImage::mimeTypeTest()
@@ -140,7 +120,7 @@ void tst_QPlaceImage::operatorsTest()
     QPlaceImage testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
-    testObj2.setId("testValue2");
+    testObj2.setImageId("testValue2");
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 

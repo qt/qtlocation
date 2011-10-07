@@ -97,7 +97,7 @@ QPlaceImage QPlaceJSonMediaParser::buildMediaObject(const QScriptValue &media)
     QScriptValue value = media.property(media_url);
     if (value.isValid() && !value.toString().isEmpty()) {
         newMedia.setUrl(QUrl::fromEncoded(value.toString().toAscii()));
-        newMedia.setId(value.toString());
+        newMedia.setImageId(value.toString());
     }
 
     QString name, id, icon;

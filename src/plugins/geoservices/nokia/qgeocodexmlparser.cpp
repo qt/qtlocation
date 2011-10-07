@@ -311,7 +311,7 @@ bool QGeoCodeXmlParser::parseLocation(QGeoLocation *location)
             if (!parseBoundingBox(&bounds))
                 return false;
 
-            location->setViewport(bounds);
+            location->setBoundingBox(bounds);
 
             parsedBounds = true;
         } else {
