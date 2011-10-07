@@ -90,10 +90,13 @@ class QLocationDeclarativeModule: public QDeclarativeExtensionPlugin
 public:
     virtual void registerTypes(const char* uri) {
         if (QLatin1String(uri) == QLatin1String("QtMobility.location")) {
-            qWarning("QtMobility.location is not supported. Use Qt.location instead.");
+            qWarning("QtMobility.location is not supported. Use QtLocation instead.");
         } else if (QLatin1String(uri) == QLatin1String("Qt.location")) {
-            // This version numbering is not correct. It is just something to get going
-            // until the proper versioning scheme of QML plugins in Qt5 is agreed upon.
+            qWarning("Qt.location is not supported. Use QtLocation instead.");
+        } else if (QLatin1String(uri) == QLatin1String("QtLocation")) {
+
+            // @uri QtLocation 5.0
+
             qmlRegisterType<QDeclarativePosition>(uri, 5, 0, "Position");
             qmlRegisterType<QDeclarativePositionSource>(uri, 5, 0, "PositionSource");
             qmlRegisterType<QDeclarativeCoordinate>(uri, 5, 0, "Coordinate");

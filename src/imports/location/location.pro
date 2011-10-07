@@ -1,8 +1,5 @@
 TARGET  = declarative_location
-TARGETPATH = Qt/location
-
-# Compatibility demands old path too.
-#TARGETPATH = QtMobility/location
+TARGETPATH = QtLocation
 
 include(qlocationimport.pri)
 

@@ -41,7 +41,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import Qt.location 5.0
+import QtLocation 5.0
 
 TestCase {
     id: testCase
@@ -324,8 +324,8 @@ TestCase {
 
     function test_categories() {
         var categories = new Array(2);
-        categories[0] = Qt.createQmlObject('import Qt.location 5.0; Category { categoryId: "cat-id-1"; name: "Category 1" }', testCase, "Category1");
-        categories[1] = Qt.createQmlObject('import Qt.location 5.0; Category { categoryId: "cat-id-2"; name: "Category 2" }', testCase, "Category2");
+        categories[0] = Qt.createQmlObject('import QtLocation 5.0; Category { categoryId: "cat-id-1"; name: "Category 1" }', testCase, "Category1");
+        categories[1] = Qt.createQmlObject('import QtLocation 5.0; Category { categoryId: "cat-id-2"; name: "Category 2" }', testCase, "Category2");
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = testPlace;
@@ -363,8 +363,8 @@ TestCase {
 
     function test_suppliers() {
         var suppliers = new Array(2);
-        suppliers[0] = Qt.createQmlObject('import Qt.location 5.0; Supplier { supplierId: "sup-id-1"; name: "Category 1" }', testCase, "Supplier1");
-        suppliers[1] = Qt.createQmlObject('import Qt.location 5.0; Supplier { supplierId: "sup-id-2"; name: "Category 2" }', testCase, "Supplier2");
+        suppliers[0] = Qt.createQmlObject('import QtLocation 5.0; Supplier { supplierId: "sup-id-1"; name: "Category 1" }', testCase, "Supplier1");
+        suppliers[1] = Qt.createQmlObject('import QtLocation 5.0; Supplier { supplierId: "sup-id-2"; name: "Category 2" }', testCase, "Supplier2");
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = testPlace;
@@ -401,7 +401,7 @@ TestCase {
     }
 
     function test_location() {
-        var location = Qt.createQmlObject('import Qt.location 5.0; Location { locationId: "loc-id-1" }', testCase, "Location1");
+        var location = Qt.createQmlObject('import QtLocation 5.0; Location { locationId: "loc-id-1" }', testCase, "Location1");
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = testPlace;
@@ -424,7 +424,7 @@ TestCase {
     }
 
     function test_rating() {
-        var rating = Qt.createQmlObject('import Qt.location 5.0; Rating { value: 3; count: 100 }', testCase, "Rating1");
+        var rating = Qt.createQmlObject('import QtLocation 5.0; Rating { value: 3; count: 100 }', testCase, "Rating1");
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = testPlace;
@@ -455,13 +455,13 @@ TestCase {
 
         verify(testPlace.extendedAttributes);
 
-        testPlace.extendedAttributes["foo"] = Qt.createQmlObject('import Qt.location 5.0; PlaceAttribute { text: "Foo"; label: "Foo label" }', testCase, 'PlaceAttribute');
+        testPlace.extendedAttributes["foo"] = Qt.createQmlObject('import QtLocation 5.0; PlaceAttribute { text: "Foo"; label: "Foo label" }', testCase, 'PlaceAttribute');
 
         verify(testPlace.extendedAttributes.foo);
         compare(testPlace.extendedAttributes.foo.text, "Foo");
         compare(testPlace.extendedAttributes.foo.label, "Foo label");
 
-        testPlace.extendedAttributes = Qt.createQmlObject('import Qt.location 5.0; ExtendedAttributes { }', testPlace, 'ExtendedAttributes1');
+        testPlace.extendedAttributes = Qt.createQmlObject('import QtLocation 5.0; ExtendedAttributes { }', testPlace, 'ExtendedAttributes1');
 
         compare(signalSpy.count, 1);
         verify(testPlace.extendedAttributes);
@@ -508,7 +508,7 @@ TestCase {
 
 
         // Read a place
-        var readPlace = Qt.createQmlObject('import Qt.location 5.0; Place { }', testCase, "test_saveload");
+        var readPlace = Qt.createQmlObject('import QtLocation 5.0; Place { }', testCase, "test_saveload");
 
         signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = readPlace;
@@ -554,7 +554,7 @@ TestCase {
 
 
         // Remove a place
-        var removePlace = Qt.createQmlObject('import Qt.location 5.0; Place { }', testCase, "test_saveload");
+        var removePlace = Qt.createQmlObject('import QtLocation 5.0; Place { }', testCase, "test_saveload");
 
         signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = removePlace;

@@ -102,7 +102,7 @@ QT_USE_NAMESPACE
     within a 5km radius:
 
     \code
-    import Qt.location 5.0
+    import QtLocation 5.0
 
     Place {
         id: place

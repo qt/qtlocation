@@ -41,8 +41,8 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import Qt.location 5.0
-import Qt.location.test 5.0
+import QtLocation 5.0
+import QtLocation.test 5.0
 
 Item {
     id: masterItem
@@ -162,7 +162,7 @@ Item {
             mapWithPlugin.removeMapObject(internalCircle)
             compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
             // Basic adding and removing of dynamic object
-            var dynamicCircle = Qt.createQmlObject( "import QtQuick 2.0; import Qt.location 5.0; MapCircle {radius: 4000; center: mapDefaultCenter}", mapWithPlugin, "");
+            var dynamicCircle = Qt.createQmlObject( "import QtQuick 2.0; import QtLocation 5.0; MapCircle {radius: 4000; center: mapDefaultCenter}", mapWithPlugin, "");
             mapWithPlugin.addMapObject(dynamicCircle)
             compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 8)
             mapWithPlugin.removeMapObject(dynamicCircle)
@@ -298,15 +298,15 @@ Item {
         }
         function test_e_map_objects_on_delete() {
             // Test that dynamic map & map object creation works
-            var dynamicMap = Qt.createQmlObject("import QtQuick 2.0; import Qt.location 5.0; Map {plugin: testPlugin;}", masterItem, "");
-            var dynamicCircle = Qt.createQmlObject("import QtQuick 2.0; import Qt.location 5.0; MapCircle {}", masterItem, "");
+            var dynamicMap = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; Map {plugin: testPlugin;}", masterItem, "");
+            var dynamicCircle = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; MapCircle {}", masterItem, "");
             compare (dynamicMap.objects.length, 0)
             dynamicMap.addMapObject(dynamicCircle)
             compare (dynamicMap.objects.length, 1)
             dynamicCircle.destroy(2); wait(100) // circle should remove itself from the map
             compare (dynamicMap.objects.length, 0)
 
-            var dynamicRectangle = Qt.createQmlObject("import QtQuick 2.0; import Qt.location 5.0; MapRectangle {}", masterItem, "");
+            var dynamicRectangle = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; MapRectangle {}", masterItem, "");
             dynamicMap.addMapObject(dynamicRectangle)
             dynamicMap.destroy(2); wait(100) // must act gracefully although has objects when destroyed
         }

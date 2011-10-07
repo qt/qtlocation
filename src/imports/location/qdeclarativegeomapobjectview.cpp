@@ -63,7 +63,7 @@ QT_BEGIN_NAMESPACE
     The MapObjectView element only makes sense when contained in a Map object,
     meaning that it has no standalone presentation.
 
-    The MapObjectView element is part of the \bold{Qt.Location 5.0} module.
+    The MapObjectView element is part of the \bold{QtLocation 5.0} module.
 */
 
 QDeclarativeGeoMapObjectView::QDeclarativeGeoMapObjectView(QSGItem *parent)

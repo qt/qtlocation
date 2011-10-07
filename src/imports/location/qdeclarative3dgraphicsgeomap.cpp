@@ -104,7 +104,7 @@ QT_BEGIN_NAMESPACE
     Mouse handling is done by adding MapMouseArea items as children of either
     MapObjects or the Map item itself.
 
-    The Map element is part of the \bold{Qt.location 5.0} module.
+    The Map element is part of the \bold{QtLocation 5.0} module.
 */
 
 QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGItem *parent)

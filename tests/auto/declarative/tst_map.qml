@@ -41,7 +41,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import Qt.location 5.0
+import QtLocation 5.0
 
 Item {
     // General-purpose elements for the test:

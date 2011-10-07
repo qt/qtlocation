@@ -39,8 +39,8 @@
 ****************************************************************************/
 
 import QtQuick 2.0
-import Qt.location 5.0
-import Qt.location.test 5.0
+import QtLocation 5.0
+import QtLocation.test 5.0
 import "common" as Common
 
 Item {

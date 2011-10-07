@@ -1,5 +1,5 @@
 TARGET  = declarative_location_test
-TARGETPATH = Qt/location/test
+TARGETPATH = QtLocation/test
 
 include(../../../src/imports/location/qlocationimport.pri)
 
@@ -10,10 +10,6 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INCLUDEPATH += ../../../src/imports/location
 INCLUDEPATH += ../../../src/location
-
-# On some platforms, build both versions because debug and release
-# versions are incompatible
-#win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release
 
 HEADERS += qdeclarativepinchgenerator_p.h \
            qdeclarativelocationtestmodel_p.h \

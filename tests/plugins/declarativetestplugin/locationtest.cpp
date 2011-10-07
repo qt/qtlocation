@@ -54,7 +54,7 @@ class QLocationDeclarativeTestModule: public QDeclarativeExtensionPlugin
 public:
     virtual void registerTypes(const char* uri) {
         qDebug() << "registerTypes in new test plugin: " << uri;
-        if (QLatin1String(uri) == QLatin1String("Qt.location.test")) {
+        if (QLatin1String(uri) == QLatin1String("QtLocation.test")) {
             // This version numbering is not correct. It is just something to get going
             // until the proper versioning scheme of QML plugins in Qt5 is agreed upon.
             qmlRegisterType<QDeclarativePinchGenerator>(uri, 5, 0, "PinchGenerator");

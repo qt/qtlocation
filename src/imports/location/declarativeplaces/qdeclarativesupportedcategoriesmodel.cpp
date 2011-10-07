@@ -63,7 +63,7 @@ QT_USE_NAMESPACE
     To use SupportedCategoryModel user need to create it in qml file and connect it to some view
     \code
     import QtQuick 2.0
-    import Qt.location 5.0
+    import QtLocation 5.0
 
     SupportedCategoriesModel {
         id: categoriesModel
