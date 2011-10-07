@@ -52,18 +52,21 @@
 QT_BEGIN_NAMESPACE
 
 class QDeclarativePlaceIcon;
+class QPlaceReply;
+class QPlaceManager;
 
 class QDeclarativeCategory : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
-    Q_ENUMS(Visibility)
+    Q_ENUMS(Status Visibility)
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QString categoryId READ categoryId WRITE setCategoryId NOTIFY categoryIdChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
     Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -78,6 +81,7 @@ public:
         PrivateVisibility = QtLocation::PrivateVisibility,
         PublicVisibility = QtLocation::PublicVisibility
     };
+    enum Status {Ready, Saving, Removing, Error};
 
     //From QDeclarativeParserStatus
     virtual void classBegin() {}
@@ -100,18 +104,35 @@ public:
     QDeclarativePlaceIcon *icon() const;
     void setIcon(QDeclarativePlaceIcon *icon);
 
+    Q_INVOKABLE QString errorString() const;
+
+    Status status() const;
+    void setStatus(Status status);
+
+    Q_INVOKABLE void save(const QString &parentId = QString());
+    Q_INVOKABLE void remove();
+
 signals:
     void pluginChanged();
     void categoryIdChanged();
     void nameChanged();
     void visibilityChanged();
     void iconChanged();
+    void statusChanged();
+
+private slots:
+    void replyFinished();
 
 private:
+    QPlaceManager *manager();
+
     QPlaceCategory m_category;
     QDeclarativePlaceIcon *m_icon;
     QDeclarativeGeoServiceProvider *m_plugin;
+    QPlaceReply *m_reply;
     bool m_complete;
+    Status m_status;
+    QString m_errorString;
 };
 
 QT_END_NAMESPACE

@@ -45,6 +45,7 @@
 
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QPlaceManager>
 
 QT_USE_NAMESPACE
 
@@ -59,7 +60,7 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeCategory::QDeclarativeCategory(QObject* parent)
-    : QObject(parent), m_icon(0)
+    : QObject(parent), m_icon(0), m_reply(0)
 {
 }
 
@@ -68,7 +69,7 @@ QDeclarativeCategory::QDeclarativeCategory(const QPlaceCategory &category,
                                            QObject *parent)
         : QObject(parent),
           m_category(category),
-          m_icon(0), m_plugin(plugin)
+          m_icon(0), m_plugin(plugin), m_reply(0)
 {
     Q_ASSERT(plugin);
     if (!category.icon().isEmpty())
@@ -222,4 +223,154 @@ void QDeclarativeCategory::setIcon(QDeclarativePlaceIcon *icon)
 
     m_icon = icon;
     emit iconChanged();
+}
+
+/*!
+    \qmlmethod string Category::errorString()
+
+    Returns a string description of the error of the last operation.
+    If the last operation completed successfully then the string is empty.
+*/
+QString QDeclarativeCategory::errorString() const
+{
+    return m_errorString;
+}
+
+/*!
+    \qmlproperty enumeration Category::status
+
+    This property holds the status of the category.  It can be one of:
+    \list
+    \o Category.Ready - No Error occurred during the last operation,
+                     further operations may be performed on the category.
+    \o Category.Saving - The category is currently being saved, no other operations
+                      may be perfomed until complete.
+    \o Category.Removing - The category is currently being removed, no other
+                        operations can be performed until complete.
+    \o Category.Error - An error occurred during the last operation,
+                     further operations can still be performed on the category.
+    \endlist
+*/
+void QDeclarativeCategory::setStatus(Status status)
+{
+    if (m_status != status) {
+        m_status = status;
+        emit statusChanged();
+    }
+}
+
+QDeclarativeCategory::Status QDeclarativeCategory::status() const
+{
+    return m_status;
+}
+
+/*!
+    \qmlmethod void Category::savePlace()
+
+    This method performs a remove operation on the category.
+*/
+void QDeclarativeCategory::save(const QString &parentId)
+{
+    QPlaceManager *placeManager = manager();
+    if (!placeManager)
+        return;
+
+    m_reply = placeManager->saveCategory(category(), parentId);
+    connect(m_reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    setStatus(QDeclarativeCategory::Saving);
+}
+
+/*!
+    \qmlmethod void Category::removePlace()
+
+    This method performs a remove operation on the category.
+*/
+void QDeclarativeCategory::remove()
+{
+    QPlaceManager *placeManager = manager();
+    if (!placeManager)
+        return;
+
+    m_reply = placeManager->removeCategory(m_category.categoryId());
+    connect(m_reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    setStatus(QDeclarativeCategory::Removing);
+}
+
+void QDeclarativeCategory::replyFinished()
+{
+    if (!m_reply)
+        return;
+
+    if (m_reply->error() == QPlaceReply::NoError) {
+        switch (m_reply->type()) {
+        case (QPlaceReply::IdReply) : {
+            QPlaceIdReply *idReply = qobject_cast<QPlaceIdReply *>(m_reply);
+
+            switch (idReply->operationType()) {
+            case QPlaceIdReply::SaveCategory:
+                setCategoryId(idReply->id());
+                break;
+            case QPlaceIdReply::RemoveCategory:
+                setCategoryId(QString());
+                break;
+            default:
+                //Other operation types shouldn't ever be received.
+                break;
+            }
+            break;
+        }
+        default:
+            //other types of replies shouldn't ever be received.
+            break;
+        }
+
+        m_errorString.clear();
+
+        m_reply->deleteLater();
+        m_reply = 0;
+
+        setStatus(QDeclarativeCategory::Ready);
+    } else {
+        m_errorString = m_reply->errorString();
+
+        m_reply->deleteLater();
+        m_reply = 0;
+
+        setStatus(QDeclarativeCategory::Error);
+    }
+}
+
+/*
+    Helper function to return the manager, this manager is intended to be used
+    to perform the next operation.
+*/
+QPlaceManager *QDeclarativeCategory::manager()
+{
+    if (m_status != QDeclarativeCategory::Ready && m_status != QDeclarativeCategory::Error)
+        return 0;
+
+
+    if (m_reply) {
+        m_reply->abort();
+        m_reply->deleteLater();
+        m_reply = 0;
+    }
+
+    if (!m_plugin) {
+           qmlInfo(this) << tr("Plugin not assigned to category");
+           return 0;
+    }
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return 0;
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+
+    if (!placeManager) {
+        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        return 0;
+    }
+
+    return placeManager;
 }

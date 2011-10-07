@@ -403,57 +403,6 @@ void QDeclarativeSupportedCategoriesModel::removedCategory(const QString &catego
     endRemoveRows();
 }
 
-void QDeclarativeSupportedCategoriesModel::saveCategory(const QVariantMap &categoryMap,
-                                                        const QString &parentId)
-{
-    QPlaceManager *placeManager = manager();
-    if (!placeManager)
-        return;
-
-    QPlaceCategory category;
-    if (categoryMap.contains(QLatin1String("categoryId"))
-            && m_categoriesTree.contains(categoryMap.value(QLatin1String("categoryId")).toString())) {
-        category = m_categoriesTree.value(categoryMap.value(QLatin1String("categoryId")).toString())->declCategory->category();
-    }
-
-    if (categoryMap.contains(QLatin1String("name")))
-        category.setName(categoryMap.value(QLatin1String("name")).toString());
-
-
-    QDeclarativePlaceIcon *declIcon = qobject_cast<QDeclarativePlaceIcon *>(categoryMap.value(QLatin1String("icon")).value<QObject *>());
-    if (declIcon) {
-        QPlaceIcon icon;
-        icon.setBaseUrl(declIcon->baseUrl());
-        icon.setFullUrl(declIcon->fullUrl());
-        icon.setManager(placeManager);
-        category.setIcon(icon);
-    }
-
-    QPlaceCategory parentCategory;
-    if (m_categoriesTree.contains(parentId))
-        parentCategory = m_categoriesTree.value(parentId)->declCategory->category();
-    else {
-        m_errorString= tr("Saving category with unknown parent id");
-        setStatus(QDeclarativeSupportedCategoriesModel::Error);
-        return;
-    }
-
-    placeManager->saveCategory(category, parentId);
-}
-
-void QDeclarativeSupportedCategoriesModel::removeCategory(const QModelIndex &index)
-{
-    QPlaceManager *placeManager = manager();
-    if (!placeManager)
-        return;
-
-    PlaceCategoryNode *node = static_cast<PlaceCategoryNode *>(index.internalPointer());
-    if (m_categoriesTree.keys(node).isEmpty())
-        return;
-
-    placeManager->removeCategory(node->declCategory->category().categoryId());
-}
-
 void QDeclarativeSupportedCategoriesModel::update()
 {
     if (!m_plugin)
@@ -492,12 +441,8 @@ QString QDeclarativeSupportedCategoriesModel::errorString() const
     \list
     \o SupportedCategoriesModel.Ready - No Error occurred during the last operation,
                      further operations may be performed on the model.
-    \o SupportedCategoriesModel.Saving - A category is currently being saved, no other operations
-                      may be perfomed until complete.
     \o SupportedCategoriesModel.Updating - The model is being updated, no
                         other operations may be performed until complete.
-    \o SupportedCategriesModel.Removing - A category is currently being removed, no other
-                        operations can be performed until complete.
     \o SupportedCategoriesModel.Error - An error occurred during the last operation,
                      further operations can still be performed on the model.
     \endlist

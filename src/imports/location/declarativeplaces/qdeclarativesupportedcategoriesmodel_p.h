@@ -101,7 +101,7 @@ public:
         CategoryRole = Qt::UserRole
     };
 
-    enum Status {Ready, Saving, Updating, Removing, Error};
+    enum Status {Ready, Updating, Error};
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider* plugin() const;
@@ -109,8 +109,6 @@ public:
     void setHierarchical(bool hierarchical);
     bool hierarchical() const;
 
-    Q_INVOKABLE void saveCategory(const QVariantMap &categoryMap, const QString &parentId);
-    Q_INVOKABLE void removeCategory(const QModelIndex &index);
     Q_INVOKABLE void update();
     Q_INVOKABLE QString errorString() const;
 
