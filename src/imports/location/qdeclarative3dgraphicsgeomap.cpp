@@ -108,7 +108,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGItem *parent)
-    : QSGItem(parent),
+    : QSGPaintedItem(parent),
       plugin_(0),
       serviceProvider_(0),
       mappingManager_(0),
@@ -142,14 +142,18 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGItem *parent)
     // Create internal flickable and pinch area.
     flickable_ = new QDeclarativeGeoMapFlickable(map_, this);
     pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
+    QLOC_TRACE1("Setting render target.");
+    setRenderTarget(QSGPaintedItem::FramebufferObject);
 }
 
+// this function is only called in rendering thread
 QSGNode* QDeclarative3DGraphicsGeoMap::updatePaintNode(QSGNode* node, UpdatePaintNodeData* data)
 {
     Q_UNUSED(node);
     Q_UNUSED(data);
+
     update();
-    return 0;
+    return QSGPaintedItem::updatePaintNode(node, data);
 }
 
 QDeclarative3DGraphicsGeoMap::~QDeclarative3DGraphicsGeoMap()
@@ -195,31 +199,9 @@ QDeclarativeGeoMapFlickable* QDeclarative3DGraphicsGeoMap::flick()
 
 void QDeclarative3DGraphicsGeoMap::itemChange(ItemChange change, const ItemChangeData & data)
 {
-    if (change == ItemSceneChange) {
-        if (canvas_ && canvas_->sceneGraphEngine()) {
-            canvas_->disconnect(this);
-            canvas_->sceneGraphEngine()->disconnect(this);
-        }
+    QLOC_TRACE0;
+    if (change == ItemSceneChange)
         canvas_ = data.canvas;
-        if (canvas_ && canvas_->sceneGraphEngine()) {
-            QLOC_TRACE1("QSGEngine exists, connecting directly.");
-            QSGEngine* engine =  canvas_->sceneGraphEngine();
-            connect((QObject*)engine, SIGNAL(beforeRendering()), this, SLOT(beforeRendering()), Qt::DirectConnection);
-            engine->setClearBeforeRendering(false);
-        } else if (canvas_)
-            connect(canvas_, SIGNAL(sceneGraphInitialized()), this, SLOT(sceneGraphInitialized()));
-    }
-}
-
-void QDeclarative3DGraphicsGeoMap::sceneGraphInitialized()
-{
-    QSGEngine* engine =  canvas_->sceneGraphEngine();
-    if (!engine) {
-        qmlInfo(this) << tr("Unable to get QSGEngine. Will not be able to render the map.");
-        return;
-    }
-    connect((QObject*)engine, SIGNAL(beforeRendering()), this, SLOT(beforeRendering()), Qt::DirectConnection);
-    engine->setClearBeforeRendering(false);
 }
 
 void QDeclarative3DGraphicsGeoMap::populateMap()
@@ -353,15 +335,12 @@ void QDeclarative3DGraphicsGeoMap::keyPressEvent(QKeyEvent *e)
     update();
 }
 
-// Note: this slot will be executed in the QSG rendering thread
-// (Qt::DirectConnection) - not in the GUI/main thread of the app.
-// Hence thread-safen the critical sections of code to avoid crashes.
-void QDeclarative3DGraphicsGeoMap::beforeRendering()
+void QDeclarative3DGraphicsGeoMap::paint(QPainter* p)
 {
     if (!isVisible())
         return;
 
-    QGLPainter painter;
+    QGLPainter painter(p);
     if (!painter.begin()) {
         qmlInfo(this) << tr("GL graphics system is not active; cannot use 3D items");
         return;
@@ -1195,14 +1174,15 @@ void QDeclarative3DGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object
 }
 */
 
+// all map item additions and removals, whether internal or app originated,
+// must go through these functions
 void QDeclarative3DGraphicsGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
 {
 #ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
     if (!item || mapItems_.contains(item))
         return;
-    item->setMap(this);
-    mapItems_.append(item);
-    map_->addMapItem(item->mapItem());
+    // set pending, we'll add them once we have GL context
+    mapItemsPending_.append(item);
 #else
     Q_UNUSED(item);
 #endif

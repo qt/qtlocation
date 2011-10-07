@@ -209,11 +209,33 @@ Item {
     Map {
         id: map
 
+        /*
         MapMouseArea {
             id: mapMouseArea
             onDoubleClicked: console.log('mapmousearea got clicked')
             anchors.fill: parent
         }
+        */
+
+        /*
+        MapItem {
+            id: externalStaticMapItem1
+            visible: true
+            objectName: "externalStaticMapItem1"
+            coordinate: brisbaneCoordinate
+            zoomLevel: 5.0
+            source: Item {
+                width: 640
+                height: 20
+                Rectangle {
+                    color: "gray"
+                    width: 640
+                    height: 20
+                    Text {font.pixelSize: 15;text: "ext map item 1"; font.bold: true; color: 'red'}
+                }
+            }
+        }
+        */
 
         /*
         MapItem {

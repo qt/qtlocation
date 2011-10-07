@@ -51,10 +51,11 @@
 #include <QtCore/QCoreApplication>
 
 #include "qsgtexture.h"
+#include "qsgpainteditem.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
 
-//#define QT_DECLARATIVE_LOCATION_TRACE 1
+#define QT_DECLARATIVE_LOCATION_TRACE 1
 
 #ifdef QT_DECLARATIVE_LOCATION_TRACE
 #define QLOC_TRACE0 qDebug() << __FILE__ << __FUNCTION__;
@@ -87,7 +88,7 @@ class QDeclarativeGeoServiceProvider;
 class QDeclarative3DGraphicsGeoMap;
 class QDeclarativeGeoMapItem;
 
-class QDeclarative3DGraphicsGeoMap : public QSGItem
+class QDeclarative3DGraphicsGeoMap : public QSGPaintedItem
 {
     Q_OBJECT
 
@@ -129,6 +130,9 @@ public:
 
     // From QDeclarativeParserStatus
     virtual void componentComplete();
+
+    // from QSGPaintedItem
+    virtual void paint(QPainter *painter);
 
     // from QSGItem
     virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
@@ -215,8 +219,6 @@ private Q_SLOTS:
     void centerLatitudeChanged(double latitude);
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
-    void sceneGraphInitialized();
-    void beforeRendering();
     void cameraZoomLevelChanged(double zoomLevel);
 
 private:
