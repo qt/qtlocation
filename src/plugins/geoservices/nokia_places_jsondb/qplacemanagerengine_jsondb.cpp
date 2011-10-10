@@ -101,14 +101,7 @@ QPlaceContentReply *QPlaceManagerEngineJsonDb::getContent(const QPlace &place, c
     return contentReply;
 }
 
-QPlaceReply *QPlaceManagerEngineJsonDb::postRating(const QString &placeId, qreal value)
-{
-    Reply *reply = new Reply(this);
-    reply->triggerDone(QPlaceReply::UnsupportedError, tr("Posting of ratings is unsupported"));
-    return reply;
-}
-
-QPlaceSearchReply *QPlaceManagerEngineJsonDb::searchForPlaces(const QPlaceSearchRequest &request)
+QPlaceSearchReply *QPlaceManagerEngineJsonDb::search(const QPlaceSearchRequest &request)
 {
     SearchReply *searchReply = new SearchReply(this);
     searchReply->setRequest(request);

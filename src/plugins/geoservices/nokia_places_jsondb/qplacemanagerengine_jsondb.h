@@ -60,11 +60,9 @@ public:
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
 
-    QPlaceReply *postRating(const QString &placeId, qreal value);
-
     QPlaceContentReply *getContent(const QPlace &place, const QPlaceContentRequest &request);
 
-    QPlaceSearchReply *searchForPlaces(const QPlaceSearchRequest &request);
+    QPlaceSearchReply *search(const QPlaceSearchRequest &request);
 
     QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &request);
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request);
