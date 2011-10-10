@@ -1,6 +1,7 @@
-load(qttest_p4)
+CONFIG += testcase
+TARGET = tst_sphere
 
-QT += location
+QT += location testlib
 CONFIG += qt3d
 
 INCLUDEPATH = ../../../src/location/mapsgl

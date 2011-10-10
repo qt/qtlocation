@@ -1,5 +1,4 @@
-load(qttest_p4)
-
+CONFIG += testcase
 TARGET = tst_qplacemanager_jsondb
 
 HEADERS += jsondbcleaner.h

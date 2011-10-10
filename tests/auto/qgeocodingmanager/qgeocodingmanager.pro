@@ -1,4 +1,5 @@
-load(qttest_p4)
+CONFIG += testcase
+TARGET = tst_qgeocodingmanager
 
 HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
     tst_qgeocodingmanager.h
@@ -6,4 +7,4 @@ HEADERS += ../qgeocoordinate/qlocationtestutils_p.h \
 SOURCES += tst_qgeocodingmanager.cpp \
            ../qgeocoordinate/qlocationtestutils.cpp
 
-QT += location
+QT += location testlib
