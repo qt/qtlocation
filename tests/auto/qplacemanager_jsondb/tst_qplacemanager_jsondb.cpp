@@ -112,6 +112,7 @@ private Q_SLOTS:
     void searchWithDistanceHint();
     void icons();
     void unsupportedFunctions();
+    void supportedFeatures();
 
 private:
     bool doSavePlace(const QPlace &place,
@@ -1034,6 +1035,23 @@ void tst_QPlaceManagerJsonDb::unsupportedFunctions()
     QSignalSpy textPredictionSpy(textPredictionReply, SIGNAL(finished()));
     QTRY_VERIFY(textPredictionSpy.count() == 1 );
     QCOMPARE(textPredictionReply->error(), QPlaceReply::UnsupportedError);
+}
+
+void tst_QPlaceManagerJsonDb::supportedFeatures()
+{
+    QCOMPARE((placeManager->supportedFeatures() & QPlaceManager::SavePlaceFeature),
+             QPlaceManager::SavePlaceFeature);
+    QCOMPARE((placeManager->supportedFeatures() & QPlaceManager::RemovePlaceFeature),
+            QPlaceManager::RemovePlaceFeature);
+    QCOMPARE((placeManager->supportedFeatures() & QPlaceManager::SaveCategoryFeature),
+             QPlaceManager::SaveCategoryFeature);
+    QCOMPARE((placeManager->supportedFeatures() & QPlaceManager::RemoveCategoryFeature),
+             QPlaceManager::RemoveCategoryFeature);
+
+    QVERIFY((placeManager->supportedFeatures() & QPlaceManager::RecommendationsFeature) == 0);
+    QVERIFY((placeManager->supportedFeatures() & QPlaceManager::TextPredictionsFeature) == 0);
+    QVERIFY((placeManager->supportedFeatures() & QPlaceManager::CorrectionsFeature) == 0);
+    QVERIFY((placeManager->supportedFeatures() & QPlaceManager::LocaleFeature) == 0);
 }
 
 

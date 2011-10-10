@@ -44,6 +44,7 @@
 
 #include <qgeocoordinate.h>
 #include <QtDeclarative/QSGItem>
+#include <QtLocation/QPlaceManager>
 
 #include <QMap>
 #include <QString>
@@ -82,6 +83,8 @@ private:
 class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
+    Q_ENUMS (PlacesFeature)
+
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QStringList availableServiceProviders READ availableServiceProviders CONSTANT)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> parameters READ parameters)
@@ -90,12 +93,29 @@ class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParser
     Q_PROPERTY(bool supportsRouting READ supportsRouting NOTIFY supportsRoutingChanged)
     Q_PROPERTY(bool supportsMapping READ supportsMapping NOTIFY supportsMappingChanged)
     Q_PROPERTY(bool supportsPlaces READ supportsPlaces NOTIFY supportsPlacesChanged)
+    Q_PROPERTY(PlacesFeatures supportedPlacesFeatures READ supportedPlacesFeatures NOTIFY supportedPlacesFeaturesChanged)
+
     Q_CLASSINFO("DefaultProperty", "parameters")
     Q_INTERFACES(QDeclarativeParserStatus)
 
 public:
     QDeclarativeGeoServiceProvider(QObject *parent = 0);
     ~QDeclarativeGeoServiceProvider();
+
+    enum PlacesFeature {
+        NoPlaceFeatures = QPlaceManager::NoFeatures,
+        SavePlaceFeature = QPlaceManager::SavePlaceFeature,
+        RemovePlaceFeature = QPlaceManager::RemovePlaceFeature,
+        SaveCategoryFeature = QPlaceManager:: SaveCategoryFeature,
+        RemoveCategoryFeature = QPlaceManager::RemoveCategoryFeature,
+        RecommendationsFeature = QPlaceManager::RecommendationsFeature,
+        TextPredictionsFeature = QPlaceManager::TextPredictionsFeature,
+        CorrectionsFeature = QPlaceManager::CorrectionsFeature,
+        LocaleFeature = QPlaceManager::LocaleFeature
+    };
+
+    Q_DECLARE_FLAGS(PlacesFeatures, PlacesFeature)
+    Q_FLAGS(PlacesFeatures)
 
     // From QDeclarativeParserStatus
     virtual void classBegin() {}
@@ -114,6 +134,8 @@ public:
     bool supportsMapping() const;
     bool supportsPlaces() const;
 
+    PlacesFeatures supportedPlacesFeatures();
+
     QGeoServiceProvider *sharedGeoServiceProvider();
 
 Q_SIGNALS:
@@ -123,6 +145,7 @@ Q_SIGNALS:
     void supportsRoutingChanged();
     void supportsMappingChanged();
     void supportsPlacesChanged();
+    void supportedPlacesFeaturesChanged();
 
 private:
     static void parameter_append(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *mapObject);
@@ -135,6 +158,7 @@ private:
     void setSupportsRouting(bool supports);
     void setSupportsMapping(bool supports);
     void setSupportsPlaces(bool supports);
+    void setSupportedPlacesFeatures(PlacesFeatures placesFeatures);
 
     QGeoServiceProvider *sharedProvider_;
     QString name_;
@@ -145,6 +169,7 @@ private:
     bool supportsMapping_;
     bool supportsPlaces_;
     bool complete_;
+    PlacesFeatures placesFeatures_;
     Q_DISABLE_COPY(QDeclarativeGeoServiceProvider)
 };
 
@@ -152,5 +177,6 @@ QT_END_NAMESPACE
 
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProviderParameter));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProvider));
+Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProvider::PlacesFeatures))
 
 #endif

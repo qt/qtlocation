@@ -60,6 +60,7 @@ Item {
     SignalSpy {id: invalidReverseGeocodeSpy; target: invalidPlugin; signalName: "supportsReverseGeocodingChanged"}
     SignalSpy {id: invalidRoutingSpy; target: invalidPlugin; signalName: "supportsRoutingChanged"}
     SignalSpy {id: invalidMappingSpy; target: invalidPlugin; signalName: "supportsMappingChanged"}
+    SignalSpy {id: invalidSupportedPlacesFeaturesSpy; target: invalidPlugin; signalName: "supportedPlacesFeaturesChanged"}
 
     TestCase {
         name: "Plugin properties"
@@ -110,7 +111,36 @@ Item {
             compare (invalidPlugin.supportsReverseGeocoding, false )
             compare (invalidPlugin.supportsRouting, false )
             compare (invalidPlugin.supportsMapping, false )
-            compare (invalidPlugin.supportsPlaces, true )
+            compare (invalidPlugin.supportsPlaces, false )
+        }
+
+        function test_placesFeatures() {
+            verify((testPlugin.supportedPlacesFeatures & Plugin.SavePlaceFeature) === Plugin.SavePlaceFeature);
+            verify((testPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature) === Plugin.SaveCategoryFeature);
+            verify((testPlugin.supportedPlacesFeatures & Plugin.TextPredictionsFeature) === Plugin.TextPredictionsFeature);
+            verify((testPlugin.supportedPlacesFeatures & Plugin.CorrectionsFeature) === 0);
+            verify((testPlugin.supportedPlacesFeatures & Plugin.RemovePlaceFeature) === 0);
+
+            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.SavePlaceFeature) === 0);
+            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.RemovePlaceFeature) === 0);
+            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature) === 0);
+            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.RemoveCategoryFeature) === 0);
+            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.RecommendationsFeature) === Plugin.RecommendationsFeature);
+            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.TextPredictionsFeature) === Plugin.TextPredictionsFeature);
+            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.CorrectionsFeature) === Plugin.CorrectionsFeature);
+            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.LocaleFeature) === Plugin.LocaleFeature);
+
+            invalidSupportedPlacesFeaturesSpy.clear();
+            invalidPlugin.name = 'qmlgeo.test.plugin';
+            compare(invalidSupportedPlacesFeaturesSpy.count, 1);
+            invalidPlugin.name = '';
+            compare(invalidSupportedPlacesFeaturesSpy.count, 2);
+
+            invalidGeocodeSpy.clear();
+            invalidReverseGeocodeSpy.clear();
+            invalidRoutingSpy.clear();
+            invalidMappingSpy.clear();
+            invalidSupportedPlacesFeaturesSpy.clear();
         }
     }
 }

@@ -278,6 +278,14 @@ QUrl QPlaceManager::constructIconUrl(const QPlaceIcon &icon, const QSize &size, 
 }
 
 /*!
+    Returns a set of flags indicating what particular features this manager instance supports.
+*/
+QPlaceManager::ManagerFeatures QPlaceManager::supportedFeatures() const
+{
+    return d->supportedFeatures();
+}
+
+/*!
 \fn void QPlaceManager::finished(QPlaceReply* reply)
 
 This signal is emitted when \a reply has finished processing.

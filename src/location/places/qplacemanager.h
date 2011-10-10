@@ -72,14 +72,19 @@ class Q_LOCATION_EXPORT QPlaceManager : public QObject
     Q_OBJECT
 public:
     enum ManagerFeature {
-        SuggestionFeature,
-        AuthenticationFeature,
-        PlaceEditingFeature,
-        SavePlaceFeature,
-        SaveCategoryFeature,
-        RecommendationsFeature,
-        LocaleFeature
+        NoFeatures              = 0x0,
+        SavePlaceFeature        = 0x1,
+        RemovePlaceFeature      = 0x2,
+        SaveCategoryFeature     = 0x4,
+        RemoveCategoryFeature   = 0x8,
+        RecommendationsFeature  = 0x10,
+        TextPredictionsFeature   = 0x20,
+        CorrectionsFeature      = 0x40,
+        LocaleFeature           = 0x80
     };
+
+    Q_DECLARE_FLAGS(ManagerFeatures, ManagerFeature)
+    Q_FLAGS(ManagerFeatures)
 
     ~QPlaceManager();
 
@@ -114,6 +119,8 @@ public:
 
     QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags);
 
+    ManagerFeatures supportedFeatures() const;
+
 Q_SIGNALS:
     void finished(QPlaceReply *reply);
     void error(QPlaceReply *, QPlaceReply::Error error, const QString &errorString = QString());
@@ -140,5 +147,7 @@ private:
 QT_END_NAMESPACE
 
 QT_END_HEADER
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QPlaceManager::ManagerFeatures))
 
 #endif // QPLACEMANAGER_H

@@ -99,6 +99,8 @@ void QDeclarativeGeoServiceProvider::updateSupportStatus()
         setSupportsReverseGeocoding(false);
         setSupportsRouting(false);
         setSupportsMapping(false);
+        setSupportsPlaces(false);
+        setSupportedPlacesFeatures(QDeclarativeGeoServiceProvider::NoPlaceFeatures);
         return;
     }
 
@@ -124,10 +126,13 @@ void QDeclarativeGeoServiceProvider::updateSupportStatus()
         setSupportsMapping(true);
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError)
+    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        setSupportedPlacesFeatures(QDeclarativeGeoServiceProvider::NoPlaceFeatures);
         setSupportsPlaces(false);
-    else
+    } else {
+        setSupportedPlacesFeatures(static_cast<QDeclarativeGeoServiceProvider::PlacesFeatures> ((int)placeManager->supportedFeatures()));
         setSupportsPlaces(true);
+    }
 }
 
 QStringList QDeclarativeGeoServiceProvider::availableServiceProviders()
@@ -173,6 +178,14 @@ void QDeclarativeGeoServiceProvider::setSupportsPlaces(bool supports)
         return;
     supportsPlaces_ = supports;
     emit supportsPlacesChanged();
+}
+
+void QDeclarativeGeoServiceProvider::setSupportedPlacesFeatures(PlacesFeatures placesFeatures)
+{
+    if (placesFeatures_ == placesFeatures)
+        return;
+    placesFeatures_ = placesFeatures;
+    emit supportedPlacesFeaturesChanged();
 }
 
 void QDeclarativeGeoServiceProvider::componentComplete()
@@ -237,6 +250,19 @@ bool QDeclarativeGeoServiceProvider::supportsMapping() const
 bool QDeclarativeGeoServiceProvider::supportsPlaces() const
 {
     return supportsPlaces_;
+}
+
+/*!
+    \qmlproperty PlacesFeatures Plugin::supportedPlacesFeatures
+
+    This property holds a set of flags indicating what Places related features are provided by the
+    plugin.
+*/
+QDeclarativeGeoServiceProvider::PlacesFeatures QDeclarativeGeoServiceProvider::supportedPlacesFeatures()
+{
+    if (!supportsPlaces_)
+        return QDeclarativeGeoServiceProvider::NoPlaceFeatures;
+    return placesFeatures_;
 }
 
 QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider()

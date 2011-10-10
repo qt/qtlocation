@@ -266,6 +266,12 @@ public:
         return QUrl();
     }
 
+    QPlaceManager::ManagerFeatures supportedFeatures() const {
+        return QPlaceManager::SavePlaceFeature
+               | QPlaceManager::SaveCategoryFeature
+               | QPlaceManager::TextPredictionsFeature;
+    }
+
 private:
     QLocale m_locale;
     QMap<QString, QPlace> m_places;

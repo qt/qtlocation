@@ -309,6 +309,14 @@ QUrl QPlaceManagerEngineNokia::constructIconUrl(const QPlaceIcon &icon, const QS
     return QUrl();
 }
 
+QPlaceManager::ManagerFeatures QPlaceManagerEngineNokia::supportedFeatures() const
+{
+    return QPlaceManager::RecommendationsFeature
+            | QPlaceManager::TextPredictionsFeature
+            | QPlaceManager::CorrectionsFeature
+            | QPlaceManager::LocaleFeature;
+}
+
 void QPlaceManagerEngineNokia::processingError(QPlaceReply *reply,
                                               const QPlaceReply::Error &errorId,
                                               const QString &errorMessage)

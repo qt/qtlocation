@@ -91,6 +91,7 @@ public:
     void setLocale(const QLocale &locale);
 
     QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags);
+    QPlaceManager::ManagerFeatures supportedFeatures() const;
 
 private slots:
     void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);

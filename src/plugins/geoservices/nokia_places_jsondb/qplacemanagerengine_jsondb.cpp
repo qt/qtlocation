@@ -376,6 +376,14 @@ QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const Q
     return icon.fullUrl();
 }
 
+QPlaceManager::ManagerFeatures QPlaceManagerEngineJsonDb::supportedFeatures() const
+{
+    return QPlaceManager::SavePlaceFeature |
+           QPlaceManager::RemovePlaceFeature |
+           QPlaceManager::SaveCategoryFeature |
+           QPlaceManager::RemoveCategoryFeature;
+}
+
 void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &data)
 {
     QPlaceReply *reply = m_idReplyMap.value(id,0);

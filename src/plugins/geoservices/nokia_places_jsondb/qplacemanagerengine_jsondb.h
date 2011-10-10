@@ -84,6 +84,7 @@ public:
     void setLocale(const QLocale &locale);
 
     QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags);
+    QPlaceManager::ManagerFeatures supportedFeatures() const;
 public slots:
     void processJsonDbResponse(int id, const QVariant &data);
     void processJsonDbError(int id, int code, const QString &data);

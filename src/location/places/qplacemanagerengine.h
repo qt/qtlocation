@@ -89,6 +89,7 @@ public:
     virtual void setLocale(const QLocale &locale) = 0;
 
     virtual QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags) = 0;
+    virtual QPlaceManager::ManagerFeatures supportedFeatures() const = 0;
 
 Q_SIGNALS:
     void finished(QPlaceReply *reply);
