@@ -47,23 +47,24 @@
 MapItem::MapItem()
         : zoom_(8.0),
         visible_(true),
-        sceneNode_(0),
         textureId_(0), // invalid value according to specs
         textureDirty_(false),
-        texture_(0),
-        defaultMaterial_(0)
+        glResources_(0)
 {
+    glResources_ = new MapItemGLResources;
     // TODO optimize the defaultMaterial be common for all
-    defaultMaterial_ = new QGLMaterial();
-    defaultMaterial_->setColor(QColor(255, 128, 0));
-    defaultMaterial_->setSpecularColor(QColor(255, 128, 0));
-    defaultMaterial_->setDiffuseColor(QColor(255, 128, 0));
-    defaultMaterial_->setShininess(1.0);
+    glResources_->defaultMaterial = new QGLMaterial();
+    glResources_->defaultMaterial->setColor(QColor(255, 128, 0));
+    glResources_->defaultMaterial->setSpecularColor(QColor(255, 128, 0));
+    glResources_->defaultMaterial->setDiffuseColor(QColor(255, 128, 0));
+    glResources_->defaultMaterial->setShininess(1.0);
 }
 
 MapItem::~MapItem()
 {
-    delete defaultMaterial_;
+    // merely deletes the struct; map item will not release the
+    // GL resources, but it is Map's responsibility to do that
+    delete glResources_;
 }
 
 void MapItem::setCoordinate(const QGeoCoordinate &coordinate)
@@ -81,6 +82,16 @@ void MapItem::setAnchor(const QPointF &anchor)
     anchor_ = anchor;
 }
 
+MapItemGLResources* MapItem::glResources()
+{
+    return glResources_;
+}
+
+void MapItem::setGLResources(MapItemGLResources* resources)
+{
+    glResources_ = 0;
+}
+
 void MapItem::setTextureId(GLuint textureId)
 {
     if (textureId_ == textureId)
@@ -96,33 +107,23 @@ GLuint MapItem::textureId()
 
 // Note: this function 'must be only' / 'is guaranteed only to be called'
 // when running in the thread that has valid GL context (rendering thread).
-// TODO refactor this function, poorly written
 void MapItem::update()
 {
-    if (!textureDirty_ || !sceneNode_)
+    if (!textureDirty_ || !glResources_->sceneNode)
         return;
     textureDirty_ = false;
-    if (texture_) {
-        // todo this will likely crash..
-        sceneNode_->material()->setTexture(0);
-        sceneNode_->material()->setColor(QColor(255, 128, 0));
-        sceneNode_->material()->setSpecularColor(QColor(255, 128, 0));
-        sceneNode_->material()->setDiffuseColor(QColor(255, 128, 0));
-        sceneNode_->material()->setShininess(1.0);
-        sceneNode_->setEffect(QGL::LitMaterial);
-        delete texture_;
-        texture_ = 0;
-    }
+    // TODO do we want to provide some default texture if we don't have a texture ID?
+    // Also: prepare for case when texture ID is invalidated (after first being valid).
     if (textureId_ != 0) {
-        texture_ = QGLTexture2D::fromTextureId(textureId_, size_.toSize()); // todo optimize out the .toSize() call
-        sceneNode_->material()->setTexture(texture_);
-        sceneNode_->setEffect(QGL::LitDecalTexture2D);
+        glResources_->texture = QGLTexture2D::fromTextureId(textureId_, size_.toSize()); // todo optimize out the .toSize() call
+        glResources_->sceneNode->material()->setTexture(glResources_->texture);
+        glResources_->sceneNode->setEffect(QGL::LitDecalTexture2D);
     }
 }
 
 QGLTexture2D* MapItem::texture()
 {
-    return texture_;
+    return glResources_->texture;
 }
 
 QPointF MapItem::anchor() const
@@ -152,10 +153,10 @@ double MapItem::zoom() const
 
 void MapItem::setSceneNode(QGLSceneNode *sceneNode)
 {
-    if (sceneNode_ == sceneNode)
+    if (glResources_->sceneNode == sceneNode)
         return;
-    sceneNode_ = sceneNode;
-    if (sceneNode_ && !sceneNode_->material()) {
+    glResources_->sceneNode = sceneNode;
+    if (glResources_->sceneNode && !glResources_->sceneNode->material()) {
         // todo figure out default material setting if
         // texture for any reason disappears. this crashes:
         //sceneNode_->setMaterial(defaultMaterial_);
@@ -164,7 +165,7 @@ void MapItem::setSceneNode(QGLSceneNode *sceneNode)
 
 QGLSceneNode* MapItem::sceneNode() const
 {
-    return sceneNode_;
+    return glResources_->sceneNode;
 }
 
 // TODO make this into a property and update the item tree when it changes?

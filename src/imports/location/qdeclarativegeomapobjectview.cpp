@@ -241,6 +241,7 @@ void QDeclarativeGeoMapObjectView::removeInstantiatedItems()
     for (int i = 0; i < mapItemList_.count(); ++ i) {
         map_->removeMapItem(mapItemList_.at(i));
     }
+    qDeleteAll(mapItemList_);
     mapItemList_.clear();
     // Delete the declarative components we have instantiated.
     // They will also delete the actual qgeomapobjects

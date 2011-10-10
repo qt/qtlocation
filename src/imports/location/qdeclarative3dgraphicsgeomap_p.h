@@ -220,6 +220,7 @@ private Q_SLOTS:
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
     void cameraZoomLevelChanged(double zoomLevel);
+    void mapItemDestroyed(QObject* item);
 
 private:
     void setupMapView(QDeclarativeGeoMapObjectView *view);
@@ -280,6 +281,7 @@ private:
     QList<QDeclarativeGeoMapItem*> mapItems_;
     QList<QDeclarativeGeoMapItem*> mapItemsPending_;
 
+    friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapObjectView;
     friend class QDeclarativeGeoMapPinchArea;
     friend class QDeclarativeGeoMapFlickable;

@@ -320,31 +320,36 @@ void MapPrivate::addMapItem(MapItem *item)
 // safe to update any geometry/structures - mutex is locked.
 void MapPrivate::GLContextAvailable()
 {
-    // remove obsolete items
-    QSet<MapItem *>::const_iterator i = obsoleteItems_.constBegin();
-    while (i != obsoleteItems_.constEnd()) {
-        QGLSceneNode *node = (*i)->sceneNode();
-        if (node) {
-            //sceneNode_->removeNode(node); must be removed in GUI thread, not in rendering thread
-            delete node;
+    // remove obsolete scene nodes
+    QSet<MapItemGLResources *>::const_iterator i = obsoleteGLResources_.constBegin();
+    while (i != obsoleteGLResources_.constEnd()) {
+        if (*i) {
+            // todo do we have to delete all pointers or will scene node take down everything
+            delete (*i)->sceneNode;
+            //obsoleteGLResources_.removeAll(*i);
         }
-        mapItems_.removeAll(*i);
         ++i;
     }
-    if (!obsoleteItems_.isEmpty())
-        obsoleteItems_.clear();
+    if (!obsoleteGLResources_.isEmpty())
+        obsoleteGLResources_.clear();
 }
 
 // Must not be called from rendering thread
 void MapPrivate::removeMapItem(MapItem *item)
 {
+    if (!item)
+        return;
     sphere_->updateMutex.lock();
-    // nodes need to be removed from the scene node tree in GUI thread,
-    // but the deletion needs to occur in rendering thread
-    if (item->sceneNode())
+    // nodes need to be removed from the scene node tree in GUI thread
+    // because the tree has been created in it,
+    // but the actual scene node deletion needs to occur in rendering thread
+    // because it has the gl context
+    if (item->glResources() && !obsoleteGLResources_.contains(item->glResources())) {
         objectSceneNode_->removeNode(item->sceneNode());
-    if (!obsoleteItems_.contains(item))
-        obsoleteItems_.insert(item);
+        obsoleteGLResources_.insert(item->glResources());
+    }
+    item->setGLResources(0);
+    mapItems_.removeAll(item);
     sphere_->updateMutex.unlock();
 }
 
@@ -352,12 +357,12 @@ void MapPrivate::clearMapItems()
 {
     sphere_->updateMutex.lock();
     for (int i = 0; i < mapItems_.size(); ++i) {
-        if (!obsoleteItems_.contains(mapItems_.at(i))) {
-            if (mapItems_.at(i)->sceneNode())
-                objectSceneNode_->removeNode(mapItems_.at(i)->sceneNode());
-            obsoleteItems_.insert(mapItems_.at(i));
+        if (mapItems_.at(i)->glResources() && !obsoleteGLResources_.contains(mapItems_.at(i)->glResources())) {
+            objectSceneNode_->removeNode(mapItems_.at(i)->glResources()->sceneNode);
+            obsoleteGLResources_.insert(mapItems_.at(i)->glResources());
         }
     }
+    mapItems_.clear();
     sphere_->updateMutex.unlock();
 }
 

@@ -142,16 +142,29 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGItem *parent)
     // Create internal flickable and pinch area.
     flickable_ = new QDeclarativeGeoMapFlickable(map_, this);
     pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
-    QLOC_TRACE1("Setting render target.");
     setRenderTarget(QSGPaintedItem::FramebufferObject);
 }
 
-// this function is only called in rendering thread
+// this function is only called & executed in rendering thread
 QSGNode* QDeclarative3DGraphicsGeoMap::updatePaintNode(QSGNode* node, UpdatePaintNodeData* data)
 {
     Q_UNUSED(node);
     Q_UNUSED(data);
-
+#ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
+    // add any pending map items
+    if (canvas_) {
+        for (int i = 0; i < mapItemsPending_.count(); i++) {
+            mapItemsPending_.at(i)->setMap(this);
+            mapItems_.append(mapItemsPending_.at(i));
+            map_->addMapItem(mapItemsPending_.at(i)->mapItem());
+        }
+        mapItemsPending_.clear();
+    }
+    // perform any updates needed by items
+    // can be optimized if lot of map items: usually the operation is no-op (static map items)
+    for (int i = 0; i < mapItems_.count(); ++i)
+        mapItems_.at(i)->updateItem();
+#endif
     update();
     return QSGPaintedItem::updatePaintNode(node, data);
 }
@@ -345,13 +358,6 @@ void QDeclarative3DGraphicsGeoMap::paint(QPainter* p)
         qmlInfo(this) << tr("GL graphics system is not active; cannot use 3D items");
         return;
     }
-
-#ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
-    // Update any map objects that may have dirty textures
-    for (int i = 0; i < mapItems_.count(); ++i) {
-        mapItems_.at(i)->updateItem();
-    }
-#endif
     // No stereo rendering, set the eye as neutral
     painter.setEye(QGL::NoEye);
     // TODO this needs to be figured out (or confirmed as invalid thing).
@@ -451,8 +457,10 @@ void QDeclarative3DGraphicsGeoMap::earlyDraw(QGLPainter *painter)
 
 void QDeclarative3DGraphicsGeoMap::paintGL(QGLPainter *painter)
 {
-    if (map_)
+    if (map_) {
+        painter->projectionMatrix().scale(1,-1, 1); // qt3d and qsg interpret y differently
         map_->paintGL(painter);
+    }
 }
 
 /*!
@@ -1002,7 +1010,7 @@ void QDeclarative3DGraphicsGeoMap::mouseDoubleClickEvent(QMouseEvent *event)
 
 void QDeclarative3DGraphicsGeoMap::mouseMoveEvent(QMouseEvent *event)
 {
-    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
+    //QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
     /* hover placeholder
     if (!mouseGrabberItem_) {
         if (lastMousePosition_.isNull())
@@ -1179,10 +1187,11 @@ void QDeclarative3DGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object
 void QDeclarative3DGraphicsGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
 {
 #ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
-    if (!item || mapItems_.contains(item))
+    if (!item || mapItems_.contains(item) || mapItemsPending_.contains(item))
         return;
     // set pending, we'll add them once we have GL context
     mapItemsPending_.append(item);
+    connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(mapItemDestroyed(QObject*)));
 #else
     Q_UNUSED(item);
 #endif
@@ -1194,6 +1203,8 @@ void QDeclarative3DGraphicsGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
     if (!item || (!mapItems_.contains(item) && !mapItemsPending_.contains(item)))
         return;
     item->setMap(0);
+    // stop listening to destroyed()
+    item->disconnect(this);
     // these can be optmized for perf, as we already check the 'contains' above
     mapItems_.removeOne(item);
     mapItemsPending_.removeOne(item);
@@ -1201,6 +1212,15 @@ void QDeclarative3DGraphicsGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
 #else
     Q_UNUSED(item);
 #endif
+}
+
+// when a map item is getting destroyed, we need make sure resources are released gracefully
+// with QML we must prepare for arbitrary deletion times
+void QDeclarative3DGraphicsGeoMap::mapItemDestroyed(QObject* item)
+{
+    QDeclarativeGeoMapItem* mapItem = qobject_cast<QDeclarativeGeoMapItem*>(item);
+    if (mapItem)
+        removeMapItem(mapItem);
 }
 
 // TODO clears all items including ones from models/mapobjectview which is not intended

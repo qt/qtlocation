@@ -58,6 +58,13 @@ class QGLTexture2D;
 class QGLMaterial;
 class QGLSceneNode;
 
+struct MapItemGLResources {
+    QGLSceneNode* sceneNode;
+    QGLTexture2D* texture;
+    QGLMaterial* defaultMaterial;
+};
+
+
 class Q_LOCATION_EXPORT MapItem
 {
 public:
@@ -90,6 +97,10 @@ public:
     void setVisibleFromViewport(bool visible);
     bool visibleFromViewport() const;
 
+    // put to private
+    MapItemGLResources* glResources();
+    void setGLResources(MapItemGLResources* resources);
+
 private:
     QGeoCoordinate coordinate_;
     QPointF anchor_;
@@ -97,11 +108,9 @@ private:
     double zoom_;
     QRect bounds_;
     bool visible_;
-    QGLSceneNode* sceneNode_;
     GLuint textureId_;
     bool textureDirty_;
-    QGLTexture2D* texture_;
-    QGLMaterial* defaultMaterial_;
+    MapItemGLResources* glResources_;
 };
 
 class Q_LOCATION_EXPORT MapItemTree

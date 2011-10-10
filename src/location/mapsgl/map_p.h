@@ -69,6 +69,7 @@ class Map;
 class MapSphere;
 class Projection;
 class MapItem;
+struct MapItemGLResources;
 
 class QGLCamera;
 class QGLSceneNode;
@@ -152,7 +153,7 @@ private:
     MapSphere *sphere_;
 
     QList<MapItem*> mapItems_;
-    QSet<MapItem*> obsoleteItems_;
+    QSet<MapItemGLResources*> obsoleteGLResources_;
     QSet<MapItem*> newItems_;
 };
 

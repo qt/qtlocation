@@ -67,12 +67,13 @@ public:
 
 #include <private/qsgshadereffectsource_p.h>
 
-class QDeclarativeGeoMapItem : public QSGShaderEffectSource
+class QDeclarativeGeoMapItem : public QSGItem
 {
     Q_OBJECT
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QSGItem* source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(QSGItem* sourceItem READ sourceItem WRITE setSourceItem NOTIFY sourceItemChanged)
     Q_PROPERTY(double zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
+    //Q_PROPERTY(bool live READ live WRITE setLive NOTIFY liveChanged)
 
 public:
     QDeclarativeGeoMapItem(QSGItem *parent = 0);
@@ -84,8 +85,8 @@ public:
     void setCoordinate(QDeclarativeCoordinate *coordinate);
     QDeclarativeCoordinate* coordinate();
 
-    void setSource(QSGItem* source);
-    QSGItem* source();
+    void setSourceItem(QSGItem* sourceItem);
+    QSGItem* sourceItem();
 
     void setZoomLevel(double zoomLevel);
     double zoomLevel();
@@ -96,9 +97,12 @@ public:
     MapItem* mapItem();
     bool hasValidTexture();
 
+    // from QSGItem
+    QSGNode* updatePaintNode(QSGNode* node, UpdatePaintNodeData* data);
+
 Q_SIGNALS:
     void coordinateChanged();
-    void sourceChanged();
+    void sourceItemChanged();
     void zoomLevelChanged();
 
 private Q_SLOTS:
@@ -106,6 +110,7 @@ private Q_SLOTS:
     void textureChangedSlot();
 
 private:
+    QSGShaderEffectSource* shaderSource_;
     QSGItem* sourceItem_;
     QDeclarativeCoordinate* coordinate_;
     QDeclarative3DGraphicsGeoMap* map_;
@@ -113,6 +118,7 @@ private:
     //QPointer<QDeclarative3DGraphicsGeoMap*> map_;
     bool componentCompleted_;
     MapItem mapItem_;
+    friend class QDeclarativeGeoMapItemNode;
     Q_DISABLE_COPY(QDeclarativeGeoMapItem);
 };
 

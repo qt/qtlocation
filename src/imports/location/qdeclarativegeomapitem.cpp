@@ -57,15 +57,36 @@ QT_BEGIN_NAMESPACE
     The MapItem element is part of the \bold{QtLocation 5.0} module.
 */
 
+class QDeclarativeGeoMapItemNode : public QSGNode
+{
+public:
+    QDeclarativeGeoMapItemNode(QDeclarativeGeoMapItem* item) :
+        item_(item)
+    {
+        Q_ASSERT(item);
+        setFlag(UsePreprocess, true);
+    }
+    ~QDeclarativeGeoMapItemNode() {}
+    virtual void preprocess() {
+        QSGTextureProvider *provider = item_->shaderSource_->textureProvider();
+        if (QSGShaderEffectTexture *texture = qobject_cast<QSGShaderEffectTexture *>(provider->texture()))
+            texture->updateTexture();
+    }
+private:
+    QDeclarativeGeoMapItem* item_;
+};
+
 QDeclarativeGeoMapItem::QDeclarativeGeoMapItem(QSGItem *parent)
-    : QSGShaderEffectSource(parent),
+    : QSGItem(parent),
+      shaderSource_(0),
       sourceItem_(0),
       coordinate_(0),
       map_(0),
       componentCompleted_(false)
 {
-    connect(this, SIGNAL(sourceItemChanged()), this, SIGNAL(sourceChanged()));
-    connect(this->textureProvider(), SIGNAL(textureChanged()), this, SLOT(textureChangedSlot()));
+    setFlag(ItemHasContents);
+    shaderSource_ = new QSGShaderEffectSource(this);
+    shaderSource_->setParentItem(this);
 }
 
 QDeclarativeGeoMapItem::~QDeclarativeGeoMapItem()
@@ -75,14 +96,11 @@ QDeclarativeGeoMapItem::~QDeclarativeGeoMapItem()
         map_->removeMapItem(this);
 }
 
-void QDeclarativeGeoMapItem::textureChangedSlot()
+QSGNode* QDeclarativeGeoMapItem::updatePaintNode(QSGNode* node, UpdatePaintNodeData* data)
 {
-    if (!textureProvider()->texture()) {
-        mapItem_.setTextureId(0); // invalidate
-        return;
-    }
-    mapItem_.setTextureId(textureProvider()->texture()->textureId());
-    mapItem_.setSize(textureProvider()->texture()->textureSize());
+    if (!node)
+        node = new QDeclarativeGeoMapItemNode(this);
+    return node;
 }
 
 MapItem* QDeclarativeGeoMapItem::mapItem()
@@ -114,9 +132,8 @@ void QDeclarativeGeoMapItem::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
     if (coordinate_ == coordinate)
         return;
-    if (coordinate_) {
+    if (coordinate_)
         coordinate_->disconnect(this);
-    }
     coordinate_ = coordinate;
     if (coordinate_) {
         connect(coordinate_,
@@ -138,25 +155,42 @@ void QDeclarativeGeoMapItem::setCoordinate(QDeclarativeCoordinate *coordinate)
     emit coordinateChanged();
 }
 
+// note: call this only from render thread (e.g. paint() call) !
 void QDeclarativeGeoMapItem::setMap(QDeclarative3DGraphicsGeoMap* map)
 {
-    if (map == map_) {
+    if (map == map_)
         return;
-    }
     map_ = map;
     if (!map_) {
         // todo we may want to set parent item as zero too
-        setSourceItem(0);
+        setParentItem(0);
+        shaderSource_->setSourceItem(0);
         mapItem_.setTextureId(0); // invalidate
     } else {
-        // Essential to QSG -parent ourselves - it glues us to QSG tree and
+        // QSG -parent ourselves - it glues us to QSG tree and
         // essentially enables rendering. This is particularly important to
         // do manually when instantiating items from models.
-
         setParent(map_);
         setParentItem(map_);
-        setSourceItem(sourceItem_);
+        if (sourceItem_)
+            mapItem_.setSize(QSize(sourceItem_->width(), sourceItem_->height()));
     }
+    if (map_ && map_->canvas_) {
+        connect(shaderSource_, SIGNAL(sourceItemChanged()), this, SIGNAL(sourceItemChanged()));
+        if (shaderSource_->textureProvider())
+            connect(shaderSource_->textureProvider(), SIGNAL(textureChanged()), this, SLOT(textureChangedSlot()), Qt::DirectConnection);
+    }
+}
+
+void QDeclarativeGeoMapItem::textureChangedSlot()
+{
+    if (!shaderSource_->textureProvider()->texture()) {
+        mapItem_.setTextureId(0); // invalidate
+        return;
+    }
+    QLOC_TRACE2("new texture ID: ", shaderSource_->textureProvider()->texture()->textureId());
+    mapItem_.setTextureId(shaderSource_->textureProvider()->texture()->textureId());
+    mapItem_.setSize(shaderSource_->textureProvider()->texture()->textureSize());
 }
 
 void QDeclarativeGeoMapItem::coordinateCoordinateChanged(double)
@@ -169,8 +203,11 @@ void QDeclarativeGeoMapItem::updateItem()
 {
     // we seem to not always get texture changed -signals when
     // adding static map items with add
-    if (!mapItem_.textureId() && textureProvider()->texture()) {
-        mapItem_.setTextureId(textureProvider()->texture()->textureId());
+    if (!mapItem_.textureId() &&
+            shaderSource_->textureProvider() &&
+            shaderSource_->textureProvider()->texture()) {
+        QLOC_TRACE2("changing/setting map item texture ID to: ", shaderSource_->textureProvider()->texture()->textureId());
+        mapItem_.setTextureId(shaderSource_->textureProvider()->texture()->textureId());
     }
     mapItem_.update();
 }
@@ -183,30 +220,26 @@ QDeclarativeCoordinate* QDeclarativeGeoMapItem::coordinate()
 void QDeclarativeGeoMapItem::componentComplete()
 {
     componentCompleted_ = true;
-    QSGShaderEffectSource::componentComplete();
+    QSGItem::componentComplete();
 }
 
-// This will enable us to intercept the setting of the source item
-// if we need to intercept our own Map graphical elements like route.
-// Also this way we can handle addition and removal of this item to map.
-void QDeclarativeGeoMapItem::setSource(QSGItem* source)
+void QDeclarativeGeoMapItem::setSourceItem(QSGItem* sourceItem)
 {
-    if (source == sourceItem_)
+    if (sourceItem == sourceItem_)
         return;
-    sourceItem_ = source;
-    if (map_)
-        setSourceItem(sourceItem_);
-    if (sourceItem_) {
+    sourceItem_ = sourceItem;
+    shaderSource_->setSourceItem(sourceItem_);
+    if (sourceItem_)
         mapItem_.setSize(QSize(sourceItem_->width(), sourceItem_->height()));
-    }
-    emit sourceChanged();
+    else
+        mapItem_.setSize(QSize(0,0)); // map item should be removed (fixme)
 }
 
-QSGItem* QDeclarativeGeoMapItem::source()
+QSGItem* QDeclarativeGeoMapItem::sourceItem()
 {
     if (!map_)
         return sourceItem_;
-    return sourceItem();
+    return shaderSource_->sourceItem();
 }
 #endif
 
