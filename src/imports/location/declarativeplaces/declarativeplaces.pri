@@ -14,6 +14,7 @@ SOURCES += \
     declarativeplaces/qdeclarativeplace.cpp \
     declarativeplaces/qdeclarativeplaceattribute.cpp \
     declarativeplaces/qdeclarativeplaceicon.cpp \
+    declarativeplaces/qdeclarativeplaceuser.cpp \
     declarativeplaces/qdeclarativerating.cpp \
     declarativeplaces/qdeclarativesupplier.cpp \
     declarativeplaces/qdeclarativesearchmodelbase.cpp
@@ -33,6 +34,7 @@ HEADERS += \
     declarativeplaces/qdeclarativeplace_p.h \
     declarativeplaces/qdeclarativeplaceattribute_p.h \
     declarativeplaces/qdeclarativeplaceicon_p.h \
+    declarativeplaces/qdeclarativeplaceuser_p.h \
     declarativeplaces/qdeclarativerating_p.h \
     declarativeplaces/qdeclarativesupplier_p.h \
     declarativeplaces/qdeclarativesearchmodelbase.h

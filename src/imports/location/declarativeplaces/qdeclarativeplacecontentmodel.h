@@ -53,6 +53,7 @@ class QDeclarativePlace;
 class QDeclarativeGeoServiceProvider;
 class QGeoServiceProvider;
 class QDeclarativeSupplier;
+class QDeclarativePlaceUser;
 
 class QDeclarativePlaceContentModel : public QAbstractListModel, public QDeclarativeParserStatus
 {
@@ -85,8 +86,7 @@ public:
     enum Roles {
         SupplierRole = Qt::UserRole,
         SourceUrlRole,
-        UserIdRole,
-        UserNameRole,
+        PlaceUserRole,
         UserRole //indicator for next conten type specific role
     };
 
@@ -108,6 +108,7 @@ private slots:
 protected:
     QPlaceContent::Collection m_content;
     QMap<QString, QDeclarativeSupplier *> m_suppliers;
+    QMap<QString, QDeclarativePlaceUser *>m_users;
 
 private:
     QDeclarativePlace *m_place;

@@ -55,6 +55,7 @@
 
 #include "qplacecontent.h"
 #include "qplacesupplier.h"
+#include "qplaceuser.h"
 
 #include <QtCore/QSharedData>
 #include <QtCore/QString>
@@ -87,7 +88,7 @@ public:
     QPlaceContentPrivate(){}
     virtual ~QPlaceContentPrivate(){}
 
-    virtual bool compare(const QPlaceContentPrivate *other) const =0;
+    virtual bool compare(const QPlaceContentPrivate *other) const;
     virtual QPlaceContentPrivate* clone() const = 0;
     virtual QPlaceContent::Type type() const = 0;
 
@@ -96,8 +97,7 @@ public:
 
     QPlaceSupplier supplier;
     QUrl sourceUrl;
-    QString userId;
-    QString userName;
+    QPlaceUser user;
 };
 
 #if defined(Q_CC_MWERKS)

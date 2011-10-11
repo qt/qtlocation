@@ -39,117 +39,115 @@
 **
 ****************************************************************************/
 
-#include "qplaceimage.h"
-#include "qplaceimage_p.h"
+#include "qplaceuser.h"
+#include "qplaceuser_p.h"
 
 QT_USE_NAMESPACE
 
-QPlaceImagePrivate::QPlaceImagePrivate() : QPlaceContentPrivate()
+QPlaceUserPrivate::QPlaceUserPrivate()
+    : QSharedData()
 {
 }
 
-QPlaceImagePrivate::QPlaceImagePrivate(const QPlaceImagePrivate &other)
-    : QPlaceContentPrivate(other)
-{
-    url = other.url;
-    id = other.id;
-    mimeType = other.mimeType;
-}
-
-QPlaceImagePrivate::~QPlaceImagePrivate()
+QPlaceUserPrivate::QPlaceUserPrivate(const QPlaceUserPrivate &other)
+    : QSharedData(), userId(other.userId), name(other.name)
 {
 }
 
-bool QPlaceImagePrivate::compare(const QPlaceContentPrivate *other) const
+QPlaceUserPrivate::~QPlaceUserPrivate()
 {
-    const QPlaceImagePrivate *od = static_cast<const QPlaceImagePrivate *>(other);
-    return QPlaceContentPrivate::compare(other)
-            && url == od->url && id == od->id && mimeType == od->mimeType;
+}
+
+bool QPlaceUserPrivate::operator==(const QPlaceUserPrivate &other) const
+{
+    return userId == other.userId && name == other.name;
 }
 
 /*!
-    \class QPlaceImage
+    \class QPlaceUser
 
     \inmodule QPlaces
 
-    \brief The QPlaceImage class represents an image.
+    \brief The QPlaceUser class represents a user.
 
+    Each QPlaceRating represents a rating object with a count and value.
 
-    Each QPlaceImage represents an image with a number of attributes
-    such as type, thumbnail, media provider etc.
-
-    QPlaceImage is an in memory representation of an image.
+    QPlaceRating is an in memory representation of a rating object.
 */
+
 
 /*!
-    Constructs an new image object.
+    Constructs a new user.
 */
-QPlaceImage::QPlaceImage()
-    : QPlaceContent(new QPlaceImagePrivate)
+QPlaceUser::QPlaceUser()
+    : d(new QPlaceUserPrivate)
+{
+}
+
+/*!
+    Constructs a copy of \a other
+*/
+QPlaceUser::QPlaceUser(const QPlaceUser &other)
+    :d(other.d)
 {
 }
 
 /*!
     Destructor.
 */
-QPlaceImage::~QPlaceImage()
+QPlaceUser::~QPlaceUser()
 {
-}
-
-Q_IMPLEMENT_CONTENT_COPY_CTOR(QPlaceImage)
-
-Q_IMPLEMENT_CONTENT_D_FUNC(QPlaceImage)
-
-/*!
-    Returns the image url.
-*/
-QUrl QPlaceImage::url() const
-{
-    Q_D(const QPlaceImage);
-    return d->url;
 }
 
 /*!
-    Sets image url.
+    Assigns \a other to this user and returns a reference to this user.
 */
-void QPlaceImage::setUrl(const QUrl &url)
+QPlaceUser &QPlaceUser::operator=(const QPlaceUser &other)
 {
-    Q_D(QPlaceImage);
-    d->url = url;
+    d = other.d;
+    return *this;
+}
+
+
+/*!
+    Returns true if this user is equal to \a other.
+    Otherwise returns false.
+*/
+bool QPlaceUser::operator==(const QPlaceUser &other) const
+{
+    return (*d) == *(other.d);
 }
 
 /*!
-    Returns image id.
+    Returns the user id.
 */
-QString QPlaceImage::imageId() const
+QString QPlaceUser::userId() const
 {
-    Q_D(const QPlaceImage);
-    return d->id;
+    return d->userId;
 }
 
 /*!
-    Sets image id.
+    Sets the \a userId.
 */
-void QPlaceImage::setImageId(const QString &data)
+void QPlaceUser::setUserId(const QString &userId)
 {
-    Q_D(QPlaceImage);
-    d->id = data;
+    d->userId = userId;
 }
 
 /*!
-    Returns image mime type.
+    Returns the user's name.
 */
-QString QPlaceImage::mimeType() const
+QString QPlaceUser::name() const
 {
-    Q_D(const QPlaceImage);
-    return d->mimeType;
+    return d->name;
 }
 
 /*!
-    Sets image mime type.
+    Sets the user's \a name.
 */
-void QPlaceImage::setMimeType(const QString &data)
+
+void QPlaceUser::setName(const QString &name)
 {
-    Q_D(QPlaceImage);
-    d->mimeType = data;
+    d->name = name;
 }
+

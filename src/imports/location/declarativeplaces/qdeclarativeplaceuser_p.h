@@ -38,78 +38,47 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QPLACECONTENT_H
-#define QPLACECONTENT_H
 
-#include <QMap>
-#include <QMetaType>
-#include <QSharedDataPointer>
+#ifndef QDECLARATIVEPLACEUSER_P_H
+#define QDECLARATIVEPLACEUSER_P_H
 
-QT_BEGIN_HEADER
+#include <QtCore/QObject>
+#include <QtDeclarative/qdeclarative.h>
+#include <QtLocation/QPlaceUser>
 
 QT_BEGIN_NAMESPACE
 
-QT_MODULE(Location)
-
-#define Q_DECLARE_CONTENT_D_FUNC(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const;\
-    friend class Class##Private;
-
-#define Q_DECLARE_CONTENT_COPY_CTOR(Class) \
-    Class(const QPlaceContent &other);
-
-class QPlaceUser;
-class QPlaceSupplier;
-class QPlaceContentPrivate;
-class Q_LOCATION_EXPORT QPlaceContent
+class QDeclarativePlaceUser : public QObject
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged())
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged())
+
 public:
-    typedef QMap<int, QPlaceContent> Collection;
-
-    enum Type {
-        ImageType,
-        ReviewType,
-        EditorialType,
-        InvalidType
-    };
-
-    QPlaceContent();
-    QPlaceContent(const QPlaceContent &other);
-    virtual ~QPlaceContent();
-
-    QPlaceContent &operator=(const QPlaceContent &other);
-
-    bool operator==(const QPlaceContent &other) const;
-    bool operator!=(const QPlaceContent &other) const;
-
-    QPlaceContent::Type type() const;
-
-    QPlaceSupplier supplier() const;
-    void setSupplier(const QPlaceSupplier &supplier);
-
-    QUrl sourceUrl() const;
-    void setSourceUrl(const QUrl &url);
+    explicit QDeclarativePlaceUser(QObject *parent = 0);
+    explicit QDeclarativePlaceUser(const QPlaceUser &src, QObject *parent = 0);
+    ~QDeclarativePlaceUser();
 
     QPlaceUser user() const;
-    void setUser(const QPlaceUser &user);
+    void setUser(const QPlaceUser &src);
 
-protected:
-    explicit QPlaceContent(QPlaceContentPrivate *d);
-    QSharedDataPointer<QPlaceContentPrivate> d_ptr;
+    QString userId() const;
+    void setUserId(const QString &id);
+
+    QString name() const;
+    void setName(const QString &name);
+
+signals:
+    void userIdChanged();
+    void nameChanged();
 
 private:
-    inline QPlaceContentPrivate *d_func();
-    inline const QPlaceContentPrivate *d_func() const;
-
-    friend class QPlaceContentPrivate;
+    QPlaceUser m_user;
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
-
-Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceContent))
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePlaceUser));
 
 #endif
-

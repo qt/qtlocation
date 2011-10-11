@@ -42,6 +42,7 @@
 #include "qdeclarativeplacecontentmodel.h"
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
+#include "qdeclarativeplaceuser_p.h"
 
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
@@ -58,8 +59,7 @@ QDeclarativePlaceContentModel::QDeclarativePlaceContentModel(QPlaceContent::Type
     QHash<int, QByteArray> roles = roleNames();
     roles.insert(SupplierRole, "supplier");
     roles.insert(SourceUrlRole, "sourceUrl");
-    roles.insert(UserIdRole, "userId");
-    roles.insert(UserNameRole, "username");
+    roles.insert(PlaceUserRole, "user");
     setRoleNames(roles);
 }
 
@@ -145,6 +145,9 @@ void QDeclarativePlaceContentModel::clear()
 
 void QDeclarativePlaceContentModel::clearData()
 {
+    qDeleteAll(m_users);
+    m_users.clear();
+
     qDeleteAll(m_suppliers);
     m_suppliers.clear();
 
@@ -178,10 +181,8 @@ QVariant QDeclarativePlaceContentModel::data(const QModelIndex &index, int role)
         return QVariant::fromValue(static_cast<QObject *>(m_suppliers.value(content.supplier().supplierId())));
     case SourceUrlRole:
         return content.sourceUrl();
-    case UserIdRole:
-        return content.userId();
-    case UserNameRole:
-        return content.userName();
+    case PlaceUserRole:
+        return QVariant::fromValue(static_cast<QObject *>(m_users.value(content.user().userId())));
     default:
         return QVariant();
     }
@@ -300,6 +301,10 @@ void QDeclarativePlaceContentModel::fetchFinished()
                         m_suppliers.insert(content.supplier().supplierId(),
                                            new QDeclarativeSupplier(content.supplier(), this));
                     }
+                    if (!m_users.contains(content.user().userId())) {
+                        m_users.insert(content.user().userId(),
+                                           new QDeclarativePlaceUser(content.user(), this));
+                    }
                 }
                 endInsertRows();
                 startIndex = -1;
@@ -322,6 +327,10 @@ void QDeclarativePlaceContentModel::fetchFinished()
                     if (!m_suppliers.contains(content.supplier().supplierId())) {
                         m_suppliers.insert(content.supplier().supplierId(),
                                            new QDeclarativeSupplier(content.supplier(), this));
+                    }
+                    if (!m_users.contains(content.user().userId())) {
+                        m_users.insert(content.user().userId(),
+                                           new QDeclarativePlaceUser(content.user(), this));
                     }
                 }
                 emit dataChanged(index(startIndex),index(currentIndex));

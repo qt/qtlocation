@@ -63,6 +63,13 @@ inline const QPlaceContentPrivate *QPlaceContent::d_func() const
     return static_cast<const QPlaceContentPrivate *>(d_ptr.constData());
 }
 
+bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
+{
+    return supplier == other->supplier
+            && sourceUrl == other->sourceUrl
+            && user == other->user;
+}
+
 /* Constructs an empty content object */
 QPlaceContent::QPlaceContent()
     :d_ptr(0)
@@ -166,41 +173,22 @@ void QPlaceContent::setSourceUrl(const QUrl &url)
 }
 
 /*!
-    Returns user id of the user who contributed this content.
+    Returns the user who contributed this content.
 */
-QString QPlaceContent::userId() const
+QPlaceUser QPlaceContent::user() const
 {
     Q_D(const QPlaceContent);
-    return d->userId;
+    return d->user;
 }
 
 /*!
-    Sets user id to \a id.
+    Sets the user who contributed this content.
 */
-void QPlaceContent::setUserId(const QString &id)
+void QPlaceContent::setUser(const QPlaceUser &user)
 {
     Q_D(QPlaceContent);
-    d->userId = id;
+    d->user = user;
 }
-
-/*!
-    Returns user name of the user who contributed this content.
-*/
-QString QPlaceContent::userName() const
-{
-    Q_D(const QPlaceContent);
-    return d->userName;
-}
-
-/*!
-    Sets user name to \a name.
-*/
-void QPlaceContent::setUserName(const QString &name)
-{
-    Q_D(QPlaceContent);
-    d->userName = name;
-}
-
 
 /*!
     \internal

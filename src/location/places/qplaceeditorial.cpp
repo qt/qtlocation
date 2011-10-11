@@ -62,11 +62,11 @@ QPlaceEditorialPrivate::~QPlaceEditorialPrivate()
 bool QPlaceEditorialPrivate::compare(const QPlaceContentPrivate *other) const
 {
     const QPlaceEditorialPrivate *od = static_cast<const QPlaceEditorialPrivate *>(other);
-    return content == od->content &&
-           contentTitle == od->contentTitle &&
-           supplier == od->supplier &&
-           sourceUrl == od->sourceUrl &&
-           language == od->language;
+    return QPlaceContentPrivate::compare(other)
+           && content == od->content
+           && contentTitle == od->contentTitle
+           && sourceUrl == od->sourceUrl
+           && language == od->language;
 }
 
 /*!

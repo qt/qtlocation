@@ -44,6 +44,7 @@
 
 #include <QtLocation/QPlaceReview>
 #include <QtLocation/QPlaceSupplier>
+#include <QtLocation/QPlaceUser>
 
 QT_USE_NAMESPACE
 
@@ -63,8 +64,7 @@ private Q_SLOTS:
     void ratingTest();
     void reviewIdTest();
     void titleTest();
-    void userIdTest();
-    void userNameTest();
+    void userTest();
     void sourceUrlTest();
     void operatorsTest();
 };
@@ -155,20 +155,25 @@ void tst_QPlaceReview::titleTest()
     testObj.setTitle("testText");
     QVERIFY2(testObj.title() == "testText", "Wrong value returned");
 }
-void tst_QPlaceReview::userIdTest()
+
+void tst_QPlaceReview::userTest()
 {
-    QPlaceReview testObj;
-    QVERIFY2(testObj.userId() == QString(), "Wrong default value");
-    testObj.setUserId("testText");
-    QVERIFY2(testObj.userId() == "testText", "Wrong value returned");
+    QPlaceReview review;
+    QVERIFY(review.user().userId().isEmpty());
+    QVERIFY(review.user().name().isEmpty());
+    QPlaceUser user;
+    user.setUserId(QLatin1String("11111"));
+    user.setName(QLatin1String("Bob"));
+
+    review.setUser(user);
+    QCOMPARE(review.user().userId(), QLatin1String("11111"));
+    QCOMPARE(review.user().name(), QLatin1String("Bob"));
+
+    review.setUser(QPlaceUser());
+    QVERIFY(review.user().userId().isEmpty());
+    QVERIFY(review.user().name().isEmpty());
 }
-void tst_QPlaceReview::userNameTest()
-{
-    QPlaceReview testObj;
-    QVERIFY2(testObj.userName() == QString(), "Wrong default value");
-    testObj.setUserName("testText");
-    QVERIFY2(testObj.userName() == "testText", "Wrong value returned");
-}
+
 void tst_QPlaceReview::sourceUrlTest()
 {
     QPlaceReview testObj;

@@ -38,78 +38,83 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QPLACECONTENT_H
-#define QPLACECONTENT_H
 
-#include <QMap>
-#include <QMetaType>
-#include <QSharedDataPointer>
+#include "qdeclarativeplaceuser_p.h"
 
-QT_BEGIN_HEADER
+QT_USE_NAMESPACE
 
-QT_BEGIN_NAMESPACE
+/*!
+    \qmlclass User
 
-QT_MODULE(Location)
+    \brief The User element identifies a particular user.
+    \inherits QObject
 
-#define Q_DECLARE_CONTENT_D_FUNC(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const;\
-    friend class Class##Private;
+    \ingroup qml-places
+*/
 
-#define Q_DECLARE_CONTENT_COPY_CTOR(Class) \
-    Class(const QPlaceContent &other);
+QDeclarativePlaceUser::QDeclarativePlaceUser(QObject* parent)
+        : QObject(parent) {}
 
-class QPlaceUser;
-class QPlaceSupplier;
-class QPlaceContentPrivate;
-class Q_LOCATION_EXPORT QPlaceContent
+QDeclarativePlaceUser::QDeclarativePlaceUser(const QPlaceUser &user,
+        QObject *parent)
+        : QObject(parent),
+        m_user(user) {}
+
+QDeclarativePlaceUser::~QDeclarativePlaceUser() {}
+
+void QDeclarativePlaceUser::setUser(const QPlaceUser &user)
 {
-public:
-    typedef QMap<int, QPlaceContent> Collection;
+    QPlaceUser previousUser = m_user;
+    m_user = user;
 
-    enum Type {
-        ImageType,
-        ReviewType,
-        EditorialType,
-        InvalidType
-    };
+    if (m_user.userId() != previousUser.userId())
+        emit userIdChanged();
 
-    QPlaceContent();
-    QPlaceContent(const QPlaceContent &other);
-    virtual ~QPlaceContent();
+    if (m_user.name() != previousUser.name())
+        emit nameChanged();
+}
 
-    QPlaceContent &operator=(const QPlaceContent &other);
+QPlaceUser QDeclarativePlaceUser::user() const
+{
+    return m_user;
+}
 
-    bool operator==(const QPlaceContent &other) const;
-    bool operator!=(const QPlaceContent &other) const;
+/*!
+    \qmlproperty string User::userId
 
-    QPlaceContent::Type type() const;
+    This property holds the id of the user.
+*/
 
-    QPlaceSupplier supplier() const;
-    void setSupplier(const QPlaceSupplier &supplier);
+void QDeclarativePlaceUser::setUserId(const QString &id)
+{
+    if (m_user.userId() == id)
+        return;
 
-    QUrl sourceUrl() const;
-    void setSourceUrl(const QUrl &url);
+    m_user.setUserId(id);
+    emit userIdChanged();
+}
 
-    QPlaceUser user() const;
-    void setUser(const QPlaceUser &user);
+QString QDeclarativePlaceUser::userId() const
+{
+    return m_user.userId();
+}
 
-protected:
-    explicit QPlaceContent(QPlaceContentPrivate *d);
-    QSharedDataPointer<QPlaceContentPrivate> d_ptr;
+/*!
+    \qmlproperty string User::name
 
-private:
-    inline QPlaceContentPrivate *d_func();
-    inline const QPlaceContentPrivate *d_func() const;
+    This property holds the name of a user.
+*/
+void QDeclarativePlaceUser::setName(const QString &name)
+{
+    if (m_user.name() == name)
+        return;
 
-    friend class QPlaceContentPrivate;
-};
+    m_user.setName(name);
+    emit nameChanged();
+}
 
-QT_END_NAMESPACE
-
-QT_END_HEADER
-
-Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceContent))
-
-#endif
+QString QDeclarativePlaceUser::name() const
+{
+    return m_user.name();
+}
 

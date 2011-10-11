@@ -55,6 +55,7 @@
 #include <QtScript/QScriptValueIterator>
 #include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceUser>
 
 #include <qplacereview.h>
 #include <qplacesupplier.h>
@@ -128,13 +129,16 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review, QPl
     }
     value = review.property(review_username_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newReview.setUserName(value.toString());
+        QPlaceUser user = newReview.user();
+        user.setName(value.toString());
+        newReview.setUser(user);
     }
     value = review.property(review_userid_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newReview.setUserId(value.toString());
+        QPlaceUser user = newReview.user();
+        user.setUserId(value.toString());
+        newReview.setUser(user);
     }
-
     QString name, id, icon;
     value = review.property(review_vendorname_element);
     if (value.isValid() && !value.toString().isEmpty()) {

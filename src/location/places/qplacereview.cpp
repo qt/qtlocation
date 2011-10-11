@@ -67,7 +67,8 @@ QPlaceReviewPrivate::~QPlaceReviewPrivate()
 bool QPlaceReviewPrivate::compare(const QPlaceContentPrivate *other) const
 {
     const QPlaceReviewPrivate *od = static_cast<const QPlaceReviewPrivate *>(other);
-    return dateTime == od->dateTime &&
+    return QPlaceContentPrivate::compare(other) &&
+           dateTime == od->dateTime &&
            content == od->content &&
            language == od->language &&
            rating == od->rating &&
