@@ -61,6 +61,7 @@
 #include <QColor>
 
 #include <QPropertyAnimation>
+#include <qopenglcontext.h>
 
 #include <cmath>
 
