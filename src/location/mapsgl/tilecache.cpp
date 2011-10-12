@@ -97,11 +97,8 @@ struct TileTexture
     TileCache *cache;
 };
 
-TileCache::TileCache(
-    const QString &directory,
-    QObject *parent)
-        : QObject(parent),
-        directory_(directory)
+TileCache::TileCache(const QString &directory, QObject *parent)
+:   QObject(parent), directory_(directory), manager_(0)
 {
     qRegisterMetaType<TileSpec>();
     qRegisterMetaType<QList<TileSpec> >();
