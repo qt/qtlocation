@@ -56,7 +56,7 @@ QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(QObject* parent)
 
 QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(const QGeoBoundingCircle& circle, QObject* parent) :
     QDeclarativeGeoBoundingArea(parent),
-    m_circle(circle), m_center(new QDeclarativeCoordinate(circle.center(), this))
+    m_center(new QDeclarativeCoordinate(circle.center(), this)), m_circle(circle)
 {
 }
 

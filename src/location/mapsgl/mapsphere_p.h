@@ -84,7 +84,6 @@ public:
 
     QGLSceneNode* sphereSceneNode() const;
 
-    // TODO Quick temporary thread protection.
     QMutex updateMutex;
     // when running as QML app we can't access GL context anywhere
     // but QSG rendering thread.

@@ -878,7 +878,7 @@ void Map2DPrivate::updateMapItemSceneNode(MapItem *item)
     QGLSceneNode *node = builder.finalizedSceneNode();
 
     QGLMaterial *mat = new QGLMaterial(node);
-    QColor defaultItemColor(128, 128, 128, 128);
+    QColor defaultItemColor(128, 128, 128, 256);
     mat->setColor(defaultItemColor);
     mat->setSpecularColor(defaultItemColor);
     mat->setDiffuseColor(defaultItemColor);

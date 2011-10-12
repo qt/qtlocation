@@ -270,7 +270,7 @@ Frustum MapPrivate::frustum() const
 void MapPrivate::paintGL(QGLPainter *painter)
 {
     if (!sphere_->updateMutex.tryLock()) {
-        qDebug() << "map will miss a frame, no mutex acquired!------";
+        qWarning() << "----- map will miss a frame, no mutex acquired!------";
         return;
     }
 
@@ -307,6 +307,8 @@ void MapPrivate::addMapItem(MapItem *item)
     if (!item->coordinate().isValid())
         return;
     sphere_->updateMutex.lock();
+    if (!item->glResources())
+        item->setGLResources(new MapItemGLResources);
     updateMapItemSceneNode(item);
     if (item->sceneNode()) {
         objectSceneNode_->addNode(item->sceneNode());

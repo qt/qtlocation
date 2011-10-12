@@ -51,20 +51,12 @@ MapItem::MapItem()
         textureDirty_(false),
         glResources_(0)
 {
-    glResources_ = new MapItemGLResources;
-    // TODO optimize the defaultMaterial be common for all
-    glResources_->defaultMaterial = new QGLMaterial();
-    glResources_->defaultMaterial->setColor(QColor(255, 128, 0));
-    glResources_->defaultMaterial->setSpecularColor(QColor(255, 128, 0));
-    glResources_->defaultMaterial->setDiffuseColor(QColor(255, 128, 0));
-    glResources_->defaultMaterial->setShininess(1.0);
 }
 
 MapItem::~MapItem()
 {
-    // merely deletes the struct; map item will not release the
-    // GL resources, but it is Map's responsibility to do that
-    delete glResources_;
+    // map item will not release the GL resources, but it is Map's responsibility
+    // to do that (needs to be done in correct thread)
 }
 
 void MapItem::setCoordinate(const QGeoCoordinate &coordinate)
@@ -89,7 +81,7 @@ MapItemGLResources* MapItem::glResources()
 
 void MapItem::setGLResources(MapItemGLResources* resources)
 {
-    glResources_ = 0;
+    glResources_ = resources;
 }
 
 void MapItem::setTextureId(GLuint textureId)
@@ -153,14 +145,7 @@ double MapItem::zoom() const
 
 void MapItem::setSceneNode(QGLSceneNode *sceneNode)
 {
-    if (glResources_->sceneNode == sceneNode)
-        return;
     glResources_->sceneNode = sceneNode;
-    if (glResources_->sceneNode && !glResources_->sceneNode->material()) {
-        // todo figure out default material setting if
-        // texture for any reason disappears. this crashes:
-        //sceneNode_->setMaterial(defaultMaterial_);
-    }
 }
 
 QGLSceneNode* MapItem::sceneNode() const

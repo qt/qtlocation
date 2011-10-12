@@ -62,6 +62,7 @@ struct MapItemGLResources {
     QGLSceneNode* sceneNode;
     QGLTexture2D* texture;
     QGLMaterial* defaultMaterial;
+    MapItemGLResources() : sceneNode(0), texture(0), defaultMaterial(0) {}
 };
 
 

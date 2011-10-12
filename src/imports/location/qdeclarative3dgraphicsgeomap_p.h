@@ -45,7 +45,7 @@
 #include <QPointer>
 #include <QTouchEvent>
 #include <QtDeclarative/qsgitem.h>
-#include <QtQuick1/QDeclarativeItem>
+#include <QtCore/QMutex>
 
 #include "qdeclarativegeomapobjectview_p.h"
 #include <QtCore/QCoreApplication>
@@ -281,6 +281,7 @@ private:
     QList<QDeclarativeGeoMapItem*> mapItems_;
     QList<QDeclarativeGeoMapItem*> mapItemsPending_;
 
+    QMutex updateMutex_;
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapObjectView;
     friend class QDeclarativeGeoMapPinchArea;

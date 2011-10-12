@@ -152,20 +152,26 @@ QSGNode* QDeclarative3DGraphicsGeoMap::updatePaintNode(QSGNode* node, UpdatePain
     Q_UNUSED(data);
 #ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
     // add any pending map items
-    if (canvas_) {
-        for (int i = 0; i < mapItemsPending_.count(); i++) {
-            mapItemsPending_.at(i)->setMap(this);
-            mapItems_.append(mapItemsPending_.at(i));
-            map_->addMapItem(mapItemsPending_.at(i)->mapItem());
+    if (updateMutex_.tryLock()) {
+        if (canvas_) {
+            for (int i = 0; i < mapItemsPending_.count(); i++) {
+                mapItemsPending_.at(i)->setMap(this);
+                mapItems_.append(mapItemsPending_.at(i));
+                map_->addMapItem(mapItemsPending_.at(i)->mapItem());
+            }
+            mapItemsPending_.clear();
         }
-        mapItemsPending_.clear();
+
+        // perform any updates needed by items
+        // can be optimized if lot of map items: usually the operation is no-op (static map items)
+        for (int i = 0; i < mapItems_.count(); ++i)
+            mapItems_.at(i)->updateItem();
+        updateMutex_.unlock();
+    } else {
+        QLOC_TRACE1("===== Map item update will be missed, mutex not acquired =====");
     }
-    // perform any updates needed by items
-    // can be optimized if lot of map items: usually the operation is no-op (static map items)
-    for (int i = 0; i < mapItems_.count(); ++i)
-        mapItems_.at(i)->updateItem();
 #endif
-    update();
+    update(); // is this needed
     return QSGPaintedItem::updatePaintNode(node, data);
 }
 
@@ -1186,12 +1192,15 @@ void QDeclarative3DGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object
 // must go through these functions
 void QDeclarative3DGraphicsGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
 {
+    QLOC_TRACE0;
 #ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
     if (!item || mapItems_.contains(item) || mapItemsPending_.contains(item))
         return;
+    updateMutex_.lock();
     // set pending, we'll add them once we have GL context
     mapItemsPending_.append(item);
     connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(mapItemDestroyed(QObject*)));
+    updateMutex_.unlock();
 #else
     Q_UNUSED(item);
 #endif
@@ -1199,9 +1208,17 @@ void QDeclarative3DGraphicsGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
 
 void QDeclarative3DGraphicsGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
 {
+    QLOC_TRACE0;
 #ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
-    if (!item || (!mapItems_.contains(item) && !mapItemsPending_.contains(item)))
+    if (!item)
         return;
+    if (mapItemsPending_.contains(item)) {
+        mapItemsPending_.removeAll(item);
+        return;
+    }
+    if (!mapItems_.contains(item))
+        return;
+    updateMutex_.lock();
     item->setMap(0);
     // stop listening to destroyed()
     item->disconnect(this);
@@ -1209,9 +1226,22 @@ void QDeclarative3DGraphicsGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
     mapItems_.removeOne(item);
     mapItemsPending_.removeOne(item);
     map_->removeMapItem(item->mapItem());
+    updateMutex_.unlock();
 #else
     Q_UNUSED(item);
 #endif
+}
+
+// TODO clears all items including ones from models/mapobjectview which is not intended
+void QDeclarative3DGraphicsGeoMap::clearMapItems()
+{
+    if (mapItems_.isEmpty())
+        return;
+    updateMutex_.lock();
+    mapItems_.clear();
+    mapItemsPending_.clear();
+    map_->clearMapItems();
+    updateMutex_.unlock();
 }
 
 // when a map item is getting destroyed, we need make sure resources are released gracefully
@@ -1221,16 +1251,6 @@ void QDeclarative3DGraphicsGeoMap::mapItemDestroyed(QObject* item)
     QDeclarativeGeoMapItem* mapItem = qobject_cast<QDeclarativeGeoMapItem*>(item);
     if (mapItem)
         removeMapItem(mapItem);
-}
-
-// TODO clears all items including ones from models/mapobjectview which is not intended
-void QDeclarative3DGraphicsGeoMap::clearMapItems()
-{
-    if (mapItems_.isEmpty())
-        return;
-    mapItems_.clear();
-    mapItemsPending_.clear();
-    map_->clearMapItems();
 }
 
 void QDeclarative3DGraphicsGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseArea *area)

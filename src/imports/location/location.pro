@@ -74,19 +74,10 @@ qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INSTALLS += target qmldir
 
-# This is interim hack until the QSGMouseArea and QSGPinchArea are enabled.
-# Hack makes code compile, but for anything useful you want the
-# QSGMOUSEAREA_AVAILABLE
-if (exists($$PWD/qsgmousearea_p.h)) {
-   message('Will try to build QML Map 3D with QML2 user interaction elements and Map Items.')
-   DEFINES += QSGMOUSEAREA_AVAILABLE
-   DEFINES += QSGSHADEREFFECTSOURCE_AVAILABLE
-} else {
-   message('QML2 3D Map user interaction elements and MapItems not available. Check location.pro - file for instructions.')
-#  1) Modify qsgmousearea_p.h at qtdeclaratice/src/declarative/items
-#  Make the QSGMouseArea exported instead of autotest exported, i.e. the file should have:
-#  class Q_DECLARATIVE_EXPORT QSGMouseArea : public QSGItem
-#  2) Also export the QSGShaderEffectSource in qsgshadereffectsource_p.h
-#  3) Make the declarative module.
-#  4) Rerun qmake and make
-}
+# manually enable mouse area and map items (shader effect source) if you know symbols to be
+# present in your environment
+#message('Will try to build QML Map 3D with QML2 user interaction elements and Map Items.')
+#DEFINES += QSGMOUSEAREA_AVAILABLE
+#DEFINES += QSGSHADEREFFECTSOURCE_AVAILABLE
+message('QML2 3D Map user interaction elements and MapItems not available. Check location.pro - file for instructions.')
+

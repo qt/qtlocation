@@ -110,6 +110,8 @@ private Q_SLOTS:
     void textureChangedSlot();
 
 private:
+    void up();
+    void down();
     QSGShaderEffectSource* shaderSource_;
     QSGItem* sourceItem_;
     QDeclarativeCoordinate* coordinate_;

@@ -68,9 +68,13 @@ public:
     }
     ~QDeclarativeGeoMapItemNode() {}
     virtual void preprocess() {
+        // TODO mutex protect changing of shaderSource_
+        if (!item_->shaderSource_)
+            return;
         QSGTextureProvider *provider = item_->shaderSource_->textureProvider();
-        if (QSGShaderEffectTexture *texture = qobject_cast<QSGShaderEffectTexture *>(provider->texture()))
+        if (QSGShaderEffectTexture *texture = qobject_cast<QSGShaderEffectTexture *>(provider->texture())) {
             texture->updateTexture();
+        }
     }
 private:
     QDeclarativeGeoMapItem* item_;
@@ -85,8 +89,6 @@ QDeclarativeGeoMapItem::QDeclarativeGeoMapItem(QSGItem *parent)
       componentCompleted_(false)
 {
     setFlag(ItemHasContents);
-    shaderSource_ = new QSGShaderEffectSource(this);
-    shaderSource_->setParentItem(this);
 }
 
 QDeclarativeGeoMapItem::~QDeclarativeGeoMapItem()
@@ -94,6 +96,7 @@ QDeclarativeGeoMapItem::~QDeclarativeGeoMapItem()
     // Remove this item from map if it still exists (qpointer protection todo).
     if (map_)
         map_->removeMapItem(this);
+    delete shaderSource_;
 }
 
 QSGNode* QDeclarativeGeoMapItem::updatePaintNode(QSGNode* node, UpdatePaintNodeData* data)
@@ -155,36 +158,52 @@ void QDeclarativeGeoMapItem::setCoordinate(QDeclarativeCoordinate *coordinate)
     emit coordinateChanged();
 }
 
-// note: call this only from render thread (e.g. paint() call) !
+// note: call this only from render thread (e.g. paint() call). todo check this wrt removal
+// this function notably associates and disassociates the item to map
+// and reserves / releases resources accordingly
 void QDeclarativeGeoMapItem::setMap(QDeclarative3DGraphicsGeoMap* map)
 {
+    QLOC_TRACE2(map, map_);
     if (map == map_)
         return;
+    if (map && map_)
+        return; // don't allow association to more than one map
     map_ = map;
-    if (!map_) {
-        // todo we may want to set parent item as zero too
-        setParentItem(0);
-        shaderSource_->setSourceItem(0);
-        mapItem_.setTextureId(0); // invalidate
-    } else {
-        // QSG -parent ourselves - it glues us to QSG tree and
-        // essentially enables rendering. This is particularly important to
-        // do manually when instantiating items from models.
-        setParent(map_);
-        setParentItem(map_);
-        if (sourceItem_)
-            mapItem_.setSize(QSize(sourceItem_->width(), sourceItem_->height()));
-    }
-    if (map_ && map_->canvas_) {
-        connect(shaderSource_, SIGNAL(sourceItemChanged()), this, SIGNAL(sourceItemChanged()));
-        if (shaderSource_->textureProvider())
-            connect(shaderSource_->textureProvider(), SIGNAL(textureChanged()), this, SLOT(textureChangedSlot()), Qt::DirectConnection);
-    }
+
+    if (!map_)
+        down();
+    else
+        up();
+}
+
+void QDeclarativeGeoMapItem::up()
+{
+    if (!map_ || !map_->canvas_ || !sourceItem_ || shaderSource_)
+        return;
+    // QSG -parent ourselves - it glues us to QSG tree and essentially enables rendering
+    setParentItem(map_);
+    shaderSource_ = new QSGShaderEffectSource(this);
+    shaderSource_->setSourceItem(sourceItem_);
+    shaderSource_->setHideSource(true);
+    shaderSource_->setParentItem(this);
+    mapItem_.setSize(QSize(sourceItem_->width(), sourceItem_->height()));
+    connect(shaderSource_, SIGNAL(sourceItemChanged()), this, SIGNAL(sourceItemChanged()));
+    connect(shaderSource_->textureProvider(), SIGNAL(textureChanged()), this, SLOT(textureChangedSlot()), Qt::DirectConnection);
+}
+
+void QDeclarativeGeoMapItem::down()
+{
+    if (!shaderSource_)
+        return;
+    setParentItem(0);
+    shaderSource_->disconnect(this);
+    delete shaderSource_;
+    shaderSource_ = 0;
 }
 
 void QDeclarativeGeoMapItem::textureChangedSlot()
 {
-    if (!shaderSource_->textureProvider()->texture()) {
+    if (!shaderSource_ || !shaderSource_->textureProvider()->texture()) {
         mapItem_.setTextureId(0); // invalidate
         return;
     }
@@ -203,9 +222,10 @@ void QDeclarativeGeoMapItem::updateItem()
 {
     // we seem to not always get texture changed -signals when
     // adding static map items with add
-    if (!mapItem_.textureId() &&
-            shaderSource_->textureProvider() &&
-            shaderSource_->textureProvider()->texture()) {
+    if (!shaderSource_)
+        return;
+    if (shaderSource_->textureProvider()->texture() &&
+        shaderSource_->textureProvider()->texture()->textureId() != mapItem_.textureId()) {
         QLOC_TRACE2("changing/setting map item texture ID to: ", shaderSource_->textureProvider()->texture()->textureId());
         mapItem_.setTextureId(shaderSource_->textureProvider()->texture()->textureId());
     }
@@ -228,16 +248,13 @@ void QDeclarativeGeoMapItem::setSourceItem(QSGItem* sourceItem)
     if (sourceItem == sourceItem_)
         return;
     sourceItem_ = sourceItem;
-    shaderSource_->setSourceItem(sourceItem_);
-    if (sourceItem_)
-        mapItem_.setSize(QSize(sourceItem_->width(), sourceItem_->height()));
-    else
-        mapItem_.setSize(QSize(0,0)); // map item should be removed (fixme)
+    down();
+    up();
 }
 
 QSGItem* QDeclarativeGeoMapItem::sourceItem()
 {
-    if (!map_)
+    if (!map_ || !shaderSource_)
         return sourceItem_;
     return shaderSource_->sourceItem();
 }
