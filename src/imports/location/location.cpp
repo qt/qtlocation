@@ -131,7 +131,7 @@ public:
             qmlRegisterType<QDeclarativeGeoLocation>(uri, 5, 0, "Location");
             qmlRegisterType<QDeclarativePlaceImageModel>(uri, 5, 0, "ImageModel");
             qmlRegisterType<QDeclarativePlace>(uri, 5, 0, "Place");
-            qmlRegisterType<QDeclarativePlaceIcon>(uri, 5, 0, "PlaceIcon");
+            qmlRegisterType<QDeclarativePlaceIcon>(uri, 5, 0, "Icon");
             qmlRegisterType<QDeclarativeRating>(uri, 5, 0, "Rating");
             qmlRegisterType<QDeclarativeReviewModel>(uri, 5, 0, "ReviewModel");
             qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");
