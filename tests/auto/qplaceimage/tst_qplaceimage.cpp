@@ -59,6 +59,7 @@ private Q_SLOTS:
     void urlTest();
     void idTest();
     void mimeTypeTest();
+    void attributionTest();
     void operatorsTest();
 };
 
@@ -111,6 +112,16 @@ void tst_QPlaceImage::mimeTypeTest()
     QVERIFY2(testObj.mimeType() == QString(), "Wrong default value");
     testObj.setMimeType("testText");
     QVERIFY2(testObj.mimeType() == "testText", "Wrong value returned");
+}
+
+void tst_QPlaceImage::attributionTest()
+{
+    QPlaceImage image;
+    QVERIFY(image.attribution().isEmpty());
+    image.setAttribution(QLatin1String("Brought to you by acme"));
+    QCOMPARE(image.attribution(), QLatin1String("Brought to you by acme"));
+    image.setAttribution(QString());
+    QVERIFY(image.attribution().isEmpty());
 }
 
 void tst_QPlaceImage::operatorsTest()

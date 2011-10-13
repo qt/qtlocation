@@ -67,7 +67,8 @@ bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
 {
     return supplier == other->supplier
             && sourceUrl == other->sourceUrl
-            && user == other->user;
+            && user == other->user
+            && attribution == other->attribution;
 }
 
 /* Constructs an empty content object */
@@ -89,9 +90,7 @@ QPlaceContent::QPlaceContent(const QPlaceContent &other)
 */
 QPlaceContent &QPlaceContent::operator=(const QPlaceContent &other)
 {
-    if (this != &other ) {
-        d_ptr = other.d_ptr;
-    }
+    d_ptr = other.d_ptr;
     return *this;
 }
 
@@ -188,6 +187,28 @@ void QPlaceContent::setUser(const QPlaceUser &user)
 {
     Q_D(QPlaceContent);
     d->user = user;
+}
+
+/*!
+    Returns a rich text attribution string.
+
+    Some providers may require that the attribution
+    of a particular content item always be displayed
+    when the content item is shown.
+*/
+QString QPlaceContent::attribution() const
+{
+    Q_D(const QPlaceContent);
+    return d->attribution;
+}
+
+/*!
+    Sets a rich text attribution string for this content item.
+*/
+void QPlaceContent::setAttribution(const QString &attribution)
+{
+    Q_D(QPlaceContent);
+    d->attribution = attribution;
 }
 
 /*!

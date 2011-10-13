@@ -94,6 +94,9 @@ public:
     QPlaceUser user() const;
     void setUser(const QPlaceUser &user);
 
+    QString attribution() const;
+    void setAttribution(const QString &attribution);
+
 protected:
     explicit QPlaceContent(QPlaceContentPrivate *d);
     QSharedDataPointer<QPlaceContentPrivate> d_ptr;

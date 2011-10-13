@@ -87,6 +87,7 @@ public:
         SupplierRole = Qt::UserRole,
         SourceUrlRole,
         PlaceUserRole,
+        AttributionRole,
         UserRole //indicator for next conten type specific role
     };
 

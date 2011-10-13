@@ -98,6 +98,7 @@ public:
     QPlaceSupplier supplier;
     QUrl sourceUrl;
     QPlaceUser user;
+    QString attribution;
 };
 
 #if defined(Q_CC_MWERKS)
