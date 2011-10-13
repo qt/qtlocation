@@ -75,6 +75,7 @@ public:
 
     QList<QPlaceCategory> categories() const;
     void setCategory(const QPlaceCategory &category);
+    void setCategories(const QList<QPlaceCategory> &categories);
 
     QGeoBoundingArea *searchArea() const;
     void setSearchArea(QGeoBoundingArea *area);

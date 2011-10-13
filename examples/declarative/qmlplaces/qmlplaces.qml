@@ -224,7 +224,11 @@ Rectangle {
     function searchCategory(category)
     {
         searchModel.clearSearchTerm();
-        searchModel.searchCategory = category;
+
+        var categories = new Array();
+        categories.push(category);
+        searchModel.categories = categories;
+
         searchModel.execute();
         placesList.model = searchModel;
         suggestions.visible = false;

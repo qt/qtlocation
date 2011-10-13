@@ -213,43 +213,68 @@ void QDeclarativeSearchResultModel::clearSearchTerm()
 }
 
 /*!
-    \qmlproperty Category SearchResultModel::searchCategory
+    \qmlproperty QDeclarativeListProperty<QDeclarativeCategory> Place::categories
 
-    This element holds search category. Search Category is used instead of search term.
+    This property holds a categories list to be used when searching.  It is expected
+    that any places that match at least one of the categories is returned.
+
+    It is possible that some backends may not support multiple categories.  In this case,
+    the first category is used and the rest are ignored.
 
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.
 */
-QDeclarativeCategory *QDeclarativeSearchResultModel::searchCategory()
+QDeclarativeListProperty<QDeclarativeCategory> QDeclarativeSearchResultModel::categories()
 {
-    return &m_category;
+    return QDeclarativeListProperty<QDeclarativeCategory>(this,
+                                                          0, // opaque data parameter
+                                                          categories_append,
+                                                          categories_count,
+                                                          category_at,
+                                                          categories_clear);
 }
 
-void QDeclarativeSearchResultModel::setSearchCategory(QDeclarativeCategory *searchCategory)
+void QDeclarativeSearchResultModel::categories_append(QDeclarativeListProperty<QDeclarativeCategory> *list,
+                                                  QDeclarativeCategory *declCategory)
 {
-    if (m_request.categories().count() &&
-        m_request.categories().first() == searchCategory->category()) {
-        return;
+    QDeclarativeSearchResultModel* searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
+    if (searchModel && declCategory) {
+        searchModel->m_categories.append(declCategory);
+        QList<QPlaceCategory> categories = searchModel->m_request.categories();
+        categories.append(declCategory->category());
+        searchModel->m_request.setCategories(categories);
+        emit searchModel->categoriesChanged();
     }
-
-    m_request.setCategory(searchCategory->category());
-    m_category.setCategory(m_request.categories().first());
-    emit searchCategoryChanged();
 }
 
-/*!
-    \qmlmethod SearchResultModel::clearCategories()
-
-    Clear the search categories.
-*/
-void QDeclarativeSearchResultModel::clearCategories()
+int QDeclarativeSearchResultModel::categories_count(QDeclarativeListProperty<QDeclarativeCategory> *list)
 {
-    if (m_request.categories().isEmpty())
-        return;
+    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
+    if (searchModel)
+        return searchModel->m_categories.count();
+    else
+        return -1;
+}
 
-    m_request.setCategory(QPlaceCategory());
-    m_category.setCategory(QPlaceCategory());
-    emit searchCategoryChanged();
+QDeclarativeCategory* QDeclarativeSearchResultModel::category_at(QDeclarativeListProperty<QDeclarativeCategory> *list,
+                                                                          int index)
+{
+    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
+    if (searchModel && (searchModel->m_categories.count() > index) && (index > -1))
+        return searchModel->m_categories.at(index);
+    else
+        return 0;
+}
+
+void QDeclarativeSearchResultModel::categories_clear(QDeclarativeListProperty<QDeclarativeCategory> *list)
+{
+    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
+    if (searchModel) {
+        //note: we do not need to delete each of the elements in m_categories since the search model
+        //should never be the parent of the categories anyway.
+        searchModel->m_categories.clear();
+        emit searchModel->categoriesChanged();
+    }
 }
 
 /*!

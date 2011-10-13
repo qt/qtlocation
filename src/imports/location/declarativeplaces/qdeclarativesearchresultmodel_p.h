@@ -55,7 +55,7 @@ class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
     Q_OBJECT
 
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
-    Q_PROPERTY(QDeclarativeCategory *searchCategory READ searchCategory WRITE setSearchCategory NOTIFY searchCategoryChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(int maximumCorrections READ maximumCorrections WRITE setMaximumCorrections NOTIFY maximumCorrectionsChanged)
     Q_PROPERTY(RelevanceHint relevanceHint READ relevanceHint WRITE setRelevanceHint NOTIFY relevanceHintChanged)
     Q_PROPERTY(QDeclarativePlace::Visibility visibilityScope READ visibilityScope WRITE setVisibilityScope NOTIFY visibilityScopeChanged)
@@ -82,9 +82,12 @@ public:
     void setSearchTerm(const QString &searchTerm);
     Q_INVOKABLE void clearSearchTerm();
 
-    QDeclarativeCategory *searchCategory();
-    void setSearchCategory(QDeclarativeCategory *searchCategory);
-    Q_INVOKABLE void clearCategories();
+    QDeclarativeListProperty<QDeclarativeCategory> categories();
+    static void categories_append(QDeclarativeListProperty<QDeclarativeCategory> *list,
+                                  QDeclarativeCategory* category);
+    static int categories_count(QDeclarativeListProperty<QDeclarativeCategory> *list);
+    static QDeclarativeCategory* category_at(QDeclarativeListProperty<QDeclarativeCategory> *list, int index);
+    static void categories_clear(QDeclarativeListProperty<QDeclarativeCategory> *list);
 
     QDeclarativeSearchResultModel::RelevanceHint relevanceHint() const;
     void setRelevanceHint(QDeclarativeSearchResultModel::RelevanceHint hint);
@@ -111,7 +114,7 @@ public:
 
 signals:
     void searchTermChanged();
-    void searchCategoryChanged();
+    void categoriesChanged();
     void maximumCorrectionsChanged();
     void relevanceHintChanged();
     void visibilityScopeChanged();
@@ -124,7 +127,7 @@ protected:
 private:
     QList<QPlaceSearchResult> m_results;
     QMap<QString, QDeclarativePlace *> m_places;
-    QDeclarativeCategory m_category;
+    QList<QDeclarativeCategory*> m_categories;
     QtLocation::VisibilityScope m_visibilityScope;
     QPlaceManager *m_placeManager;
 };

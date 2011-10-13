@@ -215,6 +215,18 @@ void QPlaceSearchRequest::setCategory(const QPlaceCategory &category)
 }
 
 /*!
+    Sets the search request to search from the list of given \a categories.
+
+    It is possible that some backends may not support multiple categories.  In this case,
+    the first category is used and the rest are ignored.
+*/
+void QPlaceSearchRequest::setCategories(const QList<QPlaceCategory> &categories)
+{
+    Q_D(QPlaceSearchRequest);
+    d->categories = categories;
+}
+
+/*!
     Returns search area.  The default search area is a null pointer.
 */
 QGeoBoundingArea *QPlaceSearchRequest::searchArea() const
