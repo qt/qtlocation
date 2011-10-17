@@ -90,8 +90,6 @@ QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
         connect(d, SIGNAL(finished(QPlaceReply*)), this, SIGNAL(finished(QPlaceReply*)));
         connect(d, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)),
                 this, SIGNAL(error(QPlaceReply*,QPlaceReply::Error)));
-        connect(d,SIGNAL(authenticationRequired(QAuthenticator*)),
-                this, SIGNAL(authenticationRequired(QAuthenticator*)));
 
         connect(d, SIGNAL(placeAdded(QString)),
                 this, SIGNAL(placeAdded(QString)), Qt::QueuedConnection);
