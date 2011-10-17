@@ -47,6 +47,7 @@
 #include <Qt3D/qglview.h>
 #include <Qt3D/qglsubsurface.h>
 #include <QtCore/QCoreApplication>
+#include <QtCore/qnumeric.h>
 #include <QThread>
 
 #include "tilecache.h"
@@ -76,7 +77,7 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass Map3D
+    \qmlclass Map
 
     \brief The Map element displays a map.
     \inherits QDeclarativeItem
@@ -681,9 +682,10 @@ qreal QDeclarative3DGraphicsGeoMap::zoomLevel() const
 */
 void QDeclarative3DGraphicsGeoMap::setCenter(QDeclarativeCoordinate *center)
 {
-    if (center_) {
+    if (center == center_)
+        return;
+    if (center_)
         center_->disconnect(this);
-    }
     center_ = center;
     if (center_) {
         connect(center_,
@@ -698,37 +700,60 @@ void QDeclarative3DGraphicsGeoMap::setCenter(QDeclarativeCoordinate *center)
                 SIGNAL(altitudeChanged(double)),
                 this,
                 SLOT(centerAltitudeChanged(double)));
-
-//        if (mapData_) {
-//            mapData_->setCenter(center_->coordinate());
-//        }
+        if (center_->coordinate().isValid()) {
+            CameraData cameraData = map_->cameraData();
+            cameraData.setCenter(center_->coordinate());
+            map_->setCameraData(cameraData);
+            update();
+        }
     }
-    emit declarativeCenterChanged(center_);
+    emit centerChanged(center_);
 }
 
 QDeclarativeCoordinate* QDeclarative3DGraphicsGeoMap::center()
 {
-//    if (mapData_ && center_)
-//        center_->setCoordinate(mapData_->center());
+    if (!center_)
+        return new QDeclarativeCoordinate(map_->cameraData().center());
     return center_;
 }
 
-void QDeclarative3DGraphicsGeoMap::centerLatitudeChanged(double /*latitude*/)
+void QDeclarative3DGraphicsGeoMap::centerLatitudeChanged(double latitude)
 {
-//    if (mapData_ && center_)
-//        mapData_->setCenter(center_->coordinate());
+    if (qIsNaN(latitude))
+        return;
+    CameraData cameraData = map_->cameraData();
+    QGeoCoordinate coord = cameraData.center();
+    coord.setLatitude(latitude);
+    cameraData.setCenter(coord);
+    map_->setCameraData(cameraData);
+    update();
+    emit centerChanged(center_);
 }
 
-void QDeclarative3DGraphicsGeoMap::centerLongitudeChanged(double /*longitude*/)
+void QDeclarative3DGraphicsGeoMap::centerLongitudeChanged(double longitude)
 {
-//    if (mapData_ && center_)
-//        mapData_->setCenter(center_->coordinate());
+    if (qIsNaN(longitude))
+        return;
+    CameraData cameraData = map_->cameraData();
+    QGeoCoordinate coord = cameraData.center();
+    coord.setLongitude(longitude);
+    cameraData.setCenter(coord);
+    map_->setCameraData(cameraData);
+    update();
+    emit centerChanged(center_);
 }
 
-void QDeclarative3DGraphicsGeoMap::centerAltitudeChanged(double /*altitude*/)
+void QDeclarative3DGraphicsGeoMap::centerAltitudeChanged(double altitude)
 {
-//    if (mapData_ && center_)
-//        mapData_->setCenter(center_->coordinate());
+    if (qIsNaN(altitude))
+        return;
+    CameraData cameraData = map_->cameraData();
+    QGeoCoordinate coord = cameraData.center();
+    coord.setAltitude(altitude);
+    cameraData.setCenter(coord);
+    map_->setCameraData(cameraData);
+    update();
+    emit centerChanged(center_);
 }
 
 /*!
@@ -1145,7 +1170,7 @@ void QDeclarative3DGraphicsGeoMap::hoverLeaveEvent(QHoverEvent *event)
 
 void QDeclarative3DGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &coordinate)
 {
-    emit declarativeCenterChanged(new QDeclarativeCoordinate(coordinate, this));
+    emit centerChanged(new QDeclarativeCoordinate(coordinate, this));
 }
 
 //void QDeclarative3DGraphicsGeoMap::internalMapTypeChanged(QGraphicsGeoMap::MapType mapType)

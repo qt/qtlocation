@@ -55,7 +55,7 @@
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
 
-#define QT_DECLARATIVE_LOCATION_TRACE 1
+//#define QT_DECLARATIVE_LOCATION_TRACE 1
 
 #ifdef QT_DECLARATIVE_LOCATION_TRACE
 #define QLOC_TRACE0 qDebug() << __FILE__ << __FUNCTION__;
@@ -103,7 +103,7 @@ class QDeclarative3DGraphicsGeoMap : public QSGPaintedItem
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel CONSTANT)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
 //    Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
-    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY declarativeCenterChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
 //    Q_PROPERTY(ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode NOTIFY connectivityModeChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -207,7 +207,7 @@ Q_SIGNALS:
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
     void sizeChanged(const QSizeF &size);
     void zoomLevelChanged(qreal zoomLevel);
-    void declarativeCenterChanged(const QDeclarativeCoordinate *coordinate);
+    void centerChanged(const QDeclarativeCoordinate *coordinate);
 //    void mapTypeChanged(QDeclarative3DGraphicsGeoMap::MapType mapType);
 //    void connectivityModeChanged(QDeclarative3DGraphicsGeoMap::ConnectivityMode connectivityMode);
 

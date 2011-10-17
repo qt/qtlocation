@@ -52,6 +52,14 @@ Item {
     Plugin { id: testPlugin; name : "nokia"; PluginParameter {name: "mapping.host"; value: "for.nonexistent"}}
     Coordinate{ id: mapDefaultCenter; latitude: 10; longitude: 30}
 
+    TestCase {
+        name: "MapObjectView"
+        function test_todo() {
+        }
+    }
+
+    /* TODO - when we have map items
+
     MapCircle {
         objectName: "externalCircle"
         id: externalCircle
@@ -311,5 +319,6 @@ Item {
             dynamicMap.destroy(2); wait(100) // must act gracefully although has objects when destroyed
         }
     }
+    */
 }
 

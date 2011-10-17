@@ -148,6 +148,42 @@ Item {
                 onDoubleClicked: {console.log('removing item 2'); map.removeMapItem(externalStaticMapItem2);}
             }
         }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Click:\nlat++"}
+            MouseArea{ anchors.fill: parent;
+                onClicked: { mapCenterCoordinate.latitude += 1}
+            }
+        }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Click:\nlat--"}
+            MouseArea{ anchors.fill: parent;
+                onClicked: { mapCenterCoordinate.latitude -= 1}
+            }
+        }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Click:\nlon++"}
+            MouseArea{ anchors.fill: parent;
+                onClicked: { mapCenterCoordinate.longitude += 1}
+            }
+        }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Click:\nlon--"}
+            MouseArea{ anchors.fill: parent;
+                onClicked: { mapCenterCoordinate.longitude -= 1}
+            }
+        }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Click:\nalt++"}
+            MouseArea{ anchors.fill: parent;
+                onClicked: { mapCenterCoordinate.altitude += 1}
+            }
+        }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Click:\nalt--"}
+            MouseArea{ anchors.fill: parent;
+                onClicked: { mapCenterCoordinate.altitude -= 1}
+            }
+        }
     }
 
     /*
@@ -401,9 +437,8 @@ Item {
             //map.pinch.maximumZoomLevel = map.zoomLevel + 2
         }
 
-
-        //focus : true
         center: Coordinate {
+            id: mapCenterCoordinate
             latitude: 51.5
             longitude: -0.11
         }

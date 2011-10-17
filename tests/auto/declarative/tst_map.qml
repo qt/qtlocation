@@ -46,168 +46,63 @@ import QtLocation 5.0
 Item {
     // General-purpose elements for the test:
     Plugin { id: nokiaPlugin; name: "nokia";  PluginParameter {name: "mapping.host"; value: "for.nonexistent"} }
+    Plugin { id: testPlugin; name: "qmlgeo.test.plugin" }
     Coordinate{ id: coordinate1; latitude: 10; longitude: 11}
     Coordinate{ id: coordinate2; latitude: 12; longitude: 13}
+    Map {id: pluginlessMap; center: coordinate1}
+    Map {id: map; plugin: testPlugin;}
+    SignalSpy {id: pluginlessMapPluginSpy; target: pluginlessMap; signalName: "pluginChanged" }
+    SignalSpy {id: centerSpy; target: map; signalName: 'centerChanged'}
+    SignalSpy {id: coordinate2LatitudeSpy; target: coordinate2; signalName: 'latitudeChanged'}
+    SignalSpy {id: coordinate2LongitudeSpy; target: coordinate2; signalName: 'longitudeChanged'}
+    SignalSpy {id: coordinate2AltitudeSpy; target: coordinate2; signalName: 'altitudeChanged'}
+
     TestCase {
-        name: "MapProperties"
-        Map {id: emptyMap}
-        SignalSpy {id: emptyMapPluginSpy; target: emptyMap; signalName: "pluginChanged" }
-        function test_a_map_properties_without_plugin() {
-            compare (emptyMap.minimumZoomLevel, -1,  "Minimum zoom level.")
-            compare (emptyMap.maximumZoomLevel, -1,  "Maximum zoom level.")
-            compare (emptyMap.zoomLevel, 8, "Zoom level.")
-            compare (emptyMap.mapType, Map.NoMap, "Map type")
-            compare (emptyMap.connectivityMode, Map.NoConnectivity, "Connectivity mode.")
+        when: windowShown
+        name: "Basic Map properties"
+
+        function test_aa_map_properties_without_plugin() {
+            // TODO
         }
-        function test_b_map_properties_with_plugin() {
-            // Set plugin and check that appropriate changes are reflected
-            emptyMap.plugin = nokiaPlugin
-            compare(emptyMapPluginSpy.count, 1, "Plugin changed signal received.")
-            compare (emptyMap.plugin, nokiaPlugin,  "Plugin set correctly.")
-            verify(emptyMap.maximumZoomLevel != -1, "Maximum zoom level.")
-            verify(emptyMap.minimumZoomLevel != -1, "Minimum zoom level.")
-            verify(emptyMap.zoomLevel != -1, "Zoom level")
-            // Should not change:
-            compare (emptyMap.mapType, Map.NoMap, "Default map type.")
-            compare (emptyMap.connectivityMode, Map.NoConnectivity, "Connectivity mode.")
+        function test_ab_map_properties_with_plugin() {
+            // TODO
         }
-    }
-    TestCase {
-        name: "MapPolyObjects"
-        Map {
-            id: polygonMap;
-            plugin: nokiaPlugin;
-            MapPolygon  {id: polygon1}
-            MapPolygon  {id: polygon2; Coordinate{latitude: 0;longitude:1} Coordinate{latitude: 2;longitude:3} }
-            MapPolyline {id:polyline1}
-            MapPolyline {id: polyline2; Coordinate{latitude: 0;longitude:1} Coordinate{latitude: 2;longitude:3} }
-        }
-        SignalSpy {id: polygon2PathSpy; target: polygon2; signalName: "pathChanged"}
-        SignalSpy {id: polygon2ColorSpy; target: polygon2.border; signalName: "colorChanged"}
-        SignalSpy {id: polygon2WidthSpy; target: polygon2.border; signalName: "widthChanged"}
-        function test_polygons() {
-            compare(polygon1.path.length, 0)
-            compare(polygon2.path.length, 2)
-            compare(polygon2PathSpy.count, 0)
-            polygon2.addCoordinate(coordinate1)
-            polygon2.addCoordinate(coordinate2)
-            compare(polygon2PathSpy.count, 2)
-            // Check the values are correct
-            compare(polygon2.path[0].latitude, 0)
-            compare(polygon2.path[1].latitude, 2)
-            compare(polygon2.path[2].latitude, 10)
-            compare(polygon2.path[3].latitude, 12)
-            // Remove a coordinate from the middle
-            polygon2.removeCoordinate(coordinate1)
-            compare(polygon2PathSpy.count, 3)
-            compare(polygon2.path[0].latitude, 0)
-            compare(polygon2.path[1].latitude, 2)
-            compare(polygon2.path[2].latitude, 12)
-            // Add same coordinate twice and remove it, latest should be removed
-            polygon2.addCoordinate(coordinate1)
-            polygon2.addCoordinate(coordinate2)
-            compare(polygon2PathSpy.count, 5)
-            compare(polygon2.path[2].latitude, 12)
-            compare(polygon2.path[3].latitude, 10)
-            compare(polygon2.path[4].latitude, 12)
-            polygon2.removeCoordinate(coordinate2)
-            compare(polygon2.path[2].latitude, 12)
-            compare(polygon2.path[3].latitude, 10)
-            compare(polygon2.path.length, 4)
-            // Clear coordinates
-            compare(polygon2PathSpy.count, 6)
-            polygon2.clearCoordinates()
-            compare(polygon2.path.length, 0)
-            compare(polygon2PathSpy.count, 7)
-            // Check border properties
-            // Width
-            compare(polygon2WidthSpy.count, 0)
-            polygon2.border.width = 123
-            compare(polygon2WidthSpy.count, 1)
-            compare(polygon2.border.width, 123)
-            polygon2.border.width = 123
-            compare(polygon2WidthSpy.count, 1)
-            polygon2.border.width = -1
-            compare(polygon2WidthSpy.count, 1)
-            compare(polygon2.border.width, 123)
-            polygon2.border.width = 0
-            compare(polygon2WidthSpy.count, 1)
-            compare(polygon2.border.width, 123)
-            // Color
-            compare(polygon2ColorSpy.count, 0)
-            polygon2.border.color = "#008000"
-            compare(polygon2ColorSpy.count, 1)
-            verify (polygon2.border.color == "#008000")
-            compare(polygon2.border.color, "#008000")
-            polygon2.border.color = "#008000"
-            compare(polygon2ColorSpy.count, 1)
-            polygon2.border.color = "#008000"
-            compare(polygon2ColorSpy.count, 1)
-            compare(polygon2.border.color, "#008000")
-        }
-        SignalSpy {id: polyline2PathSpy; target: polyline2; signalName: "pathChanged"}
-        SignalSpy {id: polyline2ColorSpy; target: polyline2.border; signalName: "colorChanged"}
-        SignalSpy {id: polyline2WidthSpy; target: polyline2.border; signalName: "widthChanged"}
-        function test_polylines() {
-            compare(polyline1.path.length, 0)
-            compare(polyline2.path.length, 2)
-            compare(polyline2PathSpy.count, 0)
-            polyline2.addCoordinate(coordinate1)
-            polyline2.addCoordinate(coordinate2)
-            compare(polyline2PathSpy.count, 2)
-            // Check the values are correct
-            compare(polyline2.path[0].latitude, 0)
-            compare(polyline2.path[1].latitude, 2)
-            compare(polyline2.path[2].latitude, 10)
-            compare(polyline2.path[3].latitude, 12)
-            // Remove a coordinate from the middle
-            polyline2.removeCoordinate(coordinate1)
-            compare(polyline2PathSpy.count, 3)
-            compare(polyline2.path[0].latitude, 0)
-            compare(polyline2.path[1].latitude, 2)
-            compare(polyline2.path[2].latitude, 12)
-            // Add same coordinate twice and remove it, latest should be removed
-            polyline2.addCoordinate(coordinate1)
-            polyline2.addCoordinate(coordinate2)
-            compare(polyline2PathSpy.count, 5)
-            compare(polyline2.path[2].latitude, 12)
-            compare(polyline2.path[3].latitude, 10)
-            compare(polyline2.path[4].latitude, 12)
-            polyline2.removeCoordinate(coordinate2)
-            compare(polyline2.path[2].latitude, 12)
-            compare(polyline2.path[3].latitude, 10)
-            compare(polyline2.path.length, 4)
-            // Clear coordinates
-            compare(polyline2PathSpy.count, 6)
-            polyline2.clearCoordinates()
-            compare(polyline2.path.length, 0)
-            compare(polyline2PathSpy.count, 7)
-            // Check border properties
-            // Width
-            compare(polyline2WidthSpy.count, 0)
-            polyline2.border.width = 123
-            compare(polyline2WidthSpy.count, 1)
-            compare(polyline2.border.width, 123)
-            polyline2.border.width = 123
-            compare(polyline2WidthSpy.count, 1)
-            polyline2.border.width = -1
-            compare(polyline2WidthSpy.count, 1)
-            compare(polyline2.border.width, 123)
-            polyline2.border.width = 0
-            compare(polyline2WidthSpy.count, 1)
-            compare(polyline2.border.width, 123)
-            // Color
-            compare(polyline2ColorSpy.count, 0)
-            polyline2.border.color = "#008000"
-            compare(polyline2ColorSpy.count, 1)
-            verify (polyline2.border.color == "#008000")
-            compare(polyline2.border.color, "#008000")
-            polyline2.border.color = "#008000"
-            compare(polyline2ColorSpy.count, 1)
-            polyline2.border.color = "#008000"
-            compare(polyline2ColorSpy.count, 1)
-            compare(polyline2.border.color, "#008000")
+        function test_map_center() {
+            // coordinate is set at declaration
+            compare(pluginlessMap.center.latitude, 10)
+            compare(pluginlessMap.center.longitude, 11)
+            // default coordinate
+            compare(map.center.latitude, -27.5)
+            compare(map.center.longitude, 153)
+            // change center and its values
+            compare(centerSpy.count, 0)
+            map.center = coordinate2
+            compare(centerSpy.count, 1)
+            map.center = coordinate2
+            compare(centerSpy.count, 1)
+            compare(coordinate2LatitudeSpy.count, 0)
+            compare(coordinate2LongitudeSpy.count, 0)
+            compare(coordinate2AltitudeSpy.count, 0)
+            coordinate2.latitude = 21
+            compare(coordinate2LatitudeSpy.count, 1)
+            compare(centerSpy.count, 2)
+            compare(coordinate2LongitudeSpy.count, 0)
+            compare(coordinate2AltitudeSpy.count, 0)
+            compare(map.center.latitude, 21)
+            coordinate2.longitude = 31
+            compare(coordinate2LatitudeSpy.count, 1)
+            compare(centerSpy.count, 3)
+            compare(coordinate2LongitudeSpy.count, 1)
+            compare(coordinate2AltitudeSpy.count, 0)
+            compare(map.center.longitude, 31)
+            coordinate2.altitude = 41
+            compare(coordinate2LatitudeSpy.count, 1)
+            compare(centerSpy.count, 4)
+            compare(coordinate2LongitudeSpy.count, 1)
+            compare(coordinate2AltitudeSpy.count, 1)
+            compare(map.center.altitude, 41)
+            compare(map.center.longitude, 31)
+            compare(map.center.latitude, 21)
         }
     }
 }
-
