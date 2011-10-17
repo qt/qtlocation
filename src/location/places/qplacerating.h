@@ -42,6 +42,8 @@
 #ifndef QPLACERATING_H
 #define QPLACERATING_H
 
+#include <QtLocation/qlocationglobal.h>
+
 #include <QSharedDataPointer>
 
 QT_BEGIN_HEADER
@@ -52,7 +54,7 @@ QT_MODULE(Location)
 
 class QPlaceRatingPrivate;
 
-class Q_LOCATION_EXPORT QPlaceRating
+class Q_LOCATION_EXPORT_TEMP QPlaceRating
 {
 public:
     QPlaceRating();

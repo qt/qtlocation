@@ -43,6 +43,7 @@
 #define QGEOADDRESS_H
 
 #include <QSharedDataPointer>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
 
@@ -52,7 +53,7 @@ QT_MODULE(Location)
 
 class QString;
 class QGeoAddressPrivate;
-class Q_LOCATION_EXPORT QGeoAddress
+class Q_LOCATION_EXPORT_TEMP QGeoAddress
 {
 public:
     QGeoAddress();

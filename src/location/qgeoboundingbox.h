@@ -55,7 +55,7 @@ QT_MODULE(Location)
 class QGeoCoordinate;
 class QGeoBoundingBoxPrivate;
 
-class Q_LOCATION_EXPORT QGeoBoundingBox : public QGeoBoundingArea
+class Q_LOCATION_EXPORT_TEMP QGeoBoundingBox : public QGeoBoundingArea
 {
 public:
     QGeoBoundingBox();

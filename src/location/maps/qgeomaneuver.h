@@ -43,6 +43,7 @@
 #define QGEOMANEUVER_H
 
 #include <qshareddata.h>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
 
@@ -55,7 +56,7 @@ class QString;
 class QGeoCoordinate;
 class QGeoManeuverPrivate;
 
-class Q_LOCATION_EXPORT QGeoManeuver
+class Q_LOCATION_EXPORT_TEMP QGeoManeuver
 {
 
 public:

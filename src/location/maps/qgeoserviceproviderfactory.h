@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Location)
 
-class Q_LOCATION_EXPORT QGeoServiceProviderFactory
+class Q_LOCATION_EXPORT_TEMP QGeoServiceProviderFactory
 {
 public:
     virtual ~QGeoServiceProviderFactory() {}

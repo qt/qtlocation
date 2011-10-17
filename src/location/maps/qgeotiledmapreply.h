@@ -42,7 +42,7 @@
 #ifndef QGEOTILEDMAPREPLY_H
 #define QGEOTILEDMAPREPLY_H
 
-#include "qglobal.h"
+#include <QtLocation/qlocationglobal.h>
 
 #include <QObject>
 
@@ -55,7 +55,7 @@ QT_MODULE(Location)
 class TileSpec;
 class QGeoTiledMapReplyPrivate;
 
-class Q_LOCATION_EXPORT QGeoTiledMapReply : public QObject
+class Q_LOCATION_EXPORT_TEMP QGeoTiledMapReply : public QObject
 {
     Q_OBJECT
 

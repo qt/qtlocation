@@ -55,7 +55,7 @@ QT_MODULE(Location)
 
 class QPlaceSearchResultPrivate;
 
-class Q_LOCATION_EXPORT QPlaceSearchResult
+class Q_LOCATION_EXPORT_TEMP QPlaceSearchResult
 {
 public:
     QPlaceSearchResult();

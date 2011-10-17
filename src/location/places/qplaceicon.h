@@ -42,6 +42,7 @@
 #ifndef QPLACEICON_H
 #define QPLACEICON_H
 
+#include <QtLocation/qlocationglobal.h>
 
 #include <QtCore/QUrl>
 #include <QtCore/QFlags>
@@ -54,7 +55,7 @@ QT_BEGIN_NAMESPACE
 class QPlaceManager;
 
 class QPlaceIconPrivate;
-class Q_LOCATION_EXPORT QPlaceIcon
+class Q_LOCATION_EXPORT_TEMP QPlaceIcon
 {
 public:
     Q_ENUMS(QPlaceIcon::IconType)

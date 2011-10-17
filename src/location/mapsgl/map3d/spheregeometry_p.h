@@ -52,7 +52,7 @@
 // We mean it.
 //
 
-#include "qglobal.h"
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -60,7 +60,7 @@ class QGeoCoordinate;
 class QVector2D;
 class QVector3D;
 
-class Q_LOCATION_EXPORT SphereGeometry
+class Q_LOCATION_EXPORT_TEMP SphereGeometry
 {
 public:
     SphereGeometry();

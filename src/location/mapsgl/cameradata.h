@@ -57,7 +57,7 @@ QT_MODULE(Location)
 class Projection;
 class CameraDataPrivate;
 
-class Q_LOCATION_EXPORT CameraData
+class Q_LOCATION_EXPORT_TEMP CameraData
 {
 public:
     CameraData();

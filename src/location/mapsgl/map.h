@@ -64,7 +64,7 @@ class QGLPainter;
 
 class QPointF;
 
-class Q_LOCATION_EXPORT Map : public QObject
+class Q_LOCATION_EXPORT_TEMP Map : public QObject
 {
     Q_OBJECT
 

@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Location)
 
-class Q_LOCATION_EXPORT QGeoBoundingArea
+class Q_LOCATION_EXPORT_TEMP QGeoBoundingArea
 {
 public:
     enum AreaType {

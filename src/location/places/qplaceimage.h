@@ -56,7 +56,7 @@ QT_MODULE(Location)
 class QPlaceImagePrivate;
 class QUrl;
 
-class Q_LOCATION_EXPORT QPlaceImage : public QPlaceContent
+class Q_LOCATION_EXPORT_TEMP QPlaceImage : public QPlaceContent
 {
 public:
     QPlaceImage();

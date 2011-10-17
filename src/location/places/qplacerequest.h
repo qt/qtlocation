@@ -42,6 +42,8 @@
 #ifndef QPLACEQUERY_H
 #define QPLACEQUERY_H
 
+#include <QtLocation/qlocationglobal.h>
+
 #include <QMetaType>
 #include <QSharedDataPointer>
 
@@ -53,7 +55,7 @@ QT_MODULE(Location)
 
 class QPlaceRequestPrivate;
 
-class Q_LOCATION_EXPORT QPlaceRequest
+class Q_LOCATION_EXPORT_TEMP QPlaceRequest
 {
 public:
     enum Type {

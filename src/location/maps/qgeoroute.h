@@ -60,7 +60,7 @@ class QGeoRouteSegment;
 
 class QGeoRoutePrivate;
 
-class Q_LOCATION_EXPORT QGeoRoute
+class Q_LOCATION_EXPORT_TEMP QGeoRoute
 {
 public:
     QGeoRoute();

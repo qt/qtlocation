@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Location)
 
-class Q_LOCATION_EXPORT QGeoPositionInfoSourceFactory
+class Q_LOCATION_EXPORT_TEMP QGeoPositionInfoSourceFactory
 {
 public:
     virtual ~QGeoPositionInfoSourceFactory();

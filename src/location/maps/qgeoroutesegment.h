@@ -44,6 +44,7 @@
 
 #include <QExplicitlySharedDataPointer>
 #include <QList>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
 
@@ -55,7 +56,7 @@ class QGeoCoordinate;
 class QGeoManeuver;
 class QGeoRouteSegmentPrivate;
 
-class Q_LOCATION_EXPORT QGeoRouteSegment
+class Q_LOCATION_EXPORT_TEMP QGeoRouteSegment
 {
 
 public:

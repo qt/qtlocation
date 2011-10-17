@@ -46,6 +46,8 @@
 #include <QVariant>
 #include <QString>
 
+#include <QtLocation/qlocationglobal.h>
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -63,7 +65,7 @@ class QGeoRoutingManagerEngine;
 class QPlaceManagerEngine;
 class QGeoServiceProviderPrivate;
 
-class Q_LOCATION_EXPORT QGeoServiceProvider
+class Q_LOCATION_EXPORT_TEMP QGeoServiceProvider
 {
 public:
     enum Error {

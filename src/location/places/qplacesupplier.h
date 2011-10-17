@@ -54,7 +54,7 @@ QT_MODULE(Location)
 class QUrl;
 class QPlaceSupplierPrivate;
 
-class Q_LOCATION_EXPORT QPlaceSupplier
+class Q_LOCATION_EXPORT_TEMP QPlaceSupplier
 {
 public:
     QPlaceSupplier();

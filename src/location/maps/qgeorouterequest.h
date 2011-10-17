@@ -46,6 +46,8 @@
 #include <QExplicitlySharedDataPointer>
 #include <QDateTime>
 
+#include <QtLocation/qlocationglobal.h>
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -56,7 +58,7 @@ class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoRouteRequestPrivate;
 
-class Q_LOCATION_EXPORT QGeoRouteRequest
+class Q_LOCATION_EXPORT_TEMP QGeoRouteRequest
 {
 public:
     enum TravelMode {

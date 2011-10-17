@@ -45,6 +45,7 @@
 #include <QObject>
 #include <QSize>
 #include <QPair>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
 
@@ -64,7 +65,7 @@ class QGeoMappingManagerEngine;
 class QGeoTiledMapReply;
 class TileSpec;
 
-class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
+class Q_LOCATION_EXPORT_TEMP QGeoMappingManager : public QObject
 {
     Q_OBJECT
 

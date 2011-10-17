@@ -42,6 +42,8 @@
 #ifndef QPLACEUSER_H
 #define QPLACEUSER_H
 
+#include <QtLocation/qlocationglobal.h>
+
 #include <QSharedDataPointer>
 
 QT_BEGIN_HEADER
@@ -52,7 +54,7 @@ QT_MODULE(Location)
 
 class QPlaceUserPrivate;
 
-class Q_LOCATION_EXPORT QPlaceUser
+class Q_LOCATION_EXPORT_TEMP QPlaceUser
 {
 public:
     QPlaceUser();

@@ -54,7 +54,7 @@ QT_MODULE(Location)
 class QGLTexture2D;
 class QGLSceneNode;
 
-class Q_LOCATION_EXPORT Tile
+class Q_LOCATION_EXPORT_TEMP Tile
 {
 public:
     Tile();

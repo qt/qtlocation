@@ -38,84 +38,36 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MAPSPHERE_H
-#define MAPSPHERE_H
+#ifndef QLOCATIONGLOBAL_H
+#define QLOCATIONGLOBAL_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QtCore/qglobal.h>
 
-#include <QtLocation/qlocationglobal.h>
+#if defined(Q_OS_WIN)
+#  if defined(QT_NODLL)
+#    undef QT_MAKEDLL
+#    undef QT_DLL
+#  elif defined(QT_MAKEDLL)
+#    if defined(QT_DLL)
+#      undef QT_DLL
+#    endif
+#    if defined(QT_BUILD_LOCATION_LIB)
+#      define Q_LOCATION_EXPORT_TEMP Q_DECL_EXPORT
+#    else
+#      define Q_LOCATION_EXPORT_TEMP Q_DECL_IMPORT
+#    endif
+#  elif defined(QT_DLL)
+#    define Q_LOCATION_EXPORT_TEMP Q_DECL_EXPORT
+#  endif
+#endif
 
-#include <QObject>
-#include <QSet>
-#include <QHash>
-#include <QList>
+#if !defined(Q_LOCATION_EXPORT_TEMP)
+#  if defined(QT_SHARED)
+#    define Q_LOCATION_EXPORT_TEMP Q_DECL_EXPORT
+#  else
+#    define Q_LOCATION_EXPORT_TEMP
+#  endif
+#endif
 
-#include <QMutex>
+#endif // QLOCATIONGLOBAL_H
 
-QT_BEGIN_NAMESPACE
-
-class QGLSceneNode;
-
-class TileSpec;
-class TileCache;
-
-class Map;
-class MapPrivate;
-
-class QGeoMappingManager;
-
-class Q_LOCATION_EXPORT_TEMP MapSphere : public QObject
-{
-    Q_OBJECT
-public:
-    MapSphere(Map* map, MapPrivate *mapPrivate, TileCache *tileCache);
-    ~MapSphere();
-
-    void setMappingManager(QGeoMappingManager *manager);
-
-    QGLSceneNode* sphereSceneNode() const;
-
-    QMutex updateMutex;
-    // when running as QML app we can't access GL context anywhere
-    // but QSG rendering thread.
-    void GLContextAvailable();
-
-public slots:
-    void clearCache();
-    void update(const QList<TileSpec> &tiles);
-
-private slots:
-    void tileFetched(const TileSpec &spec);
-    void prefetchingFinished();
-
-signals:
-    void tileUpdated();
-    void sphereUpdated();
-
-private:
-    void displayTile(const TileSpec &spec);
-
-    TileCache *tileCache_;
-    int minZoom_;
-
-    QSet<TileSpec> requested_;
-    QHash<TileSpec, QGLSceneNode*> built_;
-
-    QGLSceneNode* sphereNode_;
-
-    MapPrivate* mapPrivate_;
-    QList<QGLSceneNode*> obsoleteNodes_;
-};
-
-QT_END_NAMESPACE
-
-#endif // MAPSPHERE_H

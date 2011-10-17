@@ -58,7 +58,7 @@ QT_MODULE(Location)
 
 class QGeoLocationPrivate;
 
-class Q_LOCATION_EXPORT QGeoLocation
+class Q_LOCATION_EXPORT_TEMP QGeoLocation
 {
 public:
     QGeoLocation();

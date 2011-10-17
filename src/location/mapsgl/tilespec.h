@@ -41,7 +41,7 @@
 #ifndef TILESPEC_H
 #define TILESPEC_H
 
-#include <QtCore/qglobal.h>
+#include <QtLocation/qlocationglobal.h>
 #include <QtCore/QMetaType>
 
 QT_BEGIN_HEADER
@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Location)
 
-class Q_LOCATION_EXPORT TileSpec
+class Q_LOCATION_EXPORT_TEMP TileSpec
 {
 public:
     TileSpec();

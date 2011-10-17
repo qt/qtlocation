@@ -41,6 +41,8 @@
 #ifndef TILECACHE_H
 #define TILECACHE_H
 
+#include <QtLocation/qlocationglobal.h>
+
 #include <QObject>
 #include <QCache>
 #include <QSet>
@@ -65,7 +67,7 @@ class QGLSceneNode;
 class QPixmap;
 class QThread;
 
-class Q_LOCATION_EXPORT TileCache : public QObject
+class Q_LOCATION_EXPORT_TEMP TileCache : public QObject
 {
     Q_OBJECT
 public:

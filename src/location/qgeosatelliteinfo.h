@@ -41,7 +41,7 @@
 #ifndef QGEOSATELLITEINFO_H
 #define QGEOSATELLITEINFO_H
 
-#include <QtCore/QtGlobal>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
 
@@ -53,7 +53,7 @@ class QDebug;
 class QDataStream;
 
 class QGeoSatelliteInfoPrivate;
-class Q_LOCATION_EXPORT QGeoSatelliteInfo
+class Q_LOCATION_EXPORT_TEMP QGeoSatelliteInfo
 {
 public:
     enum Attribute {
@@ -86,22 +86,22 @@ public:
 
 private:
 #ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
+    friend Q_LOCATION_EXPORT_TEMP QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
 #endif
 #ifndef QT_NO_DATASTREAM
-    friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info);
-    friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info);
+    friend Q_LOCATION_EXPORT_TEMP QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info);
+    friend Q_LOCATION_EXPORT_TEMP QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info);
 #endif
     QGeoSatelliteInfoPrivate *d;
 };
 
 #ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
+Q_LOCATION_EXPORT_TEMP QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info);
 #endif
 
 #ifndef QT_NO_DATASTREAM
-Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info);
-Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info);
+Q_LOCATION_EXPORT_TEMP QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info);
+Q_LOCATION_EXPORT_TEMP QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info);
 #endif
 
 QT_END_NAMESPACE

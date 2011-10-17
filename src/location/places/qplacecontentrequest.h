@@ -56,7 +56,7 @@ QT_MODULE(Location)
 
 class QPlaceContentRequestPrivate;
 
-class Q_LOCATION_EXPORT QPlaceContentRequest : public QPlaceRequest
+class Q_LOCATION_EXPORT_TEMP QPlaceContentRequest : public QPlaceRequest
 {
 public:
     QPlaceContentRequest();

@@ -42,7 +42,7 @@
 #ifndef QTLOCATION_H
 #define QTLOCATION_H
 
-#include <QtCore/QtGlobal>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
 

@@ -52,7 +52,7 @@ QT_MODULE(Location)
 
 class QPlaceManagerEnginePrivate;
 
-class Q_LOCATION_EXPORT QPlaceManagerEngine : public QObject
+class Q_LOCATION_EXPORT_TEMP QPlaceManagerEngine : public QObject
 {
     Q_OBJECT
 public:

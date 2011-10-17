@@ -41,6 +41,8 @@
 #ifndef QPLACECONTENT_H
 #define QPLACECONTENT_H
 
+#include <QtLocation/qlocationglobal.h>
+
 #include <QMap>
 #include <QMetaType>
 #include <QSharedDataPointer>
@@ -62,7 +64,7 @@ QT_MODULE(Location)
 class QPlaceUser;
 class QPlaceSupplier;
 class QPlaceContentPrivate;
-class Q_LOCATION_EXPORT QPlaceContent
+class Q_LOCATION_EXPORT_TEMP QPlaceContent
 {
 public:
     typedef QMap<int, QPlaceContent> Collection;

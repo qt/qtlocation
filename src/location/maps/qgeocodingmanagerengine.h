@@ -57,7 +57,7 @@ QT_MODULE(Location)
 
 class QGeocodingManagerEnginePrivate;
 
-class Q_LOCATION_EXPORT QGeocodingManagerEngine : public QObject
+class Q_LOCATION_EXPORT_TEMP QGeocodingManagerEngine : public QObject
 {
     Q_OBJECT
 public:

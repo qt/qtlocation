@@ -42,6 +42,8 @@
 #ifndef QPLACEREPLY_H
 #define QPLACEREPLY_H
 
+#include <QtLocation/qlocationglobal.h>
+
 #include <QObject>
 
 QT_BEGIN_HEADER
@@ -51,7 +53,7 @@ QT_BEGIN_NAMESPACE
 QT_MODULE(Location)
 
 class QPlaceReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceReply : public QObject
+class Q_LOCATION_EXPORT_TEMP QPlaceReply : public QObject
 {
     Q_OBJECT
 public:

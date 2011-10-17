@@ -53,7 +53,7 @@ QT_MODULE(Location)
 class QDateTime;
 class QPlaceReviewPrivate;
 
-class Q_LOCATION_EXPORT QPlaceReview : public QPlaceContent
+class Q_LOCATION_EXPORT_TEMP QPlaceReview : public QPlaceContent
 {
 public:
     QPlaceReview();

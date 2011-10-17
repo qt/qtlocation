@@ -37,7 +37,8 @@ PUBLIC_HEADERS += \
                     qgeopositioninfosourcefactory.h \
                     qlatin1constant.h \
                     qmobilitypluginsearch.h \
-                    qtlocation.h
+                    qtlocation.h \
+                    qlocationglobal.h
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \

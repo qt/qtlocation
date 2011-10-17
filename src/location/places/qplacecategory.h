@@ -42,6 +42,8 @@
 #ifndef QPLACECATEGORY_H
 #define QPLACECATEGORY_H
 
+#include <QtLocation/qlocationglobal.h>
+
 #include <QtCore/QSharedDataPointer>
 #include <QtCore/QString>
 #include <QtCore/QMetaType>
@@ -56,7 +58,7 @@ QT_MODULE(Location)
 class QPlaceIcon;
 
 class QPlaceCategoryPrivate;
-class Q_LOCATION_EXPORT QPlaceCategory
+class Q_LOCATION_EXPORT_TEMP QPlaceCategory
 {
 public:
     QPlaceCategory();
