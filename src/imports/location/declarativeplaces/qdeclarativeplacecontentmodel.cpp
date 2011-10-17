@@ -302,7 +302,7 @@ void QDeclarativePlaceContentModel::fetchFinished()
                     m_content.insert(i, content);
                     if (!m_suppliers.contains(content.supplier().supplierId())) {
                         m_suppliers.insert(content.supplier().supplierId(),
-                                           new QDeclarativeSupplier(content.supplier(), this));
+                                           new QDeclarativeSupplier(content.supplier(), m_place->plugin(), this));
                     }
                     if (!m_users.contains(content.user().userId())) {
                         m_users.insert(content.user().userId(),
@@ -329,7 +329,7 @@ void QDeclarativePlaceContentModel::fetchFinished()
                     m_content.insert(i, content);
                     if (!m_suppliers.contains(content.supplier().supplierId())) {
                         m_suppliers.insert(content.supplier().supplierId(),
-                                           new QDeclarativeSupplier(content.supplier(), this));
+                                           new QDeclarativeSupplier(content.supplier(), m_place->plugin(), this));
                     }
                     if (!m_users.contains(content.user().userId())) {
                         m_users.insert(content.user().userId(),

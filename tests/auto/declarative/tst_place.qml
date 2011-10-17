@@ -111,17 +111,22 @@ TestCase {
             name: "Supplier 1"
             supplierId: "supplier-id-1"
             url: "http://www.example.com/supplier-id-1/"
-            supplierIconUrl: "http://www.example.com/supplier-id-1/icon"
+            icon: Icon{
+                fullUrl: "http://www.example.com/supplier-id-1/icon"
+                plugin: testPlugin
+            }
         }
 
         categories: [
             Category {
                 name: "Category 1"
                 categoryId: "category-id-1"
+                plugin: testPlugin
             },
             Category {
                 name: "Category 2"
                 categoryId: "category-id-2"
+                plugin: testPlugin
             }
         ]
 
@@ -178,8 +183,20 @@ TestCase {
                 return false;
             if (place1.supplier.url !== place2.supplier.url)
                 return false;
-            if (place1.supplier.supplierIconUrl !== place2.supplier.supplierIconUrl)
+
+            // check supplier icon
+            if (place1.supplier.icon === null && place2.supplier.icon !== null)
                 return false;
+            if (place1.supplier.icon !== null && place2.supplier.icon === null)
+                return false;
+            if (place1.supplier.icon !== null && place2.supplier.icon !== null) {
+                if (place1.supplier.icon.fullUrl !== place2.supplier.icon.fullUrl)
+                    return false;
+                if (place1.supplier.icon.baseUrl !== place2.supplier.icon.baseUrl)
+                    return false;
+                if (place1.supplier.icon.plugin !== place2.supplier.icon.plugin)
+                    return false;
+            }
         }
 
         // check rating
@@ -268,9 +285,22 @@ TestCase {
         compare(emptyPlace.visibility, Place.UnspecifiedVisibility);
 
         // complex properties
-        compare(emptyPlace.rating, null);
-        compare(emptyPlace.location, null);
-        compare(emptyPlace.supplier, null);
+        compare(emptyPlace.rating.value, 0);
+        compare(emptyPlace.location.address.street, '');
+        compare(emptyPlace.location.address.district, '');
+        compare(emptyPlace.location.address.city, '');
+        compare(emptyPlace.location.address.county, '');
+        compare(emptyPlace.location.address.state, '');
+        compare(emptyPlace.location.address.country, '');
+
+        compare(emptyPlace.supplier.name, '');
+        compare(emptyPlace.supplier.supplierId, '');
+        compare(emptyPlace.supplier.url, '');
+
+        compare(emptyPlace.supplier.icon.fullUrl, '');
+        compare(emptyPlace.supplier.icon.baseUrl, '');
+        compare(emptyPlace.supplier.icon.plugin, null);
+
         compare(emptyPlace.reviewModel.totalCount, -1);
         compare(emptyPlace.imageModel.totalCount, -1);
         compare(emptyPlace.editorialModel.totalCount, -1);

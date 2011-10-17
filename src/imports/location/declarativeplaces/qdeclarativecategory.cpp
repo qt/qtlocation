@@ -72,8 +72,7 @@ QDeclarativeCategory::QDeclarativeCategory(const QPlaceCategory &category,
           m_icon(0), m_plugin(plugin), m_reply(0)
 {
     Q_ASSERT(plugin);
-    if (!category.icon().isEmpty())
-        m_icon = new QDeclarativePlaceIcon(category.icon(), m_plugin, this);
+    setCategory(category);
 }
 
 QDeclarativeCategory::~QDeclarativeCategory() {}
@@ -115,33 +114,18 @@ void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
     QPlaceCategory previous = m_category;
     m_category = category;
 
-    if (category.name() != previous.name()) {
+    if (category.name() != previous.name())
         emit nameChanged();
-    }
-    if (category.categoryId() != previous.categoryId()) {
-        emit categoryIdChanged();
-    }
 
-    if (m_icon) {
-        if (m_icon->plugin() != m_plugin
-                || m_icon->baseUrl() != category.icon().baseUrl()
-                || m_icon->fullUrl() != category.icon().fullUrl()) {
-            if (m_icon->parent() == this) {
-                if (category.icon().isEmpty()) {
-                    delete m_icon;
-                    m_icon = 0;
-                } else {
-                    m_icon->setPlugin(m_plugin);
-                    m_icon->setBaseUrl(category.icon().baseUrl());
-                    m_icon->setFullUrl(category.icon().fullUrl());
-                }
-            } else {
-                m_icon = new QDeclarativePlaceIcon(category.icon(), m_plugin, this);
-            }
-            emit iconChanged();
-        }
-    } else {
-        m_icon = new QDeclarativePlaceIcon(category.icon(), m_plugin, this);
+    if (category.categoryId() != previous.categoryId())
+        emit categoryIdChanged();
+
+    if (m_icon && m_icon->parent() == this) {
+        m_icon->setPlugin(m_plugin);
+        m_icon->setBaseUrl(m_category.icon().baseUrl());
+        m_icon->setFullUrl(m_category.icon().fullUrl());
+    } else if (!m_icon || m_icon->parent() != this){
+        m_icon = new QDeclarativePlaceIcon(m_category.icon(), m_plugin, this);
         emit iconChanged();
     }
 }

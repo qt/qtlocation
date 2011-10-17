@@ -82,9 +82,6 @@ QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServicePr
     m_status(QDeclarativePlace::Ready)
 {
     Q_ASSERT(plugin);
-    if (!m_src.icon().isEmpty())
-        m_icon = new QDeclarativePlaceIcon(m_src.icon(), m_plugin, this);
-
     setPlace(src);
 }
 
@@ -174,31 +171,17 @@ void QDeclarativePlace::setPlace(const QPlace &src)
     }
 
     if (m_supplier && m_supplier->parent() == this) {
-        m_supplier->setSupplier(m_src.supplier());
+        m_supplier->setSupplier(m_src.supplier(), m_plugin);
     } else if (!m_supplier || m_supplier->parent() != this) {
-        m_supplier = new QDeclarativeSupplier(m_src.supplier(), this);
+        m_supplier = new QDeclarativeSupplier(m_src.supplier(), m_plugin, this);
         emit supplierChanged();
     }
 
-    if (m_icon) {
-        if (m_icon->plugin() != m_plugin
-                || m_icon->baseUrl() != m_src.icon().baseUrl()
-                || m_icon->fullUrl() != m_src.icon().fullUrl()) {
-            if (m_icon->parent() == this) {
-                if (m_src.icon().isEmpty()) {
-                    delete m_icon;
-                    m_icon = 0;
-                } else {
-                    m_icon->setPlugin(m_plugin);
-                    m_icon->setBaseUrl(m_src.icon().baseUrl());
-                    m_icon->setFullUrl(m_src.icon().fullUrl());
-                }
-            } else {
-                m_icon = new QDeclarativePlaceIcon(m_src.icon(), m_plugin, this);
-            }
-            emit iconChanged();
-        }
-    } else {
+    if (m_icon && m_icon->parent() == this) {
+        m_icon->setPlugin(m_plugin);
+        m_icon->setBaseUrl(m_src.icon().baseUrl());
+        m_icon->setFullUrl(m_src.icon().fullUrl());
+    } else if (!m_icon || m_icon->parent() != this) {
         m_icon = new QDeclarativePlaceIcon(m_src.icon(), m_plugin, this);
         emit iconChanged();
     }

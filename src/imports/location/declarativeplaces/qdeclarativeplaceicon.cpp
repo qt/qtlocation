@@ -57,7 +57,7 @@ QT_USE_NAMESPACE
     \ingroup qml-places
 */
 QDeclarativePlaceIcon::QDeclarativePlaceIcon(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), m_plugin(0)
 {
 }
 
@@ -66,7 +66,10 @@ QDeclarativePlaceIcon::QDeclarativePlaceIcon(const QPlaceIcon &icon, QDeclarativ
 {
     m_baseUrl = icon.baseUrl();
     m_fullUrl = icon.fullUrl();
-    m_plugin = plugin;
+    if (icon.isEmpty())
+        m_plugin = 0;
+    else
+        m_plugin = plugin;
 }
 
 QDeclarativePlaceIcon::~QDeclarativePlaceIcon()

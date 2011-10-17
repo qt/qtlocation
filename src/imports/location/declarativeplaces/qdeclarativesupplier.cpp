@@ -62,38 +62,41 @@ QDeclarativeSupplier::QDeclarativeSupplier(QObject* parent)
 }
 
 QDeclarativeSupplier::QDeclarativeSupplier(const QPlaceSupplier &src,
-        QObject *parent)
-        : QObject(parent),
-          m_src(src),
-          m_icon(0)
+                                           QDeclarativeGeoServiceProvider *plugin,
+                                           QObject *parent)
+    : QObject(parent),
+      m_src(src),
+      m_icon(0)
 {
-    //Note: icon needs to be assigned externally
-    //to the QDeclarativeSupplier since the icon needs
-    //to know which plugin it comes from.
+    setSupplier(src, plugin);
 }
 
 QDeclarativeSupplier::~QDeclarativeSupplier()
 {
 }
 
-void QDeclarativeSupplier::setSupplier(const QPlaceSupplier &src)
+void QDeclarativeSupplier::setSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin)
 {
     QPlaceSupplier previous = m_src;
     m_src = src;
 
-   if (previous.name() != m_src.name()) {
+   if (previous.name() != m_src.name())
         emit nameChanged();
-    }
-    if (previous.supplierId() != m_src.supplierId()) {
-        emit supplierIdChanged();
-    }
-    if (previous.url() != m_src.url()) {
-        emit urlChanged();
-    }
 
-    //Note: icon needs to be assigned externally
-    //to the QDeclarativeSupplier since the icon needs
-    //to know which plugin it comes from.
+    if (previous.supplierId() != m_src.supplierId())
+        emit supplierIdChanged();
+
+    if (previous.url() != m_src.url())
+        emit urlChanged();
+
+    if (m_icon && m_icon->parent() == this) {
+        m_icon->setPlugin(plugin);
+        m_icon->setBaseUrl(m_src.icon().baseUrl());
+        m_icon->setFullUrl(m_src.icon().fullUrl());
+    } else if (!m_icon || m_icon->parent() != this) {
+        m_icon = new QDeclarativePlaceIcon(m_src.icon(), plugin, this);
+        emit iconChanged();
+    }
 }
 
 QPlaceSupplier QDeclarativeSupplier::supplier()

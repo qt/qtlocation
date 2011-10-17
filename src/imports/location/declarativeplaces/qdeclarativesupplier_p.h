@@ -62,11 +62,11 @@ class QDeclarativeSupplier : public QObject
 
 public:
     explicit QDeclarativeSupplier(QObject* parent = 0);
-    explicit QDeclarativeSupplier(const QPlaceSupplier &src, QObject* parent = 0);
+    explicit QDeclarativeSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin, QObject* parent = 0);
     ~QDeclarativeSupplier();
 
     QPlaceSupplier supplier();
-    void setSupplier(const QPlaceSupplier &src);
+    void setSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin);
 
     QString name() const;
     void setName(const QString &data);
