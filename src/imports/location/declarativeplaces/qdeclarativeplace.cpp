@@ -71,6 +71,7 @@ QDeclarativePlace::QDeclarativePlace(QObject* parent)
     m_extendedAttributes(new QDeclarativePropertyMap(this)),
     m_reply(0), m_plugin(0),m_complete(false), m_status(QDeclarativePlace::Ready)
 {
+    setPlace(QPlace());
 }
 
 QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent)
