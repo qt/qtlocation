@@ -46,7 +46,6 @@
 #include <qnmeapositioninfosource.h>
 #include <QFile>
 #include <QTimer>
-#include <QApplication>
 #if defined(Q_OS_SYMBIAN)
 #include <e32std.h>
 #endif

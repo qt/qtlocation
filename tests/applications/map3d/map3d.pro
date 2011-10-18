@@ -2,9 +2,9 @@
 TEMPLATE = app
 TARGET = map3d
 
-CONFIG += qt warn_on qt3d
+CONFIG += qt warn_on
 
-QT += network location
+QT += network location qt3d widgets
 
 INCLUDEPATH += ../../../src/location/mapsgl/map3d
 

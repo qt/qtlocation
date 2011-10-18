@@ -1,8 +1,7 @@
 
 INCLUDEPATH += mapsgl
 
-QT += network
-CONFIG += qt3d
+QT += network qt3d
 
 include(map2d/map2d.pri)
 include(map3d/map3d.pri)

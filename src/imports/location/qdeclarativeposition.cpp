@@ -43,7 +43,6 @@
 #include "qdeclarative.h"
 #include <qnmeapositioninfosource.h>
 #include <QFile>
-#include <QApplication>
 
 QT_BEGIN_NAMESPACE
 

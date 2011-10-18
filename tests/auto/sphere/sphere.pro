@@ -1,8 +1,7 @@
 CONFIG += testcase
 TARGET = tst_sphere
 
-QT += location testlib
-CONFIG += qt3d
+QT += location testlib qt3d
 
 INCLUDEPATH = ../../../src/location/mapsgl
 

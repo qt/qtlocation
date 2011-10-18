@@ -62,14 +62,11 @@
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
 
-#include <QGraphicsSceneMouseEvent>
 #include <QDeclarativeContext>
 #include <QtDeclarative/qdeclarativeinfo.h>
 #include <QModelIndex>
-#include <QApplication>
 #include <QSGCanvas>
 #include <QSGEngine>
-#include <QDesktopWidget>
 #include <QtGui/QGuiApplication>
 
 #include <QDebug>

@@ -41,7 +41,6 @@
 
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
-#include <QGraphicsSceneMouseEvent>
 #include <QPropertyAnimation>
 #include <QEasingCurve>
 #include "qdeclarativegeomapflickable_p.h"
