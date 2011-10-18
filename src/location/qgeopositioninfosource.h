@@ -49,7 +49,7 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-QT_MODULE(Location)
+
 
 class QGeoPositionInfoSourcePrivate;
 class Q_LOCATION_EXPORT_TEMP QGeoPositionInfoSource : public QObject

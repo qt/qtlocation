@@ -48,7 +48,7 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-QT_MODULE(Location)
+
 
 class QDateTime;
 class QPlaceReviewPrivate;

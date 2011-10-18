@@ -54,7 +54,7 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-QT_MODULE(Location)
+
 
 #if defined(Q_OS_SYMBIAN)
 static inline bool qSymbian_CheckDir(const QDir& dir, RFs& rfs)

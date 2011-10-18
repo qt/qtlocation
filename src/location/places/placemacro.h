@@ -48,7 +48,7 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-QT_MODULE(Location)
+
 
 #define Q_DECLARE_D_FUNC(Class) \
     inline Class##Private* d_func(); \
