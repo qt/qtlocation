@@ -69,12 +69,21 @@ Item {
         }
         function test_map_center() {
             // coordinate is set at declaration
+            centerSpy.clear()
             compare(pluginlessMap.center.latitude, 10)
             compare(pluginlessMap.center.longitude, 11)
-            // default coordinate
+            // default coordinate (coordinate is not explicitly set)
             compare(map.center.latitude, -27.5)
             compare(map.center.longitude, 153)
+            map.center.latitude = 5
+            compare(centerSpy.count, 1)
+            map.center.longitude = 10
+            compare(centerSpy.count, 2)
+            compare(map.center.latitude, 5)
+            compare(map.center.longitude, 10)
+
             // change center and its values
+            centerSpy.clear();
             compare(centerSpy.count, 0)
             map.center = coordinate2
             compare(centerSpy.count, 1)

@@ -61,7 +61,7 @@
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
 #include "qdeclarativegeomapitem_p.h"
-#include "qdeclarativegeomapobjectview_p.h"
+#include "qdeclarativegeomapitemview_p.h"
 
 //Place includes
 #include "qdeclarativecategory_p.h"
@@ -111,7 +111,7 @@ public:
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
             qmlRegisterType<QDeclarative3DGraphicsGeoMap>(uri, 5, 0, "Map");
             qmlRegisterType<QDeclarativeGeoMapItem>(uri, 5, 0, "MapItem");
-            qmlRegisterType<QDeclarativeGeoMapObjectView>(uri, 5, 0, "MapObjectView");
+            qmlRegisterType<QDeclarativeGeoMapItemView>(uri, 5, 0, "MapItemView");
             qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 5, 0, "MapMouseArea");
             qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 5, 0, "MapMouseEvent");
 

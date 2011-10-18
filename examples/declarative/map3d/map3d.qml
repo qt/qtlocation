@@ -245,22 +245,19 @@ Item {
     Map {
         id: map
 
-        /*
         MapMouseArea {
             id: mapMouseArea
             onDoubleClicked: console.log('mapmousearea got clicked')
             anchors.fill: parent
         }
-        */
 
-        /*
         MapItem {
             id: externalStaticMapItem1
             visible: true
             objectName: "externalStaticMapItem1"
             coordinate: brisbaneCoordinate
             zoomLevel: 5.0
-            source: Item {
+            sourceItem: Item {
                 width: 640
                 height: 20
                 Rectangle {
@@ -271,38 +268,28 @@ Item {
                 }
             }
         }
-        */
 
-        /*
+
         MapItem {
             objectName: 'blinky static item'
             zoomLevel: 7 // at which map's  zoom level the width and height are '1-to-1'
             coordinate: brisbaneCoordinate
-            source: AnimatedImage {
+            sourceItem: AnimatedImage {
                 width: 80
                 height: 80
                 playing: true
                 source: "blinky.gif"
             }
         }
-        */
 
-
-        //MapItem {
-        //    source: Rectangle { width: 40; height: 40; color: 'chocolate'
-        //    }
-        // }
-        /*
-        MapObjectView {
+        MapItemView {
             id: theObjectView
             model: testModel
             delegate: Component {
                 MapItem {
                     objectName: 'one of many items from model'
                     visible: true
-                    live: true
-                    recursive: true
-                    source: Rectangle {
+                    sourceItem: Rectangle {
                         width: 300; height: 300; color: 'green'
                         Component.onCompleted: {
                             var num = (Math.floor(4 * Math.random()));
@@ -330,7 +317,6 @@ Item {
                 }
             }
         }
-        */
 
         // From location.test plugin
         PinchGenerator {
@@ -341,11 +327,21 @@ Item {
             focus: true           // enables keyboard control for convinience
             replaySpeedFactor: 1.1 // replay with 1.1 times the recording speed to better see what happens
             Text {
+                id: pinchGenText
                 text: "PinchArea state: " + pinchGenerator.state + "\n"
                       + "Swipes recorded: " + pinchGenerator.count + "\n"
                       + "Replay speed factor: " + pinchGenerator.replaySpeedFactor
             }
         }
+
+        Column {
+            y: 100
+            spacing: 2
+            Text {id: positionText; text: "Map zoom level: " + map.zoomLevel; color: 'red'; font.bold: true}
+            Text {color: positionText.color; font.bold: true; width: page.width / 2; elide: Text.ElideRight; text: "Map center lat: " + mapCenterCoordinate.latitude }
+            Text {color: positionText.color; font.bold: true; width: page.width / 2; elide: Text.ElideRight; text: "Map center lon: " + mapCenterCoordinate.longitude }
+        }
+
         /*
         Keys.onPressed: {
             if (event.key == Qt.Key_A) {

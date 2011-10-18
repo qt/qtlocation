@@ -79,8 +79,6 @@ class QDeclarativeGeoMapMouseArea : public QSGItem
     Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(Qt::MouseButtons pressedButtons READ pressedButtons NOTIFY pressedChanged)
     Q_PROPERTY(Qt::MouseButtons acceptedButtons READ acceptedButtons WRITE setAcceptedButtons NOTIFY acceptedButtonsChanged)
-    // placeholder (if hover will be enabled)
-    //Q_PROPERTY(bool hoverEnabled READ hoverEnabled WRITE setHoverEnabled NOTIFY hoverEnabledChanged)
 
 public:
     QDeclarativeGeoMapMouseArea(QSGItem *parent = 0);
@@ -100,15 +98,10 @@ public:
     void setEnabled(bool enabled);
 
     Qt::MouseButtons pressedButtons() const;
-
-    //bool hoverEnabled() const;
-    //void setHoverEnabled(bool hoverEnabled);
-
     void setAcceptedButtons(Qt::MouseButtons acceptedButtons);
     Qt::MouseButtons acceptedButtons() const;
 
     bool mouseEvent(QMouseEvent* event);
-    //bool hoverEvent(QHoverEvent* event);
 
 Q_SIGNALS:
     // publicly supported (i.e. documented) signals:
@@ -125,7 +118,6 @@ Q_SIGNALS:
     void pressedChanged(bool pressed);
     void enabledChanged(bool enabled);
     void acceptedButtonsChanged(Qt::MouseButtons acceptedButtons);
-    //void hoverEnabledChanged(bool hoverEnabled);
 
 protected:
     // from QSGItem
@@ -143,7 +135,6 @@ private slots:
     void canceledHandler();
     void enabledChangedHandler();
     void acceptedButtonsChangedHandler();
-    //void hoverEnabledChangedHandler();
     void pressedChangedHandler();
     void hoveredChangedHandler();
 

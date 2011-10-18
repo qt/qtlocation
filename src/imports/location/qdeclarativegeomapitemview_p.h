@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPOBJECT_H
-#define QDECLARATIVEGEOMAPOBJECT_H
+#ifndef QDECLARATIVEGEOMAPITEMVIEW_H
+#define QDECLARATIVEGEOMAPITEMVIEW_H
 
 #include "qdeclarativegeomapmouseevent_p.h"
 #include "QModelIndex"
@@ -56,7 +56,7 @@ class QDeclarative3DGraphicsGeoMap;
 class QDeclarativeGeoMapItem;
 class QDeclarativeGeoMapMouseArea;
 
-class QDeclarativeGeoMapObjectView : public QObject, public QDeclarativeParserStatus
+class QDeclarativeGeoMapItemView : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
@@ -68,8 +68,8 @@ class QDeclarativeGeoMapObjectView : public QObject, public QDeclarativeParserSt
     Q_PROPERTY(qreal z READ zValue WRITE setZValue NOTIFY zChanged)
 
 public:
-    QDeclarativeGeoMapObjectView(QSGItem *parent = 0);
-    ~QDeclarativeGeoMapObjectView();
+    QDeclarativeGeoMapItemView(QSGItem *parent = 0);
+    ~QDeclarativeGeoMapItemView();
 
     QVariant model() const;
     void setModel(const QVariant &);
@@ -114,6 +114,6 @@ private:
 };
 
 QT_END_NAMESPACE
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapObjectView));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapItemView));
 
 #endif

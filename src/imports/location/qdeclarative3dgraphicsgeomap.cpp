@@ -88,19 +88,19 @@ QT_BEGIN_NAMESPACE
     Various map objects can be added to the map.  These map objects are
     specified in terms of coordinates and metres.
 
-    MapObjects can be directly added to the Map element and it will display them
+    MapItems can be directly added to the Map element and it will display them
     automatically. The various objects that can be added include:
 
     \list
     \endlist
 
-    Of the above list, MapObjectView is a special case and not a MapObject as such.
+    Of the above list, MapItemView is a special case and not a MapItem as such.
     Here is a small example to illustrate this:
 
-    \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapObjects and View on Map
+    \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapItems and View on Map
 
     Mouse handling is done by adding MapMouseArea items as children of either
-    MapObjects or the Map item itself.
+    MapItems or the Map item itself.
 
     The Map element is part of the \bold{QtLocation 5.0} module.
 */
@@ -117,7 +117,6 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGItem *parent)
       componentCompleted_(false),
       flickable_(0),
       pinchArea_(0),
-      //hoverItem_(0),
       mouseGrabberItem_(0),
       canvas_(0),
       touchTimer_(-1),
@@ -137,6 +136,10 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGItem *parent)
             SIGNAL(updateRequired()),
             this,
             SLOT(update()));
+    connect(map_,
+            SIGNAL(cameraDataChanged(CameraData)),
+            this,
+            SLOT(cameraDataChanged(CameraData)));
     // Create internal flickable and pinch area.
     flickable_ = new QDeclarativeGeoMapFlickable(map_, this);
     pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
@@ -178,12 +181,12 @@ QDeclarative3DGraphicsGeoMap::~QDeclarative3DGraphicsGeoMap()
     // TODO we do not clear the map items atm
 //    if (mapData_) {
 //        qDeleteAll(mapViews_);
-//        // Remove map objects, we can't allow mapObject
+//        // Remove map objects, we can't allow MapItem
 //        // to delete the objects because they are owned
 //        // by the declarative elements.
-//        QList<QDeclarativeGeoMapObject*> objects = mapObjects_;
+//        QList<QDeclarativeGeoMapItem*> objects = MapItems_;
 //        for (int i = 0; i < objects.size(); ++i) {
-//            mapData_->removeMapObject(objects.at(i)->mapObject());
+//            mapData_->removeMapItem(objects.at(i)->MapItem());
 //        }
 //        delete mapData_;
 //    }
@@ -228,7 +231,7 @@ void QDeclarative3DGraphicsGeoMap::populateMap()
     QObjectList kids = children();
     for (int i = 0; i < kids.size(); ++i) {
         // dispatch items appropriately
-        QDeclarativeGeoMapObjectView* mapView = qobject_cast<QDeclarativeGeoMapObjectView*>(kids.at(i));
+        QDeclarativeGeoMapItemView* mapView = qobject_cast<QDeclarativeGeoMapItemView*>(kids.at(i));
         if (mapView) {
             mapViews_.append(mapView);
             setupMapView(mapView);
@@ -246,7 +249,7 @@ void QDeclarative3DGraphicsGeoMap::populateMap()
     }
 }
 
-void QDeclarative3DGraphicsGeoMap::setupMapView(QDeclarativeGeoMapObjectView *view)
+void QDeclarative3DGraphicsGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
 {
     Q_UNUSED(view)
     view->setMapData(this);
@@ -655,11 +658,6 @@ void QDeclarative3DGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
     emit zoomLevelChanged(zoomLevel_);
 }
 
-void QDeclarative3DGraphicsGeoMap::cameraZoomLevelChanged(double zoomLevel)
-{
-    emit zoomLevelChanged(static_cast<qreal>(zoomLevel));
-}
-
 qreal QDeclarative3DGraphicsGeoMap::zoomLevel() const
 {
     if (map_) {
@@ -709,9 +707,36 @@ void QDeclarative3DGraphicsGeoMap::setCenter(QDeclarativeCoordinate *center)
 
 QDeclarativeCoordinate* QDeclarative3DGraphicsGeoMap::center()
 {
-    if (!center_)
-        return new QDeclarativeCoordinate(map_->cameraData().center());
+    if (!center_) {
+        center_ = new QDeclarativeCoordinate(map_->cameraData().center());
+        connect(center_,
+                SIGNAL(latitudeChanged(double)),
+                this,
+                SLOT(centerLatitudeChanged(double)));
+        connect(center_,
+                SIGNAL(longitudeChanged(double)),
+                this,
+                SLOT(centerLongitudeChanged(double)));
+        connect(center_,
+                SIGNAL(altitudeChanged(double)),
+                this,
+                SLOT(centerAltitudeChanged(double)));
+    }
     return center_;
+}
+
+void QDeclarative3DGraphicsGeoMap::cameraDataChanged(const CameraData &cameraData)
+{
+    // check what has changed and emit appropriate signals
+    if (!center_ || cameraData.center() != center_->coordinate()) {
+        QDeclarativeCoordinate* currentCenter = center();
+        currentCenter->setCoordinate(cameraData.center());
+        emit centerChanged(currentCenter);
+    }
+    if (cameraData.zoomFactor() != zoomLevel_) {
+        zoomLevel_ = cameraData.zoomFactor();
+        emit zoomLevelChanged(zoomLevel_);
+    }
 }
 
 void QDeclarative3DGraphicsGeoMap::centerLatitudeChanged(double latitude)
@@ -828,7 +853,7 @@ void QDeclarative3DGraphicsGeoMap::centerAltitudeChanged(double altitude)
 //}
 
 /*!
-    \qmlproperty list<QGeoMapObject> Map::objects
+    \qmlproperty list<QGeoMapItem> Map::objects
     \default
 
     This property holds the list of objects associated with this map.
@@ -1039,21 +1064,6 @@ void QDeclarative3DGraphicsGeoMap::mouseDoubleClickEvent(QMouseEvent *event)
 void QDeclarative3DGraphicsGeoMap::mouseMoveEvent(QMouseEvent *event)
 {
     //QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
-    /* hover placeholder
-    if (!mouseGrabberItem_) {
-        if (lastMousePosition_.isNull())
-            lastMousePosition_ = event->windowPos();
-        QPointF last = lastMousePosition_;
-        lastMousePosition_ = event->windowPos();
-        bool accepted = event->isAccepted();
-        bool delivered = deliverHoverEvent(mouseAreaAt(event->pos()), event->windowPos(), last, event->modifiers(), accepted);
-        // exit any hover areas if we're out of bounds
-        if (!delivered)
-            accepted = clearHover();
-        event->setAccepted(accepted);
-        return;
-    }
-    */
     bool consumed = false;
     if (mouseGrabberItem_)
         consumed = deliverMouseEvent(event);
@@ -1063,107 +1073,6 @@ void QDeclarative3DGraphicsGeoMap::mouseMoveEvent(QMouseEvent *event)
     else
         event->ignore();
 }
-
-// hover functions are a placeholder. It works to an extent but
-// will need more work and testing if will be supported officially
-/*
-
-bool QDeclarative3DGraphicsGeoMap::deliverHoverEvent(QDeclarativeGeoMapMouseArea* ma, const QPointF &scenePos, const QPointF &lastScenePos,
-                                         Qt::KeyboardModifiers modifiers, bool &accepted)
-{
-    if (hoverItem_ && ma == hoverItem_) {
-        // hovering on the same item as before
-        QLOC_TRACE2(" deliver hover for same item: ", ma->objectName());
-        accepted = sendHoverEvent(QEvent::HoverMove, ma, scenePos, lastScenePos, modifiers, accepted);
-        return true;
-    } else {
-        // leave previous hover item since it is different
-        if (hoverItem_) {
-            sendHoverEvent(QEvent::HoverLeave, hoverItem_, scenePos, lastScenePos, modifiers, accepted);
-            QLOC_TRACE2("exiting previous hover area: ", hoverItem_->objectName());
-            hoverItem_ = 0;
-        }
-        // enter new hover item if any
-        if (ma && ma->hoverEnabled()) {
-            QLOC_TRACE2("entering new hover area: ",  ma->objectName());
-            sendHoverEvent(QEvent::HoverEnter, ma, scenePos, lastScenePos, modifiers, accepted);
-            hoverItem_ = ma;
-        } else {
-            if (ma) {
-                QLOC_TRACE2("no hover area, hovering disabled: ",  ma->objectName());
-            } else {
-                QLOC_TRACE1("no hover area");
-            }
-        }
-        return true;
-    }
-    return false;
-}
-
-
-void QDeclarative3DGraphicsGeoMap::hoverEvent(QHoverEvent* event)
-{
-    QDeclarativeGeoMapMouseArea* ma = mouseAreaAt(event->pos());
-    if (ma) {
-        QLOC_TRACE2("for mouse area: ", ma->objectName());
-    } else {
-        QLOC_TRACE1("no mouse area");
-    }
-    if (lastMousePosition_.isNull())
-        lastMousePosition_ = event->pos(); // hmmm todo was windowPos
-    QPointF last = lastMousePosition_;
-    lastMousePosition_ = event->pos(); // hmmm todo was windowPos
-    bool accepted = event->isAccepted();
-    (bool)deliverHoverEvent(ma, event->pos(), last, event->modifiers(), accepted);
-}
-
-
-bool QDeclarative3DGraphicsGeoMap::clearHover()
-{
-    QLOC_TRACE0;
-    if (!hoverItem_)
-        return false;
-    QPointF pos = QCursor::pos();
-    bool accepted = sendHoverEvent(QEvent::HoverLeave, hoverItem_, pos, pos, QGuiApplication::keyboardModifiers(), true);
-    hoverItem_ = 0;
-    return accepted;
-}
-
-bool QDeclarative3DGraphicsGeoMap::sendHoverEvent(QEvent::Type type, QSGItem *item,
-                                      const QPointF &scenePos, const QPointF &lastScenePos,
-                                      Qt::KeyboardModifiers modifiers, bool accepted)
-{
-    bool transformOk;
-    const QTransform &transform = itemTransform(item, &transformOk);
-    //create copy of event
-    QHoverEvent hoverEvent(type, transform.map(scenePos), transform.map(lastScenePos), modifiers);
-    hoverEvent.setAccepted(accepted);
-    QDeclarativeGeoMapMouseArea* ma = static_cast<QDeclarativeGeoMapMouseArea*>(item);
-    ma->hoverEvent(&hoverEvent);
-    return hoverEvent.isAccepted();
-}
-
-void QDeclarative3DGraphicsGeoMap::hoverEnterEvent(QHoverEvent *event)
-{
-    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
-    QLOC_TRACE2(" type: ", event->type());
-    hoverEvent(event);
-}
-
-void QDeclarative3DGraphicsGeoMap::hoverMoveEvent(QHoverEvent *event)
-{
-    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
-    QLOC_TRACE2(" type: ", event->type());
-    hoverEvent(event);
-}
-
-void QDeclarative3DGraphicsGeoMap::hoverLeaveEvent(QHoverEvent *event)
-{
-    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
-    QLOC_TRACE2(" type: ", event->type());
-    hoverEvent(event);
-}
-*/
 
 void QDeclarative3DGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &coordinate)
 {
@@ -1181,33 +1090,18 @@ void QDeclarative3DGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &c
 //}
 
 /*!
-    \qmlmethod Map::addMapObject(MapObject)
+    \qmlmethod Map::addMapItem(MapItem)
 
     Adds the given MapOject to the Map. If the object already
     is on the Map, it will not be added again.
 
     As an example, consider you have a MapCircle presenting your current position:
 
-    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic map position marker definition
+    \snippet doc/src/snippets/declarative/testpolyMapItems.qml Basic map position marker definition
     You can add it to Map (alterntively it can be defined as a child element of the Map):
 
-    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic add MapObject
-    Note: MapObjectViews can not be added with this method.
-*/
-
-/*
-void QDeclarative3DGraphicsGeoMap::addMapObject(QDeclarativeGeoMapObject *object)
-{
-    if (!mapData_)
-        qmlInfo(this) << tr("Map plugin is not set, map object cannot be added.");
-    if (!mapData_ || !object || objectMap_.contains(object->mapObject()))
-        return;
-    mapObjects_.append(object);
-    objectMap_.insert(object->mapObject(), object);
-    mapData_->addMapObject(object->mapObject());
-    // TODO
-    // object->setMap(this);
-}
+    \snippet doc/src/snippets/declarative/testpolyMapItems.qml Basic add MapItem
+    Note: MapItemViews can not be added with this method.
 */
 
 // all map item additions and removals, whether internal or app originated,
@@ -1254,7 +1148,7 @@ void QDeclarative3DGraphicsGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
 #endif
 }
 
-// TODO clears all items including ones from models/mapobjectview which is not intended
+// TODO clears all items including ones from models/MapItemview which is not intended
 void QDeclarative3DGraphicsGeoMap::clearMapItems()
 {
     if (mapItems_.isEmpty())
@@ -1283,35 +1177,22 @@ void QDeclarative3DGraphicsGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseAre
 
 
 /*!
-    \qmlmethod Map::removeMapObject(MapObject)
+    \qmlmethod Map::removeMapItem(MapItem)
 
-    Removes the given MapObject from the Map. If the MapObject does not
+    Removes the given MapItem from the Map. If the MapItem does not
     exist, function does nothing.
 
     As an example, consider you have a MapCircle presenting your current position:
-    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic map position marker definition
+    \snippet doc/src/snippets/declarative/testpolyMapItems.qml Basic map position marker definition
 
     You can remove it from the Map element:
-    \snippet doc/src/snippets/declarative/testpolymapobjects.qml Basic remove MapObject
+    \snippet doc/src/snippets/declarative/testpolyMapItems.qml Basic remove MapItem
 
 
-*/
-
-/*
-void QDeclarative3DGraphicsGeoMap::removeMapObject(QDeclarativeGeoMapObject *object)
-{
-    if (!mapData_)
-        qmlInfo(this) << tr("Map plugin is not set, map object cannot be removed.");
-    if (!mapData_ || !object || !objectMap_.contains(object->mapObject()))
-        return;
-    objectMap_.remove(object->mapObject());
-    mapObjects_.removeOne(object);
-    mapData_->removeMapObject(object->mapObject());
-}
 */
 
 // This function is strictly for testing purposes
-int QDeclarative3DGraphicsGeoMap::testGetDeclarativeMapObjectCount()
+int QDeclarative3DGraphicsGeoMap::testGetDeclarativeMapItemCount()
 {
     return mapItems_.count();
 }

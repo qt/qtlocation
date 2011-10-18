@@ -53,7 +53,7 @@ Item {
     Coordinate{ id: mapDefaultCenter; latitude: 10; longitude: 30}
 
     TestCase {
-        name: "MapObjectView"
+        name: "MapItemView"
         function test_todo() {
         }
     }
@@ -111,7 +111,7 @@ Item {
             radius: 2000000
             center: mapDefaultCenter
         }
-        MapObjectView {
+        MapItemView {
             id: theObjectView
             model: testModel
             delegate: Component {
@@ -134,7 +134,7 @@ Item {
             radius: 2000000
             center: mapDefaultCenter
         }
-        MapObjectView {
+        MapItemView {
             id: theObjectView2
             model: testModel
             delegate: Component {
@@ -147,7 +147,7 @@ Item {
                 }
             }
         }
-        MapObjectView {
+        MapItemView {
             id: routeObjectView
             model: routeModel
             delegate: Component {
@@ -159,7 +159,7 @@ Item {
     }
 
     TestCase {
-        name: "MapObjectView"
+        name: "MapItemView"
         function test_a_add_and_remove() {
             // Basic adding and removing of static object
             compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 8)
@@ -182,7 +182,7 @@ Item {
         SignalSpy {id: model1Spy; target: testModel; signalName: "modelChanged"}
         SignalSpy {id: model2Spy; target: testModel2; signalName: "modelChanged"}
         function test_b_model_change() {
-            // Change the model of an MapObjectView on the fly
+            // Change the model of an MapItemView on the fly
             // and verify that object counts change accordingly.
             compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
             testModel.datacount += 2

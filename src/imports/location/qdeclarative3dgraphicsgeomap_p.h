@@ -47,11 +47,11 @@
 #include <QtDeclarative/qsgitem.h>
 #include <QtCore/QMutex>
 
-#include "qdeclarativegeomapobjectview_p.h"
 #include <QtCore/QCoreApplication>
 
 #include "qsgtexture.h"
 #include "qsgpainteditem.h"
+#include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
 
@@ -176,7 +176,7 @@ public:
     // This function is strictly for testing purposes and may be removed at
     // any time without any notice (hence also the obscure naming to avoid
     // accidental usage):
-    Q_INVOKABLE int testGetDeclarativeMapObjectCount();
+    Q_INVOKABLE int testGetDeclarativeMapItemCount();
     void setActiveMouseArea(QDeclarativeGeoMapMouseArea *area);
     //QDeclarativeGeoMapMouseArea* activeMouseArea() const;
 
@@ -219,11 +219,11 @@ private Q_SLOTS:
     void centerLatitudeChanged(double latitude);
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
-    void cameraZoomLevelChanged(double zoomLevel);
     void mapItemDestroyed(QObject* item);
+    void cameraDataChanged(const CameraData &cameraData);
 
 private:
-    void setupMapView(QDeclarativeGeoMapObjectView *view);
+    void setupMapView(QDeclarativeGeoMapItemView *view);
     void updateAspectRatio();
     void populateMap();
 
@@ -258,7 +258,7 @@ private:
     QSizeF size_;
 
     bool componentCompleted_;
-    QList<QDeclarativeGeoMapObjectView*> mapViews_;
+    QList<QDeclarativeGeoMapItemView*> mapViews_;
 
     QDeclarativeGeoMapFlickable* flickable_;
     QDeclarativeGeoMapPinchArea* pinchArea_;
@@ -283,7 +283,7 @@ private:
 
     QMutex updateMutex_;
     friend class QDeclarativeGeoMapItem;
-    friend class QDeclarativeGeoMapObjectView;
+    friend class QDeclarativeGeoMapItemView;
     friend class QDeclarativeGeoMapPinchArea;
     friend class QDeclarativeGeoMapFlickable;
     Q_DISABLE_COPY(QDeclarative3DGraphicsGeoMap);

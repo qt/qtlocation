@@ -21,7 +21,7 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativepositionsource_p.h \
            qdeclarativecoordinate_p.h \
            qdeclarativegeolocation_p.h \
-           qdeclarativegeomapobjectview_p.h \
+           qdeclarativegeomapitemview_p.h \
            qdeclarativegeomapmouseevent_p.h \
            qdeclarativegeomapmousearea_p.h \
            qdeclarativegeoserviceprovider_p.h \
@@ -44,7 +44,7 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativepositionsource.cpp \
            qdeclarativecoordinate.cpp \
            qdeclarativegeolocation.cpp \
-           qdeclarativegeomapobjectview.cpp \
+           qdeclarativegeomapitemview.cpp \
            qdeclarativegeomapmouseevent.cpp \
            qdeclarativegeomapmousearea.cpp \
            qdeclarativegeoserviceprovider.cpp \

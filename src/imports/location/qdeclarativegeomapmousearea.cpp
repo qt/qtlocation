@@ -121,7 +121,6 @@ QDeclarativeGeoMapMouseArea::QDeclarativeGeoMapMouseArea(QSGItem *parent)
     connect(mouseArea_, SIGNAL(pressedChanged()), this, SLOT(pressedChangedHandler()));
     connect(mouseArea_, SIGNAL(enabledChanged()), this, SLOT(enabledChangedHandler()));
     connect(mouseArea_, SIGNAL(acceptedButtonsChanged()), this, SLOT(acceptedButtonsChangedHandler()));
-    //connect(mouseArea_, SIGNAL(hoverEnabledChanged()), this, SLOT(hoverEnabledChangedHandler()));
     // new signals from qt5 ->
     connect(mouseArea_, SIGNAL(hoveredChanged()), this, SLOT(hoveredChangedHandler()));
     connect(mouseArea_, SIGNAL(positionChanged(QSGMouseEvent*)), this, SLOT(positionChangedHandler(QSGMouseEvent*)));
@@ -167,13 +166,6 @@ void QDeclarativeGeoMapMouseArea::pressAndHoldHandler(QSGMouseEvent* event)
     mapMouseEvent(event);
     emit pressAndHold(mouseEvent_);
 }
-
-/* hovering not supported at the moment
-void QDeclarativeGeoMapMouseArea::hoverEnabledChangedHandler()
-{
-    emit hoverEnabledChanged(mouseArea_->hoverEnabled());
-}
-*/
 
 void QDeclarativeGeoMapMouseArea::acceptedButtonsChangedHandler()
 {
@@ -364,43 +356,6 @@ Qt::MouseButtons QDeclarativeGeoMapMouseArea::acceptedButtons() const
 {
     return static_cast<Qt::MouseButtons>(mouseArea_->property("acceptedButtons").toInt());
 }
-
-/* hover is currently not supported
-    \qmlproperty bool MapMouseArea::hoverEnabled
-    This property holds whether hover events are handled.
-
-    By default, mouse events are only handled in response to a button event, or when a button is
-    pressed. Hover enables handling of all mouse events even when no mouse button is
-    pressed.
-
-    This property affects the \l containsMouse property and the \l onEntered, \l onExited and
-    \l onPositionChanged signals.
-
-
-bool QDeclarativeGeoMapMouseArea::hoverEnabled() const
-{
-    return mouseArea_->hoverEnabled();
-}
-
-void QDeclarativeGeoMapMouseArea::setHoverEnabled(bool hoverEnabled)
-{
-    mouseArea_->setHoverEnabled(hoverEnabled);
-}
-
-bool QDeclarativeGeoMapMouseArea::hoverEvent(QHoverEvent *event)
-{
-    if (!map_ || !map_->canvas()) {
-        qmlInfo(this)  << "Warning: no qsgcanvas available, cannot dispatch the mouse event";
-        return false;
-    }
-    // we need to filter hover events to mimic regular MouseArea's behavior
-    if (!mouseArea_->hoverEnabled()) {
-        return false;
-    }
-    map_->canvas()->sendEvent(mouseArea_, event);
-    return true;
-}
-*/
 
 bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
 {

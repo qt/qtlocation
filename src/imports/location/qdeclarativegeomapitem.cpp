@@ -101,6 +101,7 @@ QDeclarativeGeoMapItem::~QDeclarativeGeoMapItem()
 
 QSGNode* QDeclarativeGeoMapItem::updatePaintNode(QSGNode* node, UpdatePaintNodeData* data)
 {
+    Q_UNUSED(data);
     if (!node)
         node = new QDeclarativeGeoMapItemNode(this);
     return node;
@@ -225,7 +226,7 @@ void QDeclarativeGeoMapItem::updateItem()
     if (!shaderSource_)
         return;
     if (shaderSource_->textureProvider()->texture() &&
-        shaderSource_->textureProvider()->texture()->textureId() != mapItem_.textureId()) {
+        (GLuint)shaderSource_->textureProvider()->texture()->textureId() != mapItem_.textureId()) {
         QLOC_TRACE2("changing/setting map item texture ID to: ", shaderSource_->textureProvider()->texture()->textureId());
         mapItem_.setTextureId(shaderSource_->textureProvider()->texture()->textureId());
     }
