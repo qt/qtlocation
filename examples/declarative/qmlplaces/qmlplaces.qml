@@ -214,7 +214,7 @@ Rectangle {
 
     function searchTerm(term)
     {
-        searchModel.clearCategories();
+        searchModel.categories = null;
         searchModel.searchTerm = term;
         searchModel.execute();
         placesList.model = searchModel;
@@ -223,7 +223,7 @@ Rectangle {
 
     function searchCategory(category)
     {
-        searchModel.clearSearchTerm();
+        searchModel.searchTerm = "";
 
         var categories = new Array();
         categories.push(category);

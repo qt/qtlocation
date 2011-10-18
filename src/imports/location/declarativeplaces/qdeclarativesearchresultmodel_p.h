@@ -80,7 +80,6 @@ public:
 
     QString searchTerm() const;
     void setSearchTerm(const QString &searchTerm);
-    Q_INVOKABLE void clearSearchTerm();
 
     QDeclarativeListProperty<QDeclarativeCategory> categories();
     static void categories_append(QDeclarativeListProperty<QDeclarativeCategory> *list,

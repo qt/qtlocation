@@ -199,20 +199,6 @@ void QDeclarativeSearchResultModel::setSearchTerm(const QString &searchTerm)
 }
 
 /*!
-    \qmlmethod SearchResultModel::clearSearchTerm()
-
-    Clears the search term.
-*/
-void QDeclarativeSearchResultModel::clearSearchTerm()
-{
-    if (m_request.searchTerm().isEmpty())
-        return;
-
-    m_request.setSearchTerm(QString());
-    emit searchTermChanged();
-}
-
-/*!
     \qmlproperty QDeclarativeListProperty<QDeclarativeCategory> Place::categories
 
     This property holds a categories list to be used when searching.  It is expected
@@ -273,6 +259,7 @@ void QDeclarativeSearchResultModel::categories_clear(QDeclarativeListProperty<QD
         //note: we do not need to delete each of the elements in m_categories since the search model
         //should never be the parent of the categories anyway.
         searchModel->m_categories.clear();
+        searchModel->m_request.setCategories(QList<QPlaceCategory>());
         emit searchModel->categoriesChanged();
     }
 }
