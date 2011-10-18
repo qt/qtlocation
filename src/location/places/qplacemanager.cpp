@@ -181,11 +181,11 @@ QPlaceIdReply *QPlaceManager::savePlace(const QPlace &place)
 }
 
 /*!
-    Removes a \a place from the manager
+    Removes the place corresponding to \a placeId from the manager.
 */
-QPlaceIdReply *QPlaceManager::removePlace(const QPlace &place)
+QPlaceIdReply *QPlaceManager::removePlace(const QString &placeId)
 {
-    return d->removePlace(place);
+    return d->removePlace(placeId);
 }
 
 /*!

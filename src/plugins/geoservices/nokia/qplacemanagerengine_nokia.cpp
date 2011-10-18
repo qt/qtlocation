@@ -238,9 +238,9 @@ QPlaceIdReply *QPlaceManagerEngineNokia::savePlace(const QPlace &place)
     return 0;
 }
 
-QPlaceIdReply *QPlaceManagerEngineNokia::removePlace(const QPlace &place)
+QPlaceIdReply *QPlaceManagerEngineNokia::removePlace(const QString &placeId)
 {
-    Q_UNUSED(place)
+    Q_UNUSED(placeId)
 
     //TODO: implementation
     return 0;

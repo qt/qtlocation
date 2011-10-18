@@ -1112,7 +1112,7 @@ void tst_QPlaceManagerJsonDb::doSavePlaces(const QList<QPlace *> &places)
 bool tst_QPlaceManagerJsonDb::doRemovePlace(const QPlace &place,
                                             QPlaceReply::Error expectedError)
 {
-    QPlaceIdReply *removeReply = placeManager->removePlace(place);
+    QPlaceIdReply *removeReply = placeManager->removePlace(place.placeId());
     bool isSuccessful = false;
     isSuccessful = checkSignals(removeReply, expectedError)
                     && (removeReply->id() == place.placeId());

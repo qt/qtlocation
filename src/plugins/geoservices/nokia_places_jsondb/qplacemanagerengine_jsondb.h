@@ -68,7 +68,7 @@ public:
     QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request);
 
     QPlaceIdReply *savePlace(const QPlace &place);
-    QPlaceIdReply *removePlace(const QPlace &place);
+    QPlaceIdReply *removePlace(const QString &placeId);
 
     QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId);
     QPlaceIdReply *removeCategory(const QString &categoryId);

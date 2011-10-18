@@ -189,16 +189,16 @@ public:
         return reply;
     }
 
-    QPlaceIdReply *removePlace(const QPlace &place)
+    QPlaceIdReply *removePlace(const QString &placeId)
     {
         IdReply *reply = new IdReply(QPlaceIdReply::RemovePlace, this);
-        reply->setId(place.placeId());
+        reply->setId(placeId);
 
-        if (!m_places.contains(place.placeId())) {
+        if (!m_places.contains(placeId)) {
             reply->setError(QPlaceReply::PlaceDoesNotExistError, tr("Place does not exist"));
             QMetaObject::invokeMethod(reply, "emitError", Qt::QueuedConnection);
         } else {
-            m_places.remove(place.placeId());
+            m_places.remove(placeId);
         }
 
         QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);

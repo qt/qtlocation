@@ -552,7 +552,7 @@ void QDeclarativePlace::remove()
     if (!placeManager)
         return;
 
-    m_reply = placeManager->removePlace(place());
+    m_reply = placeManager->removePlace(place().placeId());
     connect(m_reply, SIGNAL(finished()), this, SLOT(finished()));
     setStatus(QDeclarativePlace::Removing);
 }

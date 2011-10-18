@@ -270,7 +270,7 @@ QPlaceIdReply *QPlaceManagerEngineJsonDb::saveCategory(const QPlaceCategory &cat
     return saveReply;
 }
 
-QPlaceIdReply *QPlaceManagerEngineJsonDb::removePlace(const QPlace &place)
+QPlaceIdReply *QPlaceManagerEngineJsonDb::removePlace(const QString &placeId)
 {
     IdReply *removeReply = new IdReply(QPlaceIdReply::RemovePlace, this);
 
@@ -279,8 +279,8 @@ QPlaceIdReply *QPlaceManagerEngineJsonDb::removePlace(const QPlace &place)
         return removeReply;
     }
 
-    int reqId = m_jsonDbHandler.remove(place.placeId());
-    removeReply->setId(place.placeId());
+    int reqId = m_jsonDbHandler.remove(placeId);
+    removeReply->setId(placeId);
     m_idReplyMap.insert(reqId, removeReply);
     return removeReply;
 }
