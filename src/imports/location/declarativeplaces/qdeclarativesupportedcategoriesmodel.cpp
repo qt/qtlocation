@@ -111,6 +111,7 @@ QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObje
 
 QDeclarativeSupportedCategoriesModel::~QDeclarativeSupportedCategoriesModel()
 {
+    qDeleteAll(m_categoriesTree);
 }
 
 // From QDeclarativeParserStatus
