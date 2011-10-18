@@ -22,6 +22,7 @@ SUBDIRS += geotestplugin \
            qplacecontentrequest \
            qplaceeditorial \
            qplacemanager \
+           qplacemanager_nokia \
            qplaceimage \
            qplacerequest \
            qplacerating \

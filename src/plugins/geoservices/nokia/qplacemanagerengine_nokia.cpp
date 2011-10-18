@@ -59,6 +59,7 @@
 #include "places/qplaceratingreplyimpl.h"
 #include "places/qplacerestmanager.h"
 #include "places/qplacerestreply.h"
+#include "places/unsupportedreplies.h"
 
 QT_USE_NAMESPACE
 Q_DECLARE_METATYPE(QPlaceReply::Error)
@@ -232,33 +233,34 @@ QPlaceTextPredictionReply *QPlaceManagerEngineNokia::textPredictions(const QPlac
 
 QPlaceIdReply *QPlaceManagerEngineNokia::savePlace(const QPlace &place)
 {
-    Q_UNUSED(place)
-
-    //TODO: implementation
-    return 0;
+    IdReply *reply = new IdReply(QPlaceIdReply::SavePlace, this);
+    reply->setId(place.placeId());
+    reply->triggerDone(QPlaceReply::UnsupportedError, tr("Saving places is not supported"));
+    return reply;
 }
 
 QPlaceIdReply *QPlaceManagerEngineNokia::removePlace(const QString &placeId)
 {
-    Q_UNUSED(placeId)
-
-    //TODO: implementation
-    return 0;
+    IdReply *reply = new IdReply(QPlaceIdReply::RemovePlace, this);
+    reply->setId(placeId);
+    reply->triggerDone(QPlaceReply::UnsupportedError, tr("Removing places is not supported"));
+    return reply;
 }
 
 QPlaceIdReply *QPlaceManagerEngineNokia::saveCategory(const QPlaceCategory &category, const QString &parentId)
 {
-    Q_UNUSED(category)
-    Q_UNUSED(parentId)
-
-    return 0;
+    IdReply *reply = new IdReply(QPlaceIdReply::SaveCategory, this);
+    reply->setId(category.categoryId());
+    reply->triggerDone(QPlaceReply::UnsupportedError, tr("Saving categories is not supported"));
+    return reply;
 }
 
 QPlaceIdReply *QPlaceManagerEngineNokia::removeCategory(const QString &categoryId)
 {
-    Q_UNUSED(categoryId)
-
-    return 0;
+    IdReply *reply = new IdReply(QPlaceIdReply::RemoveCategory, this);
+    reply->setId(categoryId);
+    reply->triggerDone(QPlaceReply::UnsupportedError, tr("Removing categories is not supported"));
+    return reply;
 }
 
 QPlaceReply *QPlaceManagerEngineNokia::initializeCategories()

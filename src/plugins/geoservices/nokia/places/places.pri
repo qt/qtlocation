@@ -26,7 +26,9 @@ HEADERS += \
     places/qplacerestreply.h \
     places/qplacerestmanager.h \
     places/qplacesuppliersrepository.h \
-    places/qplacecategorytree.h
+    places/qplacecategorytree.h \
+#misc
+    places/unsupportedreplies.h
 
 SOURCES += \
 #data classes
