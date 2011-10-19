@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qgeopositioninfosource_npe_backend_p.h"
-#include <QtDebug>
 #include <sys/stat.h>
 
 
@@ -57,8 +56,6 @@ const QString kgetSupportedMethodsReply = QLatin1String("getSupportedMethodsRepl
 const QString kgetLastKnownPosition = QLatin1String("getLastKnownPosition");
 const QString kgetLastKnownPositionReply = QLatin1String("getLastKnownPositionReply");
 const QString kpositionUpdate = QLatin1String("positionUpdate"); // Notification
-const QString ksatelliteInfoUpdate = QLatin1String("satelliteInfoUpdate"); // Notification
-const QString knmeaUpdate = QLatin1String("nmeaUpdate"); // Notification
 
 // Attributes for socket communication towards nld
 const QString kinterval = QLatin1String("interval");
@@ -78,11 +75,11 @@ const QString kvalid = QLatin1String("valid");
 
 
 
-QGeoPositionInfoSourceNpeBackend::QGeoPositionInfoSourceNpeBackend(QObject *parent): QGeoPositionInfoSource(parent)
+QGeoPositionInfoSourceNpeBackend::QGeoPositionInfoSourceNpeBackend(QObject *parent):
+    QGeoPositionInfoSource(parent), locationOngoing(false), timeoutSent(false)
 {
     requestTimer = new QTimer(this);
     QObject::connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimerExpired()));
-    locationOngoing = false;
 }
 
 
@@ -102,15 +99,12 @@ bool QGeoPositionInfoSourceNpeBackend::init()
             return(mSocket->waitForConnected(500)); // wait up to 0.5 seconds to get connected, otherwise return false
         }
     }
-    else
-        qDebug() << "stat fails for nld.socket";
     return(false);
 }
 
 
 QGeoPositionInfo QGeoPositionInfoSourceNpeBackend::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
-    // todo: test failed as nld does not respond yet; QEventloop forever....
     QEventLoop loop; // loop to wait for response from nld (asynchronous socket connection)
     connect( this, SIGNAL(lastKnownPositionReceived()), &loop, SLOT(quit()));
     QVariantMap action;
@@ -136,11 +130,9 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceNpeBackend::sup
     case QGeoPositionInfoSource::SatellitePositioningMethods:
         return(QGeoPositionInfoSource::SatellitePositioningMethods);
     case QGeoPositionInfoSource::NonSatellitePositioningMethods:
-        return(NonSatellitePositioningMethods);
-    case QGeoPositionInfoSource::AllPositioningMethods:
-        return(QGeoPositionInfoSource::AllPositioningMethods);
+        return(QGeoPositionInfoSource::NonSatellitePositioningMethods);
     default:
-        qDebug() << "unsupported Method received from nld";
+        return(QGeoPositionInfoSource::AllPositioningMethods);
     }
 }
 
@@ -191,16 +183,18 @@ int QGeoPositionInfoSourceNpeBackend::minimumUpdateInterval() const
 
 void QGeoPositionInfoSourceNpeBackend::startUpdates()
 {
-    locationOngoing = true;
-    QVariantMap action;
-    action.insert(JsonDbString::kActionStr, kstartUpdates);
-    mStream->send(action);
+    if (!locationOngoing) {
+        locationOngoing = true;
+        QVariantMap action;
+        action.insert(JsonDbString::kActionStr, kstartUpdates);
+        mStream->send(action);
+    }
 }
 
 
 void QGeoPositionInfoSourceNpeBackend::stopUpdates()
 {
-    if ( !requestTimer->isActive() ) {
+    if ( locationOngoing && !requestTimer->isActive() ) {
         locationOngoing = false;
         QVariantMap action;
         action.insert(JsonDbString::kActionStr, kstopUpdates);
@@ -211,33 +205,36 @@ void QGeoPositionInfoSourceNpeBackend::stopUpdates()
 
 void QGeoPositionInfoSourceNpeBackend::requestUpdate(int timeout)
 {
-    int minimumInterval = minimumUpdateInterval();
-    // set reasonable timeout for the source if timeout is 0
-    if (timeout == 0)
-        timeout = 5*minimumInterval;
-    // do not start request if timeout can not be fullfilled by the source
-    if (timeout < minimumInterval) {
-        emit updateTimeout();
-        return;
+    // ignore if another requestUpdate is still pending
+    if (!requestTimer->isActive()) {
+        int minimumInterval = minimumUpdateInterval();
+        // set reasonable timeout for the source if timeout is 0
+        if (timeout == 0)
+            timeout = 5*minimumInterval;
+        // do not start request if timeout can not be fullfilled by the source
+        if (timeout < minimumInterval) {
+            emit updateTimeout();
+            return;
+        }
+        // get position as fast as possible in case of ongoing satellite based session
+        if ( locationOngoing && (QGeoPositionInfoSource::preferredPositioningMethods() & QGeoPositionInfoSource::SatellitePositioningMethods) ) {
+            if ( QGeoPositionInfoSource::updateInterval() != minimumInterval) {
+                QVariantMap actionUpdate;
+                QVariantMap object;
+                actionUpdate.insert(JsonDbString::kActionStr, ksetUpdateInterval);
+                object.insert(kinterval, minimumInterval);
+                actionUpdate.insert(JsonDbString::kDataStr, object);
+                mStream->send(actionUpdate);
+            }
+        }
+        // request the update only if qDebug() << "no tracking session is active
+        if ( !locationOngoing) {
+            QVariantMap action;
+            action.insert(JsonDbString::kActionStr, krequestUpdate);
+            mStream->send(action);
+        }
+        requestTimer->start(timeout);
     }
-    // get position as accurate and fast as possible
-    if ( QGeoPositionInfoSource::updateInterval() != minimumInterval) {
-        QVariantMap actionUpdate;
-        QVariantMap object;
-        actionUpdate.insert(JsonDbString::kActionStr, ksetUpdateInterval);
-        object.insert(kinterval, minimumInterval);
-        actionUpdate.insert(JsonDbString::kDataStr, object);
-        mStream->send(actionUpdate);
-    }
-    if ( !QGeoPositionInfoSource::preferredPositioningMethods().testFlag(QGeoPositionInfoSource::AllPositioningMethods) )
-        setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
-    // request the update only if no other regular session request is ongoing
-    if ( !locationOngoing ) {
-        QVariantMap action;
-        action.insert(JsonDbString::kActionStr, krequestUpdate);
-        mStream->send(action);
-    }
-    requestTimer->start(timeout);
 }
 
 
@@ -252,12 +249,10 @@ void QGeoPositionInfoSourceNpeBackend::requestTimerExpired()
 void QGeoPositionInfoSourceNpeBackend::shutdownRequestSession()
 {
     requestTimer->stop();
-    // Restore updateInterval and preferedPositioningMethods from before Request Session
+    // Restore updateInterval from before Request Session
     int minimumInterval = minimumUpdateInterval();
     if ( QGeoPositionInfoSource::updateInterval() != minimumInterval)
         setUpdateInterval(QGeoPositionInfoSource::updateInterval());
-    if ( !QGeoPositionInfoSource::preferredPositioningMethods().testFlag(QGeoPositionInfoSource::AllPositioningMethods) )
-        setPreferredPositioningMethods(QGeoPositionInfoSource::preferredPositioningMethods());
 }
 
 
@@ -281,17 +276,34 @@ void QGeoPositionInfoSourceNpeBackend::onStreamReceived(const QVariantMap& map)
 
         else if (action == kgetLastKnownPositionReply) {
             QVariantMap tmp = map.value(JsonDbString::kDataStr).toMap();
-            bool valid = tmp.value(kvalid).toBool();
-            if (valid) {
-                QGeoCoordinate coordinate;
-                coordinate.setLatitude(tmp.value(klatitude).toDouble());
-                coordinate.setLongitude(tmp.value(klongitude).toDouble());
+            QGeoCoordinate coordinate;
+            coordinate.setLatitude(tmp.value(klatitude).toDouble());
+            coordinate.setLongitude(tmp.value(klongitude).toDouble());
+            coordinate.setAltitude(tmp.value(kaltitude).toDouble());
+            if (coordinate.isValid()) {
                 lastPosition.setCoordinate(coordinate);
-                lastPosition.setTimestamp(tmp.value(ktimestamp).toDateTime());
-                emit lastKnownPositionReceived();
+                lastPosition.setAttribute(QGeoPositionInfo::HorizontalAccuracy, tmp.value(khorizontalAccuracy).toReal());
+                lastPosition.setAttribute(QGeoPositionInfo::VerticalAccuracy, tmp.value(kverticalAccuracy).toReal());
+                lastPosition.setAttribute(QGeoPositionInfo::GroundSpeed, tmp.value(kgroundSpeed).toReal());
+                lastPosition.setAttribute(QGeoPositionInfo::VerticalSpeed, tmp.value(kverticalSpeed).toReal());
+                lastPosition.setAttribute(QGeoPositionInfo::MagneticVariation, tmp.value(kmagneticVariation).toReal());
+                lastPosition.setAttribute(QGeoPositionInfo::Direction, tmp.value(kbearing).toReal());
+                QDateTime timestamp = tmp.value(ktimestamp).toDateTime();
+                lastPosition.setTimestamp(timestamp);
+            } else {
+                // return null update as no valid lastKnown Position is available
+                coordinate.setLatitude(0);
+                coordinate.setLongitude(0);
+                coordinate.setAltitude(0);
+                lastPosition.setCoordinate(coordinate);
+                lastPosition.setAttribute(QGeoPositionInfo::HorizontalAccuracy, 0);
+                lastPosition.setAttribute(QGeoPositionInfo::VerticalAccuracy, 0);
+                lastPosition.setAttribute(QGeoPositionInfo::GroundSpeed, 0);
+                lastPosition.setAttribute(QGeoPositionInfo::VerticalSpeed, 0);
+                lastPosition.setAttribute(QGeoPositionInfo::MagneticVariation, 0);
+                lastPosition.setAttribute(QGeoPositionInfo::Direction, 0);
             }
-            else
-                qDebug() << "invalid lastKnownPosition received from nld";
+            emit lastKnownPositionReceived();
         }
 
         else if (action == kpositionUpdate) {
@@ -312,10 +324,14 @@ void QGeoPositionInfoSourceNpeBackend::onStreamReceived(const QVariantMap& map)
                 QDateTime timestamp = tmp.value(ktimestamp).toDateTime();
                 update.setTimestamp(timestamp);
                 emit positionUpdated(update);
+                timeoutSent = false;
                 if ( requestTimer->isActive() )
                     shutdownRequestSession();
             } else {
-                qDebug() << "invalid position received from nld";
+                if (!timeoutSent) {
+                    emit updateTimeout();
+                    timeoutSent = true;
+                }
             }
         }
     }
@@ -324,11 +340,9 @@ void QGeoPositionInfoSourceNpeBackend::onStreamReceived(const QVariantMap& map)
 
 void QGeoPositionInfoSourceNpeBackend::onSocketConnected()
 {
-    qDebug("Socket Connected!");
 }
 
 
 void QGeoPositionInfoSourceNpeBackend::onSocketDisconnected()
 {
-    qDebug("Socket Disconnected!");
 }

@@ -87,6 +87,7 @@ private:
     uint supportedMethods;
     QGeoPositionInfo lastPosition;
     bool locationOngoing;
+    bool timeoutSent;
     QTimer* requestTimer;
     void shutdownRequestSession();
 
