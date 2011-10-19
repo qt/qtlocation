@@ -63,7 +63,7 @@ Q_DECLARE_METATYPE(QList<QGeoSatelliteInfo>)
 #define CHECK_SOURCE_VALID { \
         if (!m_source) { \
             if (m_testingDefaultSource && QGeoSatelliteInfoSource::createDefaultSource(0) == 0) \
-                QSKIP("No default satellite source on this system", SkipAll); \
+                QSKIP("No default satellite source on this system"); \
             else \
                 QFAIL("createTestSource() must return a valid source!"); \
         } \

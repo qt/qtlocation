@@ -68,7 +68,7 @@ Q_DECLARE_METATYPE(QGeoPositionInfo)
 #define CHECK_SOURCE_VALID { \
         if (!m_source) { \
             if (m_testingDefaultSource && QGeoPositionInfoSource::createDefaultSource(0) == 0) \
-                QSKIP("No default position source on this system", SkipAll); \
+                QSKIP("No default position source on this system"); \
             else \
                 QFAIL("createTestSource() must return a valid source!"); \
         } \
@@ -337,7 +337,7 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
             = static_cast<QGeoPositionInfoSource::PositioningMethods>(positioningMethod);
 
     if ((m_source->supportedPositioningMethods() & method) == 0)
-        QSKIP("Not a supported positioning method for this position source", SkipSingle);
+        QSKIP("Not a supported positioning method for this position source");
 
     m_source->setPreferredPositioningMethods(method);
 
