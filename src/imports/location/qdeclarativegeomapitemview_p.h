@@ -45,7 +45,7 @@
 #include "qdeclarativegeomapmouseevent_p.h"
 #include "QModelIndex"
 
-#include <QtDeclarative/QSGItem>
+#include <QtDeclarative/QQuickItem>
 #include <QtCore/QPointer>
 
 QT_BEGIN_NAMESPACE
@@ -68,7 +68,7 @@ class QDeclarativeGeoMapItemView : public QObject, public QDeclarativeParserStat
     Q_PROPERTY(qreal z READ zValue WRITE setZValue NOTIFY zChanged)
 
 public:
-    QDeclarativeGeoMapItemView(QSGItem *parent = 0);
+    QDeclarativeGeoMapItemView(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapItemView();
 
     QVariant model() const;

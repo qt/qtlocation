@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVELOCATIONTESTMODEL_H
 #define QDECLARATIVELOCATIONTESTMODEL_H
 
-#include <QtDeclarative/QSGItem>
+#include <QtDeclarative/QQuickItem>
 #include <QAbstractListModel>
 #include <QTimer>
 #include <QDebug>

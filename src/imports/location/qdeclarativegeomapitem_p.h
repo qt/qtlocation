@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPITEM_H
 #define QDECLARATIVEGEOMAPITEM_H
 
-#include <QtDeclarative/qsgitem.h>
+#include <QtDeclarative/qquickitem.h>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QPointer>
 
@@ -53,30 +53,30 @@
 
 QT_BEGIN_NAMESPACE
 
-#ifndef QSGSHADEREFFECTSOURCE_AVAILABLE
+#ifndef QQUICKSHADEREFFECTSOURCE_AVAILABLE
 // dummy implementation so we don't have to ifdef all over the place
-class QDeclarativeGeoMapItem : public QSGItem
+class QDeclarativeGeoMapItem : public QQuickItem
 {
     Q_OBJECT
 public:
-    QDeclarativeGeoMapItem(QSGItem *parent = 0) { Q_UNUSED(parent);};
+    QDeclarativeGeoMapItem(QQuickItem *parent = 0) { Q_UNUSED(parent);};
     ~QDeclarativeGeoMapItem() {};
 };
 
 #else
 
-#include <private/qsgshadereffectsource_p.h>
+#include <private/qquickshadereffectsource_p.h>
 
-class QDeclarativeGeoMapItem : public QSGItem
+class QDeclarativeGeoMapItem : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QSGItem* sourceItem READ sourceItem WRITE setSourceItem NOTIFY sourceItemChanged)
+    Q_PROPERTY(QQuickItem* sourceItem READ sourceItem WRITE setSourceItem NOTIFY sourceItemChanged)
     Q_PROPERTY(double zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
     //Q_PROPERTY(bool live READ live WRITE setLive NOTIFY liveChanged)
 
 public:
-    QDeclarativeGeoMapItem(QSGItem *parent = 0);
+    QDeclarativeGeoMapItem(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapItem();
 
     // From QDeclarativeParserStatus
@@ -85,8 +85,8 @@ public:
     void setCoordinate(QDeclarativeCoordinate *coordinate);
     QDeclarativeCoordinate* coordinate();
 
-    void setSourceItem(QSGItem* sourceItem);
-    QSGItem* sourceItem();
+    void setSourceItem(QQuickItem* sourceItem);
+    QQuickItem* sourceItem();
 
     void setZoomLevel(double zoomLevel);
     double zoomLevel();
@@ -97,7 +97,7 @@ public:
     MapItem* mapItem();
     bool hasValidTexture();
 
-    // from QSGItem
+    // from QQuickItem
     QSGNode* updatePaintNode(QSGNode* node, UpdatePaintNodeData* data);
 
 Q_SIGNALS:
@@ -112,8 +112,8 @@ private Q_SLOTS:
 private:
     void up();
     void down();
-    QSGShaderEffectSource* shaderSource_;
-    QSGItem* sourceItem_;
+    QQuickShaderEffectSource* shaderSource_;
+    QQuickItem* sourceItem_;
     QDeclarativeCoordinate* coordinate_;
     QDeclarative3DGraphicsGeoMap* map_;
     // TODO enable didnt compile

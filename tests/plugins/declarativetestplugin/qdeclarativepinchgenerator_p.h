@@ -42,8 +42,8 @@
 #ifndef QDECLARATIVEPINCHGENERATOR_H
 #define QDECLARATIVEPINCHGENERATOR_H
 
-#include <QtDeclarative/QSGItem>
-#include <QSGCanvas>
+#include <QtDeclarative/QQuickItem>
+#include <QQuickCanvas>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QTouchEvent>
 #include <QtGui/QKeyEvent>
@@ -80,7 +80,7 @@ public:
     int touchState_;
 };
 
-class QDeclarativePinchGenerator : public QSGItem
+class QDeclarativePinchGenerator : public QQuickItem
 {
     Q_OBJECT
 
@@ -88,7 +88,7 @@ class QDeclarativePinchGenerator : public QSGItem
     Q_PROPERTY(QString state READ state NOTIFY stateChanged)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(qreal replaySpeedFactor READ replaySpeedFactor WRITE setReplaySpeedFactor NOTIFY replaySpeedFactorChanged)
-    Q_PROPERTY(QSGItem* target READ target WRITE setTarget NOTIFY targetChanged)
+    Q_PROPERTY(QQuickItem* target READ target WRITE setTarget NOTIFY targetChanged)
     Q_PROPERTY(QList<QObject*> swipe1 READ swipe1 NOTIFY swipesChanged)
     Q_PROPERTY(QList<QObject*> swipe2 READ swipe2 NOTIFY swipesChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -99,8 +99,8 @@ public:
 
     QString state() const;
     int count() const;
-    QSGItem* target() const;
-    void setTarget(QSGItem* target);
+    QQuickItem* target() const;
+    void setTarget(QQuickItem* target);
     qreal replaySpeedFactor() const;
     void setReplaySpeedFactor(qreal factor);
     bool enabled() const;
@@ -140,7 +140,7 @@ public:
 
     // from QDeclarativeParserStatus
     virtual void componentComplete();
-    // from QSGItem
+    // from QQuickItem
     void itemChange(ItemChange change, const ItemChangeData & data);
 
 protected:
@@ -159,9 +159,9 @@ private:
     void generateSwipe(QPoint from, QPoint to, int duration, int samples);
 
 private:
-    QSGItem* target_;
+    QQuickItem* target_;
     GeneratorState state_;
-    QSGCanvas* canvas_;
+    QQuickCanvas* canvas_;
     QList<Swipe*> swipes_;
     Swipe* activeSwipe_;
     QElapsedTimer swipeTimer_;

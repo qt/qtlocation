@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass MapItemView
 
     \brief The MapItemView is used to populate Map from a model.
-    \inherits QSGItem
+    \inherits QQuickItem
 
     \ingroup qml-location-maps
 
@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
     The MapItemView element is part of the \bold{QtLocation 5.0} module.
 */
 
-QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QSGItem *parent)
+QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)
     : QObject(parent), visible_(true), componentCompleted_(false), delegate_(0),
       model_(0), map_(0)
 {

@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPFLICKABLE_H
 #define QDECLARATIVEGEOMAPFLICKABLE_H
 
-// Constant value from QSGFlickable
+// Constant value from QQuickFlickable
 // The number of samples to use in calculating the velocity of a flick
 #ifndef QML_FLICK_SAMPLEBUFFER
 #define QML_FLICK_SAMPLEBUFFER 3

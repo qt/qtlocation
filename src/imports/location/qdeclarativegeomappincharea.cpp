@@ -456,7 +456,7 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
 
             //QPointF pos = sceneCenter - sceneStartCenter_ + pinchStartPos_;
             // TODO we probably don't want drag - leave that to flickable
-            //if (pinch()->axis() & QSGPinch::XAxis) {
+            //if (pinch()->axis() & QQuickPinch::XAxis) {
             //    qreal x = pos.x();
             //    if (x < pinch()->xmin())
             //        x = pinch()->xmin();
@@ -464,7 +464,7 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
             //        x = pinch()->xmax();
             //    pinch()->target()->setX(x);
             //}
-            //if (pinch()->axis() & QSGPinch::YAxis) {
+            //if (pinch()->axis() & QQuickPinch::YAxis) {
             //    qreal y = pos.y();
             //    if (y < pinch()->ymin())
             //        y = pinch()->ymin();

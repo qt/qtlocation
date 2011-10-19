@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 #include <QGuiApplication>
-#include <QtDeclarative/QSGView>
+#include <QtDeclarative/QQuickView>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
 #include <QtNetwork>
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         QNetworkProxyFactory::setUseSystemConfiguration(true);
     }
 
-    QSGView view;
+    QQuickView view;
     view.setSource(QString("qrc:/qmlplaces.qml"));
     view.show();
     return a.exec();

@@ -43,7 +43,7 @@
 #define QDECLARATIVEQGEOSERVICEPROVIDER_H
 
 #include <qgeocoordinate.h>
-#include <QtDeclarative/QSGItem>
+#include <QtDeclarative/QQuickItem>
 #include <QtLocation/QPlaceManager>
 
 #include <QMap>

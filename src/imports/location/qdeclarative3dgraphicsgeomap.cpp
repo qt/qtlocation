@@ -65,7 +65,7 @@
 #include <QDeclarativeContext>
 #include <QtDeclarative/qdeclarativeinfo.h>
 #include <QModelIndex>
-#include <QSGCanvas>
+#include <QQuickCanvas>
 #include <QSGEngine>
 #include <QtGui/QGuiApplication>
 
@@ -105,8 +105,8 @@ QT_BEGIN_NAMESPACE
     The Map element is part of the \bold{QtLocation 5.0} module.
 */
 
-QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGItem *parent)
-    : QSGPaintedItem(parent),
+QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QQuickItem *parent)
+    : QQuickPaintedItem(parent),
       plugin_(0),
       serviceProvider_(0),
       mappingManager_(0),
@@ -127,7 +127,7 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGItem *parent)
     size_ = QSizeF(100.0, 100.0);
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
-    setFlags(QSGItem::ItemHasContents);
+    setFlags(QQuickItem::ItemHasContents);
 
     // Create internal flickable and pinch area.
     tileCache_ = new TileCache();
@@ -135,7 +135,7 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QSGItem *parent)
     flickable_ = new QDeclarativeGeoMapFlickable(this);
     flickable_->setMap(map_);
     pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
-    setRenderTarget(QSGPaintedItem::FramebufferObject);
+    setRenderTarget(QQuickPaintedItem::FramebufferObject);
 }
 
 // this function is only called & executed in rendering thread
@@ -143,7 +143,7 @@ QSGNode* QDeclarative3DGraphicsGeoMap::updatePaintNode(QSGNode* node, UpdatePain
 {
     Q_UNUSED(node);
     Q_UNUSED(data);
-#ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
+#ifdef QQUICKSHADEREFFECTSOURCE_AVAILABLE
     // add any pending map items
     if (updateMutex_.tryLock()) {
         if (canvas_) {
@@ -165,7 +165,7 @@ QSGNode* QDeclarative3DGraphicsGeoMap::updatePaintNode(QSGNode* node, UpdatePain
     }
 #endif
     update(); // is this needed
-    return QSGPaintedItem::updatePaintNode(node, data);
+    return QQuickPaintedItem::updatePaintNode(node, data);
 }
 
 QDeclarative3DGraphicsGeoMap::~QDeclarative3DGraphicsGeoMap()
@@ -192,7 +192,7 @@ void QDeclarative3DGraphicsGeoMap::componentComplete()
     QLOC_TRACE0;
     componentCompleted_ = true;
     populateMap();
-    QSGItem::componentComplete();
+    QQuickItem::componentComplete();
 }
 
 QDeclarativeGeoMapFlickable* QDeclarative3DGraphicsGeoMap::flick()
@@ -269,7 +269,7 @@ void QDeclarative3DGraphicsGeoMap::geometryChanged(const QRectF &newGeometry, co
 {
     setSize(QSizeF(newGeometry.width(), newGeometry.height()));
     updateAspectRatio();
-    QSGItem::geometryChanged(newGeometry, oldGeometry);
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
 }
 
 void QDeclarative3DGraphicsGeoMap::keyPressEvent(QKeyEvent *e)
@@ -569,7 +569,7 @@ void QDeclarative3DGraphicsGeoMap::mappingManagerInitialized()
 void QDeclarative3DGraphicsGeoMap::updateMapDisplay(const QRectF &target)
 {
     Q_UNUSED(target);
-    QSGItem::update();
+    QQuickItem::update();
 }
 
 QDeclarativeGeoServiceProvider* QDeclarative3DGraphicsGeoMap::plugin() const
@@ -1152,7 +1152,7 @@ void QDeclarative3DGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &c
 void QDeclarative3DGraphicsGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
 {
     QLOC_TRACE0;
-#ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
+#ifdef QQUICKSHADEREFFECTSOURCE_AVAILABLE
     if (!item || mapItems_.contains(item) || mapItemsPending_.contains(item))
         return;
     updateMutex_.lock();
@@ -1168,7 +1168,7 @@ void QDeclarative3DGraphicsGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
 void QDeclarative3DGraphicsGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
 {
     QLOC_TRACE0;
-#ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
+#ifdef QQUICKSHADEREFFECTSOURCE_AVAILABLE
     if (!item || !map_)
         return;
     if (mapItemsPending_.contains(item)) {

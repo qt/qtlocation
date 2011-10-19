@@ -42,7 +42,7 @@
 #include <QtCore/QStringList>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QNetworkProxy>
-#include <QtDeclarative/qsgview.h>
+#include <QtDeclarative/qquickview.h>
 
 // QML2 app
 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    QSGView view;
+    QQuickView view;
     const QString mainQmlApp = QLatin1String("qrc:///map3d.qml");
     view.setSource(QUrl(mainQmlApp));
     // Temporary development-time proxy setting. TODO improve later.

@@ -74,7 +74,7 @@ QDeclarativePinchGenerator::~QDeclarativePinchGenerator()
 
 void QDeclarativePinchGenerator::componentComplete()
 {
-    QSGItem::componentComplete();
+    QQuickItem::componentComplete();
 }
 
 void QDeclarativePinchGenerator::mousePressEvent(QMouseEvent *event)
@@ -383,12 +383,12 @@ void QDeclarativePinchGenerator::timerEvent(QTimerEvent *event)
     }
 }
 
-QSGItem* QDeclarativePinchGenerator::target() const
+QQuickItem* QDeclarativePinchGenerator::target() const
 {
     return target_;
 }
 
-void QDeclarativePinchGenerator::setTarget(QSGItem* target)
+void QDeclarativePinchGenerator::setTarget(QQuickItem* target)
 {
     if (target == target_)
         return;

@@ -44,13 +44,13 @@
 
 #include <QPointer>
 #include <QTouchEvent>
-#include <QtDeclarative/qsgitem.h>
+#include <QtDeclarative/qquickitem.h>
 #include <QtCore/QMutex>
 
 #include <QtCore/QCoreApplication>
 
 #include "qsgtexture.h"
-#include "qsgpainteditem.h"
+#include "qquickpainteditem.h"
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
@@ -88,7 +88,7 @@ class QDeclarativeGeoServiceProvider;
 class QDeclarative3DGraphicsGeoMap;
 class QDeclarativeGeoMapItem;
 
-class QDeclarative3DGraphicsGeoMap : public QSGPaintedItem
+class QDeclarative3DGraphicsGeoMap : public QQuickPaintedItem
 {
     Q_OBJECT
 
@@ -125,16 +125,16 @@ public:
 
 public:
 
-    QDeclarative3DGraphicsGeoMap(QSGItem *parent = 0);
+    QDeclarative3DGraphicsGeoMap(QQuickItem *parent = 0);
     ~QDeclarative3DGraphicsGeoMap();
 
     // From QDeclarativeParserStatus
     virtual void componentComplete();
 
-    // from QSGPaintedItem
+    // from QQuickPaintedItem
     virtual void paint(QPainter *painter);
 
-    // from QSGItem
+    // from QQuickItem
     virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
     void itemChange(ItemChange change, const ItemChangeData & data);
 
@@ -236,7 +236,7 @@ private:
                            const QPointF &lastScenePos,
                            Qt::KeyboardModifiers modifiers,
                            bool &accepted);
-    bool sendHoverEvent(QEvent::Type type, QSGItem *item,
+    bool sendHoverEvent(QEvent::Type type, QQuickItem *item,
                         const QPointF &scenePos, const QPointF &lastScenePos,
                         Qt::KeyboardModifiers modifiers, bool accepted);
     QDeclarativeGeoMapMouseArea* hoverItem_;
@@ -272,7 +272,7 @@ private:
     void earlyDraw(QGLPainter *painter);
     void restoreDefaults(QGLPainter *painter);
 
-    QSGCanvas* canvas_;
+    QQuickCanvas* canvas_;
     int touchTimer_;
 
     TileCache *tileCache_;

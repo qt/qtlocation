@@ -219,19 +219,19 @@ private:
     // own
     bool enabled_;
 
-    // qsgpinch
+    // qquickpinch
     bool active_;
     qreal minimumZoomLevel_;
     qreal maximumZoomLevel_;
     qreal minimumRotation_;
     qreal maximumRotation_;
 
-    // qsgpincharea
+    // qquickpincharea
     QList<QTouchEvent::TouchPoint> touchPoints_;
     bool inPinch_;
     bool pinchRejected_;
     bool pinchActivated_;
-    //QSGPinch *pinch_;
+    //QQuickPinch *pinch_;
     QPointF sceneStartPoint1_;
     QPointF sceneStartPoint2_;
     QPointF lastPoint1_;

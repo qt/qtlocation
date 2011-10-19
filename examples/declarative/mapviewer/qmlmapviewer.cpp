@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 #include <QtGui/QGuiApplication>
-#include <QtDeclarative/QSGView>
+#include <QtDeclarative/QQuickView>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QNetworkProxy>
 
@@ -47,9 +47,9 @@ int main(int argc, char *argv[])
 {
     QGuiApplication application(argc, argv);
     const QString mainQmlApp = QLatin1String("qrc:///mapviewer.qml");
-    QSGView view;
+    QQuickView view;
     view.setSource(QUrl(mainQmlApp));
-    view.setResizeMode(QSGView::SizeRootObjectToView);
+    view.setResizeMode(QQuickView::SizeRootObjectToView);
     // Temporary development-time proxy setting
     // TODO improve later.
     QNetworkProxy proxy;

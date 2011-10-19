@@ -43,7 +43,7 @@
 #include "qdeclarativecoordinate_p.h"
 #include <QtDeclarative/qdeclarativeinfo.h>
 
-#ifndef QSGSHADEREFFECTSOURCE_AVAILABLE
+#ifndef QQUICKSHADEREFFECTSOURCE_AVAILABLE
 
 #else
 
@@ -72,7 +72,7 @@ public:
         if (!item_->shaderSource_)
             return;
         QSGTextureProvider *provider = item_->shaderSource_->textureProvider();
-        if (QSGShaderEffectTexture *texture = qobject_cast<QSGShaderEffectTexture *>(provider->texture())) {
+        if (QQuickShaderEffectTexture *texture = qobject_cast<QQuickShaderEffectTexture *>(provider->texture())) {
             texture->updateTexture();
         }
     }
@@ -80,8 +80,8 @@ private:
     QDeclarativeGeoMapItem* item_;
 };
 
-QDeclarativeGeoMapItem::QDeclarativeGeoMapItem(QSGItem *parent)
-    : QSGItem(parent),
+QDeclarativeGeoMapItem::QDeclarativeGeoMapItem(QQuickItem *parent)
+    : QQuickItem(parent),
       shaderSource_(0),
       sourceItem_(0),
       coordinate_(0),
@@ -183,7 +183,7 @@ void QDeclarativeGeoMapItem::up()
         return;
     // QSG -parent ourselves - it glues us to QSG tree and essentially enables rendering
     setParentItem(map_);
-    shaderSource_ = new QSGShaderEffectSource(this);
+    shaderSource_ = new QQuickShaderEffectSource(this);
     shaderSource_->setSourceItem(sourceItem_);
     shaderSource_->setHideSource(true);
     shaderSource_->setParentItem(this);
@@ -241,10 +241,10 @@ QDeclarativeCoordinate* QDeclarativeGeoMapItem::coordinate()
 void QDeclarativeGeoMapItem::componentComplete()
 {
     componentCompleted_ = true;
-    QSGItem::componentComplete();
+    QQuickItem::componentComplete();
 }
 
-void QDeclarativeGeoMapItem::setSourceItem(QSGItem* sourceItem)
+void QDeclarativeGeoMapItem::setSourceItem(QQuickItem* sourceItem)
 {
     if (sourceItem == sourceItem_)
         return;
@@ -253,7 +253,7 @@ void QDeclarativeGeoMapItem::setSourceItem(QSGItem* sourceItem)
     up();
 }
 
-QSGItem* QDeclarativeGeoMapItem::sourceItem()
+QQuickItem* QDeclarativeGeoMapItem::sourceItem()
 {
     if (!map_ || !shaderSource_)
         return sourceItem_;

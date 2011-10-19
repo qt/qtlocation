@@ -46,13 +46,13 @@
 #include "qdeclarative3dgraphicsgeomap_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 
-#include <QtDeclarative/QSGItem>
+#include <QtDeclarative/QQuickItem>
 
 QT_BEGIN_NAMESPACE
 
-#ifndef QSGMOUSEAREA_AVAILABLE
+#ifndef QQUICKMOUSEAREA_AVAILABLE
 
-class QDeclarativeGeoMapMouseArea : public QSGItem
+class QDeclarativeGeoMapMouseArea : public QQuickItem
 {
     Q_OBJECT
 
@@ -60,16 +60,16 @@ public:
     void setMap(QDeclarative3DGraphicsGeoMap *map) {Q_UNUSED(map);}
     bool mouseEvent(QMouseEvent* event) {Q_UNUSED(event); return false;}
 
-    QDeclarativeGeoMapMouseArea(QSGItem *parent = 0) { Q_UNUSED(parent); qWarning("=================== using map mouse area stub ===============");}
+    QDeclarativeGeoMapMouseArea(QQuickItem *parent = 0) { Q_UNUSED(parent); qWarning("=================== using map mouse area stub ===============");}
     ~QDeclarativeGeoMapMouseArea() {}
 };
 
 #else
 
-class QSGMouseArea;
-class QSGMouseEvent;
+class QQuickMouseArea;
+class QQuickMouseEvent;
 
-class QDeclarativeGeoMapMouseArea : public QSGItem
+class QDeclarativeGeoMapMouseArea : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(qreal mouseX READ mouseX NOTIFY positionChanged)
@@ -81,7 +81,7 @@ class QDeclarativeGeoMapMouseArea : public QSGItem
     Q_PROPERTY(Qt::MouseButtons acceptedButtons READ acceptedButtons WRITE setAcceptedButtons NOTIFY acceptedButtonsChanged)
 
 public:
-    QDeclarativeGeoMapMouseArea(QSGItem *parent = 0);
+    QDeclarativeGeoMapMouseArea(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapMouseArea();
 
     // From QDeclarativeParserStatus
@@ -120,16 +120,16 @@ Q_SIGNALS:
     void acceptedButtonsChanged(Qt::MouseButtons acceptedButtons);
 
 protected:
-    // from QSGItem
+    // from QQuickItem
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
 private slots:
-    void pressedHandler(QSGMouseEvent* event);
-    void releasedHandler(QSGMouseEvent* event);
-    void clickedHandler(QSGMouseEvent* event);
-    void doubleClickedHandler(QSGMouseEvent* event);
-    void positionChangedHandler(QSGMouseEvent* event);
-    void pressAndHoldHandler(QSGMouseEvent* event);
+    void pressedHandler(QQuickMouseEvent* event);
+    void releasedHandler(QQuickMouseEvent* event);
+    void clickedHandler(QQuickMouseEvent* event);
+    void doubleClickedHandler(QQuickMouseEvent* event);
+    void positionChangedHandler(QQuickMouseEvent* event);
+    void pressAndHoldHandler(QQuickMouseEvent* event);
     void enteredHandler();
     void exitedHandler();
     void canceledHandler();
@@ -139,14 +139,14 @@ private slots:
     void hoveredChangedHandler();
 
 private:
-    void mapMouseEvent(QSGMouseEvent* event);
+    void mapMouseEvent(QQuickMouseEvent* event);
     QDeclarativeGeoMapMouseEvent* mouseEvent_;
     QDeclarative3DGraphicsGeoMap* map_;
-    QSGMouseArea* mouseArea_;
+    QQuickMouseArea* mouseArea_;
     bool componentCompleted_;
 };
 
-#endif // QSGMOUSEAREA_AVAILABLE
+#endif // QQUICKMOUSEAREA_AVAILABLE
 QT_END_NAMESPACE
 
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapMouseArea));

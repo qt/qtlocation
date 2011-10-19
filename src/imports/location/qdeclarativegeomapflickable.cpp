@@ -48,7 +48,7 @@
 #include "map.h"
 #include "math.h"
 
-// Constant values from QSGFlickable
+// Constant values from QQuickFlickable
 // The default maximum velocity of a flick.
 #ifndef QML_FLICK_DEFAULTMAXVELOCITY
 #define QML_FLICK_DEFAULTMAXVELOCITY 2500
