@@ -80,30 +80,33 @@ const qreal MinimumFlickVelocity = 75.0;
 
 QT_BEGIN_NAMESPACE
 
-QDeclarativeGeoMapFlickable::QDeclarativeGeoMapFlickable(Map* map, QObject *parent)
+QDeclarativeGeoMapFlickable::QDeclarativeGeoMapFlickable(QObject *parent)
     : QObject(parent),
       pressed_(false),
       maxVelocity_(QML_FLICK_DEFAULTMAXVELOCITY),
       deceleration_(QML_FLICK_DEFAULTDECELERATION),
       flicking_(false),
-      map_(map),
+      map_(0),
       enabled_(false),
       moving_(false)
 {
-    Q_ASSERT(map_);
     pressTime_.invalidate();
     lastPosTime_.invalidate();
     velocityTime_.invalidate();
-    //animation_ = new QPropertyAnimation(map_->mapCamera(), "cameraData", this);
-    //animation_ = new QPropertyAnimation(map_->mapCamera(), "center", this);
-    animation_ = new QPropertyAnimation(map_, "camera", this);
-    animation_->setEasingCurve(QEasingCurve(QEasingCurve::OutQuad));
-    connect(animation_, SIGNAL(finished()), this, SLOT(flickAnimationFinished()));
-    //connect(animation_, SIGNAL(valueChanged(const QVariant&)), this, SLOT(flickAnimationValueChanged(const QVariant&)));
 }
 
 QDeclarativeGeoMapFlickable::~QDeclarativeGeoMapFlickable()
 {
+}
+
+void QDeclarativeGeoMapFlickable::setMap(Map* map)
+{
+    if (map_ || !map)
+        return;
+    map_ = map;
+    animation_ = new QPropertyAnimation(map_, "camera", this);
+    animation_->setEasingCurve(QEasingCurve(QEasingCurve::OutQuad));
+    connect(animation_, SIGNAL(finished()), this, SLOT(flickAnimationFinished()));
 }
 
 qreal QDeclarativeGeoMapFlickable::deceleration() const

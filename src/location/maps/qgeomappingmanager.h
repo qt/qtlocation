@@ -94,6 +94,7 @@ public:
     qreal maximumZoomLevel() const;
 
     bool supportsBearing() const;
+    bool isInitialized() const;
 
     bool supportsTilting() const;
     qreal minimumTilt() const;
@@ -106,6 +107,7 @@ Q_SIGNALS:
     void tileFinished(const TileSpec &spec, const QByteArray &bytes);
     void tileError(const TileSpec &spec, const QString &errorString);
     void queueFinished();
+    void initialized();
 
 private:
     QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);

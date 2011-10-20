@@ -115,6 +115,8 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
+    setMinimumZoomLevel(0.0);
+    setMaximumZoomLevel(20.0);
 }
 
 QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
@@ -122,9 +124,6 @@ QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
 void QGeoMappingManagerEngineNokia::init()
 {
     setTileSize(QSize(256, 256));
-    setMinimumZoomLevel(0.0);
-    setMaximumZoomLevel(20.0);
-
 //    QList<QGraphicsGeoMap::MapType> types;
 //    types << QGraphicsGeoMap::StreetMap;
 //    types << QGraphicsGeoMap::SatelliteMapDay;
@@ -206,6 +205,7 @@ void QGeoMappingManagerEngineNokia::init()
         m_networkManager->setCache(m_cache);
     }
 #endif
+    QGeoMappingManagerEngine::init();
 }
 
 QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const TileSpec &spec)

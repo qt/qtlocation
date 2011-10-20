@@ -79,6 +79,7 @@ QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QVariant>
       d_ptr(new QGeoMappingManagerEnginePrivate())
 {
     d_ptr->parameters = parameters;
+    d_ptr->initialized = false;
 }
 
 /*!
@@ -103,8 +104,21 @@ QMap<QString, QVariant> QGeoMappingManagerEngine::parameters() const
     return d->parameters;
 }
 
+/*!
+    Initializes the engine. Subclasses of QGeoMappingManagerEngine may
+    implement this function to perform (potentially asynchronous) initialization.
+
+    Static/already known data (such as min/max zoom levels) is better to
+    initialize already earlier (e.g. in constructor).
+
+    Once subclasses are done with initialization, they should call this baseclass
+    implementation of init().
+*/
 void QGeoMappingManagerEngine::init()
 {
+    Q_D(QGeoMappingManagerEngine);
+    d->initialized = true;
+    emit initialized();
 }
 
 void QGeoMappingManagerEngine::threadStarted()
@@ -344,6 +358,17 @@ QSize QGeoMappingManagerEngine::tileSize() const
     return d->tileSize;
 }
 
+
+/*!
+    Return whether the engine has been initialized and is ready to be used.
+*/
+
+bool QGeoMappingManagerEngine::isInitialized() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->initialized;
+}
+
 /*!
     Sets the minimum zoom level supported by this engine to \a minimumZoom.
 
@@ -358,6 +383,17 @@ void QGeoMappingManagerEngine::setMinimumZoomLevel(qreal minimumZoom)
     Q_D(QGeoMappingManagerEngine);
     d->minimumZoomLevel = minimumZoom;
 }
+
+/*!
+    \fn void QGeoMappingManagerEngine::initialized()
+
+    This signal is emitted when the mapping manager has been initialized
+    and is ready to be used.
+
+    Subclasses of QGeoMappingManagerEngine should call the
+    QGeoMappingManagerEngine init() when they have initialized themselves.
+*/
+
 
 /*!
     Sets the maximum zoom level supported by this engine to \a maximumZoom.
@@ -503,8 +539,8 @@ QLocale QGeoMappingManagerEngine::locale() const
 
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
     : managerVersion(-1),
-    minimumZoomLevel(1.0),
-    maximumZoomLevel(20.0), // todo fixme, this needs to come from plugin
+    minimumZoomLevel(-2.0),
+    maximumZoomLevel(-2.0), // todo fixme, this needs to come from plugin
     supportsBearing(false),
     supportsTilting(false),
     minimumTilt(0.0),

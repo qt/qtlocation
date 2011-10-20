@@ -71,7 +71,7 @@ class QDeclarativeGeoMapFlickable: public QObject
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged())
 
 public:
-    QDeclarativeGeoMapFlickable(Map* map, QObject *parent = 0);
+    QDeclarativeGeoMapFlickable(QObject *parent = 0);
     ~QDeclarativeGeoMapFlickable();
 
     qreal deceleration() const;
@@ -79,6 +79,8 @@ public:
 
     bool enabled() const;
     void setEnabled(bool enabled);
+
+    void setMap(Map* map);
 
     bool mousePressEvent(QMouseEvent *event);
     bool mouseMoveEvent(QMouseEvent *event);

@@ -63,6 +63,12 @@ Item {
 
         function test_aa_map_properties_without_plugin() {
             // TODO
+            compare(pluginlessMap.minimumZoomLevel, -1.0)
+            compare(pluginlessMap.maximumZoomLevel, -1.0)
+            // set the plugin and see that values change properly
+            pluginlessMap.plugin = nokiaPlugin;
+            compare(pluginlessMap.minimumZoomLevel, 0)
+            compare(pluginlessMap.maximumZoomLevel, 20)
         }
         function test_ab_map_properties_with_plugin() {
             // TODO
@@ -73,8 +79,8 @@ Item {
             compare(pluginlessMap.center.latitude, 10)
             compare(pluginlessMap.center.longitude, 11)
             // default coordinate (coordinate is not explicitly set)
-            compare(map.center.latitude, -27.5)
-            compare(map.center.longitude, 153)
+            compare(map.center.latitude, 0)
+            compare(map.center.longitude, 0)
             map.center.latitude = 5
             compare(centerSpy.count, 1)
             map.center.longitude = 10

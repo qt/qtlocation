@@ -55,10 +55,10 @@ QDeclarativeGeoMapPinchArea::QDeclarativeGeoMapPinchArea(QDeclarative3DGraphicsG
       map_(map),
       enabled_(true),
       active_(false),
-      minimumZoomLevel_(0.0),
-      maximumZoomLevel_(100.0),
+      minimumZoomLevel_(-1.0),
+      maximumZoomLevel_(-1.0),
       minimumRotation_(0.0),
-      maximumRotation_(0.0),
+      maximumRotation_(45.0),
       inPinch_(false),
       pinchRejected_(false),
       pinchActivated_(false),
@@ -71,10 +71,11 @@ QDeclarativeGeoMapPinchArea::QDeclarativeGeoMapPinchArea(QDeclarative3DGraphicsG
       pinchRotation_(0.0),
       id1_(-1),
       maximumZoomLevelChange_(2.0),
+      rotationSpeed_(1.0),
       activeGestures_(ZoomGesture | RotationGesture),
       minimumTilt_(0.0),
       maximumTilt_(90.0),
-      maximumTiltChange_(10.0),
+      maximumTiltChange_(20.0),
       pinchLastTilt_(0.0),
       pinchStartTilt_(0.0)
 {
@@ -108,7 +109,7 @@ void QDeclarativeGeoMapPinchArea::setActive(bool active)
 {
     if (active == active_)
         return;
-    active = active_;
+    active_ = active;
     emit activeChanged();
 }
 
@@ -121,7 +122,7 @@ void QDeclarativeGeoMapPinchArea::setEnabled(bool enabled)
 {
     if (enabled == enabled_)
         return;
-    enabled = enabled_;
+    enabled_ = enabled;
     emit enabledChanged();
 }
 
@@ -132,7 +133,9 @@ qreal QDeclarativeGeoMapPinchArea::minimumZoomLevel() const
 
 void QDeclarativeGeoMapPinchArea::setMinimumZoomLevel(qreal zoomLevel)
 {
-    if (zoomLevel == minimumZoomLevel_ || zoomLevel < map_->minimumZoomLevel())
+    if (zoomLevel == minimumZoomLevel_ ||
+            zoomLevel < map_->minimumZoomLevel() ||
+            (maximumZoomLevel_ != -1.0 && zoomLevel > maximumZoomLevel_) )
         return;
     minimumZoomLevel_ = zoomLevel;
     emit minimumZoomLevelChanged();
@@ -145,7 +148,9 @@ qreal QDeclarativeGeoMapPinchArea::maximumZoomLevel() const
 
 void QDeclarativeGeoMapPinchArea::setMaximumZoomLevel(qreal zoomLevel)
 {
-    if (zoomLevel == maximumZoomLevel_ || zoomLevel > map_->maximumZoomLevel())
+    if (zoomLevel == maximumZoomLevel_ ||
+            zoomLevel > map_->maximumZoomLevel() ||
+            (minimumZoomLevel_ != - 1.0 && zoomLevel < minimumZoomLevel_))
         return;
     maximumZoomLevel_ = zoomLevel;
     emit maximumZoomLevelChanged();
@@ -156,9 +161,9 @@ void QDeclarativeGeoMapPinchArea::setMaximumZoomLevel(qreal zoomLevel)
 // it possible to check against mapping plugins' limits)
 void QDeclarativeGeoMapPinchArea::zoomLevelLimits(qreal min, qreal max)
 {
-    if (min > minimumZoomLevel_)
+    if (minimumZoomLevel_ == -1.0 || min > minimumZoomLevel_)
         setMinimumZoomLevel(min);
-    if (max < maximumZoomLevel_)
+    if (maximumZoomLevel_ == -1.0 || max < maximumZoomLevel_)
         setMaximumZoomLevel(max);
 }
 
@@ -169,7 +174,7 @@ qreal QDeclarativeGeoMapPinchArea::maximumZoomLevelChange() const
 
 void QDeclarativeGeoMapPinchArea::setMaximumZoomLevelChange(qreal maxChange)
 {
-    if (maxChange == maximumZoomLevelChange_ || maxChange < 0.1)
+    if (maxChange == maximumZoomLevelChange_ || maxChange < 0.1 || maxChange > 10.0)
         return;
     maximumZoomLevelChange_ = maxChange;
     emit maximumZoomLevelChangeChanged();
@@ -182,7 +187,9 @@ qreal QDeclarativeGeoMapPinchArea::minimumRotation() const
 
 void QDeclarativeGeoMapPinchArea::setMinimumRotation(qreal rotation)
 {
-    if (rotation == minimumRotation_ || rotation < 0.1)
+    if (rotation == minimumRotation_ ||
+            rotation < 0 ||
+            rotation > maximumRotation_)
         return;
     minimumRotation_ = rotation;
     emit minimumRotationChanged();
@@ -195,7 +202,9 @@ qreal QDeclarativeGeoMapPinchArea::maximumRotation() const
 
 void QDeclarativeGeoMapPinchArea::setMaximumRotation(qreal rotation)
 {
-    if (rotation == maximumRotation_ || rotation > 360)
+    if (rotation == maximumRotation_ ||
+            rotation > 360 ||
+            rotation < minimumRotation_)
         return;
     maximumRotation_ = rotation;
     emit maximumRotationChanged();
@@ -208,7 +217,9 @@ qreal QDeclarativeGeoMapPinchArea::rotationSpeed() const
 
 void QDeclarativeGeoMapPinchArea::setRotationSpeed(qreal speed)
 {
-    if (rotationSpeed_ == speed || speed < 0.1)
+    if (rotationSpeed_ == speed ||
+            speed < 0 ||
+            speed > 10)
         return;
     rotationSpeed_ = speed;
     emit rotationSpeedChanged();

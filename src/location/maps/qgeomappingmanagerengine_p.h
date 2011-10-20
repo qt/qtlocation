@@ -88,8 +88,8 @@ public:
     qreal maximumTilt;
 
     QLocale locale;
-
     bool started_;
+    bool initialized;
     QTimer *timer_;
     QList<TileSpec> queue_;
     QHash<QGeoTiledMapReply*, TileSpec> map_;

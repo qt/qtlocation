@@ -120,8 +120,13 @@ void QDeclarativePinchGenerator::setEnabled(bool enabled)
 
 QTouchEvent::TouchPoint QDeclarativePinchGenerator::mouseEventToTouchPoint(QMouseEvent *event)
 {
+    return createTouchPoint(event->type(), event->pos());
+}
+
+QTouchEvent::TouchPoint QDeclarativePinchGenerator::createTouchPoint(QEvent::Type type, QPoint pos)
+{
     QTouchEvent::TouchPoint touchPoint;
-    switch (event->type()) {
+    switch (type) {
     //case QEvent::GraphicsSceneMousePress:
     case QEvent::MouseButtonPress:
         touchPoint.setState(Qt::TouchPointPressed);
@@ -140,10 +145,10 @@ QTouchEvent::TouchPoint QDeclarativePinchGenerator::mouseEventToTouchPoint(QMous
     //touchPoint.setId(touchPointId_++); // running number
     touchPoint.setId(0);
     touchPoint.setPressure(0.75);
-    touchPoint.setPos(event->pos());
-    touchPoint.setLastPos(event->pos());
-    touchPoint.setScenePos(target_->mapToScene(event->pos()));
-    touchPoint.setLastScenePos(target_->mapToScene(event->pos()));
+    touchPoint.setPos(pos);
+    touchPoint.setLastPos(pos);
+    touchPoint.setScenePos(target_->mapToScene(pos));
+    touchPoint.setLastScenePos(target_->mapToScene(pos));
     return touchPoint;
 }
 
@@ -432,6 +437,79 @@ Q_INVOKABLE void QDeclarativePinchGenerator::replay()
     replayTimer_ = startTimer(swipes_.at(masterSwipe_)->touchPointDurations.at(0) / replaySpeedFactor_);
     replayBookmark_ = 0;
     setState(Replaying);
+}
+
+void QDeclarativePinchGenerator::pinch(QPoint point1From,
+                                       QPoint point1To,
+                                       QPoint point2From,
+                                       QPoint point2To,
+                                       int interval1,
+                                       int interval2,
+                                       int samples1,
+                                       int samples2)
+{
+    //qDebug() << __FUNCTION__ << point1From << point1To << point2From << point2To << interval1 << interval2 << samples1 << samples2 << state_;
+    Q_ASSERT(state_ == Idle);
+    //Q_ASSERT(!point1From.isNull());
+    //Q_ASSERT(!point1To.isNull());
+    //Q_ASSERT(!point2From.isNull());
+    //Q_ASSERT(!point2To.isNull());
+    Q_ASSERT(interval1 > 10);
+    Q_ASSERT(interval2 > 10);
+    Q_ASSERT(samples1 >= 2); // we need press and release events at minimum
+    Q_ASSERT(samples2 >= 2);
+
+    // generate swipes based on the parameters
+    if (!swipes_.isEmpty()) {
+        qDeleteAll(swipes_);
+        swipes_.clear();
+    }
+    generateSwipe(point1From, point1To, interval1, samples1);
+    generateSwipe(point2From, point2To, interval2, samples2);
+    Q_ASSERT(swipes_.at(0));
+    Q_ASSERT(swipes_.at(1));
+
+    if (swipes_.at(0)->touchPoints.count() >= swipes_.at(1)->touchPoints.count())
+        masterSwipe_ = 0;
+    else
+        masterSwipe_ = 1;
+    replayTimer_ = startTimer(swipes_.at(masterSwipe_)->touchPointDurations.at(0) / replaySpeedFactor_);
+    replayBookmark_ = 0;
+    setState(Replaying);
+}
+
+void QDeclarativePinchGenerator::generateSwipe(QPoint from, QPoint to, int interval, int samples)
+{
+    //qDebug() << __FUNCTION__ << "generate swipe from, to, interval, samplecount: " << from << to << interval << samples;
+    int deltaX = (to.x() - from.x()) / samples;
+    int deltaY = (to.y() - from.y()) / samples;
+    //qDebug() << __FUNCTION__ << "deltaX, deltaY: " << deltaX << deltaY;
+    Q_ASSERT(qAbs(deltaX) > 0 || qAbs(deltaY) > 0);
+
+    activeSwipe_ = new Swipe;
+    // create press event
+    activeSwipe_->touchPointDurations.append(interval);
+    activeSwipe_->totalDuration += interval;
+    activeSwipe_->touchPoints.append(createTouchPoint(QEvent::MouseButtonPress, from));
+    //qDebug() << __FUNCTION__ << "press X, Y: " << from.x() << from.y();
+
+    // create move events
+    for (int i = 1; i < samples - 1; ++i) {
+        activeSwipe_->touchPointDurations.append(interval);
+        activeSwipe_->totalDuration  += interval;
+        int nextX = from.x() + (i * deltaX);
+        int nextY = from.y() + (i * deltaY);
+        //qDebug() << __FUNCTION__ << "move X, Y: " << nextX << nextY;
+        activeSwipe_->touchPoints.append(createTouchPoint(QEvent::MouseMove, QPoint(nextX, nextY)));
+    }
+    // create release event
+    activeSwipe_->touchPointDurations.append(interval);
+    activeSwipe_->totalDuration += interval;
+    activeSwipe_->touchPoints.append(createTouchPoint(QEvent::MouseButtonRelease, to));
+    //qDebug() << __FUNCTION__ << "release X, Y: " << to.x() << to.y();
+
+    // append the swipe
+    swipes_.append(activeSwipe_);
 }
 
 Q_INVOKABLE void QDeclarativePinchGenerator::clear()

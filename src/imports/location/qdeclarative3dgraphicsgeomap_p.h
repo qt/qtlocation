@@ -221,6 +221,7 @@ private Q_SLOTS:
     void centerAltitudeChanged(double altitude);
     void mapItemDestroyed(QObject* item);
     void cameraDataChanged(const CameraData &cameraData);
+    void mappingManagerInitialized();
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
@@ -252,12 +253,12 @@ private:
     qreal zoomLevel_;
     QPointer<QDeclarativeCoordinate> center_;
 
-    QGeoCoordinate* initialCoordinate;
 //    QDeclarative3DGraphicsGeoMap::MapType mapType_;
 //    QDeclarative3DGraphicsGeoMap::ConnectivityMode connectivityMode_;
     QSizeF size_;
 
     bool componentCompleted_;
+    bool mappingManagerInitialized_;
     QList<QDeclarativeGeoMapItemView*> mapViews_;
 
     QDeclarativeGeoMapFlickable* flickable_;

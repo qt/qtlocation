@@ -123,6 +123,11 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
             SLOT(threadStarted()),
             Qt::QueuedConnection);
 
+    connect(d_ptr->engine,
+            SIGNAL(initialized()),
+            this,
+            SIGNAL(initialized()));
+
     d_ptr->engine->moveToThread(d_ptr->thread);
     QTimer::singleShot(0, d_ptr->thread, SLOT(start()));
 }
@@ -134,6 +139,13 @@ QGeoMappingManager::~QGeoMappingManager()
 {
     delete d_ptr;
 }
+
+/*!
+    \fn void QGeoMappingManager::initialized()
+
+    This signal is emitted when the mapping manager has been initialized
+    and is ready to be used.
+*/
 
 /*!
     Returns the name of the engine which implements the behaviour of this
@@ -230,6 +242,17 @@ bool QGeoMappingManager::supportsBearing() const
 {
     return d_ptr->engine->supportsBearing();
 }
+
+/*!
+    Return whether the manager has been initialized
+    (will be done automatically but may take some time).
+
+*/
+bool QGeoMappingManager::isInitialized() const
+{
+    return d_ptr->engine->isInitialized();
+}
+
 
 /*!
     Return whether tilting is supported by this manager.

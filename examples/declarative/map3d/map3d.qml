@@ -184,6 +184,22 @@ Item {
                 onClicked: { mapCenterCoordinate.altitude -= 1}
             }
         }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Click:\pinch"}
+            MouseArea{ anchors.fill: parent;
+                onClicked: {
+                    pinchGenerator.pinch(
+                                            Qt.point(100,100),   // point1From
+                                            Qt.point(150,150),   // point1To
+                                            Qt.point(300,300),   // point2From
+                                            Qt.point(150,150),   // point2To
+                                            20,                // interval between touch events (swipe1), default 20ms
+                                            20,                // interval between touch events (swipe2), defualt 20ms
+                                            10,                // number of touchevents in point1from -> point1to, default 10
+                                            10);               // number of touchevents in point2from -> point2to, default 10
+                }
+            }
+        }
     }
 
     /*
@@ -244,13 +260,11 @@ Item {
 
     Map {
         id: map
-
         MapMouseArea {
             id: mapMouseArea
             onDoubleClicked: console.log('mapmousearea got clicked')
             anchors.fill: parent
         }
-
         MapItem {
             id: externalStaticMapItem1
             visible: true
@@ -268,7 +282,6 @@ Item {
                 }
             }
         }
-
 
         MapItem {
             objectName: 'blinky static item'
@@ -382,7 +395,7 @@ Item {
         //anchors.fill: page
         width: page.width - 80
         height: 1000
-        zoomLevel: 5.1
+        zoomLevel: 9
 
         // pinch.activeGestures: MapPinch.ZoomGesture | RotationGesture
         pinch.activeGestures: MapPinch.NoGesture

@@ -43,12 +43,13 @@
 #define QDECLARATIVEPINCHGENERATOR_H
 
 #include <QtDeclarative/QSGItem>
-#include <QMouseEvent>
-#include <QElapsedTimer>
-#include <QTouchEvent>
 #include <QSGCanvas>
-#include <QKeyEvent>
-#include <QList>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QTouchEvent>
+#include <QtGui/QKeyEvent>
+#include <QtCore/QElapsedTimer>
+#include <QtCore/QList>
+#include <QtCore/QPoint>
 #include <QDebug>
 
 // how many concurrent "swipes" should we have
@@ -112,6 +113,15 @@ public:
     Q_INVOKABLE void clear();
     Q_INVOKABLE void stop();
 
+    // programmatic interface, useful for autotests
+    Q_INVOKABLE void pinch(QPoint point1From,
+                           QPoint point1To,
+                           QPoint point2From,
+                           QPoint point2To,
+                           int interval1 = 20,
+                           int interval2 = 20,
+                           int samples1 = 10,
+                           int samples2 = 10);
 signals:
     void stateChanged();
     void countChanged();
@@ -144,7 +154,9 @@ protected:
 private:
     void setState(GeneratorState state);
     QTouchEvent::TouchPoint mouseEventToTouchPoint(QMouseEvent* event);
+    QTouchEvent::TouchPoint createTouchPoint(QEvent::Type type, QPoint pos);
     QTouchEvent::TouchPoint convertToPrimary(QTouchEvent::TouchPoint original);
+    void generateSwipe(QPoint from, QPoint to, int duration, int samples);
 
 private:
     QSGItem* target_;

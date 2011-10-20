@@ -288,6 +288,7 @@ Item {
         function test_aaa_basic_properties() // _aaa_ to ensure execution first
         {
             clear_data()
+            wait(50)
             // default values
             compare(mouseUpper.containsMouse, false)
             compare(mouseUpper.pressed, false)

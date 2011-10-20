@@ -97,6 +97,7 @@ public:
     QLocale locale() const;
 
     virtual void init();
+    bool isInitialized() const;
 
 public Q_SLOTS:
     void threadStarted();
@@ -110,6 +111,7 @@ Q_SIGNALS:
     void tileFinished(const TileSpec &spec, const QByteArray &bytes);
     void tileError(const TileSpec &spec, const QString &errorString);
     void queueFinished();
+    void initialized();
 
 protected:
     QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
