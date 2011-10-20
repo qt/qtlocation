@@ -52,7 +52,6 @@ QT_BEGIN_NAMESPACE
   \inmodule QtLocation
 
   \ingroup location
-  \since 1.2
 
   Implementers must provide a unique combination of sourceName() and
   sourceVersion() per plugin.

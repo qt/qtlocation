@@ -58,7 +58,6 @@ QT_BEGIN_NAMESPACE
 
 
     \inmodule QtLocation
-    \since 1.1
 
     \ingroup maps-places
 

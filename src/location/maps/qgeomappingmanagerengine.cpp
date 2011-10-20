@@ -55,7 +55,6 @@ QT_BEGIN_NAMESPACE
     and interacting with maps.
 
     \inmodule QtLocation
-    \since 1.1
 
     \ingroup maps-impl
 

@@ -75,7 +75,6 @@ QT_BEGIN_NAMESPACE
     geographical information.
 
     \inmodule QtLocation
-    \since 1.1
 
     \ingroup maps
 

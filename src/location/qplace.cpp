@@ -53,7 +53,6 @@ QT_BEGIN_NAMESPACE
     \brief The QPlace class represents basic information about a place.
 
     \inmodule QtLocation
-    \since 1.1
 
     \ingroup location
     \ingroup places-main
@@ -69,7 +68,6 @@ QPlace::QPlace()
 
 /*!
     Constructs a copy of \a other.
-    \since 1.1
 */
 QPlace::QPlace(const QPlace &other)
         : d_ptr(other.d_ptr)
@@ -86,7 +84,6 @@ QPlace::~QPlace()
 /*!
     Assigns \a other to this place and returns a reference
     to this place.
-    \since 1.1
 */
 QPlace &QPlace::operator= (const QPlace & other)
 {
@@ -107,7 +104,6 @@ inline const QPlacePrivate* QPlace::d_func() const
 /*!
     Returns true if \a other is equal to this place,
     otherwise returns false.
-    \since 1.1
 */
 bool QPlace::operator== (const QPlace &other) const
 {
@@ -118,7 +114,6 @@ bool QPlace::operator== (const QPlace &other) const
 /*!
     Returns true if \a other is not equal to this place,
     otherwise returns false.
-    \since 1.1
 */
 bool QPlace::operator!= (const QPlace &other) const
 {

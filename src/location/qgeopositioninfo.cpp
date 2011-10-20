@@ -59,7 +59,6 @@ public:
     \brief The QGeoPositionInfo class contains information gathered on a global position, direction and velocity at a particular point in time.
 
     \inmodule QtLocation
-    \since 1.0
 
     \ingroup location
 
@@ -94,7 +93,6 @@ QGeoPositionInfo::QGeoPositionInfo()
 
 /*!
     Creates a QGeoPositionInfo for the given \a coordinate and \a timestamp.
-    \since 1.0
 */
 QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDateTime &timestamp)
         : d(new QGeoPositionInfoPrivate)
@@ -105,7 +103,6 @@ QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDate
 
 /*!
     Creates a QGeoPositionInfo with the values of \a other.
-    \since 1.0
 */
 QGeoPositionInfo::QGeoPositionInfo(const QGeoPositionInfo &other)
         : d(new QGeoPositionInfoPrivate)
@@ -123,7 +120,6 @@ QGeoPositionInfo::~QGeoPositionInfo()
 
 /*!
     Assigns the values from \a other to this QGeoPositionInfo.
-    \since 1.0
 */
 QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo & other)
 {
@@ -140,7 +136,6 @@ QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo & other)
 /*!
     Returns true if all of this object's values are the same as those of
     \a other.
-    \since 1.0
 */
 bool QGeoPositionInfo::operator==(const QGeoPositionInfo &other) const
 {
@@ -154,13 +149,11 @@ bool QGeoPositionInfo::operator==(const QGeoPositionInfo &other) const
 
     Returns true if any of this object's values are not the same as those of
     \a other.
-    \since 1.0
 */
 
 /*!
     Returns true if the timestamp() and coordinate() values are both valid.
 
-    \since 1.0
     \sa QGeoCoordinate::isValid(), QDateTime::isValid()
 */
 bool QGeoPositionInfo::isValid() const
@@ -173,7 +166,6 @@ bool QGeoPositionInfo::isValid() const
 
     The \a timestamp must be in UTC time.
 
-    \since 1.0
     \sa timestamp()
 */
 void QGeoPositionInfo::setTimestamp(const QDateTime &timestamp)
@@ -186,7 +178,6 @@ void QGeoPositionInfo::setTimestamp(const QDateTime &timestamp)
 
     Returns an invalid QDateTime if no date/time value has been set.
 
-    \since 1.0
     \sa setTimestamp()
 */
 QDateTime QGeoPositionInfo::timestamp() const
@@ -197,7 +188,6 @@ QDateTime QGeoPositionInfo::timestamp() const
 /*!
     Sets the coordinate for this position to \a coordinate.
 
-    \since 1.0
     \sa coordinate()
 */
 void QGeoPositionInfo::setCoordinate(const QGeoCoordinate &coordinate)
@@ -210,7 +200,6 @@ void QGeoPositionInfo::setCoordinate(const QGeoCoordinate &coordinate)
 
     Returns an invalid coordinate if no coordinate has been set.
 
-    \since 1.0
     \sa setCoordinate()
 */
 QGeoCoordinate QGeoPositionInfo::coordinate() const
@@ -221,7 +210,6 @@ QGeoCoordinate QGeoPositionInfo::coordinate() const
 /*!
     Sets the value for \a attribute to \a value.
 
-    \since 1.0
     \sa attribute()
 */
 void QGeoPositionInfo::setAttribute(Attribute attribute, qreal value)
@@ -238,7 +226,6 @@ void QGeoPositionInfo::setAttribute(Attribute attribute, qreal value)
     The function hasAttribute() should be used to determine whether or
     not a value has been set for an attribute.
 
-    \since 1.0
     \sa hasAttribute(), setAttribute()
 */
 qreal QGeoPositionInfo::attribute(Attribute attribute) const
@@ -250,7 +237,6 @@ qreal QGeoPositionInfo::attribute(Attribute attribute) const
 
 /*!
     Removes the specified \a attribute and its value.
-    \since 1.0
 */
 void QGeoPositionInfo::removeAttribute(Attribute attribute)
 {
@@ -260,7 +246,6 @@ void QGeoPositionInfo::removeAttribute(Attribute attribute)
 /*!
     Returns true if the specified \a attribute is present for this
     QGeoPositionInfo object.
-    \since 1.0
 */
 bool QGeoPositionInfo::hasAttribute(Attribute attribute) const
 {
@@ -311,7 +296,6 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
 
     Writes the given \a info to the specified \a stream.
 
-    \since 1.0
     \sa {Serializing Qt Data Types}
 */
 
@@ -332,7 +316,6 @@ QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
     Reads a coordinate from the specified \a stream into the given
     \a info.
 
-    \since 1.0
     \sa {Serializing Qt Data Types}
 */
 

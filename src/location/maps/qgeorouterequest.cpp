@@ -53,7 +53,6 @@ QT_BEGIN_NAMESPACE
     which define a request for routing information.
 
     \inmodule QtLocation
-    \since 1.1
 
     \ingroup maps-routing
 

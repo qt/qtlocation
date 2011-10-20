@@ -55,7 +55,6 @@ QT_BEGIN_NAMESPACE
     to provide support for geocoding operations.
 
     \inmodule QtLocation
-    \since 1.1
 
     \ingroup maps-impl
 

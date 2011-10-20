@@ -69,7 +69,6 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
 \class QPlaceAttribute
 \brief The QPlaceAttribute class represents generic attribute information about a place.
 \inmodule QtLocation
-\since 1.1
 
 \ingroup location
 \ingroup places-main
