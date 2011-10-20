@@ -276,20 +276,31 @@ QPlaceReply *QPlaceManagerEngineNokia::initializeCategories()
     return reply;
 }
 
-QList<QPlaceCategory> QPlaceManagerEngineNokia::childCategories(const QString &parentId) const
+QString QPlaceManagerEngineNokia::parentCategoryId(const QString &categoryId) const
 {
     QPlaceCategoryTree tree = QPlaceCategoriesRepository::instance()->categories();
-    tree = tree.findCategoryTreeById(parentId);
+    return tree.value(categoryId).parentId;
+}
 
+QStringList QPlaceManagerEngineNokia::childrenCategoryIds(const QString &categoryId) const
+{
+    QPlaceCategoryTree tree = QPlaceCategoriesRepository::instance()->categories();
+    return tree.value(categoryId).childIds;
+}
+
+QPlaceCategory QPlaceManagerEngineNokia::category(const QString &categoryId) const
+{
+    QPlaceCategoryTree tree = QPlaceCategoriesRepository::instance()->categories();
+    return tree.value(categoryId).category;
+}
+
+QList<QPlaceCategory> QPlaceManagerEngineNokia::childCategories(const QString &parentId) const
+{
     QList<QPlaceCategory> results;
-
-    QHashIterator<QString, QPlaceCategoryTree> it(tree.subCategories);
-    while (it.hasNext()) {
-        it.next();
-
-        results.append(it.value().category);
-    }
-
+    QPlaceCategoryTree tree = QPlaceCategoriesRepository::instance()->categories();
+    PlaceCategoryNode node = tree.value(parentId);
+    foreach (const QString &childId, node.childIds)
+        results.append(tree.value(childId).category);
     return results;
 }
 

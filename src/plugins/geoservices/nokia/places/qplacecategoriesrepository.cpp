@@ -118,7 +118,7 @@ QString QPlaceCategoriesRepository::getCategoryTagId(const QPlaceCategory &categ
 
 QPlaceCategory QPlaceCategoriesRepository::findCategoryById(const QString &id)
 {
-    return m_categoryTree.findCategoryById(id);
+    return m_categoryTree.value(id).category;
 }
 
 void QPlaceCategoriesRepository::replyFinished()

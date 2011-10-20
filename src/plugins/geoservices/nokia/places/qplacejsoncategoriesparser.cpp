@@ -75,29 +75,42 @@ QPlaceJSonCategoriesParser::~QPlaceJSonCategoriesParser()
 {
 }
 
-QList<QPlaceCategory> QPlaceJSonCategoriesParser::parseFlatCategoryList(const QScriptValue &categories)
-{
-    return processCategories(categories).toList();
-}
-
 QPlaceCategoryTree QPlaceJSonCategoriesParser::resultCategories() const
 {
-    return m_categoryTree;
+    return m_tree;
 }
 
 QList<QPlaceCategory> QPlaceJSonCategoriesParser::resultCategoriesFlat() const
 {
-    return m_categoryTree.toList();
+    QList<QPlaceCategory> result;
+    foreach (const PlaceCategoryNode node, m_tree.values())
+        result.append(node.category);
+    return result;
+}
+
+QList<QPlaceCategory> QPlaceJSonCategoriesParser::parseFlatCategoryList(const QScriptValue &categories)
+{
+    QPlaceCategoryTree tree;
+    PlaceCategoryNode rootNode;
+    tree.insert(QString(), rootNode);
+    processCategories(categories, QString(), &tree);
+
+    QList<QPlaceCategory> result;
+    foreach (const PlaceCategoryNode &node, tree.values())
+        result.append(node.category);
+    return result;
 }
 
 void QPlaceJSonCategoriesParser::processJSonData(const QScriptValue &sv)
 {
-    m_categoryTree.clear();
+    m_tree.clear();
+    PlaceCategoryNode rootNode;
+    m_tree.insert(QString(), rootNode);
 
     if (sv.isValid()) {
         QScriptValue sv2 = sv.property(place_categories_element);
         if (sv2.isValid()) {
-            m_categoryTree = processCategories(sv2);
+            processCategories(sv2, QString(), &m_tree);
             emit finished(NoError, QString());
         } else {
             emit finished(ParsingError, QString("JSON data are invalid"));
@@ -107,9 +120,10 @@ void QPlaceJSonCategoriesParser::processJSonData(const QScriptValue &sv)
     }
 }
 
-QPlaceCategoryTree QPlaceJSonCategoriesParser::processCategories(const QScriptValue &categories)
+void QPlaceJSonCategoriesParser::processCategories(const QScriptValue &categories, const QString &parentId, QPlaceCategoryTree *tree)
 {
-    QPlaceCategoryTree results;
+
+    Q_ASSERT(tree->contains(parentId));
 
     QScriptValue value = categories.property(place_category_element);
     if (value.isValid()) {
@@ -119,20 +133,21 @@ QPlaceCategoryTree QPlaceJSonCategoriesParser::processCategories(const QScriptVa
                 it.next();
                 // array contains count as last element
                 if (it.name() != QLatin1String("length")) {
-                    QPlaceCategoryTree catTree;
-                    catTree.category = processCategory(it.value());
-                    if (!catTree.category.categoryId().isEmpty() &&
-                        !results.subCategories.contains(catTree.category.categoryId())) {
-                        results.subCategories.insert(catTree.category.categoryId(), catTree);
+                    PlaceCategoryNode catNode = processCategory(it.value(), parentId);
+
+                    if (!catNode.category.categoryId().isEmpty() &&
+                        !tree->contains(catNode.category.categoryId())) {
+                        tree->insert(catNode.category.categoryId(), catNode);
+                        (*tree)[parentId].childIds.append(catNode.category.categoryId());
                     }
                 }
             }
         } else {
-            QPlaceCategoryTree catTree;
-            catTree.category = processCategory(value);
-            if (!catTree.category.categoryId().isEmpty() &&
-                !results.subCategories.contains(catTree.category.categoryId())) {
-                results.subCategories.insert(catTree.category.categoryId(), catTree);
+            PlaceCategoryNode catNode = processCategory(value, parentId);
+            if (!catNode.category.categoryId().isEmpty() &&
+                !tree->contains(catNode.category.categoryId())) {
+                tree->insert(catNode.category.categoryId(), catNode);
+                (*tree)[parentId].childIds.append(catNode.category.categoryId());
             }
         }
     }
@@ -144,64 +159,43 @@ QPlaceCategoryTree QPlaceJSonCategoriesParser::processCategories(const QScriptVa
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element
-                if (it.name() != QLatin1String("length")) {
-                    QPlaceCategoryTree catTree = processGroup(it.value());
-                    if (!results.subCategories.contains(catTree.category.categoryId())) {
-                        results.subCategories.insert(catTree.category.categoryId(), catTree);
-                    } else {
-                        QHashIterator<QString, QPlaceCategoryTree> treeIt(catTree.subCategories);
-                        while (treeIt.hasNext()) {
-                            treeIt.next();
-
-                            results.subCategories[catTree.category.categoryId()].subCategories.insert(treeIt.key(), treeIt.value());
-                        }
-                    }
-                }
+                if (it.name() != QLatin1String("length"))
+                    processGroup(it.value(), parentId, tree);
             }
         } else {
-            QPlaceCategoryTree catTree = processGroup(value);
-            if (!results.subCategories.contains(catTree.category.categoryId())) {
-                results.subCategories.insert(catTree.category.categoryId(), catTree);
-            } else {
-                QHashIterator<QString, QPlaceCategoryTree> treeIt(catTree.subCategories);
-                while (treeIt.hasNext()) {
-                    treeIt.next();
-
-                    results.subCategories[catTree.category.categoryId()].subCategories.insert(treeIt.key(), treeIt.value());
-                }
-            }
+            processGroup(value, parentId, tree);
         }
     }
-
-    return results;
 }
 
-QPlaceCategory QPlaceJSonCategoriesParser::processCategory(const QScriptValue &categoryValue)
+PlaceCategoryNode QPlaceJSonCategoriesParser::processCategory(const QScriptValue &categoryValue, const QString &parentId)
 {
-    QPlaceCategory category;
+    PlaceCategoryNode categoryNode;
+    categoryNode.parentId = parentId;
     QScriptValue value = categoryValue.property(place_category_id_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        category.setCategoryId(value.toString());
+        categoryNode.category.setCategoryId(value.toString());
         value = categoryValue.property(place_category_name_element);
         if (value.isValid() && !value.toString().isEmpty()) {
-            category.setName(value.toString());
+            categoryNode.category.setName(value.toString());
         }
     }
-    return category;
+    return categoryNode;
 }
 
-QPlaceCategoryTree QPlaceJSonCategoriesParser::processGroup(const QScriptValue &group)
+void QPlaceJSonCategoriesParser::processGroup(const QScriptValue &group, const QString &parentId, QPlaceCategoryTree *tree)
 {
     QScriptValue value = group.property(place_groupingcategory_element);
     if (!value.isValid())
-        return QPlaceCategoryTree();
+        return;
 
-    QPlaceCategoryTree results;
-    results.category = processCategory(value);
-    if (results.category.categoryId().isEmpty())
-        return QPlaceCategoryTree();
+    PlaceCategoryNode catNode = processCategory(value, parentId);
+    if (catNode.category.categoryId().isEmpty()) {
+        return;
+    } else {
+        tree->insert(catNode.category.categoryId(), catNode);
+        (*tree)[parentId].childIds.append(catNode.category.categoryId());
+    }
 
-    results.subCategories = processCategories(group).subCategories;
-
-    return results;
+    processCategories(group, catNode.category.categoryId(), tree);
 }

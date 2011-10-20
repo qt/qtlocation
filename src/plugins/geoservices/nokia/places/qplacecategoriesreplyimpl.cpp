@@ -79,7 +79,10 @@ QPlaceCategoryTree QPlaceCategoriesReplyImpl::categories() const
 
 QList<QPlaceCategory> QPlaceCategoriesReplyImpl::categoriesFlat() const
 {
-    return m_categoryTree.toList();
+    QList<QPlaceCategory> categories;
+    foreach (const PlaceCategoryNode node, m_categoryTree.values())
+        categories.append(node.category);
+    return categories;
 }
 
 void QPlaceCategoriesReplyImpl::abort()
