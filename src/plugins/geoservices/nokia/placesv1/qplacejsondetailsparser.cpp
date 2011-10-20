@@ -714,7 +714,7 @@ QPlaceImage *QPlaceJSonDetailsParser::processPremiumContentMediaObject(const QJS
     QJSValue value = content.property(place_premiumcontent_content_mediaurl_element);
     if (!value.isUndefined() && !value.toString().isEmpty()) {
         obj = new QPlaceImage();
-        obj->setUrl(QUrl::fromEncoded(value.toString().toAscii()));
+        obj->setUrl(QUrl(value.toString()));
         obj->setImageId(value.toString());
         value = content.property(place_premiumcontent_content_mediamimetype_element);
         if (!value.isUndefined() && !value.toString().isEmpty()) {
@@ -860,7 +860,7 @@ QPlaceImage *QPlaceJSonDetailsParser::processAdContentMediaObject(const QJSValue
     }
     if (!mediaMimeType.isEmpty() || !mediaUrl.isEmpty()) {
         obj = new QPlaceImage();
-        obj->setUrl(QUrl::fromEncoded(mediaUrl.toAscii()));
+        obj->setUrl(QUrl(mediaUrl));
         obj->setImageId(mediaUrl);
         obj->setMimeType(mediaMimeType);
     }
