@@ -332,6 +332,27 @@ QPlaceReply *QPlaceManagerEngineJsonDb::initializeCategories()
     return reply;
 }
 
+QString QPlaceManagerEngineJsonDb::parentCategoryId(const QString &categoryId) const
+{
+    QVariantMap parentMap = m_jsonDbHandler.findParentCategoryJson(categoryId);
+    return parentMap.value(UUID).toString();
+}
+
+QStringList QPlaceManagerEngineJsonDb::childrenCategoryIds(const QString &categoryId) const
+{
+    QStringList result;
+    QList<QPlaceCategory> children = childCategories(categoryId);
+    foreach (const QPlaceCategory &child, children)
+        result.append(child.categoryId());
+
+    return result;
+}
+
+QPlaceCategory QPlaceManagerEngineJsonDb::category(const QString &categoryId) const
+{
+    return m_jsonDbHandler.findCategory(categoryId);
+}
+
 QList<QPlaceCategory> QPlaceManagerEngineJsonDb::childCategories(const QString &parentId) const
 {
     int reqId;

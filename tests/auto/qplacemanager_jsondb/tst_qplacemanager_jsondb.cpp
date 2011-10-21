@@ -113,6 +113,7 @@ private Q_SLOTS:
     void icons();
     void unsupportedFunctions();
     void supportedFeatures();
+    void categoryFunctions();
 
 private:
     bool doSavePlace(const QPlace &place,
@@ -1054,6 +1055,51 @@ void tst_QPlaceManagerJsonDb::supportedFeatures()
     QVERIFY((placeManager->supportedFeatures() & QPlaceManager::LocaleFeature) == 0);
 }
 
+void tst_QPlaceManagerJsonDb::categoryFunctions()
+{
+    QString categoryId;
+    QPlaceCategory restaurant;
+    restaurant.setName(QLatin1String("Restaurant"));
+    QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
+    restaurant.setCategoryId(categoryId);
+
+    QPlaceCategory fastFood;
+    fastFood.setName(QLatin1String("Fast Food"));
+    QVERIFY(doSaveCategory(fastFood, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
+    fastFood.setCategoryId(categoryId);
+
+    QPlaceCategory fineDining;
+    fineDining.setName(QLatin1String("Fine dining"));
+    QVERIFY(doSaveCategory(fineDining, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
+    fineDining.setCategoryId(categoryId);
+
+    //try find a parent id
+    QCOMPARE(placeManager->parentCategoryId(fineDining.categoryId()), restaurant.categoryId());
+
+    //try find the parent id of a top level category
+    QCOMPARE(placeManager->parentCategoryId(restaurant.categoryId()), QString());
+
+    //try find the parent id of a non-existent category.
+    QCOMPARE(placeManager->parentCategoryId(QLatin1String("does-not-exist")), QString());
+
+    //try find the child ids
+    QStringList childIds = placeManager->childrenCategoryIds(restaurant.categoryId());
+    QVERIFY(childIds.contains(fastFood.categoryId()));
+    QVERIFY(childIds.contains(fineDining.categoryId()));
+    QCOMPARE(childIds.count(), 2);
+
+    //try find the child id of a category without a child
+    QCOMPARE(placeManager->childrenCategoryIds(fineDining.categoryId()), QStringList());
+
+    //try to find child ids of a non-existent category
+    QCOMPARE(placeManager->childrenCategoryIds(QLatin1String("does-not-exist")), QStringList());
+
+    //try to find a category by it's id
+    QCOMPARE(placeManager->category(fastFood.categoryId()), fastFood);
+
+    //try to find a category with a non-existent id
+    QCOMPARE(placeManager->category(QLatin1String("does-not-exist")), QPlaceCategory());
+}
 
 void tst_QPlaceManagerJsonDb::cleanup()
 {

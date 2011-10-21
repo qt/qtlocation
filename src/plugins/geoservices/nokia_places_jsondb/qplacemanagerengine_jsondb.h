@@ -74,9 +74,9 @@ public:
     QPlaceIdReply *removeCategory(const QString &categoryId);
 
     QPlaceReply *initializeCategories();
-    QString parentCategoryId(const QString &categoryId) const {return QString();}
-    QStringList childrenCategoryIds(const QString &categoryId) const {return QStringList();}
-    QPlaceCategory category(const QString &categoryId) const {return QPlaceCategory();}
+    QString parentCategoryId(const QString &categoryId) const;
+    QStringList childrenCategoryIds(const QString &categoryId) const;
+    QPlaceCategory category(const QString &categoryId) const;
 
     QList<QPlaceCategory> childCategories(const QString &parentId) const;
 
