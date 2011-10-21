@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
 
 
 
-class Q_LOCATION_EXPORT_TEMP TileSpec
+class Q_LOCATION_EXPORT TileSpec
 {
 public:
     TileSpec();

@@ -57,7 +57,7 @@ QT_BEGIN_NAMESPACE
 class QGeoBoundingArea;
 class QPlaceSearchRequestPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QPlaceSearchRequest : public QPlaceRequest
+class Q_LOCATION_EXPORT QPlaceSearchRequest : public QPlaceRequest
 {
 public:
     enum RelevanceHint {

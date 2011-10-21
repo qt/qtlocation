@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
 class QPlaceIcon;
 
 class QPlaceCategoryPrivate;
-class Q_LOCATION_EXPORT_TEMP QPlaceCategory
+class Q_LOCATION_EXPORT QPlaceCategory
 {
 public:
     QPlaceCategory();

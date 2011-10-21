@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 
 class QPlaceRequestPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QPlaceRequest
+class Q_LOCATION_EXPORT QPlaceRequest
 {
 public:
     enum Type {

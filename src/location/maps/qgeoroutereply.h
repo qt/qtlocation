@@ -56,7 +56,7 @@ QT_BEGIN_NAMESPACE
 class QGeoRouteRequest;
 class QGeoRouteReplyPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeoRouteReply : public QObject
+class Q_LOCATION_EXPORT QGeoRouteReply : public QObject
 {
     Q_OBJECT
 public:

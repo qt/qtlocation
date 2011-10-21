@@ -66,7 +66,7 @@ struct MapItemGLResources {
 };
 
 
-class Q_LOCATION_EXPORT_TEMP MapItem
+class Q_LOCATION_EXPORT MapItem
 {
 public:
     MapItem();
@@ -114,7 +114,7 @@ private:
     MapItemGLResources* glResources_;
 };
 
-class Q_LOCATION_EXPORT_TEMP MapItemTree
+class Q_LOCATION_EXPORT MapItemTree
 {
 public:
     MapItemTree();

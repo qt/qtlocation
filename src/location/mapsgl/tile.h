@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 class QGLTexture2D;
 class QGLSceneNode;
 
-class Q_LOCATION_EXPORT_TEMP Tile
+class Q_LOCATION_EXPORT Tile
 {
 public:
     Tile();

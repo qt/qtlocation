@@ -65,7 +65,7 @@ class QGeoRoutingManagerEngine;
 class QPlaceManagerEngine;
 class QGeoServiceProviderPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeoServiceProvider
+class Q_LOCATION_EXPORT QGeoServiceProvider
 {
 public:
     enum Error {

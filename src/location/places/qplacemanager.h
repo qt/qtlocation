@@ -67,7 +67,7 @@ class QPlaceManagerEngine;
 class QPlaceSearchRequest;
 class QPlaceSearchReply;
 
-class Q_LOCATION_EXPORT_TEMP QPlaceManager : public QObject
+class Q_LOCATION_EXPORT QPlaceManager : public QObject
 {
     Q_OBJECT
 public:

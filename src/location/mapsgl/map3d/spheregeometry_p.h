@@ -60,7 +60,7 @@ class QGeoCoordinate;
 class QVector2D;
 class QVector3D;
 
-class Q_LOCATION_EXPORT_TEMP SphereGeometry
+class Q_LOCATION_EXPORT SphereGeometry
 {
 public:
     SphereGeometry();

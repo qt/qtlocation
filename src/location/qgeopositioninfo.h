@@ -55,7 +55,7 @@ class QDebug;
 class QDataStream;
 
 class QGeoPositionInfoPrivate;
-class Q_LOCATION_EXPORT_TEMP QGeoPositionInfo
+class Q_LOCATION_EXPORT QGeoPositionInfo
 {
 public:
     enum Attribute {
@@ -94,22 +94,22 @@ public:
 
 private:
 #ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT_TEMP QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
+    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
 #endif
 #ifndef QT_NO_DATASTREAM
-    friend Q_LOCATION_EXPORT_TEMP QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info);
-    friend Q_LOCATION_EXPORT_TEMP QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
+    friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info);
+    friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
 #endif
     QGeoPositionInfoPrivate *d;
 };
 
 #ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT_TEMP QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
+Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
 #endif
 
 #ifndef QT_NO_DATASTREAM
-Q_LOCATION_EXPORT_TEMP QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info);
-Q_LOCATION_EXPORT_TEMP QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
+Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info);
+Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
 #endif
 
 QT_END_NAMESPACE

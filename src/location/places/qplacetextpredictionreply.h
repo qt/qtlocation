@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 
 class QPlaceTextPredictionReplyPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QPlaceTextPredictionReply : public QPlaceReply
+class Q_LOCATION_EXPORT QPlaceTextPredictionReply : public QPlaceReply
 {
     Q_OBJECT
 public:

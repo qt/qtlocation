@@ -56,7 +56,7 @@ QT_BEGIN_NAMESPACE
 class QPlaceImagePrivate;
 class QUrl;
 
-class Q_LOCATION_EXPORT_TEMP QPlaceImage : public QPlaceContent
+class Q_LOCATION_EXPORT QPlaceImage : public QPlaceContent
 {
 public:
     QPlaceImage();

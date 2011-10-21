@@ -66,7 +66,7 @@ class QGeoMappingManagerEnginePrivate;
 class QGeoTiledMapReply;
 class TileSpec;
 
-class Q_LOCATION_EXPORT_TEMP QGeoMappingManagerEngine : public QObject
+class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
 {
     Q_OBJECT
 

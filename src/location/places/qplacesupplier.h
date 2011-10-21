@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 class QUrl;
 class QPlaceSupplierPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QPlaceSupplier
+class Q_LOCATION_EXPORT QPlaceSupplier
 {
 public:
     QPlaceSupplier();

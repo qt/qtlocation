@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoPositionInfo;
 class QGeoAreaMonitorPrivate;
-class Q_LOCATION_EXPORT_TEMP QGeoAreaMonitor : public QObject
+class Q_LOCATION_EXPORT QGeoAreaMonitor : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter)

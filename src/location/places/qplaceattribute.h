@@ -57,7 +57,7 @@ QT_BEGIN_NAMESPACE
 
 
 class QPlaceAttributePrivate;
-class Q_LOCATION_EXPORT_TEMP QPlaceAttribute
+class Q_LOCATION_EXPORT QPlaceAttribute
 {
 public:
     QPlaceAttribute();

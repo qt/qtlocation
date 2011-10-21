@@ -58,7 +58,7 @@ class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoRouteRequestPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeoRouteRequest
+class Q_LOCATION_EXPORT QGeoRouteRequest
 {
 public:
     enum TravelMode {

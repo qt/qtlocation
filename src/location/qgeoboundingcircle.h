@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeoBoundingCirclePrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeoBoundingCircle : public QGeoBoundingArea
+class Q_LOCATION_EXPORT QGeoBoundingCircle : public QGeoBoundingArea
 {
 public:
     QGeoBoundingCircle();

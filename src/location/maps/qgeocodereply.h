@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeocodeReplyPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeocodeReply : public QObject
+class Q_LOCATION_EXPORT QGeocodeReply : public QObject
 {
     Q_OBJECT
 

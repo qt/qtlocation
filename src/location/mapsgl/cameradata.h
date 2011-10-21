@@ -57,7 +57,7 @@ QT_BEGIN_NAMESPACE
 class Projection;
 class CameraDataPrivate;
 
-class Q_LOCATION_EXPORT_TEMP CameraData
+class Q_LOCATION_EXPORT CameraData
 {
 public:
     CameraData();

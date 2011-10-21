@@ -64,7 +64,7 @@ QT_BEGIN_NAMESPACE
 class QPlaceUser;
 class QPlaceSupplier;
 class QPlaceContentPrivate;
-class Q_LOCATION_EXPORT_TEMP QPlaceContent
+class Q_LOCATION_EXPORT QPlaceContent
 {
 public:
     typedef QMap<int, QPlaceContent> Collection;

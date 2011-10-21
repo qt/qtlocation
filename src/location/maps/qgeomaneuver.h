@@ -56,7 +56,7 @@ class QString;
 class QGeoCoordinate;
 class QGeoManeuverPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeoManeuver
+class Q_LOCATION_EXPORT QGeoManeuver
 {
 
 public:

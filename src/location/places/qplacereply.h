@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
 
 
 class QPlaceReplyPrivate;
-class Q_LOCATION_EXPORT_TEMP QPlaceReply : public QObject
+class Q_LOCATION_EXPORT QPlaceReply : public QObject
 {
     Q_OBJECT
 public:

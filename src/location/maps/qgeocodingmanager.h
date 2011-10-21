@@ -60,7 +60,7 @@ class QLocale;
 class QGeocodingManagerEngine;
 class QGeocodingManagerPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeocodingManager : public QObject
+class Q_LOCATION_EXPORT QGeocodingManager : public QObject
 {
     Q_OBJECT
 public:

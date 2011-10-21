@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 class QIODevice;
 
 class QNmeaPositionInfoSourcePrivate;
-class Q_LOCATION_EXPORT_TEMP QNmeaPositionInfoSource : public QGeoPositionInfoSource
+class Q_LOCATION_EXPORT QNmeaPositionInfoSource : public QGeoPositionInfoSource
 {
     Q_OBJECT
 public:

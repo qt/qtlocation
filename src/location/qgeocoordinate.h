@@ -55,7 +55,7 @@ class QDebug;
 class QDataStream;
 
 class QGeoCoordinatePrivate;
-class Q_LOCATION_EXPORT_TEMP QGeoCoordinate
+class Q_LOCATION_EXPORT QGeoCoordinate
 {
 public:
     enum CoordinateType {
@@ -112,12 +112,12 @@ private:
 };
 
 #ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT_TEMP QDebug operator<<(QDebug, const QGeoCoordinate &);
+Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QGeoCoordinate &);
 #endif
 
 #ifndef QT_NO_DATASTREAM
-Q_LOCATION_EXPORT_TEMP QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate);
-Q_LOCATION_EXPORT_TEMP QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate);
+Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoCoordinate &coordinate);
+Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &coordinate);
 #endif
 
 QT_END_NAMESPACE

@@ -67,7 +67,7 @@ class QGLSceneNode;
 class QPixmap;
 class QThread;
 
-class Q_LOCATION_EXPORT_TEMP TileCache : public QObject
+class Q_LOCATION_EXPORT TileCache : public QObject
 {
     Q_OBJECT
 public:

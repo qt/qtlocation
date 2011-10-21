@@ -58,7 +58,7 @@ class QLocale;
 
 class QGeoRoutingManagerEnginePrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeoRoutingManagerEngine : public QObject
+class Q_LOCATION_EXPORT QGeoRoutingManagerEngine : public QObject
 {
     Q_OBJECT
 public:

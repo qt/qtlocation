@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 
 class QPlaceUserPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QPlaceUser
+class Q_LOCATION_EXPORT QPlaceUser
 {
 public:
     QPlaceUser();

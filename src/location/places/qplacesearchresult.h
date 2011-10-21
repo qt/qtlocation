@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 
 class QPlaceSearchResultPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QPlaceSearchResult
+class Q_LOCATION_EXPORT QPlaceSearchResult
 {
 public:
     QPlaceSearchResult();

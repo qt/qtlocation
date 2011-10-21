@@ -65,7 +65,7 @@ class QString;
 class QPlaceIcon;
 class QPlacePrivate;
 
-class Q_LOCATION_EXPORT_TEMP QPlace
+class Q_LOCATION_EXPORT QPlace
 {
 public:
     typedef QMap<QString, QPlaceAttribute> ExtendedAttributes;

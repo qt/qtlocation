@@ -74,7 +74,7 @@ class Arc;
 
 class Projection3D;
 
-class Q_LOCATION_EXPORT_TEMP Viewport
+class Q_LOCATION_EXPORT Viewport
 {
 public:
     Viewport();

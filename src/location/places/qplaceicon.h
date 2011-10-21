@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 class QPlaceManager;
 
 class QPlaceIconPrivate;
-class Q_LOCATION_EXPORT_TEMP QPlaceIcon
+class Q_LOCATION_EXPORT QPlaceIcon
 {
 public:
     Q_ENUMS(QPlaceIcon::IconType)

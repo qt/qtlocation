@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 
 class QPlaceEditorialPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QPlaceEditorial : public QPlaceContent
+class Q_LOCATION_EXPORT QPlaceEditorial : public QPlaceContent
 {
 public:
     QPlaceEditorial();

@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoLocationPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeoLocation
+class Q_LOCATION_EXPORT QGeoLocation
 {
 public:
     QGeoLocation();

@@ -52,20 +52,20 @@
 #      undef QT_DLL
 #    endif
 #    if defined(QT_BUILD_LOCATION_LIB)
-#      define Q_LOCATION_EXPORT_TEMP Q_DECL_EXPORT
+#      define Q_LOCATION_EXPORT Q_DECL_EXPORT
 #    else
-#      define Q_LOCATION_EXPORT_TEMP Q_DECL_IMPORT
+#      define Q_LOCATION_EXPORT Q_DECL_IMPORT
 #    endif
 #  elif defined(QT_DLL)
-#    define Q_LOCATION_EXPORT_TEMP Q_DECL_EXPORT
+#    define Q_LOCATION_EXPORT Q_DECL_EXPORT
 #  endif
 #endif
 
-#if !defined(Q_LOCATION_EXPORT_TEMP)
+#if !defined(Q_LOCATION_EXPORT)
 #  if defined(QT_SHARED)
-#    define Q_LOCATION_EXPORT_TEMP Q_DECL_EXPORT
+#    define Q_LOCATION_EXPORT Q_DECL_EXPORT
 #  else
-#    define Q_LOCATION_EXPORT_TEMP
+#    define Q_LOCATION_EXPORT
 #  endif
 #endif
 

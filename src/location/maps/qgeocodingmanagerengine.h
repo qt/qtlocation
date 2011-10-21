@@ -57,7 +57,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeocodingManagerEnginePrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeocodingManagerEngine : public QObject
+class Q_LOCATION_EXPORT QGeocodingManagerEngine : public QObject
 {
     Q_OBJECT
 public:

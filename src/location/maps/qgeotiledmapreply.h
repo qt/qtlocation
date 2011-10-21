@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 class TileSpec;
 class QGeoTiledMapReplyPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeoTiledMapReply : public QObject
+class Q_LOCATION_EXPORT QGeoTiledMapReply : public QObject
 {
     Q_OBJECT
 

@@ -56,7 +56,7 @@ class QGeoCoordinate;
 class QGeoManeuver;
 class QGeoRouteSegmentPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QGeoRouteSegment
+class Q_LOCATION_EXPORT QGeoRouteSegment
 {
 
 public:

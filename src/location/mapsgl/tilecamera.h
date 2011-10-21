@@ -55,7 +55,7 @@ class QGLCamera;
 class QGLSceneNode;
 class QVector3D;
 
-class Q_LOCATION_EXPORT_TEMP TileCamera
+class Q_LOCATION_EXPORT TileCamera
 {
 public:
     TileCamera();

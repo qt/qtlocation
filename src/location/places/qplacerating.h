@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 
 class QPlaceRatingPrivate;
 
-class Q_LOCATION_EXPORT_TEMP QPlaceRating
+class Q_LOCATION_EXPORT QPlaceRating
 {
 public:
     QPlaceRating();

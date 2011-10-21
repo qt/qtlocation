@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
 
 class QString;
 class QGeoAddressPrivate;
-class Q_LOCATION_EXPORT_TEMP QGeoAddress
+class Q_LOCATION_EXPORT QGeoAddress
 {
 public:
     QGeoAddress();

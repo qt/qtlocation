@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 
 
 class QGeoPositionInfoSourcePrivate;
-class Q_LOCATION_EXPORT_TEMP QGeoPositionInfoSource : public QObject
+class Q_LOCATION_EXPORT QGeoPositionInfoSource : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
