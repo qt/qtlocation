@@ -5,6 +5,7 @@ SUBDIRS += geotestplugin \
            positionplugintest \
            qgeocodingmanagerplugins \
            qgeoaddress \
+           qgeoareamonitor \
            qgeoboundingbox \
            qgeoboundingcircle \
            qgeocodereply \
