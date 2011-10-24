@@ -51,8 +51,6 @@ QT_BEGIN_NAMESPACE
     \since QtLocation 5.0
 
     \brief The BoundingCircle element represents a circular geographic area.
-
-    For behavioral details, please see \l QGeoBoundingCircle.
 */
 
 QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(QObject* parent)
@@ -107,6 +105,11 @@ Q_INVOKABLE bool QDeclarativeGeoBoundingCircle::contains(QDeclarativeCoordinate*
     return m_circle.contains(coordinate->coordinate());
 }
 
+/*!
+    \qmlproperty Coordinate BoundingCircle::center
+
+    This property holds the coordinate of the center of the bounding circle.
+*/
 QDeclarativeCoordinate* QDeclarativeGeoBoundingCircle::center()
 {
     return m_center;
@@ -122,6 +125,13 @@ void QDeclarativeGeoBoundingCircle::setCenter(QDeclarativeCoordinate *coordinate
     }
 }
 
+/*!
+    \qmlproperty qreal BoundingCircle::radius
+
+    This property holds the radius of the bounding circle in meters.
+
+    The default value for the radius is -1 indicating an invalid bounding circle area.
+*/
 qreal QDeclarativeGeoBoundingCircle::radius() const
 {
     return m_circle.radius();

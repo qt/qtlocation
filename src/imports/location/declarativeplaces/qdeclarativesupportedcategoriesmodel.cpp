@@ -55,47 +55,44 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The CategoriesModel element provides access to supported categories list.
+    \brief The CategoryModel element provides a model of the categories supported by a \l Plugin.
 
-    CategoriesModel provides a model of categories from the supported categories list.  The
-    model can provide both a flat list of categories or a hierarchical tree representing category
-    grouping.  This can be controlled by the \l hierarchy property.
+    The CategoryModel element provides a model of the categories that are available from the
+    current \l Plugin.  The model supports both a flat list of categories and a hierarchical tree
+    representing category groupings.  This can be controlled by the \l hierarchical property.
 
-    The model provides a single data role, \c category (\l Category).
+    The model supports the following roles:
 
-    To use the CategoriesModel the user needs to create it in qml file and connect it to some view
-    \code
-    import QtQuick 2.0
-    import QtLocation 5.0
+    \table
+        \header
+            \o Role
+            \o Type
+            \o Description
+        \row
+            \o category
+            \o \l Category
+            \o Category object for the current item.
+    \endtable
 
-    CategoriesModel {
-        id: categoriesModel
-        hierarchical: false
-    }
+    The following example displays a flat list of all available categories:
 
-    ListView {
-        id: categoriesList
-        model: categoriesModel
-        delegate: Text {
-            text: '<b>name:</b> ' + category.name }
-        }
-    }
-    \endcode
+    \snippet snippets/declarative/places.qml QtQuick import
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml CategoryView
 
-    To access the hierarchical category model it is necessary to use a VisualDataModel to access
+    To access the hierarchical category model it is necessary to use a \l VisualDataModel to access
     the child items.
-
-    \sa SearchResultModel, SuggestionModel, {QPlaceManager}
 */
 
 /*!
     \qmlproperty Plugin CategoriesModel::plugin
 
-    this property holds the provider Plugin used by this model.
+    This property holds the provider \l Plugin used by this model.
 */
 
 /*!
-    \qmlproperty bool CategoriesModel::hierarchical
+    \qmlproperty bool CategoryModel::hierarchical
 
     This property holds whether the model provides a hierarchical tree of categories or a flat
     list.  The default is true.
@@ -437,17 +434,23 @@ QString QDeclarativeSupportedCategoriesModel::errorString() const
 }
 
 /*!
-    \qmlproperty enumeration SupportedCategoryModel::status
+    \qmlproperty enumeration CategoryModel::status
 
-    This property holds the status of the place.  It can be one of:
-    \list
-    \o SupportedCategoriesModel.Ready - No Error occurred during the last operation,
-                     further operations may be performed on the model.
-    \o SupportedCategoriesModel.Updating - The model is being updated, no
-                        other operations may be performed until complete.
-    \o SupportedCategoriesModel.Error - An error occurred during the last operation,
-                     further operations can still be performed on the model.
-    \endlist
+    This property holds the status of the model.  It can be one of:
+
+    \table
+        \row
+            \o CategoryModel.Ready
+            \o No Error occurred during the last operation, further operations may be performed on
+               the model.
+        \row
+            \o CategoryModel.Updating
+            \o The model is being updated, no other operations may be performed until complete.
+        \row
+            \o CategoryModel.Error
+            \o An error occurred during the last operation, further operations can still be
+               performed on the model.
+    \endtable
 */
 void QDeclarativeSupportedCategoriesModel::setStatus(Status status)
 {

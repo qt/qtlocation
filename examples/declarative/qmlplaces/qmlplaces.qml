@@ -154,7 +154,7 @@ Rectangle {
         anchors.top: categoriesText.bottom
         anchors.bottomMargin: 10
         anchors.rightMargin: 10
-        model: categoriesModel
+        model: categoryModel
 
         onCategorySelected: searchCategory(category);
     }
@@ -255,7 +255,7 @@ Rectangle {
     }
 
     CategoryModel {
-        id: categoriesModel
+        id: categoryModel
         plugin: geoServices
         hierarchical: true
     }

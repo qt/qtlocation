@@ -47,9 +47,26 @@
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The ExtendedAttributes elements holds addition data about a Place.
+    \brief The ExtendedAttributes element holds additional data about a \l Place.
 
-    \sa PlaceAttribute
+    The ExtendedAttributes element is a map of \l {PlaceAttribute}{PlaceAttributes}.  To access
+    attributes in the map use the \l keys() method to get the list of keys stored in the map and
+    use the \c {[]} operator to access the \l PlaceAttribute items.
+
+    The following example shows how to access all \l {PlaceAttribute}{PlaceAttributes} and print
+    them to the console:
+
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml ExtendedAttributes read
+
+    \sa PlaceAttribute, QDeclarativePropertyMap
+*/
+
+/*!
+    \qmlmethod variant ExtendedAttributes::keys()
+
+    Returns an array of place attribute keys currently stored in the map.
 */
 
 /*!
@@ -59,7 +76,21 @@
     \since QtLocation 5.0
 
     \brief The PlaceAttribute element holds generic place attribute information.
+
+    A place attribute stores an additional piece of information about a \l Place that is not
+    otherwise exposed through the \l Place element.  A PlaceAttribute is a textural piece of data,
+    accessible through the \l text property, and a \l label.  Both the \l text and \l label
+    properties are intended to be displayed to the user.  PlaceAttributes are stored in an
+    \l ExtendedAttributes map with a unique key.
+
+    The following example shows how to display all attributes in a list:
+
+    \snippet snippets/declarative/places.qml QtQuick import
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml ExtendedAttributes
 */
+
 QDeclarativePlaceAttribute::QDeclarativePlaceAttribute(QObject *parent)
     : QObject(parent)
 {

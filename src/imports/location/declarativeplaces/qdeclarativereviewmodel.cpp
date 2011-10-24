@@ -53,25 +53,26 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The ReviewModel element provides access to reviews of a Place.
+    \brief The ReviewModel element provides access to reviews of a \l Place.
 
-    The ReviewModel is a read-only model used to fetch reviews about a Place.  The model
+    The ReviewModel is a read-only model used to fetch reviews about a \l Place.  The model
     incrementally fetches reviews.  The number of reviews which are fetched at a time is specified
-    by the batchSize property.  The total number of reviews available can be accessed via the
-    totalCount property and the number of fetched reviews via the count property.
+    by the \l batchSize property.  The total number of reviews available can be accessed via the
+    \l totalCount property.
 
     The model returns data for the following roles:
+
     \table
         \header
             \o Role
             \o Type
             \o Description
         \row
-            \o date
-            \o string
-            \o The date that the review was posted.
+            \o dateTime
+            \o datetime
+            \o The date and time that the review was posted.
         \row
-            \o description
+            \o content
             \o string
             \o The content of the review.
         \row
@@ -79,45 +80,33 @@ QT_BEGIN_NAMESPACE
             \o string
             \o The language that the review is written in.
         \row
-            \o helpfulVotings
-            \o int
-            \o The number of votings indicating that the review was helpful.
-        \row
-            \o unhelpfulVotings
-            \o int
-            \o The number of votings indicating that the review was not helpful.
-        \row
             \o rating
             \o real
             \o The rating that the reviewer gave to the place.
-        \row
-            \o mediaIds
-            \o list
-            \o The list of media ids associated with the review.
         \row
             \o reviewId
             \o string
             \o The id of the review.
         \row
-            \o supplier
-            \o Supplier
-            \o The source of the review.
-        \row
             \o title
             \o string
             \o The title of the review.
         \row
-            \o userId
-            \o string
-            \o The id of the user who posted the review.
+            \o supplier
+            \o \l Supplier
+            \o The supplier of the editorial.
         \row
-            \o userName
-            \o string
-            \o The name of the user who posted the review.
-        \row
-            \o originatorUrl
+            \o sourceUrl
             \o url
-            \o The URL of the review.
+            \o The source URL of the editorial.
+        \row
+            \o user
+            \o \l User
+            \o The user who contributed the editorial.
+        \row
+            \o attribution
+            \o string
+            \o Attribution text which must be displayed when displaying the editorial.
     \endtable
 */
 

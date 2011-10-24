@@ -49,7 +49,12 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The User element identifies a particular user.
+    \brief The User element identifies a user who contributed a particular \l Place content item.
+
+    Each \l Place content item has an associated user who contributed the content.  This element
+    provides information about that user.
+
+    \sa ImageModel, ReviewModel, EditorialModel
 */
 
 QDeclarativePlaceUser::QDeclarativePlaceUser(QObject* parent)

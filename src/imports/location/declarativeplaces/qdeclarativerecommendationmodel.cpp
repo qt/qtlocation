@@ -56,12 +56,14 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The RecommendationModel element provides access to place recommendations.
+    \brief The RecommendationModel element provides a model of place recommendations.
 
     RecommendationModel provides a model of place recommendation results within the \l searchArea,
     that are similiar to the place identified by the \l placeId property.
 
-    The \l executing property indicates whether a query is currently executing.
+    The \l offset and \l limit properties can be used to access paged search results.  When the
+    \l offset and \l limit properties are set the search results between \l offset and
+    (\l offset + \l limit - 1) will be returned.
 
     The model returns data for the following roles:
 
@@ -76,89 +78,88 @@ QT_USE_NAMESPACE
             \o The distance to the place.
         \row
             \o place
-            \o Place
-            \o The Place.
+            \o \l Place
+            \o The place.
     \endtable
 
-    The following example shows how to use the RecommendationModel to search for recommendations
-    within a 5km radius:
+    The following example shows how to use the RecommendationModel to search for recommendations in
+    close proximity of a given position.
 
-    \code
-    import QtLocation 5.0
+    \snippet snippets/declarative/places.qml QtQuick import
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml RecommendationModel
 
-    Place {
-        id: place
-        ...
-    }
-
-    RecommendationModel {
-        id: recommendationModel
-
-        placeId: place.placeId
-        searchArea: BoundingCircle {
-            center: Coordinate {
-                longitude: 53
-                latitude: 100
-            }
-            radius:5000
-        }
-    }
-
-    ...
-    resultModel.execute()
-    ...
-
-    ListView {
-        model: recommendationModel
-        delegate: Text { text: 'Name: ' + place.name }
-    }
-    \endcode
-
-    \sa SearchResultModel, SupportedCategoryModel, {QPlaceManager}
+    \sa PlaceSearchModel, CategoryModel, {QPlaceManager}
 */
 
 /*!
-    \qmlproperty GeoCoordinate RecommendationModel::searchArea
+    \qmlproperty Plugin RecommendationModel::plugin
 
-    This element holds the search area.
+    This property holds the \l Plugin which will be used to perform the search.
+*/
 
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
+/*!
+    \qmlproperty BoundingArea RecommendationModel::searchArea
+
+    This property holds the search area.  Search results returned by the model will be within the
+    search area.
+
+    If this property is set to a \l BoundingCircle its \l {BoundingCircle::radius}{radius} property
+    may be left unset, in which case the \l Plugin will choose an appropriate radius for the
+    search.
 */
 
 /*!
     \qmlproperty int RecommendationModel::offset
 
-    This element holds offset for items that would be returned.
-    Less then 0 means that it is undefined.
+    This property holds the index of the first search result in the model.
+
+    \sa limit
 */
 
 /*!
     \qmlproperty int RecommendationModel::limit
 
-    This element holds limit of items that would be returned.
-    Less then -1 means that limit is undefined.
+    This property holds the limit of the number of items that will be returned.
+
+    \sa offset
 */
 
 /*!
-    \qmlproperty bool RecommendationModel::executing
+    \qmlproperty enum RecommendationModel::status
 
-    This property indicates whether a search query is currently being executed.
+    This property holds the status of the model.  It can be one of:
+
+    \table
+        \row
+            \o RecommendationModel.Ready
+            \o The search query has completed and the result are available.
+        \row
+            \o RecommendationModel.Executing
+            \o A search query is currently being executed.
+        \row
+            \o RecommendationModel.Error
+            \o An error occurred when executing the previous search query.
+    \endtable
 */
-
-
 
 /*!
     \qmlmethod RecommendationModel::execute()
-    Parameter placeId should contain string for which search should be
-    started.
-    Updates the items represented by the model from the underlying proivider.
-*/
 
+    Executes a recommendation search query for places similar to the place identified by the
+    \l placeId property.  Once the query completes the model items are updated with the search
+    results.
+
+    \sa cancel(), status
+*/
 
 /*!
     \qmlmethod RecommendationModel::cancel()
-    Cancels ongoing request.
+
+    Cancels an ongoing search query.
+
+    \sa execute(), status
 */
 
 QDeclarativeRecommendationModel::QDeclarativeRecommendationModel(QObject *parent)
@@ -177,9 +178,8 @@ QDeclarativeRecommendationModel::~QDeclarativeRecommendationModel()
 /*!
     \qmlproperty string RecommendationModel::placeId
 
-    This element holds place id used in query.
+    This property holds place id used in the recommendation search query.
 */
-
 QString QDeclarativeRecommendationModel::placeId() const
 {
     return m_request.searchTerm();

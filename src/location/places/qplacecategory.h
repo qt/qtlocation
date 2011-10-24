@@ -74,7 +74,7 @@ public:
     }
 
     QString categoryId() const;
-    void setCategoryId(const QString &catID);
+    void setCategoryId(const QString &id);
 
     QString name() const;
     void setName(const QString &name);

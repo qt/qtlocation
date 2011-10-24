@@ -58,91 +58,110 @@ QT_USE_NAMESPACE
 
     \brief The TextPredictionModel element provides access to text predictions.
 
-    TextPredictionModel provides a model of text prediction from PlaceManager.
-    The contents of the model is string list. User can add additional parameters
-    which make suggestion search more satisfactory. At least position of search center
-    should be set. Other parameters are start and limit of returned items, and bounding box
-    for the items returned.
+    The TextPredictionModel can be used to provide search term predictions as the user enters their
+    search term.  The properties of this model should match that of the \l PlaceSearchModel which
+    will be used to perform the actual search query to ensure that the text prediction results are
+    relevant.
 
-    There are two ways of accessing the data: through model by using views and delegates,
-    or alternatively via \l suggestions list property. Of the two, the model access is preferred.
+    There are two ways of accessing the data provided by this model, either through the
+    \l textPredictions property or through views and delegates.  The latter is the preferred
+    method.
 
-    At the moment only data role provided by the model is \c suggestion.
+    The \l offset and \l limit properties can be used to access paged search results.  When the
+    \l offset and \l limit properties are set the search results between \l offset and
+    (\l offset + \l limit - 1) will be returned.
 
-    To use TextPredictionModel user need to create it in qml file and connect it to some view
-    \code
-    import places 1.0
+    The model returns data for the following roles:
 
-    TextPredictionModel {
-        id: textPredictionModel
-        searchArea: BoundingCircle {
-            center: Coordinate {
-                longitude: 53
-                latitude: 100
-            }
-            radius:5000
-        }
-        start: 0
-        limit: 15
-    }
+    \table
+        \header
+            \o Role
+            \o Type
+            \o Description
+        \row
+            \o textPrediction
+            \o string
+            \o Suggested search term.
+    \endtable
 
-    ...
-    // Starts suggestion request
-    textPredictionModel.executeQuery(search_term)
-    ...
+    The following example shows how to use the TextPredictionModel to get suggested search queries
+    for a partial search term.  The \l searchArea is set to match what would be used to perform the
+    actual place search with \l PlaceSearchModel.
 
-    ListView {
-        id: textPredictionList
-        model: textPredictionModel
-        delegate: Text {
-            text: textPrediction }
-        }
-    }
-    \endcode
+    \snippet snippets/declarative/places.qml QtQuick import
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml TextPredictionModel
 
-    \sa {QPlaceManager}
+    \sa PlaceSearchModel, {QPlaceManager}
 */
 
 /*!
     \qmlproperty Plugin TextPredictionModel::plugin
 
-    This property holds the provider Plugin used by this model.
+    This property holds the provider \l Plugin which will be used to perform the search.
 */
 
 /*!
-    \qmlproperty GeoCoordinate TextPredictionModel::searchArea
+    \qmlproperty BoundingArea TextPredictionModel::searchArea
 
-    This element holds the search area.
+    This property holds the search area.  Text prediction results returned by the model will be
+    relevant to the given search area.
 
-    Note: this property's changed() signal is currently emitted only if the whole element changes,
-    not if only the contents of the element change.
+    If this property is set to a \l BoundingCircle its \l {BoundingCircle::radius}{radius} property
+    may be left unset, in which case the \l Plugin will choose an appropriate radius for the
+    search.
 */
 
 /*!
     \qmlproperty int TextPredictionModel::offset
 
-    This element holds offset for items that would be returned.  Less then 0 means that it is
-    undefined.
+    This property holds the index of the first search result in the model.
+
+    \sa limit
 */
 
 /*!
     \qmlproperty int TextPredictionModel::limit
 
-    This element holds limit of items that would be returned. Less then -1 means that limit is
-    undefined.
+    This property holds the limit of the number of items that will be returned.
+
+    \sa offset
+*/
+
+/*!
+    \qmlproperty enum TextPredictionModel::status
+
+    This property holds the status of the model.  It can be one of:
+
+    \table
+        \row
+            \o TextPredictionModel.Ready
+            \o The search query has completed and the result are available.
+        \row
+            \o TextPredictionModel.Executing
+            \o A search query is currently being executed.
+        \row
+            \o TextPredictionModel.Error
+            \o An error occurred when executing the previous search query.
+    \endtable
 */
 
 /*!
     \qmlmethod TextPredictionModel::execute()
 
-    Parameter searchTerm should contain string for which suggestion search should be started.
-    Updates the items represented by the model from the underlying provider.
+    Executes a text prediction query for the partial \l searchTerm and \l searchArea.  Once the
+    query completes the model items are updated with the text prediction results.
+
+    \sa cancel(), status
 */
 
 /*!
     \qmlmethod TextPredictionModel::cancel()
 
-    Cancels ongoing request.
+    Cancels an ongoing text prediction query.
+
+    \sa execute(), status
 */
 
 QDeclarativeTextPredictionModel::QDeclarativeTextPredictionModel(QObject *parent)
@@ -161,7 +180,7 @@ QDeclarativeTextPredictionModel::~QDeclarativeTextPredictionModel()
 /*!
     \qmlproperty string TextPredictionModel::searchTerm
 
-    This element holds search term used in query.
+    This property holds the partial search term used in query.
 */
 QString QDeclarativeTextPredictionModel::searchTerm() const
 {
@@ -178,9 +197,9 @@ void QDeclarativeTextPredictionModel::setSearchTerm(const QString &searchTerm)
 }
 
 /*!
-    \qmlproperty QStringList TextPredictionModel::predictions
+    \qmlproperty QStringList TextPredictionModel::textPredictions
 
-    This element holds the list of string that the model currently has.
+    This property holds the list of predicted search terms that the model currently has.
 */
 QStringList QDeclarativeTextPredictionModel::textPredictions() const
 {

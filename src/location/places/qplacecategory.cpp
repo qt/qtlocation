@@ -67,34 +67,31 @@ QPlaceCategoryPrivate &QPlaceCategoryPrivate::operator=(const QPlaceCategoryPriv
     return *this;
 }
 
-bool QPlaceCategoryPrivate::operator==(const QPlaceCategoryPrivate &other) const
-{
-    return (categoryId == other.categoryId)
-            && (icon == other.icon)
-            && (name == other.name);
-}
-
 /*!
     \class QPlaceCategory
     \inmodule QtLocation
     \ingroup QtLocation-places
     \since QtLocation 5.0
 
-    \brief The QPlaceCategory class represents a category object.
+    \brief The QPlaceCategory class represents a category that a \l QPlace can be associated with.
 
-    Each QPlaceCategory represents a category object with a number of attributes
-    such as name, id etc. Each QPlaceCategory is associated with place.
+    Categories are used to search for places based on the categories they are associated with.  The
+    list of available categories can be obtained from \l QPlaceManager.  The
+    \l QPlaceSearchRequest::setCategories() function can be used to limit the search results to
+    places with the specified categories.
 
-    Category objects are read-only, e.g. user of API might get business info object
-    associated to specific place but can not edit its content. User might also create new
-    contact object and add it to place.
-
-    QPlaceCategory is an in memory representation of a contact object.
+    If the \l QGeoServiceProvider supports it, categories can be created and removed.  This
+    functionality is available in the \l QPlaceManager class.
 */
 
+/*!
+    \fn bool QPlaceCategory::operator!=(const QPlaceCategory &other) const
 
-/*
-    Default constructor. Constructs a new category object.
+    Returns true if \a other is not equal to this place category; otherwise returns false.
+*/
+
+/*!
+    Constructs a place category.
 */
 QPlaceCategory::QPlaceCategory()
     : d(new QPlaceCategoryPrivate)
@@ -102,7 +99,7 @@ QPlaceCategory::QPlaceCategory()
 }
 
 /*!
-    Constructs a copy of \a other
+    Constructs a place category which is a copy of \a other.
 */
 QPlaceCategory::QPlaceCategory(const QPlaceCategory &other)
     :d(other.d)
@@ -110,26 +107,35 @@ QPlaceCategory::QPlaceCategory(const QPlaceCategory &other)
 }
 
 /*!
-    Destructor.
+    Destroys the place category.
 */
 QPlaceCategory::~QPlaceCategory()
 {
 }
 
-QPlaceCategory &QPlaceCategory::operator =(const QPlaceCategory &other) {
+/*!
+    Assigns \a other to this place category and returns a reference to this place category.
+*/
+QPlaceCategory &QPlaceCategory::operator =(const QPlaceCategory &other)
+{
     d = other.d;
     return *this;
 }
 
+/*!
+    Returns true if \a other is equal to this place category; otherwise returns false.
+*/
 bool QPlaceCategory::operator==(const QPlaceCategory &other) const
 {
     return d->categoryId == other.d->categoryId &&
            d->name == other.d->name &&
-           d->visibility == other.d->visibility;
+           d->visibility == other.d->visibility &&
+           d->icon == other.d->icon;
 }
 
 /*!
-    Returns category id.
+    Returns category id.  The category id is a string which uniquely identifies this category
+    within a particular \l QGeoServiceProvider.
 */
 QString QPlaceCategory::categoryId() const
 {
@@ -137,11 +143,11 @@ QString QPlaceCategory::categoryId() const
 }
 
 /*!
-    Sets category id to \a catID.
+    Sets category id to \a id.
 */
-void QPlaceCategory::setCategoryId(const QString &catID)
+void QPlaceCategory::setCategoryId(const QString &id)
 {
-    d->categoryId = catID;
+    d->categoryId = id;
 }
 
 /*!
@@ -153,7 +159,7 @@ QString QPlaceCategory::name() const
 }
 
 /*!
-    Sets category name.
+    Sets place category name to \a name.
 */
 void QPlaceCategory::setName(const QString &name)
 {
@@ -177,7 +183,7 @@ QtLocation::Visibility QPlaceCategory::visibility() const
 }
 
 /*!
-    Returns the category icon
+    Returns the icon associated with the place category.
 */
 QPlaceIcon QPlaceCategory::icon() const
 {
@@ -185,7 +191,7 @@ QPlaceIcon QPlaceCategory::icon() const
 }
 
 /*!
-    Sets the category icon
+    Sets the category icon to \a icon.
 */
 void QPlaceCategory::setIcon(const QPlaceIcon &icon)
 {

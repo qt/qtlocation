@@ -55,7 +55,26 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The Category element represents a categorical grouping of places.
+    \brief The Category element represents a category that a \l Place can be associated with.
+
+    Categories are used to search for places based on the categories they are associated with.  The
+    list of available categories can be obtained from the \l CategoryModel.  The
+    \l PlaceSearchModel has a \l {PlaceSearchModel::categories}{categories} property that is used
+    to limit the search results to places with the specified categories.
+
+    If the \l Plugin supports it, categories can be created or removed.  To create a new category
+    construct a new Category object and set its properties, then invoke the \l save() method.
+
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml Category
+    \dots 0
+    \snippet snippets/declarative/places.qml Category save
+
+    To remove a category ensure that the \l plugin and categoryId properties are set and call the
+    \l remove() method.
+
+    \sa CategoryModel
 */
 
 QDeclarativeCategory::QDeclarativeCategory(QObject* parent)
@@ -138,7 +157,8 @@ QPlaceCategory QDeclarativeCategory::category()
 /*!
     \qmlproperty string Category::categoryId
 
-    This property holds the id of the category
+    This property holds the id of the category.  The categoryId is a string which uniquely
+    identifies this category within the categories \l plugin.
 */
 void QDeclarativeCategory::setCategoryId(const QString &id)
 {
@@ -156,9 +176,8 @@ QString QDeclarativeCategory::categoryId() const
 /*!
     \qmlproperty string Category::name
 
-    This property holds name of the category
+    This property holds name of the category.
 */
-
 void QDeclarativeCategory::setName(const QString &name)
 {
     if (m_category.name() != name) {
@@ -172,6 +191,29 @@ QString QDeclarativeCategory::name() const
     return m_category.name();
 }
 
+/*!
+    \qmlproperty enumeration Category::visibility
+
+    This property holds the visibility of the category.  It can be one of:
+
+    \table
+        \row
+            \o Category.UnspecifiedVisibility
+            \o The visibility of the category is unspecified, the default visibility of the plugin
+               will be used.
+        \row
+            \o Category.DeviceVisibility
+            \o The category is limited to the current device.  The category will not be transferred
+               off of the device.
+        \row
+            \o Category.PrivateVisibility
+            \o The category is private to the current user.  The category may be transferred to an
+               online service but is only ever visible to the current user.
+        \row
+            \o Category.PublicVisibility
+            \o The category is public.
+    \endtable
+*/
 QDeclarativeCategory::Visibility QDeclarativeCategory::visibility() const
 {
     return static_cast<QDeclarativeCategory::Visibility>(m_category.visibility());
@@ -189,7 +231,7 @@ void QDeclarativeCategory::setVisibility(Visibility visibility)
 /*!
     \qmlproperty PlaceIcon Category::icon
 
-    This property holds the icon of the category.
+    This property holds the icon associated with the category.
 */
 QDeclarativePlaceIcon *QDeclarativeCategory::icon() const
 {
@@ -223,16 +265,25 @@ QString QDeclarativeCategory::errorString() const
     \qmlproperty enumeration Category::status
 
     This property holds the status of the category.  It can be one of:
-    \list
-    \o Category.Ready - No Error occurred during the last operation,
-                     further operations may be performed on the category.
-    \o Category.Saving - The category is currently being saved, no other operations
-                      may be perfomed until complete.
-    \o Category.Removing - The category is currently being removed, no other
-                        operations can be performed until complete.
-    \o Category.Error - An error occurred during the last operation,
-                     further operations can still be performed on the category.
-    \endlist
+
+    \table
+        \row
+            \o Category.Ready
+            \o No Error occurred during the last operation, further operations may be performed on
+               the category.
+        \row
+            \o Category.Saving
+            \o The category is currently being saved, no other operations may be perfomed until the
+               current operation completes.
+        \row
+            \o Category.Removing
+            \o The category is currently being removed, no other operations can be performed until
+               the current operation completes.
+        \row
+            \o Category.Error
+            \o An error occurred during the last operation, further operations can still be
+               performed on the category.
+    \endtable
 */
 void QDeclarativeCategory::setStatus(Status status)
 {
@@ -248,9 +299,9 @@ QDeclarativeCategory::Status QDeclarativeCategory::status() const
 }
 
 /*!
-    \qmlmethod void Category::savePlace()
+    \qmlmethod void Category::save()
 
-    This method performs a remove operation on the category.
+    This method saves the category to the backend service.
 */
 void QDeclarativeCategory::save(const QString &parentId)
 {
@@ -264,9 +315,9 @@ void QDeclarativeCategory::save(const QString &parentId)
 }
 
 /*!
-    \qmlmethod void Category::removePlace()
+    \qmlmethod void Category::remove()
 
-    This method performs a remove operation on the category.
+    This method permanently removes the category from the backend service.
 */
 void QDeclarativeCategory::remove()
 {

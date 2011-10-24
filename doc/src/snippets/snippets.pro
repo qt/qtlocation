@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += places
+SUBDIRS += places declarative

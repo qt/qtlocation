@@ -52,12 +52,12 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The PlaceEditorialModel element provides access to place editorials.
+    \brief The EditorialModel element provides a model of place editorials.
 
-    The PlaceEditorialModel is a read-only model used to fetch editorials related to a Place.  The
+    The EditorialModel is a read-only model used to fetch editorials related to a \l Place.  The
     model performs fetches incrementally.  The number of editorials which are fetched at a time is
-    specified by the batchSize property.  The total number of editorials available can be accessed
-    via the totalCount property and the number of fetch editorials via the count property.
+    specified by the \l batchSize property.  The total number of editorials available can be
+    accessed via the \l totalCount property.
 
     The model returns data for the following roles:
 
@@ -75,36 +75,44 @@ QT_BEGIN_NAMESPACE
             \o string
             \o The title of the editorial.
         \row
-            \o supplier
-            \o Supplier
-            \o The supplier of the editorial.
-        \row
-            \o url
-            \o url
-            \o The source URL of the editorial.
-        \row
             \o language
             \o string
             \o The language that the editorial is written in.
+        \row
+            \o supplier
+            \o \l Supplier
+            \o The supplier of the editorial.
+        \row
+            \o sourceUrl
+            \o url
+            \o The source URL of the editorial.
+        \row
+            \o user
+            \o \l User
+            \o The user who contributed the editorial.
+        \row
+            \o attribution
+            \o string
+            \o Attribution text which must be displayed when displaying the editorial.
     \endtable
 */
 
 /*!
-    \qmlproperty Place PlaceEditorialModel::place
+    \qmlproperty Place EditorialModel::place
 
     This property holds the Place that the editorials are for.
 */
 
 /*!
-    \qmlproperty int PlaceEditorialModel::batchSize
+    \qmlproperty int EditorialModel::batchSize
 
     This property holds the batch size to use when fetching more editorials items.
 */
 
 /*!
-    \qmlproperty int PlaceEditorialModel::totalCount
+    \qmlproperty int EditorialModel::totalCount
 
-    This property holds the total number of editorials items for the place.
+    This property holds the total number of editorial items for the place.
 */
 
 QDeclarativePlaceEditorialModel::QDeclarativePlaceEditorialModel(QObject *parent)

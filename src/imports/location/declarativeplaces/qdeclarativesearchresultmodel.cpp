@@ -59,14 +59,16 @@ QT_USE_NAMESPACE
     \brief The PlaceSearchModel element provides access to place search results.
 
     PlaceSearchModel provides a model of place search results within the \l searchArea.  The
-    \l searchTerm and \l searchCategory properties can be set to restrict the search results to
+    \l searchTerm and \l categories properties can be set to restrict the search results to
     places matching those criteria.
 
-    The \l correction property can be used to limit the maximum number of search term correction
-    results that may be returned.  Settings \l correction to 0 will prevent any search term
-    correction results from being returned.
+    The \l maximumCorrections property can be used to limit the maximum number of search term
+    correction results that may be returned.  Setting \l maximumCorrections to 0 will prevent any
+    search term correction results from being returned.
 
-    The \l executing property indicates whether a query is currently executing.
+    The \l offset and \l limit properties can be used to access paged search results.  When the
+    \l offset and \l limit properties are set the search results between \l offset and
+    (\l offset + \l limit - 1) will be returned.
 
     The model returns data for the following roles:
 
@@ -77,93 +79,101 @@ QT_USE_NAMESPACE
             \o Description
         \row
             \o type
-            \o SearchResultModel.SearchResultType
+            \o enum
             \o The type of search result.
         \row
             \o distance
             \o real
-            \o The distance to the place.
+            \o Valid only when the \c type role is \c PlaceResult, the distance to the place.
         \row
             \o place
-            \o Place
-            \o The Place.
+            \o \l Place
+            \o Valid only when they \c type role is \c PlaceResult, an object representing the
+               place.
         \row
             \o correction
             \o string
-            \o Valid only for did you mean search results, a suggested corrected search term.
+            \o Valid only when the \c type role is \c CorrectionResult, a suggested correction to
+               the search term.
     \endtable
 
-    The following example shows how to use the PlaceSearchModel to search for Pizza restaurants
-    within a 5km radius:
+    The following example shows how to use the PlaceSearchModel to search for Pizza restaurants in
+    close proximity of a given position.
 
-    \code
-    import QtLocation 5.0
+    \snippet snippets/declarative/places.qml QtQuick import
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml PlaceSearchModel
 
-    PlaceSearchModel {
-        id: searchModel
-
-        searchTerm: "Pizza"
-        searchArea: BoundingCircle {
-            center: Coordinate {
-                longitude: 53
-                latitude: 100
-            }
-            radius:5000
-        }
-
-        Component.onCompleted: execute()
-    }
-
-    ListView {
-        model: searchModel
-        delegate: Text { text: 'Name: ' + place.name }
-    }
-    \endcode
-
-    \sa RecommendationModel, CategoriesModel, {QPlaceManager}
+    \sa RecommendationModel, CategoryModel, {QPlaceManager}
 */
 
 /*!
-    \qmlproperty GeoCoordinate PlaceSearchModel::searchArea
+    \qmlproperty Plugin PlaceSearchModel::plugin
 
-    This element holds the search area.
+    This property holds the \l Plugin which will be used to perform the search.
+*/
 
-    Note: this property's changed() signal is currently emitted only if the whole element changes,
-    not if only the contents of the element change.
+/*!
+    \qmlproperty BoundingArea PlaceSearchModel::searchArea
+
+    This property holds the search area.  The search result returned by the model will be within
+    the search area.
+
+    If this property is set to a \l BoundingCircle its \l {BoundingCircle::radius}{radius} property
+    may be left unset, in which case the \l Plugin will choose an appropriate radius for the
+    search.
 */
 
 /*!
     \qmlproperty int PlaceSearchModel::offset
 
-    This element holds offset for items that would be returned.  Less then 0 means that it is
-    undefined.
-*/
+    This property holds the index of the first search result in the model.
 
+    \sa limit
+*/
 
 /*!
     \qmlproperty int PlaceSearchModel::limit
 
-    This element holds limit of items that would be returned.  Less then -1 means that limit is
-    undefined.
+    This property holds the limit of the number of items that will be returned.
+
+    \sa offset
 */
 
 /*!
-    \qmlproperty bool PlaceSearchModel::executing
+    \qmlproperty enum PlaceSearchModel::status
 
-    This property indicates whether a search query is currently being executed.
+    This property holds the status of the model.  It can be one of:
+
+    \table
+        \row
+            \o PlaceSearchModel.Ready
+            \o The search query has completed and the result are available.
+        \row
+            \o PlaceSearchModel.Executing
+            \o A search query is currently being executed.
+        \row
+            \o PlaceSearchModel.Error
+            \o An error occurred when executing the previous search query.
+    \endtable
 */
 
 /*!
     \qmlmethod PlaceSearchModel::execute()
 
-    Parameter searchTerm should contain string for which search should be started.  Updates the
-    items represented by the model from the underlying proivider.
+    Executes a search query using the element's properties as search parameters.  Once the query
+    completes, the model items are updated with the search results.
+
+    \sa cancel(), status
 */
 
 /*!
     \qmlmethod PlaceSearchModel::cancel()
 
-    Cancels ongoing request.
+    Cancels an ongoing search query.
+
+    \sa execute(), status
 */
 
 QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
@@ -184,7 +194,7 @@ QDeclarativeSearchResultModel::~QDeclarativeSearchResultModel()
 /*!
     \qmlproperty string PlaceSearchModel::searchTerm
 
-    This element holds search term used in query.
+    This property holds search term used in query.  The search term is a free-form text string.
 */
 QString QDeclarativeSearchResultModel::searchTerm() const
 {
@@ -201,16 +211,10 @@ void QDeclarativeSearchResultModel::setSearchTerm(const QString &searchTerm)
 }
 
 /*!
-    \qmlproperty QDeclarativeListProperty<QDeclarativeCategory> PlaceSearchModel::categories
+    \qmlproperty list<Category> PlaceSearchModel::categories
 
-    This property holds a categories list to be used when searching.  It is expected
-    that any places that match at least one of the categories is returned.
-
-    It is possible that some backends may not support multiple categories.  In this case,
-    the first category is used and the rest are ignored.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
+    This property holds a list of categories to be used when searching.  Returned search results
+    will be for places that match at least one of the categories.
 */
 QDeclarativeListProperty<QDeclarativeCategory> QDeclarativeSearchResultModel::categories()
 {
@@ -269,20 +273,24 @@ void QDeclarativeSearchResultModel::categories_clear(QDeclarativeListProperty<QD
 /*!
     \qmlproperty enumeration PlaceSearchModel::relevanceHint
 
-    This property holds a relevance hint for the search model.  The hint is given
-    to the provider to help but not dictate the ranking of results. e.g a distance
-    hint may give closer places a higher ranking but it does not neccessarily mean
-    the results will be strictly ordered according to distance. A provider
-    may ignore the hint altogether.
+    This property holds a relevance hint used in the search query.  The hint is given to the
+    provider to help but not dictate the ranking of results.  For example, the distance hint may
+    give closer places a higher ranking but it does not neccessarily mean the results will be
+    strictly ordered according to distance. A provider may ignore the hint altogether.
 
-    \list
-    \o SearchResultModel.NoHint - No relevance hint is given to the provider.
-    \o SearchResultModel.DistanceHint - The distance to the user's curent location
-        is important to the user.  This is only useful if a circular search area is used.
-        Closer places are more highly ranked.
-    \o SearchResultModel.LexicalPlaceNameHint - The lexical ordering of place names
-        (in ascending alphabetical order) is relevant to the user.
-    \endlist
+    \table
+        \row
+            \o SearchResultModel.NoHint
+            \o No relevance hint is given to the provider.
+        \row
+            \o SearchResultModel.DistanceHint
+            \o The distance of the place from the user's current location is important to the user.
+               This hint is only meaningful when a circular search area is used.
+        \row
+            \o SearchResultModel.LexicalPlaceNameHint
+            \o The lexical ordering of place names (in ascending alphabetical order) is relevant to
+               the user.  This hint is useful for providers based on a local data store.
+    \endtable
 */
 QDeclarativeSearchResultModel::RelevanceHint QDeclarativeSearchResultModel::relevanceHint() const
 {
@@ -300,7 +308,7 @@ void QDeclarativeSearchResultModel::setRelevanceHint(QDeclarativeSearchResultMod
 /*!
     \qmlproperty int PlaceSearchModel::maximumCorrections
 
-    This element holds maximum number of search term corrections that may be returned.
+    This property holds the maximum number of search term corrections that may be returned.
 */
 int QDeclarativeSearchResultModel::maximumCorrections() const
 {
@@ -317,9 +325,28 @@ void QDeclarativeSearchResultModel::setMaximumCorrections(int corrections)
 }
 
 /*!
-    \qmlproperty QDeclarativePlace::Visibility PlaceSearchModel::visibilityScope
+    \qmlproperty enum PlaceSearchModel::visibilityScope
 
-    This property holds the visibility scope of the places to search.
+    This property holds the visibility scope of the places to search.  Only places with the
+    specified visibility will be returned in the search results.
+
+    The visibility scope can be one of:
+
+    \table
+        \row
+            \o Place.UnspecifiedVisibility
+            \o No explicit visibility scope specified, places with any visibility may be part of
+               search results.
+        \row
+            \o Place.DeviceVisibility
+            \o Only places stored on the local device will be part of the search results.
+        \row
+            \o Place.PrivateVisibility
+            \o Only places that are private to the current user will be part of the search results.
+        \row
+            \o Place.PublicVisibility
+            \o Only places that are public will be part of the search results.
+    \endtable
 */
 QDeclarativePlace::Visibility QDeclarativeSearchResultModel::visibilityScope() const
 {

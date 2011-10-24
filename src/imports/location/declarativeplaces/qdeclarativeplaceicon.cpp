@@ -49,12 +49,23 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass PlaceIcon QDeclarativePlaceIcon
+    \qmlclass Icon QDeclarativePlaceIcon
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The PlaceIcon element holds icon related information, most prominently the icon's urls.
+    \brief The Icon element represents an icon image source which can have multiple states and
+           sizes.
+
+    The Icon element can be used in conjunction with an \l Image element to display an icon in
+    multiple states and sizes.  The \l url() function is used to construct an icon url from the
+    \l baseUrl property and the desired icon size and state.  For example the following code will
+    display a 64x64 pixel icon for a list in the selected state.
+
+    \snippet snippets/declarative/places.qml QtQuick import
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml Icon
 */
 
 QDeclarativePlaceIcon::QDeclarativePlaceIcon(QObject *parent)
@@ -101,11 +112,42 @@ void QDeclarativePlaceIcon::setIcon(const QPlaceIcon &src)
 }
 
 /*!
-    \qmlmethod string PlaceIcon::url(size, PlaceIcon.IconFlags flags)
+    \qmlmethod url Icon::url(size size, IconFlags flags)
 
-    Returns a url for the icon best suited to the given size and flags.
-    Note that a manager may not explicitly support a given set of sizes and
-    flags, in thise case a 'closest match' url is returned.
+    Returns a url for the icon best suited to the given \a size and \a flags.
+
+    The \a flags parameter is a bitwise or combination of
+
+    \table
+        \row
+            \o Icon.Normal
+            \o An icon with no state modifications.  This flag indicates that the user is not
+               interacting with the icon, but the functionality represented by the icon is
+               available.
+        \row
+            \o Icon.Disabled
+            \o An icon with a disabled appearance.  This flag indicates that the functionality
+               represented by the icon is not available.
+        \row
+            \o Icon.Active
+            \o An icon with an active appearance.  This flag indicates that the functionality
+               represented by the icon is available and the user is interacting with the icon,
+               for example, touching it.
+        \row
+            \o Icon.Selected
+            \o An icon with a selected appearance.  This flag indicates that the item represented
+               by the icon is selected.
+        \row
+            \o Icon.Map
+            \o An icon intended for display on a \l Map.
+        \row
+            \o Icon.List
+            \o An icon intended for display in a list.
+    \endtable
+
+    If the \l fullUrl property is set, this method will return \l fullUrl, otherwise it will
+    construct an url from the \l baseUrl and the given \a size and \a flags.  If an explicit icon
+    for the given set of flags does not exist an url for the closest matched icon will be returned.
 */
 QUrl QDeclarativePlaceIcon::url(const QSize &size, QDeclarativePlaceIcon::IconFlags flags) const
 {
@@ -122,12 +164,11 @@ QUrl QDeclarativePlaceIcon::url(const QSize &size, QDeclarativePlaceIcon::IconFl
 }
 
 /*!
-    \qmlproperty url PlaceIcon::fullUrl
+    \qmlproperty url Icon::fullUrl
 
-    This property holds the full url of the icon of the place.  Setting
-    the full url implies that the base url is cleared.  If the full url
-    is set, the url() method will always return the full url regardless
-    of the specified size and flags.
+    This property holds the full url of the icon of the place.  Setting this property implies that
+    the \l baseUrl property is cleared. If this property is set \l url() will always return the
+    full url regardless of the of the parameters passed to it.
 */
 QUrl QDeclarativePlaceIcon::fullUrl() const
 {
@@ -144,15 +185,15 @@ void QDeclarativePlaceIcon::setFullUrl(const QUrl &url)
 }
 
 /*!
-    \qmlproperty url PlaceIcon::baseUrl
+    \qmlproperty url Icon::baseUrl
 
-    This property holds a base url which the complete url returned by
-    url() will be based off.  Setting the base url implies that the full
-    url is cleared.
+    This property holds the base url which is used to construct a complete icon url by the
+    \l url() method.  Settings this property implies that the \l fullUrl property is cleared.
 
-    An example base url is http://example/icon.  Depending on the
-    parameters specified, when url() is invoked the returned complete url
-    may be something like http://example/icon_32x32_selected.jpg.
+    An example base url might be \c {http://example.com/icon}.  Depending on the parameters passed
+    to \l url() the returned complete url may be something like
+    \c {http://example.com/icon_32x32_selected.png}.  The format of the url returned by \l url() is
+    dependent on the \l plugin.
 */
 QUrl QDeclarativePlaceIcon::baseUrl() const
 {
@@ -169,7 +210,7 @@ void QDeclarativePlaceIcon::setBaseUrl(const QUrl &url)
 }
 
 /*!
-    \qmlproperty Plugin PlaceIcon::plugin
+    \qmlproperty Plugin Icon::plugin
 
     The property holds plugin the that is reponsible for managing this icon.
 */

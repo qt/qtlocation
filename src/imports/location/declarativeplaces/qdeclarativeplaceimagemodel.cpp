@@ -53,13 +53,12 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The ImageModel element provides access to place images.
+    \brief The ImageModel element provides a model of place images.
 
-    The ImageModel is a read-only model used to fetch images related to a Place.  The model
-    performs fetches incrmentally.  The number of images which are fetched at a time
-    is specified by the batchSize property.  The total number of images available can be
-    accessed via the totalCount property and the number of fetched images via the count
-    property.
+    The ImageModel is a read-only model used to fetch images related to a \l Place.  The model
+    performs fetches incrementally.  The number of images which are fetched at a time is specified
+    by the \l batchSize property.  The total number of images available can be accessed via the
+    \l totalCount property.
 
     The model returns data for the following roles:
 
@@ -73,25 +72,29 @@ QT_BEGIN_NAMESPACE
             \o url
             \o The URL of the image.
         \row
-            \o thumbnailUrl
-            \o url
-            \o The URL of the image thumbnail.
-        \row
             \o imageId
             \o string
             \o The id of the image.
-        \row
-            \o metaInfo
-            \o string
-            \o Meta information about the image.
         \row
             \o mimeType
             \o string
             \o The MIME type of the image.
         \row
             \o supplier
-            \o Supplier
-            \o The source of the image.
+            \o \l Supplier
+            \o The supplier of the editorial.
+        \row
+            \o sourceUrl
+            \o url
+            \o The source URL of the editorial.
+        \row
+            \o user
+            \o \l User
+            \o The user who contributed the editorial.
+        \row
+            \o attribution
+            \o string
+            \o Attribution text which must be displayed when displaying the editorial.
     \endtable
 */
 

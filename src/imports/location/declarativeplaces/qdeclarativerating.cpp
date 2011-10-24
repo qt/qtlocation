@@ -50,6 +50,15 @@ QT_USE_NAMESPACE
     \since QtLocation 5.0
 
     \brief The Rating element holds place rating information.
+
+    Rating information is used to describe how \e good a place is conceived to be.  Typically this
+    information is visualized as a number of stars.  The \l value property gives the rating value
+    out of a possible maximum as given by the \l maximum property.
+
+    \snippet snippets/declarative/places.qml QtQuick import
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml Rating
 */
 
 QDeclarativeRating::QDeclarativeRating(QObject* parent)
@@ -83,9 +92,10 @@ QPlaceRating QDeclarativeRating::rating() const
 /*!
     \qmlproperty qreal Rating::value
 
-    This property holds the value of rating
-*/
+    This property holds the rating value.
 
+    \sa maximum
+*/
 void QDeclarativeRating::setValue(qreal value)
 {
     if (m_rating.value() != value) {
@@ -121,9 +131,8 @@ qreal QDeclarativeRating::maximum() const
 /*!
     \qmlproperty int Rating::count
 
-    This property holds number of votes with rate.
+    This property holds the total number of votes used in determining the overall rating \l value.
 */
-
 void QDeclarativeRating::setCount(int count)
 {
     if (m_rating.count() != count) {
