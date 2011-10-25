@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativeplace_p.h"
+#include "qdeclarativecontactdetail_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativeplaceattribute_p.h"
 #include "qdeclarativeplaceicon_p.h"
@@ -50,6 +51,7 @@
 #include <QtLocation/QPlaceDetailsReply>
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlaceIdReply>
+#include <QtLocation/QPlaceContactDetail>
 
 QT_USE_NAMESPACE
 
@@ -69,7 +71,8 @@ QDeclarativePlace::QDeclarativePlace(QObject* parent)
 :   QObject(parent), m_location(0), m_rating(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QDeclarativePropertyMap(this)),
-    m_reply(0), m_plugin(0),m_complete(false), m_status(QDeclarativePlace::Ready)
+    m_contactDetails(0), m_reply(0), m_plugin(0), m_complete(false),
+    m_status(QDeclarativePlace::Ready), m_errorString(QString())
 {
     setPlace(QPlace());
 }
@@ -77,7 +80,7 @@ QDeclarativePlace::QDeclarativePlace(QObject* parent)
 QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent)
 :   QObject(parent), m_location(0), m_rating(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
-    m_extendedAttributes(new QDeclarativePropertyMap(this)),
+    m_extendedAttributes(new QDeclarativePropertyMap(this)), m_contactDetails(0),
     m_src(src), m_reply(0), m_plugin(plugin), m_complete(false),
     m_status(QDeclarativePlace::Ready)
 {
@@ -207,8 +210,8 @@ void QDeclarativePlace::setPlace(const QPlace &src)
     if (previous.primaryEmail() != m_src.primaryEmail()) {
         emit primaryEmailChanged();
     }
-    if (previous.primaryUrl() != m_src.primaryUrl()) {
-        emit primaryUrlChanged();
+    if (previous.primaryWebsite() != m_src.primaryWebsite()) {
+        emit primaryWebsiteChanged();
     }
 
     if (previous.placeId() != m_src.placeId()) {
@@ -226,6 +229,16 @@ void QDeclarativePlace::setPlace(const QPlace &src)
         m_extendedAttributes = new QDeclarativePropertyMap(this);
         synchronizeExtendedAttributes();
         emit extendedAttributesChanged();
+    }
+
+    if (m_contactDetails && m_contactDetails->parent() == this) {
+        synchronizeContacts();
+    } else if (!m_contactDetails || m_contactDetails->parent() != this) {
+        m_contactDetails = new QDeclarativePropertyMap(this);
+        connect(m_contactDetails, SIGNAL(valueChanged(QString,QVariant)), this, SLOT(contactsModified(QString,QVariant)));
+        synchronizeContacts();
+
+        emit contactDetailsChanged();
     }
 }
 
@@ -509,6 +522,11 @@ void QDeclarativePlace::finished()
     }
 }
 
+void QDeclarativePlace::contactsModified(const QString &key, const QVariant &value)
+{
+    primarySignalsEmission(key);
+}
+
 /*!
     \qmlmethod void Place::getDetails()
 
@@ -573,17 +591,15 @@ QString QDeclarativePlace::errorString() const
 
     This property holds the primary phone number of the place.
 */
-void QDeclarativePlace::setPrimaryPhone(const QString &phone)
-{
-    if (m_src.primaryPhone() != phone) {
-        m_src.setPrimaryPhone(phone);
-        emit primaryPhoneChanged();
-    }
-}
-
 QString QDeclarativePlace::primaryPhone() const
 {
-    return m_src.primaryPhone();
+    QVariantList phoneNumbers = m_contactDetails->value(QPlaceContactDetail::Phone).toList();
+    if (!phoneNumbers.isEmpty()) {
+        QDeclarativeContactDetail *primaryPhone = qobject_cast<QDeclarativeContactDetail*>(phoneNumbers.at(0).value<QObject *>());
+        return primaryPhone->value();
+    } else {
+        return QString();
+    }
 }
 
 /*!
@@ -591,17 +607,15 @@ QString QDeclarativePlace::primaryPhone() const
 
     This property holds the primary fax number of the place.
 */
-void QDeclarativePlace::setPrimaryFax(const QString &fax)
-{
-    if (m_src.primaryFax() != fax) {
-        m_src.setPrimaryFax(fax);
-        emit primaryFaxChanged();
-    }
-}
-
 QString QDeclarativePlace::primaryFax() const
 {
-    return m_src.primaryFax();
+    QVariantList faxNumbers = m_contactDetails->value(QPlaceContactDetail::Fax).toList();
+    if (!faxNumbers.isEmpty()) {
+        QDeclarativeContactDetail *primaryFax = qobject_cast<QDeclarativeContactDetail*>(faxNumbers.at(0).value<QObject *>());
+        return primaryFax->value();
+    } else {
+        return QString();
+    }
 }
 
 /*!
@@ -609,35 +623,32 @@ QString QDeclarativePlace::primaryFax() const
 
     This property holds the primary email address of the place.
 */
-void QDeclarativePlace::setPrimaryEmail(const QString &email)
-{
-    if (m_src.primaryEmail() != email) {
-        m_src.setPrimaryEmail(email);
-        emit primaryEmailChanged();
-    }
-}
-
 QString QDeclarativePlace::primaryEmail() const
 {
-    return m_src.primaryEmail();
+    QVariantList emailAddresses = m_contactDetails->value(QPlaceContactDetail::Email).toList();
+    if (!emailAddresses.isEmpty()) {
+        QDeclarativeContactDetail *primaryEmail = qobject_cast<QDeclarativeContactDetail*>(emailAddresses.at(0).value<QObject *>());
+        return primaryEmail->value();
+    } else {
+        return QString();
+    }
 }
 
 /*!
-    \qmlproperty string Place::primaryUrl
+    \qmlproperty string Place::primaryWebsite
 
-    This property holds the primary website address of the place.
+    This property holds the primary website url of the place.
 */
-void QDeclarativePlace::setPrimaryUrl(const QUrl &url)
-{
-    if (m_src.primaryUrl() != url) {
-        m_src.setPrimaryUrl(url);
-        emit primaryUrlChanged();
-    }
-}
 
-QUrl QDeclarativePlace::primaryUrl() const
+QUrl QDeclarativePlace::primaryWebsite() const
 {
-    return m_src.primaryUrl();
+    QVariantList websites = m_contactDetails->value(QPlaceContactDetail::Website).toList();
+    if (!websites.isEmpty()) {
+        QDeclarativeContactDetail *primaryWebsite = qobject_cast<QDeclarativeContactDetail*>(websites.at(0).value<QObject *>());
+        return primaryWebsite->value();
+    } else {
+        return QUrl();
+    }
 }
 
 /*!
@@ -663,6 +674,27 @@ void QDeclarativePlace::setExtendedAttributes(QDeclarativePropertyMap *attribs)
 QDeclarativePropertyMap *QDeclarativePlace::extendedAttributes() const
 {
     return m_extendedAttributes;
+}
+
+/*!
+    \qmlproperty Contacts contacts
+    This property holds the contact information for this place.
+*/
+void QDeclarativePlace::setContactDetails(QDeclarativePropertyMap *contactDetails)
+{
+    if (m_contactDetails == contactDetails)
+        return;
+
+    if (m_contactDetails && m_contactDetails->parent() == this)
+        delete m_contactDetails;
+
+    m_contactDetails = contactDetails;
+    emit contactDetailsChanged();
+}
+
+QDeclarativePropertyMap *QDeclarativePlace::contactDetails() const
+{
+    return m_contactDetails;
 }
 
 /*!
@@ -762,6 +794,75 @@ void QDeclarativePlace::synchronizeExtendedAttributes()
     }
 
     emit extendedAttributesChanged();
+}
+
+void QDeclarativePlace::synchronizeContacts()
+{
+    //clear out contact data
+    foreach (const QString &contactType, m_contactDetails->keys()) {
+        QList<QVariant> contacts = m_contactDetails->value(contactType).toList();
+        foreach (const QVariant &var, contacts) {
+            QObject *obj = var.value<QObject*>();
+            if (obj->parent() == this)
+                delete obj;
+        }
+        m_contactDetails->insert(contactType, QVariantList());
+    }
+
+    //insert new contact data from source place
+    foreach (const QString &contactType, m_src.contactTypes()) {
+        QList<QPlaceContactDetail> sourceContacts = m_src.contactDetails(contactType);
+        QVariantList declContacts;
+        foreach (const QPlaceContactDetail &sourceContact, sourceContacts) {
+            QDeclarativeContactDetail *declContact = new QDeclarativeContactDetail(this);
+            declContact->setContactDetail(sourceContact);
+            declContacts.append(QVariant::fromValue(qobject_cast<QObject *>(declContact)));
+        }
+        m_contactDetails->insert(contactType, declContacts);
+    }
+    primarySignalsEmission();
+}
+
+/*
+    Helper function to emit the signals for the primary___()
+    fields.  It is expected that the values of the primary___()
+    functions have alread been modified to new values.
+*/
+void QDeclarativePlace::primarySignalsEmission(const QString &type)
+{
+    if (type.isEmpty() || type == QPlaceContactDetail::Phone) {
+        if (m_prevPrimaryPhone != primaryPhone()) {
+            m_prevPrimaryPhone = primaryPhone();
+            emit primaryPhoneChanged();
+        }
+        if (!type.isEmpty())
+            return;
+    }
+
+    if (type.isEmpty() || type == QPlaceContactDetail::Email) {
+        if (m_prevPrimaryEmail != primaryEmail()) {
+            m_prevPrimaryEmail = primaryEmail();
+            emit primaryEmailChanged();
+        }
+        if (!type.isEmpty())
+            return;
+    }
+
+    if (type.isEmpty() || type == QPlaceContactDetail::Website) {
+        if (m_prevPrimaryWebsite != primaryWebsite()) {
+            m_prevPrimaryWebsite = primaryWebsite();
+            emit primaryWebsiteChanged();
+        }
+        if (!type.isEmpty())
+            return;
+    }
+
+    if (type.isEmpty() || type == QPlaceContactDetail::Fax) {
+        if (m_prevPrimaryFax != primaryFax()) {
+            m_prevPrimaryFax = primaryFax();
+            emit primaryFaxChanged();
+        }
+    }
 }
 
 /*

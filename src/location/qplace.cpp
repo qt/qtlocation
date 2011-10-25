@@ -46,6 +46,8 @@
 #include <QDebug>
 #endif
 
+#include <QStringList>
+
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -328,16 +330,11 @@ void QPlace::setIcon(const QPlaceIcon &icon)
 QString QPlace::primaryPhone() const
 {
     Q_D(const QPlace);
-    return d->primaryPhone;
-}
-
-/*!
-    Sets the primary \a phone number of this place.
-*/
-void QPlace::setPrimaryPhone(const QString &phone)
-{
-    Q_D(QPlace);
-    d->primaryPhone = phone;
+    QList<QPlaceContactDetail> phoneNumbers = d->contacts.value(QPlaceContactDetail::Phone);
+    if (!phoneNumbers.isEmpty())
+        return phoneNumbers.at(0).value();
+    else
+        return QString();
 }
 
 /*!
@@ -346,16 +343,11 @@ void QPlace::setPrimaryPhone(const QString &phone)
 QString QPlace::primaryFax() const
 {
     Q_D(const QPlace);
-    return d->primaryFax;
-}
-
-/*!
-    Sets the primary \a fax number for this place
-*/
-void QPlace::setPrimaryFax(const QString fax)
-{
-    Q_D(QPlace);
-    d->primaryFax = fax;
+    QList<QPlaceContactDetail> faxNumbers = d->contacts.value(QPlaceContactDetail::Fax);
+    if (!faxNumbers.isEmpty())
+        return faxNumbers.at(0).value();
+    else
+        return QString();
 }
 
 /*!
@@ -364,34 +356,24 @@ void QPlace::setPrimaryFax(const QString fax)
 QString QPlace::primaryEmail() const
 {
     Q_D(const QPlace);
-    return d->primaryEmail;
-}
-
-/*!
-    Sets the primary \a email address for this place.
-*/
-void QPlace::setPrimaryEmail(const QString &email)
-{
-    Q_D(QPlace);
-    d->primaryEmail = email;
+    QList<QPlaceContactDetail> emailAddresses = d->contacts.value(QPlaceContactDetail::Email);
+    if (!emailAddresses.isEmpty())
+        return emailAddresses.at(0).value();
+    else
+        return QString();
 }
 
 /*!
     Returns the primary URL of this place.
 */
-QUrl QPlace::primaryUrl() const
+QUrl QPlace::primaryWebsite() const
 {
     Q_D(const QPlace);
-    return d->primaryUrl;
-}
-
-/*!
-    Sets the primary \a url of this place.
-*/
-void QPlace::setPrimaryUrl(const QUrl &url)
-{
-    Q_D(QPlace);
-    d->primaryUrl = url;
+    QList<QPlaceContactDetail> websites = d->contacts.value(QPlaceContactDetail::Website);
+    if (!websites.isEmpty())
+        return QUrl(websites.at(0).value().toAscii());
+    else
+        return QString();
 }
 
 /*!
@@ -428,6 +410,47 @@ void QPlace::setExtendedAttributes(const ExtendedAttributes &attributes)
 {
     Q_D(QPlace);
     d->extendedAttributes = attributes;
+}
+
+/*!
+    Returns the type of contact details this place has.
+*/
+QStringList QPlace::contactTypes() const
+{
+    Q_D(const QPlace);
+    return d->contacts.keys();
+}
+
+/*!
+    Returns a list of contact details of the specified \a contactType
+*/
+QList<QPlaceContactDetail> QPlace::contactDetails(const QString &contactType)
+{
+    Q_D(const QPlace);
+    return d->contacts.value(contactType);
+}
+
+/*!
+    Sets the contact \a details of a specified \a contactType.
+*/
+void QPlace::setContactDetails(const QString &contactType, QList<QPlaceContactDetail> details)
+{
+    Q_D(QPlace);
+    if (details.isEmpty())
+        d->contacts.remove(contactType);
+    else
+        d->contacts.insert(contactType, details);
+}
+
+/*!
+    Appends a contact \a detail of a specified \a contactType.
+*/
+void QPlace::appendContactDetail(const QString &contactType, const QPlaceContactDetail &detail)
+{
+    Q_D(QPlace);
+    QList<QPlaceContactDetail> details = d->contacts.value(contactType);
+    details.append(detail);
+    d->contacts.insert(contactType, details);
 }
 
 /*!
@@ -477,10 +500,7 @@ QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
         attribution(other.attribution),
         contentCollections(other.contentCollections),
         contentCounts(other.contentCounts),
-        primaryPhone(other.primaryPhone),
-        primaryFax(other.primaryFax),
-        primaryEmail(other.primaryEmail),
-        primaryUrl(other.primaryUrl),
+        contacts(other.contacts),
         extendedAttributes(other.extendedAttributes),
         visibility(other.visibility),
         detailsFetched(other.detailsFetched)
@@ -500,10 +520,7 @@ QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
     attribution = other.attribution;
     contentCollections = other.contentCollections;
     contentCounts = other.contentCounts;
-    primaryPhone = other.primaryPhone;
-    primaryFax = other.primaryFax;
-    primaryEmail = other.primaryEmail;
-    primaryUrl = other.primaryUrl;
+    contacts = other.contacts;
     extendedAttributes = other.extendedAttributes;
     visibility = other.visibility;
     detailsFetched = other.detailsFetched;
@@ -523,10 +540,7 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
     qDebug() << "name " << (name == other.name);
     qDebug() << "placeId" << (placeId == other.placeId);
     qDebug() << "attribution" << (attribution == other.attribution);
-    qDebug() << "phone" << (primaryPhone == other.primaryPhone);
-    qDebug() << "fax" << (primaryFax == other.primaryFax);
-    qDebug() << "email" << (primaryEmail == other.primaryEmail);
-    qDebug() << "url" << (primaryUrl == other.primaryUrl);
+    qDebug() << "contacts" << (contacts == other.contacts);
     qDebug() << "extendedAttributes" << (extendedAttributes == other.extendedAttributes);
     qDebug() << "visibility" << (visibility == other.visibility);
 #endif
@@ -540,14 +554,10 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
             && name == other.name
             && placeId == other.placeId
             && attribution == other.attribution
-            && primaryPhone == other.primaryPhone
-            && primaryFax == other.primaryFax
-            && primaryEmail == other.primaryEmail
-            && primaryUrl == other.primaryUrl
+            && contacts == other.contacts
             && extendedAttributes == other.extendedAttributes
             && visibility == other.visibility
             );
 }
 
 QT_END_NAMESPACE
-

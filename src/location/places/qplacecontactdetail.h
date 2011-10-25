@@ -39,63 +39,60 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACE_P_H
-#define QPLACE_P_H
+#ifndef QPLACECONTACTDETAIL_H
+#define QPLACECONTACTDETAIL_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QString>
+#include <QVariant>
+#include <QSharedDataPointer>
+#include <QLatin1Constant>
 
-#include <QSharedData>
-#include <QUrl>
+#include <QtLocation/qlocationglobal.h>
 
-#include "qplace.h"
-#include "qgeoaddress.h"
-#include "qgeoboundingbox.h"
-#include "qgeocoordinate.h"
-#include "qplacesupplier.h"
-#include <QtLocation/QPlaceIcon>
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QPlacePrivate : public QSharedData
+class QPlaceContactDetailPrivate;
+class Q_LOCATION_EXPORT QPlaceContactDetail
 {
 public:
-    QPlacePrivate();
-    QPlacePrivate(const QPlacePrivate &other);
-    ~QPlacePrivate();
+#ifdef Q_QDOC
+    static const QLatin1Constant Phone;
+    static const QLatin1Constant Email;
+    static const QLatin1Constant Website;
+    static const QLatin1Constant Fax;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(Phone, "Phone");
+    Q_DECLARE_LATIN1_CONSTANT(Email, "Email");
+    Q_DECLARE_LATIN1_CONSTANT(Website, "Website");
+    Q_DECLARE_LATIN1_CONSTANT(Fax, "Fax");
+#endif
 
-    QPlacePrivate &operator= (const QPlacePrivate &other);
+    QPlaceContactDetail();
+    QPlaceContactDetail(const QPlaceContactDetail &other);
+    virtual ~QPlaceContactDetail();
 
-    bool operator==(const QPlacePrivate &other) const;
+    QPlaceContactDetail &operator=(const QPlaceContactDetail &other);
 
-    QList<QPlaceCategory> categories;
-    QGeoLocation location;
-    QPlaceRating rating;
-    QPlaceSupplier supplier;
-    QString name;
-    QString placeId;
-    QString attribution;
+    bool operator==(const QPlaceContactDetail &other) const;
+    bool operator!=(const QPlaceContactDetail &other) const;
 
-    QMap<QPlaceContent::Type, QPlaceContent::Collection> contentCollections;
-    QMap<QPlaceContent::Type, int> contentCounts;
+    QString label() const;
+    void setLabel(const QString &label);
 
-    QPlace::ExtendedAttributes extendedAttributes;
-    QMap<QString, QList<QPlaceContactDetail> > contacts;
+    QString value() const;
+    void setValue(const QString &value);
 
-    QtLocation::Visibility visibility;
-    QPlaceIcon icon;
-    bool detailsFetched;
+private:
+    QSharedDataPointer<QPlaceContactDetailPrivate> d_ptr;
+
 };
 
 QT_END_NAMESPACE
 
-#endif
+QT_END_HEADER
 
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceContactDetail));
+
+#endif

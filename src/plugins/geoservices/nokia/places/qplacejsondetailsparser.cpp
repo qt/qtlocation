@@ -53,6 +53,7 @@
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
 #include <QtScript/QScriptValueIterator>
+#include <QtLocation/QPlaceContactDetail>
 
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
@@ -297,32 +298,25 @@ void QPlaceJSonDetailsParser::processMainProvider(const QScriptValue &placeValue
 void QPlaceJSonDetailsParser::processContacts(const QScriptValue &contactsValue, QPlace *targetPlace)
 {
     QScriptValueIterator it(contactsValue);
-    bool phoneRetrieved = false;
-    bool faxRetrieved = false;
-    bool emailRetrieved = false;
-    bool urlRetrieved = false;
+    QPlaceContactDetail contactDetail;
     while (it.hasNext()) {
         it.next();
         if (it.name() == place_contact_website_element) {
-            if (!urlRetrieved) {
-                targetPlace->setPrimaryUrl(QUrl::fromEncoded(it.value().toString().toAscii()));
-                urlRetrieved = true;
-            }
+            contactDetail.setLabel(tr("Website"));
+            contactDetail.setValue(it.value().toString());
+            targetPlace->appendContactDetail(QPlaceContactDetail::Website, contactDetail);
         } else if (it.name() == place_contact_phone_element) {
-            if (!phoneRetrieved) {
-                targetPlace->setPrimaryPhone(it.value().toString());
-                phoneRetrieved = true;
-            }
+            contactDetail.setLabel(tr("Phone"));
+            contactDetail.setValue(it.value().toString());
+            targetPlace->appendContactDetail(QPlaceContactDetail::Phone, contactDetail);
         } else if (it.name() == place_contact_fax_element) {
-            if (!faxRetrieved) {
-                targetPlace->setPrimaryFax(it.value().toString());
-                faxRetrieved = true;
-            }
+            contactDetail.setLabel(tr("Fax"));
+            contactDetail.setValue(it.value().toString());
+            targetPlace->appendContactDetail(QPlaceContactDetail::Fax, contactDetail);
         } else if (it.name() == place_contact_email_element) {
-            if (!emailRetrieved) {
-                targetPlace->setPrimaryEmail(it.value().toString());
-                faxRetrieved = true;
-            }
+            contactDetail.setLabel(tr("Email"));
+            contactDetail.setValue(it.value().toString());
+            targetPlace->appendContactDetail(QPlaceContactDetail::Email, contactDetail);
         } else {
             //unknown contact element, do nothing
         }

@@ -226,11 +226,17 @@ void QPlaceJSonSearchParser::processContacts(const QScriptValue &properties, QPl
 {
     QScriptValue value = properties.property(search_properties_url_value);
     if (value.isValid() && !value.toString().isEmpty()) {
-        place->setPrimaryUrl(QUrl::fromEncoded(value.toString().toAscii()));
+        QPlaceContactDetail contactDetail;
+        contactDetail.setLabel(tr("Website"));
+        contactDetail.setValue(value.toString());
+        place->appendContactDetail(QPlaceContactDetail::Website, contactDetail);
     }
     value = properties.property(search_properties_phone_value);
     if (value.isValid() && !value.toString().isEmpty()) {
-        place->setPrimaryPhone(value.toString());
+        QPlaceContactDetail contactDetail;
+        contactDetail.setLabel(tr("Phone"));
+        contactDetail.setValue(value.toString());
+        place->appendContactDetail(QPlaceContactDetail::Phone, contactDetail);
     }
 }
 

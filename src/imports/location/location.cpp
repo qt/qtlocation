@@ -72,6 +72,7 @@
 #include "qdeclarativerating_p.h"
 #include "qdeclarativesupplier_p.h"
 #include "qdeclarativeplaceuser_p.h"
+#include "qdeclarativecontactdetail_p.h"
 
 #include "qdeclarativerecommendationmodel_p.h"
 #include "qdeclarativesupportedcategoriesmodel_p.h"
@@ -142,6 +143,8 @@ public:
             qmlRegisterType<QDeclarativeTextPredictionModel>(uri, 5, 0, "TextPredictionModel");
             qmlRegisterType<QDeclarativePropertyMap>(uri, 5,0,"ExtendedAttributes");
             qmlRegisterType<QDeclarativePlaceAttribute>(uri, 5,0, "PlaceAttribute");
+            qmlRegisterType<QDeclarativeContactDetail>(uri, 5, 0, "ContactDetail");
+
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }

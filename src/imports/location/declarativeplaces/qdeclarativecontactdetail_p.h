@@ -39,63 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACE_P_H
-#define QPLACE_P_H
+#ifndef QDECLARATIVECONTACTDETAIL_P_H
+#define QDECLARATIVECONTACTDETAIL_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include <QSharedData>
-#include <QUrl>
-
-#include "qplace.h"
-#include "qgeoaddress.h"
-#include "qgeoboundingbox.h"
-#include "qgeocoordinate.h"
-#include "qplacesupplier.h"
-#include <QtLocation/QPlaceIcon>
+#include <QtCore/QObject>
+#include <QtLocation/QPlaceContactDetail>
+#include <QtDeclarative/qdeclarative.h>
 
 QT_BEGIN_NAMESPACE
 
-class QPlacePrivate : public QSharedData
+class QDeclarativeContactDetail : public QObject
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
+    Q_PROPERTY(QString value READ value WRITE setValue NOTIFY valueChanged)
+
 public:
-    QPlacePrivate();
-    QPlacePrivate(const QPlacePrivate &other);
-    ~QPlacePrivate();
+    explicit QDeclarativeContactDetail(QObject *parent = 0);
+    explicit QDeclarativeContactDetail(const QPlaceContactDetail &src, QObject *parent = 0);
+    ~QDeclarativeContactDetail();
 
-    QPlacePrivate &operator= (const QPlacePrivate &other);
+    QPlaceContactDetail contactDetail() const;
+    void setContactDetail(const QPlaceContactDetail &contactDetail);
 
-    bool operator==(const QPlacePrivate &other) const;
+    QString label() const;
+    void setLabel(const QString &label);
 
-    QList<QPlaceCategory> categories;
-    QGeoLocation location;
-    QPlaceRating rating;
-    QPlaceSupplier supplier;
-    QString name;
-    QString placeId;
-    QString attribution;
+    QString value() const;
+    void setValue(const QString &value);
 
-    QMap<QPlaceContent::Type, QPlaceContent::Collection> contentCollections;
-    QMap<QPlaceContent::Type, int> contentCounts;
+signals:
+    void labelChanged();
+    void valueChanged();
 
-    QPlace::ExtendedAttributes extendedAttributes;
-    QMap<QString, QList<QPlaceContactDetail> > contacts;
+private:
+    QPlaceContactDetail m_contactDetail;
 
-    QtLocation::Visibility visibility;
-    QPlaceIcon icon;
-    bool detailsFetched;
 };
 
 QT_END_NAMESPACE
 
-#endif
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeContactDetail));
 
+#endif

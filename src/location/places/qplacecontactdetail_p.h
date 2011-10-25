@@ -39,8 +39,9 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACE_P_H
-#define QPLACE_P_H
+#ifndef QPLACECONTACTDETAIL_P_H
+#define QPLACECONTACTDETAIL_P_H
+
 
 //
 //  W A R N I N G
@@ -54,48 +55,23 @@
 //
 
 #include <QSharedData>
-#include <QUrl>
-
-#include "qplace.h"
-#include "qgeoaddress.h"
-#include "qgeoboundingbox.h"
-#include "qgeocoordinate.h"
-#include "qplacesupplier.h"
-#include <QtLocation/QPlaceIcon>
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 
-class QPlacePrivate : public QSharedData
+class QPlaceContactDetailPrivate : public QSharedData
 {
 public:
-    QPlacePrivate();
-    QPlacePrivate(const QPlacePrivate &other);
-    ~QPlacePrivate();
+    QPlaceContactDetailPrivate(){}
+    QPlaceContactDetailPrivate(const QPlaceContactDetailPrivate &other);
+    virtual ~QPlaceContactDetailPrivate(){}
 
-    QPlacePrivate &operator= (const QPlacePrivate &other);
+    bool operator== (const QPlaceContactDetailPrivate &other) const;
 
-    bool operator==(const QPlacePrivate &other) const;
-
-    QList<QPlaceCategory> categories;
-    QGeoLocation location;
-    QPlaceRating rating;
-    QPlaceSupplier supplier;
-    QString name;
-    QString placeId;
-    QString attribution;
-
-    QMap<QPlaceContent::Type, QPlaceContent::Collection> contentCollections;
-    QMap<QPlaceContent::Type, int> contentCounts;
-
-    QPlace::ExtendedAttributes extendedAttributes;
-    QMap<QString, QList<QPlaceContactDetail> > contacts;
-
-    QtLocation::Visibility visibility;
-    QPlaceIcon icon;
-    bool detailsFetched;
+    QString label;
+    QString value;
 };
 
 QT_END_NAMESPACE
 
 #endif
-

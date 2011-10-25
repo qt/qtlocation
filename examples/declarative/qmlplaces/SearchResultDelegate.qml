@@ -151,10 +151,10 @@ Rectangle {
                 }
 
                 Text {
-                    text: '<b>Website: </b> <a href=\"' + place.primaryUrl + '\">' + place.primaryUrl + '</a>'
+                    text: '<b>Website: </b> <a href=\"' + place.primaryWebsite + '\">' + place.primaryWebsite + '</a>'
                     font.pixelSize: 16
-                    visible: String(place.primaryUrl).length > 0
-                    onLinkActivated: Qt.openUrlExternally(place.primaryUrl)
+                    visible: String(place.primaryWebsite).length > 0
+                    onLinkActivated: Qt.openUrlExternally(place.primaryWebsite)
                 }
 
                 Text { text: '<b>Tags: </b> ' + place.tags; font.pixelSize: 16 }

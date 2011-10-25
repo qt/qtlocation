@@ -47,6 +47,7 @@
 #include <qplace.h>
 #include "qdeclarativegeolocation_p.h"
 #include "qdeclarativecategory_p.h"
+#include "qdeclarativecontactdetail_p.h"
 #include "qdeclarativesupplier_p.h"
 #include "qdeclarativerating_p.h"
 #include "qdeclarativereviewmodel_p.h"
@@ -82,13 +83,14 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QDeclarativePlaceEditorialModel *editorialModel READ editorialModel NOTIFY editorialModelChanged)
 
     Q_PROPERTY(QDeclarativePropertyMap *extendedAttributes READ extendedAttributes WRITE setExtendedAttributes NOTIFY extendedAttributesChanged);
+    Q_PROPERTY(QDeclarativePropertyMap *contactDetails READ contactDetails WRITE setContactDetails NOTIFY contactDetailsChanged);
     Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
     Q_PROPERTY(Status status READ status NOTIFY statusChanged);
 
-    Q_PROPERTY(QString primaryPhone READ primaryPhone WRITE setPrimaryPhone NOTIFY primaryPhoneChanged);
-    Q_PROPERTY(QString primaryFax READ primaryFax WRITE setPrimaryFax NOTIFY primaryFaxChanged);
-    Q_PROPERTY(QString primaryEmail READ primaryEmail WRITE setPrimaryEmail NOTIFY primaryEmailChanged);
-    Q_PROPERTY(QUrl primaryUrl READ primaryUrl WRITE setPrimaryUrl NOTIFY primaryUrlChanged);
+    Q_PROPERTY(QString primaryPhone READ primaryPhone NOTIFY primaryPhoneChanged);
+    Q_PROPERTY(QString primaryFax READ primaryFax NOTIFY primaryFaxChanged);
+    Q_PROPERTY(QString primaryEmail READ primaryEmail NOTIFY primaryEmailChanged);
+    Q_PROPERTY(QUrl primaryWebsite READ primaryWebsite NOTIFY primaryWebsiteChanged);
 
     Q_PROPERTY(Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
 
@@ -154,19 +156,15 @@ public:
     Q_INVOKABLE QString errorString() const;
 
     QString primaryPhone() const;
-    void setPrimaryPhone(const QString &phone);
-
     QString primaryFax() const;
-    void setPrimaryFax(const QString &fax);
-
     QString primaryEmail() const;
-    void setPrimaryEmail(const QString &email);
-
-    QUrl primaryUrl() const;
-    void setPrimaryUrl(const QUrl &url);
+    QUrl primaryWebsite() const;
 
     QDeclarativePropertyMap *extendedAttributes() const;
     void setExtendedAttributes(QDeclarativePropertyMap *attrib);
+
+    QDeclarativePropertyMap *contactDetails() const;
+    void setContactDetails(QDeclarativePropertyMap *contactDetails);
 
     Visibility visibility() const;
     void setVisibility(Visibility visibility);
@@ -189,18 +187,22 @@ signals:
     void primaryPhoneChanged();
     void primaryFaxChanged();
     void primaryEmailChanged();
-    void primaryUrlChanged();
+    void primaryWebsiteChanged();
 
     void extendedAttributesChanged();
+    void contactDetailsChanged();
     void statusChanged();
     void visibilityChanged();
 
 private slots:
     void finished();
+    void contactsModified(const QString &, const QVariant &);
 
 private:
     void synchronizeCategories();
     void synchronizeExtendedAttributes();
+    void synchronizeContacts();
+    void primarySignalsEmission(const QString &type = QString());
 
 private:
     QPlaceManager *manager();
@@ -214,6 +216,7 @@ private:
     QDeclarativePlaceImageModel *m_imageModel;
     QDeclarativePlaceEditorialModel *m_editorialModel;
     QDeclarativePropertyMap *m_extendedAttributes;
+    QDeclarativePropertyMap *m_contactDetails;
 
     QPlace m_src;
 
@@ -221,6 +224,11 @@ private:
 
     QDeclarativeGeoServiceProvider *m_plugin;
     bool m_complete;
+
+    QString m_prevPrimaryPhone;
+    QString m_prevPrimaryEmail;
+    QString m_prevPrimaryFax;
+    QUrl m_prevPrimaryWebsite;
 
     Status m_status;
     QString m_errorString;

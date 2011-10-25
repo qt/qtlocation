@@ -10,6 +10,7 @@ SOURCES += \
     declarativeplaces/qdeclarativeplaceimagemodel.cpp \
     declarativeplaces/qdeclarativeplaceeditorialmodel.cpp \
 #data
+    declarativeplaces/qdeclarativecontactdetail.cpp \
     declarativeplaces/qdeclarativecategory.cpp \
     declarativeplaces/qdeclarativeplace.cpp \
     declarativeplaces/qdeclarativeplaceattribute.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     declarativeplaces/qdeclarativeplaceimagemodel_p.h \
     declarativeplaces/qdeclarativeplaceeditorialmodel.h \
 #data
+    declarativeplaces/qdeclarativecontactdetail_p.h \
     declarativeplaces/qdeclarativecategory_p.h \
     declarativeplaces/qdeclarativeplace_p.h \
     declarativeplaces/qdeclarativeplaceattribute_p.h \

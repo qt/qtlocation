@@ -73,7 +73,7 @@ private Q_SLOTS:
     void primaryPhoneTest();
     void primaryFaxTest();
     void primaryEmailTest();
-    void primaryUrlTest();
+    void primaryWebsiteTest();
     void operatorsTest();
     void extendedAttributeTest();
     void visibilityTest();
@@ -352,23 +352,16 @@ void tst_Place::primaryPhoneTest()
     QPlace place;
     QVERIFY2(place.primaryPhone().isEmpty(), "Wrong default value");
 
-    place.setPrimaryPhone("555-5555");
+    QPlaceContactDetail contactDetail;
+    contactDetail.setLabel(QLatin1String("Phone"));
+    contactDetail.setValue(QLatin1String("555-5555"));
+    place.appendContactDetail(QPlaceContactDetail::Phone, contactDetail);
+
     QCOMPARE(place.primaryPhone(), QString("555-5555"));
 
-    place.setPrimaryPhone(QString());
+    //try clearing the primary phone number
+    place.setContactDetails(QPlaceContactDetail::Phone, QList<QPlaceContactDetail>());
     QCOMPARE(place.primaryPhone(), QString());
-}
-
-void tst_Place::primaryFaxTest()
-{
-    QPlace place;
-    QVERIFY2(place.primaryFax().isEmpty(), "Wrong default value");
-
-    place.setPrimaryFax("555-5555");
-    QCOMPARE(place.primaryFax(), QString("555-5555"));
-
-    place.setPrimaryFax(QString());
-    QCOMPARE(place.primaryFax(), QString());
 }
 
 void tst_Place::primaryEmailTest()
@@ -376,24 +369,50 @@ void tst_Place::primaryEmailTest()
     QPlace place;
     QVERIFY2(place.primaryEmail().isEmpty(), "Wrong default value");
 
-    place.setPrimaryEmail("test@test.com");
-    QCOMPARE(place.primaryEmail(), QString("test@test.com"));
+    QPlaceContactDetail contactDetail;
+    contactDetail.setLabel(QLatin1String("Email"));
+    contactDetail.setValue(QLatin1String("test@test.com"));
+    place.appendContactDetail(QPlaceContactDetail::Email, contactDetail);
 
+    QCOMPARE(place.primaryEmail(), QLatin1String("test@test.com"));
 
-    place.setPrimaryEmail(QString());
+    //try clearing the primary email address
+    place.setContactDetails(QPlaceContactDetail::Email, QList<QPlaceContactDetail>());
     QCOMPARE(place.primaryEmail(), QString());
 }
 
-void tst_Place::primaryUrlTest()
+void tst_Place::primaryFaxTest()
 {
     QPlace place;
-    QVERIFY2(place.primaryUrl().isEmpty(), "Wron default value");
+    QVERIFY2(place.primaryFax().isEmpty(), "Wrong default value");
 
-    place.setPrimaryUrl(QUrl("www.winterfell.com"));
-    QCOMPARE(place.primaryUrl(), QUrl("www.winterfell.com"));
+    QPlaceContactDetail contactDetail;
+    contactDetail.setLabel(QLatin1String("Fax"));
+    contactDetail.setValue(QLatin1String("555-5555"));
+    place.appendContactDetail(QPlaceContactDetail::Fax, contactDetail);
 
-    place.setPrimaryUrl(QUrl());
-    QCOMPARE(place.primaryUrl(), QUrl());
+    QCOMPARE(place.primaryFax(), QLatin1String("555-5555"));
+
+    //try clearing the primary fax number
+    place.setContactDetails(QPlaceContactDetail::Fax, QList<QPlaceContactDetail>());
+    QCOMPARE(place.primaryFax(), QString());
+}
+
+void tst_Place::primaryWebsiteTest()
+{
+    QPlace place;
+    QVERIFY2(place.primaryWebsite().isEmpty(), "Wrong default value");
+
+    QPlaceContactDetail contactDetail;
+    contactDetail.setLabel(QLatin1String("Website"));
+    contactDetail.setValue(QLatin1String("www.example.com"));
+    place.appendContactDetail(QPlaceContactDetail::Website, contactDetail);
+
+    QCOMPARE(place.primaryWebsite(), QUrl("www.example.com"));
+
+    //try clearing the primary website number
+    place.setContactDetails(QPlaceContactDetail::Website, QList<QPlaceContactDetail>());
+    QCOMPARE(place.primaryWebsite(), QUrl());
 }
 
 void tst_Place::operatorsTest()

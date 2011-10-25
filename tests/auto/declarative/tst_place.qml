@@ -64,11 +64,6 @@ TestCase {
 
         name: "Test place"
 
-        primaryPhone: "11111111"
-        primaryFax: "22222222"
-        primaryEmail: "test-place@example.com"
-        primaryUrl: "http://www.example.com/test-place"
-
         visibility: Place.DeviceVisibility
 
         location: Location {
@@ -281,7 +276,7 @@ TestCase {
         compare(emptyPlace.primaryPhone, "");
         compare(emptyPlace.primaryFax, "");
         compare(emptyPlace.primaryEmail, "");
-        compare(emptyPlace.primaryUrl, "");
+        compare(emptyPlace.primaryWebsite, "");
         compare(emptyPlace.visibility, Place.UnspecifiedVisibility);
 
         // complex properties
@@ -314,10 +309,6 @@ TestCase {
         return [
             { tag: "name", property: "name", signal: "nameChanged", value: "Test Place", reset: "" },
             { tag: "placeId", property: "placeId", signal: "placeIdChanged", value: "test-place-id-1", reset: "" },
-            { tag: "primaryPhone", property: "primaryPhone", signal: "primaryPhoneChanged", value: "11111111", reset: "" },
-            { tag: "primaryFax", property: "primaryFax", signal: "primaryFaxChanged", value: "22222222", reset: "" },
-            { tag: "primaryEmail", property: "primaryEmail", signal: "primaryEmailChanged", value: "test@example.com", reset: "" },
-            { tag: "primaryUrl", property: "primaryUrl", signal: "primaryUrlChanged", value: "http://www.example.com/test-place-id-1", reset: "" },
             { tag: "visibility", property: "visibility", signal: "visibilityChanged", value: Place.PublicVisibility, reset: Place.UnspecifiedVisibility },
         ];
     }

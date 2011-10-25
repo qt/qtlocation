@@ -1,10 +1,10 @@
-#TODO: remove when plugin is refactored out
 INCLUDEPATH += places
 
 PUBLIC_HEADERS += \
     places/placemacro.h \
 #data classes
     places/qplaceattribute.h \
+    places/qplacecontactdetail.h \
     places/qplacecategory.h \
     places/qplacecontent.h \
     places/qplacecontentreply.h \
@@ -35,6 +35,7 @@ PRIVATE_HEADERS += \
     places/qplaceattribute_p.h \
     places/qplacecategory_p.h \
     places/qplacecontent_p.h \
+    places/qplacecontactdetail_p.h \
     places/qplaceeditorial_p.h \
     places/qplaceicon_p.h \
     places/qplaceimage_p.h \
@@ -52,6 +53,7 @@ SOURCES += \
 #data classes
     places/qplaceattribute.cpp \
     places/qplacecategory.cpp \
+    places/qplacecontactdetail.cpp \
     places/qplacecontent.cpp \
     places/qplacecontentreply.cpp \
     places/qplaceeditorial.cpp \

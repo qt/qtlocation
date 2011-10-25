@@ -54,6 +54,7 @@
 #include "qplacerating.h"
 #include "qplacereview.h"
 #include "qplaceattribute.h"
+#include "qplacecontactdetail.h"
 
 QT_BEGIN_HEADER
 
@@ -107,16 +108,9 @@ public:
     void setPlaceId(const QString &placeId);
 
     QString primaryPhone() const;
-    void setPrimaryPhone(const QString &phone);
-
     QString primaryFax() const;
-    void setPrimaryFax(const QString fax);
-
     QString primaryEmail() const;
-    void setPrimaryEmail(const QString &email);
-
-    QUrl primaryUrl() const;
-    void setPrimaryUrl(const QUrl &url);
+    QUrl primaryWebsite() const;
 
     bool detailsFetched() const;
     void setDetailsFetched(bool fetched);
@@ -124,6 +118,11 @@ public:
     QPlace::ExtendedAttributes extendedAttributes() const;
     void setExtendedAttributes(const QPlace::ExtendedAttributes &attributes);
     void insertExtendedAttribute(const QString &key, const QPlaceAttribute &);
+
+    QStringList contactTypes() const;
+    QList<QPlaceContactDetail> contactDetails(const QString &contactType);
+    void setContactDetails(const QString &contactType, QList<QPlaceContactDetail> details);
+    void appendContactDetail(const QString &contactType, const QPlaceContactDetail &detail);
 
     QtLocation::Visibility visibility() const;
     void setVisibility(QtLocation::Visibility visibility);
