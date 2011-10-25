@@ -45,10 +45,11 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass MapMouseEvent QDeclarativeGeoMapMouseEvent
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-maps
+    \since QtLocation 5.0
 
     \brief The MapMouseEvent object provides information about a mouse event.
-
-    \ingroup qml-location-maps
 
     The position of the mouse can be found via the \l x and \l y properties
     or the \l coordinate property.

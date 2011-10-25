@@ -49,14 +49,13 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeocodingManagerEngine
+    \inmodule QtLocation
+    \ingroup QtLocation-impl
+    \since QtLocation 5.0
 
     \brief The QGeocodingManagerEngine class provides an interface and
     convenience methods to implementers of QGeoServiceProvider plugins who want
     to provide support for geocoding operations.
-
-    \inmodule QtLocation
-
-    \ingroup maps-impl
 
     In the default implementation, supportsGeocoding() and supportsReverseGeocoding() returns false while
     geocode() and reverseGeocode()

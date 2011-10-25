@@ -52,9 +52,11 @@ QT_USE_NAMESPACE
 
 /*!
     \qmlclass RecommendationModel QDeclarativeRecommenadationModel
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
+
     \brief The RecommendationModel element provides access to place recommendations.
-    \inherits QAbstractListModel
-    \ingroup qml-places
 
     RecommendationModel provides a model of place recommendation results within the \l searchArea,
     that are similiar to the place identified by the \l placeId property.

@@ -71,8 +71,9 @@ bool QPlaceEditorialPrivate::compare(const QPlaceContentPrivate *other) const
 
 /*!
     \class QPlaceEditorial
-
-    \inmodule QPlaces
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
     \brief The QPlaceEditorial class represents a address object.
 
@@ -81,8 +82,6 @@ bool QPlaceEditorialPrivate::compare(const QPlaceContentPrivate *other) const
 
     Editorial objects are read-only, e.g. user of API might get editorial objects associated to
     specific place but can not edit its content. User might also create new editorial.
-
-    \ingroup places-main
 */
 
 /*!

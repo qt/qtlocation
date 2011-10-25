@@ -216,11 +216,11 @@ void QGeoSatelliteInfoSourcePrivate::loadStaticPlugins(QHash<QString, QGeoPositi
 
 /*!
     \class QGeoSatelliteInfoSource
-    \brief The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
-
     \inmodule QtLocation
+    \ingroup QtLocation-positioning
+    \since QtLocation 5.0
 
-    \ingroup location
+    \brief The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
 
     The static function QGeoSatelliteInfoSource::createDefaultSource() creates a default
     satellite data source that is appropriate for the platform, if one is

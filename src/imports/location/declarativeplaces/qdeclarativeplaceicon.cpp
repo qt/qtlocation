@@ -49,13 +49,14 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass PlaceIcon
+    \qmlclass PlaceIcon QDeclarativePlaceIcon
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
 
     \brief The PlaceIcon element holds icon related information, most prominently the icon's urls.
-    \inherits QObject
-
-    \ingroup qml-places
 */
+
 QDeclarativePlaceIcon::QDeclarativePlaceIcon(QObject *parent)
     : QObject(parent), m_plugin(0)
 {

@@ -44,15 +44,15 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass Location
+    \qmlclass Location QDeclarativeGeoLocation
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-positioning
+    \since QtLocation 5.0
 
     \brief The Location element holds location data.
-    \inherits QObject
 
     Location cointains many properties holding data of the location like geo coordinates,
     address, etc.
-
-    \ingroup qml-places
 */
 
 QDeclarativeGeoLocation::QDeclarativeGeoLocation(QObject* parent)

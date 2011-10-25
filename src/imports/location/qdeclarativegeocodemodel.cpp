@@ -50,12 +50,13 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GeocodeModel
+    \qmlclass GeocodeModel QDeclarativeGeocodeModel
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-geocoding
+    \since QtLocation 5.0
 
     \brief The GeocodeModel element provides support for searching operations related
            to geographic information.
-    \ingroup qml-geocoding
-    \since 5.0
 
     The GeocodeModel is a model used to perform geocoding. This includes both geocoding
     (address to coordinate) and reverse geocoding (coordinate to address).

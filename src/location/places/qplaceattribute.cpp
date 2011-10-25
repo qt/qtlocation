@@ -66,12 +66,12 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
 }
 
 /*!
-\class QPlaceAttribute
-\brief The QPlaceAttribute class represents generic attribute information about a place.
-\inmodule QtLocation
+    \class QPlaceAttribute
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
-\ingroup location
-\ingroup places-main
+    \brief The QPlaceAttribute class represents generic attribute information about a place.
 */
 
 /*!

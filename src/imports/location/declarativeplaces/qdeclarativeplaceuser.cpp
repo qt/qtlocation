@@ -44,12 +44,12 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass User
+    \qmlclass User QDeclarativePlaceUser
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
 
     \brief The User element identifies a particular user.
-    \inherits QObject
-
-    \ingroup qml-places
 */
 
 QDeclarativePlaceUser::QDeclarativePlaceUser(QObject* parent)

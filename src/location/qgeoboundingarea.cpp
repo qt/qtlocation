@@ -45,11 +45,11 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoBoundingArea
-    \brief The QGeoBoundingArea class defines a geographic area.
-
     \inmodule QtLocation
+    \ingroup QtLocation-positioning
+    \since QtLocation 5.0
 
-    \ingroup maps
+    \brief The QGeoBoundingArea class defines a geographic area.
 
     This class is the base class for classes which specify a geographic
     area.

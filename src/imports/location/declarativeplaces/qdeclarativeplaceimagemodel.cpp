@@ -48,13 +48,14 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass PlaceImageModel QDeclarativePlaceImage
+    \qmlclass ImageModel QDeclarativePlaceImageModel
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
 
-    \brief The PlaceImageModel element provides access to place images.
-    \ingroup qml-places
-    \since 5.0
+    \brief The ImageModel element provides access to place images.
 
-    The PlaceImageModel is a read-only model used to fetch images related to a Place.  The model
+    The ImageModel is a read-only model used to fetch images related to a Place.  The model
     performs fetches incrmentally.  The number of images which are fetched at a time
     is specified by the batchSize property.  The total number of images available can be
     accessed via the totalCount property and the number of fetched images via the count
@@ -95,19 +96,19 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty Place PlaceImageModel::place
+    \qmlproperty Place ImageModel::place
 
     This property holds the Place that the images are for.
 */
 
 /*!
-    \qmlproperty int PlaceImageModel::batchSize
+    \qmlproperty int ImageModel::batchSize
 
     This property holds the batch size to use when fetching more image items.
 */
 
 /*!
-    \qmlproperty int PlaceImageModel::totalCount
+    \qmlproperty int ImageModel::totalCount
 
     This property holds the total number of image items for the place.
 */

@@ -51,12 +51,14 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass SearchResultModel QDeclarativeSearchResultModel
-    \brief The SearchResultModel element provides access to place search results.
-    \inherits QAbstractListModel
-    \ingroup qml-places
+    \qmlclass PlaceSearchModel QDeclarativeSearchResultModel
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
 
-    SearchResultModel provides a model of place search results within the \l searchArea.  The
+    \brief The PlaceSearchModel element provides access to place search results.
+
+    PlaceSearchModel provides a model of place search results within the \l searchArea.  The
     \l searchTerm and \l searchCategory properties can be set to restrict the search results to
     places matching those criteria.
 
@@ -91,13 +93,13 @@ QT_USE_NAMESPACE
             \o Valid only for did you mean search results, a suggested corrected search term.
     \endtable
 
-    The following example shows how to use the SearchResultModel to search for Pizza restaurants
+    The following example shows how to use the PlaceSearchModel to search for Pizza restaurants
     within a 5km radius:
 
     \code
     import QtLocation 5.0
 
-    SearchResultModel {
+    PlaceSearchModel {
         id: searchModel
 
         searchTerm: "Pizza"
@@ -118,11 +120,11 @@ QT_USE_NAMESPACE
     }
     \endcode
 
-    \sa RecommendationModel, SupportedCategoryModel, {QPlaceManager}
+    \sa RecommendationModel, CategoriesModel, {QPlaceManager}
 */
 
 /*!
-    \qmlproperty GeoCoordinate SearchResultModel::searchArea
+    \qmlproperty GeoCoordinate PlaceSearchModel::searchArea
 
     This element holds the search area.
 
@@ -131,7 +133,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty int SearchResultModel::offset
+    \qmlproperty int PlaceSearchModel::offset
 
     This element holds offset for items that would be returned.  Less then 0 means that it is
     undefined.
@@ -139,27 +141,27 @@ QT_USE_NAMESPACE
 
 
 /*!
-    \qmlproperty int SearchResultModel::limit
+    \qmlproperty int PlaceSearchModel::limit
 
     This element holds limit of items that would be returned.  Less then -1 means that limit is
     undefined.
 */
 
 /*!
-    \qmlproperty bool SearchResultModel::executing
+    \qmlproperty bool PlaceSearchModel::executing
 
     This property indicates whether a search query is currently being executed.
 */
 
 /*!
-    \qmlmethod SearchResultModel::execute()
+    \qmlmethod PlaceSearchModel::execute()
 
     Parameter searchTerm should contain string for which search should be started.  Updates the
     items represented by the model from the underlying proivider.
 */
 
 /*!
-    \qmlmethod SearchResultModel::cancel()
+    \qmlmethod PlaceSearchModel::cancel()
 
     Cancels ongoing request.
 */
@@ -180,7 +182,7 @@ QDeclarativeSearchResultModel::~QDeclarativeSearchResultModel()
 }
 
 /*!
-    \qmlproperty string SearchResultModel::searchTerm
+    \qmlproperty string PlaceSearchModel::searchTerm
 
     This element holds search term used in query.
 */
@@ -199,7 +201,7 @@ void QDeclarativeSearchResultModel::setSearchTerm(const QString &searchTerm)
 }
 
 /*!
-    \qmlproperty QDeclarativeListProperty<QDeclarativeCategory> Place::categories
+    \qmlproperty QDeclarativeListProperty<QDeclarativeCategory> PlaceSearchModel::categories
 
     This property holds a categories list to be used when searching.  It is expected
     that any places that match at least one of the categories is returned.
@@ -265,7 +267,7 @@ void QDeclarativeSearchResultModel::categories_clear(QDeclarativeListProperty<QD
 }
 
 /*!
-    \qmlproperty enumeration SearchResultModel::relevanceHint
+    \qmlproperty enumeration PlaceSearchModel::relevanceHint
 
     This property holds a relevance hint for the search model.  The hint is given
     to the provider to help but not dictate the ranking of results. e.g a distance
@@ -296,7 +298,7 @@ void QDeclarativeSearchResultModel::setRelevanceHint(QDeclarativeSearchResultMod
 }
 
 /*!
-    \qmlproperty int SearchResultModel::maximumCorrections
+    \qmlproperty int PlaceSearchModel::maximumCorrections
 
     This element holds maximum number of search term corrections that may be returned.
 */
@@ -315,7 +317,7 @@ void QDeclarativeSearchResultModel::setMaximumCorrections(int corrections)
 }
 
 /*!
-    \qmlproperty QDeclarativePlace::Visibility SearchResultModel::visibilityScope
+    \qmlproperty QDeclarativePlace::Visibility PlaceSearchModel::visibilityScope
 
     This property holds the visibility scope of the places to search.
 */

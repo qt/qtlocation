@@ -48,13 +48,11 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QPlaceManager
-
-    \brief The QPlaceManager class is responsible for the discovery and
-    management of places.
-
     \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
-    \ingroup places-main
+    \brief The QPlaceManager class is responsible for the discovery and management of places.
 */
 
 /*!

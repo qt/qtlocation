@@ -26,21 +26,11 @@
 ****************************************************************************/
 
 /*!
-    \group location
-    \title Location Classes
+\page qtlocation-cpp.html
+\title QtLocation C++ API
+\brief Information about the QtLocation C++ API
 
-    The Location API provides a library for location positioning, mapping and navigation.
-*/
-
-/*!
-\page location-overview.html
-
-\title QtLocation
-
-\brief The Location API provides a library for location positioning, mapping and navigation.
-
-\ingroup technology-apis
-
+The Location API provides a library for location positioning, mapping and navigation.
 
 \tableofcontents
 
@@ -53,26 +43,21 @@ position to see if it moves into or out of a given region. With the Maps API
 we can associate the position with a map in various formats supplied by a backend.
 Then the Places API could be used to populated locations on the Map or even
 the current position as a place of interest complete with icons, contact details
-and other information. A QML plugin means these powerful features are easily
-accessible even for users unfamiliar with C++.
+and other information.
 
-\section1 \l {Location Positioning}
+The following table provides links to more detailed information on section of the
+QtLocation C++ API.
 
-
-\section1 \l {Maps}{Location Maps and Navigation}
-
-
-\section1 \l {Places}{Location Places of Interest}
-
-
-\section1 QML Elements
-
-For details on the QML support provided for the Location API see the documentation for the
-\l {Location QML Plugin}.
-
-
-
+\table
+    \row
+        \o \l {Location Positioning}
+        \o Retrieving information about the current position.
+    \row
+        \o \l {Maps}{Maps and Navigation}
+        \o Displaying maps and finding routes.
+    \row
+        \o \l {Places}
+        \o Searching for places.
+\endtable
 */
-
-
 

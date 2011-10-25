@@ -46,15 +46,13 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass Coordinate
+    \qmlclass Coordinate QDeclarativeCoordinate
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-positioning
+    \since QtLocation 5.0
 
     \brief The Coordinate element holds various positional data, such as \l
     latitude, \l longitude and \l altitude.
-    \inherits QObject
-
-    \ingroup qml-location
-
-    The Coordinate element is part of the \bold{QtMobility.location 1.1} module.
 */
 
 QDeclarativeCoordinate::QDeclarativeCoordinate(QObject* parent)

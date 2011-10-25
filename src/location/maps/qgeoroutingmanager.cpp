@@ -49,14 +49,12 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRoutingManager
+    \inmodule QtLocation
+    \ingroup QtLocation-routing
+    \since QtLocation 5.0
 
     \brief The QGeoRoutingManager class provides support for geographic routing
     operations.
-
-
-    \inmodule QtLocation
-
-    \ingroup maps-routing
 
     The calculateRoute() and updateRoute() methods function QGeoRouteReply
     objects, which manage these operations and report on the result of the

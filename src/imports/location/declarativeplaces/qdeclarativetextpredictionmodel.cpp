@@ -52,9 +52,11 @@ QT_USE_NAMESPACE
 
 /*!
     \qmlclass TextPredictionModel QDeclarativeTextPredictionModel
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
+
     \brief The TextPredictionModel element provides access to text predictions.
-    \inherits QAbstractListModel
-    \ingroup qml-places
 
     TextPredictionModel provides a model of text prediction from PlaceManager.
     The contents of the model is string list. User can add additional parameters

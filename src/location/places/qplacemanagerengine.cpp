@@ -46,15 +46,13 @@ QT_USE_NAMESPACE
 
 /*!
     \class QPlaceManagerEngine
+    \inmodule QtLocation
+    \ingroup QtLocation-impl
+    \since QtLocation 5.0
 
     \brief The QPlaceManagerEngine class provides an interface and convenience methods to
     implementers of QGeoServiceProvider plugins who want to provide access to place search
     functionality.
-
-    \inmodule QtLocation
-    \since 5.0
-
-    \ingroup maps-impl
 
     Subclasses of QPlaceManagerEngine need to provide an implementation of getPlaceDetails(),
     getContent(), postRating(), getReviews(), searchForPlaces(), supportedSearchVisibilityScopes(),

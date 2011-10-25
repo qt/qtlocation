@@ -48,12 +48,12 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoManeuver
+    \inmodule QtLocation
+    \ingroup QtLocation-routing
+    \since QtLocation 5.0
+
     \brief The QGeoManeuver class represents the information relevant to the
     point at which two QGeoRouteSegments meet.
-
-    \inmodule QtLocation
-
-    \ingroup maps-routing
 
     QGeoRouteSegment instances can be thought of as edges on a routing
     graph, with QGeoManeuver instances as optional labels attached to the

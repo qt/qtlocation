@@ -51,11 +51,11 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoBoundingCircle
-    \brief The QGeoBoundingCircle class defines a circular geographic area.
-
     \inmodule QtLocation
+    \ingroup QtLocation-positioning
+    \since QtLocation 5.0
 
-    \ingroup maps
+    \brief The QGeoBoundingCircle class defines a circular geographic area.
 
     The circle is defined in terms of a QGeoCoordinate which specifies the
     center of the circle and a qreal which specifies the radius of the circle

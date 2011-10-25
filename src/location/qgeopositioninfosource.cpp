@@ -72,11 +72,11 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoPositionInfoSource
-    \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
-
     \inmodule QtLocation
+    \ingroup QtLocation-positioning
+    \since QtLocation 5.0
 
-    \ingroup location
+    \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
 
     The static function QGeoPositionInfoSource::createDefaultSource() creates a default
     position source that is appropriate for the platform, if one is available.

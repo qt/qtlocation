@@ -72,12 +72,11 @@ bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &othe
 
 /*!
     \class QPlaceSearchResult
-
-    \inmodule QPlaces
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
     \brief The QPlaceSearchResult class represents a search result object.
-
-    \ingroup places-main
 
     Each QPlaceSearchResult represents a place with a number of attributes
     such as distance, relevance, etc.

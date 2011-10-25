@@ -65,8 +65,9 @@ bool QPlaceUserPrivate::operator==(const QPlaceUserPrivate &other) const
 
 /*!
     \class QPlaceUser
-
-    \inmodule QPlaces
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
     \brief The QPlaceUser class represents a user.
 

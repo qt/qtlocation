@@ -45,13 +45,12 @@ QT_BEGIN_NAMESPACE
 
 /*!
   \class QGeoPositionInfoSourceFactory
+  \inmodule QtLocation
+  \ingroup QtLocation-impl
+  \since QtLocation 5.0
 
   \brief The QGeoPositionInfoSourceFactory class is a factory class used
   as the plugin interface for external providers of positioning data.
-
-  \inmodule QtLocation
-
-  \ingroup location
 
   Implementers must provide a unique combination of sourceName() and
   sourceVersion() per plugin.

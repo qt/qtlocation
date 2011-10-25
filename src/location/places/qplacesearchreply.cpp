@@ -58,13 +58,12 @@ QT_USE_NAMESPACE
 
 /*!
     \class QPlaceSearchReply
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
     \brief The QPlaceSearchReply class manages a search operation started by an
     instance of QPlaceManager.
-
-    \inmodule QtLocation
-
-    \ingroup places-main
 */
 
 /*!

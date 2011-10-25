@@ -73,8 +73,9 @@ bool QGeoLocationPrivate::operator==(const QGeoLocationPrivate &other) const
 
 /*!
     \class QGeoLocation
-
-    \inmodule QPlaces
+    \inmodule QtLocation
+    \ingroup QtLocation-positioning
+    \since QtLocation 5.0
 
     \brief The QGeoLocation class represents a location object.
 

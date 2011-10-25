@@ -74,12 +74,12 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass Map
+    \qmlclass Map QDeclarative3DGraphicsGeoMap
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-maps
+    \since QtLocation 5.0
 
     \brief The Map element displays a map.
-    \inherits QDeclarativeItem
-
-    \ingroup qml-location-maps
 
     The Map element can be used be used to display a map of the world.  The
     bulk of the functionality is provided by a mapping plugin described
@@ -101,8 +101,6 @@ QT_BEGIN_NAMESPACE
 
     Mouse handling is done by adding MapMouseArea items as children of either
     MapItems or the Map item itself.
-
-    The Map element is part of the \bold{QtLocation 5.0} module.
 */
 
 QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QQuickItem *parent)

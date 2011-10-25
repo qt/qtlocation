@@ -53,17 +53,17 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass PositionSource
+    \qmlclass PositionSource QDeclarativePositionSource
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-positioning
+    \since QtLocation 5.0
 
     \brief The PositionSource element allows you to get information about your
     current position.
-    \inherits QObject
-
-    \ingroup qml-location
 
     The PositionSource element allows you to get information about your current position.
     You can receive information about things such as latitude, longitude, altitude, and
-    speed. This element is part of the \bold{QtMobility.location 1.1} module.
+    speed.
 
     Support for location sources are platform dependant. When declaring a PositionSource element, a
     default PositionSource source shall be created. Supported positioning methods are held in
@@ -77,12 +77,6 @@ QT_BEGIN_NAMESPACE
 
     \sa {QGeoPositionInfoSource}, {QGeoPositionInfo}, {QNmeaPositionInfoSource}, {QGeoCoordinate}
 
-*/
-
-/*!
-    \internal
-    \class QDeclarativePositionSource
-    \brief The QDeclarativePositionSource provides positional data.
 */
 
 QDeclarativePositionSource::QDeclarativePositionSource()

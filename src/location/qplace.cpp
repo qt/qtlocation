@@ -50,12 +50,11 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QPlace
-    \brief The QPlace class represents basic information about a place.
-
     \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
-    \ingroup location
-    \ingroup places-main
+    \brief The QPlace class represents basic information about a place.
 */
 
 /*!

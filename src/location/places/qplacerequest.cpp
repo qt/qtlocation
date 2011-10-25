@@ -83,13 +83,11 @@ void QPlaceRequestPrivate::clear()
 
 /*!
     \class QPlaceQuery
-
-    \inmodule Location
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
     \brief The QPlaceQuery class is the base class used for various search queries.
-
-    \ingroup places-main
-
 */
 
 /*!

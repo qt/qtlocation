@@ -46,13 +46,11 @@ QT_USE_NAMESPACE
 
 /*!
     \class QPlaceReply
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
-    \inmodule Location
-
-    \brief The QPlaceReply class manages an operation started by
-    an instance of QPlaceManager.
-
-    \ingroup places-main
+    \brief The QPlaceReply class manages an operation started by an instance of QPlaceManager.
 */
 
 /*!

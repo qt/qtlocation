@@ -29,7 +29,6 @@
 /*!
     \page location-places.html
     \title Places
-    \previouspage QtLocation
 
     \brief Places enables places of interest to be identified and retrieved by
     position and metadata.
@@ -186,7 +185,6 @@
 
     \section1 Classes in Places
 
-    \annotatedlist places-main
-
+    \annotatedlist QtLocation-places
 */
 

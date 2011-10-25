@@ -73,11 +73,11 @@ QGeoAddressPrivate::~QGeoAddressPrivate()
 
 /*!
     \class QGeoAddress
-    \brief The QGeoAddress class represents an address
-
     \inmodule QtLocation
+    \ingroup QtLocation-positioning
+    \since QtLocation 5.0
 
-    \ingroup location
+    \brief The QGeoAddress class represents an address
 
     This class represents an address of a location.
 */

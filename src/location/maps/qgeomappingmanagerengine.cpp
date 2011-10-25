@@ -50,13 +50,13 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMappingManagerEngine
+    \inmodule QtLocation
+    \ingroup QtLocation-impl
+    \since QtLocation 5.0
+
     \brief The QGeoMappingManagerEngine class provides an interface and convenience methods
     to implementors of QGeoServiceProvider plugins who want to provides support for displaying
     and interacting with maps.
-
-    \inmodule QtLocation
-
-    \ingroup maps-impl
 
     Subclasses of QGeoMappingManagerEngine need to provide an implementations
     of createMapData(). The QGeoMapData instances returned by createMapData()

@@ -71,12 +71,12 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoServiceProvider
+    \inmodule QtLocation
+    \ingroup QtLocation-common
+    \since QtLocation 5.0
+
     \brief The QGeoServiceProvider class aggregates access to services which provide
     geographical information.
-
-    \inmodule QtLocation
-
-    \ingroup maps
 
     The Maps and Navigation API allows people to access various kinds of
     geographical information, including functionality to perform geocoding,

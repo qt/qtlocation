@@ -102,7 +102,7 @@ public:
             qmlRegisterType<QDeclarativePosition>(uri, 5, 0, "Position");
             qmlRegisterType<QDeclarativePositionSource>(uri, 5, 0, "PositionSource");
             qmlRegisterType<QDeclarativeCoordinate>(uri, 5, 0, "Coordinate");
-            qmlRegisterType<QDeclarativeGeoBoundingArea>();
+            qmlRegisterUncreatableType<QDeclarativeGeoBoundingArea>(uri, 5, 0, "BoundingArea", QDeclarativeGeoBoundingArea::tr("(Positioning)BoundingArea is not intended instantiable by developer."));
             qmlRegisterType<QDeclarativeGeoBoundingBox>(uri, 5, 0, "BoundingBox");
             qmlRegisterType<QDeclarativeGeoBoundingCircle>(uri, 5, 0, "BoundingCircle");
             qmlRegisterType<QDeclarativeGeoAddress>(uri, 5, 0, "Address");
@@ -121,7 +121,6 @@ public:
             qmlRegisterType<QDeclarativeGeoRoute>(uri, 5, 0, "Route"); // data type
             qmlRegisterType<QDeclarativeGeoRouteSegment>(uri, 5, 0, "RouteSegment");
             qmlRegisterType<QDeclarativeGeoManeuver>(uri, 5, 0, "RouteManeuver");
-            qmlRegisterType<QDeclarativeGeoBoundingCircle>(uri, 5, 0, "BoundingCircle");
             qmlRegisterUncreatableType<QDeclarativeGeoMapFlickable>(uri, 5, 0, "MapFlickable", QDeclarativeGeoMapFlickable::tr("(Map)Flickable is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QDeclarativeGeoMapPinchArea>(uri, 5, 0, "MapPinch", QDeclarativeGeoMapPinchArea::tr("(Map)PinchArea is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent>(uri, 5, 0, "", QDeclarativeGeoMapPinchEvent::tr("(Map)PinchEvent is not intended instantiable by developer."));
@@ -138,7 +137,7 @@ public:
             qmlRegisterType<QDeclarativePlaceUser>(uri, 5, 0, "User");
 
             qmlRegisterType<QDeclarativeRecommendationModel>(uri, 5, 0, "RecommendationModel");
-            qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "CategoriesModel");
+            qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "CategoryModel");
             qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "PlaceSearchModel");
             qmlRegisterType<QDeclarativeTextPredictionModel>(uri, 5, 0, "TextPredictionModel");
             qmlRegisterType<QDeclarativePropertyMap>(uri, 5,0,"ExtendedAttributes");

@@ -69,13 +69,11 @@ bool QPlaceImagePrivate::compare(const QPlaceContentPrivate *other) const
 
 /*!
     \class QPlaceImage
-
-    \inmodule QPlaces
-
-    \ingroup places-main
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
     \brief The QPlaceImage class represents an image.
-
 
     Each QPlaceImage represents an image with a number of attributes
     such as type, thumbnail, media provider etc.

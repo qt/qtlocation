@@ -50,24 +50,25 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass SupportedCategoryModel QDeclarativeSupportedCategoriesModel
-    \brief The SupportedCategoryModel element provides access to supported categories list.
-    \inherits QAbstractListModel
-    \ingroup qml-places
+    \qmlclass CategoryModel QDeclarativeSupportedCategoriesModel
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    SupportedCategoryModel provides a model of categories from the supported categories list.  The
+    \brief The CategoriesModel element provides access to supported categories list.
+
+    CategoriesModel provides a model of categories from the supported categories list.  The
     model can provide both a flat list of categories or a hierarchical tree representing category
     grouping.  This can be controlled by the \l hierarchy property.
 
     The model provides a single data role, \c category (\l Category).
 
-    To use SupportedCategoryModel user need to create it in qml file and connect it to some view
+    To use the CategoriesModel the user needs to create it in qml file and connect it to some view
     \code
     import QtQuick 2.0
     import QtLocation 5.0
 
-    SupportedCategoriesModel {
+    CategoriesModel {
         id: categoriesModel
         hierarchical: false
     }
@@ -88,13 +89,13 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty Plugin SupportedCategoriesModel::plugin
+    \qmlproperty Plugin CategoriesModel::plugin
 
     this property holds the provider Plugin used by this model.
 */
 
 /*!
-    \qmlproperty bool SupportedCategoriesModel::hierarchical
+    \qmlproperty bool CategoriesModel::hierarchical
 
     This property holds whether the model provides a hierarchical tree of categories or a flat
     list.  The default is true.

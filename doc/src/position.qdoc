@@ -233,7 +233,7 @@ images from Flickr relevant to the current location.
 
 \section1 Location Position classes
 
-\annotatedlist location
+\annotatedlist QtLocation-positioning
 
 
 */

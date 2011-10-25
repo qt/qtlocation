@@ -54,15 +54,15 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass Place
+    \qmlclass Place QDeclarativePlace
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
 
     \brief The Place element holds place data.
-    \inherits QObject
 
     Place cointains many properties holding data of the place like location,
     id, name etc.
-
-    \ingroup qml-places
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)

@@ -44,12 +44,13 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass RouteManeuver
+    \qmlclass RouteManeuver QDeclarativeGeoManeuver
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-routing
+    \since QtLocation 5.0
 
     \brief The RouteManeuver element represents the information relevant to the
     point at which two RouteSegments meet.
-    \ingroup qml-routing
-    \since 5.0
 
     RouteSegment instances can be thought of as edges on a routing
     graph, with RouteManeuver instances as optional labels attached to the

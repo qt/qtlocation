@@ -42,12 +42,23 @@
 #include "qdeclarativeplaceattribute_p.h"
 
 /*!
-    \qmlclass PlaceAttribute
+    \qmlclass ExtendedAttributes QDeclarativePropertyMap
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
+
+    \brief The ExtendedAttributes elements holds addition data about a Place.
+
+    \sa PlaceAttribute
+*/
+
+/*!
+    \qmlclass PlaceAttribute QDeclarativePlaceAttribute
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
 
     \brief The PlaceAttribute element holds generic place attribute information.
-    \inherits QObject
-
-    \ingroup qml-places
 */
 QDeclarativePlaceAttribute::QDeclarativePlaceAttribute(QObject *parent)
     : QObject(parent)

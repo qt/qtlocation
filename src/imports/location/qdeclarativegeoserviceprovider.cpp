@@ -51,14 +51,12 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass Plugin
+    \qmlclass Plugin QDeclarativeGeoServiceProvider
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-common
+    \since QtLocation 5.0
 
     \brief The Plugin element describes a Location based services plugin.
-    \inherits QObject
-
-    \ingroup qml-location-maps
-
-    The Plugin element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
@@ -328,14 +326,12 @@ QMap<QString, QVariant> QDeclarativeGeoServiceProvider::parameterMap() const
 *******************************************************************************/
 
 /*!
-    \qmlclass PluginParameter
+    \qmlclass PluginParameter QDeclarativeGeoServiceProviderParameter
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-common
+    \since QtLocation 5.0
 
     \brief The PluginParameter element describes the parameter to a \l Plugin.
-    \inherits QObject
-
-    \ingroup qml-location-maps
-
-    The PluginParameter element is part of the \bold{QtMobility.location 1.2} module.
 */
 
 QDeclarativeGeoServiceProviderParameter::QDeclarativeGeoServiceProviderParameter(QObject *parent)

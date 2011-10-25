@@ -47,11 +47,12 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass PlaceEditorialModel QDeclarativePlaceEditorialModel
+    \qmlclass EditorialModel QDeclarativePlaceEditorialModel
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
 
     \brief The PlaceEditorialModel element provides access to place editorials.
-    \ingroup qml-places
-    \since 5.0
 
     The PlaceEditorialModel is a read-only model used to fetch editorials related to a Place.  The
     model performs fetches incrementally.  The number of editorials which are fetched at a time is

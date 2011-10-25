@@ -65,16 +65,15 @@ bool QPlaceRatingPrivate::operator==(const QPlaceRatingPrivate &other) const
 
 /*!
     \class QPlaceRating
-
-    \inmodule QPlaces
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
     \brief The QPlaceRating class represents a rating object.
 
     Each QPlaceRating represents a rating object with a count and value.
 
     QPlaceRating is an in memory representation of a rating object.
-
-    \ingroup places-main
 */
 
 /*!

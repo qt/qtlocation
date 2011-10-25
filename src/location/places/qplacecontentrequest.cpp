@@ -74,13 +74,11 @@ void QPlaceContentRequestPrivate::clear()
 
 /*!
     \class QPlaceContentRequest
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
-    \inmodule Location
-
-    \brief The QPlaceContentRequest class represents the query parameters
-    of a content request.
-
-    \ingroup places-main
+    \brief The QPlaceContentRequest class represents the query parameters of a content request.
 
     The QPlaceContentRequest class represents a query parameters object, it currently
     specifies the type of content to be retrived.

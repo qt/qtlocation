@@ -46,15 +46,13 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRoutingManagerEngine
+    \inmodule QtLocation
+    \ingroup QtLocation-impl
+    \since QtLocation 5.0
 
     \brief The QGeoRoutingManagerEngine class provides an interface and
     convenience methods to implementers of QGeoServiceProvider plugins who want
     to provide access to geographic routing information.
-
-
-    \inmodule QtLocation
-
-    \ingroup maps-impl
 
     Subclasses of QGeoRoutingManagerEngine need to provide an implementation of
     calculateRoute().

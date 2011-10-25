@@ -52,14 +52,12 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeocodingManager
+    \inmodule QtLocation
+    \ingroup QtLocation-geocoding
+    \since QtLocation 5.0
 
     \brief The QGeocodingManager class provides support for geocoding
     operations.
-
-
-    \inmodule QtLocation
-
-    \ingroup maps-places
 
     The geocode(), reverseGeocode() and search() functions return
     QGeocodeReply objects, which manage these operations and report on the

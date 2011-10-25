@@ -44,11 +44,12 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass Route
+    \qmlclass Route QDeclarativeGeoRoute
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-routing
+    \since QtLocation 5.0
 
     \brief The Route element represents one geographical route.
-    \ingroup qml-routing
-    \since 5.0
 
     A Route element contains high level information about a route, such
     as the length the route, the estimated travel time for the route,

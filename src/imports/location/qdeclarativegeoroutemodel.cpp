@@ -49,11 +49,12 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass RouteModel
+    \qmlclass RouteModel QDeclarativeGeoRouteModel
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-routing
+    \since QtLocation 5.0
 
     \brief The RouteModel element provides access to routes.
-    \ingroup qml-routing
-    \since 5.0
 
     The RouteModel is model used to fetch routes. The routing result provider is determined
     by the \l plugin. The route data is set in \l query.
@@ -460,7 +461,13 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
     reply_ = 0;
 }
 
-// RouteQuery
+
+/*!
+    \qmlclass RouteQuery QDeclarativeGeoRouteQuery
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-routing
+    \since QtLocation 5.0
+*/
 
 QDeclarativeGeoRouteQuery::QDeclarativeGeoRouteQuery(QObject *parent)
     : QObject(parent),

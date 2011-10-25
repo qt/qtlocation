@@ -44,6 +44,16 @@
 QT_BEGIN_NAMESPACE
 
 namespace QtLocation {
+
+/*!
+    \namespace QtLocation
+    \inmodule QtLocation
+    \target QtLocation Namespace
+
+    \brief The QtLocation namespace contains miscellaneous identifiers used throughout the
+           QtLocation module.
+*/
+
 /*!
     \enum QtLocation::Visibility
 

@@ -79,11 +79,11 @@ QGeoCoordinatePrivate::QGeoCoordinatePrivate() {
 
 /*!
     \class QGeoCoordinate
-    \brief The QGeoCoordinate class defines a geographical position on the surface of the Earth.
-
     \inmodule QtLocation
+    \ingroup QtLocation-positioning
+    \since QtLocation 5.0
 
-    \ingroup location
+    \brief The QGeoCoordinate class defines a geographical position on the surface of the Earth.
 
     A QGeoCoordinate is defined by latitude, longitude, and optionally, altitude.
 

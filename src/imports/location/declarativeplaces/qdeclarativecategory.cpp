@@ -50,13 +50,12 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass Category
+    \qmlclass Category QDeclarativeCategory
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
 
-    \brief The Category element holds various positional data, such as \l
-    latitude and \l longitude and.
-    \inherits QObject
-
-    \ingroup qml-places
+    \brief The Category element represents a categorical grouping of places.
 */
 
 QDeclarativeCategory::QDeclarativeCategory(QObject* parent)

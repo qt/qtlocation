@@ -73,15 +73,14 @@ bool QPlaceSupplierPrivate::operator==(const QPlaceSupplierPrivate &other) const
 
 /*!
     \class QPlaceSupplier
-
-    \inmodule QPlaces
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
     \brief The QPlaceSupplier class represents a supplier object.
 
     Each QPlaceSupplier represents a supplier object with a number of attributes
     such as name, icon etc. Each QPlaceSupplier is associated with place, media, review or description.
-
-    \ingroup places-main
 */
 
 /*!

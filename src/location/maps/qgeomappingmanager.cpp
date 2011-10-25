@@ -53,12 +53,12 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMappingManager
+    \inmodule QtLocation
+    \ingroup QtLocation-maps
+    \since QtLocation 5.0
+
     \brief The QGeoMappingManager class provides support for displaying
     and interacting with maps.
-
-    \inmodule QtLocation
-
-    \ingroup maps-mapping
 
     A QGeoMappingManager instance can create QGeoMapData instances with
     createMapData(). The QGeoMapData instances can be used to contain and

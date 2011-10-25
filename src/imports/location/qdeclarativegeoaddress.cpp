@@ -45,11 +45,13 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass Address QDeclarativeGeoAddress
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-positioning
+    \since QtLocation 5.0
+
     \brief The Address element presents an address.
-    \ingroup qml-location
 
     The Address element presents an address of a location.
-    This element is part of the \bold{QtLocation 5.0} module.
 
     \sa {QGeoAddress}
 */

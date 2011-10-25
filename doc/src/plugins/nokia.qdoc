@@ -1,0 +1,123 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of
+** this file.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms
+** and conditions contained in a signed written agreement between you
+** and Nokia.
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+\page location-plugin-nokia.html
+\title QtLocation Nokia plugin
+\ingroup QtLocation-plugins
+
+\brief Uses the relevant Ovi services provided by Nokia.
+
+\section1 Overview
+
+Included with the QtLocation is a Maps and Navigation API plugin which accesses the relevant Ovi
+services provided by Nokia.  The use of these services is governed by the terms and conditions
+available in the file plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt.
+
+The Ovi services plugin can be loaded by using the plugin key "nokia".
+
+Note that accepting the terms and conditions only applies those terms and conditions to the use of
+the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API
+plugins that may be included with Qt.
+
+On Symbian platforms the applications using the Nokia plugin will need NetworkServices capability
+to access the online services.
+
+The online plugin uses the tiled map classes, which cache tile data in heap memory (currently up to
+10 MB on Symbian and Maemo5 and Harmattan platforms). Because default heap size for Qt application
+on Symbian is 4 MB, it may be good idea to increase the application's heap size (depending on the
+app of course). Otherwise somewhat misleading error popups may appear,
+e.g. "<application name>: Memory full. Close some applications and try again."
+See e.g.  \l {http://library.forum.nokia.com/index.jsp?topic=/Qt_for_Symbian_Developers_Library/GUID-4427F6F8-AB72-489B-BB9C-3261A0568E4E.html}{Forum Nokia documentation.}
+
+\section1 Parameters
+
+The following table lists optional parameters that can be passed to the Nokia plugin.
+\table
+\header
+    \o Parameter
+    \o Description
+\row
+    \o mapping.proxy
+    \o Proxy server URL used by mapping manager.
+\row
+    \o mapping.host
+    \o Map tile service URL used by mapping manager.
+\row
+    \o mapping.referer
+    \o Referer for the mapping token used for authentication by mapping manager.
+\row
+    \o mapping.token
+    \o Client token for the service used for authentication by mapping manager.
+\row
+    \o mapping.cache.directory
+    \o Map tile cache directory used as network disk cache.
+
+    Default place for the cache is "maptiles" directory in system temp.
+
+    On Symbian platform by default the cache is placed into internal mass memory drive directory
+    "/data/nokia/maptiles".
+
+    If no internal mass memory is present on Symbian device caching is not used by default.
+
+    Changing the cache directory on Symbian may cause additional capability needs depending on
+    where the new directory is placed.
+
+    Map tile caching is disabled on Maemo, Meego and Windows CE platforms. Using the parameter on
+    these platforms will have no effect.
+
+    Map tiles will expire and are refetched 14 days after download.
+\row
+    \o mapping.cache.size
+    \o Map tile cache size. Maximum size of the cache is 50MB.
+\row
+    \o routing.proxy
+    \o Proxy server URL used by routing manager.
+\row
+    \o routing.host
+    \o Routing service URL used by routing manager.
+\row
+    \o routing.referer
+    \o Referer for the routing token used for authentication by routing manager.
+\row
+    \o routing.token
+    \o Client token for the service used for authentication by routing manager.
+\row
+    \o places.proxy
+    \o Proxy server URL used by search manager.
+\row
+    \o places.host
+    \o Search service URL used by search manager.
+\row
+    \o places.referer
+    \o Referer for the places token used for authentication by search manager.
+\row
+    \o places.token
+    \o Client token for the service used for authentication by search manager.
+\endtable
+
+*/

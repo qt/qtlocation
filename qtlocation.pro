@@ -17,7 +17,11 @@ module_qtlocation_tests.depends = module_qtlocation_src
     module_qtlocation_tests.CONFIG = no_default_target no_default_install
 }
 
+module_qtlocation_doc.subdir = doc/src
+module_qtlocation_doc.target = module-qtlocation-doc
+module_qtlocation_doc.depends = module_qtlocation_src
 
 SUBDIRS += module_qtlocation_src \
            module_qtlocation_examples \
            module_qtlocation_tests \
+           module_qtlocation_doc

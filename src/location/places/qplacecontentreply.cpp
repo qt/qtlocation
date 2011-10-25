@@ -60,13 +60,12 @@ QT_USE_NAMESPACE
 
 /*!
     \class QPlaceContentReply
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
     \brief The QPlaceContentReply class manages a content retrieval operation started by an
     instance of QPlaceManager.
-
-    \inmodule QtLocation
-
-    \ingroup places-main
 */
 
 /*!

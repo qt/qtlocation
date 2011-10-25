@@ -49,11 +49,11 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QGeoBoundingBox
-    \brief The QGeoBoundingBox class defines a rectangular geographic area.
-
     \inmodule QtLocation
+    \ingroup QtLocation-positioning
+    \since QtLocation 5.0
 
-    \ingroup maps
+    \brief The QGeoBoundingBox class defines a rectangular geographic area.
 
     The rectangle is defined in terms of a QGeoCoordinate which specifies the
     top left coordinate of the rectangle and a QGeoCoordinate which specifies

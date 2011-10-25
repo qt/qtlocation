@@ -49,6 +49,7 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomapmousearea.cpp \
            qdeclarativegeoserviceprovider.cpp \
            qdeclarativegeoaddress.cpp \
+           qdeclarativegeoboundingarea.cpp \
            qdeclarativegeoboundingbox.cpp \
            qdeclarativegeocodemodel.cpp \
            qdeclarativegeoroutemodel.cpp \

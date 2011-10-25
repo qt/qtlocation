@@ -39,69 +39,22 @@
 **
 ****************************************************************************/
 
-#include "qplacedetailsreply.h"
-#include "qplacereply_p.h"
+#include "qdeclarativegeoboundingarea_p.h"
 
 QT_BEGIN_NAMESPACE
-class QPlaceDetailsReplyPrivate : public QPlaceReplyPrivate
-{
-public:
-    QPlaceDetailsReplyPrivate() {}
-    ~QPlaceDetailsReplyPrivate() {}
-    QPlace result;
-};
-
-QT_END_NAMESPACE
-
-QT_USE_NAMESPACE
 
 /*!
-    \class QPlaceDetailsReply
-    \inmodule QtLocation
-    \ingroup QtLocation-places
+    \qmlclass BoundingArea QDeclarativeGeoBoundingArea
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-positioning
     \since QtLocation 5.0
 
-    \brief The QPlaceDetailsReply class manages a place datails operation started by an
-    instance of QPlaceManager.
+    \brief The BoundingArea element represent an abstract geographic area.
+
+    The BoundingArea element is not intended to be instantiated by the developer.  Use BoundingBox
+    or BoundingCircle instead.
+
+    \sa BoundingBox, BoundingCircle
 */
 
-/*!
-    Constructs a search reply with a given \a parent.
-*/
-QPlaceDetailsReply::QPlaceDetailsReply(QObject *parent)
-    : QPlaceReply(new QPlaceDetailsReplyPrivate, parent)
-{
-}
-
-/*!
-    Destroys the search reply.
-*/
-QPlaceDetailsReply::~QPlaceDetailsReply()
-{
-}
-
-/*!
-    Returns the type of reply.
-*/
-QPlaceReply::Type QPlaceDetailsReply::type() const
-{
-    return QPlaceReply::DetailsReply;
-}
-
- /*!
-    Returns a place result
-*/
-QPlace QPlaceDetailsReply::place() const
-{
-    Q_D(const QPlaceDetailsReply);
-    return d->result;
-}
-
-/*!
-    Sets the \a place
-*/
-void QPlaceDetailsReply::setPlace(const QPlace &place)
-{
-    Q_D(QPlaceDetailsReply);
-    d->result = place;
-}
+QT_END_NAMESPACE

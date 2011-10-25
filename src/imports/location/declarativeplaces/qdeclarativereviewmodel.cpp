@@ -49,10 +49,11 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass ReviewModel QDeclarativeReviewModel
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
 
     \brief The ReviewModel element provides access to reviews of a Place.
-    \ingroup qml-places
-    \since 5.0
 
     The ReviewModel is a read-only model used to fetch reviews about a Place.  The model
     incrementally fetches reviews.  The number of reviews which are fetched at a time is specified

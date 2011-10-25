@@ -78,11 +78,11 @@ bool QPlaceReviewPrivate::compare(const QPlaceContentPrivate *other) const
 
 /*!
     \class QPlaceReview
-
-    \inmodule QPlaces
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \since QtLocation 5.0
 
     \brief The QPlaceReview class represents a review object.
-
 
     Each QPlaceReview represents a review object with a number of attributes
     such as rating, review id, connected media etc. Each QPlaceReview is associated
@@ -92,8 +92,6 @@ bool QPlaceReviewPrivate::compare(const QPlaceContentPrivate *other) const
     associated to specific place but can not edit its content. User might also create new review.
 
     QPlaceReview is an in memory representation of a review object.
-
-    \ingroup places-main
 */
 
 

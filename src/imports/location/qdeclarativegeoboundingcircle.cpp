@@ -45,7 +45,14 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass Yippiaiee! TODO
+    \qmlclass BoundingCircle QDeclarativeGeoBoundingCircle
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-positioning
+    \since QtLocation 5.0
+
+    \brief The BoundingCircle element represents a circular geographic area.
+
+    For behavioral details, please see \l QGeoBoundingCircle.
 */
 
 QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(QObject* parent)

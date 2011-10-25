@@ -47,12 +47,13 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass Position
+    \qmlclass Position QDeclarativePosition
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-positioning
+    \since QtLocation 5.0
 
     \brief The Position element holds various positional data, such as coordinate
     (longitude, latitude, altitude) and speed.
-    \inherits QObject
-    \ingroup qml-location
 
     The Position element holds various positional data, such as \l coordinate,
     (longitude, latitude, and altitude) and \l speed, as well as \l timestamp.
@@ -63,8 +64,6 @@ QT_BEGIN_NAMESPACE
 
     At the time being the Position element is a read-only element (meaning it does
     not have exposed write accessors), primarily used by \l PositionSource.
-
-    The Position element is part of the \bold{QtMobility.location 1.1} module.
 
     \sa PositionSource, Coordinate
 
