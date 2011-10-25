@@ -51,6 +51,8 @@ class QGeoSatelliteInfoPrivate
 public:
     int prn;
     int signal;
+    int satId;
+    QGeoSatelliteInfo::SatelliteSystem system;
     QHash<int, qreal> doubleAttribs;
 };
 
@@ -70,6 +72,9 @@ public:
     \enum QGeoSatelliteInfo::Attribute
     Defines the attributes for the satellite information.
 
+    \enum QGeoSatelliteInfo::SatelliteSystem
+    Defines the GNSS system of the satellite.
+
     \value Elevation The elevation of the satellite, in degrees.
     \value Azimuth The azimuth to true north, in degrees.
 */
@@ -83,6 +88,8 @@ QGeoSatelliteInfo::QGeoSatelliteInfo()
 {
     d->prn = -1;
     d->signal = -1;
+    d->satId = -1;
+    d->system = QGeoSatelliteInfo::Undefined;
 }
 
 /*!
@@ -113,6 +120,8 @@ QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo & other)
 
     d->prn = other.d->prn;
     d->signal = other.d->signal;
+    d->satId = other.d->satId;
+    d->system = other.d->system;
     d->doubleAttribs = other.d->doubleAttribs;
     return *this;
 }
@@ -125,6 +134,8 @@ bool QGeoSatelliteInfo::operator==(const QGeoSatelliteInfo &other) const
 {
     return d->prn == other.d->prn
            && d->signal == other.d->signal
+           && d->satId == other.d->satId
+           && d->system == other.d->system
            && d->doubleAttribs == other.d->doubleAttribs;
 }
 
@@ -148,10 +159,49 @@ void QGeoSatelliteInfo::setPrnNumber(int prn)
 /*!
     Returns the PRN (Pseudo-random noise) number, or -1 if the value has not been set.
 */
-
 int QGeoSatelliteInfo::prnNumber() const
 {
     return d->prn;
+}
+
+/*!
+    Sets the Satellite System (GPS, GLONASS, ...) to \a system.
+*/
+void QGeoSatelliteInfo::setSatelliteSystem(SatelliteSystem system)
+{
+    d->system = system;
+}
+
+/*!
+    Returns the Satellite System (GPS, GLONASS, ...)
+*/
+QGeoSatelliteInfo::SatelliteSystem QGeoSatelliteInfo::satelliteSystem() const
+{
+    return d->system;
+}
+
+/*!
+    Sets the satellite ID number to \a satId.
+
+    The satellite ID number can be used to identify a satellite inside the satellite system.
+    For satellite system GPS the satellite ID number represents the PRN (Pseudo-random noise) number.
+    For satellite system GLONASS the satellite ID number represents the slot number.
+*/
+void QGeoSatelliteInfo::setSatelliteIdentifier(int satId)
+{
+    d->satId = satId;
+}
+
+/*!
+    Returns the satellite ID number.
+
+    The satellite ID number can be used to identify a satellite inside the satellite system.
+    For satellite system GPS the satellite ID number represents the PRN (Pseudo-random noise) number.
+    For satellite system GLONASS the satellite ID number represents the slot number.
+*/
+int QGeoSatelliteInfo::satelliteIdentifier() const
+{
+    return d->satId;
 }
 
 /*!
@@ -211,9 +261,11 @@ bool QGeoSatelliteInfo::hasAttribute(Attribute attribute) const
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
 {
-    dbg.nospace() << "QGeoSatelliteInfo(PRN=" << info.d->prn;
-    dbg.nospace() << ", signal-strength=";
-    dbg.nospace() << info.d->signal;
+    dbg.nospace() << "QGeoSatelliteInfo(system=" << info.d->system;
+    dbg.nospace() << ", satId=" << info.d->satId;
+    dbg.nospace() << ", signal-strength=" << info.d->signal;
+    dbg.nospace() << ", PRN=" << info.d->prn;
+
 
     QList<int> attribs = info.d->doubleAttribs.keys();
     for (int i = 0; i < attribs.count(); i++) {
@@ -249,6 +301,8 @@ QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
     stream << info.d->prn;
     stream << info.d->signal;
     stream << info.d->doubleAttribs;
+    stream << info.d->satId;
+    stream << info.d->system;
     return stream;
 }
 #endif
@@ -266,9 +320,13 @@ QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
 
 QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info)
 {
+    int system;
     stream >> info.d->prn;
     stream >> info.d->signal;
     stream >> info.d->doubleAttribs;
+    stream >> info.d->satId;
+    stream >> system;
+    info.d->system = (QGeoSatelliteInfo::SatelliteSystem)system;
     return stream;
 }
 #endif

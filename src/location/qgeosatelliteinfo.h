@@ -61,6 +61,12 @@ public:
         Azimuth
     };
 
+    enum SatelliteSystem {
+        Undefined = 0x00,
+        GPS = 0x01,
+        GLONASS = 0x02
+    };
+
     QGeoSatelliteInfo();
     QGeoSatelliteInfo(const QGeoSatelliteInfo &other);
     ~QGeoSatelliteInfo();
@@ -71,6 +77,12 @@ public:
     inline bool operator!=(const QGeoSatelliteInfo &other) const {
         return !operator==(other);
     }
+
+    void setSatelliteSystem(SatelliteSystem system);
+    SatelliteSystem satelliteSystem() const;
+
+    void setSatelliteIdentifier(int satId);
+    int satelliteIdentifier() const;
 
     void setPrnNumber(int prn);
     int prnNumber() const;

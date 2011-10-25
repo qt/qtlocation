@@ -137,6 +137,18 @@ private:
             QTest::newRow("signal strength") << info;
         }
 
+        for (int i=0; i<intValues.count(); i++) {
+            QGeoSatelliteInfo info;
+            info.setSatelliteIdentifier(intValues[i]);
+            QTest::newRow("satellite identifier") << info;
+        }
+
+            QGeoSatelliteInfo info;
+            info.setSatelliteSystem(QGeoSatelliteInfo::GPS);
+            QTest::newRow("satellite system") << info;
+            info.setSatelliteSystem(QGeoSatelliteInfo::GLONASS);
+            QTest::newRow("satellite system") << info;
+
         QList<QGeoSatelliteInfo::Attribute> attributes = tst_qgeosatelliteinfo_getAttributes();
         QList<qreal> qrealValues = tst_qgeosatelliteinfo_qrealTestValues();
         for (int i=0; i<attributes.count(); i++) {
@@ -151,11 +163,12 @@ private slots:
         QGeoSatelliteInfo info;
         QCOMPARE(info.prnNumber(), -1);
         QCOMPARE(info.signalStrength(), -1);
+        QCOMPARE(info.satelliteIdentifier(), -1);
+        QCOMPARE(info.satelliteSystem(), QGeoSatelliteInfo::Undefined);
         QList<QGeoSatelliteInfo::Attribute> attributes = tst_qgeosatelliteinfo_getAttributes();
         for (int i=0; i<attributes.count(); i++)
             QCOMPARE(info.attribute(attributes[i]), qreal(-1.0));
     }
-
     void constructor_copy()
     {
         QFETCH(QGeoSatelliteInfo, info);
@@ -237,6 +250,48 @@ private slots:
         for (int i=0; i<intValues.count(); i++)
             QTest::newRow(qPrintable(QString("%1").arg(intValues[i]))) << intValues[i];
     }
+    void setSatelliteIdentifier()
+    {
+        QFETCH(int, satId);
+
+        QGeoSatelliteInfo info;
+        QCOMPARE(info.satelliteIdentifier(), -1);
+
+        info.setSatelliteIdentifier(satId);
+        QCOMPARE(info.satelliteIdentifier(), satId);
+    }
+
+    void setSatelliteIdentifier_data()
+    {
+        QTest::addColumn<int>("satId");
+
+        QList<int> intValues = tst_qgeosatelliteinfo_intTestValues();
+        for (int i=0; i<intValues.count(); i++)
+            QTest::newRow(qPrintable(QString("%1").arg(intValues[i]))) << intValues[i];
+    }
+
+    void setSatelliteSystem()
+    {
+        QFETCH(int, system);
+
+        QGeoSatelliteInfo info;
+        QCOMPARE(info.satelliteSystem(), QGeoSatelliteInfo::Undefined);
+
+        info.setSatelliteSystem(static_cast<QGeoSatelliteInfo::SatelliteSystem>(system));
+        QCOMPARE(info.satelliteSystem(), static_cast<QGeoSatelliteInfo::SatelliteSystem>(system));
+    }
+
+    void setSatelliteSystem_data()
+    {
+        QTest::addColumn<int>("system");
+
+        QTest::newRow("Sat system undefined")
+        << int(QGeoSatelliteInfo::Undefined);
+        QTest::newRow("Sat system GPS")
+        << int(QGeoSatelliteInfo::GPS);
+        QTest::newRow("Sat system GLONASS")
+        << int(QGeoSatelliteInfo::GLONASS);
+    }
 
     void attribute()
     {
@@ -248,7 +303,6 @@ private slots:
 
         u.setAttribute(attribute, value);
         QCOMPARE(u.attribute(attribute), value);
-
         u.removeAttribute(attribute);
         QCOMPARE(u.attribute(attribute), qreal(-1.0));
     }
@@ -355,27 +409,42 @@ private slots:
         QGeoSatelliteInfo info;
 
         QTest::newRow("uninitialized") << info
-                << QByteArray("QGeoSatelliteInfo(PRN=-1, signal-strength=-1)");
+                << QByteArray("QGeoSatelliteInfo(system=0, satId=-1, signal-strength=-1, PRN=-1)");
 
         info = QGeoSatelliteInfo();
         info.setPrnNumber(1);
         QTest::newRow("with PRN") << info
-                << QByteArray("QGeoSatelliteInfo(PRN=1, signal-strength=-1)");
+                << QByteArray("QGeoSatelliteInfo(system=0, satId=-1, signal-strength=-1, PRN=1)");
 
         info = QGeoSatelliteInfo();
         info.setSignalStrength(1);
-        QTest::newRow("with PRN") << info
-                << QByteArray("QGeoSatelliteInfo(PRN=-1, signal-strength=1)");
+        QTest::newRow("with SignalStrength") << info
+                << QByteArray("QGeoSatelliteInfo(system=0, satId=-1, signal-strength=1, PRN=-1)");
+
+        info = QGeoSatelliteInfo();
+        info.setSatelliteIdentifier(1);
+        QTest::newRow("with SatelliteIdentifier") << info
+                << QByteArray("QGeoSatelliteInfo(system=0, satId=1, signal-strength=-1, PRN=-1)");
+
+        info = QGeoSatelliteInfo();
+        info.setSatelliteSystem(QGeoSatelliteInfo::GPS);
+        QTest::newRow("with System GPS") << info
+                << QByteArray("QGeoSatelliteInfo(system=1, satId=-1, signal-strength=-1, PRN=-1)");
+
+        info = QGeoSatelliteInfo();
+        info.setSatelliteSystem(QGeoSatelliteInfo::GLONASS);
+        QTest::newRow("with System GLONASS") << info
+                << QByteArray("QGeoSatelliteInfo(system=2, satId=-1, signal-strength=-1, PRN=-1)");
 
         info = QGeoSatelliteInfo();
         info.setAttribute(QGeoSatelliteInfo::Elevation, 1.1);
         QTest::newRow("with Elevation") << info
-                << QByteArray("QGeoSatelliteInfo(PRN=-1, signal-strength=-1, Elevation=1.1)");
+                << QByteArray("QGeoSatelliteInfo(system=0, satId=-1, signal-strength=-1, PRN=-1, Elevation=1.1)");
 
         info = QGeoSatelliteInfo();
         info.setAttribute(QGeoSatelliteInfo::Azimuth, 1.1);
         QTest::newRow("with Azimuth") << info
-                << QByteArray("QGeoSatelliteInfo(PRN=-1, signal-strength=-1, Azimuth=1.1)");
+                << QByteArray("QGeoSatelliteInfo(system=0, satId=-1, signal-strength=-1, PRN=-1, Azimuth=1.1)");
     }
 };
 
