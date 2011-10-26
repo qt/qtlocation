@@ -108,6 +108,8 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QQuickItem *parent)
       plugin_(0),
       serviceProvider_(0),
       mappingManager_(0),
+      zoomLevel_(8.0),
+      bearing_(0.0),
       center_(0),
 //      mapType_(NoMap),
 //      connectivityMode_(NoConnectivity),
@@ -121,7 +123,6 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QQuickItem *parent)
       tileCache_(0)
 {
     QLOC_TRACE0;
-    zoomLevel_ = 8;
     size_ = QSizeF(100.0, 100.0);
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
@@ -560,6 +561,7 @@ void QDeclarative3DGraphicsGeoMap::mappingManagerInitialized()
     CameraData cameraData = map_->cameraData();
     cameraData.setCenter(center_->coordinate());
     cameraData.setZoomFactor(zoomLevel_);
+    cameraData.setBearing(bearing_);
     map_->setCameraData(cameraData);
     map_->update();
 }
@@ -637,6 +639,55 @@ QSizeF QDeclarative3DGraphicsGeoMap::size() const
         return size_;
 }
 
+void QDeclarative3DGraphicsGeoMap::setBearing(qreal bearing)
+{
+    if (bearing_ == bearing)
+        return;
+    bool clockwise = (bearing >= 0);
+    qreal fractions = bearing - int(bearing);
+    bearing = (int(qAbs(bearing))) % 359;
+    if (!clockwise)
+        bearing = (-1.0 * bearing) + 360;
+    bearing_ = bearing + fractions;
+    if (mappingManagerInitialized_) {
+        CameraData cameraData = map_->cameraData();
+        cameraData.setBearing(bearing_);
+        map_->setCameraData(cameraData);
+    }
+    emit bearingChanged(bearing_);
+}
+
+/*!
+    \qmlproperty qreal Map::bearing
+
+    This property holds the current bearing (starting from 0 and increasing
+    clockwise to 359,9 degrees) pointing up.
+
+    For example setting bearing to 10 will set bearing 10 to point up, which
+    visually looks like rotating the map counter-clockwise.
+
+    You can also assign negative values, which will internally get
+    translated into positive bearing (e.g. -10 equals 350). This is primarily for
+    convenience (e.g. you can decrement bearing without worrying about it).
+    Assigning values greater than abs(360) will be mod'd (e.g. 365 will result
+    in 5).
+
+    The default value is 0 corresponding North pointing up.
+*/
+
+qreal QDeclarative3DGraphicsGeoMap::bearing() const
+{
+    if (mappingManagerInitialized_) {
+        if (map_->cameraData().bearing() >= 0)
+            return map_->cameraData().bearing();
+        else
+            return map_->cameraData().bearing() + 360;
+    } else {
+        return bearing_;
+    }
+}
+
+
 /*!
     \qmlproperty qreal Map::zoomLevel
 
@@ -650,11 +701,7 @@ void QDeclarative3DGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
 {
     if (zoomLevel_ == zoomLevel)
         return;
-    if (!componentCompleted_) {
-        zoomLevel_ = zoomLevel;
-        return;
-    }
-    if (mappingManager_ &&
+    if (mappingManagerInitialized_ &&
             (zoomLevel < mappingManager_->minimumZoomLevel() ||
              zoomLevel > mappingManager_->maximumZoomLevel())) {
         return;
@@ -662,12 +709,10 @@ void QDeclarative3DGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
     zoomLevel_ = zoomLevel;
     if (mappingManagerInitialized_) {
         CameraData cameraData = map_->cameraData();
-        cameraData.setZoomFactor(zoomLevel);
+        cameraData.setZoomFactor(zoomLevel_);
         map_->setCameraData(cameraData);
-        if (!map_->autoUpdate())
-            map_->update();
     }
-    emit zoomLevelChanged(zoomLevel_);
+    emit zoomLevelChanged(zoomLevel);
 }
 
 qreal QDeclarative3DGraphicsGeoMap::zoomLevel() const
@@ -752,6 +797,10 @@ void QDeclarative3DGraphicsGeoMap::cameraDataChanged(const CameraData &cameraDat
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
         emit zoomLevelChanged(zoomLevel_);
+    }
+    if (cameraData.bearing() != bearing_) {
+        bearing_ = cameraData.bearing();
+        emit bearingChanged(bearing_);
     }
 }
 

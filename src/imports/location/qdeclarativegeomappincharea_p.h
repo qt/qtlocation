@@ -59,45 +59,30 @@ class QDeclarativeGeoMapPinchEvent : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QPointF center READ center) // TODO this probably needs to reset every time
-    Q_PROPERTY(QPointF startCenter READ startCenter)
-    Q_PROPERTY(QPointF previousCenter READ previousCenter)
-    Q_PROPERTY(qreal zoomLevel READ zoomLevel)
-    Q_PROPERTY(qreal previousZoomLevel READ previousZoomLevel)
+    Q_PROPERTY(QPointF center READ center)
     Q_PROPERTY(qreal angle READ angle)
-    Q_PROPERTY(qreal previousAngle READ previousAngle)
-    Q_PROPERTY(qreal rotation READ rotation)
     Q_PROPERTY(QPointF point1 READ point1)
-    Q_PROPERTY(QPointF startPoint1 READ startPoint1)
     Q_PROPERTY(QPointF point2 READ point2)
-    Q_PROPERTY(QPointF startPoint2 READ startPoint2)
     Q_PROPERTY(int pointCount READ pointCount)
     Q_PROPERTY(bool accepted READ accepted WRITE setAccepted)
 
 public:
-    QDeclarativeGeoMapPinchEvent(QPointF c, qreal s, qreal a, qreal r)
-        : QObject(), center_(c), zoomLevel_(s), angle_(a), rotation_(r)
-        , pointCount_(0), accepted_(true) {}
+    QDeclarativeGeoMapPinchEvent(QPointF center, qreal angle,
+                                 QPointF point1, QPointF point2,
+                                 int pointCount = 0, bool accepted = true)
+        : QObject(), center_(center), angle_(angle),
+          point1_(point1), point2_(point2),
+        pointCount_(pointCount), accepted_(accepted) {}
+    QDeclarativeGeoMapPinchEvent() {}
+
     QPointF center() const { return center_; }
-    QPointF startCenter() const { return startCenter_; }
-    void setStartCenter(QPointF c) { startCenter_ = c; }
-    QPointF previousCenter() const { return lastCenter_; }
-    void setPreviousCenter(QPointF c) { lastCenter_ = c; }
-    qreal zoomLevel() const { return zoomLevel_; }
-    qreal previousZoomLevel() const { return lastZoomLevel_; }
-    void setPreviousZoomLevel(qreal s) { lastZoomLevel_ = s; }
+    void setCenter(QPointF center) { center_ = center; }
     qreal angle() const { return angle_; }
-    qreal previousAngle() const { return lastAngle_; }
-    void setPreviousAngle(qreal a) { lastAngle_ = a; }
-    qreal rotation() const { return rotation_; }
+    void setAngle(qreal angle) { angle_ = angle; }
     QPointF point1() const { return point1_; }
     void setPoint1(QPointF p) { point1_ = p; }
-    QPointF startPoint1() const { return startPoint1_; }
-    void setStartPoint1(QPointF p) { startPoint1_ = p; }
     QPointF point2() const { return point2_; }
     void setPoint2(QPointF p) { point2_ = p; }
-    QPointF startPoint2() const { return startPoint2_; }
-    void setStartPoint2(QPointF p) { startPoint2_ = p; }
     int pointCount() const { return pointCount_; }
     void setPointCount(int count) { pointCount_ = count; }
     bool accepted() const { return accepted_; }
@@ -105,17 +90,9 @@ public:
 
 private:
     QPointF center_;
-    QPointF startCenter_;
-    QPointF lastCenter_;
-    qreal zoomLevel_;
-    qreal lastZoomLevel_;
     qreal angle_;
-    qreal lastAngle_;
-    qreal rotation_;
     QPointF point1_;
     QPointF point2_;
-    QPointF startPoint1_;
-    QPointF startPoint2_;
     int pointCount_;
     bool accepted_;
 };
@@ -129,15 +106,17 @@ class QDeclarativeGeoMapPinchArea: public QObject
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(bool active READ active NOTIFY activeChanged)
     Q_PROPERTY(ActiveGestures activeGestures READ activeGestures WRITE setActiveGestures NOTIFY activeGesturesChanged)
-    Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel WRITE setMinimumZoomLevel NOTIFY minimumZoomLevelChanged)
-    Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel WRITE setMaximumZoomLevel NOTIFY maximumZoomLevelChanged)
     Q_PROPERTY(qreal maximumZoomLevelChange READ maximumZoomLevelChange WRITE setMaximumZoomLevelChange NOTIFY maximumZoomLevelChangeChanged)
-    Q_PROPERTY(qreal minimumRotation READ minimumRotation WRITE setMinimumRotation NOTIFY minimumRotationChanged)
-    Q_PROPERTY(qreal maximumRotation READ maximumRotation WRITE setMaximumRotation NOTIFY maximumRotationChanged)
-    Q_PROPERTY(qreal rotationSpeed READ rotationSpeed WRITE setRotationSpeed NOTIFY rotationSpeedChanged)
-    Q_PROPERTY(qreal maximumTilt READ maximumTilt WRITE setMaximumTilt NOTIFY maximumTiltChanged)
-    Q_PROPERTY(qreal minimumTilt READ minimumTilt WRITE setMinimumTilt NOTIFY minimumTiltChanged)
-    Q_PROPERTY(qreal maximumTiltChange READ maximumTiltChange WRITE setMaximumTiltChange NOTIFY maximumTiltChangeChanged)
+    Q_PROPERTY(qreal rotationFactor READ rotationFactor WRITE setRotationFactor NOTIFY rotationFactorChanged)
+    // need for these is not clear, use-case(s) not yet identified:
+    //Q_PROPERTY(qreal minimumRotation READ minimumRotation WRITE setMinimumRotation NOTIFY minimumRotationChanged)
+    //Q_PROPERTY(qreal maximumRotation READ maximumRotation WRITE setMaximumRotation NOTIFY maximumRotationChanged)
+    //Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel WRITE setMinimumZoomLevel NOTIFY minimumZoomLevelChanged)
+    //Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel WRITE setMaximumZoomLevel NOTIFY maximumZoomLevelChanged)
+    // when tilt is supported, these are needed:
+    //Q_PROPERTY(qreal maximumTilt READ maximumTilt WRITE setMaximumTilt NOTIFY maximumTiltChanged)
+    //Q_PROPERTY(qreal minimumTilt READ minimumTilt WRITE setMinimumTilt NOTIFY minimumTiltChanged)
+    //Q_PROPERTY(qreal maximumTiltChange READ maximumTiltChange WRITE setMaximumTiltChange NOTIFY maximumTiltChangeChanged)
 
 public:
     QDeclarativeGeoMapPinchArea(QDeclarative3DGraphicsGeoMap* map, QObject *parent = 0);
@@ -175,8 +154,8 @@ public:
     qreal maximumRotation() const;
     void setMaximumRotation(qreal zoomLevel);
 
-    qreal rotationSpeed() const;
-    void setRotationSpeed(qreal speed);
+    qreal rotationFactor() const;
+    void setRotationFactor(qreal factor);
 
     qreal maximumTilt() const;
     void setMaximumTilt(qreal tilt);
@@ -199,7 +178,7 @@ signals:
     void maximumZoomLevelChangeChanged();
     void minimumRotationChanged();
     void maximumRotationChanged();
-    void rotationSpeedChanged();
+    void rotationFactorChanged();
     void activeGesturesChanged();
     void minimumTiltChanged();
     void maximumTiltChanged();
@@ -213,25 +192,18 @@ private:
     void updatePinch();
 
 private:
-    // pinch target (fixed for now)
     QDeclarative3DGraphicsGeoMap* map_;
-
-    // own
+    QDeclarativeGeoMapPinchEvent pinchEvent_;
     bool enabled_;
-
-    // qquickpinch
     bool active_;
     qreal minimumZoomLevel_;
     qreal maximumZoomLevel_;
     qreal minimumRotation_;
     qreal maximumRotation_;
-
-    // qquickpincharea
     QList<QTouchEvent::TouchPoint> touchPoints_;
     bool inPinch_;
     bool pinchRejected_;
     bool pinchActivated_;
-    //QQuickPinch *pinch_;
     QPointF sceneStartPoint1_;
     QPointF sceneStartPoint2_;
     QPointF lastPoint1_;
@@ -240,16 +212,12 @@ private:
     qreal pinchStartZoomLevel_;
     qreal pinchLastZoomLevel_;
     qreal pinchStartRotation_;
-    qreal pinchStartAngle_;
     qreal pinchLastAngle_;
     qreal pinchRotation_;
-    QPointF sceneStartCenter_;
-    QPointF pinchStartCenter_;
     QPointF sceneLastCenter_;
-    QPointF pinchStartPos_;
     int id1_;
     qreal maximumZoomLevelChange_;
-    qreal rotationSpeed_;
+    qreal rotationFactor_;
     ActiveGestures activeGestures_;
     qreal minimumTilt_;
     qreal maximumTilt_;

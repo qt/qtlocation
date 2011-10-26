@@ -102,6 +102,7 @@ class QDeclarative3DGraphicsGeoMap : public QQuickPaintedItem
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel CONSTANT)
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel CONSTANT)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
+    Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
 //    Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
     Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
 //    Q_PROPERTY(ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode NOTIFY connectivityModeChanged)
@@ -152,6 +153,9 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
+    void setBearing(qreal bearing);
+    qreal bearing() const;
+
     void setCenter(QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* center();
 
@@ -195,10 +199,6 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseDoubleClickEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
-    // hover is just a placeholder
-    //void hoverEnterEvent(QHoverEvent *event);
-    //void hoverMoveEvent(QHoverEvent *event);
-    //void hoverLeaveEvent(QHoverEvent *event);
     void keyPressEvent(QKeyEvent *e);
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
@@ -207,6 +207,7 @@ Q_SIGNALS:
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
     void sizeChanged(const QSizeF &size);
     void zoomLevelChanged(qreal zoomLevel);
+    void bearingChanged(qreal bearing);
     void centerChanged(const QDeclarativeCoordinate *coordinate);
 //    void mapTypeChanged(QDeclarative3DGraphicsGeoMap::MapType mapType);
 //    void connectivityModeChanged(QDeclarative3DGraphicsGeoMap::ConnectivityMode connectivityMode);
@@ -251,6 +252,7 @@ private:
     QGeoMappingManager* mappingManager_;
 
     qreal zoomLevel_;
+    qreal bearing_;
     QPointer<QDeclarativeCoordinate> center_;
 
 //    QDeclarative3DGraphicsGeoMap::MapType mapType_;

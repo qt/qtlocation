@@ -375,7 +375,7 @@ void QDeclarativePinchGenerator::timerEvent(QTimerEvent *event)
 
     replayBookmark_++;
     if (replayBookmark_ >= swipes_.at(masterSwipe_)->touchPoints.count()) {
-        qDebug() << "Pinch replay finished!";
+        //qDebug() << "Pinch replay finished!";
         stop();
     } else  {
         killTimer(replayTimer_);

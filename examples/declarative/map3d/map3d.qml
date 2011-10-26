@@ -51,11 +51,6 @@ Item {
     //height: 640
     id: page
 
-    //Rectangle {
-    //    id: bottleAnimation
-    //    width: animation.width; height: animation.height + 8
-        // }
-
     // From location.test plugin
     TestModel {
           id: testModel
@@ -65,54 +60,6 @@ Item {
           crazyMode:  false  // generate arbitrarily updates. interval is set below, and the number of items is varied between 0..datacount
           crazyLevel: 2000 // the update interval varies between 3...crazyLevel (ms)
       }
-
-    Item {
-        visible: false
-        id: shaderItem
-        width: 256
-        height: 256
-        x: 100
-        y: 100
-        Rectangle {
-            radius: 20
-            id: shaderRect
-            width: parent.width
-            height: parent.height/4
-            color: 'red'
-            z: 1
-            Text {text: "Wicked!"}
-
-            SequentialAnimation on color {
-                loops: Animation.Infinite
-                ColorAnimation { from: "DeepSkyBlue"; to: "red"; duration: 2000 }
-                ColorAnimation { from: "red"; to: "DeepSkyBlue"; duration: 2000 }
-            }
-        }
-        Rectangle {
-            id: shaderRect2
-            opacity: 0.5
-            //width: parent.width
-            anchors.fill: shaderRect
-            //height: parent.height/4
-            color: 'green'
-            Text {text: "Sick!"}
-        }
-        Rectangle {
-            id: shaderRect3
-            width: parent.width
-            anchors.top: shaderRect2.bottom
-            height: parent.height/4
-            color: 'blue'
-            Text {text: "Sick!"}
-        }
-        Rectangle {
-            width: parent.width
-            anchors.top: shaderRect3.bottom
-            height: parent.height/4
-            color: 'yellow'
-            Text {text: "Sick!"}
-        }
-    }
 
     Column {
         id: buttonColumn
@@ -182,6 +129,20 @@ Item {
             Text {text: "Click:\nalt--"}
             MouseArea{ anchors.fill: parent;
                 onClicked: { mapCenterCoordinate.altitude -= 1}
+            }
+        }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Click:\nbear++"}
+            MouseArea{ anchors.fill: parent;
+                onClicked: { map.bearing += 1.1}
+                onDoubleClicked: { map.bearing += 20.1}
+            }
+        }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Click:\nbear--"}
+            MouseArea{ anchors.fill: parent;
+                onClicked: { map.bearing -= 1.1}
+                onDoubleClicked: { map.bearing -= 20.1}
             }
         }
         Rectangle {color: "lightblue"; width: 80; height: 40;
@@ -338,7 +299,7 @@ Item {
             target: map
             enabled: false
             focus: true           // enables keyboard control for convinience
-            replaySpeedFactor: 1.1 // replay with 1.1 times the recording speed to better see what happens
+            replaySpeedFactor: 1.7 // replay with 1.1 times the recording speed to better see what happens
             Text {
                 id: pinchGenText
                 text: "PinchArea state: " + pinchGenerator.state + "\n"
@@ -353,6 +314,8 @@ Item {
             Text {id: positionText; text: "Map zoom level: " + map.zoomLevel; color: 'red'; font.bold: true}
             Text {color: positionText.color; font.bold: true; width: page.width / 2; elide: Text.ElideRight; text: "Map center lat: " + mapCenterCoordinate.latitude }
             Text {color: positionText.color; font.bold: true; width: page.width / 2; elide: Text.ElideRight; text: "Map center lon: " + mapCenterCoordinate.longitude }
+            Text {color: positionText.color; font.bold: true; width: page.width / 2; elide: Text.ElideRight; text: "Map bearing: " + map.bearing }
+
         }
 
         /*
@@ -370,13 +333,12 @@ Item {
             y: 1050
             Text {id: firstText; text: "Map zoom level: " + map.zoomLevel; color: 'red'; font.bold: true}
             Text {text: "Pinch zoom sensitivity: " + map.pinch.maximumZoomLevelChange; color: firstText.color; font.bold: true}
-            Text {text: "Pinch rotation sensitivity: " + map.pinch.rotationSpeed; color: firstText.color; font.bold: true}
+            Text {text: "Pinch rotation sensitivity: " + map.pinch.rotationFactor; color: firstText.color; font.bold: true}
         }
 
         Row {
             spacing: 15
             anchors.top: textRow1.bottom
-            Text {text: "Pinch tilt sensitivity: " + map.pinch.maximumTiltChange; color: firstText.color; font.bold: true}
             Text {text: "Flick deceleration: " + map.flick.deceleration; color: firstText.color; font.bold: true}
             Text {text: "Weather: Sunny, mild, late showers."; color: firstText.color; font.bold: true}
         }
@@ -399,17 +361,9 @@ Item {
 
         // pinch.activeGestures: MapPinch.ZoomGesture | RotationGesture
         pinch.activeGestures: MapPinch.NoGesture
-
         pinch.enabled: true
-        pinch.maximumZoomLevel: 20        // biggest zoomlevel allowed
-        pinch.minimumZoomLevel: 1         // smallest zoomlevel allowed
-        pinch.maximumZoomLevelChange: 1.0 // maximum zoomlevel changes per pinch
-        pinch.maximumRotation: 0 // unlimited
-        pinch.minimumRotation: 0 // unlimited
-        pinch.rotationSpeed: 1.0 // default ~follows angle between fingers
-        pinch.maximumTilt: 90
-        pinch.minimumTilt: 0
-        pinch.maximumTiltChange: 35
+        pinch.maximumZoomLevelChange: 4.0 // maximum zoomlevel changes per pinch
+        pinch.rotationFactor: 1.0 // default ~follows angle between fingers
 
         // Flicking
         flick.enabled: true
@@ -431,19 +385,33 @@ Item {
             pinchRect1.x = pinch.point1.x; pinchRect1.y = pinch.point1.y;
             pinchRect2.x = pinch.point2.x; pinchRect2.y = pinch.point2.y;
             pinchRect1.visible = true; pinchRect2.visible = true;
-            //console.log('Point 1 x: ' + pinch.point1.x + ' Point2 x' + pinch.point2.x)
-            //console.log('Center x: ' + pinch.center.x + ' Point1 y: ' + pinch.point1.y)
+            console.log('Center : ' + pinch.center)
+            console.log('Angle: ' + pinch.angle)
+            console.log('Point count: ' + pinch.pointCount)
+            console.log('Accepted: ' + pinch.accepted)
+            console.log('Point 1: ' + pinch.point1)
+            console.log('Point 2: ' + pinch.point2)
         }
         pinch.onPinchUpdated: {
             console.log('Map element pinch updated---------+++++++++++++++++++++++++++++++++++++')
             pinchRect1.x = pinch.point1.x; pinchRect1.y = pinch.point1.y;
             pinchRect2.x = pinch.point2.x; pinchRect2.y = pinch.point2.y;
+            console.log('Center : ' + pinch.center)
+            console.log('Angle: ' + pinch.angle)
+            console.log('Point count: ' + pinch.pointCount)
+            console.log('Accepted: ' + pinch.accepted)
+            console.log('Point 1: ' + pinch.point1)
+            console.log('Point 2: ' + pinch.point2)
         }
         pinch.onPinchFinished: {
             console.log('Map element pinch finished ---------+++++++++++++++++++++++++++++++++++++')
             pinchRect1.visible = false; pinchRect2.visible = false;
-            //map.pinch.minimumZoomLevel =  map.zoomLevel - 2
-            //map.pinch.maximumZoomLevel = map.zoomLevel + 2
+            console.log('Center : ' + pinch.center)
+            console.log('Angle: ' + pinch.angle)
+            console.log('Point count: ' + pinch.pointCount)
+            console.log('Accepted: ' + pinch.accepted)
+            console.log('Point 1: ' + pinch.point1)
+            console.log('Point 2: ' + pinch.point2)
         }
 
         center: Coordinate {
@@ -481,23 +449,13 @@ Item {
             }
         }
         Rectangle { width: rowRect1.width; height: rowRect1.height; color: rowRect1.color;
-            MouseArea { anchors.fill: parent; onClicked: {map.pinch.rotationSpeed += 0.1}
+            MouseArea { anchors.fill: parent; onClicked: {map.pinch.rotationFactor += 0.1}
                 Text {text: "Pinch rotation\nsensitivity+"}
             }
         }
         Rectangle { width: rowRect1.width; height: rowRect1.height; color: rowRect1.color;
-            MouseArea { anchors.fill: parent; onClicked: {map.pinch.rotationSpeed -= 0.1}
+            MouseArea { anchors.fill: parent; onClicked: {map.pinch.rotationFactor -= 0.1}
                 Text {text: "Pinch rotation\nsensitivity-"}
-            }
-        }
-        Rectangle { width: rowRect1.width; height: rowRect1.height; color: rowRect1.color;
-            MouseArea { anchors.fill: parent; onClicked: {map.pinch.maximumTiltChange += 1}
-                Text {text: "Pinch tilt\nsensitivity+"}
-            }
-        }
-        Rectangle { width: rowRect1.width; height: rowRect1.height; color: rowRect1.color;
-            MouseArea { anchors.fill: parent; onClicked: {map.pinch.maximumTiltChange -= 1}
-                Text {text: "Pinch tilt\nsensitivity-"}
             }
         }
         Rectangle { id: rowRectPinchGen; width: rowRect1.width; height: rowRect1.height; color: 'lightsteelblue';
