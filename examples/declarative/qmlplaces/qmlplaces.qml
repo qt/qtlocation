@@ -254,7 +254,7 @@ Rectangle {
         //onQueryFinished: console.log("datareceived " + error)
     }
 
-    CategoriesModel {
+    CategoryModel {
         id: categoriesModel
         plugin: geoServices
         hierarchical: true
