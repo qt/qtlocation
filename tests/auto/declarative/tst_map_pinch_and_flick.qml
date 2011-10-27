@@ -69,8 +69,22 @@ Item {
             //console.log('Pinch got updated, point1: ' + pinch.point1 + ' point2: ' + pinch.point2 + ' angle: ' + pinch.angle)
         }
         pinch.onPinchFinished: {map.lastPinchEvent = pinch}
+        property real flickStartedLatitude
+        property real flickStartedLongitude
+        property bool disableFlickOnStarted: false
+        property bool disableFlickOnMovementStarted: false
+        flick.onMovementStarted: {
+            if (disableFlickOnMovementStarted)
+                map.flick.enabled = false
+        }
+        flick.onFlickStarted: {
+            flickStartedLatitude = map.center.latitude
+            flickStartedLatitude = map.center.longitude
+            if (disableFlickOnStarted) {
+                map.flick.enabled = false
+            }
+        }
     }
-
     SignalSpy {id: centerSpy; target: map; signalName: 'centerChanged'}
     SignalSpy {id: coordinate2LatitudeSpy; target: coordinate2; signalName: 'latitudeChanged'}
     SignalSpy {id: coordinate2LongitudeSpy; target: coordinate2; signalName: 'longitudeChanged'}
@@ -89,6 +103,12 @@ Item {
     SignalSpy {id: pinchActiveGesturesSpy; target: map.pinch; signalName: 'activeGesturesChanged'}
     SignalSpy {id: mapZoomLevelSpy; target: map; signalName: 'zoomLevelChanged'}
     SignalSpy {id: mapBearingSpy; target: map; signalName: 'bearingChanged'}
+    SignalSpy {id: flickEnabledSpy; target: map.flick; signalName: 'enabledChanged'}
+    SignalSpy {id: flickDecelerationSpy; target: map.flick; signalName: 'decelerationChanged'}
+    SignalSpy {id: flickMovementStartedSpy; target: map.flick; signalName: 'movementStarted'}
+    SignalSpy {id: flickMovementEndedSpy; target: map.flick; signalName: 'movementEnded'}
+    SignalSpy {id: flickStartedSpy; target: map.flick; signalName: 'flickStarted'}
+    SignalSpy {id: flickEndedSpy; target: map.flick; signalName: 'flickEnded'}
 
     // From QtLocation.test plugin
     PinchGenerator {
@@ -121,6 +141,12 @@ Item {
             pinchActiveGesturesSpy.clear()
             mapZoomLevelSpy.clear()
             mapBearingSpy.clear()
+            flickEnabledSpy.clear()
+            flickDecelerationSpy.clear()
+            flickMovementStartedSpy.clear()
+            flickMovementEndedSpy.clear()
+            flickStartedSpy.clear()
+            flickEndedSpy.clear()
         }
 
         function test_a_basic_properties() { // a to excecute first
@@ -266,14 +292,36 @@ Item {
             */
 
             // flick
+            compare(map.flick.enabled, true)
+            map.flick.enabled = false
+            compare(flickEnabledSpy.count, 1)
+            compare(map.flick.enabled, false)
+            map.flick.enabled = false
+            compare(flickEnabledSpy.count, 1)
+            map.flick.enabled = true
 
-
+            compare(map.flick.deceleration, 2500)
+            map.flick.deceleration = 2600
+            compare(flickDecelerationSpy.count, 1)
+            compare(map.flick.deceleration, 2600)
+            map.flick.deceleration = 2600
+            compare(flickDecelerationSpy.count, 1)
+            compare(map.flick.deceleration, 2600)
+            map.flick.deceleration = 400 // too small
+            compare(flickDecelerationSpy.count, 2)
+            compare(map.flick.deceleration, 500) // clipped to min
+            map.flick.deceleration = 11000 // too big
+            compare(flickDecelerationSpy.count, 3)
+            compare(map.flick.deceleration, 10000) // clipped to max
         }
 
         function test_b_pinch_rotation() {
             map.pinch.activeGestures = MapPinch.RotationGesture
             map.pinch.rotationFactor = 1.0
             map.zoomLevel = 8
+            compare(map.zoomLevel, 8)
+            map.center.latitude = 10
+            map.center.longitude = 11
             clear_data()
             compare(map.bearing, 0)
             // 1. basic ccw rotation
@@ -368,6 +416,138 @@ Item {
             pinchGenerator.pinch(Qt.point(100, 0),Qt.point(50, 0),Qt.point(0, 100),Qt.point(50, 100)); //ccw
             tryCompare(pinchFinishedSpy, "count", 1);
             compare(map.bearing, ccw_basic * 5)
+        }
+
+        function test_a_flick() {
+            clear_data()
+            var i=0
+            //var moveLatitude=0
+            // few sanity checks
+            map.flick.enabled = true
+            // to get maximum changes (robust autotest)
+            map.flick.deceleration = 500
+            map.zoomLevel = 0
+            compare(map.center.latitude, coordinate1.latitude)
+            compare(map.center.longitude, coordinate1.longitude)
+            // 1. test basic flick down
+            clear_data()
+            map.center.latitude = 10
+            map.center.longitude = 11
+            mousePress(map, 0, 50)
+            for (i=0; i < 50; i += 5) {
+                wait(20)
+                mouseMove(map, 0, (50 + i), 0, Qt.LeftButton);
+            }
+            mouseRelease(map, 0, (50 + i))
+
+            // order of signals is: movementStarted, flickStarted, either order: (flickEnded, movementEnded)
+            tryCompare(flickMovementStartedSpy, "count", 1)
+            verify(map.center.latitude > 10) // latitude increases we are going 'up/north' (moving mouse down)
+            var moveLatitude = map.center.latitude // store lat and check that flick continues
+            tryCompare(flickStartedSpy, "count", 1)
+
+            tryCompare(flickMovementEndedSpy, "count", 1)
+            tryCompare(flickEndedSpy, "count", 1)
+            verify(map.center.latitude > moveLatitude)
+            compare(map.center.longitude, 11) // should remain the same
+
+            // 2. test basic flick up
+            clear_data()
+            map.center.latitude = 70
+            map.center.longitude = 11
+            mousePress(map, 10, 95)
+            for (i=45; i > 0; i -= 5) {
+                wait(20)
+                mouseMove(map, 10, (50 + i), 0, Qt.LeftButton);
+            }
+            mouseRelease(map, 10, (50 + i))
+            tryCompare(flickMovementStartedSpy, "count", 1)
+            verify(map.center.latitude < 70)
+            moveLatitude = map.center.latitude // store lat and check that flick continues
+            tryCompare(flickStartedSpy, "count", 1)
+            tryCompare(flickMovementEndedSpy, "count", 1)
+            tryCompare(flickEndedSpy, "count", 1)
+            verify(map.center.latitude < moveLatitude)
+            compare(map.center.longitude, 11) // should remain the same
+
+            // 3. basic flick diagonal
+            clear_data()
+            map.center.latitude = 50
+            map.center.longitude = 50
+            mousePress(map, 0, 0)
+            for (i=0; i < 50; i += 5) {
+                wait(20)
+                mouseMove(map, i, i, 0, Qt.LeftButton);
+            }
+            mouseRelease(map, i, i)
+            tryCompare(flickMovementStartedSpy, "count", 1)
+            verify(map.center.latitude > 50)
+            verify(map.center.longitude < 50)
+            moveLatitude = map.center.latitude
+            var moveLongitude = map.center.longitude
+            tryCompare(flickStartedSpy, "count", 1)
+            tryCompare(flickMovementEndedSpy, "count", 1)
+            tryCompare(flickEndedSpy, "count", 1)
+            verify(map.center.latitude > moveLatitude)
+            verify(map.center.longitude < moveLongitude)
+            var diagonalFlickResultLatitude = map.center.latitude
+            var diagonalFlickResultLongitude = map.center.longitude
+            // 4. test flicking while disabled
+            clear_data()
+            map.flick.enabled = false
+            map.center.latitude = 50
+            map.center.longitude = 50
+            for (i=0; i < 50; i += 5) {
+                wait(20)
+                mouseMove(map, i, i, 0, Qt.LeftButton);
+            }
+            mouseRelease(map, i, i)
+            compare(flickStartedSpy.count, 0)
+            compare(flickEndedSpy.count, 0)
+            compare(flickMovementStartedSpy.count, 0)
+            compare(flickMovementEndedSpy.count, 0)
+            map.flick.enabled = true
+
+            // 5. disable during flick: onFlickStarted
+            clear_data()
+            map.disableFlickOnStarted = true
+            map.center.latitude = 50
+            map.center.longitude = 50
+            mousePress(map, 0, 0)
+            for (i=0; i < 50; i += 5) {
+                wait(20)
+                mouseMove(map, i, i, 0, Qt.LeftButton);
+            }
+            mouseRelease(map, i, i)
+            tryCompare(flickStartedSpy, "count", 1)
+            verify(map.center.latitude > 50)
+            tryCompare(flickStartedSpy, "count", 1)
+            tryCompare(flickMovementEndedSpy, "count", 1)
+            tryCompare(flickEndedSpy, "count", 1)
+            // compare that flick was interrupted (less movement than without interrupting)
+            verify(diagonalFlickResultLatitude > map.center.latitude)
+            verify(diagonalFlickResultLongitude < map.center.longitude)
+            map.disableFlickOnStarted = false
+            map.flick.enabled = true
+
+            // 6. disable during flick: onMovementStarted
+            clear_data()
+            map.disableFlickOnMovementStarted = true
+            map.center.latitude = 50
+            map.center.longitude = 50
+            mousePress(map, 0, 0)
+            for (i=0; i < 50; i += 5) {
+                wait(20)
+                mouseMove(map, i, i, 0, Qt.LeftButton);
+            }
+            mouseRelease(map, i, i)
+            tryCompare(flickMovementStartedSpy, "count", 1)
+            verify(map.center.latitude > 50)
+            tryCompare(flickMovementEndedSpy, "count", 1)
+            // compare that flick was interrupted (less movement than without interrupting)
+            verify(diagonalFlickResultLatitude > map.center.latitude)
+            verify(diagonalFlickResultLongitude < map.center.longitude)
+            map.disableFlickOnMovementStarted = false
         }
 
         function test_pinch_zoom() {

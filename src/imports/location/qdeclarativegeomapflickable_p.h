@@ -42,11 +42,6 @@
 #ifndef QDECLARATIVEGEOMAPFLICKABLE_H
 #define QDECLARATIVEGEOMAPFLICKABLE_H
 
-// Constant value from QQuickFlickable
-// The number of samples to use in calculating the velocity of a flick
-#ifndef QML_FLICK_SAMPLEBUFFER
-#define QML_FLICK_SAMPLEBUFFER 3
-#endif
 
 #include <QtDeclarative/qdeclarative.h>
 #include <QtGui/qevent.h>
@@ -55,8 +50,6 @@
 #include <QObject>
 #include <QDebug>
 
-// Internal. Calculates relevant flick parameters based on mouse
-// movements, which can then be used to fire a panning animation.
 QT_BEGIN_NAMESPACE
 
 class QGraphicsSceneMouseEvent;
@@ -89,8 +82,9 @@ public:
 
 signals:
     void decelerationChanged();
-    void movementStarted();
     void enabledChanged();
+    // public (documented) signals:
+    void movementStarted();
     void movementEnded();
     void flickStarted();
     void flickEnded();

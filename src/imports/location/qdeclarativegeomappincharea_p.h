@@ -97,6 +97,8 @@ private:
     bool accepted_;
 };
 
+// tbd: should we have a 'active' / 'moving' boolean attribute when pinch is active?
+
 class QDeclarativeGeoMapPinchArea: public QObject
 {
     Q_OBJECT

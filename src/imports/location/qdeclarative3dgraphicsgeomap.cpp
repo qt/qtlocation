@@ -1150,6 +1150,7 @@ void QDeclarative3DGraphicsGeoMap::mouseDoubleClickEvent(QMouseEvent *event)
 
 void QDeclarative3DGraphicsGeoMap::mouseMoveEvent(QMouseEvent *event)
 {
+    //QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
     if (!mappingManagerInitialized_) {
         event->ignore();
         return;

@@ -48,26 +48,15 @@
 #include "map.h"
 #include "math.h"
 
-// Constant values from QQuickFlickable
-// The default maximum velocity of a flick.
-#ifndef QML_FLICK_DEFAULTMAXVELOCITY
-#define QML_FLICK_DEFAULTMAXVELOCITY 2500
-#endif
-// The default deceleration of a flick.
-#ifndef QML_FLICK_DEFAULTDECELERATION
-#define QML_FLICK_DEFAULTDECELERATION 1500
-#endif
-// Minimum
-#ifndef QML_FLICK_MINIMUMECELERATION
-#define QML_FLICK_MINIMUMDECELERATION 10
-#endif
-
-
+#define QML_MAP_FLICK_DEFAULTMAXVELOCITY 2500
+#define QML_MAP_FLICK_MINIMUMDECELERATION 500
+#define QML_MAP_FLICK_DEFAULTDECELERATION 2500
+#define QML_MAP_FLICK_MAXIMUMDECELERATION 10000
+// The number of samples to use in calculating the velocity of a flick
+#define QML_MAP_FLICK_SAMPLEBUFFER 3
 // The number of samples to discard when calculating the flick velocity.
 // Touch panels often produce inaccurate results as the finger is lifted.
-#ifndef QML_FLICK_DISCARDSAMPLES
-#define QML_FLICK_DISCARDSAMPLES 1
-#endif
+#define QML_MAP_FLICK_DISCARDSAMPLES 1
 
 // FlickThreshold determines how far the "mouse" must have moved
 // before we perform a flick.
@@ -80,14 +69,82 @@ const qreal MinimumFlickVelocity = 75.0;
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass MapFlickable
+
+    \brief MapFlickable element provides basic flicking of the map.
+
+    MapFlickable element provides basic flicking of the map. Essentially flicking
+    the map means panning that continues after user has lifted finger/released
+    mouse button, gradually slowing down.
+
+    MapFlickable is not a standalone user-instantiable element but a fixed member
+    of the Map element which can be enabled or disabled. The sensitivity (rate
+    of slowing down or deceleration) can be adjusted.
+
+    \ingroup qml-location-maps
+    \since 5.0
+*/
+
+/*!
+  \qmlproperty bool MapFlickable::enabled
+
+  This property holds whether the flicking is enabled.
+  By default flicking is enabled. Disabling flicking will terminate
+  any potentially active flicks (movement or actual flick).
+
+  */
+
+/*!
+  \qmlproperty bool MapFlickable::deceleration
+
+  This property holds the rate at which a flick will decelerate.
+  Default value is 2500, minimum value is 500 and maximum value is 10000.
+
+  */
+
+/*!
+    \qmlsignal MapFlickable::onMovementStarted()
+
+    This handler is called when the view begins moving due to user
+    interaction. Typically this means that user is dragging finger
+    or mouse on the map (mouse with pressed button) but has not released yet.
+*/
+
+/*!
+    \qmlsignal MapFlickable::onMovementEnded()
+
+    This handler is called when the view stops moving due to user
+    interaction.  If a flick was generated, this handler will
+    be triggered once the flick stops.  If a flick was not
+    generated, the handler will be triggered when the
+    user stops dragging - i.e. a mouse or touch release.
+
+*/
+
+/*!
+    \qmlsignal MapFlickable::onFlickStarted()
+
+    This handler is called when the view is flicked.  A flick
+    starts from the point that the mouse or touch is released,
+    while still in motion.
+*/
+
+/*!
+    \qmlsignal MapFlickable::onFlickEnded()
+
+    This handler is called when the view stops moving due to a flick.
+    The order of onMovementEnded() and onFlickEnded() is not specified.
+*/
+
 QDeclarativeGeoMapFlickable::QDeclarativeGeoMapFlickable(QObject *parent)
     : QObject(parent),
       pressed_(false),
-      maxVelocity_(QML_FLICK_DEFAULTMAXVELOCITY),
-      deceleration_(QML_FLICK_DEFAULTDECELERATION),
+      maxVelocity_(QML_MAP_FLICK_DEFAULTMAXVELOCITY),
+      deceleration_(QML_MAP_FLICK_DEFAULTDECELERATION),
       flicking_(false),
       map_(0),
-      enabled_(false),
+      enabled_(true),
       moving_(false)
 {
     pressTime_.invalidate();
@@ -116,11 +173,12 @@ qreal QDeclarativeGeoMapFlickable::deceleration() const
 
 void QDeclarativeGeoMapFlickable::setDeceleration(qreal deceleration)
 {
-    if (deceleration < QML_FLICK_MINIMUMDECELERATION)
-        deceleration = QML_FLICK_MINIMUMDECELERATION;
+    if (deceleration < QML_MAP_FLICK_MINIMUMDECELERATION)
+        deceleration = QML_MAP_FLICK_MINIMUMDECELERATION;
+    else if (deceleration > QML_MAP_FLICK_MAXIMUMDECELERATION)
+        deceleration = QML_MAP_FLICK_MAXIMUMDECELERATION;
     if (deceleration == deceleration_)
         return;
-
     deceleration_ = deceleration;
     emit decelerationChanged();
 }
@@ -182,8 +240,8 @@ bool QDeclarativeGeoMapFlickable::mouseMoveEvent(QMouseEvent *event)
             || pressTime_.elapsed() > 200) && !lastPos_.isNull()) {
 
         if (!moving_) {
-            emit movementStarted();
             moving_ = true;
+            emit movementStarted();
         }
         updateCamera(dxFromLastPos, dyFromLastPos, 0);
     }
@@ -232,7 +290,8 @@ void QDeclarativeGeoMapFlickable::updateCamera(int dx, int dy, int timeMs)
 
         qDebug() << "The latitude will go from:" << cameraStart.center().latitude() << "to:" << cameraEnd.center().latitude();
         qDebug() << "The longitude will go from:" << cameraStart.center().longitude() << "to:" << cameraEnd.center().longitude();
-        QTimer::singleShot(0, animation_, SLOT(start()));
+        // start animation straight away, user may disable the flick in the flickStarted() handler
+        animation_->start();
         flicking_ = true;
         emit flickStarted();
     }
@@ -247,15 +306,15 @@ void QDeclarativeGeoMapFlickable::addVelocitySample(QVector<qreal>& buffer, qrea
     else if (sample < -maxVelocity_)
         sample = -maxVelocity_;
     buffer.append(sample);
-    if (buffer.count() > QML_FLICK_SAMPLEBUFFER)
+    if (buffer.count() > QML_MAP_FLICK_SAMPLEBUFFER)
         buffer.remove(0);
 }
 
 void QDeclarativeGeoMapFlickable::updateVelocity(QVector<qreal>& buffer, qreal& velocity)
 {
-    if (buffer.count() > QML_FLICK_DISCARDSAMPLES) {
+    if (buffer.count() > QML_MAP_FLICK_DISCARDSAMPLES) {
         velocity = 0;
-        int count = buffer.count() - QML_FLICK_DISCARDSAMPLES;
+        int count = buffer.count() - QML_MAP_FLICK_DISCARDSAMPLES;
         for (int i = 0; i < count; ++i) {
             qreal v = buffer.at(i);
             velocity += v;

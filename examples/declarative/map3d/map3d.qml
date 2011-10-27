@@ -161,6 +161,13 @@ Item {
                 }
             }
         }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Dis pinch"}
+            MouseArea{ anchors.fill: parent;
+                onClicked: { map.disableFlickOnStarted = true}
+                onDoubleClicked: { map.disableFlickOnStarted = false}
+            }
+        }
     }
 
     /*
@@ -221,6 +228,9 @@ Item {
 
     Map {
         id: map
+
+        property bool disableFlickOnStarted: false
+
         MapMouseArea {
             id: mapMouseArea
             onDoubleClicked: console.log('mapmousearea got clicked')
@@ -367,11 +377,15 @@ Item {
 
         // Flicking
         flick.enabled: true
-        flick.deceleration: 3000
-        flick.onFlickStarted: {console.log   ('flick started signal                      F Start ++++++++++++++++++ ') }
-        flick.onFlickEnded: {console.log     ('flick ended signal                        F Stop ------------------ ') }
-        flick.onMovementStarted: {console.log('movement started signal                   M Start ++++++++++++++++++ ') }
-        flick.onMovementEnded: {console.log  ('movement ended signal                     M Stop ------------------ ') }
+        flick.onFlickStarted: {
+            if (map.disableFlickOnStarted)
+                map.flick.enabled = false
+            else
+                map.flick.enabled = true
+        }
+        //flick.onFlickEnded: {console.log     ('flick ended signal                        F Stop ------------------ ') }
+        //flick.onMovementStarted: {console.log('movement started signal                   M Start ++++++++++++++++++ ') }
+        //flick.onMovementEnded: {console.log  ('movement ended signal                     M Stop ------------------ ') }
 
 
         onWheel: {
