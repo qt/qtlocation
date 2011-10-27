@@ -192,12 +192,46 @@ Map2DPrivate::Map2DPrivate(Map *parent, TileCache *cache, int maxZoom, int tileS
 
 Map2DPrivate::~Map2DPrivate() {}
 
-QGLSceneNode* Map2DPrivate::createTileNode(const Tile &tile)
+QRect Map2DPrivate::specToRect(const TileSpec &tileSpec) const
 {
-    int geomZoom = tile.tileSpec().zoom();
+    int geomZoom = tileSpec.zoom();
+    int x = tileSpec.x();
+    int y = tileSpec.y();
+
+    int z = 1 << geomZoom;
+
+    bool rightEdge = false;
+
+    double x1 = x * 1.0 / z;
+    double x2 = ((x + 1) % z) * 1.0 / z;
+    if (x2 == 0.0) {
+        x2 = 1.0;
+        rightEdge = true;
+    }
+    double y1 = y * 1.0 / z;
+    double y2 = (y + 1) * 1.0 / z;
+
+    QSharedPointer<Projection> p = projection();
+
+    QVector3D tl = p->mercatorToPoint(QVector2D(x1, y1));
+    QVector3D tr = p->mercatorToPoint(QVector2D(x2, y1));
+    QVector3D bl = p->mercatorToPoint(QVector2D(x1, y2));
+    QVector3D br = p->mercatorToPoint(QVector2D(x2, y2));
+
+    if (rightEdge) {
+        tr.setX(sideLength_);
+        br.setX(sideLength_);
+    }
+
+    return QRect(bl.x(), bl.y(), br.x() - tl.x() - 1, tl.y() - br.y() - 1);
+}
+
+QGLSceneNode* Map2DPrivate::createTileSpecNode(const TileSpec &tileSpec)
+{
+    int geomZoom = tileSpec.zoom();
     int tileZoom = geomZoom;
-    int x = tile.tileSpec().x();
-    int y = tile.tileSpec().y();
+    int x = tileSpec.x();
+    int y = tileSpec.y();
 
     QGLBuilder builder;
 
@@ -265,16 +299,7 @@ QGLSceneNode* Map2DPrivate::createTileNode(const Tile &tile)
 
     builder.addQuads(g);
 
-    QGLSceneNode *node = builder.finalizedSceneNode();
-
-    QGLMaterial *mat = new QGLMaterial(node);
-//    tile.texture()->bind();
-    mat->setTexture(tile.texture());
-    node->setEffect(QGL::LitDecalTexture2D);
-
-    node->setMaterial(mat);
-
-    return node;
+    return builder.finalizedSceneNode();
 }
 
 void Map2DPrivate::updateGlCamera(QGLCamera* glCamera)
@@ -846,7 +871,7 @@ void Map2DPrivate::updateMapItemSceneNode(MapItem *item)
     double scale = sideLength_ / (tileSize_ * pow(2, z));
     QPointF anchor = item->anchor() * scale;
     QSizeF size = item->size() * scale;
-    double alt = 0.0;
+    double alt = 100.0;
     QVector3D point = projection()->coordToPoint(item->coordinate());
     QVector3D tl = QVector3D(point.x() + anchor.x(), point.y() - anchor.y(), alt);
     QVector3D tr = QVector3D(tl.x() + size.width(), tl.y(), alt);
@@ -887,6 +912,8 @@ void Map2DPrivate::updateMapItemSceneNode(MapItem *item)
 
     node->setMaterial(mat);
     item->setSceneNode(node);
+
+    item->setBounds(QRect(bl.x(), bl.y(), size.width(), size.height()));
 }
 
 QGeoCoordinate Map2DPrivate::screenPositionToCoordinate(const QPointF &pos) const

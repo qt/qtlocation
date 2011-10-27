@@ -58,6 +58,8 @@
 #include "cameradata.h"
 #include "frustum_p.h"
 
+#include "mapitem.h"
+
 #include <QSharedPointer>
 
 class QGeoMappingManager;
@@ -68,7 +70,6 @@ class TileSpec;
 class Map;
 class MapSphere;
 class Projection;
-class MapItem;
 struct MapItemGLResources;
 
 class QGLCamera;
@@ -96,13 +97,17 @@ public:
 
     void resize(int width, int height);
 
-    virtual QGLSceneNode* createTileNode(const Tile &tile) = 0;
+    virtual QGLSceneNode* createTileSpecNode(const TileSpec &tileSpec) = 0;
+    QGLSceneNode* createTileNode(const Tile &tile);
+
+    virtual QRect specToRect(const TileSpec &tileSpec) const = 0;
 
     void update();
 
     int numMapItems() const;
-    MapItem* mapItem(int index) const;
     QList<MapItem*> mapItems() const;
+    QList<MapItem*> mapItemsAt(const QPoint &point) const;
+    QList<MapItem*> mapItemsWithin(const QRect &rect) const;
     void addMapItem(MapItem *item);
     void removeMapItem(MapItem *item);
     void clearMapItems();
@@ -113,6 +118,8 @@ public:
     QVector2D pointToTile(const QVector3D &point, int zoom, bool roundUp = false) const;
     QVector3D tileXIntersectToPoint(int zoomLevel, int x) const;
     QVector3D tileYIntersectToPoint(int zoomLevel, int y) const;
+
+    virtual void updateMapItemSceneNode(MapItem *item) = 0;
 
 protected:
     Frustum frustum() const;
@@ -129,8 +136,6 @@ private:
     virtual void updateGlCamera(QGLCamera* glCamera) = 0;
     virtual void updateFrustum(Frustum &frustum) = 0;
     virtual QList<TileSpec> updateVisibleTiles() = 0;
-    virtual void updateMapItemSceneNode(MapItem *item) = 0;
-    void GLContextAvailable();
 
     bool autoUpdate_;
 
@@ -143,18 +148,12 @@ private:
     QSharedPointer<Projection> projection_;
 
     QGLCamera *glCamera_;
-    QGLSceneNode *mapSceneNode_;
-    QGLSceneNode *objectSceneNode_;
 
     CameraData cameraData_;
     Frustum frustum_;
     QList<TileSpec> visibleTiles_;
 
     MapSphere *sphere_;
-
-    QList<MapItem*> mapItems_;
-    QSet<MapItemGLResources*> obsoleteGLResources_;
-    QSet<MapItem*> newItems_;
 };
 
 #endif // MAP_P_H

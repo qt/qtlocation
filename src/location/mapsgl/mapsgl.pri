@@ -11,6 +11,7 @@ SOURCES += \
     mapsgl/frustum.cpp \
     mapsgl/map.cpp \
     mapsgl/mapitem.cpp \
+    mapsgl/mapitemtree.cpp \
     mapsgl/mapsphere.cpp \
     mapsgl/projection.cpp \
     mapsgl/tilecache.cpp \
@@ -29,5 +30,6 @@ PRIVATE_HEADERS += \
     mapsgl/frustum_p.h \
     mapsgl/intervaltree_p.h \
     mapsgl/map_p.h \
+    mapsgl/mapitemtree_p.h \
     mapsgl/mapsphere_p.h \
     mapsgl/projection_p.h

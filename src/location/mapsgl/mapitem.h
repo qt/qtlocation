@@ -46,13 +46,9 @@
 #include <QSizeF>
 #include <QtOpenGL/qgl.h>
 
-#include "intervaltree_p.h"
-
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
-
-
 
 class QGLTexture2D;
 class QGLMaterial;
@@ -64,7 +60,6 @@ struct MapItemGLResources {
     QGLMaterial* defaultMaterial;
     MapItemGLResources() : sceneNode(0), texture(0), defaultMaterial(0) {}
 };
-
 
 class Q_LOCATION_EXPORT MapItem
 {
@@ -79,6 +74,9 @@ public:
     GLuint textureId();
     QGLTexture2D* texture();
     void update();
+
+    void setNeedsUpdate(bool needsUpdate);
+    bool needsUpdate() const;
 
     void setAnchor(const QPointF &anchor);
     QPointF anchor() const;
@@ -112,28 +110,7 @@ private:
     GLuint textureId_;
     bool textureDirty_;
     MapItemGLResources* glResources_;
-};
-
-class Q_LOCATION_EXPORT MapItemTree
-{
-public:
-    MapItemTree();
-    ~MapItemTree();
-
-    void insert(MapItem *item);
-    void remove(MapItem *item);
-
-    bool isEmpty() const;
-    int size() const;
-
-    QList<MapItem*> items() const;
-    QList<MapItem*> itemsAt(const QPoint &point) const;
-    QList<MapItem*> itemsWithin(const QRect &viewport) const;
-    void makeVisible(const QRect& viewport, QList<MapItem*> &added, QList<MapItem*> &removed);
-private:
-
-    QRect viewport_;
-    AAInterval2DTree<MapItem*> *root_;
+    bool needsUpdate_;
 };
 
 QT_END_NAMESPACE

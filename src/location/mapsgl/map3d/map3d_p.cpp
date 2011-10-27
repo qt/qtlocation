@@ -64,6 +64,11 @@ Map3DPrivate::~Map3DPrivate()
 {
 }
 
+QRect Map3DPrivate::specToRect(const TileSpec &tileSpec) const
+{
+    return QRect();
+}
+
 QGeometryData Map3DPrivate::generateTileGeometryData(int x, int y, int tileZoom, int geomZoom) const
 {
     int z = 1 << geomZoom;
@@ -120,15 +125,15 @@ QGeometryData Map3DPrivate::generateTileGeometryData(int x, int y, int tileZoom,
     return g;
 }
 
-QGLSceneNode* Map3DPrivate::createTileNode(const Tile &tile)
+QGLSceneNode* Map3DPrivate::createTileSpecNode(const TileSpec &tileSpec)
 {
-    int tileZoom = tile.tileSpec().zoom();
+    int tileZoom = tileSpec.zoom();
     int geomZoom = qMax(minZoom_, tileZoom);
 
     int dz = 1 << (geomZoom - tileZoom);
 
-    int x1 = tile.tileSpec().x() * dz;
-    int y1 = tile.tileSpec().y() * dz;
+    int x1 = tileSpec.x() * dz;
+    int y1 = tileSpec.y() * dz;
 
     QGLBuilder builder;
 
@@ -138,16 +143,7 @@ QGLSceneNode* Map3DPrivate::createTileNode(const Tile &tile)
         }
     }
 
-    QGLSceneNode *node = builder.finalizedSceneNode();
-
-    QGLMaterial *mat = new QGLMaterial(node);
-    // tile.texture()->bind();
-    mat->setTexture(tile.texture());
-    node->setEffect(QGL::LitDecalTexture2D);
-
-    node->setMaterial(mat);
-
-    return node;
+    return builder.finalizedSceneNode();
 }
 
 void Map3DPrivate::updateGlCamera(QGLCamera* glCamera)

@@ -53,17 +53,25 @@
 //
 
 #include <QtLocation/qlocationglobal.h>
+#include "mapitem.h"
+#include "mapitemtree_p.h"
+#include "tilespec.h"
 
 #include <QObject>
 #include <QSet>
 #include <QHash>
 #include <QList>
+#include <QCache>
+#include <QSharedPointer>
 
 #include <QMutex>
 
 QT_BEGIN_NAMESPACE
 
 class QGLSceneNode;
+class QGLPainter;
+
+class QOpenGLFramebufferObject;
 
 class TileSpec;
 class TileCache;
@@ -72,6 +80,11 @@ class Map;
 class MapPrivate;
 
 class QGeoMappingManager;
+
+struct MapItemGLResources;
+
+struct ItemTileResources;
+struct ItemTileCacheEntry;
 
 class Q_LOCATION_EXPORT MapSphere : public QObject
 {
@@ -89,6 +102,16 @@ public:
     // but QSG rendering thread.
     void GLContextAvailable();
 
+    void paintGL(QGLPainter *painter);
+
+    int numMapItems() const;
+    QList<MapItem*> mapItems() const;
+    QList<MapItem*> mapItemsAt(const QPoint &point) const;
+    QList<MapItem*> mapItemsWithin(const QRect &rect) const;
+    void addMapItem(MapItem *item);
+    void removeMapItem(MapItem *item);
+    void clearMapItems();
+
 public slots:
     void clearCache();
     void update(const QList<TileSpec> &tiles);
@@ -104,6 +127,25 @@ signals:
 private:
     void displayTile(const TileSpec &spec);
 
+    //void updateItemTiles();
+    //void renderItemTiles(QGLPainter *painter);
+
+    QList<TileSpec> visibleTiles_;
+
+    void updateItems(QGLPainter *painter);
+
+    void addSpec(const TileSpec &spec);
+    void removeSpec(const TileSpec &spec);
+
+    QCache<TileSpec, ItemTileCacheEntry> itemTileCache_;
+    QList<ItemTileResources> itemTileEvictions_;
+    QHash<MapItem*, QSet<TileSpec> > itemTileReverseMap_;
+    QSet<TileSpec> itemTileUpdates_;
+
+    QGLSceneNode *itemNode_;
+    bool itemsDirty_;
+    QList<QOpenGLFramebufferObject*> fboList_;
+
     TileCache *tileCache_;
     int minZoom_;
 
@@ -112,8 +154,14 @@ private:
 
     QGLSceneNode* sphereNode_;
 
+    Map *map_;
     MapPrivate* mapPrivate_;
     QList<QGLSceneNode*> obsoleteNodes_;
+
+    MapItemTree itemTree_;
+    QSet<MapItemGLResources*> obsoleteGLResources_;
+
+    friend struct ItemTileCacheEntry;
 };
 
 QT_END_NAMESPACE

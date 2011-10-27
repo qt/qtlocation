@@ -38,52 +38,46 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MAP3D_P_H
-#define MAP3D_P_H
+#ifndef MAPITEMTREE_P_H
+#define MAPITEMTREE_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QPoint>
+#include <QRect>
+#include <QList>
+#include <QtLocation/qlocationglobal.h>
 
-#include "map_p.h"
-#include "viewport_p.h"
+#include "intervaltree_p.h"
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QGeometryData;
+class MapItem;
 
-class Map3DPrivate : public MapPrivate
+class Q_LOCATION_EXPORT MapItemTree
 {
 public:
-    Map3DPrivate(Map *parent, TileCache *cache, double radius);
-    virtual ~Map3DPrivate();
+    MapItemTree();
+    ~MapItemTree();
 
-    virtual QRect specToRect(const TileSpec &tileSpec) const;
-    virtual QGLSceneNode* createTileSpecNode(const TileSpec &tileSpec);
+    void insert(MapItem *item);
+    void remove(MapItem *item);
 
-    virtual void updateGlCamera(QGLCamera* glCamera);
-    virtual void updateFrustum(Frustum &frustum);
-    virtual QList<TileSpec> updateVisibleTiles();
-    virtual void updateMapItemSceneNode(MapItem *item);
+    bool isEmpty() const;
+    int size() const;
 
-    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    QList<MapItem*> items() const;
+    QList<MapItem*> itemsAt(const QPoint &point) const;
+    QList<MapItem*> itemsWithin(const QRect &viewport) const;
+    void makeVisible(const QRect& viewport, QList<MapItem*> &added, QList<MapItem*> &removed);
 
 private:
-    QGeometryData generateTileGeometryData(int x, int y, int tileZoom, int geomZoom) const;
-
-    int minZoom_;
-    double radius_;
-    Viewport viewport_;
+    QRect viewport_;
+    AAInterval2DTree<MapItem*> *root_;
 };
 
 QT_END_NAMESPACE
 
-#endif // MAP3D_P_H
+QT_END_HEADER
+
+#endif // MAPITEMTREE_P__H

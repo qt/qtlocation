@@ -42,6 +42,7 @@
 #include <QtTest/QtTest>
 
 #include <mapitem.h>
+#include "mapitemtree_p.h"
 
 #include <QSet>
 #include <QHash>

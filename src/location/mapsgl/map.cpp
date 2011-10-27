@@ -138,14 +138,19 @@ int Map::numMapItems() const
     return d_ptr->numMapItems();
 }
 
-MapItem* Map::mapItem(int index) const
-{
-    return d_ptr->mapItem(index);
-}
-
 QList<MapItem*> Map::mapItems() const
 {
     return d_ptr->mapItems();
+}
+
+QList<MapItem*> Map::mapItemsAt(const QPoint &point) const
+{
+    return d_ptr->mapItemsAt(point);
+}
+
+QList<MapItem*> Map::mapItemsWithin(const QRect &rect) const
+{
+    return d_ptr->mapItemsWithin(rect);
 }
 
 void Map::addMapItem(MapItem *item)
@@ -180,20 +185,27 @@ MapPrivate::MapPrivate(Map *parent, TileCache *cache)
       manager_(0)
 {
     sphere_ = new MapSphere(parent, this, cache);
-    mapSceneNode_ = new QGLSceneNode();
-    mapSceneNode_->addNode(sphere_->sphereSceneNode());
-    objectSceneNode_ = new QGLSceneNode();
     glCamera_ = new QGLCamera();
 }
 
 MapPrivate::~MapPrivate()
 {
     delete sphere_;
-    delete mapSceneNode_;
-    delete objectSceneNode_;
     delete glCamera_;
     // TODO map items are not deallocated!
     // However: how to ensure this is done in rendering thread?
+}
+
+QGLSceneNode* MapPrivate::createTileNode(const Tile &tile)
+{
+    QGLSceneNode* node = createTileSpecNode(tile.tileSpec());
+
+    QGLMaterial *mat = new QGLMaterial(node);
+    mat->setTexture(tile.texture());
+    node->setEffect(QGL::LitDecalTexture2D);
+    node->setMaterial(mat);
+
+    return node;
 }
 
 void MapPrivate::setMappingManager(QGeoMappingManager *manager)
@@ -269,103 +281,43 @@ Frustum MapPrivate::frustum() const
 
 void MapPrivate::paintGL(QGLPainter *painter)
 {
-    if (!sphere_->updateMutex.tryLock()) {
-        qWarning() << "----- map will miss a frame, no mutex acquired!------";
-        return;
-    }
-
-    sphere_->GLContextAvailable();
-    GLContextAvailable();
-
-    mapSceneNode_->draw(painter);
-
-    glDisable(GL_DEPTH_TEST);
-    objectSceneNode_->draw(painter);
-    glEnable(GL_DEPTH_TEST);
-
-    sphere_->updateMutex.unlock();
+    sphere_->paintGL(painter);
 }
 
 int MapPrivate::numMapItems() const
 {
-    return mapItems_.length();
-}
-
-MapItem* MapPrivate::mapItem(int index) const
-{
-    return mapItems_.at(index);
+    return sphere_->numMapItems();
 }
 
 QList<MapItem*> MapPrivate::mapItems() const
 {
-    return mapItems_;
+    return sphere_->mapItems();
+}
+
+QList<MapItem*> MapPrivate::mapItemsAt(const QPoint &point) const
+{
+    return sphere_->mapItemsAt(point);
+}
+
+QList<MapItem*> MapPrivate::mapItemsWithin(const QRect &rect) const
+{
+    return sphere_->mapItemsWithin(rect);
 }
 
 void MapPrivate::addMapItem(MapItem *item)
 {
-    // TODO bit hard block - on declarative side the coordinate may well be invalid time to time
-    if (!item->coordinate().isValid())
-        return;
-    sphere_->updateMutex.lock();
-    if (!item->glResources())
-        item->setGLResources(new MapItemGLResources);
-    updateMapItemSceneNode(item);
-    if (item->sceneNode()) {
-        objectSceneNode_->addNode(item->sceneNode());
-    }
-    mapItems_.append(item);
-    sphere_->updateMutex.unlock();
-}
-
-// Function is guaranteed to be only called when executing in
-// rendering thread with valid GL context. Furthermore it is
-// safe to update any geometry/structures - mutex is locked.
-void MapPrivate::GLContextAvailable()
-{
-    // remove obsolete scene nodes
-    QSet<MapItemGLResources *>::const_iterator i = obsoleteGLResources_.constBegin();
-    while (i != obsoleteGLResources_.constEnd()) {
-        if (*i) {
-            // todo do we have to delete all pointers or will scene node take down everything
-            delete (*i)->sceneNode;
-            //obsoleteGLResources_.removeAll(*i);
-        }
-        ++i;
-    }
-    if (!obsoleteGLResources_.isEmpty())
-        obsoleteGLResources_.clear();
+    sphere_->addMapItem(item);
 }
 
 // Must not be called from rendering thread
 void MapPrivate::removeMapItem(MapItem *item)
 {
-    if (!item)
-        return;
-    sphere_->updateMutex.lock();
-    // nodes need to be removed from the scene node tree in GUI thread
-    // because the tree has been created in it,
-    // but the actual scene node deletion needs to occur in rendering thread
-    // because it has the gl context
-    if (item->glResources() && !obsoleteGLResources_.contains(item->glResources())) {
-        objectSceneNode_->removeNode(item->sceneNode());
-        obsoleteGLResources_.insert(item->glResources());
-    }
-    item->setGLResources(0);
-    mapItems_.removeAll(item);
-    sphere_->updateMutex.unlock();
+    sphere_->removeMapItem(item);
 }
 
 void MapPrivate::clearMapItems()
 {
-    sphere_->updateMutex.lock();
-    for (int i = 0; i < mapItems_.size(); ++i) {
-        if (mapItems_.at(i)->glResources() && !obsoleteGLResources_.contains(mapItems_.at(i)->glResources())) {
-            objectSceneNode_->removeNode(mapItems_.at(i)->glResources()->sceneNode);
-            obsoleteGLResources_.insert(mapItems_.at(i)->glResources());
-        }
-    }
-    mapItems_.clear();
-    sphere_->updateMutex.unlock();
+    sphere_->clearMapItems();
 }
 
 QVector2D MapPrivate::pointToTile(const QVector3D &point, int zoom, bool roundUp) const
