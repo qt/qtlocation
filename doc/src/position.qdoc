@@ -29,6 +29,7 @@
 \page location-positioning.html
 
 \title Location Positioning
+\previouspage {qtlocation-cpp.html}{QtLocation}
 
 \brief The Location Positioning API enables location positioning by means of
 GPS or an NMEA data source.

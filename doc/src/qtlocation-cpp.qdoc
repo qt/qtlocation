@@ -59,5 +59,31 @@ QtLocation C++ API.
         \o \l {Places}
         \o Searching for places.
 \endtable
+
+
+\section1 Positioning Classes
+
+    \annotatedlist QtLocation-positioning
+
+
+\section1 Maps and Navigation Classes
+
+    \annotatedlist QtLocation-common
+
+    \annotatedlist QtLocation-maps
+
+    \annotatedlist QtLocation-impl
+
+    \annotatedlist QtLocation-routing
+
+    \annotatedlist QtLocation-geocoding
+
+
+
+\section1 Location Places of Interest
+
+    \annotatedlist QtLocation-places
+
+
 */
 

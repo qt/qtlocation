@@ -29,6 +29,7 @@
 /*!
 \page location-maps.html
 \title Maps
+\previouspage {qtlocation-cpp.html}{QtLocation}
 
 \brief Maps is the part of the Location API that deals with maps,
 their contents and navigation through the maps.
