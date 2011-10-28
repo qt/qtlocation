@@ -85,10 +85,10 @@ class QGeoMapData;
 class QGeoServiceProvider;
 class QDeclarativeCoordinate;
 class QDeclarativeGeoServiceProvider;
-class QDeclarative3DGraphicsGeoMap;
+class QDeclarativeGeoMap;
 class QDeclarativeGeoMapItem;
 
-class QDeclarative3DGraphicsGeoMap : public QQuickPaintedItem
+class QDeclarativeGeoMap : public QQuickPaintedItem
 {
     Q_OBJECT
 
@@ -126,8 +126,8 @@ public:
 
 public:
 
-    QDeclarative3DGraphicsGeoMap(QQuickItem *parent = 0);
-    ~QDeclarative3DGraphicsGeoMap();
+    QDeclarativeGeoMap(QQuickItem *parent = 0);
+    ~QDeclarativeGeoMap();
 
     // From QDeclarativeParserStatus
     virtual void componentComplete();
@@ -209,8 +209,8 @@ Q_SIGNALS:
     void zoomLevelChanged(qreal zoomLevel);
     void bearingChanged(qreal bearing);
     void centerChanged(const QDeclarativeCoordinate *coordinate);
-//    void mapTypeChanged(QDeclarative3DGraphicsGeoMap::MapType mapType);
-//    void connectivityModeChanged(QDeclarative3DGraphicsGeoMap::ConnectivityMode connectivityMode);
+//    void mapTypeChanged(QDeclarativeGeoMap::MapType mapType);
+//    void connectivityModeChanged(QDeclarativeGeoMap::ConnectivityMode connectivityMode);
 
 private Q_SLOTS:
     void updateMapDisplay(const QRectF& target);
@@ -255,8 +255,8 @@ private:
     qreal bearing_;
     QPointer<QDeclarativeCoordinate> center_;
 
-//    QDeclarative3DGraphicsGeoMap::MapType mapType_;
-//    QDeclarative3DGraphicsGeoMap::ConnectivityMode connectivityMode_;
+//    QDeclarativeGeoMap::MapType mapType_;
+//    QDeclarativeGeoMap::ConnectivityMode connectivityMode_;
     QSizeF size_;
 
     bool componentCompleted_;
@@ -289,12 +289,12 @@ private:
     friend class QDeclarativeGeoMapItemView;
     friend class QDeclarativeGeoMapPinchArea;
     friend class QDeclarativeGeoMapFlickable;
-    Q_DISABLE_COPY(QDeclarative3DGraphicsGeoMap);
+    Q_DISABLE_COPY(QDeclarativeGeoMap);
 };
 
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarative3DGraphicsGeoMap));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMap));
 
 #endif

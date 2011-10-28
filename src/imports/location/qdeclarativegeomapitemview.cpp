@@ -41,7 +41,7 @@
 
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
-#include "qdeclarative3dgraphicsgeomap_p.h"
+#include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapitem_p.h"
 
 #include <QDebug>
@@ -180,7 +180,7 @@ void QDeclarativeGeoMapItemView::setDelegate(QDeclarativeComponent *delegate)
 }
 
 //void QDeclarativeGeoMapItemView::setMapData(QDeclarativeGraphicsGeoMap* map)
-void QDeclarativeGeoMapItemView::setMapData(QDeclarative3DGraphicsGeoMap* map)
+void QDeclarativeGeoMapItemView::setMapData(QDeclarativeGeoMap* map)
 {
     if (!map || map_) // changing map on the fly not supported
         return;

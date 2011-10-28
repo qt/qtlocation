@@ -158,7 +158,7 @@ void QDeclarativeGeoMapItem::setCoordinate(QDeclarativeCoordinate *coordinate)
 // note: call this only from render thread (e.g. paint() call). todo check this wrt removal
 // this function notably associates and disassociates the item to map
 // and reserves / releases resources accordingly
-void QDeclarativeGeoMapItem::setMap(QDeclarative3DGraphicsGeoMap* map)
+void QDeclarativeGeoMapItem::setMap(QDeclarativeGeoMap* map)
 {
     QLOC_TRACE2(map, map_);
     if (map == map_)

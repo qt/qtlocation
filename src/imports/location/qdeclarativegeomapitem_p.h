@@ -49,7 +49,7 @@
 #include "qsgtexture.h"
 #include "mapitem.h"
 #include "qdeclarativecoordinate_p.h"
-#include "qdeclarative3dgraphicsgeomap_p.h"
+#include "qdeclarativegeomap_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -80,7 +80,7 @@ public:
     double zoomLevel();
 
     void updateItem();
-    void setMap(QDeclarative3DGraphicsGeoMap* map);
+    void setMap(QDeclarativeGeoMap* map);
 
     MapItem* mapItem();
     bool hasValidTexture();
@@ -103,9 +103,9 @@ private:
     QQuickShaderEffectSource* shaderSource_;
     QQuickItem* sourceItem_;
     QDeclarativeCoordinate* coordinate_;
-    QDeclarative3DGraphicsGeoMap* map_;
+    QDeclarativeGeoMap* map_;
     // TODO enable didnt compile
-    //QPointer<QDeclarative3DGraphicsGeoMap*> map_;
+    //QPointer<QDeclarativeGeoMap*> map_;
     bool componentCompleted_;
     MapItem mapItem_;
     friend class QDeclarativeGeoMapItemNode;

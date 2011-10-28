@@ -41,7 +41,7 @@
 
 #include <QtGui/QGuiApplication>
 #include "qdeclarativegeomappincharea_p.h"
-#include "qdeclarative3dgraphicsgeomap_p.h"
+#include "qdeclarativegeomap_p.h"
 #include <QtGui/qevent.h>
 #include <QtGui/QStyleHints>
 #include <QtDeclarative/qdeclarativeinfo.h>
@@ -176,7 +176,7 @@ QT_BEGIN_NAMESPACE
 
   */
 
-QDeclarativeGeoMapPinchArea::QDeclarativeGeoMapPinchArea(QDeclarative3DGraphicsGeoMap* map, QObject *parent)
+QDeclarativeGeoMapPinchArea::QDeclarativeGeoMapPinchArea(QDeclarativeGeoMap* map, QObject *parent)
     : QObject(parent),
       map_(map),
       enabled_(true),

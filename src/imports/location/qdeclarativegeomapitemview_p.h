@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 
 class QAbstractItemModel;
 class QDeclarativeGraphicsGeoMap;
-class QDeclarative3DGraphicsGeoMap;
+class QDeclarativeGeoMap;
 class QDeclarativeGeoMapItem;
 class QDeclarativeGeoMapMouseArea;
 
@@ -77,7 +77,7 @@ public:
     QDeclarativeComponent *delegate() const;
     void setDelegate(QDeclarativeComponent*);
 
-    void setMapData(QDeclarative3DGraphicsGeoMap*);
+    void setMapData(QDeclarativeGeoMap*);
     void repopulate();
     void removeInstantiatedItems();
 
@@ -109,7 +109,7 @@ private:
     QDeclarativeComponent *delegate_;
     QVariant modelVariant_;
     QAbstractItemModel* model_;
-    QDeclarative3DGraphicsGeoMap *map_;
+    QDeclarativeGeoMap *map_;
     QList<QDeclarativeGeoMapItem*> mapItemList_;
 };
 

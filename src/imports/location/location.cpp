@@ -49,7 +49,7 @@
 #include "qdeclarativecoordinate_p.h"
 
 #include "qdeclarativegeoserviceprovider_p.h"
-#include "qdeclarative3dgraphicsgeomap_p.h"
+#include "qdeclarativegeomap_p.h"
 
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
@@ -110,7 +110,7 @@ public:
 
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 5, 0, "Plugin");
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
-            qmlRegisterType<QDeclarative3DGraphicsGeoMap>(uri, 5, 0, "Map");
+            qmlRegisterType<QDeclarativeGeoMap>(uri, 5, 0, "Map");
             qmlRegisterType<QDeclarativeGeoMapItem>(uri, 5, 0, "MapItem");
             qmlRegisterType<QDeclarativeGeoMapItemView>(uri, 5, 0, "MapItemView");
             qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 5, 0, "MapMouseArea");

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qdeclarative3dgraphicsgeomap_p.h"
+#include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
 
 #include "qdeclarativecoordinate_p.h"
@@ -74,7 +74,7 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass Map QDeclarative3DGraphicsGeoMap
+    \qmlclass Map QDeclarativeGeoMap
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0
@@ -103,7 +103,7 @@ QT_BEGIN_NAMESPACE
     MapItems or the Map item itself.
 */
 
-QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QQuickItem *parent)
+QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     : QQuickPaintedItem(parent),
       plugin_(0),
       serviceProvider_(0),
@@ -138,7 +138,7 @@ QDeclarative3DGraphicsGeoMap::QDeclarative3DGraphicsGeoMap(QQuickItem *parent)
 }
 
 // this function is only called & executed in rendering thread
-QSGNode* QDeclarative3DGraphicsGeoMap::updatePaintNode(QSGNode* node, UpdatePaintNodeData* data)
+QSGNode* QDeclarativeGeoMap::updatePaintNode(QSGNode* node, UpdatePaintNodeData* data)
 {
     Q_UNUSED(node);
     Q_UNUSED(data);
@@ -165,7 +165,7 @@ QSGNode* QDeclarative3DGraphicsGeoMap::updatePaintNode(QSGNode* node, UpdatePain
     return QQuickPaintedItem::updatePaintNode(node, data);
 }
 
-QDeclarative3DGraphicsGeoMap::~QDeclarative3DGraphicsGeoMap()
+QDeclarativeGeoMap::~QDeclarativeGeoMap()
 {
     // TODO we do not clear the map items atm
 //    if (mapData_) {
@@ -184,7 +184,7 @@ QDeclarative3DGraphicsGeoMap::~QDeclarative3DGraphicsGeoMap()
         delete serviceProvider_;
 }
 
-void QDeclarative3DGraphicsGeoMap::componentComplete()
+void QDeclarativeGeoMap::componentComplete()
 {
     QLOC_TRACE0;
     componentCompleted_ = true;
@@ -192,19 +192,19 @@ void QDeclarative3DGraphicsGeoMap::componentComplete()
     QQuickItem::componentComplete();
 }
 
-QDeclarativeGeoMapFlickable* QDeclarative3DGraphicsGeoMap::flick()
+QDeclarativeGeoMapFlickable* QDeclarativeGeoMap::flick()
 {
     return flickable_;
 }
 
-void QDeclarative3DGraphicsGeoMap::itemChange(ItemChange change, const ItemChangeData & data)
+void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData & data)
 {
     QLOC_TRACE0;
     if (change == ItemSceneChange)
         canvas_ = data.canvas;
 }
 
-void QDeclarative3DGraphicsGeoMap::populateMap()
+void QDeclarativeGeoMap::populateMap()
 {
     QObjectList kids = children();
     for (int i = 0; i < kids.size(); ++i) {
@@ -227,7 +227,7 @@ void QDeclarative3DGraphicsGeoMap::populateMap()
     }
 }
 
-void QDeclarative3DGraphicsGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
+void QDeclarativeGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
 {
     Q_UNUSED(view)
     view->setMapData(this);
@@ -253,7 +253,7 @@ qreal ViewportSubsurface::aspectRatio() const
     return QGLSubsurface::aspectRatio() * m_adjust;
 }
 
-void QDeclarative3DGraphicsGeoMap::updateAspectRatio()
+void QDeclarativeGeoMap::updateAspectRatio()
 {
     if (!mappingManagerInitialized_)
         return;
@@ -262,14 +262,14 @@ void QDeclarative3DGraphicsGeoMap::updateAspectRatio()
         map_->update();
 }
 
-void QDeclarative3DGraphicsGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     setSize(QSizeF(newGeometry.width(), newGeometry.height()));
     updateAspectRatio();
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
 }
 
-void QDeclarative3DGraphicsGeoMap::keyPressEvent(QKeyEvent *e)
+void QDeclarativeGeoMap::keyPressEvent(QKeyEvent *e)
 {
     if (!mappingManagerInitialized_)
         return;
@@ -337,7 +337,7 @@ void QDeclarative3DGraphicsGeoMap::keyPressEvent(QKeyEvent *e)
     update();
 }
 
-void QDeclarative3DGraphicsGeoMap::paint(QPainter* p)
+void QDeclarativeGeoMap::paint(QPainter* p)
 {
     if (!isVisible() || !mappingManagerInitialized_)
         return;
@@ -378,7 +378,7 @@ void QDeclarative3DGraphicsGeoMap::paint(QPainter* p)
     restoreDefaults(&painter);
 }
 
-void QDeclarative3DGraphicsGeoMap::setCameraData(const CameraData &camera)
+void QDeclarativeGeoMap::setCameraData(const CameraData &camera)
 {
     if (!mappingManagerInitialized_)
         return;
@@ -387,14 +387,14 @@ void QDeclarative3DGraphicsGeoMap::setCameraData(const CameraData &camera)
         map_->update();
 }
 
-CameraData QDeclarative3DGraphicsGeoMap::cameraData() const
+CameraData QDeclarativeGeoMap::cameraData() const
 {
     if (!mappingManagerInitialized_)
         return CameraData();
     return map_->cameraData();
 }
 
-void QDeclarative3DGraphicsGeoMap::restoreDefaults(QGLPainter *painter)
+void QDeclarativeGeoMap::restoreDefaults(QGLPainter *painter)
 {
     // Disable the effect to return control to the GL paint engine.
     painter->disableEffect();
@@ -425,7 +425,7 @@ void QDeclarative3DGraphicsGeoMap::restoreDefaults(QGLPainter *painter)
 #define GL_MULTISAMPLE 0x809D
 #endif
 
-void QDeclarative3DGraphicsGeoMap::earlyDraw(QGLPainter *painter)
+void QDeclarativeGeoMap::earlyDraw(QGLPainter *painter)
 {
     glClearColor(0.0,0.0,0.0,0.0);
     // Depth buffer has been cleared already, but color buffer hasn't
@@ -448,7 +448,7 @@ void QDeclarative3DGraphicsGeoMap::earlyDraw(QGLPainter *painter)
     painter->setFaceColor(QGL::AllFaces, Qt::white);
 }
 
-void QDeclarative3DGraphicsGeoMap::paintGL(QGLPainter *painter)
+void QDeclarativeGeoMap::paintGL(QGLPainter *painter)
 {
     painter->projectionMatrix().scale(1,-1, 1); // qt3d and qsg interpret y differently
     map_->paintGL(painter);
@@ -463,7 +463,7 @@ void QDeclarative3DGraphicsGeoMap::paintGL(QGLPainter *painter)
     it any attempted modifications of the plugin will be ignored.
 */
 
-void QDeclarative3DGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
+void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (plugin_) {
         qmlInfo(this) << tr("Plugin is a write-once property, and cannot be set again.");
@@ -543,7 +543,7 @@ void QDeclarative3DGraphicsGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plu
 }
 
 // this function will only be ever called once
-void QDeclarative3DGraphicsGeoMap::mappingManagerInitialized()
+void QDeclarativeGeoMap::mappingManagerInitialized()
 {
     mappingManagerInitialized_ = true;
     connect(map_,
@@ -564,13 +564,13 @@ void QDeclarative3DGraphicsGeoMap::mappingManagerInitialized()
     map_->update();
 }
 
-void QDeclarative3DGraphicsGeoMap::updateMapDisplay(const QRectF &target)
+void QDeclarativeGeoMap::updateMapDisplay(const QRectF &target)
 {
     Q_UNUSED(target);
     QQuickItem::update();
 }
 
-QDeclarativeGeoServiceProvider* QDeclarative3DGraphicsGeoMap::plugin() const
+QDeclarativeGeoServiceProvider* QDeclarativeGeoMap::plugin() const
 {
     return plugin_;
 }
@@ -581,7 +581,7 @@ QDeclarativeGeoServiceProvider* QDeclarative3DGraphicsGeoMap::plugin() const
     This property holds the minimum valid zoom level for the map.
 */
 
-qreal QDeclarative3DGraphicsGeoMap::minimumZoomLevel() const
+qreal QDeclarativeGeoMap::minimumZoomLevel() const
 {
     if (mappingManager_)
         return mappingManager_->minimumZoomLevel();
@@ -595,7 +595,7 @@ qreal QDeclarative3DGraphicsGeoMap::minimumZoomLevel() const
     This property holds the maximum valid zoom level for the map.
 */
 
-qreal QDeclarative3DGraphicsGeoMap::maximumZoomLevel() const
+qreal QDeclarativeGeoMap::maximumZoomLevel() const
 {
     if (mappingManager_)
         return mappingManager_->maximumZoomLevel();
@@ -604,15 +604,15 @@ qreal QDeclarative3DGraphicsGeoMap::maximumZoomLevel() const
 }
 
 // TODO make these more QML like
-//QList<MapType> QDeclarative3DGraphicsGeoMap::supportedMapTypes() const;
-//QList<ConnectivityMode> QDeclarative3DGraphicsGeoMap::supportedConnectivityModes() const;
+//QList<MapType> QDeclarativeGeoMap::supportedMapTypes() const;
+//QList<ConnectivityMode> QDeclarativeGeoMap::supportedConnectivityModes() const;
 
 /*!
     \qmlproperty QSizeF Map::size
 
     This property holds the size of the map viewport.
 */
-void QDeclarative3DGraphicsGeoMap::setSize(const QSizeF &size)
+void QDeclarativeGeoMap::setSize(const QSizeF &size)
 {
 //    if (mapData_) {
 //        setWidth(size.width());
@@ -629,7 +629,7 @@ void QDeclarative3DGraphicsGeoMap::setSize(const QSizeF &size)
 
 }
 
-QSizeF QDeclarative3DGraphicsGeoMap::size() const
+QSizeF QDeclarativeGeoMap::size() const
 {
 //    if (mapData_)
 //        return mapData_->windowSize();
@@ -637,7 +637,7 @@ QSizeF QDeclarative3DGraphicsGeoMap::size() const
         return size_;
 }
 
-void QDeclarative3DGraphicsGeoMap::setBearing(qreal bearing)
+void QDeclarativeGeoMap::setBearing(qreal bearing)
 {
     if (bearing_ == bearing)
         return;
@@ -673,7 +673,7 @@ void QDeclarative3DGraphicsGeoMap::setBearing(qreal bearing)
     The default value is 0 corresponding North pointing up.
 */
 
-qreal QDeclarative3DGraphicsGeoMap::bearing() const
+qreal QDeclarativeGeoMap::bearing() const
 {
     if (mappingManagerInitialized_) {
         if (map_->cameraData().bearing() >= 0)
@@ -695,7 +695,7 @@ qreal QDeclarative3DGraphicsGeoMap::bearing() const
 
     The default value is 8.0.
 */
-void QDeclarative3DGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
+void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
 {
     if (zoomLevel_ == zoomLevel)
         return;
@@ -713,7 +713,7 @@ void QDeclarative3DGraphicsGeoMap::setZoomLevel(qreal zoomLevel)
     emit zoomLevelChanged(zoomLevel);
 }
 
-qreal QDeclarative3DGraphicsGeoMap::zoomLevel() const
+qreal QDeclarativeGeoMap::zoomLevel() const
 {
     if (mappingManagerInitialized_)
         return map_->cameraData().zoomFactor();
@@ -729,7 +729,7 @@ qreal QDeclarative3DGraphicsGeoMap::zoomLevel() const
 
     The default value is an arbitrary valid coordinate.
 */
-void QDeclarative3DGraphicsGeoMap::setCenter(QDeclarativeCoordinate *center)
+void QDeclarativeGeoMap::setCenter(QDeclarativeCoordinate *center)
 {
     if (center == center_)
         return;
@@ -759,7 +759,7 @@ void QDeclarative3DGraphicsGeoMap::setCenter(QDeclarativeCoordinate *center)
     emit centerChanged(center_);
 }
 
-QDeclarativeCoordinate* QDeclarative3DGraphicsGeoMap::center()
+QDeclarativeCoordinate* QDeclarativeGeoMap::center()
 {
     if (!center_) {
         if (mappingManagerInitialized_)
@@ -782,7 +782,7 @@ QDeclarativeCoordinate* QDeclarative3DGraphicsGeoMap::center()
     return center_;
 }
 
-void QDeclarative3DGraphicsGeoMap::cameraDataChanged(const CameraData &cameraData)
+void QDeclarativeGeoMap::cameraDataChanged(const CameraData &cameraData)
 {
     if (!componentCompleted_)
         return;
@@ -802,7 +802,7 @@ void QDeclarative3DGraphicsGeoMap::cameraDataChanged(const CameraData &cameraDat
     }
 }
 
-void QDeclarative3DGraphicsGeoMap::centerLatitudeChanged(double latitude)
+void QDeclarativeGeoMap::centerLatitudeChanged(double latitude)
 {
     if (qIsNaN(latitude))
         return;
@@ -817,7 +817,7 @@ void QDeclarative3DGraphicsGeoMap::centerLatitudeChanged(double latitude)
     emit centerChanged(center_);
 }
 
-void QDeclarative3DGraphicsGeoMap::centerLongitudeChanged(double longitude)
+void QDeclarativeGeoMap::centerLongitudeChanged(double longitude)
 {
     if (qIsNaN(longitude))
         return;
@@ -832,7 +832,7 @@ void QDeclarative3DGraphicsGeoMap::centerLongitudeChanged(double longitude)
     emit centerChanged(center_);
 }
 
-void QDeclarative3DGraphicsGeoMap::centerAltitudeChanged(double altitude)
+void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
 {
     if (qIsNaN(altitude))
         return;
@@ -862,7 +862,7 @@ void QDeclarative3DGraphicsGeoMap::centerAltitudeChanged(double altitude)
 
     The default value is determined by the plugin.
 */
-//void QDeclarative3DGraphicsGeoMap::setMapType(QDeclarative3DGraphicsGeoMap::MapType mapType)
+//void QDeclarativeGeoMap::setMapType(QDeclarativeGeoMap::MapType mapType)
 //{
 //    if (mapData_) {
 //        mapData_->setMapType(QGraphicsGeoMap::MapType(mapType));
@@ -876,10 +876,10 @@ void QDeclarative3DGraphicsGeoMap::centerAltitudeChanged(double altitude)
 //    }
 //}
 
-//QDeclarative3DGraphicsGeoMap::MapType QDeclarative3DGraphicsGeoMap::mapType() const
+//QDeclarativeGeoMap::MapType QDeclarativeGeoMap::mapType() const
 //{
 //    if (mapData_) {
-//        return QDeclarative3DGraphicsGeoMap::MapType(mapData_->mapType());
+//        return QDeclarativeGeoMap::MapType(mapData_->mapType());
 //    } else {
 //        return mapType_;
 //    }
@@ -899,7 +899,7 @@ void QDeclarative3DGraphicsGeoMap::centerAltitudeChanged(double altitude)
 
     The default value is determined by the plugin.
 */
-//void QDeclarative3DGraphicsGeoMap::setConnectivityMode(QDeclarative3DGraphicsGeoMap::ConnectivityMode connectivityMode)
+//void QDeclarativeGeoMap::setConnectivityMode(QDeclarativeGeoMap::ConnectivityMode connectivityMode)
 //{
 //    if (mapData_) {
 //        mapData_->setConnectivityMode(QGraphicsGeoMap::ConnectivityMode(connectivityMode));
@@ -913,10 +913,10 @@ void QDeclarative3DGraphicsGeoMap::centerAltitudeChanged(double altitude)
 //    }
 //}
 
-//QDeclarative3DGraphicsGeoMap::ConnectivityMode QDeclarative3DGraphicsGeoMap::connectivityMode() const
+//QDeclarativeGeoMap::ConnectivityMode QDeclarativeGeoMap::connectivityMode() const
 //{
 //    if (mapData_)
-//        return QDeclarative3DGraphicsGeoMap::ConnectivityMode(mapData_->connectivityMode());
+//        return QDeclarativeGeoMap::ConnectivityMode(mapData_->connectivityMode());
 //    else
 //        return connectivityMode_;
 //}
@@ -954,7 +954,7 @@ void QDeclarative3DGraphicsGeoMap::centerAltitudeChanged(double altitude)
 
 */
 
-QDeclarativeCoordinate* QDeclarative3DGraphicsGeoMap::toCoordinate(QPointF screenPosition) const
+QDeclarativeCoordinate* QDeclarativeGeoMap::toCoordinate(QPointF screenPosition) const
 {
     QGeoCoordinate coordinate;
     if (mappingManagerInitialized_)
@@ -974,7 +974,7 @@ QDeclarativeCoordinate* QDeclarative3DGraphicsGeoMap::toCoordinate(QPointF scree
     current viewport.
 */
 
-QPointF QDeclarative3DGraphicsGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate) const
+QPointF QDeclarativeGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate) const
 {
     QPointF point;
     if (mappingManagerInitialized_)
@@ -982,14 +982,14 @@ QPointF QDeclarative3DGraphicsGeoMap::toScreenPosition(QDeclarativeCoordinate* c
     return point;
 }
 
-void QDeclarative3DGraphicsGeoMap::pan(int dx, int dy)
+void QDeclarativeGeoMap::pan(int dx, int dy)
 {
     Q_UNUSED(dx);
     Q_UNUSED(dy);
     qWarning() << __FUNCTION__ << " of Map not implemented."; // TODO
 }
 
-void QDeclarative3DGraphicsGeoMap::touchEvent(QTouchEvent *event)
+void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
 {
     if (!mappingManagerInitialized_) {
         event->ignore();
@@ -1000,7 +1000,7 @@ void QDeclarative3DGraphicsGeoMap::touchEvent(QTouchEvent *event)
     pinchArea_->touchEvent(event);
 }
 
-void QDeclarative3DGraphicsGeoMap::wheelEvent(QWheelEvent *event)
+void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 {
     QLOC_TRACE0;
     event->accept();
@@ -1008,7 +1008,7 @@ void QDeclarative3DGraphicsGeoMap::wheelEvent(QWheelEvent *event)
 }
 
 // event delivery helpers
-bool QDeclarative3DGraphicsGeoMap::deliverMouseEvent(QMouseEvent* event)
+bool QDeclarativeGeoMap::deliverMouseEvent(QMouseEvent* event)
 {
     QLOC_TRACE2("mouse grabber item: ", mouseGrabberItem_);
     // todo deliver first for map items
@@ -1054,7 +1054,7 @@ bool QDeclarative3DGraphicsGeoMap::deliverMouseEvent(QMouseEvent* event)
     return false;
 }
 
-bool QDeclarative3DGraphicsGeoMap::deliverInitialMousePressEvent(QDeclarativeGeoMapMouseArea* ma, QMouseEvent* event)
+bool QDeclarativeGeoMap::deliverInitialMousePressEvent(QDeclarativeGeoMapMouseArea* ma, QMouseEvent* event)
 {
     if (ma->acceptedMouseButtons() & event->button()) {
         QPointF p = ma->mapFromScene(event->windowPos());
@@ -1075,7 +1075,7 @@ bool QDeclarative3DGraphicsGeoMap::deliverInitialMousePressEvent(QDeclarativeGeo
     return false;
 }
 
-void QDeclarative3DGraphicsGeoMap::mousePressEvent(QMouseEvent *event)
+void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
 {
     QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
     if (!mappingManagerInitialized_) {
@@ -1092,7 +1092,7 @@ void QDeclarative3DGraphicsGeoMap::mousePressEvent(QMouseEvent *event)
 
 // returns list of mouse areas under 'pos'. returned list is in the priority order in which the
 // mouse events should be provided (currently does not consider 'z')
-QList<QDeclarativeGeoMapMouseArea*> QDeclarative3DGraphicsGeoMap::mouseAreasAt(QPoint pos)
+QList<QDeclarativeGeoMapMouseArea*> QDeclarativeGeoMap::mouseAreasAt(QPoint pos)
 {
     QList<QDeclarativeGeoMapMouseArea*> list;
     for (int i = mouseAreas_.count() - 1; i >= 0; --i) {
@@ -1103,7 +1103,7 @@ QList<QDeclarativeGeoMapMouseArea*> QDeclarative3DGraphicsGeoMap::mouseAreasAt(Q
     return list;
 }
 
-void QDeclarative3DGraphicsGeoMap::mouseReleaseEvent(QMouseEvent *event)
+void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
 {
     QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
     if (!mappingManagerInitialized_) {
@@ -1122,7 +1122,7 @@ void QDeclarative3DGraphicsGeoMap::mouseReleaseEvent(QMouseEvent *event)
         event->ignore();
 }
 
-void QDeclarative3DGraphicsGeoMap::mouseDoubleClickEvent(QMouseEvent *event)
+void QDeclarativeGeoMap::mouseDoubleClickEvent(QMouseEvent *event)
 {
     QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
     if (!mappingManagerInitialized_) {
@@ -1146,7 +1146,7 @@ void QDeclarative3DGraphicsGeoMap::mouseDoubleClickEvent(QMouseEvent *event)
         event->ignore();
 }
 
-void QDeclarative3DGraphicsGeoMap::mouseMoveEvent(QMouseEvent *event)
+void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
 {
     //QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
     if (!mappingManagerInitialized_) {
@@ -1163,19 +1163,19 @@ void QDeclarative3DGraphicsGeoMap::mouseMoveEvent(QMouseEvent *event)
         event->ignore();
 }
 
-void QDeclarative3DGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &coordinate)
+void QDeclarativeGeoMap::internalCenterChanged(const QGeoCoordinate &coordinate)
 {
     emit centerChanged(new QDeclarativeCoordinate(coordinate, this));
 }
 
-//void QDeclarative3DGraphicsGeoMap::internalMapTypeChanged(QGraphicsGeoMap::MapType mapType)
+//void QDeclarativeGeoMap::internalMapTypeChanged(QGraphicsGeoMap::MapType mapType)
 //{
-//    emit mapTypeChanged(QDeclarative3DGraphicsGeoMap::MapType(mapType));
+//    emit mapTypeChanged(QDeclarativeGeoMap::MapType(mapType));
 //}
 
-//void QDeclarative3DGraphicsGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode)
+//void QDeclarativeGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode)
 //{
-//    emit connectivityModeChanged(QDeclarative3DGraphicsGeoMap::ConnectivityMode(connectivityMode));
+//    emit connectivityModeChanged(QDeclarativeGeoMap::ConnectivityMode(connectivityMode));
 //}
 
 /*!
@@ -1195,7 +1195,7 @@ void QDeclarative3DGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &c
 
 // all map item additions and removals, whether internal or app originated,
 // must go through these functions
-void QDeclarative3DGraphicsGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
+void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
 {
     QLOC_TRACE0;
     if (!item || mapItems_.contains(item) || mapItemsPending_.contains(item))
@@ -1207,7 +1207,7 @@ void QDeclarative3DGraphicsGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
     updateMutex_.unlock();
 }
 
-void QDeclarative3DGraphicsGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
+void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
 {
     QLOC_TRACE0;
     if (!item || !map_)
@@ -1230,7 +1230,7 @@ void QDeclarative3DGraphicsGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
 }
 
 // TODO clears all items including ones from models/MapItemview which is not intended
-void QDeclarative3DGraphicsGeoMap::clearMapItems()
+void QDeclarativeGeoMap::clearMapItems()
 {
     if (mapItems_.isEmpty() || !map_)
         return;
@@ -1243,14 +1243,14 @@ void QDeclarative3DGraphicsGeoMap::clearMapItems()
 
 // when a map item is getting destroyed, we need make sure resources are released gracefully
 // with QML we must prepare for arbitrary deletion times
-void QDeclarative3DGraphicsGeoMap::mapItemDestroyed(QObject* item)
+void QDeclarativeGeoMap::mapItemDestroyed(QObject* item)
 {
     QDeclarativeGeoMapItem* mapItem = qobject_cast<QDeclarativeGeoMapItem*>(item);
     if (mapItem)
         removeMapItem(mapItem);
 }
 
-void QDeclarative3DGraphicsGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseArea *area)
+void QDeclarativeGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseArea *area)
 {
     Q_UNUSED(area); // TODO
     // to be done when the item picking is clear
@@ -1273,11 +1273,11 @@ void QDeclarative3DGraphicsGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseAre
 */
 
 // This function is strictly for testing purposes
-int QDeclarative3DGraphicsGeoMap::testGetDeclarativeMapItemCount()
+int QDeclarativeGeoMap::testGetDeclarativeMapItemCount()
 {
     return mapItems_.count();
 }
 
-#include "moc_qdeclarative3dgraphicsgeomap_p.cpp"
+#include "moc_qdeclarativegeomap_p.cpp"
 
 QT_END_NAMESPACE

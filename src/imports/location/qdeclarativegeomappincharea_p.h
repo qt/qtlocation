@@ -48,7 +48,7 @@
 #include <QDebug>
 
 class QGraphicsSceneMouseEvent;
-class QDeclarative3DGraphicsGeoMap;
+class QDeclarativeGeoMap;
 class QTouchEvent;
 class Map;
 
@@ -121,7 +121,7 @@ class QDeclarativeGeoMapPinchArea: public QObject
     //Q_PROPERTY(qreal maximumTiltChange READ maximumTiltChange WRITE setMaximumTiltChange NOTIFY maximumTiltChangeChanged)
 
 public:
-    QDeclarativeGeoMapPinchArea(QDeclarative3DGraphicsGeoMap* map, QObject *parent = 0);
+    QDeclarativeGeoMapPinchArea(QDeclarativeGeoMap* map, QObject *parent = 0);
     ~QDeclarativeGeoMapPinchArea();
 
     enum ActiveGesture {
@@ -194,7 +194,7 @@ private:
     void updatePinch();
 
 private:
-    QDeclarative3DGraphicsGeoMap* map_;
+    QDeclarativeGeoMap* map_;
     QDeclarativeGeoMapPinchEvent pinchEvent_;
     bool enabled_;
     bool active_;

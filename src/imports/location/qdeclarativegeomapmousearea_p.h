@@ -43,7 +43,7 @@
 #define QDECLARATIVEGEOMAPMOUSEAREA_H
 
 #include "qdeclarativecoordinate_p.h"
-#include "qdeclarative3dgraphicsgeomap_p.h"
+#include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 
 #include <QtDeclarative/QQuickItem>
@@ -71,7 +71,7 @@ public:
     // From QDeclarativeParserStatus
     virtual void componentComplete();
 
-    void setMap(QDeclarative3DGraphicsGeoMap *map);
+    void setMap(QDeclarativeGeoMap *map);
 
     qreal mouseX() const;
     qreal mouseY() const;
@@ -124,7 +124,7 @@ private slots:
 private:
     void mapMouseEvent(QQuickMouseEvent* event);
     QDeclarativeGeoMapMouseEvent* mouseEvent_;
-    QDeclarative3DGraphicsGeoMap* map_;
+    QDeclarativeGeoMap* map_;
     QQuickMouseArea* mouseArea_;
     bool componentCompleted_;
 };

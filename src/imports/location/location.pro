@@ -34,7 +34,7 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeoroutesegment_p.h \
            qdeclarativegeomaneuver_p.h \
            qdeclarativegeoboundingcircle_p.h \
-           qdeclarative3dgraphicsgeomap_p.h \
+           qdeclarativegeomap_p.h \
            qdeclarativegeomapflickable_p.h \
            qdeclarativegeomappincharea_p.h \
            qdeclarativegeomapitem_p.h
@@ -57,7 +57,7 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeoroutesegment.cpp \
            qdeclarativegeomaneuver.cpp \
            qdeclarativegeoboundingcircle.cpp \
-           qdeclarative3dgraphicsgeomap.cpp \
+           qdeclarativegeomap.cpp \
            qdeclarativegeomapflickable.cpp \
            qdeclarativegeomappincharea.cpp \
            qdeclarativegeomapitem.cpp

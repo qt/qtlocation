@@ -234,7 +234,7 @@ void QDeclarativeGeoMapMouseArea::doubleClickedHandler(QQuickMouseEvent* event)
     emit doubleClicked(mouseEvent_);
 }
 
-void QDeclarativeGeoMapMouseArea::setMap(QDeclarative3DGraphicsGeoMap *map)
+void QDeclarativeGeoMapMouseArea::setMap(QDeclarativeGeoMap *map)
 {
     Q_ASSERT(map);
     map_ = map;
