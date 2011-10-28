@@ -73,11 +73,3 @@ qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INSTALLS += target qmldir
-
-# manually enable mouse area and map items (shader effect source) if you know symbols to be
-# present in your environment
-
-#message('Will try to build QML Map 3D with QML2 user interaction elements and Map Items.')
-#DEFINES += QQUICKMOUSEAREA_AVAILABLE
-#DEFINES += QQUICKSHADEREFFECTSOURCE_AVAILABLE
-message('QML2 3D Map user interaction elements and MapItems not available. Check location.pro - file for instructions.')

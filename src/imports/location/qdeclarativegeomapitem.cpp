@@ -43,10 +43,6 @@
 #include "qdeclarativecoordinate_p.h"
 #include <QtDeclarative/qdeclarativeinfo.h>
 
-#ifndef QQUICKSHADEREFFECTSOURCE_AVAILABLE
-
-#else
-
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -259,7 +255,6 @@ QQuickItem* QDeclarativeGeoMapItem::sourceItem()
         return sourceItem_;
     return shaderSource_->sourceItem();
 }
-#endif
 
 #include "moc_qdeclarativegeomapitem_p.cpp"
 

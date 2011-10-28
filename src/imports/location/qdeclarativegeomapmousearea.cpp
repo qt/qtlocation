@@ -43,10 +43,6 @@
 #include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/QQuickCanvas>
 
-#ifndef QQUICKMOUSEAREA_AVAILABLE
-
-#else
-
 #include <qquickevents_p_p.h>
 #include "qquickmousearea_p.h"
 
@@ -472,8 +468,6 @@ bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
 
     \sa onEntered()
 */
-
-#endif // QQUICKMOUSEAREA_AVAILABLE
 
 #include "moc_qdeclarativegeomapmousearea_p.cpp"
 

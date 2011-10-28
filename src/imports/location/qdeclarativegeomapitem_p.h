@@ -53,18 +53,6 @@
 
 QT_BEGIN_NAMESPACE
 
-#ifndef QQUICKSHADEREFFECTSOURCE_AVAILABLE
-// dummy implementation so we don't have to ifdef all over the place
-class QDeclarativeGeoMapItem : public QQuickItem
-{
-    Q_OBJECT
-public:
-    QDeclarativeGeoMapItem(QQuickItem *parent = 0) { Q_UNUSED(parent);};
-    ~QDeclarativeGeoMapItem() {};
-};
-
-#else
-
 #include <private/qquickshadereffectsource_p.h>
 
 class QDeclarativeGeoMapItem : public QQuickItem
@@ -123,8 +111,6 @@ private:
     friend class QDeclarativeGeoMapItemNode;
     Q_DISABLE_COPY(QDeclarativeGeoMapItem);
 };
-
-#endif // shader effect source available
 
 QT_END_NAMESPACE
 

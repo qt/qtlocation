@@ -142,7 +142,6 @@ QSGNode* QDeclarative3DGraphicsGeoMap::updatePaintNode(QSGNode* node, UpdatePain
 {
     Q_UNUSED(node);
     Q_UNUSED(data);
-#ifdef QQUICKSHADEREFFECTSOURCE_AVAILABLE
     // add any pending map items
     if (updateMutex_.tryLock()) {
         if (canvas_) {
@@ -162,7 +161,6 @@ QSGNode* QDeclarative3DGraphicsGeoMap::updatePaintNode(QSGNode* node, UpdatePain
     } else {
         QLOC_TRACE1("===== Map item update will be missed, mutex not acquired =====");
     }
-#endif
     update(); // is this needed
     return QQuickPaintedItem::updatePaintNode(node, data);
 }
@@ -1200,7 +1198,6 @@ void QDeclarative3DGraphicsGeoMap::internalCenterChanged(const QGeoCoordinate &c
 void QDeclarative3DGraphicsGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
 {
     QLOC_TRACE0;
-#ifdef QQUICKSHADEREFFECTSOURCE_AVAILABLE
     if (!item || mapItems_.contains(item) || mapItemsPending_.contains(item))
         return;
     updateMutex_.lock();
@@ -1208,15 +1205,11 @@ void QDeclarative3DGraphicsGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
     mapItemsPending_.append(item);
     connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(mapItemDestroyed(QObject*)));
     updateMutex_.unlock();
-#else
-    Q_UNUSED(item);
-#endif
 }
 
 void QDeclarative3DGraphicsGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
 {
     QLOC_TRACE0;
-#ifdef QQUICKSHADEREFFECTSOURCE_AVAILABLE
     if (!item || !map_)
         return;
     if (mapItemsPending_.contains(item)) {
@@ -1234,9 +1227,6 @@ void QDeclarative3DGraphicsGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
     mapItemsPending_.removeOne(item);
     map_->removeMapItem(item->mapItem());
     updateMutex_.unlock();
-#else
-    Q_UNUSED(item);
-#endif
 }
 
 // TODO clears all items including ones from models/MapItemview which is not intended

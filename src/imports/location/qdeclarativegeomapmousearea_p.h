@@ -50,22 +50,6 @@
 
 QT_BEGIN_NAMESPACE
 
-#ifndef QQUICKMOUSEAREA_AVAILABLE
-
-class QDeclarativeGeoMapMouseArea : public QQuickItem
-{
-    Q_OBJECT
-
-public:
-    void setMap(QDeclarative3DGraphicsGeoMap *map) {Q_UNUSED(map);}
-    bool mouseEvent(QMouseEvent* event) {Q_UNUSED(event); return false;}
-
-    QDeclarativeGeoMapMouseArea(QQuickItem *parent = 0) { Q_UNUSED(parent); qWarning("=================== using map mouse area stub ===============");}
-    ~QDeclarativeGeoMapMouseArea() {}
-};
-
-#else
-
 class QQuickMouseArea;
 class QQuickMouseEvent;
 
@@ -132,7 +116,6 @@ private slots:
     void pressAndHoldHandler(QQuickMouseEvent* event);
     void enteredHandler();
     void exitedHandler();
-    void canceledHandler();
     void enabledChangedHandler();
     void acceptedButtonsChangedHandler();
     void pressedChangedHandler();
@@ -146,7 +129,6 @@ private:
     bool componentCompleted_;
 };
 
-#endif // QQUICKMOUSEAREA_AVAILABLE
 QT_END_NAMESPACE
 
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapMouseArea));
