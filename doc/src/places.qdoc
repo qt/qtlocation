@@ -36,150 +36,191 @@
 
     \section1 Overview
 
-    The Places API allows users to identify and search for places based on
-    metadata.
+    The Places API allows users to discover places, view rich content about the places
+    as reviews and images.  It can also be used to facilitated management
+    of places such as saving and removing.
 
-    Using the API requires at least an instance of QPlace to hold the
-    location we are interested in and a QPlaceManager to handle our search
-    requests and retrieval of location details.
-
-    A QPlace object describes the place by acting as a container for various
-    information, including:
+    \section1 Place Definition
+    A place is a point of interest whether it be a favorite restaurant, a park or someone's home.
+    A QPlace object describes a place by acting as a container for various information.  The information can
+    be divided into 3 classifications
 
     \list
-        \o a QMap of various attributes
-        \o a list category tags for the place
-        \o a physical location
-        \o a supplier url and icon url
-        \o a name and id
-        \o contact information for the place, if any
-        \o a url
-        \o a list of suppliers of content
+    \o Core data
+    \o Detailed data
+    \o Rich content
     \endlist
 
-    A developer who wishes to use the API to save a place of interest could
-    write a minimal piece of code as follows. In this code the developer
-    wishes to record a favorite place for ice cream. She places the name in a
-    QPlace object and details of the position of the place are recorded in a
-    QGeoLocation object. The QGeoLocation object is then passed to the QPlace
-    object to initialize it
+    The \e {Core} data consists of the bare essential information regarding a place.  What comes under core
+    may vary from provider to provider but typically it would consist of the place name, location, contact information,
+    categories and icon.  When searching for places with an online provider, it is typical that of the candidate places
+    returned only the core data is populated to save bandwidth.  If a user is interested in a particular place, then
+    the details of that data are retrieved.
 
+    The \e {Detailed} data consists of the remaining place data fields like the supplier and attributes, but with
+    the exception of rich content as described below.  For offline providers the details are usually all available,
+    so when a search operation is conducted, the places contain detailed information.  To check whether a place does
+    contain detailed information the QPlace::detailsFetched() function can be queried.  The QPlaceManager::getPlaceDetails()
+    function can be used to fetch the details if necessary.
+
+    The \e {Rich Content} consists of media type information such as images and reviews.  These are typically paginated
+    and thus are retrieved independently from the place using the QPlaceManager.  \e {Rich Content} can then be assigned
+    to a place instance as necessary so it can act as a container for the content.
+
+    \section1 Common Operations
+
+    \section2 Initializing a manager
+    All places functionality is facilitated by a QPlaceManager instance.  One must specify
+    a QGeoServiceProvider in order to create the QPlaceManager
+
+    \snippet snippets/places/requesthandler.h Initialize Manager
+
+    \section2 Discovery/Search
+
+    In order to perform a search operation we simply create a QPlaceSearchRequest
+    and set the desired search parameters, such as a search term and search center.
+
+    \snippet snippets/places/requesthandler.h Search for places cpp
+
+    The request  is an asynchronous operation so we need a slot to handle the
+    completion of the request. In the handler we check that there are no errors and that our search result
+    type is a place.  If so we can then retrieve some of the core details of the
+    place.  At the end of the slot, we delete the reply since they are for single use only.
+
+    \snippet snippets/places/requesthandler.h Search for places handler cpp
+
+    \bold {Note:} Depending upon the plugin backend that was chosen the search results may contain places
+    that are only populated with \e {core} details such as name, address, and location only.  The specifics
+    depend on the plugin implementation.  To fetch the other place details see \l {Fetching Place Details}.
+
+    \section3 Paging
+    If the plugin supports paging, limit and offset parameters may be provided to the search request.
+    \snippet snippets/places/requesthandler.h Search paging
+
+    \section3 Corrections
+    Suggested search term corrections to user input may also be returned with the search results if desired.
+    A maximum number can be set in the search request.
+    \snippet snippets/places/requesthandler.h Corrections
+    \dots
+    \dots
+    \snippet snippets/places/requesthandler.h Corrections handling pt1
+    \dots
+    \snippet snippets/places/requesthandler.h Corrections handling pt2
+
+    \section2 Fetching Place Details
+    Depending upon the plugin, the place results returned during a search may only contain core data.
+    We can check if the details have already been retrieved and if not, request them as shown:
+    \snippet snippets/places/requesthandler.h Details check
+    \dots
+    \dots
+    \snippet snippets/places/requesthandler.h Details handler cpp
+
+    \section2 Fetching Rich Content
+    Rich content such as images and reviews is retrieved through the manager and then if required assigned to a place.
+    \snippet snippets/places/requesthandler.h Image request
+
+    We can handle the content request as shown below.
+    \snippet snippets/places/requesthandler.h Image handler
+
+    It is important to note that the results in the QPlaceContentReply,
+    is a QPlaceContent::Collection which is essentially a QMap<int, QPlaceContent>.  The key \c {int} in this case is the
+    index of the content, and the value is the content itself.  Due to the way Content is implemented
+    it is possible to convert a content type as follows
     \code
-        QPlace  place;
-        place.setName( "Fred's Ice Cream Parlor" );
-
-        QGeoLocation  location(latitude, longitude);
-        location.setCoordinate(12.34, 56.78);
-
-        QGeoAddress address;
-        address.setStreet("111 Nother Street");
-        ...
-        location.setAddress(address);
-
-        place.setLocation(location);
+        QPlaceImage image = content; //provided that 'content' has a type QPlace::ImageType
     \endcode
 
-    The \e place now has some identification and location information to specify
-    it. To save it we need to use the QPlaceManager and monitor the signal
-    that indicates a successful save
+    \section2 Text Prediction
+    The retrieval of text predictions is very similar to performing a place search. A QPlaceSearchRequest
+    is used just like a place search, the only difference being that the search term is set to a
+    semi-completed string.
 
-    \code
-        QPlaceIdReply *saveReply = placeManager.savePlace( place );
+    \snippet snippets/places/requesthandler.h Prediction request
+    And when the request is done, we can use the reply to show the predictions.
+    \snippet snippets/places/requesthandler.h Prediction handler
 
-        connect(saveReply, SIGNAL( finished() ), handler, SLOT( processFinished() ));
-    \endcode
+    \section2 Saving a place
+    The saving of a new place is performed as follows, we create a QPlace instance
+    and populate it with information such as a name, address and coordinate.  Once
+    done we can invoke QPlaceManager::savePlace() to begin a save operation.
+    \snippet snippets/places/requesthandler.h Save place pt1
+    \dots
+    \snippet snippets/places/requesthandler.h Save place pt2
 
-    The slot that handles the completion will be \e {processFinished()} in
-    a \e handler object (not shown).
+    Once a place is saved the reply contains the new id for that place.
+    \snippet snippets/places/requesthandler.h Save place handler
 
-    \note replies are only valid for one use, do not re-use them.
+    Note that to save an already \e existing place, the QPlace::placeId() must
+    be filled in with the correct id.  Otherwise a new place will be created if empty or the
+    wrong place overwritten if the id is incorrect.
 
-    \code
-        void handler:processFinished() {
-            if (saveReply->error() == QPlaceReply::NoError)
-                qDebug() << "Place successfully saved";
-            else
-                qDebug() << "Place failed to save";
+    When a place is saved, the QPlaceManager may emit QPlaceManager::placedAdded() or QPlaceManager::placeUpdated()
+    signals.  However whether a manager does so or not is provider specific, managers accessing places
+    from a web service will typically not emit these signals while managers accessing places locally stored generally will.
 
-            // replies cannot be used again for another operation, they're for 'single shot' usage
-            saveReply->deleteLater();
-            saveReply =0;
-        }
-    \endcode
+    \section3 Caveats
+    The Places API is currently designed for only saving \a {core} data.  Saving a place with \e {rich content}
+    or \a {detailed} data is not a supported use case.  Typically a manager will generally ignore these fields upon save and may
+    produce a warning message if they are populated.
 
-    To look for a place we can submit search requests based on text if
-    we know the name, or part of the name if we wish to use the predictive text
-    search features. We could also search within a region, a bounding box
-    of geographical coordinates or within a given radius of a location. Perhaps
-    we want to find a particular restaurant or landmark near to our location
-    or a named place in a given city.
+    \section2 Removing a place
+    The removal of a place is performed as follows:
+    \snippet snippets/places/requesthandler.h Remove place
+    \dots
+    \dots
+    \snippet snippets/places/requesthandler.h Remove place handler
 
-    Here we try searching for "brisbane" expecting that this substring will
-    be sufficient to reduce the list of search hits.
+    When a place is removed, the QPlaceManager may emit the QPlaceManager::placeRemoved() signal.  Whether a
+    manager does so is provider specific.  Managers accessing places from a web service will typically not emit
+    these signals, while managers accessing places stored locally generally will.
 
-    First we set up a QPlaceManager object, this will require us to select a
-    QGeoServiceProvider.
+    \section2 Using Categories
+    To use categories they must first be initialized.
+    \snippet snippets/places/requesthandler.h Initialize categories
+    \dots
+    \dots
+    \snippet snippets/places/requesthandler.h Initialize categories reply
 
-    \code
+    After the categories have been initialized we can then use these category functions.
+    \list
+        \o QPlaceManager::childCategories()
+        \o QPlaceManager::category()
+        \o QPlaceManager::parentCategoryId()
+        \o QPlaceManager::childrenCategoryIds();
+    \endlist
 
-        QGeoServiceProvider *provider = new QGeoServiceProvider( "some_provider" );
-        QPlaceManager *placeManager = provider->placeManager() ;
-    \endcode
+    To retrieve the top level categories
+    we use the QPlaceManager::childCategories() function but do not provide
+    a category id.
 
-    Next we need a QPlaceSearchRequest object to contain the details of the
-    search request.
+    \snippet snippets/places/requesthandler.h Top level categories
 
-    \code
-        QPlaceSearchRequest request;
-        request.setSearchTerm("brisbane");
-    \endcode
+    If we did provide an id then we could retrieve a category's children.
 
-    Now we use the QPlaceManager to submit the search request and the returned
-    QPlaceSearchReply object to extract the list of \l {QPlaceSearchResult}s.
+    \snippet snippets/places/requesthandler.h Child categories
 
-    \code
-        QPlaceSearchReply *searchReply = placeManager->searchForPlaces( request );
-        QList<QPlaceSearchResult> searchResults = searchReply->results();
-    \endcode
+    \section2 Saving a category
+    The following shows how to save a category
+    \snippet snippets/places/requesthandler.h Save category
+    \dots
+    \dots
+    \snippet snippets/places/requesthandler.h Save category handler
 
-    The QPlaceSearchResult class can provide various pieces of information,
-    including a QPlace object, or information on the distance and heading
-    to the place. The code below just extracts the QPlace objects which
-    could be used to update a map with names of places of interest.
+    When a category is saved, the QPlaceManager may emit QPlaceManager::categoryAdded() or QPlaceManager::categoryUpdated()
+    signals.  However whether a manager does so or not is provider specific, managers accessing places
+    from a web service will typically not emit these signals while managers accessing places locally stored generally will.
 
-    \code
-        // Then extract the 'results' to a form that the user can select from.
 
-        QList<QPlace>  results;
-        foreach (const QPlaceSearchResult &searchResult, searchResults)
-            results.append(searchResult.place());
-        ...
-    \endcode
+    \section2 Removing a category
+    Category removal is very similar to removing a place
+    \snippet snippets/places/requesthandler.h Remove category
+    \dots
+    \dots
+    \snippet snippets/places/requesthandler.h Remove category handler
 
-    If we wish to search within an area, say a 200 meter radius of our
-    current position then we could do the following
-
-    \code
-        QGeoCoordinate  here( myLat, myLong );
-        radius = 200 ;
-
-        QPlaceSearchRequest request;
-
-        request.setSearchArea( new QGeoBoundingCircle( here, radius ) );
-
-        ...
-
-        QPlaceSearchReply *searchReply = placeManager->searchForPlaces( request );
-        QList<QPlaceSearchResult> searchResults = searchReply->results();
-
-        // Similar code as used for the text search to extract results.
-        ...
-    \endcode
-
-    For more information about the place there may be a supplier url available.
-    This would mean we could show a link to information about the place of interest.
-    A supplier icon url may also be supplied which can be used to display a
-    pleasing icon representing the landmark on a map or a list.
+    When a category is removed, the QPlaceManager may emit the QPlaceManager::categoryRemoved() signal.  Whether a
+    manager does so is provider specific.  Managers accessing places from a web service will typically not emit
+    these signals, while managers accessing places stored locally generally will.
 
     \section1 Places Examples
 
