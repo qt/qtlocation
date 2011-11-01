@@ -45,6 +45,8 @@
 #include <QVector2D>
 #include <QVector3D>
 
+#include <qnumeric.h>
+
 Projection2D::Projection2D(double baseHeight, double sideLength)
     : baseHeight_(baseHeight), sideLength_(sideLength) {}
 
@@ -53,7 +55,10 @@ Projection2D::~Projection2D() {}
 QVector3D Projection2D::coordToPoint(const QGeoCoordinate &coord) const
 {
     QVector2D m = coordToMercator(coord);
-    return QVector3D(m.x() * sideLength_, (1.0 - m.y()) * sideLength_, coord.altitude() + baseHeight_);
+    double z = baseHeight_;
+    if (!qIsNaN(coord.altitude()))
+        z += coord.altitude();
+    return QVector3D(m.x() * sideLength_, (1.0 - m.y()) * sideLength_, z);
 }
 
 QGeoCoordinate Projection2D::pointToCoord(const QVector3D &point) const
