@@ -96,6 +96,9 @@ public:
     bool autoUpdate() const;
 
     void resize(int width, int height);
+    int width() const;
+    int height() const;
+    double aspectRatio() const;
 
     virtual QGLSceneNode* createTileSpecNode(const TileSpec &tileSpec) = 0;
     QGLSceneNode* createTileNode(const Tile &tile);
@@ -125,10 +128,6 @@ protected:
     Frustum frustum() const;
 
     void setProjection(const QSharedPointer<Projection> &projection);
-
-    int width() const;
-    int height() const;
-    double aspectRatio() const;
 
     QGeoMappingManager* manager() const;
 
