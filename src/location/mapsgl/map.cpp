@@ -48,6 +48,7 @@
 #include "projection_p.h"
 #include "tile.h"
 #include "mapitem.h"
+#include "mapcontroller.h"
 
 #include <QMutex>
 #include <QMap>
@@ -74,6 +75,11 @@ Map::~Map()
     delete d_ptr;
 }
 
+MapController* Map::mapController()
+{
+    return d_ptr->mapController();
+}
+
 void Map::setMappingManager(QGeoMappingManager *manager)
 {
     d_ptr->setMappingManager(manager);
@@ -92,6 +98,16 @@ QGLCamera* Map::glCamera() const
 void Map::resize(int width, int height)
 {
     d_ptr->resize(width, height);
+}
+
+int Map::width() const
+{
+    return d_ptr->width();
+}
+
+int Map::height() const
+{
+    return d_ptr->height();
 }
 
 void Map::setAutoUpdate(bool autoUpdate)
@@ -196,7 +212,9 @@ QPointF Map::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 
 MapPrivate::MapPrivate(Map *parent, TileCache *cache)
     : autoUpdate_(true),
-      manager_(0)
+      map_(parent),
+      manager_(0),
+      controller_(0)
 {
     sphere_ = new MapSphere(parent, this, cache);
     glCamera_ = new QGLCamera();
@@ -204,6 +222,7 @@ MapPrivate::MapPrivate(Map *parent, TileCache *cache)
 
 MapPrivate::~MapPrivate()
 {
+    // controller_ is a child of map_, don't need to delete it here
     delete sphere_;
     delete glCamera_;
     // TODO map items are not deallocated!
@@ -226,6 +245,13 @@ void MapPrivate::setMappingManager(QGeoMappingManager *manager)
 {
     manager_ = manager;
     sphere_->setMappingManager(manager_);
+}
+
+MapController* MapPrivate::mapController()
+{
+    if (!controller_)
+        controller_ = new MapController(map_, projection_);
+    return controller_;
 }
 
 QGeoMappingManager* MapPrivate::manager() const

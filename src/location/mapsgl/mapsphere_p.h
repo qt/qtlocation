@@ -143,7 +143,6 @@ private:
     QSet<TileSpec> itemTileUpdates_;
 
     QGLSceneNode *itemNode_;
-    bool itemsDirty_;
     QList<QOpenGLFramebufferObject*> fboList_;
 
     TileCache *tileCache_;

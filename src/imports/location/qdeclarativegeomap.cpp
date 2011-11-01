@@ -53,6 +53,7 @@
 #include "tilecache.h"
 #include "tile.h"
 #include "cameradata.h"
+#include "mapcontroller.h"
 #include <Qt3D/qglscenenode.h>
 #include <Qt3D/qglbuilder.h>
 #include <Qt3D/qgeometrydata.h>
@@ -277,33 +278,29 @@ void QDeclarativeGeoMap::keyPressEvent(QKeyEvent *e)
     CameraData cameraData = map_->cameraData();
     if (e->key() == Qt::Key_Left) {
         if (e->modifiers() & Qt::ShiftModifier) {
-            QGeoCoordinate coord = cameraData.center();
-            coord.setLongitude(coord.longitude() - 1);
-            cameraData.setCenter(coord);
+            map_->mapController()->pan(-1.0 * map_->width() / 8.0, 0);
+            cameraData = map_->cameraData();
         } else {
             cameraData.setBearing(cameraData.bearing() - 5.0);
         }
     } else if (e->key() == Qt::Key_Right) {
         if (e->modifiers() & Qt::ShiftModifier) {
-            QGeoCoordinate coord = cameraData.center();
-            coord.setLongitude(coord.longitude() + 1);
-            cameraData.setCenter(coord);
+            map_->mapController()->pan(map_->width() / 8.0, 0);
+            cameraData = map_->cameraData();
         } else {
             cameraData.setBearing(cameraData.bearing() + 5.0);
         }
     } else if (e->key() == Qt::Key_Up) {
         if (e->modifiers() & Qt::ShiftModifier) {
-            QGeoCoordinate coord = cameraData.center();
-            coord.setLatitude(coord.latitude() + 1);
-            cameraData.setCenter(coord);
+            map_->mapController()->pan(0, map_->height() / 8.0);
+            cameraData = map_->cameraData();
         } else {
             cameraData.setTilt(cameraData.tilt() - 5.0);
         }
     } else if (e->key() == Qt::Key_Down) {
         if (e->modifiers() & Qt::ShiftModifier) {
-            QGeoCoordinate coord = cameraData.center();
-            coord.setLatitude(coord.latitude() - 1);
-            cameraData.setCenter(coord);
+            map_->mapController()->pan(0, -1.0 * map_->height() / 8.0);
+            cameraData = map_->cameraData();
         } else {
             cameraData.setTilt(cameraData.tilt() + 5.0);
         }

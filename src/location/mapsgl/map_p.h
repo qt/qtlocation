@@ -68,6 +68,7 @@ class Tile;
 class TileCache;
 class TileSpec;
 class Map;
+class MapController;
 class MapSphere;
 class Projection;
 struct MapItemGLResources;
@@ -83,6 +84,8 @@ public:
     virtual ~MapPrivate();
 
     void setMappingManager(QGeoMappingManager *manager);
+
+    MapController* mapController();
 
     QGLCamera* glCamera() const;
     void paintGL(QGLPainter *painter);
@@ -142,7 +145,9 @@ private:
     int height_;
     double aspectRatio_;
 
+    Map *map_;
     QGeoMappingManager *manager_;
+    MapController *controller_;
 
     QSharedPointer<Projection> projection_;
 

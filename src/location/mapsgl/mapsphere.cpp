@@ -92,8 +92,7 @@ MapSphere::MapSphere(Map* map, MapPrivate *mapPrivate, TileCache *tileCache)
     : QObject(0),
       tileCache_(tileCache),
       map_(map),
-      mapPrivate_(mapPrivate),
-      itemsDirty_(false)
+      mapPrivate_(mapPrivate)
 {
 
     sphereNode_ = new QGLSceneNode(this);
@@ -468,8 +467,8 @@ void MapSphere::updateItems(QGLPainter *painter)
         if (built_.contains(spec))
             built_[spec]->draw(painter);
 
-        for (int i = 0; i < entry->items.size(); ++i) {
-            MapItem *item = entry->items.at(i);
+        for (int j = 0; j < entry->items.size(); ++j) {
+            MapItem *item = entry->items.at(j);
             if (item->glResources() == 0)
                 continue;
 

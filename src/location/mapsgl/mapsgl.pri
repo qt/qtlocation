@@ -10,6 +10,7 @@ SOURCES += \
     mapsgl/cameradata.cpp \
     mapsgl/frustum.cpp \
     mapsgl/map.cpp \
+    mapsgl/mapcontroller.cpp \
     mapsgl/mapitem.cpp \
     mapsgl/mapitemtree.cpp \
     mapsgl/mapsphere.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 PUBLIC_HEADERS += \
     mapsgl/cameradata.h \
     mapsgl/map.h \
+    mapsgl/mapcontroller.h \
     mapsgl/mapitem.h \
     mapsgl/tilecache.h \
     mapsgl/tile.h \

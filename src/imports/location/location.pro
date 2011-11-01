@@ -11,6 +11,7 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 #INCLUDEPATH += ../../../../qtdeclarative/include
 INCLUDEPATH += ../../../../qtdeclarative/include/QtDeclarative/5.0.0/QtDeclarative
 INCLUDEPATH += ../../../../qtdeclarative/include/QtDeclarative/5.0.0/QtDeclarative/private
+INCLUDEPATH += ../../location/mapsgl
 INCLUDEPATH *= $$PWD
 
 # On some platforms, build both versions because debug and release

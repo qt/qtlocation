@@ -38,86 +38,81 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MAP_H
-#define MAP_H
+
+#ifndef MAPCONTROLLER_H
+#define MAPCONTROLLER_H
 
 #include <QObject>
 
+#include "qgeocoordinate.h"
 #include "cameradata.h"
 
-QT_BEGIN_HEADER
+class Map;
 
-QT_BEGIN_NAMESPACE
+class AnimatableCoordinate {
+public:
+    AnimatableCoordinate();
+    AnimatableCoordinate(const QGeoCoordinate &coordinate,
+                         QSharedPointer<Projection> projection);
 
+    QGeoCoordinate coordinate() const;
+    void setCoordinate(const QGeoCoordinate &coordinate);
 
+    QSharedPointer<Projection> projection() const;
+    void setProjection(QSharedPointer<Projection> projection);
 
-class QGeoCoordinate;
+private:
+    QGeoCoordinate coordinate_;
+    QSharedPointer<Projection> projection_;
+};
 
-class QGeoMappingManager;
+Q_DECLARE_METATYPE(AnimatableCoordinate)
 
-class TileCache;
-class MapPrivate;
-class MapItem;
-class MapController;
-
-class QGLCamera;
-class QGLPainter;
-
-class QPointF;
-
-class Q_LOCATION_EXPORT Map : public QObject
+class Q_LOCATION_EXPORT MapController : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(CameraData camera READ cameraData WRITE setCameraData NOTIFY cameraDataChanged)
+    Q_PROPERTY(AnimatableCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
+    Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
+    Q_PROPERTY(qreal roll READ roll WRITE setRoll NOTIFY rollChanged)
+    Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged)
 
 public:
-    Map(TileCache *cache, QObject *parent = 0);
-    virtual ~Map();
+    MapController(Map *map, QSharedPointer<Projection> projection);
+    ~MapController();
 
-    void setMappingManager(QGeoMappingManager *manager);
+    AnimatableCoordinate center() const;
+    void setCenter(const AnimatableCoordinate &center);
 
-    MapController* mapController();
+    qreal bearing() const;
+    void setBearing(qreal bearing);
 
-    QGLCamera* glCamera() const;
-    void paintGL(QGLPainter *painter);
+    qreal tilt() const;
+    void setTilt(qreal tilt);
 
-    void resize(int width, int height);
-    int width() const;
-    int height() const;
+    qreal roll() const;
+    void setRoll(qreal roll);
 
-    void setAutoUpdate(bool autoUpdate);
-    bool autoUpdate() const;
+    qreal zoom() const;
+    void setZoom(qreal zoom);
 
-    void setCameraData(const CameraData &cameraData);
-    CameraData cameraData() const;
+    void pan(qreal dx, qreal dy);
 
-    int numMapItems() const;
-    QList<MapItem*> mapItems() const;
-    QList<MapItem*> mapItemsAt(const QPoint &point) const;
-    QList<MapItem*> mapItemsWithin(const QRect &rect) const;
-    void addMapItem(MapItem *item);
-    void removeMapItem(MapItem *item);
-    void clearMapItems();
-
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-
-public Q_SLOTS:
-    void clearCache();
-    void update();
-
-Q_SIGNALS:
-    void updateRequired();
-    void updatesFinished();
+private slots:
     void cameraDataChanged(const CameraData &cameraData);
 
+signals:
+    void centerChanged(const AnimatableCoordinate &center);
+    void bearingChanged(qreal bearing);
+    void tiltChanged(qreal tilt);
+    void rollChanged(qreal roll);
+    void zoomChanged(qreal zoom);
+
 private:
-    MapPrivate *d_ptr;
+    Map *map_;
+    QSharedPointer<Projection> projection_;
+    CameraData oldCameraData_;
 };
 
-QT_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // MAP_H
+#endif // MAPCONTROLLER_H

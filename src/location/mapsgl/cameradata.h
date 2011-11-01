@@ -42,6 +42,7 @@
 #define CAMERADATA_H
 
 #include "qgeocoordinate.h"
+#include "projection_p.h"
 
 #include <QMetaType>
 
@@ -52,9 +53,6 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
-class Projection;
 class CameraDataPrivate;
 
 class Q_LOCATION_EXPORT CameraData
