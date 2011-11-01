@@ -87,7 +87,7 @@ public:
     QMap<QPlaceContent::Type, QPlaceContent::Collection> contentCollections;
     QMap<QPlaceContent::Type, int> contentCounts;
 
-    QPlace::ExtendedAttributes extendedAttributes;
+    QMap<QString, QPlaceAttribute> extendedAttributes;
     QMap<QString, QList<QPlaceContactDetail> > contacts;
 
     QtLocation::Visibility visibility;

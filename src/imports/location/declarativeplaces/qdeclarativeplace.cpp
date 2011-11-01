@@ -786,11 +786,10 @@ void QDeclarativePlace::synchronizeExtendedAttributes()
     foreach (const QString &key, keys)
         m_extendedAttributes->clear(key);
 
-    QMapIterator<QString, QPlaceAttribute> attribIter(m_src.extendedAttributes());
-    while (attribIter.hasNext()) {
-        attribIter.next();
-        m_extendedAttributes->insert(attribIter.key(),
-            qVariantFromValue(new QDeclarativePlaceAttribute(attribIter.value())));
+    QStringList attributeTypes = m_src.extendedAttributeTypes();
+    foreach (const QString &attributeType, attributeTypes) {
+        m_extendedAttributes->insert(attributeType,
+            qVariantFromValue(new QDeclarativePlaceAttribute(m_src.extendedAttribute(attributeType))));
     }
 
     emit extendedAttributesChanged();

@@ -90,7 +90,7 @@ void tst_Place::constructorTest()
     QPlaceAttribute paymentMethods;
     paymentMethods.setLabel("Payment methods");
     paymentMethods.setText("Visa");
-    testObj.insertExtendedAttribute(QLatin1String("paymentMethods"), paymentMethods);
+    testObj.setExtendedAttribute(QLatin1String("paymentMethods"), paymentMethods);
     QGeoLocation loc;
     loc.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(loc);
@@ -422,7 +422,7 @@ void tst_Place::operatorsTest()
     QPlaceAttribute paymentMethods;
     paymentMethods.setLabel("Payment methods");
     paymentMethods.setText("Visa");
-    testObj.insertExtendedAttribute(QLatin1String("paymentMethods"), paymentMethods);
+    testObj.setExtendedAttribute(QLatin1String("paymentMethods"), paymentMethods);
     QGeoLocation loc;
     loc.setCoordinate(QGeoCoordinate(10,20));
     testObj.setLocation(loc);
@@ -437,66 +437,47 @@ void tst_Place::operatorsTest()
 void tst_Place::extendedAttributeTest()
 {
     QPlace place;
-    QVERIFY2(place.extendedAttributes().isEmpty(), "Invalid default attributes");
+    QVERIFY2(place.extendedAttributeTypes().isEmpty(), "Invalid default attributes");
     QPlaceAttribute smoking;
     smoking.setLabel("Public Smoking");
     smoking.setText("No");
 
-    //test insertion of an attribution
-    place.insertExtendedAttribute("Smoking", smoking);
-    QVERIFY(place.extendedAttributes().contains("Smoking"));
-    QCOMPARE(place.extendedAttributes().value("Smoking").label(), QLatin1String("Public Smoking"));
-    QCOMPARE(place.extendedAttributes().value("Smoking").text(), QLatin1String("No"));
-    QCOMPARE(place.extendedAttributes().count(), 1);
+    //test setting of an attribue
+    place.setExtendedAttribute("Smoking", smoking);
+
+    QVERIFY(place.extendedAttributeTypes().contains("Smoking"));
+    QCOMPARE(place.extendedAttributeTypes().count(), 1);
+
+    QCOMPARE(place.extendedAttribute("Smoking").label(), QLatin1String("Public Smoking"));
+    QCOMPARE(place.extendedAttribute("Smoking").text(), QLatin1String("No"));
 
     QPlaceAttribute shelter;
     shelter.setLabel("Outdoor shelter");
     shelter.setText("Yes");
 
-    //test insertion again
-    place.insertExtendedAttribute("Shelter", shelter);
-    QVERIFY(place.extendedAttributes().contains("Shelter"));
-    QCOMPARE(place.extendedAttributes().value("Shelter").label(), QLatin1String("Outdoor shelter"));
-    QCOMPARE(place.extendedAttributes().value("Shelter").text(), QLatin1String("Yes"));
+    //test setting another new attribute
+    place.setExtendedAttribute("Shelter", shelter);
+    QVERIFY(place.extendedAttributeTypes().contains("Shelter"));
+    QVERIFY(place.extendedAttributeTypes().contains("Smoking"));
+    QCOMPARE(place.extendedAttributeTypes().count(), 2);
+    QCOMPARE(place.extendedAttribute("Shelter").label(), QLatin1String("Outdoor shelter"));
+    QCOMPARE(place.extendedAttribute("Shelter").text(), QLatin1String("Yes"));
 
-    QCOMPARE(place.extendedAttributes().count(), 2);
-
-    //test overwriting an attribute using an insertion
+    //test overwriting an attribute
     shelter.setText("No");
-    place.insertExtendedAttribute("Shelter", shelter);
+    place.setExtendedAttribute("Shelter", shelter);
 
-    QPlaceAttribute wireless;
-    wireless.setLabel("Wifi");
-    wireless.setText("None");
-
-    QPlaceAttribute lan;
-    lan.setLabel("Lan");
-    lan.setText("Available");
-
-    //test setting a new set of attributes
-    QPlace::ExtendedAttributes attributes;
-    attributes.insert("Wireless", wireless);
-    attributes.insert("Lan", lan);
-
-    place.setExtendedAttributes(attributes);
-
-    QVERIFY(place.extendedAttributes().contains("Wireless"));
-    QVERIFY(place.extendedAttributes().contains("Lan"));
-    QCOMPARE(place.extendedAttributes().value("Wireless").label(), QLatin1String("Wifi"));
-    QCOMPARE(place.extendedAttributes().value("Wireless").text(), QLatin1String("None"));
-    QCOMPARE(place.extendedAttributes().value("Lan").label(), QLatin1String("Lan"));
-    QCOMPARE(place.extendedAttributes().value("Lan").text(), QLatin1String("Available"));
-
-    QVERIFY(!place.extendedAttributes().contains("Shelter"));
-    QVERIFY(!place.extendedAttributes().contains("Smoking"));
-    QCOMPARE(place.extendedAttributes().count(), 2);
+    QVERIFY(place.extendedAttributeTypes().contains("Shelter"));
+    QVERIFY(place.extendedAttributeTypes().contains("Smoking"));
+    QCOMPARE(place.extendedAttributeTypes().count(), 2);
+    QCOMPARE(place.extendedAttribute("Shelter").text(), QLatin1String("No"));
 
     //test clearing of attributes
-    QPlace::ExtendedAttributes noAttributes;
-    place.setExtendedAttributes(noAttributes);
-    QCOMPARE(place.extendedAttributes().count(), 0);
-}
+    foreach (const QString &attributeType, place.extendedAttributeTypes())
+        place.setExtendedAttribute(attributeType, QPlaceAttribute());
 
+    QCOMPARE(place.extendedAttributeTypes().count(), 0);
+}
 void tst_Place::visibilityTest()
 {
     QPlace place;

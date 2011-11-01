@@ -69,8 +69,6 @@ class QPlacePrivate;
 class Q_LOCATION_EXPORT QPlace
 {
 public:
-    typedef QMap<QString, QPlaceAttribute> ExtendedAttributes;
-
     QPlace();
     QPlace(const QPlace &other);
     ~QPlace();
@@ -115,9 +113,10 @@ public:
     bool detailsFetched() const;
     void setDetailsFetched(bool fetched);
 
-    QPlace::ExtendedAttributes extendedAttributes() const;
-    void setExtendedAttributes(const QPlace::ExtendedAttributes &attributes);
-    void insertExtendedAttribute(const QString &key, const QPlaceAttribute &);
+    QStringList extendedAttributeTypes() const;
+    QPlaceAttribute extendedAttribute(const QString &attributeType) const;
+    void setExtendedAttribute(const QString &attributeType, const QPlaceAttribute &attribute);
+    void removeExtendedAttribute(const QString &attributeType);
 
     QStringList contactTypes() const;
     QList<QPlaceContactDetail> contactDetails(const QString &contactType);

@@ -395,21 +395,51 @@ void QPlace::setDetailsFetched(bool fetched)
 }
 
 /*!
-    Returns the extended attributes of the place
+    Returns the types of extended attributes that this place has.
 */
-QPlace::ExtendedAttributes QPlace::extendedAttributes() const
+QStringList QPlace::extendedAttributeTypes() const
 {
     Q_D(const QPlace);
-    return d->extendedAttributes;
+    return d->extendedAttributes.keys();
 }
 
 /*!
-    Sets the extended attributes of the place.
+    Returns the exteded attribute corresponding to the specified \a attributeType.
+    If the place does not have that particular attribute type, a default constructed
+    QPlaceExtendedAttribute is returned.
 */
-void QPlace::setExtendedAttributes(const ExtendedAttributes &attributes)
+QPlaceAttribute QPlace::extendedAttribute(const QString &attributeType) const
+{
+    Q_D(const QPlace);
+    return d->extendedAttributes.value(attributeType);
+}
+
+/*!
+    Assigns an \a attribute of the given \a attributeType to a place.  If the given \a attributeType
+    already exists in the place, then it is overwritten.
+
+    If \a attribute is a default constructed QPlaceAttribute, then the \a attributeType
+    is removed from the place i.e it will not be listed by QPlace::extendedAttributeTypes().
+*/
+void QPlace::setExtendedAttribute(const QString &attributeType,
+                                    const QPlaceAttribute &attribute)
 {
     Q_D(QPlace);
-    d->extendedAttributes = attributes;
+    if (attribute == QPlaceAttribute())
+        d->extendedAttributes.remove(attributeType);
+    else
+        d->extendedAttributes.insert(attributeType, attribute);
+}
+
+/*!
+    Remove the attribute of \a attributeType from the place.
+
+    The attribute will no longer be listed by QPlace::extendedAttributeTypes()
+*/
+void QPlace::removeExtendedAttribute(const QString &attributeType)
+{
+    Q_D(QPlace);
+    d->extendedAttributes.remove(attributeType);
 }
 
 /*!
@@ -451,16 +481,6 @@ void QPlace::appendContactDetail(const QString &contactType, const QPlaceContact
     QList<QPlaceContactDetail> details = d->contacts.value(contactType);
     details.append(detail);
     d->contacts.insert(contactType, details);
-}
-
-/*!
-    Adds a single attribute to the place.  If the attribute already
-    exists then the old value is overwritten.
-*/
-void QPlace::insertExtendedAttribute(const QString &key, const QPlaceAttribute &value)
-{
-    Q_D(QPlace);
-    d->extendedAttributes.insert(key, value);
 }
 
 /*!
