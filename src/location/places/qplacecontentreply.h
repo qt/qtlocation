@@ -44,6 +44,7 @@
 
 #include "qplacereply.h"
 #include "qplacecontent.h"
+#include "qplacecontentrequest.h"
 
 QT_BEGIN_HEADER
 
@@ -65,9 +66,12 @@ public:
 
     int totalCount() const;
 
+    QPlaceContentRequest request() const;
+
 protected:
     void setContent(const QPlaceContent::Collection &content);
     void setTotalCount(int total);
+    void setRequest(const QPlaceContentRequest &request);
 
 \
 private:

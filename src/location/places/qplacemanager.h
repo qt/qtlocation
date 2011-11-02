@@ -44,7 +44,6 @@
 
 #include "qplacecontentreply.h"
 #include "qplacecontentrequest.h"
-#include "qplacerequest.h"
 #include "qplaceidreply.h"
 #include "qplacereply.h"
 #include "qplacedetailsreply.h"

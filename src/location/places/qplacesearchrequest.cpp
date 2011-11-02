@@ -39,22 +39,24 @@
 **
 ****************************************************************************/
 
-#include "qplacerequest_p.h"
 #include "qplacesearchrequest.h"
 #include "qgeocoordinate.h"
 #include "qgeoboundingarea.h"
 
+#include <QtCore/QSharedData>
+
 QT_BEGIN_NAMESPACE
 
-class QPlaceSearchRequestPrivate : public QPlaceRequestPrivate
+class QPlaceSearchRequestPrivate : public QSharedData
 {
 public:
     QPlaceSearchRequestPrivate();
     QPlaceSearchRequestPrivate(const QPlaceSearchRequestPrivate &other);
     ~QPlaceSearchRequestPrivate();
 
-    bool compare(const QPlaceRequestPrivate *other) const;
-    Q_DEFINE_PRIVATE_HELPER(QPlaceSearchRequest, QPlaceRequest, QPlaceRequest::SearchRequest)
+    QPlaceSearchRequestPrivate &operator=(const QPlaceSearchRequestPrivate &other);
+    bool operator==(const QPlaceSearchRequestPrivate &other) const;
+
     void clear();
 
     QString searchTerm;
@@ -63,26 +65,33 @@ public:
     int dymNumber;
     QtLocation::VisibilityScope visibilityScope;
     QPlaceSearchRequest::RelevanceHint relevanceHint;
+    int limit;
+    int offset;
 };
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
-:   QPlaceRequestPrivate(QPlaceRequest::SearchRequest), searchArea(0), dymNumber(0),
-    visibilityScope(QtLocation::UnspecifiedVisibility), relevanceHint(QPlaceSearchRequest::UnspecifiedHint)
+    :   QSharedData(),
+        searchArea(0), dymNumber(0),
+        visibilityScope(QtLocation::UnspecifiedVisibility), relevanceHint(QPlaceSearchRequest::UnspecifiedHint),
+        limit(-1), offset(0)
 {
 }
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequestPrivate &other)
-:   QPlaceRequestPrivate(other)
+    : QSharedData(other),
+      searchTerm(other.searchTerm),
+      categories(other.categories),
+      dymNumber(other.dymNumber),
+      visibilityScope(other.visibilityScope),
+      relevanceHint(other.relevanceHint),
+      limit(other.limit),
+      offset(other.offset)
 {
-    this->searchTerm = other.searchTerm;
-    this->categories = other.categories;
+
     if (other.searchArea)
-        this->searchArea = other.searchArea->clone();
+        searchArea = other.searchArea->clone();
     else
-        this->searchArea = 0;
-    this->dymNumber = other.dymNumber;
-    visibilityScope = other.visibilityScope;
-    this->relevanceHint = other.relevanceHint;
+        searchArea = 0;
 }
 
 QPlaceSearchRequestPrivate::~QPlaceSearchRequestPrivate()
@@ -90,14 +99,28 @@ QPlaceSearchRequestPrivate::~QPlaceSearchRequestPrivate()
     delete searchArea;
 }
 
-bool QPlaceSearchRequestPrivate::compare(const QPlaceRequestPrivate *other) const
+QPlaceSearchRequestPrivate &QPlaceSearchRequestPrivate::operator=(const QPlaceSearchRequestPrivate &other)
 {
-    const QPlaceSearchRequestPrivate *od = static_cast<const QPlaceSearchRequestPrivate *>(other);
+    searchTerm = other.searchTerm;
+    categories = other.categories;
+    if (other.searchArea)
+        searchArea = other.searchArea->clone();
+    else
+        searchArea = 0;
+    dymNumber = other.dymNumber;
+    visibilityScope = other.visibilityScope;
+    relevanceHint = other.relevanceHint;
+    limit = other.limit;
+    offset = other.offset;
+}
+
+bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &other) const
+{
     bool searchAreaMatch = false;
-    if ((this->searchArea == 0) && (od->searchArea == 0)) {
+    if ((searchArea == 0) && (other.searchArea == 0)) {
         searchAreaMatch = true;
-    } else if (this->searchArea && od->searchArea) {
-        if ((*this->searchArea) == (*od->searchArea))
+    } else if (searchArea && other.searchArea) {
+        if (*searchArea == *(other.searchArea))
             searchAreaMatch = true;
         else
             searchAreaMatch = false;
@@ -106,18 +129,21 @@ bool QPlaceSearchRequestPrivate::compare(const QPlaceRequestPrivate *other) cons
     }
 
     return (
-            this->searchTerm == od->searchTerm
-            && this->categories == od->categories
-            && this->dymNumber == od->dymNumber
+            searchTerm == other.searchTerm
+            && categories == other.categories
+            && dymNumber == other.dymNumber
             && searchAreaMatch
-            && visibilityScope == od->visibilityScope
-            && this->relevanceHint == od->relevanceHint
+            && visibilityScope == other.visibilityScope
+            && relevanceHint == other.relevanceHint
+            && limit == other.limit
+            && offset == other.offset
     );
 }
 
 void QPlaceSearchRequestPrivate::clear()
 {
-    QPlaceRequestPrivate::clear();
+    limit = -1;
+    offset = 0;
     searchTerm.clear();
     categories.clear();
     delete searchArea;
@@ -133,43 +159,97 @@ void QPlaceSearchRequestPrivate::clear()
     \ingroup QtLocation-places
     \since QtLocation 5.0
 
-    \brief The QPlaceSearchRequest class represents the query parameters of a search request.
+    \brief The QPlaceSearchRequest class represents the set of parameters for a search request.
 
-    The QPlaceSearchRequest class represents a query parameters object. Each
-    QPlaceSearchRequest cointans search query parameters like search term.
+    A typical search request may look like the following:
+    \snippet snippets/places/requesthandler.h Search request
+
+    Note that specifying a search center can be done by setting a circular search area that has
+    a center but no radius.    The default radius is set to -1, which indicates an undefined radius.  The provider will
+    interpret this as being free to choose its own default radius.
+
+    The QPlaceSearchRequest will assume ownership of the bounding area and will be responsible
+    for its destruction.
+
+    The QPlaceSearchRequest is primarily used with the QPlaceManager to
+    \l {QPlaceManager::search()} {search for places}, however it is also
+    used to provide parameters for \l {QPlaceManager::textPredictions()}{generating text predictions}
+    and \l {QPlaceManager::recommendations()} {retreiving recommendations}.  Note that depending on usage
+    some parameters may not be relevant, e.g. the relevance hint is not important for text predictions.  However
+    in general most of the parameters are useful for each of these operations, eg for a recommendation, a search area
+    and categories can be useful in narrowing down recommendation candidates.
+
+    Also be aware that providers may vary by which parameters they support e.g. some providers may not support
+    paging while others do, some providers may honor relevance hints while others may completely ignore them.
 */
 
 /*!
     \enum QPlaceSearchRequest::RelevanceHint
 
     Defines hints to help rank place results.
+    \value UnspecifiedHint
+        No explicit hint has been specified.
     \value DistanceHint
-        Distance to the user's current location is relevant.  This is only useful
+        Distance to a search center is relevant for the user.  Closer places
+        are more highly weighted.  This hint is only useful
         if a circular bounding area is used in the query.
-    \value RatingHint
-        The rating of the place is relevant to the user.
-    \value AlphabetHint
-        Alphabetic ordering of places is relevant to the user.
+    \value LexicalPlaceNameHint
+        Alphabetic ordering of places according to name is relevant to the user.
 */
 
 /*!
     Default constructor. Constructs an new request object.
 */
 QPlaceSearchRequest::QPlaceSearchRequest()
-    : QPlaceRequest(new QPlaceSearchRequestPrivate)
+    : d_ptr(new QPlaceSearchRequestPrivate())
 {
 }
 
-Q_IMPLEMENT_COPY_CTOR(QPlaceSearchRequest, QPlaceRequest)
+/*!
+    Constructs a copy of \a other.
+*/
+QPlaceSearchRequest::QPlaceSearchRequest(const QPlaceSearchRequest &other)
+    : d_ptr(other.d_ptr)
+{
+}
 
 /*!
-    Destructor.
+    Destroys the request object.
 */
 QPlaceSearchRequest::~QPlaceSearchRequest()
 {
 }
 
-Q_IMPLEMENT_D_FUNC(QPlaceSearchRequest)
+/*!
+    Assigns \a other to this search request and returns a reference
+    to this search request.
+*/
+QPlaceSearchRequest &QPlaceSearchRequest::operator= (const QPlaceSearchRequest & other)
+{
+    Q_D(QPlaceSearchRequest);
+    d_ptr = other.d_ptr;
+    return *this;
+}
+
+/*!
+    Returns true if \a other is equal to this search request,
+    otherwise returns false.
+*/
+bool QPlaceSearchRequest::operator== (const QPlaceSearchRequest &other) const
+{
+    Q_D(const QPlaceSearchRequest);
+    return *d == *other.d_func();
+}
+
+/*!
+    Returns true if \a other is not equal to this search request,
+    otherwise returns false.
+*/
+bool QPlaceSearchRequest::operator!= (const QPlaceSearchRequest &other) const
+{
+    Q_D(const QPlaceSearchRequest);
+    return !(*d == *other.d_func());
+}
 
 /*!
     Returns the search term.
@@ -202,6 +282,8 @@ QList<QPlaceCategory> QPlaceSearchRequest::categories() const
 
 /*!
     Sets the search request to search by a single \a category
+
+    \sa setCategories()
 */
 void QPlaceSearchRequest::setCategory(const QPlaceCategory &category)
 {
@@ -217,6 +299,8 @@ void QPlaceSearchRequest::setCategory(const QPlaceCategory &category)
 
     It is possible that some backends may not support multiple categories.  In this case,
     the first category is used and the rest are ignored.
+
+    \sa setCategory()
 */
 void QPlaceSearchRequest::setCategories(const QList<QPlaceCategory> &categories)
 {
@@ -277,12 +361,12 @@ QtLocation::VisibilityScope QPlaceSearchRequest::visibilityScope() const
 }
 
 /*!
-    Sets the \a scope used when searching for places.
+    Sets the visibiliy \a scope used when searching for places.
 */
-void QPlaceSearchRequest::setVisibilityScope(QtLocation::VisibilityScope visibilityScope)
+void QPlaceSearchRequest::setVisibilityScope(QtLocation::VisibilityScope scope)
 {
     Q_D(QPlaceSearchRequest);
-    d->visibilityScope = visibilityScope;
+    d->visibilityScope = scope;
 }
 
 /*!
@@ -304,6 +388,65 @@ void QPlaceSearchRequest::setRelevanceHint(QPlaceSearchRequest::RelevanceHint hi
 {
     Q_D(QPlaceSearchRequest);
     d->relevanceHint = hint;
+}
+
+/*!
+    Returns the maximum number of search results to retrieve.
+
+    A negative value for limit means that it is undefined.  It is left up to the backend
+    provider to choose an appropriate number of results to return.
+*/
+int QPlaceSearchRequest::limit() const
+{
+    Q_D(const QPlaceSearchRequest);
+    return d->limit;
+}
+
+/*!
+    Set the maximum number of search results to retrieve to \a limit.
+*/
+void QPlaceSearchRequest::setLimit(int limit)
+{
+    Q_D(QPlaceSearchRequest);
+    d->limit = limit;
+}
+
+/*!
+    Returns the index of the first item that is to be retrieved.
+*/
+int QPlaceSearchRequest::offset() const
+{
+    Q_D(const QPlaceSearchRequest);
+    return d->offset;
+}
+
+/*!
+    Sets the starting index of the first item to be retrieved
+    to \a offset.
+*/
+void QPlaceSearchRequest::setOffset(int offset)
+{
+    Q_D(QPlaceSearchRequest);
+    d->offset = offset;
+}
+
+/*!
+    Clears the search request.
+*/
+void QPlaceSearchRequest::clear()
+{
+    Q_D(QPlaceSearchRequest);
+    d->clear();
+}
+
+inline QPlaceSearchRequestPrivate* QPlaceSearchRequest::d_func()
+{
+    return static_cast<QPlaceSearchRequestPrivate *>(d_ptr.data());
+}
+
+inline const QPlaceSearchRequestPrivate* QPlaceSearchRequest::d_func() const
+{
+    return static_cast<const QPlaceSearchRequestPrivate *>(d_ptr.constData());
 }
 
 QT_END_NAMESPACE

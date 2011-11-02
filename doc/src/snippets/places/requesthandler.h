@@ -204,6 +204,46 @@ public:
         //! [Remove category]
     }
 
+    void searchRequest() {
+        QPlaceCategory diner;
+        QPlaceCategory restaurant;
+
+        //! [Search request]
+        QPlaceSearchRequest searchRequest;
+        searchRequest.setSearchTerm("Fast food"); //search term for what we are interested in
+
+        //set a search center
+        searchRequest.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(2.3, 48.87)));
+
+        //set a distance hint as a relevancy hint.
+        //closer places have greater weighting in the ranking of results.
+        searchRequest.setRelevanceHint(QPlaceSearchRequest::DistanceHint);
+
+        //use offset and limit to provide pagination.
+        //this retrieves the next 5 items from the 10th index
+        searchRequest.setOffset(9);
+        searchRequest.setLimit(5);
+
+        //provide some categories to narrow down search
+        QList<QPlaceCategory> categories;
+        categories << diner << restaurant;
+        searchRequest.setCategories(categories);
+        //! [Search request]
+    }
+
+    void content() {
+        QPlace place;
+        //! [Content request]
+        QPlaceContentRequest request;
+        request.setContentType(QPlaceContent::ImageType);
+        request.setOffset(9);
+        request.setLimit(5);
+
+        QPlaceContentReply *contentReply = manager->getContent(place, request);
+        //..connect signals..//
+
+        //! [Content request]
+    }
 
 public slots:
     //! [Search for places handler cpp]
@@ -250,8 +290,12 @@ public slots:
                 qDebug() << image.url();
                 qDebug() << image.mimeType();
             }
-            place.insertContent( QPlaceContent::ImageType, contentReply->content());
-            place.setTotalContentCount(QPlaceContent::ImageType, contentReply->totalCount());
+
+            //we can assign content to the place that it belongs to.
+            //the place object serves as a container where we can retrieve
+            //content that has already been fetched
+            place.insertContent(contentReply->request().contentType(), contentReply->content());
+            place.setTotalContentCount(contentReply->request().contentType(), contentReply->totalCount());
         }
 
         contentReply->deleteLater();
@@ -339,6 +383,16 @@ public slots:
         removeCategoryReply = 0;
     }
     //! [Remove category handler]
+
+
+    //! [Content handler]
+    void contentHandler() {
+        if (contentReply->error() == QPlaceReply::NoError)  {
+            place.insertContent(contentReply->request().contentType(),
+                                contentReply->content());
+        }
+    }
+    //! [Content handler]
 
 QPlaceSearchReply *searchReply;
 QPlaceManager *manager;

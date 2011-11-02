@@ -280,7 +280,7 @@ void QDeclarativeSearchResultModel::categories_clear(QDeclarativeListProperty<QD
 
     \table
         \row
-            \o SearchResultModel.NoHint
+            \o SearchResultModel.UnspecifiedHint
             \o No relevance hint is given to the provider.
         \row
             \o SearchResultModel.DistanceHint

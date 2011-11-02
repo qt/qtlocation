@@ -52,6 +52,7 @@ public:
 
     QPlaceContent::Collection contentCollection;
     int totalCount;
+    QPlaceContentRequest contentRequest;
 };
 
 QT_END_NAMESPACE
@@ -66,6 +67,9 @@ QT_USE_NAMESPACE
 
     \brief The QPlaceContentReply class manages a content retrieval operation started by an
     instance of QPlaceManager.
+
+    See \l {Fetching Rich Content} for an example on how to use a content reply.
+    \sa QPlaceContentRequest
 */
 
 /*!
@@ -128,4 +132,22 @@ void QPlaceContentReply::setTotalCount(int total)
 {
     Q_D(QPlaceContentReply);
     d->totalCount = total;
+}
+
+/*!
+    Returns the content request that was used to generate this reply.
+*/
+QPlaceContentRequest QPlaceContentReply::request() const
+{
+    Q_D(const QPlaceContentReply);
+    return d->contentRequest;
+}
+
+/*!
+    Sets the content \a request used to generate this this reply.
+*/
+void QPlaceContentReply::setRequest(const QPlaceContentRequest &request)
+{
+    Q_D(QPlaceContentReply);
+    d->contentRequest = request;
 }

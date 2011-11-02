@@ -43,7 +43,6 @@
 #define QPLACESEARCHREQUEST_H
 
 #include <QtCore/QSharedDataPointer>
-#include <QtLocation/QPlaceRequest>
 #include <QtLocation/placemacro.h>
 #include <QtLocation/QPlaceCategory>
 #include <QtLocation/qtlocation.h>
@@ -57,7 +56,7 @@ QT_BEGIN_NAMESPACE
 class QGeoBoundingArea;
 class QPlaceSearchRequestPrivate;
 
-class Q_LOCATION_EXPORT QPlaceSearchRequest : public QPlaceRequest
+class Q_LOCATION_EXPORT QPlaceSearchRequest
 {
 public:
     enum RelevanceHint {
@@ -67,7 +66,14 @@ public:
     };
 
     QPlaceSearchRequest();
-    Q_DECLARE_COPY_CTOR(QPlaceSearchRequest, QPlaceRequest)
+    QPlaceSearchRequest(const QPlaceSearchRequest &other);
+
+
+    QPlaceSearchRequest& operator=(const QPlaceSearchRequest &other);
+
+    bool operator==(const QPlaceSearchRequest &other) const;
+    bool operator!=(const QPlaceSearchRequest &other) const;
+
     ~QPlaceSearchRequest();
 
     QString searchTerm() const;
@@ -89,8 +95,17 @@ public:
     RelevanceHint relevanceHint() const;
     void setRelevanceHint(RelevanceHint hint);
 
+    int offset() const;
+    void setOffset(int offset);
+    int limit() const;
+    void setLimit(int limit);
+
+    void clear();
+
 private:
-    Q_DECLARE_D_FUNC(QPlaceSearchRequest)
+    QSharedDataPointer<QPlaceSearchRequestPrivate> d_ptr;
+    inline QPlaceSearchRequestPrivate *d_func();
+    inline const QPlaceSearchRequestPrivate *d_func() const;
 };
 
 QT_END_NAMESPACE

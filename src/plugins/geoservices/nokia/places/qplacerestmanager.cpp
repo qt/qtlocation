@@ -54,6 +54,7 @@
 #include <qgeoboundingcircle.h>
 #include <qgeoboundingbox.h>
 #include "qplacerestreply.h"
+#include <QtLocation/QPlaceContentRequest>
 
 #if defined(QT_PLACES_LOGGING)
     #include <QDebug>
@@ -139,7 +140,7 @@ QPlaceRestReply *QPlaceRestManager::sendPlaceRequest(const QString &placeId)
     return sendGeneralRequest(placeServer + placeId);
 }
 
-QPlaceRestReply *QPlaceRestManager::sendPlaceImagesRequest(const QString &placeId, const QPlaceRequest &params)
+QPlaceRestReply *QPlaceRestManager::sendPlaceImagesRequest(const QString &placeId, const QPlaceContentRequest &params)
 {
     QString query = placeServer + placeId + images;
     if (params.offset() > -1) {
@@ -154,7 +155,7 @@ QPlaceRestReply *QPlaceRestManager::sendPlaceImagesRequest(const QString &placeI
 /*!
     Predefines a review request and executes sendGeneralRequest().
 */
-QPlaceRestReply *QPlaceRestManager::sendPlaceReviewRequest(const QString &placeId, const QPlaceRequest &params)
+QPlaceRestReply *QPlaceRestManager::sendPlaceReviewRequest(const QString &placeId, const QPlaceContentRequest &params)
 {
     QString query = placeServer + placeId + reviews;
     if (params.offset() > -1) {

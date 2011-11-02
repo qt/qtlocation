@@ -54,6 +54,7 @@
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
+#include <QtLocation/QPlaceContentRequest>
 
 #include <qplacesearchrequest.h>
 #include "qplacerestreply.h"
@@ -70,8 +71,8 @@ public:
     void setProxy(const QNetworkProxy &proxy);
 
     QPlaceRestReply *sendPlaceRequest(const QString &placeId);
-    QPlaceRestReply *sendPlaceImagesRequest(const QString &placeId, const QPlaceRequest &params);
-    QPlaceRestReply *sendPlaceReviewRequest(const QString &placeId, const QPlaceRequest &params);
+    QPlaceRestReply *sendPlaceImagesRequest(const QString &placeId, const QPlaceContentRequest &params);
+    QPlaceRestReply *sendPlaceReviewRequest(const QString &placeId, const QPlaceContentRequest &params);
     QPlaceRestReply *sendRecommendationRequest(const QPlaceSearchRequest &query, const QString &userId);
     QPlaceRestReply *sendCategoriesTreeRequest();
     QPlaceRestReply *sendSearchRequest(const QPlaceSearchRequest &query);

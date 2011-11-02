@@ -46,7 +46,14 @@
 QT_BEGIN_NAMESPACE
 
 QPlaceContentRequestPrivate::QPlaceContentRequestPrivate()
-:   QPlaceRequestPrivate(QPlaceRequest::ContentRequest), contentType(QPlaceContent::InvalidType)
+:   QSharedData(), contentType(QPlaceContent::InvalidType),
+    limit(-1), offset(0)
+{
+}
+
+QPlaceContentRequestPrivate::QPlaceContentRequestPrivate(const QPlaceContentRequestPrivate &other)
+    : QSharedData(other), contentType(other.contentType),
+      limit(other.limit), offset(other.offset)
 {
 }
 
@@ -54,22 +61,18 @@ QPlaceContentRequestPrivate::~QPlaceContentRequestPrivate()
 {
 }
 
-QPlaceContentRequestPrivate::QPlaceContentRequestPrivate(const QPlaceContentRequestPrivate &other)
-    : QPlaceRequestPrivate(other)
+bool QPlaceContentRequestPrivate::operator==(const QPlaceContentRequestPrivate &other) const
 {
-    this->contentType = other.contentType;
-}
-
-bool QPlaceContentRequestPrivate::compare(const QPlaceRequestPrivate *other) const
-{
-    const QPlaceContentRequestPrivate *od = static_cast<const QPlaceContentRequestPrivate *>(other);
-    return contentType == od->contentType && QPlaceRequestPrivate::compare(other);
+    return contentType == other.contentType
+            && limit == other.limit
+            && offset == other.offset;
 }
 
 void QPlaceContentRequestPrivate::clear()
 {
-    QPlaceRequestPrivate::clear();
     this->contentType = QPlaceContent::InvalidType;
+    limit = -1;
+    offset = 0;
 }
 
 /*!
@@ -78,31 +81,72 @@ void QPlaceContentRequestPrivate::clear()
     \ingroup QtLocation-places
     \since QtLocation 5.0
 
-    \brief The QPlaceContentRequest class represents the query parameters of a content request.
+    \brief The QPlaceContentRequest class represents the parameters of a content request.
 
-    The QPlaceContentRequest class represents a query parameters object, it currently
-    specifies the type of content to be retrived.
+    The QPlaceContentRequest class is used in conjunction with a QPlaceManager to
+    retrieve rich content like images and reviews in a paginated fashion.
+    The following code would request a set of 5 images from the 10th index:
+
+    \snippet snippets/places/requesthandler.h Content request
+    \dots
+    \dots
+    \snippet snippets/places/requesthandler.h Content handler
+
+    \sa QPlaceContentReply
 */
 
 /*!
-    Default constructor. Constructs an new request object.
+    Constructs an new request object.
 */
 QPlaceContentRequest::QPlaceContentRequest()
-    : QPlaceRequest(new QPlaceContentRequestPrivate)
+    : d_ptr(new QPlaceContentRequestPrivate())
 {
 }
 
-Q_IMPLEMENT_COPY_CTOR(QPlaceContentRequest, QPlaceRequest)
+/*!
+    Constructs a copy of \a other.
+*/
+QPlaceContentRequest::QPlaceContentRequest(const QPlaceContentRequest &other)
+    : d_ptr(other.d_ptr)
+{
+}
 
 /*!
-    Destructor.
+    Destroys the request object
 */
 QPlaceContentRequest::~QPlaceContentRequest()
 {
 }
 
-Q_IMPLEMENT_D_FUNC(QPlaceContentRequest)
+/*!
+    Assigns \a other to this content request and returns a reference
+    to this content request.
+*/
+QPlaceContentRequest &QPlaceContentRequest::operator= (const QPlaceContentRequest & other)
+{
+    d_ptr = other.d_ptr;
+    return *this;
+}
 
+/*!
+    Returns true if \a other is equal to this content request,
+    otherwise returns false.
+*/
+bool QPlaceContentRequest::operator== (const QPlaceContentRequest &other) const
+{
+    Q_D(const QPlaceContentRequest);
+    return *d == *other.d_func();
+}
+
+/*!
+    Returns true if \a other is not equal to this content request,
+    otherwise returns false.
+*/
+bool QPlaceContentRequest::operator!= (const QPlaceContentRequest &other) const
+{
+    Q_D(const QPlaceContentRequest);
+    return !(*d == *other.d_func());
+}
 
 /*!
     Returns the type of content to be requested, eg reviews or images
@@ -120,6 +164,67 @@ void QPlaceContentRequest::setContentType(QPlaceContent::Type type)
 {
     Q_D(QPlaceContentRequest);
     d->contentType = type;
+}
+
+/*!
+    Returns the maximum number of content items to retrieve.
+
+    A negative value for limit means that it is undefined.  It is left up to the backend
+    provider to choose an appropriate number of items to return.
+
+*/
+int QPlaceContentRequest::limit() const
+{
+    Q_D(const QPlaceContentRequest);
+    return d->limit;
+}
+
+/*!
+    Set the maximum number of content items to retrieve to
+    \a limit.
+*/
+void QPlaceContentRequest::setLimit(int limit)
+{
+    Q_D(QPlaceContentRequest);
+    d->limit = limit;
+}
+
+/*!
+    Returns the index of the first item that is to be retrieved.
+*/
+int QPlaceContentRequest::offset() const
+{
+    Q_D(const QPlaceContentRequest);
+    return d->offset;
+}
+
+/*!
+    Sets the starting index of the first item to be retrieved
+    to \a offset.
+*/
+void QPlaceContentRequest::setOffset(int offset)
+{
+    Q_D(QPlaceContentRequest);
+    d->offset = offset;
+}
+
+/*!
+    Clears the content request.
+*/
+void QPlaceContentRequest::clear()
+{
+    Q_D(QPlaceContentRequest);
+    d->clear();
+}
+
+inline QPlaceContentRequestPrivate* QPlaceContentRequest::d_func()
+{
+    return static_cast<QPlaceContentRequestPrivate *>(d_ptr.data());
+}
+
+inline const QPlaceContentRequestPrivate* QPlaceContentRequest::d_func() const
+{
+    return static_cast<const QPlaceContentRequestPrivate *>(d_ptr.constData());
 }
 
 QT_END_NAMESPACE

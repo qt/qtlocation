@@ -57,16 +57,17 @@ QT_USE_NAMESPACE
 /*!
     Constructor.
 */
-QPlaceContentReplyImpl::QPlaceContentReplyImpl(QPlaceContent::Type type, QPlaceRestReply *reply,
+QPlaceContentReplyImpl::QPlaceContentReplyImpl(const QPlaceContentRequest &request, QPlaceRestReply *reply,
                                                QPlaceManager *manager, QObject *parent)
-:   QPlaceContentReply(parent), restReply(reply), contentType(type), startNumber(0)
+:   QPlaceContentReply(parent), restReply(reply), startNumber(0)
 
 {
-    if (contentType == QPlaceContent::ImageType)
+    setRequest(request);
+    if (request.contentType() == QPlaceContent::ImageType)
         parser = new QPlaceJSonMediaParser(this);
-    else if (contentType == QPlaceContent::ReviewType)
+    else if (request.contentType() == QPlaceContent::ReviewType)
         parser = new QPlaceJSonReviewParser(manager, this);
-    else if (contentType == QPlaceContent::EditorialType)
+    else if (request.contentType() == QPlaceContent::EditorialType)
         parser = new QPlaceJSonDetailsParser(manager, this);
     else
         parser = 0;
@@ -129,7 +130,7 @@ void QPlaceContentReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {
-        if (contentType == QPlaceContent::ImageType) {
+        if (request().contentType() == QPlaceContent::ImageType) {
             QPlaceJSonMediaParser * mediaParser = qobject_cast<QPlaceJSonMediaParser*>(parser);
             QList<QPlaceImage> imageOjects = mediaParser->resultMedia();
             QPlaceContent::Collection collection;
@@ -137,7 +138,7 @@ void QPlaceContentReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                 collection.insert(startNumber +i, imageOjects.at(i));
             setContent(collection);
             setTotalCount(mediaParser->allMediaCount());
-        } else if (contentType == QPlaceContent::ReviewType) {
+        } else if (request().contentType() == QPlaceContent::ReviewType) {
             QPlaceJSonReviewParser *reviewParser = qobject_cast<QPlaceJSonReviewParser*>(parser);
             QList<QPlaceReview> reviewObjects = reviewParser->results();
             QPlaceContent::Collection collection;
@@ -145,7 +146,7 @@ void QPlaceContentReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
                 collection.insert(startNumber + i, reviewObjects.at(i));
             setContent(collection);
             setTotalCount(reviewParser->allReviewsCount());
-        } else if (contentType == QPlaceContent::EditorialType) {
+        } else if (request().contentType() == QPlaceContent::EditorialType) {
             QPlaceJSonDetailsParser *detailsParser =
                 qobject_cast<QPlaceJSonDetailsParser *>(parser);
 

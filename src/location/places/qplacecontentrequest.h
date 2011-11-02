@@ -45,8 +45,6 @@
 #include <QSharedDataPointer>
 
 #include "qplacecontent.h"
-#include "qplacerequest.h"
-#include "placemacro.h"
 
 QT_BEGIN_HEADER
 
@@ -56,18 +54,32 @@ QT_BEGIN_NAMESPACE
 
 class QPlaceContentRequestPrivate;
 
-class Q_LOCATION_EXPORT QPlaceContentRequest : public QPlaceRequest
+class Q_LOCATION_EXPORT QPlaceContentRequest
 {
 public:
     QPlaceContentRequest();
-    Q_DECLARE_COPY_CTOR(QPlaceContentRequest, QPlaceRequest)
+    QPlaceContentRequest(const QPlaceContentRequest &other);
     ~QPlaceContentRequest();
+
+    QPlaceContentRequest& operator=(const QPlaceContentRequest &other);
+
+    bool operator==(const QPlaceContentRequest &other) const;
+    bool operator!=(const QPlaceContentRequest &other) const;
 
     QPlaceContent::Type contentType() const;
     void setContentType(QPlaceContent::Type type);
 
+    int offset() const;
+    void setOffset(int offset);
+    int limit() const;
+    void setLimit(int limit);
+
+    void clear();
+
 private:
-    Q_DECLARE_D_FUNC(QPlaceContentRequest)
+    QSharedDataPointer<QPlaceContentRequestPrivate> d_ptr;
+    inline QPlaceContentRequestPrivate *d_func();
+    inline const QPlaceContentRequestPrivate *d_func() const;
 };
 
 QT_END_NAMESPACE

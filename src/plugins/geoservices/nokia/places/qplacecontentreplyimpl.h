@@ -64,7 +64,7 @@ class QPlaceContentReplyImpl : public QPlaceContentReply
 {
     Q_OBJECT
 public:
-    QPlaceContentReplyImpl(QPlaceContent::Type type, QPlaceRestReply *reply,
+    QPlaceContentReplyImpl(const QPlaceContentRequest &request, QPlaceRestReply *reply,
                            QPlaceManager *manager, QObject *parent = 0);
     ~QPlaceContentReplyImpl();
     void abort();
@@ -83,7 +83,6 @@ public slots:
 private:
     QPlaceRestReply *restReply;
     QPlaceJSonParser *parser;
-    QPlaceContent::Type contentType;
 
     int startNumber;
 };

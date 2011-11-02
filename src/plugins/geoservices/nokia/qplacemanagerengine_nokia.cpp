@@ -117,7 +117,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
     case QPlaceContent::ImageType: {
             QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceImagesRequest(place.placeId(),
                                                                                                request);
-            reply = new QPlaceContentReplyImpl(request.contentType(), restReply, manager(), this);
+            reply = new QPlaceContentReplyImpl(request, restReply, manager(), this);
 
             if (!restReply)
                 QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
@@ -128,7 +128,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
     case QPlaceContent::ReviewType: {
             QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceReviewRequest(place.placeId(),
                                                                                                request);
-            reply = new QPlaceContentReplyImpl(request.contentType(), restReply, manager(), this);
+            reply = new QPlaceContentReplyImpl(request, restReply, manager(), this);
 
             if (!restReply)
                 QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
@@ -140,7 +140,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
         QPlaceRestReply *restReply =
             QPlaceRestManager::instance()->sendPlaceRequest(place.placeId());
 
-        reply = new QPlaceContentReplyImpl(request.contentType(), restReply, manager(), this);
+        reply = new QPlaceContentReplyImpl(request, restReply, manager(), this);
 
         if (!restReply) {
             QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
@@ -151,7 +151,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
         break;
     }
     default: {
-            reply = new QPlaceContentReplyImpl(request.contentType(), 0, manager(), this);
+            reply = new QPlaceContentReplyImpl(request, 0, manager(), this);
             QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
                                       Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
                                       Q_ARG(QString, QString("Retrieval of given content type not supported")));

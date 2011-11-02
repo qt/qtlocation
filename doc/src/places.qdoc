@@ -130,6 +130,9 @@
         QPlaceImage image = content; //provided that 'content' has a type QPlace::ImageType
     \endcode
 
+    The usage of the QPlaceContent::Collection and the conversion between content and its subtypes means
+    that code for handling the mechanics of paging reviews, images and editorials can be easily shared.
+
     \section2 Text Prediction
     The retrieval of text predictions is very similar to performing a place search. A QPlaceSearchRequest
     is used just like a place search, the only difference being that the search term is set to a

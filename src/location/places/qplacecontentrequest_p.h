@@ -42,24 +42,26 @@
 #ifndef QPLACECONTENTREQUEST_P_H
 #define QPLACECONTENTREQUEST_P_H
 
-#include "placemacro.h"
-#include "qplacecontent_p.h"
-#include "qplacerequest_p.h"
+#include <QtCore/QSharedData>
+#include "qplacecontent.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceContentRequestPrivate : public QPlaceRequestPrivate
+class QPlaceContentRequestPrivate : public QSharedData
 {
 public:
     QPlaceContentRequestPrivate();
     QPlaceContentRequestPrivate(const QPlaceContentRequestPrivate &other);
     ~QPlaceContentRequestPrivate();
 
-    bool compare(const QPlaceRequestPrivate *other) const;
-    Q_DEFINE_PRIVATE_HELPER(QPlaceContentRequest, QPlaceRequest, QPlaceRequest::ContentRequest)
+    QPlaceContentRequestPrivate &operator=(const QPlaceContentRequestPrivate &other);
+    bool operator==(const QPlaceContentRequestPrivate &other) const;
+
     void clear();
 
     QPlaceContent::Type contentType;
+    int limit;
+    int offset;
 };
 
 QT_END_NAMESPACE
