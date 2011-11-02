@@ -42,15 +42,62 @@
 #include "qdeclarativecontactdetail_p.h"
 
 /*!
-    \qmlclass ContactDetail QDeclarativeContactDetail
-
+    \qmlclass ContactDetails QDeclarativePropertyMap
     \inqmlmodule QtLocation 5
-
     \ingroup qml-QtLocation5-places
-
     \since QtLocation 5.0
 
-    \brief The ContactDetail element holds a contact detail such as phone number or website address.
+    \brief The ContactDetails element holds contact details for a \l Place.
+
+    The ContactDetails element is a map of \l {QtLocation5::ContactDetail}{ContactDetail} objects.
+    To access contact details in the map use the \l keys() method to get the list of keys stored in
+    the map and then use the \c {[]} operator to access the
+    \l {QtLocation5::ContactDetail}{ContactDetail} items.
+
+    The following keys are defined in the API.  \l Plugin implementations are free to define
+    additional keys.
+
+    \list
+        \o Phone
+        \o Fax
+        \o Email
+        \o Website
+    \endlist
+
+    The following example shows how to access all \l {QtLocation5::ContactDetail}{ContactDetails}
+    and print them to the console:
+
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml ContactDetails read
+
+    The returned list of contact details can be used directly as data models.  For example, the
+    following demonstrates how to display a list of contact phone numbers in a list view:
+
+    \snippet snippets/declarative/places.qml QtQuick import
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml ContactDetails phoneList
+*/
+
+/*!
+    \qmlmethod variant ContactDetails::keys()
+
+    Returns an array of contact detail keys currently stored in the map.
+*/
+
+/*!
+    \qmlclass ContactDetail QDeclarativeContactDetail
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-places
+    \since QtLocation 5.0
+
+    \brief The ContactDetail element holds a contact detail such as a phone number or a website
+           address.
+
+    The ContactDetail provides a single detail on how one could contact a \l Place.  The
+    ContactDetail consists of a \l label, which is a localized string describing the contact
+    method, and a \l value representing the actual contact detail.
 */
 QDeclarativeContactDetail::QDeclarativeContactDetail(QObject *parent)
     : QObject(parent)
@@ -83,7 +130,7 @@ QPlaceContactDetail QDeclarativeContactDetail::contactDetail() const
 }
 
 /*!
-    \qmlproperty string ContactDetail::label
+    \qmlproperty string QtLocation5::ContactDetail::label
 
     This property holds a localized label describing the contact detail.
 */
@@ -101,10 +148,10 @@ void QDeclarativeContactDetail::setLabel(const QString &label)
 }
 
 /*!
-    \qmlproperty string ContactDetail::value
+    \qmlproperty string QtLocation5::ContactDetail::value
 
-    This property holds the value of the contact detail which
-    may be a phone number, email address, website url etc.
+    This property holds the value of the contact detail which may be a phone number, an email
+    address, a website url etc.
 */
 QString QDeclarativeContactDetail::value() const
 {

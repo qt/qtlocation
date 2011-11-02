@@ -61,10 +61,73 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The Place element holds place data.
+    \brief The Place element represents a place.
 
-    Place cointains many properties holding data of the place like location,
-    id, name etc.
+    The Place element represents a physical location with additional metadata describing that
+    location.  Constrasted with \l Location, \l Address, and \l Coordinate elements which are used
+    to describe where a location is.  The basic properties of a Place are its \l name and
+    \l location.
+
+    Place objects are typically obtained from a search model and will generally only have their
+    basic properties set.  The \l detailsFetched property can be used to test if further property
+    values need to be fetched from the \l Plugin.  This can be done by invoking the \l getDetails()
+    method.  Progress of the fetching operation can be monitored with the \l status property, which
+    will be set to Place.Fetching when the details are being fetched.
+
+    The Place element has many properties holding information about the place.  Details on how to
+    contact the place are available from the \l contactDetails property.  Convienence properties
+    for obtaining the primary \l {primaryPhone}{phone}, \l {primaryFax}{fax},
+    \l {primaryEmail}{email} and \l {primaryWebsite}{website} are also available.
+
+    Each place is is assigned zero or more \l categories.  Categories are typically used when
+    searching for a particular type of place, such as a restaurant or hotel.  Some places have a
+    \l rating, which gives an indication of the quality of the place.
+
+    Place metadata is provided by a \l supplier who may require that an \l attribution message be
+    displayed to the user when the place details are viewed.
+
+    Places have an associated \l icon which can be used to represent a place on a map or to
+    decorate a delegate in a view.
+
+    Places may have additional rich content associated with them.  The currently supported rich
+    content include editorial descriptions, reviews and images.  These are exposed as a set of
+    models for retrieving the content.  Editorial descriptions of the place are available from the
+    \l editorialModel property.  Reviews of the place are available from the \l reviewModel
+    property.  A gallery of pictures of the place can be accessed using the \l imageModel property.
+
+    Places may have additional attributes which are not covered in the formal API.  The
+    \l extendedAttributes property provides access to these.  The type of extended attributes
+    available is specific to each \l Plugin.
+
+    A Place is almost always tied to a \l plugin.  The \l plugin property must be set before it is
+    possible to call \l save(), \l remove() or \l getDetails().  The \l reviewModel, \l imageModel
+    and \l editorialModel are only valid then the \l plugin property is set.
+
+    \section2 Saving a place
+
+    If the \l Plugin supports it the Place element can be used to save a place.  First create a new
+    Place and set its properties.
+
+    \snippet snippets/declarative/places.qml Place savePlace def
+
+    Then invoke the \l save() method.
+
+    \snippet snippets/declarative/places.qml Place savePlace
+
+    The \l status property will change to Place.Saving and then to Place.Ready if the save was
+    successful or to Place.Error if an error occurs.
+
+    If the \l placeId property is set, the backend will update an existing place otherwise it will
+    create a new place.  On success the \l placeId property will be updated with the id of the newly
+    saved place.
+
+    \section2 Removing a place
+
+    To remove a place, ensure that a Place object with a valid \l placeId property exists and call
+    its \l remove() method.  The \l status property will change to Place.Removing and then to
+    Place.Ready if the save was successful or to Place.Error if an error occurs.
+
+    \sa PlaceSearchModel, RecommendationModel
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
@@ -98,6 +161,11 @@ void QDeclarativePlace::componentComplete()
     m_complete = true;
 }
 
+/*!
+    \qmlproperty Plugin Place::plugin
+
+    This property holds the \l Plugin that provided this place.
+*/
 void QDeclarativePlace::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (m_plugin == plugin)
@@ -119,6 +187,11 @@ QDeclarativeGeoServiceProvider* QDeclarativePlace::plugin() const
     return m_plugin;
 }
 
+/*!
+    \qmlproperty ReviewModel Place::reviewModel
+
+    This property holds a model which can be used to retrieve reviews about the place.
+*/
 QDeclarativeReviewModel *QDeclarativePlace::reviewModel()
 {
     if (!m_reviewModel) {
@@ -129,6 +202,11 @@ QDeclarativeReviewModel *QDeclarativePlace::reviewModel()
     return m_reviewModel;
 }
 
+/*!
+    \qmlproperty ImageModel Place::imageModel
+
+    This property holds a model which can be used to retrieve images of the place.
+*/
 QDeclarativePlaceImageModel *QDeclarativePlace::imageModel()
 {
     if (!m_imageModel) {
@@ -139,6 +217,11 @@ QDeclarativePlaceImageModel *QDeclarativePlace::imageModel()
     return m_imageModel;
 }
 
+/*!
+    \qmlproperty EditorialModel Place::editorialModel
+
+    This property holds a model which can be used to retrieve editorial descriptions of the place.
+*/
 QDeclarativePlaceEditorialModel *QDeclarativePlace::editorialModel()
 {
     if (!m_editorialModel) {
@@ -272,12 +355,9 @@ QPlace QDeclarativePlace::place()
 }
 
 /*!
-    \qmlproperty string Place::location
+    \qmlproperty QtLocation5::Location Place::location
 
-    This property holds location of the place.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
+    This property holds the location of the place.
 */
 void QDeclarativePlace::setLocation(QDeclarativeGeoLocation *location)
 {
@@ -299,10 +379,8 @@ QDeclarativeGeoLocation *QDeclarativePlace::location()
 /*!
     \qmlproperty Rating Place::rating
 
-    This property holds rating of the place.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
+    This property holds rating of the place.  The rating provides an indication of the quality of a
+    place.
 */
 void QDeclarativePlace::setRating(QDeclarativeRating *rating)
 {
@@ -345,9 +423,9 @@ QDeclarativeSupplier *QDeclarativePlace::supplier() const
 }
 
 /*!
-    \qmlproperty PlaceIcon Place::icon
+    \qmlproperty Icon Place::icon
 
-    This property holds the icon of the place.
+    This property holds a graphical icon which can be used to represent the place.
 */
 QDeclarativePlaceIcon *QDeclarativePlace::icon() const
 {
@@ -369,7 +447,7 @@ void QDeclarativePlace::setIcon(QDeclarativePlaceIcon *icon)
 /*!
     \qmlproperty string Place::name
 
-    This property holds name.
+    This property holds the name of the place.
 */
 void QDeclarativePlace::setName(const QString &name)
 {
@@ -387,7 +465,13 @@ QString QDeclarativePlace::name() const
 /*!
     \qmlproperty string Place::placeId
 
-    This property holds place id.
+    This property holds the unique identifier of the place.  The place id is only meaningful to the
+    \l Plugin that generated it and is not transferable between \l {Plugin}{Plugins}.  The place id
+    is not guarinteed to be universally unique, but unique within the \l Plugin that generated it.
+
+    If only the place id is known, all other place data can fetched from the \l Plugin.
+
+    \snippet snippets/declarative/places.qml Place placeId
 */
 void QDeclarativePlace::setPlaceId(const QString &placeId)
 {
@@ -405,10 +489,9 @@ QString QDeclarativePlace::placeId() const
 /*!
     \qmlproperty string Place::attribution
 
-    This property holds a rich text attribution string
-    for the place.  Some providers may require that the
-    attribution be shown whenever a place is displayed
-    to an end user.
+    This property holds a rich text attribution string for the place.  Some providers may require
+    that the attribution be shown whenever a place is displayed to an end user.  The contents of
+    this property should be shown to the user if it is not empty.
 */
 void QDeclarativePlace::setAttribution(const QString &attribution)
 {
@@ -426,9 +509,11 @@ QString QDeclarativePlace::attribution() const
 /*!
     \qmlproperty bool Place::detailsFetched
 
-    This property holds a boolean indicating
-    whether the details of the place have been fetched
-    or not.
+    This property indicates whether the details of the place have been fetched.  If this property
+    is false then the place details have not yet been fetch, which can be done by invoking the
+    \l getDetails() method.
+
+    \sa getDetails()
 */
 void QDeclarativePlace::setDetailsFetched(bool fetched)
 {
@@ -447,18 +532,29 @@ bool QDeclarativePlace::detailsFetched() const
     \qmlproperty enumeration Place::status
 
     This property holds the status of the place.  It can be one of:
-    \list
-    \o Place.Ready - No Error occurred during the last operation,
-                     further operations may be performed on the place.
-    \o Place.Saving - The place is currently being saved, no other operations
-                      may be perfomed until complete.
-    \o Place.Fetching - The place details are currently being fetched, no
-                        other operations may be performed until complete.
-    \o Place.Removing - The place is currently being removed, no other
-                        operations can be performed until complete.
-    \o Place.Error - An error occurred during the last operation,
-                     further operations can still be performed on the place.
-    \endlist
+
+    \table
+        \row
+            \o Place.Ready
+            \o No Error occurred during the last operation, further operations may be performed on
+               the place.
+        \row
+            \o Place.Saving
+            \o The place is currently being saved, no other operations may be perfomed until
+               complete.
+        \row
+            \o Place.Fetching
+            \o The place details are currently being fetched, no other operations may be performed
+               until complete.
+        \row
+            \o Place.Removing
+            \o The place is currently being removed, no other operations can be performed until
+               complete.
+        \row
+            \o Place.Error
+            \o An error occurred during the last operation, further operations can still be
+               performed on the place.
+    \endtable
 */
 void QDeclarativePlace::setStatus(Status status)
 {
@@ -531,6 +627,11 @@ void QDeclarativePlace::contactsModified(const QString &key, const QVariant &val
     \qmlmethod void Place::getDetails()
 
     This methods starts fetching place details.
+
+    The \l status property will change to Place.Fetching while the fetch is in progress.  On
+    success the element properties will be updated, \l status will be set to Place.Ready and
+    \l detailsFetched will be set to true.  On error \l status will be set to Place.Error.  The
+    \l errorString() method can be used to get the details of the error.
 */
 void QDeclarativePlace::getDetails()
 {
@@ -547,6 +648,11 @@ void QDeclarativePlace::getDetails()
     \qmlmethod void Place::save()
 
     This method performs a save operation on the place.
+
+    The \l status property will change to Place.Saving while the save operation is in progress.  On
+    success the \l placeId property will be updated and \l status will be set to Place.Ready.  On
+    error \l status will be set to Place.Error.  The \l errorString() method can be used to get the
+    details of the error.
 */
 void QDeclarativePlace::save()
 {
@@ -563,6 +669,10 @@ void QDeclarativePlace::save()
     \qmlmethod void Place::remove()
 
     This method performs a remove operation on the place.
+
+    The \l status property will change to Place.Removing while the save operation is in progress.
+    On success \l status will be set to Place.Ready.  On error \l status will be set to
+    Place.Error.  The \l errorString() method can be used to get the details of the error.
 */
 void QDeclarativePlace::remove()
 {
@@ -578,8 +688,8 @@ void QDeclarativePlace::remove()
 /*!
     \qmlmethod string Place::errorString()
 
-    Returns a string description of the error of the last operation.
-    If the last operation completed successfully then the string is empty.
+    Returns a string description of the error of the last operation.  If the last operation
+    completed successfully then the string is empty.
 */
 QString QDeclarativePlace::errorString() const
 {
@@ -589,7 +699,10 @@ QString QDeclarativePlace::errorString() const
 /*!
     \qmlproperty string Place::primaryPhone
 
-    This property holds the primary phone number of the place.
+    This property holds the primary phone number of the place.  If no "Phone" contact detail is
+    defined for this place this property will be an empty string.  It is equivalent to
+
+    \snippet snippets/declarative/places.qml Place primaryPhone
 */
 QString QDeclarativePlace::primaryPhone() const
 {
@@ -605,7 +718,10 @@ QString QDeclarativePlace::primaryPhone() const
 /*!
     \qmlproperty string Place::primaryFax
 
-    This property holds the primary fax number of the place.
+    This property holds the primary fax number of the place.  If no "Fax" contact detail is
+    defined for this place this property will be an empty string.  It is equivalent to
+
+    \snippet snippets/declarative/places.qml Place primaryFax
 */
 QString QDeclarativePlace::primaryFax() const
 {
@@ -621,7 +737,10 @@ QString QDeclarativePlace::primaryFax() const
 /*!
     \qmlproperty string Place::primaryEmail
 
-    This property holds the primary email address of the place.
+    This property holds the primary email address of the place.  If no "Email" contact detail is
+    defined for this place this property will be an empty string.  It is equivalent to
+
+    \snippet snippets/declarative/places.qml Place primaryEmail
 */
 QString QDeclarativePlace::primaryEmail() const
 {
@@ -637,7 +756,10 @@ QString QDeclarativePlace::primaryEmail() const
 /*!
     \qmlproperty string Place::primaryWebsite
 
-    This property holds the primary website url of the place.
+    This property holds the primary website url of the place.  If no "Website" contact detail is
+    defined for this place this property will be an empty string.  It is equivalent to
+
+    \snippet snippets/declarative/places.qml Place primaryWebsite
 */
 
 QUrl QDeclarativePlace::primaryWebsite() const
@@ -652,12 +774,10 @@ QUrl QDeclarativePlace::primaryWebsite() const
 }
 
 /*!
-    \qmlproperty ExtendedAttributes extendedAttributes
+    \qmlproperty ExtendedAttributes Place::extendedAttributes
 
-    This property holds the extended attributes of a place.
-    Note: this property's changed() signal is currently only emitted
-    if the whole element changes, not if only the contents of
-    the element changes.
+    This property holds the extended attributes of a place.  Extended attributes are additional
+    information about a place not covered by the place's properties.
 */
 void QDeclarativePlace::setExtendedAttributes(QDeclarativePropertyMap *attribs)
 {
@@ -677,8 +797,10 @@ QDeclarativePropertyMap *QDeclarativePlace::extendedAttributes() const
 }
 
 /*!
-    \qmlproperty Contacts contacts
-    This property holds the contact information for this place.
+    \qmlproperty ContactDetails Place::contactDetails
+
+    This property holds the contact information for this place, for example a phone number or
+    a website URL.  This property is a map of \l ContactDetail objects.
 */
 void QDeclarativePlace::setContactDetails(QDeclarativePropertyMap *contactDetails)
 {
@@ -698,12 +820,10 @@ QDeclarativePropertyMap *QDeclarativePlace::contactDetails() const
 }
 
 /*!
-    \qmlproperty QDeclarativeListProperty<QDeclarativeCategory> Place::categories
+    \qmlproperty list<Category> Place::categories
 
-    This property categories list.
-
-    Note: this property's changed() signal is currently emitted only if the
-    whole element changes, not if only the contents of the element change.
+    This property holds the list of categories this place is a member of.  The categories that can
+    be assigned to a place are specific to each \l plugin.
 */
 QDeclarativeListProperty<QDeclarativeCategory> QDeclarativePlace::categories()
 {
@@ -766,6 +886,29 @@ void QDeclarativePlace::synchronizeCategories()
     }
 }
 
+/*!
+    \qmlproperty enumeration Place::visibility
+
+    This property holds the visibility of the place.  It can be one of:
+
+    \table
+        \row
+            \o Place.UnspecifiedVisibility
+            \o The visibility of the place is unspecified, the default visibility of the \l plugin
+               will be used.
+        \row
+            \o Place.DeviceVisibility
+            \o The place is limited to the current device.  The place will not be transferred off
+               of the device.
+        \row
+            \o Place.PrivateVisibility
+            \o The place is private to the current user.  The place may be transferred to an online
+               service but is only ever visible to the current user.
+        \row
+            \o Place.PublicVisibility
+            \o The place is public.
+    \endtable
+*/
 QDeclarativePlace::Visibility QDeclarativePlace::visibility() const
 {
     return static_cast<QDeclarativePlace::Visibility>(m_src.visibility());

@@ -175,4 +175,83 @@ Item {
         text: "This place is rated " + place.rating.value + " out of " + place.rating.maximum + " stars."
     }
     //! [Rating]
+
+    //! [ContactDetails read]
+    function printContactDetails(contactDetails) {
+        var keys = contactDetails.keys();
+        for (var i = 0; i < keys.length; ++i) {
+            var contactList = contactDetails[keys[i]];
+            for (var j = 0; j < contactList.length; ++j) {
+                console.log(contactList[j].label + ": " + contactList[j].value);
+            }
+        }
+    }
+    //! [ContactDetails read]
+
+    //! [ContactDetails phoneList]
+    ListView {
+        model: place.contactDetails.Phone;
+        delegate: Text { text: label + ": " + value }
+    }
+    //! [ContactDetails phoneList]
+
+    //! [Place savePlace def]
+    Place {
+        id: myPlace
+        plugin: myPlugin
+
+        name: "Nokia Brisbane"
+        location: Location {
+            address: Address {
+                street: "53 Brandl Street"
+                city: "Eight Mile Plains"
+                postcode: "4113"
+                country: "Australia"
+            }
+            coordinate: Coordinate {
+                latitude: -27.579646
+                longitude: 153.100308
+            }
+        }
+
+        visibility: Place.PrivateVisibility
+    }
+    //! [Place savePlace def]
+
+    function savePlace() {
+    //! [Place savePlace]
+        myPlace.save();
+    //! [Place savePlace]
+    }
+
+    function getPlaceForId() {
+    //! [Place placeId]
+        place.plugin = myPlugin;
+        place.placeId = "known-place-id";
+        place.getDetails();
+    //! [Place placeId]
+    }
+
+    function primaryContacts() {
+    //! [Place primaryPhone]
+        var primaryPhone;
+        if (place.contactDetails["Phone"].length > 0)
+            primaryPhone = place.contactDetails["Phone"][0].value;
+    //! [Place primaryPhone]
+    //! [Place primaryFax]
+        var primaryFax;
+        if (place.contactDetails["Fax"].length > 0)
+            primaryFax = place.contactDetails["Fax"][0].value;
+    //! [Place primaryFax]
+    //! [Place primaryEmail]
+        var primaryEmail;
+        if (place.contactDetails["Email"].length > 0)
+            primaryEmail = place.contactDetails["Email"][0].value;
+    //! [Place primaryEmail]
+    //! [Place primaryWebsite]
+        var primaryWebsite;
+        if (place.contactDetails["Website"].length > 0)
+            primaryWebsite = place.contactDetails["Website"][0].value;
+    //! [Place primaryWebsite]
+    }
 }
