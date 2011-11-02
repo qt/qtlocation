@@ -168,7 +168,7 @@ Map2DPrivate::Map2DPrivate(Map *parent, TileCache *cache, int maxZoom, int tileS
       tileSize_(tileSize),
       baseHeight_(100.0)
 {
-    sideLength_ = pow(2.0, 1.0 * maxZoom_);
+    sideLength_ = pow(2.0, 1.0 * maxZoom_) * tileSize;
 
     setProjection(QSharedPointer<Projection>(new Projection2D(baseHeight_, sideLength_)));
     screenPoly_.resize(4);
