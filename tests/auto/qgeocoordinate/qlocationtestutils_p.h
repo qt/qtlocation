@@ -45,13 +45,6 @@
 #include <QString>
 #include <QTest>
 
-#define QTRY_COMPARE(a,e)                       \
-    for (int _i = 0; _i < 5000; _i += 100) {    \
-        if ((a) == (e)) break;                  \
-        QTest::qWait(100);                      \
-    }                                           \
-    QCOMPARE(a, e)
-
 #define QTRY_COMPARE_WITH_TIMEOUT(a,e,t)                       \
     for (int _i = 0; _i < t; _i += 100) {    \
         if ((a) >= (e)) break;                  \

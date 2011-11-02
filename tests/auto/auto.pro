@@ -17,6 +17,7 @@ SUBDIRS += geotestplugin \
            qgeopositioninfosource \
            qgeosatelliteinfo \
            qgeosatelliteinfosource \
+           qnmeapositioninfosource \
            qplace \
            qplacecategory \
            qplacecontentrequest \
