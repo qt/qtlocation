@@ -60,7 +60,7 @@ class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
     Q_PROPERTY(RelevanceHint relevanceHint READ relevanceHint WRITE setRelevanceHint NOTIFY relevanceHintChanged)
     Q_PROPERTY(QDeclarativePlace::Visibility visibilityScope READ visibilityScope WRITE setVisibilityScope NOTIFY visibilityScopeChanged)
 
-    Q_ENUMS(SearchResultTypeRole RelevanceHint)
+    Q_ENUMS(SearchResultType RelevanceHint)
 
 public:
     enum SearchResultType {
