@@ -86,19 +86,20 @@ QT_BEGIN_NAMESPACE
     bulk of the functionality is provided by a mapping plugin described
     by the Plugin element associated with the Map.
 
-    Various map objects can be added to the map.  These map objects are
+    Various map items can be added to the map.  These map items are
     specified in terms of coordinates and metres.
 
     MapItems can be directly added to the Map element and it will display them
     automatically. The various objects that can be added include:
 
     \list
+    \o MapItem - The generic QML item
     \endlist
 
     Of the above list, MapItemView is a special case and not a MapItem as such.
     Here is a small example to illustrate this:
 
-    \snippet doc/src/snippets/declarative/declarative-map.qml Basic MapItems and View on Map
+    \snippet todo
 
     Mouse handling is done by adding MapMouseArea items as children of either
     MapItems or the Map item itself.
@@ -113,7 +114,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
       bearing_(0.0),
       center_(0),
 //      mapType_(NoMap),
-//      connectivityMode_(NoConnectivity),
       componentCompleted_(false),
       mappingManagerInitialized_(false),
       flickable_(0),
@@ -124,7 +124,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
       tileCache_(0)
 {
     QLOC_TRACE0;
-    size_ = QSizeF(100.0, 100.0);
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
     setFlags(QQuickItem::ItemHasContents);
@@ -490,59 +489,16 @@ void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
         connect(mappingManager_, SIGNAL(initialized()), this, SLOT(mappingManagerInitialized()));
     else
         mappingManagerInitialized();
-
-//    mapData_ = mappingManager_->createMapData();
-//    mapData_->init();
-    //mapData_->setParentItem(this);
-
-    // setters
-//    mapData_->setWindowSize(size_);
-//    mapData_->setZoomLevel(zoomLevel_);
-
-//    if (center_)
-//        mapData_->setCenter(center_->coordinate());
-//    else
-//        mapData_->setCenter(*initialCoordinate);
-
-//    mapData_->setMapType(QGraphicsGeoMap::MapType(mapType_));
-//    mapData_->setConnectivityMode(QGraphicsGeoMap::ConnectivityMode(connectivityMode_));
-
-    // setup signals
-//    connect(mapData_,
-//            SIGNAL(updateMapDisplay(QRectF)),
-//            this,
-//            SLOT(updateMapDisplay(QRectF)));
-
-//    connect(mapData_,
-//            SIGNAL(centerChanged(QGeoCoordinate)),
-//            this,
-//            SLOT(internalCenterChanged(QGeoCoordinate)));
-
-//    connect(mapData_,
-//            SIGNAL(mapTypeChanged(QGraphicsGeoMap::MapType)),
-//            this,
-//            SLOT(internalMapTypeChanged(QGraphicsGeoMap::MapType)));
-
-//    connect(mapData_,
-//            SIGNAL(connectivityModeChanged(QGraphicsGeoMap::ConnectivityMode)),
-//            this,
-//            SLOT(internalConnectivityModeChanged(QGraphicsGeoMap::ConnectivityMode)));
-
-//    connect(mapData_,
-//            SIGNAL(windowSizeChanged(QSizeF)),
-//            this,
-//            SIGNAL(sizeChanged(QSizeF)));
-
-//    connect(mapData_,
-//            SIGNAL(zoomLevelChanged(qreal)),
-//            this,
-//            SIGNAL(zoomLevelChanged(qreal)));
 }
 
 // this function will only be ever called once
 void QDeclarativeGeoMap::mappingManagerInitialized()
 {
     mappingManagerInitialized_ = true;
+    if (zoomLevel_ < mappingManager_->minimumZoomLevel())
+        setZoomLevel(mappingManager_->minimumZoomLevel());
+    else if (zoomLevel_ > mappingManager_->maximumZoomLevel())
+        setZoomLevel(mappingManager_->maximumZoomLevel());
     connect(map_,
             SIGNAL(updateRequired()),
             this,
@@ -554,11 +510,13 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     map_->setMappingManager(mappingManager_);
     map_->resize(width(), height());
     CameraData cameraData = map_->cameraData();
-    cameraData.setCenter(center_->coordinate());
+    cameraData.setCenter(center()->coordinate());
     cameraData.setZoomFactor(zoomLevel_);
     cameraData.setBearing(bearing_);
     map_->setCameraData(cameraData);
     map_->update();
+    emit minimumZoomLevelChanged();
+    emit maximumZoomLevelChanged();
 }
 
 void QDeclarativeGeoMap::updateMapDisplay(const QRectF &target)
@@ -576,6 +534,9 @@ QDeclarativeGeoServiceProvider* QDeclarativeGeoMap::plugin() const
     \qmlproperty qreal Map::minimumZoomLevel
 
     This property holds the minimum valid zoom level for the map.
+
+    The minimum zoom level is defined by the \l plugin used.
+    If plugin supporting mapping is not set, a -1.0 is returned.
 */
 
 qreal QDeclarativeGeoMap::minimumZoomLevel() const
@@ -590,6 +551,9 @@ qreal QDeclarativeGeoMap::minimumZoomLevel() const
     \qmlproperty qreal Map::maximumZoomLevel
 
     This property holds the maximum valid zoom level for the map.
+
+    The maximum zoom level is defined by the \l plugin used.
+    If plugin supporting mapping is not set, a -1.0 is returned.
 */
 
 qreal QDeclarativeGeoMap::maximumZoomLevel() const
@@ -598,40 +562,6 @@ qreal QDeclarativeGeoMap::maximumZoomLevel() const
         return mappingManager_->maximumZoomLevel();
     else
         return -1.0;
-}
-
-// TODO make these more QML like
-//QList<MapType> QDeclarativeGeoMap::supportedMapTypes() const;
-//QList<ConnectivityMode> QDeclarativeGeoMap::supportedConnectivityModes() const;
-
-/*!
-    \qmlproperty QSizeF Map::size
-
-    This property holds the size of the map viewport.
-*/
-void QDeclarativeGeoMap::setSize(const QSizeF &size)
-{
-//    if (mapData_) {
-//        setWidth(size.width());
-//        setHeight(size.height());
-//        mapData_->setWindowSize(size);
-//    } else {
-        if (size_ == size)
-            return;
-
-        size_ = size;
-
-        emit sizeChanged(size_);
-//    }
-
-}
-
-QSizeF QDeclarativeGeoMap::size() const
-{
-//    if (mapData_)
-//        return mapData_->windowSize();
-//    else
-        return size_;
 }
 
 void QDeclarativeGeoMap::setBearing(qreal bearing)
@@ -652,7 +582,7 @@ void QDeclarativeGeoMap::setBearing(qreal bearing)
     emit bearingChanged(bearing_);
 }
 
-/*!
+/* <- put '!' mark here, temporarily undocumented until supported
     \qmlproperty qreal Map::bearing
 
     This property holds the current bearing (starting from 0 and increasing
@@ -688,13 +618,12 @@ qreal QDeclarativeGeoMap::bearing() const
 
     This property holds the zoom level for the map.
 
-    Larger values for the zoom level provide more detail.
-
-    The default value is 8.0.
+    Larger values for the zoom level provide more detail. Zoom levels
+    are always non-negative. The default value is 8.0.
 */
 void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
 {
-    if (zoomLevel_ == zoomLevel)
+    if (zoomLevel_ == zoomLevel || zoomLevel < 0)
         return;
     if (mappingManagerInitialized_ &&
             (zoomLevel < mappingManager_->minimumZoomLevel() ||
@@ -762,7 +691,7 @@ QDeclarativeCoordinate* QDeclarativeGeoMap::center()
         if (mappingManagerInitialized_)
             center_ = new QDeclarativeCoordinate(map_->cameraData().center());
         else
-            center_ = new QDeclarativeCoordinate(QGeoCoordinate(0,0));
+            center_ = new QDeclarativeCoordinate(QGeoCoordinate(0,0,0));
         connect(center_,
                 SIGNAL(latitudeChanged(double)),
                 this,
@@ -784,7 +713,7 @@ void QDeclarativeGeoMap::cameraDataChanged(const CameraData &cameraData)
     if (!componentCompleted_)
         return;
     // check what has changed and emit appropriate signals
-    if (!center_ || cameraData.center() != center_->coordinate()) {
+    if (cameraData.center() != center()->coordinate()) {
         QDeclarativeCoordinate* currentCenter = center();
         currentCenter->setCoordinate(cameraData.center());
         emit centerChanged(currentCenter);
@@ -883,60 +812,6 @@ void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
 //}
 
 /*!
-    \qmlproperty enumeration Map::connectivityMode
-
-    This property holds the connectivity mode used to fetch the map data.
-
-    The mode can be one of:
-    \list
-    \o Map.OfflineMode
-    \o Map.OnlineMode
-    \o Map.HybridMode
-    \endlist
-
-    The default value is determined by the plugin.
-*/
-//void QDeclarativeGeoMap::setConnectivityMode(QDeclarativeGeoMap::ConnectivityMode connectivityMode)
-//{
-//    if (mapData_) {
-//        mapData_->setConnectivityMode(QGraphicsGeoMap::ConnectivityMode(connectivityMode));
-//    } else {
-//        if (connectivityMode_ == connectivityMode)
-//            return;
-
-//        connectivityMode_ = connectivityMode;
-
-//        emit connectivityModeChanged(connectivityMode_);
-//    }
-//}
-
-//QDeclarativeGeoMap::ConnectivityMode QDeclarativeGeoMap::connectivityMode() const
-//{
-//    if (mapData_)
-//        return QDeclarativeGeoMap::ConnectivityMode(mapData_->connectivityMode());
-//    else
-//        return connectivityMode_;
-//}
-
-/*!
-    \qmlproperty list<QGeoMapItem> Map::objects
-    \default
-
-    This property holds the list of objects associated with this map.
-
-    The various objects that can be added include:
-    \list
-    \o MapRectangle
-    \o MapCircle
-    \o MapText
-    \o MapImage
-    \o MapPolygon
-    \o MapPolyline
-    \o MapGroup
-    \endlist
-*/
-
-/*!
     \qmlmethod Map::toCoordinate(QPointF screenPosition)
 
     Returns the coordinate which corresponds to the screen position
@@ -973,8 +848,8 @@ QDeclarativeCoordinate* QDeclarativeGeoMap::toCoordinate(QPointF screenPosition)
 
 QPointF QDeclarativeGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate) const
 {
-    QPointF point;
-    if (mappingManagerInitialized_)
+    QPointF point(qQNaN(), qQNaN());
+    if (coordinate && mappingManagerInitialized_)
         point = map_->coordinateToScreenPosition(coordinate->coordinate());
     return point;
 }

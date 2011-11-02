@@ -203,7 +203,7 @@ QPointF Map::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
     int h = d_ptr->height();
 
     if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
-        return QPointF();
+        return QPointF(qQNaN(), qQNaN());
 
     return pos;
 }

@@ -92,36 +92,25 @@ class QDeclarativeGeoMap : public QQuickPaintedItem
 {
     Q_OBJECT
 
-    Q_ENUMS(MapType)
-    Q_ENUMS(ConnectivityMode)
-    // Temporary tweak for testing
+//    Q_ENUMS(MapType)
     Q_PROPERTY(QDeclarativeGeoMapPinchArea* pinch READ pinch CONSTANT)
     Q_PROPERTY(QDeclarativeGeoMapFlickable* flick READ flick CONSTANT);
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
-    Q_PROPERTY(QSizeF size READ size WRITE setSize NOTIFY sizeChanged)
-    Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel CONSTANT)
-    Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel CONSTANT)
+    Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel NOTIFY minimumZoomLevelChanged)
+    Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel NOTIFY maximumZoomLevelChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
 //    Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
     Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
-//    Q_PROPERTY(ConnectivityMode connectivityMode READ connectivityMode WRITE setConnectivityMode NOTIFY connectivityModeChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 
-public:
+//public:
 //    enum MapType {
 //        NoMap = QGraphicsGeoMap::NoMap,
 //        StreetMap = QGraphicsGeoMap::StreetMap,
 //        SatelliteMapDay = QGraphicsGeoMap::SatelliteMapDay,
 //        SatelliteMapNight = QGraphicsGeoMap::SatelliteMapNight,
 //        TerrainMap = QGraphicsGeoMap::TerrainMap
-//    };
-
-//    enum ConnectivityMode {
-//        NoConnectivity = QGraphicsGeoMap::NoConnectivity,
-//        OfflineMode = QGraphicsGeoMap::OfflineMode,
-//        OnlineMode = QGraphicsGeoMap::OnlineMode,
-//        HybridMode = QGraphicsGeoMap::HybridMode
 //    };
 
 public:
@@ -145,9 +134,6 @@ public:
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
 
-    void setSize(const QSizeF &size);
-    QSizeF size() const;
-
     QDeclarativeGeoMapFlickable* flick();
 
     void setZoomLevel(qreal zoomLevel);
@@ -162,13 +148,7 @@ public:
 //    void setMapType(MapType mapType);
 //    MapType mapType() const;
 
-//    void setConnectivityMode(ConnectivityMode connectivityMode);
-//    ConnectivityMode connectivityMode() const;
-
     QDeclarativeListProperty<QDeclarativeGeoMapItem> items();
-
-    //Q_INVOKABLE void addMapObject(QDeclarativeGeoMapObject* object);
-    //Q_INVOKABLE void removeMapObject(QDeclarativeGeoMapObject* object);
 
     Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItem *item);
     Q_INVOKABLE void addMapItem(QDeclarativeGeoMapItem *item);
@@ -205,18 +185,17 @@ protected:
 Q_SIGNALS:
     void wheel(qreal delta);
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
-    void sizeChanged(const QSizeF &size);
     void zoomLevelChanged(qreal zoomLevel);
     void bearingChanged(qreal bearing);
     void centerChanged(const QDeclarativeCoordinate *coordinate);
+    void minimumZoomLevelChanged();
+    void maximumZoomLevelChanged();
 //    void mapTypeChanged(QDeclarativeGeoMap::MapType mapType);
-//    void connectivityModeChanged(QDeclarativeGeoMap::ConnectivityMode connectivityMode);
 
 private Q_SLOTS:
     void updateMapDisplay(const QRectF& target);
     void internalCenterChanged(const QGeoCoordinate &coordinate);
 //    void internalMapTypeChanged(QGraphicsGeoMap::MapType mapType);
-//    void internalConnectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode);
     void centerLatitudeChanged(double latitude);
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
@@ -228,20 +207,6 @@ private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
     void updateAspectRatio();
     void populateMap();
-
-    /* hover placeholder (works to an extent but would need more work)
-    void hoverEvent(QHoverEvent* event);
-    bool clearHover();
-    bool deliverHoverEvent(QDeclarativeGeoMapMouseArea* ma,
-                           const QPointF &scenePos,
-                           const QPointF &lastScenePos,
-                           Qt::KeyboardModifiers modifiers,
-                           bool &accepted);
-    bool sendHoverEvent(QEvent::Type type, QQuickItem *item,
-                        const QPointF &scenePos, const QPointF &lastScenePos,
-                        Qt::KeyboardModifiers modifiers, bool accepted);
-    QDeclarativeGeoMapMouseArea* hoverItem_;
-    */
 
     QList<QDeclarativeGeoMapMouseArea*> mouseAreasAt(QPoint pos);
     bool deliverMouseEvent(QMouseEvent* event);
@@ -256,9 +221,6 @@ private:
     QPointer<QDeclarativeCoordinate> center_;
 
 //    QDeclarativeGeoMap::MapType mapType_;
-//    QDeclarativeGeoMap::ConnectivityMode connectivityMode_;
-    QSizeF size_;
-
     bool componentCompleted_;
     bool mappingManagerInitialized_;
     QList<QDeclarativeGeoMapItemView*> mapViews_;

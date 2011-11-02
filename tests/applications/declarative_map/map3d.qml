@@ -162,12 +162,41 @@ Item {
             }
         }
         Rectangle {color: "lightblue"; width: 80; height: 40;
-            Text {text: "Dis pinch"}
-            MouseArea{ anchors.fill: parent;
-                onClicked: { map.disableFlickOnStarted = true}
-                onDoubleClicked: { map.disableFlickOnStarted = false}
-            }
+            Text {text: "Width++"}
+            MouseArea{ anchors.fill: parent; onClicked: map.width += 10}
         }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Width--"}
+            MouseArea{ anchors.fill: parent; onClicked: map.width -= 10}
+        }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Height++"}
+            MouseArea{ anchors.fill: parent; onClicked: map.height += 10}
+        }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Height--"}
+            MouseArea{ anchors.fill: parent; onClicked: map.height -= 10}
+        }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Plugin"}
+            MouseArea{ anchors.fill: parent; onClicked: map.plugin = nokia_plugin}
+        }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "toScrPos"}
+            MouseArea{ anchors.fill: parent;
+                onClicked: console.log('coordinate: ' +
+                                       beyondCoordinate.latitude +
+                                       ' to screen pos: ' +
+                                       map.toScreenPosition(beyondCoordinate).x +
+                                       ' ' + map.toScreenPosition(beyondCoordinate).y) }
+        }
+    }
+
+    Coordinate {
+        id: beyondCoordinate
+        latitude: 80
+        longitude: 80
+        altitude: 0
     }
 
     /*
@@ -228,13 +257,12 @@ Item {
 
     Map {
         id: map
-
         property bool disableFlickOnStarted: false
-
         MapMouseArea {
             id: mapMouseArea
             onDoubleClicked: console.log('mapmousearea got clicked')
             anchors.fill: parent
+            onClicked: console.log('coordinate: ' + mouse.coordinate.latitude + ' to screen pos: ' + map.toScreenPosition(mouse.coordinate).x + ' ' + map.toScreenPosition(mouse.coordinate).y)
         }
         MapItem {
             id: externalStaticMapItem1
@@ -253,7 +281,6 @@ Item {
                 }
             }
         }
-
         MapItem {
             objectName: 'blinky static item'
             zoomLevel: 7 // at which map's  zoom level the width and height are '1-to-1'
@@ -356,8 +383,6 @@ Item {
         // commented features are checked to work at least somehow
         x: 0
         y: 0
-        //size.width: 100
-        //size.height: 100
         //anchors.left: parent.left
         //anchors.bottom: parent.bottom
         //anchors.leftMargin: 70
@@ -444,7 +469,7 @@ Item {
         // </unsupported so far>
     }
 
-
+    Plugin {id: nokia_plugin; name: "nokia"}
 
     Row {
         id: buttonRow

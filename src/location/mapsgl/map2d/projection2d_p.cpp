@@ -109,6 +109,4 @@ QGeoCoordinate Projection2D::interpolate(const QGeoCoordinate &start, const QGeo
     QGeoCoordinate result = pointToCoord(QVector3D(x, y, 0.0));
     result.setAltitude((1.0 - progress) * start.altitude() + progress * end.altitude());
     return result;
-
-    return start;
 }
