@@ -220,6 +220,8 @@ void MapController::setZoom(qreal zoom)
 
 void MapController::pan(qreal dx, qreal dy)
 {
+    if (dx == 0 && dy == 0)
+        return;
     CameraData cd = map_->cameraData();
     QGeoCoordinate coord = map_->screenPositionToCoordinate(
                                 QPointF(map_->width() / 2 + dx,
@@ -230,4 +232,3 @@ void MapController::pan(qreal dx, qreal dy)
         map_->setCameraData(cd);
     }
 }
-

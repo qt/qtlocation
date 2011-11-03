@@ -112,6 +112,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
       mappingManager_(0),
       zoomLevel_(8.0),
       bearing_(0.0),
+      tilt_(0.0),
       center_(0),
 //      mapType_(NoMap),
       componentCompleted_(false),
@@ -269,6 +270,7 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
 }
 
+// Note: this keyboard handling is for development purposes only
 void QDeclarativeGeoMap::keyPressEvent(QKeyEvent *e)
 {
     if (!mappingManagerInitialized_)
@@ -372,22 +374,6 @@ void QDeclarativeGeoMap::paint(QPainter* p)
     // Default heaps of things, because we cannot be sure what the Qt3D internally
     // sets.
     restoreDefaults(&painter);
-}
-
-void QDeclarativeGeoMap::setCameraData(const CameraData &camera)
-{
-    if (!mappingManagerInitialized_)
-        return;
-    map_->setCameraData(camera);
-    if (!map_->autoUpdate())
-        map_->update();
-}
-
-CameraData QDeclarativeGeoMap::cameraData() const
-{
-    if (!mappingManagerInitialized_)
-        return CameraData();
-    return map_->cameraData();
 }
 
 void QDeclarativeGeoMap::restoreDefaults(QGLPainter *painter)
@@ -503,17 +489,31 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             SIGNAL(updateRequired()),
             this,
             SLOT(update()));
-    connect(map_,
-            SIGNAL(cameraDataChanged(CameraData)),
+    connect(map_->mapController(),
+            SIGNAL(centerChanged(AnimatableCoordinate)),
             this,
-            SLOT(cameraDataChanged(CameraData)));
+            SLOT(mapCenterChanged(AnimatableCoordinate)));
+    connect(map_->mapController(),
+            SIGNAL(bearingChanged(qreal)),
+            this,
+            SLOT(mapBearingChanged(qreal)));
+    connect(map_->mapController(),
+            SIGNAL(tiltChanged(qreal)),
+            this,
+            SLOT(mapTiltChanged(qreal)));
+    connect(map_->mapController(),
+            SIGNAL(zoomChanged(qreal)),
+            this,
+            SLOT(mapZoomLevelChanged(qreal)));
+
     map_->setMappingManager(mappingManager_);
     map_->resize(width(), height());
-    CameraData cameraData = map_->cameraData();
-    cameraData.setCenter(center()->coordinate());
-    cameraData.setZoomFactor(zoomLevel_);
-    cameraData.setBearing(bearing_);
-    map_->setCameraData(cameraData);
+    AnimatableCoordinate acenter = map_->mapController()->center();
+    acenter.setCoordinate(center()->coordinate());
+    map_->mapController()->setCenter(acenter);
+    map_->mapController()->setZoom(zoomLevel_);
+    map_->mapController()->setBearing(bearing_);
+    map_->mapController()->setTilt(tilt_);
     map_->update();
     emit minimumZoomLevelChanged();
     emit maximumZoomLevelChanged();
@@ -574,11 +574,8 @@ void QDeclarativeGeoMap::setBearing(qreal bearing)
     if (!clockwise)
         bearing = (-1.0 * bearing) + 360;
     bearing_ = bearing + fractions;
-    if (mappingManagerInitialized_) {
-        CameraData cameraData = map_->cameraData();
-        cameraData.setBearing(bearing_);
-        map_->setCameraData(cameraData);
-    }
+    if (mappingManagerInitialized_)
+        map_->mapController()->setBearing(bearing_);
     emit bearingChanged(bearing_);
 }
 
@@ -603,15 +600,31 @@ void QDeclarativeGeoMap::setBearing(qreal bearing)
 qreal QDeclarativeGeoMap::bearing() const
 {
     if (mappingManagerInitialized_) {
-        if (map_->cameraData().bearing() >= 0)
-            return map_->cameraData().bearing();
+        if (map_->mapController()->bearing() >= 0)
+            return map_->mapController()->bearing();
         else
-            return map_->cameraData().bearing() + 360;
+            return map_->mapController()->bearing() + 360;
     } else {
         return bearing_;
     }
 }
 
+void QDeclarativeGeoMap::setTilt(qreal tilt)
+{
+    if (tilt_ == tilt || tilt > 85.0 || tilt < 0)
+        return;
+    tilt_ = tilt;
+    if (mappingManagerInitialized_)
+        map_->mapController()->setTilt(tilt);
+    emit tiltChanged(tilt);
+}
+
+qreal QDeclarativeGeoMap::tilt() const
+{
+    if (!mappingManagerInitialized_)
+        return tilt_;
+    return map_->mapController()->tilt();
+}
 
 /*!
     \qmlproperty qreal Map::zoomLevel
@@ -631,18 +644,15 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel)
         return;
     }
     zoomLevel_ = zoomLevel;
-    if (mappingManagerInitialized_) {
-        CameraData cameraData = map_->cameraData();
-        cameraData.setZoomFactor(zoomLevel_);
-        map_->setCameraData(cameraData);
-    }
+    if (mappingManagerInitialized_)
+        map_->mapController()->setZoom(zoomLevel_);
     emit zoomLevelChanged(zoomLevel);
 }
 
 qreal QDeclarativeGeoMap::zoomLevel() const
 {
     if (mappingManagerInitialized_)
-        return map_->cameraData().zoomFactor();
+        return map_->mapController()->zoom();
     else
         return zoomLevel_;
 }
@@ -676,9 +686,9 @@ void QDeclarativeGeoMap::setCenter(QDeclarativeCoordinate *center)
                 this,
                 SLOT(centerAltitudeChanged(double)));
         if (center_->coordinate().isValid() && mappingManagerInitialized_) {
-            CameraData cameraData = map_->cameraData();
-            cameraData.setCenter(center_->coordinate());
-            map_->setCameraData(cameraData);
+            AnimatableCoordinate acoord = map_->mapController()->center();
+            acoord.setCoordinate(center_->coordinate());
+            map_->mapController()->setCenter(acoord);
             update();
         }
     }
@@ -689,7 +699,7 @@ QDeclarativeCoordinate* QDeclarativeGeoMap::center()
 {
     if (!center_) {
         if (mappingManagerInitialized_)
-            center_ = new QDeclarativeCoordinate(map_->cameraData().center());
+            center_ = new QDeclarativeCoordinate(map_->mapController()->center().coordinate());
         else
             center_ = new QDeclarativeCoordinate(QGeoCoordinate(0,0,0));
         connect(center_,
@@ -708,23 +718,36 @@ QDeclarativeCoordinate* QDeclarativeGeoMap::center()
     return center_;
 }
 
-void QDeclarativeGeoMap::cameraDataChanged(const CameraData &cameraData)
+void QDeclarativeGeoMap::mapZoomLevelChanged(qreal zoom)
 {
-    if (!componentCompleted_)
+    if (zoom == zoomLevel_)
         return;
-    // check what has changed and emit appropriate signals
-    if (cameraData.center() != center()->coordinate()) {
-        QDeclarativeCoordinate* currentCenter = center();
-        currentCenter->setCoordinate(cameraData.center());
+    zoomLevel_ = zoom;
+    emit zoomLevelChanged(zoomLevel_);
+}
+
+void QDeclarativeGeoMap::mapTiltChanged(qreal tilt)
+{
+    if (tilt == zoomLevel_)
+        return;
+    tilt_ = tilt;
+    emit tiltChanged(tilt_);
+}
+
+void QDeclarativeGeoMap::mapBearingChanged(qreal bearing)
+{
+    if (bearing == bearing_)
+        return;
+    bearing_ = bearing;
+    emit bearingChanged(bearing_);
+}
+
+void QDeclarativeGeoMap::mapCenterChanged(AnimatableCoordinate center)
+{
+    if (center.coordinate() != this->center()->coordinate()) {
+        QDeclarativeCoordinate* currentCenter = this->center();
+        currentCenter->setCoordinate(center.coordinate());
         emit centerChanged(currentCenter);
-    }
-    if (cameraData.zoomFactor() != zoomLevel_) {
-        zoomLevel_ = cameraData.zoomFactor();
-        emit zoomLevelChanged(zoomLevel_);
-    }
-    if (cameraData.bearing() != bearing_) {
-        bearing_ = cameraData.bearing();
-        emit bearingChanged(bearing_);
     }
 }
 
@@ -733,14 +756,18 @@ void QDeclarativeGeoMap::centerLatitudeChanged(double latitude)
     if (qIsNaN(latitude))
         return;
     if (mappingManagerInitialized_) {
-        CameraData cameraData = map_->cameraData();
-        QGeoCoordinate coord = cameraData.center();
+        AnimatableCoordinate acoord = map_->mapController()->center();
+        QGeoCoordinate coord = acoord.coordinate();
+        // if the change originated from app, emit (other changes via mapctrl signals)
+        if (latitude != coord.latitude())
+            emit centerChanged(center_);
         coord.setLatitude(latitude);
-        cameraData.setCenter(coord);
-        map_->setCameraData(cameraData);
+        acoord.setCoordinate(coord);
+        map_->mapController()->setCenter(acoord);
         update();
+    } else {
+        emit centerChanged(center_);
     }
-    emit centerChanged(center_);
 }
 
 void QDeclarativeGeoMap::centerLongitudeChanged(double longitude)
@@ -748,14 +775,18 @@ void QDeclarativeGeoMap::centerLongitudeChanged(double longitude)
     if (qIsNaN(longitude))
         return;
     if (mappingManagerInitialized_) {
-        CameraData cameraData = map_->cameraData();
-        QGeoCoordinate coord = cameraData.center();
+        AnimatableCoordinate acoord = map_->mapController()->center();
+        QGeoCoordinate coord = acoord.coordinate();
+        // if the change originated from app, emit (other changes via mapctrl signals)
+        if (longitude != coord.longitude())
+            emit centerChanged(center_);
         coord.setLongitude(longitude);
-        cameraData.setCenter(coord);
-        map_->setCameraData(cameraData);
+        acoord.setCoordinate(coord);
+        map_->mapController()->setCenter(acoord);
         update();
+    } else {
+        emit centerChanged(center_);
     }
-    emit centerChanged(center_);
 }
 
 void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
@@ -763,14 +794,18 @@ void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
     if (qIsNaN(altitude))
         return;
     if (mappingManagerInitialized_) {
-        CameraData cameraData = map_->cameraData();
-        QGeoCoordinate coord = cameraData.center();
+        AnimatableCoordinate acoord = map_->mapController()->center();
+        QGeoCoordinate coord = acoord.coordinate();
+        // if the change originated from app, emit (other changes via mapctrl signals)
+        if (altitude != coord.altitude())
+            emit centerChanged(center_);
         coord.setAltitude(altitude);
-        cameraData.setCenter(coord);
-        map_->setCameraData(cameraData);
+        acoord.setCoordinate(coord);
+        map_->mapController()->setCenter(acoord);
         update();
+    } else {
+        emit centerChanged(center_);
     }
-    emit centerChanged(center_);
 }
 
 /*!
@@ -856,9 +891,9 @@ QPointF QDeclarativeGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate)
 
 void QDeclarativeGeoMap::pan(int dx, int dy)
 {
-    Q_UNUSED(dx);
-    Q_UNUSED(dy);
-    qWarning() << __FUNCTION__ << " of Map not implemented."; // TODO
+    if (!mappingManagerInitialized_)
+        return;
+    map_->mapController()->pan(dx, dy);
 }
 
 void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
@@ -1033,11 +1068,6 @@ void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
         event->accept();
     else
         event->ignore();
-}
-
-void QDeclarativeGeoMap::internalCenterChanged(const QGeoCoordinate &coordinate)
-{
-    emit centerChanged(new QDeclarativeCoordinate(coordinate, this));
 }
 
 //void QDeclarativeGeoMap::internalMapTypeChanged(QGraphicsGeoMap::MapType mapType)

@@ -75,6 +75,14 @@ Item {
         when: windowShown
         name: "Basic Map properties"
 
+        function fuzzy_compare(val, ref) {
+            var tolerance = 0.01;
+            if ((val > ref - tolerance) && (val < ref + tolerance))
+                return true;
+            console.log('map fuzzy cmp returns false for value, ref: ' + val + ', ' + ref)
+            return false;
+        }
+
         function clear_data() {
             pluginlessMapMaximumZoomLevelSpy.clear()
             pluginlessMapMinimumZoomLevelSpy.clear()
@@ -88,7 +96,84 @@ Item {
         }
 
         function test_pan() {
-            console.log('todo map pan')
+            map.center.latitude = 30
+            map.center.longitude = 60
+            map.zoomLevel = 4
+            clear_data()
+            // up left
+            tryCompare(mapCenterSpy, "count", 0)
+            map.pan(-20,20)
+            tryCompare(mapCenterSpy, "count", 1)
+            verify(map.center.latitude > 30)
+            verify(map.center.longitude < 60)
+            map.center.latitude = 30
+            map.center.longitude = 60
+            mapCenterSpy.clear()
+            // up
+            map.pan(0,20)
+            tryCompare(mapCenterSpy, "count", 1)
+            verify(map.center.latitude > 30)
+            compare(map.center.longitude, 60)
+            map.center.latitude = 30
+            map.center.longitude = 60
+            mapCenterSpy.clear()
+            // up right
+            tryCompare(mapCenterSpy, "count", 0)
+            map.pan(20,20)
+            tryCompare(mapCenterSpy, "count", 1)
+            verify(map.center.latitude > 30)
+            verify(map.center.longitude > 60)
+            map.center.latitude = 30
+            map.center.longitude = 60
+            mapCenterSpy.clear()
+            // left
+            map.pan(-20,0)
+            tryCompare(mapCenterSpy, "count", 1)
+            verify (fuzzy_compare(map.center.latitude, 30))
+            verify(map.center.longitude < 60)
+            map.center.latitude = 30
+            map.center.longitude = 60
+            mapCenterSpy.clear()
+            // center
+            map.pan(0,0)
+            tryCompare(mapCenterSpy, "count", 0)
+            compare(map.center.latitude, 30)
+            compare(map.center.longitude, 60)
+            map.center.latitude = 30
+            map.center.longitude = 60
+            mapCenterSpy.clear()
+            // right
+            map.pan(20,0)
+            tryCompare(mapCenterSpy, "count", 1)
+            verify (fuzzy_compare(map.center.latitude, 30))
+            verify(map.center.longitude > 60)
+            map.center.latitude = 30
+            map.center.longitude = 60
+            mapCenterSpy.clear()
+            // down left
+            map.pan(-20,-20)
+            tryCompare(mapCenterSpy, "count", 1)
+            verify (map.center.latitude < 30 )
+            verify (map.center.longitude < 60 )
+            map.center.latitude = 30
+            map.center.longitude = 60
+            mapCenterSpy.clear()
+            // down
+            map.pan(0,-20)
+            tryCompare(mapCenterSpy, "count", 1)
+            verify (map.center.latitude < 30 )
+            verify (fuzzy_compare(map.center.longitude, 60))
+            map.center.latitude = 30
+            map.center.longitude = 60
+            mapCenterSpy.clear()
+            // down right
+            map.pan(20,-20)
+            tryCompare(mapCenterSpy, "count", 1)
+            verify (map.center.latitude < 30 )
+            verify (map.center.longitude > 60 )
+            map.center.latitude = 30
+            map.center.longitude = 60
+            mapCenterSpy.clear()
         }
 
         function test_coordinate_conversion() {

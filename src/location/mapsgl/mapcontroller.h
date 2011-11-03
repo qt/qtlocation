@@ -49,7 +49,7 @@
 
 class Map;
 
-class AnimatableCoordinate {
+class Q_LOCATION_EXPORT AnimatableCoordinate {
 public:
     AnimatableCoordinate();
     AnimatableCoordinate(const QGeoCoordinate &coordinate,

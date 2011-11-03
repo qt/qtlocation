@@ -492,9 +492,9 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
 
                 if (pinchEvent_.accepted()) {
                     inPinch_ = true;
-                    pinchStartZoomLevel_ = map_->cameraData().zoomFactor();
-                    pinchStartRotation_ = map_->cameraData().bearing();
-                    pinchStartTilt_ = map_->cameraData().tilt();
+                    pinchStartZoomLevel_ = map_->zoomLevel();
+                    pinchStartRotation_ = map_->bearing();
+                    pinchStartTilt_ = map_->tilt();
                     setActive(true);
                 } else {
                     pinchRejected_ = true;
@@ -537,9 +537,7 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
                 qreal perPinchMaximumZoomLevel = qMin(pinchStartZoomLevel_ + maximumZoomLevelChange_, maximumZoomLevel_);
                 newZoomLevel = qMin(qMax(perPinchMinimumZoomLevel, newZoomLevel), perPinchMaximumZoomLevel);
                 pinchLastZoomLevel_ = newZoomLevel;
-                CameraData cam = map_->map()->cameraData();
-                cam.setZoomFactor(newZoomLevel);
-                map_->map()->setCameraData(cam);
+                map_->setZoomLevel(newZoomLevel);
             }
             if (activeGestures_ & TiltGesture && minimumZoomLevel_ >= 0 && maximumZoomLevel_ >= 0) {
                 // Note: tilt is not yet supported.
@@ -557,10 +555,7 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
                 qreal perPinchMaximumTilt = qMin(pinchStartTilt_ + maximumTiltChange_, maximumTilt_);
                 newTilt = qMin(qMax(perPinchMinimumTilt, newTilt), perPinchMaximumTilt);
                 pinchLastTilt_ = newTilt;
-
-                CameraData cam = map_->map()->cameraData();
-                cam.setTilt(newTilt);
-                map_->map()->setCameraData(cam);
+                map_->setTilt(newTilt);
             }
             if (activeGestures_ & RotationGesture) {
                 bool unlimitedRotation = (minimumRotation_ == 0.0 && maximumRotation_ == 0.0);
@@ -572,10 +567,7 @@ void QDeclarativeGeoMapPinchArea::updatePinch()
                         r -= 360;
                     if (r < -360.0)
                         r += 360.0;
-
-                    CameraData cam = map_->map()->cameraData();
-                    cam.setBearing(r);
-                    map_->map()->setCameraData(cam);
+                    map_->setBearing(r);
                 }
             }
         }

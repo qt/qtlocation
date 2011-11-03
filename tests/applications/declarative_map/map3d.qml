@@ -260,7 +260,7 @@ Item {
         property bool disableFlickOnStarted: false
         MapMouseArea {
             id: mapMouseArea
-            onDoubleClicked: console.log('mapmousearea got clicked')
+            onDoubleClicked: console.log('mapmousearea got doubleclicked')
             anchors.fill: parent
             onClicked: console.log('coordinate: ' + mouse.coordinate.latitude + ' to screen pos: ' + map.toScreenPosition(mouse.coordinate).x + ' ' + map.toScreenPosition(mouse.coordinate).y)
         }
@@ -346,13 +346,31 @@ Item {
         }
 
         Column {
+            id: infoText
             y: 100
             spacing: 2
             Text {id: positionText; text: "Map zoom level: " + map.zoomLevel; color: 'red'; font.bold: true}
             Text {color: positionText.color; font.bold: true; width: page.width / 2; elide: Text.ElideRight; text: "Map center lat: " + mapCenterCoordinate.latitude }
             Text {color: positionText.color; font.bold: true; width: page.width / 2; elide: Text.ElideRight; text: "Map center lon: " + mapCenterCoordinate.longitude }
             Text {color: positionText.color; font.bold: true; width: page.width / 2; elide: Text.ElideRight; text: "Map bearing: " + map.bearing }
+            Text {color: positionText.color; font.bold: true; width: page.width / 2; elide: Text.ElideRight; text: "Map tilt: " + map.tilt }
+        }
 
+        Grid {
+            id: panNav
+            z: 10
+            anchors.top: infoText.bottom
+            columns: 3
+            spacing: 2
+            Rectangle { id: navRect; width: 50; height: 50; color: 'peru'; Text {text: "\u2196";} MouseArea {anchors.fill: parent; onClicked: { map.pan(-1,1)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2191";} MouseArea {anchors.fill: parent; onClicked: {map.pan(0,1)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2197";} MouseArea {anchors.fill: parent; onClicked: {map.pan(1,1)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2190";} MouseArea {anchors.fill: parent; onClicked: {map.pan(-1,0)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "Tickle";} MouseArea {anchors.fill: parent; onClicked: {console.log('ticle tickle hehehe')}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2192";} MouseArea {anchors.fill: parent; onClicked: {map.pan(1,0)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2199";} MouseArea {anchors.fill: parent; onClicked: {map.pan(-1,-1)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2193";} MouseArea {anchors.fill: parent; onClicked: {map.pan(0,-1)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2198";} MouseArea {anchors.fill: parent; onClicked: {map.pan(1,-1)}}}
         }
 
         /*

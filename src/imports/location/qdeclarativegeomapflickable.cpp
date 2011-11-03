@@ -44,6 +44,7 @@
 #include <QPropertyAnimation>
 #include <QEasingCurve>
 #include "qdeclarativegeomapflickable_p.h"
+#include "mapcontroller.h"
 #include <QTimer>
 #include "map.h"
 #include "math.h"
@@ -161,7 +162,7 @@ void QDeclarativeGeoMapFlickable::setMap(Map* map)
     if (map_ || !map)
         return;
     map_ = map;
-    animation_ = new QPropertyAnimation(map_, "camera", this);
+    animation_ = new QPropertyAnimation(map_->mapController(), "center", this);
     animation_->setEasingCurve(QEasingCurve(QEasingCurve::OutQuad));
     connect(animation_, SIGNAL(finished()), this, SLOT(flickAnimationFinished()));
 }
@@ -259,37 +260,35 @@ bool QDeclarativeGeoMapFlickable::mouseMoveEvent(QMouseEvent *event)
     return true;
 }
 
-// FIXME coordinate pan with a sleeve-constant (zoom level is not considered appropriately)
+// FIXME:
+// - coordinate pan with a sleeve-constant (zoom level is not considered scientifically)
+// - not left right / up down flicking, so if map is rotated, will act unintuitively
 void QDeclarativeGeoMapFlickable::updateCamera(int dx, int dy, int timeMs)
 {
     if (timeMs < 0)
         return;
-    CameraData cameraStart = map_->cameraData();
-    QGeoCoordinate coordinate = cameraStart.center();
+    AnimatableCoordinate animationStartCoordinate = map_->mapController()->center();
+    QGeoCoordinate coordinate = animationStartCoordinate.coordinate();
      if (timeMs == 0) {
         // No animation, just set new values.
-        coordinate.setLatitude(coordinate.latitude() + (dy / pow(2.0, cameraStart.zoomFactor())));
-        coordinate.setLongitude(coordinate.longitude() - (dx / pow(2.0, cameraStart.zoomFactor())));
-        cameraStart.setCenter(coordinate);
-        map_->setCameraData(cameraStart);
+        coordinate.setLatitude(coordinate.latitude() + (dy / pow(2.0, map_->mapController()->zoom())));
+        coordinate.setLongitude(coordinate.longitude() - (dx / pow(2.0, map_->mapController()->zoom())));
+        animationStartCoordinate.setCoordinate(coordinate);
+        map_->mapController()->setCenter(animationStartCoordinate);
     } else {
-        qDebug() << "Will do flick animation dx (pix), dy (pix), time (ms): " << dx << dy << timeMs;
+        //qDebug() << "Will do flick animation dx (pix), dy (pix), time (ms): " << dx << dy << timeMs;
         if (animation_->state() == QPropertyAnimation::Running)
             animation_->stop();
-        CameraData cameraEnd = cameraStart;
+        AnimatableCoordinate animationEndCoordinate;
+        animationEndCoordinate.setProjection(animationStartCoordinate.projection());
         animation_->setDuration(timeMs);
-        coordinate.setLongitude(coordinate.longitude() - (dx / pow(2.0, cameraStart.zoomFactor())));
-        coordinate.setLatitude(coordinate.latitude() + (dy / pow(2.0, cameraStart.zoomFactor())));
-        cameraEnd.setCenter(coordinate);
-
-        animation_->setStartValue(QVariant::fromValue(cameraStart));
-        animation_->setEndValue(QVariant::fromValue(cameraEnd));
-
-        //animation_->setStartValue(QVariant::fromValue(cameraStart.center()));
-        //animation_->setEndValue(QVariant::fromValue(cameraEnd.center()));
-
-        qDebug() << "The latitude will go from:" << cameraStart.center().latitude() << "to:" << cameraEnd.center().latitude();
-        qDebug() << "The longitude will go from:" << cameraStart.center().longitude() << "to:" << cameraEnd.center().longitude();
+        coordinate.setLongitude(coordinate.longitude() - (dx / pow(2.0, map_->mapController()->zoom())));
+        coordinate.setLatitude(coordinate.latitude() + (dy / pow(2.0, map_->mapController()->zoom())));
+        animationEndCoordinate.setCoordinate(coordinate);
+        animation_->setStartValue(QVariant::fromValue(animationStartCoordinate));
+        animation_->setEndValue(QVariant::fromValue(animationEndCoordinate));
+        //qDebug() << "The latitude will go from:" << animationStartCoordinate.coordinate().latitude() << "to:" << animationEndCoordinate.coordinate().latitude();
+        //qDebug() << "The longitude will go from:" << animationStartCoordinate.coordinate().longitude() << "to:" << animationEndCoordinate.coordinate().longitude();
         // start animation straight away, user may disable the flick in the flickStarted() handler
         animation_->start();
         flicking_ = true;

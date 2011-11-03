@@ -54,6 +54,7 @@
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
+#include "mapcontroller.h"
 
 //#define QT_DECLARATIVE_LOCATION_TRACE 1
 
@@ -99,9 +100,11 @@ class QDeclarativeGeoMap : public QQuickPaintedItem
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel NOTIFY minimumZoomLevelChanged)
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel NOTIFY maximumZoomLevelChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
-    Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
 //    Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
     Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
+    // Tilt and bearing are not part of supported API
+    Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
+    Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
 
 //public:
@@ -142,6 +145,9 @@ public:
     void setBearing(qreal bearing);
     qreal bearing() const;
 
+    void setTilt(qreal tilt);
+    qreal tilt() const;
+
     void setCenter(QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* center();
 
@@ -166,9 +172,6 @@ public:
 
     QDeclarativeGeoMapPinchArea* pinch() {return pinchArea_;}
 
-    // Internal
-    Map* map() {return map_;}
-
 public Q_SLOTS:
     void pan(int dx, int dy);
 
@@ -187,6 +190,7 @@ Q_SIGNALS:
     void pluginChanged(QDeclarativeGeoServiceProvider *plugin);
     void zoomLevelChanged(qreal zoomLevel);
     void bearingChanged(qreal bearing);
+    void tiltChanged(qreal tilt);
     void centerChanged(const QDeclarativeCoordinate *coordinate);
     void minimumZoomLevelChanged();
     void maximumZoomLevelChanged();
@@ -194,14 +198,16 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void updateMapDisplay(const QRectF& target);
-    void internalCenterChanged(const QGeoCoordinate &coordinate);
 //    void internalMapTypeChanged(QGraphicsGeoMap::MapType mapType);
     void centerLatitudeChanged(double latitude);
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
     void mapItemDestroyed(QObject* item);
-    void cameraDataChanged(const CameraData &cameraData);
     void mappingManagerInitialized();
+    void mapZoomLevelChanged(qreal zoom);
+    void mapTiltChanged(qreal tilt);
+    void mapBearingChanged(qreal bearing);
+    void mapCenterChanged(AnimatableCoordinate center);
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
@@ -218,6 +224,7 @@ private:
 
     qreal zoomLevel_;
     qreal bearing_;
+    qreal tilt_;
     QPointer<QDeclarativeCoordinate> center_;
 
 //    QDeclarativeGeoMap::MapType mapType_;
@@ -240,8 +247,6 @@ private:
     int touchTimer_;
 
     TileCache *tileCache_;
-    void setCameraData(const CameraData &camera);
-    CameraData cameraData() const;
     Map *map_;
     QList<QDeclarativeGeoMapItem*> mapItems_;
     QList<QDeclarativeGeoMapItem*> mapItemsPending_;

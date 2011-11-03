@@ -212,8 +212,7 @@ void QDeclarativeGeoMapMouseArea::mapMouseEvent(QQuickMouseEvent* event)
    mouseEvent_->setX(event->property("x").toInt());
    mouseEvent_->setY(event->property("y").toInt());
    if (map_)
-       mouseEvent_->setCoordinate(
-                   map_->map()->screenPositionToCoordinate(QPointF(mouseEvent_->x(), mouseEvent_->y())));
+       mouseEvent_->setCoordinate(map_->toCoordinate(QPointF(mouseEvent_->x(), mouseEvent_->y()))->coordinate());
 }
 
 void QDeclarativeGeoMapMouseArea::releasedHandler(QQuickMouseEvent* event)
