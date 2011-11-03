@@ -1,0 +1,58 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="mapviewer.qml">../mapviewer/mapviewer.qml</file>
+    </qresource>
+    <qresource prefix="/content/components">
+        <file alias="Button.qml">../mapviewer/content/components/Button.qml</file>
+        <file alias="Checkbox.qml">../mapviewer/content/components/Checkbox.qml</file>
+        <file alias="Fader.qml">../mapviewer/content/components/Fader.qml</file>
+        <file alias="Optionbutton.qml">../mapviewer/content/components/Optionbutton.qml</file>
+        <file alias="Slider.qml">../mapviewer/content/components/Slider.qml</file>
+        <file alias="TextWithLabel.qml">../mapviewer/content/components/TextWithLabel.qml</file>
+        <file alias="TitleBar.qml">../mapviewer/content/components/TitleBar.qml</file>
+        <file alias="Menu.qml">../mapviewer/content/components/Menu.qml</file>
+    </qresource>
+    <qresource prefix="/content/components/style">
+        <file alias="ButtonStyle.qml">../mapviewer/content/components/style/ButtonStyle.qml</file>
+        <file alias="HMenuItemStyle.qml">../mapviewer/content/components/style/HMenuItemStyle.qml</file>
+        <file alias="VMenuItemStyle.qml">../mapviewer/content/components/style/VMenuItemStyle.qml</file>
+    </qresource>
+    <qresource prefix="/content/dialogs">
+        <file alias="Dialog.qml">../mapviewer/content/dialogs/Dialog.qml</file>
+        <file alias="Message.qml">../mapviewer/content/dialogs/Message.qml</file>
+        <file alias="RouteDialog.qml">../mapviewer/content/dialogs/RouteDialog.qml</file>
+    </qresource>
+    <qresource prefix="/content/map">
+        <file alias="MapBaseComponent.qml">../mapviewer/content/map/MapBaseComponent.qml</file>
+        <file alias="MapComponent.qml">../mapviewer/content/map/MapComponent.qml</file>
+        <file alias="Marker.qml">../mapviewer/content/map/Marker.qml</file>
+    </qresource>
+    <qresource prefix="/content/resources">
+        <file alias="button_hovered.png">../mapviewer/content/resources/button_hovered.png</file>
+        <file alias="button_pressed.png">../mapviewer/content/resources/button_pressed.png</file>
+        <file alias="button.png">../mapviewer/content/resources/button.png</file>
+        <file alias="button.sci">../mapviewer/content/resources/button.sci</file>
+        <file alias="catch.png">../mapviewer/content/resources/catch.png</file>
+        <file alias="checkbox_selected.png">../mapviewer/content/resources/checkbox_selected.png</file>
+        <file alias="checkbox.png">../mapviewer/content/resources/checkbox.png</file>
+        <file alias="hmenuItem_hovered.png">../mapviewer/content/resources/hmenuItem_hovered.png</file>
+        <file alias="hmenuItem_pressed.png">../mapviewer/content/resources/hmenuItem_pressed.png</file>
+        <file alias="hmenuItem.png">../mapviewer/content/resources/hmenuItem.png</file>
+        <file alias="marker_hovered.png">../mapviewer/content/resources/marker_hovered.png</file>
+        <file alias="marker_selected.png">../mapviewer/content/resources/marker_selected.png</file>
+        <file alias="marker.png">../mapviewer/content/resources/marker.png</file>
+        <file alias="node_selected.png">../mapviewer/content/resources/node_selected.png</file>
+        <file alias="node.png">../mapviewer/content/resources/node.png</file>
+        <file alias="option_button_selected.png">../mapviewer/content/resources/option_button_selected.png</file>
+        <file alias="option_button.png">../mapviewer/content/resources/option_button.png</file>
+        <file alias="quit_hovered.png">../mapviewer/content/resources/quit_hovered.png</file>
+        <file alias="quit_pressed.png">../mapviewer/content/resources/quit_pressed.png</file>
+        <file alias="quit.png">../mapviewer/content/resources/quit.png</file>
+        <file alias="scale.png">../mapviewer/content/resources/scale.png</file>
+        <file alias="titlebar.png">../mapviewer/content/resources/titlebar.png</file>
+        <file alias="titlebar.sci">../mapviewer/content/resources/titlebar.sci</file>
+        <file alias="vmenuItem.png">../mapviewer/content/resources/vmenuItem.png</file>
+        <file alias="hmenuItem.sci">../mapviewer/content/resources/hmenuItem.sci</file>
+        <file alias="vmenuItem.sci">../mapviewer/content/resources/vmenuItem.sci</file>
+    </qresource>
+</RCC>
