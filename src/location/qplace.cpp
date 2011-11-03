@@ -503,7 +503,8 @@ QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
         contacts(other.contacts),
         extendedAttributes(other.extendedAttributes),
         visibility(other.visibility),
-        detailsFetched(other.detailsFetched)
+        detailsFetched(other.detailsFetched),
+        icon(other.icon)
 {
 }
 
@@ -524,6 +525,7 @@ QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
     extendedAttributes = other.extendedAttributes;
     visibility = other.visibility;
     detailsFetched = other.detailsFetched;
+    icon = other.icon;
 
     return *this;
 }
@@ -543,6 +545,7 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
     qDebug() << "contacts" << (contacts == other.contacts);
     qDebug() << "extendedAttributes" << (extendedAttributes == other.extendedAttributes);
     qDebug() << "visibility" << (visibility == other.visibility);
+    qDebug() << "icon" << (icon == other.icon);
 #endif
 
     return (categories == other.categories
@@ -557,6 +560,7 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
             && contacts == other.contacts
             && extendedAttributes == other.extendedAttributes
             && visibility == other.visibility
+            && icon == other.icon
             );
 }
 
