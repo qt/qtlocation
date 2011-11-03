@@ -39,73 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGMANAGER_H
-#define QGEOMAPPINGMANAGER_H
+#ifndef QDECLARATIVEGEOMAPTYPE_H
+#define QDECLARATIVEGEOMAPTYPE_H
 
-#include <QObject>
-#include <QSize>
-#include <QPair>
-#include <QtLocation/qlocationglobal.h>
+#include <QtDeclarative/qdeclarative.h>
 #include "maptype.h"
-
-QT_BEGIN_HEADER
+#include <QObject>
 
 QT_BEGIN_NAMESPACE
 
-class QLocale;
-class QGeoBoundingBox;
-class QGeoCoordinate;
-class QGeoMappingManagerPrivate;
-class QGeoMapRequestOptions;
-class QGeoMappingManagerEngine;
-class QGeoTiledMapReply;
-class TileSpec;
-
-class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
+class QDeclarativeGeoMapType : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(MapStyle)
+
+    Q_PROPERTY(MapStyle style READ style CONSTANT)
+    Q_PROPERTY(QString name READ name CONSTANT)
+    Q_PROPERTY(QString description READ description CONSTANT)
+    Q_PROPERTY(bool mobile READ mobile CONSTANT)
 
 public:
-    ~QGeoMappingManager();
+    enum MapStyle {
+        NoMap = MapType::NoMap,
+        StreetMap = MapType::StreetMap,
+        SatelliteMapDay = MapType::SatelliteMapDay,
+        SatelliteMapNight = MapType::SatelliteMapNight,
+        TerrainMap = MapType::TerrainMap,
+        HybridMap = MapType::HybridMap,
+        TransitMap = MapType::TransitMap,
+        GrayStreetMap = MapType::GrayStreetMap,
+        CustomMap = 100
+    };
 
-    QString managerName() const;
-    int managerVersion() const;
+    QDeclarativeGeoMapType(const MapType mapType, QObject* parent = 0);
+    ~QDeclarativeGeoMapType();
 
-    void requestTiles(const QList<TileSpec> &tiles);
+    MapStyle style() const;
+    QString name() const;
+    QString description() const;
+    bool mobile() const;
 
-    QList<MapType> supportedMapTypes() const;
- //    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
-
-    qreal minimumZoomLevel() const;
-    qreal maximumZoomLevel() const;
-
-    bool supportsBearing() const;
-    bool isInitialized() const;
-
-    bool supportsTilting() const;
-    qreal minimumTilt() const;
-    qreal maximumTilt() const;
-
-    void setLocale(const QLocale &locale);
-    QLocale locale() const;
-
-Q_SIGNALS:
-    void tileFinished(const TileSpec &spec, const QByteArray &bytes);
-    void tileError(const TileSpec &spec, const QString &errorString);
-    void queueFinished();
-    void initialized();
+    const MapType mapType(){return mapType_;}
 
 private:
-    QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
+    MapType mapType_;
 
-    QGeoMappingManagerPrivate* d_ptr;
-    Q_DISABLE_COPY(QGeoMappingManager)
-
-    friend class QGeoServiceProvider;
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapType))
 
 #endif

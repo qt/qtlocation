@@ -621,8 +621,8 @@ QList<TileSpec> ViewportTilesPrivateOld::visibleTilesFromPlanes(const ViewportCa
 
     int zoom = zoomLevel();
 
-    queue << TileSpec(zoom, t.x(), t.y());
-    queued << TileSpec(zoom, t.x(), t.y());
+    queue << TileSpec(0, zoom, t.x(), t.y());
+    queued << TileSpec(0, zoom, t.x(), t.y());
 
     int z = 1 << zoom;
 
@@ -641,8 +641,8 @@ QList<TileSpec> ViewportTilesPrivateOld::visibleTilesFromPlanes(const ViewportCa
                 xp = z - 1;
             int xn = (spec.x() + 1) % z;
 
-            tiles << TileSpec(zoom, xp, spec.y());
-            tiles << TileSpec(zoom, xn, spec.y());
+            tiles << TileSpec(0, zoom, xp, spec.y());
+            tiles << TileSpec(0, zoom, xn, spec.y());
 
             if (spec.y() == 0) {
                 int x2 = (spec.x() + z / 2) % z;
@@ -650,13 +650,13 @@ QList<TileSpec> ViewportTilesPrivateOld::visibleTilesFromPlanes(const ViewportCa
                 if (xp2 < 0)
                     xp2 += z;
                 int xn2 = ((spec.x() + z / 2 + 1) % z);
-                tiles << TileSpec(zoom, xp2, spec.y());
-                tiles << TileSpec(zoom, x2, spec.y());
-                tiles << TileSpec(zoom, xn2, spec.y());
+                tiles << TileSpec(0, zoom, xp2, spec.y());
+                tiles << TileSpec(0, zoom, x2, spec.y());
+                tiles << TileSpec(0, zoom, xn2, spec.y());
             } else {
-                tiles << TileSpec(zoom, xp, spec.y() - 1);
-                tiles << TileSpec(zoom, spec.x(), spec.y() - 1);
-                tiles << TileSpec(zoom, xn, spec.y() - 1);
+                tiles << TileSpec(0, zoom, xp, spec.y() - 1);
+                tiles << TileSpec(0, zoom, spec.x(), spec.y() - 1);
+                tiles << TileSpec(0, zoom, xn, spec.y() - 1);
             }
 
             if (spec.y() == (z - 1)) {
@@ -665,13 +665,13 @@ QList<TileSpec> ViewportTilesPrivateOld::visibleTilesFromPlanes(const ViewportCa
                 if (xp2 < 0)
                     xp2 += z;
                 int xn2 = ((spec.x() + z / 2 + 1) % z);
-                tiles << TileSpec(zoom, xp2, spec.y());
-                tiles << TileSpec(zoom, x2, spec.y());
-                tiles << TileSpec(zoom, xn2, spec.y());
+                tiles << TileSpec(0, zoom, xp2, spec.y());
+                tiles << TileSpec(0, zoom, x2, spec.y());
+                tiles << TileSpec(0, zoom, xn2, spec.y());
             } else {
-                tiles << TileSpec(zoom, xp, spec.y() + 1);
-                tiles << TileSpec(zoom, t.x(), spec.y() + 1);
-                tiles << TileSpec(zoom, xn, spec.y() + 1);
+                tiles << TileSpec(0, zoom, xp, spec.y() + 1);
+                tiles << TileSpec(0, zoom, t.x(), spec.y() + 1);
+                tiles << TileSpec(0, zoom, xn, spec.y() + 1);
             }
 
             for (int i = 0; i < tiles.size(); ++i) {

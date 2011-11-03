@@ -274,14 +274,23 @@ int QGeoMappingManagerEngine::managerVersion() const
     return d_ptr->managerVersion;
 }
 
-///*!
-//    Returns a list of the map types supported by this engine.
-//*/
-//QList<QGraphicsGeoMap::MapType> QGeoMappingManagerEngine::supportedMapTypes() const
-//{
-//    Q_D(const QGeoMappingManagerEngine);
-//    return d->supportedMapTypes;
-//}
+QList<MapType> QGeoMappingManagerEngine::supportedMapTypes() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->supportedMapTypes;
+}
+
+/*!
+    Sets the list of map types supported by this engine to \a mapTypes.
+
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    that supportedMapTypes() provides accurate information.
+*/
+void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<MapType> &supportedMapTypes)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->supportedMapTypes = supportedMapTypes;
+}
 
 ///*!
 //    Returns a list of the connectivity modes supported by this engine.
@@ -316,18 +325,6 @@ qreal QGeoMappingManagerEngine::maximumZoomLevel() const
     Q_D(const QGeoMappingManagerEngine);
     return d->maximumZoomLevel;
 }
-
-///*!
-//    Sets the list of map types supported by this engine to \a mapTypes.
-
-//    Subclasses of QGeoMappingManagerEngine should use this function to ensure
-//    that supportedMapTypes() provides accurate information.
-//*/
-//void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes)
-//{
-//    Q_D(QGeoMappingManagerEngine);
-//    d->supportedMapTypes = mapTypes;
-//}
 
 ///*!
 //    Sets the list of connectivity modes supported by this engine to \a connectivityModes.

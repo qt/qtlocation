@@ -17,7 +17,8 @@ SOURCES += \
     mapsgl/projection.cpp \
     mapsgl/tilecache.cpp \
     mapsgl/tile.cpp \
-    mapsgl/tilespec.cpp
+    mapsgl/tilespec.cpp \
+    mapsgl/maptype.cpp
 
 PUBLIC_HEADERS += \
     mapsgl/cameradata.h \
@@ -26,7 +27,8 @@ PUBLIC_HEADERS += \
     mapsgl/mapitem.h \
     mapsgl/tilecache.h \
     mapsgl/tile.h \
-    mapsgl/tilespec.h
+    mapsgl/tilespec.h \
+    mapsgl/maptype.h
 
 PRIVATE_HEADERS += \
     mapsgl/frustum_p.h \

@@ -55,6 +55,7 @@
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
 #include "mapcontroller.h"
+#include "qgeomappingmanager.h"
 
 //#define QT_DECLARATIVE_LOCATION_TRACE 1
 
@@ -70,6 +71,7 @@
 
 #include "cameradata.h"
 #include "map.h"
+#include "qdeclarativegeomaptype_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -89,33 +91,25 @@ class QDeclarativeGeoServiceProvider;
 class QDeclarativeGeoMap;
 class QDeclarativeGeoMapItem;
 class QDeclarativeGeoMapItemBase;
+class QDeclarativeGeoMapType;
 
 class QDeclarativeGeoMap : public QQuickPaintedItem
 {
     Q_OBJECT
 
-//    Q_ENUMS(MapType)
     Q_PROPERTY(QDeclarativeGeoMapPinchArea* pinch READ pinch CONSTANT)
     Q_PROPERTY(QDeclarativeGeoMapFlickable* flick READ flick CONSTANT);
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel NOTIFY minimumZoomLevelChanged)
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel NOTIFY maximumZoomLevelChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
-//    Q_PROPERTY(MapType mapType READ mapType WRITE setMapType NOTIFY mapTypeChanged)
+    Q_PROPERTY(QDeclarativeGeoMapType* activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
     Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
     // Tilt and bearing are not part of supported API
     Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
     Q_INTERFACES(QDeclarativeParserStatus)
-
-//public:
-//    enum MapType {
-//        NoMap = QGraphicsGeoMap::NoMap,
-//        StreetMap = QGraphicsGeoMap::StreetMap,
-//        SatelliteMapDay = QGraphicsGeoMap::SatelliteMapDay,
-//        SatelliteMapNight = QGraphicsGeoMap::SatelliteMapNight,
-//        TerrainMap = QGraphicsGeoMap::TerrainMap
-//    };
 
 public:
 
@@ -135,6 +129,9 @@ public:
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider* plugin() const;
 
+    Q_INVOKABLE void setActiveMapType(QDeclarativeGeoMapType* mapType);
+    QDeclarativeGeoMapType* activeMapType()const;
+
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
 
@@ -152,8 +149,7 @@ public:
     void setCenter(QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* center();
 
-//    void setMapType(MapType mapType);
-//    MapType mapType() const;
+    QDeclarativeListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
     QDeclarativeListProperty<QDeclarativeGeoMapItem> items();
 
@@ -197,13 +193,13 @@ Q_SIGNALS:
     void bearingChanged(qreal bearing);
     void tiltChanged(qreal tilt);
     void centerChanged(const QDeclarativeCoordinate *coordinate);
+    void activeMapTypeChanged();
+    void supportedMapTypesChanged();
     void minimumZoomLevelChanged();
     void maximumZoomLevelChanged();
-//    void mapTypeChanged(QDeclarativeGeoMap::MapType mapType);
 
 private Q_SLOTS:
     void updateMapDisplay(const QRectF& target);
-//    void internalMapTypeChanged(QGraphicsGeoMap::MapType mapType);
     void centerLatitudeChanged(double latitude);
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
@@ -233,7 +229,8 @@ private:
     qreal tilt_;
     QPointer<QDeclarativeCoordinate> center_;
 
-//    QDeclarativeGeoMap::MapType mapType_;
+    QDeclarativeGeoMapType* activeMapType_;
+    QList<QDeclarativeGeoMapType*> supportedMapTypes_;
     bool componentCompleted_;
     bool mappingManagerInitialized_;
     QList<QDeclarativeGeoMapItemView*> mapViews_;
@@ -264,12 +261,12 @@ private:
     friend class QDeclarativeGeoMapItemView;
     friend class QDeclarativeGeoMapPinchArea;
     friend class QDeclarativeGeoMapFlickable;
-    Q_DISABLE_COPY(QDeclarativeGeoMap);
+    Q_DISABLE_COPY(QDeclarativeGeoMap)
 };
 
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMap));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMap))
 
 #endif

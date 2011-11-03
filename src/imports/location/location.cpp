@@ -63,6 +63,7 @@
 #include "qdeclarativegeomapitem_p.h"
 #include "qdeclarativegeomapscreenitem_p.h"
 #include "qdeclarativegeomapitemview_p.h"
+#include "qdeclarativegeomaptype_p.h"
 
 //Place includes
 #include "qdeclarativecategory_p.h"
@@ -127,7 +128,7 @@ public:
             qmlRegisterUncreatableType<QDeclarativeGeoMapFlickable>(uri, 5, 0, "MapFlickable", QDeclarativeGeoMapFlickable::tr("(Map)Flickable is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QDeclarativeGeoMapPinchArea>(uri, 5, 0, "MapPinch", QDeclarativeGeoMapPinchArea::tr("(Map)PinchArea is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent>(uri, 5, 0, "MapPinchEvent", QDeclarativeGeoMapPinchEvent::tr("(Map)PinchEvent is not intended instantiable by developer."));
-
+            qmlRegisterUncreatableType<QDeclarativeGeoMapType>(uri, 5, 0, "MapType",QDeclarativeGeoMapType::tr("MapType is not intended instantiable by developer."));
             qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
             qmlRegisterType<QDeclarativePlaceEditorialModel>(uri, 5, 0, "EditorialModel");
             qmlRegisterType<QDeclarativeGeoLocation>(uri, 5, 0, "Location");

@@ -115,7 +115,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
       bearing_(0.0),
       tilt_(0.0),
       center_(0),
-//      mapType_(NoMap),
       componentCompleted_(false),
       mappingManagerInitialized_(false),
       flickable_(0),
@@ -133,6 +132,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     // Create internal flickable and pinch area.
     tileCache_ = new TileCache();
     map_ = new Map(tileCache_, this);
+    map_->setActiveMapType(MapType());
     flickable_ = new QDeclarativeGeoMapFlickable(this);
     flickable_->setMap(map_);
     pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
@@ -514,6 +514,13 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     map_->update();
     emit minimumZoomLevelChanged();
     emit maximumZoomLevelChanged();
+
+    QList<MapType> types = mappingManager_->supportedMapTypes();
+    for (int i = 0; i < types.size(); ++i) {
+        QDeclarativeGeoMapType *type = new QDeclarativeGeoMapType(types[i], this);
+        supportedMapTypes_.append(type);
+    }
+    emit supportedMapTypesChanged();
 }
 
 void QDeclarativeGeoMap::updateMapDisplay(const QRectF &target)
@@ -805,43 +812,10 @@ void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
     }
 }
 
-/*!
-\qmlproperty enumeration QtLocation5::Map::mapType
-
-    This property holds the type of map to display.
-
-    The type can be one of:
-    \list
-    \o Map.StreetMap
-    \o Map.SatelliteMapDay
-    \o Map.SatelliteMapNight
-    \o Map.TerrainMap
-    \endlist
-
-    The default value is determined by the plugin.
-*/
-//void QDeclarativeGeoMap::setMapType(QDeclarativeGeoMap::MapType mapType)
-//{
-//    if (mapData_) {
-//        mapData_->setMapType(QGraphicsGeoMap::MapType(mapType));
-//    } else {
-//        if (mapType_ == mapType)
-//            return;
-
-//        mapType_ = mapType;
-
-//        emit mapTypeChanged(mapType_);
-//    }
-//}
-
-//QDeclarativeGeoMap::MapType QDeclarativeGeoMap::mapType() const
-//{
-//    if (mapData_) {
-//        return QDeclarativeGeoMap::MapType(mapData_->mapType());
-//    } else {
-//        return mapType_;
-//    }
-//}
+QDeclarativeListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
+{
+    return QDeclarativeListProperty<QDeclarativeGeoMapType>(this, supportedMapTypes_);
+}
 
 /*!
     \qmlmethod QtLocation5::Map::toCoordinate(QPointF screenPosition)
@@ -1067,11 +1041,6 @@ void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
         event->ignore();
 }
 
-//void QDeclarativeGeoMap::internalMapTypeChanged(QGraphicsGeoMap::MapType mapType)
-//{
-//    emit mapTypeChanged(QDeclarativeGeoMap::MapType(mapType));
-//}
-
 //void QDeclarativeGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode)
 //{
 //    emit connectivityModeChanged(QDeclarativeGeoMap::ConnectivityMode(connectivityMode));
@@ -1199,6 +1168,17 @@ void QDeclarativeGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseArea *area)
     // to be done when the item picking is clear
 }
 
+void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
+{
+    activeMapType_ = mapType;
+    map_->setActiveMapType(mapType->mapType());
+    emit activeMapTypeChanged();
+}
+
+QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
+{
+    return activeMapType_;
+}
 
 /*!
     \qmlmethod QtLocation5::Map::removeMapItem(MapItem)

@@ -212,13 +212,24 @@ QPointF Map::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool c
     return pos;
 }
 
+void Map::setActiveMapType(const MapType type)
+{
+    d_ptr->setActiveMapType(type);
+}
+
+const MapType Map::activeMapType() const
+{
+    return d_ptr->activeMapType();
+}
+
 //------------------------------------------------------------//
 
 MapPrivate::MapPrivate(Map *parent, TileCache *cache)
     : autoUpdate_(true),
       map_(parent),
       manager_(0),
-      controller_(0)
+      controller_(0),
+      activeMapType_(MapType())
 {
     sphere_ = new MapSphere(parent, this, cache);
     glCamera_ = new QGLCamera();
@@ -413,4 +424,26 @@ int MapPrivate::height() const
 double MapPrivate::aspectRatio() const
 {
     return aspectRatio_;
+}
+
+void
+MapPrivate::setActiveMapType(const MapType type)
+{
+    activeMapType_ = type;
+    //TODO: check if this shared
+    //make it more optimal
+    //rewrite current specs
+    QList<TileSpec> temp = visibleTiles_;
+    visibleTiles_.clear();
+    foreach (TileSpec spec,temp) {
+      spec.setMapId(type.mapId());
+      visibleTiles_ << spec;
+    }
+
+    update();
+}
+
+const MapType MapPrivate::activeMapType() const
+{
+  return activeMapType_;
 }

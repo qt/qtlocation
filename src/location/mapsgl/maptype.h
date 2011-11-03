@@ -39,69 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGMANAGER_H
-#define QGEOMAPPINGMANAGER_H
+#ifndef MAPTYPE_H
+#define MAPTYPE_H
 
-#include <QObject>
-#include <QSize>
-#include <QPair>
 #include <QtLocation/qlocationglobal.h>
-#include "maptype.h"
+#include <QString>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QLocale;
-class QGeoBoundingBox;
-class QGeoCoordinate;
-class QGeoMappingManagerPrivate;
-class QGeoMapRequestOptions;
-class QGeoMappingManagerEngine;
-class QGeoTiledMapReply;
-class TileSpec;
-
-class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
+class Q_LOCATION_EXPORT MapType
 {
-    Q_OBJECT
 
 public:
-    ~QGeoMappingManager();
+    enum MapStyle {
+        NoMap = 0,
+        StreetMap,
+        SatelliteMapDay,
+        SatelliteMapNight,
+        TerrainMap,
+        HybridMap,
+        TransitMap,
+        GrayStreetMap,
+        CustomMap = 100
+    };
 
-    QString managerName() const;
-    int managerVersion() const;
+    MapType();
+    MapType(MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
+    ~MapType();
+    bool operator == (const MapType &other) const;
+    bool operator != (const MapType &other) const;
 
-    void requestTiles(const QList<TileSpec> &tiles);
-
-    QList<MapType> supportedMapTypes() const;
- //    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
-
-    qreal minimumZoomLevel() const;
-    qreal maximumZoomLevel() const;
-
-    bool supportsBearing() const;
-    bool isInitialized() const;
-
-    bool supportsTilting() const;
-    qreal minimumTilt() const;
-    qreal maximumTilt() const;
-
-    void setLocale(const QLocale &locale);
-    QLocale locale() const;
-
-Q_SIGNALS:
-    void tileFinished(const TileSpec &spec, const QByteArray &bytes);
-    void tileError(const TileSpec &spec, const QString &errorString);
-    void queueFinished();
-    void initialized();
+    MapStyle style() const;
+    QString name() const;
+    QString description() const;
+    bool mobile() const;
+    int mapId() const;
 
 private:
-    QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
-
-    QGeoMappingManagerPrivate* d_ptr;
-    Q_DISABLE_COPY(QGeoMappingManager)
-
-    friend class QGeoServiceProvider;
+    MapStyle style_;
+    QString name_;
+    QString description_;
+    bool mobile_;
+    int mapId_;
 };
 
 QT_END_NAMESPACE

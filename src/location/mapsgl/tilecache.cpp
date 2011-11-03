@@ -61,7 +61,7 @@ struct TileDisk
     ~TileDisk()
     {
 //        qWarning() << "evicting (disk) " << spec;
-        cache->evictFromDiskCache(this);
+//        cache->evictFromDiskCache(this);
     }
 
     TileSpec spec;
@@ -392,7 +392,6 @@ void TileCache::loadTiles()
     QDir dir(directory_);
     //QStringList files = dir.entryList(formats, QDir::Files, QDir::Time | QDir::Reversed);
     QStringList files = dir.entryList(formats, QDir::Files);
-
     int tiles = 0;
     for (int i = 0; i < files.size(); ++i) {
         TileSpec spec = filenameToTileSpec(files.at(i));
@@ -408,7 +407,9 @@ void TileCache::loadTiles()
 
 QString TileCache::tileSpecToFilename(const TileSpec &spec, const QString &directory)
 {
-    QString filename = QString::number(spec.zoom());
+    QString filename = QString::number(spec.mapId());
+    filename += QLatin1String("-");
+    filename += QString::number(spec.zoom());
     filename += QLatin1String("-");
     filename += QString::number(spec.x());
     filename += QLatin1String("-");
@@ -423,26 +424,31 @@ QString TileCache::tileSpecToFilename(const TileSpec &spec, const QString &direc
 TileSpec TileCache::filenameToTileSpec(const QString &filename)
 {
     TileSpec spec;
-    QRegExp r(QLatin1String("(\\d+)-(\\d+)-(\\d+).png"));
+    QRegExp r(QLatin1String("(\\d+)-(\\d+)-(\\d+)-(\\d+).png"));
 
     int index = r.indexIn(filename);
     if (index != -1) {
         bool ok = false;
 
-        int zoom = r.cap(1).toInt(&ok);
+        int mapId = r.cap(1).toInt(&ok);
+        if (!ok)
+            return spec;
+
+        int zoom = r.cap(2).toInt(&ok);
         if (!ok)
             return spec;
 
         ok = false;
-        int x = r.cap(2).toInt(&ok);
+        int x = r.cap(3).toInt(&ok);
         if (!ok)
             return spec;
 
         ok = false;
-        int y = r.cap(3).toInt(&ok);
+        int y = r.cap(4).toInt(&ok);
         if (!ok)
             return spec;
 
+        spec.setMapId(mapId);
         spec.setZoom(zoom);
         spec.setX(x);
         spec.setY(y);

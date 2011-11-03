@@ -401,7 +401,7 @@ QList<TileSpec> ViewportTilesPrivate::tilesFromSpherePatch(const SpherePatch &pa
         int minX = map.range[y].first;
         int maxX = map.range[y].second;
         for (int x = minX; x <= maxX; ++x) {
-            results << TileSpec(zoomLevel_, x, y);
+            results << TileSpec(0, zoomLevel_, x, y);
         }
     }
 

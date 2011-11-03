@@ -853,7 +853,7 @@ QList<TileSpec> Map2DPrivate::tilesFromPoints(const QVector<QVector3D> &points, 
         int minX = map.minX[i];
         int maxX = map.maxX[i];
         for (int x = minX; x <= maxX; ++x)
-            results << TileSpec(zoomLevel, x, y);
+            results << TileSpec(activeMapType().mapId(), zoomLevel, x, y);
     }
 
     return results;

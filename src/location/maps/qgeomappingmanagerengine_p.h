@@ -60,6 +60,7 @@
 #include <QMap>
 #include <QLocale>
 #include <QTimer>
+#include "maptype.h"
 
 class TileSpec;
 class QGeoTiledMapReply;
@@ -77,7 +78,7 @@ public:
     QString managerName;
     int managerVersion;
 
-//    QList<QGraphicsGeoMap::MapType> supportedMapTypes;
+    QList<MapType> supportedMapTypes;
 //    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes;
     QSize tileSize;
     qreal minimumZoomLevel;

@@ -59,6 +59,7 @@
 #include "frustum_p.h"
 
 #include "mapitem.h"
+#include "maptype.h"
 
 #include <QSharedPointer>
 
@@ -117,6 +118,8 @@ public:
     void addMapItem(MapItem *item);
     void removeMapItem(MapItem *item);
     void clearMapItems();
+    const MapType activeMapType() const;
+    void setActiveMapType(const MapType mapType);
 
     virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const = 0;
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
@@ -158,6 +161,7 @@ private:
     QList<TileSpec> visibleTiles_;
 
     MapSphere *sphere_;
+    MapType activeMapType_;
 };
 
 #endif // MAP_P_H

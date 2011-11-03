@@ -54,7 +54,7 @@ class Q_LOCATION_EXPORT TileSpec
 {
 public:
     TileSpec();
-    TileSpec(int zoom, int x, int y);
+    TileSpec(int mapId, int zoom, int x, int y);
 
     void setZoom(int zoom);
     int zoom() const;
@@ -65,10 +65,14 @@ public:
     void setY(int y);
     int y() const;
 
+    void setMapId(int mapId);
+    int mapId() const;
+
     bool operator == (const TileSpec &rhs) const;
     bool operator < (const TileSpec &rhs) const;
 
 private:
+    int mapId_;
     int zoom_;
     int x_;
     int y_;

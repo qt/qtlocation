@@ -46,6 +46,7 @@
 #include <QSize>
 #include <QPair>
 #include <QtLocation/qlocationglobal.h>
+#include "maptype.h"
 
 QT_BEGIN_HEADER
 
@@ -79,7 +80,7 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-//    QList<QGraphicsGeoMap::MapType> supportedMapTypes() const;
+    QList<MapType> supportedMapTypes() const;
 //    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
 
     QSize tileSize() const;
@@ -116,7 +117,7 @@ Q_SIGNALS:
 protected:
     QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
 
-//    void setSupportedMapTypes(const QList<QGraphicsGeoMap::MapType> &mapTypes);
+    void setSupportedMapTypes(const QList<MapType> &supportedMapTypes);
 //    void setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes);
 
     void setTileSize(const QSize &tileSize);

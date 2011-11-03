@@ -44,6 +44,7 @@
 #include <QObject>
 
 #include "cameradata.h"
+#include "maptype.h"
 
 QT_BEGIN_HEADER
 
@@ -70,6 +71,7 @@ class Q_LOCATION_EXPORT Map : public QObject
     Q_OBJECT
 
     Q_PROPERTY(CameraData camera READ cameraData WRITE setCameraData NOTIFY cameraDataChanged)
+    Q_PROPERTY(MapType activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
 
 public:
     Map(TileCache *cache, QObject *parent = 0);
@@ -103,6 +105,9 @@ public:
     QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const;
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
 
+    void setActiveMapType(const MapType mapType);
+    const MapType activeMapType() const;
+
 public Q_SLOTS:
     void clearCache();
     void update();
@@ -111,6 +116,7 @@ Q_SIGNALS:
     void updateRequired();
     void updatesFinished();
     void cameraDataChanged(const CameraData &cameraData);
+    void activeMapTypeChanged();
 
 private:
     MapPrivate *d_ptr;

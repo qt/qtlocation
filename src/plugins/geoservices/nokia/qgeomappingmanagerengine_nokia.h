@@ -54,6 +54,10 @@
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanagerengine.h>
 
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+#include <qnetworkinfo.h>
+#endif
+
 QT_BEGIN_NAMESPACE
 
 class QNetworkAccessManager;
@@ -75,19 +79,39 @@ public:
 
     QGeoTiledMapReply* getTileImage(const TileSpec &spec);
 
+    const QString& host() const;
+    QChar firstSubdomain() const;
+    unsigned char maxSubdomains() const;
+    const QString& token() const;
+    const QString& applicationId() const;
+    const QString& referer() const;
+
+private Q_SLOTS:
+    void currentMobileCountryCodeChanged(int interface, const QString& mcc);
+
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
 
     QString getRequestString(const TileSpec &spec) const;
 
     static QString sizeToStr(const QSize &size);
-//    static QString mapTypeToStr(QGraphicsGeoMap::MapType type);
+    static QString mapIdToStr(int mapId);
+
+    void setHost(const QString& host);
+    bool isValidParameter(const QString& param);
 
     QNetworkAccessManager *m_networkManager;
     QNetworkDiskCache *m_cache;
     QString m_host;
     QString m_token;
     QString m_referer;
+    QChar m_firstSubdomain;
+    unsigned char m_maxSubdomains;
+    QString m_applicationId;
+
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    QNetworkInfo m_networkInfo;
+#endif
 };
 
 QT_END_NAMESPACE

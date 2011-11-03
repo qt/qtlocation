@@ -1,7 +1,7 @@
 load(qt_module)
 
 TARGET = qtgeoservices_nokia
-QT += location network
+QT += location network systeminfo
 
 load(qt_plugin)
 

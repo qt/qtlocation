@@ -177,6 +177,11 @@ void QGeoMappingManager::requestTiles(const QList<TileSpec> &tiles)
                               Q_ARG(QList<TileSpec>, tiles));
 }
 
+QList<MapType> QGeoMappingManager::supportedMapTypes() const
+{
+    return d_ptr->engine->supportedMapTypes();
+}
+
 //QGeoTiledMapReply* QGeoMappingManager::getTileImage(const TileSpec &spec)
 //{
 //    qWarning() << d_ptr->engine->minimumZoomLevel() << d_ptr->engine->maximumZoomLevel();
@@ -194,14 +199,6 @@ void QGeoMappingManager::requestTiles(const QList<TileSpec> &tiles)
 //        return;
 
 //    emit finished(reply);
-//}
-
-///*!
-//    Returns a list of the map types supported by this manager.
-//*/
-//QList<QGraphicsGeoMap::MapType> QGeoMappingManager::supportedMapTypes() const
-//{
-//    return d_ptr->engine->supportedMapTypes();
 //}
 
 ///*!
