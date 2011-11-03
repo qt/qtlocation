@@ -80,7 +80,8 @@ public:
         RecommendationsFeature  = 0x10,
         TextPredictionsFeature   = 0x20,
         CorrectionsFeature      = 0x40,
-        LocaleFeature           = 0x80
+        LocaleFeature           = 0x80,
+        NotificationsFeature    = 0x100
     };
 
     Q_DECLARE_FLAGS(ManagerFeatures, ManagerFeature)

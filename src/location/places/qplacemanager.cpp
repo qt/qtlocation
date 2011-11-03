@@ -67,6 +67,7 @@ QT_BEGIN_NAMESPACE
     \value AuthenticationFeature The manager supports authentication of a user.
     \value CreatePlaceFeature The manager supports the creation of places.
     \value UpdatePlaceFeature The manager supports the updating of places.
+    \value NotifcationsFeature The manager gives notifications for added/modified/remove places and categories.
 */
 
 /*!
