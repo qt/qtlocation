@@ -227,7 +227,7 @@ void QGeoPositionInfoSourceNpeBackend::requestUpdate(int timeout)
                 mStream->send(actionUpdate);
             }
         }
-        // request the update only if qDebug() << "no tracking session is active
+        // request the update only if no tracking session is active
         if ( !locationOngoing) {
             QVariantMap action;
             action.insert(JsonDbString::kActionStr, krequestUpdate);

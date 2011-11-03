@@ -56,6 +56,8 @@
 #   include "qgeosatelliteinfosource_maemo_p.h"
 #elif defined(Q_WS_MAEMO_5)
 #   include "qgeosatelliteinfosource_maemo5_p.h"
+#elif defined (NPE_BACKEND)
+#   include "qgeosatelliteinfosource_npe_backend_p.h"
 #endif
 
 #if defined(Q_WS_MEEGO)
@@ -309,6 +311,12 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
         return gypsySource;
     delete gypsySource;
 #endif // GYPSY_AVAILABLE
+#elif defined(NPE_BACKEND)
+    QGeoSatelliteInfoSourceNpeBackend* npeBackendSource = new QGeoSatelliteInfoSourceNpeBackend(parent);
+    if (npeBackendSource->init())
+        return npeBackendSource;
+    else
+        delete npeBackendSource;
 #endif
     foreach (QGeoPositionInfoSourceFactory *f, QGeoSatelliteInfoSourcePrivate::pluginsSorted()) {
         QGeoSatelliteInfoSource *src = f->satelliteInfoSource(parent);
