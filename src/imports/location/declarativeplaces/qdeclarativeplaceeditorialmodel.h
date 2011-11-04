@@ -60,7 +60,7 @@ public:
 
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
-        ContentRole = UserRole,
+        TextRole = UserRole,
         TitleRole,
         LanguageRole
     };

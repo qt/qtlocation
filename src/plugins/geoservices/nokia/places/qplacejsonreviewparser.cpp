@@ -121,7 +121,7 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review, QPl
     }
     value = review.property(review_description_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newReview.setContent(value.toString());
+        newReview.setText(value.toString());
     }
     value = review.property(review_title_element);
     if (value.isValid() && !value.toString().isEmpty()) {

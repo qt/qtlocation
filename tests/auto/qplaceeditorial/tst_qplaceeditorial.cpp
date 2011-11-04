@@ -57,8 +57,8 @@ public:
 private Q_SLOTS:
     void constructorTest();
     void supplierTest();
-    void contentTest();
-    void contentTitleTest();
+    void textTest();
+    void titleTest();
     void sourceUrlTest();
     void languageTest();
     void operatorsTest();
@@ -71,7 +71,7 @@ tst_QPlaceEditorial::tst_QPlaceEditorial()
 void tst_QPlaceEditorial::constructorTest()
 {
     QPlaceEditorial testObj;
-    testObj.setContent("testId");
+    testObj.setText("testId");
     QPlaceEditorial *testObjPtr = new QPlaceEditorial(testObj);
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
@@ -89,15 +89,15 @@ void tst_QPlaceEditorial::supplierTest()
     QVERIFY2(testObj.supplier() == sup, "Wrong value returned");
 }
 
-void tst_QPlaceEditorial::contentTest()
+void tst_QPlaceEditorial::textTest()
 {
     QPlaceEditorial testObj;
-    QVERIFY2(testObj.content() == QString(), "Wrong default value");
-    testObj.setContent("testText");
-    QVERIFY2(testObj.content() == "testText", "Wrong value returned");
+    QVERIFY2(testObj.text() == QString(), "Wrong default value");
+    testObj.setText("testText");
+    QVERIFY2(testObj.text() == "testText", "Wrong value returned");
 }
 
-void tst_QPlaceEditorial::contentTitleTest()
+void tst_QPlaceEditorial::titleTest()
 {
     QPlaceEditorial testObj;
     QVERIFY2(testObj.title() == QString(), "Wrong default value");
@@ -129,7 +129,7 @@ void tst_QPlaceEditorial::operatorsTest()
     QPlaceEditorial testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
-    testObj2.setContent("testValue2");
+    testObj2.setText("testValue2");
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 

@@ -62,7 +62,7 @@ public:
     Q_DEFINE_CONTENT_PRIVATE_HELPER(QPlaceReview, QPlaceContent::ReviewType);
 
     QDateTime dateTime;
-    QString content;
+    QString text;
     QString language;
     qreal rating;
     QString reviewId;

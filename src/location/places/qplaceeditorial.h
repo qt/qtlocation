@@ -60,8 +60,8 @@ public:
 
     virtual ~QPlaceEditorial();
 
-    QString content() const;
-    void setContent(const QString &data);
+    QString text() const;
+    void setText(const QString &text);
     QString title() const;
     void setTitle(const QString &data);
     QString language() const;

@@ -50,7 +50,7 @@ QPlaceEditorialPrivate::QPlaceEditorialPrivate()
 }
 
 QPlaceEditorialPrivate::QPlaceEditorialPrivate(const QPlaceEditorialPrivate &other)
-:   QPlaceContentPrivate(), content(other.content), contentTitle(other.contentTitle),
+:   QPlaceContentPrivate(), text(other.text), contentTitle(other.contentTitle),
     language(other.language)
 {
 }
@@ -63,7 +63,7 @@ bool QPlaceEditorialPrivate::compare(const QPlaceContentPrivate *other) const
 {
     const QPlaceEditorialPrivate *od = static_cast<const QPlaceEditorialPrivate *>(other);
     return QPlaceContentPrivate::compare(other)
-           && content == od->content
+           && text == od->text
            && contentTitle == od->contentTitle
            && sourceUrl == od->sourceUrl
            && language == od->language;
@@ -104,21 +104,24 @@ Q_IMPLEMENT_CONTENT_COPY_CTOR(QPlaceEditorial)
 Q_IMPLEMENT_CONTENT_D_FUNC(QPlaceEditorial)
 
 /*!
-    Returns content.
+    Returns text of the editorial.
+
+    Depending upon the provider, the
+    editorial text could be rich or plain text.
 */
-QString QPlaceEditorial::content() const
+QString QPlaceEditorial::text() const
 {
     Q_D(const QPlaceEditorial);
-    return d->content;
+    return d->text;
 }
 
 /*!
-    Sets content.
+    Sets the \a text of the editorial.
 */
-void QPlaceEditorial::setContent(const QString &data)
+void QPlaceEditorial::setText(const QString &text)
 {
     Q_D(QPlaceEditorial);
-    d->content = data;
+    d->text = text;
 }
 
 /*!

@@ -67,7 +67,7 @@ Rectangle {
         }
 
         Text {
-            text: content
+            text: model.text
             wrapMode: Text.WordWrap
             width: parent.width
         }

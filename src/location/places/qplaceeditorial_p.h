@@ -61,7 +61,7 @@ public:
 
     Q_DEFINE_CONTENT_PRIVATE_HELPER(QPlaceEditorial, QPlaceContent::EditorialType)
 
-    QString content;
+    QString text;
     QString contentTitle;
     QString language;
 };

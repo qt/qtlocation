@@ -67,9 +67,10 @@ QT_BEGIN_NAMESPACE
             \o Type
             \o Description
         \row
-            \o content
+            \o text
             \o string
-            \o The editorial content.
+            \o The editorial's text.  It can be either plain text or rich text
+               depending upon the provider.
         \row
             \o title
             \o string
@@ -119,7 +120,7 @@ QDeclarativePlaceEditorialModel::QDeclarativePlaceEditorialModel(QObject *parent
 :   QDeclarativePlaceContentModel(QPlaceContent::EditorialType, parent)
 {
     QHash<int, QByteArray> roleNames;
-    roleNames.insert(ContentRole, "content");
+    roleNames.insert(TextRole, "text");
     roleNames.insert(TitleRole, "title");
     roleNames.insert(SupplierRole, "supplier");
     roleNames.insert(SourceUrlRole, "url");
@@ -142,8 +143,8 @@ QVariant QDeclarativePlaceEditorialModel::data(const QModelIndex &index, int rol
     const QPlaceEditorial &description = m_content.value(index.row());
 
     switch (role) {
-    case ContentRole:
-        return description.content();
+    case TextRole:
+        return description.text();
     case TitleRole:
         return description.title();
     case SourceUrlRole:

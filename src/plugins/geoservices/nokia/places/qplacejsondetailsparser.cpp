@@ -608,15 +608,15 @@ void QPlaceJSonDetailsParser::processPremiumContentDescription(const QScriptValu
     QScriptValue value = content.property(place_premiumcontent_content_desc_element);
     QPlaceEditorial desc;
     if (value.isValid() && !value.toString().isEmpty()) {
-        desc.setContent(value.toString());
+        desc.setText(value.toString());
     } else {
         value = content.property(place_premiumcontent_content_shortdesc_element);
         if (value.isValid() && !value.toString().isEmpty()) {
-            desc.setContent(value.toString());
+            desc.setText(value.toString());
         }
     }
     // if no description do not continue
-    if (desc.content().isEmpty()) {
+    if (desc.text().isEmpty()) {
         return;
     }
     value = content.property(place_premiumcontent_content_name_element);
@@ -774,7 +774,7 @@ QPlaceEditorial *QPlaceJSonDetailsParser::processAdContentDescription(const QScr
     QScriptValue value = content.property(place_adcontent_localizedDescription_element);
     if (value.isValid() && !value.toString().isEmpty()) {
         description = new QPlaceEditorial();
-        description->setContent(value.toString());
+        description->setText(value.toString());
         value = content.property(place_adcontent_descriptionLanguage_element);
         if (value.isValid() && !value.toString().isEmpty()) {
             description->setLanguage(value.toString());

@@ -53,7 +53,7 @@ QPlaceReviewPrivate::QPlaceReviewPrivate(const QPlaceReviewPrivate &other)
     : QPlaceContentPrivate(other)
 {
     dateTime = other.dateTime;
-    content = other.content;
+    text = other.text;
     language = other.language;
     rating = other.rating;
     reviewId = other.reviewId;
@@ -69,7 +69,7 @@ bool QPlaceReviewPrivate::compare(const QPlaceContentPrivate *other) const
     const QPlaceReviewPrivate *od = static_cast<const QPlaceReviewPrivate *>(other);
     return QPlaceContentPrivate::compare(other) &&
            dateTime == od->dateTime &&
-           content == od->content &&
+           text == od->text &&
            language == od->language &&
            rating == od->rating &&
            reviewId == od->reviewId &&
@@ -134,21 +134,23 @@ void QPlaceReview::setDateTime(const QDateTime &dt)
 }
 
 /*!
-    Returns description.
+    Returns the text of the review.
+
+    Depending on the provider the text could be plain or rich text.
 */
-QString QPlaceReview::content() const
+QString QPlaceReview::text() const
 {
     Q_D(const QPlaceReview);
-    return d->content;
+    return d->text;
 }
 
 /*!
-    Sets description.
+    Sets \a text of the review.
 */
-void QPlaceReview::setContent(const QString &data)
+void QPlaceReview::setText(const QString &text)
 {
     Q_D(QPlaceReview);
-    d->content = data;
+    d->text = text;
 }
 
 /*!

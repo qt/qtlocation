@@ -63,8 +63,8 @@ public:
 
     QDateTime dateTime() const;
     void setDateTime(const QDateTime &dt);
-    QString content() const;
-    void setContent(const QString &content);
+    QString text() const;
+    void setText(const QString &text);
     QString language() const;
     void setLanguage(const QString &data);
 

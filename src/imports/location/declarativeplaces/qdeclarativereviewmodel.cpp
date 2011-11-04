@@ -72,9 +72,10 @@ QT_BEGIN_NAMESPACE
             \o datetime
             \o The date and time that the review was posted.
         \row
-            \o content
+            \o text
             \o string
-            \o The content of the review.
+            \o The text of the review.  It can be either rich text or plain text
+               depending on the provider.
         \row
             \o language
             \o string
@@ -133,7 +134,7 @@ QDeclarativeReviewModel::QDeclarativeReviewModel(QObject* parent)
 {
     QHash<int, QByteArray> roles = roleNames();
     roles.insert(DateTimeRole, "dateTime");
-    roles.insert(ContentRole, "content");
+    roles.insert(TextRole, "text");
     roles.insert(LanguageRole, "language");
     roles.insert(RatingRole, "rating");
     roles.insert(ReviewIdRole, "reviewId");
@@ -159,8 +160,8 @@ QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case DateTimeRole:
         return review.dateTime();
-    case ContentRole:
-        return review.content();
+    case TextRole:
+        return review.text();
     case LanguageRole:
         return review.language();
     case RatingRole:

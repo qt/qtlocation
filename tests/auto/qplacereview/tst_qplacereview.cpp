@@ -59,7 +59,7 @@ private Q_SLOTS:
     void constructorTest();
     void supplierTest();
     void dateTest();
-    void descriptionTest();
+    void textTest();
     void languageTest();
     void ratingTest();
     void reviewIdTest();
@@ -104,12 +104,12 @@ void tst_QPlaceReview::dateTest()
     QCOMPARE(testObj.dateTime(), dt);
 }
 
-void tst_QPlaceReview::descriptionTest()
+void tst_QPlaceReview::textTest()
 {
     QPlaceReview testObj;
-    QVERIFY2(testObj.content() == QString(), "Wrong default value");
-    testObj.setContent("testText");
-    QVERIFY2(testObj.content() == "testText", "Wrong value returned");
+    QVERIFY2(testObj.text() == QString(), "Wrong default value");
+    testObj.setText("testText");
+    QVERIFY2(testObj.text() == "testText", "Wrong value returned");
 }
 
 void tst_QPlaceReview::languageTest()
@@ -133,7 +133,7 @@ void tst_QPlaceReview::ratingTest()
 void tst_QPlaceReview::operatorsTest()
 {
     QPlaceReview testObj;
-    testObj.setContent("testValue");
+    testObj.setText("testValue");
     QPlaceReview testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");
