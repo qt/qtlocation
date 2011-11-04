@@ -139,7 +139,7 @@ void QDeclarativePlaceIcon::setIcon(const QPlaceIcon &src)
                by the icon is selected.
         \row
             \o Icon.Map
-            \o An icon intended for display on a \l Map.
+            \o An icon intended for display on a \l {QtLocation5::Map}{Map}.
         \row
             \o Icon.List
             \o An icon intended for display in a list.

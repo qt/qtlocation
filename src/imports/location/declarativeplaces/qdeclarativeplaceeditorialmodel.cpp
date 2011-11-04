@@ -89,7 +89,7 @@ QT_BEGIN_NAMESPACE
             \o The source URL of the editorial.
         \row
             \o user
-            \o \l User
+            \o \l {QtLocation5::User}{User}
             \o The user who contributed the editorial.
         \row
             \o attribution
