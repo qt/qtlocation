@@ -266,14 +266,6 @@ void QPlaceManager::setLocale(const QLocale &locale)
 }
 
 /*!
-    Constructs an icon url from a given \a icon, \a size and \a flags.
-*/
-QUrl QPlaceManager::constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)
-{
-    return d->constructIconUrl(icon, size, flags);
-}
-
-/*!
     Returns a set of flags indicating what particular features this manager instance supports.
 */
 QPlaceManager::ManagerFeatures QPlaceManager::supportedFeatures() const

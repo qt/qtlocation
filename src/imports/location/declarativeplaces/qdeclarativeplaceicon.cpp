@@ -157,7 +157,7 @@ QUrl QDeclarativePlaceIcon::url(const QSize &size, QDeclarativePlaceIcon::IconFl
         icon.setBaseUrl(m_baseUrl);
         icon.setFullUrl(m_fullUrl);
         icon.setManager(placeManager);
-        return placeManager->constructIconUrl(icon, size, QPlaceIcon::IconFlags(int(flags)));
+        return icon.url(size, QPlaceIcon::IconFlags(int(flags)));
     }
 
     return QUrl();

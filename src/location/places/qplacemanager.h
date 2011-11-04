@@ -117,8 +117,6 @@ public:
     QLocale locale() const;
     void setLocale(const QLocale &locale);
 
-    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags);
-
     ManagerFeatures supportedFeatures() const;
 
 Q_SIGNALS:
@@ -135,12 +133,12 @@ Q_SIGNALS:
 
 private:
     QPlaceManager(QPlaceManagerEngine *engine, QObject *parent = 0);
-
     Q_DISABLE_COPY(QPlaceManager)
 
     QPlaceManagerEngine *d;
 
     friend class QGeoServiceProvider;
+    friend class QPlaceIcon;
 };
 
 QT_END_NAMESPACE

@@ -42,6 +42,7 @@
 #include "qplaceicon.h"
 #include "qplaceicon_p.h"
 #include "qplacemanager.h"
+#include "qplacemanagerengine.h"
 
 QT_USE_NAMESPACE
 
@@ -137,7 +138,7 @@ QUrl QPlaceIcon::url(const QSize &size, QPlaceIcon::IconFlags flags) const
         return d->fullUrl;
 
 
-    return d->manager->constructIconUrl(*this, size, flags);
+    return d->manager->d->constructIconUrl(*this, size, flags);
 }
 
 /*!
