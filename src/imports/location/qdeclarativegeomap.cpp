@@ -182,8 +182,6 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
 //        delete mapData_;
 //    }
     mouseAreas_.clear();
-    if (serviceProvider_)
-        delete serviceProvider_;
 }
 
 void QDeclarativeGeoMap::componentComplete()
@@ -460,23 +458,15 @@ void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     }
     plugin_ = plugin;
     emit pluginChanged(plugin_);
-    serviceProvider_ = new QGeoServiceProvider(plugin_->name(),
-                                               plugin_->parameterMap());
-    if (serviceProvider_->error() != QGeoServiceProvider::NoError) {
-        qWarning() << serviceProvider_->errorString();
-        delete serviceProvider_;
-        serviceProvider_ = 0;
-        return;
-    }
+
+    serviceProvider_  = plugin_->sharedGeoServiceProvider();
     mappingManager_ = serviceProvider_->mappingManager();
-    if (!mappingManager_ || serviceProvider_->error() != QGeoServiceProvider::NoError) {
-        qWarning() << serviceProvider_->errorString();
-        delete serviceProvider_;
-        serviceProvider_ = 0;
-        delete mappingManager_;
-        mappingManager_ = 0;
-        return;
-    }
+
+    if (!mappingManager_  || serviceProvider_->error() != QGeoServiceProvider::NoError) {
+           qmlInfo(this) << tr("Warning: Plugin does not support mapping.");
+           return;
+       }
+
     pinchArea_->zoomLevelLimits(mappingManager_->minimumZoomLevel(), mappingManager_->maximumZoomLevel());
     if (!mappingManager_->isInitialized())
         connect(mappingManager_, SIGNAL(initialized()), this, SLOT(mappingManagerInitialized()));
