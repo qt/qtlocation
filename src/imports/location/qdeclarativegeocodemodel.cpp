@@ -231,10 +231,10 @@ void QDeclarativeGeocodeModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 }
 
 /*!
-    \qmlproperty Plugin GeocodeModel::plugin
+    \qmlproperty Plugin QtLocation5::GeocodeModel::plugin
 
     This property holds the plugin that providers the actual geocoding service.
-    Note that all plugins do not necessarily provide routing (could e.g. provide
+    Note that all plugins do not necessarily provide geocoding (could e.g. provide
     only routing or maps).
 
     \sa Plugin
@@ -262,7 +262,7 @@ void QDeclarativeGeocodeModel::setBounds(QObject* bounds)
 }
 
 /*!
-    \qmlproperty bounding area GeocodeModel::bounds
+    \qmlproperty bounding area QtLocation5::GeocodeModel::bounds
 
     This property holds the bounding area used to limit the results to those
     within the area. his is particularly useful if query is only partially filled out,
@@ -314,7 +314,7 @@ void QDeclarativeGeocodeModel::geocodeError(QGeocodeReply *reply,
 }
 
 /*!
-    \qmlproperty enumeration GeocodeModel::status
+    \qmlproperty enumeration QtLocation5::GeocodeModel::status
 
     This read-only property holds the current status of the model.
 
@@ -340,7 +340,7 @@ void QDeclarativeGeocodeModel::setStatus(QDeclarativeGeocodeModel::Status status
 }
 
 /*!
-    \qmlproperty enumeration GeocodeModel::error
+    \qmlproperty enumeration QtLocation5::GeocodeModel::error
 
     This read-only property holds the latest error value of the geocoding request.
 
@@ -369,7 +369,7 @@ void QDeclarativeGeocodeModel::setError(GeocodeError error)
 }
 
 /*!
-    \qmlproperty string GeocodeModel::errorString
+    \qmlproperty string QtLocation5::GeocodeModel::errorString
 
     This read-only property holds the textual presentation of latest geocoding error.
     If no error has occured or the model has been reset, an empty string is returned.
@@ -404,11 +404,11 @@ void QDeclarativeGeocodeModel::setLocations(const QList<QGeoLocation> &locations
 }
 
 /*!
-    \qmlproperty int GeocodeModel::count
+    \qmlproperty int QtLocation5::GeocodeModel::count
 
     This property holds how many locations the model currently has
     Amongst other uses, you can use this value when accessing locations
-    via the GeocodeModel::get -method.
+    via the QtLocation5::GeocodeModel::get -method.
 */
 
 int QDeclarativeGeocodeModel::count() const
@@ -417,7 +417,7 @@ int QDeclarativeGeocodeModel::count() const
 }
 
 /*!
-    \qmlmethod GeocodeModel::get(int)
+    \qmlmethod QtLocation5::GeocodeModel::get(int)
 
     Returns the Location at given index. Use \l count property to check the
     amount of locations available. The locations are indexed from zero, so the accessible range
@@ -436,7 +436,7 @@ QDeclarativeGeoLocation* QDeclarativeGeocodeModel::get(int index)
 }
 
 /*!
-    \qmlproperty int GeocodeModel::limit
+    \qmlproperty int QtLocation5::GeocodeModel::limit
 
     This property holds the maximum number of results. The \l limit and \l offset values only
     applicable with free string geocoding (i.e. they are not considered when using addresses
@@ -463,7 +463,7 @@ void QDeclarativeGeocodeModel::setLimit(int limit)
 }
 
 /*!
-    \qmlproperty int GeocodeModel::offset
+    \qmlproperty int QtLocation5::GeocodeModel::offset
 
     This property tells not to return the first 'offset' number of the results. The \l limit
     and \l offset values are only applicable with free string geocoding (i.e. they are not considered
@@ -489,7 +489,7 @@ void QDeclarativeGeocodeModel::setOffset(int offset)
 }
 
 /*!
-    \qmlmethod GeocodeModel::clear()
+    \qmlmethod QtLocation5::GeocodeModel::clear()
 
     Clears the location data of the model. Any outstanding requests or
     errors remain intact.
@@ -504,7 +504,7 @@ void QDeclarativeGeocodeModel::clear()
 }
 
 /*!
-    \qmlmethod GeocodeModel::reset()
+    \qmlmethod QtLocation5::GeocodeModel::reset()
 
     Resets the model. All location data is cleared, any outstanding requests
     are aborted and possible errors are cleared. Model status will be set
@@ -521,7 +521,7 @@ void QDeclarativeGeocodeModel::reset()
 }
 
 /*!
-    \qmlproperty QVariant GeocodeModel::query
+    \qmlproperty QVariant QtLocation5::GeocodeModel::query
 
     This property holds the data of the geocoding request.
     The property accepts three types of queries, which determines both the data and
@@ -590,7 +590,7 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant& query)
 }
 
 /*!
-    \qmlproperty bool GeocodeModel::autoUpdate
+    \qmlproperty bool QtLocation5::GeocodeModel::autoUpdate
 
     This property instructs how the model should react on query changes -
     should it automatically update the model or do nothing.

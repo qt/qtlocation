@@ -92,7 +92,7 @@ QVariant QDeclarativeGeoMapItemView::model() const
 }
 
 /*!
-    \qmlproperty model MapItemView::model
+    \qmlproperty model QtLocation5::MapItemView::model
 
     This property holds the model that provides data for
     populating data with delegates.
@@ -161,7 +161,7 @@ QDeclarativeComponent* QDeclarativeGeoMapItemView::delegate() const
 }
 
 /*!
-    \qmlproperty Component MapItemView::delegate
+    \qmlproperty Component QtLocation5::MapItemView::delegate
 
     This property holds the delegate which defines how each item in the
     model should be displayed. The Component must contain exactly one
@@ -274,7 +274,7 @@ QDeclarativeGeoMapItem* QDeclarativeGeoMapItemView::createItem(int modelRow)
 }
 
 /*!
-    \qmlproperty bool MapItemView::visible
+    \qmlproperty bool QtLocation5::MapItemView::visible
 
     This property holds whether the delegate objects created from the
     model are visible or not. Default value is true.
@@ -293,7 +293,7 @@ bool QDeclarativeGeoMapItemView::isVisible() const
 }
 
 /*!
-    \qmlproperty int MapItemView::z
+    \qmlproperty int QtLocation5::MapItemView::z
 
     This property holds the z-value of the MapItemView.
     It determines the z-value of the instantiated delegates.

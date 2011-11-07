@@ -92,7 +92,7 @@ void QDeclarativeGeoRoute::init()
 }
 
 /*!
-    \qmlproperty BoundingBox Route::bounds
+    \qmlproperty BoundingBox QtLocation5::Route::bounds
 
     Read-only property which holds a bounding box which encompasses the entire route.
 
@@ -104,7 +104,7 @@ QDeclarativeGeoBoundingBox* QDeclarativeGeoRoute::bounds() const
 }
 
 /*!
-    \qmlproperty int Route::travelTime
+    \qmlproperty int QtLocation5::Route::travelTime
 
     Read-only property which holds the estimated amount of time it will take to
     traverse this route, in seconds.
@@ -117,7 +117,7 @@ int QDeclarativeGeoRoute::travelTime() const
 }
 
 /*!
-    \qmlproperty int Route::distance
+    \qmlproperty int QtLocation5::Route::distance
 
     Read-only property which holds distance covered by this route, in metres.
 */
@@ -128,7 +128,7 @@ qreal QDeclarativeGeoRoute::distance() const
 }
 
 /*
-    \qmlproperty QDeclarativeListProperty<Coordinate> Route::path
+    \qmlproperty QDeclarativeListProperty<Coordinate> QtLocation5::Route::path
 
     Read-only property which holds the geographical coordinates of this route.
     Coordinates are listed in the order in which they would be traversed by someone
@@ -172,7 +172,7 @@ void QDeclarativeGeoRoute::path_clear(QDeclarativeListProperty<QDeclarativeCoord
 }
 
 /*
-    \qmlproperty QDeclarativeListProperty<RouteSegment> Route::segments
+    \qmlproperty QDeclarativeListProperty<RouteSegment> QtLocation5::Route::segments
 
     Read-only property which holds the list of \l RouteSegment elements of this route.
 

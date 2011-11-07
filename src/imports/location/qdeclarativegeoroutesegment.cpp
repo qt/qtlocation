@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
 
     \brief The RouteSegment element represents a segment of a Route.
 
-    A RouteSegment instance has information about the physcial layout
+    A RouteSegment instance has information about the physical layout
     of the route segment, the length of the route and estimated time required
     to traverse the route segment and optional RouteManeuvers associated with
     the end of the route segment.
@@ -83,7 +83,7 @@ QDeclarativeGeoRouteSegment::QDeclarativeGeoRouteSegment(const QGeoRouteSegment 
 QDeclarativeGeoRouteSegment::~QDeclarativeGeoRouteSegment() {}
 
 /*!
-    \qmlproperty int RouteSegment::travelTime
+    \qmlproperty int QtLocation5::RouteSegment::travelTime
 
     Read-only property which holds the estimated amount of time it will take to
     traverse this segment, in seconds.
@@ -96,9 +96,9 @@ int QDeclarativeGeoRouteSegment::travelTime() const
 }
 
 /*!
-    \qmlproperty int RouteSegment::distance
+    \qmlproperty int QtLocation5::RouteSegment::distance
 
-    Read-only property which holds the distance covered by this segment of the route, in metres.
+    Read-only property which holds the distance covered by this segment of the route, in meters.
 
 */
 
@@ -108,9 +108,9 @@ qreal QDeclarativeGeoRouteSegment::distance() const
 }
 
 /*!
-    \qmlproperty int RouteSegment::maneuver
+    \qmlproperty int QtLocation5::RouteSegment::maneuver
 
-    Read-only property which holds the manevuer for this route segment.
+    Read-only property which holds the maneuver for this route segment.
 
     Will return invalid maneuver if no information has been attached to the endpoint
     of this route segment.
@@ -122,7 +122,7 @@ QDeclarativeGeoManeuver* QDeclarativeGeoRouteSegment::maneuver() const
 }
 
 /*
-    \qmlproperty QDeclarativeListProperty<Coordinate> RouteSegment::path
+    \qmlproperty QDeclarativeListProperty<Coordinate> QtLocation5::RouteSegment::path
 
     Read-only property which holds the geographical coordinates of this segment.
     Coordinates are listed in the order in which they would be traversed by someone

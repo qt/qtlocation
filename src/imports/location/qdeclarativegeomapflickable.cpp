@@ -71,7 +71,9 @@ const qreal MinimumFlickVelocity = 75.0;
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass MapFlickable
+    \qmlclass MapFlickable QDeclarativeGeoMapFlickable
+
+    \inqmlmodule QtLocation 5
 
     \brief MapFlickable element provides basic flicking of the map.
 
@@ -83,12 +85,12 @@ QT_BEGIN_NAMESPACE
     of the Map element which can be enabled or disabled. The sensitivity (rate
     of slowing down or deceleration) can be adjusted.
 
-    \ingroup qml-location-maps
-    \since 5.0
+    \ingroup qml-QtLocation5-maps
+    \since QtLocation 5.0
 */
 
 /*!
-  \qmlproperty bool MapFlickable::enabled
+    \qmlproperty bool QtLocation5::MapFlickable::enabled
 
   This property holds whether the flicking is enabled.
   By default flicking is enabled. Disabling flicking will terminate
@@ -97,7 +99,7 @@ QT_BEGIN_NAMESPACE
   */
 
 /*!
-  \qmlproperty bool MapFlickable::deceleration
+  \qmlproperty bool QtLocation5::MapFlickable::deceleration
 
   This property holds the rate at which a flick will decelerate.
   Default value is 2500, minimum value is 500 and maximum value is 10000.
@@ -105,7 +107,7 @@ QT_BEGIN_NAMESPACE
   */
 
 /*!
-    \qmlsignal MapFlickable::onMovementStarted()
+    \qmlsignal QtLocation5::MapFlickable::onMovementStarted()
 
     This handler is called when the view begins moving due to user
     interaction. Typically this means that user is dragging finger
@@ -113,7 +115,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal MapFlickable::onMovementEnded()
+    \qmlsignal QtLocation5::MapFlickable::onMovementEnded()
 
     This handler is called when the view stops moving due to user
     interaction.  If a flick was generated, this handler will
@@ -124,7 +126,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal MapFlickable::onFlickStarted()
+    \qmlsignal QtLocation5::MapFlickable::onFlickStarted()
 
     This handler is called when the view is flicked.  A flick
     starts from the point that the mouse or touch is released,
@@ -132,7 +134,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlsignal MapFlickable::onFlickEnded()
+    \qmlsignal QtLocation5::MapFlickable::onFlickEnded()
 
     This handler is called when the view stops moving due to a flick.
     The order of onMovementEnded() and onFlickEnded() is not specified.

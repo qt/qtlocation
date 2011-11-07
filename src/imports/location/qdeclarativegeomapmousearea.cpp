@@ -51,11 +51,12 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass MapMouseArea
+    \qmlclass MapMouseArea  QDeclarativeGeoMapMouseArea
 
     \brief The MapMouseArea item enables simple mouse handling.
 
-    \ingroup qml-location-maps
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-maps
 
    A MapMouseArea is an invisible item that is typically used in conjunction
    with a visible map object or map item in order to provide mouse handling.
@@ -240,8 +241,8 @@ void QDeclarativeGeoMapMouseArea::setMap(QDeclarativeGeoMap *map)
 }
 
 /*!
-    \qmlproperty real MapMouseArea::mouseX
-    \qmlproperty real MapMouseArea::mouseY
+    \qmlproperty real QtLocation5::MapMouseArea::mouseX
+    \qmlproperty real QtLocation5::MapMouseArea::mouseY
 
     These properties hold the screen coordinates of the mouse cursor.
 
@@ -262,7 +263,7 @@ qreal QDeclarativeGeoMapMouseArea::mouseY() const
 }
 
 /*!
-    \qmlproperty bool MapMouseArea::containsMouse
+    \qmlproperty bool QtLocation5::MapMouseArea::containsMouse
     This property holds whether the mouse is currently inside the mouse area.
 
     \warning This property is not updated if the area moves under the mouse: \e containsMouse will not change.
@@ -275,7 +276,7 @@ bool QDeclarativeGeoMapMouseArea::hovered() const
 }
 
 /*!
-    \qmlproperty bool MapMouseArea::pressed
+    \qmlproperty bool QtLocation5::MapMouseArea::pressed
     This property holds whether the mouse area is currently pressed.
 */
 
@@ -285,7 +286,7 @@ bool QDeclarativeGeoMapMouseArea::pressed() const
 }
 
 /*!
-    \qmlproperty bool MapMouseArea::enabled
+    \qmlproperty bool QtLocation5::MapMouseArea::enabled
     This property holds whether the item accepts mouse events.
 
     By default, this property is true.
@@ -302,7 +303,7 @@ void QDeclarativeGeoMapMouseArea::setEnabled(bool enabled)
 }
 
 /*!
-    \qmlproperty MouseButton MapMouseArea::pressedButtons
+    \qmlproperty MouseButton QtLocation5::MapMouseArea::pressedButtons
     This property holds the mouse buttons currently pressed.
 
     It contains a bitwise combination of:
@@ -321,7 +322,7 @@ Qt::MouseButtons QDeclarativeGeoMapMouseArea::pressedButtons() const
 }
 
 /*!
-    \qmlproperty Qt::MouseButtons MapMouseArea::acceptedButtons
+    \qmlproperty Qt::MouseButtons QtLocation5::MapMouseArea::acceptedButtons
     This property holds the mouse buttons that the mouse area reacts to.
 
     The available buttons are:
@@ -368,7 +369,7 @@ bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
 }
 
 /*!
-  \qmlsignal MapMouseArea::onPressed(MapMouseEvent mouse)
+    \qmlsignal QtLocation5::MapMouseArea::onPressed(MapMouseEvent mouse)
 
     This handler is called when there is a press.
 
@@ -384,7 +385,7 @@ bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
 */
 
 /*!
-  \qmlsignal MapMouseArea::onReleased(MapMouseEvent mouse)
+    \qmlsignal QtLocation5::MapMouseArea::onReleased(MapMouseEvent mouse)
 
     This handler is called when there is a release.
     The \l {MapMouseEvent}{mouse} parameter provides information about the
@@ -395,7 +396,7 @@ bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
 */
 
 /*!
-  \qmlsignal MapMouseArea::onClicked(MapMouseEvent mouse)
+    \qmlsignal QtLocation5::MapMouseArea::onClicked(MapMouseEvent mouse)
 
     This handler is called when there is a click. A click is defined as a
     press followed by a release, both inside the MapMouseArea (pressing,
@@ -410,7 +411,7 @@ bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
 */
 
 /*!
-  \qmlsignal MapMouseArea::onDoubleClicked(MapMouseEvent mouse)
+    \qmlsignal QtLocation5::MapMouseArea::onDoubleClicked(MapMouseEvent mouse)
 
     This handler is called when there is a double-click (a press followed
     by a release followed by a press).
@@ -425,7 +426,7 @@ bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
 */
 
 /*!
-    \qmlsignal MapMouseArea::onEntered()
+    \qmlsignal QtLocation5::MapMouseArea::onEntered()
 
     This handler is called when the mouse enters the mouse area.
 
@@ -436,7 +437,7 @@ bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
 */
 
 /*!
-    \qmlsignal MapMouseArea::onPositionChanged(MapMouseEvent mouse)
+    \qmlsignal QtLocation5::MapMouseArea::onPositionChanged(MapMouseEvent mouse)
 
     This handler is called when the mouse position changes.
 
@@ -449,7 +450,7 @@ bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
 */
 
 /*!
-    \qmlsignal MapMouseArea::onPressAndHold(MapMouseEvent mouse)
+    \qmlsignal QtLocation5::MapMouseArea::onPressAndHold(MapMouseEvent mouse)
 
     This handler is called when there is a long press (currently 800ms).
     The \l {MapMouseEvent}{mouse} parameter provides information about the press, including the x and y
@@ -459,7 +460,7 @@ bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
 */
 
 /*!
-    \qmlsignal MapMouseArea::onExited()
+    \qmlsignal QtLocation5::MapMouseArea::onExited()
 
     This handler is called when the mouse exits the mouse area.
 

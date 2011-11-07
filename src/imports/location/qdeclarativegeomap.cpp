@@ -437,7 +437,7 @@ void QDeclarativeGeoMap::paintGL(QGLPainter *painter)
 }
 
 /*!
-    \qmlproperty Plugin Map::plugin
+    \qmlproperty Plugin QtLocation5::Map::plugin
 
     This property holds the plugin which provides the mapping functionality.
 
@@ -531,7 +531,7 @@ QDeclarativeGeoServiceProvider* QDeclarativeGeoMap::plugin() const
 }
 
 /*!
-    \qmlproperty qreal Map::minimumZoomLevel
+    \qmlproperty qreal QtLocation5::Map::minimumZoomLevel
 
     This property holds the minimum valid zoom level for the map.
 
@@ -548,7 +548,7 @@ qreal QDeclarativeGeoMap::minimumZoomLevel() const
 }
 
 /*!
-    \qmlproperty qreal Map::maximumZoomLevel
+\qmlproperty qreal QtLocation5::Map::maximumZoomLevel
 
     This property holds the maximum valid zoom level for the map.
 
@@ -627,7 +627,7 @@ qreal QDeclarativeGeoMap::tilt() const
 }
 
 /*!
-    \qmlproperty qreal Map::zoomLevel
+\qmlproperty qreal QtLocation5::Map::zoomLevel
 
     This property holds the zoom level for the map.
 
@@ -658,7 +658,7 @@ qreal QDeclarativeGeoMap::zoomLevel() const
 }
 
 /*!
-    \qmlproperty Coordinate Map::center
+\qmlproperty Coordinate QtLocation5::Map::center
 
     This property holds the coordinate which occupies the center of the
     mapping viewport.
@@ -809,7 +809,7 @@ void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
 }
 
 /*!
-    \qmlproperty enumeration Map::mapType
+\qmlproperty enumeration QtLocation5::Map::mapType
 
     This property holds the type of map to display.
 
@@ -847,7 +847,7 @@ void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
 //}
 
 /*!
-    \qmlmethod Map::toCoordinate(QPointF screenPosition)
+    \qmlmethod QtLocation5::Map::toCoordinate(QPointF screenPosition)
 
     Returns the coordinate which corresponds to the screen position
     \a screenPosition.
@@ -872,7 +872,7 @@ QDeclarativeCoordinate* QDeclarativeGeoMap::toCoordinate(QPointF screenPosition)
 }
 
 /*!
-    \qmlmethod Map::toScreenPosition(Coordinate coordinate)
+\qmlmethod QtLocation5::Map::toScreenPosition(Coordinate coordinate)
 
     Returns the screen position which corresponds to the coordinate
     \a coordinate.
@@ -1081,7 +1081,7 @@ void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
 //}
 
 /*!
-    \qmlmethod Map::addMapItem(MapItem)
+    \qmlmethod QtLocation5::Map::addMapItem(MapItem)
 
     Adds the given MapOject to the Map. If the object already
     is on the Map, it will not be added again.
@@ -1160,7 +1160,7 @@ void QDeclarativeGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseArea *area)
 
 
 /*!
-    \qmlmethod Map::removeMapItem(MapItem)
+    \qmlmethod QtLocation5::Map::removeMapItem(MapItem)
 
     Removes the given MapItem from the Map. If the MapItem does not
     exist, function does nothing.

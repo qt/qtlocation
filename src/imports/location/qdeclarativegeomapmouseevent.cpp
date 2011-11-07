@@ -75,7 +75,7 @@ QDeclarativeGeoMapMouseEvent::~QDeclarativeGeoMapMouseEvent()
 }
 
 /*!
-    \qmlproperty bool MapMouseEvent::accepted
+    \qmlproperty bool QtLocation5::MapMouseEvent::accepted
 
     Setting \a accepted to true prevents the mouse event from being
     propagated to items below this item.
@@ -95,7 +95,7 @@ bool QDeclarativeGeoMapMouseEvent::accepted() const
 }
 
 /*!
-    \qmlproperty enumeration MapMouseEvent::button
+    \qmlproperty enumeration QtLocation5::MapMouseEvent::button
 
     This property holds the button that caused the event.  It can be one of:
 
@@ -119,7 +119,7 @@ int QDeclarativeGeoMapMouseEvent::button() const
 }
 
 /*!
-    \qmlproperty enumeration MapMouseEvent::buttons
+    \qmlproperty enumeration QtLocation5::MapMouseEvent::buttons
 
     This property holds the mouse buttons pressed when the event was
     generated. For mouse move events, this is all buttons that are pressed
@@ -149,7 +149,7 @@ int QDeclarativeGeoMapMouseEvent::buttons() const
 }
 
 /*!
-    \qmlproperty int MapMouseEvent::modifiers
+    \qmlproperty int QtLocation5::MapMouseEvent::modifiers
 
     This property holds the keyboard modifier flags that existed immediately
     before the event occurred.
@@ -176,7 +176,7 @@ int QDeclarativeGeoMapMouseEvent::modifiers() const
 }
 
 /*!
-    \qmlproperty bool MapMouseEvent::wasHeld
+    \qmlproperty bool QtLocation5::MapMouseEvent::wasHeld
 
      This property is true if the mouse button has been held pressed longer the threshold (800ms).
 */
@@ -192,8 +192,8 @@ bool QDeclarativeGeoMapMouseEvent::wasHeld() const
 }
 
 /*!
-    \qmlproperty int MapMouseEvent::x
-    \qmlproperty int MapMouseEvent::y
+    \qmlproperty int QtLocation5::MapMouseEvent::x
+    \qmlproperty int QtLocation5::MapMouseEvent::y
 
     These properties hold the screen coordinates of the position supplied
     by the mouse event.
@@ -220,7 +220,7 @@ int QDeclarativeGeoMapMouseEvent::y() const
 }
 
 /*!
-    \qmlproperty Coordinate MapMouseEvent::coordinate
+    \qmlproperty Coordinate QtLocation5::MapMouseEvent::coordinate
 
     This property holds the coordinate corresponding to the latitude
     and longitude of the position on the map at which the mouse event

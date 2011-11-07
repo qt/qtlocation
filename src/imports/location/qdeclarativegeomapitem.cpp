@@ -48,9 +48,14 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass MapItem
+    \qmlclass MapItem QDeclarativeGeoMapItem
+    \inqmlmodule QtLocation 5
 
     The MapItem element is part of the \bold{QtLocation 5.0} module.
+
+    \ingroup qml-QtLocation5-maps
+
+    \since QtLocation 5.0
 */
 
 class QDeclarativeGeoMapItemNode : public QSGNode
