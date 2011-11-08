@@ -67,7 +67,7 @@ void tst_QPlaceContentRequest::contentTest()
     QPlaceContentRequest req;
     QCOMPARE(req.limit(), -1);
     QCOMPARE(req.offset(), 0);
-    QCOMPARE(req.contentType(), QPlaceContent::InvalidType);
+    QCOMPARE(req.contentType(), QPlaceContent::NoType);
 
     //check that we can set the request fields
     req.setLimit(100);
@@ -100,7 +100,7 @@ void tst_QPlaceContentRequest::clearTest()
     req.setLimit(9000);
     req.setOffset(1);
     req.clear();
-    QVERIFY(req.contentType() == QPlaceContent::InvalidType);
+    QVERIFY(req.contentType() == QPlaceContent::NoType);
     QVERIFY(req.limit() == -1);
     QVERIFY(req.offset() == 0);
 }

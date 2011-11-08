@@ -106,7 +106,7 @@ QPlaceContent::~QPlaceContent()
 QPlaceContent::Type QPlaceContent::type() const
 {
     if (!d_ptr)
-        return InvalidType;
+        return NoType;
     return d_ptr->type();
 }
 

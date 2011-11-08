@@ -70,10 +70,10 @@ public:
     typedef QMap<int, QPlaceContent> Collection;
 
     enum Type {
+        NoType = 0,
         ImageType,
         ReviewType,
         EditorialType,
-        InvalidType
     };
 
     QPlaceContent();

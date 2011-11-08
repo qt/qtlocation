@@ -46,7 +46,7 @@
 QT_BEGIN_NAMESPACE
 
 QPlaceContentRequestPrivate::QPlaceContentRequestPrivate()
-:   QSharedData(), contentType(QPlaceContent::InvalidType),
+:   QSharedData(), contentType(QPlaceContent::NoType),
     limit(-1), offset(0)
 {
 }
@@ -70,7 +70,7 @@ bool QPlaceContentRequestPrivate::operator==(const QPlaceContentRequestPrivate &
 
 void QPlaceContentRequestPrivate::clear()
 {
-    this->contentType = QPlaceContent::InvalidType;
+    contentType = QPlaceContent::NoType;
     limit = -1;
     offset = 0;
 }
