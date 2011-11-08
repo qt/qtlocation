@@ -56,7 +56,6 @@ public:
 private Q_SLOTS:
     void constructorTest();
     void supplierTest();
-    void urlTest();
     void idTest();
     void mimeTypeTest();
     void attributionTest();
@@ -86,16 +85,6 @@ void tst_QPlaceImage::supplierTest()
     sup.setSupplierId("testId");
     testObj.setSupplier(sup);
     QVERIFY2(testObj.supplier() == sup, "Wrong value returned");
-}
-
-void tst_QPlaceImage::urlTest()
-{
-    QUrl imageUrl("testText");
-
-    QPlaceImage testObj;
-    QVERIFY2(testObj.sourceUrl() == QString(), "Wrong default value");
-    testObj.setSourceUrl(imageUrl);
-    QVERIFY2(testObj.sourceUrl() == imageUrl, "Wrong value returned");
 }
 
 void tst_QPlaceImage::idTest()

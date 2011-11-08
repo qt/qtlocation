@@ -84,10 +84,6 @@ QT_BEGIN_NAMESPACE
             \o \l Supplier
             \o The supplier of the editorial.
         \row
-            \o sourceUrl
-            \o url
-            \o The source URL of the editorial.
-        \row
             \o user
             \o \l {QtLocation5::User}{User}
             \o The user who contributed the editorial.

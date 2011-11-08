@@ -59,7 +59,6 @@ private Q_SLOTS:
     void supplierTest();
     void textTest();
     void titleTest();
-    void sourceUrlTest();
     void languageTest();
     void operatorsTest();
 };
@@ -103,15 +102,6 @@ void tst_QPlaceEditorial::titleTest()
     QVERIFY2(testObj.title() == QString(), "Wrong default value");
     testObj.setTitle("testText");
     QVERIFY2(testObj.title() == "testText", "Wrong value returned");
-}
-
-void tst_QPlaceEditorial::sourceUrlTest()
-{
-    QPlaceEditorial testObj;
-    const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
-    QVERIFY2(testObj.sourceUrl() == QUrl(), "Wrong default value");
-    testObj.setSourceUrl(testUrl);
-    QVERIFY2(testObj.sourceUrl() == testUrl, "Wrong value returned");
 }
 
 void tst_QPlaceEditorial::languageTest()

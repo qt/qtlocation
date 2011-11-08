@@ -65,7 +65,6 @@ private Q_SLOTS:
     void reviewIdTest();
     void titleTest();
     void userTest();
-    void sourceUrlTest();
     void operatorsTest();
 };
 
@@ -172,15 +171,6 @@ void tst_QPlaceReview::userTest()
     review.setUser(QPlaceUser());
     QVERIFY(review.user().userId().isEmpty());
     QVERIFY(review.user().name().isEmpty());
-}
-
-void tst_QPlaceReview::sourceUrlTest()
-{
-    QPlaceReview testObj;
-    QVERIFY2(testObj.sourceUrl().isEmpty(), "Wrong default value");
-    const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
-    testObj.setSourceUrl(testUrl);
-    QCOMPARE(testObj.sourceUrl(), testUrl);
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceReview)

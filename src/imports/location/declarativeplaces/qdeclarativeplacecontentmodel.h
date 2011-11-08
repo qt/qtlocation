@@ -85,7 +85,6 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
         SupplierRole = Qt::UserRole,
-        SourceUrlRole,
         PlaceUserRole,
         AttributionRole,
         UserRole //indicator for next conten type specific role

@@ -58,7 +58,6 @@ QDeclarativePlaceContentModel::QDeclarativePlaceContentModel(QPlaceContent::Type
 {
     QHash<int, QByteArray> roles = roleNames();
     roles.insert(SupplierRole, "supplier");
-    roles.insert(SourceUrlRole, "sourceUrl");
     roles.insert(PlaceUserRole, "user");
     roles.insert(AttributionRole, "attribution");
     setRoleNames(roles);
@@ -180,8 +179,6 @@ QVariant QDeclarativePlaceContentModel::data(const QModelIndex &index, int role)
     switch (role) {
     case SupplierRole:
         return QVariant::fromValue(static_cast<QObject *>(m_suppliers.value(content.supplier().supplierId())));
-    case SourceUrlRole:
-        return content.sourceUrl();
     case PlaceUserRole:
         return QVariant::fromValue(static_cast<QObject *>(m_users.value(content.user().userId())));
     case AttributionRole:

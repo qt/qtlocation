@@ -84,10 +84,6 @@ QT_BEGIN_NAMESPACE
             \o \l Supplier
             \o The supplier of the editorial.
         \row
-            \o sourceUrl
-            \o url
-            \o The source URL of the editorial.
-        \row
             \o user
             \o \l {QtLocation5::User}{User}
             \o The user who contributed the editorial.
@@ -123,7 +119,6 @@ QDeclarativePlaceEditorialModel::QDeclarativePlaceEditorialModel(QObject *parent
     roleNames.insert(TextRole, "text");
     roleNames.insert(TitleRole, "title");
     roleNames.insert(SupplierRole, "supplier");
-    roleNames.insert(SourceUrlRole, "url");
     roleNames.insert(LanguageRole, "language");
     setRoleNames(roleNames);
 }
@@ -147,8 +142,6 @@ QVariant QDeclarativePlaceEditorialModel::data(const QModelIndex &index, int rol
         return description.text();
     case TitleRole:
         return description.title();
-    case SourceUrlRole:
-        return description.sourceUrl();
     case LanguageRole:
         return description.language();
     }

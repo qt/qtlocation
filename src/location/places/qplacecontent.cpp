@@ -66,7 +66,6 @@ inline const QPlaceContentPrivate *QPlaceContent::d_func() const
 bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
 {
     return supplier == other->supplier
-            && sourceUrl == other->sourceUrl
             && user == other->user
             && attribution == other->attribution;
 }
@@ -150,25 +149,6 @@ void QPlaceContent::setSupplier(const QPlaceSupplier &supplier)
     Q_D(QPlaceContent);
 
     d->supplier = supplier;
-}
-
-/*!
-    Returns the source url of the content.
-*/
-QUrl QPlaceContent::sourceUrl() const
-{
-    Q_D(const QPlaceContent);
-
-    return d->sourceUrl;
-}
-
-/*!
-    Sets source url of the content to \a url.
-*/
-void QPlaceContent::setSourceUrl(const QUrl &url)
-{
-    Q_D(QPlaceContent);
-    d->sourceUrl = url;
 }
 
 /*!

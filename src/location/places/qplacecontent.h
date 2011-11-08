@@ -90,9 +90,6 @@ public:
     QPlaceSupplier supplier() const;
     void setSupplier(const QPlaceSupplier &supplier);
 
-    QUrl sourceUrl() const;
-    void setSourceUrl(const QUrl &url);
-
     QPlaceUser user() const;
     void setUser(const QPlaceUser &user);
 

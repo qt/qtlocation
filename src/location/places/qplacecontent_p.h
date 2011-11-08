@@ -96,7 +96,6 @@ public:
     static const QSharedDataPointer<QPlaceContentPrivate>& extract_d(const QPlaceContent& other) {return other.d_ptr;}
 
     QPlaceSupplier supplier;
-    QUrl sourceUrl;
     QPlaceUser user;
     QString attribution;
 };

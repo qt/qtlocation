@@ -625,7 +625,9 @@ void QPlaceJSonDetailsParser::processPremiumContentDescription(const QScriptValu
     }
     value = content.property(place_premiumcontent_content_vendorurl_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        desc.setSourceUrl(value.toString());
+        QPlaceSupplier supplier = desc.supplier();
+        supplier.setUrl(value.toString());
+        desc.setSupplier(supplier);
     }
     value = content.property(place_premiumcontent_content_language_element);
     if (value.isValid() && !value.toString().isEmpty()) {

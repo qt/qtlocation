@@ -65,7 +65,6 @@ bool QPlaceEditorialPrivate::compare(const QPlaceContentPrivate *other) const
     return QPlaceContentPrivate::compare(other)
            && text == od->text
            && contentTitle == od->contentTitle
-           && sourceUrl == od->sourceUrl
            && language == od->language;
 }
 
