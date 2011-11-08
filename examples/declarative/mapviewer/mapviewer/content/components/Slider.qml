@@ -43,7 +43,7 @@ import QtQuick 2.0
 Item {
     id: slider;
     height: 10
-    property int value // value is read/write.
+    property real value // value is read/write.
     property real minimum: 0
     property real maximum: 1
     property int length: width - handle.width
