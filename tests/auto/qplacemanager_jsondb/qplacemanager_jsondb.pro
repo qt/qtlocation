@@ -1,4 +1,4 @@
-CONFIG += testcase
+!no_system_tests:CONFIG += testcase
 TARGET = tst_qplacemanager_jsondb
 
 HEADERS += jsondbcleaner.h
