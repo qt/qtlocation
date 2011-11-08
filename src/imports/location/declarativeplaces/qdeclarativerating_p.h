@@ -53,6 +53,7 @@ class QDeclarativeRating : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QPlaceRating rating READ rating WRITE setRating)
     Q_PROPERTY(qreal value READ value WRITE setValue NOTIFY valueChanged)
     Q_PROPERTY(qreal maximum READ maximum WRITE setMaximum NOTIFY maximumChanged)
     Q_PROPERTY(int count READ count WRITE setCount NOTIFY countChanged)

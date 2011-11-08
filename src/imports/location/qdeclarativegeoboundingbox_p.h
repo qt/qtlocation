@@ -54,6 +54,8 @@ QT_BEGIN_NAMESPACE
 class QDeclarativeGeoBoundingBox : public QDeclarativeGeoBoundingArea
 {
     Q_OBJECT
+
+    Q_PROPERTY(QGeoBoundingBox box READ box WRITE setBox)
     Q_PROPERTY(QDeclarativeCoordinate* bottomLeft READ bottomLeft WRITE setBottomLeft NOTIFY bottomLeftChanged)
     Q_PROPERTY(QDeclarativeCoordinate* bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
     Q_PROPERTY(QDeclarativeCoordinate* topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)

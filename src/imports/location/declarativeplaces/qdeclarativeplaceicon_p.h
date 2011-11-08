@@ -57,6 +57,7 @@ class QDeclarativePlaceIcon : public QObject
     Q_ENUMS(IconFlag)
     Q_FLAGS(IconFlags)
 
+    Q_PROPERTY(QPlaceIcon icon READ icon WRITE setIcon)
     Q_PROPERTY(QUrl baseUrl READ baseUrl WRITE setBaseUrl NOTIFY baseUrlChanged)
     Q_PROPERTY(QUrl fullUrl READ fullUrl WRITE setFullUrl NOTIFY fullUrlChanged)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)

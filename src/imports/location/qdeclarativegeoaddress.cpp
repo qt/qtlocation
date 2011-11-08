@@ -71,6 +71,21 @@ QGeoAddress QDeclarativeGeoAddress::address() const
     return m_address;
 }
 
+/*!
+    \qmlproperty QGeoAddress QtLocation5::Address::address
+
+    This property is used to provide an interface between C++ and QML code.  First a pointer to a
+    Address object must be obtained from C++, then use the \l {QObject::property()}{property()} and
+    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c address property.
+
+    The following gets the QGeoAddress representing this object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Address get
+
+    The following sets the properties of this object based on a QGeoAddress object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Address set
+*/
 void QDeclarativeGeoAddress::setAddress(const QGeoAddress& address)
 {
     // Elaborate but takes care of emiting needed signals
@@ -91,7 +106,7 @@ QString QDeclarativeGeoAddress::country() const
 }
 
 /*!
-  \qmlproperty string Address::country
+  \qmlproperty string QtLocation5::Address::country
 
   This property holds the country of the address.
 
@@ -111,7 +126,7 @@ QString QDeclarativeGeoAddress::countryCode() const
 }
 
 /*!
-  \qmlproperty string Address::countryCode
+  \qmlproperty string QtLocation5::Address::countryCode
 
   This property holds the country code of the address.
 
@@ -131,7 +146,7 @@ QString QDeclarativeGeoAddress::state() const
 }
 
 /*!
-  \qmlproperty string Address::state
+  \qmlproperty string QtLocation5::Address::state
 
   This property holds the state of the address.
 
@@ -151,7 +166,7 @@ QString QDeclarativeGeoAddress::county() const
 }
 
 /*!
-  \qmlproperty string Address::county
+  \qmlproperty string QtLocation5::Address::county
 
   This property holds the county of the address.
 
@@ -171,7 +186,7 @@ QString QDeclarativeGeoAddress::city() const
 }
 
 /*!
-  \qmlproperty string Address::city
+  \qmlproperty string QtLocation5::Address::city
 
   This property holds the city of the address.
 
@@ -191,7 +206,7 @@ QString QDeclarativeGeoAddress::district() const
 }
 
 /*!
-  \qmlproperty string Address::district
+  \qmlproperty string QtLocation5::Address::district
 
   This property holds the district of the address.
 
@@ -211,7 +226,7 @@ QString QDeclarativeGeoAddress::street() const
 }
 
 /*!
-  \qmlproperty string Address::street
+  \qmlproperty string QtLocation5::Address::street
 
   This property holds the street of the address.
 
@@ -231,7 +246,7 @@ QString QDeclarativeGeoAddress::postcode() const
 }
 
 /*!
-  \qmlproperty string Address::postcode
+  \qmlproperty string QtLocation5::Address::postcode
 
   This property holds the post code of the address.
 

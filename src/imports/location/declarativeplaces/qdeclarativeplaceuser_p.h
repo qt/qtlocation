@@ -52,6 +52,7 @@ class QDeclarativePlaceUser : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QPlaceUser user READ user WRITE setUser)
     Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged())
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged())
 

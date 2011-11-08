@@ -61,6 +61,8 @@ class QDeclarativeCategory : public QObject, public QDeclarativeParserStatus
 
     Q_ENUMS(Status Visibility)
 
+
+    Q_PROPERTY(QPlaceCategory category READ category WRITE setCategory)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QString categoryId READ categoryId WRITE setCategoryId NOTIFY categoryIdChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)

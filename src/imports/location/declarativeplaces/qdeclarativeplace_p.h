@@ -68,6 +68,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
 
     Q_ENUMS(Status Visibility)
 
+    Q_PROPERTY(QPlace place READ place WRITE setPlace)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);

@@ -55,6 +55,7 @@ class QDeclarativeSupplier : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QPlaceSupplier supplier READ supplier WRITE setSupplier)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
     Q_PROPERTY(QString supplierId READ supplierId WRITE setSupplierId NOTIFY supplierIdChanged);
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
@@ -66,7 +67,7 @@ public:
     ~QDeclarativeSupplier();
 
     QPlaceSupplier supplier();
-    void setSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin);
+    void setSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin = 0);
 
     QString name() const;
     void setName(const QString &data);

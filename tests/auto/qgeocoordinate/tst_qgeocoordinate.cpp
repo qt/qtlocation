@@ -52,7 +52,7 @@
 #include <float.h>
 
 QT_USE_NAMESPACE
-Q_DECLARE_METATYPE(QGeoCoordinate)
+
 Q_DECLARE_METATYPE(QGeoCoordinate::CoordinateFormat)
 Q_DECLARE_METATYPE(QGeoCoordinate::CoordinateType)
 

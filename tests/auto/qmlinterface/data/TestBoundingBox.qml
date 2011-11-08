@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -37,57 +37,12 @@
 **
 ** $QT_END_LICENSE$
 **
-***************************************************************************/
+****************************************************************************/
 
-#ifndef QDECLARATIVECOORDINATE_H
-#define QDECLARATIVECOORDINATE_H
+import QtLocation 5.0
 
-#include <qgeocoordinate.h>
-#include <QtDeclarative/qdeclarative.h>
-
-#include <QObject>
-
-QT_BEGIN_NAMESPACE
-
-class QDeclarativeCoordinate : public QObject
-{
-    Q_OBJECT
-
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate)
-    Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY latitudeChanged)
-    Q_PROPERTY(double longitude READ longitude WRITE setLongitude NOTIFY longitudeChanged)
-    Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
-
-public:
-    QDeclarativeCoordinate(QObject* parent = 0);
-    QDeclarativeCoordinate(const QGeoCoordinate &coordinate, QObject* parent = 0);
-    ~QDeclarativeCoordinate();
-
-    Q_INVOKABLE qreal distanceTo(QObject* coordinate);
-
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
-
-    double latitude() const;
-    void setLatitude(double latitude);
-
-    double longitude() const;
-    void setLongitude(double longitude);
-
-    double altitude() const;
-    void setAltitude(double altitude);
-
-Q_SIGNALS:
-    void latitudeChanged(double latitude);
-    void longitudeChanged(double longitude);
-    void altitudeChanged(double altitude);
-
-private:
-    QGeoCoordinate m_coordinate;
-};
-
-QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeCoordinate));
-
-#endif
+BoundingBox {
+    center: TestCoordinate { }
+    height: 30.0
+    width: 40.0
+}

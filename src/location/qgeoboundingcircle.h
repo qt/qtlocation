@@ -95,6 +95,8 @@ private:
 
 QT_END_NAMESPACE
 
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QGeoBoundingCircle))
+
 QT_END_HEADER
 
 #endif

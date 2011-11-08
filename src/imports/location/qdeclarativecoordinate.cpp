@@ -65,6 +65,22 @@ QDeclarativeCoordinate::QDeclarativeCoordinate(const QGeoCoordinate &coordinate,
 
 QDeclarativeCoordinate::~QDeclarativeCoordinate() {}
 
+/*!
+    \qmlproperty QGeoCoordinate Coordinate::coordinate
+
+    This property is used to provide an interface between C++ and QML code.  First a pointer to a
+    Coordinate object must be obtained from C++, then use the \l {QObject::property()}{property()}
+    and \l {QObject::setProperty()}{setProperty()} functions to get and set the \c coordinate
+    property.
+
+    The following gets the QGeoCoordinate representing this object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Coordinate get
+
+    The following sets the properties of this object based on a QGeoCoordinate object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Coordinate set
+*/
 void QDeclarativeCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
 {
     QGeoCoordinate previousCoordinate = m_coordinate;

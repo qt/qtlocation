@@ -67,6 +67,21 @@ QDeclarativePlaceUser::QDeclarativePlaceUser(const QPlaceUser &user,
 
 QDeclarativePlaceUser::~QDeclarativePlaceUser() {}
 
+/*!
+    \qmlproperty QPlaceUser User::user
+
+    This property is used to provide an interface between C++ and QML code.  First a pointer to a
+    User object must be obtained from C++, then use the \l {QObject::property()}{property()} and
+    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c user property.
+
+    The following gets the QPlaceUser representing this object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp User get
+
+    The following sets the properties of this object based on a QPlaceUser object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp User set
+*/
 void QDeclarativePlaceUser::setUser(const QPlaceUser &user)
 {
     QPlaceUser previousUser = m_user;

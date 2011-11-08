@@ -50,6 +50,8 @@
 #include <QtCore/QSize>
 #include <QtCore/QSharedDataPointer>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
 
 class QPlaceManager;
@@ -100,8 +102,11 @@ private:
     QSharedDataPointer<QPlaceIconPrivate> d;
 };
 
+QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceIcon))
 Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QPlaceIcon::IconFlags))
 
-QT_END_NAMESPACE
+QT_END_HEADER
 
 #endif

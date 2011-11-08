@@ -42,7 +42,8 @@
 #ifndef QGEOCOORDINATE_H
 #define QGEOCOORDINATE_H
 
-#include <QString>
+#include <QtCore/QMetaType>
+#include <QtCore/QString>
 #include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
@@ -121,6 +122,8 @@ Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &c
 #endif
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QGeoCoordinate))
 
 QT_END_HEADER
 

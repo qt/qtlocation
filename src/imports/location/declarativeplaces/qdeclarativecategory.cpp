@@ -127,6 +127,21 @@ QDeclarativeGeoServiceProvider* QDeclarativeCategory::plugin() const
     return m_plugin;
 }
 
+/*!
+    \qmlproperty QPlaceCategory Category::category
+
+    This property is used to provide an interface between C++ and QML code.  First a pointer to a
+    Category object must be obtained from C++, then use the \l {QObject::property()}{property()} and
+    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c category property.
+
+    The following gets the QPlaceCategory representing this object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Category get
+
+    The following sets the properties of this object based on a QPlaceCategory object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Category set
+*/
 void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
 {
     QPlaceCategory previous = m_category;

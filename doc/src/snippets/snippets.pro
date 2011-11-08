@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += places declarative
+SUBDIRS += places declarative cpp

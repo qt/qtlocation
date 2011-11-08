@@ -33,7 +33,8 @@ SUBDIRS += geotestplugin \
            declarative \
            intervaltree \
            mapitemtree \
-           sphere
+           sphere \
+           qmlinterface
 
 contains(config_test_jsondb, yes) {
     SUBDIRS += qplacemanager_jsondb

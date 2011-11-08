@@ -52,6 +52,7 @@ class QDeclarativeContactDetail : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QPlaceContactDetail contactDetail READ contactDetail WRITE setContactDetail)
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
     Q_PROPERTY(QString value READ value WRITE setValue NOTIFY valueChanged)
 

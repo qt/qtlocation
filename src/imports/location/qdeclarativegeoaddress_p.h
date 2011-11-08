@@ -51,6 +51,8 @@ QT_BEGIN_NAMESPACE
 class QDeclarativeGeoAddress : public QObject
 {
     Q_OBJECT
+
+    Q_PROPERTY(QGeoAddress address READ address WRITE setAddress)
     Q_PROPERTY(QString country READ country WRITE setCountry NOTIFY countryChanged)
     Q_PROPERTY(QString countryCode READ countryCode WRITE setCountryCode NOTIFY countryCodeChanged)
     Q_PROPERTY(QString state READ state WRITE setState NOTIFY stateChanged)

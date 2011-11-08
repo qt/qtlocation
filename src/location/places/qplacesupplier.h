@@ -42,14 +42,13 @@
 #ifndef QPLACESUPPLIER_H
 #define QPLACESUPPLIER_H
 
-#include <QSharedDataPointer>
+#include <QtCore/QMetaType>
+#include <QtCore/QSharedDataPointer>
 #include <QtLocation/QPlaceIcon>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
-
-
 
 class QUrl;
 class QPlaceSupplierPrivate;
@@ -85,6 +84,8 @@ private:
 };
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceSupplier))
 
 QT_END_HEADER
 

@@ -123,6 +123,8 @@ inline QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &bound
 
 QT_END_NAMESPACE
 
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QGeoBoundingBox))
+
 QT_END_HEADER
 
 #endif

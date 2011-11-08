@@ -73,6 +73,21 @@ QDeclarativeGeoBoundingBox::QDeclarativeGeoBoundingBox(const QGeoBoundingBox& bo
 {
 }
 
+/*!
+    \qmlproperty QGeoBoundingBox BoundingBox::box
+
+    This property is used to provide an interface between C++ and QML code.  First a pointer to a
+    BoundingBox object must be obtained from C++, then use the \l {QObject::property()}{property()}
+    and \l {QObject::setProperty()}{setProperty()} functions to get and set the \c box property.
+
+    The following gets the QGeoBoundingBox representing this object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp BoundingBox get
+
+    The following sets the properties of this object based on a QGeoBoundingBox object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp BoundingBox set
+*/
 void QDeclarativeGeoBoundingBox::setBox(const QGeoBoundingBox& box)
 {
     m_box = box;

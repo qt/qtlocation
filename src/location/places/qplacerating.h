@@ -42,15 +42,13 @@
 #ifndef QPLACERATING_H
 #define QPLACERATING_H
 
+#include <QtCore/QMetaType>
+#include <QtCore/QSharedDataPointer>
 #include <QtLocation/qlocationglobal.h>
-
-#include <QSharedDataPointer>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
-
-
 
 class QPlaceRatingPrivate;
 
@@ -83,6 +81,8 @@ private:
 };
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceRating))
 
 QT_END_HEADER
 

@@ -42,15 +42,13 @@
 #ifndef QPLACEUSER_H
 #define QPLACEUSER_H
 
+#include <QtCore/QMetaType>
+#include <QtCore/QSharedDataPointer>
 #include <QtLocation/qlocationglobal.h>
-
-#include <QSharedDataPointer>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
-
-
 
 class QPlaceUserPrivate;
 
@@ -79,6 +77,8 @@ private:
 };
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceUser))
 
 QT_END_HEADER
 

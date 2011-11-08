@@ -105,6 +105,22 @@ QDeclarativePlaceAttribute::~QDeclarativePlaceAttribute()
 {
 }
 
+/*!
+    \qmlproperty QPlaceAttribute PlaceAttribute::attribute
+
+    This property is used to provide an interface between C++ and QML code.  First a pointer to a
+    PlaceAttribute object must be obtained from C++, then use the
+    \l {QObject::property()}{property()} and \l {QObject::setProperty()}{setProperty()} functions
+    to get and set the \c attribute property.
+
+    The following gets the QPlaceAttribute representing this object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp PlaceAttribute get
+
+    The following sets the properties of this object based on a QPlaceAttribute object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp PlaceAttribute set
+*/
 void QDeclarativePlaceAttribute::setAttribute(const QPlaceAttribute &src)
 {
     QPlaceAttribute prevAttribute = m_attribute;

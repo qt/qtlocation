@@ -42,7 +42,8 @@
 #ifndef QGEOADDRESS_H
 #define QGEOADDRESS_H
 
-#include <QSharedDataPointer>
+#include <QtCore/QMetaType>
+#include <QtCore/QSharedDataPointer>
 #include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
@@ -98,6 +99,8 @@ private:
 };
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QGeoAddress))
 
 QT_END_HEADER
 

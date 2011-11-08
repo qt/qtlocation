@@ -232,6 +232,21 @@ QDeclarativePlaceEditorialModel *QDeclarativePlace::editorialModel()
     return m_editorialModel;
 }
 
+/*!
+    \qmlproperty QPlace Place::place
+
+    This property is used to provide an interface between C++ and QML code.  First a pointer to a
+    Place object must be obtained from C++, then use the \l {QObject::property()}{property()} and
+    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c place property.
+
+    The following gets the QPlace representing this object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Place get
+
+    The following sets the properties of this object based on a QPlace object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Place set
+*/
 void QDeclarativePlace::setPlace(const QPlace &src)
 {
     QPlace previous = m_src;

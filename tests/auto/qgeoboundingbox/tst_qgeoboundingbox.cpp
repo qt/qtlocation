@@ -47,8 +47,6 @@
 #include <qgeocoordinate.h>
 
 QT_USE_NAMESPACE
-Q_DECLARE_METATYPE(QGeoCoordinate)
-Q_DECLARE_METATYPE(QGeoBoundingBox)
 
 class tst_QGeoBoundingBox : public QObject
 {

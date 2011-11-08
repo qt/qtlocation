@@ -98,6 +98,21 @@ QPlaceIcon QDeclarativePlaceIcon::icon() const
     return icon;
 }
 
+/*!
+    \qmlproperty QPlaceIcon Icon::icon
+
+    This property is used to provide an interface between C++ and QML code.  First a pointer to a
+    Icon object must be obtained from C++, then use the \l {QObject::property()}{property()} and
+    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c icon property.
+
+    The following gets the QPlaceIcon representing this object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Icon get
+
+    The following sets the properties of this object based on a QPlaceIcon object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Icon set
+*/
 void QDeclarativePlaceIcon::setIcon(const QPlaceIcon &src)
 {
     if (m_baseUrl != src.baseUrl()) {

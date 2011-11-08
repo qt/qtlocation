@@ -54,6 +54,7 @@ class QDeclarativePlaceAttribute : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QPlaceAttribute attribute READ attribute WRITE setAttribute)
     Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
     Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
 

@@ -1,0 +1,163 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtLocation module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
+**
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#include <QtCore/QObject>
+#include <QtCore/QVariant>
+#include <QtLocation/QPlaceCategory>
+#include <QtLocation/QPlaceContactDetail>
+#include <QtLocation/QPlace>
+#include <QtLocation/QPlaceAttribute>
+#include <QtLocation/QPlaceIcon>
+#include <QtLocation/QPlaceUser>
+#include <QtLocation/QPlaceRating>
+#include <QtLocation/QPlaceSupplier>
+#include <QtLocation/QGeoCoordinate>
+#include <QtLocation/QGeoAddress>
+#include <QtLocation/QGeoBoundingBox>
+#include <QtLocation/QGeoBoundingCircle>
+#include <QtLocation/QGeoLocation>
+
+void cppQmlInterface(QObject *qmlObject)
+{
+    //! [Category get]
+    QPlaceCategory category = qmlObject->property("category").value<QPlaceCategory>();
+    //! [Category get]
+
+    //! [Category set]
+    qmlObject->setProperty("category", QVariant::fromValue(category));
+    //! [Category set]
+
+    //! [ContactDetail get]
+    QPlaceContactDetail contactDetail = qmlObject->property("contactDetail").value<QPlaceContactDetail>();
+    //! [ContactDetail get]
+
+    //! [ContactDetail set]
+    qmlObject->setProperty("contactDetail", QVariant::fromValue(contactDetail));
+    //! [ContactDetail set]
+
+    //! [Place get]
+    QPlace place = qmlObject->property("place").value<QPlace>();
+    //! [Place get]
+
+    //! [Place set]
+    qmlObject->setProperty("place", QVariant::fromValue(place));
+    //! [Place set]
+
+    //! [PlaceAttribute get]
+    QPlaceAttribute placeAttribute = qmlObject->property("attribute").value<QPlaceAttribute>();
+    //! [PlaceAttribute get]
+
+    //! [PlaceAttribute set]
+    qmlObject->setProperty("attribute", QVariant::fromValue(placeAttribute));
+    //! [PlaceAttribute set]
+
+    //! [Icon get]
+    QPlaceIcon placeIcon = qmlObject->property("icon").value<QPlaceIcon>();
+    //! [Icon get]
+
+    //! [Icon set]
+    qmlObject->setProperty("icon", QVariant::fromValue(placeIcon));
+    //! [Icon set]
+
+    //! [User get]
+    QPlaceUser placeUser = qmlObject->property("user").value<QPlaceUser>();
+    //! [User get]
+
+    //! [User set]
+    qmlObject->setProperty("user", QVariant::fromValue(placeUser));
+    //! [User set]
+
+    //! [Rating get]
+    QPlaceRating placeRating = qmlObject->property("rating").value<QPlaceRating>();
+    //! [Rating get]
+
+    //! [Rating set]
+    qmlObject->setProperty("rating", QVariant::fromValue(placeRating));
+    //! [Rating set]
+
+    //! [Supplier get]
+    QPlaceSupplier placeSupplier = qmlObject->property("supplier").value<QPlaceSupplier>();
+    //! [Supplier get]
+
+    //! [Supplier set]
+    qmlObject->setProperty("supplier", QVariant::fromValue(placeSupplier));
+    //! [Supplier set]
+
+    //! [Coordinate get]
+    QGeoCoordinate geoCoordinate = qmlObject->property("coordinate").value<QGeoCoordinate>();
+    //! [Coordinate get]
+
+    //! [Coordinate set]
+    qmlObject->setProperty("coordinate", QVariant::fromValue(geoCoordinate));
+    //! [Coordinate set]
+
+    //! [Address get]
+    QGeoAddress geoAddress = qmlObject->property("address").value<QGeoAddress>();
+    //! [Address get]
+
+    //! [Address set]
+    qmlObject->setProperty("address", QVariant::fromValue(geoAddress));
+    //! [Address set]
+
+    //! [BoundingBox get]
+    QGeoBoundingBox geoBoundingBox = qmlObject->property("box").value<QGeoBoundingBox>();
+    //! [BoundingBox get]
+
+    //! [BoundingBox set]
+    qmlObject->setProperty("box", QVariant::fromValue(geoBoundingBox));
+    //! [BoundingBox set]
+
+    //! [BoundingCircle get]
+    QGeoBoundingCircle geoBoundingCircle = qmlObject->property("circle").value<QGeoBoundingCircle>();
+    //! [BoundingCircle get]
+
+    //! [BoundingCircle set]
+    qmlObject->setProperty("circle", QVariant::fromValue(geoBoundingCircle));
+    //! [BoundingCircle set]
+
+    //! [Location get]
+    QGeoLocation geoLocation = qmlObject->property("location").value<QGeoLocation>();
+    //! [Location get]
+
+    //! [Location set]
+    qmlObject->setProperty("location", QVariant::fromValue(geoLocation));
+    //! [Location set]
+}
+

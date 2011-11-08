@@ -55,6 +55,8 @@ QT_BEGIN_NAMESPACE
 class QDeclarativeGeoBoundingCircle : public QDeclarativeGeoBoundingArea
 {
     Q_OBJECT
+
+    Q_PROPERTY(QGeoBoundingCircle circle READ circle WRITE setCircle)
     Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
 

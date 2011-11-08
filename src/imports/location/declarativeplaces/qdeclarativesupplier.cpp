@@ -76,6 +76,21 @@ QDeclarativeSupplier::~QDeclarativeSupplier()
 {
 }
 
+/*!
+    \qmlproperty QPlaceSupplier Supplier::supplier
+
+    This property is used to provide an interface between C++ and QML code.  First a pointer to a
+    Supplier object must be obtained from C++, then use the \l {QObject::property()}{property()} and
+    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c supplier property.
+
+    The following gets the QPlaceSupplier representing this object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Supplier get
+
+    The following sets the properties of this object based on a QPlaceSupplier object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp Supplier set
+*/
 void QDeclarativeSupplier::setSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin)
 {
     QPlaceSupplier previous = m_src;

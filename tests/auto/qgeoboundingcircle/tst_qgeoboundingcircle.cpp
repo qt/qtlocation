@@ -46,8 +46,6 @@
 
 QT_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QGeoCoordinate)
-
 class tst_QGeoBoundingCircle : public QObject
 {
     Q_OBJECT

@@ -65,6 +65,22 @@ QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(const QGeoBoundingC
 {
 }
 
+/*!
+    \qmlproperty QGeoBoundingCircle BoundingCircle::circle
+
+    This property is used to provide an interface between C++ and QML code.  First a pointer to a
+    BoundingCircle object must be obtained from C++, then use the
+    \l {QObject::property()}{property()} and \l {QObject::setProperty()}{setProperty()} functions
+    to get and set the \c circle property.
+
+    The following gets the QGeoBoundingCircle representing this object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp BoundingCircle get
+
+    The following sets the properties of this object based on a QGeoBoundingCircle object from C++:
+
+    \snippet snippets/cpp/cppqml.cpp BoundingCircle set
+*/
 void QDeclarativeGeoBoundingCircle::setCircle(const QGeoBoundingCircle& circle)
 {
     if ((m_center && m_center->coordinate() != circle.center()) || !m_center) {
