@@ -62,6 +62,9 @@ public:
 
     }
 
+public slots:
+    void initTestCase();
+
 private slots:
     void x_plane();
     void x_plane_data();
@@ -87,6 +90,12 @@ private:
     Sphere planeTest(const QList<QPlane3D> &planes, const QList<int> &planeIndices) const;
 };
 
+void tst_Sphere::initTestCase()
+{
+#if defined(Q_OS_LINUX)
+    QSKIP("Fails on Linux - see QTBUG-22634");
+#endif
+}
 
 Sphere tst_Sphere::emptySphere(double radius) const
 {
