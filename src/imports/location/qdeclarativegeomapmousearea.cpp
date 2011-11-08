@@ -43,8 +43,8 @@
 #include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/QQuickCanvas>
 
-#include <qquickevents_p_p.h>
-#include "qquickmousearea_p.h"
+#include <QtDeclarative/private/qquickevents_p_p.h>
+#include <QtDeclarative/private/qquickmousearea_p.h>
 
 #include <QDebug>
 
