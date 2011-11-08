@@ -119,9 +119,10 @@ public:
     void removeExtendedAttribute(const QString &attributeType);
 
     QStringList contactTypes() const;
-    QList<QPlaceContactDetail> contactDetails(const QString &contactType);
+    QList<QPlaceContactDetail> contactDetails(const QString &contactType) const;
     void setContactDetails(const QString &contactType, QList<QPlaceContactDetail> details);
     void appendContactDetail(const QString &contactType, const QPlaceContactDetail &detail);
+    void removeContactDetails(const QString &contactType);
 
     QtLocation::Visibility visibility() const;
     void setVisibility(QtLocation::Visibility visibility);

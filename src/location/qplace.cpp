@@ -454,7 +454,7 @@ QStringList QPlace::contactTypes() const
 /*!
     Returns a list of contact details of the specified \a contactType
 */
-QList<QPlaceContactDetail> QPlace::contactDetails(const QString &contactType)
+QList<QPlaceContactDetail> QPlace::contactDetails(const QString &contactType) const
 {
     Q_D(const QPlace);
     return d->contacts.value(contactType);
@@ -462,6 +462,9 @@ QList<QPlaceContactDetail> QPlace::contactDetails(const QString &contactType)
 
 /*!
     Sets the contact \a details of a specified \a contactType.
+
+    If \a details is empty, then the \a contactType is removed from the place such
+    that it is no longer returned by QPlace::contactTypes().
 */
 void QPlace::setContactDetails(const QString &contactType, QList<QPlaceContactDetail> details)
 {
@@ -481,6 +484,17 @@ void QPlace::appendContactDetail(const QString &contactType, const QPlaceContact
     QList<QPlaceContactDetail> details = d->contacts.value(contactType);
     details.append(detail);
     d->contacts.insert(contactType, details);
+}
+
+/*!
+    Removes all the contact details of a given \a contactType.
+
+    The \a contactType is no longer returned when QPlace::contactTypes() is called.
+*/
+void QPlace::removeContactDetails(const QString &contactType)
+{
+    Q_D(QPlace);
+    d->contacts.remove(contactType);
 }
 
 /*!
