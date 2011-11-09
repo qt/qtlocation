@@ -70,7 +70,6 @@ void tst_QGeoLocation::constructor()
     QCOMPARE(m_location.address(), m_address);
     QCOMPARE(m_location.coordinate(), m_coordinate);
     QCOMPARE(m_location.boundingBox(), m_viewport);
-    QCOMPARE(m_location.locationId(), m_locationId);
 }
 
 void tst_QGeoLocation::copy_constructor()
@@ -141,15 +140,6 @@ void tst_QGeoLocation::viewport()
     QVERIFY(m_location.boundingBox() != qgeoboundingboxcopy);
 }
 
-void tst_QGeoLocation::locationId()
-{
-    m_locationId = "id";
-    m_location.setLocationId(m_locationId);
-
-    m_locationId = "new id";
-    m_location.setLocationId(m_locationId);
-}
-
 void tst_QGeoLocation::operators()
 {
     QGeoAddress qgeoaddresscopy;
@@ -208,9 +198,6 @@ void tst_QGeoLocation::comparison()
     //set viewport
     location.setBoundingBox(QGeoBoundingBox(QGeoCoordinate(5,5),0.4,0.4));
 
-    //set locationId
-    location.setLocationId("id");
-
     QGeoLocation otherLocation(location);
 
     if (dataField == "no change") {
@@ -225,8 +212,6 @@ void tst_QGeoLocation::comparison()
             otherLocation.setCoordinate(QGeoCoordinate(12,13));
         } else if (dataField == "viewport"){
             otherLocation.setBoundingBox(QGeoBoundingBox(QGeoCoordinate(1,2), 0.5,0.5));
-        } else if (dataField == "locationId") {
-            otherLocation.setLocationId("otherId");
         } else {
             qFatal("Unknown data field to test");
         }
@@ -241,7 +226,6 @@ void tst_QGeoLocation::comparison_data()
     QTest::newRow("no change") << "no change";
     QTest::newRow("address") << "address";
     QTest::newRow("coordinate") << "coordinate";
-    QTest::newRow("locationId") << "locationId";
 }
 
 QTEST_APPLESS_MAIN(tst_QGeoLocation);

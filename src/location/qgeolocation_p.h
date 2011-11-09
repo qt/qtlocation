@@ -58,7 +58,6 @@ public:
 
     QGeoAddress address;
     QGeoCoordinate coordinate;
-    QString locationId;
     QGeoBoundingBox viewport;
 };
 

@@ -67,8 +67,6 @@ TestCase {
         visibility: Place.DeviceVisibility
 
         location: Location {
-            locationId: "test-place-location-id"
-
             address: Address {
                 country: "country"
                 countryCode: "cc"
@@ -212,8 +210,6 @@ TestCase {
         if (place1.location !== null && place2.location === null)
             return false;
         if (place1.location !== null && place2.location !== null) {
-            if (place1.location.locationId !== place2.location.locationId)
-                return false;
             if (place1.location.address.country !== place2.location.address.country)
                 return false;
             if (place1.location.address.countryCode !== place2.location.address.countryCode)
@@ -409,18 +405,18 @@ TestCase {
     }
 
     function test_location() {
-        var location = Qt.createQmlObject('import QtLocation 5.0; Location { locationId: "loc-id-1" }', testCase, "Location1");
+        var location = Qt.createQmlObject('import QtLocation 5.0; Location { coordinate: Coordinate{ latitude:10.0 } }', testCase, "Location1");
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = testPlace;
         signalSpy.signalName = "locationChanged";
 
         testPlace.location = location;
-        compare(testPlace.location.locationId, "loc-id-1");
+        compare(testPlace.location.coordinate.latitude, 10.0);
         compare(signalSpy.count, 1);
 
         testPlace.location = location;
-        compare(testPlace.location.locationId, "loc-id-1");
+        compare(testPlace.location.coordinate.latitude, 10.0);
         compare(signalSpy.count, 1);
 
         testPlace.location = null;

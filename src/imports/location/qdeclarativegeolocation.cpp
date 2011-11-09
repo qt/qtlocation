@@ -56,18 +56,16 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeGeoLocation::QDeclarativeGeoLocation(QObject* parent)
-        : QObject(parent)
+    : QObject(parent), m_address(0), m_coordinate(0), m_boundingBox(0)
+
 {
+    setLocation(QGeoLocation());
 }
 
-QDeclarativeGeoLocation::QDeclarativeGeoLocation(const QGeoLocation &src,
-        QObject *parent)
-        : QObject(parent),
-          m_address(src.address()),
-          m_coordinate(src.coordinate()),
-          m_boundingBox(src.boundingBox()),
-          m_src(src)
+QDeclarativeGeoLocation::QDeclarativeGeoLocation(const QGeoLocation &src, QObject *parent)
+    : QObject(parent), m_address(0), m_coordinate(0), m_boundingBox(0)
 {
+    setLocation(src);
 }
 
 QDeclarativeGeoLocation::~QDeclarativeGeoLocation()
@@ -76,31 +74,35 @@ QDeclarativeGeoLocation::~QDeclarativeGeoLocation()
 
 void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
 {
-    QGeoLocation previous = m_src;
-    m_src = src;
-
-    if (previous.address() != m_src.address()) {
-        m_address.setAddress(m_src.address());
+    if (m_address && m_address->parent() == this) {
+        m_address->setAddress(src.address());
+    } else if (!m_address || m_address->parent() != this) {
+        m_address = new QDeclarativeGeoAddress(src.address(), this);
         emit addressChanged();
     }
-    if (previous.coordinate() != m_src.coordinate()) {
-        m_coordinate.setCoordinate(m_src.coordinate());
+
+    if (m_coordinate && m_coordinate->parent() == this) {
+        m_coordinate->setCoordinate(src.coordinate());
+    } else if (!m_coordinate || m_coordinate->parent() != this){
+        m_coordinate = new QDeclarativeCoordinate(src.coordinate(), this);
         emit coordinateChanged();
     }
-    if (previous.locationId() != m_src.locationId()) {
-        emit locationIdChanged();
-    }
-    if (previous.boundingBox() != m_src.boundingBox()) {
-        emit boundingBox();
+
+    if (m_boundingBox && m_boundingBox->parent() == this) {
+        m_boundingBox->setBox(src.boundingBox());
+    } else if (!m_boundingBox || m_boundingBox->parent() != this){
+        m_boundingBox = new QDeclarativeGeoBoundingBox(src.boundingBox(), this);
+        emit boundingBoxChanged();
     }
 }
 
 QGeoLocation QDeclarativeGeoLocation::location()
 {
-    m_src.setAddress(m_address.address());
-    m_src.setCoordinate(m_coordinate.coordinate());
-    m_src.setBoundingBox(m_boundingBox.box());
-    return m_src;
+    QGeoLocation retValue;
+    retValue.setAddress(m_address ? m_address->address() : QGeoAddress());
+    retValue.setCoordinate(m_coordinate ? m_coordinate->coordinate() : QGeoCoordinate());
+    retValue.setBoundingBox(m_boundingBox ? m_boundingBox->box() : QGeoBoundingBox());
+    return retValue;
 }
 
 /*!
@@ -110,16 +112,19 @@ QGeoLocation QDeclarativeGeoLocation::location()
 */
 void QDeclarativeGeoLocation::setAddress(QDeclarativeGeoAddress *address)
 {
-    if (m_src.address() != address->address()) {
-        m_address.setAddress(address->address());
-        m_src.setAddress(address->address());
-        emit addressChanged();
-    }
+    if (m_address == address)
+        return;
+
+    if (m_address && m_address->parent() == this)
+        delete m_address;
+
+    m_address = address;
+    emit addressChanged();
 }
 
 QDeclarativeGeoAddress *QDeclarativeGeoLocation::address()
 {
-    return &m_address;
+    return m_address;
 }
 
 /*!
@@ -132,34 +137,19 @@ QDeclarativeGeoAddress *QDeclarativeGeoLocation::address()
 */
 void QDeclarativeGeoLocation::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
-    if (m_src.coordinate() != coordinate->coordinate()) {
-        m_coordinate.setCoordinate(coordinate->coordinate());
-        m_src.setCoordinate(coordinate->coordinate());
-        emit coordinateChanged();
-    }
+    if (m_coordinate == coordinate)
+        return;
+
+    if (m_coordinate && m_coordinate->parent() == this)
+        delete m_coordinate;
+
+    m_coordinate = coordinate;
+    emit coordinateChanged();
 }
 
 QDeclarativeCoordinate *QDeclarativeGeoLocation::coordinate()
 {
-    return &m_coordinate;
-}
-
-/*!
-    \qmlproperty string Location::locationId
-
-    This property holds location id.
-*/
-void QDeclarativeGeoLocation::setLocationId(const QString &locationId)
-{
-    if (m_src.locationId() != locationId) {
-        m_src.setLocationId(locationId);
-        emit locationIdChanged();
-    }
-}
-
-QString QDeclarativeGeoLocation::locationId() const
-{
-    return m_src.locationId();
+    return m_coordinate;
 }
 
 /*!
@@ -172,15 +162,17 @@ QString QDeclarativeGeoLocation::locationId() const
 */
 void QDeclarativeGeoLocation::setBoundingBox(QDeclarativeGeoBoundingBox *boundingBox)
 {
-    if (m_src.boundingBox() == boundingBox->box())
+    if (m_boundingBox == boundingBox)
         return;
 
-    m_boundingBox.setBox(boundingBox->box());
-    m_src.setBoundingBox(boundingBox->box());
+    if (m_boundingBox && m_boundingBox->parent() == this)
+        delete m_boundingBox;
+
+    m_boundingBox = boundingBox;
     emit boundingBoxChanged();
 }
 
 QDeclarativeGeoBoundingBox *QDeclarativeGeoLocation::boundingBox()
 {
-    return &m_boundingBox;
+    return m_boundingBox;
 }
