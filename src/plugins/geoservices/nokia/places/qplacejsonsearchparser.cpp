@@ -48,9 +48,9 @@
 
 #include "qplacejsonsearchparser.h"
 
-#include <QtScript/QScriptEngine>
-#include <QtScript/QScriptValue>
-#include <QtScript/QScriptValueIterator>
+#include <QJSEngine>
+#include <QJSValue>
+#include <QJSValueIterator>
 
 #include <qgeocoordinate.h>
 #include <qgeoaddress.h>
@@ -121,14 +121,14 @@ QList<QPlaceSearchResult> QPlaceJSonSearchParser::searchResults()
     return searchResultsList;
 }
 
-void QPlaceJSonSearchParser::processJSonData(const QScriptValue &sv)
+void QPlaceJSonSearchParser::processJSonData(const QJSValue &sv)
 {
     searchResultsList.clear();
 
     if (sv.isValid()) {
-        QScriptValue results = sv.property(search_results_element);
+        QJSValue results = sv.property(search_results_element);
         if (results.isValid()) {
-            QScriptValueIterator it(results);
+            QJSValueIterator it(results);
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element
@@ -145,17 +145,17 @@ void QPlaceJSonSearchParser::processJSonData(const QScriptValue &sv)
     }
 }
 
-void QPlaceJSonSearchParser::processResultElement(const QScriptValue &value)
+void QPlaceJSonSearchParser::processResultElement(const QJSValue &value)
 {
     // Procesing DYM string
-    QScriptValue type = value.property(search_type_element);
+    QJSValue type = value.property(search_type_element);
     if (type.isValid() && type.toString() == search_type_dym_value) {
-        QScriptValue properties = value.property(search_properties_element);
+        QJSValue properties = value.property(search_properties_element);
         if (properties.isValid()) {
-            QScriptValue title = properties.property(search_properties_title_value);
+            QJSValue title = properties.property(search_properties_title_value);
             if (title.isValid() && !title.toString().isEmpty()) {
                 QPlaceSearchResult result;
-                QScriptValue type = properties.property(search_type_element);
+                QJSValue type = properties.property(search_type_element);
                 if (type.isValid()) {
                     result = processPlaceElement(value);
                 }
@@ -170,17 +170,17 @@ void QPlaceJSonSearchParser::processResultElement(const QScriptValue &value)
     }
 }
 
-QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValue &results)
+QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QJSValue &results)
 {
     QPlaceSearchResult result;
     result.setType(QPlaceSearchResult::PlaceResult);
     QPlace newPlace;
 
     // Processing properties
-    QScriptValue properties = results.property(search_properties_element);
+    QJSValue properties = results.property(search_properties_element);
     if (properties.isValid()) {
         // QSearchResult properties
-        QScriptValue distance = properties.property(search_properties_distance_value);
+        QJSValue distance = properties.property(search_properties_distance_value);
         if (distance.isValid() && !distance.toString().isEmpty()) {
             bool isConverted;
             double distanceValue = distance.toString().toDouble(&isConverted);
@@ -189,7 +189,7 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValu
             }
         }
         // Place properties
-        QScriptValue value = properties.property(search_properties_title_value);
+        QJSValue value = properties.property(search_properties_title_value);
         if (value.isValid() && !value.toString().isEmpty()) {
             newPlace.setName(value.toString());
         }
@@ -222,9 +222,9 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QScriptValu
     return result;
 }
 
-void QPlaceJSonSearchParser::processContacts(const QScriptValue &properties, QPlace *place)
+void QPlaceJSonSearchParser::processContacts(const QJSValue &properties, QPlace *place)
 {
-    QScriptValue value = properties.property(search_properties_url_value);
+    QJSValue value = properties.property(search_properties_url_value);
     if (value.isValid() && !value.toString().isEmpty()) {
         QPlaceContactDetail contactDetail;
         contactDetail.setLabel(tr("Website"));
@@ -241,15 +241,15 @@ void QPlaceJSonSearchParser::processContacts(const QScriptValue &properties, QPl
 }
 
 
-void QPlaceJSonSearchParser::processCategories(const QScriptValue &categories, QPlace *place)
+void QPlaceJSonSearchParser::processCategories(const QJSValue &categories, QPlace *place)
 {
     QList<QPlaceCategory> categoriesList;
-    QScriptValueIterator it(categories);
+    QJSValueIterator it(categories);
     while (it.hasNext()) {
         it.next();
         // array contains count as last element
         if (it.name() != "length") {
-            QScriptValue value = it.value().property(search_categories_id_value);
+            QJSValue value = it.value().property(search_categories_id_value);
             if (value.isValid() && !value.toString().isEmpty()) {
                 QPlaceCategory category = QPlaceCategoriesRepository::instance()->mapCategory(
                             value.toString());
@@ -262,9 +262,9 @@ void QPlaceJSonSearchParser::processCategories(const QScriptValue &categories, Q
     place->setCategories(categoriesList);
 }
 
-void QPlaceJSonSearchParser::processRating(const QScriptValue &properties, QPlace *place)
+void QPlaceJSonSearchParser::processRating(const QJSValue &properties, QPlace *place)
 {
-    QScriptValue value = properties.property(search_properties_rating_value);
+    QJSValue value = properties.property(search_properties_rating_value);
     if (value.isValid() && !value.toString().isEmpty()) {
         bool isConverted;
         double ratingValue = value.toString().toDouble(&isConverted);
@@ -276,10 +276,10 @@ void QPlaceJSonSearchParser::processRating(const QScriptValue &properties, QPlac
     }
 }
 
-void QPlaceJSonSearchParser::processAddress(const QScriptValue &properties, QGeoLocation *location)
+void QPlaceJSonSearchParser::processAddress(const QJSValue &properties, QGeoLocation *location)
 {
     QGeoAddress newAddress;
-    QScriptValue value = properties.property(search_properties_address_country);
+    QJSValue value = properties.property(search_properties_address_country);
     if (value.isValid() && !value.toString().isEmpty()) {
         newAddress.setCountry(value.toString());
     }
@@ -320,7 +320,7 @@ void QPlaceJSonSearchParser::processAddress(const QScriptValue &properties, QGeo
     location->setAddress(newAddress);
 }
 
-void QPlaceJSonSearchParser::processLocation(const QScriptValue &properties, QPlace *place)
+void QPlaceJSonSearchParser::processLocation(const QJSValue &properties, QPlace *place)
 {
     QGeoLocation location;
 
@@ -330,7 +330,7 @@ void QPlaceJSonSearchParser::processLocation(const QScriptValue &properties, QPl
     double longitude;
 
     // display position
-    QScriptValue value = properties.property(search_properties_latitude_value);
+    QJSValue value = properties.property(search_properties_latitude_value);
     if (value.isValid() && !value.toString().isEmpty()) {
         latitude = value.toString().toDouble(&latOK);
     }

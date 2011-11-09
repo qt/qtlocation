@@ -55,8 +55,8 @@
 #include <qplaceimage.h>
 #include "qplacejsonparser_p.h"
 
-class QScriptEngine;
-class QScriptValue;
+class QJSEngine;
+class QJSValue;
 
 QT_BEGIN_NAMESPACE
 
@@ -69,11 +69,11 @@ public:
 
     QList<QPlaceImage> resultMedia();
     int allMediaCount();
-    static QPlaceImage buildMediaObject(const QScriptValue &place);
+    static QPlaceImage buildMediaObject(const QJSValue &place);
 
 private:
-    void processJSonData(const QScriptValue &sv);
-    void processMedia(const QScriptValue &contacts);
+    void processJSonData(const QJSValue &sv);
+    void processMedia(const QJSValue &contacts);
 
 private:
     QList<QPlaceImage> media;

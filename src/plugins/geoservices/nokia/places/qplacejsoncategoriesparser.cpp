@@ -48,9 +48,9 @@
 
 #include "qplacejsoncategoriesparser.h"
 
-#include <QtScript/QScriptEngine>
-#include <QtScript/QScriptValue>
-#include <QtScript/QScriptValueIterator>
+#include <QJSEngine>
+#include <QJSValue>
+#include <QJSValueIterator>
 
 #if defined(QT_PLACES_LOGGING)
     #include <QDebug>
@@ -88,7 +88,7 @@ QList<QPlaceCategory> QPlaceJSonCategoriesParser::resultCategoriesFlat() const
     return result;
 }
 
-QList<QPlaceCategory> QPlaceJSonCategoriesParser::parseFlatCategoryList(const QScriptValue &categories)
+QList<QPlaceCategory> QPlaceJSonCategoriesParser::parseFlatCategoryList(const QJSValue &categories)
 {
     QPlaceCategoryTree tree;
     PlaceCategoryNode rootNode;
@@ -101,14 +101,14 @@ QList<QPlaceCategory> QPlaceJSonCategoriesParser::parseFlatCategoryList(const QS
     return result;
 }
 
-void QPlaceJSonCategoriesParser::processJSonData(const QScriptValue &sv)
+void QPlaceJSonCategoriesParser::processJSonData(const QJSValue &sv)
 {
     m_tree.clear();
     PlaceCategoryNode rootNode;
     m_tree.insert(QString(), rootNode);
 
     if (sv.isValid()) {
-        QScriptValue sv2 = sv.property(place_categories_element);
+        QJSValue sv2 = sv.property(place_categories_element);
         if (sv2.isValid()) {
             processCategories(sv2, QString(), &m_tree);
             emit finished(NoError, QString());
@@ -120,15 +120,15 @@ void QPlaceJSonCategoriesParser::processJSonData(const QScriptValue &sv)
     }
 }
 
-void QPlaceJSonCategoriesParser::processCategories(const QScriptValue &categories, const QString &parentId, QPlaceCategoryTree *tree)
+void QPlaceJSonCategoriesParser::processCategories(const QJSValue &categories, const QString &parentId, QPlaceCategoryTree *tree)
 {
 
     Q_ASSERT(tree->contains(parentId));
 
-    QScriptValue value = categories.property(place_category_element);
+    QJSValue value = categories.property(place_category_element);
     if (value.isValid()) {
         if (value.isArray()) {
-            QScriptValueIterator it(value);
+            QJSValueIterator it(value);
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element
@@ -155,7 +155,7 @@ void QPlaceJSonCategoriesParser::processCategories(const QScriptValue &categorie
     value = categories.property(place_group_element);
     if (value.isValid()) {
         if (value.isArray()) {
-            QScriptValueIterator it(value);
+            QJSValueIterator it(value);
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element
@@ -168,11 +168,11 @@ void QPlaceJSonCategoriesParser::processCategories(const QScriptValue &categorie
     }
 }
 
-PlaceCategoryNode QPlaceJSonCategoriesParser::processCategory(const QScriptValue &categoryValue, const QString &parentId)
+PlaceCategoryNode QPlaceJSonCategoriesParser::processCategory(const QJSValue &categoryValue, const QString &parentId)
 {
     PlaceCategoryNode categoryNode;
     categoryNode.parentId = parentId;
-    QScriptValue value = categoryValue.property(place_category_id_element);
+    QJSValue value = categoryValue.property(place_category_id_element);
     if (value.isValid() && !value.toString().isEmpty()) {
         categoryNode.category.setCategoryId(value.toString());
         value = categoryValue.property(place_category_name_element);
@@ -183,9 +183,9 @@ PlaceCategoryNode QPlaceJSonCategoriesParser::processCategory(const QScriptValue
     return categoryNode;
 }
 
-void QPlaceJSonCategoriesParser::processGroup(const QScriptValue &group, const QString &parentId, QPlaceCategoryTree *tree)
+void QPlaceJSonCategoriesParser::processGroup(const QJSValue &group, const QString &parentId, QPlaceCategoryTree *tree)
 {
-    QScriptValue value = group.property(place_groupingcategory_element);
+    QJSValue value = group.property(place_groupingcategory_element);
     if (!value.isValid())
         return;
 

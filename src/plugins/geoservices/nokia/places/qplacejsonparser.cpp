@@ -41,8 +41,8 @@
 
 #include "qplacejsonparser_p.h"
 
-#include <QtScript/QScriptEngine>
-#include <QtScript/QScriptValue>
+#include <QJSEngine>
+#include <QJSValue>
 
 #if defined(QT_PLACES_LOGGING)
     #include <QDebug>
@@ -57,8 +57,8 @@ QPlaceJSonParser::QPlaceJSonParser(QObject *parent) :
 void QPlaceJSonParser::processData(const QString &data)
 {
     if (!engine) {
-        engine = new QScriptEngine(this);
+        engine = new QJSEngine(this);
     }
-    QScriptValue sv = engine->evaluate("(" + data + ")");
+    QJSValue sv = engine->evaluate("(" + data + ")");
     processJSonData(sv);
 }

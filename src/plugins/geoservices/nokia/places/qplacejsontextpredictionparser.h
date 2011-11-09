@@ -54,7 +54,7 @@
 
 #include "qplacejsonparser_p.h"
 
-class QScriptEngine;
+class QJSEngine;
 
 QT_BEGIN_NAMESPACE
 
@@ -67,7 +67,7 @@ public:
     QStringList predictions();
 
 private:
-    void processJSonData(const QScriptValue &sv);
+    void processJSonData(const QJSValue &sv);
     QStringList suggestions;
 };
 

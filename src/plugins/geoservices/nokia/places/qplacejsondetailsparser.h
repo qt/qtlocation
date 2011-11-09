@@ -58,8 +58,8 @@
 
 QT_BEGIN_NAMESPACE
 
-class QScriptEngine;
-class QScriptValue;
+class QJSEngine;
+class QJSValue;
 class QPlaceEditorial;
 
 class QPlaceJSonDetailsParser : public QPlaceJSonParser
@@ -69,47 +69,47 @@ public:
     explicit QPlaceJSonDetailsParser(QPlaceManager *manager, QObject *parent = 0);
     virtual ~QPlaceJSonDetailsParser();
 
-    static QPlace buildPlace(const QScriptValue &place, QPlaceManager *manager);
+    static QPlace buildPlace(const QJSValue &place, QPlaceManager *manager);
     QPlace result();
 
 private:
-    void processJSonData(const QScriptValue &sv);
-    static void buildPlace(const QScriptValue &place, QPlace *targetPlace);
-    static void processMainProvider(const QScriptValue &place, QPlace *targetPlace);
-    static void processContacts(const QScriptValue &contacts, QPlace *targetPlace);
-    static void processCategories(const QScriptValue &categories, QPlace *targetPlace);
-    static QPlaceCategory processCategory(const QScriptValue &category);
-    static void processRatings(const QScriptValue &ratings, QPlace *targetPlace);
-    static QPlaceRating *processRating(const QScriptValue &rating);
-    static void processAddress(const QScriptValue &address, QGeoLocation *location);
-    static void processLocation(const QScriptValue &location, QPlace *targetPlace);
-    static void processTags(const QScriptValue &locations, QPlace *targetPlace);
-    static void processNames(const QScriptValue &locations, QPlace *targetPlace);
-    static QString processName(const QScriptValue &nameValue);
-    static void processPremiumContents(const QScriptValue &content, QPlace *targetPlace);
-    static void processPremiumVersion(const QScriptValue &content, QPlace *targetPlace);
-    static void processPremiumContent(const QScriptValue &content, QPlace *targetPlace);
-    static void processPremiumContentDescription(const QScriptValue &content,
+    void processJSonData(const QJSValue &sv);
+    static void buildPlace(const QJSValue &place, QPlace *targetPlace);
+    static void processMainProvider(const QJSValue &place, QPlace *targetPlace);
+    static void processContacts(const QJSValue &contacts, QPlace *targetPlace);
+    static void processCategories(const QJSValue &categories, QPlace *targetPlace);
+    static QPlaceCategory processCategory(const QJSValue &category);
+    static void processRatings(const QJSValue &ratings, QPlace *targetPlace);
+    static QPlaceRating *processRating(const QJSValue &rating);
+    static void processAddress(const QJSValue &address, QGeoLocation *location);
+    static void processLocation(const QJSValue &location, QPlace *targetPlace);
+    static void processTags(const QJSValue &locations, QPlace *targetPlace);
+    static void processNames(const QJSValue &locations, QPlace *targetPlace);
+    static QString processName(const QJSValue &nameValue);
+    static void processPremiumContents(const QJSValue &content, QPlace *targetPlace);
+    static void processPremiumVersion(const QJSValue &content, QPlace *targetPlace);
+    static void processPremiumContent(const QJSValue &content, QPlace *targetPlace);
+    static void processPremiumContentDescription(const QJSValue &content,
                                                  const QPlaceSupplier &supplier,
                                                  QPlace *targetPlace);
-    static void processPremiumContentMediaObjects(const QScriptValue &content,
+    static void processPremiumContentMediaObjects(const QJSValue &content,
                                                   const QPlaceSupplier &supplier,
                                                   QPlace *targetPlace);
-    static QPlaceImage *processPremiumContentMediaObject(const QScriptValue &content);
-    static void processAdContent(const QScriptValue &content, QPlace *targetPlace);
-    static void processAdContentDescriptions(const QScriptValue &content, QPlace *targetPlace);
-    static QPlaceEditorial *processAdContentDescription(const QScriptValue &content);
-    static void processAdContentMediaObjects(const QScriptValue &content, QPlace *targetPlace);
-    static QPlaceImage *processAdContentMediaObject(const QScriptValue &content);
-    static void processAdContentPaymentMethods(const QScriptValue &content, QPlace *targetPlace);
-    static QString processAdContentPaymentMethod(const QScriptValue &content);
-    static void processAdContentBusinessHours(const QScriptValue &content, QPlace *targetPlace);
-    static void processAdContentClosingsNotes(const QScriptValue &content, QPlace *targetPlace);
-    static QString processAdContentClosingsNote(const QScriptValue &content);
-    static void processAdContentOpeningHours(const QScriptValue &content, QPlace *targetPlace);
-    static void processAdContentOpeningHoursElement(const QScriptValue &content);
-    static void processAdContentOpeningNotes(const QScriptValue &content, QPlace *targetPlace);
-    static QString processAdContentOpeningNote(const QScriptValue &content);
+    static QPlaceImage *processPremiumContentMediaObject(const QJSValue &content);
+    static void processAdContent(const QJSValue &content, QPlace *targetPlace);
+    static void processAdContentDescriptions(const QJSValue &content, QPlace *targetPlace);
+    static QPlaceEditorial *processAdContentDescription(const QJSValue &content);
+    static void processAdContentMediaObjects(const QJSValue &content, QPlace *targetPlace);
+    static QPlaceImage *processAdContentMediaObject(const QJSValue &content);
+    static void processAdContentPaymentMethods(const QJSValue &content, QPlace *targetPlace);
+    static QString processAdContentPaymentMethod(const QJSValue &content);
+    static void processAdContentBusinessHours(const QJSValue &content, QPlace *targetPlace);
+    static void processAdContentClosingsNotes(const QJSValue &content, QPlace *targetPlace);
+    static QString processAdContentClosingsNote(const QJSValue &content);
+    static void processAdContentOpeningHours(const QJSValue &content, QPlace *targetPlace);
+    static void processAdContentOpeningHoursElement(const QJSValue &content);
+    static void processAdContentOpeningNotes(const QJSValue &content, QPlace *targetPlace);
+    static QString processAdContentOpeningNote(const QJSValue &content);
 
 private:
     QPlace place;

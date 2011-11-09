@@ -55,8 +55,8 @@
 #include <qplacesearchresult.h>
 #include "qplacejsonparser_p.h"
 
-class QScriptEngine;
-class QScriptValue;
+class QJSEngine;
+class QJSValue;
 
 QT_BEGIN_NAMESPACE
 class QPlaceManager;
@@ -70,11 +70,11 @@ public:
 
     QList<QPlaceReview> results();
     int allReviewsCount();
-    static QPlaceReview buildReview(const QScriptValue &place, QPlaceManager *manager);
+    static QPlaceReview buildReview(const QJSValue &place, QPlaceManager *manager);
 
 private:
-    void processJSonData(const QScriptValue &sv);
-    void processReviews(const QScriptValue &contacts);
+    void processJSonData(const QJSValue &sv);
+    void processReviews(const QJSValue &contacts);
 
 private:
     QList<QPlaceReview> reviews;

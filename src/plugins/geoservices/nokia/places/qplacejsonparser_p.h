@@ -44,8 +44,8 @@
 
 #include <QObject>
 #include <QStringList>
-#include <QtScript/QScriptEngine>
-#include <QtScript/QScriptValue>
+#include <QJSEngine>
+#include <QJSValue>
 
 class QPlaceJSonParser : public QObject
 {
@@ -65,10 +65,10 @@ public slots:
     void processData(const QString &data);
 
 private:
-    virtual void processJSonData(const QScriptValue &sv) = 0;
+    virtual void processJSonData(const QJSValue &sv) = 0;
 
 protected:
-    QScriptEngine *engine;
+    QJSEngine *engine;
 };
 
 #endif // QPLACEJSONPARSER_P_H

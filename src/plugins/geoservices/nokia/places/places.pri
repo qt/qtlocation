@@ -1,4 +1,4 @@
-QT *= location network script
+QT *= location network declarative
 
 HEADERS += \
 #data classes

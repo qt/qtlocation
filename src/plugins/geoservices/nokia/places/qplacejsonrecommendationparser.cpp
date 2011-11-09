@@ -48,9 +48,9 @@
 
 #include "qplacejsonrecommendationparser.h"
 
-#include <QtScript/QScriptEngine>
-#include <QtScript/QScriptValue>
-#include <QtScript/QScriptValueIterator>
+#include <QJSEngine>
+#include <QJSValue>
+#include <QJSValueIterator>
 
 #include "qplacejsondetailsparser.h"
 #include <qplace.h>
@@ -80,14 +80,14 @@ QList<QPlaceSearchResult> QPlaceJSonRecommendationParser::results()
     return searchResults;
 }
 
-void QPlaceJSonRecommendationParser::processJSonData(const QScriptValue &sv)
+void QPlaceJSonRecommendationParser::processJSonData(const QJSValue &sv)
 {
     searchResults.clear();
 
     if (sv.isValid()) {
-        QScriptValue sv2 = sv.property(recommendations_element);
+        QJSValue sv2 = sv.property(recommendations_element);
         if (sv2.isValid()) {
-            QScriptValueIterator it(sv2.property(recommendations_nearby_element));
+            QJSValueIterator it(sv2.property(recommendations_nearby_element));
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element
@@ -102,13 +102,13 @@ void QPlaceJSonRecommendationParser::processJSonData(const QScriptValue &sv)
     emit finished(ParsingError, QString("JSON data are invalid"));
 }
 
-void QPlaceJSonRecommendationParser::processResultElement(const QScriptValue &value)
+void QPlaceJSonRecommendationParser::processResultElement(const QJSValue &value)
 {
     QPlaceSearchResult result;
     result.setType(QPlaceSearchResult::PlaceResult);
 
     // Processing properties
-    QScriptValue distance = value.property(recommendations_distance_element);
+    QJSValue distance = value.property(recommendations_distance_element);
     if (distance.isValid() && !distance.toString().isEmpty()) {
         bool isConverted;
         double distanceValue = distance.toString().toDouble(&isConverted);
@@ -116,7 +116,7 @@ void QPlaceJSonRecommendationParser::processResultElement(const QScriptValue &va
             result.setDistance(distanceValue);
         }
     }
-    QScriptValue place = value.property(recommendations_place_element);
+    QJSValue place = value.property(recommendations_place_element);
     if (place.isValid()) {
         QPlace newPlace = QPlaceJSonDetailsParser::buildPlace(place, m_manager);
         result.setPlace(newPlace);

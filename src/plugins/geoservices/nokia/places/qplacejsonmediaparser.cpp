@@ -49,9 +49,9 @@
 #include "qplacejsonmediaparser.h"
 
 #include <QtCore/QUrl>
-#include <QtScript/QScriptEngine>
-#include <QtScript/QScriptValue>
-#include <QtScript/QScriptValueIterator>
+#include <QJSEngine>
+#include <QJSValue>
+#include <QJSValueIterator>
 
 #include <qplacesupplier.h>
 #include "qplacesuppliersrepository.h"
@@ -91,10 +91,10 @@ int QPlaceJSonMediaParser::allMediaCount()
     return allMedia;
 }
 
-QPlaceImage QPlaceJSonMediaParser::buildMediaObject(const QScriptValue &media)
+QPlaceImage QPlaceJSonMediaParser::buildMediaObject(const QJSValue &media)
 {
     QPlaceImage newMedia;
-    QScriptValue value = media.property(media_url);
+    QJSValue value = media.property(media_url);
     if (value.isValid() && !value.toString().isEmpty()) {
         newMedia.setUrl(QUrl::fromEncoded(value.toString().toAscii()));
         newMedia.setImageId(value.toString());
@@ -119,12 +119,12 @@ QPlaceImage QPlaceJSonMediaParser::buildMediaObject(const QScriptValue &media)
     return newMedia;
 }
 
-void QPlaceJSonMediaParser::processJSonData(const QScriptValue &sv)
+void QPlaceJSonMediaParser::processJSonData(const QJSValue &sv)
 {
     media.clear();
 
     if (sv.isValid()) {
-        QScriptValue sv2 = sv.property(media_objects_element);
+        QJSValue sv2 = sv.property(media_objects_element);
         if (sv2.isValid()) {
             processMedia(sv2);
             emit finished(NoError, QString());
@@ -136,12 +136,12 @@ void QPlaceJSonMediaParser::processJSonData(const QScriptValue &sv)
     }
 }
 
-void QPlaceJSonMediaParser::processMedia(const QScriptValue &mediaElement)
+void QPlaceJSonMediaParser::processMedia(const QJSValue &mediaElement)
 {
-    QScriptValue value = mediaElement.property(media_element);
+    QJSValue value = mediaElement.property(media_element);
     if (value.isValid()) {
         if (value.isArray()) {
-            QScriptValueIterator it(value);
+            QJSValueIterator it(value);
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element

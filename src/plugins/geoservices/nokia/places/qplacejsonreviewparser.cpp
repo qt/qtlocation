@@ -50,9 +50,9 @@
 
 #include <QtCore/QUrl>
 #include <QtCore/QDateTime>
-#include <QtScript/QScriptEngine>
-#include <QtScript/QScriptValue>
-#include <QtScript/QScriptValueIterator>
+#include <QJSEngine>
+#include <QJSValue>
+#include <QJSValueIterator>
 #include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceUser>
@@ -104,10 +104,10 @@ int QPlaceJSonReviewParser::allReviewsCount()
     return allReviews;
 }
 
-QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review, QPlaceManager *manager)
+QPlaceReview QPlaceJSonReviewParser::buildReview(const QJSValue &review, QPlaceManager *manager)
 {
     QPlaceReview newReview;
-    QScriptValue value = review.property(review_id_element);
+    QJSValue value = review.property(review_id_element);
     if (value.isValid() && !value.toString().isEmpty()) {
         newReview.setReviewId(value.toString());
     }
@@ -178,12 +178,12 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QScriptValue &review, QPl
     return newReview;
 }
 
-void QPlaceJSonReviewParser::processJSonData(const QScriptValue &sv)
+void QPlaceJSonReviewParser::processJSonData(const QJSValue &sv)
 {
     reviews.clear();
 
     if (sv.isValid()) {
-        QScriptValue sv2 = sv.property(reviews_element);
+        QJSValue sv2 = sv.property(reviews_element);
         if (sv2.isValid()) {
             processReviews(sv2);
             emit finished(NoError, QString());
@@ -195,12 +195,12 @@ void QPlaceJSonReviewParser::processJSonData(const QScriptValue &sv)
     }
 }
 
-void QPlaceJSonReviewParser::processReviews(const QScriptValue &reviewsElement)
+void QPlaceJSonReviewParser::processReviews(const QJSValue &reviewsElement)
 {
-    QScriptValue value = reviewsElement.property(review_element);
+    QJSValue value = reviewsElement.property(review_element);
     if (value.isValid()) {
         if (value.isArray()) {
-            QScriptValueIterator it(value);
+            QJSValueIterator it(value);
             while (it.hasNext()) {
                 it.next();
                 // array contains count as last element

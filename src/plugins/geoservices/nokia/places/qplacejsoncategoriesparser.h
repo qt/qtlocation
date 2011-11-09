@@ -56,8 +56,8 @@
 #include <qplacecategory.h>
 #include "qplacejsonparser_p.h"
 
-class QScriptEngine;
-class QScriptValue;
+class QJSEngine;
+class QJSValue;
 
 QT_BEGIN_NAMESPACE
 
@@ -82,14 +82,14 @@ public:
     QPlaceCategoryTree resultCategories() const;
     QList<QPlaceCategory> resultCategoriesFlat() const;
 
-    static QList<QPlaceCategory> parseFlatCategoryList(const QScriptValue &categories);
+    static QList<QPlaceCategory> parseFlatCategoryList(const QJSValue &categories);
 
 private:
-    void processJSonData(const QScriptValue &sv);
+    void processJSonData(const QJSValue &sv);
 
-    static void processCategories(const QScriptValue &categories, const QString &parentId, QPlaceCategoryTree *tree);
-    static void processGroup(const QScriptValue &group, const QString &parentId, QPlaceCategoryTree *tree);
-    static PlaceCategoryNode processCategory(const QScriptValue &categoryValue, const QString &parentId);
+    static void processCategories(const QJSValue &categories, const QString &parentId, QPlaceCategoryTree *tree);
+    static void processGroup(const QJSValue &group, const QString &parentId, QPlaceCategoryTree *tree);
+    static PlaceCategoryNode processCategory(const QJSValue &categoryValue, const QString &parentId);
 
 private:
     QPlaceCategoryTree m_tree;

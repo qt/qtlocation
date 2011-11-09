@@ -55,8 +55,8 @@
 #include <qplacesearchresult.h>
 #include "qplacejsonparser_p.h"
 
-class QScriptEngine;
-class QScriptValue;
+class QJSEngine;
+class QJSValue;
 
 QT_BEGIN_NAMESPACE
 
@@ -72,8 +72,8 @@ public:
     QList<QPlaceSearchResult> results();
 
 private:
-    void processJSonData(const QScriptValue &sv);
-    void processResultElement(const QScriptValue &value);
+    void processJSonData(const QJSValue &sv);
+    void processResultElement(const QJSValue &value);
 
 private:
     QList<QPlaceSearchResult> searchResults;
