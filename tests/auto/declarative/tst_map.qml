@@ -44,6 +44,8 @@ import QtTest 1.0
 import QtLocation 5.0
 
 Item {
+    width:100
+    height:100
     // General-purpose elements for the test:
     Plugin { id: nokiaPlugin; name: "nokia";  PluginParameter {name: "mapping.host"; value: "for.nonexistent"} }
     Plugin { id: nokiaPlugin2; name: "nokia"; }

@@ -3,7 +3,7 @@ TARGETPATH = QtLocation
 
 include(qlocationimport.pri)
 
-QT += declarative-private gui-private core-private network location qtquick1 qt3d
+QT += declarative-private network location qtquick1 declarative qt3d core-private gui-private
 
 DESTDIR = $$QT.location.imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
@@ -37,7 +37,8 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeomappincharea_p.h \
            qdeclarativegeomapitem_p.h \
            qdeclarativegeomaptype_p.h \
-           qdeclarativegeomapscreenitem_p.h
+           qdeclarativegeomapscreenitem_p.h \
+           mapnode_p.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -62,7 +63,8 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomappincharea.cpp \
            qdeclarativegeomapitem.cpp \
            qdeclarativegeomaptype.cpp \
-           qdeclarativegeomapscreenitem.cpp
+           qdeclarativegeomapscreenitem.cpp \
+           mapnode.cpp
 
 include(declarativeplaces/declarativeplaces.pri)
 

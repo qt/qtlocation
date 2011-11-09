@@ -93,7 +93,7 @@ class QDeclarativeGeoMapItem;
 class QDeclarativeGeoMapItemBase;
 class QDeclarativeGeoMapType;
 
-class QDeclarativeGeoMap : public QQuickPaintedItem
+class QDeclarativeGeoMap : public QQuickItem
 {
     Q_OBJECT
 
@@ -118,9 +118,6 @@ public:
 
     // From QDeclarativeParserStatus
     virtual void componentComplete();
-
-    // from QQuickPaintedItem
-    virtual void paint(QPainter *painter);
 
     // from QQuickItem
     virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
@@ -171,7 +168,9 @@ public:
     void setActiveMouseArea(QDeclarativeGeoMapMouseArea *area);
     //QDeclarativeGeoMapMouseArea* activeMouseArea() const;
 
-    QDeclarativeGeoMapPinchArea* pinch() {return pinchArea_;}
+    QDeclarativeGeoMapPinchArea* pinch() {
+        return pinchArea_;
+    }
 
 public Q_SLOTS:
     void pan(int dx, int dy);
@@ -184,7 +183,6 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *e);
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
 Q_SIGNALS:
     void wheel(qreal delta);

@@ -55,6 +55,7 @@
 #include "tile.h"
 #include "cameradata.h"
 #include "mapcontroller.h"
+#include "mapnode_p.h"
 #include <Qt3D/qglscenenode.h>
 #include <Qt3D/qglbuilder.h>
 #include <Qt3D/qgeometrydata.h>
@@ -107,22 +108,23 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
-    : QQuickPaintedItem(parent),
-      plugin_(0),
-      serviceProvider_(0),
-      mappingManager_(0),
-      zoomLevel_(8.0),
-      bearing_(0.0),
-      tilt_(0.0),
-      center_(0),
-      componentCompleted_(false),
-      mappingManagerInitialized_(false),
-      flickable_(0),
-      pinchArea_(0),
-      mouseGrabberItem_(0),
-      canvas_(0),
-      touchTimer_(-1),
-      tileCache_(0)
+        : QQuickItem(parent),
+        plugin_(0),
+        serviceProvider_(0),
+        mappingManager_(0),
+        zoomLevel_(8.0),
+        bearing_(0.0),
+        tilt_(0.0),
+        center_(0),
+//      mapType_(NoMap),
+        componentCompleted_(false),
+        mappingManagerInitialized_(false),
+        flickable_(0),
+        pinchArea_(0),
+        mouseGrabberItem_(0),
+        canvas_(0),
+        touchTimer_(-1),
+        tileCache_(0)
 {
     QLOC_TRACE0;
     setAcceptHoverEvents(false);
@@ -136,36 +138,8 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     flickable_ = new QDeclarativeGeoMapFlickable(this);
     flickable_->setMap(map_);
     pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
-    setRenderTarget(QQuickPaintedItem::FramebufferObject);
 }
 
-// this function is only called & executed in rendering thread
-QSGNode* QDeclarativeGeoMap::updatePaintNode(QSGNode* node, UpdatePaintNodeData* data)
-{
-    Q_UNUSED(node);
-    Q_UNUSED(data);
-    // add any pending map items
-    if (updateMutex_.tryLock()) {
-        if (canvas_) {
-            for (int i = 0; i < mapItemsPending_.count(); i++) {
-                mapItemsPending_.at(i)->setMap(this);
-                mapItems_.append(mapItemsPending_.at(i));
-                map_->addMapItem(mapItemsPending_.at(i)->mapItem());
-            }
-            mapItemsPending_.clear();
-        }
-
-        // perform any updates needed by items
-        // can be optimized if lot of map items: usually the operation is no-op (static map items)
-        for (int i = 0; i < mapItems_.count(); ++i)
-            mapItems_.at(i)->updateItem();
-        updateMutex_.unlock();
-    } else {
-        QLOC_TRACE1("===== Map item update will be missed, mutex not acquired =====");
-    }
-    update(); // is this needed
-    return QQuickPaintedItem::updatePaintNode(node, data);
-}
 
 QDeclarativeGeoMap::~QDeclarativeGeoMap()
 {
@@ -240,41 +214,6 @@ void QDeclarativeGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
     view->repopulate();
 }
 
-class ViewportSubsurface : public QGLSubsurface
-{
-public:
-    ViewportSubsurface(QGLAbstractSurface *surface, const QRect &region,
-                       qreal adjust)
-        : QGLSubsurface(surface, region), m_adjust(adjust) {}
-
-    qreal aspectRatio() const;
-    ~ViewportSubsurface() {}
-
-private:
-    qreal m_adjust;
-};
-
-qreal ViewportSubsurface::aspectRatio() const
-{
-    return QGLSubsurface::aspectRatio() * m_adjust;
-}
-
-void QDeclarativeGeoMap::updateAspectRatio()
-{
-    if (!mappingManagerInitialized_)
-        return;
-    map_->resize(width(), height());
-    if (!map_->autoUpdate())
-        map_->update();
-}
-
-void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
-{
-    setSize(QSizeF(newGeometry.width(), newGeometry.height()));
-    updateAspectRatio();
-    QQuickItem::geometryChanged(newGeometry, oldGeometry);
-}
-
 // Note: this keyboard handling is for development purposes only
 void QDeclarativeGeoMap::keyPressEvent(QKeyEvent *e)
 {
@@ -340,106 +279,45 @@ void QDeclarativeGeoMap::keyPressEvent(QKeyEvent *e)
     update();
 }
 
-void QDeclarativeGeoMap::paint(QPainter* p)
+QSGNode* QDeclarativeGeoMap::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
-    if (!isVisible() || !mappingManagerInitialized_)
-        return;
-
-    QGLPainter painter(p);
-    if (!painter.begin()) {
-        qmlInfo(this) << tr("GL graphics system is not active; cannot use 3D items");
-        return;
+    if (width() <= 0 || height() <= 0) {
+        delete oldNode;
+        return 0;
     }
-    // No stereo rendering, set the eye as neutral
-    painter.setEye(QGL::NoEye);
-    // TODO this needs to be figured out (or confirmed as invalid thing).
-    // Currently applied transforms for this Map3D element - how to get/apply current transforms?
-    // QTransform transform = painter->combinedTransform();
-    // Then we get the rectangle that is gotten by applying the QTransform on the rect
-    // --> this is the viewport for Map3D
-    // QRect viewport = transform.mapRect(boundingRect()).toRect();
 
-    // boundingRect is in local coordinates. We need to map it to the scene coordinates
-    // in order to render to correct area.
-    QRect viewport = mapRectToScene(boundingRect()).toRect();
-    qreal adjust = 1.0f;
-    ViewportSubsurface surface(painter.currentSurface(), viewport, adjust);
-    painter.pushSurface(&surface);
-    earlyDraw(&painter);
-    if (map_->glCamera()) {
-        painter.setCamera(map_->glCamera());
+    MapNode *node = static_cast<MapNode *>(oldNode);
+
+    if (!node) {
+        node = new MapNode(map_);
+    }
+
+    node->setSize(QSize(width(), height()));
+    node->update();
+
+    //TODO: refactor below
+    if (updateMutex_.tryLock()) {
+        if (canvas_) {
+            for (int i = 0; i < mapItemsPending_.count(); i++) {
+                mapItemsPending_.at(i)->setMap(this);
+                mapItems_.append(mapItemsPending_.at(i));
+                map_->addMapItem(mapItemsPending_.at(i)->mapItem());
+            }
+            mapItemsPending_.clear();
+        }
+
+        // perform any updates needed by items
+        // can be optimized if lot of map items: usually the operation is no-op (static map items)
+        for (int i = 0; i < mapItems_.count(); ++i)
+            mapItems_.at(i)->updateItem();
+        updateMutex_.unlock();
     } else {
-        QGLCamera defCamera;
-        painter.setCamera(&defCamera);
+        QLOC_TRACE1("===== Map item update will be missed, mutex not acquired =====");
     }
-    paintGL(&painter);
-    // Draw the children items
-    painter.popSurface();
-    // QSG does not expect anyone to alter gl context state; restore defaults.
-    // Default heaps of things, because we cannot be sure what the Qt3D internally
-    // sets.
-    restoreDefaults(&painter);
+
+    return node;
 }
 
-void QDeclarativeGeoMap::restoreDefaults(QGLPainter *painter)
-{
-    // Disable the effect to return control to the GL paint engine.
-    painter->disableEffect();
-
-    // Try to restore the default options
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
-    // Set the default depth buffer options.
-    glDepthFunc(GL_LESS);
-    glDepthMask(GL_TRUE);
-#if defined(QT_OPENGL_ES)
-    glDepthRangef(0.0f, 1.0f);
-#else
-    glDepthRange(0.0f, 1.0f);
-#endif
-    // Set the default blend options.
-    glDisable(GL_BLEND);
-    if (painter->hasOpenGLFeature(QOpenGLFunctions::BlendColor))
-        painter->glBlendColor(0, 0, 0, 0);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    if (painter->hasOpenGLFeature(QOpenGLFunctions::BlendEquation))
-        painter->glBlendEquation(GL_FUNC_ADD);
-    else if (painter->hasOpenGLFeature(QOpenGLFunctions::BlendEquationSeparate))
-        painter->glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-}
-
-#ifndef GL_MULTISAMPLE
-#define GL_MULTISAMPLE 0x809D
-#endif
-
-void QDeclarativeGeoMap::earlyDraw(QGLPainter *painter)
-{
-    glClearColor(0.0,0.0,0.0,0.0);
-    // Depth buffer has been cleared already, but color buffer hasn't
-    glClear(GL_COLOR_BUFFER_BIT);
-    // Force the effect to be updated.
-    painter->disableEffect();
-#ifdef GL_RESCALE_NORMAL
-    // Scale normals by a scale factor derived from modelview matrix.
-    // Note: normals need to be unit length.
-    glEnable(GL_RESCALE_NORMAL);
-#endif
-
-#if !defined(QT_OPENGL_ES_2)
-    glShadeModel(GL_SMOOTH);
-    glEnable(GL_MULTISAMPLE);
-#endif
-
-    // Set the default effect for the scene.
-    painter->setStandardEffect(QGL::LitMaterial);
-    painter->setFaceColor(QGL::AllFaces, Qt::white);
-}
-
-void QDeclarativeGeoMap::paintGL(QGLPainter *painter)
-{
-    painter->projectionMatrix().scale(1,-1, 1); // qt3d and qsg interpret y differently
-    map_->paintGL(painter);
-}
 
 /*!
     \qmlproperty Plugin QtLocation5::Map::plugin
@@ -705,7 +583,7 @@ QDeclarativeCoordinate* QDeclarativeGeoMap::center()
         if (mappingManagerInitialized_)
             center_ = new QDeclarativeCoordinate(map_->mapController()->center().coordinate());
         else
-            center_ = new QDeclarativeCoordinate(QGeoCoordinate(0,0,0));
+            center_ = new QDeclarativeCoordinate(QGeoCoordinate(0, 0, 0));
         connect(center_,
                 SIGNAL(latitudeChanged(double)),
                 this,
@@ -939,17 +817,17 @@ bool QDeclarativeGeoMap::deliverInitialMousePressEvent(QDeclarativeGeoMapMouseAr
         if (QRectF(0, 0, ma->width(), ma->height()).contains(p)) {
             QMouseEvent me(event->type(), p, event->windowPos(), event->screenPos(),
                            event->button(), event->buttons(), event->modifiers());
-                me.accept();
-                mouseGrabberItem_ = ma;
-                ma->mouseEvent(&me);
-                event->setAccepted(me.isAccepted());
-                QLOC_TRACE2("the initial mouse press accepted: ", me.isAccepted());
-                if (me.isAccepted())
-                    return true;
-                QLOC_TRACE1("nulling the mouse grabber");
-                mouseGrabberItem_ = 0;
-            }
+            me.accept();
+            mouseGrabberItem_ = ma;
+            ma->mouseEvent(&me);
+            event->setAccepted(me.isAccepted());
+            QLOC_TRACE2("the initial mouse press accepted: ", me.isAccepted());
+            if (me.isAccepted())
+                return true;
+            QLOC_TRACE1("nulling the mouse grabber");
+            mouseGrabberItem_ = 0;
         }
+    }
     return false;
 }
 
