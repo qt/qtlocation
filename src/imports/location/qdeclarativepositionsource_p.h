@@ -61,28 +61,37 @@ class QDeclarativePositionSource : public QObject
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(QUrl nmeaSource READ nmeaSource WRITE setNmeaSource NOTIFY nmeaSourceChanged)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval NOTIFY updateIntervalChanged)
+    Q_PROPERTY(PositioningMethods supportedPositioningMethods READ supportedPositioningMethods NOTIFY supportedPositioningMethodsChanged)
+    Q_PROPERTY(PositioningMethods preferredPositioningMethods READ preferredPositioningMethods WRITE setPreferredPositioningMethods NOTIFY preferredPositioningMethodsChanged)
     Q_PROPERTY(PositioningMethod positioningMethod READ positioningMethod NOTIFY positioningMethodChanged)
     Q_ENUMS(PositioningMethod)
 
 public:
-
     enum PositioningMethod {
         NoPositioningMethod = 0,
         SatellitePositioningMethod = QGeoPositionInfoSource::SatellitePositioningMethods,
         NonSatellitePositioningMethod = QGeoPositionInfoSource::NonSatellitePositioningMethods,
         AllPositioningMethods = QGeoPositionInfoSource::AllPositioningMethods
     };
+
+    Q_DECLARE_FLAGS(PositioningMethods, PositioningMethod)
+    Q_FLAGS(PositioningMethods)
+
     QDeclarativePositionSource();
     ~QDeclarativePositionSource();
     void setNmeaSource(const QUrl& nmeaSource);
     void setUpdateInterval(int updateInterval);
     void setActive(bool active);
+    void setPreferredPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods);
 
     QUrl nmeaSource() const;
     int updateInterval() const;
     bool isActive() const;
     QDeclarativePosition* position();
+    PositioningMethods supportedPositioningMethods() const;
+    PositioningMethods preferredPositioningMethods() const;
     PositioningMethod positioningMethod() const;
+
 
 public Q_SLOTS:
     void update();
@@ -94,14 +103,17 @@ Q_SIGNALS:
     void activeChanged();
     void nmeaSourceChanged();
     void updateIntervalChanged();
+    void supportedPositioningMethodsChanged();
+    void preferredPositioningMethodsChanged();
     void positioningMethodChanged();
+
 
 private Q_SLOTS:
     void positionUpdateReceived(const QGeoPositionInfo& update);
 
 private:
     QGeoPositionInfoSource* m_positionSource;
-    PositioningMethod m_positioningMethod;
+    PositioningMethods m_positioningMethod;
     QDeclarativePosition m_position;
     QFile* m_nmeaFile;
     QString m_nmeaFileName;

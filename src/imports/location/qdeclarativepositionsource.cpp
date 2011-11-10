@@ -84,7 +84,14 @@ QDeclarativePositionSource::QDeclarativePositionSource()
     if (m_positionSource) {
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
-        m_positioningMethod = positioningMethod();
+        m_positioningMethod = supportedPositioningMethods();
+#if defined(Q_OS_SYMBIAN)
+    } else {
+        RProcess thisProcess;
+        if (!thisProcess.HasCapability(ECapabilityLocation)) {
+            qmlInfo(this) << tr("PositionSource requires the Symbian Location capability to succeed on the Symbian platform.");
+        }
+#endif
     }
 #ifdef QDECLARATIVE_POSITION_DEBUG
     if (m_positionSource)
@@ -157,9 +164,9 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
             emit activeChanged();
         }
     }
-    if (m_positioningMethod != positioningMethod()) {
-        m_positioningMethod = positioningMethod();
-        emit positioningMethodChanged();
+    if (m_positioningMethod != supportedPositioningMethods()) {
+        m_positioningMethod = supportedPositioningMethods();
+        emit supportedPositioningMethodsChanged();
     }
     emit this->nmeaSourceChanged();
 }
@@ -211,6 +218,22 @@ int QDeclarativePositionSource::updateInterval() const
 }
 
 /*!
+    \qmlmethod PositionSource::setPreferredPositioningMethod(PositioningMethod method)
+
+    Sets the preferred Positioning method.
+*/
+
+void QDeclarativePositionSource::setPreferredPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods)
+{
+    m_positionSource->setPreferredPositioningMethods(methods);
+    emit preferredPositioningMethodsChanged();
+}
+
+/*------------------------------------------------------------------------------------------------------------------*/
+/* WARNING: THE FOLLOWING FUNCTION WILL BE DEPRECATED IN THE FUTURE AND IS REPLACED BY SUPPORTED POSITIONING METHOD */
+/*------------------------------------------------------------------------------------------------------------------*/
+
+/*!
     \qmlproperty enumeration PositionSource::positioningMethod
 
     This property holds the supported positioning methods of the
@@ -227,20 +250,80 @@ int QDeclarativePositionSource::updateInterval() const
 
 QDeclarativePositionSource::PositioningMethod QDeclarativePositionSource::positioningMethod() const
 {
+    qmlInfo(this) << "Warning: PositionInfoSource::positioningMethod() is deprecated. It was replaced by supportedPositioningMethod. Please remove any usage of this function/property as it will be removed at some time in the future." << endl;
     if (m_positionSource) {
         QGeoPositionInfoSource::PositioningMethods methods = m_positionSource->supportedPositioningMethods();
-        if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
-            //qDebug() << "Returning satellite: " << QDeclarativePositionSource::SatellitePositioningMethod;
+        if (methods == QGeoPositionInfoSource::AllPositioningMethods) {
+            return QDeclarativePositionSource::AllPositioningMethods;
+        } else if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
             return QDeclarativePositionSource::SatellitePositioningMethod;
         } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
-            //qDebug() << "Returning non-satellite: " << QDeclarativePositionSource::NonSatellitePositioningMethod;
             return QDeclarativePositionSource::NonSatellitePositioningMethod;
-        } else if (methods & QGeoPositionInfoSource::AllPositioningMethods) {
-            //qDebug() << "Returning all: " << QDeclarativePositionSource::AllPositioningMethods;
-            return QDeclarativePositionSource::AllPositioningMethods;
         }
     }
-    //qDebug() << "Returning no-positioning: " << QDeclarativePositionSource::NoPositioningMethod;
+    return QDeclarativePositionSource::NoPositioningMethod;
+}
+
+/*-------------------------------------------------------------*/
+/*---------- END OF FUNCTION THAT WILL BE DEPRECATED ----------*/
+/*-------------------------------------------------------------*/
+
+/*!
+    \qmlproperty enumeration PositionSource::supportedPositioningMethod
+
+    This property holds the supported positioning methods of the
+    current source.
+
+    \list
+    \o NoPositioningMethod - No positioning methods supported (no source).
+    \o SatellitePositioningMethod - Satellite-based positioning methods such as GPS is supported.
+    \o NonSatellitePositioningMethod - Non satellite methods are supported.
+    \o AllPositioningMethods - Combination of methods are supported.
+    \endlist
+
+*/
+
+QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::supportedPositioningMethods() const
+{
+    if (m_positionSource) {
+        QGeoPositionInfoSource::PositioningMethods methods = m_positionSource->supportedPositioningMethods();
+        if (methods == QGeoPositionInfoSource::AllPositioningMethods) {
+            return QDeclarativePositionSource::AllPositioningMethods;
+        } else if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
+            return QDeclarativePositionSource::SatellitePositioningMethod;
+        } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
+            return QDeclarativePositionSource::NonSatellitePositioningMethod;
+        }
+    }
+    return QDeclarativePositionSource::NoPositioningMethod;
+}
+
+/*!
+    \qmlproperty enumeration PositionSource::preferredPositioningMethod
+
+    This property holds the supported positioning methods of the
+    current source.
+
+    \list
+    \o SatellitePositioningMethod - Satellite-based positioning methods such as GPS is supported.
+    \o NonSatellitePositioningMethod - Non satellite methods are supported.
+    \o AllPositioningMethods - Combination of methods are supported.
+    \endlist
+
+*/
+
+QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::preferredPositioningMethods() const
+{
+    if (m_positionSource) {
+        QGeoPositionInfoSource::PositioningMethods methods = m_positionSource->preferredPositioningMethods();
+        if (methods == QGeoPositionInfoSource::AllPositioningMethods) {
+            return QDeclarativePositionSource::AllPositioningMethods;
+        } else if (methods & QGeoPositionInfoSource::SatellitePositioningMethods) {
+            return QDeclarativePositionSource::SatellitePositioningMethod;
+        } else if (methods & QGeoPositionInfoSource::NonSatellitePositioningMethods) {
+            return QDeclarativePositionSource::NonSatellitePositioningMethod;
+        }
+    }
     return QDeclarativePositionSource::NoPositioningMethod;
 }
 
