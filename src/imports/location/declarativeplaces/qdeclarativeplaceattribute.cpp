@@ -53,6 +53,20 @@
     attributes in the map use the \l keys() method to get the list of keys stored in the map and
     use the \c {[]} operator to access the \l PlaceAttribute items.
 
+    The following are standard keys that are defined by the API.  \l Plugin
+    implementations are free to define additional keys.
+    \table
+        \header
+            \o key
+            \o description
+        \row
+            \o openingHours
+            \o The trading hours of the place
+        \row
+            \o payment
+            \o The types of payment the place accepts, e.g. visa, mastercard etc.
+    \endtable
+
     The following example shows how to access all \l {PlaceAttribute}{PlaceAttributes} and print
     them to the console:
 

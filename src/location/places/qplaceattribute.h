@@ -60,6 +60,14 @@ class QPlaceAttributePrivate;
 class Q_LOCATION_EXPORT QPlaceAttribute
 {
 public:
+#ifdef Q_QDOC
+    static const QLatin1Constant OpeningHours;
+    static const QLatin1Constant Payment;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(OpeningHours, "openingHours");
+    Q_DECLARE_LATIN1_CONSTANT(Payment, "payment");
+#endif
+
     QPlaceAttribute();
     QPlaceAttribute(const QPlaceAttribute &other);
     virtual ~QPlaceAttribute();

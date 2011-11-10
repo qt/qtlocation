@@ -72,7 +72,42 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
     \since QtLocation 5.0
 
     \brief The QPlaceAttribute class represents generic attribute information about a place.
+
+    A QPlaceAttribute instance stores an additional piece of information about a place that is not
+    otherwise exposed though the QPlace class.  A QPlaceAttribute encapsulates a
+    localized label which describes the attribute and rich text string representing the attribute's value.
+    Generally, both are intended to be displayed to the end-user as is.
+
+    \section2 Attribute Types
+    The QPlaceAttribute class defines some constant strings which characterize standard \e {attribute types}.
+    \list
+        \o QPlaceAttribute::OpeningHours
+        \o QPlaceAttribute::Payment
+    \endlist
+
+    The above types are used to access and modify attributes in QPlace via:
+    \list
+        \o QPlace::extendedAttribute()
+        \o QPlace::setExtendedAttribute()
+        \o QPlace::removeExtendedAttribute()
+        \o QPlace::removeExtendedAttribute()
+    \endlist
+
+    The \e {attribute type} is a string type so that providers are able to introduce
+    new attributes as necessary.
 */
+
+/*!
+   \variable QPlaceAttrubute::OpeningHours
+   The constant to specify an opening hours attribute.
+*/
+Q_DEFINE_LATIN1_CONSTANT(QPlaceAttribute::OpeningHours, "openingHours");
+
+/*!
+   \variable QPlaceAttrubute::Payment
+   The constant to specify an attribute that defines the methods of payment.
+*/
+Q_DEFINE_LATIN1_CONSTANT(QPlaceAttribute::Payment, "payment");
 
 /*!
     Constructs an attribute.
@@ -119,7 +154,7 @@ bool QPlaceAttribute::operator== (const QPlaceAttribute &other) const
 }
 
 /*!
-    Returns true if \a other is not equal to this place,
+    Returns true if \a other is not equal to this attribute,
     otherwise returns false.
 */
 bool QPlaceAttribute::operator!= (const QPlaceAttribute &other) const
@@ -128,7 +163,7 @@ bool QPlaceAttribute::operator!= (const QPlaceAttribute &other) const
 }
 
 /*!
-    Returns a user-visible label describing the attribute.
+    Returns a localized label describing the attribute.
 */
 QString QPlaceAttribute::label() const
 {
@@ -136,7 +171,7 @@ QString QPlaceAttribute::label() const
 }
 
 /*!
-    Sets the label of the attribute.
+    Sets the \a label of the attribute.
 */
 void QPlaceAttribute::setLabel(const QString &label)
 {
@@ -144,7 +179,7 @@ void QPlaceAttribute::setLabel(const QString &label)
 }
 
 /*!
-    Returns text representing the attribute value.
+    Returns a piece of rich text representing the attribute value.
 */
 QString QPlaceAttribute::text() const
 {
@@ -152,7 +187,7 @@ QString QPlaceAttribute::text() const
 }
 
 /*!
-    Sets the text of the attribute.
+    Sets the \a text of the attribute.
 */
 void QPlaceAttribute::setText(const QString &text)
 {
