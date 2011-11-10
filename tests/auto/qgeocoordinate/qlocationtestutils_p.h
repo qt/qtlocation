@@ -75,9 +75,6 @@
 class QLocationTestUtils
 {
 public:
-    static void uheap_mark();
-    static void uheap_mark_end();
-
     static bool hasDefaultSource();
     static bool hasDefaultMonitor();
 

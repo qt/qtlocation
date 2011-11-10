@@ -229,49 +229,33 @@ private slots:
     {
         QGeoCoordinate *coordinate;
 
-        QLocationTestUtils::uheap_mark();
         coordinate = new QGeoCoordinate();
         delete coordinate;
-        QLocationTestUtils::uheap_mark_end();
 
-        QLocationTestUtils::uheap_mark();
         coordinate = new QGeoCoordinate(0.0, 0.0);
         delete coordinate;
-        QLocationTestUtils::uheap_mark_end();
 
-        QLocationTestUtils::uheap_mark();
         coordinate = new QGeoCoordinate(0.0, 0.0, 0.0);
         delete coordinate;
-        QLocationTestUtils::uheap_mark_end();
 
-        QLocationTestUtils::uheap_mark();
         coordinate = new QGeoCoordinate(90.0, 180.0);
         delete coordinate;
-        QLocationTestUtils::uheap_mark_end();
 
-        QLocationTestUtils::uheap_mark();
         coordinate = new QGeoCoordinate(-90.0, -180.0);
         delete coordinate;
-        QLocationTestUtils::uheap_mark_end();
 
-        QLocationTestUtils::uheap_mark();
         coordinate = new QGeoCoordinate(90.1, 180.1);
         delete coordinate;
-        QLocationTestUtils::uheap_mark_end();
 
-        QLocationTestUtils::uheap_mark();
         coordinate = new QGeoCoordinate(-90.1, -180.1);
         delete coordinate;
-        QLocationTestUtils::uheap_mark_end();
     }
 
     void destructor2()
     {
         QFETCH(QGeoCoordinate, c);
-        QLocationTestUtils::uheap_mark();
         QGeoCoordinate *coordinate = new QGeoCoordinate(c);
         delete coordinate;
-        QLocationTestUtils::uheap_mark_end();
     }
 
     void destructor2_data()

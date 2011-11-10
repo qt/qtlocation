@@ -91,15 +91,11 @@ void tst_QGeoManeuver::destructor()
 {
     QGeoManeuver *qgeomaneuvercopy;
 
-    QLocationTestUtils::uheap_mark();
     qgeomaneuvercopy = new QGeoManeuver();
     delete qgeomaneuvercopy;
-    QLocationTestUtils::uheap_mark_end();
 
-    QLocationTestUtils::uheap_mark();
     qgeomaneuvercopy = new QGeoManeuver(*qgeomaneuver);
     delete qgeomaneuvercopy;
-    QLocationTestUtils::uheap_mark_end();
 }
 
 void tst_QGeoManeuver::direction()

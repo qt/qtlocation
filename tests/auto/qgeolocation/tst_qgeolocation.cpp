@@ -83,15 +83,11 @@ void tst_QGeoLocation::destructor()
 {
     QGeoLocation *qgeolocationcopy;
 
-    QLocationTestUtils::uheap_mark();
     qgeolocationcopy = new QGeoLocation();
     delete qgeolocationcopy;
-    QLocationTestUtils::uheap_mark_end();
 
-    QLocationTestUtils::uheap_mark();
     qgeolocationcopy = new QGeoLocation(m_location);
     delete qgeolocationcopy;
-    QLocationTestUtils::uheap_mark_end();
 }
 
 void tst_QGeoLocation::address()

@@ -182,20 +182,16 @@ void TestQGeoPositionInfoSource::cleanupTestCase()
 // TC_ID_3_x_1
 void TestQGeoPositionInfoSource::constructor_withParent()
 {
-    //QLocationTestUtils::uheap_mark();
     QObject *parent = new QObject();
     new MyPositionSource(parent);
     delete parent;
-    //QLocationTestUtils::uheap_mark_end();
 }
 
 // TC_ID_3_x_2
 void TestQGeoPositionInfoSource::constructor_noParent()
 {
-    //QLocationTestUtils::uheap_mark();
     MyPositionSource *obj = new MyPositionSource();
     delete obj;
-    //QLocationTestUtils::uheap_mark_end();
 }
 
 void TestQGeoPositionInfoSource::updateInterval()
@@ -275,14 +271,12 @@ void TestQGeoPositionInfoSource::preferredPositioningMethods()
 // sources of location data
 void TestQGeoPositionInfoSource::createDefaultSource()
 {
-    //QLocationTestUtils::uheap_mark();
     QObject *parent = new QObject;
 
     QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(parent);
     // now all platforms have the dummy plugin at least
     QVERIFY(source != 0);
     delete parent;
-    //QLocationTestUtils::uheap_mark_end();
 }
 
 void TestQGeoPositionInfoSource::setUpdateInterval()

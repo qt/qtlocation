@@ -37,16 +37,6 @@ RESOURCES += resource.qrc
 
 INCLUDEPATH += $$QT.location.includes
 
-symbian {
-    TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
-    TARGET.UID3 = 0x2002BFCA
-    pluginDep.sources = $${TARGET}.dll
-    pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
-    DEPLOYMENT += pluginDep
-    LIBS += -lefsrv
-}
-
 target.path += $$[QT_INSTALL_PLUGINS]/geoservices
 INSTALLS += target
 

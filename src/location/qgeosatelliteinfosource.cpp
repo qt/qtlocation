@@ -47,9 +47,7 @@
 #include <QtCore/private/qfactoryloader_p.h>
 #include <QFile>
 
-#if defined(Q_OS_SYMBIAN)
-#   include "qgeosatelliteinfosource_s60_p.h"
-#elif defined(QT_SIMULATOR)
+#if defined(QT_SIMULATOR)
 #   include "qgeosatelliteinfosource_simulator_p.h"
 #elif defined(Q_OS_WINCE)
 #   include "qgeosatelliteinfosource_wince_p.h"
@@ -241,9 +239,6 @@ void QGeoSatelliteInfoSourcePrivate::loadStaticPlugins(QHash<QString, QGeoPositi
 
     \warning On Windows CE it is not possible to detect if a device is GPS enabled.
     The default satellite source on a Windows CE device without GPS support will never provide any satellite data.
-
-    \warning On Symbian it is currently only possible to instantiate and use the satellite sources in the main thread
-    of the application.
 */
 
 /*!
@@ -261,9 +256,6 @@ QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
 
     Returns 0 if the system has no default source and no valid plugins
     could be found.
-
-    Note: Symbian applications will need to have the Location capability
-    otherwise this will return 0.
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {
@@ -278,12 +270,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
         }
     }
 
-#if defined(Q_OS_SYMBIAN)
-    CQGeoSatelliteInfoSourceS60 *ret = NULL;
-    TRAPD(error, QT_TRYCATCH_LEAVING(ret = CQGeoSatelliteInfoSourceS60::NewL(parent)));
-    if (error == KErrNone)
-        return ret;
-#elif defined(Q_OS_WINCE)
+#if defined(Q_OS_WINCE)
     return new QGeoSatelliteInfoSourceWinCE(parent);
 #elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))
     QGeoSatelliteInfoSourceMaemo *source = new QGeoSatelliteInfoSourceMaemo(parent);

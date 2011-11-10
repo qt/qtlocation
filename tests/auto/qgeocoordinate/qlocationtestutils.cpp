@@ -41,40 +41,14 @@
 
 #include "qlocationtestutils_p.h"
 
-#if defined(Q_OS_SYMBIAN)
-    #include <e32std.h>
-#endif
-
-void QLocationTestUtils::uheap_mark()
-{
-#if defined(Q_OS_SYMBIAN)
-    __UHEAP_MARK;
-#endif
-}
-
-void QLocationTestUtils::uheap_mark_end()
-{
-#if defined(Q_OS_SYMBIAN)
-    __UHEAP_MARKEND;
-#endif
-}
-
 bool QLocationTestUtils::hasDefaultSource()
 {
-#if defined(Q_OS_SYMBIAN)
-    return true;
-#else
     return false;
-#endif
 }
 
 bool QLocationTestUtils::hasDefaultMonitor()
 {
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
-    return true;
-#else
     return false;
-#endif
 }
 
 QString QLocationTestUtils::addNmeaChecksumAndBreaks(const QString &sentence)

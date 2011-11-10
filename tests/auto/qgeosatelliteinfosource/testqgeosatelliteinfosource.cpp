@@ -156,11 +156,9 @@ void TestQGeoSatelliteInfoSource::test_slot2()
 
 void TestQGeoSatelliteInfoSource::constructor_withParent()
 {
-    //QLocationTestUtils::uheap_mark();
     QObject *parent = new QObject();
     new MySatelliteSource(parent);
     delete parent;
-    //QLocationTestUtils::uheap_mark_end();
 }
 
 void TestQGeoSatelliteInfoSource::constructor_noParent()

@@ -70,41 +70,7 @@
 
 #undef DISK_CACHE_ENABLED
 
-#ifdef Q_OS_SYMBIAN
-#include <f32file.h>
-#endif
-
 QT_BEGIN_NAMESPACE
-
-#if defined(Q_OS_SYMBIAN)
-QChar QGeoMappingManagerEngineNokia::findFirstInternalFlashDrive()
-{
-    QChar flashDrive;
-    RFs fsSession;
-    // if something leaves just return an empty QChar
-    TRAP_IGNORE(
-        User::LeaveIfError(fsSession.Connect());
-        CleanupClosePushL(fsSession);
-        TDriveList drivelist;
-        User::LeaveIfError(fsSession.DriveList(drivelist));
-        for (int i = 0; i < KMaxDrives; ++i) {
-            if (drivelist[i] != 0) {
-                TChar driveChar;
-                User::LeaveIfError(RFs::DriveToChar(i, driveChar));
-                TDriveInfo driveInfo;
-                if (fsSession.Drive(driveInfo, i) != KErrNone)
-                    continue;
-                if ((driveInfo.iDriveAtt & KDriveAttInternal) && driveInfo.iType == EMediaHardDisk) {
-                    flashDrive = QChar(driveChar);
-                    break;
-                }
-            }
-        }
-        CleanupStack::PopAndDestroy(&fsSession);
-    )
-    return flashDrive;
-}
-#endif //Q_OS_SYMBIAN
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoMappingManagerEngine(parameters),
@@ -174,15 +140,7 @@ void QGeoMappingManagerEngineNokia::init()
         cacheDir = parameters.value("mapping.cache.directory").toString();
 
     if (cacheDir.isEmpty()) {
-#if defined(Q_OS_SYMBIAN)
-        QChar driveLetter(findFirstInternalFlashDrive());
-        if (!driveLetter.isNull()) {
-            cacheDir = driveLetter;
-            cacheDir += ":/data/nokia/maptiles";
-        }
-#else
         cacheDir = QDir::temp().path()+"/maptiles";
-#endif
     }
     if (!cacheDir.isEmpty()) {
         m_cache = new QNetworkDiskCache(this);
@@ -255,11 +213,7 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const TileSpec &spec) co
     requestString += QString::number(spec.y());
     requestString += slash;
     requestString += sizeToStr(tileSize());
-//#if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     static const QString slashpng("/png8");
-//#else
-//    static const QString slashpng("/png");
-//#endif
     requestString += slashpng;
 
     if (!m_token.isEmpty()) {

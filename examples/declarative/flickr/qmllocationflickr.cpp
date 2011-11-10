@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     // Qt.quit() called in embedded .qml by default only emits
     // quit() signal, so do this (optionally use Qt.exit()).
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_6)
     view.showFullScreen();
 #else
     view.setGeometry(QRect(100, 100, 360, 640));

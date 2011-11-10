@@ -8,12 +8,6 @@ QT += network location
 
 RESOURCES += maps.qrc
 
-symbian: {
-    TARGET.CAPABILITY = Location \
-                        NetworkServices \
-                        ReadUserData \
-                        WriteUserData
-}
 
 # TODO this example needs to be converted to work with Qt5
 # when the c++ headers are available.

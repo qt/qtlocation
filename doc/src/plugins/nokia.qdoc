@@ -30,7 +30,7 @@
 \title QtLocation Nokia plugin
 \ingroup QtLocation-plugins
 
-\brief Uses the relevant Ovi services provided by Nokia.
+\brief Uses the relevant Nokia services provided by Nokia.
 
 \section1 Overview
 
@@ -44,15 +44,8 @@ Note that accepting the terms and conditions only applies those terms and condit
 the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API
 plugins that may be included with Qt.
 
-On Symbian platforms the applications using the Nokia plugin will need NetworkServices capability
-to access the online services.
-
 The online plugin uses the tiled map classes, which cache tile data in heap memory (currently up to
-10 MB on Symbian and Maemo5 and Harmattan platforms). Because default heap size for Qt application
-on Symbian is 4 MB, it may be good idea to increase the application's heap size (depending on the
-app of course). Otherwise somewhat misleading error popups may appear,
-e.g. "<application name>: Memory full. Close some applications and try again."
-See e.g.  \l {http://library.forum.nokia.com/index.jsp?topic=/Qt_for_Symbian_Developers_Library/GUID-4427F6F8-AB72-489B-BB9C-3261A0568E4E.html}{Forum Nokia documentation.}
+10 MB).
 
 \section1 Parameters
 
@@ -78,14 +71,6 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \o Map tile cache directory used as network disk cache.
 
     Default place for the cache is "maptiles" directory in system temp.
-
-    On Symbian platform by default the cache is placed into internal mass memory drive directory
-    "/data/nokia/maptiles".
-
-    If no internal mass memory is present on Symbian device caching is not used by default.
-
-    Changing the cache directory on Symbian may cause additional capability needs depending on
-    where the new directory is placed.
 
     Map tile caching is disabled on Maemo, Meego and Windows CE platforms. Using the parameter on
     these platforms will have no effect.

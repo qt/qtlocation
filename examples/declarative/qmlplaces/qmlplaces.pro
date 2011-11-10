@@ -17,10 +17,3 @@ OTHER_FILES = qmlplaces.qml \
     RatingView.qml
 
 RESOURCES += qmlplaces.qrc
-
-symbian {
-    #Symbian specific definitions
-    TARGET.UID3 = 0xE7E7BCD6
-    TARGET.CAPABILITY = NetworkServices
-    TARGET.EPOCALLOWDLLDATA = 1
-}

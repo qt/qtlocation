@@ -48,9 +48,7 @@
 #include <QCryptographicHash>
 #include <QtCore/private/qfactoryloader_p.h>
 
-#if defined(Q_OS_SYMBIAN)
-#   include "qgeopositioninfosource_s60_p.h"
-#elif defined(QT_SIMULATOR)
+#if defined(QT_SIMULATOR)
 #   include "qgeopositioninfosource_simulator_p.h"
 #elif defined(Q_OS_WINCE)
 #   include "qgeopositioninfosource_wince_p.h"
@@ -115,10 +113,6 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 
     \warning On Windows CE it is not possible to detect if a device is GPS enabled.
     The default position source on a Windows CE device without GPS support will never provide any position data.
-
-    \warning On Symbian it is currently only possible to instantiate and use the position sources in the main thread
-    of the application.
-
 */
 
 /*!
@@ -368,9 +362,6 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
 
     Returns 0 if the system has no default position source and no valid plugins
     could be found.
-
-    Note: Symbian applications will need to have the Location capability
-    otherwise this will return 0.
 */
 
 QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)
@@ -386,12 +377,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
         }
     }
 
-#if defined(Q_OS_SYMBIAN)
-    QGeoPositionInfoSource *ret = NULL;
-    TRAPD(error, QT_TRYCATCH_LEAVING(ret = CQGeoPositionInfoSourceS60::NewL(parent)));
-    if (error == KErrNone)
-        return ret;
-#elif defined(QT_SIMULATOR)
+#if defined(QT_SIMULATOR)
     return new QGeoPositionInfoSourceSimulator(parent);
 #elif defined(Q_OS_WINCE)
     return new QGeoPositionInfoSourceWinCE(parent);

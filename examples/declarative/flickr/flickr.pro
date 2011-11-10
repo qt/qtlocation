@@ -4,11 +4,6 @@ TARGET = qml_location_flickr
 QT += declarative network location qtquick1
 SOURCES += qmllocationflickr.cpp
 
-symbian {
-    TARGET.CAPABILITY = NetworkServices Location ReadUserData WriteUserData
-    TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
-}
-
 RESOURCES += \
     flickr.qrc
 

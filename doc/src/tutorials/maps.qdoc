@@ -1902,9 +1902,9 @@ void MainWindow::openNetworkSession()
     of zoom buttons on the right-hand side of the map display.
 
     We also currently assume that panning the map using a mouse or touch
-    screen is possible, which is not the case on, for example, many
-    Symbian devices, which lack touch input. To rectify this, we will
-    add support for handling arrow key events in \a GeoMap.
+    screen is possible, which is not the case on many embedded devices.
+    To rectify this, we will add support for handling arrow key events
+    in \a GeoMap.
 
     First up, our zoom buttons. We're going to use a very similar setup
     to that which we used for the sliding status bar previously, and

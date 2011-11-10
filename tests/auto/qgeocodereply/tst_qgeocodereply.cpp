@@ -123,11 +123,8 @@ void tst_QGeocodeReply::destructor()
     QFETCH(QGeocodeReply::Error,error);
     QFETCH(QString,msg);
 
-    QLocationTestUtils::uheap_mark();
     qgeocodereplycopy = new QGeocodeReply (error,msg,0);
     delete qgeocodereplycopy;
-    QLocationTestUtils::uheap_mark_end();
-
 }
 
 void tst_QGeocodeReply::destructor_data()
