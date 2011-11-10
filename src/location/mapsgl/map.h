@@ -100,8 +100,8 @@ public:
     void removeMapItem(MapItem *item);
     void clearMapItems();
 
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const;
+    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
 
 public Q_SLOTS:
     void clearCache();

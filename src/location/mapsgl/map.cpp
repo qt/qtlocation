@@ -184,26 +184,30 @@ void Map::clearMapItems()
     d_ptr->clearMapItems();
 }
 
-QGeoCoordinate Map::screenPositionToCoordinate(const QPointF &pos) const
+QGeoCoordinate Map::screenPositionToCoordinate(const QPointF &pos, bool clipToViewport) const
 {
-    int w = d_ptr->width();
-    int h = d_ptr->height();
+    if (clipToViewport) {
+        int w = d_ptr->width();
+        int h = d_ptr->height();
 
-    if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
-        return QGeoCoordinate();
+        if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
+            return QGeoCoordinate();
+    }
 
     return d_ptr->screenPositionToCoordinate(pos);
 }
 
-QPointF Map::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
+QPointF Map::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
 {
     QPointF pos = d_ptr->coordinateToScreenPosition(coordinate);
 
-    int w = d_ptr->width();
-    int h = d_ptr->height();
+    if (clipToViewport) {
+        int w = d_ptr->width();
+        int h = d_ptr->height();
 
-    if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
-        return QPointF(qQNaN(), qQNaN());
+        if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
+            return QPointF(qQNaN(), qQNaN());
+    }
 
     return pos;
 }
