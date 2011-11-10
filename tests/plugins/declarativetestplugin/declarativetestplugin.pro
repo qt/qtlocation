@@ -22,7 +22,7 @@ SOURCES += locationtest.cpp \
            ../../../src/imports/location/qdeclarativecoordinate.cpp
 
 # Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
-# are both copied to qt/imports/QtMobility/location -directory,
+# are both copied to qt/imports/QtLocation -directory,
 # as the "/imports" is the default place where qmlviewer looks for plugins
 # (otherwise qmlviewer -I <path> -option is needed)
 

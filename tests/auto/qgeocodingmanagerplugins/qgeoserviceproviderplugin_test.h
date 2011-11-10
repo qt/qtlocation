@@ -50,13 +50,14 @@ QT_USE_NAMESPACE
 class QGeoServiceProviderFactoryTest: public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QGeoServiceProviderFactory)
+    Q_INTERFACES(QGeoServiceProviderFactory:QFactoryInterface)
 public:
     QGeoServiceProviderFactoryTest();
     ~QGeoServiceProviderFactoryTest();
 
     QString providerName() const;
     int providerVersion() const;
+    QStringList keys() const;
 
     QGeocodingManagerEngine* createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error, QString *errorString) const;

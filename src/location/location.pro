@@ -6,7 +6,7 @@ QPRO_PWD   = $$PWD
 CONFIG += module
 MODULE_PRI = ../../modules/qt_location.pri
 
-QT = core gui network
+QT = core core-private gui network
 
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
@@ -36,7 +36,6 @@ PUBLIC_HEADERS += \
                     qnmeapositioninfosource.h \
                     qgeopositioninfosourcefactory.h \
                     qlatin1constant.h \
-                    qmobilitypluginsearch.h \
                     qtlocation.h \
                     qlocationglobal.h
 

@@ -41,11 +41,12 @@
 #include <qgeopositioninfosource.h>
 #include "qgeopositioninfosourcefactory.h"
 
+#include <QFile>
 #include <QPluginLoader>
 #include <QStringList>
 #include <QSettings>
 #include <QCryptographicHash>
-#include "qmobilitypluginsearch.h"
+#include <QtCore/private/qfactoryloader_p.h>
 
 #if defined(Q_OS_SYMBIAN)
 #   include "qgeopositioninfosource_s60_p.h"
@@ -69,6 +70,11 @@
 #endif
 
 QT_BEGIN_NAMESPACE
+
+#ifndef QT_NO_LIBRARY
+Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
+        (QT_POSITION_SOURCE_INTERFACE, QLatin1String("/position")))
+#endif
 
 /*!
     \class QGeoPositionInfoSource
@@ -166,9 +172,6 @@ QList<QGeoPositionInfoSourceFactory*> QGeoPositionInfoSourcePrivate::pluginsSort
 
 void QGeoPositionInfoSourcePrivate::loadDynamicPlugins(QHash<QString, QGeoPositionInfoSourceFactory *> &plugins)
 {
-    QStringList paths;
-    paths << mobilityPlugins(QLatin1String("position"));
-
     QPluginLoader qpl;
     QString blockName;
 
@@ -222,26 +225,28 @@ void QGeoPositionInfoSourcePrivate::loadDynamicPlugins(QHash<QString, QGeoPositi
             }
 
             // still set blockName to ensure the plugin doesn't load
-            blockName = parts.at(1);
+            blockName = parts.at(0);
         } else {
             qWarning("Position plugin whitelist: invalid format -- should be key,filename,hash,size");
         }
     }
 
-    for (int i = 0; i < paths.count(); ++i) {
-        if (paths.at(i) != blockName) {
-            qpl.setFileName(paths.at(i));
-
-            QGeoPositionInfoSourceFactory *f =
-                    qobject_cast<QGeoPositionInfoSourceFactory*>(qpl.instance());
-            if (f) {
-                QString name = f->sourceName();
-
-    #if !defined QT_NO_DEBUG
+    QFactoryLoader *l = loader();
+    QString key;
+    for (int i = 0; i < l->keys().count(); i++) {
+        key = l->keys().at(i);
+        QGeoPositionInfoSourceFactory *f =
+                qobject_cast<QGeoPositionInfoSourceFactory*>(l->instance(key));
+        if (f) {
+            const QString name = f->sourceName();
+            if (name == blockName) {
+                delete f;
+            } else {
+#if !defined QT_NO_DEBUG
                 const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
                 if (showDebug)
                     qDebug("Dynamic: found a service provider plugin with name %s", qPrintable(name));
-    #endif
+#endif
                 plugins.insertMulti(name, f);
             }
         }

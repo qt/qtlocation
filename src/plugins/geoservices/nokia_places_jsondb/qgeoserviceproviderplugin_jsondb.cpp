@@ -57,6 +57,11 @@ QString QGeoServiceProviderFactoryJsonDb::providerName() const
     return QLatin1String("nokia_places_jsondb");
 }
 
+QStringList QGeoServiceProviderFactoryJsonDb::keys() const
+{
+    return QStringList() << QLatin1String("nokia_places_jsondb");
+}
+
 int QGeoServiceProviderFactoryJsonDb::providerVersion() const
 {
     return 1;

@@ -57,13 +57,14 @@ QT_BEGIN_NAMESPACE
 class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QGeoServiceProviderFactory)
+    Q_INTERFACES(QGeoServiceProviderFactory:QFactoryInterface)
 public:
     QGeoServiceProviderFactoryNokia();
     ~QGeoServiceProviderFactoryNokia();
 
     QString providerName() const;
     int providerVersion() const;
+    QStringList keys() const;
 
     QGeocodingManagerEngine* createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,

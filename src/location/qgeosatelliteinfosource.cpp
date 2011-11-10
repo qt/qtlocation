@@ -44,7 +44,8 @@
 #include <QStringList>
 #include <QCryptographicHash>
 #include <QSettings>
-#include "qmobilitypluginsearch.h"
+#include <QtCore/private/qfactoryloader_p.h>
+#include <QFile>
 
 #if defined(Q_OS_SYMBIAN)
 #   include "qgeosatelliteinfosource_s60_p.h"
@@ -68,6 +69,11 @@
 #endif
 
 QT_BEGIN_NAMESPACE
+
+#ifndef QT_NO_LIBRARY
+Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
+        (QT_POSITION_SOURCE_INTERFACE, QLatin1String("/position")))
+#endif
 
 class QGeoSatelliteInfoSourcePrivate
 {
@@ -108,9 +114,6 @@ QList<QGeoPositionInfoSourceFactory*> QGeoSatelliteInfoSourcePrivate::pluginsSor
 
 void QGeoSatelliteInfoSourcePrivate::loadDynamicPlugins(QHash<QString, QGeoPositionInfoSourceFactory *> &plugins)
 {
-    QStringList paths;
-    paths << mobilityPlugins(QLatin1String("position"));
-
     QPluginLoader qpl;
     QString blockName;
 
@@ -170,20 +173,22 @@ void QGeoSatelliteInfoSourcePrivate::loadDynamicPlugins(QHash<QString, QGeoPosit
         }
     }
 
-    for (int i = 0; i < paths.count(); ++i) {
-        if (paths.at(i) != blockName) {
-            qpl.setFileName(paths.at(i));
-
-            QGeoPositionInfoSourceFactory *f =
-                    qobject_cast<QGeoPositionInfoSourceFactory*>(qpl.instance());
-            if (f) {
-                QString name = f->sourceName();
-
-    #if !defined QT_NO_DEBUG
+    QFactoryLoader* l = loader();
+    QString key;
+    for (int i = 0; i < l->keys().count(); ++i) {
+        key = l->keys().at(i);
+        QGeoPositionInfoSourceFactory *f =
+                qobject_cast<QGeoPositionInfoSourceFactory*>(l->instance(key));
+        if (f) {
+            const QString name = f->sourceName();
+            if (name == blockName) {
+                delete f;
+            } else {
+#if !defined QT_NO_DEBUG
                 const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
                 if (showDebug)
                     qDebug("Dynamic: found a service provider plugin with name %s", qPrintable(name));
-    #endif
+#endif
                 plugins.insertMulti(name, f);
             }
         }

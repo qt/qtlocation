@@ -59,6 +59,11 @@ QString QGeoServiceProviderFactoryTest::providerName() const
     return "qmlgeo.test.plugin";
 }
 
+QStringList QGeoServiceProviderFactoryTest::keys() const
+{
+    return QStringList() << QLatin1String("qmlgeo.test.plugin");
+}
+
 int QGeoServiceProviderFactoryTest::providerVersion() const
 {
     return 3;

@@ -176,11 +176,13 @@ void DummySource::doTimeout()
 class QGeoPositionInfoSourceFactoryTest : public QObject, public QGeoPositionInfoSourceFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QGeoPositionInfoSourceFactory)
+    Q_INTERFACES(QGeoPositionInfoSourceFactory:QFactoryInterface)
 
 public:
     QString sourceName() const;
     int sourceVersion() const;
+
+    QStringList keys() const { return QStringList() << QLatin1String("testposition.source"); }
 
     QGeoPositionInfoSource *positionInfoSource(QObject *parent);
     QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);

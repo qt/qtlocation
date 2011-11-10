@@ -64,10 +64,14 @@
 #include <QObject>
 #include <QProcess>
 #include <QEventLoop>
-
-#include "qmobilitypluginsearch.h"
+#include <QtCore/private/qfactoryloader_p.h>
 
 QT_BEGIN_NAMESPACE
+
+#ifndef QT_NO_LIBRARY
+Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
+        (QT_GEOSERVICE_BACKEND_INTERFACE, QLatin1String("/geoservices")))
+#endif
 
 /*!
     \class QGeoServiceProvider
@@ -95,7 +99,7 @@ QT_BEGIN_NAMESPACE
     Subclasses of QGeoServiceProvider guarantee that the different services
     that they provide are interoperable.
 
-    At this point only the Nokia Services plugin is pacakged with Qt Mobility,
+    At this point only the Nokia Services plugin is packaged with Qt,
     which is accessible using the provider name "nokia".
 */
 
@@ -456,17 +460,13 @@ QHash<QString, QGeoServiceProviderFactory*> QGeoServiceProviderPrivate::plugins(
 
 void QGeoServiceProviderPrivate::loadDynamicPlugins(QHash<QString, QGeoServiceProviderFactory*> *plugins)
 {
-    QStringList paths;
-    paths << mobilityPlugins(QLatin1String("geoservices"));
-
-    QPluginLoader qpl;
-    for (int i = 0; i < paths.count(); ++i) {
-        qpl.setFileName(paths.at(i));
-
-        QGeoServiceProviderFactory *f = qobject_cast<QGeoServiceProviderFactory*>(qpl.instance());
+    QFactoryLoader *l = loader();
+    QString key;
+    for (int i = 0; i < l->keys().count(); i++) {
+        key = l->keys().at(i);
+        QGeoServiceProviderFactory *f = qobject_cast<QGeoServiceProviderFactory*>(l->instance(key));
         if (f) {
-            QString name = f->providerName();
-
+            const QString name = f->providerName();
 #if !defined QT_NO_DEBUG
             const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
             if (showDebug)

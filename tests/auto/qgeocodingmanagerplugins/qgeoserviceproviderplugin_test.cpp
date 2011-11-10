@@ -57,6 +57,11 @@ QString QGeoServiceProviderFactoryTest::providerName() const
     return "static.geocode.test.plugin";
 }
 
+QStringList QGeoServiceProviderFactoryTest::keys() const
+{
+    return QStringList() << QLatin1String("static.geocode.test.plugin");
+}
+
 int QGeoServiceProviderFactoryTest::providerVersion() const
 {
     return 3;

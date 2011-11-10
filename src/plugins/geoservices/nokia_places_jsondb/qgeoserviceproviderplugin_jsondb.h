@@ -50,13 +50,15 @@ QT_USE_NAMESPACE
 class QGeoServiceProviderFactoryJsonDb : public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QGeoServiceProviderFactory)
+    Q_INTERFACES(QGeoServiceProviderFactory:QFactoryInterface)
 public:
     QGeoServiceProviderFactoryJsonDb();
     ~QGeoServiceProviderFactoryJsonDb();
 
     QString providerName() const;
     int providerVersion() const;
+
+    QStringList keys() const;
 
     QGeocodingManagerEngine* createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,

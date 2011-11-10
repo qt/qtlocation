@@ -67,6 +67,11 @@ QString QGeoServiceProviderFactoryNokia::providerName() const
     return "nokia";
 }
 
+QStringList QGeoServiceProviderFactoryNokia::keys() const
+{
+    return QStringList() << QLatin1String("nokia");
+}
+
 int QGeoServiceProviderFactoryNokia::providerVersion() const
 {
     return 1;
