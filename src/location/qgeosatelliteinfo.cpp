@@ -71,12 +71,17 @@ public:
 /*!
     \enum QGeoSatelliteInfo::Attribute
     Defines the attributes for the satellite information.
-
-    \enum QGeoSatelliteInfo::SatelliteSystem
-    Defines the GNSS system of the satellite.
-
     \value Elevation The elevation of the satellite, in degrees.
     \value Azimuth The azimuth to true north, in degrees.
+*/
+
+/*!
+    \enum QGeoSatelliteInfo::SatelliteSystem
+    Defines the GNSS system of the satellite.
+    \value Undefined Not defined.
+    \value GPS Global Positioning System (USA).
+    \value GLONASS Global Positioning System (Russia).
+
 */
 
 
