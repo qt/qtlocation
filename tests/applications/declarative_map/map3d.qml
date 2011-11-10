@@ -281,6 +281,38 @@ Item {
                 }
             }
         }
+
+        MapScreenItem {
+            objectName: "blinky screen item 1"
+            coordinate: Coordinate { latitude: -19; longitude : 146 }
+            sourceItem: AnimatedImage {
+                width: 80
+                height: 80
+                playing: true
+                source: "blinky.gif"
+            }
+        }
+
+
+        MapScreenItem {
+            objectName: "blinky screen item 2"
+            coordinate: brisbaneCoordinate
+            anchorPoint: Qt.point(40, 40)
+            zoomLevel: 6.0
+            sourceItem: AnimatedImage {
+                width: 80
+                height: 80
+                playing: true
+                source: "blinky.gif"
+                MouseArea {
+                    anchors.fill: parent;
+                    onClicked: {
+                        parent.parent.zoomLevel += 1
+                    }
+                }
+            }
+        }
+
         MapItem {
             objectName: 'blinky static item'
             zoomLevel: 7 // at which map's  zoom level the width and height are '1-to-1'

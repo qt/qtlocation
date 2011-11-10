@@ -61,6 +61,7 @@
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
 #include "qdeclarativegeomapitem_p.h"
+#include "qdeclarativegeomapscreenitem_p.h"
 #include "qdeclarativegeomapitemview_p.h"
 
 //Place includes
@@ -112,6 +113,7 @@ public:
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
             qmlRegisterType<QDeclarativeGeoMap>(uri, 5, 0, "Map");
             qmlRegisterType<QDeclarativeGeoMapItem>(uri, 5, 0, "MapItem");
+            qmlRegisterType<QDeclarativeGeoMapScreenItem>(uri, 5, 0, "MapScreenItem");
             qmlRegisterType<QDeclarativeGeoMapItemView>(uri, 5, 0, "MapItemView");
             qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 5, 0, "MapMouseArea");
             qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 5, 0, "MapMouseEvent");

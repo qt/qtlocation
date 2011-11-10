@@ -42,6 +42,7 @@
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
 
+#include "qdeclarativegeomapscreenitem_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include <Qt3D/qglview.h>
@@ -127,7 +128,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     QLOC_TRACE0;
     setAcceptHoverEvents(false);
     setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
-    setFlags(QQuickItem::ItemHasContents);
+    setFlags(QQuickItem::ItemHasContents | QQuickItem::ItemClipsChildrenToShape);
 
     // Create internal flickable and pinch area.
     tileCache_ = new TileCache();
@@ -220,6 +221,12 @@ void QDeclarativeGeoMap::populateMap()
         if (mapItem) {
             addMapItem(mapItem);
         }
+
+        QDeclarativeGeoMapScreenItem* mapScreenItem = qobject_cast<QDeclarativeGeoMapScreenItem*>(kids.at(i));
+        if (mapScreenItem) {
+            addMapScreenItem(mapScreenItem);
+        }
+
         QDeclarativeGeoMapMouseArea *mapMouseArea = qobject_cast<QDeclarativeGeoMapMouseArea*>(kids.at(i));
         if (mapMouseArea) {
             mapMouseArea->setMap(this);
@@ -1150,6 +1157,50 @@ void QDeclarativeGeoMap::mapItemDestroyed(QObject* item)
     QDeclarativeGeoMapItem* mapItem = qobject_cast<QDeclarativeGeoMapItem*>(item);
     if (mapItem)
         removeMapItem(mapItem);
+}
+
+void QDeclarativeGeoMap::addMapScreenItem(QDeclarativeGeoMapScreenItem *item)
+{
+    QLOC_TRACE0;
+    if (!item || mapScreenItems_.contains(item))
+        return;
+    updateMutex_.lock();
+    item->setMap(this, map_);
+    mapScreenItems_.append(item);
+    connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(mapScreenItemDestroyed(QObject*)));
+    updateMutex_.unlock();
+}
+
+void QDeclarativeGeoMap::removeMapScreenItem(QDeclarativeGeoMapScreenItem *item)
+{
+    QLOC_TRACE0;
+    if (!item || !map_)
+        return;
+    if (!mapScreenItems_.contains(item))
+        return;
+    updateMutex_.lock();
+    item->setMap(0, 0);
+    // stop listening to destroyed()
+    item->disconnect(this);
+    // these can be optmized for perf, as we already check the 'contains' above
+    mapScreenItems_.removeOne(item);
+    updateMutex_.unlock();
+}
+
+void QDeclarativeGeoMap::clearMapScreenItems()
+{
+    if (mapScreenItems_.isEmpty())
+        return;
+    updateMutex_.lock();
+    mapScreenItems_.clear();
+    updateMutex_.unlock();
+}
+
+void QDeclarativeGeoMap::mapScreenItemDestroyed(QObject* item)
+{
+    QDeclarativeGeoMapScreenItem* mapScreenItem = qobject_cast<QDeclarativeGeoMapScreenItem*>(item);
+    if (mapScreenItem)
+        removeMapScreenItem(mapScreenItem);
 }
 
 void QDeclarativeGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseArea *area)

@@ -88,6 +88,7 @@ class QDeclarativeCoordinate;
 class QDeclarativeGeoServiceProvider;
 class QDeclarativeGeoMap;
 class QDeclarativeGeoMapItem;
+class QDeclarativeGeoMapScreenItem;
 
 class QDeclarativeGeoMap : public QQuickPaintedItem
 {
@@ -160,6 +161,10 @@ public:
     Q_INVOKABLE void addMapItem(QDeclarativeGeoMapItem *item);
     Q_INVOKABLE void clearMapItems();
 
+    Q_INVOKABLE void removeMapScreenItem(QDeclarativeGeoMapScreenItem *item);
+    Q_INVOKABLE void addMapScreenItem(QDeclarativeGeoMapScreenItem *item);
+    Q_INVOKABLE void clearMapScreenItems();
+
     Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
     Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
 
@@ -203,6 +208,7 @@ private Q_SLOTS:
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
     void mapItemDestroyed(QObject* item);
+    void mapScreenItemDestroyed(QObject* item);
     void mappingManagerInitialized();
     void mapZoomLevelChanged(qreal zoom);
     void mapTiltChanged(qreal tilt);
@@ -250,6 +256,8 @@ private:
     Map *map_;
     QList<QDeclarativeGeoMapItem*> mapItems_;
     QList<QDeclarativeGeoMapItem*> mapItemsPending_;
+
+    QList<QDeclarativeGeoMapScreenItem*> mapScreenItems_;
 
     QMutex updateMutex_;
     friend class QDeclarativeGeoMapItem;

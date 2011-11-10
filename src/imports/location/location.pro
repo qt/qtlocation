@@ -38,7 +38,8 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeomap_p.h \
            qdeclarativegeomapflickable_p.h \
            qdeclarativegeomappincharea_p.h \
-           qdeclarativegeomapitem_p.h
+           qdeclarativegeomapitem_p.h \
+           qdeclarativegeomapscreenitem_p.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -61,7 +62,8 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomap.cpp \
            qdeclarativegeomapflickable.cpp \
            qdeclarativegeomappincharea.cpp \
-           qdeclarativegeomapitem.cpp
+           qdeclarativegeomapitem.cpp \
+           qdeclarativegeomapscreenitem.cpp
 
 include(declarativeplaces/declarativeplaces.pri)
 
