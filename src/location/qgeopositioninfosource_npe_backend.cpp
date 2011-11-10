@@ -145,15 +145,17 @@ void QGeoPositionInfoSourceNpeBackend::setUpdateInterval(int msec)
     action.insert(JsonDbString::kActionStr, kgetMinimumUpdateInterval);
     mStream->send(action);
     loop.exec(); // wait for minimumUpdateIntervalReceived() signal sent by slot onStreamReceived
-    if (msec < minInterval)
+    if (msec < minInterval && msec != 0)
         msec = minInterval;
+    QGeoPositionInfoSource::setUpdateInterval(msec);
+    if (!requestTimer->isActive()) {
     QVariantMap actionUpdate;
     QVariantMap object;
     actionUpdate.insert(JsonDbString::kActionStr, ksetUpdateInterval);
     object.insert(kinterval, msec);
     actionUpdate.insert(JsonDbString::kDataStr, object);
     mStream->send(actionUpdate);
-    QGeoPositionInfoSource::setUpdateInterval(msec);
+    }
 }
 
 
@@ -217,7 +219,7 @@ void QGeoPositionInfoSourceNpeBackend::requestUpdate(int timeout)
             return;
         }
         // get position as fast as possible in case of ongoing satellite based session
-        if ( locationOngoing && (QGeoPositionInfoSource::preferredPositioningMethods() & QGeoPositionInfoSource::SatellitePositioningMethods) ) {
+        if ( locationOngoing ) {
             if ( QGeoPositionInfoSource::updateInterval() != minimumInterval) {
                 QVariantMap actionUpdate;
                 QVariantMap object;
