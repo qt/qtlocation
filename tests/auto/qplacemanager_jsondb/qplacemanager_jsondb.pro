@@ -8,7 +8,7 @@ SOURCES += tst_qplacemanager_jsondb.cpp \
 
 
 
-QT += location testlib script
+QT += location testlib
 CONFIG += debug
 
 DEFINES += QT_ADDON_JSONDB_LIB

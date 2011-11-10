@@ -1,7 +1,7 @@
 load(qt_module)
 
 TARGET = qtgeoservices_nokia_places_jsondb
-QT += location network script
+QT += location
 
 load(qt_plugin)
 

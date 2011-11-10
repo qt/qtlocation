@@ -44,7 +44,6 @@
 #include "qplacemanagerengine_jsondb.h"
 
 #include <QtPlugin>
-#include <QNetworkProxy>
 
 QT_BEGIN_NAMESPACE
 
