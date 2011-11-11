@@ -44,6 +44,7 @@
 #include "qgeoboundingarea.h"
 
 #include <QtCore/QSharedData>
+#include <QtCore/QList>
 
 QT_BEGIN_NAMESPACE
 
