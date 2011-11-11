@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the examples of the Qt Mobility Components.
+** This file is part of the examples of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -40,19 +40,13 @@
 #ifndef CLIENTAPPLICATION_H
 #define CLIENTAPPLICATION_H
 
-#include <qmobilityglobal.h>
 #include <QMainWindow>
 
+QT_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
 class QGeoPositionInfo;
-QTM_END_NAMESPACE
-
-QT_BEGIN_NAMESPACE
 class QTextEdit;
-QT_END_NAMESPACE
 
-QTM_USE_NAMESPACE
 class ClientApplication : public QMainWindow
 {
     Q_OBJECT
