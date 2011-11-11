@@ -50,8 +50,28 @@
 
 QT_BEGIN_NAMESPACE
 
+class QDeclarativeGeoMapItemBase : public QQuickItem
+{
+    Q_OBJECT
+public:
+    QDeclarativeGeoMapItemBase(QQuickItem *parent = 0);
+    ~QDeclarativeGeoMapItemBase();
 
-class QDeclarativeGeoMapScreenItem : public QQuickItem
+    void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+
+protected Q_SLOTS:
+    virtual void update();
+
+protected:
+    QDeclarativeGeoMap* quickMap();
+    Map* map();
+
+private:
+    QDeclarativeGeoMap* quickMap_;
+    Map* map_;
+};
+
+class QDeclarativeGeoMapScreenItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
@@ -62,9 +82,6 @@ class QDeclarativeGeoMapScreenItem : public QQuickItem
 public:
     QDeclarativeGeoMapScreenItem(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapScreenItem();
-
-    // From QDeclarativeParserStatus
-    virtual void componentComplete();
 
     void setCoordinate(QDeclarativeCoordinate *coordinate);
     QDeclarativeCoordinate* coordinate();
@@ -78,31 +95,26 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
-    void updateItem();
-    void setMap(QDeclarativeGeoMap* quickMap, Map *map);
-
 Q_SIGNALS:
     void coordinateChanged();
     void sourceItemChanged();
     void anchorPointChanged();
     void zoomLevelChanged();
+    void camerDataChanged(const CameraData &cameraData);
+
+protected Q_SLOTS:
+    void update();
 
 private Q_SLOTS:
     void coordinateCoordinateChanged(double);
-    void updatePosition();
 
 private:
     QDeclarativeCoordinate* coordinate_;
     QQuickItem* sourceItem_;
     QPointF anchorPoint_;
     qreal zoomLevel_;
-    bool inUpdatePosition_;
-
-    QDeclarativeGeoMap* quickMap_;
-    Map* map_;
-    bool componentCompleted_;
-
-    Q_DISABLE_COPY(QDeclarativeGeoMapScreenItem);
+    bool inUpdate_;
+    bool mapAndSourceItemSet_;
 };
 
 QT_END_NAMESPACE

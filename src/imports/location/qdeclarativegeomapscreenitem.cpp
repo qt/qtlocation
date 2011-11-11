@@ -49,6 +49,46 @@
 
 QT_BEGIN_NAMESPACE
 
+QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
+    : QQuickItem(parent),
+      quickMap_(0),
+      map_(0)
+{
+    setParentItem(parent);
+    setFlag(ItemHasContents, false);
+}
+
+QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
+{
+    if (quickMap_)
+        quickMap_->removeMapScreenItem(this);
+}
+
+void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap* quickMap, Map *map)
+{
+    QLOC_TRACE2(quickMap, quickMap_);
+    if (quickMap == quickMap_)
+        return;
+    if (quickMap && quickMap_)
+        return; // don't allow association to more than one map
+    quickMap_ = quickMap;
+    map_ = map;
+
+    this->update();
+}
+
+void QDeclarativeGeoMapItemBase::update() {}
+
+QDeclarativeGeoMap* QDeclarativeGeoMapItemBase::quickMap()
+{
+    return quickMap_;
+}
+
+Map* QDeclarativeGeoMapItemBase::map()
+{
+    return map_;
+}
+
 /*!
     \qmlclass MapScreenItem
 
@@ -56,31 +96,14 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapScreenItem::QDeclarativeGeoMapScreenItem(QQuickItem *parent)
-    : QQuickItem(parent),
+    : QDeclarativeGeoMapItemBase(parent),
       sourceItem_(0),
       coordinate_(0),
       zoomLevel_(0.0),
-      quickMap_(0),
-      map_(0),
-      componentCompleted_(false),
-      inUpdatePosition_(false)
-{
-    setParentItem(parent);
-    setFlag(ItemHasContents, false);
-}
+      inUpdate_(false),
+      mapAndSourceItemSet_(false) {}
 
-QDeclarativeGeoMapScreenItem::~QDeclarativeGeoMapScreenItem()
-{
-    // Remove this item from map if it still exists (qpointer protection todo).
-    if (quickMap_)
-        quickMap_->removeMapScreenItem(this);
-}
-
-void QDeclarativeGeoMapScreenItem::componentComplete()
-{
-    componentCompleted_ = true;
-    QQuickItem::componentComplete();
-}
+QDeclarativeGeoMapScreenItem::~QDeclarativeGeoMapScreenItem() {}
 
 void QDeclarativeGeoMapScreenItem::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
@@ -89,7 +112,7 @@ void QDeclarativeGeoMapScreenItem::setCoordinate(QDeclarativeCoordinate *coordin
     if (coordinate_)
         coordinate_->disconnect(this);
     coordinate_ = coordinate;
-    updatePosition();
+    update();
     if (coordinate_) {
         connect(coordinate_,
                 SIGNAL(latitudeChanged(double)),
@@ -109,7 +132,7 @@ void QDeclarativeGeoMapScreenItem::setCoordinate(QDeclarativeCoordinate *coordin
 
 void QDeclarativeGeoMapScreenItem::coordinateCoordinateChanged(double)
 {
-    updatePosition();
+    update();
     emit coordinateChanged();
 }
 
@@ -123,18 +146,7 @@ void QDeclarativeGeoMapScreenItem::setSourceItem(QQuickItem* sourceItem)
     if (sourceItem == sourceItem_)
         return;
     sourceItem_ = sourceItem;
-    if (quickMap_ && sourceItem_ && map_) {
-        sourceItem_->setParentItem(this);
-        sourceItem_->setTransformOrigin(QQuickItem::TopLeft);
-        connect(map_, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(updatePosition()));
-
-        connect(sourceItem_, SIGNAL(xChanged()), this, SLOT(updatePosition()));
-        connect(sourceItem_, SIGNAL(yChanged()), this, SLOT(updatePosition()));
-        connect(sourceItem_, SIGNAL(widthChanged()), this, SLOT(updatePosition()));
-        connect(sourceItem_, SIGNAL(heightChanged()), this, SLOT(updatePosition()));
-
-        updatePosition();
-    }
+    update();
     emit sourceItemChanged();
 }
 
@@ -148,7 +160,7 @@ void QDeclarativeGeoMapScreenItem::setAnchorPoint(const QPointF &anchorPoint)
     if (anchorPoint == anchorPoint_)
         return;
     anchorPoint_ = anchorPoint;
-    updatePosition();
+    update();
     emit anchorPointChanged();
 }
 
@@ -162,7 +174,7 @@ void QDeclarativeGeoMapScreenItem::setZoomLevel(qreal zoomLevel)
     if (zoomLevel == zoomLevel_)
         return;
     zoomLevel_ = zoomLevel;
-    updatePosition();
+    update();
     emit zoomLevelChanged();
 }
 
@@ -171,55 +183,58 @@ qreal QDeclarativeGeoMapScreenItem::zoomLevel() const
     return zoomLevel_;
 }
 
-// note: call this only from render thread (e.g. paint() call). todo check this wrt removal
-// this function notably associates and disassociates the item to map
-// and reserves / releases resources accordingly
-void QDeclarativeGeoMapScreenItem::setMap(QDeclarativeGeoMap* quickMap, Map* map)
+void QDeclarativeGeoMapScreenItem::update()
 {
-    QLOC_TRACE2(quickMap, quickMap_);
-    if (quickMap == quickMap_)
+    if (inUpdate_)
         return;
-    if (quickMap && quickMap_)
-        return; // don't allow association to more than one map
-    quickMap_ = quickMap;
-    map_ = map;
 
-    if (!quickMap_) {
+    if (!quickMap() && sourceItem_) {
+        mapAndSourceItemSet_ = false;
         sourceItem_->setParentItem(0);
-    } else {
+        return;
+    }
+
+    if (!quickMap() || !map() || !sourceItem_) {
+        mapAndSourceItemSet_ = false;
+        return;
+    }
+
+    inUpdate_ = true;
+
+    if (!mapAndSourceItemSet_ && quickMap() && map() && sourceItem_) {
+        mapAndSourceItemSet_ = true;
+
         sourceItem_->setParentItem(this);
         sourceItem_->setTransformOrigin(QQuickItem::TopLeft);
-        connect(map_, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(updatePosition()));
-        if (sourceItem_)
-            updatePosition();
+        connect(quickMap(), SIGNAL(heightChanged()), this, SLOT(update()));
+        connect(quickMap(), SIGNAL(widthChanged()), this, SLOT(update()));
+        connect(map(), SIGNAL(cameraDataChanged(CameraData)), this, SLOT(update()));
+        connect(map(), SIGNAL(cameraDataChanged(CameraData)), this, SIGNAL(camerDataChanged(CameraData)));
+
+        connect(sourceItem_, SIGNAL(xChanged()), this, SLOT(update()));
+        connect(sourceItem_, SIGNAL(yChanged()), this, SLOT(update()));
+        connect(sourceItem_, SIGNAL(widthChanged()), this, SLOT(update()));
+        connect(sourceItem_, SIGNAL(heightChanged()), this, SLOT(update()));
     }
-}
-
-void QDeclarativeGeoMapScreenItem::updatePosition()
-{
-    if (inUpdatePosition_ || !map_ || !sourceItem_)
-        return;
-
-    inUpdatePosition_ = true;
 
     qreal s = 1.0;
     if (zoomLevel_ != 0.0)
-        s = pow(0.5, zoomLevel_ - map_->cameraData().zoomFactor());
+        s = pow(0.5, zoomLevel_ - map()->cameraData().zoomFactor());
 
-    QPointF invalid = map_->coordinateToScreenPosition(QGeoCoordinate());
-    QPointF topLeft = map_->coordinateToScreenPosition(coordinate()->coordinate(), false) - s * anchorPoint_;
+    QPointF invalid = map()->coordinateToScreenPosition(QGeoCoordinate());
+    QPointF topLeft = map()->coordinateToScreenPosition(coordinate()->coordinate(), false) - s * anchorPoint_;
 
-    if ((topLeft.x() > quickMap_->width())
+    if ((topLeft.x() > quickMap()->width())
             || (topLeft.x() + s * sourceItem_->width() < 0)
             || (topLeft.y() + s * sourceItem_->height() < 0)
-            || (topLeft.y() > quickMap_->height())) {
+            || (topLeft.y() > quickMap()->height())) {
         sourceItem_->setPos(invalid);
     } else {
         sourceItem_->setPos(topLeft);
         sourceItem_->setScale(s);
     }
 
-    inUpdatePosition_ = false;
+    inUpdate_ = false;
 }
 
 #include "moc_qdeclarativegeomapscreenitem_p.cpp"

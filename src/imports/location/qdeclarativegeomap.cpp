@@ -222,7 +222,7 @@ void QDeclarativeGeoMap::populateMap()
             addMapItem(mapItem);
         }
 
-        QDeclarativeGeoMapScreenItem* mapScreenItem = qobject_cast<QDeclarativeGeoMapScreenItem*>(kids.at(i));
+        QDeclarativeGeoMapItemBase* mapScreenItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
         if (mapScreenItem) {
             addMapScreenItem(mapScreenItem);
         }
@@ -1159,7 +1159,7 @@ void QDeclarativeGeoMap::mapItemDestroyed(QObject* item)
         removeMapItem(mapItem);
 }
 
-void QDeclarativeGeoMap::addMapScreenItem(QDeclarativeGeoMapScreenItem *item)
+void QDeclarativeGeoMap::addMapScreenItem(QDeclarativeGeoMapItemBase *item)
 {
     QLOC_TRACE0;
     if (!item || mapScreenItems_.contains(item))
@@ -1171,7 +1171,7 @@ void QDeclarativeGeoMap::addMapScreenItem(QDeclarativeGeoMapScreenItem *item)
     updateMutex_.unlock();
 }
 
-void QDeclarativeGeoMap::removeMapScreenItem(QDeclarativeGeoMapScreenItem *item)
+void QDeclarativeGeoMap::removeMapScreenItem(QDeclarativeGeoMapItemBase *item)
 {
     QLOC_TRACE0;
     if (!item || !map_)
@@ -1198,7 +1198,7 @@ void QDeclarativeGeoMap::clearMapScreenItems()
 
 void QDeclarativeGeoMap::mapScreenItemDestroyed(QObject* item)
 {
-    QDeclarativeGeoMapScreenItem* mapScreenItem = qobject_cast<QDeclarativeGeoMapScreenItem*>(item);
+    QDeclarativeGeoMapItemBase* mapScreenItem = qobject_cast<QDeclarativeGeoMapItemBase*>(item);
     if (mapScreenItem)
         removeMapScreenItem(mapScreenItem);
 }
