@@ -65,7 +65,7 @@ public:
 
     virtual QPlaceDetailsReply *getPlaceDetails(const QString &placeId) = 0;
 
-    virtual QPlaceContentReply *getContent(const QPlace &place, const QPlaceContentRequest &request) = 0;
+    virtual QPlaceContentReply *getPlaceContent(const QString &placeId, const QPlaceContentRequest &request) = 0;
 
     virtual QPlaceSearchReply *search(const QPlaceSearchRequest &request) = 0;
 

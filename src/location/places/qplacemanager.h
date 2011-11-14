@@ -92,7 +92,7 @@ public:
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId) const;
 
-    QPlaceContentReply *getContent(const QPlace &place, const QPlaceContentRequest &request) const;
+    QPlaceContentReply *getPlaceContent(const QString &placeId, const QPlaceContentRequest &request) const;
 
     QPlaceSearchReply *search(const QPlaceSearchRequest &query) const;
 

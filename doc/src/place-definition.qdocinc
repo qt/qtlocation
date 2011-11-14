@@ -18,5 +18,5 @@ provider to provider. (See \l {Information about plugins}).
 
 The rich content of a place consists items such as images, reviews and editorials.  Potentially
 there may be many rich content items, so they are treated separately from the place details.
-They can be retrieved in a paged fashion via QPlaceManager::getContent().  If necessary,
+They can be retrieved in a paged fashion via QPlaceManager::getPlaceContent().  If necessary,
 the content may be assigned to a place so it can act as a convenient container.

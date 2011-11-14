@@ -243,7 +243,7 @@ void QDeclarativePlaceContentModel::fetchMore(const QModelIndex &parent)
             request.setLimit(qMin(m_batchSize, missing.second - missing.first + 1));
     }
 
-    m_reply = placeManager->getContent(m_place->place(), request);
+    m_reply = placeManager->getPlaceContent(m_place->place().placeId(), request);
     connect(m_reply, SIGNAL(finished()), this, SLOT(fetchFinished()), Qt::QueuedConnection);
 }
 

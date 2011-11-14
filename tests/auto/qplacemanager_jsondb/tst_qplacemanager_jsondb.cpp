@@ -1026,7 +1026,7 @@ void tst_QPlaceManagerJsonDb::unsupportedFunctions()
     request.setContentType(QPlaceContent::ImageType);
     request.setLimit(5);
     request.setOffset(0);
-    QPlaceContentReply *contentReply = placeManager->getContent(place, request);
+    QPlaceContentReply *contentReply = placeManager->getPlaceContent(place.placeId(), request);
     QSignalSpy contentSpy(contentReply, SIGNAL(finished()));
     QTRY_VERIFY(contentSpy.count() == 1);
     QCOMPARE(contentReply->error(), QPlaceReply::UnsupportedError);

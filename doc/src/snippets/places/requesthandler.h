@@ -140,7 +140,7 @@ public:
         request.setContentType(QPlaceContent::ImageType);
         request.setOffset(0);
         request.setLimit(5);
-        /*QPlaceContentReply * */ contentReply = manager->getContent(place, request);
+        /*QPlaceContentReply * */ contentReply = manager->getPlaceContent(place.placeId(), request);
         connect(contentReply, SIGNAL(finished()), this, SLOT(handleImagesReply()));
         //! [Image request]
     }
@@ -266,7 +266,7 @@ public:
         request.setOffset(9);
         request.setLimit(5);
 
-        QPlaceContentReply *contentReply = manager->getContent(place, request);
+        QPlaceContentReply *contentReply = manager->getPlaceContent(place.placeId(), request);
         //..connect signals..//
 
         //! [Content request]

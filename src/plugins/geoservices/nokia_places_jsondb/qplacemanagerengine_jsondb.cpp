@@ -94,8 +94,9 @@ QPlaceDetailsReply *QPlaceManagerEngineJsonDb::getPlaceDetails(const QString &pl
     return detailsReply;
 }
 
-QPlaceContentReply *QPlaceManagerEngineJsonDb::getContent(const QPlace &place, const QPlaceContentRequest &request)
+QPlaceContentReply *QPlaceManagerEngineJsonDb::getPlaceContent(const QString &placeId, const QPlaceContentRequest &request)
 {
+    Q_UNUSED(placeId);
     ContentReply *contentReply = new ContentReply(this);
     contentReply->triggerDone(QPlaceReply::UnsupportedError, tr("Fetching content is unsupported"));
     return contentReply;

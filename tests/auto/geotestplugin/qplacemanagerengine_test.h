@@ -136,9 +136,9 @@ public:
         return reply;
     }
 
-    QPlaceContentReply *getContent(const QPlace &place, const QPlaceContentRequest &query)
+    QPlaceContentReply *getPlaceContent(const QString &placeId, const QPlaceContentRequest &query)
     {
-        Q_UNUSED(place)
+        Q_UNUSED(placeId)
         Q_UNUSED(query)
 
         return 0;

@@ -156,9 +156,9 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     Retrieves a details of place corresponding to the given \a placeId.
 */
 
-/*! \fn QPlaceContentReply *QPlaceManagerEngine::getContent(const QPlace &place, const QPlaceContentRequest &request)
+/*! \fn QPlaceContentReply *QPlaceManagerEngine::getPlaceContent(const QString &placeId, const QPlaceContentRequest &request)
 
-    Retrieves content for a given \a place according to the parameters specified in
+    Retrieves content for the place correspoinding to \a placeId, according to the parameters specified in
     \a request.
 */
 

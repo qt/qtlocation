@@ -110,12 +110,12 @@ QPlaceDetailsReply *QPlaceManagerEngineNokia::getPlaceDetails(const QString &pla
     return reply;
 }
 
-QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, const QPlaceContentRequest &request)
+QPlaceContentReply *QPlaceManagerEngineNokia::getPlaceContent(const QString &placeId, const QPlaceContentRequest &request)
 {
     QPlaceContentReplyImpl *reply;
     switch (request.contentType()) {
     case QPlaceContent::ImageType: {
-            QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceImagesRequest(place.placeId(),
+            QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceImagesRequest(placeId,
                                                                                                request);
             reply = new QPlaceContentReplyImpl(request, restReply, manager(), this);
 
@@ -126,7 +126,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
             break;
         }
     case QPlaceContent::ReviewType: {
-            QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceReviewRequest(place.placeId(),
+            QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceReviewRequest(placeId,
                                                                                                request);
             reply = new QPlaceContentReplyImpl(request, restReply, manager(), this);
 
@@ -138,7 +138,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getContent(const QPlace &place, co
         }
     case QPlaceContent::EditorialType: {
         QPlaceRestReply *restReply =
-            QPlaceRestManager::instance()->sendPlaceRequest(place.placeId());
+            QPlaceRestManager::instance()->sendPlaceRequest(placeId);
 
         reply = new QPlaceContentReplyImpl(request, restReply, manager(), this);
 
