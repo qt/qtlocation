@@ -75,16 +75,21 @@ bool QPlaceSupplierPrivate::operator==(const QPlaceSupplierPrivate &other) const
     \class QPlaceSupplier
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
-    \brief The QPlaceSupplier class represents a supplier object.
+    \brief The QPlaceSupplier class represents a supplier of a place or content associated
+    with a place.
 
-    Each QPlaceSupplier represents a supplier object with a number of attributes
-    such as name, icon etc. Each QPlaceSupplier is associated with place, media, review or description.
+    Each instance represents a set of data about a supplier, which can include
+    supplier's name, url and icon.  The supplier is typically a business or organization.
+
+    Note: The Places API only supports suppliers as 'retrieve-only' objects.  Submitting
+    suppliers to a provider is not a supported use case.
 */
 
 /*!
-    Default constructor. Constructs an new supplier object.
+    Constructs a new supplier object.
 */
 QPlaceSupplier::QPlaceSupplier()
     : d(new QPlaceSupplierPrivate)
@@ -92,7 +97,7 @@ QPlaceSupplier::QPlaceSupplier()
 }
 
 /*!
-    Constructs a copy of \a other
+    Constructs a copy of \a other.
 */
 QPlaceSupplier::QPlaceSupplier(const QPlaceSupplier &other)
     :d(other.d)
@@ -100,24 +105,39 @@ QPlaceSupplier::QPlaceSupplier(const QPlaceSupplier &other)
 }
 
 /*!
-    Destructor.
+    Destroys the supplier object.
 */
 QPlaceSupplier::~QPlaceSupplier()
 {
 }
 
-QPlaceSupplier &QPlaceSupplier::operator =(const QPlaceSupplier &other) {
+/*!
+    Assigns \a other to this supplier and returns a reference to this
+    supplier.
+*/
+QPlaceSupplier &QPlaceSupplier::operator=(const QPlaceSupplier &other) {
     d = other.d;
     return *this;
 }
 
+/*!
+    Returns true if this supplier is equal to \a other,
+    otherwise returns false.
+*/
 bool QPlaceSupplier::operator==(const QPlaceSupplier &other) const
 {
     return (*(d.constData()) == *(other.d.constData()));
 }
 
 /*!
-    Returns name.
+    \fn QPlaceSupplier::operator!=(const QPlaceSupplier &other) const
+
+    Returns true if this supplier is not equal to \a other,
+    otherwise returns false.
+*/
+
+/*!
+    Returns the name of the supplier.
 */
 QString QPlaceSupplier::name() const
 {
@@ -125,15 +145,15 @@ QString QPlaceSupplier::name() const
 }
 
 /*!
-    Sets name.
+    Sets the \a name of the supplier.
 */
-void QPlaceSupplier::setName(const QString &data)
+void QPlaceSupplier::setName(const QString &name)
 {
-    d->name = data;
+    d->name = name;
 }
 
 /*!
-    Returns supplier id.
+    Returns the id of the supplier.
 */
 QString QPlaceSupplier::supplierId() const
 {
@@ -141,15 +161,15 @@ QString QPlaceSupplier::supplierId() const
 }
 
 /*!
-    Sets supplier id.
+    Sets the \a id of the supplier.
 */
-void QPlaceSupplier::setSupplierId(const QString &data)
+void QPlaceSupplier::setSupplierId(const QString &id)
 {
-    d->supplierId = data;
+    d->supplierId = id;
 }
 
 /*!
-    Returns the URL of the supplier.
+    Returns the url of the supplier.
 */
 QUrl QPlaceSupplier::url() const
 {
@@ -157,7 +177,7 @@ QUrl QPlaceSupplier::url() const
 }
 
 /*!
-    Sets \a url of the supplier.
+    Sets the \a url of the supplier.
 */
 void QPlaceSupplier::setUrl(const QUrl &url)
 {
@@ -165,7 +185,7 @@ void QPlaceSupplier::setUrl(const QUrl &url)
 }
 
 /*!
-    Returns the supplier icon
+    Returns the icon of the supplier.
 */
 QPlaceIcon QPlaceSupplier::icon() const
 {
@@ -173,7 +193,7 @@ QPlaceIcon QPlaceSupplier::icon() const
 }
 
 /*!
-    Sets the supplier icon
+    Sets the \a icon of the supplier.
 */
 void QPlaceSupplier::setIcon(const QPlaceIcon &icon)
 {

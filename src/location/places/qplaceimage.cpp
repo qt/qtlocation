@@ -71,18 +71,22 @@ bool QPlaceImagePrivate::compare(const QPlaceContentPrivate *other) const
     \class QPlaceImage
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
-    \brief The QPlaceImage class represents an image.
+    \brief The QPlaceImage class represents a reference to an image.
 
-    Each QPlaceImage represents an image with a number of attributes
-    such as type, thumbnail, media provider etc.
+    Each QPlaceImage represents a set of metadata about an image such as it's
+    url, id and MIME type.  These are properties in addition to those provided
+    by QPlaceContent.
 
-    QPlaceImage is an in memory representation of an image.
+    Note: The Places API only supports images as 'retrieve-only' objects.  Submitting
+    images to a provider is not a supported use case.
+    \sa QPlaceContent
 */
 
 /*!
-    Constructs an new image object.
+    Constructs an new QPlaceImage.
 */
 QPlaceImage::QPlaceImage()
     : QPlaceContent(new QPlaceImagePrivate)
@@ -96,12 +100,17 @@ QPlaceImage::~QPlaceImage()
 {
 }
 
+/*!
+    \fn QPlaceImage::QPlaceImage(const QPlaceContent &other)
+    Constructs a copy of \a other if possible, otherwise constructs a default image.
+*/
+
 Q_IMPLEMENT_CONTENT_COPY_CTOR(QPlaceImage)
 
 Q_IMPLEMENT_CONTENT_D_FUNC(QPlaceImage)
 
 /*!
-    Returns the image url.
+    Returns the image's url.
 */
 QUrl QPlaceImage::url() const
 {
@@ -110,7 +119,7 @@ QUrl QPlaceImage::url() const
 }
 
 /*!
-    Sets image url.
+    Sets the image's \a url.
 */
 void QPlaceImage::setUrl(const QUrl &url)
 {
@@ -119,7 +128,7 @@ void QPlaceImage::setUrl(const QUrl &url)
 }
 
 /*!
-    Returns image id.
+    Returns the image's id.
 */
 QString QPlaceImage::imageId() const
 {
@@ -128,16 +137,16 @@ QString QPlaceImage::imageId() const
 }
 
 /*!
-    Sets image id.
+    Sets image's \a id.
 */
-void QPlaceImage::setImageId(const QString &data)
+void QPlaceImage::setImageId(const QString &id)
 {
     Q_D(QPlaceImage);
-    d->id = data;
+    d->id = id;
 }
 
 /*!
-    Returns image mime type.
+    Returns the image's MIME type.
 */
 QString QPlaceImage::mimeType() const
 {
@@ -146,10 +155,10 @@ QString QPlaceImage::mimeType() const
 }
 
 /*!
-    Sets image mime type.
+    Sets image's MIME \a type.
 */
-void QPlaceImage::setMimeType(const QString &data)
+void QPlaceImage::setMimeType(const QString &type)
 {
     Q_D(QPlaceImage);
-    d->mimeType = data;
+    d->mimeType = type;
 }

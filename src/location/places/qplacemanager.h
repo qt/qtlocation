@@ -127,9 +127,9 @@ Q_SIGNALS:
     void placeUpdated(const QString &placeId);
     void placeRemoved(const QString &placeId);
 
-    void categoryAdded(const QPlaceCategory &category, const QString &parentCategoryId);
-    void categoryUpdated(const QPlaceCategory &category, const QString &parentCategoryId);
-    void categoryRemoved(const QString &categoryId, const QString &parentCategoryId);
+    void categoryAdded(const QPlaceCategory &category, const QString &parentId);
+    void categoryUpdated(const QPlaceCategory &category, const QString &parentId);
+    void categoryRemoved(const QString &categoryId, const QString &parentId);
 
 private:
     QPlaceManager(QPlaceManagerEngine *engine, QObject *parent = 0);

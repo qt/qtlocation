@@ -224,6 +224,17 @@ Item {
     //! [Place savePlace]
     }
 
+    function saveToNewPlugin() {
+        //! [Place save to different plugin]
+        myPlace.plugin = diffPlugin;
+        place.placeId = "";
+        place.categories = null;
+        place.icon = null;
+        place.visibility = QtLocation.UnspecifiedVisibility; //let the manager choose an appropriate default visibility
+        place.save();
+        //! [Place save to different plugin]
+    }
+
     function getPlaceForId() {
     //! [Place placeId]
         place.plugin = myPlugin;

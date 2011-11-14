@@ -56,7 +56,11 @@ class Q_LOCATION_EXPORT QPlaceEditorial : public QPlaceContent
 {
 public:
     QPlaceEditorial();
+#ifdef Q_QDOC
+    QPlaceEditorial::QPlaceEditorial(const QPlaceContent &other)
+#else
     Q_DECLARE_CONTENT_COPY_CTOR(QPlaceEditorial)
+#endif
 
     virtual ~QPlaceEditorial();
 

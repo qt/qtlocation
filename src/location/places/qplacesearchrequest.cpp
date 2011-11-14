@@ -158,6 +158,7 @@ void QPlaceSearchRequestPrivate::clear()
     \class QPlaceSearchRequest
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-requests
     \since QtLocation 5.0
 
     \brief The QPlaceSearchRequest class represents the set of parameters for a search request.
@@ -175,13 +176,15 @@ void QPlaceSearchRequestPrivate::clear()
     The QPlaceSearchRequest is primarily used with the QPlaceManager to
     \l {QPlaceManager::search()} {search for places}, however it is also
     used to provide parameters for \l {QPlaceManager::textPredictions()}{generating text predictions}
-    and \l {QPlaceManager::recommendations()} {retreiving recommendations}.  Note that depending on usage
+    and \l {QPlaceManager::recommendations()} {retreiving recommendations}.  Note that depending on usage,
     some parameters may not be relevant, e.g. the relevance hint is not important for text predictions.  However
-    in general most of the parameters are useful for each of these operations, eg for a recommendation, a search area
+    in general, most of the parameters are useful for each of these operations, eg for a recommendation, a search area
     and categories can be useful in narrowing down recommendation candidates.
 
     Also be aware that providers may vary by which parameters they support e.g. some providers may not support
-    paging while others do, some providers may honor relevance hints while others may completely ignore them.
+    paging while others do, some providers may honor relevance hints while others may completely ignore them,
+    see \l {Information about plugins}.
+
 */
 
 /*!
@@ -297,9 +300,8 @@ void QPlaceSearchRequest::setCategory(const QPlaceCategory &category)
 
 /*!
     Sets the search request to search from the list of given \a categories.
-
-    It is possible that some backends may not support multiple categories.  In this case,
-    the first category is used and the rest are ignored.
+    Any places returned during the search will match at least one of the \a
+    categories.
 
     \sa setCategory()
 */
@@ -320,7 +322,7 @@ QGeoBoundingArea *QPlaceSearchRequest::searchArea() const
 
 /*!
     Sets the search request to search within the given \a area.  Ownership of the \a area is
-    transferred to the request  who is responsible for pointer deletion.  If a new \a area
+    transferred to the request,  who is now responsible for pointer deletion.  If a new \a area
     is being assigned, the old area is deleted.
 */
 void QPlaceSearchRequest::setSearchArea(QGeoBoundingArea *area)
@@ -352,8 +354,8 @@ void QPlaceSearchRequest::setMaximumCorrections(int number)
 
 /*!
     Returns the visibility scope used when searching for places.  The default value is
-    QtLocation::UnspecifiedVisibility meaning that no explicit scope has been assigned.  It is up
-    to the manager implementation to decide what scope it searches by default.
+    QtLocation::UnspecifiedVisibility meaning that no explicit scope has been assigned.
+    Places of any scope may be returned during the search.
 */
 QtLocation::VisibilityScope QPlaceSearchRequest::visibilityScope() const
 {
@@ -395,7 +397,7 @@ void QPlaceSearchRequest::setRelevanceHint(QPlaceSearchRequest::RelevanceHint hi
     Returns the maximum number of search results to retrieve.
 
     A negative value for limit means that it is undefined.  It is left up to the backend
-    provider to choose an appropriate number of results to return.
+    provider to choose an appropriate number of results to return.  The default limit is -1.
 */
 int QPlaceSearchRequest::limit() const
 {
@@ -413,7 +415,9 @@ void QPlaceSearchRequest::setLimit(int limit)
 }
 
 /*!
-    Returns the index of the first item that is to be retrieved.
+    Returns the offset index of the first item that is to be retrieved.
+
+    The default offset is 0.
 */
 int QPlaceSearchRequest::offset() const
 {

@@ -73,7 +73,7 @@ public:
         NoType = 0,
         ImageType,
         ReviewType,
-        EditorialType,
+        EditorialType
     };
 
     QPlaceContent();

@@ -48,15 +48,30 @@ QT_USE_NAMESPACE
     \class QPlaceReply
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-replies
     \since QtLocation 5.0
 
-    \brief The QPlaceReply class manages an operation started by an instance of QPlaceManager.
+    \brief The QPlaceReply class manages an operation started by an instance of QPlaceManager and
+           serves as a base class for more specialized replies.
+
+    The QPlaceReply and each of its specialized subclasses manage the
+    state and results of their corresponding operations.  The QPlaceReply itself is used
+    for operations that have no results i.e. it only necessary to know if the operation
+    succeeded or failed.
+
+    The finished() signal can be used to monitor the progress of an operation.
+    Once an operation is complete, the error() and errorString() methods provide information
+    on whether the operation completed successfully.  If successful, the reply
+    will contain the results for that operation i.e. each subclass will have appropriate
+    functions to retrieve the results of an operation.
+
+    \sa QPlaceManager
 */
 
 /*!
     \enum QPlaceReply::Error
 
-    Describes an error which prevented completion of an operation.
+    Describes an error which occurred during an operation.
     \value NoError
         No error has occurred
     \value DoesNotExistError
@@ -73,6 +88,8 @@ QT_USE_NAMESPACE
         The operation failed because of insufficient permissions.
     \value UnsupportedError
         The operation was not supported by the service provider.
+    \value BadArgumentError.
+        A parameter that was provided was invalid.
     \value CancelError
         The operation was canceled.
     \value UnknownError
@@ -85,16 +102,18 @@ QT_USE_NAMESPACE
     Describes the reply's type.
     \value Reply
         This is a generic reply.
+    \value DetailsReply
+        This is a reply for the retrieval of place details
+    \value SearchReply
+        This is a reply for the place search operation.
+
     \value TextPredictionReply
-        Thi is the reply for a text prediction operation.
-    \value ReviewReply
-        This is a reply for the retrieval of place reviews.
+        This is a reply for a text prediction operation.
     \value ContentReply
-        This is a reply for the retrieval of place content.
-    \value PlaceDetailsReply
-        This is a reply for the retrieval of place details.
-    \value PlaceSearchReply
-        This is a reply for a place search operation.
+        This is a reply for content associated with a place.
+    \value IdReply
+        This is a reply that returns an id of a place/category.
+        Typically used for place/category save and remove operations.
 */
 
 /*!
@@ -105,13 +124,16 @@ QPlaceReply::QPlaceReply(QObject *parent)
 {
 }
 
+/*!
+    \internal
+*/
 QPlaceReply::QPlaceReply(QPlaceReplyPrivate *dd, QObject *parent)
     : QObject(parent),d_ptr(dd)
 {
 }
 
 /*!
-    Destructor.
+    Destroys the reply object.
 */
 QPlaceReply::~QPlaceReply()
 {
@@ -130,7 +152,7 @@ bool QPlaceReply::isFinished() const
 }
 
 /*!
-    Return type of operation.
+    Returns the type of the reply.
 */
 QPlaceReply::Type QPlaceReply::type() const
 {
@@ -149,7 +171,7 @@ void QPlaceReply::setFinished(bool finished)
 
 /*!
     Sets the \a error and \a errorString of the reply.
-    This function does not cause the error(QPlaceReply::Error, const QString &errorString)
+    This function does not cause the QPlaceReply::error(QPlaceReply::Error, const QString &errorString)
     signal to be emitted.
 */
 void QPlaceReply::setError(QPlaceReply::Error error, const QString &errorString)
@@ -159,7 +181,10 @@ void QPlaceReply::setError(QPlaceReply::Error error, const QString &errorString)
 }
 
 /*!
-    Returns the error string.
+    Returns the error string of the reply.  The error string is intended to be
+    used by developers only and is not fit to be displayed to an end user.
+
+    If no error has occurred, the string is empty.
 */
 QString QPlaceReply::errorString() const
 {
@@ -167,7 +192,7 @@ QString QPlaceReply::errorString() const
 }
 
 /*!
-    Returns error code.
+    Returns the error code.
 */
 QPlaceReply::Error QPlaceReply::error() const
 {

@@ -67,13 +67,10 @@ bool QPlaceRatingPrivate::operator==(const QPlaceRatingPrivate &other) const
     \class QPlaceRating
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
-    \brief The QPlaceRating class represents a rating object.
-
-    Each QPlaceRating represents a rating object with a count and value.
-
-    QPlaceRating is an in memory representation of a rating object.
+    \brief The QPlaceRating class contains an aggregated rating for a place.
 */
 
 /*!
@@ -93,24 +90,40 @@ QPlaceRating::QPlaceRating(const QPlaceRating &other)
 }
 
 /*!
-    Destructor.
+    Destroys the rating object.
 */
 QPlaceRating::~QPlaceRating()
 {
 }
 
-QPlaceRating &QPlaceRating::operator =(const QPlaceRating &other) {
+/*!
+    Assigns \a other to this rating and returns a reference
+    to this rating.
+*/
+QPlaceRating &QPlaceRating::operator=(const QPlaceRating &other) {
     d = other.d;
     return *this;
 }
 
+/*!
+    Returns true if \a other is equal to this rating,
+    otherwise returns false.
+*/
 bool QPlaceRating::operator==(const QPlaceRating &other) const
 {
     return (*(d.constData()) == *(other.d.constData()));
 }
 
 /*!
-    Returns value.
+    \fn bool QPlaceRating::operator!=(const QPlaceRating &other) const
+
+    Returns true if \a other is not equal to this rating,
+    otherwise returns false
+*/
+
+/*!
+    Returns the value of the rating which is an aggregation
+    of individual ratings.
 */
 qreal QPlaceRating::value() const
 {
@@ -118,7 +131,7 @@ qreal QPlaceRating::value() const
 }
 
 /*!
-    Sets the \a value.
+    Sets the rating's aggregated \a value.
 */
 void QPlaceRating::setValue(qreal value)
 {
@@ -142,7 +155,7 @@ void QPlaceRating::setMaximum(qreal max)
 }
 
 /*!
-    Returns count.
+    Returns the total number of individual ratings.
 */
 int QPlaceRating::count() const
 {
@@ -150,7 +163,7 @@ int QPlaceRating::count() const
 }
 
 /*!
-    Sets the \a count.
+    Sets the total number of individual ratings to \a count.
 */
 void QPlaceRating::setCount(int count)
 {

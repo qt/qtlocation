@@ -1,0 +1,141 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** GNU Free Documentation License
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of
+** this file.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms
+** and conditions contained in a signed written agreement between you
+** and Nokia.
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+\page location-places-backend.html
+\title Places Backend
+\previouspage {QtLocation Module}
+
+\brief The Places backend is responsible for managing a places datastore whether
+       it is located remotely or locally
+
+\section1 Overview
+
+The QPlaceManager interface, provided to clients to allow access to place information,
+depends directly on an implementation of QPlaceManagerEngine.  The engine provides
+the backend function implementations which are called by the manager.
+
+A places backend implementer needs to derive from QPlaceManagerEngine
+and provide implementations for the abstract virtual functions.  Most of these
+functions are asynchronous and so implementers will also need to derive
+the appropriate \l {Places Reply Classes}{reply classes}.  The reply objects are reponsible for managing
+an asynchronous request; they are used to notify when a request is complete
+and hold the results of that request.
+
+\section2 Implementing/Inheriting reply objects
+A reply object would be inherited as follows:
+\snippet snippets/places/requesthandler.h Implement reply pt1
+\dots
+\snippet snippets/places/requesthandler.h Implement reply pt2
+
+The protected functions of QPlaceSearchReply::setResults() and QPlaceSearchReply::setRequest()
+are made publically accessible so the plugin can assign results and requests.  Because
+these functions are not publically exported, accessibility is not so much of an issue.
+An alternative would have been to declare a friend class in SearchReply.
+
+Typically the engine instance would be made the \c parent of the reply.  If the developer
+fails to discard the replies when finished, the engine can clean those upon destruction.
+Commonly, the reply also has a pointer reference back to the engine, which may be used
+to emit the QPlaceManager::finished() and QPlaceManager::error() signals.  This is
+just one of many ways the reply could be implemented.
+
+Usually the QPlaceReply::finished() signal of the reply is somehow tied to a notification mechanism of the
+implementation e.g. for a network based engine, the reply's finished signal may be
+emitted from a slot which is in turn is invoked by a QNetworkReply::finished() signal.
+Sometimes however, we may want to emit the QPlaceReply::finished() signal without
+depending upon an underlying asynchronous notification mechanism.  This
+is a common case when a portion of functionality is not supported.  For example,
+a backend may not support text predictions, so we need a way to trigger the finished
+signal, but there's no underlying asynchronous mechanism to do so.  In this case,
+the typical approach is to use QMetaObject::invokeMethod() with a Qt::QueuedConnection,
+so that the QPlaceReply::finished(), QPlaceReply::error(), QPlaceManagerEngine::finished()
+and QPlaceManagerEngine::error() signals are emitted at the next event loop.
+
+\snippet snippets/places/requesthandler.h Trigger done
+(\note  the above code is not necessary if there already is an underlying
+asynchronous notification mechanism)
+
+\section2 Icon Urls
+
+Icon URLs are provided through the QPlaceManagerEngine::constructIconUrl() function.
+Two important concepts regarding icons that needs to be discused
+is that of the \e baseUrl and \e fullUrl.
+A \e {baseUrl} is an incomplete URL similar to the following:
+\code
+http://www.example.com/icons/icon_
+or
+file://home/user/icons/icon_
+or
+http://www.example.com/icons/icon
+or
+file://home/user/icons/icon
+\endcode
+
+A \e {fullUrl} is a complete URL like:
+\code
+http://www.example.com/icons/icon.png
+or
+file://home/user/icons/icon.png
+\endcode
+
+The purpose of the \e {baseUrl} is to accommodate different variations
+of the same icon.  e.g. A server may provide icons with dimensions of
+16x16 but also 48x48 to allow for clients which have different form factors.
+Some providers may have a set of icons suited for maps, as well as another
+set more suited for lists.  These kinds of engines populate the \e {baseUrl} of a place's
+QPlaceIcon,
+
+The \e {baseUrl} is used in conjunction with the
+requested size and usage flag parameters of
+QPlaceManagerEngine::constructIconUrl() to give the closest matching
+url of the icon.  e.g.
+\code
+//base
+http://www.example.com/icons/icon_
+//constructed icons
+http://www.example.com/icons/icon_48_selected.png
+http://www.example.com/icons/icon_16_map.png
+http://www.example.com/icons/icon_16_selected_map.png
+\endcode
+
+If a datastore does not support icon variations, then the \e {fullUrl}
+of the QPlaceIcon should be populated.  The \e baseUrl and \e {fullUrl}
+are mutually exclusive, if one is set the other is implicitly cleared.
+If the \e {fullUrl} of an icon is used, then the manager engine should
+always returns the contents of the \e {fullUrl} as is, regardless of
+the variation parameters specified.
+
+\note It is possible for icon URLs to be \l {http://dataurl.net}{data URLs} where the icon image
+itself is embedded into the URL.
+
+\section2 Categories
+The categories of a manager engine are relatively static entities; for engines accessing
+remote place datastores it may be desirable to cache the category structure rather than
+querying a server every time QPlaceManagerEngine::initializeCategories() is called.
+Depending on how dynamic the categories are, always downloading the freshest
+set of categories may be more appropriate.
+*/

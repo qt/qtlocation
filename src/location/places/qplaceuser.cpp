@@ -67,18 +67,14 @@ bool QPlaceUserPrivate::operator==(const QPlaceUserPrivate &other) const
     \class QPlaceUser
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
-    \brief The QPlaceUser class represents a user.
-
-    Each QPlaceRating represents a rating object with a count and value.
-
-    QPlaceRating is an in memory representation of a rating object.
+    \brief The QPlaceUser class represents a individual user.
 */
 
-
 /*!
-    Constructs a new user.
+    Constructs a new user object.
 */
 QPlaceUser::QPlaceUser()
     : d(new QPlaceUserPrivate)
@@ -86,7 +82,7 @@ QPlaceUser::QPlaceUser()
 }
 
 /*!
-    Constructs a copy of \a other
+    Constructs a copy of \a other.
 */
 QPlaceUser::QPlaceUser(const QPlaceUser &other)
     :d(other.d)
@@ -94,7 +90,7 @@ QPlaceUser::QPlaceUser(const QPlaceUser &other)
 }
 
 /*!
-    Destructor.
+    Destroys the user object.
 */
 QPlaceUser::~QPlaceUser()
 {
@@ -109,6 +105,12 @@ QPlaceUser &QPlaceUser::operator=(const QPlaceUser &other)
     return *this;
 }
 
+/*!
+    \fn bool QPlaceUser::operator!=(const QPlaceUser &other) const
+
+    Returns true if \a other is not equal to this user,
+    otherwise returns false.
+*/
 
 /*!
     Returns true if this user is equal to \a other.
@@ -120,7 +122,7 @@ bool QPlaceUser::operator==(const QPlaceUser &other) const
 }
 
 /*!
-    Returns the user id.
+    Returns the id of the user.
 */
 QString QPlaceUser::userId() const
 {
@@ -128,15 +130,15 @@ QString QPlaceUser::userId() const
 }
 
 /*!
-    Sets the \a userId.
+    Sets the \a id of the user.
 */
-void QPlaceUser::setUserId(const QString &userId)
+void QPlaceUser::setUserId(const QString &id)
 {
-    d->userId = userId;
+    d->userId = id;
 }
 
 /*!
-    Returns the user's name.
+    Returns the name of the user.
 */
 QString QPlaceUser::name() const
 {
@@ -144,11 +146,10 @@ QString QPlaceUser::name() const
 }
 
 /*!
-    Sets the user's \a name.
+    Sets the \a name of the user.
 */
 
 void QPlaceUser::setName(const QString &name)
 {
     d->name = name;
 }
-

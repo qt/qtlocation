@@ -60,10 +60,14 @@ QT_USE_NAMESPACE
     \class QPlaceSearchReply
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-replies
     \since QtLocation 5.0
 
-    \brief The QPlaceSearchReply class manages a search operation started by an
+    \brief The QPlaceSearchReply class manages a place search operation started by an
     instance of QPlaceManager.
+
+    See \l {Discovery/Search} for an example on how to use a search reply.
+    \sa QPlaceSearchRequest, QPlaceManager
 */
 
 /*!
@@ -117,7 +121,7 @@ QPlaceSearchRequest QPlaceSearchReply::request() const
 }
 
 /*!
-    Sets the search request used to generate this this reply.
+    Sets the search \a request used to generate this reply.
 */
 void QPlaceSearchReply::setRequest(const QPlaceSearchRequest &request)
 {

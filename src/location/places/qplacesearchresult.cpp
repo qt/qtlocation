@@ -41,11 +41,12 @@
 
 #include "qplacesearchresult.h"
 #include "qplacesearchresult_p.h"
+#include <QtCore/qnumeric.h>
 
 QT_USE_NAMESPACE
 
 QPlaceSearchResultPrivate::QPlaceSearchResultPrivate()
-:   QSharedData(), distance(0), type(QPlaceSearchResult::UnknownSearchResult)
+    :   QSharedData(), distance(qQNaN()), type(QPlaceSearchResult::UnknownSearchResult)
 {
 }
 
@@ -74,16 +75,32 @@ bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &othe
     \class QPlaceSearchResult
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
-    \brief The QPlaceSearchResult class represents a search result object.
+    \brief The QPlaceSearchResult class represents a search result.
 
-    Each QPlaceSearchResult represents a place with a number of attributes
-    such as distance, relevance, etc.
+    There are two types of search result.  The first is a
+    \l {QPlaceSearchResult::PlaceResult} {place result}, which contains
+    a place that matched a search request, but also metadata about the place
+    such as the distance from the search center of a search request(if it had one).
+
+    The other type is a \l {QPlaceSearchResult::CorrectionResult}{correction}, which
+    contains an alternative search term that may better reflect the
+    user's intended query.
+
 */
 
 /*!
-    Default constructor. Constructs an new search result.
+    \enum QPlaceSearchResult::SearchResultType
+    Defines the type of search result
+    \value PlaceResult The search result contains a place.
+    \value CorrectionResult The search result contains a search term correction.
+    \value UnknownSearchResult The contents of the search result are unknown.
+*/
+
+/*!
+    Constructs an new search result.
 */
 QPlaceSearchResult::QPlaceSearchResult()
     : d(new QPlaceSearchResultPrivate)
@@ -99,24 +116,42 @@ QPlaceSearchResult::QPlaceSearchResult(const QPlaceSearchResult &other)
 }
 
 /*!
-    Destructor.
+    Destroys the search result.
 */
 QPlaceSearchResult::~QPlaceSearchResult()
 {
 }
 
+/*!
+    Assigns \a other to this search result and returns a reference to this
+    search result.
+*/
 QPlaceSearchResult &QPlaceSearchResult::operator =(const QPlaceSearchResult &other) {
     d = other.d;
     return *this;
 }
 
+/*!
+    Returns true if \a other is equal to this search result, otherwise
+    returns false.
+*/
 bool QPlaceSearchResult::operator==(const QPlaceSearchResult &other) const
 {
     return (*(d.constData()) == *(other.d.constData()));
 }
 
 /*!
-    Returns the distance.
+    \fn bool QPlaceSearchResult::operator!=(const QPlaceSearchResult &other) const
+    Returns true if \a other not equal to this search result, otherwise
+    returns false.
+*/
+
+/*!
+    Returns the distance of the place to the search center.  This field
+    is only valid when the search result type is QPlaceSearchResult::PlaceResult,
+    and where the search request contained a search center.  Otherwise,
+    the distance is NaN indicating an undefined distance.  The default value
+    for distance is NaN.
 */
 qreal QPlaceSearchResult::distance() const
 {
@@ -124,7 +159,7 @@ qreal QPlaceSearchResult::distance() const
 }
 
 /*!
-    Sets the \a distance.
+    Set the \a distance of the search result's place from a search center.
 */
 void QPlaceSearchResult::setDistance(qreal distance)
 {
@@ -132,7 +167,7 @@ void QPlaceSearchResult::setDistance(qreal distance)
 }
 
 /*!
-    Returns the place.
+    Returns the type of the search result.
 */
 QPlaceSearchResult::SearchResultType QPlaceSearchResult::type() const
 {
@@ -140,7 +175,7 @@ QPlaceSearchResult::SearchResultType QPlaceSearchResult::type() const
 }
 
 /*!
-    Sets the \a place.
+    Sets the \a type of the search result.
 */
 void QPlaceSearchResult::setType(QPlaceSearchResult::SearchResultType type)
 {
@@ -148,7 +183,8 @@ void QPlaceSearchResult::setType(QPlaceSearchResult::SearchResultType type)
 }
 
 /*!
-    Returns the place.
+    Returns the place of the search result.  This field is only valid when the search result
+    type is QPlaceSearchResult::PlaceResult.
 */
 QPlace QPlaceSearchResult::place() const
 {
@@ -156,7 +192,7 @@ QPlace QPlaceSearchResult::place() const
 }
 
 /*!
-    Sets the \a place.
+    Sets the \a place that this search result refers to.
 */
 void QPlaceSearchResult::setPlace(const QPlace &place)
 {
@@ -164,7 +200,8 @@ void QPlaceSearchResult::setPlace(const QPlace &place)
 }
 
 /*!
-    Returns the suggested search term correction.
+    Returns the correction term that this particular search result represents.
+    This field is only valid when the search result type is QPlaceSearchResult::CorrectionResult.
 */
 QString QPlaceSearchResult::correction() const
 {
@@ -172,7 +209,7 @@ QString QPlaceSearchResult::correction() const
 }
 
 /*!
-    Sets the "did you mean" \a string.
+    Sets the \a correction term of the search result.
 */
 void QPlaceSearchResult::setCorrection(const QString &correction)
 {

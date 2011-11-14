@@ -31,41 +31,16 @@
     \title Places
     \previouspage {qtlocation-cpp.html}{QtLocation}
 
-    \brief Places enables places of interest to be identified and retrieved by
-    position and metadata.
-
     \section1 Overview
 
-    The Places API allows users to discover places, view rich content about the places
-    as reviews and images.  It can also be used to facilitated management
-    of places such as saving and removing.
+    The Places API allows users to discover places/points of interest
+    and view details about them such as address and contact information;
+    some places may even have rich content such as images and reviews.
+    The Places API also facilitates management of places and
+    categories, allowing users to save and remove them.
 
     \section1 Place Definition
-    A place is a point of interest whether it be a favorite restaurant, a park or someone's home.
-    A QPlace object describes a place by acting as a container for various information.  The information can
-    be divided into 3 classifications
-
-    \list
-    \o Core data
-    \o Detailed data
-    \o Rich content
-    \endlist
-
-    The \e {Core} data consists of the bare essential information regarding a place.  What comes under core
-    may vary from provider to provider but typically it would consist of the place name, location, contact information,
-    categories and icon.  When searching for places with an online provider, it is typical that of the candidate places
-    returned only the core data is populated to save bandwidth.  If a user is interested in a particular place, then
-    the details of that data are retrieved.
-
-    The \e {Detailed} data consists of the remaining place data fields like the supplier and attributes, but with
-    the exception of rich content as described below.  For offline providers the details are usually all available,
-    so when a search operation is conducted, the places contain detailed information.  To check whether a place does
-    contain detailed information the QPlace::detailsFetched() function can be queried.  The QPlaceManager::getPlaceDetails()
-    function can be used to fetch the details if necessary.
-
-    The \e {Rich Content} consists of media type information such as images and reviews.  These are typically paginated
-    and thus are retrieved independently from the place using the QPlaceManager.  \e {Rich Content} can then be assigned
-    to a place instance as necessary so it can act as a container for the content.
+    \input place-definition.qdocinc
 
     \section1 Common Operations
 
@@ -133,15 +108,26 @@
     The usage of the QPlaceContent::Collection and the conversion between content and its subtypes means
     that code for handling the mechanics of paging reviews, images and editorials can be easily shared.
 
-    \section2 Text Prediction
+    \section2 Text Predictions
     The retrieval of text predictions is very similar to performing a place search. A QPlaceSearchRequest
     is used just like a place search, the only difference being that the search term is set to a
-    semi-completed string.
+    partially completed string.
 
     \snippet snippets/places/requesthandler.h Prediction request
     And when the request is done, we can use the reply to show the predictions.
     \snippet snippets/places/requesthandler.h Prediction handler
 
+    \section2 Recommendations
+    Recommendations are suggestions for places that are similar to a specified place.
+    The retrieval of recommendations is very similar to retrieving text predictions or
+    performing a place search.
+
+    \snippet snippets/places/requesthandler.h Recommendation
+    \dots
+    \dots
+    \snippet snippets/places/requesthandler.h Recommendation handler
+
+    \target Saving a place cpp
     \section2 Saving a place
     The saving of a new place is performed as follows, we create a QPlace instance
     and populate it with information such as a name, address and coordinate.  Once
@@ -162,10 +148,19 @@
     from a web service will typically not emit these signals while managers accessing places locally stored generally will.
 
     \section3 Caveats
-    The Places API is currently designed for only saving \a {core} data.  Saving a place with \e {rich content}
-    or \a {detailed} data is not a supported use case.  Typically a manager will generally ignore these fields upon save and may
-    produce a warning message if they are populated.
+    \input place-caveats.qdocinc
 
+    \section3 Saving between managers
+    When saving places between managers, there are a few things to be aware of.
+    Some fields of a place such as the id, categories and icons are manager specific entities
+    e.g. the categories in one manager may not be recognised in another.
+    Therefore trying to save a place directly from one manager to another is not possible.
+    The typical approach is to either clear the id, categories and icon
+    or alternatively assign them with appropriate values of the new manager.
+    The visibility scope may also need to be modified.
+    \snippet snippets/places/requesthandler.h Save to different manager
+
+    \target Removing a place cpp
     \section2 Removing a place
     The removal of a place is performed as follows:
     \snippet snippets/places/requesthandler.h Remove place
@@ -225,11 +220,19 @@
     manager does so is provider specific.  Managers accessing places from a web service will typically not emit
     these signals, while managers accessing places stored locally generally will.
 
-    \section1 Places Examples
-
-
     \section1 Classes in Places
 
-    \annotatedlist QtLocation-places
+    \section2 Data classes
+    \annotatedlist QtLocation-places-data
+
+    \section2 Request classes
+    \annotatedlist QtLocation-places-requests
+
+    \target Places Reply Classes
+    \section2 Reply classes
+    \annotatedlist QtLocation-places-replies
+
+    \section2 Manager classes
+    \annotatedlist QtLocation-places-manager
 */
 

@@ -59,14 +59,18 @@ QT_USE_NAMESPACE
     \class QPlaceDetailsReply
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-replies
     \since QtLocation 5.0
 
-    \brief The QPlaceDetailsReply class manages a place datails operation started by an
+    \brief The QPlaceDetailsReply class manages a place details fetch operation started by an
     instance of QPlaceManager.
+
+    See \l {Fetching Place Details} for an example on how to use a details reply.
+    \sa QPlaceManager
 */
 
 /*!
-    Constructs a search reply with a given \a parent.
+    Constructs a details reply with a given \a parent.
 */
 QPlaceDetailsReply::QPlaceDetailsReply(QObject *parent)
     : QPlaceReply(new QPlaceDetailsReplyPrivate, parent)
@@ -74,7 +78,7 @@ QPlaceDetailsReply::QPlaceDetailsReply(QObject *parent)
 }
 
 /*!
-    Destroys the search reply.
+    Destroys the details reply.
 */
 QPlaceDetailsReply::~QPlaceDetailsReply()
 {
@@ -89,7 +93,7 @@ QPlaceReply::Type QPlaceDetailsReply::type() const
 }
 
  /*!
-    Returns a place result
+    Returns the place that was fetched.
 */
 QPlace QPlaceDetailsReply::place() const
 {
@@ -98,7 +102,7 @@ QPlace QPlaceDetailsReply::place() const
 }
 
 /*!
-    Sets the \a place
+    Sets the fetched \a place of the reply.
 */
 void QPlaceDetailsReply::setPlace(const QPlace &place)
 {

@@ -60,7 +60,11 @@ class Q_LOCATION_EXPORT QPlaceImage : public QPlaceContent
 {
 public:
     QPlaceImage();
+#ifdef Q_QDOC
+    QPlaceImage(const QPlaceContent &other);
+#else
     Q_DECLARE_CONTENT_COPY_CTOR(QPlaceImage)
+#endif
 
     virtual ~QPlaceImage();
 

@@ -50,28 +50,105 @@ QT_BEGIN_NAMESPACE
     \class QPlaceManager
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-manager
     \since QtLocation 5.0
 
-    \brief The QPlaceManager class is responsible for the discovery and management of places.
+    \brief The QPlaceManager class provides the interface which allows clients to access
+    places stored in a particular backend.
+
+    The following table gives an overview of the functionality provided by the QPlaceManager
+    \table
+        \header
+            \o Functionality
+            \o Description
+        \row
+            \o Searching for places
+            \o Using set of parameters such as a seach term and search area, relevant places
+               can be returned to the user.
+        \row
+            \o Categories
+            \o Places can be classified as belonging to different categories.  The
+               manager supports access to these categories.
+        \row
+            \o Text predictions
+            \o Given a partially complete search term, a list of potential complete
+               search terms can be given.
+        \row
+            \o Recommendations
+            \o Given an existing place, a set of similar recommended places can
+               be suggested to the user.
+        \row
+            \o Rich Content
+            \o Rich content such as images, reviews etc can be retrieved in a paged
+               fashion.
+        \row
+            \o Place/Category management
+            \o Places and categories may be saved and removed.  It is possible
+               for notifications to be given when this happens.
+        \row
+            \o Localization
+            \o Different locales may be specified to return place
+               data in different languages.
+    \endtable
+
+    \section1 Obtaining a QPlaceManager instance
+    Creation of a QPlaceManager is facilitated by the QGeoServiceProvider.
+    See \l {Initializing a manager} for an example on how to create a manager.
+
+
+    \section1 Asynchronous interface.
+    The QPlaceManager class provides an abstraction of the datastore which contains place information.
+    The functions provided by the QPlaceManager and primarily asynchronous and follow
+    a request-reply model.   Typically a request is given to the manager, consisting
+    of a various set of parameters and a reply object is created.  The reply object
+    has a signal to notify when the request is done, and once completed, the reply
+    contains the results of the request, along with any errors that occurred, if any.
+
+    An asynchonous request is generally handled as follows:
+    \snippet snippets/places/requesthandler.h Simple search
+    \dots
+    \dots
+    \snippet snippets/places/requesthandler.h Simple search handler
+
+    See \l {Common Operations} for a list of examples demonstrating how the QPlaceManger
+    is used.
+
+    \section1 Category Initialization
+    Sometime during startup of an application, the initializeCategories() function should
+    be called to setup the categories.  Initializing the categories enables the usage of the
+    following functions:
+
+    \list
+        \o QPlaceManager::childCategories()
+        \o QPlaceManager::category()
+        \o QPlaceManager::parentCategoryId()
+        \o QPlaceManager::childrenCategoryIds();
+    \endlist
+
+    If the categories need to be refreshed or reloaded, the initializeCategories() function
+    may be called again.
+
 */
 
 /*!
     \enum QPlaceManager::ManagerFeature
-    Defines the possible features that the place manager can possible.
-    \value ImportFeature The manager supports import operations
-    \value ExportFeature The manager supports export operations
-    \value CheckInFeature The manaager supports check-in operations
-    \value PostRatingFeature The manager supports posting ratings for places
-    \value SuggestionFeature The manager supports the providing of suggestions
-    \value ReportPlaceFeature The manager supports reporting a place if it is incorrect/inappropriate.
-    \value AuthenticationFeature The manager supports authentication of a user.
-    \value CreatePlaceFeature The manager supports the creation of places.
-    \value UpdatePlaceFeature The manager supports the updating of places.
-    \value NotifcationsFeature The manager gives notifications for added/modified/remove places and categories.
+    Defines the possible features that the place manager can have.
+    \value NoFeatures No features specified/supported
+    \value SavePlaceFeature The manager can be used to save places
+    \value RemovePlaceFeature The manager can be used to remove places
+    \value SaveCategoryFeature The manager can be used to save categories.
+    \value RemoveCategoryFeature The manager can be used to remove categories.
+    \value RecommendationsFeature The manager can be used to provide recommendations.
+    \value TextPredictionsFeature The manager can be used to provide text predictions
+    \value CorrectionsFeature The manager can be used to provide search term corrections
+    \value LocaleFeature The manager can be used to provide place data localized
+                          according to locale
+    \value NotificationsFeature The manager has signal notifications for when
+                                places/categories are added/modified/removed.
 */
 
 /*!
-    Constructs a new manager with the specified \a pareent and with the
+    Constructs a new manager with the specified \a parent and with the
     implementation provided by \a engine.
 
     This constructor is used internally by QGeoServiceProviderFactory. Regular
@@ -109,7 +186,8 @@ QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
 }
 
 /*!
-    Destroys the manager.
+    Destroys the manager.  This destructor is used internally by QGeoServiceProvider
+    and should never need to be called in application code.
 */
 QPlaceManager::~QPlaceManager()
 {
@@ -133,7 +211,9 @@ int QPlaceManager::managerVersion() const
 }
 
 /*!
-    Retrieves a details of place with \a place id.
+    Retrieves a details of place corresponding to the given \a placeId.
+
+    See \l {Fetching Place Details} for an example of usage.
 */
 QPlaceDetailsReply *QPlaceManager::getPlaceDetails(const QString &placeId) const
 {
@@ -141,8 +221,10 @@ QPlaceDetailsReply *QPlaceManager::getPlaceDetails(const QString &placeId) const
 }
 
 /*!
-    Retrieves content from a given \a place according to thes parameters specified in
+    Retrieves content for a given \a place according to the parameters specified in
     \a request.
+
+    See \l {Fetching Rich Content} for an example of usage.
 */
 QPlaceContentReply *QPlaceManager::getContent(const QPlace &place, const QPlaceContentRequest &request) const
 {
@@ -150,7 +232,9 @@ QPlaceContentReply *QPlaceManager::getContent(const QPlace &place, const QPlaceC
 }
 
 /*!
-    Searches for places according to a given \a request.
+    Searches for places according to the parameters specified in \a request.
+
+    See \l {Discovery/Search} for an example of usage.
 */
 QPlaceSearchReply *QPlaceManager::search(const QPlaceSearchRequest &request) const
 {
@@ -158,7 +242,9 @@ QPlaceSearchReply *QPlaceManager::search(const QPlaceSearchRequest &request) con
 }
 
 /*!
-    Provides recommendation based on a given \a request.
+    Provides recommendations for places that are similar to \a place, and using the parameters as specified in \a request.
+
+    See \l {Recommendations} for an example of usage.
 */
 QPlaceSearchReply *QPlaceManager::recommendations(const QPlace &place, const QPlaceSearchRequest &request) const
 {
@@ -166,7 +252,11 @@ QPlaceSearchReply *QPlaceManager::recommendations(const QPlace &place, const QPl
 }
 
 /*!
-    Requests a set of text predictions for a given \a request
+    Requests a set of text predictions according to the parameters specified in \a request.
+    The \a request can hold the incomplete search term, along with other data such
+    as a search area to narrow down relevant results.
+
+    See \l {Text Predictions} for an example of usage.
 */
 QPlaceTextPredictionReply *QPlaceManager::textPredictions(const QPlaceSearchRequest &request) const
 {
@@ -174,7 +264,9 @@ QPlaceTextPredictionReply *QPlaceManager::textPredictions(const QPlaceSearchRequ
 }
 
 /*!
-    Saves a \a place at the given \a scope.
+    Saves a specified \a place.
+
+    See \l {Saving a place cpp} for an example of usage.
 */
 QPlaceIdReply *QPlaceManager::savePlace(const QPlace &place)
 {
@@ -183,6 +275,8 @@ QPlaceIdReply *QPlaceManager::savePlace(const QPlace &place)
 
 /*!
     Removes the place corresponding to \a placeId from the manager.
+
+    See \l {Removing a place cpp} for an example of usage.
 */
 QPlaceIdReply *QPlaceManager::removePlace(const QString &placeId)
 {
@@ -190,7 +284,10 @@ QPlaceIdReply *QPlaceManager::removePlace(const QString &placeId)
 }
 
 /*!
-    Saves a \a category that is a child of \a parent.
+    Saves a \a category that is a child of the category specified by \a parentId.
+    An empty \a parentId means \a category is saved as a top level category.
+
+    See \l {Saving a category} for an example of usage.
 */
 QPlaceIdReply *QPlaceManager::saveCategory(const QPlaceCategory &category, const QString &parentId)
 {
@@ -198,7 +295,9 @@ QPlaceIdReply *QPlaceManager::saveCategory(const QPlaceCategory &category, const
 }
 
 /*!
-    Remove \a category from the manager.
+    Removes the category corresponding to \a categoryId from the manager.
+
+    See \l {Removing a category} for an example of usage.
 */
 QPlaceIdReply *QPlaceManager::removeCategory(const QString &categoryId)
 {
@@ -206,7 +305,9 @@ QPlaceIdReply *QPlaceManager::removeCategory(const QString &categoryId)
 }
 
 /*!
-    Initializes the manager categories.
+    Initializes the categories of the manager.
+
+    See \l {Using Categories} for an example of usage.
 */
 QPlaceReply *QPlaceManager::initializeCategories()
 {
@@ -223,7 +324,7 @@ QString QPlaceManager::parentCategoryId(const QString &categoryId) const
 
 /*!
     Returns the children category ids of the category corresponding to \a categoryId.
-    If \a categoryId is empty than all top level category ids are returned.
+    If \a categoryId is empty then all top level category ids are returned.
 */
 QStringList QPlaceManager::childrenCategoryIds(const QString &categoryId) const
 {
@@ -247,11 +348,10 @@ QList<QPlaceCategory> QPlaceManager::childCategories(const QString &parentId) co
     return d->childCategories(parentId);
 }
 
-
 /*!
     Returns the locale of the manager.
     The locale is used as a hint to determine
-    what language place details should be returned in.
+    what language place data should be returned in.
 */
 QLocale QPlaceManager::locale() const
 {
@@ -259,7 +359,7 @@ QLocale QPlaceManager::locale() const
 }
 
 /*!
-    Sets the locale of the manager.
+    Sets the \a locale of the manager.
 */
 void QPlaceManager::setLocale(const QLocale &locale)
 {
@@ -275,94 +375,90 @@ QPlaceManager::ManagerFeatures QPlaceManager::supportedFeatures() const
 }
 
 /*!
-\fn void QPlaceManager::finished(QPlaceReply* reply)
+    \fn void QPlaceManager::finished(QPlaceReply* reply)
 
-This signal is emitted when \a reply has finished processing.
+    This signal is emitted when \a reply has finished processing.
 
-If reply->error() equals QPlaceReply::NoError then the processing
-finished successfully.
+    If reply->error() equals QPlaceReply::NoError then the processing
+    finished successfully.
 
-This signal and QPlaceReply::finished() will be emitted at the same time.
+    This signal and QPlaceReply::finished() will be emitted at the same time.
 
-\note Do no delete the \a reply object in the slot connected to this signal.
-Use deleteLater() instead.
+    \note Do no delete the \a reply object in the slot connected to this signal.
+    Use deleteLater() instead.
 */
 
 /*!
-\fn void QPlaceManager::error(QPlaceReply* reply, QPlaceReply::Error error, const QString &errorString)
+    \fn void QPlaceManager::error(QPlaceReply* reply, QPlaceReply::Error error, const QString &errorString)
 
-This signal is emitted when an error has been detected in the processing of
-\a reply.  The QPlaceManager::finished() signal will probably follow.
+    This signal is emitted when an error has been detected in the processing of
+    \a reply.  The QPlaceManager::finished() signal will probably follow.
 
-The error will be described by the error code \a error.  If \a errorString is
-not empty it will contain a textual description of the error meant for developers
-and not end users.
+    The error will be described by the error code \a error.  If \a errorString is
+    not empty it will contain a textual description of the error meant for developers
+    and not end users.
 
-This signal and QPlaceReply::error() will be emitted at the same time.
+    This signal and QPlaceReply::error() will be emitted at the same time.
 
-\note Do no delete the \a reply object in the slot connected to this signal.
-Use deleteLater() instead.
+    \note Do no delete the \a reply object in the slot connected to this signal.
+    Use deleteLater() instead.
 */
 
 /*!
-    \fn void QPlaceManager::authenticationRequired(QAuthenticator *authenticator)
+    \fn void QPlaceManager::placeAdded(const QString &placeId)
 
-    This signal is emitted if authentication details are required by the manager
-    to peform certain operations.  If the authentication was successful, the next time
-    the operations are performed, the same credentials are used and the
-    authenticationRequired signal is not emitted again.
+    This signal is emitted if a place has been added to the manager engine's datastore.
+    The particular added place is specified by \a placeId.
 
-    If authentication is unsuccessful, the manager will emit the signal again.
-*/
-
-/*!
-    \fn void QPlaceManager::placeAdded(const QString&placeId)
-
-    This signal is emitted if a place has been added to the manager's datastore.
-
-    It is generally only emitted by managers that store places locally.
+    This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
 
 */
 
 /*!
-    \fn void QPlaceManager::placeUpdated(const QString&placeId)
+    \fn void QPlaceManager::placeUpdated(const QString &placeId)
 
     This signal is emitted if a place has been modified in the manager's datastore.
+    The particular modifed place is specified by \a placeId.
 
-    It is generally only emitted by managers that store places locally.
+    This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
 */
 
 /*!
-    \fn void QPlaceManager::placeRemoved(const QString&placeId)
+    \fn void QPlaceManager::placeRemoved(const QString &placeId)
 
     This signal is emitted if a place has been removed from the manager's datastore.
+    The particular place that has been removed is specified by \a placeId.
 
-    It is generally only emitted by managers that store places locally.
+    This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
 */
 
 /*!
-    \fn void QPlaceManager::categoryAdded(const QString&categoryId)
+    \fn void QPlaceManager::categoryAdded(const QPlaceCategory &category, const QString &parentId)
 
-    This signal is emitted if a category has been added to the manager's datastore.
+    This signal is emitted if a \a category has been added to the manager's datastore.
+    The parent of the \a category is specified by \a parentId.
 
-    It is generally only emitted by managers that store categories locally.
+    This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
 
 */
 
 /*!
-    \fn void QPlaceManager::categoryUpdated(const QString&categoryId)
+    \fn void QPlaceManager::categoryUpdated(const QPlaceCategory &category, const QString &parentId)
 
-    This signal is emitted if a category has been modified in the manager's datastore.
+    This signal is emitted if a \a category has been modified in the manager's datastore.
+    The parent of the modified category is specified by \a parentId.
 
-    It is generally only emitted by managers that store categories locally.
+    This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
 */
 
 /*!
-    \fn void QPlaceManager::categoryRemoved(const QString&categoryId)
+    \fn void QPlaceManager::categoryRemoved(const QString &categoryId, const QString &parentId)
 
-    This signal is emitted if a category has been removed from the manager's datastore.
+    This signal is emitted when the category correspoinding to \a categoryId has
+    been removed from the manager's datastore.  The parent of the removed category
+    is specified by \a parentId.
 
-    It is generally only emitted by managers that store categories locally.
+    This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
 */
 
 QT_END_NAMESPACE

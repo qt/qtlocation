@@ -1,0 +1,20 @@
+    The Places API is currently designed for only saving \a {core} details.  Saving rich content like
+    images and reviews or details like supplier and rating is not a supported use case.  Typically a manager
+    will generally ignore these fields upon save and may produce a warning message if they are populated.
+
+    The Places API only supports saving of the following \e {core details}:
+    \list
+        \o name
+        \o place id
+        \o location
+        \o contact details
+        \o icon
+        \o categories
+        \o visibility scope
+    \endlist
+
+    It is possible that providers may only support a subset of these.
+    See the \l {Information about plugins} {provider plugins} for more details.
+
+    Saving of properties such as the rating, extended attributes,
+    images, reviews, editorials and supplier is explicitly not supported by the Places API.

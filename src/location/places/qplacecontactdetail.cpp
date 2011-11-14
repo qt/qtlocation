@@ -59,11 +59,35 @@ bool QPlaceContactDetailPrivate::operator== (const QPlaceContactDetailPrivate &o
 
 /*!
 \class QPlaceContactDetail
-\brief The QPlaceContactDetail class represents a contact detail such as a phone number or url.
+\brief The QPlaceContactDetail class represents a contact detail such as a phone number or website url.
 \inmodule QtLocation
 
 \ingroup QtLocation-places
+\ingroup QtLocation-places-data
 
+The detail consists of a label and value.  The label is a localized string that can be presented
+to the end user that describes that detail value which is the actual phone number, email address etc.
+
+\section2 Contact Types
+
+The QPlaceContactDetail class defines some constant strings which characterize standard \e {contact types}.
+\list
+    \o QPlaceContactDetail::Phone
+    \o QPlaceContactDetail::Email
+    \o QPlaceContactDetail::Website
+    \o QPlaceContactDetail::Fax
+\endlist
+
+These types are used to access and modify contact details in QPlace via:
+\list
+    \o QPlace::contactDetails()
+    \o QPlace::setContactDetails()
+    \o QPlace::appendContactDetail()
+    \o QPlace::contactTypes()
+\endlist
+
+The \e {contact type} is intended to be a string type so that providers are able to introduce new contact
+types if necessary.
 */
 
 /*!
@@ -74,7 +98,7 @@ Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Phone, "Phone");
 
 /*!
    \variable QPlaceContactDetail::Email
-   The constant to specify email contact contact details.
+   The constant to specify email contact details.
 */
 Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Email, "Email");
 
@@ -91,7 +115,7 @@ Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Website, "Website");
 Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Fax, "Fax");
 
 /*!
-    Constructs an contact detail.
+    Constructs a contact detail.
 */
 QPlaceContactDetail::QPlaceContactDetail()
     : d_ptr(new QPlaceContactDetailPrivate)

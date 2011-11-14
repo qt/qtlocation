@@ -67,7 +67,6 @@ public:
         PermissionsError,
         UnsupportedError,
         BadArgumentError,
-        AuthenticationFailedError,
         CancelError,
         UnknownError
     };

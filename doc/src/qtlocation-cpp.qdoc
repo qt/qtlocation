@@ -29,6 +29,7 @@
 \page qtlocation-cpp.html
 \title QtLocation C++ API
 \brief Information about the QtLocation C++ API
+\previouspage {QtLocation Module}
 
 The Location API provides a library for location positioning, mapping and navigation.
 
@@ -41,11 +42,11 @@ Positioning information can be sourced from GPS satellites or a stream of data u
 NMEA formatted text. Once a position is acquired we can monitor the updated
 position to see if it moves into or out of a given region. With the Maps API
 we can associate the position with a map in various formats supplied by a backend.
-Then the Places API could be used to populated locations on the Map or even
-the current position as a place of interest complete with icons, contact details
-and other information.
+Then the Places API could be used to populate places on the Map or even
+specify the current position as a place of interest and associate it with
+an icon, contact details and other information.
 
-The following table provides links to more detailed information on section of the
+The following table provides links to more detailed information on sections of the
 QtLocation C++ API.
 
 \table
@@ -57,7 +58,7 @@ QtLocation C++ API.
         \o Displaying maps and finding routes.
     \row
         \o \l {Places}
-        \o Searching for places.
+        \o Searching for and managing points of interest.
 \endtable
 
 
@@ -80,10 +81,8 @@ QtLocation C++ API.
 
 
 
-\section1 Location Places of Interest
+\section1 Places classes
 
     \annotatedlist QtLocation-places
-
-
 */
 

@@ -60,10 +60,27 @@ QT_USE_NAMESPACE
     \class QPlaceIdReply
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-replies
     \since QtLocation 5.0
 
     \brief The QPlaceIdReply class manages operations which return an id such as
            saving and removal operations of places and categories.
+
+    The QPlaceIdReply can be considered a multipurpose reply in that it can
+    be used to save places, save categories, remove places and remove categories.
+    In each case it returns an id of the place or category that was added/modified/removed.
+
+    See \l {Saving a place cpp}{Saving a place} for an example of how to use an id reply.
+    \sa QPlaceManager
+*/
+
+/*!
+    \enum QPlaceIdReply::OperationType
+    Defines the type of operation that was used to generate this reply.
+    \value SavePlace The reply was created for a save place operation
+    \value RemovePlace The reply was created for a remove place operation.
+    \value SaveCategory The reply was created for a save category operation
+    \value RemoveCategory The reply was created for a remove category operation.
 */
 
 /*!
@@ -84,8 +101,7 @@ QPlaceIdReply::~QPlaceIdReply()
 }
 
 /*!
-    Returns the type of reply.  This is an indication of the content
-    of the reply.
+    Returns the type of reply.
 */
 QPlaceReply::Type QPlaceIdReply::type() const
 {
@@ -93,7 +109,9 @@ QPlaceReply::Type QPlaceIdReply::type() const
 }
 
 /*!
-    Returns the operation type of the reply.
+    Returns the operation type of the reply. i.e whether this
+    id reply was for a save place operation,
+    remove category operation etc.
 */
 QPlaceIdReply::OperationType QPlaceIdReply::operationType() const
 {
@@ -102,9 +120,9 @@ QPlaceIdReply::OperationType QPlaceIdReply::operationType() const
 }
 
 /*!
-    Returns the relevant id for the opeation. Eg for a save place operation,
+    Returns the relevant id for the operation. Eg for a save place operation,
     the id is that of the saved place.  For a category removal operation,
-    it is the category id.
+    it is the id of the category that was removed.
 */
 QString QPlaceIdReply::id() const
 {

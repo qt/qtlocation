@@ -115,7 +115,13 @@ Creates a new QGeoBoundingArea that is a deep copy of this bounding area.
 \fn bool QGeoBoundingArea::operator==(const QGeoBoundingArea &other) const
 
   Returns true if the \a other bounding area is equivalent to this bounding area,
-  otherwise returns false
+  otherwise returns false.
+*/
+
+/*!
+    \fn bool QGeoBoundingArea::operator!=(const QGeoBoundingArea &other) const
+    Returns true if \a other is not equivalent to this bounding area,
+    otherwise returns false.
 */
 
 QT_END_NAMESPACE

@@ -69,6 +69,7 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
     \class QPlaceAttribute
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
     \brief The QPlaceAttribute class represents generic attribute information about a place.
@@ -85,6 +86,7 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
         \o QPlaceAttribute::Payment
     \endlist
 
+
     The above types are used to access and modify attributes in QPlace via:
     \list
         \o QPlace::extendedAttribute()
@@ -98,13 +100,13 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
 */
 
 /*!
-   \variable QPlaceAttrubute::OpeningHours
+   \variable QPlaceAttribute::OpeningHours
    The constant to specify an opening hours attribute.
 */
 Q_DEFINE_LATIN1_CONSTANT(QPlaceAttribute::OpeningHours, "openingHours");
 
 /*!
-   \variable QPlaceAttrubute::Payment
+   \variable QPlaceAttribute::Payment
    The constant to specify an attribute that defines the methods of payment.
 */
 Q_DEFINE_LATIN1_CONSTANT(QPlaceAttribute::Payment, "payment");

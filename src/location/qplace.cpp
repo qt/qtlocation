@@ -54,9 +54,67 @@ QT_BEGIN_NAMESPACE
     \class QPlace
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
-    \brief The QPlace class represents basic information about a place.
+    \brief The QPlace class represents a set of data about a place.
+
+    \input place-definition.qdocinc
+
+    \section2 Contact Information
+    The contact information of a place is based around a common set of
+    \l {Contact Types}{contact types}. To retrieve all the phone numbers
+    of a place, one would do:
+
+    \snippet snippets/places/requesthandler.h Phone numbers
+
+    The contact types are string values by design to allow for providers
+    to introduce new contact types.
+
+    For convenience there are a set of functions which return the value
+    of the first contact detail of each type.
+    \list
+        \o QPlace::primaryPhone()
+        \o QPlace::primaryEmail()
+        \o QPlace::primaryWebsite()
+        \o QPlace::primaryFax()
+    \endlist
+
+    \section2 Extended Attributes
+    Places may have additional attributes which are not covered in the formal API.
+    Similar to contacts attributes are based around a common set of
+    \l {Attribute Types}{attribute types}.  To retrieve an extended attribute one
+    would do:
+    \snippet snippets/places/requesthandler.h Opening hours
+
+    The attribute types are string values by design to allow providers
+    to introduce new attribute types.
+
+    \section2 Content
+    The QPlace object is only meant to be a convenient container to hold
+    rich content such as images, reviews etc.  Retrieval of content
+    should happen via QPlaceManager::getContent().
+
+    The content is stored as a QPlaceContent::Collection which contains
+    both the index of the content, as well as the content itself.  This enables
+    developers to check whether a particular item has already been retrieved
+    and if not, then request that content.
+
+    \section3 Attribution
+    Places have a field for a rich text attribution string.  Some providers
+    may require that the attribution be shown when a place is displayed
+    to a user.
+
+    \section2 Categories
+    Different categories may be assigned to a place to indicate that the place
+    is associated with those categories.  When saving a place, the only meaningful
+    data is the category id, the rest of the category data is effectively ignored.
+    The category must already exist before saving the place (it is not possible
+    to create a new category, assign it to the place, save the place and expect
+    the category to be created).
+
+    \section2 Saving Caveats
+    \input place-caveats.qdocinc
 */
 
 /*!
@@ -123,7 +181,7 @@ bool QPlace::operator!= (const QPlace &other) const
 }
 
 /*!
-    Returns categories.
+    Returns categories that this place belongs to.
 */
 QList<QPlaceCategory> QPlace::categories() const
 {
@@ -132,7 +190,7 @@ QList<QPlaceCategory> QPlace::categories() const
 }
 
 /*!
-    Sets categories.
+    Sets the \a categories that this place belongs to.
 */
 void QPlace::setCategories(const QList<QPlaceCategory> &categories)
 {
@@ -141,7 +199,7 @@ void QPlace::setCategories(const QList<QPlaceCategory> &categories)
 }
 
 /*!
-    Returns location.
+    Returns the location of the place.
 */
 QGeoLocation QPlace::location() const
 {
@@ -150,7 +208,7 @@ QGeoLocation QPlace::location() const
 }
 
 /*!
-    Sets location.
+    Sets the \a location of the place.
 */
 void QPlace::setLocation(const QGeoLocation &location)
 {
@@ -159,7 +217,7 @@ void QPlace::setLocation(const QGeoLocation &location)
 }
 
 /*!
-    Returns rating.
+    Returns an aggregated rating of the place.
 */
 QPlaceRating QPlace::rating() const
 {
@@ -168,7 +226,7 @@ QPlaceRating QPlace::rating() const
 }
 
 /*!
-    Sets rating.
+    Sets the aggregated \a rating of the place.
 */
 void QPlace::setRating(const QPlaceRating &rating)
 {
@@ -177,7 +235,7 @@ void QPlace::setRating(const QPlaceRating &rating)
 }
 
 /*!
-    Returns the supplier of this place data.
+    Returns the supplier of this place.
 */
 QPlaceSupplier QPlace::supplier() const
 {
@@ -186,7 +244,7 @@ QPlaceSupplier QPlace::supplier() const
 }
 
 /*!
-    Sets the supplier of this place data to \a supplier.
+    Sets the supplier of this place to \a supplier.
 */
 void QPlace::setSupplier(const QPlaceSupplier &supplier)
 {
@@ -232,7 +290,7 @@ void QPlace::insertContent(QPlaceContent::Type type, const QPlaceContent::Collec
 
 /*!
     Returns the total count of content objects of the given \a type.
-    This total count indicates how many the manager should have available.
+    This total count indicates how many the manager/provider should have available.
     (As opposed to how many objects this place instance is currently assigned).
     A negative count indicates that the total number of items is unknown.
 */
@@ -252,7 +310,7 @@ void QPlace::setTotalContentCount(QPlaceContent::Type type, int totalCount)
 }
 
 /*!
-    Returns name.
+    Returns the name of the place.
 */
 QString QPlace::name() const
 {
@@ -261,7 +319,7 @@ QString QPlace::name() const
 }
 
 /*!
-    Sets name.
+    Sets the \a name of the place.
 */
 void QPlace::setName(const QString &name)
 {
@@ -270,7 +328,9 @@ void QPlace::setName(const QString &name)
 }
 
 /*!
-    Returns placeId.
+    Returns the id of the place.  The place id is only meaningful to the QPlaceManager that
+    generated it and is not transferrable between managers.  The place id is not guaranteed
+    to be universally unique, but unique for the manager that generated it.
 */
 QString QPlace::placeId() const
 {
@@ -279,12 +339,12 @@ QString QPlace::placeId() const
 }
 
 /*!
-    Sets placeId.
+    Sets the \a id of the place.
 */
-void QPlace::setPlaceId(const QString &placeId)
+void QPlace::setPlaceId(const QString &id)
 {
     Q_D(QPlace);
-    d->placeId = placeId;
+    d->placeId = id;
 }
 
 /*!
@@ -298,7 +358,7 @@ QString QPlace::attribution() const
 }
 
 /*!
-    Sets the attribution string of the place.
+    Sets the \a attribution string of the place.
 */
 void QPlace::setAttribution(const QString &attribution)
 {
@@ -316,7 +376,7 @@ QPlaceIcon QPlace::icon() const
 }
 
 /*!
-    Sets the icon of the place.
+    Sets the \a icon of the place.
 */
 void QPlace::setIcon(const QPlaceIcon &icon)
 {
@@ -325,7 +385,8 @@ void QPlace::setIcon(const QPlaceIcon &icon)
 }
 
 /*!
-    Returns the primary phone number for this place.
+    Returns the primary phone number for this place.  This accesses the first contact detail
+    of the \l {QPlaceContactDetail::Phone}{phone number type}.  If no phone details exist, then an empty string is returned.
 */
 QString QPlace::primaryPhone() const
 {
@@ -338,7 +399,8 @@ QString QPlace::primaryPhone() const
 }
 
 /*!
-    Returns the primary fax number for this place.
+    Returns the primary fax number for this place.  This convenience function accesses the first contact
+    detail of the \l {QPlaceContactDetail::Fax}{fax type}.  If no fax details exist, then an empty string is returned.
 */
 QString QPlace::primaryFax() const
 {
@@ -351,7 +413,9 @@ QString QPlace::primaryFax() const
 }
 
 /*!
-    Returns the primary email address for this place.
+    Returns the primary email address for this place.  This convenience function accesses the first
+    contact detail of the \l {QPlaceContactDetail::Email}{email type}.  If no email addresses exist, then
+    an empty string is returned.
 */
 QString QPlace::primaryEmail() const
 {
@@ -364,7 +428,9 @@ QString QPlace::primaryEmail() const
 }
 
 /*!
-    Returns the primary URL of this place.
+    Returns the primary website of the place.  This convenience function accesses the first
+    contact detail of the \l {QPlaceContactDetail::Website}{website type}.  If no websites exist,
+    then an empty string is returned.
 */
 QUrl QPlace::primaryWebsite() const
 {
@@ -444,6 +510,8 @@ void QPlace::removeExtendedAttribute(const QString &attributeType)
 
 /*!
     Returns the type of contact details this place has.
+
+    See QPlaceContactDetail for a list of common \l {QPlaceContactDetail::Email}{contact types}.
 */
 QStringList QPlace::contactTypes() const
 {
@@ -452,7 +520,9 @@ QStringList QPlace::contactTypes() const
 }
 
 /*!
-    Returns a list of contact details of the specified \a contactType
+    Returns a list of contact details of the specified \a contactType.
+
+    See QPlaceContactDetail for a list of common \l {QPlaceContactDetail::Email}{contact types}.
 */
 QList<QPlaceContactDetail> QPlace::contactDetails(const QString &contactType) const
 {
@@ -465,6 +535,8 @@ QList<QPlaceContactDetail> QPlace::contactDetails(const QString &contactType) co
 
     If \a details is empty, then the \a contactType is removed from the place such
     that it is no longer returned by QPlace::contactTypes().
+
+    See QPlaceContactDetail for a list of common \l {QPlaceContactDetail::Email}{contact types}.
 */
 void QPlace::setContactDetails(const QString &contactType, QList<QPlaceContactDetail> details)
 {
@@ -477,6 +549,8 @@ void QPlace::setContactDetails(const QString &contactType, QList<QPlaceContactDe
 
 /*!
     Appends a contact \a detail of a specified \a contactType.
+
+    See QPlaceContactDetail for a list of common \l {QPlaceContactDetail::Email}{contact types}.
 */
 void QPlace::appendContactDetail(const QString &contactType, const QPlaceContactDetail &detail)
 {
@@ -508,6 +582,10 @@ void QPlace::setVisibility(QtLocation::Visibility visibility)
 
 /*!
     Returns the visibility of the place.
+
+    The default visibility of a new place is set to QtLocatin::Unspecified visibility.
+    If a place is saved with unspecified visibility the backend chooses an appropriate
+    default visibilty to use when saving.
 */
 QtLocation::Visibility QPlace::visibility() const
 {

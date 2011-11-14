@@ -57,8 +57,11 @@ class Q_LOCATION_EXPORT QPlaceReview : public QPlaceContent
 {
 public:
     QPlaceReview();
+#ifdef Q_QDOC
+    QPlaceReview(const QPlaceContent &other);
+#else
     Q_DECLARE_CONTENT_COPY_CTOR(QPlaceReview)
-
+#endif
     virtual ~QPlaceReview();
 
     QDateTime dateTime() const;

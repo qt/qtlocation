@@ -59,10 +59,15 @@ QT_USE_NAMESPACE
     \class QPlaceTextPredictionReply
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-replies
     \since QtLocation 5.0
 
     \brief The QPlaceTextPredictionReply class manages a text prediction operation started by an
     instance of QPlaceManager.
+
+    See \l {Text Predictions} for an example on how to use a text prediction reply.
+
+    \sa QPlaceManager
 */
 
 /*!

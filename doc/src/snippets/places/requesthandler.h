@@ -46,6 +46,7 @@
 #include <QPlaceManager>
 #include <QPlaceSearchReply>
 #include <QPlaceImage>
+#include <QtCore/QMetaObject>
 
 class RequestHandler : public QObject
 {
@@ -56,6 +57,22 @@ public:
         QGeoServiceProvider *provider = new QGeoServiceProvider("provider name");
         QPlaceManager *manager = provider->placeManager();
         //! [Initialize Manager]
+    }
+
+    void simpleSearch()
+    {
+        //! [Simple search]
+        //1) Make an appropriate request
+        QPlaceSearchRequest searchRequest;
+        searchRequest.setSearchTerm("ice cream");
+        searchRequest.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
+
+        //2) Use the manager to initiate a request and retreive a reply object
+        QPlaceSearchReply * searchReply = manager->search(searchRequest);
+
+        //3) Connect the reply object to a slot which is invoked upon operation completion
+        connect(searchReply, SIGNAL(finished()), this, SLOT(processSearchReply()));
+        //! [Simple search]
     }
 
     void search()
@@ -103,7 +120,6 @@ public:
         //! [Corrections handling pt2]
     }
 
-
     void details()
     {
         QPlace place;
@@ -139,6 +155,17 @@ public:
         /* QPlaceTextPredictionReply * */predictionReply = manager->textPredictions(request);
         connect(predictionReply, SIGNAL(finished()), this, SLOT(handlePredictionReply()));
         //! [Prediction request]
+    }
+
+    void recommendation()
+    {
+        //! [Recommendation]
+        QPlaceSearchRequest request;
+        request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
+
+        /* QPlaceSearchReply * */ recommendationReply = manager->recommendations(place, request);
+        connect(recommendationReply, SIGNAL(finished()), this, SLOT(handleRecommendationReply()));
+        //! [Recommendation]
     }
 
     void savePlace()
@@ -245,9 +272,67 @@ public:
         //! [Content request]
     }
 
+    void contentConversion()
+    {
+        //! [Content conversion]
+        QPlaceImage image;
+        image.setUrl(QUrl("www.example.com"));
+
+        QPlaceContent content = image;
+
+        QPlaceImage image2;
+        image2 = content;
+        qDebug() << image2.url(); //image2.url() == "www.example.com"
+        //! [Content conversion]
+    }
+
+    void icon() {
+        QPlace place;
+        //! [icon]
+        QUrl iconSourceUrl = place.icon().url(QSize(32,32), QPlaceIcon::Selected | QPlaceIcon::List);
+
+        //A default icon may also be requested like so
+        iconSourceUrl = place.icon().url();
+        //! [icon]
+    }
+
+    void saveBetweenManagers()  {
+        QPlaceSearchResult result;
+        QPlaceIdReply *saveReply;
+        //! [ Save to different manager]
+        //result retrieved from a different manager
+        QPlace place = result.place();
+
+        //clear manager specific fields and
+        //save to new manager
+        place.setPlaceId(QString());
+        place.setCategories(QList<QPlaceCategory>());
+        place.setIcon(QPlaceIcon());
+        place.setVisibility(QtLocation::UnspecifiedVisibility); //let the manager choose an appropriate default visibility
+        saveReply = manager->savePlace(place);
+        //! [ Save to different manager]
+    }
+
+
 public slots:
+    // ![Simple search handler]
+    //4) Have the slot appropriately process the results of the operation
+    void processSearchReply() {
+        if (searchReply->error() == QPlaceReply::NoError) {
+            foreach (const QPlaceSearchResult &result, searchReply->results()) {
+                if (result.type() == QPlaceSearchResult::PlaceResult)
+                    qDebug() << "Name:" << result.place().name();
+            }
+        }
+
+    //5) Discard the rely object when done.
+        searchReply->deleteLater();
+        searchReply = 0;
+    }
+    // ![Simple search handler]
+
     //! [Search for places handler cpp]
-    void handleSearchReply(){
+    void handleSearchReply() {
         if (searchReply->error() == QPlaceReply::NoError) {
             foreach (const QPlaceSearchResult &result, searchReply->results()) {
                 if (result.type() == QPlaceSearchResult::PlaceResult) {
@@ -315,6 +400,21 @@ public slots:
     }
 
     //! [Prediction handler]
+
+    //! [Recommendation handler]
+    void handleRecommendationReply() {
+        if (recommendationReply->error() ==  QPlaceReply::NoError) {
+            foreach (const QPlaceSearchResult &result, searchReply->results()) {
+                if (result.type() == QPlaceSearchResult::PlaceResult)
+                    qDebug() << result.place().name();
+            }
+        }
+        recommendationReply->deleteLater(); //discard reply
+        recommendationReply = 0;
+    }
+
+
+    //! [Recommendation handler]
 
     //! [Save place handler]
     void handleSavePlaceReply() {
@@ -394,7 +494,25 @@ public slots:
     }
     //! [Content handler]
 
+    void phoneNumbers() {
+        //! [Phone numbers]
+        if (place.contactTypes().contains(QPlaceContactDetail::Phone)) {
+            foreach (const QPlaceContactDetail &number, place.contactDetails(QPlaceContactDetail::Phone))
+                qDebug() << number.label() << ":" << number.value();
+        }
+        //! [Phone numbers]
+    }
+
+
+    void openingHours() {
+        //! [Opening hours]
+        if (place.extendedAttributeTypes().contains(QPlaceAttribute::OpeningHours))
+            qDebug() << place.extendedAttribute(QPlaceAttribute::OpeningHours).text();
+        //! [Opening hours]
+    }
+
 QPlaceSearchReply *searchReply;
+QPlaceSearchReply *recommendationReply;
 QPlaceManager *manager;
 QPlaceDetailsReply *detailsReply;
 QPlaceContentReply *contentReply;
@@ -406,3 +524,59 @@ QPlaceIdReply *removeCategoryReply;
 QPlaceReply *initCatReply;
 QPlace place;
 };
+
+class ManagerEngine : public QObject
+{
+};
+
+//! [Implement reply pt1]
+class SearchReply : public QPlaceSearchReply
+{
+public:
+    explicit SearchReply(ManagerEngine *engine)
+        : QPlaceSearchReply(engine), m_engine(engine){}
+
+    ~SearchReply();
+    void setResults(const QList<QPlaceSearchResult> &results);
+    void setRequest(const QPlaceSearchRequest &request);
+//! [Implement reply pt1]
+
+//! [Implement reply pt2]
+    void triggerDone(QPlaceReply::Error error = QPlaceReply::NoError,
+                     const QString &errorString = QString());
+
+    ManagerEngine *m_engine;
+};
+//! [Implement reply pt2]
+
+class TextPredictionReply : public QPlaceTextPredictionReply
+{
+public:
+    void triggerDone(QPlaceReply::Error error = QPlaceReply::NoError,
+                     const QString &errorString = QString());
+
+    ManagerEngine *m_engine;
+
+};
+
+//! [Trigger done]
+void TextPredictionReply::triggerDone(QPlaceReply::Error error,
+                         const QString &errorString)
+{
+    if (error != QPlaceReply::NoError) {
+        this->setError(error,errorString);
+        QMetaObject::invokeMethod(m_engine, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *,this),
+                                  Q_ARG(QPlaceReply::Error, error),
+                                  Q_ARG(QString, errorString));
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, error),
+                                  Q_ARG(QString, errorString));
+    }
+
+    this->setFinished(true);
+    QMetaObject::invokeMethod(m_engine, "finished", Qt::QueuedConnection,
+                              Q_ARG(QPlaceReply *,this));
+    QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+}
+//! [Trigger done]

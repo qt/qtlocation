@@ -75,6 +75,8 @@ QGeoAddressPrivate::~QGeoAddressPrivate()
     \class QGeoAddress
     \inmodule QtLocation
     \ingroup QtLocation-positioning
+    \ingroup QtLocation-places-data
+    \ingroup QtLocation-places
     \since QtLocation 5.0
 
     \brief The QGeoAddress class represents an address
@@ -289,7 +291,7 @@ void QGeoAddress::setPostcode(const QString &postcode)
 
 /*!
     Returns whether this address is empty. An address is considered empty
-    if \i all of its fields are empty.
+    if \e all of its fields are empty.
 */
 bool QGeoAddress::isEmpty() const
 {

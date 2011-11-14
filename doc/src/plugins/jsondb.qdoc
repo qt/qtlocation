@@ -28,13 +28,105 @@
 /*!
 \page location-plugin-jsondb.html
 \title QtLocation JsonDb plugin
+\previouspage {QtLocation Module}
+
 \ingroup QtLocation-plugins
 
 \brief Local store for private places.
 
 \section1 Overview
 
-Included with QtLocation is a JsonDb store of private places.
+Included with QtLocation is a plugin which stores places in a Json database (aka JsonDb)
 
 The JsonDb GeoServices plugin can be loaded by using the plugin key "nokia_places_jsondb".
+
+
+\section1 Places
+The Nokia JsonDb provider accesses places stored locally on device.
+It provides read/write access to the place repository.  The specific
+capabiliies are outlined below:
+
+\section2 Capabilities
+\table
+    \row
+        \o Storage
+        \o local
+    \row
+        \o Read/Write
+        \o read/write
+    \row
+        \o Icon url type(see \l {Icon internals} {QPlaceIcon})
+        \o full  url
+    \row
+        \o Text Prediction
+        \o no
+    \row
+        \o Recommendations
+        \o no
+    \row
+        \o Category structure
+        \o Hierarchical
+    \row
+        \o (Rich) Content images
+        \o no
+    \row
+        \o (Rich) Content reviews
+        \o no
+    \row
+        \o (Rich) Content editorials
+        \o no
+    \row
+        \o All details fetched during search
+        \o yes
+    \row
+        \o Paging offset index
+        \o yes
+    \row
+        \o Paging limit
+        \o yes
+    \row
+        \o Distance relevance hint
+        \o yes
+    \row
+        \o Lexical name relevance hint
+        \o yes
+    \row
+        \o Search term corrections
+        \o no
+    \row
+        \o Extended Attributes
+        \o no
+    \row
+        \o Notifications for added/removed places/categories
+        \o yes
+    \row
+        \o visibility scopes
+        \o device
+\endtable
+
+\section2 Plugin specific behaviours
+\section3 Search
+The following list shows what core place data is returned during a place search:
+\list
+\o name
+\o location
+\o contact information
+\o icon
+\o categories
+\endlist
+
+The JsonDb plugin does not support any other details so all
+available details are fetched during a search.  The JsonDb plugin
+does not support saving of any other details.
+
+\section3 Icons
+The icon urls for the JsonDb plugin take the form of a file path.
+There can only be one icon image per icon, hence only the
+\l {Icon internals} {full url} is supported.  No icon variations are
+supported.
+
+\section3 Visibility scope
+The JsonDb plugin only supports places of the QtLocation::PrivateVisibility scope.
+Specifying the QtLocation::UnspecifiedVisibility when saving a place will default
+to the QtLocation::PrivateVisibility scope.
 */

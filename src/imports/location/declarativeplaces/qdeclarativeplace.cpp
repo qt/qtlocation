@@ -121,6 +121,21 @@ QT_USE_NAMESPACE
     create a new place.  On success the \l placeId property will be updated with the id of the newly
     saved place.
 
+    \section3 Caveats
+    \input place-caveats.qdocinc
+
+    \section3 Saving between plugins
+    When saving places between plugins, there are a few things to be aware of.
+    Some fields of a place such as the id, categories and icons are plugin specific entities e.g.
+    the categories in one manager may not be recognised in another.
+    Therefore trying to save a place directly from one plugin to another is not possible.
+    The typical approach is to either clear the id, categories and icon
+    or alternatively assign them with appropriate values of the new manager.  The plugin
+    property naturally be needs to be assigned to the new plugin and the visibility scope
+    may need to be adjusted.
+
+    \snippet snippets/declarative/places.qml Place save to different plugin
+
     \section2 Removing a place
 
     To remove a place, ensure that a Place object with a valid \l placeId property exists and call

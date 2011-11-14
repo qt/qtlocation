@@ -70,14 +70,77 @@ bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
             && attribution == other->attribution;
 }
 
-/* Constructs an empty content object */
+/*!
+    \class QPlaceContent
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
+    \since QtLocation 5.0
+
+    \brief The QPlaceContent class serves as the base class for rich content types.
+
+    Rich content such as \l {QPlaceImage}{images}, \l {QPlaceReview}{reviews}
+    and \l {QPlaceEditorial}{editorials} inherit
+    from the QPlaceContent class which contains common properties such as
+    an attribution string and content contributor, which may take the form of a
+    \l {QPlaceUser}{user} and/or \l {QPlaceSupplier}{supplier}.  It is possible that
+    a user from a supplier is contributing content, hence both fields could
+    be filled in simultaneously.
+
+    \bold {Note:} Some providers may \e {require} that the attribution string be displayed
+    to the user whenever a piece of content is viewed.
+
+    Conversion between QPlaceContent and it's subclasses can be easily performed without
+    casting. Due to the way it has been implemented, object slicing is not an issue,
+    the following code is valid:
+    \snippet snippets/places/requesthandler.h Content conversion
+
+    The rich content of a place is typically made available as paginated items.  The ability
+    to convert between QPlaceContent and it's subclasses means that code which handles
+    the mechanics of paging can be easily shared for each of the sub types.
+
+    At present the QPlaceContent class is not extensible by 3rd parties.
+
+    Note:  The Places API considers content objects to be 'retrieve-only' objects.
+    Submission of content to a provider is not a supported use case.
+    \sa QPlaceImage, QPlaceReview, QPlaceEditorial
+*/
+
+/*!
+    \typedef QPlaceContent::Collection
+    Synonym for QMap<int, QPlaceContent>.  The key of the map is an \c int representing the
+    index of the content.  The value is the content object itself.
+
+    The \c {Collection} is intended to be a container where content items, that have been retrieved
+    as pages, can be stored.  This enables a developer to skip pages, e.g. indexes 0-9 may be
+    stored in the collection,  if the user skips to indexes 80-99, these can be stored in the
+    collection as well.
+*/
+
+/*!
+    \enum QPlaceContent::Type
+    Defines the type of content.
+    \value NoType
+        The content object is default constructed, any other content type may be assigned
+        to this content object.
+    \value ImageType
+        The content object is an image.
+    \value ReviewType
+        The content object is a review.
+    \value EditorialType
+        The content object is an editorial
+*/
+
+/*!
+    Constructs an default content object which has no type.
+*/
 QPlaceContent::QPlaceContent()
     :d_ptr(0)
 {
 }
 
 /*!
-    Constructs a new copy of \a other
+    Constructs a new copy of \a other.
 */
 QPlaceContent::QPlaceContent(const QPlaceContent &other)
     :d_ptr(other.d_ptr)
@@ -85,7 +148,8 @@ QPlaceContent::QPlaceContent(const QPlaceContent &other)
 }
 
 /*!
-    Assigns the \a other content object to this
+    Assigns the \a other content object to this and returns a reference
+    to this content object.
 */
 QPlaceContent &QPlaceContent::operator=(const QPlaceContent &other)
 {
@@ -94,7 +158,7 @@ QPlaceContent &QPlaceContent::operator=(const QPlaceContent &other)
 }
 
 /*!
-    Destroys the content object
+    Destroys the content object.
 */
 QPlaceContent::~QPlaceContent()
 {
@@ -111,7 +175,7 @@ QPlaceContent::Type QPlaceContent::type() const
 }
 
 /*!
-    Returns true if the content object is equivalent to \a other,
+    Returns true if this content object is equivalent to \a other,
     otherwise returns false.
 */
 bool QPlaceContent::operator==(const QPlaceContent &other) const
@@ -126,13 +190,17 @@ bool QPlaceContent::operator==(const QPlaceContent &other) const
     return d_ptr->compare(other.d_ptr);
 }
 
+/*!
+    Returns true if this content object is not equivalent to \a other,
+    otherwise returns false.
+*/
 bool QPlaceContent::operator!=(const QPlaceContent &other) const
 {
     return !(*this == other);
 }
 
 /*!
-    Returns the supplier of the content.
+    Returns the supplier who contributed this content.
 */
 QPlaceSupplier QPlaceContent::supplier() const
 {
@@ -142,7 +210,7 @@ QPlaceSupplier QPlaceContent::supplier() const
 }
 
 /*!
-    Sets the supplier of the content to \a supplier.
+    Sets the \a supplier of the content.
 */
 void QPlaceContent::setSupplier(const QPlaceSupplier &supplier)
 {
@@ -161,7 +229,7 @@ QPlaceUser QPlaceContent::user() const
 }
 
 /*!
-    Sets the user who contributed this content.
+    Sets the \a user who contributed this content.
 */
 void QPlaceContent::setUser(const QPlaceUser &user)
 {
@@ -172,7 +240,7 @@ void QPlaceContent::setUser(const QPlaceUser &user)
 /*!
     Returns a rich text attribution string.
 
-    Some providers may require that the attribution
+    \bold {Note}: Some providers may require that the attribution
     of a particular content item always be displayed
     when the content item is shown.
 */
@@ -183,7 +251,7 @@ QString QPlaceContent::attribution() const
 }
 
 /*!
-    Sets a rich text attribution string for this content item.
+    Sets a rich text \a attribution string for this content item.
 */
 void QPlaceContent::setAttribution(const QString &attribution)
 {

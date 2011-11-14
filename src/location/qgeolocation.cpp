@@ -73,18 +73,18 @@ bool QGeoLocationPrivate::operator==(const QGeoLocationPrivate &other) const
     \class QGeoLocation
     \inmodule QtLocation
     \ingroup QtLocation-positioning
+    \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
-    \brief The QGeoLocation class represents a location object.
+    \brief The QGeoLocation class represents basic information about a location.
 
-    Each QGeoLocation represents a location object with a number of attributes
-    such as address, display position etc.
-
-    QGeoLocation is an in memory representation of a location object.
+    A QGeoLocation consists of a coordinate and corresponding address, along with an optional
+    bounding box which is the recommended region to be displayed when viewing the location.
 */
 
 /*!
-    Default constructor. Constructs an new location object.
+    Constructs an new location object.
 */
 QGeoLocation::QGeoLocation()
     : d(new QGeoLocationPrivate)
@@ -100,24 +100,31 @@ QGeoLocation::QGeoLocation(const QGeoLocation &other)
 }
 
 /*!
-    Destructor.
+    Destroys the location object.
 */
 QGeoLocation::~QGeoLocation()
 {
 }
 
+/*!
+    Assigns \a other to this location and returns a reference to this location.
+*/
 QGeoLocation &QGeoLocation::operator =(const QGeoLocation &other) {
     d = other.d;
     return *this;
 }
 
+/*!
+    Returns true if this location is equal to \a other,
+    otherwise returns false.
+*/
 bool QGeoLocation::operator==(const QGeoLocation &other) const
 {
     return (*(d.constData()) == *(other.d.constData()));
 }
 
 /*!
-    Returns address.
+    Returns the address of the location.
 */
 QGeoAddress QGeoLocation::address() const
 {
@@ -125,7 +132,7 @@ QGeoAddress QGeoLocation::address() const
 }
 
 /*!
-    Sets address.
+    Sets the \a address of the location.
 */
 void QGeoLocation::setAddress(const QGeoAddress &address)
 {
@@ -133,7 +140,7 @@ void QGeoLocation::setAddress(const QGeoAddress &address)
 }
 
 /*!
-    Returns the location's coordinate.
+    Returns the coordinate of the location.
 */
 QGeoCoordinate QGeoLocation::coordinate() const
 {
@@ -141,7 +148,7 @@ QGeoCoordinate QGeoLocation::coordinate() const
 }
 
 /*!
-    Sets the location's \a coordinate.
+    Sets the \a coordinate of the location.
 */
 void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
 {
@@ -149,7 +156,8 @@ void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
 }
 
 /*!
-    Returns view port.
+    Returns a bounding box which represents the recommended region
+    to display when viewing this location.
 */
 QGeoBoundingBox QGeoLocation::boundingBox() const
 {
@@ -157,9 +165,9 @@ QGeoBoundingBox QGeoLocation::boundingBox() const
 }
 
 /*!
-    Sets view port.
+    Sets the \a boundingBox of the location.
 */
-void QGeoLocation::setBoundingBox(const QGeoBoundingBox &viewport)
+void QGeoLocation::setBoundingBox(const QGeoBoundingBox &boundingBox)
 {
-    d->viewport = viewport;
+    d->viewport = boundingBox;
 }

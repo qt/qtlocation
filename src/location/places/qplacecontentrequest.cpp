@@ -46,8 +46,8 @@
 QT_BEGIN_NAMESPACE
 
 QPlaceContentRequestPrivate::QPlaceContentRequestPrivate()
-:   QSharedData(), contentType(QPlaceContent::NoType),
-    limit(-1), offset(0)
+    : QSharedData(), contentType(QPlaceContent::NoType),
+      limit(-1), offset(0)
 {
 }
 
@@ -79,6 +79,7 @@ void QPlaceContentRequestPrivate::clear()
     \class QPlaceContentRequest
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-requests
     \since QtLocation 5.0
 
     \brief The QPlaceContentRequest class represents the parameters of a content request.
@@ -172,6 +173,7 @@ void QPlaceContentRequest::setContentType(QPlaceContent::Type type)
     A negative value for limit means that it is undefined.  It is left up to the backend
     provider to choose an appropriate number of items to return.
 
+    The default limit is -1.
 */
 int QPlaceContentRequest::limit() const
 {
@@ -190,7 +192,9 @@ void QPlaceContentRequest::setLimit(int limit)
 }
 
 /*!
-    Returns the index of the first item that is to be retrieved.
+    Returns the offset index of the first item that is to be retrieved.
+
+    The default offset is 0.
 */
 int QPlaceContentRequest::offset() const
 {

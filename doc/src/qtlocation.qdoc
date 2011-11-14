@@ -51,19 +51,21 @@ Applications can access QtLocation using QML or C++.
         \o Examples demonstrating use of the QtLocation APIs
 \endtable
 
-\section1 Plugins
+\section1 Information about plugins
 
 The QtLocation API uses plugins to enable location services to be implemented by multiple service
-providers.  The following is a list of GeoServices plugins included with QtLocation.
+providers.
 
 \annotatedlist QtLocation-plugins
 
-\section1 Information for Backend Implementors
+\section1 Information for Backend Implementers
 
 \table
     \row
         \o \l {QtLocation GeoServices}{GeoServices}
         \o Information about the QtLocation GeoServices plugins
+    \row
+        \o \l {Places Backend} {Places}
+        \o Information for \l {Places Backend} Implementors
 \endtable
 */
-

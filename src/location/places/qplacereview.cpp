@@ -80,20 +80,20 @@ bool QPlaceReviewPrivate::compare(const QPlaceContentPrivate *other) const
     \class QPlaceReview
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
-    \brief The QPlaceReview class represents a review object.
+    \brief The QPlaceReview class represents a review of a place.
 
-    Each QPlaceReview represents a review object with a number of attributes
-    such as rating, review id, connected media etc. Each QPlaceReview is associated
-    with place.
+    Each QPlaceReview has a number of properties such as
+    a title, text, date of submission and rating; in addition to those properties
+    inherited from QPlaceContent.
 
-    Review objects are read-only, e.g. user of API might get list of review objects
-    associated to specific place but can not edit its content. User might also create new review.
+    Note: The Places API only supports reviews as 'retrieve-only' objects.  Submitting reviews
+    to a provider is not a supported use case.
 
-    QPlaceReview is an in memory representation of a review object.
+    \sa QPlaceContent, QPlaceEditorial
 */
-
 
 /*!
     Constructs a new review object.
@@ -103,11 +103,15 @@ QPlaceReview::QPlaceReview()
 {
 }
 
+/*!
+    \fn QPlaceReview::QPlaceReview(const QPlaceContent &other)
+    Constructs a copy of \a other, otherwise constructs a default review object.
+*/
 Q_IMPLEMENT_CONTENT_COPY_CTOR(QPlaceReview)
 
 
 /*!
-    Destructor.
+    Destroys the review.
 */
 QPlaceReview::~QPlaceReview()
 {
@@ -116,7 +120,7 @@ QPlaceReview::~QPlaceReview()
 Q_IMPLEMENT_CONTENT_D_FUNC(QPlaceReview)
 
 /*!
-    Returns the date and time that the review was written.
+    Returns the date and time that the review was submitted.
 */
 QDateTime QPlaceReview::dateTime() const
 {
@@ -125,12 +129,12 @@ QDateTime QPlaceReview::dateTime() const
 }
 
 /*!
-    Sets the date and time that the review was written to \a dt.
+    Sets the date and time that the review was submitted to \a dateTime.
 */
-void QPlaceReview::setDateTime(const QDateTime &dt)
+void QPlaceReview::setDateTime(const QDateTime &dateTime)
 {
     Q_D(QPlaceReview);
-    d->dateTime = dt;
+    d->dateTime = dateTime;
 }
 
 /*!
@@ -154,7 +158,8 @@ void QPlaceReview::setText(const QString &text)
 }
 
 /*!
-    Returns language.
+    Returns the language of the review.  Typically this would be a language code
+    in the 2 letter ISO 639-1 format.
 */
 QString QPlaceReview::language() const
 {
@@ -163,16 +168,17 @@ QString QPlaceReview::language() const
 }
 
 /*!
-    Sets language.
+    Sets the \a language of the review.  Typically this would be a language code
+    in the 2 letter ISO 639-1 format.
 */
-void QPlaceReview::setLanguage(const QString &data)
+void QPlaceReview::setLanguage(const QString &language)
 {
     Q_D(QPlaceReview);
-    d->language = data;
+    d->language = language;
 }
 
 /*!
-    Returns rating.
+    Returns this review's rating of the place.
 */
 qreal QPlaceReview::rating() const
 {
@@ -181,16 +187,16 @@ qreal QPlaceReview::rating() const
 }
 
 /*!
-    Sets rating.
+    Sets the review's \a rating of the place.
 */
-void QPlaceReview::setRating(qreal data)
+void QPlaceReview::setRating(qreal rating)
 {
     Q_D(QPlaceReview);
-    d->rating = data;
+    d->rating = rating;
 }
 
 /*!
-    Returns review id.
+    Returns the review's id.
 */
 QString QPlaceReview::reviewId() const
 {
@@ -199,16 +205,16 @@ QString QPlaceReview::reviewId() const
 }
 
 /*!
-    Sets review id.
+    Sets the \a id of the review.
 */
-void QPlaceReview::setReviewId(const QString &data)
+void QPlaceReview::setReviewId(const QString &id)
 {
     Q_D(QPlaceReview);
-    d->reviewId = data;
+    d->reviewId = id;
 }
 
 /*!
-    Returns review title.
+    Returns the title of the review.
 */
 QString QPlaceReview::title() const
 {
@@ -217,12 +223,12 @@ QString QPlaceReview::title() const
 }
 
 /*!
-    Sets title.
+    Sets the \a title of the review.
 */
-void QPlaceReview::setTitle(const QString &data)
+void QPlaceReview::setTitle(const QString &title)
 {
     Q_D(QPlaceReview);
-    d->title = data;
+    d->title = title;
 }
 
 QT_END_NAMESPACE

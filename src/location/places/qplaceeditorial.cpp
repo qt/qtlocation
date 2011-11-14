@@ -72,19 +72,22 @@ bool QPlaceEditorialPrivate::compare(const QPlaceContentPrivate *other) const
     \class QPlaceEditorial
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
-    \brief The QPlaceEditorial class represents a address object.
+    \brief The QPlaceEditorial class represents a publisher's article describing a place.
 
-    Each QPlaceEditorial represents a description object with a number of attributes
-    such as title, value etc. Each QPlaceEditorial is associated with place.
+    Each QPlaceEditorial has a title, text and language; in addition to those properties
+    inherited from QPlaceContent.
 
-    Editorial objects are read-only, e.g. user of API might get editorial objects associated to
-    specific place but can not edit its content. User might also create new editorial.
+    Note: The Places API only supports editorials as 'retrieve-only' objects.  Submitting editorials
+    to a provider is not a supported use case.
+
+    \sa QPlaceContent
 */
 
 /*!
-    Constructs an new place editorial object.
+    Constructs an new editorial object.
 */
 QPlaceEditorial::QPlaceEditorial()
 :   QPlaceContent(new QPlaceEditorialPrivate)
@@ -98,6 +101,10 @@ QPlaceEditorial::~QPlaceEditorial()
 {
 }
 
+/*!
+    \fn QPlaceEditorial::QPlaceEditorial(const QPlaceContent &other)
+    Constructs a copy of \a other if possible, otherwise constructs a default editorial object.
+*/
 Q_IMPLEMENT_CONTENT_COPY_CTOR(QPlaceEditorial)
 
 Q_IMPLEMENT_CONTENT_D_FUNC(QPlaceEditorial)
@@ -124,7 +131,7 @@ void QPlaceEditorial::setText(const QString &text)
 }
 
 /*!
-    Returns content title.
+    Returns the title of the editorial.
 */
 QString QPlaceEditorial::title() const
 {
@@ -133,16 +140,17 @@ QString QPlaceEditorial::title() const
 }
 
 /*!
-    Sets content title.
+    Sets the \a title of the editorial.
 */
-void QPlaceEditorial::setTitle(const QString &data)
+void QPlaceEditorial::setTitle(const QString &title)
 {
     Q_D(QPlaceEditorial);
-    d->contentTitle = data;
+    d->contentTitle = title;
 }
 
 /*!
-    Returns language.
+    Returns the language of the editorial.   Typically this would be a language code
+    in the 2 letter ISO 639-1 format.
 */
 QString QPlaceEditorial::language() const
 {
@@ -151,10 +159,11 @@ QString QPlaceEditorial::language() const
 }
 
 /*!
-    Sets language.
+    Sets the \a language of the editorial. Typically this would be a language code
+    in the 2 letter ISO 639-1 format.
 */
-void QPlaceEditorial::setLanguage(const QString &data)
+void QPlaceEditorial::setLanguage(const QString &language)
 {
     Q_D(QPlaceEditorial);
-    d->language = data;
+    d->language = language;
 }

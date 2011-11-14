@@ -58,7 +58,7 @@ void tst_QPlaceSearchResult::test()
     QPlaceSearchResult result;
 
     QCOMPARE(result.type(), QPlaceSearchResult::UnknownSearchResult);
-    QCOMPARE(result.distance(), 0.0);
+    QVERIFY(qIsNaN(result.distance()));
     QCOMPARE(result.place(), QPlace());
     QVERIFY(result.correction().isEmpty());
 

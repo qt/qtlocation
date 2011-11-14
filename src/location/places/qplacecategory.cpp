@@ -71,12 +71,13 @@ QPlaceCategoryPrivate &QPlaceCategoryPrivate::operator=(const QPlaceCategoryPriv
     \class QPlaceCategory
     \inmodule QtLocation
     \ingroup QtLocation-places
+    \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
     \brief The QPlaceCategory class represents a category that a \l QPlace can be associated with.
 
     Categories are used to search for places based on the categories they are associated with.  The
-    list of available categories can be obtained from \l QPlaceManager.  The
+    list/tree of available categories can be obtained from \l QPlaceManager.  The
     \l QPlaceSearchRequest::setCategories() function can be used to limit the search results to
     places with the specified categories.
 
@@ -87,11 +88,11 @@ QPlaceCategoryPrivate &QPlaceCategoryPrivate::operator=(const QPlaceCategoryPriv
 /*!
     \fn bool QPlaceCategory::operator!=(const QPlaceCategory &other) const
 
-    Returns true if \a other is not equal to this place category; otherwise returns false.
+    Returns true if \a other is not equal to this category; otherwise returns false.
 */
 
 /*!
-    Constructs a place category.
+    Constructs a category.
 */
 QPlaceCategory::QPlaceCategory()
     : d(new QPlaceCategoryPrivate)
@@ -99,7 +100,7 @@ QPlaceCategory::QPlaceCategory()
 }
 
 /*!
-    Constructs a place category which is a copy of \a other.
+    Constructs a category which is a copy of \a other.
 */
 QPlaceCategory::QPlaceCategory(const QPlaceCategory &other)
     :d(other.d)
@@ -107,14 +108,14 @@ QPlaceCategory::QPlaceCategory(const QPlaceCategory &other)
 }
 
 /*!
-    Destroys the place category.
+    Destroys the category.
 */
 QPlaceCategory::~QPlaceCategory()
 {
 }
 
 /*!
-    Assigns \a other to this place category and returns a reference to this place category.
+    Assigns \a other to this category and returns a reference to this category.
 */
 QPlaceCategory &QPlaceCategory::operator =(const QPlaceCategory &other)
 {
@@ -123,7 +124,7 @@ QPlaceCategory &QPlaceCategory::operator =(const QPlaceCategory &other)
 }
 
 /*!
-    Returns true if \a other is equal to this place category; otherwise returns false.
+    Returns true if \a other is equal to this category; otherwise returns false.
 */
 bool QPlaceCategory::operator==(const QPlaceCategory &other) const
 {
@@ -134,8 +135,9 @@ bool QPlaceCategory::operator==(const QPlaceCategory &other) const
 }
 
 /*!
-    Returns category id.  The category id is a string which uniquely identifies this category
-    within a particular \l QGeoServiceProvider.
+    Returns the id of the category.  The category id is a string which uniquely identifies this category
+    within a particular \l QPlaceManager.  The id is only meaningful to the QPlaceManager
+    that generated it and is not transferrable between managers.
 */
 QString QPlaceCategory::categoryId() const
 {
@@ -143,7 +145,7 @@ QString QPlaceCategory::categoryId() const
 }
 
 /*!
-    Sets category id to \a id.
+    Sets the \a id of the category.
 */
 void QPlaceCategory::setCategoryId(const QString &id)
 {
@@ -151,7 +153,7 @@ void QPlaceCategory::setCategoryId(const QString &id)
 }
 
 /*!
-    Returns name of category.
+    Returns the name of category.
 */
 QString QPlaceCategory::name() const
 {
@@ -159,7 +161,7 @@ QString QPlaceCategory::name() const
 }
 
 /*!
-    Sets place category name to \a name.
+    Sets the \a name of the category.
 */
 void QPlaceCategory::setName(const QString &name)
 {
@@ -167,7 +169,7 @@ void QPlaceCategory::setName(const QString &name)
 }
 
 /*!
-    Sets the visibility of the category to \a visibility.
+    Sets the \a visibility of the category.
 */
 void QPlaceCategory::setVisibility(QtLocation::Visibility visibility)
 {
@@ -183,7 +185,7 @@ QtLocation::Visibility QPlaceCategory::visibility() const
 }
 
 /*!
-    Returns the icon associated with the place category.
+    Returns the icon associated with the category.
 */
 QPlaceIcon QPlaceCategory::icon() const
 {
@@ -191,7 +193,7 @@ QPlaceIcon QPlaceCategory::icon() const
 }
 
 /*!
-    Sets the category icon to \a icon.
+    Sets the \a icon of the category.
 */
 void QPlaceCategory::setIcon(const QPlaceIcon &icon)
 {

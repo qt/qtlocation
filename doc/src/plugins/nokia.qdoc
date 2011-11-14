@@ -28,6 +28,7 @@
 /*!
 \page location-plugin-nokia.html
 \title QtLocation Nokia plugin
+\previouspage {QtLocation Module}
 \ingroup QtLocation-plugins
 
 \brief Uses the relevant Nokia services provided by Nokia.
@@ -105,4 +106,92 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \o Client token for the service used for authentication by search manager.
 \endtable
 
+\section1 Places
+The Nokia provider remotely accesses places from a REST based server.  It only
+provides read-only access the place repository.  The specific capabilities
+and behaviours are outlined below:
+
+\section2 Capabilities
+\table
+    \row
+        \o Storage
+        \o remote
+    \row
+        \o Read/Write
+        \o read-only
+    \row
+        \o Icon url type(see \l {Icon internals} {QPlaceIcon})
+        \o not supported
+    \row
+        \o Text Prediction
+        \o yes
+    \row
+        \o Recommendations
+        \o yes
+    \row
+        \o Category structure
+        \o Hierarchical
+    \row
+        \o (Rich) Content images
+        \o yes
+    \row
+        \o (Rich) Content reviews
+        \o yes
+    \row
+        \o (Rich) Content editorials
+        \o yes
+    \row
+        \o All details fetched during search
+        \o no
+    \row
+        \o Paging offset index
+        \o no
+    \row
+        \o Paging limit
+        \o yes
+    \row
+        \o Distance relevance hint
+        \o no
+    \row
+        \o Lexical name relevance hint
+        \o no
+    \row
+        \o Search term corrections
+        \o no
+    \row
+        \o Extended Attributes
+        \o no
+    \row
+        \o Notifications for added/removed places/categories
+        \o no
+    \row
+        \o visibility scopes
+        \o public
+\endtable
+
+\section2 Plugin specific behaviours
+\section3 Search
+The following list shows what core place data is returned during a place search:
+\list
+\o name
+\o location
+\o contact information
+\o attribution
+\o categories
+\o rating
+\o visibility
+\endlist
+
+The following list shows further details that may be retrieved
+via QPlaceManager::getDetails()
+\list
+\o supplier
+\o extended attributes
+\endlist
+
+\section3 Text prediction
+Only a search term and search center is supported for text prediction
+
+\section3 Recommendation
+Only a given place is supported as a parameter for a recommendation.  No other parameters are used.
 */

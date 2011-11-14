@@ -59,8 +59,7 @@ namespace QtLocation {
 
     Defines the visibility of a QPlace or QPlaceCategory.
 
-    \value UnspecifiedVisibility    Only used when search for places and categories.  Indicates
-                                    that results with any visibility should be returned.
+    \value UnspecifiedVisibility    No explicit visibility has been defined.
     \value DeviceVisibility         Places and categories with DeviceVisibility are only stored on
                                     the local device.
     \value PrivateVisibility        Places and categories with PrivateVisibility are only visible
@@ -68,6 +67,16 @@ namespace QtLocation {
                                     on a remote service or both.
     \value PublicVisibility         Places and categories with PublicVisibility are visible to
                                     everyone.
+
+    A particular manager may support one or more visibility scopes.  For example a manager from one provider may only provide places
+    that are public to everyone, whilst another may provide both public and private places.
+
+    \note The meaning of unspecified visibility depends on the context it is used.
+
+    When \e saving a place or category, the
+    default visibility is unspecified meaning that the manager chooses an appropriate visibility scope for the item.
+
+    When \e searching for places, unspecified means that places of any scope is returned.
 */
 }
 
