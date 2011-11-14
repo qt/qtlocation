@@ -55,6 +55,7 @@ Item {
         }
         Text {
             id: optionbuttonText
+            font.pixelSize: 14
         }
     }
     MouseArea {

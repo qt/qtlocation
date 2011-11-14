@@ -47,6 +47,7 @@ Row {
     property alias label: label.text
     property alias text: inputField.text
     property alias labelWidth: label.width
+    property alias font: inputField.font
 
     Text {
         id: label;
@@ -57,11 +58,12 @@ Row {
             top: parent.top;
             topMargin: (inputRectangle.height-height)/2
         }
+        font.pixelSize: 14
     }
 
     Rectangle {
         id: inputRectangle
-        width: textWithLabel.width - label.width; height: 30
+        width: textWithLabel.width - label.width; height: inputField.font.pixelSize * 1.5
         color: enabled ? "white" : "ghostwhite"
 
         border.width: 1
@@ -80,6 +82,7 @@ Row {
                 verticalCenter: parent.verticalCenter;
                 leftMargin: 5
             }
+            font.pixelSize: 14
         }
     }
 }

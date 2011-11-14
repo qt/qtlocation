@@ -48,7 +48,7 @@ Item {
     signal cancelButtonClicked
 
     anchors.fill: parent
-    property int gap: 10
+    property int gap: 6
     opacity: 0
 
     property alias title: titleBar.text
@@ -77,8 +77,7 @@ Item {
         height: options.height + gap*4 + buttons.height + titleBar.height + routeOptions.height
 
         anchors {
-            top: parent.top
-            topMargin: 50
+            verticalCenter: parent.verticalCenter
             left: parent.left
             leftMargin: gap
         }
@@ -154,6 +153,7 @@ Item {
                         }
                         text: "From"
                         color: enabled ? "black" : "grey"
+                        font.pixelSize: 14
                     }
 
                     TextWithLabel {
@@ -197,6 +197,7 @@ Item {
                         }
                         text: "To"
                         color: enabled ? "black" : "grey"
+                        font.pixelSize: 14
                     }
 
                     TextWithLabel {
@@ -265,6 +266,7 @@ Item {
                         }
                         text: "From"
                         color: enabled ? "black" : "grey"
+                        font.pixelSize: 14
                     }
 
                     TextWithLabel {
@@ -320,6 +322,7 @@ Item {
                         }
                         text: "To"
                         color: enabled ? "black" : "grey"
+                        font.pixelSize: 14
                     }
 
                     TextWithLabel {
@@ -377,7 +380,7 @@ Item {
             Column {//travel mode
                 spacing: gap/3
                 height: parent.height
-                width: parent.width*0.3
+                width: parent.width*0.325
                 Optionbutton {
                     id: optionbuttonVehicle
                     width: parent.width
@@ -402,7 +405,7 @@ Item {
             Column {//Optimization
                 spacing: gap/3
                 height: parent.height
-                width: parent.width*0.3
+                width: parent.width*0.275
                 Optionbutton {
                     id: optionbuttonFastest
                     width: parent.width
@@ -489,6 +492,8 @@ Item {
                 width: 80; height: parent.height
                 onClicked: {
                     dialog.goButtonClicked ()
+                    console.log(dialog.width)
+                    console.log(dialog.height)
                 }
             }
         }

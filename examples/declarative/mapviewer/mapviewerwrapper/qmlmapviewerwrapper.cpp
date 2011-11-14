@@ -41,6 +41,8 @@
 #include <QtGui/QGuiApplication>
 #include <QtDeclarative/QQuickView>
 #include <QtDeclarative/QDeclarativeEngine>
+#include <QtDeclarative/QDeclarativeContext>
+#include <QtDeclarative/QQuickItem>
 #include <QNetworkProxy>
 
 int main(int argc, char *argv[])
@@ -50,6 +52,10 @@ int main(int argc, char *argv[])
     QQuickView view;
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);
+
+    QQuickItem *object = view.rootObject();
+    object->setProperty("mobileUi", false);
+
     // Temporary development-time proxy setting
     // TODO improve later.
     QNetworkProxy proxy;

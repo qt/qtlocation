@@ -69,13 +69,15 @@ Item {
         id: mouseRegion
         anchors.fill: buttonImage
         hoverEnabled: true
-        onClicked: { container.clicked(); }
+        onClicked: { container.clicked() }
     }
     Text {
         id: buttonText
         color: checked ? "lawngreen" : "white"
-        anchors.centerIn: buttonImage; font.bold: true
+        anchors.centerIn: buttonImage; font.bold: true; font.pixelSize: 14
         style: Text.Raised; styleColor: "darkblue"
+        anchors.baseline: parent.bottom
+        anchors.baselineOffset: -6
     }
 
     states: [

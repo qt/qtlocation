@@ -48,6 +48,7 @@ Item {
     id: page
     width: 360
     height: 640
+    property bool mobileUi: true
 
     Rectangle {
         id: backgroundRect
@@ -55,9 +56,8 @@ Item {
         color: "lightgrey"
         z:2
     }
-
     TitleBar {
-        id: titleBar; z: mainMenu.z; width: parent.width; height: 40; opacity: 0.9; text: "QML mapviewer example"
+        id: titleBar; z: mainMenu.z; width: parent.width; height: 40; opacity: 0.9; text: "QML mapviewer example"; visible: !page.mobileUi
         onClicked: { Qt.quit() }
     }
 

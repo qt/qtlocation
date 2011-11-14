@@ -48,7 +48,7 @@ Item {
 
     property alias title: titleBar.text
     property alias text: message.text
-    property int gap: 20
+    property int gap: 10
 
     signal okButtonClicked
     signal cancelButtonClicked
@@ -60,12 +60,10 @@ Item {
         id: dialogRectangle
 
         color: "white"
-//        color: "lightsteelblue"
         width: parent.width - gap;
         height: titleBar.height + message.height + okButton.height + gap*3
         anchors {
-            top: parent.top
-            topMargin: 50
+            verticalCenter: parent.verticalCenter
             left: parent.left
             leftMargin: gap/2
         }
@@ -94,6 +92,7 @@ Item {
             onLinkActivated: {
                 Qt.openUrlExternally(link)
             }
+            font.pixelSize: 14
         }
 
         Button {

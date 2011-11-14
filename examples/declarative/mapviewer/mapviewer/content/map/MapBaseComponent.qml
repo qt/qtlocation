@@ -47,7 +47,7 @@ Map {
     zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
     center: brisbaneCoordinate
 
-    pinch.activeGestures: MapPinch.ZoomGesture | RotationGesture
+    pinch.activeGestures: MapPinch.ZoomGesture
     pinch.enabled: true
 
     // Flicking
@@ -59,8 +59,7 @@ Map {
     property int mapItemsCounter: 0 // counter for total amount of mapItems. Resets to 0 when number of markers = 0
 //    property Marker currentMarker
     signal mapPressed() // replace with
-                          // signal mousePressed(MouseEvent mouse)
-                          // when QTBUG-14550 is fixed
+                        // signal mousePressed(MouseEvent mouse) when QTBUG-14550 is fixed
 
     property int lastX : -1
     property int lastY : -1
@@ -72,15 +71,14 @@ Map {
     }
     Slider {
         id: zoomSlider;
-        parent: map.parent //todo: remove the line
         minimum: map.minimumZoomLevel;
         maximum: map.maximumZoomLevel;
         opacity: 1
         visible: parent.visible
-        z: map.z
+        z: map.z+1
         anchors {
             bottom: parent.bottom;
-            bottomMargin: 50; rightMargin: 5; leftMargin: 5
+            bottomMargin: 56; rightMargin: 5; leftMargin: 5
             left: parent.left
         }
         width: parent.width - anchors.rightMargin - anchors.leftMargin
@@ -235,7 +233,7 @@ Map {
                 text: index + 1
                 color: "white"
                 font.bold: true
-                font.pixelSize: 12
+                font.pixelSize: 14
             }
             Text {
                 text: instruction
@@ -249,7 +247,7 @@ Map {
                 text: distance
                 color: "white"
                 font.bold: true
-                font.pixelSize: 12
+                font.pixelSize: 14
             }
         }
     }
@@ -413,6 +411,7 @@ Map {
             anchors.left: parent.left
             anchors.bottomMargin: 3
             text:calculateScale()
+            font.pixelSize: 14
         }
     }
 
@@ -568,6 +567,7 @@ Map {
             maximumLineCount: 4
             wrapMode: Text.Wrap
             font.bold: true
+            font.pixelSize: 14
             style: Text.Raised;
             anchors.left: parent.left
             anchors.right: parent.right
@@ -583,7 +583,7 @@ Map {
         property Coordinate lastCoordinate: Coordinate { latitude : 0; longitude : 0}
         anchors.fill: parent
 
-        onPressed : {
+/*        onPressed : {
             mapPressed();
             map.state = ""
             map.lastX = mouse.x
@@ -596,11 +596,11 @@ Map {
         onPositionChanged: {
             map.state = ""
             if ((mouse.button == Qt.LeftButton) & (map.state == "")) {
-/*                if ((map.lastX != -1) && (map.lastY != -1)) {
-                    var dx = mouse.x - map.lastX
-                    var dy = mouse.y - map.lastY
-                    map.pan(-dx, -dy)
-                }*/
+//                if ((map.lastX != -1) && (map.lastY != -1)) {
+//                    var dx = mouse.x - map.lastX
+//                    var dy = mouse.y - map.lastY
+//                    map.pan(-dx, -dy)
+//                }
                 map.lastX = mouse.x
                 map.lastY = mouse.y
             }
@@ -623,9 +623,9 @@ Map {
             popupMenu.addItem("Circle")
             popupMenu.addItem("Polyline")
             popupMenu.addItem("Polygon")
-/*            if ((map.markers.length != 0) || (map.mapItems.length != 0)) popupMenu.addItem("Delete all objects")
-                map.state = "PopupMenu"*/
-        }
+//            if ((map.markers.length != 0) || (map.mapItems.length != 0)) popupMenu.addItem("Delete all objects")
+//                map.state = "PopupMenu"
+        }*/
     }
 
 

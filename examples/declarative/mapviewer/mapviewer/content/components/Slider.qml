@@ -58,8 +58,33 @@ Item {
     }
 
     Rectangle {
+        id: labelRect
+        width: label.width
+        height: label.height + 4
+        radius: 4
+        smooth: true
+        color: "white"
+        border.color: "dodgerblue"
+        anchors.bottom: handle.top
+        anchors.bottomMargin: 4
+        x: Math.max(Math.min(handle.x + (handle.width - width )/2, slider.width - width),0)
+        visible: mouseRegion.pressed
+        Text{
+            id: label
+            color: "dodgerblue"
+            text: Math.round(slider.value *100)/100
+            width: font.pointSize * 3.5
+            anchors.horizontalCenter: labelRect.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            anchors.baseline: parent.bottom
+            anchors.baselineOffset: -6
+            font.pixelSize: 14
+        }
+    }
+
+    Rectangle {
         id: handle; smooth: true
-        width: 20;
+        width: 26;
         y: (slider.height - height)/2;
         x: (slider.value - slider.minimum) * slider.length / (slider.maximum - slider.minimum)
 
@@ -89,7 +114,7 @@ Item {
             hoverEnabled: true
             anchors.fill: parent; drag.target: parent
             drag.axis: Drag.XAxis; drag.minimumX: 0; drag.maximumX: slider.length
-            onPositionChanged: { value = (maximum - minimum) * handle.x / slider.length + minimum; }
+            onPositionChanged: { slider.value = (slider.maximum - slider.minimum) * handle.x / slider.length + slider.minimum; }
         }
     }
 

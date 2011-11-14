@@ -51,8 +51,8 @@ Item {
     property alias title: titleBar.text
     property alias dialogModel: dialogModel
     property alias length: dialogModel.count
-    property int gap: 20
-    property int listItemHeight: 30
+    property int gap: 10
+    property int listItemHeight: titleBar.font.pixelSize * 1.5
 
     opacity: 0
 
@@ -73,11 +73,10 @@ Item {
         color: "white"
         opacity: parent.opacity
         width: parent.width - gap;
-        height: listview.height + titleBar.height + buttons.height + gap*2
+        height: listview.height + titleBar.height + buttons.height + gap*1.5
 
         anchors {
-            top: parent.top
-            topMargin: 50
+            verticalCenter: parent.verticalCenter
             left: parent.left
             leftMargin: gap/2
         }
@@ -135,12 +134,6 @@ Item {
 
         ListView {
             id: listview
-/*            anchors {
-                top: titleBar.bottom
-                topMargin: gap
-                left: parent.left
-                leftMargin: gap/2
-            }*/
             anchors {
                 top: dataRect.top
                 topMargin: gap/2
@@ -160,7 +153,6 @@ Item {
         Row {
             id: buttons
             anchors.top: dataRect.bottom
-//            anchors.top: listview.bottom
             anchors.topMargin: gap/2
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: gap/3

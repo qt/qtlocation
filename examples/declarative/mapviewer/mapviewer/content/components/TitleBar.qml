@@ -45,6 +45,7 @@ Item {
 
     property alias text:titleText.text
     property alias hoverEnabled: mouseRegion.hoverEnabled
+    property alias font: titleText.font
     signal clicked
 
     BorderImage { source: "../resources/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
@@ -68,7 +69,7 @@ Item {
             left: parent.left; leftMargin: 10; verticalCenter: parent.verticalCenter
         }
         elide: Text.ElideLeft
-        font.bold: true; color: "white"; style: Text.Raised; styleColor: "dimgrey"
+        font.bold: true;  font.pixelSize: 14; color: "white"; style: Text.Raised; styleColor: "dimgrey"
     }
 
     states: [

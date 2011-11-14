@@ -125,5 +125,6 @@ MapGroup {  //to be used inside MapComponent only
         Component.onCompleted: {
             text = map.counter
         }
+        font.pixelSize: 14
     }
 }
