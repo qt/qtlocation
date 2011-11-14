@@ -217,7 +217,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QPlace &place
     return reply;
 }
 
-QPlaceTextPredictionReply *QPlaceManagerEngineNokia::textPredictions(const QPlaceSearchRequest &query)
+QPlaceSearchSuggestionReply *QPlaceManagerEngineNokia::searchSuggestions(const QPlaceSearchRequest &query)
 {
     QPlaceTextPredictionReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSuggestionRequest(query);
@@ -325,7 +325,7 @@ QUrl QPlaceManagerEngineNokia::constructIconUrl(const QPlaceIcon &icon, const QS
 QPlaceManager::ManagerFeatures QPlaceManagerEngineNokia::supportedFeatures() const
 {
     return QPlaceManager::RecommendationsFeature
-            | QPlaceManager::TextPredictionsFeature
+            | QPlaceManager::SearchSuggestionsFeature
             | QPlaceManager::CorrectionsFeature
             | QPlaceManager::LocaleFeature;
 }

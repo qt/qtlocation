@@ -78,7 +78,7 @@
 #include "qdeclarativerecommendationmodel_p.h"
 #include "qdeclarativesupportedcategoriesmodel_p.h"
 #include "qdeclarativesearchresultmodel_p.h"
-#include "qdeclarativetextpredictionmodel_p.h"
+#include "qdeclarativesearchsuggestionmodel_p.h"
 
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
@@ -142,7 +142,7 @@ public:
             qmlRegisterType<QDeclarativeRecommendationModel>(uri, 5, 0, "RecommendationModel");
             qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "CategoryModel");
             qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "PlaceSearchModel");
-            qmlRegisterType<QDeclarativeTextPredictionModel>(uri, 5, 0, "TextPredictionModel");
+            qmlRegisterType<QDeclarativeSearchSuggestionModel>(uri, 5, 0, "PlaceSearchSuggestionModel");
             qmlRegisterType<QDeclarativePropertyMap>(uri, 5,0,"ExtendedAttributes");
             qmlRegisterType<QDeclarativePlaceAttribute>(uri, 5,0, "PlaceAttribute");
             qmlRegisterType<QDeclarativeContactDetail>(uri, 5, 0, "ContactDetail");

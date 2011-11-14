@@ -164,7 +164,7 @@ Rectangle {
         anchors.left: searchTermRect.left
         anchors.right: searchTermRect.right
         anchors.top: searchTermRect.bottom
-        height: Math.min(4, resultSuggestion.textPredictions.length) * 19
+        height: Math.min(4, resultSuggestion.suggestions.length) * 19
         visible: false
         color: "#f0f0f0"
         clip: true
@@ -175,13 +175,13 @@ Rectangle {
             delegate: Component {
                 Text {
                     width: parent.width
-                    text: textPrediction
+                    text: suggestion
                     font.pixelSize: 16
 
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            search_term.text = textPrediction;
+                            search_term.text = suggestion;
                             searchTerm(search_term.text);
                         }
                     }
@@ -234,7 +234,7 @@ Rectangle {
         suggestions.visible = false;
     }
 
-    TextPredictionModel {
+    PlaceSearchSuggestionModel {
         id: resultSuggestion
         plugin: geoServices
 

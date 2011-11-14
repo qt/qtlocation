@@ -43,7 +43,7 @@
 #define UNSUPPORTED_REPLIES_H
 
 #include <qplacecontentreply.h>
-#include <qplacetextpredictionreply.h>
+#include <qplacesearchsuggestionreply.h>
 
 #include "macro.h"
 #include "qplacemanagerengine_jsondb.h"
@@ -66,14 +66,14 @@ private:
 
 };
 
-class TextPredictionReply : public QPlaceTextPredictionReply
+class SearchSuggestionReply : public QPlaceSearchSuggestionReply
 {
     Q_OBJECT
 public:
-    TextPredictionReply(QPlaceManagerEngineJsonDb *engine)
-        : QPlaceTextPredictionReply(engine), m_engine(engine)
+    SearchSuggestionReply(QPlaceManagerEngineJsonDb *engine)
+        : QPlaceSearchSuggestionReply(engine), m_engine(engine)
     {}
-    virtual ~TextPredictionReply() {}
+    virtual ~SearchSuggestionReply() {}
 
     DECLARE_TRIGGER_DONE_FN
 

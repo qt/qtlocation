@@ -148,11 +148,11 @@ QPlaceSearchReply *QPlaceManagerEngineJsonDb::recommendations(const QPlace &plac
     return searchReply;
 }
 
-QPlaceTextPredictionReply *QPlaceManagerEngineJsonDb::textPredictions(const QPlaceSearchRequest &request)
+QPlaceSearchSuggestionReply *QPlaceManagerEngineJsonDb::searchSuggestions(const QPlaceSearchRequest &request)
 {
-    TextPredictionReply *textPredictionReply = new TextPredictionReply(this);
-    textPredictionReply->triggerDone(QPlaceReply::UnsupportedError, tr("Text prediction is unsupported"));
-    return textPredictionReply;
+    SearchSuggestionReply *searchSuggestionReply = new SearchSuggestionReply(this);
+    searchSuggestionReply->triggerDone(QPlaceReply::UnsupportedError, tr("Search suggestions is unsupported"));
+    return searchSuggestionReply;
 }
 
 QPlaceIdReply *QPlaceManagerEngineJsonDb::savePlace(const QPlace &place)

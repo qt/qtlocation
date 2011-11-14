@@ -146,15 +146,15 @@ public:
     }
 
 
-    void textPrediction()
+    void suggestion()
     {
-        //! [Prediction request]
+        //! [Suggestion request]
         QPlaceSearchRequest request;
         request.setSearchTerm("piz");
         request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
-        /* QPlaceTextPredictionReply * */predictionReply = manager->textPredictions(request);
-        connect(predictionReply, SIGNAL(finished()), this, SLOT(handlePredictionReply()));
-        //! [Prediction request]
+        /* QPlaceSearchSuggestion * */suggestionReply = manager->searchSuggestions(request);
+        connect(suggestionReply, SIGNAL(finished()), this, SLOT(handleSuggestionReply()));
+        //! [Suggestion request]
     }
 
     void recommendation()
@@ -388,18 +388,18 @@ public slots:
     }
     //! [Image handler]
 
-    //! [Prediction handler]
-    void handlePredictionReply() {
-        if (predictionReply->error() == QPlaceReply::NoError) {
-            foreach (const QString &prediction, predictionReply->textPredictions())
-                qDebug() << prediction;
+    //! [Suggestion handler]
+    void handleSuggestionReply() {
+        if (suggestionReply->error() == QPlaceReply::NoError) {
+            foreach (const QString &suggestion, suggestionReply->suggestions())
+                qDebug() << suggestion;
         }
 
-        predictionReply->deleteLater(); //discard reply
-        predictionReply = 0;
+        suggestionReply->deleteLater(); //discard reply
+        suggestionReply = 0;
     }
 
-    //! [Prediction handler]
+    //! [Suggestion handler]
 
     //! [Recommendation handler]
     void handleRecommendationReply() {
@@ -516,7 +516,7 @@ QPlaceSearchReply *recommendationReply;
 QPlaceManager *manager;
 QPlaceDetailsReply *detailsReply;
 QPlaceContentReply *contentReply;
-QPlaceTextPredictionReply *predictionReply;
+QPlaceSearchSuggestionReply *suggestionReply;
 QPlaceIdReply *savePlaceReply;
 QPlaceIdReply *removePlaceReply;
 QPlaceIdReply *saveCategoryReply;
@@ -549,7 +549,7 @@ public:
 };
 //! [Implement reply pt2]
 
-class TextPredictionReply : public QPlaceTextPredictionReply
+class SearchSuggestionReply : public QPlaceSearchSuggestionReply
 {
 public:
     void triggerDone(QPlaceReply::Error error = QPlaceReply::NoError,
@@ -560,7 +560,7 @@ public:
 };
 
 //! [Trigger done]
-void TextPredictionReply::triggerDone(QPlaceReply::Error error,
+void SearchSuggestionReply::triggerDone(QPlaceReply::Error error,
                          const QString &errorString)
 {
     if (error != QPlaceReply::NoError) {

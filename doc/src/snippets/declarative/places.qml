@@ -150,9 +150,9 @@ Item {
     }
     //! [RecommendationModel]
 
-    //! [TextPredictionModel]
-    TextPredictionModel {
-        id: textPredictionModel
+    //! [SearchSuggestionModel]
+    PlaceSearchSuggestionModel {
+        id: suggestionModel
         searchArea: BoundingCircle {
             center: Coordinate {
                 // Brisbane
@@ -165,10 +165,10 @@ Item {
     }
 
     ListView {
-        model: textPredictionModel
-        delegate: Text { text: textPrediction }
+        model: suggestionModel
+        delegate: Text { text: suggestion }
     }
-    //! [TextPredictionModel]
+    //! [SearchSuggestionModel]
 
     //! [Rating]
     Text {

@@ -106,9 +106,8 @@ QT_USE_NAMESPACE
         This is a reply for the retrieval of place details
     \value SearchReply
         This is a reply for the place search operation.
-
-    \value TextPredictionReply
-        This is a reply for a text prediction operation.
+    \value SearchSuggestionReply
+        This is a reply for a search suggestion operation.
     \value ContentReply
         This is a reply for content associated with a place.
     \value IdReply

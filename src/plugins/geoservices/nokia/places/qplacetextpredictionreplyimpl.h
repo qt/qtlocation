@@ -52,13 +52,13 @@
 #include <QObject>
 #include <QHash>
 
-#include <qplacetextpredictionreply.h>
+#include <qplacesearchsuggestionreply.h>
 #include "qplacerestreply.h"
 #include "qplacejsontextpredictionparser.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceTextPredictionReplyImpl : public QPlaceTextPredictionReply
+class QPlaceTextPredictionReplyImpl : public QPlaceSearchSuggestionReply
 {
     Q_OBJECT
 public:

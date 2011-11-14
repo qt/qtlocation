@@ -117,7 +117,7 @@ Item {
         function test_placesFeatures() {
             verify((testPlugin.supportedPlacesFeatures & Plugin.SavePlaceFeature) === Plugin.SavePlaceFeature);
             verify((testPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature) === Plugin.SaveCategoryFeature);
-            verify((testPlugin.supportedPlacesFeatures & Plugin.TextPredictionsFeature) === Plugin.TextPredictionsFeature);
+            verify((testPlugin.supportedPlacesFeatures & Plugin.SearchSuggestionsFeature) === Plugin.SearchSuggestionsFeature);
             verify((testPlugin.supportedPlacesFeatures & Plugin.CorrectionsFeature) === 0);
             verify((testPlugin.supportedPlacesFeatures & Plugin.RemovePlaceFeature) === 0);
 
@@ -126,7 +126,7 @@ Item {
             verify((nokiaPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature) === 0);
             verify((nokiaPlugin.supportedPlacesFeatures & Plugin.RemoveCategoryFeature) === 0);
             verify((nokiaPlugin.supportedPlacesFeatures & Plugin.RecommendationsFeature) === Plugin.RecommendationsFeature);
-            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.TextPredictionsFeature) === Plugin.TextPredictionsFeature);
+            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.SearchSuggestionsFeature) === Plugin.SearchSuggestionsFeature);
             verify((nokiaPlugin.supportedPlacesFeatures & Plugin.CorrectionsFeature) === Plugin.CorrectionsFeature);
             verify((nokiaPlugin.supportedPlacesFeatures & Plugin.LocaleFeature) === Plugin.LocaleFeature);
 

@@ -47,7 +47,7 @@
 #include "qplaceidreply.h"
 #include "qplacereply.h"
 #include "qplacedetailsreply.h"
-#include "qplacetextpredictionreply.h"
+#include "qplacesearchsuggestionreply.h"
 
 #include <QLocale>
 #include <QVector>
@@ -59,8 +59,6 @@
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
-
-
 
 class QPlaceManagerEngine;
 class QPlaceSearchRequest;
@@ -77,7 +75,7 @@ public:
         SaveCategoryFeature     = 0x4,
         RemoveCategoryFeature   = 0x8,
         RecommendationsFeature  = 0x10,
-        TextPredictionsFeature   = 0x20,
+        SearchSuggestionsFeature   = 0x20,
         CorrectionsFeature      = 0x40,
         LocaleFeature           = 0x80,
         NotificationsFeature    = 0x100
@@ -99,7 +97,7 @@ public:
 
     QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &request) const;
 
-    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request) const;
+    QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &request) const;
 
     QPlaceIdReply *savePlace(const QPlace &place);
     QPlaceIdReply *removePlace(const QString &placeId);

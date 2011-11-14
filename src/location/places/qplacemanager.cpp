@@ -70,8 +70,8 @@ QT_BEGIN_NAMESPACE
             \o Places can be classified as belonging to different categories.  The
                manager supports access to these categories.
         \row
-            \o Text predictions
-            \o Given a partially complete search term, a list of potential complete
+            \o Search term suggestions
+            \o Given a partially complete search term, a list of potential
                search terms can be given.
         \row
             \o Recommendations
@@ -139,7 +139,7 @@ QT_BEGIN_NAMESPACE
     \value SaveCategoryFeature The manager can be used to save categories.
     \value RemoveCategoryFeature The manager can be used to remove categories.
     \value RecommendationsFeature The manager can be used to provide recommendations.
-    \value TextPredictionsFeature The manager can be used to provide text predictions
+    \value SearchSuggestionsFeature The manager can be used to provide search term suggestions.
     \value CorrectionsFeature The manager can be used to provide search term corrections
     \value LocaleFeature The manager can be used to provide place data localized
                           according to locale
@@ -252,15 +252,15 @@ QPlaceSearchReply *QPlaceManager::recommendations(const QPlace &place, const QPl
 }
 
 /*!
-    Requests a set of text predictions according to the parameters specified in \a request.
+    Requests a set of search term suggestions  according to the parameters specified in \a request.
     The \a request can hold the incomplete search term, along with other data such
     as a search area to narrow down relevant results.
 
-    See \l {Text Predictions} for an example of usage.
+    See \l {Search Suggestions} for an example of usage.
 */
-QPlaceTextPredictionReply *QPlaceManager::textPredictions(const QPlaceSearchRequest &request) const
+QPlaceSearchSuggestionReply *QPlaceManager::searchSuggestions(const QPlaceSearchRequest &request) const
 {
-    return d->textPredictions(request);
+    return d->searchSuggestions(request);
 }
 
 /*!

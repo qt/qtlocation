@@ -109,7 +109,7 @@ public:
         SaveCategoryFeature = QPlaceManager:: SaveCategoryFeature,
         RemoveCategoryFeature = QPlaceManager::RemoveCategoryFeature,
         RecommendationsFeature = QPlaceManager::RecommendationsFeature,
-        TextPredictionsFeature = QPlaceManager::TextPredictionsFeature,
+        SearchSuggestionsFeature = QPlaceManager::SearchSuggestionsFeature,
         CorrectionsFeature = QPlaceManager::CorrectionsFeature,
         LocaleFeature = QPlaceManager::LocaleFeature
     };

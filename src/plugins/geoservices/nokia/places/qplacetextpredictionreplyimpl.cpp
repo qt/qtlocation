@@ -60,7 +60,7 @@ QT_USE_NAMESPACE
     Constructor.
 */
 QPlaceTextPredictionReplyImpl::QPlaceTextPredictionReplyImpl(QPlaceRestReply *reply, QObject *parent) :
-    QPlaceTextPredictionReply(parent),
+    QPlaceSearchSuggestionReply(parent),
     restReply(reply)
 {
     parser = new QPlaceJSonTextPredictionParser(this);
@@ -107,7 +107,7 @@ void QPlaceTextPredictionReplyImpl::resultReady(const QPlaceJSonParser::Error &e
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {
-        setTextPredictions(parser->predictions());
+        setSuggestions(parser->predictions());
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());

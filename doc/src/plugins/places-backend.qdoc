@@ -69,7 +69,7 @@ emitted from a slot which is in turn is invoked by a QNetworkReply::finished() s
 Sometimes however, we may want to emit the QPlaceReply::finished() signal without
 depending upon an underlying asynchronous notification mechanism.  This
 is a common case when a portion of functionality is not supported.  For example,
-a backend may not support text predictions, so we need a way to trigger the finished
+a backend may not support search term suggestions, so we need a way to trigger the finished
 signal, but there's no underlying asynchronous mechanism to do so.  In this case,
 the typical approach is to use QMetaObject::invokeMethod() with a Qt::QueuedConnection,
 so that the QPlaceReply::finished(), QPlaceReply::error(), QPlaceManagerEngine::finished()

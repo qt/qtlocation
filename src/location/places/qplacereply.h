@@ -75,7 +75,7 @@ public:
         Reply,
         DetailsReply,
         SearchReply,
-        TextPredictionReply,
+        SearchSuggestionReply,
         ContentReply,
         IdReply
     };

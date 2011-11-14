@@ -123,7 +123,7 @@ and behaviours are outlined below:
         \o Icon url type(see \l {Icon internals} {QPlaceIcon})
         \o not supported
     \row
-        \o Text Prediction
+        \o Search term suggestions
         \o yes
     \row
         \o Recommendations
@@ -189,8 +189,8 @@ via QPlaceManager::getDetails()
 \o extended attributes
 \endlist
 
-\section3 Text prediction
-Only a search term and search center is supported for text prediction
+\section3 Search term suggestions.
+Only a partial search term and search center is supported when retrieving suggestions.
 
 \section3 Recommendation
 Only a given place is supported as a parameter for a recommendation.  No other parameters are used.

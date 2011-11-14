@@ -65,7 +65,7 @@ public:
     QPlaceSearchReply *search(const QPlaceSearchRequest &request);
 
     QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &request);
-    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &request);
+    QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &request);
 
     QPlaceIdReply *savePlace(const QPlace &place);
     QPlaceIdReply *removePlace(const QString &placeId);
@@ -97,7 +97,7 @@ private:
     friend class SaveReply;
     friend class MediaReply;
     friend class RemoveReply;
-    friend class TextPredictionReply;
+    friend class SearchSuggestionReply;
     friend class ReviewReply;
     friend class Reply;
     friend class SearchReply;

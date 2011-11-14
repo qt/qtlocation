@@ -175,9 +175,9 @@ void QPlaceSearchRequestPrivate::clear()
 
     The QPlaceSearchRequest is primarily used with the QPlaceManager to
     \l {QPlaceManager::search()} {search for places}, however it is also
-    used to provide parameters for \l {QPlaceManager::textPredictions()}{generating text predictions}
+    used to provide parameters for \l {QPlaceManager::searchSuggestions()}{generating search term suggestions}
     and \l {QPlaceManager::recommendations()} {retreiving recommendations}.  Note that depending on usage,
-    some parameters may not be relevant, e.g. the relevance hint is not important for text predictions.  However
+    some parameters may not be relevant, e.g. the relevance hint is not important for search term suggestions.  However
     in general, most of the parameters are useful for each of these operations, eg for a recommendation, a search area
     and categories can be useful in narrowing down recommendation candidates.
 

@@ -39,41 +39,76 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACETEXTPREDICTIONREPLY_H
-#define QPLACETEXTPREDICTIONREPLY_H
-
-#include "qplacereply.h"
-
-#include <QStringList>
-
-QT_BEGIN_HEADER
+#include "qplacesearchsuggestionreply.h"
+#include "qplacereply_p.h"
 
 QT_BEGIN_NAMESPACE
 
-
-
-class QPlaceTextPredictionReplyPrivate;
-
-class Q_LOCATION_EXPORT QPlaceTextPredictionReply : public QPlaceReply
+class QPlaceSearchSuggestionReplyPrivate : public QPlaceReplyPrivate
 {
-    Q_OBJECT
 public:
-    explicit QPlaceTextPredictionReply(QObject *parent = 0);
-    ~QPlaceTextPredictionReply();
-
-    QStringList textPredictions() const;
-    Type type() const;
-
-protected:
-    void setTextPredictions(const QStringList &predictions);
-
-private:
-    Q_DISABLE_COPY(QPlaceTextPredictionReply)
-    Q_DECLARE_PRIVATE(QPlaceTextPredictionReply)
+    QPlaceSearchSuggestionReplyPrivate(){}
+    QStringList suggestions;
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
+QT_USE_NAMESPACE
 
-#endif
+/*!
+    \class QPlaceSearchSuggestionReply
+    \inmodule QtLocation
+    \ingroup QtLocation-places
+    \ingroup QtLocation-places-replies
+    \since QtLocation 5.0
+
+    \brief The QPlaceSearchSuggestionReply class manages a search suggestion operation started by an
+    instance of QPlaceManager.
+
+    On successful completion of the operation, the reply will contain a list of search term
+    suggestions.
+    See \l {Search Suggestions} for an example on how to use a search suggestion reply.
+
+    \sa QPlaceManager
+*/
+
+/*!
+    Constructs a search suggestion reply with a given \a parent.
+*/
+QPlaceSearchSuggestionReply::QPlaceSearchSuggestionReply(QObject *parent)
+    : QPlaceReply(new QPlaceSearchSuggestionReplyPrivate, parent)
+{
+}
+
+/*!
+    Destroys the reply.
+*/
+QPlaceSearchSuggestionReply::~QPlaceSearchSuggestionReply()
+{
+}
+
+/*!
+    Returns the search term suggestions.
+*/
+QStringList QPlaceSearchSuggestionReply::suggestions() const
+{
+    Q_D(const QPlaceSearchSuggestionReply);
+    return d->suggestions;
+}
+
+/*!
+   Returns type of reply.
+*/
+QPlaceReply::Type QPlaceSearchSuggestionReply::type() const
+{
+    return QPlaceReply::SearchSuggestionReply;
+}
+
+/*!
+    Sets the search term \a suggestions.
+*/
+void QPlaceSearchSuggestionReply::setSuggestions(const QStringList &suggestions)
+{
+    Q_D(QPlaceSearchSuggestionReply);
+    d->suggestions = suggestions;
+}

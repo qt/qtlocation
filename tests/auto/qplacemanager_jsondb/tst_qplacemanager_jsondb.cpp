@@ -49,7 +49,7 @@
 #include <qplacemanager.h>
 #include <qplacecategory.h>
 #include <qplacecontentreply.h>
-#include <qplacetextpredictionreply.h>
+#include <qplacesearchsuggestionreply.h>
 #include <qplacesearchrequest.h>
 #include <qplacesearchresult.h>
 #include <qplacesearchreply.h>
@@ -1032,10 +1032,10 @@ void tst_QPlaceManagerJsonDb::unsupportedFunctions()
     QCOMPARE(contentReply->error(), QPlaceReply::UnsupportedError);
 
     QPlaceSearchRequest searchRequest;
-    QPlaceTextPredictionReply *textPredictionReply = placeManager->textPredictions(searchRequest);
-    QSignalSpy textPredictionSpy(textPredictionReply, SIGNAL(finished()));
-    QTRY_VERIFY(textPredictionSpy.count() == 1 );
-    QCOMPARE(textPredictionReply->error(), QPlaceReply::UnsupportedError);
+    QPlaceSearchSuggestionReply *searchSuggestionReply = placeManager->searchSuggestions(searchRequest);
+    QSignalSpy searchSuggestionSpy(searchSuggestionReply, SIGNAL(finished()));
+    QTRY_VERIFY(searchSuggestionSpy.count() == 1 );
+    QCOMPARE(searchSuggestionReply->error(), QPlaceReply::UnsupportedError);
 }
 
 void tst_QPlaceManagerJsonDb::supportedFeatures()
@@ -1050,7 +1050,7 @@ void tst_QPlaceManagerJsonDb::supportedFeatures()
              QPlaceManager::RemoveCategoryFeature);
 
     QVERIFY((placeManager->supportedFeatures() & QPlaceManager::RecommendationsFeature) == 0);
-    QVERIFY((placeManager->supportedFeatures() & QPlaceManager::TextPredictionsFeature) == 0);
+    QVERIFY((placeManager->supportedFeatures() & QPlaceManager::SearchSuggestionsFeature) == 0);
     QVERIFY((placeManager->supportedFeatures() & QPlaceManager::CorrectionsFeature) == 0);
     QVERIFY((placeManager->supportedFeatures() & QPlaceManager::LocaleFeature) == 0);
 }

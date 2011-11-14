@@ -159,7 +159,7 @@ public:
         return 0;
     }
 
-    QPlaceTextPredictionReply *textPredictions(const QPlaceSearchRequest &query)
+    QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &query)
     {
         Q_UNUSED(query)
 
@@ -269,7 +269,7 @@ public:
     QPlaceManager::ManagerFeatures supportedFeatures() const {
         return QPlaceManager::SavePlaceFeature
                | QPlaceManager::SaveCategoryFeature
-               | QPlaceManager::TextPredictionsFeature;
+               | QPlaceManager::SearchSuggestionsFeature;
     }
 
 private:

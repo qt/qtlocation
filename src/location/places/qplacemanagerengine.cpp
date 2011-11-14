@@ -175,9 +175,9 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 */
 
 /*!
-    \fn QPlaceTextPredictionReply *QPlaceManagerEngine::textPredictions(const QPlaceSearchRequest &request)
+    \fn QPlaceSearchSuggestionReply *QPlaceManagerEngine::searchSuggestions(const QPlaceSearchRequest &request)
 
-    Requests a set of text predictions according to the parameters specified in \a request.
+    Requests a set of search term suggestions according to the parameters specified in \a request.
 */
 
 /*!

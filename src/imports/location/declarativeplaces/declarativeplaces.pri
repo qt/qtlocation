@@ -4,7 +4,7 @@ SOURCES += \
     declarativeplaces/qdeclarativeplacecontentmodel.cpp \
     declarativeplaces/qdeclarativerecommendationmodel.cpp \
     declarativeplaces/qdeclarativesupportedcategoriesmodel.cpp \
-    declarativeplaces/qdeclarativetextpredictionmodel.cpp \
+    declarativeplaces/qdeclarativesearchsuggestionmodel.cpp \
     declarativeplaces/qdeclarativesearchresultmodel.cpp \
     declarativeplaces/qdeclarativereviewmodel.cpp \
     declarativeplaces/qdeclarativeplaceimagemodel.cpp \
@@ -25,7 +25,7 @@ HEADERS += \
     declarativeplaces/qdeclarativeplacecontentmodel.h \
     declarativeplaces/qdeclarativerecommendationmodel_p.h \
     declarativeplaces/qdeclarativesupportedcategoriesmodel_p.h \
-    declarativeplaces/qdeclarativetextpredictionmodel_p.h \
+    declarativeplaces/qdeclarativesearchsuggestionmodel_p.h \
     declarativeplaces/qdeclarativesearchresultmodel_p.h \
     declarativeplaces/qdeclarativereviewmodel_p.h \
     declarativeplaces/qdeclarativeplaceimagemodel_p.h \

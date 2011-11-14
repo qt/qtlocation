@@ -39,74 +39,56 @@
 **
 ****************************************************************************/
 
-#include "qplacetextpredictionreply.h"
-#include "qplacereply_p.h"
+#ifndef QDECLARATIVESEARCHSUGGESTIONMODEL_P_H
+#define QDECLARATIVESEARCHSUGGESTIONMODEL_P_H
+
+#include "qdeclarativesearchmodelbase.h"
+
+#include <QtCore/QStringList>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceTextPredictionReplyPrivate : public QPlaceReplyPrivate
+class QDeclarativeGeoServiceProvider;
+class QGeoServiceProvider;
+
+class QDeclarativeSearchSuggestionModel : public QDeclarativeSearchModelBase
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
+    Q_PROPERTY(QStringList suggestions READ suggestions NOTIFY suggestionsChanged)
+
 public:
-    QPlaceTextPredictionReplyPrivate(){}
-    QStringList textPredictions;
+    explicit QDeclarativeSearchSuggestionModel(QObject *parent = 0);
+    ~QDeclarativeSearchSuggestionModel();
+
+    QString searchTerm() const;
+    void setSearchTerm(const QString &searchTerm);
+
+    QStringList suggestions() const;
+
+    void clearData();
+    void updateSearchRequest();
+    void processReply(QPlaceReply *reply);
+
+    // From QAbstractListModel
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    enum Roles {
+        SearchSuggestionRole = Qt::UserRole
+    };
+
+signals:
+    void searchTermChanged();
+    void suggestionsChanged();
+
+protected:
+    QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
+
+private:
+    QStringList m_suggestions;
 };
 
 QT_END_NAMESPACE
 
-QT_USE_NAMESPACE
-
-/*!
-    \class QPlaceTextPredictionReply
-    \inmodule QtLocation
-    \ingroup QtLocation-places
-    \ingroup QtLocation-places-replies
-    \since QtLocation 5.0
-
-    \brief The QPlaceTextPredictionReply class manages a text prediction operation started by an
-    instance of QPlaceManager.
-
-    See \l {Text Predictions} for an example on how to use a text prediction reply.
-
-    \sa QPlaceManager
-*/
-
-/*!
-    Constructs a text prediction reply with a given \a parent.
-*/
-QPlaceTextPredictionReply::QPlaceTextPredictionReply(QObject *parent)
-    : QPlaceReply(new QPlaceTextPredictionReplyPrivate, parent)
-{
-}
-
-/*!
-    Destroys the reply.
-*/
-QPlaceTextPredictionReply::~QPlaceTextPredictionReply()
-{
-}
-
-/*!
-    Returns the text predictions.
-*/
-QStringList QPlaceTextPredictionReply::textPredictions() const
-{
-    Q_D(const QPlaceTextPredictionReply);
-    return d->textPredictions;
-}
-
-/*!
-   Returns type of reply.
-*/
-QPlaceReply::Type QPlaceTextPredictionReply::type() const
-{
-    return QPlaceReply::TextPredictionReply;
-}
-
-/*!
-    Sets the text \a predictions.
-*/
-void QPlaceTextPredictionReply::setTextPredictions(const QStringList &predictions)
-{
-    Q_D(QPlaceTextPredictionReply);
-    d->textPredictions = predictions;
-}
+#endif

@@ -39,56 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVETEXTPREDICTIONMODEL_P_H
-#define QDECLARATIVETEXTPREDICTIONMODEL_P_H
+#ifndef QPLACESEARCHSUGGESTIONREPLY_H
+#define QPLACESEARCHSUGGESTIONREPLY_H
 
-#include "qdeclarativesearchmodelbase.h"
+#include "qplacereply.h"
 
-#include <QtCore/QStringList>
+#include <QStringList>
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoServiceProvider;
-class QGeoServiceProvider;
+class QPlaceSearchSuggestionReplyPrivate;
 
-class QDeclarativeTextPredictionModel : public QDeclarativeSearchModelBase
+class Q_LOCATION_EXPORT QPlaceSearchSuggestionReply : public QPlaceReply
 {
     Q_OBJECT
-
-    Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
-    Q_PROPERTY(QStringList textPredictions READ textPredictions NOTIFY textPredictionsChanged)
-
 public:
-    explicit QDeclarativeTextPredictionModel(QObject *parent = 0);
-    ~QDeclarativeTextPredictionModel();
+    explicit QPlaceSearchSuggestionReply(QObject *parent = 0);
+    ~QPlaceSearchSuggestionReply();
 
-    QString searchTerm() const;
-    void setSearchTerm(const QString &searchTerm);
-
-    QStringList textPredictions() const;
-
-    void clearData();
-    void updateSearchRequest();
-    void processReply(QPlaceReply *reply);
-
-    // From QAbstractListModel
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    enum Roles {
-        TextPredictionRole = Qt::UserRole
-    };
-
-signals:
-    void searchTermChanged();
-    void textPredictionsChanged();
+    QStringList suggestions() const;
+    Type type() const;
 
 protected:
-    QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
+    void setSuggestions(const QStringList &suggestions);
 
 private:
-    QStringList m_predictions;
+    Q_DISABLE_COPY(QPlaceSearchSuggestionReply)
+    Q_DECLARE_PRIVATE(QPlaceSearchSuggestionReply)
 };
 
 QT_END_NAMESPACE
 
-#endif // QDECLARATIVETEXTPREDICTIONMODEL_P_H
+QT_END_HEADER
+
+#endif

@@ -25,7 +25,7 @@ PUBLIC_HEADERS += \
     places/qplacedetailsreply.h \
     places/qplaceidreply.h \
     places/qplacesearchreply.h \
-    places/qplacetextpredictionreply.h \
+    places/qplacesearchsuggestionreply.h \
 #manager and engine
     places/qplacemanager.h \
     places/qplacemanagerengine.h
@@ -72,7 +72,7 @@ SOURCES += \
     places/qplacereply.cpp \
     places/qplacedetailsreply.cpp \
     places/qplacesearchreply.cpp \
-    places/qplacetextpredictionreply.cpp \
+    places/qplacesearchsuggestionreply.cpp \
 #manager and engine
     places/qplacemanager.cpp \
     places/qplacemanagerengine.cpp

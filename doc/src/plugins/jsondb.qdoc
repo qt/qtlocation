@@ -58,7 +58,7 @@ capabiliies are outlined below:
         \o Icon url type(see \l {Icon internals} {QPlaceIcon})
         \o full  url
     \row
-        \o Text Prediction
+        \o Search term suggestions
         \o no
     \row
         \o Recommendations

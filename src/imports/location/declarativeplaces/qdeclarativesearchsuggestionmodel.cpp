@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativetextpredictionmodel_p.h"
+#include "qdeclarativesearchsuggestionmodel_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 
 #include <QtDeclarative/QDeclarativeInfo>
@@ -51,25 +51,26 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass TextPredictionModel QDeclarativeTextPredictionModel
+    \qmlclass PlaceSearchSuggestionModel QDeclarativeSearchSuggestionModel
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The TextPredictionModel element provides access to text predictions.
+    \brief The PlaceSearchSuggestionModel element provides access to search term suggestions.
 
-    The TextPredictionModel can be used to provide search term predictions as the user enters their
-    search term.  The properties of this model should match that of the \l PlaceSearchModel which
-    will be used to perform the actual search query to ensure that the text prediction results are
+    The PlaceSearchSuggestionModel can be used to provide search term suggestions as the user enters their
+    search term.  The properties of this model should match that of the \l PlaceSearchModel, which
+    will be used to perform the actual search query, to ensure that the search suggestion results are
     relevant.
 
     There are two ways of accessing the data provided by this model, either through the
-    \l textPredictions property or through views and delegates.  The latter is the preferred
+    \l suggestions property or through views and delegates.  The latter is the preferred
     method.
 
-    The \l offset and \l limit properties can be used to access paged search results.  When the
-    \l offset and \l limit properties are set the search results between \l offset and
-    (\l offset + \l limit - 1) will be returned.
+    The \l offset and \l limit properties can be used to access paged suggestions.  When the
+    \l offset and \l limit properties are set the suggestions between \l offset and
+    (\l offset + \l limit - 1) will be returned.  Support for paging may vary
+    from plugin to plugin.
 
     The model returns data for the following roles:
 
@@ -79,33 +80,33 @@ QT_USE_NAMESPACE
             \o Type
             \o Description
         \row
-            \o textPrediction
+            \o suggestion
             \o string
             \o Suggested search term.
     \endtable
 
-    The following example shows how to use the TextPredictionModel to get suggested search queries
-    for a partial search term.  The \l searchArea is set to match what would be used to perform the
+    The following example shows how to use the PlaceSearchSuggestionModel to get suggested search terms
+    from a partial search term.  The \l searchArea is set to match what would be used to perform the
     actual place search with \l PlaceSearchModel.
 
     \snippet snippets/declarative/places.qml QtQuick import
     \snippet snippets/declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml TextPredictionModel
+    \snippet snippets/declarative/places.qml SearchSuggestionModel
 
     \sa PlaceSearchModel, {QPlaceManager}
 */
 
 /*!
-    \qmlproperty Plugin TextPredictionModel::plugin
+    \qmlproperty Plugin PlaceSearchSuggestionModel::plugin
 
     This property holds the provider \l Plugin which will be used to perform the search.
 */
 
 /*!
-    \qmlproperty BoundingArea TextPredictionModel::searchArea
+    \qmlproperty BoundingArea PlaceSearchSuggestionModel::searchArea
 
-    This property holds the search area.  Text prediction results returned by the model will be
+    This property holds the search area.  Search suggestion results returned by the model will be
     relevant to the given search area.
 
     If this property is set to a \l BoundingCircle its \l {BoundingCircle::radius}{radius} property
@@ -114,15 +115,15 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty int TextPredictionModel::offset
+    \qmlproperty int PlaceSearchSuggestionModel::offset
 
-    This property holds the index of the first search result in the model.
+    This property holds the index of the first item in the model.
 
     \sa limit
 */
 
 /*!
-    \qmlproperty int TextPredictionModel::limit
+    \qmlproperty int PlaceSearchSuggestionModel::limit
 
     This property holds the limit of the number of items that will be returned.
 
@@ -130,64 +131,64 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty enum TextPredictionModel::status
+    \qmlproperty enum PlaceSearchSuggestionModel::status
 
     This property holds the status of the model.  It can be one of:
 
     \table
         \row
-            \o TextPredictionModel.Ready
+            \o SearchSuggestionModel.Ready
             \o The search query has completed and the result are available.
         \row
-            \o TextPredictionModel.Executing
+            \o SearchSuggestionModel.Executing
             \o A search query is currently being executed.
         \row
-            \o TextPredictionModel.Error
+            \o SearchSuggestionModel.Error
             \o An error occurred when executing the previous search query.
     \endtable
 */
 
 /*!
-    \qmlmethod TextPredictionModel::execute()
+    \qmlmethod PlaceSearchSuggestionModel::execute()
 
-    Executes a text prediction query for the partial \l searchTerm and \l searchArea.  Once the
-    query completes the model items are updated with the text prediction results.
+    Executes a search suggestion query for the partial \l searchTerm and \l searchArea.  Once the
+    query completes the model items are updated with the suggestions.
 
     \sa cancel(), status
 */
 
 /*!
-    \qmlmethod TextPredictionModel::cancel()
+    \qmlmethod PlaceSearchSuggestionModel::cancel()
 
-    Cancels an ongoing text prediction query.
+    Cancels an ongoing search suggestion operation.
 
     \sa execute(), status
 */
 
-QDeclarativeTextPredictionModel::QDeclarativeTextPredictionModel(QObject *parent)
+QDeclarativeSearchSuggestionModel::QDeclarativeSearchSuggestionModel(QObject *parent)
 :   QDeclarativeSearchModelBase(parent)
 {
     QHash<int, QByteArray> roleNames;
     roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(TextPredictionRole, "textPrediction");
+    roleNames.insert(SearchSuggestionRole, "suggestion");
     setRoleNames(roleNames);
 }
 
-QDeclarativeTextPredictionModel::~QDeclarativeTextPredictionModel()
+QDeclarativeSearchSuggestionModel::~QDeclarativeSearchSuggestionModel()
 {
 }
 
 /*!
-    \qmlproperty string TextPredictionModel::searchTerm
+    \qmlproperty string PlaceSearchSuggestionModel::searchTerm
 
     This property holds the partial search term used in query.
 */
-QString QDeclarativeTextPredictionModel::searchTerm() const
+QString QDeclarativeSearchSuggestionModel::searchTerm() const
 {
     return m_request.searchTerm();
 }
 
-void QDeclarativeTextPredictionModel::setSearchTerm(const QString &searchTerm)
+void QDeclarativeSearchSuggestionModel::setSearchTerm(const QString &searchTerm)
 {
     if (m_request.searchTerm() == searchTerm)
         return;
@@ -197,40 +198,40 @@ void QDeclarativeTextPredictionModel::setSearchTerm(const QString &searchTerm)
 }
 
 /*!
-    \qmlproperty QStringList TextPredictionModel::textPredictions
+    \qmlproperty QStringList PlaceSearchSuggestionModel::suggestions
 
     This property holds the list of predicted search terms that the model currently has.
 */
-QStringList QDeclarativeTextPredictionModel::textPredictions() const
+QStringList QDeclarativeSearchSuggestionModel::suggestions() const
 {
-    return m_predictions;
+    return m_suggestions;
 }
 
-void QDeclarativeTextPredictionModel::clearData()
+void QDeclarativeSearchSuggestionModel::clearData()
 {
-    m_predictions.clear();
+    m_suggestions.clear();
 }
 
-void QDeclarativeTextPredictionModel::updateSearchRequest()
+void QDeclarativeSearchSuggestionModel::updateSearchRequest()
 {
     QDeclarativeSearchModelBase::updateSearchRequest();
 }
 
-void QDeclarativeTextPredictionModel::processReply(QPlaceReply *reply)
+void QDeclarativeSearchSuggestionModel::processReply(QPlaceReply *reply)
 {
-    QPlaceTextPredictionReply *predictionReply = qobject_cast<QPlaceTextPredictionReply *>(reply);
-    m_predictions = predictionReply->textPredictions();
-    emit textPredictionsChanged();
+    QPlaceSearchSuggestionReply *suggestionReply = qobject_cast<QPlaceSearchSuggestionReply *>(reply);
+    m_suggestions = suggestionReply->suggestions();
+    emit suggestionsChanged();
 }
 
-int QDeclarativeTextPredictionModel::rowCount(const QModelIndex& parent) const
+int QDeclarativeSearchSuggestionModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent)
 
-    return m_predictions.count();
+    return m_suggestions.count();
 }
 
-QVariant QDeclarativeTextPredictionModel::data(const QModelIndex& index, int role) const
+QVariant QDeclarativeSearchSuggestionModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -240,15 +241,15 @@ QVariant QDeclarativeTextPredictionModel::data(const QModelIndex& index, int rol
 
     switch (role) {
     case Qt::DisplayRole:
-    case TextPredictionRole:
-        return m_predictions.at(index.row());
+    case SearchSuggestionRole:
+        return m_suggestions.at(index.row());
     }
 
     return QVariant();
 }
 
-QPlaceReply *QDeclarativeTextPredictionModel::sendQuery(QPlaceManager *manager,
+QPlaceReply *QDeclarativeSearchSuggestionModel::sendQuery(QPlaceManager *manager,
                                                         const QPlaceSearchRequest &request)
 {
-    return manager->textPredictions(request);
+    return manager->searchSuggestions(request);
 }
