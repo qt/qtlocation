@@ -1,4 +1,5 @@
 TEMPLATE = subdirs
 SUBDIRS +=  flickr \
             mapviewer \
-            qmlplaces
+            qmlplaces \
+            places

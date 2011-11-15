@@ -1,0 +1,14 @@
+{
+  "info-version": "1.0",
+  "dict": {
+     "DisplayName": "Places",
+     "Identifier": "com.nokia.mt.qt5location.places",
+     "Runtime": "qml",
+     "MainQML": "places.qml",
+     "Version": "1.0.0",
+     "Category": "application",
+     "Subcategory": "utility",
+     "Summary": "Places example",
+     "Author": "Qt"
+    }
+}
