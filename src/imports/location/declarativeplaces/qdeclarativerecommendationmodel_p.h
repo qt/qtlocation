@@ -82,6 +82,7 @@ protected:
 private:
     QList<QPlaceSearchResult> m_results;
     QMap<QString, QDeclarativePlace *> m_places;
+    QString m_placeId;
 };
 
 QT_END_NAMESPACE

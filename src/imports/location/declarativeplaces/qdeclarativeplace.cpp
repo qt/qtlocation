@@ -142,7 +142,7 @@ QT_USE_NAMESPACE
     its \l remove() method.  The \l status property will change to Place.Removing and then to
     Place.Ready if the save was successful or to Place.Error if an error occurs.
 
-    \sa PlaceSearchModel, RecommendationModel
+    \sa PlaceSearchModel, PlaceRecommendationModel
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)

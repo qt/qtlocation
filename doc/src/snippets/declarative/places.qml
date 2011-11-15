@@ -129,7 +129,7 @@ Item {
     //! [PlaceSearchModel]
 
     //! [RecommendationModel]
-    RecommendationModel {
+    PlaceRecommendationModel {
         id: recommendationModel
 
         placeId: place.placeId

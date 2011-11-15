@@ -169,9 +169,10 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 */
 
 /*!
-    \fn QPlaceSearchReply *QPlaceManagerEngine::recommendations(const QPlace &place, const QPlaceSearchRequest &request)
+    \fn QPlaceSearchReply *QPlaceManagerEngine::recommendations(const QString &placeId, const QPlaceSearchRequest &request)
 
-    Provides recommendations for places that similar to \a place, and using the parameters as specified in \a request.
+    Provides recommendations for places that are similar to the place identified by \a placeId,
+    and using the parameters as specified in \a request.
 */
 
 /*!

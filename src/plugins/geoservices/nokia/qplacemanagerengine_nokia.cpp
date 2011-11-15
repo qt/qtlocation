@@ -201,11 +201,11 @@ QPlaceSearchReply *QPlaceManagerEngineNokia::search(const QPlaceSearchRequest &q
     return reply;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QPlace &place, const QPlaceSearchRequest &query)
+QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QString &placeId, const QPlaceSearchRequest &query)
 {
     QPlaceRecommendationReplyImpl *reply = NULL;
     QPlaceSearchRequest newQuery = query;
-    newQuery.setSearchTerm(place.placeId());
+    newQuery.setSearchTerm(placeId);
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendRecommendationRequest(newQuery, QString());
     if (restReply) {
         reply = new QPlaceRecommendationReplyImpl(restReply, manager(), this);

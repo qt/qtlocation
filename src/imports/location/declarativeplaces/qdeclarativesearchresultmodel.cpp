@@ -105,7 +105,7 @@ QT_USE_NAMESPACE
     \codeline
     \snippet snippets/declarative/places.qml PlaceSearchModel
 
-    \sa RecommendationModel, CategoryModel, {QPlaceManager}
+    \sa PlaceRecommendationModel, CategoryModel, {QPlaceManager}
 */
 
 /*!

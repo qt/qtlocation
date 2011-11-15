@@ -139,7 +139,7 @@ public:
             qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");
             qmlRegisterType<QDeclarativePlaceUser>(uri, 5, 0, "User");
 
-            qmlRegisterType<QDeclarativeRecommendationModel>(uri, 5, 0, "RecommendationModel");
+            qmlRegisterType<QDeclarativeRecommendationModel>(uri, 5, 0, "PlaceRecommendationModel");
             qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "CategoryModel");
             qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "PlaceSearchModel");
             qmlRegisterType<QDeclarativeSearchSuggestionModel>(uri, 5, 0, "PlaceSearchSuggestionModel");

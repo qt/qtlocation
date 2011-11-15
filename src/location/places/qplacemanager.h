@@ -48,6 +48,7 @@
 #include "qplacereply.h"
 #include "qplacedetailsreply.h"
 #include "qplacesearchsuggestionreply.h"
+#include "qplacesearchrequest.h"
 
 #include <QLocale>
 #include <QVector>
@@ -95,7 +96,7 @@ public:
 
     QPlaceSearchReply *search(const QPlaceSearchRequest &query) const;
 
-    QPlaceSearchReply *recommendations(const QPlace &place, const QPlaceSearchRequest &request) const;
+    QPlaceSearchReply *recommendations(const QString &placeId, const QPlaceSearchRequest &request = QPlaceSearchRequest()) const;
 
     QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &request) const;
 

@@ -163,7 +163,7 @@ public:
         QPlaceSearchRequest request;
         request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
 
-        /* QPlaceSearchReply * */ recommendationReply = manager->recommendations(place, request);
+        /* QPlaceSearchReply * */ recommendationReply = manager->recommendations(place.placeId(), request);
         connect(recommendationReply, SIGNAL(finished()), this, SLOT(handleRecommendationReply()));
         //! [Recommendation]
     }

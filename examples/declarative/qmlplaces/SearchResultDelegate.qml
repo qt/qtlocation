@@ -228,6 +228,15 @@ Rectangle {
         y: 5
         clip: true
 
-        sourceComponent: (type === PlaceSearchModel.PlaceResult) ? placeComponent : didYouMeanComponent
+        sourceComponent: {
+            if (placesList.model === searchModel) {
+                if (type === PlaceSearchModel.PlaceResult)
+                    return placeComponent;
+                else
+                    return didYouMeanComponent;
+            } else {
+                return placeComponent;
+            }
+        }
     }
 }

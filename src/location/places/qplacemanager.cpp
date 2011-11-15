@@ -242,13 +242,14 @@ QPlaceSearchReply *QPlaceManager::search(const QPlaceSearchRequest &request) con
 }
 
 /*!
-    Provides recommendations for places that are similar to \a place, and using the parameters as specified in \a request.
+    Provides recommendations for places that are similar to the place identified by \a placeId,
+    and using the parameters as specified in \a request.
 
     See \l {Recommendations} for an example of usage.
 */
-QPlaceSearchReply *QPlaceManager::recommendations(const QPlace &place, const QPlaceSearchRequest &request) const
+QPlaceSearchReply *QPlaceManager::recommendations(const QString &placeId, const QPlaceSearchRequest &request) const
 {
-    return d->recommendations(place, request);
+    return d->recommendations(placeId, request);
 }
 
 /*!

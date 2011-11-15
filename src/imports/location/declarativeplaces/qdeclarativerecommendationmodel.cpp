@@ -51,14 +51,14 @@
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass RecommendationModel QDeclarativeRecommenadationModel
+    \qmlclass PlaceRecommendationModel QDeclarativeRecommenadationModel
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The RecommendationModel element provides a model of place recommendations.
+    \brief The PlaceRecommendationModel element provides a model of place recommendations.
 
-    RecommendationModel provides a model of place recommendation results within the \l searchArea,
+    PlaceRecommendationModel provides a model of place recommendation results within the \l searchArea,
     that are similiar to the place identified by the \l placeId property.
 
     The \l offset and \l limit properties can be used to access paged search results.  When the
@@ -82,7 +82,7 @@ QT_USE_NAMESPACE
             \o The place.
     \endtable
 
-    The following example shows how to use the RecommendationModel to search for recommendations in
+    The following example shows how to use the PlaceRecommendationModel to search for recommendations in
     close proximity of a given position.
 
     \snippet snippets/declarative/places.qml QtQuick import
@@ -94,13 +94,13 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty Plugin RecommendationModel::plugin
+    \qmlproperty Plugin PlaceRecommendationModel::plugin
 
     This property holds the \l Plugin which will be used to perform the search.
 */
 
 /*!
-    \qmlproperty BoundingArea RecommendationModel::searchArea
+    \qmlproperty BoundingArea PlaceRecommendationModel::searchArea
 
     This property holds the search area.  Search results returned by the model will be within the
     search area.
@@ -111,7 +111,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty int RecommendationModel::offset
+    \qmlproperty int PlaceRecommendationModel::offset
 
     This property holds the index of the first search result in the model.
 
@@ -119,7 +119,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty int RecommendationModel::limit
+    \qmlproperty int PlaceRecommendationModel::limit
 
     This property holds the limit of the number of items that will be returned.
 
@@ -127,25 +127,25 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty enum RecommendationModel::status
+    \qmlproperty enum PlaceRecommendationModel::status
 
     This property holds the status of the model.  It can be one of:
 
     \table
         \row
-            \o RecommendationModel.Ready
+            \o PlaceRecommendationModel.Ready
             \o The search query has completed and the result are available.
         \row
-            \o RecommendationModel.Executing
+            \o PlaceRecommendationModel.Executing
             \o A search query is currently being executed.
         \row
-            \o RecommendationModel.Error
+            \o PlaceRecommendationModel.Error
             \o An error occurred when executing the previous search query.
     \endtable
 */
 
 /*!
-    \qmlmethod RecommendationModel::execute()
+    \qmlmethod PlaceRecommendationModel::execute()
 
     Executes a recommendation search query for places similar to the place identified by the
     \l placeId property.  Once the query completes the model items are updated with the search
@@ -155,7 +155,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod RecommendationModel::cancel()
+    \qmlmethod PlaceRecommendationModel::cancel()
 
     Cancels an ongoing search query.
 
@@ -176,21 +176,21 @@ QDeclarativeRecommendationModel::~QDeclarativeRecommendationModel()
 }
 
 /*!
-    \qmlproperty string RecommendationModel::placeId
+    \qmlproperty string PlaceRecommendationModel::placeId
 
     This property holds place id used in the recommendation search query.
 */
 QString QDeclarativeRecommendationModel::placeId() const
 {
-    return m_request.searchTerm();
+    return m_placeId;
 }
 
 void QDeclarativeRecommendationModel::setPlaceId(const QString &placeId)
 {
-    if (m_request.searchTerm() == placeId)
+    if (m_placeId == placeId)
         return;
 
-    m_request.setSearchTerm(placeId);
+    m_placeId = placeId;
     emit placeIdChanged();
 }
 
@@ -254,7 +254,5 @@ QVariant QDeclarativeRecommendationModel::data(const QModelIndex& index, int rol
 QPlaceReply *QDeclarativeRecommendationModel::sendQuery(QPlaceManager *manager,
                                                         const QPlaceSearchRequest &request)
 {
-    QPlace target;
-    target.setPlaceId(request.searchTerm());
-    return manager->recommendations(target, request);
+    return manager->recommendations(m_placeId, request);
 }

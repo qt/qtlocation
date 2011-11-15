@@ -244,7 +244,7 @@ Rectangle {
         searchTerm: search_term.text
     }
 
-    RecommendationModel {
+    PlaceRecommendationModel {
         id: recommendationModel
         plugin: geoServices
 
