@@ -384,14 +384,14 @@ QList<QPlaceCategory> QPlaceManagerEngineJsonDb::childCategories(const QString &
     return m_jsonDbHandler.convertJsonResponseToCategories(responseMap);
 }
 
-QLocale QPlaceManagerEngineJsonDb::locale() const
+QList<QLocale> QPlaceManagerEngineJsonDb::locales() const
 {
-    return QLocale();
+    return QList<QLocale>();
 }
 
-void QPlaceManagerEngineJsonDb::setLocale(const QLocale &locale)
+void QPlaceManagerEngineJsonDb::setLocales(const QList<QLocale> &locales)
 {
-    Q_UNUSED(locale);
+    Q_UNUSED(locales);
 }
 
 QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)

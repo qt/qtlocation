@@ -350,21 +350,38 @@ QList<QPlaceCategory> QPlaceManager::childCategories(const QString &parentId) co
 }
 
 /*!
-    Returns the locale of the manager.
-    The locale is used as a hint to determine
-    what language place data should be returned in.
+    Returns a list of prefered locales. The locales are used as a hint to the manager for what language
+    place and category details should be returned in.
+
+    If the first specified locale cannot be accommodated, the manager falls back to the next and so forth.
+
+    Support for locales may vary from provider to provider.  For those that do support it,
+    by default, the global default locale is set as the manager's only locale.  If the manager
+    has no locales assigned to it, it impliclty uses the global default locale.
+    For managers that do not support locales, the locale list is always empty.
 */
-QLocale QPlaceManager::locale() const
+QList<QLocale> QPlaceManager::locales() const
 {
-    return d->locale();
+    return d->locales();
 }
 
 /*!
-    Sets the \a locale of the manager.
+    Convenience function which sets the manager's list of preferred locales
+    to a single \a locale.
 */
 void QPlaceManager::setLocale(const QLocale &locale)
 {
-    d->setLocale(locale);
+    QList<QLocale> locales;
+    locales << locale;
+    d->setLocales(locales);
+}
+
+/*!
+    Set the list of preferred \a locales.
+*/
+void QPlaceManager::setLocales(const QList<QLocale> &locales)
+{
+    d->setLocales(locales);
 }
 
 /*!

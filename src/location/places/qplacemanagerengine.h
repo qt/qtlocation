@@ -85,8 +85,8 @@ public:
 
     virtual QList<QPlaceCategory> childCategories(const QString &parentId) const = 0;
 
-    virtual QLocale locale() const = 0;
-    virtual void setLocale(const QLocale &locale) = 0;
+    virtual QList<QLocale> locales() const = 0;
+    virtual void setLocales(const QList<QLocale> &locales) = 0;
 
     virtual QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags) = 0;
     virtual QPlaceManager::ManagerFeatures supportedFeatures() const = 0;

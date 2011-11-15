@@ -94,9 +94,9 @@ QPlaceRestManager *QPlaceRestManager::mInstance = NULL;
     Constructor.
 */
 QPlaceRestManager::QPlaceRestManager(QObject *parent) :
-    QObject(parent),
-    mLocale(QLocale())
+    QObject(parent)
 {
+    mLocales << QLocale();
     mManager = new QNetworkAccessManager(this);
 
     if (searchServer.isNull()) {
@@ -210,12 +210,7 @@ QPlaceRestReply *QPlaceRestManager::postRatingRequest(const QString &placeId, co
     QString url = placesServerUrl + placeId + "/ugc/ratings";
     request.setUrl(url);
 
-    QByteArray language;
-    language.append(mLocale.name().toLatin1());
-    language.append(",");
-    language.append(mLocale.name().left(2).toLatin1());
-
-    request.setRawHeader("Accept-Language", language);
+    request.setRawHeader("Accept-Language", createLanguageString());
     request.setRawHeader("Content-Type", "application/json");
     request.setRawHeader("Accept", "application/json");
     request.setRawHeader("X-Ovi-NcimUser", userId.toUtf8());
@@ -227,14 +222,14 @@ QPlaceRestReply *QPlaceRestManager::postRatingRequest(const QString &placeId, co
     return new QPlaceRestReply(mManager->post(request, data));
 }
 
-QLocale QPlaceRestManager::locale() const
+QList<QLocale> QPlaceRestManager::locales() const
 {
-    return mLocale;
+    return mLocales;
 }
 
-void QPlaceRestManager::setLocale(const QLocale &locale)
+void QPlaceRestManager::setLocales(const QList<QLocale> &locales)
 {
-    mLocale = locale;
+    mLocales = locales;
 }
 
 /*!
@@ -245,22 +240,33 @@ QPlaceRestReply *QPlaceRestManager::sendGeneralRequest(const QUrl &url)
     QNetworkRequest request;
     request.setUrl(url);
 
-    QByteArray language;
-    language.append(mLocale.name().toLatin1());
-    language.append(",");
-    language.append(mLocale.name().left(2).toLatin1());
-
 #if defined(QPLACES_LOGGING)
-    qDebug() << "QRestDataProvider::sendGeneralRequest: Language - " + language;
+    qDebug() << "QRestDataProvider::sendGeneralRequest: Language - " + createLocaleString();
 #endif
 
-    request.setRawHeader("Accept-Language", language);
+    request.setRawHeader("Accept-Language", createLanguageString());
 
 #if defined(QPLACES_LOGGING)
     qDebug() << "QRestDataProvider::sendGeneralRequest: " + url.toString();
 #endif
 
     return new QPlaceRestReply(mManager->get(request));
+}
+
+QByteArray QPlaceRestManager::createLanguageString() const
+{
+    QByteArray language;
+    QList<QLocale> locales = mLocales;
+    if (locales.isEmpty())
+        locales << QLocale();
+
+    foreach (const QLocale &loc, locales) {
+        language.append(loc.name().replace(2, 1, '-'));
+        language.append(", ");
+    }
+    language.chop(2);
+
+    return language;
 }
 
 /*!

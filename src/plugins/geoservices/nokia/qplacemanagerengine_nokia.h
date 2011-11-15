@@ -87,8 +87,8 @@ public:
     QPlaceCategory category(const QString &categoryId) const;
     QList<QPlaceCategory> childCategories(const QString &parentId) const;
 
-    QLocale locale() const;
-    void setLocale(const QLocale &locale);
+    QList<QLocale> locales() const;
+    void setLocales(const QList<QLocale> &locales);
 
     QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags);
     QPlaceManager::ManagerFeatures supportedFeatures() const;

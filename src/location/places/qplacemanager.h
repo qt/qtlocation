@@ -113,8 +113,9 @@ public:
     QPlaceCategory category(const QString &categoryId) const;
     QList<QPlaceCategory> childCategories(const QString &parentId = QString()) const;
 
-    QLocale locale() const;
+    QList<QLocale> locales() const;
     void setLocale(const QLocale &locale);
+    void setLocales(const QList<QLocale> &locale);
 
     ManagerFeatures supportedFeatures() const;
 

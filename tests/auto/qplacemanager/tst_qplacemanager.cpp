@@ -56,7 +56,7 @@ private Q_SLOTS:
     void cleanupTestCase();
 
     void testMetadata();
-    void testLocale();
+    void testLocales();
 
 private:
     QGeoServiceProvider *provider;
@@ -81,14 +81,24 @@ void tst_QPlaceManager::testMetadata()
     QCOMPARE(placeManager->managerVersion(), 3);
 }
 
-void tst_QPlaceManager::testLocale()
+void tst_QPlaceManager::testLocales()
 {
-    QCOMPARE(placeManager->locale(), QLocale());
+    QCOMPARE(placeManager->locales().count(), 1);
+    QCOMPARE(placeManager->locales().at(0), QLocale());
 
     QLocale locale(QLocale::Norwegian, QLocale::Norway);
     placeManager->setLocale(locale);
 
-    QCOMPARE(placeManager->locale(), locale);
+    QCOMPARE(placeManager->locales().at(0), locale);
+
+    QList<QLocale> locales;
+    QLocale en_AU = QLocale(QLocale::English, QLocale::Australia);
+    QLocale en_UK = QLocale(QLocale::English, QLocale::UnitedKingdom);
+    locales << en_AU << en_UK;
+    placeManager->setLocales(locales);
+    QCOMPARE(placeManager->locales().count(), 2);
+    QCOMPARE(placeManager->locales().at(0), en_AU);
+    QCOMPARE(placeManager->locales().at(1), en_UK);
 }
 
 void tst_QPlaceManager::cleanupTestCase()

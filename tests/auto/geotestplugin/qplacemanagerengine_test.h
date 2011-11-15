@@ -118,6 +118,7 @@ public:
     QPlaceManagerEngineTest(const QMap<QString, QVariant> &parameters)
         : QPlaceManagerEngine(parameters)
     {
+        m_locales << QLocale();
     }
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId)
@@ -248,14 +249,14 @@ public:
         return QList<QPlaceCategory>();
     }
 
-    QLocale locale() const
+    QList<QLocale> locales() const
     {
-        return m_locale;
+        return m_locales;
     }
 
-    void setLocale(const QLocale &locale)
+    void setLocales(const QList<QLocale> &locales)
     {
-        m_locale = locale;
+        m_locales = locales;
     }
 
     QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags) {
@@ -273,7 +274,7 @@ public:
     }
 
 private:
-    QLocale m_locale;
+    QList<QLocale> m_locales;
     QMap<QString, QPlace> m_places;
 };
 

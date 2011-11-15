@@ -304,14 +304,14 @@ QList<QPlaceCategory> QPlaceManagerEngineNokia::childCategories(const QString &p
     return results;
 }
 
-QLocale QPlaceManagerEngineNokia::locale() const
+QList<QLocale> QPlaceManagerEngineNokia::locales() const
 {
-    return QPlaceRestManager::instance()->locale();
+    return QPlaceRestManager::instance()->locales();
 }
 
-void QPlaceManagerEngineNokia::setLocale(const QLocale &locale)
+void QPlaceManagerEngineNokia::setLocales(const QList<QLocale> &locales)
 {
-    QPlaceRestManager::instance()->setLocale(locale);
+    QPlaceRestManager::instance()->setLocales(locales);
 }
 
 QUrl QPlaceManagerEngineNokia::constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)
