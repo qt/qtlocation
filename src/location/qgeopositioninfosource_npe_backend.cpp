@@ -43,7 +43,7 @@
 #include <sys/stat.h>
 
 
-// API for socket communication towards nld
+// API for socket communication towards locationd
 const QString kstartUpdates = QLatin1String("startUpdates");
 const QString krequestUpdate = QLatin1String("requestUpdate");
 const QString kstopUpdates = QLatin1String("stopUpdates");
@@ -57,7 +57,7 @@ const QString kgetLastKnownPosition = QLatin1String("getLastKnownPosition");
 const QString kgetLastKnownPositionReply = QLatin1String("getLastKnownPositionReply");
 const QString kpositionUpdate = QLatin1String("positionUpdate"); // Notification
 
-// Attributes for socket communication towards nld
+// Attributes for socket communication towards locationd
 const QString kinterval = QLatin1String("interval");
 const QString ksatelliteOnly = QLatin1String("satelliteOnly");
 const QString klatitude = QLatin1String("latitude");
@@ -86,7 +86,7 @@ QGeoPositionInfoSourceNpeBackend::QGeoPositionInfoSourceNpeBackend(QObject *pare
 bool QGeoPositionInfoSourceNpeBackend::init()
 {
     struct stat buf;
-    if (stat("/var/run/nld/nld.socket", &buf) == 0) {
+    if (stat("/var/run/locationd/locationd.socket", &buf) == 0) {
         mSocket = new QLocalSocket(this);
         if (mSocket) {
             connect(mSocket, SIGNAL(connected()), this, SLOT(onSocketConnected()));
@@ -95,7 +95,7 @@ bool QGeoPositionInfoSourceNpeBackend::init()
             if (mStream) {
                 connect(mStream, SIGNAL(receive(const QVariantMap&)), this, SLOT(onStreamReceived(const QVariantMap&)), Qt::QueuedConnection);
             }
-            mSocket->connectToServer("/var/run/nld/nld.socket");
+            mSocket->connectToServer("/var/run/locationd/locationd.socket");
             return(mSocket->waitForConnected(500)); // wait up to 0.5 seconds to get connected, otherwise return false
         }
     }
@@ -105,7 +105,7 @@ bool QGeoPositionInfoSourceNpeBackend::init()
 
 QGeoPositionInfo QGeoPositionInfoSourceNpeBackend::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
-    QEventLoop loop; // loop to wait for response from nld (asynchronous socket connection)
+    QEventLoop loop; // loop to wait for response from locationd (asynchronous socket connection)
     connect( this, SIGNAL(lastKnownPositionReceived()), &loop, SLOT(quit()));
     QVariantMap action;
     QVariantMap object;
@@ -120,7 +120,7 @@ QGeoPositionInfo QGeoPositionInfoSourceNpeBackend::lastKnownPosition(bool fromSa
 
 QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceNpeBackend::supportedPositioningMethods() const
 {
-    QEventLoop loop; // loop to wait for response from nld (asynchronous socket connection)
+    QEventLoop loop; // loop to wait for response from locationd (asynchronous socket connection)
     connect( this, SIGNAL(supportedPositioningMethodsReceived()), &loop, SLOT(quit()));
     QVariantMap action;
     action.insert(JsonDbString::kActionStr, kgetSupportedMethods);
@@ -140,7 +140,7 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceNpeBackend::sup
 void QGeoPositionInfoSourceNpeBackend::setUpdateInterval(int msec)
 {
     QVariantMap action;
-    QEventLoop loop; // loop to wait for response from nld (asynchronous socket connection)
+    QEventLoop loop; // loop to wait for response from locationd (asynchronous socket connection)
     connect( this, SIGNAL(minimumUpdateIntervalReceived()), &loop, SLOT(quit()));
     action.insert(JsonDbString::kActionStr, kgetMinimumUpdateInterval);
     mStream->send(action);
@@ -174,7 +174,7 @@ void QGeoPositionInfoSourceNpeBackend::setPreferredPositioningMethods(Positionin
 int QGeoPositionInfoSourceNpeBackend::minimumUpdateInterval() const
 {
     QVariantMap action;
-    QEventLoop loop; // loop to wait for response from nld (asynchronous socket connection)
+    QEventLoop loop; // loop to wait for response from locationd (asynchronous socket connection)
     connect( this, SIGNAL(minimumUpdateIntervalReceived()), &loop, SLOT(quit()));
     action.insert(JsonDbString::kActionStr, kgetMinimumUpdateInterval);
     mStream->send(action);
@@ -260,7 +260,7 @@ void QGeoPositionInfoSourceNpeBackend::shutdownRequestSession()
 
 void QGeoPositionInfoSourceNpeBackend::onStreamReceived(const QVariantMap& map)
 {
-    // this slot handles the communication received from nld socket
+    // this slot handles the communication received from locationd socket
     if (map.contains(JsonDbString::kActionStr)) {
         QString action = map.value(JsonDbString::kActionStr).toString();
 

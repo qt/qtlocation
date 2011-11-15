@@ -43,13 +43,13 @@
 #include <sys/stat.h>
 
 
-// API for socket communication towards nld
+// API for socket communication towards locationd
 const QString ksatelliteStartUpdates = QLatin1String("satelliteStartUpdates");
 const QString ksatelliteRequestUpdate = QLatin1String("satelliteRequestUpdate");
 const QString ksatelliteStopUpdates = QLatin1String("satelliteStopUpdates");
 const QString ksatelliteInfoUpdate = QLatin1String("satelliteInfoUpdate");
 
-// Attributes for socket communication towards nld
+// Attributes for socket communication towards locationd
 const QString ksatId = QLatin1String("satId");
 const QString kazimuth = QLatin1String("azimuth");
 const QString kelevation = QLatin1String("elevation");
@@ -78,7 +78,7 @@ QGeoSatelliteInfoSourceNpeBackend::QGeoSatelliteInfoSourceNpeBackend(QObject *pa
 bool QGeoSatelliteInfoSourceNpeBackend::init()
 {
     struct stat buf;
-    if (stat("/var/run/nld/nld.socket", &buf) == 0) {
+    if (stat("/var/run/locationd/locationd.socket", &buf) == 0) {
         mSocket = new QLocalSocket(this);
         if (mSocket) {
             connect(mSocket, SIGNAL(connected()), this, SLOT(onSocketConnected()));
@@ -87,7 +87,7 @@ bool QGeoSatelliteInfoSourceNpeBackend::init()
             if (mStream) {
                 connect(mStream, SIGNAL(receive(const QVariantMap&)), this, SLOT(onStreamReceived(const QVariantMap&)), Qt::QueuedConnection);
             }
-            mSocket->connectToServer("/var/run/nld/nld.socket");
+            mSocket->connectToServer("/var/run/locationd/locationd.socket");
             return(mSocket->waitForConnected(500)); // wait up to 0.5 seconds to get connected, otherwise return false
         }
     }
@@ -144,7 +144,7 @@ void QGeoSatelliteInfoSourceNpeBackend::requestTimerExpired()
 
 void QGeoSatelliteInfoSourceNpeBackend::onStreamReceived(const QVariantMap& map)
 {
-    // this slot handles the communication received from nld socket
+    // this slot handles the communication received from locationd socket
     if (map.contains(JsonDbString::kActionStr)) {
         QString action = map.value(JsonDbString::kActionStr).toString();
 
