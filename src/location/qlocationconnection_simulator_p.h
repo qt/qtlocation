@@ -43,35 +43,43 @@
 #define QLOCATIONCONNECTION_H
 
 #include "qlocationdata_simulator_p.h"
-#include <mobilityconnection_p.h>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+
 namespace Simulator
 {
+    class Connection;
+    class ConnectionWorker;
+
     class LocationConnection : public QObject
     {
         Q_OBJECT
     public:
-        LocationConnection(MobilityConnection *mobilityCon);
-        virtual ~LocationConnection() {}
-
-        void getInitialData();
-
-    private slots:
-        void setLocationData(const QtMobility::QGeoPositionInfoData &);
-        void setSatelliteData(const QtMobility::QGeoSatelliteInfoData &);
-        void initialLocationDataSent();
+        static void ensureSimulatorConnection();
+        virtual ~LocationConnection();
 
     private:
-        MobilityConnection *mConnection;
-        bool mInitialDataReceived;
+        LocationConnection();
+        Q_DISABLE_COPY(LocationConnection)
+
+    private slots:
+        // these will be called by the simulator
+        void setLocationData(const QGeoPositionInfoData &);
+        void setSatelliteData(const QGeoSatelliteInfoData &);
+        void initialLocationDataSent();
+
+    signals:
+        void initialDataReceived();
+
+    private:
+        Connection *mConnection;
+        ConnectionWorker *mWorker;
     };
 } // end namespace Simulator
 
-void ensureSimulatorConnection();
 QGeoPositionInfoData *qtPositionInfo();
 QGeoSatelliteInfoData *qtSatelliteInfo();
 

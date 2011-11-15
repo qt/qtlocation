@@ -41,11 +41,8 @@
 
 #include "qgeopositioninfosource_simulator_p.h"
 #include "qlocationdata_simulator_p.h"
-#include "mobilitysimulatorglobal.h"
 #include "qlocationconnection_simulator_p.h"
-#include <mobilityconnection_p.h>
 
-#include <private/qsimulatordata_p.h>
 #include <QtCore/QDebug>
 #include <QtCore/QTimer>
 #include <QtCore/QDataStream>
@@ -53,8 +50,6 @@
 #include <QtNetwork/QLocalSocket>
 
 QT_BEGIN_NAMESPACE
-
-using namespace QtSimulatorPrivate;
 
 namespace Simulator
 {
@@ -84,7 +79,7 @@ QGeoPositionInfoSourceSimulator::QGeoPositionInfoSourceSimulator(QObject *parent
     , timer(new QTimer(this))
     , requestTimer(new QTimer(this))
 {
-    ensureSimulatorConnection();
+    Simulator::LocationConnection::ensureSimulatorConnection();
 
     connect(timer, SIGNAL(timeout()), this, SLOT(updatePosition()));
     requestTimer->setSingleShot(true);

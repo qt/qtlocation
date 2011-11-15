@@ -42,44 +42,57 @@
 #include "qlocationconnection_simulator_p.h"
 #include "qgeopositioninfosource_simulator_p.h"
 #include "qlocationdata_simulator_p.h"
-#include "mobilitysimulatorglobal.h"
 
-#include <private/qsimulatordata_p.h>
 #include <QtCore/QDebug>
 #include <QtCore/QTimer>
 #include <QtCore/QDataStream>
+#include <QtCore/QEventLoop>
 
 #include <QtNetwork/QLocalSocket>
 
+#include <QtSimulator/connection.h>
+#include <QtSimulator/version.h>
+#include <QtSimulator/connectionworker.h>
+
 QT_BEGIN_NAMESPACE
 
-using namespace QtSimulatorPrivate;
+const QString simulatorName(QString::fromLatin1("QtSimulator_Mobility_ServerName1.3.0.0"));
+const quint16 simulatorPort = 0xbeef + 1;
 
 namespace Simulator
 {
-    LocationConnection::LocationConnection(MobilityConnection *mobilityCon)
-        : QObject(mobilityCon)
-        , mConnection(mobilityCon)
-        , mInitialDataReceived(false)
+    LocationConnection::LocationConnection()
+        : mConnection(new Connection(Connection::Client, simulatorName, simulatorPort, Version(1,3,0,0)))
     {
         qt_registerLocationTypes();
-        mobilityCon->addMessageHandler(this);
+        mWorker = mConnection->connectToServer(Connection::simulatorHostName(true), simulatorPort);
+        if (!mWorker)
+            qFatal("Could not connect to server");
+        mWorker->addReceiver(this);
+
+        // register for location notifications
+        mWorker->call("setRequestsLocationInfo");
+
+        // wait until initial data is received
+        QEventLoop loop;
+        connect(this, SIGNAL(initialDataReceived()), &loop, SLOT(quit()));
+        loop.exec();
     }
 
-
-    void LocationConnection::getInitialData()
+    LocationConnection::~LocationConnection()
     {
-        RemoteMetacall<void>::call(mConnection->sendSocket(), NoSync, "setRequestsLocationInfo");
+        delete mWorker;
+        delete mConnection;
+    }
 
-        while (!mInitialDataReceived) {
-            mConnection->receiveSocket()->waitForReadyRead(100);
-            mConnection->onReadyRead();
-        }
+    void LocationConnection::ensureSimulatorConnection()
+    {
+        static LocationConnection locationConnection;
     }
 
     void LocationConnection::initialLocationDataSent()
     {
-        mInitialDataReceived = true;
+        emit initialDataReceived();
     }
 
     void LocationConnection::setLocationData(const QGeoPositionInfoData &data)
@@ -96,21 +109,6 @@ namespace Simulator
 
 } // namespace
 
-
-void ensureSimulatorConnection()
-{
-    using namespace Simulator;
-
-    static bool connected = false;
-    if (connected)
-        return;
-
-    connected = true;
-    MobilityConnection *connection = MobilityConnection::instance();
-    LocationConnection *locationConnection = new LocationConnection(connection);
-    locationConnection->getInitialData();
-}
-
 QGeoPositionInfoData *qtPositionInfo()
 {
     static QGeoPositionInfoData *positionInfo = 0;
@@ -123,7 +121,7 @@ QGeoPositionInfoData *qtPositionInfo()
 
 QGeoSatelliteInfoData *qtSatelliteInfo()
 {
-    static QGeoSatelliteInfoData *satelliteInfo;
+    static QGeoSatelliteInfoData *satelliteInfo = 0;
     if (!satelliteInfo) {
         satelliteInfo = new QGeoSatelliteInfoData;
     }

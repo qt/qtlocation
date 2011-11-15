@@ -50,7 +50,7 @@ QGeoSatelliteInfoSourceSimulator::QGeoSatelliteInfoSourceSimulator(QObject *pare
     , timer(new QTimer(this))
     , requestTimer(new QTimer(this))
 {
-    ensureSimulatorConnection();
+    Simulator::LocationConnection::ensureSimulatorConnection();
 
     timer->setInterval(5000);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateData()));
@@ -89,10 +89,11 @@ void QGeoSatelliteInfoSourceSimulator::updateData()
     for(int i = 0; i < data->satellites.count(); i++) {
         QGeoSatelliteInfoData::SatelliteInfo info = data->satellites.at(i);
         QGeoSatelliteInfo satInfo;
-        satInfo.setPrnNumber(info.prn);
         satInfo.setAttribute(QGeoSatelliteInfo::Azimuth, info.azimuth);
         satInfo.setAttribute(QGeoSatelliteInfo::Elevation, info.elevation);
         satInfo.setSignalStrength(info.signalStrength);
+        satInfo.setSatelliteSystem(static_cast<QGeoSatelliteInfo::SatelliteSystem>(info.satelliteSystem));
+        satInfo.setSatelliteIdentifier(info.satelliteIdentifier);
         satellitesInView.append(satInfo);
         if (info.inUse)
             satellitesInUse.append(satInfo);

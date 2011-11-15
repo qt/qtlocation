@@ -127,7 +127,8 @@ SOURCES += \
             qtlocation.cpp
 
 simulator {
-    QT += gui
+    QT += simulator
+    DEFINES += QT_SIMULATOR
     SOURCES += qgeopositioninfosource_simulator.cpp \
                 qlocationdata_simulator.cpp \
                 qgeosatelliteinfosource_simulator.cpp \
@@ -136,6 +137,4 @@ simulator {
                 qlocationdata_simulator_p.h \
                 qgeosatelliteinfosource_simulator_p.h \
                 qlocationconnection_simulator_p.h
-    INCLUDEPATH += ../mobilitysimulator
-    qtAddLibrary(QtMobilitySimulator)
 }

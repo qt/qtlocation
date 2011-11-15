@@ -47,9 +47,9 @@ QT_BEGIN_NAMESPACE
 
 void qt_registerLocationTypes()
 {
-    qRegisterMetaTypeStreamOperators<QGeoPositionInfoData>("QtMobility::QGeoPositionInfoData");
-    qRegisterMetaTypeStreamOperators<QGeoSatelliteInfoData>("QtMobility::QGeoSatelliteInfoData");
-    qRegisterMetaTypeStreamOperators<QGeoSatelliteInfoData::SatelliteInfo>("QtMobility::QGeoSatelliteInfoData::SatelliteInfo");
+    qRegisterMetaTypeStreamOperators<QGeoPositionInfoData>("QGeoPositionInfoData");
+    qRegisterMetaTypeStreamOperators<QGeoSatelliteInfoData>("QGeoSatelliteInfoData");
+    qRegisterMetaTypeStreamOperators<QGeoSatelliteInfoData::SatelliteInfo>("QGeoSatelliteInfoData::SatelliteInfo");
 }
 
 QDataStream &operator<<(QDataStream &out, const QGeoPositionInfoData &s)
@@ -84,13 +84,15 @@ QDataStream &operator>>(QDataStream &in, QGeoSatelliteInfoData &s)
 
 QDataStream &operator<<(QDataStream &out, const QGeoSatelliteInfoData::SatelliteInfo &s)
 {
-    out << s.prn << s.azimuth << s.elevation << s.signalStrength << s.inUse;
+    out << s.azimuth << s.elevation << s.signalStrength << s.inUse << static_cast<qint32>(s.satelliteSystem) << s.satelliteIdentifier;
     return out;
 }
 
 QDataStream &operator>>(QDataStream &in, QGeoSatelliteInfoData::SatelliteInfo &s)
 {
-    in >> s.prn >> s.azimuth >> s.elevation >> s.signalStrength >> s.inUse;
+    qint32 satelliteSystem;
+    in >> s.azimuth >> s.elevation >> s.signalStrength >> s.inUse >> satelliteSystem >> s.satelliteIdentifier;
+    s.satelliteSystem = static_cast<QGeoSatelliteInfoData::SatelliteInfo::SatelliteSystem>(satelliteSystem);
     return in;
 }
 

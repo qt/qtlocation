@@ -87,11 +87,21 @@ struct QGeoSatelliteInfoData
 {
     struct SatelliteInfo
     {
-        int prn;
+        // This enum duplicates the SatelliteSystem enum defined in qgeosatelliteinfo.h, which cannot be
+        // included as this file must compile with Qt4 (it is used by Qt Simulator)
+        enum SatelliteSystem
+        {
+            Undefined = 0x00,
+            GPS = 0x01,
+            GLONASS = 0x02
+        };
+
         qreal azimuth;
         qreal elevation;
         int signalStrength;
         bool inUse;
+        SatelliteSystem satelliteSystem;
+        int satelliteIdentifier;
     };
 
     QList<SatelliteInfo> satellites;
@@ -101,9 +111,9 @@ void qt_registerLocationTypes();
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QtMobility::QGeoPositionInfoData)
-Q_DECLARE_METATYPE(QtMobility::QGeoSatelliteInfoData)
-Q_DECLARE_METATYPE(QtMobility::QGeoSatelliteInfoData::SatelliteInfo)
+Q_DECLARE_METATYPE(QGeoPositionInfoData)
+Q_DECLARE_METATYPE(QGeoSatelliteInfoData)
+Q_DECLARE_METATYPE(QGeoSatelliteInfoData::SatelliteInfo)
 
 QT_END_HEADER
 
