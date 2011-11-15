@@ -70,7 +70,7 @@
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativeplaceattribute_p.h"
 #include "qdeclarativeplaceicon_p.h"
-#include "qdeclarativerating_p.h"
+#include "qdeclarativeratings_p.h"
 #include "qdeclarativesupplier_p.h"
 #include "qdeclarativeplaceuser_p.h"
 #include "qdeclarativecontactdetail_p.h"
@@ -134,7 +134,7 @@ public:
             qmlRegisterType<QDeclarativePlaceImageModel>(uri, 5, 0, "ImageModel");
             qmlRegisterType<QDeclarativePlace>(uri, 5, 0, "Place");
             qmlRegisterType<QDeclarativePlaceIcon>(uri, 5, 0, "Icon");
-            qmlRegisterType<QDeclarativeRating>(uri, 5, 0, "Rating");
+            qmlRegisterType<QDeclarativeRatings>(uri, 5, 0, "Ratings");
             qmlRegisterType<QDeclarativeReviewModel>(uri, 5, 0, "ReviewModel");
             qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");
             qmlRegisterType<QDeclarativePlaceUser>(uri, 5, 0, "User");
@@ -155,7 +155,7 @@ public:
             qRegisterMetaType<QPlaceCategory>("QPlaceCategory");
             qRegisterMetaType<QPlace>("QPlace");
             qRegisterMetaType<QPlaceIcon>("QPlaceIcon");
-            qRegisterMetaType<QPlaceRating>("QPlaceRating");
+            qRegisterMetaType<QPlaceRatings>("QPlaceRatings");
             qRegisterMetaType<QPlaceSupplier>("QPlaceSupplier");
             qRegisterMetaType<QPlaceUser>("QPlaceUser");
             qRegisterMetaType<QPlaceAttribute>("QPlaceAttribute");

@@ -104,7 +104,7 @@ Rectangle {
                 anchors.right: parent.right
                 Text { text: '<b>Name: </b> ' + place.name; font.pixelSize: 16 }
 
-                RatingView { rating: place.rating.value }
+                RatingView { rating: place.ratings.value }
 
                 Text { text: '<b>Street: </b> ' + place.location.address.street; font.pixelSize: 16 }
                 Text { text: '<b>Latitude: </b> ' + place.location.coordinate.latitude; font.pixelSize: 16 }

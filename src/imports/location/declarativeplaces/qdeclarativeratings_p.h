@@ -39,30 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACERATING_P_H
-#define QPLACERATING_P_H
+#ifndef QDECLARATIVERATINGS_P_H
+#define QDECLARATIVERATINGS_P_H
 
-#include <QSharedData>
+#include <qplaceratings.h>
+#include <QtDeclarative/qdeclarative.h>
 
-#include "qplacerating.h"
+#include <QObject>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceRatingPrivate : public QSharedData
+class QDeclarativeRatings : public QObject
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QPlaceRatings ratings READ ratings WRITE setRatings)
+    Q_PROPERTY(qreal value READ value WRITE setValue NOTIFY valueChanged)
+    Q_PROPERTY(qreal maximum READ maximum WRITE setMaximum NOTIFY maximumChanged)
+    Q_PROPERTY(int count READ count WRITE setCount NOTIFY countChanged)
+
 public:
-    QPlaceRatingPrivate();
-    QPlaceRatingPrivate(const QPlaceRatingPrivate &other);
+    explicit QDeclarativeRatings(QObject* parent = 0);
+    explicit QDeclarativeRatings(const QPlaceRatings &src, QObject* parent = 0);
+    ~QDeclarativeRatings();
 
-    ~QPlaceRatingPrivate();
+    QPlaceRatings ratings() const;
+    void setRatings(const QPlaceRatings &src);
 
-    bool operator==(const QPlaceRatingPrivate &other) const;
+    qreal value() const;
+    void setValue(qreal value);
 
-    qreal value;
-    qreal maximum;
-    int count;
+    qreal maximum() const;
+    void setMaximum(qreal max);
+
+    int count() const;
+    void setCount(int count);
+
+signals:
+    void valueChanged();
+    void maximumChanged();
+    void countChanged();
+
+private:
+    QPlaceRatings m_ratings;
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACERATING_P_H
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeRatings));
+
+#endif // QDECLARATIVERATING_P_H

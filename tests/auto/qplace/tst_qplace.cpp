@@ -132,11 +132,11 @@ void tst_Place::contentCountTest()
 void tst_Place::ratingTest()
 {
     QPlace testObj;
-    QVERIFY2(testObj.rating() == QPlaceRating(), "Wrong default value");
-    QPlaceRating obj;
+    QVERIFY2(testObj.ratings() == QPlaceRatings(), "Wrong default value");
+    QPlaceRatings obj;
     obj.setCount(10);
-    testObj.setRating(obj);
-    QVERIFY2(testObj.rating() == obj, "Wrong value returned");
+    testObj.setRatings(obj);
+    QVERIFY2(testObj.ratings() == obj, "Wrong value returned");
 }
 
 void tst_Place::locationTest()

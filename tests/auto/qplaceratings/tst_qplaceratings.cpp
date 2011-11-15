@@ -39,25 +39,71 @@
 **
 ****************************************************************************/
 
-import QtLocation 5.0
+#include <QtCore/QString>
+#include <QtTest/QtTest>
 
-Place {
-    name: "Test Place"
-    placeId: "test-place-id"
-    attribution: "Place data by Foo"
-    categories: [
-        Category {
-            name: "Test category 1"
-            categoryId: "test-category-id-1"
-        },
-        Category {
-            name: "Test category 2"
-            categoryId: "test-category-id-2"
-        }
-    ]
-    location: TestLocation { }
-    ratings: TestRatings { }
-    icon: TestIcon { }
-    supplier: TestSupplier { }
-    visibility: Place.PrivateVisibility
+#include <qplaceratings.h>
+
+QT_USE_NAMESPACE
+
+class tst_QPlaceRatings : public QObject
+{
+    Q_OBJECT
+
+public:
+    tst_QPlaceRatings();
+
+private Q_SLOTS:
+    void constructorTest();
+    void valueTest();
+    void countTest();
+    void operatorsTest();
+};
+
+tst_QPlaceRatings::tst_QPlaceRatings()
+{
 }
+
+void tst_QPlaceRatings::constructorTest()
+{
+    QPlaceRatings testObj;
+    Q_UNUSED(testObj);
+
+    QPlaceRatings *testObjPtr = new QPlaceRatings(testObj);
+    QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
+    QVERIFY2(testObjPtr->count() == 0, "Copy constructor - wrong count");
+    QVERIFY2(testObjPtr->value() == 0, "Copy constructor - wrong value");
+    QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
+    delete testObjPtr;
+}
+
+void tst_QPlaceRatings::valueTest()
+{
+    QPlaceRatings testObj;
+    QVERIFY2(testObj.value() == 0, "Wrong default value");
+    testObj.setValue(-10.23);
+    QVERIFY2(testObj.value() == -10.23, "Wrong value returned");
+}
+
+void tst_QPlaceRatings::countTest()
+{
+    QPlaceRatings testObj;
+    QVERIFY2(testObj.count() == 0, "Wrong default value");
+    testObj.setCount(-1002);
+    QVERIFY2(testObj.count() == -1002, "Wrong value returned");
+}
+
+void tst_QPlaceRatings::operatorsTest()
+{
+    QPlaceRatings testObj;
+    testObj.setValue(0.123);
+    QPlaceRatings testObj2;
+    testObj2 = testObj;
+    QVERIFY2(testObj == testObj2, "Not copied correctly");
+    testObj2.setCount(-10);
+    QVERIFY2(testObj != testObj2, "Object should be different");
+}
+
+QTEST_APPLESS_MAIN(tst_QPlaceRatings);
+
+#include "tst_qplaceratings.moc"

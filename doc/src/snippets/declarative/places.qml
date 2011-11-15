@@ -170,11 +170,11 @@ Item {
     }
     //! [SearchSuggestionModel]
 
-    //! [Rating]
+    //! [Ratings]
     Text {
-        text: "This place is rated " + place.rating.value + " out of " + place.rating.maximum + " stars."
+        text: "This place is rated " + place.ratings.value + " out of " + place.ratings.maximum + " stars."
     }
-    //! [Rating]
+    //! [Ratings]
 
     //! [ContactDetails read]
     function printContactDetails(contactDetails) {

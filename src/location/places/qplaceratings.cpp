@@ -39,101 +39,108 @@
 **
 ****************************************************************************/
 
-#include "qplacerating.h"
-#include "qplacerating_p.h"
+#include "qplaceratings.h"
+#include "qplaceratings_p.h"
 
 QT_USE_NAMESPACE
 
-QPlaceRatingPrivate::QPlaceRatingPrivate()
+QPlaceRatingsPrivate::QPlaceRatingsPrivate()
 :   QSharedData(), value(0), maximum(0), count(0)
 {
 }
 
-QPlaceRatingPrivate::QPlaceRatingPrivate(const QPlaceRatingPrivate &other)
+QPlaceRatingsPrivate::QPlaceRatingsPrivate(const QPlaceRatingsPrivate &other)
 :   QSharedData(), value(other.value), maximum(other.maximum), count(other.count)
 {
 }
 
-QPlaceRatingPrivate::~QPlaceRatingPrivate()
+QPlaceRatingsPrivate::~QPlaceRatingsPrivate()
 {
 }
 
-bool QPlaceRatingPrivate::operator==(const QPlaceRatingPrivate &other) const
+bool QPlaceRatingsPrivate::operator==(const QPlaceRatingsPrivate &other) const
 {
     return value == other.value && maximum == other.maximum && count == other.count;
 }
 
 /*!
-    \class QPlaceRating
+    \class QPlaceRatings
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
-    \brief The QPlaceRating class contains an aggregated rating for a place.
+    \brief The QPlaceRatings class holds rating information about a place.
+
+    Rating information is used to describe how good a place is conceived to be.
+    Typically this information is visualized as a number of stars.
+    The value() function returns an aggregated ratings value out of a possible
+    maximum as given by the maximum() function.
+
+    \snippet snippets/places/requesthandler.h Ratings
 */
 
 /*!
-    Constructs a new rating object.
+    Constructs a new ratings object.
 */
-QPlaceRating::QPlaceRating()
-    : d(new QPlaceRatingPrivate)
+QPlaceRatings::QPlaceRatings()
+    : d(new QPlaceRatingsPrivate)
 {
 }
 
 /*!
-    Constructs a copy of \a other
+    Constructs a copy of \a other.
 */
-QPlaceRating::QPlaceRating(const QPlaceRating &other)
+QPlaceRatings::QPlaceRatings(const QPlaceRatings &other)
     :d(other.d)
 {
 }
 
 /*!
-    Destroys the rating object.
+    Destroys the ratings object.
 */
-QPlaceRating::~QPlaceRating()
+QPlaceRatings::~QPlaceRatings()
 {
 }
 
 /*!
-    Assigns \a other to this rating and returns a reference
-    to this rating.
+    Assigns \a other to this ratings object and returns
+    a reference to this ratings object.
 */
-QPlaceRating &QPlaceRating::operator=(const QPlaceRating &other) {
+QPlaceRatings &QPlaceRatings::operator=(const QPlaceRatings &other)
+{
     d = other.d;
     return *this;
 }
 
 /*!
-    Returns true if \a other is equal to this rating,
+    Returns true if \a other is equal to this ratings object,
     otherwise returns false.
 */
-bool QPlaceRating::operator==(const QPlaceRating &other) const
+bool QPlaceRatings::operator==(const QPlaceRatings &other) const
 {
     return (*(d.constData()) == *(other.d.constData()));
 }
 
 /*!
-    \fn bool QPlaceRating::operator!=(const QPlaceRating &other) const
+    \fn bool QPlaceRatings::operator!=(const QPlaceRatings &other) const
 
-    Returns true if \a other is not equal to this rating,
-    otherwise returns false
+    Returns true if \a other is not equal to this ratings object,
+    otherwise returns false.
 */
 
 /*!
-    Returns the value of the rating which is an aggregation
-    of individual ratings.
+    Returns the aggregated value of indiviual ratings.
 */
-qreal QPlaceRating::value() const
+qreal QPlaceRatings::value() const
 {
     return d->value;
 }
 
 /*!
-    Sets the rating's aggregated \a value.
+    Sets the aggregated \a value of the ratings.
 */
-void QPlaceRating::setValue(qreal value)
+void QPlaceRatings::setValue(qreal value)
 {
     d->value = value;
 }
@@ -141,7 +148,7 @@ void QPlaceRating::setValue(qreal value)
 /*!
     Returns the maximum possible rating value.
 */
-qreal QPlaceRating::maximum() const
+qreal QPlaceRatings::maximum() const
 {
     return d->maximum;
 }
@@ -149,7 +156,7 @@ qreal QPlaceRating::maximum() const
 /*!
     Sets the maximum possible rating value to \a max.
 */
-void QPlaceRating::setMaximum(qreal max)
+void QPlaceRatings::setMaximum(qreal max)
 {
     d->maximum = max;
 }
@@ -157,7 +164,7 @@ void QPlaceRating::setMaximum(qreal max)
 /*!
     Returns the total number of individual ratings.
 */
-int QPlaceRating::count() const
+int QPlaceRatings::count() const
 {
     return d->count;
 }
@@ -165,7 +172,7 @@ int QPlaceRating::count() const
 /*!
     Sets the total number of individual ratings to \a count.
 */
-void QPlaceRating::setCount(int count)
+void QPlaceRatings::setCount(int count)
 {
     d->count = count;
 }

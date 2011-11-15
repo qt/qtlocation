@@ -46,7 +46,7 @@
 #include <QtLocation/QPlaceAttribute>
 #include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceUser>
-#include <QtLocation/QPlaceRating>
+#include <QtLocation/QPlaceRatings>
 #include <QtLocation/QPlaceSupplier>
 #include <QtLocation/QGeoCoordinate>
 #include <QtLocation/QGeoAddress>
@@ -104,13 +104,13 @@ void cppQmlInterface(QObject *qmlObject)
     qmlObject->setProperty("user", QVariant::fromValue(placeUser));
     //! [User set]
 
-    //! [Rating get]
-    QPlaceRating placeRating = qmlObject->property("rating").value<QPlaceRating>();
-    //! [Rating get]
+    //! [Ratings get]
+    QPlaceRatings placeRatings = qmlObject->property("ratings").value<QPlaceRatings>();
+    //! [Ratings get]
 
-    //! [Rating set]
-    qmlObject->setProperty("rating", QVariant::fromValue(placeRating));
-    //! [Rating set]
+    //! [Ratings set]
+    qmlObject->setProperty("ratings", QVariant::fromValue(placeRatings));
+    //! [Ratings set]
 
     //! [Supplier get]
     QPlaceSupplier placeSupplier = qmlObject->property("supplier").value<QPlaceSupplier>();

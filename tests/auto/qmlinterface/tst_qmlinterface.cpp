@@ -50,7 +50,7 @@
 #include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlace>
 #include <QtLocation/QPlaceIcon>
-#include <QtLocation/QPlaceRating>
+#include <QtLocation/QPlaceRatings>
 #include <QtLocation/QPlaceSupplier>
 #include <QtLocation/QPlaceUser>
 #include <QtLocation/QPlaceAttribute>
@@ -71,7 +71,7 @@ private Q_SLOTS:
     void testLocation();
     void testCategory();
     void testIcon();
-    void testRating();
+    void testRatings();
     void testSupplier();
     void testUser();
     void testPlaceAttribute();
@@ -86,7 +86,7 @@ private:
     QGeoLocation m_location;
     QPlaceCategory m_category;
     QPlaceIcon m_icon;
-    QPlaceRating m_rating;
+    QPlaceRatings m_ratings;
     QPlaceSupplier m_supplier;
     QPlaceUser m_user;
     QPlaceAttribute m_placeAttribute;
@@ -124,9 +124,9 @@ tst_qmlinterface::tst_qmlinterface()
 
     m_icon.setFullUrl(QUrl(QLatin1String("http://www.example.com/test-icon.png")));
 
-    m_rating.setValue(3.5);
-    m_rating.setMaximum(5.0);
-    m_rating.setCount(10);
+    m_ratings.setValue(3.5);
+    m_ratings.setMaximum(5.0);
+    m_ratings.setCount(10);
 
     m_supplier.setName(QLatin1String("Test supplier"));
     m_supplier.setUrl(QUrl(QLatin1String("http://www.example.com/test-supplier")));
@@ -155,7 +155,7 @@ tst_qmlinterface::tst_qmlinterface()
     m_place.setAttribution(QLatin1String("Place data by Foo"));
     m_place.setCategories(m_categories);
     m_place.setLocation(m_location);
-    m_place.setRating(m_rating);
+    m_place.setRatings(m_ratings);
     m_place.setIcon(m_icon);
     m_place.setSupplier(m_supplier);
     m_place.setVisibility(QtLocation::PrivateVisibility);
@@ -245,16 +245,16 @@ void tst_qmlinterface::testIcon()
     QCOMPARE(icon, m_icon);
 }
 
-void tst_qmlinterface::testRating()
+void tst_qmlinterface::testRatings()
 {
     QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestRating.qml");
+    QDeclarativeComponent component(&engine, SRCDIR "data/TestRatings.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
-    QPlaceRating rating = qmlObject->property("rating").value<QPlaceRating>();
+    QPlaceRatings ratings = qmlObject->property("ratings").value<QPlaceRatings>();
 
-    QCOMPARE(rating, m_rating);
+    QCOMPARE(ratings, m_ratings);
 }
 
 void tst_qmlinterface::testSupplier()

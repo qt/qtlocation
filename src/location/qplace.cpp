@@ -219,19 +219,19 @@ void QPlace::setLocation(const QGeoLocation &location)
 /*!
     Returns an aggregated rating of the place.
 */
-QPlaceRating QPlace::rating() const
+QPlaceRatings QPlace::ratings() const
 {
     Q_D(const QPlace);
-    return d->rating;
+    return d->ratings;
 }
 
 /*!
     Sets the aggregated \a rating of the place.
 */
-void QPlace::setRating(const QPlaceRating &rating)
+void QPlace::setRatings(const QPlaceRatings &rating)
 {
     Q_D(QPlace);
-    d->rating = rating;
+    d->ratings = rating;
 }
 
 /*!
@@ -605,7 +605,7 @@ QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
         : QSharedData(other),
         categories(other.categories),
         location(other.location),
-        rating(other.rating),
+        ratings(other.ratings),
         supplier(other.supplier),
         name(other.name),
         placeId(other.placeId),
@@ -626,7 +626,7 @@ QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
 {
     categories = other.categories;
     location = other.location;
-    rating = other.rating;
+    ratings = other.ratings;
     supplier = other.supplier;
     name = other.name;
     placeId = other.placeId;
@@ -662,7 +662,7 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
 
     return (categories == other.categories
             && location == other.location
-            && rating == other.rating
+            && ratings == other.ratings
             && supplier == other.supplier
             && contentCollections == other.contentCollections
             && contentCounts == other.contentCounts

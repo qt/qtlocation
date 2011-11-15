@@ -313,6 +313,12 @@ public:
         //! [ Save to different manager]
     }
 
+    void ratings() {
+        //! [Ratings]
+        qDebug() << QString("This place rated ") + place.ratings().value()
+                    + "out of " + place.ratings().maximum() + "stars";
+        //! [Ratings]
+    }
 
 public slots:
     // ![Simple search handler]

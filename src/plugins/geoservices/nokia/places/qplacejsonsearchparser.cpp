@@ -56,7 +56,7 @@
 #include <qgeoaddress.h>
 #include <qgeolocation.h>
 #include <qplace.h>
-#include <qplacerating.h>
+#include <qplaceratings.h>
 #include <qplacecategory.h>
 #include <qplacesupplier.h>
 #include <qplacesearchresult.h>
@@ -269,9 +269,9 @@ void QPlaceJSonSearchParser::processRating(const QJSValue &properties, QPlace *p
         bool isConverted;
         double ratingValue = value.toString().toDouble(&isConverted);
         if (isConverted) {
-            QPlaceRating rating;
+            QPlaceRatings rating;
             rating.setValue(ratingValue);
-            place->setRating(rating);
+            place->setRatings(rating);
         }
     }
 }

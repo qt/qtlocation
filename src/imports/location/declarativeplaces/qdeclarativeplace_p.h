@@ -49,7 +49,7 @@
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativecontactdetail_p.h"
 #include "qdeclarativesupplier_p.h"
-#include "qdeclarativerating_p.h"
+#include "qdeclarativeratings_p.h"
 #include "qdeclarativereviewmodel_p.h"
 #include "qdeclarativeplaceimagemodel_p.h"
 #include "qdeclarativeplaceeditorialmodel.h"
@@ -72,7 +72,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
-    Q_PROPERTY(QDeclarativeRating* rating READ rating WRITE setRating NOTIFY ratingChanged);
+    Q_PROPERTY(QDeclarativeRatings* ratings READ ratings WRITE setRatings NOTIFY ratingsChanged);
     Q_PROPERTY(QDeclarativeSupplier *supplier READ supplier WRITE setSupplier NOTIFY supplierChanged)
     Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
@@ -133,8 +133,8 @@ public:
 
     QDeclarativeGeoLocation *location();
     void setLocation(QDeclarativeGeoLocation *location);
-    QDeclarativeRating *rating();
-    void setRating(QDeclarativeRating *rating);
+    QDeclarativeRatings *ratings();
+    void setRatings(QDeclarativeRatings *ratings);
     QDeclarativeSupplier *supplier() const;
     void setSupplier(QDeclarativeSupplier *supplier);
     QDeclarativePlaceIcon *icon() const;
@@ -174,7 +174,7 @@ signals:
     void pluginChanged();
     void categoriesChanged();
     void locationChanged();
-    void ratingChanged();
+    void ratingsChanged();
     void supplierChanged();
     void iconChanged();
     void nameChanged();
@@ -210,7 +210,7 @@ private:
 
     QList<QDeclarativeCategory*> m_categories;
     QDeclarativeGeoLocation *m_location;
-    QDeclarativeRating *m_rating;
+    QDeclarativeRatings *m_ratings;
     QDeclarativeSupplier *m_supplier;
     QDeclarativePlaceIcon *m_icon;
     QDeclarativeReviewModel *m_reviewModel;

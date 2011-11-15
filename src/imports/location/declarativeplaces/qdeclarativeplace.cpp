@@ -146,7 +146,7 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
-:   QObject(parent), m_location(0), m_rating(0), m_supplier(0), m_icon(0),
+:   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QDeclarativePropertyMap(this)),
     m_contactDetails(0), m_reply(0), m_plugin(0), m_complete(false),
@@ -156,7 +156,7 @@ QDeclarativePlace::QDeclarativePlace(QObject* parent)
 }
 
 QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent)
-:   QObject(parent), m_location(0), m_rating(0), m_supplier(0), m_icon(0),
+:   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QDeclarativePropertyMap(this)), m_contactDetails(0),
     m_src(src), m_reply(0), m_plugin(plugin), m_complete(false),
@@ -279,11 +279,11 @@ void QDeclarativePlace::setPlace(const QPlace &src)
         emit locationChanged();
     }
 
-    if (m_rating && m_rating->parent() == this) {
-        m_rating->setRating(m_src.rating());
-    } else if (!m_rating || m_rating->parent() != this) {
-        m_rating = new QDeclarativeRating(m_src.rating(), this);
-        emit ratingChanged();
+    if (m_ratings && m_ratings->parent() == this) {
+        m_ratings->setRatings(m_src.ratings());
+    } else if (!m_ratings || m_ratings->parent() != this) {
+        m_ratings = new QDeclarativeRatings(m_src.ratings(), this);
+        emit ratingsChanged();
     }
 
     if (m_supplier && m_supplier->parent() == this) {
@@ -372,7 +372,7 @@ QPlace QDeclarativePlace::place()
     result.setLocation(m_location ? m_location->location() : QGeoLocation());
 
     // Rating
-    result.setRating(m_rating ? m_rating->rating() : QPlaceRating());
+    result.setRatings(m_ratings ? m_ratings->ratings() : QPlaceRatings());
 
     // Supplier
     result.setSupplier(m_supplier ? m_supplier->supplier() : QPlaceSupplier());
@@ -407,27 +407,27 @@ QDeclarativeGeoLocation *QDeclarativePlace::location()
 }
 
 /*!
-    \qmlproperty Rating Place::rating
+    \qmlproperty Ratings Place::ratings
 
-    This property holds rating of the place.  The rating provides an indication of the quality of a
+    This property holds ratings of the place.  The ratings provides an indication of the quality of a
     place.
 */
-void QDeclarativePlace::setRating(QDeclarativeRating *rating)
+void QDeclarativePlace::setRatings(QDeclarativeRatings *rating)
 {
-    if (m_rating == rating)
+    if (m_ratings == rating)
         return;
 
-    if (m_rating && m_rating->parent() == this)
-        delete m_rating;
+    if (m_ratings && m_ratings->parent() == this)
+        delete m_ratings;
 
-    m_rating = rating;
-    emit ratingChanged();
+    m_ratings = rating;
+    emit ratingsChanged();
 }
 
-QDeclarativeRating *QDeclarativePlace::rating()
+QDeclarativeRatings *QDeclarativePlace::ratings()
 {
 
-    return m_rating;
+    return m_ratings;
 }
 
 /*!

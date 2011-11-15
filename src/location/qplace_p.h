@@ -78,7 +78,7 @@ public:
 
     QList<QPlaceCategory> categories;
     QGeoLocation location;
-    QPlaceRating rating;
+    QPlaceRatings ratings;
     QPlaceSupplier supplier;
     QString name;
     QString placeId;

@@ -39,125 +39,126 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativerating_p.h"
+#include "qdeclarativeratings_p.h"
 
 QT_USE_NAMESPACE
 
 /*!
-    \qmlclass Rating QDeclarativeRating
+    \qmlclass Ratings QDeclarativeRatings
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The Rating element holds place rating information.
+    \brief The Ratings element holds place rating information.
 
     Rating information is used to describe how \e good a place is conceived to be.  Typically this
-    information is visualized as a number of stars.  The \l value property gives the rating value
-    out of a possible maximum as given by the \l maximum property.
+    information is visualized as a number of stars.  The \l value property gives an aggregated
+    ratings value out of a possible maximum as given by the \l maximum property.
 
     \snippet snippets/declarative/places.qml QtQuick import
     \snippet snippets/declarative/places.qml QtLocation import
     \codeline
-    \snippet snippets/declarative/places.qml Rating
+    \snippet snippets/declarative/places.qml Ratings
 */
 
-QDeclarativeRating::QDeclarativeRating(QObject* parent)
+QDeclarativeRatings::QDeclarativeRatings(QObject* parent)
         : QObject(parent) {}
 
-QDeclarativeRating::QDeclarativeRating(const QPlaceRating &rating,
+QDeclarativeRatings::QDeclarativeRatings(const QPlaceRatings &rating,
         QObject *parent)
         : QObject(parent),
-        m_rating(rating) {}
+        m_ratings(rating) {}
 
-QDeclarativeRating::~QDeclarativeRating() {}
+QDeclarativeRatings::~QDeclarativeRatings() {}
 
 /*!
-    \qmlproperty QPlaceRating Rating::rating
+    \qmlproperty QPlaceRatings Ratings::ratings
 
     This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    Rating object must be obtained from C++, then use the \l {QObject::property()}{property()} and
-    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c rating property.
+    Ratings object must be obtained from C++, then use the \l {QObject::property()}{property()} and
+    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c ratings property.
 
     The following gets the QPlaceRating representing this object from C++:
 
-    \snippet snippets/cpp/cppqml.cpp Rating get
+    \snippet snippets/cpp/cppqml.cpp Ratings get
 
-    The following sets the properties of this object based on a QPlaceRating object from C++:
+    The following sets the properties of this object based on a QPlaceRatings object from C++:
 
-    \snippet snippets/cpp/cppqml.cpp Rating set
+    \snippet snippets/cpp/cppqml.cpp Ratings set
 */
-void QDeclarativeRating::setRating(const QPlaceRating &rating)
+void QDeclarativeRatings::setRatings(const QPlaceRatings &ratings)
 {
-    QPlaceRating previous = m_rating;
-    m_rating = rating;
+    QPlaceRatings previous = m_ratings;
+    m_ratings = ratings;
 
-    if (rating.value() != previous.value()) {
+    if (ratings.value() != previous.value()) {
         emit valueChanged();
     }
-    if (rating.count() != previous.count()) {
+    if (ratings.count() != previous.count()) {
         emit countChanged();
     }
 }
 
-QPlaceRating QDeclarativeRating::rating() const
+QPlaceRatings QDeclarativeRatings::ratings() const
 {
-    return m_rating;
+    return m_ratings;
 }
 
 /*!
-    \qmlproperty qreal Rating::value
+    \qmlproperty qreal Ratings::value
 
-    This property holds the rating value.
+    This property holds an aggregating ratings value.
 
     \sa maximum
 */
-void QDeclarativeRating::setValue(qreal value)
+void QDeclarativeRatings::setValue(qreal value)
 {
-    if (m_rating.value() != value) {
-        m_rating.setValue(value);
+    if (m_ratings.value() != value) {
+        m_ratings.setValue(value);
         emit valueChanged();
     }
 }
 
-qreal QDeclarativeRating::value() const
+qreal QDeclarativeRatings::value() const
 {
-    return m_rating.value();
+    return m_ratings.value();
 }
 
 /*!
-    \qmlproperty qreal Rating::maximum
+    \qmlproperty qreal Ratings::maximum
 
     This property holds the maximum rating value.
 */
-void QDeclarativeRating::setMaximum(qreal max)
+void QDeclarativeRatings::setMaximum(qreal max)
 {
-    if (m_rating.maximum() == max)
+    if (m_ratings.maximum() == max)
         return;
 
-    m_rating.setMaximum(max);
+    m_ratings.setMaximum(max);
     emit maximumChanged();
 }
 
-qreal QDeclarativeRating::maximum() const
+qreal QDeclarativeRatings::maximum() const
 {
-    return m_rating.maximum();
+    return m_ratings.maximum();
 }
 
 /*!
-    \qmlproperty int Rating::count
+    \qmlproperty int Ratings::count
 
-    This property holds the total number of votes used in determining the overall rating \l value.
+    This property holds the total number of individual user ratings
+    used in determining the overall ratings \l value.
 */
-void QDeclarativeRating::setCount(int count)
+void QDeclarativeRatings::setCount(int count)
 {
-    if (m_rating.count() != count) {
-        m_rating.setCount(count);
+    if (m_ratings.count() != count) {
+        m_ratings.setCount(count);
         emit countChanged();
     }
 }
 
-int QDeclarativeRating::count() const
+int QDeclarativeRatings::count() const
 {
-    return m_rating.count();
+    return m_ratings.count();
 }
 

@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the test suite of the Qt Toolkit.
+** This file is part of the QtLocation module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,71 +39,28 @@
 **
 ****************************************************************************/
 
-#include <QtCore/QString>
-#include <QtTest/QtTest>
+#ifndef QPLACERATINGS_P_H
+#define QPLACERATINGS_P_H
 
-#include <qplacerating.h>
+#include <QSharedData>
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class tst_QPlaceRating : public QObject
+class QPlaceRatingsPrivate : public QSharedData
 {
-    Q_OBJECT
-
 public:
-    tst_QPlaceRating();
+    QPlaceRatingsPrivate();
+    QPlaceRatingsPrivate(const QPlaceRatingsPrivate &other);
 
-private Q_SLOTS:
-    void constructorTest();
-    void valueTest();
-    void countTest();
-    void operatorsTest();
+    ~QPlaceRatingsPrivate();
+
+    bool operator==(const QPlaceRatingsPrivate &other) const;
+
+    qreal value;
+    qreal maximum;
+    int count;
 };
 
-tst_QPlaceRating::tst_QPlaceRating()
-{
-}
+QT_END_NAMESPACE
 
-void tst_QPlaceRating::constructorTest()
-{
-    QPlaceRating testObj;
-    Q_UNUSED(testObj);
-
-    QPlaceRating *testObjPtr = new QPlaceRating(testObj);
-    QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
-    QVERIFY2(testObjPtr->count() == 0, "Copy constructor - wrong count");
-    QVERIFY2(testObjPtr->value() == 0, "Copy constructor - wrong value");
-    QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
-    delete testObjPtr;
-}
-
-void tst_QPlaceRating::valueTest()
-{
-    QPlaceRating testObj;
-    QVERIFY2(testObj.value() == 0, "Wrong default value");
-    testObj.setValue(-10.23);
-    QVERIFY2(testObj.value() == -10.23, "Wrong value returned");
-}
-
-void tst_QPlaceRating::countTest()
-{
-    QPlaceRating testObj;
-    QVERIFY2(testObj.count() == 0, "Wrong default value");
-    testObj.setCount(-1002);
-    QVERIFY2(testObj.count() == -1002, "Wrong value returned");
-}
-
-void tst_QPlaceRating::operatorsTest()
-{
-    QPlaceRating testObj;
-    testObj.setValue(0.123);
-    QPlaceRating testObj2;
-    testObj2 = testObj;
-    QVERIFY2(testObj == testObj2, "Not copied correctly");
-    testObj2.setCount(-10);
-    QVERIFY2(testObj != testObj2, "Object should be different");
-}
-
-QTEST_APPLESS_MAIN(tst_QPlaceRating);
-
-#include "tst_qplacerating.moc"
+#endif // QPLACERATING_P_H

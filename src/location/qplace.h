@@ -51,7 +51,7 @@
 #include "qgeolocation.h"
 #include "qplacecategory.h"
 #include "qplacecontent.h"
-#include "qplacerating.h"
+#include "qplaceratings.h"
 #include "qplacereview.h"
 #include "qplaceattribute.h"
 #include "qplacecontactdetail.h"
@@ -82,8 +82,8 @@ public:
     void setCategories(const QList<QPlaceCategory> &categories);
     QGeoLocation location() const;
     void setLocation(const QGeoLocation &location);
-    QPlaceRating rating() const;
-    void setRating(const QPlaceRating &rating);
+    QPlaceRatings ratings() const;
+    void setRatings(const QPlaceRatings &ratings);
     QPlaceSupplier supplier() const;
     void setSupplier(const QPlaceSupplier &supplier);
 

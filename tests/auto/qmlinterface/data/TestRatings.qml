@@ -41,7 +41,7 @@
 
 import QtLocation 5.0
 
-Rating {
+Ratings {
     value: 3.5
     maximum: 5.0
     count: 10

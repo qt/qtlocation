@@ -27,7 +27,7 @@ OTHER_FILES += \
     data/TestLocation.qml \
     data/TestPlace.qml \
     data/TestIcon.qml \
-    data/TestRating.qml \
+    data/TestRatings.qml \
     data/TestSupplier.qml \
     data/TestUser.qml \
     data/TestPlaceAttribute.qml \

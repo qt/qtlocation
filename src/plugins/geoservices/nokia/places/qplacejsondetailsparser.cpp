@@ -60,7 +60,7 @@
 #include <qplace.h>
 #include <qplacecategory.h>
 #include <qplaceeditorial.h>
-#include <qplacerating.h>
+#include <qplaceratings.h>
 #include <qgeolocation.h>
 #include <qplacesupplier.h>
 #include "qplacejsoncategoriesparser.h"
@@ -330,7 +330,7 @@ void QPlaceJSonDetailsParser::processCategories(const QJSValue &categories, QPla
 
 void QPlaceJSonDetailsParser::processRatings(const QJSValue &ratings, QPlace *targetPlace)
 {
-    QPlaceRating *rating = NULL;
+    QPlaceRatings *rating = NULL;
     QJSValue value = ratings.property(place_rating_element);
     if (value.isValid()) {
         if (value.isArray()) {
@@ -350,19 +350,19 @@ void QPlaceJSonDetailsParser::processRatings(const QJSValue &ratings, QPlace *ta
         }
     }
     if (rating) {
-        targetPlace->setRating(*rating);
+        targetPlace->setRatings(*rating);
         delete rating;
         rating = NULL;
     }
 }
 
-QPlaceRating *QPlaceJSonDetailsParser::processRating(const QJSValue &ratingElement)
+QPlaceRatings *QPlaceJSonDetailsParser::processRating(const QJSValue &ratingElement)
 {
-    QPlaceRating *rating = NULL;
+    QPlaceRatings *rating = NULL;
     QJSValue value = ratingElement.property(place_rating_type_element);
     // Only overall elements are interesting
     if (value.isValid() && value.toString() == place_rating_type_overall_element) {
-        rating = new QPlaceRating();
+        rating = new QPlaceRatings();
         value = ratingElement.property(place_rating_count_element);
         if (value.isValid() && !value.toString().isEmpty()) {
             bool isConverted;

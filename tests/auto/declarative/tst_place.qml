@@ -95,7 +95,7 @@ TestCase {
             }
         }
 
-        rating: Rating {
+        ratings: Ratings {
             value: 3.5
             count: 10
         }
@@ -192,15 +192,15 @@ TestCase {
             }
         }
 
-        // check rating
-        if (place1.rating === null && place2.rating !== null)
+        // check ratings
+        if (place1. ratings === null && place2.ratings !== null)
             return false;
-        if (place1.rating !== null && place2.rating === null)
+        if (place1.ratings !== null && place2.ratings === null)
             return false;
-        if (place1.rating !== null && place2.rating !== null) {
-            if (place1.rating.value !== place2.rating.value)
+        if (place1.ratings !== null && place2.ratings !== null) {
+            if (place1.ratings.value !== place2.ratings.value)
                 return false;
-            if (place1.rating.count !== place2.rating.count)
+            if (place1.ratings.count !== place2.ratings.count)
                 return false;
         }
 
@@ -276,7 +276,7 @@ TestCase {
         compare(emptyPlace.visibility, Place.UnspecifiedVisibility);
 
         // complex properties
-        compare(emptyPlace.rating.value, 0);
+        compare(emptyPlace.ratings.value, 0);
         compare(emptyPlace.location.address.street, '');
         compare(emptyPlace.location.address.district, '');
         compare(emptyPlace.location.address.city, '');
@@ -427,28 +427,28 @@ TestCase {
         signalSpy.destroy();
     }
 
-    function test_rating() {
-        var rating = Qt.createQmlObject('import QtLocation 5.0; Rating { value: 3; count: 100 }', testCase, "Rating1");
+    function test_ratings() {
+        var ratings = Qt.createQmlObject('import QtLocation 5.0; Ratings { value: 3; count: 100 }', testCase, "Rating1");
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = testPlace;
-        signalSpy.signalName = "ratingChanged";
+        signalSpy.signalName = "ratingsChanged";
 
-        testPlace.rating = rating;
-        compare(testPlace.rating.value, 3);
-        compare(testPlace.rating.count, 100);
+        testPlace.ratings = ratings;
+        compare(testPlace.ratings.value, 3);
+        compare(testPlace.ratings.count, 100);
         compare(signalSpy.count, 1);
 
-        testPlace.rating = rating;
-        compare(testPlace.rating.value, 3);
-        compare(testPlace.rating.count, 100);
+        testPlace.ratings = ratings;
+        compare(testPlace.ratings.value, 3);
+        compare(testPlace.ratings.count, 100);
         compare(signalSpy.count, 1);
 
-        testPlace.rating = null;
-        compare(testPlace.rating, null);
+        testPlace.ratings = null;
+        compare(testPlace.ratings, null);
         compare(signalSpy.count, 2);
 
-        rating.destroy();
+        ratings.destroy();
         signalSpy.destroy();
     }
 

@@ -39,53 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVERATING_P_H
-#define QDECLARATIVERATING_P_H
+#ifndef QPLACERATINGS_H
+#define QPLACERATINGS_H
 
-#include <qplacerating.h>
-#include <QtDeclarative/qdeclarative.h>
+#include <QtCore/QMetaType>
+#include <QtCore/QSharedDataPointer>
+#include <QtLocation/qlocationglobal.h>
 
-#include <QObject>
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeRating : public QObject
+class QPlaceRatingsPrivate;
+
+class Q_LOCATION_EXPORT QPlaceRatings
 {
-    Q_OBJECT
-
-    Q_PROPERTY(QPlaceRating rating READ rating WRITE setRating)
-    Q_PROPERTY(qreal value READ value WRITE setValue NOTIFY valueChanged)
-    Q_PROPERTY(qreal maximum READ maximum WRITE setMaximum NOTIFY maximumChanged)
-    Q_PROPERTY(int count READ count WRITE setCount NOTIFY countChanged)
-
 public:
-    explicit QDeclarativeRating(QObject* parent = 0);
-    explicit QDeclarativeRating(const QPlaceRating &src, QObject* parent = 0);
-    ~QDeclarativeRating();
+    QPlaceRatings();
+    QPlaceRatings(const QPlaceRatings &other);
 
-    QPlaceRating rating() const;
-    void setRating(const QPlaceRating &src);
+    ~QPlaceRatings();
+
+    QPlaceRatings &operator=(const QPlaceRatings &other);
+
+    bool operator==(const QPlaceRatings &other) const;
+    bool operator!=(const QPlaceRatings &other) const {
+        return !(other == *this);
+    }
 
     qreal value() const;
     void setValue(qreal value);
 
-    qreal maximum() const;
-    void setMaximum(qreal max);
-
     int count() const;
     void setCount(int count);
 
-signals:
-    void valueChanged();
-    void maximumChanged();
-    void countChanged();
+    qreal maximum() const;
+    void setMaximum(qreal max);
 
 private:
-    QPlaceRating m_rating;
+    QSharedDataPointer<QPlaceRatingsPrivate> d;
 };
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeRating));
+Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QPlaceRatings))
 
-#endif // QDECLARATIVERATING_P_H
+QT_END_HEADER
+
+#endif
