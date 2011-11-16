@@ -2,7 +2,7 @@
   "info-version": "1.0",
   "dict": {
      "DisplayName": "Mapviewer",
-     "Identifier": "com.nokia.mt-qt5location-mapviewer",
+     "Identifier": "com.nokia.mt.qt5location.mapviewer",
      "Runtime": "qml",
      "MainQML": "mapviewer.qml",
      "Version": "1.0.0",

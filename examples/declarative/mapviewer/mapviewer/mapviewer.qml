@@ -46,8 +46,8 @@ import "content/dialogs"
 
 Item {
     id: page
-    width: 360
-    height: 640
+    width: parent ? parent.width : 360
+    height: parent ? parent.height : 640
     property bool mobileUi: true
 
     Rectangle {
