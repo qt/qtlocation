@@ -23,7 +23,6 @@
         <file alias="RouteDialog.qml">../mapviewer/content/dialogs/RouteDialog.qml</file>
     </qresource>
     <qresource prefix="/content/map">
-        <file alias="MapBaseComponent.qml">../mapviewer/content/map/MapBaseComponent.qml</file>
         <file alias="MapComponent.qml">../mapviewer/content/map/MapComponent.qml</file>
         <file alias="Marker.qml">../mapviewer/content/map/Marker.qml</file>
     </qresource>

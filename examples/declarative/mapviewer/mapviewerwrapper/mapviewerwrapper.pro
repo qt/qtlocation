@@ -17,7 +17,6 @@ OTHER_FILES += \
     ../mapviewer/content/dialogs/Message.qml \
     ../mapviewer/content/dialogs/RouteDialog.qml \
     ../mapviewer/content/map/MapComponent.qml \
-    ../mapviewer/content/map/MapBaseComponent.qml \
     ../mapviewer/content/map/Marker.qml \
     ../mapviewer/content/components/TextWithLabel.qml \
     ../mapviewer/content/components/Button.qml \

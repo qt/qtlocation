@@ -49,6 +49,7 @@ Item {
     width: parent ? parent.width : 360
     height: parent ? parent.height : 640
     property bool mobileUi: true
+    property variant map
 
     Rectangle {
         id: backgroundRect
@@ -61,7 +62,7 @@ Item {
         onClicked: { Qt.quit() }
     }
 
-//=====================Menu=====================
+    //=====================Menu=====================
     Menu {
         id:mainMenu
         anchors.bottom: parent.bottom
@@ -76,18 +77,18 @@ Item {
 
         onClicked: {
             switch (button) {
-                case "Options": {
-                    page.state = "Options"
-                    break;
-                }
-                case "Map Type": {
-                    page.state = "MapType"
-                    break;
-                }
-                case "Provider": {
-                    page.state = "Provider"
-                    break;
-                }
+            case "Options": {
+                page.state = "Options"
+                break;
+            }
+            case "Map Type": {
+                page.state = "MapType"
+                break;
+            }
+            case "Provider": {
+                page.state = "Provider"
+                break;
+            }
             }
         }
     }
@@ -106,18 +107,18 @@ Item {
 
         onClicked: {
             switch (button) {
-                case "Reverse geocode": {
-                    page.state = "RevGeocode"
-                    break;
-                }
-                case "Geocode": {
-                    page.state = "Geocode"
-                    break;
-                }
-                case "Route": {
-                    page.state = "Route"
-                    break;
-                }
+            case "Reverse geocode": {
+                page.state = "RevGeocode"
+                break;
+            }
+            case "Geocode": {
+                page.state = "Geocode"
+                break;
+            }
+            case "Route": {
+                page.state = "Route"
+                break;
+            }
             }
         }
     }
@@ -130,7 +131,7 @@ Item {
         exclusive: true
 
         Component.onCompleted: {
-/*            for (var i = 0; i<map.supportedMapTypes.length; i++)
+            /*            for (var i = 0; i<map.supportedMapTypes.length; i++)
                 addItem(map.supportedMapTypes[i].name)
             if (map.supportedMapTypes.length > 0)
                 exclusiveButton = map.supportedMapTypes[0].name*/
@@ -141,7 +142,7 @@ Item {
         }
 
         onExclusiveButtonChanged: {
-//             map.mapType = exclusiveButton
+            //             map.mapType = exclusiveButton
         }
     }
 
@@ -153,7 +154,7 @@ Item {
         exclusive: true
 
         Component.onCompleted: {
-            var plugins = map.getPlugins()
+            var plugins = getPlugins()
             for (var i = 0; i<plugins.length; i++)
                 addItem(plugins[i])
             if (plugins.length > 0) exclusiveButton = plugins[0]
@@ -164,13 +165,11 @@ Item {
         }
 
         onExclusiveButtonChanged: {
-            for (var i = 0; i<map.maps.length; i++)
-                if (map.maps[i].plugin.name == exclusiveButton)
-                    map.currentMap = map.maps[i]
+            createMap(exclusiveButton)
         }
     }
 
-//=====================Dialogs=====================
+    //=====================Dialogs=====================
     Message {
         id: messageDialog
         z: backgroundRect.z + 2
@@ -214,7 +213,7 @@ Item {
         ]
     }
 
-//Route Dialog
+    //Route Dialog
     RouteDialog {
         id: routeDialog
         z: backgroundRect.z + 2
@@ -224,7 +223,7 @@ Item {
         Address { id:startAddress }
         Address { id:endAddress }
 
-/*        GeocodeModel {
+        /*        GeocodeModel {
             id: tempGeocodeModel
             plugin : map.plugin
             property int success: 0
@@ -266,7 +265,7 @@ Item {
         }
 */
         onGoButtonClicked: {
-/*            var status = true
+            /*            var status = true
 
             messageDialog.state = ""
             if (routeDialog.byCoordinates) {
@@ -296,7 +295,7 @@ Item {
             page.state = ""
         }
 
-/*        function calculateRoute(){
+        /*        function calculateRoute(){
             map.routeQuery.clearWaypoints();
             map.center = startCoordinate
             map.routeQuery.addWaypoint(startCoordinate)
@@ -316,7 +315,7 @@ Item {
         }*/
     }
 
-//Geocode Dialog
+    //Geocode Dialog
     Dialog {
         id: geocodeDialog
         title: "Geocode"
@@ -333,7 +332,7 @@ Item {
 
         onGoButtonClicked: {
             page.state = ""
-/*            messageDialog.state = ""
+            /*            messageDialog.state = ""
             geocodeAddress.street = dialogModel.get(0).inputText
             geocodeAddress.district = dialogModel.get(1).inputText
             geocodeAddress.city = dialogModel.get(2).inputText
@@ -351,7 +350,7 @@ Item {
         }
     }
 
-//Reverse Geocode Dialog
+    //Reverse Geocode Dialog
     Dialog {
         id: reverseGeocodeDialog
         title: "Reverse Geocode"
@@ -370,7 +369,7 @@ Item {
             page.state = ""
             messageDialog.state = ""
 
-/*            reverseGeocodeCoordinate.latitude = dialogModel.get(0).inputText
+            /*            reverseGeocodeCoordinate.latitude = dialogModel.get(0).inputText
             reverseGeocodeCoordinate.longitude = dialogModel.get(1).inputText
             map.geocodeModel.clear()
             map.geocodeModel.query = reverseGeocodeCoordinate
@@ -382,7 +381,7 @@ Item {
         }
     }
 
-//Get new coordinates for marker
+    //Get new coordinates for marker
     Dialog {
         id: coordinatesDialog
         title: "New coordinates"
@@ -396,17 +395,17 @@ Item {
         onGoButtonClicked: {
             page.state = ""
             messageDialog.state = ""
-/*            map.currentMarker.coordinate.latitude = dialogModel.get(0).inputText
+            /*            map.currentMarker.coordinate.latitude = dialogModel.get(0).inputText
             map.currentMarker.coordinate.longitude = dialogModel.get(1).inputText
             map.center = map.currentMarker.coordinate*/
         }
 
         onCancelButtonClicked: {
             page.state = ""
-       }
+        }
     }
 
-/*    GeocodeModel {
+    /*    GeocodeModel {
         id: geocodeModel
         plugin : Plugin { name : "nokia"}
         onLocationsChanged: {
@@ -418,19 +417,9 @@ Item {
     }*/
 
 
-//=====================Map=====================
-    MapComponent{
-        id: map
-        z : backgroundRect.z + 1
-        width: parent.width
-        height: parent.height
-        Connections {
-            target: map.currentMap
-            onMapPressed: { page.state = "" }
-        }
-    }
+    //=====================Map=====================
 
-/*        MapObjectView {
+    /*        MapObjectView {
             model: geocodeModel
             delegate: Component {
                 MapCircle {
@@ -480,7 +469,7 @@ Item {
 */
     function geocodeMessage(){
         var street, district, city, county, state, countryCode, country, postcode, latitude, longitude, text
-/*        latitude = map.geocodeModel.get(0).coordinate.latitude
+        /*        latitude = map.geocodeModel.get(0).coordinate.latitude
         longitude = map.geocodeModel.get(0).coordinate.longitude
         street = map.geocodeModel.get(0).address.street
         district = map.geocodeModel.get(0).address.district
@@ -503,9 +492,9 @@ Item {
         if (postcode) text +="<b>Postcode: </b>"+ postcode + " <br/>"*/
         return text
     }
-//=====================States of page=====================
+    //=====================States of page=====================
     states: [
-       State {
+        State {
             name: ""
             PropertyChanges { target: map; focus: true }
         },
@@ -543,7 +532,7 @@ Item {
         }
     ]
 
-//=====================State-transition animations for page=====================
+    //=====================State-transition animations for page=====================
     transitions: [
         Transition {
             to: "RevGeocode"
@@ -584,19 +573,27 @@ Item {
     ]
 
 
+    function createMap(provider){
+        var plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"}', page)
+        if (plugin.supportsMapping && plugin.supportsGeocoding && plugin.supportsReverseGeocoding && plugin.supportsRouting ){
+            if (map) map.destroy()
+            map = Qt.createQmlObject ('import QtLocation 5.0;import "content/map"; MapComponent{ z : backgroundRect.z + 1;width: page.width ;height: page.height; onMapPressed:{ page.state = "" }}',page)
+            map.plugin = plugin
+        }
+    }
 
-/*    function getPlugins(){
+
+    function getPlugins(){
         var plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {}', page)
         var tempPlugin
         var myArray = new Array()
-
-        console.log("getting plugins")
         for (var i = 0; i<plugin.availableServiceProviders.length; i++){
             tempPlugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
+            //note this will allocate all the plugin managers and resources
             if (tempPlugin.supportsMapping && tempPlugin.supportsGeocoding && tempPlugin.supportsReverseGeocoding && tempPlugin.supportsRouting )
                 myArray.push(tempPlugin.name)
         }
 
         return myArray
-    }*/
+    }
 }
