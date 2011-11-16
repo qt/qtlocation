@@ -89,7 +89,7 @@ QPlaceManagerEngineJsonDb::~QPlaceManagerEngineJsonDb()
 QPlaceDetailsReply *QPlaceManagerEngineJsonDb::getPlaceDetails(const QString &placeId)
 {
     DetailsReply *detailsReply = new DetailsReply(this);
-    int reqId = m_jsonDbHandler.queryByUuid(placeId);
+    int reqId = m_jsonDbHandler.queryPlaceByUuid(placeId);
     m_idReplyMap.insert(reqId, detailsReply);
     return detailsReply;
 }
@@ -170,11 +170,19 @@ QPlaceIdReply *QPlaceManagerEngineJsonDb::savePlace(const QPlace &place)
     } else {
         QVariant jsonPlace = JsonDbHandler::convertToJsonVariant(place);
         int reqId;
-        if (place.placeId().isEmpty())
+        if (place.placeId().isEmpty()) {
             reqId = m_jsonDbHandler.write(jsonPlace);
-        else
-            reqId = m_jsonDbHandler.update(jsonPlace);
+        } else {
+            reqId = m_jsonDbHandler.queryPlaceByUuid(place.placeId());
+            QList<QPlace> places = m_jsonDbHandler.convertJsonResponseToPlaces(m_jsonDbHandler.waitForRequest(reqId));
+            if (places.isEmpty()) {
+                saveReply->setId(place.placeId());
+                saveReply->triggerDone(QPlaceReply::PlaceDoesNotExistError, tr("Specified place does not exist"));
+                return saveReply;
+            }
 
+            reqId = m_jsonDbHandler.update(jsonPlace);
+        }
         m_idReplyMap.insert(reqId, saveReply);
     }
     return saveReply;
@@ -281,7 +289,7 @@ QPlaceIdReply *QPlaceManagerEngineJsonDb::removePlace(const QString &placeId)
         return removeReply;
     }
 
-    int reqId = m_jsonDbHandler.remove(placeId);
+    int reqId = m_jsonDbHandler.removePlace(placeId);
     removeReply->setId(placeId);
     m_idReplyMap.insert(reqId, removeReply);
     return removeReply;
@@ -667,7 +675,7 @@ void QPlaceManagerEngineJsonDb::recursiveRemoveHelper(const QString &categoryId,
     foreach (const QString &uuid, childUuids)
         recursiveRemoveHelper(uuid, categoryId);
 
-    int reqId = m_jsonDbHandler.remove(categoryId);
+    int reqId = m_jsonDbHandler.removeCategory(categoryId);
     m_jsonDbHandler.waitForRequest(reqId);
     emit categoryRemoved(categoryId, parentId);
 }

@@ -44,6 +44,7 @@
 #include <QObject>
 #include <QMap>
 #include <QVariant>
+#include <QEventLoop>
 
 #include <jsondb-global.h>
 Q_ADDON_JSONDB_BEGIN_NAMESPACE
@@ -68,6 +69,7 @@ signals:
 private:
     JsonDbClient *mDb;
     int cleanReqId;
+    QEventLoop m_eventLoop;
 };
 
 #endif

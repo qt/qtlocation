@@ -95,8 +95,10 @@ public:
     int write(const QVariant &jsonObj);
     int update(const QVariant &jsonObj);
     int query(const QVariant &jsonObj);
-    int queryByUuid(const QString &uuid);
-    int remove(const QString &uuid);
+    int queryPlaceByUuid(const QString &placeUuid);
+    int queryCategoryByUuid(const QString &categoryUuid);
+    int removePlace(const QString &placeUuid);
+    int removeCategory(const QString &categoryUuid);
     int query(const QString &query);
 
 

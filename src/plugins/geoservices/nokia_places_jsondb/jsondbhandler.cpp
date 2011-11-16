@@ -84,18 +84,33 @@ int JsonDbHandler::query(const QVariant &jsonObj)
     return m_db->find(jsonObj);
 }
 
-int JsonDbHandler::queryByUuid(const QString &uuid)
+int JsonDbHandler::queryPlaceByUuid(const QString &placeUuid)
 {
-    return m_db->query(QString("[?_uuid = \"%1\"]").arg(uuid));
+    return m_db->query(QString("[?%1=\"%2\"][?%3 = \"%4\"]").arg(TYPE).arg(PLACE_TYPE)
+                                                            .arg(UUID).arg(placeUuid));
 }
 
-int JsonDbHandler::remove(const QString &uuid)
+int JsonDbHandler::queryCategoryByUuid(const QString &categoryUuid)
+{
+    return m_db->query(QString("[?%1=\"%2\"][?%3 = \"%4\"]").arg(TYPE).arg(PLACE_CATEGORY_TYPE)
+                                                            .arg(UUID).arg(categoryUuid));
+}
+
+int JsonDbHandler::removePlace(const QString &placeUuid)
 {
     QVariantMap jsonMap;
-    jsonMap.insert(UUID, uuid);
+    jsonMap.insert(UUID, placeUuid);
+    jsonMap.insert(TYPE, PLACE_TYPE);
     return m_db->remove(jsonMap);
 }
 
+int JsonDbHandler::removeCategory(const QString &categoryUuid)
+{
+    QVariantMap jsonMap;
+    jsonMap.insert(UUID, categoryUuid);
+    jsonMap.insert(TYPE, PLACE_CATEGORY_TYPE);
+    return m_db->remove(jsonMap);
+}
 
 int JsonDbHandler::query(const QString &query)
 {
@@ -276,7 +291,7 @@ QVariantMap JsonDbHandler::findParentCategoryJson(const QString &categoryId)
 
 QVariantMap JsonDbHandler::findCategoryJson(const QString &categoryId)
 {
-    int reqId = queryByUuid(categoryId);
+    int reqId = queryCategoryByUuid(categoryId);
     QVariantMap responseMap = waitForRequest(reqId);
     if (responseMap.value(QLatin1String("length")).toInt() <= 0)
         return QVariantMap();
@@ -289,7 +304,7 @@ QPlaceCategory JsonDbHandler::findCategory(const QString &categoryId)
     if (categoryId.isEmpty())
         return QPlaceCategory();
 
-    int reqId = queryByUuid(categoryId);
+    int reqId = queryCategoryByUuid(categoryId);
     QVariantMap response = waitForRequest(reqId);
 
     if (response.value(QLatin1String("length")).toInt() <=0 ) {

@@ -70,16 +70,20 @@ JsonDbCleaner::JsonDbCleaner(QObject *parent)
 
 void JsonDbCleaner::jsonDbResponse(int id, const QVariant& data)
 {
-    if (id == cleanReqId)
-        emit dbCleaned();
+    m_eventLoop.exit();
 }
 
 void JsonDbCleaner::jsonDbError(int id, int code, const QString& data)
 {
+    m_eventLoop.exit();
     qDebug() << Q_FUNC_INFO << " id: " << id << " code: " << code << " data: " << data;
 }
 
 void JsonDbCleaner::cleanDb()
 {
-    cleanReqId = mDb->remove(QString::fromLatin1("[?%1=\"%2\" | %1 =\"%3\"]").arg(TYPE).arg(PLACE_TYPE).arg(PLACE_CATEGORY_TYPE));
+    mDb->remove(QString::fromLatin1("[?%1=\"%2\"]").arg(TYPE).arg(PLACE_TYPE));
+    m_eventLoop.exec();
+    mDb->remove(QString::fromLatin1("[?%1=\"%2\"]").arg(TYPE).arg(PLACE_CATEGORY_TYPE));
+    m_eventLoop.exec();
+    emit dbCleaned();
 }
