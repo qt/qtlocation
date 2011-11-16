@@ -37,17 +37,64 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include <QtGui/QGuiApplication>
 #include <QtDeclarative/QQuickView>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
 #include <QtDeclarative/QQuickItem>
-#include <QNetworkProxy>
+#include <QStringList>
+#include <QTextStream>
+
+
+
+static bool parseArgs(QStringList& args, QVariantMap& parameters)
+{
+
+    while (!args.isEmpty()) {
+
+        QString param = args.takeFirst();
+
+        if (param.startsWith("--help")) {
+            QTextStream out(stdout);
+            out << "Usage: " << endl;
+            out << "--plugin.<parameter_name> <parameter_value>    -  Sets parameter = value for plugin" << endl;
+            out.flush();
+            return true;
+        }
+
+        if (param.startsWith("--plugin.")) {
+
+            param.remove(0, 9);
+
+            if (args.isEmpty() || args.first().startsWith("--")) {
+                parameters[param] = true;
+            } else {
+
+                QString value = args.takeFirst();
+
+                if (value == "true" || value == "on" || value == "enabled") {
+                    parameters[param] = true;
+                } else if (value == "false" || value == "off"
+                           || value == "disable") {
+                    parameters[param] = false;
+                } else {
+                    parameters[param] = value;
+                }
+            }
+        }
+    }
+    return false;
+}
 
 int main(int argc, char *argv[])
 {
     QGuiApplication application(argc, argv);
+
+    QVariantMap parameters;
+    QStringList args(QCoreApplication::arguments());
+
+    if (parseArgs(args, parameters)) exit(0);
+
     const QString mainQmlApp = QLatin1String("qrc:///mapviewer.qml");
     QQuickView view;
     view.setSource(QUrl(mainQmlApp));
@@ -55,16 +102,8 @@ int main(int argc, char *argv[])
 
     QQuickItem *object = view.rootObject();
     object->setProperty("mobileUi", false);
+    if (parameters.size() > 0) QMetaObject::invokeMethod(object, "setPluginParameters", Q_ARG(QVariant, QVariant::fromValue(parameters)));
 
-    // Temporary development-time proxy setting
-    // TODO improve later.
-    QNetworkProxy proxy;
-    proxy.setType(QNetworkProxy::HttpProxy);
-    proxy.setHostName("nokes.nokia.com");
-    proxy.setPort(8080);
-    QNetworkProxy::setApplicationProxy(proxy);
-    // Qt.quit() called in embedded .qml by default only emits
-    // quit() signal, so do this (optionally use Qt.exit()).
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
     view.setGeometry(QRect(100, 100, 360, 640));
     view.show();

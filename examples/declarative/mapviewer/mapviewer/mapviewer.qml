@@ -50,6 +50,7 @@ Item {
     height: parent ? parent.height : 640
     property bool mobileUi: true
     property variant map
+    property list<PluginParameter> parameters
 
     Rectangle {
         id: backgroundRect
@@ -574,7 +575,11 @@ Item {
 
 
     function createMap(provider){
-        var plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"}', page)
+        var plugin
+        if (parameters.length>0)
+            plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"; parameters: page.parameters}', page)
+        else
+            plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"}', page)
         if (plugin.supportsMapping && plugin.supportsGeocoding && plugin.supportsReverseGeocoding && plugin.supportsRouting ){
             if (map) map.destroy()
             map = Qt.createQmlObject ('import QtLocation 5.0;import "content/map"; MapComponent{ z : backgroundRect.z + 1;width: page.width ;height: page.height; onMapPressed:{ page.state = "" }}',page)
@@ -595,5 +600,17 @@ Item {
         }
 
         return myArray
+    }
+
+    function setPluginParameters(pluginParameters) {
+        console.log("Plugin parameters:");
+        var parameters = new Array()
+        for (var prop in pluginParameters){
+            console.log(prop, "=", pluginParameters[prop])
+            var parameter = Qt.createQmlObject('import QtLocation 5.0; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
+            parameters.push(parameter)
+        }
+        page.parameters=parameters
+        createMap(map.plugin.name)
     }
 }
