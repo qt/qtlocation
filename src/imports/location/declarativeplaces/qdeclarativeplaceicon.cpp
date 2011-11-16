@@ -91,10 +91,14 @@ QDeclarativePlaceIcon::~QDeclarativePlaceIcon()
 QPlaceIcon QDeclarativePlaceIcon::icon() const
 {
     QPlaceIcon icon;
+
     if (m_plugin)
         icon.setManager(manager());
-    icon.setBaseUrl(m_baseUrl);
-    icon.setFullUrl(m_fullUrl);
+    if (!m_baseUrl.isEmpty())
+        icon.setBaseUrl(m_baseUrl);
+    else if (!m_fullUrl.isEmpty())
+        icon.setFullUrl(m_fullUrl);
+
     return icon;
 }
 
@@ -115,15 +119,18 @@ QPlaceIcon QDeclarativePlaceIcon::icon() const
 */
 void QDeclarativePlaceIcon::setIcon(const QPlaceIcon &src)
 {
-    if (m_baseUrl != src.baseUrl()) {
-        m_baseUrl = src.baseUrl();
-        emit baseUrlChanged();
-    }
+    bool baseChanged = m_baseUrl != src.baseUrl();
+    bool fullChanged = m_fullUrl != src.fullUrl();
 
-    if (m_fullUrl != src.fullUrl()) {
+    if (baseChanged)
+        m_baseUrl = src.baseUrl();
+    if (fullChanged)
         m_fullUrl = src.fullUrl();
+
+    if (baseChanged)
+        emit baseUrlChanged();
+    if (fullChanged)
         emit fullUrlChanged();
-    }
 }
 
 /*!
@@ -166,16 +173,7 @@ void QDeclarativePlaceIcon::setIcon(const QPlaceIcon &src)
 */
 QUrl QDeclarativePlaceIcon::url(const QSize &size, QDeclarativePlaceIcon::IconFlags flags) const
 {
-    QPlaceManager *placeManager = manager();
-    if (placeManager) {
-        QPlaceIcon icon;
-        icon.setBaseUrl(m_baseUrl);
-        icon.setFullUrl(m_fullUrl);
-        icon.setManager(placeManager);
-        return icon.url(size, QPlaceIcon::IconFlags(int(flags)));
-    }
-
-    return QUrl();
+    return icon().url(size, QPlaceIcon::IconFlags(int(flags)));
 }
 
 /*!
@@ -192,11 +190,17 @@ QUrl QDeclarativePlaceIcon::fullUrl() const
 
 void QDeclarativePlaceIcon::setFullUrl(const QUrl &url)
 {
-    if (m_fullUrl != url) {
-        m_fullUrl = url;
-        emit fullUrlChanged();
-        setBaseUrl(QUrl());
+    if (m_fullUrl == url)
+        return;
+
+    m_fullUrl = url;
+
+    if (!m_baseUrl.isEmpty()) {
+        m_baseUrl.clear();
+        emit baseUrlChanged();
     }
+
+    emit fullUrlChanged();
 }
 
 /*!
@@ -217,11 +221,17 @@ QUrl QDeclarativePlaceIcon::baseUrl() const
 
 void QDeclarativePlaceIcon::setBaseUrl(const QUrl &url)
 {
-    if (m_baseUrl != url) {
-        m_baseUrl = url;
-        emit baseUrlChanged();
-        setFullUrl(QUrl());
+    if (m_baseUrl == url)
+        return;
+
+    m_baseUrl = url;
+
+    if (!m_fullUrl.isEmpty()) {
+        m_fullUrl.clear();
+        emit fullUrlChanged();
     }
+
+    emit baseUrlChanged();
 }
 
 /*!

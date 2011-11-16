@@ -66,27 +66,15 @@ QPlaceSuppliersRepository::QPlaceSuppliersRepository(QObject *parent)
 
 QPlaceSuppliersRepository::~QPlaceSuppliersRepository()
 {
-    suppliers.clear();
+    m_suppliers.clear();
 }
 
 QPlaceSupplier QPlaceSuppliersRepository::addSupplier(const QPlaceSupplier &src)
 {
-    QPlaceSupplier res;
-    QPlaceSupplier tmp;
-
-    foreach (tmp, suppliers) {
-        if ((!src.supplierId().isEmpty() && src.supplierId() == tmp.supplierId())
-                || (!src.name().isEmpty() && src.name() == tmp.name())) {
-            copyMissingData(src, tmp);
-            res = tmp;
-            break;
-        }
-    }
-    if (res.supplierId().isEmpty() && res.name().isEmpty()) {
-        res = src;
-        suppliers.append(res);
-    }
-    return res;
+    QPlaceSupplier supplier = m_suppliers.value(src.supplierId());
+    copyMissingData(src, supplier);
+    m_suppliers.insert(supplier.supplierId(), supplier);
+    return supplier;
 }
 
 void QPlaceSuppliersRepository::copyMissingData(const QPlaceSupplier &src,

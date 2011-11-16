@@ -571,32 +571,27 @@ void QPlaceJSonDetailsParser::processPremiumVersion(const QJSValue &content, QPl
 
 void QPlaceJSonDetailsParser::processPremiumContent(const QJSValue &content, QPlace *targetPlace)
 {
-    QString name, id, iconUrl;
+    QPlaceSupplier supplier;
+
     QJSValue value = content.property(place_premiumcontent_content_providername_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
-        name = value.toString();
-    }
+    if (value.isValid() && !value.toString().isEmpty())
+        supplier.setName(value.toString());
+
     value = content.property(place_premiumcontent_content_provider_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
-        id = value.toString();
-    }
+    if (value.isValid() && !value.toString().isEmpty())
+        supplier.setSupplierId(value.toString());
+
     value = content.property(place_premiumcontent_content_providerIconUrl_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        iconUrl = value.toString();
+        QPlaceIcon icon;
+        icon.setFullUrl(QUrl::fromEncoded(value.toString().toAscii()));
+        //note: the icon manager is set in QPlaceJSonDetailsParser::buildPlace()
+        supplier.setIcon(icon);
     }
-    QPlaceSupplier supplier;
-    if (!name.isEmpty() || !id.isEmpty()) {
-        supplier.setName(name);
-        supplier.setSupplierId(id);
-        if (!iconUrl.isEmpty()) {
-            QPlaceIcon icon;
-            icon.setBaseUrl(iconUrl);
-            //note: the icon manager is set in QPlaceJSonDetailsParser::buildPlace()
-            supplier.setIcon(icon);
-        }
 
+    if (!supplier.supplierId().isEmpty())
         supplier = QPlaceSuppliersRepository::instance()->addSupplier(supplier);
-    }
+
     processPremiumContentDescription(content, supplier, targetPlace);
     processPremiumContentMediaObjects(content, supplier, targetPlace);
 }

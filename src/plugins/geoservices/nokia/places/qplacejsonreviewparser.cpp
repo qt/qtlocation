@@ -107,6 +107,8 @@ int QPlaceJSonReviewParser::allReviewsCount()
 QPlaceReview QPlaceJSonReviewParser::buildReview(const QJSValue &review, QPlaceManager *manager)
 {
     QPlaceReview newReview;
+    QPlaceSupplier supplier;
+
     QJSValue value = review.property(review_id_element);
     if (value.isValid() && !value.toString().isEmpty()) {
         newReview.setReviewId(value.toString());
@@ -115,12 +117,11 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QJSValue &review, QPlaceM
     if (value.isValid() && !value.toString().isEmpty()) {
         newReview.setDateTime(QDateTime::fromString(value.toString()));
     }
+
     value = review.property(review_originator_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
-        QPlaceSupplier supplier = newReview.supplier();
+    if (value.isValid() && !value.toString().isEmpty())
         supplier.setUrl(value.toString());
-        newReview.setSupplier(supplier);
-    }
+
     value = review.property(review_description_element);
     if (value.isValid() && !value.toString().isEmpty()) {
         newReview.setText(value.toString());
@@ -141,30 +142,21 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QJSValue &review, QPlaceM
         user.setUserId(value.toString());
         newReview.setUser(user);
     }
-    QString name, id, icon;
+
     value = review.property(review_vendorname_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
-        name = value.toString();
-    }
+    if (value.isValid() && !value.toString().isEmpty())
+        supplier.setName(value.toString());
+
     value = review.property(review_vendor_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
-        id = value.toString();
-    }
+    if (value.isValid() && !value.toString().isEmpty())
+        supplier.setSupplierId(value.toString());
+
     value = review.property(review_vendoricon_element);
     if (value.isValid() && !value.toString().isEmpty()) {
-        icon = value.toString();
-    }
-    if (!name.isEmpty() || !id.isEmpty()) {
-        QPlaceSupplier sup;
-        sup.setName(name);
-        sup.setSupplierId(id);
-        if (!icon.toAscii().isEmpty()) {
-            QPlaceIcon supplierIcon;
-            supplierIcon.setBaseUrl(QUrl::fromEncoded(icon.toAscii()));
-            supplierIcon.setManager(manager);
-            sup.setIcon(supplierIcon);
-        }
-        newReview.setSupplier(QPlaceSuppliersRepository::instance()->addSupplier(sup));
+        QPlaceIcon icon;
+        icon.setFullUrl(QUrl::fromEncoded(value.toString().toAscii()));
+        icon.setManager(manager);
+        supplier.setIcon(icon);
     }
 
     value = review.property(review_rating_element);
@@ -175,6 +167,10 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QJSValue &review, QPlaceM
             newReview.setRating(number);
         }
     }
+
+    if (!supplier.supplierId().isEmpty())
+        newReview.setSupplier(QPlaceSuppliersRepository::instance()->addSupplier(supplier));
+
     return newReview;
 }
 

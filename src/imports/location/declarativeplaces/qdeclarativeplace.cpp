@@ -295,8 +295,7 @@ void QDeclarativePlace::setPlace(const QPlace &src)
 
     if (m_icon && m_icon->parent() == this) {
         m_icon->setPlugin(m_plugin);
-        m_icon->setBaseUrl(m_src.icon().baseUrl());
-        m_icon->setFullUrl(m_src.icon().fullUrl());
+        m_icon->setIcon(m_src.icon());
     } else if (!m_icon || m_icon->parent() != this) {
         m_icon = new QDeclarativePlaceIcon(m_src.icon(), m_plugin, this);
         emit iconChanged();

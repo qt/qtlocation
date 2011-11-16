@@ -107,8 +107,7 @@ void QDeclarativeSupplier::setSupplier(const QPlaceSupplier &src, QDeclarativeGe
 
     if (m_icon && m_icon->parent() == this) {
         m_icon->setPlugin(plugin);
-        m_icon->setBaseUrl(m_src.icon().baseUrl());
-        m_icon->setFullUrl(m_src.icon().fullUrl());
+        m_icon->setIcon(m_src.icon());
     } else if (!m_icon || m_icon->parent() != this) {
         m_icon = new QDeclarativePlaceIcon(m_src.icon(), plugin, this);
         emit iconChanged();

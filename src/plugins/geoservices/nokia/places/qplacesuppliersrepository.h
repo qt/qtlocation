@@ -49,8 +49,8 @@
 #ifndef QPLACESUPPLIERSREPOSITORY_H
 #define QPLACESUPPLIERSREPOSITORY_H
 
-#include <QObject>
-#include <QList>
+#include <QtCore/QObject>
+#include <QtCore/QMap>
 
 #include <qplacesupplier.h>
 
@@ -69,7 +69,7 @@ private:
 private:
     void copyMissingData(const QPlaceSupplier &src, QPlaceSupplier &target);
 
-    QList<QPlaceSupplier> suppliers;
+    QHash<QString, QPlaceSupplier> m_suppliers;
 };
 
 QT_END_NAMESPACE
