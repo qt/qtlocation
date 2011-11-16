@@ -13,8 +13,9 @@ module_qtlocation_examples.depends = module_qtlocation_src
 module_qtlocation_tests.subdir = tests
 module_qtlocation_tests.target = module-qtlocation-tests
 module_qtlocation_tests.depends = module_qtlocation_src
+module_qtlocation_tests.CONFIG = no_default_install
 !contains(QT_BUILD_PARTS,tests) {
-    module_qtlocation_tests.CONFIG = no_default_target no_default_install
+    module_qtlocation_tests.CONFIG += no_default_target
 }
 
 module_qtlocation_doc.subdir = doc/src
