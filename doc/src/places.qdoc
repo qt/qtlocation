@@ -64,9 +64,9 @@
 
     \snippet snippets/places/requesthandler.h Search for places handler cpp
 
-    \bold {Note:} Depending upon the plugin backend that was chosen the search results may contain places
-    that are only populated with \e {core} details such as name, address, and location only.  The specifics
-    depend on the plugin implementation.  To fetch the other place details see \l {Fetching Place Details}.
+    \bold {Note:} Depending upon the plugin backend that was chosen, the search results may contain places
+    which have further details that can be fetched on a place by place basis.  To fetch these other details
+    see \l {Fetching Place Details}.
 
     \section3 Paging
     If the plugin supports paging, limit and offset parameters may be provided to the search request.
@@ -83,8 +83,10 @@
     \snippet snippets/places/requesthandler.h Corrections handling pt2
 
     \section2 Fetching Place Details
-    Depending upon the plugin, the place results returned during a search may only contain core data.
-    We can check if the details have already been retrieved and if not, request them as shown:
+    A place that has been returned from a search request may have more details
+    that can be fetched.  The following demonstrates how to check if there
+    are further details and if so how to request them.
+
     \snippet snippets/places/requesthandler.h Details check
     \dots
     \dots
