@@ -111,7 +111,8 @@ public:
         RecommendationsFeature = QPlaceManager::RecommendationsFeature,
         SearchSuggestionsFeature = QPlaceManager::SearchSuggestionsFeature,
         CorrectionsFeature = QPlaceManager::CorrectionsFeature,
-        LocaleFeature = QPlaceManager::LocaleFeature
+        LocaleFeature = QPlaceManager::LocaleFeature,
+        NotificationsFeature = QPlaceManager::NotificationsFeature
     };
 
     Q_DECLARE_FLAGS(PlacesFeatures, PlacesFeature)

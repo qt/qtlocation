@@ -251,10 +251,43 @@ bool QDeclarativeGeoServiceProvider::supportsPlaces() const
 }
 
 /*!
-    \qmlproperty PlacesFeatures Plugin::supportedPlacesFeatures
+    \qmlproperty enumeration Plugin::supportedPlacesFeatures
 
     This property holds a set of flags indicating what Places related features are provided by the
-    plugin.
+    plugin. It can be a binary concatenation of the following values:
+
+    \table
+        \row
+            \o Plugin.NoFeatures
+            \o No features specified/supported (value: 0x0).
+        \row
+            \o Plugin.SavePlaceFeature
+            \o The plugin can be used to save places (value: 0x1).
+        \row
+            \o Plugin.RemovePlaceFeature
+            \o The plugin can be used to remove places (value: 0x2).
+        \row
+            \o Plugin.SaveCategoryFeature
+            \o The plugin can be used to save categories (value: 0x4).
+        \row
+            \o Plugin.RemoveCategoryFeature
+            \o The plugin can be used to remove categories (value: 0x8).
+        \row
+            \o Plugin.RecommendationsFeature
+            \o The plugin can provide recommendations (value: 0x10).
+        \row
+            \o Plugin.SearchSuggestionsFeature\
+            \o The plugin can be used to provide search term suggestions (value: 0x20).
+        \row
+            \o Plugin.CorrectionsFeature
+            \o The plugin can provide search term corrections (value: 0x40).
+        \row
+            \o Plugin.LocaleFeature
+            \o The plugin can provide place data information localized according to a set of preferred locales (0x80).
+        \row
+            \o Plugin.NotificationsFeature
+            \o The plugin has notfication mechanisms for when places/categories are added/modified/removed (0x100).
+    \endtable
 */
 QDeclarativeGeoServiceProvider::PlacesFeatures QDeclarativeGeoServiceProvider::supportedPlacesFeatures()
 {
