@@ -90,7 +90,7 @@ public slots:
     void processJsonDbError(int id, int code, const QString &data);
 
 private:
-    void recursiveRemoveHelper(const QString &categoryId, const QString &parentId);
+    bool recursiveRemoveHelper(const QString &categoryId, const QString &parentId);
     mutable JsonDbHandler m_jsonDbHandler;
     mutable QMap<int, QPlaceReply *> m_idReplyMap;
     friend class JsonDbHandler;

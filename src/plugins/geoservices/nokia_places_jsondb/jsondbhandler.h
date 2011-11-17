@@ -113,7 +113,7 @@ public:
 
     bool isConnected();
 
-    QVariantMap waitForRequest(int reqId);
+    bool waitForRequest(int reqId, QVariantMap *variantMap = 0);
     QVariantMap findParentCategoryJson(const QString &categoryId);
     QVariantMap findCategoryJson(const QString &categoryId);
     QPlaceCategory findCategory(const QString &categoryId);

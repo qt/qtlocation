@@ -264,20 +264,30 @@ bool JsonDbHandler::isConnected()
     return m_db->isConnected();
 }
 
-QVariantMap JsonDbHandler::waitForRequest(int reqId)
+bool JsonDbHandler::waitForRequest(int reqId, QVariantMap *variantMap)
 {
     m_helperMap.insert(reqId, QVariant());
     m_eventLoop.exec(QEventLoop::AllEvents);
-    QVariantMap response = m_helperMap.value(reqId).toMap();
-    m_helperMap.remove(reqId);
-    return response;
+
+    QVariant response = m_helperMap.value(reqId);
+    if (response.type() == QVariant::Bool) {
+        if (variantMap)
+            *variantMap = QVariantMap();
+        return false;
+    } else {
+        if (variantMap)
+            *variantMap = response.toMap();
+        return true;
+    }
 }
 
 QVariantMap JsonDbHandler::findParentCategoryJson(const QString &categoryId)
 {
     QVariantMap parentMap;
     int reqId = query(QString("[?%1 = \"%2\"]").arg(TYPE).arg(PLACE_CATEGORY_TYPE));
-    QVariantMap responseMap = waitForRequest(reqId);
+    QVariantMap responseMap;
+    if (!waitForRequest(reqId, &responseMap))
+        return QVariantMap(); //TODO: correctly handle error condition
     QList<QVariant> categoriesJson = responseMap.value(QLatin1String("data")).toList();
     foreach (const QVariant &categoryJson, categoriesJson) {
         QStringList childrenUuids = categoryJson.toMap().value(CHILDREN_UUIDS).toStringList();
@@ -292,7 +302,10 @@ QVariantMap JsonDbHandler::findParentCategoryJson(const QString &categoryId)
 QVariantMap JsonDbHandler::findCategoryJson(const QString &categoryId)
 {
     int reqId = queryCategoryByUuid(categoryId);
-    QVariantMap responseMap = waitForRequest(reqId);
+    QVariantMap responseMap;
+    if (!waitForRequest(reqId, &responseMap))
+            return QVariantMap(); //TODO: correctly handle error condition
+
     if (responseMap.value(QLatin1String("length")).toInt() <= 0)
         return QVariantMap();
     else
@@ -305,9 +318,11 @@ QPlaceCategory JsonDbHandler::findCategory(const QString &categoryId)
         return QPlaceCategory();
 
     int reqId = queryCategoryByUuid(categoryId);
-    QVariantMap response = waitForRequest(reqId);
+    QVariantMap response;
+    if (!waitForRequest(reqId, &response))
+        return QPlaceCategory();//TODO: correctly handle error condition
 
-    if (response.value(QLatin1String("length")).toInt() <=0 ) {
+    if (response.value(QLatin1String("length")).toInt() <= 0) {
         return QPlaceCategory();
     }
 
