@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
         \row
             \o text
             \o string
-            \o The editorial's text.  It can be either plain text or rich text
+            \o The editorial's textual description of the place.  It can be either rich(HTML based) text or plain text
                depending upon the provider.
         \row
             \o title

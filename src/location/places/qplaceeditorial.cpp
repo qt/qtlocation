@@ -110,10 +110,10 @@ Q_IMPLEMENT_CONTENT_COPY_CTOR(QPlaceEditorial)
 Q_IMPLEMENT_CONTENT_D_FUNC(QPlaceEditorial)
 
 /*!
-    Returns text of the editorial.
+    Returns a textual description of the place.
 
     Depending upon the provider, the
-    editorial text could be rich or plain text.
+    editorial text could be either rich(HTML based) text or plain text.
 */
 QString QPlaceEditorial::text() const
 {

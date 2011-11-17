@@ -74,7 +74,7 @@ QT_BEGIN_NAMESPACE
         \row
             \o text
             \o string
-            \o The text of the review.  It can be either rich text or plain text
+            \o The review's textual description of the place.  It can be either rich(HTML based) text or plain text
                depending on the provider.
         \row
             \o language

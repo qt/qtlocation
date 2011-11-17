@@ -138,9 +138,9 @@ void QPlaceReview::setDateTime(const QDateTime &dateTime)
 }
 
 /*!
-    Returns the text of the review.
+    Returns a textual description of the place.
 
-    Depending on the provider the text could be plain or rich text.
+    Depending on the provider the text could be rich(HTML based) or plain text.
 */
 QString QPlaceReview::text() const
 {
