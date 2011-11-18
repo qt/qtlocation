@@ -29,7 +29,6 @@ dialogs.files = \
 
 map.path = $${files.path}/content/map
 map.files = \
-    content/map/MapBaseComponent.qml \
     content/map/MapComponent.qml \
     content/map/Marker.qml
 
