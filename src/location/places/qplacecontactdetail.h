@@ -84,6 +84,8 @@ public:
     QString value() const;
     void setValue(const QString &value);
 
+    void clear();
+
 private:
     QSharedDataPointer<QPlaceContactDetailPrivate> d_ptr;
 

@@ -198,3 +198,12 @@ void QPlaceContactDetail::setValue(const QString &value)
 {
     d_ptr->value = value;
 }
+
+/*!
+    Clears the contact detail.
+*/
+void QPlaceContactDetail::clear()
+{
+    d_ptr->label.clear();
+    d_ptr->value.clear();
+}
