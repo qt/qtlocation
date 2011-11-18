@@ -70,6 +70,9 @@ JsonDbCleaner::JsonDbCleaner(QObject *parent)
 
 void JsonDbCleaner::jsonDbResponse(int id, const QVariant& data)
 {
+    Q_UNUSED(id)
+    Q_UNUSED(data)
+
     m_eventLoop.exit();
 }
 

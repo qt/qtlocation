@@ -437,7 +437,7 @@ QUrl QPlace::primaryWebsite() const
     Q_D(const QPlace);
     QList<QPlaceContactDetail> websites = d->contacts.value(QPlaceContactDetail::Website);
     if (!websites.isEmpty())
-        return QUrl(websites.at(0).value().toAscii());
+        return QUrl(websites.at(0).value());
     else
         return QString();
 }
@@ -612,11 +612,11 @@ QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
         attribution(other.attribution),
         contentCollections(other.contentCollections),
         contentCounts(other.contentCounts),
-        contacts(other.contacts),
         extendedAttributes(other.extendedAttributes),
+        contacts(other.contacts),
         visibility(other.visibility),
-        detailsFetched(other.detailsFetched),
-        icon(other.icon)
+        icon(other.icon),
+        detailsFetched(other.detailsFetched)
 {
 }
 

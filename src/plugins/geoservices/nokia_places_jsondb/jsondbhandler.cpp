@@ -324,6 +324,9 @@ void JsonDbHandler::processJsonDbResponse(int id, const QVariant &data)
 
 void JsonDbHandler::processJsonDbError(int id, int code, const QString &jsonDbErrorString)
 {
+    Q_UNUSED(code)
+    Q_UNUSED(jsonDbErrorString)
+
     if (m_helperMap.contains(id)) {
         m_helperMap.insert(id, false);
         m_eventLoop.exit();

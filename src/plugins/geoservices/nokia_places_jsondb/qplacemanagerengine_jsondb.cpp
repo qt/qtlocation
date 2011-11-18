@@ -96,7 +96,9 @@ QPlaceDetailsReply *QPlaceManagerEngineJsonDb::getPlaceDetails(const QString &pl
 
 QPlaceContentReply *QPlaceManagerEngineJsonDb::getPlaceContent(const QString &placeId, const QPlaceContentRequest &request)
 {
-    Q_UNUSED(placeId);
+    Q_UNUSED(placeId)
+    Q_UNUSED(request)
+
     ContentReply *contentReply = new ContentReply(this);
     contentReply->triggerDone(QPlaceReply::UnsupportedError, tr("Fetching content is unsupported"));
     return contentReply;
@@ -146,12 +148,15 @@ QPlaceSearchReply *QPlaceManagerEngineJsonDb::recommendations(const QString &pla
 {
     Q_UNUSED(placeId);
     SearchReply *searchReply = new SearchReply(this);
+    searchReply->setRequest(request);
     searchReply->triggerDone(QPlaceReply::UnsupportedError, tr("Recommendations is unsupported"));
     return searchReply;
 }
 
 QPlaceSearchSuggestionReply *QPlaceManagerEngineJsonDb::searchSuggestions(const QPlaceSearchRequest &request)
 {
+    Q_UNUSED(request)
+
     SearchSuggestionReply *searchSuggestionReply = new SearchSuggestionReply(this);
     searchSuggestionReply->triggerDone(QPlaceReply::UnsupportedError, tr("Search suggestions is unsupported"));
     return searchSuggestionReply;
@@ -404,6 +409,9 @@ void QPlaceManagerEngineJsonDb::setLocales(const QList<QLocale> &locales)
 
 QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)
 {
+    Q_UNUSED(size)
+    Q_UNUSED(flags)
+
     return icon.fullUrl();
 }
 
@@ -616,6 +624,8 @@ void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &da
                 reply_->triggerDone();
                 break;
             }
+        default:
+            break;
         }
         m_idReplyMap.remove(id);
     }
@@ -659,6 +669,8 @@ void QPlaceManagerEngineJsonDb::processJsonDbError(int id, int code, const QStri
                 reply->triggerDone(error, errorString);
                 break;
             }
+        default:
+            break;
         }
         m_idReplyMap.remove(id);
     }

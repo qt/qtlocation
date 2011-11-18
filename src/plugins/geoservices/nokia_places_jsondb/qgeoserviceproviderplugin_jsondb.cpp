@@ -70,6 +70,10 @@ QGeocodingManagerEngine* QGeoServiceProviderFactoryJsonDb::createGeocodingManage
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+
     return 0;
 }
 
@@ -77,6 +81,10 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactoryJsonDb::createMappingManager
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+
     return 0;
 }
 
@@ -84,6 +92,10 @@ QGeoRoutingManagerEngine* QGeoServiceProviderFactoryJsonDb::createRoutingManager
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+
     return 0;
 }
 

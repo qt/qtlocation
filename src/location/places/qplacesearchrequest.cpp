@@ -113,6 +113,8 @@ QPlaceSearchRequestPrivate &QPlaceSearchRequestPrivate::operator=(const QPlaceSe
     relevanceHint = other.relevanceHint;
     limit = other.limit;
     offset = other.offset;
+
+    return *this;
 }
 
 bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &other) const
@@ -230,7 +232,6 @@ QPlaceSearchRequest::~QPlaceSearchRequest()
 */
 QPlaceSearchRequest &QPlaceSearchRequest::operator= (const QPlaceSearchRequest & other)
 {
-    Q_D(QPlaceSearchRequest);
     d_ptr = other.d_ptr;
     return *this;
 }

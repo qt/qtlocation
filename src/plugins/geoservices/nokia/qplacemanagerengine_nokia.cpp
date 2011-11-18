@@ -249,6 +249,8 @@ QPlaceIdReply *QPlaceManagerEngineNokia::removePlace(const QString &placeId)
 
 QPlaceIdReply *QPlaceManagerEngineNokia::saveCategory(const QPlaceCategory &category, const QString &parentId)
 {
+    Q_UNUSED(parentId)
+
     IdReply *reply = new IdReply(QPlaceIdReply::SaveCategory, this);
     reply->setId(category.categoryId());
     reply->triggerDone(QPlaceReply::UnsupportedError, tr("Saving categories is not supported"));

@@ -299,7 +299,7 @@ QDeclarativeSearchResultModel::RelevanceHint QDeclarativeSearchResultModel::rele
 
 void QDeclarativeSearchResultModel::setRelevanceHint(QDeclarativeSearchResultModel::RelevanceHint hint)
 {
-    if (m_request.relevanceHint() != hint) {
+    if (m_request.relevanceHint() != static_cast<QPlaceSearchRequest::RelevanceHint>(hint)) {
         m_request.setRelevanceHint(static_cast<QPlaceSearchRequest::RelevanceHint>(hint));
         emit relevanceHintChanged();
     }

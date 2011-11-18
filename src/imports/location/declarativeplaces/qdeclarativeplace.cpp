@@ -649,6 +649,8 @@ void QDeclarativePlace::finished()
 
 void QDeclarativePlace::contactsModified(const QString &key, const QVariant &value)
 {
+    Q_UNUSED(value)
+
     primarySignalsEmission(key);
 }
 

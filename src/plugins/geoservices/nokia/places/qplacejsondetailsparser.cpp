@@ -458,6 +458,8 @@ void QPlaceJSonDetailsParser::processLocation(const QJSValue &location, QPlace *
 
 void QPlaceJSonDetailsParser::processTags(const QJSValue &tags, QPlace *targetPlace)
 {
+    Q_UNUSED(targetPlace)
+
     QStringList newTags;
     if (tags.isValid()) {
         if (tags.isArray()) {
