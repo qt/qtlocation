@@ -51,7 +51,7 @@
 #define UUID "_uuid"
 #define TYPE "_type"
 
-#define PLACE_TYPE "place"
+#define PLACE_TYPE "com.nokia.mp.location.Place"
 #define PLACE_CATEGORY_TYPE "com.nokia.mp.location.PlaceCategory"
 
 JsonDbCleaner::JsonDbCleaner(QObject *parent)

@@ -47,33 +47,47 @@
 
 #include <jsondb-global.h>
 
-#define UUID "_uuid"
-#define TYPE "_type"
+#define UUID QLatin1String("_uuid")
+#define TYPE QLatin1String("_type")
 
-#define PLACE_TYPE "place"
-#define DISPLAY_NAME "displayName"
-#define PLACE_CATEGORY_TYPE "com.nokia.mp.location.PlaceCategory"
-#define TOP_LEVEL_CATEGORY "topLevel"
-#define CHILDREN_UUIDS "childrenUuids"
-#define COORDINATE "coordinate"
+#define PLACE_TYPE QLatin1String("com.nokia.mp.location.Place")
+#define DISPLAY_NAME QLatin1String("displayName")
+#define PLACE_CATEGORY_TYPE QLatin1String("com.nokia.mp.location.PlaceCategory")
+#define TOP_LEVEL_CATEGORY QLatin1String("topLevel")
+#define CHILDREN_UUIDS QLatin1String("childrenUuids")
+#define COORDINATE QLatin1String("coordinate")
 
 //coord
-#define COORDINATE "coordinate"
+#define COORDINATE QLatin1String("geo")
 #define LATITUDE QLatin1String("latitude")
 #define LONGITUDE QLatin1String("longitude")
-#define ALTITUDE QLatin1String("altitude")
 
 //address
-#define ADDRESS "address"
-#define STREET "street"
-#define POSTCODE "postcode"
-#define DISTRICT "district"
-#define CITY "locality"
-#define STATE "state"
-#define COUNTY "county"
-#define COUNTRY "country"
+#define ADDRESS QLatin1String("address")
+#define STREET QLatin1String("street")
+#define DISTRICT QLatin1String("district")
+#define CITY QLatin1String("locality")
+#define COUNTY QLatin1String("county")
+#define STATE QLatin1String("state")
+#define COUNTRY QLatin1String("country")
+#define POSTCODE QLatin1String("postalCode")
 
-#define ICON_URL "iconUrl"
+#define LOCATION QLatin1String("location")
+
+//contact details
+#define PHONES QLatin1String("phones")
+#define EMAILS QLatin1String("emails")
+#define WEBSITES QLatin1String("urls")
+
+#define PHONE_SUBTYPE QLatin1String("subType")
+#define SUBTYPE_FAX QLatin1String("Fax")
+#define SUBTYPE_LANDLINE QLatin1String("Landline")
+
+#define LABEL QLatin1String("label")
+#define VALUE QLatin1String("value")
+#define URL QLatin1String("url")
+
+#define ICON_URL QLatin1String("iconUrl")
 
 Q_ADDON_JSONDB_BEGIN_NAMESPACE
 class JsonDbClient;

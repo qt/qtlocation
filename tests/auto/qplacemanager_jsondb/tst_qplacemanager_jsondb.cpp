@@ -53,6 +53,7 @@
 #include <qplacesearchrequest.h>
 #include <qplacesearchresult.h>
 #include <qplacesearchreply.h>
+#include <qplacecontactdetail.h>
 
 #include "jsondbcleaner.h"
 
@@ -114,6 +115,9 @@ private Q_SLOTS:
     void unsupportedFunctions();
     void supportedFeatures();
     void categoryFunctions();
+    void contactDetails();
+    void contactDetails_data();
+    void mulipleDetailTypes();
 
 private:
     bool doSavePlace(const QPlace &place,
@@ -193,15 +197,30 @@ void tst_QPlaceManagerJsonDb::saveAndRemovePlace()
     place.setName("Char");
     QGeoLocation location;
 
-    location.setCoordinate(QGeoCoordinate(10,20,30));
+    location.setCoordinate(QGeoCoordinate(10,20));
 
     QGeoAddress address;
     address.setStreet("1 test street");
     address.setCity("New york");
     address.setCountry("USA");
     location.setAddress(address);
-
     place.setLocation(location);
+
+    QPlaceContactDetail phone;
+    phone.setValue("555-5555");
+    place.appendContactDetail(QPlaceContactDetail::Phone, phone);
+
+    QPlaceContactDetail fax;
+    fax.setValue("999-9999");
+    place.appendContactDetail(QPlaceContactDetail::Fax, fax);
+
+    QPlaceContactDetail email;
+    email.setValue("email@adddresss.com");
+    place.appendContactDetail(QPlaceContactDetail::Email, email);
+
+    QPlaceContactDetail website;
+    website.setValue("www.example.com");
+    place.appendContactDetail(QPlaceContactDetail::Website, website);
 
     //Save a place
     QString placeId;
@@ -1099,6 +1118,158 @@ void tst_QPlaceManagerJsonDb::categoryFunctions()
 
     //try to find a category with a non-existent id
     QCOMPARE(placeManager->category(QLatin1String("does-not-exist")), QPlaceCategory());
+}
+
+void tst_QPlaceManagerJsonDb::contactDetails()
+{
+    QFETCH(QString, contactType);
+    QPlace place;
+    //create a place with a single contact detail of a given type
+    place.setName(QLatin1String("place"));
+    QPlaceContactDetail detail;
+    detail.setLabel(QLatin1String("detailLabel"));
+    detail.setValue(QLatin1String("detail"));
+    place.appendContactDetail(contactType, detail);
+
+    QString placeId;
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+    place.setPlaceId(placeId);
+
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QVERIFY(retrievedPlace.contactTypes().contains(contactType));
+    QCOMPARE(retrievedPlace.contactDetails(contactType).count(), 1);
+    QCOMPARE(retrievedPlace.contactDetails(contactType).at(0), detail);
+
+    //add multiple details of a given type;
+    QPlaceContactDetail detail2;
+    detail2.setLabel("detail2Label");
+    detail2.setValue(QLatin1String("detail2"));
+    QPlaceContactDetail detail3;
+    detail3.setLabel("detail3Label");
+    detail3.setValue(QLatin1String("detail3"));
+
+    place.appendContactDetail(contactType, detail2);
+    place.appendContactDetail(contactType, detail3);
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.contactDetails(contactType).count(), 3);
+    QCOMPARE(retrievedPlace.contactDetails(contactType).at(0), detail);
+    QCOMPARE(retrievedPlace.contactDetails(contactType).at(1), detail2);
+    QCOMPARE(retrievedPlace.contactDetails(contactType).at(2), detail3);
+
+    //try removing a detail
+    QList<QPlaceContactDetail> details;
+    details << detail <<detail3;
+    place.setContactDetails(contactType, details);
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.contactDetails(contactType).count(), 2);
+    QCOMPARE(retrievedPlace.contactDetails(contactType).at(0), detail);
+    QCOMPARE(retrievedPlace.contactDetails(contactType).at(1), detail3);
+
+    //try remove all details
+    place.removeContactDetails(contactType);
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QVERIFY(retrievedPlace.contactTypes().contains(contactType) == false);
+    QCOMPARE(retrievedPlace.contactDetails(contactType).count(), 0);
+
+    //try creating a place with multiple contact details of a given type.
+    QPlace place2;
+    place2.setContactDetails(contactType, details);
+    QVERIFY(doSavePlace(place2, QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QVERIFY(retrievedPlace.contactTypes().contains(contactType) == true);
+    QCOMPARE(retrievedPlace.contactDetails(contactType).count(), 2);
+    QCOMPARE(retrievedPlace.contactDetails(contactType).at(0), detail);
+    QCOMPARE(retrievedPlace.contactDetails(contactType).at(1), detail3);
+}
+
+void tst_QPlaceManagerJsonDb::contactDetails_data()
+{
+    QTest::addColumn<QString>("contactType");
+
+    QTest::newRow("phone") << QPlaceContactDetail::Phone.latin1();
+    QTest::newRow("email") << QPlaceContactDetail::Email.latin1();
+    QTest::newRow("website") << QPlaceContactDetail::Website.latin1();
+    QTest::newRow("fax") << QPlaceContactDetail::Fax.latin1();
+}
+
+void tst_QPlaceManagerJsonDb::mulipleDetailTypes()
+{
+    //try saving a place with multiple detail types simultaneously.
+    QPlace place;
+    place.setName("Char");
+
+    QPlaceContactDetail phone;
+    phone.setLabel("phone1");
+    phone.setValue("555-5555");
+    QPlaceContactDetail phone2;
+    phone2.setLabel("phone2");
+    phone2.setValue("444-4444");
+    QList<QPlaceContactDetail> phones;
+    place.setContactDetails(QPlaceContactDetail::Phone, phones);
+
+    QPlaceContactDetail fax;
+    fax.setLabel("fax1");
+    fax.setValue("999-9999");
+    QPlaceContactDetail fax2;
+    fax2.setLabel("fax2");
+    fax2.setValue("999-9999");
+    QList<QPlaceContactDetail> faxes;
+    place.setContactDetails(QPlaceContactDetail::Fax, faxes);
+
+    QPlaceContactDetail email;
+    email.setValue("email@adddress.com");
+    QPlaceContactDetail email2;
+    email2.setValue("email2@adddress.com");
+    place.appendContactDetail(QPlaceContactDetail::Email, email);
+    place.appendContactDetail(QPlaceContactDetail::Email, email2);
+
+    QPlaceContactDetail website;
+    website.setLabel("website");
+    website.setValue("www.example.com");
+    QPlaceContactDetail website2;
+    website2.setLabel("website2");
+    website2.setValue("www.example2.com");
+    place.appendContactDetail(QPlaceContactDetail::Website, website);
+    place.appendContactDetail(QPlaceContactDetail::Website, website2);
+
+    //Save a place
+    QString placeId;
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+
+    //ensure we can retrieve it's details
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    place.setPlaceId(placeId);
+    QVERIFY(retrievedPlace == place);
+
+    //try adding some more, changing and removing details of different types
+    //when updating a place.
+    phone2.setValue("222-2222");  //modify detail
+    phones.clear();
+    phones << phone << phone2;
+    place.setContactDetails(QPlaceContactDetail::Phone, phones);
+
+    //remove an entire set of details
+    place.removeContactDetails(QPlaceContactDetail::Fax);
+
+    //add remove one detail
+    QList<QPlaceContactDetail> emails;
+    emails << email2;
+    place.setContactDetails(QPlaceContactDetail::Email, emails);
+
+    //add more of a detail
+    QPlaceContactDetail website3;
+    website3.setLabel("website3");
+    website3.setValue("www.example3.com");
+    place.appendContactDetail(QPlaceContactDetail::Website, website3);
+
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QVERIFY(retrievedPlace == place);
 }
 
 void tst_QPlaceManagerJsonDb::cleanup()

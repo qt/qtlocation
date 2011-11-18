@@ -128,7 +128,6 @@ QVariant JsonDbHandler::convertToJsonVariant(const QPlace &place)
     QVariantMap coordMap;
     coordMap.insert(LATITUDE, place.location().coordinate().latitude());
     coordMap.insert(LONGITUDE, place.location().coordinate().longitude());
-    coordMap.insert(ALTITUDE, place.location().coordinate().altitude());
 
     QVariantMap addressMap;
     addressMap.insert(STREET, place.location().address().street());
@@ -137,9 +136,56 @@ QVariant JsonDbHandler::convertToJsonVariant(const QPlace &place)
     addressMap.insert(COUNTY, place.location().address().county());
     addressMap.insert(STATE, place.location().address().state());
     addressMap.insert(COUNTRY, place.location().address().country());
+    addressMap.insert(POSTCODE, place.location().address().postcode());
 
-    map.insert(COORDINATE, coordMap);
-    map.insert(ADDRESS, addressMap);
+    QVariantMap locationMap;
+    locationMap.insert(COORDINATE, coordMap);
+    locationMap.insert(ADDRESS, addressMap);
+    map.insert(LOCATION, locationMap);
+
+    foreach (const QString &contactType, place.contactTypes()) {
+        if (contactType != QPlaceContactDetail::Phone
+                && contactType != QPlaceContactDetail::Fax
+                && contactType != QPlaceContactDetail::Website
+                && contactType != QPlaceContactDetail::Email) {
+            qWarning() << "Contact type ignored when saving place:" << contactType;
+        }
+    }
+
+    QVariantList phonesJson;
+    QVariantMap detailMap;
+    foreach (const QPlaceContactDetail &phone, place.contactDetails(QPlaceContactDetail::Phone)) {
+        detailMap.insert(PHONE_SUBTYPE, SUBTYPE_LANDLINE);
+        detailMap.insert(LABEL, phone.label());
+        detailMap.insert(VALUE, phone.value());
+        phonesJson.append(detailMap);
+    }
+
+    foreach (const QPlaceContactDetail &fax, place.contactDetails(QPlaceContactDetail::Fax)) {
+        detailMap.insert(PHONE_SUBTYPE, SUBTYPE_FAX);
+        detailMap.insert(LABEL, fax.label());
+        detailMap.insert(VALUE, fax.value());
+        phonesJson.append(detailMap);
+    }
+    map.insert(PHONES, phonesJson);
+
+    QVariantList websitesJson;
+    detailMap.clear();
+    foreach (const QPlaceContactDetail &website, place.contactDetails(QPlaceContactDetail::Website)) {
+        detailMap.insert(LABEL, website.label());
+        detailMap.insert(URL, website.value());
+        websitesJson.append(detailMap);
+    }
+    map.insert(WEBSITES, websitesJson);
+
+    QVariantList emailsJson;
+    detailMap.clear();
+    foreach (const QPlaceContactDetail &email, place.contactDetails(QPlaceContactDetail::Email)) {
+        detailMap.insert(LABEL, email.label());
+        detailMap.insert(VALUE, email.value());
+        emailsJson.append(detailMap);
+    }
+    map.insert(EMAILS, emailsJson);
 
     map.insert(ICON_URL, place.icon().fullUrl().toString());
 
@@ -212,15 +258,16 @@ QPlace JsonDbHandler::convertJsonVariantToPlace(const QVariant &variant)
     place.setName(placeJson.value(DISPLAY_NAME).toString());
     place.setPlaceId(placeJson.value(UUID).toString());
 
-    QVariantMap coordMap = placeJson.value(COORDINATE).toMap();
+    QVariantMap locationMap = placeJson.value(LOCATION).toMap();
     QGeoLocation location;
+
+    QVariantMap coordMap = locationMap.value(COORDINATE).toMap();
     QGeoCoordinate coord;
     coord.setLatitude(coordMap.value(LATITUDE).toDouble());
     coord.setLongitude(coordMap.value(LONGITUDE).toDouble());
-    coord.setAltitude(coordMap.value(ALTITUDE).toDouble());
     location.setCoordinate(coord);
 
-    QVariantMap addressMap = placeJson.value(ADDRESS).toMap();
+    QVariantMap addressMap = locationMap.value(ADDRESS).toMap();
     QGeoAddress address;
     address.setStreet(addressMap.value(STREET).toString());
     address.setDistrict(addressMap.value(DISTRICT).toString());
@@ -228,9 +275,36 @@ QPlace JsonDbHandler::convertJsonVariantToPlace(const QVariant &variant)
     address.setCounty(addressMap.value(COUNTY).toString());
     address.setState(addressMap.value(STATE).toString());
     address.setCountry(addressMap.value(COUNTRY).toString());
+    address.setPostcode(addressMap.value(POSTCODE).toString());
     location.setAddress(address);
 
     place.setLocation(location);
+
+    QVariantList phonesJson = placeJson.value(PHONES).toList();
+
+    QPlaceContactDetail detail;
+    foreach (const QVariant &phoneJson, phonesJson) {
+        detail.setLabel(phoneJson.toMap().value(LABEL).toString());
+        detail.setValue(phoneJson.toMap().value(VALUE).toString());
+        if (phoneJson.toMap().value(PHONE_SUBTYPE).toString() == SUBTYPE_LANDLINE)
+            place.appendContactDetail(QPlaceContactDetail::Phone, detail);
+        else if (phoneJson.toMap().value(PHONE_SUBTYPE).toString() == SUBTYPE_FAX)
+            place.appendContactDetail(QPlaceContactDetail::Fax, detail);
+    }
+
+    QVariantList websitesJson = placeJson.value(WEBSITES).toList();
+    foreach (const QVariant &websiteJson, websitesJson) {
+        detail.setLabel(websiteJson.toMap().value(LABEL).toString());
+        detail.setValue(websiteJson.toMap().value(URL).toString());
+        place.appendContactDetail(QPlaceContactDetail::Website, detail);
+    }
+
+    QVariantList emailsJson = placeJson.value(EMAILS).toList();
+    foreach (const QVariant &emailJson, emailsJson) {
+        detail.setLabel(emailJson.toMap().value(LABEL).toString());
+        detail.setValue(emailJson.toMap().value(VALUE).toString());
+        place.appendContactDetail(QPlaceContactDetail::Email, detail);
+    }
 
     if (placeJson.keys().contains(ICON_URL) && !placeJson.value(ICON_URL).toString().isEmpty()) {
         QPlaceIcon icon;
