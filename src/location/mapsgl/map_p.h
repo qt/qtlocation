@@ -58,7 +58,6 @@
 #include "cameradata.h"
 #include "frustum_p.h"
 
-#include "mapitem.h"
 #include "maptype.h"
 
 #include <QSharedPointer>
@@ -72,7 +71,6 @@ class Map;
 class MapController;
 class MapSphere;
 class Projection;
-struct MapItemGLResources;
 
 class QGLCamera;
 class QGLSceneNode;
@@ -111,13 +109,6 @@ public:
 
     void update();
 
-    int numMapItems() const;
-    QList<MapItem*> mapItems() const;
-    QList<MapItem*> mapItemsAt(const QPoint &point) const;
-    QList<MapItem*> mapItemsWithin(const QRect &rect) const;
-    void addMapItem(MapItem *item);
-    void removeMapItem(MapItem *item);
-    void clearMapItems();
     const MapType activeMapType() const;
     void setActiveMapType(const MapType mapType);
 
@@ -127,8 +118,6 @@ public:
     QVector2D pointToTile(const QVector3D &point, int zoom, bool roundUp = false) const;
     QVector3D tileXIntersectToPoint(int zoomLevel, int x) const;
     QVector3D tileYIntersectToPoint(int zoomLevel, int y) const;
-
-    virtual void updateMapItemSceneNode(MapItem *item) = 0;
 
 protected:
     Frustum frustum() const;

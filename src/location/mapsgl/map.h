@@ -94,14 +94,6 @@ public:
     void setCameraData(const CameraData &cameraData);
     CameraData cameraData() const;
 
-    int numMapItems() const;
-    QList<MapItem*> mapItems() const;
-    QList<MapItem*> mapItemsAt(const QPoint &point) const;
-    QList<MapItem*> mapItemsWithin(const QRect &rect) const;
-    void addMapItem(MapItem *item);
-    void removeMapItem(MapItem *item);
-    void clearMapItems();
-
     QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const;
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
 

@@ -43,7 +43,6 @@
 #include "tilecache.h"
 #include "tile.h"
 #include "cameradata.h"
-#include "mapitem.h"
 
 #include "qgeocoordinate.h"
 
@@ -93,27 +92,6 @@ TileView::TileView(TileCache *tileCache) :
             SLOT(update()));
 
     setCamera(map_->glCamera());
-
-
-//    MapItem *item1 = new MapItem;
-//    item1->setCoordinate(QGeoCoordinate(-27, 153));
-//    item1->setSize(QSizeF(128, 128));
-//    item1->setZoom(5);
-//    map_->addMapItem(item1);
-
-//    MapItem *item2 = new MapItem;
-//    item2->setCoordinate(QGeoCoordinate(-27, 153));
-//    item2->setSize(QSizeF(128, 128));
-//    item2->setAnchor(QPointF(128, 128));
-//    item2->setZoom(5);
-//    map_->addMapItem(item2);
-
-//    MapItem *item3 = new MapItem;
-//    item3->setCoordinate(QGeoCoordinate(-27, 153));
-//    item3->setSize(QSizeF(256.0, 256.0));
-//    item3->setAnchor(QPointF(-256.0, -256.0));
-//    item3->setZoom(6);
-//    map_->addMapItem(item3);
 }
 
 TileView::~TileView()

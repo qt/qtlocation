@@ -59,7 +59,6 @@
 #include <Qt3D/qglscenenode.h>
 #include <Qt3D/qglbuilder.h>
 #include <Qt3D/qgeometrydata.h>
-#include "qdeclarativegeomapitem_p.h"
 #include <cmath>
 
 #include <qgeoserviceprovider.h>
@@ -140,7 +139,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
 }
 
-
 QDeclarativeGeoMap::~QDeclarativeGeoMap()
 {
     // TODO we do not clear the map items atm
@@ -189,11 +187,6 @@ void QDeclarativeGeoMap::populateMap()
             setupMapView(mapView);
             continue;
         }
-        QDeclarativeGeoMapItem* mapItem = qobject_cast<QDeclarativeGeoMapItem*>(kids.at(i));
-        if (mapItem) {
-            addMapItem(mapItem);
-        }
-
         QDeclarativeGeoMapItemBase* mapScreenItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
         if (mapScreenItem) {
             addMapScreenItem(mapScreenItem);
@@ -294,26 +287,6 @@ QSGNode* QDeclarativeGeoMap::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
 
     node->setSize(QSize(width(), height()));
     node->update();
-
-    //TODO: refactor below
-    if (updateMutex_.tryLock()) {
-        if (canvas_) {
-            for (int i = 0; i < mapItemsPending_.count(); i++) {
-                mapItemsPending_.at(i)->setMap(this);
-                mapItems_.append(mapItemsPending_.at(i));
-                map_->addMapItem(mapItemsPending_.at(i)->mapItem());
-            }
-            mapItemsPending_.clear();
-        }
-
-        // perform any updates needed by items
-        // can be optimized if lot of map items: usually the operation is no-op (static map items)
-        for (int i = 0; i < mapItems_.count(); ++i)
-            mapItems_.at(i)->updateItem();
-        updateMutex_.unlock();
-    } else {
-        QLOC_TRACE1("===== Map item update will be missed, mutex not acquired =====");
-    }
 
     return node;
 }
@@ -947,69 +920,13 @@ void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
     Note: MapItemViews can not be added with this method.
 */
 
-// all map item additions and removals, whether internal or app originated,
-// must go through these functions
-void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItem *item)
-{
-    QLOC_TRACE0;
-    if (!item || mapItems_.contains(item) || mapItemsPending_.contains(item))
-        return;
-    updateMutex_.lock();
-    // set pending, we'll add them once we have GL context
-    mapItemsPending_.append(item);
-    connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(mapItemDestroyed(QObject*)));
-    updateMutex_.unlock();
-}
-
-void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItem *item)
-{
-    QLOC_TRACE0;
-    if (!item || !map_)
-        return;
-    if (mapItemsPending_.contains(item)) {
-        mapItemsPending_.removeAll(item);
-        return;
-    }
-    if (!mapItems_.contains(item))
-        return;
-    updateMutex_.lock();
-    item->setMap(0);
-    // stop listening to destroyed()
-    item->disconnect(this);
-    // these can be optmized for perf, as we already check the 'contains' above
-    mapItems_.removeOne(item);
-    mapItemsPending_.removeOne(item);
-    map_->removeMapItem(item->mapItem());
-    updateMutex_.unlock();
-}
-
-// TODO clears all items including ones from models/MapItemview which is not intended
-void QDeclarativeGeoMap::clearMapItems()
-{
-    if (mapItems_.isEmpty() || !map_)
-        return;
-    updateMutex_.lock();
-    mapItems_.clear();
-    mapItemsPending_.clear();
-    map_->clearMapItems();
-    updateMutex_.unlock();
-}
-
-// when a map item is getting destroyed, we need make sure resources are released gracefully
-// with QML we must prepare for arbitrary deletion times
-void QDeclarativeGeoMap::mapItemDestroyed(QObject* item)
-{
-    QDeclarativeGeoMapItem* mapItem = qobject_cast<QDeclarativeGeoMapItem*>(item);
-    if (mapItem)
-        removeMapItem(mapItem);
-}
-
 void QDeclarativeGeoMap::addMapScreenItem(QDeclarativeGeoMapItemBase *item)
 {
     QLOC_TRACE0;
     if (!item || mapScreenItems_.contains(item))
         return;
     updateMutex_.lock();
+    item->setParentItem(this);
     item->setMap(this, map_);
     mapScreenItems_.append(item);
     connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(mapScreenItemDestroyed(QObject*)));
@@ -1024,6 +941,7 @@ void QDeclarativeGeoMap::removeMapScreenItem(QDeclarativeGeoMapItemBase *item)
     if (!mapScreenItems_.contains(item))
         return;
     updateMutex_.lock();
+    item->setParentItem(0);
     item->setMap(0, 0);
     // stop listening to destroyed()
     item->disconnect(this);
@@ -1084,7 +1002,7 @@ QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
 // This function is strictly for testing purposes
 int QDeclarativeGeoMap::testGetDeclarativeMapItemCount()
 {
-    return mapItems_.count();
+    return 0;
 }
 
 #include "moc_qdeclarativegeomap_p.cpp"

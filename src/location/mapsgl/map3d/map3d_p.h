@@ -71,7 +71,6 @@ public:
     virtual void updateGlCamera(QGLCamera* glCamera);
     virtual void updateFrustum(Frustum &frustum);
     virtual QList<TileSpec> updateVisibleTiles();
-    virtual void updateMapItemSceneNode(MapItem *item);
 
     virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;

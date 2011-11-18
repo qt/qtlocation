@@ -202,10 +202,6 @@ QList<TileSpec> Map3DPrivate::updateVisibleTiles()
     return viewport_.visibleTiles();
 }
 
-void Map3DPrivate::updateMapItemSceneNode(MapItem */*item*/)
-{
-}
-
 QGeoCoordinate Map3DPrivate::screenPositionToCoordinate(const QPointF &/*pos*/) const
 {
     return QGeoCoordinate();

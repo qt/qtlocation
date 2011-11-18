@@ -31,8 +31,6 @@ SUBDIRS += geotestplugin \
            qplacesupplier \
            qplacesearchresult \
            declarative \
-           intervaltree \
-           mapitemtree \
            sphere \
            qmlinterface \
            maptype

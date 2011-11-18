@@ -148,11 +148,8 @@ public:
 
     QDeclarativeListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
-    QDeclarativeListProperty<QDeclarativeGeoMapItem> items();
-
-    Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItem *item);
-    Q_INVOKABLE void addMapItem(QDeclarativeGeoMapItem *item);
-    Q_INVOKABLE void clearMapItems();
+    // do we need this?
+    //QDeclarativeListProperty<QDeclarativeGeoMapItemBase> items();
 
     Q_INVOKABLE void removeMapScreenItem(QDeclarativeGeoMapItemBase *item);
     Q_INVOKABLE void addMapScreenItem(QDeclarativeGeoMapItemBase *item);
@@ -201,7 +198,6 @@ private Q_SLOTS:
     void centerLatitudeChanged(double latitude);
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
-    void mapItemDestroyed(QObject* item);
     void mapScreenItemDestroyed(QObject* item);
     void mappingManagerInitialized();
     void mapZoomLevelChanged(qreal zoom);
@@ -249,8 +245,6 @@ private:
 
     TileCache *tileCache_;
     Map *map_;
-    QList<QDeclarativeGeoMapItem*> mapItems_;
-    QList<QDeclarativeGeoMapItem*> mapItemsPending_;
 
     QList<QDeclarativeGeoMapItemBase*> mapScreenItems_;
 

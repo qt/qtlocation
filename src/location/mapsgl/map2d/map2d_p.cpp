@@ -42,7 +42,6 @@
 #include "projection2d_p.h"
 
 #include "tile.h"
-#include "mapitem.h"
 
 #include <Qt3D/qgeometrydata.h>
 #include <Qt3D/qglbuilder.h>
@@ -857,63 +856,6 @@ QList<TileSpec> Map2DPrivate::tilesFromPoints(const QVector<QVector3D> &points, 
     }
 
     return results;
-}
-
-void Map2DPrivate::updateMapItemSceneNode(MapItem *item)
-{
-    double z = item->zoom();
-
-    if (z < 0) {
-        // TODO draw item on camera
-        return;
-    }
-
-    double scale = sideLength_ / (tileSize_ * pow(2, z));
-    QPointF anchor = item->anchor() * scale;
-    QSizeF size = item->size() * scale;
-    double alt = 100.0;
-    QVector3D point = projection()->coordToPoint(item->coordinate());
-    QVector3D tl = QVector3D(point.x() + anchor.x(), point.y() - anchor.y(), alt);
-    QVector3D tr = QVector3D(tl.x() + size.width(), tl.y(), alt);
-    QVector3D bl = QVector3D(tl.x(), tl.y() - size.height(), alt);
-    QVector3D br = QVector3D(tl.x() + size.width(), tl.y() - size.height(), alt);
-
-    QVector3D up(0.0, 0.0, 1.0);
-
-    QGeometryData g;
-
-    g.appendVertex(tl);
-    g.appendNormal(up);
-    g.appendTexCoord(QVector2D(0.0, 0.0));
-
-    g.appendVertex(bl);
-    g.appendNormal(up);
-    g.appendTexCoord(QVector2D(0.0, 1.0));
-
-    g.appendVertex(br);
-    g.appendNormal(up);
-    g.appendTexCoord(QVector2D(1.0, 1.0));
-
-    g.appendVertex(tr);
-    g.appendNormal(up);
-    g.appendTexCoord(QVector2D(1.0, 0.0));
-
-    QGLBuilder builder;
-    builder.addQuads(g);
-    QGLSceneNode *node = builder.finalizedSceneNode();
-
-    QGLMaterial *mat = new QGLMaterial(node);
-    QColor defaultItemColor(128, 128, 128, 256);
-    mat->setColor(defaultItemColor);
-    mat->setSpecularColor(defaultItemColor);
-    mat->setDiffuseColor(defaultItemColor);
-    mat->setShininess(1.0);
-    node->setEffect(QGL::LitMaterial);
-
-    node->setMaterial(mat);
-    item->setSceneNode(node);
-
-    item->setBounds(QRect(bl.x(), bl.y(), size.width(), size.height()));
 }
 
 QGeoCoordinate Map2DPrivate::screenPositionToCoordinate(const QPointF &pos) const

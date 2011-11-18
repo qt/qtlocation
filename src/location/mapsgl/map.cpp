@@ -47,7 +47,6 @@
 #include "mapsphere_p.h"
 #include "projection_p.h"
 #include "tile.h"
-#include "mapitem.h"
 #include "mapcontroller.h"
 
 #include <QMutex>
@@ -147,41 +146,6 @@ void Map::update()
 {
     d_ptr->update();
     emit updateRequired();
-}
-
-int Map::numMapItems() const
-{
-    return d_ptr->numMapItems();
-}
-
-QList<MapItem*> Map::mapItems() const
-{
-    return d_ptr->mapItems();
-}
-
-QList<MapItem*> Map::mapItemsAt(const QPoint &point) const
-{
-    return d_ptr->mapItemsAt(point);
-}
-
-QList<MapItem*> Map::mapItemsWithin(const QRect &rect) const
-{
-    return d_ptr->mapItemsWithin(rect);
-}
-
-void Map::addMapItem(MapItem *item)
-{
-    d_ptr->addMapItem(item);
-}
-
-void Map::removeMapItem(MapItem *item)
-{
-    d_ptr->removeMapItem(item);
-}
-
-void Map::clearMapItems()
-{
-    d_ptr->clearMapItems();
 }
 
 QGeoCoordinate Map::screenPositionToCoordinate(const QPointF &pos, bool clipToViewport) const
@@ -337,42 +301,6 @@ Frustum MapPrivate::frustum() const
 void MapPrivate::paintGL(QGLPainter *painter)
 {
     sphere_->paintGL(painter);
-}
-
-int MapPrivate::numMapItems() const
-{
-    return sphere_->numMapItems();
-}
-
-QList<MapItem*> MapPrivate::mapItems() const
-{
-    return sphere_->mapItems();
-}
-
-QList<MapItem*> MapPrivate::mapItemsAt(const QPoint &point) const
-{
-    return sphere_->mapItemsAt(point);
-}
-
-QList<MapItem*> MapPrivate::mapItemsWithin(const QRect &rect) const
-{
-    return sphere_->mapItemsWithin(rect);
-}
-
-void MapPrivate::addMapItem(MapItem *item)
-{
-    sphere_->addMapItem(item);
-}
-
-// Must not be called from rendering thread
-void MapPrivate::removeMapItem(MapItem *item)
-{
-    sphere_->removeMapItem(item);
-}
-
-void MapPrivate::clearMapItems()
-{
-    sphere_->clearMapItems();
 }
 
 QVector2D MapPrivate::pointToTile(const QVector3D &point, int zoom, bool roundUp) const

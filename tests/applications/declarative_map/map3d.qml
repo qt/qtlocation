@@ -71,7 +71,7 @@ Item {
             Text {text: "Crazy mode:\n" + testModel.crazyMode + "\nclick to\ntoggle."}
             MouseArea{ anchors.fill: parent;
                 onClicked: testModel.crazyMode = !testModel.crazyMode
-                onDoubleClicked: map.removeMapItem(mapItem1)
+                onDoubleClicked: map.removeMapScreenItem(mapItem1)
             }
         }
         AnimatedImage {
@@ -84,14 +84,14 @@ Item {
         Rectangle {color: "lightblue"; width: 80; height: 80;
             Text {text: "Click:\nadd item1\nDouble-click:\nrm item1"}
             MouseArea{ anchors.fill: parent;
-                onClicked: {console.log('----------------adding item 1'); map.addMapItem(externalStaticMapItem1);}
-                onDoubleClicked: {console.log('+++++++++++++++ removing item 1'); map.removeMapItem(externalStaticMapItem1);}
+                onClicked: {console.log('----------------adding item 1'); map.addMapScreenItem(externalStaticMapItem1);}
+                onDoubleClicked: {console.log('+++++++++++++++ removing item 1'); map.removeMapScreenItem(externalStaticMapItem1);}
             }
         }
         Rectangle {color: "lightblue"; width: 80; height: 80;
             Text {text: "Click:\nadd item2\nDouble-click:\nrm item2"}
             MouseArea{ anchors.fill: parent;
-                onClicked: {console.log('adding item 2'); map.addMapItem(externalStaticMapItem2);}
+                onClicked: {console.log('adding item 2'); map.addMapScreenItem(externalStaticMapItem2);}
                 onDoubleClicked: {console.log('removing item 2'); map.removeMapItem(externalStaticMapItem2);}
             }
         }
@@ -199,50 +199,6 @@ Item {
         altitude: 0
     }
 
-    /*
-    MapItem {
-        id: externalStaticMapItem1
-        objectName: "externalStaticMapItem1"
-        coordinate: brisbaneCoordinate
-        zoomLevel: 5.0
-        source: Rectangle {
-            color: "gray"
-            width: 140
-            height: 20
-            Text {font.pixelSize: 15;text: "ext map item 1"; font.bold: true; color: 'red'}
-        }
-    }
-
-    MapItem {
-        id: externalStaticMapItem2
-        objectName: "externalStaticMapItem2"
-        coordinate: brisbaneCoordinate2
-        zoomLevel: 5.0
-        source: Rectangle {
-            color: "gray"
-            width: 140
-            height: 20
-            Text {font.pixelSize: 15;text: "ext map item 2"; font.bold: true; color: 'red'}
-        }
-    }
-    */
-
-    /*
-    MapItem {
-        id: mapItem1
-        source: AnimatedImage {width: 80; height: 80; playing: true; source: "walk.gif"}
-    }
-    */
-
-    //AnimatedImage {width: 80; height: 80; playing: true; source: "walk.gif"}
-    //MapItem {id: mapItem2 }
-    //MapItem {id: mapItem3 }
-    //MapItem {id: mapItem4 }
-    //MapItem {id: mapItem5 }
-    //MapItem {id: mapItem6 }
-    //MapItem {id: mapItem7 }
-    //MapItem {id: mapItem8 }
-
     Coordinate {
         id: brisbaneCoordinate
         latitude: -27.5
@@ -264,6 +220,7 @@ Item {
             anchors.fill: parent
             onClicked: console.log('coordinate: ' + mouse.coordinate.latitude + ' to screen pos: ' + map.toScreenPosition(mouse.coordinate).x + ' ' + map.toScreenPosition(mouse.coordinate).y)
         }
+/*
         MapItem {
             id: externalStaticMapItem1
             visible: true
@@ -281,6 +238,7 @@ Item {
                 }
             }
         }
+*/
 
         MapScreenItem {
             objectName: "blinky screen item 1"
@@ -292,7 +250,6 @@ Item {
                 source: "blinky.gif"
             }
         }
-
 
         MapScreenItem {
             objectName: "blinky screen item 2"
@@ -313,25 +270,14 @@ Item {
             }
         }
 
-        MapItem {
-            objectName: 'blinky static item'
-            zoomLevel: 7 // at which map's  zoom level the width and height are '1-to-1'
-            coordinate: brisbaneCoordinate
-            sourceItem: AnimatedImage {
-                width: 80
-                height: 80
-                playing: true
-                source: "blinky.gif"
-            }
-        }
-
         MapItemView {
             id: theObjectView
             model: testModel
             delegate: Component {
-                MapItem {
-                    objectName: 'one of many items from model'
-                    visible: true
+                MapScreenItem {
+//                    objectName: 'one of many items from model'
+//                    visible: true
+                    zoomLevel: 7
                     sourceItem: Rectangle {
                         width: 300; height: 300; color: 'green'
                         Component.onCompleted: {

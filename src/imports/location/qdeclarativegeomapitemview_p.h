@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
 class QAbstractItemModel;
 class QDeclarativeGraphicsGeoMap;
 class QDeclarativeGeoMap;
-class QDeclarativeGeoMapItem;
+class QDeclarativeGeoMapScreenItem;
 class QDeclarativeGeoMapMouseArea;
 
 class QDeclarativeGeoMapItemView : public QObject, public QDeclarativeParserStatus
@@ -87,7 +87,7 @@ public:
     void setVisible(bool visible);
     bool isVisible() const;
 
-    QDeclarativeGeoMapItem* createItem(int modelRow);
+    QDeclarativeGeoMapScreenItem* createItem(int modelRow);
     // From QDeclarativeParserStatus
     virtual void componentComplete();
     void classBegin() {}
@@ -110,7 +110,7 @@ private:
     QVariant modelVariant_;
     QAbstractItemModel* model_;
     QDeclarativeGeoMap *map_;
-    QList<QDeclarativeGeoMapItem*> mapItemList_;
+    QList<QDeclarativeGeoMapScreenItem*> mapItemList_;
 };
 
 QT_END_NAMESPACE

@@ -42,7 +42,7 @@
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativegeomap_p.h"
-#include "qdeclarativegeomapitem_p.h"
+#include "qdeclarativegeomapscreenitem_p.h"
 
 #include <QDebug>
 #include <QDeclarativeParserStatus>
@@ -126,7 +126,7 @@ void QDeclarativeGeoMapItemView::modelReset()
 void QDeclarativeGeoMapItemView::modelRowsInserted(QModelIndex, int start, int end)
 {
     if (!componentCompleted_ || !map_ || !delegate_ || !model_) {
-        QDeclarativeGeoMapItem* mapItem;
+        QDeclarativeGeoMapScreenItem* mapItem;
         for (int i = start; i <= end; ++i) {
             mapItem = createItem(i);
             if (!mapItem) {
@@ -135,7 +135,7 @@ void QDeclarativeGeoMapItemView::modelRowsInserted(QModelIndex, int start, int e
             mapItemList_.append(mapItem);
             // TODO visibility factors need to be solved
             //mapItem->setVisible(visible_);
-            map_->addMapItem(mapItem);
+            map_->addMapScreenItem(mapItem);
             // TODO mouse areas are omitted atm
         }
     }
@@ -146,11 +146,11 @@ void QDeclarativeGeoMapItemView::modelRowsRemoved(QModelIndex, int start, int en
     if (!componentCompleted_ || !map_ || !delegate_ || !model_)
         return;
     for (int i = end; i >= start; --i) {
-        QDeclarativeGeoMapItem *mapItem = mapItemList_.takeAt(i);
+        QDeclarativeGeoMapScreenItem *mapItem = mapItemList_.takeAt(i);
         Q_ASSERT(mapItem);
         if (!mapItem) // bad
             break;
-        map_->removeMapItem(mapItem);
+        map_->removeMapScreenItem(mapItem);
         delete mapItem;
     }
 }
@@ -192,7 +192,7 @@ void QDeclarativeGeoMapItemView::removeInstantiatedItems()
     if (!map_)
         return;
     for (int i = 0; i < mapItemList_.count(); ++ i) {
-        map_->removeMapItem(mapItemList_.at(i));
+        map_->removeMapScreenItem(mapItemList_.at(i));
     }
     qDeleteAll(mapItemList_);
     mapItemList_.clear();
@@ -210,7 +210,7 @@ void QDeclarativeGeoMapItemView::repopulate()
     // We could use more specialized landmark model calls here too,
     // but hopefully the support will be leveraged to a general model
     // level.
-    QDeclarativeGeoMapItem* mapItem;
+    QDeclarativeGeoMapScreenItem* mapItem;
     for (int i = 0; i < model_->rowCount(); ++i) {
         mapItem = createItem(i);
         Q_ASSERT(mapItem);
@@ -218,7 +218,7 @@ void QDeclarativeGeoMapItemView::repopulate()
             break;
         mapItemList_.append(mapItem);
         // TODO what to do with visibility
-        map_->addMapItem(mapItem);
+        map_->addMapScreenItem(mapItem);
     }
 }
 
@@ -226,7 +226,7 @@ void QDeclarativeGeoMapItemView::repopulate()
 // QObject* as data. Some day this may be leveraged to any user defined
 // model or e.g. XML model.
 //QDeclarativeGeoMapItem* QDeclarativeGeoMapItemView::createItem(int modelRow)
-QDeclarativeGeoMapItem* QDeclarativeGeoMapItemView::createItem(int modelRow)
+QDeclarativeGeoMapScreenItem* QDeclarativeGeoMapItemView::createItem(int modelRow)
 {
     if (!delegate_ || !model_)
         return NULL;
@@ -263,7 +263,7 @@ QDeclarativeGeoMapItem* QDeclarativeGeoMapItemView::createItem(int modelRow)
         delete itemContext;
         return 0;
     }
-    QDeclarativeGeoMapItem *declMapObj =  qobject_cast<QDeclarativeGeoMapItem*>(obj);
+    QDeclarativeGeoMapScreenItem *declMapObj =  qobject_cast<QDeclarativeGeoMapScreenItem*>(obj);
     if (!declMapObj) {
         qWarning() << "QDeclarativeGeoMapItem map item delegate is of unsupported type.";
         delete itemContext;
