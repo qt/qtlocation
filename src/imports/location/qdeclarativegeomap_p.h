@@ -98,7 +98,7 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeGeoMapPinchArea* pinch READ pinch CONSTANT)
-    Q_PROPERTY(QDeclarativeGeoMapFlickable* flick READ flick CONSTANT);
+    Q_PROPERTY(QDeclarativeGeoMapFlickable* flick READ flick CONSTANT)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel NOTIFY minimumZoomLevelChanged)
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel NOTIFY maximumZoomLevelChanged)
@@ -126,7 +126,7 @@ public:
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider* plugin() const;
 
-    Q_INVOKABLE void setActiveMapType(QDeclarativeGeoMapType* mapType);
+    void setActiveMapType(QDeclarativeGeoMapType* mapType);
     QDeclarativeGeoMapType* activeMapType()const;
 
     qreal minimumZoomLevel() const;

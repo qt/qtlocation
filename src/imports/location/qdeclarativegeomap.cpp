@@ -116,7 +116,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         bearing_(0.0),
         tilt_(0.0),
         center_(0),
-//      mapType_(NoMap),
         componentCompleted_(false),
         mappingManagerInitialized_(false),
         flickable_(0),

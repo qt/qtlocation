@@ -440,7 +440,7 @@ MapPrivate::setActiveMapType(const MapType type)
       visibleTiles_ << spec;
     }
 
-    update();
+    map_->update();
 }
 
 const MapType MapPrivate::activeMapType() const
