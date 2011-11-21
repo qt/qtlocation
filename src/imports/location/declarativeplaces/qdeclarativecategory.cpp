@@ -78,16 +78,15 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeCategory::QDeclarativeCategory(QObject* parent)
-    : QObject(parent), m_icon(0), m_reply(0)
+:   QObject(parent), m_icon(0), m_plugin(0), m_reply(0), m_complete(false), m_status(Ready)
 {
 }
 
 QDeclarativeCategory::QDeclarativeCategory(const QPlaceCategory &category,
                                            QDeclarativeGeoServiceProvider *plugin,
                                            QObject *parent)
-        : QObject(parent),
-          m_category(category),
-          m_icon(0), m_plugin(plugin), m_reply(0)
+:   QObject(parent), m_category(category), m_icon(0), m_plugin(plugin), m_reply(0),
+    m_complete(false), m_status(Ready)
 {
     Q_ASSERT(plugin);
     setCategory(category);
