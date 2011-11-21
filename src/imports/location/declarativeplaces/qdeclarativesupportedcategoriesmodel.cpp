@@ -194,15 +194,11 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
     if (m_plugin == plugin)
         return;
 
-    QPlaceManager *placeManager;
-    //The purpose of the connections below is to listen to any category notifications
-    //so that we can reupdate the categories model.
-
     //disconnect the manager of the old plugin if we have one
     if (m_plugin) {
         QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
         if (serviceProvider) {
-            placeManager = serviceProvider->placeManager();
+            QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
                 disconnect(placeManager, SIGNAL(categoryAdded(QPlaceCategory, QString)),
                            this, SLOT(addedCategory(QPlaceCategory, QString)));
@@ -214,17 +210,24 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
         }
     }
 
+    m_plugin = plugin;
+
+    // handle plugin name changes -> update categories
+    connect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(updateCategories()));
+
     //connect to the manager of the new plugin.
-    if (plugin) {
-        QGeoServiceProvider *serviceProvider = plugin->sharedGeoServiceProvider();
+    if (m_plugin) {
+        QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
         if (serviceProvider) {
-            placeManager = serviceProvider->placeManager();
+            QPlaceManager *placeManager = serviceProvider->placeManager();
             if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
                 qmlInfo(this) << tr("Warning: Plugin does not support places.");
                 return;
             }
 
             if (placeManager) {
+                // listen for any category notifications so that we can reupdate the categories
+                // model.
                 connect(placeManager, SIGNAL(categoryAdded(QPlaceCategory, QString)),
                         this, SLOT(addedCategory(QPlaceCategory, QString)));
                 connect(placeManager, SIGNAL(categoryUpdated(QPlaceCategory, QString)),
@@ -235,21 +238,10 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
         }
     }
 
-    reset(); // reset the model
-    m_plugin = plugin;
     if (m_complete)
         emit pluginChanged();
 
-    if (placeManager) {
-        m_response = placeManager->initializeCategories();
-        if (m_response) {
-            connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
-            setStatus(QDeclarativeSupportedCategoriesModel::Updating);
-        } else {
-            setStatus(QDeclarativeSupportedCategoriesModel::Error);
-            m_errorString = tr("Unable to initialize categories");
-        }
-    }
+    updateCategories();
 }
 
 QDeclarativeGeoServiceProvider* QDeclarativeSupportedCategoriesModel::plugin() const
@@ -400,6 +392,33 @@ void QDeclarativeSupportedCategoriesModel::removedCategory(const QString &catego
     parentNode->childIds.removeAll(categoryId);
     delete m_categoriesTree.take(categoryId);
     endRemoveRows();
+}
+
+void QDeclarativeSupportedCategoriesModel::updateCategories()
+{
+    if (!m_plugin)
+        return;
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+        return;
+    }
+
+    if (placeManager) {
+        m_response = placeManager->initializeCategories();
+        if (m_response) {
+            connect(m_response, SIGNAL(finished()), this, SLOT(replyFinished()));
+            setStatus(QDeclarativeSupportedCategoriesModel::Updating);
+        } else {
+            setStatus(QDeclarativeSupportedCategoriesModel::Error);
+            m_errorString = tr("Unable to initialize categories");
+        }
+    }
 }
 
 void QDeclarativeSupportedCategoriesModel::update()

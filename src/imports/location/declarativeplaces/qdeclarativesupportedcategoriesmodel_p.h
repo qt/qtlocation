@@ -125,6 +125,7 @@ private slots:
     void addedCategory(const QPlaceCategory &category, const QString &parentId);
     void updatedCategory(const QPlaceCategory &category, const QString &parentId);
     void removedCategory(const QString &categoryId, const QString &parentId);
+    void updateCategories();
 
 private:
     QStringList populateCategories(QPlaceManager *, const QPlaceCategory &parent);
