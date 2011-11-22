@@ -116,6 +116,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         bearing_(0.0),
         tilt_(0.0),
         center_(0),
+        activeMapType_(0),
         componentCompleted_(false),
         mappingManagerInitialized_(false),
         flickable_(0),
@@ -388,16 +389,24 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     map_->mapController()->setZoom(zoomLevel_);
     map_->mapController()->setBearing(bearing_);
     map_->mapController()->setTilt(tilt_);
-    map_->update();
-    emit minimumZoomLevelChanged();
-    emit maximumZoomLevelChanged();
 
     QList<MapType> types = mappingManager_->supportedMapTypes();
     for (int i = 0; i < types.size(); ++i) {
         QDeclarativeGeoMapType *type = new QDeclarativeGeoMapType(types[i], this);
         supportedMapTypes_.append(type);
     }
+
+    if (!supportedMapTypes_.isEmpty()) {
+        QDeclarativeGeoMapType *type = supportedMapTypes_.at(0);
+        activeMapType_ = type;
+        map_->setActiveMapType(type->mapType());
+    }
+
+    map_->update();
+    emit minimumZoomLevelChanged();
+    emit maximumZoomLevelChanged();
     emit supportedMapTypesChanged();
+    emit activeMapTypeChanged();
 }
 
 void QDeclarativeGeoMap::updateMapDisplay(const QRectF &target)
