@@ -73,7 +73,6 @@ Item {
             addItem("Options")
             addItem("Map Type")
             addItem("Provider")
-            disableItem("Map Type")
         }
 
         onClicked: {
@@ -101,9 +100,7 @@ Item {
         horizontalOrientation: false
 
         Component.onCompleted: {
-            addItem("Reverse geocode")
-            addItem("Geocode")
-            addItem("Route")
+            update()
         }
 
         onClicked: {
@@ -120,7 +117,25 @@ Item {
                 page.state = "Route"
                 break;
             }
+            case "Follow me": {
+                map.followme =true
+                page.state = ""
+                break;
             }
+            case "Stop following": {
+                map.followme =false
+                page.state = ""
+                break;
+            }
+            }
+        }
+        function update(){
+            clear()
+            addItem("Reverse geocode")
+            addItem("Geocode")
+            addItem("Route")
+            if (map.followme) addItem("Stop following")
+            else addItem("Follow me")
         }
     }
 
@@ -132,10 +147,7 @@ Item {
         exclusive: true
 
         Component.onCompleted: {
-            /*            for (var i = 0; i<map.supportedMapTypes.length; i++)
-                addItem(map.supportedMapTypes[i].name)
-            if (map.supportedMapTypes.length > 0)
-                exclusiveButton = map.supportedMapTypes[0].name*/
+            update()
         }
 
         onClicked: {
@@ -143,7 +155,21 @@ Item {
         }
 
         onExclusiveButtonChanged: {
-            //             map.mapType = exclusiveButton
+            for (var i = 0; i<map.supportedMapTypes.length; i++){
+                if (exclusiveButton == map.supportedMapTypes[i].name){
+                    map.activeMapType = map.supportedMapTypes[i]
+                    break;
+                }
+            }
+        }
+
+        function update(){
+            clear()
+            for (var i = 0; i<map.supportedMapTypes.length; i++)
+                addItem(map.supportedMapTypes[i].name)
+
+            if (map.supportedMapTypes.length > 0)
+                exclusiveButton = map.supportedMapTypes[0].name
         }
     }
 
@@ -287,7 +313,7 @@ Item {
                 endAddress.city = routeDialog.endCity
 
                 tempGeocodeModel.query = startAddress
-                tempGeocodeModel.update();k
+                tempGeocodeModel.update();
             }*/
             page.state = ""
         }
@@ -493,11 +519,62 @@ Item {
         if (postcode) text +="<b>Postcode: </b>"+ postcode + " <br/>"*/
         return text
     }
+
+    function createMap(provider){
+        var plugin
+        if (parameters.length>0)
+            plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"; parameters: page.parameters}', page)
+        else
+            plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"}', page)
+        if (plugin.supportsMapping && plugin.supportsGeocoding && plugin.supportsReverseGeocoding && plugin.supportsRouting ){
+            if (map) map.destroy()
+            map = Qt.createQmlObject ('import QtLocation 5.0;\
+                                      import "content/map";\
+                                      MapComponent{\
+                                          z : backgroundRect.z + 1;\
+                                          width: page.width;\
+                                          height: page.height;\
+                                          onMapPressed:{page.state = ""}\
+                                          onFollowmeChanged: {optionsMenu.update()}\
+                                          onSupportedMapTypesChanged: {mapTypeMenu.update()}}',page)
+            map.plugin = plugin
+        }
+    }
+
+
+    function getPlugins(){
+        var plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {}', page)
+        var tempPlugin
+        var myArray = new Array()
+        for (var i = 0; i<plugin.availableServiceProviders.length; i++){
+            tempPlugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
+            //note this will allocate all the plugin managers and resources
+            if (tempPlugin.supportsMapping && tempPlugin.supportsGeocoding && tempPlugin.supportsReverseGeocoding && tempPlugin.supportsRouting )
+                myArray.push(tempPlugin.name)
+        }
+
+        return myArray
+    }
+
+    function setPluginParameters(pluginParameters) {
+        var parameters = new Array()
+        for (var prop in pluginParameters){
+            var parameter = Qt.createQmlObject('import QtLocation 5.0; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
+            parameters.push(parameter)
+        }
+        page.parameters=parameters
+        createMap(map.plugin.name)
+    }
+
     //=====================States of page=====================
     states: [
         State {
             name: ""
             PropertyChanges { target: map; focus: true }
+            StateChangeScript {
+                name: "updateOptionMenu"
+                script: { optionsMenu.update() }
+            }
         },
         State {
             name: "RevGeocode"
@@ -572,45 +649,4 @@ Item {
             NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
         }
     ]
-
-
-    function createMap(provider){
-        var plugin
-        if (parameters.length>0)
-            plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"; parameters: page.parameters}', page)
-        else
-            plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"}', page)
-        if (plugin.supportsMapping && plugin.supportsGeocoding && plugin.supportsReverseGeocoding && plugin.supportsRouting ){
-            if (map) map.destroy()
-            map = Qt.createQmlObject ('import QtLocation 5.0;import "content/map"; MapComponent{ z : backgroundRect.z + 1;width: page.width ;height: page.height; onMapPressed:{ page.state = "" }}',page)
-            map.plugin = plugin
-        }
-    }
-
-
-    function getPlugins(){
-        var plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {}', page)
-        var tempPlugin
-        var myArray = new Array()
-        for (var i = 0; i<plugin.availableServiceProviders.length; i++){
-            tempPlugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
-            //note this will allocate all the plugin managers and resources
-            if (tempPlugin.supportsMapping && tempPlugin.supportsGeocoding && tempPlugin.supportsReverseGeocoding && tempPlugin.supportsRouting )
-                myArray.push(tempPlugin.name)
-        }
-
-        return myArray
-    }
-
-    function setPluginParameters(pluginParameters) {
-        console.log("Plugin parameters:");
-        var parameters = new Array()
-        for (var prop in pluginParameters){
-            console.log(prop, "=", pluginParameters[prop])
-            var parameter = Qt.createQmlObject('import QtLocation 5.0; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',page)
-            parameters.push(parameter)
-        }
-        page.parameters=parameters
-        createMap(map.plugin.name)
-    }
 }

@@ -63,12 +63,23 @@ Map {
 
     property int lastX : -1
     property int lastY : -1
+    property bool followme: false
 
     Coordinate {
         id: brisbaneCoordinate
         latitude: -27.5
         longitude: 153
     }
+
+    PositionSource{
+        id: positionSource
+        active: followme
+
+        onPositionChanged: {
+            map.center = positionSource.position.coordinate
+        }
+    }
+
     Slider {
         id: zoomSlider;
         minimum: map.minimumZoomLevel;
@@ -78,7 +89,7 @@ Map {
         z: map.z+1
         anchors {
             bottom: parent.bottom;
-            bottomMargin: 56; rightMargin: 5; leftMargin: 5
+            bottomMargin: 56; rightMargin: 10; leftMargin: 10
             left: parent.left
         }
         width: parent.width - anchors.rightMargin - anchors.leftMargin
@@ -417,10 +428,13 @@ Map {
 
     onCenterChanged:{
         scaleText.text = calculateScale()
+        if (map.followme)
+            if (map.center != positionSource.position.coordinate) map.followme = false
     }
 
     onZoomLevelChanged:{
         scaleText.text = map.calculateScale()
+        if (map.followme) map.center = positionSource.position.coordinate
     }
 
     onWidthChanged:{
@@ -583,7 +597,7 @@ Map {
         property Coordinate lastCoordinate: Coordinate { latitude : 0; longitude : 0}
         anchors.fill: parent
 
-/*        onPressed : {
+        onPressed : {
             mapPressed();
             map.state = ""
             map.lastX = mouse.x
@@ -625,7 +639,7 @@ Map {
             popupMenu.addItem("Polygon")
 //            if ((map.markers.length != 0) || (map.mapItems.length != 0)) popupMenu.addItem("Delete all objects")
 //                map.state = "PopupMenu"
-        }*/
+        }
     }
 
 
