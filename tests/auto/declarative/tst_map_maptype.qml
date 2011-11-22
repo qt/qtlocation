@@ -96,6 +96,7 @@ TestCase {
         console.log('Number of supported map types: '
                     + map.supportedMapTypes.length)
 
+        activeMapTypeChangedSpy.clear();
         for (var i = 0; i < count; i++) {
             console.log('setting ' + map.supportedMapTypes[i].name)
             map.activeMapType = map.supportedMapTypes[i]
