@@ -40,8 +40,6 @@
 ****************************************************************************/
 #include "frustum_p.h"
 
-#include "viewportcamera_p.h"
-
 #include <Qt3D/qglcamera.h>
 
 #include <cmath>
@@ -91,72 +89,6 @@ void Frustum::update(const QGLCamera *camera, double aspectRatio, bool updatePla
 
     if (!updatePlanes)
         return;
-
-    QPlane3D pn = QPlane3D(bln_, tln_, brn_);
-    pn.setNormal(pn.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Near), pn);
-
-    QPlane3D pf = QPlane3D(blf_, brf_, tlf_);
-    pf.setNormal(pf.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Far), pf);
-
-    QPlane3D pl = QPlane3D(blf_, tlf_, bln_);
-    pl.setNormal(pl.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Left), pl);
-
-    QPlane3D pr = QPlane3D(brf_, brn_, trf_);
-    pr.setNormal(pr.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Right), pr);
-
-    QPlane3D pt = QPlane3D(tlf_, trf_, tln_);
-    pt.setNormal(pt.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Top), pt);
-
-    QPlane3D pb = QPlane3D(blf_, bln_, brf_);
-    pb.setNormal(pb.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Bottom), pb);
-}
-
-void Frustum::update(const ViewportCamera &camera)
-{
-    if (camera.aspectRatio() > 1.0) {
-        double fov = atan2(camera.viewSize().height() , (2 * camera.nearPlane()));
-
-        hn_ = 2 * tan(fov) * camera.nearPlane();
-        wn_ = hn_ * camera.aspectRatio();
-
-        hf_ = 2 * tan(fov) * camera.farPlane();
-        wf_ = hf_ * camera.aspectRatio();
-    } else {
-        double fov = atan2(camera.viewSize().width() , (2 * camera.nearPlane()));
-
-        wn_ = 2 * tan(fov) * camera.nearPlane();
-        hn_ = wn_ / camera.aspectRatio();
-
-        wf_ = 2 * tan(fov) * camera.farPlane();
-        hf_ = wf_ / camera.aspectRatio();
-    }
-
-    QVector3D p = camera.eye();
-    QVector3D d = camera.center() - camera.eye();
-    d.normalize();
-
-    QVector3D up = camera.up();
-    up.normalize();
-
-    QVector3D right = QVector3D::normal(d, up);
-
-    cf_ = p + d * camera.farPlane();
-    tlf_ = cf_ + (up * hf_ / 2) - (right * wf_ / 2);
-    trf_ = cf_ + (up * hf_ / 2) + (right * wf_ / 2);
-    blf_ = cf_ - (up * hf_ / 2) - (right * wf_ / 2);
-    brf_ = cf_ - (up * hf_ / 2) + (right * wf_ / 2);
-
-    cn_ = p + d * camera.nearPlane();
-    tln_ = cn_ + (up * hn_ / 2) - (right * wn_ / 2);
-    trn_ = cn_ + (up * hn_ / 2) + (right * wn_ / 2);
-    bln_ = cn_ - (up * hn_ / 2) - (right * wn_ / 2);
-    brn_ = cn_ - (up * hn_ / 2) + (right * wn_ / 2);
 
     QPlane3D pn = QPlane3D(bln_, tln_, brn_);
     pn.setNormal(pn.normal().normalized());

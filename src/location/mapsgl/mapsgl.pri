@@ -4,7 +4,6 @@ INCLUDEPATH += mapsgl
 QT += network qt3d
 
 include(map2d/map2d.pri)
-include(map3d/map3d.pri)
 
 SOURCES += \
     mapsgl/cameradata.cpp \

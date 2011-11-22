@@ -41,7 +41,6 @@
 #include "map.h"
 #include "map_p.h"
 #include "map2d_p.h"
-#include "map3d_p.h"
 
 #include "tilecache.h"
 #include "mapsphere_p.h"

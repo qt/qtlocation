@@ -57,8 +57,6 @@
 
 #include <Qt3D/qplane3d.h>
 
-class ViewportCamera;
-
 class QGLCamera;
 
 class Q_AUTOTEST_EXPORT Frustum
@@ -84,8 +82,6 @@ public:
     Q_DECLARE_FLAGS(Planes, Plane)
 
     Frustum();
-
-    void update(const ViewportCamera &camera);
 
     void update(const QGLCamera *camera, double aspectRatio, bool updatePlanes = false);
 
