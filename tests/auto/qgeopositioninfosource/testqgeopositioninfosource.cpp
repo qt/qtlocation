@@ -346,7 +346,9 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
     // changed by the time it is checked)
     QEventLoop loop;
     QTimer timer;
-    timer.setInterval(9500);
+    //simulated CI tests will quickly return -> real GPS tests take 2 minutes for satellite systems
+    //use a 5 min timeout
+    timer.setInterval(300000);
     connect(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)),
             &loop, SLOT(quit()));
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
