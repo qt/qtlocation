@@ -43,7 +43,7 @@
 #define UNSUPPORTED_REPLIES_H
 
 #include <QtLocation/QPlaceIdReply>
-#include "qplacemanagerengine_nokia.h"
+#include "../qplacemanagerengine_nokia.h"
 
 QT_USE_NAMESPACE
 
