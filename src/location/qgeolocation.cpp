@@ -84,6 +84,12 @@ bool QGeoLocationPrivate::operator==(const QGeoLocationPrivate &other) const
 */
 
 /*!
+    \fn bool QGeoLocation::operator!=(const QGeoLocation &other) const
+
+    Returns true if this location is not equal to \a other, otherwise returns false.
+*/
+
+/*!
     Constructs an new location object.
 */
 QGeoLocation::QGeoLocation()
