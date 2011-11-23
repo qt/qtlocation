@@ -97,8 +97,8 @@ Map* QDeclarativeGeoMapItemBase::map()
 
 QDeclarativeGeoMapScreenItem::QDeclarativeGeoMapScreenItem(QQuickItem *parent)
     : QDeclarativeGeoMapItemBase(parent),
-      sourceItem_(0),
       coordinate_(0),
+      sourceItem_(0),
       zoomLevel_(0.0),
       inUpdate_(false),
       mapAndSourceItemSet_(false) {}

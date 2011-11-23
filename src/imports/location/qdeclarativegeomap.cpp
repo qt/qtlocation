@@ -274,6 +274,7 @@ void QDeclarativeGeoMap::keyPressEvent(QKeyEvent *e)
 
 QSGNode* QDeclarativeGeoMap::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
+    Q_UNUSED(data)
     if (width() <= 0 || height() <= 0) {
         delete oldNode;
         return 0;

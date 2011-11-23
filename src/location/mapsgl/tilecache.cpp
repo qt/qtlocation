@@ -56,8 +56,9 @@
 
 Q_DECLARE_METATYPE(QList<TileSpec>)
 
-struct TileDisk
+class TileDisk
 {
+public:
     ~TileDisk()
     {
 //        qWarning() << "evicting (disk) " << spec;
@@ -69,8 +70,9 @@ struct TileDisk
     TileCache *cache;
 };
 
-struct TileMemory
+class TileMemory
 {
+public:
     ~TileMemory()
     {
 //        qWarning() << "evicting (memory) " << spec;
@@ -82,8 +84,8 @@ struct TileMemory
     TileCache *cache;
 };
 
-struct TileTexture
-{
+class TileTexture {
+public:
     ~TileTexture()
     {
 //        qWarning() << "evicting (texture) " << spec;
