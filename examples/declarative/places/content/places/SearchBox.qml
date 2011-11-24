@@ -76,6 +76,7 @@ Rectangle {
             visible: running
         }
 
+        //! [PlaceSearchSuggestionModel search text changed]
         onTextChanged: {
             if (suggestionsEnabled) {
                 if (text.length >= 3) {
@@ -86,6 +87,7 @@ Rectangle {
                 }
             }
         }
+        //! [PlaceSearchSuggestionModel search text changed]
     }
 
     Row {
@@ -126,8 +128,10 @@ Rectangle {
         }
     }
 
+    //! [CategoryModel view 1]
     ListView {
         id: categoryView
+    //! [CategoryModel view 1]
 
         anchors.top: row.bottom
         anchors.topMargin: 10
@@ -141,6 +145,7 @@ Rectangle {
         clip: true
         snapMode: ListView.SnapToItem
 
+    //! [CategoryModel view 2]
         header: IconButton {
             source: "../resources/left.png"
             hoveredSource: "../resources/left_hovered.png"
@@ -149,7 +154,9 @@ Rectangle {
             onClicked: categoryListModel.rootIndex = categoryListModel.parentModelIndex()
             visible: !busy.visible
         }
+    //! [CategoryModel view 2]
 
+    //! [CategoryModel view 3]
         model: VisualDataModel {
             id: categoryListModel
             model: categoryModel
@@ -168,6 +175,7 @@ Rectangle {
             }
         }
     }
+    //! [CategoryModel view 3]
 
     BusyIndicator {
         id: busy
@@ -186,14 +194,18 @@ Rectangle {
         visible: false
     }
 
+    //! [CategoryModel model]
     CategoryModel {
         id: categoryModel
         plugin: placesPlugin
         hierarchical: true
     }
+    //! [CategoryModel model]
 
+    //! [PlaceSearchSuggestionModel view 1]
     ListView {
         id: suggestionView
+    //! [PlaceSearchSuggestionModel view 1]
 
         anchors.top: row.bottom
         anchors.topMargin: 10
@@ -207,6 +219,7 @@ Rectangle {
         clip: true
         snapMode: ListView.SnapToItem
 
+    //! [PlaceSearchSuggestionModel view 2]
         model: suggestionModel
         delegate: Text {
             text: suggestion
@@ -225,7 +238,9 @@ Rectangle {
             }
         }
     }
+    //! [PlaceSearchSuggestionModel view 2]
 
+    //! [PlaceSearchSuggestionModel model]
     PlaceSearchSuggestionModel {
         id: suggestionModel
         plugin: placesPlugin
@@ -236,6 +251,7 @@ Rectangle {
                 searchRectangle.state = "SuggestionsShown";
         }
     }
+    //! [PlaceSearchSuggestionModel model]
 
     states: [
         State {

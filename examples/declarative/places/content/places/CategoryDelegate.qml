@@ -53,6 +53,7 @@ Item {
     width: parent.width
     height: childrenRect.height
 
+    //! [CategoryModel delegate text]
     Text {
         anchors.left: parent.left
         anchors.right: arrow.left
@@ -65,7 +66,9 @@ Item {
             onClicked: root.clicked()
         }
     }
+    //! [CategoryModel delegate text]
 
+    //! [CategoryModel delegate icon]
     IconButton {
         id: edit
 
@@ -104,4 +107,5 @@ Item {
 
         onClicked: root.arrowClicked()
     }
+    //! [CategoryModel delegate icon]
 }

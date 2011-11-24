@@ -46,6 +46,7 @@ Item {
 
     clip: true
 
+    //! [PlaceEditorialModel view]
     ListView {
         anchors.fill: parent
 
@@ -53,4 +54,5 @@ Item {
 
         delegate: EditorialDelegate { }
     }
+    //! [PlaceEditorialModel view]
 }

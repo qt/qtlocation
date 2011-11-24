@@ -69,7 +69,7 @@ Item {
         anchors.right: root.right
         anchors.rightMargin: 4
 
-        text: model.title
+        text: model.title.length > 0 ? model.title : qsTr("Untitled editorial")
         font.bold: true
         font.pixelSize: 16
 

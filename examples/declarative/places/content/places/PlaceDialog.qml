@@ -86,6 +86,7 @@ Dialog {
         ]);
     }
 
+    //! [Place save]
     onGoButtonClicked: {
         var modifiedPlace = place ? place : Qt.createQmlObject('import QtLocation 5.0; Place { }', page);
         modifiedPlace.plugin = placesPlugin;
@@ -107,4 +108,5 @@ Dialog {
 
         place.save();
     }
+    //! [Place save]
 }

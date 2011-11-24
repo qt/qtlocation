@@ -227,12 +227,12 @@ Item {
         value: map ? map.center : null
     }
 
+    //! [PlaceSearchModel model]
     PlaceSearchModel {
         id: placeSearchModel
+
         plugin: placesPlugin
-
         maximumCorrections: 5
-
         searchArea: searchRegion
 
         function searchForCategory(category) {
@@ -247,13 +247,16 @@ Item {
             execute();
         }
     }
+    //! [PlaceSearchModel model]
 
+    //! [PlaceRecommendationModel model]
     PlaceRecommendationModel {
         id: recommendationModel
         plugin: placesPlugin
 
         searchArea: searchRegion
     }
+    //! [PlaceRecommendationModel model]
 
     SearchBox {
         id: searchBox

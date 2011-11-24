@@ -50,6 +50,7 @@ Item {
     width: parent.width
     height: childrenRect.height
 
+    //! [PlaceSearchModel place delegate]
     Component {
         id: placeComponent
 
@@ -68,13 +69,14 @@ Item {
             }
         }
     }
+    //! [PlaceSearchModel place delegate]
 
     Component {
         id: correctionComponent
 
         Text {
             width: parent.width
-            text: correction
+            text: "Did you mean " + correction + "?"
         }
     }
 

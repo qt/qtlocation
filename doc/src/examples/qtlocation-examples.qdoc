@@ -84,26 +84,19 @@
     \ingroup qtlocation-examples
 */
 
-
-
 /*!
     \example declarative/mapviewer
     \title QML MapViewer
-    \brief The QML MapViewer displays and navigats a map using the Location
+    \brief The QML MapViewer displays and navigates a map using the Location
     QML plugin.
 
     \ingroup qtlocation-examples
 */
 
-
 /*!
-    \example declarative/qmlplaces
-    \title   QML Places
-    \brief The QML Places example shows how to use the Location QML plugin
-    to create and find places of interest.
-    for position information.
+    \example declarative/places
+    \title QML Places
+    \brief The QML Places searches for and displays places using the QtLocation QML plugin.
 
     \ingroup qtlocation-examples
 */
-
-

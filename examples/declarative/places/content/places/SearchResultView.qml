@@ -71,6 +71,7 @@ Item {
                     onStatusChanged: searchView.visible = false
                 }
 
+                //! [PlaceSearchModel place list]
                 ListView {
                     id: searchView
 
@@ -87,7 +88,9 @@ Item {
                         }
                     }
                 }
+                //! [PlaceSearchModel place list]
 
+                //! [PlaceRecommendationModel place list]
                 ListView {
                     id: similarView
 
@@ -105,6 +108,7 @@ Item {
                         }
                     }
                 }
+                //! [PlaceRecommendationModel place list]
             }
             Item {
                 // place details (page 1)
@@ -154,12 +158,14 @@ Item {
                         view.currentIndex = 2;
                     }
 
+                    //! [PlaceRecommendationModel search]
                     onSearchForSimilar: {
                         placeContentList.source = "";
                         recommendationModel.placeId = place.placeId;
                         recommendationModel.execute();
                         view.currentIndex = 0;
                     }
+                    //! [PlaceRecommendationModel search]
 
                     onEditPlace: {
                         editPlaceDialog.place = place;

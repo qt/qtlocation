@@ -3,4 +3,5 @@ SUBDIRS += snippets
 
 OTHER_FILES = \
     *.qdoc \
-    plugins/*.qdoc
+    plugins/*.qdoc \
+    examples/*.qdoc

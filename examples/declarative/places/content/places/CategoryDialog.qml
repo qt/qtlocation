@@ -58,6 +58,7 @@ Dialog {
         ]);
     }
 
+    //! [Category save]
     onGoButtonClicked: {
         console.log("Go clicked!");
         var modifiedCategory = category ? category : Qt.createQmlObject('import QtLocation 5.0; Category { }', page);
@@ -69,4 +70,5 @@ Dialog {
 
         category.save();
     }
+    //! [Category save]
 }
