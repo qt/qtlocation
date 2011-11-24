@@ -64,6 +64,7 @@ Map {
     property int lastX : -1
     property int lastY : -1
     property bool followme: false
+    property variant scaleLengths: [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
 
     Coordinate {
         id: brisbaneCoordinate
@@ -417,32 +418,44 @@ Map {
             id: scaleText
             color: "#004EAE"
             horizontalAlignment: Text.AlignHCenter
-            width: scaleImage.sourceSize.width
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.bottomMargin: 3
-            text:calculateScale()
+            text: "0 m"
             font.pixelSize: 14
+        }
+        Component.onCompleted: {
+            map.calculateScale();
+        }
+    }
+
+    Timer {
+        id: scaleTimer
+        interval: 100
+        running: false
+        repeat: false
+        onTriggered: {
+            map.calculateScale()
         }
     }
 
     onCenterChanged:{
-        scaleText.text = calculateScale()
+        scaleTimer.restart()
         if (map.followme)
             if (map.center != positionSource.position.coordinate) map.followme = false
     }
 
     onZoomLevelChanged:{
-        scaleText.text = map.calculateScale()
+        scaleTimer.restart()
         if (map.followme) map.center = positionSource.position.coordinate
     }
 
     onWidthChanged:{
-        scaleText.text = map.calculateScale()
+        scaleTimer.restart()
     }
 
     onHeightChanged:{
-        scaleText.text = map.calculateScale()
+        scaleTimer.restart()
     }
 
     Menu {
@@ -652,12 +665,31 @@ Map {
     }
 
     function calculateScale(){
-        var coord1, coord2, dist, text
+        var coord1, coord2, dist, text, f
+        f = 0
         coord1 = map.toCoordinate(Qt.point(0,scale.y))
         coord2 = map.toCoordinate(Qt.point(0+scaleImage.sourceSize.width,scale.y))
         dist = Math.round(coord1.distanceTo(coord2))
+
+        if (dist === 0) {
+            // not visible
+        } else {
+            for (var i = 0; i < scaleLengths.length-1; i++) {
+                if (dist < (scaleLengths[i] + scaleLengths[i+1]) / 2 ) {
+                    f = dist / scaleLengths[i]
+                    dist = scaleLengths[i]
+                    break;
+                }
+            }
+            if (f === 0) {
+                f = dist / scaleLengths[i]
+                dist = scaleLengths[i]
+            }
+        }
+
         text = formatDistance(dist)
-        return text
+        scaleImage.width = scaleImage.sourceSize.width * f
+        scaleText.text = text
     }
 
 /*
