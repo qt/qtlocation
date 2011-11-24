@@ -50,8 +50,6 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
 class QGeoCoordinate;
 
 class QGeoMappingManager;
