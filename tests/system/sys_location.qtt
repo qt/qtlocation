@@ -43,7 +43,7 @@
 
 testcase = {
 
-    current_position: function()
+/*    current_position: function()
     {
         // Test meta data
         testTitle = "Location - Current Position";
@@ -408,8 +408,8 @@ testcase = {
         | Decrease zoom level | Verify that the blue square is not scaled |"
         ));
     },
-
-    qml_display_map: function()
+*/
+    qml_map_types: function()
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Map View options";
@@ -429,12 +429,107 @@ testcase = {
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | Verify that map is loaded in *Street* view with the center next to Brisbane |
-        | Press Settings button | |
+        | Press Provider button | |
+        | Select nokia provider | Verify that map is displayed in *Street* view |
+        | Press Map Type button | |
+        | Select Satelite Map(day) | Verify that map is displayed in *Satelite (day)* view |
+        | Pan map | Verify that new map tiles are in *Satelite Map(day)* view |
+        | Zoom in map | Verify that new map tiles are in *Satelite Map(day)* view |
         | Press Map Type | |
-        | Select Satelite view | Verify that map is displayed in *Satellite* view |
-        | Press Settings button | |
+        | Select Terrain Map | Verify that map is displayed in *Terrain (day)* view |
         | Press Map Type | |
-        | Select Terrain view | Verify that map is displayed in *Terrain* view |"
+        | Select Hybrid Map | Verify that map is displayed in *Hybrid* view |
+        | Press Map Type | |
+        | Select Transit Map | Verify that map is displayed in *Transit* view |
+        | Press Map Type | |
+        | Select Gray Street Map | Verify that map is displayed in *Gray Street* view |
+        | Press Map Type | |
+        | Select Mobile Street Map | Verify that map is displayed in *Mobile Street* view |
+        | Press Map Type | |
+        | Select Mobile Terrain Map | Verify that map is displayed in *Mobile Terrain* view |
+        | Press Map Type | |
+        | Select Mobile Hybrid Map | Verify that map is displayed in *Mobile Hybrid* view |
+        | Press Map Type | |
+        | Select Mobile Transit Map | Verify that map is displayed in *Mobile Transit* view |
+        | Press Map Type | |
+        | Select Mobile Gray Street Map | Verify that map is displayed in *Mobile Gray Street* view |
+        | Press Map Type | |
+        | Select Street Map | Verify that map is displayed in *Street (day)* view |"
+        ));
+    },
+
+    qml_flick_a_map: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Flick";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that flick gesture works correctly with map.";
+        testPreconditions = "internet connection is required for this test case";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | Verify that map is loaded with the center next to Brisbane  |
+        | Make a long flick gesture from the right side the left | Verify that map center was moving to the left with dropping speed at the end |
+        | Make a short flick gesture from the left side the right | Verify that map center was moving to the rigth with dropping speed at the end. Verify that map center has been moved to the less distance in comparing with previous step |
+        | Make a flick gesture 2 o'clock direction | Verify that map center was following flick gesture. |"
+        ));
+    },
+
+    qml_pinch_a_map: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Pinch";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that pinch gesture works correctly with map.";
+        testPreconditions = "internet connection is required for this test case";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | Verify that map is loaded with the center next to Brisbane  |
+        | Make a long zooming in pinch gesture | Verify that map is zoomed in |
+        | Make a short zooming out pinch gesture | Verify that map is zoomed out to less degree incaomparing with previous step. |"
+        ));
+    },
+
+    qml_pan_a_map: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Pan";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that pan gesture works correctly";
+        testPreconditions = "internet connection is required for this test case";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | Verify that map is loaded with the center next to Brisbane  |
+        | Pan a map | Verify that map center followed the finger/cursor. Verify that new tiles is uploaded if needed. |"
         ));
     },
 
@@ -461,6 +556,18 @@ testcase = {
         | Move slider to the right | Verify that map is zoomed in |
         | Move slider to the left | Verify that map is zoomed out |"
         ));
+/*    },
+
+    qml_border_wrapping_for_map: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Border wrapping";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that border wrapping works correctly for map and map items.";
+        testPreconditions = "internet connection is required for this test case";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
     },
 
     qml_route_for_two_close_points: function()
@@ -1083,7 +1190,7 @@ testcase = {
         | Press Go! button | |
         | Wait for message appears on the screen | Verify that location is not found |"
         ));
-/*    },
+    },
 
 
     // \groups BAT,5.0,MOBILITY-2902
