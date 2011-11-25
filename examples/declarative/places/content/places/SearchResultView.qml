@@ -50,7 +50,7 @@ Item {
     clip: true
 
     ListView {
-        id: page
+        id: view
 
         orientation: ListView.Horizontal
         interactive: false
@@ -70,7 +70,7 @@ Item {
                     onDisplayPlaceDetails: {
                         placeDetails.place = data.place;
                         placeDetails.distance = data.distance;
-                        page.currentIndex = 1;
+                        view.currentIndex = 1;
                     }
                 }
             }
@@ -86,7 +86,7 @@ Item {
                     hoveredSource: "../resources/left_hovered.png"
                     pressedSource: "../resources/left_pressed.png"
 
-                    onClicked: page.currentIndex = 0
+                    onClicked: view.currentIndex = 0
                 }
 
                 PlaceDelegate {
@@ -101,21 +101,21 @@ Item {
                         placeContentList.source = "";
                         placeContentList.place = place;
                         placeContentList.source = "PlaceEditorials.qml";
-                        page.currentIndex = 2;
+                        view.currentIndex = 2;
                     }
 
                     onShowReviews: {
                         placeContentList.source = "";
                         placeContentList.place = place;
                         placeContentList.source = "PlaceReviews.qml";
-                        page.currentIndex = 2;
+                        view.currentIndex = 2;
                     }
 
                     onShowImages: {
                         placeContentList.source = "";
                         placeContentList.place = place;
                         placeContentList.source = "PlaceImages.qml";
-                        page.currentIndex = 2;
+                        view.currentIndex = 2;
                     }
 
                     onSearchForSimilar: {
@@ -126,7 +126,7 @@ Item {
 
                     onEditPlace: {
                         editPlaceDialog.place = place;
-                        root.parent.state = "EditPlace"
+                        page.state = "EditPlace"
                     }
 
                     onDeletePlace: place.remove();
@@ -144,7 +144,7 @@ Item {
                     hoveredSource: "../resources/left_hovered.png"
                     pressedSource: "../resources/left_pressed.png"
 
-                    onClicked: page.currentIndex = 1
+                    onClicked: view.currentIndex = 1
                 }
 
                 Loader {
@@ -171,7 +171,7 @@ Item {
                     pressedSource: "../resources/left_pressed.png"
 
                     onClicked: {
-                        page.currentIndex = 2;
+                        view.currentIndex = 2;
                         placeContent.source = "";
                         placeContent.data = null;
                     }
@@ -185,7 +185,7 @@ Item {
                     width: parent.width
                     anchors.margins: 10
 
-                    onLoaded: page.currentIndex = 3
+                    onLoaded: view.currentIndex = 3
 
                     property variant data
                 }
