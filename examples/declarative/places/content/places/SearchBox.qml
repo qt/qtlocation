@@ -156,6 +156,7 @@ Rectangle {
                     placeSearchModel.searchForCategory(category);
                     searchRectangle.state = "";
                 }
+                onArrowClicked: categoryListModel.rootIndex = categoryListModel.modelIndex(index)
             }
         }
     }

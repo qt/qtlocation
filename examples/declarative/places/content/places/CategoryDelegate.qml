@@ -45,6 +45,7 @@ Item {
     id: root
 
     signal clicked
+    signal arrowClicked
 
     width: parent.width
     height: childrenRect.height
@@ -72,6 +73,6 @@ Item {
         hoveredSource: "../resources/right_hovered.png"
         pressedSource: "../resources/right_pressed.png"
 
-        onClicked: categoryListModel.rootIndex = categoryListModel.modelIndex(index)
+        onClicked: root.arrowClicked()
     }
 }
