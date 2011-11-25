@@ -141,7 +141,6 @@ Rectangle {
 
         clip: true
         snapMode: ListView.SnapToItem
-        interactive: true
 
         header: IconButton {
             source: "../resources/left.png"
@@ -202,7 +201,6 @@ Rectangle {
 
         clip: true
         snapMode: ListView.SnapToItem
-        interactive: true
 
         model: suggestionModel
         delegate: Text {
