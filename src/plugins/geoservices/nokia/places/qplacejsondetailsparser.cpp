@@ -376,7 +376,7 @@ QPlaceRatings *QPlaceJSonDetailsParser::processRating(const QJSValue &ratingElem
             bool isConverted;
             double ratingValue = value.toString().toDouble(&isConverted);
             if (isConverted) {
-                rating->setValue(ratingValue);
+                rating->setAverage(ratingValue);
             }
         }
     }

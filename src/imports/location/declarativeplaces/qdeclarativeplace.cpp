@@ -81,7 +81,7 @@ QT_USE_NAMESPACE
 
     Each place is is assigned zero or more \l categories.  Categories are typically used when
     searching for a particular type of place, such as a restaurant or hotel.  Some places have a
-    \l ratings value, which gives an indication of the quality of the place.
+    \l ratings object, which gives an indication of the quality of the place.
 
     Place metadata is provided by a \l supplier who may require that an \l attribution message be
     displayed to the user when the place details are viewed.

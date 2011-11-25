@@ -96,7 +96,7 @@ TestCase {
         }
 
         ratings: Ratings {
-            value: 3.5
+            average: 3.5
             count: 10
         }
 
@@ -198,7 +198,7 @@ TestCase {
         if (place1.ratings !== null && place2.ratings === null)
             return false;
         if (place1.ratings !== null && place2.ratings !== null) {
-            if (place1.ratings.value !== place2.ratings.value)
+            if (place1.ratings.average !== place2.ratings.average)
                 return false;
             if (place1.ratings.count !== place2.ratings.count)
                 return false;
@@ -276,7 +276,7 @@ TestCase {
         compare(emptyPlace.visibility, Place.UnspecifiedVisibility);
 
         // complex properties
-        compare(emptyPlace.ratings.value, 0);
+        compare(emptyPlace.ratings.average, 0);
         compare(emptyPlace.location.address.street, '');
         compare(emptyPlace.location.address.district, '');
         compare(emptyPlace.location.address.city, '');
@@ -428,19 +428,19 @@ TestCase {
     }
 
     function test_ratings() {
-        var ratings = Qt.createQmlObject('import QtLocation 5.0; Ratings { value: 3; count: 100 }', testCase, "Rating1");
+        var ratings = Qt.createQmlObject('import QtLocation 5.0; Ratings { average: 3; count: 100 }', testCase, "Rating1");
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         signalSpy.target = testPlace;
         signalSpy.signalName = "ratingsChanged";
 
         testPlace.ratings = ratings;
-        compare(testPlace.ratings.value, 3);
+        compare(testPlace.ratings.average, 3);
         compare(testPlace.ratings.count, 100);
         compare(signalSpy.count, 1);
 
         testPlace.ratings = ratings;
-        compare(testPlace.ratings.value, 3);
+        compare(testPlace.ratings.average, 3);
         compare(testPlace.ratings.count, 100);
         compare(signalSpy.count, 1);
 

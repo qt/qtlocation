@@ -315,7 +315,7 @@ public:
 
     void ratings() {
         //! [Ratings]
-        qDebug() << QString("This place rated ") + place.ratings().value()
+        qDebug() << QString("This place rated ") + place.ratings().average()
                     + "out of " + place.ratings().maximum() + "stars";
         //! [Ratings]
     }

@@ -42,7 +42,7 @@
 import QtLocation 5.0
 
 Ratings {
-    value: 3.5
+    average: 3.5
     maximum: 5.0
     count: 10
 }

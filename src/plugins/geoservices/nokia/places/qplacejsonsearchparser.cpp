@@ -270,7 +270,7 @@ void QPlaceJSonSearchParser::processRating(const QJSValue &properties, QPlace *p
         double ratingValue = value.toString().toDouble(&isConverted);
         if (isConverted) {
             QPlaceRatings rating;
-            rating.setValue(ratingValue);
+            rating.setAverage(ratingValue);
             place->setRatings(rating);
         }
     }

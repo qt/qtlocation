@@ -45,12 +45,12 @@
 QT_USE_NAMESPACE
 
 QPlaceRatingsPrivate::QPlaceRatingsPrivate()
-:   QSharedData(), value(0), maximum(0), count(0)
+    :   QSharedData(), average(0), maximum(0), count(0)
 {
 }
 
 QPlaceRatingsPrivate::QPlaceRatingsPrivate(const QPlaceRatingsPrivate &other)
-:   QSharedData(), value(other.value), maximum(other.maximum), count(other.count)
+:   QSharedData(), average(0), maximum(other.maximum), count(other.count)
 {
 }
 
@@ -60,7 +60,7 @@ QPlaceRatingsPrivate::~QPlaceRatingsPrivate()
 
 bool QPlaceRatingsPrivate::operator==(const QPlaceRatingsPrivate &other) const
 {
-    return value == other.value && maximum == other.maximum && count == other.count;
+    return average == other.average && maximum == other.maximum && count == other.count;
 }
 
 /*!
@@ -74,7 +74,7 @@ bool QPlaceRatingsPrivate::operator==(const QPlaceRatingsPrivate &other) const
 
     Rating information is used to describe how good a place is conceived to be.
     Typically this information is visualized as a number of stars.
-    The value() function returns an aggregated ratings value out of a possible
+    The average() function returns an aggregated ratings value out of a possible
     maximum as given by the maximum() function.
 
     \snippet snippets/places/requesthandler.h Ratings
@@ -130,19 +130,19 @@ bool QPlaceRatings::operator==(const QPlaceRatings &other) const
 */
 
 /*!
-    Returns the aggregated value of indiviual ratings.
+    Returns the average value of individual ratings.
 */
-qreal QPlaceRatings::value() const
+qreal QPlaceRatings::average() const
 {
-    return d->value;
+    return d->average;
 }
 
 /*!
-    Sets the aggregated \a value of the ratings.
+    Sets the \a average value of the ratings.
 */
-void QPlaceRatings::setValue(qreal value)
+void QPlaceRatings::setAverage(qreal average)
 {
-    d->value = value;
+    d->average = average;
 }
 
 /*!

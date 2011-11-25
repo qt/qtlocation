@@ -52,7 +52,7 @@ QT_USE_NAMESPACE
     \brief The Ratings element holds place rating information.
 
     Rating information is used to describe how \e good a place is conceived to be.  Typically this
-    information is visualized as a number of stars.  The \l value property gives an aggregated
+    information is visualized as a number of stars.  The \l average property gives an aggregated
     ratings value out of a possible maximum as given by the \l maximum property.
 
     \snippet snippets/declarative/places.qml QtQuick import
@@ -91,8 +91,8 @@ void QDeclarativeRatings::setRatings(const QPlaceRatings &ratings)
     QPlaceRatings previous = m_ratings;
     m_ratings = ratings;
 
-    if (ratings.value() != previous.value()) {
-        emit valueChanged();
+    if (ratings.average() != previous.average()) {
+        emit averageChanged();
     }
     if (ratings.count() != previous.count()) {
         emit countChanged();
@@ -105,23 +105,23 @@ QPlaceRatings QDeclarativeRatings::ratings() const
 }
 
 /*!
-    \qmlproperty qreal Ratings::value
+    \qmlproperty qreal Ratings::average
 
-    This property holds an aggregating ratings value.
+    This property holds the average of the individual ratings.
 
     \sa maximum
 */
-void QDeclarativeRatings::setValue(qreal value)
+void QDeclarativeRatings::setAverage(qreal average)
 {
-    if (m_ratings.value() != value) {
-        m_ratings.setValue(value);
-        emit valueChanged();
+    if (m_ratings.average() != average) {
+        m_ratings.setAverage(average);
+        emit averageChanged();
     }
 }
 
-qreal QDeclarativeRatings::value() const
+qreal QDeclarativeRatings::average() const
 {
-    return m_ratings.value();
+    return m_ratings.average();
 }
 
 /*!
@@ -147,7 +147,7 @@ qreal QDeclarativeRatings::maximum() const
     \qmlproperty int Ratings::count
 
     This property holds the total number of individual user ratings
-    used in determining the overall ratings \l value.
+    used in determining the overall ratings \l average.
 */
 void QDeclarativeRatings::setCount(int count)
 {

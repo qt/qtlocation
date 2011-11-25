@@ -124,7 +124,7 @@ tst_qmlinterface::tst_qmlinterface()
 
     m_icon.setFullUrl(QUrl(QLatin1String("http://www.example.com/test-icon.png")));
 
-    m_ratings.setValue(3.5);
+    m_ratings.setAverage(3.5);
     m_ratings.setMaximum(5.0);
     m_ratings.setCount(10);
 

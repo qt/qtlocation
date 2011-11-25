@@ -73,7 +73,7 @@ Item {
                 color: "white"
             }
 
-            RatingView { rating: (place && place.rating) ? place.rating.value : 0 }
+            RatingView { rating: (place && place.ratings) ? place.ratings.average : 0 }
 
             Group { text: qsTr("Address") }
             Text { text: distance + "m away"; color: "white" }

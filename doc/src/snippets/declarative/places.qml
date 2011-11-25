@@ -172,7 +172,7 @@ Item {
 
     //! [Ratings]
     Text {
-        text: "This place is rated " + place.ratings.value + " out of " + place.ratings.maximum + " stars."
+        text: "This place is rated " + place.ratings.average + " out of " + place.ratings.maximum + " stars."
     }
     //! [Ratings]
 

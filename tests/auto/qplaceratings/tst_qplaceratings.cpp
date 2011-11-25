@@ -55,7 +55,7 @@ public:
 
 private Q_SLOTS:
     void constructorTest();
-    void valueTest();
+    void averageTest();
     void countTest();
     void operatorsTest();
 };
@@ -72,17 +72,17 @@ void tst_QPlaceRatings::constructorTest()
     QPlaceRatings *testObjPtr = new QPlaceRatings(testObj);
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(testObjPtr->count() == 0, "Copy constructor - wrong count");
-    QVERIFY2(testObjPtr->value() == 0, "Copy constructor - wrong value");
+    QVERIFY2(testObjPtr->average() == 0, "Copy constructor - wrong average");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
     delete testObjPtr;
 }
 
-void tst_QPlaceRatings::valueTest()
+void tst_QPlaceRatings::averageTest()
 {
     QPlaceRatings testObj;
-    QVERIFY2(testObj.value() == 0, "Wrong default value");
-    testObj.setValue(-10.23);
-    QVERIFY2(testObj.value() == -10.23, "Wrong value returned");
+    QVERIFY2(qFuzzyCompare(testObj.average(), 0) , "Wrong default average");
+    testObj.setAverage(-10.23);
+    QVERIFY2(qFuzzyCompare(testObj.average(), -10.23), "Wrong average returned");
 }
 
 void tst_QPlaceRatings::countTest()
@@ -96,7 +96,7 @@ void tst_QPlaceRatings::countTest()
 void tst_QPlaceRatings::operatorsTest()
 {
     QPlaceRatings testObj;
-    testObj.setValue(0.123);
+    testObj.setAverage(0.123);
     QPlaceRatings testObj2;
     testObj2 = testObj;
     QVERIFY2(testObj == testObj2, "Not copied correctly");

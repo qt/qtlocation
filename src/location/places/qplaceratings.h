@@ -67,8 +67,8 @@ public:
         return !(other == *this);
     }
 
-    qreal value() const;
-    void setValue(qreal value);
+    qreal average() const;
+    void setAverage(qreal average);
 
     int count() const;
     void setCount(int count);
