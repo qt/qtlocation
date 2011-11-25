@@ -86,7 +86,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlproperty Plugin CategoriesModel::plugin
+    \qmlproperty Plugin CategoryModel::plugin
 
     This property holds the provider \l Plugin used by this model.
 */
