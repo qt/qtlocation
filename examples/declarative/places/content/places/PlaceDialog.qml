@@ -93,8 +93,17 @@ Dialog {
 
         modifiedPlace.name = dialogModel.get(0).inputText;
         modifiedPlace.location.address.street = dialogModel.get(1).inputText;
-        modifiedPlace.location.coordinate.latitude = parseFloat(dialogModel.get(2).inputText);
-        modifiedPlace.location.coordinate.longitude = parseFloat(dialogModel.get(3).inputText);
+        modifiedPlace.location.address.district = dialogModel.get(2).inputText;
+        modifiedPlace.location.address.city = dialogModel.get(3).inputText;
+        modifiedPlace.location.address.county = dialogModel.get(4).inputText;
+        modifiedPlace.location.address.state = dialogModel.get(5).inputText;
+        modifiedPlace.location.address.countryCode = dialogModel.get(6).inputText;
+        modifiedPlace.location.address.country = dialogModel.get(7).inputText;
+        modifiedPlace.location.address.postcode = dialogModel.get(8).inputText;
+
+        modifiedPlace.location.coordinate.latitude = parseFloat(dialogModel.get(9).inputText);
+        modifiedPlace.location.coordinate.longitude = parseFloat(dialogModel.get(10).inputText);
+
 
         place = modifiedPlace;
 
