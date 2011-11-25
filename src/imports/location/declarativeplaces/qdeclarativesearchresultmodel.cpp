@@ -386,7 +386,7 @@ void QDeclarativeSearchResultModel::processReply(QPlaceReply *reply)
 
     foreach (const QPlaceSearchResult &result, m_results) {
         QDeclarativePlace *place = new QDeclarativePlace(result.place(),plugin(), this);
-        m_places.insert(result.place().placeId(), place);
+        m_places.append(place);
     }
 }
 
@@ -413,7 +413,7 @@ QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role)
         case DistanceRole:
             return result.distance();
         case PlaceRole:
-            return QVariant::fromValue(static_cast<QObject *>(m_places.value(result.place().placeId())));
+            return QVariant::fromValue(static_cast<QObject *>(m_places.at(index.row())));
         default:
             return QVariant();
         }

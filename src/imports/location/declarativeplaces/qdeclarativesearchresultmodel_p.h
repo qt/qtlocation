@@ -125,7 +125,7 @@ protected:
 
 private:
     QList<QPlaceSearchResult> m_results;
-    QMap<QString, QDeclarativePlace *> m_places;
+    QList<QDeclarativePlace *> m_places;
     QList<QDeclarativeCategory*> m_categories;
     QtLocation::VisibilityScope m_visibilityScope;
     QPlaceManager *m_placeManager;
