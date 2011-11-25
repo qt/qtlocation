@@ -102,17 +102,19 @@ QPlaceSearchRequestPrivate::~QPlaceSearchRequestPrivate()
 
 QPlaceSearchRequestPrivate &QPlaceSearchRequestPrivate::operator=(const QPlaceSearchRequestPrivate &other)
 {
-    searchTerm = other.searchTerm;
-    categories = other.categories;
-    if (other.searchArea)
-        searchArea = other.searchArea->clone();
-    else
-        searchArea = 0;
-    dymNumber = other.dymNumber;
-    visibilityScope = other.visibilityScope;
-    relevanceHint = other.relevanceHint;
-    limit = other.limit;
-    offset = other.offset;
+    if (this != &other) {
+        searchTerm = other.searchTerm;
+        categories = other.categories;
+        if (other.searchArea)
+            searchArea = other.searchArea->clone();
+        else
+            searchArea = 0;
+        dymNumber = other.dymNumber;
+        visibilityScope = other.visibilityScope;
+        relevanceHint = other.relevanceHint;
+        limit = other.limit;
+        offset = other.offset;
+    }
 
     return *this;
 }
