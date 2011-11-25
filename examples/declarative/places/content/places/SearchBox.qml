@@ -148,7 +148,7 @@ Rectangle {
             pressedSource: "../resources/left_pressed.png"
 
             onClicked: categoryListModel.rootIndex = categoryListModel.parentModelIndex()
-            visible: !busy.busy
+            visible: !busy.visible
         }
 
         model: VisualDataModel {
