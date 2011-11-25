@@ -72,6 +72,14 @@ Map {
         longitude: 153
     }
 
+/* @todo
+    Binding {
+        target: map
+        property: 'center'
+        value: positionSource.position.coordinate
+        when: followme
+    }*/
+
     PositionSource{
         id: positionSource
         active: followme

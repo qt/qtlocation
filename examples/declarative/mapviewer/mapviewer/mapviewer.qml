@@ -134,8 +134,8 @@ Item {
             addItem("Reverse geocode")
             addItem("Geocode")
             addItem("Route")
-            if (map.followme) addItem("Stop following")
-            else addItem("Follow me")
+            var item = addItem("Follow me")
+            item.text = (function() { return map.followme ? "Stop following" : "Follow me" });
         }
     }
 
@@ -169,7 +169,7 @@ Item {
                 addItem(map.supportedMapTypes[i].name)
 
             if (map.supportedMapTypes.length > 0)
-                exclusiveButton = map.supportedMapTypes[0].name
+                exclusiveButton = map.activeMapType.name
         }
     }
 
@@ -571,10 +571,6 @@ Item {
         State {
             name: ""
             PropertyChanges { target: map; focus: true }
-            StateChangeScript {
-                name: "updateOptionMenu"
-                script: { optionsMenu.update() }
-            }
         },
         State {
             name: "RevGeocode"

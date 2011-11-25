@@ -81,9 +81,9 @@ Grid {
     function addItem(caption) {
         var button, myArray
         if (horizontalOrientation)
-            button = Qt.createQmlObject ('import "style"; Button {height: menu.height; onClicked: {parent.itemClicked(text)} style: HMenuItemStyle {}}', menu)
+            button = Qt.createQmlObject ('import "style"; Button {height: menu.height; onClicked: {menu.itemClicked(text)} style: HMenuItemStyle {}}', menu)
         else
-            button = Qt.createQmlObject ('import "style"; Button {height: 40; width: menu.width; onClicked: {parent.itemClicked(text)} style: VMenuItemStyle {}}', menu)
+            button = Qt.createQmlObject ('import "style"; Button {height: 40; width: menu.width; onClicked: {menu.itemClicked(text)} style: VMenuItemStyle {}}', menu)
         button.text = caption
 
         myArray = new Array()
@@ -92,6 +92,8 @@ Grid {
         }
         myArray.push(button)
         children = myArray
+
+        return button
     }
 
     function deleteItem(caption){
