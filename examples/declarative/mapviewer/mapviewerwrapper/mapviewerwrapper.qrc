@@ -48,6 +48,7 @@
         <file alias="quit_pressed.png">../mapviewer/content/resources/quit_pressed.png</file>
         <file alias="quit.png">../mapviewer/content/resources/quit.png</file>
         <file alias="scale.png">../mapviewer/content/resources/scale.png</file>
+        <file alias="scale_end.png">../mapviewer/content/resources/scale_end.png</file>
         <file alias="titlebar.png">../mapviewer/content/resources/titlebar.png</file>
         <file alias="titlebar.sci">../mapviewer/content/resources/titlebar.sci</file>
         <file alias="vmenuItem.png">../mapviewer/content/resources/vmenuItem.png</file>

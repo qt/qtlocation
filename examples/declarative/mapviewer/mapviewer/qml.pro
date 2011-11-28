@@ -55,6 +55,7 @@ resources.files = \
     content/resources/quit_pressed.png \
     content/resources/quit.png \
     content/resources/scale.png \
+    content/resources/scale_end.png \
     content/resources/titlebar.png \
     content/resources/titlebar.sci \
     content/resources/vmenuItem.png \

@@ -64,7 +64,7 @@ Map {
     property int lastX : -1
     property int lastY : -1
     property bool followme: false
-    property variant scaleLengths: [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
+    property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
 
     Coordinate {
         id: brisbaneCoordinate
@@ -417,10 +417,22 @@ Map {
             left: zoomSlider.left
         }
         Image {
+            id: scaleImageLeft
+            source: "../resources/scale_end.png"
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+        }
+        Image {
             id: scaleImage
             source: "../resources/scale.png"
             anchors.bottom: parent.bottom
-            anchors.left: parent.left
+            anchors.left: scaleImageLeft.right
+        }
+        Image {
+            id: scaleImageRight
+            source: "../resources/scale_end.png"
+            anchors.bottom: parent.bottom
+            anchors.left: scaleImage.right
         }
         Text {
             id: scaleText
@@ -684,7 +696,7 @@ Map {
         } else {
             for (var i = 0; i < scaleLengths.length-1; i++) {
                 if (dist < (scaleLengths[i] + scaleLengths[i+1]) / 2 ) {
-                    f = dist / scaleLengths[i]
+                    f = scaleLengths[i] / dist
                     dist = scaleLengths[i]
                     break;
                 }
@@ -696,7 +708,7 @@ Map {
         }
 
         text = formatDistance(dist)
-        scaleImage.width = scaleImage.sourceSize.width * f
+        scaleImage.width = (scaleImage.sourceSize.width * f) - 2 * scaleImageLeft.sourceSize.width
         scaleText.text = text
     }
 
