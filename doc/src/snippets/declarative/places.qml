@@ -205,7 +205,7 @@ Item {
             address: Address {
                 street: "53 Brandl Street"
                 city: "Eight Mile Plains"
-                postcode: "4113"
+                postalCode: "4113"
                 country: "Australia"
             }
             coordinate: Coordinate {

@@ -435,7 +435,7 @@ bool QGeoCodeXmlParser::parseAddress(QGeoAddress *address)
     }
 
     if (m_reader->name() == "postCode") {
-        address->setPostcode(m_reader->readElementText());
+        address->setPostalCode(m_reader->readElementText());
         if (!m_reader->readNextStartElement())
             return true;
     }

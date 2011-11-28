@@ -75,7 +75,7 @@ TestCase {
                 city: "city"
                 district: "district"
                 street: "123 Fake Street"
-                postcode: "1234"
+                postalCode: "1234"
             }
 
             coordinate: Coordinate {
@@ -224,7 +224,7 @@ TestCase {
                 return false;
             if (place1.location.address.street !== place2.location.address.street)
                 return false;
-            if (place1.location.address.postcode !== place2.location.address.postcode)
+            if (place1.location.address.postalCode !== place2.location.address.postalCode)
                 return false;
 
             /*

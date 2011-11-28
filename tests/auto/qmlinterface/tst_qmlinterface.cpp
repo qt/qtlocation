@@ -104,7 +104,7 @@ tst_qmlinterface::tst_qmlinterface()
     m_address.setCity(QLatin1String("Brisbane"));
     m_address.setCountry(QLatin1String("Australia"));
     m_address.setCountryCode(QLatin1String("AU"));
-    m_address.setPostcode(QLatin1String("4000"));
+    m_address.setPostalCode(QLatin1String("4000"));
     m_address.setState(QLatin1String("Queensland"));
     m_address.setStreet(QLatin1String("123 Fake Street"));
 

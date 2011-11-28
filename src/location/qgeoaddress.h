@@ -85,8 +85,8 @@ public:
     QString district() const;
     void setDistrict(const QString &district);
 
-    QString postcode() const;
-    void setPostcode(const QString &postcode);
+    QString postalCode() const;
+    void setPostalCode(const QString &postalCode);
 
     QString street() const;
     void setStreet(const QString &street);

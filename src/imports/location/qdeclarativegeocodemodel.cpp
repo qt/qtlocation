@@ -568,7 +568,7 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant& query)
         connect(address_, SIGNAL(cityChanged()), this, SLOT(queryContentChanged()));
         connect(address_, SIGNAL(districtChanged()), this, SLOT(queryContentChanged()));
         connect(address_, SIGNAL(streetChanged()), this, SLOT(queryContentChanged()));
-        connect(address_, SIGNAL(postcodeChanged()), this, SLOT(queryContentChanged()));
+        connect(address_, SIGNAL(postalCodeChanged()), this, SLOT(queryContentChanged()));
         coordinate_ = 0;
         searchString_.clear();
     } else if (query.type() == QVariant::String) {

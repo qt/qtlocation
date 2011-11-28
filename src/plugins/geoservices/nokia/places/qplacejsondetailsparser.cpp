@@ -412,7 +412,7 @@ void QPlaceJSonDetailsParser::processAddress(const QJSValue &address, QGeoLocati
     }
     value = address.property(place_address_code);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newAddress.setPostcode(value.toString());
+        newAddress.setPostalCode(value.toString());
     }
     value = address.property(place_address_district);
     if (value.isValid() && !value.toString().isEmpty()) {

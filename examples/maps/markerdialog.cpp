@@ -99,12 +99,12 @@ void MarkerDialog::updateMarker()
 
 void MarkerDialog::setAddressLabel(QGeoAddress address)
 {
-    QString addressFormat = tr("$street\n$city, $state $postcode\n$country");
+    QString addressFormat = tr("$street\n$city, $state $postalcode\n$country");
     addressFormat.replace("$street", address.street());
     addressFormat.replace("$city", address.city());
     addressFormat.replace("$county", address.county());
     addressFormat.replace("$state", address.state());
-    addressFormat.replace("$postcode", address.postcode());
+    addressFormat.replace("$postalcode", address.postalCode());
     addressFormat.replace("$district", address.district());
     addressFormat.replace("$country", address.country());
 

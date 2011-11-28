@@ -67,7 +67,7 @@ private Q_SLOTS:
 //    void floorTest();
 //    void houseNumberTest();
 //    void labelTest();
-    void postcodeTest();
+    void postalCodeTest();
     void stateTest();
     void streetTest();
 //    void suiteTest();
@@ -156,12 +156,12 @@ void tst_QGeoAddress::districtTest()
 //    QVERIFY2(testObj.label() == "testText", "Wrong value returned");
 //}
 
-void tst_QGeoAddress::postcodeTest()
+void tst_QGeoAddress::postalCodeTest()
 {
     QGeoAddress testObj;
-    QVERIFY2(testObj.postcode() == QString(), "Wrong default value");
-    testObj.setPostcode("testText");
-    QVERIFY2(testObj.postcode() == "testText", "Wrong value returned");
+    QVERIFY2(testObj.postalCode() == QString(), "Wrong default value");
+    testObj.setPostalCode("testText");
+    QVERIFY2(testObj.postalCode() == "testText", "Wrong value returned");
 }
 
 void tst_QGeoAddress::stateTest()
@@ -230,7 +230,7 @@ void tst_QGeoAddress::emptyClearTest()
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 
-    testObj.setPostcode(QLatin1String("postcode"));
+    testObj.setPostalCode(QLatin1String("postalCode"));
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 

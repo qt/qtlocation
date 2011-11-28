@@ -96,14 +96,14 @@ void tst_QGeoLocation::address()
     m_address.setCountry("Germany");
     m_address.setCountryCode("DEU");
     m_address.setDistrict("Mitte");
-    m_address.setPostcode("10115");
+    m_address.setPostalCode("10115");
     m_address.setStreet("Invalidenstrasse");
 
     m_location.setAddress(m_address);
 
     QCOMPARE(m_location.address(),m_address);
 
-    m_address.setPostcode("10125");
+    m_address.setPostalCode("10125");
     QVERIFY(m_location.address() != m_address);
 }
 

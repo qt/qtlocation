@@ -45,7 +45,7 @@ Address {
     city: "Brisbane"
     country: "Australia"
     countryCode: "AU"
-    postcode: "4000"
+    postalCode: "4000"
     state: "Queensland"
     street: "123 Fake Street"
 }

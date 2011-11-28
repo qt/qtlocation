@@ -136,7 +136,7 @@ QVariant JsonDbHandler::convertToJsonVariant(const QPlace &place)
     addressMap.insert(COUNTY, place.location().address().county());
     addressMap.insert(STATE, place.location().address().state());
     addressMap.insert(COUNTRY, place.location().address().country());
-    addressMap.insert(POSTCODE, place.location().address().postcode());
+    addressMap.insert(POSTALCODE, place.location().address().postalCode());
 
     QVariantMap locationMap;
     locationMap.insert(COORDINATE, coordMap);
@@ -275,9 +275,9 @@ QPlace JsonDbHandler::convertJsonVariantToPlace(const QVariant &variant)
     address.setCounty(addressMap.value(COUNTY).toString());
     address.setState(addressMap.value(STATE).toString());
     address.setCountry(addressMap.value(COUNTRY).toString());
-    address.setPostcode(addressMap.value(POSTCODE).toString());
-    location.setAddress(address);
+    address.setPostalCode(addressMap.value(POSTALCODE).toString());
 
+    location.setAddress(address);
     place.setLocation(location);
 
     QVariantList phonesJson = placeJson.value(PHONES).toList();

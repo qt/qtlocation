@@ -297,7 +297,7 @@ void QPlaceJSonSearchParser::processAddress(const QJSValue &properties, QGeoLoca
     }
     value = properties.property(search_properties_address_code);
     if (value.isValid() && !value.toString().isEmpty()) {
-        newAddress.setPostcode(value.toString());
+        newAddress.setPostalCode(value.toString());
     }
     value = properties.property(search_properties_address_city);
     if (value.isValid() && !value.toString().isEmpty()) {

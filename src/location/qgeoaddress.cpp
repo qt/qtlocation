@@ -63,7 +63,7 @@ QGeoAddressPrivate::QGeoAddressPrivate(const QGeoAddressPrivate &other)
         sCity(other.sCity),
         sDistrict(other.sDistrict),
         sStreet(other.sStreet),
-        sPostCode(other.sPostCode)
+        sPostalCode(other.sPostalCode)
 {
 }
 
@@ -131,7 +131,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
     qDebug() << "city:" << (d->sCity == other.city());
     qDebug() << "district:" << (d->sDistrict == other.district());
     qDebug() << "street:" << (d->sStreet == other.street());
-    qDebug() << "postcode:" << (d->sPostCode == other.postcode());
+    qDebug() << "postalCode:" << (d->sPostalCode == other.postalCode());
 #endif
 
     return d->sCountry == other.country() &&
@@ -141,7 +141,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
            d->sCity == other.city() &&
            d->sDistrict == other.district() &&
            d->sStreet == other.street() &&
-           d->sPostCode == other.postcode();
+           d->sPostalCode == other.postalCode();
 }
 
 /*!
@@ -274,19 +274,19 @@ void QGeoAddress::setStreet(const QString &street)
 }
 
 /*!
-    Returns the post code.
+    Returns the postal code.
 */
-QString QGeoAddress::postcode() const
+QString QGeoAddress::postalCode() const
 {
-    return d->sPostCode;
+    return d->sPostalCode;
 }
 
 /*!
-    Sets the \a postcode.
+    Sets the \a postalCode.
 */
-void QGeoAddress::setPostcode(const QString &postcode)
+void QGeoAddress::setPostalCode(const QString &postalCode)
 {
-    d->sPostCode = postcode;
+    d->sPostalCode = postalCode;
 }
 
 /*!
@@ -302,8 +302,10 @@ bool QGeoAddress::isEmpty() const
            d->sCity.isEmpty() &&
            d->sDistrict.isEmpty() &&
            d->sStreet.isEmpty() &&
-           d->sPostCode.isEmpty();
+           d->sPostalCode.isEmpty();
+
 }
+
 /*!
     Clears the all the address' data fields.
 */
@@ -316,7 +318,7 @@ void QGeoAddress::clear()
     d->sCity.clear();
     d->sDistrict.clear();
     d->sStreet.clear();
-    d->sPostCode.clear();
+    d->sPostalCode.clear();
 }
 
 QT_END_NAMESPACE

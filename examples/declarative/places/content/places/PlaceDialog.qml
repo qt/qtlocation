@@ -81,7 +81,7 @@ Dialog {
             ["State", place ? place.location.address.state : ""],
             ["Country code", place ? place.location.address.countryCode : ""],
             ["Country", place ? place.location.address.country : ""],
-            ["Post code", place ? place.location.address.postcode : ""],
+            ["Postal code", place ? place.location.address.postalCode : ""],
             ["Latitude", latitude()],
             ["Longitude", longitude()]
         ]);
@@ -99,11 +99,10 @@ Dialog {
         modifiedPlace.location.address.state = dialogModel.get(5).inputText;
         modifiedPlace.location.address.countryCode = dialogModel.get(6).inputText;
         modifiedPlace.location.address.country = dialogModel.get(7).inputText;
-        modifiedPlace.location.address.postcode = dialogModel.get(8).inputText;
+        modifiedPlace.location.address.postalCode = dialogModel.get(8).inputText;
 
         modifiedPlace.location.coordinate.latitude = parseFloat(dialogModel.get(9).inputText);
         modifiedPlace.location.coordinate.longitude = parseFloat(dialogModel.get(10).inputText);
-
 
         place = modifiedPlace;
 

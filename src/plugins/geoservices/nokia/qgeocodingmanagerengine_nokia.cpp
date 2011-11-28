@@ -71,7 +71,7 @@ QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(const QMap<QString, Q
         if (!proxy.isEmpty()) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
-                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, 
+                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
 
                     proxyUrl.host(),
                     proxyUrl.port(8080),
@@ -143,9 +143,9 @@ QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
         requestString += address.city();
     }
 
-    if (!address.postcode().isEmpty()) {
+    if (!address.postalCode().isEmpty()) {
         requestString += "&zip=";
-        requestString += address.postcode();
+        requestString += address.postalCode();
     }
 
     if (!address.street().isEmpty()) {

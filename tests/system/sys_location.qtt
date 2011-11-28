@@ -1130,7 +1130,7 @@ testcase = {
         | Fill in *-27.575* in Latitude filed | |
         | Fill in *153.088* in Longitude field | |
         | Press Go! button | |
-        | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: *230 Padstow Rd*, City: *Eight Mile Plains*, State: *AUS-QLD*, Country code: *AUS*, Country: *AUSTRALIA*, Postcode: *4113*) |"
+        | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: *230 Padstow Rd*, City: *Eight Mile Plains*, State: *AUS-QLD*, Country code: *AUS*, Country: *AUSTRALIA*, Postal code: *4113*) |"
         ));
     },
 
@@ -1159,7 +1159,7 @@ testcase = {
         | Fill in *56.3264* in Latitude filed | |
         | Fill in *44.0048* in Longitude field | |
         | Press Go! button | |
-        | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: *Minina I Pozharskogo Ploshchad\'*, district: *Nizhegorodskiy Rayon*, City: *Nizhniy Novgorod*, Country code: *RUS*, Country: *Russian Federation*, Postcode: *603005*) |"
+        | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: *Minina I Pozharskogo Ploshchad\'*, district: *Nizhegorodskiy Rayon*, City: *Nizhniy Novgorod*, Country code: *RUS*, Country: *Russian Federation*, Postal code: *603005*) |"
         ));
     },
 

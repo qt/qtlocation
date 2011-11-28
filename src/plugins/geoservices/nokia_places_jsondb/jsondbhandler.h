@@ -69,7 +69,7 @@
 #define COUNTY QLatin1String("county")
 #define STATE QLatin1String("state")
 #define COUNTRY QLatin1String("country")
-#define POSTCODE QLatin1String("postalCode")
+#define POSTALCODE QLatin1String("postalCode")
 
 #define LOCATION QLatin1String("location")
 

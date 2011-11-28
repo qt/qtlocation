@@ -96,7 +96,7 @@ void QDeclarativeGeoAddress::setAddress(const QGeoAddress& address)
     setCity(address.city());
     setDistrict(address.district());
     setStreet(address.street());
-    setPostcode(address.postcode());
+    setPostalCode(address.postalCode());
     m_address = address;
 }
 
@@ -240,24 +240,23 @@ void QDeclarativeGeoAddress::setStreet(const QString& street)
     emit streetChanged();
 }
 
-QString QDeclarativeGeoAddress::postcode() const
+QString QDeclarativeGeoAddress::postalCode() const
 {
-    return m_address.postcode();
+    return m_address.postalCode();
 }
 
 /*!
-  \qmlproperty string QtLocation5::Address::postcode
+  \qmlproperty string QtLocation5::Address::postalCode
 
-  This property holds the post code of the address.
+  This property holds the postal code of the address.
 
-  */
-
-void QDeclarativeGeoAddress::setPostcode(const QString& postcode)
+*/
+void QDeclarativeGeoAddress::setPostalCode(const QString& postalCode)
 {
-    if (m_address.postcode() == postcode)
+    if (m_address.postalCode() == postalCode)
         return;
-    m_address.setPostcode(postcode);
-    emit postcodeChanged();
+    m_address.setPostalCode(postalCode);
+    emit postalCodeChanged();
 }
 
 #include "moc_qdeclarativegeoaddress_p.cpp"

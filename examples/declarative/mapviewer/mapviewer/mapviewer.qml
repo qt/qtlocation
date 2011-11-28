@@ -349,7 +349,7 @@ Item {
         z: backgroundRect.z + 2
 
         Component.onCompleted: {
-            var obj = [["Street", "Brandl St"],["District",""],["City", "Eight Mile Plains"], ["County", ""],["State", ""],["Country code",""],["Country","Australia"], ["Post code", ""]]
+            var obj = [["Street", "Brandl St"],["District",""],["City", "Eight Mile Plains"], ["County", ""],["State", ""],["Country code",""],["Country","Australia"], ["Postal code", ""]]
             setModel(obj)
         }
 
@@ -367,7 +367,7 @@ Item {
             geocodeAddress.state = dialogModel.get(4).inputText
             geocodeAddress.countryCode = dialogModel.get(5).inputText
             geocodeAddress.country = dialogModel.get(6).inputText
-            geocodeAddress.postcode = dialogModel.get(7).inputText
+            geocodeAddress.postalCode = dialogModel.get(7).inputText
             map.geocodeModel.clear()
             map.geocodeModel.query = geocodeAddress
             map.geocodeModel.update();*/
@@ -495,7 +495,7 @@ Item {
     }
 */
     function geocodeMessage(){
-        var street, district, city, county, state, countryCode, country, postcode, latitude, longitude, text
+        var street, district, city, county, state, countryCode, country, postalCode, latitude, longitude, text
         /*        latitude = map.geocodeModel.get(0).coordinate.latitude
         longitude = map.geocodeModel.get(0).coordinate.longitude
         street = map.geocodeModel.get(0).address.street
@@ -505,7 +505,7 @@ Item {
         state = map.geocodeModel.get(0).address.state
         countryCode = map.geocodeModel.get(0).address.countryCode
         country = map.geocodeModel.get(0).address.country
-        postcode = map.geocodeModel.get(0).address.postcode
+        postalCode = map.geocodeModel.get(0).address.postalCode
 
         text = "<b>Latitude:</b> " + latitude + "<br/>"
         text +="<b>Longitude:</b> " + longitude + "<br/>" + "<br/>"
@@ -516,7 +516,7 @@ Item {
         if (state) text +="<b>State: </b>"+ state + " <br/>"
         if (countryCode) text +="<b>Country code: </b>"+ countryCode + " <br/>"
         if (country) text +="<b>Country: </b>"+ country + " <br/>"
-        if (postcode) text +="<b>Postcode: </b>"+ postcode + " <br/>"*/
+        if (postalCode) text +="<b>PostalCode: </b>"+ postalCode + " <br/>"*/
         return text
     }
 
