@@ -55,7 +55,6 @@
 #define PLACE_CATEGORY_TYPE QLatin1String("com.nokia.mp.location.PlaceCategory")
 #define TOP_LEVEL_CATEGORY QLatin1String("topLevel")
 #define CHILDREN_UUIDS QLatin1String("childrenUuids")
-#define COORDINATE QLatin1String("coordinate")
 
 //coord
 #define COORDINATE QLatin1String("geo")
