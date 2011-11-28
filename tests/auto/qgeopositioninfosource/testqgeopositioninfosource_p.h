@@ -52,9 +52,9 @@
 #include <QTest>
 #include <QObject>
 
-QT_USE_NAMESPACE
-
+QT_BEGIN_NAMESPACE
 class QGeoPositionInfoSource;
+QT_END_NAMESPACE
 
 class TestQGeoPositionInfoSource : public QObject
 {

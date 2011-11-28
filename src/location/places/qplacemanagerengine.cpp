@@ -42,7 +42,7 @@
 #include "qplacemanagerengine.h"
 #include "qplacemanagerengine_p.h"
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QPlaceManagerEngine
@@ -357,7 +357,6 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     This signal is only emitted by manager engines that support the QPlaceManager::NotificationsFeature.
 */
 
-#include "moc_qplacemanagerengine.cpp"
-
 QT_END_NAMESPACE
 
+#include "moc_qplacemanagerengine.cpp"

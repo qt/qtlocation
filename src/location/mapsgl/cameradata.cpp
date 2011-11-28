@@ -51,6 +51,7 @@
 
 #include <cmath>
 
+QT_BEGIN_NAMESPACE
 
 class CameraDataPrivate : public QSharedData
 {
@@ -288,3 +289,5 @@ QSharedPointer<Projection> CameraData::projection() const
 {
     return d->projection_.toStrongRef();
 }
+
+QT_END_NAMESPACE

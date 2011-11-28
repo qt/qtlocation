@@ -49,7 +49,6 @@
 #include <QSignalSpy>
 #include <QTest>
 
-QT_USE_NAMESPACE
 Q_DECLARE_METATYPE(QNmeaPositionInfoSource::UpdateMode)
 Q_DECLARE_METATYPE(QGeoPositionInfo)
 

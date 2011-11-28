@@ -82,9 +82,9 @@ unsigned int qHash(const TileSpec &spec);
 
 QDebug operator<<(QDebug, const TileSpec &);
 
-Q_DECLARE_METATYPE(TileSpec)
-
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(TileSpec)
 
 QT_END_HEADER
 

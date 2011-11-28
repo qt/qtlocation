@@ -98,9 +98,9 @@ private:
     QSharedDataPointer<CameraDataPrivate> d;
 };
 
-Q_DECLARE_METATYPE(CameraData)
-
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(CameraData)
 
 QT_END_HEADER
 

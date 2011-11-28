@@ -56,6 +56,8 @@
 
 Q_DECLARE_METATYPE(QList<TileSpec>)
 
+QT_BEGIN_NAMESPACE
+
 class TileDisk
 {
 public:
@@ -458,3 +460,5 @@ TileSpec TileCache::filenameToTileSpec(const QString &filename)
 
     return spec;
 }
+
+QT_END_NAMESPACE

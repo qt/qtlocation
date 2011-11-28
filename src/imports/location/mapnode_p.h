@@ -58,6 +58,8 @@
 #include "qglframebufferobjectsurface.h"
 #include <private/qsgtexture_p.h>
 
+QT_BEGIN_NAMESPACE
+
 class Map;
 class QOpenGLFramebufferObject;
 class QGLPainter;
@@ -94,5 +96,7 @@ private:
     bool m_initialized;
     bool m_dirtyFBO;
 };
+
+QT_END_NAMESPACE
 
 #endif

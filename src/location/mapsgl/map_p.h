@@ -68,6 +68,8 @@
 
 #include <QSharedPointer>
 
+QT_BEGIN_NAMESPACE
+
 class QGeoMappingManager;
 
 class Tile;
@@ -244,5 +246,7 @@ private:
     QVector3D eye_;
     QMatrix4x4 projectionMatrix_;
 };
+
+QT_END_NAMESPACE
 
 #endif // MAP_P_H

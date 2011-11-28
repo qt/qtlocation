@@ -57,6 +57,8 @@
 
 #include <Qt3D/qplane3d.h>
 
+QT_BEGIN_NAMESPACE
+
 class QGLCamera;
 
 class Q_AUTOTEST_EXPORT Frustum
@@ -135,5 +137,7 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Frustum::Planes)
+
+QT_END_NAMESPACE
 
 #endif // TILEFRUSTUM_H

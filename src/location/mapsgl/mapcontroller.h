@@ -47,6 +47,8 @@
 #include "qgeocoordinate.h"
 #include "cameradata.h"
 
+QT_BEGIN_NAMESPACE
+
 class Map;
 
 class Q_LOCATION_EXPORT AnimatableCoordinate {
@@ -65,8 +67,6 @@ private:
     QGeoCoordinate coordinate_;
     QSharedPointer<Projection> projection_;
 };
-
-Q_DECLARE_METATYPE(AnimatableCoordinate)
 
 class Q_LOCATION_EXPORT MapController : public QObject
 {
@@ -114,5 +114,9 @@ private:
     QSharedPointer<Projection> projection_;
     CameraData oldCameraData_;
 };
+
+QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(AnimatableCoordinate)
 
 #endif // MAPCONTROLLER_H

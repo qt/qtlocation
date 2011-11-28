@@ -47,13 +47,12 @@
 #include <QObject>
 #include <QDebug>
 
+QT_BEGIN_NAMESPACE
+
 class QGraphicsSceneMouseEvent;
 class QDeclarativeGeoMap;
 class QTouchEvent;
 class Map;
-
-QT_BEGIN_NAMESPACE
-
 
 class QDeclarativeGeoMapPinchEvent : public QObject
 {

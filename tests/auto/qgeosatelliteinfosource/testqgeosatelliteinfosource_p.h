@@ -45,9 +45,9 @@
 #include <QTest>
 #include <QObject>
 
-QT_USE_NAMESPACE
-
+QT_BEGIN_NAMESPACE
 class QGeoSatelliteInfoSource;
+QT_END_NAMESPACE
 
 
 class TestQGeoSatelliteInfoSource : public QObject
