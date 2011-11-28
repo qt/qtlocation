@@ -62,9 +62,9 @@ Item {
             Column {
                 width: parent.width
 
-                Text { text: place.name; color: "white" }
+                Text { text: place.name }
 
-                Text { text: distance + "m"; color: "white" }
+                Text { text: distance + "m" }
             }
         }
     }
@@ -75,7 +75,6 @@ Item {
         Text {
             width: parent.width
             text: correction
-            color: "white"
         }
     }
 

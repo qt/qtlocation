@@ -50,7 +50,6 @@ Item {
     Text {
         id: heading
         text: '#heading#'
-        color: "white"
         anchors.left: parent.left
         y: 5
     }

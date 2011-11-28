@@ -111,7 +111,6 @@ Item {
 
             Text {
                 text: supplier.name + "\n" + supplier.url
-                color: "white"
                 width: parent.width
                 anchors.bottom: parent.bottom
             }
@@ -131,7 +130,6 @@ Item {
         visible: listView.visible
 
         text: (listView.currentIndex + 1) + '/' + listView.model.totalCount
-        color: "white"
         horizontalAlignment: Text.AlignRight
     }
 

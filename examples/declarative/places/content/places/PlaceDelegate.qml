@@ -70,14 +70,13 @@ Item {
                 text: place ? place.name : ""
                 font.pixelSize: 16
                 font.bold: true
-                color: "white"
             }
 
             RatingView { rating: (place && place.ratings) ? place.ratings.average : 0 }
 
             Group { text: qsTr("Address") }
-            Text { text: distance + "m away"; color: "white" }
-            Text { text: place ? place.location.address.street : ""; color: "white" }
+            Text { text: distance + "m away" }
+            Text { text: place ? place.location.address.street : "" }
 
             Group {
                 text: qsTr("Categories")
@@ -99,7 +98,6 @@ Item {
                 }
 
                 text: place ? categoryNames(place.categories) : ""
-                color: "white"
                 width: parent.width
                 wrapMode: Text.WordWrap
                 visible: place && place.categories.length > 0
@@ -112,25 +110,21 @@ Item {
             Text {
                 id: phone
                 text: qsTr("Phone: ") + (place ? place.primaryPhone : "")
-                color: "white"
                 visible: place && place.primaryPhone.length > 0
             }
             Text {
                 id: fax
                 text: qsTr("Fax: ") + (place ? place.primaryFax : "")
-                color: "white"
                 visible: place && place.primaryFax.length > 0
             }
             Text {
                 id: email
                 text: place ? place.primaryEmail : ""
-                color: "white"
                 visible: place && place.primaryEmail.length > 0
             }
             Text {
                 id: website
                 text: place ? '<a href=\"' + place.primaryWebsite + '\">' + place.primaryWebsite + '</a>' : ""
-                color: "white"
                 visible: place && String(place.primaryWebsite).length > 0
                 onLinkActivated: Qt.openUrlExternally(place.primaryWebsite)
             }
@@ -146,7 +140,6 @@ Item {
                 delegate: Text {
                     text: place.extendedAttributes[modelData].label +
                           place.extendedAttributes[modelData].text
-                    color: "white"
                     width: c.width
                     wrapMode: Text.WordWrap
                 }

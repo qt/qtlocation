@@ -63,7 +63,6 @@ Item {
                 width: parent.width
                 wrapMode: Text.WordWrap
                 font.pixelSize: 24
-                color: "white"
             }
 
             Text {
@@ -71,7 +70,6 @@ Item {
                 width: parent.width
                 wrapMode: Text.WordWrap
                 font.pixelSize: 20
-                color: "white"
             }
 
             Row {
@@ -84,13 +82,11 @@ Item {
                 Text {
                     text: d ? d.supplier.name : ""
                     font.pixelSize: 16
-                    color: "white"
                 }
             }
             Text {
                 text: d ? d.supplier.url : ""
                 font.pixelSize: 16
-                color: "white"
             }
         }
     }

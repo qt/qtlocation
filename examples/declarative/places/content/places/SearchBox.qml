@@ -56,7 +56,6 @@ Rectangle {
 
     TextWithLabel {
         id: searchBox
-        opacity: 0.9
         label: "Search"
         text: "sushi"
 

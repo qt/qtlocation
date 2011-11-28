@@ -63,14 +63,12 @@ Item {
                 width: parent.width
                 wrapMode: Text.WordWrap
                 font.pixelSize: 24
-                color: "white"
             }
 
             Text {
                 text: d ? Qt.formatDateTime(d.dateTime) : ""
                 width: parent.width
                 font.pixelSize: 18
-                color: "white"
             }
 
             RatingView {
@@ -83,7 +81,6 @@ Item {
                 width: parent.width
                 wrapMode: Text.WordWrap
                 font.pixelSize: 20
-                color: "white"
             }
 
             Row {
@@ -96,13 +93,11 @@ Item {
                 Text {
                     text: d ? d.supplier.name : ""
                     font.pixelSize: 16
-                    color: "white"
                 }
             }
             Text {
                 text: d ? d.supplier.url : ""
                 font.pixelSize: 16
-                color: "white"
             }
         }
     }

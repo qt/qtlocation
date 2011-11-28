@@ -29,10 +29,6 @@
         <file>content/resources/marker_hovered.png</file>
         <file>content/resources/marker_selected.png</file>
         <file>content/resources/marker.png</file>
-        <file>content/resources/menuItem_hovered.png</file>
-        <file>content/resources/menuItem_pressed.png</file>
-        <file>content/resources/menuItem.png</file>
-        <file>content/resources/menuItem.sci</file>
         <file>content/resources/node_selected.png</file>
         <file>content/resources/node.png</file>
         <file>content/resources/option_button_selected.png</file>
@@ -59,9 +55,6 @@
         <file>content/resources/left_hovered.png</file>
         <file>content/resources/left_pressed.png</file>
         <file>content/resources/left.png</file>
-        <file>content/resources/list_hovered.png</file>
-        <file>content/resources/list_pressed.png</file>
-        <file>content/resources/list.png</file>
         <file>content/places/SearchResultView.qml</file>
         <file>content/places/SearchResultDelegate.qml</file>
         <file>content/resources/search_hovered.png</file>

@@ -262,7 +262,6 @@ Item {
 
         anchors.top: page.mobileUi ? page.top : titleBar.bottom
         width: parent.width
-        opacity: 0.9
         z: map ? map.z + 2 : 0
     }
 
@@ -303,7 +302,7 @@ Item {
 
             width: parent.width - catchImage.width
             height: parent.height
-            color: "#CC3F95FF"
+            color: "white"
             radius: 5
 
             SearchResultView {

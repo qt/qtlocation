@@ -72,7 +72,6 @@ Item {
         text: model.title
         font.bold: true
         font.pixelSize: 16
-        color: "white"
 
         wrapMode: Text.WordWrap
         elide: Text.ElideRight
