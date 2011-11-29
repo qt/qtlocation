@@ -159,6 +159,12 @@ Rectangle {
                     searchRectangle.state = "";
                 }
                 onArrowClicked: categoryListModel.rootIndex = categoryListModel.modelIndex(index)
+                onCrossClicked: category.remove()
+                onEditClicked: {
+                    editCategoryDialog.category = category;
+                    page.state = "EditCategory";
+                    searchRectangle.state = "";
+                }
             }
         }
     }

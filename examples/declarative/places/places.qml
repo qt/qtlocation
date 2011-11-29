@@ -131,6 +131,7 @@ Item {
             }
             case "Category": {
                 editCategoryDialog.category = null;
+                editCategoryDialog.prepareDialog();
                 page.state = "NewCategory";
                 break;
             }
@@ -407,6 +408,10 @@ Item {
         State {
             name: "EditPlace"
             PropertyChanges { target: editPlaceDialog; opacity: 1 }
+        },
+        State {
+            name: "EditCategory"
+            PropertyChanges { target: editCategoryDialog; opacity: 1 }
         }
     ]
 

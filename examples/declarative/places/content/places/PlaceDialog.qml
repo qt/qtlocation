@@ -43,7 +43,6 @@ import QtLocation 5.0
 import "../dialogs"
 
 Dialog {
-    id: editPlaceDialog
     title: "Edit Place"
 
     property Place place

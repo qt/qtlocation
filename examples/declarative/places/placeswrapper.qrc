@@ -73,5 +73,11 @@
         <file>content/places/EditorialPage.qml</file>
         <file>content/places/PlaceEditorials.qml</file>
         <file>content/places/PlaceImages.qml</file>
+        <file>content/resources/cross_hovered.png</file>
+        <file>content/resources/cross_pressed.png</file>
+        <file>content/resources/cross.png</file>
+        <file>content/resources/pencil_hovered.png</file>
+        <file>content/resources/pencil_pressed.png</file>
+        <file>content/resources/pencil.png</file>
     </qresource>
 </RCC>

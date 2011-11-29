@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 import QtQuick 2.0
+import QtLocation 5.0
 import "../components"
 
 Item {
@@ -46,13 +47,15 @@ Item {
 
     signal clicked
     signal arrowClicked
+    signal crossClicked
+    signal editClicked
 
     width: parent.width
     height: childrenRect.height
 
     Text {
         anchors.left: parent.left
-        anchors.right: icon.left
+        anchors.right: arrow.left
 
         text: category.name
         elide: Text.ElideRight
@@ -64,7 +67,33 @@ Item {
     }
 
     IconButton {
-        id: icon
+        id: edit
+
+        anchors.right: cross.left
+        visible: placesPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature
+
+        source: "../resources/pencil.png"
+        hoveredSource: "../resources/pencil_hovered.png"
+        pressedSource: "../resources/pencil_pressed.png"
+
+        onClicked: root.editClicked()
+    }
+
+    IconButton {
+        id: cross
+
+        anchors.right: arrow.left
+        visible: placesPlugin.supportedPlacesFeatures & Plugin.RemoveCategoryFeature
+
+        source: "../resources/cross.png"
+        hoveredSource: "../resources/cross_hovered.png"
+        pressedSource: "../resources/cross_pressed.png"
+
+        onClicked: root.crossClicked()
+    }
+
+    IconButton {
+        id: arrow
 
         anchors.right: parent.right
         visible: model.hasModelChildren
