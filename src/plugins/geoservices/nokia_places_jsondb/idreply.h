@@ -41,7 +41,8 @@
 #ifndef IDREPLY_H
 #define IDREPLY_H
 
-#include <qplaceidreply.h>
+#include <QtCore/QObject>
+#include <QtLocation/QPlaceIdReply>
 
 #include "macro.h"
 #include "qplacemanagerengine_jsondb.h"
@@ -63,10 +64,121 @@ public:
 
     QString parentCategoryId() const;
     void setParentCategoryId(const QString &parentId);
-private:
+
+    virtual void start();
+
+protected:
     QPlaceManagerEngineJsonDb *m_engine;
+    bool checkConnection();
+    JsonDbClient *db() { return m_engine->db();}
+
+private:
     bool m_isUpdate;
     QString m_parentCategoryId;
+};
+
+class SavePlaceReply : public IdReply
+{
+    Q_OBJECT
+    enum State {
+        Initial,
+        CheckIfExists,
+        GetCategories,
+        Saving
+    };
+
+public:
+    SavePlaceReply(QPlaceManagerEngineJsonDb *engine);
+    virtual ~SavePlaceReply();
+
+    void setPlace(const QPlace &place);
+    void start();
+    void enterGetCategoriesState();
+
+private slots:
+    void processResponse(int id, const QVariant &data);
+    void processError(int id, int code, const QString &errorString);
+
+private:
+    QPlace m_place;
+    int m_reqId;
+    State m_state;
+    QVariantMap m_placeMap;
+};
+
+class RemovePlaceReply : public IdReply
+{
+    Q_OBJECT
+public:
+    RemovePlaceReply(QPlaceManagerEngineJsonDb *engine);
+    virtual ~RemovePlaceReply();
+    void setId(const QString &placeId);
+    void start();
+
+private slots:
+    void processResponse(int id, const QVariant &data);
+    void processError(int id, int code, const QString &errorString);
+
+private:
+    int m_reqId;
+};
+
+class SaveCategoryReply : public IdReply
+{
+    Q_OBJECT
+    enum State {
+        Initial,
+        CheckParentExists,
+        GetCurrentCategory,
+        GetParentDescendants,
+        Saving
+    };
+
+public:
+    SaveCategoryReply(QPlaceManagerEngineJsonDb *engine);
+    virtual ~SaveCategoryReply();
+    void setCategory(const QPlaceCategory &category);
+    void setParentId(const QString &parentId);
+    void start();
+
+    void doSave();
+
+private slots:
+    void processResponse(int id, const QVariant &data);
+    void processError(int id, int code, const QString &errorString);
+
+private:
+    QPlaceCategory m_category;
+    QString m_parentId;
+    int m_reqId;
+    State m_state;
+    QStringList m_newAncestors;
+    QStringList m_oldAncestors;
+};
+
+class RemoveCategoryReply : public IdReply
+{
+    Q_OBJECT
+    enum State {
+        Initial,
+        GetCategory,
+        GetCategoriesToBeRemoved,
+        RemoveCategories
+    };
+
+public:
+    RemoveCategoryReply(QPlaceManagerEngineJsonDb *engine);
+    virtual ~RemoveCategoryReply();
+    void setId(const QString &categoryId);
+    void start();
+
+private slots:
+    void processResponse(int id, const QVariant &data);
+    void processError(int id, int code, const QString &errorString);
+
+private:
+    int m_reqId;
+    State m_state;
 };
 
 #endif

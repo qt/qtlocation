@@ -42,10 +42,18 @@
 #ifndef QPLACEMANAGERENGINE_NOKIA_JSONDB_H
 #define QPLACEMANAGERENGINE_NOKIA_JSONDB_H
 
+#include "jsonconverter.h"
+
 #include <qplacemanagerengine.h>
 #include <qgeoserviceprovider.h>
 
-#include "jsondbhandler.h"
+#include <QtAddOnJsonDb/jsondb-global.h>
+#include <QtCore/QEventLoop>
+
+Q_ADDON_JSONDB_BEGIN_NAMESPACE
+class JsonDbClient;
+Q_ADDON_JSONDB_END_NAMESPACE
+Q_USE_JSONDB_NAMESPACE
 
 QT_USE_NAMESPACE
 
@@ -85,15 +93,32 @@ public:
 
     QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags);
     QPlaceManager::ManagerFeatures supportedFeatures() const;
+
+    JsonDbClient *db() { return m_db;}
+    QPlaceManager *manager() const { return QPlaceManagerEngine::manager(); }
+
+    QString queryCategoryString(const QString &categoryUuid) const
+    {
+        return QString::fromLatin1("[?%1=\"%2\"][?%3 = \"%4\"]")
+                .arg(JsonConverter::Type).arg(JsonConverter::CategoryType).arg(JsonConverter::Uuid).arg(categoryUuid);
+    }
 public slots:
     void processJsonDbResponse(int id, const QVariant &data);
-    void processJsonDbError(int id, int code, const QString &data);
+    void processJsonDbError(int id, int code, const QString &error);
+    void processJsonDbNotification(const QString &, const QVariant &, const QString &);
+
+    void setupNotificationsResponse(int id, const QVariant &data);
+    void setupNotificationsError(int id, int code, const QString &error);
 
 private:
-    bool recursiveRemoveHelper(const QString &categoryId, const QString &parentId);
-    mutable JsonDbHandler m_jsonDbHandler;
-    mutable QMap<int, QPlaceReply *> m_idReplyMap;
-    friend class JsonDbHandler;
+    bool waitForRequest(int reqId, QVariantMap *variantMap) const;
+
+    JsonDbClient *m_db;
+    mutable QMap<int, QVariant> m_helperMap;
+    mutable QEventLoop m_eventLoop;
+    QString m_notificationUuid;
+    int m_notificationReqId;
+
     friend class SaveReply;
     friend class MediaReply;
     friend class RemoveReply;

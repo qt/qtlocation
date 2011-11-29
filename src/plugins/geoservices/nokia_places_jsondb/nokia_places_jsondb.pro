@@ -12,7 +12,7 @@ DESTDIR = $$QT.location.plugins/geoservices
 HEADERS += \
             qgeoserviceproviderplugin_jsondb.h \
             qplacemanagerengine_jsondb.h \
-            jsondbhandler.h \
+            jsonconverter.h \
             searchreply.h \
             detailsreply.h \
             reply.h \
@@ -23,7 +23,7 @@ HEADERS += \
 SOURCES += \
             qgeoserviceproviderplugin_jsondb.cpp \
             qplacemanagerengine_jsondb.cpp \
-            jsondbhandler.cpp \
+            jsonconverter.cpp \
             searchreply.cpp \
             detailsreply.cpp \
             reply.cpp \

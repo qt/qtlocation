@@ -54,6 +54,7 @@
 #include <qplacesearchresult.h>
 #include <qplacesearchreply.h>
 #include <qplacecontactdetail.h>
+#include <qplacesearchrequest.h>
 
 #include "jsondbcleaner.h"
 
@@ -104,13 +105,17 @@ private Q_SLOTS:
 
     void saveAndRemovePlace();
     void updatePlace();
+    void simpleSaveAndRemoveCategory();
     void saveAndRemoveCategory();
     void updateCategory();
+    void savePlaceWithCategory();
+
     void searchByName();
     void searchByBox();
     void searchByCircle();
     void searchWithLexicalPlaceNameHint();
     void searchWithDistanceHint();
+    void searchByCategory();
     void icons();
     void unsupportedFunctions();
     void supportedFeatures();
@@ -118,6 +123,8 @@ private Q_SLOTS:
     void contactDetails();
     void contactDetails_data();
     void mulipleDetailTypes();
+    void placeNotifications();
+    void categoryNotifications();
 
 private:
     bool doSavePlace(const QPlace &place,
@@ -282,6 +289,27 @@ void tst_QPlaceManagerJsonDb::updatePlace()
     QVERIFY(doSavePlace(place, QPlaceReply::PlaceDoesNotExistError));
 }
 
+void tst_QPlaceManagerJsonDb::simpleSaveAndRemoveCategory()
+{
+    QString categoryId;
+    QPlaceCategory restaurant;
+    restaurant.setName("Restaurant");
+    QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
+    restaurant.setCategoryId(categoryId);
+
+    QList<QPlaceCategory> categories = placeManager->childCategories();
+    QCOMPARE(categories.count(), 1);
+
+    QPlaceCategory retrievedCategory = placeManager->category(categoryId);
+    QCOMPARE(retrievedCategory, restaurant);
+
+    QVERIFY(doRemoveCategory(restaurant));
+
+    QCOMPARE(placeManager->category(categoryId), QPlaceCategory());
+    categories = placeManager->childCategories();
+    QCOMPARE(categories.count(), 0);
+}
+
 void tst_QPlaceManagerJsonDb::saveAndRemoveCategory()
 {
     QString categoryId;
@@ -358,6 +386,9 @@ void tst_QPlaceManagerJsonDb::saveAndRemoveCategory()
     QVERIFY(categories.contains(pancakes));
     QCOMPARE(categories.count(), 2);
 
+    QVERIFY(placeManager->category(pizza.categoryId()) == QPlaceCategory());
+    QVERIFY(placeManager->category(burgers.categoryId()) == QPlaceCategory());
+
     QVERIFY(doRemoveCategory(accommodation));
     categories = placeManager->childCategories();
     QVERIFY(categories.contains(restaurant));
@@ -426,6 +457,45 @@ void tst_QPlaceManagerJsonDb::updateCategory()
     categories = placeManager->childCategories(fineDining.categoryId());
     QVERIFY(categories.contains(pizza));
     QCOMPARE(categories.count(), 1);
+}
+
+void tst_QPlaceManagerJsonDb::savePlaceWithCategory()
+{
+    QString categoryId;
+    QPlaceCategory restaurant;
+    restaurant.setName("Restaurant");
+    QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
+    restaurant.setCategoryId(categoryId);
+
+    QString placeId;
+    QPlace monolithBurgers;
+    monolithBurgers.setName("Monolith burgers");
+    monolithBurgers.setCategory(restaurant);
+    QVERIFY(doSavePlace(monolithBurgers,QPlaceReply::NoError, &placeId));
+    monolithBurgers.setPlaceId(placeId);
+
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.categories().count(), 1);
+    QCOMPARE(retrievedPlace.categories().first(), restaurant);
+
+    //update place with multiple categories
+    QPlaceCategory facilities;
+    facilities.setName("facilities");
+    QVERIFY(doSaveCategory(facilities, QPlaceReply::NoError, &categoryId));
+    facilities.setCategoryId(categoryId);
+
+    QList<QPlaceCategory> categories;
+    categories << facilities << restaurant;
+    monolithBurgers.setCategories(categories);
+    QVERIFY(doSavePlace(monolithBurgers,QPlaceReply::NoError, &placeId));
+
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.categories().count(), 2);
+    QSet<QPlaceCategory> catSet;
+
+    QVERIFY(retrievedPlace.categories().contains(facilities));
+    QVERIFY(retrievedPlace.categories().contains(restaurant));
 }
 
 void tst_QPlaceManagerJsonDb::searchByName()
@@ -985,6 +1055,37 @@ void tst_QPlaceManagerJsonDb::searchWithDistanceHint()
 
 }
 
+void tst_QPlaceManagerJsonDb::searchByCategory()
+{
+    QString categoryId;
+    QPlaceCategory restaurant;
+    restaurant.setName("Restaurant");
+    QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
+    restaurant.setCategoryId(categoryId);
+
+    QString placeId;
+    QPlace park;
+    park.setName("Park");
+    QVERIFY(doSavePlace(park, QPlaceReply::NoError, &placeId));
+    park.setPlaceId(placeId);
+
+    QList<QPlaceCategory> categories;
+    categories << restaurant;
+
+    QPlace krustyBurger;
+    krustyBurger.setName("Krusty burger");
+    krustyBurger.setCategories(categories);
+    QVERIFY(doSavePlace(krustyBurger, QPlaceReply::NoError, &placeId));
+    krustyBurger.setPlaceId(placeId);
+
+    QList<QPlace> places;
+    QPlaceSearchRequest request;
+    request.setCategory(restaurant);
+    QVERIFY(doSearch(request, &places));
+    QCOMPARE(places.count(), 1);
+    QCOMPARE(places.at(0), krustyBurger);
+}
+
 void tst_QPlaceManagerJsonDb::icons()
 {
     QPlaceIcon icon;
@@ -1271,6 +1372,94 @@ void tst_QPlaceManagerJsonDb::mulipleDetailTypes()
     QVERIFY(doFetchDetails(placeId, &retrievedPlace));
     QVERIFY(retrievedPlace == place);
 }
+
+void tst_QPlaceManagerJsonDb::placeNotifications()
+{
+    QSignalSpy createSpy(placeManager, SIGNAL(placeAdded(QString)));
+    QSignalSpy updateSpy(placeManager, SIGNAL(placeUpdated(QString)));
+    QSignalSpy removeSpy(placeManager, SIGNAL(placeRemoved(QString)));
+
+    //create place
+    QPlace place;
+    place.setName("Char");
+    QString placeId;
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+    place.setPlaceId(placeId);
+
+    QTRY_VERIFY(createSpy.count() == 1);
+    createSpy.clear();
+    QVERIFY(updateSpy.count() == 0);
+    QVERIFY(removeSpy.count() == 0);
+
+    //modify place
+    QGeoLocation location;
+    location.setCoordinate(QGeoCoordinate(10,10));
+    place.setLocation(location);
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError));
+    QTRY_VERIFY(updateSpy.count() == 1);
+    updateSpy.clear();
+    QVERIFY(createSpy.count() == 0);
+    QVERIFY(removeSpy.count() == 0);
+
+    //remove place
+    QVERIFY(doRemovePlace(place, QPlaceReply::NoError));
+    QTRY_VERIFY(removeSpy.count() == 1);
+    removeSpy.clear();
+    QVERIFY(createSpy.count() == 0);
+    QVERIFY(updateSpy.count() == 0);
+}
+
+void tst_QPlaceManagerJsonDb::categoryNotifications()
+{
+    QSignalSpy createSpy(placeManager, SIGNAL(categoryAdded(QPlaceCategory,QString)));
+    QSignalSpy updateSpy(placeManager, SIGNAL(categoryUpdated(QPlaceCategory,QString)));
+    QSignalSpy removeSpy(placeManager, SIGNAL(categoryRemoved(QString,QString)));
+
+    //create category
+    QString restaurantId;
+    QPlaceCategory restaurant;
+    restaurant.setName("Restaurant");
+    QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &restaurantId));
+    restaurant.setCategoryId(restaurantId);
+    QTRY_VERIFY(createSpy.count() == 1);
+    createSpy.clear();
+    QVERIFY(updateSpy.count() == 0);
+    QVERIFY(removeSpy.count() == 0);
+
+    //modify category
+    restaurant.setName("RESTAURANT");
+    QVERIFY(doSaveCategory(restaurant));
+    QTRY_VERIFY(updateSpy.count() == 1);
+    updateSpy.clear();
+    QVERIFY(createSpy.count() == 0);
+    QVERIFY(removeSpy.count() == 0);
+
+    QVERIFY(doRemoveCategory(restaurant));
+    QTRY_VERIFY(removeSpy.count() == 1);
+    removeSpy.clear();
+    QVERIFY(createSpy.count() == 0);
+    QVERIFY(updateSpy.count() == 0);
+
+    restaurant.setCategoryId(QString());
+    QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &restaurantId));
+    QTRY_VERIFY(createSpy.count() == 1);
+    createSpy.clear();
+    QVERIFY(updateSpy.count() == 0);
+    QVERIFY(removeSpy.count() == 0);
+
+    //save a category as a child
+    QString steakId;
+    QPlaceCategory steak;
+    steak.setName("Steak");
+
+    QVERIFY(doSaveCategory(steak, restaurantId, QPlaceReply::NoError, &steakId));
+    steak.setCategoryId(steakId);
+    QTRY_VERIFY(createSpy.count() == 1);
+    QVERIFY(createSpy.at(0).at(0).value<QPlaceCategory>() == steak);
+    createSpy.clear();
+    QVERIFY(updateSpy.count() == 0);
+    QVERIFY(removeSpy.count() == 0);
+ }
 
 void tst_QPlaceManagerJsonDb::cleanup()
 {

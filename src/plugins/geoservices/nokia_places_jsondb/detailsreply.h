@@ -51,15 +51,34 @@ QT_USE_NAMESPACE
 class DetailsReply : public QPlaceDetailsReply
 {
     Q_OBJECT
+    enum State {
+        Initial,
+        GetCategories,
+        GetPlace
+    };
+
 public:
     DetailsReply(QPlaceManagerEngineJsonDb *engine);
     virtual ~DetailsReply();
-    void setPlace(const QPlace &place);
 
     DECLARE_TRIGGER_DONE_FN
 
+    void setPlaceId(const QString &placeId);
+
+    void start();
+
+protected:
+    JsonDbClient *db() {return m_engine->db();}
+
+private slots:
+    void processResponse(int id, const QVariant &data);
+    void processError(int id, int code, const QString &errorString);
+
 private:
     QPlaceManagerEngineJsonDb *m_engine;
+    QString m_placeId;
+    int m_reqId;
+    State m_state;
 };
 
 #endif

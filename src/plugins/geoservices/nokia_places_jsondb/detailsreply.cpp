@@ -41,6 +41,8 @@
 
 #include "detailsreply.h"
 #include "qplacemanagerengine_jsondb.h"
+#include <QDebug>
+#include <jsondb-client.h>
 
 DetailsReply::DetailsReply(QPlaceManagerEngineJsonDb *engine)
     : QPlaceDetailsReply(engine), m_engine(engine)
@@ -51,7 +53,86 @@ DetailsReply::~DetailsReply()
 {
 }
 
-void DetailsReply::setPlace(const QPlace &place)
+void DetailsReply::setPlaceId(const QString &placeId)
 {
-    QPlaceDetailsReply::setPlace(place);
+    m_placeId = placeId;
 }
+
+void DetailsReply::start()
+{
+    if (!db()->isConnected()) {
+        triggerDone(QPlaceReply::CommunicationError, QLatin1String("No connection to jsondb database"));
+        return;
+    }
+
+    connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
+    connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
+
+    m_state = DetailsReply::GetPlace;
+    m_reqId = db()->query(QString::fromLatin1("[?%1 = \"%2\"][?%3 = \"%4\"]").arg(JsonConverter::Type).arg(JsonConverter::PlaceType)
+                          .arg(JsonConverter::Uuid).arg(m_placeId));
+}
+
+void DetailsReply::processResponse(int id, const QVariant &data)
+{
+    if (id != m_reqId)
+        return;
+    switch (m_state) {
+    case (DetailsReply::GetPlace) : {
+        if (data.toMap().value(JsonConverter::Length).toInt() <= 0) {
+            triggerDone(QPlaceReply::PlaceDoesNotExistError,
+                                      QString::fromLatin1("Specified place does not exist"));
+            return;
+        } else {
+            QVariantMap placeMap = data.toMap().value(JsonConverter::Data).toList().first().toMap();
+            setPlace(JsonConverter::convertJsonMapToPlace(placeMap, m_engine));
+            QVariantList categoryUuids = placeMap.value(JsonConverter::CategoryUuids).toList();
+            if (!categoryUuids.isEmpty()) {
+                //need to retrieve categories
+                QString queryString = QString::fromLatin1("[?%1=\"%2\"]").arg(JsonConverter::Type).arg(JsonConverter::CategoryType)
+                                    + QString::fromLatin1("[?%1 in %categoryUuids]").arg(JsonConverter::Uuid);
+
+                QVariantMap bindingsMap;
+                bindingsMap.insert(QLatin1String("categoryUuids"), categoryUuids);
+
+                QVariantMap queryObj;
+                queryObj.insert(JsonConverter::Query, queryString);
+                queryObj.insert(JsonConverter::Bindings, bindingsMap);
+
+                m_state = DetailsReply::GetCategories;
+                m_reqId = db()->find(queryObj);
+                return;
+            } else { //don't need to retrieve categores so return the details
+                triggerDone();
+                return;
+            }
+        }
+        break;
+    } case (DetailsReply::GetCategories): {
+        QList<QVariantMap> categoriesJson =JsonConverter::convertToListOfMaps(data);
+        QList<QPlaceCategory> categories;
+        foreach (const QVariantMap categoryMap, categoriesJson)
+            categories.append(JsonConverter::convertJsonMapToCategory(categoryMap, m_engine));
+
+        QPlace p = place();
+        p.setCategories(categories);
+        setPlace(p);
+        triggerDone();
+        return;
+    } default:
+        triggerDone(QPlaceReply::UnknownError, QLatin1String("Unknown state encountered when retrieving place details"));
+        return;
+    }
+}
+
+void DetailsReply::processError(int id, int code, const QString &jsonDbErrorString)
+{
+    if (id != m_reqId)
+        return;
+    QPlaceReply::Error error = QPlaceReply::UnknownError;
+    QString errorStr = QString::fromLatin1("Unknown error during details fetch operation: jsondb error code =%1, erroString=%2").
+                  arg(code).arg(jsonDbErrorString);
+    triggerDone(error, errorStr);
+}
+
+

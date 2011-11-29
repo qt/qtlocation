@@ -41,16 +41,25 @@
 #ifndef SEARCHREPLY_H
 #define SEARCHREPLY_H
 
-#include <qplacesearchreply.h>
-
 #include "macro.h"
 #include "qplacemanagerengine_jsondb.h"
+
+#include <qplacesearchreply.h>
+
+#include <QObject>
 
 QT_USE_NAMESPACE
 
 class SearchReply : public QPlaceSearchReply
 {
     Q_OBJECT
+
+    enum State {
+       Initial,
+       GetCategories,
+       Search
+    };
+
 public:
     SearchReply(QPlaceManagerEngineJsonDb *engine);
     virtual ~SearchReply();
@@ -59,9 +68,19 @@ public:
 
     DECLARE_TRIGGER_DONE_FN
 
+    void start();
+
+protected:
+    JsonDbClient *db() {return m_engine->db();}
+
+private slots:
+    void processResponse(int id, const QVariant &data);
+    void processError(int id, int code, const QString &);
+
 private:
     QPlaceManagerEngineJsonDb *m_engine;
-
+    State m_state;
+    int m_reqId;
 };
 
 #endif
