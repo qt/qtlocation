@@ -141,10 +141,10 @@ private:
     friend class QPlaceIcon;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::ManagerFeatures)
+
 QT_END_NAMESPACE
 
 QT_END_HEADER
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QPlaceManager::ManagerFeatures))
 
 #endif // QPLACEMANAGER_H
