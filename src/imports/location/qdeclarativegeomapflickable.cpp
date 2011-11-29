@@ -263,7 +263,6 @@ bool QDeclarativeGeoMapFlickable::mouseMoveEvent(QMouseEvent *event)
 }
 
 // FIXME:
-// - coordinate pan with a sleeve-constant (zoom level is not considered scientifically)
 // - not left right / up down flicking, so if map is rotated, will act unintuitively
 void QDeclarativeGeoMapFlickable::updateCamera(int dx, int dy, int timeMs)
 {
@@ -273,9 +272,10 @@ void QDeclarativeGeoMapFlickable::updateCamera(int dx, int dy, int timeMs)
     QGeoCoordinate coordinate = animationStartCoordinate.coordinate();
      if (timeMs == 0) {
         // No animation, just set new values.
-        coordinate.setLatitude(coordinate.latitude() + (dy / pow(2.0, map_->mapController()->zoom())));
-        coordinate.setLongitude(coordinate.longitude() - (dx / pow(2.0, map_->mapController()->zoom())));
-        animationStartCoordinate.setCoordinate(coordinate);
+        QPointF p = map_->coordinateToScreenPosition(coordinate);
+        p.setY(p.y() - dy);
+        p.setX(p.x() - dx);
+        animationStartCoordinate.setCoordinate(map_->screenPositionToCoordinate(p));
         map_->mapController()->setCenter(animationStartCoordinate);
     } else {
         //qDebug() << "Will do flick animation dx (pix), dy (pix), time (ms): " << dx << dy << timeMs;
