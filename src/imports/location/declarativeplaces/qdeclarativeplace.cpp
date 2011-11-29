@@ -159,7 +159,7 @@ QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServicePr
 :   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QDeclarativePropertyMap(this)), m_contactDetails(0),
-    m_src(src), m_reply(0), m_plugin(plugin), m_complete(false),
+    m_reply(0), m_plugin(plugin), m_complete(false),
     m_status(QDeclarativePlace::Ready)
 {
     Q_ASSERT(plugin);
