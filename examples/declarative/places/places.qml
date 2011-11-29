@@ -234,8 +234,6 @@ Item {
 
         searchArea: searchRegion
 
-        onStatusChanged: searchResultView.model = placeSearchModel
-
         function searchForCategory(category) {
             searchTerm = "";
             categories = category;
@@ -254,7 +252,6 @@ Item {
         plugin: placesPlugin
 
         searchArea: searchRegion
-        onStatusChanged: searchResultView.model = recommendationModel
     }
 
     SearchBox {

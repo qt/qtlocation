@@ -45,8 +45,6 @@ import "../components"
 Item {
     id: root
 
-    property variant model
-
     clip: true
 
     ListView {
@@ -58,19 +56,53 @@ Item {
         snapMode: ListView.SnapOneItem
 
         model: VisualItemModel {
-            ListView {
+            Item {
                 // search results (page 0)
+
                 width: root.width
                 height: root.height
 
-                spacing: 5
+                Connections {
+                    target: placeSearchModel
+                    onStatusChanged: searchView.visible = true
+                }
+                Connections {
+                    target: recommendationModel
+                    onStatusChanged: searchView.visible = false
+                }
 
-                model: root.model
-                delegate: SearchResultDelegate {
-                    onDisplayPlaceDetails: {
-                        placeDetails.place = data.place;
-                        placeDetails.distance = data.distance;
-                        view.currentIndex = 1;
+                ListView {
+                    id: searchView
+
+                    anchors.fill: parent
+
+                    spacing: 5
+
+                    model: placeSearchModel
+                    delegate: SearchResultDelegate {
+                        onDisplayPlaceDetails: {
+                            placeDetails.place = data.place;
+                            placeDetails.distance = data.distance;
+                            view.currentIndex = 1;
+                        }
+                    }
+                }
+
+                ListView {
+                    id: similarView
+
+                    anchors.fill: parent
+
+                    spacing: 5
+
+                    visible: !searchView.visible
+                    model: recommendationModel
+                    delegate: SearchResultDelegate {
+                        onDisplayPlaceDetails: {
+                            placeDetails.place = data.place;
+                            placeDetails.distance = data.distance;
+                            view.currentIndex = 1;
+                        }
                     }
                 }
             }
@@ -86,7 +118,11 @@ Item {
                     hoveredSource: "../resources/left_hovered.png"
                     pressedSource: "../resources/left_pressed.png"
 
-                    onClicked: view.currentIndex = 0
+                    onClicked: {
+                        view.currentIndex = 0;
+                        placeContentList.source = "";
+                        placeContentList.place = null;
+                    }
                 }
 
                 PlaceDelegate {
@@ -119,9 +155,10 @@ Item {
                     }
 
                     onSearchForSimilar: {
+                        placeContentList.source = "";
                         recommendationModel.placeId = place.placeId;
                         recommendationModel.execute();
-                        //page.currentIndex = 0;  // this causes a crash?
+                        view.currentIndex = 0;
                     }
 
                     onEditPlace: {
@@ -150,12 +187,17 @@ Item {
                 Loader {
                     id: placeContentList
 
+                    property Place place
+
                     anchors.top: contentListBackButton.bottom
                     anchors.bottom: parent.bottom
                     width: parent.width
                     anchors.margins: 10
 
-                    property Place place
+                    onStatusChanged: {
+                        if (status === Loader.Null)
+                            place = null;
+                    }
                 }
             }
             Item {

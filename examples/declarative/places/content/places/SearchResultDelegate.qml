@@ -85,7 +85,7 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                if (type === PlaceSearchModel.PlaceResult) {
+                if (model.type === undefined || type === PlaceSearchModel.PlaceResult) {
                     if (!place.detailsFetched)
                         place.getDetails();
 
