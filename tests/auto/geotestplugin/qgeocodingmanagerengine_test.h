@@ -237,7 +237,7 @@ public:
 
         if (coordinate.latitude() > 70) {
             errorString_ = "error";
-            errorCode_ = (QGeocodeReply::Error) (coordinate.latitude() - 70);
+            errorCode_ = (QGeocodeReply::Error) (qRound(coordinate.latitude() - 70));
         } else {
             errorString_ = "";
             errorCode_ = QGeocodeReply::NoError;
