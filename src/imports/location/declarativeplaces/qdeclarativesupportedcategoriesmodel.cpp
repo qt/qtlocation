@@ -213,30 +213,10 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
     m_plugin = plugin;
 
     // handle plugin name changes -> update categories
+    connect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(connectNotificationSignals()));
     connect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(updateCategories()));
 
-    //connect to the manager of the new plugin.
-    if (m_plugin) {
-        QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-        if (serviceProvider) {
-            QPlaceManager *placeManager = serviceProvider->placeManager();
-            if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-                qmlInfo(this) << tr("Warning: Plugin does not support places.");
-                return;
-            }
-
-            if (placeManager) {
-                // listen for any category notifications so that we can reupdate the categories
-                // model.
-                connect(placeManager, SIGNAL(categoryAdded(QPlaceCategory, QString)),
-                        this, SLOT(addedCategory(QPlaceCategory, QString)));
-                connect(placeManager, SIGNAL(categoryUpdated(QPlaceCategory, QString)),
-                        this, SLOT(updatedCategory(QPlaceCategory, QString)));
-                connect(placeManager, SIGNAL(categoryRemoved(QString, QString)),
-                        this, SLOT(removedCategory(QString, QString)));
-            }
-        }
-    }
+    connectNotificationSignals();
 
     if (m_complete)
         emit pluginChanged();
@@ -392,6 +372,31 @@ void QDeclarativeSupportedCategoriesModel::removedCategory(const QString &catego
     parentNode->childIds.removeAll(categoryId);
     delete m_categoriesTree.take(categoryId);
     endRemoveRows();
+}
+
+void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
+{
+    if (!m_plugin)
+        return;
+
+    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider)
+        return;
+
+    QPlaceManager *placeManager = serviceProvider->placeManager();
+    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+        return;
+    }
+
+    // listen for any category notifications so that we can reupdate the categories
+    // model.
+    connect(placeManager, SIGNAL(categoryAdded(QPlaceCategory, QString)),
+            this, SLOT(addedCategory(QPlaceCategory, QString)));
+    connect(placeManager, SIGNAL(categoryUpdated(QPlaceCategory, QString)),
+            this, SLOT(updatedCategory(QPlaceCategory, QString)));
+    connect(placeManager, SIGNAL(categoryRemoved(QString, QString)),
+            this, SLOT(removedCategory(QString, QString)));
 }
 
 void QDeclarativeSupportedCategoriesModel::updateCategories()
