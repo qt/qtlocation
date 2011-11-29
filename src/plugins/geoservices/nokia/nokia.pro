@@ -1,7 +1,13 @@
 load(qt_module)
 
 TARGET = qtgeoservices_nokia
-QT += location network systeminfo
+QT += location network
+
+contains(QT_CONFIG, location-china-support) {
+    # China support
+    QT += systeminfo
+    DEFINES += USE_CHINA_NETWORK_REGISTRATION
+}
 
 load(qt_plugin)
 

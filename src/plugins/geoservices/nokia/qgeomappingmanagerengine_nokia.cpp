@@ -360,6 +360,7 @@ void QGeoMappingManagerEngineNokia::setHost(const QString &host)
     }
 }
 
+#ifdef USE_CHINA_NETWORK_REGISTRATION
 void QGeoMappingManagerEngineNokia::currentMobileCountryCodeChanged(int interface, const QString & mcc)
 {
     Q_UNUSED(interface)
@@ -367,6 +368,7 @@ void QGeoMappingManagerEngineNokia::currentMobileCountryCodeChanged(int interfac
         setHost(MAPTILES_HOST_CN);
     }
 }
+#endif
 
 bool QGeoMappingManagerEngineNokia::isValidParameter(const QString &param)
 {

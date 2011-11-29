@@ -86,8 +86,10 @@ public:
     const QString& applicationId() const;
     const QString& referer() const;
 
+#ifdef USE_CHINA_NETWORK_REGISTRATION
 private Q_SLOTS:
     void currentMobileCountryCodeChanged(int interface, const QString& mcc);
+#endif
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
