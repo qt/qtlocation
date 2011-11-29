@@ -460,13 +460,9 @@ Item {
         onSliderUpdated: {
             page.state = ""
         }
+    */
 
-        onCoordinatesCaptured: {
-            messageDialog.state = "Coordinates"
-            messageDialog.text = "<b>Latitude:</b> " + roundNumber(latitude,4) + "<br/><b>Longitude:</b> " + roundNumber(longitude,4);
-            page.state = "Message"
-        }
-
+    /*
         onGeocodeFinished:{
             var street, district, city, county, state, countryCode, country, latitude, longitude, text
 
@@ -536,7 +532,11 @@ Item {
                                           height: page.height;\
                                           onMapPressed:{page.state = ""}\
                                           onFollowmeChanged: {optionsMenu.update()}\
-                                          onSupportedMapTypesChanged: {mapTypeMenu.update()}}',page)
+                                          onSupportedMapTypesChanged: {mapTypeMenu.update()}\
+                                          onCoordinatesCaptured: {\
+                                          messageDialog.state = "Coordinates";\
+                                          messageDialog.text = "<b>Latitude:</b> " + roundNumber(latitude,4) + "<br/><b>Longitude:</b> " + roundNumber(longitude,4);\
+                                          page.state = "Message"}}',page)
             map.plugin = plugin
         }
     }

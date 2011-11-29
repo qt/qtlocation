@@ -53,7 +53,7 @@ Map {
     // Flicking
     flick.enabled: true
     flick.deceleration: 3000
-//    property list<Marker> markers
+    property list<Marker> markers
 //    property list<MapItem> mapItems
     property int counter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
     property int mapItemsCounter: 0 // counter for total amount of mapItems. Resets to 0 when number of markers = 0
@@ -138,16 +138,17 @@ Map {
                                             }
                                         }
 
-    signal coordinatesCaptured(double latitude, double longitude)
     signal geocodeFinished()
     signal showGeocodeInfo()
     signal moveMarker()
     signal routeError()
+*/
+    signal coordinatesCaptured(double latitude, double longitude)
 
     Component.onCompleted: {
-        markers = []
+        markers = new Array();
     }
-
+/*
     Component {
         id: routeDelegate
         MapGroup {
@@ -522,12 +523,12 @@ Map {
         y: 0
 
         onClicked: {
-/*            switch (button) {
-                case "Set Marker": {
+               switch (button) {
+                case "Add Marker": {
                     addMarker()
                     break;
                 }
-                case "Coordinates": {
+                case "Get coordinate": {
                     map.coordinatesCaptured(mouseArea.lastCoordinate.latitude, mouseArea.lastCoordinate.longitude)
                     break;
                 }
@@ -535,7 +536,7 @@ Map {
                     map.deleteAllObjects()
                     break;
                 }
-            }*/
+            }
             map.state = ""
         }
     }
@@ -664,14 +665,12 @@ Map {
 
         onPressAndHold:{
             popupMenu.clear()
-            popupMenu.addItem("Coordinates")
-            popupMenu.addItem("Marker")
-            popupMenu.addItem("Rectangle")
-            popupMenu.addItem("Circle")
-            popupMenu.addItem("Polyline")
-            popupMenu.addItem("Polygon")
-//            if ((map.markers.length != 0) || (map.mapItems.length != 0)) popupMenu.addItem("Delete all objects")
-//                map.state = "PopupMenu"
+            popupMenu.addItem("Add Marker")
+            popupMenu.addItem("Get coordinate")
+            //comming...
+            //popupMenu.addItem("Draw Items")
+            //if ((map.markers.length != 0) || (map.mapItems.length() != 0)) popupMenu.addItem("Remove all Items")
+            map.state = "PopupMenu"
         }
     }
 
@@ -748,14 +747,14 @@ Map {
         map.mapItems = []
         mapItemsCounter = 0
     }
-
+*/
     function addMarker(){
 
         var marker, myArray
         var count = map.markers.length
         counter++
         marker = Qt.createQmlObject ('Marker {}', map)
-        map.addMapObject(marker)
+        map.addMapScreenItem(marker)
 
         //update list of markers
         myArray = new Array()
@@ -765,7 +764,7 @@ Map {
         myArray.push(marker)
         markers = myArray
     }
-
+/*
     function removeMarker(marker){
         //update list of markers
         var myArray = new Array()

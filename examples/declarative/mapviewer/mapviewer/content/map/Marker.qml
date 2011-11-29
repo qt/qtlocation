@@ -42,89 +42,49 @@ import QtQuick 2.0;
 import QtLocation 5.0
 import "../components"
 
-MapGroup {  //to be used inside MapComponent only
+MapScreenItem {  //to be used inside MapComponent only
     id: marker
-    property alias coordinate: markerImage.coordinate
-    property alias lastMouseX: markerMouseArea.lastX
-    property alias lastMouseY: markerMouseArea.lastY
-    property alias text: markerIndex.text
+    anchorPoint.x: image.width/4
+    anchorPoint.y: image.height
 
-    MapImage {
-        id: markerImage
-        source: markerMouseArea.pressed ? "resources/marker_selected.png" : "resources/marker.png" //TODO replace with following lane when QTBUG-20096 fixed
-//        source: markerMouseArea.containsMouse ? (markerMouseArea.pressed  ? "resources/marker_selected.png" :"resources/marker_hovered.png") : "resources/marker.png"
-        coordinate: Coordinate { latitude : 0; longitude : 0 }
-        offset.x: -13
-        offset.y: -32
+    coordinate: Coordinate { latitude : 0; longitude : 0 }
 
-        Component.onCompleted: {
-            coordinate = mouseArea.lastCoordinate
-        }
-
-        MapMouseArea {
+    sourceItem:  Image {
+        id: image
+        source: markerMouseArea.containsMouse ? (markerMouseArea.pressed  ? "../resources/marker_selected.png" :"../resources/marker_hovered.png") : "../resources/marker.png"
+        MapMouseArea  {
             id: markerMouseArea
-            property int dX: 0
-            property int dY: 0
-            property int lastX: -1
-            property int lastY: -1
-            property bool longPress: false
-            hoverEnabled: true
-            onPressed: {
-                ++marker.z
-                var newX, newY, oldX, oldY
-                newX = map.toScreenPosition(markerMouseArea.mouseToCoordinate(mouse)).x
-                newY = map.toScreenPosition(markerMouseArea.mouseToCoordinate(mouse)).y
-                oldX = map.toScreenPosition(markerImage.coordinate).x
-                oldY = map.toScreenPosition(markerImage.coordinate).y
-                dX = oldX - newX
-                dY = oldY - newY
-                lastX = mouse.x
-                lastY = mouse.y
+            anchors.fill: parent
+            hoverEnabled : true
+            drag.target: marker
+            drag.axis: Drag.XandYAxis
+            drag.minimumX: -map.toScreenPosition(marker.coordinate).x
+            drag.maximumX: map.width + drag.minimumX
+            drag.minimumY: -map.toScreenPosition(marker.coordinate).y
+            drag.maximumY: map.height + drag.minimumY
 
-                markerTimer.start()
-                map.currentMarker = marker
-                map.state = ""
-            }
-            onReleased: {
-                if (markerTimer.running) markerTimer.stop();
-                marker.z--
-                longPress = false
-            }
-
-            onPositionChanged: {
-                var newX, newY
-                if (markerTimer.running) markerTimer.stop();
-                if ((mouse.button == Qt.LeftButton) && (longPress != true)){
-                    lastX = mouse.x
-                    lastY = mouse.y
-                    newX = map.toScreenPosition(markerMouseArea.mouseToCoordinate(mouse)).x + dX
-                    newY = map.toScreenPosition(markerMouseArea.mouseToCoordinate(mouse)).y + dY
-                    markerImage.coordinate = map.toCoordinate(Qt.point(newX,newY))
-                }
-            }
-
-            Timer {
-                id: markerTimer
-                interval: map.longPressDuration
-                running: false
-                repeat: false
-                onTriggered: {
-                    markerMouseArea.longPress = true
-                    map.markerLongPress()
-                }
+            onReleased:{
+                console.log("drag: implement me")
             }
         }
+
+        Text{
+            id: number
+            y: image.height/4
+            color: "white"
+            font.bold: true
+            font.pixelSize: 14
+            Component.onCompleted: {
+                text = map.counter
+                //very pro way of positioning text
+                x = map.counter > 9 ? image.width/10 : image.width/5
+            }
+        }
+
     }
 
-    MapText {
-        id: markerIndex
-        offset.y : -16
-        coordinate: markerImage.coordinate
-        color: "white"
-        font.bold: true
-        Component.onCompleted: {
-            text = map.counter
-        }
-        font.pixelSize: 14
+    Component.onCompleted: {
+        coordinate.longitude = mouseArea.lastCoordinate.longitude
+        coordinate.latitude = mouseArea.lastCoordinate.latitude
     }
 }
