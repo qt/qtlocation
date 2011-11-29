@@ -141,7 +141,7 @@ Item {
     //=====================Dialogs=====================
     PlaceDialog {
         id: editPlaceDialog
-        z: backgroundRect.z + 2
+        z: backgroundRect.z + 3
 
         onCancelButtonClicked: page.state = ""
 
@@ -168,7 +168,7 @@ Item {
 
     CategoryDialog {
         id: editCategoryDialog
-        z: backgroundRect.z + 2
+        z: backgroundRect.z + 3
 
         onCancelButtonClicked: page.state = ""
 
@@ -195,7 +195,7 @@ Item {
 
     Dialog {
         id: gotoDialog
-        z: backgroundRect.z + 2
+        z: backgroundRect.z + 3
 
         Behavior on opacity { NumberAnimation { duration: 500 } }
 
