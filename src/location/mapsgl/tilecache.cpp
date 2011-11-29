@@ -302,7 +302,7 @@ void TileCache::evictFromDiskCache(TileDisk *td)
     QFile::remove(td->filename);
 }
 
-void TileCache::evictFromMemoryCache(TileMemory */*tm*/)
+void TileCache::evictFromMemoryCache(TileMemory * /* tm  */)
 {
 }
 
