@@ -152,6 +152,10 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
 //        }
 //        delete mapData_;
 //    }
+    foreach (QDeclarativeGeoMapItemBase* item, mapScreenItems_) {
+        item->setMap(0,0);
+    }
+    mapScreenItems_.clear();
 }
 
 void QDeclarativeGeoMap::componentComplete()
