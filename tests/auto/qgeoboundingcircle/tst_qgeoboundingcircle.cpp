@@ -287,13 +287,11 @@ void tst_QGeoBoundingCircle::clone()
 
     QVERIFY2(originalCircle.center() == QGeoCoordinate(9,9),
              "Center of original has not changed");
-    QVERIFY2(originalCircle.radius() == 99.9,
-             "Radius of original has not changed");
+    QCOMPARE(originalCircle.radius(), 99.9);
 
     QVERIFY2(clonedCirclePtr->center() == QGeoCoordinate(1,1),
              "Center of clone references center of original");
-    QVERIFY2(clonedCirclePtr->radius() == 500.0,
-             "Radius of clone references radius of original");
+    QCOMPARE(clonedCirclePtr->radius(), 500.0);
 }
 
 QTEST_MAIN(tst_QGeoBoundingCircle)

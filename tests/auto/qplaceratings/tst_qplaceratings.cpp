@@ -82,7 +82,7 @@ void tst_QPlaceRatings::averageTest()
     QPlaceRatings testObj;
     QVERIFY2(qFuzzyCompare(testObj.average(), 0) , "Wrong default average");
     testObj.setAverage(-10.23);
-    QVERIFY2(qFuzzyCompare(testObj.average(), -10.23), "Wrong average returned");
+    QCOMPARE(testObj.average(), -10.23);
 }
 
 void tst_QPlaceRatings::countTest()

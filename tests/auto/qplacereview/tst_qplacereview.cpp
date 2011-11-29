@@ -124,9 +124,9 @@ void tst_QPlaceReview::ratingTest()
     QPlaceReview testObj;
     QVERIFY2(testObj.rating() == 0, "Wrong default value");
     testObj.setRating(-10);
-    QVERIFY2(testObj.rating() == -10, "Wrong value returned");
+    QCOMPARE(testObj.rating(), -10.0);
     testObj.setRating(3.4);
-    QVERIFY2(testObj.rating() == 3.4, "Wrong value returned");
+    QCOMPARE(testObj.rating(), 3.4);
 }
 
 void tst_QPlaceReview::operatorsTest()
