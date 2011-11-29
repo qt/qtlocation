@@ -63,6 +63,8 @@
 #include "qdeclarativegeomapscreenitem_p.h"
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomaptype_p.h"
+#include "qdeclarativerectanglemapitem_p.h"
+#include "qdeclarativecirclemapitem_p.h"
 
 //Place includes
 #include "qdeclarativecategory_p.h"
@@ -137,6 +139,8 @@ public:
             qmlRegisterType<QDeclarativeReviewModel>(uri, 5, 0, "ReviewModel");
             qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");
             qmlRegisterType<QDeclarativePlaceUser>(uri, 5, 0, "User");
+            qmlRegisterType<QDeclarativeRectangleMapItem>(uri, 5, 0, "RectangleMapItem");
+            qmlRegisterType<QDeclarativeCircleMapItem>(uri, 5, 0, "CircleMapItem");
 
             qmlRegisterType<QDeclarativeRecommendationModel>(uri, 5, 0, "PlaceRecommendationModel");
             qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "CategoryModel");
@@ -159,6 +163,7 @@ public:
             qRegisterMetaType<QPlaceUser>("QPlaceUser");
             qRegisterMetaType<QPlaceAttribute>("QPlaceAttribute");
             qRegisterMetaType<QPlaceContactDetail>("QPlaceContactDetail");
+
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }
