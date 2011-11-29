@@ -110,7 +110,7 @@ void MapNode::updateFBO()
 
     painter.pushSurface(&m_fboSurface);
 
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClearColor(0.9, 0.9, 0.9, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);
     painter.disableEffect();
 #ifdef GL_RESCALE_NORMAL
