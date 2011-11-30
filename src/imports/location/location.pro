@@ -36,7 +36,8 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeomapflickable_p.h \
            qdeclarativegeomappincharea_p.h \
            qdeclarativegeomaptype_p.h \
-           qdeclarativegeomapscreenitem_p.h \
+           qdeclarativegeomapitembase_p.h \
+           qdeclarativegeomapquickitem_p.h \
            mapnode_p.h \
            qdeclarativecirclemapitem_p.h \
            qdeclarativerectanglemapitem_p.h
@@ -63,7 +64,8 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomapflickable.cpp \
            qdeclarativegeomappincharea.cpp \
            qdeclarativegeomaptype.cpp \
-           qdeclarativegeomapscreenitem.cpp \
+           qdeclarativegeomapitembase.cpp \
+           qdeclarativegeomapquickitem.cpp \
            mapnode.cpp \
            qdeclarativecirclemapitem.cpp \
            qdeclarativerectanglemapitem.cpp

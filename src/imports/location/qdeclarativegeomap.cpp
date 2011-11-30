@@ -42,7 +42,7 @@
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
 
-#include "qdeclarativegeomapscreenitem_p.h"
+#include "qdeclarativegeomapquickitem_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 #include <Qt3D/qglview.h>
@@ -152,10 +152,10 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
 //        }
 //        delete mapData_;
 //    }
-    foreach (QDeclarativeGeoMapItemBase* item, mapScreenItems_) {
+    foreach (QDeclarativeGeoMapItemBase* item, mapItems_) {
         item->setMap(0,0);
     }
-    mapScreenItems_.clear();
+    mapItems_.clear();
 }
 
 void QDeclarativeGeoMap::componentComplete()
@@ -224,9 +224,9 @@ void QDeclarativeGeoMap::populateMap()
             setupMapView(mapView);
             continue;
         }
-        QDeclarativeGeoMapItemBase* mapScreenItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
-        if (mapScreenItem) {
-            addMapScreenItem(mapScreenItem);
+        QDeclarativeGeoMapItemBase* mapItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
+        if (mapItem) {
+            addMapItem(mapItem);
         }
     }
 }
@@ -779,37 +779,37 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 /*!
     \qmlmethod QtLocation5::Map::addMapItem(MapItem)
 
-    Adds the given MapOject to the Map. If the object already
-    is on the Map, it will not be added again.
+    Adds the given MapItem to the Map (e.g. MapQuickItem, MapCircle). If the object
+    already is on the Map, it will not be added again.
 
     As an example, consider you have a MapCircle presenting your current position:
 
-    \snippet doc/src/snippets/declarative/testpolyMapItems.qml Basic map position marker definition
-    You can add it to Map (alterntively it can be defined as a child element of the Map):
+    \snippet TODO
+    You can add it to Map (alternatively it can be defined as a child element of the Map):
 
-    \snippet doc/src/snippets/declarative/testpolyMapItems.qml Basic add MapItem
+    \snippet TODO
     Note: MapItemViews can not be added with this method.
 */
 
-void QDeclarativeGeoMap::addMapScreenItem(QDeclarativeGeoMapItemBase *item)
+void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
 {
     QLOC_TRACE0;
-    if (!item || mapScreenItems_.contains(item))
+    if (!item || mapItems_.contains(item))
         return;
     updateMutex_.lock();
     item->setParentItem(this);
     item->setMap(this, map_);
-    mapScreenItems_.append(item);
-    connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(mapScreenItemDestroyed(QObject*)));
+    mapItems_.append(item);
+    connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(mapItemDestroyed(QObject*)));
     updateMutex_.unlock();
 }
 
-void QDeclarativeGeoMap::removeMapScreenItem(QDeclarativeGeoMapItemBase *item)
+void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
 {
     QLOC_TRACE0;
     if (!item || !map_)
         return;
-    if (!mapScreenItems_.contains(item))
+    if (!mapItems_.contains(item))
         return;
     updateMutex_.lock();
     item->setParentItem(0);
@@ -817,24 +817,24 @@ void QDeclarativeGeoMap::removeMapScreenItem(QDeclarativeGeoMapItemBase *item)
     // stop listening to destroyed()
     item->disconnect(this);
     // these can be optmized for perf, as we already check the 'contains' above
-    mapScreenItems_.removeOne(item);
+    mapItems_.removeOne(item);
     updateMutex_.unlock();
 }
 
-void QDeclarativeGeoMap::clearMapScreenItems()
+void QDeclarativeGeoMap::clearMapItems()
 {
-    if (mapScreenItems_.isEmpty())
+    if (mapItems_.isEmpty())
         return;
     updateMutex_.lock();
-    mapScreenItems_.clear();
+    mapItems_.clear();
     updateMutex_.unlock();
 }
 
-void QDeclarativeGeoMap::mapScreenItemDestroyed(QObject* item)
+void QDeclarativeGeoMap::mapItemDestroyed(QObject* item)
 {
-    QDeclarativeGeoMapItemBase* mapScreenItem = qobject_cast<QDeclarativeGeoMapItemBase*>(item);
-    if (mapScreenItem)
-        removeMapScreenItem(mapScreenItem);
+    QDeclarativeGeoMapItemBase* mapItem = qobject_cast<QDeclarativeGeoMapItemBase*>(item);
+    if (mapItem)
+        removeMapItem(mapItem);
 }
 
 void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
@@ -856,11 +856,10 @@ QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
     exist, function does nothing.
 
     As an example, consider you have a MapCircle presenting your current position:
-    \snippet doc/src/snippets/declarative/testpolyMapItems.qml Basic map position marker definition
+    \snippet TODO
 
     You can remove it from the Map element:
-    \snippet doc/src/snippets/declarative/testpolyMapItems.qml Basic remove MapItem
-
+    \snippet TODO
 
 */
 

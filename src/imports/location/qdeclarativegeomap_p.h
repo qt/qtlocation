@@ -151,9 +151,9 @@ public:
     // do we need this?
     //QDeclarativeListProperty<QDeclarativeGeoMapItemBase> items();
 
-    Q_INVOKABLE void removeMapScreenItem(QDeclarativeGeoMapItemBase *item);
-    Q_INVOKABLE void addMapScreenItem(QDeclarativeGeoMapItemBase *item);
-    Q_INVOKABLE void clearMapScreenItems();
+    Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItemBase *item);
+    Q_INVOKABLE void addMapItem(QDeclarativeGeoMapItemBase *item);
+    Q_INVOKABLE void clearMapItems();
 
     Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
     Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
@@ -198,7 +198,7 @@ private Q_SLOTS:
     void centerLatitudeChanged(double latitude);
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
-    void mapScreenItemDestroyed(QObject* item);
+    void mapItemDestroyed(QObject* item);
     void mappingManagerInitialized();
     void mapZoomLevelChanged(qreal zoom);
     void mapTiltChanged(qreal tilt);
@@ -238,7 +238,7 @@ private:
     TileCache *tileCache_;
     Map *map_;
 
-    QList<QDeclarativeGeoMapItemBase*> mapScreenItems_;
+    QList<QDeclarativeGeoMapItemBase*> mapItems_;
 
     QMutex updateMutex_;
     friend class QDeclarativeGeoMapItem;

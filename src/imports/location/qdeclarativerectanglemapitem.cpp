@@ -40,11 +40,12 @@
 ****************************************************************************/
 
 #include "qdeclarativerectanglemapitem_p.h"
+#include "qdeclarativegeomapquickitem_p.h"
 #include <QPainter>
 
 QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), screenItem_(new QDeclarativeGeoMapScreenItem(this)),
-    rectangleMapPaintedItem_(new RectangleMapPaintedItem(screenItem_)), topLeft_(0),
+:   QDeclarativeGeoMapItemBase(parent), quickItem_(new QDeclarativeGeoMapQuickItem(this)),
+    rectangleMapPaintedItem_(new RectangleMapPaintedItem(quickItem_)), topLeft_(0),
     bottomRight_(0)
 {
 }
@@ -110,16 +111,16 @@ void QDeclarativeRectangleMapItem::update()
     if (!map())
         return;
 
-    screenItem_->setCoordinate(
-        new QDeclarativeCoordinate(rectangleMapPaintedItem_->screenItemCoordinate()));
-    screenItem_->setAnchorPoint(rectangleMapPaintedItem_->screenItemAnchorPoint());
+    quickItem_->setCoordinate(
+        new QDeclarativeCoordinate(rectangleMapPaintedItem_->quickItemCoordinate()));
+    quickItem_->setAnchorPoint(rectangleMapPaintedItem_->quickItemAnchorPoint());
 
-    if (screenItem_->sourceItem() == 0) {
+    if (quickItem_->sourceItem() == 0) {
         QObject::connect(map(), SIGNAL(cameraDataChanged(CameraData)), this,
             SLOT(handleCameraDataChanged(CameraData)));
         rectangleMapPaintedItem_->setMap(map());
-        screenItem_->setMap(quickMap(), map());
-        screenItem_->setSourceItem(rectangleMapPaintedItem_);
+        quickItem_->setMap(quickMap(), map());
+        quickItem_->setSourceItem(rectangleMapPaintedItem_);
     }
 }
 
@@ -258,21 +259,21 @@ void RectangleMapPaintedItem::updateGeometry()
     rect_.setTopLeft(QPointF(0, 0));
     rect_.setBottomRight(QPointF(w, h));
 
-    screenItemCoordinate_ = topLeftCoord_;
-    screenItemAnchorPoint_ = rect_.topLeft();
+    quickItemCoordinate_ = topLeftCoord_;
+    quickItemAnchorPoint_ = rect_.topLeft();
     initialized_ = true;
 
     update();
 }
 
-QGeoCoordinate RectangleMapPaintedItem::screenItemCoordinate() const
+QGeoCoordinate RectangleMapPaintedItem::quickItemCoordinate() const
 {
-    return screenItemCoordinate_;
+    return quickItemCoordinate_;
 }
 
-QPointF RectangleMapPaintedItem::screenItemAnchorPoint() const
+QPointF RectangleMapPaintedItem::quickItemAnchorPoint() const
 {
-    return screenItemAnchorPoint_;
+    return quickItemAnchorPoint_;
 }
 
 void RectangleMapPaintedItem::setBrush(const QBrush &brush)

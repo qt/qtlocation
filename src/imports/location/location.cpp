@@ -60,7 +60,7 @@
 #include "qdeclarativegeomaneuver_p.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
-#include "qdeclarativegeomapscreenitem_p.h"
+#include "qdeclarativegeomapquickitem_p.h"
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomaptype_p.h"
 #include "qdeclarativerectanglemapitem_p.h"
@@ -114,8 +114,9 @@ public:
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 5, 0, "Plugin");
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
             qmlRegisterType<QDeclarativeGeoMap>(uri, 5, 0, "Map");
-            qmlRegisterType<QDeclarativeGeoMapScreenItem>(uri, 5, 0, "MapScreenItem");
+
             qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase>(uri, 5, 0, "GeoMapItemBase",QDeclarativeGeoMapItemBase::tr("GeoMapItemBase is not intended instantiable by developer."));
+            qmlRegisterType<QDeclarativeGeoMapQuickItem>(uri, 5, 0, "MapQuickItem");
             qmlRegisterType<QDeclarativeGeoMapItemView>(uri, 5, 0, "MapItemView");
             qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 5, 0, "MapMouseArea");
             qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 5, 0, "MapMouseEvent");
@@ -140,8 +141,8 @@ public:
             qmlRegisterType<QDeclarativeReviewModel>(uri, 5, 0, "ReviewModel");
             qmlRegisterType<QDeclarativeSupplier>(uri, 5, 0, "Supplier");
             qmlRegisterType<QDeclarativePlaceUser>(uri, 5, 0, "User");
-            qmlRegisterType<QDeclarativeRectangleMapItem>(uri, 5, 0, "RectangleMapItem");
-            qmlRegisterType<QDeclarativeCircleMapItem>(uri, 5, 0, "CircleMapItem");
+            qmlRegisterType<QDeclarativeRectangleMapItem>(uri, 5, 0, "MapRectangle");
+            qmlRegisterType<QDeclarativeCircleMapItem>(uri, 5, 0, "MapCircle");
 
             qmlRegisterType<QDeclarativeRecommendationModel>(uri, 5, 0, "PlaceRecommendationModel");
             qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "CategoryModel");

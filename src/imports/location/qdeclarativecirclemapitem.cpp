@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativecirclemapitem_p.h"
+#include "qdeclarativegeomapquickitem_p.h"
 #include "projection_p.h"
 #include <cmath>
 #include <QPen>
@@ -103,8 +104,8 @@ static QPolygonF createPolygon(const Map& map, const QList<QGeoCoordinate> &path
 QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent):
         QDeclarativeGeoMapItemBase(parent),
         center_(0),
-        screenItem_(new QDeclarativeGeoMapScreenItem(this)),
-        circleMapPaintedItem_(new CircleMapPaintedItem(screenItem_))
+        quickItem_(new QDeclarativeGeoMapQuickItem(this)),
+        circleMapPaintedItem_(new CircleMapPaintedItem(quickItem_))
 {
 }
 
@@ -187,14 +188,14 @@ void QDeclarativeCircleMapItem::update()
     if (!map())
         return;
 
-    screenItem_->setCoordinate(new QDeclarativeCoordinate(circleMapPaintedItem_->screenItemCoordinate()));
-    screenItem_->setAnchorPoint(circleMapPaintedItem_->screenItemAnchorPoint());
+    quickItem_->setCoordinate(new QDeclarativeCoordinate(circleMapPaintedItem_->quickItemCoordinate()));
+    quickItem_->setAnchorPoint(circleMapPaintedItem_->quickItemAnchorPoint());
 
-    if (screenItem_->sourceItem() == 0) {
+    if (quickItem_->sourceItem() == 0) {
         connect(map(), SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
         circleMapPaintedItem_->setMap(map());
-        screenItem_->setMap(quickMap(), map());
-        screenItem_->setSourceItem(circleMapPaintedItem_);
+        quickItem_->setMap(quickMap(), map());
+        quickItem_->setSourceItem(circleMapPaintedItem_);
     }
 }
 
@@ -272,8 +273,8 @@ void CircleMapPaintedItem::updateGeometry()
     setHeight(h);
     setContentsSize(QSize(w, h));
 
-    screenItemCoordinate_ = centerCoord_;
-    screenItemAnchorPoint_ = QPointF(w, h) / 2;
+    quickItemCoordinate_ = centerCoord_;
+    quickItemAnchorPoint_ = QPointF(w, h) / 2;
     initialized_ = true;
 
     update();
@@ -380,12 +381,12 @@ qreal CircleMapPaintedItem::radius() const
     return radius_;
 }
 
-QGeoCoordinate CircleMapPaintedItem::screenItemCoordinate() const
+QGeoCoordinate CircleMapPaintedItem::quickItemCoordinate() const
 {
-    return screenItemCoordinate_;
+    return quickItemCoordinate_;
 }
 
-QPointF CircleMapPaintedItem::screenItemAnchorPoint() const
+QPointF CircleMapPaintedItem::quickItemAnchorPoint() const
 {
-    return screenItemAnchorPoint_;
+    return quickItemAnchorPoint_;
 }

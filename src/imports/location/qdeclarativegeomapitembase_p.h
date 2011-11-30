@@ -39,16 +39,12 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEGEOMAPSCREENITEM_H
-#define QDECLARATIVEGEOMAPSCREENITEM_H
+#ifndef QDECLARATIVEGEOMAPITEMBASE_H
+#define QDECLARATIVEGEOMAPITEMBASE_H
 
 #include <QtDeclarative/qquickitem.h>
-#include <QtCore/QCoreApplication>
 
-#include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomap_p.h"
-
-class QDeclarativeGeoMapMouseArea;
 
 QT_BEGIN_NAMESPACE
 
@@ -77,54 +73,7 @@ private:
     Map* map_;
 };
 
-class QDeclarativeGeoMapScreenItem : public QDeclarativeGeoMapItemBase
-{
-    Q_OBJECT
-    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
-    Q_PROPERTY(QPointF anchorPoint READ anchorPoint WRITE setAnchorPoint NOTIFY anchorPointChanged)
-    Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
-    Q_PROPERTY(QQuickItem* sourceItem READ sourceItem WRITE setSourceItem NOTIFY sourceItemChanged)
-
-public:
-    QDeclarativeGeoMapScreenItem(QQuickItem *parent = 0);
-    ~QDeclarativeGeoMapScreenItem();
-
-    void setCoordinate(QDeclarativeCoordinate *coordinate);
-    QDeclarativeCoordinate* coordinate();
-
-    void setSourceItem(QQuickItem* sourceItem);
-    QQuickItem* sourceItem();
-
-    void setAnchorPoint(const QPointF &anchorPoint);
-    QPointF anchorPoint() const;
-
-    void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
-
-Q_SIGNALS:
-    void coordinateChanged();
-    void sourceItemChanged();
-    void anchorPointChanged();
-    void zoomLevelChanged();
-    void camerDataChanged(const CameraData &cameraData);
-
-protected Q_SLOTS:
-    void update();
-
-private Q_SLOTS:
-    void coordinateCoordinateChanged(double);
-
-private:
-    QDeclarativeCoordinate* coordinate_;
-    QQuickItem* sourceItem_;
-    QPointF anchorPoint_;
-    qreal zoomLevel_;
-    bool inUpdate_;
-    bool mapAndSourceItemSet_;
-};
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoMapScreenItem));
 
 #endif

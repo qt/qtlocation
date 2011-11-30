@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVERECTANGLEMAPITEM_H_
 #define QDECLARATIVERECTANGLEMAPITEM_H_
 
-#include "qdeclarativegeomapscreenitem_p.h"
+#include "qdeclarativegeomapitembase_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomap_p.h"
 #include <QPen>
@@ -51,6 +51,7 @@
 QT_BEGIN_NAMESPACE
 
 class RectangleMapPaintedItem;
+class QDeclarativeGeoMapQuickItem;
 
 class QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
 {
@@ -88,7 +89,7 @@ private Q_SLOTS:
     void handleBottomRightCoordinateChanged();
 
 private:
-    QDeclarativeGeoMapScreenItem *screenItem_;
+    QDeclarativeGeoMapQuickItem *quickItem_;
     RectangleMapPaintedItem *rectangleMapPaintedItem_;
     QDeclarativeCoordinate* topLeft_;
     QDeclarativeCoordinate* bottomRight_;
@@ -124,8 +125,8 @@ public:
     QBrush brush() const;
     void setBrush(const QBrush &brush);
 
-    QGeoCoordinate screenItemCoordinate() const;
-    QPointF screenItemAnchorPoint() const;
+    QGeoCoordinate quickItemCoordinate() const;
+    QPointF quickItemAnchorPoint() const;
 
 private:
     void updateGeometry();
@@ -134,8 +135,8 @@ private:
     qreal zoomLevel_;
     QGeoCoordinate topLeftCoord_;
     QGeoCoordinate bottomRightCoord_;
-    QGeoCoordinate screenItemCoordinate_;
-    QPointF screenItemAnchorPoint_;
+    QGeoCoordinate quickItemCoordinate_;
+    QPointF quickItemAnchorPoint_;
     QPen pen_;
     QBrush brush_;
     QRectF rect_;

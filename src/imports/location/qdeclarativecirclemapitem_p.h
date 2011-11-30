@@ -42,11 +42,12 @@
 #ifndef QDECLARATIVECRICLEMAPITEM_H_
 #define QDECLARATIVECRICLEMAPITEM_H_
 
-#include "qdeclarativegeomapscreenitem_p.h"
+#include "qdeclarativegeomapitembase_p.h"
 #include <QPen>
 #include <QBrush>
 
 class CircleMapPaintedItem;
+class QDeclarativeGeoMapQuickItem;
 
 class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
 {
@@ -83,7 +84,7 @@ private Q_SLOTS:
 
 private:
     QDeclarativeCoordinate *center_;
-    QDeclarativeGeoMapScreenItem *screenItem_;
+    QDeclarativeGeoMapQuickItem *quickItem_;
     CircleMapPaintedItem *circleMapPaintedItem_;
     QColor color_;
 };
@@ -115,8 +116,8 @@ public:
     QBrush brush() const;
     void setBrush(const QBrush &brush);
 
-    QGeoCoordinate screenItemCoordinate() const;
-    QPointF screenItemAnchorPoint() const;
+    QGeoCoordinate quickItemCoordinate() const;
+    QPointF quickItemAnchorPoint() const;
 
 private:
     void updateGeometry();
@@ -126,8 +127,8 @@ private:
     qreal zoomLevel_;
     QGeoCoordinate centerCoord_;
     qreal radius_;
-    QGeoCoordinate screenItemCoordinate_;
-    QPointF screenItemAnchorPoint_;
+    QGeoCoordinate quickItemCoordinate_;
+    QPointF quickItemAnchorPoint_;
     QPen pen_;
     QBrush brush_;
     QPolygonF polygon_;

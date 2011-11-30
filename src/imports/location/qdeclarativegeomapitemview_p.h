@@ -42,7 +42,6 @@
 #ifndef QDECLARATIVEGEOMAPITEMVIEW_H
 #define QDECLARATIVEGEOMAPITEMVIEW_H
 
-#include "qdeclarativegeomapmouseevent_p.h"
 #include "QModelIndex"
 
 #include <QtDeclarative/QQuickItem>
@@ -51,10 +50,8 @@
 QT_BEGIN_NAMESPACE
 
 class QAbstractItemModel;
-class QDeclarativeGraphicsGeoMap;
 class QDeclarativeGeoMap;
-class QDeclarativeGeoMapScreenItem;
-class QDeclarativeGeoMapMouseArea;
+class QDeclarativeGeoMapItemBase;
 
 class QDeclarativeGeoMapItemView : public QObject, public QDeclarativeParserStatus
 {
@@ -87,7 +84,7 @@ public:
     void setVisible(bool visible);
     bool isVisible() const;
 
-    QDeclarativeGeoMapScreenItem* createItem(int modelRow);
+    QDeclarativeGeoMapItemBase* createItem(int modelRow);
     // From QDeclarativeParserStatus
     virtual void componentComplete();
     void classBegin() {}
@@ -110,7 +107,7 @@ private:
     QVariant modelVariant_;
     QAbstractItemModel* model_;
     QDeclarativeGeoMap *map_;
-    QList<QDeclarativeGeoMapScreenItem*> mapItemList_;
+    QList<QDeclarativeGeoMapItemBase*> mapItemList_;
 };
 
 QT_END_NAMESPACE

@@ -71,7 +71,7 @@ Item {
             Text {text: "Crazy mode:\n" + testModel.crazyMode + "\nclick to\ntoggle."}
             MouseArea{ anchors.fill: parent;
                 onClicked: testModel.crazyMode = !testModel.crazyMode
-                onDoubleClicked: map.removeMapScreenItem(mapItem1)
+                onDoubleClicked: map.removeMapItem(mapItem1)
             }
         }
         AnimatedImage {
@@ -84,14 +84,14 @@ Item {
         Rectangle {color: "lightblue"; width: 80; height: 80;
             Text {text: "Click:\nadd item1\nDouble-click:\nrm item1"}
             MouseArea{ anchors.fill: parent;
-                onClicked: {console.log('----------------adding item 1'); map.addMapScreenItem(externalStaticMapItem1);}
-                onDoubleClicked: {console.log('+++++++++++++++ removing item 1'); map.removeMapScreenItem(externalStaticMapItem1);}
+                onClicked: {console.log('----------------adding item 1'); map.addMapItem(externalStaticMapItem1);}
+                onDoubleClicked: {console.log('+++++++++++++++ removing item 1'); map.removeMapItem(externalStaticMapItem1);}
             }
         }
         Rectangle {color: "lightblue"; width: 80; height: 80;
             Text {text: "Click:\nadd item2\nDouble-click:\nrm item2"}
             MouseArea{ anchors.fill: parent;
-                onClicked: {console.log('adding item 2'); map.addMapScreenItem(externalStaticMapItem2);}
+                onClicked: {console.log('adding item 2'); map.addMapItem(externalStaticMapItem2);}
                 onDoubleClicked: {console.log('removing item 2'); map.removeMapItem(externalStaticMapItem2);}
             }
         }
@@ -244,9 +244,14 @@ Item {
             }
         }
 */
+        MapCircle {
+            center: londonCoordinate
+            radius: 1000
+            color: 'red'
+        }
 
-        MapScreenItem {
-            objectName: "blinky screen item 1"
+        MapQuickItem {
+            objectName: "blinky quick item 1"
             coordinate: Coordinate { latitude: -19; longitude : 146 }
             sourceItem: AnimatedImage {
                 width: 80
@@ -257,7 +262,7 @@ Item {
         }
 
         Coordinate {id: londonCoordinate; latitude: 51.5; longitude: -0.11}
-        MapScreenItem {
+        MapQuickItem {
             MapMouseArea {
                 id: mapMouseAreaUpperPurple
                 z: 100
@@ -305,7 +310,7 @@ Item {
         }
 
 
-        MapScreenItem {
+        MapQuickItem {
             z: 1
             objectName: "mousetestrectanglelower"
             coordinate: londonCoordinate
@@ -320,8 +325,8 @@ Item {
 
 
         /*
-        MapScreenItem {
-            objectName: "blinky screen item 2"
+        MapQuickItem {
+            objectName: "blinky quick item 2"
             coordinate: brisbaneCoordinate
             anchorPoint: Qt.point(40, 40)
             zoomLevel: 6.0
@@ -354,14 +359,13 @@ Item {
         }
         */
 
-        /*
         MapItemView {
             id: theObjectView
             model: testModel
             delegate: Component {
-                MapScreenItem {
-//                    objectName: 'one of many items from model'
-//                    visible: true
+                MapQuickItem {
+                    objectName: 'one of many items from model'
+                    visible: true
                     zoomLevel: 7
                     sourceItem: Rectangle {
                         width: 300; height: 300; color: 'green'
@@ -391,7 +395,6 @@ Item {
                 }
             }
         }
-        */
 
         // From location.test plugin
         PinchGenerator {

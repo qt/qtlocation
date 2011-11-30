@@ -39,8 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qdeclarativegeomapscreenitem_p.h"
-#include "qdeclarativegeomapmousearea_p.h"
+#include "qdeclarativegeomapquickitem_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include <QtDeclarative/qdeclarativeinfo.h>
 
@@ -49,63 +48,13 @@
 
 QT_BEGIN_NAMESPACE
 
-QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
-    : QQuickItem(parent),
-      quickMap_(0),
-      map_(0)
-{
-    setParentItem(parent);
-    setFlag(ItemHasContents, false);
-    setAcceptHoverEvents(false);
-}
-
-QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
-{
-    if (quickMap_)
-        quickMap_->removeMapScreenItem(this);
-}
-
-void QDeclarativeGeoMapItemBase::componentComplete()
-{
-    componentComplete_ = true;
-}
-
-bool QDeclarativeGeoMapItemBase::contains(QPoint point)
-{
-    return true;
-}
-
-void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap* quickMap, Map *map)
-{
-    QLOC_TRACE2(quickMap, quickMap_);
-    if (quickMap == quickMap_)
-        return;
-    if (quickMap && quickMap_)
-        return; // don't allow association to more than one map
-    quickMap_ = quickMap;
-    map_ = map;
-    this->update();
-}
-
-void QDeclarativeGeoMapItemBase::update() {}
-
-QDeclarativeGeoMap* QDeclarativeGeoMapItemBase::quickMap()
-{
-    return quickMap_;
-}
-
-Map* QDeclarativeGeoMapItemBase::map()
-{
-    return map_;
-}
-
 /*!
-    \qmlclass MapScreenItem
+    \qmlclass MapQuickItem
 
-    The MapScreenItem element is part of the \bold{QtLocation 5.0} module.
+    The MapQuickItem element is part of the \bold{QtLocation 5.0} module.
 */
 
-QDeclarativeGeoMapScreenItem::QDeclarativeGeoMapScreenItem(QQuickItem *parent)
+QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
     : QDeclarativeGeoMapItemBase(parent),
       coordinate_(0),
       sourceItem_(0),
@@ -113,9 +62,9 @@ QDeclarativeGeoMapScreenItem::QDeclarativeGeoMapScreenItem(QQuickItem *parent)
       inUpdate_(false),
       mapAndSourceItemSet_(false) {}
 
-QDeclarativeGeoMapScreenItem::~QDeclarativeGeoMapScreenItem() {}
+QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
 
-void QDeclarativeGeoMapScreenItem::setCoordinate(QDeclarativeCoordinate *coordinate)
+void QDeclarativeGeoMapQuickItem::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
     if (coordinate_ == coordinate)
         return;
@@ -140,18 +89,18 @@ void QDeclarativeGeoMapScreenItem::setCoordinate(QDeclarativeCoordinate *coordin
     emit coordinateChanged();
 }
 
-void QDeclarativeGeoMapScreenItem::coordinateCoordinateChanged(double)
+void QDeclarativeGeoMapQuickItem::coordinateCoordinateChanged(double)
 {
     update();
     emit coordinateChanged();
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapScreenItem::coordinate()
+QDeclarativeCoordinate* QDeclarativeGeoMapQuickItem::coordinate()
 {
     return coordinate_;
 }
 
-void QDeclarativeGeoMapScreenItem::setSourceItem(QQuickItem* sourceItem)
+void QDeclarativeGeoMapQuickItem::setSourceItem(QQuickItem* sourceItem)
 {
     if (sourceItem == sourceItem_)
         return;
@@ -160,12 +109,12 @@ void QDeclarativeGeoMapScreenItem::setSourceItem(QQuickItem* sourceItem)
     emit sourceItemChanged();
 }
 
-QQuickItem* QDeclarativeGeoMapScreenItem::sourceItem()
+QQuickItem* QDeclarativeGeoMapQuickItem::sourceItem()
 {
     return sourceItem_;
 }
 
-void QDeclarativeGeoMapScreenItem::setAnchorPoint(const QPointF &anchorPoint)
+void QDeclarativeGeoMapQuickItem::setAnchorPoint(const QPointF &anchorPoint)
 {
     if (anchorPoint == anchorPoint_)
         return;
@@ -174,12 +123,12 @@ void QDeclarativeGeoMapScreenItem::setAnchorPoint(const QPointF &anchorPoint)
     emit anchorPointChanged();
 }
 
-QPointF QDeclarativeGeoMapScreenItem::anchorPoint() const
+QPointF QDeclarativeGeoMapQuickItem::anchorPoint() const
 {
     return anchorPoint_;
 }
 
-void QDeclarativeGeoMapScreenItem::setZoomLevel(qreal zoomLevel)
+void QDeclarativeGeoMapQuickItem::setZoomLevel(qreal zoomLevel)
 {
     if (zoomLevel == zoomLevel_)
         return;
@@ -188,12 +137,12 @@ void QDeclarativeGeoMapScreenItem::setZoomLevel(qreal zoomLevel)
     emit zoomLevelChanged();
 }
 
-qreal QDeclarativeGeoMapScreenItem::zoomLevel() const
+qreal QDeclarativeGeoMapQuickItem::zoomLevel() const
 {
     return zoomLevel_;
 }
 
-void QDeclarativeGeoMapScreenItem::update()
+void QDeclarativeGeoMapQuickItem::update()
 {
     if (inUpdate_)
         return;
@@ -245,6 +194,6 @@ void QDeclarativeGeoMapScreenItem::update()
     inUpdate_ = false;
 }
 
-#include "moc_qdeclarativegeomapscreenitem_p.cpp"
+#include "moc_qdeclarativegeomapquickitem_p.cpp"
 
 QT_END_NAMESPACE

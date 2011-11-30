@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapmousearea_p.h"
-#include "qdeclarativegeomapscreenitem_p.h"
+#include "qdeclarativegeomapitembase_p.h"
 #include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/QQuickCanvas>
 
