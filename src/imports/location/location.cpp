@@ -115,6 +115,7 @@ public:
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
             qmlRegisterType<QDeclarativeGeoMap>(uri, 5, 0, "Map");
             qmlRegisterType<QDeclarativeGeoMapScreenItem>(uri, 5, 0, "MapScreenItem");
+            qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase>(uri, 5, 0, "GeoMapItemBase",QDeclarativeGeoMapItemBase::tr("GeoMapItemBase is not intended instantiable by developer."));
             qmlRegisterType<QDeclarativeGeoMapItemView>(uri, 5, 0, "MapItemView");
             qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 5, 0, "MapMouseArea");
             qmlRegisterType<QDeclarativeGeoMapMouseEvent>(uri, 5, 0, "MapMouseEvent");
