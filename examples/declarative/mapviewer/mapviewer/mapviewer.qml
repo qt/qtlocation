@@ -359,7 +359,7 @@ Item {
 
         onGoButtonClicked: {
             page.state = ""
-            /*            messageDialog.state = ""
+            messageDialog.state = ""
             geocodeAddress.street = dialogModel.get(0).inputText
             geocodeAddress.district = dialogModel.get(1).inputText
             geocodeAddress.city = dialogModel.get(2).inputText
@@ -370,7 +370,7 @@ Item {
             geocodeAddress.postalCode = dialogModel.get(7).inputText
             map.geocodeModel.clear()
             map.geocodeModel.query = geocodeAddress
-            map.geocodeModel.update();*/
+            map.geocodeModel.update()
         }
         onCancelButtonClicked: {
             page.state = ""
@@ -395,12 +395,11 @@ Item {
         onGoButtonClicked: {
             page.state = ""
             messageDialog.state = ""
-
-            /*            reverseGeocodeCoordinate.latitude = dialogModel.get(0).inputText
+            reverseGeocodeCoordinate.latitude = dialogModel.get(0).inputText
             reverseGeocodeCoordinate.longitude = dialogModel.get(1).inputText
             map.geocodeModel.clear()
             map.geocodeModel.query = reverseGeocodeCoordinate
-            map.geocodeModel.update();*/
+            map.geocodeModel.update();
         }
 
         onCancelButtonClicked: {
@@ -442,7 +441,6 @@ Item {
             }
         }
     }*/
-
 
     //=====================Map=====================
 

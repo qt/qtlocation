@@ -63,6 +63,9 @@ Map {
 
     property int lastX : -1
     property int lastY : -1
+    property int pressX : -1
+    property int pressY : -1
+    property int jitterThreshold : 10
     property bool followme: false
     property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
 
@@ -126,18 +129,18 @@ Map {
                                             clear()
                                             routeInfoModel.update()
                                         }
-                                    }
+                                    }*/
     property GeocodeModel geocodeModel: GeocodeModel {
                                             plugin : map.plugin;
                                             onStatusChanged:{
-                                                if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)) map.geocodeFinished()
+//                                                if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)) map.geocodeFinished()
                                             }
                                             onLocationsChanged:
                                             {
                                                 if (count == 1) map.center = get(0).coordinate
                                             }
                                         }
-
+/*
     signal geocodeFinished()
     signal showGeocodeInfo()
     signal moveMarker()
@@ -636,6 +639,8 @@ Map {
             map.state = ""
             map.lastX = mouse.x
             map.lastY = mouse.y
+            map.pressX = mouse.x
+            map.pressY = mouse.y
             lastCoordinate = mouseArea.mouseToCoordinate(mouse)
 //            if (mouse.button == Qt.MiddleButton)
 //                addMarker()
@@ -664,13 +669,16 @@ Map {
         }
 
         onPressAndHold:{
-            popupMenu.clear()
-            popupMenu.addItem("Add Marker")
-            popupMenu.addItem("Get coordinate")
-            //comming...
-            //popupMenu.addItem("Draw Items")
-            //if ((map.markers.length != 0) || (map.mapItems.length() != 0)) popupMenu.addItem("Remove all Items")
-            map.state = "PopupMenu"
+            if (Math.abs(map.pressX - mouse.x ) < map.jitterThreshold
+                    && Math.abs(map.pressY - mouse.y ) < map.jitterThreshold) {
+                popupMenu.clear()
+                popupMenu.addItem("Add Marker")
+                popupMenu.addItem("Get coordinate")
+                //comming...
+                //popupMenu.addItem("Draw Items")
+                //if ((map.markers.length != 0) || (map.mapItems.length() != 0)) popupMenu.addItem("Remove all Items")
+                map.state = "PopupMenu"
+            }
         }
     }
 
