@@ -90,7 +90,7 @@ private:
     QDeclarativeGeoBoundingBox* bounds_;
     QList<QDeclarativeCoordinate*> path_;
     QList<QDeclarativeGeoRouteSegment*> segments_;
-    friend class QDeclarativeGeoMapRouteObject;
+    friend class QDeclarativeRouteMapItem;
 };
 
 QT_END_NAMESPACE

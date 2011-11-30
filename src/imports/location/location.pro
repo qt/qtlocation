@@ -40,7 +40,9 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativegeomapquickitem_p.h \
            mapnode_p.h \
            qdeclarativecirclemapitem_p.h \
-           qdeclarativerectanglemapitem_p.h
+           qdeclarativerectanglemapitem_p.h \
+           qdeclarativepolylinemapitem_p.h \
+           qdeclarativeroutemapitem_p.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -68,7 +70,9 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativegeomapquickitem.cpp \
            mapnode.cpp \
            qdeclarativecirclemapitem.cpp \
-           qdeclarativerectanglemapitem.cpp
+           qdeclarativerectanglemapitem.cpp \
+           qdeclarativepolylinemapitem.cpp \
+           qdeclarativeroutemapitem.cpp
 
 include(declarativeplaces/declarativeplaces.pri)
 

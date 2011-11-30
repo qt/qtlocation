@@ -65,6 +65,8 @@
 #include "qdeclarativegeomaptype_p.h"
 #include "qdeclarativerectanglemapitem_p.h"
 #include "qdeclarativecirclemapitem_p.h"
+#include "qdeclarativeroutemapitem_p.h"
+#include "qdeclarativepolylinemapitem_p.h"
 
 //Place includes
 #include "qdeclarativecategory_p.h"
@@ -143,6 +145,8 @@ public:
             qmlRegisterType<QDeclarativePlaceUser>(uri, 5, 0, "User");
             qmlRegisterType<QDeclarativeRectangleMapItem>(uri, 5, 0, "MapRectangle");
             qmlRegisterType<QDeclarativeCircleMapItem>(uri, 5, 0, "MapCircle");
+            qmlRegisterType<QDeclarativePolylineMapItem>(uri, 5, 0, "MapPolyline");
+            qmlRegisterType<QDeclarativeRouteMapItem>(uri, 5, 0, "MapRoute");
 
             qmlRegisterType<QDeclarativeRecommendationModel>(uri, 5, 0, "PlaceRecommendationModel");
             qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "CategoryModel");
