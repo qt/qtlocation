@@ -30,7 +30,8 @@ SUBDIRS += geotestplugin \
            qplacesearchrequest \
            qplacesupplier \
            qplacesearchresult \
-           declarative \
+           declarative_core \
+           declarative_ui \
            qmlinterface \
            maptype
 
