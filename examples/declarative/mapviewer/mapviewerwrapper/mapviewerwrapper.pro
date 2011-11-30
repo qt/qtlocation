@@ -18,6 +18,10 @@ OTHER_FILES += \
     ../mapviewer/content/dialogs/RouteDialog.qml \
     ../mapviewer/content/map/MapComponent.qml \
     ../mapviewer/content/map/Marker.qml \
+    ../mapviewer/content/map/PolylineItem.qml \
+    ../mapviewer/content/map/RectangleItem.qml \
+    ../mapviewer/content/map/CircleItem.qml \
+    ../mapviewer/content/map/PolygonItem.qml \
     ../mapviewer/content/components/TextWithLabel.qml \
     ../mapviewer/content/components/Button.qml \
     ../mapviewer/content/components/Checkbox.qml \

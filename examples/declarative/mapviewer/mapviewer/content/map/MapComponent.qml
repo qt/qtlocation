@@ -53,13 +53,13 @@ Map {
     // Flicking
     flick.enabled: true
     flick.deceleration: 3000
-    property list<Marker> markers
-//    property list<MapItem> mapItems
-    property int counter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
-    property int mapItemsCounter: 0 // counter for total amount of mapItems. Resets to 0 when number of markers = 0
-//    property Marker currentMarker
+    property variant markers
+    property variant mapItems
+    property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
+    property int mapGeoItemsCounter: 0 // counter for total amount of mapItems. Resets to 0 when number of markers = 0
+    //    property Marker currentMarker
     signal mapPressed() // replace with
-                        // signal mousePressed(MouseEvent mouse) when QTBUG-14550 is fixed
+    // signal mousePressed(MouseEvent mouse) when QTBUG-14550 is fixed
 
     property int lastX : -1
     property int lastY : -1
@@ -75,7 +75,7 @@ Map {
         longitude: 153
     }
 
-/* @todo
+    /* @todo
     Binding {
         target: map
         property: 'center'
@@ -111,7 +111,7 @@ Map {
         }
     }
 
-/*
+    /*
     property RouteQuery routeQuery: RouteQuery {}
     property RouteModel routeModel: RouteModel {
                                         plugin : map.plugin
@@ -150,8 +150,9 @@ Map {
 
     Component.onCompleted: {
         markers = new Array();
+        mapItems = new Array();
     }
-/*
+    /*
     Component {
         id: routeDelegate
         MapGroup {
@@ -493,7 +494,7 @@ Map {
         y: 0
         onClicked: {
             map.state = ""
-/*            switch (button) {
+            /*            switch (button) {
                 case "Delete": {//remove marker
                     map.removeMarker(currentMarker)
                     break;
@@ -526,19 +527,45 @@ Map {
         y: 0
 
         onClicked: {
-               switch (button) {
-                case "Add Marker": {
-                    addMarker()
-                    break;
-                }
-                case "Get coordinate": {
-                    map.coordinatesCaptured(mouseArea.lastCoordinate.latitude, mouseArea.lastCoordinate.longitude)
-                    break;
-                }
-                case "Delete all objects": {
-                    map.deleteAllObjects()
-                    break;
-                }
+            switch (button) {
+            case "Add Marker": {
+                addMarker()
+                break;
+            }
+            case "Get coordinate": {
+                map.coordinatesCaptured(mouseArea.lastCoordinate.latitude, mouseArea.lastCoordinate.longitude)
+                break;
+            }
+            case "Remove markers": {
+                deleteMarkers()
+                break;
+            }
+
+            case "Remove items": {
+                deleteMapItems()
+                break;
+            }
+
+            case "Draw Polyline": {
+                addGeoItem("PolylineItem")
+                break;
+            }
+
+            case "Draw Rectangle": {
+                addGeoItem("RectangleItem")
+                break;
+            }
+
+            case "Draw Circle": {
+                addGeoItem("CircleItem")
+                break;
+            }
+
+            case "Draw Polygon": {
+                addGeoItem("PolygonItem")
+                break;
+            }
+
             }
             map.state = ""
         }
@@ -555,7 +582,7 @@ Map {
         y: 0
 
         onClicked: {
-/*            switch (button) {
+            /*            switch (button) {
                 case "Delete": {//delete route
                     routeModel.clear()
                     routeInfoModel.update()
@@ -580,7 +607,7 @@ Map {
         y: 0
 
         onClicked: {
-/*            switch (button) {
+            /*            switch (button) {
                 case "Info": {
                     map.showGeocodeInfo()
                     break;
@@ -642,18 +669,18 @@ Map {
             map.pressX = mouse.x
             map.pressY = mouse.y
             lastCoordinate = mouseArea.mouseToCoordinate(mouse)
-//            if (mouse.button == Qt.MiddleButton)
-//                addMarker()
+            //            if (mouse.button == Qt.MiddleButton)
+            //                addMarker()
         }
 
         onPositionChanged: {
             map.state = ""
             if ((mouse.button == Qt.LeftButton) & (map.state == "")) {
-//                if ((map.lastX != -1) && (map.lastY != -1)) {
-//                    var dx = mouse.x - map.lastX
-//                    var dy = mouse.y - map.lastY
-//                    map.pan(-dx, -dy)
-//                }
+                //                if ((map.lastX != -1) && (map.lastY != -1)) {
+                //                    var dx = mouse.x - map.lastX
+                //                    var dy = mouse.y - map.lastY
+                //                    map.pan(-dx, -dy)
+                //                }
                 map.lastX = mouse.x
                 map.lastY = mouse.y
             }
@@ -674,13 +701,34 @@ Map {
                 popupMenu.clear()
                 popupMenu.addItem("Add Marker")
                 popupMenu.addItem("Get coordinate")
-                //comming...
-                //popupMenu.addItem("Draw Items")
-                //if ((map.markers.length != 0) || (map.mapItems.length() != 0)) popupMenu.addItem("Remove all Items")
+
+                if (map.markers.length>0) {
+                    popupMenu.addItem("Remove markers")
+                }
+
+                if (map.mapItems.length>0) {
+                    popupMenu.addItem("Remove items")
+                }
+
+                if (map.markers.length>1) {
+
+                    popupMenu.addItem("Draw Polyline")
+
+                }
+
+                if (map.markers.length==2) {
+                    popupMenu.addItem("Draw Rectangle")
+                    popupMenu.addItem("Draw Circle")
+                }
+
+                if (map.markers.length>2) {
+                    popupMenu.addItem("Draw Polygon")
+                }
+
                 map.state = "PopupMenu"
             }
+          }
         }
-    }
 
 
     Keys.onPressed: {
@@ -719,60 +767,63 @@ Map {
         scaleText.text = text
     }
 
-/*
-    function addMapItem(type){
-        var item, myArray
-        if (map.itemMarkers.length < 2){
-            console.log("less than 2 points marked")
-        } else {
-            console.log("adding " + type)
-            item = Qt.createQmlObject (type + ' {}', map)
-            map.addMapObject(item)
-            //update list of markers
-            var count = map.objects.length
-            mapItemsCounter++
-            myArray = new Array()
-            for (var i = 0; i<count; i++){
-                myArray.push(mapItems[i])
-            }
-            myArray.push(item)
-            mapItems = myArray
-        }
-    }
-
-    function deleteAllObjects(){
+    function deleteMarkers(){
         var count = map.markers.length
         for (var i = 0; i<count; i++){
-            map.removeMapObject(map.markers[i])
+            map.removeMapItem(map.markers[i])
             map.markers[i].destroy()
         }
         map.markers = []
+        markerCounter = 0
+    }
+
+    function deleteMapItems(){
         var count = map.mapItems.length
         for (var i = 0; i<count; i++){
-            map.removeMapObject(map.mapItems[i])
+            map.removeMapItem(map.mapItems[i])
             map.mapItems[i].destroy()
         }
         map.mapItems = []
-        mapItemsCounter = 0
+        mapGeoItemsCounter = 0
     }
-*/
-    function addMarker(){
 
-        var marker, myArray
+    function addMarker(){
         var count = map.markers.length
-        counter++
-        marker = Qt.createQmlObject ('Marker {}', map)
+        markerCounter++
+        var marker = Qt.createQmlObject ('Marker {}', map)
         map.addMapItem(marker)
+        marker.z = map.z+1
 
         //update list of markers
-        myArray = new Array()
+        var myArray = new Array()
         for (var i = 0; i<count; i++){
             myArray.push(markers[i])
         }
         myArray.push(marker)
         markers = myArray
     }
-/*
+
+    function addGeoItem(item){
+        var count = map.mapItems.length
+        var co = Qt.createComponent(item+'.qml')
+        if (co.status == Component.Ready) {
+            var o = co.createObject(map)
+            o.setGeometry(map.markers)
+            mapGeoItemsCounter++
+            map.addMapItem(o)
+            //update list of items
+            var myArray = new Array()
+            for (var i = 0; i<count; i++){
+                myArray.push(mapItems[i])
+            }
+            myArray.push(o)
+            mapItems = myArray
+
+        } else {
+            console.log(item + " is not supported right now, please call us later.")
+        }
+    }
+    /*
     function removeMarker(marker){
         //update list of markers
         var myArray = new Array()
@@ -846,21 +897,21 @@ Map {
 
     function formatDistance(meters)
     {
-         var dist = Math.round(meters)
-         if (dist > 1000 ){
-             if (dist > 100000){
-                 dist = Math.round(dist / 1000)
-             }
-             else{
-                 dist = Math.round(dist / 100)
-                 dist = dist / 10
-             }
-             dist = dist + " km"
-         }
-         else{
-             dist = dist + " m"
-         }
-         return dist
+        var dist = Math.round(meters)
+        if (dist > 1000 ){
+            if (dist > 100000){
+                dist = Math.round(dist / 1000)
+            }
+            else{
+                dist = Math.round(dist / 100)
+                dist = dist / 10
+            }
+            dist = dist + " km"
+        }
+        else{
+            dist = dist + " m"
+        }
+        return dist
     }
 
     // states of map

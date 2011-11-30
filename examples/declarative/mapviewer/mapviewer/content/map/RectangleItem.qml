@@ -37,54 +37,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-import QtQuick 2.0;
+import QtQuick 2.0
 import QtLocation 5.0
-import "../components"
 
-MapQuickItem {  //to be used inside MapComponent only
-    id: marker
-    anchorPoint.x: image.width/4
-    anchorPoint.y: image.height
+//TODO: remove/refactor me when items are integrated
 
-    coordinate: Coordinate { latitude : 0; longitude : 0 }
+MapRectangle {
 
-    sourceItem:  Image {
-        id: image
-        source: markerMouseArea.containsMouse ? (markerMouseArea.pressed  ? "../resources/marker_selected.png" :"../resources/marker_hovered.png") : "../resources/marker.png"
-        MapMouseArea  {
-            id: markerMouseArea
-            anchors.fill: parent
-            hoverEnabled : true
-            drag.target: marker
-            drag.axis: Drag.XandYAxis
-            drag.minimumX: -map.toScreenPosition(marker.coordinate).x
-            drag.maximumX: map.width + drag.minimumX
-            drag.minimumY: -map.toScreenPosition(marker.coordinate).y
-            drag.maximumY: map.height + drag.minimumY
+    color: "red"
 
-//            onReleased:{
-//                console.log("drag: implement me")
-//            }
-        }
-
-        Text{
-            id: number
-            y: image.height/4
-            color: "white"
-            font.bold: true
-            font.pixelSize: 14
-            width:27
-            horizontalAlignment: Text.AlignHCenter
-            Component.onCompleted: {
-                text = map.markerCounter
-            }
-        }
-
-    }
-
-    Component.onCompleted: {
-        coordinate.longitude = mouseArea.lastCoordinate.longitude
-        coordinate.latitude = mouseArea.lastCoordinate.latitude
+    function setGeometry(markers){
+        var count = markers.length
+        topLeft = markers[count-2].coordinate
+        bottomRight = markers[count-1].coordinate
     }
 }

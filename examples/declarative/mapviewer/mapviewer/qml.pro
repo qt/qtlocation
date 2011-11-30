@@ -30,7 +30,11 @@ dialogs.files = \
 map.path = $${files.path}/content/map
 map.files = \
     content/map/MapComponent.qml \
-    content/map/Marker.qml
+    content/map/Marker.qml \
+    content/map/CircleItem.qml \
+    content/map/RectangleItem.qml \
+    content/map/PolylineItem.qml \
+    content/map/PolygonItem.qml
 
 resources.path =  $${files.path}/content/resources
 resources.files = \

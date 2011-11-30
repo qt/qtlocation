@@ -25,6 +25,10 @@
     <qresource prefix="/content/map">
         <file alias="MapComponent.qml">../mapviewer/content/map/MapComponent.qml</file>
         <file alias="Marker.qml">../mapviewer/content/map/Marker.qml</file>
+        <file alias="PolylineItem.qml">../mapviewer/content/map/PolylineItem.qml</file>
+        <file alias="RectangleItem.qml">../mapviewer/content/map/RectangleItem.qml</file>
+        <file alias="CircleItem.qml">../mapviewer/content/map/CircleItem.qml</file>
+        <file alias="PolygonItem.qml">../mapviewer/content/map/PolygonItem.qml</file>
     </qresource>
     <qresource prefix="/content/resources">
         <file alias="button_hovered.png">../mapviewer/content/resources/button_hovered.png</file>
