@@ -201,7 +201,7 @@ QDeclarativeGeoMapPinchArea::QDeclarativeGeoMapPinchArea(QDeclarativeGeoMap* map
       id1_(-1),
       maximumZoomLevelChange_(2.0),
       rotationFactor_(1.0),
-      activeGestures_(ZoomGesture | RotationGesture),
+      activeGestures_(ZoomGesture),
       minimumTilt_(0.0),
       maximumTilt_(90.0),
       maximumTiltChange_(20.0),
@@ -223,11 +223,11 @@ void QDeclarativeGeoMapPinchArea::setActiveGestures(ActiveGestures activeGesture
 {
     if (activeGestures == activeGestures_)
         return;
+    activeGestures_ = activeGestures;
     if (activeGestures_ & RotationGesture)
         qmlInfo(this) << tr("Pinchrotation gesture activated. Note that it is experimental feature.");
     if (activeGestures_ & TiltGesture)
         qmlInfo(this) << tr("Pinchtilt gesture activated. Note that it is experimental feature.");
-    activeGestures_ = activeGestures;
     emit activeGesturesChanged();
 }
 

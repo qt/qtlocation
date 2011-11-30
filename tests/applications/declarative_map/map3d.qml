@@ -214,11 +214,16 @@ Item {
     Map {
         id: map
         property bool disableFlickOnStarted: false
+        x: 0
+        y: 0
         MapMouseArea {
             id: mapMouseArea
             onDoubleClicked: console.log('mapmousearea got doubleclicked')
             anchors.fill: parent
-            onClicked: console.log('coordinate: ' + mouse.coordinate.latitude + ' to screen pos: ' + map.toScreenPosition(mouse.coordinate).x + ' ' + map.toScreenPosition(mouse.coordinate).y)
+            onClicked: console.log('coordinate lat: ' + mapMouseArea.mouseToCoordinate(mouse).latitude +
+                                   'coordinate lon: ' + mapMouseArea.mouseToCoordinate(mouse).longitude +
+                                   ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x +
+                                   ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
         }
 /*
         MapItem {
@@ -251,6 +256,70 @@ Item {
             }
         }
 
+        Coordinate {id: londonCoordinate; latitude: 51.5; longitude: -0.11}
+        MapScreenItem {
+            MapMouseArea {
+                id: mapMouseAreaUpperPurple
+                z: 100
+                objectName: 'mapMouseAreaUpperPurple'
+                width: rectangleSourceItem.width
+                height: rectangleSourceItem.height
+                x: rectangleSourceItem.x
+                y: rectangleSourceItem.y
+                onClicked: {
+                    console.log('..... map mouse clicked() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                    rectangleSourceItem.width -= 5
+                    rectangleSourceItem.height -= 5
+                }
+                onPressed: {
+                    console.log('..... map mouse pressed() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                }
+                onReleased: {
+                    console.log('..... map mouse released() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                }
+                onDoubleClicked: {
+                    console.log('..... map mouse doubleClicked() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                }
+                onPositionChanged: {
+                    console.log('..... map mouse positionChanged() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                }
+                onPressAndHold: {
+                    console.log('..... map mouse pressAndHold() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                }
+                onEntered: {
+                    console.log('..... map mouse entered()')
+                }
+                onExited: {
+                    console.log('..... map mouse exited()')
+                }
+            }
+            z: 2
+            objectName: "mousetestrectangleupper"
+            coordinate: londonCoordinate
+            sourceItem: Rectangle {
+                id: rectangleSourceItem
+                width: 80
+                height: 80
+                color: 'purple'
+            }
+        }
+
+
+        MapScreenItem {
+            z: 1
+            objectName: "mousetestrectanglelower"
+            coordinate: londonCoordinate
+            sourceItem: Rectangle {
+                width: 160
+                height: 160
+                color: 'yellow'
+            }
+        }
+
+
+
+
+        /*
         MapScreenItem {
             objectName: "blinky screen item 2"
             coordinate: brisbaneCoordinate
@@ -269,7 +338,23 @@ Item {
                 }
             }
         }
+        */
 
+        /*
+        MapItem {
+            objectName: 'blinky static item'
+            zoomLevel: 7 // at which map's  zoom level the width and height are '1-to-1'
+            coordinate: brisbaneCoordinate
+            sourceItem: AnimatedImage {
+                width: 80
+                height: 80
+                playing: true
+                source: "blinky.gif"
+            }
+        }
+        */
+
+        /*
         MapItemView {
             id: theObjectView
             model: testModel
@@ -306,6 +391,7 @@ Item {
                 }
             }
         }
+        */
 
         // From location.test plugin
         PinchGenerator {
@@ -377,8 +463,6 @@ Item {
         }
         plugin : Plugin {name : "nokia"}
         // commented features are checked to work at least somehow
-        x: 0
-        y: 0
         //anchors.left: parent.left
         //anchors.bottom: parent.bottom
         //anchors.leftMargin: 70
@@ -398,16 +482,11 @@ Item {
 
         // Flicking
         flick.enabled: true
-        flick.onFlickStarted: {
-            if (map.disableFlickOnStarted)
-                map.flick.enabled = false
-            else
-                map.flick.enabled = true
-        }
-        //flick.onFlickEnded: {console.log     ('flick ended signal                        F Stop ------------------ ') }
+        //flick.onFlickStarted: {console.log ('flick started signal                    F Start ++++++++++++++++++ ') }
+        //flick.onFlickEnded: {console.log ('flick ended signal                        F Stop ------------------ ') }
         //flick.onMovementStarted: {console.log('movement started signal                   M Start ++++++++++++++++++ ') }
-        //flick.onMovementEnded: {console.log  ('movement ended signal                     M Stop ------------------ ') }
 
+        //flick.onMovementEnded: {console.log ('movement ended signal                     M Stop ------------------ ') }
 
         onWheel: {
             console.log('map wheel event, rotation in degrees: ' + delta/8);

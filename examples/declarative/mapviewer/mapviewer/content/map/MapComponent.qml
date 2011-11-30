@@ -227,7 +227,7 @@ Map {
                 }
                 onPositionChanged: {
                     if (circleTimer.running) circleTimer.stop()
-                    if ((mouse.button == Qt.LeftButton) && (map.state == "")) radius = center.distanceTo(mouse.coordinate)
+                    if ((mouse.button == Qt.LeftButton) && (map.state == "")) radius = center.distanceTo(mouseArea.mouseToCoordinate(mouse))
                     if (map.state == "") {
                         map.lastX = mouse.x
                         map.lastY = mouse.y
@@ -635,7 +635,7 @@ Map {
             map.state = ""
             map.lastX = mouse.x
             map.lastY = mouse.y
-            lastCoordinate = mouse.coordinate
+            lastCoordinate = mouseArea.mouseToCoordinate(mouse)
 //            if (mouse.button == Qt.MiddleButton)
 //                addMarker()
         }
@@ -654,7 +654,7 @@ Map {
         }
 
         onDoubleClicked: {
-            map.center = mouse.coordinate
+            map.center = mouseArea.mouseToCoordinate(mouse)
             if (mouse.button == Qt.LeftButton){
                 map.zoomLevel += 1
             } else if (mouse.button == Qt.RightButton) map.zoomLevel -= 1

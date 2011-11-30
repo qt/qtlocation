@@ -310,15 +310,6 @@ Item {
         pinch.activeGestures: MapPinch.NoGesture
 
         pinch.enabled: true
-        pinch.maximumZoomLevel: 20        // biggest zoomlevel allowed
-        pinch.minimumZoomLevel: 1         // smallest zoomlevel allowed
-        pinch.maximumZoomLevelChange: 1.0 // maximum zoomlevel changes per pinch
-        pinch.maximumRotation: 0 // unlimited
-        pinch.minimumRotation: 0 // unlimited
-        pinch.rotationSpeed: 1.0 // default ~follows angle between fingers
-        pinch.maximumTilt: 90
-        pinch.minimumTilt: 0
-        pinch.maximumTiltChange: 35
 
         // Flicking
         flick.enabled: true
@@ -366,12 +357,13 @@ Item {
             x: 0; y: 0;
             width: map.width;
             height: map.height / 2
-            Text { text: '                                          upper MapMouseArea'}
+            Text { font.pixelSize: 20; text: '\n\n\n\n\n\n     upper MapMouseArea, z value: ' + mouseAreaOfMap.z}
         }
 
         MapMouseArea {
             id: mouseAreaOfMap
             objectName: 'map mouse area'
+            z: 5
             x: 0; y: 0;
             width: map.width;
             height: map.height / 2;
@@ -402,8 +394,6 @@ Item {
                 console.log('oooQML: button: ' + mouse.button);
                 console.log('oooQML: modifiers: ' + mouse.modifiers);
                 console.log('oooQML: wasHeld: ' + mouse.wasHeld);
-                console.log('oooQML: latitude: ' + mouse.latitude);
-                console.log('oooQML: longitude: ' + mouse.longitude);
                 console.log('oooQML: x: ' + mouse.x);
                 console.log('oooQML: y: ' + mouse.y);
                 console.log('oooQML: mouse area x,y, width, height: ' + mouseAreaOfMap.x + ' ' + mouseAreaOfMap.y + ' ' + mouseAreaOfMap.width + ' ' + mouseAreaOfMap.height)
@@ -442,7 +432,7 @@ Item {
             x: 0; y: map.height/2;
             width: map.width;
             height: map.height/2;
-            Text { text: '                                          lower MapMouseArea'}
+            Text { font.pixelSize: 20; text: '                                          lower MapMouseArea, z value: ' + mouseAreaOfMap2.z}
         }
 
         MapMouseArea {
@@ -451,6 +441,8 @@ Item {
             x: 0; y: map.height/2;
             width: map.width;
             height: map.height/2;
+
+            hoverEnabled: true
 
             onAcceptedButtonsChanged: {
                console.log('oooQML: in QML MapMouseArea2 acceptedButtonsChanged: ' + mouseAreaOfMap2.acceptedButtons + ' ' + acceptedButtons)
@@ -462,6 +454,9 @@ Item {
                 console.log('oooQML: in QML MapMouseArea2 pressed: ' +
                             mouse.x + ' y:' + mouse.y + ' pressed: '
                             + pressed + ' mouseX: ' + mouseAreaOfMap2.mouseX + ' mouseY: ' + mouseAreaOfMap2.mouseY)
+                console.log('oooQML: and the geo coordinate for that is, lat: '
+                            + mouseAreaOfMap2.mouseToCoordinate(mouse).latitude + ' + lon : ' +
+                            mouseAreaOfMap2.mouseToCoordinate(mouse).longitude)
             }
             onPressedChanged: {
                 console.log('oooQML: in QML MapMouseArea2 pressedChanged, pressedButtons: ' + mouseAreaOfMap2.pressedButtons)
@@ -478,8 +473,6 @@ Item {
                 console.log('oooQML: button: ' + mouse.button);
                 console.log('oooQML: modifiers: ' + mouse.modifiers);
                 console.log('oooQML: wasHeld: ' + mouse.wasHeld);
-                console.log('oooQML: latitude: ' + mouse.latitude);
-                console.log('oooQML: longitude: ' + mouse.longitude);
                 console.log('oooQML: x: ' + mouse.x);
                 console.log('oooQML: y: ' + mouse.y);
                 console.log('oooQML: mouse area x,y, width, height: ' + mouseAreaOfMap2.x + ' ' + mouseAreaOfMap2.y + ' ' + mouseAreaOfMap2.width + ' ' + mouseAreaOfMap2.height)
@@ -519,12 +512,13 @@ Item {
             x: map.width/2; y: 0;
             width: map.width/2;
             height: map.height;
-            Text { text: 'overlapping MapMouseArea'}
+            Text { font.pixelSize: 20; text: '\n\n\n\n\n overlapping MapMouseArea (3), Z value: ' + mouseAreaOfMap3.z}
         }
 
         MapMouseArea {
             id: mouseAreaOfMap3
             objectName: 'map mouse area 3'
+            z: 4
             x: map.width/2; y: 0;
             width: map.width/2;
             height: map.height;
@@ -539,6 +533,8 @@ Item {
                 console.log('oooQML: in QML MapMouseArea3 pressed: ' +
                             mouse.x + ' y:' + mouse.y + ' pressed: '
                             + pressed + ' mouseX: ' + mouseAreaOfMap3.mouseX + ' mouseY: ' + mouseAreaOfMap3.mouseY)
+
+                console.log('oooQML: in QML MapMouseArea3, the x mapped:  ' +  map.mapFromItem(mouseAreaOfMap3, mouse.x, mouse.y).x + ' the y mapped: ' + map.mapFromItem(mouseAreaOfMap3, mouse.x, mouse.y).y)
             }
             onPressedChanged: {
                 console.log('oooQML: in QML MapMouseArea3 pressedChanged, pressedButtons: ' + mouseAreaOfMap3.pressedButtons)
@@ -555,8 +551,6 @@ Item {
                 console.log('oooQML: button: ' + mouse.button);
                 console.log('oooQML: modifiers: ' + mouse.modifiers);
                 console.log('oooQML: wasHeld: ' + mouse.wasHeld);
-                console.log('oooQML: latitude: ' + mouse.latitude);
-                console.log('oooQML: longitude: ' + mouse.longitude);
                 console.log('oooQML: x: ' + mouse.x);
                 console.log('oooQML: y: ' + mouse.y);
                 console.log('oooQML: mouse area x,y, width, height: ' + mouseAreaOfMap3.x + ' ' + mouseAreaOfMap3.y + ' ' + mouseAreaOfMap3.width + ' ' + mouseAreaOfMap3.height)
@@ -623,7 +617,7 @@ Item {
                 console.log('oooQML: in QML Reference MouseArea upper enabledChanged: ' + referenceMouseAreaUpper.enabled)
             }
             onPressed: {
-                console.log('oooQML: in QML Reference MouseArea upper pressed: ' + mouse.x + ' y:' + mouse.y + ' pressed: ' + pressed)
+                console.log('oooQML: in QML Reference MouseArea upper pressed, x: ' + mouse.x + ' y:' + mouse.y + ' pressed: ' + pressed)
             }
             onPressedChanged: {
                 console.log('oooQML: in QML Reference MouseArea upper pressedChanged ' + ' pressed button: ' + referenceMouseAreaUpper.pressedButtons)
@@ -637,8 +631,6 @@ Item {
                 console.log('oooQML: button: ' + mouse.button);
                 console.log('oooQML: modifiers: ' + mouse.modifiers);
                 console.log('oooQML: wasHeld: ' + mouse.wasHeld);
-                console.log('oooQML: latitude: ' + mouse.latitude);
-                console.log('oooQML: longitude: ' + mouse.longitude);
                 console.log('oooQML: x: ' + mouse.x);
                 console.log('oooQML: y: ' + mouse.y);
                 console.log('oooQML: in QML Reference MouseArea upper doubleclicked---------------------------------------- end dump ')
@@ -738,8 +730,6 @@ Item {
                 console.log('oooQML: button: ' + mouse.button);
                 console.log('oooQML: modifiers: ' + mouse.modifiers);
                 console.log('oooQML: wasHeld: ' + mouse.wasHeld);
-                console.log('oooQML: latitude: ' + mouse.latitude);
-                console.log('oooQML: longitude: ' + mouse.longitude);
                 console.log('oooQML: x: ' + mouse.x);
                 console.log('oooQML: y: ' + mouse.y);
                 console.log('oooQML: in QML Reference MouseArea doubleclicked---------------------------------------- end dump ')

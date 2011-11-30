@@ -48,6 +48,8 @@
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomap_p.h"
 
+class QDeclarativeGeoMapMouseArea;
+
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoMapItemBase : public QQuickItem
@@ -58,16 +60,20 @@ public:
     ~QDeclarativeGeoMapItemBase();
 
     void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+    virtual void classBegin() {}
+    virtual void componentComplete();
+    virtual bool contains(QPoint point);
+    QDeclarativeGeoMap* quickMap();
 
 protected Q_SLOTS:
     virtual void update();
 
 protected:
-    QDeclarativeGeoMap* quickMap();
     Map* map();
 
 private:
     QDeclarativeGeoMap* quickMap_;
+    bool componentComplete_;
     Map* map_;
 };
 

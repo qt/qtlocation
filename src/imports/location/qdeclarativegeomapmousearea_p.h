@@ -47,85 +47,32 @@
 #include "qdeclarativegeomapmouseevent_p.h"
 
 #include <QtDeclarative/QQuickItem>
+#include <QtDeclarative/private/qquickmousearea_p.h>
 
 QT_BEGIN_NAMESPACE
 
-class QQuickMouseArea;
-class QQuickMouseEvent;
-
-class QDeclarativeGeoMapMouseArea : public QQuickItem
+class QDeclarativeGeoMapMouseArea : public QQuickMouseArea
 {
     Q_OBJECT
-    Q_PROPERTY(qreal mouseX READ mouseX NOTIFY positionChanged)
-    Q_PROPERTY(qreal mouseY READ mouseY NOTIFY positionChanged)
-    Q_PROPERTY(bool containsMouse READ hovered NOTIFY hoveredChanged)
-    Q_PROPERTY(bool pressed READ pressed NOTIFY pressedChanged)
-    Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
-    Q_PROPERTY(Qt::MouseButtons pressedButtons READ pressedButtons NOTIFY pressedChanged)
-    Q_PROPERTY(Qt::MouseButtons acceptedButtons READ acceptedButtons WRITE setAcceptedButtons NOTIFY acceptedButtonsChanged)
 
 public:
     QDeclarativeGeoMapMouseArea(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapMouseArea();
 
+    Q_INVOKABLE QDeclarativeCoordinate* mouseToCoordinate(QQuickMouseEvent* event);
+
     // From QDeclarativeParserStatus
     virtual void componentComplete();
 
-    void setMap(QDeclarativeGeoMap *map);
-
-    qreal mouseX() const;
-    qreal mouseY() const;
-    bool hovered() const;
-    bool pressed() const;
-
-    bool isEnabled() const;
-    void setEnabled(bool enabled);
-
-    Qt::MouseButtons pressedButtons() const;
-    void setAcceptedButtons(Qt::MouseButtons acceptedButtons);
-    Qt::MouseButtons acceptedButtons() const;
-
-    bool mouseEvent(QMouseEvent* event);
-
-Q_SIGNALS:
-    // publicly supported (i.e. documented) signals:
-    void clicked(QDeclarativeGeoMapMouseEvent *mouse);
-    void doubleClicked(QDeclarativeGeoMapMouseEvent *mouse);
-    void pressed(QDeclarativeGeoMapMouseEvent *mouse);
-    void released(QDeclarativeGeoMapMouseEvent *mouse);
-    void positionChanged(QDeclarativeGeoMapMouseEvent *mouse);
-    void pressAndHold(QDeclarativeGeoMapMouseEvent *mouse);
-    void entered();
-    void exited();
-    // internal signals (non documented, used as property notifiers):
-    void hoveredChanged(bool hovered);
-    void pressedChanged(bool pressed);
-    void enabledChanged(bool enabled);
-    void acceptedButtonsChanged(Qt::MouseButtons acceptedButtons);
-
 protected:
     // from QQuickItem
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
-
-private slots:
-    void pressedHandler(QQuickMouseEvent* event);
-    void releasedHandler(QQuickMouseEvent* event);
-    void clickedHandler(QQuickMouseEvent* event);
-    void doubleClickedHandler(QQuickMouseEvent* event);
-    void positionChangedHandler(QQuickMouseEvent* event);
-    void pressAndHoldHandler(QQuickMouseEvent* event);
-    void enteredHandler();
-    void exitedHandler();
-    void enabledChangedHandler();
-    void acceptedButtonsChangedHandler();
-    void pressedChangedHandler();
-    void hoveredChangedHandler();
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
 
 private:
-    void mapMouseEvent(QQuickMouseEvent* event);
-    QDeclarativeGeoMapMouseEvent* mouseEvent_;
     QDeclarativeGeoMap* map_;
-    QQuickMouseArea* mouseArea_;
     bool componentCompleted_;
 };
 

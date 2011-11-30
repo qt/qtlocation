@@ -40,11 +40,11 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapmousearea_p.h"
+#include "qdeclarativegeomapscreenitem_p.h"
 #include <QtDeclarative/qdeclarativeinfo.h>
 #include <QtDeclarative/QQuickCanvas>
 
 #include <QtDeclarative/private/qquickevents_p_p.h>
-#include <QtDeclarative/private/qquickmousearea_p.h>
 
 #include <QDebug>
 
@@ -95,149 +95,74 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapMouseArea::QDeclarativeGeoMapMouseArea(QQuickItem *parent)
-    : QQuickItem(parent),
-      mouseEvent_(0),
+    : QQuickMouseArea(parent),
       map_(0),
-      mouseArea_(0),
       componentCompleted_(false)
 {
-    mouseEvent_ = new QDeclarativeGeoMapMouseEvent(this);
-    mouseArea_ = new QQuickMouseArea(this);
-    // prevents mouseArea automagically intercepting mouse events:
-    mouseArea_->setVisible(false);
-    setVisible(false);
-    setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
-    setAcceptHoverEvents(false);
-    // connect to signals so we can intercept them and convert to map
-    // mouse events (and e.g. to amend with geo coordinate).
-    // the signals that were present on mobility
-    connect(mouseArea_, SIGNAL(pressed(QQuickMouseEvent*)), this, SLOT(pressedHandler(QQuickMouseEvent*)));
-    connect(mouseArea_, SIGNAL(clicked(QQuickMouseEvent*)), this, SLOT(clickedHandler(QQuickMouseEvent*)));
-    connect(mouseArea_, SIGNAL(doubleClicked(QQuickMouseEvent*)), this, SLOT(doubleClickedHandler(QQuickMouseEvent*)));
-    connect(mouseArea_, SIGNAL(released(QQuickMouseEvent*)), this, SLOT(releasedHandler(QQuickMouseEvent*)));
-    connect(mouseArea_, SIGNAL(pressedChanged()), this, SLOT(pressedChangedHandler()));
-    connect(mouseArea_, SIGNAL(enabledChanged()), this, SLOT(enabledChangedHandler()));
-    connect(mouseArea_, SIGNAL(acceptedButtonsChanged()), this, SLOT(acceptedButtonsChangedHandler()));
-    // new signals from qt5 ->
-    connect(mouseArea_, SIGNAL(hoveredChanged()), this, SLOT(hoveredChangedHandler()));
-    connect(mouseArea_, SIGNAL(positionChanged(QQuickMouseEvent*)), this, SLOT(positionChangedHandler(QQuickMouseEvent*)));
-    connect(mouseArea_, SIGNAL(entered()), this, SLOT(enteredHandler()));
-    connect(mouseArea_, SIGNAL(exited()), this, SLOT(exitedHandler()));
-    connect(mouseArea_, SIGNAL(pressAndHold(QQuickMouseEvent*)), this, SLOT(pressAndHoldHandler(QQuickMouseEvent*)));
 }
 
 QDeclarativeGeoMapMouseArea::~QDeclarativeGeoMapMouseArea()
 {
-    delete mouseEvent_;
-    delete mouseArea_;
+}
+
+QDeclarativeCoordinate* QDeclarativeGeoMapMouseArea::mouseToCoordinate(QQuickMouseEvent* event)
+{
+    // figure out the map association for this mouse area and use it to resolve geocoordinate.
+    // we may need to dive higher in the parent tree if associating
+    // element (map item or map element) is further up the tree. TODO
+    if (parentItem()) {
+        QDeclarativeGeoMap* map = qobject_cast<QDeclarativeGeoMap*>(parentItem());
+        if (!map) {
+            QDeclarativeGeoMapItemBase* item = qobject_cast<QDeclarativeGeoMapItemBase*>(parentItem());
+            if (item)
+                map = item->quickMap();
+        }
+        if (map)
+            return map->toCoordinate(map->mapFromItem(this, QPointF(event->x(), event->y())));
+    }
+    return new QDeclarativeCoordinate; // return invalid coordinate
 }
 
 void QDeclarativeGeoMapMouseArea::componentComplete()
 {
-    mouseArea_->setWidth(this->width());
-    mouseArea_->setHeight(this->height());
-    mouseArea_->setX(this->x());
-    mouseArea_->setY(this->y());
     componentCompleted_ = true;
-    QQuickItem::componentComplete();
+    QQuickMouseArea::componentComplete();
 }
 
-void QDeclarativeGeoMapMouseArea::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+void QDeclarativeGeoMapMouseArea::mousePressEvent(QMouseEvent *event)
 {
-    if (!componentCompleted_)
-        return;
-    mouseArea_->setWidth(this->width());
-    mouseArea_->setHeight(this->height());
-    mouseArea_->setX(this->x());
-    mouseArea_->setY(this->y());
-    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+    // map element's flickable may use the event
+    if (parentItem() && qobject_cast<QDeclarativeGeoMap*>(parentItem()))
+        qobject_cast<QDeclarativeGeoMap*>(parentItem())->mouseEvent(event);
+    // ignore event if it misses non-rectangular geometry (e.g. circle, route)
+    bool contains = true;
+    if (parentItem() && qobject_cast<QDeclarativeGeoMapItemBase*>(parentItem()))
+        contains = qobject_cast<QDeclarativeGeoMapItemBase*>(parentItem())->contains(event->pos());
+    if (!contains)
+        event->ignore();
+    else
+        QQuickMouseArea::mousePressEvent(event);
 }
 
-void QDeclarativeGeoMapMouseArea::hoveredChangedHandler()
+void QDeclarativeGeoMapMouseArea::mouseReleaseEvent(QMouseEvent *event)
 {
-    emit hoveredChanged(mouseArea_->property("containsMouse").toBool());
+    // map element's flickable may use the event
+    if (parentItem() && qobject_cast<QDeclarativeGeoMap*>(parentItem()))
+        qobject_cast<QDeclarativeGeoMap*>(parentItem())->mouseEvent(event);
+    QQuickMouseArea::mouseReleaseEvent(event);
 }
 
-void QDeclarativeGeoMapMouseArea::pressAndHoldHandler(QQuickMouseEvent* event)
+void QDeclarativeGeoMapMouseArea::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    mapMouseEvent(event);
-    emit pressAndHold(mouseEvent_);
+    QQuickMouseArea::mouseDoubleClickEvent(event);
 }
 
-void QDeclarativeGeoMapMouseArea::acceptedButtonsChangedHandler()
+void QDeclarativeGeoMapMouseArea::mouseMoveEvent(QMouseEvent *event)
 {
-    emit acceptedButtonsChanged(static_cast<Qt::MouseButtons>(mouseArea_->property("acceptedButtons").toInt()));
-}
-
-void QDeclarativeGeoMapMouseArea::enabledChangedHandler()
-{
-    emit enabledChanged(mouseArea_->property("enabled").toBool());
-}
-
-void QDeclarativeGeoMapMouseArea::pressedHandler(QQuickMouseEvent* event)
-{
-   mapMouseEvent(event);
-   emit pressed(mouseEvent_);
-}
-
-void QDeclarativeGeoMapMouseArea::pressedChangedHandler()
-{
-    emit pressedChanged(mouseArea_->property("pressed").toBool());
-}
-
-void QDeclarativeGeoMapMouseArea::enteredHandler()
-{
-   emit entered();
-}
-
-void QDeclarativeGeoMapMouseArea::exitedHandler()
-{
-   emit exited();
-}
-
-void QDeclarativeGeoMapMouseArea::positionChangedHandler(QQuickMouseEvent* event)
-{
-   mapMouseEvent(event);
-   emit positionChanged(mouseEvent_);
-}
-
-void QDeclarativeGeoMapMouseArea::mapMouseEvent(QQuickMouseEvent* event)
-{
-   // we could probably access these directly,
-   // wouldn't worsen the private header dependency much
-   mouseEvent_->setAccepted(event->property("accepted").toBool());
-   mouseEvent_->setButton(event->property("button").toInt());
-   mouseEvent_->setButtons(event->property("buttons").toInt());
-   mouseEvent_->setModifiers(event->property("modifiers").toInt());
-   mouseEvent_->setWasHeld(event->property("wasHeld").toBool());
-   mouseEvent_->setX(event->property("x").toInt());
-   mouseEvent_->setY(event->property("y").toInt());
-   if (map_)
-       mouseEvent_->setCoordinate(map_->toCoordinate(QPointF(mouseEvent_->x(), mouseEvent_->y()))->coordinate());
-}
-
-void QDeclarativeGeoMapMouseArea::releasedHandler(QQuickMouseEvent* event)
-{
-    mapMouseEvent(event);
-    emit released(mouseEvent_);
-}
-
-void QDeclarativeGeoMapMouseArea::clickedHandler(QQuickMouseEvent* event)
-{
-    mapMouseEvent(event);
-    emit clicked(mouseEvent_);
-}
-
-void QDeclarativeGeoMapMouseArea::doubleClickedHandler(QQuickMouseEvent* event)
-{
-    mapMouseEvent(event);
-    emit doubleClicked(mouseEvent_);
-}
-
-void QDeclarativeGeoMapMouseArea::setMap(QDeclarativeGeoMap *map)
-{
-    Q_ASSERT(map);
-    map_ = map;
+    // map element's flickable may use the event
+    if (parentItem() && qobject_cast<QDeclarativeGeoMap*>(parentItem()))
+        qobject_cast<QDeclarativeGeoMap*>(parentItem())->mouseEvent(event);
+    QQuickMouseArea::mouseMoveEvent(event);
 }
 
 /*!
@@ -252,16 +177,6 @@ void QDeclarativeGeoMapMouseArea::setMap(QDeclarativeGeoMap *map)
     The screen coordinates are relative to the MapMouseArea.
 */
 
-qreal QDeclarativeGeoMapMouseArea::mouseX() const
-{
-    return mouseArea_->property("mouseX").toReal();
-}
-
-qreal QDeclarativeGeoMapMouseArea::mouseY() const
-{
-    return mouseArea_->property("mouseY").toReal();
-}
-
 /*!
     \qmlproperty bool QtLocation5::MapMouseArea::containsMouse
     This property holds whether the mouse is currently inside the mouse area.
@@ -270,20 +185,10 @@ qreal QDeclarativeGeoMapMouseArea::mouseY() const
     In addition, containsMouse will only be valid when the mouse is pressed.
 */
 
-bool QDeclarativeGeoMapMouseArea::hovered() const
-{
-    return mouseArea_->property("containsMouse").toBool();
-}
-
 /*!
     \qmlproperty bool QtLocation5::MapMouseArea::pressed
     This property holds whether the mouse area is currently pressed.
 */
-
-bool QDeclarativeGeoMapMouseArea::pressed() const
-{
-    return mouseArea_->property("pressed").toBool();
-}
 
 /*!
     \qmlproperty bool QtLocation5::MapMouseArea::enabled
@@ -291,16 +196,6 @@ bool QDeclarativeGeoMapMouseArea::pressed() const
 
     By default, this property is true.
 */
-
-bool QDeclarativeGeoMapMouseArea::isEnabled() const
-{
-    return mouseArea_->property("enabled").toBool();
-}
-
-void QDeclarativeGeoMapMouseArea::setEnabled(bool enabled)
-{
-    mouseArea_->setProperty("enabled", QVariant(enabled));
-}
 
 /*!
     \qmlproperty MouseButton QtLocation5::MapMouseArea::pressedButtons
@@ -315,11 +210,6 @@ void QDeclarativeGeoMapMouseArea::setEnabled(bool enabled)
 
     \sa acceptedButtons
 */
-
-Qt::MouseButtons QDeclarativeGeoMapMouseArea::pressedButtons() const
-{
-    return static_cast<Qt::MouseButtons>(mouseEvent_->button());
-}
 
 /*!
     \qmlproperty Qt::MouseButtons QtLocation5::MapMouseArea::acceptedButtons
@@ -341,32 +231,6 @@ Qt::MouseButtons QDeclarativeGeoMapMouseArea::pressedButtons() const
 
     The default value is \c Qt.LeftButton.
 */
-
-void QDeclarativeGeoMapMouseArea::setAcceptedButtons(Qt::MouseButtons acceptedButtons)
-{
-    mouseArea_->setProperty("acceptedButtons", QVariant(acceptedButtons));
-    setAcceptedMouseButtons(acceptedButtons);
-}
-
-Qt::MouseButtons QDeclarativeGeoMapMouseArea::acceptedButtons() const
-{
-    return static_cast<Qt::MouseButtons>(mouseArea_->property("acceptedButtons").toInt());
-}
-
-bool QDeclarativeGeoMapMouseArea::mouseEvent(QMouseEvent *event)
-{
-    if (!map_ || !map_->canvas()) {
-        qmlInfo(this)  << "Warning: no qquickcanvas available, cannot dispatch the mouse event";
-        return false;
-    }
-    if (!mouseArea_->property("enabled").toBool()) {
-        QLOC_TRACE2("mouse area not enabled.", objectName());
-        event->ignore();
-        return false;
-    }
-    map_->canvas()->sendEvent(mouseArea_, event);
-    return event->isAccepted(); // hmm..
-}
 
 /*!
     \qmlsignal QtLocation5::MapMouseArea::onPressed(MapMouseEvent mouse)

@@ -40,11 +40,11 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapscreenitem_p.h"
+#include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include <QtDeclarative/qdeclarativeinfo.h>
 
 #include <QDebug>
-
 #include <cmath>
 
 QT_BEGIN_NAMESPACE
@@ -56,12 +56,23 @@ QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
 {
     setParentItem(parent);
     setFlag(ItemHasContents, false);
+    setAcceptHoverEvents(false);
 }
 
 QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
 {
     if (quickMap_)
         quickMap_->removeMapScreenItem(this);
+}
+
+void QDeclarativeGeoMapItemBase::componentComplete()
+{
+    componentComplete_ = true;
+}
+
+bool QDeclarativeGeoMapItemBase::contains(QPoint point)
+{
+    return true;
 }
 
 void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap* quickMap, Map *map)
@@ -73,7 +84,6 @@ void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap* quickMap, Map *map)
         return; // don't allow association to more than one map
     quickMap_ = quickMap;
     map_ = map;
-
     this->update();
 }
 
@@ -198,7 +208,6 @@ void QDeclarativeGeoMapScreenItem::update()
         mapAndSourceItemSet_ = false;
         return;
     }
-
     inUpdate_ = true;
 
     if (!mapAndSourceItemSet_ && quickMap() && map() && sourceItem_) {
@@ -223,7 +232,6 @@ void QDeclarativeGeoMapScreenItem::update()
 
     QPointF invalid = map()->coordinateToScreenPosition(QGeoCoordinate());
     QPointF topLeft = map()->coordinateToScreenPosition(coordinate()->coordinate(), false) - s * anchorPoint_;
-
     if ((topLeft.x() > quickMap()->width())
             || (topLeft.x() + s * sourceItem_->width() < 0)
             || (topLeft.y() + s * sourceItem_->height() < 0)

@@ -72,8 +72,8 @@ MapGroup {  //to be used inside MapComponent only
             onPressed: {
                 ++marker.z
                 var newX, newY, oldX, oldY
-                newX = map.toScreenPosition(mouse.coordinate).x
-                newY = map.toScreenPosition(mouse.coordinate).y
+                newX = map.toScreenPosition(markerMouseArea.mouseToCoordinate(mouse)).x
+                newY = map.toScreenPosition(markerMouseArea.mouseToCoordinate(mouse)).y
                 oldX = map.toScreenPosition(markerImage.coordinate).x
                 oldY = map.toScreenPosition(markerImage.coordinate).y
                 dX = oldX - newX
@@ -97,8 +97,8 @@ MapGroup {  //to be used inside MapComponent only
                 if ((mouse.button == Qt.LeftButton) && (longPress != true)){
                     lastX = mouse.x
                     lastY = mouse.y
-                    newX = map.toScreenPosition(mouse.coordinate).x + dX
-                    newY = map.toScreenPosition(mouse.coordinate).y + dY
+                    newX = map.toScreenPosition(markerMouseArea.mouseToCoordinate(mouse)).x + dX
+                    newY = map.toScreenPosition(markerMouseArea.mouseToCoordinate(mouse)).y + dY
                     markerImage.coordinate = map.toCoordinate(Qt.point(newX,newY))
                 }
             }

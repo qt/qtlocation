@@ -120,7 +120,6 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         mappingManagerInitialized_(false),
         flickable_(0),
         pinchArea_(0),
-        mouseGrabberItem_(0),
         canvas_(0),
         touchTimer_(-1),
         tileCache_(0)
@@ -153,7 +152,6 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
 //        }
 //        delete mapData_;
 //    }
-    mouseAreas_.clear();
 }
 
 void QDeclarativeGeoMap::componentComplete()
@@ -162,6 +160,41 @@ void QDeclarativeGeoMap::componentComplete()
     componentCompleted_ = true;
     populateMap();
     QQuickItem::componentComplete();
+}
+
+void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
+{
+    if (!mouseEvent(event))
+        event->ignore();
+}
+
+void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
+{
+    if (!mouseEvent(event))
+        event->ignore();
+}
+
+void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (!mouseEvent(event))
+        event->ignore();
+}
+
+// returns whether flickable used the event
+bool QDeclarativeGeoMap::mouseEvent(QMouseEvent* event)
+{
+    if (!mappingManagerInitialized_)
+        return false;
+    switch (event->type()) {
+    case QEvent::MouseButtonPress:
+        return flickable_->mousePressEvent(event);
+    case QEvent::MouseButtonRelease:
+        return flickable_->mouseReleaseEvent(event);
+    case QEvent::MouseMove:
+        return flickable_->mouseMoveEvent(event);
+    default:
+        return false;
+    }
 }
 
 QDeclarativeGeoMapFlickable* QDeclarativeGeoMap::flick()
@@ -190,12 +223,6 @@ void QDeclarativeGeoMap::populateMap()
         QDeclarativeGeoMapItemBase* mapScreenItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
         if (mapScreenItem) {
             addMapScreenItem(mapScreenItem);
-        }
-
-        QDeclarativeGeoMapMouseArea *mapMouseArea = qobject_cast<QDeclarativeGeoMapMouseArea*>(kids.at(i));
-        if (mapMouseArea) {
-            mapMouseArea->setMap(this);
-            mouseAreas_.append(mapMouseArea);
         }
     }
 }
@@ -745,167 +772,6 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
     emit wheel(event->delta());
 }
 
-// event delivery helpers
-bool QDeclarativeGeoMap::deliverMouseEvent(QMouseEvent* event)
-{
-    QLOC_TRACE2("mouse grabber item: ", mouseGrabberItem_);
-    // todo deliver first for map items
-
-    // mouse grabber item is an item that has received the initial
-    // press event. all events will be given to that item (can be
-    // outside of mouse area) until mouse is released. this enables
-    // for example entered() exited() -signals whilst mouse is pressed
-    lastMousePosition_ = event->windowPos();
-
-    if (!mouseGrabberItem_ &&
-            event->type() == QEvent::MouseButtonPress &&
-            (event->button() & event->buttons()) == event->buttons()) {
-        QList<QDeclarativeGeoMapMouseArea*> mouseAreas = mouseAreasAt(event->pos());
-        for (int i = 0; i < mouseAreas.count(); ++i) {
-            QDeclarativeGeoMapMouseArea* item = mouseAreas.at(i);
-            QLOC_TRACE2("delivering initial mouse press for: ", item->objectName());
-            if (deliverInitialMousePressEvent(item, event)) {
-                QLOC_TRACE2("initial mouse press accepted by: ", item->objectName());
-                return true;
-            }
-        }
-        QLOC_TRACE1("no item found for initial mouse press");
-        return false;
-    }
-    if (mouseGrabberItem_) {
-        bool transformOk;
-        const QTransform &transform = itemTransform(mouseGrabberItem_, &transformOk);
-        QMouseEvent me(event->type(),                     // event type
-                       transform.map(event->windowPos()), // pos coordinates translated into that of mapmousearea (local coords)
-                       event->windowPos(),                // window position (coords relative to window)
-                       event->screenPos(),                // global position (absolute coords)
-                       event->button(),                   // button causing the event
-                       event->buttons(),                  // buttons pressed when event was caused
-                       event->modifiers());               // any keyboard modifiers held when event was triggered
-        me.accept();
-        mouseGrabberItem_->mouseEvent(&me);
-        QLOC_TRACE2("mouse grabber accepted event: ", me.isAccepted());
-        event->setAccepted(me.isAccepted());
-        if (me.isAccepted())
-            return true;
-    }
-    return false;
-}
-
-bool QDeclarativeGeoMap::deliverInitialMousePressEvent(QDeclarativeGeoMapMouseArea* ma, QMouseEvent* event)
-{
-    if (ma->acceptedMouseButtons() & event->button()) {
-        QPointF p = ma->mapFromScene(event->windowPos());
-        if (QRectF(0, 0, ma->width(), ma->height()).contains(p)) {
-            QMouseEvent me(event->type(), p, event->windowPos(), event->screenPos(),
-                           event->button(), event->buttons(), event->modifiers());
-            me.accept();
-            mouseGrabberItem_ = ma;
-            ma->mouseEvent(&me);
-            event->setAccepted(me.isAccepted());
-            QLOC_TRACE2("the initial mouse press accepted: ", me.isAccepted());
-            if (me.isAccepted())
-                return true;
-            QLOC_TRACE1("nulling the mouse grabber");
-            mouseGrabberItem_ = 0;
-        }
-    }
-    return false;
-}
-
-void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
-{
-    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
-    if (!mappingManagerInitialized_) {
-        event->ignore();
-        return;
-    }
-    bool consumed = deliverMouseEvent(event);
-    consumed |= flickable_->mousePressEvent(event);
-    if (consumed)
-        event->accept();
-    else
-        event->ignore();
-}
-
-// returns list of mouse areas under 'pos'. returned list is in the priority order in which the
-// mouse events should be provided (currently does not consider 'z')
-QList<QDeclarativeGeoMapMouseArea*> QDeclarativeGeoMap::mouseAreasAt(QPoint pos)
-{
-    QList<QDeclarativeGeoMapMouseArea*> list;
-    for (int i = mouseAreas_.count() - 1; i >= 0; --i) {
-        if (mouseAreas_.at(i)->boundingRect().contains(mouseAreas_.at(i)->mapFromScene(pos))) {
-            list.append(mouseAreas_.at(i));
-        }
-    }
-    return list;
-}
-
-void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
-{
-    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
-    if (!mappingManagerInitialized_) {
-        event->ignore();
-        return;
-    }
-    bool consumed = false;
-    if (mouseGrabberItem_) {
-        consumed = deliverMouseEvent(event);
-        mouseGrabberItem_ = 0;
-    }
-    consumed |= flickable_->mouseReleaseEvent(event);
-    if (consumed)
-        event->accept();
-    else
-        event->ignore();
-}
-
-void QDeclarativeGeoMap::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
-    if (!mappingManagerInitialized_) {
-        event->ignore();
-        return;
-    }
-    if (!mouseGrabberItem_ && (event->button() & event->buttons()) == event->buttons()) {
-        QList<QDeclarativeGeoMapMouseArea*> mouseAreas = mouseAreasAt(event->pos());
-        for (int i = 0; i < mouseAreas.count(); ++i) {
-            if (deliverInitialMousePressEvent(mouseAreas.at(i), event)) {
-                event->accept();
-                return;
-            }
-        }
-        event->ignore();
-        return;
-    }
-    if (deliverMouseEvent(event))
-        event->accept();
-    else
-        event->ignore();
-}
-
-void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
-{
-    //QLOC_TRACE2(" ~~~~~~~ event, coordinates: ", event->pos());
-    if (!mappingManagerInitialized_) {
-        event->ignore();
-        return;
-    }
-    bool consumed = false;
-    if (mouseGrabberItem_)
-        consumed = deliverMouseEvent(event);
-    consumed |= flickable_->mouseMoveEvent(event);
-    if (consumed)
-        event->accept();
-    else
-        event->ignore();
-}
-
-//void QDeclarativeGeoMap::internalConnectivityModeChanged(QGraphicsGeoMap::ConnectivityMode connectivityMode)
-//{
-//    emit connectivityModeChanged(QDeclarativeGeoMap::ConnectivityMode(connectivityMode));
-//}
-
 /*!
     \qmlmethod QtLocation5::Map::addMapItem(MapItem)
 
@@ -965,12 +831,6 @@ void QDeclarativeGeoMap::mapScreenItemDestroyed(QObject* item)
     QDeclarativeGeoMapItemBase* mapScreenItem = qobject_cast<QDeclarativeGeoMapItemBase*>(item);
     if (mapScreenItem)
         removeMapScreenItem(mapScreenItem);
-}
-
-void QDeclarativeGeoMap::setActiveMouseArea(QDeclarativeGeoMapMouseArea *area)
-{
-    Q_UNUSED(area); // TODO
-    // to be done when the item picking is clear
 }
 
 void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)

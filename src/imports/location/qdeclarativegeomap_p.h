@@ -162,8 +162,8 @@ public:
     // any time without any notice (hence also the obscure naming to avoid
     // accidental usage):
     Q_INVOKABLE int testGetDeclarativeMapItemCount();
-    void setActiveMouseArea(QDeclarativeGeoMapMouseArea *area);
-    //QDeclarativeGeoMapMouseArea* activeMouseArea() const;
+    // callback for map mouse areas
+    bool mouseEvent(QMouseEvent* event);
 
     QDeclarativeGeoMapPinchArea* pinch() {
         return pinchArea_;
@@ -173,12 +173,12 @@ public Q_SLOTS:
     void pan(int dx, int dy);
 
 protected:
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+
     void touchEvent(QTouchEvent *event);
     void wheelEvent(QWheelEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mouseDoubleClickEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *e);
 
 Q_SIGNALS:
@@ -210,10 +210,6 @@ private:
     void updateAspectRatio();
     void populateMap();
 
-    QList<QDeclarativeGeoMapMouseArea*> mouseAreasAt(QPoint pos);
-    bool deliverMouseEvent(QMouseEvent* event);
-    bool deliverInitialMousePressEvent(QDeclarativeGeoMapMouseArea* ma, QMouseEvent* event);
-
     QDeclarativeGeoServiceProvider* plugin_;
     QGeoServiceProvider* serviceProvider_;
     QGeoMappingManager* mappingManager_;
@@ -231,10 +227,6 @@ private:
 
     QDeclarativeGeoMapFlickable* flickable_;
     QDeclarativeGeoMapPinchArea* pinchArea_;
-    QList<QDeclarativeGeoMapMouseArea*> mouseAreas_;
-
-    QDeclarativeGeoMapMouseArea* mouseGrabberItem_;
-    QPointF lastMousePosition_;
 
     void paintGL(QGLPainter *painter);
     void earlyDraw(QGLPainter *painter);

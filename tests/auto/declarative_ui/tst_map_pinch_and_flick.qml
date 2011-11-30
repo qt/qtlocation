@@ -167,7 +167,7 @@ Item {
             compare(map.pinch.active, false)
 
             verify(map.pinch.activeGestures & MapPinch.ZoomGesture)
-            verify(map.pinch.activeGestures & MapPinch.RotationGesture)
+            verify(!(map.pinch.activeGestures & MapPinch.RotationGesture))
             verify(!(map.pinch.activeGestures & MapPinch.TiltGesture))
             map.pinch.activeGestures = MapPinch.NoGesture
             compare(map.pinch.activeGestures, MapPinch.NoGesture)
