@@ -42,9 +42,10 @@
 #include "qdeclarativerectanglemapitem_p.h"
 #include <QPainter>
 
-QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent) :
-    QDeclarativeGeoMapItemBase(parent), screenItem_(new QDeclarativeGeoMapScreenItem(this)), rectangleMapPaintedItem_(
-        new RectangleMapPaintedItem(screenItem_))
+QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
+:   QDeclarativeGeoMapItemBase(parent), screenItem_(new QDeclarativeGeoMapScreenItem(this)),
+    rectangleMapPaintedItem_(new RectangleMapPaintedItem(screenItem_)), topLeft_(0),
+    bottomRight_(0)
 {
 }
 
