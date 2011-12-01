@@ -292,8 +292,7 @@ Item {
         }
 */
         onGoButtonClicked: {
-            /*            var status = true
-
+            var status = true
             messageDialog.state = ""
             if (routeDialog.byCoordinates) {
                 startCoordinate.latitude = routeDialog.startLatitude
@@ -304,6 +303,7 @@ Item {
                 calculateRoute()
             }
             else {
+                /*
                 startAddress.country = routeDialog.startCountry
                 startAddress.street = routeDialog.startStreet
                 startAddress.city = routeDialog.startCity
@@ -314,7 +314,8 @@ Item {
 
                 tempGeocodeModel.query = startAddress
                 tempGeocodeModel.update();
-            }*/
+                */
+            }
             page.state = ""
         }
 
@@ -322,7 +323,7 @@ Item {
             page.state = ""
         }
 
-        /*        function calculateRoute(){
+        function calculateRoute(){
             map.routeQuery.clearWaypoints();
             map.center = startCoordinate
             map.routeQuery.addWaypoint(startCoordinate)
@@ -339,7 +340,7 @@ Item {
             }
 
             map.routeModel.update();
-        }*/
+        }
     }
 
     //Geocode Dialog

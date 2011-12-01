@@ -111,101 +111,115 @@ Map {
         }
     }
 
-    /*
     property RouteQuery routeQuery: RouteQuery {}
     property RouteModel routeModel: RouteModel {
-                                        plugin : map.plugin
-                                        query: routeQuery
-                                        onStatusChanged:{
-                                            if (status == RouteModel.Ready){
-                                                if (count == 1) { routeInfoModel.update()}
-                                            }
-                                            else if (status == RouteModel.Error){
-                                                clearAll()
-                                                map.routeError()
-                                            }
-                                        }
-                                        function clearAll(){
-                                            clear()
-                                            routeInfoModel.update()
-                                        }
-                                    }*/
-    property GeocodeModel geocodeModel: GeocodeModel {
-                                            plugin : map.plugin;
-                                            onStatusChanged:{
-                                                if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)) map.geocodeFinished()
-                                            }
-                                            onLocationsChanged:
-                                            {
-                                                if (count == 1) map.center = get(0).coordinate
-                                            }
-                                        }
+        plugin : map.plugin
+        query: routeQuery
+        onStatusChanged:{
+            if (status == RouteModel.Ready){
+                if (count == 1) { routeInfoModel.update()}
+            }
+            else if (status == RouteModel.Error){
+                clearAll()
+                map.routeError()
+            }
+        }
+        function clearAll(){
+            clear()
+            routeInfoModel.update()
+        }
+    }
 
-    signal geocodeFinished()
-/*    signal showGeocodeInfo()
+    property GeocodeModel geocodeModel: GeocodeModel {
+        plugin : map.plugin;
+        onStatusChanged:{
+            if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)) map.geocodeFinished()
+        }
+        onLocationsChanged:
+        {
+            if (count == 1) {
+                map.center.latitude = get(0).coordinate.latitude
+                map.center.longitude = get(0).coordinate.longitude
+            }
+
+        }
+    }
+
+/*  signal showGeocodeInfo()
     signal moveMarker()
-    signal routeError()
 */
+    signal geocodeFinished()
+    signal routeError()
     signal coordinatesCaptured(double latitude, double longitude)
 
     Component.onCompleted: {
         markers = new Array();
         mapItems = new Array();
     }
-    /*
+
     Component {
         id: routeDelegate
-        MapGroup {
-            MapRoute {
-                route: path
-            border.color: routeMouseArea.containsMouse ? "lime" :"red"
-            border.width: 5
-                MapMouseArea {
-                    id: routeMouseArea
+        MapRoute {
+            route: routeData
+            //border.color: routeMouseArea.containsMouse ? "lime" :"red"
+            //border.width: 5
+            MapMouseArea {
+                id: routeMouseArea
 
-                    hoverEnabled: true
-                    onPressed : {
-                        routeTimer.start()markers;
-                        map.state = ""
-                        map.lastX = mouse.x
-                        map.lastY = mouse.y
-                    }
-                    onReleased : {
+                hoverEnabled: true
+                onPressed : {
+                    //routeTimer.start();
+                    map.state = ""
+                    map.lastX = mouse.x
+                    map.lastY = mouse.y
+                }
+                onReleased : {
+                    /*
                         if (routeTimer.running){ //SHORT PRESS
                             routeTimer.stop()
                             map.lastX = -1
                             map.lastY = -1
                         }
-                    }
-                    onPositionChanged: {
+                        */// This is available in all editors.
+                }
+                onPositionChanged: {
+                    /*
                         if (routeTimer.running) routeTimer.stop()
                         if (map.state == "") {
                             map.lastX = mouse.x
                             map.lastY = mouse.y
                         }
-                    }
+                        */
+                }
+                /*
                     Timer {
                         id: routeTimer
                         interval: longPressDuration; running: false; repeat: false
                         onTriggered: { //LONG PRESS
-                        map.state = "RoutePopupMenu"
+                            map.state = "RoutePopupMenu"
                         }
                     }
-                }
-            }
-            MapImage {
-                source: routeMouseArea.containsMouse ? "resources/node_selected.png" : "resources/node.png"
-                coordinate:path.path[0]
-                offset.x: -5
-                offset.y: -5
-            }
-            MapImage {
-                source: routeMouseArea.containsMouse ? "resources/node_selected.png" : "resources/node.png"
-                coordinate:path.path[path.path.length-1]
-                offset.x: -5
-                offset.y: -5
+                    */
             }
         }
+        /*
+            MapQuickItem {
+                coordinate: routeData.path[0]
+                anchorPoint.x: -5
+                anchorPoint.y: -5
+                sourceItem: Image {
+                    source: routeMouseArea.containsMouse ? "resources/node_selected.png" : "resources/node.png"
+                }
+            }
+            MapQuickItem {
+                coordinate: routeData.path[path.path.length-1]
+                anchorPoint.x: -5
+                anchorPoint.y: -5
+                sourceItem: Image {
+                    source: routeMouseArea.containsMouse ? "resources/node_selected.png" : "resources/node.png"
+                }
+            }
+            */
     }
 
     Component {
@@ -213,31 +227,38 @@ Map {
         MapCircle {
             radius: 1000
             color: circleMouseArea.containsMouse ? "#8000FF00" : "#80FF0000"
-            center: location.coordinate
+            center: locationData.coordinate
             MapMouseArea {
                 id: circleMouseArea
                 hoverEnabled: true
                 onPressed : {
+                    /*
                     circleTimer.start()
                     map.state = ""
                     map.lastX = mouse.x
                     map.lastY = mouse.y
+                    */
                 }
                 onReleased : {
+                    /*
                     if (circleTimer.running) {//SHORT PRESS
                         circleTimer.stop();
                         map.lastX = -1
                         map.lastY = -1
                     }
+                    */
                 }
                 onPositionChanged: {
+                    /*
                     if (circleTimer.running) circleTimer.stop()
                     if ((mouse.button == Qt.LeftButton) && (map.state == "")) radius = center.distanceTo(mouseArea.mouseToCoordinate(mouse))
                     if (map.state == "") {
                         map.lastX = mouse.x
                         map.lastY = mouse.y
                     }
+                    */
                 }
+                /*
                 Timer {
                     id: circleTimer
                     interval: longPressDuration; running: false; repeat: false
@@ -245,10 +266,11 @@ Map {
                         map.state = "PointPopupMenu"
                     }
                 }
+                */
             }
         }
     }
-
+    /*
     Component {
         id: routeInfoDelegate
         Row {
@@ -310,7 +332,7 @@ Map {
         }
     }
 
-
+*/
     ListModel{
         id: routeInfoModel
         property string travelTime
@@ -328,16 +350,16 @@ Map {
         }
     }
 
-    MapObjectView {
+    MapItemView {
         model: routeModel
         delegate: routeDelegate
     }
 
-    MapObjectView {
+    MapItemView {
         model: geocodeModel
         delegate: pointDelegate
     }
-
+/*
     Plugin {
         id: defaultPlugin
         name : "nokia"
@@ -538,6 +560,7 @@ Map {
                 map.coordinatesCaptured(mouseArea.lastCoordinate.latitude, mouseArea.lastCoordinate.longitude)
                 break;
             }
+
             case "Remove markers": {
                 deleteMarkers()
                 break;
@@ -567,6 +590,7 @@ Map {
                 addGeoItem("PolygonItem")
                 break;
             }
+
 
             }
             map.state = ""
@@ -769,6 +793,7 @@ Map {
         scaleText.text = text
     }
 
+
     function deleteMarkers(){
         var count = map.markers.length
         for (var i = 0; i<count; i++){
@@ -825,6 +850,7 @@ Map {
             console.log(item + " is not supported right now, please call us later.")
         }
     }
+
     /*
     function removeMarker(marker){
         //update list of markers

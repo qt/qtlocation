@@ -492,8 +492,6 @@ Item {
                 width: 80; height: parent.height
                 onClicked: {
                     dialog.goButtonClicked ()
-                    console.log(dialog.width)
-                    console.log(dialog.height)
                 }
             }
         }
