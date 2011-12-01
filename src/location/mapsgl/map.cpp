@@ -418,69 +418,6 @@ void MapPrivate::resize(int width, int height)
     setCameraData(cameraData_);
 }
 
-void MapPrivate::paintGL(QGLPainter *painter)
-{
-    double side = pow(2.0, cameraData_.zoomFactor()) * tileSize_;
-    double mapWidth = width_ * 1.0;
-    double mapHeight = height_ * 1.0;
-    double offsetX = 0.0;
-    double offsetY = 0.0;
-
-    if (side < mapWidth) {
-        offsetX = (mapWidth - side) / 2.0;
-        mapWidth = side;
-    }
-
-    if (side < mapHeight) {
-        offsetY = (mapHeight - side) / 2.0;
-        mapHeight = side;
-    }
-
-    glEnable(GL_SCISSOR_TEST);
-
-    painter->setScissor(QRect(offsetX, offsetY, mapWidth, mapHeight));
-
-    QGLCamera *camera = glCamera();
-
-    bool old = camera->blockSignals(true);
-
-    glDisable(GL_DEPTH);
-
-    QVector3D c = camera->center();
-    c.setX(c.x() + sideLength_);
-    camera->setCenter(c);
-
-    QVector3D e = camera->eye();
-    e.setX(e.x() + sideLength_);
-    camera->setEye(e);
-
-    painter->setCamera(camera);
-    painter->projectionMatrix().scale(1, -1, 1);
-    sphere_->paintGL(painter);
-
-    c.setX(c.x() - 2 * sideLength_);
-    camera->setCenter(c);
-    e.setX(e.x() - 2 * sideLength_);
-    camera->setEye(e);
-
-    painter->setCamera(camera);
-    painter->projectionMatrix().scale(1, -1, 1);
-    sphere_->paintGL(painter);
-
-    c.setX(c.x() + sideLength_);
-    camera->setCenter(c);
-    e.setX(e.x() + sideLength_);
-    camera->setEye(e);
-
-    painter->setCamera(camera);
-    painter->projectionMatrix().scale(1, -1, 1);
-    sphere_->paintGL(painter);
-
-    glEnable(GL_DEPTH);
-
-    camera->blockSignals(old);
-}
-
 QVector2D MapPrivate::pointToTile(const QVector3D &point, int zoom, bool roundUp) const
 {
     QVector2D p = projection_->pointToMercator(point);
@@ -659,6 +596,69 @@ QGLSceneNode* MapPrivate::createTileSpecNode(const TileSpec &tileSpec)
     return builder.finalizedSceneNode();
 }
 
+void MapPrivate::paintGL(QGLPainter *painter)
+{
+    double side = pow(2.0, cameraData_.zoomFactor()) * tileSize_;
+    double mapWidth = width_ * 1.0;
+    double mapHeight = height_ * 1.0;
+    double offsetX = 0.0;
+    double offsetY = 0.0;
+
+    if (side < mapWidth) {
+        offsetX = (mapWidth - side) / 2.0;
+        mapWidth = side;
+    }
+
+    if (side < mapHeight) {
+        offsetY = (mapHeight - side) / 2.0;
+        mapHeight = side;
+    }
+
+    glEnable(GL_SCISSOR_TEST);
+
+    painter->setScissor(QRect(offsetX, offsetY, mapWidth, mapHeight));
+
+    QGLCamera *camera = glCamera();
+
+    bool old = camera->blockSignals(true);
+
+    glDisable(GL_DEPTH);
+
+    QVector3D c = camera->center();
+    c.setX(c.x() + sideLength_);
+    camera->setCenter(c);
+
+    QVector3D e = camera->eye();
+    e.setX(e.x() + sideLength_);
+    camera->setEye(e);
+
+    painter->setCamera(camera);
+    painter->projectionMatrix().scale(1, -1, 1);
+    sphere_->paintGL(painter);
+
+    c.setX(c.x() - 2 * sideLength_);
+    camera->setCenter(c);
+    e.setX(e.x() - 2 * sideLength_);
+    camera->setEye(e);
+
+    painter->setCamera(camera);
+    painter->projectionMatrix().scale(1, -1, 1);
+    sphere_->paintGL(painter);
+
+    c.setX(c.x() + sideLength_);
+    camera->setCenter(c);
+    e.setX(e.x() + sideLength_);
+    camera->setEye(e);
+
+    painter->setCamera(camera);
+    painter->projectionMatrix().scale(1, -1, 1);
+    sphere_->paintGL(painter);
+
+    glEnable(GL_DEPTH);
+
+    camera->blockSignals(old);
+}
+
 void MapPrivate::updateGlCamera(QGLCamera* glCamera)
 {
     bool old = glCamera->blockSignals(true);
@@ -674,6 +674,11 @@ void MapPrivate::updateGlCamera(QGLCamera* glCamera)
     QVector3D center = projection_->coordToPoint(coord);
     coord.setAltitude(altitude);
     QVector3D eye = projection_->coordToPoint(coord);
+
+//    if (pow(2.0, cameraData_.zoomFactor()) * tileSize_ < height_) {
+//        center.setY(sideLength_ / 2.0);
+//        eye.setY(sideLength_ / 2.0);
+//    }
 
     QVector3D view = eye - center;
     QVector3D side = QVector3D::normal(view, QVector3D(0.0, 1.0, 0.0));
@@ -713,63 +718,305 @@ void MapPrivate::updateGlCamera(QGLCamera* glCamera)
     projectionMatrix_ = glCamera->projectionMatrix(aspectRatio()) * glCamera->modelViewMatrix();
 }
 
+QGeoCoordinate MapPrivate::screenPositionToCoordinate(const QPointF &pos) const
+{
+    double side = pow(2.0, cameraData_.zoomFactor()) * tileSize_;
+    double mapWidth = width_ * 1.0;
+    double mapHeight = height_ * 1.0;
+    double offsetX = 0.0;
+    double offsetY = 0.0;
+
+    if (side < mapWidth) {
+        offsetX = (mapWidth - side) / 2.0;
+        mapWidth = side;
+    }
+
+    if (side < mapHeight) {
+        offsetY = (mapHeight - side) / 2.0;
+        mapHeight = side;
+    }
+
+    double posX = pos.x() - offsetX;
+    double posY = pos.y() - offsetY;
+
+    if (posX < 0.0)
+        return QGeoCoordinate();
+    if (mapWidth < posX)
+        return QGeoCoordinate();
+
+    if (posY < 0.0)
+        return QGeoCoordinate();
+    if (mapHeight < posY)
+        return QGeoCoordinate();
+
+    double w = mapWidth / viewSize_.width();
+    double h = mapHeight / viewSize_.height();
+    double x = (posX - w) / w;
+    double y = (posY - h) / h;
+
+    x = (x + 1.0) / 2.0;
+    y = (y + 1.0) / 2.0;
+
+    QVector3D tl = frustum_.topLeftFar();
+    QVector3D tr = frustum_.topRightFar();
+    QVector3D bl = frustum_.bottomLeftFar();
+
+    QVector3D n = (1 - x - y) * tl + x * tr + y * bl;
+
+    if (eye_.z() == n.z())
+        return QGeoCoordinate();
+
+    double alpha = eye_.z() / (eye_.z() - n.z());
+    QVector3D c = (1 - alpha) * eye_ + alpha * n;
+
+    return projection_->pointToCoord(c);
+}
+
+QPointF MapPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
+{
+    QVector3D c = projection_->coordToPoint(coordinate);
+    QVector3D d = projectionMatrix_.map(c);
+    QPointF point =  QPointF((d.x() + 1.0) * width() / 2.0, (-d.y() + 1.0) * height() / 2.0);
+
+    double side = pow(2.0, cameraData_.zoomFactor()) * tileSize_;
+    double mapWidth = width_ * 1.0;
+    double offsetX = 0.0;
+
+    if (side < mapWidth) {
+        offsetX = (mapWidth - side) / 2.0;
+        mapWidth = side;
+
+        if (point.x() < offsetX)
+            point.setX(point.x() + mapWidth);
+
+        if (offsetX + mapWidth < point.x())
+            point.setX(point.x() - mapWidth);
+    }
+
+    return point;
+}
+
 void MapPrivate::updateFrustum(Frustum &frustum)
 {
     frustum.update(glCamera(), cameraData().aspectRatio());
 }
 
-QList<QVector3D> MapPrivate::pointsOnLineWithX(const QVector3D &p1, const QVector3D &p2, double x) const
+QList<TileSpec> MapPrivate::updateVisibleTiles()
 {
-    QList<QVector3D> results;
+    QList<QVector3D> points;
 
-    if (p1.x() == p2.x()) {
-        if (p1.x() == x) {
-            results.append(p1);
-            results.append(p2);
+    points.append(pointsOnLineWithZ(frustum_.topLeftNear(), frustum_.topLeftFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(frustum_.topRightNear(), frustum_.topRightFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(frustum_.bottomLeftNear(), frustum_.bottomLeftFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(frustum_.bottomRightNear(), frustum_.bottomRightFar(), baseHeight_));
+
+    points.append(pointsOnLineWithZ(frustum_.topLeftNear(), frustum_.bottomLeftNear(), baseHeight_));
+    points.append(pointsOnLineWithZ(frustum_.bottomLeftNear(), frustum_.bottomRightNear(), baseHeight_));
+    points.append(pointsOnLineWithZ(frustum_.bottomRightNear(), frustum_.topRightNear(), baseHeight_));
+    points.append(pointsOnLineWithZ(frustum_.topRightNear(), frustum_.topLeftNear(), baseHeight_));
+
+    points.append(pointsOnLineWithZ(frustum_.topLeftFar(), frustum_.bottomLeftFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(frustum_.bottomLeftFar(), frustum_.bottomRightFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(frustum_.bottomRightFar(), frustum_.topRightFar(), baseHeight_));
+    points.append(pointsOnLineWithZ(frustum_.topRightFar(), frustum_.topLeftFar(), baseHeight_));
+
+    QList<TileSpec> tiles;
+
+    if (points.isEmpty())
+        return tiles;
+
+    // sort points into a right handed polygon
+
+    LengthSorter sorter;
+
+    // - initial sort to remove duplicates
+    sorter.base = points.first();
+    qSort(points.begin(), points.end(), sorter);
+    for (int i = points.size() - 1; i > 0; --i) {
+        if (points.at(i) == points.at(i - 1))
+            points.removeAt(i);
+    }
+
+    // - proper sort
+    //   - start with the first point, put it in the sorted part of the list
+    //   - add the nearest unsorted point to the last sorted point to the end
+    //     of the sorted points
+    QList<QVector3D>::iterator i;
+    for (i = points.begin(); i != points.end(); ++i) {
+        sorter.base = *i;
+        if (i + 1 != points.end())
+            qSort(i + 1, points.end(), sorter);
+    }
+
+    // - determine if what we have is right handed
+    if (points.size() >= 3) {
+        QVector3D normal = QVector3D::normal(points.at(1) - points.at(0),
+                                             points.at(2) - points.at(1));
+        // - if not, reverse the list
+        if (normal.z() < 0.0) {
+            int s = points.size();
+            int s2 = s / 2;
+            for (int i = 0; i < s2; ++i) {
+                points.swap(i, s - 1 - i);
+            }
+        }
+    }
+
+    // work out if the polygon needs clipping
+    // - if we go off the far right edge we need to clip into
+    //   two regions - one which rounds down now and one which rounds up
+    // - otherwise if we cross an edge of the map we just need to clip
+    //   to the map square
+
+    bool round = false;
+    bool clip = false;
+    for (int i = 0; i < points.size(); ++i) {
+        QVector3D p = points.at(i);
+        if (p.x() >= sideLength_) {
+            round = true;
+            break;
+        }
+        if ((p.x() < 0)
+                || (sideLength_ < p.x())
+                || (p.y() < 0)
+                || (sideLength_ < p.y())) {
+            clip = true;
+        }
+    }
+
+    if (!round) {
+        if (!clip) {
+            tiles.append(tilesFromPoints(points.toVector(), false));
+        } else {
+            QPair<QList<QVector3D>,QList<QVector3D> > pair = clipPolygonToMap(points);
+            if (!pair.first.isEmpty())
+                tiles.append(tilesFromPoints(pair.first.toVector(), true));
+            if (!pair.second.isEmpty())
+                tiles.append(tilesFromPoints(pair.second.toVector(), false));
         }
     } else {
-        double f = (p1.x() - x) / (p1.x() - p2.x());
-        if ((0 <= f) && (f <= 1.0))
-            results.append((1 - f) * p1 + f * p2);
+        QPair<QList<QVector3D>,QList<QVector3D> > pair = clipPolygonToMap(points);
+        if (!pair.first.isEmpty()) {
+            QPair<QList<QVector3D>, QList<QVector3D> > split = splitPolygonX(pair.first, sideLength_ / 2.0);
+            if (!split.first.isEmpty()) {
+                tiles.append(tilesFromPoints(split.first.toVector(), false));
+            }
+            if (!split.second.isEmpty()) {
+                tiles.append(tilesFromPoints(split.second.toVector(), true));
+            }
+        }
+        if (!pair.second.isEmpty()) {
+            QPair<QList<QVector3D>, QList<QVector3D> > split = splitPolygonX(pair.second, sideLength_ / 2.0);
+            if (!split.first.isEmpty()) {
+                tiles.append(tilesFromPoints(split.first.toVector(), false));
+            }
+            if (!split.second.isEmpty()) {
+                tiles.append(tilesFromPoints(split.second.toVector(), true));
+            }
+        }
+    }
+
+    return tiles;
+}
+
+QList<TileSpec> MapPrivate::tilesFromPoints(const QVector<QVector3D> &points, bool roundUp) const
+{
+    int numPoints = points.size();
+
+    if (numPoints == 0)
+        return QList<TileSpec>();
+
+    int zoomLevel = cameraData().zoomLevel();
+
+    int minY = -1;
+    int maxY = -1;
+
+    QVector<QVector2D> tiles(points.size());
+    for (int i = 0; i < numPoints; ++i) {
+        QVector2D t = pointToTile(points.at(i), zoomLevel, roundUp);
+        if (minY == -1) {
+            minY = t.y();
+            maxY = t.y();
+        } else {
+            minY = qMin(minY, static_cast<int>(t.y()));
+            maxY = qMax(maxY, static_cast<int>(t.y()));
+        }
+        tiles[i] = t;
+    }
+
+    TileMap map(minY, maxY);
+
+    for (int i1 = 0; i1 < numPoints; ++i1) {
+        int i2 = (i1 + 1) % numPoints;
+        tilesFromLine(points.at(i1), points.at(i2), tiles.at(i1), tiles.at(i2), zoomLevel, map);
+    }
+
+    QList<TileSpec> results;
+
+    results.reserve(map.size);
+
+    int size = map.minX.size();
+    for (int i = 0; i < size; ++i) {
+        int y = map.minY + i;
+        int minX = map.minX[i];
+        int maxX = map.maxX[i];
+        for (int x = minX; x <= maxX; ++x)
+            results << TileSpec(activeMapType().mapId(), zoomLevel, x, y);
     }
 
     return results;
 }
 
-QList<QVector3D> MapPrivate::pointsOnLineWithY(const QVector3D &p1, const QVector3D &p2, double y) const
+void MapPrivate::tilesFromLine(const QVector3D &p1,
+                                 const QVector3D &p2,
+                                 const QVector2D &t1,
+                                 const QVector2D &t2,
+                                 int zoomLevel,
+                                 TileMap &map) const
 {
-    QList<QVector3D> results;
+    IntersectGenerator xGen = IntersectGenerator(this, p1.x(), p2.x(), t1.x(), t2.x(),
+                                                 IntersectGenerator::XAxis, zoomLevel);
+    IntersectGenerator yGen = IntersectGenerator(this, p1.y(), p2.y(), t1.y(), t2.y(),
+                                                 IntersectGenerator::YAxis, zoomLevel);
 
-    if (p1.y() == p2.y()) {
-        if (p1.y() == y) {
-            results.append(p1);
-            results.append(p2);
+    int tileX = t1.x();
+    int tileY = t1.y();
+
+    map.adjust(tileX, tileY);
+
+    while (xGen.hasNext() && yGen.hasNext()) {
+        QPair<double, int> x = xGen.value();
+        QPair<double, int> y = yGen.value();
+        if (x.first < y.first) {
+            tileX = x.second;
+            map.adjust(tileX, tileY);
+            xGen.next();
+        } else if (x.first > y.first) {
+            tileY = y.second;
+            map.adjust(tileX, tileY);
+            yGen.next();
+        } else {
+            map.adjust(tileX, y.second);
+            map.adjust(x.second, tileY);
+            tileX = x.second;
+            tileY = y.second;
+            map.adjust(tileX, tileY);
+            xGen.next();
+            yGen.next();
         }
-    } else {
-        double f = (p1.y() - y) / (p1.y() - p2.y());
-        if ((0 <= f) && (f <= 1.0))
-            results.append((1 - f) * p1 + f * p2);
     }
 
-    return results;
-}
-
-QList<QVector3D> MapPrivate::pointsOnLineWithZ(const QVector3D &p1, const QVector3D &p2, double z) const
-{
-    QList<QVector3D> results;
-
-    if (p1.z() == p2.z()) {
-        if (p1.z() == z) {
-            results.append(p1);
-            results.append(p2);
-        }
-    } else {
-        double f = (p1.z() - z) / (p1.z() - p2.z());
-        if ((0 <= f) && (f <= 1.0))
-            results.append((1 - f) * p1 + f * p2);
+    while (xGen.hasNext()) {
+        tileX = xGen.value().second;
+        map.adjust(tileX, tileY);
+        xGen.next();
     }
 
-    return results;
+    while (yGen.hasNext()) {
+        tileY = yGen.value().second;
+        map.adjust(tileX, tileY);
+        yGen.next();
+    }
 }
 
 QPair<QList<QVector3D>,QList<QVector3D> > MapPrivate::clipPolygonToMap(const QList<QVector3D> &points) const
@@ -1022,298 +1269,56 @@ QPair<QList<QVector3D>,QList<QVector3D> > MapPrivate::splitPolygonX(const QList<
     return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, pointsAbove);
 }
 
-QList<TileSpec> MapPrivate::updateVisibleTiles()
+QList<QVector3D> MapPrivate::pointsOnLineWithX(const QVector3D &p1, const QVector3D &p2, double x) const
 {
-    QList<QVector3D> points;
+    QList<QVector3D> results;
 
-    points.append(pointsOnLineWithZ(frustum_.topLeftNear(), frustum_.topLeftFar(), baseHeight_));
-    points.append(pointsOnLineWithZ(frustum_.topRightNear(), frustum_.topRightFar(), baseHeight_));
-    points.append(pointsOnLineWithZ(frustum_.bottomLeftNear(), frustum_.bottomLeftFar(), baseHeight_));
-    points.append(pointsOnLineWithZ(frustum_.bottomRightNear(), frustum_.bottomRightFar(), baseHeight_));
-
-    points.append(pointsOnLineWithZ(frustum_.topLeftNear(), frustum_.bottomLeftNear(), baseHeight_));
-    points.append(pointsOnLineWithZ(frustum_.bottomLeftNear(), frustum_.bottomRightNear(), baseHeight_));
-    points.append(pointsOnLineWithZ(frustum_.bottomRightNear(), frustum_.topRightNear(), baseHeight_));
-    points.append(pointsOnLineWithZ(frustum_.topRightNear(), frustum_.topLeftNear(), baseHeight_));
-
-    points.append(pointsOnLineWithZ(frustum_.topLeftFar(), frustum_.bottomLeftFar(), baseHeight_));
-    points.append(pointsOnLineWithZ(frustum_.bottomLeftFar(), frustum_.bottomRightFar(), baseHeight_));
-    points.append(pointsOnLineWithZ(frustum_.bottomRightFar(), frustum_.topRightFar(), baseHeight_));
-    points.append(pointsOnLineWithZ(frustum_.topRightFar(), frustum_.topLeftFar(), baseHeight_));
-
-    QList<TileSpec> tiles;
-
-    if (points.isEmpty())
-        return tiles;
-
-    // sort points into a right handed polygon
-
-    LengthSorter sorter;
-
-    // - initial sort to remove duplicates
-    sorter.base = points.first();
-    qSort(points.begin(), points.end(), sorter);
-    for (int i = points.size() - 1; i > 0; --i) {
-        if (points.at(i) == points.at(i - 1))
-            points.removeAt(i);
-    }
-
-    // - proper sort
-    //   - start with the first point, put it in the sorted part of the list
-    //   - add the nearest unsorted point to the last sorted point to the end
-    //     of the sorted points
-    QList<QVector3D>::iterator i;
-    for (i = points.begin(); i != points.end(); ++i) {
-        sorter.base = *i;
-        if (i + 1 != points.end())
-            qSort(i + 1, points.end(), sorter);
-    }
-
-    // - determine if what we have is right handed
-    if (points.size() >= 3) {
-        QVector3D normal = QVector3D::normal(points.at(1) - points.at(0),
-                                             points.at(2) - points.at(1));
-        // - if not, reverse the list
-        if (normal.z() < 0.0) {
-            int s = points.size();
-            int s2 = s / 2;
-            for (int i = 0; i < s2; ++i) {
-                points.swap(i, s - 1 - i);
-            }
-        }
-    }
-
-    // work out if the polygon needs clipping
-    // - if we go off the far right edge we need to clip into
-    //   two regions - one which rounds down now and one which rounds up
-    // - otherwise if we cross an edge of the map we just need to clip
-    //   to the map square
-
-    bool round = false;
-    bool clip = false;
-    for (int i = 0; i < points.size(); ++i) {
-        QVector3D p = points.at(i);
-        if (p.x() >= sideLength_) {
-            round = true;
-            break;
-        }
-        if ((p.x() < 0)
-                || (sideLength_ < p.x())
-                || (p.y() < 0)
-                || (sideLength_ < p.y())) {
-            clip = true;
-        }
-    }
-
-    if (!round) {
-        if (!clip) {
-            tiles.append(tilesFromPoints(points.toVector(), false));
-        } else {
-            QPair<QList<QVector3D>,QList<QVector3D> > pair = clipPolygonToMap(points);
-            if (!pair.first.isEmpty())
-                tiles.append(tilesFromPoints(pair.first.toVector(), true));
-            if (!pair.second.isEmpty())
-                tiles.append(tilesFromPoints(pair.second.toVector(), false));
+    if (p1.x() == p2.x()) {
+        if (p1.x() == x) {
+            results.append(p1);
+            results.append(p2);
         }
     } else {
-        QPair<QList<QVector3D>,QList<QVector3D> > pair = clipPolygonToMap(points);
-        if (!pair.first.isEmpty()) {
-            QPair<QList<QVector3D>, QList<QVector3D> > split = splitPolygonX(pair.first, sideLength_ / 2.0);
-            if (!split.first.isEmpty()) {
-                tiles.append(tilesFromPoints(split.first.toVector(), false));
-            }
-            if (!split.second.isEmpty()) {
-                tiles.append(tilesFromPoints(split.second.toVector(), true));
-            }
-        }
-        if (!pair.second.isEmpty()) {
-            QPair<QList<QVector3D>, QList<QVector3D> > split = splitPolygonX(pair.second, sideLength_ / 2.0);
-            if (!split.first.isEmpty()) {
-                tiles.append(tilesFromPoints(split.first.toVector(), false));
-            }
-            if (!split.second.isEmpty()) {
-                tiles.append(tilesFromPoints(split.second.toVector(), true));
-            }
-        }
-    }
-
-    return tiles;
-}
-
-void MapPrivate::tilesFromLine(const QVector3D &p1,
-                                 const QVector3D &p2,
-                                 const QVector2D &t1,
-                                 const QVector2D &t2,
-                                 int zoomLevel,
-                                 TileMap &map) const
-{
-    IntersectGenerator xGen = IntersectGenerator(this, p1.x(), p2.x(), t1.x(), t2.x(),
-                                                 IntersectGenerator::XAxis, zoomLevel);
-    IntersectGenerator yGen = IntersectGenerator(this, p1.y(), p2.y(), t1.y(), t2.y(),
-                                                 IntersectGenerator::YAxis, zoomLevel);
-
-    int tileX = t1.x();
-    int tileY = t1.y();
-
-    map.adjust(tileX, tileY);
-
-    while (xGen.hasNext() && yGen.hasNext()) {
-        QPair<double, int> x = xGen.value();
-        QPair<double, int> y = yGen.value();
-        if (x.first < y.first) {
-            tileX = x.second;
-            map.adjust(tileX, tileY);
-            xGen.next();
-        } else if (x.first > y.first) {
-            tileY = y.second;
-            map.adjust(tileX, tileY);
-            yGen.next();
-        } else {
-            map.adjust(tileX, y.second);
-            map.adjust(x.second, tileY);
-            tileX = x.second;
-            tileY = y.second;
-            map.adjust(tileX, tileY);
-            xGen.next();
-            yGen.next();
-        }
-    }
-
-    while (xGen.hasNext()) {
-        tileX = xGen.value().second;
-        map.adjust(tileX, tileY);
-        xGen.next();
-    }
-
-    while (yGen.hasNext()) {
-        tileY = yGen.value().second;
-        map.adjust(tileX, tileY);
-        yGen.next();
-    }
-}
-
-QList<TileSpec> MapPrivate::tilesFromPoints(const QVector<QVector3D> &points, bool roundUp) const
-{
-    int numPoints = points.size();
-
-    if (numPoints == 0)
-        return QList<TileSpec>();
-
-    int zoomLevel = cameraData().zoomLevel();
-
-    int minY = -1;
-    int maxY = -1;
-
-    QVector<QVector2D> tiles(points.size());
-    for (int i = 0; i < numPoints; ++i) {
-        QVector2D t = pointToTile(points.at(i), zoomLevel, roundUp);
-        if (minY == -1) {
-            minY = t.y();
-            maxY = t.y();
-        } else {
-            minY = qMin(minY, static_cast<int>(t.y()));
-            maxY = qMax(maxY, static_cast<int>(t.y()));
-        }
-        tiles[i] = t;
-    }
-
-    TileMap map(minY, maxY);
-
-    for (int i1 = 0; i1 < numPoints; ++i1) {
-        int i2 = (i1 + 1) % numPoints;
-        tilesFromLine(points.at(i1), points.at(i2), tiles.at(i1), tiles.at(i2), zoomLevel, map);
-    }
-
-    QList<TileSpec> results;
-
-    results.reserve(map.size);
-
-    int size = map.minX.size();
-    for (int i = 0; i < size; ++i) {
-        int y = map.minY + i;
-        int minX = map.minX[i];
-        int maxX = map.maxX[i];
-        for (int x = minX; x <= maxX; ++x)
-            results << TileSpec(activeMapType().mapId(), zoomLevel, x, y);
+        double f = (p1.x() - x) / (p1.x() - p2.x());
+        if ((0 <= f) && (f <= 1.0))
+            results.append((1 - f) * p1 + f * p2);
     }
 
     return results;
 }
 
-QGeoCoordinate MapPrivate::screenPositionToCoordinate(const QPointF &pos) const
+QList<QVector3D> MapPrivate::pointsOnLineWithY(const QVector3D &p1, const QVector3D &p2, double y) const
 {
-    double side = pow(2.0, cameraData_.zoomFactor()) * tileSize_;
-    double mapWidth = width_ * 1.0;
-    double mapHeight = height_ * 1.0;
-    double offsetX = 0.0;
-    double offsetY = 0.0;
+    QList<QVector3D> results;
 
-    if (side < mapWidth) {
-        offsetX = (mapWidth - side) / 2.0;
-        mapWidth = side;
+    if (p1.y() == p2.y()) {
+        if (p1.y() == y) {
+            results.append(p1);
+            results.append(p2);
+        }
+    } else {
+        double f = (p1.y() - y) / (p1.y() - p2.y());
+        if ((0 <= f) && (f <= 1.0))
+            results.append((1 - f) * p1 + f * p2);
     }
 
-    if (side < mapHeight) {
-        offsetY = (mapHeight - side) / 2.0;
-        mapHeight = side;
-    }
-
-    double posX = pos.x() - offsetX;
-    double posY = pos.y() - offsetY;
-
-    if (posX < 0.0)
-        return QGeoCoordinate();
-    if (mapWidth < posX)
-        return QGeoCoordinate();
-
-    if (posY < 0.0)
-        return QGeoCoordinate();
-    if (mapHeight < posY)
-        return QGeoCoordinate();
-
-    double w = mapWidth / viewSize_.width();
-    double h = mapHeight / viewSize_.height();
-    double x = (posX - w) / w;
-    double y = (posY - h) / h;
-
-    x = (x + 1.0) / 2.0;
-    y = (y + 1.0) / 2.0;
-
-    QVector3D tl = frustum_.topLeftFar();
-    QVector3D tr = frustum_.topRightFar();
-    QVector3D bl = frustum_.bottomLeftFar();
-
-    QVector3D n = (1 - x - y) * tl + x * tr + y * bl;
-
-    if (eye_.z() == n.z())
-        return QGeoCoordinate();
-
-    double alpha = eye_.z() / (eye_.z() - n.z());
-    QVector3D c = (1 - alpha) * eye_ + alpha * n;
-
-    return projection_->pointToCoord(c);
+    return results;
 }
 
-QPointF MapPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
+QList<QVector3D> MapPrivate::pointsOnLineWithZ(const QVector3D &p1, const QVector3D &p2, double z) const
 {
-    QVector3D c = projection_->coordToPoint(coordinate);
-    QVector3D d = projectionMatrix_.map(c);
-    QPointF point =  QPointF((d.x() + 1.0) * width() / 2.0, (-d.y() + 1.0) * height() / 2.0);
+    QList<QVector3D> results;
 
-    double side = pow(2.0, cameraData_.zoomFactor()) * tileSize_;
-    double mapWidth = width_ * 1.0;
-    double offsetX = 0.0;
-
-    if (side < mapWidth) {
-        offsetX = (mapWidth - side) / 2.0;
-        mapWidth = side;
-
-        if (point.x() < offsetX)
-            point.setX(point.x() + mapWidth);
-
-        if (offsetX + mapWidth < point.x())
-            point.setX(point.x() - mapWidth);
+    if (p1.z() == p2.z()) {
+        if (p1.z() == z) {
+            results.append(p1);
+            results.append(p2);
+        }
+    } else {
+        double f = (p1.z() - z) / (p1.z() - p2.z());
+        if ((0 <= f) && (f <= 1.0))
+            results.append((1 - f) * p1 + f * p2);
     }
 
-    return point;
+    return results;
 }
