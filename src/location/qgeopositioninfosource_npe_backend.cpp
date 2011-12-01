@@ -73,7 +73,8 @@ const QString ktimestamp = QLatin1String("timestamp");
 const QString kmethod = QLatin1String("method");
 const QString kvalid = QLatin1String("valid");
 
-
+// socket to locationd
+const char* klocationdSocketName = "/var/run/locationd/locationd.socket";
 
 QGeoPositionInfoSourceNpeBackend::QGeoPositionInfoSourceNpeBackend(QObject *parent):
     QGeoPositionInfoSource(parent), locationOngoing(false), timeoutSent(false)
@@ -86,7 +87,7 @@ QGeoPositionInfoSourceNpeBackend::QGeoPositionInfoSourceNpeBackend(QObject *pare
 bool QGeoPositionInfoSourceNpeBackend::init()
 {
     struct stat buf;
-    if (stat("/var/run/locationd/locationd.socket", &buf) == 0) {
+    if (stat(klocationdSocketName, &buf) == 0) {
         mSocket = new QLocalSocket(this);
         if (mSocket) {
             connect(mSocket, SIGNAL(connected()), this, SLOT(onSocketConnected()));
@@ -95,7 +96,7 @@ bool QGeoPositionInfoSourceNpeBackend::init()
             if (mStream) {
                 connect(mStream, SIGNAL(receive(const QVariantMap&)), this, SLOT(onStreamReceived(const QVariantMap&)), Qt::QueuedConnection);
             }
-            mSocket->connectToServer("/var/run/locationd/locationd.socket");
+            mSocket->connectToServer((QLatin1String)klocationdSocketName);
             return(mSocket->waitForConnected(500)); // wait up to 0.5 seconds to get connected, otherwise return false
         }
     }
@@ -252,9 +253,11 @@ void QGeoPositionInfoSourceNpeBackend::shutdownRequestSession()
 {
     requestTimer->stop();
     // Restore updateInterval from before Request Session
-    int minimumInterval = minimumUpdateInterval();
-    if ( QGeoPositionInfoSource::updateInterval() != minimumInterval)
-        setUpdateInterval(QGeoPositionInfoSource::updateInterval());
+    if ( locationOngoing ) {
+        int minimumInterval = minimumUpdateInterval();
+        if ( QGeoPositionInfoSource::updateInterval() != minimumInterval)
+            setUpdateInterval(QGeoPositionInfoSource::updateInterval());
+    }
 }
 
 
