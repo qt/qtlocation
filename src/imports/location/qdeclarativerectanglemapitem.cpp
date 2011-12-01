@@ -60,8 +60,10 @@ void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
     if (topLeft_)
         topLeft_->disconnect(this);
     topLeft_ = topLeft;
-    rectangleMapPaintedItem_->setTopLeft(topLeft_->coordinate());
-    if (topLeft_) {
+    if (!topLeft_) {
+        rectangleMapPaintedItem_->setTopLeft(QGeoCoordinate());
+    } else {
+        rectangleMapPaintedItem_->setTopLeft(topLeft_->coordinate());
         connect(topLeft_, SIGNAL(latitudeChanged(double)), this,
             SLOT(handleTopLeftCoordinateChanged()));
         connect(topLeft_, SIGNAL(longitudeChanged(double)), this,
@@ -84,8 +86,10 @@ void QDeclarativeRectangleMapItem::setBottomRight(QDeclarativeCoordinate *bottom
     if (bottomRight_)
         bottomRight_->disconnect(this);
     bottomRight_ = bottomRight;
-    rectangleMapPaintedItem_->setBottomRight(bottomRight_->coordinate());
-    if (bottomRight_) {
+    if (!bottomRight_) {
+        rectangleMapPaintedItem_->setBottomRight(QGeoCoordinate());
+    } else {
+        rectangleMapPaintedItem_->setBottomRight(bottomRight_->coordinate());
         connect(bottomRight_, SIGNAL(latitudeChanged(double)), this,
             SLOT(handleBottomRightCoordinateChanged()));
         connect(bottomRight_, SIGNAL(longitudeChanged(double)), this,

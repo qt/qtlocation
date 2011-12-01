@@ -122,9 +122,11 @@ void QDeclarativeCircleMapItem::setCenter(QDeclarativeCoordinate *center)
 
     center_ = center;
 
-    circleMapPaintedItem_->setCenter(center_->coordinate());
+    if (!center_) {
+        circleMapPaintedItem_->setCenter(QGeoCoordinate());
+    } else {
+        circleMapPaintedItem_->setCenter(center_->coordinate());
 
-    if (center_) {
         connect(center_, SIGNAL(latitudeChanged(double)), this,
                 SLOT(handleCenterCoordinateChanged()));
         connect(center_, SIGNAL(longitudeChanged(double)), this,
