@@ -754,7 +754,7 @@ Map {
         var count = map.markers.length
         counter++
         marker = Qt.createQmlObject ('Marker {}', map)
-        map.addMapScreenItem(marker)
+        map.addMapItem(marker)
 
         //update list of markers
         myArray = new Array()

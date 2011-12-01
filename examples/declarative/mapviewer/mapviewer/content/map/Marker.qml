@@ -42,7 +42,7 @@ import QtQuick 2.0;
 import QtLocation 5.0
 import "../components"
 
-MapScreenItem {  //to be used inside MapComponent only
+MapQuickItem {  //to be used inside MapComponent only
     id: marker
     anchorPoint.x: image.width/4
     anchorPoint.y: image.height
