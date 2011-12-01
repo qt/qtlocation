@@ -39,73 +39,49 @@
 ****************************************************************************/
 
 import QtQuick 2.0
-import QtLocation 5.0
-import QtLocation.examples 5.0
 
 Item {
-    id: root
+    id: titleBar
 
+    property alias text:titleText.text
+    property alias hoverEnabled: mouseRegion.hoverEnabled
+    property alias font: titleText.font
     signal clicked
-    signal arrowClicked
-    signal crossClicked
-    signal editClicked
 
-    width: parent.width
-    height: childrenRect.height
+    BorderImage { source: "../../../resources/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
-    //! [CategoryModel delegate text]
-    Text {
-        anchors.left: parent.left
-        anchors.right: arrow.left
-
-        text: category.name
-        elide: Text.ElideRight
-
+    Image {
+        id: quitButton
+        anchors.right: parent.right; anchors.rightMargin: 10
+        anchors.verticalCenter: parent.verticalCenter
+        source: "../../../resources/quit.png"
         MouseArea {
+            id: mouseRegion
+            hoverEnabled: true
             anchors.fill: parent
-            onClicked: root.clicked()
+            onClicked: { titleBar.clicked(); }
         }
-    }
-    //! [CategoryModel delegate text]
+  }
 
-    //! [CategoryModel delegate icon]
-    IconButton {
-        id: edit
-
-        anchors.right: cross.left
-        visible: placesPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature
-
-        source: "../../resources/pencil.png"
-        hoveredSource: "../../resources/pencil_hovered.png"
-        pressedSource: "../../resources/pencil_pressed.png"
-
-        onClicked: root.editClicked()
+    Text {
+        id: titleText
+        anchors {
+            left: parent.left; leftMargin: 10; verticalCenter: parent.verticalCenter
+        }
+        elide: Text.ElideLeft
+        font.bold: true;  font.pixelSize: 14; color: "white"; style: Text.Raised; styleColor: "dimgrey"
     }
 
-    IconButton {
-        id: cross
-
-        anchors.right: arrow.left
-        visible: placesPlugin.supportedPlacesFeatures & Plugin.RemoveCategoryFeature
-
-        source: "../../resources/cross.png"
-        hoveredSource: "../../resources/cross_hovered.png"
-        pressedSource: "../../resources/cross_pressed.png"
-
-        onClicked: root.crossClicked()
-    }
-
-    IconButton {
-        id: arrow
-
-        anchors.right: parent.right
-        visible: model.hasModelChildren
-
-        source: "../../resources/right.png"
-        hoveredSource: "../../resources/right_hovered.png"
-        pressedSource: "../../resources/right_pressed.png"
-
-        onClicked: root.arrowClicked()
-    }
-    //! [CategoryModel delegate icon]
+    states: [
+        State {
+            name: "Pressed"
+            when: mouseRegion.pressed
+            PropertyChanges { target: quitButton; source: "../../../resources/quit_pressed.png" }
+        },
+        State {
+            name: "Hover"
+            when: mouseRegion.containsMouse
+            PropertyChanges { target: quitButton; source: "../../../resources/quit_hovered.png" }
+        }
+    ]
 }

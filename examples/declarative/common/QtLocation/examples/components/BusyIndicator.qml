@@ -39,73 +39,18 @@
 ****************************************************************************/
 
 import QtQuick 2.0
-import QtLocation 5.0
-import QtLocation.examples 5.0
 
-Item {
+Image {
     id: root
 
-    signal clicked
-    signal arrowClicked
-    signal crossClicked
-    signal editClicked
+    property bool running: false
 
-    width: parent.width
-    height: childrenRect.height
+    source: "../../../resources/busy.png"
 
-    //! [CategoryModel delegate text]
-    Text {
-        anchors.left: parent.left
-        anchors.right: arrow.left
-
-        text: category.name
-        elide: Text.ElideRight
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.clicked()
-        }
+    RotationAnimation on rotation {
+        loops: Animation.Infinite
+        from: 0
+        to: 360
+        duration: 500
     }
-    //! [CategoryModel delegate text]
-
-    //! [CategoryModel delegate icon]
-    IconButton {
-        id: edit
-
-        anchors.right: cross.left
-        visible: placesPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature
-
-        source: "../../resources/pencil.png"
-        hoveredSource: "../../resources/pencil_hovered.png"
-        pressedSource: "../../resources/pencil_pressed.png"
-
-        onClicked: root.editClicked()
-    }
-
-    IconButton {
-        id: cross
-
-        anchors.right: arrow.left
-        visible: placesPlugin.supportedPlacesFeatures & Plugin.RemoveCategoryFeature
-
-        source: "../../resources/cross.png"
-        hoveredSource: "../../resources/cross_hovered.png"
-        pressedSource: "../../resources/cross_pressed.png"
-
-        onClicked: root.crossClicked()
-    }
-
-    IconButton {
-        id: arrow
-
-        anchors.right: parent.right
-        visible: model.hasModelChildren
-
-        source: "../../resources/right.png"
-        hoveredSource: "../../resources/right_hovered.png"
-        pressedSource: "../../resources/right_pressed.png"
-
-        onClicked: root.arrowClicked()
-    }
-    //! [CategoryModel delegate icon]
 }

@@ -37,75 +37,32 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 import QtQuick 2.0
-import QtLocation 5.0
-import QtLocation.examples 5.0
 
 Item {
-    id: root
-
+    id: optionbutton
+    property bool selected: false
+    property alias text: optionbuttonText.text
+    height: optionbuttonText.height
     signal clicked
-    signal arrowClicked
-    signal crossClicked
-    signal editClicked
 
-    width: parent.width
-    height: childrenRect.height
-
-    //! [CategoryModel delegate text]
-    Text {
-        anchors.left: parent.left
-        anchors.right: arrow.left
-
-        text: category.name
-        elide: Text.ElideRight
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.clicked()
+    Row {
+        id: optionbuttonRow
+        spacing: 3
+        anchors.fill: parent
+        Image {
+            source: optionbutton.selected ? "../../../resources/option_button_selected.png" : "../../../resources/option_button.png"
+        }
+        Text {
+            id: optionbuttonText
+            font.pixelSize: 14
         }
     }
-    //! [CategoryModel delegate text]
-
-    //! [CategoryModel delegate icon]
-    IconButton {
-        id: edit
-
-        anchors.right: cross.left
-        visible: placesPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature
-
-        source: "../../resources/pencil.png"
-        hoveredSource: "../../resources/pencil_hovered.png"
-        pressedSource: "../../resources/pencil_pressed.png"
-
-        onClicked: root.editClicked()
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            optionbutton.selected = true
+            optionbutton.clicked()
+        }
     }
-
-    IconButton {
-        id: cross
-
-        anchors.right: arrow.left
-        visible: placesPlugin.supportedPlacesFeatures & Plugin.RemoveCategoryFeature
-
-        source: "../../resources/cross.png"
-        hoveredSource: "../../resources/cross_hovered.png"
-        pressedSource: "../../resources/cross_pressed.png"
-
-        onClicked: root.crossClicked()
-    }
-
-    IconButton {
-        id: arrow
-
-        anchors.right: parent.right
-        visible: model.hasModelChildren
-
-        source: "../../resources/right.png"
-        hoveredSource: "../../resources/right_hovered.png"
-        pressedSource: "../../resources/right_pressed.png"
-
-        onClicked: root.arrowClicked()
-    }
-    //! [CategoryModel delegate icon]
 }

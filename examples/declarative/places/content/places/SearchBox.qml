@@ -40,7 +40,7 @@
 
 import QtQuick 2.0
 import QtLocation 5.0
-import "../components"
+import QtLocation.examples 5.0
 
 Rectangle {
     id: searchRectangle
@@ -78,7 +78,7 @@ Rectangle {
 
         //! [PlaceSearchSuggestionModel search text changed]
         onTextChanged: {
-            if (suggestionsEnabled) {
+            if (searchRectangle.suggestionsEnabled) {
                 if (text.length >= 3) {
                     suggestionModel.searchTerm = text;
                     suggestionModel.execute();
@@ -100,9 +100,9 @@ Rectangle {
         IconButton {
             id: searchButton
 
-            source: "../resources/search.png"
-            hoveredSource: "../resources/search_hovered.png"
-            pressedSource: "../resources/search_pressed.png"
+            source: "../../resources/search.png"
+            hoveredSource: "../../resources/search_hovered.png"
+            pressedSource: "../../resources/search_pressed.png"
 
             onClicked: {
                 placeSearchModel.searchForText(searchBox.text);
@@ -113,9 +113,9 @@ Rectangle {
         IconButton {
             id: categoryButton
 
-            source: "../resources/categories.png"
-            hoveredSource: "../resources/categories_hovered.png"
-            pressedSource: "../resources/categories_pressed.png"
+            source: "../../resources/categories.png"
+            hoveredSource: "../../resources/categories_hovered.png"
+            pressedSource: "../../resources/categories_pressed.png"
 
             onClicked: {
                 if (searchRectangle.state !== "CategoriesShown")
@@ -147,9 +147,9 @@ Rectangle {
 
     //! [CategoryModel view 2]
         header: IconButton {
-            source: "../resources/left.png"
-            hoveredSource: "../resources/left_hovered.png"
-            pressedSource: "../resources/left_pressed.png"
+            source: "../../resources/left.png"
+            hoveredSource: "../../resources/left_hovered.png"
+            pressedSource: "../../resources/left_pressed.png"
 
             onClicked: categoryListModel.rootIndex = categoryListModel.parentModelIndex()
             visible: !busy.visible

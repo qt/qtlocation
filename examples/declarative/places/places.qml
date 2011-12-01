@@ -40,9 +40,7 @@
 
 import QtQuick 2.0
 import QtLocation 5.0
-import "content/components"
-import "content/map"
-import "content/dialogs"
+import QtLocation.examples 5.0
 import "content/places"
 
 Item {
@@ -288,7 +286,7 @@ Item {
         Image {
             id: catchImage
 
-            source: "content/resources/catch.png"
+            source: "resources/catch.png"
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
 
@@ -326,7 +324,7 @@ Item {
         if (placesPlugin.supportsMapping) {
             if (map)
                 map.destroy();
-            map = Qt.createQmlObject('import QtLocation 5.0; import "content/map"; MapComponent { z : backgroundRect.z + 1; width: page.width; height: page.height; onMapPressed: { page.state = "" }}', page);
+            map = Qt.createQmlObject('import QtLocation 5.0; import "content/places"; MapComponent { z : backgroundRect.z + 1; width: page.width; height: page.height; onMapPressed: { page.state = "" }}', page);
             map.plugin = placesPlugin;
         } else {
             var plugins = getPlugins();
@@ -336,7 +334,7 @@ Item {
                 if (tempPlugin.supportsMapping) {
                     if (map)
                         map.destroy();
-                    map = Qt.createQmlObject('import QtLocation 5.0; import "content/map"; MapComponent { z : backgroundRect.z + 1; width: page.width; height: page.height; onMapPressed: { page.state = "" }}', page);
+                    map = Qt.createQmlObject('import QtLocation 5.0; import "content/places"; MapComponent { z : backgroundRect.z + 1; width: page.width; height: page.height; onMapPressed: { page.state = "" }}', page);
                     map.plugin = tempPlugin;
                     break;
                 }

@@ -37,14 +37,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include <QtGui/QGuiApplication>
 #include <QtDeclarative/QQuickView>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
 #include <QtDeclarative/QQuickItem>
-#include <QtCore/QStringList>
-#include <QtCore/QTextStream>
+#include <QStringList>
+#include <QTextStream>
+
+
 
 static bool parseArgs(QStringList& args, QVariantMap& parameters)
 {
@@ -92,19 +93,19 @@ int main(int argc, char *argv[])
     QVariantMap parameters;
     QStringList args(QCoreApplication::arguments());
 
-    if (parseArgs(args, parameters))
-        return 0;
+    if (parseArgs(args, parameters)) exit(0);
 
-    const QString mainQmlApp = QLatin1String("qrc:///places.qml");
+    const QString mainQmlApp = QLatin1String("qrc:///mapviewer.qml");
     QQuickView view;
 
     view.engine()->addImportPath(QLatin1String(":/"));
 
-    view.rootContext()->setContextProperty(QLatin1String("pluginParameters"), parameters);
-    view.rootContext()->setContextProperty(QLatin1String("_mobileUi"), false);
-
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);
+
+    QQuickItem *object = view.rootObject();
+    object->setProperty("mobileUi", false);
+    if (parameters.size() > 0) QMetaObject::invokeMethod(object, "setPluginParameters", Q_ARG(QVariant, QVariant::fromValue(parameters)));
 
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
     view.setGeometry(QRect(100, 100, 360, 640));

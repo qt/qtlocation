@@ -40,7 +40,7 @@
 
 import QtQuick 2.0
 import QtLocation 5.0
-import "../components"
+import QtLocation.examples 5.0
 
 Item {
     id: root
@@ -118,9 +118,9 @@ Item {
                 IconButton {
                     id: placeBackButton
 
-                    source: "../resources/left.png"
-                    hoveredSource: "../resources/left_hovered.png"
-                    pressedSource: "../resources/left_pressed.png"
+                    source: "../../resources/left.png"
+                    hoveredSource: "../../resources/left_hovered.png"
+                    pressedSource: "../../resources/left_pressed.png"
 
                     onClicked: {
                         view.currentIndex = 0;
@@ -183,9 +183,9 @@ Item {
                 IconButton {
                     id: contentListBackButton
 
-                    source: "../resources/left.png"
-                    hoveredSource: "../resources/left_hovered.png"
-                    pressedSource: "../resources/left_pressed.png"
+                    source: "../../resources/left.png"
+                    hoveredSource: "../../resources/left_hovered.png"
+                    pressedSource: "../../resources/left_pressed.png"
 
                     onClicked: view.currentIndex = 1
                 }
@@ -214,9 +214,9 @@ Item {
                 IconButton {
                     id: contentBackButton
 
-                    source: "../resources/left.png"
-                    hoveredSource: "../resources/left_hovered.png"
-                    pressedSource: "../resources/left_pressed.png"
+                    source: "../../resources/left.png"
+                    hoveredSource: "../../resources/left_hovered.png"
+                    pressedSource: "../../resources/left_pressed.png"
 
                     onClicked: {
                         view.currentIndex = 2;

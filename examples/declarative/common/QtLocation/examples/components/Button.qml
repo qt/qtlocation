@@ -39,73 +39,70 @@
 ****************************************************************************/
 
 import QtQuick 2.0
-import QtLocation 5.0
-import QtLocation.examples 5.0
+import "style"
 
 Item {
-    id: root
+    id: container
 
     signal clicked
-    signal arrowClicked
-    signal crossClicked
-    signal editClicked
 
-    width: parent.width
-    height: childrenRect.height
+    property alias text: buttonText.text
+    property alias color: buttonText.color
+    property alias paintedWidth: buttonText.paintedWidth
+    property alias paintedHeight: buttonText.paintedHeight
+    property bool checked: false
+    property bool enabled: true
+    property ButtonStyle style: ButtonStyle{}
 
-    //! [CategoryModel delegate text]
+    width: buttonText.width * 1.2
+    height: buttonText.height * 1.2
+
+    function disable() {
+        enabled = false;
+    }
+
+    function enable() {
+        enabled = true;
+    }
+
+    BorderImage {
+        id: buttonImage
+        source: style.background
+        width: parent.width; height: parent.height + style.heightAdjustment; y: style.yAdjustment
+    }
+
+    MouseArea {
+        id: mouseRegion
+        anchors.fill: buttonImage
+        hoverEnabled: true
+        onClicked: { container.clicked() }
+    }
     Text {
-        anchors.left: parent.left
-        anchors.right: arrow.left
+        id: buttonText
+        color: checked ? "lawngreen" : "white"
+        anchors.centerIn: buttonImage; font.bold: true; font.pixelSize: 14
+        style: Text.Raised; styleColor: "darkblue"
+        anchors.baseline: parent.bottom
+        anchors.baselineOffset: -6
+    }
 
-        text: category.name
-        elide: Text.ElideRight
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.clicked()
+    states: [
+        State {
+            name: "Pressed"
+            when: mouseRegion.pressed == true
+            PropertyChanges { target: buttonImage; source: style.pressedBackground }
+            PropertyChanges { target: buttonText; style: Text.Sunken }
+        },
+        State {
+            name: "Hovered"
+            when: mouseRegion.containsMouse
+            PropertyChanges{ target: buttonImage; source: style.disabledBackground }
+        },
+        State {
+            name: "Disabled"
+            when: !enabled
+            PropertyChanges{ target: buttonText; color: "silver" }
+            PropertyChanges{ target: mouseRegion; enabled: false }
         }
-    }
-    //! [CategoryModel delegate text]
-
-    //! [CategoryModel delegate icon]
-    IconButton {
-        id: edit
-
-        anchors.right: cross.left
-        visible: placesPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature
-
-        source: "../../resources/pencil.png"
-        hoveredSource: "../../resources/pencil_hovered.png"
-        pressedSource: "../../resources/pencil_pressed.png"
-
-        onClicked: root.editClicked()
-    }
-
-    IconButton {
-        id: cross
-
-        anchors.right: arrow.left
-        visible: placesPlugin.supportedPlacesFeatures & Plugin.RemoveCategoryFeature
-
-        source: "../../resources/cross.png"
-        hoveredSource: "../../resources/cross_hovered.png"
-        pressedSource: "../../resources/cross_pressed.png"
-
-        onClicked: root.crossClicked()
-    }
-
-    IconButton {
-        id: arrow
-
-        anchors.right: parent.right
-        visible: model.hasModelChildren
-
-        source: "../../resources/right.png"
-        hoveredSource: "../../resources/right_hovered.png"
-        pressedSource: "../../resources/right_pressed.png"
-
-        onClicked: root.arrowClicked()
-    }
-    //! [CategoryModel delegate icon]
+    ]
 }

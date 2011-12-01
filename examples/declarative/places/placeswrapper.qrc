@@ -1,83 +1,22 @@
 <RCC>
     <qresource prefix="/">
         <file>places.qml</file>
-        <file>content/components/style/ButtonStyle.qml</file>
-        <file>content/components/style/HMenuItemStyle.qml</file>
-        <file>content/components/style/VMenuItemStyle.qml</file>
-        <file>content/components/Button.qml</file>
-        <file>content/components/Checkbox.qml</file>
-        <file>content/components/Fader.qml</file>
-        <file>content/components/Menu.qml</file>
-        <file>content/components/Optionbutton.qml</file>
-        <file>content/components/Slider.qml</file>
-        <file>content/components/TextWithLabel.qml</file>
-        <file>content/components/TitleBar.qml</file>
-        <file>content/dialogs/Dialog.qml</file>
-        <file>content/map/MapComponent.qml</file>
-        <file>content/map/Marker.qml</file>
-        <file>content/resources/button_hovered.png</file>
-        <file>content/resources/button_pressed.png</file>
-        <file>content/resources/button.png</file>
-        <file>content/resources/button.sci</file>
-        <file>content/resources/catch.png</file>
-        <file>content/resources/checkbox_selected.png</file>
-        <file>content/resources/checkbox.png</file>
-        <file>content/resources/hmenuItem_hovered.png</file>
-        <file>content/resources/hmenuItem_pressed.png</file>
-        <file>content/resources/hmenuItem.png</file>
-        <file>content/resources/hmenuItem.sci</file>
-        <file>content/resources/marker_hovered.png</file>
-        <file>content/resources/marker_selected.png</file>
-        <file>content/resources/marker.png</file>
-        <file>content/resources/node_selected.png</file>
-        <file>content/resources/node.png</file>
-        <file>content/resources/option_button_selected.png</file>
-        <file>content/resources/option_button.png</file>
-        <file>content/resources/quit_hovered.png</file>
-        <file>content/resources/quit_pressed.png</file>
-        <file>content/resources/quit.png</file>
-        <file>content/resources/scale.png</file>
-        <file>content/resources/titlebar.png</file>
-        <file>content/resources/titlebar.sci</file>
-        <file>content/resources/vmenuItem.png</file>
-        <file>content/resources/vmenuItem.sci</file>
-        <file>content/resources/categories.png</file>
-        <file>content/resources/categories_hovered.png</file>
-        <file>content/resources/categories_pressed.png</file>
-        <file>content/places/SearchBox.qml</file>
-        <file>content/components/IconButton.qml</file>
-        <file>content/components/BusyIndicator.qml</file>
         <file>content/places/CategoryDelegate.qml</file>
-        <file>content/resources/right_hovered.png</file>
-        <file>content/resources/right_pressed.png</file>
-        <file>content/resources/right.png</file>
-        <file>content/resources/busy.png</file>
-        <file>content/resources/left_hovered.png</file>
-        <file>content/resources/left_pressed.png</file>
-        <file>content/resources/left.png</file>
-        <file>content/places/SearchResultView.qml</file>
-        <file>content/places/SearchResultDelegate.qml</file>
-        <file>content/resources/search_hovered.png</file>
-        <file>content/resources/search_pressed.png</file>
-        <file>content/resources/search.png</file>
-        <file>content/places/PlaceDelegate.qml</file>
-        <file>content/resources/star.png</file>
-        <file>content/places/RatingView.qml</file>
-        <file>content/places/Group.qml</file>
-        <file>content/places/ReviewDelegate.qml</file>
-        <file>content/places/PlaceReviews.qml</file>
-        <file>content/places/ReviewPage.qml</file>
-        <file>content/places/PlaceDialog.qml</file>
         <file>content/places/CategoryDialog.qml</file>
         <file>content/places/EditorialDelegate.qml</file>
         <file>content/places/EditorialPage.qml</file>
+        <file>content/places/Group.qml</file>
+        <file>content/places/MapComponent.qml</file>
+        <file>content/places/PlaceDelegate.qml</file>
+        <file>content/places/PlaceDialog.qml</file>
         <file>content/places/PlaceEditorials.qml</file>
         <file>content/places/PlaceImages.qml</file>
-        <file>content/resources/cross_hovered.png</file>
-        <file>content/resources/cross_pressed.png</file>
-        <file>content/resources/cross.png</file>
-        <file>content/resources/pencil_hovered.png</file>
-        <file>content/resources/pencil_pressed.png</file>
-        <file>content/resources/pencil.png</file>
+        <file>content/places/PlaceReviews.qml</file>
+        <file>content/places/RatingView.qml</file>
+        <file>content/places/ReviewDelegate.qml</file>
+        <file>content/places/ReviewPage.qml</file>
+        <file>content/places/SearchBox.qml</file>
+        <file>content/places/SearchResultDelegate.qml</file>
+        <file>content/places/SearchResultView.qml</file>
     </qresource>
 </RCC>

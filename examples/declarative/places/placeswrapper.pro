@@ -12,4 +12,3 @@ include(places.pri)
 target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/declarative/places
 
 INSTALLS += target
-

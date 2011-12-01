@@ -40,7 +40,7 @@
 
 import QtQuick 2.0
 import QtLocation 5.0
-import "../components"
+import QtLocation.examples 5.0
 
 Item {
     property Place place

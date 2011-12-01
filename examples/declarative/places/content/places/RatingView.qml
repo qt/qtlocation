@@ -47,7 +47,7 @@ Row {
     Repeater {
         model: Math.ceil(rating)
         Image {
-            source: "../resources/star.png"
+            source: "../../resources/star.png"
             width: size
             height: size
         }
