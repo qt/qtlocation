@@ -62,6 +62,8 @@ QT_BEGIN_NAMESPACE
 
 struct QGeoPositionInfoData
 {
+    QGeoPositionInfoData();
+
     // Coordinate information
     double latitude;
     double longitude;
@@ -87,6 +89,8 @@ struct QGeoSatelliteInfoData
 {
     struct SatelliteInfo
     {
+        SatelliteInfo();
+
         // This enum duplicates the SatelliteSystem enum defined in qgeosatelliteinfo.h, which cannot be
         // included as this file must compile with Qt4 (it is used by Qt Simulator)
         enum SatelliteSystem

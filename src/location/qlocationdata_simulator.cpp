@@ -45,6 +45,28 @@
 
 QT_BEGIN_NAMESPACE
 
+QGeoPositionInfoData::QGeoPositionInfoData()
+    : latitude(0.0),
+      longitude(0.0),
+      altitude(0.0),
+      direction(0.0),
+      groundSpeed(0.0),
+      verticalSpeed(0.0),
+      magneticVariation(0.0),
+      horizontalAccuracy(0.0),
+      verticalAccuracy(0.0),
+      dateTime(),
+      minimumInterval(0),
+      enabled(false) {}
+
+QGeoSatelliteInfoData::SatelliteInfo::SatelliteInfo()
+    : azimuth(0.0),
+      elevation(0.0),
+      signalStrength(0),
+      inUse(false),
+      satelliteSystem(Undefined),
+      satelliteIdentifier(0) {}
+
 void qt_registerLocationTypes()
 {
     qRegisterMetaTypeStreamOperators<QGeoPositionInfoData>("QGeoPositionInfoData");
