@@ -216,7 +216,7 @@ private:
 
     QList<TileSpec> tilesFromPoints(const QVector<QVector3D> &points, bool roundUp) const;
 
-    QList<QVector3D> clipPolygonToMap(const QList<QVector3D> &points) const;
+    QPair<QList<QVector3D>,QList<QVector3D> > clipPolygonToMap(const QList<QVector3D> &points) const;
 
     class LengthSorter {
     public:

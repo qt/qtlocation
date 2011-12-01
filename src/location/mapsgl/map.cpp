@@ -58,6 +58,7 @@
 #include <Qt3D/qgeometrydata.h>
 #include <Qt3D/qglbuilder.h>
 #include <Qt3D/qglcamera.h>
+#include <Qt3D/qglsubsurface.h>
 
 #include <cmath>
 
@@ -419,7 +420,65 @@ void MapPrivate::resize(int width, int height)
 
 void MapPrivate::paintGL(QGLPainter *painter)
 {
+    double side = pow(2.0, cameraData_.zoomFactor()) * tileSize_;
+    double mapWidth = width_ * 1.0;
+    double mapHeight = height_ * 1.0;
+    double offsetX = 0.0;
+    double offsetY = 0.0;
+
+    if (side < mapWidth) {
+        offsetX = (mapWidth - side) / 2.0;
+        mapWidth = side;
+    }
+
+    if (side < mapHeight) {
+        offsetY = (mapHeight - side) / 2.0;
+        mapHeight = side;
+    }
+
+    glEnable(GL_SCISSOR_TEST);
+
+    painter->setScissor(QRect(offsetX, offsetY, mapWidth, mapHeight));
+
+    QGLCamera *camera = glCamera();
+
+    bool old = camera->blockSignals(true);
+
+    glDisable(GL_DEPTH);
+
+    QVector3D c = camera->center();
+    c.setX(c.x() + sideLength_);
+    camera->setCenter(c);
+
+    QVector3D e = camera->eye();
+    e.setX(e.x() + sideLength_);
+    camera->setEye(e);
+
+    painter->setCamera(camera);
+    painter->projectionMatrix().scale(1, -1, 1);
     sphere_->paintGL(painter);
+
+    c.setX(c.x() - 2 * sideLength_);
+    camera->setCenter(c);
+    e.setX(e.x() - 2 * sideLength_);
+    camera->setEye(e);
+
+    painter->setCamera(camera);
+    painter->projectionMatrix().scale(1, -1, 1);
+    sphere_->paintGL(painter);
+
+    c.setX(c.x() + sideLength_);
+    camera->setCenter(c);
+    e.setX(e.x() + sideLength_);
+    camera->setEye(e);
+
+    painter->setCamera(camera);
+    painter->projectionMatrix().scale(1, -1, 1);
+    sphere_->paintGL(painter);
+
+    glEnable(GL_DEPTH);
+
+    camera->blockSignals(old);
 }
 
 QVector2D MapPrivate::pointToTile(const QVector3D &point, int zoom, bool roundUp) const
@@ -713,7 +772,7 @@ QList<QVector3D> MapPrivate::pointsOnLineWithZ(const QVector3D &p1, const QVecto
     return results;
 }
 
-QList<QVector3D> MapPrivate::clipPolygonToMap(const QList<QVector3D> &points) const
+QPair<QList<QVector3D>,QList<QVector3D> > MapPrivate::clipPolygonToMap(const QList<QVector3D> &points) const
 {
     bool clipX0 = false;
     bool clipX1 = false;
@@ -735,14 +794,6 @@ QList<QVector3D> MapPrivate::clipPolygonToMap(const QList<QVector3D> &points) co
 
     QList<QVector3D> results = points;
 
-    if (clipX0) {
-        results = splitPolygonX(results, 0.0).second;
-    }
-
-    if (clipX1) {
-        results = splitPolygonX(results, sideLength_).first;
-    }
-
     if (clipY0) {
         results = splitPolygonY(results, 0.0).second;
     }
@@ -751,7 +802,29 @@ QList<QVector3D> MapPrivate::clipPolygonToMap(const QList<QVector3D> &points) co
         results = splitPolygonY(results, sideLength_).first;
     }
 
-    return results;
+    if (clipX0) {
+        if (clipX1) {
+            results = splitPolygonX(results, 0.0).second;
+            results = splitPolygonX(results, sideLength_).first;
+            return QPair<QList<QVector3D>,QList<QVector3D> >(results, QList<QVector3D>());
+        } else {
+            QPair<QList<QVector3D>,QList<QVector3D> > pair = splitPolygonX(results, 0.0);
+            for (int i = 0; i < pair.first.size(); ++i) {
+                pair.first[i].setX(pair.first.at(i).x() + sideLength_);
+            }
+            return pair;
+        }
+    } else {
+        if (clipX1) {
+            QPair<QList<QVector3D>,QList<QVector3D> > pair = splitPolygonX(results, sideLength_);
+            for (int i = 0; i < pair.second.size(); ++i) {
+                pair.second[i].setX(pair.second.at(i).x() - sideLength_);
+            }
+            return pair;
+        } else {
+            return QPair<QList<QVector3D>,QList<QVector3D> >(results, QList<QVector3D>());
+        }
+    }
 }
 
 QPair<QList<QVector3D>,QList<QVector3D> > MapPrivate::splitPolygonY(const QList<QVector3D> &points, double y) const
@@ -1036,17 +1109,31 @@ QList<TileSpec> MapPrivate::updateVisibleTiles()
         if (!clip) {
             tiles.append(tilesFromPoints(points.toVector(), false));
         } else {
-            points = clipPolygonToMap(points);
-            tiles.append(tilesFromPoints(points.toVector(), false));
+            QPair<QList<QVector3D>,QList<QVector3D> > pair = clipPolygonToMap(points);
+            if (!pair.first.isEmpty())
+                tiles.append(tilesFromPoints(pair.first.toVector(), true));
+            if (!pair.second.isEmpty())
+                tiles.append(tilesFromPoints(pair.second.toVector(), false));
         }
     } else {
-        points = clipPolygonToMap(points);
-        QPair<QList<QVector3D>, QList<QVector3D> > split = splitPolygonX(points, sideLength_ / 2.0);
-        if (!split.first.isEmpty()) {
-            tiles.append(tilesFromPoints(split.first.toVector(), false));
+        QPair<QList<QVector3D>,QList<QVector3D> > pair = clipPolygonToMap(points);
+        if (!pair.first.isEmpty()) {
+            QPair<QList<QVector3D>, QList<QVector3D> > split = splitPolygonX(pair.first, sideLength_ / 2.0);
+            if (!split.first.isEmpty()) {
+                tiles.append(tilesFromPoints(split.first.toVector(), false));
+            }
+            if (!split.second.isEmpty()) {
+                tiles.append(tilesFromPoints(split.second.toVector(), true));
+            }
         }
-        if (!split.second.isEmpty()) {
-            tiles.append(tilesFromPoints(split.second.toVector(), true));
+        if (!pair.second.isEmpty()) {
+            QPair<QList<QVector3D>, QList<QVector3D> > split = splitPolygonX(pair.second, sideLength_ / 2.0);
+            if (!split.first.isEmpty()) {
+                tiles.append(tilesFromPoints(split.first.toVector(), false));
+            }
+            if (!split.second.isEmpty()) {
+                tiles.append(tilesFromPoints(split.second.toVector(), true));
+            }
         }
     }
 
@@ -1155,10 +1242,39 @@ QList<TileSpec> MapPrivate::tilesFromPoints(const QVector<QVector3D> &points, bo
 
 QGeoCoordinate MapPrivate::screenPositionToCoordinate(const QPointF &pos) const
 {
-    double w = width() * 1.0 / viewSize_.width();
-    double h = height() * 1.0 / viewSize_.height();
-    double x = (pos.x() - w) / w;
-    double y = (pos.y() - h) / h;
+    double side = pow(2.0, cameraData_.zoomFactor()) * tileSize_;
+    double mapWidth = width_ * 1.0;
+    double mapHeight = height_ * 1.0;
+    double offsetX = 0.0;
+    double offsetY = 0.0;
+
+    if (side < mapWidth) {
+        offsetX = (mapWidth - side) / 2.0;
+        mapWidth = side;
+    }
+
+    if (side < mapHeight) {
+        offsetY = (mapHeight - side) / 2.0;
+        mapHeight = side;
+    }
+
+    double posX = pos.x() - offsetX;
+    double posY = pos.y() - offsetY;
+
+    if (posX < 0.0)
+        return QGeoCoordinate();
+    if (mapWidth < posX)
+        return QGeoCoordinate();
+
+    if (posY < 0.0)
+        return QGeoCoordinate();
+    if (mapHeight < posY)
+        return QGeoCoordinate();
+
+    double w = mapWidth / viewSize_.width();
+    double h = mapHeight / viewSize_.height();
+    double x = (posX - w) / w;
+    double y = (posY - h) / h;
 
     x = (x + 1.0) / 2.0;
     y = (y + 1.0) / 2.0;
@@ -1182,5 +1298,22 @@ QPointF MapPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate)
 {
     QVector3D c = projection_->coordToPoint(coordinate);
     QVector3D d = projectionMatrix_.map(c);
-    return QPointF((d.x() + 1.0) * width() / 2.0, (-d.y() + 1.0) * height() / 2.0);
+    QPointF point =  QPointF((d.x() + 1.0) * width() / 2.0, (-d.y() + 1.0) * height() / 2.0);
+
+    double side = pow(2.0, cameraData_.zoomFactor()) * tileSize_;
+    double mapWidth = width_ * 1.0;
+    double offsetX = 0.0;
+
+    if (side < mapWidth) {
+        offsetX = (mapWidth - side) / 2.0;
+        mapWidth = side;
+
+        if (point.x() < offsetX)
+            point.setX(point.x() + mapWidth);
+
+        if (offsetX + mapWidth < point.x())
+            point.setX(point.x() - mapWidth);
+    }
+
+    return point;
 }
