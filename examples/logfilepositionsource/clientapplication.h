@@ -42,10 +42,10 @@
 
 #include <QMainWindow>
 
-QT_USE_NAMESPACE
-
+QT_BEGIN_NAMESPACE
 class QGeoPositionInfo;
 class QTextEdit;
+QT_END_NAMESPACE
 
 class ClientApplication : public QMainWindow
 {

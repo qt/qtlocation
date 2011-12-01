@@ -45,8 +45,10 @@
 
 #include "cameradata.h"
 
+QT_BEGIN_NAMESPACE
 class QLineEdit;
 class QPushButton;
+QT_END_NAMESPACE
 
 class CameraWidget : public QWidget
 {

@@ -42,10 +42,10 @@
 
 #include <qgeopositioninfosource.h>
 
-QT_USE_NAMESPACE
-
+QT_BEGIN_NAMESPACE
 class QFile;
 class QTimer;
+QT_END_NAMESPACE
 
 class LogFilePositionSource : public QGeoPositionInfoSource
 {

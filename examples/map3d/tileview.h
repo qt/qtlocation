@@ -46,13 +46,16 @@
 #include "cameradata.h"
 #include "map.h"
 
+QT_BEGIN_NAMESPACE
 class QGLPainter;
 class QGLSceneNode;
+class QGeoServiceProvider;
 class TileCache;
+QT_END_NAMESPACE
+
 class Tile;
 class TileSpec;
 class MapSphere;
-class QGeoServiceProvider;
 class ScriptEngine;
 
 class TileView : public QGLView

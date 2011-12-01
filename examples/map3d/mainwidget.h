@@ -46,10 +46,12 @@
 class TileView;
 class CameraWidget;
 
+QT_BEGIN_NAMESPACE
 class QTextEdit;
 class QPushButton;
 class QLineEdit;
 class QComboBox;
+QT_END_NAMESPACE
 
 class MainWidget : public QWidget
 {
