@@ -63,9 +63,9 @@ MapQuickItem {  //to be used inside MapComponent only
             drag.minimumY: -map.toScreenPosition(marker.coordinate).y
             drag.maximumY: map.height + drag.minimumY
 
-            onReleased:{
-                console.log("drag: implement me")
-            }
+//            onReleased:{
+//                console.log("drag: implement me")
+//            }
         }
 
         Text{
@@ -74,10 +74,10 @@ MapQuickItem {  //to be used inside MapComponent only
             color: "white"
             font.bold: true
             font.pixelSize: 14
+            width:27
+            horizontalAlignment: Text.AlignHCenter
             Component.onCompleted: {
                 text = map.counter
-                //very pro way of positioning text
-                x = map.counter > 9 ? image.width/10 : image.width/5
             }
         }
 
