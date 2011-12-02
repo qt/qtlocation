@@ -102,8 +102,8 @@ void QDeclarativeRouteMapItem::update()
     if (!map())
         return;
 
-    quickItem_->setCoordinate(new QDeclarativeCoordinate(polylineMapPaintedItem_->screenItemCoordinate()));
-    quickItem_->setAnchorPoint(polylineMapPaintedItem_->screenItemAnchorPoint());
+    quickItem_->setCoordinate(new QDeclarativeCoordinate(polylineMapPaintedItem_->quickItemCoordinate()));
+    quickItem_->setAnchorPoint(polylineMapPaintedItem_->quickItemAnchorPoint());
 
     if (quickItem_->sourceItem() == 0) {
         QObject::connect(map(), SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));

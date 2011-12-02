@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEPOLYLINEMAPITEM
-#define QDECLARATIVEPOLYLINEMAPITEM
+#ifndef QDECLARATIVEPOLYGONMAPITEM
+#define QDECLARATIVEPOLYGONMAPITEM
 
 #include "qdeclarativegeomapitembase_p.h"
 #include "qdeclarativecoordinate_p.h"
@@ -50,10 +50,10 @@
 
 QT_BEGIN_NAMESPACE
 
-class PolylineMapPaintedItem;
+class PolygonMapPaintedItem;
 class QDeclarativeGeoMapQuickItem;
 
-class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
+class QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
 
@@ -61,8 +61,8 @@ class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
 
 public:
-    QDeclarativePolylineMapItem(QQuickItem *parent = 0);
-    ~QDeclarativePolylineMapItem();
+    QDeclarativePolygonMapItem(QQuickItem *parent = 0);
+    ~QDeclarativePolygonMapItem();
 
     virtual void componentComplete();
 
@@ -95,7 +95,7 @@ private:
 
 private:
     QDeclarativeGeoMapQuickItem *quickItem_;
-    PolylineMapPaintedItem *polylineMapPaintedItem_;
+    PolygonMapPaintedItem *polygonMapPaintedItem_;
     QList<QDeclarativeCoordinate*> path_;
     QColor color_;
     bool initialized_;
@@ -103,13 +103,13 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class PolylineMapPaintedItem : public QQuickPaintedItem
+class PolygonMapPaintedItem : public QQuickPaintedItem
 {
     Q_OBJECT
 
 public:
-    PolylineMapPaintedItem(QQuickItem *parent = 0);
-    ~PolylineMapPaintedItem();
+    PolygonMapPaintedItem(QQuickItem *parent = 0);
+    ~PolygonMapPaintedItem();
 
     void setMap(Map* map);
 
@@ -140,13 +140,13 @@ private:
     QPen pen_;
     QBrush brush_;
     QList<QGeoCoordinate> coordPath_;
-    QPainterPath path_;
+    QPolygonF polygon_;
     bool initialized_;
 };
 
 
 QT_END_NAMESPACE
 
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePolylineMapItem));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePolygonMapItem));
 
-#endif /* QDECLARATIVEPOLYLINEMAPITEM_H_ */
+#endif /* QDECLARATIVEPOLYGONMAPITEM_H_ */

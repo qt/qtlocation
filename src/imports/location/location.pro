@@ -42,6 +42,7 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativecirclemapitem_p.h \
            qdeclarativerectanglemapitem_p.h \
            qdeclarativepolylinemapitem_p.h \
+           qdeclarativepolygonmapitem_p.h \
            qdeclarativeroutemapitem_p.h
 
 SOURCES += qdeclarativeposition.cpp \
@@ -72,6 +73,7 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativecirclemapitem.cpp \
            qdeclarativerectanglemapitem.cpp \
            qdeclarativepolylinemapitem.cpp \
+           qdeclarativepolygonmapitem.cpp \
            qdeclarativeroutemapitem.cpp
 
 include(declarativeplaces/declarativeplaces.pri)
