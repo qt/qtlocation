@@ -51,17 +51,24 @@ QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
 
-
 class QGeoSatelliteInfoSourcePrivate;
 class Q_LOCATION_EXPORT QGeoSatelliteInfoSource : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
+    Q_PROPERTY(int minimumUpdateInterval READ minimumUpdateInterval)
+
 public:
     explicit QGeoSatelliteInfoSource(QObject *parent);
+    virtual ~QGeoSatelliteInfoSource();
 
     static QGeoSatelliteInfoSource *createDefaultSource(QObject *parent);
     static QGeoSatelliteInfoSource *createSource(const QString &sourceName, QObject *parent);
     static QStringList availableSources();
+
+    virtual void setUpdateInterval(int msec);
+    int updateInterval() const;
+    virtual int minimumUpdateInterval() const = 0;
 
 public Q_SLOTS:
     virtual void startUpdates() = 0;

@@ -81,10 +81,20 @@ private slots:
     void constructor_withParent();
     void constructor_noParent();
 
+    void updateInterval();
+
+    void setUpdateInterval();
+    void setUpdateInterval_data();
+
+    void minimumUpdateInterval();
+
     void createDefaultSource();
     void createDefaultSource_noParent();
 
-    void startUpdates();
+    void startUpdates_testIntervals();
+    void startUpdates_testIntervalChangesWhileRunning();
+    void startUpdates_testDefaultInterval();
+    void startUpdates_testZeroInterval();
     void startUpdates_moreThanOnce();
     void stopUpdates();
     void stopUpdates_withoutStart();
@@ -94,12 +104,15 @@ private slots:
 
     void requestUpdate_validTimeout();
     void requestUpdate_defaultTimeout();
+    void requestUpdate_timeoutLessThanMinimumInterval();
     void requestUpdate_repeatedCalls();
     void requestUpdate_overlappingCalls();
     void requestUpdate_overlappingCallsWithTimeout();
 
-    void requestUpdateBeforeStartUpdates();
-    void requestUpdateAfterStartUpdates();
+    void requestUpdateAfterStartUpdates_ZeroInterval();
+    void requestUpdateAfterStartUpdates_SmallInterval();
+    void requestUpdateBeforeStartUpdates_ZeroInterval();
+    void requestUpdateBeforeStartUpdates_SmallInterval();
 
     void removeSlotForRequestTimeout();
     void removeSlotForSatellitesInUseUpdated();

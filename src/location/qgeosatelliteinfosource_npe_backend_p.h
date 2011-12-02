@@ -58,6 +58,7 @@
 #include <mtcore/variantstream.h>
 #include <private/jsondb-strings_p.h>
 #include <qlocalsocket.h>
+#include <qeventloop.h>
 #include <qtimer.h>
 
 
@@ -70,6 +71,8 @@ class QGeoSatelliteInfoSourceNpeBackend: public QGeoSatelliteInfoSource
 public:
     QGeoSatelliteInfoSourceNpeBackend(QObject *parent = 0);
     bool init();
+    void setUpdateInterval(int interval);
+    int minimumUpdateInterval() const;
 
 public Q_SLOTS:
     void startUpdates();
@@ -78,18 +81,21 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void requestTimeout();
+    void minimumUpdateIntervalReceived();
 
 private Q_SLOTS:
     void onStreamReceived(const QVariantMap& map);
     void onSocketConnected();
     void onSocketDisconnected();
     void requestTimerExpired();
+    void shutdownRequestSession();
 
 private:
     QLocalSocket* mSocket;
     VariantStream* mStream;
     bool satOngoing;
     QTimer* requestTimer;
+    int minInterval;
 };
 
 #endif // QGEOSATELLITEINFOSOURCE_NPE_BACKEND_H

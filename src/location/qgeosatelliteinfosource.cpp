@@ -76,6 +76,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
 class QGeoSatelliteInfoSourcePrivate
 {
 public:
+    int interval;
     static QList<QGeoPositionInfoSourceFactory*> pluginsSorted();
     static QHash<QString, QGeoPositionInfoSourceFactory*> plugins(bool reload = false);
     static void loadDynamicPlugins(QHash<QString, QGeoPositionInfoSourceFactory*> &plugins);
@@ -205,6 +206,7 @@ void QGeoSatelliteInfoSourcePrivate::loadStaticPlugins(QHash<QString, QGeoPositi
                 qobject_cast<QGeoPositionInfoSourceFactory*>(staticPlugins.at(i));
 
         if (f) {
+
             QString name = f->sourceName();
 
 #if !defined QT_NO_DEBUG
@@ -237,17 +239,79 @@ void QGeoSatelliteInfoSourcePrivate::loadStaticPlugins(QHash<QString, QGeoPositi
     When an update is available, satellitesInViewUpdated() and/or
     satellitesInUseUpdated() will be emitted.
 
+    If regular satellite updates are required, setUpdateInterval() can be used
+    to specify how often these updates should be emitted. If no interval is
+    specified, updates are simply provided whenever they are available.
+    For example:
+
+    \code
+        // Emit updates every 10 seconds if available
+        QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(0);
+        if (source)
+            source->setUpdateInterval(10000);
+    \endcode
+
+    To remove an update interval that was previously set, call
+    setUpdateInterval() with a value of 0.
+
+    Note that the satellite source may have a minimum value requirement for
+    update intervals, as returned by minimumUpdateInterval().
+
     \warning On Windows CE it is not possible to detect if a device is GPS enabled.
     The default satellite source on a Windows CE device without GPS support will never provide any satellite data.
 */
 
 /*!
-    Creates a source with the specified \a parent.
+    Creates a satellite source with the specified \a parent.
 */
 QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
-        : QObject(parent)
+        : QObject(parent),
+        d(new QGeoSatelliteInfoSourcePrivate)
 {
+    d->interval = 0;
 }
+
+/*!
+    Destroys the satellite source.
+*/
+QGeoSatelliteInfoSource::~QGeoSatelliteInfoSource()
+{
+    delete d;
+}
+
+/*!
+    \property QGeoSatelliteInfoSource::updateInterval
+    \brief This property holds the requested interval in milliseconds between each update.
+
+    If the update interval is not set (or is set to 0) the
+    source will provide updates as often as necessary.
+
+    If the update interval is set, the source will provide updates at an
+    interval as close to the requested interval as possible. If the requested
+    interval is less than the minimumUpdateInterval(),
+    the minimum interval is used instead.
+
+    Changes to the update interval will happen as soon as is practical, however the
+    time the change takes may vary between implementations.  Whether or not the elapsed
+    time from the previous interval is counted as part of the new interval is also
+    implementation dependent.
+
+    The default value for this property is 0.
+
+    Note: Subclass implementations must call the base implementation of
+    setUpdateInterval() so that updateInterval() returns the correct value.
+*/
+void QGeoSatelliteInfoSource::setUpdateInterval(int msec)
+{
+    d->interval = msec;
+}
+
+int QGeoSatelliteInfoSource::updateInterval() const
+{
+    return d->interval;
+}
+
+
 
 /*!
     Creates and returns a source with the specified \a parent that reads
@@ -369,6 +433,15 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 */
 
 /*!
+    \property QGeoSatelliteInfoSource::minimumUpdateInterval
+    \brief This property holds the minimum time (in milliseconds) required to retrieve a satellite update.
+
+    This is the minimum value accepted by setUpdateInterval() and
+    requestUpdate().
+*/
+
+
+/*!
     \fn virtual void QGeoSatelliteInfoSource::startUpdates() = 0;
 
     Starts emitting updates at regular intervals. The updates will be
@@ -389,7 +462,8 @@ QStringList QGeoSatelliteInfoSource::availableSources()
     Attempts to get the current satellite information and emit
     satellitesInViewUpdated() and satellitesInUseUpdated() with this
     information. If the current position cannot be found
-    within the given \a timeout (in milliseconds), requestTimeout() is
+    within the given \a timeout (in milliseconds) or if \a timeout is less than the value returned by
+    minimumUpdateInterval(), requestTimeout() is
     emitted.
 
     If the timeout is zero, the timeout defaults to a reasonable timeout
