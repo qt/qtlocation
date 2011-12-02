@@ -460,19 +460,7 @@ Item {
         }
     */
 
-    /*
-        onGeocodeFinished:{
-            var street, district, city, county, state, countryCode, country, latitude, longitude, text
-
-            if (map.geocodeModel.status == GeocodeModel.Ready){
-                if (map.geocodeModel.count == 0) messageDialog.state = "UnknownGeocodeError"
-                else if (map.geocodeModel.count > 1) messageDialog.state = "AmbiguousGeocode"
-                else messageDialog.state = "LocationInfo";
-            }
-            else if (map.geocodeModel.status == GeocodeModel.Error) messageDialog.state = "GeocodeError"
-            page.state = "Message"
-        }
-
+/*
         onShowGeocodeInfo:{
             messageDialog.state = "LocationInfo"
             page.state = "Message"
@@ -490,7 +478,7 @@ Item {
 */
     function geocodeMessage(){
         var street, district, city, county, state, countryCode, country, postalCode, latitude, longitude, text
-        /*        latitude = map.geocodeModel.get(0).coordinate.latitude
+        latitude = map.geocodeModel.get(0).coordinate.latitude
         longitude = map.geocodeModel.get(0).coordinate.longitude
         street = map.geocodeModel.get(0).address.street
         district = map.geocodeModel.get(0).address.district
@@ -510,7 +498,7 @@ Item {
         if (state) text +="<b>State: </b>"+ state + " <br/>"
         if (countryCode) text +="<b>Country code: </b>"+ countryCode + " <br/>"
         if (country) text +="<b>Country: </b>"+ country + " <br/>"
-        if (postalCode) text +="<b>PostalCode: </b>"+ postalCode + " <br/>"*/
+        if (postalCode) text +="<b>PostalCode: </b>"+ postalCode + " <br/>"
         return text
     }
 
@@ -523,22 +511,33 @@ Item {
         if (plugin.supportsMapping && plugin.supportsGeocoding && plugin.supportsReverseGeocoding && plugin.supportsRouting ){
             if (map) map.destroy()
             map = Qt.createQmlObject ('import QtLocation 5.0;\
-                                      import "content/map";\
-                                      MapComponent{\
-                                          z : backgroundRect.z + 1;\
-                                          width: page.width;\
-                                          height: page.height;\
-                                          onMapPressed:{page.state = ""}\
-                                          onFollowmeChanged: {optionsMenu.update()}\
-                                          onSupportedMapTypesChanged: {mapTypeMenu.update()}\
-                                          onCoordinatesCaptured: {\
-                                          messageDialog.state = "Coordinates";\
-                                          messageDialog.text = "<b>Latitude:</b> " + roundNumber(latitude,4) + "<br/><b>Longitude:</b> " + roundNumber(longitude,4);\
-                                          page.state = "Message"}}',page)
+                                       import "content/map";\
+                                       MapComponent{\
+                                           z : backgroundRect.z + 1;\
+                                           width: page.width;\
+                                           height: page.height;\
+                                           onMapPressed:{page.state = ""}\
+                                           onFollowmeChanged: {optionsMenu.update()}\
+                                           onSupportedMapTypesChanged: {mapTypeMenu.update()}\
+                                           onCoordinatesCaptured: {\
+                                               messageDialog.state = "Coordinates";\
+                                               messageDialog.text = "<b>Latitude:</b> " + roundNumber(latitude,4) + "<br/><b>Longitude:</b> " + roundNumber(longitude,4);\
+                                               page.state = "Message";\
+                                           }\
+                                           onGeocodeFinished:{\
+                                               var street, district, city, county, state, countryCode, country, latitude, longitude, text;\
+                                               if (map.geocodeModel.status == GeocodeModel.Ready){\
+                                                   if (map.geocodeModel.count == 0) {messageDialog.state = "UnknownGeocodeError";}\
+                                                   else if (map.geocodeModel.count > 1) {messageDialog.state = "AmbiguousGeocode";}\
+                                                   else {messageDialog.state = "LocationInfo";}\
+                                               }\
+                                               else if (map.geocodeModel.status == GeocodeModel.Error) {messageDialog.state = "GeocodeError";}\
+                                               page.state = "Message";\
+                                           }\
+                                       }',page)
             map.plugin = plugin
         }
     }
-
 
     function getPlugins(){
         var plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {}', page)

@@ -133,16 +133,16 @@ Map {
     property GeocodeModel geocodeModel: GeocodeModel {
                                             plugin : map.plugin;
                                             onStatusChanged:{
-//                                                if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)) map.geocodeFinished()
+                                                if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)) map.geocodeFinished()
                                             }
                                             onLocationsChanged:
                                             {
                                                 if (count == 1) map.center = get(0).coordinate
                                             }
                                         }
-/*
+
     signal geocodeFinished()
-    signal showGeocodeInfo()
+/*    signal showGeocodeInfo()
     signal moveMarker()
     signal routeError()
 */
