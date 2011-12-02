@@ -102,6 +102,7 @@ public:
 
 public Q_SLOTS:
     void threadStarted();
+    void threadFinished();
     void requestTiles(const QList<TileSpec> &tiles);
 
 private Q_SLOTS:

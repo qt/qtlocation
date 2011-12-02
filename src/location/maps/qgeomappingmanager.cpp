@@ -122,6 +122,12 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
             SLOT(threadStarted()),
             Qt::QueuedConnection);
 
+    connect(d_ptr->thread,
+            SIGNAL(finished()),
+            d_ptr->engine,
+            SLOT(threadFinished()),
+            Qt::QueuedConnection);
+
     connect(d_ptr->engine,
             SIGNAL(initialized()),
             this,
@@ -310,9 +316,10 @@ QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
 
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 {
+    thread->quit();
     if (engine)
-        delete engine;
-    delete thread;
+        engine->deleteLater();
+    thread->deleteLater();
 }
 
 #include "moc_qgeomappingmanager.cpp"

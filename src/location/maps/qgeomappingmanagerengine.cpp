@@ -140,6 +140,12 @@ void QGeoMappingManagerEngine::threadStarted()
         d->timer_->start();
 }
 
+void QGeoMappingManagerEngine::threadFinished()
+{
+    Q_D(QGeoMappingManagerEngine);
+    disconnect(d->timer_);
+    d->timer_->stop();
+}
 
 void QGeoMappingManagerEngine::requestTiles(const QList<TileSpec> &tiles)
 {
