@@ -388,6 +388,7 @@ void QDeclarativeSearchResultModel::processReply(QPlaceReply *reply)
         QDeclarativePlace *place = new QDeclarativePlace(result.place(),plugin(), this);
         m_places.append(place);
     }
+    emit rowCountChanged();
 }
 
 int QDeclarativeSearchResultModel::rowCount(const QModelIndex &parent) const

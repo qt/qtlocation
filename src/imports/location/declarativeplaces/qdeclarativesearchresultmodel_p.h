@@ -59,6 +59,7 @@ class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
     Q_PROPERTY(int maximumCorrections READ maximumCorrections WRITE setMaximumCorrections NOTIFY maximumCorrectionsChanged)
     Q_PROPERTY(RelevanceHint relevanceHint READ relevanceHint WRITE setRelevanceHint NOTIFY relevanceHintChanged)
     Q_PROPERTY(QDeclarativePlace::Visibility visibilityScope READ visibilityScope WRITE setVisibilityScope NOTIFY visibilityScopeChanged)
+    Q_PROPERTY(int count READ rowCount NOTIFY rowCountChanged)
 
     Q_ENUMS(SearchResultType RelevanceHint)
 
@@ -102,7 +103,7 @@ public:
     void processReply(QPlaceReply *reply);
 
     // From QAbstractListModel
-    int rowCount(const QModelIndex &parent) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
     enum Roles {
         SearchResultTypeRole = Qt::UserRole,
@@ -117,6 +118,7 @@ signals:
     void maximumCorrectionsChanged();
     void relevanceHintChanged();
     void visibilityScopeChanged();
+    void rowCountChanged();
 
 protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
