@@ -398,6 +398,17 @@ int QDeclarativeSearchResultModel::rowCount(const QModelIndex &parent) const
     return m_results.count();
 }
 
+/*!
+    \qmlmethod PlaceSearchResult::data(int index, string role)
+
+    Returns the data for a given \a role at the specified \a index.
+*/
+QVariant QDeclarativeSearchResultModel::data(int index, const QString &role) const
+{
+    QModelIndex modelIndex = createIndex(index, 0);
+    return data(modelIndex, roleNames().key(role.toLatin1()));
+}
+
 QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role) const
 {
     if (index.row() > m_results.count())

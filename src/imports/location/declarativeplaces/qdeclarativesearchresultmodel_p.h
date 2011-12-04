@@ -111,6 +111,7 @@ public:
         PlaceRole,
         CorrectionRole
     };
+    Q_INVOKABLE QVariant data(int index, const QString &roleName) const;
 
 signals:
     void searchTermChanged();
