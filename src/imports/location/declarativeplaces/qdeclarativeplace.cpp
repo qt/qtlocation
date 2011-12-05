@@ -379,7 +379,25 @@ QPlace QDeclarativePlace::place()
     // Icon
     result.setIcon(m_icon ? m_icon->icon() : QPlaceIcon());
 
-    // Extended Attributes
+    //contact details
+    QList<QPlaceContactDetail> cppDetails;
+    foreach (const QString &key, m_contactDetails->keys()) {
+        cppDetails.clear();
+        if (m_contactDetails->value(key).type() == QVariant::List) {
+            QVariantList detailsVarList = m_contactDetails->value(key).toList();
+            foreach (const QVariant &detailVar, detailsVarList) {
+                QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(detailVar.value<QObject*>());
+                if (detail)
+                    cppDetails.append(detail->contactDetail());
+            }
+        } else {
+            QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(m_contactDetails->value(key).value<QObject*>());
+            if (detail)
+                cppDetails.append(detail->contactDetail());
+        }
+        result.setContactDetails(key, cppDetails);
+    }
+
     return result;
 }
 
