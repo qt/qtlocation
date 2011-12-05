@@ -44,6 +44,8 @@ import "../components"
 
 MapQuickItem {  //to be used inside MapComponent only
     id: marker
+    property alias lastMouseX: markerMouseArea.lastX
+    property alias lastMouseY: markerMouseArea.lastY
     anchorPoint.x: image.width/4
     anchorPoint.y: image.height
 
@@ -54,6 +56,11 @@ MapQuickItem {  //to be used inside MapComponent only
         source: markerMouseArea.containsMouse ? (markerMouseArea.pressed  ? "../resources/marker_selected.png" :"../resources/marker_hovered.png") : "../resources/marker.png"
         MapMouseArea  {
             id: markerMouseArea
+            property int pressX : -1
+            property int pressY : -1
+            property int jitterThreshold : 10
+            property int lastX: -1
+            property int lastY: -1
             anchors.fill: parent
             hoverEnabled : true
             drag.target: marker
@@ -63,6 +70,21 @@ MapQuickItem {  //to be used inside MapComponent only
             drag.minimumY: -map.toScreenPosition(marker.coordinate).y
             drag.maximumY: map.height + drag.minimumY
 
+            onPressed : {
+                map.pressX = mouse.x
+                map.pressY = mouse.y
+                map.currentMarker = marker
+                map.state = ""
+            }
+
+            onPressAndHold:{
+                if (Math.abs(map.pressX - mouse.x ) < map.jitterThreshold
+                        && Math.abs(map.pressY - mouse.y ) < map.jitterThreshold) {
+                    lastX = map.toScreenPosition(marker.coordinate).x
+                    lastY = map.toScreenPosition(marker.coordinate).y
+                    map.markerPopup()
+                }
+            }
 //            onReleased:{
 //                console.log("drag: implement me")
 //            }

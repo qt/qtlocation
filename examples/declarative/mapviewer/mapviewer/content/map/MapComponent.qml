@@ -57,7 +57,7 @@ Map {
     property variant mapItems
     property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
     property int mapGeoItemsCounter: 0 // counter for total amount of mapItems. Resets to 0 when number of markers = 0
-    //    property Marker currentMarker
+    property Marker currentMarker
     signal mapPressed() // replace with
     // signal mousePressed(MouseEvent mouse) when QTBUG-14550 is fixed
 
@@ -68,6 +68,7 @@ Map {
     property int jitterThreshold : 10
     property bool followme: false
     property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
+    signal showDistance(string distance);
 
     Coordinate {
         id: brisbaneCoordinate
@@ -517,25 +518,37 @@ Map {
         y: 0
         onClicked: {
             map.state = ""
-            /*            switch (button) {
+            switch (button) {
                 case "Delete": {//remove marker
                     map.removeMarker(currentMarker)
                     break;
                 }
-                case "Move to": {//move marker
-                    map.moveMarker()
+                case "Delete All": {//remove all markers
+                    map.deleteMarkers()
                     break;
                 }
+//                case "Move to": {//move marker
+//                    map.moveMarker()
+//                    break;
+//                }
                 case "Coordinates": {//show marker's coordinates
                     map.coordinatesCaptured(currentMarker.coordinate.latitude, currentMarker.coordinate.longitude)
                     break;
                 }
                 case "Route to next points"://calculate route
                 case "Route to next point": {
-                    map.calculateRoute(currentMarker)
+//                    map.calculateRoute(currentMarker)
                     break;
                 }
-            }*/
+                case "Distance to next point": {
+                    var count = map.markers.length
+                    for (var i = 0; i<count; i++) {
+                        if (currentMarker == map.markers[i])
+                            showDistance(formatDistance(currentMarker.coordinate.distanceTo(map.markers[i+1].coordinate)));
+                    }
+                    break;
+                }
+            }
         }
     }
 
@@ -851,7 +864,6 @@ Map {
         }
     }
 
-    /*
     function removeMarker(marker){
         //update list of markers
         var myArray = new Array()
@@ -860,29 +872,32 @@ Map {
             if (marker != map.markers[i]) myArray.push(map.markers[i])
         }
 
-        map.removeMapObject(marker)
+        map.removeMapItem(marker)
         marker.destroy()
         map.markers = myArray
-        if (markers.length == 0) counter = 0
+        if (markers.length == 0) markerCounter = 0
     }
 
-    function markerLongPress(){
+    function markerPopup(){
         var array
         var count = map.markers.length
 
         markerMenu.clear()
-        markerMenu.addItem("Delete")
-        markerMenu.addItem("Move to")
         markerMenu.addItem("Coordinates")
-        if ((currentMarker != markers[count-1]) && (count > 2))
-            if (currentMarker == markers[count-2]) markerMenu.addItem("Route to next point")
-            else  markerMenu.addItem("Route to next points")
-        }
-        else  markerMenu.addItem("Route to next point")
-
+//        if ((currentMarker != markers[count-1]) && (count > 2)) {
+//            if (currentMarker == markers[count-2]) markerMenu.addItem("Route to next point")
+//            else  markerMenu.addItem("Route to next points")
+//        }
+//        else  markerMenu.addItem("Route to next point")
+        if (currentMarker != markers[count-1])
+            markerMenu.addItem("Distance to next point")
+        markerMenu.addItem("Delete")
+        if (count > 1)
+            markerMenu.addItem("Delete All")
+//        markerMenu.addItem("Move to")
         map.state = "MarkerPopupMenu"
     }
-
+/*
     function calculateRoute(marker){
         routeQuery.clearWaypoints();
         var startPointFound = false

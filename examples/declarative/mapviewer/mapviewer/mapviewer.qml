@@ -236,6 +236,10 @@ Item {
                 name: "LocationInfo"
                 PropertyChanges { target: messageDialog; title: "Location" }
                 PropertyChanges { target: messageDialog; text: geocodeMessage() }
+            },
+            State{
+                name: "Distance"
+                PropertyChanges { target: messageDialog; title: "Distance" }
             }
         ]
     }
@@ -532,6 +536,11 @@ Item {
                                                    else {messageDialog.state = "LocationInfo";}\
                                                }\
                                                else if (map.geocodeModel.status == GeocodeModel.Error) {messageDialog.state = "GeocodeError";}\
+                                               page.state = "Message";\
+                                           }\
+                                           onShowDistance:{\
+                                               messageDialog.state = "Distance";\
+                                               messageDialog.text = "<b>Distance:</b> " + distance;\
                                                page.state = "Message";\
                                            }\
                                        }',page)
