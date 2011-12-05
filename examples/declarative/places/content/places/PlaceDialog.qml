@@ -82,7 +82,11 @@ Dialog {
             ["Country", place ? place.location.address.country : ""],
             ["Postal code", place ? place.location.address.postalCode : ""],
             ["Latitude", latitude()],
-            ["Longitude", longitude()]
+            ["Longitude", longitude()],
+            ["Phone", place ? place.primaryPhone : ""],
+            ["Fax", place ? place.primaryFax : ""],
+            ["Email", place ? place.primaryEmail : ""],
+            ["Website", place ? place.primaryWebsite.toString() : ""]
         ]);
     }
 
@@ -104,9 +108,27 @@ Dialog {
         modifiedPlace.location.coordinate.latitude = parseFloat(dialogModel.get(9).inputText);
         modifiedPlace.location.coordinate.longitude = parseFloat(dialogModel.get(10).inputText);
 
-        place = modifiedPlace;
+        var phone = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', modifiedPlace);
+        phone.label = "Phone";
+        phone.value = dialogModel.get(11).inputText;
+        modifiedPlace.contactDetails.phone = phone;
 
-        place.save();
+        var fax = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', modifiedPlace);
+        fax.label = "Fax";
+        fax.value = dialogModel.get(12).inputText;
+        modifiedPlace.contactDetails.fax = fax;
+
+        var email = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', modifiedPlace);
+        email.label = "Email";
+        email.value = dialogModel.get(13).inputText;
+        modifiedPlace.contactDetails.email = email;
+
+        var website = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', modifiedPlace);
+        website.label = "Website";
+        website.value = dialogModel.get(14).inputText;
+        modifiedPlace.contactDetails.website = website;
+
+        modifiedPlace.save();
     }
     //! [Place save]
 }
