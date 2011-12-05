@@ -116,6 +116,8 @@ QMap<QString, QVariant> QGeoMappingManagerEngine::parameters() const
 void QGeoMappingManagerEngine::init()
 {
     Q_D(QGeoMappingManagerEngine);
+    if (d->stopped_)
+        return;
     d->initialized = true;
     emit initialized();
 }
@@ -123,6 +125,9 @@ void QGeoMappingManagerEngine::init()
 void QGeoMappingManagerEngine::threadStarted()
 {
     Q_D(QGeoMappingManagerEngine);
+
+    if (d->stopped_)
+        return;
 
     init();
 
@@ -143,6 +148,7 @@ void QGeoMappingManagerEngine::threadStarted()
 void QGeoMappingManagerEngine::threadFinished()
 {
     Q_D(QGeoMappingManagerEngine);
+    d->stopped_ = true;
     disconnect(d->timer_);
     d->timer_->stop();
 }
@@ -150,6 +156,9 @@ void QGeoMappingManagerEngine::threadFinished()
 void QGeoMappingManagerEngine::requestTiles(const QList<TileSpec> &tiles)
 {
     Q_D(QGeoMappingManagerEngine);
+
+    if (d->stopped_)
+        return;
 
     if (!d->started_) {
         d->queue_ = tiles;
@@ -175,6 +184,9 @@ void QGeoMappingManagerEngine::requestTiles(const QList<TileSpec> &tiles)
 void QGeoMappingManagerEngine::requestNextTile()
 {
     Q_D(QGeoMappingManagerEngine);
+
+    if (d->stopped_)
+        return;
 
     TileSpec ts = d->queue_.takeFirst();
 
@@ -220,6 +232,11 @@ void QGeoMappingManagerEngine::finished()
 void QGeoMappingManagerEngine::handleReply(QGeoTiledMapReply *reply, const TileSpec &spec)
 {
     Q_D(QGeoMappingManagerEngine);
+
+    if (d->stopped_) {
+        reply->deleteLater();
+        return;
+    }
 
     if (reply->error() == QGeoTiledMapReply::NoError) {
         QByteArray bytes = reply->mapImageData();
@@ -547,7 +564,8 @@ QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
     supportsTilting(false),
     minimumTilt(0.0),
     maximumTilt(0.0),
-    started_(false) {}
+    started_(false),
+    stopped_(false) {}
 
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 

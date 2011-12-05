@@ -91,6 +91,7 @@ public:
     QLocale locale;
     bool started_;
     bool initialized;
+    bool stopped_;
     QTimer *timer_;
     QList<TileSpec> queue_;
     QHash<QGeoTiledMapReply*, TileSpec> map_;
