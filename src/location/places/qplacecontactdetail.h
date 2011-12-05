@@ -63,10 +63,10 @@ public:
     static const QLatin1Constant Website;
     static const QLatin1Constant Fax;
 #else
-    Q_DECLARE_LATIN1_CONSTANT(Phone, "Phone");
-    Q_DECLARE_LATIN1_CONSTANT(Email, "Email");
-    Q_DECLARE_LATIN1_CONSTANT(Website, "Website");
-    Q_DECLARE_LATIN1_CONSTANT(Fax, "Fax");
+    Q_DECLARE_LATIN1_CONSTANT(Phone, "phone");
+    Q_DECLARE_LATIN1_CONSTANT(Email, "email");
+    Q_DECLARE_LATIN1_CONSTANT(Website, "website");
+    Q_DECLARE_LATIN1_CONSTANT(Fax, "fax");
 #endif
 
     QPlaceContactDetail();

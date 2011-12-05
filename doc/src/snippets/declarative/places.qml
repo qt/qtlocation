@@ -190,7 +190,7 @@ Item {
 
     //! [ContactDetails phoneList]
     ListView {
-        model: place.contactDetails.Phone;
+        model: place.contactDetails.phone;
         delegate: Text { text: label + ": " + value }
     }
     //! [ContactDetails phoneList]
@@ -246,23 +246,23 @@ Item {
     function primaryContacts() {
     //! [Place primaryPhone]
         var primaryPhone;
-        if (place.contactDetails["Phone"].length > 0)
-            primaryPhone = place.contactDetails["Phone"][0].value;
+        if (place.contactDetails["phone"].length > 0)
+            primaryPhone = place.contactDetails["phone"][0].value;
     //! [Place primaryPhone]
     //! [Place primaryFax]
         var primaryFax;
-        if (place.contactDetails["Fax"].length > 0)
-            primaryFax = place.contactDetails["Fax"][0].value;
+        if (place.contactDetails["fax"].length > 0)
+            primaryFax = place.contactDetails["fax"][0].value;
     //! [Place primaryFax]
     //! [Place primaryEmail]
         var primaryEmail;
-        if (place.contactDetails["Email"].length > 0)
-            primaryEmail = place.contactDetails["Email"][0].value;
+        if (place.contactDetails["email"].length > 0)
+            primaryEmail = place.contactDetails["email"][0].value;
     //! [Place primaryEmail]
     //! [Place primaryWebsite]
         var primaryWebsite;
-        if (place.contactDetails["Website"].length > 0)
-            primaryWebsite = place.contactDetails["Website"][0].value;
+        if (place.contactDetails["website"].length > 0)
+            primaryWebsite = place.contactDetails["website"][0].value;
     //! [Place primaryWebsite]
     }
 }

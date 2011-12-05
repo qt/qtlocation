@@ -730,7 +730,7 @@ QString QDeclarativePlace::errorString() const
 /*!
     \qmlproperty string Place::primaryPhone
 
-    This property holds the primary phone number of the place.  If no "Phone" contact detail is
+    This property holds the primary phone number of the place.  If no "phone" contact detail is
     defined for this place this property will be an empty string.  It is equivalent to
 
     \snippet snippets/declarative/places.qml Place primaryPhone
@@ -749,7 +749,7 @@ QString QDeclarativePlace::primaryPhone() const
 /*!
     \qmlproperty string Place::primaryFax
 
-    This property holds the primary fax number of the place.  If no "Fax" contact detail is
+    This property holds the primary fax number of the place.  If no "fax" contact detail is
     defined for this place this property will be an empty string.  It is equivalent to
 
     \snippet snippets/declarative/places.qml Place primaryFax
@@ -768,7 +768,7 @@ QString QDeclarativePlace::primaryFax() const
 /*!
     \qmlproperty string Place::primaryEmail
 
-    This property holds the primary email address of the place.  If no "Email" contact detail is
+    This property holds the primary email address of the place.  If no "email" contact detail is
     defined for this place this property will be an empty string.  It is equivalent to
 
     \snippet snippets/declarative/places.qml Place primaryEmail
@@ -787,7 +787,7 @@ QString QDeclarativePlace::primaryEmail() const
 /*!
     \qmlproperty string Place::primaryWebsite
 
-    This property holds the primary website url of the place.  If no "Website" contact detail is
+    This property holds the primary website url of the place.  If no "website" contact detail is
     defined for this place this property will be an empty string.  It is equivalent to
 
     \snippet snippets/declarative/places.qml Place primaryWebsite

@@ -58,10 +58,10 @@
     additional keys.
 
     \list
-        \o Phone
-        \o Fax
-        \o Email
-        \o Website
+        \o phone
+        \o fax
+        \o email
+        \o website
     \endlist
 
     The following example shows how to access all \l {QtLocation5::ContactDetail}{ContactDetails}

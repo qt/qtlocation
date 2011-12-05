@@ -94,25 +94,25 @@ types if necessary.
    \variable QPlaceContactDetail::Phone
    The constant to specify phone contact details
 */
-Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Phone, "Phone");
+Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Phone, "phone");
 
 /*!
    \variable QPlaceContactDetail::Email
    The constant to specify email contact details.
 */
-Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Email, "Email");
+Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Email, "email");
 
 /*!
    \variable QPlaceContactDetail::Website
    The constant used to specify website contact details.
 */
-Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Website, "Website");
+Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Website, "website");
 
 /*!
    \variable QPlaceContactDetail::Fax
    The constant used to specify fax contact details.
 */
-Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Fax, "Fax");
+Q_DEFINE_LATIN1_CONSTANT(QPlaceContactDetail::Fax, "fax");
 
 /*!
     Constructs a contact detail.
