@@ -83,10 +83,6 @@ public:
 
     void setSatelliteIdentifier(int satId);
     int satelliteIdentifier() const;
-#ifdef QT_DEPRECATED
-    QT_DEPRECATED void setPrnNumber(int prn);
-    QT_DEPRECATED int prnNumber() const;
-#endif
 
     void setSignalStrength(int signalStrength);
     int signalStrength() const;

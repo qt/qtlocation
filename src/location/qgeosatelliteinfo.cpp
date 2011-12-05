@@ -49,7 +49,6 @@ QT_BEGIN_NAMESPACE
 class QGeoSatelliteInfoPrivate
 {
 public:
-    int prn;
     int signal;
     int satId;
     QGeoSatelliteInfo::SatelliteSystem system;
@@ -91,7 +90,6 @@ public:
 QGeoSatelliteInfo::QGeoSatelliteInfo()
         : d(new QGeoSatelliteInfoPrivate)
 {
-    d->prn = -1;
     d->signal = -1;
     d->satId = -1;
     d->system = QGeoSatelliteInfo::Undefined;
@@ -123,7 +121,6 @@ QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo & other)
     if (this == &other)
         return *this;
 
-    d->prn = other.d->prn;
     d->signal = other.d->signal;
     d->satId = other.d->satId;
     d->system = other.d->system;
@@ -137,8 +134,7 @@ QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo & other)
 */
 bool QGeoSatelliteInfo::operator==(const QGeoSatelliteInfo &other) const
 {
-    return d->prn == other.d->prn
-           && d->signal == other.d->signal
+    return d->signal == other.d->signal
            && d->satId == other.d->satId
            && d->system == other.d->system
            && d->doubleAttribs == other.d->doubleAttribs;
@@ -151,23 +147,6 @@ bool QGeoSatelliteInfo::operator==(const QGeoSatelliteInfo &other) const
     are not the same as those of \a other.
 */
 
-/*!
-    Sets the PRN (Pseudo-random noise) number to \a prn.
-
-    The PRN number can be used to identify a satellite.
-*/
-void QGeoSatelliteInfo::setPrnNumber(int prn)
-{
-    d->prn = prn;
-}
-
-/*!
-    Returns the PRN (Pseudo-random noise) number, or -1 if the value has not been set.
-*/
-int QGeoSatelliteInfo::prnNumber() const
-{
-    return d->prn;
-}
 
 /*!
     Sets the Satellite System (GPS, GLONASS, ...) to \a system.
@@ -269,7 +248,6 @@ QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
     dbg.nospace() << "QGeoSatelliteInfo(system=" << info.d->system;
     dbg.nospace() << ", satId=" << info.d->satId;
     dbg.nospace() << ", signal-strength=" << info.d->signal;
-    dbg.nospace() << ", PRN=" << info.d->prn;
 
 
     QList<int> attribs = info.d->doubleAttribs.keys();
@@ -303,7 +281,6 @@ QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
 
 QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
 {
-    stream << info.d->prn;
     stream << info.d->signal;
     stream << info.d->doubleAttribs;
     stream << info.d->satId;
@@ -326,7 +303,6 @@ QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
 QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info)
 {
     int system;
-    stream >> info.d->prn;
     stream >> info.d->signal;
     stream >> info.d->doubleAttribs;
     stream >> info.d->satId;

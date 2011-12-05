@@ -189,7 +189,6 @@ void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite* satellite,
         QGeoSatelliteInfo info;
         info.setAttribute(QGeoSatelliteInfo::Elevation, details->elevation);
         info.setAttribute(QGeoSatelliteInfo::Azimuth, details->azimuth);
-        info.setPrnNumber(details->satellite_id);
         info.setSignalStrength(details->snr);
         if (details->in_use)
             lastSatellitesInUse.append(info);

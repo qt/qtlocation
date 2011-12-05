@@ -236,10 +236,8 @@ void QGeoSatelliteInfoSourceNpeBackend::onStreamReceived(const QVariantMap& map)
                         satinfo.setAttribute(QGeoSatelliteInfo::Azimuth, sat_elem.value(kazimuth).toReal());
                         satinfo.setSatelliteIdentifier(sat_elem.value(ksatId).toInt());
                         satinfo.setSignalStrength(sat_elem.value(ksignalStrength).toInt());
-                        if (sat_elem.value(ksystem).toString() == kGPS) {
+                        if (sat_elem.value(ksystem).toString() == kGPS)
                             satinfo.setSatelliteSystem(QGeoSatelliteInfo::GPS);
-                            satinfo.setPrnNumber(sat_elem.value(ksatId).toInt());
-                        }
                         else if (sat_elem.value(ksystem).toString() == kGLONASS)
                             satinfo.setSatelliteSystem(QGeoSatelliteInfo::GLONASS);
                         else
