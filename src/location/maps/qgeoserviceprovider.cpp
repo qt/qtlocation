@@ -120,6 +120,9 @@ The plugin did not recognise one of the parameters it was given.
 
 \value MissingRequiredParameterError
 The plugin did not find one of the parameters it was expecting.
+
+\value ConnectionError
+The plugin could not connect to its backend service or database.
 */
 
 /*!

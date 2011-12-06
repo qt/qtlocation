@@ -72,7 +72,8 @@ public:
         NoError,
         NotSupportedError,
         UnknownParameterError,
-        MissingRequiredParameterError
+        MissingRequiredParameterError,
+        ConnectionError
     };
 
     static QStringList availableServiceProviders();
