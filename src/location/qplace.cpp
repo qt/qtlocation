@@ -647,7 +647,7 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
 #ifdef QPLACE_DEBUG
     qDebug() << "categories: " << (categories == other.categories);
     qDebug() << "location:" << (location == other.location);
-    qDebug() << "rating" << (rating == other.rating);
+    qDebug() << "ratings" << (ratings == other.ratings);
     qDebug() << "supplier" << (supplier == other.supplier);
     qDebug() << "contentCollections " << (contentCollections == other.contentCollections);
     qDebug() << "contentCounts " << (contentCounts == other.contentCounts);
