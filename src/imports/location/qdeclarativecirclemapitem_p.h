@@ -46,8 +46,11 @@
 #include <QPen>
 #include <QBrush>
 
-class CircleMapPaintedItem;
+QT_BEGIN_NAMESPACE
 class QDeclarativeGeoMapQuickItem;
+QT_END_NAMESPACE
+
+class CircleMapPaintedItem;
 
 class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
 {
