@@ -486,6 +486,7 @@ Map {
     Menu {
         id: markerMenu
         horizontalOrientation: false
+        autoWidth: true
         z: map.z + 2
         opacity: 0
 
@@ -519,6 +520,7 @@ Map {
     Menu {
         id: popupMenu
         horizontalOrientation: false
+        autoWidth: true
         z: map.z + 2
         opacity: 0
 

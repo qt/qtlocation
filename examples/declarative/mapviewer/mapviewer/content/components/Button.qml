@@ -48,6 +48,8 @@ Item {
 
     property alias text: buttonText.text
     property alias color: buttonText.color
+    property alias paintedWidth: buttonText.paintedWidth
+    property alias paintedHeight: buttonText.paintedHeight
     property bool checked: false
     property ButtonStyle style: ButtonStyle{}
 

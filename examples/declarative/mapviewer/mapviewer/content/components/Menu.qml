@@ -50,13 +50,14 @@ Grid {
     spacing: 0
     property string exclusiveButton: ""
     property bool exclusive: false
+    property bool autoWidth: false
     opacity: 0.9
     rows: (horizontalOrientation) ? 1 : children.length
     columns: (horizontalOrientation) ? children.length : 1
     signal clicked(string button)
 
     onChildrenChanged: {
-        if (horizontalOrientation) resizeItems()
+        resizeItems()
     }
 
     onExclusiveChanged: {
@@ -130,8 +131,22 @@ Grid {
     }
 
     function resizeItems(){
-        for (var i = 0; i<children.length; i++)
-            children[i].width = parent.width/children.length - spacing
+        if (horizontalOrientation) {
+            for (var i = 0; i<children.length; i++)
+                children[i].width = parent.width/children.length - spacing
+        } else if (autoWidth) {
+            if (children.length > 0) {
+                var maxWidth = children[0].paintedWidth
+                for (var i = 1; i<children.length; i++){
+                    if (children[i].paintedWidth > maxWidth) {
+                        maxWidth = children[i].paintedWidth
+                    }
+                }
+                menu.width = maxWidth + 20
+            }
+            for (var i = 0; i < children.length; i++)
+                children[i].width = menu.width;
+        }
     }
 
     function itemClicked(text){
