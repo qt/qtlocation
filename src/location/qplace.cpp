@@ -190,6 +190,16 @@ QList<QPlaceCategory> QPlace::categories() const
 }
 
 /*!
+    Sets a single \a category that this place belongs to.
+*/
+void QPlace::setCategory(const QPlaceCategory &category)
+{
+    Q_D(QPlace);
+    d->categories.clear();
+    d->categories.append(category);
+}
+
+/*!
     Sets the \a categories that this place belongs to.
 */
 void QPlace::setCategories(const QList<QPlaceCategory> &categories)

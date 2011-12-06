@@ -79,6 +79,7 @@ public:
     bool operator!=(const QPlace &other) const;
 
     QList<QPlaceCategory> categories() const;
+    void setCategory(const QPlaceCategory &category);
     void setCategories(const QList<QPlaceCategory> &categories);
     QGeoLocation location() const;
     void setLocation(const QGeoLocation &location);
