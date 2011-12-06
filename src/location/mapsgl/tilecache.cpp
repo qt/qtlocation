@@ -46,8 +46,6 @@
 #include "qgeomappingmanager.h"
 
 #include <QDir>
-#include <QRegExp>
-#include <QThread>
 #include <QMetaType>
 #include <QDebug>
 
@@ -411,7 +409,9 @@ void TileCache::loadTiles()
 
 QString TileCache::tileSpecToFilename(const TileSpec &spec, const QString &directory)
 {
-    QString filename = QString::number(spec.mapId());
+    QString filename = spec.plugin();
+    filename += QLatin1String("-");
+    filename += QString::number(spec.mapId());
     filename += QLatin1String("-");
     filename += QString::number(spec.zoom());
     filename += QLatin1String("-");
@@ -427,38 +427,35 @@ QString TileCache::tileSpecToFilename(const TileSpec &spec, const QString &direc
 
 TileSpec TileCache::filenameToTileSpec(const QString &filename)
 {
-    TileSpec spec;
-    QRegExp r(QLatin1String("(\\d+)-(\\d+)-(\\d+)-(\\d+).png"));
+    TileSpec emptySpec;
+    QString extension = QLatin1String(".png");
 
-    int index = r.indexIn(filename);
-    if (index != -1) {
-        bool ok = false;
+    if (!filename.endsWith(extension))
+        return emptySpec;
 
-        int mapId = r.cap(1).toInt(&ok);
-        if (!ok)
-            return spec;
+    QString name = filename;
+    name.chop(extension.length());
+    QStringList fields = name.split('-');
 
-        int zoom = r.cap(2).toInt(&ok);
-        if (!ok)
-            return spec;
+    if (fields.length() != 5)
+        return emptySpec;
 
+    QList<int> numbers;
+
+    bool ok = false;
+    for (int i = 1; i < 5; ++i) {
         ok = false;
-        int x = r.cap(3).toInt(&ok);
+        int value = fields.at(i).toInt(&ok);
         if (!ok)
-            return spec;
-
-        ok = false;
-        int y = r.cap(4).toInt(&ok);
-        if (!ok)
-            return spec;
-
-        spec.setMapId(mapId);
-        spec.setZoom(zoom);
-        spec.setX(x);
-        spec.setY(y);
+            return emptySpec;
+        numbers.append(value);
     }
 
-    return spec;
+    return TileSpec(fields.at(0),
+                    numbers.at(0),
+                    numbers.at(1),
+                    numbers.at(2),
+                    numbers.at(3));
 }
 
 QT_END_NAMESPACE

@@ -48,6 +48,8 @@
 #include "tile.h"
 #include "mapcontroller.h"
 
+#include "qgeomappingmanager.h"
+
 #include <QMutex>
 #include <QMap>
 
@@ -363,7 +365,10 @@ QGLSceneNode* MapPrivate::createTileNode(const Tile &tile)
 void MapPrivate::setMappingManager(QGeoMappingManager *manager)
 {
     manager_ = manager;
-    sphere_->setMappingManager(manager_);
+    if (manager_) {
+        pluginString_ = manager_->managerName() + QLatin1String("_") + QString::number(manager->managerVersion());
+        sphere_->setMappingManager(manager_);
+    }
 }
 
 MapController* MapPrivate::mapController()
@@ -961,7 +966,7 @@ QList<TileSpec> MapPrivate::tilesFromPoints(const QVector<QVector3D> &points, bo
         int minX = map.minX[i];
         int maxX = map.maxX[i];
         for (int x = minX; x <= maxX; ++x)
-            results << TileSpec(activeMapType().mapId(), zoomLevel, x, y);
+            results << TileSpec(pluginString_, activeMapType().mapId(), zoomLevel, x, y);
     }
 
     return results;

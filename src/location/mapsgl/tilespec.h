@@ -43,18 +43,19 @@
 
 #include <QtLocation/qlocationglobal.h>
 #include <QtCore/QMetaType>
+#include <QString>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
 class Q_LOCATION_EXPORT TileSpec
 {
 public:
     TileSpec();
-    TileSpec(int mapId, int zoom, int x, int y);
+    TileSpec(const QString &plugin, int mapId, int zoom, int x, int y);
+
+    QString plugin() const;
 
     void setZoom(int zoom);
     int zoom() const;
@@ -72,6 +73,7 @@ public:
     bool operator < (const TileSpec &rhs) const;
 
 private:
+    QString plugin_;
     int mapId_;
     int zoom_;
     int x_;

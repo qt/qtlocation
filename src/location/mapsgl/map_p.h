@@ -60,6 +60,7 @@
 #include <QSizeF>
 #include <QVector3D>
 #include <QMatrix4x4>
+#include <QString>
 
 #include "cameradata.h"
 #include "frustum_p.h"
@@ -192,6 +193,7 @@ private:
 
     Map *map_;
     QGeoMappingManager *manager_;
+    QString pluginString_;
     MapController *controller_;
 
     QSharedPointer<Projection> projection_;

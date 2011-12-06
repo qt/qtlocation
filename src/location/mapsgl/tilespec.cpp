@@ -49,11 +49,17 @@ TileSpec::TileSpec()
         x_(-1),
         y_(-1) {}
 
-TileSpec::TileSpec(int mapId, int zoom, int x, int y)
-        : mapId_(mapId),
-        zoom_(zoom),
-        x_(x),
-        y_(y) {}
+TileSpec::TileSpec(const QString &plugin, int mapId, int zoom, int x, int y)
+        : plugin_(plugin),
+          mapId_(mapId),
+          zoom_(zoom),
+          x_(x),
+          y_(y) {}
+
+QString TileSpec::plugin() const
+{
+    return plugin_;
+}
 
 void TileSpec::setZoom(int zoom)
 {
@@ -97,6 +103,9 @@ int TileSpec::mapId() const
 
 bool TileSpec::operator == (const TileSpec &rhs) const
 {
+    if (plugin_ != rhs.plugin_)
+        return false;
+
     if (mapId_ != rhs.mapId_)
         return false;
 
@@ -114,6 +123,11 @@ bool TileSpec::operator == (const TileSpec &rhs) const
 
 bool TileSpec::operator < (const TileSpec &rhs) const
 {
+    if (plugin_ < rhs.plugin_)
+        return true;
+    if (plugin_ > rhs.plugin_)
+        return false;
+
     if (zoom_ < rhs.zoom_)
         return true;
     if (zoom_ > rhs.zoom_)
@@ -130,16 +144,17 @@ bool TileSpec::operator < (const TileSpec &rhs) const
 
 unsigned int qHash(const TileSpec &spec)
 {
-    unsigned int result = (spec.mapId() * 17) % 31;
-    result += ((spec.zoom() * 19) % 31) << 5;
-    result += ((spec.x() * 23) % 31) << 10;
-    result += ((spec.y() * 29) % 31) << 15;
+    unsigned int result = (qHash(spec.plugin()) * 13) % 31;
+    result += ((spec.mapId() * 17) % 31) << 5;
+    result += ((spec.zoom() * 19) % 31) << 10;
+    result += ((spec.x() * 23) % 31) << 15;
+    result += ((spec.y() * 29) % 31) << 20;
     return result;
 }
 
 QDebug operator<< (QDebug dbg, const TileSpec &spec)
 {
-    dbg << spec.mapId() << spec.zoom() << spec.x() << spec.y();
+    dbg << spec.plugin() << spec.mapId() << spec.zoom() << spec.x() << spec.y();
     return dbg;
 }
 

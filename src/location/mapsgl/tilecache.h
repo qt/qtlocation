@@ -122,10 +122,6 @@ private:
 
     QString directory_;
 
-    int diskSize_;
-    int memorySize_;
-    int textureSize_;
-
     QSet<TileSpec> keys_;
     QCache<TileSpec, TileDisk > diskCache_;
     QCache<TileSpec, TileMemory > memoryCache_;
