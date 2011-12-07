@@ -44,6 +44,7 @@
 #include "qgeotiledmapreply.h"
 #include "tilespec.h"
 
+#include <QThread>
 #include <QNetworkProxy>
 
 QT_BEGIN_NAMESPACE
@@ -151,6 +152,7 @@ void QGeoMappingManagerEngine::threadFinished()
     d->stopped_ = true;
     disconnect(d->timer_);
     d->timer_->stop();
+    this->deleteLater();
 }
 
 void QGeoMappingManagerEngine::requestTiles(const QList<TileSpec> &tiles)

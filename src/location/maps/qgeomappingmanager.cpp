@@ -116,24 +116,28 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
             SIGNAL(queueFinished()),
             Qt::QueuedConnection);
 
-    connect(d_ptr->thread,
-            SIGNAL(started()),
-            d_ptr->engine,
-            SLOT(threadStarted()),
-            Qt::QueuedConnection);
-
-    connect(d_ptr->thread,
-            SIGNAL(finished()),
-            d_ptr->engine,
-            SLOT(threadFinished()),
-            Qt::QueuedConnection);
-
     connect(d_ptr->engine,
             SIGNAL(initialized()),
             this,
             SIGNAL(initialized()));
 
     d_ptr->engine->moveToThread(d_ptr->thread);
+
+    connect(d_ptr->thread,
+            SIGNAL(started()),
+            d_ptr->engine,
+            SLOT(threadStarted()));
+
+    connect(d_ptr->thread,
+            SIGNAL(finished()),
+            d_ptr->engine,
+            SLOT(threadFinished()));
+
+    connect(d_ptr->engine,
+            SIGNAL(destroyed()),
+            d_ptr->thread,
+            SLOT(deleteLater()));
+
     QTimer::singleShot(0, d_ptr->thread, SLOT(start()));
 }
 
@@ -317,9 +321,6 @@ QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 {
     thread->quit();
-    if (engine)
-        engine->deleteLater();
-    thread->deleteLater();
 }
 
 #include "moc_qgeomappingmanager.cpp"
