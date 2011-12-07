@@ -478,8 +478,8 @@ Item {
 */
     function geocodeMessage(){
         var street, district, city, county, state, countryCode, country, postalCode, latitude, longitude, text
-        latitude = map.geocodeModel.get(0).coordinate.latitude
-        longitude = map.geocodeModel.get(0).coordinate.longitude
+        latitude = Math.round(map.geocodeModel.get(0).coordinate.latitude * 10000) / 10000
+        longitude =Math.round(map.geocodeModel.get(0).coordinate.longitude * 10000) / 10000
         street = map.geocodeModel.get(0).address.street
         district = map.geocodeModel.get(0).address.district
         city = map.geocodeModel.get(0).address.city
@@ -525,7 +525,6 @@ Item {
                                                page.state = "Message";\
                                            }\
                                            onGeocodeFinished:{\
-                                               var street, district, city, county, state, countryCode, country, latitude, longitude, text;\
                                                if (map.geocodeModel.status == GeocodeModel.Ready){\
                                                    if (map.geocodeModel.count == 0) {messageDialog.state = "UnknownGeocodeError";}\
                                                    else if (map.geocodeModel.count > 1) {messageDialog.state = "AmbiguousGeocode";}\
