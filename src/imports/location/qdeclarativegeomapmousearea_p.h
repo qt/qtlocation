@@ -71,6 +71,12 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
 
+private Q_SLOTS:
+    void dragActiveChanged();
+
+private:
+    QQuickItem* parentMapItem();
+
 private:
     QDeclarativeGeoMap* map_;
     bool componentCompleted_;

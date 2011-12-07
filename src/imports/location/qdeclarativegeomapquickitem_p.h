@@ -74,6 +74,9 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
+    void dragStarted();
+    void dragEnded();
+
 Q_SIGNALS:
     void coordinateChanged();
     void sourceItemChanged();
@@ -83,17 +86,21 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     void update();
+    // from qquickitem
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
 private Q_SLOTS:
     void coordinateCoordinateChanged(double);
 
 private:
     QDeclarativeCoordinate* coordinate_;
+    QDeclarativeCoordinate internalCoordinate_;
     QQuickItem* sourceItem_;
     QPointF anchorPoint_;
     qreal zoomLevel_;
     bool inUpdate_;
     bool mapAndSourceItemSet_;
+    bool dragActive_;
 };
 
 QT_END_NAMESPACE

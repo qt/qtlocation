@@ -108,12 +108,11 @@ QDeclarativeGeoMapMouseArea::~QDeclarativeGeoMapMouseArea()
 QDeclarativeCoordinate* QDeclarativeGeoMapMouseArea::mouseToCoordinate(QQuickMouseEvent* event)
 {
     // figure out the map association for this mouse area and use it to resolve geocoordinate.
-    // we may need to dive higher in the parent tree if associating
-    // element (map item or map element) is further up the tree. TODO
-    if (parentItem()) {
-        QDeclarativeGeoMap* map = qobject_cast<QDeclarativeGeoMap*>(parentItem());
+    QQuickItem* pmi = parentMapItem();
+    if (pmi) {
+        QDeclarativeGeoMap* map = qobject_cast<QDeclarativeGeoMap*>(pmi);
         if (!map) {
-            QDeclarativeGeoMapItemBase* item = qobject_cast<QDeclarativeGeoMapItemBase*>(parentItem());
+            QDeclarativeGeoMapItemBase* item = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi);
             if (item)
                 map = item->quickMap();
         }
@@ -123,21 +122,34 @@ QDeclarativeCoordinate* QDeclarativeGeoMapMouseArea::mouseToCoordinate(QQuickMou
     return new QDeclarativeCoordinate; // return invalid coordinate
 }
 
+void QDeclarativeGeoMapMouseArea::dragActiveChanged()
+{
+    QQuickItem* pmi = parentMapItem();
+    if (pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)) {
+        if (drag() && drag()->property("active").toBool())
+            qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->dragStarted();
+        else
+            qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->dragEnded();
+    }
+}
+
 void QDeclarativeGeoMapMouseArea::componentComplete()
 {
     componentCompleted_ = true;
+    connect(drag(), SIGNAL(activeChanged()), this, SLOT(dragActiveChanged()));
     QQuickMouseArea::componentComplete();
 }
 
 void QDeclarativeGeoMapMouseArea::mousePressEvent(QMouseEvent *event)
 {
     // map element's flickable may use the event
-    if (parentItem() && qobject_cast<QDeclarativeGeoMap*>(parentItem()))
-        qobject_cast<QDeclarativeGeoMap*>(parentItem())->mouseEvent(event);
+    QQuickItem* pmi = parentMapItem();
+    if (pmi && qobject_cast<QDeclarativeGeoMap*>(pmi))
+        qobject_cast<QDeclarativeGeoMap*>(pmi)->mouseEvent(event);
     // ignore event if it misses non-rectangular geometry (e.g. circle, route)
     bool contains = true;
-    if (parentItem() && qobject_cast<QDeclarativeGeoMapItemBase*>(parentItem()))
-        contains = qobject_cast<QDeclarativeGeoMapItemBase*>(parentItem())->contains(event->pos());
+    if (pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi))
+         contains = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->contains(event->pos());
     if (!contains)
         event->ignore();
     else
@@ -147,8 +159,9 @@ void QDeclarativeGeoMapMouseArea::mousePressEvent(QMouseEvent *event)
 void QDeclarativeGeoMapMouseArea::mouseReleaseEvent(QMouseEvent *event)
 {
     // map element's flickable may use the event
-    if (parentItem() && qobject_cast<QDeclarativeGeoMap*>(parentItem()))
-        qobject_cast<QDeclarativeGeoMap*>(parentItem())->mouseEvent(event);
+    QQuickItem* pmi = parentMapItem();
+    if (pmi && qobject_cast<QDeclarativeGeoMap*>(pmi))
+        qobject_cast<QDeclarativeGeoMap*>(pmi)->mouseEvent(event);
     QQuickMouseArea::mouseReleaseEvent(event);
 }
 
@@ -160,9 +173,22 @@ void QDeclarativeGeoMapMouseArea::mouseDoubleClickEvent(QMouseEvent *event)
 void QDeclarativeGeoMapMouseArea::mouseMoveEvent(QMouseEvent *event)
 {
     // map element's flickable may use the event
-    if (parentItem() && qobject_cast<QDeclarativeGeoMap*>(parentItem()))
-        qobject_cast<QDeclarativeGeoMap*>(parentItem())->mouseEvent(event);
+    QQuickItem* pmi = parentMapItem();
+    if (pmi && qobject_cast<QDeclarativeGeoMap*>(pmi))
+        qobject_cast<QDeclarativeGeoMap*>(pmi)->mouseEvent(event);
     QQuickMouseArea::mouseMoveEvent(event);
+}
+
+QQuickItem* QDeclarativeGeoMapMouseArea::parentMapItem()
+{
+    QQuickItem* item = this;
+    while (item->parentItem()) {
+        item = item->parentItem();
+        if (qobject_cast<QDeclarativeGeoMap*>(item) ||
+                qobject_cast<QDeclarativeGeoMapItemBase*>(item))
+            return item;
+    }
+    return 0;
 }
 
 /*!

@@ -43,12 +43,14 @@ import QtLocation 5.0
 import QtLocation.test 5.0
 import "common" as Common
 
-Item {
+import Qt3D 1.0
+import Qt.multimediakit 4.0
+
+Rectangle {
     objectName: "The page."
-    width:  1140     //360
-    height: 1085    // 640
-    //width:  360
-    //height: 640
+    color: 'yellow'
+    width:  1140
+    height: 1085
     id: page
 
     // From location.test plugin
@@ -214,16 +216,15 @@ Item {
     Map {
         id: map
         property bool disableFlickOnStarted: false
-        x: 0
-        y: 0
+        x: 10
+        y: 10
         MapMouseArea {
             id: mapMouseArea
-            onDoubleClicked: console.log('mapmousearea got doubleclicked')
             anchors.fill: parent
-            onClicked: console.log('coordinate lat: ' + mapMouseArea.mouseToCoordinate(mouse).latitude +
-                                   'coordinate lon: ' + mapMouseArea.mouseToCoordinate(mouse).longitude +
-                                   ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x +
-                                   ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+            onClicked: console.log('.....[Map]..... mouse area of maps clicked, coordinate lat: ' + mapMouseArea.mouseToCoordinate(mouse).latitude +
+                                   'coordinate lon: ' + mapMouseArea.mouseToCoordinate(mouse).longitude);
+                                   //' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x +
+                                   //' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
         }
 /*
         MapItem {
@@ -244,12 +245,100 @@ Item {
             }
         }
 */
+
+
         MapCircle {
+            id: mapCircle
+            z: 5
             center: londonCoordinate
-            radius: 1000
+            radius: 10000
             color: 'red'
+
+            MapMouseArea {
+                id: mouseAreaOfMapCircle
+                anchors.fill: parent
+                drag.target: parent
+                onClicked: console.log('....[Circle].... map mouse area of circle clicked')
+            }
+            Column {
+                spacing: 2
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' MapCircle '}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' x: ' + mapCircle.x}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' y: ' + mapCircle.y}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapCircle.width + 30;
+                    text: ' c lat: ' + mapCircle.center.latitude}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapCircle.width + 30;
+                    text: ' c lon: ' + mapCircle.center.longitude}
+            }
         }
 
+        Coordinate { id: southEastLondonCoordinate; latitude: 51.2; longitude: 0.3 }
+
+        MapPolyline {
+            id: mapPolyline
+            z: 15
+            color: 'red'
+            path: [
+                Coordinate { id: pathCoord1; latitude: 51; longitude: 0.1},
+                Coordinate { id: pathCoord2; latitude: 51.1; longitude: 0.4},
+                Coordinate { id: pathCoord3; latitude: 51.2; longitude: 0.2}
+            ]
+            MapMouseArea {
+                id: mouseAreaOfMapPolyline
+                anchors.fill: parent
+                drag.target: parent
+                onClicked: console.log('....[Polyline].... map mouse area of polyline clicked')
+            }
+            Column {
+                spacing: 2
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' MapPolyline '}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' x: ' + mapPolyline.x}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' y: ' + mapPolyline.y}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapPolyline.width + 30;
+                    text: ' at(0) lat: ' + mapPolyline.path[0].latitude}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapPolyline.width + 30;
+                    text: ' at(0) lon: ' + mapPolyline.path[0].longitude}
+            }
+        }
+
+        MapRectangle {
+            id: mapRectangle
+            z: 5
+            topLeft: londonCoordinate
+            bottomRight: southEastLondonCoordinate
+            color: 'green'
+            MapMouseArea {
+                id: mouseAreaOfMapRectangle
+                anchors.fill: parent
+                drag.target: parent
+                onClicked: console.log('....[Rectangle].... map mouse area of rectangle clicked')
+            }
+            Column {
+                spacing: 2
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' MapRectangle '}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' x: ' + mapRectangle.x}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' y: ' + mapRectangle.y}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapRectangle.width - 10;
+                    text: ' tl lat: ' + mapRectangle.topLeft.latitude}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapRectangle.width - 10;
+                    text: ' tl lon: ' + mapRectangle.topLeft.longitude}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapRectangle.width - 10;
+                    text: ' br lat: ' + mapRectangle.bottomRight.latitude}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapRectangle.width - 10;
+                    text: ' br lon: ' + mapRectangle.bottomRight.longitude}
+            }
+        }
+
+        /*
         MapQuickItem {
             objectName: "blinky quick item 1"
             coordinate: Coordinate { latitude: -19; longitude : 146 }
@@ -260,70 +349,144 @@ Item {
                 source: "blinky.gif"
             }
         }
+        */
 
         Coordinate {id: londonCoordinate; latitude: 51.5; longitude: -0.11}
+
+        /*
         MapQuickItem {
+            objectName: "mousetestrectanglelower yellow"
+            coordinate: londonCoordinate
             MapMouseArea {
-                id: mapMouseAreaUpperPurple
-                z: 100
-                objectName: 'mapMouseAreaUpperPurple'
-                width: rectangleSourceItem.width
-                height: rectangleSourceItem.height
-                x: rectangleSourceItem.x
-                y: rectangleSourceItem.y
-                onClicked: {
-                    console.log('..... map mouse clicked() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
-                    rectangleSourceItem.width -= 5
-                    rectangleSourceItem.height -= 5
-                }
-                onPressed: {
-                    console.log('..... map mouse pressed() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
-                }
-                onReleased: {
-                    console.log('..... map mouse released() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
-                }
-                onDoubleClicked: {
-                    console.log('..... map mouse doubleClicked() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
-                }
-                onPositionChanged: {
-                    console.log('..... map mouse positionChanged() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
-                }
-                onPressAndHold: {
-                    console.log('..... map mouse pressAndHold() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
-                }
-                onEntered: {
-                    console.log('..... map mouse entered()')
-                }
-                onExited: {
-                    console.log('..... map mouse exited()')
-                }
+                anchors.fill: parent
+                onClicked: console.log('....... yellow map mouse clicked at x: ' + mouse.x + ' y: ' + mouse.y)
             }
-            z: 2
-            objectName: "mousetestrectangleupper"
-            coordinate: londonCoordinate
-            sourceItem: Rectangle {
-                id: rectangleSourceItem
-                width: 80
-                height: 80
-                color: 'purple'
-            }
-        }
-
-
-        MapQuickItem {
-            z: 1
-            objectName: "mousetestrectanglelower"
-            coordinate: londonCoordinate
             sourceItem: Rectangle {
                 width: 160
                 height: 160
                 color: 'yellow'
             }
         }
+        */
+
+        MapQuickItem {
+            objectName: "mousetestrectangleupper purple"
+            id: purpleRectMapItem
+            coordinate: londonCoordinate
+
+            MapMouseArea {
+                id: mapMouseAreaUpperPurple
+                objectName: 'mapMouseAreaUpperPurple'
+                anchors.fill: parent
+                //z: 100
+                drag.target: parent
+                onClicked: {
+                    console.log('....[purple]..... purple map mouse clicked() area upper coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                }
+                onPressed: {
+                    console.log('....[purple]..... map mouse pressed() area purple coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                }
+                onReleased: {
+                    console.log('....[purple]..... map mouse released() area purple coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                }
+                onDoubleClicked: {
+                    console.log('....[purple]..... map mouse doubleClicked() area purple coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                }
+                //onPositionChanged: {
+                //    console.log('....[purple]..... map mouse positionChanged() area purple coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                //}
+                onPressAndHold: {
+                    console.log('....[purple]..... map mouse pressAndHold() area purple coordinate: ' + mapMouseAreaUpperPurple.mouseToCoordinate(mouse).latitude + ' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x + ' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
+                }
+                onEntered: {
+                    console.log('....[purple]..... map mouse area purple entered()')
+                }
+                onExited: {
+                    console.log('....[purple]..... map mouse area purple exited()')
+                }
+            }
+            sourceItem: Rectangle {
+                id: rectangleSourceItem
+                width: 200
+                height: 200
+                color: 'purple'
+                Column {
+                    spacing: 2
+                    Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                        text: ' MapQuickItem '}
+                    Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                        text: ' x: ' + purpleRectMapItem.x}
+                    Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                        text: ' y: ' + purpleRectMapItem.y}
+                    Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: purpleRectMapItem.width - 30;
+                        text: ' c lat: ' + purpleRectMapItem.coordinate.latitude}
+                    Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: purpleRectMapItem.width - 30;
+                        text: ' c lon: ' + purpleRectMapItem.coordinate.longitude}
+                }
+            }
+        }
 
 
 
+        /*
+        MapQuickItem {
+            z: 10
+            objectName: "video item"
+            coordinate: londonCoordinate
+            sourceItem: Rectangle {
+                color: "green"
+                width: 200;
+                height: 200;
+                MediaPlayer {
+                    id: player
+                    source: "file:///home/juvuolle/Downloads/Big_Buck_Bunny_Trailer_400p.ogg.ogv"
+                    playing: true
+                }
+                VideoOutput {
+                    id: videoItem
+                    source: player
+                    anchors.fill: parent
+                }
+            }
+        }
+        */
 
+/*
+        MapQuickItem {
+            z: 11
+            objectName: "3d item"
+            coordinate: londonCoordinate
+            sourceItem: Item {//Rectangle {
+                width: 200
+                height: 200
+                //color: Qt.rgba(0, 0, 1, 0)
+                Viewport {
+                    width: 200
+                    height: 200
+                Item3D {
+                    mesh: Mesh { source: "file:///home/juvuolle/qt/qt5/qtlocation/tests/applications/declarative_map/basket.bez" }
+                    effect: Effect { texture: "file:///home/juvuolle/qt/qt5/qtlocation/tests/applications/declarative_map/basket.jpg" }
+                    //! [2]
+                    //! [3]
+
+                    transform: [
+                        Scale3D { scale: 1.5 },
+                        Rotation3D {
+                            axis: Qt.vector3d(0, 1, 0)
+                            NumberAnimation on angle {
+                                running: true
+                                loops: Animation.Infinite
+                                from: 0
+                                to: 360
+                                duration: 2000
+                            }
+                        }
+                    ]
+                }
+                }
+            }
+        }
+*/
         /*
         MapQuickItem {
             objectName: "blinky quick item 2"
@@ -359,6 +522,7 @@ Item {
         }
         */
 
+        /*
         MapItemView {
             id: theObjectView
             model: testModel
@@ -395,6 +559,7 @@ Item {
                 }
             }
         }
+        */
 
         // From location.test plugin
         PinchGenerator {
@@ -429,16 +594,87 @@ Item {
             anchors.top: infoText.bottom
             columns: 3
             spacing: 2
-            Rectangle { id: navRect; width: 50; height: 50; color: 'peru'; Text {text: "\u2196";} MouseArea {anchors.fill: parent; onClicked: { map.pan(-1,1)}}}
-            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2191";} MouseArea {anchors.fill: parent; onClicked: {map.pan(0,1)}}}
-            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2197";} MouseArea {anchors.fill: parent; onClicked: {map.pan(1,1)}}}
-            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2190";} MouseArea {anchors.fill: parent; onClicked: {map.pan(-1,0)}}}
-            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "Tickle";} MouseArea {anchors.fill: parent; onClicked: {console.log('ticle tickle hehehe')}}}
-            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2192";} MouseArea {anchors.fill: parent; onClicked: {map.pan(1,0)}}}
-            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2199";} MouseArea {anchors.fill: parent; onClicked: {map.pan(-1,-1)}}}
-            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2193";} MouseArea {anchors.fill: parent; onClicked: {map.pan(0,-1)}}}
-            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2198";} MouseArea {anchors.fill: parent; onClicked: {map.pan(1,-1)}}}
+            Rectangle { id: navRect; width: 50; height: 50; color: 'peru'; Text {text: "\u2196";} MouseArea {anchors.fill: parent; onClicked: { map.pan(-5,5)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2191";} MouseArea {anchors.fill: parent; onClicked: {map.pan(0,5)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2197";} MouseArea {anchors.fill: parent; onClicked: {map.pan(5,5)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2190";} MouseArea {anchors.fill: parent; onClicked: {map.pan(-5,0)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "Pan\nMap";} MouseArea {anchors.fill: parent; onClicked: {console.log('ticle tickle hehehe')}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2192";} MouseArea {anchors.fill: parent; onClicked: {map.pan(5,0)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2199";} MouseArea {anchors.fill: parent; onClicked: {map.pan(-5,-5)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2193";} MouseArea {anchors.fill: parent; onClicked: {map.pan(0,-5)}}}
+            Rectangle { width: navRect.width; height: navRect.height; color: navRect.color; Text {text: "\u2198";} MouseArea {anchors.fill: parent; onClicked: {map.pan(5,-5)}}}
         }
+
+        Grid {
+            id: itemMover
+            z: 10
+            anchors.top: panNav.bottom
+            columns: 3
+            spacing: 2
+            property variant target: mapCircle
+
+            Rectangle { id: itemMoverRect; width: 50; height: 50; color: 'peru'; Text {text: "\u2196";} MouseArea {anchors.fill: parent; onClicked: { itemMover.target.y -= 5; itemMover.target.x -= 5 }}}
+            Rectangle { width: itemMoverRect.width; height: itemMoverRect.height; color: itemMoverRect.color; Text {text: "\u2191";} MouseArea {anchors.fill: parent; onClicked: {itemMover.target.y -= 5}}}
+            Rectangle { width: itemMoverRect.width; height: itemMoverRect.height; color: itemMoverRect.color; Text {text: "\u2197";} MouseArea {anchors.fill: parent; onClicked: {itemMover.target.y -= 5; itemMover.target.x += 5}}}
+            Rectangle { width: itemMoverRect.width; height: itemMoverRect.height; color: itemMoverRect.color; Text {text: "\u2190";} MouseArea {anchors.fill: parent; onClicked: {itemMover.target.x -= 5}}}
+            Rectangle { width: itemMoverRect.width; height: itemMoverRect.height; color: itemMoverRect.color; Text {text: "Move\nCircle";} MouseArea {anchors.fill: parent; onClicked: {console.log('ticle tickle hehehe')}}}
+            Rectangle { width: itemMoverRect.width; height: itemMoverRect.height; color: itemMoverRect.color; Text {text: "\u2192";} MouseArea {anchors.fill: parent; onClicked: {itemMover.target.x += 5}}}
+            Rectangle { width: itemMoverRect.width; height: itemMoverRect.height; color: itemMoverRect.color; Text {text: "\u2199";} MouseArea {anchors.fill: parent; onClicked: {itemMover.target.x -= 5; itemMover.target.y += 5}}}
+            Rectangle { width: itemMoverRect.width; height: itemMoverRect.height; color: itemMoverRect.color; Text {text: "\u2193";} MouseArea {anchors.fill: parent; onClicked: {itemMover.target.y += 5}}}
+            Rectangle { width: itemMoverRect.width; height: itemMoverRect.height; color: itemMoverRect.color; Text {text: "\u2198";} MouseArea {anchors.fill: parent; onClicked: {itemMover.target.y += 5; itemMover.target.x += 5}}}
+        }
+
+        Rectangle {
+            id: itemDataBackground
+            opacity: 0.8
+            anchors.top: itemMover.bottom
+            anchors.bottom: rectangleData.bottom
+            width: itemMover.width
+        }
+        Column {
+            id: circleData;
+            anchors.top: itemMover.bottom
+            spacing: 1
+            Text { text: ' MapCircle '; font.bold: true; font.pixelSize: 10; }
+            Text { text: ' x: ' + mapCircle.x; font.pixelSize: 10; }
+            Text { text: ' y: ' + mapCircle.y; font.pixelSize: 10; }
+            Text { text: ' c lat: ' + mapCircle.center.latitude; font.pixelSize: 10; }
+            Text { text: ' c lon: ' + mapCircle.center.longitude; font.pixelSize: 10; }
+        }
+        Column {
+            id: polylineData;
+            anchors.top: circleData.bottom
+            spacing: 1
+            Text { text: ' MapPolyline '; font.bold: true;font.pixelSize: 10; }
+            Text { text: ' x: ' + mapPolyline.x; font.pixelSize: 10; }
+            Text {text: ' y: ' + mapPolyline.y; font.pixelSize: 10; }
+            Text {text: ' at(0) lat: ' + mapPolyline.path[0].latitude; font.pixelSize: 10; }
+            Text {text: ' at(0) lon: ' + mapPolyline.path[0].longitude; font.pixelSize: 10; }
+        }
+        Column {
+            id: quickItemData
+            spacing: 1
+            anchors.top: polylineData.bottom
+            Text {text: ' MapQuickItem ';font.bold: true; font.pixelSize: 10; }
+            Text {text: ' x: ' + purpleRectMapItem.x; font.pixelSize: 10; }
+            Text {text: ' y: ' + purpleRectMapItem.y; font.pixelSize: 10; }
+            Text {text: ' tl lat: ' + purpleRectMapItem.coordinate.latitude; font.pixelSize: 10; }
+            Text {text: ' tl lon: ' + purpleRectMapItem.coordinate.longitude; font.pixelSize: 10; }
+        }
+        Column {
+            id: rectangleData
+            spacing: 1
+            anchors.top: quickItemData.bottom
+            Text {text: ' MapRectangle '; font.bold: true; font.pixelSize: 10; }
+            Text {text: ' x: ' + mapRectangle.x; font.pixelSize: 10; }
+            Text {text: ' y: ' + mapRectangle.y; font.pixelSize: 10; }
+            Text {text: ' tl lat: ' + mapRectangle.topLeft.latitude; font.pixelSize: 10; }
+            Text {text: ' tl lon: ' + mapRectangle.topLeft.longitude; font.pixelSize: 10; }
+            Text {text: ' br lat: ' + mapRectangle.bottomRight.latitude; font.pixelSize: 10; }
+            Text {text: ' br lon: ' + mapRectangle.bottomRight.longitude; font.pixelSize: 10; }
+        }
+
+
 
         /*
         Keys.onPressed: {
@@ -485,6 +721,7 @@ Item {
 
         // Flicking
         flick.enabled: true
+        // flick.deceleration: 500
         //flick.onFlickStarted: {console.log ('flick started signal                    F Start ++++++++++++++++++ ') }
         //flick.onFlickEnded: {console.log ('flick ended signal                        F Stop ------------------ ') }
         //flick.onMovementStarted: {console.log('movement started signal                   M Start ++++++++++++++++++ ') }

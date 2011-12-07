@@ -62,9 +62,18 @@ void QDeclarativeGeoMapItemBase::componentComplete()
     componentComplete_ = true;
 }
 
-bool QDeclarativeGeoMapItemBase::contains(QPoint point)
+bool QDeclarativeGeoMapItemBase::contains(QPointF point)
 {
+    Q_UNUSED(point);
     return true;
+}
+
+void QDeclarativeGeoMapItemBase::dragStarted()
+{
+}
+
+void QDeclarativeGeoMapItemBase::dragEnded()
+{
 }
 
 void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap* quickMap, Map *map)

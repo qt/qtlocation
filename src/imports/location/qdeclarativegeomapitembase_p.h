@@ -45,6 +45,7 @@
 #include <QtDeclarative/qquickitem.h>
 
 #include "qdeclarativegeomap_p.h"
+#include "qdeclarativecoordinate_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -53,12 +54,14 @@ class QDeclarativeGeoMapItemBase : public QQuickItem
     Q_OBJECT
 public:
     QDeclarativeGeoMapItemBase(QQuickItem *parent = 0);
-    ~QDeclarativeGeoMapItemBase();
+    virtual ~QDeclarativeGeoMapItemBase();
 
     void setMap(QDeclarativeGeoMap* quickMap, Map *map);
     virtual void classBegin() {}
     virtual void componentComplete();
-    virtual bool contains(QPoint point);
+    virtual bool contains(QPointF point);
+    virtual void dragStarted();
+    virtual void dragEnded();
     QDeclarativeGeoMap* quickMap();
 
 protected Q_SLOTS:
@@ -66,13 +69,13 @@ protected Q_SLOTS:
 
 protected:
     Map* map();
+    bool inUpdate_;
 
 private:
     QDeclarativeGeoMap* quickMap_;
     bool componentComplete_;
     Map* map_;
 };
-
 
 QT_END_NAMESPACE
 

@@ -39,16 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVECRICLEMAPITEM_H_
-#define QDECLARATIVECRICLEMAPITEM_H_
+#ifndef QDECLARATIVECIRCLEMAPITEM_H
+#define QDECLARATIVECIRCLEMAPITEM_H
 
 #include "qdeclarativegeomapitembase_p.h"
 #include <QPen>
 #include <QBrush>
 
 QT_BEGIN_NAMESPACE
-class QDeclarativeGeoMapQuickItem;
-QT_END_NAMESPACE
 
 class CircleMapPaintedItem;
 
@@ -72,6 +70,10 @@ public:
     QColor color() const;
     void setColor(const QColor &color);
 
+    void dragStarted();
+    void dragEnded();
+    bool contains(QPointF point);
+
 Q_SIGNALS:
     void centerChanged(const QDeclarativeCoordinate *center);
     void radiusChanged(qreal radius);
@@ -79,17 +81,21 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     void update();
+    // from qquickitem
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
 private Q_SLOTS:
     void handleCameraDataChanged(const CameraData& cameraData);
     void handleCenterCoordinateChanged();
 
-
 private:
+    QDeclarativeCoordinate internalCoordinate_;
     QDeclarativeCoordinate *center_;
-    QDeclarativeGeoMapQuickItem *quickItem_;
-    CircleMapPaintedItem *circleMapPaintedItem_;
+    CircleMapPaintedItem *circleItem_;
     QColor color_;
+    bool inUpdate_;
+    bool zoomLevel_;
+    bool dragActive_;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -102,6 +108,7 @@ public:
     ~CircleMapPaintedItem();
 
     void setMap(Map* map);
+    Map* map();
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
@@ -119,8 +126,7 @@ public:
     QBrush brush() const;
     void setBrush(const QBrush &brush);
 
-    QGeoCoordinate quickItemCoordinate() const;
-    QPointF quickItemAnchorPoint() const;
+    bool contains(QPointF point);
 
 private:
     void updateGeometry();
@@ -130,8 +136,6 @@ private:
     qreal zoomLevel_;
     QGeoCoordinate centerCoord_;
     qreal radius_;
-    QGeoCoordinate quickItemCoordinate_;
-    QPointF quickItemAnchorPoint_;
     QPen pen_;
     QBrush brush_;
     QPolygonF polygon_;
@@ -139,5 +143,6 @@ private:
     bool initialized_;
 };
 
+QT_END_NAMESPACE
 
-#endif /* QDECLARATIVECRICLEMAPITEM_H_ */
+#endif /* QDECLARATIVECIRCLEMAPITEM_H */

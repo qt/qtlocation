@@ -60,7 +60,8 @@ QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
       sourceItem_(0),
       zoomLevel_(0.0),
       inUpdate_(false),
-      mapAndSourceItemSet_(false) {}
+      mapAndSourceItemSet_(false),
+      dragActive_(true) {}
 
 QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
 
@@ -87,6 +88,43 @@ void QDeclarativeGeoMapQuickItem::setCoordinate(QDeclarativeCoordinate *coordina
                 SLOT(coordinateCoordinateChanged(double)));
     }
     emit coordinateChanged();
+}
+
+void QDeclarativeGeoMapQuickItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+{
+    if (!dragActive_ && quickMap() && sourceItem() && newGeometry.isValid() && newGeometry != oldGeometry) {
+        QPointF point(newGeometry.x(), newGeometry.y());
+        // screenPositionToCoordinate seems to return nan values when
+        // it goes beyond viewport, hence sanity check (fixme todo):
+        QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(point, false);
+        if (newCoordinate.isValid()) {
+            internalCoordinate_.setCoordinate(newCoordinate);
+            setCoordinate(&internalCoordinate_);
+        }
+    }
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+}
+
+void QDeclarativeGeoMapQuickItem::dragStarted()
+{
+    dragActive_ = true;
+}
+
+void QDeclarativeGeoMapQuickItem::dragEnded()
+{
+    if (!dragActive_)
+        return;
+    dragActive_ = false;
+    if (quickMap() && sourceItem()) {
+        QPointF point(x(), y());
+        // screenPositionToCoordinate seems to return nan values when
+        // it goes beyond viewport, hence sanity check (fixme todo):
+        QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(point, false);
+        if (newCoordinate.isValid()) {
+            internalCoordinate_.setCoordinate(newCoordinate);
+            setCoordinate(&internalCoordinate_);
+        }
+    }
 }
 
 void QDeclarativeGeoMapQuickItem::coordinateCoordinateChanged(double)
@@ -161,7 +199,6 @@ void QDeclarativeGeoMapQuickItem::update()
 
     if (!mapAndSourceItemSet_ && quickMap() && map() && sourceItem_) {
         mapAndSourceItemSet_ = true;
-
         sourceItem_->setParentItem(this);
         sourceItem_->setTransformOrigin(QQuickItem::TopLeft);
         connect(quickMap(), SIGNAL(heightChanged()), this, SLOT(update()));
@@ -185,12 +222,17 @@ void QDeclarativeGeoMapQuickItem::update()
             || (topLeft.x() + s * sourceItem_->width() < 0)
             || (topLeft.y() + s * sourceItem_->height() < 0)
             || (topLeft.y() > quickMap()->height())) {
+        // TODO FIXME generates QTransform::translate with NaN called - warnings:
         sourceItem_->setPos(invalid);
+        setPos(invalid);
     } else {
-        sourceItem_->setPos(topLeft);
+        // source item is positioned at 0,0 of the wrapper item
+        setPos(topLeft);
+        sourceItem_->setPos(QPointF(0,0));
         sourceItem_->setScale(s);
+        setWidth(sourceItem_->width());
+        setHeight(sourceItem_->height());
     }
-
     inUpdate_ = false;
 }
 

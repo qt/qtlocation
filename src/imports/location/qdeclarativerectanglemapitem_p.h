@@ -51,7 +51,6 @@
 QT_BEGIN_NAMESPACE
 
 class RectangleMapPaintedItem;
-class QDeclarativeGeoMapQuickItem;
 
 class QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
 {
@@ -74,6 +73,10 @@ public:
     QColor color() const;
     void setColor(const QColor &color);
 
+    void dragStarted();
+    void dragEnded();
+    bool contains(QPointF point);
+
 Q_SIGNALS:
     void topLeftChanged(const QDeclarativeCoordinate *topLeft);
     void bottomRightChanged(const QDeclarativeCoordinate *bottomRight);
@@ -81,6 +84,8 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     void update();
+    // from qquickitem
+    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
 private Q_SLOTS:
     // map size changed
@@ -89,11 +94,15 @@ private Q_SLOTS:
     void handleBottomRightCoordinateChanged();
 
 private:
-    QDeclarativeGeoMapQuickItem *quickItem_;
-    RectangleMapPaintedItem *rectangleMapPaintedItem_;
+    RectangleMapPaintedItem *rectangleItem_;
     QDeclarativeCoordinate* topLeft_;
     QDeclarativeCoordinate* bottomRight_;
+    QDeclarativeCoordinate internalTopLeft_;
+    QDeclarativeCoordinate internalBottomRight_;
     QColor color_;
+    qreal zoomLevel_;
+    bool inUpdate_;
+    bool dragActive_;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -107,6 +116,7 @@ public:
     ~RectangleMapPaintedItem();
 
     void setMap(Map* map);
+    Map* map();
 
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
@@ -125,8 +135,7 @@ public:
     QBrush brush() const;
     void setBrush(const QBrush &brush);
 
-    QGeoCoordinate quickItemCoordinate() const;
-    QPointF quickItemAnchorPoint() const;
+    bool contains(QPointF point);
 
 private:
     void updateGeometry();
