@@ -297,84 +297,6 @@ testcase = {
         ));
    },
 
-    displaying_a_map: function()
-    {
-        // Test meta data
-        testTitle = "Maps and Navigation - Map View Options";
-        testBinary = "mapviewer"; // (sources are /tests/location-testing-tools/mapviewer)
-        testGoal = "Verify that maps can be shown different mode.";
-        testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,1.1";
-        testRequirements = "MOBILITY-538: Maps and Navigation";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally and map for current location is displayed on the screen |
-        | Press Option button | |
-        | Press Street button (if button is enabled) | Map is drawn in *Street* view |
-        | Press Option button | |
-        | Press Satellite button (if button is enabled) | Map is drawn in *Satellite* view |
-        | Press Option button | |
-        | Press Terrain button (if button is enabled) | Map is drawn in *Terrain* view |"
-        ));
-    },
-
-    zooming_support:function()
-    {
-        // Test meta data
-        testTitle = "Maps and Navigation - Zooming";
-        testBinary = "mapsdemo"; // (sources are /examples/mapsdemo)
-        testGoal = "Verify that maps can be zoomed in and out.";
-        testPreconditions = "internet connection is required for this test case.";
-        testGroups = "BAT,1.1";
-        testRequirements = "MOBILITY-538: Maps and Navigation";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press - button | Map is zoomed out correctly |
-        | Press + button | Map is zoomed in correctly |"
-        ));
-    },
-
-    capturing_coordinates:function()
-    {
-        // Test meta data
-        testTitle = "Maps and Navigation - Coordinate Capturing";
-        testBinary = "mapviewer"; // (sources are /tests/location-testing-tools/mapviewer)
-        testGoal = "Verify that coordinates can be captured when selecting a location on the map.";
-        testPreconditions = "internet connection is required for this test case.";
-        testGroups = "BAT,1.1";
-        testRequirements = "MOBILITY-538: Maps and Navigation";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
-        | Zoom in the map to see *Brisbane* | |
-        | Right mouse click on the square which represents Brisbane | |
-        | Select Coordinates menu item | |
-        | Select Capture menu item | Verify that dialog with coordinates appears on the screen. Latitude is about *-27.46*, longitude is about *153.02* |"
-        ));
-    },
-
     pixmap_object_zooming: function()
     {
         //Test application testqtLocation covers just one use case meanwhile we have 8 different situation
@@ -409,6 +331,33 @@ testcase = {
         ));
     },
 */
+    qml_capturing_coordinates:function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Coordinate Capturing";
+        testBinary = "qml_location_mapviewer";
+        testGoal = "Verify that coordinates can be captured when selecting a location on the map.";
+        testPreconditions = "internet connection is required for this test case.";
+        testGroups = "BAT,1.1";
+        testRequirements = "MOBILITY-538: Maps and Navigation";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. |
+        | Press Provider button | |
+        | Select nokia provider | Map is displayed on the screen |
+        | Zoom in the map to see *Brisbane* | |
+        | Press and Hold on the square which represents Brisbane | |
+        | Select *Get coordinate* menu item | Verify that dialog with coordinates appears on the screen. Latitude is about *-27.46*, longitude is about *153.02* |"
+        ));
+    },
+
     qml_map_types: function()
     {
         // Test meta data
@@ -554,10 +503,13 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | Verify that map is loaded with the center next to Brisbane  |
         | Move slider to the right | Verify that map is zoomed in |
-        | Move slider to the left | Verify that map is zoomed out |"
+        | Move slider to the left | Verify that map is zoomed out |
+        | Move slider to have zoom level between 8 and 9 | |
+        | Move slider the right to have zoom level less than 9 | Verify that map is scaled |
+        | Move slider the right to jump over 9 zoom level but less than 10 | Verify that new tiles are displayed to reflect bigger zoom level |"
         ));
-/*    },
-
+    },
+/*
     qml_border_wrapping_for_map: function()
     {
         // Test meta data
@@ -818,7 +770,7 @@ testcase = {
         | Click on the catch on the left side of the screen | Verify that distance is *2.2km* |"
         ));
     },
-
+*/
     qml_geocode_australian_location: function()
     {
         // Test meta data
@@ -826,7 +778,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "internet connection is required for this test case";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
@@ -846,7 +798,7 @@ testcase = {
         | Fill in *Eight Mile Plains* in City field | |
         | Fill in *Australia* in Country field | |
         | Press Go! button | |
-        | Wait for message appears on the screen | Verify that geocode was successful with latitude *-27.5798*, longitude *153.1* |"
+        | Wait for message appears on the screen | Verify that geocode was successful with latitude *-27.5791*, longitude *153.098* |"
         ));
     },
 
@@ -857,7 +809,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "internet connection is required for this test case";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
@@ -874,10 +826,10 @@ testcase = {
         | Select Geocode menu item | |
         | Press Clear All button | |
         | Fill in *Minina I Pozharskogo Ploshchad* in Street filed | |
-        | Fill in *Nizhniy Novgorod* in City field | |
+        | Fill in *Nizhny Novgorod* in City field | |
         | Fill in *Russia* in Country field | |
         | Press Go! button | |
-        | Wait for message appears on the screen | Verify that geocode was successful with latitude *56.3294*, longitude *44.0089* |"
+        | Wait for message appears on the screen | Verify that geocode was successful with latitude *56.3286*, longitude *44.0083* |"
         ));
     },
 
@@ -888,7 +840,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location is not founs.";
-        testPreconditions = "internet connection is required for this test case";
+        testPreconditions = "Internet connection is required for this test case Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
@@ -905,7 +857,7 @@ testcase = {
         | Select Geocode menu item | |
         | Press Clear All button | |
         | Fill in *The Best City* in City field | |
-        | Fill in *Australia* in Country field | |
+        | Fill in *France* in Country field | |
         | Press Go! button | |
         | Wait for message appears on the screen | Verify that location is not found |"
         ));
@@ -918,7 +870,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "internet connection is required for this test case";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
@@ -934,53 +886,10 @@ testcase = {
         | Press Options button | |
         | Select Geocode menu item | |
         | Fill in *Moscow* in City field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that several results were found |
-        | Press Ok button |
-        | Press Options button | |
-        | Select Geocode menu item | |
         | Fill in *USA* in Country field | |
         | Press Go! button | |
-        | Wait for message appears on the screen | Verify that *19* points were found |
-        | Press Ok button |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Press Clear All button | |
-        | Fill in *Moscow* in City filed | |
-        | Fill in *Russia* in Country field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that geocode was successful with latitude *55.7569*, longitude *37.615* |"
-        ));
-    },
-
-    qml_geocode_popular_request: function()
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Geocoding of short form of address";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0";
-        testRequirements = "MTMW-236: QML Geocoding";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Press Clear All button | |
-        | Fill in *53 Brandl st* in Street filed | |
-        | Fill in *Eight Mile Plains* in City field | |
-        | Fill in *QLD* in State field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that geocode was successful |"
+        | Wait for message appears on the screen | Verify that *5* points were found |
+        | Press Ok button |"
         ));
     },
 
@@ -991,7 +900,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "internet connection is required for this test case";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
@@ -1007,7 +916,7 @@ testcase = {
         | Press Options button | |
         | Select Geocode menu item | |
         | Press Clear All button | |
-        | Fill in *Nizhniy Novgorod* in City filed | |
+        | Fill in *Nizhny Novgorod* in City filed | |
         | Fill in *Russia* in Country field | |
         | Fill in *Nizhegorodskiy Rayon* in District field | |
         | Press Go! button | |
@@ -1022,7 +931,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "internet connection is required for this test case";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
@@ -1052,7 +961,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "internet connection is required for this test case";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
@@ -1081,7 +990,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "internet connection is required for this test case";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
@@ -1101,7 +1010,7 @@ testcase = {
         | Fill in *4113* in Post Code field | |
         | Fill in *Australia* in Country field | |
         | Press Go! button | |
-        | Wait for message appears on the screen | Verify that geocode is successful with latitude *-27.5798*, longitude *153.1* |"
+        | Wait for message appears on the screen | Verify that geocode is successful with latitude *-27.5791*, longitude *153.098* |"
         ));
     },
 
@@ -1112,7 +1021,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "internet connection is required for this test case";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-237:QML Reverse geocoding";
 
@@ -1141,7 +1050,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "internet connection is required for this test case";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-237:QML Reverse geocoding";
 
@@ -1159,7 +1068,7 @@ testcase = {
         | Fill in *56.3264* in Latitude filed | |
         | Fill in *44.0048* in Longitude field | |
         | Press Go! button | |
-        | Wait for message appears on the screen | Verify that reverse geocode issuccessful (street: *Minina I Pozharskogo Ploshchad\'*, district: *Nizhegorodskiy Rayon*, City: *Nizhniy Novgorod*, Country code: *RUS*, Country: *Russian Federation*, Postal code: *603005*) |"
+        | Wait for message appears on the screen | Verify that reverse geocode is successful (street: *Minina I Pozharskogo Ploshchad\'*, district: *Nizhegorodskiy Rayon*, City: *Nizhniy Novgorod*, Country code: *RUS*, Country: *Russian Federation*, Postal code: *603005*) |"
         ));
     },
 
@@ -1170,7 +1079,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location is not found.";
-        testPreconditions = "internet connection is required for this test case";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-237:QML Reverse geocoding";
 
@@ -1190,9 +1099,13 @@ testcase = {
         | Press Go! button | |
         | Wait for message appears on the screen | Verify that location is not found |"
         ));
+/*    },
+
+
+    // \groups BAT,5.0
+    qml_distance_between_points:function()
+    {
     },
-
-
     // \groups BAT,5.0,MOBILITY-2902
     qml_searching: function()
     {
