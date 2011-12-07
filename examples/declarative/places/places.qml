@@ -272,6 +272,11 @@ Item {
         onNameChanged: createMap(placesPlugin);
     }
 
+    Plugin {
+        id: jsonDbPlugin
+        name: "nokia_places_jsondb"
+    }
+
     Item {
         id: searchResultTab
 

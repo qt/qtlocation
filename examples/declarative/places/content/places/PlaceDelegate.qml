@@ -43,6 +43,8 @@ import QtLocation 5.0
 import QtLocation.examples 5.0
 
 Item {
+    id: placeDelegate
+
     property Place place
     property real distance
 
@@ -181,6 +183,57 @@ Item {
                     text: qsTr("Delete");
                     onClicked: deletePlace(place)
                     visible: placesPlugin.supportedPlacesFeatures & Plugin.RemovePlaceFeature
+                }
+
+                Item {
+                    width: parent.width
+                    height: childrenRect.height
+                    Button {
+                        id: saveButton;
+                        property Place favoritePlace
+                        function updateSaveStatus() {
+                            if (updateSaveStatus.prevStatus === Place.Saving) {
+                                switch (favoritePlace.status) {
+                                case Place.Ready:
+                                    visible = false;
+                                    saveStatus.text = "Save Successful";
+                                    saveStatus.visible = true;
+                                    break;
+                                case Place.Error:
+                                    saveStatus.anchors.top = saveButton.bottom
+                                    saveStatus.text = "Save Failed";
+                                    saveStatus.visible = true;
+                                    break;
+                                default:
+                                }
+                            }
+                            updateSaveStatus.prevStatus = favoritePlace.status;
+                        }
+
+                        function reset()
+                        {
+                            saveButton.visible = (placesPlugin.name !== "nokia_places_jsondb");
+                            saveStatus.visible = false;
+                        }
+
+                        Component.onCompleted:  {
+                            reset();
+                            placeDelegate.placeChanged.connect(reset);
+                        }
+
+                        text: qsTr("Save as Favorite");
+                        onClicked:  {
+                            favoritePlace = Qt.createQmlObject('import QtLocation 5.0; Place { }', saveButton);
+                            favoritePlace.plugin = jsonDbPlugin;
+                            favoritePlace.copyFrom(place);
+                            favoritePlace.statusChanged.connect(updateSaveStatus);
+                            favoritePlace.save();
+                        }
+                    }
+
+                    Text {
+                        id: saveStatus
+                    }
                 }
             }
         }
