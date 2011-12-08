@@ -58,15 +58,6 @@
 
 
 /*!
-    \example map3d
-    \title Map3D
-    \brief The Map 3D example demonstrates three dimensional map functions.
-
-    \ingroup qtlocation-examples
-*/
-
-
-/*!
     \example declarative/flickr
     \title QML Flickr By Location
     \brief The QML Flickr By Location example shows how to use location information
