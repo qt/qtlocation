@@ -42,6 +42,7 @@
 #include "qplacemanagerengine_jsondb.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/qnumeric.h>
 
 #include <QtAddOnJsonDb/jsondb-client.h>
 #include <QtAddOnJsonDb/jsondb-error.h>
@@ -261,6 +262,26 @@ QList<QLocale> QPlaceManagerEngineJsonDb::locales() const
 void QPlaceManagerEngineJsonDb::setLocales(const QList<QLocale> &locales)
 {
     Q_UNUSED(locales);
+}
+
+QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
+{
+    QPlace place;
+    place.setName(original.name());
+
+    QGeoLocation location = original.location();
+    QGeoCoordinate coord = original.location().coordinate();
+    coord.setAltitude(qQNaN());
+    location.setCoordinate(coord);
+    location.setBoundingBox(QGeoBoundingBox());
+    place.setLocation(location);
+
+    QList<QPlaceContactDetail> details;
+    foreach (const QString &contactType, original.contactTypes())
+        place.setContactDetails(contactType, original.contactDetails(contactType));
+
+    place.setVisibility(QtLocation::DeviceVisibility);
+    return place;
 }
 
 QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)

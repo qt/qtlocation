@@ -42,6 +42,7 @@
 #include <QCoreApplication>
 #include <QString>
 #include <QtTest/QtTest>
+#include <QtCore/qnumeric.h>
 
 #include <qgeoboundingbox.h>
 #include <qgeoboundingcircle.h>
@@ -54,7 +55,8 @@
 #include <qplacesearchresult.h>
 #include <qplacesearchreply.h>
 #include <qplacecontactdetail.h>
-#include <qplacesearchrequest.h>
+#include <qplaceimage.h>
+#include <qplacesupplier.h>
 
 #include "jsondbcleaner.h"
 
@@ -125,6 +127,7 @@ private Q_SLOTS:
     void mulipleDetailTypes();
     void placeNotifications();
     void categoryNotifications();
+    void compatiblePlace();
 
 private:
     bool doSavePlace(const QPlace &place,
@@ -1460,6 +1463,82 @@ void tst_QPlaceManagerJsonDb::categoryNotifications()
     QVERIFY(updateSpy.count() == 0);
     QVERIFY(removeSpy.count() == 0);
  }
+
+void tst_QPlaceManagerJsonDb::compatiblePlace()
+{
+    QPlace place;
+    place.setPlaceId(QLatin1String("123"));
+    place.setName(QLatin1String("Moe's Tavern"));
+
+    QGeoAddress address;
+    address.setStreet(QLatin1String("93 Brewing Ave"));
+    address.setDistrict(QLatin1String("Maine"));
+    address.setCity(QLatin1String("Springfield"));
+    address.setCounty(QLatin1String("Jackson"));
+    address.setState(QLatin1String("Minnesota"));
+    address.setCountry("Unisted Statess");
+    address.setCountryCode("USA");
+    QGeoCoordinate coord(56,34,5);
+
+    QGeoLocation location;
+    location.setAddress(address);
+    location.setCoordinate(coord);
+    location.setBoundingBox(QGeoBoundingBox(QGeoCoordinate(20,20), QGeoCoordinate(10,30)));
+    place.setLocation(location);
+
+    QPlaceContactDetail phone;
+    phone.setLabel("Phone");
+    phone.setValue("555-1793");
+    place.appendContactDetail(QPlaceContactDetail::Phone, phone);
+
+    QPlaceSupplier supplier;
+    supplier.setName("Springfield brewery");
+    supplier.setSupplierId("ID");
+
+    place.setSupplier(supplier);
+
+    QPlaceImage image;
+    image.setImageId("798");
+    image.setUrl(QUrl("http://image.com/"));
+    QPlaceContent::Collection imageCollection;
+    imageCollection.insert(0,image);
+    place.insertContent(QPlaceContent::ImageType, imageCollection);
+    place.setTotalContentCount(QPlaceContent::ImageType, 1);
+
+    QPlaceAttribute attribute;
+    attribute.setLabel(QLatin1String("Smoking"));
+    attribute.setText(QLatin1String("Yes"));
+
+    place.setExtendedAttribute(QLatin1String("Smoking"), attribute);
+
+    place.setVisibility(QtLocation::PublicVisibility);
+
+    QPlace compatPlace = placeManager->compatiblePlace(place);
+
+    QVERIFY(compatPlace.placeId().isEmpty());
+    QCOMPARE(compatPlace.name(),QLatin1String("Moe's Tavern"));
+    QCOMPARE(compatPlace.location().address(), address);
+    QVERIFY(compatPlace.location().coordinate() != location.coordinate());
+    location.setCoordinate(QGeoCoordinate(56,34));
+    QVERIFY(compatPlace.location().coordinate() == location.coordinate());
+    QVERIFY(compatPlace.location().boundingBox().isEmpty());
+
+    QCOMPARE(compatPlace.contactTypes().count(), 1);
+    QVERIFY(compatPlace.contactTypes().contains(QPlaceContactDetail::Phone));
+    QCOMPARE(compatPlace.contactDetails(QPlaceContactDetail::Phone).count(), 1);
+    QCOMPARE(compatPlace.contactDetails(QPlaceContactDetail::Phone).at(0), phone);
+
+    QCOMPARE(compatPlace.supplier(), QPlaceSupplier());
+    QVERIFY(compatPlace.content(QPlaceContent::ImageType).isEmpty());
+    QVERIFY(compatPlace.content(QPlaceContent::ReviewType).isEmpty());
+    QVERIFY(compatPlace.content(QPlaceContent::EditorialType).isEmpty());
+    QCOMPARE(compatPlace.totalContentCount(QPlaceContent::ImageType), 0);
+
+    QVERIFY(compatPlace.extendedAttributeTypes().isEmpty());
+    QCOMPARE(compatPlace.extendedAttribute(QLatin1String("Smoking")), QPlaceAttribute());
+
+    QCOMPARE(compatPlace.visibility(), QtLocation::DeviceVisibility);
+}
 
 void tst_QPlaceManagerJsonDb::cleanup()
 {
