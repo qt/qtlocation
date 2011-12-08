@@ -170,6 +170,8 @@ public:
     Visibility visibility() const;
     void setVisibility(Visibility visibility);
 
+    Q_INVOKABLE void copyFrom(QDeclarativePlace *original);
+
 signals:
     void pluginChanged();
     void categoriesChanged();

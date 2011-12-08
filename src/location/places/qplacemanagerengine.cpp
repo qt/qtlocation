@@ -141,6 +141,19 @@ QPlaceManager *QPlaceManagerEngine::manager() const
     return d_ptr->manager;
 }
 
+/*!
+    Returns a pruned or modified version of the \a original place
+    which is suitable to be saved by the manager engine.
+
+    Only place details that are supported by this manager is
+    present in the modified version.  Manager specific data such
+    as the place id, is not copied over from the \a original.
+*/
+QPlace QPlaceManagerEngine::compatiblePlace(const QPlace &original) const
+{
+    return QPlace();
+}
+
 QPlaceManagerEnginePrivate::QPlaceManagerEnginePrivate()
     :   managerVersion(-1), manager(0)
 {

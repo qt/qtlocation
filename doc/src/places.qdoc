@@ -157,9 +157,12 @@
     Some fields of a place such as the id, categories and icons are manager specific entities
     e.g. the categories in one manager may not be recognised in another.
     Therefore trying to save a place directly from one manager to another is not possible.
-    The typical approach is to either clear the id, categories and icon
-    or alternatively assign them with appropriate values of the new manager.
-    The visibility scope may also need to be modified.
+
+    The typical approach is to use the QPlaceManager::compatiblePlace() function,
+    it creates a copy of a place, but only copies data that the manager supports.
+    Manager specific data such as the place id is not copied over.  The new
+    copy is now suitable for saving into the manager.
+
     \snippet snippets/places/requesthandler.h Save to different manager
 
     \target Removing a place cpp

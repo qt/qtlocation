@@ -129,10 +129,11 @@ QT_USE_NAMESPACE
     Some fields of a place such as the id, categories and icons are plugin specific entities e.g.
     the categories in one manager may not be recognised in another.
     Therefore trying to save a place directly from one plugin to another is not possible.
-    The typical approach is to either clear the id, categories and icon
-    or alternatively assign them with appropriate values of the new manager.  The plugin
-    property naturally be needs to be assigned to the new plugin and the visibility scope
-    may need to be adjusted.
+
+    The typical approach is to create a new place, set its (destination) plugin and then use the \l copyFrom() method
+    to copy the details of the original place.  Using \l copyFrom() only copies data
+    that is supported by the destination plugin, plugin specific data such as the place id is not copied over.
+    Once the copy is done, the place is in a suitable state to be saved.
 
     \snippet snippets/declarative/places.qml Place save to different plugin
 
@@ -970,6 +971,21 @@ void QDeclarativePlace::setVisibility(Visibility visibility)
 
     m_src.setVisibility(static_cast<QtLocation::Visibility>(visibility));
     emit visibilityChanged();
+}
+
+/*!
+    \qmlmethod Place::copyFrom(Place original)
+
+    Copies data from an \a original place into this place.  Only data that is supported by this
+    place's plugin is copied over and plugin specific data such as place id is not copied over.
+*/
+void QDeclarativePlace::copyFrom(QDeclarativePlace *original)
+{
+    QPlaceManager *placeManager = manager();
+    if (!placeManager)
+        return;
+
+    setPlace(placeManager->compatiblePlace(original->place()));
 }
 
 void QDeclarativePlace::synchronizeExtendedAttributes()

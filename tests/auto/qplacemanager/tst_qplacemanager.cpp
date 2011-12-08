@@ -55,6 +55,7 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
+    void compatiblePlace();
     void testMetadata();
     void testLocales();
 
@@ -99,6 +100,19 @@ void tst_QPlaceManager::testLocales()
     QCOMPARE(placeManager->locales().count(), 2);
     QCOMPARE(placeManager->locales().at(0), en_AU);
     QCOMPARE(placeManager->locales().at(1), en_UK);
+}
+
+void tst_QPlaceManager::compatiblePlace()
+{
+    QPlace place;
+    place.setPlaceId(QLatin1String("4-8-15-16-23-42"));
+    place.setName(QLatin1String("Island"));
+    place.setVisibility(QtLocation::PublicVisibility);
+
+    QPlace compatPlace = placeManager->compatiblePlace(place);
+    QVERIFY(compatPlace.placeId().isEmpty());
+    QCOMPARE(compatPlace.name(), QLatin1String("Island"));
+    QCOMPARE(compatPlace.visibility(), QtLocation::UnspecifiedVisibility);
 }
 
 void tst_QPlaceManager::cleanupTestCase()

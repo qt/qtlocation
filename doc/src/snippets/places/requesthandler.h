@@ -301,14 +301,7 @@ public:
         QPlaceIdReply *saveReply;
         //! [ Save to different manager]
         //result retrieved from a different manager
-        QPlace place = result.place();
-
-        //clear manager specific fields and
-        //save to new manager
-        place.setPlaceId(QString());
-        place.setCategories(QList<QPlaceCategory>());
-        place.setIcon(QPlaceIcon());
-        place.setVisibility(QtLocation::UnspecifiedVisibility); //let the manager choose an appropriate default visibility
+        QPlace place = manager->compatiblePlace(result.place());
         saveReply = manager->savePlace(place);
         //! [ Save to different manager]
     }

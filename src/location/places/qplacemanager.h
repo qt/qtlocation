@@ -117,6 +117,8 @@ public:
     void setLocale(const QLocale &locale);
     void setLocales(const QList<QLocale> &locale);
 
+    QPlace compatiblePlace(const QPlace &place);
+
     ManagerFeatures supportedFeatures() const;
 
 Q_SIGNALS:

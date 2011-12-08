@@ -273,6 +273,12 @@ public:
                | QPlaceManager::SearchSuggestionsFeature;
     }
 
+    QPlace compatiblePlace(const QPlace &original) const {
+        QPlace place;
+        place.setName(original.name());
+        return place;
+    }
+
 private:
     QList<QLocale> m_locales;
     QMap<QString, QPlace> m_places;

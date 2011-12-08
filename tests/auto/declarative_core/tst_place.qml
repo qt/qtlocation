@@ -136,6 +136,13 @@ TestCase {
         }*/
     }
 
+     Place {
+         id: dummyPlace
+         placeId: "487"
+         name: "dummyPlace"
+         visibility: Place.PublicVisibility
+     }
+
     // compares two coordinates property by property
     function compare_coordinate(coord1, coord2) {
         return coord1.latitude === coord2.latitude &&
@@ -608,4 +615,14 @@ TestCase {
 
         signalSpy.destroy();
     }
+
+     function test_copy() {
+         var place = Qt.createQmlObject('import QtLocation 5.0; Place { }', this);
+         place.plugin = testPlugin;
+         place.copyFrom(dummyPlace);
+         compare(place.placeId, "");
+         compare(place.name, "dummyPlace");
+         compare(place.visibility, Place.UnspecifiedVisibility);
+     }
+
 }

@@ -385,6 +385,19 @@ void QPlaceManager::setLocales(const QList<QLocale> &locales)
 }
 
 /*!
+    Returns a pruned or modified version of the \a original place
+    which is suitable to be saved into this manager.
+
+    Only place details that are supported by this manager is
+    present in the modified version.  Manager specific data such
+    as the place id, is not copied over from the \a original.
+*/
+QPlace QPlaceManager::compatiblePlace(const QPlace &original)
+{
+    return d->compatiblePlace(original);
+}
+
+/*!
     Returns a set of flags indicating what particular features this manager instance supports.
 */
 QPlaceManager::ManagerFeatures QPlaceManager::supportedFeatures() const
