@@ -211,7 +211,7 @@ Item {
             State{
                 name: "GeocodeError"
                 PropertyChanges { target: messageDialog; title: "Geocode Error" }
-                PropertyChanges { target: messageDialog; text: "Unable to find location for the given point" }
+                PropertyChanges { target: messageDialog; text: "No data available for the specified location" }
             },
             State{
                 name: "UnknownGeocodeError"
