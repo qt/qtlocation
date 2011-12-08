@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS += declarative logfilepositionsource
+SUBDIRS += declarative logfilepositionsource weatherinfo
