@@ -15,6 +15,7 @@ SUBDIRS += qplace \
            qplacesearchrequest \
            qplacesupplier \
            qplacesearchresult \
+           qplaceuser \
            qmlinterface
 
 SUBDIRS += geotestplugin \
