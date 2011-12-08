@@ -59,7 +59,6 @@ class Q_LOCATION_EXPORT QPlaceReply : public QObject
 public:
     enum Error {
         NoError,
-        DoesNotExistError,
         PlaceDoesNotExistError,
         CategoryDoesNotExistError,
         CommunicationError,

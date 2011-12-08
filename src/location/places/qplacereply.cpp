@@ -74,8 +74,6 @@ QT_USE_NAMESPACE
     Describes an error which occurred during an operation.
     \value NoError
         No error has occurred
-    \value DoesNotExistError
-        An entity does not exist eg an import file.
     \value PlaceDoesNotExistError
         A specified place could not be found
     \value CategoryDoesNotExistError
