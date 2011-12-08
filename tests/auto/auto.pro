@@ -1,5 +1,20 @@
 TEMPLATE = subdirs
 
+#Place unit tests
+SUBDIRS += qplace \
+           qplacecategory \
+           qplacecontentrequest \
+           qplaceeditorial \
+           qplacemanager \
+           qplacemanager_nokia \
+           qplaceimage \
+           qplaceratings \
+           qplacereview \
+           qplacesearchrequest \
+           qplacesupplier \
+           qplacesearchresult \
+           qmlinterface
+
 SUBDIRS += geotestplugin \
            positionplugin \
            positionplugintest \
@@ -18,20 +33,7 @@ SUBDIRS += geotestplugin \
            qgeosatelliteinfo \
            qgeosatelliteinfosource \
            qnmeapositioninfosource \
-           qplace \
-           qplacecategory \
-           qplacecontentrequest \
-           qplaceeditorial \
-           qplacemanager \
-           qplacemanager_nokia \
-           qplaceimage \
-           qplaceratings \
-           qplacereview \
-           qplacesearchrequest \
-           qplacesupplier \
-           qplacesearchresult \
            declarative_core \
-           qmlinterface \
            maptype
 
 !mac: SUBDIRS += declarative_ui
