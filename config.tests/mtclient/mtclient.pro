@@ -1,9 +1,8 @@
 TEMPLATE = app
-
 QT += declarative
 unix{
       CONFIG += link_pkgconfig
-      PKGCONFIG += mtcore
+      PKGCONFIG += mt-client
     }
 
 SOURCES += main.cpp

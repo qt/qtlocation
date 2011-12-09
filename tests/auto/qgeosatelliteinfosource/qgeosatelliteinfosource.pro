@@ -11,6 +11,6 @@ HEADERS += testqgeosatelliteinfosource_p.h \
 
 QT += location testlib
 
-contains(config_test_jsondb, yes): contains(config_test_mtcore, yes) {
+contains(config_test_jsondb, yes): contains(config_test_mtclient, yes) {
     DEFINES += NPE_BACKEND
 }

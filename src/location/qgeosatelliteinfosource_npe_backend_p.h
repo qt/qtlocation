@@ -55,7 +55,7 @@
 
 #include "qgeosatelliteinfosource.h"
 #include "qgeosatelliteinfo.h"
-#include <mtcore/variantstream.h>
+#include <mt-client/variantstream.h>
 #include <private/jsondb-strings_p.h>
 #include <qlocalsocket.h>
 #include <qeventloop.h>

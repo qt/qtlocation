@@ -32,5 +32,5 @@
 # compile tests
 %configtests = (
     "jsondb" => {},
-    "mtcore" => {},
+    "mtclient" => {},
 );

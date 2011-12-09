@@ -39,8 +39,7 @@
 **
 ****************************************************************************/
 
-#include <mtcore/variantstream.h>
-
+#include <mt-client/variantstream.h>
 int main()
 {
     return 0;

@@ -91,7 +91,7 @@ meego {
     }
 }
 
-contains(config_test_jsondb, yes): contains(config_test_mtcore, yes) {
+contains(config_test_jsondb, yes): contains(config_test_mtclient, yes) {
     DEFINES += NPE_BACKEND
     QT += jsondb-private
     SOURCES += qgeopositioninfosource_npe_backend.cpp\
@@ -101,7 +101,7 @@ contains(config_test_jsondb, yes): contains(config_test_mtcore, yes) {
 
     unix{
       CONFIG += link_pkgconfig
-      PKGCONFIG += mtcore
+      PKGCONFIG += mt-client
     }
 }
 
