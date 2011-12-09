@@ -627,7 +627,7 @@ void MapPrivate::paintGL(QGLPainter *painter)
 
     bool old = camera->blockSignals(true);
 
-    glDisable(GL_DEPTH);
+    glDisable(GL_DEPTH_TEST);
 
     QVector3D c = camera->center();
     c.setX(c.x() + sideLength_);
@@ -659,7 +659,7 @@ void MapPrivate::paintGL(QGLPainter *painter)
     painter->projectionMatrix().scale(1, -1, 1);
     sphere_->paintGL(painter);
 
-    glEnable(GL_DEPTH);
+    glEnable(GL_DEPTH_TEST);
 
     camera->blockSignals(old);
 }
