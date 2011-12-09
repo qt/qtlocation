@@ -51,7 +51,6 @@
 QT_BEGIN_NAMESPACE
 
 class PolygonMapPaintedItem;
-class QDeclarativeGeoMapQuickItem;
 
 class QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
 {
@@ -74,13 +73,17 @@ public:
     QColor color() const;
     void setColor(const QColor &color);
 
+    void dragStarted();
+    bool contains(QPointF point);
+
 Q_SIGNALS:
     void pathChanged();
     void colorChanged(const QColor &color);
 
-
-protected Q_SLOTS:
-    void update();
+protected:
+    void updateContent();
+    QPointF contentTopLeftPoint();
+    void mapChanged();
 
 private Q_SLOTS:
     // map size changed
@@ -94,8 +97,7 @@ private:
     void pathPropertyChanged();
 
 private:
-    QDeclarativeGeoMapQuickItem *quickItem_;
-    PolygonMapPaintedItem *polygonMapPaintedItem_;
+    PolygonMapPaintedItem *polygonItem_;
     QList<QDeclarativeCoordinate*> path_;
     QColor color_;
     bool initialized_;
@@ -112,6 +114,7 @@ public:
     ~PolygonMapPaintedItem();
 
     void setMap(Map* map);
+    Map* map();
 
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
@@ -130,8 +133,10 @@ public:
     QGeoCoordinate quickItemCoordinate() const;
     QPointF quickItemAnchorPoint() const;
 
-private:
+    bool contains(QPointF point);
     void updateGeometry();
+
+private:
 
     Map *map_;
     qreal zoomLevel_;
@@ -142,6 +147,7 @@ private:
     QList<QGeoCoordinate> coordPath_;
     QPolygonF polygon_;
     bool initialized_;
+    bool dirtyGeometry_;
 };
 
 

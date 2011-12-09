@@ -96,7 +96,7 @@ void QDeclarativeGeoMapQuickItem::geometryChanged(const QRectF &newGeometry, con
         QPointF point(newGeometry.x(), newGeometry.y());
         // screenPositionToCoordinate seems to return nan values when
         // it goes beyond viewport, hence sanity check (fixme todo):
-        QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(point, false);
+        QGeoCoordinate newCoordinate = map_->screenPositionToCoordinate(point, false);
         if (newCoordinate.isValid()) {
             internalCoordinate_.setCoordinate(newCoordinate);
             setCoordinate(&internalCoordinate_);
@@ -119,7 +119,7 @@ void QDeclarativeGeoMapQuickItem::dragEnded()
         QPointF point(x(), y());
         // screenPositionToCoordinate seems to return nan values when
         // it goes beyond viewport, hence sanity check (fixme todo):
-        QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(point, false);
+        QGeoCoordinate newCoordinate = map_->screenPositionToCoordinate(point, false);
         if (newCoordinate.isValid()) {
             internalCoordinate_.setCoordinate(newCoordinate);
             setCoordinate(&internalCoordinate_);
@@ -129,7 +129,7 @@ void QDeclarativeGeoMapQuickItem::dragEnded()
 
 void QDeclarativeGeoMapQuickItem::coordinateCoordinateChanged(double)
 {
-    update();
+    updateMapItem();
     emit coordinateChanged();
 }
 
@@ -143,8 +143,42 @@ void QDeclarativeGeoMapQuickItem::setSourceItem(QQuickItem* sourceItem)
     if (sourceItem == sourceItem_)
         return;
     sourceItem_ = sourceItem;
-    update();
+    mapChanged();
     emit sourceItemChanged();
+}
+
+void QDeclarativeGeoMapQuickItem::updateMapItem()
+{
+    if (!mapAndSourceItemSet_)
+        return;
+    QDeclarativeGeoMapItemBase::updateMapItem();
+}
+
+void QDeclarativeGeoMapQuickItem::mapChanged()
+{
+    // currently this function checks for source item changes too
+    if (!quickMap() && sourceItem_) {
+        mapAndSourceItemSet_ = false;
+        sourceItem_->setParentItem(0);
+        return;
+    }
+    if (!quickMap() || !map_ || !sourceItem_) {
+        mapAndSourceItemSet_ = false;
+        return;
+    }
+    if (!mapAndSourceItemSet_ && quickMap() && map_ && sourceItem_) {
+        mapAndSourceItemSet_ = true;
+        sourceItem_->setParentItem(this);
+        sourceItem_->setTransformOrigin(QQuickItem::TopLeft);
+        connect(quickMap(), SIGNAL(heightChanged()), this, SLOT(updateMapItem()));
+        connect(quickMap(), SIGNAL(widthChanged()), this, SLOT(updateMapItem()));
+        connect(map_, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(updateMapItem()));
+        connect(sourceItem_, SIGNAL(xChanged()), this, SLOT(updateMapItem()));
+        connect(sourceItem_, SIGNAL(yChanged()), this, SLOT(updateMapItem()));
+        connect(sourceItem_, SIGNAL(widthChanged()), this, SLOT(updateMapItem()));
+        connect(sourceItem_, SIGNAL(heightChanged()), this, SLOT(updateMapItem()));
+    }
+    updateMapItem();
 }
 
 QQuickItem* QDeclarativeGeoMapQuickItem::sourceItem()
@@ -157,7 +191,7 @@ void QDeclarativeGeoMapQuickItem::setAnchorPoint(const QPointF &anchorPoint)
     if (anchorPoint == anchorPoint_)
         return;
     anchorPoint_ = anchorPoint;
-    update();
+    updateMapItem();
     emit anchorPointChanged();
 }
 
@@ -171,7 +205,7 @@ void QDeclarativeGeoMapQuickItem::setZoomLevel(qreal zoomLevel)
     if (zoomLevel == zoomLevel_)
         return;
     zoomLevel_ = zoomLevel;
-    update();
+    updateMapItem();
     emit zoomLevelChanged();
 }
 
@@ -180,60 +214,27 @@ qreal QDeclarativeGeoMapQuickItem::zoomLevel() const
     return zoomLevel_;
 }
 
-void QDeclarativeGeoMapQuickItem::update()
+void QDeclarativeGeoMapQuickItem::updateContent()
 {
-    if (inUpdate_)
-        return;
+    sourceItem_->setScale(scaleFactor());
+    sourceItem_->setPos(QPointF(0,0));
+    setWidth(sourceItem_->width());
+    setHeight(sourceItem_->height());
+}
 
-    if (!quickMap() && sourceItem_) {
-        mapAndSourceItemSet_ = false;
-        sourceItem_->setParentItem(0);
-        return;
-    }
+QPointF QDeclarativeGeoMapQuickItem::contentTopLeftPoint()
+{
+    if (!map_)
+        return QPointF(0,0);
+    return map_->coordinateToScreenPosition(coordinate()->coordinate(), false) - scaleFactor() * anchorPoint_;
+}
 
-    if (!quickMap() || !map() || !sourceItem_) {
-        mapAndSourceItemSet_ = false;
-        return;
-    }
-    inUpdate_ = true;
-
-    if (!mapAndSourceItemSet_ && quickMap() && map() && sourceItem_) {
-        mapAndSourceItemSet_ = true;
-        sourceItem_->setParentItem(this);
-        sourceItem_->setTransformOrigin(QQuickItem::TopLeft);
-        connect(quickMap(), SIGNAL(heightChanged()), this, SLOT(update()));
-        connect(quickMap(), SIGNAL(widthChanged()), this, SLOT(update()));
-        connect(map(), SIGNAL(cameraDataChanged(CameraData)), this, SLOT(update()));
-        connect(map(), SIGNAL(cameraDataChanged(CameraData)), this, SIGNAL(camerDataChanged(CameraData)));
-
-        connect(sourceItem_, SIGNAL(xChanged()), this, SLOT(update()));
-        connect(sourceItem_, SIGNAL(yChanged()), this, SLOT(update()));
-        connect(sourceItem_, SIGNAL(widthChanged()), this, SLOT(update()));
-        connect(sourceItem_, SIGNAL(heightChanged()), this, SLOT(update()));
-    }
-
-    qreal s = 1.0;
+qreal QDeclarativeGeoMapQuickItem::scaleFactor()
+{
+    qreal scale = 1.0;
     if (zoomLevel_ != 0.0)
-        s = pow(0.5, zoomLevel_ - map()->cameraData().zoomFactor());
-
-    QPointF invalid = map()->coordinateToScreenPosition(QGeoCoordinate());
-    QPointF topLeft = map()->coordinateToScreenPosition(coordinate()->coordinate(), false) - s * anchorPoint_;
-    if ((topLeft.x() > quickMap()->width())
-            || (topLeft.x() + s * sourceItem_->width() < 0)
-            || (topLeft.y() + s * sourceItem_->height() < 0)
-            || (topLeft.y() > quickMap()->height())) {
-        // TODO FIXME generates QTransform::translate with NaN called - warnings:
-        sourceItem_->setPos(invalid);
-        setPos(invalid);
-    } else {
-        // source item is positioned at 0,0 of the wrapper item
-        setPos(topLeft);
-        sourceItem_->setPos(QPointF(0,0));
-        sourceItem_->setScale(s);
-        setWidth(sourceItem_->width());
-        setHeight(sourceItem_->height());
-    }
-    inUpdate_ = false;
+        scale = pow(0.5, zoomLevel_ - map_->cameraData().zoomFactor());
+    return scale;
 }
 
 #include "moc_qdeclarativegeomapquickitem_p.cpp"

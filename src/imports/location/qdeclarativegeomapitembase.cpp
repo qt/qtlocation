@@ -45,11 +45,12 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
     : QQuickItem(parent),
+      map_(0),
       quickMap_(0),
-      map_(0)
+      inUpdate_(false)
 {
     setParentItem(parent);
-    setFlag(ItemHasContents, false);
+    setFlag(ItemHasContents, true);
     setAcceptHoverEvents(false);
 }
 
@@ -57,9 +58,8 @@ QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
 {
 }
 
-void QDeclarativeGeoMapItemBase::componentComplete()
+void QDeclarativeGeoMapItemBase::mapChanged()
 {
-    componentComplete_ = true;
 }
 
 bool QDeclarativeGeoMapItemBase::contains(QPointF point)
@@ -76,28 +76,48 @@ void QDeclarativeGeoMapItemBase::dragEnded()
 {
 }
 
-void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap* quickMap, Map *map)
+void QDeclarativeGeoMapItemBase::updateContent()
 {
-    QLOC_TRACE2(quickMap, quickMap_);
+}
+
+void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, Map *map) {
     if (quickMap == quickMap_)
         return;
     if (quickMap && quickMap_)
         return; // don't allow association to more than one map
+    if (quickMap_)
+        quickMap_->disconnect(this);
+    if (map_)
+        map_->disconnect(this);
     quickMap_ = quickMap;
     map_ = map;
-    this->update();
+    mapChanged();
+    updateMapItem();
 }
 
-void QDeclarativeGeoMapItemBase::update() {}
+void QDeclarativeGeoMapItemBase::updateMapItem()
+{
+    if (inUpdate_ || !map_ || !quickMap_)
+        return;
+    inUpdate_ = true;
+
+    updateContent();
+    QPointF topLeft = contentTopLeftPoint();
+    if ((topLeft.x() > quickMap()->width())
+            || (topLeft.x() + width() < 0)
+            || (topLeft.y() + height() < 0)
+            || (topLeft.y() > quickMap()->height())) {
+        setVisible(false);
+    } else {
+        setVisible(true);
+        setPos(topLeft);
+    }
+    inUpdate_ = false;
+}
 
 QDeclarativeGeoMap* QDeclarativeGeoMapItemBase::quickMap()
 {
     return quickMap_;
-}
-
-Map* QDeclarativeGeoMapItemBase::map()
-{
-    return map_;
 }
 
 #include "moc_qdeclarativegeomapitembase_p.cpp"

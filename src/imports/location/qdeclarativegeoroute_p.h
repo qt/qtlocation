@@ -59,8 +59,8 @@ class QDeclarativeGeoRoute : public QObject
     Q_PROPERTY(QDeclarativeGeoBoundingBox *bounds READ bounds CONSTANT)
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ path)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoRouteSegment> segments READ segments)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ path CONSTANT)
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoRouteSegment> segments READ segments CONSTANT)
 
 public:
     QDeclarativeGeoRoute(QObject *parent = 0);
@@ -72,6 +72,12 @@ public:
     qreal distance() const;
     QDeclarativeListProperty<QDeclarativeCoordinate> path();
     QDeclarativeListProperty<QDeclarativeGeoRouteSegment> segments();
+
+    void appendPath(QDeclarativeCoordinate* coordinate);
+    void clearPath();
+
+    void appendSegment(QDeclarativeGeoRouteSegment* segment);
+    void clearSegments();
 
 private:
     static void path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
@@ -85,6 +91,7 @@ private:
     static void segments_clear(QDeclarativeListProperty<QDeclarativeGeoRouteSegment> *prop);
 
     void init();
+    QList<QGeoCoordinate> routePath();
 
     QGeoRoute route_;
     QDeclarativeGeoBoundingBox* bounds_;

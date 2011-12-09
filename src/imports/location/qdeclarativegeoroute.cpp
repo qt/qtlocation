@@ -76,7 +76,6 @@ QDeclarativeGeoRoute::QDeclarativeGeoRoute(const QGeoRoute &route, QObject *pare
 
 QDeclarativeGeoRoute::~QDeclarativeGeoRoute() {}
 
-
 void QDeclarativeGeoRoute::init()
 {
     bounds_ = new QDeclarativeGeoBoundingBox(route_.bounds(), this);
@@ -89,6 +88,21 @@ void QDeclarativeGeoRoute::init()
         segments_.append(new QDeclarativeGeoRouteSegment(segment, this));
         segment = segment.nextRouteSegment();
     }
+}
+
+QList<QGeoCoordinate> QDeclarativeGeoRoute::routePath()
+{
+    if (!route_.path().isEmpty()) {
+        return route_.path();
+    } else if (!path_.isEmpty()) {
+        // this is for testing. Route elements are not meant
+        // user instantiable but for testing it makes sense
+        QList<QGeoCoordinate> list;
+        for (int i = 0; i < path_.count(); ++i)
+            list.append(path_.at(i)->coordinate());
+        return list;
+    }
+    return QList<QGeoCoordinate>();
 }
 
 /*!
@@ -153,7 +167,7 @@ QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoRoute::path()
 
 void QDeclarativeGeoRoute::path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate)
 {
-    static_cast<QDeclarativeGeoRoute*>(prop->object)->path_.append(coordinate);
+    static_cast<QDeclarativeGeoRoute*>(prop->object)->appendPath(coordinate);
 }
 
 int QDeclarativeGeoRoute::path_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
@@ -168,7 +182,17 @@ QDeclarativeCoordinate* QDeclarativeGeoRoute::path_at(QDeclarativeListProperty<Q
 
 void QDeclarativeGeoRoute::path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
 {
-    static_cast<QDeclarativeGeoRoute*>(prop->object)->path_.clear();
+    static_cast<QDeclarativeGeoRoute*>(prop->object)->clearPath();
+}
+
+void QDeclarativeGeoRoute::appendPath(QDeclarativeCoordinate* coordinate)
+{
+    path_.append(coordinate);
+}
+
+void QDeclarativeGeoRoute::clearPath()
+{
+    path_.clear();
 }
 
 /*
@@ -195,7 +219,7 @@ QDeclarativeListProperty<QDeclarativeGeoRouteSegment> QDeclarativeGeoRoute::segm
 
 void QDeclarativeGeoRoute::segments_append(QDeclarativeListProperty<QDeclarativeGeoRouteSegment> *prop, QDeclarativeGeoRouteSegment *segment)
 {
-    static_cast<QDeclarativeGeoRoute*>(prop->object)->segments_.append(segment);
+    static_cast<QDeclarativeGeoRoute*>(prop->object)->appendSegment(segment);
 }
 
 int QDeclarativeGeoRoute::segments_count(QDeclarativeListProperty<QDeclarativeGeoRouteSegment> *prop)
@@ -210,7 +234,17 @@ QDeclarativeGeoRouteSegment* QDeclarativeGeoRoute::segments_at(QDeclarativeListP
 
 void QDeclarativeGeoRoute::segments_clear(QDeclarativeListProperty<QDeclarativeGeoRouteSegment> *prop)
 {
-    static_cast<QDeclarativeGeoRoute*>(prop->object)->segments_.clear();
+    static_cast<QDeclarativeGeoRoute*>(prop->object)->clearSegments();
+}
+
+void QDeclarativeGeoRoute::appendSegment(QDeclarativeGeoRouteSegment* segment)
+{
+    segments_.append(segment);
+}
+
+void QDeclarativeGeoRoute::clearSegments()
+{
+    segments_.clear();
 }
 
 #include "moc_qdeclarativegeoroute_p.cpp"

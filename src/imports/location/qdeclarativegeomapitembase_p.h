@@ -57,24 +57,22 @@ public:
     virtual ~QDeclarativeGeoMapItemBase();
 
     void setMap(QDeclarativeGeoMap* quickMap, Map *map);
-    virtual void classBegin() {}
-    virtual void componentComplete();
     virtual bool contains(QPointF point);
     virtual void dragStarted();
     virtual void dragEnded();
     QDeclarativeGeoMap* quickMap();
 
-protected Q_SLOTS:
-    virtual void update();
+ protected Q_SLOTS:
+    virtual void updateMapItem();
 
 protected:
-    Map* map();
-    bool inUpdate_;
+    virtual void mapChanged();
+    virtual void updateContent();
+    virtual QPointF contentTopLeftPoint() = 0;
 
-private:
-    QDeclarativeGeoMap* quickMap_;
-    bool componentComplete_;
     Map* map_;
+    QDeclarativeGeoMap* quickMap_;
+    bool inUpdate_;
 };
 
 QT_END_NAMESPACE

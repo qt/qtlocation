@@ -52,7 +52,6 @@ QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoRoute;
 class PolylineMapPaintedItem;
-class QDeclarativeGeoMapQuickItem;
 
 class QDeclarativeRouteMapItem : public QDeclarativeGeoMapItemBase
 {
@@ -71,24 +70,27 @@ public:
     QColor color() const;
     void setColor(const QColor &color);
 
+    void dragStarted();
+    bool contains(QPointF point);
+
 Q_SIGNALS:
     void routeChanged(const QDeclarativeGeoRoute *route);
     void colorChanged(const QColor &color);
 
-protected Q_SLOTS:
-    void update();
+protected:
+    void updateContent();
+    QPointF contentTopLeftPoint();
+    void mapChanged();
 
 private Q_SLOTS:
     // map size changed
     void handleCameraDataChanged(const CameraData& cameraData);
 
-
 private:
-    QDeclarativeGeoMapQuickItem *quickItem_;
-    PolylineMapPaintedItem *polylineMapPaintedItem_;
+    PolylineMapPaintedItem *polylineItem_;
     QDeclarativeGeoRoute* route_;
     QColor color_;
-
+    bool dragActive_;
 };
 
 QT_END_NAMESPACE

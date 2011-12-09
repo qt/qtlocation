@@ -87,20 +87,13 @@ static QPainterPath createPath(const Map& map, const QList<QGeoCoordinate> &path
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent) :
     QDeclarativeGeoMapItemBase(parent),
     polylineItem_(new PolylineMapPaintedItem(this)),
-    initialized_(false),
-    inUpdate_(false),
-    zoomLevel_(0.0)
+    initialized_(false)
 {
     polylineItem_->setParentItem(this);
 }
 
 QDeclarativePolylineMapItem::~QDeclarativePolylineMapItem()
 {
-}
-
-void QDeclarativePolylineMapItem::componentComplete()
-{
-    //initialized_ = true;
 }
 
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativePolylineMapItem::declarativePath()
@@ -120,6 +113,7 @@ void QDeclarativePolylineMapItem::path_append(
     item->polylineItem_->setPath(p);
     if (item->initialized_)
         emit item->pathChanged();
+    item->updateMapItem();
 }
 
 int QDeclarativePolylineMapItem::path_count(
@@ -144,6 +138,7 @@ void QDeclarativePolylineMapItem::path_clear(
     item->polylineItem_->setPath(QList<QGeoCoordinate>());
     if (item->initialized_)
         emit item->pathChanged();
+    item->updateMapItem();
 }
 
 void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordinate)
@@ -152,6 +147,7 @@ void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordina
     QList<QGeoCoordinate> path = polylineItem_->path();
     path.append(coordinate->coordinate());
     polylineItem_->setPath(path);
+    updateMapItem();
     emit pathChanged();
 }
 
@@ -173,33 +169,31 @@ void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate* coord
     path.removeAt(index);
     polylineItem_->setPath(path);
     path_.removeAt(index);
+    updateMapItem();
     emit pathChanged();
 }
 
-void QDeclarativePolylineMapItem::update()
+void QDeclarativePolylineMapItem::updateContent()
 {
-    if (inUpdate_ || !map())
-        return;
+    polylineItem_->updateGeometry();
+    setWidth(polylineItem_->width());
+    setHeight(polylineItem_->height());
+}
 
-    inUpdate_ = true;
-    QPointF topLeft = map()->coordinateToScreenPosition(
+QPointF QDeclarativePolylineMapItem::contentTopLeftPoint()
+{
+    return map_->coordinateToScreenPosition(
                 polylineItem_->quickItemCoordinate(), false) - polylineItem_->quickItemAnchorPoint();
-    if ((topLeft.x() > quickMap()->width())
-            || (topLeft.x() + width() < 0)
-            || (topLeft.y() + height() < 0)
-            || (topLeft.y() > quickMap()->height())) {
-        setPos(map()->coordinateToScreenPosition(QGeoCoordinate()));
-    } else {
-        setWidth(polylineItem_->width());
-        setHeight(polylineItem_->height());
-        setPos(topLeft);
+}
+
+void QDeclarativePolylineMapItem::mapChanged()
+{
+    polylineItem_->setMap(map_);
+    if (map_) {
+        connect(map_, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+        // initial update
+        handleCameraDataChanged(map_->cameraData());
     }
-    // optimize this check/calls, need to be done only when map changes:
-    if (!polylineItem_->map()) {
-        polylineItem_->setMap(map());
-        connect(map(), SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
-    }
-    inUpdate_ = false;
 }
 
 void QDeclarativePolylineMapItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
@@ -224,7 +218,7 @@ bool QDeclarativePolylineMapItem::contains(QPointF point)
 void QDeclarativePolylineMapItem::handleCameraDataChanged(const CameraData& cameraData)
 {
     polylineItem_->setZoomLevel(cameraData.zoomFactor());
-    update();
+    updateMapItem();
 }
 
 QColor QDeclarativePolylineMapItem::color() const
@@ -245,7 +239,8 @@ void QDeclarativePolylineMapItem::setColor(const QColor &color)
 //////////////////////////////////////////////////////////////////////
 
 PolylineMapPaintedItem::PolylineMapPaintedItem(QQuickItem *parent) :
-        QQuickPaintedItem(parent), map_(0), zoomLevel_(-1), initialized_(false)
+    QQuickPaintedItem(parent), map_(0), zoomLevel_(-1), initialized_(false),
+    dirtyGeometry_(false)
 {
     setAntialiasing(true);
     connect(this, SIGNAL(xChanged()), this, SLOT(update()));
@@ -272,7 +267,7 @@ void PolylineMapPaintedItem::setZoomLevel(qreal zoomLevel)
         return;
 
     zoomLevel_ = zoomLevel;
-    updateGeometry();
+    dirtyGeometry_ = true;
 }
 
 qreal PolylineMapPaintedItem::zoomLevel() const
@@ -288,7 +283,7 @@ bool PolylineMapPaintedItem::contains(QPointF point)
 void PolylineMapPaintedItem::setPath(const QList<QGeoCoordinate>& path)
 {
     coordPath_ = path;
-    updateGeometry();
+    dirtyGeometry_ = true;
 }
 
 QList<QGeoCoordinate> PolylineMapPaintedItem::path() const
@@ -337,6 +332,8 @@ void PolylineMapPaintedItem::paint(QPainter *painter)
 
 void PolylineMapPaintedItem::updateGeometry()
 {
+    if (!dirtyGeometry_)
+        return;
     initialized_ = false;
 
     if (!map())
@@ -362,8 +359,8 @@ void PolylineMapPaintedItem::updateGeometry()
     quickItemAnchorPoint_ = path_.pointAtPercent(0);
     initialized_ = true;
 
+    dirtyGeometry_ = false;
     update();
-
 }
 
 QT_END_NAMESPACE

@@ -63,8 +63,6 @@ public:
     QDeclarativePolylineMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolylineMapItem();
 
-    virtual void componentComplete();
-
     Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate* coordinate);
     Q_INVOKABLE void removeCoordinate(QDeclarativeCoordinate* coordinate);
 
@@ -81,9 +79,13 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
 
 protected Q_SLOTS:
-    void update();
     // from qquickitem
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
+
+protected:
+    void updateContent();
+    QPointF contentTopLeftPoint();
+    void mapChanged();
 
 private Q_SLOTS:
     // map size changed
@@ -101,8 +103,6 @@ private:
     QList<QDeclarativeCoordinate*> path_;
     QColor color_;
     bool initialized_;
-    bool inUpdate_;
-    bool zoomLevel_;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -137,8 +137,9 @@ public:
     QGeoCoordinate quickItemCoordinate() const;
     QPointF quickItemAnchorPoint() const;
 
-private:
     void updateGeometry();
+
+private:
     Map *map_;
     qreal zoomLevel_;
     QPen pen_;
@@ -148,6 +149,7 @@ private:
     QList<QGeoCoordinate> coordPath_;
     QPainterPath path_;
     bool initialized_;
+    bool dirtyGeometry_;
 };
 
 

@@ -83,7 +83,9 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
 
 protected Q_SLOTS:
-    void update();
+    void updateContent();
+    QPointF contentTopLeftPoint();
+    void mapChanged();
     // from qquickitem
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
@@ -100,8 +102,6 @@ private:
     QDeclarativeCoordinate internalTopLeft_;
     QDeclarativeCoordinate internalBottomRight_;
     QColor color_;
-    qreal zoomLevel_;
-    bool inUpdate_;
     bool dragActive_;
 };
 
@@ -136,10 +136,9 @@ public:
     void setBrush(const QBrush &brush);
 
     bool contains(QPointF point);
-
-private:
     void updateGeometry();
 
+private:
     Map *map_;
     qreal zoomLevel_;
     QGeoCoordinate topLeftCoord_;
@@ -150,6 +149,7 @@ private:
     QBrush brush_;
     QRectF rect_;
     bool initialized_;
+    bool dirtyGeometry_;
 };
 
 QT_END_NAMESPACE

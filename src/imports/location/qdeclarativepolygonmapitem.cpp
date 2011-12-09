@@ -40,7 +40,6 @@
  ****************************************************************************/
 
 #include "qdeclarativepolygonmapitem_p.h"
-#include "qdeclarativegeomapquickitem_p.h"
 #include <QDeclarativeInfo>
 #include <QPainter>
 
@@ -86,9 +85,11 @@ static QPolygonF createPolygon(const Map& map, const QList<QGeoCoordinate> &path
 }
 
 QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
-        QDeclarativeGeoMapItemBase(parent), quickItem_(new QDeclarativeGeoMapQuickItem(this)), polygonMapPaintedItem_(
-            new PolygonMapPaintedItem(quickItem_)), initialized_(false)
+    QDeclarativeGeoMapItemBase(parent),
+    polygonItem_(new PolygonMapPaintedItem(this)),
+    initialized_(false)
 {
+    polygonItem_->setParentItem(this);
 }
 
 QDeclarativePolygonMapItem::~QDeclarativePolygonMapItem()
@@ -112,11 +113,12 @@ void QDeclarativePolygonMapItem::path_append(
     QDeclarativePolygonMapItem* item = qobject_cast<QDeclarativePolygonMapItem*>(
                                             property->object);
     item->path_.append(coordinate);
-    QList<QGeoCoordinate> p = item->polygonMapPaintedItem_->path();
+    QList<QGeoCoordinate> p = item->polygonItem_->path();
     p.append(coordinate->coordinate());
-    item->polygonMapPaintedItem_->setPath(p);
+    item->polygonItem_->setPath(p);
     if (item->initialized_)
         emit item->pathChanged();
+    item->updateMapItem();
 }
 
 int QDeclarativePolygonMapItem::path_count(
@@ -138,17 +140,19 @@ void QDeclarativePolygonMapItem::path_clear(
                                             property->object);
     qDeleteAll(item->path_);
     item->path_.clear();
-    item->polygonMapPaintedItem_->setPath(QList<QGeoCoordinate>());
+    item->polygonItem_->setPath(QList<QGeoCoordinate>());
     if (item->initialized_)
         emit item->pathChanged();
+    item->updateMapItem();
 }
 
 void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate* coordinate)
 {
     path_.append(coordinate);
-    QList<QGeoCoordinate> path = polygonMapPaintedItem_->path();
+    QList<QGeoCoordinate> path = polygonItem_->path();
     path.append(coordinate->coordinate());
-    polygonMapPaintedItem_->setPath(path);
+    polygonItem_->setPath(path);
+    updateMapItem();
     emit pathChanged();
 }
 
@@ -161,40 +165,56 @@ void QDeclarativePolygonMapItem::removeCoordinate(QDeclarativeCoordinate* coordi
         return;
     }
 
-    QList<QGeoCoordinate> path = polygonMapPaintedItem_->path();
+    QList<QGeoCoordinate> path = polygonItem_->path();
 
     if (path.count() < index + 1) {
         qmlInfo(this) << tr("Coordinate does not belong to PolygonMapItem.");
         return;
     }
     path.removeAt(index);
-    polygonMapPaintedItem_->setPath(path);
+    polygonItem_->setPath(path);
     path_.removeAt(index);
+    updateMapItem();
     emit pathChanged();
 }
 
-void QDeclarativePolygonMapItem::update()
+void QDeclarativePolygonMapItem::updateContent()
 {
-    if (!map())
-        return;
+    polygonItem_->updateGeometry();
+    setWidth(polygonItem_->width());
+    setHeight(polygonItem_->height());
+}
 
-    quickItem_->setCoordinate(
-        new QDeclarativeCoordinate(polygonMapPaintedItem_->quickItemCoordinate()));
-    quickItem_->setAnchorPoint(polygonMapPaintedItem_->quickItemAnchorPoint());
+QPointF QDeclarativePolygonMapItem::contentTopLeftPoint()
+{
+    return map_->coordinateToScreenPosition(
+                polygonItem_->quickItemCoordinate(), false) - polygonItem_->quickItemAnchorPoint();
+}
 
-    if (quickItem_->sourceItem() == 0) {
-        QObject::connect(map(), SIGNAL(cameraDataChanged(CameraData)), this,
-                         SLOT(handleCameraDataChanged(CameraData)));
-        polygonMapPaintedItem_->setMap(map());
-        quickItem_->setMap(quickMap(), map());
-        quickItem_->setSourceItem(polygonMapPaintedItem_);
+void QDeclarativePolygonMapItem::mapChanged()
+{
+    polygonItem_->setMap(map_);
+    if (map_) {
+        connect(map_, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+        // initial update
+        handleCameraDataChanged(map_->cameraData());
     }
+}
+
+void QDeclarativePolygonMapItem::dragStarted()
+{
+    qmlInfo(this) << "warning: mouse dragging is not currently supported with polygon.";
+}
+
+bool QDeclarativePolygonMapItem::contains(QPointF point)
+{
+    return polygonItem_->contains(point);
 }
 
 void QDeclarativePolygonMapItem::handleCameraDataChanged(const CameraData& cameraData)
 {
-    polygonMapPaintedItem_->setZoomLevel(cameraData.zoomFactor());
-    update();
+    polygonItem_->setZoomLevel(cameraData.zoomFactor());
+    updateMapItem();
 }
 
 QColor QDeclarativePolygonMapItem::color() const
@@ -208,7 +228,7 @@ void QDeclarativePolygonMapItem::setColor(const QColor &color)
         return;
 
     color_ = color;
-    polygonMapPaintedItem_->setBrush(color);
+    polygonItem_->setBrush(color);
     emit colorChanged(color_);
 }
 
@@ -231,13 +251,18 @@ void PolygonMapPaintedItem::setMap(Map* map)
     map_ = map;
 }
 
+Map* PolygonMapPaintedItem::map()
+{
+    return map_;
+}
+
 void PolygonMapPaintedItem::setZoomLevel(qreal zoomLevel)
 {
     if (zoomLevel_ == zoomLevel)
         return;
 
     zoomLevel_ = zoomLevel;
-    updateGeometry();
+    dirtyGeometry_ = true;
 }
 
 qreal PolygonMapPaintedItem::zoomLevel() const
@@ -245,10 +270,15 @@ qreal PolygonMapPaintedItem::zoomLevel() const
     return zoomLevel_;
 }
 
+bool PolygonMapPaintedItem::contains(QPointF point)
+{
+    return polygon_.containsPoint(point, Qt::OddEvenFill);
+}
+
 void PolygonMapPaintedItem::setPath(const QList<QGeoCoordinate>& path)
 {
     coordPath_ = path;
-    updateGeometry();
+    dirtyGeometry_ = true;
 }
 
 QList<QGeoCoordinate> PolygonMapPaintedItem::path() const
@@ -297,6 +327,8 @@ void PolygonMapPaintedItem::paint(QPainter *painter)
 
 void PolygonMapPaintedItem::updateGeometry()
 {
+    if (!dirtyGeometry_)
+        return;
     initialized_ = false;
 
     if (!map_)
@@ -324,5 +356,6 @@ void PolygonMapPaintedItem::updateGeometry()
     quickItemAnchorPoint_ = polygon_.first();
     initialized_ = true;
 
-    update();
+    dirtyGeometry_ = false;
+    update(); // qquickpainteditem
 }

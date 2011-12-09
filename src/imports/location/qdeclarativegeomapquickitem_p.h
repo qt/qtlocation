@@ -82,10 +82,14 @@ Q_SIGNALS:
     void sourceItemChanged();
     void anchorPointChanged();
     void zoomLevelChanged();
-    void camerDataChanged(const CameraData &cameraData);
+
+protected:
+    void updateContent();
+    void mapChanged();
+    QPointF contentTopLeftPoint();
 
 protected Q_SLOTS:
-    void update();
+    void updateMapItem();
     // from qquickitem
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
@@ -93,6 +97,7 @@ private Q_SLOTS:
     void coordinateCoordinateChanged(double);
 
 private:
+    qreal scaleFactor();
     QDeclarativeCoordinate* coordinate_;
     QDeclarativeCoordinate internalCoordinate_;
     QQuickItem* sourceItem_;

@@ -49,8 +49,6 @@ QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
   rectangleItem_(new RectangleMapPaintedItem(this)),
   topLeft_(0),
   bottomRight_(0),
-  zoomLevel_(0.0),
-  inUpdate_(false),
   dragActive_(false)
 {
     rectangleItem_->setParentItem(this);
@@ -79,6 +77,7 @@ void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
             SLOT(handleTopLeftCoordinateChanged()));
     }
     emit topLeftChanged(topLeft_);
+    updateMapItem();
 }
 
 QDeclarativeCoordinate* QDeclarativeRectangleMapItem::topLeft()
@@ -105,6 +104,7 @@ void QDeclarativeRectangleMapItem::setBottomRight(QDeclarativeCoordinate *bottom
             SLOT(handleBottomRightCoordinateChanged()));
     }
     emit bottomRightChanged(bottomRight);
+    updateMapItem();
 }
 
 QDeclarativeCoordinate* QDeclarativeRectangleMapItem::bottomRight()
@@ -112,30 +112,25 @@ QDeclarativeCoordinate* QDeclarativeRectangleMapItem::bottomRight()
     return bottomRight_;
 }
 
-void QDeclarativeRectangleMapItem::update()
+void QDeclarativeRectangleMapItem::updateContent()
 {
-    if (inUpdate_ || !map())
-        return;
+    rectangleItem_->updateGeometry();
+    setWidth(rectangleItem_->width());
+    setHeight(rectangleItem_->height());
+}
 
-    inUpdate_ = true;
+QPointF QDeclarativeRectangleMapItem::contentTopLeftPoint()
+{
+    return map_->coordinateToScreenPosition(rectangleItem_->topLeft(), false);
+}
 
-    QPointF topLeft = map()->coordinateToScreenPosition(rectangleItem_->topLeft(), false);
-    if ((topLeft.x() > quickMap()->width())
-            || (topLeft.x() + width() < 0)
-            || (topLeft.y() + height() < 0)
-            || (topLeft.y() > quickMap()->height())) {
-        setPos(map()->coordinateToScreenPosition(QGeoCoordinate()));
-    } else {
-        setWidth(rectangleItem_->width());
-        setHeight(rectangleItem_->height());
-        setPos(topLeft);
+void QDeclarativeRectangleMapItem::mapChanged()
+{
+    rectangleItem_->setMap(map_);
+    if (map_) {
+        connect(map_, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+        handleCameraDataChanged(map_->cameraData());
     }
-    // optimize this check/calls, need to be done only when map changes:
-    if (!rectangleItem_->map()) {
-        rectangleItem_->setMap(map());
-        connect(map(), SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
-    }
-    inUpdate_ = false;
 }
 
 void QDeclarativeRectangleMapItem::dragEnded()
@@ -145,9 +140,9 @@ void QDeclarativeRectangleMapItem::dragEnded()
     dragActive_ = false;
     QPointF newTopLeftPoint = QPointF(x(),y());
     // does not preserve exact projection geometry but that should be acceptable
-    QGeoCoordinate newTopLeft = map()->screenPositionToCoordinate(newTopLeftPoint, false);
+    QGeoCoordinate newTopLeft = map_->screenPositionToCoordinate(newTopLeftPoint, false);
     QPointF newBottomRightPoint = QPointF(x() + width(), y() + height());
-    QGeoCoordinate newBottomRight = map()->screenPositionToCoordinate(newBottomRightPoint, false);
+    QGeoCoordinate newBottomRight = map_->screenPositionToCoordinate(newBottomRightPoint, false);
     if (newTopLeft.isValid() && newBottomRight.isValid()) {
         internalTopLeft_.setCoordinate(newTopLeft);
         internalBottomRight_.setCoordinate(newBottomRight);
@@ -164,7 +159,7 @@ void QDeclarativeRectangleMapItem::dragStarted()
 void QDeclarativeRectangleMapItem::handleCameraDataChanged(const CameraData& cameraData)
 {
     rectangleItem_->setZoomLevel(cameraData.zoomFactor());
-    update();
+    updateMapItem();
 }
 
 bool QDeclarativeRectangleMapItem::contains(QPointF point)
@@ -210,7 +205,8 @@ void QDeclarativeRectangleMapItem::setColor(const QColor &color)
 //////////////////////////////////////////////////////////////////////
 
 RectangleMapPaintedItem::RectangleMapPaintedItem(QQuickItem *parent) :
-    QQuickPaintedItem(parent), map_(0), zoomLevel_(-1), initialized_(false)
+    QQuickPaintedItem(parent), map_(0), zoomLevel_(-1), initialized_(false),
+    dirtyGeometry_(false)
 {
     setAntialiasing(true);
     connect(this, SIGNAL(xChanged()), this, SLOT(update()));
@@ -237,7 +233,7 @@ void RectangleMapPaintedItem::setZoomLevel(qreal zoomLevel)
         return;
 
     zoomLevel_ = zoomLevel;
-    updateGeometry();
+    dirtyGeometry_ = true;
 }
 
 qreal RectangleMapPaintedItem::zoomLevel() const
@@ -251,7 +247,7 @@ void RectangleMapPaintedItem::setTopLeft(const QGeoCoordinate &topLeftCoord)
         return;
 
     topLeftCoord_ = topLeftCoord;
-    updateGeometry();
+    dirtyGeometry_ = true;
 }
 
 QGeoCoordinate RectangleMapPaintedItem::topLeft() const
@@ -265,7 +261,7 @@ void RectangleMapPaintedItem::setBottomRight(const QGeoCoordinate &bottomRightCo
         return;
 
     bottomRightCoord_ = bottomRightCoord;
-    updateGeometry();
+    dirtyGeometry_ = true;
 }
 
 QGeoCoordinate RectangleMapPaintedItem::bottomRight() const
@@ -284,6 +280,8 @@ void RectangleMapPaintedItem::paint(QPainter *painter)
 
 void RectangleMapPaintedItem::updateGeometry()
 {
+    if (!dirtyGeometry_)
+        return;
     initialized_ = false;
 
     if (!map_)
@@ -314,7 +312,8 @@ void RectangleMapPaintedItem::updateGeometry()
     rect_.setBottomRight(QPointF(w, h));
 
     initialized_ = true;
-    update();
+    dirtyGeometry_ = false;
+    update(); // qquickpainteditem
 }
 
 

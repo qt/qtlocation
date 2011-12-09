@@ -180,8 +180,8 @@ Rectangle {
             MouseArea{ anchors.fill: parent; onClicked: map.height -= 10}
         }
         Rectangle {color: "lightblue"; width: 80; height: 40;
-            Text {text: "Plugin"}
-            MouseArea{ anchors.fill: parent; onClicked: map.plugin = nokia_plugin}
+            Text {text: "Add\nitem"}
+            MouseArea{ anchors.fill: parent; onClicked: map.addMapItem(extMapCircle)}
         }
         Rectangle {color: "lightblue"; width: 80; height: 40;
             Text {text: "toScrPos"}
@@ -213,6 +213,37 @@ Rectangle {
         longitude: 140
     }
 
+    Coordinate {id: londonCoordinate3; latitude: 51.6; longitude: -0.11}
+
+    MapCircle {
+        id: extMapCircle
+        z: 5
+        center: londonCoordinate3
+        radius: 10000
+        color: 'yellow'
+
+        MapMouseArea {
+            id: mouseAreaOfExtMapCircle
+            anchors.fill: parent
+            drag.target: parent
+            onClicked: console.log('....[extCircle].... map mouse area of extCircle clicked')
+        }
+        Column {
+            spacing: 2
+            Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                text: ' MapCircle ext '}
+            Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                text: ' x: ' + extMapCircle.x}
+            Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                text: ' y: ' + extMapCircle.y}
+            Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: extMapCircle.width + 30;
+                text: ' c lat: ' + extMapCircle.center.latitude}
+            Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: extMapCircle.width + 30;
+                text: ' c lon: ' + extMapCircle.center.longitude}
+        }
+    }
+
+
     Map {
         id: map
         property bool disableFlickOnStarted: false
@@ -226,26 +257,6 @@ Rectangle {
                                    //' to screen pos: ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).x +
                                    //' ' + map.toScreenPosition(mapMouseAreaUpperPurple.mouseToCoordinate(mouse)).y)
         }
-/*
-        MapItem {
-            id: externalStaticMapItem1
-            visible: true
-            objectName: "externalStaticMapItem1"
-            coordinate: brisbaneCoordinate
-            zoomLevel: 5.0
-            sourceItem: Item {
-                width: 640
-                height: 20
-                Rectangle {
-                    color: "gray"
-                    width: 640
-                    height: 20
-                    Text {font.pixelSize: 15;text: "ext map item 1"; font.bold: true; color: 'red'}
-                }
-            }
-        }
-*/
-
 
         MapCircle {
             id: mapCircle
@@ -282,9 +293,9 @@ Rectangle {
             z: 15
             color: 'red'
             path: [
-                Coordinate { id: pathCoord1; latitude: 51; longitude: 0.1},
-                Coordinate { id: pathCoord2; latitude: 51.1; longitude: 0.4},
-                Coordinate { id: pathCoord3; latitude: 51.2; longitude: 0.2}
+                Coordinate { id: pathCoord1; latitude: 50.7; longitude: 0.1},
+                Coordinate { id: pathCoord2; latitude: 50.8; longitude: 0.4},
+                Coordinate { id: pathCoord3; latitude: 50.9; longitude: 0.2}
             ]
             MapMouseArea {
                 id: mouseAreaOfMapPolyline
@@ -304,6 +315,70 @@ Rectangle {
                     text: ' at(0) lat: ' + mapPolyline.path[0].latitude}
                 Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapPolyline.width + 30;
                     text: ' at(0) lon: ' + mapPolyline.path[0].longitude}
+            }
+        }
+
+        MapPolygon {
+            id: mapPolygon
+            color: 'pink'
+            path: [
+                Coordinate { id: pathCoord_1; latitude: 51; longitude: 0.2},
+                Coordinate { id: pathCoord_2; latitude: 51.1; longitude: 0.6},
+                Coordinate { id: pathCoord_3; latitude: 51.2; longitude: 0.4}
+            ]
+            MapMouseArea {
+                id: mouseAreaOfMapPolygon
+                anchors.fill: parent
+                drag.target: parent
+                onClicked: console.log('....[Polygon].... map mouse area of polygon clicked')
+            }
+            Column {
+                spacing: 2
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' MapPolygon '}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' x: ' + mapPolygon.x}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' y: ' + mapPolygon.y}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapPolygon.width + 30;
+                    text: ' at(0) lat: ' + mapPolygon.path[0].latitude}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapPolygon.width + 30;
+                    text: ' at(0) lon: ' + mapPolygon.path[0].longitude}
+            }
+        }
+
+        MapRoute {
+            id: mapRoute
+            color: 'black'
+            // don't do this at home - route is not user instantiable,
+            // use polyline instead
+            route: Route {
+                path: [
+                    Coordinate { latitude: 51.6; longitude: 0.2},
+                    Coordinate { latitude: 51.7; longitude: 1.2},
+                    Coordinate { latitude: 51.7; longitude: 1.3},
+                    Coordinate { latitude: 51.8; longitude: 0.6},
+                    Coordinate { latitude: 51.7; longitude: 0.6}
+                ]
+            }
+            MapMouseArea {
+                id: mouseAreaOfMapRoute
+                anchors.fill: parent
+                drag.target: parent
+                onClicked: console.log('....[Polygon].... map mouse area of polygon clicked')
+            }
+            Column {
+                spacing: 2
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' MapRoute '}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' x: ' + mapRoute.x}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                    text: ' y: ' + mapRoute.y}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapRoute.width + 30;
+                    text: ' at(0) lat: ' + mapRoute.route.path[0].latitude}
+                Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black'; elide: Text.ElideRight; width: mapRoute.width + 30;
+                    text: ' at(0) lon: ' + mapRoute.route.path[0].longitude}
             }
         }
 
@@ -369,6 +444,7 @@ Rectangle {
         }
         */
 
+
         MapQuickItem {
             objectName: "mousetestrectangleupper purple"
             id: purpleRectMapItem
@@ -415,6 +491,10 @@ Rectangle {
                     Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
                         text: ' MapQuickItem '}
                     Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                        text: ' w: ' + purpleRectMapItem.width}
+                    Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
+                        text: ' h: ' + purpleRectMapItem.height}
+                    Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
                         text: ' x: ' + purpleRectMapItem.x}
                     Text { color: 'yellow'; font.bold: true; style: Text.Outline; styleColor: 'black';
                         text: ' y: ' + purpleRectMapItem.y}
@@ -425,8 +505,6 @@ Rectangle {
                 }
             }
         }
-
-
 
         /*
         MapQuickItem {
@@ -652,9 +730,29 @@ Rectangle {
             Text {text: ' at(0) lon: ' + mapPolyline.path[0].longitude; font.pixelSize: 10; }
         }
         Column {
+            id: polygonData;
+            anchors.top: polylineData.bottom
+            spacing: 1
+            Text { text: ' MapPolygon '; font.bold: true;font.pixelSize: 10; }
+            Text { text: ' x: ' + mapPolygon.x; font.pixelSize: 10; }
+            Text {text: ' y: ' + mapPolygon.y; font.pixelSize: 10; }
+            Text {text: ' at(0) lat: ' + mapPolygon.path[0].latitude; font.pixelSize: 10; }
+            Text {text: ' at(0) lon: ' + mapPolygon.path[0].longitude; font.pixelSize: 10; }
+        }
+        Column {
+            id: routeData;
+            anchors.top: polygonData.bottom
+            spacing: 1
+            Text { text: ' MapRoute '; font.bold: true;font.pixelSize: 10; }
+            Text { text: ' x: ' + mapRoute.x; font.pixelSize: 10; }
+            Text {text: ' y: ' + mapRoute.y; font.pixelSize: 10; }
+            Text {text: ' at(0) lat: ' + mapRoute.route.path[0].latitude; font.pixelSize: 10; }
+            Text {text: ' at(0) lon: ' + mapRoute.route.path[0].longitude; font.pixelSize: 10; }
+        }
+        Column {
             id: quickItemData
             spacing: 1
-            anchors.top: polylineData.bottom
+            anchors.top: routeData.bottom
             Text {text: ' MapQuickItem ';font.bold: true; font.pixelSize: 10; }
             Text {text: ' x: ' + purpleRectMapItem.x; font.pixelSize: 10; }
             Text {text: ' y: ' + purpleRectMapItem.y; font.pixelSize: 10; }

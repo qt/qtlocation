@@ -79,8 +79,10 @@ Q_SIGNALS:
     void radiusChanged(qreal radius);
     void colorChanged(const QColor &color);
 
-protected Q_SLOTS:
-    void update();
+protected:
+    void updateContent();
+    QPointF contentTopLeftPoint();
+    void mapChanged();
     // from qquickitem
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
@@ -93,8 +95,6 @@ private:
     QDeclarativeCoordinate *center_;
     CircleMapPaintedItem *circleItem_;
     QColor color_;
-    bool inUpdate_;
-    bool zoomLevel_;
     bool dragActive_;
 };
 
@@ -127,9 +127,9 @@ public:
     void setBrush(const QBrush &brush);
 
     bool contains(QPointF point);
+    void updateGeometry();
 
 private:
-    void updateGeometry();
     void calcualtePeripheralPoints(QList<QGeoCoordinate>& path, const QGeoCoordinate& center, qreal distance, int steps) const;
 
     Map *map_;
@@ -141,6 +141,7 @@ private:
     QPolygonF polygon_;
     QList<QGeoCoordinate> path_;
     bool initialized_;
+    bool dirtyGeometry_;
 };
 
 QT_END_NAMESPACE
