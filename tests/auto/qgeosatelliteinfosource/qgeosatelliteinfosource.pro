@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG+=testcase
+!no_system_tests:CONFIG += testcase
 TARGET=tst_qgeosatelliteinfosource
 
 SOURCES += tst_qgeosatelliteinfosource.cpp \
