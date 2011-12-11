@@ -343,13 +343,13 @@ void QDeclarativePinchGenerator::timerEvent(QTimerEvent *event)
     QTouchEvent* touchEvent;
     switch (swipes_.at(masterSwipe_)->touchPoints.at(replayBookmark_).state()) {
     case (Qt::TouchPointPressed):
-        touchEvent = new QTouchEvent(QEvent::TouchBegin,QTouchEvent::TouchScreen,Qt::NoModifier,Qt::TouchPointReleased);
+        touchEvent = new QTouchEvent(QEvent::TouchBegin,NULL,Qt::NoModifier,Qt::TouchPointReleased);
         break;
     case (Qt::TouchPointMoved):
-        touchEvent = new QTouchEvent(QEvent::TouchUpdate,QTouchEvent::TouchScreen,Qt::NoModifier,Qt::TouchPointReleased);
+        touchEvent = new QTouchEvent(QEvent::TouchUpdate,NULL,Qt::NoModifier,Qt::TouchPointReleased);
         break;
     case (Qt::TouchPointReleased):
-        touchEvent = new QTouchEvent(QEvent::TouchEnd,QTouchEvent::TouchScreen,Qt::NoModifier,Qt::TouchPointReleased);
+        touchEvent = new QTouchEvent(QEvent::TouchEnd,NULL,Qt::NoModifier,Qt::TouchPointReleased);
         break;
     default:
         Q_ASSERT(false);
