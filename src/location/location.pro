@@ -91,7 +91,7 @@ meego {
     }
 }
 
-contains(config_test_jsondb, yes): contains(config_test_mtclient, yes) {
+contains(config_test_jsondb, yes):contains(config_test_mtclient, yes):!simulator {
     DEFINES += NPE_BACKEND
     QT += jsondb-private
     SOURCES += qgeopositioninfosource_npe_backend.cpp\
