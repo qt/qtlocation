@@ -50,6 +50,12 @@ Item {
     ListView {
         id: view
 
+        function showSearchResults() {
+            view.currentIndex = 0;
+            placeContentList.source = "";
+            placeContentList.place = null;
+        }
+
         orientation: ListView.Horizontal
         interactive: false
         anchors.fill: parent
@@ -122,11 +128,7 @@ Item {
                     hoveredSource: "../../resources/left_hovered.png"
                     pressedSource: "../../resources/left_pressed.png"
 
-                    onClicked: {
-                        view.currentIndex = 0;
-                        placeContentList.source = "";
-                        placeContentList.place = null;
-                    }
+                    onClicked: view.showSearchResults()
                 }
 
                 PlaceDelegate {
@@ -172,7 +174,10 @@ Item {
                         page.state = "EditPlace"
                     }
 
-                    onDeletePlace: place.remove();
+                    onDeletePlace:  {
+                        place.remove();
+                        view.showSearchResults();
+                    }
                 }
             }
             Item {
