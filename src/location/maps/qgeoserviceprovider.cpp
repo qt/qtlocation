@@ -116,7 +116,7 @@ No error has occurred.
 The plugin does not support this functionality.
 
 \value UnknownParameterError
-The plugin did not recognise one of the parameters it was given.
+The plugin did not recognize one of the parameters it was given.
 
 \value MissingRequiredParameterError
 The plugin did not find one of the parameters it was expecting.

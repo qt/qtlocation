@@ -214,7 +214,7 @@ void QGeoPositionInfoSourceNpeBackend::requestUpdate(int timeout)
         // set reasonable timeout for the source if timeout is 0
         if (timeout == 0)
             timeout = 5*minimumInterval;
-        // do not start request if timeout can not be fullfilled by the source
+        // do not start request if timeout can not be fulfilled by the source
         if (timeout < minimumInterval) {
             emit updateTimeout();
             return;

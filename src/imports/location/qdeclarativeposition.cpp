@@ -202,7 +202,7 @@ bool QDeclarativePosition::isAltitudeValid() const
 /*!
     \qmlproperty double Position::speed
 
-    This property holds the value of speed (groundspeed, metres / second).
+    This property holds the value of speed (groundspeed, meters / second).
     Currently a read-only property.
 
     \sa speedValid, coordinate

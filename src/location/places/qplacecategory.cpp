@@ -137,7 +137,7 @@ bool QPlaceCategory::operator==(const QPlaceCategory &other) const
 /*!
     Returns the id of the category.  The category id is a string which uniquely identifies this category
     within a particular \l QPlaceManager.  The id is only meaningful to the QPlaceManager
-    that generated it and is not transferrable between managers.
+    that generated it and is not transferable between managers.
 */
 QString QPlaceCategory::categoryId() const
 {

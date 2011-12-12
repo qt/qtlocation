@@ -133,7 +133,7 @@ int QDeclarativeGeoRoute::travelTime() const
 /*!
     \qmlproperty int QtLocation5::Route::distance
 
-    Read-only property which holds distance covered by this route, in metres.
+    Read-only property which holds distance covered by this route, in meters.
 */
 
 qreal QDeclarativeGeoRoute::distance() const

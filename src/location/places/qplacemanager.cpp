@@ -104,7 +104,7 @@ QT_BEGIN_NAMESPACE
     has a signal to notify when the request is done, and once completed, the reply
     contains the results of the request, along with any errors that occurred, if any.
 
-    An asynchonous request is generally handled as follows:
+    An asynchronous request is generally handled as follows:
     \snippet snippets/places/requesthandler.h Simple search
     \dots
     \dots
@@ -350,7 +350,7 @@ QList<QPlaceCategory> QPlaceManager::childCategories(const QString &parentId) co
 }
 
 /*!
-    Returns a list of prefered locales. The locales are used as a hint to the manager for what language
+    Returns a list of preferred locales. The locales are used as a hint to the manager for what language
     place and category details should be returned in.
 
     If the first specified locale cannot be accommodated, the manager falls back to the next and so forth.

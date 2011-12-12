@@ -216,7 +216,7 @@ int QGeoRoute::travelTime() const
 }
 
 /*!
-    Sets the distance covered by this route, in metres, to \a distance.
+    Sets the distance covered by this route, in meters, to \a distance.
 */
 void QGeoRoute::setDistance(qreal distance)
 {
@@ -224,7 +224,7 @@ void QGeoRoute::setDistance(qreal distance)
 }
 
 /*!
-    Returns the distance covered by this route, in metres.
+    Returns the distance covered by this route, in meters.
 */
 qreal QGeoRoute::distance() const
 {

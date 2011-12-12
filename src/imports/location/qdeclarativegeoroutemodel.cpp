@@ -56,7 +56,7 @@ QT_BEGIN_NAMESPACE
 
     \brief The RouteModel element provides access to routes.
 
-    The RouteModel is model used to fetch routes. The routing result provider is determined
+    The RouteModel is used to fetch routes. The routing result provider is determined
     by the \l plugin. The route data is set in \l query.
 
     The model provides a single data role, the "routeData" role which
@@ -316,7 +316,7 @@ void QDeclarativeGeoRouteModel::setStatus(QDeclarativeGeoRouteModel::Status stat
     \o RouteModel.Null - No route requests have been issued or \l reset has been called.
     \o RouteModel.Ready - Route request(s) have finished successfully.
     \o RouteModel.Loading - Route request has been issued but not yet finished
-    \o RouteModel.Error - Routing error has occured, details are in \l error and \l errorString
+    \o RouteModel.Error - Routing error has occurred, details are in \l error and \l errorString
     \endlist
 */
 
@@ -340,7 +340,7 @@ void QDeclarativeGeoRouteModel::setErrorString(const QString &error)
     \qmlproperty string QtLocation5::RouteModel::errorString
 
     This read-only property holds the textual presentation of latest routing error.
-    If no error has occured or the model has been reset, an empty string is returned.
+    If no error has occurred or the model has been reset, an empty string is returned.
 
     An empty string may also be returned if an error occurred which has no associated
     textual representation.
@@ -904,7 +904,7 @@ QDeclarativeGeoRouteQuery::SegmentDetail QDeclarativeGeoRouteQuery::segmentDetai
 
     \list
     \o RouteModel.NoManeuvers - No maneuvers should be included with the route
-    \o RouteModel.BasicManeuvers - Basic manevuers will be included with the route
+    \o RouteModel.BasicManeuvers - Basic maneuvers will be included with the route
     \endlist
 
     The default value is RouteModel.BasicManeuvers

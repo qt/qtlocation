@@ -158,7 +158,7 @@ int QDeclarativeGeoManeuver::timeToNextInstruction() const
 /*!
     \qmlproperty qreal RouteManeuver::distanceToNextInstruction
 
-    This read-only property holds the distance, in metres, between the point at which
+    This read-only property holds the distance, in meters, between the point at which
     the associated instruction was issued and the point that the next instruction should
     be issued.
 */

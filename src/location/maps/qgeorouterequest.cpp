@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
     for basic route segment and navigation maneuvers describing the fastest
     route by car which covers the given waypoints.
 
-    There may be signifcant variation in the features supported by different
+    There may be significant variation in the features supported by different
     providers of routing information, or even in the features supported by
     the same provider if different levels of authorization are used.
 
@@ -190,12 +190,12 @@ QT_BEGIN_NAMESPACE
 /*!
     \enum QGeoRouteRequest::SegmentDetail
 
-    Defines the amount of route segment information that shoudl be included
+    Defines the amount of route segment information that should be included
     with the route.
 
     \value NoSegmentData
         No segment data should be included with the route.  A route requested
-        with this level of segment detail will initialise
+        with this level of segment detail will initialize
         QGeoRouteSegment::path() as a straight line between the positions of
         the previous and next QGeoManeuver instances.
 
@@ -353,7 +353,7 @@ QGeoRouteRequest::TravelModes QGeoRouteRequest::travelModes() const
 }
 
 /*!
-    Assigns the weight \a featureWeight to the feauture \a featureType during
+    Assigns the weight \a featureWeight to the feature \a featureType during
     the planning of the route.
 
     By default all features are assigned a weight of NeutralFeatureWeight.

@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
 
     The circle is defined in terms of a QGeoCoordinate which specifies the
     center of the circle and a qreal which specifies the radius of the circle
-    in metres.
+    in meters.
 
     The circle is considered invalid if the center coordinate is invalid
     or if the radius is less than zero.
@@ -73,7 +73,7 @@ QGeoBoundingCircle::QGeoBoundingCircle()
 
 /*!
     Constructs a new bounding circle centered at \a center and with a radius of \a
-    radius metres.
+    radius meters.
 */
 QGeoBoundingCircle::QGeoBoundingCircle(const QGeoCoordinate &center, qreal radius)
         : d_ptr(new QGeoBoundingCirclePrivate(center, radius)) {}

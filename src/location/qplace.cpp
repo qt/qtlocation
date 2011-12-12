@@ -339,7 +339,7 @@ void QPlace::setName(const QString &name)
 
 /*!
     Returns the id of the place.  The place id is only meaningful to the QPlaceManager that
-    generated it and is not transferrable between managers.  The place id is not guaranteed
+    generated it and is not transferable between managers.  The place id is not guaranteed
     to be universally unique, but unique for the manager that generated it.
 */
 QString QPlace::placeId() const

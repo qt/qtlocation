@@ -59,7 +59,7 @@ QT_USE_NAMESPACE
     \brief The PlaceRecommendationModel element provides a model of place recommendations.
 
     PlaceRecommendationModel provides a model of place recommendation results within the \l searchArea,
-    that are similiar to the place identified by the \l placeId property.
+    that are similar to the place identified by the \l placeId property.
 
     The \l offset and \l limit properties can be used to access paged search results.  When the
     \l offset and \l limit properties are set the search results between \l offset and

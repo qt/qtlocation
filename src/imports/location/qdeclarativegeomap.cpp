@@ -86,7 +86,7 @@ QT_BEGIN_NAMESPACE
     by the Plugin element associated with the Map.
 
     Various map items can be added to the map.  These map items are
-    specified in terms of coordinates and metres.
+    specified in terms of coordinates and meters.
 
     MapItems can be directly added to the Map element and it will display them
     automatically. The various objects that can be added include:

@@ -62,7 +62,7 @@ QT_BEGIN_NAMESPACE
     You can receive information about things such as latitude, longitude, altitude, and
     speed.
 
-    Support for location sources are platform dependant. When declaring a PositionSource element, a
+    Support for location sources are platform dependent. When declaring a PositionSource element, a
     default PositionSource source shall be created. Supported positioning methods are held in
     \l positioningMethod. As a development convenience, one may also set data file as a source (NMEA format).
     Location updates are not necessarily started automatically upon element declaration, see \l start \l stop \l active

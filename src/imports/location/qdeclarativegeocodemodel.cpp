@@ -322,7 +322,7 @@ void QDeclarativeGeocodeModel::geocodeError(QGeocodeReply *reply,
     \o GeocodeModel.Null - No geocode requests have been issued or \l reset has been called.
     \o GeocodeModel.Ready - Geocode request(s) have finished successfully.
     \o GeocodeModel.Loading - Geocode request has been issued but not yet finished
-    \o GeocodeModel.Error - Geocoding error has occured, details are in \l error and \l errorString
+    \o GeocodeModel.Error - Geocoding error has occurred, details are in \l error and \l errorString
     \endlist
 */
 
@@ -372,7 +372,7 @@ void QDeclarativeGeocodeModel::setError(GeocodeError error)
     \qmlproperty string QtLocation5::GeocodeModel::errorString
 
     This read-only property holds the textual presentation of latest geocoding error.
-    If no error has occured or the model has been reset, an empty string is returned.
+    If no error has occurred or the model has been reset, an empty string is returned.
 
     An empty string may also be returned if an error occurred which has no associated
     textual representation.

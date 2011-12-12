@@ -154,7 +154,7 @@ QGeoCoordinate::QGeoCoordinate(double latitude, double longitude)
     is not between -180 to 180 inclusive, none of the values are set and
     the type() will be QGeoCoordinate::InvalidCoordinate.
 
-    Note that \a altitude specifies the metres above sea level.
+    Note that \a altitude specifies the meters above sea level.
 
     \sa isValid()
 */
@@ -418,7 +418,7 @@ void QGeoCoordinatePrivate::atDistanceAndAzimuth(const QGeoCoordinate &coord,
 }
 
 /*!
-    Returns the coordinate that is reached by traveling \a distance metres
+    Returns the coordinate that is reached by traveling \a distance meters
     from the current coordinate at \a azimuth (or bearing) along a great-circle.
     There is an assumption that the Earth is spherical for the purpose of this
     calculation.

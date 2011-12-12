@@ -51,7 +51,7 @@ QT_USE_NAMESPACE
 
     \brief The Location element holds location data.
 
-    Location cointains many properties holding data of the location like geo coordinates,
+    Location contains many properties holding data of the location like geo coordinates,
     address, etc.
 */
 
@@ -170,7 +170,7 @@ QDeclarativeCoordinate *QDeclarativeGeoLocation::coordinate()
 /*!
     \qmlproperty BoundingBox Location::boundingBox
 
-    This property holds bouding box of area on map ocupied by location.
+    This property holds bounding box of area on map occupied by location.
 
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.

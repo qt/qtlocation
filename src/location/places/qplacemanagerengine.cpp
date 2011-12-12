@@ -254,14 +254,14 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 /*!
     \fn QList<QLocale> QPlaceManagerEngine::locales() const
 
-    Returns a list of prefered locales. The locales are used as a hint to the manager engine for what language
+    Returns a list of preferred locales. The locales are used as a hint to the manager engine for what language
     place and category details should be returned in.
 
     If the first specified locale cannot be accommodated, the manager engine falls back to the next and so forth.
 
     Support for locales may vary from provider to provider.  For those that do support it,
     by default, the global default locale is set as the manager engine's only locale.  If the
-    manager engine has no locales assigned to it, it impliclty uses the global default locale.
+    manager engine has no locales assigned to it, it implicitly uses the global default locale.
     For engines that do not support locales, the locale list is always empty.
 */
 

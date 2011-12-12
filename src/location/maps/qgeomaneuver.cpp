@@ -129,7 +129,7 @@ QGeoManeuver::QGeoManeuver(const QGeoManeuver &other)
     : d_ptr(other.d_ptr) {}
 
 /*!
-    Destroys this manevuer object.
+    Destroys this maneuver object.
 */
 QGeoManeuver::~QGeoManeuver() {}
 
@@ -245,7 +245,7 @@ int QGeoManeuver::timeToNextInstruction() const
 }
 
 /*!
-    Sets the distance, in metres, between the point at which the associated
+    Sets the distance, in meters, between the point at which the associated
     instruction was issued and the point that the next instruction should be
     issued to \a distance.
 */
@@ -256,7 +256,7 @@ void QGeoManeuver::setDistanceToNextInstruction(qreal distance)
 }
 
 /*!
-    Returns the distance, in metres, between the point at which the associated
+    Returns the distance, in meters, between the point at which the associated
     instruction was issued and the point that the next instruction should be
     issued.
 */

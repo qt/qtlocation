@@ -178,7 +178,7 @@ int QGeoRouteSegment::travelTime() const
 }
 
 /*!
-    Sets the distance covered by this segment of the route, in metres, to \a distance.
+    Sets the distance covered by this segment of the route, in meters, to \a distance.
 */
 void QGeoRouteSegment::setDistance(qreal distance)
 {
@@ -187,7 +187,7 @@ void QGeoRouteSegment::setDistance(qreal distance)
 }
 
 /*!
-    Returns the distance covered by this segment of the route, in metres.
+    Returns the distance covered by this segment of the route, in meters.
 */
 qreal QGeoRouteSegment::distance() const
 {
@@ -219,7 +219,7 @@ QList<QGeoCoordinate> QGeoRouteSegment::path() const
 }
 
 /*!
-    Sets the maneuver for this route segement to \a maneuver.
+    Sets the maneuver for this route segment to \a maneuver.
 */
 void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
 {
@@ -228,7 +228,7 @@ void QGeoRouteSegment::setManeuver(const QGeoManeuver &maneuver)
 }
 
 /*!
-    Returns the manevuer for this route segment.
+    Returns the maneuver for this route segment.
 
     Will return an invalid QGeoManeuver if no information has been attached
     to the endpoint of this route segment.

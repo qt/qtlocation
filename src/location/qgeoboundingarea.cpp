@@ -56,7 +56,7 @@ QT_BEGIN_NAMESPACE
 
     For the sake of consistency, subclasses should describe the specific
     details of the associated areas in terms of QGeoCoordinate instances
-    and distances in metres.
+    and distances in meters.
 */
 
 /*!

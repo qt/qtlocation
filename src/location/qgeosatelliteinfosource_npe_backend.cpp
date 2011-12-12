@@ -162,7 +162,7 @@ void QGeoSatelliteInfoSourceNpeBackend::requestUpdate(int timeout)
         int minimumInterval = minimumUpdateInterval();
         if (timeout == 0)
             timeout = 5*minimumInterval; // set reasonable timeout if provided timeout is 0
-        // do not start request if timeout can not be fullfilled by the source
+        // do not start request if timeout can not be fulfilled by the source
         if (timeout < minimumInterval) {
             emit requestTimeout();
             return;

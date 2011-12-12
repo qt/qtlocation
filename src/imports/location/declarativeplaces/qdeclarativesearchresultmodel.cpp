@@ -275,7 +275,7 @@ void QDeclarativeSearchResultModel::categories_clear(QDeclarativeListProperty<QD
 
     This property holds a relevance hint used in the search query.  The hint is given to the
     provider to help but not dictate the ranking of results.  For example, the distance hint may
-    give closer places a higher ranking but it does not neccessarily mean the results will be
+    give closer places a higher ranking but it does not necessarily mean the results will be
     strictly ordered according to distance. A provider may ignore the hint altogether.
 
     \table

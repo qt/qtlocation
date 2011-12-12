@@ -109,7 +109,7 @@ QGeoCoordinate QDeclarativeCoordinate::coordinate() const
 /*!
     \qmlproperty double Coordinate::altitude
 
-    This property holds the value of altitude (metres above sea level).
+    This property holds the value of altitude (meters above sea level).
     If the property has not been set, its default value is zero.
 
 */
