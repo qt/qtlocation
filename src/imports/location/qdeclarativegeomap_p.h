@@ -106,6 +106,7 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(QDeclarativeGeoMapType* activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
     Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(QList<QObject*> mapItems READ mapItems NOTIFY mapItemsChanged)
     // Tilt and bearing are not part of supported API
     Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
@@ -148,26 +149,18 @@ public:
 
     QDeclarativeListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
-    // do we need this?
-    //QDeclarativeListProperty<QDeclarativeGeoMapItemBase> items();
-
     Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItemBase *item);
     Q_INVOKABLE void addMapItem(QDeclarativeGeoMapItemBase *item);
     Q_INVOKABLE void clearMapItems();
+    QList<QObject*> mapItems();
 
     Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
     Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
 
-    // This function is strictly for testing purposes and may be removed at
-    // any time without any notice (hence also the obscure naming to avoid
-    // accidental usage):
-    Q_INVOKABLE int testGetDeclarativeMapItemCount();
     // callback for map mouse areas
     bool mouseEvent(QMouseEvent* event);
 
-    QDeclarativeGeoMapPinchArea* pinch() {
-        return pinchArea_;
-    }
+    QDeclarativeGeoMapPinchArea* pinch();
 
 public Q_SLOTS:
     void pan(int dx, int dy);
@@ -192,13 +185,13 @@ Q_SIGNALS:
     void supportedMapTypesChanged();
     void minimumZoomLevelChanged();
     void maximumZoomLevelChanged();
+    void mapItemsChanged();
 
 private Q_SLOTS:
     void updateMapDisplay(const QRectF& target);
     void centerLatitudeChanged(double latitude);
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
-    void mapItemDestroyed(QObject* item);
     void mappingManagerInitialized();
     void mapZoomLevelChanged(qreal zoom);
     void mapTiltChanged(qreal tilt);
@@ -238,7 +231,7 @@ private:
     TileCache *tileCache_;
     Map *map_;
 
-    QList<QDeclarativeGeoMapItemBase*> mapItems_;
+    QList<QObject*> mapItems_;
 
     QMutex updateMutex_;
     friend class QDeclarativeGeoMapItem;

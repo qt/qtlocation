@@ -56,6 +56,9 @@ QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
 
 QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
 {
+    //qDebug() << __FUNCTION__ << objectName() << quickMap();
+    if (quickMap_)
+        quickMap_->removeMapItem(this);
 }
 
 void QDeclarativeGeoMapItemBase::mapChanged()

@@ -71,8 +71,6 @@
 #include <QtQuick/QSGEngine>
 #include <QtGui/QGuiApplication>
 
-#include <QDebug>
-
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -140,21 +138,11 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
 
 QDeclarativeGeoMap::~QDeclarativeGeoMap()
 {
-    // TODO we do not clear the map items atm
-//    if (mapData_) {
-//        qDeleteAll(mapViews_);
-//        // Remove map objects, we can't allow MapItem
-//        // to delete the objects because they are owned
-//        // by the declarative elements.
-//        QList<QDeclarativeGeoMapItem*> objects = MapItems_;
-//        for (int i = 0; i < objects.size(); ++i) {
-//            mapData_->removeMapItem(objects.at(i)->MapItem());
-//        }
-//        delete mapData_;
-//    }
-    foreach (QDeclarativeGeoMapItemBase* item, mapItems_) {
-        item->setMap(0,0);
-    }
+    if (!mapViews_.isEmpty())
+        qDeleteAll(mapViews_);
+    // remove any map items associations
+    for (int i = 0; i < mapItems_.count(); ++i)
+        qobject_cast<QDeclarativeGeoMapItemBase*>(mapItems_.at(i))->setMap(0,0);
     mapItems_.clear();
 }
 
@@ -199,6 +187,10 @@ bool QDeclarativeGeoMap::mouseEvent(QMouseEvent* event)
     default:
         return false;
     }
+}
+
+QDeclarativeGeoMapPinchArea* QDeclarativeGeoMap::pinch() {
+    return pinchArea_;
 }
 
 QDeclarativeGeoMapFlickable* QDeclarativeGeoMap::flick()
@@ -351,6 +343,7 @@ void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
        }
 
     pinchArea_->zoomLevelLimits(mappingManager_->minimumZoomLevel(), mappingManager_->maximumZoomLevel());
+
     if (!mappingManager_->isInitialized())
         connect(mappingManager_, SIGNAL(initialized()), this, SLOT(mappingManagerInitialized()));
     else
@@ -794,14 +787,31 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
 {
     QLOC_TRACE0;
-    if (!item || mapItems_.contains(item))
+    if (!item || item->quickMap())
         return;
     updateMutex_.lock();
     item->setParentItem(this);
     item->setMap(this, map_);
     mapItems_.append(item);
-    connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(mapItemDestroyed(QObject*)));
+    emit mapItemsChanged();
     updateMutex_.unlock();
+}
+
+/*!
+    \qmlmethod QtLocation5::Map::mapItems()
+
+    Returns the list of all map items in no particular order.
+    These items include items that were declared statically as part of
+    the element declaration, as well as dynamical items (\l addMapItem,
+    \l MapItemView).
+
+    \snippet TODO
+
+*/
+
+QList<QObject*> QDeclarativeGeoMap::mapItems()
+{
+    return mapItems_;
 }
 
 void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
@@ -814,27 +824,25 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
     updateMutex_.lock();
     item->setParentItem(0);
     item->setMap(0, 0);
-    // stop listening to destroyed()
-    item->disconnect(this);
     // these can be optmized for perf, as we already check the 'contains' above
     mapItems_.removeOne(item);
+    emit mapItemsChanged();
     updateMutex_.unlock();
 }
 
 void QDeclarativeGeoMap::clearMapItems()
 {
+    QLOC_TRACE0;
     if (mapItems_.isEmpty())
         return;
     updateMutex_.lock();
+    for (int i = 0; i < mapItems_.count(); ++i) {
+        qobject_cast<QDeclarativeGeoMapItemBase*>(mapItems_.at(i))->setParentItem(0);
+        qobject_cast<QDeclarativeGeoMapItemBase*>(mapItems_.at(i))->setMap(0, 0);
+    }
     mapItems_.clear();
+    emit mapItemsChanged();
     updateMutex_.unlock();
-}
-
-void QDeclarativeGeoMap::mapItemDestroyed(QObject* item)
-{
-    QDeclarativeGeoMapItemBase* mapItem = qobject_cast<QDeclarativeGeoMapItemBase*>(item);
-    if (mapItem)
-        removeMapItem(mapItem);
 }
 
 void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
@@ -862,12 +870,6 @@ QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
     \snippet TODO
 
 */
-
-// This function is strictly for testing purposes
-int QDeclarativeGeoMap::testGetDeclarativeMapItemCount()
-{
-    return 0;
-}
 
 #include "moc_qdeclarativegeomap_p.cpp"
 

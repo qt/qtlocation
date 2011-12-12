@@ -196,6 +196,11 @@ void QDeclarativeLocationTestModel::repopulate()
     endResetModel();
 }
 
+void QDeclarativeLocationTestModel::update()
+{
+    scheduleRepopulation();
+}
+
 void QDeclarativeLocationTestModel::reset()
 {
     if (timer_.isActive())

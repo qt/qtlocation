@@ -52,17 +52,58 @@ Item {
     Plugin { id: testPlugin; name : "nokia"; PluginParameter {name: "mapping.host"; value: "for.nonexistent"}}
     Coordinate{ id: mapDefaultCenter; latitude: 10; longitude: 30}
 
-    TestCase {
-        name: "MapItemView"
-        function test_todo() {
+    Map {
+        id: map
+        objectName: 'staticallyDeclaredMap'
+        center: mapDefaultCenter;
+        plugin: testPlugin;
+        width: 100
+        height: 100
+        zoomLevel: 2
+        MapCircle {
+            id: prepopulatedCircle
+            objectName: 'prepopulatedCircle'
+            center: mapDefaultCenter;
+            radius: 100
         }
     }
 
-    /* TODO - when we have map items
+    Map {
+        id: map3
+        objectName: 'staticallyDeclaredMapWithView'
+        center: mapDefaultCenter;
+        plugin: testPlugin;
+        width: 100
+        height: 100
+        zoomLevel: 2
+        MapItemView {
+            id: theItemView3
+            model: testModel3
+            delegate: Component {
+                MapCircle {
+                    radius: 1500000
+                    center: Coordinate {
+                        latitude: modeldata.coordinate.latitude;
+                        longitude: modeldata.coordinate.longitude;
+                    }
+                }
+            }
+        }
+    }
 
     MapCircle {
-        objectName: "externalCircle"
         id: externalCircle
+        objectName: 'externalCircle'
+        radius: 200
+        center: mapDefaultCenter
+    }
+
+    SignalSpy {id: mapItemSpy; target: map; signalName: 'mapItemsChanged'}
+
+
+    MapCircle {
+        objectName: "externalCircle2"
+        id: externalCircle2
         radius: 2000000
         center: mapDefaultCenter
     }
@@ -77,16 +118,15 @@ Item {
         id: externalPolygon
     }
 
-    MapText {
-        id: externalText
-    }
-
-    MapImage {
-        id: externalImage
-    }
-
     MapPolyline {
+        objectName: 'externalPolyline'
         id: externalPolyline
+    }
+
+    MapQuickItem {
+        objectName: 'externalQuickItem'
+        id: externalQuickItem
+        sourceItem: Rectangle {}
     }
 
     TestModel {
@@ -103,16 +143,49 @@ Item {
         delay: 0
     }
 
+    TestModel {
+        id: testModel3
+        datatype: 'coordinate'
+        datacount: 0
+        delay: 0
+    }
+
+    Plugin {
+        id: testPlugin_immediate;
+        name: "qmlgeo.test.plugin"
+        parameters: [
+            // Parms to guide the test plugin
+            PluginParameter { name: "gc_supported"; value: true},
+            PluginParameter { name: "gc_finishRequestImmediately"; value: true},
+            PluginParameter { name: "gc_validateWellKnownValues"; value: true}
+        ]
+    }
+    RouteQuery {id: routeQuery;
+        waypoints: [
+            Coordinate {id: fcoordinate1; latitude: 60; longitude: 60},
+            Coordinate {id: fcoordinate2; latitude: 61; longitude: 62},
+            Coordinate {id: fcoordinate3; latitude: 63; longitude: 64},
+            Coordinate {id: fcoordinate4; latitude: 65; longitude: 66},
+            Coordinate {id: fcoordinate5; latitude: 67; longitude: 68}
+        ]
+    }
+
+    RouteModel {id: routeModel; plugin: testPlugin_immediate; query: routeQuery }
+    SignalSpy {id: mapItemsChangedSpy; target: mapForViewWithoutPlugin; signalName: "mapItemsChanged"}
+
     Map {
-        id: mapWithPlugin; center: mapDefaultCenter; plugin: testPlugin;
-        anchors.fill: parent; size.width: parent.width; size.height: parent.height; zoomLevel: 2
+        id: mapForView;
+        center: mapDefaultCenter;
+        plugin: testPlugin;
+        anchors.fill: parent;
+        zoomLevel: 2
         MapCircle {
             id: internalCircle
             radius: 2000000
             center: mapDefaultCenter
         }
         MapItemView {
-            id: theObjectView
+            id: theItemView
             model: testModel
             delegate: Component {
                 MapCircle {
@@ -127,15 +200,17 @@ Item {
     }
 
     Map {
-        id: mapWithoutPlugin; center: mapDefaultCenter;
-        anchors.fill: parent; size.width: parent.width; size.height: parent.height; zoomLevel: 2
+        id: mapForViewWithoutPlugin;
+        center: mapDefaultCenter;
+        anchors.fill: parent;
+        zoomLevel: 2
         MapCircle {
             id: internalCircle2
             radius: 2000000
             center: mapDefaultCenter
         }
         MapItemView {
-            id: theObjectView2
+            id: theItemView2
             model: testModel
             delegate: Component {
                 MapCircle {
@@ -148,7 +223,7 @@ Item {
             }
         }
         MapItemView {
-            id: routeObjectView
+            id: routeItemView
             model: routeModel
             delegate: Component {
                 MapRoute {
@@ -159,166 +234,212 @@ Item {
     }
 
     TestCase {
-        name: "MapItemView"
-        function test_a_add_and_remove() {
-            // Basic adding and removing of static object
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 8)
-            mapWithPlugin.addMapObject(internalCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 8)
-            mapWithPlugin.removeMapObject(internalCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
-            mapWithPlugin.removeMapObject(internalCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
-            // Basic adding and removing of dynamic object
-            var dynamicCircle = Qt.createQmlObject( "import QtQuick 2.0; import QtLocation 5.0; MapCircle {radius: 4000; center: mapDefaultCenter}", mapWithPlugin, "");
-            mapWithPlugin.addMapObject(dynamicCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 8)
-            mapWithPlugin.removeMapObject(dynamicCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
-            mapWithPlugin.removeMapObject(dynamicCircle)
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
+        name: "MapItem"
+        when: windowShown
+        function clear_data() {
+            mapItemSpy.clear()
         }
 
+        function test_aaa_basic_add_remove() { // aaa to ensure execution first
+            clear_data()
+            compare(map.mapItems.length, 1)
+            compare(map.mapItems[0], prepopulatedCircle)
+            compare(mapItemSpy.count, 0)
+            // nonexistent
+            map.removeMapItem(externalCircle)
+            compare(mapItemSpy.count, 0)
+            compare(map.mapItems.length, 1)
+            compare(map.mapItems[0], prepopulatedCircle)
+            // real
+            map.removeMapItem(prepopulatedCircle)
+            compare(mapItemSpy.count, 1)
+            compare(map.mapItems.length, 0)
+            map.addMapItem(externalCircle)
+            map.addMapItem(prepopulatedCircle)
+            compare(mapItemSpy.count, 3)
+            compare(map.mapItems.length, 2)
+            // same again
+            map.addMapItem(prepopulatedCircle)
+            compare(mapItemSpy.count, 3)
+            compare(map.mapItems.length, 2)
+            compare(map.mapItems[0], externalCircle)
+            compare(map.mapItems[1], prepopulatedCircle)
+            map.removeMapItem(externalCircle)
+            compare(map.mapItems[0], prepopulatedCircle)
+            compare(mapItemSpy.count, 4)
+            compare(map.mapItems.length, 1)
+            map.clearMapItems()
+            compare(mapItemSpy.count, 5)
+            compare(map.mapItems.length, 0)
+            // empty map, do not crash
+            map.clearMapItems()
+            compare(mapItemSpy.count, 5)
+            compare(map.mapItems.length, 0)
+        }
+
+        function test_dynamic_map_and_items() {
+            clear_data();
+            // basic create-destroy without items, mustn't crash
+            var dynamicMap = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; Map { x:0; y:0; objectName: \'dynomik map\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
+            verify(dynamicMap !== null)
+            dynamicMap.destroy(1)
+            wait(5)
+
+            // add rm add, destroy with item on it
+            dynamicMap = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; Map { x:0; y:0; objectName: \'dynomik map\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
+            verify(dynamicMap !== null)
+            dynamicMap.addMapItem(externalCircle);
+            compare(dynamicMap.mapItems.length, 1)
+            dynamicMap.removeMapItem(externalCircle);
+            compare(dynamicMap.mapItems.length, 0)
+            dynamicMap.addMapItem(externalCircle);
+            compare(dynamicMap.mapItems.length, 1)
+            dynamicMap.destroy(1)
+            wait(5)
+
+            // try adding same item to two maps, will not be allowed
+            var dynamicMap2 = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; Map { x:0; y:0; objectName: \'dynomik map2\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
+            dynamicMap = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; Map { x:0; y:0; objectName: \'dynomik map\'; width: masterItem.width; height: masterItem.height; plugin: testPlugin} ', masterItem, "dynamicCreationErrors" );
+            verify(dynamicMap !== null)
+            verify(dynamicMap2 !== null)
+            compare(dynamicMap.mapItems.length, 0)
+            dynamicMap.addMapItem(externalCircle);
+            compare(dynamicMap.mapItems.length, 1)
+            dynamicMap2.addMapItem(externalCircle);
+            compare(dynamicMap2.mapItems.length, 0)
+
+            // create and destroy a dynamic item that is in the map
+            var dynamicCircle = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; MapCircle { objectName: \'dynamic circle 1\'; center: Coordinate { latitude: 5; longitude: 5 } radius: 15 } ', masterItem, "dynamicCreationErrors" );
+            verify (dynamicCircle !== null)
+            compare(map.mapItems.length, 0)
+            map.addMapItem(dynamicCircle)
+            compare(mapItemSpy.count, 1)
+            compare(map.mapItems.length, 1)
+            dynamicCircle.destroy(1)
+            tryCompare(mapItemSpy, "count", 2)
+            compare(map.mapItems.length, 0)
+
+            // leave one map item, will be destroyed at the end of the case
+            dynamicMap.addMapItem(externalCircle);
+            compare(dynamicMap.mapItems.length, 1)
+
+            // leave a handful of item from model to the map and let it destroy
+            compare(map3.mapItems.length, 0)
+            testModel3.datacount = 4
+            testModel3.update()
+            compare(map3.mapItems.length, 4)
+        }
+
+        function test_add_and_remove_with_view() {
+            // Basic adding and removing of static object
+            compare(mapForView.mapItems.length, 8) // 1 declared and 7 from model
+            mapForView.addMapItem(internalCircle)
+            compare(mapForView.mapItems.length, 8)
+            mapForView.removeMapItem(internalCircle)
+            compare(mapForView.mapItems.length, 7)
+            mapForView.removeMapItem(internalCircle)
+            compare(mapForView.mapItems.length, 7)
+            // Basic adding and removing of dynamic object
+            var dynamicCircle = Qt.createQmlObject( "import QtQuick 2.0; import QtLocation 5.0; MapCircle {radius: 4000; center: mapDefaultCenter}", map, "");
+            mapForView.addMapItem(dynamicCircle)
+            compare(mapForView.mapItems.length, 8)
+            mapForView.removeMapItem(dynamicCircle)
+            compare(mapForView.mapItems.length, 7)
+            mapForView.removeMapItem(dynamicCircle)
+            compare(mapForView.mapItems.length, 7)
+        }
         SignalSpy {id: model1Spy; target: testModel; signalName: "modelChanged"}
         SignalSpy {id: model2Spy; target: testModel2; signalName: "modelChanged"}
-        function test_b_model_change() {
+        function test_model_change() {
             // Change the model of an MapItemView on the fly
             // and verify that object counts change accordingly.
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 7)
+            testModel.datacount = 7
+            testModel.update()
+            compare(mapForView.mapItems.length, 7)
             testModel.datacount += 2
             testModel2.datacount += 1
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 9)
-            theObjectView.model = testModel
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 9)
-            theObjectView.model = testModel2
-            compare(mapWithPlugin.testGetDeclarativeMapObjectCount(), 4)
+            compare(mapForView.mapItems.length, 9)
+            theItemView.model = testModel
+            compare(mapForView.mapItems.length, 9)
+            theItemView.model = testModel2
+            compare(mapForView.mapItems.length, 4)
         }
 
-        SignalSpy {id: pluginChangedSpy; target: mapWithoutPlugin; signalName: "pluginChanged"}
-        function test_c_plugin_set_later() {
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0)
-            mapWithoutPlugin.plugin = testPlugin
+        SignalSpy {id: pluginChangedSpy; target: mapForViewWithoutPlugin; signalName: "pluginChanged"}
+        function test_plugin_set_later() {
+            testModel.datacount = 7
+            testModel.update()
+            compare(mapForViewWithoutPlugin.mapItems.length, 8) // 7 from testModel, + 1 from mapcircle
+            mapForViewWithoutPlugin.plugin = testPlugin
             tryCompare(pluginChangedSpy, "count", 1, 1000)
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 10) // 9 from testModel, + 1 from mapcircle
-            mapWithoutPlugin.clearMapObjects();
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 9)  // 9 from testModel
+            compare(mapForViewWithoutPlugin.mapItems.length, 8)
+            mapForViewWithoutPlugin.clearMapItems();
+            compare(mapForViewWithoutPlugin.mapItems.length, 0)
             testModel.reset();
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0)
+            compare(mapForViewWithoutPlugin.mapItems.length, 0)
+            testModel.reset();
+            testModel.datacount = 7
+            testModel.update()
+            compare(mapForViewWithoutPlugin.mapItems.length, 7)
         }
-        Plugin {
-            id: testPlugin_immediate;
-            name: "qmlgeo.test.plugin"
-            parameters: [
-                // Parms to guide the test plugin
-                PluginParameter { name: "gc_supported"; value: true},
-                PluginParameter { name: "gc_finishRequestImmediately"; value: true},
-                PluginParameter { name: "gc_validateWellKnownValues"; value: true}
-            ]
-        }
-        RouteQuery {id: routeQuery;
-            waypoints: [
-                Coordinate {id: fcoordinate1; latitude: 60; longitude: 60},
-                Coordinate {id: fcoordinate2; latitude: 61; longitude: 62},
-                Coordinate {id: fcoordinate3; latitude: 63; longitude: 64},
-                Coordinate {id: fcoordinate4; latitude: 65; longitude: 66},
-                Coordinate {id: fcoordinate5; latitude: 67; longitude: 68}
-            ]
-        }
-        // Test routemodel and object list of map
-        RouteModel {id: routeModel; plugin: testPlugin_immediate; query: routeQuery }
-        SignalSpy {id: objectsChangedSpy; target: mapWithoutPlugin; signalName: "objectsChanged"}
-        function test_d_routemodel() {
-            objectsChangedSpy.clear()
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0) // precondition
-            compare(mapWithoutPlugin.objects.length, 0)
-            compare(objectsChangedSpy.count, 0)
+
+        function test_routemodel() {
+            testModel.reset();
+            mapItemsChangedSpy.clear()
+            compare(mapForViewWithoutPlugin.mapItems.length, 0) // precondition
+            compare(mapItemsChangedSpy.count, 0)
             routeQuery.numberAlternativeRoutes = 4
             routeModel.update();
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 4)
-            compare(mapWithoutPlugin.objects.length, 0)
+            compare(mapForViewWithoutPlugin.mapItems.length, 4)
             routeQuery.numberAlternativeRoutes = 3
             routeModel.update();
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 3)
-            compare(mapWithoutPlugin.objects.length, 0)
+            compare(mapForViewWithoutPlugin.mapItems.length, 3)
             routeModel.clear();
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0)
-            compare(mapWithoutPlugin.objects.length, 0)
+            compare(mapForViewWithoutPlugin.mapItems.length, 0)
             routeModel.clear(); // clear empty model
             routeQuery.numberAlternativeRoutes = 3
             routeModel.update();
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 3)
-            compare(mapWithoutPlugin.objects.length, 0)
-            compare(objectsChangedSpy.count, 0)
-            mapWithoutPlugin.addMapObject(externalCircle)
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 4)
-            compare(mapWithoutPlugin.objects.length, 1)
-            compare(objectsChangedSpy.count, 1)
-            compare(mapWithoutPlugin.objects[0], externalCircle)
-            routeModel.reset(); // all map objects based on model will be cleared
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 1)
-            compare(mapWithoutPlugin.objects.length, 1)
-            mapWithoutPlugin.clearMapObjects() // clears objects not stemming from model
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0)
-            compare(mapWithoutPlugin.objects.length, 0)
-            compare(objectsChangedSpy.count, 2)
+            compare(mapForViewWithoutPlugin.mapItems.length, 3)
+            mapForViewWithoutPlugin.addMapItem(externalCircle2)
+            compare(mapForViewWithoutPlugin.mapItems.length, 4)
+            compare(mapForViewWithoutPlugin.mapItems[3], externalCircle2)
+            routeModel.reset();
+            compare(mapForViewWithoutPlugin.mapItems.length, 1)
+            mapForViewWithoutPlugin.clearMapItems()
+            compare(mapForViewWithoutPlugin.mapItems.length, 0)
 
-            // Test the objects list
-            mapWithoutPlugin.addMapObject(externalCircle)
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 1)
-            compare(mapWithoutPlugin.objects.length, 1)
-            compare(objectsChangedSpy.count, 3)
-            compare(mapWithoutPlugin.objects[0], externalCircle)
+            // Test the mapItems list
+            mapForViewWithoutPlugin.addMapItem(externalCircle2)
+            compare(mapForViewWithoutPlugin.mapItems.length, 1)
+            compare(mapForViewWithoutPlugin.mapItems[0], externalCircle2)
 
-            mapWithoutPlugin.addMapObject(externalRectangle)
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 2)
-            compare(mapWithoutPlugin.objects.length, 2)
-            compare(objectsChangedSpy.count, 4)
-            compare(mapWithoutPlugin.objects[1], externalRectangle)
+            mapForViewWithoutPlugin.addMapItem(externalRectangle)
+            compare(mapForViewWithoutPlugin.mapItems.length, 2)
+            compare(mapForViewWithoutPlugin.mapItems[1], externalRectangle)
 
-            mapWithoutPlugin.addMapObject(externalRectangle)
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 2)
-            compare(mapWithoutPlugin.objects.length, 2)
-            compare(objectsChangedSpy.count, 4)
-            compare(mapWithoutPlugin.objects[1], externalRectangle)
+            mapForViewWithoutPlugin.addMapItem(externalRectangle)
+            compare(mapForViewWithoutPlugin.mapItems.length, 2)
+            compare(mapForViewWithoutPlugin.mapItems[1], externalRectangle)
 
-            mapWithoutPlugin.addMapObject(externalPolygon)
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 3)
-            compare(mapWithoutPlugin.objects.length, 3)
-            compare(objectsChangedSpy.count, 5)
-            compare(mapWithoutPlugin.objects[1], externalRectangle)
+            mapForViewWithoutPlugin.addMapItem(externalPolygon)
+            compare(mapForViewWithoutPlugin.mapItems.length, 3)
+            compare(mapForViewWithoutPlugin.mapItems[2], externalPolygon)
 
-            mapWithoutPlugin.removeMapObject(externalCircle)
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 2)
-            compare(mapWithoutPlugin.objects.length, 2)
-            compare(objectsChangedSpy.count, 6)
-            compare(mapWithoutPlugin.objects[0], externalRectangle)
+            mapForViewWithoutPlugin.addMapItem(externalQuickItem)
+            compare(mapForViewWithoutPlugin.mapItems.length, 4)
+            compare(mapForViewWithoutPlugin.mapItems[3], externalQuickItem)
 
-            mapWithoutPlugin.removeMapObject(externalRectangle)
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 1)
-            compare(mapWithoutPlugin.objects.length, 1)
-            compare(objectsChangedSpy.count, 7)
-            compare(mapWithoutPlugin.objects[0], externalPolygon)
+            mapForViewWithoutPlugin.removeMapItem(externalCircle2)
+            compare(mapForViewWithoutPlugin.mapItems.length, 3)
+            compare(mapForViewWithoutPlugin.mapItems[0], externalRectangle)
 
-            mapWithoutPlugin.clearMapObjects()
-            compare(mapWithoutPlugin.testGetDeclarativeMapObjectCount(), 0)
-            compare(mapWithoutPlugin.objects.length, 0)
-            compare(objectsChangedSpy.count, 8)
-        }
-        function test_e_map_objects_on_delete() {
-            // Test that dynamic map & map object creation works
-            var dynamicMap = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; Map {plugin: testPlugin;}", masterItem, "");
-            var dynamicCircle = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; MapCircle {}", masterItem, "");
-            compare (dynamicMap.objects.length, 0)
-            dynamicMap.addMapObject(dynamicCircle)
-            compare (dynamicMap.objects.length, 1)
-            dynamicCircle.destroy(2); wait(100) // circle should remove itself from the map
-            compare (dynamicMap.objects.length, 0)
+            mapForViewWithoutPlugin.removeMapItem(externalRectangle)
+            compare(mapForViewWithoutPlugin.mapItems.length, 2)
+            compare(mapForViewWithoutPlugin.mapItems[0], externalPolygon)
 
-            var dynamicRectangle = Qt.createQmlObject("import QtQuick 2.0; import QtLocation 5.0; MapRectangle {}", masterItem, "");
-            dynamicMap.addMapObject(dynamicRectangle)
-            dynamicMap.destroy(2); wait(100) // must act gracefully although has objects when destroyed
+            mapForViewWithoutPlugin.clearMapItems()
+            compare(mapForViewWithoutPlugin.mapItems.length, 0)
         }
     }
-    */
 }
 

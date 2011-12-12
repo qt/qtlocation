@@ -534,10 +534,9 @@ Rectangle {
             z: 11
             objectName: "3d item"
             coordinate: londonCoordinate
-            sourceItem: Item {//Rectangle {
+            sourceItem: Item {
                 width: 200
                 height: 200
-                //color: Qt.rgba(0, 0, 1, 0)
                 Viewport {
                     width: 200
                     height: 200
@@ -600,9 +599,9 @@ Rectangle {
         }
         */
 
-        /*
+
         MapItemView {
-            id: theObjectView
+            id: theItemView
             model: testModel
             delegate: Component {
                 MapQuickItem {
@@ -637,7 +636,6 @@ Rectangle {
                 }
             }
         }
-        */
 
         // From location.test plugin
         PinchGenerator {
@@ -827,7 +825,7 @@ Rectangle {
         //flick.onMovementEnded: {console.log ('movement ended signal                     M Stop ------------------ ') }
 
         onWheel: {
-            console.log('map wheel event, rotation in degrees: ' + delta/8);
+            //console.log('map wheel event, rotation in degrees: ' + delta/8);
             if (delta > 0) map.zoomLevel += 0.25
             else map.zoomLevel -= 0.25
         }

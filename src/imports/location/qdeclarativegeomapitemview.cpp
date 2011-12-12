@@ -44,7 +44,6 @@
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapitembase_p.h"
 
-#include <QDebug>
 #include <QDeclarativeParserStatus>
 #include <QAbstractItemModel>
 #include <QDeclarativeContext>
@@ -75,10 +74,6 @@ QDeclarativeGeoMapItemView::~QDeclarativeGeoMapItemView()
 {
     if (map_)
         removeInstantiatedItems();
-    // Remove group from map, and items from the group. This is to
-    // prevent their deletion. The items are owned by the
-    // declarative items and are to be deleted by them.
-    // TODO the concept of group objects need to be analyzed - is it needed anymore?
 }
 
 void QDeclarativeGeoMapItemView::componentComplete()

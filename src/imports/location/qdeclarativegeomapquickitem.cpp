@@ -56,7 +56,7 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
     : QDeclarativeGeoMapItemBase(parent),
-      coordinate_(0),
+      coordinate_(&internalCoordinate_),
       sourceItem_(0),
       zoomLevel_(0.0),
       inUpdate_(false),

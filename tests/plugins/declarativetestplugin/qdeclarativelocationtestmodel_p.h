@@ -105,6 +105,7 @@ public:
 
     //Q_INVOKABLE void clear();
     Q_INVOKABLE void reset();
+    Q_INVOKABLE void update();
     //Q_INVOKABLE void reset();
 
 signals:
