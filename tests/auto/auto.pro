@@ -5,6 +5,7 @@ SUBDIRS += qplace \
            qplacecategory \
            qplacecontactdetail \
            qplacecontentrequest \
+           qplacedetailsreply \
            qplaceeditorial \
            qplacemanager \
            qplacemanager_nokia \
