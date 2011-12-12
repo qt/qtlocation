@@ -3,6 +3,7 @@ TEMPLATE = subdirs
 #Place unit tests
 SUBDIRS += qplace \
            qplacecategory \
+           qplacecontactdetail \
            qplacecontentrequest \
            qplaceeditorial \
            qplacemanager \
