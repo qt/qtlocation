@@ -31,9 +31,10 @@ SUBDIRS += geotestplugin \
            qplacesupplier \
            qplacesearchresult \
            declarative_core \
-           declarative_ui \
            qmlinterface \
            maptype
+
+!mac: SUBDIRS += declarative_ui
 
 contains(config_test_jsondb, yes) {
     SUBDIRS += qplacemanager_jsondb
