@@ -451,15 +451,11 @@ QPlaceReply *QDeclarativeSearchResultModel::sendQuery(QPlaceManager *manager,
     return manager->search(request);
 }
 
-void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvider *oldPlugin,
-                                                     QDeclarativeGeoServiceProvider *newPlugin)
+void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvider *plugin)
 {
-    //The purpose of initialization is to connect to the place manager's signals
-    //for place notifications so we can rexecute the query
-
     //disconnect the manager of the old plugin if we have one
-    if (oldPlugin) {
-        QGeoServiceProvider *serviceProvider = oldPlugin->sharedGeoServiceProvider();
+    if (m_plugin) {
+        QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
         if (serviceProvider) {
             QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
@@ -470,8 +466,8 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
     }
 
     //connect to the manager of the new plugin.
-    if (newPlugin) {
-        QGeoServiceProvider *serviceProvider = newPlugin->sharedGeoServiceProvider();
+    if (plugin) {
+        QGeoServiceProvider *serviceProvider = plugin->sharedGeoServiceProvider();
         if (serviceProvider) {
             QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
@@ -480,6 +476,7 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
             }
         }
     }
+    QDeclarativeSearchModelBase::initializePlugin(plugin);
 }
 
 void QDeclarativeSearchResultModel::placeUpdated(const QString &placeId)

@@ -118,20 +118,20 @@ signals:
     void statusChanged();
 
 protected:
-    virtual void initializePlugin(QDeclarativeGeoServiceProvider *oldPlugin,
-                                  QDeclarativeGeoServiceProvider *newPlugin);
+    virtual void initializePlugin(QDeclarativeGeoServiceProvider *plugin);
 
 private slots:
     void queryFinished();
     void queryError(QPlaceReply::Error error, const QString &errorString);
+    void pluginNameChanged();
 
 protected:
     virtual QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request) = 0;
 
     QPlaceSearchRequest m_request;
+    QDeclarativeGeoServiceProvider *m_plugin;
 
 private:
-    QDeclarativeGeoServiceProvider *m_plugin;
     QPlaceReply *m_reply;
 
     QDeclarativeGeoBoundingArea *m_searchArea;

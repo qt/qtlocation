@@ -123,8 +123,7 @@ signals:
 
 protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
-    virtual void initializePlugin(QDeclarativeGeoServiceProvider *oldPlugin,
-                                  QDeclarativeGeoServiceProvider *newPlugin);
+    virtual void initializePlugin(QDeclarativeGeoServiceProvider *plugin);
 
 private slots:
     void placeUpdated(const QString &placeId);

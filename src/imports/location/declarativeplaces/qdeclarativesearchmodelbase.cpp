@@ -68,18 +68,10 @@ void QDeclarativeSearchModelBase::setPlugin(QDeclarativeGeoServiceProvider *plug
     if (m_plugin == plugin)
         return;
 
-    initializePlugin(m_plugin, plugin);
+    initializePlugin(plugin);
 
-    reset(); // reset the model
-    m_plugin = plugin;
     if (m_complete)
         emit pluginChanged();
-    QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support places.");
-        return;
-    }
 }
 
 QDeclarativeGeoBoundingArea *QDeclarativeSearchModelBase::searchArea() const
@@ -211,11 +203,15 @@ void QDeclarativeSearchModelBase::componentComplete()
     m_complete = true;
 }
 
-void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvider *oldPlugin,
-                                                   QDeclarativeGeoServiceProvider *newPlugin)
+void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvider *plugin)
 {
-    Q_UNUSED(oldPlugin);
-    Q_UNUSED(newPlugin);
+    if (plugin != m_plugin) {
+        disconnect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(pluginNameChanged()));
+        connect(plugin, SIGNAL(nameChanged(QString)), this, SLOT(pluginNameChanged()));
+        m_plugin = plugin;
+    }
+
+    reset(); // reset the model
 }
 
 void QDeclarativeSearchModelBase::queryFinished()
@@ -243,4 +239,9 @@ void QDeclarativeSearchModelBase::queryError(QPlaceReply::Error error, const QSt
     Q_UNUSED(error)
 
     m_errorString = errorString;
+}
+
+void QDeclarativeSearchModelBase::pluginNameChanged()
+{
+    initializePlugin(m_plugin);
 }
