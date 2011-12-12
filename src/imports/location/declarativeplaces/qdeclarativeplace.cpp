@@ -632,7 +632,6 @@ void QDeclarativePlace::finished()
                 setPlaceId(idReply->id());
                 break;
             case QPlaceIdReply::RemovePlace:
-                setPlaceId(QString());
                 break;
             default:
                 //Other operation types shouldn't ever be received.

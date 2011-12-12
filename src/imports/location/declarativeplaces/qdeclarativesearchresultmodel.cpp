@@ -463,9 +463,8 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
         if (serviceProvider) {
             QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
-                disconnect(placeManager, SIGNAL(placeAdded(QString)), this, SLOT(execute()));
-                disconnect(placeManager, SIGNAL(placeUpdated(QString)), this, SLOT(execute()));
-                disconnect(placeManager, SIGNAL(placeRemoved(QString)), this, SLOT(execute()));
+                disconnect(placeManager, SIGNAL(placeUpdated(QString)), this, SLOT(placeUpdated(QString)));
+                disconnect(placeManager, SIGNAL(placeRemoved(QString)), this, SLOT(placeRemoved(QString)));
             }
         }
     }
@@ -476,10 +475,47 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
         if (serviceProvider) {
             QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
-                connect(placeManager, SIGNAL(placeAdded(QString)), this, SLOT(execute()));
-                connect(placeManager, SIGNAL(placeUpdated(QString)), this, SLOT(execute()));
-                connect(placeManager, SIGNAL(placeRemoved(QString)), this, SLOT(execute()));
+                connect(placeManager, SIGNAL(placeUpdated(QString)), this, SLOT(placeUpdated(QString)));
+                connect(placeManager, SIGNAL(placeRemoved(QString)), this, SLOT(placeRemoved(QString)));
             }
         }
     }
 }
+
+void QDeclarativeSearchResultModel::placeUpdated(const QString &placeId)
+{
+    int row = getRow(placeId);
+    if (row < 0 || row > m_places.count())
+        return;
+
+    if (m_places.at(row))
+        m_places.at(row)->getDetails();
+}
+
+void QDeclarativeSearchResultModel::placeRemoved(const QString &placeId)
+{
+    int row = getRow(placeId);
+    if (row < 0 || row > m_places.count())
+        return;
+
+    beginRemoveRows(QModelIndex(), row, row);
+    delete m_places.at(row);
+    m_places.removeAt(row);
+    m_results.removeAt(row);
+    endRemoveRows();
+
+    emit rowCountChanged();
+}
+
+int QDeclarativeSearchResultModel::getRow(const QString &placeId) const
+{
+    for (int i = 0; i < m_places.count(); ++i) {
+        if (!m_places.at(i))
+            continue;
+        else if (m_places.at(i)->placeId() == placeId)
+            return i;
+    }
+
+    return -1;
+}
+

@@ -601,10 +601,6 @@ TestCase {
 
         compare(removePlace.status, Place.Ready);
 
-        verify(removePlace.placeId === "");
-
-        removePlace.placeId = savePlace.placeId;
-
         removePlace.getDetails();
 
         compare(removePlace.status, Place.Fetching);

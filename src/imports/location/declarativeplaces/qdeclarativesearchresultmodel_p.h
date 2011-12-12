@@ -126,7 +126,12 @@ protected:
     virtual void initializePlugin(QDeclarativeGeoServiceProvider *oldPlugin,
                                   QDeclarativeGeoServiceProvider *newPlugin);
 
+private slots:
+    void placeUpdated(const QString &placeId);
+    void placeRemoved(const QString &placeId);
+
 private:
+    int getRow(const QString &placeId) const;
     QList<QPlaceSearchResult> m_results;
     QList<QDeclarativePlace *> m_places;
     QList<QDeclarativeCategory*> m_categories;
