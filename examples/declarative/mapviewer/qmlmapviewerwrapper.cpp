@@ -37,15 +37,14 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include <QtCore/QStringList>
+#include <QtCore/QTextStream>
 #include <QtGui/QGuiApplication>
-#include <QtDeclarative/QQuickView>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
-#include <QtDeclarative/QQuickItem>
-#include <QStringList>
-#include <QTextStream>
-
-
+#include <QtQuick/QQuickView>
+#include <QtQuick/QQuickItem>
 
 static bool parseArgs(QStringList& args, QVariantMap& parameters)
 {

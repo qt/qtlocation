@@ -44,13 +44,13 @@
 
 #include <QPointer>
 #include <QTouchEvent>
-#include <QtDeclarative/qquickitem.h>
+#include <QtQuick/QQuickItem>
 #include <QtCore/QMutex>
 
 #include <QtCore/QCoreApplication>
 
-#include "qsgtexture.h"
-#include "qquickpainteditem.h"
+#include <QtQuick/QSGTexture>
+#include <QtQuick/QQuickPaintedItem>
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"

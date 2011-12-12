@@ -1,7 +1,7 @@
 TARGET = qml_location_places
 TEMPLATE = app
 
-QT += declarative network
+QT += declarative quick network
 SOURCES += qmlplaceswrapper.cpp
 
 RESOURCES += \

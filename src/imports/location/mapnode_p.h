@@ -53,10 +53,10 @@
 // We mean it.
 //
 
-#include <QSGGeometryNode>
-#include "qsgtexturematerial.h"
-#include "qglframebufferobjectsurface.h"
-#include <private/qsgtexture_p.h>
+#include <QtQuick/QSGNode>
+#include <QtQuick/QSGTextureMaterial>
+#include <QtQuick/private/qsgtexture_p.h>
+#include <Qt3D/QGLFramebufferObjectSurface>
 
 QT_BEGIN_NAMESPACE
 

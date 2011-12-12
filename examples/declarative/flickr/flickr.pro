@@ -1,7 +1,7 @@
 TEMPLATE=app
 TARGET = qml_location_flickr
 
-QT += declarative network location qtquick1
+QT += declarative quick network location
 SOURCES += qmllocationflickr.cpp
 
 RESOURCES += \

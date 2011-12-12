@@ -46,8 +46,8 @@
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapmouseevent_p.h"
 
-#include <QtDeclarative/QQuickItem>
-#include <QtDeclarative/private/qquickmousearea_p.h>
+#include <QtQuick/QQuickItem>
+#include <QtQuick/private/qquickmousearea_p.h>
 
 QT_BEGIN_NAMESPACE
 

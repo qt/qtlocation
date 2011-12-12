@@ -38,13 +38,13 @@
 **
 ****************************************************************************/
 
-#include <QtWidgets/QApplication>
-#include <QtDeclarative/QQuickView>
+#include <QGuiApplication>
+#include <QtQuick/QQuickView>
 #include <QtDeclarative/QDeclarativeEngine>
 
 int main(int argc, char *argv[])
 {
-    QApplication application(argc, argv);
+    QGuiApplication application(argc, argv);
     const QString mainQmlApp = QLatin1String("qrc:///flickr.qml");
     QQuickView view;
     view.setSource(QUrl(mainQmlApp));

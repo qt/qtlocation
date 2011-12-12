@@ -42,8 +42,8 @@
 #ifndef QDECLARATIVEPINCHGENERATOR_H
 #define QDECLARATIVEPINCHGENERATOR_H
 
-#include <QtDeclarative/QQuickItem>
-#include <QQuickCanvas>
+#include <QtQuick/QQuickItem>
+#include <QtQuick/QQuickCanvas>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QTouchEvent>
 #include <QtGui/QKeyEvent>

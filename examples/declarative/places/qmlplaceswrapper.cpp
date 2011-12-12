@@ -38,13 +38,13 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QGuiApplication>
-#include <QtDeclarative/QQuickView>
-#include <QtDeclarative/QDeclarativeEngine>
-#include <QtDeclarative/QDeclarativeContext>
-#include <QtDeclarative/QQuickItem>
 #include <QtCore/QStringList>
 #include <QtCore/QTextStream>
+#include <QtGui/QGuiApplication>
+#include <QtDeclarative/QDeclarativeEngine>
+#include <QtDeclarative/QDeclarativeContext>
+#include <QtQuick/QQuickView>
+#include <QtQuick/QQuickItem>
 
 static bool parseArgs(QStringList& args, QVariantMap& parameters)
 {

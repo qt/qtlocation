@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPITEMBASE_H
 #define QDECLARATIVEGEOMAPITEMBASE_H
 
-#include <QtDeclarative/qquickitem.h>
+#include <QtQuick/QQuickItem>
 
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativecoordinate_p.h"

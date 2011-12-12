@@ -67,8 +67,8 @@
 #include <QDeclarativeContext>
 #include <QtDeclarative/qdeclarativeinfo.h>
 #include <QModelIndex>
-#include <QQuickCanvas>
-#include <QSGEngine>
+#include <QtQuick/QQuickCanvas>
+#include <QtQuick/QSGEngine>
 #include <QtGui/QGuiApplication>
 
 #include <QDebug>
