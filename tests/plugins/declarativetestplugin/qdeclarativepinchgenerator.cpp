@@ -155,13 +155,14 @@ QTouchEvent::TouchPoint QDeclarativePinchGenerator::createTouchPoint(QEvent::Typ
 QTouchEvent::TouchPoint QDeclarativePinchGenerator::convertToPrimary(QTouchEvent::TouchPoint original)
 {
     QTouchEvent::TouchPoint touchPoint;
-    touchPoint.setState(original.state() | Qt::TouchPointPrimary);
+    touchPoint.setState(original.state());
     touchPoint.setId(original.id() + 1);
     touchPoint.setPressure(original.pressure());
     touchPoint.setPos(original.pos());
     touchPoint.setLastPos(original.lastPos());
     touchPoint.setScenePos(original.scenePos());
     touchPoint.setLastScenePos(original.lastScenePos());
+    touchPoint.setFlags(touchPoint.flags() | QTouchEvent::TouchPoint::Primary);
     return touchPoint;
 
 }
