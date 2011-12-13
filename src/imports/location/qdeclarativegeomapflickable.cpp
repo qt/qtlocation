@@ -252,8 +252,10 @@ bool QDeclarativeGeoMapFlickable::mouseMoveEvent(QMouseEvent *event)
     // duration and speed (when mouse is released).
     if (!lastPos_.isNull()) {
         qreal elapsed = qreal(lastPosTime_.elapsed()) / 1000.;
-        if (elapsed <= 0)
+        if (elapsed <= 0) {
+            lastPos_ = event->pos();
             return false;
+        }
         lastPosTime_.restart();
         addVelocitySample(velocityBufferY_, double(dyFromLastPos)/elapsed);
         addVelocitySample(velocityBufferX_, double(dxFromLastPos)/elapsed);
