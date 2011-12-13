@@ -62,6 +62,8 @@ public:
     QDeclarativeGeoMapQuickItem(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapQuickItem();
 
+    virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+
     void setCoordinate(QDeclarativeCoordinate *coordinate);
     QDeclarativeCoordinate* coordinate();
 
@@ -83,18 +85,10 @@ Q_SIGNALS:
     void anchorPointChanged();
     void zoomLevelChanged();
 
-protected:
-    void updateContent();
-    void mapChanged();
-    QPointF contentTopLeftPoint();
-
 protected Q_SLOTS:
-    void updateMapItem();
+    virtual void updateMapItem(bool dirtyGeometry = true);
     // from qquickitem
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
-
-private Q_SLOTS:
-    void coordinateCoordinateChanged(double);
 
 private:
     qreal scaleFactor();

@@ -43,10 +43,13 @@
 #include <QDeclarativeInfo>
 #include <QPainter>
 
-static QPolygonF createPolygon(const Map& map, const QList<QGeoCoordinate> &path, qreal& w,
-                               qreal& h)
+struct Vertex
 {
-    QPolygonF polygon;
+    QVector2D position;
+};
+
+static void updatePolygon(QPolygonF& points,const Map& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
+{
 
     qreal minX, maxX, minY, maxY;
     //TODO: dateline handling
@@ -65,156 +68,104 @@ static QPolygonF createPolygon(const Map& map, const QList<QGeoCoordinate> &path
             maxX = point.x();
             minY = point.y();
             maxY = point.y();
-            polygon.append(point);
         } else {
             minX = qMin(point.x(), minX);
             maxX = qMax(point.x(), maxX);
             minY = qMin(point.y(), minY);
             maxY = qMax(point.y(), maxY);
         }
-
-        polygon.append(point);
+        points.append(point);
     }
 
-    polygon.translate(-minX, -minY);
+    points.translate(-minX, -minY);
 
     w = maxX - minX;
     h = maxY - minY;
-
-    return polygon;
 }
 
 QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
     QDeclarativeGeoMapItemBase(parent),
-    polygonItem_(new PolygonMapPaintedItem(this)),
-    initialized_(false)
+    mapPolygonNode_(0),
+    zoomLevel_(0.0)
 {
-    polygonItem_->setParentItem(this);
+    setFlag(ItemHasContents, true);
 }
 
 QDeclarativePolygonMapItem::~QDeclarativePolygonMapItem()
 {
 }
 
-void QDeclarativePolygonMapItem::componentComplete()
+void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
 {
-    initialized_ = true;
+    QDeclarativeGeoMapItemBase::setMap(quickMap,map);
+    if (map) QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
 }
 
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarativePath()
 {
     return QDeclarativeListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
-            path_at, path_clear);
+                                                            path_at, path_clear);
 }
 
 void QDeclarativePolygonMapItem::path_append(
-    QDeclarativeListProperty<QDeclarativeCoordinate> *property, QDeclarativeCoordinate *coordinate)
+        QDeclarativeListProperty<QDeclarativeCoordinate> *property, QDeclarativeCoordinate *coordinate)
 {
-    QDeclarativePolygonMapItem* item = qobject_cast<QDeclarativePolygonMapItem*>(
-                                            property->object);
-    item->path_.append(coordinate);
-    QList<QGeoCoordinate> p = item->polygonItem_->path();
-    p.append(coordinate->coordinate());
-    item->polygonItem_->setPath(p);
-    if (item->initialized_)
-        emit item->pathChanged();
-    item->updateMapItem();
+    QDeclarativePolygonMapItem* item = qobject_cast<QDeclarativePolygonMapItem*>(property->object);
+    item->coordPath_.append(coordinate);
+    item->path_.append(coordinate->coordinate());
+    item->updateMapItem(true);
+    emit item->pathChanged();
 }
 
 int QDeclarativePolygonMapItem::path_count(
-    QDeclarativeListProperty<QDeclarativeCoordinate> *property)
+        QDeclarativeListProperty<QDeclarativeCoordinate> *property)
 {
-    return qobject_cast<QDeclarativePolygonMapItem*>(property->object)->path_.count();
+    return qobject_cast<QDeclarativePolygonMapItem*>(property->object)->coordPath_.count();
 }
 
 QDeclarativeCoordinate* QDeclarativePolygonMapItem::path_at(
-    QDeclarativeListProperty<QDeclarativeCoordinate> *property, int index)
+        QDeclarativeListProperty<QDeclarativeCoordinate> *property, int index)
 {
-    return qobject_cast<QDeclarativePolygonMapItem*>(property->object)->path_.at(index);
+    return qobject_cast<QDeclarativePolygonMapItem*>(property->object)->coordPath_.at(index);
 }
 
 void QDeclarativePolygonMapItem::path_clear(
-    QDeclarativeListProperty<QDeclarativeCoordinate> *property)
+        QDeclarativeListProperty<QDeclarativeCoordinate> *property)
 {
     QDeclarativePolygonMapItem* item = qobject_cast<QDeclarativePolygonMapItem*>(
-                                            property->object);
-    qDeleteAll(item->path_);
+                property->object);
+    qDeleteAll(item->coordPath_);
+    item->coordPath_.clear();
     item->path_.clear();
-    item->polygonItem_->setPath(QList<QGeoCoordinate>());
-    if (item->initialized_)
-        emit item->pathChanged();
-    item->updateMapItem();
+    item->updateMapItem(true);
+    emit item->pathChanged();
 }
 
 void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate* coordinate)
 {
-    path_.append(coordinate);
-    QList<QGeoCoordinate> path = polygonItem_->path();
-    path.append(coordinate->coordinate());
-    polygonItem_->setPath(path);
-    updateMapItem();
+    coordPath_.append(coordinate);
+    path_.append(coordinate->coordinate());
+    updateMapItem(true);
     emit pathChanged();
 }
 
 void QDeclarativePolygonMapItem::removeCoordinate(QDeclarativeCoordinate* coordinate)
 {
-    int index = path_.lastIndexOf(coordinate);
+    int index = coordPath_.lastIndexOf(coordinate);
 
     if (index == -1) {
         qmlInfo(this) << tr("Coordinate does not belong to PolygonMapItem.");
         return;
     }
 
-    QList<QGeoCoordinate> path = polygonItem_->path();
-
-    if (path.count() < index + 1) {
+    if (path_.count() < index + 1) {
         qmlInfo(this) << tr("Coordinate does not belong to PolygonMapItem.");
         return;
     }
-    path.removeAt(index);
-    polygonItem_->setPath(path);
+    coordPath_.removeAt(index);
     path_.removeAt(index);
-    updateMapItem();
+    updateMapItem(true);
     emit pathChanged();
-}
-
-void QDeclarativePolygonMapItem::updateContent()
-{
-    polygonItem_->updateGeometry();
-    setWidth(polygonItem_->width());
-    setHeight(polygonItem_->height());
-}
-
-QPointF QDeclarativePolygonMapItem::contentTopLeftPoint()
-{
-    return map_->coordinateToScreenPosition(
-                polygonItem_->quickItemCoordinate(), false) - polygonItem_->quickItemAnchorPoint();
-}
-
-void QDeclarativePolygonMapItem::mapChanged()
-{
-    polygonItem_->setMap(map_);
-    if (map_) {
-        connect(map_, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
-        // initial update
-        handleCameraDataChanged(map_->cameraData());
-    }
-}
-
-void QDeclarativePolygonMapItem::dragStarted()
-{
-    qmlInfo(this) << "warning: mouse dragging is not currently supported with polygon.";
-}
-
-bool QDeclarativePolygonMapItem::contains(QPointF point)
-{
-    return polygonItem_->contains(point);
-}
-
-void QDeclarativePolygonMapItem::handleCameraDataChanged(const CameraData& cameraData)
-{
-    polygonItem_->setZoomLevel(cameraData.zoomFactor());
-    updateMapItem();
 }
 
 QColor QDeclarativePolygonMapItem::color() const
@@ -228,134 +179,141 @@ void QDeclarativePolygonMapItem::setColor(const QColor &color)
         return;
 
     color_ = color;
-    polygonItem_->setBrush(color);
+    updateMapItem(false);
     emit colorChanged(color_);
+}
+QSGNode* QDeclarativePolygonMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+{
+    Q_UNUSED(data);
+
+    MapPolygonNode *node = static_cast<MapPolygonNode*>(oldNode);
+
+    if (!node) {
+        mapPolygonNode_ = new MapPolygonNode();
+        updateMapItem(true);
+    }
+
+    mapPolygonNode_->update();
+    return mapPolygonNode_;
+}
+
+void
+QDeclarativePolygonMapItem::updateMapItem(bool dirtyGeometry)
+{
+    if (!map() || path_.count() == 0 || !mapPolygonNode_)
+        return;
+
+    mapPolygonNode_->setBrushColor(color_);
+
+    if (dirtyGeometry)
+        mapPolygonNode_->setGeometry(*map(), path_);
+
+    const QSizeF& size = mapPolygonNode_->size();
+
+    setWidth(size.width());
+    setHeight(size.height());
+
+    setPositionOnMap(path_.at(0), mapPolygonNode_->geometry().at(0));
+    update();
+}
+
+void QDeclarativePolygonMapItem::handleCameraDataChanged(const CameraData& cameraData)
+{
+    if (cameraData.zoomFactor() != zoomLevel_) {
+        zoomLevel_ = cameraData.zoomFactor();
+        updateMapItem(true);
+    } else {
+        updateMapItem(false);
+    }
+}
+
+void QDeclarativePolygonMapItem::dragStarted()
+{
+    qmlInfo(this) << "warning: mouse dragging is not currently supported with polygon.";
+}
+
+bool QDeclarativePolygonMapItem::contains(QPointF point)
+{
+    return mapPolygonNode_->contains(point);
 }
 
 //////////////////////////////////////////////////////////////////////
 
-PolygonMapPaintedItem::PolygonMapPaintedItem(QQuickItem *parent) :
-        QQuickPaintedItem(parent), map_(0), zoomLevel_(-1), initialized_(false)
+MapPolygonNode::MapPolygonNode() :
+    fillColor_(Qt::black),
+    borderColor_(Qt::black),
+    geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
 {
-    setAntialiasing(true);
-    connect(this, SIGNAL(xChanged()), this, SLOT(update()));
-    connect(this, SIGNAL(yChanged()), this, SLOT(update()));
+    geometry_.setDrawingMode(GL_POLYGON);
+    QSGGeometryNode::setMaterial(&fill_material_);
+    QSGGeometryNode::setGeometry(&geometry_);
 }
 
-PolygonMapPaintedItem::~PolygonMapPaintedItem()
+MapPolygonNode::~MapPolygonNode()
 {
 }
 
-void PolygonMapPaintedItem::setMap(Map* map)
+void MapPolygonNode::update()
 {
-    map_ = map;
+    //TODO: optimize , perform calculation only if polygon has changed
+    if (polygon_.size()==0) return;
+
+    QSGGeometry *fill = QSGGeometryNode::geometry();
+
+    Q_ASSERT(fill->sizeOfVertex() == sizeof(Vertex));
+
+    int fillVertexCount = 0;
+    //note this will not allocate new buffer if the size has not changed
+    fill->allocate(polygon_.size());
+
+    Vertex *vertices = (Vertex *)fill->vertexData();
+
+    for (int i = 0; i < polygon_.size(); ++i) {
+        vertices[fillVertexCount++].position = QVector2D(polygon_.at(i));
+    }
+
+    Q_ASSERT(fillVertexCount == fill->vertexCount());
+
+    markDirty(DirtyGeometry);
+
+    if (fillColor_ != fill_material_.color()) {
+        fill_material_.setColor(fillColor_);
+        setMaterial(&fill_material_);
+    }
+
+    //TODO: implement me : borders , gradient
 }
 
-Map* PolygonMapPaintedItem::map()
+void MapPolygonNode::setBrushColor(const QColor &color)
 {
-    return map_;
+    fillColor_= color;
 }
 
-void PolygonMapPaintedItem::setZoomLevel(qreal zoomLevel)
+QColor MapPolygonNode::brushColor() const
 {
-    if (zoomLevel_ == zoomLevel)
-        return;
-
-    zoomLevel_ = zoomLevel;
-    dirtyGeometry_ = true;
+    return fillColor_;
 }
 
-qreal PolygonMapPaintedItem::zoomLevel() const
+void MapPolygonNode::setPenColor(const QColor &color)
 {
-    return zoomLevel_;
+    borderColor_ = color;
 }
 
-bool PolygonMapPaintedItem::contains(QPointF point)
+QColor MapPolygonNode::penColor() const
+{
+    return borderColor_;
+}
+
+bool MapPolygonNode::contains(QPointF point)
 {
     return polygon_.containsPoint(point, Qt::OddEvenFill);
 }
 
-void PolygonMapPaintedItem::setPath(const QList<QGeoCoordinate>& path)
+void MapPolygonNode::setGeometry(const Map& map, const QList<QGeoCoordinate> &path)
 {
-    coordPath_ = path;
-    dirtyGeometry_ = true;
-}
-
-QList<QGeoCoordinate> PolygonMapPaintedItem::path() const
-{
-    return coordPath_;
-}
-
-QGeoCoordinate PolygonMapPaintedItem::quickItemCoordinate() const
-{
-    return quickItemCoordinate_;
-}
-
-QPointF PolygonMapPaintedItem::quickItemAnchorPoint() const
-{
-    return quickItemAnchorPoint_;
-}
-
-void PolygonMapPaintedItem::setBrush(const QBrush &brush)
-{
-    brush_ = brush;
-}
-
-QBrush PolygonMapPaintedItem::brush() const
-{
-    return brush_;
-}
-
-void PolygonMapPaintedItem::setPen(const QPen &pen)
-{
-    pen_ = pen;
-}
-
-QPen PolygonMapPaintedItem::pen() const
-{
-    return pen_;
-}
-
-void PolygonMapPaintedItem::paint(QPainter *painter)
-{
-    if (!initialized_)
-        return;
-    painter->setPen(pen_);
-    painter->setBrush(brush_);
-    painter->drawConvexPolygon(polygon_);
-}
-
-void PolygonMapPaintedItem::updateGeometry()
-{
-    if (!dirtyGeometry_)
-        return;
-    initialized_ = false;
-
-    if (!map_)
-        return;
-
-    if (coordPath_.size() == 0)
-        return;
-
-    if (zoomLevel_ == -1)
-        return;
-
-    QPointF point = map_->coordinateToScreenPosition(coordPath_.at(0), false);
-
-    qreal w = 0;
     qreal h = 0;
-
-    //TODO: optimize essential part
-    polygon_ = createPolygon(*map_, coordPath_, w, h);
-
-    setWidth(w);
-    setHeight(h);
-    setContentsSize(QSize(w, h));
-
-    quickItemCoordinate_ = coordPath_.at(0);
-    quickItemAnchorPoint_ = polygon_.first();
-    initialized_ = true;
-
-    dirtyGeometry_ = false;
-    update(); // qquickpainteditem
+    qreal w = 0;
+    polygon_.clear();
+    updatePolygon(polygon_, map, path, w, h);
+    size_ = QSizeF(w, h);
 }

@@ -51,7 +51,7 @@
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoRoute;
-class PolylineMapPaintedItem;
+class MapPolylineNode;
 
 class QDeclarativeRouteMapItem : public QDeclarativeGeoMapItemBase
 {
@@ -63,6 +63,10 @@ class QDeclarativeRouteMapItem : public QDeclarativeGeoMapItemBase
 public:
     QDeclarativeRouteMapItem(QQuickItem *parent = 0);
     ~QDeclarativeRouteMapItem();
+
+    virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+    //from QuickItem
+    virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
 
     QDeclarativeGeoRoute* route() const;
     void setRoute(QDeclarativeGeoRoute *route);
@@ -77,19 +81,19 @@ Q_SIGNALS:
     void routeChanged(const QDeclarativeGeoRoute *route);
     void colorChanged(const QColor &color);
 
-protected:
-    void updateContent();
-    QPointF contentTopLeftPoint();
-    void mapChanged();
+protected Q_SLOTS:
+    virtual void updateMapItem(bool dirtyGeomoetry = true);
 
 private Q_SLOTS:
     // map size changed
     void handleCameraDataChanged(const CameraData& cameraData);
 
 private:
-    PolylineMapPaintedItem *polylineItem_;
+    MapPolylineNode *mapPolylineNode_;
     QDeclarativeGeoRoute* route_;
     QColor color_;
+    qreal zoomLevel_;
+    QList<QGeoCoordinate> path_;
     bool dragActive_;
 };
 

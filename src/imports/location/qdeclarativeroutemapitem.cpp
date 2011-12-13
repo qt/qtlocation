@@ -46,16 +46,23 @@
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtGui/QPainter>
 
-QDeclarativeRouteMapItem::QDeclarativeRouteMapItem(QQuickItem *parent)
-    : QDeclarativeGeoMapItemBase(parent),
-      polylineItem_(new PolylineMapPaintedItem(this)),
-      route_(0)
+QDeclarativeRouteMapItem::QDeclarativeRouteMapItem(QQuickItem *parent):
+    QDeclarativeGeoMapItemBase(parent),
+    mapPolylineNode_(0),
+    route_(0),
+    zoomLevel_(0.0)
 {
-    polylineItem_->setParentItem(this);
+    setFlag(ItemHasContents, true);
 }
 
 QDeclarativeRouteMapItem::~QDeclarativeRouteMapItem()
 {
+}
+
+void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
+{
+    QDeclarativeGeoMapItemBase::setMap(quickMap,map);
+    if (map) QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
 }
 
 QColor QDeclarativeRouteMapItem::color() const
@@ -69,9 +76,7 @@ void QDeclarativeRouteMapItem::setColor(const QColor &color)
         return;
 
     color_ = color;
-    //QBrush m_brush(color);
-    //polylineItem_->setBrush(m_brush);
-    polylineItem_->setPen(color);
+    updateMapItem(false);
     emit colorChanged(color_);
 }
 
@@ -88,51 +93,66 @@ void QDeclarativeRouteMapItem::setRoute(QDeclarativeGeoRoute *route)
     route_ = route;
 
     if (route_) {
-        polylineItem_->setPath(route_->routePath());
+        path_ = route_->routePath();
     } else {
-        polylineItem_->setPath(QList<QGeoCoordinate>());
+        path_ = QList<QGeoCoordinate>();
     }
 
-    updateMapItem();
+    updateMapItem(true);
     emit routeChanged(route_);
 
 }
 
-void QDeclarativeRouteMapItem::updateContent()
+QSGNode* QDeclarativeRouteMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
-    polylineItem_->updateGeometry();
-    setWidth(polylineItem_->width());
-    setHeight(polylineItem_->height());
-}
+    Q_UNUSED(data);
 
-QPointF QDeclarativeRouteMapItem::contentTopLeftPoint()
-{
-    return map_->coordinateToScreenPosition(
-                polylineItem_->quickItemCoordinate(), false) - polylineItem_->quickItemAnchorPoint();
-}
+    MapPolylineNode *node = static_cast<MapPolylineNode*>(oldNode);
 
-void QDeclarativeRouteMapItem::mapChanged()
-{
-    polylineItem_->setMap(map_);
-    if (map_) {
-        connect(map_, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
-        // initial update
-        handleCameraDataChanged(map_->cameraData());
+    if (!node) {
+        mapPolylineNode_ = new MapPolylineNode();
+        updateMapItem(true);
     }
+
+    mapPolylineNode_->update();
+    return mapPolylineNode_;
+}
+
+
+void QDeclarativeRouteMapItem::updateMapItem(bool dirtyGeometry) {
+
+    if (!map() || path_.count() == 0 || !mapPolylineNode_)
+        return;
+
+    mapPolylineNode_->setPenColor(color_);
+
+    if (dirtyGeometry) mapPolylineNode_->setGeometry(*map(), path_);
+
+    const QSizeF& size = mapPolylineNode_->size();
+
+    setWidth(size.width());
+    setHeight(size.height());
+
+    setPositionOnMap(path_.at(0), mapPolylineNode_->geometry().at(0));
+    update();
+}
+
+void QDeclarativeRouteMapItem::handleCameraDataChanged(const CameraData& cameraData)
+{
+    if (cameraData.zoomFactor() != zoomLevel_) {
+        zoomLevel_ = cameraData.zoomFactor();
+        updateMapItem(true);
+    } else {
+        updateMapItem(false);
+    }
+}
+
+bool QDeclarativeRouteMapItem::contains(QPointF point)
+{
+    return mapPolylineNode_->contains(point);
 }
 
 void QDeclarativeRouteMapItem::dragStarted()
 {
     qmlInfo(this) << "warning: mouse dragging is not currently supported with polylines/routes.";
-}
-
-bool QDeclarativeRouteMapItem::contains(QPointF point)
-{
-    return polylineItem_->contains(point);
-}
-
-void QDeclarativeRouteMapItem::handleCameraDataChanged(const CameraData& cameraData)
-{
-    polylineItem_->setZoomLevel(cameraData.zoomFactor());
-    updateMapItem();
 }

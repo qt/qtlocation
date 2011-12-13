@@ -43,14 +43,12 @@
 #define QDECLARATIVEPOLYLINEMAPITEM
 
 #include "qdeclarativegeomapitembase_p.h"
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeomap_p.h"
-#include <QPen>
-#include <QBrush>
+#include <QSGGeometryNode>
+#include <QSGFlatColorMaterial>
 
 QT_BEGIN_NAMESPACE
 
-class PolylineMapPaintedItem;
+class MapPolylineNode;
 
 class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
 {
@@ -62,6 +60,10 @@ class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
 public:
     QDeclarativePolylineMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolylineMapItem();
+
+    virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+       //from QuickItem
+    virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
 
     Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate* coordinate);
     Q_INVOKABLE void removeCoordinate(QDeclarativeCoordinate* coordinate);
@@ -79,13 +81,7 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
 
 protected Q_SLOTS:
-    // from qquickitem
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
-
-protected:
-    void updateContent();
-    QPointF contentTopLeftPoint();
-    void mapChanged();
+    virtual void updateMapItem(bool dirtyGeomoetry = true);
 
 private Q_SLOTS:
     // map size changed
@@ -99,57 +95,42 @@ private:
     void pathPropertyChanged();
 
 private:
-    PolylineMapPaintedItem *polylineItem_;
-    QList<QDeclarativeCoordinate*> path_;
+    MapPolylineNode *mapPolylineNode_;
+    QList<QDeclarativeCoordinate*> coordPath_;
+    QList<QGeoCoordinate> path_;
     QColor color_;
-    bool initialized_;
+    qreal zoomLevel_;
 };
 
 //////////////////////////////////////////////////////////////////////
 
-class PolylineMapPaintedItem : public QQuickPaintedItem
+class MapPolylineNode : public QSGGeometryNode
 {
-    Q_OBJECT
 
 public:
-    PolylineMapPaintedItem(QQuickItem *parent = 0);
-    ~PolylineMapPaintedItem();
+    MapPolylineNode();
+    ~MapPolylineNode();
 
-    void setMap(Map* map);
-    Map* map();
+    void setSize(const QSize &size);
+    QSizeF size() const {
+            return size_;
+    }
 
-    void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
+    QColor penColor() const;
+    void setPenColor(const QColor &pen);
 
-    QList<QGeoCoordinate> path() const;
-    void setPath(const QList<QGeoCoordinate>& path);
-
-    void paint(QPainter *painter);
-
-    QPen pen() const;
-    void setPen(const QPen &pen);
-
-    QBrush brush() const;
-    void setBrush(const QBrush &brush);
-
+    void update();
     bool contains(QPointF point);
 
-    QGeoCoordinate quickItemCoordinate() const;
-    QPointF quickItemAnchorPoint() const;
-
-    void updateGeometry();
+    void setGeometry(const Map &map, const  QList<QGeoCoordinate>  &path);
+    const QPolygonF& geometry() { return polyline_; }
 
 private:
-    Map *map_;
-    qreal zoomLevel_;
-    QPen pen_;
-    QBrush brush_;
-    QGeoCoordinate quickItemCoordinate_;
-    QPointF quickItemAnchorPoint_;
-    QList<QGeoCoordinate> coordPath_;
-    QPainterPath path_;
-    bool initialized_;
-    bool dirtyGeometry_;
+    QSGFlatColorMaterial fill_material_;
+    QColor fillColor_;
+    QSGGeometry geometry_;
+    QPolygonF polyline_;
+    QSizeF size_;
 };
 
 

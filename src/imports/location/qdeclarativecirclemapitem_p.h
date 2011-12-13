@@ -43,12 +43,13 @@
 #define QDECLARATIVECIRCLEMAPITEM_H
 
 #include "qdeclarativegeomapitembase_p.h"
-#include <QPen>
-#include <QBrush>
+#include <QSGGeometryNode>
+#include <QSGFlatColorMaterial>
 
 QT_BEGIN_NAMESPACE
 
-class CircleMapPaintedItem;
+class QDeclarativeGeoMapQuickItem;
+class MapCircleNode;
 
 class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
 {
@@ -61,6 +62,10 @@ public:
     QDeclarativeCircleMapItem(QQuickItem *parent = 0);
     ~QDeclarativeCircleMapItem();
 
+    virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+    //from QuickItem
+    virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
+
     QDeclarativeCoordinate* center();
     void setCenter(QDeclarativeCoordinate* center);
 
@@ -69,6 +74,7 @@ public:
 
     QColor color() const;
     void setColor(const QColor &color);
+
 
     void dragStarted();
     void dragEnded();
@@ -79,71 +85,62 @@ Q_SIGNALS:
     void radiusChanged(qreal radius);
     void colorChanged(const QColor &color);
 
-protected:
-    void updateContent();
-    QPointF contentTopLeftPoint();
-    void mapChanged();
-    // from qquickitem
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
+protected Q_SLOTS:
+    virtual void updateMapItem(bool dirtyGeomoetry=true);
 
 private Q_SLOTS:
     void handleCameraDataChanged(const CameraData& cameraData);
-    void handleCenterCoordinateChanged();
 
 private:
+    //TODO: pimpl
     QDeclarativeCoordinate internalCoordinate_;
     QDeclarativeCoordinate *center_;
-    CircleMapPaintedItem *circleItem_;
+    MapCircleNode *mapCircleNode_;
     QColor color_;
+    qreal radius_;
+    qreal zoomLevel_;
     bool dragActive_;
 };
 
 //////////////////////////////////////////////////////////////////////
 
-class CircleMapPaintedItem: public QQuickPaintedItem
+class MapCircleNode: public QSGGeometryNode
 {
 
 public:
-    CircleMapPaintedItem(QQuickItem *parent = 0);
-    ~CircleMapPaintedItem();
+    MapCircleNode();
+    ~MapCircleNode();
 
-    void setMap(Map* map);
-    Map* map();
-    void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
+    void setSize(const QSize &size);
+    QSizeF size() const {
+          return size_;
+    }
 
-    void setCenter(const QGeoCoordinate &center);
-    const QGeoCoordinate& center() const;
+    QColor penColor() const;
+    void setPenColor(const QColor &pen);
 
-    void setRadius(qreal radius);
-    qreal radius() const;
+    QColor brushColor() const;
+    void setBrushColor(const QColor &color);
 
-    void paint(QPainter *painter);
-
-    QPen pen() const;
-    void setPen(const QPen &pen);
-
-    QBrush brush() const;
-    void setBrush(const QBrush &brush);
-
+    void update();
     bool contains(QPointF point);
-    void updateGeometry();
+    void setGeometry(const Map &map, qreal radius,const QGeoCoordinate &center);
 
 private:
-    void calcualtePeripheralPoints(QList<QGeoCoordinate>& path, const QGeoCoordinate& center, qreal distance, int steps) const;
-
-    Map *map_;
-    qreal zoomLevel_;
-    QGeoCoordinate centerCoord_;
-    qreal radius_;
-    QPen pen_;
-    QBrush brush_;
-    QPolygonF polygon_;
+    QSGFlatColorMaterial fill_material_;
+    //QSGFlatColorMaterial border_material_;
+    QColor fillColor_;
+    QColor borderColor_;
+    //keeps pixel geometry
+    QSGGeometry geometry_;
+    //keeps geographic geometry
     QList<QGeoCoordinate> path_;
-    bool initialized_;
-    bool dirtyGeometry_;
+    QPolygonF polygon_;
+    QSizeF size_;
 };
 
 QT_END_NAMESPACE
+
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeCircleMapItem));
 
 #endif /* QDECLARATIVECIRCLEMAPITEM_H */

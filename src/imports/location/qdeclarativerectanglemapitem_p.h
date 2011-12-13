@@ -43,14 +43,12 @@
 #define QDECLARATIVERECTANGLEMAPITEM_H_
 
 #include "qdeclarativegeomapitembase_p.h"
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeomap_p.h"
-#include <QPen>
-#include <QBrush>
+#include <QSGGeometryNode>
+#include <QSGFlatColorMaterial>
 
 QT_BEGIN_NAMESPACE
 
-class RectangleMapPaintedItem;
+class MapRectangleNode;
 
 class QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
 {
@@ -63,6 +61,10 @@ class QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
 public:
     QDeclarativeRectangleMapItem(QQuickItem *parent = 0);
     ~QDeclarativeRectangleMapItem();
+
+    virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+    //from QuickItem
+    virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
 
     QDeclarativeCoordinate* topLeft();
     void setTopLeft(QDeclarativeCoordinate *center);
@@ -83,73 +85,56 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
 
 protected Q_SLOTS:
-    void updateContent();
-    QPointF contentTopLeftPoint();
-    void mapChanged();
-    // from qquickitem
-    void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
+    virtual void updateMapItem(bool dirtyGeometry = true);
+
 
 private Q_SLOTS:
     // map size changed
     void handleCameraDataChanged(const CameraData& cameraData);
-    void handleTopLeftCoordinateChanged();
-    void handleBottomRightCoordinateChanged();
 
 private:
-    RectangleMapPaintedItem *rectangleItem_;
+    MapRectangleNode *mapRectangleNode_;
     QDeclarativeCoordinate* topLeft_;
     QDeclarativeCoordinate* bottomRight_;
     QDeclarativeCoordinate internalTopLeft_;
     QDeclarativeCoordinate internalBottomRight_;
     QColor color_;
+    qreal zoomLevel_;
     bool dragActive_;
 };
 
 //////////////////////////////////////////////////////////////////////
 
-class RectangleMapPaintedItem: public QQuickPaintedItem
+class MapRectangleNode: public QSGGeometryNode
 {
-    Q_OBJECT
 
 public:
-    RectangleMapPaintedItem(QQuickItem *parent = 0);
-    ~RectangleMapPaintedItem();
+    MapRectangleNode();
+    ~MapRectangleNode();
 
-    void setMap(Map* map);
-    Map* map();
+    void setSize(const QSize &size);
+    QSizeF size() const {
+            return size_;
+    }
 
-    void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
+    QColor penColor() const;
+    void setPenColor(const QColor &pen);
 
-    QGeoCoordinate topLeft() const;
-    void setTopLeft(const QGeoCoordinate &topLeft);
+    QColor brushColor() const;
+    void setBrushColor(const QColor &color);
 
-    QGeoCoordinate bottomRight() const;
-    void setBottomRight(const QGeoCoordinate &bottomRight);
-
-    void paint(QPainter *painter);
-
-    QPen pen() const;
-    void setPen(const QPen &pen);
-
-    QBrush brush() const;
-    void setBrush(const QBrush &brush);
-
+    void update();
     bool contains(QPointF point);
-    void updateGeometry();
+    void setGeometry(const Map& map, const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
 
 private:
-    Map *map_;
-    qreal zoomLevel_;
-    QGeoCoordinate topLeftCoord_;
-    QGeoCoordinate bottomRightCoord_;
-    QGeoCoordinate quickItemCoordinate_;
-    QPointF quickItemAnchorPoint_;
-    QPen pen_;
-    QBrush brush_;
+    QSGFlatColorMaterial fill_material_;
+    QColor fillColor_;
+    QColor borderColor_;
+    QSGGeometry geometry_;
     QRectF rect_;
-    bool initialized_;
-    bool dirtyGeometry_;
+    QSizeF size_;
+
 };
 
 QT_END_NAMESPACE

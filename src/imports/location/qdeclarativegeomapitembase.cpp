@@ -46,12 +46,8 @@ QT_BEGIN_NAMESPACE
 QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
     : QQuickItem(parent),
       map_(0),
-      quickMap_(0),
-      inUpdate_(false)
+      quickMap_(0)
 {
-    setParentItem(parent);
-    setFlag(ItemHasContents, true);
-    setAcceptHoverEvents(false);
 }
 
 QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
@@ -61,9 +57,6 @@ QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
         quickMap_->removeMapItem(this);
 }
 
-void QDeclarativeGeoMapItemBase::mapChanged()
-{
-}
 
 bool QDeclarativeGeoMapItemBase::contains(QPointF point)
 {
@@ -79,10 +72,6 @@ void QDeclarativeGeoMapItemBase::dragEnded()
 {
 }
 
-void QDeclarativeGeoMapItemBase::updateContent()
-{
-}
-
 void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, Map *map) {
     if (quickMap == quickMap_)
         return;
@@ -94,18 +83,15 @@ void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, Map *map) 
         map_->disconnect(this);
     quickMap_ = quickMap;
     map_ = map;
-    mapChanged();
-    updateMapItem();
 }
 
-void QDeclarativeGeoMapItemBase::updateMapItem()
+void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate& coordinate, const QPointF& offset)
 {
-    if (inUpdate_ || !map_ || !quickMap_)
+    if (!map_ || !quickMap_)
         return;
-    inUpdate_ = true;
 
-    updateContent();
-    QPointF topLeft = contentTopLeftPoint();
+    QPointF topLeft = map_->coordinateToScreenPosition(coordinate, false) - offset;
+
     if ((topLeft.x() > quickMap()->width())
             || (topLeft.x() + width() < 0)
             || (topLeft.y() + height() < 0)
@@ -115,12 +101,6 @@ void QDeclarativeGeoMapItemBase::updateMapItem()
         setVisible(true);
         setPos(topLeft);
     }
-    inUpdate_ = false;
-}
-
-QDeclarativeGeoMap* QDeclarativeGeoMapItemBase::quickMap()
-{
-    return quickMap_;
 }
 
 #include "moc_qdeclarativegeomapitembase_p.cpp"

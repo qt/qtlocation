@@ -43,14 +43,12 @@
 #define QDECLARATIVEPOLYGONMAPITEM
 
 #include "qdeclarativegeomapitembase_p.h"
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeomap_p.h"
-#include <QPen>
-#include <QBrush>
+#include <QSGGeometryNode>
+#include <QSGFlatColorMaterial>
 
 QT_BEGIN_NAMESPACE
 
-class PolygonMapPaintedItem;
+class MapPolygonNode;
 
 class QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
 {
@@ -63,7 +61,9 @@ public:
     QDeclarativePolygonMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolygonMapItem();
 
-    virtual void componentComplete();
+    virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+    //from QuickItem
+    virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
 
     Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate* coordinate);
     Q_INVOKABLE void removeCoordinate(QDeclarativeCoordinate* coordinate);
@@ -80,10 +80,8 @@ Q_SIGNALS:
     void pathChanged();
     void colorChanged(const QColor &color);
 
-protected:
-    void updateContent();
-    QPointF contentTopLeftPoint();
-    void mapChanged();
+protected Q_SLOTS:
+    virtual void updateMapItem(bool dirtyGeomoetry = true);
 
 private Q_SLOTS:
     // map size changed
@@ -97,57 +95,45 @@ private:
     void pathPropertyChanged();
 
 private:
-    PolygonMapPaintedItem *polygonItem_;
-    QList<QDeclarativeCoordinate*> path_;
+    MapPolygonNode *mapPolygonNode_;
+    QList<QDeclarativeCoordinate*> coordPath_;
+    QList<QGeoCoordinate> path_;
     QColor color_;
-    bool initialized_;
+    qreal zoomLevel_;
 };
 
 //////////////////////////////////////////////////////////////////////
 
-class PolygonMapPaintedItem : public QQuickPaintedItem
+class MapPolygonNode : public QSGGeometryNode
 {
-    Q_OBJECT
 
 public:
-    PolygonMapPaintedItem(QQuickItem *parent = 0);
-    ~PolygonMapPaintedItem();
+    MapPolygonNode();
+    ~MapPolygonNode();
 
-    void setMap(Map* map);
-    Map* map();
+    void setSize(const QSize &size);
+    QSizeF size() const {
+          return size_;
+    }
 
-    void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
+    QColor penColor() const;
+    void setPenColor(const QColor &pen);
 
-    QList<QGeoCoordinate> path() const;
-    void setPath(const QList<QGeoCoordinate>& path);
+    QColor brushColor() const;
+    void setBrushColor(const QColor &color);
 
-    void paint(QPainter *painter);
-
-    QPen pen() const;
-    void setPen(const QPen &pen);
-
-    QBrush brush() const;
-    void setBrush(const QBrush &brush);
-
-    QGeoCoordinate quickItemCoordinate() const;
-    QPointF quickItemAnchorPoint() const;
-
+    void update();
     bool contains(QPointF point);
-    void updateGeometry();
+    void setGeometry(const Map &map, const  QList<QGeoCoordinate>  &path);
+    const QPolygonF& geometry() { return polygon_; }
 
 private:
-
-    Map *map_;
-    qreal zoomLevel_;
-    QGeoCoordinate quickItemCoordinate_;
-    QPointF quickItemAnchorPoint_;
-    QPen pen_;
-    QBrush brush_;
-    QList<QGeoCoordinate> coordPath_;
+    QSGFlatColorMaterial fill_material_;
+    QColor fillColor_;
+    QColor borderColor_;
+    QSGGeometry geometry_;
     QPolygonF polygon_;
-    bool initialized_;
-    bool dirtyGeometry_;
+    QSizeF size_;
 };
 
 
