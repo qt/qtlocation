@@ -73,9 +73,9 @@ Rectangle {
         anchors {left: parent.left; leftMargin: 5}
         y: 3; height: 32; width: parent.width - 10
         onClicked: {
-            if (positionSource.positioningMethod == PositionSource.NoPositioningMethod) {
+            if (positionSource.supportedPositioningMethod == PositionSource.NoPositioningMethod) {
                 positionSource.nmeaSource = "nmealog.txt";
-                sourceText.text = "(filesource): " + printableMethod(positionSource.positioningMethod);
+                sourceText.text = "(filesource): " + printableMethod(positionSource.supportedPositioningMethod);
             }
             positionSource.update();
         }
@@ -123,6 +123,6 @@ Rectangle {
     }
     Text {id: sourceText; color: "white"; font.bold: true;
         anchors {left: planet.right; leftMargin: 5; verticalCenter: planet.verticalCenter}
-        text: "Source: " + printableMethod(positionSource.positioningMethod); style: Text.Raised; styleColor: "black";
+        text: "Source: " + printableMethod(positionSource.supportedPositioningMethod); style: Text.Raised; styleColor: "black";
     }
 }
