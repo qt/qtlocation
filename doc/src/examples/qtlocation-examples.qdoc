@@ -75,15 +75,6 @@
 */
 
 /*!
-    \example declarative/mapviewer
-    \title QML MapViewer
-    \brief The QML MapViewer displays and navigates a map using the Location
-    QML plugin.
-
-    \ingroup qtlocation-examples
-*/
-
-/*!
     \example declarative/places
     \title QML Places
     \brief The QML Places searches for and displays places using the QtLocation QML plugin.

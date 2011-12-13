@@ -255,19 +255,24 @@ Item {
     }
 
     //Route Dialog
+//! [routedialog0]
     RouteDialog {
         id: routeDialog
-        z: backgroundRect.z + 2
 
         Coordinate { id: endCoordinate }
         Coordinate { id: startCoordinate }
-        Address { id:startAddress }
-        Address { id:endAddress }
+//! [routedialog0]
+        Address { id: startAddress }
+        Address { id: endAddress }
+
+        z: backgroundRect.z + 2
 
         GeocodeModel {
             id: tempGeocodeModel
+
             plugin : map.plugin
             property int success: 0
+
             onStatusChanged:{
                 if ((status == GeocodeModel.Ready) && (count == 1)) {
                     success++
@@ -335,14 +340,17 @@ Item {
             page.state = ""
         }
 
-        function calculateRoute(){
+        function calculateRoute() {
+//! [routerequest0]
+            // clear away any old data in the query
             map.routeQuery.clearWaypoints();
-            map.center = startCoordinate
+
+            // add the start and end coords as waypoints on the route
             map.routeQuery.addWaypoint(startCoordinate)
             map.routeQuery.addWaypoint(endCoordinate)
             map.routeQuery.travelModes = routeDialog.travelMode
             map.routeQuery.routeOptimizations = routeDialog.routeOptimization
-
+//! [routerequest0]
             for (var i=0; i<9; i++) {
                 map.routeQuery.setFeatureWeight(i, 0)
             }
@@ -351,13 +359,22 @@ Item {
                 map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
             }
 
+//! [routerequest1]
             map.routeModel.update();
+
+            // center the map on the start coord
+            map.center = startCoordinate
+//! [routerequest1]
         }
+//! [routedialog1]
     }
+//! [routedialog1]
 
     //Geocode Dialog
+//! [geocode0]
     Dialog {
         id: geocodeDialog
+//! [geocode0]
         title: "Geocode"
         z: backgroundRect.z + 2
 
@@ -366,26 +383,37 @@ Item {
             setModel(obj)
         }
 
+//! [geocode1]
+
         Address {
             id: geocodeAddress
         }
 
         onGoButtonClicked: {
+            // manage the UI state transitions
             page.state = ""
             messageDialog.state = ""
+
+            // fill out the Address element
             geocodeAddress.street = dialogModel.get(0).inputText
             geocodeAddress.city = dialogModel.get(1).inputText
             geocodeAddress.state = dialogModel.get(2).inputText
             geocodeAddress.country = dialogModel.get(3).inputText
             geocodeAddress.postalCode = dialogModel.get(4).inputText
+
+            // send the geocode request
             map.geocodeModel.clear()
             map.geocodeModel.query = geocodeAddress
             map.geocodeModel.update()
         }
+//! [geocode1]
+
         onCancelButtonClicked: {
             page.state = ""
         }
+//! [geocode2]
     }
+//! [geocode2]
 
     //Reverse Geocode Dialog
     Dialog {

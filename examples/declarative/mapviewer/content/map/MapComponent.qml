@@ -41,18 +41,23 @@ import QtQuick 2.0
 import QtLocation 5.0
 import QtLocation.examples 5.0
 
+//! [top]
 Map {
     id: map
     anchors.fill: parent
     zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
     center: brisbaneCoordinate
 
+    // Enable pinch gestures to zoom in and out
     pinch.activeGestures: MapPinchArea.ZoomGesture
     pinch.enabled: true
 
-    // Flicking
+    // And flicking gestures for quick panning
     flick.enabled: true
     flick.deceleration: 3000
+
+//! [top]
+
     property variant markers
     property variant mapItems
     property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
@@ -70,11 +75,13 @@ Map {
     signal showDistance(string distance);
     signal requestLocale()
 
+//! [coord]
     Coordinate {
         id: brisbaneCoordinate
         latitude: -27.5
         longitude: 153
     }
+//! [coord]
 
     /* @todo
     Binding {
@@ -154,26 +161,40 @@ Map {
         }
     }
 
+//! [routemodel0]
     property RouteQuery routeQuery: RouteQuery {}
+
     property RouteModel routeModel: RouteModel {
         plugin : map.plugin
         query: routeQuery
-        onStatusChanged:{
-            if (status == RouteModel.Ready){
-                if (count == 1) { routeInfoModel.update()}
+//! [routemodel0]
+
+//! [routemodel1]
+        onStatusChanged: {
+            if (status == RouteModel.Ready) {
+                if (count == 1)
+                    routeInfoModel.update()
             }
-            else if (status == RouteModel.Error){
+//! [routemodel1]
+            else if (status == RouteModel.Error) {
                 clearAll()
                 map.routeError()
             }
+//! [routemodel2]
         }
-        function clearAll(){
+//! [routemodel2]
+
+        function clearAll() {
             clear()
             routeInfoModel.update()
         }
+//! [routemodel3]
     }
+//! [routemodel3]
 
+//! [geocodemodel0]
     property GeocodeModel geocodeModel: GeocodeModel {
+//! [geocodemodel0]
         plugin : map.plugin;
         onStatusChanged:{
             if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error)) map.geocodeFinished()
@@ -186,7 +207,9 @@ Map {
             }
 
         }
+//! [geocodemodel1]
     }
+//! [geocodemodel1]
 
 //  signal showGeocodeInfo()
     signal moveMarker()
@@ -200,16 +223,18 @@ Map {
         mapItems = new Array();
     }
 
+//! [routedelegate0]
     Component {
         id: routeDelegate
+
         MapRoute {
             route: routeData
 
-            line.color: routeMouseArea.containsMouse ? "lime" :"red"
+            line.color: "lime"
             line.width: 5
             smooth: true
             opacity: 0.8
-
+//! [routedelegate0]
             MapMouseArea {
                 id: routeMouseArea
 
@@ -267,14 +292,19 @@ Map {
                 }
             }
             */
+//! [routedelegate1]
     }
+//! [routedelegate1]
 
+//! [pointdel0]
     Component {
         id: pointDelegate
+
         MapCircle {
             radius: 1000
             color: circleMouseArea.containsMouse ? "#8000FF00" : "#80FF0000"
             center: locationData.coordinate
+//! [pointdel0]
             MapMouseArea {
                 id: circleMouseArea
                 hoverEnabled: true
@@ -315,13 +345,17 @@ Map {
                 }
                 */
             }
+//! [pointdel1]
         }
     }
+//! [pointdel1]
 
+//! [routeinfodel0]
     Component {
         id: routeInfoDelegate
         Row {
             spacing: 10
+//! [routeinfodel0]
             Text {
                 id: indexText
                 text: index + 1
@@ -329,11 +363,14 @@ Map {
                 font.bold: true
                 font.pixelSize: 14
             }
+//! [routeinfodel1]
             Text {
                 text: instruction
                 color: "royalblue"
                 wrapMode: Text.Wrap
+//! [routeinfodel1]
                 width: textArea.width - indexText.width - distanceText.width - spacing*4
+//! [routeinfodel2]
                 font.pixelSize: 14
             }
             Text {
@@ -345,6 +382,7 @@ Map {
             }
         }
     }
+//! [routeinfodel2]
 
     Component{
         id: routeInfoHeader
@@ -379,32 +417,43 @@ Map {
         }
     }
 
-    ListModel{
+//! [routeinfomodel]
+    ListModel {
         id: routeInfoModel
+
         property string travelTime
         property string distance
 
         function update() {
             clear()
-            if (routeModel.count > 0){
-                for (var i=0; i< routeModel.get(0).segments.length; i++){
-                    append({"instruction": routeModel.get(0).segments[i].maneuver.instructionText, "distance": formatDistance(routeModel.get(0).segments[i].maneuver.distanceToNextInstruction)})
+            if (routeModel.count > 0) {
+                for (var i = 0; i < routeModel.get(0).segments.length; i++) {
+                    append({
+                        "instruction": routeModel.get(0).segments[i].maneuver.instructionText,
+                        "distance": formatDistance(routeModel.get(0).segments[i].maneuver.distanceToNextInstruction)
+                    });
                 }
             }
             travelTime = routeModel.count == 0 ? "" : formatTime(routeModel.get(0).travelTime)
             distance = routeModel.count == 0 ? "" : formatDistance(routeModel.get(0).distance)
         }
     }
+//! [routeinfomodel]
+
+//! [routeview]
 
     MapItemView {
         model: routeModel
         delegate: routeDelegate
     }
+//! [routeview]
 
+//! [geocodeview]
     MapItemView {
         model: geocodeModel
         delegate: pointDelegate
     }
+//! [geocodeview]
 
     Item {
         id: infoTab
@@ -1059,5 +1108,6 @@ Map {
             PropertyChanges { target: languageMenu; opacity: 1}
         }
     ]
-
+//! [end]
 }
+//! [end]
