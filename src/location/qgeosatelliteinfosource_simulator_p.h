@@ -65,6 +65,8 @@ public slots:
     virtual void stopUpdates();
     virtual void requestUpdate(int timeout = 5000);
 
+    virtual int minimumUpdateInterval() const;
+
 private slots:
     void updateData();
 

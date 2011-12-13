@@ -80,6 +80,11 @@ void QGeoSatelliteInfoSourceSimulator::requestUpdate(int timeout)
     }
 }
 
+int QGeoSatelliteInfoSourceSimulator::minimumUpdateInterval() const
+{
+    return 0;
+}
+
 void QGeoSatelliteInfoSourceSimulator::updateData()
 {
     QList<QGeoSatelliteInfo> satellitesInUse;
