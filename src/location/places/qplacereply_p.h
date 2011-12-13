@@ -64,6 +64,7 @@ public:
             isFinished(false),
             error(QPlaceReply::NoError),
             errorString(QString()){}
+    virtual ~QPlaceReplyPrivate(){}
     bool isFinished;
     QPlaceReply::Error error;
     QString errorString;
