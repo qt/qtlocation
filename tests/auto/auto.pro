@@ -11,6 +11,7 @@ SUBDIRS += qplace \
            qplacemanager_nokia \
            qplaceimage \
            qplaceratings \
+           qplacereply \
            qplacereview \
            qplacesearchrequest \
            qplacesupplier \
