@@ -796,7 +796,19 @@ Rectangle {
             Text {text: "Flick deceleration: " + map.flick.deceleration; color: firstText.color; font.bold: true}
             Text {text: "Weather: Sunny, mild, late showers."; color: firstText.color; font.bold: true}
         }
-        plugin : Plugin {name : "nokia"}
+
+
+        //plugin : Plugin {name : "nokia"}
+
+        plugin: Plugin {
+            id: testPlugin;
+            name: "qmlgeo.test.plugin"
+            parameters: [
+                // Parms to guide the test plugin
+                PluginParameter { name: "finishRequestImmediately"; value: true}
+            ]
+        }
+
         // commented features are checked to work at least somehow
         //anchors.left: parent.left
         //anchors.bottom: parent.bottom
