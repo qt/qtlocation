@@ -122,6 +122,8 @@ public:
 
     // from QQuickItem
     virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
+    virtual void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
+
     void itemChange(ItemChange change, const ItemChangeData & data);
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);

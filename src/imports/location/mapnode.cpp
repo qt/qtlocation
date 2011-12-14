@@ -201,7 +201,6 @@ void MapNode::setSize(const QSize &size)
         return;
     m_size = size;
     m_dirtyFBO = true;
-    m_map->resize(m_size.width(), m_size.height());
     m_initialized = false;
     markDirty(DirtyGeometry);
 }

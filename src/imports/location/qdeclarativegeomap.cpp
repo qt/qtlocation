@@ -871,6 +871,12 @@ QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
 
 */
 
+void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+{
+    map_->resize(newGeometry.width(), newGeometry.height());
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+}
+
 #include "moc_qdeclarativegeomap_p.cpp"
 
 QT_END_NAMESPACE
