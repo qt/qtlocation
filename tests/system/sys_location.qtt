@@ -43,52 +43,7 @@
 
 testcase = {
 
-/*    current_position: function()
-    {
-        // Test meta data
-        testTitle = "Location - Current Position";
-        testBinary = "weatherinfo";
-        testSource = "$QTDIR/qtsvg/examples/embedded/weatherinfo"
-        testGoal = "Verify that current position is detected and displayed.";
-        testPreconditions = "GPS connection is required for this test case";
-        testGroups = "BAT,1.1";
-        testRequirements = "MOBILITY-65: Basic Location Functionality";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | Verify that weather information for your local area is displayed |"
-        ));
-    },
-
-    location_is_updated: function()
-    {
-        // Test meta data
-        testTitle = "Location - Location Updates";
-        testBinary = "lightmaps_with_location"; //sources are in demos\lightmaps
-        testGoal = "Verify that location data is received and map is updated after changing location.";
-        testPreconditions = "GPS and internet connection is required for this test case";
-        testGroups = "BAT,1.1";
-        testRequirements = "MOBILITY-65: Basic Location Functionality";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | Verify that map is displayed and centered with the current position. |
-        | Move to a different location | Verify that map is updated and centered with new location |"
-       ));
-    },
-
+/*
     third_party_position_source: function()
     {
         // Test meta data
@@ -112,164 +67,32 @@ testcase = {
         | Press the Update Map button | Verify that map was loaded and correct current position is displayed |"
         ));
     },
-
-    shift_to_the_given_offset: function()
-    {
-        // Test meta data
-        testTitle = "Location - Shift To Given Offset";
-        testBinary = "testQtLocation";
-        testGoal = "Verify that coordinates can be calculated as an offset to another position.";
-        testPreconditions = "None";
-        testGroups = "BAT,1.2";
-        testRequirements = "QTMOBILITY-658: Add a method to QGeoCoordinate which takes an offset and returns another QGeoCoordinate";
-
-        // Note that significand precision should be taken into account during comparing real numbers, that is why we consider 5.48417e-16 value equal to zero
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select the MapNavigation | |
-        | Fill in <b>0</b> in to Start Latitude field | |
-        | Fill in *100* in to Start Longitude field | |
-        | Select Distance/Bearing from pre-defined dropdown list | |
-        | Fill *1000000, 90* in to the given field | |
-        | Press the Ok button | Verify that Destination fields are updated with *5.48417e-16* latitude and *108.9932* longitude |
-        | Fill in *60* in to Start Latitude field | |
-        | Fill in *100* in to Start Longitude field | |
-        | Select Distance/Bearing from pre-defined dropdown list | |
-        | Fill *1000000, 180* in to the given field | |
-        | Press the Ok button | Verify that Destination fields are updated with *51.0068* latitude and *100* longitude |
-        | Fill in *60* in to Start Latitude field | |
-        | Fill in *100* in to Start Longitude field | |
-        | Select Distance/Bearing from pre-defined dropdown list | |
-        | Fill *1000000, 20* in to the given field | |
-        | Press the Ok button | Verify that Destination fields are updated with *68.2523* latitude and *108.296* longitude |"
-        ));
-    },
-
-    select_service_provider: function()
-    {
-        // Test meta data
-        testTitle = "Maps and Navigation - Select Service Provider";
-        testBinary = "geoservicedemo";
-        testGoal = "Verify that service provider can be selected";
-        testPreconditions = "None";
-        testGroups = "BAT,1.1";
-        testRequirements = "MOBILITY-538: Maps and Navigation";
-
-        // Test steps
-        startApplication(testBinary);
-        select("Service Providers");
-        select("nokia");
-        select("Set Service Provider");
-
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | | Verify selected service provider is indicated as current service provider |"));
-    },
-
-    request_route_from_one_GPS_location_to_another_data: {
-        route1:["-27.575", "153.088", "-27.465", "153.023", "15901", "15987"]
-    },
-
-    request_route_from_one_GPS_location_to_another: function(lat1, long1, lat2, long2, distance1, distance2)
-    {
-        // Test meta data
-        testTitle = "Maps and Navigation - Route Calculation";
-        testBinary = "geoservicedemo";
-        testGoal = "Verify that routes can be calculated from one GPS location to another.";
-        testPreconditions = "Testing via proxy is not recommended, incorrect settings can be a cause of the 'Socket operation timed out' error";
-        testGroups = "BAT,1.1";
-        testRequirements = "MOBILITY-538: Maps and Navigation";
-
-        // Test steps
-        startApplication(testBinary);
-        select("Service Providers");
-        select("nokia");
-        select("Set Service Provider");
-        select("Route");
-        select("Request Route");
-        enter(lat1);
-        enter(long1);
-        enter(lat2);
-        enter(long2);
-        select("Ok");
-
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Wait until the route is calculated (should be less than 10 seconds) | Verify the there are 8 segments, first and last instructions indicate to 'Head toward Logan rd' and 'Turn right onto Bartley St'"));
-
-        select("routes/route");
-        compare(getText("distance"), distance1);
-        select("Request Route");
-        enter(lat2);
-        enter(long2);
-        enter(lat1);
-        enter(long1);
-        select("Ok");
-
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Wait until the route is calculated (should be less than 10 seconds) | Verify the instructions for segments 1 and 2 indicate to Head towards Sedgebrook st and Turn right onto Sedgebrook st"));
-
-        compare(getText("distance"), distance2);
-    },
-
-    pixmap_object_zooming: function()
-    {
-        //Test application testqtLocation covers just one use case meanwhile we have 8 different situation
-        //depending on what units and transforms are in use (we have 4 types of units (PixelUnit, MeterUnit, RelativeArcSecondUnit, AbsoluteArcSecondUnit)
-        //and 2 types of transforms (BilinearTransform, ExactTransform)). New set of tests has to be created as soon as testqtLocation is improved.
-
-        // Test meta data
-        testTitle = "Maps and Navigation - Pixmap Object Zooming";
-        testBinary = "testQtLocation";
-        testGoal = "Verify that pixmap objects are not scaled";
-        testPreconditions = "GPS and internet connection is required for this test case";
-        testGroups = "BAT,1.2";
-        testRequirements = "QTMOBILITY-757: Be able to prevent a QGeoMapPixmapObject from being scaled when zooming occurs<br>
-                            QTMOBILITY-701: Add a QGraphicsItem based map object.";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select the MapNavigation | |
-        | Go to Map tab | Verify that map is loaded for current position |
-        | Swith to MapObject mode | |
-        | Tap on the screen to create pixmap object | Verify that blue square appears on the screen in place of touch |
-        | Switch to Pan/Zoom mode | |
-        | Increase zoom level | Verify that the blue square is not scaled |
-        | Decrease zoom level | Verify that the blue square is not scaled |"
-        ));
-    },
 */
+    qml_select_service_provider: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Select Service Provider";
+        testBinary = "qml_location_mapviewer";
+        testGoal = "Verify that service provider can be selected";
+        testPreconditions = "Several service providers should be available. Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, MOBILITY-538: Maps and Navigation";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Pan the map | |
+        | Press Provider button | Verify that on of the providers is indicated as current service provider |
+        | Select other provider | Verify that map is displayed on the screen with default location next to Brisbane |
+        "));
+    },
+
     qml_capturing_coordinates:function()
     {
         // Test meta data
@@ -277,8 +100,8 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testGoal = "Verify that coordinates can be captured when selecting a location on the map.";
         testPreconditions = "internet connection is required for this test case.";
-        testGroups = "BAT,1.1";
-        testRequirements = "MOBILITY-538: Maps and Navigation";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, MOBILITY-538: Maps and Navigation";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -305,8 +128,8 @@ testcase = {
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that maps can be shown in different modes.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,1.2";
-        testRequirements = "QTMOBILITY-796: QML for Maps & Navigation: mapping";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, QTMOBILITY-796: QML for Maps & Navigation: mapping";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -354,8 +177,8 @@ testcase = {
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that flick gesture works correctly with map.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0";
-        testRequirements = "MOBILITY-2861";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-239: QML for maps";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -368,7 +191,9 @@ testcase = {
         | Launch " + testBinary + " | Verify that map is loaded with the center next to Brisbane  |
         | Make a long flick gesture from the right side the left | Verify that map center was moving to the left with dropping speed at the end |
         | Make a short flick gesture from the left side the right | Verify that map center was moving to the rigth with dropping speed at the end. Verify that map center has been moved to the less distance in comparing with previous step |
-        | Make a flick gesture 2 o'clock direction | Verify that map center was following flick gesture. |"
+        | Make a flick gesture 2 o'clock direction | Verify that map center was following flick gesture. |
+        | Zoom in map close to the maximum zoom level | |
+        | Flick map | Verify that flick gesture worked as expected. |"
         ));
     },
 
@@ -380,7 +205,7 @@ testcase = {
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that pinch gesture works correctly with map.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0";
+        testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
 
         // Test steps
@@ -405,7 +230,7 @@ testcase = {
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that pan gesture works correctly";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0";
+        testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
 
         // Test steps
@@ -429,8 +254,8 @@ testcase = {
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that maps can be zoomed in and out.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,1.2";
-        testRequirements = "QTMOBILITY-796: QML for Maps & Navigation: mapping";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, QTMOBILITY-796: QML for Maps & Navigation: mapping";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -448,7 +273,419 @@ testcase = {
         | Move slider the right to jump over 9 zoom level but less than 10 | Verify that new tiles are displayed to reflect bigger zoom level |"
         ));
     },
+
+    qml_geocode_data: {
+        australian_place:["Brandl st", "Eight Mile Plains", "Australia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Australia&city=Eight Mile Plains&street=Brandl St"],
+        russian_place:["Minina I Pozharskogo Ploshchad", "Nizhny Novgorod", "Russia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Russia&city=Nizhny Novgorod&street=Minina I Pozharskogo Ploshchad"],
+        fictional_place:["My street", "The Best City", "Australia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Australia&city=The Best City&street=My street"]
+    },
+
+    qml_geocode: function(street, city, country, url)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Geocoding";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that location can be geocoded.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-236: QML Geocoding";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Options button | |
+        | Select Geocode menu item | |
+        | Press Clear All button | |
+        | Fill in " + street + " in Street filed | |
+        | Fill in " + city + " in City field | |
+        | Fill in " + country + " in Country field | |
+        | Press Go! button | |
+        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
+        ));
+    },
+
+    qml_geocode_not_unique_location_data: {
+        request:["Moscow", "Idaho","USA", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=France&city=The Best City",
+                 "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=USA&state=Idaho&city=Moscow"]
+    },
+
+    qml_geocode_not_unique_location: function(city, state, country, url1, url2)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Geocoding of non-unique address";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that location can be geocoded.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-236: QML Geocoding";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url1 + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Options button | |
+        | Select Geocode menu item | |
+        | Fill in " + city + " in City field | |
+        | Fill in " + country + " in Country field | |
+        | Press Go! button | |
+        | Wait for message appears on the screen | Verify that several locations were found, number of locations is the same as in the open web page |
+        | Open " + url2 + " url in a desktop browser | |
+        | Press Options button | |
+        | Select Geocode menu item | |
+        | Fill in " + state + " in State field | |
+        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
+        ));
+    },
+
+    qml_geocode_request_with_district_data: {
+        request:["Nizhny Novgorod", "Priokskiy rayon", "Russia"]
+    },
+
+    qml_geocode_request_with_district: function(city, district, country)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Geocode district";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that location can be geocoded.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-236: QML Geocoding";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Options button | |
+        | Select Geocode menu item | |
+        | Press Clear All button | |
+        | Fill in " + city + " in City filed | |
+        | Fill in " + country + " in Country field | |
+        | Fill in " + district + " in District field | |
+        | Press Go! button | |
+        | Wait for message appears on the screen | Verify that geocode was successful with latitude *56.3217*, longitude *44.0331* |"
+        ));
+    },
+
+    qml_geocode_request_with_county_data: {
+        request:["Norfolk", "United Kingdom"]
+    },
+
+    qml_geocode_request_with_county: function(county, country)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Geocode county";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that location can be geocoded.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-236: QML Geocoding";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Options button | |
+        | Select Geocode menu item | |
+        | Press Clear All button | |
+        | Fill in " + county + " in County filed | |
+        | Fill in " + country + " in Country field | |
+        | Press Go! button | |
+        | Wait for message appears on the screen | Verify that geocode was successful with latitude *52.614*, longitude *0.8864* |"
+        ));
+    },
+
+    qml_geocode_request_with_country_code_data: {
+        request:["AUS"]
+    },
+
+    qml_geocode_request_with_country_code: function(country_code)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Geocode country code";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that location can be geocoded.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-236: QML Geocoding";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Options button | |
+        | Select Geocode menu item | |
+        | Press Clear All button | |
+        | Fill in " + country_code + " in Country code field | |
+        | Press Go! button | |
+        | Wait for message appears on the screen | Verify that geocode is successful |"
+        ));
+    },
+
+    qml_geocode_request_with_post_code_data: {
+        request:["4113", "Australia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Australia&zip=4113"]
+    },
+
+    qml_geocode_request_with_post_code: function(postcode, country, url)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Geocode post code";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that location can be geocoded.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-236: QML Geocoding";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Options button | |
+        | Select Geocode menu item | |
+        | Press Clear All button | |
+        | Fill in " + postcode + " in Post Code field | |
+        | Fill in " + country + " in Country field | |
+        | Press Go! button | |
+        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
+        ));
+    },
+
+    qml_reverse_geocode_data: {
+        australian_place:["-27.575", "153.088", "http://loc.desktop.maps.svc.ovi.com/geocoder/rgc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&long=153.088&lat=-27.575&lg=eng"],
+        russian_place:["56.3264", "44.0048", "http://loc.desktop.maps.svc.ovi.com/geocoder/rgc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&long=44.0048&lat=56.3264&lg=eng"],
+        uninhabited_place:["-26.8890", "154.6696", "http://loc.desktop.maps.svc.ovi.com/geocoder/rgc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&long=154.6696&lat=-26.889&lg=eng"]
+    },
+
+    qml_reverse_geocode: function(latitude, longitude, url)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Reverse geocode";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that location can be geocoded.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-237:QML Reverse geocoding";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Options button | |
+        | Select Reverse Geocode | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longitude + " in Longitude field | |
+        | Press Go! button | |
+        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
+        ));
+    },
+
 /*
+    qml_current_position: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Current Position";
+        testBinary = "qml_location_mapviewer";
+        testGoal = "Verify that current position is detected and displayed.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2888, MOBILITY-65: Basic Location Functionality ";
+    },
+
+    qml_location_is_updated: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Current Position";
+        testBinary = "qml_location_mapviewer";
+        testGoal = "Verify that location data is received and map is updated after changing location.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2888, MOBILITY-65: Basic Location Functionality ";
+    }
+
+    qml_distance_between_points:function()
+    {
+        testTitle = "QML: Maps and Navigation - Distance between points";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that distance between points can be calculated.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
+    },
+
+    qml_shift_to_the_given_offset:function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Shift To Given Offset";
+        testBinary = "qml_location_mapviewer";
+        testGoal = "Verify that coordinates can be calculated as an offset to another position.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, QTMOBILITY-658: Add a method to QGeoCoordinate which takes an offset and returns another QGeoCoordinate";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select the MapNavigation | |
+        | Fill in <b>0</b> in to Start Latitude field | |
+        | Fill in *100* in to Start Longitude field | |
+        | Select Distance/Bearing from pre-defined dropdown list | |
+        | Fill *1000000, 90* in to the given field | |
+        | Press the Ok button | Verify that Destination fields are updated with *5.48417e-16* latitude and *108.9932* longitude |
+        | Fill in *60* in to Start Latitude field | |
+        | Fill in *100* in to Start Longitude field | |
+        | Select Distance/Bearing from pre-defined dropdown list | |
+        | Fill *1000000, 180* in to the given field | |
+        | Press the Ok button | Verify that Destination fields are updated with *51.0068* latitude and *100* longitude |
+        | Fill in *60* in to Start Latitude field | |
+        | Fill in *100* in to Start Longitude field | |
+        | Select Distance/Bearing from pre-defined dropdown list | |
+        | Fill *1000000, 20* in to the given field | |
+        | Press the Ok button | Verify that Destination fields are updated with *68.2523* latitude and *108.296* longitude |"
+        ));
+    },
+
+    qml_polyline_mapitem:function()
+    {
+        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that polyline can be drawn on map.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+    },
+
+    qml_polygon_mapitem:function()
+    {
+        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that polygon can be drawn on map.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+    },
+
+    qml_circle_mapitem:function()
+    {
+        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that circle can be drawn on map.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+    },
+
+    qml_video_mapitem:function()
+    {
+        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that video can be placed on map.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+    },
+
+    qml_image_mapitem:function()
+    {
+        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that circle can be drawn on map.";
+        testPreconditions = "Internet connection is required for this test casei.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+    },
+
+    qml_3dqml_mapitem:function()
+    {
+        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that 3D QML item can be drawn on map.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+    },
+
+    qml_mapitems_zooming: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Mapitem object zooming";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that pixmap objects are not scaled, verify that vector objects are scaled.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, QTMOBILITY-757: Be able to prevent a QGeoMapPixmapObject from being scaled when zooming occurs, QTMOBILITY-701: Add a QGraphicsItem based map object.";
+    },
+
+    qml_mapitem_interaction:function()
+    {
+        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that mapitems can handle touch/mouse events.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+    },
+
     qml_border_wrapping_for_map: function()
     {
         // Test meta data
@@ -456,8 +693,8 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that border wrapping works correctly for map and map items.";
-        testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
     },
 
@@ -468,8 +705,8 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
-        testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
@@ -505,7 +742,7 @@ testcase = {
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0";
+        testGroups = "BAT, 5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
@@ -558,7 +795,7 @@ testcase = {
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0";
+        testGroups = "BAT, 5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
@@ -604,7 +841,7 @@ testcase = {
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0";
+        testGroups = "BAT, 5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
@@ -644,7 +881,7 @@ testcase = {
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0";
+        testGroups = "BAT, 5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
@@ -684,7 +921,7 @@ testcase = {
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
         testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT,5.0";
+        testGroups = "BAT, 5.0";
         testRequirements = "MTMW-235: QML Routing";
 
         // Test steps
@@ -711,59 +948,21 @@ testcase = {
     },
 */
 
-    qml_geocode_data: {
-        australian_place:["Brandl st", "Eight Mile Plains", "Australia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Australia&city=Eight Mile Plains&street=Brandl St"],
-        russian_place:["Minina I Pozharskogo Ploshchad", "Nizhny Novgorod", "Russia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Russia&city=Nizhny Novgorod&street=Minina I Pozharskogo Ploshchad"],
-        fictional_place:["My street", "The Best City", "Australia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Australia&city=The Best City&street=My street"]
+    qml_searching_for_places_by_category_for_given_position_data: {
+        data:["48.9", "2.4", "Shopping", "Pharmacy", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&dym=5&q=Pharmacy",
+              "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&dym=5&q=Shopping"]
     },
 
-    qml_geocode: function(street, city, country, url)
+    qml_searching_for_places_by_category_for_given_position: function(latitude, longitude, category, subcategory, url1, url2)
     {
         // Test meta data
-        testTitle = "QML: Maps and Navigation - Geocoding";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that location can be geocoded.";
+        testTitle = "QML: Places - Searching by category for the given position";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that places can be found.";
         testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
-        testRequirements = "MTMW-236: QML Geocoding";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Press Clear All button | |
-        | Fill in " + street + " in Street filed | |
-        | Fill in " + city + " in City field | |
-        | Fill in " + country + " in Country field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
-        ));
-    },
-
-    qml_geocode_not_unique_location_data: {
-        request:["Moscow", "Idaho","USA", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=France&city=The Best City",
-                 "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=USA&state=Idaho&city=Moscow"]
-    },
-
-    qml_geocode_not_unique_location: function(city, state, country, url1, url2)
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Geocoding of non-unique address";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
-        testGroups = "BAT,5.0";
-        testRequirements = "MTMW-236: QML Geocoding";
+        testRequirements = "MTMW-190: Place Discovery";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -775,214 +974,329 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url1 + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Fill in " + city + " in City field | |
-        | Fill in " + country + " in Country field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that several locations were found, number of locations is the same as in the open web page |
-        | Open " + url2 + " url in a desktop browser | |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Fill in " + state + " in State field | |
-        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
-        ));
-    },
-
-    qml_geocode_request_with_district_data: {
-        request:["Nizhny Novgorod", "Priokskiy rayon", "Russia"]
-    },
-
-    qml_geocode_request_with_district: function(city, district, country)
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Geocode district";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
-        testGroups = "BAT,5.0";
-        testRequirements = "MTMW-236: QML Geocoding";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Press Clear All button | |
-        | Fill in " + city + " in City filed | |
-        | Fill in " + country + " in Country field | |
-        | Fill in " + district + " in District field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that geocode was successful with latitude *56.3217*, longitude *44.0331* |"
-        ));
-    },
-
-    qml_geocode_request_with_county_data: {
-        request:["Norfolk", "United Kingdom"]
-    },
-
-    qml_geocode_request_with_county: function(county, country)
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Geocode county";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
-        testGroups = "BAT,5.0";
-        testRequirements = "MTMW-236: QML Geocoding";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Press Clear All button | |
-        | Fill in " + county + " in County filed | |
-        | Fill in " + country + " in Country field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that geocode was successful with latitude *52.614*, longitude *0.8864* |"
-        ));
-    },
-
-    qml_geocode_request_with_country_code_data: {
-        request:["AUS"]
-    },
-
-    qml_geocode_request_with_country_code: function(country_code)
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Geocode country code";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
-        testGroups = "BAT,5.0";
-        testRequirements = "MTMW-236: QML Geocoding";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Press Clear All button | |
-        | Fill in " + country_code + " in Country code field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that geocode is successful |"
-        ));
-    },
-
-    qml_geocode_request_with_post_code_data: {
-        request:["4113", "Australia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Australia&zip=4113"]
-    },
-
-    qml_geocode_request_with_post_code: function(postcode, country, url)
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Geocode post code";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
-        testGroups = "BAT,5.0";
-        testRequirements = "MTMW-236: QML Geocoding";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Press Clear All button | |
-        | Fill in " + postcode + " in Post Code field | |
-        | Fill in " + country + " in Country field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
-        ));
-    },
-
-    qml_reverse_geocode_data: {
-        australian_place:["-27.575", "153.088", "http://loc.desktop.maps.svc.ovi.com/geocoder/rgc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&long=153.088&lat=-27.575&lg=eng"],
-        russian_place:["56.3264", "44.0048", "http://loc.desktop.maps.svc.ovi.com/geocoder/rgc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&long=44.0048&lat=56.3264&lg=eng"],
-        uninhabited_place:["-26.8890", "154.6696", "http://loc.desktop.maps.svc.ovi.com/geocoder/rgc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&long=154.6696&lat=-26.889&lg=eng"]
-    },
-
-    qml_reverse_geocode: function(latitude, longitude, url)
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Reverse geocode";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
-        testGroups = "BAT,5.0";
-        testRequirements = "MTMW-237:QML Reverse geocoding";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Reverse Geocode | |
+        | Press Provider button | |
+        | Select nokia provider | |
+        | Press Goto button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
         | Press Go! button | |
-        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
+        | Press Categories button | |
+        | Press Right arrow next to " + category + " | |
+        | Select " + subcategory + " | |
+        | Expand panel with seacrh results | Verify that number of found places corresponds to the open web page. Verify that details of the first place is the same. |
+        | Hide panel with results | |
+        | Open " + url2 + " url in a desktop browser | |
+        | Press Categories button | |
+        | Press Back button | |
+        | Select " + category + " | |
+        | Expand panel with seacrh result | Verify that number of found places corresponds to the open web page. Verify that details of the first place is the same. |"
         ));
-/*    },
-
-    // \groups BAT,5.0
-    qml_distance_between_points:function()
-    {
     },
-    // \groups BAT,5.0
-    qml_drag_mapitem:function()
-    {
+
+    qml_searching_for_places_by_text_string_for_given_position_data: {
+        search_string:["48.9", "2.4", "pizza", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&dym=5&q=pizza"],
+        search_string_with_typo:["-27.5", "153", "pizzs", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=-27.5&lon=153&of=0&dym=5&q=pizzs"]
     },
-    // \groups BAT,5.0,MOBILITY-2902
-    qml_searching: function()
+
+    qml_searching_for_places_by_text_string_for_given_position: function(latitude, longitude, search_string, url)
     {
-// Seacrh for places
-*/    }
+        // Test meta data
+        testTitle = "QML: Places - Searching by text string for the given position";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that places can be found.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-190: Place Discovery";
 
-}  // end of testcase
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Provider button | |
+        | Select nokia provider | |
+        | Press Goto button | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longitude + " in Longitude field | |
+        | Press Go! button | |
+        | Fill in " + search_string + " | |
+        | Press Search button | |
+        | Expand panel with results | Verify that number of found places corresponds to the open web page. Verify that details of the first place is the same. |"
+        ));
+    },
 
-/*
+    qml_recomendations_for_places_data: {
+        data:["48.9", "2.4", "La Romantica", "La Romantica 6996m", "http://places.maps.ovi.com/rest/v1/places/250u09wh-8412aba7c3f8475da0a7ebc5fa713ec4/recommendations/nearby"]
+    },
 
-----Maps And Navigation use cases
+    qml_recomendations_for_places: function(latitude, longitude, search_string, place, url)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Recommendation for places";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that recomendation for places can be found.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-190: Place Discovery";
 
-    online_and_offline: function() {    }
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
 
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Provider button | |
+        | Select nokia provider | |
+        | Press Goto button | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longitude + " in Longitude field | |
+        | Press Go! button | |
+        | Fill in " + search_string + " | |
+        | Press Search button | |
+        | Expand panel with results | |
+        | Select " + place + " | |
+        | Select “Find Similar” | Verify that number of found places corresponds to the open web page. Verify that distance to reccommended places is the same. |"
+        ));
+    },
+
+    qml_suggestions_for_places_data: {
+        search_string_of_3_symbols:["48.9", "2.4", "piz", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&q=piz&lh=1"],
+        search_string_of_4_symbols:["48.9", "2.4", "pizz", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&q=pizz&lh=1"]
+    },
+
+    qml_suggestions_for_places: function(latitude, longitude, search_string, url)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Suggestions for places";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that suggestions for places can be obtained.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-190: Place Discovery";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Provider button | |
+        | Select nokia provider | |
+        | Press Goto button | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longitude + " in Longitude field | |
+        | Press Go! button | |
+        | Fill in " + search_string + " | Verify that list of suggested places corresponds to the open web page. |"
+        ));
+    },
+
+    qml_place_editorials_data: {
+        search_string:["-27.5", "153", "sushi", "Oz Sushi 1865m", "Oz sushi", "http://places.maps.ovi.com/rest/v1/places/036r7hg9-3e09424ccf6246d49ac94c367386376b"]
+    },
+
+    qml_place_editorials: function(latitude, longitude, search_string, place, editorial, url)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Retrieval of editorials";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that editorials for places can be obtained.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-191: Place Retrieval";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Provider button | |
+        | Select nokia provider | |
+        | Press Goto button | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longitude + " in Longitude field | |
+        | Press Go! button | |
+        | Fill in " + search_string + " | |
+        | Press Search button | |
+        | Expand panel with results | |
+        | Select " + place + " | |
+        | Select “Editorials” | |
+        | Select " + editorial + " | Verify that text, title and vendor correspond to the 'premiumContent' section of the open web page. |"
+        ));
+    },
+
+    qml_place_images_data: {
+        search_string:["48.9", "2.4", "sushi", "Nakagawa 2838m", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a/images"]
+    },
+
+    qml_place_images: function(latitude, longitude, search_string, place, url)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Retrieval of images";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that editorials for places can be obtained.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-191: Place Retrieval";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Provider button | |
+        | Select nokia provider | |
+        | Press Goto button | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longitude + " in Longitude field | |
+        | Press Go! button | |
+        | Fill in " + search_string + " | |
+        | Press Search button | |
+        | Expand panel with results | |
+        | Select " + place + " | |
+        | Select “Images” | Verify that images correspond to the open web page. |"
+        ));
+    },
+
+    qml_place_reviews_data: {
+        search_string:["48.9", "2.4", "sushi", "Nakagawa 2838m", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a/reviews"]
+    },
+
+    qml_place_reviews: function(latitude, longitude, search_string, place, url)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Retrieval of reviews";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that editorials for places can be obtained.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-191: Place Retrieval";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Provider button | |
+        | Select nokia provider | |
+        | Press Goto button | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longitude + " in Longitude field | |
+        | Press Go! button | |
+        | Fill in " + search_string + " | |
+        | Press Search button | |
+        | Expand panel with results | |
+        | Select " + place + " | |
+        | Select “Reviews” | Verify that reviews correspond to the open web page. |"
+        ));
+    },
+
+    qml_place_retrieval_data: {
+        search_string:["-27.5", "153", "sushi", "Oz Sushi 1865m", "http://places.maps.ovi.com/rest/v1/places/036r7hg9-3e09424ccf6246d49ac94c367386376b"]
+    },
+
+    qml_place_retrieval: function(latitude, longitude, search_string, place, url)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Retrieval of general data of a place";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that general information about place can be obtained.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-191: Place Retrieval";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Press Provider button | |
+        | Select nokia provider | |
+        | Press Goto button | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longitude + " in Longitude field | |
+        | Press Go! button | |
+        | Fill in " + search_string + " | |
+        | Press Search button | |
+        | Expand panel with results | |
+        | Select " + place + " | Verify that rating, address, category and contact details correspond to the open web page. |"
+        ));
+    }
+
+    /*
+    qml_locale_handling: function()
+    {
+        // Test meta data
+        testTitle = "QML: Places - Locale handling";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that places can be found for different locale.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-191: Place Retrieval";
+    },
+
+    qml_searching_for_places_by_category_inside_bounding_box: function()
+    {
+        // Test meta data
+        testTitle = "QML: Places - Searching by category inside bounding box";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that places can be found.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-190: Place Discovery";
+    },
+
+    qml_searching_for_places_by_text_string_inside_bounding_box: function()
+    {
+        // Test meta data
+        testTitle = "QML: Places - Searching by text string inside bounding box";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that places can be found.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-190: Place Discovery";
+    }
 */
+}  // end of testcase
