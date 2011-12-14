@@ -37,6 +37,9 @@ SUBDIRS += geotestplugin \
            qgeoroute \
            qgeoroutereply \
            qgeorouterequest \
+           qgeoroutesegment \
+           qgeoroutingmanager \
+           qgeoroutingmanagerplugins \
            qgeosatelliteinfo \
            qgeosatelliteinfosource \
            qnmeapositioninfosource \

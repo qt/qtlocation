@@ -109,7 +109,8 @@ QGeoRouteSegment& QGeoRouteSegment::operator= (const QGeoRouteSegment & other)
 */
 bool QGeoRouteSegment::operator ==(const QGeoRouteSegment &other) const
 {
-    return (d_ptr.constData() == other.d_ptr.constData());
+    return ( (d_ptr.constData() == other.d_ptr.constData())
+            || (*d_ptr) == (*other.d_ptr));
 }
 
 /*!
