@@ -104,7 +104,7 @@ Item {
             clear_data()
             // up left
             tryCompare(mapCenterSpy, "count", 0)
-            map.pan(-20,20)
+            map.pan(-20,-20)
             tryCompare(mapCenterSpy, "count", 1)
             verify(map.center.latitude > 30)
             verify(map.center.longitude < 60)
@@ -112,7 +112,7 @@ Item {
             map.center.longitude = 60
             mapCenterSpy.clear()
             // up
-            map.pan(0,20)
+            map.pan(0,-20)
             tryCompare(mapCenterSpy, "count", 1)
             verify(map.center.latitude > 30)
             compare(map.center.longitude, 60)
@@ -121,7 +121,7 @@ Item {
             mapCenterSpy.clear()
             // up right
             tryCompare(mapCenterSpy, "count", 0)
-            map.pan(20,20)
+            map.pan(20,-20)
             tryCompare(mapCenterSpy, "count", 1)
             verify(map.center.latitude > 30)
             verify(map.center.longitude > 60)
@@ -153,7 +153,7 @@ Item {
             map.center.longitude = 60
             mapCenterSpy.clear()
             // down left
-            map.pan(-20,-20)
+            map.pan(-20,20)
             tryCompare(mapCenterSpy, "count", 1)
             verify (map.center.latitude < 30 )
             verify (map.center.longitude < 60 )
@@ -161,7 +161,7 @@ Item {
             map.center.longitude = 60
             mapCenterSpy.clear()
             // down
-            map.pan(0,-20)
+            map.pan(0,20)
             tryCompare(mapCenterSpy, "count", 1)
             verify (map.center.latitude < 30 )
             verify (fuzzy_compare(map.center.longitude, 60))
@@ -169,7 +169,7 @@ Item {
             map.center.longitude = 60
             mapCenterSpy.clear()
             // down right
-            map.pan(20,-20)
+            map.pan(20,20)
             tryCompare(mapCenterSpy, "count", 1)
             verify (map.center.latitude < 30 )
             verify (map.center.longitude > 60 )

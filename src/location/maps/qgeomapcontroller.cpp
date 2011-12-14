@@ -227,7 +227,7 @@ void QGeoMapController::pan(qreal dx, qreal dy)
     QGeoCameraData cd = map_->cameraData();
     QGeoCoordinate coord = map_->screenPositionToCoordinate(
                                 QPointF(map_->width() / 2 + dx,
-                                        map_->height() / 2 - dy));
+                                        map_->height() / 2 + dy));
 
     if (coord.isValid()) {
         cd.setCenter(coord);
