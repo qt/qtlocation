@@ -85,9 +85,8 @@ struct Vertex
     QVector2D position;
 };
 
-static void updatePolyline(QPolygonF& points,const Map& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
+void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& points,const Map& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
 {
-
     qreal minX, maxX, minY, maxY;
     //TODO: dateline handling
 
@@ -122,8 +121,9 @@ static void updatePolyline(QPolygonF& points,const Map& map, const QList<QGeoCoo
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent) :
     QDeclarativeGeoMapItemBase(parent),
-    mapPolylineNode_(0),
-    zoomLevel_(0.0)
+    zoomLevel_(0.0),
+    dirtyGeometry_(true),
+    dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&line_, SIGNAL(colorChanged(QColor)),
@@ -138,14 +138,18 @@ QDeclarativePolylineMapItem::~QDeclarativePolylineMapItem()
 
 void QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged()
 {
-    // pass true just in case we're a width change
-    updateMapItem(true);
+    // mark dirty just in case we're a width change
+    dirtyGeometry_ = true;
+    updateMapItem();
 }
 
 void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
-    if (map) QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+    if (map){
+        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+        updateMapItem();
+    }
 }
 
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativePolylineMapItem::declarativePath()
@@ -160,7 +164,8 @@ void QDeclarativePolylineMapItem::path_append(QDeclarativeListProperty<QDeclarat
                 property->object);
     item->coordPath_.append(coordinate);
     item->path_.append(coordinate->coordinate());
-    item->updateMapItem(true);
+    item->dirtyGeometry_ = true;
+    item->updateMapItem();
     emit item->pathChanged();
 }
 
@@ -184,7 +189,8 @@ void QDeclarativePolylineMapItem::path_clear(
     qDeleteAll(item->coordPath_);
     item->coordPath_.clear();
     item->path_.clear();
-    item->updateMapItem(true);
+    item->dirtyGeometry_ = true;
+    item->updateMapItem();
     emit item->pathChanged();
 }
 
@@ -192,7 +198,8 @@ void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordina
 {
     coordPath_.append(coordinate);
     path_.append(coordinate->coordinate());
-    updateMapItem(true);
+    dirtyGeometry_ = true;
+    updateMapItem();
     emit pathChanged();
 }
 
@@ -211,7 +218,8 @@ void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate* coord
     }
     coordPath_.removeAt(index);
     path_.removeAt(index);
-    updateMapItem(true);
+    dirtyGeometry_ = true;
+    updateMapItem();
     emit pathChanged();
 }
 
@@ -227,31 +235,33 @@ QSGNode* QDeclarativePolylineMapItem::updatePaintNode(QSGNode* oldNode, UpdatePa
     MapPolylineNode *node = static_cast<MapPolylineNode*>(oldNode);
 
     if (!node) {
-        mapPolylineNode_ = new MapPolylineNode();
-        updateMapItem(true);
+        node = new MapPolylineNode();
     }
 
-    mapPolylineNode_->update();
-    return mapPolylineNode_;
+    //TODO: update only material
+    if (dirtyGeometry_ || dirtyMaterial_) {
+        node->update(line_.color(), polyline_, line_.width());
+        dirtyGeometry_ = false;
+        dirtyMaterial_ = false;
+    }
+    return node;
 }
 
-void QDeclarativePolylineMapItem::updateMapItem(bool dirtyGeometry) {
-
-    if (!map() || path_.count()==0 || !mapPolylineNode_)
+void QDeclarativePolylineMapItem::updateMapItem()
+{
+    if (!map() || path_.count() == 0)
         return;
 
-    mapPolylineNode_->setPenColor(line_.color());
-    mapPolylineNode_->setLineWidth(line_.width());
+    if (dirtyGeometry_) {
+           qreal h = 0;
+           qreal w = 0;
+           polyline_.clear();
+           updatePolyline(polyline_, *map(), path_, w, h);
+           setWidth(w);
+           setHeight(h);
+       }
 
-    if (dirtyGeometry)
-        mapPolylineNode_->setGeometry(*map(), path_);
-
-    const QSizeF& size = mapPolylineNode_->size();
-
-    setWidth(size.width());
-    setHeight(size.height());
-
-    setPositionOnMap(path_.at(0),mapPolylineNode_->geometry().at(0));
+    setPositionOnMap(path_.at(0),polyline_.at(0));
     update();
 }
 
@@ -259,9 +269,10 @@ void QDeclarativePolylineMapItem::handleCameraDataChanged(const CameraData& came
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
-        updateMapItem(true);
+        dirtyGeometry_ = true;
+        updateMapItem();
     } else {
-        updateMapItem(false);
+        updateMapItem();
     }
 }
 
@@ -269,7 +280,7 @@ bool QDeclarativePolylineMapItem::contains(QPointF point)
 {
     // TODO: this currently returns all points _inside_ of the implicitly closed
     // painterpath whereas we are only interested in the outlines of it
-    return mapPolylineNode_->contains(point);
+    return polyline_.contains(point);
 }
 
 void QDeclarativePolylineMapItem::dragStarted()
@@ -280,8 +291,6 @@ void QDeclarativePolylineMapItem::dragStarted()
 //////////////////////////////////////////////////////////////////////
 
 MapPolylineNode::MapPolylineNode() :
-    fillColor_(Qt::black),
-    width_(2.0),
     geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
 {
     geometry_.setDrawingMode(GL_LINE_STRIP);
@@ -294,73 +303,37 @@ MapPolylineNode::~MapPolylineNode()
 {
 }
 
-void MapPolylineNode::update()
+void MapPolylineNode::update(const QColor& fillColor, const QPolygonF& shape, qreal width)
 {
-    //TODO: optimize , perform calculation only if polygon has changed
-    if (polyline_.size() == 0)
+    if (shape.size() == 0)
         return;
 
     QSGGeometry *fill = QSGGeometryNode::geometry();
 
-    fill->setLineWidth(width_);
+    fill->setLineWidth(width);
 
     Q_ASSERT(fill->sizeOfVertex() == sizeof(Vertex));
 
     int fillVertexCount = 0;
     //note this will not allocate new buffer if the size has not changed
-    fill->allocate(polyline_.size());
+    fill->allocate(shape.size());
 
     Vertex *vertices = (Vertex *)fill->vertexData();
 
-    for (int i = 0; i < polyline_.size(); ++i) {
-        vertices[fillVertexCount++].position = QVector2D(polyline_.at(i));
+    for (int i = 0; i < shape.size(); ++i) {
+        vertices[fillVertexCount++].position = QVector2D(shape.at(i));
     }
 
     Q_ASSERT(fillVertexCount == fill->vertexCount());
 
     markDirty(DirtyGeometry);
 
-    if (fillColor_ != fill_material_.color()) {
-        fill_material_.setColor(fillColor_);
+    if (fillColor != fill_material_.color()) {
+        fill_material_.setColor(fillColor);
         setMaterial(&fill_material_);
     }
 
     //TODO: implement me : borders , gradient
-}
-
-bool MapPolylineNode::contains(QPointF point)
-{
-    //TODO: implement me
-    return polyline_.contains(point);
-}
-
-void MapPolylineNode::setPenColor(const QColor &color)
-{
-    fillColor_ = color;
-}
-
-QColor MapPolylineNode::penColor() const
-{
-    return fillColor_;
-}
-
-qreal MapPolylineNode::lineWidth() const
-{
-    return width_;
-}
-
-void MapPolylineNode::setLineWidth(qreal width)
-{
-    width_ = width;
-}
-
-void MapPolylineNode::setGeometry(const Map& map, const QList<QGeoCoordinate> &path)
-{
-    qreal h = 0;
-    qreal w = 0;
-    polyline_.clear();
-    updatePolyline(polyline_, map, path, w, h);
-    size_ = QSizeF(w, h);
 }
 
 QT_END_NAMESPACE

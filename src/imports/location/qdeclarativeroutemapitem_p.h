@@ -80,7 +80,7 @@ Q_SIGNALS:
     void routeChanged(const QDeclarativeGeoRoute *route);
 
 protected Q_SLOTS:
-    virtual void updateMapItem(bool dirtyGeomoetry = true);
+    virtual void updateMapItem();
     void updateAfterLinePropertiesChanged();
 
 private Q_SLOTS:
@@ -88,12 +88,13 @@ private Q_SLOTS:
     void handleCameraDataChanged(const CameraData& cameraData);
 
 private:
-    MapPolylineNode *mapPolylineNode_;
     QDeclarativeMapLineProperties line_;
     QDeclarativeGeoRoute* route_;
-    QColor color_;
     qreal zoomLevel_;
     QList<QGeoCoordinate> path_;
+    QPolygonF polyline_;
+    bool dirtyGeometry_;
+    bool dirtyMaterial_;
     bool dragActive_;
 };
 

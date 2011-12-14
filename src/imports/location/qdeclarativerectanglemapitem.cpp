@@ -51,10 +51,11 @@ struct Vertex
 
 QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent):
     QDeclarativeGeoMapItemBase(parent),
-    mapRectangleNode_(0),
     topLeft_(0),
     bottomRight_(0),
     zoomLevel_(0.0),
+    dirtyGeometry_(true),
+    dirtyMaterial_(true),
     dragActive_(false)
 {
     setFlag(ItemHasContents, true);
@@ -67,7 +68,10 @@ QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
 void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
-    if (map) QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+    if (map) {
+        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+        updateMapItem();
+    }
 }
 
 void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
@@ -86,8 +90,8 @@ void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
         connect(topLeft_, SIGNAL(altitudeChanged(double)), this,
                 SLOT(updateMapItem()));
     }
-
-    updateMapItem(true);
+    dirtyGeometry_ = true;
+    updateMapItem();
     emit topLeftChanged(topLeft_);
 }
 
@@ -111,7 +115,8 @@ void QDeclarativeRectangleMapItem::setBottomRight(QDeclarativeCoordinate *bottom
         connect(bottomRight_, SIGNAL(altitudeChanged(double)), this,
                 SLOT(updateMapItem()));
     }
-    updateMapItem(true);
+    dirtyGeometry_ = true;
+    updateMapItem();
     emit bottomRightChanged(bottomRight_);
 }
 
@@ -130,7 +135,8 @@ void QDeclarativeRectangleMapItem::setColor(const QColor &color)
     if (color_ == color)
         return;
     color_ = color;
-    updateMapItem(false);
+    dirtyMaterial_ = true;
+    updateMapItem();
     emit colorChanged(color_);
 }
 
@@ -141,31 +147,45 @@ QSGNode* QDeclarativeRectangleMapItem::updatePaintNode(QSGNode* oldNode, UpdateP
     MapRectangleNode *node = static_cast<MapRectangleNode*>(oldNode);
 
     if (!node) {
-        mapRectangleNode_ = new MapRectangleNode();
-        updateMapItem(true);
+        node = new MapRectangleNode();
     }
 
-    mapRectangleNode_->update();
-    return mapRectangleNode_;
+    //TODO: update only material
+    if (dirtyGeometry_ || dirtyMaterial_) {
+        node->update(color_,rectangle_);
+        dirtyGeometry_ = false;
+        dirtyMaterial_ = false;
+    }
+    return node;
 }
 
-void QDeclarativeRectangleMapItem::updateMapItem(bool dirtyGeometry)
+void QDeclarativeRectangleMapItem::updateMapItem()
 {
     if (!map() || !topLeft() || !topLeft()->coordinate().isValid()
-            || !bottomRight() || !bottomRight()->coordinate().isValid()
-            || !mapRectangleNode_)
+            || !bottomRight() || !bottomRight()->coordinate().isValid())
         return;
 
-    mapRectangleNode_->setBrushColor(color_);
+    if (dirtyGeometry_) {
+        QPointF p1 = map()->coordinateToScreenPosition(topLeft_->coordinate(), false);
+        QPointF p2 = map()->coordinateToScreenPosition(bottomRight_->coordinate(), false);
 
-    if (dirtyGeometry) mapRectangleNode_->setGeometry(*map(), topLeft()->coordinate(), bottomRight()->coordinate());
+        qreal minX = qMin(p1.x(), p2.x());
+        qreal maxX = qMax(p1.x(), p2.x());
+        qreal minY = qMin(p1.y(), p2.y());
+        qreal maxY = qMax(p1.y(), p2.y());
 
-    const QSizeF& size = mapRectangleNode_->size();
+        qreal w = maxX - minX;
+        qreal h = maxY - minY;
 
-    setWidth(size.width());
-    setHeight(size.height());
+        rectangle_.setTopLeft(QPointF(0, 0));
+        rectangle_.setBottomRight(QPointF(w, h));
 
-    setPositionOnMap(topLeft()->coordinate(), QPointF(0, 0));
+        setWidth(w);
+        setHeight(h);
+    }
+
+    //TODO: add AnchorCoordiante
+    setPositionOnMap(topLeft_->coordinate(), QPointF(0, 0));
     update();
 }
 
@@ -173,15 +193,14 @@ void QDeclarativeRectangleMapItem::handleCameraDataChanged(const CameraData& cam
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
-        updateMapItem(true);
-    } else {
-        updateMapItem(false);
+        dirtyGeometry_ = true;
     }
+    updateMapItem();
 }
 
 bool QDeclarativeRectangleMapItem::contains(QPointF point)
 {
-    return mapRectangleNode_->contains(point);
+    return rectangle_.contains(point);
 }
 
 void QDeclarativeRectangleMapItem::dragEnded()
@@ -202,6 +221,7 @@ void QDeclarativeRectangleMapItem::dragEnded()
     }
 }
 
+//TODO: this is goingn to be removed by I466aa31d33a204b2f7c6c562025946371d3b6f46
 void QDeclarativeRectangleMapItem::dragStarted()
 {
     dragActive_ = true;
@@ -209,12 +229,10 @@ void QDeclarativeRectangleMapItem::dragStarted()
 //////////////////////////////////////////////////////////////////////
 
 MapRectangleNode::MapRectangleNode():
-    fillColor_(Qt::black),
-    borderColor_(Qt::black),
     geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
 {
     geometry_.setDrawingMode(GL_QUADS);
-    QSGGeometryNode::setMaterial(&fill_material_);
+    QSGGeometryNode::setMaterial(&fillMaterial_);
     QSGGeometryNode::setGeometry(&geometry_);
 }
 
@@ -222,7 +240,7 @@ MapRectangleNode::~MapRectangleNode()
 {
 }
 
-void MapRectangleNode::update()
+void MapRectangleNode::update(const QColor& fillColor, const QRectF& shape)
 {
     QSGGeometry *fill = QSGGeometryNode::geometry();
 
@@ -235,63 +253,20 @@ void MapRectangleNode::update()
     Vertex *vertices = (Vertex *)fill->vertexData();
 
     //set corners
-    vertices[fillVertexCount++].position = QVector2D(rect_.left(),rect_.top());
-    vertices[fillVertexCount++].position = QVector2D(rect_.right(),rect_.top());
-    vertices[fillVertexCount++].position = QVector2D(rect_.right(),rect_.bottom());
-    vertices[fillVertexCount++].position = QVector2D(rect_.left(),rect_.bottom());
+    vertices[fillVertexCount++].position = QVector2D(shape.left(),shape.top());
+    vertices[fillVertexCount++].position = QVector2D(shape.right(),shape.top());
+    vertices[fillVertexCount++].position = QVector2D(shape.right(),shape.bottom());
+    vertices[fillVertexCount++].position = QVector2D(shape.left(),shape.bottom());
 
     Q_ASSERT(fillVertexCount == fill->vertexCount());
 
     markDirty(DirtyGeometry);
 
-    if (fillColor_ != fill_material_.color()) {
-        fill_material_.setColor(fillColor_);
-        setMaterial(&fill_material_);
+    if (fillColor != fillMaterial_.color()) {
+        fillMaterial_.setColor(fillColor);
+        setMaterial(&fillMaterial_);
     }
     //TODO: implement me : borders , gradient
-}
-
-void MapRectangleNode::setBrushColor(const QColor &color)
-{
-    fillColor_= color;
-}
-
-QColor MapRectangleNode::brushColor() const
-{
-    return fillColor_;
-}
-
-void MapRectangleNode::setPenColor(const QColor &color)
-{
-    borderColor_ = color;
-}
-
-QColor MapRectangleNode::penColor() const
-{
-    return borderColor_;
-}
-
-bool MapRectangleNode::contains(QPointF point)
-{
-    return rect_.contains(point);
-}
-
-void  MapRectangleNode::setGeometry(const Map& map, const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
-{
-    QPointF p1 = map.coordinateToScreenPosition(topLeft, false);
-    QPointF p2 = map.coordinateToScreenPosition(bottomRight, false);
-
-    qreal minX = qMin(p1.x(), p2.x());
-    qreal maxX = qMax(p1.x(), p2.x());
-    qreal minY = qMin(p1.y(), p2.y());
-    qreal maxY = qMax(p1.y(), p2.y());
-
-    qreal w = maxX - minX;
-    qreal h = maxY - minY;
-
-    size_ = QSizeF(w, h);
-    rect_.setTopLeft(QPointF(0, 0));
-    rect_.setBottomRight(QPointF(w, h));
 }
 
 QT_END_NAMESPACE

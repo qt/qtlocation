@@ -89,7 +89,7 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
 
 protected Q_SLOTS:
-    virtual void updateMapItem(bool dirtyGeomoetry=true);
+    virtual void updateMapItem();
     void handleBorderUpdated();
 
 private Q_SLOTS:
@@ -97,13 +97,19 @@ private Q_SLOTS:
 
 private:
     //TODO: pimpl
+    //TODO: this should be in base class done in
     QDeclarativeCoordinate internalCoordinate_;
     QDeclarativeCoordinate *center_;
     QDeclarativeMapLineProperties border_;
-    MapCircleNode *mapCircleNode_;
     QColor color_;
     qreal radius_;
     qreal zoomLevel_;
+    QList<QGeoCoordinate> circlePath_;
+    QPolygonF circlePolygon_;
+    QPolygonF borderPolygon_;
+    bool dirtyPixelGeometry_;
+    bool dirtyGeoGeometry_;
+    bool dirtyMaterial_;
     bool dragActive_;
 };
 
@@ -116,37 +122,13 @@ public:
     MapCircleNode();
     ~MapCircleNode();
 
-    void setSize(const QSize &size);
-    QSizeF size() const {
-          return size_;
-    }
-
-    void setLineWidth(qreal width);
-    qreal lineWidth() const;
-
-    QColor penColor() const;
-    void setPenColor(const QColor &pen);
-
-    QColor brushColor() const;
-    void setBrushColor(const QColor &color);
-
-    void update();
-    bool contains(QPointF point);
-    void setGeometry(const Map &map, qreal radius, const QGeoCoordinate &center);
+    void update(const QColor& fillColor, const QPolygonF& circleShape, const QPointF& center,
+                const QPolygonF& borderShape, const QColor& borderColor, qreal borderWidth);
 
 private:
     QSGFlatColorMaterial fill_material_;
-    //QSGFlatColorMaterial border_material_;
-    QColor fillColor_;
-    QColor borderColor_;
-    qreal borderWidth_;
     MapPolylineNode *border_;
-    //keeps pixel geometry
     QSGGeometry geometry_;
-    //keeps geographic geometry
-    QList<QGeoCoordinate> path_;
-    QPolygonF polygon_;
-    QSizeF size_;
 };
 
 QT_END_NAMESPACE

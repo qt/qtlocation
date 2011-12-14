@@ -195,9 +195,8 @@ qreal QDeclarativeGeoMapQuickItem::zoomLevel() const
     return zoomLevel_;
 }
 
-void QDeclarativeGeoMapQuickItem::updateMapItem(bool dirtyGeometry)
+void QDeclarativeGeoMapQuickItem::updateMapItem()
 {
-    Q_UNUSED(dirtyGeometry);
     if (!quickMap() && sourceItem_) {
         mapAndSourceItemSet_ = false;
         sourceItem_->setParentItem(0);

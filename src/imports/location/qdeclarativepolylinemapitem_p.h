@@ -86,6 +86,8 @@ public:
     QDeclarativePolylineMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolylineMapItem();
 
+    static void updatePolyline(QPolygonF& points,const Map& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h);
+
     virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
        //from QuickItem
     virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
@@ -104,7 +106,7 @@ Q_SIGNALS:
     void pathChanged();
 
 protected Q_SLOTS:
-    virtual void updateMapItem(bool dirtyGeomoetry = true);
+    virtual void updateMapItem();
     void updateAfterLinePropertiesChanged();
 
 private Q_SLOTS:
@@ -119,12 +121,14 @@ private:
     void pathPropertyChanged();
 
 private:
-    MapPolylineNode *mapPolylineNode_;
     QDeclarativeMapLineProperties line_;
     QList<QDeclarativeCoordinate*> coordPath_;
     QList<QGeoCoordinate> path_;
     QColor color_;
     qreal zoomLevel_;
+    QPolygonF polyline_;
+    bool dirtyGeometry_;
+    bool dirtyMaterial_;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -136,32 +140,12 @@ public:
     MapPolylineNode();
     ~MapPolylineNode();
 
-    void setSize(const QSize &size);
-    QSizeF size() const {
-            return size_;
-    }
-
-    qreal lineWidth() const;
-    void setLineWidth(qreal width);
-
-    QColor penColor() const;
-    void setPenColor(const QColor &pen);
-
-    void update();
-    bool contains(QPointF point);
-
-    void setGeometry(const Map &map, const  QList<QGeoCoordinate>  &path);
-    const QPolygonF& geometry() { return polyline_; }
+    void update(const QColor& fillColor, const QPolygonF& shape, qreal width);
 
 private:
     QSGFlatColorMaterial fill_material_;
-    QColor fillColor_;
     QSGGeometry geometry_;
-    QPolygonF polyline_;
-    QSizeF size_;
-    qreal width_;
 };
-
 
 QT_END_NAMESPACE
 

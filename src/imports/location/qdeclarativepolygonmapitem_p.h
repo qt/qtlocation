@@ -85,7 +85,7 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
 
 protected Q_SLOTS:
-    virtual void updateMapItem(bool dirtyGeomoetry = true);
+    virtual void updateMapItem();
     void handleBorderUpdated();
 
 private Q_SLOTS:
@@ -100,12 +100,15 @@ private:
     void pathPropertyChanged();
 
 private:
-    MapPolygonNode *mapPolygonNode_;
     QDeclarativeMapLineProperties border_;
     QList<QDeclarativeCoordinate*> coordPath_;
     QList<QGeoCoordinate> path_;
     QColor color_;
     qreal zoomLevel_;
+    QPolygonF polygon_;
+    QPolygonF borderPolygon_;
+    bool dirtyGeometry_;
+    bool dirtyMaterial_;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -117,36 +120,14 @@ public:
     MapPolygonNode();
     ~MapPolygonNode();
 
-    void setSize(const QSize &size);
-    QSizeF size() const {
-          return size_;
-    }
-
-    QColor penColor() const;
-    void setPenColor(const QColor &pen);
-
-    qreal lineWidth() const;
-    void setLineWidth(qreal width);
-
-    QColor brushColor() const;
-    void setBrushColor(const QColor &color);
-
-    void update();
-    bool contains(QPointF point);
-    void setGeometry(const Map &map, const  QList<QGeoCoordinate>  &path);
-    const QPolygonF& geometry() { return polygon_; }
+    void update(const QColor& fillColor, const QPolygonF& shape,
+                const QPolygonF& borderShape, const QColor& borderColor, qreal borderWidth);
 
 private:
     QSGFlatColorMaterial fill_material_;
-    QColor fillColor_;
-    QColor borderColor_;
-    qreal borderWidth_;
-    MapPolylineNode *border_;
+    MapPolylineNode* border_;
     QSGGeometry geometry_;
-    QPolygonF polygon_;
-    QSizeF size_;
 };
-
 
 QT_END_NAMESPACE
 

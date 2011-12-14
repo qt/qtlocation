@@ -85,10 +85,12 @@ static void updatePolygon(QPolygonF& points,const Map& map, const QList<QGeoCoor
 
 QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
     QDeclarativeGeoMapItemBase(parent),
-    mapPolygonNode_(0),
-    zoomLevel_(0.0)
+    zoomLevel_(0.0),
+    dirtyGeometry_(true),
+    dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
+    border_.setWidth(3.0);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
                      this, SLOT(handleBorderUpdated()));
     QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
@@ -97,7 +99,8 @@ QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
 
 void QDeclarativePolygonMapItem::handleBorderUpdated()
 {
-    updateMapItem(true);
+    dirtyGeometry_ = true;
+    updateMapItem();
 }
 
 QDeclarativePolygonMapItem::~QDeclarativePolygonMapItem()
@@ -111,10 +114,12 @@ QDeclarativeMapLineProperties *QDeclarativePolygonMapItem::border()
 
 void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
 {
-    QDeclarativeGeoMapItemBase::setMap(quickMap, map);
-    if (map)
-        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)),
-                         this, SLOT(handleCameraDataChanged(CameraData)));
+    QDeclarativeGeoMapItemBase::setMap(quickMap,map);
+    if (map) {
+        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+        dirtyGeometry_ = true;
+        updateMapItem();
+    }
 }
 
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarativePath()
@@ -129,7 +134,8 @@ void QDeclarativePolygonMapItem::path_append(
     QDeclarativePolygonMapItem* item = qobject_cast<QDeclarativePolygonMapItem*>(property->object);
     item->coordPath_.append(coordinate);
     item->path_.append(coordinate->coordinate());
-    item->updateMapItem(true);
+    item->dirtyGeometry_ = true;
+    item->updateMapItem();
     emit item->pathChanged();
 }
 
@@ -153,7 +159,8 @@ void QDeclarativePolygonMapItem::path_clear(
     qDeleteAll(item->coordPath_);
     item->coordPath_.clear();
     item->path_.clear();
-    item->updateMapItem(true);
+    item->dirtyGeometry_ = true;
+    item->updateMapItem();
     emit item->pathChanged();
 }
 
@@ -161,7 +168,8 @@ void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate* coordinat
 {
     coordPath_.append(coordinate);
     path_.append(coordinate->coordinate());
-    updateMapItem(true);
+    dirtyGeometry_ = true;
+    updateMapItem();
     emit pathChanged();
 }
 
@@ -180,7 +188,8 @@ void QDeclarativePolygonMapItem::removeCoordinate(QDeclarativeCoordinate* coordi
     }
     coordPath_.removeAt(index);
     path_.removeAt(index);
-    updateMapItem(true);
+    dirtyGeometry_ = true;
+    updateMapItem();
     emit pathChanged();
 }
 
@@ -195,44 +204,47 @@ void QDeclarativePolygonMapItem::setColor(const QColor &color)
         return;
 
     color_ = color;
-    updateMapItem(false);
+    dirtyMaterial_ = true;
+    updateMapItem();
     emit colorChanged(color_);
 }
 
 QSGNode* QDeclarativePolygonMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
-
     MapPolygonNode *node = static_cast<MapPolygonNode*>(oldNode);
 
-    if (!node) {
-        mapPolygonNode_ = new MapPolygonNode();
-        updateMapItem(true);
-    }
+    if (!node)
+        node = new MapPolygonNode();
 
-    mapPolygonNode_->update();
-    return mapPolygonNode_;
+    //TODO: update only material
+    if (dirtyGeometry_ || dirtyMaterial_) {
+        node->update(color_, polygon_, borderPolygon_,  border_.color(), border_.width());
+        dirtyGeometry_ = false;
+        dirtyMaterial_ = false;
+    }
+    return node;
 }
 
-void
-QDeclarativePolygonMapItem::updateMapItem(bool dirtyGeometry)
+void QDeclarativePolygonMapItem::updateMapItem()
 {
-    if (!map() || path_.count() == 0 || !mapPolygonNode_)
+    if (!map() || path_.count() == 0)
         return;
 
-    mapPolygonNode_->setBrushColor(color_);
-    mapPolygonNode_->setPenColor(border_.color());
-    mapPolygonNode_->setLineWidth(border_.width());
+    if (dirtyGeometry_) {
+        qreal h = 0;
+        qreal w = 0;
+        polygon_.clear();
+        borderPolygon_.clear();
+        updatePolygon(polygon_, *map(), path_, w, h);
 
-    if (dirtyGeometry)
-        mapPolygonNode_->setGeometry(*map(), path_);
-
-    const QSizeF& size = mapPolygonNode_->size();
-
-    setWidth(size.width());
-    setHeight(size.height());
-
-    setPositionOnMap(path_.at(0), mapPolygonNode_->geometry().at(0));
+        QList<QGeoCoordinate> pathClosed = path_;
+        pathClosed.append(pathClosed.at(0));
+        QDeclarativePolylineMapItem::updatePolyline(borderPolygon_, *map(), pathClosed, w, h);
+        setWidth(w);
+        setHeight(h);
+    }
+    setPositionOnMap(path_.at(0), polygon_.at(0));
     update();
 }
 
@@ -240,10 +252,9 @@ void QDeclarativePolygonMapItem::handleCameraDataChanged(const CameraData& camer
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
-        updateMapItem(true);
-    } else {
-        updateMapItem(false);
+        dirtyGeometry_ = true;
     }
+    updateMapItem();
 }
 
 void QDeclarativePolygonMapItem::dragStarted()
@@ -253,15 +264,12 @@ void QDeclarativePolygonMapItem::dragStarted()
 
 bool QDeclarativePolygonMapItem::contains(QPointF point)
 {
-    return mapPolygonNode_->contains(point);
+    return polygon_.contains(point);
 }
 
 //////////////////////////////////////////////////////////////////////
 
 MapPolygonNode::MapPolygonNode() :
-    fillColor_(Qt::black),
-    borderColor_(Qt::black),
-    borderWidth_(3.0),
     border_(new MapPolylineNode()),
     geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
 {
@@ -276,10 +284,11 @@ MapPolygonNode::~MapPolygonNode()
 {
 }
 
-void MapPolygonNode::update()
+void MapPolygonNode::update(const QColor& fillColor, const QPolygonF& shape,
+                            const QPolygonF& borderShape, const QColor& borderColor, qreal borderWidth)
 {
-    //TODO: optimize , perform calculation only if polygon has changed
-    if (polygon_.size()==0) return;
+    if (shape.size() == 0)
+        return;
 
     QSGGeometry *fill = QSGGeometryNode::geometry();
 
@@ -287,75 +296,20 @@ void MapPolygonNode::update()
 
     int fillVertexCount = 0;
     //note this will not allocate new buffer if the size has not changed
-    fill->allocate(polygon_.size());
+    fill->allocate(shape.size());
 
     Vertex *vertices = (Vertex *)fill->vertexData();
 
-    for (int i = 0; i < polygon_.size(); ++i) {
-        vertices[fillVertexCount++].position = QVector2D(polygon_.at(i));
+    for (int i = 0; i < shape.size(); ++i) {
+        vertices[fillVertexCount++].position = QVector2D(shape.at(i));
     }
 
     Q_ASSERT(fillVertexCount == fill->vertexCount());
-
     markDirty(DirtyGeometry);
 
-    if (fillColor_ != fill_material_.color()) {
-        fill_material_.setColor(fillColor_);
+    if (fillColor != fill_material_.color()) {
+        fill_material_.setColor(fillColor);
         setMaterial(&fill_material_);
     }
-
-    border_->setPenColor(borderColor_);
-    border_->setLineWidth(borderWidth_);
-
-    border_->update();
-
-    //TODO: implement me : gradient
-}
-
-qreal MapPolygonNode::lineWidth() const
-{
-    return borderWidth_;
-}
-
-void MapPolygonNode::setLineWidth(qreal width)
-{
-    borderWidth_ = width;
-}
-
-void MapPolygonNode::setBrushColor(const QColor &color)
-{
-    fillColor_= color;
-}
-
-QColor MapPolygonNode::brushColor() const
-{
-    return fillColor_;
-}
-
-void MapPolygonNode::setPenColor(const QColor &color)
-{
-    borderColor_ = color;
-}
-
-QColor MapPolygonNode::penColor() const
-{
-    return borderColor_;
-}
-
-bool MapPolygonNode::contains(QPointF point)
-{
-    return polygon_.containsPoint(point, Qt::OddEvenFill);
-}
-
-void MapPolygonNode::setGeometry(const Map& map, const QList<QGeoCoordinate> &path)
-{
-    qreal h = 0;
-    qreal w = 0;
-    polygon_.clear();
-    updatePolygon(polygon_, map, path, w, h);
-    size_ = QSizeF(w, h);
-
-    QList<QGeoCoordinate> pathClosed = path;
-    pathClosed.append(pathClosed.at(0));
-    border_->setGeometry(map, pathClosed);
+    border_->update(borderColor, borderShape, borderWidth);
 }

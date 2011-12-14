@@ -65,9 +65,8 @@ public:
     QDeclarativeGeoMap* quickMap() {return quickMap_;}
     Map* map() {return map_;}
 
-
 protected Q_SLOT:
-    virtual void updateMapItem(bool dirtyGeometry = true) = 0;
+    virtual void updateMapItem() = 0;
 
 private:
     Map* map_;

@@ -90,6 +90,10 @@ Rectangle {
                 onDoubleClicked: {console.log('+++++++++++++++ removing item 1'); map.removeMapItem(externalStaticMapItem1);}
             }
         }
+        Rectangle {color: "lightblue"; width: 80; height: 40;
+            Text {text: "Add\nitem"}
+            MouseArea{ anchors.fill: parent; onClicked: map.addMapItem(extMapCircle)}
+        }
         Rectangle {color: "lightblue"; width: 80; height: 80;
             Text {text: "Click:\nadd item2\nDouble-click:\nrm item2"}
             MouseArea{ anchors.fill: parent;
@@ -180,10 +184,6 @@ Rectangle {
             MouseArea{ anchors.fill: parent; onClicked: map.height -= 10}
         }
         Rectangle {color: "lightblue"; width: 80; height: 40;
-            Text {text: "Add\nitem"}
-            MouseArea{ anchors.fill: parent; onClicked: map.addMapItem(extMapCircle)}
-        }
-        Rectangle {color: "lightblue"; width: 80; height: 40;
             Text {text: "toScrPos"}
             MouseArea{ anchors.fill: parent;
                 onClicked: console.log('coordinate: ' +
@@ -264,6 +264,8 @@ Rectangle {
             center: londonCoordinate
             radius: 10000
             color: 'red'
+            border.color: 'darkcyan'
+            border.width: 15
 
             MapMouseArea {
                 id: mouseAreaOfMapCircle
@@ -291,7 +293,8 @@ Rectangle {
         MapPolyline {
             id: mapPolyline
             z: 15
-            color: 'red'
+            line.color: 'red'
+            line.width: 10
             path: [
                 Coordinate { id: pathCoord1; latitude: 50.7; longitude: 0.1},
                 Coordinate { id: pathCoord2; latitude: 50.8; longitude: 0.4},
@@ -321,6 +324,8 @@ Rectangle {
         MapPolygon {
             id: mapPolygon
             color: 'pink'
+            border.color: 'darkmagenta'
+            border.width: 10
             path: [
                 Coordinate { id: pathCoord_1; latitude: 51; longitude: 0.2},
                 Coordinate { id: pathCoord_2; latitude: 51.1; longitude: 0.6},
@@ -349,7 +354,8 @@ Rectangle {
 
         MapRoute {
             id: mapRoute
-            color: 'black'
+            line.color: 'green'
+            line.width: 7
             // don't do this at home - route is not user instantiable,
             // use polyline instead
             route: Route {

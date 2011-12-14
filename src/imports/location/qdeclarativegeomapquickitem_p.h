@@ -86,7 +86,7 @@ Q_SIGNALS:
     void zoomLevelChanged();
 
 protected Q_SLOTS:
-    virtual void updateMapItem(bool dirtyGeometry = true);
+    virtual void updateMapItem();
     // from qquickitem
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 

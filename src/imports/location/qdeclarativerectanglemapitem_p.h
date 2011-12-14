@@ -85,22 +85,24 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
 
 protected Q_SLOTS:
-    virtual void updateMapItem(bool dirtyGeometry = true);
-
+    virtual void updateMapItem();
 
 private Q_SLOTS:
     // map size changed
     void handleCameraDataChanged(const CameraData& cameraData);
 
 private:
-    MapRectangleNode *mapRectangleNode_;
     QDeclarativeCoordinate* topLeft_;
     QDeclarativeCoordinate* bottomRight_;
     QDeclarativeCoordinate internalTopLeft_;
     QDeclarativeCoordinate internalBottomRight_;
     QColor color_;
     qreal zoomLevel_;
+    QRectF rectangle_;
+    bool dirtyGeometry_;
+    bool dirtyMaterial_;
     bool dragActive_;
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -112,28 +114,11 @@ public:
     MapRectangleNode();
     ~MapRectangleNode();
 
-    void setSize(const QSize &size);
-    QSizeF size() const {
-            return size_;
-    }
-
-    QColor penColor() const;
-    void setPenColor(const QColor &pen);
-
-    QColor brushColor() const;
-    void setBrushColor(const QColor &color);
-
-    void update();
-    bool contains(QPointF point);
-    void setGeometry(const Map& map, const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
+    void update(const QColor& fillColor, const QRectF& shape);
 
 private:
-    QSGFlatColorMaterial fill_material_;
-    QColor fillColor_;
-    QColor borderColor_;
+    QSGFlatColorMaterial fillMaterial_;
     QSGGeometry geometry_;
-    QRectF rect_;
-    QSizeF size_;
 
 };
 
