@@ -109,7 +109,6 @@ public:
     void setHierarchical(bool hierarchical);
     bool hierarchical() const;
 
-    Q_INVOKABLE void update();
     Q_INVOKABLE QString errorString() const;
 
     Status status() const;
@@ -120,18 +119,21 @@ signals:
     void hierarchicalChanged();
     void statusChanged();
 
+public slots:
+    void update();
+
 private slots:
     void replyFinished();
     void addedCategory(const QPlaceCategory &category, const QString &parentId);
     void updatedCategory(const QPlaceCategory &category, const QString &parentId);
     void removedCategory(const QString &categoryId, const QString &parentId);
     void connectNotificationSignals();
-    void updateCategories();
 
 private:
     QStringList populateCategories(QPlaceManager *, const QPlaceCategory &parent);
     QModelIndex index(const QString &categoryId) const;
     int rowToAddChild(PlaceCategoryNode *, const QPlaceCategory &category);
+    void reloadCategories();
 
     QPlaceManager *manager(bool stateCheck = true);
 

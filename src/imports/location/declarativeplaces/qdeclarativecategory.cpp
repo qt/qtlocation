@@ -97,6 +97,12 @@ QDeclarativeCategory::~QDeclarativeCategory() {}
 // From QDeclarativeParserStatus
 void QDeclarativeCategory::componentComplete()
 {
+    // delayed instantiation of QObject based properties.
+    if (!m_icon) {
+        m_icon = new QDeclarativePlaceIcon(this);
+        m_icon->setPlugin(m_plugin);
+    }
+
     m_complete = true;
 }
 
@@ -113,10 +119,18 @@ void QDeclarativeCategory::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     m_plugin = plugin;
     if (m_complete)
         emit pluginChanged();
+
+    if (m_icon && m_icon->parent() == this && !m_icon->plugin())
+        m_icon->setPlugin(m_plugin);
+
+    if (!m_plugin)
+        return;
+
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+        m_errorString = tr("Places not supported by %1 plugin.").arg(m_plugin->name());
+        setStatus(Error);
         return;
     }
 }
@@ -301,6 +315,9 @@ QString QDeclarativeCategory::errorString() const
 */
 void QDeclarativeCategory::setStatus(Status status)
 {
+    if (status != Error)
+        m_errorString.clear();
+
     if (m_status != status) {
         m_status = status;
         emit statusChanged();
@@ -389,14 +406,14 @@ void QDeclarativeCategory::replyFinished()
 }
 
 /*
-    Helper function to return the manager, this manager is intended to be used
-    to perform the next operation.
+    Helper function to return the manager, this manager is intended to be used to perform the next
+    operation.  Sets status to Error and an appropriate m_errorString if the manager cannot be
+    obtained.
 */
 QPlaceManager *QDeclarativeCategory::manager()
 {
     if (m_status != QDeclarativeCategory::Ready && m_status != QDeclarativeCategory::Error)
         return 0;
-
 
     if (m_reply) {
         m_reply->abort();
@@ -405,18 +422,16 @@ QPlaceManager *QDeclarativeCategory::manager()
     }
 
     if (!m_plugin) {
-           qmlInfo(this) << tr("Plugin not assigned to category");
-           return 0;
+        m_errorString = tr("Plugin property not set.");
+        setStatus(Error);
+        return 0;
     }
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    if (!serviceProvider)
-        return 0;
-
     QPlaceManager *placeManager = serviceProvider->placeManager();
-
     if (!placeManager) {
-        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        m_errorString = tr("Places not supported by %1 plugin.").arg(m_plugin->name());
+        setStatus(Error);
         return 0;
     }
 

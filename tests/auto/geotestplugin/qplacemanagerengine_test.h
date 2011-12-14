@@ -54,17 +54,21 @@
 
 QT_USE_NAMESPACE
 
-class PlaceReplyTest : public QPlaceReply
+class PlaceReply : public QPlaceReply
 {
     Q_OBJECT
+
+    friend class QPlaceManagerEngineTest;
+
 public:
-    PlaceReplyTest(QObject *parent = 0)
-        : QPlaceReply(parent) {}
+    PlaceReply(QObject *parent = 0)
+    :   QPlaceReply(parent)
+    { }
 
-    void abort() { emit aborted(); }
-
-Q_SIGNALS:
-    void aborted();
+    Q_INVOKABLE void emitFinished()
+    {
+        emit finished();
+    }
 };
 
 class DetailsReply : public QPlaceDetailsReply
@@ -209,44 +213,107 @@ public:
 
     QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId)
     {
-        Q_UNUSED(category);
-        Q_UNUSED(parentId);
+        IdReply *reply = new IdReply(QPlaceIdReply::SaveCategory, this);
 
-        return 0;
+        if ((!category.categoryId().isEmpty() && !m_categories.contains(category.categoryId())) ||
+            (!parentId.isEmpty() && !m_categories.contains(parentId))) {
+            reply->setError(QPlaceReply::CategoryDoesNotExistError, tr("Category does not exist"));
+            QMetaObject::invokeMethod(reply, "emitError", Qt::QueuedConnection);
+        } else if (!category.categoryId().isEmpty()) {
+            m_categories.insert(category.categoryId(), category);
+            QStringList children = m_childCategories.value(parentId);
+
+            QMutableHashIterator<QString, QStringList> i(m_childCategories);
+            while (i.hasNext()) {
+                i.next();
+                i.value().removeAll(category.categoryId());
+            }
+
+            if (!children.contains(category.categoryId())) {
+                children.append(category.categoryId());
+                m_childCategories.insert(parentId, children);
+            }
+            reply->setId(category.categoryId());
+        } else {
+            QPlaceCategory c = category;
+            c.setCategoryId(QUuid::createUuid().toString());
+            m_categories.insert(c.categoryId(), c);
+            QStringList children = m_childCategories.value(parentId);
+            if (!children.contains(c.categoryId())) {
+                children.append(c.categoryId());
+                m_childCategories.insert(parentId, children);
+            }
+
+            reply->setId(c.categoryId());
+        }
+
+        QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
+
+        return reply;
     }
 
     QPlaceIdReply *removeCategory(const QString &categoryId)
     {
-        Q_UNUSED(categoryId);
+        IdReply *reply = new IdReply(QPlaceIdReply::RemoveCategory, this);
+        reply->setId(categoryId);
 
-        return 0;
+        if (!m_categories.contains(categoryId)) {
+            reply->setError(QPlaceReply::CategoryDoesNotExistError, tr("Category does not exist"));
+            QMetaObject::invokeMethod(reply, "emitError", Qt::QueuedConnection);
+        } else {
+            m_categories.remove(categoryId);
+
+            QMutableHashIterator<QString, QStringList> i(m_childCategories);
+            while (i.hasNext()) {
+                i.next();
+                i.value().removeAll(categoryId);
+            }
+        }
+
+        QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
+
+        return reply;
     }
 
     QPlaceReply *initializeCategories()
     {
-        return 0;
+        QPlaceReply *reply = new PlaceReply(this);
+
+        QMetaObject::invokeMethod(reply, "emitFinished", Qt::QueuedConnection);
+
+        return reply;
     }
 
     QString parentCategoryId(const QString &categoryId) const
     {
-        Q_UNUSED(categoryId)
+        QHashIterator<QString, QStringList> i(m_childCategories);
+        while (i.hasNext()) {
+            i.next();
+            if (i.value().contains(categoryId))
+                return i.key();
+        }
+
         return QString();
     }
 
     virtual QStringList childrenCategoryIds(const QString &categoryId) const
     {
-        Q_UNUSED(categoryId)
-        return QStringList();
+        return m_childCategories.value(categoryId);
     }
 
-    virtual QPlaceCategory category(const QString &categoryId) const {
-        Q_UNUSED(categoryId)
-        return QPlaceCategory();
+    virtual QPlaceCategory category(const QString &categoryId) const
+    {
+        return m_categories.value(categoryId);
     }
 
-    QList<QPlaceCategory> childCategories(const QString &parentId) const {
-        Q_UNUSED(parentId);
-        return QList<QPlaceCategory>();
+    QList<QPlaceCategory> childCategories(const QString &parentId) const
+    {
+        QList<QPlaceCategory> categories;
+
+        foreach (const QString &id, m_childCategories.value(parentId))
+            categories.append(m_categories.value(id));
+
+        return categories;
     }
 
     QList<QLocale> locales() const
@@ -281,7 +348,9 @@ public:
 
 private:
     QList<QLocale> m_locales;
-    QMap<QString, QPlace> m_places;
+    QHash<QString, QPlace> m_places;
+    QHash<QString, QPlaceCategory> m_categories;
+    QHash<QString, QStringList> m_childCategories;
 };
 
 #endif

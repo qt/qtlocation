@@ -214,14 +214,14 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
 
     // handle plugin name changes -> update categories
     connect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(connectNotificationSignals()));
-    connect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(updateCategories()));
+    connect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(update()));
 
     connectNotificationSignals();
 
     if (m_complete)
         emit pluginChanged();
 
-    updateCategories();
+    update();
 }
 
 QDeclarativeGeoServiceProvider* QDeclarativeSupportedCategoriesModel::plugin() const
@@ -237,7 +237,7 @@ void QDeclarativeSupportedCategoriesModel::setHierarchical(bool hierarchical)
     m_hierarchical = hierarchical;
     emit hierarchicalChanged();
 
-    update();
+    reloadCategories();
 }
 
 bool QDeclarativeSupportedCategoriesModel::hierarchical() const
@@ -256,7 +256,7 @@ void QDeclarativeSupportedCategoriesModel::replyFinished()
         m_response->deleteLater();
         m_response = 0;
 
-        update();
+        reloadCategories();
         setStatus(QDeclarativeSupportedCategoriesModel::Ready);
     } else {
         m_errorString = m_response->errorString();
@@ -399,7 +399,7 @@ void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
             this, SLOT(removedCategory(QString, QString)));
 }
 
-void QDeclarativeSupportedCategoriesModel::updateCategories()
+void QDeclarativeSupportedCategoriesModel::update()
 {
     if (!m_plugin)
         return;
@@ -426,7 +426,7 @@ void QDeclarativeSupportedCategoriesModel::updateCategories()
     }
 }
 
-void QDeclarativeSupportedCategoriesModel::update()
+void QDeclarativeSupportedCategoriesModel::reloadCategories()
 {
     if (!m_plugin)
         return;
