@@ -33,6 +33,9 @@ SUBDIRS += geotestplugin \
            qgeomaneuver \
            qgeopositioninfo \
            qgeopositioninfosource \
+           qgeoroute \
+           qgeoroutereply \
+           qgeorouterequest \
            qgeosatelliteinfo \
            qgeosatelliteinfosource \
            qnmeapositioninfosource \
