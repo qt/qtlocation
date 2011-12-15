@@ -81,7 +81,7 @@ Item {
     width: 120
     height: 120
     // General-purpose elements for the test:
-    Plugin { id: testPlugin; name : "nokia"; PluginParameter {name: "mapping.host"; value: "for.nonexistent"}}
+    Plugin { id: testPlugin; name : "qmlgeo.test.plugin";}
     Coordinate{ id: mapDefaultCenter; latitude: 20; longitude: 20}
 
     MapMouseEvent{

@@ -49,13 +49,12 @@ Item {
     id: page
     width: 100
     height: 100
-    //Plugin { id: testPlugin; name: "qmlgeo.test.plugin" }
-    Plugin { id: nokiaPlugin; name: "nokia";  PluginParameter {name: "mapping.host"; value: "for.nonexistent"} }
+    Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; }
     Coordinate{ id: coordinate1; latitude: 10; longitude: 11}
     Coordinate{ id: coordinate2; latitude: 12; longitude: 13}
     Map {
         id: map
-        plugin: nokiaPlugin
+        plugin: testPlugin
         center: coordinate1;
         zoomLevel: 9;
         anchors.fill: page

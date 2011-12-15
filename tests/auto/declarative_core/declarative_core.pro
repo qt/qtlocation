@@ -6,7 +6,7 @@ TARGET = tst_declarative_core
 CONFIG += warn_on qmltestcase
 SOURCES += main.cpp
 
-QT += declarative location
+QT += location quick
 
 OTHER_FILES += *.qml
 

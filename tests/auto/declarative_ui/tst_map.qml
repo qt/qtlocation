@@ -47,9 +47,9 @@ Item {
     width:100
     height:100
     // General-purpose elements for the test:
-    Plugin { id: nokiaPlugin; name: "nokia";  PluginParameter {name: "mapping.host"; value: "for.nonexistent"} }
-    Plugin { id: nokiaPlugin2; name: "nokia"; }
-    Plugin { id: testPlugin; name: "qmlgeo.test.plugin" }
+    Plugin { id: testPlugin; name: "qmlgeo.test.plugin";}
+    Plugin { id: testPlugin2; name: "gmlgeo.test.plugin"; }
+    Plugin { id: nokiaPlugin; name: "nokia"; }
     Coordinate{ id: coordinate1; latitude: 10; longitude: 11}
     Coordinate{ id: coordinate2; latitude: 12; longitude: 13}
     Coordinate{ id: coordinate3; latitude: 50; longitude: 50; altitude: 0}
@@ -58,8 +58,8 @@ Item {
     Coordinate{ id: altitudelessCoordinate; latitude: 50; longitude: 50}
     Map {id: pluginlessMap; width: 100; height: 100}
     Map {id: pluginlessMap2; width: 100; height: 100}
-    Map {id: map; plugin: nokiaPlugin; center: coordinate1; width: 100; height: 100}
-    Map {id: coordinateMap; plugin: nokiaPlugin2; center: coordinate3; width: 1000; height: 1000; zoomLevel: 15}
+    Map {id: map; plugin: testPlugin; center: coordinate1; width: 100; height: 100}
+    Map {id: coordinateMap; plugin: nokiaPlugin; center: coordinate3; width: 1000; height: 1000; zoomLevel: 15}
 
     SignalSpy {id: pluginlessMapPluginSpy; target: pluginlessMap; signalName: "pluginChanged" }
     SignalSpy {id: pluginlessMapCenterSpy; target: pluginlessMap; signalName: 'centerChanged'}
@@ -242,14 +242,14 @@ Item {
             pluginlessMap2.zoomLevel = 25.0
 
             // set the plugin and see that values change properly
-            pluginlessMap.plugin = nokiaPlugin
-            pluginlessMap2.plugin = nokiaPlugin
+            pluginlessMap.plugin = testPlugin
+            pluginlessMap2.plugin = testPlugin
             compare(pluginlessMapPluginSpy.count, 1)
             tryCompare(pluginlessMapMaximumZoomLevelSpy.count, 1)
             tryCompare(pluginlessMapMinimumZoomLevelSpy.count, 1)
             compare(pluginlessMap.minimumZoomLevel, 0)
             compare(pluginlessMap.maximumZoomLevel, 20)
-            compare(pluginlessMap.plugin, nokiaPlugin)
+            compare(pluginlessMap.plugin, testPlugin)
             compare(pluginlessMap.zoomLevel, 5.0)
             tryCompare(pluginlessMap2, "zoomLevel", 20.0)
             compare(pluginlessMap.minimumZoomLevel, 0)

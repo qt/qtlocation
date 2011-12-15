@@ -42,7 +42,7 @@
 #include <QtCore/QStringList>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QNetworkProxy>
-#include <QtDeclarative/qquickview.h>
+#include <QtQuick/qquickview.h>
 
 // QML2 app
 

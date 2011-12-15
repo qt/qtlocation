@@ -43,8 +43,8 @@ import QtLocation 5.0
 import QtLocation.test 5.0
 import "common" as Common
 
-import Qt3D 1.0
-import Qt.multimediakit 4.0
+//import Qt3D 1.0
+//import Qt.multimediakit 4.0
 
 Rectangle {
     objectName: "The page."

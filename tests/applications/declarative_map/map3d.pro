@@ -1,7 +1,7 @@
 TARGET = qml_location_map3d
 TEMPLATE=app
 
-QT += declarative network widgets
+QT += network widgets quick
 
 SOURCES += qmlmap3d.cpp
 

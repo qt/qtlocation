@@ -44,7 +44,7 @@ import QtTest 1.0
 import QtLocation 5.0
 
 Item {
-    Plugin { id: nokiaPlugin; name: "nokia"}
+    Plugin { id: nokiaPlugin; name: "qmlgeo.test.plugin"}
     Plugin { id: invalidPlugin; name: "invalid"}
 
     Coordinate{ id: coordinate1; latitude: 51; longitude: 41}

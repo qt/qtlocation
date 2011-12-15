@@ -44,7 +44,7 @@ import QtTest 1.0
 import QtLocation 5.0
 
 Item {
-    Plugin { id: nokiaPlugin; name: "nokia"}
+    Plugin { id: testPlugin; name: "qmlgeo.test.plugin"}
     Plugin { id: invalidPlugin; name: "invalid"}
     Coordinate{ id: coordinate1; latitude: 51; longitude: 0}
     Coordinate{ id: coordinate2; latitude: 52; longitude: 0}
@@ -454,10 +454,10 @@ Item {
 
             // Plugin
             compare(pluginSpy.count, 0)
-            emptyModel.plugin = nokiaPlugin
+            emptyModel.plugin = testPlugin
             compare(pluginSpy.count, 1)
-            compare(emptyModel.plugin, nokiaPlugin)
-            emptyModel.plugin = nokiaPlugin
+            compare(emptyModel.plugin, testPlugin)
+            emptyModel.plugin = testPlugin
             compare(pluginSpy.count, 1)
             emptyModel.plugin = invalidPlugin
             compare(pluginSpy.count, 2)
