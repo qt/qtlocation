@@ -60,7 +60,11 @@ Item {
     }
     TitleBar {
         id: titleBar; z: mainMenu.z; width: parent.width; height: 40; opacity: 0.9; text: "QML mapviewer example"; visible: !page.mobileUi
-        onClicked: { Qt.quit() }
+        onClicked: {
+            // FIXME: quitting with 3d item on screen segfaults
+            map.deleteMapItems()
+            Qt.quit()
+        }
     }
 
     //=====================Menu=====================

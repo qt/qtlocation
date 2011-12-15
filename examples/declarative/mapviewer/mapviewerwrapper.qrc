@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>mapviewer.qml</file>
+        <file>icon.png</file>
         <file>content/map/MapComponent.qml</file>
         <file>content/map/Marker.qml</file>
         <file>content/map/PolylineItem.qml</file>
@@ -9,5 +10,8 @@
         <file>content/map/PolygonItem.qml</file>
         <file>content/dialogs/Message.qml</file>
         <file>content/dialogs/RouteDialog.qml</file>
+        <file>content/map/ImageItem.qml</file>
+        <file>content/map/VideoItem.qml</file>
+        <file>content/map/3dItem.qml</file>
     </qresource>
 </RCC>

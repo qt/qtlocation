@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
     QQuickView view;
 
     view.engine()->addImportPath(QLatin1String(":/"));
+    view.rootContext()->setContextProperty("exampleDir", application.applicationDirPath());
 
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);

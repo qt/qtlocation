@@ -608,6 +608,20 @@ Map {
                 break;
             }
 
+            case "Draw Image": {
+                addGeoItem("ImageItem")
+                break;
+            }
+
+            case "Draw Video": {
+                addGeoItem("VideoItem")
+                break;
+            }
+
+            case "Draw 3D Item": {
+                addGeoItem("3dItem")
+                break;
+            }
 
             }
             map.state = ""
@@ -754,7 +768,6 @@ Map {
                 }
 
                 if (map.markers.length>1) {
-
                     popupMenu.addItem("Draw Polyline")
 
                 }
@@ -768,6 +781,11 @@ Map {
                     popupMenu.addItem("Draw Polygon")
                 }
 
+                if (map.markers.length>0) {
+                    popupMenu.addItem("Draw Image")
+                    popupMenu.addItem("Draw Video")
+                    popupMenu.addItem("Draw 3D Item")
+                }
                 map.state = "PopupMenu"
             }
           }

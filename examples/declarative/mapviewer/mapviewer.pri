@@ -9,7 +9,10 @@ qmlcontentmap.files += \
     content/map/CircleItem.qml \
     content/map/RectangleItem.qml \
     content/map/PolylineItem.qml \
-    content/map/PolygonItem.qml
+    content/map/PolygonItem.qml \
+    content/map/ImageItem.qml \
+    content/map/VideoItem.qml \
+    content/map/3dItem.qml
 OTHER_FILES += $$qmlcontentmap.files
 
 qmlcontentdialogs.files += \
