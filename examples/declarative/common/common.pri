@@ -4,6 +4,8 @@ QML_IMPORT_PATH += $$PWD
 RESOURCES += \
     $$PWD/common.qrc
 
+commonresources.files += $$PWD/resources/*
+
 qmlcomponents.files += \
     $$PWD/QtLocation/examples/components/TextWithLabel.qml \
     $$PWD/QtLocation/examples/components/Button.qml \
@@ -29,3 +31,5 @@ qmldialogs.files += \
     $$PWD/QtLocation/examples/dialogs/Dialog.qml
 OTHER_FILES += $$qmldialogs.files
 
+qmldir.files += $$PWD/QtLocation/examples/qmldir
+OTHER_FILES += $$qmldir.files

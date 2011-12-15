@@ -123,7 +123,7 @@ Item {
                 Image {
                     id: optionButtonCoord
                     anchors.verticalCenter:parent.verticalCenter
-                    source: coord.enabled ? "../../../resources/option_button_selected.png" : "../../../resources/option_button.png"
+                    source: coord.enabled ? "../../resources/option_button_selected.png" : "../../resources/option_button.png"
                     MouseArea {
                         anchors.fill: parent
                         onClicked: { options.state = "" }
@@ -236,7 +236,7 @@ Item {
 
                 Image {
                     id: optionButtonAddress
-                    source: address.enabled ? "../../../resources/option_button_selected.png" : "../../../resources/option_button.png"
+                    source: address.enabled ? "../../resources/option_button_selected.png" : "../../resources/option_button.png"
                     anchors.verticalCenter: parent.verticalCenter
                     MouseArea {
                         anchors.fill: parent
