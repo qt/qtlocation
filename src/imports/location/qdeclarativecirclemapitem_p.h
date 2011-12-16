@@ -43,6 +43,7 @@
 #define QDECLARATIVECIRCLEMAPITEM_H
 
 #include "qdeclarativegeomapitembase_p.h"
+#include "qdeclarativepolylinemapitem_p.h"
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
@@ -57,6 +58,7 @@ class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
     Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border)
 
 public:
     QDeclarativeCircleMapItem(QQuickItem *parent = 0);
@@ -75,6 +77,7 @@ public:
     QColor color() const;
     void setColor(const QColor &color);
 
+    QDeclarativeMapLineProperties *border();
 
     void dragStarted();
     void dragEnded();
@@ -87,6 +90,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     virtual void updateMapItem(bool dirtyGeomoetry=true);
+    void handleBorderUpdated();
 
 private Q_SLOTS:
     void handleCameraDataChanged(const CameraData& cameraData);
@@ -95,6 +99,7 @@ private:
     //TODO: pimpl
     QDeclarativeCoordinate internalCoordinate_;
     QDeclarativeCoordinate *center_;
+    QDeclarativeMapLineProperties border_;
     MapCircleNode *mapCircleNode_;
     QColor color_;
     qreal radius_;
@@ -116,6 +121,9 @@ public:
           return size_;
     }
 
+    void setLineWidth(qreal width);
+    qreal lineWidth() const;
+
     QColor penColor() const;
     void setPenColor(const QColor &pen);
 
@@ -124,13 +132,15 @@ public:
 
     void update();
     bool contains(QPointF point);
-    void setGeometry(const Map &map, qreal radius,const QGeoCoordinate &center);
+    void setGeometry(const Map &map, qreal radius, const QGeoCoordinate &center);
 
 private:
     QSGFlatColorMaterial fill_material_;
     //QSGFlatColorMaterial border_material_;
     QColor fillColor_;
     QColor borderColor_;
+    qreal borderWidth_;
+    MapPolylineNode *border_;
     //keeps pixel geometry
     QSGGeometry geometry_;
     //keeps geographic geometry

@@ -43,6 +43,7 @@
 #define QDECLARATIVEPOLYGONMAPITEM
 
 #include "qdeclarativegeomapitembase_p.h"
+#include "qdeclarativepolylinemapitem_p.h"
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
@@ -56,6 +57,7 @@ class QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border)
 
 public:
     QDeclarativePolygonMapItem(QQuickItem *parent = 0);
@@ -73,6 +75,8 @@ public:
     QColor color() const;
     void setColor(const QColor &color);
 
+    QDeclarativeMapLineProperties *border();
+
     void dragStarted();
     bool contains(QPointF point);
 
@@ -82,6 +86,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     virtual void updateMapItem(bool dirtyGeomoetry = true);
+    void handleBorderUpdated();
 
 private Q_SLOTS:
     // map size changed
@@ -96,6 +101,7 @@ private:
 
 private:
     MapPolygonNode *mapPolygonNode_;
+    QDeclarativeMapLineProperties border_;
     QList<QDeclarativeCoordinate*> coordPath_;
     QList<QGeoCoordinate> path_;
     QColor color_;
@@ -119,6 +125,9 @@ public:
     QColor penColor() const;
     void setPenColor(const QColor &pen);
 
+    qreal lineWidth() const;
+    void setLineWidth(qreal width);
+
     QColor brushColor() const;
     void setBrushColor(const QColor &color);
 
@@ -131,6 +140,8 @@ private:
     QSGFlatColorMaterial fill_material_;
     QColor fillColor_;
     QColor borderColor_;
+    qreal borderWidth_;
+    MapPolylineNode *border_;
     QSGGeometry geometry_;
     QPolygonF polygon_;
     QSizeF size_;

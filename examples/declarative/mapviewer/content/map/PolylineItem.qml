@@ -43,7 +43,10 @@ import QtLocation 5.0
 //TODO: remove/refactor me when items are integrated
 
 MapPolyline {
-    color: "blue"
+    line.color: "blue"
+    line.width: 4
+    opacity: 0.7
+    smooth: true
 
     function setGeometry(markers){
         var count = markers.length

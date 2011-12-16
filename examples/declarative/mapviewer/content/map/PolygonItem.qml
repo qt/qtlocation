@@ -45,6 +45,10 @@ import QtLocation 5.0
 MapPolygon {
 
     color: "green"
+    border.color: "darkgreen"
+    border.width: 4
+    smooth: true
+    opacity: 0.8
 
     function setGeometry(markers){
         var count = markers.length

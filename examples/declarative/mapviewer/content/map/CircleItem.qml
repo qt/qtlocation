@@ -45,6 +45,10 @@ import QtLocation 5.0
 MapCircle {
 
     color: "yellow"
+    border.color: "red"
+    border.width: 5
+    smooth: true
+    opacity: 0.8
 
     function setGeometry(markers){
         var count = markers.length

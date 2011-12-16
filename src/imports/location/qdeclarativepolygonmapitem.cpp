@@ -89,16 +89,32 @@ QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
     zoomLevel_(0.0)
 {
     setFlag(ItemHasContents, true);
+    QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
+                     this, SLOT(handleBorderUpdated()));
+    QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
+                     this, SLOT(handleBorderUpdated()));
+}
+
+void QDeclarativePolygonMapItem::handleBorderUpdated()
+{
+    updateMapItem(true);
 }
 
 QDeclarativePolygonMapItem::~QDeclarativePolygonMapItem()
 {
 }
 
+QDeclarativeMapLineProperties *QDeclarativePolygonMapItem::border()
+{
+    return &border_;
+}
+
 void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
 {
-    QDeclarativeGeoMapItemBase::setMap(quickMap,map);
-    if (map) QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+    QDeclarativeGeoMapItemBase::setMap(quickMap, map);
+    if (map)
+        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)),
+                         this, SLOT(handleCameraDataChanged(CameraData)));
 }
 
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarativePath()
@@ -182,6 +198,7 @@ void QDeclarativePolygonMapItem::setColor(const QColor &color)
     updateMapItem(false);
     emit colorChanged(color_);
 }
+
 QSGNode* QDeclarativePolygonMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
@@ -204,6 +221,8 @@ QDeclarativePolygonMapItem::updateMapItem(bool dirtyGeometry)
         return;
 
     mapPolygonNode_->setBrushColor(color_);
+    mapPolygonNode_->setPenColor(border_.color());
+    mapPolygonNode_->setLineWidth(border_.width());
 
     if (dirtyGeometry)
         mapPolygonNode_->setGeometry(*map(), path_);
@@ -242,11 +261,15 @@ bool QDeclarativePolygonMapItem::contains(QPointF point)
 MapPolygonNode::MapPolygonNode() :
     fillColor_(Qt::black),
     borderColor_(Qt::black),
+    borderWidth_(3.0),
+    border_(new MapPolylineNode()),
     geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
 {
     geometry_.setDrawingMode(GL_POLYGON);
     QSGGeometryNode::setMaterial(&fill_material_);
     QSGGeometryNode::setGeometry(&geometry_);
+
+    appendChildNode(border_);
 }
 
 MapPolygonNode::~MapPolygonNode()
@@ -281,7 +304,22 @@ void MapPolygonNode::update()
         setMaterial(&fill_material_);
     }
 
-    //TODO: implement me : borders , gradient
+    border_->setPenColor(borderColor_);
+    border_->setLineWidth(borderWidth_);
+
+    border_->update();
+
+    //TODO: implement me : gradient
+}
+
+qreal MapPolygonNode::lineWidth() const
+{
+    return borderWidth_;
+}
+
+void MapPolygonNode::setLineWidth(qreal width)
+{
+    borderWidth_ = width;
 }
 
 void MapPolygonNode::setBrushColor(const QColor &color)
@@ -316,4 +354,8 @@ void MapPolygonNode::setGeometry(const Map& map, const QList<QGeoCoordinate> &pa
     polygon_.clear();
     updatePolygon(polygon_, map, path, w, h);
     size_ = QSizeF(w, h);
+
+    QList<QGeoCoordinate> pathClosed = path;
+    pathClosed.append(pathClosed.at(0));
+    border_->setGeometry(map, pathClosed);
 }
