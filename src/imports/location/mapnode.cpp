@@ -140,6 +140,12 @@ void MapNode::updateFBO()
         mapItems_.at(i)->updateItem();
     }
 #endif
+
+#if defined(GL_LINE_SMOOTH) && defined(GL_LINE_SMOOTH_HINT)
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+#endif
+
     // No stereo rendering, set the eye as neutral
     painter.setEye(QGL::NoEye);
     // TODO this needs to be figured out (or confirmed as invalid thing).
