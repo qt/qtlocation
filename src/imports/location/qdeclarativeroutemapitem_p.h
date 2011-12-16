@@ -45,20 +45,20 @@
 #include "qdeclarativegeomapitembase_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeomap_p.h"
+#include "qdeclarativepolylinemapitem_p.h"
 #include <QPen>
 #include <QBrush>
 
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoRoute;
-class MapPolylineNode;
 
 class QDeclarativeRouteMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeGeoRoute* route READ route WRITE setRoute NOTIFY routeChanged)
-    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeMapLineProperties *line READ line)
 
 public:
     QDeclarativeRouteMapItem(QQuickItem *parent = 0);
@@ -71,18 +71,17 @@ public:
     QDeclarativeGeoRoute* route() const;
     void setRoute(QDeclarativeGeoRoute *route);
 
-    QColor color() const;
-    void setColor(const QColor &color);
+    QDeclarativeMapLineProperties *line();
 
     void dragStarted();
     bool contains(QPointF point);
 
 Q_SIGNALS:
     void routeChanged(const QDeclarativeGeoRoute *route);
-    void colorChanged(const QColor &color);
 
 protected Q_SLOTS:
     virtual void updateMapItem(bool dirtyGeomoetry = true);
+    void updateAfterLinePropertiesChanged();
 
 private Q_SLOTS:
     // map size changed
@@ -90,6 +89,7 @@ private Q_SLOTS:
 
 private:
     MapPolylineNode *mapPolylineNode_;
+    QDeclarativeMapLineProperties line_;
     QDeclarativeGeoRoute* route_;
     QColor color_;
     qreal zoomLevel_;

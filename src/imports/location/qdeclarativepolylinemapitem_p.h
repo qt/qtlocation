@@ -50,12 +50,37 @@ QT_BEGIN_NAMESPACE
 
 class MapPolylineNode;
 
+class QDeclarativeMapLineProperties : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(qreal width READ width WRITE setWidth NOTIFY widthChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+
+public:
+    explicit QDeclarativeMapLineProperties(QObject *parent = 0);
+
+    QColor color() const;
+    void setColor(const QColor &color);
+
+    qreal width() const;
+    void setWidth(qreal width);
+
+Q_SIGNALS:
+    void widthChanged(qreal width);
+    void colorChanged(const QColor &color);
+
+private:
+    qreal width_;
+    QColor color_;
+};
+
 class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
-    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeMapLineProperties *line READ line)
 
 public:
     QDeclarativePolylineMapItem(QQuickItem *parent = 0);
@@ -70,18 +95,17 @@ public:
 
     QDeclarativeListProperty<QDeclarativeCoordinate> declarativePath();
 
-    QColor color() const;
-    void setColor(const QColor &color);
-
     void dragStarted();
     bool contains(QPointF point);
 
+    QDeclarativeMapLineProperties *line();
+
 Q_SIGNALS:
     void pathChanged();
-    void colorChanged(const QColor &color);
 
 protected Q_SLOTS:
     virtual void updateMapItem(bool dirtyGeomoetry = true);
+    void updateAfterLinePropertiesChanged();
 
 private Q_SLOTS:
     // map size changed
@@ -96,6 +120,7 @@ private:
 
 private:
     MapPolylineNode *mapPolylineNode_;
+    QDeclarativeMapLineProperties line_;
     QList<QDeclarativeCoordinate*> coordPath_;
     QList<QGeoCoordinate> path_;
     QColor color_;
@@ -116,6 +141,9 @@ public:
             return size_;
     }
 
+    qreal lineWidth() const;
+    void setLineWidth(qreal width);
+
     QColor penColor() const;
     void setPenColor(const QColor &pen);
 
@@ -131,11 +159,13 @@ private:
     QSGGeometry geometry_;
     QPolygonF polyline_;
     QSizeF size_;
+    qreal width_;
 };
 
 
 QT_END_NAMESPACE
 
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeMapLineProperties));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativePolylineMapItem));
 
 #endif /* QDECLARATIVEPOLYLINEMAPITEM_H_ */

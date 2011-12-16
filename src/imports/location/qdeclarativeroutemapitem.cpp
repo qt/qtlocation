@@ -53,31 +53,26 @@ QDeclarativeRouteMapItem::QDeclarativeRouteMapItem(QQuickItem *parent):
     zoomLevel_(0.0)
 {
     setFlag(ItemHasContents, true);
+    QObject::connect(&line_, SIGNAL(colorChanged(QColor)),
+                     this, SLOT(updateAfterLinePropertiesChanged()));
+    QObject::connect(&line_, SIGNAL(widthChanged(qreal)),
+                     this, SLOT(updateAfterLinePropertiesChanged()));
 }
 
 QDeclarativeRouteMapItem::~QDeclarativeRouteMapItem()
 {
 }
 
+void QDeclarativeRouteMapItem::updateAfterLinePropertiesChanged()
+{
+    // pass true just in case we're a width change
+    updateMapItem(true);
+}
+
 void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
-}
-
-QColor QDeclarativeRouteMapItem::color() const
-{
-    return color_;
-}
-
-void QDeclarativeRouteMapItem::setColor(const QColor &color)
-{
-    if (color_ == color)
-        return;
-
-    color_ = color;
-    updateMapItem(false);
-    emit colorChanged(color_);
 }
 
 QDeclarativeGeoRoute* QDeclarativeRouteMapItem::route() const
@@ -118,15 +113,21 @@ QSGNode* QDeclarativeRouteMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaint
     return mapPolylineNode_;
 }
 
+QDeclarativeMapLineProperties *QDeclarativeRouteMapItem::line()
+{
+    return &line_;
+}
 
 void QDeclarativeRouteMapItem::updateMapItem(bool dirtyGeometry) {
 
     if (!map() || path_.count() == 0 || !mapPolylineNode_)
         return;
 
-    mapPolylineNode_->setPenColor(color_);
+    mapPolylineNode_->setPenColor(line_.color());
+    mapPolylineNode_->setLineWidth(line_.width());
 
-    if (dirtyGeometry) mapPolylineNode_->setGeometry(*map(), path_);
+    if (dirtyGeometry)
+        mapPolylineNode_->setGeometry(*map(), path_);
 
     const QSizeF& size = mapPolylineNode_->size();
 

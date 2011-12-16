@@ -162,8 +162,12 @@ Map {
         id: routeDelegate
         MapRoute {
             route: routeData
-            //border.color: routeMouseArea.containsMouse ? "lime" :"red"
-            //border.width: 5
+
+            line.color: routeMouseArea.containsMouse ? "lime" :"red"
+            line.width: 5
+            smooth: true
+            opacity: 0.8
+
             MapMouseArea {
                 id: routeMouseArea
 

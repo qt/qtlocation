@@ -45,6 +45,41 @@
 
 QT_BEGIN_NAMESPACE
 
+QDeclarativeMapLineProperties::QDeclarativeMapLineProperties(QObject *parent) :
+    QObject(parent),
+    width_(2.0),
+    color_(Qt::black)
+{
+}
+
+QColor QDeclarativeMapLineProperties::color() const
+{
+    return color_;
+}
+
+void QDeclarativeMapLineProperties::setColor(const QColor &color)
+{
+    if (color_ == color)
+        return;
+
+    color_ = color;
+    emit colorChanged(color_);
+}
+
+qreal QDeclarativeMapLineProperties::width() const
+{
+    return width_;
+}
+
+void QDeclarativeMapLineProperties::setWidth(qreal width)
+{
+    if (width_ == width)
+        return;
+
+    width_ = width;
+    emit widthChanged(width_);
+}
+
 struct Vertex
 {
     QVector2D position;
@@ -91,10 +126,20 @@ QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent) :
     zoomLevel_(0.0)
 {
     setFlag(ItemHasContents, true);
+    QObject::connect(&line_, SIGNAL(colorChanged(QColor)),
+                     this, SLOT(updateAfterLinePropertiesChanged()));
+    QObject::connect(&line_, SIGNAL(widthChanged(qreal)),
+                     this, SLOT(updateAfterLinePropertiesChanged()));
 }
 
 QDeclarativePolylineMapItem::~QDeclarativePolylineMapItem()
 {
+}
+
+void QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged()
+{
+    // pass true just in case we're a width change
+    updateMapItem(true);
 }
 
 void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
@@ -170,19 +215,9 @@ void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate* coord
     emit pathChanged();
 }
 
-QColor QDeclarativePolylineMapItem::color() const
+QDeclarativeMapLineProperties *QDeclarativePolylineMapItem::line()
 {
-    return color_;
-}
-
-void QDeclarativePolylineMapItem::setColor(const QColor &color)
-{
-    if (color_ == color)
-        return;
-
-    color_ = color;
-    updateMapItem(false);
-    emit colorChanged(color_);
+    return &line_;
 }
 
 QSGNode* QDeclarativePolylineMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
@@ -205,9 +240,11 @@ void QDeclarativePolylineMapItem::updateMapItem(bool dirtyGeometry) {
     if (!map() || path_.count()==0 || !mapPolylineNode_)
         return;
 
-    mapPolylineNode_->setPenColor(color_);
+    mapPolylineNode_->setPenColor(line_.color());
+    mapPolylineNode_->setLineWidth(line_.width());
 
-    if (dirtyGeometry) mapPolylineNode_->setGeometry(*map(), path_);
+    if (dirtyGeometry)
+        mapPolylineNode_->setGeometry(*map(), path_);
 
     const QSizeF& size = mapPolylineNode_->size();
 
@@ -244,6 +281,7 @@ void QDeclarativePolylineMapItem::dragStarted()
 
 MapPolylineNode::MapPolylineNode() :
     fillColor_(Qt::black),
+    width_(2.0),
     geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
 {
     geometry_.setDrawingMode(GL_LINE_STRIP);
@@ -263,6 +301,8 @@ void MapPolylineNode::update()
         return;
 
     QSGGeometry *fill = QSGGeometryNode::geometry();
+
+    fill->setLineWidth(width_);
 
     Q_ASSERT(fill->sizeOfVertex() == sizeof(Vertex));
 
@@ -302,6 +342,16 @@ void MapPolylineNode::setPenColor(const QColor &color)
 QColor MapPolylineNode::penColor() const
 {
     return fillColor_;
+}
+
+qreal MapPolylineNode::lineWidth() const
+{
+    return width_;
+}
+
+void MapPolylineNode::setLineWidth(qreal width)
+{
+    width_ = width;
 }
 
 void MapPolylineNode::setGeometry(const Map& map, const QList<QGeoCoordinate> &path)

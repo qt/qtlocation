@@ -146,6 +146,7 @@ public:
             qmlRegisterType<QDeclarativePlaceUser>(uri, 5, 0, "User");
             qmlRegisterType<QDeclarativeRectangleMapItem>(uri, 5, 0, "MapRectangle");
             qmlRegisterType<QDeclarativeCircleMapItem>(uri, 5, 0, "MapCircle");
+            qmlRegisterType<QDeclarativeMapLineProperties>();
             qmlRegisterType<QDeclarativePolylineMapItem>(uri, 5, 0, "MapPolyline");
             qmlRegisterType<QDeclarativePolygonMapItem>(uri, 5, 0, "MapPolygon");
             qmlRegisterType<QDeclarativeRouteMapItem>(uri, 5, 0, "MapRoute");
