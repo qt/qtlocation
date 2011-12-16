@@ -188,10 +188,34 @@ Item {
     }
     //! [ContactDetails read]
 
+    //! [ContactDetails write single]
+    var phoneNumber = Qt.createQmlObject('import QtLocation 5.0; ContactDetail {}', place);
+    phoneNumber.label = "Phone";
+    phoneNumber.value = "555-5555"
+    place.contactDetails.phone = phoneNumber;
+    //! [ContactDetails write single]
+
+    //! [ContactDetails write multiple]
+    var bob = Qt.createQmlObject('import QtLocation 5.0; ContactDetail {}', place);
+    bob.label = "Bob";
+    bob.value = "555-5555"
+
+    var alice = Qt.createQmlObject('import QtLocation 5.0; ContactDetail {}', place);
+    alice.label = "Alice";
+    alice.value = "555-8745"
+
+    var numbers = new Array();
+    numbers.push(bob);
+    numbers.push(alice);
+
+    place.contactDetails.phone = numbers;
+    //! [ContactDetails write multiple]
+
+
     //! [ContactDetails phoneList]
     ListView {
         model: place.contactDetails.phone;
-        delegate: Text { text: label + ": " + value }
+        delegate: Text { text: modelData.label + ": " + modelData.value }
     }
     //! [ContactDetails phoneList]
 

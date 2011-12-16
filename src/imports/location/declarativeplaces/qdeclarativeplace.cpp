@@ -667,7 +667,19 @@ void QDeclarativePlace::finished()
 
 void QDeclarativePlace::contactsModified(const QString &key, const QVariant &value)
 {
-    Q_UNUSED(value)
+    //TODO: This is a workaround to allow an assignment of a single contact detail
+    //      to be treated as an asignment of a list with a single element.
+    //      A proper solution is to inherit off QDeclarativePropertyMap
+    //      and override the write behaviour but this can only be done
+    //      when QTBUG-23183 is complete.
+    if (value.userType() == QMetaType::QObjectStar) {
+        QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail*>(value.value<QObject *>());
+        if (detail) {
+            QVariantList varList;
+            varList.append(value);
+            m_contactDetails->insert(key, varList);
+        }
+    }
 
     primarySignalsEmission(key);
 }
@@ -755,13 +767,7 @@ QString QDeclarativePlace::errorString() const
 */
 QString QDeclarativePlace::primaryPhone() const
 {
-    QVariantList phoneNumbers = m_contactDetails->value(QPlaceContactDetail::Phone).toList();
-    if (!phoneNumbers.isEmpty()) {
-        QDeclarativeContactDetail *primaryPhone = qobject_cast<QDeclarativeContactDetail*>(phoneNumbers.at(0).value<QObject *>());
-        return primaryPhone->value();
-    } else {
-        return QString();
-    }
+    return primaryValue(QPlaceContactDetail::Phone);
 }
 
 /*!
@@ -774,13 +780,7 @@ QString QDeclarativePlace::primaryPhone() const
 */
 QString QDeclarativePlace::primaryFax() const
 {
-    QVariantList faxNumbers = m_contactDetails->value(QPlaceContactDetail::Fax).toList();
-    if (!faxNumbers.isEmpty()) {
-        QDeclarativeContactDetail *primaryFax = qobject_cast<QDeclarativeContactDetail*>(faxNumbers.at(0).value<QObject *>());
-        return primaryFax->value();
-    } else {
-        return QString();
-    }
+    return primaryValue(QPlaceContactDetail::Fax);
 }
 
 /*!
@@ -793,13 +793,7 @@ QString QDeclarativePlace::primaryFax() const
 */
 QString QDeclarativePlace::primaryEmail() const
 {
-    QVariantList emailAddresses = m_contactDetails->value(QPlaceContactDetail::Email).toList();
-    if (!emailAddresses.isEmpty()) {
-        QDeclarativeContactDetail *primaryEmail = qobject_cast<QDeclarativeContactDetail*>(emailAddresses.at(0).value<QObject *>());
-        return primaryEmail->value();
-    } else {
-        return QString();
-    }
+    return primaryValue(QPlaceContactDetail::Email);
 }
 
 /*!
@@ -813,13 +807,7 @@ QString QDeclarativePlace::primaryEmail() const
 
 QUrl QDeclarativePlace::primaryWebsite() const
 {
-    QVariantList websites = m_contactDetails->value(QPlaceContactDetail::Website).toList();
-    if (!websites.isEmpty()) {
-        QDeclarativeContactDetail *primaryWebsite = qobject_cast<QDeclarativeContactDetail*>(websites.at(0).value<QObject *>());
-        return primaryWebsite->value();
-    } else {
-        return QUrl();
-    }
+    return QUrl(primaryValue(QPlaceContactDetail::Website));
 }
 
 /*!
@@ -1104,4 +1092,22 @@ QPlaceManager *QDeclarativePlace::manager()
     }
 
     return placeManager;
+}
+
+QString QDeclarativePlace::primaryValue(const QString &contactType) const
+{
+    if (m_contactDetails->value(contactType).userType() == QVariant::List) {
+        QVariantList detailList = m_contactDetails->value(contactType).toList();
+        if (!detailList.isEmpty()) {
+            QDeclarativeContactDetail *primaryDetail = qobject_cast<QDeclarativeContactDetail*>(detailList.at(0).value<QObject *>());
+            if (primaryDetail)
+                return primaryDetail->value();
+        }
+    } else if (m_contactDetails->value(contactType).userType() == QMetaType::QObjectStar) {
+        QDeclarativeContactDetail *primaryDetail = qobject_cast<QDeclarativeContactDetail*>(m_contactDetails->value(contactType).value<QObject *>());
+        if (primaryDetail)
+            return primaryDetail->value();
+    }
+
+    return QString();
 }

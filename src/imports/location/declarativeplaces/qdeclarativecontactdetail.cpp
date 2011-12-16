@@ -71,13 +71,23 @@
     \codeline
     \snippet snippets/declarative/places.qml ContactDetails read
 
-    The returned list of contact details can be used directly as data models.  For example, the
+    The returned list of contact details is an \l {QObjectList-based model}{object list} and so can be used directly as a data model.  For example, the
     following demonstrates how to display a list of contact phone numbers in a list view:
 
     \snippet snippets/declarative/places.qml QtQuick import
     \snippet snippets/declarative/places.qml QtLocation import
     \codeline
     \snippet snippets/declarative/places.qml ContactDetails phoneList
+
+    The following example demonstrates how to assign a single phone number to a place in javascript:
+    \snippet snippets/declarative/places.qml  ContactDetails write single
+
+    The following demonstrates how to assign multiple phone numbers to a place in javascript:
+    \snippet snippets/declarative/places.qml  ContactDetails write multiple
+
+    Note, due to limitations of the QDeclarativePropertyMap, it is not possible
+    to declaratively specify the contact details in QML, it can only be accomplished
+    via javascript.
 */
 
 /*!

@@ -206,6 +206,7 @@ private:
     void synchronizeExtendedAttributes();
     void synchronizeContacts();
     void primarySignalsEmission(const QString &type = QString());
+    QString primaryValue(const QString &contactType) const;
 
 private:
     QPlaceManager *manager();
