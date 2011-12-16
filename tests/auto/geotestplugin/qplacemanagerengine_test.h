@@ -326,12 +326,12 @@ public:
         m_locales = locales;
     }
 
-    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags) {
-        Q_UNUSED(icon)
-        Q_UNUSED(size)
+    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)
+    {
         Q_UNUSED(flags)
 
-        return QUrl();
+        const QString url = icon.baseUrl().toString() + QLatin1String("_%1x%2.png");
+        return url.arg(size.width()).arg(size.height());
     }
 
     QPlaceManager::ManagerFeatures supportedFeatures() const {

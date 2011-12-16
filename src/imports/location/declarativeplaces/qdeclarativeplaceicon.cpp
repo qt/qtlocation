@@ -252,6 +252,9 @@ void QDeclarativePlaceIcon::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     m_plugin = plugin;
     emit pluginChanged();
 
+    if (!m_plugin)
+        return;
+
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
