@@ -76,6 +76,13 @@ QDeclarativeSupplier::~QDeclarativeSupplier()
 {
 }
 
+void QDeclarativeSupplier::componentComplete()
+{
+    // delayed instantiation of QObject based properties.
+    if (!m_icon)
+        m_icon = new QDeclarativePlaceIcon(this);
+}
+
 /*!
     \qmlproperty QPlaceSupplier Supplier::supplier
 

@@ -51,7 +51,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeSupplier : public QObject
+class QDeclarativeSupplier : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
 
@@ -61,10 +61,16 @@ class QDeclarativeSupplier : public QObject
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
     Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
 
+    Q_INTERFACES(QDeclarativeParserStatus)
+
 public:
     explicit QDeclarativeSupplier(QObject* parent = 0);
     explicit QDeclarativeSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin, QObject* parent = 0);
     ~QDeclarativeSupplier();
+
+    // From QDeclarativeParserStatus
+    void classBegin() { }
+    void componentComplete();
 
     QPlaceSupplier supplier();
     void setSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin = 0);
