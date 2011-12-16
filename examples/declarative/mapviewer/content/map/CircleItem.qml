@@ -48,7 +48,7 @@ MapCircle {
     border.color: "red"
     border.width: 5
     smooth: true
-    opacity: 0.8
+    opacity: 0.5
 
     function setGeometry(markers){
         var count = markers.length

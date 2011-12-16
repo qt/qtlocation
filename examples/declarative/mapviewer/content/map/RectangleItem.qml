@@ -45,6 +45,7 @@ import QtLocation 5.0
 MapRectangle {
 
     color: "red"
+    opacity: 0.5
 
     function setGeometry(markers){
         var count = markers.length

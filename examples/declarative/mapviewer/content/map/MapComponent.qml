@@ -985,25 +985,25 @@ Map {
             name: "PopupMenu"
             PropertyChanges { target: popupMenu; opacity: 1}
             PropertyChanges { target: popupMenu; x: ((map.lastX + popupMenu.width > map.width) ? map.width - popupMenu.width : map.lastX)}
-            PropertyChanges { target: popupMenu; y: ((map.lastY + popupMenu.height > map.height) ? map.height - popupMenu.height : map.lastY)}
+            PropertyChanges { target: popupMenu; y: ((map.lastY + popupMenu.height > map.height - 40) ? map.height - popupMenu.height - 40 : map.lastY)}
         },
         State {
             name: "MarkerPopupMenu"
             PropertyChanges { target: markerMenu; opacity: 1}
             PropertyChanges { target: markerMenu; x: ((currentMarker.lastMouseX + markerMenu.width > map.width) ? map.width - markerMenu.width : currentMarker.lastMouseX )}
-            PropertyChanges { target: markerMenu; y: ((currentMarker.lastMouseY + markerMenu.height > map.height) ? map.height - markerMenu.height : currentMarker.lastMouseY)}
+            PropertyChanges { target: markerMenu; y: ((currentMarker.lastMouseY + markerMenu.height > map.height - 40) ? map.height - markerMenu.height - 40 : currentMarker.lastMouseY)}
         },
         State {
             name: "RoutePopupMenu"
             PropertyChanges { target: routeMenu; opacity: 1}
             PropertyChanges { target: routeMenu; x: ((map.lastX + routeMenu.width > map.width) ? map.width - routeMenu.width : map.lastX)}
-            PropertyChanges { target: routeMenu; y: ((map.lastY + routeMenu.height > map.height) ? map.height - routeMenu.height : map.lastY)}
+            PropertyChanges { target: routeMenu; y: ((map.lastY + routeMenu.height > map.height - 40) ? map.height - routeMenu.height - 40 : map.lastY)}
         },
         State {
             name: "PointPopupMenu"
             PropertyChanges { target: pointMenu; opacity: 1}
             PropertyChanges { target: pointMenu; x: ((map.lastX + pointMenu.width > map.width) ? map.width - pointMenu.width : map.lastX)}
-            PropertyChanges { target: pointMenu; y: ((map.lastY + pointMenu.height > map.height) ? map.height - pointMenu.height : map.lastY)}
+            PropertyChanges { target: pointMenu; y: ((map.lastY + pointMenu.height > map.height - 40) ? map.height - pointMenu.height - 40 : map.lastY)}
         }
     ]
 
