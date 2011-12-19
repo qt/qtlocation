@@ -60,7 +60,7 @@ An alternative would have been to declare a friend class in SearchReply.
 Typically the engine instance would be made the \c parent of the reply.  If the developer
 fails to discard the replies when finished, the engine can clean those upon destruction.
 Commonly, the reply also has a pointer reference back to the engine, which may be used
-to emit the QPlaceManager::finished() and QPlaceManager::error() signals.  This is
+to emit the QPlaceManagerEngine::finished() and QPlaceManagerEngine::error() signals.  This is
 just one of many ways the reply could be implemented.
 
 Usually the QPlaceReply::finished() signal of the reply is somehow tied to a notification mechanism of the
@@ -70,7 +70,7 @@ Sometimes however, we may want to emit the QPlaceReply::finished() signal withou
 depending upon an underlying asynchronous notification mechanism.  This
 is a common case when a portion of functionality is not supported.  For example,
 a backend may not support search term suggestions, so we need a way to trigger the finished
-signal, but there's no underlying asynchronous mechanism to do so.  In this case,
+signal (and error signals), but there's no underlying asynchronous mechanism to do so.  In this case,
 the typical approach is to use QMetaObject::invokeMethod() with a Qt::QueuedConnection,
 so that the QPlaceReply::finished(), QPlaceReply::error(), QPlaceManagerEngine::finished()
 and QPlaceManagerEngine::error() signals are emitted at the next event loop.
@@ -78,6 +78,10 @@ and QPlaceManagerEngine::error() signals are emitted at the next event loop.
 \snippet snippets/places/requesthandler.h Trigger done
 (\note  the above code is not necessary if there already is an underlying
 asynchronous notification mechanism)
+
+Also note that the \c finished signals should always be emitted when a reply is complete, even if
+an error has been encountred, i.e. if there is an error, both the \c error and \c finished signals
+should be emitted while if there is no error, only the \c finished signals are emitted.
 
 \section2 Icon Urls
 
