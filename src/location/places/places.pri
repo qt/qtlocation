@@ -3,6 +3,7 @@ INCLUDEPATH += places
 PUBLIC_HEADERS += \
     places/placemacro.h \
 #data classes
+    places/qplace.h \
     places/qplaceattribute.h \
     places/qplacecontactdetail.h \
     places/qplacecategory.h \
@@ -31,6 +32,7 @@ PUBLIC_HEADERS += \
     places/qplacemanagerengine.h
 
 PRIVATE_HEADERS += \
+    places/qplace_p.h \
     places/qplaceattribute_p.h \
     places/qplacecategory_p.h \
     places/qplacecontent_p.h \
@@ -49,6 +51,7 @@ PRIVATE_HEADERS += \
 
 SOURCES += \
 #data classes
+    places/qplace.cpp \
     places/qplaceattribute.cpp \
     places/qplacecategory.cpp \
     places/qplacecontactdetail.cpp \
