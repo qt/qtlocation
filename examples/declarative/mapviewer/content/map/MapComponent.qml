@@ -623,6 +623,11 @@ Map {
                 break;
             }
 
+            case "Calculate Route": {
+                calculateRoute()
+                break;
+            }
+
             }
             map.state = ""
         }
@@ -765,6 +770,10 @@ Map {
 
                 if (map.mapItems.length>0) {
                     popupMenu.addItem("Remove items")
+                }
+
+                if (map.markers.length>=2) {
+                    popupMenu.addItem("Calculate Route")
                 }
 
                 if (map.markers.length>1) {
@@ -919,28 +928,19 @@ Map {
 //        markerMenu.addItem("Move to")
         map.state = "MarkerPopupMenu"
     }
-/*
-    function calculateRoute(marker){
+
+    function calculateRoute(){
         routeQuery.clearWaypoints();
-        var startPointFound = false
         var count = map.markers.length
         for (var i = 0; i< count; i++){
-            if (startPointFound != true){
-                if (markers[i] == marker){
-                    startPointFound = true
-                    routeQuery.addWaypoint(marker.coordinate)
-                }
-            }
-            else routeQuery.addWaypoint(markers[i].coordinate)
+            routeQuery.addWaypoint(markers[i].coordinate)
         }
         routeQuery.travelModes = RouteQuery.CarTravel
         routeQuery.routeOptimizations = RouteQuery.ShortestRoute
-        for (i=0; i<9; i++) {
-            routeQuery.setFeatureWeight(i, 0)
-        }
+        routeQuery.setFeatureWeight(0, 0)
         routeModel.update();
     }
-*/
+
     function roundNumber(number, digits) {
         var multiple = Math.pow(10, digits);
         return Math.round(number * multiple) / multiple;
