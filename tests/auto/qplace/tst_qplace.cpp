@@ -70,6 +70,7 @@ private Q_SLOTS:
     void nameTest();
     void placeIdTest();
     void attributionTest();
+    void contactDetailsTest();
     void primaryPhoneTest();
     void primaryFaxTest();
     void primaryEmailTest();
@@ -311,16 +312,40 @@ void tst_Place::editorialContentTest()
 
 void tst_Place::categoriesTest()
 {
-    QPlace testObj;
-    QVERIFY2(testObj.categories().count() == 0, "Wrong default value");
-    QPlaceCategory sup;
-    sup.setCategoryId("testId");
-    QList<QPlaceCategory> list;
-    list.append(sup);
-    sup.setCategoryId("testName2");
-    list.append(sup);
-    testObj.setCategories(list);
-    QVERIFY2(testObj.categories().count() == 2, "Wrong value returned");
+    QPlace place;
+    QVERIFY(place.categories().isEmpty());
+
+    //set a single category
+    QPlaceCategory cat1;
+    cat1.setName("cat1");
+
+    place.setCategory(cat1);
+    QCOMPARE(place.categories().count(), 1);
+    QCOMPARE(place.categories().at(0), cat1);
+
+    //set multiple categories
+    QPlaceCategory cat2;
+    cat2.setName("cat2");
+
+    QPlaceCategory cat3;
+    cat3.setName("cat3");
+
+    QList<QPlaceCategory> categories;
+    categories << cat2 << cat3;
+
+    place.setCategories(categories);
+    QCOMPARE(place.categories().count(), 2);
+    QVERIFY(place.categories().contains(cat2));
+    QVERIFY(place.categories().contains(cat3));
+
+    //set a single category again while there are multiple categories already assigned.
+    place.setCategory(cat1);
+    QCOMPARE(place.categories().count(), 1);
+    QCOMPARE(place.categories().at(0), cat1);
+
+    //set an empty list of categories
+    place.setCategories(QList<QPlaceCategory>());
+    QVERIFY(place.categories().isEmpty());
 }
 
 void tst_Place::supplierTest()
@@ -345,6 +370,51 @@ void tst_Place::attributionTest()
     QCOMPARE(testPlace.attribution(), QLatin1String("attribution"));
     testPlace.setAttribution(QString());
     QVERIFY(testPlace.attribution().isEmpty());
+}
+
+void tst_Place::contactDetailsTest()
+{
+    QPlaceContactDetail phone1;
+    phone1.setLabel("Phone1");
+    phone1.setValue("555-5555");
+
+    QPlaceContactDetail phone2;
+    phone2.setLabel("Phone2");
+    phone2.setValue("555-5556");
+
+    QList<QPlaceContactDetail> phones;
+    phones << phone1 << phone2;
+
+
+    QPlaceContactDetail email;
+    email.setLabel("Email");
+    email.setValue("email@email.com");
+
+    QPlace place;
+    place.setContactDetails(QPlaceContactDetail::Phone,phones);
+    QCOMPARE(place.contactTypes().count(), 1);
+    QVERIFY(place.contactTypes().contains(QPlaceContactDetail::Phone));
+    QCOMPARE(place.contactDetails(QPlaceContactDetail::Phone), phones);
+
+    place.appendContactDetail(QPlaceContactDetail::Email, email);
+    QCOMPARE(place.contactTypes().count(), 2);
+    QVERIFY(place.contactTypes().contains(QPlaceContactDetail::Phone));
+    QVERIFY(place.contactTypes().contains(QPlaceContactDetail::Email));
+    QCOMPARE(place.contactDetails(QPlaceContactDetail::Phone), phones);
+    QCOMPARE(place.contactDetails(QPlaceContactDetail::Email).count(), 1);
+    QCOMPARE(place.contactDetails(QPlaceContactDetail::Email).at(0), email);
+
+    place.removeContactDetails(QPlaceContactDetail::Phone);
+    QCOMPARE(place.contactTypes().count(), 1);
+    QVERIFY(!place.contactTypes().contains(QPlaceContactDetail::Phone));
+    QVERIFY(place.contactDetails(QPlaceContactDetail::Phone).isEmpty());
+    QVERIFY(place.contactTypes().contains(QPlaceContactDetail::Email));
+    QCOMPARE(place.contactDetails(QPlaceContactDetail::Email).count(), 1);
+    QCOMPARE(place.contactDetails(QPlaceContactDetail::Email).at(0), email);
+
+    place.removeContactDetails(QPlaceContactDetail::Email);
+    QVERIFY(place.contactTypes().isEmpty());
+    QVERIFY(place.contactDetails(QPlaceContactDetail::Email).isEmpty());
 }
 
 void tst_Place::primaryPhoneTest()
@@ -437,46 +507,52 @@ void tst_Place::operatorsTest()
 void tst_Place::extendedAttributeTest()
 {
     QPlace place;
-    QVERIFY2(place.extendedAttributeTypes().isEmpty(), "Invalid default attributes");
+    QVERIFY(place.extendedAttributeTypes().isEmpty());
     QPlaceAttribute smoking;
-    smoking.setLabel("Public Smoking");
-    smoking.setText("No");
+    smoking.setLabel(QLatin1String("Public Smoking"));
+    smoking.setText(QLatin1String("No"));
 
     //test setting of an attribue
-    place.setExtendedAttribute("Smoking", smoking);
+    place.setExtendedAttribute(QLatin1String("smoking"), smoking);
 
-    QVERIFY(place.extendedAttributeTypes().contains("Smoking"));
+    QVERIFY(place.extendedAttributeTypes().contains(QLatin1String("smoking")));
     QCOMPARE(place.extendedAttributeTypes().count(), 1);
 
-    QCOMPARE(place.extendedAttribute("Smoking").label(), QLatin1String("Public Smoking"));
-    QCOMPARE(place.extendedAttribute("Smoking").text(), QLatin1String("No"));
+    QCOMPARE(place.extendedAttribute(QLatin1String("smoking")).label(), QLatin1String("Public Smoking"));
+    QCOMPARE(place.extendedAttribute(QLatin1String("smoking")).text(), QLatin1String("No"));
 
     QPlaceAttribute shelter;
-    shelter.setLabel("Outdoor shelter");
-    shelter.setText("Yes");
+    shelter.setLabel(QLatin1String("Outdoor shelter"));
+    shelter.setText(QLatin1String("Yes"));
 
     //test setting another new attribute
-    place.setExtendedAttribute("Shelter", shelter);
-    QVERIFY(place.extendedAttributeTypes().contains("Shelter"));
-    QVERIFY(place.extendedAttributeTypes().contains("Smoking"));
+    place.setExtendedAttribute("shelter", shelter);
+    QVERIFY(place.extendedAttributeTypes().contains(QLatin1String("shelter")));
+    QVERIFY(place.extendedAttributeTypes().contains(QLatin1String("smoking")));
     QCOMPARE(place.extendedAttributeTypes().count(), 2);
-    QCOMPARE(place.extendedAttribute("Shelter").label(), QLatin1String("Outdoor shelter"));
-    QCOMPARE(place.extendedAttribute("Shelter").text(), QLatin1String("Yes"));
+    QCOMPARE(place.extendedAttribute(QLatin1String("shelter")).label(), QLatin1String("Outdoor shelter"));
+    QCOMPARE(place.extendedAttribute(QLatin1String("shelter")).text(), QLatin1String("Yes"));
 
     //test overwriting an attribute
-    shelter.setText("No");
-    place.setExtendedAttribute("Shelter", shelter);
+    shelter.setText(QLatin1String("No"));
+    place.setExtendedAttribute(QLatin1String("shelter"), shelter);
 
-    QVERIFY(place.extendedAttributeTypes().contains("Shelter"));
-    QVERIFY(place.extendedAttributeTypes().contains("Smoking"));
+    QVERIFY(place.extendedAttributeTypes().contains(QLatin1String("shelter")));
+    QVERIFY(place.extendedAttributeTypes().contains(QLatin1String("smoking")));
     QCOMPARE(place.extendedAttributeTypes().count(), 2);
-    QCOMPARE(place.extendedAttribute("Shelter").text(), QLatin1String("No"));
+    QCOMPARE(place.extendedAttribute(QLatin1String("shelter")).text(), QLatin1String("No"));
 
-    //test clearing of attributes
+    //test clearing of attributes by setting them to the default attribute
     foreach (const QString &attributeType, place.extendedAttributeTypes())
         place.setExtendedAttribute(attributeType, QPlaceAttribute());
 
     QCOMPARE(place.extendedAttributeTypes().count(), 0);
+
+    //test removing of attributes
+    place.setExtendedAttribute(QLatin1String("smoking"), smoking);
+    QVERIFY(!place.extendedAttributeTypes().isEmpty());
+    place.removeExtendedAttribute(QLatin1String("smoking"));
+    QVERIFY(place.extendedAttributeTypes().isEmpty());
 }
 void tst_Place::visibilityTest()
 {
