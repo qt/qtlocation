@@ -189,6 +189,13 @@ via QPlaceManager::getDetails()
 \o extended attributes
 \endlist
 
+\section3 Addresses vs POIs
+Sometimes a search will return a Place without a placeId, which indicates that the place is simply an 'address'
+that has matched the user's search query.  An 'address' only has location and name properties.
+
+If a Place has a placeId, then it is a specific 'point of interest', which may have some
+or all Place properties available.
+
 \section3 Search term suggestions.
 Only a partial search term and search center is supported when retrieving suggestions.
 
