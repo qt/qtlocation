@@ -194,14 +194,6 @@ Rectangle {
         visible: false
     }
 
-    //! [CategoryModel model]
-    CategoryModel {
-        id: categoryModel
-        plugin: placesPlugin
-        hierarchical: true
-    }
-    //! [CategoryModel model]
-
     //! [PlaceSearchSuggestionModel view 1]
     ListView {
         id: suggestionView

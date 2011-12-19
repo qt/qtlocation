@@ -65,7 +65,7 @@
     Before search by category can be performed, the list of available categories needs to be
     retrieved.  This is achieved by creating a \l CategoryModel.
 
-    \snippet declarative/places/content/places/SearchBox.qml CategoryModel model
+    \snippet declarative/places/places.qml CategoryModel model
 
     The \l CategoryModel element provides a model of the available categories.  It can provide
     either a flat list or a hierarchical tree model.  In this example, we use a hierarchical tree

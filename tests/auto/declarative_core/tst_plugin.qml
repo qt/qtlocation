@@ -142,5 +142,21 @@ Item {
             invalidMappingSpy.clear();
             invalidSupportedPlacesFeaturesSpy.clear();
         }
+
+        function test_locale() {
+            compare(nokiaPlugin.locales, [Qt.locale().name]);
+
+            //try assignment of a single locale
+            nokiaPlugin.locales = "fr_FR";
+            compare(nokiaPlugin.locales, ["fr_FR"]);
+
+            //try assignment of multiple locales
+            nokiaPlugin.locales = ["fr_FR","en_US"];
+            compare(nokiaPlugin.locales, ["fr_FR","en_US"]);
+
+            //check that assignment of empty locale list defaults to system locale
+            nokiaPlugin.locales = [];
+            compare(nokiaPlugin.locales, [Qt.locale().name]);
+        }
     }
 }

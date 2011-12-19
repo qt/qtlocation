@@ -94,6 +94,7 @@ class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParser
     Q_PROPERTY(bool supportsMapping READ supportsMapping NOTIFY supportsMappingChanged)
     Q_PROPERTY(bool supportsPlaces READ supportsPlaces NOTIFY supportsPlacesChanged)
     Q_PROPERTY(PlacesFeatures supportedPlacesFeatures READ supportedPlacesFeatures NOTIFY supportedPlacesFeaturesChanged)
+    Q_PROPERTY(QStringList locales READ locales WRITE setLocales NOTIFY localesChanged)
 
     Q_CLASSINFO("DefaultProperty", "parameters")
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -139,6 +140,9 @@ public:
 
     QGeoServiceProvider *sharedGeoServiceProvider();
 
+    QStringList locales() const;
+    void setLocales(const QStringList &locales);
+
 Q_SIGNALS:
     void nameChanged(const QString &name);
     void supportsGeocodingChanged();
@@ -147,13 +151,14 @@ Q_SIGNALS:
     void supportsMappingChanged();
     void supportsPlacesChanged();
     void supportedPlacesFeaturesChanged();
+    void localesChanged();
 
 private:
     static void parameter_append(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *mapObject);
     static int parameter_count(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
     static QDeclarativeGeoServiceProviderParameter* parameter_at(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index);
     static void parameter_clear(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
-    void updateSupportStatus();
+    void update();
     void setSupportsGeocoding(bool supports);
     void setSupportsReverseGeocoding(bool supports);
     void setSupportsRouting(bool supports);
@@ -170,6 +175,7 @@ private:
     bool supportsMapping_;
     bool supportsPlaces_;
     bool complete_;
+    QStringList locales_;
     PlacesFeatures placesFeatures_;
     Q_DISABLE_COPY(QDeclarativeGeoServiceProvider)
 };

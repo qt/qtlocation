@@ -74,6 +74,7 @@ Item {
             addItem("Provider");
             addItem("New");
             addItem("Goto");
+            addItem("Options");
         }
 
         onClicked: page.state = page.state == "" ? button : "";
@@ -215,6 +216,29 @@ Item {
         }
     }
 
+    Dialog {
+        id: optionsDialog
+        z: backgroundRect.z + 3
+
+        Behavior on opacity { NumberAnimation { duration: 500 } }
+
+        Component.onCompleted: prepareDialog()
+
+        function prepareDialog() {
+            setModel([
+                         ["Locale(s)", placesPlugin.locales.toString()]
+            ]);
+        }
+
+        onCancelButtonClicked: page.state = ""
+        onGoButtonClicked: {
+            var locales = dialogModel.get(0).inputText.split(Qt.locale().groupSeparator);
+            placesPlugin.locales = locales;
+            categoryModel.update();
+            page.state = "";
+        }
+    }
+
     BoundingCircle {
         id: searchRegion
     }
@@ -255,6 +279,14 @@ Item {
         searchArea: searchRegion
     }
     //! [PlaceRecommendationModel model]
+
+    //! [CategoryModel model]
+    CategoryModel {
+        id: categoryModel
+        plugin: placesPlugin
+        hierarchical: true
+    }
+    //! [CategoryModel model]
 
     SearchBox {
         id: searchBox
@@ -418,6 +450,11 @@ Item {
         State {
             name: "EditCategory"
             PropertyChanges { target: editCategoryDialog; opacity: 1 }
+        },
+        State {
+            name: "Options"
+            PropertyChanges { target: optionsDialog; opacity: 1 }
+            StateChangeScript { script: optionsDialog.prepareDialog() }
         }
     ]
 

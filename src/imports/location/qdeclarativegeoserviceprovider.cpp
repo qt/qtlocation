@@ -64,6 +64,7 @@ QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
     supportsReverseGeocoding_(false), supportsRouting_(false), supportsMapping_(false),
     supportsPlaces_(false), complete_(false)
 {
+    locales_.append(QLocale().name());
 }
 
 QDeclarativeGeoServiceProvider::~QDeclarativeGeoServiceProvider()
@@ -85,11 +86,11 @@ void QDeclarativeGeoServiceProvider::setName(const QString &name)
     delete sharedProvider_;
     sharedProvider_ = 0;
     if (complete_)
-        updateSupportStatus();
+        update();
     emit nameChanged(name_);
 }
 
-void QDeclarativeGeoServiceProvider::updateSupportStatus()
+void QDeclarativeGeoServiceProvider::update()
 {
     QGeoServiceProvider *serviceProvider = sharedGeoServiceProvider();
     if (!serviceProvider  || serviceProvider->error() != QGeoServiceProvider::NoError) {
@@ -102,6 +103,10 @@ void QDeclarativeGeoServiceProvider::updateSupportStatus()
         return;
     }
 
+    if (locales_.isEmpty())
+        locales_.append(QLocale().name());
+
+    Q_ASSERT(!locales_.isEmpty());
     QGeocodingManager* geocodingManager = serviceProvider->geocodingManager();
     if (!geocodingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
         setSupportsGeocoding(false);
@@ -109,19 +114,26 @@ void QDeclarativeGeoServiceProvider::updateSupportStatus()
     } else {
         setSupportsGeocoding(geocodingManager->supportsGeocoding());
         setSupportsReverseGeocoding(geocodingManager->supportsReverseGeocoding());
+        geocodingManager->setLocale(QLocale(locales_.at(0)));
     }
 
+
     QGeoRoutingManager* routingManager = serviceProvider->routingManager();
-    if (!routingManager  || serviceProvider->error() != QGeoServiceProvider::NoError)
+    if (!routingManager  || serviceProvider->error() != QGeoServiceProvider::NoError) {
         setSupportsRouting(false);
-    else
+    } else {
         setSupportsRouting(true);
+        routingManager->setLocale(QLocale(locales_.at(0)));
+    }
+
 
     QGeoMappingManager* mappingManager = serviceProvider->mappingManager();
-    if (!mappingManager  || serviceProvider->error() != QGeoServiceProvider::NoError)
+    if (!mappingManager  || serviceProvider->error() != QGeoServiceProvider::NoError) {
         setSupportsMapping(false);
-    else
+    } else {
         setSupportsMapping(true);
+        mappingManager->setLocale(QLocale(locales_.at(0)));
+    }
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
@@ -130,6 +142,12 @@ void QDeclarativeGeoServiceProvider::updateSupportStatus()
     } else {
         setSupportedPlacesFeatures(static_cast<QDeclarativeGeoServiceProvider::PlacesFeatures> ((int)placeManager->supportedFeatures()));
         setSupportsPlaces(true);
+
+        QList<QLocale> localePreferences;
+        foreach (const QString &locale, locales_)
+            localePreferences.append(locale);
+
+        placeManager->setLocales(localePreferences);
     }
 }
 
@@ -190,7 +208,7 @@ void QDeclarativeGeoServiceProvider::componentComplete()
 {
     complete_ = true;
     if (!name_.isEmpty())
-        updateSupportStatus();
+        update();
 }
 
 QString QDeclarativeGeoServiceProvider::name() const
@@ -302,6 +320,46 @@ QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider()
         sharedProvider_ = new QGeoServiceProvider(name(), parameterMap());
 
     return sharedProvider_;
+}
+
+/*!
+    \qmlproperty stringlist Plugin::locales
+
+    This property holds a set of locale preferences.  If the first locale cannot be accommodated, then
+    the backend falls back to using the second, and so on.  By default the locales property contains the system locale.
+
+    The locales are specified as strings which have the format
+    "language[_script][_country]" or "C", where:
+
+    \list
+    \i language is a lowercase, two-letter, ISO 639 language code,
+    \i script is a titlecase, four-letter, ISO 15924 script code,
+    \i country is an uppercase, two- or three-letter, ISO 3166 country code (also "419" as defined by United Nations),
+    \endlist
+
+
+    The following code demonstrates how to set a single and multiple locales:
+    \snippet snippets/declarative/plugin.qml Plugin locale
+*/
+QStringList QDeclarativeGeoServiceProvider::locales() const
+{
+    return locales_;
+}
+
+void QDeclarativeGeoServiceProvider::setLocales(const QStringList &locales)
+{
+    if (locales_ == locales)
+        return;
+
+    locales_ = locales;
+
+    if (locales_.isEmpty())
+        locales_.append(QLocale().name());
+
+    if (complete_)
+        update();
+
+    emit localesChanged();
 }
 
 /*!
