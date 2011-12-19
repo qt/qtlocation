@@ -78,6 +78,11 @@ Map::~Map()
     delete d_ptr;
 }
 
+TileCache* Map::tileCache()
+{
+    return d_ptr->tileCache();
+}
+
 MapController* Map::mapController()
 {
     return d_ptr->mapController();
@@ -121,11 +126,6 @@ void Map::setAutoUpdate(bool autoUpdate)
 bool Map::autoUpdate() const
 {
     return d_ptr->autoUpdate();
-}
-
-void Map::clearCache()
-{
-//    sphere_->clearCache();
 }
 
 void Map::setCameraData(const CameraData &cameraData)
@@ -309,6 +309,7 @@ void IntersectGenerator::generateValue()
 MapPrivate::MapPrivate(Map *parent, TileCache *cache, int maxZoom, int tileSize)
     : autoUpdate_(true),
       map_(parent),
+      cache_(cache),
       manager_(0),
       controller_(0),
       activeMapType_(MapType()),
@@ -344,10 +345,16 @@ MapPrivate::MapPrivate(Map *parent, TileCache *cache, int maxZoom, int tileSize)
 MapPrivate::~MapPrivate()
 {
     // controller_ is a child of map_, don't need to delete it here
+    manager_->deregisterMap(map_);
     delete sphere_;
     delete glCamera_;
     // TODO map items are not deallocated!
     // However: how to ensure this is done in rendering thread?
+}
+
+TileCache* MapPrivate::tileCache()
+{
+    return cache_;
 }
 
 QGLSceneNode* MapPrivate::createTileNode(const Tile &tile)
@@ -364,11 +371,14 @@ QGLSceneNode* MapPrivate::createTileNode(const Tile &tile)
 
 void MapPrivate::setMappingManager(QGeoMappingManager *manager)
 {
-    manager_ = manager;
-    if (manager_) {
-        pluginString_ = manager_->managerName() + QLatin1String("_") + QString::number(manager->managerVersion());
-        sphere_->setMappingManager(manager_);
+    if (manager) {
+        manager->registerMap(map_);
+        pluginString_ = manager->managerName() + QLatin1String("_") + QString::number(manager->managerVersion());
+        sphere_->setMappingManager(manager);
+    } else {
+        manager->deregisterMap(map_);
     }
+    manager_ = manager;
 }
 
 MapController* MapPrivate::mapController()
@@ -493,6 +503,11 @@ void MapPrivate::setActiveMapType(const MapType type)
 const MapType MapPrivate::activeMapType() const
 {
   return activeMapType_;
+}
+
+void MapPrivate::tileFetched(const TileSpec &spec)
+{
+    sphere_->tileFetched(spec);
 }
 
 QRect MapPrivate::specToRect(const TileSpec &tileSpec) const

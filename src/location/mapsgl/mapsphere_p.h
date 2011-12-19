@@ -97,17 +97,13 @@ public:
 
     void paintGL(QGLPainter *painter);
 
-public slots:
-    void clearCache();
+    void tileFetched(const TileSpec &spec);
+
+public Q_SLOTS:
     void update(const QList<TileSpec> &tiles);
 
-private slots:
-    void tileFetched(const TileSpec &spec);
-    void prefetchingFinished();
-
-signals:
+Q_SIGNALS:
     void tileUpdated();
-    void sphereUpdated();
 
 private:
     void displayTile(const TileSpec &spec);
@@ -124,6 +120,7 @@ private:
 
     Map *map_;
     MapPrivate* mapPrivate_;
+    QGeoMappingManager *manager_;
 };
 
 QT_END_NAMESPACE

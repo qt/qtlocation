@@ -61,6 +61,7 @@
 #include <QLocale>
 #include <QTimer>
 #include "maptype.h"
+#include "tilecache.h"
 
 class TileSpec;
 class QGeoTiledMapReply;
@@ -87,6 +88,7 @@ public:
     bool supportsTilting;
     qreal minimumTilt;
     qreal maximumTilt;
+    TileCache::CacheAreas cacheHint;
 
     QLocale locale;
     bool started_;
@@ -94,7 +96,6 @@ public:
     bool stopped_;
     QTimer *timer_;
     QList<TileSpec> queue_;
-    QHash<QGeoTiledMapReply*, TileSpec> map_;
     QHash<TileSpec, QGeoTiledMapReply*> invmap_;
 
 private:

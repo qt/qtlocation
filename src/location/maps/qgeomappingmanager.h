@@ -47,6 +47,7 @@
 #include <QPair>
 #include <QtLocation/qlocationglobal.h>
 #include "maptype.h"
+#include "tilecache.h"
 
 QT_BEGIN_HEADER
 
@@ -59,7 +60,9 @@ class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
 class QGeoMappingManagerEngine;
 class QGeoTiledMapReply;
+
 class TileSpec;
+class Map;
 
 class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
 {
@@ -71,7 +74,12 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    void requestTiles(const QList<TileSpec> &tiles);
+    void registerMap(Map *map);
+    void deregisterMap(Map *map);
+
+    void updateTileRequests(Map *map,
+                            const QSet<TileSpec> &tilesAdded,
+                            const QSet<TileSpec> &tilesRemoved);
 
     QList<MapType> supportedMapTypes() const;
  //    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
@@ -86,13 +94,18 @@ public:
     qreal minimumTilt() const;
     qreal maximumTilt() const;
 
+    TileCache::CacheAreas cacheHint() const;
+
     void setLocale(const QLocale &locale);
     QLocale locale() const;
+
+private Q_SLOTS:
+    void engineTileFinished(const TileSpec &spec, const QByteArray &bytes);
+    void engineTileError(const TileSpec &spec, const QString &errorString);
 
 Q_SIGNALS:
     void tileFinished(const TileSpec &spec, const QByteArray &bytes);
     void tileError(const TileSpec &spec, const QString &errorString);
-    void queueFinished();
     void initialized();
 
 private:

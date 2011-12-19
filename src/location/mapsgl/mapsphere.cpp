@@ -46,6 +46,8 @@
 #include "map.h"
 #include "map_p.h"
 
+#include "qgeomappingmanager.h"
+
 #include <QOpenGLFramebufferObject>
 
 #include <Qt3D/qglscenenode.h>
@@ -60,29 +62,16 @@ MapSphere::MapSphere(Map* map, MapPrivate *mapPrivate, TileCache *tileCache)
     : QObject(0),
       tileCache_(tileCache),
       map_(map),
-      mapPrivate_(mapPrivate)
+      mapPrivate_(mapPrivate),
+      manager_(0)
 {
 
     sphereNode_ = new QGLSceneNode(this);
-
-    connect(tileCache_,
-            SIGNAL(prefetchingFinished()),
-            this,
-            SLOT(prefetchingFinished()));
-    connect(tileCache_,
-            SIGNAL(tileFetched(TileSpec)),
-            this,
-            SLOT(tileFetched(TileSpec)));
 
     connect(this,
             SIGNAL(tileUpdated()),
             map,
             SIGNAL(updateRequired()));
-
-    connect(this,
-            SIGNAL(sphereUpdated()),
-            map,
-            SIGNAL(updatesFinished()));
 }
 
 MapSphere::~MapSphere()
@@ -99,17 +88,12 @@ MapSphere::~MapSphere()
 
 void MapSphere::setMappingManager(QGeoMappingManager *manager)
 {
-    tileCache_->setMappingManager(manager);
+    manager_ = manager;
 }
 
 QGLSceneNode* MapSphere::sphereSceneNode() const
 {
     return sphereNode_;
-}
-
-void MapSphere::clearCache()
-{
-    // clear cache
 }
 
 // Function to perform housekeeping that require access to GL context
@@ -135,6 +119,8 @@ void MapSphere::update(const QList<TileSpec> &tiles)
 
     QVector<TileSpec> req(tiles.size());
     QVector<TileSpec> draw(tiles.size());
+
+    QSet<TileSpec> cancelTiles = requested_ - tiles.toSet();
 
     int reqSize = 0;
     int drawSize = 0;
@@ -186,15 +172,12 @@ void MapSphere::update(const QList<TileSpec> &tiles)
             displayTile(draw.at(i));
 
     if (req.isEmpty()) {
-        emit sphereUpdated();
+        emit tileUpdated();
     } else {
-        tileCache_->prefetch(req.toList());
+        if (manager_) {
+            manager_->updateTileRequests(map_, req.toList().toSet(), cancelTiles);
+        }
     }
-}
-
-void MapSphere::prefetchingFinished()
-{
-    emit sphereUpdated();
 }
 
 void MapSphere::tileFetched(const TileSpec &spec)

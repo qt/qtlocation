@@ -75,6 +75,8 @@ public:
     Map(TileCache *cache, QObject *parent = 0);
     virtual ~Map();
 
+    TileCache* tileCache();
+
     void setMappingManager(QGeoMappingManager *manager);
 
     MapController* mapController();
@@ -99,17 +101,17 @@ public:
     const MapType activeMapType() const;
 
 public Q_SLOTS:
-    void clearCache();
     void update();
 
 Q_SIGNALS:
     void updateRequired();
-    void updatesFinished();
     void cameraDataChanged(const CameraData &cameraData);
     void activeMapTypeChanged();
 
 private:
     MapPrivate *d_ptr;
+
+    friend class QGeoMappingManager;
 };
 
 QT_END_NAMESPACE

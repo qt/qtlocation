@@ -155,32 +155,41 @@ void QGeoMappingManagerEngine::threadFinished()
     this->deleteLater();
 }
 
-void QGeoMappingManagerEngine::requestTiles(const QList<TileSpec> &tiles)
+void QGeoMappingManagerEngine::updateTileRequests(const QSet<TileSpec> &tilesAdded,
+                                                  const QSet<TileSpec> &tilesRemoved)
 {
     Q_D(QGeoMappingManagerEngine);
 
     if (d->stopped_)
         return;
 
-    if (!d->started_) {
-        d->queue_ = tiles;
-        return;
-    }
+    cancelTileRequests(tilesRemoved);
 
-    for (int i = 0; i < d->queue_.size(); ++i) {
-        QGeoTiledMapReply* reply = d->invmap_.value(d->queue_.at(i), 0);
-        if (reply) {
-            reply->abort();
-            d->map_.remove(reply);
-            d->invmap_.remove(d->queue_.at(i));
-            reply->deleteLater();
-        }
-    }
-
-    d->queue_ = tiles;
+    d->queue_ = tilesAdded.toList();
 
     if (!d->queue_.empty())
         d->timer_->start();
+}
+
+void QGeoMappingManagerEngine::cancelTileRequests(const QSet<TileSpec> &tiles)
+{
+    Q_D(QGeoMappingManagerEngine);
+
+    typedef QSet<TileSpec>::const_iterator tile_iter;
+    tile_iter tile = tiles.constBegin();
+    tile_iter end = tiles.constEnd();
+    for (; tile != end; ++tile) {
+        QGeoTiledMapReply* reply = d->invmap_.value(*tile, 0);
+        if (reply) {
+            d->invmap_.remove(*tile);
+            reply->abort();
+            reply->deleteLater();
+        }
+        d->queue_.removeAll(*tile);
+    }
+
+    if (d->queue_.isEmpty())
+        d->timer_->stop();
 }
 
 void QGeoMappingManagerEngine::requestNextTile()
@@ -202,7 +211,6 @@ void QGeoMappingManagerEngine::requestNextTile()
                 this,
                 SLOT(finished()));
 
-        d->map_.insert(reply, ts);
         d->invmap_.insert(ts, reply);
     }
 
@@ -218,14 +226,13 @@ void QGeoMappingManagerEngine::finished()
     if (!reply)
         return;
 
-    if (!d->map_.contains(reply)) {
+    TileSpec spec = reply->tileSpec();
+
+    if (!d->invmap_.contains(spec)) {
         reply->deleteLater();
         return;
     }
 
-    TileSpec spec = d->map_.value(reply);
-
-    d->map_.remove(reply);
     d->invmap_.remove(spec);
 
     handleReply(reply, spec);
@@ -246,9 +253,6 @@ void QGeoMappingManagerEngine::handleReply(QGeoTiledMapReply *reply, const TileS
     } else {
         emit tileError(spec, reply->errorString());
     }
-
-    if (d->queue_.isEmpty())
-        emit queueFinished();
 
     reply->deleteLater();
 }
@@ -555,6 +559,18 @@ QLocale QGeoMappingManagerEngine::locale() const
     return d_ptr->locale;
 }
 
+TileCache::CacheAreas QGeoMappingManagerEngine::cacheHint() const
+{
+    Q_D(const QGeoMappingManagerEngine);
+    return d->cacheHint;
+}
+
+void QGeoMappingManagerEngine::setCacheHint(TileCache::CacheAreas cacheHint)
+{
+    Q_D(QGeoMappingManagerEngine);
+    d->cacheHint = cacheHint;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -566,6 +582,7 @@ QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
     supportsTilting(false),
     minimumTilt(0.0),
     maximumTilt(0.0),
+    cacheHint(TileCache::AllCaches),
     started_(false),
     stopped_(false) {}
 

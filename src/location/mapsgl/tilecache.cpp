@@ -53,6 +53,7 @@
 #include <Qt3D/qglscenenode.h>
 
 Q_DECLARE_METATYPE(QList<TileSpec>)
+Q_DECLARE_METATYPE(QSet<TileSpec>)
 
 QT_BEGIN_NAMESPACE
 
@@ -100,10 +101,11 @@ public:
 };
 
 TileCache::TileCache(const QString &directory, QObject *parent)
-:   QObject(parent), directory_(directory), manager_(0)
+:   QObject(parent), directory_(directory)
 {
     qRegisterMetaType<TileSpec>();
     qRegisterMetaType<QList<TileSpec> >();
+    qRegisterMetaType<QSet<TileSpec> >();
 
 
     if (directory_.isEmpty()) {
@@ -122,27 +124,7 @@ TileCache::TileCache(const QString &directory, QObject *parent)
     loadTiles();
 }
 
-TileCache::~TileCache()
-{
-    delete manager_;
-}
-
-void TileCache::setMappingManager(QGeoMappingManager *manager)
-{
-    manager_ = manager;
-    connect(manager_,
-            SIGNAL(tileFinished(TileSpec,QByteArray)),
-            this,
-            SLOT(insert(TileSpec,QByteArray)));
-    connect(manager_,
-            SIGNAL(tileError(TileSpec,QString)),
-            this,
-            SLOT(handleError(TileSpec,QString)));
-    connect(manager_,
-            SIGNAL(queueFinished()),
-            this,
-            SIGNAL(prefetchingFinished()));
-}
+TileCache::~TileCache() {}
 
 void TileCache::setMaxDiskUsage(int diskUsage)
 {
@@ -187,14 +169,6 @@ int TileCache::maxTextureUsage() const
 int TileCache::textureUsage() const
 {
     return textureCache_.totalCost();
-}
-
-void TileCache::prefetch(const QList<TileSpec> &tiles)
-{
-    if (!manager_)
-        return;
-
-    manager_->requestTiles(tiles);
 }
 
 void TileCache::GLContextAvailable(QGLSceneNode *parentNode)
@@ -270,11 +244,9 @@ void TileCache::update(const TileSpec &spec, const Tile &tile)
     }
 }
 
-void TileCache::insert(const TileSpec &spec, const QByteArray &bytes)
+void TileCache::insert(const TileSpec &spec, const QByteArray &bytes, TileCache::CacheAreas areas)
 {
     keys_.insert(spec);
-
-    QString filename = tileSpecToFilename(spec, directory_);
 
     QPixmap pixmap;
     if (!pixmap.loadFromData(bytes)) {
@@ -282,16 +254,24 @@ void TileCache::insert(const TileSpec &spec, const QByteArray &bytes)
         return;
     }
 
-    QFile file(filename);
-    file.open(QIODevice::WriteOnly);
-    file.write(bytes);
-    file.close();
+    if (areas & TileCache::DiskCache) {
+        QString filename = tileSpecToFilename(spec, directory_);
 
-    addToDiskCache(spec, filename);
-//    addToMemoryCache(spec, pixmap);
-    addToTextureCache(spec, pixmap);
+        QFile file(filename);
+        file.open(QIODevice::WriteOnly);
+        file.write(bytes);
+        file.close();
 
-    emit tileFetched(spec);
+        addToDiskCache(spec, filename);
+    }
+
+    if (areas & TileCache::MemoryCache) {
+//        addToMemoryCache(spec, pixmap);
+    }
+
+    if (areas & TileCache::TextureCache) {
+        addToTextureCache(spec, pixmap);
+    }
 }
 
 void TileCache::evictFromDiskCache(TileDisk *td)

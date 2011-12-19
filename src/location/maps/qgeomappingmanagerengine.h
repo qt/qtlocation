@@ -47,6 +47,7 @@
 #include <QPair>
 #include <QtLocation/qlocationglobal.h>
 #include "maptype.h"
+#include "tilecache.h"
 
 QT_BEGIN_HEADER
 
@@ -94,6 +95,8 @@ public:
     qreal minimumTilt() const;
     qreal maximumTilt() const;
 
+    TileCache::CacheAreas cacheHint() const;
+
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
@@ -103,7 +106,8 @@ public:
 public Q_SLOTS:
     void threadStarted();
     void threadFinished();
-    void requestTiles(const QList<TileSpec> &tiles);
+    void updateTileRequests(const QSet<TileSpec> &tilesAdded, const QSet<TileSpec> &tilesRemoved);
+    void cancelTileRequests(const QSet<TileSpec> &tiles);
 
 private Q_SLOTS:
     void requestNextTile();
@@ -112,7 +116,6 @@ private Q_SLOTS:
 Q_SIGNALS:
     void tileFinished(const TileSpec &spec, const QByteArray &bytes);
     void tileError(const TileSpec &spec, const QString &errorString);
-    void queueFinished();
     void initialized();
 
 protected:
@@ -131,6 +134,8 @@ protected:
 
     void setSupportsBearing(bool supportsBearing);
     void setSupportsTilting(bool supportsTilting);
+
+    void setCacheHint(TileCache::CacheAreas cacheHint);
 
     QGeoMappingManagerEnginePrivate* d_ptr;
 

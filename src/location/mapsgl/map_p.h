@@ -145,6 +145,8 @@ public:
     MapPrivate(Map *parent, TileCache *cache, int maxZoom, int tileSize);
     virtual ~MapPrivate();
 
+    TileCache* tileCache();
+
     void setMappingManager(QGeoMappingManager *manager);
 
     MapController* mapController();
@@ -180,6 +182,8 @@ public:
     QVector3D tileXIntersectToPoint(int zoomLevel, int x) const;
     QVector3D tileYIntersectToPoint(int zoomLevel, int y) const;
 
+    void tileFetched(const TileSpec &spec);
+
 private:
     void updateGlCamera(QGLCamera* glCamera);
     void updateFrustum(Frustum &frustum);
@@ -192,6 +196,7 @@ private:
     double aspectRatio_;
 
     Map *map_;
+    TileCache* cache_;
     QGeoMappingManager *manager_;
     QString pluginString_;
     MapController *controller_;

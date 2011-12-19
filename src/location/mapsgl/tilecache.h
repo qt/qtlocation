@@ -71,10 +71,16 @@ class Q_LOCATION_EXPORT TileCache : public QObject
 {
     Q_OBJECT
 public:
+    enum CacheArea {
+        DiskCache = 0x01,
+        MemoryCache = 0x02,
+        TextureCache = 0x04,
+        AllCaches = 0xFF
+    };
+    Q_DECLARE_FLAGS(CacheAreas, CacheArea)
+
     TileCache(const QString &directory = QString(), QObject *parent = 0);
     ~TileCache();
-
-    void setMappingManager(QGeoMappingManager *manager);
 
     void setMaxDiskUsage(int diskUsage);
     int maxDiskUsage() const;
@@ -95,20 +101,12 @@ public:
 
     void update(const TileSpec &spec, const Tile &tile);
 
-    void prefetch(const QList<TileSpec> &tiles);
-
     void evictFromDiskCache(TileDisk *td);
     void evictFromMemoryCache(TileMemory *tm);
     void evictFromTextureCache(TileTexture *tt);
 
-private Q_SLOTS:
-    void insert(const TileSpec &spec, const QByteArray &bytes);
+    void insert(const TileSpec &spec, const QByteArray &bytes, CacheAreas areas = AllCaches);
     void handleError(const TileSpec &spec, const QString &errorString);
-
-Q_SIGNALS:
-    void beginPrefetch(const QList<TileSpec> &tiles);
-    void tileFetched(const TileSpec &spec);
-    void prefetchingFinished();
 
 private:
     void loadTiles();
@@ -128,9 +126,9 @@ private:
     QCache<TileSpec, TileTexture > textureCache_;
 
     QList<Tile> cleanupList_;
-
-    QGeoMappingManager *manager_;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(TileCache::CacheAreas)
 
 QT_END_NAMESPACE
 

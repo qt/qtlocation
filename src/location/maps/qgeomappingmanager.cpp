@@ -43,6 +43,11 @@
 #include "qgeomappingmanager_p.h"
 #include "qgeomappingmanagerengine.h"
 #include "qgeotiledmapreply.h"
+
+
+#include "map.h"
+#include "map_p.h"
+#include "tilecache.h"
 #include "tilespec.h"
 
 #include <QTimer>
@@ -103,17 +108,12 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
     connect(d_ptr->engine,
             SIGNAL(tileFinished(TileSpec,QByteArray)),
             this,
-            SIGNAL(tileFinished(TileSpec,QByteArray)),
+            SLOT(engineTileFinished(TileSpec,QByteArray)),
             Qt::QueuedConnection);
     connect(d_ptr->engine,
             SIGNAL(tileError(TileSpec,QString)),
             this,
-            SIGNAL(tileError(TileSpec,QString)),
-            Qt::QueuedConnection);
-    connect(d_ptr->engine,
-            SIGNAL(queueFinished()),
-            this,
-            SIGNAL(queueFinished()),
+            SLOT(engineTileError(TileSpec,QString)),
             Qt::QueuedConnection);
 
     connect(d_ptr->engine,
@@ -180,36 +180,133 @@ int QGeoMappingManager::managerVersion() const
     return d_ptr->engine->managerVersion();
 }
 
-void QGeoMappingManager::requestTiles(const QList<TileSpec> &tiles)
+void QGeoMappingManager::registerMap(Map *map)
 {
-    QMetaObject::invokeMethod(d_ptr->engine, "requestTiles",
+    TileCache *cache = map->tileCache();
+    QSet<Map*> maps = d_ptr->caches.value(cache);
+    maps.insert(map);
+    d_ptr->caches.insert(cache, maps);
+}
+
+void QGeoMappingManager::deregisterMap(Map *map)
+{
+//    TileCache *cache = map->tileCache();
+//    QSet<Map*> maps = d_ptr->caches.value(cache);
+//    maps.remove(map);
+//    if (maps.isEmpty()) {
+//        d_ptr->caches.remove(cache);
+//    } else {
+//        d_ptr->caches.insert(cache, maps);
+//    }
+
+    // clear any tileHash / mapHash entries
+}
+
+void QGeoMappingManager::updateTileRequests(Map *map,
+                                            const QSet<TileSpec> &tilesAdded,
+                                            const QSet<TileSpec> &tilesRemoved)
+{
+    typedef QSet<TileSpec>::const_iterator tile_iter;
+
+    // add and remove tiles from tileset for this map
+
+    QSet<TileSpec> oldTiles = d_ptr->mapHash.value(map);
+
+    tile_iter rem = tilesRemoved.constBegin();
+    tile_iter remEnd = tilesRemoved.constEnd();
+    for (; rem != remEnd; ++rem) {
+        oldTiles.remove(*rem);
+    }
+
+    tile_iter add = tilesAdded.constBegin();
+    tile_iter addEnd = tilesAdded.constEnd();
+    for (; add != addEnd; ++add) {
+        oldTiles.insert(*add);
+    }
+
+    d_ptr->mapHash.insert(map, oldTiles);
+
+    // add and remove map from mapset for the tiles
+
+    QSet<TileSpec> reqTiles;
+    QSet<TileSpec> cancelTiles;
+
+    rem = tilesRemoved.constBegin();
+    for (; rem != remEnd; ++rem) {
+        QSet<Map*> mapSet = d_ptr->tileHash.value(*rem);
+        mapSet.remove(map);
+        if (mapSet.isEmpty()) {
+            cancelTiles.insert(*rem);
+            d_ptr->tileHash.remove(*rem);
+        } else {
+            d_ptr->tileHash.insert(*rem, mapSet);
+        }
+    }
+
+    add = tilesAdded.constBegin();
+    for (; add != addEnd; ++add) {
+        QSet<Map*> mapSet = d_ptr->tileHash.value(*add);
+        if (mapSet.isEmpty()) {
+            reqTiles.insert(*add);
+        }
+        mapSet.insert(map);
+        d_ptr->tileHash.insert(*add, mapSet);
+    }
+
+    cancelTiles -= reqTiles;
+
+    QMetaObject::invokeMethod(d_ptr->engine, "updateTileRequests",
                               Qt::QueuedConnection,
-                              Q_ARG(QList<TileSpec>, tiles));
+                              Q_ARG(QSet<TileSpec>, reqTiles),
+                              Q_ARG(QSet<TileSpec>, cancelTiles));
+}
+
+void QGeoMappingManager::engineTileFinished(const TileSpec &spec, const QByteArray &bytes)
+{
+    QSet<TileCache*> caches;
+
+    QSet<Map*> maps = d_ptr->tileHash.value(spec);
+
+    typedef QSet<Map*>::const_iterator map_iter;
+
+    map_iter map = maps.constBegin();
+    map_iter mapEnd = maps.constEnd();
+    for (; map != mapEnd; ++map) {
+        caches.insert((*map)->tileCache());
+
+        QSet<TileSpec> tileSet = d_ptr->mapHash.value(*map);
+        tileSet.remove(spec);
+        if (tileSet.isEmpty())
+            d_ptr->mapHash.remove(*map);
+        else
+            d_ptr->mapHash.insert(*map, tileSet);
+    }
+
+    d_ptr->tileHash.remove(spec);
+
+    typedef QSet<TileCache*>::const_iterator cache_iter;
+
+    cache_iter cache = caches.constBegin();
+    cache_iter cacheEnd = caches.constEnd();
+    for (; cache != cacheEnd; ++cache) {
+        (*cache)->insert(spec, bytes, d_ptr->engine->cacheHint());
+    }
+
+    map = maps.constBegin();
+    for (; map != mapEnd; ++map) {
+        (*map)->d_ptr->tileFetched(spec);
+    }
+}
+
+void QGeoMappingManager::engineTileError(const TileSpec &spec, const QString &errorString)
+{
+    emit tileError(spec, errorString);
 }
 
 QList<MapType> QGeoMappingManager::supportedMapTypes() const
 {
     return d_ptr->engine->supportedMapTypes();
 }
-
-//QGeoTiledMapReply* QGeoMappingManager::getTileImage(const TileSpec &spec)
-//{
-//    qWarning() << d_ptr->engine->minimumZoomLevel() << d_ptr->engine->maximumZoomLevel();
-//    QGeoTiledMapReply* reply = d_ptr->engine->getTileImage(spec);
-
-//    connect(reply, SIGNAL(finished()), this, SLOT(tileFinished()));
-
-//    return reply;
-//}
-
-//void QGeoMappingManager::tileFinished()
-//{
-//    QGeoTiledMapReply *reply = qobject_cast<QGeoTiledMapReply*>(sender());
-//    if (!reply)
-//        return;
-
-//    emit finished(reply);
-//}
 
 ///*!
 //    Returns a list of the connectivity modes supported by this manager.
@@ -310,6 +407,11 @@ void QGeoMappingManager::setLocale(const QLocale &locale)
 QLocale QGeoMappingManager::locale() const
 {
     return d_ptr->engine->locale();
+}
+
+TileCache::CacheAreas QGeoMappingManager::cacheHint() const
+{
+    return d_ptr->engine->cacheHint();
 }
 
 /*******************************************************************************
