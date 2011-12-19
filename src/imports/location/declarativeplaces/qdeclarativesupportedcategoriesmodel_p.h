@@ -133,7 +133,7 @@ private:
     QStringList populateCategories(QPlaceManager *, const QPlaceCategory &parent);
     QModelIndex index(const QString &categoryId) const;
     int rowToAddChild(PlaceCategoryNode *, const QPlaceCategory &category);
-    void reloadCategories();
+    void updateLayout();
 
     QPlaceManager *manager(bool stateCheck = true);
 

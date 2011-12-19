@@ -237,7 +237,7 @@ void QDeclarativeSupportedCategoriesModel::setHierarchical(bool hierarchical)
     m_hierarchical = hierarchical;
     emit hierarchicalChanged();
 
-    reloadCategories();
+    updateLayout();
 }
 
 bool QDeclarativeSupportedCategoriesModel::hierarchical() const
@@ -256,7 +256,7 @@ void QDeclarativeSupportedCategoriesModel::replyFinished()
         m_response->deleteLater();
         m_response = 0;
 
-        reloadCategories();
+        updateLayout();
         setStatus(QDeclarativeSupportedCategoriesModel::Ready);
     } else {
         m_errorString = m_response->errorString();
@@ -426,7 +426,7 @@ void QDeclarativeSupportedCategoriesModel::update()
     }
 }
 
-void QDeclarativeSupportedCategoriesModel::reloadCategories()
+void QDeclarativeSupportedCategoriesModel::updateLayout()
 {
     if (!m_plugin)
         return;
