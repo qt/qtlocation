@@ -45,8 +45,6 @@
 #include "qdeclarativegeomapquickitem_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
-#include <Qt3D/qglview.h>
-#include <Qt3D/qglsubsurface.h>
 #include <QtCore/QCoreApplication>
 #include <QtCore/qnumeric.h>
 #include <QThread>
@@ -56,9 +54,6 @@
 #include "cameradata.h"
 #include "mapcontroller.h"
 #include "mapnode_p.h"
-#include <Qt3D/qglscenenode.h>
-#include <Qt3D/qglbuilder.h>
-#include <Qt3D/qgeometrydata.h>
 #include <cmath>
 
 #include <qgeoserviceprovider.h>
