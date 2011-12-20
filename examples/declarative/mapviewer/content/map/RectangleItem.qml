@@ -47,6 +47,8 @@ MapRectangle {
     color: "red"
     opacity: 0.5
 
+    border.width: 2.0
+
     function setGeometry(markers){
         var count = markers.length
         topLeft = markers[count-2].coordinate

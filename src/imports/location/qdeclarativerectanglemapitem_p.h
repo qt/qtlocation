@@ -43,6 +43,7 @@
 #define QDECLARATIVERECTANGLEMAPITEM_H_
 
 #include "qdeclarativegeomapitembase_p.h"
+#include "qdeclarativepolylinemapitem_p.h"
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
@@ -57,6 +58,7 @@ class QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
     Q_PROPERTY(QDeclarativeCoordinate* topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
     Q_PROPERTY(QDeclarativeCoordinate* bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border)
 
 public:
     QDeclarativeRectangleMapItem(QQuickItem *parent = 0);
@@ -75,6 +77,8 @@ public:
     QColor color() const;
     void setColor(const QColor &color);
 
+    QDeclarativeMapLineProperties *border();
+
     void dragStarted();
     void dragEnded();
     bool contains(QPointF point);
@@ -86,6 +90,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     virtual void updateMapItem();
+    void handleBorderUpdated();
 
 private Q_SLOTS:
     // map size changed
@@ -96,9 +101,11 @@ private:
     QDeclarativeCoordinate* bottomRight_;
     QDeclarativeCoordinate internalTopLeft_;
     QDeclarativeCoordinate internalBottomRight_;
+    QDeclarativeMapLineProperties border_;
     QColor color_;
     qreal zoomLevel_;
     QRectF rectangle_;
+    QPolygonF borderPoly_;
     bool dirtyGeometry_;
     bool dirtyMaterial_;
     bool dragActive_;
@@ -114,11 +121,14 @@ public:
     MapRectangleNode();
     ~MapRectangleNode();
 
-    void update(const QColor& fillColor, const QRectF& shape);
+    void update(const QColor& fillColor, const QRectF& shape,
+                const QPolygonF& borderPoly, const QColor& borderColor,
+                qreal borderWidth);
 
 private:
     QSGFlatColorMaterial fillMaterial_;
     QSGGeometry geometry_;
+    MapPolylineNode *border_;
 
 };
 

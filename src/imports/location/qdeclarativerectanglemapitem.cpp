@@ -59,6 +59,10 @@ QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent):
     dragActive_(false)
 {
     setFlag(ItemHasContents, true);
+    QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
+                     this, SLOT(handleBorderUpdated()));
+    QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
+                     this, SLOT(handleBorderUpdated()));
 }
 
 QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
@@ -72,6 +76,11 @@ void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map
         QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
         updateMapItem();
     }
+}
+
+QDeclarativeMapLineProperties *QDeclarativeRectangleMapItem::border()
+{
+    return &border_;
 }
 
 void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
@@ -98,6 +107,12 @@ void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
 QDeclarativeCoordinate* QDeclarativeRectangleMapItem::topLeft()
 {
     return topLeft_;
+}
+
+void QDeclarativeRectangleMapItem::handleBorderUpdated()
+{
+    dirtyGeometry_ = true;
+    updateMapItem();
 }
 
 void QDeclarativeRectangleMapItem::setBottomRight(QDeclarativeCoordinate *bottomRight)
@@ -152,7 +167,7 @@ QSGNode* QDeclarativeRectangleMapItem::updatePaintNode(QSGNode* oldNode, UpdateP
 
     //TODO: update only material
     if (dirtyGeometry_ || dirtyMaterial_) {
-        node->update(color_,rectangle_);
+        node->update(color_, rectangle_, borderPoly_, border_.color(), border_.width());
         dirtyGeometry_ = false;
         dirtyMaterial_ = false;
     }
@@ -179,6 +194,13 @@ void QDeclarativeRectangleMapItem::updateMapItem()
 
         rectangle_.setTopLeft(QPointF(0, 0));
         rectangle_.setBottomRight(QPointF(w, h));
+
+        borderPoly_.clear();
+        borderPoly_.append(QPointF(0, 0));
+        borderPoly_.append(QPointF(w, 0));
+        borderPoly_.append(QPointF(w, h));
+        borderPoly_.append(QPointF(0, h));
+        borderPoly_.append(borderPoly_.at(0));
 
         setWidth(w);
         setHeight(h);
@@ -229,18 +251,21 @@ void QDeclarativeRectangleMapItem::dragStarted()
 //////////////////////////////////////////////////////////////////////
 
 MapRectangleNode::MapRectangleNode():
-    geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
+    geometry_(QSGGeometry::defaultAttributes_Point2D(),0),
+    border_(new MapPolylineNode())
 {
     geometry_.setDrawingMode(GL_TRIANGLE_STRIP);
     QSGGeometryNode::setMaterial(&fillMaterial_);
     QSGGeometryNode::setGeometry(&geometry_);
+
+    appendChildNode(border_);
 }
 
 MapRectangleNode::~MapRectangleNode()
 {
 }
 
-void MapRectangleNode::update(const QColor& fillColor, const QRectF& shape)
+void MapRectangleNode::update(const QColor& fillColor, const QRectF& shape, const QPolygonF& borderPoly, const QColor& borderColor, qreal borderWidth)
 {
     QSGGeometry *fill = QSGGeometryNode::geometry();
 
@@ -248,16 +273,15 @@ void MapRectangleNode::update(const QColor& fillColor, const QRectF& shape)
 
     int fillVertexCount = 0;
     //note this will not allocate new buffer if the size has not changed
-    fill->allocate(5);
+    fill->allocate(4);
 
     Vertex *vertices = (Vertex *)fill->vertexData();
 
     //set corners
     vertices[fillVertexCount++].position = QVector2D(shape.left(), shape.top());
     vertices[fillVertexCount++].position = QVector2D(shape.right(),shape.top());
-    vertices[fillVertexCount++].position = QVector2D(shape.right(),shape.bottom());
-    vertices[fillVertexCount++].position = QVector2D(shape.left(), shape.bottom());
-    vertices[fillVertexCount++].position = QVector2D(shape.left(), shape.top());
+    vertices[fillVertexCount++].position = QVector2D(shape.left(),shape.bottom());
+    vertices[fillVertexCount++].position = QVector2D(shape.right(), shape.bottom());
 
     Q_ASSERT(fillVertexCount == fill->vertexCount());
 
@@ -267,7 +291,8 @@ void MapRectangleNode::update(const QColor& fillColor, const QRectF& shape)
         fillMaterial_.setColor(fillColor);
         setMaterial(&fillMaterial_);
     }
-    //TODO: implement me : borders , gradient
+
+    border_->update(borderColor, borderPoly, borderWidth);
 }
 
 QT_END_NAMESPACE
