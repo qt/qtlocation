@@ -1294,10 +1294,10 @@ void tst_QPlaceManagerJsonDb::contactDetails_data()
 {
     QTest::addColumn<QString>("contactType");
 
-    QTest::newRow("phone") << QPlaceContactDetail::Phone.latin1();
-    QTest::newRow("email") << QPlaceContactDetail::Email.latin1();
-    QTest::newRow("website") << QPlaceContactDetail::Website.latin1();
-    QTest::newRow("fax") << QPlaceContactDetail::Fax.latin1();
+    QTest::newRow("phone") << QPlaceContactDetail::Phone;
+    QTest::newRow("email") << QPlaceContactDetail::Email;
+    QTest::newRow("website") << QPlaceContactDetail::Website;
+    QTest::newRow("fax") << QPlaceContactDetail::Fax;
 }
 
 void tst_QPlaceManagerJsonDb::mulipleDetailTypes()
