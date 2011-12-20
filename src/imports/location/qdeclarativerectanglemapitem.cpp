@@ -231,7 +231,7 @@ void QDeclarativeRectangleMapItem::dragStarted()
 MapRectangleNode::MapRectangleNode():
     geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
 {
-    geometry_.setDrawingMode(GL_QUADS);
+    geometry_.setDrawingMode(GL_TRIANGLE_STRIP);
     QSGGeometryNode::setMaterial(&fillMaterial_);
     QSGGeometryNode::setGeometry(&geometry_);
 }
@@ -248,15 +248,16 @@ void MapRectangleNode::update(const QColor& fillColor, const QRectF& shape)
 
     int fillVertexCount = 0;
     //note this will not allocate new buffer if the size has not changed
-    fill->allocate(4);
+    fill->allocate(5);
 
     Vertex *vertices = (Vertex *)fill->vertexData();
 
     //set corners
-    vertices[fillVertexCount++].position = QVector2D(shape.left(),shape.top());
+    vertices[fillVertexCount++].position = QVector2D(shape.left(), shape.top());
     vertices[fillVertexCount++].position = QVector2D(shape.right(),shape.top());
     vertices[fillVertexCount++].position = QVector2D(shape.right(),shape.bottom());
-    vertices[fillVertexCount++].position = QVector2D(shape.left(),shape.bottom());
+    vertices[fillVertexCount++].position = QVector2D(shape.left(), shape.bottom());
+    vertices[fillVertexCount++].position = QVector2D(shape.left(), shape.top());
 
     Q_ASSERT(fillVertexCount == fill->vertexCount());
 

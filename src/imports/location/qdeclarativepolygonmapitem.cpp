@@ -273,7 +273,7 @@ MapPolygonNode::MapPolygonNode() :
     border_(new MapPolylineNode()),
     geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
 {
-    geometry_.setDrawingMode(GL_POLYGON);
+    geometry_.setDrawingMode(GL_TRIANGLE_FAN);
     QSGGeometryNode::setMaterial(&fill_material_);
     QSGGeometryNode::setGeometry(&geometry_);
 
@@ -296,13 +296,15 @@ void MapPolygonNode::update(const QColor& fillColor, const QPolygonF& shape,
 
     int fillVertexCount = 0;
     //note this will not allocate new buffer if the size has not changed
-    fill->allocate(shape.size());
+    fill->allocate(shape.size() + 2);
 
     Vertex *vertices = (Vertex *)fill->vertexData();
 
+    vertices[fillVertexCount++].position = QVector2D(shape.boundingRect().center());
     for (int i = 0; i < shape.size(); ++i) {
         vertices[fillVertexCount++].position = QVector2D(shape.at(i));
     }
+    vertices[fillVertexCount++].position = QVector2D(shape.at(0));
 
     Q_ASSERT(fillVertexCount == fill->vertexCount());
     markDirty(DirtyGeometry);
