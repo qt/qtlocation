@@ -150,20 +150,27 @@ QDeclarativePlace::QDeclarativePlace(QObject* parent)
 :   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QDeclarativePropertyMap(this)),
-    m_contactDetails(0), m_reply(0), m_plugin(0), m_complete(false),
-    m_status(QDeclarativePlace::Ready), m_errorString(QString())
+    m_contactDetails(new QDeclarativePropertyMap(this)), m_reply(0), m_plugin(0),
+    m_complete(false), m_status(QDeclarativePlace::Ready), m_errorString(QString())
 {
+    connect(m_contactDetails, SIGNAL(valueChanged(QString,QVariant)),
+            this, SLOT(contactsModified(QString,QVariant)));
+
     setPlace(QPlace());
 }
 
 QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent)
 :   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
-    m_extendedAttributes(new QDeclarativePropertyMap(this)), m_contactDetails(0),
-    m_reply(0), m_plugin(plugin), m_complete(false),
-    m_status(QDeclarativePlace::Ready)
+    m_extendedAttributes(new QDeclarativePropertyMap(this)),
+    m_contactDetails(new QDeclarativePropertyMap(this)), m_reply(0), m_plugin(plugin),
+    m_complete(false), m_status(QDeclarativePlace::Ready)
 {
     Q_ASSERT(plugin);
+
+    connect(m_contactDetails, SIGNAL(valueChanged(QString,QVariant)),
+            this, SLOT(contactsModified(QString,QVariant)));
+
     setPlace(src);
 }
 
@@ -336,23 +343,8 @@ void QDeclarativePlace::setPlace(const QPlace &src)
             m_editorialModel->clear();
     }
 
-    if (m_extendedAttributes && m_extendedAttributes->parent() == this) {
-        synchronizeExtendedAttributes();
-    } else if (!m_extendedAttributes || m_extendedAttributes->parent() != this) {
-        m_extendedAttributes = new QDeclarativePropertyMap(this);
-        synchronizeExtendedAttributes();
-        emit extendedAttributesChanged();
-    }
-
-    if (m_contactDetails && m_contactDetails->parent() == this) {
-        synchronizeContacts();
-    } else if (!m_contactDetails || m_contactDetails->parent() != this) {
-        m_contactDetails = new QDeclarativePropertyMap(this);
-        connect(m_contactDetails, SIGNAL(valueChanged(QString,QVariant)), this, SLOT(contactsModified(QString,QVariant)));
-        synchronizeContacts();
-
-        emit contactDetailsChanged();
-    }
+    synchronizeExtendedAttributes();
+    synchronizeContacts();
 }
 
 QPlace QDeclarativePlace::place()
@@ -563,14 +555,6 @@ QString QDeclarativePlace::attribution() const
 
     \sa getDetails()
 */
-void QDeclarativePlace::setDetailsFetched(bool fetched)
-{
-    if (m_src.detailsFetched() != fetched) {
-        m_src.setDetailsFetched(fetched);
-        emit detailsFetchedChanged();
-    }
-}
-
 bool QDeclarativePlace::detailsFetched() const
 {
     return m_src.detailsFetched();
@@ -816,18 +800,6 @@ QUrl QDeclarativePlace::primaryWebsite() const
     This property holds the extended attributes of a place.  Extended attributes are additional
     information about a place not covered by the place's properties.
 */
-void QDeclarativePlace::setExtendedAttributes(QDeclarativePropertyMap *attribs)
-{
-    if (m_extendedAttributes == attribs)
-        return;
-
-    if (m_extendedAttributes && m_extendedAttributes->parent() == this)
-        delete m_extendedAttributes;
-
-    m_extendedAttributes = attribs;
-    emit extendedAttributesChanged();
-}
-
 QDeclarativePropertyMap *QDeclarativePlace::extendedAttributes() const
 {
     return m_extendedAttributes;
@@ -839,18 +811,6 @@ QDeclarativePropertyMap *QDeclarativePlace::extendedAttributes() const
     This property holds the contact information for this place, for example a phone number or
     a website URL.  This property is a map of \l ContactDetail objects.
 */
-void QDeclarativePlace::setContactDetails(QDeclarativePropertyMap *contactDetails)
-{
-    if (m_contactDetails == contactDetails)
-        return;
-
-    if (m_contactDetails && m_contactDetails->parent() == this)
-        delete m_contactDetails;
-
-    m_contactDetails = contactDetails;
-    emit contactDetailsChanged();
-}
-
 QDeclarativePropertyMap *QDeclarativePlace::contactDetails() const
 {
     return m_contactDetails;

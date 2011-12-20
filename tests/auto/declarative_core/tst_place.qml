@@ -123,17 +123,9 @@ TestCase {
             }
         ]
 
-        // fixme, how is this meant to work?
-        /*extendedAttributes: ExtendedAttributes {
-            foo: PlaceAttribute {
-                text: "Attribute 1"
-                label: "Attribute Label 1"
-            }
-            other: PlaceAttribute {
-                text: "Attribute 2"
-                label: "Attribute Label 2"
-            }
-        }*/
+        icon: Icon {
+            fullUrl: "http://example.com/test-place.png"
+        }
     }
 
      Place {
@@ -263,6 +255,31 @@ TestCase {
             */
         }
 
+        // check icon
+        if (place1.icon === null && place2.icon !== null) {
+            console.log("f1");
+            return false;
+        }
+        if (place1.icon !== null && place2.icon === null) {
+            console.log("f2");
+            return false;
+        }
+        if (place1.icon !== null && place2.icon !== null) {
+            if (place1.icon.plugin !== place2.icon.plugin) {
+                console.log("f3");
+                console.log(place1.icon.plugin + " " + place2.icon.plugin);
+                return false;
+            }
+            if (place1.icon.baseUrl !== place2.icon.baseUrl) {
+                console.log("f4");
+                return false;
+            }
+            if (place1.icon.fullUrl !== place2.icon.fullUrl) {
+                console.log("f5");
+                return false;
+            }
+        }
+
         // check extended attributes
 
         return true;
@@ -281,6 +298,7 @@ TestCase {
         compare(emptyPlace.primaryEmail, "");
         compare(emptyPlace.primaryWebsite, "");
         compare(emptyPlace.visibility, Place.UnspecifiedVisibility);
+        compare(emptyPlace.attribution, "");
 
         // complex properties
         compare(emptyPlace.ratings.average, 0);
@@ -290,6 +308,10 @@ TestCase {
         compare(emptyPlace.location.address.county, '');
         compare(emptyPlace.location.address.state, '');
         compare(emptyPlace.location.address.country, '');
+
+        compare(emptyPlace.icon.fullUrl, '');
+        compare(emptyPlace.icon.baseUrl, '');
+        compare(emptyPlace.icon.plugin, null);
 
         compare(emptyPlace.supplier.name, '');
         compare(emptyPlace.supplier.supplierId, '');
@@ -313,6 +335,7 @@ TestCase {
             { tag: "name", property: "name", signal: "nameChanged", value: "Test Place", reset: "" },
             { tag: "placeId", property: "placeId", signal: "placeIdChanged", value: "test-place-id-1", reset: "" },
             { tag: "visibility", property: "visibility", signal: "visibilityChanged", value: Place.PublicVisibility, reset: Place.UnspecifiedVisibility },
+            { tag: "attribution", property: "attribution", signal: "attributionChanged", value: "Place data from...", reset: "" }
         ];
     }
 
@@ -460,10 +483,6 @@ TestCase {
     }
 
     function test_extendedAttributes() {
-        var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        signalSpy.target = testPlace;
-        signalSpy.signalName = "extendedAttributesChanged";
-
         verify(testPlace.extendedAttributes);
 
         testPlace.extendedAttributes["foo"] = Qt.createQmlObject('import QtLocation 5.0; PlaceAttribute { text: "Foo"; label: "Foo label" }', testCase, 'PlaceAttribute');
@@ -472,16 +491,21 @@ TestCase {
         compare(testPlace.extendedAttributes.foo.text, "Foo");
         compare(testPlace.extendedAttributes.foo.label, "Foo label");
 
-        testPlace.extendedAttributes = Qt.createQmlObject('import QtLocation 5.0; ExtendedAttributes { }', testPlace, 'ExtendedAttributes1');
+        testPlace.extendedAttributes["foo"] = null;
+        verify(!testPlace.extendedAttributes.foo);
+    }
 
-        compare(signalSpy.count, 1);
-        verify(testPlace.extendedAttributes);
-        compare(testPlace.extendedAttributes.foo, undefined);
+    function test_contactDetailsProperty() {
+        verify(testPlace.contactDetails);
 
-        testPlace.extendedAttributes = testPlace.extendedAttributes
-        compare(signalSpy.count, 1);
+        testPlace.contactDetails["phone"] = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { label: "Test Label"; value: "Detail Value" }', testCase, 'ContactDetail');
 
-        signalSpy.destroy();
+        verify(testPlace.contactDetails.phone);
+        compare(testPlace.contactDetails.phone[0].label, "Test Label");
+        compare(testPlace.contactDetails.phone[0].value, "Detail Value");
+
+        testPlace.contactDetails["phone"] = null;
+        verify(!testPlace.contactDetails.phone);
     }
 
     function test_saveload() {
@@ -491,6 +515,7 @@ TestCase {
         signalSpy.signalName = "statusChanged";
 
         savePlace.plugin = testPlugin;
+        savePlace.icon.plugin = testPlugin;
         savePlace.placeId = "invalid-place-id";
 
         savePlace.save();

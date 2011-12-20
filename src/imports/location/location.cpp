@@ -155,7 +155,6 @@ public:
             qmlRegisterType<QDeclarativeSupportedCategoriesModel>(uri, 5, 0, "CategoryModel");
             qmlRegisterType<QDeclarativeSearchResultModel>(uri, 5, 0, "PlaceSearchModel");
             qmlRegisterType<QDeclarativeSearchSuggestionModel>(uri, 5, 0, "PlaceSearchSuggestionModel");
-            qmlRegisterType<QDeclarativePropertyMap>(uri, 5,0,"ExtendedAttributes");
             qmlRegisterType<QDeclarativePlaceAttribute>(uri, 5,0, "PlaceAttribute");
             qmlRegisterType<QDeclarativeContactDetail>(uri, 5, 0, "ContactDetail");
 

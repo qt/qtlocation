@@ -83,9 +83,9 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QDeclarativePlaceImageModel *imageModel READ imageModel NOTIFY imageModelChanged)
     Q_PROPERTY(QDeclarativePlaceEditorialModel *editorialModel READ editorialModel NOTIFY editorialModelChanged)
 
-    Q_PROPERTY(QDeclarativePropertyMap *extendedAttributes READ extendedAttributes WRITE setExtendedAttributes NOTIFY extendedAttributesChanged);
-    Q_PROPERTY(QDeclarativePropertyMap *contactDetails READ contactDetails WRITE setContactDetails NOTIFY contactDetailsChanged);
-    Q_PROPERTY(bool detailsFetched READ detailsFetched WRITE setDetailsFetched NOTIFY detailsFetchedChanged);
+    Q_PROPERTY(QObject *extendedAttributes READ extendedAttributes NOTIFY extendedAttributesChanged)
+    Q_PROPERTY(QObject *contactDetails READ contactDetails NOTIFY contactDetailsChanged)
+    Q_PROPERTY(bool detailsFetched READ detailsFetched NOTIFY detailsFetchedChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged);
 
     Q_PROPERTY(QString primaryPhone READ primaryPhone NOTIFY primaryPhoneChanged);
@@ -146,7 +146,6 @@ public:
     QString attribution() const;
     void setAttribution(const QString &attribution);
     bool detailsFetched() const;
-    void setDetailsFetched(bool fetched);
 
     Status status() const;
     void setStatus(Status status);
@@ -162,10 +161,8 @@ public:
     QUrl primaryWebsite() const;
 
     QDeclarativePropertyMap *extendedAttributes() const;
-    void setExtendedAttributes(QDeclarativePropertyMap *attrib);
 
     QDeclarativePropertyMap *contactDetails() const;
-    void setContactDetails(QDeclarativePropertyMap *contactDetails);
 
     Visibility visibility() const;
     void setVisibility(Visibility visibility);
