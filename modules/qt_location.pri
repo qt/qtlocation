@@ -11,7 +11,7 @@ QT.location.sources = $$QT_MODULE_BASE/src/location
 QT.location.libs = $$QT_MODULE_LIB_BASE
 QT.location.plugins = $$QT_MODULE_PLUGIN_BASE
 QT.location.imports = $$QT_MODULE_IMPORT_BASE
-QT.location.depends = gui sql network
+QT.location.depends = gui qt3d sql network
 QT.location.DEFINES = QT_LOCATION_LIB
 
 QT_CONFIG += location
