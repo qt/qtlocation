@@ -300,11 +300,17 @@ void MapPolygonNode::update(const QColor& fillColor, const QPolygonF& shape,
 
     Vertex *vertices = (Vertex *)fill->vertexData();
 
-    vertices[fillVertexCount++].position = QVector2D(shape.boundingRect().center());
+    qreal xSum = 0, ySum = 0, count = 0;
+    // skip the center point for now, we'll fill it in afterwards
+    fillVertexCount++;
     for (int i = 0; i < shape.size(); ++i) {
+        xSum += shape.at(i).x();
+        ySum += shape.at(i).y();
+        count += 1.0;
         vertices[fillVertexCount++].position = QVector2D(shape.at(i));
     }
     vertices[fillVertexCount++].position = QVector2D(shape.at(0));
+    vertices[0].position = QVector2D(xSum / count, ySum / count);
 
     Q_ASSERT(fillVertexCount == fill->vertexCount());
     markDirty(DirtyGeometry);
