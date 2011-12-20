@@ -148,6 +148,7 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map){
         QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+        dirtyGeometry_ = true;
         updateMapItem();
     }
 }

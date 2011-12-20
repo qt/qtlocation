@@ -57,7 +57,7 @@ class QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
-    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border)
+    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
 
 public:
     QDeclarativePolygonMapItem(QQuickItem *parent = 0);

@@ -58,7 +58,7 @@ class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
     Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
-    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border)
+    Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
 
 public:
     QDeclarativeCircleMapItem(QQuickItem *parent = 0);

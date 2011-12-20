@@ -75,17 +75,41 @@ Item {
     height: 240
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin";}
     Coordinate{ id: mapDefaultCenter; latitude: 20; longitude: 20}
+    Coordinate{ id: someCoordinate1; latitude: 15; longitude: 15}
+    Coordinate{ id: someCoordinate2; latitude: 16; longitude: 16}
+    Route { id: someRoute;
+        path: [
+            Coordinate { latitude: 22; longitude: 15},
+            Coordinate { latitude: 21; longitude: 16},
+            Coordinate { latitude: 23; longitude: 17}
+        ]
+    }
+    Item { id: someItem }
 
-    function setMouseData(ma, me)
-    {
-        ma.lastX = me.x
-        ma.lastY = me.y
-        ma.lastButton = me.button
-        ma.lastButtons = me.buttons
-        ma.lastModifiers = me.modifiers
-        ma.lastWasHeld = me.wasHeld
-        ma.lastIsClick = me.isClick
-        ma.lastAccepted = me.accepted
+    MapCircle {
+        id: extMapCircle
+        center: Coordinate { latitude: 35; longitude: 15}
+        color: 'firebrick'
+        radius: 600000
+        MapMouseArea {
+            anchors.fill: parent
+            onClicked: console.log('ext circle clicked')
+            SignalSpy { id: extMapCircleClicked; target: parent; signalName: "clicked" }
+        }
+    }
+
+    MapQuickItem {
+        id: extMapQuickItem
+        MapMouseArea {
+            anchors.fill: parent
+            SignalSpy { id: extMapQuickItemClicked; target: parent; signalName: "clicked" }
+        }
+        coordinate: Coordinate { latitude: 35; longitude: 33}
+        sourceItem: Rectangle {
+            color: 'darkblue'
+            width: 40
+            height: 20
+        }
     }
 
     Map {
@@ -103,8 +127,13 @@ Item {
             MapMouseArea {
                 id: preMapRectMa
                 anchors.fill: parent
+                drag.target: parent
                 SignalSpy { id: preMapRectClicked; target: parent; signalName: "clicked" }
+                SignalSpy { id: preMapRectActiveChanged; target: parent.drag; signalName: "activeChanged" }
             }
+            SignalSpy {id: preMapRectTopLeftChanged; target: parent; signalName: "topLeftChanged" }
+            SignalSpy {id: preMapRectBottomRightChanged; target: parent; signalName: "bottomRightChanged" }
+            SignalSpy {id: preMapRectColorChanged; target: parent; signalName: "colorChanged"}
         }
         MapCircle {
             id: preMapCircle
@@ -114,8 +143,74 @@ Item {
             MapMouseArea {
                 id: preMapCircleMa
                 anchors.fill: parent
+                drag.target: parent
                 SignalSpy { id: preMapCircleClicked; target: parent; signalName: "clicked" }
+                SignalSpy { id: preMapCircleActiveChanged; target: parent.drag; signalName: "activeChanged" }
             }
+            SignalSpy {id: preMapCircleCenterChanged; target: parent; signalName: "centerChanged"}
+            SignalSpy {id: preMapCircleColorChanged; target: parent; signalName: "colorChanged"}
+            SignalSpy {id: preMapCircleRadiusChanged; target: parent; signalName: "radiusChanged"}
+            SignalSpy {id: preMapCircleBorderColorChanged; target: parent.border; signalName: "colorChanged"}
+            SignalSpy {id: preMapCircleBorderWidthChanged; target: parent.border; signalName: "widthChanged"}
+        }
+        MapQuickItem {
+            id: preMapQuickItem
+            MapMouseArea {
+                anchors.fill: parent
+                drag.target: parent
+                SignalSpy { id: preMapQuickItemClicked; target: parent; signalName: "clicked" }
+                SignalSpy { id: preMapQuickItemActiveChanged; target: parent.drag; signalName: "activeChanged" }
+            }
+            coordinate: Coordinate { latitude: 35; longitude: 3}
+            sourceItem: Rectangle {
+                color: 'darkgreen'
+                width: 20
+                height: 20
+            }
+            SignalSpy { id: preMapQuickItemCoordinateChanged; target: parent; signalName: "coordinateChanged"}
+            SignalSpy { id: preMapQuickItemAnchorPointChanged; target: parent; signalName: "anchorPointChanged"}
+            SignalSpy { id: preMapQuickItemZoomLevelChanged; target: parent; signalName: "zoomLevelChanged"}
+            SignalSpy { id: preMapQuickItemSourceItemChanged; target: parent; signalName: "sourceItemChanged"}
+        }
+        MapPolygon {
+            id: preMapPolygon
+            color: 'darkgrey'
+            path: [
+                Coordinate { latitude: 25; longitude: 5},
+                Coordinate { latitude: 20; longitude: 10},
+                Coordinate { latitude: 15; longitude: 6}
+            ]
+            SignalSpy {id: preMapPolygonPathChanged; target: parent; signalName: "pathChanged"}
+            SignalSpy {id: preMapPolygonColorChanged; target: parent; signalName: "colorChanged"}
+            SignalSpy {id: preMapPolygonBorderWidthChanged; target: parent.border; signalName: "widthChanged"}
+            SignalSpy {id: preMapPolygonBorderColorChanged; target: parent.border; signalName: "colorChanged"}
+        }
+        MapPolyline {
+            id: preMapPolyline
+            line.color: 'darkred'
+            path: [
+                Coordinate { latitude: 25; longitude: 15},
+                Coordinate { latitude: 20; longitude: 19},
+                Coordinate { latitude: 15; longitude: 16}
+            ]
+            SignalSpy {id: preMapPolylineColorChanged; target: parent.line; signalName: "colorChanged"}
+            SignalSpy {id: preMapPolylineWidthChanged; target: parent.line; signalName: "widthChanged"}
+            SignalSpy {id: preMapPolylinePathChanged; target: parent; signalName: "pathChanged"}
+        }
+        MapRoute {
+            id: preMapRoute
+            line.color: 'yellow'
+            // don't try this at home - route is not user instantiable
+            route: Route {
+                path: [
+                    Coordinate { latitude: 25; longitude: 14},
+                    Coordinate { latitude: 20; longitude: 18},
+                    Coordinate { latitude: 15; longitude: 15}
+                ]
+            }
+            SignalSpy {id: preMapRouteRouteChanged; target: parent; signalName: "routeChanged"}
+            SignalSpy {id: preMapRouteLineWidthChanged; target: parent.line; signalName: "widthChanged"}
+            SignalSpy {id: preMapRouteLineColorChanged; target: parent.line; signalName: "colorChanged"}
         }
     }
 
@@ -124,18 +219,17 @@ Item {
         when: windowShown
 
         function test_aa_items_on_map() { // aa et al. for execution order
+            wait(10)
             // sanity check that the coordinate conversion works, as
             // rest of the case relies on it. for robustness cut
             // a little slack with fuzzy compare
-            wait(10)
             var mapcenter = map.toScreenPosition(map.center)
-            verify (fuzzy_compare(mapcenter.x, 100))
-            verify (fuzzy_compare(mapcenter.y, 100))
+            verify (fuzzy_compare(mapcenter.x, 100, 2))
+            verify (fuzzy_compare(mapcenter.y, 100, 2))
 
             // precondition
             compare(preMapRectClicked.count, 0)
             compare(preMapCircleClicked.count, 0)
-
             // click rect
             var point = map.toScreenPosition(preMapRect.topLeft)
             mouseClick(map, point.x + 5, point.y + 5)
@@ -144,34 +238,296 @@ Item {
             compare(preMapRectClicked.count, 1)
             compare(preMapCircleClicked.count, 0)
             // click circle, overlaps and is above rect
-            pause() // marks good visual inspection point
+            visualInspectionPoint() // marks good visual inspection point
             point = map.toScreenPosition(preMapCircle.center)
             mouseClick(map, point.x - 5, point.y - 5)
             compare(preMapRectClicked.count, 1)
             compare(preMapCircleClicked.count, 1)
             // click within circle bounding rect but not inside the circle geometry
-            console.log('circle x y : ' +  preMapCircle.x + ' ' + preMapCircle.y)
             mouseClick(map, preMapCircle.x + 4, preMapCircle.y + 4)
             compare(preMapRectClicked.count, 2)
             compare(preMapCircleClicked.count, 1)
+            // click quick item
+            compare(preMapQuickItemClicked.count, 0)
+            point = map.toScreenPosition(preMapQuickItem.coordinate)
+            mouseClick(map, point.x + 5, point.y + 5)
+            compare(preMapQuickItemClicked.count, 1)
+
+            // remove items and repeat clicks to verify they are gone
+            map.clearMapItems()
+            clear_data()
+            compare (map.mapItems.length, 0)
+            point = map.toScreenPosition(preMapRect.topLeft)
+            mouseClick(map, point.x + 5, point.y + 5)
+            compare(preMapRectClicked.count, 0)
+            visualInspectionPoint()
+            point = map.toScreenPosition(preMapCircle.center)
+            mouseClick(map, point.x - 5, point.y - 5)
+            compare(preMapRectClicked.count, 0)
+            compare(preMapCircleClicked.count, 0)
+            mouseClick(map, preMapCircle.x + 4, preMapCircle.y + 4)
+            compare(preMapRectClicked.count, 0)
+            compare(preMapCircleClicked.count, 0)
+            compare(preMapQuickItemClicked.count, 0)
+            point = map.toScreenPosition(preMapQuickItem.coordinate)
+            mouseClick(map, point.x + 5, point.y + 5)
+            compare(preMapQuickItemClicked.count, 0)
+
+            // re-add items and verify they are back (without needing to pan map etc.)
+            // note: addition order is significant
+            map.addMapItem(preMapRect)
+            map.addMapItem(preMapCircle)
+            map.addMapItem(preMapQuickItem)
+            map.addMapItem(preMapPolygon)
+            map.addMapItem(preMapPolyline)
+            map.addMapItem(preMapRoute)
+            compare (map.mapItems.length, 6)
+            visualInspectionPoint()
+            point = map.toScreenPosition(preMapRect.topLeft)
+            mouseClick(map, point.x + 5, point.y + 5)
+            compare(preMapRectClicked.count, 1)
+            point = map.toScreenPosition(preMapCircle.center)
+            mouseClick(map, point.x - 5, point.y - 5)
+            compare(preMapRectClicked.count, 1)
+            compare(preMapCircleClicked.count, 1)
+            mouseClick(map, preMapCircle.x + 4, preMapCircle.y + 4)
+            compare(preMapRectClicked.count, 2)
+            compare(preMapCircleClicked.count, 1)
+            compare(preMapQuickItemClicked.count, 0)
+            point = map.toScreenPosition(preMapQuickItem.coordinate)
+            mouseClick(map, point.x + 5, point.y + 5)
+            compare(preMapQuickItemClicked.count, 1)
+
+            // item clips to map. not sure if this is sensible test
+            map.addMapItem(extMapCircle)
+            visualInspectionPoint();
+            point = map.toScreenPosition(extMapCircle.center)
+            mouseClick(map, point.x, point.y)
+            compare(extMapCircleClicked.count, 1)
+            mouseClick(map, point.x, -5)
+            compare(extMapCircleClicked.count, 1)
+
+            map.addMapItem(extMapQuickItem)
+            visualInspectionPoint();
+            point = map.toScreenPosition(extMapQuickItem.coordinate)
+            mouseClick(map, point.x + 5, point.y + 5)
+            compare(extMapQuickItemClicked.count, 1)
+            mouseClick(map, map.width + 5, point.y + 5)
+            compare(extMapQuickItemClicked.count, 1)
+        }
+
+        function test_ab_drag() {
+            clear_data()
+            // basic drags, drag rectangle
+            compare (preMapRectActiveChanged.count, 0)
+            var i = 0
+            var point = map.toScreenPosition(preMapRect.topLeft)
+            mousePress(map, point.x + 5, point.y + 5)
+            for (i=0; i < 50; i += 5) {
+                wait(1)
+                mouseMove(map, point.x + 5 - i, point.y + 5 - i)
+            }
+            mouseRelease(map, point.x + 5 - i, point.y + 5 - i)
+            visualInspectionPoint()
+            compare (preMapRectActiveChanged.count, 2)
+            // coordinates update only (once) after drag has finished
+            compare (preMapRectTopLeftChanged.count, 1)
+            compare (preMapRectBottomRightChanged.count, 1)
+            verify(fuzzy_compare(preMapRect.topLeft.latitude, 27.2, 0.1))
+            verify(fuzzy_compare(preMapRect.topLeft.longitude, 12.1, 0.1))
+            verify(fuzzy_compare(preMapRect.bottomRight.latitude, 17.7, 0.1))
+            verify(fuzzy_compare(preMapRect.bottomRight.longitude, 22.1, 0.1))
+
+            // drag circle
+            compare (preMapCircleActiveChanged.count, 0)
+            point = map.toScreenPosition(preMapCircle.center)
+            mousePress(map, point.x, point.y)
+            for (i=0; i < 50; i += 5) {
+                wait(1)
+                mouseMove(map, point.x - i, point.y - i)
+            }
+            mouseRelease(map, point.x - i, point.y - i)
+            visualInspectionPoint()
+            compare (preMapRectActiveChanged.count, 2)
+            compare (preMapCircleCenterChanged.count, 1)
+            verify(fuzzy_compare(preMapCircle.center.latitude, 17.7, 0.1))
+            verify(fuzzy_compare(preMapCircle.center.longitude, 22.1, 0.1))
+
+            // drag quick item
+            compare (preMapQuickItemActiveChanged.count, 0)
+            i = 0
+            point = map.toScreenPosition(preMapQuickItem.coordinate)
+            mousePress(map, point.x + 5, point.y + 5)
+            for (i=0; i < 50; i += 5) {
+                wait(1)
+                mouseMove(map, point.x + i, point.y + i)
+            }
+            mouseRelease(map, point.x + i, point.y + i)
+            visualInspectionPoint()
+            compare (preMapQuickItemActiveChanged.count, 2)
+            compare (preMapQuickItemCoordinateChanged.count, 1)
+            verify(fuzzy_compare(preMapQuickItem.coordinate.latitude, 29, 0.1))
+            verify(fuzzy_compare(preMapQuickItem.coordinate.longitude, 10, 0.1))
+        }
+
+        function test_ac_basic_properties() {
+            clear_data()
+            // circle
+            preMapCircle.center = someCoordinate1
+            compare (preMapCircleCenterChanged.count, 1)
+            preMapCircle.center = someCoordinate1
+            compare (preMapCircleCenterChanged.count, 1)
+            preMapCircle.color = 'blue'
+            compare (preMapCircleColorChanged.count, 1)
+            preMapCircle.color = 'blue'
+            compare (preMapCircleColorChanged.count, 1)
+            preMapCircle.radius  = 50
+            compare (preMapCircleRadiusChanged.count, 1)
+            preMapCircle.radius  = 50
+            compare (preMapCircleRadiusChanged.count, 1)
+            preMapCircle.border.color = 'blue'
+            compare(preMapCircleBorderColorChanged.count, 1)
+            preMapCircle.border.color = 'blue'
+            compare(preMapCircleBorderColorChanged.count, 1)
+            preMapCircle.border.width = 5
+            compare(preMapCircleBorderWidthChanged.count, 1)
+            preMapCircle.border.width = 5
+            compare(preMapCircleBorderWidthChanged.count, 1)
+
+            // rectangle
+            preMapRect.topLeft = someCoordinate1
+            compare (preMapRectTopLeftChanged.count, 1)
+            compare (preMapRectBottomRightChanged.count, 0)
+            preMapRect.bottomRight = someCoordinate2
+            compare (preMapRectTopLeftChanged.count, 1)
+            compare (preMapRectBottomRightChanged.count, 1)
+            preMapRect.bottomRight = someCoordinate2
+            preMapRect.topLeft = someCoordinate1
+            compare (preMapRectTopLeftChanged.count, 1)
+            compare (preMapRectBottomRightChanged.count, 1)
+            preMapRect.color = 'blue'
+            compare (preMapRectColorChanged.count, 1)
+            preMapRect.color = 'blue'
+            compare (preMapRectColorChanged.count, 1)
+
+            // polyline
+            preMapPolyline.line.width = 5
+            compare (preMapPolylineWidthChanged.count, 1)
+            preMapPolyline.line.width = 5
+            compare (preMapPolylineWidthChanged.count, 1)
+            preMapPolyline.line.color = 'blue'
+            compare(preMapPolylineColorChanged.count, 1)
+            preMapPolyline.line.color = 'blue'
+            compare(preMapPolylineColorChanged.count, 1)
+            preMapPolyline.addCoordinate(someCoordinate1)
+            compare (preMapPolylinePathChanged.count, 1)
+            preMapPolyline.addCoordinate(someCoordinate1)
+            compare (preMapPolylinePathChanged.count, 2)
+            preMapPolyline.removeCoordinate(someCoordinate1)
+            compare (preMapPolylinePathChanged.count, 3)
+            preMapPolyline.removeCoordinate(someCoordinate1)
+            compare (preMapPolylinePathChanged.count, 4)
+            preMapPolyline.removeCoordinate(someCoordinate1)
+            compare (preMapPolylinePathChanged.count, 4)
+
+            // polygon
+            preMapPolygon.border.width = 5
+            compare (preMapPolylineWidthChanged.count, 1)
+            preMapPolygon.border.width = 5
+            compare (preMapPolylineWidthChanged.count, 1)
+            preMapPolygon.border.color = 'blue'
+            compare(preMapPolylineColorChanged.count, 1)
+            preMapPolygon.border.color = 'blue'
+            preMapPolygon.color = 'blue'
+            compare (preMapPolygonColorChanged.count, 1)
+            preMapPolygon.color = 'blue'
+            compare (preMapPolygonColorChanged.count, 1)
+            preMapPolygon.addCoordinate(someCoordinate1)
+            compare (preMapPolygonPathChanged.count, 1)
+            preMapPolygon.addCoordinate(someCoordinate1)
+            compare (preMapPolygonPathChanged.count, 2)
+            preMapPolygon.removeCoordinate(someCoordinate1)
+            compare (preMapPolygonPathChanged.count, 3)
+            preMapPolygon.removeCoordinate(someCoordinate1)
+            compare (preMapPolygonPathChanged.count, 4)
+            preMapPolygon.removeCoordinate(someCoordinate1)
+            compare (preMapPolygonPathChanged.count, 4)
+
+            // route
+            preMapRoute.line.width = 5
+            compare (preMapRouteLineWidthChanged.count, 1)
+            preMapRoute.line.width = 5
+            compare (preMapRouteLineWidthChanged.count, 1)
+            preMapRoute.line.color = 'blue'
+            compare (preMapRouteLineColorChanged.count, 1)
+            preMapRoute.line.color = 'blue'
+            compare (preMapRouteLineColorChanged.count, 1)
+            preMapRoute.route = someRoute
+            compare (preMapRouteRouteChanged.count, 1)
+            preMapRoute.route = someRoute
+            compare (preMapRouteRouteChanged.count, 1)
+
+            // quick
+            compare (preMapQuickItemCoordinateChanged.count, 0)
+            preMapQuickItem.coordinate = someCoordinate1
+            compare (preMapQuickItemCoordinateChanged.count, 1)
+            preMapQuickItem.coordinate = someCoordinate1
+            compare (preMapQuickItemCoordinateChanged.count, 1)
+            preMapQuickItem.anchorPoint = Qt.point(39, 3)
+            compare (preMapQuickItemAnchorPointChanged.count, 1)
+            preMapQuickItem.anchorPoint = Qt.point(39, 3)
+            compare (preMapQuickItemAnchorPointChanged.count, 1)
+            preMapQuickItem.zoomLevel = 6
+            compare (preMapQuickItemZoomLevelChanged.count, 1)
+            preMapQuickItem.zoomLevel = 6
+            compare (preMapQuickItemZoomLevelChanged.count, 1)
+            preMapQuickItem.sourceItem = someItem
+            compare (preMapQuickItemSourceItemChanged.count, 1)
+            preMapQuickItem.sourceItem = someItem
+            compare (preMapQuickItemSourceItemChanged.count, 1)
         }
 
         function clear_data() {
             preMapRectClicked.clear()
             preMapCircleClicked.clear()
+            preMapQuickItemClicked.clear()
+            preMapCircleCenterChanged.clear()
+            preMapCircleColorChanged.clear()
+            preMapCircleRadiusChanged.clear()
+            preMapCircleBorderColorChanged.clear()
+            preMapCircleBorderWidthChanged.clear()
+            preMapRectTopLeftChanged.clear()
+            preMapRectBottomRightChanged.clear()
+            preMapRectColorChanged.clear()
+            preMapPolylineColorChanged.clear()
+            preMapPolylineWidthChanged.clear()
+            preMapPolylinePathChanged.clear()
+            preMapPolygonPathChanged.clear()
+            preMapPolygonColorChanged.clear()
+            preMapPolygonBorderColorChanged.clear()
+            preMapPolygonBorderWidthChanged.clear()
+            preMapRouteRouteChanged.clear()
+            preMapRouteLineColorChanged.clear()
+            preMapRouteLineWidthChanged.clear()
+            preMapQuickItemCoordinateChanged.clear()
+            preMapQuickItemAnchorPointChanged.clear()
+            preMapQuickItemZoomLevelChanged.clear()
+            preMapQuickItemSourceItemChanged.clear()
         }
 
-        function fuzzy_compare(val, ref) {
-            var tolerance = 2;
+        function fuzzy_compare(val, ref, tol) {
+            var tolerance = 2
+            if (tol !== undefined)
+                tolerance = tol
             if ((val >= ref - tolerance) && (val <= ref + tolerance))
                 return true;
             console.log('map fuzzy cmp returns false for value, ref, tolerance: ' + val + ', ' + ref + ', ' + tolerance)
             return false;
         }
 
-        // call to pause testcase (for dev time visual inspection)
-        function pause(time) {
-            var waitTime = 1000
+        // call to visualInspectionPoint testcase (for dev time visual inspection)
+        function visualInspectionPoint(time) {
+            var waitTime = 0 // 300
             if (time !== undefined)
                 waitTime = time
             if (waitTime > 0) {
@@ -184,10 +540,6 @@ Item {
         // a sequence of press, release, doubleclick, release).
         // (they were recorded as seen on test app). mouseClick() works ok
         // because testlib internally converts it to mousePress + mouseRelease events
-        function real_click (target, x, y) {
-            mousePress(target, x,y)
-            mouseRelease(target, x, y)
-        }
         function real_double_click (target, x, y) {
             mousePress(target, x,y)
             mouseRelease(target, x, y)

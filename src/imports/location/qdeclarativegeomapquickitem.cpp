@@ -110,6 +110,7 @@ void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
 
 void QDeclarativeGeoMapQuickItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
+    /*
     if (!dragActive_ && quickMap() && sourceItem() && newGeometry.isValid() && newGeometry != oldGeometry) {
         QPointF point(newGeometry.x(), newGeometry.y());
         // screenPositionToCoordinate seems to return nan values when
@@ -120,6 +121,7 @@ void QDeclarativeGeoMapQuickItem::geometryChanged(const QRectF &newGeometry, con
             setCoordinate(&internalCoordinate_);
         }
     }
+    */
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
 }
 

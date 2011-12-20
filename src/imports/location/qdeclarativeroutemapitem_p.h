@@ -58,7 +58,7 @@ class QDeclarativeRouteMapItem : public QDeclarativeGeoMapItemBase
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeGeoRoute* route READ route WRITE setRoute NOTIFY routeChanged)
-    Q_PROPERTY(QDeclarativeMapLineProperties *line READ line)
+    Q_PROPERTY(QDeclarativeMapLineProperties *line READ line CONSTANT)
 
 public:
     QDeclarativeRouteMapItem(QQuickItem *parent = 0);

@@ -80,7 +80,7 @@ class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
     Q_OBJECT
 
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
-    Q_PROPERTY(QDeclarativeMapLineProperties *line READ line)
+    Q_PROPERTY(QDeclarativeMapLineProperties *line READ line CONSTANT)
 
 public:
     QDeclarativePolylineMapItem(QQuickItem *parent = 0);

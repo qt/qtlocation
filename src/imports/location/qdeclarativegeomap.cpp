@@ -714,7 +714,7 @@ QDeclarativeListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMa
 QDeclarativeCoordinate* QDeclarativeGeoMap::toCoordinate(QPointF screenPosition) const
 {
     QGeoCoordinate coordinate;
-    if (mappingManagerInitialized_)
+    if (map_)
         coordinate = map_->screenPositionToCoordinate(screenPosition);
     // by default objects returned from method call get javascript ownership,
     // so we don't need to worry about this as long as we don't set the parent
@@ -734,7 +734,7 @@ QDeclarativeCoordinate* QDeclarativeGeoMap::toCoordinate(QPointF screenPosition)
 QPointF QDeclarativeGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate) const
 {
     QPointF point(qQNaN(), qQNaN());
-    if (coordinate && mappingManagerInitialized_)
+    if (coordinate && map_)
         point = map_->coordinateToScreenPosition(coordinate->coordinate());
     return point;
 }
