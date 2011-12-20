@@ -45,7 +45,6 @@
 #include <QString>
 #include <QVariant>
 #include <QSharedDataPointer>
-#include <QLatin1Constant>
 
 #include <QtLocation/qlocationglobal.h>
 
@@ -57,17 +56,10 @@ class QPlaceContactDetailPrivate;
 class Q_LOCATION_EXPORT QPlaceContactDetail
 {
 public:
-#ifdef Q_QDOC
-    static const QLatin1Constant Phone;
-    static const QLatin1Constant Email;
-    static const QLatin1Constant Website;
-    static const QLatin1Constant Fax;
-#else
-    Q_DECLARE_LATIN1_CONSTANT(Phone, "phone");
-    Q_DECLARE_LATIN1_CONSTANT(Email, "email");
-    Q_DECLARE_LATIN1_CONSTANT(Website, "website");
-    Q_DECLARE_LATIN1_CONSTANT(Fax, "fax");
-#endif
+    static const QString Phone;
+    static const QString Email;
+    static const QString Website;
+    static const QString Fax;
 
     QPlaceContactDetail();
     QPlaceContactDetail(const QPlaceContactDetail &other);

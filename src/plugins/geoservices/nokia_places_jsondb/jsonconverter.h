@@ -44,7 +44,6 @@
 #include <QtCore/QVariant>
 
 #include <QtCore/QStringList>
-#include <QLatin1Constant>
 
 class QPlaceManagerEngineJsonDb;
 class QPlace;

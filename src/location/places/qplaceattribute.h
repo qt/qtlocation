@@ -46,8 +46,6 @@
 #include <QVariant>
 #include <QSharedDataPointer>
 
-#include <qlatin1constant.h>
-
 #include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
@@ -60,13 +58,8 @@ class QPlaceAttributePrivate;
 class Q_LOCATION_EXPORT QPlaceAttribute
 {
 public:
-#ifdef Q_QDOC
-    static const QLatin1Constant OpeningHours;
-    static const QLatin1Constant Payment;
-#else
-    Q_DECLARE_LATIN1_CONSTANT(OpeningHours, "openingHours");
-    Q_DECLARE_LATIN1_CONSTANT(Payment, "payment");
-#endif
+    static const QString OpeningHours;
+    static const QString Payment;
 
     QPlaceAttribute();
     QPlaceAttribute(const QPlaceAttribute &other);

@@ -34,7 +34,6 @@ PUBLIC_HEADERS += \
                     qgeosatelliteinfosource.h \
                     qnmeapositioninfosource.h \
                     qgeopositioninfosourcefactory.h \
-                    qlatin1constant.h \
                     qtlocation.h \
                     qlocationglobal.h
 
