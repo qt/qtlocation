@@ -297,6 +297,8 @@ void IntersectGenerator::generateValue()
         if ((0.0 < alpha) && (alpha < 1.0)) {
             value_ = QPair<double,int>(alpha, current_ + adjust_);
             current_ += step_;
+            if (current_ == end_)
+                hasNext_ = false;
             return;
         }
         current_ += step_;
