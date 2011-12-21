@@ -73,7 +73,6 @@ public:
 
     QDeclarativeMapLineProperties *line();
 
-    void dragStarted();
     bool contains(QPointF point);
 
 Q_SIGNALS:

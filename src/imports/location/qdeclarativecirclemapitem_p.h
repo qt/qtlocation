@@ -79,7 +79,6 @@ public:
 
     QDeclarativeMapLineProperties *border();
 
-    void dragStarted();
     void dragEnded();
     bool contains(QPointF point);
 
@@ -110,7 +109,6 @@ private:
     bool dirtyPixelGeometry_;
     bool dirtyGeoGeometry_;
     bool dirtyMaterial_;
-    bool dragActive_;
 };
 
 //////////////////////////////////////////////////////////////////////

@@ -96,8 +96,8 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapMouseArea::QDeclarativeGeoMapMouseArea(QQuickItem *parent)
     : QQuickMouseArea(parent),
-      map_(0),
-      componentCompleted_(false)
+      componentCompleted_(false),
+      dragActive_(false)
 {
 }
 
@@ -107,30 +107,33 @@ QDeclarativeGeoMapMouseArea::~QDeclarativeGeoMapMouseArea()
 
 QDeclarativeCoordinate* QDeclarativeGeoMapMouseArea::mouseToCoordinate(QQuickMouseEvent* event)
 {
-    // figure out the map association for this mouse area and use it to resolve geocoordinate.
+    // figure out the map association for this mouse area and use it to resolve geocoordinate
+    QDeclarativeGeoMap* quickmap = map();
+    if (quickmap)
+        return quickmap->toCoordinate(quickmap->mapFromItem(this, QPointF(event->x(), event->y())));
+    return new QDeclarativeCoordinate; // return invalid coordinate
+}
+
+// TODO: cache the map association and hook up to parent change -signals
+QDeclarativeGeoMap* QDeclarativeGeoMapMouseArea::map()
+{
     QQuickItem* pmi = parentMapItem();
+    QDeclarativeGeoMap* map = 0;
     if (pmi) {
-        QDeclarativeGeoMap* map = qobject_cast<QDeclarativeGeoMap*>(pmi);
+        map = qobject_cast<QDeclarativeGeoMap*>(pmi);
         if (!map) {
             QDeclarativeGeoMapItemBase* item = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi);
             if (item)
                 map = item->quickMap();
         }
-        if (map)
-            return map->toCoordinate(map->mapFromItem(this, QPointF(event->x(), event->y())));
     }
-    return new QDeclarativeCoordinate; // return invalid coordinate
+    return map;
 }
 
 void QDeclarativeGeoMapMouseArea::dragActiveChanged()
 {
-    QQuickItem* pmi = parentMapItem();
-    if (pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)) {
-        if (drag() && drag()->property("active").toBool())
-            qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->dragStarted();
-        else
-            qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->dragEnded();
-    }
+    if (drag() && drag()->property("active").toBool())
+        dragActive_ = true;
 }
 
 void QDeclarativeGeoMapMouseArea::componentComplete()
@@ -160,8 +163,14 @@ void QDeclarativeGeoMapMouseArea::mouseReleaseEvent(QMouseEvent *event)
 {
     // map element's flickable may use the event
     QQuickItem* pmi = parentMapItem();
-    if (pmi && qobject_cast<QDeclarativeGeoMap*>(pmi))
+    if (pmi && qobject_cast<QDeclarativeGeoMap*>(pmi)) {
         qobject_cast<QDeclarativeGeoMap*>(pmi)->mouseEvent(event);
+    } else if (dragActive_ && pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)) {
+        // position of the item may have changed by the time the activeChanged
+        // is received, hence update already on mouse release
+        qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->dragEnded();
+        dragActive_ = false;
+    }
     QQuickMouseArea::mouseReleaseEvent(event);
 }
 

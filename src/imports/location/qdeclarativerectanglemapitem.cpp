@@ -55,8 +55,7 @@ QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent):
     bottomRight_(0),
     zoomLevel_(0.0),
     dirtyGeometry_(true),
-    dirtyMaterial_(true),
-    dragActive_(false)
+    dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
@@ -228,11 +227,7 @@ bool QDeclarativeRectangleMapItem::contains(QPointF point)
 
 void QDeclarativeRectangleMapItem::dragEnded()
 {
-    if (!dragActive_)
-        return;
-    dragActive_ = false;
     QPointF newTopLeftPoint = QPointF(x(),y());
-    // does not preserve exact projection geometry but that should be acceptable
     QGeoCoordinate newTopLeft = map()->screenPositionToCoordinate(newTopLeftPoint, false);
     QPointF newBottomRightPoint = QPointF(x() + width(), y() + height());
     QGeoCoordinate newBottomRight = map()->screenPositionToCoordinate(newBottomRightPoint, false);
@@ -244,11 +239,6 @@ void QDeclarativeRectangleMapItem::dragEnded()
     }
 }
 
-//TODO: this is goingn to be removed by I466aa31d33a204b2f7c6c562025946371d3b6f46
-void QDeclarativeRectangleMapItem::dragStarted()
-{
-    dragActive_ = true;
-}
 //////////////////////////////////////////////////////////////////////
 
 MapRectangleNode::MapRectangleNode():

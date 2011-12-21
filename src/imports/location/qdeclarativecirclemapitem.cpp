@@ -1,4 +1,4 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
@@ -162,9 +162,7 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent):
     zoomLevel_(0.0),
     dirtyPixelGeometry_(true),
     dirtyGeoGeometry_(true),
-    dirtyMaterial_(true),
-    dragActive_(false)
-
+    dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
     border_.setWidth(3.0);
@@ -317,20 +315,12 @@ void QDeclarativeCircleMapItem::handleCameraDataChanged(const CameraData& camera
 
 void QDeclarativeCircleMapItem::dragEnded()
 {
-    if (!dragActive_)
-        return;
-    dragActive_ = false;
     QPointF newPoint = QPointF(x(),y()) + QPointF(width(), height()) / 2;
     QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid()) {
         internalCoordinate_.setCoordinate(newCoordinate);
         setCenter(&internalCoordinate_);
     }
-}
-
-void QDeclarativeCircleMapItem::dragStarted()
-{
-    dragActive_ = true;
 }
 
 bool QDeclarativeCircleMapItem::contains(QPointF point)

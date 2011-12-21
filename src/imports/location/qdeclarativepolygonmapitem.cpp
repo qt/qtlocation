@@ -257,11 +257,6 @@ void QDeclarativePolygonMapItem::handleCameraDataChanged(const CameraData& camer
     updateMapItem();
 }
 
-void QDeclarativePolygonMapItem::dragStarted()
-{
-    qmlInfo(this) << "warning: mouse dragging is not currently supported with polygon.";
-}
-
 bool QDeclarativePolygonMapItem::contains(QPointF point)
 {
     return polygon_.contains(point);

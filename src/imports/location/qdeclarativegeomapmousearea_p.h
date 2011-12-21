@@ -76,10 +76,11 @@ private Q_SLOTS:
 
 private:
     QQuickItem* parentMapItem();
+    QDeclarativeGeoMap* map();
 
 private:
-    QDeclarativeGeoMap* map_;
     bool componentCompleted_;
+    bool dragActive_;
 };
 
 QT_END_NAMESPACE

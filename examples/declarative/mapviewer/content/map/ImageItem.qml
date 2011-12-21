@@ -45,6 +45,11 @@ MapQuickItem {  //to be used inside MapComponent only
 
     coordinate: Coordinate { latitude : 0; longitude : 0 }
 
+    MapMouseArea {
+        anchors.fill: parent
+        drag.target: parent
+    }
+
     function setGeometry(markers) {
         var count = markers.length
         coordinate.latitude = markers[count-1].coordinate.latitude

@@ -60,8 +60,7 @@ QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
       sourceItem_(0),
       zoomLevel_(0.0),
       inUpdate_(false),
-      mapAndSourceItemSet_(false),
-      dragActive_(true)
+      mapAndSourceItemSet_(false)
 {
     setFlag(ItemHasContents, true);
 }
@@ -107,46 +106,16 @@ void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
     }
 }
 
-
-void QDeclarativeGeoMapQuickItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
-{
-    /*
-    if (!dragActive_ && quickMap() && sourceItem() && newGeometry.isValid() && newGeometry != oldGeometry) {
-        QPointF point(newGeometry.x(), newGeometry.y());
-        // screenPositionToCoordinate seems to return nan values when
-        // it goes beyond viewport, hence sanity check (fixme todo):
-        QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(point, false);
-        if (newCoordinate.isValid()) {
-            internalCoordinate_.setCoordinate(newCoordinate);
-            setCoordinate(&internalCoordinate_);
-        }
-    }
-    */
-    QQuickItem::geometryChanged(newGeometry, oldGeometry);
-}
-
-void QDeclarativeGeoMapQuickItem::dragStarted()
-{
-    dragActive_ = true;
-}
-
 void QDeclarativeGeoMapQuickItem::dragEnded()
 {
-    if (!dragActive_)
+    if (!mapAndSourceItemSet_)
         return;
-    dragActive_ = false;
-    if (quickMap() && sourceItem()) {
-        QPointF point(x(), y());
-        // screenPositionToCoordinate seems to return nan values when
-        // it goes beyond viewport, hence sanity check (fixme todo):
-        QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(point, false);
-        if (newCoordinate.isValid()) {
-            internalCoordinate_.setCoordinate(newCoordinate);
-            setCoordinate(&internalCoordinate_);
-        }
+    QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(QPointF(x(), y()) + (scaleFactor() * anchorPoint_), false);
+    if (newCoordinate.isValid()) {
+        internalCoordinate_.setCoordinate(newCoordinate);
+        setCoordinate(&internalCoordinate_);
     }
 }
-
 
 QDeclarativeCoordinate* QDeclarativeGeoMapQuickItem::coordinate()
 {

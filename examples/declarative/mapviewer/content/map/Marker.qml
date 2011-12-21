@@ -64,11 +64,6 @@ MapQuickItem {  //to be used inside MapComponent only
             anchors.fill: parent
             hoverEnabled : true
             drag.target: marker
-            drag.axis: Drag.XandYAxis
-            drag.minimumX: -map.toScreenPosition(marker.coordinate).x
-            drag.maximumX: map.width + drag.minimumX
-            drag.minimumY: -map.toScreenPosition(marker.coordinate).y
-            drag.maximumY: map.height + drag.minimumY
 
             onPressed : {
                 map.pressX = mouse.x
@@ -85,9 +80,6 @@ MapQuickItem {  //to be used inside MapComponent only
                     map.markerPopup()
                 }
             }
-//            onReleased:{
-//                console.log("drag: implement me")
-//            }
         }
 
         Text{

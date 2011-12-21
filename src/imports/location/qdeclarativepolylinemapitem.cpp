@@ -284,11 +284,6 @@ bool QDeclarativePolylineMapItem::contains(QPointF point)
     return polyline_.contains(point);
 }
 
-void QDeclarativePolylineMapItem::dragStarted()
-{
-    qmlInfo(this) << "warning: mouse dragging is not currently supported with polylines/routes.";
-}
-
 //////////////////////////////////////////////////////////////////////
 
 MapPolylineNode::MapPolylineNode() :

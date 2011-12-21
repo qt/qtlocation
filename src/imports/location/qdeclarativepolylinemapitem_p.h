@@ -97,7 +97,6 @@ public:
 
     QDeclarativeListProperty<QDeclarativeCoordinate> declarativePath();
 
-    void dragStarted();
     bool contains(QPointF point);
 
     QDeclarativeMapLineProperties *line();
