@@ -259,7 +259,7 @@ void QDeclarativePolygonMapItem::handleCameraDataChanged(const CameraData& camer
 
 bool QDeclarativePolygonMapItem::contains(QPointF point)
 {
-    return polygon_.contains(point);
+    return borderPolygon_.containsPoint(point, Qt::OddEvenFill);
 }
 
 //////////////////////////////////////////////////////////////////////

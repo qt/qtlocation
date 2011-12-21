@@ -334,8 +334,11 @@ Rectangle {
             MapMouseArea {
                 id: mouseAreaOfMapPolygon
                 anchors.fill: parent
+                hoverEnabled: true
                 drag.target: parent
                 onClicked: console.log('....[Polygon].... map mouse area of polygon clicked')
+                onEntered: parent.color = 'red'
+                onExited: parent.color = 'pink'
             }
             Column {
                 spacing: 2

@@ -180,6 +180,11 @@ Item {
                 Coordinate { latitude: 20; longitude: 10},
                 Coordinate { latitude: 15; longitude: 6}
             ]
+            MapMouseArea {
+                anchors.fill: parent
+                drag.target: parent
+                SignalSpy { id: preMapPolygonClicked; target: parent; signalName: "clicked" }
+            }
             SignalSpy {id: preMapPolygonPathChanged; target: parent; signalName: "pathChanged"}
             SignalSpy {id: preMapPolygonColorChanged; target: parent; signalName: "colorChanged"}
             SignalSpy {id: preMapPolygonBorderWidthChanged; target: parent.border; signalName: "widthChanged"}
@@ -252,6 +257,11 @@ Item {
             point = map.toScreenPosition(preMapQuickItem.coordinate)
             mouseClick(map, point.x + 5, point.y + 5)
             compare(preMapQuickItemClicked.count, 1)
+            // click polygon
+            compare (preMapPolygonClicked.count, 0)
+            point = map.toScreenPosition(preMapPolygon.path[1])
+            mouseClick(map, point.x - 5, point.y)
+            compare(preMapPolygonClicked.count, 1)
 
             // remove items and repeat clicks to verify they are gone
             map.clearMapItems()
@@ -272,6 +282,9 @@ Item {
             point = map.toScreenPosition(preMapQuickItem.coordinate)
             mouseClick(map, point.x + 5, point.y + 5)
             compare(preMapQuickItemClicked.count, 0)
+            point = map.toScreenPosition(preMapPolygon.path[1])
+            mouseClick(map, point.x - 5, point.y)
+            compare(preMapPolygonClicked.count, 0)
 
             // re-add items and verify they are back (without needing to pan map etc.)
             // note: addition order is significant
@@ -297,6 +310,10 @@ Item {
             point = map.toScreenPosition(preMapQuickItem.coordinate)
             mouseClick(map, point.x + 5, point.y + 5)
             compare(preMapQuickItemClicked.count, 1)
+            point = map.toScreenPosition(preMapPolygon.path[1])
+            mouseClick(map, point.x - 5, point.y)
+            compare(preMapPolygonClicked.count, 1)
+
 
             // item clips to map. not sure if this is sensible test
             map.addMapItem(extMapCircle)
@@ -491,6 +508,7 @@ Item {
             preMapRectClicked.clear()
             preMapCircleClicked.clear()
             preMapQuickItemClicked.clear()
+            preMapPolygonClicked.clear()
             preMapCircleCenterChanged.clear()
             preMapCircleColorChanged.clear()
             preMapCircleRadiusChanged.clear()
