@@ -103,13 +103,13 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
    \variable QPlaceAttribute::OpeningHours
    The constant to specify an opening hours attribute.
 */
-const QString QPlaceAttribute::OpeningHours(QStringLiteral("openingHours"));
+const QString QPlaceAttribute::OpeningHours(QLatin1String("openingHours"));
 
 /*!
    \variable QPlaceAttribute::Payment
    The constant to specify an attribute that defines the methods of payment.
 */
-const QString QPlaceAttribute::Payment(QStringLiteral("payment"));
+const QString QPlaceAttribute::Payment(QLatin1String("payment"));
 
 /*!
     Constructs an attribute.

@@ -94,25 +94,25 @@ types if necessary.
    \variable QPlaceContactDetail::Phone
    The constant to specify phone contact details
 */
-const QString QPlaceContactDetail::Phone(QStringLiteral("phone"));
+const QString QPlaceContactDetail::Phone(QLatin1String("phone"));
 
 /*!
    \variable QPlaceContactDetail::Email
    The constant to specify email contact details.
 */
-const QString QPlaceContactDetail::Email(QStringLiteral("email"));
+const QString QPlaceContactDetail::Email(QLatin1String("email"));
 
 /*!
    \variable QPlaceContactDetail::Website
    The constant used to specify website contact details.
 */
-const QString QPlaceContactDetail::Website(QStringLiteral("website"));
+const QString QPlaceContactDetail::Website(QLatin1String("website"));
 
 /*!
    \variable QPlaceContactDetail::Fax
    The constant used to specify fax contact details.
 */
-const QString QPlaceContactDetail::Fax(QStringLiteral("fax"));
+const QString QPlaceContactDetail::Fax(QLatin1String("fax"));
 
 /*!
     Constructs a contact detail.
