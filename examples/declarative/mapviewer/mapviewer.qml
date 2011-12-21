@@ -430,9 +430,9 @@ Item {
         onGoButtonClicked: {
             page.state = ""
             messageDialog.state = ""
-            /*            map.currentMarker.coordinate.latitude = dialogModel.get(0).inputText
+            map.currentMarker.coordinate.latitude = dialogModel.get(0).inputText
             map.currentMarker.coordinate.longitude = dialogModel.get(1).inputText
-            map.center = map.currentMarker.coordinate*/
+            map.center = map.currentMarker.coordinate
         }
 
         onCancelButtonClicked: {
@@ -472,15 +472,6 @@ Item {
 /*
         onShowGeocodeInfo:{
             messageDialog.state = "LocationInfo"
-            page.state = "Message"
-        }
-
-        onMoveMarker: {
-            page.state = "Coordinates"
-        }
-
-        onRouteError: {
-            messageDialog.state = "RouteError"
             page.state = "Message"
         }
     }
@@ -545,6 +536,13 @@ Item {
                                            onShowDistance:{\
                                                messageDialog.state = "Distance";\
                                                messageDialog.text = "<b>Distance:</b> " + distance;\
+                                               page.state = "Message";\
+                                           }\
+                                           onMoveMarker: {\
+                                               page.state = "Coordinates";\
+                                           }\
+                                           onRouteError: {\
+                                               messageDialog.state = "RouteError";\
                                                page.state = "Message";\
                                            }\
                                        }',page)

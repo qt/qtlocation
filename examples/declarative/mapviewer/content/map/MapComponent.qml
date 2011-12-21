@@ -146,9 +146,9 @@ Map {
         }
     }
 
-/*  signal showGeocodeInfo()
+//  signal showGeocodeInfo()
     signal moveMarker()
-*/
+
     signal geocodeFinished()
     signal routeError()
     signal coordinatesCaptured(double latitude, double longitude)
@@ -275,7 +275,7 @@ Map {
             }
         }
     }
-    /*
+
     Component {
         id: routeInfoDelegate
         Row {
@@ -283,14 +283,13 @@ Map {
             Text {
                 id: indexText
                 text: index + 1
-                color: "white"
+                color: "royalblue"
                 font.bold: true
                 font.pixelSize: 14
             }
             Text {
                 text: instruction
-                color: "white"
-                height: indexText.height*3
+                color: "royalblue"
                 wrapMode: Text.Wrap
                 width: textArea.width - indexText.width - distanceText.width - spacing*4
             }
@@ -312,7 +311,7 @@ Map {
             Text {
                 id: travelTime
                 text: routeInfoModel.travelTime
-                color: "white"
+                color: "royalblue"
                 font.bold: true
                 font.pixelSize: 14
                 anchors.left: parent.left
@@ -320,14 +319,14 @@ Map {
             Text {
                 id: distance
                 text: routeInfoModel.distance
-                color: "white"
+                color: "royalblue"
                 font.bold: true
                 font.pixelSize: 14
                 anchors.right: parent.right
             }
             Rectangle {
                 id: line
-                color: "white"
+                color: "royalblue"
                 width: parent.width
                 height: 2
                 anchors.left: parent.left
@@ -337,7 +336,6 @@ Map {
         }
     }
 
-*/
     ListModel{
         id: routeInfoModel
         property string travelTime
@@ -364,22 +362,11 @@ Map {
         model: geocodeModel
         delegate: pointDelegate
     }
-/*
-    Plugin {
-        id: defaultPlugin
-        name : "nokia"
-    }
-
-    Coordinate {
-        id: defaultCoordinates
-        latitude : -27.53
-        longitude : 153.088
-    }
 
     Item {
         id: infoTab
         parent: scale.parent
-        z: map.z
+        z: map.z + 2
         height: parent.height - 180
         width: parent.width
         x: -5 - infoRect.width
@@ -387,7 +374,7 @@ Map {
         visible: (routeInfoModel.count > 0)
         Image {
             id: catchImage
-            source: "../resources/catch.png"
+            source: "../../resources/catch.png"
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             MouseArea {
@@ -408,8 +395,8 @@ Map {
             id: infoRect
             width: parent.width - catchImage.sourceSize.width
             height: parent.height
-            color: "#3F95FF"
-            opacity: 0.75
+            color: "white"
+            opacity: 1
             radius: 5
             MouseArea {
                 anchors.fill: parent
@@ -434,7 +421,7 @@ Map {
             }
         }
     }
-*/
+
 
     Item {//scale
         id: scale
@@ -527,14 +514,10 @@ Map {
                     map.removeMarker(currentMarker)
                     break;
                 }
-                case "Delete All": {//remove all markers
-                    map.deleteMarkers()
+                case "Move to": {//move marker
+                    map.moveMarker()
                     break;
                 }
-//                case "Move to": {//move marker
-//                    map.moveMarker()
-//                    break;
-//                }
                 case "Coordinates": {//show marker's coordinates
                     map.coordinatesCaptured(currentMarker.coordinate.latitude, currentMarker.coordinate.longitude)
                     break;
@@ -578,12 +561,12 @@ Map {
                 break;
             }
 
-            case "Remove markers": {
+            case "Delete all markers": {
                 deleteMarkers()
                 break;
             }
 
-            case "Remove items": {
+            case "Delete all items": {
                 deleteMapItems()
                 break;
             }
@@ -765,11 +748,11 @@ Map {
                 popupMenu.addItem("Get coordinate")
 
                 if (map.markers.length>0) {
-                    popupMenu.addItem("Remove markers")
+                    popupMenu.addItem("Delete all markers")
                 }
 
                 if (map.mapItems.length>0) {
-                    popupMenu.addItem("Remove items")
+                    popupMenu.addItem("Delete all items")
                 }
 
                 if (map.markers.length>=2) {
@@ -915,6 +898,7 @@ Map {
 
         markerMenu.clear()
         markerMenu.addItem("Coordinates")
+        markerMenu.addItem("Move to")
 //        if ((currentMarker != markers[count-1]) && (count > 2)) {
 //            if (currentMarker == markers[count-2]) markerMenu.addItem("Route to next point")
 //            else  markerMenu.addItem("Route to next points")
@@ -923,9 +907,6 @@ Map {
         if (currentMarker != markers[count-1])
             markerMenu.addItem("Distance to next point")
         markerMenu.addItem("Delete")
-        if (count > 1)
-            markerMenu.addItem("Delete All")
-//        markerMenu.addItem("Move to")
         map.state = "MarkerPopupMenu"
     }
 
