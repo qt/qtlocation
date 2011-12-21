@@ -60,21 +60,6 @@
 
 #include "jsondbcleaner.h"
 
-#ifndef QTRY_VERIFY
-#define QTRY_VERIFY(__expr) \
-        do { \
-        const int __step = 50; \
-        const int __timeout = 5000; \
-        if (!(__expr)) { \
-            QTest::qWait(0); \
-        } \
-        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
-            QTest::qWait(__step); \
-        } \
-        QVERIFY(__expr); \
-    } while (0)
-#endif
-
 #ifndef WAIT_UNTIL
 #define WAIT_UNTIL(__expr) \
         do { \
