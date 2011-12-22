@@ -440,6 +440,29 @@ Item {
         }
     }
 
+    //Get new locale
+    Dialog {
+        id: localeDialog
+        title: "New Locale"
+        z: backgroundRect.z + 2
+
+        Component.onCompleted: {
+            var obj = [["Language", ""]]
+            setModel(obj)
+        }
+
+        onGoButtonClicked: {
+            page.state = ""
+            messageDialog.state = ""
+            map.setLanguage(dialogModel.get(0).inputText.split(Qt.locale().groupSeparator));
+        }
+
+        onCancelButtonClicked: {
+            page.state = ""
+        }
+    }
+
+
     /*    GeocodeModel {
         id: geocodeModel
         plugin : Plugin { name : "nokia"}
@@ -545,6 +568,9 @@ Item {
                                                messageDialog.state = "RouteError";\
                                                page.state = "Message";\
                                            }\
+                                           onRequestLocale:{\
+                                               page.state = "Locale";\
+                                           }\
                                        }',page)
             map.plugin = plugin
         }
@@ -611,6 +637,10 @@ Item {
         State {
             name : "MapType"
             PropertyChanges { target: mapTypeMenu; y: page.height - mapTypeMenu.height - mainMenu.height }
+        },
+        State {
+            name : "Locale"
+            PropertyChanges { target: localeDialog;  opacity: 1 }
         }
     ]
 

@@ -69,6 +69,7 @@ Map {
     property bool followme: false
     property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
     signal showDistance(string distance);
+    signal requestLocale()
 
     Coordinate {
         id: brisbaneCoordinate
@@ -109,6 +110,55 @@ Map {
         value: map.zoomLevel
         onValueChanged: {
             map.zoomLevel = value
+        }
+    }
+
+    Button {
+        id: languageButton
+        text: "en"
+        width: 30
+        height: 30
+        z: map.z + 2
+        anchors.bottom: zoomSlider.top
+        anchors.bottomMargin: 8
+        anchors.right: zoomSlider.right
+        onClicked: {
+            if (languageMenu.opacity ==1)
+                languageMenu.opacity = 0;
+            else
+                languageMenu.opacity = 1;
+        }
+    }
+
+    Menu {
+        id:languageMenu
+        horizontalOrientation: false
+        autoWidth: true
+        opacity: 0
+        z: map.z + 2
+        width: 100
+        anchors.bottom: languageButton.top
+        anchors.right: languageButton.left
+        onClicked: {
+            opacity = 0
+            switch (button) {
+            case "en": {
+                setLanguage("en");
+                break;
+            }
+            case "fr" : {
+                setLanguage("fr");
+                break;
+            }
+            case "Other": {
+                map.requestLocale()
+            }
+            }
+        }
+        Component.onCompleted: {
+            addItem("en")
+            addItem("fr")
+            addItem("Other")
         }
     }
 
@@ -958,6 +1008,13 @@ Map {
             dist = dist + " m"
         }
         return dist
+    }
+
+    function setLanguage(lang) {
+        map.plugin.locales = lang;
+        if (map.plugin.locales.length  >  0) {
+            languageButton.text = map.plugin.locales[0];
+        }
     }
 
     // states of map
