@@ -199,6 +199,11 @@ void QGeoMappingManagerEngine::requestNextTile()
     if (d->stopped_)
         return;
 
+    if (d->queue_.isEmpty()) {
+        d->timer_->stop();
+        return;
+    }
+
     TileSpec ts = d->queue_.takeFirst();
 
     QGeoTiledMapReply *reply = getTileImage(ts);
