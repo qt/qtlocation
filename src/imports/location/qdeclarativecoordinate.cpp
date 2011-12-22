@@ -116,9 +116,13 @@ QGeoCoordinate QDeclarativeCoordinate::coordinate() const
 
 void QDeclarativeCoordinate::setAltitude(double altitude)
 {
+    bool wasValid = m_coordinate.isValid();
     if (m_coordinate.altitude() != altitude) {
         m_coordinate.setAltitude(altitude);
         emit altitudeChanged(m_coordinate.altitude());
+
+        if (wasValid != m_coordinate.isValid())
+            emit validityChanged(m_coordinate.isValid());
     }
 }
 
@@ -138,9 +142,13 @@ double QDeclarativeCoordinate::altitude() const
 
 void QDeclarativeCoordinate::setLongitude(double longitude)
 {
+    bool wasValid = m_coordinate.isValid();
     if (m_coordinate.longitude() != longitude) {
         m_coordinate.setLongitude(longitude);
         emit longitudeChanged(m_coordinate.longitude());
+
+        if (wasValid != m_coordinate.isValid())
+            emit validityChanged(m_coordinate.isValid());
     }
 }
 
@@ -160,15 +168,32 @@ double QDeclarativeCoordinate::longitude() const
 
 void QDeclarativeCoordinate::setLatitude(double latitude)
 {
+    bool wasValid = m_coordinate.isValid();
     if (m_coordinate.latitude() != latitude) {
         m_coordinate.setLatitude(latitude);
         emit latitudeChanged(latitude);
+
+        if (wasValid != m_coordinate.isValid())
+            emit validityChanged(m_coordinate.isValid());
     }
 }
 
 double QDeclarativeCoordinate::latitude() const
 {
     return m_coordinate.latitude();
+}
+
+/*!
+    \qmlproperty bool Coordinate::isValid
+
+    This property holds the current validity of the coordinate. Coordinates
+    are considered valid if they have been set with a valid latitude and
+    longitude (altitude is not required).
+*/
+
+bool QDeclarativeCoordinate::isValid() const
+{
+    return m_coordinate.isValid();
 }
 
 /*!
@@ -186,6 +211,36 @@ qreal QDeclarativeCoordinate::distanceTo(QObject* coordinate)
 {
     QDeclarativeCoordinate* coord = static_cast<QDeclarativeCoordinate*>(coordinate);
     return m_coordinate.distanceTo(coord->coordinate());
+}
+
+/*!
+    \qmlmethod Coordinate::azimuthTo(Coordinate)
+
+    Returns the azimuth (or bearing) in degrees from this coordinate to the
+    coordinate specified by other. Altitude is not used in the calculation.
+
+    There is an assumption that the Earth is spherical for the purpose of
+    this calculation.
+*/
+qreal QDeclarativeCoordinate::azimuthTo(QObject *coordinate)
+{
+    QDeclarativeCoordinate *coord = static_cast<QDeclarativeCoordinate*>(coordinate);
+    return m_coordinate.azimuthTo(coord->coordinate());
+}
+
+/*!
+    \qmlmethod Coordinate::atDistanceAndAzimuth(qreal, qreal)
+
+    Returns the coordinate that is reached by traveling distance metres
+    from the current coordinate at azimuth (or bearing) along a great-circle.
+
+    There is an assumption that the Earth is spherical for the purpose
+    of this calculation.
+*/
+QDeclarativeCoordinate *QDeclarativeCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimuth)
+{
+    QGeoCoordinate coord = m_coordinate.atDistanceAndAzimuth(distance, azimuth);
+    return new QDeclarativeCoordinate(coord);
 }
 
 #include "moc_qdeclarativecoordinate_p.cpp"

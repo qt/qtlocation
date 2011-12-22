@@ -57,6 +57,7 @@ class QDeclarativeCoordinate : public QObject
     Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY latitudeChanged)
     Q_PROPERTY(double longitude READ longitude WRITE setLongitude NOTIFY longitudeChanged)
     Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
+    Q_PROPERTY(bool isValid READ isValid NOTIFY validityChanged)
 
 public:
     QDeclarativeCoordinate(QObject* parent = 0);
@@ -64,6 +65,9 @@ public:
     ~QDeclarativeCoordinate();
 
     Q_INVOKABLE qreal distanceTo(QObject* coordinate);
+    Q_INVOKABLE qreal azimuthTo(QObject *coordinate);
+
+    Q_INVOKABLE QDeclarativeCoordinate *atDistanceAndAzimuth(qreal distance, qreal azimuth);
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
@@ -77,10 +81,13 @@ public:
     double altitude() const;
     void setAltitude(double altitude);
 
+    bool isValid() const;
+
 Q_SIGNALS:
     void latitudeChanged(double latitude);
     void longitudeChanged(double longitude);
     void altitudeChanged(double altitude);
+    void validityChanged(bool valid);
 
 private:
     QGeoCoordinate m_coordinate;
