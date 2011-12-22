@@ -88,9 +88,6 @@ public:
     int width() const;
     int height() const;
 
-    void setAutoUpdate(bool autoUpdate);
-    bool autoUpdate() const;
-
     void setCameraData(const CameraData &cameraData);
     CameraData cameraData() const;
 
@@ -110,6 +107,7 @@ Q_SIGNALS:
 
 private:
     MapPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(Map)
 
     friend class QGeoMappingManager;
 };

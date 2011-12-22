@@ -49,11 +49,17 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+class TileSpecPrivate;
+
 class Q_LOCATION_EXPORT TileSpec
 {
 public:
     TileSpec();
+    TileSpec(const TileSpec &other);
     TileSpec(const QString &plugin, int mapId, int zoom, int x, int y);
+    ~TileSpec();
+
+    TileSpec& operator = (const TileSpec &other);
 
     QString plugin() const;
 
@@ -73,11 +79,8 @@ public:
     bool operator < (const TileSpec &rhs) const;
 
 private:
-    QString plugin_;
-    int mapId_;
-    int zoom_;
-    int x_;
-    int y_;
+    TileSpecPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(TileSpec)
 };
 
 unsigned int qHash(const TileSpec &spec);

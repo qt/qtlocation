@@ -39,57 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef MAPTYPE_H
-#define MAPTYPE_H
+#ifndef MAPTYPE_P_H
+#define MAPTYPE_P_H
 
-#include <QtLocation/qlocationglobal.h>
+#include <QMetaType>
 #include <QString>
-#include <QSharedDataPointer>
+#include <QSharedData>
 
-QT_BEGIN_HEADER
+#include "maptype.h"
 
 QT_BEGIN_NAMESPACE
 
-class MapTypePrivate;
-
-class Q_LOCATION_EXPORT MapType
+class MapTypePrivate : public QSharedData
 {
 
 public:
-    enum MapStyle {
-        NoMap = 0,
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap,
-        HybridMap,
-        TransitMap,
-        GrayStreetMap,
-        CustomMap = 100
-    };
+    MapTypePrivate();
+    MapTypePrivate(MapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
+    MapTypePrivate(const MapTypePrivate &other);
+    ~MapTypePrivate();
 
-    MapType();
-    MapType(const MapType &other);
-    MapType(MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
-    ~MapType();
+    MapTypePrivate& operator = (const MapTypePrivate &other);
 
-    MapType& operator = (const MapType &other);
+    bool operator == (const MapTypePrivate &other) const;
 
-    bool operator == (const MapType &other) const;
-    bool operator != (const MapType &other) const;
-
-    MapStyle style() const;
-    QString name() const;
-    QString description() const;
-    bool mobile() const;
-    int mapId() const;
-
-private:
-    QSharedDataPointer<MapTypePrivate> d_ptr;
+    MapType::MapStyle style_;
+    QString name_;
+    QString description_;
+    bool mobile_;
+    int mapId_;
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
+Q_DECLARE_METATYPE(MapTypePrivate)
 
-#endif
+#endif // MAPTYPE_P_H

@@ -80,98 +80,100 @@ Map::~Map()
 
 TileCache* Map::tileCache()
 {
-    return d_ptr->tileCache();
+    Q_D(Map);
+    return d->tileCache();
 }
 
 MapController* Map::mapController()
 {
-    return d_ptr->mapController();
+    Q_D(Map);
+    return d->mapController();
 }
 
 void Map::setMappingManager(QGeoMappingManager *manager)
 {
-    d_ptr->setMappingManager(manager);
+    Q_D(Map);
+    d->setMappingManager(manager);
 }
 
 void Map::paintGL(QGLPainter *painter)
 {
-    d_ptr->paintGL(painter);
+    Q_D(Map);
+    d->paintGL(painter);
 }
 
 QGLCamera* Map::glCamera() const
 {
-    return d_ptr->glCamera();
+    Q_D(const Map);
+    return d->glCamera();
 }
 
 void Map::resize(int width, int height)
 {
-    d_ptr->resize(width, height);
+    Q_D(Map);
+    d->resize(width, height);
 }
 
 int Map::width() const
 {
-    return d_ptr->width();
+    Q_D(const Map);
+    return d->width();
 }
 
 int Map::height() const
 {
-    return d_ptr->height();
-}
-
-void Map::setAutoUpdate(bool autoUpdate)
-{
-    d_ptr->setAutoUpdate(autoUpdate);
-}
-
-bool Map::autoUpdate() const
-{
-    return d_ptr->autoUpdate();
+    Q_D(const Map);
+    return d->height();
 }
 
 void Map::setCameraData(const CameraData &cameraData)
 {
-    if (cameraData == d_ptr->cameraData())
+    Q_D(Map);
+
+    if (cameraData == d->cameraData())
         return;
 
-    d_ptr->setCameraData(cameraData);
+    d->setCameraData(cameraData);
+    update();
 
-    if (d_ptr->autoUpdate())
-            update();
-
-    emit cameraDataChanged(d_ptr->cameraData());
+    emit cameraDataChanged(d->cameraData());
 }
 
 CameraData Map::cameraData() const
 {
-    return d_ptr->cameraData();
+    Q_D(const Map);
+    return d->cameraData();
 }
 
 void Map::update()
 {
-    d_ptr->update();
+    Q_D(Map);
+    d->update();
     emit updateRequired();
 }
 
 QGeoCoordinate Map::screenPositionToCoordinate(const QPointF &pos, bool clipToViewport) const
 {
+    Q_D(const Map);
     if (clipToViewport) {
-        int w = d_ptr->width();
-        int h = d_ptr->height();
+        int w = d->width();
+        int h = d->height();
 
         if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
             return QGeoCoordinate();
     }
 
-    return d_ptr->screenPositionToCoordinate(pos);
+    return d->screenPositionToCoordinate(pos);
 }
 
 QPointF Map::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
 {
-    QPointF pos = d_ptr->coordinateToScreenPosition(coordinate);
+    Q_D(const Map);
+    QPointF pos = d->coordinateToScreenPosition(coordinate);
 
     if (clipToViewport) {
-        int w = d_ptr->width();
-        int h = d_ptr->height();
+        int w = d->width();
+        int h = d->height();
 
         if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
             return QPointF(qQNaN(), qQNaN());
@@ -182,12 +184,14 @@ QPointF Map::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool c
 
 void Map::setActiveMapType(const MapType type)
 {
-    d_ptr->setActiveMapType(type);
+    Q_D(Map);
+    d->setActiveMapType(type);
 }
 
 const MapType Map::activeMapType() const
 {
-    return d_ptr->activeMapType();
+    Q_D(const Map);
+    return d->activeMapType();
 }
 
 //------------------------------------------------------------//
@@ -309,8 +313,7 @@ void IntersectGenerator::generateValue()
 //------------------------------------------------------------//
 
 MapPrivate::MapPrivate(Map *parent, TileCache *cache, int maxZoom, int tileSize)
-    : autoUpdate_(true),
-      map_(parent),
+    : map_(parent),
       cache_(cache),
       manager_(0),
       controller_(0),
@@ -403,8 +406,7 @@ void MapPrivate::setCameraData(const CameraData &cameraData)
     updateGlCamera(glCamera_);
     updateFrustum(frustum_);
     visibleTiles_ = updateVisibleTiles();
-    if (autoUpdate_)
-        sphere_->update(visibleTiles_);
+    sphere_->update(visibleTiles_);
 }
 
 CameraData MapPrivate::cameraData() const
@@ -415,16 +417,6 @@ CameraData MapPrivate::cameraData() const
 void MapPrivate::update()
 {
     sphere_->update(visibleTiles_);
-}
-
-void MapPrivate::setAutoUpdate(bool autoUpdate)
-{
-    autoUpdate_ = autoUpdate;
-}
-
-bool MapPrivate::autoUpdate() const
-{
-    return autoUpdate_;
 }
 
 void MapPrivate::resize(int width, int height)

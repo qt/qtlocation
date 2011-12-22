@@ -265,8 +265,6 @@ void QDeclarativeGeoMap::keyPressEvent(QKeyEvent *e)
             cameraData.setDistance(cameraData.distance() / 2.0);
             cameraData.setZoomLevel(cameraData.zoomLevel() + 1);
             map_->setCameraData(cameraData);
-            if (!map_->autoUpdate())
-                map_->update();
         } else {
             cameraData.setDistance(cameraData.distance() / 1.1);
         }
@@ -276,15 +274,11 @@ void QDeclarativeGeoMap::keyPressEvent(QKeyEvent *e)
                 cameraData.setZoomLevel(cameraData.zoomLevel() - 1);
             cameraData.setDistance(cameraData.distance() * 2.0);
             map_->setCameraData(cameraData);
-            if (!map_->autoUpdate())
-                map_->update();
         } else {
             cameraData.setDistance(cameraData.distance() * 1.1);
         }
     } else if (e->key() == Qt::Key_U) {
         map_->setCameraData(cameraData);
-        if (!map_->autoUpdate())
-            map_->update();
     }
     map_->setCameraData(cameraData);
     update();

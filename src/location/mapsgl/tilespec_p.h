@@ -38,58 +38,33 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef TILESPEC_P_H
+#define TILESPEC_P_H
 
-#ifndef MAPTYPE_H
-#define MAPTYPE_H
-
-#include <QtLocation/qlocationglobal.h>
 #include <QString>
-#include <QSharedDataPointer>
-
-QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class MapTypePrivate;
-
-class Q_LOCATION_EXPORT MapType
+class TileSpecPrivate
 {
-
 public:
-    enum MapStyle {
-        NoMap = 0,
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap,
-        HybridMap,
-        TransitMap,
-        GrayStreetMap,
-        CustomMap = 100
-    };
+    TileSpecPrivate();
+    TileSpecPrivate(const TileSpecPrivate &other);
+    TileSpecPrivate(const QString &plugin, int mapId, int zoom, int x, int y);
+    ~TileSpecPrivate();
 
-    MapType();
-    MapType(const MapType &other);
-    MapType(MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
-    ~MapType();
+    TileSpecPrivate& operator = (const TileSpecPrivate &other);
 
-    MapType& operator = (const MapType &other);
+    bool operator == (const TileSpecPrivate &rhs) const;
+    bool operator < (const TileSpecPrivate &rhs) const;
 
-    bool operator == (const MapType &other) const;
-    bool operator != (const MapType &other) const;
-
-    MapStyle style() const;
-    QString name() const;
-    QString description() const;
-    bool mobile() const;
-    int mapId() const;
-
-private:
-    QSharedDataPointer<MapTypePrivate> d_ptr;
+    QString plugin_;
+    int mapId_;
+    int zoom_;
+    int x_;
+    int y_;
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif
+#endif // TILESPEC_P_H

@@ -29,5 +29,7 @@ PRIVATE_HEADERS += \
     mapsgl/frustum_p.h \
     mapsgl/map_p.h \
     mapsgl/mapsphere_p.h \
+    mapsgl/maptype_p.h \
     mapsgl/projection_p.h \
-    mapsgl/projection2d_p.h
+    mapsgl/projection2d_p.h \
+    mapsgl/tilespec_p.h

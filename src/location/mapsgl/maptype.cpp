@@ -40,26 +40,30 @@
 ****************************************************************************/
 
 #include "maptype.h"
+#include "maptype_p.h"
 
 QT_BEGIN_NAMESPACE
 
-MapType::MapType() :
-    style_(MapType::NoMap), name_(QLatin1String("")),
-    description_(QLatin1String("")), mobile_(false), mapId_(0) {}
+MapType::MapType()
+    : d_ptr(new MapTypePrivate()) {}
 
-MapType::MapType(MapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId) :
-    style_(style), name_(name),
-    description_(description), mobile_(mobile), mapId_(mapId) {}
+MapType::MapType(const MapType &other)
+    : d_ptr(other.d_ptr) {}
+
+MapType::MapType(MapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId)
+    : d_ptr(new MapTypePrivate(style, name, description, mobile, mapId)) {}
 
 MapType::~MapType() {}
 
+MapType& MapType::operator = (const MapType &other)
+{
+    d_ptr = other.d_ptr;
+    return *this;
+}
+
 bool MapType::operator == (const MapType &other) const
 {
-    return ((style_ == other.style_)
-            && (name_ == other.name_)
-            && (description_ == other.description_)
-            && (mobile_ == other.mobile_)
-            && (mapId_ == other.mapId_));
+    return (*d_ptr.constData() == *other.d_ptr.constData());
 }
 
 bool MapType::operator != (const MapType &other) const
@@ -69,27 +73,60 @@ bool MapType::operator != (const MapType &other) const
 
 MapType::MapStyle MapType::style() const
 {
-    return style_;
+    return d_ptr->style_;
 }
 
 QString MapType::name() const
 {
-    return name_;
+    return d_ptr->name_;
 }
 
 QString MapType::description() const
 {
-    return description_;
+    return d_ptr->description_;
 }
 
 bool MapType::mobile() const
 {
-    return mobile_;
+    return d_ptr->mobile_;
 }
 
 int MapType::mapId() const
 {
-    return mapId_;
+    return d_ptr->mapId_;
+}
+
+MapTypePrivate::MapTypePrivate()
+    : style_(MapType::NoMap),
+      name_(QLatin1String("")),
+      description_(QLatin1String("")),
+      mobile_(false),
+      mapId_(0) {}
+
+MapTypePrivate::MapTypePrivate(const MapTypePrivate &other)
+    : QSharedData(other),
+      style_(other.style_),
+      name_(other.name_),
+      description_(other.description_),
+      mobile_(other.mobile_),
+      mapId_(other.mapId_) {}
+
+MapTypePrivate::MapTypePrivate(MapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId)
+    : style_(style),
+      name_(name),
+      description_(description),
+      mobile_(mobile),
+      mapId_(mapId) {}
+
+MapTypePrivate::~MapTypePrivate() {}
+
+bool MapTypePrivate::operator == (const MapTypePrivate &other) const
+{
+    return ((style_ == other.style_)
+            && (name_ == other.name_)
+            && (description_ == other.description_)
+            && (mobile_ == other.mobile_)
+            && (mapId_ == other.mapId_));
 }
 
 QT_END_NAMESPACE

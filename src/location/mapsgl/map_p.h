@@ -157,9 +157,6 @@ public:
     void setCameraData(const CameraData &cameraData);
     CameraData cameraData() const;
 
-    void setAutoUpdate(bool autoUpdate);
-    bool autoUpdate() const;
-
     void resize(int width, int height);
     int width() const;
     int height() const;
@@ -188,8 +185,6 @@ private:
     void updateGlCamera(QGLCamera* glCamera);
     void updateFrustum(Frustum &frustum);
     QList<TileSpec> updateVisibleTiles();
-
-    bool autoUpdate_;
 
     int width_;
     int height_;
