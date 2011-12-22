@@ -258,7 +258,7 @@ Item {
         Address { id:startAddress }
         Address { id:endAddress }
 
-        /*        GeocodeModel {
+        GeocodeModel {
             id: tempGeocodeModel
             plugin : map.plugin
             property int success: 0
@@ -298,7 +298,7 @@ Item {
                 }
             }
         }
-*/
+
         onGoButtonClicked: {
             var status = true
             messageDialog.state = ""
@@ -311,7 +311,6 @@ Item {
                 calculateRoute()
             }
             else {
-                /*
                 startAddress.country = routeDialog.startCountry
                 startAddress.street = routeDialog.startStreet
                 startAddress.city = routeDialog.startCity
@@ -322,7 +321,6 @@ Item {
 
                 tempGeocodeModel.query = startAddress
                 tempGeocodeModel.update();
-                */
             }
             page.state = ""
         }

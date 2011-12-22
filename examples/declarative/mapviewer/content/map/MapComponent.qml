@@ -342,11 +342,12 @@ Map {
                 color: "royalblue"
                 wrapMode: Text.Wrap
                 width: textArea.width - indexText.width - distanceText.width - spacing*4
+                font.pixelSize: 14
             }
             Text {
                 id: distanceText
                 text: distance
-                color: "white"
+                color: "royalblue"
                 font.bold: true
                 font.pixelSize: 14
             }
