@@ -220,7 +220,7 @@ Item {
     }
 
     TestCase {
-        name: "MapMouseArea"
+        name: "Map Items"
         when: windowShown
 
         function test_aa_items_on_map() { // aa et al. for execution order

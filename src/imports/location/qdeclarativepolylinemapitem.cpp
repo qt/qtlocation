@@ -45,9 +45,22 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass MapPolyline
+    \inqmlmodule QtLocation 5
+    \ingroup qml-location-maps
+    \since QtLocation 5.0
+
+    \brief The MapPolyline element displays a polyline on a map.
+
+    The polyline is specified in terms of an ordered list of
+    coordinates.  Any invalid coordinates in the list will be ignored.
+
+*/
+
 QDeclarativeMapLineProperties::QDeclarativeMapLineProperties(QObject *parent) :
     QObject(parent),
-    width_(2.0),
+    width_(1.0),
     color_(Qt::black)
 {
 }
@@ -153,6 +166,16 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
     }
 }
 
+/*!
+    \qmlproperty list<Coordinate> MapPolyline::path
+
+    This property holds the ordered list of coordinates which
+    define the polyline. Individual coordinates can be accessed with
+    square brackets 'path.[i]' operator and coordinate amount with
+    'path.length'.
+
+*/
+
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativePolylineMapItem::declarativePath()
 {
     return QDeclarativeListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
@@ -195,6 +218,14 @@ void QDeclarativePolylineMapItem::path_clear(
     emit item->pathChanged();
 }
 
+/*!
+    \qmlmethod MapPolyline::addCoordinate(Coordinate)
+
+    Adds coordinate to the path.
+
+    \sa removeCoordinate path
+*/
+
 void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordinate)
 {
     coordPath_.append(coordinate);
@@ -203,6 +234,15 @@ void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordina
     updateMapItem();
     emit pathChanged();
 }
+
+/*!
+    \qmlmethod MapPolyline::removeCoordinate(Coordinate)
+
+    Remove coordinate from the path. If there are multiple instances of the
+    same coordinate, the one added last is removed.
+
+    \sa addCoordinate path
+*/
 
 void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate* coordinate)
 {
@@ -223,6 +263,18 @@ void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate* coord
     updateMapItem();
     emit pathChanged();
 }
+
+/*!
+    \qmlproperty int MapPolyline::line.width
+    \qmlproperty color MapPolyline::line.color
+
+    These properties hold the width and color used to draw the line.
+
+    The width is in pixels and is independent of the zoom level of the map.
+    The default values correspond to a black border with a width of 1 pixel.
+
+    For no line, use a width of 0 or a transparent color.
+*/
 
 QDeclarativeMapLineProperties *QDeclarativePolylineMapItem::line()
 {
