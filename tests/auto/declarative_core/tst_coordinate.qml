@@ -54,6 +54,7 @@ Item {
     SignalSpy { id: validitySpy; target: empty; signalName: "validityChanged" }
     SignalSpy { id: longSpy; target: base; signalName: "longitudeChanged" }
     SignalSpy { id: latSpy; target: base; signalName: "latitudeChanged" }
+    SignalSpy { id: coordSpy; target: base; signalName: "coordinateChanged" }
     SignalSpy { id: altSpy; target: base; signalName: "altitudeChanged" }
 
     TestCase {
@@ -80,6 +81,7 @@ Item {
             compare(longSpy.count, 1)
             compare(latSpy.count, 1)
             compare(altSpy.count, 0)
+            compare(coordSpy.count, 2)
         }
 
         function test_distance() {

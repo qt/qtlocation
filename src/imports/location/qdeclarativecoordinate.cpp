@@ -83,6 +83,7 @@ QDeclarativeCoordinate::~QDeclarativeCoordinate() {}
 */
 void QDeclarativeCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
 {
+    bool changed = false;
     QGeoCoordinate previousCoordinate = m_coordinate;
     m_coordinate = coordinate;
 
@@ -90,15 +91,21 @@ void QDeclarativeCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
     if (coordinate.altitude() != previousCoordinate.altitude() &&
         !(qIsNaN(coordinate.altitude()) && qIsNaN(previousCoordinate.altitude()))) {
         emit altitudeChanged(m_coordinate.altitude());
+        changed = true;
     }
     if (coordinate.latitude() != previousCoordinate.latitude() &&
         !(qIsNaN(coordinate.latitude()) && qIsNaN(previousCoordinate.latitude()))) {
         emit latitudeChanged(m_coordinate.latitude());
+        changed = true;
     }
     if (coordinate.longitude() != previousCoordinate.longitude() &&
         !(qIsNaN(coordinate.longitude()) && qIsNaN(previousCoordinate.longitude()))) {
         emit longitudeChanged(m_coordinate.longitude());
+        changed = true;
     }
+
+    if (changed)
+        emit coordinateChanged(m_coordinate);
 }
 
 QGeoCoordinate QDeclarativeCoordinate::coordinate() const
@@ -120,6 +127,7 @@ void QDeclarativeCoordinate::setAltitude(double altitude)
     if (m_coordinate.altitude() != altitude) {
         m_coordinate.setAltitude(altitude);
         emit altitudeChanged(m_coordinate.altitude());
+        emit coordinateChanged(m_coordinate);
 
         if (wasValid != m_coordinate.isValid())
             emit validityChanged(m_coordinate.isValid());
@@ -146,6 +154,7 @@ void QDeclarativeCoordinate::setLongitude(double longitude)
     if (m_coordinate.longitude() != longitude) {
         m_coordinate.setLongitude(longitude);
         emit longitudeChanged(m_coordinate.longitude());
+        emit coordinateChanged(m_coordinate);
 
         if (wasValid != m_coordinate.isValid())
             emit validityChanged(m_coordinate.isValid());
@@ -172,6 +181,7 @@ void QDeclarativeCoordinate::setLatitude(double latitude)
     if (m_coordinate.latitude() != latitude) {
         m_coordinate.setLatitude(latitude);
         emit latitudeChanged(latitude);
+        emit coordinateChanged(m_coordinate);
 
         if (wasValid != m_coordinate.isValid())
             emit validityChanged(m_coordinate.isValid());

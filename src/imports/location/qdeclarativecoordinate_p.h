@@ -53,7 +53,7 @@ class QDeclarativeCoordinate : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate)
+    Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
     Q_PROPERTY(double latitude READ latitude WRITE setLatitude NOTIFY latitudeChanged)
     Q_PROPERTY(double longitude READ longitude WRITE setLongitude NOTIFY longitudeChanged)
     Q_PROPERTY(double altitude READ altitude WRITE setAltitude NOTIFY altitudeChanged)
@@ -88,6 +88,7 @@ Q_SIGNALS:
     void longitudeChanged(double longitude);
     void altitudeChanged(double altitude);
     void validityChanged(bool valid);
+    void coordinateChanged(const QGeoCoordinate &coord);
 
 private:
     QGeoCoordinate m_coordinate;
