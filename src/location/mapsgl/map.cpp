@@ -112,6 +112,9 @@ void Map::resize(int width, int height)
 {
     Q_D(Map);
     d->resize(width, height);
+
+    // always emit this signal to trigger items to redraw
+    emit cameraDataChanged(d->cameraData());
 }
 
 int Map::width() const

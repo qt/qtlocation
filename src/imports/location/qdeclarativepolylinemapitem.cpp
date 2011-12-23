@@ -323,10 +323,8 @@ void QDeclarativePolylineMapItem::handleCameraDataChanged(const CameraData& came
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
         dirtyGeometry_ = true;
-        updateMapItem();
-    } else {
-        updateMapItem();
     }
+    updateMapItem();
 }
 
 bool QDeclarativePolylineMapItem::contains(QPointF point)
