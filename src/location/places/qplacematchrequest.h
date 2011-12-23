@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,38 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVERECOMMENDATIONMODEL_P_H
-#define QDECLARATIVERECOMMENDATIONMODEL_P_H
+#ifndef QPLACEMATCHREQUEST_H
+#define QPLACEMATCHREQUEST_H
 
-#include <QtDeclarative/QDeclarativeParserStatus>
-#include "qdeclarativeresultmodelbase_p.h"
+#include <QtCore/QSharedDataPointer>
+#include <QtLocation/qtlocation.h>
+
+#include "qplacesearchresult.h"
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeRecommendationModel : public QDeclarativeResultModelBase
+class QPlaceMatchRequestPrivate;
+
+class Q_LOCATION_EXPORT QPlaceMatchRequest
 {
-    Q_OBJECT
-
-    Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
-    Q_INTERFACES(QDeclarativeParserStatus)
-
 public:
-    explicit QDeclarativeRecommendationModel(QObject *parent = 0);
-    ~QDeclarativeRecommendationModel();
+    static const QString AlternativeId;
 
-    QString placeId() const;
-    void setPlaceId(const QString &placeId);
+    QPlaceMatchRequest();
+    QPlaceMatchRequest(const QPlaceMatchRequest &other);
 
-signals:
-    void placeIdChanged();
 
-protected:
-    QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
+    QPlaceMatchRequest& operator=(const QPlaceMatchRequest &other);
+
+    bool operator==(const QPlaceMatchRequest &other) const;
+    bool operator!=(const QPlaceMatchRequest &other) const;
+
+    ~QPlaceMatchRequest();
+
+    QList<QPlace> places() const;
+    void setPlaces(const QList<QPlace> places);
+
+    void setResults(const QList<QPlaceSearchResult> &results);
+
+    QVariantMap parameters() const;
+    void setParameters(const QVariantMap &parameters);
+
+    void clear();
 
 private:
-    QString m_placeId;
+    QSharedDataPointer<QPlaceMatchRequestPrivate> d_ptr;
+    inline QPlaceMatchRequestPrivate *d_func();
+    inline const QPlaceMatchRequestPrivate *d_func() const;
 };
 
 QT_END_NAMESPACE
 
-#endif // QDECLARATIVERECOMMENDATIONMODEL_P_H
+QT_END_HEADER
+
+#endif

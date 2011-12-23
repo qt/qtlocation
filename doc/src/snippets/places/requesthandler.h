@@ -316,6 +316,18 @@ public:
         //! [Ratings]
     }
 
+    void matchPlaces() {
+        QList<QPlaceSearchResult> results;
+        //! [Match places]
+        QPlaceMatchRequest request;
+        request.setResults(results);
+        QVariantMap parameters;
+        parameters.insert(QPlaceMatchRequest::AlternativeId, "x_id_nokia");
+        request.setParameters(parameters);
+        matchReply = manager->matchingPlaces(request);
+        //! [Match places]
+    }
+
 public slots:
     // ![Simple search handler]
     //4) Have the slot appropriately process the results of the operation
@@ -486,7 +498,6 @@ public slots:
     }
     //! [Remove category handler]
 
-
     //! [Content handler]
     void contentHandler() {
         if (contentReply->error() == QPlaceReply::NoError)  {
@@ -513,6 +524,22 @@ public slots:
         //! [Opening hours]
     }
 
+    //! [Match places handler]
+    void matchHandler() {
+        if (matchReply->error() == QPlaceReply::NoError) {
+            foreach (const QPlace place, matchReply->places()) {
+                if (place != QPlace())
+                    qDebug() << "Place is a favorite with name" << place.name();
+                else
+                    qDebug() << "Place is not a favorite";
+            }
+        }
+
+        matchReply->deleteLater();
+        matchReply = 0;
+    }
+    //! [Match places handler]
+
 QPlaceSearchReply *searchReply;
 QPlaceSearchReply *recommendationReply;
 QPlaceManager *manager;
@@ -524,6 +551,7 @@ QPlaceIdReply *removePlaceReply;
 QPlaceIdReply *saveCategoryReply;
 QPlaceIdReply *removeCategoryReply;
 QPlaceReply *initCatReply;
+QPlaceMatchReply *matchReply;
 QPlace place;
 };
 

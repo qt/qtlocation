@@ -39,11 +39,27 @@
 **
 ****************************************************************************/
 
+#include <QtCore/QMetaType>
 #include <QString>
 #include <QtTest/QtTest>
 
 #include <qgeoserviceprovider.h>
 #include <qplacemanager.h>
+
+
+#ifndef WAIT_UNTIL
+#define WAIT_UNTIL(__expr) \
+        do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+    } while (0)
+#endif
 
 QT_USE_NAMESPACE
 
@@ -58,8 +74,11 @@ private Q_SLOTS:
     void compatiblePlace();
     void testMetadata();
     void testLocales();
+    void testMatchUnsupported();
 
 private:
+    bool checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError);
+
     QGeoServiceProvider *provider;
     QPlaceManager *placeManager;
 };
@@ -102,6 +121,13 @@ void tst_QPlaceManager::testLocales()
     QCOMPARE(placeManager->locales().at(1), en_UK);
 }
 
+void tst_QPlaceManager::testMatchUnsupported()
+{
+    QPlaceMatchRequest request;
+    QPlaceMatchReply *reply = placeManager->matchingPlaces(request);
+    QVERIFY(checkSignals(reply, QPlaceReply::UnsupportedError));
+}
+
 void tst_QPlaceManager::compatiblePlace()
 {
     QPlace place;
@@ -118,6 +144,89 @@ void tst_QPlaceManager::compatiblePlace()
 void tst_QPlaceManager::cleanupTestCase()
 {
     delete provider;
+}
+
+bool tst_QPlaceManager::checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError)
+{
+    QSignalSpy finishedSpy(reply, SIGNAL(finished()));
+    QSignalSpy errorSpy(reply, SIGNAL(error(QPlaceReply::Error,QString)));
+    QSignalSpy managerFinishedSpy(placeManager, SIGNAL(finished(QPlaceReply*)));
+    QSignalSpy managerErrorSpy(placeManager,SIGNAL(error(QPlaceReply*,QPlaceReply::Error,QString)));
+
+    if (expectedError != QPlaceReply::NoError) {
+        //check that we get an error signal from the reply
+        WAIT_UNTIL(errorSpy.count() == 1);
+        if (errorSpy.count() != 1) {
+            qWarning() << "Error signal for search operation not received";
+            return false;
+        }
+
+        //check that we get the correct error from the reply's signal
+        QPlaceReply::Error actualError = qvariant_cast<QPlaceReply::Error>(errorSpy.at(0).at(0));
+        if (actualError != expectedError) {
+            qWarning() << "Actual error code in reply signal does not match expected error code";
+            qWarning() << "Actual error code = " << actualError;
+            qWarning() << "Expected error coe =" << expectedError;
+            return false;
+        }
+
+        //check that we get an error  signal from the manager
+        WAIT_UNTIL(managerErrorSpy.count() == 1);
+        if (managerErrorSpy.count() !=1) {
+           qWarning() << "Error signal from manager for search operation not received";
+           return false;
+        }
+
+        //check that we get the correct reply instance in the error signal from the manager
+        if (qvariant_cast<QPlaceReply*>(managerErrorSpy.at(0).at(0)) != reply)  {
+            qWarning() << "Reply instance in error signal from manager is incorrect";
+            return false;
+        }
+
+        //check that we get the correct error from the signal of the manager
+        actualError = qvariant_cast<QPlaceReply::Error>(managerErrorSpy.at(0).at(1));
+        if (actualError != expectedError) {
+            qWarning() << "Actual error code from manager signal does not match expected error code";
+            qWarning() << "Actual error code =" << actualError;
+            qWarning() << "Expected error code = " << expectedError;
+            return false;
+        }
+    }
+
+    //check that we get a finished signal
+    WAIT_UNTIL(finishedSpy.count() == 1);
+    if (finishedSpy.count() !=1) {
+        qWarning() << "Finished signal from reply not received";
+        return false;
+    }
+
+    if (reply->error() != expectedError) {
+        qWarning() << "Actual error code does not match expected error code";
+        qWarning() << "Actual error code: " << reply->error();
+        qWarning() << "Expected error code" << expectedError;
+        return false;
+    }
+
+    if (expectedError == QPlaceReply::NoError && !reply->errorString().isEmpty()) {
+        qWarning() << "Expected error was no error but error string was not empty";
+        qWarning() << "Error string=" << reply->errorString();
+        return false;
+    }
+
+    //check that we get the finished signal from the manager
+    WAIT_UNTIL(managerFinishedSpy.count() == 1);
+    if (managerFinishedSpy.count() != 1) {
+        qWarning() << "Finished signal from manager not received";
+        return false;
+    }
+
+    //check that the reply instance in the finished signal from the manager is correct
+    if (qvariant_cast<QPlaceReply *>(managerFinishedSpy.at(0).at(0)) != reply) {
+        qWarning() << "Reply instance in finished signal from manager is incorrect";
+        return false;
+    }
+
+    return true;
 }
 
 QTEST_GUILESS_MAIN(tst_QPlaceManager)

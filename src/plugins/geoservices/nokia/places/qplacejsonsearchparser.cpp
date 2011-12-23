@@ -220,6 +220,12 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QJSValue &r
             processCategories(value, &newPlace);
         }
     }
+
+    QPlaceAttribute managerName;
+    managerName.setText(QLatin1String("nokia")); //provider name
+
+    newPlace.setExtendedAttribute(QLatin1String("x_provider"), managerName);
+
     result.setPlace(newPlace);
     return result;
 }

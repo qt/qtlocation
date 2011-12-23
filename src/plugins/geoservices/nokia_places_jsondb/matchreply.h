@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,39 +38,53 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef MATCHREPLY_H
+#define MATCHREPLY_H
 
-#ifndef QDECLARATIVERECOMMENDATIONMODEL_P_H
-#define QDECLARATIVERECOMMENDATIONMODEL_P_H
+#include "macro.h"
+#include "qplacemanagerengine_jsondb.h"
 
-#include <QtDeclarative/QDeclarativeParserStatus>
-#include "qdeclarativeresultmodelbase_p.h"
+#include <qplacematchreply.h>
 
-QT_BEGIN_NAMESPACE
+#include <QObject>
 
-class QDeclarativeRecommendationModel : public QDeclarativeResultModelBase
+QT_USE_NAMESPACE
+
+class MatchReply : public QPlaceMatchReply
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
-    Q_INTERFACES(QDeclarativeParserStatus)
+    enum State {
+       Initial,
+       GetPlaces
+    };
 
 public:
-    explicit QDeclarativeRecommendationModel(QObject *parent = 0);
-    ~QDeclarativeRecommendationModel();
+    MatchReply(QPlaceManagerEngineJsonDb *engine);
+    virtual ~MatchReply();
+    void setPlaces(const QList<QPlace> &places);
+    void setRequest(const QPlaceMatchRequest &request);
 
-    QString placeId() const;
-    void setPlaceId(const QString &placeId);
+    DECLARE_TRIGGER_DONE_FN
 
-signals:
-    void placeIdChanged();
+    void start();
 
 protected:
-    QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
+    JsonDbClient *db() {return m_engine->db();}
+
+private slots:
+    void processResponse(int id, const QVariant &data);
+    void processError(int id, int code, const QString &);
 
 private:
-    QString m_placeId;
+    void findPlace(const QString &id);
+    void findPlaceByProximity();
+
+    QPlaceManagerEngineJsonDb *m_engine;
+    State m_state;
+    int m_reqId;
+    QList<QPlace> m_inputPlaces;
+    QList<QPlace> m_outputPlaces;
 };
 
-QT_END_NAMESPACE
-
-#endif // QDECLARATIVERECOMMENDATIONMODEL_P_H
+#endif

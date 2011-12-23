@@ -9,6 +9,8 @@ SUBDIRS += qplace \
            qplaceeditorial \
            qplacemanager \
            qplacemanager_nokia \
+           qplacematchreply \
+           qplacematchrequest \
            qplaceimage \
            qplaceratings \
            qplacereply \

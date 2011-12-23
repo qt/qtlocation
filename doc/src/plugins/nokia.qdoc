@@ -167,6 +167,9 @@ and behaviours are outlined below:
     \row
         \o visibility scopes
         \o public
+    \row
+        \o favorites matching/(usable as favoritesPlugin)
+        \o no
 \endtable
 
 \section2 Plugin specific behaviours

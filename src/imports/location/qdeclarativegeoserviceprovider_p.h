@@ -124,7 +124,8 @@ public:
         SearchSuggestionsFeature = QPlaceManager::SearchSuggestionsFeature,
         CorrectionsFeature = QPlaceManager::CorrectionsFeature,
         LocaleFeature = QPlaceManager::LocaleFeature,
-        NotificationsFeature = QPlaceManager::NotificationsFeature
+        NotificationsFeature = QPlaceManager::NotificationsFeature,
+        FavoritesMatchingFeature = QPlaceManager::MatchingFeature
     };
 
     Q_DECLARE_FLAGS(PlacesFeatures, PlacesFeature)

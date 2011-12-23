@@ -95,6 +95,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QUrl primaryWebsite READ primaryWebsite NOTIFY primaryWebsiteChanged);
 
     Q_PROPERTY(Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
+    Q_PROPERTY(QDeclarativePlace *favorite READ favorite WRITE setFavorite NOTIFY favoriteChanged)
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -168,7 +169,11 @@ public:
     Visibility visibility() const;
     void setVisibility(Visibility visibility);
 
+    QDeclarativePlace *favorite() const;
+    void setFavorite(QDeclarativePlace *favorite);
+
     Q_INVOKABLE void copyFrom(QDeclarativePlace *original);
+    Q_INVOKABLE void initializeFavorite(QDeclarativeGeoServiceProvider *plugin);
 
 signals:
     void pluginChanged();
@@ -194,6 +199,7 @@ signals:
     void contactDetailsChanged();
     void statusChanged();
     void visibilityChanged();
+    void favoriteChanged();
 
 private slots:
     void finished();
@@ -231,6 +237,8 @@ private:
     QString m_prevPrimaryEmail;
     QString m_prevPrimaryFax;
     QUrl m_prevPrimaryWebsite;
+
+    QDeclarativePlace *m_favorite;
 
     Status m_status;
     QString m_errorString;

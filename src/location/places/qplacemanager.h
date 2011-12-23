@@ -47,8 +47,11 @@
 #include "qplaceidreply.h"
 #include "qplacereply.h"
 #include "qplacedetailsreply.h"
+#include "qplacematchreply.h"
+#include "qplacematchrequest.h"
 #include "qplacesearchsuggestionreply.h"
 #include "qplacesearchrequest.h"
+#include "qplacesearchresult.h"
 
 #include <QLocale>
 #include <QVector>
@@ -79,7 +82,8 @@ public:
         SearchSuggestionsFeature   = 0x20,
         CorrectionsFeature      = 0x40,
         LocaleFeature           = 0x80,
-        NotificationsFeature    = 0x100
+        NotificationsFeature    = 0x100,
+        MatchingFeature         = 0x200
     };
 
     Q_DECLARE_FLAGS(ManagerFeatures, ManagerFeature)
@@ -120,6 +124,8 @@ public:
     QPlace compatiblePlace(const QPlace &place);
 
     ManagerFeatures supportedFeatures() const;
+
+    QPlaceMatchReply *matchingPlaces(const QPlaceMatchRequest &request) const;
 
 Q_SIGNALS:
     void finished(QPlaceReply *reply);

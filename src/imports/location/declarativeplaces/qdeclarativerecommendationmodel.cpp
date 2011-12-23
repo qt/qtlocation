@@ -42,11 +42,14 @@
 #include "qdeclarativerecommendationmodel_p.h"
 #include "qdeclarativeplace_p.h"
 
+#include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
 
-#include <qplacesearchreply.h>
+#include <QtLocation/QPlaceSearchReply>
+#include <QtLocation/QPlaceMatchRequest>
+#include <QtLocation/QPlaceMatchReply>
 
 QT_USE_NAMESPACE
 
@@ -97,6 +100,35 @@ QT_USE_NAMESPACE
     \qmlproperty Plugin PlaceRecommendationModel::plugin
 
     This property holds the \l Plugin which will be used to perform the search.
+*/
+
+/*!
+    \qmlproperty Plugin PlaceRecommendationModel::favoritesPlugin
+
+    This property holds the \l Plugin which will be used to look for favorites.
+    Any places from the recommendation search which can be cross-referenced/matched
+    in the favorites \l Plugin will have their \l {Place::favorite}{favorite} property
+    set with the \l Place from the favorites \l Plugin.
+
+    If the favoritesPlugin is not set, the \l {Place::favorite}{favorite} property
+    of the places in the results will always be null.
+
+    \sa Favorites
+*/
+
+/*!
+    \qmlproperty VariantMap PlaceRecommendationModel::favoritesMatchParameters
+
+    This property holds a set of parameters used to specify how recommended places
+    are matched to favorites in the favoritesPlugin.
+
+    By default the parameter map is empty and implies that the favorites plugin
+    matches by \l {Alternative Id cross-referencing}{alternative ids}.  Generally,
+    an application developer will not need to set this property.
+
+    In cases where the favorites plugin does not support matching by alternative ids,
+    then the \l {Information about plugins} {backend plugin documentation} should be consulted
+    to see precisely what key-value parameters to set.
 */
 
 /*!
@@ -163,12 +195,8 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeRecommendationModel::QDeclarativeRecommendationModel(QObject *parent)
-:   QDeclarativeSearchModelBase(parent)
+:   QDeclarativeResultModelBase(parent)
 {
-    QHash<int, QByteArray> roles = roleNames();
-    roles.insert(DistanceRole, "distance");
-    roles.insert(PlaceRole, "place");
-    setRoleNames(roles);
 }
 
 QDeclarativeRecommendationModel::~QDeclarativeRecommendationModel()
@@ -194,80 +222,17 @@ void QDeclarativeRecommendationModel::setPlaceId(const QString &placeId)
     emit placeIdChanged();
 }
 
-void QDeclarativeRecommendationModel::clearData()
-{
-    qDeleteAll(m_places);
-    m_places.clear();
-    m_results.clear();
-}
-
-void QDeclarativeRecommendationModel::updateSearchRequest()
-{
-    QDeclarativeSearchModelBase::updateSearchRequest();
-}
-
-void QDeclarativeRecommendationModel::processReply(QPlaceReply *reply)
-{
-    QPlaceSearchReply *searchReply = qobject_cast<QPlaceSearchReply *>(reply);
-    if (!searchReply)
-        return;
-
-    m_results = searchReply->results();
-
-    foreach (const QPlaceSearchResult &result, m_results) {
-        QDeclarativePlace *place = new QDeclarativePlace(result.place(), plugin(), this);
-        m_places.append(place);
-    }
-
-    emit rowCountChanged();
-}
-
 /*!
-    \qmlproperty string PlaceRecommendationModel::row
+    \qmlproperty string PlaceRecommendationModel::count
 
-    This properties holds the number of rows/results the model has.
+    This properties holds the number of results the model has.
 */
-int QDeclarativeRecommendationModel::rowCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent)
-
-    return m_results.count();
-}
-
-QVariant QDeclarativeRecommendationModel::data(const QModelIndex& index, int role) const
-{
-    if (index.row() > m_results.count())
-        return QVariant();
-
-    const QPlaceSearchResult &result = m_results.at(index.row());
-
-    if (result.type() != QPlaceSearchResult::PlaceResult)
-        return QVariant();
-
-    switch (role) {
-    case Qt::DisplayRole:
-        return result.place().name();
-    case DistanceRole:
-        return result.distance();
-    case PlaceRole:
-        return QVariant::fromValue(static_cast<QObject *>(m_places.at(index.row())));
-    default:
-        return QVariant();
-    }
-
-    return QVariant();
-}
 
 /*!
     \qmlmethod PlaceRecommendationModel::data(int index, string role)
 
     Returns the data for a given \a role at the specified row \a index.
 */
-QVariant QDeclarativeRecommendationModel::data(int index, const QString &role) const
-{
-    QModelIndex modelIndex = createIndex(index, 0);
-    return data(modelIndex, roleNames().key(role.toLatin1()));
-}
 
 QPlaceReply *QDeclarativeRecommendationModel::sendQuery(QPlaceManager *manager,
                                                         const QPlaceSearchRequest &request)

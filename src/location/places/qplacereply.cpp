@@ -111,6 +111,9 @@ QT_USE_NAMESPACE
     \value IdReply
         This is a reply that returns an id of a place/category.
         Typically used for place/category save and remove operations.
+    \value MatchReply
+        This is a reply that returns places that match
+        those from another provider.
 */
 
 /*!

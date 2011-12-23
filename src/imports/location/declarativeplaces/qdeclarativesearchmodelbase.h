@@ -95,7 +95,7 @@ public:
     void setLimit(int limit);
 
     Status status() const;
-    void setStatus(Status status);
+    void setStatus(Status status, const QString &errorString = QString());
 
     Q_INVOKABLE void execute();
     Q_INVOKABLE void cancel();
@@ -104,7 +104,6 @@ public:
 
     virtual void clearData();
     virtual void updateSearchRequest();
-    virtual void processReply(QPlaceReply *reply) = 0;
 
     // From QDeclarativeParserStatus
     virtual void classBegin();
@@ -120,9 +119,10 @@ signals:
 protected:
     virtual void initializePlugin(QDeclarativeGeoServiceProvider *plugin);
 
+protected slots:
+    virtual void queryFinished() = 0;
+
 private slots:
-    void queryFinished();
-    void queryError(QPlaceReply::Error error, const QString &errorString);
     void pluginNameChanged();
 
 protected:
@@ -130,16 +130,14 @@ protected:
 
     QPlaceSearchRequest m_request;
     QDeclarativeGeoServiceProvider *m_plugin;
-
-private:
     QPlaceReply *m_reply;
 
+private:
     QDeclarativeGeoBoundingArea *m_searchArea;
-
-    QString m_errorString;
 
     bool m_complete;
     Status m_status;
+    QString m_errorString;
 };
 
 QT_END_NAMESPACE

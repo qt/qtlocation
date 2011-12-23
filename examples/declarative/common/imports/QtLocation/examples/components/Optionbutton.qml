@@ -41,10 +41,14 @@ import QtQuick 2.0
 
 Item {
     id: optionbutton
+
+    signal clicked
+
     property bool selected: false
     property alias text: optionbuttonText.text
+    property bool toggle: false
+
     height: optionbuttonText.height
-    signal clicked
 
     Row {
         id: optionbuttonRow
@@ -61,7 +65,14 @@ Item {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            optionbutton.selected = true
+            if (toggle) {
+                if (optionbutton.selected)
+                    optionbutton.selected = false
+                else
+                    optionbutton.selected = true
+            } else {
+                optionbutton.selected = true
+            }
             optionbutton.clicked()
         }
     }

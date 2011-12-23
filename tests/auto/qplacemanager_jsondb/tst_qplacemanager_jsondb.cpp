@@ -50,6 +50,7 @@
 #include <qplacemanager.h>
 #include <qplacecategory.h>
 #include <qplacecontentreply.h>
+#include <qplacematchreply.h>
 #include <qplacesearchsuggestionreply.h>
 #include <qplacesearchrequest.h>
 #include <qplacesearchresult.h>
@@ -74,8 +75,6 @@
     } while (0)
 #endif
 
-Q_DECLARE_METATYPE(QPlaceReply::Error);
-Q_DECLARE_METATYPE(QPlaceReply *);
 Q_DECLARE_METATYPE(QPlaceIdReply *);
 
 QT_USE_NAMESPACE
@@ -113,6 +112,8 @@ private Q_SLOTS:
     void placeNotifications();
     void categoryNotifications();
     void compatiblePlace();
+    void extendedAttribute();
+    void matchingPlaces();
 
 private:
     bool doSavePlace(const QPlace &place,
@@ -147,6 +148,10 @@ private:
 
     bool doRemoveCategory(const QPlaceCategory &category,
                           QPlaceReply::Error expectedError = QPlaceReply::NoError);
+
+    bool doMatch(const QPlaceMatchRequest &request,
+                 QList<QPlace> *places,
+                 QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
     bool checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError);
 
@@ -1522,7 +1527,92 @@ void tst_QPlaceManagerJsonDb::compatiblePlace()
     QVERIFY(compatPlace.extendedAttributeTypes().isEmpty());
     QCOMPARE(compatPlace.extendedAttribute(QLatin1String("Smoking")), QPlaceAttribute());
 
-    QCOMPARE(compatPlace.visibility(), QtLocation::DeviceVisibility);
+    QCOMPARE(compatPlace.visibility(), QtLocation::UnspecifiedVisibility);
+}
+
+void tst_QPlaceManagerJsonDb::extendedAttribute()
+{
+    QPlaceAttribute attribute;
+    attribute.setLabel(QLatin1String("x_id_nokia"));
+    attribute.setText(QLatin1String("ae562"));
+    QPlace place;
+    place.setExtendedAttribute(QLatin1String("x_id_nokia"), attribute);
+
+    QString placeId;
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId,&retrievedPlace));
+    QVERIFY(retrievedPlace.extendedAttributeTypes().contains(QLatin1String("x_id_nokia")));
+}
+
+void tst_QPlaceManagerJsonDb::matchingPlaces()
+{
+    QPlace place1;
+    place1.setPlaceId(QLatin1String("abcd"));
+    place1.setName("place1");
+
+    QPlaceAttribute origin1;
+    origin1.setText("nokia");
+    place1.setExtendedAttribute(QLatin1String("x_provider"), origin1);
+
+    QPlace place1Saved;
+    place1Saved = placeManager->compatiblePlace(place1);
+
+    QString placeId;
+    QVERIFY(doSavePlace(place1Saved, QPlaceReply::NoError, &placeId));
+    place1Saved.setPlaceId(placeId);
+
+    QPlaceSearchResult result1;
+    result1.setPlace(place1);
+
+    QList<QPlaceSearchResult> results;
+    results << result1;
+
+    QPlaceMatchRequest matchRequest;
+    QVariantMap parameters;
+    parameters.insert(QPlaceMatchRequest::AlternativeId, QLatin1String("x_id_nokia"));
+    matchRequest.setParameters(parameters);
+    matchRequest.setResults(results);
+    QList<QPlace> places;
+    QVERIFY(doMatch(matchRequest,&places));
+    QCOMPARE(places.count(), 1);
+    QCOMPARE(place1Saved, places.at(0));
+
+    //try matching multiple places
+    QPlace nonMatchingPlace;
+    nonMatchingPlace.setName("Non matching");
+    nonMatchingPlace.setPlaceId(QLatin1String("1234"));
+    QPlaceAttribute originNonMatch;
+    originNonMatch.setText(QLatin1String("nokia"));
+    nonMatchingPlace.setExtendedAttribute(QLatin1String("x_provider"),originNonMatch);
+    QPlaceSearchResult nonMatchingResult;
+    nonMatchingResult.setPlace(nonMatchingPlace);
+    results.insert(1, nonMatchingResult);
+
+    QPlace place2;
+    place2.setName(QLatin1String("place2"));
+    place2.setPlaceId(QLatin1String("efgh"));
+
+    QPlaceAttribute origin2;
+    origin2.setText(QLatin1String("nokia"));
+    place2.setExtendedAttribute(QLatin1String("x_provider"), origin2);
+
+    QPlace place2Saved = placeManager->compatiblePlace(place2);
+    QVERIFY(doSavePlace(place2Saved, QPlaceReply::NoError, &placeId));
+    place2Saved.setPlaceId(placeId);
+
+    QPlaceSearchResult result2;
+    result2.setPlace(place2);
+    results.clear();
+    results << result1 << nonMatchingResult << result2;
+
+    matchRequest.setResults(results);
+    QVERIFY(doMatch(matchRequest, &places));
+    QCOMPARE(places.count(), 3);
+    QCOMPARE(places.at(0), place1Saved);
+    QCOMPARE(places.at(1), QPlace());
+    QCOMPARE(places.at(2), place2Saved);
 }
 
 void tst_QPlaceManagerJsonDb::cleanup()
@@ -1735,6 +1825,17 @@ bool tst_QPlaceManagerJsonDb::checkSignals(QPlaceReply *reply, QPlaceReply::Erro
     }
 
     return true;
+}
+
+bool tst_QPlaceManagerJsonDb::doMatch(const QPlaceMatchRequest &request,
+                                      QList<QPlace> *places,
+                                      QPlaceReply::Error expectedError)
+{
+    QPlaceMatchReply *reply = placeManager->matchingPlaces(request);
+    bool isSuccessful = checkSignals(reply, expectedError) &&
+                        (reply->error() == expectedError);
+    *places = reply->places();
+    return isSuccessful;
 }
 
 bool tst_QPlaceManagerJsonDb::compareResults(const QList<QPlaceSearchResult> &results,

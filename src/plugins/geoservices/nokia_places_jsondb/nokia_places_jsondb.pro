@@ -13,6 +13,7 @@ HEADERS += \
             qgeoserviceproviderplugin_jsondb.h \
             qplacemanagerengine_jsondb.h \
             jsonconverter.h \
+            matchreply.h \
             searchreply.h \
             detailsreply.h \
             reply.h \
@@ -24,6 +25,7 @@ SOURCES += \
             qgeoserviceproviderplugin_jsondb.cpp \
             qplacemanagerengine_jsondb.cpp \
             jsonconverter.cpp \
+            matchreply.cpp \
             searchreply.cpp \
             detailsreply.cpp \
             reply.cpp \

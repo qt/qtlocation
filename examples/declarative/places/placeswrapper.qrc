@@ -7,6 +7,7 @@
         <file>content/places/EditorialPage.qml</file>
         <file>content/places/Group.qml</file>
         <file>content/places/MapComponent.qml</file>
+        <file>content/places/OptionsDialog.qml</file>
         <file>content/places/PlaceDelegate.qml</file>
         <file>content/places/PlaceDialog.qml</file>
         <file>content/places/PlaceEditorials.qml</file>

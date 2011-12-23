@@ -20,7 +20,8 @@ qmlcontentplaces.files += \
     content/places/ReviewDelegate.qml \
     content/places/ReviewPage.qml \
     content/places/PlaceImages.qml \
-    content/places/MapComponent.qml
+    content/places/MapComponent.qml \
+    content/places/OptionsDialog.qml
 OTHER_FILES += $$qmlcontentplaces.files
 
 include(../common/common.pri)

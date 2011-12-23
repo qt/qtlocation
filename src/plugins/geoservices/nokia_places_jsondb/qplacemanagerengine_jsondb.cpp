@@ -50,13 +50,11 @@
 #include "detailsreply.h"
 #include "reply.h"
 #include "idreply.h"
+#include "matchreply.h"
 #include "searchreply.h"
 #include "unsupportedreplies.h"
 
 QT_USE_NAMESPACE
-
-Q_DECLARE_METATYPE(QPlaceReply::Error)
-Q_DECLARE_METATYPE(QPlaceReply *)
 
 QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVariant> &parameters,
                                                      QGeoServiceProvider::Error *error,
@@ -259,7 +257,23 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
     foreach (const QString &contactType, original.contactTypes())
         place.setContactDetails(contactType, original.contactDetails(contactType));
 
-    place.setVisibility(QtLocation::DeviceVisibility);
+
+    place.setVisibility(QtLocation::UnspecifiedVisibility);
+
+
+    QStringList attributeTypes = original.extendedAttributeTypes();
+    foreach (const QString &attributeType, attributeTypes) {
+        if (attributeType.startsWith(QLatin1String("x_id")))
+            place.setExtendedAttribute(attributeType, original.extendedAttribute(attributeType));
+    }
+
+    if (attributeTypes.contains(QLatin1String("x_provider")) && !original.extendedAttribute(QLatin1String("x_provider")).text().isEmpty()) {
+        QPlaceAttribute alternativeId;
+        alternativeId.setText(original.placeId());
+        place.setExtendedAttribute(QString::fromLatin1("x_id_") + original.extendedAttribute(QLatin1String("x_provider")).text(),
+                                   alternativeId);
+    }
+
     return place;
 }
 
@@ -276,7 +290,16 @@ QPlaceManager::ManagerFeatures QPlaceManagerEngineJsonDb::supportedFeatures() co
     return QPlaceManager::SavePlaceFeature |
            QPlaceManager::RemovePlaceFeature |
            QPlaceManager::SaveCategoryFeature |
-           QPlaceManager::RemoveCategoryFeature;
+           QPlaceManager::RemoveCategoryFeature |
+           QPlaceManager::MatchingFeature;
+}
+
+QPlaceMatchReply * QPlaceManagerEngineJsonDb::matchingPlaces(const QPlaceMatchRequest &request)
+{
+    MatchReply *reply = new MatchReply(this);
+    reply->setRequest(request);
+    reply->start();
+    return reply;
 }
 
 void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &data)

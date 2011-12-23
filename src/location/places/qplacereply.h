@@ -42,15 +42,13 @@
 #ifndef QPLACEREPLY_H
 #define QPLACEREPLY_H
 
+#include <QtCore/QMetaType>
+#include <QtCore/QObject>
 #include <QtLocation/qlocationglobal.h>
-
-#include <QObject>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
-
-
 
 class QPlaceReplyPrivate;
 class Q_LOCATION_EXPORT QPlaceReply : public QObject
@@ -76,7 +74,8 @@ public:
         SearchReply,
         SearchSuggestionReply,
         ContentReply,
-        IdReply
+        IdReply,
+        MatchReply
     };
 
     explicit QPlaceReply(QObject *parent = 0);
@@ -107,6 +106,9 @@ private:
 };
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QPlaceReply::Error)
+Q_DECLARE_METATYPE(QPlaceReply *)
 
 QT_END_HEADER
 

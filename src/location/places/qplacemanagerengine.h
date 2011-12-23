@@ -94,6 +94,8 @@ public:
 
     virtual QPlaceManager::ManagerFeatures supportedFeatures() const = 0;
 
+    virtual QPlaceMatchReply *matchingPlaces(const QPlaceMatchRequest &request);
+
 Q_SIGNALS:
     void finished(QPlaceReply *reply);
     void error(QPlaceReply *, QPlaceReply::Error error, const QString &errorString = QString());

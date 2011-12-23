@@ -161,7 +161,8 @@
     The typical approach is to use the QPlaceManager::compatiblePlace() function,
     it creates a copy of a place, but only copies data that the manager supports.
     Manager specific data such as the place id is not copied over.  The new
-    copy is now suitable for saving into the manager.
+    copy is now suitable for saving into the manager.  If the manager supports matching by alternative
+    ids, an alternative id attribute is assigned to the copy (see \l {Matching places between managers})
 
     \snippet snippets/places/requesthandler.h Save to different manager
 
@@ -224,6 +225,32 @@
     When a category is removed, the QPlaceManager may emit the QPlaceManager::categoryRemoved() signal.  Whether a
     manager does so is provider specific.  Managers accessing places from a web service will typically not emit
     these signals, while managers accessing places stored locally generally will.
+
+    \section2 Matching places between managers
+    Sometimes you may want to cross reference whether places from one manager match those from another manager.
+    Such a situation may arise where one manager provides read-only access to places (origin manager) while another second r/w
+    manager (destination manager) is used to save selected favorites from the first. During a search
+    of the origin manager we may want to know which ones have been 'favorited' into the destination manager and perhaps display
+    a customized favorite name rather than the original name.
+
+    The matching mechanism can vary between managers, but is typically accomplished through an alternative id.
+    As part of the save process, the place id from the origin manager is saved as an alternative id attribute in the destination manager
+    (which can have it's own place id scheme).  In the following example, the origin manager is from the 'nokia' QGeoServiceProider, therefore
+    as part of the saving process an alternative id attriubute, x_id_nokia, is set for the place saved into the destination manager
+    (when QPlaceManager::compatiblePlace() is called)
+
+    \input place-crossref.qdocinc
+
+    In order to perform the matching, we create a QPlaceMatchRequest and assign it the search results from the origin manager.
+    The QPlaceMatchRequest will be used on the destination manager to return corresponding places.  We also specify
+    matching parameters which are key value pairs.  As mentioned previously, this can vary depending on the manager but typically
+    the key is QPlaceMatchRequest::AlternativeId to indicate we are matching by alternative id, the value in this case would be
+    x_id_nokia which specifies which alternative id attribute we are using to do the matching.
+
+    \snippet snippets/places/requesthandler.h Match places
+    \dots
+    \dots
+    \snippet snippets/places/requesthandler.h Match places handler
 
     \section1 Classes in Places
 

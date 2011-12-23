@@ -45,6 +45,7 @@
 #include "qdeclarativeplaceattribute_p.h"
 #include "qdeclarativeplaceicon_p.h"
 
+#include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
@@ -130,10 +131,12 @@ QT_USE_NAMESPACE
     the categories in one manager may not be recognised in another.
     Therefore trying to save a place directly from one plugin to another is not possible.
 
-    The typical approach is to create a new place, set its (destination) plugin and then use the \l copyFrom() method
-    to copy the details of the original place.  Using \l copyFrom() only copies data
-    that is supported by the destination plugin, plugin specific data such as the place id is not copied over.
-    Once the copy is done, the place is in a suitable state to be saved.
+    It is generally recommended that saving across plugins be handled as saving \l {Favorites}{favorites}
+    as explained below.  However there is another approach which is to create a new place,
+    set its (destination) plugin and then use the \l copyFrom() method to copy the details of the original place.
+    Using \l copyFrom() only copies data that is supported by the destination plugin,
+    plugin specific data such as the place id is not copied over. Once the copy is done,
+    the place is in a suitable state to be saved.  The call to initializeFavorite
 
     \snippet snippets/declarative/places.qml Place save to different plugin
 
@@ -143,6 +146,35 @@ QT_USE_NAMESPACE
     its \l remove() method.  The \l status property will change to Place.Removing and then to
     Place.Ready if the save was successful or to Place.Error if an error occurs.
 
+    \section2 Favorites
+    The Places API supports the concept of favorites. Favorites are generally implemented
+    by using two plugins, the first plugin is typically a r/o source of places(origin plugin) and a second
+    r/w plugin (destination plugin) is used to store places from the origin as favorites.
+
+    Each Place has a favorite property which is intended to contain the corresponding place
+    from the destination plugin (the place itself is sourced from the origin plugin).  Because both the original
+    place and favorite instances are available, the developer can choose which
+    properties to show to the user.  e.g. the favorite may have a modified name which should
+    be displayed rather than the original name.
+
+    \snippet snippets/declarative/places.qml Place favorite
+
+    The following demonstrates how to save a new favorite instance.  A call is made
+    to create/initialize the favorite instance and then the instance is saved.
+
+    \snippet snippets/declarative/places.qml Place saveFavorite
+
+    The following demonstrates favorite removal:
+
+    \snippet snippets/declarative/places.qml Place removeFavorite 1
+    \dots
+    \snippet snippets/declarative/places.qml Place removeFavorite 2
+
+    The PlaceSearchModel and PlaceRecommendationModel have a favoritesPlugin property.
+    If the property is set, any places found during a search are checked against the favoritesPlugin
+    to see if there is a matching/corresponding favorite place.  If so, the favorite property of the Place
+    is set, otherwise the favorite property is remains null.
+
     \sa PlaceSearchModel, PlaceRecommendationModel
 */
 
@@ -151,7 +183,7 @@ QDeclarativePlace::QDeclarativePlace(QObject* parent)
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QDeclarativePropertyMap(this)),
     m_contactDetails(new QDeclarativePropertyMap(this)), m_reply(0), m_plugin(0),
-    m_complete(false), m_status(QDeclarativePlace::Ready), m_errorString(QString())
+    m_complete(false), m_favorite(0), m_status(QDeclarativePlace::Ready)
 {
     connect(m_contactDetails, SIGNAL(valueChanged(QString,QVariant)),
             this, SLOT(contactsModified(QString,QVariant)));
@@ -164,7 +196,7 @@ QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServicePr
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QDeclarativePropertyMap(this)),
     m_contactDetails(new QDeclarativePropertyMap(this)), m_reply(0), m_plugin(plugin),
-    m_complete(false), m_status(QDeclarativePlace::Ready)
+    m_complete(false), m_favorite(0), m_status(QDeclarativePlace::Ready)
 {
     Q_ASSERT(plugin);
 
@@ -587,6 +619,16 @@ bool QDeclarativePlace::detailsFetched() const
             \o An error occurred during the last operation, further operations can still be
                performed on the place.
     \endtable
+
+    The status of a place can be checked by connecting the status property
+    to a handler function, and then have the handler function process the change
+    in status.
+
+    \snippet snippets/declarative/places.qml Place checkStatus
+    \dots
+    \dots
+    \snippet snippets/declarative/places.qml Place checkStatus handler
+
 */
 void QDeclarativePlace::setStatus(Status status)
 {
@@ -921,6 +963,29 @@ void QDeclarativePlace::setVisibility(Visibility visibility)
 }
 
 /*!
+    \qmlproperty Place Place::favorite
+
+    This property holds the favorite instance of a place.
+*/
+QDeclarativePlace *QDeclarativePlace::favorite() const
+{
+    return m_favorite;
+}
+
+void QDeclarativePlace::setFavorite(QDeclarativePlace *favorite)
+{
+
+    if (m_favorite == favorite)
+        return;
+
+    if (m_favorite && m_favorite->parent() == this)
+        delete m_favorite;
+
+    m_favorite = favorite;
+    emit favoriteChanged();
+}
+
+/*!
     \qmlmethod Place::copyFrom(Place original)
 
     Copies data from an \a original place into this place.  Only data that is supported by this
@@ -933,6 +998,23 @@ void QDeclarativePlace::copyFrom(QDeclarativePlace *original)
         return;
 
     setPlace(placeManager->compatiblePlace(original->place()));
+}
+
+/*!
+    \qmlmethod Place::initializeFavorite(Plugin destinationPlugin)
+
+    Creates a favorite instance for the place which is to be saved into the
+    \a destination plugin.  This method does nothing if the favorite property is
+    not null.
+*/
+void QDeclarativePlace::initializeFavorite(QDeclarativeGeoServiceProvider *plugin)
+{
+    if (m_favorite == 0) {
+        QDeclarativePlace *place = new QDeclarativePlace(this);
+        place->setPlugin(plugin);
+        place->copyFrom(this);
+        setFavorite(place);
+    }
 }
 
 void QDeclarativePlace::synchronizeExtendedAttributes()

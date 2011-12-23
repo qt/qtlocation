@@ -95,7 +95,8 @@ Item {
         var keys = extendedAttributes.keys();
         for (var i = 0; i < keys.length; ++i) {
             var key = keys[i];
-            console.log(extendedAttributes[key].label + ": " + extendedAttributes[key].text);
+            if (extendedAttributes[key].label !== "")
+                console.log(extendedAttributes[key].label + ": " + extendedAttributes[key].text);
         }
     }
     //! [ExtendedAttributes read]
@@ -291,4 +292,55 @@ Item {
             primaryWebsite = place.contactDetails["website"][0].value;
     //! [Place primaryWebsite]
     }
+
+    //! [Place favorite]
+    Text { text: place.favorite ? place.favorite.name : place.name }
+    //! [Place favorite]
+
+    function saveFavorite() {
+        var place;
+        var destinationPlugin
+        //! [Place saveFavorite]
+        place.initializeFavorite(destinationPlugin);
+        //if necessary customizations to the favorite can be made here.
+        //...
+        place.favorite.save();
+        //! [Place saveFavorite]
+    }
+
+    function removeFavorite() {
+        var place;
+        //! [Place removeFavorite 1]
+        place.favorite.remove();
+        //! [Place removeFavorite 1]
+
+        //! [Place removeFavorite 2]
+        //after detecting successful favorite removal by checking its status
+        place.favorite = null;
+        //! [Place removeFavorite 2]
+    }
+
+    function connectStatusChangedHandler() {
+        //! [Place checkStatus]
+        place.statusChanged.connect(statusChangedHandler);
+        //! [Place checkStatus]
+    }
+
+    //! [Place checkStatus handler]
+    function statusChangedHandler() {
+        if (statusChangedHandler.prevStatus === Place.Saving) {
+            switch (place.status) {
+            case Place.Ready:
+                console.log('Save successful');
+                break;
+            case Place.Error:
+                console.log('Save failed');
+                break;
+            default:
+                break;
+            }
+        }
+        statusChangedHandler.prevStatus = place.status;
+    }
+    //! [Place checkStatus handler]
 }

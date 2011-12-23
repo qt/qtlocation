@@ -60,8 +60,6 @@
     } while (0)
 #endif
 
-Q_DECLARE_METATYPE(QPlaceReply::Error);
-Q_DECLARE_METATYPE(QPlaceReply *);
 Q_DECLARE_METATYPE(QPlaceIdReply *);
 
 QT_USE_NAMESPACE

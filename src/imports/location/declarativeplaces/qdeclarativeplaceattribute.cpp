@@ -54,7 +54,8 @@
     use the \c {[]} operator to access the \l PlaceAttribute items.
 
     The following are standard keys that are defined by the API.  \l Plugin
-    implementations are free to define additional keys.
+    implementations are free to define additional keys.  Custom keys should
+    be qualified by a unique prefix to avoid clashes.
     \table
         \header
             \o key
@@ -65,7 +66,17 @@
         \row
             \o payment
             \o The types of payment the place accepts, e.g. visa, mastercard etc.
+        \row
+            \o x_provider
+            \o The name of the provider that a place is sourced from
+        \row
+            \o x_id_<provider> (e.g x_id_nokia)
+            \o An alterantive id which identifies the place from the
+               persective of the specified provider.
     \endtable
+
+    Some attributes may not be intended to be readable by end users, the label field
+    of such attributes is empty to indicate this fact.
 
     The following example shows how to access all \l {PlaceAttribute}{PlaceAttributes} and print
     them to the console:

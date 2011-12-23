@@ -176,6 +176,18 @@ QVariantMap JsonConverter::addToJsonMap(const QVariant &var, const QPlace &place
         categoryUuids.append(category.categoryId());
     map.insert(JsonConverter::CategoryUuids, categoryUuids);
 
+    QVariantMap extendedAttributes;
+    QVariantMap attribute;
+    QStringList attributeTypes = place.extendedAttributeTypes();
+    foreach (const QString attributeType, attributeTypes) {
+        if (attributeType.startsWith("x_id")) {
+            attribute.insert(JsonConverter::Label, place.extendedAttribute(attributeType).label());
+            attribute.insert(JsonConverter::Text, place.extendedAttribute(attributeType).text());
+            extendedAttributes.insert(attributeType, attribute);
+        }
+    }
+    map.insert(JsonConverter::ExtendedAttributes, extendedAttributes);
+
     return map;
 }
 
@@ -280,6 +292,18 @@ QPlace JsonConverter::convertJsonMapToPlace(const QVariantMap &placeMap,
     }
 
     place.setCategories(categories);
+
+    if (placeMap.keys().contains(JsonConverter::ExtendedAttributes)) {
+        QVariantMap attributesMap = placeMap.value(JsonConverter::ExtendedAttributes).toMap();
+        QVariantMap attributeMap;
+        QPlaceAttribute attribute;
+        foreach (const QString &attributeType, attributesMap.keys()) {
+            attributeMap = attributesMap.value(attributeType).toMap();
+            attribute.setLabel(attributeMap.value(JsonConverter::Label).toString());
+            attribute.setText(attributeMap.value(JsonConverter::Text).toString());
+            place.setExtendedAttribute(attributeType, attribute);
+        }
+    }
 
     return place;
 }

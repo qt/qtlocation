@@ -84,8 +84,12 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
     \list
         \o QPlaceAttribute::OpeningHours
         \o QPlaceAttribute::Payment
+        \o QPlaceAttribute::Provider
     \endlist
 
+    There is a class of attributes types of the format x_id_<provider> e.g. x_id_nokia.
+    This class of attributes are alternative ids of the place, from the specified provider's
+    perspective.
 
     The above types are used to access and modify attributes in QPlace via:
     \list
@@ -96,7 +100,12 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
     \endlist
 
     The \e {attribute type} is a string type so that providers are able to introduce
-    new attributes as necessary.
+    new attributes as necessary.  Custom attribute types should always be prefixed
+    by a qualifier in order to avoid conflicts.
+
+    \section3 User readable vs non-user readable attributes
+    Some attributes may not be intended to be readable by end users, the label field
+    of such attributes are empty to indicate this fact.
 */
 
 /*!
@@ -110,6 +119,13 @@ const QString QPlaceAttribute::OpeningHours(QLatin1String("openingHours"));
    The constant to specify an attribute that defines the methods of payment.
 */
 const QString QPlaceAttribute::Payment(QLatin1String("payment"));
+
+/*!
+    \variable QPlaceAttribute::Provider
+    The constant to specify an attribute that defines which
+    provider the place came from.
+*/
+const QString QPlaceAttribute::Provider(QLatin1String("x_provider"));
 
 /*!
     Constructs an attribute.

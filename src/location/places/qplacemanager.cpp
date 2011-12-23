@@ -145,6 +145,7 @@ QT_BEGIN_NAMESPACE
                           according to locale
     \value NotificationsFeature The manager has signal notifications for when
                                 places/categories are added/modified/removed.
+    \value MatchingFeature The manager support matching places from other managers.
 */
 
 /*!
@@ -403,6 +404,16 @@ QPlace QPlaceManager::compatiblePlace(const QPlace &original)
 QPlaceManager::ManagerFeatures QPlaceManager::supportedFeatures() const
 {
     return d->supportedFeatures();
+}
+
+/*!
+    Returns a reply which contains a list of places which correspond/match those
+    specified in the \a request.  The places specified in the request come from a
+    different manager.
+*/
+QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &request) const
+{
+    return d->matchingPlaces(request);
 }
 
 /*!

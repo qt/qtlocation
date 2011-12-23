@@ -121,12 +121,13 @@ QDeclarativeSearchModelBase::Status QDeclarativeSearchModelBase::status() const
     return m_status;
 }
 
-void QDeclarativeSearchModelBase::setStatus(Status status)
+void QDeclarativeSearchModelBase::setStatus(Status status, const QString &errorString)
 {
     if (m_status == status)
         return;
 
     m_status = status;
+    m_errorString = errorString;
     emit statusChanged();
 }
 
@@ -158,8 +159,6 @@ void QDeclarativeSearchModelBase::execute()
 
     m_reply->setParent(this);
     connect(m_reply, SIGNAL(finished()), this, SLOT(queryFinished()));
-    connect(m_reply, SIGNAL(error(QPlaceReply::Error,QString)),
-            this, SLOT(queryError(QPlaceReply::Error,QString)));
 
     setStatus(Executing);
 }
@@ -227,33 +226,6 @@ void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvide
     }
 
     reset(); // reset the model
-}
-
-void QDeclarativeSearchModelBase::queryFinished()
-{
-    if (!m_reply)
-        return;
-
-    QPlaceReply *reply = m_reply;
-    m_reply = 0;
-
-    beginResetModel();
-
-    clearData();
-
-    processReply(reply);
-
-    endResetModel();
-
-    reply->deleteLater();
-    setStatus(Ready);
-}
-
-void QDeclarativeSearchModelBase::queryError(QPlaceReply::Error error, const QString &errorString)
-{
-    Q_UNUSED(error)
-
-    m_errorString = errorString;
 }
 
 void QDeclarativeSearchModelBase::pluginNameChanged()

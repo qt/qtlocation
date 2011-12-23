@@ -211,7 +211,7 @@ Item {
         }
     }
 
-    Dialog {
+    OptionsDialog {
         id: optionsDialog
         z: backgroundRect.z + 3
 
@@ -220,15 +220,25 @@ Item {
         Component.onCompleted: prepareDialog()
 
         function prepareDialog() {
-            setModel([
-                         ["Locale(s)", placesPlugin.locales.toString()]
-            ]);
+            if (placeSearchModel.favoritesPlugin !== null)
+                isFavoritesEnabled = true;
+            else
+                isFavoritesEnabled = false;
+
+            locales = placesPlugin.locales.join(Qt.locale().groupSeparator);
         }
 
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
-            var locales = dialogModel.get(0).inputText.split(Qt.locale().groupSeparator);
-            placesPlugin.locales = locales;
+            if (isFavoritesEnabled) {
+                placeSearchModel.favoritesPlugin = jsonDbPlugin;
+                recommendationModel.favoritesPlugin = jsonDbPlugin;
+            } else {
+                placeSearchModel.favoritesPlugin = null;
+                recommendationModel.favoritesPlugin = null;
+            }
+
+            placesPlugin.locales = locales.split(Qt.locale().groupSeparator);
             categoryModel.update();
             page.state = "";
         }
@@ -296,7 +306,6 @@ Item {
         id: placesPlugin
 
         parameters: pluginParametersFromMap(pluginParameters)
-
         onNameChanged: createMap(placesPlugin);
     }
 

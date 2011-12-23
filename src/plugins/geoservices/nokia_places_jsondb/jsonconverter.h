@@ -120,6 +120,9 @@ namespace JsonConverter
     static QLatin1String Url("url");
 
     static QLatin1String IconUrl("iconUrl");
+
+    static QLatin1String ExtendedAttributes("extendedAttributes");
+    static QLatin1String Text("text");
 }
 
 QT_END_NAMESPACE

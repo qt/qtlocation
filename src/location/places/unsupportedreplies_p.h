@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,38 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVERECOMMENDATIONMODEL_P_H
-#define QDECLARATIVERECOMMENDATIONMODEL_P_H
+#ifndef UNSUPPORTEDREPLIES_P_H
+#define UNSUPPORTEDREPLIES_P_H
 
-#include <QtDeclarative/QDeclarativeParserStatus>
-#include "qdeclarativeresultmodelbase_p.h"
+#include "qplacematchreply.h"
+#include "qplacemanagerengine.h"
 
-QT_BEGIN_NAMESPACE
-
-class QDeclarativeRecommendationModel : public QDeclarativeResultModelBase
+class MatchReply : public QPlaceMatchReply
 {
     Q_OBJECT
-
-    Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
-    Q_INTERFACES(QDeclarativeParserStatus)
-
 public:
-    explicit QDeclarativeRecommendationModel(QObject *parent = 0);
-    ~QDeclarativeRecommendationModel();
+    MatchReply(QPlaceManagerEngine *engine)
+        : QPlaceMatchReply(engine), m_engine(engine)
+    {}
+    virtual ~MatchReply() {}
 
-    QString placeId() const;
-    void setPlaceId(const QString &placeId);
-
-signals:
-    void placeIdChanged();
-
-protected:
-    QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
+    void triggerDone(QPlaceReply::Error error = QPlaceReply::NoError,
+                     const QString &errorString = QString()) {
+        if (error != QPlaceReply::NoError) {
+            this->setError(error,errorString);
+            QMetaObject::invokeMethod(m_engine, "error", Qt::QueuedConnection,
+                                      Q_ARG(QPlaceReply *,this),
+                                      Q_ARG(QPlaceReply::Error, error),
+                                      Q_ARG(QString, errorString));
+            QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                      Q_ARG(QPlaceReply::Error, error),
+                                      Q_ARG(QString, errorString));
+        }
+        this->setFinished(true);
+        QMetaObject::invokeMethod(m_engine, "finished", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *,this));
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+    }
 
 private:
-    QString m_placeId;
+    QPlaceManagerEngine *m_engine;
 };
 
-QT_END_NAMESPACE
-
-#endif // QDECLARATIVERECOMMENDATIONMODEL_P_H
+#endif

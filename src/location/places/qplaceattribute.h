@@ -60,6 +60,7 @@ class Q_LOCATION_EXPORT QPlaceAttribute
 public:
     static const QString OpeningHours;
     static const QString Payment;
+    static const QString Provider;
 
     QPlaceAttribute();
     QPlaceAttribute(const QPlaceAttribute &other);

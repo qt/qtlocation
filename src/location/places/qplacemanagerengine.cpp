@@ -41,6 +41,9 @@
 
 #include "qplacemanagerengine.h"
 #include "qplacemanagerengine_p.h"
+#include "unsupportedreplies_p.h"
+
+#include <QtCore/QMetaType>
 
 QT_BEGIN_NAMESPACE
 
@@ -73,6 +76,8 @@ QPlaceManagerEngine::QPlaceManagerEngine(const QMap<QString, QVariant> &paramete
                                          QObject *parent)
 :   QObject(parent), d_ptr(new QPlaceManagerEnginePrivate)
 {
+    qRegisterMetaType<QPlaceReply::Error>("QPlaceReply::Error");
+    qRegisterMetaType<QPlaceReply *>("QPlaceReply *");
     Q_UNUSED(parameters)
 }
 
@@ -153,6 +158,17 @@ QPlace QPlaceManagerEngine::compatiblePlace(const QPlace &original) const
 {
     Q_UNUSED(original);
     return QPlace();
+}
+
+/*!
+    Returns a reply which contains a list of places which correspond/match those
+    specified in \a request.
+*/
+QPlaceMatchReply * QPlaceManagerEngine::matchingPlaces(const QPlaceMatchRequest &request)
+{
+    MatchReply *reply = new MatchReply(this);
+    reply->triggerDone(QPlaceReply::UnsupportedError, "Place matching is not supported");
+    return reply;
 }
 
 QPlaceManagerEnginePrivate::QPlaceManagerEnginePrivate()

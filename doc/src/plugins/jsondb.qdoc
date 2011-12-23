@@ -102,6 +102,9 @@ capabiliies are outlined below:
     \row
         \o visibility scopes
         \o device
+    \row
+        \o favorites matching/(usable as favoritesPlugin)
+        \o yes
 \endtable
 
 \section2 Plugin specific behaviours
@@ -129,4 +132,19 @@ supported.
 The JsonDb plugin only supports places of the QtLocation::PrivateVisibility scope.
 Specifying the QtLocation::UnspecifiedVisibility when saving a place will default
 to the QtLocation::PrivateVisibility scope.
+
+\section3 Favorites Matching Parameters
+The JsonDb plugin can be used as a favorites store and thus supports the following
+parameters.
+\table
+    \header
+        \o key
+        \o value
+    \row
+        \o "alternativeId" (aka QPlaceMatchRequest::AlternativeId)
+        \o  alternative id attribute type, of the form "x_id_<provider name>" eg "x_id_nokia"
+    \row
+        \o "proximity"
+        \o The distance (m) allowed between places in order to be considered a match.
+\endtable
 */

@@ -63,6 +63,7 @@
 #include <qplaceratings.h>
 #include <qgeolocation.h>
 #include <qplacesupplier.h>
+#include <qplacemanager.h>
 #include "qplacejsoncategoriesparser.h"
 #include "qplacesuppliersrepository.h"
 
@@ -215,6 +216,11 @@ QPlace QPlaceJSonDetailsParser::buildPlace(const QJSValue &placeValue, QPlaceMan
         icon.setManager(manager);
         newPlace.setIcon(icon);
     }
+
+    QPlaceAttribute managerName;
+    managerName.setText(manager->managerName());
+
+    newPlace.setExtendedAttribute(QLatin1String("x_provider"), managerName);
 
     return newPlace;
 }

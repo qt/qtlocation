@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,38 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVERECOMMENDATIONMODEL_P_H
-#define QDECLARATIVERECOMMENDATIONMODEL_P_H
+#ifndef QPLACEMATCHREPLY_H
+#define QPLACEMATCHREPLY_H
 
-#include <QtDeclarative/QDeclarativeParserStatus>
-#include "qdeclarativeresultmodelbase_p.h"
+#include "qplacereply.h"
+#include  "qplacematchrequest.h"
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeRecommendationModel : public QDeclarativeResultModelBase
+class QPlaceMatchReplyPrivate;
+class Q_LOCATION_EXPORT QPlaceMatchReply : public QPlaceReply
 {
     Q_OBJECT
-
-    Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
-    Q_INTERFACES(QDeclarativeParserStatus)
-
 public:
-    explicit QDeclarativeRecommendationModel(QObject *parent = 0);
-    ~QDeclarativeRecommendationModel();
+    explicit QPlaceMatchReply(QObject *parent = 0);
+    ~QPlaceMatchReply();
 
-    QString placeId() const;
-    void setPlaceId(const QString &placeId);
+    QPlaceReply::Type type() const;
 
-signals:
-    void placeIdChanged();
+    QList<QPlace> places() const;
+    QPlaceMatchRequest request() const;
 
 protected:
-    QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
-
+    void setPlaces(const QList<QPlace> &results);
+    void setRequest(const QPlaceMatchRequest &request);
 private:
-    QString m_placeId;
+    Q_DISABLE_COPY(QPlaceMatchReply)
+    Q_DECLARE_PRIVATE(QPlaceMatchReply)
 };
 
 QT_END_NAMESPACE
 
-#endif // QDECLARATIVERECOMMENDATIONMODEL_P_H
+QT_END_HEADER
+
+#endif

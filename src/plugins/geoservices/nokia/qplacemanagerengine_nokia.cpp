@@ -62,7 +62,6 @@
 #include "places/unsupportedreplies.h"
 
 QT_USE_NAMESPACE
-Q_DECLARE_METATYPE(QPlaceReply::Error)
 
 QPlaceManagerEngineNokia::QPlaceManagerEngineNokia(const QMap<QString, QVariant> &parameters,
                                                  QGeoServiceProvider::Error *error,

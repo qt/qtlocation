@@ -105,6 +105,8 @@ public:
         return QString::fromLatin1("[?%1=\"%2\"][?%3 = \"%4\"]")
                 .arg(JsonConverter::Type).arg(JsonConverter::CategoryType).arg(JsonConverter::Uuid).arg(categoryUuid);
     }
+
+    QPlaceMatchReply * matchingPlaces(const QPlaceMatchRequest &request);
 public slots:
     void processJsonDbResponse(int id, const QVariant &data);
     void processJsonDbError(int id, int code, const QString &error);

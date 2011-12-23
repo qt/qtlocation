@@ -20,13 +20,16 @@ PUBLIC_HEADERS += \
     places/qplacesearchresult.h \
 #request classes
     places/qplacecontentrequest.h \
+    places/qplacematchrequest.h \
     places/qplacesearchrequest.h \
 #reply classes
     places/qplacereply.h \
     places/qplacedetailsreply.h \
     places/qplaceidreply.h \
+    places/qplacematchreply.h \
     places/qplacesearchreply.h \
     places/qplacesearchsuggestionreply.h \
+    places/unsupportedreplies_p.h \
 #manager and engine
     places/qplacemanager.h \
     places/qplacemanagerengine.h
@@ -70,10 +73,12 @@ SOURCES += \
     places/qplacesearchresult.cpp \
 #request classes
     places/qplacecontentrequest.cpp \
+    places/qplacematchrequest.cpp \
     places/qplacesearchrequest.cpp \
 #reply classes
     places/qplacereply.cpp \
     places/qplacedetailsreply.cpp \
+    places/qplacematchreply.cpp \
     places/qplacesearchreply.cpp \
     places/qplacesearchsuggestionreply.cpp \
 #manager and engine

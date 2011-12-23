@@ -43,10 +43,13 @@
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativeplaceicon_p.h"
 
+#include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceSearchReply>
 #include <QtLocation/QPlaceManager>
+#include <QtLocation/QPlaceMatchRequest>
+#include <QtLocation/QPlaceMatchReply>
 
 QT_USE_NAMESPACE
 
@@ -115,6 +118,35 @@ QT_USE_NAMESPACE
 */
 
 /*!
+    \qmlproperty Plugin PlaceSearchModel::favoritesPlugin
+
+    This property holds the \l Plugin which will be used to search for favorites.
+    Any places from the search which can be cross-referenced/matched
+    in the favorites \l Plugin will have their \l {Place::favorite}{favorite} property
+    set with the \l Place from the favorites \l Plugin.
+
+    If the favoritesPlugin is not set, the \l {Place::favorite}{favorite} property
+    of the places in the results will always be null.
+
+    \sa Favorites
+*/
+
+/*!
+    \qmlproperty VariantMap PlaceSearchModel::favoritesMatchParameters
+
+    This property holds a set of parameters used to specify how search result places
+    are matched to favorites in the favoritesPlugin.
+
+    By default the parameter map is empty and implies that the favorites plugin
+    matches by \l {Alternative Id cross-referencing}{alternative ids}.  Generally,
+    an application developer will not need to set this property.
+
+    In cases where the favorites plugin does not support matching by alternative ids,
+    then the \l {Information about plugins} {backend plugin documentation} should be consulted
+    to see precisely what key-value parameters to set.
+*/
+
+/*!
     \qmlproperty BoundingArea PlaceSearchModel::searchArea
 
     This property holds the search area.  The search result returned by the model will be within
@@ -177,12 +209,10 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
-:   QDeclarativeSearchModelBase(parent)
+:   QDeclarativeResultModelBase(parent)
 {
     QHash<int, QByteArray> roles = roleNames();
     roles.insert(SearchResultTypeRole, "type");
-    roles.insert(DistanceRole, "distance");
-    roles.insert(PlaceRole, "place");
     roles.insert(CorrectionRole, "correction");
     setRoleNames(roles);
 }
@@ -364,84 +394,19 @@ void QDeclarativeSearchResultModel::setVisibilityScope(QDeclarativePlace::Visibi
     emit visibilityScopeChanged();
 }
 
-void QDeclarativeSearchResultModel::clearData()
-{
-    qDeleteAll(m_places);
-    m_places.clear();
-    m_results.clear();
-}
-
-void QDeclarativeSearchResultModel::updateSearchRequest()
-{
-    QDeclarativeSearchModelBase::updateSearchRequest();
-}
-
-void QDeclarativeSearchResultModel::processReply(QPlaceReply *reply)
-{
-    QPlaceSearchReply *searchReply = qobject_cast<QPlaceSearchReply *>(reply);
-    if (!searchReply)
-        return;
-
-    m_results = searchReply->results();
-
-    foreach (const QPlaceSearchResult &result, m_results) {
-        QDeclarativePlace *place = new QDeclarativePlace(result.place(),plugin(), this);
-        m_places.append(place);
-    }
-    emit rowCountChanged();
-}
-
-int QDeclarativeSearchResultModel::rowCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent);
-
-    return m_results.count();
-}
-
-/*!
-    \qmlmethod PlaceSearchResult::data(int index, string role)
-
-    Returns the data for a given \a role at the specified \a index.
-*/
-QVariant QDeclarativeSearchResultModel::data(int index, const QString &role) const
-{
-    QModelIndex modelIndex = createIndex(index, 0);
-    return data(modelIndex, roleNames().key(role.toLatin1()));
-}
-
 QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role) const
 {
     if (index.row() > m_results.count())
         return QVariant();
 
-    const QPlaceSearchResult &result = m_results.at(index.row());
-
-    if (result.type() == QPlaceSearchResult::PlaceResult) {
-        switch (role) {
-        case Qt::DisplayRole:
-            return result.place().name();
-        case SearchResultTypeRole:
-            return result.type();
-        case DistanceRole:
-            return result.distance();
-        case PlaceRole:
-            return QVariant::fromValue(static_cast<QObject *>(m_places.at(index.row())));
-        default:
-            return QVariant();
-        }
-    } else if (result.type() == QPlaceSearchResult::CorrectionResult) {
-        switch (role) {
-        case Qt::DisplayRole:
-        case CorrectionRole:
-            return result.correction();
-        case SearchResultTypeRole:
-            return result.type();
-        default:
-            return QVariant();
-        }
+    switch (role) {
+    case SearchResultTypeRole:
+        return m_results.at(index.row()).type();
+    case CorrectionRole:
+        return m_results.at(index.row()).correction();
+    default:
+        return QDeclarativeResultModelBase::data(index, role);
     }
-
-    return QVariant();
 }
 
 QPlaceReply *QDeclarativeSearchResultModel::sendQuery(QPlaceManager *manager,
@@ -478,6 +443,18 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
     }
     QDeclarativeSearchModelBase::initializePlugin(plugin);
 }
+
+/*!
+    \qmlmethod PlaceSearchModel::data(int index, string role)
+
+    Returns the data for a given \a role at the specified row \a index.
+*/
+
+/*!
+    \qmlproperty string PlaceSearchModel::count
+
+    This properties holds the number of results the model has.
+*/
 
 void QDeclarativeSearchResultModel::placeUpdated(const QString &placeId)
 {

@@ -217,13 +217,6 @@ void QDeclarativeSearchSuggestionModel::updateSearchRequest()
     QDeclarativeSearchModelBase::updateSearchRequest();
 }
 
-void QDeclarativeSearchSuggestionModel::processReply(QPlaceReply *reply)
-{
-    QPlaceSearchSuggestionReply *suggestionReply = qobject_cast<QPlaceSearchSuggestionReply *>(reply);
-    m_suggestions = suggestionReply->suggestions();
-    emit suggestionsChanged();
-}
-
 int QDeclarativeSearchSuggestionModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent)
@@ -246,6 +239,33 @@ QVariant QDeclarativeSearchSuggestionModel::data(const QModelIndex& index, int r
     }
 
     return QVariant();
+}
+
+void QDeclarativeSearchSuggestionModel::queryFinished()
+{
+    if (!m_reply)
+        return;
+
+    QPlaceReply *reply = m_reply;
+    m_reply = 0;
+
+    beginResetModel();
+
+    clearData();
+
+    QPlaceSearchSuggestionReply *suggestionReply = qobject_cast<QPlaceSearchSuggestionReply *>(reply);
+    m_suggestions = suggestionReply->suggestions();
+    emit suggestionsChanged();
+
+    endResetModel();
+
+    if (suggestionReply->error() != QPlaceReply::NoError)
+        setStatus(Error, suggestionReply->errorString());
+    else
+        setStatus(Ready);
+
+
+    reply->deleteLater();
 }
 
 QPlaceReply *QDeclarativeSearchSuggestionModel::sendQuery(QPlaceManager *manager,

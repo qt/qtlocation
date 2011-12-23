@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,58 +39,61 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVESEARCHSUGGESTIONMODEL_P_H
-#define QDECLARATIVESEARCHSUGGESTIONMODEL_P_H
+#ifndef QDECLARATIVERESULTMODELBASE_H
+#define QDECLARATIVERESULTMODELBASE_H
 
 #include "qdeclarativesearchmodelbase.h"
+#include "qdeclarativeplace_p.h"
 
-#include <QtCore/QStringList>
+#include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/QPlaceSearchReply>
 
-QT_BEGIN_NAMESPACE
-
-class QDeclarativeGeoServiceProvider;
-class QGeoServiceProvider;
-
-class QDeclarativeSearchSuggestionModel : public QDeclarativeSearchModelBase
+class QDeclarativeResultModelBase : public QDeclarativeSearchModelBase
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
-    Q_PROPERTY(QStringList suggestions READ suggestions NOTIFY suggestionsChanged)
-
 public:
-    explicit QDeclarativeSearchSuggestionModel(QObject *parent = 0);
-    ~QDeclarativeSearchSuggestionModel();
+    Q_PROPERTY(int count READ rowCount NOTIFY rowCountChanged)
+    Q_PROPERTY(QDeclarativeGeoServiceProvider *favoritesPlugin READ favoritesPlugin WRITE setFavoritesPlugin NOTIFY favoritesPluginChanged)
+    Q_PROPERTY(QVariantMap favoritesMatchParameters READ favoritesMatchParameters WRITE setFavoritesMatchParameters NOTIFY favoritesMatchParametersChanged)
 
-    QString searchTerm() const;
-    void setSearchTerm(const QString &searchTerm);
+    explicit QDeclarativeResultModelBase(QObject *parent = 0);
 
-    QStringList suggestions() const;
+    QDeclarativeGeoServiceProvider* favoritesPlugin() const;
+    void setFavoritesPlugin(QDeclarativeGeoServiceProvider *plugin);
 
-    void clearData();
-    void updateSearchRequest();
+    QVariantMap favoritesMatchParameters() const;
+    void setFavoritesMatchParameters(const QVariantMap &parameters);
 
-    // From QAbstractListModel
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    enum Roles {
-        SearchSuggestionRole = Qt::UserRole
-    };
+    virtual void clearData();
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const;
+    Q_INVOKABLE QVariant data(int index, const QString &roleName) const;
+
+signals:
+    void rowCountChanged();
+    void favoritesPluginChanged();
+    void favoritesMatchParametersChanged();
 
 protected slots:
     virtual void queryFinished();
 
-signals:
-    void searchTermChanged();
-    void suggestionsChanged();
+private slots:
+    void updateLayout(const QList<QPlace> &favoritePlaces = QList<QPlace>());
 
 protected:
-    QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
+    enum Roles {
+        DistanceRole = Qt::UserRole,
+        PlaceRole
+    };
 
-private:
-    QStringList m_suggestions;
+    QList<QPlaceSearchResult> m_results;
+    QList<QPlaceSearchResult> m_resultsBuffer;
+    QList<QDeclarativePlace *> m_places;
+
+    QDeclarativeGeoServiceProvider *m_favoritesPlugin;
+    QVariantMap m_matchParameters;
 };
-
-QT_END_NAMESPACE
 
 #endif

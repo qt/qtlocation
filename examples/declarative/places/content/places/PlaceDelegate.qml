@@ -188,31 +188,34 @@ Item {
                 Item {
                     width: parent.width
                     height: childrenRect.height
+
                     Button {
                         id: saveButton;
-                        property Place favoritePlace
                         function updateSaveStatus() {
                             if (updateSaveStatus.prevStatus === Place.Saving) {
-                                switch (favoritePlace.status) {
+                                switch (place.favorite.status) {
                                 case Place.Ready:
-                                    visible = false;
-                                    saveStatus.text = "Save Successful";
-                                    saveStatus.visible = true;
                                     break;
                                 case Place.Error:
-                                    saveStatus.anchors.top = saveButton.bottom
                                     saveStatus.text = "Save Failed";
                                     saveStatus.visible = true;
                                     break;
                                 default:
                                 }
+                            } else if (updateSaveStatus.prevStatus == Place.Removing) {
+                                place.favorite = null;
+                                updateSaveStatus.prevStatus = Place.Ready
+                                return;
+
                             }
-                            updateSaveStatus.prevStatus = favoritePlace.status;
+
+                            updateSaveStatus.prevStatus = place.favorite.status;
                         }
 
                         function reset()
                         {
-                            saveButton.visible = (placesPlugin.name !== "nokia_places_jsondb");
+                            saveButton.visible = (placesPlugin.name !== "nokia_places_jsondb")
+                                                && (placeSearchModel.favoritesPlugin !== null);
                             saveStatus.visible = false;
                         }
 
@@ -221,18 +224,23 @@ Item {
                             placeDelegate.placeChanged.connect(reset);
                         }
 
-                        text: qsTr("Save as Favorite");
+                        text: (place.favorite !== null) ? qsTr("Remove Favorite") : qsTr("Save as Favorite");
                         onClicked:  {
-                            favoritePlace = Qt.createQmlObject('import QtLocation 5.0; Place { }', saveButton);
-                            favoritePlace.plugin = jsonDbPlugin;
-                            favoritePlace.copyFrom(place);
-                            favoritePlace.statusChanged.connect(updateSaveStatus);
-                            favoritePlace.save();
+                            if (place.favorite === null) {
+                                place.initializeFavorite(jsonDbPlugin);
+                                place.favorite.statusChanged.connect(updateSaveStatus);
+                                place.favorite.save();
+                            } else {
+                                place.favorite.statusChanged.connect(updateSaveStatus);
+                                place.favorite.remove();
+                            }
                         }
                     }
 
                     Text {
                         id: saveStatus
+                        anchors.top:  saveButton.bottom
+                        visible: false
                     }
                 }
             }

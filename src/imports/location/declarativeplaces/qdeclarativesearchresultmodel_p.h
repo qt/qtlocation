@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVESEARCHRESULTMODEL_P_H
 #define QDECLARATIVESEARCHRESULTMODEL_P_H
 
-#include "qdeclarativesearchmodelbase.h"
+#include "qdeclarativeresultmodelbase_p.h"
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativeplace_p.h"
 
@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoServiceProvider;
 
-class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
+class QDeclarativeSearchResultModel : public QDeclarativeResultModelBase
 {
     Q_OBJECT
 
@@ -59,7 +59,6 @@ class QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
     Q_PROPERTY(int maximumCorrections READ maximumCorrections WRITE setMaximumCorrections NOTIFY maximumCorrectionsChanged)
     Q_PROPERTY(RelevanceHint relevanceHint READ relevanceHint WRITE setRelevanceHint NOTIFY relevanceHintChanged)
     Q_PROPERTY(QDeclarativePlace::Visibility visibilityScope READ visibilityScope WRITE setVisibilityScope NOTIFY visibilityScopeChanged)
-    Q_PROPERTY(int count READ rowCount NOTIFY rowCountChanged)
 
     Q_ENUMS(SearchResultType RelevanceHint)
 
@@ -98,20 +97,7 @@ public:
     QDeclarativePlace::Visibility visibilityScope() const;
     void setVisibilityScope(QDeclarativePlace::Visibility visibilityScope);
 
-    void clearData();
-    void updateSearchRequest();
-    void processReply(QPlaceReply *reply);
-
-    // From QAbstractListModel
-    int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
-    enum Roles {
-        SearchResultTypeRole = Qt::UserRole,
-        DistanceRole,
-        PlaceRole,
-        CorrectionRole
-    };
-    Q_INVOKABLE QVariant data(int index, const QString &roleName) const;
 
 signals:
     void searchTermChanged();
@@ -119,7 +105,6 @@ signals:
     void maximumCorrectionsChanged();
     void relevanceHintChanged();
     void visibilityScopeChanged();
-    void rowCountChanged();
 
 protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
@@ -130,9 +115,12 @@ private slots:
     void placeRemoved(const QString &placeId);
 
 private:
+    enum Roles {
+        SearchResultTypeRole = QDeclarativeResultModelBase::PlaceRole + 1,
+        CorrectionRole
+    };
+
     int getRow(const QString &placeId) const;
-    QList<QPlaceSearchResult> m_results;
-    QList<QDeclarativePlace *> m_places;
     QList<QDeclarativeCategory*> m_categories;
     QtLocation::VisibilityScope m_visibilityScope;
 };

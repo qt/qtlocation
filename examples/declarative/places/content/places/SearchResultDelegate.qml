@@ -63,8 +63,16 @@ Item {
             Column {
                 width: parent.width
 
-                Text { text: place.name }
+                Row {
+                    Image {
+                        visible: (place.favorite != null)
+                        source: "../../resources/star.png"
+                        height: placeName.height
+                        fillMode: Image.PreserveAspectFit
+                    }
 
+                    Text { id: placeName; text: place.favorite ? place.favorite.name : place.name }
+                }
                 Text { text: distance + "m" }
             }
         }
