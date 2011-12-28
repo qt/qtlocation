@@ -1054,9 +1054,11 @@ void tst_QGeoBoundingBox::containsCoord_data()
     double latT3 = 90.0;
     double latTI3 = 80.0;
     double latC3 = 70.0;
+    /* current unused:
     double latBI3 = 60.0;
     double latB3 = 50.0;
     double latBO3 = 40.0;
+    */
 
     QTest::newRow("north pole - in center")
             << b3 << QGeoCoordinate(latC3, lonC3) << true;
@@ -1099,9 +1101,11 @@ void tst_QGeoBoundingBox::containsCoord_data()
     double lonR4 = 70.0;
     double lonRO4 = 80.0;
 
+    /* currently unused:
     double latTO4 = -40.0;
     double latT4 = -50.0;
     double latTI4 = -60.0;
+    */
     double latC4 = -70.0;
     double latBI4 = -80.0;
     double latB4 = -90.0;

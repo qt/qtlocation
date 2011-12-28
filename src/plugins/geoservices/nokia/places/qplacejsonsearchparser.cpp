@@ -72,7 +72,9 @@
 static const char *search_results_element = "results";
 static const char *search_type_element = "type";
 static const char *search_type_dym_value = "DID_YOU_MEAN_SEARCH";
+/* currently unused:
 static const char *search_type_addplace_value = "ADPLACE";
+*/
 
 static const char *search_categories_element = "categories";
 static const char *search_categories_id_value = "id";

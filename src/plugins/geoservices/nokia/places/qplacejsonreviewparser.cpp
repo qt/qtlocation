@@ -71,9 +71,7 @@ static const char *review_count = "totalNumberOfReviews";
 static const char *review_id_element = "a_id";
 static const char *review_date_element = "creationDate";
 static const char *review_description_element = "description";
-static const char *review_minus_element = "minusCount";
 static const char *review_originator_element = "originatorUrl";
-static const char *review_plus_element = "plusCount";
 static const char *review_rating_element = "rating";
 static const char *review_title_element = "title";
 static const char *review_username_element = "user";
@@ -81,6 +79,11 @@ static const char *review_userid_element = "uuid";
 static const char *review_vendor_element = "vendor";
 static const char *review_vendorname_element = "vendorDisplayName";
 static const char *review_vendoricon_element = "vendorIconUrl";
+
+/* currently unused:
+static const char *review_minus_element = "minusCount";
+static const char *review_plus_element = "plusCount";
+*/
 
 QT_USE_NAMESPACE
 

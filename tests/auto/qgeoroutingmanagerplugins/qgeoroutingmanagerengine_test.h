@@ -74,11 +74,14 @@ public:
 
     QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request)
     {
+        Q_UNUSED(request);
         return new QGeoRouteReply(QGeoRouteReply::NoError,"no error");
     }
 
     QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
     {
+        Q_UNUSED(route);
+        Q_UNUSED(position);
         return new QGeoRouteReply(QGeoRouteReply::CommunicationError,"no error");
 
     }

@@ -151,6 +151,7 @@ QPlaceManager *QPlaceManagerEngine::manager() const
 */
 QPlace QPlaceManagerEngine::compatiblePlace(const QPlace &original) const
 {
+    Q_UNUSED(original);
     return QPlace();
 }
 

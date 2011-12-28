@@ -73,7 +73,9 @@
 //search const
 static const char *place_place_element = "place";
 static const char *place_id_element = "a_id";
+/* currently unused:
 static const char *place_is_ad_place_value = "isAdPlace";
+*/
 
 static const char *place_provider = "provider";
 static const char *place_provider_url = "providerUrl";
@@ -85,7 +87,9 @@ static const char *place_contact_email_element = "email";
 static const char *place_contact_fax_element = "fax";
 static const char *place_contact_phone_element = "phone";
 static const char *place_contact_website_element = "website";
+/* currently unused:
 static const char *place_contact_im_element = "im";
+*/
 
 static const char *place_tags_element = "tags";
 static const char *place_tags_value_element = "value";
@@ -95,7 +99,9 @@ static const char *place_alternativenames_element = "alternativeNames";
 static const char *place_name_default_element = "defaultName";
 static const char *place_name_localized_element = "localizedName";
 static const char *place_name_value_element = "name";
+/* currently unused:
 static const char *place_name_language_element = "language";
+*/
 
 static const char *place_ratings_element = "averageRatings";
 static const char *place_rating_element = "averageRating";
@@ -149,6 +155,7 @@ static const char *place_adcontent_hours_open_to_element = "openTo";
 static const char *place_adcontent_hours_openingnotes_element = "openingnotes";
 static const char *place_adcontent_hours_openingnote_element = "openingnote";
 static const char *place_adcontent_hours_openingnote_v_element = "_v";
+/* currently unused:
 static const char *place_adcontent_packages_element = "packages";
 static const char *place_adcontent_package_element = "package";
 static const char *place_adcontent_package_type_element = "packageType";
@@ -160,6 +167,7 @@ static const char *place_package_type_ad_place = "ADPLACE";
 static const char *place_package_type_ad_place_prime_plus = "ADPLACE, PRIME_PLUS";
 static const char *place_package_type_ad_place_prime_plus_plus = "ADPLACE, PRIME_PLUS_PLUS";
 static const char *place_package_type_place = "PLACE";
+*/
 
 static const char *place_premiumcontent_element = "premiumContent";
 static const char *place_premiumcontent_version_element = "version";

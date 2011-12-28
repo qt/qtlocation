@@ -57,6 +57,8 @@ public:
         QGeoServiceProvider *provider = new QGeoServiceProvider("provider name");
         QPlaceManager *manager = provider->placeManager();
         //! [Initialize Manager]
+        Q_UNUSED(provider);
+        Q_UNUSED(manager);
     }
 
     void simpleSearch()
@@ -270,6 +272,7 @@ public:
         //..connect signals..//
 
         //! [Content request]
+        Q_UNUSED(contentReply);
     }
 
     void contentConversion()

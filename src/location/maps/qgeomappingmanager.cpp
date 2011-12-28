@@ -190,6 +190,7 @@ void QGeoMappingManager::registerMap(Map *map)
 
 void QGeoMappingManager::deregisterMap(Map *map)
 {
+    Q_UNUSED(map);
 //    TileCache *cache = map->tileCache();
 //    QSet<Map*> maps = d_ptr->caches.value(cache);
 //    maps.remove(map);
