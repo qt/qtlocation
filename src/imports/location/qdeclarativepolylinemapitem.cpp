@@ -156,6 +156,18 @@ void QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged()
     updateMapItem();
 }
 
+void QDeclarativePolylineMapItem::updateAfterCoordinateChanged()
+{
+    QDeclarativeCoordinate *coord = qobject_cast<QDeclarativeCoordinate*>(QObject::sender());
+    if (coord) {
+        // TODO: maybe use a QHash instead of indexOf here?
+        int idx = this->coordPath_.indexOf(coord);
+        this->path_.replace(idx, coord->coordinate());
+        this->dirtyGeometry_ = true;
+        this->updateMapItem();
+    }
+}
+
 void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
@@ -186,6 +198,10 @@ void QDeclarativePolylineMapItem::path_append(QDeclarativeListProperty<QDeclarat
 {
     QDeclarativePolylineMapItem* item = qobject_cast<QDeclarativePolylineMapItem*>(
                 property->object);
+
+    QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
+                     item, SLOT(updateAfterCoordinateChanged()));
+
     item->coordPath_.append(coordinate);
     item->path_.append(coordinate->coordinate());
     item->dirtyGeometry_ = true;
@@ -230,6 +246,10 @@ void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordina
 {
     coordPath_.append(coordinate);
     path_.append(coordinate->coordinate());
+
+    QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
+                     this, SLOT(updateAfterCoordinateChanged()));
+
     dirtyGeometry_ = true;
     updateMapItem();
     emit pathChanged();
@@ -259,6 +279,10 @@ void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate* coord
     }
     coordPath_.removeAt(index);
     path_.removeAt(index);
+
+    QObject::disconnect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
+                        this, SLOT(updateAfterCoordinateChanged()));
+
     dirtyGeometry_ = true;
     updateMapItem();
     emit pathChanged();

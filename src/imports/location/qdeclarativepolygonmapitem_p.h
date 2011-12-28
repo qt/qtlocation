@@ -90,6 +90,7 @@ protected Q_SLOTS:
 private Q_SLOTS:
     // map size changed
     void handleCameraDataChanged(const CameraData& cameraData);
+    void updateAfterCoordinateChanged();
 
 private:
     static void path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);

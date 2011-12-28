@@ -107,6 +107,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
     virtual void updateMapItem();
     void updateAfterLinePropertiesChanged();
+    void updateAfterCoordinateChanged();
 
 private Q_SLOTS:
     // map size changed
