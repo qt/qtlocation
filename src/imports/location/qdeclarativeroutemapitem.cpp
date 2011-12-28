@@ -46,6 +46,16 @@
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtGui/QPainter>
 
+/*!
+    \qmlclass MapRoute QDeclarativeRouteMapItem
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-maps
+    \since QtLocation 5.0
+
+    \brief The MapRoute element displays a route on the map.
+
+    \sa MapPolyline
+*/
 
 static void updatePolyline(QPolygonF& points,const Map& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
 {
@@ -116,6 +126,11 @@ void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
     }
 }
 
+/*!
+    \qmlproperty GeoRoute MapRoute::route
+
+    Holds the route to be drawn.
+*/
 QDeclarativeGeoRoute* QDeclarativeRouteMapItem::route() const
 {
     return route_;
@@ -158,6 +173,18 @@ QSGNode* QDeclarativeRouteMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaint
     }
     return node;
 }
+
+/*!
+    \qmlproperty int MapRoute::line.width
+    \qmlproperty color MapRoute::line.color
+
+    These properties hold the width and color used to draw the line.
+
+    The width is in pixels and is independent of the zoom level of the map.
+    The default values correspond to a black border with a width of 1 pixel.
+
+    For no line, use a width of 0 or a transparent color.
+*/
 
 QDeclarativeMapLineProperties *QDeclarativeRouteMapItem::line()
 {

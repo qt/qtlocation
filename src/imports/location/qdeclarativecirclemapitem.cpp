@@ -48,6 +48,19 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass MapCircle QDeclarativeCircleMapItem
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-maps
+    \since QtLocation 5.0
+
+    \brief The MapCircle element displays a geographic circle on a map.
+
+    A geographic circle consists of all points that are at a set distance
+    from one central point. MapCircle displays such a circle, based on the
+    center and radius properties given.
+*/
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -176,6 +189,16 @@ QDeclarativeCircleMapItem::~QDeclarativeCircleMapItem()
 {
 }
 
+/*!
+    \qmlproperty int MapCircle::border.width
+    \qmlproperty color MapCircle::border.color
+
+    These properties hold the width and color used to draw the border of the circle.
+    The width is in pixels and is independent of the zoom level of the map.
+
+    The default values correspond to a black border with a width of 1 pixel.
+    For no line, use a width of 0 or a transparent color.
+*/
 QDeclarativeMapLineProperties *QDeclarativeCircleMapItem::border()
 {
     return &border_;
@@ -197,6 +220,13 @@ void QDeclarativeCircleMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
     }
 }
 
+/*!
+    \qmlproperty Coordinate MapCircle::center
+
+    This property holds the central point about which the circle is defined.
+
+    \sa radius
+*/
 void QDeclarativeCircleMapItem::setCenter(QDeclarativeCoordinate *center)
 {
     if (center_ == center)
@@ -220,6 +250,12 @@ QDeclarativeCoordinate* QDeclarativeCircleMapItem::center()
     return center_;
 }
 
+/*!
+    \qmlproperty color MapCircle::color
+
+    This property holds the fill color of the circle when drawn. For no fill,
+    use a transparent color.
+*/
 void QDeclarativeCircleMapItem::setColor(const QColor &color)
 {
     if (color_ == color)
@@ -235,6 +271,13 @@ QColor QDeclarativeCircleMapItem::color() const
     return color_;
 }
 
+/*!
+    \qmlproperty qreal MapCircle::radius
+
+    This property holds the radius of the circle, in meters on the ground.
+
+    \sa center
+*/
 void QDeclarativeCircleMapItem::setRadius(qreal radius)
 {
     if (radius_ == radius)

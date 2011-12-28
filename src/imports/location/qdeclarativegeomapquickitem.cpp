@@ -49,9 +49,23 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass MapQuickItem
+    \qmlclass MapQuickItem QDeclarativeGeoMapQuickItem
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-maps
+    \since QtLocation 5.0
 
-    The MapQuickItem element is part of the \bold{QtLocation 5.0} module.
+    \brief The MapQuickItem element displays an arbitrary Qt Quick element
+           at a specified geographic location on a map.
+
+    The displayed element is contained in the sourceItem property. The
+    anchorPoint property controls the point on the sourceItem that should be
+    kept anchored to the geographic coordinate of the MapQuickItem. One common
+    use of the MapQuickItem is to display a simple image on the map:
+
+    \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-top
+    \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-anchor
+    \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-closeimage
+    \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-close
 */
 
 QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
@@ -67,6 +81,13 @@ QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
 
 QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
 
+/*!
+    \qmlproperty Coordinate MapQuickItem::coordinate
+
+    This property holds the anchor coordinate of the MapQuickItem. The point
+    on the sourceItem that is specified by anchorPoint is kept aligned with
+    this coordinate when drawn on the map.
+*/
 void QDeclarativeGeoMapQuickItem::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
     if (coordinate_ == coordinate)
@@ -122,6 +143,11 @@ QDeclarativeCoordinate* QDeclarativeGeoMapQuickItem::coordinate()
     return coordinate_;
 }
 
+/*!
+    \qmlproperty object MapQuickItem::sourceItem
+
+    This property holds the source item that will be drawn on the map.
+*/
 void QDeclarativeGeoMapQuickItem::setSourceItem(QQuickItem* sourceItem)
 {
     if (sourceItem == sourceItem_)
@@ -138,6 +164,12 @@ QQuickItem* QDeclarativeGeoMapQuickItem::sourceItem()
     return sourceItem_;
 }
 
+/*!
+    \qmlproperty QPointF MapQuickItem::anchorPoint
+
+    This property determines which point on the sourceItem will be lined up
+    with the coordinate on the map.
+*/
 void QDeclarativeGeoMapQuickItem::setAnchorPoint(const QPointF &anchorPoint)
 {
     if (anchorPoint == anchorPoint_)
@@ -152,6 +184,11 @@ QPointF QDeclarativeGeoMapQuickItem::anchorPoint() const
     return anchorPoint_;
 }
 
+/*!
+    \qmlproperty qreal MapQuickItem::zoomLevel
+
+    TODO: document this property
+*/
 void QDeclarativeGeoMapQuickItem::setZoomLevel(qreal zoomLevel)
 {
     if (zoomLevel == zoomLevel_)

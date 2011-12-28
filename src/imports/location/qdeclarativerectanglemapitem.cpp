@@ -44,6 +44,18 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass MapRectangle QDeclarativeRectangleMapItem
+    \inqmlmodule QtLocation 5
+    \ingroup qml-QtLocation5-maps
+    \since QtLocation 5.0
+
+    \brief The MapRectangle element displays a rectangle on a Map.
+
+    The rectangle displayed by MapRectangle is defined by its topLeft and
+    bottomRight coordinates.
+*/
+
 struct Vertex
 {
     QVector2D position;
@@ -78,11 +90,26 @@ void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map
     }
 }
 
+/*!
+    \qmlproperty int MapRectangle::border.width
+    \qmlproperty color MapRectangle::border.color
+
+    These properties hold the width and color used to draw the border of the rectangle.
+    The width is in pixels and is independent of the zoom level of the map.
+
+    The default values correspond to a black border with a width of 1 pixel.
+    For no line, use a width of 0 or a transparent color.
+*/
 QDeclarativeMapLineProperties *QDeclarativeRectangleMapItem::border()
 {
     return &border_;
 }
 
+/*!
+    \qmlproperty Coordinate MapRectangle::topLeft
+
+    Holds the top-left coordinate of the MapRectangle.
+*/
 void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
 {
     if (topLeft_ == topLeft)
@@ -111,6 +138,11 @@ void QDeclarativeRectangleMapItem::updateMapItemAssumeDirty()
     updateMapItem();
 }
 
+/*!
+    \qmlproperty Coordinate MapRectangle::bottomRight
+
+    Holds the bottom-right coordinate of the MapRectangle.
+*/
 void QDeclarativeRectangleMapItem::setBottomRight(QDeclarativeCoordinate *bottomRight)
 {
     if (bottomRight_ == bottomRight)
@@ -132,6 +164,12 @@ QDeclarativeCoordinate* QDeclarativeRectangleMapItem::bottomRight()
     return bottomRight_;
 }
 
+/*!
+    \qmlproperty color MapRectangle::color
+
+    This property holds the fill color of the rectangle. For no fill, use
+    a transparent color.
+*/
 QColor QDeclarativeRectangleMapItem::color() const
 {
     return color_;

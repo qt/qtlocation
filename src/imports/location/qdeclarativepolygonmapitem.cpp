@@ -56,8 +56,10 @@ QT_BEGIN_NAMESPACE
     The polygon is specified in terms of an ordered list of coordinates.
     Any invalid coordinates in the list will be ignored.
 
-    \sa MapItem
+    MapPolygon can only display simple, convex polygons. Support may be added
+    in future for concave polygons, but this is not currently available.
 
+    \sa MapItem
 */
 
 struct Vertex
@@ -276,7 +278,7 @@ void QDeclarativePolygonMapItem::removeCoordinate(QDeclarativeCoordinate* coordi
 /*!
     \qmlproperty color MapPolygon::color
 
-    This property holds the color used to fill the circle.
+    This property holds the color used to fill the polygon.
 
     The default value is transparent.
 */

@@ -46,9 +46,9 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass MapPolyline
+    \qmlclass MapPolyline QDeclarativePolylineMapItem
     \inqmlmodule QtLocation 5
-    \ingroup qml-location-maps
+    \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0
 
     \brief The MapPolyline element displays a polyline on a map.

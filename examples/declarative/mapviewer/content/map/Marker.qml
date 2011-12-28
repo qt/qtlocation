@@ -42,17 +42,22 @@ import QtQuick 2.0;
 import QtLocation 5.0
 import QtLocation.examples 5.0
 
-MapQuickItem {  //to be used inside MapComponent only
+//! [mqi-top]
+MapQuickItem {
     id: marker
+//! [mqi-top]
     property alias lastMouseX: markerMouseArea.lastX
     property alias lastMouseY: markerMouseArea.lastY
+
+//! [mqi-anchor]
     anchorPoint.x: image.width/4
     anchorPoint.y: image.height
 
     coordinate: Coordinate { latitude : 0; longitude : 0 }
 
-    sourceItem:  Image {
+    sourceItem: Image {
         id: image
+//! [mqi-anchor]
         source: markerMouseArea.containsMouse ? (markerMouseArea.pressed  ? "../../resources/marker_selected.png" :"../../resources/marker_hovered.png") : "../../resources/marker.png"
         MapMouseArea  {
             id: markerMouseArea
@@ -95,10 +100,14 @@ MapQuickItem {  //to be used inside MapComponent only
             }
         }
 
+//! [mqi-closeimage]
     }
+//! [mqi-closeimage]
 
     Component.onCompleted: {
         coordinate.longitude = mouseArea.lastCoordinate.longitude
         coordinate.latitude = mouseArea.lastCoordinate.latitude
     }
+//! [mqi-close]
 }
+//! [mqi-close]
