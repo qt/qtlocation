@@ -39,8 +39,8 @@
 ****************************************************************************/
 
 //![0]
-import Qt 4.7
-import QtMobility.location 1.1
+import QtQuick 2.0
+import QtLocation 5.0
 
 Rectangle {
         id: page
@@ -54,7 +54,8 @@ Rectangle {
         }
         Column {
             Text {text: "<==== PositionSource ====>"}
-            Text {text: "positioningMethod: "  + printableMethod(positionSource.positioningMethod)}
+            Text {text: "preferredPositioningMethods: "  + printableMethod(positionSource.preferredPositioningMethods)}
+            Text {text: "supportedPositioningMethods: "  + printableMethod(positionSource.supportedPositioningMethods)}
             Text {text: "nmeaSource: "         + positionSource.nmeaSource}
             Text {text: "updateInterval: "     + positionSource.updateInterval}
             Text {text: "active: "     + positionSource.active}

@@ -63,7 +63,6 @@ class QDeclarativePositionSource : public QObject
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval NOTIFY updateIntervalChanged)
     Q_PROPERTY(PositioningMethods supportedPositioningMethods READ supportedPositioningMethods NOTIFY supportedPositioningMethodsChanged)
     Q_PROPERTY(PositioningMethods preferredPositioningMethods READ preferredPositioningMethods WRITE setPreferredPositioningMethods NOTIFY preferredPositioningMethodsChanged)
-    Q_PROPERTY(PositioningMethod positioningMethod READ positioningMethod NOTIFY positioningMethodChanged)
     Q_ENUMS(PositioningMethod)
 
 public:
@@ -90,7 +89,6 @@ public:
     QDeclarativePosition* position();
     PositioningMethods supportedPositioningMethods() const;
     PositioningMethods preferredPositioningMethods() const;
-    PositioningMethod positioningMethod() const;
 
 
 public Q_SLOTS:
@@ -105,7 +103,6 @@ Q_SIGNALS:
     void updateIntervalChanged();
     void supportedPositioningMethodsChanged();
     void preferredPositioningMethodsChanged();
-    void positioningMethodChanged();
 
 
 private Q_SLOTS:

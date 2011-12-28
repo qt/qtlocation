@@ -698,11 +698,6 @@ QDeclarativeListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMa
 
     Returns an invalid coordinate if \a screenPosition is not within
     the current viewport.
-
-    An example to constraint landmarks of a model to just those
-    currently on Map:
-    \snippet examples/declarative-location/landmarkmap/landmarkmap.qml Map toCoordinate
-
 */
 
 QDeclarativeCoordinate* QDeclarativeGeoMap::toCoordinate(QPointF screenPosition) const
