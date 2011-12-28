@@ -98,14 +98,33 @@ Item {
         }
 
         function test_atDistanceAndAzimuth() {
-            var coord = zero.atDistanceAndAzimuth(20000, 30)
-            compare(coord.longitude > 0, true)
-            compare(coord.latitude > 0, true)
-            compare(zero.distanceTo(coord), 20000)
-            compare(zero.azimuthTo(coord), 30)
+            // 112km is approximately one degree of arc
 
-            var coord2 = coord.atDistanceAndAzimuth(200, 30)
-            compare(zero.distanceTo(coord2), 20200)
+            var coord_0d = zero.atDistanceAndAzimuth(112000, 0)
+            compare(coord_0d.latitude > 0.95, true)
+            compare(coord_0d.latitude < 1.05, true)
+            compare(coord_0d.longitude < 0.05, true)
+            compare(coord_0d.longitude > -0.05, true)
+            compare(zero.distanceTo(coord_0d), 112000)
+            compare(zero.azimuthTo(coord_0d), 0)
+
+            var coord_90d = zero.atDistanceAndAzimuth(112000, 90)
+            compare(coord_90d.longitude > 0.95, true)
+            compare(coord_90d.longitude < 1.05, true)
+            compare(coord_90d.latitude < 0.05, true)
+            compare(coord_90d.latitude > -0.05, true)
+            compare(zero.distanceTo(coord_90d), 112000)
+            compare(zero.azimuthTo(coord_90d), 90)
+
+            var coord_30d = zero.atDistanceAndAzimuth(20000, 30)
+            compare(coord_30d.longitude > 0, true)
+            compare(coord_30d.latitude > 0, true)
+            compare(zero.distanceTo(coord_30d), 20000)
+            compare(zero.azimuthTo(coord_30d), 30)
+
+            var coord_30d2 = coord_30d.atDistanceAndAzimuth(200, 30)
+            compare(zero.distanceTo(coord_30d2), 20200)
+
         }
 
     }
