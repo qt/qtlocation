@@ -43,31 +43,6 @@
 
 testcase = {
 
-/*
-    third_party_position_source: function()
-    {
-        // Test meta data
-        testTitle = "Location - Position Detection via Custom Plugin";
-        testBinary = "testQtLocation"; // this is part of BlueWeel project, sources are in git@scm.dev.nokia.troll.no:qtmobility/qtmobility-tests.git
-        testGoal = "Verify that positions can be detected using third party plugins";
-        testPreconditions = "GPS and internet connection is required for this test case";
-        testGroups = "BAT,1.2";
-        testRequirements = "QTMOBILITY-873: Allow 3rd party position sources";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select the Custom Service | Verify that no 'Unable to register location service' and 'Not valid interface.' messages appear |
-        | Press the Update Map button | Verify that map was loaded and correct current position is displayed |"
-        ));
-    },
-*/
     qml_select_service_provider: function()
     {
         // Test meta data
@@ -88,7 +63,7 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Pan the map | |
-        | Press Provider button | Verify that on of the providers is indicated as current service provider |
+        | Select Provider button | Verify that one of the providers is indicated as current service provider |
         | Select other provider | Verify that map is displayed on the screen with default location next to Brisbane |
         "));
     },
@@ -112,7 +87,7 @@ testcase = {
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. |
-        | Press Provider button | |
+        | Select Provider button | |
         | Select nokia provider | Map is displayed on the screen |
         | Zoom in the map to see *Brisbane* | |
         | Press and Hold on the square which represents Brisbane | |
@@ -140,31 +115,31 @@ testcase = {
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | Verify that map is loaded in *Street* view with the center next to Brisbane |
-        | Press Provider button | |
+        | Select Provider button | |
         | Select nokia provider | Verify that map is displayed in *Street* view |
-        | Press Map Type button | |
+        | Select Map Type button | |
         | Select Satelite Map(day) | Verify that map is displayed in *Satelite (day)* view |
         | Pan map | Verify that new map tiles are in *Satelite Map(day)* view |
         | Zoom in map | Verify that new map tiles are in *Satelite Map(day)* view |
-        | Press Map Type | |
+        | Select Map Type | |
         | Select Terrain Map | Verify that map is displayed in *Terrain (day)* view |
-        | Press Map Type | |
+        | Select Map Type | |
         | Select Hybrid Map | Verify that map is displayed in *Hybrid* view |
-        | Press Map Type | |
+        | Select Map Type | |
         | Select Transit Map | Verify that map is displayed in *Transit* view |
-        | Press Map Type | |
+        | Select Map Type | |
         | Select Gray Street Map | Verify that map is displayed in *Gray Street* view |
-        | Press Map Type | |
+        | Select Map Type | |
         | Select Mobile Street Map | Verify that map is displayed in *Mobile Street* view |
-        | Press Map Type | |
+        | Select Map Type | |
         | Select Mobile Terrain Map | Verify that map is displayed in *Mobile Terrain* view |
-        | Press Map Type | |
+        | Select Map Type | |
         | Select Mobile Hybrid Map | Verify that map is displayed in *Mobile Hybrid* view |
-        | Press Map Type | |
+        | Select Map Type | |
         | Select Mobile Transit Map | Verify that map is displayed in *Mobile Transit* view |
-        | Press Map Type | |
+        | Select Map Type | |
         | Select Mobile Gray Street Map | Verify that map is displayed in *Mobile Gray Street* view |
-        | Press Map Type | |
+        | Select Map Type | |
         | Select Street Map | Verify that map is displayed in *Street (day)* view |"
         ));
     },
@@ -242,7 +217,9 @@ testcase = {
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | Verify that map is loaded with the center next to Brisbane  |
-        | Pan a map | Verify that map center followed the finger/cursor. Verify that new tiles is uploaded if needed. |"
+        | Pan a map | Verify that map center followed the finger/cursor. Verify that new tiles is uploaded if needed. |
+        | Zoom in map close to the maximum zoom level | |
+        | Pan map | Verify that pan gesture worked as expected. |"
         ));
     },
 
@@ -301,13 +278,13 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
+        | Select Options button | |
         | Select Geocode menu item | |
-        | Press Clear All button | |
+        | Select Clear All button | |
         | Fill in " + street + " in Street filed | |
         | Fill in " + city + " in City field | |
         | Fill in " + country + " in Country field | |
-        | Press Go! button | |
+        | Select Go! button | |
         | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
         ));
     },
@@ -338,119 +315,17 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url1 + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
+        | Select Options button | |
         | Select Geocode menu item | |
         | Fill in " + city + " in City field | |
         | Fill in " + country + " in Country field | |
-        | Press Go! button | |
+        | Select Go! button | |
         | Wait for message appears on the screen | Verify that several locations were found, number of locations is the same as in the open web page |
         | Open " + url2 + " url in a desktop browser | |
-        | Press Options button | |
+        | Select Options button | |
         | Select Geocode menu item | |
         | Fill in " + state + " in State field | |
         | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
-        ));
-    },
-
-    qml_geocode_request_with_district_data: {
-        request:["Nizhny Novgorod", "Priokskiy rayon", "Russia"]
-    },
-
-    qml_geocode_request_with_district: function(city, district, country)
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Geocode district";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
-        testGroups = "BAT, 5.0";
-        testRequirements = "MTMW-236: QML Geocoding";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Press Clear All button | |
-        | Fill in " + city + " in City filed | |
-        | Fill in " + country + " in Country field | |
-        | Fill in " + district + " in District field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that geocode was successful with latitude *56.3217*, longitude *44.0331* |"
-        ));
-    },
-
-    qml_geocode_request_with_county_data: {
-        request:["Norfolk", "United Kingdom"]
-    },
-
-    qml_geocode_request_with_county: function(county, country)
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Geocode county";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
-        testGroups = "BAT, 5.0";
-        testRequirements = "MTMW-236: QML Geocoding";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Press Clear All button | |
-        | Fill in " + county + " in County filed | |
-        | Fill in " + country + " in Country field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that geocode was successful with latitude *52.614*, longitude *0.8864* |"
-        ));
-    },
-
-    qml_geocode_request_with_country_code_data: {
-        request:["AUS"]
-    },
-
-    qml_geocode_request_with_country_code: function(country_code)
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Geocode country code";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
-        testGroups = "BAT, 5.0";
-        testRequirements = "MTMW-236: QML Geocoding";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Geocode menu item | |
-        | Press Clear All button | |
-        | Fill in " + country_code + " in Country code field | |
-        | Press Go! button | |
-        | Wait for message appears on the screen | Verify that geocode is successful |"
         ));
     },
 
@@ -479,12 +354,12 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
+        | Select Options button | |
         | Select Geocode menu item | |
-        | Press Clear All button | |
+        | Select Clear All button | |
         | Fill in " + postcode + " in Post Code field | |
         | Fill in " + country + " in Country field | |
-        | Press Go! button | |
+        | Select Go! button | |
         | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
         ));
     },
@@ -516,12 +391,432 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
+        | Select Options button | |
         | Select Reverse Geocode | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
-        | Press Go! button | |
+        | Select Go! button | |
         | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
+        ));
+    },
+
+    qml_route_for_two_points_data: {
+        close_points:["-27.575", "153.088", "-27.465", "153.023", "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.575,153.088&waypoint1=-27.465,153.023&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T21:51:25Z&instructionformat=text&language=en_AU"],
+        medium_distant_points:["-27.4709", "153.0235", "-33.8689", "151.2071", "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.4709,153.0235&waypoint1=-33.8689,151.2071&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T21:52:33Z&instructionformat=text&language=en_AU"],
+        distant_points:["-27.4709", "153.0235", "56.3167", "44", "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.4709,153.0235&waypoint1=56.3167,44&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T21:54:35Z&instructionformat=text&language=en_AU"]
+    },
+
+    qml_route_for_two_points: function(lat1, long1, lat2, long2, url)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Route for two points";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Options button | |
+        | Select Route menu item | |
+        | Fill in " + lat1 + " in From Latitude field | |
+        | Fill in " + long1 + " in From Longitude filed | |
+        | Fill in " + lat2 + " in To Latitude field | |
+        | Fill in " + long2 + " in To Longitude filed | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+
+    qml_route_for_two_addresses_data: {
+        points:["Brandle st","Eight Mile Plains", "Australia", "Brunswick st", "New Farm", "Australia", "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5791,153.098&waypoint1=-27.4622,153.0398&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:03:58Z&instructionformat=text&language=en_AU"],
+    },
+
+
+    qml_route_for_two_addresses: function(street1, city1, country1, street2, city2, country2, url) {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Route for two addresses";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Options button | |
+        | Select Route menu item | |
+        | Select second option group to enter start and end points as address | |
+        | Fill in " + city1 + " in From City field | |
+        | Fill in " + country1 + " in From Country filed | |
+        | Fill in " + city2 + " in To City field | |
+        | Fill in " + country2 + " in To Country filed | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+    qml_route_for_three_points_data:{
+        points:["-27.575", "153.088", "-27.465", "153.023", "-27.3614", "153.0043", "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.575,153.088&waypoint1=-27.465,153.023&waypoint2=-27.36140072373,153.004295826&mode0=shortest;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:05:50Z&instructionformat=text&language=en_AU"]
+    },
+
+    qml_route_for_three_points: function(lat1, long1, lat2, long2, lat3, long3, url)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Route for several waypoints";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Long press on the map | |
+        | Select Set Marker menu item | |
+        | Create another Marker via Long Press | |
+        | Create third Marker | |
+        | Long Press on the first marker | |
+        | Select Move To menu item | |
+        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + long1 + " in Longitude | |
+        | Select Go! button | |
+        | Long Press on the second marker | |
+        | Select Move To menu item | |
+        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + long2 + " in Longitude | |
+        | Select Go! button | |
+        | Long Press on the third marker | |
+        | Select Move To menu item | |
+        | Fill in " + lat3 + " in Latitude filed | |
+        | Fill in " + long3 + " in Longitude | |
+        | Press Go! button | |
+        | Long press on the map | |
+        | Select Route To The Next Points | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+    qml_travel_mode_data: {
+        point:["-27.5789", "153.0919", "-27.5792", "153.096",
+               "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5789,153.0919&waypoint1=-27.5792,153.096&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:07:16Z&instructionformat=text&language=en_AU",
+               "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5789,153.0919&waypoint1=-27.5792,153.096&mode0=fastestNow;pedestrian&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:07:51Z&instructionformat=text&language=en_AU"]
+    },
+
+    qml_travel_mode: function(lat1, long1, lat2, long2, url1, url2)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Travel mode (Car and Pedestrian)";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url1 + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Options button | |
+        | Select Route menu item | |
+        | Selec first option group | |
+        | Fill in " + lat1 + " in From Latitude field | |
+        | Fill in " + long1 + " in From Longitude filed | |
+        | Fill in " + lat2 + " in To Latitude field | |
+        | Fill in " + long2 + " in To Longitude filed | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
+        | Open " + url2 + " url in a desktop browser | |
+        | Select Options button | |
+        | Select Route menu item | |
+        | Select *Pedestrian* option button | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+    qml_travel_feature_type: {
+        points:["-27.5299", "153.0713", "-27.4395", "153.0504",
+                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5299,153.0713&waypoint1=-27.4395,153.0504&mode0=fastestNow;car;tollroad:-1&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:16:14Z&instructionformat=text&language=en_AU",
+                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5299,153.0713&waypoint1=-27.4395,153.0504&mode0=fastestNow;car;tollroad:-1,motorway:-1&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:16:37Z&instructionformat=text&language=en_AU"]
+    },
+
+    qml_route_feature_type: function(lat1, long1, lat2, long2, url1, url2)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Route features (Avoid Highways and Avoid Tool Road)";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url1 + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Options button | |
+        | Select Route menu item | |
+        | Selec first option group | |
+        | Fill in " + lat1 + " in From Latitude field | |
+        | Fill in " + long1 + " in From Longitude filed | |
+        | Fill in " + lat2 + " in To Latitude field | |
+        | Fill in " + long2 + " in To Longitude filed | |
+        | Select *Avoid toll roads* checkbox | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
+        | Select Options button | |
+        | Select Route menu item | |
+        | Select *Avoid highways* checkbox | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+    qml_route_optimization_data: {
+        points:["-27.5013", "153.1002", "-27.4395", "153.0504",
+                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5013,153.1002&waypoint1=-27.4395,153.0504&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:55:13Z&instructionformat=text&language=en_AU",
+                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5013,153.1002&waypoint1=-27.4395,153.0504&mode0=shortest;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:56:07Z&instructionformat=text&language=en_AU"]
+    },
+
+    qml_route_optimization: function(lat1, long1, lat2, long2, url1, url2)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Route optimization (Shortest and Fastest)";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url1 + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Options button | |
+        | Select Route menu item | |
+        | Selec first option group | |
+        | Fill in " + lat1 + " in From Latitude field | |
+        | Fill in " + long1 + " in From Longitude filed | |
+        | Fill in " + lat2 + " in To Latitude field | |
+        | Fill in " + long2 + " in To Longitude filed | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
+        | Open " + url2 + " url in a desktop browser | |
+        | Select Options button | |
+        | Select Route menu item | |
+        | Select *Shortest* option button | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+    qml_distance_between_points_data: {
+        points:["-27.5013", "153.1002", "-27.4395", "153.0504", "8.4"]
+    },
+
+    qml_distance_between_points:function(lat1, long1, lat2, long2, distance)
+    {
+        testTitle = "QML: Maps and Navigation - Distance between points";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that distance between points can be calculated.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Long press on the map | |
+        | Select Set Marker menu item | |
+        | Create another Marker via Long Press | |
+        | Long Press on the first marker | |
+        | Select Move To menu item | |
+        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + long1 + " in Longitude | |
+        | Select Go! button | |
+        | Long Press on the second marker | |
+        | Select Move To menu item | |
+        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + long2 + " in Longitude | |
+        | Select Go! button | |
+        | Long Press on the first marker | |
+        | Select *Distance to the next point* | Verify that distance is " + distance + " |"
+        ));
+    },
+
+    qml_border_wrapping_for_map_data: {
+        markers:["-27", "150", "-27", "-170"]
+    },
+
+    qml_border_wrapping_for_map: function(lat1, long1, lat2, long2)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Border wrapping";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that border wrapping works correctly for map and map items.";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Zoom out map to about level 3 | |
+        | Long press on the map | |
+        | Select Set Marker menu item | |
+        | Create another Marker via Long Press | |
+        | Long Press on the first marker | |
+        | Select Move To menu item | |
+        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + long1 + " in Longitude | |
+        | Select Go! button | |
+        | Long Press on the second marker | |
+        | Select Move To menu item | |
+        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + long2 + " in Longitude | |
+        | Select Go! button | |
+        | Pan map to the left so the map center crosses dateline | Verify that there are 2 markers on the screen |
+        | Pan map to the right so the map center crosses dateline | Verify that there are 2 markers on the screen |
+        | Zoom out hte map to zoom level 0 | |
+        | Pan map to make round-the-world trip | Verify that map looks and behaves as flattened cylinder. Verify that all markers visible and drawn correctly. |"
+        ));
+    },
+
+    qml_geocoding_and_locale_data: {
+        greek_place:["38", "24", "el"]
+    },
+
+    qml_geocoding_and_locale: function(latitude, longtitude, locale)
+    {
+        // Test meta data
+        testTitle = "QML: Geocoding - Locale handling";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that geocode information can be present in different languages.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Reverse geocode | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longtitude + " in Longitude field | |
+        | Select Go! | |
+        | Wait for success geocode message | Verify that address is in English|
+        | Select *en* button | |
+        | Select Other | |
+        | Fill in " + locale + " in Language filed | |
+        | Select Go! | |
+        | Select Reverse geocode | |
+        | Select Go! | |
+        | Wait for success geocode message | Verify that address is in Greek|"
+        ));
+    },
+
+    qml_routing_and_locale: function()
+    {
+        // Test meta data
+        testTitle = "QML: Routing - Locale handling";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that route information can be present in different languages and measurement systems.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Options | |
+        | Select Route | |
+        | Select Go! | |
+        | Expand information about rhe route | Verify that instructions is in English and uses imperial system |
+        | Close info tab |
+        | Select En button | |
+        | Select Fr | |
+        | Select Options | |
+        | Select Route | |
+        | Select Go! | |
+        | Expand information about rhe route | Verify that instructions is in Franch and uses metric system |"
         ));
     },
 
@@ -547,55 +842,6 @@ testcase = {
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2888, MOBILITY-65: Basic Location Functionality ";
     }
-
-    qml_distance_between_points:function()
-    {
-        testTitle = "QML: Maps and Navigation - Distance between points";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that distance between points can be calculated.";
-        testPreconditions = "Internet connection is required for this test case.";
-        testGroups = "BAT,5.0";
-        testRequirements = "MOBILITY-2861";
-    },
-
-    qml_shift_to_the_given_offset:function()
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Shift To Given Offset";
-        testBinary = "qml_location_mapviewer";
-        testGoal = "Verify that coordinates can be calculated as an offset to another position.";
-        testPreconditions = "Internet connection is required for this test case.";
-        testGroups = "BAT, 5.0";
-        testRequirements = "MOBILITY-2861, QTMOBILITY-658: Add a method to QGeoCoordinate which takes an offset and returns another QGeoCoordinate";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select the MapNavigation | |
-        | Fill in <b>0</b> in to Start Latitude field | |
-        | Fill in *100* in to Start Longitude field | |
-        | Select Distance/Bearing from pre-defined dropdown list | |
-        | Fill *1000000, 90* in to the given field | |
-        | Press the Ok button | Verify that Destination fields are updated with *5.48417e-16* latitude and *108.9932* longitude |
-        | Fill in *60* in to Start Latitude field | |
-        | Fill in *100* in to Start Longitude field | |
-        | Select Distance/Bearing from pre-defined dropdown list | |
-        | Fill *1000000, 180* in to the given field | |
-        | Press the Ok button | Verify that Destination fields are updated with *51.0068* latitude and *100* longitude |
-        | Fill in *60* in to Start Latitude field | |
-        | Fill in *100* in to Start Longitude field | |
-        | Select Distance/Bearing from pre-defined dropdown list | |
-        | Fill *1000000, 20* in to the given field | |
-        | Press the Ok button | Verify that Destination fields are updated with *68.2523* latitude and *108.296* longitude |"
-        ));
-    },
 
     qml_polyline_mapitem:function()
     {
@@ -685,267 +931,6 @@ testcase = {
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
     },
-
-    qml_border_wrapping_for_map: function()
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Border wrapping";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that border wrapping works correctly for map and map items.";
-        testPreconditions = "Internet connection is required for this test case";
-        testGroups = "BAT, 5.0";
-        testRequirements = "MOBILITY-2861";
-    },
-
-    qml_route_for_two_close_points: function()
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Route for two close points";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that route can be calculated.";
-        testPreconditions = "Internet connection is required for this test case";
-        testGroups = "BAT, 5.0";
-        testRequirements = "MTMW-235: QML Routing";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Route menu item | |
-        | Make sure that coordinates are *(-27.575,153.088)->(-27.465,153.023)* | |
-        | Press Go button | |
-        | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
-        | Click on the catch on the left side of the screen | Verify that distance is *15.9km* |
-        | Click on the catch | |
-        | Press Options button | |
-        | Select Route menu item | |
-        | Select second option group to enter start and end points as address | |
-        | Use default addresses and Press Go button | |
-        | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
-        | Click on the catch on the left side of the screen | Verify that distance is *19.6km* |"
-        ));
-    },
-
-    qml_route_for_two_distant_points: function()
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Route for two distant points";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that route can be calculated.";
-        testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT, 5.0";
-        testRequirements = "MTMW-235: QML Routing";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Route menu item | |
-        | Selec coordinate option group | |
-        | Fill in *-27.4709* in From Latitude field | |
-        | Fill in *153.0235* in From Longitude filed | |
-        | Fill in *-33.8689* in To Latitude field | |
-        | Fill in *151.2071* in To Longitude filed | |
-        | Press Go button | |
-        | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
-        | Click on the catch on the left side of the screen | Verify that distance is *930km* |
-        | Click on the catch | |
-        | Press Options button | |
-        | Select Route menu item | |
-        | Selec second option group | |
-        | Press Clear button | |
-        | Fill in *Eight Mile Plains* in From City field | |
-        | Fill in *Australia* in From Country filed | |
-        | Fill in *Moscow* in To City filed | |
-        | Fill in *Australia* in To Country filed | |
-        | Press Go button | |
-        | Wait for message appears on the screen | Verify that route is not found |
-        | Press Ok button | |
-        | Press Options button | |
-        | Select Route menu item | |
-        | Selec second option group | |
-        | Fill in *Byron Bay* in To City filed | |
-        | Fill in *Australia* in To Country filed | |
-        | Press Go button | |
-        | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
-        | Click on the catch on the left side of the screen | Verify that distance is *151km* |"
-        ));
-    },
-
-    qml_route_for_multiple_points: function()
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Route for several waypoints";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that route can be calculated.";
-        testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT, 5.0";
-        testRequirements = "MTMW-235: QML Routing";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Long press on the map | |
-        | Press Set Marker menu item | |
-        | Create another Marker via Long Press | |
-        | Create third Marker | |
-        | Long Press on the first marker | |
-        | Select Move To menu item | |
-        | Fill in *-27.575* in Latitude filed | |
-        | Fill in *153.088* in Longitude | |
-        | Press Go! button | |
-        | Long Press on the second marker | |
-        | Select Move To menu item | |
-        | Fill in *-27.465* in Latitude filed | |
-        | Fill in *153.023* in Longitude | |
-        | Press Go! button | |
-        | Long Press on the third marker | |
-        | Select Move To menu item | |
-        | Fill in *-27.3614* in Latitude filed | |
-        | Fill in *153.0043* in Longitude | |
-        | Press Go! button | |
-        | Long Press on the first marker | |
-        | Select Route To The Next Points | |
-        | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
-        | Click on the catch on the left side of the screen | Verify that distance is *29.5km* |"
-        ));
-    },
-
-    qml_travel_mode: function()
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Travel mode (Car and Pedestrian)";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that route can be calculated.";
-        testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT, 5.0";
-        testRequirements = "MTMW-235: QML Routing";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Route menu item | |
-        | Selec first option group | |
-        | Fill in *-27.5789* in From Latitude field | |
-        | Fill in *153.0919* in From Longitude filed | |
-        | Fill in *-27.5792* in To Latitude field | |
-        | Fill in *153.096* in To Longitude filed | |
-        | Press Go button | |
-        | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
-        | Click on the catch on the left side of the screen | Verify that distance is *2.6km* |
-        | Click on the catch | |
-        | Press Options button | |
-        | Select Route menu item | |
-        | Select *Pedestrian* option button | |
-        | Press Go button | |
-        | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
-        | Click on the catch on the left side of the screen | Verify that distance is *1.7km* |"
-        ));
-    },
-
-    qml_route_feature_type: function()
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Route features (Avoid Highways and Avoid Tool Road)";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that route can be calculated.";
-        testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT, 5.0";
-        testRequirements = "MTMW-235: QML Routing";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Route menu item | |
-        | Selec first option group | |
-        | Fill in *-27.5013* in From Latitude field | |
-        | Fill in *153.1002* in From Longitude filed | |
-        | Fill in *-27.4395* in To Latitude field | |
-        | Fill in *153.0504* in To Longitude filed | |
-        | Select *Avoid toll roads* checkbox | |
-        | Press Go button | |
-        | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
-        | Click on the catch on the left side of the screen | Verify that distance is *18km* |
-        | Click on the catch | |
-        | Press Options button | |
-        | Select *Avoid highways* checkbox | |
-        | Press Go button | |
-        | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
-        | Click on the catch on the left side of the screen | Verify that distance is *15km* |"
-        ));
-    },
-
-    qml_route_optimization: function()
-    {
-        // Test meta data
-        testTitle = "QML: Maps and Navigation - Route optimization (Shortest way)";
-        testBinary = "qml_location_mapviewer";
-        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that route can be calculated.";
-        testPreconditions = "internet connection is required for this test case";
-        testGroups = "BAT, 5.0";
-        testRequirements = "MTMW-235: QML Routing";
-
-        // Test steps
-        prompt(twiki("---+++ " + testTitle + "<br><br>
-        *Goal:* " + testGoal + "<br>
-        *Pre-Requisites:* " + testPreconditions + "<br>
-        *Tested Binary:* " + testBinary + "<br>
-        *Requirements:* " + testRequirements + "<br>
-
-        | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Press Options button | |
-        | Select Route menu item | |
-        | Selec first option group | |
-        | Fill in *-27.5789* in From Latitude field | |
-        | Fill in *153.0919* in From Longitude filed | |
-        | Fill in *-27.5792* in To Latitude field | |
-        | Fill in *153.096* in To Longitude filed | |
-        | Select *Shortest* option button | |
-        | Press Go button | |
-        | Wait for the route appears on the screen | Verify that the route looks correct and does not have strange loops |
-        | Click on the catch on the left side of the screen | Verify that distance is *2.2km* |"
-        ));
-    },
 */
 
     qml_searching_for_places_by_category_for_given_position_data: {
@@ -974,20 +959,20 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url1 + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Provider button | |
+        | Select Provider button | |
         | Select nokia provider | |
-        | Press Goto button | |
+        | Select Goto button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
-        | Press Go! button | |
-        | Press Categories button | |
-        | Press Right arrow next to " + category + " | |
+        | Select Go! button | |
+        | Select Categories button | |
+        | Select Right arrow next to " + category + " | |
         | Select " + subcategory + " | |
         | Expand panel with seacrh results | Verify that number of found places corresponds to the open web page. Verify that details of the first place is the same. |
         | Hide panel with results | |
         | Open " + url2 + " url in a desktop browser | |
-        | Press Categories button | |
-        | Press Back button | |
+        | Select Categories button | |
+        | Select Back button | |
         | Select " + category + " | |
         | Expand panel with seacrh result | Verify that number of found places corresponds to the open web page. Verify that details of the first place is the same. |"
         ));
@@ -1019,14 +1004,14 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Provider button | |
+        | Select Provider button | |
         | Select nokia provider | |
-        | Press Goto button | |
+        | Select Goto button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
-        | Press Go! button | |
+        | Select Go! button | |
         | Fill in " + search_string + " | |
-        | Press Search button | |
+        | Select Search button | |
         | Expand panel with results | Verify that number of found places corresponds to the open web page. Verify that details of the first place is the same. |"
         ));
     },
@@ -1056,14 +1041,14 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Provider button | |
+        | Select Provider button | |
         | Select nokia provider | |
-        | Press Goto button | |
+        | Select Goto button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
-        | Press Go! button | |
+        | Select Go! button | |
         | Fill in " + search_string + " | |
-        | Press Search button | |
+        | Select Search button | |
         | Expand panel with results | |
         | Select " + place + " | |
         | Select “Find Similar” | Verify that number of found places corresponds to the open web page. Verify that distance to reccommended places is the same. |"
@@ -1096,12 +1081,12 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Provider button | |
+        | Select Provider button | |
         | Select nokia provider | |
-        | Press Goto button | |
+        | Select Goto button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
-        | Press Go! button | |
+        | Select Go! button | |
         | Fill in " + search_string + " | Verify that list of suggested places corresponds to the open web page. |"
         ));
     },
@@ -1131,14 +1116,14 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Provider button | |
+        | Select Provider button | |
         | Select nokia provider | |
-        | Press Goto button | |
+        | Select Goto button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
-        | Press Go! button | |
+        | Select Go! button | |
         | Fill in " + search_string + " | |
-        | Press Search button | |
+        | Select Search button | |
         | Expand panel with results | |
         | Select " + place + " | |
         | Select “Editorials” | |
@@ -1171,14 +1156,14 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Provider button | |
+        | Select Provider button | |
         | Select nokia provider | |
-        | Press Goto button | |
+        | Select Goto button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
-        | Press Go! button | |
+        | Select Go! button | |
         | Fill in " + search_string + " | |
-        | Press Search button | |
+        | Select Search button | |
         | Expand panel with results | |
         | Select " + place + " | |
         | Select “Images” | Verify that images correspond to the open web page. |"
@@ -1210,14 +1195,14 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Provider button | |
+        | Select Provider button | |
         | Select nokia provider | |
-        | Press Goto button | |
+        | Select Goto button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
-        | Press Go! button | |
+        | Select Go! button | |
         | Fill in " + search_string + " | |
-        | Press Search button | |
+        | Select Search button | |
         | Expand panel with results | |
         | Select " + place + " | |
         | Select “Reviews” | Verify that reviews correspond to the open web page. |"
@@ -1249,21 +1234,21 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Press Provider button | |
+        | Select Provider button | |
         | Select nokia provider | |
-        | Press Goto button | |
+        | Select Goto button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
-        | Press Go! button | |
+        | Select Go! button | |
         | Fill in " + search_string + " | |
-        | Press Search button | |
+        | Select Search button | |
         | Expand panel with results | |
         | Select " + place + " | Verify that rating, address, category and contact details correspond to the open web page. |"
         ));
     }
 
     /*
-    qml_locale_handling: function()
+    qml_places_and_locale: function(latitude, longtitude, locale)
     {
         // Test meta data
         testTitle = "QML: Places - Locale handling";
@@ -1272,8 +1257,8 @@ testcase = {
         testGoal = "Verify that places can be found for different locale.";
         testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
-        testRequirements = "MTMW-191: Place Retrieval";
-    },
+        testRequirements = "MOBILITY-2861";
+    }
 
     qml_searching_for_places_by_category_inside_bounding_box: function()
     {
