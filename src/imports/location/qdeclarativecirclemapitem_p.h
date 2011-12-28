@@ -89,7 +89,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     virtual void updateMapItem();
-    void handleBorderUpdated();
+    void updateMapItemAssumeDirty();
 
 private Q_SLOTS:
     void handleCameraDataChanged(const CameraData& cameraData);

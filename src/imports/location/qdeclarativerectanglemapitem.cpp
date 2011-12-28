@@ -59,9 +59,9 @@ QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent):
 {
     setFlag(ItemHasContents, true);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
-                     this, SLOT(handleBorderUpdated()));
+                     this, SLOT(updateMapItemAssumeDirty()));
     QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
-                     this, SLOT(handleBorderUpdated()));
+                     this, SLOT(updateMapItemAssumeDirty()));
 }
 
 QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
@@ -72,7 +72,7 @@ void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
-        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)),this, SLOT(handleCameraDataChanged(CameraData)));
         dirtyGeometry_ = true;
         updateMapItem();
     }
@@ -92,12 +92,8 @@ void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
     topLeft_ = topLeft;
 
     if (topLeft_) {
-        connect(topLeft_, SIGNAL(latitudeChanged(double)), this,
-                SLOT(updateMapItem()));
-        connect(topLeft_, SIGNAL(longitudeChanged(double)), this,
-                SLOT(updateMapItem()));
-        connect(topLeft_, SIGNAL(altitudeChanged(double)), this,
-                SLOT(updateMapItem()));
+        connect(topLeft_, SIGNAL(coordinateChanged(QGeoCoordinate)),
+                this, SLOT(updateMapItemAssumeDirty()));
     }
     dirtyGeometry_ = true;
     updateMapItem();
@@ -109,7 +105,7 @@ QDeclarativeCoordinate* QDeclarativeRectangleMapItem::topLeft()
     return topLeft_;
 }
 
-void QDeclarativeRectangleMapItem::handleBorderUpdated()
+void QDeclarativeRectangleMapItem::updateMapItemAssumeDirty()
 {
     dirtyGeometry_ = true;
     updateMapItem();
@@ -123,12 +119,8 @@ void QDeclarativeRectangleMapItem::setBottomRight(QDeclarativeCoordinate *bottom
         bottomRight_->disconnect(this);
     bottomRight_ = bottomRight;
     if (bottomRight_) {
-        connect(bottomRight_, SIGNAL(latitudeChanged(double)), this,
-                SLOT(updateMapItem()));
-        connect(bottomRight_, SIGNAL(longitudeChanged(double)), this,
-                SLOT(updateMapItem()));
-        connect(bottomRight_, SIGNAL(altitudeChanged(double)), this,
-                SLOT(updateMapItem()));
+        connect(bottomRight_, SIGNAL(coordinateChanged(QGeoCoordinate)),
+                this, SLOT(updateMapItemAssumeDirty()));
     }
     dirtyGeometry_ = true;
     updateMapItem();

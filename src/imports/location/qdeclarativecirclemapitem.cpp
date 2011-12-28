@@ -167,9 +167,9 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent):
     setFlag(ItemHasContents, true);
     border_.setWidth(3.0);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
-                     this, SLOT(handleBorderUpdated()));
+                     this, SLOT(updateMapItemAssumeDirty()));
     QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
-                     this, SLOT(handleBorderUpdated()));
+                     this, SLOT(updateMapItemAssumeDirty()));
 }
 
 QDeclarativeCircleMapItem::~QDeclarativeCircleMapItem()
@@ -181,7 +181,7 @@ QDeclarativeMapLineProperties *QDeclarativeCircleMapItem::border()
     return &border_;
 }
 
-void QDeclarativeCircleMapItem::handleBorderUpdated()
+void QDeclarativeCircleMapItem::updateMapItemAssumeDirty()
 {
     dirtyGeoGeometry_ = true;
     updateMapItem();
@@ -206,12 +206,8 @@ void QDeclarativeCircleMapItem::setCenter(QDeclarativeCoordinate *center)
     center_ = center;
 
     if (center_) {
-        connect(center_, SIGNAL(latitudeChanged(double)), this,
-                SLOT(updateMapItem()));
-        connect(center_, SIGNAL(longitudeChanged(double)), this,
-                SLOT(updateMapItem()));
-        connect(center_, SIGNAL(altitudeChanged(double)), this,
-                SLOT(updateMapItem()));
+        connect(center_, SIGNAL(coordinateChanged(QGeoCoordinate)),
+                this, SLOT(updateMapItemAssumeDirty()));
     }
 
     dirtyGeoGeometry_ = true;
