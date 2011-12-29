@@ -46,7 +46,7 @@
 #include "macro.h"
 #include "qplacemanagerengine_jsondb.h"
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Reply : public QPlaceReply
 {
@@ -59,5 +59,7 @@ public:
 private:
     QPlaceManagerEngineJsonDb *m_engine;
 };
+
+QT_END_NAMESPACE
 
 #endif

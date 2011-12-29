@@ -48,7 +48,7 @@
 
 #include <QObject>
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class SearchReply : public QPlaceSearchReply
 {
@@ -82,5 +82,7 @@ private:
     State m_state;
     int m_reqId;
 };
+
+QT_END_NAMESPACE
 
 #endif

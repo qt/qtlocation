@@ -50,12 +50,13 @@
 #include <QtAddOnJsonDb/jsondb-global.h>
 #include <QtCore/QEventLoop>
 
-Q_ADDON_JSONDB_BEGIN_NAMESPACE
+QT_ADDON_JSONDB_BEGIN_NAMESPACE
 class JsonDbClient;
-Q_ADDON_JSONDB_END_NAMESPACE
-Q_USE_JSONDB_NAMESPACE
+QT_ADDON_JSONDB_END_NAMESPACE
 
-QT_USE_NAMESPACE
+QT_ADDON_JSONDB_USE_NAMESPACE
+
+QT_BEGIN_NAMESPACE
 
 class QPlaceManagerEngineJsonDb : public QPlaceManagerEngine
 {
@@ -128,5 +129,7 @@ private:
     friend class Reply;
     friend class SearchReply;
 };
+
+QT_END_NAMESPACE
 
 #endif

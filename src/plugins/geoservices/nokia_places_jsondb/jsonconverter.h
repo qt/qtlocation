@@ -45,6 +45,8 @@
 
 #include <QtCore/QStringList>
 
+QT_BEGIN_NAMESPACE
+
 class QPlaceManagerEngineJsonDb;
 class QPlace;
 class QPlaceSearchRequest;
@@ -122,6 +124,8 @@ namespace JsonConverter
 
     static QLatin1String IconUrl("iconUrl");
 }
+
+QT_END_NAMESPACE
 
 #endif
 

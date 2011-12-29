@@ -47,7 +47,7 @@
 #include "macro.h"
 #include "qplacemanagerengine_jsondb.h"
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class IdReply : public QPlaceIdReply
 {
@@ -180,5 +180,7 @@ private:
     int m_reqId;
     State m_state;
 };
+
+QT_END_NAMESPACE
 
 #endif

@@ -45,7 +45,7 @@
 #include <qgeoserviceproviderfactory.h>
 #include <QObject>
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGeoServiceProviderFactoryJsonDb : public QObject, public QGeoServiceProviderFactory
 {
@@ -74,5 +74,7 @@ public:
                                                   QString *errorString) const;
 
 };
+
+QT_END_NAMESPACE
 
 #endif

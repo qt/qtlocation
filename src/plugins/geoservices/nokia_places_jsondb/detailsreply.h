@@ -46,7 +46,7 @@
 
 #include "macro.h"
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class DetailsReply : public QPlaceDetailsReply
 {
@@ -80,5 +80,7 @@ private:
     int m_reqId;
     State m_state;
 };
+
+QT_END_NAMESPACE
 
 #endif
