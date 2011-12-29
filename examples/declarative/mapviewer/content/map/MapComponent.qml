@@ -100,7 +100,7 @@ Map {
         maximum: map.maximumZoomLevel;
         opacity: 1
         visible: parent.visible
-        z: map.z+1
+        z: map.z + 3
         anchors {
             bottom: parent.bottom;
             bottomMargin: 56; rightMargin: 10; leftMargin: 10
@@ -123,10 +123,7 @@ Map {
         anchors.bottomMargin: 8
         anchors.right: zoomSlider.right
         onClicked: {
-            if (languageMenu.opacity ==1)
-                languageMenu.opacity = 0;
-            else
-                languageMenu.opacity = 1;
+            map.state = "LanguageMenu"
         }
     }
 
@@ -135,25 +132,21 @@ Map {
         horizontalOrientation: false
         autoWidth: true
         opacity: 0
-        z: map.z + 2
-        width: 100
+        z: map.z + 4
         anchors.bottom: languageButton.top
         anchors.right: languageButton.left
         onClicked: {
-            opacity = 0
             switch (button) {
-            case "en": {
-                setLanguage("en");
-                break;
-            }
-            case "fr" : {
-                setLanguage("fr");
+            case "en":
+            case "fr": {
+                setLanguage(button);
                 break;
             }
             case "Other": {
                 map.requestLocale()
             }
             }
+            map.state = ""
         }
         Component.onCompleted: {
             addItem("en")
@@ -478,7 +471,7 @@ Map {
         id: scale
         parent: zoomSlider.parent
         visible: scaleText.text != "0 m"
-        z: map.z
+        z: map.z + 2
         opacity: 0.6
         anchors {
             bottom: zoomSlider.top;
@@ -552,7 +545,7 @@ Map {
         id: markerMenu
         horizontalOrientation: false
         autoWidth: true
-        z: map.z + 2
+        z: map.z + 4
         opacity: 0
 
         width: 150
@@ -594,7 +587,7 @@ Map {
         id: popupMenu
         horizontalOrientation: false
         autoWidth: true
-        z: map.z + 2
+        z: map.z + 4
         opacity: 0
 
         width: 150
@@ -670,7 +663,8 @@ Map {
     Menu {
         id: routeMenu
         horizontalOrientation: false
-        z: map.z +2
+        autoWidth: true
+        z: map.z + 4
         opacity: 0
 
         width: 150
@@ -695,7 +689,8 @@ Map {
     Menu {
         id: pointMenu
         horizontalOrientation: false
-        z: map.z +2
+        autoWidth: true
+        z: map.z + 4
         opacity: 0
 
         width: 150
@@ -1043,6 +1038,10 @@ Map {
             PropertyChanges { target: pointMenu; opacity: 1}
             PropertyChanges { target: pointMenu; x: ((map.lastX + pointMenu.width > map.width) ? map.width - pointMenu.width : map.lastX)}
             PropertyChanges { target: pointMenu; y: ((map.lastY + pointMenu.height > map.height - 40) ? map.height - pointMenu.height - 40 : map.lastY)}
+        },
+        State {
+            name: "LanguageMenu"
+            PropertyChanges { target: languageMenu; opacity: 1}
         }
     ]
 

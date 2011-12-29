@@ -356,7 +356,7 @@ Item {
         z: backgroundRect.z + 2
 
         Component.onCompleted: {
-            var obj = [["Street", "Brandl St"],["District",""],["City", "Eight Mile Plains"], ["County", ""],["State", ""],["Country code",""],["Country","Australia"], ["Postal code", ""]]
+            var obj = [["Street", "Brandl St"],["City", "Eight Mile Plains"],["State", ""],["Country","Australia"], ["Postal code", ""]]
             setModel(obj)
         }
 
@@ -368,13 +368,10 @@ Item {
             page.state = ""
             messageDialog.state = ""
             geocodeAddress.street = dialogModel.get(0).inputText
-            geocodeAddress.district = dialogModel.get(1).inputText
-            geocodeAddress.city = dialogModel.get(2).inputText
-            geocodeAddress.county = dialogModel.get(3).inputText
-            geocodeAddress.state = dialogModel.get(4).inputText
-            geocodeAddress.countryCode = dialogModel.get(5).inputText
-            geocodeAddress.country = dialogModel.get(6).inputText
-            geocodeAddress.postalCode = dialogModel.get(7).inputText
+            geocodeAddress.city = dialogModel.get(1).inputText
+            geocodeAddress.state = dialogModel.get(2).inputText
+            geocodeAddress.country = dialogModel.get(3).inputText
+            geocodeAddress.postalCode = dialogModel.get(4).inputText
             map.geocodeModel.clear()
             map.geocodeModel.query = geocodeAddress
             map.geocodeModel.update()
