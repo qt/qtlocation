@@ -214,10 +214,15 @@ void QDeclarativeGeocodeModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (plugin_ == plugin)
         return;
+
     reset(); // reset the model
     plugin_ = plugin;
     if (complete_)
         emit pluginChanged();
+
+    if (!plugin)
+        return;
+
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeocodingManager *geocodingManager = serviceProvider->geocodingManager();
     if (!geocodingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {

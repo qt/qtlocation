@@ -206,10 +206,15 @@ void QDeclarativeGeoRouteModel::setPlugin(QDeclarativeGeoServiceProvider *plugin
 {
     if (plugin_ == plugin)
         return;
+
     reset(); // reset the model
     plugin_ = plugin;
     if (complete_)
         emit pluginChanged();
+
+    if (!plugin)
+        return;
+
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
     if (!routingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
