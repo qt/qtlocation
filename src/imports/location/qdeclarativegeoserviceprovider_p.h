@@ -93,6 +93,11 @@ class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParser
     Q_PROPERTY(bool supportsRouting READ supportsRouting NOTIFY supportsRoutingChanged)
     Q_PROPERTY(bool supportsMapping READ supportsMapping NOTIFY supportsMappingChanged)
     Q_PROPERTY(bool supportsPlaces READ supportsPlaces NOTIFY supportsPlacesChanged)
+    Q_PROPERTY(bool withGeocoding READ withGeocoding WRITE setWithGeocoding)
+    Q_PROPERTY(bool withReverseGeocoding READ withGeocoding WRITE setWithReverseGeocoding)
+    Q_PROPERTY(bool withRouting READ withGeocoding WRITE setWithRouting)
+    Q_PROPERTY(bool withMapping READ withGeocoding WRITE setWithMapping)
+    Q_PROPERTY(bool withPlaces READ withGeocoding WRITE setWithPlaces)
     Q_PROPERTY(PlacesFeatures supportedPlacesFeatures READ supportedPlacesFeatures NOTIFY supportedPlacesFeaturesChanged)
     Q_PROPERTY(QStringList locales READ locales WRITE setLocales NOTIFY localesChanged)
 
@@ -136,6 +141,18 @@ public:
     bool supportsMapping() const;
     bool supportsPlaces() const;
 
+    bool withGeocoding() const;
+    bool withReverseGeocoding() const;
+    bool withRouting() const;
+    bool withMapping() const;
+    bool withPlaces() const;
+
+    void setWithGeocoding(bool value);
+    void setWithReverseGeocoding(bool value);
+    void setWithRouting(bool value);
+    void setWithMapping(bool value);
+    void setWithPlaces(bool value);
+
     PlacesFeatures supportedPlacesFeatures();
 
     QGeoServiceProvider *sharedGeoServiceProvider();
@@ -174,6 +191,11 @@ private:
     bool supportsRouting_;
     bool supportsMapping_;
     bool supportsPlaces_;
+    bool withGeocoding_;
+    bool withReverseGeocoding_;
+    bool withRouting_;
+    bool withMapping_;
+    bool withPlaces_;
     bool complete_;
     QStringList locales_;
     PlacesFeatures placesFeatures_;

@@ -57,12 +57,25 @@ QT_BEGIN_NAMESPACE
     \since QtLocation 5.0
 
     \brief The Plugin element describes a Location based services plugin.
+
+    A Plugin is necessary in order to make use of many other parts of the Qt
+    Location functionality, such as a Map element.
+
+    The simplest way, in many cases, to make use of Plugin is to employ the
+    withMapping, withRouting and similar feature properties. When creating a
+    Plugin, set the desired features in these properties, and the first
+    available service plugin meeting the criteria set will be chosen.
+
+    Alternatively, a Plugin can be instantiated from a function that iterates
+    through the contents of availableServiceProviders in order to find
+    the desired service plugin.
 */
 
 QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
 :   QObject(parent), sharedProvider_(0), supportsGeocoding_(false),
     supportsReverseGeocoding_(false), supportsRouting_(false), supportsMapping_(false),
-    supportsPlaces_(false), complete_(false)
+    supportsPlaces_(false), withGeocoding_(false), withReverseGeocoding_(false),
+    withRouting_(false), withMapping_(false), withPlaces_(false), complete_(false)
 {
     locales_.append(QLocale().name());
 }
@@ -207,8 +220,39 @@ void QDeclarativeGeoServiceProvider::setSupportedPlacesFeatures(PlacesFeatures p
 void QDeclarativeGeoServiceProvider::componentComplete()
 {
     complete_ = true;
-    if (!name_.isEmpty())
+    if (!name_.isEmpty()) {
         update();
+        return;
+    }
+    if (withGeocoding_ || withReverseGeocoding_ || withRouting_ ||
+            withMapping_ || withPlaces_) {
+        QStringList providers = QGeoServiceProvider::availableServiceProviders();
+        foreach (QString name, providers) {
+            // hack: avoid notifying anyone else when we're just iterating
+            blockSignals(true);
+            setName(name);
+            blockSignals(false);
+
+            bool ok = true;
+            if (withGeocoding_ && !supportsGeocoding_)
+                ok = false;
+            if (withReverseGeocoding_ && !supportsReverseGeocoding_)
+                ok = false;
+            if (withRouting_ && !supportsRouting_)
+                ok = false;
+            if (withMapping_ && !supportsMapping_)
+                ok = false;
+            if (withPlaces_ && !supportsPlaces_)
+                ok = false;
+
+            if (ok) {
+                // run it again to send the notifications
+                name_ = "";
+                setName(name);
+                break;
+            }
+        }
+    }
 }
 
 QString QDeclarativeGeoServiceProvider::name() const
@@ -216,7 +260,62 @@ QString QDeclarativeGeoServiceProvider::name() const
     return name_;
 }
 
+/*!
+    \qmlproperty bool Plugin::withGeocoding
+    \qmlproperty bool Plugin::withReverseGeocoding
+    \qmlproperty bool Plugin::withRouting
+    \qmlproperty bool Plugin::withMapping
+    \qmlproperty bool Plugin::withPlaces
 
+    These properties indicate the desired properties of a plugin. If at least
+    one of these properties is set at the creation of the Plugin element, it
+    will automatically work out which plugin to use, as the first available
+    plugin that fulfills the set criteria.
+
+    Note that these properties will only have any effect if set at creation
+    time.
+*/
+bool QDeclarativeGeoServiceProvider::withGeocoding() const
+{
+    return withGeocoding_;
+}
+bool QDeclarativeGeoServiceProvider::withReverseGeocoding() const
+{
+    return withReverseGeocoding_;
+}
+bool QDeclarativeGeoServiceProvider::withRouting() const
+{
+    return withRouting_;
+}
+bool QDeclarativeGeoServiceProvider::withMapping() const
+{
+    return withMapping_;
+}
+bool QDeclarativeGeoServiceProvider::withPlaces() const
+{
+    return withPlaces_;
+}
+
+void QDeclarativeGeoServiceProvider::setWithGeocoding(bool value)
+{
+    withGeocoding_ = value;
+}
+void QDeclarativeGeoServiceProvider::setWithReverseGeocoding(bool value)
+{
+    withReverseGeocoding_ = value;
+}
+void QDeclarativeGeoServiceProvider::setWithRouting(bool value)
+{
+    withRouting_ = value;
+}
+void QDeclarativeGeoServiceProvider::setWithMapping(bool value)
+{
+    withMapping_ = value;
+}
+void QDeclarativeGeoServiceProvider::setWithPlaces(bool value)
+{
+    withPlaces_ = value;
+}
 
 /*!
     \qmlproperty bool Plugin::supportsGeocoding
