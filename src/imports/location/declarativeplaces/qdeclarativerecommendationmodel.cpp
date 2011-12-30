@@ -216,10 +216,17 @@ void QDeclarativeRecommendationModel::processReply(QPlaceReply *reply)
 
     foreach (const QPlaceSearchResult &result, m_results) {
         QDeclarativePlace *place = new QDeclarativePlace(result.place(), plugin(), this);
-        m_places.insert(result.place().placeId(), place);
+        m_places.append(place);
     }
+
+    emit rowCountChanged();
 }
 
+/*!
+    \qmlproperty string PlaceRecommendationModel::row
+
+    This properties holds the number of rows/results the model has.
+*/
 int QDeclarativeRecommendationModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
@@ -243,12 +250,23 @@ QVariant QDeclarativeRecommendationModel::data(const QModelIndex& index, int rol
     case DistanceRole:
         return result.distance();
     case PlaceRole:
-        return QVariant::fromValue(static_cast<QObject *>(m_places.value(result.place().placeId())));
+        return QVariant::fromValue(static_cast<QObject *>(m_places.at(index.row())));
     default:
         return QVariant();
     }
 
     return QVariant();
+}
+
+/*!
+    \qmlmethod PlaceRecommendationModel::data(int index, string role)
+
+    Returns the data for a given \a role at the specified row \a index.
+*/
+QVariant QDeclarativeRecommendationModel::data(int index, const QString &role) const
+{
+    QModelIndex modelIndex = createIndex(index, 0);
+    return data(modelIndex, roleNames().key(role.toLatin1()));
 }
 
 QPlaceReply *QDeclarativeRecommendationModel::sendQuery(QPlaceManager *manager,

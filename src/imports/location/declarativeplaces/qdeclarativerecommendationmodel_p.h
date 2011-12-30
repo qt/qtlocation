@@ -51,6 +51,7 @@ class QDeclarativeRecommendationModel : public QDeclarativeSearchModelBase
     Q_OBJECT
 
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
+    Q_PROPERTY(int count READ rowCount NOTIFY rowCountChanged)
 
     Q_INTERFACES(QDeclarativeParserStatus)
 
@@ -66,8 +67,9 @@ public:
     void processReply(QPlaceReply *reply);
 
     // From QAbstractListModel
-    int rowCount(const QModelIndex &parent) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
+    Q_INVOKABLE QVariant data(int index, const QString &roleName) const;
     enum Roles {
         DistanceRole = Qt::UserRole,
         PlaceRole
@@ -75,13 +77,14 @@ public:
 
 signals:
     void placeIdChanged();
+    void rowCountChanged();
 
 protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
 
 private:
     QList<QPlaceSearchResult> m_results;
-    QMap<QString, QDeclarativePlace *> m_places;
+    QList<QDeclarativePlace *> m_places;
     QString m_placeId;
 };
 
