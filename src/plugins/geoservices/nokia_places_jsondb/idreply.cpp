@@ -88,15 +88,6 @@ void IdReply::start()
 {
 }
 
-bool IdReply::checkConnection() {
-    if (!db()->isConnected()) {
-        triggerDone(QPlaceReply::CommunicationError, QLatin1String("No connection to jsondb database"));
-        return false;
-    }
-
-    return true;
-}
-
 SavePlaceReply::SavePlaceReply(QPlaceManagerEngineJsonDb *engine)
     : IdReply(QPlaceIdReply::SavePlace, engine)
 {
@@ -114,8 +105,6 @@ void SavePlaceReply::setPlace(const QPlace &place)
 
 void SavePlaceReply::start()
 {
-    if (!IdReply::checkConnection())
-        return;
     connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
     connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
 
@@ -246,9 +235,6 @@ void RemovePlaceReply::setId(const QString &placeId)
 
 void RemovePlaceReply::start()
 {
-    if (!IdReply::checkConnection())
-        return;
-
     connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
     connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
 
@@ -338,9 +324,6 @@ void SaveCategoryReply::setParentId(const QString &parentId)
 
 void SaveCategoryReply::start()
 {
-    if (!IdReply::checkConnection())
-        return;
-
    connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
    connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
 
@@ -495,9 +478,6 @@ void RemoveCategoryReply::setId(const QString &categoryId)
 
 void RemoveCategoryReply::start()
 {
-    if (!IdReply::checkConnection())
-        return;
-
     connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
     connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
 

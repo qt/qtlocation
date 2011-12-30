@@ -69,7 +69,6 @@ public:
 
 protected:
     QPlaceManagerEngineJsonDb *m_engine;
-    bool checkConnection();
     JsonDbClient *db() { return m_engine->db();}
 
 private:

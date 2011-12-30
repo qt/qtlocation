@@ -68,39 +68,35 @@ QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVarian
     qRegisterMetaType<QPlaceCategory>();
 
     m_db = new JsonDbClient(this);
-    if (!m_db->isConnected()) {
-        *error = QGeoServiceProvider::ConnectionError;
-        *errorString = QLatin1String("JsonDb is not connected");
-    } else {
-        connect(m_db, SIGNAL(response(int,QVariant)),
-                this, SLOT(processJsonDbResponse(int,QVariant)));
-        connect(m_db, SIGNAL(error(int,int,QString)),
-                this, SLOT(processJsonDbError(int,int,QString)));
-        connect(m_db, SIGNAL(notified(QString,QVariant,QString)),
-                    this, SLOT(processJsonDbNotification(QString,QVariant,QString)));
 
-        //Setup notifications
-        QVariantMap notificationMap;
-        QVariantList actions;
-        notificationMap.insert(JsonConverter::Type, JsonConverter::NotificationType);
-        notificationMap.insert(QLatin1String("query"),
-                               QString::fromLatin1("[?%1 = \"%2\" | %1 = \"%3\" ]")
-                                .arg(JsonConverter::Type).arg(JsonConverter::PlaceType).arg(JsonConverter::CategoryType));
-        actions.append(JsonConverter::Create);
-        actions.append(JsonConverter::Update);
-        actions.append(JsonConverter::Remove);
-        notificationMap.insert(JsonConverter::Actions, actions);
+    connect(m_db, SIGNAL(response(int,QVariant)),
+            this, SLOT(processJsonDbResponse(int,QVariant)));
+    connect(m_db, SIGNAL(error(int,int,QString)),
+            this, SLOT(processJsonDbError(int,int,QString)));
+    connect(m_db, SIGNAL(notified(QString,QVariant,QString)),
+            this, SLOT(processJsonDbNotification(QString,QVariant,QString)));
 
-        connect(m_db, SIGNAL(response(int,QVariant)),
-                this, SLOT(setupNotificationsResponse(int,QVariant)));
-        connect(m_db, SIGNAL(error(int,int,QString)),
-                this, SLOT(setupNotificationsError(int,int,QString)));
+    //Setup notifications
+    QVariantMap notificationMap;
+    QVariantList actions;
+    notificationMap.insert(JsonConverter::Type, JsonConverter::NotificationType);
+    notificationMap.insert(QLatin1String("query"),
+                           QString::fromLatin1("[?%1 = \"%2\" | %1 = \"%3\" ]")
+                           .arg(JsonConverter::Type).arg(JsonConverter::PlaceType).arg(JsonConverter::CategoryType));
+    actions.append(JsonConverter::Create);
+    actions.append(JsonConverter::Update);
+    actions.append(JsonConverter::Remove);
+    notificationMap.insert(JsonConverter::Actions, actions);
 
-        m_notificationReqId = m_db->create(notificationMap);
+    connect(m_db, SIGNAL(response(int,QVariant)),
+            this, SLOT(setupNotificationsResponse(int,QVariant)));
+    connect(m_db, SIGNAL(error(int,int,QString)),
+            this, SLOT(setupNotificationsError(int,int,QString)));
 
-        *error = QGeoServiceProvider::NoError;
-        errorString->clear();
-    }
+    m_notificationReqId = m_db->create(notificationMap);
+
+    *error = QGeoServiceProvider::NoError;
+    errorString->clear();
 }
 
 QPlaceManagerEngineJsonDb::~QPlaceManagerEngineJsonDb()

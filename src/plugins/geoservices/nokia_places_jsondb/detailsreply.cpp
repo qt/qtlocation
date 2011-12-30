@@ -60,11 +60,6 @@ void DetailsReply::setPlaceId(const QString &placeId)
 
 void DetailsReply::start()
 {
-    if (!db()->isConnected()) {
-        triggerDone(QPlaceReply::CommunicationError, QLatin1String("No connection to jsondb database"));
-        return;
-    }
-
     connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
     connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
 
