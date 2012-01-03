@@ -187,7 +187,20 @@ QPointF QDeclarativeGeoMapQuickItem::anchorPoint() const
 /*!
     \qmlproperty qreal MapQuickItem::zoomLevel
 
-    TODO: document this property
+    This property controls the scaling behaviour of the contents of the
+    MapQuickItem. In particular, by setting this property it is possible
+    to choose between objects that are drawn on the screen (and sized in
+    screen pixels), and those drawn on the map surface (which change size
+    with the zoom level of the map).
+
+    The default value for this property is 0.0, which corresponds to drawing
+    the object on the screen surface. If set to another value, the object will
+    be drawn on the map surface instead. The value (if not zero) specifies the
+    zoomLevel at which the object will be visible at a scale of 1:1 (ie, where
+    object pixels and screen pixels are the same). At zoom levels lower than
+    this, the object will appear smaller, and at higher zoom levels, appear
+    larger. This is in contrast to when this property is set to zero, where
+    the object remains the same size on the screen at all zoom levels.
 */
 void QDeclarativeGeoMapQuickItem::setZoomLevel(qreal zoomLevel)
 {
@@ -237,7 +250,8 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
 qreal QDeclarativeGeoMapQuickItem::scaleFactor()
 {
     qreal scale = 1.0;
-    if (zoomLevel_ != 0.0)
+    // use 1+x to avoid fuzzy compare against zero
+    if (!qFuzzyCompare(1.0 + zoomLevel_, 1.0))
         scale = pow(0.5, zoomLevel_ - map()->cameraData().zoomFactor());
     return scale;
 }
