@@ -17,6 +17,7 @@ SUBDIRS += qplace \
            qplacesupplier \
            qplacesearchresult \
            qplacesearchreply \
+           qplacesearchsuggestionreply \
            qplaceuser \
            qmlinterface
 
