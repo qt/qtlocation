@@ -42,6 +42,7 @@
 #include <QtTest/QtTest>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeComponent>
+#include <QtDeclarative/QDeclarativeListReference>
 #include <QtLocation/QGeoCoordinate>
 #include <QtLocation/QGeoAddress>
 #include <QtLocation/QGeoBoundingBox>
@@ -171,6 +172,14 @@ void tst_qmlinterface::testCoordinate()
     QGeoCoordinate coordinate = qmlObject->property("coordinate").value<QGeoCoordinate>();
 
     QCOMPARE(coordinate, m_coordinate);
+
+    qmlObject->setProperty("coordinate", QVariant::fromValue(QGeoCoordinate()));
+
+    QVERIFY(qIsNaN(qmlObject->property("longitude").toDouble()));
+    QVERIFY(qIsNaN(qmlObject->property("latitude").toDouble()));
+    QVERIFY(qIsNaN(qmlObject->property("altitude").toDouble()));
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testAddress()
@@ -183,6 +192,17 @@ void tst_qmlinterface::testAddress()
     QGeoAddress address = qmlObject->property("address").value<QGeoAddress>();
 
     QCOMPARE(address, m_address);
+
+    qmlObject->setProperty("address", QVariant::fromValue(QGeoAddress()));
+
+    QVERIFY(qmlObject->property("city").toString().isEmpty());
+    QVERIFY(qmlObject->property("country").toString().isEmpty());
+    QVERIFY(qmlObject->property("countryCode").toString().isEmpty());
+    QVERIFY(qmlObject->property("postalCode").toString().isEmpty());
+    QVERIFY(qmlObject->property("state").toString().isEmpty());
+    QVERIFY(qmlObject->property("street").toString().isEmpty());
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testBoundingBox()
@@ -195,6 +215,14 @@ void tst_qmlinterface::testBoundingBox()
     QGeoBoundingBox boundingBox = qmlObject->property("box").value<QGeoBoundingBox>();
 
     QCOMPARE(boundingBox, m_boundingBox);
+
+    qmlObject->setProperty("box", QVariant::fromValue(QGeoBoundingBox()));
+
+    QCOMPARE(qmlObject->property("center").value<QGeoCoordinate>(), QGeoCoordinate());
+    QVERIFY(qIsNaN(qmlObject->property("height").toDouble()));
+    QVERIFY(qIsNaN(qmlObject->property("width").toDouble()));
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testBoundingCircle()
@@ -207,6 +235,13 @@ void tst_qmlinterface::testBoundingCircle()
     QGeoBoundingCircle boundingCircle = qmlObject->property("circle").value<QGeoBoundingCircle>();
 
     QCOMPARE(boundingCircle, m_boundingCircle);
+
+    qmlObject->setProperty("circle", QVariant::fromValue(QGeoBoundingCircle()));
+
+    QCOMPARE(qmlObject->property("center").value<QGeoCoordinate>(), QGeoCoordinate());
+    QCOMPARE(qmlObject->property("radius").toDouble(), -1.0);
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testLocation()
@@ -219,6 +254,14 @@ void tst_qmlinterface::testLocation()
     QGeoLocation location = qmlObject->property("location").value<QGeoLocation>();
 
     QCOMPARE(location, m_location);
+
+    qmlObject->setProperty("location", QVariant::fromValue(QGeoLocation()));
+
+    QCOMPARE(qmlObject->property("address").value<QGeoAddress>(), QGeoAddress());
+    QCOMPARE(qmlObject->property("boundingBox").value<QGeoBoundingBox>(), QGeoBoundingBox());
+    QCOMPARE(qmlObject->property("coordinate").value<QGeoCoordinate>(), QGeoCoordinate());
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testCategory()
@@ -231,6 +274,13 @@ void tst_qmlinterface::testCategory()
     QPlaceCategory category = qmlObject->property("category").value<QPlaceCategory>();
 
     QCOMPARE(category, m_category);
+
+    qmlObject->setProperty("category", QVariant::fromValue(QPlaceCategory()));
+
+    QVERIFY(qmlObject->property("name").toString().isEmpty());
+    QVERIFY(qmlObject->property("categoryId").toString().isEmpty());
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testIcon()
@@ -243,6 +293,12 @@ void tst_qmlinterface::testIcon()
     QPlaceIcon icon = qmlObject->property("icon").value<QPlaceIcon>();
 
     QCOMPARE(icon, m_icon);
+
+    qmlObject->setProperty("icon", QVariant::fromValue(QPlaceIcon()));
+
+    QVERIFY(!qmlObject->property("fullUrl").toUrl().isValid());
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testRatings()
@@ -255,6 +311,14 @@ void tst_qmlinterface::testRatings()
     QPlaceRatings ratings = qmlObject->property("ratings").value<QPlaceRatings>();
 
     QCOMPARE(ratings, m_ratings);
+
+    qmlObject->setProperty("ratings", QVariant::fromValue(QPlaceRatings()));
+
+    QCOMPARE(qmlObject->property("average").value<qreal>(), 0.0);
+    QCOMPARE(qmlObject->property("maximum").value<qreal>(), 0.0);
+    QCOMPARE(qmlObject->property("average").toInt(), 0);
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testSupplier()
@@ -267,6 +331,15 @@ void tst_qmlinterface::testSupplier()
     QPlaceSupplier supplier = qmlObject->property("supplier").value<QPlaceSupplier>();
 
     QCOMPARE(supplier, m_supplier);
+
+    qmlObject->setProperty("supplier", QVariant::fromValue(QPlaceSupplier()));
+
+    QVERIFY(qmlObject->property("name").toString().isEmpty());
+    QVERIFY(!qmlObject->property("url").toUrl().isValid());
+    QVERIFY(qmlObject->property("supplierId").toString().isEmpty());
+    QCOMPARE(qmlObject->property("icon").value<QPlaceIcon>(), QPlaceIcon());
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testUser()
@@ -279,6 +352,13 @@ void tst_qmlinterface::testUser()
     QPlaceUser user = qmlObject->property("user").value<QPlaceUser>();
 
     QCOMPARE(user, m_user);
+
+    qmlObject->setProperty("user", QVariant::fromValue(QPlaceUser()));
+
+    QVERIFY(qmlObject->property("name").toString().isEmpty());
+    QVERIFY(qmlObject->property("userId").toString().isEmpty());
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testPlaceAttribute()
@@ -291,6 +371,13 @@ void tst_qmlinterface::testPlaceAttribute()
     QPlaceAttribute placeAttribute = qmlObject->property("attribute").value<QPlaceAttribute>();
 
     QCOMPARE(placeAttribute, m_placeAttribute);
+
+    qmlObject->setProperty("attribute", QVariant::fromValue(QPlaceAttribute()));
+
+    QVERIFY(qmlObject->property("label").toString().isEmpty());
+    QVERIFY(qmlObject->property("text").toString().isEmpty());
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testContactDetail()
@@ -303,6 +390,13 @@ void tst_qmlinterface::testContactDetail()
     QPlaceContactDetail contactDetail = qmlObject->property("contactDetail").value<QPlaceContactDetail>();
 
     QCOMPARE(contactDetail, m_contactDetail);
+
+    qmlObject->setProperty("contactDetail", QVariant::fromValue(QPlaceContactDetail()));
+
+    QVERIFY(qmlObject->property("label").toString().isEmpty());
+    QVERIFY(qmlObject->property("value").toString().isEmpty());
+
+    delete qmlObject;
 }
 
 void tst_qmlinterface::testPlace()
@@ -315,6 +409,20 @@ void tst_qmlinterface::testPlace()
     QPlace place = qmlObject->property("place").value<QPlace>();
 
     QCOMPARE(place, m_place);
+
+    qmlObject->setProperty("place", QVariant::fromValue(QPlace()));
+
+    QVERIFY(qmlObject->property("name").toString().isEmpty());
+    QVERIFY(qmlObject->property("placeId").toString().isEmpty());
+    QVERIFY(qmlObject->property("attribution").toString().isEmpty());
+    QDeclarativeListReference categories(qmlObject, "categories", &engine);
+    QCOMPARE(categories.count(), 0);
+    QCOMPARE(qmlObject->property("location").value<QGeoLocation>(), QGeoLocation());
+    QCOMPARE(qmlObject->property("ratings").value<QPlaceRatings>(), QPlaceRatings());
+    QCOMPARE(qmlObject->property("icon").value<QPlaceIcon>(), QPlaceIcon());
+    QCOMPARE(qmlObject->property("supplier").value<QPlaceSupplier>(), QPlaceSupplier());
+
+    delete qmlObject;
 }
 
 QTEST_MAIN(tst_qmlinterface)

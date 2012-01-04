@@ -123,7 +123,7 @@ Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoCoordinate &c
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QT_PREPEND_NAMESPACE(QGeoCoordinate))
+Q_DECLARE_METATYPE(QGeoCoordinate)
 
 QT_END_HEADER
 
