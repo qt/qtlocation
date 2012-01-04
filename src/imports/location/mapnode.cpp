@@ -134,16 +134,16 @@ void MapNode::updateFBO()
     glClearDepth(1);
 #endif
 
+#if defined(GL_LINE_SMOOTH) && defined(GL_LINE_SMOOTH_HINT)
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+#endif
+
 #ifdef QSGSHADEREFFECTSOURCE_AVAILABLE
     // Update any map objects that may have dirty textures
     for (int i = 0; i < mapItems_.count(); ++i) {
         mapItems_.at(i)->updateItem();
     }
-#endif
-
-#if defined(GL_LINE_SMOOTH) && defined(GL_LINE_SMOOTH_HINT)
-    glEnable(GL_LINE_SMOOTH);
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 #endif
 
     // No stereo rendering, set the eye as neutral
