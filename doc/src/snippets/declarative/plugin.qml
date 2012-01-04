@@ -38,15 +38,16 @@
 **
 ****************************************************************************/
 
+Item {
+    //! [Plugin locale]
+    //single locale
+    Plugin {
+        locales: "en_US"
+    }
 
-//! [Plugin locale]
-//single locale
-Plugin {
-    locales: "en_US"
+    //multiple locales
+    Plugin {
+        locales: ["fr_FR","en_US"]
+    }
+    //! [Plugin locale]
 }
-
-//multiple locales
-Plugin {
-    locales: ["fr_FR","en_US"]
-}
-//! [Plugin locale]
