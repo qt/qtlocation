@@ -88,9 +88,6 @@ namespace JsonConverter
 
     static QLatin1String NotificationType("notification");
     static QLatin1String Actions("actions");
-    static QLatin1String Create("create");
-    static QLatin1String Update("update");
-    static QLatin1String Remove("remove");
 
     //coord
     static QLatin1String Coordinate("geo");

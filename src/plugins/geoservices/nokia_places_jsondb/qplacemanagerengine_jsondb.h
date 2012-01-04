@@ -48,6 +48,7 @@
 #include <qgeoserviceprovider.h>
 
 #include <QtAddOnJsonDb/jsondb-global.h>
+#include <QtAddOnJsonDb/jsondb-notification.h>
 #include <QtCore/QEventLoop>
 
 QT_ADDON_JSONDB_BEGIN_NAMESPACE
@@ -107,10 +108,8 @@ public:
 public slots:
     void processJsonDbResponse(int id, const QVariant &data);
     void processJsonDbError(int id, int code, const QString &error);
-    void processJsonDbNotification(const QString &, const QVariant &, const QString &);
-
-    void setupNotificationsResponse(int id, const QVariant &data);
-    void setupNotificationsError(int id, int code, const QString &error);
+    void processJsonDbNotification(const QString &notifyUuid,
+                                   const QtAddOn::JsonDb::JsonDbNotification &notification);
 
 private:
     bool waitForRequest(int reqId, QVariantMap *variantMap) const;

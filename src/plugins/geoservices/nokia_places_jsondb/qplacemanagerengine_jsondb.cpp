@@ -73,27 +73,10 @@ QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVarian
             this, SLOT(processJsonDbResponse(int,QVariant)));
     connect(m_db, SIGNAL(error(int,int,QString)),
             this, SLOT(processJsonDbError(int,int,QString)));
-    connect(m_db, SIGNAL(notified(QString,QVariant,QString)),
-            this, SLOT(processJsonDbNotification(QString,QVariant,QString)));
 
-    //Setup notifications
-    QVariantMap notificationMap;
-    QVariantList actions;
-    notificationMap.insert(JsonConverter::Type, JsonConverter::NotificationType);
-    notificationMap.insert(QLatin1String("query"),
-                           QString::fromLatin1("[?%1 = \"%2\" | %1 = \"%3\" ]")
-                           .arg(JsonConverter::Type).arg(JsonConverter::PlaceType).arg(JsonConverter::CategoryType));
-    actions.append(JsonConverter::Create);
-    actions.append(JsonConverter::Update);
-    actions.append(JsonConverter::Remove);
-    notificationMap.insert(JsonConverter::Actions, actions);
-
-    connect(m_db, SIGNAL(response(int,QVariant)),
-            this, SLOT(setupNotificationsResponse(int,QVariant)));
-    connect(m_db, SIGNAL(error(int,int,QString)),
-            this, SLOT(setupNotificationsError(int,int,QString)));
-
-    m_notificationReqId = m_db->create(notificationMap);
+    m_notificationUuid = m_db->registerNotification(JsonDbClient::NotifyCreate | JsonDbClient::NotifyUpdate | JsonDbClient::NotifyRemove,
+                                QString::fromLatin1("[?%1 = \"%2\" | %1 = \"%3\" ]").arg(JsonConverter::Type).arg(JsonConverter::PlaceType).arg(JsonConverter::CategoryType),
+                                QString(), this, SLOT(processJsonDbNotification(QString,QtAddOn::JsonDb::JsonDbNotification)));
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
@@ -315,28 +298,6 @@ void QPlaceManagerEngineJsonDb::processJsonDbError(int id, int code, const QStri
     }
 }
 
-void QPlaceManagerEngineJsonDb::setupNotificationsResponse(int id, const QVariant &data)
-{
-    if (id == m_notificationReqId) {
-        m_notificationUuid = data.toMap().value(JsonConverter::Uuid).toString();
-        disconnect(m_db, SIGNAL(response(int,QVariant)),
-                this, SLOT(setupNotificationsResponse(int,QVariant)));
-        disconnect(m_db, SIGNAL(error(int,int,QString)),
-                this, SLOT(setupNotificationsResponse(int,QVariant)));
-    }
-}
-
-void QPlaceManagerEngineJsonDb::setupNotificationsError(int id, int code, const QString &error)
-{
-    if (id == m_notificationReqId) {
-        qWarning() << "Place notifications could not be initialized";
-        disconnect(m_db, SIGNAL(response(int,QVariant)),
-                this, SLOT(setupNotificationsResponse(int,QVariant)));
-        disconnect(m_db, SIGNAL(error(int,int,QString)),
-                this, SLOT(setupNotificationsResponse(int,QVariant)));
-    }
-}
-
 bool QPlaceManagerEngineJsonDb::waitForRequest(int reqId, QVariantMap *variantMap) const
 {
     m_helperMap.insert(reqId, QVariant());
@@ -354,33 +315,31 @@ bool QPlaceManagerEngineJsonDb::waitForRequest(int reqId, QVariantMap *variantMa
     }
 }
 
-void QPlaceManagerEngineJsonDb::processJsonDbNotification(const QString &notifyUuid, const QVariant &object, const QString &action)
+void QPlaceManagerEngineJsonDb::processJsonDbNotification(const QString &notifyUuid, const QtAddOn::JsonDb::JsonDbNotification &notification)
 {
-    if (notifyUuid != m_notificationUuid)
-        return;
-
-    if (object.toMap().value(JsonConverter::Type).toString() == JsonConverter::PlaceType) {
-        if (action == JsonConverter::Create)
-            emit placeAdded(object.toMap().value(JsonConverter::Uuid).toString());
-        else if (action == JsonConverter::Update)
-            emit placeUpdated(object.toMap().value(JsonConverter::Uuid).toString());
-        else if (action == JsonConverter::Remove)
-            emit placeRemoved(object.toMap().value(JsonConverter::Uuid).toString());
-
-    } else if (object.toMap().value(JsonConverter::Type).toString() == JsonConverter::CategoryType) {
-        QPlaceCategory category = JsonConverter::convertJsonMapToCategory(object.toMap(), this);
-        QStringList ancestors = object.toMap().value(JsonConverter::Ancestors).toStringList();
+    Q_ASSERT(notifyUuid == m_notificationUuid);
+    QVariantMap object = notification.object();
+    if (object.value(JsonConverter::Type).toString() == JsonConverter::PlaceType) {
+        if (notification.action() & JsonDbClient::NotifyCreate)
+            emit placeAdded(object.value(JsonConverter::Uuid).toString());
+        else if (notification.action() & JsonDbClient::NotifyUpdate)
+            emit placeUpdated(object.value(JsonConverter::Uuid).toString());
+        else if (notification.action() & JsonDbClient::NotifyRemove)
+            emit placeRemoved(object.value(JsonConverter::Uuid).toString());
+    } else if (object.value(JsonConverter::Type).toString() == JsonConverter::CategoryType) {
+        QPlaceCategory category = JsonConverter::convertJsonMapToCategory(object, this);
+        QStringList ancestors = object.value(JsonConverter::Ancestors).toStringList();
         QString parentId;
         if (ancestors.count() >= 2) {
             ancestors.takeLast();//last element in ancestors is always the uuid of the catgory itself
             parentId = ancestors.takeLast(); //the 2nd last element must be the parent;
         }
 
-        if (action == JsonConverter::Create)
+        if (notification.action() & JsonDbClient::NotifyCreate)
             emit categoryAdded(category, parentId);
-        else if (action == JsonConverter::Update)
+        else if (notification.action() & JsonDbClient::NotifyUpdate)
             emit categoryUpdated(category, parentId);
-        else if (action == JsonConverter::Remove)
+        else if (notification.action() & JsonDbClient::NotifyRemove)
             emit categoryRemoved(category.categoryId(), parentId);
     }
 }
