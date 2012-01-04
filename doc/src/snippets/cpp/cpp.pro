@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = cppsnippet
-QT += gui network xmlpatterns declarative quick opengl qt3d sql location
+QT = core location
 
 SOURCES += \
     main.cpp \
