@@ -810,7 +810,23 @@ QPointF MapPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate)
             point.setX(point.x() - mapWidth);
     }
 
-    return point;
+    QPointF altPointRight(point.x() + side, point.y());
+    QPointF altPointLeft(point.x() - side, point.y());
+
+    QPointF ret = point;
+    qreal minDist = qAbs(point.x() - width_ / 2.0);
+    qreal dist;
+
+    if ((dist = qAbs(altPointRight.x() - width_ / 2.0)) < minDist) {
+        ret = altPointRight;
+        minDist = dist;
+    }
+    if ((dist = qAbs(altPointLeft.x() - width_ / 2.0)) < minDist) {
+        ret = altPointLeft;
+        minDist = dist;
+    }
+
+    return ret;
 }
 
 void MapPrivate::updateFrustum(Frustum &frustum)
