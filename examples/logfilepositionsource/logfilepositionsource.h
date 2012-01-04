@@ -57,6 +57,7 @@ public:
 
     PositioningMethods supportedPositioningMethods() const;
     int minimumUpdateInterval() const;
+    Error error() const;
 
 public slots:
     virtual void startUpdates();

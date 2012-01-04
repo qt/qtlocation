@@ -74,6 +74,8 @@ public:
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     PositioningMethods supportedPositioningMethods() const;
     int minimumUpdateInterval() const;
+    Error error() const;
+
 
 public Q_SLOTS:
     void startUpdates();
@@ -90,6 +92,7 @@ private:
     Q_DISABLE_COPY(QNmeaPositionInfoSource)
     friend class QNmeaPositionInfoSourcePrivate;
     QNmeaPositionInfoSourcePrivate *d;
+    void setError(QGeoPositionInfoSource::Error positionError);
 };
 
 QT_END_NAMESPACE

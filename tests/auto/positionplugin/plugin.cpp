@@ -64,6 +64,7 @@ public:
 
     void setUpdateInterval(int msec);
     int minimumUpdateInterval() const;
+    Error error() const;
 
 private:
     QTimer *timer;
@@ -91,6 +92,12 @@ DummySource::DummySource(QObject *parent) :
     connect(timeoutTimer, SIGNAL(timeout()),
             this, SLOT(doTimeout()));
 }
+
+QGeoPositionInfoSource::Error DummySource::error() const
+{
+    return QGeoPositionInfoSource::UnknownSourceError;
+}
+
 
 void DummySource::setUpdateInterval(int msec)
 {

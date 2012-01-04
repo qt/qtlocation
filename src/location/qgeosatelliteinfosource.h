@@ -59,6 +59,13 @@ class Q_LOCATION_EXPORT QGeoSatelliteInfoSource : public QObject
     Q_PROPERTY(int minimumUpdateInterval READ minimumUpdateInterval)
 
 public:
+    enum Error {
+        AccessError,
+        ClosedError,              /* 1 */
+        UnknownSourceError = -1
+    };
+    Q_ENUMS(Error)
+
     explicit QGeoSatelliteInfoSource(QObject *parent);
     virtual ~QGeoSatelliteInfoSource();
 
@@ -69,6 +76,7 @@ public:
     virtual void setUpdateInterval(int msec);
     int updateInterval() const;
     virtual int minimumUpdateInterval() const = 0;
+    virtual Error error() const = 0;
 
 public Q_SLOTS:
     virtual void startUpdates() = 0;
@@ -80,6 +88,7 @@ Q_SIGNALS:
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void requestTimeout();
+    void error(QGeoSatelliteInfoSource::Error);
 
 private:
     Q_DISABLE_COPY(QGeoSatelliteInfoSource)

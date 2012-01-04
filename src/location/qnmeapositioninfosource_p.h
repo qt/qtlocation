@@ -95,6 +95,7 @@ public:
     QPointer<QIODevice> m_device;
     QGeoPositionInfo m_lastUpdate;
     bool m_invokedStart;
+    QGeoPositionInfoSource::Error m_positionError;
 
 public Q_SLOTS:
     void readyRead();

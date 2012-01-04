@@ -63,6 +63,7 @@ class QDeclarativePositionSource : public QObject
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval NOTIFY updateIntervalChanged)
     Q_PROPERTY(PositioningMethods supportedPositioningMethods READ supportedPositioningMethods NOTIFY supportedPositioningMethodsChanged)
     Q_PROPERTY(PositioningMethods preferredPositioningMethods READ preferredPositioningMethods WRITE setPreferredPositioningMethods NOTIFY preferredPositioningMethodsChanged)
+    Q_PROPERTY(SourceError sourceError READ sourceError NOTIFY sourceErrorChanged)
     Q_ENUMS(PositioningMethod)
 
 public:
@@ -75,6 +76,14 @@ public:
 
     Q_DECLARE_FLAGS(PositioningMethods, PositioningMethod)
     Q_FLAGS(PositioningMethods)
+
+    enum SourceError {
+        AccessError = QGeoPositionInfoSource::AccessError,
+        ClosedError = QGeoPositionInfoSource::ClosedError,
+        UnknownSourceError = QGeoPositionInfoSource::UnknownSourceError
+    };
+    Q_ENUMS(SourceError)
+
 
     QDeclarativePositionSource();
     ~QDeclarativePositionSource();
@@ -89,7 +98,7 @@ public:
     QDeclarativePosition* position();
     PositioningMethods supportedPositioningMethods() const;
     PositioningMethods preferredPositioningMethods() const;
-
+    SourceError sourceError() const;
 
 public Q_SLOTS:
     void update();
@@ -103,11 +112,12 @@ Q_SIGNALS:
     void updateIntervalChanged();
     void supportedPositioningMethodsChanged();
     void preferredPositioningMethodsChanged();
+    void sourceErrorChanged();
 
 
 private Q_SLOTS:
     void positionUpdateReceived(const QGeoPositionInfo& update);
-
+    void sourceErrorReceived(const QGeoPositionInfoSource::Error error);
 private:
     QGeoPositionInfoSource* m_positionSource;
     PositioningMethods m_positioningMethod;
@@ -118,6 +128,7 @@ private:
     bool m_active;
     bool m_singleUpdate;
     int m_updateInterval;
+    SourceError m_sourceError;
 };
 
 QT_END_NAMESPACE

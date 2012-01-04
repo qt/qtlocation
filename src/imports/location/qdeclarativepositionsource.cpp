@@ -112,12 +112,15 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativePositionSource::QDeclarativePositionSource()
     : m_positionSource(0), m_positioningMethod(QDeclarativePositionSource::NoPositioningMethod),
-      m_nmeaFile(0), m_active(false), m_singleUpdate(false), m_updateInterval(0)
+      m_nmeaFile(0), m_active(false), m_singleUpdate(false), m_updateInterval(0),
+      m_sourceError(UnknownSourceError)
 {
     m_positionSource = QGeoPositionInfoSource::createDefaultSource(this);
     if (m_positionSource) {
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
+        connect(m_positionSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
+                this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
         m_positioningMethod = supportedPositioningMethods();
 #if defined(Q_OS_SYMBIAN)
     } else {
@@ -468,6 +471,39 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
         m_singleUpdate = false;
         emit activeChanged();
     }
+}
+
+QDeclarativePositionSource::SourceError QDeclarativePositionSource::sourceError() const
+{
+    return m_sourceError;
+}
+
+/*!
+    \qmlproperty enumeration PositionSource::sourceError
+
+    This property holds the error which last occured with the PositionSource.
+
+    \list
+    \o AccessError - The connection setup to the remote positioning backend failed because the
+        application lacked the required privileges.
+    \o ClosedError - The remote positioning backend closed the connection, which happens e.g. in case
+        the user is switching location services to off. This object becomes invalid and should be deleted.
+        A new source can be declared later on to check whether the positioning backend is up again.
+    \o UnknownSourceError - An unidentified error occurred.
+    \endlist
+
+*/
+
+void QDeclarativePositionSource::sourceErrorReceived(const QGeoPositionInfoSource::Error error)
+{
+    if (error == QGeoPositionInfoSource::AccessError) {
+        m_sourceError = QDeclarativePositionSource::AccessError;
+    } else if (error == QGeoPositionInfoSource::ClosedError) {
+        m_sourceError = QDeclarativePositionSource::ClosedError;
+    } else {
+         m_sourceError = QDeclarativePositionSource::UnknownSourceError;
+    }
+    emit sourceErrorChanged();
 }
 
 #include "moc_qdeclarativepositionsource_p.cpp"

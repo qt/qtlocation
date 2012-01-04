@@ -78,6 +78,7 @@ public:
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     PositioningMethods supportedPositioningMethods() const;
     int minimumUpdateInterval() const;
+    Error error() const;
 
 public Q_SLOTS:
     void startUpdates();
@@ -93,6 +94,8 @@ private:
     bool locationOngoing;
     bool timeoutSent;
     QTimer* requestTimer;
+    QGeoPositionInfoSource::Error mPositionError;
+    void setError(QGeoPositionInfoSource::Error positionError);
     void shutdownRequestSession();
 
 Q_SIGNALS:
@@ -104,6 +107,7 @@ private Q_SLOTS:
     void onStreamReceived(const QJsonObject &jsonObject);
     void onSocketConnected();
     void onSocketDisconnected();
+    void onSocketError(QLocalSocket::LocalSocketError);
     void requestTimerExpired();
 };
 

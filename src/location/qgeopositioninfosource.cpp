@@ -360,10 +360,9 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSource::preferredPosi
     reads from the system's default sources of location data, or the plugin
     with the highest available priority.
 
-    Returns 0 if the system has no default position source and no valid plugins
-    could be found.
+    Returns 0 if the system has no default position source, no valid plugins
+    could be found or the user does not have the permission to access the current position.
 */
-
 QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *parent)
 {
     QSettings pluginSettings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
@@ -525,6 +524,13 @@ QStringList QGeoPositionInfoSource::availableSources()
 */
 
 /*!
+     \fn virtual QGeoPositionInfoSource::Error QGeoPositionInfoSource::error() const;
+
+     Returns the type of error that last occurred.
+
+*/
+
+/*!
     \fn void QGeoPositionInfoSource::positionUpdated(const QGeoPositionInfo &update);
 
     If startUpdates() or requestUpdate() is called, this signal is emitted
@@ -543,6 +549,27 @@ QStringList QGeoPositionInfoSource::availableSources()
     subclass determines that it will not be able to provide further regular updates.  This signal
     will not be emitted again until after the regular updates resume.
 */
+
+/*!
+    \fn void QGeoPositionInfoSource::error(QGeoPositionInfoSource::Error positioningError)
+
+    This signal is emitted after an error occurred. The \a positioningError
+    parameter describes the type of error that occurred.
+
+*/
+
+/*!
+    \enum QGeoPositionInfoSource::Error
+
+    The Error enumeration represents the errors which can occur.
+
+    \value AccessError The connection setup to the remote positioning backend failed because the
+        application lacked the required privileges.
+    \value ClosedError  The remote positioning backend closed the connection, which happens e.g. in case
+        the user is switching location services to off. This object becomes invalid and should be deleted.
+        A call to createDefaultSource() can be used to create a new source later on.
+    \value UnknownSourceError An unidentified error occurred.
+ */
 
 #include "moc_qgeopositioninfosource.cpp"
 

@@ -63,6 +63,7 @@ public:
 
     void setUpdateInterval(int msec);
     int minimumUpdateInterval() const;
+    Error error() const;
 
 public Q_SLOTS:
     void startUpdates();
@@ -77,6 +78,8 @@ private:
     QTimer *timer;
     QTimer *requestTimer;
     QGeoPositionInfo lastPosition;
+    QGeoPositionInfoSource::Error m_positionError;
+    void setError(QGeoPositionInfoSource::Error positionError);
 };
 
 QT_END_NAMESPACE

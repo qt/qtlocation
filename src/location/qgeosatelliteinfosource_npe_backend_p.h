@@ -76,6 +76,7 @@ public:
     bool init();
     void setUpdateInterval(int interval);
     int minimumUpdateInterval() const;
+    Error error() const;
 
 public Q_SLOTS:
     void startUpdates();
@@ -92,6 +93,7 @@ private Q_SLOTS:
     void onSocketDisconnected();
     void requestTimerExpired();
     void shutdownRequestSession();
+    void onSocketError(QLocalSocket::LocalSocketError);
 
 private:
     QLocalSocket* mSocket;
@@ -99,6 +101,8 @@ private:
     bool satOngoing;
     QTimer* requestTimer;
     int minInterval;
+    QGeoSatelliteInfoSource::Error mSatelliteError;
+    void setError(QGeoSatelliteInfoSource::Error satelliteError);
 };
 
 #endif // QGEOSATELLITEINFOSOURCE_NPE_BACKEND_H

@@ -198,6 +198,7 @@ void QNmeaSimulatedReader::processNextSentence()
 QNmeaPositionInfoSourcePrivate::QNmeaPositionInfoSourcePrivate(QNmeaPositionInfoSource *parent)
         : QObject(parent),
         m_invokedStart(false),
+        m_positionError(QGeoPositionInfoSource::UnknownSourceError),
         m_source(parent),
         m_nmeaReader(0),
         m_updateTimer(0),
@@ -602,6 +603,17 @@ QGeoPositionInfoSource::PositioningMethods QNmeaPositionInfoSource::supportedPos
 int QNmeaPositionInfoSource::minimumUpdateInterval() const
 {
     return 100;
+}
+
+QGeoPositionInfoSource::Error QNmeaPositionInfoSource::error() const
+{
+    return d->m_positionError;
+}
+
+void QNmeaPositionInfoSource::setError(QGeoPositionInfoSource::Error positionError)
+{
+    d->m_positionError = positionError;
+    emit QGeoPositionInfoSource::error(positionError);
 }
 
 #include "moc_qnmeapositioninfosource.cpp"

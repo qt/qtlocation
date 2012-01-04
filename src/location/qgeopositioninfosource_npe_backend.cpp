@@ -78,7 +78,7 @@ const QString kvalid = QLatin1String("valid");
 const char* klocationdSocketName = "/var/run/locationd/locationd.socket";
 
 QGeoPositionInfoSourceNpeBackend::QGeoPositionInfoSourceNpeBackend(QObject *parent):
-    QGeoPositionInfoSource(parent), locationOngoing(false), timeoutSent(false)
+    QGeoPositionInfoSource(parent), locationOngoing(false), timeoutSent(false), mPositionError(QGeoPositionInfoSource::UnknownSourceError)
 {
     requestTimer = new QTimer(this);
     QObject::connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimerExpired()));
@@ -94,6 +94,7 @@ bool QGeoPositionInfoSourceNpeBackend::init()
         if (mSocket) {
             connect(mSocket, SIGNAL(connected()), this, SLOT(onSocketConnected()));
             connect(mSocket, SIGNAL(disconnected()), this, SLOT(onSocketDisconnected()));
+            connect(mSocket, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onSocketError(QLocalSocket::LocalSocketError)));
             mStream = new JsonStream(mSocket);
             if (mStream) {
                 connect(mStream, SIGNAL(messageReceived(const QJsonObject&)), this, SLOT(onStreamReceived(const QJsonObject&)), Qt::QueuedConnection);
@@ -345,6 +346,34 @@ void QGeoPositionInfoSourceNpeBackend::onStreamReceived(const QJsonObject& jsonO
                 }
             }
         }
+    }
+}
+
+
+QGeoPositionInfoSource::Error QGeoPositionInfoSourceNpeBackend::error() const
+{
+    return mPositionError;
+}
+
+
+void QGeoPositionInfoSourceNpeBackend::setError(QGeoPositionInfoSource::Error positionError)
+{
+    mPositionError = positionError;
+    emit QGeoPositionInfoSource::error(positionError);
+}
+
+
+void QGeoPositionInfoSourceNpeBackend::onSocketError(QLocalSocket::LocalSocketError mError)
+{
+    switch (mError) {
+    case QLocalSocket::PeerClosedError:
+        setError(ClosedError);
+        break;
+    case QLocalSocket::SocketAccessError:
+        setError(AccessError);
+        break;
+    default:
+        setError(UnknownSourceError);
     }
 }
 

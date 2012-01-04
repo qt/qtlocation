@@ -78,6 +78,7 @@ QGeoPositionInfoSourceSimulator::QGeoPositionInfoSourceSimulator(QObject *parent
     : QGeoPositionInfoSource(parent)
     , timer(new QTimer(this))
     , requestTimer(new QTimer(this))
+    , m_positionError(QGeoPositionInfoSource::UnknownSourceError)
 {
     Simulator::LocationConnection::ensureSimulatorConnection();
 
@@ -154,6 +155,18 @@ void QGeoPositionInfoSourceSimulator::updatePosition()
     } else {
         emit updateTimeout();
     }
+}
+
+QGeoPositionInfoSource::Error QGeoPositionInfoSourceSimulator::error() const
+{
+    return m_positionError;
+}
+
+
+void QGeoPositionInfoSourceSimulator::setError(QGeoPositionInfoSource::Error positionError)
+{
+    m_positionError = positionError;
+    emit QGeoPositionInfoSource::error(positionError);
 }
 
 #include "moc_qgeopositioninfosource_simulator_p.cpp"

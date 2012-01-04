@@ -59,6 +59,13 @@ class Q_LOCATION_EXPORT QGeoPositionInfoSource : public QObject
     Q_PROPERTY(int minimumUpdateInterval READ minimumUpdateInterval)
 
 public:
+    enum Error {
+        AccessError,
+        ClosedError,              /* 1 */
+        UnknownSourceError = -1
+    };
+    Q_ENUMS(Error)
+
     enum PositioningMethod {
         SatellitePositioningMethods = 0x000000ff,
         NonSatellitePositioningMethods = 0xffffff00,
@@ -83,6 +90,7 @@ public:
     static QGeoPositionInfoSource *createDefaultSource(QObject *parent);
     static QGeoPositionInfoSource *createSource(const QString &sourceName, QObject *parent);
     static QStringList availableSources();
+    virtual Error error() const = 0;
 
 public Q_SLOTS:
     virtual void startUpdates() = 0;
@@ -93,6 +101,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void positionUpdated(const QGeoPositionInfo &update);
     void updateTimeout();
+    void error(QGeoPositionInfoSource::Error);
 
 private:
     Q_DISABLE_COPY(QGeoPositionInfoSource)

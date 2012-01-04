@@ -74,7 +74,7 @@ const QString kinterval = QLatin1String("interval");
 
 
 QGeoSatelliteInfoSourceNpeBackend::QGeoSatelliteInfoSourceNpeBackend(QObject *parent): QGeoSatelliteInfoSource(parent),
-    satOngoing(false)
+    satOngoing(false), mSatelliteError(QGeoSatelliteInfoSource::UnknownSourceError)
 {
     requestTimer = new QTimer(this);
     QObject::connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimerExpired()));
@@ -90,6 +90,7 @@ bool QGeoSatelliteInfoSourceNpeBackend::init()
         if (mSocket) {
             connect(mSocket, SIGNAL(connected()), this, SLOT(onSocketConnected()));
             connect(mSocket, SIGNAL(disconnected()), this, SLOT(onSocketDisconnected()));
+            connect(mSocket, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onSocketError(QLocalSocket::LocalSocketError)));
             mStream = new JsonStream(mSocket);
             if (mStream) {
                 connect(mStream, SIGNAL(messageReceived(const QJsonObject&)), this, SLOT(onStreamReceived(const QJsonObject&)), Qt::QueuedConnection);
@@ -262,6 +263,34 @@ void QGeoSatelliteInfoSourceNpeBackend::onStreamReceived(const QJsonObject& json
                 }
             }
         }
+    }
+}
+
+
+QGeoSatelliteInfoSource::Error QGeoSatelliteInfoSourceNpeBackend::error() const
+{
+    return mSatelliteError;
+}
+
+
+void QGeoSatelliteInfoSourceNpeBackend::setError(QGeoSatelliteInfoSource::Error satelliteError)
+{
+    mSatelliteError = satelliteError;
+    emit QGeoSatelliteInfoSource::error(satelliteError);
+}
+
+
+void QGeoSatelliteInfoSourceNpeBackend::onSocketError(QLocalSocket::LocalSocketError mError)
+{
+    switch (mError) {
+    case QLocalSocket::PeerClosedError:
+        setError(ClosedError);
+        break;
+    case QLocalSocket::SocketAccessError:
+        setError(AccessError);
+        break;
+    default:
+        setError(UnknownSourceError);
     }
 }
 
