@@ -64,7 +64,7 @@ public:
     QDeclarativeCircleMapItem(QQuickItem *parent = 0);
     ~QDeclarativeCircleMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
     //from QuickItem
     virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
 
@@ -92,7 +92,7 @@ protected Q_SLOTS:
     void updateMapItemAssumeDirty();
 
 private Q_SLOTS:
-    void handleCameraDataChanged(const CameraData& cameraData);
+    void handleCameraDataChanged(const QGeoCameraData& cameraData);
 
 private:
     //TODO: pimpl

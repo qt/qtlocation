@@ -54,8 +54,8 @@ QT_BEGIN_NAMESPACE
 
 class QGraphicsSceneMouseEvent;
 class QPropertyAnimation;
-class CameraData;
-class Map;
+class QGeoCameraData;
+class QGeoMap;
 
 class QDeclarativeGeoMapFlickable: public QObject
 {
@@ -73,7 +73,7 @@ public:
     bool enabled() const;
     void setEnabled(bool enabled);
 
-    void setMap(Map* map);
+    void setMap(QGeoMap* map);
 
     bool mousePressEvent(QMouseEvent *event);
     bool mouseMoveEvent(QMouseEvent *event);
@@ -113,7 +113,7 @@ private:
     QPointF lastPos_;
     QPointF pressPos_;
     bool flicking_;
-    Map* map_;
+    QGeoMap* map_;
     QPropertyAnimation* animation_;
     bool enabled_;
     bool moving_;

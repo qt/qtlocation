@@ -38,96 +38,96 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "tilespec.h"
-#include "tilespec_p.h"
+#include "qgeotilespec.h"
+#include "qgeotilespec_p.h"
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
-TileSpec::TileSpec()
-    : d_ptr(new TileSpecPrivate()) {}
+QGeoTileSpec::QGeoTileSpec()
+    : d_ptr(new QGeoTileSpecPrivate()) {}
 
-TileSpec::TileSpec(const QString &plugin, int mapId, int zoom, int x, int y)
-        : d_ptr(new TileSpecPrivate(plugin, mapId, zoom, x, y)) {}
+QGeoTileSpec::QGeoTileSpec(const QString &plugin, int mapId, int zoom, int x, int y)
+        : d_ptr(new QGeoTileSpecPrivate(plugin, mapId, zoom, x, y)) {}
 
-TileSpec::TileSpec(const TileSpec &other)
-    : d_ptr(new TileSpecPrivate(*(other.d_ptr))) {}
+QGeoTileSpec::QGeoTileSpec(const QGeoTileSpec &other)
+    : d_ptr(new QGeoTileSpecPrivate(*(other.d_ptr))) {}
 
-TileSpec::~TileSpec() {
+QGeoTileSpec::~QGeoTileSpec() {
     delete d_ptr;
 }
 
-TileSpec& TileSpec::operator = (const TileSpec &other)
+QGeoTileSpec& QGeoTileSpec::operator = (const QGeoTileSpec &other)
 {
     d_ptr->operator=(*(other.d_ptr));
     return *this;
 }
 
-QString TileSpec::plugin() const
+QString QGeoTileSpec::plugin() const
 {
-    Q_D(const TileSpec);
+    Q_D(const QGeoTileSpec);
     return d->plugin_;
 }
 
-void TileSpec::setZoom(int zoom)
+void QGeoTileSpec::setZoom(int zoom)
 {
-    Q_D(TileSpec);
+    Q_D(QGeoTileSpec);
     d->zoom_ = zoom;
 }
 
-int TileSpec::zoom() const
+int QGeoTileSpec::zoom() const
 {
-    Q_D(const TileSpec);
+    Q_D(const QGeoTileSpec);
     return d->zoom_;
 }
 
-void TileSpec::setX(int x)
+void QGeoTileSpec::setX(int x)
 {
-    Q_D(TileSpec);
+    Q_D(QGeoTileSpec);
     d->x_ = x;
 }
 
-int TileSpec::x() const
+int QGeoTileSpec::x() const
 {
-    Q_D(const TileSpec);
+    Q_D(const QGeoTileSpec);
     return d->x_;
 }
 
-void TileSpec::setY(int y)
+void QGeoTileSpec::setY(int y)
 {
-    Q_D(TileSpec);
+    Q_D(QGeoTileSpec);
     d->y_ = y;
 }
 
-int TileSpec::y() const
+int QGeoTileSpec::y() const
 {
-    Q_D(const TileSpec);
+    Q_D(const QGeoTileSpec);
     return d->y_;
 }
 
-void TileSpec::setMapId(int mapId)
+void QGeoTileSpec::setMapId(int mapId)
 {
-    Q_D(TileSpec);
+    Q_D(QGeoTileSpec);
     d->mapId_ = mapId;
 }
 
-int TileSpec::mapId() const
+int QGeoTileSpec::mapId() const
 {
-    Q_D(const TileSpec);
+    Q_D(const QGeoTileSpec);
     return d->mapId_;
 }
 
-bool TileSpec::operator == (const TileSpec &rhs) const
+bool QGeoTileSpec::operator == (const QGeoTileSpec &rhs) const
 {
     return (d_ptr->operator == (*(rhs.d_ptr)));
 }
 
-bool TileSpec::operator < (const TileSpec &rhs) const
+bool QGeoTileSpec::operator < (const QGeoTileSpec &rhs) const
 {
     return (d_ptr->operator < (*(rhs.d_ptr)));
 }
 
-unsigned int qHash(const TileSpec &spec)
+unsigned int qHash(const QGeoTileSpec &spec)
 {
     unsigned int result = (qHash(spec.plugin()) * 13) % 31;
     result += ((spec.mapId() * 17) % 31) << 5;
@@ -137,35 +137,35 @@ unsigned int qHash(const TileSpec &spec)
     return result;
 }
 
-QDebug operator<< (QDebug dbg, const TileSpec &spec)
+QDebug operator<< (QDebug dbg, const QGeoTileSpec &spec)
 {
     dbg << spec.plugin() << spec.mapId() << spec.zoom() << spec.x() << spec.y();
     return dbg;
 }
 
-TileSpecPrivate::TileSpecPrivate()
+QGeoTileSpecPrivate::QGeoTileSpecPrivate()
     : mapId_(0),
     zoom_(-1),
     x_(-1),
     y_(-1) {}
 
-TileSpecPrivate::TileSpecPrivate(const TileSpecPrivate &other)
+QGeoTileSpecPrivate::QGeoTileSpecPrivate(const QGeoTileSpecPrivate &other)
     : plugin_(other.plugin_),
       mapId_(other.mapId_),
       zoom_(other.zoom_),
       x_(other.x_),
       y_(other.y_) {}
 
-TileSpecPrivate::TileSpecPrivate(const QString &plugin, int mapId, int zoom, int x, int y)
+QGeoTileSpecPrivate::QGeoTileSpecPrivate(const QString &plugin, int mapId, int zoom, int x, int y)
     : plugin_(plugin),
       mapId_(mapId),
       zoom_(zoom),
       x_(x),
       y_(y) {}
 
-TileSpecPrivate::~TileSpecPrivate() {}
+QGeoTileSpecPrivate::~QGeoTileSpecPrivate() {}
 
-TileSpecPrivate& TileSpecPrivate::operator = (const TileSpecPrivate &other)
+QGeoTileSpecPrivate& QGeoTileSpecPrivate::operator = (const QGeoTileSpecPrivate &other)
 {
     plugin_ = other.plugin_;
     mapId_ = other.mapId_;
@@ -175,7 +175,7 @@ TileSpecPrivate& TileSpecPrivate::operator = (const TileSpecPrivate &other)
     return *this;
 }
 
-bool TileSpecPrivate::operator == (const TileSpecPrivate &rhs) const
+bool QGeoTileSpecPrivate::operator == (const QGeoTileSpecPrivate &rhs) const
 {
     if (plugin_ != rhs.plugin_)
         return false;
@@ -195,7 +195,7 @@ bool TileSpecPrivate::operator == (const TileSpecPrivate &rhs) const
     return true;
 }
 
-bool TileSpecPrivate::operator < (const TileSpecPrivate &rhs) const
+bool QGeoTileSpecPrivate::operator < (const QGeoTileSpecPrivate &rhs) const
 {
     if (plugin_ < rhs.plugin_)
         return true;

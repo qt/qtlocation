@@ -53,7 +53,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const TileSpec &spec, QObject *parent)
+QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent)
         : QGeoTiledMapReply(spec, parent),
         m_reply(reply)
 {

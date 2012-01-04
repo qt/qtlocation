@@ -60,10 +60,10 @@
 #include <QMap>
 #include <QLocale>
 #include <QTimer>
-#include "maptype.h"
-#include "tilecache.h"
+#include "qgeomaptype.h"
+#include "qgeotilecache.h"
 
-class TileSpec;
+class QGeoTileSpec;
 class QGeoTiledMapReply;
 
 QT_BEGIN_NAMESPACE
@@ -79,7 +79,7 @@ public:
     QString managerName;
     int managerVersion;
 
-    QList<MapType> supportedMapTypes;
+    QList<QGeoMapType> supportedMapTypes;
 //    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes;
     QSize tileSize;
     qreal minimumZoomLevel;
@@ -88,15 +88,15 @@ public:
     bool supportsTilting;
     qreal minimumTilt;
     qreal maximumTilt;
-    TileCache::CacheAreas cacheHint;
+    QGeoTileCache::CacheAreas cacheHint;
 
     QLocale locale;
     bool started_;
     bool initialized;
     bool stopped_;
     QTimer *timer_;
-    QList<TileSpec> queue_;
-    QHash<TileSpec, QGeoTiledMapReply*> invmap_;
+    QList<QGeoTileSpec> queue_;
+    QHash<QGeoTileSpec, QGeoTiledMapReply*> invmap_;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEnginePrivate)

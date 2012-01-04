@@ -47,7 +47,7 @@
 #include <QtDeclarative/qdeclarativeinfo.h>
 #include <QDebug>
 #include "math.h"
-#include "map.h"
+#include "qgeomap.h"
 
 QT_BEGIN_NAMESPACE
 

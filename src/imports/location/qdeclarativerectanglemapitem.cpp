@@ -120,11 +120,11 @@ QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
 {
 }
 
-void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
+void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
-        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)),this, SLOT(handleCameraDataChanged(CameraData)));
+        QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)),this, SLOT(handleCameraDataChanged(QGeoCameraData)));
         dirtyGeometry_ = true;
         updateMapItem();
     }
@@ -281,7 +281,7 @@ void QDeclarativeRectangleMapItem::updateMapItem()
     update();
 }
 
-void QDeclarativeRectangleMapItem::handleCameraDataChanged(const CameraData& cameraData)
+void QDeclarativeRectangleMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();

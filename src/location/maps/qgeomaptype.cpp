@@ -39,71 +39,71 @@
 **
 ****************************************************************************/
 
-#include "maptype.h"
-#include "maptype_p.h"
+#include "qgeomaptype.h"
+#include "qgeomaptype_p.h"
 
 QT_BEGIN_NAMESPACE
 
-MapType::MapType()
-    : d_ptr(new MapTypePrivate()) {}
+QGeoMapType::QGeoMapType()
+    : d_ptr(new QGeoMapTypePrivate()) {}
 
-MapType::MapType(const MapType &other)
+QGeoMapType::QGeoMapType(const QGeoMapType &other)
     : d_ptr(other.d_ptr) {}
 
-MapType::MapType(MapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId)
-    : d_ptr(new MapTypePrivate(style, name, description, mobile, mapId)) {}
+QGeoMapType::QGeoMapType(QGeoMapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId)
+    : d_ptr(new QGeoMapTypePrivate(style, name, description, mobile, mapId)) {}
 
-MapType::~MapType() {}
+QGeoMapType::~QGeoMapType() {}
 
-MapType& MapType::operator = (const MapType &other)
+QGeoMapType& QGeoMapType::operator = (const QGeoMapType &other)
 {
     d_ptr = other.d_ptr;
     return *this;
 }
 
-bool MapType::operator == (const MapType &other) const
+bool QGeoMapType::operator == (const QGeoMapType &other) const
 {
     return (*d_ptr.constData() == *other.d_ptr.constData());
 }
 
-bool MapType::operator != (const MapType &other) const
+bool QGeoMapType::operator != (const QGeoMapType &other) const
 {
     return !(operator ==(other));
 }
 
-MapType::MapStyle MapType::style() const
+QGeoMapType::MapStyle QGeoMapType::style() const
 {
     return d_ptr->style_;
 }
 
-QString MapType::name() const
+QString QGeoMapType::name() const
 {
     return d_ptr->name_;
 }
 
-QString MapType::description() const
+QString QGeoMapType::description() const
 {
     return d_ptr->description_;
 }
 
-bool MapType::mobile() const
+bool QGeoMapType::mobile() const
 {
     return d_ptr->mobile_;
 }
 
-int MapType::mapId() const
+int QGeoMapType::mapId() const
 {
     return d_ptr->mapId_;
 }
 
-MapTypePrivate::MapTypePrivate()
-    : style_(MapType::NoMap),
+QGeoMapTypePrivate::QGeoMapTypePrivate()
+    : style_(QGeoMapType::NoMap),
       name_(QLatin1String("")),
       description_(QLatin1String("")),
       mobile_(false),
       mapId_(0) {}
 
-MapTypePrivate::MapTypePrivate(const MapTypePrivate &other)
+QGeoMapTypePrivate::QGeoMapTypePrivate(const QGeoMapTypePrivate &other)
     : QSharedData(other),
       style_(other.style_),
       name_(other.name_),
@@ -111,16 +111,16 @@ MapTypePrivate::MapTypePrivate(const MapTypePrivate &other)
       mobile_(other.mobile_),
       mapId_(other.mapId_) {}
 
-MapTypePrivate::MapTypePrivate(MapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId)
+QGeoMapTypePrivate::QGeoMapTypePrivate(QGeoMapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId)
     : style_(style),
       name_(name),
       description_(description),
       mobile_(mobile),
       mapId_(mapId) {}
 
-MapTypePrivate::~MapTypePrivate() {}
+QGeoMapTypePrivate::~QGeoMapTypePrivate() {}
 
-bool MapTypePrivate::operator == (const MapTypePrivate &other) const
+bool QGeoMapTypePrivate::operator == (const QGeoMapTypePrivate &other) const
 {
     return ((style_ == other.style_)
             && (name_ == other.name_)

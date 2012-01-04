@@ -49,10 +49,10 @@
 #include <QtCore/qnumeric.h>
 #include <QThread>
 
-#include "tilecache.h"
-#include "tile.h"
-#include "cameradata.h"
-#include "mapcontroller.h"
+#include "qgeotilecache.h"
+#include "qgeotile.h"
+#include "qgeocameradata.h"
+#include "qgeomapcontroller.h"
 #include "mapnode_p.h"
 #include <cmath>
 
@@ -123,9 +123,9 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     setFlags(QQuickItem::ItemHasContents | QQuickItem::ItemClipsChildrenToShape);
 
     // Create internal flickable and pinch area.
-    tileCache_ = new TileCache();
-    map_ = new Map(tileCache_, this);
-    map_->setActiveMapType(MapType());
+    tileCache_ = new QGeoTileCache();
+    map_ = new QGeoMap(tileCache_, this);
+    map_->setActiveMapType(QGeoMapType());
     flickable_ = new QDeclarativeGeoMapFlickable(this);
     flickable_->setMap(map_);
     pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
@@ -231,7 +231,7 @@ void QDeclarativeGeoMap::keyPressEvent(QKeyEvent *e)
     if (!mappingManagerInitialized_)
         return;
     QLOC_TRACE2(" key: ", e->key());
-    CameraData cameraData = map_->cameraData();
+    QGeoCameraData cameraData = map_->cameraData();
     if (e->key() == Qt::Key_Left) {
         if (e->modifiers() & Qt::ShiftModifier) {
             map_->mapController()->pan(-1.0 * map_->width() / 8.0, 0);
@@ -377,7 +377,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     map_->mapController()->setBearing(bearing_);
     map_->mapController()->setTilt(tilt_);
 
-    QList<MapType> types = mappingManager_->supportedMapTypes();
+    QList<QGeoMapType> types = mappingManager_->supportedMapTypes();
     for (int i = 0; i < types.size(); ++i) {
         QDeclarativeGeoMapType *type = new QDeclarativeGeoMapType(types[i], this);
         supportedMapTypes_.append(type);

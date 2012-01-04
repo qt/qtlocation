@@ -38,75 +38,80 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "tile.h"
+#include "qgeoprojection_p.h"
 
-#include <Qt3D/qgltexture2d.h>
-#include <Qt3D/qglscenenode.h>
+#include "qgeocoordinate.h"
 
-QT_BEGIN_NAMESPACE
+#include <qvector2d.h>
+#include <qvector3d.h>
+#include <QMatrix4x4>
+#include <qnumeric.h>
 
-Tile::Tile() {}
+#include <cmath>
 
-Tile::Tile(const TileSpec &spec)
-        : spec_(spec),
-          texture_(0),
-          sceneNode_(0),
-          bound_(false) {}
+QGeoProjection::QGeoProjection() {}
 
-bool Tile::operator == (const Tile &rhs) const
+QGeoProjection::~QGeoProjection() {}
+
+QVector3D QGeoProjection::mercatorToPoint(const QVector2D &mercator) const
 {
-    return (spec_ == rhs.spec_);
+    return this->coordToPoint(mercatorToCoord(mercator));
 }
 
-void Tile::setTileSpec(const TileSpec &spec)
+QVector2D QGeoProjection::pointToMercator(const QVector3D &point) const
 {
-    spec_ = spec;
+    return coordToMercator(this->pointToCoord(point));
 }
 
-TileSpec Tile::tileSpec() const
+QVector2D QGeoProjection::coordToMercator(const QGeoCoordinate &coord) const
 {
-    return spec_;
+    const double pi = M_PI;
+
+    double lon = coord.longitude() / 360.0 + 0.5;
+
+    double lat = coord.latitude();
+    lat = 0.5 - (log(tan((pi / 4.0) + (pi / 2.0) * lat / 180.0)) / pi) / 2.0;
+    lat = qMax(0.0, lat);
+    lat = qMin(1.0, lat);
+
+    return QVector2D(lon, lat);
 }
 
-void Tile::setTexture(QGLTexture2D *texture)
+double QGeoProjection::realmod(const double a, const double b)
 {
-    texture_ = texture;
+    quint64 div = static_cast<quint64>(a / b);
+    return a - static_cast<double>(div) * b;
 }
 
-QGLTexture2D* Tile::texture() const
+QGeoCoordinate QGeoProjection::mercatorToCoord(const QVector2D &mercator) const
 {
-    return texture_;
+    const double pi = M_PI;
+
+    double fx = mercator.x();
+    double fy = mercator.y();
+
+    if (fy < 0.0)
+        fy = 0.0;
+    else if (fy > 1.0)
+        fy = 1.0;
+
+    double lat;
+
+    if (fy == 0.0)
+        lat = 90.0;
+    else if (fy == 1.0)
+        lat = -90.0;
+    else
+        lat = (180.0 / pi) * (2.0 * atan(exp(pi * (1.0 - 2.0 * fy))) - (pi / 2.0));
+
+    double lng;
+    if (fx >= 0) {
+        lng = realmod(fx, 1.0);
+    } else {
+        lng = realmod(1.0 - realmod(-1.0 * fx, 1.0), 1.0);
+    }
+
+    lng = lng * 360.0 - 180.0;
+
+    return QGeoCoordinate(lat, lng, 0.0);
 }
-
-void Tile::setSceneNode(QGLSceneNode *sceneNode)
-{
-    sceneNode_ = sceneNode;
-}
-
-QGLSceneNode* Tile::sceneNode() const
-{
-    return sceneNode_;
-}
-
-void Tile::bind()
-{
-    if (bound_)
-        return;
-
-    texture_->bind();
-//    texture_->clearImage();
-
-    bound_ = true;
-}
-
-void Tile::setBound(bool bound)
-{
-    bound_ = bound;
-}
-
-bool Tile::isBound() const
-{
-    return bound_;
-}
-
-QT_END_NAMESPACE

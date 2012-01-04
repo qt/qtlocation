@@ -38,82 +38,33 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MAP_H
-#define MAP_H
+#ifndef QGEOTILESPEC_P_H
+#define QGEOTILESPEC_P_H
 
-#include <QObject>
-
-#include "cameradata.h"
-#include "maptype.h"
-
-QT_BEGIN_HEADER
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-
-class QGeoMappingManager;
-
-class TileCache;
-class MapPrivate;
-class MapItem;
-class MapController;
-
-class QGLCamera;
-class QGLPainter;
-
-class QPointF;
-
-class Q_LOCATION_EXPORT Map : public QObject
+class QGeoTileSpecPrivate
 {
-    Q_OBJECT
-
-    Q_PROPERTY(CameraData camera READ cameraData WRITE setCameraData NOTIFY cameraDataChanged)
-    Q_PROPERTY(MapType activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
-
 public:
-    Map(TileCache *cache, QObject *parent = 0);
-    virtual ~Map();
+    QGeoTileSpecPrivate();
+    QGeoTileSpecPrivate(const QGeoTileSpecPrivate &other);
+    QGeoTileSpecPrivate(const QString &plugin, int mapId, int zoom, int x, int y);
+    ~QGeoTileSpecPrivate();
 
-    TileCache* tileCache();
+    QGeoTileSpecPrivate& operator = (const QGeoTileSpecPrivate &other);
 
-    void setMappingManager(QGeoMappingManager *manager);
+    bool operator == (const QGeoTileSpecPrivate &rhs) const;
+    bool operator < (const QGeoTileSpecPrivate &rhs) const;
 
-    MapController* mapController();
-
-    QGLCamera* glCamera() const;
-    void paintGL(QGLPainter *painter);
-
-    void resize(int width, int height);
-    int width() const;
-    int height() const;
-
-    void setCameraData(const CameraData &cameraData);
-    CameraData cameraData() const;
-
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const;
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
-
-    void setActiveMapType(const MapType mapType);
-    const MapType activeMapType() const;
-
-public Q_SLOTS:
-    void update();
-
-Q_SIGNALS:
-    void updateRequired();
-    void cameraDataChanged(const CameraData &cameraData);
-    void activeMapTypeChanged();
-
-private:
-    MapPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(Map)
-
-    friend class QGeoMappingManager;
+    QString plugin_;
+    int mapId_;
+    int zoom_;
+    int x_;
+    int y_;
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif // MAP_H
+#endif // QGEOTILESPEC_P_H

@@ -50,8 +50,8 @@
 #include <QByteArray>
 #include <QBuffer>
 #include <qgeotiledmapreply.h>
-#include "maptype.h"
-#include "tilespec.h"
+#include "qgeomaptype.h"
+#include "qgeotilespec.h"
 
 #include <QTimer>
 #include <QDebug>
@@ -64,7 +64,7 @@ class TiledMapReplyTest :public QGeoTiledMapReply
 {
     Q_OBJECT
 public:
-    TiledMapReplyTest(const TileSpec &spec, QObject *parent=0): QGeoTiledMapReply (spec, parent) {}
+    TiledMapReplyTest(const QGeoTileSpec &spec, QObject *parent=0): QGeoTiledMapReply (spec, parent) {}
     void callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}
     void callSetFinished ( bool finished ) { setFinished(finished);}
     void callSetCached(bool cached) { setFinished(cached);}
@@ -101,13 +101,13 @@ public:
     void init()
     {
         setTileSize(QSize(256, 256));
-        QList<MapType> types;
-        types << MapType(MapType::StreetMap,tr("Street Map"),tr("Test Street Map"), false, 1);
+        QList<QGeoMapType> types;
+        types << QGeoMapType(QGeoMapType::StreetMap,tr("Street Map"),tr("Test Street Map"), false, 1);
         setSupportedMapTypes(types);
         QGeoMappingManagerEngine::init();
     }
 
-    QGeoTiledMapReply* getTileImage(const TileSpec &spec)
+    QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec)
     {
         mappingReply_ = new TiledMapReplyTest(spec, this);
 

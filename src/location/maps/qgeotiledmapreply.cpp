@@ -93,7 +93,7 @@ QT_BEGIN_NAMESPACE
 /*!
     Constructs a tiled map reply object based on \a request,  with parent \a parent.
 */
-QGeoTiledMapReply::QGeoTiledMapReply(const TileSpec &spec, QObject *parent)
+QGeoTiledMapReply::QGeoTiledMapReply(const QGeoTileSpec &spec, QObject *parent)
     : QObject(parent),
       d_ptr(new QGeoTiledMapReplyPrivate(spec))
 {
@@ -201,7 +201,7 @@ void QGeoTiledMapReply::setCached(bool cached)
 /*!
     Returns the request which corresponds to this reply.
 */
-TileSpec QGeoTiledMapReply::tileSpec() const
+QGeoTileSpec QGeoTiledMapReply::tileSpec() const
 {
     return d_ptr->spec;
 }
@@ -304,7 +304,7 @@ void QGeoTiledMapReply::abort()
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(const TileSpec &spec)
+QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(const QGeoTileSpec &spec)
     : error(QGeoTiledMapReply::NoError),
       errorString(QLatin1String("")),
       isFinished(false),

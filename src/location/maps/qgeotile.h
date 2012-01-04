@@ -38,66 +38,50 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef TILECAMERA_H
-#define TILECAMERA_H
+#ifndef QGEOTILE_H
+#define QGEOTILE_H
 
 #include "qglobal.h"
+
+#include "qgeotilespec.h"
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
-class SphereGeometry;
-class QGLCamera;
+class QGLTexture2D;
 class QGLSceneNode;
-class QVector3D;
 
-class Q_LOCATION_EXPORT TileCamera
+class Q_LOCATION_EXPORT QGeoTile
 {
 public:
-    TileCamera();
-    ~TileCamera();
+    QGeoTile();
+    QGeoTile(const QGeoTileSpec &spec);
 
-    enum DetailPreference {
-        DetailPreferenceNear,
-        DetailPreferenceCenter
-    };
+    bool operator == (const QGeoTile &rhs) const;
 
-    // Reset the camera (to look at lon,lat, with given distance, tilt etc.)
-    void setCamera(const SphereGeometry &sphere,
-                   double latitude,
-                   double longitude,
-                   double distance,
-                   double bearing,
-                   double tilt,
-                   double aspectRatio);
-    void tiltCamera(const SphereGeometry& sphere, double tilt);
-    void rollCamera(const SphereGeometry& sphere, double roll);
-    void panCamera(const SphereGeometry& sphere, double pan);
-    void rotateCamera(const SphereGeometry& sphere, double up, double right);
-    void zoomCamera(SphereGeometry& sphere, double factor, DetailPreference detailPreference = DetailPreferenceNear);
+    void setTileSpec(const QGeoTileSpec &spec);
+    QGeoTileSpec tileSpec() const;
 
-    QGLCamera* camera() const;
+    void setTexture(QGLTexture2D *texture);
+    QGLTexture2D* texture() const;
 
-    QVector3D eye() const;
-    QVector3D view(double x, double y) const;
+    void setSceneNode(QGLSceneNode *sceneNode);
+    QGLSceneNode *sceneNode() const;
+
+    void bind();
+    void setBound(bool bound);
+    bool isBound() const;
 
 private:
-    double latitude_;
-    double longitude_;
-    double distance_;
-    double bearing_;
-    double tilt_;
-    double zoom_;
-    double aspectRatio_;
-    QGLCamera* camera_;
+    QGeoTileSpec spec_;
+    QGLTexture2D *texture_;
+    QGLSceneNode *sceneNode_;
+    bool bound_;
 };
 
 QT_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // TILECAMERA_H
+#endif // QGEOTILE_H

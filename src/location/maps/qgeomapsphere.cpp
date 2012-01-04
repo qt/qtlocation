@@ -38,13 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "mapsphere_p.h"
+#include "qgeomapsphere_p.h"
 
-#include "tilecache.h"
-#include "tilespec.h"
-#include "tile.h"
-#include "map.h"
-#include "map_p.h"
+#include "qgeotilecache.h"
+#include "qgeotile.h"
+#include "qgeomap.h"
+#include "qgeomap_p.h"
 
 #include "qgeomappingmanager.h"
 
@@ -58,7 +57,7 @@
 #include <QVector>
 #include <QTimer>
 
-MapSphere::MapSphere(Map* map, MapPrivate *mapPrivate, TileCache *tileCache)
+QGeoMapSphere::QGeoMapSphere(QGeoMap* map, QGeoMapPrivate *mapPrivate, QGeoTileCache *tileCache)
     : QObject(0),
       tileCache_(tileCache),
       map_(map),
@@ -74,7 +73,7 @@ MapSphere::MapSphere(Map* map, MapPrivate *mapPrivate, TileCache *tileCache)
             SIGNAL(updateRequired()));
 }
 
-MapSphere::~MapSphere()
+QGeoMapSphere::~QGeoMapSphere()
 {
     QList<QGLSceneNode*> nodes = built_.values();
     for (int i = 0; i < nodes.size(); ++i) {
@@ -86,12 +85,12 @@ MapSphere::~MapSphere()
     }
 }
 
-void MapSphere::setMappingManager(QGeoMappingManager *manager)
+void QGeoMapSphere::setMappingManager(QGeoMappingManager *manager)
 {
     manager_ = manager;
 }
 
-QGLSceneNode* MapSphere::sphereSceneNode() const
+QGLSceneNode* QGeoMapSphere::sphereSceneNode() const
 {
     return sphereNode_;
 }
@@ -103,7 +102,7 @@ QGLSceneNode* MapSphere::sphereSceneNode() const
 // Function is guaranteed to be only called when executing in
 // rendering thread with valid GL context. Furthermore it is
 // safe to update any geometry/structures - mutex is locked.
-void MapSphere::GLContextAvailable()
+void QGeoMapSphere::GLContextAvailable()
 {
     // need something like this in the cache for
     // releasing textures and freeing nodes that
@@ -113,19 +112,19 @@ void MapSphere::GLContextAvailable()
 //    obsoleteNodes_.clear();
 }
 
-void MapSphere::update(const QList<TileSpec> &tiles)
+void QGeoMapSphere::update(const QList<QGeoTileSpec> &tiles)
 {
-    QHash<TileSpec, QGLSceneNode*> stillBuilt;
+    QHash<QGeoTileSpec, QGLSceneNode*> stillBuilt;
 
-    QVector<TileSpec> req(tiles.size());
-    QVector<TileSpec> draw(tiles.size());
+    QVector<QGeoTileSpec> req(tiles.size());
+    QVector<QGeoTileSpec> draw(tiles.size());
 
-    QSet<TileSpec> cancelTiles = requested_ - tiles.toSet();
+    QSet<QGeoTileSpec> cancelTiles = requested_ - tiles.toSet();
 
     int reqSize = 0;
     int drawSize = 0;
-    QList<TileSpec>::const_iterator i = tiles.constBegin();
-    QList<TileSpec>::const_iterator tilesEnd = tiles.constEnd();
+    QList<QGeoTileSpec>::const_iterator i = tiles.constBegin();
+    QList<QGeoTileSpec>::const_iterator tilesEnd = tiles.constEnd();
     while (i != tilesEnd) {
         /*
           If the tile is already built or has been requested then we
@@ -155,10 +154,10 @@ void MapSphere::update(const QList<TileSpec> &tiles)
 
     updateMutex.lock();
 
-    QHash<TileSpec, QGLSceneNode*>::const_iterator j = built_.constBegin();
-    QHash<TileSpec, QGLSceneNode*>::const_iterator end = built_.constEnd();
+    QHash<QGeoTileSpec, QGLSceneNode*>::const_iterator j = built_.constBegin();
+    QHash<QGeoTileSpec, QGLSceneNode*>::const_iterator end = built_.constEnd();
     while (j != end) {
-        TileSpec spec = j.key();
+        QGeoTileSpec spec = j.key();
         if (!stillBuilt.contains(spec)) {
             sphereNode_->removeNode(j.value());
         }
@@ -180,7 +179,7 @@ void MapSphere::update(const QList<TileSpec> &tiles)
     }
 }
 
-void MapSphere::tileFetched(const TileSpec &spec)
+void QGeoMapSphere::tileFetched(const QGeoTileSpec &spec)
 {
     if (!requested_.contains(spec))
         return;
@@ -192,13 +191,13 @@ void MapSphere::tileFetched(const TileSpec &spec)
     emit tileUpdated();
 }
 
-void MapSphere::displayTile(const TileSpec &spec)
+void QGeoMapSphere::displayTile(const QGeoTileSpec &spec)
 {
     if (built_.contains(spec))
         return;
 
     updateMutex.lock();
-    Tile tile = tileCache_->get(spec);
+    QGeoTile tile = tileCache_->get(spec);
     QGLSceneNode *node = tile.sceneNode();
     if (!node) {
         node = mapPrivate_->createTileNode(tile);
@@ -213,7 +212,7 @@ void MapSphere::displayTile(const TileSpec &spec)
     updateMutex.unlock();
 }
 
-void MapSphere::paintGL(QGLPainter *painter)
+void QGeoMapSphere::paintGL(QGLPainter *painter)
 {
     if (!updateMutex.tryLock()) {
         qWarning() << "----- map will miss a frame, no mutex acquired!------";

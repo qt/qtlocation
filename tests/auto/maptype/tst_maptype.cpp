@@ -42,7 +42,7 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include <maptype.h>
+#include <qgeomaptype.h>
 
 QT_USE_NAMESPACE
 
@@ -67,12 +67,12 @@ tst_MapType::tst_MapType() {}
 
 void tst_MapType::constructorTest()
 {
-    MapType *testObjPtr = new MapType(MapType::StreetMap, "street name", "street desc", false, 0);
+    QGeoMapType *testObjPtr = new QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 0);
     QVERIFY(testObjPtr);
     delete testObjPtr;
 
-    testObjPtr = new MapType();
-    QVERIFY2(testObjPtr->style() == MapType::NoMap, "Wrong default value");
+    testObjPtr = new QGeoMapType();
+    QVERIFY2(testObjPtr->style() == QGeoMapType::NoMap, "Wrong default value");
     QVERIFY2(testObjPtr->name() == "", "Wrong default value");
     QVERIFY2(testObjPtr->description() == "", "Wrong default value");
     QVERIFY2(testObjPtr->mobile() == false, "Wrong default value");
@@ -82,64 +82,64 @@ void tst_MapType::constructorTest()
 
 void tst_MapType::styleTest()
 {
-    MapType testObj = MapType(MapType::StreetMap, "street name", "street desc", false, 0);
-    QVERIFY2(testObj.style() == MapType::StreetMap, "Wrong value returned");
+    QGeoMapType testObj = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 0);
+    QVERIFY2(testObj.style() == QGeoMapType::StreetMap, "Wrong value returned");
 }
 
 void tst_MapType::nameTest()
 {
-    MapType testObj = MapType(MapType::StreetMap, "street name", "street desc", false, 0);
+    QGeoMapType testObj = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 0);
     QVERIFY2(testObj.name() == "street name", "Wrong value returned");
 }
 
 void tst_MapType::descTest()
 {
-    MapType testObj = MapType(MapType::StreetMap, "street name", "street desc", false, 0);
+    QGeoMapType testObj = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 0);
     QVERIFY2(testObj.description() == "street desc", "Wrong value returned");
 }
 
 void tst_MapType::mobileTest()
 {
-    MapType testObj = MapType(MapType::StreetMap, "mobile street name", "mobile street desc", true, 0);
+    QGeoMapType testObj = QGeoMapType(QGeoMapType::StreetMap, "mobile street name", "mobile street desc", true, 0);
     QVERIFY2(testObj.mobile() == true, "Wrong value returned");
 }
 
 void tst_MapType::mapIdTest()
 {
-    MapType testObj = MapType(MapType::StreetMap, "mobile street name", "mobile street desc", true, 42);
+    QGeoMapType testObj = QGeoMapType(QGeoMapType::StreetMap, "mobile street name", "mobile street desc", true, 42);
     QVERIFY2(testObj.mapId() == 42, "Wrong value returned");
 }
 
 void tst_MapType::comparison()
 {
     // TODO Tried using data function but couldn't make QFETCH work
-    MapType t1 = MapType(MapType::StreetMap, "street name", "street desc", false, 42);
-    MapType t2 = MapType(MapType::StreetMap, "street name", "street desc", false, 42);
+    QGeoMapType t1 = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 42);
+    QGeoMapType t2 = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 42);
     QCOMPARE(t1 == t2, true);
     QCOMPARE(t1 != t2, false);
 
-    t1 = MapType();
-    t2 = MapType();
+    t1 = QGeoMapType();
+    t2 = QGeoMapType();
     QCOMPARE(t1 == t2, true);
 
-    t1 = MapType(MapType::StreetMap, "street name", "street desc", false, 42);
-    t2 = MapType(MapType::TerrainMap, "street name", "street desc", false, 42);
+    t1 = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 42);
+    t2 = QGeoMapType(QGeoMapType::TerrainMap, "street name", "street desc", false, 42);
     QCOMPARE(t1 == t2, false);
 
-    t1 = MapType(MapType::StreetMap, "street name", "street desc", false, 42);
-    t2 = MapType(MapType::StreetMap, "different name", "street desc", false, 42);
+    t1 = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 42);
+    t2 = QGeoMapType(QGeoMapType::StreetMap, "different name", "street desc", false, 42);
     QCOMPARE(t1 == t2, false);
 
-    t1 = MapType(MapType::StreetMap, "street name", "street desc", false, 42);
-    t2 = MapType(MapType::StreetMap, "street name", "different desc", false, 42);
+    t1 = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 42);
+    t2 = QGeoMapType(QGeoMapType::StreetMap, "street name", "different desc", false, 42);
     QCOMPARE(t1 == t2, false);
 
-    t1 = MapType(MapType::StreetMap, "street name", "street desc", false, 42);
-    t2 = MapType(MapType::StreetMap, "street name", "street desc", true, 42);
+    t1 = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 42);
+    t2 = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", true, 42);
     QCOMPARE(t1 == t2, false);
 
-    t1 = MapType(MapType::StreetMap, "street name", "street desc", false, 42);
-    t2 = MapType(MapType::StreetMap, "street name", "street desc", false, 99);
+    t1 = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 42);
+    t2 = QGeoMapType(QGeoMapType::StreetMap, "street name", "street desc", false, 99);
     QCOMPARE(t1 == t2, false);
 }
 

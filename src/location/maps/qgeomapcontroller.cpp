@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include "mapcontroller.h"
+#include "qgeomapcontroller.h"
 
-#include "map.h"
-#include "projection_p.h"
+#include "qgeomap.h"
+#include "qgeoprojection_p.h"
 
 #include <QPointF>
 
@@ -55,7 +55,7 @@ QVariant coordinateInterpolator(const AnimatableCoordinate &start,
 {
     AnimatableCoordinate result;
 
-    QSharedPointer<Projection> p = start.projection();
+    QSharedPointer<QGeoProjection> p = start.projection();
     if (!p)
         p = end.projection();
 
@@ -74,7 +74,7 @@ QVariant coordinateInterpolator(const AnimatableCoordinate &start,
 AnimatableCoordinate::AnimatableCoordinate() {}
 
 AnimatableCoordinate::AnimatableCoordinate(const QGeoCoordinate &coordinate,
-                     QSharedPointer<Projection> projection)
+                     QSharedPointer<QGeoProjection> projection)
     : coordinate_(coordinate),
       projection_(projection)
 {
@@ -90,17 +90,17 @@ void AnimatableCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
     coordinate_ = coordinate;
 }
 
-QSharedPointer<Projection> AnimatableCoordinate::projection() const
+QSharedPointer<QGeoProjection> AnimatableCoordinate::projection() const
 {
     return projection_;
 }
 
-void AnimatableCoordinate::setProjection(QSharedPointer<Projection> projection)
+void AnimatableCoordinate::setProjection(QSharedPointer<QGeoProjection> projection)
 {
     projection_ = projection;
 }
 
-MapController::MapController(Map *map, QSharedPointer<Projection> projection)
+QGeoMapController::QGeoMapController(QGeoMap *map, QSharedPointer<QGeoProjection> projection)
     : QObject(map),
       map_(map),
       projection_(projection)
@@ -111,14 +111,14 @@ MapController::MapController(Map *map, QSharedPointer<Projection> projection)
     oldCameraData_ = map_->cameraData();
 
     connect(map,
-            SIGNAL(cameraDataChanged(CameraData)),
+            SIGNAL(cameraDataChanged(QGeoCameraData)),
             this,
-            SLOT(cameraDataChanged(CameraData)));
+            SLOT(cameraDataChanged(QGeoCameraData)));
 }
 
-MapController::~MapController() {}
+QGeoMapController::~QGeoMapController() {}
 
-void MapController::cameraDataChanged(const CameraData &cameraData)
+void QGeoMapController::cameraDataChanged(const QGeoCameraData &cameraData)
 {
     if (oldCameraData_.center() != cameraData.center())
         emit centerChanged(AnimatableCoordinate(cameraData.center(), projection_));
@@ -138,14 +138,14 @@ void MapController::cameraDataChanged(const CameraData &cameraData)
     oldCameraData_ = cameraData;
 }
 
-AnimatableCoordinate MapController::center() const
+AnimatableCoordinate QGeoMapController::center() const
 {
     return AnimatableCoordinate(map_->cameraData().center(), projection_);
 }
 
-void MapController::setCenter(const AnimatableCoordinate &center)
+void QGeoMapController::setCenter(const AnimatableCoordinate &center)
 {
-    CameraData cd = map_->cameraData();
+    QGeoCameraData cd = map_->cameraData();
 
     if (center.coordinate() == cd.center())
         return;
@@ -154,14 +154,14 @@ void MapController::setCenter(const AnimatableCoordinate &center)
     map_->setCameraData(cd);
 }
 
-qreal MapController::bearing() const
+qreal QGeoMapController::bearing() const
 {
     return map_->cameraData().bearing();
 }
 
-void MapController::setBearing(qreal bearing)
+void QGeoMapController::setBearing(qreal bearing)
 {
-    CameraData cd = map_->cameraData();
+    QGeoCameraData cd = map_->cameraData();
 
     if (bearing == cd.bearing())
         return;
@@ -170,14 +170,14 @@ void MapController::setBearing(qreal bearing)
     map_->setCameraData(cd);
 }
 
-qreal MapController::tilt() const
+qreal QGeoMapController::tilt() const
 {
     return map_->cameraData().tilt();
 }
 
-void MapController::setTilt(qreal tilt)
+void QGeoMapController::setTilt(qreal tilt)
 {
-    CameraData cd = map_->cameraData();
+    QGeoCameraData cd = map_->cameraData();
 
     if (tilt == cd.tilt())
         return;
@@ -186,14 +186,14 @@ void MapController::setTilt(qreal tilt)
     map_->setCameraData(cd);
 }
 
-qreal MapController::roll() const
+qreal QGeoMapController::roll() const
 {
     return map_->cameraData().roll();
 }
 
-void MapController::setRoll(qreal roll)
+void QGeoMapController::setRoll(qreal roll)
 {
-    CameraData cd = map_->cameraData();
+    QGeoCameraData cd = map_->cameraData();
 
     if (roll == cd.roll())
         return;
@@ -202,14 +202,14 @@ void MapController::setRoll(qreal roll)
     map_->setCameraData(cd);
 }
 
-qreal MapController::zoom() const
+qreal QGeoMapController::zoom() const
 {
     return map_->cameraData().zoomFactor();
 }
 
-void MapController::setZoom(qreal zoom)
+void QGeoMapController::setZoom(qreal zoom)
 {
-    CameraData cd = map_->cameraData();
+    QGeoCameraData cd = map_->cameraData();
 
     if (zoom == cd.zoomFactor())
         return;
@@ -218,11 +218,11 @@ void MapController::setZoom(qreal zoom)
     map_->setCameraData(cd);
 }
 
-void MapController::pan(qreal dx, qreal dy)
+void QGeoMapController::pan(qreal dx, qreal dy)
 {
     if (dx == 0 && dy == 0)
         return;
-    CameraData cd = map_->cameraData();
+    QGeoCameraData cd = map_->cameraData();
     QGeoCoordinate coord = map_->screenPositionToCoordinate(
                                 QPointF(map_->width() / 2 + dx,
                                         map_->height() / 2 - dy));

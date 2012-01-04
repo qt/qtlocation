@@ -38,10 +38,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "tilecache.h"
+#include "qgeotilecache.h"
 
-#include "tile.h"
-#include "tilespec.h"
+#include "qgeotile.h"
+#include "qgeotilespec.h"
 
 #include "qgeomappingmanager.h"
 
@@ -52,8 +52,8 @@
 #include <Qt3D/qgltexture2d.h>
 #include <Qt3D/qglscenenode.h>
 
-Q_DECLARE_METATYPE(QList<TileSpec>)
-Q_DECLARE_METATYPE(QSet<TileSpec>)
+Q_DECLARE_METATYPE(QList<QGeoTileSpec>)
+Q_DECLARE_METATYPE(QSet<QGeoTileSpec>)
 
 QT_BEGIN_NAMESPACE
 
@@ -66,9 +66,9 @@ public:
 //        cache->evictFromDiskCache(this);
     }
 
-    TileSpec spec;
+    QGeoTileSpec spec;
     QString filename;
-    TileCache *cache;
+    QGeoTileCache *cache;
 };
 
 class TileMemory
@@ -80,9 +80,9 @@ public:
         cache->evictFromMemoryCache(this);
     }
 
-    TileSpec spec;
+    QGeoTileSpec spec;
     QPixmap pixmap;
-    TileCache *cache;
+    QGeoTileCache *cache;
 };
 
 class TileTexture {
@@ -93,19 +93,19 @@ public:
         cache->evictFromTextureCache(this);
     }
 
-    TileSpec spec;
+    QGeoTileSpec spec;
     bool bound;
     QGLTexture2D *texture;
     QGLSceneNode *node;
-    TileCache *cache;
+    QGeoTileCache *cache;
 };
 
-TileCache::TileCache(const QString &directory, QObject *parent)
+QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
 :   QObject(parent), directory_(directory)
 {
-    qRegisterMetaType<TileSpec>();
-    qRegisterMetaType<QList<TileSpec> >();
-    qRegisterMetaType<QSet<TileSpec> >();
+    qRegisterMetaType<QGeoTileSpec>();
+    qRegisterMetaType<QList<QGeoTileSpec> >();
+    qRegisterMetaType<QSet<QGeoTileSpec> >();
 
 
     if (directory_.isEmpty()) {
@@ -124,58 +124,58 @@ TileCache::TileCache(const QString &directory, QObject *parent)
     loadTiles();
 }
 
-TileCache::~TileCache() {}
+QGeoTileCache::~QGeoTileCache() {}
 
-void TileCache::setMaxDiskUsage(int diskUsage)
+void QGeoTileCache::setMaxDiskUsage(int diskUsage)
 {
     diskCache_.setMaxCost(diskUsage);
 }
 
-int TileCache::maxDiskUsage() const
+int QGeoTileCache::maxDiskUsage() const
 {
     return diskCache_.maxCost();
 }
 
-int TileCache::diskUsage() const
+int QGeoTileCache::diskUsage() const
 {
     return diskCache_.totalCost();
 }
 
-void TileCache::setMaxMemoryUsage(int memoryUsage)
+void QGeoTileCache::setMaxMemoryUsage(int memoryUsage)
 {
     memoryCache_.setMaxCost(memoryUsage);
 }
 
-int TileCache::maxMemoryUsage() const
+int QGeoTileCache::maxMemoryUsage() const
 {
     return memoryCache_.maxCost();
 }
 
-int TileCache::memoryUsage() const
+int QGeoTileCache::memoryUsage() const
 {
     return memoryCache_.totalCost();
 }
 
-void TileCache::setMaxTextureUsage(int textureUsage)
+void QGeoTileCache::setMaxTextureUsage(int textureUsage)
 {
     textureCache_.setMaxCost(textureUsage);
 }
 
-int TileCache::maxTextureUsage() const
+int QGeoTileCache::maxTextureUsage() const
 {
     return textureCache_.maxCost();
 }
 
-int TileCache::textureUsage() const
+int QGeoTileCache::textureUsage() const
 {
     return textureCache_.totalCost();
 }
 
-void TileCache::GLContextAvailable(QGLSceneNode *parentNode)
+void QGeoTileCache::GLContextAvailable(QGLSceneNode *parentNode)
 {
     int size = cleanupList_.size();
     for (int i = 0; i < size; ++i) {
-        Tile t = cleanupList_.at(i);
+        QGeoTile t = cleanupList_.at(i);
         QGLSceneNode *node = t.sceneNode();
         if (node) {
             parentNode->removeNode(node);
@@ -190,17 +190,17 @@ void TileCache::GLContextAvailable(QGLSceneNode *parentNode)
     cleanupList_.clear();
 }
 
-bool TileCache::contains(const TileSpec &spec) const
+bool QGeoTileCache::contains(const QGeoTileSpec &spec) const
 {
     return keys_.contains(spec);
 }
 
-Tile TileCache::get(const TileSpec &spec)
+QGeoTile QGeoTileCache::get(const QGeoTileSpec &spec)
 {
     if (textureCache_.contains(spec)) {
         TileTexture *tt = textureCache_.object(spec);
 
-        Tile t = Tile(tt->spec);
+        QGeoTile t = QGeoTile(tt->spec);
         t.setTexture(tt->texture);
         t.setSceneNode(tt->node);
         t.setBound(tt->bound);
@@ -210,7 +210,7 @@ Tile TileCache::get(const TileSpec &spec)
 //        TileMemory *tm = memoryCache_.object(spec);
 //        TileTexture *tt = addToTextureCache(tm->spec, tm->pixmap);
 
-//        Tile t = Tile(tt->spec);
+//        QGeoTile t = Tile(tt->spec);
 //        t.setTexture(tt->texture);
 //        t.setSceneNode(tt->node);
 //        t.setBound(tt->bound);
@@ -222,19 +222,19 @@ Tile TileCache::get(const TileSpec &spec)
 //        TileTexture *tt = addToTextureCache(tm->spec, tm->pixmap);
         TileTexture *tt = addToTextureCache(td->spec, QPixmap(td->filename));
 
-        Tile t = Tile(tt->spec);
+        QGeoTile t = QGeoTile(tt->spec);
         t.setTexture(tt->texture);
         t.setSceneNode(tt->node);
         t.setBound(tt->bound);
         return t;
     }
 
-    return Tile();
+    return QGeoTile();
 }
 
 // TODO rename so this is less strange
 // OR do node creation in here somehow
-void TileCache::update(const TileSpec &spec, const Tile &tile)
+void QGeoTileCache::update(const QGeoTileSpec &spec, const QGeoTile &tile)
 {
     TileTexture *tt = textureCache_.object(spec);
     if (tt) {
@@ -244,7 +244,7 @@ void TileCache::update(const TileSpec &spec, const Tile &tile)
     }
 }
 
-void TileCache::insert(const TileSpec &spec, const QByteArray &bytes, TileCache::CacheAreas areas)
+void QGeoTileCache::insert(const QGeoTileSpec &spec, const QByteArray &bytes, QGeoTileCache::CacheAreas areas)
 {
     keys_.insert(spec);
 
@@ -254,7 +254,7 @@ void TileCache::insert(const TileSpec &spec, const QByteArray &bytes, TileCache:
         return;
     }
 
-    if (areas & TileCache::DiskCache) {
+    if (areas & QGeoTileCache::DiskCache) {
         QString filename = tileSpecToFilename(spec, directory_);
 
         QFile file(filename);
@@ -265,34 +265,34 @@ void TileCache::insert(const TileSpec &spec, const QByteArray &bytes, TileCache:
         addToDiskCache(spec, filename);
     }
 
-    if (areas & TileCache::MemoryCache) {
+    if (areas & QGeoTileCache::MemoryCache) {
 //        addToMemoryCache(spec, pixmap);
     }
 
-    if (areas & TileCache::TextureCache) {
+    if (areas & QGeoTileCache::TextureCache) {
         addToTextureCache(spec, pixmap);
     }
 }
 
-void TileCache::evictFromDiskCache(TileDisk *td)
+void QGeoTileCache::evictFromDiskCache(TileDisk *td)
 {
     keys_.remove(td->spec);
     QFile::remove(td->filename);
 }
 
-void TileCache::evictFromMemoryCache(TileMemory * /* tm  */)
+void QGeoTileCache::evictFromMemoryCache(TileMemory * /* tm  */)
 {
 }
 
-void TileCache::evictFromTextureCache(TileTexture *tt)
+void QGeoTileCache::evictFromTextureCache(TileTexture *tt)
 {
-    Tile t(tt->spec);
+    QGeoTile t(tt->spec);
     t.setTexture(tt->texture);
     t.setSceneNode(tt->node);
     cleanupList_ << t;
 }
 
-TileDisk* TileCache::addToDiskCache(const TileSpec &spec, const QString &filename)
+TileDisk* QGeoTileCache::addToDiskCache(const QGeoTileSpec &spec, const QString &filename)
 {
     keys_.insert(spec);
 
@@ -313,7 +313,7 @@ TileDisk* TileCache::addToDiskCache(const TileSpec &spec, const QString &filenam
     return td;
 }
 
-TileMemory* TileCache::addToMemoryCache(const TileSpec &spec, const QPixmap &pixmap)
+TileMemory* QGeoTileCache::addToMemoryCache(const QGeoTileSpec &spec, const QPixmap &pixmap)
 {
     keys_.insert(spec);
 
@@ -333,7 +333,7 @@ TileMemory* TileCache::addToMemoryCache(const TileSpec &spec, const QPixmap &pix
     return tm;
 }
 
-TileTexture* TileCache::addToTextureCache(const TileSpec &spec, const QPixmap &pixmap)
+TileTexture* QGeoTileCache::addToTextureCache(const QGeoTileSpec &spec, const QPixmap &pixmap)
 {
     keys_.insert(spec);
 
@@ -361,12 +361,12 @@ TileTexture* TileCache::addToTextureCache(const TileSpec &spec, const QPixmap &p
     return tt;
 }
 
-void TileCache::handleError(const TileSpec &, const QString &error)
+void QGeoTileCache::handleError(const QGeoTileSpec &, const QString &error)
 {
     qWarning() << "tile request error " << error;
 }
 
-void TileCache::loadTiles()
+void QGeoTileCache::loadTiles()
 {
     QStringList formats;
     formats << QLatin1String("*.png");
@@ -376,7 +376,7 @@ void TileCache::loadTiles()
     QStringList files = dir.entryList(formats, QDir::Files);
     int tiles = 0;
     for (int i = 0; i < files.size(); ++i) {
-        TileSpec spec = filenameToTileSpec(files.at(i));
+        QGeoTileSpec spec = filenameToTileSpec(files.at(i));
         if (spec.zoom() == -1)
             continue;
         QString filename = dir.filePath(files.at(i));
@@ -387,7 +387,7 @@ void TileCache::loadTiles()
 
 }
 
-QString TileCache::tileSpecToFilename(const TileSpec &spec, const QString &directory)
+QString QGeoTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &directory)
 {
     QString filename = spec.plugin();
     filename += QLatin1String("-");
@@ -405,9 +405,9 @@ QString TileCache::tileSpecToFilename(const TileSpec &spec, const QString &direc
     return dir.filePath(filename);
 }
 
-TileSpec TileCache::filenameToTileSpec(const QString &filename)
+QGeoTileSpec QGeoTileCache::filenameToTileSpec(const QString &filename)
 {
-    TileSpec emptySpec;
+    QGeoTileSpec emptySpec;
     QString extension = QLatin1String(".png");
 
     if (!filename.endsWith(extension))
@@ -431,7 +431,7 @@ TileSpec TileCache::filenameToTileSpec(const QString &filename)
         numbers.append(value);
     }
 
-    return TileSpec(fields.at(0),
+    return QGeoTileSpec(fields.at(0),
                     numbers.at(0),
                     numbers.at(1),
                     numbers.at(2),

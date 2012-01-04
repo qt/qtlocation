@@ -49,7 +49,7 @@
 #include "qgeomappingmanagerengine_nokia.h"
 #include "qgeomapreply_nokia.h"
 
-#include <tilespec.h>
+#include <qgeotilespec.h>
 
 #include <QNetworkAccessManager>
 #include <QNetworkDiskCache>
@@ -97,18 +97,18 @@ void QGeoMappingManagerEngineNokia::init()
 {
     setTileSize(QSize(256, 256));
 
-    QList<MapType> types;
-    types << MapType(MapType::StreetMap,tr("Street Map"),tr("Nokia Street Map"), false, 1);
-    types << MapType(MapType::SatelliteMapDay,tr("Satellite Map(day)"),tr("Nokia Satellite Map (day)"), false, 2);
-    types << MapType(MapType::TerrainMap,tr("Terrain Map"),tr("Nokia Terrain Map"), false, 3);
-    types << MapType(MapType::HybridMap,tr("Hybrid Map"),tr("Nokia Hybrid Map"), false, 4);
-    types << MapType(MapType::TransitMap,tr("Transit Map"),tr("Nokia Transit Map"), false, 5);
-    types << MapType(MapType::GrayStreetMap,tr("Gray Street Map"),tr("Nokia Gray Street Map"), false, 6);
-    types << MapType(MapType::StreetMap,tr("Mobile Street Map"),tr("Nokia Mobile Street Map"), true, 7);
-    types << MapType(MapType::TerrainMap,tr("Mobile Terrain Map"),tr("Nokia Mobile Terrain Map"), true, 8);
-    types << MapType(MapType::HybridMap,tr("Mobile Hybrid Map"),tr("Nokia Mobile Hybrid Map"), true, 9);
-    types << MapType(MapType::TransitMap,tr("Mobile Transit Map"),tr("Nokia Mobile Transit Map"), true, 10);
-    types << MapType(MapType::GrayStreetMap,tr("Mobile Gray Street Map"),tr("Nokia Mobile Gray Street Map"), true, 11);
+    QList<QGeoMapType> types;
+    types << QGeoMapType(QGeoMapType::StreetMap,tr("Street Map"),tr("Nokia Street Map"), false, 1);
+    types << QGeoMapType(QGeoMapType::SatelliteMapDay,tr("Satellite Map(day)"),tr("Nokia Satellite Map (day)"), false, 2);
+    types << QGeoMapType(QGeoMapType::TerrainMap,tr("Terrain Map"),tr("Nokia Terrain Map"), false, 3);
+    types << QGeoMapType(QGeoMapType::HybridMap,tr("Hybrid Map"),tr("Nokia Hybrid Map"), false, 4);
+    types << QGeoMapType(QGeoMapType::TransitMap,tr("Transit Map"),tr("Nokia Transit Map"), false, 5);
+    types << QGeoMapType(QGeoMapType::GrayStreetMap,tr("Gray Street Map"),tr("Nokia Gray Street Map"), false, 6);
+    types << QGeoMapType(QGeoMapType::StreetMap,tr("Mobile Street Map"),tr("Nokia Mobile Street Map"), true, 7);
+    types << QGeoMapType(QGeoMapType::TerrainMap,tr("Mobile Terrain Map"),tr("Nokia Mobile Terrain Map"), true, 8);
+    types << QGeoMapType(QGeoMapType::HybridMap,tr("Mobile Hybrid Map"),tr("Nokia Mobile Hybrid Map"), true, 9);
+    types << QGeoMapType(QGeoMapType::TransitMap,tr("Mobile Transit Map"),tr("Nokia Mobile Transit Map"), true, 10);
+    types << QGeoMapType(QGeoMapType::GrayStreetMap,tr("Mobile Gray Street Map"),tr("Nokia Mobile Gray Street Map"), true, 11);
     setSupportedMapTypes(types);
 
 //    QList<QGraphicsGeoMap::ConnectivityMode> modes;
@@ -207,7 +207,7 @@ void QGeoMappingManagerEngineNokia::init()
     QGeoMappingManagerEngine::init();
 }
 
-QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const TileSpec &spec)
+QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const QGeoTileSpec &spec)
 {
     // TODO add error detection for if request.connectivityMode() != QGraphicsGeoMap::OnlineMode
     QString rawRequest = getRequestString(spec);
@@ -230,7 +230,7 @@ QGeoTiledMapReply* QGeoMappingManagerEngineNokia::getTileImage(const TileSpec &s
     return mapReply;
 }
 
-QString QGeoMappingManagerEngineNokia::getRequestString(const TileSpec &spec) const
+QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTileSpec &spec) const
 {
     const char subdomain = m_maxSubdomains ? m_firstSubdomain.toAscii() +
                                              (spec.x() + spec.y()) % m_maxSubdomains : 0;

@@ -38,40 +38,82 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QGEOMAP_H
+#define QGEOMAP_H
 
-#ifndef MAPTYPE_P_H
-#define MAPTYPE_P_H
+#include <QObject>
 
-#include <QMetaType>
-#include <QString>
-#include <QSharedData>
+#include "qgeocameradata.h"
+#include "qgeomaptype.h"
 
-#include "maptype.h"
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class MapTypePrivate : public QSharedData
+class QGeoCoordinate;
+
+class QGeoMappingManager;
+
+class QGeoTileCache;
+class QGeoMapPrivate;
+class MapItem;
+class QGeoMapController;
+
+class QGLCamera;
+class QGLPainter;
+
+class QPointF;
+
+class Q_LOCATION_EXPORT QGeoMap : public QObject
 {
+    Q_OBJECT
+
+    Q_PROPERTY(QGeoCameraData camera READ cameraData WRITE setCameraData NOTIFY cameraDataChanged)
+    Q_PROPERTY(QGeoMapType activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
 
 public:
-    MapTypePrivate();
-    MapTypePrivate(MapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
-    MapTypePrivate(const MapTypePrivate &other);
-    ~MapTypePrivate();
+    QGeoMap(QGeoTileCache *cache, QObject *parent = 0);
+    virtual ~QGeoMap();
 
-    MapTypePrivate& operator = (const MapTypePrivate &other);
+    QGeoTileCache* tileCache();
 
-    bool operator == (const MapTypePrivate &other) const;
+    void setMappingManager(QGeoMappingManager *manager);
 
-    MapType::MapStyle style_;
-    QString name_;
-    QString description_;
-    bool mobile_;
-    int mapId_;
+    QGeoMapController* mapController();
+
+    QGLCamera* glCamera() const;
+    void paintGL(QGLPainter *painter);
+
+    void resize(int width, int height);
+    int width() const;
+    int height() const;
+
+    void setCameraData(const QGeoCameraData &cameraData);
+    QGeoCameraData cameraData() const;
+
+    QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const;
+    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
+
+    void setActiveMapType(const QGeoMapType mapType);
+    const QGeoMapType activeMapType() const;
+
+public Q_SLOTS:
+    void update();
+
+Q_SIGNALS:
+    void updateRequired();
+    void cameraDataChanged(const QGeoCameraData &cameraData);
+    void activeMapTypeChanged();
+
+private:
+    QGeoMapPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoMap)
+
+    friend class QGeoMappingManager;
 };
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(MapTypePrivate)
+QT_END_HEADER
 
-#endif // MAPTYPE_P_H
+#endif // QGEOMAP_H

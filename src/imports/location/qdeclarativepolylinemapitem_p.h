@@ -86,9 +86,9 @@ public:
     QDeclarativePolylineMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolylineMapItem();
 
-    static void updatePolyline(QPolygonF& points,const Map& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h);
+    static void updatePolyline(QPolygonF& points,const QGeoMap& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h);
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
        //from QuickItem
     virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
 
@@ -111,7 +111,7 @@ protected Q_SLOTS:
 
 private Q_SLOTS:
     // map size changed
-    void handleCameraDataChanged(const CameraData& cameraData);
+    void handleCameraDataChanged(const QGeoCameraData& cameraData);
 
 private:
     static void path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);

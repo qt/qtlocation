@@ -38,52 +38,48 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TILE_H
-#define TILE_H
+#ifndef QGEOPROJECTION_H
+#define QGEOPROJECTION_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include "qglobal.h"
 
-#include "tilespec.h"
-
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
+class QVector2D;
+class QVector3D;
 
-
-class QGLTexture2D;
-class QGLSceneNode;
-
-class Q_LOCATION_EXPORT Tile
+class Q_AUTOTEST_EXPORT QGeoProjection
 {
 public:
-    Tile();
-    Tile(const TileSpec &spec);
+    QGeoProjection();
+    virtual ~QGeoProjection();
 
-    bool operator == (const Tile &rhs) const;
+    virtual QVector3D coordToPoint(const QGeoCoordinate &coord) const = 0;
+    virtual QGeoCoordinate pointToCoord(const QVector3D &point) const = 0;
 
-    void setTileSpec(const TileSpec &spec);
-    TileSpec tileSpec() const;
+    QVector2D coordToMercator(const QGeoCoordinate &coord) const;
+    QGeoCoordinate mercatorToCoord(const QVector2D &mercator) const;
 
-    void setTexture(QGLTexture2D *texture);
-    QGLTexture2D* texture() const;
+    virtual QVector3D mercatorToPoint(const QVector2D &mercator) const;
+    virtual QVector2D pointToMercator(const QVector3D &point) const;
 
-    void setSceneNode(QGLSceneNode *sceneNode);
-    QGLSceneNode *sceneNode() const;
-
-    void bind();
-    void setBound(bool bound);
-    bool isBound() const;
-
+    virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress) = 0;
 private:
-    TileSpec spec_;
-    QGLTexture2D *texture_;
-    QGLSceneNode *sceneNode_;
-    bool bound_;
+    static double realmod(const double a, const double b);
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif // TILE_H
+#endif // QGEOPROJECTION_H

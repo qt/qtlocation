@@ -158,13 +158,13 @@ void QDeclarativeGeoMapQuickItem::setCoordinate(QDeclarativeCoordinate *coordina
     emit coordinateChanged();
 }
 
-void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
+void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map && quickMap) {
         QObject::connect(quickMap, SIGNAL(heightChanged()), this, SLOT(updateMapItem()));
         QObject::connect(quickMap, SIGNAL(widthChanged()), this, SLOT(updateMapItem()));
-        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(updateMapItem()));
+        QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(updateMapItem()));
         updateMapItem();
     }
 }

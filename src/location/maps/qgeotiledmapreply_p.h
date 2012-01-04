@@ -54,14 +54,14 @@
 //
 
 #include "qgeotiledmapreply.h"
-#include "tilespec.h"
+#include "qgeotilespec.h"
 
 QT_BEGIN_NAMESPACE
 
 class QGeoTiledMapReplyPrivate
 {
 public:
-    QGeoTiledMapReplyPrivate(const TileSpec &spec);
+    QGeoTiledMapReplyPrivate(const QGeoTileSpec &spec);
     QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error error, const QString& errorString);
     ~QGeoTiledMapReplyPrivate();
 
@@ -70,7 +70,7 @@ public:
     bool isFinished;
     bool isCached;
 
-    TileSpec spec;
+    QGeoTileSpec spec;
     QByteArray mapImageData;
     QString mapImageFormat;
 };

@@ -64,7 +64,7 @@ public:
     QDeclarativeRouteMapItem(QQuickItem *parent = 0);
     ~QDeclarativeRouteMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
     //from QuickItem
     virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
 
@@ -84,7 +84,7 @@ protected Q_SLOTS:
 
 private Q_SLOTS:
     // map size changed
-    void handleCameraDataChanged(const CameraData& cameraData);
+    void handleCameraDataChanged(const QGeoCameraData& cameraData);
 
 private:
     QDeclarativeMapLineProperties line_;

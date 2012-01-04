@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
 class QDeclarativeGeoMap;
 class QTouchEvent;
-class Map;
+class QGeoMap;
 
 class QDeclarativeGeoMapPinchEvent : public QObject
 {

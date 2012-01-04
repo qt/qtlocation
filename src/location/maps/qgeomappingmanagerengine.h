@@ -46,8 +46,8 @@
 #include <QSize>
 #include <QPair>
 #include <QtLocation/qlocationglobal.h>
-#include "maptype.h"
-#include "tilecache.h"
+#include "qgeomaptype.h"
+#include "qgeotilecache.h"
 
 QT_BEGIN_HEADER
 
@@ -66,7 +66,7 @@ class QGeoMapRequestOptions;
 class QGeoMappingManagerEnginePrivate;
 
 class QGeoTiledMapReply;
-class TileSpec;
+class QGeoTileSpec;
 
 class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
 {
@@ -81,7 +81,7 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    QList<MapType> supportedMapTypes() const;
+    QList<QGeoMapType> supportedMapTypes() const;
 //    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
 
     QSize tileSize() const;
@@ -95,7 +95,7 @@ public:
     qreal minimumTilt() const;
     qreal maximumTilt() const;
 
-    TileCache::CacheAreas cacheHint() const;
+    QGeoTileCache::CacheAreas cacheHint() const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
@@ -106,22 +106,22 @@ public:
 public Q_SLOTS:
     void threadStarted();
     void threadFinished();
-    void updateTileRequests(const QSet<TileSpec> &tilesAdded, const QSet<TileSpec> &tilesRemoved);
-    void cancelTileRequests(const QSet<TileSpec> &tiles);
+    void updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded, const QSet<QGeoTileSpec> &tilesRemoved);
+    void cancelTileRequests(const QSet<QGeoTileSpec> &tiles);
 
 private Q_SLOTS:
     void requestNextTile();
     void finished();
 
 Q_SIGNALS:
-    void tileFinished(const TileSpec &spec, const QByteArray &bytes);
-    void tileError(const TileSpec &spec, const QString &errorString);
+    void tileFinished(const QGeoTileSpec &spec, const QByteArray &bytes);
+    void tileError(const QGeoTileSpec &spec, const QString &errorString);
     void initialized();
 
 protected:
     QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
 
-    void setSupportedMapTypes(const QList<MapType> &supportedMapTypes);
+    void setSupportedMapTypes(const QList<QGeoMapType> &supportedMapTypes);
 //    void setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes);
 
     void setTileSize(const QSize &tileSize);
@@ -135,14 +135,14 @@ protected:
     void setSupportsBearing(bool supportsBearing);
     void setSupportsTilting(bool supportsTilting);
 
-    void setCacheHint(TileCache::CacheAreas cacheHint);
+    void setCacheHint(QGeoTileCache::CacheAreas cacheHint);
 
     QGeoMappingManagerEnginePrivate* d_ptr;
 
 private:
-    virtual QGeoTiledMapReply* getTileImage(const TileSpec &spec) = 0;
+    virtual QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec) = 0;
 
-    void handleReply(QGeoTiledMapReply *reply, const TileSpec &spec);
+    void handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec);
 
     void setManagerName(const QString &managerName);
     void setManagerVersion(int managerVersion);

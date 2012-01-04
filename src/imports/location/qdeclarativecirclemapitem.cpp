@@ -41,7 +41,7 @@
 
 #include "qdeclarativecirclemapitem_p.h"
 #include "qdeclarativegeomapquickitem_p.h"
-#include "projection_p.h"
+#include "qgeoprojection_p.h"
 #include <cmath>
 #include <QPen>
 #include <QPainter>
@@ -126,7 +126,7 @@ inline static qreal qgeocoordinate_radToDeg(qreal rad)
     return rad * 180 / M_PI;
 }
 
-static void updatePolygon(QPolygonF& points,const Map& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
+static void updatePolygon(QPolygonF& points,const QGeoMap& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
 {
 
     qreal minX, maxX, minY, maxY;
@@ -255,11 +255,11 @@ void QDeclarativeCircleMapItem::updateMapItemAssumeDirty()
     updateMapItem();
 }
 
-void QDeclarativeCircleMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
+void QDeclarativeCircleMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
-        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+        QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(handleCameraDataChanged(QGeoCameraData)));
         dirtyGeoGeometry_ = true;
         updateMapItem();
     }
@@ -388,7 +388,7 @@ void QDeclarativeCircleMapItem::updateMapItem()
     update();
 }
 
-void QDeclarativeCircleMapItem::handleCameraDataChanged(const CameraData& cameraData)
+void QDeclarativeCircleMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();

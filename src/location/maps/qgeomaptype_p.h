@@ -38,91 +38,40 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MAPSPHERE_H
-#define MAPSPHERE_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef QGEOMAPTYPE_P_H
+#define QGEOMAPTYPE_P_H
 
-#include <QtLocation/qlocationglobal.h>
-#include "tilespec.h"
+#include <QMetaType>
+#include <QString>
+#include <QSharedData>
 
-#include <QObject>
-#include <QSet>
-#include <QHash>
-#include <QList>
-#include <QCache>
-#include <QSharedPointer>
-
-#include <QMutex>
+#include "qgeomaptype.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGLSceneNode;
-class QGLPainter;
-
-class QOpenGLFramebufferObject;
-
-class TileSpec;
-class TileCache;
-
-class Map;
-class MapPrivate;
-
-class QGeoMappingManager;
-
-class Q_LOCATION_EXPORT MapSphere : public QObject
+class QGeoMapTypePrivate : public QSharedData
 {
-    Q_OBJECT
+
 public:
-    MapSphere(Map* map, MapPrivate *mapPrivate, TileCache *tileCache);
-    ~MapSphere();
+    QGeoMapTypePrivate();
+    QGeoMapTypePrivate(QGeoMapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
+    QGeoMapTypePrivate(const QGeoMapTypePrivate &other);
+    ~QGeoMapTypePrivate();
 
-    void setMappingManager(QGeoMappingManager *manager);
+    QGeoMapTypePrivate& operator = (const QGeoMapTypePrivate &other);
 
-    QGLSceneNode* sphereSceneNode() const;
+    bool operator == (const QGeoMapTypePrivate &other) const;
 
-    QMutex updateMutex;
-    // when running as QML app we can't access GL context anywhere
-    // but QSG rendering thread.
-    void GLContextAvailable();
-
-    void paintGL(QGLPainter *painter);
-
-    void tileFetched(const TileSpec &spec);
-
-public Q_SLOTS:
-    void update(const QList<TileSpec> &tiles);
-
-Q_SIGNALS:
-    void tileUpdated();
-
-private:
-    void displayTile(const TileSpec &spec);
-
-    QList<TileSpec> visibleTiles_;
-
-    TileCache *tileCache_;
-    int minZoom_;
-
-    QSet<TileSpec> requested_;
-    QHash<TileSpec, QGLSceneNode*> built_;
-
-    QGLSceneNode* sphereNode_;
-
-    Map *map_;
-    MapPrivate* mapPrivate_;
-    QGeoMappingManager *manager_;
+    QGeoMapType::MapStyle style_;
+    QString name_;
+    QString description_;
+    bool mobile_;
+    int mapId_;
 };
 
 QT_END_NAMESPACE
 
-#endif // MAPSPHERE_H
+Q_DECLARE_METATYPE(QGeoMapTypePrivate)
+
+#endif // QGEOMAPTYPE_P_H

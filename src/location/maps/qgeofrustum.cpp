@@ -38,15 +38,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "frustum_p.h"
+#include "qgeofrustum_p.h"
 
 #include <Qt3D/qglcamera.h>
 
 #include <cmath>
 
-Frustum::Frustum() {}
+QGeoFrustum::QGeoFrustum() {}
 
-void Frustum::update(const QGLCamera *camera, double aspectRatio, bool updatePlanes)
+void QGeoFrustum::update(const QGLCamera *camera, double aspectRatio, bool updatePlanes)
 {
     if (aspectRatio > 1.0) {
         double fov = atan2(camera->viewSize().height() , (2 * camera->nearPlane()));
@@ -92,36 +92,36 @@ void Frustum::update(const QGLCamera *camera, double aspectRatio, bool updatePla
 
     QPlane3D pn = QPlane3D(bln_, tln_, brn_);
     pn.setNormal(pn.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Near), pn);
+    planeHash_.insert(QGeoFrustum::Planes(QGeoFrustum::Near), pn);
 
     QPlane3D pf = QPlane3D(blf_, brf_, tlf_);
     pf.setNormal(pf.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Far), pf);
+    planeHash_.insert(QGeoFrustum::Planes(QGeoFrustum::Far), pf);
 
     QPlane3D pl = QPlane3D(blf_, tlf_, bln_);
     pl.setNormal(pl.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Left), pl);
+    planeHash_.insert(QGeoFrustum::Planes(QGeoFrustum::Left), pl);
 
     QPlane3D pr = QPlane3D(brf_, brn_, trf_);
     pr.setNormal(pr.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Right), pr);
+    planeHash_.insert(QGeoFrustum::Planes(QGeoFrustum::Right), pr);
 
     QPlane3D pt = QPlane3D(tlf_, trf_, tln_);
     pt.setNormal(pt.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Top), pt);
+    planeHash_.insert(QGeoFrustum::Planes(QGeoFrustum::Top), pt);
 
     QPlane3D pb = QPlane3D(blf_, bln_, brf_);
     pb.setNormal(pb.normal().normalized());
-    planeHash_.insert(Frustum::Planes(Frustum::Bottom), pb);
+    planeHash_.insert(QGeoFrustum::Planes(QGeoFrustum::Bottom), pb);
 }
 
-bool Frustum::contains(const QVector3D &center, double radius) const
+bool QGeoFrustum::contains(const QVector3D &center, double radius) const
 {
     if (planeHash_.isEmpty())
         return false;
 
-    QHash<Frustum::Planes, QPlane3D>::const_iterator i = planeHash_.constBegin();
-    QHash<Frustum::Planes, QPlane3D>::const_iterator end = planeHash_.constEnd();
+    QHash<QGeoFrustum::Planes, QPlane3D>::const_iterator i = planeHash_.constBegin();
+    QHash<QGeoFrustum::Planes, QPlane3D>::const_iterator end = planeHash_.constEnd();
 
     while (i != end) {
         if (i.value().distanceTo(center) < -1.0 * radius)
@@ -132,7 +132,7 @@ bool Frustum::contains(const QVector3D &center, double radius) const
     return true;
 }
 
-QPlane3D Frustum::plane(Planes planes) const
+QPlane3D QGeoFrustum::plane(Planes planes) const
 {
     return planeHash_.value(planes);
 }

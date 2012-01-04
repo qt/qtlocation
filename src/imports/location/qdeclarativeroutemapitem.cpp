@@ -73,7 +73,7 @@
     TODO: an example here. do we want to use a RouteModel?
 */
 
-static void updatePolyline(QPolygonF& points,const Map& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
+static void updatePolyline(QPolygonF& points,const QGeoMap& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
 {
 
     qreal minX, maxX, minY, maxY;
@@ -132,11 +132,11 @@ void QDeclarativeRouteMapItem::updateAfterLinePropertiesChanged()
     updateMapItem();
 }
 
-void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
+void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
-        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+        QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(handleCameraDataChanged(QGeoCameraData)));
         dirtyGeometry_ = true;
         updateMapItem();
     }
@@ -223,7 +223,7 @@ void QDeclarativeRouteMapItem::updateMapItem()
     setPositionOnMap(path_.at(0), polyline_.at(0));
 }
 
-void QDeclarativeRouteMapItem::handleCameraDataChanged(const CameraData& cameraData)
+void QDeclarativeRouteMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();

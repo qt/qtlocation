@@ -43,7 +43,7 @@
 #define QDECLARATIVEGEOMAPTYPE_H
 
 #include <QtDeclarative/qdeclarative.h>
-#include "maptype.h"
+#include "qgeomaptype.h"
 #include <QObject>
 
 QT_BEGIN_NAMESPACE
@@ -60,18 +60,18 @@ class QDeclarativeGeoMapType : public QObject
 
 public:
     enum MapStyle {
-        NoMap = MapType::NoMap,
-        StreetMap = MapType::StreetMap,
-        SatelliteMapDay = MapType::SatelliteMapDay,
-        SatelliteMapNight = MapType::SatelliteMapNight,
-        TerrainMap = MapType::TerrainMap,
-        HybridMap = MapType::HybridMap,
-        TransitMap = MapType::TransitMap,
-        GrayStreetMap = MapType::GrayStreetMap,
+        NoMap = QGeoMapType::NoMap,
+        StreetMap = QGeoMapType::StreetMap,
+        SatelliteMapDay = QGeoMapType::SatelliteMapDay,
+        SatelliteMapNight = QGeoMapType::SatelliteMapNight,
+        TerrainMap = QGeoMapType::TerrainMap,
+        HybridMap = QGeoMapType::HybridMap,
+        TransitMap = QGeoMapType::TransitMap,
+        GrayStreetMap = QGeoMapType::GrayStreetMap,
         CustomMap = 100
     };
 
-    QDeclarativeGeoMapType(const MapType mapType, QObject* parent = 0);
+    QDeclarativeGeoMapType(const QGeoMapType mapType, QObject* parent = 0);
     ~QDeclarativeGeoMapType();
 
     MapStyle style() const;
@@ -79,10 +79,10 @@ public:
     QString description() const;
     bool mobile() const;
 
-    const MapType mapType(){return mapType_;}
+    const QGeoMapType mapType(){return mapType_;}
 
 private:
-    MapType mapType_;
+    QGeoMapType mapType_;
 
 };
 

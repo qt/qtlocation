@@ -38,59 +38,43 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TILESPEC_H
-#define TILESPEC_H
+#ifndef QGEOPROJECTION2D_P_H
+#define QGEOPROJECTION2D_P_H
 
-#include <QtLocation/qlocationglobal.h>
-#include <QtCore/QMetaType>
-#include <QString>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QT_BEGIN_HEADER
+#include "qgeoprojection_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class TileSpecPrivate;
-
-class Q_LOCATION_EXPORT TileSpec
+class Q_AUTOTEST_EXPORT QGeoProjection2D : public QGeoProjection
 {
 public:
-    TileSpec();
-    TileSpec(const TileSpec &other);
-    TileSpec(const QString &plugin, int mapId, int zoom, int x, int y);
-    ~TileSpec();
+    QGeoProjection2D(double baseHeight, double sideLength);
+    virtual ~QGeoProjection2D();
 
-    TileSpec& operator = (const TileSpec &other);
+    virtual QVector3D coordToPoint(const QGeoCoordinate &coord) const;
+    virtual QGeoCoordinate pointToCoord(const QVector3D &point) const;
 
-    QString plugin() const;
+    virtual QVector3D mercatorToPoint(const QVector2D &mercator) const;
+    virtual QVector2D pointToMercator(const QVector3D &point) const;
 
-    void setZoom(int zoom);
-    int zoom() const;
-
-    void setX(int x);
-    int x() const;
-
-    void setY(int y);
-    int y() const;
-
-    void setMapId(int mapId);
-    int mapId() const;
-
-    bool operator == (const TileSpec &rhs) const;
-    bool operator < (const TileSpec &rhs) const;
+    virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress);
 
 private:
-    TileSpecPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(TileSpec)
+    double baseHeight_;
+    double sideLength_;
 };
-
-unsigned int qHash(const TileSpec &spec);
-
-QDebug operator<<(QDebug, const TileSpec &);
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(TileSpec)
-
-QT_END_HEADER
-
-#endif // TILESPEC_H
+#endif // QGEOPROJECTION2D_P_H

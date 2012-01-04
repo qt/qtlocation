@@ -42,7 +42,7 @@
 #include "qgeomappingmanagerengine.h"
 #include "qgeomappingmanagerengine_p.h"
 #include "qgeotiledmapreply.h"
-#include "tilespec.h"
+#include "qgeotilespec.h"
 
 #include <QThread>
 #include <QNetworkProxy>
@@ -155,8 +155,8 @@ void QGeoMappingManagerEngine::threadFinished()
     this->deleteLater();
 }
 
-void QGeoMappingManagerEngine::updateTileRequests(const QSet<TileSpec> &tilesAdded,
-                                                  const QSet<TileSpec> &tilesRemoved)
+void QGeoMappingManagerEngine::updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded,
+                                                  const QSet<QGeoTileSpec> &tilesRemoved)
 {
     Q_D(QGeoMappingManagerEngine);
 
@@ -171,11 +171,11 @@ void QGeoMappingManagerEngine::updateTileRequests(const QSet<TileSpec> &tilesAdd
         d->timer_->start();
 }
 
-void QGeoMappingManagerEngine::cancelTileRequests(const QSet<TileSpec> &tiles)
+void QGeoMappingManagerEngine::cancelTileRequests(const QSet<QGeoTileSpec> &tiles)
 {
     Q_D(QGeoMappingManagerEngine);
 
-    typedef QSet<TileSpec>::const_iterator tile_iter;
+    typedef QSet<QGeoTileSpec>::const_iterator tile_iter;
     tile_iter tile = tiles.constBegin();
     tile_iter end = tiles.constEnd();
     for (; tile != end; ++tile) {
@@ -204,7 +204,7 @@ void QGeoMappingManagerEngine::requestNextTile()
         return;
     }
 
-    TileSpec ts = d->queue_.takeFirst();
+    QGeoTileSpec ts = d->queue_.takeFirst();
 
     QGeoTiledMapReply *reply = getTileImage(ts);
 
@@ -231,7 +231,7 @@ void QGeoMappingManagerEngine::finished()
     if (!reply)
         return;
 
-    TileSpec spec = reply->tileSpec();
+    QGeoTileSpec spec = reply->tileSpec();
 
     if (!d->invmap_.contains(spec)) {
         reply->deleteLater();
@@ -243,7 +243,7 @@ void QGeoMappingManagerEngine::finished()
     handleReply(reply, spec);
 }
 
-void QGeoMappingManagerEngine::handleReply(QGeoTiledMapReply *reply, const TileSpec &spec)
+void QGeoMappingManagerEngine::handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec)
 {
     Q_D(QGeoMappingManagerEngine);
 
@@ -308,7 +308,7 @@ int QGeoMappingManagerEngine::managerVersion() const
     return d_ptr->managerVersion;
 }
 
-QList<MapType> QGeoMappingManagerEngine::supportedMapTypes() const
+QList<QGeoMapType> QGeoMappingManagerEngine::supportedMapTypes() const
 {
     Q_D(const QGeoMappingManagerEngine);
     return d->supportedMapTypes;
@@ -320,7 +320,7 @@ QList<MapType> QGeoMappingManagerEngine::supportedMapTypes() const
     Subclasses of QGeoMappingManagerEngine should use this function to ensure
     that supportedMapTypes() provides accurate information.
 */
-void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<MapType> &supportedMapTypes)
+void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGeoMapType> &supportedMapTypes)
 {
     Q_D(QGeoMappingManagerEngine);
     d->supportedMapTypes = supportedMapTypes;
@@ -564,13 +564,13 @@ QLocale QGeoMappingManagerEngine::locale() const
     return d_ptr->locale;
 }
 
-TileCache::CacheAreas QGeoMappingManagerEngine::cacheHint() const
+QGeoTileCache::CacheAreas QGeoMappingManagerEngine::cacheHint() const
 {
     Q_D(const QGeoMappingManagerEngine);
     return d->cacheHint;
 }
 
-void QGeoMappingManagerEngine::setCacheHint(TileCache::CacheAreas cacheHint)
+void QGeoMappingManagerEngine::setCacheHint(QGeoTileCache::CacheAreas cacheHint)
 {
     Q_D(QGeoMappingManagerEngine);
     d->cacheHint = cacheHint;
@@ -587,7 +587,7 @@ QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
     supportsTilting(false),
     minimumTilt(0.0),
     maximumTilt(0.0),
-    cacheHint(TileCache::AllCaches),
+    cacheHint(QGeoTileCache::AllCaches),
     started_(false),
     stopped_(false) {}
 

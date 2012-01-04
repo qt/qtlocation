@@ -38,58 +38,59 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef MAPTYPE_H
-#define MAPTYPE_H
+#ifndef QGEOTILESPEC_H
+#define QGEOTILESPEC_H
 
 #include <QtLocation/qlocationglobal.h>
+#include <QtCore/QMetaType>
 #include <QString>
-#include <QSharedDataPointer>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class MapTypePrivate;
+class QGeoTileSpecPrivate;
 
-class Q_LOCATION_EXPORT MapType
+class Q_LOCATION_EXPORT QGeoTileSpec
 {
-
 public:
-    enum MapStyle {
-        NoMap = 0,
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap,
-        HybridMap,
-        TransitMap,
-        GrayStreetMap,
-        CustomMap = 100
-    };
+    QGeoTileSpec();
+    QGeoTileSpec(const QGeoTileSpec &other);
+    QGeoTileSpec(const QString &plugin, int mapId, int zoom, int x, int y);
+    ~QGeoTileSpec();
 
-    MapType();
-    MapType(const MapType &other);
-    MapType(MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
-    ~MapType();
+    QGeoTileSpec& operator = (const QGeoTileSpec &other);
 
-    MapType& operator = (const MapType &other);
+    QString plugin() const;
 
-    bool operator == (const MapType &other) const;
-    bool operator != (const MapType &other) const;
+    void setZoom(int zoom);
+    int zoom() const;
 
-    MapStyle style() const;
-    QString name() const;
-    QString description() const;
-    bool mobile() const;
+    void setX(int x);
+    int x() const;
+
+    void setY(int y);
+    int y() const;
+
+    void setMapId(int mapId);
     int mapId() const;
 
+    bool operator == (const QGeoTileSpec &rhs) const;
+    bool operator < (const QGeoTileSpec &rhs) const;
+
 private:
-    QSharedDataPointer<MapTypePrivate> d_ptr;
+    QGeoTileSpecPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoTileSpec)
 };
+
+unsigned int qHash(const QGeoTileSpec &spec);
+
+QDebug operator<<(QDebug, const QGeoTileSpec &);
 
 QT_END_NAMESPACE
 
+Q_DECLARE_METATYPE(QGeoTileSpec)
+
 QT_END_HEADER
 
-#endif
+#endif // QGEOTILESPEC_H

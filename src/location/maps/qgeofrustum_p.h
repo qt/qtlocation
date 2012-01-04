@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef PROJECTION_H
-#define PROJECTION_H
+#ifndef QGEOFRUSTUM_H
+#define QGEOFRUSTUM_H
 
 //
 //  W A R N I N G
@@ -52,34 +52,92 @@
 // We mean it.
 //
 
-#include "qglobal.h"
+#include <QVector3D>
+#include <QHash>
+
+#include <Qt3D/qplane3d.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QVector2D;
-class QVector3D;
+class QGLCamera;
 
-class Q_AUTOTEST_EXPORT Projection
+class Q_AUTOTEST_EXPORT QGeoFrustum
 {
 public:
-    Projection();
-    virtual ~Projection();
+    enum Plane {
+        Near = 0x001,
+        Far = 0x002,
+        Right = 0x004,
+        Left = 0x008,
+        Top = 0x010,
+        Bottom = 0x020,
+        TopLeftNear = Top | Left | Near,
+        TopLeftFar = Top | Left | Far,
+        TopRightNear = Top | Right | Near,
+        TopRightFar = Top | Right | Far,
+        BottomLeftNear = Bottom | Left | Near,
+        BottomLeftFar = Bottom | Left | Far,
+        BottomRightNear = Bottom | Right | Near,
+        BottomRightFar = Bottom | Right | Far
+    };
 
-    virtual QVector3D coordToPoint(const QGeoCoordinate &coord) const = 0;
-    virtual QGeoCoordinate pointToCoord(const QVector3D &point) const = 0;
+    Q_DECLARE_FLAGS(Planes, Plane)
 
-    QVector2D coordToMercator(const QGeoCoordinate &coord) const;
-    QGeoCoordinate mercatorToCoord(const QVector2D &mercator) const;
+    QGeoFrustum();
 
-    virtual QVector3D mercatorToPoint(const QVector2D &mercator) const;
-    virtual QVector2D pointToMercator(const QVector3D &point) const;
+    void update(const QGLCamera *camera, double aspectRatio, bool updatePlanes = false);
 
-    virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress) = 0;
+    bool contains(const QVector3D &center, double radius) const;
+
+    QVector3D topLeftNear() const {
+        return tln_;
+    }
+    QVector3D topLeftFar() const {
+        return tlf_;
+    }
+    QVector3D bottomLeftNear() const {
+        return bln_;
+    }
+    QVector3D bottomLeftFar() const {
+        return blf_;
+    }
+    QVector3D topRightNear() const {
+        return trn_;
+    }
+    QVector3D topRightFar() const {
+        return trf_;
+    }
+    QVector3D bottomRightNear() const {
+        return brn_;
+    }
+    QVector3D bottomRightFar() const {
+        return brf_;
+    }
+
+    QPlane3D plane(Planes planes) const;
+
 private:
-    static double realmod(const double a, const double b);
+    double hf_;
+    double wf_;
+    QVector3D cf_;
+    QVector3D tlf_;
+    QVector3D trf_;
+    QVector3D blf_;
+    QVector3D brf_;
+
+    double hn_;
+    double wn_;
+    QVector3D cn_;
+    QVector3D tln_;
+    QVector3D trn_;
+    QVector3D bln_;
+    QVector3D brn_;
+
+    QHash<Planes, QPlane3D> planeHash_;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoFrustum::Planes)
 
 QT_END_NAMESPACE
 
-#endif // PROJECTION_H
+#endif // QGEOFRUSTUM_H

@@ -60,14 +60,14 @@
 
 QT_BEGIN_NAMESPACE
 
-class Map;
+class QGeoMap;
 class QOpenGLFramebufferObject;
 class QGLPainter;
 
 class MapNode : public QSGGeometryNode
 {
 public:
-    MapNode(Map *m_map);
+    MapNode(QGeoMap *m_map);
     ~MapNode();
 
     void setSize(const QSize &size);
@@ -91,7 +91,7 @@ private:
     QSGTextureMaterial m_material;
     QSGGeometry m_geometry;
     QSGPlainTexture *m_texture;
-    Map *m_map;
+    QGeoMap *m_map;
     QSize m_size;
     bool m_initialized;
     bool m_dirtyFBO;

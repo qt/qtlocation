@@ -38,43 +38,75 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef PROJECTION2D_P_H
-#define PROJECTION2D_P_H
+#include "qgeotile.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "projection_p.h"
+#include <Qt3D/qgltexture2d.h>
+#include <Qt3D/qglscenenode.h>
 
 QT_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT Projection2D : public Projection
+QGeoTile::QGeoTile() {}
+
+QGeoTile::QGeoTile(const QGeoTileSpec &spec)
+        : spec_(spec),
+          texture_(0),
+          sceneNode_(0),
+          bound_(false) {}
+
+bool QGeoTile::operator == (const QGeoTile &rhs) const
 {
-public:
-    Projection2D(double baseHeight, double sideLength);
-    virtual ~Projection2D();
+    return (spec_ == rhs.spec_);
+}
 
-    virtual QVector3D coordToPoint(const QGeoCoordinate &coord) const;
-    virtual QGeoCoordinate pointToCoord(const QVector3D &point) const;
+void QGeoTile::setTileSpec(const QGeoTileSpec &spec)
+{
+    spec_ = spec;
+}
 
-    virtual QVector3D mercatorToPoint(const QVector2D &mercator) const;
-    virtual QVector2D pointToMercator(const QVector3D &point) const;
+QGeoTileSpec QGeoTile::tileSpec() const
+{
+    return spec_;
+}
 
-    virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress);
+void QGeoTile::setTexture(QGLTexture2D *texture)
+{
+    texture_ = texture;
+}
 
-private:
-    double baseHeight_;
-    double sideLength_;
-};
+QGLTexture2D* QGeoTile::texture() const
+{
+    return texture_;
+}
+
+void QGeoTile::setSceneNode(QGLSceneNode *sceneNode)
+{
+    sceneNode_ = sceneNode;
+}
+
+QGLSceneNode* QGeoTile::sceneNode() const
+{
+    return sceneNode_;
+}
+
+void QGeoTile::bind()
+{
+    if (bound_)
+        return;
+
+    texture_->bind();
+//    texture_->clearImage();
+
+    bound_ = true;
+}
+
+void QGeoTile::setBound(bool bound)
+{
+    bound_ = bound;
+}
+
+bool QGeoTile::isBound() const
+{
+    return bound_;
+}
 
 QT_END_NAMESPACE
-
-#endif // PROJECTION2D_P_H

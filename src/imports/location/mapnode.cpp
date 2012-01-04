@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "mapnode_p.h"
-#include "map.h"
+#include "qgeomap.h"
 #include <Qt3D/qglpainter.h>
 #include <Qt3D/qglframebufferobjectsurface.h>
 #include <QtGui/QOpenGLFramebufferObject>
@@ -49,7 +49,7 @@
 #define GL_MULTISAMPLE 0x809D
 #endif
 
-MapNode::MapNode(Map* map): QSGGeometryNode(),
+MapNode::MapNode(QGeoMap* map): QSGGeometryNode(),
         m_fbo(0),
         m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4),
         m_texture(0),

@@ -111,7 +111,7 @@ struct Vertex
     QVector2D position;
 };
 
-static void updatePolygon(QPolygonF& points,const Map& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
+static void updatePolygon(QPolygonF& points,const QGeoMap& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
 {
     qreal minX, maxX, minY, maxY;
     //TODO: dateline handling
@@ -197,11 +197,11 @@ QDeclarativeMapLineProperties *QDeclarativePolygonMapItem::border()
     return &border_;
 }
 
-void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
+void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
-        QObject::connect(map, SIGNAL(cameraDataChanged(CameraData)), this, SLOT(handleCameraDataChanged(CameraData)));
+        QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(handleCameraDataChanged(QGeoCameraData)));
         dirtyGeometry_ = true;
         updateMapItem();
     }
@@ -380,7 +380,7 @@ void QDeclarativePolygonMapItem::updateMapItem()
     update();
 }
 
-void QDeclarativePolygonMapItem::handleCameraDataChanged(const CameraData& cameraData)
+void QDeclarativePolygonMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();

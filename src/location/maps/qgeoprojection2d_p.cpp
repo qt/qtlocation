@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "projection2d_p.h"
+#include "qgeoprojection2d_p.h"
 
 #include "qgeocoordinate.h"
 
@@ -47,12 +47,12 @@
 
 #include <qnumeric.h>
 
-Projection2D::Projection2D(double baseHeight, double sideLength)
+QGeoProjection2D::QGeoProjection2D(double baseHeight, double sideLength)
     : baseHeight_(baseHeight), sideLength_(sideLength) {}
 
-Projection2D::~Projection2D() {}
+QGeoProjection2D::~QGeoProjection2D() {}
 
-QVector3D Projection2D::coordToPoint(const QGeoCoordinate &coord) const
+QVector3D QGeoProjection2D::coordToPoint(const QGeoCoordinate &coord) const
 {
     QVector2D m = coordToMercator(coord);
     double z = baseHeight_;
@@ -61,7 +61,7 @@ QVector3D Projection2D::coordToPoint(const QGeoCoordinate &coord) const
     return QVector3D(m.x() * sideLength_, (1.0 - m.y()) * sideLength_, z);
 }
 
-QGeoCoordinate Projection2D::pointToCoord(const QVector3D &point) const
+QGeoCoordinate QGeoProjection2D::pointToCoord(const QVector3D &point) const
 {
     QVector2D m = QVector2D(point.x() / sideLength_, 1.0 - point.y() / sideLength_);
     QGeoCoordinate coord = mercatorToCoord(m);
@@ -69,17 +69,17 @@ QGeoCoordinate Projection2D::pointToCoord(const QVector3D &point) const
     return coord;
 }
 
-QVector3D Projection2D::mercatorToPoint(const QVector2D &mercator) const
+QVector3D QGeoProjection2D::mercatorToPoint(const QVector2D &mercator) const
 {
     return QVector3D(mercator.x() * sideLength_, (1.0 - mercator.y()) * sideLength_, baseHeight_);
 }
 
-QVector2D Projection2D::pointToMercator(const QVector3D &point) const
+QVector2D QGeoProjection2D::pointToMercator(const QVector3D &point) const
 {
     return QVector2D(point.x() / sideLength_, 1.0 - (point.y() / sideLength_));
 }
 
-QGeoCoordinate Projection2D::interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress)
+QGeoCoordinate QGeoProjection2D::interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress)
 {
     if (start == end) {
         if (progress < 0.5) {

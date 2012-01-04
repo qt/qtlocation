@@ -46,8 +46,8 @@
 #include <QSize>
 #include <QPair>
 #include <QtLocation/qlocationglobal.h>
-#include "maptype.h"
-#include "tilecache.h"
+#include "qgeomaptype.h"
+#include "qgeotilecache.h"
 
 QT_BEGIN_HEADER
 
@@ -61,8 +61,8 @@ class QGeoMapRequestOptions;
 class QGeoMappingManagerEngine;
 class QGeoTiledMapReply;
 
-class TileSpec;
-class Map;
+class QGeoTileSpec;
+class QGeoMap;
 
 class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
 {
@@ -74,14 +74,14 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    void registerMap(Map *map);
-    void deregisterMap(Map *map);
+    void registerMap(QGeoMap *map);
+    void deregisterMap(QGeoMap *map);
 
-    void updateTileRequests(Map *map,
-                            const QSet<TileSpec> &tilesAdded,
-                            const QSet<TileSpec> &tilesRemoved);
+    void updateTileRequests(QGeoMap *map,
+                            const QSet<QGeoTileSpec> &tilesAdded,
+                            const QSet<QGeoTileSpec> &tilesRemoved);
 
-    QList<MapType> supportedMapTypes() const;
+    QList<QGeoMapType> supportedMapTypes() const;
  //    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
 
     qreal minimumZoomLevel() const;
@@ -94,18 +94,18 @@ public:
     qreal minimumTilt() const;
     qreal maximumTilt() const;
 
-    TileCache::CacheAreas cacheHint() const;
+    QGeoTileCache::CacheAreas cacheHint() const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
 private Q_SLOTS:
-    void engineTileFinished(const TileSpec &spec, const QByteArray &bytes);
-    void engineTileError(const TileSpec &spec, const QString &errorString);
+    void engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes);
+    void engineTileError(const QGeoTileSpec &spec, const QString &errorString);
 
 Q_SIGNALS:
-    void tileFinished(const TileSpec &spec, const QByteArray &bytes);
-    void tileError(const TileSpec &spec, const QString &errorString);
+    void tileFinished(const QGeoTileSpec &spec, const QByteArray &bytes);
+    void tileError(const QGeoTileSpec &spec, const QString &errorString);
     void initialized();
 
 private:

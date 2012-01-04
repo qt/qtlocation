@@ -59,9 +59,9 @@
 #include <QSet>
 #include <QThread>
 
-class Map;
-class TileCache;
-class TileSpec;
+class QGeoMap;
+class QGeoTileCache;
+class QGeoTileSpec;
 
 QT_BEGIN_NAMESPACE
 
@@ -76,9 +76,9 @@ public:
     QThread *thread;
     QGeoMappingManagerEngine *engine;
 
-    QHash<TileCache*, QSet<Map*> > caches;
-    QHash<Map*, QSet<TileSpec> > mapHash;
-    QHash<TileSpec, QSet<Map*> > tileHash;
+    QHash<QGeoTileCache*, QSet<QGeoMap*> > caches;
+    QHash<QGeoMap*, QSet<QGeoTileSpec> > mapHash;
+    QHash<QGeoTileSpec, QSet<QGeoMap*> > tileHash;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerPrivate)

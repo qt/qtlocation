@@ -1,46 +1,70 @@
 
 INCLUDEPATH += maps
 
+QT += network qt3d
+
 PUBLIC_HEADERS += \
-                    maps/qgeocodingmanager.h \
-                    maps/qgeocodingmanagerengine.h \
+                    maps/qgeocameradata.h \
                     maps/qgeocodereply.h \
+                    maps/qgeocodingmanagerengine.h \
+                    maps/qgeocodingmanager.h \
                     maps/qgeomaneuver.h \
-                    maps/qgeomappingmanager.h \
+                    maps/qgeomapcontroller.h \
+                    maps/qgeomap.h \
                     maps/qgeomappingmanagerengine.h \
+                    maps/qgeomappingmanager.h \
+                    maps/qgeomaptype.h \
                     maps/qgeoroute.h \
                     maps/qgeoroutereply.h \
                     maps/qgeorouterequest.h \
                     maps/qgeoroutesegment.h \
-                    maps/qgeoroutingmanager.h \
                     maps/qgeoroutingmanagerengine.h \
-                    maps/qgeoserviceprovider.h \
+                    maps/qgeoroutingmanager.h \
                     maps/qgeoserviceproviderfactory.h \
-                    maps/qgeotiledmapreply.h
+                    maps/qgeoserviceprovider.h \
+                    maps/qgeotilecache.h \
+                    maps/qgeotiledmapreply.h \
+                    maps/qgeotile.h \
+                    maps/qgeotilespec.h
 
 PRIVATE_HEADERS += \
-                    maps/qgeocodingmanager_p.h \
-                    maps/qgeocodingmanagerengine_p.h \
                     maps/qgeocodereply_p.h \
+                    maps/qgeocodingmanagerengine_p.h \
+                    maps/qgeocodingmanager_p.h \
+                    maps/qgeofrustum_p.h \
                     maps/qgeomaneuver_p.h \
-                    maps/qgeomappingmanager_p.h \
+                    maps/qgeomap_p.h \
                     maps/qgeomappingmanagerengine_p.h \
+                    maps/qgeomappingmanager_p.h \
+                    maps/qgeomapsphere_p.h \
+                    maps/qgeomaptype_p.h \
+                    maps/qgeoprojection2d_p.h \
+                    maps/qgeoprojection_p.h \
                     maps/qgeoroute_p.h \
                     maps/qgeoroutereply_p.h \
                     maps/qgeorouterequest_p.h \
                     maps/qgeoroutesegment_p.h \
-                    maps/qgeoroutingmanager_p.h \
                     maps/qgeoroutingmanagerengine_p.h \
+                    maps/qgeoroutingmanager_p.h \
                     maps/qgeoserviceprovider_p.h \
-                    maps/qgeotiledmapreply_p.h
+                    maps/qgeotiledmapreply_p.h \
+                    maps/qgeotilespec_p.h
 
 SOURCES += \
+            maps/qgeocameradata.cpp \
+            maps/qgeocodereply.cpp \
             maps/qgeocodingmanager.cpp \
             maps/qgeocodingmanagerengine.cpp \
-            maps/qgeocodereply.cpp \
+            maps/qgeofrustum.cpp \
             maps/qgeomaneuver.cpp \
+            maps/qgeomapcontroller.cpp \
+            maps/qgeomap.cpp \
             maps/qgeomappingmanager.cpp \
             maps/qgeomappingmanagerengine.cpp \
+            maps/qgeomapsphere.cpp \
+            maps/qgeomaptype.cpp \
+            maps/qgeoprojection2d_p.cpp \
+            maps/qgeoprojection.cpp \
             maps/qgeoroute.cpp \
             maps/qgeoroutereply.cpp \
             maps/qgeorouterequest.cpp \
@@ -49,4 +73,7 @@ SOURCES += \
             maps/qgeoroutingmanagerengine.cpp \
             maps/qgeoserviceprovider.cpp \
             maps/qgeoserviceproviderfactory.cpp \
-            maps/qgeotiledmapreply.cpp
+            maps/qgeotilecache.cpp \
+            maps/qgeotile.cpp \
+            maps/qgeotiledmapreply.cpp \
+            maps/qgeotilespec.cpp

@@ -54,7 +54,7 @@
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
-#include "mapcontroller.h"
+#include "qgeomapcontroller.h"
 #include "qgeomappingmanager.h"
 
 //#define QT_DECLARATIVE_LOCATION_TRACE 1
@@ -69,18 +69,18 @@
 #define QLOC_TRACE2(msg1, msg2)
 #endif
 
-#include "cameradata.h"
-#include "map.h"
+#include "qgeocameradata.h"
+#include "qgeomap.h"
 #include "qdeclarativegeomaptype_p.h"
 
 QT_BEGIN_NAMESPACE
 
 class QGLPainter;
 class QGLSceneNode;
-class TileCache;
+class QGeoTileCache;
 class Tile;
-class TileSpec;
-class MapSphere;
+class QGeoTileSpec;
+class QGeoMapSphere;
 
 class QGeoCoordinate;
 class QGeoMapObject;
@@ -230,8 +230,8 @@ private:
     QQuickCanvas* canvas_;
     int touchTimer_;
 
-    TileCache *tileCache_;
-    Map *map_;
+    QGeoTileCache *tileCache_;
+    QGeoMap *map_;
 
     QList<QObject*> mapItems_;
 

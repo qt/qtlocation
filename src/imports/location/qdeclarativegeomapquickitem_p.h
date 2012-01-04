@@ -62,7 +62,7 @@ public:
     QDeclarativeGeoMapQuickItem(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapQuickItem();
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
 
     void setCoordinate(QDeclarativeCoordinate *coordinate);
     QDeclarativeCoordinate* coordinate();

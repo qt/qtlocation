@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TILECACHE_H
-#define TILECACHE_H
+#ifndef QGEOTILECACHE_H
+#define QGEOTILECACHE_H
 
 #include <QtLocation/qlocationglobal.h>
 
@@ -51,12 +51,10 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
 class QGeoMappingManager;
 
-class TileSpec;
-class Tile;
+class QGeoTileSpec;
+class QGeoTile;
 
 class TileDisk;
 class TileMemory;
@@ -67,7 +65,7 @@ class QGLSceneNode;
 class QPixmap;
 class QThread;
 
-class Q_LOCATION_EXPORT TileCache : public QObject
+class Q_LOCATION_EXPORT QGeoTileCache : public QObject
 {
     Q_OBJECT
 public:
@@ -79,8 +77,8 @@ public:
     };
     Q_DECLARE_FLAGS(CacheAreas, CacheArea)
 
-    TileCache(const QString &directory = QString(), QObject *parent = 0);
-    ~TileCache();
+    QGeoTileCache(const QString &directory = QString(), QObject *parent = 0);
+    ~QGeoTileCache();
 
     void setMaxDiskUsage(int diskUsage);
     int maxDiskUsage() const;
@@ -96,42 +94,42 @@ public:
 
     void GLContextAvailable(QGLSceneNode *parentNode);
 
-    bool contains(const TileSpec &spec) const;
-    Tile get(const TileSpec &spec);
+    bool contains(const QGeoTileSpec &spec) const;
+    QGeoTile get(const QGeoTileSpec &spec);
 
-    void update(const TileSpec &spec, const Tile &tile);
+    void update(const QGeoTileSpec &spec, const QGeoTile &tile);
 
     void evictFromDiskCache(TileDisk *td);
     void evictFromMemoryCache(TileMemory *tm);
     void evictFromTextureCache(TileTexture *tt);
 
-    void insert(const TileSpec &spec, const QByteArray &bytes, CacheAreas areas = AllCaches);
-    void handleError(const TileSpec &spec, const QString &errorString);
+    void insert(const QGeoTileSpec &spec, const QByteArray &bytes, CacheAreas areas = AllCaches);
+    void handleError(const QGeoTileSpec &spec, const QString &errorString);
 
 private:
     void loadTiles();
 
-    TileDisk* addToDiskCache(const TileSpec &spec, const QString &filename);
-    TileMemory* addToMemoryCache(const TileSpec &spec, const QPixmap &pixmap);
-    TileTexture* addToTextureCache(const TileSpec &spec, const QPixmap &pixmap);
+    TileDisk* addToDiskCache(const QGeoTileSpec &spec, const QString &filename);
+    TileMemory* addToMemoryCache(const QGeoTileSpec &spec, const QPixmap &pixmap);
+    TileTexture* addToTextureCache(const QGeoTileSpec &spec, const QPixmap &pixmap);
 
-    static QString tileSpecToFilename(const TileSpec &spec, const QString &directory);
-    static TileSpec filenameToTileSpec(const QString &filename);
+    static QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &directory);
+    static QGeoTileSpec filenameToTileSpec(const QString &filename);
 
     QString directory_;
 
-    QSet<TileSpec> keys_;
-    QCache<TileSpec, TileDisk > diskCache_;
-    QCache<TileSpec, TileMemory > memoryCache_;
-    QCache<TileSpec, TileTexture > textureCache_;
+    QSet<QGeoTileSpec> keys_;
+    QCache<QGeoTileSpec, TileDisk > diskCache_;
+    QCache<QGeoTileSpec, TileMemory > memoryCache_;
+    QCache<QGeoTileSpec, TileTexture > textureCache_;
 
-    QList<Tile> cleanupList_;
+    QList<QGeoTile> cleanupList_;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(TileCache::CacheAreas)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoTileCache::CacheAreas)
 
 QT_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // TILECACHE_H
+#endif // QGEOTILECACHE_H

@@ -38,70 +38,58 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef CAMERADATA_H
-#define CAMERADATA_H
 
-#include "qgeocoordinate.h"
-#include "projection_p.h"
+#ifndef QGEOMAPTYPE_H
+#define QGEOMAPTYPE_H
 
-#include <QMetaType>
-
-#include <QSharedPointer>
+#include <QtLocation/qlocationglobal.h>
+#include <QString>
 #include <QSharedDataPointer>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class CameraDataPrivate;
+class QGeoMapTypePrivate;
 
-class Q_LOCATION_EXPORT CameraData
+class Q_LOCATION_EXPORT QGeoMapType
 {
+
 public:
-    CameraData();
-    CameraData(const CameraData &other);
-    ~CameraData();
+    enum MapStyle {
+        NoMap = 0,
+        StreetMap,
+        SatelliteMapDay,
+        SatelliteMapNight,
+        TerrainMap,
+        HybridMap,
+        TransitMap,
+        GrayStreetMap,
+        CustomMap = 100
+    };
 
-    CameraData& operator = (const CameraData &other);
+    QGeoMapType();
+    QGeoMapType(const QGeoMapType &other);
+    QGeoMapType(MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
+    ~QGeoMapType();
 
-    bool operator == (const CameraData &other) const;
-    bool operator != (const CameraData &other) const;
+    QGeoMapType& operator = (const QGeoMapType &other);
 
-    void setCenter(const QGeoCoordinate &coordinate);
-    QGeoCoordinate center() const;
+    bool operator == (const QGeoMapType &other) const;
+    bool operator != (const QGeoMapType &other) const;
 
-    void setBearing(double bearing);
-    double bearing() const;
-
-    void setTilt(double tilt);
-    double tilt() const;
-
-    void setRoll(double roll);
-    double roll() const;
-
-    void setAspectRatio(double aspectRatio);
-    double aspectRatio() const;
-
-    void setDistance(double distance);
-    double distance() const;
-
-    void setZoomLevel(int zoomLevel);
-    int zoomLevel() const;
-
-    void setZoomFactor(double zoomFactor);
-    double zoomFactor() const;
-
-    void setProjection(QSharedPointer<Projection> projection);
-    QSharedPointer<Projection> projection() const;
+    MapStyle style() const;
+    QString name() const;
+    QString description() const;
+    bool mobile() const;
+    int mapId() const;
 
 private:
-    QSharedDataPointer<CameraDataPrivate> d;
+    QSharedDataPointer<QGeoMapTypePrivate> d_ptr;
 };
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(CameraData)
-
 QT_END_HEADER
 
-#endif // CAMERADATA_H
+#endif // QGEOMAPTYPE_H

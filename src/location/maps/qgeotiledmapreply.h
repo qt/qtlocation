@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 
 
 
-class TileSpec;
+class QGeoTileSpec;
 class QGeoTiledMapReplyPrivate;
 
 class Q_LOCATION_EXPORT QGeoTiledMapReply : public QObject
@@ -67,7 +67,7 @@ public:
         UnknownError
     };
 
-    QGeoTiledMapReply(const TileSpec &spec, QObject *parent = 0);
+    QGeoTiledMapReply(const QGeoTileSpec &spec, QObject *parent = 0);
     QGeoTiledMapReply(Error error, const QString &errorString, QObject *parent = 0);
     virtual ~QGeoTiledMapReply();
 
@@ -77,7 +77,7 @@ public:
 
     bool isCached() const;
 
-    TileSpec tileSpec() const;
+    QGeoTileSpec tileSpec() const;
 
     QByteArray mapImageData() const;
     QString mapImageFormat() const;

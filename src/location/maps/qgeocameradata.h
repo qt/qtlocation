@@ -38,80 +38,70 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "projection_p.h"
+#ifndef QGEOCAMERADATA_H
+#define QGEOCAMERADATA_H
 
 #include "qgeocoordinate.h"
+#include "qgeoprojection_p.h"
 
-#include <qvector2d.h>
-#include <qvector3d.h>
-#include <QMatrix4x4>
-#include <qnumeric.h>
+#include <QMetaType>
 
-#include <cmath>
+#include <QSharedPointer>
+#include <QSharedDataPointer>
 
-Projection::Projection() {}
+QT_BEGIN_HEADER
 
-Projection::~Projection() {}
+QT_BEGIN_NAMESPACE
 
-QVector3D Projection::mercatorToPoint(const QVector2D &mercator) const
+class QGeoCameraDataPrivate;
+
+class Q_LOCATION_EXPORT QGeoCameraData
 {
-    return this->coordToPoint(mercatorToCoord(mercator));
-}
+public:
+    QGeoCameraData();
+    QGeoCameraData(const QGeoCameraData &other);
+    ~QGeoCameraData();
 
-QVector2D Projection::pointToMercator(const QVector3D &point) const
-{
-    return coordToMercator(this->pointToCoord(point));
-}
+    QGeoCameraData& operator = (const QGeoCameraData &other);
 
-QVector2D Projection::coordToMercator(const QGeoCoordinate &coord) const
-{
-    const double pi = M_PI;
+    bool operator == (const QGeoCameraData &other) const;
+    bool operator != (const QGeoCameraData &other) const;
 
-    double lon = coord.longitude() / 360.0 + 0.5;
+    void setCenter(const QGeoCoordinate &coordinate);
+    QGeoCoordinate center() const;
 
-    double lat = coord.latitude();
-    lat = 0.5 - (log(tan((pi / 4.0) + (pi / 2.0) * lat / 180.0)) / pi) / 2.0;
-    lat = qMax(0.0, lat);
-    lat = qMin(1.0, lat);
+    void setBearing(double bearing);
+    double bearing() const;
 
-    return QVector2D(lon, lat);
-}
+    void setTilt(double tilt);
+    double tilt() const;
 
-double Projection::realmod(const double a, const double b)
-{
-    quint64 div = static_cast<quint64>(a / b);
-    return a - static_cast<double>(div) * b;
-}
+    void setRoll(double roll);
+    double roll() const;
 
-QGeoCoordinate Projection::mercatorToCoord(const QVector2D &mercator) const
-{
-    const double pi = M_PI;
+    void setAspectRatio(double aspectRatio);
+    double aspectRatio() const;
 
-    double fx = mercator.x();
-    double fy = mercator.y();
+    void setDistance(double distance);
+    double distance() const;
 
-    if (fy < 0.0)
-        fy = 0.0;
-    else if (fy > 1.0)
-        fy = 1.0;
+    void setZoomLevel(int zoomLevel);
+    int zoomLevel() const;
 
-    double lat;
+    void setZoomFactor(double zoomFactor);
+    double zoomFactor() const;
 
-    if (fy == 0.0)
-        lat = 90.0;
-    else if (fy == 1.0)
-        lat = -90.0;
-    else
-        lat = (180.0 / pi) * (2.0 * atan(exp(pi * (1.0 - 2.0 * fy))) - (pi / 2.0));
+    void setProjection(QSharedPointer<QGeoProjection> projection);
+    QSharedPointer<QGeoProjection> projection() const;
 
-    double lng;
-    if (fx >= 0) {
-        lng = realmod(fx, 1.0);
-    } else {
-        lng = realmod(1.0 - realmod(-1.0 * fx, 1.0), 1.0);
-    }
+private:
+    QSharedDataPointer<QGeoCameraDataPrivate> d;
+};
 
-    lng = lng * 360.0 - 180.0;
+QT_END_NAMESPACE
 
-    return QGeoCoordinate(lat, lng, 0.0);
-}
+Q_DECLARE_METATYPE(QGeoCameraData)
+
+QT_END_HEADER
+
+#endif // QGEOCAMERADATA_H

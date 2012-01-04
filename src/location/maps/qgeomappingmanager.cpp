@@ -45,10 +45,10 @@
 #include "qgeotiledmapreply.h"
 
 
-#include "map.h"
-#include "map_p.h"
-#include "tilecache.h"
-#include "tilespec.h"
+#include "qgeomap.h"
+#include "qgeomap_p.h"
+#include "qgeotilecache.h"
+#include "qgeotilespec.h"
 
 #include <QTimer>
 #include <QNetworkProxy>
@@ -103,17 +103,17 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
 
     d_ptr->thread= new QThread;
 
-    qRegisterMetaType<TileSpec>();
+    qRegisterMetaType<QGeoTileSpec>();
 
     connect(d_ptr->engine,
-            SIGNAL(tileFinished(TileSpec,QByteArray)),
+            SIGNAL(tileFinished(QGeoTileSpec,QByteArray)),
             this,
-            SLOT(engineTileFinished(TileSpec,QByteArray)),
+            SLOT(engineTileFinished(QGeoTileSpec,QByteArray)),
             Qt::QueuedConnection);
     connect(d_ptr->engine,
-            SIGNAL(tileError(TileSpec,QString)),
+            SIGNAL(tileError(QGeoTileSpec,QString)),
             this,
-            SLOT(engineTileError(TileSpec,QString)),
+            SLOT(engineTileError(QGeoTileSpec,QString)),
             Qt::QueuedConnection);
 
     connect(d_ptr->engine,
@@ -180,15 +180,15 @@ int QGeoMappingManager::managerVersion() const
     return d_ptr->engine->managerVersion();
 }
 
-void QGeoMappingManager::registerMap(Map *map)
+void QGeoMappingManager::registerMap(QGeoMap *map)
 {
-    TileCache *cache = map->tileCache();
-    QSet<Map*> maps = d_ptr->caches.value(cache);
+    QGeoTileCache *cache = map->tileCache();
+    QSet<QGeoMap*> maps = d_ptr->caches.value(cache);
     maps.insert(map);
     d_ptr->caches.insert(cache, maps);
 }
 
-void QGeoMappingManager::deregisterMap(Map *map)
+void QGeoMappingManager::deregisterMap(QGeoMap *map)
 {
     Q_UNUSED(map);
 //    TileCache *cache = map->tileCache();
@@ -203,15 +203,15 @@ void QGeoMappingManager::deregisterMap(Map *map)
     // clear any tileHash / mapHash entries
 }
 
-void QGeoMappingManager::updateTileRequests(Map *map,
-                                            const QSet<TileSpec> &tilesAdded,
-                                            const QSet<TileSpec> &tilesRemoved)
+void QGeoMappingManager::updateTileRequests(QGeoMap *map,
+                                            const QSet<QGeoTileSpec> &tilesAdded,
+                                            const QSet<QGeoTileSpec> &tilesRemoved)
 {
-    typedef QSet<TileSpec>::const_iterator tile_iter;
+    typedef QSet<QGeoTileSpec>::const_iterator tile_iter;
 
     // add and remove tiles from tileset for this map
 
-    QSet<TileSpec> oldTiles = d_ptr->mapHash.value(map);
+    QSet<QGeoTileSpec> oldTiles = d_ptr->mapHash.value(map);
 
     tile_iter rem = tilesRemoved.constBegin();
     tile_iter remEnd = tilesRemoved.constEnd();
@@ -229,12 +229,12 @@ void QGeoMappingManager::updateTileRequests(Map *map,
 
     // add and remove map from mapset for the tiles
 
-    QSet<TileSpec> reqTiles;
-    QSet<TileSpec> cancelTiles;
+    QSet<QGeoTileSpec> reqTiles;
+    QSet<QGeoTileSpec> cancelTiles;
 
     rem = tilesRemoved.constBegin();
     for (; rem != remEnd; ++rem) {
-        QSet<Map*> mapSet = d_ptr->tileHash.value(*rem);
+        QSet<QGeoMap*> mapSet = d_ptr->tileHash.value(*rem);
         mapSet.remove(map);
         if (mapSet.isEmpty()) {
             cancelTiles.insert(*rem);
@@ -246,7 +246,7 @@ void QGeoMappingManager::updateTileRequests(Map *map,
 
     add = tilesAdded.constBegin();
     for (; add != addEnd; ++add) {
-        QSet<Map*> mapSet = d_ptr->tileHash.value(*add);
+        QSet<QGeoMap*> mapSet = d_ptr->tileHash.value(*add);
         if (mapSet.isEmpty()) {
             reqTiles.insert(*add);
         }
@@ -258,24 +258,24 @@ void QGeoMappingManager::updateTileRequests(Map *map,
 
     QMetaObject::invokeMethod(d_ptr->engine, "updateTileRequests",
                               Qt::QueuedConnection,
-                              Q_ARG(QSet<TileSpec>, reqTiles),
-                              Q_ARG(QSet<TileSpec>, cancelTiles));
+                              Q_ARG(QSet<QGeoTileSpec>, reqTiles),
+                              Q_ARG(QSet<QGeoTileSpec>, cancelTiles));
 }
 
-void QGeoMappingManager::engineTileFinished(const TileSpec &spec, const QByteArray &bytes)
+void QGeoMappingManager::engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes)
 {
-    QSet<TileCache*> caches;
+    QSet<QGeoTileCache*> caches;
 
-    QSet<Map*> maps = d_ptr->tileHash.value(spec);
+    QSet<QGeoMap*> maps = d_ptr->tileHash.value(spec);
 
-    typedef QSet<Map*>::const_iterator map_iter;
+    typedef QSet<QGeoMap*>::const_iterator map_iter;
 
     map_iter map = maps.constBegin();
     map_iter mapEnd = maps.constEnd();
     for (; map != mapEnd; ++map) {
         caches.insert((*map)->tileCache());
 
-        QSet<TileSpec> tileSet = d_ptr->mapHash.value(*map);
+        QSet<QGeoTileSpec> tileSet = d_ptr->mapHash.value(*map);
         tileSet.remove(spec);
         if (tileSet.isEmpty())
             d_ptr->mapHash.remove(*map);
@@ -285,7 +285,7 @@ void QGeoMappingManager::engineTileFinished(const TileSpec &spec, const QByteArr
 
     d_ptr->tileHash.remove(spec);
 
-    typedef QSet<TileCache*>::const_iterator cache_iter;
+    typedef QSet<QGeoTileCache*>::const_iterator cache_iter;
 
     cache_iter cache = caches.constBegin();
     cache_iter cacheEnd = caches.constEnd();
@@ -299,12 +299,12 @@ void QGeoMappingManager::engineTileFinished(const TileSpec &spec, const QByteArr
     }
 }
 
-void QGeoMappingManager::engineTileError(const TileSpec &spec, const QString &errorString)
+void QGeoMappingManager::engineTileError(const QGeoTileSpec &spec, const QString &errorString)
 {
     emit tileError(spec, errorString);
 }
 
-QList<MapType> QGeoMappingManager::supportedMapTypes() const
+QList<QGeoMapType> QGeoMappingManager::supportedMapTypes() const
 {
     return d_ptr->engine->supportedMapTypes();
 }
@@ -410,7 +410,7 @@ QLocale QGeoMappingManager::locale() const
     return d_ptr->engine->locale();
 }
 
-TileCache::CacheAreas QGeoMappingManager::cacheHint() const
+QGeoTileCache::CacheAreas QGeoMappingManager::cacheHint() const
 {
     return d_ptr->engine->cacheHint();
 }

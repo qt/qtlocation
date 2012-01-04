@@ -38,9 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "cameradata.h"
-
-#include "projection_p.h"
+#include "qgeocameradata.h"
 
 #include <QVariant>
 #include <QVariantAnimation>
@@ -53,15 +51,15 @@
 
 QT_BEGIN_NAMESPACE
 
-class CameraDataPrivate : public QSharedData
+class QGeoCameraDataPrivate : public QSharedData
 {
 public:
-    CameraDataPrivate();
-    CameraDataPrivate(const CameraDataPrivate &rhs);
+    QGeoCameraDataPrivate();
+    QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs);
 
-    CameraDataPrivate& operator = (const CameraDataPrivate &rhs);
+    QGeoCameraDataPrivate& operator = (const QGeoCameraDataPrivate &rhs);
 
-    bool operator == (const CameraDataPrivate &rhs) const;
+    bool operator == (const QGeoCameraDataPrivate &rhs) const;
 
     QGeoCoordinate center_;
     double distance_;
@@ -72,10 +70,10 @@ public:
     int zoomLevel_;
     double zoomFactor_;
 
-    QWeakPointer<Projection> projection_;
+    QWeakPointer<QGeoProjection> projection_;
 };
 
-CameraDataPrivate::CameraDataPrivate()
+QGeoCameraDataPrivate::QGeoCameraDataPrivate()
     : QSharedData(),
       center_(-27.5, 153),
       distance_(0.02),
@@ -85,7 +83,7 @@ CameraDataPrivate::CameraDataPrivate()
       aspectRatio_(1.0),
       zoomLevel_(9) {}
 
-CameraDataPrivate::CameraDataPrivate(const CameraDataPrivate &rhs)
+QGeoCameraDataPrivate::QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs)
     : QSharedData(rhs),
       center_(rhs.center_),
       distance_(rhs.distance_),
@@ -97,7 +95,7 @@ CameraDataPrivate::CameraDataPrivate(const CameraDataPrivate &rhs)
       zoomFactor_(rhs.zoomFactor_),
       projection_(rhs.projection_) {}
 
-CameraDataPrivate& CameraDataPrivate::operator = (const CameraDataPrivate &rhs)
+QGeoCameraDataPrivate& QGeoCameraDataPrivate::operator = (const QGeoCameraDataPrivate &rhs)
 {
     center_ = rhs.center_;
     distance_ = rhs.distance_;
@@ -107,7 +105,7 @@ CameraDataPrivate& CameraDataPrivate::operator = (const CameraDataPrivate &rhs)
     aspectRatio_ = rhs.aspectRatio_;
     zoomLevel_ = rhs.zoomLevel_;
     zoomFactor_ = rhs.zoomFactor_;
-    QSharedPointer<Projection> p = rhs.projection_.toStrongRef();
+    QSharedPointer<QGeoProjection> p = rhs.projection_.toStrongRef();
     if (p)
         projection_ = p.toWeakRef();
     else
@@ -116,7 +114,7 @@ CameraDataPrivate& CameraDataPrivate::operator = (const CameraDataPrivate &rhs)
     return *this;
 }
 
-bool CameraDataPrivate::operator == (const CameraDataPrivate &rhs) const
+bool QGeoCameraDataPrivate::operator == (const QGeoCameraDataPrivate &rhs) const
 {
     return ((center_ == rhs.center_)
             && (distance_ == rhs.distance_)
@@ -128,14 +126,14 @@ bool CameraDataPrivate::operator == (const CameraDataPrivate &rhs) const
             && (zoomFactor_ == rhs.zoomFactor_));
 }
 
-QVariant cameraInterpolator(const CameraData &start,
-                            const CameraData &end,
+QVariant cameraInterpolator(const QGeoCameraData &start,
+                            const QGeoCameraData &end,
                             qreal progress)
 {
-    CameraData result = start;
+    QGeoCameraData result = start;
 
 
-    QSharedPointer<Projection> p = start.projection();
+    QSharedPointer<QGeoProjection> p = start.projection();
     if (!p)
         p = end.projection();
 
@@ -155,83 +153,83 @@ QVariant cameraInterpolator(const CameraData &start,
     return QVariant::fromValue(result);
 }
 
-CameraData::CameraData()
-    : d(new CameraDataPrivate())
+QGeoCameraData::QGeoCameraData()
+    : d(new QGeoCameraDataPrivate())
 {
-    qRegisterMetaType<CameraData>();
-    qRegisterAnimationInterpolator<CameraData>(cameraInterpolator);
+    qRegisterMetaType<QGeoCameraData>();
+    qRegisterAnimationInterpolator<QGeoCameraData>(cameraInterpolator);
     setZoomFactor(4.0);
 }
 
-CameraData::CameraData(const CameraData &other)
+QGeoCameraData::QGeoCameraData(const QGeoCameraData &other)
     : d(other.d) {}
 
-CameraData::~CameraData()
+QGeoCameraData::~QGeoCameraData()
 {
 }
 
-CameraData& CameraData::operator = (const CameraData &other)
+QGeoCameraData& QGeoCameraData::operator = (const QGeoCameraData &other)
 {
     d = other.d;
     return *this;
 }
 
-bool CameraData::operator == (const CameraData &rhs) const
+bool QGeoCameraData::operator == (const QGeoCameraData &rhs) const
 {
     return (*(d.constData()) == *(rhs.d.constData()));
 }
 
-bool CameraData::operator != (const CameraData &other) const
+bool QGeoCameraData::operator != (const QGeoCameraData &other) const
 {
     return !(operator==(other));
 }
 
-void CameraData::setCenter(const QGeoCoordinate &center)
+void QGeoCameraData::setCenter(const QGeoCoordinate &center)
 {
     d->center_ = center;
 }
 
-QGeoCoordinate CameraData::center() const
+QGeoCoordinate QGeoCameraData::center() const
 {
     return d->center_;
 }
 
-void CameraData::setBearing(double bearing)
+void QGeoCameraData::setBearing(double bearing)
 {
     d->bearing_ = bearing;
 }
 
-double CameraData::bearing() const
+double QGeoCameraData::bearing() const
 {
     return d->bearing_;
 }
 
-void CameraData::setTilt(double tilt)
+void QGeoCameraData::setTilt(double tilt)
 {
     d->tilt_ = tilt;
 }
 
-double CameraData::tilt() const
+double QGeoCameraData::tilt() const
 {
     return d->tilt_;
 }
 
-void CameraData::setRoll(double roll)
+void QGeoCameraData::setRoll(double roll)
 {
     d->roll_ = roll;
 }
 
-double CameraData::roll() const
+double QGeoCameraData::roll() const
 {
     return d->roll_;
 }
 
-void CameraData::setAspectRatio(double aspectRatio)
+void QGeoCameraData::setAspectRatio(double aspectRatio)
 {
     d->aspectRatio_ = aspectRatio;
 }
 
-double CameraData::aspectRatio() const
+double QGeoCameraData::aspectRatio() const
 {
     return d->aspectRatio_;
 }
@@ -242,28 +240,28 @@ double CameraData::aspectRatio() const
   the way to set these.
 */
 
-void CameraData::setDistance(double distance)
+void QGeoCameraData::setDistance(double distance)
 {
     d->zoomFactor_ = -1.0 * log(distance) / log(2.0);
     d->distance_ = distance;
 }
 
-double CameraData::distance() const
+double QGeoCameraData::distance() const
 {
     return d->distance_;
 }
 
-void CameraData::setZoomLevel(int zoomLevel)
+void QGeoCameraData::setZoomLevel(int zoomLevel)
 {
     d->zoomLevel_ = zoomLevel;
 }
 
-int CameraData::zoomLevel() const
+int QGeoCameraData::zoomLevel() const
 {
     return d->zoomLevel_;
 }
 
-void CameraData::setZoomFactor(double zoomFactor)
+void QGeoCameraData::setZoomFactor(double zoomFactor)
 {
     d->zoomLevel_ = floor(zoomFactor);
 //    qDebug() << __FUNCTION__ << zoomFactor << d->zoomLevel_;
@@ -275,17 +273,17 @@ void CameraData::setZoomFactor(double zoomFactor)
     d->zoomFactor_ = zoomFactor;
 }
 
-double CameraData::zoomFactor() const
+double QGeoCameraData::zoomFactor() const
 {
     return d->zoomFactor_;
 }
 
-void CameraData::setProjection(QSharedPointer<Projection> projection)
+void QGeoCameraData::setProjection(QSharedPointer<QGeoProjection> projection)
 {
     d->projection_ = projection.toWeakRef();
 }
 
-QSharedPointer<Projection> CameraData::projection() const
+QSharedPointer<QGeoProjection> QGeoCameraData::projection() const
 {
     return d->projection_.toStrongRef();
 }

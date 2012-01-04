@@ -64,7 +64,7 @@ class QNetworkAccessManager;
 class QNetworkDiskCache;
 
 class QGeoTiledMapReply;
-class TileSpec;
+class QGeoTileSpec;
 
 class QGeoMappingManagerEngineNokia : public QGeoMappingManagerEngine
 {
@@ -77,7 +77,7 @@ public:
 
     void init();
 
-    QGeoTiledMapReply* getTileImage(const TileSpec &spec);
+    QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec);
 
     const QString& host() const;
     QChar firstSubdomain() const;
@@ -94,7 +94,7 @@ private Q_SLOTS:
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
 
-    QString getRequestString(const TileSpec &spec) const;
+    QString getRequestString(const QGeoTileSpec &spec) const;
 
     static QString sizeToStr(const QSize &size);
     static QString mapIdToStr(int mapId);

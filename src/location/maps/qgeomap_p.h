@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MAP_P_H
-#define MAP_P_H
+#ifndef QGEOMAP_P_H
+#define QGEOMAP_P_H
 
 //
 //  W A R N I N G
@@ -62,10 +62,10 @@
 #include <QMatrix4x4>
 #include <QString>
 
-#include "cameradata.h"
-#include "frustum_p.h"
+#include "qgeocameradata.h"
+#include "qgeofrustum_p.h"
 
-#include "maptype.h"
+#include "qgeomaptype.h"
 
 #include <QSharedPointer>
 
@@ -73,19 +73,19 @@ QT_BEGIN_NAMESPACE
 
 class QGeoMappingManager;
 
-class Tile;
-class TileCache;
-class TileSpec;
-class Map;
-class MapController;
-class MapSphere;
-class Projection;
+class QGeoTile;
+class QGeoTileCache;
+class QGeoTileSpec;
+class QGeoMap;
+class QGeoMapController;
+class QGeoMapSphere;
+class QGeoProjection;
 
 class QGLCamera;
 class QGLSceneNode;
 class QGLPainter;
 
-class MapPrivate;
+class QGeoMapPrivate;
 
 struct TileMap
 {
@@ -107,7 +107,7 @@ public:
         XAxis,
         YAxis
     };
-    IntersectGenerator(const MapPrivate *mp,
+    IntersectGenerator(const QGeoMapPrivate *mp,
                         double p1,
                         double p2,
                         int t1,
@@ -123,7 +123,7 @@ private:
     void generateValue();
 
 protected:
-    const MapPrivate *mp_;
+    const QGeoMapPrivate *mp_;
     Axis axis_;
     int zoomLevel_;
 
@@ -139,38 +139,38 @@ protected:
     double denom_;
 };
 
-class MapPrivate
+class QGeoMapPrivate
 {
 public:
-    MapPrivate(Map *parent, TileCache *cache, int maxZoom, int tileSize);
-    virtual ~MapPrivate();
+    QGeoMapPrivate(QGeoMap *parent, QGeoTileCache *cache, int maxZoom, int tileSize);
+    virtual ~QGeoMapPrivate();
 
-    TileCache* tileCache();
+    QGeoTileCache* tileCache();
 
     void setMappingManager(QGeoMappingManager *manager);
 
-    MapController* mapController();
+    QGeoMapController* mapController();
 
     QGLCamera* glCamera() const;
     void paintGL(QGLPainter *painter);
 
-    void setCameraData(const CameraData &cameraData);
-    CameraData cameraData() const;
+    void setCameraData(const QGeoCameraData &cameraData);
+    QGeoCameraData cameraData() const;
 
     void resize(int width, int height);
     int width() const;
     int height() const;
     double aspectRatio() const;
 
-    QGLSceneNode* createTileSpecNode(const TileSpec &tileSpec);
-    QGLSceneNode* createTileNode(const Tile &tile);
+    QGLSceneNode* createTileSpecNode(const QGeoTileSpec &tileSpec);
+    QGLSceneNode* createTileNode(const QGeoTile &tile);
 
-    QRect specToRect(const TileSpec &tileSpec) const;
+    QRect specToRect(const QGeoTileSpec &tileSpec) const;
 
     void update();
 
-    const MapType activeMapType() const;
-    void setActiveMapType(const MapType mapType);
+    const QGeoMapType activeMapType() const;
+    void setActiveMapType(const QGeoMapType mapType);
 
     QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
@@ -179,33 +179,33 @@ public:
     QVector3D tileXIntersectToPoint(int zoomLevel, int x) const;
     QVector3D tileYIntersectToPoint(int zoomLevel, int y) const;
 
-    void tileFetched(const TileSpec &spec);
+    void tileFetched(const QGeoTileSpec &spec);
 
 private:
     void updateGlCamera(QGLCamera* glCamera);
-    void updateFrustum(Frustum &frustum);
-    QList<TileSpec> updateVisibleTiles();
+    void updateFrustum(QGeoFrustum &frustum);
+    QList<QGeoTileSpec> updateVisibleTiles();
 
     int width_;
     int height_;
     double aspectRatio_;
 
-    Map *map_;
-    TileCache* cache_;
+    QGeoMap *map_;
+    QGeoTileCache* cache_;
     QGeoMappingManager *manager_;
     QString pluginString_;
-    MapController *controller_;
+    QGeoMapController *controller_;
 
-    QSharedPointer<Projection> projection_;
+    QSharedPointer<QGeoProjection> projection_;
 
     QGLCamera *glCamera_;
 
-    CameraData cameraData_;
-    Frustum frustum_;
-    QList<TileSpec> visibleTiles_;
+    QGeoCameraData cameraData_;
+    QGeoFrustum frustum_;
+    QList<QGeoTileSpec> visibleTiles_;
 
-    MapSphere *sphere_;
-    MapType activeMapType_;
+    QGeoMapSphere *sphere_;
+    QGeoMapType activeMapType_;
 
     // from map2d_p.h
 
@@ -216,7 +216,7 @@ private:
                        int zoomLevel,
                        TileMap &map) const;
 
-    QList<TileSpec> tilesFromPoints(const QVector<QVector3D> &points, bool roundUp) const;
+    QList<QGeoTileSpec> tilesFromPoints(const QVector<QVector3D> &points, bool roundUp) const;
 
     QPair<QList<QVector3D>,QList<QVector3D> > clipPolygonToMap(const QList<QVector3D> &points) const;
 
@@ -251,4 +251,4 @@ private:
 
 QT_END_NAMESPACE
 
-#endif // MAP_P_H
+#endif // QGEOMAP_P_H

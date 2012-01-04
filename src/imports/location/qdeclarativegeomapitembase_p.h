@@ -56,20 +56,20 @@ public:
     QDeclarativeGeoMapItemBase(QQuickItem *parent = 0);
     virtual ~QDeclarativeGeoMapItemBase();
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, Map *map);
+    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
     virtual void setPositionOnMap(const QGeoCoordinate& coordinate, const QPointF& offset);
     virtual bool contains(QPointF point);
     virtual void dragStarted();
     virtual void dragEnded();
 
     QDeclarativeGeoMap* quickMap() {return quickMap_;}
-    Map* map() {return map_;}
+    QGeoMap* map() {return map_;}
 
 protected Q_SLOT:
     virtual void updateMapItem() = 0;
 
 private:
-    Map* map_;
+    QGeoMap* map_;
     QDeclarativeGeoMap* quickMap_;
 };
 

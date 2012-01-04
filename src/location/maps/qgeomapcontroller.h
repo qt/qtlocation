@@ -39,36 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef MAPCONTROLLER_H
-#define MAPCONTROLLER_H
+#ifndef QGEOMAPCONTROLLER_H
+#define QGEOMAPCONTROLLER_H
 
 #include <QObject>
 
 #include "qgeocoordinate.h"
-#include "cameradata.h"
+#include "qgeocameradata.h"
 
 QT_BEGIN_NAMESPACE
 
-class Map;
+class QGeoMap;
 
 class Q_LOCATION_EXPORT AnimatableCoordinate {
 public:
     AnimatableCoordinate();
     AnimatableCoordinate(const QGeoCoordinate &coordinate,
-                         QSharedPointer<Projection> projection);
+                         QSharedPointer<QGeoProjection> projection);
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
 
-    QSharedPointer<Projection> projection() const;
-    void setProjection(QSharedPointer<Projection> projection);
+    QSharedPointer<QGeoProjection> projection() const;
+    void setProjection(QSharedPointer<QGeoProjection> projection);
 
 private:
     QGeoCoordinate coordinate_;
-    QSharedPointer<Projection> projection_;
+    QSharedPointer<QGeoProjection> projection_;
 };
 
-class Q_LOCATION_EXPORT MapController : public QObject
+class Q_LOCATION_EXPORT QGeoMapController : public QObject
 {
     Q_OBJECT
 
@@ -79,8 +79,8 @@ class Q_LOCATION_EXPORT MapController : public QObject
     Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged)
 
 public:
-    MapController(Map *map, QSharedPointer<Projection> projection);
-    ~MapController();
+    QGeoMapController(QGeoMap *map, QSharedPointer<QGeoProjection> projection);
+    ~QGeoMapController();
 
     AnimatableCoordinate center() const;
     void setCenter(const AnimatableCoordinate &center);
@@ -100,7 +100,7 @@ public:
     void pan(qreal dx, qreal dy);
 
 private slots:
-    void cameraDataChanged(const CameraData &cameraData);
+    void cameraDataChanged(const QGeoCameraData &cameraData);
 
 signals:
     void centerChanged(const AnimatableCoordinate &center);
@@ -110,13 +110,13 @@ signals:
     void zoomChanged(qreal zoom);
 
 private:
-    Map *map_;
-    QSharedPointer<Projection> projection_;
-    CameraData oldCameraData_;
+    QGeoMap *map_;
+    QSharedPointer<QGeoProjection> projection_;
+    QGeoCameraData oldCameraData_;
 };
 
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(AnimatableCoordinate)
 
-#endif // MAPCONTROLLER_H
+#endif // QGEOMAPCONTROLLER_H

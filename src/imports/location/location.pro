@@ -8,7 +8,7 @@ QT += declarative quick-private network location declarative qt3d core-private g
 DESTDIR = $$QT.location.imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-INCLUDEPATH += ../../location/mapsgl
+INCLUDEPATH += ../../location/maps
 INCLUDEPATH *= $$PWD
 
 # On some platforms, build both versions because debug and release

@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-location
 */
 
-QDeclarativeGeoMapType::QDeclarativeGeoMapType(const MapType mapType, QObject* parent)
+QDeclarativeGeoMapType::QDeclarativeGeoMapType(const QGeoMapType mapType, QObject* parent)
     : QObject(parent),
       mapType_(mapType) {}
 

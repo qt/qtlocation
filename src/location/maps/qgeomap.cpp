@@ -38,15 +38,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "map.h"
-#include "map_p.h"
+#include "qgeomap.h"
+#include "qgeomap_p.h"
 
-#include "tilecache.h"
-#include "mapsphere_p.h"
-#include "projection_p.h"
-#include "projection2d_p.h"
-#include "tile.h"
-#include "mapcontroller.h"
+#include "qgeotilecache.h"
+#include "qgeomapsphere_p.h"
+#include "qgeoprojection_p.h"
+#include "qgeoprojection2d_p.h"
+#include "qgeotile.h"
+#include "qgeomapcontroller.h"
 
 #include "qgeomappingmanager.h"
 
@@ -64,74 +64,74 @@
 
 #include <cmath>
 
-Map::Map(TileCache *cache, QObject *parent)
+QGeoMap::QGeoMap(QGeoTileCache *cache, QObject *parent)
     : QObject(parent)
 {
 //    d_ptr = new Map3DPrivate(this, cache, 20000.0);
 
     // edge is 2^max zoom * 4
-    d_ptr = new MapPrivate(this, cache, 20, 256);
+    d_ptr = new QGeoMapPrivate(this, cache, 20, 256);
 }
 
-Map::~Map()
+QGeoMap::~QGeoMap()
 {
     delete d_ptr;
 }
 
-TileCache* Map::tileCache()
+QGeoTileCache* QGeoMap::tileCache()
 {
-    Q_D(Map);
+    Q_D(QGeoMap);
     return d->tileCache();
 }
 
-MapController* Map::mapController()
+QGeoMapController* QGeoMap::mapController()
 {
-    Q_D(Map);
+    Q_D(QGeoMap);
     return d->mapController();
 }
 
-void Map::setMappingManager(QGeoMappingManager *manager)
+void QGeoMap::setMappingManager(QGeoMappingManager *manager)
 {
-    Q_D(Map);
+    Q_D(QGeoMap);
     d->setMappingManager(manager);
 }
 
-void Map::paintGL(QGLPainter *painter)
+void QGeoMap::paintGL(QGLPainter *painter)
 {
-    Q_D(Map);
+    Q_D(QGeoMap);
     d->paintGL(painter);
 }
 
-QGLCamera* Map::glCamera() const
+QGLCamera* QGeoMap::glCamera() const
 {
-    Q_D(const Map);
+    Q_D(const QGeoMap);
     return d->glCamera();
 }
 
-void Map::resize(int width, int height)
+void QGeoMap::resize(int width, int height)
 {
-    Q_D(Map);
+    Q_D(QGeoMap);
     d->resize(width, height);
 
     // always emit this signal to trigger items to redraw
     emit cameraDataChanged(d->cameraData());
 }
 
-int Map::width() const
+int QGeoMap::width() const
 {
-    Q_D(const Map);
+    Q_D(const QGeoMap);
     return d->width();
 }
 
-int Map::height() const
+int QGeoMap::height() const
 {
-    Q_D(const Map);
+    Q_D(const QGeoMap);
     return d->height();
 }
 
-void Map::setCameraData(const CameraData &cameraData)
+void QGeoMap::setCameraData(const QGeoCameraData &cameraData)
 {
-    Q_D(Map);
+    Q_D(QGeoMap);
 
     if (cameraData == d->cameraData())
         return;
@@ -142,22 +142,22 @@ void Map::setCameraData(const CameraData &cameraData)
     emit cameraDataChanged(d->cameraData());
 }
 
-CameraData Map::cameraData() const
+QGeoCameraData QGeoMap::cameraData() const
 {
-    Q_D(const Map);
+    Q_D(const QGeoMap);
     return d->cameraData();
 }
 
-void Map::update()
+void QGeoMap::update()
 {
-    Q_D(Map);
+    Q_D(QGeoMap);
     d->update();
     emit updateRequired();
 }
 
-QGeoCoordinate Map::screenPositionToCoordinate(const QPointF &pos, bool clipToViewport) const
+QGeoCoordinate QGeoMap::screenPositionToCoordinate(const QPointF &pos, bool clipToViewport) const
 {
-    Q_D(const Map);
+    Q_D(const QGeoMap);
     if (clipToViewport) {
         int w = d->width();
         int h = d->height();
@@ -169,9 +169,9 @@ QGeoCoordinate Map::screenPositionToCoordinate(const QPointF &pos, bool clipToVi
     return d->screenPositionToCoordinate(pos);
 }
 
-QPointF Map::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
+QPointF QGeoMap::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
 {
-    Q_D(const Map);
+    Q_D(const QGeoMap);
     QPointF pos = d->coordinateToScreenPosition(coordinate);
 
     if (clipToViewport) {
@@ -185,15 +185,15 @@ QPointF Map::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool c
     return pos;
 }
 
-void Map::setActiveMapType(const MapType type)
+void QGeoMap::setActiveMapType(const QGeoMapType type)
 {
-    Q_D(Map);
+    Q_D(QGeoMap);
     d->setActiveMapType(type);
 }
 
-const MapType Map::activeMapType() const
+const QGeoMapType QGeoMap::activeMapType() const
 {
-    Q_D(const Map);
+    Q_D(const QGeoMap);
     return d->activeMapType();
 }
 
@@ -232,7 +232,7 @@ void TileMap::adjust(int tileX, int tileY)
     }
 }
 
-IntersectGenerator::IntersectGenerator(const MapPrivate *mp,
+IntersectGenerator::IntersectGenerator(const QGeoMapPrivate *mp,
                                          double p1,
                                          double p2,
                                          int t1,
@@ -315,22 +315,22 @@ void IntersectGenerator::generateValue()
 
 //------------------------------------------------------------//
 
-MapPrivate::MapPrivate(Map *parent, TileCache *cache, int maxZoom, int tileSize)
+QGeoMapPrivate::QGeoMapPrivate(QGeoMap *parent, QGeoTileCache *cache, int maxZoom, int tileSize)
     : map_(parent),
       cache_(cache),
       manager_(0),
       controller_(0),
-      activeMapType_(MapType()),
+      activeMapType_(QGeoMapType()),
       maxZoom_(maxZoom),
       tileSize_(tileSize),
       baseHeight_(100.0)
 {
-    sphere_ = new MapSphere(parent, this, cache);
+    sphere_ = new QGeoMapSphere(parent, this, cache);
     glCamera_ = new QGLCamera();
 
     sideLength_ = pow(2.0, 1.0 * maxZoom_) * tileSize;
 
-    projection_ = QSharedPointer<Projection>(new Projection2D(baseHeight_, sideLength_));
+    projection_ = QSharedPointer<QGeoProjection>(new QGeoProjection2D(baseHeight_, sideLength_));
     screenPoly_.resize(4);
     screenPoly_[0] = QPointF(0.0, 0.0);
     screenPoly_[1] = QPointF(0.0, sideLength_);
@@ -350,7 +350,7 @@ MapPrivate::MapPrivate(Map *parent, TileCache *cache, int maxZoom, int tileSize)
     screenPolyRight_[3] = QPointF(sideLength_, 0.0);
 }
 
-MapPrivate::~MapPrivate()
+QGeoMapPrivate::~QGeoMapPrivate()
 {
     // controller_ is a child of map_, don't need to delete it here
     manager_->deregisterMap(map_);
@@ -360,12 +360,12 @@ MapPrivate::~MapPrivate()
     // However: how to ensure this is done in rendering thread?
 }
 
-TileCache* MapPrivate::tileCache()
+QGeoTileCache* QGeoMapPrivate::tileCache()
 {
     return cache_;
 }
 
-QGLSceneNode* MapPrivate::createTileNode(const Tile &tile)
+QGLSceneNode* QGeoMapPrivate::createTileNode(const QGeoTile &tile)
 {
     QGLSceneNode* node = createTileSpecNode(tile.tileSpec());
 
@@ -377,7 +377,7 @@ QGLSceneNode* MapPrivate::createTileNode(const Tile &tile)
     return node;
 }
 
-void MapPrivate::setMappingManager(QGeoMappingManager *manager)
+void QGeoMapPrivate::setMappingManager(QGeoMappingManager *manager)
 {
     if (manager) {
         manager->registerMap(map_);
@@ -389,19 +389,19 @@ void MapPrivate::setMappingManager(QGeoMappingManager *manager)
     manager_ = manager;
 }
 
-MapController* MapPrivate::mapController()
+QGeoMapController* QGeoMapPrivate::mapController()
 {
     if (!controller_)
-        controller_ = new MapController(map_, projection_);
+        controller_ = new QGeoMapController(map_, projection_);
     return controller_;
 }
 
-QGLCamera* MapPrivate::glCamera() const
+QGLCamera* QGeoMapPrivate::glCamera() const
 {
     return glCamera_;
 }
 
-void MapPrivate::setCameraData(const CameraData &cameraData)
+void QGeoMapPrivate::setCameraData(const QGeoCameraData &cameraData)
 {
     cameraData_ = cameraData;
     cameraData_.setAspectRatio(aspectRatio_);
@@ -412,17 +412,17 @@ void MapPrivate::setCameraData(const CameraData &cameraData)
     sphere_->update(visibleTiles_);
 }
 
-CameraData MapPrivate::cameraData() const
+QGeoCameraData QGeoMapPrivate::cameraData() const
 {
     return cameraData_;
 }
 
-void MapPrivate::update()
+void QGeoMapPrivate::update()
 {
     sphere_->update(visibleTiles_);
 }
 
-void MapPrivate::resize(int width, int height)
+void QGeoMapPrivate::resize(int width, int height)
 {
     width_ = width;
     height_ = height;
@@ -430,7 +430,7 @@ void MapPrivate::resize(int width, int height)
     setCameraData(cameraData_);
 }
 
-QVector2D MapPrivate::pointToTile(const QVector3D &point, int zoom, bool roundUp) const
+QVector2D QGeoMapPrivate::pointToTile(const QVector3D &point, int zoom, bool roundUp) const
 {
     QVector2D p = projection_->pointToMercator(point);
 
@@ -454,42 +454,42 @@ QVector2D MapPrivate::pointToTile(const QVector3D &point, int zoom, bool roundUp
     return QVector2D(x, y);
 }
 
-QVector3D MapPrivate::tileXIntersectToPoint(int zoomLevel, int x) const
+QVector3D QGeoMapPrivate::tileXIntersectToPoint(int zoomLevel, int x) const
 {
     int zpow2 = 1 << zoomLevel;
     return projection_->mercatorToPoint(QVector2D(x * 1.0 / zpow2, zpow2 / 2.0));
 }
 
-QVector3D MapPrivate::tileYIntersectToPoint(int zoomLevel, int y) const
+QVector3D QGeoMapPrivate::tileYIntersectToPoint(int zoomLevel, int y) const
 {
     int zpow2 = 1 << zoomLevel;
     return projection_->mercatorToPoint(QVector2D(zpow2 / 2.0, y * 1.0 / zpow2));
 }
 
-int MapPrivate::width() const
+int QGeoMapPrivate::width() const
 {
     return width_;
 }
 
-int MapPrivate::height() const
+int QGeoMapPrivate::height() const
 {
     return height_;
 }
 
-double MapPrivate::aspectRatio() const
+double QGeoMapPrivate::aspectRatio() const
 {
     return aspectRatio_;
 }
 
-void MapPrivate::setActiveMapType(const MapType type)
+void QGeoMapPrivate::setActiveMapType(const QGeoMapType type)
 {
     activeMapType_ = type;
     //TODO: check if this shared
     //make it more optimal
     //rewrite current specs
-    QList<TileSpec> temp = visibleTiles_;
+    QList<QGeoTileSpec> temp = visibleTiles_;
     visibleTiles_.clear();
-    foreach (TileSpec spec,temp) {
+    foreach (QGeoTileSpec spec,temp) {
       spec.setMapId(type.mapId());
       visibleTiles_ << spec;
     }
@@ -497,17 +497,17 @@ void MapPrivate::setActiveMapType(const MapType type)
     map_->update();
 }
 
-const MapType MapPrivate::activeMapType() const
+const QGeoMapType QGeoMapPrivate::activeMapType() const
 {
   return activeMapType_;
 }
 
-void MapPrivate::tileFetched(const TileSpec &spec)
+void QGeoMapPrivate::tileFetched(const QGeoTileSpec &spec)
 {
     sphere_->tileFetched(spec);
 }
 
-QRect MapPrivate::specToRect(const TileSpec &tileSpec) const
+QRect QGeoMapPrivate::specToRect(const QGeoTileSpec &tileSpec) const
 {
     int geomZoom = tileSpec.zoom();
     int x = tileSpec.x();
@@ -539,7 +539,7 @@ QRect MapPrivate::specToRect(const TileSpec &tileSpec) const
     return QRect(bl.x(), bl.y(), br.x() - tl.x() - 1, tl.y() - br.y() - 1);
 }
 
-QGLSceneNode* MapPrivate::createTileSpecNode(const TileSpec &tileSpec)
+QGLSceneNode* QGeoMapPrivate::createTileSpecNode(const QGeoTileSpec &tileSpec)
 {
     int geomZoom = tileSpec.zoom();
     int tileZoom = geomZoom;
@@ -613,7 +613,7 @@ QGLSceneNode* MapPrivate::createTileSpecNode(const TileSpec &tileSpec)
     return builder.finalizedSceneNode();
 }
 
-void MapPrivate::paintGL(QGLPainter *painter)
+void QGeoMapPrivate::paintGL(QGLPainter *painter)
 {
     double side = pow(2.0, cameraData_.zoomFactor()) * tileSize_;
     double mapWidth = width_ * 1.0;
@@ -676,11 +676,11 @@ void MapPrivate::paintGL(QGLPainter *painter)
     camera->blockSignals(old);
 }
 
-void MapPrivate::updateGlCamera(QGLCamera* glCamera)
+void QGeoMapPrivate::updateGlCamera(QGLCamera* glCamera)
 {
     bool old = glCamera->blockSignals(true);
 
-    CameraData camera = cameraData();
+    QGeoCameraData camera = cameraData();
 
     double f = 1.0 * qMin(width(), height()) / tileSize_;
 
@@ -735,7 +735,7 @@ void MapPrivate::updateGlCamera(QGLCamera* glCamera)
     projectionMatrix_ = glCamera->projectionMatrix(aspectRatio()) * glCamera->modelViewMatrix();
 }
 
-QGeoCoordinate MapPrivate::screenPositionToCoordinate(const QPointF &pos) const
+QGeoCoordinate QGeoMapPrivate::screenPositionToCoordinate(const QPointF &pos) const
 {
     double side = pow(2.0, cameraData_.zoomFactor()) * tileSize_;
     double mapWidth = width_ * 1.0;
@@ -789,7 +789,7 @@ QGeoCoordinate MapPrivate::screenPositionToCoordinate(const QPointF &pos) const
     return projection_->pointToCoord(c);
 }
 
-QPointF MapPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
+QPointF QGeoMapPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 {
     QVector3D c = projection_->coordToPoint(coordinate);
     QVector3D d = projectionMatrix_.map(c);
@@ -829,12 +829,12 @@ QPointF MapPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate)
     return ret;
 }
 
-void MapPrivate::updateFrustum(Frustum &frustum)
+void QGeoMapPrivate::updateFrustum(QGeoFrustum &frustum)
 {
     frustum.update(glCamera(), cameraData().aspectRatio());
 }
 
-QList<TileSpec> MapPrivate::updateVisibleTiles()
+QList<QGeoTileSpec> QGeoMapPrivate::updateVisibleTiles()
 {
     QList<QVector3D> points;
 
@@ -853,7 +853,7 @@ QList<TileSpec> MapPrivate::updateVisibleTiles()
     points.append(pointsOnLineWithZ(frustum_.bottomRightFar(), frustum_.topRightFar(), baseHeight_));
     points.append(pointsOnLineWithZ(frustum_.topRightFar(), frustum_.topLeftFar(), baseHeight_));
 
-    QList<TileSpec> tiles;
+    QList<QGeoTileSpec> tiles;
 
     if (points.isEmpty())
         return tiles;
@@ -952,12 +952,12 @@ QList<TileSpec> MapPrivate::updateVisibleTiles()
     return tiles;
 }
 
-QList<TileSpec> MapPrivate::tilesFromPoints(const QVector<QVector3D> &points, bool roundUp) const
+QList<QGeoTileSpec> QGeoMapPrivate::tilesFromPoints(const QVector<QVector3D> &points, bool roundUp) const
 {
     int numPoints = points.size();
 
     if (numPoints == 0)
-        return QList<TileSpec>();
+        return QList<QGeoTileSpec>();
 
     int zoomLevel = cameraData().zoomLevel();
 
@@ -984,7 +984,7 @@ QList<TileSpec> MapPrivate::tilesFromPoints(const QVector<QVector3D> &points, bo
         tilesFromLine(points.at(i1), points.at(i2), tiles.at(i1), tiles.at(i2), zoomLevel, map);
     }
 
-    QList<TileSpec> results;
+    QList<QGeoTileSpec> results;
 
     results.reserve(map.size);
 
@@ -994,13 +994,13 @@ QList<TileSpec> MapPrivate::tilesFromPoints(const QVector<QVector3D> &points, bo
         int minX = map.minX[i];
         int maxX = map.maxX[i];
         for (int x = minX; x <= maxX; ++x)
-            results << TileSpec(pluginString_, activeMapType().mapId(), zoomLevel, x, y);
+            results << QGeoTileSpec(pluginString_, activeMapType().mapId(), zoomLevel, x, y);
     }
 
     return results;
 }
 
-void MapPrivate::tilesFromLine(const QVector3D &p1,
+void QGeoMapPrivate::tilesFromLine(const QVector3D &p1,
                                  const QVector3D &p2,
                                  const QVector2D &t1,
                                  const QVector2D &t2,
@@ -1052,7 +1052,7 @@ void MapPrivate::tilesFromLine(const QVector3D &p1,
     }
 }
 
-QPair<QList<QVector3D>,QList<QVector3D> > MapPrivate::clipPolygonToMap(const QList<QVector3D> &points) const
+QPair<QList<QVector3D>,QList<QVector3D> > QGeoMapPrivate::clipPolygonToMap(const QList<QVector3D> &points) const
 {
     bool clipX0 = false;
     bool clipX1 = false;
@@ -1107,7 +1107,7 @@ QPair<QList<QVector3D>,QList<QVector3D> > MapPrivate::clipPolygonToMap(const QLi
     }
 }
 
-QPair<QList<QVector3D>,QList<QVector3D> > MapPrivate::splitPolygonY(const QList<QVector3D> &points, double y) const
+QPair<QList<QVector3D>,QList<QVector3D> > QGeoMapPrivate::splitPolygonY(const QList<QVector3D> &points, double y) const
 {
     QList<QVector3D> pointsBelow;
     QList<QVector3D> pointsAbove;
@@ -1205,7 +1205,7 @@ QPair<QList<QVector3D>,QList<QVector3D> > MapPrivate::splitPolygonY(const QList<
     return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, pointsAbove);
 }
 
-QPair<QList<QVector3D>,QList<QVector3D> > MapPrivate::splitPolygonX(const QList<QVector3D> &points, double x) const
+QPair<QList<QVector3D>,QList<QVector3D> > QGeoMapPrivate::splitPolygonX(const QList<QVector3D> &points, double x) const
 {
     QList<QVector3D> pointsBelow;
     QList<QVector3D> pointsAbove;
@@ -1302,7 +1302,7 @@ QPair<QList<QVector3D>,QList<QVector3D> > MapPrivate::splitPolygonX(const QList<
     return QPair<QList<QVector3D>,QList<QVector3D> >(pointsBelow, pointsAbove);
 }
 
-QList<QVector3D> MapPrivate::pointsOnLineWithX(const QVector3D &p1, const QVector3D &p2, double x) const
+QList<QVector3D> QGeoMapPrivate::pointsOnLineWithX(const QVector3D &p1, const QVector3D &p2, double x) const
 {
     QList<QVector3D> results;
 
@@ -1320,7 +1320,7 @@ QList<QVector3D> MapPrivate::pointsOnLineWithX(const QVector3D &p1, const QVecto
     return results;
 }
 
-QList<QVector3D> MapPrivate::pointsOnLineWithY(const QVector3D &p1, const QVector3D &p2, double y) const
+QList<QVector3D> QGeoMapPrivate::pointsOnLineWithY(const QVector3D &p1, const QVector3D &p2, double y) const
 {
     QList<QVector3D> results;
 
@@ -1338,7 +1338,7 @@ QList<QVector3D> MapPrivate::pointsOnLineWithY(const QVector3D &p1, const QVecto
     return results;
 }
 
-QList<QVector3D> MapPrivate::pointsOnLineWithZ(const QVector3D &p1, const QVector3D &p2, double z) const
+QList<QVector3D> QGeoMapPrivate::pointsOnLineWithZ(const QVector3D &p1, const QVector3D &p2, double z) const
 {
     QList<QVector3D> results;
 
