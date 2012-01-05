@@ -69,9 +69,9 @@
     \l MapPolyline.
 
     \section2 Example Usage
-
-    TODO: an example here. do we want to use a RouteModel?
 */
+/* TODO: an example here. do we want to use a RouteModel? */
+
 
 static void updatePolyline(QPolygonF& points,const QGeoMap& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
 {
