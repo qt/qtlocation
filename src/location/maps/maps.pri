@@ -4,13 +4,10 @@ INCLUDEPATH += maps
 QT += network qt3d
 
 PUBLIC_HEADERS += \
-                    maps/qgeocameradata.h \
                     maps/qgeocodereply.h \
                     maps/qgeocodingmanagerengine.h \
                     maps/qgeocodingmanager.h \
                     maps/qgeomaneuver.h \
-                    maps/qgeomapcontroller.h \
-                    maps/qgeomap.h \
                     maps/qgeomappingmanagerengine.h \
                     maps/qgeomappingmanager.h \
                     maps/qgeomaptype.h \
@@ -22,18 +19,19 @@ PUBLIC_HEADERS += \
                     maps/qgeoroutingmanager.h \
                     maps/qgeoserviceproviderfactory.h \
                     maps/qgeoserviceprovider.h \
-                    maps/qgeotilecache.h \
                     maps/qgeotiledmapreply.h \
-                    maps/qgeotile.h \
                     maps/qgeotilespec.h
 
 PRIVATE_HEADERS += \
+                    maps/qgeocameradata_p.h \
                     maps/qgeocodereply_p.h \
                     maps/qgeocodingmanagerengine_p.h \
                     maps/qgeocodingmanager_p.h \
                     maps/qgeofrustum_p.h \
                     maps/qgeomaneuver_p.h \
+                    maps/qgeomapcontroller_p.h \
                     maps/qgeomap_p.h \
+                    maps/qgeomap_p_p.h \
                     maps/qgeomappingmanagerengine_p.h \
                     maps/qgeomappingmanager_p.h \
                     maps/qgeomapsphere_p.h \
@@ -47,7 +45,9 @@ PRIVATE_HEADERS += \
                     maps/qgeoroutingmanagerengine_p.h \
                     maps/qgeoroutingmanager_p.h \
                     maps/qgeoserviceprovider_p.h \
+                    maps/qgeotilecache_p.h \
                     maps/qgeotiledmapreply_p.h \
+                    maps/qgeotile_p.h \
                     maps/qgeotilespec_p.h
 
 SOURCES += \
@@ -63,7 +63,7 @@ SOURCES += \
             maps/qgeomappingmanagerengine.cpp \
             maps/qgeomapsphere.cpp \
             maps/qgeomaptype.cpp \
-            maps/qgeoprojection2d_p.cpp \
+            maps/qgeoprojection2d.cpp \
             maps/qgeoprojection.cpp \
             maps/qgeoroute.cpp \
             maps/qgeoroutereply.cpp \

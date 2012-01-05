@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeocameradata.h"
+#include "qgeocameradata_p.h"
 
 #include <QVariant>
 #include <QVariantAnimation>

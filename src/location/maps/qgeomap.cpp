@@ -38,15 +38,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeomap.h"
 #include "qgeomap_p.h"
+#include "qgeomap_p_p.h"
 
-#include "qgeotilecache.h"
+#include "qgeotilecache_p.h"
 #include "qgeomapsphere_p.h"
 #include "qgeoprojection_p.h"
 #include "qgeoprojection2d_p.h"
-#include "qgeotile.h"
-#include "qgeomapcontroller.h"
+#include "qgeotile_p.h"
+#include "qgeomapcontroller_p.h"
 
 #include "qgeomappingmanager.h"
 
@@ -63,6 +63,8 @@
 #include <Qt3D/qglsubsurface.h>
 
 #include <cmath>
+
+QT_BEGIN_NAMESPACE
 
 QGeoMap::QGeoMap(QGeoTileCache *cache, QObject *parent)
     : QObject(parent)
@@ -1355,3 +1357,5 @@ QList<QVector3D> QGeoMapPrivate::pointsOnLineWithZ(const QVector3D &p1, const QV
 
     return results;
 }
+
+QT_END_NAMESPACE

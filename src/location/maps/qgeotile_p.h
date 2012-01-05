@@ -38,14 +38,23 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOTILE_H
-#define QGEOTILE_H
+#ifndef QGEOTILE_P_H
+#define QGEOTILE_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include "qglobal.h"
 
 #include "qgeotilespec.h"
-
-QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
@@ -82,6 +91,4 @@ private:
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif // QGEOTILE_H
+#endif // QGEOTILE_P_H

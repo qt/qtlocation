@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAPSPHERE_H
-#define QGEOMAPSPHERE_H
+#ifndef QGEOMAPSPHERE_P_H
+#define QGEOMAPSPHERE_P_H
 
 //
 //  W A R N I N G

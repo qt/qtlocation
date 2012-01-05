@@ -49,6 +49,8 @@
 
 #include <cmath>
 
+QT_BEGIN_NAMESPACE
+
 QGeoProjection::QGeoProjection() {}
 
 QGeoProjection::~QGeoProjection() {}
@@ -115,3 +117,5 @@ QGeoCoordinate QGeoProjection::mercatorToCoord(const QVector2D &mercator) const
 
     return QGeoCoordinate(lat, lng, 0.0);
 }
+
+QT_END_NAMESPACE

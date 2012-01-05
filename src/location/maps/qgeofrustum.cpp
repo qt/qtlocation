@@ -44,6 +44,8 @@
 
 #include <cmath>
 
+QT_BEGIN_NAMESPACE
+
 QGeoFrustum::QGeoFrustum() {}
 
 void QGeoFrustum::update(const QGLCamera *camera, double aspectRatio, bool updatePlanes)
@@ -136,3 +138,5 @@ QPlane3D QGeoFrustum::plane(Planes planes) const
 {
     return planeHash_.value(planes);
 }
+
+QT_END_NAMESPACE

@@ -39,15 +39,17 @@
 **
 ****************************************************************************/
 
-#include "qgeomapcontroller.h"
+#include "qgeomapcontroller_p.h"
 
-#include "qgeomap.h"
+#include "qgeomap_p.h"
 #include "qgeoprojection_p.h"
 
 #include <QPointF>
 
 #include <QVariant>
 #include <QVariantAnimation>
+
+QT_BEGIN_NAMESPACE
 
 QVariant coordinateInterpolator(const AnimatableCoordinate &start,
                                 const AnimatableCoordinate &end,
@@ -232,3 +234,5 @@ void QGeoMapController::pan(qreal dx, qreal dy)
         map_->setCameraData(cd);
     }
 }
+
+QT_END_NAMESPACE

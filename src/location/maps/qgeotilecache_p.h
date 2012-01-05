@@ -38,8 +38,19 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOTILECACHE_H
-#define QGEOTILECACHE_H
+#ifndef QGEOTILECACHE_P_H
+#define QGEOTILECACHE_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include <QtLocation/qlocationglobal.h>
 
@@ -47,7 +58,7 @@
 #include <QCache>
 #include <QSet>
 
-QT_BEGIN_HEADER
+#include "qgeomappingmanager.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -69,14 +80,6 @@ class Q_LOCATION_EXPORT QGeoTileCache : public QObject
 {
     Q_OBJECT
 public:
-    enum CacheArea {
-        DiskCache = 0x01,
-        MemoryCache = 0x02,
-        TextureCache = 0x04,
-        AllCaches = 0xFF
-    };
-    Q_DECLARE_FLAGS(CacheAreas, CacheArea)
-
     QGeoTileCache(const QString &directory = QString(), QObject *parent = 0);
     ~QGeoTileCache();
 
@@ -103,7 +106,7 @@ public:
     void evictFromMemoryCache(TileMemory *tm);
     void evictFromTextureCache(TileTexture *tt);
 
-    void insert(const QGeoTileSpec &spec, const QByteArray &bytes, CacheAreas areas = AllCaches);
+    void insert(const QGeoTileSpec &spec, const QByteArray &bytes, QGeoMappingManager::CacheAreas areas = QGeoMappingManager::AllCaches);
     void handleError(const QGeoTileSpec &spec, const QString &errorString);
 
 private:
@@ -126,10 +129,6 @@ private:
     QList<QGeoTile> cleanupList_;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoTileCache::CacheAreas)
-
 QT_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif // QGEOTILECACHE_H
+#endif // QGEOTILECACHE_P_H

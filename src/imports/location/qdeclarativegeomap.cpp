@@ -49,10 +49,10 @@
 #include <QtCore/qnumeric.h>
 #include <QThread>
 
-#include "qgeotilecache.h"
-#include "qgeotile.h"
-#include "qgeocameradata.h"
-#include "qgeomapcontroller.h"
+#include "qgeotilecache_p.h"
+#include "qgeotile_p.h"
+#include "qgeocameradata_p.h"
+#include "qgeomapcontroller_p.h"
 #include "mapnode_p.h"
 #include <cmath>
 

@@ -38,9 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeotilecache.h"
+#include "qgeotilecache_p.h"
 
-#include "qgeotile.h"
+#include "qgeotile_p.h"
 #include "qgeotilespec.h"
 
 #include "qgeomappingmanager.h"
@@ -244,7 +244,7 @@ void QGeoTileCache::update(const QGeoTileSpec &spec, const QGeoTile &tile)
     }
 }
 
-void QGeoTileCache::insert(const QGeoTileSpec &spec, const QByteArray &bytes, QGeoTileCache::CacheAreas areas)
+void QGeoTileCache::insert(const QGeoTileSpec &spec, const QByteArray &bytes, QGeoMappingManager::CacheAreas areas)
 {
     keys_.insert(spec);
 
@@ -254,7 +254,7 @@ void QGeoTileCache::insert(const QGeoTileSpec &spec, const QByteArray &bytes, QG
         return;
     }
 
-    if (areas & QGeoTileCache::DiskCache) {
+    if (areas & QGeoMappingManager::DiskCache) {
         QString filename = tileSpecToFilename(spec, directory_);
 
         QFile file(filename);
@@ -265,11 +265,11 @@ void QGeoTileCache::insert(const QGeoTileSpec &spec, const QByteArray &bytes, QG
         addToDiskCache(spec, filename);
     }
 
-    if (areas & QGeoTileCache::MemoryCache) {
+    if (areas & QGeoMappingManager::MemoryCache) {
 //        addToMemoryCache(spec, pixmap);
     }
 
-    if (areas & QGeoTileCache::TextureCache) {
+    if (areas & QGeoMappingManager::TextureCache) {
         addToTextureCache(spec, pixmap);
     }
 }

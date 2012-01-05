@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeotile.h"
+#include "qgeotile_p.h"
 
 #include <Qt3D/qgltexture2d.h>
 #include <Qt3D/qglscenenode.h>

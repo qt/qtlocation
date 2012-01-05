@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOFRUSTUM_H
-#define QGEOFRUSTUM_H
+#ifndef QGEOFRUSTUM_P_H
+#define QGEOFRUSTUM_P_H
 
 //
 //  W A R N I N G
@@ -140,4 +140,4 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoFrustum::Planes)
 
 QT_END_NAMESPACE
 
-#endif // QGEOFRUSTUM_H
+#endif // QGEOFRUSTUM_P_H

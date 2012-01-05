@@ -45,9 +45,9 @@
 #include "qgeotiledmapreply.h"
 
 
-#include "qgeomap.h"
 #include "qgeomap_p.h"
-#include "qgeotilecache.h"
+#include "qgeomap_p_p.h"
+#include "qgeotilecache_p.h"
 #include "qgeotilespec.h"
 
 #include <QTimer>
@@ -410,7 +410,7 @@ QLocale QGeoMappingManager::locale() const
     return d_ptr->engine->locale();
 }
 
-QGeoTileCache::CacheAreas QGeoMappingManager::cacheHint() const
+QGeoMappingManager::CacheAreas QGeoMappingManager::cacheHint() const
 {
     return d_ptr->engine->cacheHint();
 }

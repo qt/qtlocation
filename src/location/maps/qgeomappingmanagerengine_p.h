@@ -61,7 +61,7 @@
 #include <QLocale>
 #include <QTimer>
 #include "qgeomaptype.h"
-#include "qgeotilecache.h"
+#include "qgeomappingmanager.h"
 
 class QGeoTileSpec;
 class QGeoTiledMapReply;
@@ -88,7 +88,7 @@ public:
     bool supportsTilting;
     qreal minimumTilt;
     qreal maximumTilt;
-    QGeoTileCache::CacheAreas cacheHint;
+    QGeoMappingManager::CacheAreas cacheHint;
 
     QLocale locale;
     bool started_;

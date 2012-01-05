@@ -564,13 +564,13 @@ QLocale QGeoMappingManagerEngine::locale() const
     return d_ptr->locale;
 }
 
-QGeoTileCache::CacheAreas QGeoMappingManagerEngine::cacheHint() const
+QGeoMappingManager::CacheAreas QGeoMappingManagerEngine::cacheHint() const
 {
     Q_D(const QGeoMappingManagerEngine);
     return d->cacheHint;
 }
 
-void QGeoMappingManagerEngine::setCacheHint(QGeoTileCache::CacheAreas cacheHint)
+void QGeoMappingManagerEngine::setCacheHint(QGeoMappingManager::CacheAreas cacheHint)
 {
     Q_D(QGeoMappingManagerEngine);
     d->cacheHint = cacheHint;
@@ -587,7 +587,7 @@ QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
     supportsTilting(false),
     minimumTilt(0.0),
     maximumTilt(0.0),
-    cacheHint(QGeoTileCache::AllCaches),
+    cacheHint(QGeoMappingManager::AllCaches),
     started_(false),
     stopped_(false) {}
 

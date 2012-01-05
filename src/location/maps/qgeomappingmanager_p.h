@@ -59,12 +59,11 @@
 #include <QSet>
 #include <QThread>
 
+QT_BEGIN_NAMESPACE
+
 class QGeoMap;
 class QGeoTileCache;
 class QGeoTileSpec;
-
-QT_BEGIN_NAMESPACE
-
 class QGeoMappingManagerEngine;
 
 class QGeoMappingManagerPrivate

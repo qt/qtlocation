@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOPROJECTION_H
-#define QGEOPROJECTION_H
+#ifndef QGEOPROJECTION_P_H
+#define QGEOPROJECTION_P_H
 
 //
 //  W A R N I N G
@@ -82,4 +82,4 @@ private:
 
 QT_END_NAMESPACE
 
-#endif // QGEOPROJECTION_H
+#endif // QGEOPROJECTION_P_H

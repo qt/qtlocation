@@ -40,10 +40,10 @@
 ****************************************************************************/
 #include "qgeomapsphere_p.h"
 
-#include "qgeotilecache.h"
-#include "qgeotile.h"
-#include "qgeomap.h"
+#include "qgeotilecache_p.h"
+#include "qgeotile_p.h"
 #include "qgeomap_p.h"
+#include "qgeomap_p_p.h"
 
 #include "qgeomappingmanager.h"
 
@@ -56,6 +56,8 @@
 
 #include <QVector>
 #include <QTimer>
+
+QT_BEGIN_NAMESPACE
 
 QGeoMapSphere::QGeoMapSphere(QGeoMap* map, QGeoMapPrivate *mapPrivate, QGeoTileCache *tileCache)
     : QObject(0),
@@ -225,3 +227,5 @@ void QGeoMapSphere::paintGL(QGLPainter *painter)
 
     updateMutex.unlock();
 }
+
+QT_END_NAMESPACE

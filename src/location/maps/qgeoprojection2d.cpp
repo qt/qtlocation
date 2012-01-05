@@ -47,6 +47,8 @@
 
 #include <qnumeric.h>
 
+QT_BEGIN_NAMESPACE
+
 QGeoProjection2D::QGeoProjection2D(double baseHeight, double sideLength)
     : baseHeight_(baseHeight), sideLength_(sideLength) {}
 
@@ -110,3 +112,5 @@ QGeoCoordinate QGeoProjection2D::interpolate(const QGeoCoordinate &start, const 
     result.setAltitude((1.0 - progress) * start.altitude() + progress * end.altitude());
     return result;
 }
+
+QT_END_NAMESPACE

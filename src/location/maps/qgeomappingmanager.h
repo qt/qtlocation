@@ -47,7 +47,6 @@
 #include <QPair>
 #include <QtLocation/qlocationglobal.h>
 #include "qgeomaptype.h"
-#include "qgeotilecache.h"
 
 QT_BEGIN_HEADER
 
@@ -69,6 +68,14 @@ class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
     Q_OBJECT
 
 public:
+    enum CacheArea {
+        DiskCache = 0x01,
+        MemoryCache = 0x02,
+        TextureCache = 0x04,
+        AllCaches = 0xFF
+    };
+    Q_DECLARE_FLAGS(CacheAreas, CacheArea)
+
     ~QGeoMappingManager();
 
     QString managerName() const;
@@ -94,7 +101,7 @@ public:
     qreal minimumTilt() const;
     qreal maximumTilt() const;
 
-    QGeoTileCache::CacheAreas cacheHint() const;
+    CacheAreas cacheHint() const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
@@ -116,6 +123,8 @@ private:
 
     friend class QGeoServiceProvider;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoMappingManager::CacheAreas)
 
 QT_END_NAMESPACE
 

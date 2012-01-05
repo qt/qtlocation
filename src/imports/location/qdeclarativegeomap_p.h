@@ -54,7 +54,7 @@
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
-#include "qgeomapcontroller.h"
+#include "qgeomapcontroller_p.h"
 #include "qgeomappingmanager.h"
 
 //#define QT_DECLARATIVE_LOCATION_TRACE 1
@@ -69,8 +69,8 @@
 #define QLOC_TRACE2(msg1, msg2)
 #endif
 
-#include "qgeocameradata.h"
-#include "qgeomap.h"
+#include "qgeocameradata_p.h"
+#include "qgeomap_p.h"
 #include "qdeclarativegeomaptype_p.h"
 
 QT_BEGIN_NAMESPACE

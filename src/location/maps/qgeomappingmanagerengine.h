@@ -47,7 +47,7 @@
 #include <QPair>
 #include <QtLocation/qlocationglobal.h>
 #include "qgeomaptype.h"
-#include "qgeotilecache.h"
+#include "qgeomappingmanager.h"
 
 QT_BEGIN_HEADER
 
@@ -95,7 +95,7 @@ public:
     qreal minimumTilt() const;
     qreal maximumTilt() const;
 
-    QGeoTileCache::CacheAreas cacheHint() const;
+    QGeoMappingManager::CacheAreas cacheHint() const;
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
@@ -135,7 +135,7 @@ protected:
     void setSupportsBearing(bool supportsBearing);
     void setSupportsTilting(bool supportsTilting);
 
-    void setCacheHint(QGeoTileCache::CacheAreas cacheHint);
+    void setCacheHint(QGeoMappingManager::CacheAreas cacheHint);
 
     QGeoMappingManagerEnginePrivate* d_ptr;
 

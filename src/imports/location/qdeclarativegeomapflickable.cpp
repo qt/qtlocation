@@ -44,9 +44,9 @@
 #include <QPropertyAnimation>
 #include <QEasingCurve>
 #include "qdeclarativegeomapflickable_p.h"
-#include "qgeomapcontroller.h"
+#include "qgeomapcontroller_p.h"
 #include <QTimer>
-#include "qgeomap.h"
+#include "qgeomap_p.h"
 #include "math.h"
 
 #define QML_MAP_FLICK_DEFAULTMAXVELOCITY 2500
