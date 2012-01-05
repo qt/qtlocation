@@ -88,7 +88,6 @@ QDeclarativeCategory::QDeclarativeCategory(const QPlaceCategory &category,
 :   QObject(parent), m_category(category), m_icon(0), m_plugin(plugin), m_reply(0),
     m_complete(false), m_status(Ready)
 {
-    Q_ASSERT(plugin);
     setCategory(category);
 }
 
