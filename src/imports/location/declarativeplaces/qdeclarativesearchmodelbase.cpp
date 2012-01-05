@@ -211,6 +211,19 @@ void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvide
         m_plugin = plugin;
     }
 
+    if (m_plugin) {
+        QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+        if (serviceProvider) {
+            QPlaceManager *placeManager = serviceProvider->placeManager();
+            if (placeManager) {
+                if (placeManager->childrenCategoryIds().isEmpty()) {
+                    QPlaceReply *reply = placeManager->initializeCategories();
+                    connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
+                }
+            }
+        }
+    }
+
     reset(); // reset the model
 }
 
