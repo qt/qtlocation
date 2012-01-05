@@ -102,6 +102,8 @@ QT_BEGIN_NAMESPACE
         }
     }
     \endcode
+
+    \image ../../../doc/src/images/api-mappolygon.png
 */
 
 struct Vertex

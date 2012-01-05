@@ -102,6 +102,8 @@ QT_BEGIN_NAMESPACE
         }
     }
     \endcode
+
+    \image ../../../doc/src/images/api-mapcircle.png
 */
 
 #ifndef M_PI
