@@ -55,17 +55,53 @@ QT_BEGIN_NAMESPACE
     \since QtLocation 5.0
 
     \brief The MapQuickItem element displays an arbitrary Qt Quick element
-           at a specified geographic location on a map.
+           on a Map.
 
-    The displayed element is contained in the sourceItem property. The
-    anchorPoint property controls the point on the sourceItem that should be
-    kept anchored to the geographic coordinate of the MapQuickItem. One common
-    use of the MapQuickItem is to display a simple image on the map:
+    The MapQuickItem element is used to place an arbitrary Qt Quick element
+    on a Map at a specified location and size. Compared to floating an item
+    above the Map, a MapQuickItem will follow the panning (and optionally, the
+    zooming) of the Map as if it is on the Map surface.
+
+    \section2 Positioning and Sizing
+
+    The positioning of the MapQuickItem on the Map is controlled by two
+    properties: \l coordinate and \l anchorPoint. If only \l coordinate is set,
+    it specifies a longitude/latitude coordinate for the item to be placed at.
+    The set coordinate will line up with the top-left corner of the contained
+    item when shown on the screen.
+
+    The \l anchorPoint property provides a way to line up the coordinate with
+    other parts of the item than just the top-left corner, by setting a number
+    of pixels the item will be offset by. A simple way to think about it is
+    to note that the point given by \l anchorPoint on the item itself is the
+    point that will line up with the given \l coordinate when displayed.
+
+    In addition to being anchored to the map, the MapQuickItem can optionally
+    follow the scale of the map, and change size when the Map is zoomed in or
+    zoomed out. This behaviour is controlled by the \l zoomLevel property. The
+    default behaviour if \l zoomLevel is not set is for the item to be drawn
+    "on the screen" rather than "on the map", so that its size remains the same
+    regardless of the zoom level of the Map.
+
+    \section2 Performance
+
+    Performance of a MapQuickItem is normally in the same ballpark as the
+    contained Qt Quick item alone. Overheads added amount to a translation
+    and (possibly) scaling of the original item, as well as a transformation
+    from longitude and latitude to screen position.
+
+    \section2 Example Usage
+
+    The following snippet shows a MapQuickItem containing an Image element,
+    to display a Marker on the Map. This strategy is used to show the map
+    markers in the MapViewer example.
 
     \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-top
     \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-anchor
     \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-closeimage
     \snippet examples/declarative/mapviewer/content/map/Marker.qml mqi-close
+
+    \image ../../../doc/src/images/api-mapquickitem.png
 */
 
 QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
@@ -87,6 +123,12 @@ QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
     This property holds the anchor coordinate of the MapQuickItem. The point
     on the sourceItem that is specified by anchorPoint is kept aligned with
     this coordinate when drawn on the map.
+
+    In the image below, there are 3 MapQuickItems that are identical except
+    for the value of their anchorPoint properties. The values of anchorPoint
+    for each are written on top of the item.
+
+    \image ../../../doc/src/images/api-mapquickitem-anchor.png
 */
 void QDeclarativeGeoMapQuickItem::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
@@ -167,8 +209,8 @@ QQuickItem* QDeclarativeGeoMapQuickItem::sourceItem()
 /*!
     \qmlproperty QPointF MapQuickItem::anchorPoint
 
-    This property determines which point on the sourceItem will be lined up
-    with the coordinate on the map.
+    This property determines which point on the sourceItem that will be lined
+    up with the coordinate on the map.
 */
 void QDeclarativeGeoMapQuickItem::setAnchorPoint(const QPointF &anchorPoint)
 {
@@ -243,7 +285,7 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
     sourceItem_->setPos(QPointF(0,0));
     setWidth(sourceItem_->width());
     setHeight(sourceItem_->height());
-    setPositionOnMap(coordinate()->coordinate() , scaleFactor() * anchorPoint_);
+    setPositionOnMap(coordinate()->coordinate(), scaleFactor() * anchorPoint_);
     update();
 }
 
