@@ -76,27 +76,108 @@ QT_BEGIN_NAMESPACE
 
     \brief The Map element displays a map.
 
-    The Map element can be used be used to display a map of the world.  The
-    bulk of the functionality is provided by a mapping plugin described
-    by the Plugin element associated with the Map.
+    The Map element is used to display a map or image of the Earth, with
+    the capability to also display interactive objects tied to the map's
+    surface.
 
-    Various map items can be added to the map.  These map items are
-    specified in terms of coordinates and meters.
+    There are a variety of different ways to visualise the Earth's surface
+    in a 2-dimensional manner, but all of them involve some kind of projection:
+    a mathematical relationship between the 3D coordinates (latitude, longitude
+    and altitude) and 2D coordinates (X and Y in pixels) on the screen.
 
-    MapItems can be directly added to the Map element and it will display them
-    automatically. The various objects that can be added include:
+    Different sources of map data can use different projections, and from the
+    point of view of the Map element, we treat these as one replaceable unit:
+    the Map plugin. A Map plugin consists of a data source, as well as all other
+    details needed to display its data on-screen.
 
-    \list
-    \o MapItem - The generic QML item
-    \endlist
+    The current Map plugin in use is contained in the \l plugin property of
+    the Map item. In order to display any image in a Map item, you will need
+    to set this property. See the \l Plugin element for a description of how
+    to retrieve an appropriate plugin for use.
 
-    Of the above list, MapItemView is a special case and not a MapItem as such.
-    Here is a small example to illustrate this:
+    The geographic region displayed in the Map item is referred to as its
+    viewport, and this is defined by the properties \l center, and
+    \l zoomLevel. The \l center property contains a \l Coordinate specifying
+    the center of the viewport, while \l zoomLevel controls the scale of the
+    map. See each of these properties for further details about their values.
 
-    \snippet todo
+    When the map is displayed, each possible geographic Coordinate that is
+    visible will map to some pixel X and Y coordinate on the screen. To perform
+    conversions between these two, Map provides the \l toCoordinate and
+    \l toScreenPosition functions, which are of general utility.
 
-    Mouse handling is done by adding MapMouseArea items as children of either
-    MapItems or the Map item itself.
+    \section2 Map Objects
+
+    Map objects can be declared within the body of a Map element in QML and will
+    automatically appear on the Map. To add objects programatically, first be
+    sure they are created with the Map as their parent (eg. in an argument to
+    Component::createObject), and then call the \l addMapItem method on the Map.
+    A corresponding \l removeMapItem method also exists to do the opposite and
+    remove an object from the Map.
+
+    Moving Map objects around, resizing them or changing their shape normally
+    does not involve any special interaction with Map itself -- changing these
+    details about a map object will automatically update the display.
+
+    \section2 Interaction
+
+    The Map element includes support for pinch and flick gestures to control
+    zooming and panning. These are disabled by default, but available at any
+    time by using the \l flick and \l pinch objects. These properties themselves
+    are read-only: the actual Flickable and PinchArea are constructed specially
+    at startup and cannot be replaced or destroyed. Their properties can be
+    altered, however, to control their behaviour.
+
+    Mouse and touch interaction with Maps and map objects is slightly different
+    to ordinary QML elements. In a Map or Map object, you will need to make use
+    of the \l MapMouseArea element instead of the normal Qt Quick MouseArea.
+    MapMouseArea is, in almost all respects, a drop-in replacement for
+    MouseArea, but the documentation for that element should be referred to for
+    further details.
+
+    \section2 Performance
+
+    Maps are rendered using OpenGL (ES) and the Qt Scene Graph stack, and as
+    a result are quite performant where GL accelerated hardware is available.
+
+    For "online" Map plugins, network bandwidth and latency can be major
+    contributors to the user's perception of performance. Extensive caching is
+    performed to mitigate this, but such mitigation is not always perfect. For
+    "offline" plugins, the time spent retrieving the stored geographic data
+    and rendering the basic map features can often play a dominant role. Some
+    offline plugins may use hardware acceleration themselves to (partially)
+    avert this.
+
+    In general, large and complex Map items such as polygons and polylines with
+    large numbers of vertices can have an adverse effect on UI performance.
+    Further, more detailed notes on this are in the documentation for each
+    map item element.
+
+    \section2 Example Usage
+
+    The following snippet shows a simple Map and the necessary Plugin element
+    to use it. The map is centered near Brisbane, Australia, zoomed out to the
+    minimum zoom level, with Flickable panning enabled.
+
+    \code
+    Plugin {
+        id: somePlugin
+        // code here to choose the plugin as necessary
+    }
+
+    Map {
+        id: map
+
+        plugin: somePlugin
+
+        center: Coordinate { latitude: -27; longitude: 153 }
+        zoomLevel: map.minimumZoomLevel
+
+        flick.enabled: true
+    }
+    \endcode
+
+    \image ../../../doc/src/images/api-map.png
 */
 
 QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
