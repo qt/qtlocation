@@ -177,7 +177,7 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
-    : QDeclarativeSearchModelBase(parent), m_placeManager(0)
+:   QDeclarativeSearchModelBase(parent)
 {
     QHash<int, QByteArray> roles = roleNames();
     roles.insert(SearchResultTypeRole, "type");

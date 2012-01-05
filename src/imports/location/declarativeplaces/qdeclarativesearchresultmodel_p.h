@@ -135,7 +135,6 @@ private:
     QList<QDeclarativePlace *> m_places;
     QList<QDeclarativeCategory*> m_categories;
     QtLocation::VisibilityScope m_visibilityScope;
-    QPlaceManager *m_placeManager;
 };
 
 QT_END_NAMESPACE
