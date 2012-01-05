@@ -53,9 +53,52 @@ QT_BEGIN_NAMESPACE
 
     \brief The MapPolyline element displays a polyline on a map.
 
-    The polyline is specified in terms of an ordered list of
-    coordinates.  Any invalid coordinates in the list will be ignored.
+    The MapPolyline element displays a polyline on a map, specified in terms
+    of an ordered list of \l Coordinate elements. The Coordinate elements
+    on the path can be changed after being added to the Polyline, and these
+    changes will be reflected in the next frame on the display. Coordinates can
+    also be added and removed at any time using the \l addCoordinate and
+    \l removeCoordinate methods.
 
+    By default, the polyline is displayed as a 1-pixel thick black line. This
+    can be changed using the \l line.width and \l line.color properties.
+
+    \section2 Performance
+
+    MapPolylines have a rendering cost that is O(n) with respect to the number
+    of vertices. This means that the per frame cost of having a Polyline on
+    the Map grows in direct proportion to the number of points in the Polyline.
+
+    Like the other map objects, MapPolyline is normally drawn without a smooth
+    appearance. Setting the \l opacity property will force the object to be
+    blended, which decreases performance considerably depending on the hardware
+    in use.
+
+    \bold{NOTE:} MapPolylines are implemented using the OpenGL GL_LINES
+    primitive. There have been occasional reports of issues and rendering
+    inconsistencies on some (particularly quite old) platforms. No workaround
+    is yet available for these issues.
+
+    \section2 Example Usage
+
+    The following snippet shows a MapPolyline with 4 points, making a shape
+    like the top part of a "question mark" (?), near Brisbane, Australia.
+    The line drawn is 3 pixels in width and green in color.
+
+    \code
+    Map {
+        MapPolyline {
+            line.width: 3
+            line.color: 'green'
+            path: [
+                Coordinate { latitude: -27; longitude: 153.0 },
+                Coordinate { latitude: -27; longitude: 154.1 },
+                Coordinate { latitude: -28; longitude: 153.5 },
+                Coordinate { latitude: -29; longitude: 153.5 }
+            ]
+        }
+    }
+    \endcode
 */
 
 QDeclarativeMapLineProperties::QDeclarativeMapLineProperties(QObject *parent) :
@@ -182,10 +225,7 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, Map *map)
     \qmlproperty list<Coordinate> MapPolyline::path
 
     This property holds the ordered list of coordinates which
-    define the polyline. Individual coordinates can be accessed with
-    square brackets 'path.[i]' operator and coordinate amount with
-    'path.length'.
-
+    define the polyline.
 */
 
 QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativePolylineMapItem::declarativePath()

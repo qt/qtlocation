@@ -52,9 +52,25 @@
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0
 
-    \brief The MapRoute element displays a route on the map.
+    \brief The MapRoute element displays a Route on a Map.
 
-    \sa MapPolyline
+    The MapRoute element displays a Route obtained through a RouteModel or
+    other means, on the Map as a Polyline following the path of the Route.
+
+    MapRoute is really a \l MapPolyline, but with the path specified using the
+    \l route property instead of directly in Coordinates.
+
+    By default, the route is displayed as a 1-pixel thick black line. This can
+    be changed using the \l line.width and \l line.color properties.
+
+    \section2 Performance
+
+    For notes about the performance on MapRoute, refer to the documentation for
+    \l MapPolyline.
+
+    \section2 Example Usage
+
+    TODO: an example here. do we want to use a RouteModel?
 */
 
 static void updatePolyline(QPolygonF& points,const Map& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)

@@ -54,11 +54,54 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0
 
-    \brief The MapCircle element displays a geographic circle on a map.
+    \brief The MapCircle element displays a geographic circle on a Map.
 
-    A geographic circle consists of all points that are at a set distance
-    from one central point. MapCircle displays such a circle, based on the
-    center and radius properties given.
+    The MapCircle element displays a geographic circle on a Map, which
+    consists of all points that are within a set distance from one
+    central point. Depending on map projection, a geographic circle
+    may not always be a perfect circle on the screen: for instance, in
+    the Mercator projection, circles become ovoid in shape as they near
+    the poles. To display a perfect screen circle around a point, use a
+    MapQuickItem containing a relevant QML element instead.
+
+    By default, the circle is displayed as a 1 pixel black border with
+    no fill. To change its appearance, use the color, border.color
+    and border.width properties.
+
+    Internally, a MapCircle is implemented as a many-sided polygon. To
+    calculate the radius points it uses a spherical model of the Earth,
+    similar to the atDistanceAndAzimuth method of the QML Coordinate
+    element. These two things can occasionally have implications for the
+    accuracy of the circle's shape, depending on position and map
+    projection.
+
+    \section2 Performance
+
+    MapCircle performance is almost equivalent to that of a MapPolygon with
+    125 vertices. There is a small amount of additional overhead with
+    respect to calculating the vertices first.
+
+    Like the other map objects, MapCircle is normally drawn without a smooth
+    appearance. Setting the opacity property will force the object to be
+    blended, which decreases performance considerably depending on the graphics
+    hardware in use.
+
+    \section2 Example Usage
+
+    The following snippet shows a map containing a MapCircle, centered at
+    the coordinate (-27, 153) with a radius of 5km. The circle is
+    filled in green, with a 3 pixel black border.
+
+    \code
+    Map {
+        MapCircle {
+            center: Coordinate { latitude: -27; longitude: 153.0 }
+            radius: 5000.0
+            color: 'green'
+            border.width: 3
+        }
+    }
+    \endcode
 */
 
 #ifndef M_PI
@@ -171,6 +214,7 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate>& path, const QGeoCoo
 QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent):
     QDeclarativeGeoMapItemBase(parent),
     center_(0),
+    color_(Qt::transparent),
     radius_(0),
     zoomLevel_(0.0),
     dirtyPixelGeometry_(true),
@@ -178,7 +222,6 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent):
     dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
-    border_.setWidth(3.0);
     QObject::connect(&border_, SIGNAL(colorChanged(QColor)),
                      this, SLOT(updateMapItemAssumeDirty()));
     QObject::connect(&border_, SIGNAL(widthChanged(qreal)),

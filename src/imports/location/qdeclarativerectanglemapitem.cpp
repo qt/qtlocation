@@ -52,8 +52,45 @@ QT_BEGIN_NAMESPACE
 
     \brief The MapRectangle element displays a rectangle on a Map.
 
-    The rectangle displayed by MapRectangle is defined by its topLeft and
-    bottomRight coordinates.
+    The MapRectangle element displays a rectangle on a Map. Rectangles are a
+    special case of Polygon with exactly 4 vertices and "straight" sides. In
+    this case, "straight" means that the top-left and top-right points (the
+    top side) have the same latitude, and the points on the left and right sides
+    have the same longitude.
+
+    To specify the rectangle, it requires a \l topLeft and \l bottomRight point,
+    both given by \l Coordinate elements.
+
+    By default, the rectangle is displayed with transparent fill and a 1-pixel
+    thick black border. This can be changed using the \l color, \l border.color
+    and \l border.width properties.
+
+    \section2 Performance
+
+    MapRectangles have a rendering cost identical to a MapPolygon with 4
+    vertices.
+
+    Like the other map objects, MapRectangle is normally drawn without a smooth
+    appearance. Setting the \l opacity property will force the object to be
+    blended, which decreases performance considerably depending on the hardware
+    in use.
+
+    \section2 Example Usage
+
+    The following snippet shows a map containing a MapRectangle, spanning
+    from (-27, 153) to (-28, 153.5), near Brisbane, Australia. The rectangle
+    is filled in green, with a 2 pixel black border.
+
+    \code
+    Map {
+        MapRectangle {
+            color: 'green'
+            border.width: 2
+            topLeft: Coordinate { latitude: -27; longitude: 153 }
+            bottomRight: Coordinate { latitude: -28; longitude: 153.5 }
+        }
+    }
+    \endcode
 */
 
 struct Vertex
@@ -65,6 +102,7 @@ QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent):
     QDeclarativeGeoMapItemBase(parent),
     topLeft_(0),
     bottomRight_(0),
+    color_(Qt::transparent),
     zoomLevel_(0.0),
     dirtyGeometry_(true),
     dirtyMaterial_(true)

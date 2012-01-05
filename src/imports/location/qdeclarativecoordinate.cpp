@@ -51,8 +51,50 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since QtLocation 5.0
 
-    \brief The Coordinate element holds various positional data, such as \l
-    latitude, \l longitude and \l altitude.
+    \brief The Coordinate element represents and stores a geographic position.
+
+    Coordinate elements represent a geographic location in the form of numbers:
+    in particular, \l latitude, \l longitude and \l altitude. These, together,
+    specify a 3-dimensional position anywhere on or near the Earth's surface.
+
+    Coordinates are used by many other elements in the Qt Location module, for
+    specifying the position of an object on a Map, the current position of
+    a device and many other tasks. They also feature a number of important
+    utility methods that make otherwise complex calculations simple to use,
+    such as atDistanceAndAzimuth.
+
+    \section2 Accuracy
+
+    The latitude, longitude and altitude numbers stored in a Coordinate are
+    represented as doubles, giving them approximately 16 decimal digits of
+    precision -- enough to specify micrometers. The calculations performed
+    in Coordinate's methods such as azimuthTo and distanceTo also use doubles
+    for all intermediate values, but the inherent inaccuracies in their
+    spherical Earth model dominate the amount of error in their output.
+
+    \section2 Example Usage
+
+    The following snippet defines two coordinates near Brisbane, Australia.
+
+    \code
+    Coordinate {
+        id: coord1
+        latitude: -27.2
+        longitude: 153.1
+        altitude: 1.0
+    }
+
+    Coordinate {
+        id: coord2
+        latitude: -27.5
+        longitude: 153.2
+        altitude: 5.0
+    }
+    \endcode
+
+    As an example, the value of \c{coord1.distanceTo(coord2)} would now be
+    approximately 34790 (34.8 km).
+
 */
 
 QDeclarativeCoordinate::QDeclarativeCoordinate(QObject* parent)

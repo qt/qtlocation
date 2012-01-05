@@ -51,15 +51,57 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0
 
-    \brief The MapPolygon element displays a polygon on a map.
+    \brief The MapPolygon element displays a polygon on a Map
 
-    The polygon is specified in terms of an ordered list of coordinates.
-    Any invalid coordinates in the list will be ignored.
+    The MapPolygon element displays a polygon on a Map, specified in terms of
+    an ordered list of \l Coordinate elements. For best appearance and results,
+    polygons should be simple (not self-intersecting) -- the result of drawing
+    a non-simple polygon is not well-defined.
 
-    MapPolygon can only display simple, convex polygons. Support may be added
-    in future for concave polygons, but this is not currently available.
+    The Coordinate elements on the path can be changed after being added to
+    the Polygon, and these changes will be reflected in the next frame on the
+    display. Coordinates can also be added and removed at any time using
+    the \l addCoordinate and \l removeCoordinate methods.
 
-    \sa MapItem
+    For drawing rectangles with "straight" edges (same latitude across one
+    edge, same latitude across the other), the \l MapRectangle element provides
+    a simpler, two-point API.
+
+    By default, the polygon is displayed as a 1 pixel black border with no
+    fill. To change its appearance, use the \l color, \l border.color and
+    \l border.width properties.
+
+    \section2 Performance
+
+    MapPolygons have a rendering cost that is O(n) with respect to the number
+    of vertices. This means that the per frame cost of having a Polygon on the
+    Map grows in direct proportion to the number of points on the Polygon.
+    Additionally, there is a triangulation cost any time the points of the
+    Polygon are updated, which is approximately O(n log n).
+
+    Like the other map objects, MapPolygon is normally drawn without a smooth
+    appearance. Setting the \l opacity property will force the object to be
+    blended, which decreases performance considerably depending on the hardware
+    in use.
+
+    \section2 Example Usage
+
+    The following snippet shows a MapPolygon being used to display a triangle,
+    with three vertices near Brisbane, Australia. The triangle is filled in
+    green, with a 1 pixel black border.
+
+    \code
+    Map {
+        MapPolygon {
+            color: 'green'
+            path: [
+                Coordinate { latitude: -27; longitude: 153.0 },
+                Coordinate { latitude: -27; longitude: 154.1 },
+                Coordinate { latitude: -28; longitude: 153.5 }
+            ]
+        }
+    }
+    \endcode
 */
 
 struct Vertex
@@ -173,9 +215,7 @@ QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::dec
     \qmlproperty list<Coordinate> MapPolygon::path
 
     This property holds the ordered list of coordinates which
-    define the polygon. Individual coordinates can be accessed with
-    square brackets 'path.[i]' operator and coordinate amount with
-    'path.length'.
+    define the polygon.
 
     \sa addCoordinate removeCoordinate
 */
