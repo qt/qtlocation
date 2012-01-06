@@ -58,17 +58,34 @@ QT_BEGIN_NAMESPACE
 
     \brief The Plugin element describes a Location based services plugin.
 
-    A Plugin is necessary in order to make use of many other parts of the Qt
-    Location functionality, such as a Map element.
+    The Plugin element is used to declaratively specify which available
+    GeoServices plugin should be used for various tasks in the Location API.
+    Plugins are used by \l Map, \l RouteModel, and \l GeocodeModel
+    elements, as well as a variety of others.
 
-    The simplest way, in many cases, to make use of Plugin is to employ the
-    withMapping, withRouting and similar feature properties. When creating a
-    Plugin, set the desired features in these properties, and the first
-    available service plugin meeting the criteria set will be chosen.
+    Plugins recognised by the system have a \l name property, a simple string
+    normally indicating the name of the service that the Plugin retrieves
+    data from. They also have a variety of features, which can be enumerated
+    using the \l supported property.
 
-    Alternatively, a Plugin can be instantiated from a function that iterates
-    through the contents of availableServiceProviders in order to find
-    the desired service plugin.
+    When a Plugin element is created, it is "detached" and not associated with
+    any actual service plugin. Once it has received information via setting
+    its \l name or \l required properties, it will choose an appropriate
+    service plugin to attach to. Plugin elements can only be attached once;
+    to use multiple plugins, create multiple Plugin elements.
+
+    \section2 Example Usage
+
+    The following snippet shows a Plugin element being created with the
+    \l required property set. This Plugin will attach to the first plugin
+    found that supports both Mapping and Geocoding.
+
+    \code
+    Plugin {
+        id: plugin
+        required: Plugin.MappingFeature | Plugin.GeocodingFeature
+    }
+    \endcode
 */
 
 QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
@@ -90,7 +107,9 @@ QDeclarativeGeoServiceProvider::~QDeclarativeGeoServiceProvider()
 /*!
     \qmlproperty string Plugin::name
 
-    This property holds the name of the plugin.
+    This property holds the name of the plugin. Setting this property
+    will cause the Plugin to only attach to a plugin with exactly this
+    name. The value of \l required will be ignored.
 */
 void QDeclarativeGeoServiceProvider::setName(const QString &name)
 {
@@ -163,6 +182,14 @@ void QDeclarativeGeoServiceProvider::update(bool doEmit)
     }
 }
 
+/*!
+    \qmlproperty list<string> Plugin::availableServiceProviders
+
+    This property holds a list of all available service plugins' names. This
+    can be used to manually enumerate the available plugins if the
+    control provided by \l name and \l required is not sufficient for your
+    needs.
+*/
 QStringList QDeclarativeGeoServiceProvider::availableServiceProviders()
 {
     return QGeoServiceProvider::availableServiceProviders();
@@ -201,11 +228,39 @@ QString QDeclarativeGeoServiceProvider::name() const
     return name_;
 }
 
+/*!
+    \qmlproperty enumeration Plugin::supported
+
+    This property enumerates all supported features of the currently attached
+    plugin. Its value will be equal to \c{Plugin.NoFeatures} until the Plugin
+    is attached.
+
+    See \l required for a list of possible enumeration values.
+*/
 QDeclarativeGeoServiceProvider::PluginFeatures QDeclarativeGeoServiceProvider::supportedFeatures() const
 {
     return supported_;
 }
 
+/*!
+    \qmlproperty enumeration Plugin::required
+
+    This property contains the set of features that will be required by the
+    Plugin element when choosing which service plugin to attach to. If the
+    \l name property is set, this has no effect.
+
+    The following values, or any bitwise combination (AND, OR etc) of these
+    may be set:
+
+    \list
+    \o Plugin.NoFeatures
+    \o Plugin.GeocodingFeature
+    \o Plugin.ReverseGeocodingFeature
+    \o Plugin.RoutingFeature
+    \o Plugin.MappingFeature
+    \o Plugin.AnyPlacesFeature
+    \endlist
+*/
 QDeclarativeGeoServiceProvider::PluginFeatures QDeclarativeGeoServiceProvider::requiredFeatures() const
 {
     return required_;
