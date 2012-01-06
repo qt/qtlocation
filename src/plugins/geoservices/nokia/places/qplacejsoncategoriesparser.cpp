@@ -96,8 +96,11 @@ QList<QPlaceCategory> QPlaceJSonCategoriesParser::parseFlatCategoryList(const QJ
     processCategories(categories, QString(), &tree);
 
     QList<QPlaceCategory> result;
-    foreach (const PlaceCategoryNode &node, tree.values())
-        result.append(node.category);
+    foreach (const PlaceCategoryNode &node, tree.values()) {
+        if (!node.category.categoryId().isEmpty())
+            result.append(node.category);
+    }
+
     return result;
 }
 
