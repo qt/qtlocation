@@ -56,8 +56,7 @@ Map {
     property variant markers
     property variant mapItems
     property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
-    property int mapGeoItemsCounter: 0 // counter for total amount of mapItems. Resets to 0 when number of markers = 0
-    property Marker currentMarker
+    property int currentMarker
     signal mapPressed() // replace with
     // signal mousePressed(MouseEvent mouse) when QTBUG-14550 is fixed
 
@@ -555,7 +554,7 @@ Map {
             map.state = ""
             switch (button) {
                 case "Delete": {//remove marker
-                    map.removeMarker(currentMarker)
+                    map.deleteMarker(currentMarker)
                     break;
                 }
                 case "Move to": {//move marker
@@ -563,22 +562,73 @@ Map {
                     break;
                 }
                 case "Coordinates": {//show marker's coordinates
-                    map.coordinatesCaptured(currentMarker.coordinate.latitude, currentMarker.coordinate.longitude)
+                    map.coordinatesCaptured(markers[currentMarker].coordinate.latitude, markers[currentMarker].coordinate.longitude)
+                    break;
+                }
+                case "Distance to next point": {
+                    showDistance(formatDistance(map.markers[currentMarker].coordinate.distanceTo(map.markers[currentMarker+1].coordinate)));
                     break;
                 }
                 case "Route to next points"://calculate route
                 case "Route to next point": {
-//                    map.calculateRoute(currentMarker)
+                    map.calculateRoute()
                     break;
                 }
-                case "Distance to next point": {
-                    var count = map.markers.length
-                    for (var i = 0; i<count; i++) {
-                        if (currentMarker == map.markers[i])
-                            showDistance(formatDistance(currentMarker.coordinate.distanceTo(map.markers[i+1].coordinate)));
-                    }
+                case "Draw...": {
+                    map.drawItemPopup()
                     break;
                 }
+            }
+        }
+    }
+
+    Menu {
+        id: drawMenu
+        horizontalOrientation: false
+        autoWidth: true
+        z: map.z + 4
+        opacity: 0
+
+        width: 150
+        x: 0
+        y: 0
+        onClicked: {
+            map.state = ""
+            switch (button) {
+            case "Polyline": {
+                addGeoItem("PolylineItem")
+                break;
+            }
+
+            case "Rectangle": {
+                addGeoItem("RectangleItem")
+                break;
+            }
+
+            case "Circle": {
+                addGeoItem("CircleItem")
+                break;
+            }
+
+            case "Polygon": {
+                addGeoItem("PolygonItem")
+                break;
+            }
+
+            case "Image": {
+                addGeoItem("ImageItem")
+                break;
+            }
+
+            case "Video": {
+                addGeoItem("VideoItem")
+                break;
+            }
+
+            case "3D QML Item": {
+                addGeoItem("3dItem")
+                break;
+            }
             }
         }
     }
@@ -614,47 +664,6 @@ Map {
                 deleteMapItems()
                 break;
             }
-
-            case "Draw Polyline": {
-                addGeoItem("PolylineItem")
-                break;
-            }
-
-            case "Draw Rectangle": {
-                addGeoItem("RectangleItem")
-                break;
-            }
-
-            case "Draw Circle": {
-                addGeoItem("CircleItem")
-                break;
-            }
-
-            case "Draw Polygon": {
-                addGeoItem("PolygonItem")
-                break;
-            }
-
-            case "Draw Image": {
-                addGeoItem("ImageItem")
-                break;
-            }
-
-            case "Draw Video": {
-                addGeoItem("VideoItem")
-                break;
-            }
-
-            case "Draw 3D Item": {
-                addGeoItem("3dItem")
-                break;
-            }
-
-            case "Calculate Route": {
-                calculateRoute()
-                break;
-            }
-
             }
             map.state = ""
         }
@@ -800,30 +809,6 @@ Map {
                 if (map.mapItems.length>0) {
                     popupMenu.addItem("Delete all items")
                 }
-
-                if (map.markers.length>=2) {
-                    popupMenu.addItem("Calculate Route")
-                }
-
-                if (map.markers.length>1) {
-                    popupMenu.addItem("Draw Polyline")
-
-                }
-
-                if (map.markers.length==2) {
-                    popupMenu.addItem("Draw Rectangle")
-                    popupMenu.addItem("Draw Circle")
-                }
-
-                if (map.markers.length>2) {
-                    popupMenu.addItem("Draw Polygon")
-                }
-
-                if (map.markers.length>0) {
-                    popupMenu.addItem("Draw Image")
-                    popupMenu.addItem("Draw Video")
-                    popupMenu.addItem("Draw 3D Item")
-                }
                 map.state = "PopupMenu"
             }
           }
@@ -884,7 +869,6 @@ Map {
             map.mapItems[i].destroy()
         }
         map.mapItems = []
-        mapGeoItemsCounter = 0
     }
 
     function addMarker(){
@@ -908,8 +892,7 @@ Map {
         var co = Qt.createComponent(item+'.qml')
         if (co.status == Component.Ready) {
             var o = co.createObject(map)
-            o.setGeometry(map.markers)
-            mapGeoItemsCounter++
+            o.setGeometry(map.markers, currentMarker)
             map.addMapItem(o)
             //update list of items
             var myArray = new Array()
@@ -924,42 +907,68 @@ Map {
         }
     }
 
-    function removeMarker(marker){
+    function deleteMarker(index){
         //update list of markers
         var myArray = new Array()
         var count = map.markers.length
         for (var i = 0; i<count; i++){
-            if (marker != map.markers[i]) myArray.push(map.markers[i])
+            if (index != i) myArray.push(map.markers[i])
         }
 
-        map.removeMapItem(marker)
-        marker.destroy()
+        map.removeMapItem(map.markers[index])
+        map.markers[index].destroy()
         map.markers = myArray
         if (markers.length == 0) markerCounter = 0
     }
 
     function markerPopup(){
         var array
-        var count = map.markers.length
+        var length = map.markers.length
 
         markerMenu.clear()
+        markerMenu.addItem("Delete")
         markerMenu.addItem("Coordinates")
         markerMenu.addItem("Move to")
-//        if ((currentMarker != markers[count-1]) && (count > 2)) {
-//            if (currentMarker == markers[count-2]) markerMenu.addItem("Route to next point")
-//            else  markerMenu.addItem("Route to next points")
-//        }
-//        else  markerMenu.addItem("Route to next point")
-        if (currentMarker != markers[count-1])
+        markerMenu.addItem("Draw...")
+
+
+        if (currentMarker == length-2){
+            markerMenu.addItem("Route to next point")
             markerMenu.addItem("Distance to next point")
-        markerMenu.addItem("Delete")
+
+        }
+        if (currentMarker < length-2){
+            markerMenu.addItem("Route to next points")
+            markerMenu.addItem("Distance to next point")
+        }
         map.state = "MarkerPopupMenu"
+    }
+
+
+    function drawItemPopup(){
+        var array
+        var length = map.markers.length
+
+        drawMenu.clear()
+
+        drawMenu.addItem("Image")
+        drawMenu.addItem("Video")
+        drawMenu.addItem("3D QML Item")
+
+        if (currentMarker <= length-2){
+            drawMenu.addItem("Rectangle")
+            drawMenu.addItem("Circle")
+            drawMenu.addItem("Polyline")
+        }
+        if (currentMarker < length-2){
+            drawMenu.addItem("Polygon")
+        }
+        map.state = "DrawItemMenu"
     }
 
     function calculateRoute(){
         routeQuery.clearWaypoints();
-        var count = map.markers.length
-        for (var i = 0; i< count; i++){
+        for (var i = currentMarker; i< map.markers.length; i++){
             routeQuery.addWaypoint(markers[i].coordinate)
         }
         routeQuery.travelModes = RouteQuery.CarTravel
@@ -1024,8 +1033,14 @@ Map {
         State {
             name: "MarkerPopupMenu"
             PropertyChanges { target: markerMenu; opacity: 1}
-            PropertyChanges { target: markerMenu; x: ((currentMarker.lastMouseX + markerMenu.width > map.width) ? map.width - markerMenu.width : currentMarker.lastMouseX )}
-            PropertyChanges { target: markerMenu; y: ((currentMarker.lastMouseY + markerMenu.height > map.height - 40) ? map.height - markerMenu.height - 40 : currentMarker.lastMouseY)}
+            PropertyChanges { target: markerMenu; x: ((markers[currentMarker].lastMouseX + markerMenu.width > map.width) ? map.width - markerMenu.width : markers[currentMarker].lastMouseX )}
+            PropertyChanges { target: markerMenu; y: ((markers[currentMarker].lastMouseY + markerMenu.height > map.height - 40) ? map.height - markerMenu.height - 40 : markers[currentMarker].lastMouseY)}
+        },
+        State {
+            name: "DrawItemMenu"
+            PropertyChanges { target: drawMenu; opacity: 1}
+            PropertyChanges { target: drawMenu; x: ((markers[currentMarker].lastMouseX + drawMenu.width > map.width) ? map.width - drawMenu.width : markers[currentMarker].lastMouseX )}
+            PropertyChanges { target: drawMenu; y: ((markers[currentMarker].lastMouseY + drawMenu.height > map.height - 40) ? map.height - drawMenu.height - 40 : markers[currentMarker].lastMouseY)}
         },
         State {
             name: "RoutePopupMenu"

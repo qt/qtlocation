@@ -50,9 +50,8 @@ MapCircle {
     smooth: true
     opacity: 0.5
 
-    function setGeometry(markers){
-        var count = markers.length
-        center = markers[count-2].coordinate
-        radius= center.distanceTo(markers[count-1].coordinate)
+    function setGeometry(markers, index){
+        center = markers[index].coordinate
+        radius= center.distanceTo(markers[index + 1].coordinate)
     }
 }

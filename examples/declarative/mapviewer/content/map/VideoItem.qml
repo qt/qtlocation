@@ -50,10 +50,9 @@ MapQuickItem {  //to be used inside MapComponent only
     coordinate: Coordinate { latitude : 0; longitude : 0 }
     //    zoomLevel: 8 // set this if you want the video to follow zoom level changes
 
-    function setGeometry(markers) {
-        var count = markers.length
-        coordinate.latitude = markers[count-1].coordinate.latitude
-        coordinate.longitude = markers[count-1].coordinate.longitude
+    function setGeometry(markers, index) {
+        coordinate.latitude = markers[index].coordinate.latitude
+        coordinate.longitude = markers[index].coordinate.longitude
     }
 
     sourceItem: Rectangle {

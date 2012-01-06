@@ -50,9 +50,8 @@ MapPolygon {
     smooth: true
     opacity: 0.5
 
-    function setGeometry(markers){
-        var count = markers.length
-        for (var i = 0; i<count; i++){
+    function setGeometry(markers, index){
+        for (var i = index; i<markers.length; i++){
             addCoordinate(markers[i].coordinate)
         }
     }

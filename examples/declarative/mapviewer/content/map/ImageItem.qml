@@ -50,10 +50,9 @@ MapQuickItem {  //to be used inside MapComponent only
         drag.target: parent
     }
 
-    function setGeometry(markers) {
-        var count = markers.length
-        coordinate.latitude = markers[count-1].coordinate.latitude
-        coordinate.longitude = markers[count-1].coordinate.longitude
+    function setGeometry(markers, index) {
+        coordinate.latitude = markers[index].coordinate.latitude
+        coordinate.longitude = markers[index].coordinate.longitude
     }
 
     sourceItem: Image {

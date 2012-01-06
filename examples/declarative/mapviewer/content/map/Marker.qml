@@ -73,7 +73,13 @@ MapQuickItem {
             onPressed : {
                 map.pressX = mouse.x
                 map.pressY = mouse.y
-                map.currentMarker = marker
+                map.currentMarker = -1
+                for (var i = 0; i< map.markers.length; i++){
+                    if (marker == map.markers[i]){
+                        map.currentMarker = i
+                        break
+                    }
+                }
                 map.state = ""
             }
 

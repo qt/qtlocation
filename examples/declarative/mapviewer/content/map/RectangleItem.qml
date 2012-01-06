@@ -44,14 +44,19 @@ import QtLocation 5.0
 
 MapRectangle {
 
+    id: mapRectangle
     color: "red"
     opacity: 0.5
 
     border.width: 2.0
 
-    function setGeometry(markers){
-        var count = markers.length
-        topLeft = markers[count-2].coordinate
-        bottomRight = markers[count-1].coordinate
+    function setGeometry(markers, index){
+        topLeft = Qt.createQmlObject ('import QtQuick 2.0; import QtLocation 5.0; Coordinate {}', mapRectangle)
+        bottomRight = Qt.createQmlObject ('import QtQuick 2.0; import QtLocation 5.0; Coordinate {}', mapRectangle)
+
+        topLeft.latitude = Math.max(markers[index].coordinate.latitude, markers[index + 1].coordinate.latitude)
+        topLeft.longitude = Math.min(markers[index].coordinate.longitude, markers[index + 1].coordinate.longitude)
+        bottomRight.latitude = Math.min(markers[index].coordinate.latitude, markers[index + 1].coordinate.latitude)
+        bottomRight.longitude = Math.max(markers[index].coordinate.longitude, markers[index + 1].coordinate.longitude)
     }
 }
