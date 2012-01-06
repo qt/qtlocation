@@ -676,7 +676,7 @@ Item {
             compare(mouseOverlapperPressAndHoldSpy.count, 0)
 
             mousePress(map,5,25)
-            wait(850) // threshold is 800 ms
+            wait(1000) // threshold is 800 ms
             compare(mouseUpperPressAndHoldSpy.count, 1)
             compare(mouseLowerPressAndHoldSpy.count, 0)
             compare(mouseOverlapperPressAndHoldSpy.count, 0)
