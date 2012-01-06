@@ -56,10 +56,7 @@ Item {
                 PluginParameter { name: "validateWellKnownValues"; value: true}
             ]
         }
-    SignalSpy {id: invalidGeocodeSpy; target: invalidPlugin; signalName: "supportsGeocodingChanged"}
-    SignalSpy {id: invalidReverseGeocodeSpy; target: invalidPlugin; signalName: "supportsReverseGeocodingChanged"}
-    SignalSpy {id: invalidRoutingSpy; target: invalidPlugin; signalName: "supportsRoutingChanged"}
-    SignalSpy {id: invalidMappingSpy; target: invalidPlugin; signalName: "supportsMappingChanged"}
+    SignalSpy {id: invalidFeaturesSpy; target: invalidPlugin; signalName: "supportedFeaturesChanged"}
     SignalSpy {id: invalidSupportedPlacesFeaturesSpy; target: invalidPlugin; signalName: "supportedPlacesFeaturesChanged"}
 
     TestCase {
@@ -67,51 +64,37 @@ Item {
         function test_plugin() {
             verify (invalidPlugin.availableServiceProviders.length > 0)
             verify (invalidPlugin.availableServiceProviders.indexOf('qmlgeo.test.plugin') > -1) // at least test plugin must be present
-            // invalid plugin
-            compare (invalidPlugin.supportsGeocoding, false )
-            compare (invalidPlugin.supportsReverseGeocoding, false )
-            compare (invalidPlugin.supportsRouting, false )
-            compare (invalidPlugin.supportsMapping, false )
-            compare (invalidPlugin.supportsPlaces, false )
-            // if nokia plugin present
+
+            // invalid plugins should have no features
+            compare(invalidPlugin.supported, Plugin.NoFeatures)
+
             if (invalidPlugin.availableServiceProviders.indexOf('qmlgeo.test.plugin') > -1) {
-                compare (nokiaPlugin.supportsGeocoding, true )
-                compare (nokiaPlugin.supportsReverseGeocoding, true )
-                compare (nokiaPlugin.supportsRouting, true )
-                compare (nokiaPlugin.supportsMapping, true )
-                compare (nokiaPlugin.supportsPlaces, true )
+                var nokiaFeatures = (Plugin.GeocodingFeature |
+                                     Plugin.ReverseGeocodingFeature |
+                                     Plugin.RoutingFeature |
+                                     Plugin.MappingFeature |
+                                     Plugin.AnyPlacesFeature)
+                compare(nokiaPlugin.supported & nokiaFeatures, nokiaFeatures)
             }
-            // test plugin does not do mapping
-            compare (testPlugin.supportsGeocoding, true )
-            compare (testPlugin.supportsReverseGeocoding, true )
-            compare (testPlugin.supportsRouting, true )
-            compare (testPlugin.supportsMapping, true )
-            compare (testPlugin.supportsPlaces, true )
+
+            var testFeatures =  (Plugin.GeocodingFeature |
+                                 Plugin.ReverseGeocodingFeature |
+                                 Plugin.RoutingFeature |
+                                 Plugin.MappingFeature |
+                                 Plugin.AnyPlacesFeature)
+            compare(testPlugin.supported & testFeatures, testFeatures)
+
             // test changing name of plugin
-            compare (invalidGeocodeSpy.count, 0)
-            compare (invalidReverseGeocodeSpy.count, 0)
-            compare (invalidRoutingSpy.count, 0)
-            compare (invalidMappingSpy.count, 0)
+            invalidFeaturesSpy.clear()
+            compare(invalidFeaturesSpy.count, 0)
             invalidPlugin.name = 'qmlgeo.test.plugin'
-            compare (invalidGeocodeSpy.count, 1)
-            compare (invalidReverseGeocodeSpy.count, 1)
-            compare (invalidRoutingSpy.count, 1)
-            compare (invalidMappingSpy.count, 1)
-            compare (invalidPlugin.supportsGeocoding, true )
-            compare (invalidPlugin.supportsReverseGeocoding, true )
-            compare (invalidPlugin.supportsRouting, true )
-            compare (invalidPlugin.supportsMapping, true )
-            compare (invalidPlugin.supportsPlaces, true )
+            compare(invalidFeaturesSpy.count, 1)
+            compare(invalidPlugin.supported & testFeatures, testFeatures)
+
             invalidPlugin.name = ''
-            compare (invalidGeocodeSpy.count, 2)
-            compare (invalidReverseGeocodeSpy.count, 2)
-            compare (invalidRoutingSpy.count, 2)
-            compare (invalidMappingSpy.count, 2)
-            compare (invalidPlugin.supportsGeocoding, false )
-            compare (invalidPlugin.supportsReverseGeocoding, false )
-            compare (invalidPlugin.supportsRouting, false )
-            compare (invalidPlugin.supportsMapping, false )
-            compare (invalidPlugin.supportsPlaces, false )
+            compare(invalidFeaturesSpy.count, 2)
+
+            compare(invalidPlugin.supported, Plugin.NoFeatures)
         }
 
         function test_placesFeatures() {
@@ -136,10 +119,7 @@ Item {
             invalidPlugin.name = '';
             compare(invalidSupportedPlacesFeaturesSpy.count, 2);
 
-            invalidGeocodeSpy.clear();
-            invalidReverseGeocodeSpy.clear();
-            invalidRoutingSpy.clear();
-            invalidMappingSpy.clear();
+            invalidFeaturesSpy.clear();
             invalidSupportedPlacesFeaturesSpy.clear();
         }
 
