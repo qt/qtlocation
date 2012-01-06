@@ -56,6 +56,7 @@ Item {
                 PluginParameter { name: "validateWellKnownValues"; value: true}
             ]
         }
+    Plugin { id: requiredPlugin; required: Plugin.MappingFeature | Plugin.GeocodingFeature }
     SignalSpy {id: invalidFeaturesSpy; target: invalidPlugin; signalName: "supportedFeaturesChanged"}
     SignalSpy {id: invalidSupportedPlacesFeaturesSpy; target: invalidPlugin; signalName: "supportedPlacesFeaturesChanged"}
 
@@ -95,6 +96,13 @@ Item {
             compare(invalidFeaturesSpy.count, 2)
 
             compare(invalidPlugin.supported, Plugin.NoFeatures)
+        }
+
+        function test_required() {
+            // the required plugin should either get nokia or qmlgeo.test.plugin
+            // either way the name will be non-empty and it'll meet the spec
+            verify(requiredPlugin.name !== "")
+            verify((requiredPlugin.supported & requiredPlugin.required) === requiredPlugin.required)
         }
 
         function test_placesFeatures() {
