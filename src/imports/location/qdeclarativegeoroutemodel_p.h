@@ -147,6 +147,7 @@ private Q_SLOTS:
                       QGeoRouteReply::Error error,
                       const QString &errorString);
     void queryDetailsChanged();
+    void pluginReady();
 
 private:
     void setStatus(Status status);

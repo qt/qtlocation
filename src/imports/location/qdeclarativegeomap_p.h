@@ -199,6 +199,7 @@ private Q_SLOTS:
     void mapTiltChanged(qreal tilt);
     void mapBearingChanged(qreal bearing);
     void mapCenterChanged(AnimatableCoordinate center);
+    void pluginReady();
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);

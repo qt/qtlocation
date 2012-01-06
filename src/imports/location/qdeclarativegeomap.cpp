@@ -222,9 +222,31 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
     mapItems_.clear();
 }
 
+void QDeclarativeGeoMap::pluginReady()
+{
+    serviceProvider_  = plugin_->sharedGeoServiceProvider();
+    mappingManager_ = serviceProvider_->mappingManager();
+
+    if (!mappingManager_  || serviceProvider_->error() != QGeoServiceProvider::NoError) {
+           qmlInfo(this) << tr("Warning: Plugin does not support mapping.");
+           return;
+       }
+
+    pinchArea_->zoomLevelLimits(mappingManager_->minimumZoomLevel(), mappingManager_->maximumZoomLevel());
+
+    if (!mappingManager_->isInitialized())
+        connect(mappingManager_, SIGNAL(initialized()), this, SLOT(mappingManagerInitialized()));
+    else
+        mappingManagerInitialized();
+
+    // make sure this is only called once
+    disconnect(this, SLOT(pluginReady()));
+}
+
 void QDeclarativeGeoMap::componentComplete()
 {
     QLOC_TRACE0;
+
     componentCompleted_ = true;
     populateMap();
     QQuickItem::componentComplete();
@@ -404,20 +426,12 @@ void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     plugin_ = plugin;
     emit pluginChanged(plugin_);
 
-    serviceProvider_  = plugin_->sharedGeoServiceProvider();
-    mappingManager_ = serviceProvider_->mappingManager();
-
-    if (!mappingManager_  || serviceProvider_->error() != QGeoServiceProvider::NoError) {
-           qmlInfo(this) << tr("Warning: Plugin does not support mapping.");
-           return;
-       }
-
-    pinchArea_->zoomLevelLimits(mappingManager_->minimumZoomLevel(), mappingManager_->maximumZoomLevel());
-
-    if (!mappingManager_->isInitialized())
-        connect(mappingManager_, SIGNAL(initialized()), this, SLOT(mappingManagerInitialized()));
-    else
-        mappingManagerInitialized();
+    if (plugin_->ready()) {
+        pluginReady();
+    } else {
+        connect(plugin_, SIGNAL(supportedFeaturesChanged(PluginFeatures)),
+                this, SLOT(pluginReady()));
+    }
 }
 
 // this function will only be ever called once

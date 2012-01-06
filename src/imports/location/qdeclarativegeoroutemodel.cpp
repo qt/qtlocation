@@ -215,6 +215,16 @@ void QDeclarativeGeoRouteModel::setPlugin(QDeclarativeGeoServiceProvider *plugin
     if (!plugin)
         return;
 
+    if (plugin_->ready()) {
+        pluginReady();
+    } else {
+        connect(plugin_, SIGNAL(supportedFeaturesChanged(PluginFeatures)),
+                this, SLOT(pluginReady()));
+    }
+}
+
+void QDeclarativeGeoRouteModel::pluginReady()
+{
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
     if (!routingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {

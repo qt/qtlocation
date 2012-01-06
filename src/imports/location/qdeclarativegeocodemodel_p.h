@@ -158,6 +158,7 @@ protected Q_SLOTS:
     void geocodeError(QGeocodeReply *reply,
                      QGeocodeReply::Error error,
                      const QString &errorString);
+    void pluginReady();
 
 protected:
     QGeocodingManager* searchManager();

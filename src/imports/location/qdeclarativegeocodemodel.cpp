@@ -223,6 +223,16 @@ void QDeclarativeGeocodeModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     if (!plugin)
         return;
 
+    if (plugin_->ready()) {
+        pluginReady();
+    } else {
+        connect(plugin_, SIGNAL(supportedFeaturesChanged(PluginFeatures)),
+                this, SLOT(pluginReady()));
+    }
+}
+
+void QDeclarativeGeocodeModel::pluginReady()
+{
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeocodingManager *geocodingManager = serviceProvider->geocodingManager();
     if (!geocodingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {

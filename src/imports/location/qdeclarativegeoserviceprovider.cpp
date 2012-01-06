@@ -72,10 +72,12 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
-:   QObject(parent), sharedProvider_(0), supportsGeocoding_(false),
-    supportsReverseGeocoding_(false), supportsRouting_(false), supportsMapping_(false),
-    supportsPlaces_(false), withGeocoding_(false), withReverseGeocoding_(false),
-    withRouting_(false), withMapping_(false), withPlaces_(false), complete_(false)
+:   QObject(parent),
+    sharedProvider_(0),
+    supported_(NoFeatures),
+    required_(NoFeatures),
+    complete_(false),
+    placesFeatures_(NoPlaceFeatures)
 {
     locales_.append(QLocale().name());
 }
@@ -103,16 +105,17 @@ void QDeclarativeGeoServiceProvider::setName(const QString &name)
     emit nameChanged(name_);
 }
 
-void QDeclarativeGeoServiceProvider::update()
+void QDeclarativeGeoServiceProvider::update(bool doEmit)
 {
+    supported_ = NoFeatures;
+    placesFeatures_ = NoPlaceFeatures;
+
     QGeoServiceProvider *serviceProvider = sharedGeoServiceProvider();
     if (!serviceProvider  || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        setSupportsGeocoding(false);
-        setSupportsReverseGeocoding(false);
-        setSupportsRouting(false);
-        setSupportsMapping(false);
-        setSupportsPlaces(false);
-        setSupportedPlacesFeatures(QDeclarativeGeoServiceProvider::NoPlaceFeatures);
+        if (doEmit) {
+            emit supportedFeaturesChanged(supported_);
+            emit supportedPlacesFeaturesChanged(placesFeatures_);
+        }
         return;
     }
 
@@ -121,40 +124,31 @@ void QDeclarativeGeoServiceProvider::update()
 
     Q_ASSERT(!locales_.isEmpty());
     QGeocodingManager* geocodingManager = serviceProvider->geocodingManager();
-    if (!geocodingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        setSupportsGeocoding(false);
-        setSupportsReverseGeocoding(false);
-    } else {
-        setSupportsGeocoding(geocodingManager->supportsGeocoding());
-        setSupportsReverseGeocoding(geocodingManager->supportsReverseGeocoding());
+    if (geocodingManager && serviceProvider->error() == QGeoServiceProvider::NoError) {
+        if (geocodingManager->supportsGeocoding())
+            supported_ |= GeocodingFeature;
+        if (geocodingManager->supportsReverseGeocoding())
+            supported_ |= ReverseGeocodingFeature;
         geocodingManager->setLocale(QLocale(locales_.at(0)));
     }
 
-
     QGeoRoutingManager* routingManager = serviceProvider->routingManager();
-    if (!routingManager  || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        setSupportsRouting(false);
-    } else {
-        setSupportsRouting(true);
+    if (routingManager  && serviceProvider->error() == QGeoServiceProvider::NoError) {
+        supported_ |= RoutingFeature;
         routingManager->setLocale(QLocale(locales_.at(0)));
     }
 
 
     QGeoMappingManager* mappingManager = serviceProvider->mappingManager();
-    if (!mappingManager  || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        setSupportsMapping(false);
-    } else {
-        setSupportsMapping(true);
+    if (mappingManager  && serviceProvider->error() == QGeoServiceProvider::NoError) {
+        supported_ |= MappingFeature;
         mappingManager->setLocale(QLocale(locales_.at(0)));
     }
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        setSupportedPlacesFeatures(QDeclarativeGeoServiceProvider::NoPlaceFeatures);
-        setSupportsPlaces(false);
-    } else {
-        setSupportedPlacesFeatures(static_cast<QDeclarativeGeoServiceProvider::PlacesFeatures> ((int)placeManager->supportedFeatures()));
-        setSupportsPlaces(true);
+    if (placeManager && serviceProvider->error() == QGeoServiceProvider::NoError) {
+        placesFeatures_ = static_cast<QDeclarativeGeoServiceProvider::PlacesFeatures> ((int)placeManager->supportedFeatures());
+        supported_ |= AnyPlacesFeature;
 
         QList<QLocale> localePreferences;
         foreach (const QString &locale, locales_)
@@ -162,59 +156,16 @@ void QDeclarativeGeoServiceProvider::update()
 
         placeManager->setLocales(localePreferences);
     }
+
+    if (doEmit) {
+        emit supportedFeaturesChanged(supported_);
+        emit supportedPlacesFeaturesChanged(placesFeatures_);
+    }
 }
 
 QStringList QDeclarativeGeoServiceProvider::availableServiceProviders()
 {
     return QGeoServiceProvider::availableServiceProviders();
-}
-
-void QDeclarativeGeoServiceProvider::setSupportsGeocoding(bool supports)
-{
-    if (supports == supportsGeocoding_)
-        return;
-    supportsGeocoding_ = supports;
-    emit supportsGeocodingChanged();
-}
-
-void QDeclarativeGeoServiceProvider::setSupportsReverseGeocoding(bool supports)
-{
-    if (supports == supportsReverseGeocoding_)
-        return;
-    supportsReverseGeocoding_ = supports;
-    emit supportsReverseGeocodingChanged();
-}
-
-void QDeclarativeGeoServiceProvider::setSupportsRouting(bool supports)
-{
-    if (supports == supportsRouting_)
-        return;
-    supportsRouting_ = supports;
-    emit supportsRoutingChanged();
-}
-
-void QDeclarativeGeoServiceProvider::setSupportsMapping(bool supports)
-{
-    if (supports == supportsMapping_)
-        return;
-    supportsMapping_ = supports;
-    emit supportsMappingChanged();
-}
-
-void QDeclarativeGeoServiceProvider::setSupportsPlaces(bool supports)
-{
-    if (supports == supportsPlaces_)
-        return;
-    supportsPlaces_ = supports;
-    emit supportsPlacesChanged();
-}
-
-void QDeclarativeGeoServiceProvider::setSupportedPlacesFeatures(PlacesFeatures placesFeatures)
-{
-    if (placesFeatures_ == placesFeatures)
-        return;
-    placesFeatures_ = placesFeatures;
-    emit supportedPlacesFeaturesChanged();
 }
 
 void QDeclarativeGeoServiceProvider::componentComplete()
@@ -224,31 +175,21 @@ void QDeclarativeGeoServiceProvider::componentComplete()
         update();
         return;
     }
-    if (withGeocoding_ || withReverseGeocoding_ || withRouting_ ||
-            withMapping_ || withPlaces_) {
+    if (required_ != NoFeatures) {
         QStringList providers = QGeoServiceProvider::availableServiceProviders();
         foreach (QString name, providers) {
-            // hack: avoid notifying anyone else when we're just iterating
-            blockSignals(true);
-            setName(name);
-            blockSignals(false);
+            if (sharedProvider_)
+                delete sharedProvider_;
+            sharedProvider_ = 0;
+            name_ = name;
+            // do an update with no emits
+            update(false);
 
-            bool ok = true;
-            if (withGeocoding_ && !supportsGeocoding_)
-                ok = false;
-            if (withReverseGeocoding_ && !supportsReverseGeocoding_)
-                ok = false;
-            if (withRouting_ && !supportsRouting_)
-                ok = false;
-            if (withMapping_ && !supportsMapping_)
-                ok = false;
-            if (withPlaces_ && !supportsPlaces_)
-                ok = false;
-
-            if (ok) {
+            if ((supported_ & required_) == required_) {
                 // run it again to send the notifications
-                name_ = "";
-                setName(name);
+                emit nameChanged(name_);
+                emit supportedFeaturesChanged(supported_);
+                emit supportedPlacesFeaturesChanged(placesFeatures_);
                 break;
             }
         }
@@ -260,111 +201,25 @@ QString QDeclarativeGeoServiceProvider::name() const
     return name_;
 }
 
-/*!
-    \qmlproperty bool Plugin::withGeocoding
-    \qmlproperty bool Plugin::withReverseGeocoding
-    \qmlproperty bool Plugin::withRouting
-    \qmlproperty bool Plugin::withMapping
-    \qmlproperty bool Plugin::withPlaces
-
-    These properties indicate the desired properties of a plugin. If at least
-    one of these properties is set at the creation of the Plugin element, it
-    will automatically work out which plugin to use, as the first available
-    plugin that fulfills the set criteria.
-
-    Note that these properties will only have any effect if set at creation
-    time.
-*/
-bool QDeclarativeGeoServiceProvider::withGeocoding() const
+QDeclarativeGeoServiceProvider::PluginFeatures QDeclarativeGeoServiceProvider::supportedFeatures() const
 {
-    return withGeocoding_;
-}
-bool QDeclarativeGeoServiceProvider::withReverseGeocoding() const
-{
-    return withReverseGeocoding_;
-}
-bool QDeclarativeGeoServiceProvider::withRouting() const
-{
-    return withRouting_;
-}
-bool QDeclarativeGeoServiceProvider::withMapping() const
-{
-    return withMapping_;
-}
-bool QDeclarativeGeoServiceProvider::withPlaces() const
-{
-    return withPlaces_;
+    return supported_;
 }
 
-void QDeclarativeGeoServiceProvider::setWithGeocoding(bool value)
+QDeclarativeGeoServiceProvider::PluginFeatures QDeclarativeGeoServiceProvider::requiredFeatures() const
 {
-    withGeocoding_ = value;
-}
-void QDeclarativeGeoServiceProvider::setWithReverseGeocoding(bool value)
-{
-    withReverseGeocoding_ = value;
-}
-void QDeclarativeGeoServiceProvider::setWithRouting(bool value)
-{
-    withRouting_ = value;
-}
-void QDeclarativeGeoServiceProvider::setWithMapping(bool value)
-{
-    withMapping_ = value;
-}
-void QDeclarativeGeoServiceProvider::setWithPlaces(bool value)
-{
-    withPlaces_ = value;
+    return required_;
 }
 
-/*!
-    \qmlproperty bool Plugin::supportsGeocoding
-
-    This property holds whether plugin supports geocoding.
-*/
-bool QDeclarativeGeoServiceProvider::supportsGeocoding() const
+void QDeclarativeGeoServiceProvider::setRequiredFeatures(const PluginFeatures &features)
 {
-    return supportsGeocoding_;
+    required_ = features;
+    emit requiredFeaturesChanged(required_);
 }
 
-/*!
-    \qmlproperty bool Plugin::supportsReverseGeocoding
-
-    This property holds whether plugin supports reverse geocoding.
-*/
-bool QDeclarativeGeoServiceProvider::supportsReverseGeocoding() const
+bool QDeclarativeGeoServiceProvider::ready() const
 {
-    return supportsReverseGeocoding_;
-}
-
-/*!
-    \qmlproperty bool Plugin::supportsRouting
-
-    This property holds whether plugin supports routing.
-*/
-bool QDeclarativeGeoServiceProvider::supportsRouting() const
-{
-    return supportsRouting_;
-}
-
-/*!
-    \qmlproperty bool Plugin::supportsMapping
-
-    This property holds whether plugin supports mapping.
-*/
-bool QDeclarativeGeoServiceProvider::supportsMapping() const
-{
-    return supportsMapping_;
-}
-
-/*!
-    \qmlproperty bool Plugin::supportsPlaces
-
-    This property holds whether plugin supports places.
-*/
-bool QDeclarativeGeoServiceProvider::supportsPlaces() const
-{
-    return supportsPlaces_;
+    return complete_;
 }
 
 /*!
@@ -406,9 +261,9 @@ bool QDeclarativeGeoServiceProvider::supportsPlaces() const
             \o The plugin has notfication mechanisms for when places/categories are added/modified/removed (0x100).
     \endtable
 */
-QDeclarativeGeoServiceProvider::PlacesFeatures QDeclarativeGeoServiceProvider::supportedPlacesFeatures()
+QDeclarativeGeoServiceProvider::PlacesFeatures QDeclarativeGeoServiceProvider::supportedPlacesFeatures() const
 {
-    if (!supportsPlaces_)
+    if ((supported_ & AnyPlacesFeature) == 0)
         return QDeclarativeGeoServiceProvider::NoPlaceFeatures;
     return placesFeatures_;
 }

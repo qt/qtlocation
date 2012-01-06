@@ -84,20 +84,13 @@ class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParser
 {
     Q_OBJECT
     Q_ENUMS (PlacesFeature)
+    Q_ENUMS (PluginFeature)
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QStringList availableServiceProviders READ availableServiceProviders CONSTANT)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> parameters READ parameters)
-    Q_PROPERTY(bool supportsGeocoding READ supportsGeocoding NOTIFY supportsGeocodingChanged)
-    Q_PROPERTY(bool supportsReverseGeocoding READ supportsReverseGeocoding NOTIFY supportsReverseGeocodingChanged)
-    Q_PROPERTY(bool supportsRouting READ supportsRouting NOTIFY supportsRoutingChanged)
-    Q_PROPERTY(bool supportsMapping READ supportsMapping NOTIFY supportsMappingChanged)
-    Q_PROPERTY(bool supportsPlaces READ supportsPlaces NOTIFY supportsPlacesChanged)
-    Q_PROPERTY(bool withGeocoding READ withGeocoding WRITE setWithGeocoding)
-    Q_PROPERTY(bool withReverseGeocoding READ withGeocoding WRITE setWithReverseGeocoding)
-    Q_PROPERTY(bool withRouting READ withGeocoding WRITE setWithRouting)
-    Q_PROPERTY(bool withMapping READ withGeocoding WRITE setWithMapping)
-    Q_PROPERTY(bool withPlaces READ withGeocoding WRITE setWithPlaces)
+    Q_PROPERTY(PluginFeatures required READ requiredFeatures WRITE setRequiredFeatures NOTIFY requiredFeaturesChanged)
+    Q_PROPERTY(PluginFeatures supported READ supportedFeatures NOTIFY supportedFeaturesChanged)
     Q_PROPERTY(PlacesFeatures supportedPlacesFeatures READ supportedPlacesFeatures NOTIFY supportedPlacesFeaturesChanged)
     Q_PROPERTY(QStringList locales READ locales WRITE setLocales NOTIFY localesChanged)
 
@@ -107,6 +100,18 @@ class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParser
 public:
     QDeclarativeGeoServiceProvider(QObject *parent = 0);
     ~QDeclarativeGeoServiceProvider();
+
+    enum PluginFeature {
+        NoFeatures                 = 0x00000000,
+        GeocodingFeature           = 0x00000001,
+        ReverseGeocodingFeature    = 0x00000002,
+        RoutingFeature             = 0x00000004,
+        MappingFeature             = 0x00000008,
+        AnyPlacesFeature           = 0x00000010
+    };
+
+    Q_DECLARE_FLAGS(PluginFeatures, PluginFeature)
+    Q_FLAGS(PluginFeatures)
 
     enum PlacesFeature {
         NoPlaceFeatures = QPlaceManager::NoFeatures,
@@ -135,67 +140,40 @@ public:
     QMap<QString, QVariant> parameterMap() const;
 
     QStringList availableServiceProviders();
-    bool supportsGeocoding() const;
-    bool supportsReverseGeocoding() const;
-    bool supportsRouting() const;
-    bool supportsMapping() const;
-    bool supportsPlaces() const;
 
-    bool withGeocoding() const;
-    bool withReverseGeocoding() const;
-    bool withRouting() const;
-    bool withMapping() const;
-    bool withPlaces() const;
+    PluginFeatures supportedFeatures() const;
 
-    void setWithGeocoding(bool value);
-    void setWithReverseGeocoding(bool value);
-    void setWithRouting(bool value);
-    void setWithMapping(bool value);
-    void setWithPlaces(bool value);
+    PluginFeatures requiredFeatures() const;
+    void setRequiredFeatures(const PluginFeatures &features);
 
-    PlacesFeatures supportedPlacesFeatures();
+    PlacesFeatures supportedPlacesFeatures() const;
 
     QGeoServiceProvider *sharedGeoServiceProvider();
 
     QStringList locales() const;
     void setLocales(const QStringList &locales);
 
+    bool ready() const;
+
 Q_SIGNALS:
     void nameChanged(const QString &name);
-    void supportsGeocodingChanged();
-    void supportsReverseGeocodingChanged();
-    void supportsRoutingChanged();
-    void supportsMappingChanged();
-    void supportsPlacesChanged();
-    void supportedPlacesFeaturesChanged();
     void localesChanged();
+    void supportedFeaturesChanged(const PluginFeatures &features);
+    void requiredFeaturesChanged(const PluginFeatures &features);
+    void supportedPlacesFeaturesChanged(const PlacesFeatures &features);
 
 private:
     static void parameter_append(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *mapObject);
     static int parameter_count(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
     static QDeclarativeGeoServiceProviderParameter* parameter_at(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index);
     static void parameter_clear(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
-    void update();
-    void setSupportsGeocoding(bool supports);
-    void setSupportsReverseGeocoding(bool supports);
-    void setSupportsRouting(bool supports);
-    void setSupportsMapping(bool supports);
-    void setSupportsPlaces(bool supports);
-    void setSupportedPlacesFeatures(PlacesFeatures placesFeatures);
+    void update(bool doEmit = true);
 
     QGeoServiceProvider *sharedProvider_;
     QString name_;
     QList<QDeclarativeGeoServiceProviderParameter*> parameters_;
-    bool supportsGeocoding_;
-    bool supportsReverseGeocoding_;
-    bool supportsRouting_;
-    bool supportsMapping_;
-    bool supportsPlaces_;
-    bool withGeocoding_;
-    bool withReverseGeocoding_;
-    bool withRouting_;
-    bool withMapping_;
-    bool withPlaces_;
+    PluginFeatures supported_;
+    PluginFeatures required_;
     bool complete_;
     QStringList locales_;
     PlacesFeatures placesFeatures_;
@@ -207,5 +185,6 @@ QT_END_NAMESPACE
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProviderParameter));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProvider));
 Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProvider::PlacesFeatures))
+Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProvider::PluginFeatures))
 
 #endif
