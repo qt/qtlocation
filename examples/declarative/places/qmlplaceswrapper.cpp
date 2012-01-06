@@ -101,10 +101,11 @@ int main(int argc, char *argv[])
     view.engine()->addImportPath(QLatin1String(":/"));
 
     view.rootContext()->setContextProperty(QLatin1String("pluginParameters"), parameters);
-    view.rootContext()->setContextProperty(QLatin1String("_mobileUi"), QVariant::fromValue(false));
 
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);
+
+    view.rootObject()->setProperty("mobileUi", false);
 
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
     view.setGeometry(QRect(100, 100, 360, 640));

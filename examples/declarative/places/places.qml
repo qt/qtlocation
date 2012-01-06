@@ -47,7 +47,7 @@ Item {
     id: page
     width: parent ? parent.width : 360
     height: parent ? parent.height : 640
-    property bool mobileUi: _mobileUi ? _mobileUi : true
+    property bool mobileUi: true
     property variant map
 
     onMapChanged: editPlaceDialog.prepareDialog()
@@ -57,11 +57,6 @@ Item {
         anchors.fill: parent
         color: "lightgrey"
         z:2
-    }
-
-    TitleBar {
-        id: titleBar; z: mainMenu.z; width: parent.width; height: 40; opacity: 0.9; text: "QML places example"; visible: !page.mobileUi
-        onClicked: { Qt.quit() }
     }
 
     //=====================Menu=====================
@@ -291,7 +286,8 @@ Item {
     SearchBox {
         id: searchBox
 
-        anchors.top: page.mobileUi ? page.top : titleBar.bottom
+        anchors.top: page.top
+        anchors.topMargin: page.mobileUi ? 20 : 0
         width: parent.width
         z: map ? map.z + 2 : 0
     }
