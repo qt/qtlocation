@@ -47,7 +47,7 @@ Map {
     zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
     center: brisbaneCoordinate
 
-    pinch.activeGestures: MapPinch.ZoomGesture
+    pinch.activeGestures: MapPinchArea.ZoomGesture
     pinch.enabled: true
 
     // Flicking

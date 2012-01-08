@@ -165,23 +165,23 @@ Item {
 
             compare(map.pinch.active, false)
 
-            verify(map.pinch.activeGestures & MapPinch.ZoomGesture)
-            verify(!(map.pinch.activeGestures & MapPinch.RotationGesture))
-            verify(!(map.pinch.activeGestures & MapPinch.TiltGesture))
-            map.pinch.activeGestures = MapPinch.NoGesture
-            compare(map.pinch.activeGestures, MapPinch.NoGesture)
+            verify(map.pinch.activeGestures & MapPinchArea.ZoomGesture)
+            verify(!(map.pinch.activeGestures & MapPinchArea.RotationGesture))
+            verify(!(map.pinch.activeGestures & MapPinchArea.TiltGesture))
+            map.pinch.activeGestures = MapPinchArea.NoGesture
+            compare(map.pinch.activeGestures, MapPinchArea.NoGesture)
             compare(pinchActiveGesturesSpy.count, 1)
-            map.pinch.activeGestures = MapPinch.NoGesture
-            compare(map.pinch.activeGestures, MapPinch.NoGesture)
+            map.pinch.activeGestures = MapPinchArea.NoGesture
+            compare(map.pinch.activeGestures, MapPinchArea.NoGesture)
             compare(pinchActiveGesturesSpy.count, 1)
-            map.pinch.activeGestures = MapPinch.ZoomGesture | MapPinch.RotationGesture
-            compare(map.pinch.activeGestures, MapPinch.ZoomGesture | MapPinch.RotationGesture)
+            map.pinch.activeGestures = MapPinchArea.ZoomGesture | MapPinchArea.RotationGesture
+            compare(map.pinch.activeGestures, MapPinchArea.ZoomGesture | MapPinchArea.RotationGesture)
             compare(pinchActiveGesturesSpy.count, 2)
-            map.pinch.activeGestures = MapPinch.RotationGesture
-            compare(map.pinch.activeGestures, MapPinch.RotationGesture)
+            map.pinch.activeGestures = MapPinchArea.RotationGesture
+            compare(map.pinch.activeGestures, MapPinchArea.RotationGesture)
             compare(pinchActiveGesturesSpy.count, 3)
-            map.pinch.activeGestures = MapPinch.ZoomGesture
-            compare(map.pinch.activeGestures, MapPinch.ZoomGesture)
+            map.pinch.activeGestures = MapPinchArea.ZoomGesture
+            compare(map.pinch.activeGestures, MapPinchArea.ZoomGesture)
             compare(pinchActiveGesturesSpy.count, 4)
 
             /*
@@ -315,7 +315,7 @@ Item {
         }
 
         function test_b_pinch_rotation() {
-            map.pinch.activeGestures = MapPinch.RotationGesture
+            map.pinch.activeGestures = MapPinchArea.RotationGesture
             map.pinch.rotationFactor = 1.0
             map.zoomLevel = 8
             compare(map.zoomLevel, 8)
@@ -550,7 +550,7 @@ Item {
         }
 
         function test_pinch_zoom() {
-            map.pinch.activeGestures = MapPinch.ZoomGesture
+            map.pinch.activeGestures = MapPinchArea.ZoomGesture
             map.zoomLevel = 9
             clear_data()
             // 1. typical zoom in
@@ -731,7 +731,7 @@ Item {
             map.pinch.enabled = true
             // 12. check nuthin happens if no active gestures
             clear_data()
-            map.pinch.activeGestures = MapPinch.NoGesture
+            map.pinch.activeGestures = MapPinchArea.NoGesture
             pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),Qt.point(50,50), Qt.point(100,50));
             tryCompare(pinchStartedSpy, "count", 0);
             wait(250);
@@ -739,7 +739,7 @@ Item {
             compare(pinchStartedSpy.count, 0);
             compare(map.zoomLevel, 8.5)
             pinchGenerator.stop()
-            map.pinch.activeGestures = MapPinch.ZoomGesture
+            map.pinch.activeGestures = MapPinchArea.ZoomGesture
             // 13. manually changing zoom level during active pinch zoom
             clear_data();
             map.pinch.maximumZoomLevelChange = 2

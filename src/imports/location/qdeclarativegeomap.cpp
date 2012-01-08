@@ -287,9 +287,21 @@ bool QDeclarativeGeoMap::mouseEvent(QMouseEvent* event)
     }
 }
 
-QDeclarativeGeoMapPinchArea* QDeclarativeGeoMap::pinch() {
+/*!
+    \qmlproperty MapPinchArea QtLocation5::Map::pinch
+*/
+
+QDeclarativeGeoMapPinchArea* QDeclarativeGeoMap::pinch()
+{
     return pinchArea_;
 }
+
+/*!
+    \qmlproperty MapFlickable QtLocation5::Map::flick
+
+    Contains the MapFlickable created with the Map. Use \c{flick.enabled: true}
+    to enable basic flick gestures, or see \l{MapFlickable} for further details.
+*/
 
 QDeclarativeGeoMapFlickable* QDeclarativeGeoMap::flick()
 {

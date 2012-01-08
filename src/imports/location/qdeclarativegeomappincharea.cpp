@@ -53,7 +53,6 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmlclass MapPinchEvent
-
     \inqmlmodule QtLocation 5
 
     \brief MapPinchEvent element provides basic information about pinch event.
@@ -66,119 +65,133 @@ QT_BEGIN_NAMESPACE
 
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0
-
 */
 
 /*!
     \qmlproperty QPoint QtLocation5::MapPinchEvent::center
 
-  This read-only property holds the current center point.
-
+    This read-only property holds the current center point.
 */
 
 /*!
     \qmlproperty real QtLocation5::MapPinchEvent::angle
 
-  This read-only property holds the current angle between the two points in
-  the range -180 to 180. Positive values for the angles mean counter-clockwise
-  while negative values mean the clockwise direction. Zero degrees is at the
-  3 o'clock position.
-
+    This read-only property holds the current angle between the two points in
+    the range -180 to 180. Positive values for the angles mean counter-clockwise
+    while negative values mean the clockwise direction. Zero degrees is at the
+    3 o'clock position.
 */
 
 /*!
     \qmlproperty QPoint QtLocation5::MapPinchEvent::point1
     \qmlproperty QPoint QtLocation5::MapPinchEvent::point2
 
-  These read-only properties hold the actual touch points generating the pinch.
-  The points are not in any particular order.
-
+    These read-only properties hold the actual touch points generating the pinch.
+    The points are not in any particular order.
 */
 
 /*!
     \qmlproperty int QtLocation5::MapPinchEvent::pointCount
 
-  This read-only property holds the number of points currently touched.
-  The MapPinch will not react until two touch points have initited a gesture,
-  but will remain active until all touch points have been released.
-
+    This read-only property holds the number of points currently touched.
+    The MapPinch will not react until two touch points have initited a gesture,
+    but will remain active until all touch points have been released.
 */
 
 /*!
     \qmlproperty bool QtLocation5::MapPinchEvent::accepted
 
-  Setting this property to false in the \c MapPinch::onPinchStarted handler
-  will result in no further pinch events being generated, and the gesture
-  ignored.
-
+    Setting this property to false in the \c MapPinch::onPinchStarted handler
+    will result in no further pinch events being generated, and the gesture
+    ignored.
 */
 
 /*!
-    \qmlclass MapPinch
+    \qmlclass MapPinchArea QDeclarativeGeoMapPinchArea
 
     \inqmlmodule QtLocation 5
 
-    \brief The MapPinch element provides basic Map pinch interaction.
+    \brief The MapPinchArea element provides basic Map pinch interaction.
 
-    It provides basic Map pinch interaction. It caters for out-of-the-box interaction
-    (e.g. zoom and rotation), as well as provides means for more customized behavior.
-    It is a non-user-instantiable member of \l Map element.
+    MapPinchArea elements are used as part of a Map, to provide for the
+    pinch-to-zoom gesture used on touch displays. This is comparable to the
+    activity of the \l{PinchArea} element.
+
+    A MapPinchArea is automatically created with a new Map and available with
+    the \l{QtLocation5::Map::pinch}{pinch} property. This is the only way
+    to create a MapPinchArea, and once created this way cannot be destroyed
+    without its parent Map.
+
+    The two most commonly used properties of the MapPinchArea are the \l enabled
+    and \l activeGestures properties. Both of these must be set before a
+    MapPinchArea will have any effect upon interaction with the Map.
+
+    \section2 Performance
+
+    The MapPinchArea, when enabled, must process all incoming touch events in
+    order to track the shape and size of the "pinch". The overhead added on
+    touch events can be considered constant time.
+
+    \section2 Example Usage
+
+    The following example enables the pinch gesture on a map.
+
+    \code
+    Map {
+        pinch.enabled: true
+        pinch.activeGestures: MapPinchArea.ZoomGesture
+    }
+    \endcode
 
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0
-
 */
 
 /*!
-    \qmlproperty bool QtLocation5::MapPinch::enabled
+    \qmlproperty bool QtLocation5::MapPinchArea::enabled
 
-  This property holds whether the pinch gestures are enabled.
-  Note: disabling pinch during active pinch does not have effect on
-  the potentially active current pinch.
-
-  */
-
-/*!
-    \qmlproperty bool QtLocation5::MapPinch::active
-
-  This read-only property holds whether a pinch gesture is active.
-
-  */
+    This property holds whether the pinch gestures are enabled.
+    Note: disabling pinch during active pinch does not have effect on
+    the potentially active current pinch.
+*/
 
 /*!
-    \qmlproperty enumeration QtLocation5::MapPinch::activeGestures
+    \qmlproperty bool QtLocation5::MapPinchArea::active
 
-  This property holds the gestures that the pinch should control.
-  For the time being, only ZoomGesture is supported.
-
-  For the extremist, one may OR flag the RotationGesture or TiltGesture
-  but these come with absolutely no warranty or guarantees at the moment
-  (may be removed, changed, moved around)
-
-  */
+    This read-only property holds whether a pinch gesture is active.
+*/
 
 /*!
-    \qmlproperty real QtLocation5::MapPinch::maximumZoomLevelChange
+    \qmlproperty enumeration QtLocation5::MapPinchArea::activeGestures
 
-  This property holds the maximum zoom level change per pinch, essentially
-  meant to be used for setting the zoom sensitivity.
+    This property holds the gestures that the pinch should control.
+    For the time being, only ZoomGesture is supported.
 
-  It is an indicative measure calculated from the dimensions of the
-  map area, roughly corresponding how much zoom level could change with
-  maximum pinch zoom. Default value is 2.0, maximum value is 10.0
+    For the extremist, one may OR flag the RotationGesture or TiltGesture
+    but these come with absolutely no warranty or guarantees at the moment
+    (may be removed, changed, moved around)
+*/
 
-  */
+/*!
+    \qmlproperty real QtLocation5::MapPinchArea::maximumZoomLevelChange
+
+    This property holds the maximum zoom level change per pinch, essentially
+    meant to be used for setting the zoom sensitivity.
+
+    It is an indicative measure calculated from the dimensions of the
+    map area, roughly corresponding how much zoom level could change with
+    maximum pinch zoom. Default value is 2.0, maximum value is 10.0
+*/
 
 /* todo uncomment this when rotation is supported
-  \qmlproperty real MapPinch::rotationFactor
+    \qmlproperty real MapPinchArea::rotationFactor
 
-  This property holds the rotation factor for zoom, essentially meant to be used for setting
-  the rotation sensitivity.
+    This property holds the rotation factor for zoom, essentially meant to be used for setting
+    the rotation sensitivity.
 
-  It is an indicative measure; the default value 1.0 means the map roughly follows the fingers,
-  whereas 2.0 means rotating twice as fast. Maximum value is 5.0.
-
-  */
+    It is an indicative measure; the default value 1.0 means the map roughly follows the fingers,
+    whereas 2.0 means rotating twice as fast. Maximum value is 5.0.
+*/
 
 QDeclarativeGeoMapPinchArea::QDeclarativeGeoMapPinchArea(QDeclarativeGeoMap* map, QObject *parent)
     : QObject(parent),

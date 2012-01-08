@@ -306,8 +306,8 @@ Item {
         height: 800
         zoomLevel: 5.1
 
-        // pinch.activeGestures: MapPinch.ZoomGesture | RotationGesture
-        pinch.activeGestures: MapPinch.NoGesture
+        // pinch.activeGestures: MapPinchArea.ZoomGesture | RotationGesture
+        pinch.activeGestures: MapPinchArea.NoGesture
 
         pinch.enabled: true
 
@@ -793,42 +793,42 @@ Item {
             }
         }
         Rectangle { id: rowRectPinchGen; width: rowRect1.width; height: rowRect1.height; color: 'lightsteelblue';
-            Text { text: "Pinch\nzoom:\n"  + ((map.pinch.activeGestures & MapPinch.ZoomGesture) > 0? "Yes":"No")}
+            Text { text: "Pinch\nzoom:\n"  + ((map.pinch.activeGestures & MapPinchArea.ZoomGesture) > 0? "Yes":"No")}
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
                     console.log('oooQML: map pinch active gestures' + map.pinch.activeGestures);
-                    if (map.pinch.activeGestures & MapPinch.ZoomGesture)
-                        map.pinch.activeGestures &= ~MapPinch.ZoomGesture
+                    if (map.pinch.activeGestures & MapPinchArea.ZoomGesture)
+                        map.pinch.activeGestures &= ~MapPinchArea.ZoomGesture
                     else
-                        map.pinch.activeGestures += MapPinch.ZoomGesture
+                        map.pinch.activeGestures += MapPinchArea.ZoomGesture
                 }
             }
         }
         Rectangle { width: rowRect1.width; height: rowRect1.height; color: rowRectPinchGen.color;
-            Text { text: "Pinch\nrotation:\n"  + ((map.pinch.activeGestures & MapPinch.RotationGesture) > 0? "Yes":"No")}
+            Text { text: "Pinch\nrotation:\n"  + ((map.pinch.activeGestures & MapPinchArea.RotationGesture) > 0? "Yes":"No")}
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
                     console.log('oooQML: map pinch active gestures' + map.pinch.activeGestures);
-                    if (map.pinch.activeGestures & MapPinch.RotationGesture)
-                        map.pinch.activeGestures &= ~MapPinch.RotationGesture
+                    if (map.pinch.activeGestures & MapPinchArea.RotationGesture)
+                        map.pinch.activeGestures &= ~MapPinchArea.RotationGesture
                     else
-                        map.pinch.activeGestures += MapPinch.RotationGesture
+                        map.pinch.activeGestures += MapPinchArea.RotationGesture
                 }
             }
         }
 
         Rectangle { width: rowRect1.width; height: rowRect1.height; color: rowRectPinchGen.color;
-            Text { text: "Pinch\ntilt:\n"  + ((map.pinch.activeGestures & MapPinch.TiltGesture) > 0? "Yes":"No")}
+            Text { text: "Pinch\ntilt:\n"  + ((map.pinch.activeGestures & MapPinchArea.TiltGesture) > 0? "Yes":"No")}
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
                     console.log('oooQML: map pinch active gestures' + map.pinch.activeGestures);
-                    if (map.pinch.activeGestures & MapPinch.TiltGesture)
-                        map.pinch.activeGestures &= ~MapPinch.TiltGesture
+                    if (map.pinch.activeGestures & MapPinchArea.TiltGesture)
+                        map.pinch.activeGestures &= ~MapPinchArea.TiltGesture
                     else
-                        map.pinch.activeGestures += MapPinch.TiltGesture
+                        map.pinch.activeGestures += MapPinchArea.TiltGesture
                 }
             }
 

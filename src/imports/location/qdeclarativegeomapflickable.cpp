@@ -75,15 +75,47 @@ QT_BEGIN_NAMESPACE
 
     \inqmlmodule QtLocation 5
 
-    \brief MapFlickable element provides basic flicking of the map.
+    \brief The MapFlickable element provides basic flicking of the Map.
 
-    MapFlickable element provides basic flicking of the map. Essentially flicking
-    the map means panning that continues after user has lifted finger/released
-    mouse button, gradually slowing down.
+    MapFlickable elements are used as part of a Map, to provide for the common
+    flick gesture that pans the map in an intuitive fashion. This is comparable
+    to the activity of the \l Flickable element.
 
-    MapFlickable is not a standalone user-instantiable element but a fixed member
-    of the Map element which can be enabled or disabled. The sensitivity (rate
-    of slowing down or deceleration) can be adjusted.
+    A MapFlickable is automatically created with a new Map and available with
+    the \l{QtLocation5::Map::flick}{flick} property. This is the only way
+    to create a MapFlickable, and once created this way cannot be destroyed
+    without its parent Map.
+
+    The two most commonly used properties of the MapFlickable are \l enabled and
+    \l deceleration. The former must be set in order for the MapFlickable to
+    have any effect upon its parent Map. The latter property customises the
+    response of the MapFlickable to input from the user, by adjusting how much
+    "friction" slows down the flick after the user has raised their finger
+    or released the mouse button.
+
+    \section2 Performance
+
+    The MapFlickable, when enabled, must process all incoming touch or cursor
+    movement events in order to build up the "flick" gesture, and then complete
+    an animation for the "deceleration" phase. The MapFlickable builds up a
+    buffer of samples during the motion capture phase: currently a maximum of
+    3 past samples are processed at each new event. As a result, the overhead
+    on movement events can be considered constant time, as there are many more
+    than 3 events in a typical gesture. The cost of animation is identical to
+    two parallel double float \l{QPropertyAnimation}{QPropertyAnimations} with
+    OutQuad easing curves.
+
+    \section2 Example Usage
+
+    The following example enables the flick gesture on a map, and sets the
+    deceleration/friction value to be double its standard level.
+
+    \code
+    Map {
+        flick.enabled: true
+        flick.deceleration: 5000
+    }
+    \endcode
 
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0
@@ -92,19 +124,17 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlproperty bool QtLocation5::MapFlickable::enabled
 
-  This property holds whether the flicking is enabled.
-  By default flicking is enabled. Disabling flicking will terminate
-  any potentially active flicks (movement or actual flick).
-
-  */
+    This property holds whether the flicking is enabled.
+    By default flicking is enabled. Disabling flicking will terminate
+    any potentially active flicks (movement or actual flick).
+*/
 
 /*!
-  \qmlproperty bool QtLocation5::MapFlickable::deceleration
+    \qmlproperty bool QtLocation5::MapFlickable::deceleration
 
-  This property holds the rate at which a flick will decelerate.
-  Default value is 2500, minimum value is 500 and maximum value is 10000.
-
-  */
+    This property holds the rate at which a flick will decelerate.
+    Default value is 2500, minimum value is 500 and maximum value is 10000.
+*/
 
 /*!
     \qmlsignal QtLocation5::MapFlickable::onMovementStarted()
