@@ -42,8 +42,8 @@
 
 #include "qgeocoordinate.h"
 
-#include <QVector2D>
-#include <QVector3D>
+#include "qdoublevector2d_p.h"
+#include "qdoublevector3d_p.h"
 
 #include <qnumeric.h>
 
@@ -54,31 +54,31 @@ QGeoProjection2D::QGeoProjection2D(double baseHeight, double sideLength)
 
 QGeoProjection2D::~QGeoProjection2D() {}
 
-QVector3D QGeoProjection2D::coordToPoint(const QGeoCoordinate &coord) const
+QDoubleVector3D QGeoProjection2D::coordToPoint(const QGeoCoordinate &coord) const
 {
-    QVector2D m = coordToMercator(coord);
+    QDoubleVector2D m = coordToMercator(coord);
     double z = baseHeight_;
     if (!qIsNaN(coord.altitude()))
         z += coord.altitude();
-    return QVector3D(m.x() * sideLength_, (1.0 - m.y()) * sideLength_, z);
+    return QDoubleVector3D(m.x() * sideLength_, (1.0 - m.y()) * sideLength_, z);
 }
 
-QGeoCoordinate QGeoProjection2D::pointToCoord(const QVector3D &point) const
+QGeoCoordinate QGeoProjection2D::pointToCoord(const QDoubleVector3D &point) const
 {
-    QVector2D m = QVector2D(point.x() / sideLength_, 1.0 - point.y() / sideLength_);
+    QDoubleVector2D m = QDoubleVector2D(point.x() / sideLength_, 1.0 - point.y() / sideLength_);
     QGeoCoordinate coord = mercatorToCoord(m);
     coord.setAltitude(point.z() - baseHeight_);
     return coord;
 }
 
-QVector3D QGeoProjection2D::mercatorToPoint(const QVector2D &mercator) const
+QDoubleVector3D QGeoProjection2D::mercatorToPoint(const QDoubleVector2D &mercator) const
 {
-    return QVector3D(mercator.x() * sideLength_, (1.0 - mercator.y()) * sideLength_, baseHeight_);
+    return QDoubleVector3D(mercator.x() * sideLength_, (1.0 - mercator.y()) * sideLength_, baseHeight_);
 }
 
-QVector2D QGeoProjection2D::pointToMercator(const QVector3D &point) const
+QDoubleVector2D QGeoProjection2D::pointToMercator(const QDoubleVector3D &point) const
 {
-    return QVector2D(point.x() / sideLength_, 1.0 - (point.y() / sideLength_));
+    return QDoubleVector2D(point.x() / sideLength_, 1.0 - (point.y() / sideLength_));
 }
 
 QGeoCoordinate QGeoProjection2D::interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress)
@@ -95,8 +95,8 @@ QGeoCoordinate QGeoProjection2D::interpolate(const QGeoCoordinate &start, const 
     s2.setAltitude(0.0);
     QGeoCoordinate e2 = end;
     e2.setAltitude(0.0);
-    QVector3D s = coordToPoint(s2);
-    QVector3D e = coordToPoint(e2);
+    QDoubleVector3D s = coordToPoint(s2);
+    QDoubleVector3D e = coordToPoint(e2);
 
     double x = s.x();
 
@@ -108,7 +108,7 @@ QGeoCoordinate QGeoProjection2D::interpolate(const QGeoCoordinate &start, const 
 
     double y = (1.0 - progress) * s.y() + progress * e.y();
 
-    QGeoCoordinate result = pointToCoord(QVector3D(x, y, 0.0));
+    QGeoCoordinate result = pointToCoord(QDoubleVector3D(x, y, 0.0));
     result.setAltitude((1.0 - progress) * start.altitude() + progress * end.altitude());
     return result;
 }

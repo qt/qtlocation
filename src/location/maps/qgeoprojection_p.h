@@ -57,8 +57,8 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-class QVector2D;
-class QVector3D;
+class QDoubleVector2D;
+class QDoubleVector3D;
 
 class Q_AUTOTEST_EXPORT QGeoProjection
 {
@@ -66,14 +66,14 @@ public:
     QGeoProjection();
     virtual ~QGeoProjection();
 
-    virtual QVector3D coordToPoint(const QGeoCoordinate &coord) const = 0;
-    virtual QGeoCoordinate pointToCoord(const QVector3D &point) const = 0;
+    virtual QDoubleVector3D coordToPoint(const QGeoCoordinate &coord) const = 0;
+    virtual QGeoCoordinate pointToCoord(const QDoubleVector3D &point) const = 0;
 
-    QVector2D coordToMercator(const QGeoCoordinate &coord) const;
-    QGeoCoordinate mercatorToCoord(const QVector2D &mercator) const;
+    QDoubleVector2D coordToMercator(const QGeoCoordinate &coord) const;
+    QGeoCoordinate mercatorToCoord(const QDoubleVector2D &mercator) const;
 
-    virtual QVector3D mercatorToPoint(const QVector2D &mercator) const;
-    virtual QVector2D pointToMercator(const QVector3D &point) const;
+    virtual QDoubleVector3D mercatorToPoint(const QDoubleVector2D &mercator) const;
+    virtual QDoubleVector2D pointToMercator(const QDoubleVector3D &point) const;
 
     virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress) = 0;
 private:

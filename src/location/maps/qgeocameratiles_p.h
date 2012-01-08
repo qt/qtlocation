@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOPROJECTION2D_P_H
-#define QGEOPROJECTION2D_P_H
+#ifndef QGEOCAMERATILES_P_H
+#define QGEOCAMERATILES_P_H
 
 //
 //  W A R N I N G
@@ -52,29 +52,41 @@
 // We mean it.
 //
 
-#include "qgeoprojection_p.h"
+#include <QtLocation/qlocationglobal.h>
+#include <QSharedPointer>
+#include <QSet>
+#include <QSize>
+#include <QSizeF>
 
 QT_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QGeoProjection2D : public QGeoProjection
-{
+class QGeoProjection;
+class QGeoCameraData;
+class QGeoTileSpec;
+class QGeoMapType;
+
+class QGeoCameraTilesPrivate;
+
+class Q_LOCATION_EXPORT QGeoCameraTiles {
 public:
-    QGeoProjection2D(double baseHeight, double sideLength);
-    virtual ~QGeoProjection2D();
+    QGeoCameraTiles(QSharedPointer<QGeoProjection> projection);
+    ~QGeoCameraTiles();
 
-    virtual QDoubleVector3D coordToPoint(const QGeoCoordinate &coord) const;
-    virtual QGeoCoordinate pointToCoord(const QDoubleVector3D &point) const;
+    void setCamera(const QGeoCameraData &camera);
+    void setScreenSize(const QSize &size);
+    void setPluginString(const QString &pluginString);
+    void setMapType(const QGeoMapType &mapType);
 
-    virtual QDoubleVector3D mercatorToPoint(const QDoubleVector2D &mercator) const;
-    virtual QDoubleVector2D pointToMercator(const QDoubleVector3D &point) const;
+    void setTileSize(int tileSize);
+    void setMaximumZoomLevel(int maxZoom);
 
-    virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress);
+    QSet<QGeoTileSpec> tiles() const;
 
 private:
-    double baseHeight_;
-    double sideLength_;
+    QGeoCameraTilesPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoCameraTiles)
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOPROJECTION2D_P_H
+#endif // QGEOCAMERATILES_P_H

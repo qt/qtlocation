@@ -68,14 +68,15 @@ void QGeoFrustum::update(const QGLCamera *camera, double aspectRatio, bool updat
         hf_ = wf_ / aspectRatio;
     }
 
-    QVector3D p = camera->eye();
-    QVector3D d = camera->center() - camera->eye();
+    QDoubleVector3D p = QDoubleVector3D(camera->eye());
+    QDoubleVector3D d = QDoubleVector3D(camera->center()) - p;
     d.normalize();
 
-    QVector3D up = camera->upVector();
+    QDoubleVector3D up = QDoubleVector3D(camera->upVector());
+
     up.normalize();
 
-    QVector3D right = QVector3D::normal(d, up);
+    QDoubleVector3D right = QDoubleVector3D::normal(d, up);
 
     cf_ = p + d * camera->farPlane();
     tlf_ = cf_ + (up * hf_ / 2) - (right * wf_ / 2);
@@ -117,7 +118,7 @@ void QGeoFrustum::update(const QGLCamera *camera, double aspectRatio, bool updat
     planeHash_.insert(QGeoFrustum::Planes(QGeoFrustum::Bottom), pb);
 }
 
-bool QGeoFrustum::contains(const QVector3D &center, double radius) const
+bool QGeoFrustum::contains(const QDoubleVector3D &center, double radius) const
 {
     if (planeHash_.isEmpty())
         return false;

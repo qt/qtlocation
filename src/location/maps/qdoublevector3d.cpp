@@ -1,0 +1,187 @@
+/****************************************************************************
+**
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtGui module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#include "qdoublevector3d_p.h"
+#include "qdoublevector2d_p.h"
+#include <QtCore/qmath.h>
+#include <QtCore/qdebug.h>
+
+QT_BEGIN_NAMESPACE
+
+QDoubleVector3D::QDoubleVector3D(const QDoubleVector2D& vector)
+{
+    xp = vector.xp;
+    yp = vector.yp;
+    zp = 0.0;
+}
+
+QDoubleVector3D::QDoubleVector3D(const QDoubleVector2D& vector, double zpos)
+{
+    xp = vector.xp;
+    yp = vector.yp;
+    zp = zpos;
+}
+
+QDoubleVector3D QDoubleVector3D::normalized() const
+{
+    // Need some extra precision if the length is very small.
+    double len = double(xp) * double(xp) +
+                 double(yp) * double(yp) +
+                 double(zp) * double(zp);
+    if (qFuzzyIsNull(len - 1.0))
+        return *this;
+    else if (!qFuzzyIsNull(len))
+        return *this / qSqrt(len);
+    else
+        return QDoubleVector3D();
+}
+
+void QDoubleVector3D::normalize()
+{
+    // Need some extra precision if the length is very small.
+    double len = double(xp) * double(xp) +
+                 double(yp) * double(yp) +
+                 double(zp) * double(zp);
+    if (qFuzzyIsNull(len - 1.0) || qFuzzyIsNull(len))
+        return;
+
+    len = qSqrt(len);
+
+    xp /= len;
+    yp /= len;
+    zp /= len;
+}
+
+double QDoubleVector3D::dotProduct(const QDoubleVector3D& v1, const QDoubleVector3D& v2)
+{
+    return v1.xp * v2.xp + v1.yp * v2.yp + v1.zp * v2.zp;
+}
+
+QDoubleVector3D QDoubleVector3D::crossProduct(const QDoubleVector3D& v1, const QDoubleVector3D& v2)
+{
+    return QDoubleVector3D(v1.yp * v2.zp - v1.zp * v2.yp,
+                    v1.zp * v2.xp - v1.xp * v2.zp,
+                    v1.xp * v2.yp - v1.yp * v2.xp);
+}
+
+QDoubleVector3D QDoubleVector3D::normal(const QDoubleVector3D& v1, const QDoubleVector3D& v2)
+{
+    return crossProduct(v1, v2).normalized();
+}
+
+QDoubleVector3D QDoubleVector3D::normal
+        (const QDoubleVector3D& v1, const QDoubleVector3D& v2, const QDoubleVector3D& v3)
+{
+    return crossProduct((v2 - v1), (v3 - v1)).normalized();
+}
+
+double QDoubleVector3D::distanceToPlane
+        (const QDoubleVector3D& plane, const QDoubleVector3D& normal) const
+{
+    return dotProduct(*this - plane, normal);
+}
+
+double QDoubleVector3D::distanceToPlane
+    (const QDoubleVector3D& plane1, const QDoubleVector3D& plane2, const QDoubleVector3D& plane3) const
+{
+    QDoubleVector3D n = normal(plane2 - plane1, plane3 - plane1);
+    return dotProduct(*this - plane1, n);
+}
+
+double QDoubleVector3D::distanceToLine
+        (const QDoubleVector3D& point, const QDoubleVector3D& direction) const
+{
+    if (direction.isNull())
+        return (*this - point).length();
+    QDoubleVector3D p = point + dotProduct(*this - point, direction) * direction;
+    return (*this - p).length();
+}
+
+QDoubleVector2D QDoubleVector3D::toVector2D() const
+{
+    return QDoubleVector2D(xp, yp);
+}
+
+double QDoubleVector3D::length() const
+{
+    return qSqrt(xp * xp + yp * yp + zp * zp);
+}
+
+double QDoubleVector3D::lengthSquared() const
+{
+    return xp * xp + yp * yp + zp * zp;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+
+QDebug operator<<(QDebug dbg, const QDoubleVector3D &vector)
+{
+    dbg.nospace() << "QDoubleVector3D("
+        << vector.x() << ", " << vector.y() << ", " << vector.z() << ')';
+    return dbg.space();
+}
+
+#endif
+
+#ifndef QT_NO_DATASTREAM
+
+QDataStream &operator<<(QDataStream &stream, const QDoubleVector3D &vector)
+{
+    stream << double(vector.x()) << double(vector.y())
+           << double(vector.z());
+    return stream;
+}
+
+QDataStream &operator>>(QDataStream &stream, QDoubleVector3D &vector)
+{
+    double x, y, z;
+    stream >> x;
+    stream >> y;
+    stream >> z;
+    vector.setX(double(x));
+    vector.setY(double(y));
+    vector.setZ(double(z));
+    return stream;
+}
+
+#endif // QT_NO_DATASTREAM
+
+QT_END_NAMESPACE

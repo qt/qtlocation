@@ -52,10 +52,11 @@
 // We mean it.
 //
 
-#include <QVector3D>
 #include <QHash>
 
 #include <Qt3D/qplane3d.h>
+
+#include "qdoublevector3d_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -87,30 +88,30 @@ public:
 
     void update(const QGLCamera *camera, double aspectRatio, bool updatePlanes = false);
 
-    bool contains(const QVector3D &center, double radius) const;
+    bool contains(const QDoubleVector3D &center, double radius) const;
 
-    QVector3D topLeftNear() const {
+    QDoubleVector3D topLeftNear() const {
         return tln_;
     }
-    QVector3D topLeftFar() const {
+    QDoubleVector3D topLeftFar() const {
         return tlf_;
     }
-    QVector3D bottomLeftNear() const {
+    QDoubleVector3D bottomLeftNear() const {
         return bln_;
     }
-    QVector3D bottomLeftFar() const {
+    QDoubleVector3D bottomLeftFar() const {
         return blf_;
     }
-    QVector3D topRightNear() const {
+    QDoubleVector3D topRightNear() const {
         return trn_;
     }
-    QVector3D topRightFar() const {
+    QDoubleVector3D topRightFar() const {
         return trf_;
     }
-    QVector3D bottomRightNear() const {
+    QDoubleVector3D bottomRightNear() const {
         return brn_;
     }
-    QVector3D bottomRightFar() const {
+    QDoubleVector3D bottomRightFar() const {
         return brf_;
     }
 
@@ -119,19 +120,19 @@ public:
 private:
     double hf_;
     double wf_;
-    QVector3D cf_;
-    QVector3D tlf_;
-    QVector3D trf_;
-    QVector3D blf_;
-    QVector3D brf_;
+    QDoubleVector3D cf_;
+    QDoubleVector3D tlf_;
+    QDoubleVector3D trf_;
+    QDoubleVector3D blf_;
+    QDoubleVector3D brf_;
 
     double hn_;
     double wn_;
-    QVector3D cn_;
-    QVector3D tln_;
-    QVector3D trn_;
-    QVector3D bln_;
-    QVector3D brn_;
+    QDoubleVector3D cn_;
+    QDoubleVector3D tln_;
+    QDoubleVector3D trn_;
+    QDoubleVector3D bln_;
+    QDoubleVector3D brn_;
 
     QHash<Planes, QPlane3D> planeHash_;
 };

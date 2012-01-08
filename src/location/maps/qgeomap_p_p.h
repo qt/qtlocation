@@ -58,16 +58,15 @@
 #include <QPair>
 #include <QPolygonF>
 #include <QSizeF>
-#include <QVector3D>
 #include <QMatrix4x4>
 #include <QString>
+#include <QSharedPointer>
 
 #include "qgeocameradata_p.h"
 #include "qgeofrustum_p.h"
-
 #include "qgeomaptype.h"
 
-#include <QSharedPointer>
+#include "qdoublevector3d_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -81,63 +80,11 @@ class QGeoMapController;
 class QGeoMapSphere;
 class QGeoProjection;
 
+class QGeoCameraTiles;
+
 class QGLCamera;
 class QGLSceneNode;
 class QGLPainter;
-
-class QGeoMapPrivate;
-
-struct TileMap
-{
-    TileMap(int minY, int maxY);
-
-    int size;
-    int minY;
-    int maxY;
-    QVector<int> minX;
-    QVector<int> maxX;
-
-    void adjust(int tileX, int tileY);
-};
-
-class IntersectGenerator
-{
-public:
-    enum Axis {
-        XAxis,
-        YAxis
-    };
-    IntersectGenerator(const QGeoMapPrivate *mp,
-                        double p1,
-                        double p2,
-                        int t1,
-                        int t2,
-                        Axis axis,
-                        int zoomLevel);
-
-    bool hasNext() const;
-    QPair<double, int> value() const;
-    void next();
-
-private:
-    void generateValue();
-
-protected:
-    const QGeoMapPrivate *mp_;
-    Axis axis_;
-    int zoomLevel_;
-
-    bool hasNext_;
-    QPair<double, int> value_;
-
-    int current_;
-    int step_;
-    int end_;
-
-    int adjust_;
-    double first_;
-    double denom_;
-};
 
 class QGeoMapPrivate
 {
@@ -170,21 +117,16 @@ public:
     void update();
 
     const QGeoMapType activeMapType() const;
-    void setActiveMapType(const QGeoMapType mapType);
+    void setActiveMapType(const QGeoMapType &mapType);
 
     QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-
-    QVector2D pointToTile(const QVector3D &point, int zoom, bool roundUp = false) const;
-    QVector3D tileXIntersectToPoint(int zoomLevel, int x) const;
-    QVector3D tileYIntersectToPoint(int zoomLevel, int y) const;
 
     void tileFetched(const QGeoTileSpec &spec);
 
 private:
     void updateGlCamera(QGLCamera* glCamera);
     void updateFrustum(QGeoFrustum &frustum);
-    QList<QGeoTileSpec> updateVisibleTiles();
 
     int width_;
     int height_;
@@ -202,50 +144,23 @@ private:
 
     QGeoCameraData cameraData_;
     QGeoFrustum frustum_;
-    QList<QGeoTileSpec> visibleTiles_;
+    QSet<QGeoTileSpec> visibleTiles_;
+
+    QGeoCameraTiles *cameraTiles_;
 
     QGeoMapSphere *sphere_;
     QGeoMapType activeMapType_;
 
     // from map2d_p.h
 
-    void tilesFromLine(const QVector3D &p1,
-                       const QVector3D &p2,
-                       const QVector2D &t1,
-                       const QVector2D &t2,
-                       int zoomLevel,
-                       TileMap &map) const;
-
-    QList<QGeoTileSpec> tilesFromPoints(const QVector<QVector3D> &points, bool roundUp) const;
-
-    QPair<QList<QVector3D>,QList<QVector3D> > clipPolygonToMap(const QList<QVector3D> &points) const;
-
-    class LengthSorter {
-    public:
-        QVector3D base;
-        bool operator()(const QVector3D &lhs, const QVector3D &rhs) {
-            return (lhs - base).lengthSquared() < (rhs - base).lengthSquared();
-        }
-    };
-
-    QList<QVector3D> pointsOnLineWithX(const QVector3D &p1, const QVector3D &p2, double x) const;
-    QList<QVector3D> pointsOnLineWithY(const QVector3D &p1, const QVector3D &p2, double y) const;
-    QList<QVector3D> pointsOnLineWithZ(const QVector3D &p1, const QVector3D &p2, double z) const;
-
-    QPair<QList<QVector3D>,QList<QVector3D> > splitPolygonX(const QList<QVector3D> &points, double x) const;
-    QPair<QList<QVector3D>,QList<QVector3D> > splitPolygonY(const QList<QVector3D> &points, double y) const;
-
     int maxZoom_;
     int tileSize_;
 
     double baseHeight_;
     double sideLength_;
-    QPolygonF screenPoly_;
-    QPolygonF screenPolyLeft_;
-    QPolygonF screenPolyRight_;
 
     QSizeF viewSize_;
-    QVector3D eye_;
+    QDoubleVector3D eye_;
     QMatrix4x4 projectionMatrix_;
 };
 

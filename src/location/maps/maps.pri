@@ -23,7 +23,10 @@ PUBLIC_HEADERS += \
                     maps/qgeotilespec.h
 
 PRIVATE_HEADERS += \
+                    maps/qdoublevector2d_p.h \
+                    maps/qdoublevector3d_p.h \
                     maps/qgeocameradata_p.h \
+                    maps/qgeocameratiles_p.h \
                     maps/qgeocodereply_p.h \
                     maps/qgeocodingmanagerengine_p.h \
                     maps/qgeocodingmanager_p.h \
@@ -51,7 +54,10 @@ PRIVATE_HEADERS += \
                     maps/qgeotilespec_p.h
 
 SOURCES += \
+            maps/qdoublevector2d.cpp \
+            maps/qdoublevector3d.cpp \
             maps/qgeocameradata.cpp \
+            maps/qgeocameratiles.cpp \
             maps/qgeocodereply.cpp \
             maps/qgeocodingmanager.cpp \
             maps/qgeocodingmanagerengine.cpp \

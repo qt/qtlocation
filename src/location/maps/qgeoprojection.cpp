@@ -42,12 +42,13 @@
 
 #include "qgeocoordinate.h"
 
-#include <qvector2d.h>
-#include <qvector3d.h>
 #include <QMatrix4x4>
 #include <qnumeric.h>
 
 #include <cmath>
+
+#include "qdoublevector2d_p.h"
+#include "qdoublevector3d_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -55,17 +56,17 @@ QGeoProjection::QGeoProjection() {}
 
 QGeoProjection::~QGeoProjection() {}
 
-QVector3D QGeoProjection::mercatorToPoint(const QVector2D &mercator) const
+QDoubleVector3D QGeoProjection::mercatorToPoint(const QDoubleVector2D &mercator) const
 {
     return this->coordToPoint(mercatorToCoord(mercator));
 }
 
-QVector2D QGeoProjection::pointToMercator(const QVector3D &point) const
+QDoubleVector2D QGeoProjection::pointToMercator(const QDoubleVector3D &point) const
 {
     return coordToMercator(this->pointToCoord(point));
 }
 
-QVector2D QGeoProjection::coordToMercator(const QGeoCoordinate &coord) const
+QDoubleVector2D QGeoProjection::coordToMercator(const QGeoCoordinate &coord) const
 {
     const double pi = M_PI;
 
@@ -76,7 +77,7 @@ QVector2D QGeoProjection::coordToMercator(const QGeoCoordinate &coord) const
     lat = qMax(0.0, lat);
     lat = qMin(1.0, lat);
 
-    return QVector2D(lon, lat);
+    return QDoubleVector2D(lon, lat);
 }
 
 double QGeoProjection::realmod(const double a, const double b)
@@ -85,7 +86,7 @@ double QGeoProjection::realmod(const double a, const double b)
     return a - static_cast<double>(div) * b;
 }
 
-QGeoCoordinate QGeoProjection::mercatorToCoord(const QVector2D &mercator) const
+QGeoCoordinate QGeoProjection::mercatorToCoord(const QDoubleVector2D &mercator) const
 {
     const double pi = M_PI;
 
