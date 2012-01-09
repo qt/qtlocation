@@ -46,39 +46,10 @@ import QtLocation 5.0
 TestCase {
     id: testCase
 
-    name: "Supplier"
+    name: "PlaceRecommendationModel"
 
-    Supplier { id: emptySupplier }
-
-    function test_empty() {
-        compare(emptySupplier.supplierId, "");
-        compare(emptySupplier.name, "");
-        compare(emptySupplier.url, "");
-        verify(emptySupplier.icon);
-    }
-
-    Supplier {
-        id: qmlSupplier
-
-        supplierId: "test-supplier-id"
-        name: "Test Supplier"
-        url: "http://example.com/test-supplier-id"
-
-        icon: Icon {
-            fullUrl: "http://example.com/icons/test-supplier.png"
-        }
-    }
-
-    function test_qmlConstructedSupplier() {
-        compare(qmlSupplier.supplierId, "test-supplier-id");
-        compare(qmlSupplier.name, "Test Supplier");
-        compare(qmlSupplier.url, "http://example.com/test-supplier-id");
-        verify(qmlSupplier.icon);
-        compare(qmlSupplier.icon.fullUrl, "http://example.com/icons/test-supplier.png");
-    }
-
-    Supplier {
-        id: testSupplier
+    PlaceRecommendationModel {
+        id: testModel
     }
 
     Plugin {
@@ -86,46 +57,49 @@ TestCase {
         name: "qmlgeo.test.plugin"
     }
 
-    Plugin {
-        id: invalidPlugin
-    }
-
-    Icon {
-        id: testIcon
+    BoundingCircle {
+        id: testSearchArea
+        center: Coordinate {
+            latitude: 10
+            longitude: 20
+        }
+        radius: 5000
     }
 
     function test_setAndGet_data() {
+        var myNull = null;
         return [
-            { tag: "name", property: "name", signal: "nameChanged", value: "Test Supplier", reset: "" },
-            { tag: "supplierId", property: "supplierId", signal: "supplierIdChanged", value: "test-supplier-id-1", reset: "" },
-            { tag: "url", property: "url", signal: "urlChanged", value: "http://example.com/test-supplier-id-1", reset: "" },
-            { tag: "icon", property: "icon", signal: "iconChanged", value: testIcon }
+            { tag: "plugin", property: "plugin", signal: "pluginChanged", value: testPlugin },
+            { tag: "searchArea", property: "searchArea", signal: "searchAreaChanged", value: testSearchArea },
+            { tag: "offset", property: "offset", signal: "offsetChanged", value: 10, reset: 0 },
+            { tag: "limit", property: "limit", signal: "limitChanged", value: 10, reset: -1 },
+
+            { tag: "placeId", property: "placeId", signal: "placeIdChanged", value: "test-place-id-1", reset: "" },
         ];
     }
 
     function test_setAndGet(data) {
-        console.log("testing: " + data.tag);
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        signalSpy.target = testSupplier;
+        signalSpy.target = testModel;
         signalSpy.signalName = data.signal;
 
         // set property to something new
-        testSupplier[data.property] = data.value;
-        compare(testSupplier[data.property], data.value);
+        testModel[data.property] = data.value;
+        compare(testModel[data.property], data.value);
         compare(signalSpy.count, 1);
 
         // set property to the same value (signal spy should not increase)
-        testSupplier[data.property] = data.value;
-        compare(testSupplier[data.property], data.value);
+        testModel[data.property] = data.value;
+        compare(testModel[data.property], data.value);
         compare(signalSpy.count, 1);
 
         // reset property
         if (data.reset === undefined) {
-            testSupplier[data.property] = null;
-            compare(testSupplier[data.property], null);
+            testModel[data.property] = null;
+            compare(testModel[data.property], null);
         } else {
-            testSupplier[data.property] = data.reset;
-            compare(testSupplier[data.property], data.reset);
+            testModel[data.property] = data.reset;
+            compare(testModel[data.property], data.reset);
         }
         compare(signalSpy.count, 2);
 

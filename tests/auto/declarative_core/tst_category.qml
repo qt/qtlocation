@@ -118,7 +118,6 @@ TestCase {
     }
 
     function test_setAndGet_data() {
-        var myNull = null;
         return [
             { tag: "name", property: "name", signal: "nameChanged", value: "Test Category", reset: "" },
             { tag: "categoryId", property: "categoryId", signal: "categoryIdChanged", value: "test-category-id-1", reset: "" },

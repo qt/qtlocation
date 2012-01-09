@@ -213,8 +213,10 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
     m_plugin = plugin;
 
     // handle plugin name changes -> update categories
-    connect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(connectNotificationSignals()));
-    connect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(update()));
+    if (m_plugin) {
+        connect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(connectNotificationSignals()));
+        connect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(update()));
+    }
 
     connectNotificationSignals();
 

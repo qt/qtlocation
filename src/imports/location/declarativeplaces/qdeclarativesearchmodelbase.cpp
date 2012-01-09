@@ -206,8 +206,10 @@ void QDeclarativeSearchModelBase::componentComplete()
 void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (plugin != m_plugin) {
-        disconnect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(pluginNameChanged()));
-        connect(plugin, SIGNAL(nameChanged(QString)), this, SLOT(pluginNameChanged()));
+        if (m_plugin)
+            disconnect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(pluginNameChanged()));
+        if (plugin)
+            connect(plugin, SIGNAL(nameChanged(QString)), this, SLOT(pluginNameChanged()));
         m_plugin = plugin;
     }
 

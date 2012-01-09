@@ -46,86 +46,51 @@ import QtLocation 5.0
 TestCase {
     id: testCase
 
-    name: "Supplier"
-
-    Supplier { id: emptySupplier }
-
-    function test_empty() {
-        compare(emptySupplier.supplierId, "");
-        compare(emptySupplier.name, "");
-        compare(emptySupplier.url, "");
-        verify(emptySupplier.icon);
-    }
-
-    Supplier {
-        id: qmlSupplier
-
-        supplierId: "test-supplier-id"
-        name: "Test Supplier"
-        url: "http://example.com/test-supplier-id"
-
-        icon: Icon {
-            fullUrl: "http://example.com/icons/test-supplier.png"
-        }
-    }
-
-    function test_qmlConstructedSupplier() {
-        compare(qmlSupplier.supplierId, "test-supplier-id");
-        compare(qmlSupplier.name, "Test Supplier");
-        compare(qmlSupplier.url, "http://example.com/test-supplier-id");
-        verify(qmlSupplier.icon);
-        compare(qmlSupplier.icon.fullUrl, "http://example.com/icons/test-supplier.png");
-    }
-
-    Supplier {
-        id: testSupplier
-    }
+    name: "ReviewModel"
 
     Plugin {
         id: testPlugin
         name: "qmlgeo.test.plugin"
     }
 
-    Plugin {
-        id: invalidPlugin
+    ReviewModel {
+        id: testModel
     }
 
-    Icon {
-        id: testIcon
+    Place {
+        id: testPlace
+        name: "Test Place"
     }
 
     function test_setAndGet_data() {
         return [
-            { tag: "name", property: "name", signal: "nameChanged", value: "Test Supplier", reset: "" },
-            { tag: "supplierId", property: "supplierId", signal: "supplierIdChanged", value: "test-supplier-id-1", reset: "" },
-            { tag: "url", property: "url", signal: "urlChanged", value: "http://example.com/test-supplier-id-1", reset: "" },
-            { tag: "icon", property: "icon", signal: "iconChanged", value: testIcon }
+            { tag: "place", property: "place", signal: "placeChanged", value: testPlace },
+            { tag: "batchSize", property: "batchSize", signal: "batchSizeChanged", value: 10, reset: 1 },
         ];
     }
 
     function test_setAndGet(data) {
-        console.log("testing: " + data.tag);
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        signalSpy.target = testSupplier;
+        signalSpy.target = testModel;
         signalSpy.signalName = data.signal;
 
         // set property to something new
-        testSupplier[data.property] = data.value;
-        compare(testSupplier[data.property], data.value);
+        testModel[data.property] = data.value;
+        compare(testModel[data.property], data.value);
         compare(signalSpy.count, 1);
 
         // set property to the same value (signal spy should not increase)
-        testSupplier[data.property] = data.value;
-        compare(testSupplier[data.property], data.value);
+        testModel[data.property] = data.value;
+        compare(testModel[data.property], data.value);
         compare(signalSpy.count, 1);
 
         // reset property
         if (data.reset === undefined) {
-            testSupplier[data.property] = null;
-            compare(testSupplier[data.property], null);
+            testModel[data.property] = null;
+            compare(testModel[data.property], null);
         } else {
-            testSupplier[data.property] = data.reset;
-            compare(testSupplier[data.property], data.reset);
+            testModel[data.property] = data.reset;
+            compare(testModel[data.property], data.reset);
         }
         compare(signalSpy.count, 2);
 
