@@ -12,7 +12,8 @@ qmlcontentmap.files += \
     content/map/PolygonItem.qml \
     content/map/ImageItem.qml \
     content/map/VideoItem.qml \
-    content/map/3dItem.qml
+    content/map/3dItem.qml \
+    content/map/MiniMap.qml
 OTHER_FILES += $$qmlcontentmap.files
 
 qmlcontentdialogs.files += \

@@ -50,6 +50,7 @@ Item {
     height: parent ? parent.height : 640
     property bool mobileUi: true
     property variant map
+    property variant minimap
     property list<PluginParameter> parameters
 
     Rectangle {
@@ -57,14 +58,6 @@ Item {
         anchors.fill: parent
         color: "lightgrey"
         z:2
-    }
-    TitleBar {
-        id: titleBar; z: mainMenu.z; width: parent.width; height: 40; opacity: 0.9; text: "QML mapviewer example"; visible: !page.mobileUi
-        onClicked: {
-            // FIXME: quitting with 3d item on screen segfaults
-            map.deleteMapItems()
-            Qt.quit()
-        }
     }
 
     //=====================Menu=====================
@@ -74,15 +67,15 @@ Item {
         z: backgroundRect.z + 2
 
         Component.onCompleted: {
-            addItem("Options")
+            addItem("Tools")
             addItem("Map Type")
             addItem("Provider")
         }
 
         onClicked: {
             switch (button) {
-            case "Options": {
-                page.state = "Options"
+            case "Tools": {
+                page.state = "Tools"
                 break;
             }
             case "Map Type": {
@@ -98,7 +91,7 @@ Item {
     }
 
     Menu {
-        id: optionsMenu
+        id: toolsMenu
         z: backgroundRect.z + 2
         y: page.height
         horizontalOrientation: false
@@ -131,6 +124,17 @@ Item {
                 page.state = ""
                 break;
             }
+            case "Minimap": {
+                minimap = Qt.createQmlObject ('import "content/map"; MiniMap{}', map)
+                page.state = ""
+                break;
+            }
+            case "Hide minimap": {
+                if (minimap) minimap.destroy()
+                minimap = null
+                page.state = ""
+                break;
+            }
             }
         }
         function update(){
@@ -140,6 +144,8 @@ Item {
             addItem("Route")
             var item = addItem("Follow me")
             item.text = (function() { return map.followme ? "Stop following" : "Follow me" });
+            item = addItem("Minimap")
+            item.text = (function() { return minimap ? "Hide minimap" : "Minimap" });
         }
     }
 
@@ -536,7 +542,7 @@ Item {
                                            width: page.width;\
                                            height: page.height;\
                                            onMapPressed:{page.state = ""}\
-                                           onFollowmeChanged: {optionsMenu.update()}\
+                                           onFollowmeChanged: {toolsMenu.update()}\
                                            onSupportedMapTypesChanged: {mapTypeMenu.update()}\
                                            onCoordinatesCaptured: {\
                                                messageDialog.state = "Coordinates";\
@@ -625,8 +631,8 @@ Item {
             PropertyChanges { target: messageDialog; opacity: 1 }
         },
         State {
-            name : "Options"
-            PropertyChanges { target: optionsMenu; y: page.height - optionsMenu.height - mainMenu.height }
+            name : "Tools"
+            PropertyChanges { target: toolsMenu; y: page.height - toolsMenu.height - mainMenu.height }
         },
         State {
             name : "Provider"
@@ -677,7 +683,7 @@ Item {
             NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
         },
         Transition {
-            to: "Options"
+            to: "Tools"
             NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
         }
     ]
