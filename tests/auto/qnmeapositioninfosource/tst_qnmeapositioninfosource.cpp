@@ -233,29 +233,27 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
     if (m_mode == QNmeaPositionInfoSource::SimulationMode) {
         // the first sentence primes the simulation
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt).toLatin1());
-        proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addMSecs(50)).toLatin1());
-        proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(1)).toLatin1());
-        proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1());
+        proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addMSecs(10)).toLatin1());
+        proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addMSecs(1100)).toLatin1());
+        proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addMSecs(2200)).toLatin1());
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(9)).toLatin1());
 
         int i = 0;
 
-        for (int j = 0; j < 3; ++j) {
-            i = 0;
-            for (; i < 12; ++i) {
-                QTest::qWait(100);
-                if ((spyUpdate.count() == 1) && (spyTimeout.count() == 0))
-                    break;
-            }
-            QVERIFY((spyUpdate.count() == 1) && (spyTimeout.count() == 0));
-            spyUpdate.clear();
-            for (; i < 10; ++i) {
-                QTest::qWait(100);
-            }
+        QTime t;
+        t.start();
+
+        for (int j = 1; j < 4; ++j) {
+            QTRY_COMPARE(spyUpdate.count(), j);
+            QCOMPARE(spyTimeout.count(), 0);
+            int time = t.elapsed();
+            QVERIFY((time > j*1000 - 300) && (time < j*1000 + 300));
         }
 
+        spyUpdate.clear();
+
         i = 0;
-        for (; i < 72; ++i) {
+        for (; i < 75; ++i) {
             QTest::qWait(100);
             if ((spyUpdate.count() == 0) && (spyTimeout.count() == 1))
                 break;
@@ -263,7 +261,7 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
         QVERIFY((spyUpdate.count() == 0) && (spyTimeout.count() == 1));
         spyTimeout.clear();
 
-        for (; i < 72; ++i) {
+        for (; i < 75; ++i) {
             QTest::qWait(100);
             if ((spyUpdate.count() == 1) && (spyTimeout.count() == 0))
                 break;
@@ -275,37 +273,37 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
         // dt + 900
         QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(1)).toLatin1());
-        QTest::qWait(200);
-        // dt + 1100
+        QTest::qWait(300);
+        // dt + 1200
         QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
         spyUpdate.clear();
 
-        QTest::qWait(800);
+        QTest::qWait(700);
         // dt + 1900
         QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1());
-        QTest::qWait(200);
-        // dt + 2100
+        QTest::qWait(300);
+        // dt + 2200
         QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
         spyUpdate.clear();
 
-        QTest::qWait(800);
+        QTest::qWait(700);
         // dt + 2900
         QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(3)).toLatin1());
-        QTest::qWait(200);
-        // dt + 3100
+        QTest::qWait(300);
+        // dt + 3200
         QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
         spyUpdate.clear();
 
-        QTest::qWait(3800);
+        QTest::qWait(3700);
         // dt + 6900
         QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 1);
         spyTimeout.clear();
 
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(7)).toLatin1());
-        QTest::qWait(200);
-        // dt + 7100
+        QTest::qWait(300);
+        // dt + 7200
         QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
         spyUpdate.clear();
     }
