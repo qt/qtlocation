@@ -165,7 +165,7 @@ void QGeoMappingManagerEngine::updateTileRequests(const QSet<QGeoTileSpec> &tile
 
     cancelTileRequests(tilesRemoved);
 
-    d->queue_ = tilesAdded.toList();
+    d->queue_ += tilesAdded.toList();
 
     if (!d->queue_.empty())
         d->timer_->start();

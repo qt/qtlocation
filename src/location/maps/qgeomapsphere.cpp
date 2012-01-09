@@ -154,6 +154,8 @@ void QGeoMapSphere::update(const QList<QGeoTileSpec> &tiles)
 
     req.resize(reqSize);
 
+    requested_ -= cancelTiles;
+
     updateMutex.lock();
 
     QHash<QGeoTileSpec, QGLSceneNode*>::const_iterator j = built_.constBegin();
