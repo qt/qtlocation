@@ -354,52 +354,30 @@ Item {
     }
 
     function createMap(placesPlugin) {
-        if (placesPlugin.supportsMapping) {
-            if (map)
-                map.destroy();
-            map = Qt.createQmlObject('import QtLocation 5.0; import "content/places"; MapComponent { z : backgroundRect.z + 1; width: page.width; height: page.height; onMapPressed: { page.state = "" }}', page);
-            map.plugin = placesPlugin;
+        var mapPlugin;
+        if (placesPlugin.supported & Plugin.MappingFeature) {
+            mapPlugin = placesPlugin;
         } else {
-            var plugins = getPlugins();
-            for (var i = 0; i < plugins.length; ++i) {
-                var tempPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { name: "' + plugins[i] + '"}', page);
-                tempPlugin.parameters = pluginParametersFromMap(pluginParameters);
-                if (tempPlugin.supportsMapping) {
-                    if (map)
-                        map.destroy();
-                    map = Qt.createQmlObject('import QtLocation 5.0; import "content/places"; MapComponent { z : backgroundRect.z + 1; width: page.width; height: page.height; onMapPressed: { page.state = "" }}', page);
-                    map.plugin = tempPlugin;
-                    break;
-                }
-            }
-        }
-    }
-
-    function getPlugins() {
-        var plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {}', page)
-        var myArray = new Array()
-        for (var i = 0; i<plugin.availableServiceProviders.length; i++){
-            var tempPlugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
-            //note this will allocate all the plugin managers and resources
-            if (tempPlugin.supportsMapping)
-                myArray.push(tempPlugin.name)
+            mapPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { required: Plugin.MappingFeature }', page);
         }
 
-        return myArray
+        if (map)
+            map.destroy();
+        map = Qt.createQmlObject('import QtLocation 5.0; import "content/places"; MapComponent { z : backgroundRect.z + 1; width: page.width; height: page.height; onMapPressed: { page.state = "" }}', page);
+        map.plugin = mapPlugin;
     }
 
     function getPlacesPlugins() {
-        var plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {}', page)
-        var tempPlugin
-        var myArray = new Array()
-        for (var i = 0; i<plugin.availableServiceProviders.length; i++){
-            tempPlugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
+        var plugin = Qt.createQmlObject('import QtLocation 5.0; Plugin {}', page);
+        var myArray = new Array;
+        for (var i = 0; i < plugin.availableServiceProviders.length; i++) {
+            var tempPlugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
             //note this will allocate all the plugin managers and resources
-            if (tempPlugin.supportsPlaces)
+            if (tempPlugin.supported & Plugin.AnyPlacesFeature)
                 myArray.push(tempPlugin.name)
         }
 
-        return myArray
+        return myArray;
     }
 
     function pluginParametersFromMap(pluginParameters) {
