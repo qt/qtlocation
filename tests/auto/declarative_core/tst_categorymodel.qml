@@ -55,6 +55,12 @@ TestCase {
     Plugin {
         id: testPlugin
         name: "qmlgeo.test.plugin"
+        parameters: [
+            PluginParameter {
+                name: "initializeCategories"
+                value: true
+            }
+        ]
     }
 
     function test_setAndGet_data() {
@@ -90,5 +96,131 @@ TestCase {
         compare(signalSpy.count, 2);
 
         signalSpy.destroy();
+    }
+
+    VisualDataModel {
+        id: categoryModel
+
+        model: CategoryModel { }
+        delegate: Item { }
+    }
+
+    function test_hierarchicalModel() {
+        var modelSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        modelSpy.target = categoryModel.model;
+        modelSpy.signalName = "statusChanged";
+
+        compare(categoryModel.model.status, CategoryModel.Ready);
+        compare(categoryModel.count, 0);
+
+
+        // set the plugin
+        categoryModel.model.plugin = testPlugin;
+
+        compare(modelSpy.count, 1);
+        compare(categoryModel.model.status, CategoryModel.Updating);
+
+        wait(0);
+
+        compare(modelSpy.count, 2);
+        compare(categoryModel.model.status, CategoryModel.Ready);
+
+        var expectedNames = [ "Accommodation", "Park" ];
+
+        compare(categoryModel.count, expectedNames.length);
+
+        for (var i = 0; i < expectedNames.length; ++i) {
+            var category = categoryModel.model.data(categoryModel.modelIndex(i),
+                                                    CategoryModel.CategoryRole);
+            compare(category.name, expectedNames[i]);
+        }
+
+
+        // check that "Accommodation" has children
+        categoryModel.rootIndex = categoryModel.modelIndex(0);
+
+        expectedNames = [ "Camping", "Hotel", "Motel" ];
+
+        compare(categoryModel.count, expectedNames.length);
+
+        for (i = 0; i < expectedNames.length; ++i) {
+            category = categoryModel.model.data(categoryModel.modelIndex(i),
+                                                    CategoryModel.CategoryRole);
+            compare(category.name, expectedNames[i]);
+        }
+
+        categoryModel.rootIndex = categoryModel.parentModelIndex();
+
+        compare(categoryModel.count, 2);
+
+
+        // check that "Park" has no children
+        categoryModel.rootIndex = categoryModel.modelIndex(1);
+
+        compare(categoryModel.count, 0);
+
+        categoryModel.rootIndex = categoryModel.parentModelIndex();
+
+
+        // clean up
+        categoryModel.model.plugin = null;
+
+
+        // check that model is empty
+        compare(categoryModel.count, 0);
+    }
+
+    function test_flatModel() {
+        var modelSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        modelSpy.target = categoryModel.model;
+        modelSpy.signalName = "statusChanged";
+
+        compare(categoryModel.model.status, CategoryModel.Ready);
+        compare(categoryModel.count, 0);
+
+
+        // set the plugin
+        categoryModel.model.hierarchical = false;
+        categoryModel.model.plugin = testPlugin;
+
+        compare(modelSpy.count, 1);
+        compare(categoryModel.model.status, CategoryModel.Updating);
+
+        wait(0);
+
+        compare(modelSpy.count, 2);
+        compare(categoryModel.model.status, CategoryModel.Ready);
+
+        var expectedNames = [ "Accommodation", "Camping", "Hotel", "Motel", "Park" ];
+
+        compare(categoryModel.count, expectedNames.length);
+
+        for (var i = 0; i < expectedNames.length; ++i) {
+            var category = categoryModel.model.data(categoryModel.modelIndex(i),
+                                                    CategoryModel.CategoryRole);
+            var name = categoryModel.model.data(categoryModel.modelIndex(i), 0);    // DisplayRole
+
+            compare(name, expectedNames[i]);
+            compare(category.name, expectedNames[i]);
+        }
+
+
+        // check that no category has children
+        for (i = 0; i < categoryModel.count; ++i) {
+            categoryModel.rootIndex = categoryModel.modelIndex(i);
+
+            compare(categoryModel.count, 0);
+
+            categoryModel.rootIndex = categoryModel.parentModelIndex();
+        }
+
+
+        // clean up
+        categoryModel.model.hierarchical = true;
+        categoryModel.model.plugin = null;
+
+
+        // check that model is empty
+        compare(categoryModel.count, 0);
     }
 }

@@ -123,6 +123,38 @@ public:
         : QPlaceManagerEngine(parameters)
     {
         m_locales << QLocale();
+
+        if (parameters.value(QLatin1String("initializeCategories"), false).toBool()) {
+            QPlaceCategory accommodation;
+            accommodation.setName(QLatin1String("Accommodation"));
+            accommodation.setCategoryId(QUuid::createUuid().toString());
+            m_categories.insert(accommodation.categoryId(), accommodation);
+            m_childCategories[QString()].append(accommodation.categoryId());
+
+            QPlaceCategory hotel;
+            hotel.setName(QLatin1String("Hotel"));
+            hotel.setCategoryId(QUuid::createUuid().toString());
+            m_categories.insert(hotel.categoryId(), hotel);
+            m_childCategories[accommodation.categoryId()].append(hotel.categoryId());
+
+            QPlaceCategory motel;
+            motel.setName(QLatin1String("Motel"));
+            motel.setCategoryId(QUuid::createUuid().toString());
+            m_categories.insert(motel.categoryId(), motel);
+            m_childCategories[accommodation.categoryId()].append(motel.categoryId());
+
+            QPlaceCategory camping;
+            camping.setName(QLatin1String("Camping"));
+            camping.setCategoryId(QUuid::createUuid().toString());
+            m_categories.insert(camping.categoryId(), camping);
+            m_childCategories[accommodation.categoryId()].append(camping.categoryId());
+
+            QPlaceCategory park;
+            park.setName(QLatin1String("Park"));
+            park.setCategoryId(QUuid::createUuid().toString());
+            m_categories.insert(park.categoryId(), park);
+            m_childCategories[QString()].append(park.categoryId());
+        }
     }
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId)
