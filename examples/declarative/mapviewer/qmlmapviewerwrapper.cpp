@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     const QString mainQmlApp = QLatin1String("qrc:///mapviewer.qml");
     QQuickView view;
 
-    view.engine()->addImportPath(QLatin1String(":/"));
+    view.engine()->addImportPath(QLatin1String(":/imports"));
     view.rootContext()->setContextProperty("exampleDir", application.applicationDirPath());
 
     view.setSource(QUrl(mainQmlApp));

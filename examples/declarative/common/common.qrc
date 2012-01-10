@@ -1,20 +1,20 @@
 <RCC>
     <qresource prefix="/">
-        <file>QtLocation/examples/qmldir</file>
-        <file>QtLocation/examples/components/style/ButtonStyle.qml</file>
-        <file>QtLocation/examples/components/style/HMenuItemStyle.qml</file>
-        <file>QtLocation/examples/components/style/VMenuItemStyle.qml</file>
-        <file>QtLocation/examples/components/BusyIndicator.qml</file>
-        <file>QtLocation/examples/components/Button.qml</file>
-        <file>QtLocation/examples/components/Checkbox.qml</file>
-        <file>QtLocation/examples/components/Fader.qml</file>
-        <file>QtLocation/examples/components/IconButton.qml</file>
-        <file>QtLocation/examples/components/Menu.qml</file>
-        <file>QtLocation/examples/components/Optionbutton.qml</file>
-        <file>QtLocation/examples/components/Slider.qml</file>
-        <file>QtLocation/examples/components/TextWithLabel.qml</file>
-        <file>QtLocation/examples/components/TitleBar.qml</file>
-        <file>QtLocation/examples/dialogs/Dialog.qml</file>
+        <file>imports/QtLocation/examples/qmldir</file>
+        <file>imports/QtLocation/examples/components/style/ButtonStyle.qml</file>
+        <file>imports/QtLocation/examples/components/style/HMenuItemStyle.qml</file>
+        <file>imports/QtLocation/examples/components/style/VMenuItemStyle.qml</file>
+        <file>imports/QtLocation/examples/components/BusyIndicator.qml</file>
+        <file>imports/QtLocation/examples/components/Button.qml</file>
+        <file>imports/QtLocation/examples/components/Checkbox.qml</file>
+        <file>imports/QtLocation/examples/components/Fader.qml</file>
+        <file>imports/QtLocation/examples/components/IconButton.qml</file>
+        <file>imports/QtLocation/examples/components/Menu.qml</file>
+        <file>imports/QtLocation/examples/components/Optionbutton.qml</file>
+        <file>imports/QtLocation/examples/components/Slider.qml</file>
+        <file>imports/QtLocation/examples/components/TextWithLabel.qml</file>
+        <file>imports/QtLocation/examples/components/TitleBar.qml</file>
+        <file>imports/QtLocation/examples/dialogs/Dialog.qml</file>
         <file>resources/busy.png</file>
         <file>resources/button_hovered.png</file>
         <file>resources/button_pressed.png</file>

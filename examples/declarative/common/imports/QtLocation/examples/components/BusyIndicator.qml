@@ -37,28 +37,20 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 import QtQuick 2.0
 
-Item {
-    id: checkbox
-    property bool selected: false
-    property alias text: checkboxText.text
-    height: checkboxText.height
+Image {
+    id: root
 
-    Row {
-        id: checkboxRow
-        spacing: 3
-        anchors.fill: parent
-        Image {
-            source: checkbox.selected ? "../../../resources/checkbox_selected.png" : "../../../resources/checkbox.png"
-        }
-        Text {
-            id: checkboxText
-            font.pixelSize: 14
-        }
-    }
-    MouseArea {
-        anchors.fill: parent
-        onClicked: { checkbox.selected = !checkbox.selected }
+    property bool running: false
+
+    source: "../../../../resources/busy.png"
+
+    RotationAnimation on rotation {
+        loops: Animation.Infinite
+        from: 0
+        to: 360
+        duration: 500
     }
 }

@@ -39,6 +39,30 @@
 ****************************************************************************/
 import QtQuick 2.0
 
-HMenuItemStyle {
-    background: "../../../resources/vmenuItem.sci"
+Item {
+    id: optionbutton
+    property bool selected: false
+    property alias text: optionbuttonText.text
+    height: optionbuttonText.height
+    signal clicked
+
+    Row {
+        id: optionbuttonRow
+        spacing: 3
+        anchors.fill: parent
+        Image {
+            source: optionbutton.selected ? "../../../../resources/option_button_selected.png" : "../../../../resources/option_button.png"
+        }
+        Text {
+            id: optionbuttonText
+            font.pixelSize: 14
+        }
+    }
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            optionbutton.selected = true
+            optionbutton.clicked()
+        }
+    }
 }

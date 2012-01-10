@@ -39,30 +39,11 @@
 ****************************************************************************/
 import QtQuick 2.0
 
-Item {
-    id: optionbutton
-    property bool selected: false
-    property alias text: optionbuttonText.text
-    height: optionbuttonText.height
-    signal clicked
-
-    Row {
-        id: optionbuttonRow
-        spacing: 3
-        anchors.fill: parent
-        Image {
-            source: optionbutton.selected ? "../../../resources/option_button_selected.png" : "../../../resources/option_button.png"
-        }
-        Text {
-            id: optionbuttonText
-            font.pixelSize: 14
-        }
-    }
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            optionbutton.selected = true
-            optionbutton.clicked()
-        }
-    }
+QtObject {
+    id: buttonStyle
+    property string background: "../../../../resources/button.sci"
+    property string pressedBackground: "../../../../resources/button_pressed.png"
+    property string disabledBackground: "../../../../resources/button_hovered.png"
+    property int heightAdjustment: 0
+    property int yAdjustment: 0
 }

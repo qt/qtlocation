@@ -37,13 +37,51 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 import QtQuick 2.0
 
-QtObject {
-    id: buttonStyle
-    property string background: "../../../resources/button.sci"
-    property string pressedBackground: "../../../resources/button_pressed.png"
-    property string disabledBackground: "../../../resources/button_hovered.png"
-    property int heightAdjustment: 0
-    property int yAdjustment: 0
+Item {
+    id: titleBar
+
+    property alias text:titleText.text
+    property alias hoverEnabled: mouseRegion.hoverEnabled
+    property alias font: titleText.font
+    signal clicked
+
+    BorderImage { source: "../../../../resources/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
+
+    Image {
+        id: quitButton
+        anchors.right: parent.right; anchors.rightMargin: 10
+        anchors.verticalCenter: parent.verticalCenter
+        source: "../../../../resources/quit.png"
+        MouseArea {
+            id: mouseRegion
+            hoverEnabled: true
+            anchors.fill: parent
+            onClicked: { titleBar.clicked(); }
+        }
+  }
+
+    Text {
+        id: titleText
+        anchors {
+            left: parent.left; leftMargin: 10; verticalCenter: parent.verticalCenter
+        }
+        elide: Text.ElideLeft
+        font.bold: true;  font.pixelSize: 14; color: "white"; style: Text.Raised; styleColor: "dimgrey"
+    }
+
+    states: [
+        State {
+            name: "Pressed"
+            when: mouseRegion.pressed
+            PropertyChanges { target: quitButton; source: "../../../../resources/quit_pressed.png" }
+        },
+        State {
+            name: "Hover"
+            when: mouseRegion.containsMouse
+            PropertyChanges { target: quitButton; source: "../../../../resources/quit_hovered.png" }
+        }
+    ]
 }

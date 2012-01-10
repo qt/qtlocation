@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     const QString mainQmlApp = QLatin1String("qrc:///places.qml");
     QQuickView view;
 
-    view.engine()->addImportPath(QLatin1String(":/"));
+    view.engine()->addImportPath(QLatin1String(":/imports"));
 
     view.rootContext()->setContextProperty(QLatin1String("pluginParameters"), parameters);
 
