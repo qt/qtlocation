@@ -29,10 +29,19 @@
     \example weatherinfo
     \title Weather Info Example
 
-    \brief The Weather Info example shows the use of the C++ Location API in combination
-    with a weather service and a QML UI to display the data.
+    \brief The Weather Info example shows how to get the user's geographic position
+           from C++ code, look up information over HTTP, and use it in a QML UI.
 
     \ingroup qtlocation-examples
+
+    Key QtLocation classes used in this example:
+
+    \list
+    \o \l{QGeoPositionInfo}
+    \o \l{QGeoPositionInfoSource}
+    \endlist
+
+    \image ../images/example-weatherinfo.png
 
     The key part of this example is the application's data model, contained
     in the WeatherData and AppModel classes. WeatherData represents the weather

@@ -60,6 +60,8 @@
         \endlist
     \endlist
 
+    \image ../images/example-mapviewer.png
+
     \section2 Displaying a map
 
     Drawing a map on-screen is accomplished using the Map element, as shown
