@@ -562,7 +562,10 @@ Item {
             plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"}', page)
         var wanted = (Plugin.MappingFeature | Plugin.GeocodingFeature | Plugin.ReverseGeocodingFeature | Plugin.RoutingFeature)
         if ((plugin.supported & wanted) == wanted) {
-            if (map) map.destroy()
+            if (map) {
+                map.destroy()
+                minimap = null
+            }
             map = Qt.createQmlObject ('import QtLocation 5.0;\
                                        import "content/map";\
                                        MapComponent{\

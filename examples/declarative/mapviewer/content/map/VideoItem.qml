@@ -65,11 +65,16 @@ MapQuickItem {  //to be used inside MapComponent only
         height: 144;
         MediaPlayer {
             id: player
-            source: "file:///" + exampleDir + "/LocationDemo_4.mp4"
+            source: Qt.resolvedUrl("../../demo.mp4")
             playing: true
 
             onStopped: {
                 player.play()
+            }
+            onError: {
+                if (MediaPlayer.NoError != error) {
+                    console.log(errorString)
+                }
             }
         }
         VideoOutput {

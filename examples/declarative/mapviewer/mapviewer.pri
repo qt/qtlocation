@@ -1,6 +1,7 @@
 
 qmlcontent.files += \
-    mapviewer.qml
+    mapviewer.qml \
+    demo.mp4
 OTHER_FILES += $$qmlcontent.files
 
 qmlcontentmap.files += \

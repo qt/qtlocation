@@ -14,5 +14,6 @@
         <file>content/map/VideoItem.qml</file>
         <file>content/map/3dItem.qml</file>
         <file>content/map/MiniMap.qml</file>
+        <file>demo.mp4</file>
     </qresource>
 </RCC>
