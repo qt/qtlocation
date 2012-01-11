@@ -27,10 +27,11 @@
 
 /*!
     \example declarative/places
-    \title QML Places Example
+    \title Places (QML)
+    \ingroup qtlocation-examples
 
-    The Places example demonstrates how to use the QtLocation Places API to search for places and
-    access related content.
+    \brief The Places example demonstrates how to search for Places and access
+           related content.
 
     \image qml-places.png
 

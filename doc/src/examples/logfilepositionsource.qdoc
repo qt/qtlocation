@@ -27,9 +27,11 @@
 
 /*!
     \example logfilepositionsource
-    \title Log File Position Source Example
+    \title Log File Position Source (C++)
+    \ingroup qtlocation-examples
 
-    This example demonstrates the replaying of position data from a log file.
+    \brief The Logfile Position Source shows how to create and work with a
+           custom NMEA position source, for platforms without GPS.
 
     The data is read from a file which has positional data in NMEA format. The resulting
     time and position information is then displayed to the screen as simple text in

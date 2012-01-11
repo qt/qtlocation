@@ -27,9 +27,11 @@
 
 /*!
     \example declarative/flickr
-    \title Declarative Flickr
+    \title Flickr (QML)
+    \ingroup qtlocation-examples
 
-    This example illustrates the positioning elements of declarative location.
+    \brief The Flickr example shows how to use the user's current location to
+           fetch local content from a web service.
 
     \image  qml-flickr-1.jpg
 
