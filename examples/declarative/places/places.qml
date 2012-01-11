@@ -49,6 +49,8 @@ Item {
     height: parent ? parent.height : 640
     property bool mobileUi: true
     property variant map
+    property variant searchRegion : startLocation
+    property variant searchRegionItem
 
     onMapChanged: editPlaceDialog.prepareDialog()
 
@@ -68,8 +70,7 @@ Item {
         Component.onCompleted: {
             addItem("Provider");
             addItem("New");
-            addItem("Goto");
-            addItem("Options");
+            addItem("Search");
         }
 
         onClicked: page.state = page.state == "" ? button : "";
@@ -133,6 +134,22 @@ Item {
         }
     }
 
+    Menu {
+        id: searchMenu
+        z: backgroundRect.z + 2
+        y: page.height
+        horizontalOrientation: false
+
+        Component.onCompleted: {
+            addItem("Search Center");
+            addItem("Search Bounding Box");
+            addItem("Search Bounding Circle");
+            addItem("Search Options");
+        }
+
+        onClicked: page.state = button
+    }
+
     //=====================Dialogs=====================
     PlaceDialog {
         id: editPlaceDialog
@@ -189,8 +206,10 @@ Item {
     }
 
     Dialog {
-        id: gotoDialog
+        id: searchCenterDialog
         z: backgroundRect.z + 3
+
+        title: "Search center"
 
         Behavior on opacity { NumberAnimation { duration: 500 } }
 
@@ -205,8 +224,105 @@ Item {
 
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
-            searchRegion.center.latitude = dialogModel.get(0).inputText;
-            searchRegion.center.longitude = dialogModel.get(1).inputText;
+            startLocation.center.latitude = dialogModel.get(0).inputText;
+            startLocation.center.longitude = dialogModel.get(1).inputText;
+            searchRegion = startLocation;
+
+            if (searchRegionItem) {
+                map.removeMapItem(searchRegionItem);
+                searchRegionItem.destroy();
+            }
+
+            page.state = "";
+        }
+    }
+
+    Dialog {
+        id: searchBoxDialog
+        z: backgroundRect.z + 3
+
+        title: "Search Bounding Box"
+
+        Behavior on opacity { NumberAnimation { duration: 500 } }
+
+        Component.onCompleted: prepareDialog()
+
+        function prepareDialog() {
+            setModel([
+                ["Latitude", searchRegion.center ? String(searchRegion.center.latitude) : ""],
+                ["Longitude", searchRegion.center ? String(searchRegion.center.longitude) : ""],
+                ["Width", searchRegion.width ? String(searchRegion.width) : "" ],
+                ["Height", searchRegion.height ? String(searchRegion.height) : "" ]
+            ]);
+        }
+
+        onCancelButtonClicked: page.state = ""
+        onGoButtonClicked: {
+            var newRegion = Qt.createQmlObject('import QtLocation 5.0; BoundingBox {}', page, "BoundingCircle");
+            newRegion.center.latitude = dialogModel.get(0).inputText;
+            newRegion.center.longitude = dialogModel.get(1).inputText;
+            newRegion.width = dialogModel.get(2).inputText;
+            newRegion.height = dialogModel.get(3).inputText;
+
+            startLocation.center.latitude = dialogModel.get(0).inputText;
+            startLocation.center.longitude = dialogModel.get(1).inputText;
+
+            searchRegion = newRegion;
+
+            if (searchRegionItem) {
+                map.removeMapItem(searchRegionItem);
+                searchRegionItem.destroy();
+            }
+
+            searchRegionItem = Qt.createQmlObject('import QtLocation 5.0; MapRectangle { color: "red"; opacity: 0.4 }', page, "MapRectangle");
+            searchRegionItem.topLeft = newRegion.topLeft;
+            searchRegionItem.bottomRight = newRegion.bottomRight;
+            map.addMapItem(searchRegionItem);
+
+            page.state = "";
+        }
+    }
+
+    Dialog {
+        id: searchCircleDialog
+        z: backgroundRect.z + 3
+
+        title: "Search Bounding Circle"
+
+        Behavior on opacity { NumberAnimation { duration: 500 } }
+
+        Component.onCompleted: prepareDialog()
+
+        function prepareDialog() {
+            setModel([
+                ["Latitude", searchRegion.center ? String(searchRegion.center.latitude) : ""],
+                ["Longitude", searchRegion.center ? String(searchRegion.center.longitude) : ""],
+                ["Radius", searchRegion.radius ? String(searchRegion.radius) : "" ]
+            ]);
+        }
+
+        onCancelButtonClicked: page.state = ""
+        onGoButtonClicked: {
+            var newRegion = Qt.createQmlObject('import QtLocation 5.0; BoundingCircle {}', page, "BoundingCircle");
+            newRegion.center.latitude = dialogModel.get(0).inputText;
+            newRegion.center.longitude = dialogModel.get(1).inputText;
+            newRegion.radius = dialogModel.get(2).inputText;
+
+            startLocation.center.latitude = dialogModel.get(0).inputText;
+            startLocation.center.longitude = dialogModel.get(1).inputText;
+
+            searchRegion = newRegion;
+
+            if (searchRegionItem) {
+                map.removeMapItem(searchRegionItem);
+                searchRegionItem.destroy();
+            }
+
+            searchRegionItem = Qt.createQmlObject('import QtLocation 5.0; MapCircle { color: "red"; opacity: 0.4 }', page, "MapRectangle");
+            searchRegionItem.center = newRegion.center;
+            searchRegionItem.radius = newRegion.radius;
+            map.addMapItem(searchRegionItem);
+
             page.state = "";
         }
     }
@@ -214,6 +330,8 @@ Item {
     OptionsDialog {
         id: optionsDialog
         z: backgroundRect.z + 3
+
+        title: "Search Options"
 
         Behavior on opacity { NumberAnimation { duration: 500 } }
 
@@ -245,11 +363,11 @@ Item {
     }
 
     BoundingCircle {
-        id: searchRegion
+        id: startLocation
     }
 
     Binding {
-        target: searchRegion
+        target: startLocation
         property: "center"
         value: map ? map.center : null
     }
@@ -414,9 +532,8 @@ Item {
             PropertyChanges { target: newMenu; y: page.height - newMenu.height - mainMenu.height }
         },
         State {
-            name: "Goto"
-            PropertyChanges { target: gotoDialog; opacity: 1 }
-            StateChangeScript { script: gotoDialog.prepareDialog() }
+            name: "Search"
+            PropertyChanges { target: searchMenu; y: page.height - searchMenu.height - mainMenu.height }
         },
         State {
             name: "NewPlace"
@@ -435,7 +552,22 @@ Item {
             PropertyChanges { target: editCategoryDialog; opacity: 1 }
         },
         State {
-            name: "Options"
+            name: "Search Center"
+            PropertyChanges { target: searchCenterDialog; opacity: 1 }
+            StateChangeScript { script: searchCenterDialog.prepareDialog() }
+        },
+        State {
+            name: "Search Bounding Box"
+            PropertyChanges { target: searchBoxDialog; opacity: 1 }
+            StateChangeScript { script: searchBoxDialog.prepareDialog() }
+        },
+        State {
+            name: "Search Bounding Circle"
+            PropertyChanges { target: searchCircleDialog; opacity: 1 }
+            StateChangeScript { script: searchCircleDialog.prepareDialog() }
+        },
+        State {
+            name: "Search Options"
             PropertyChanges { target: optionsDialog; opacity: 1 }
             StateChangeScript { script: optionsDialog.prepareDialog() }
         }
@@ -453,6 +585,10 @@ Item {
         },
         Transition {
             to: "New"
+            NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
+        },
+        Transition {
+            to: "Search"
             NumberAnimation { properties: "y" ; duration: 300; easing.type: Easing.Linear }
         }
     ]
