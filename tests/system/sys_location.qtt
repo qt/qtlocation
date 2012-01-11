@@ -278,7 +278,7 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Geocode menu item | |
         | Select Clear All button | |
         | Fill in " + street + " in Street filed | |
@@ -315,14 +315,14 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url1 + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Geocode menu item | |
         | Fill in " + city + " in City field | |
         | Fill in " + country + " in Country field | |
         | Select Go! button | |
         | Wait for message appears on the screen | Verify that several locations were found, number of locations is the same as in the open web page |
         | Open " + url2 + " url in a desktop browser | |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Geocode menu item | |
         | Fill in " + state + " in State field | |
         | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
@@ -354,7 +354,7 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Geocode menu item | |
         | Select Clear All button | |
         | Fill in " + postcode + " in Post Code field | |
@@ -391,7 +391,7 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Reverse Geocode | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
@@ -427,7 +427,7 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Route menu item | |
         | Fill in " + lat1 + " in From Latitude field | |
         | Fill in " + long1 + " in From Longitude filed | |
@@ -464,7 +464,7 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Route menu item | |
         | Select second option group to enter start and end points as address | |
         | Fill in " + city1 + " in From City field | |
@@ -502,7 +502,7 @@ testcase = {
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
         | Long press on the map | |
-        | Select Set Marker menu item | |
+        | Select Add Marker menu item | |
         | Create another Marker via Long Press | |
         | Create third Marker | |
         | Long Press on the first marker | |
@@ -553,7 +553,7 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url1 + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Route menu item | |
         | Selec first option group | |
         | Fill in " + lat1 + " in From Latitude field | |
@@ -563,7 +563,7 @@ testcase = {
         | Select Go! button | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
         | Open " + url2 + " url in a desktop browser | |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Route menu item | |
         | Select *Pedestrian* option button | |
         | Select Go! button | |
@@ -598,7 +598,7 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url1 + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Route menu item | |
         | Selec first option group | |
         | Fill in " + lat1 + " in From Latitude field | |
@@ -608,7 +608,7 @@ testcase = {
         | Select *Avoid toll roads* checkbox | |
         | Select Go! button | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Route menu item | |
         | Select *Avoid highways* checkbox | |
         | Select Go! button | |
@@ -643,7 +643,7 @@ testcase = {
         | *Step* | *Verification* |
         | Open " + url1 + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Route menu item | |
         | Selec first option group | |
         | Fill in " + lat1 + " in From Latitude field | |
@@ -653,7 +653,7 @@ testcase = {
         | Select Go! button | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
         | Open " + url2 + " url in a desktop browser | |
-        | Select Options button | |
+        | Select Tools button | |
         | Select Route menu item | |
         | Select *Shortest* option button | |
         | Select Go! button | |
@@ -685,7 +685,7 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
         | Long press on the map | |
-        | Select Set Marker menu item | |
+        | Select Add Marker menu item | |
         | Create another Marker via Long Press | |
         | Long Press on the first marker | |
         | Select Move To menu item | |
@@ -728,7 +728,7 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Zoom out map to about level 3 | |
         | Long press on the map | |
-        | Select Set Marker menu item | |
+        | Select Add Marker menu item | |
         | Create another Marker via Long Press | |
         | Long Press on the first marker | |
         | Select Move To menu item | |
@@ -743,15 +743,16 @@ testcase = {
         | Pan map to the left so the map center crosses dateline | Verify that there are 2 markers on the screen |
         | Pan map to the right so the map center crosses dateline | Verify that there are 2 markers on the screen |
         | Zoom out hte map to zoom level 0 | |
-        | Pan map to make round-the-world trip | Verify that map looks and behaves as flattened cylinder. Verify that all markers visible and drawn correctly. |"
+        | Pan map to make round-the-world trip | Verify that map looks and behaves as unfolded cylinder. Verify that all markers visible and drawn correctly. |
+        | Pan map from North pole to the South pole | Verify that all markers visible and drawn correctly. |"
         ));
     },
 
     qml_geocoding_and_locale_data: {
-        greek_place:["38", "24", "el"]
+        greek_place:["38", "24", "el", "Greek"]
     },
 
-    qml_geocoding_and_locale: function(latitude, longtitude, locale)
+    qml_geocoding_and_locale: function(latitude, longtitude, locale, language)
     {
         // Test meta data
         testTitle = "QML: Geocoding - Locale handling";
@@ -782,7 +783,7 @@ testcase = {
         | Select Go! | |
         | Select Reverse geocode | |
         | Select Go! | |
-        | Wait for success geocode message | Verify that address is in Greek|"
+        | Wait for success geocode message | Verify that address is in " + language + " |"
         ));
     },
 
@@ -806,14 +807,14 @@ testcase = {
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
-        | Select Options | |
+        | Select Tools | |
         | Select Route | |
         | Select Go! | |
         | Expand information about rhe route | Verify that instructions is in English and uses imperial system |
         | Close info tab |
         | Select En button | |
         | Select Fr | |
-        | Select Options | |
+        | Select Tools | |
         | Select Route | |
         | Select Go! | |
         | Expand information about rhe route | Verify that instructions is in Franch and uses metric system |"
@@ -841,72 +842,308 @@ testcase = {
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2888, MOBILITY-65: Basic Location Functionality ";
-    }
+    },
+*/
 
-    qml_polyline_mapitem:function()
+    qml_several_maps:function()
     {
-        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Several maps";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify several maps can be displayed at the same time.";
+        testPreconditions = "Several service providers should be available. Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Select Provider button | |
+        | Select nokia provider | Verify that map is displayed on the screen with default location next to Brisbane |
+        | Select Tools button | |
+        | Select Minimap button | Verify that another smaller map above the base map. |
+        | | Verify that minimap's zoom level is smaller then base maps zoom level. |
+        | | Verify that base maps's center is inside red rectangle on the minimap. |
+        | Pan the base map | Verify that minimap is updated correctly with centre following base map centre |
+        | Select Map Type button | |
+        | Select Terrain Map button | Verify that base map is in Terrain view and minimap's type is unaltered |
+        | Select Provider button | |
+        | Select any other provider except nokia | Verify that map is displayed on the screen with default location next to Brisbane. |
+        | | Verify that Brisbane is inside red rectungle on the minimap. |
+        | Pan the base map | Verify that minimap is updated smoothly with centre following base map centre. |"
+        ));
+    },
+
+    qml_polyline_mapitem_data: {
+        nodes:["-26.15", "152.1", "-28", "-152.6", "-27", "153"],
+        nodes_near_dateline:["67", "179.5", "66.5", "0.5", "66.7", "179"]
+    },
+
+    qml_polyline_mapitem:function(lat1, long1, lat2, long2, lat3, long3)
+    {
+        testTitle = "QML: Maps and Navigation - Polyline";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that polyline can be drawn on map.";
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Create second Marker | |
+        | Create third Marker | |
+        | Press and Hold on the first marker | |
+        | Select Move To button | |
+        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + long1 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the second marker | |
+        | Select Move To button | |
+        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + long2 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the third marker | |
+        | Select Move To button | |
+        | Fill in " + lat3 + " in Latitude filed | |
+        | Fill in " + long3 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the first marker | |
+        | Select Draw... button | |
+        | Select Polyline button | Verify that polyine is drawn correctly. |"
+        ));
     },
 
-    qml_polygon_mapitem:function()
+    qml_polygon_mapitem_data: {
+        pentagon:["-27", "150", "-27", "-170", "-26", "155", "-25", "160", "-26", "167"],
+        concave_pentagon:["-27", "150", "-27", "-170", "-26", "155", "-26.5", "160", "-26", "167"],
+        pentagon_crossing_dateline:["67", "179.5", "66.8", "0.6", "66.4", "0.8", "66", "0", "66.9", "179.1"]
+    },
+
+    qml_polygon_mapitem:function(lat1, long1, lat2, long2, lat3, long3, lat4, long4, lat5, long5)
     {
-        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testTitle = "QML: Maps and Navigation - Polygon";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that polygon can be drawn on map.";
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Create second Marker | |
+        | Create third Marker | |
+        | Create fourth Marker | |
+        | Create fifth Marker | |
+        | Press and Hold on the first marker | |
+        | Select Move To button | |
+        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + long1 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the second marker | |
+        | Select Move To button | |
+        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + long2 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the third marker | |
+        | Select Move To button | |
+        | Fill in " + lat3 + " in Latitude filed | |
+        | Fill in " + long3 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the fourth marker | |
+        | Select Move To button | |
+        | Fill in " + lat4 + " in Latitude filed | |
+        | Fill in " + long4 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the fifth marker | |
+        | Select Move To button | |
+        | Fill in " + lat5 + " in Latitude filed | |
+        | Fill in " + long5 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the first marker | |
+        | Select Draw... button | |
+        | Select Polygon button | Verify that polgon is drawn correctly. |"
+        ));
     },
 
-    qml_circle_mapitem:function()
+    qml_circle_mapitem_data:{
+        nodes:["-27", "150", "-27", "-170"],
+        nodes_near_dateline:["67", "179.5", "66.8", "0.6"]
+    },
+
+    qml_circle_mapitem:function(lat1, long1, lat2, long2)
     {
-        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testTitle = "QML: Maps and Navigation - Circle";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that circle can be drawn on map.";
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Create second Marker | |
+        | Press and Hold on the first marker | |
+        | Select Move To button | |
+        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + long1 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the second marker | |
+        | Select Move To button | |
+        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + long2 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the first marker | |
+        | Select Draw... button | |
+        | Select Circle button | Verify that circle is drawn correctly. |"
+        ));
     },
 
-    qml_video_mapitem:function()
+    qml_video_mapitem_data:{
+        nodes:["-27", "150"],
+        nodes_near_dateline:["-27", "179"]
+    },
+
+    qml_video_mapitem:function(latitude, longtitude)
     {
-        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testTitle = "QML: Maps and Navigation - Video";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that video can be placed on map.";
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Press and Hold on the marker | |
+        | Select Move To button | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longtitude + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the marker | |
+        | Select Draw... button | |
+        | Select Video button | Verify that video is positioned correctly and it plays. |"
+        ));
+    },
+
+    qml_image_mapitem_data:{
+        nodes:["-27", "150"],
+        nodes_near_dateline:["-27", "179"]
     },
 
     qml_image_mapitem:function()
     {
-        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testTitle = "QML: Maps and Navigation - Image";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that circle can be drawn on map.";
         testPreconditions = "Internet connection is required for this test casei.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Press and Hold on the marker | |
+        | Select Move To button | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longtitude + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the marker | |
+        | Select Draw... button | |
+        | Select Image button | Verify that image is drawn correctly. |"
+        ));
     },
 
-    qml_3dqml_mapitem:function()
+    qml_3dqml_mapitem_data:{
+        nodes:["-27", "150"],
+        nodes_near_dateline:["-27", "179"]
+    },
+
+    qml_3dqml_mapitem:function(latitude, longtitude)
     {
-        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testTitle = "QML: Maps and Navigation - 3D QML Item";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that 3D QML item can be drawn on map.";
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Press and Hold on the marker | |
+        | Select Move To button | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longtitude + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the marker | |
+        | Select Draw... button | |
+        | Select 3D QML Item button | Verify that rotating cube is on the map. |"
+        ));
     },
 
     qml_mapitems_zooming: function()
@@ -915,13 +1152,56 @@ testcase = {
         testTitle = "QML: Maps and Navigation - Mapitem object zooming";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that pixmap objects are not scaled, verify that vector objects are scaled.";
+        testGoal = "Verify that markers, image, 3d item and video objects are not scaled, verify that polyline, polygon, circle and rectangle are scaled.";
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861, QTMOBILITY-757: Be able to prevent a QGeoMapPixmapObject from being scaled when zooming occurs, QTMOBILITY-701: Add a QGraphicsItem based map object.";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Create second Marker | |
+        | Create third Marker | |
+        | Create fourth Marker | |
+        | Press and Hold on the first marker | |
+        | Select Draw... button | |
+        | Select Polyline | |
+        | Press and Hold on the first marker | |
+        | Select Draw... button | |
+        | Select Rectangle | |
+        | Press and Hold on the second marker | |
+        | Select Draw... button | |
+        | Select Polygon | |
+        | Press and Hold on the second marker | |
+        | Select Draw... button | |
+        | Select Image | |
+        | Press and Hold on the third marker | |
+        | Select Draw... button | |
+        | Select Circle | |
+        | Press and Hold on the third marker | |
+        | Select Draw... button | |
+        | Select 3D QML Item | |
+        | Press and Hold on the fourth marker | |
+        | Select Draw... button | |
+        | Select Video | |
+        | Zoom in the map | Verify that polyline, polygon, rectangle and circle are scaled and video, image, 3dqml item are not scaled |
+        | Zoom out the map | Verify that polyline, polygon, rectangle and circle are scaled and video, image, 3dqml item are not scaled |"
+        ));
     },
 
-    qml_mapitem_interaction:function()
+    qml_mapitem_interaction_data:{
+        nodes:["-27.3644", "153.0178", "Sydney"],
+    },
+
+    qml_mapitem_interaction:function(latitude, longtitude, city)
     {
         testTitle = "QML: Maps and Navigation - Interaction with mapitems";
         testBinary = "qml_location_mapviewer";
@@ -930,8 +1210,26 @@ testcase = {
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Press and Hold on the marker | Verify that popup menu appears |
+        | Select Move To button | |
+        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + longtitude + " in Longitude | |
+        | Select Go! button | Verify that marker places next to " + city + "|
+        | Drag the marker | Verify that marker can be dragged correctly |"
+        ));
     },
-*/
 
     qml_searching_for_places_by_category_for_given_position_data: {
         data:["48.9", "2.4", "Shopping", "Pharmacy", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&dym=5&q=Pharmacy",
