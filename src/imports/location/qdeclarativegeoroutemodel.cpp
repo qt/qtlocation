@@ -56,11 +56,61 @@ QT_BEGIN_NAMESPACE
 
     \brief The RouteModel element provides access to routes.
 
-    The RouteModel is used to fetch routes. The routing result provider is determined
-    by the \l plugin. The route data is set in \l query.
+    The RouteModel element is used as part of a model/view grouping to retrieve
+    geographic routes from a backend provider. Routes include data about driving
+    directions between two points, walking directions with multiple waypoints,
+    and various other similar concepts. It functions much like other Model
+    elements in QML (see eg. \l ListModel and \l XmlListModel), and interacts
+    with views such as \l MapItemView, and \l{ListView}.
 
-    The model provides a single data role, the "routeData" role which
-    returns a Route object.
+    Like \l Map and \l GeocodeModel, all the data for a RouteModel to work comes
+    from a services plugin. This is contained in the \l{plugin} property, and
+    this must be set before the RouteModel can do any useful work.
+
+    Once the plugin is set, create a \l RouteQuery with the appropriate
+    waypoints and other settings, and set the \l{RouteModel}'s \l{query}
+    property. If \l autoUpdate is enabled, the update will being automatically.
+    Otherwise, the \l{update} method may be used. By default, autoUpdate is
+    disabled.
+
+    The data stored and returned in the RouteModel consists of \l Route elements,
+    as a list with the role name "routeData". See the documentation for \l Route
+    for further details on its structure and contents.
+
+    \section2 Example Usage
+
+    The following snippet is two-part, showing firstly the declaration of
+    elements, and secondly a short piece of procedural code using it. We set
+    the routeModel's \l{autoUpdate} property to false, and call \l{update} once
+    the query is set up, to avoid useless extra requests halfway through the
+    set up of the query.
+
+    \code
+    Plugin {
+        id: aPlugin
+    }
+
+    RouteQuery {
+        id: aQuery
+    }
+
+    RouteModel {
+        id: routeModel
+        plugin: aPlugin
+        query: aQuery
+        autoUpdate: false
+    }
+    \endcode
+
+    \code
+    {
+        aQuery.addWaypoint(...)
+        aQuery.addWaypoint(...)
+        aQuery.travelModes = ...
+        routeModel.update()
+    }
+    \endcode
+
 */
 
 QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
@@ -250,6 +300,9 @@ void QDeclarativeGeoRouteModel::queryDetailsChanged()
     routing service. Note that all plugins do not necessarily
     provide routing (could e.g. provide only geocoding or maps).
 
+    A valid plugin must be set before the RouteModel can perform any useful
+    operations.
+
     \sa Plugin
 */
 
@@ -298,12 +351,15 @@ void QDeclarativeGeoRouteModel::setAutoUpdate(bool autoUpdate)
 /*!
     \qmlproperty bool QtLocation5::RouteModel::autoUpdate
 
-    This property instructs how the model should react on query changes -
-    should it automatically update the model or do nothing.
+    This property controls whether the Model automatically updates in response
+    to changes in its attached RouteQuery. The default value of this property
+    is false.
 
-    Caution: If setting this value to 'true', take also care that your application
-    does not accidentally trigger huge amounts of unnecessary route requests.
-    In another words, be aware where in your application the query might change.
+    If setting this value to 'true', note that any change at all in
+    the RouteQuery object set in the \l{query} property will trigger a new
+    request to be sent. If you are adjusting many properties of the RouteQuery
+    with autoUpdate enabled, this can generate large numbers of useless (and
+    later discarded) requests.
 */
 
 bool QDeclarativeGeoRouteModel::autoUpdate() const
@@ -394,6 +450,13 @@ void QDeclarativeGeoRouteModel::setError(RouteError error)
     emit errorChanged();
 }
 
+/*!
+    \qmlmethod QtLocation5::RouteModel::update()
+
+    Instructs the RouteModel to update its data. This is most useful
+    when \l autoUpdate is disabled, to force a refresh when the query
+    has been changed.
+*/
 void QDeclarativeGeoRouteModel::update()
 {
     if (!complete_)

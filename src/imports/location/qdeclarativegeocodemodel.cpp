@@ -55,16 +55,55 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-geocoding
     \since QtLocation 5.0
 
-    \brief The GeocodeModel element provides support for searching operations related
-           to geographic information.
+    \brief The GeocodeModel element provides support for searching operations
+           related to geographic information.
 
-    The GeocodeModel is a model used to perform geocoding. This includes both geocoding
-    (address to coordinate) and reverse geocoding (coordinate to address).
-    The geocoding result provider is determined by the \l plugin. The geocoding data is set
-    in \l query.
+    The GeocodeModel element is used as part of a model/view grouping to
+    match addresses or search strings with geographic locations. How the
+    geographic locations generated are used or displayed is decided by any
+    Views attached to the GeocodeModel (eg. a \l MapItemView or \l{ListView}).
 
-    The model provides a single data role, the "locationData" role which
-    is a \l Location element.
+    Like \l Map and \l RouteModel, all the data for a GeocodeModel to work
+    comes from a services plugin. This is contained in the \l{plugin} property,
+    and this must be set before the GeocodeModel can do any useful work.
+
+    Once the plugin is set, the \l{query} property can be used to specify the
+    address or search string to match. If \l{autoUpdate} is enabled, the Model
+    will update its output automatically. Otherwise, the \l{update} method may
+    be used. By default, autoUpdate is disabled.
+
+    The data stored and returned in the GeocodeModel consists of \l{Location}
+    elements, as a list with the role name "locationData". See the documentation
+    for \l{Location} for further details on its structure and contents.
+
+    \section2 Example Usage
+
+    The following snippet is two-part, showing firstly the declaration of
+    elements, and secondly a short piece of procedural code using it. We set
+    the geocodeModel's \l{autoUpdate} property to false, and call \l{update} once
+    the query is set up. In this case, as we use a string value in \l{query},
+    only one update would occur, even with autoUpdate enabled. However, if we
+    provided an \l{Address} object we may inadvertently trigger multiple
+    requests whilst setting its properties.
+
+    \code
+    Plugin {
+        id: aPlugin
+    }
+
+    GeocodeModel {
+        id: geocodeModel
+        plugin: aPlugin
+        autoUpdate: false
+    }
+    \endcode
+
+    \code
+    {
+        geocodeModel.query = "Lot 4, Yellow Brick Rd, Emerald, Australia"
+        geocodeModel.update()
+    }
+    \endcode
 */
 
 QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject* parent)
@@ -112,6 +151,13 @@ QGeoBoundingArea* QDeclarativeGeocodeModel::boundingArea()
     return 0;
 }
 
+/*!
+    \qmlmethod QtLocation5::GeocodeModel::update()
+
+    Instructs the GeocodeModel to update its data. This is most useful
+    when \l autoUpdate is disabled, to force a refresh when the query
+    has been changed.
+*/
 void QDeclarativeGeocodeModel::update()
 {
     if (!complete_)
@@ -607,12 +653,15 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant& query)
 /*!
     \qmlproperty bool QtLocation5::GeocodeModel::autoUpdate
 
-    This property instructs how the model should react on query changes -
-    should it automatically update the model or do nothing.
+    This property controls whether the Model automatically updates in response
+    to changes in its attached query. The default value of this property
+    is false.
 
-    Caution: If setting this value to 'true', take also care that your application
-    does not accidentally trigger huge amounts of unnecessary geocoding requests.
-    In another words, be aware where in your application the query might change.
+    If setting this value to 'true' and using an Address or Coordinate element
+    as the query, note that any change at all in the element's properties will
+    trigger a new request to be sent. If you are adjusting many properties of
+    the element whilst autoUpdate is enabled, this can generate large numbers
+    of useless (and later discarded) requests.
 */
 
 bool QDeclarativeGeocodeModel::autoUpdate() const
