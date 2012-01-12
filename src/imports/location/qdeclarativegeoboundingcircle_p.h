@@ -62,7 +62,7 @@ class QDeclarativeGeoBoundingCircle : public QDeclarativeGeoBoundingArea
 
 public:
     explicit QDeclarativeGeoBoundingCircle(QObject* parent = 0);
-    QDeclarativeGeoBoundingCircle(const QGeoBoundingCircle& circle, QObject* parent = 0);
+    explicit QDeclarativeGeoBoundingCircle(const QGeoBoundingCircle &circle, QObject *parent = 0);
     void setCircle(const QGeoBoundingCircle& circle);
     QGeoBoundingCircle circle() const;
     virtual QGeoBoundingArea *area() const;
@@ -71,18 +71,26 @@ public:
     QDeclarativeCoordinate* center();
     void setCenter(QDeclarativeCoordinate* coordinate);
     qreal radius() const;
-    void setRadius(const qreal radius);
+    void setRadius(qreal radius);
 
 signals:
     void centerChanged();
     void radiusChanged();
 
+private slots:
+    void coordinateChanged();
+
+private:
+    void synchronizeDeclarative(const QGeoBoundingCircle &old, bool skipCenter);
+
 private:
     QDeclarativeCoordinate *m_center;
-    mutable QGeoBoundingCircle m_circle;
+    QGeoBoundingCircle m_circle;
+    qreal m_radius;
 };
 
 QT_END_NAMESPACE
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoBoundingCircle));
+
+QML_DECLARE_TYPE(QDeclarativeGeoBoundingCircle)
 
 #endif

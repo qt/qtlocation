@@ -66,7 +66,7 @@ class QDeclarativeGeoBoundingBox : public QDeclarativeGeoBoundingArea
 
 public:
     explicit QDeclarativeGeoBoundingBox(QObject* parent = 0);
-    QDeclarativeGeoBoundingBox(const QGeoBoundingBox& box, QObject* parent = 0);
+    explicit QDeclarativeGeoBoundingBox(const QGeoBoundingBox &box, QObject *parent = 0);
     void setBox(const QGeoBoundingBox& box);
     QGeoBoundingBox box();
     virtual QGeoBoundingArea *area() const;
@@ -83,9 +83,9 @@ public:
     QDeclarativeCoordinate* center();
     void setCenter(QDeclarativeCoordinate* coordinate);
     double height();
-    void setHeight(const double height);
+    void setHeight(double height);
     double width();
-    void setWidth(const double width);
+    void setWidth(double width);
 
 signals:
     void bottomLeftChanged();
@@ -96,21 +96,33 @@ signals:
     void heightChanged();
     void widthChanged();
 
-private:
-    void synchronizeDeclarative();
+private slots:
+    void coordinateChanged();
 
 private:
-    QDeclarativeCoordinate m_declarativeBottomLeft;
-    QDeclarativeCoordinate m_declarativeBottomRight;
-    QDeclarativeCoordinate m_declarativeTopLeft;
-    QDeclarativeCoordinate m_declarativeTopRight;
-    QDeclarativeCoordinate m_declarativeCenter;
+    enum SkipProp {
+        SkipNone,
+        SkipBottomLeft,
+        SkipBottomRight,
+        SkipTopLeft,
+        SkipTopRight,
+        SkipCenter
+    };
+    void synchronizeDeclarative(const QGeoBoundingBox &old, SkipProp skip);
+
+private:
+    QDeclarativeCoordinate *m_bottomLeft;
+    QDeclarativeCoordinate *m_bottomRight;
+    QDeclarativeCoordinate *m_topLeft;
+    QDeclarativeCoordinate *m_topRight;
+    QDeclarativeCoordinate *m_center;
     QGeoBoundingBox m_box;
-    double m_height;
     double m_width;
+    double m_height;
 };
 
 QT_END_NAMESPACE
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoBoundingBox));
+
+QML_DECLARE_TYPE(QDeclarativeGeoBoundingBox)
 
 #endif // QDECLARATIVEGEOBOUNDINGBOX_P_H

@@ -772,7 +772,7 @@ void tst_QGeoBoundingBox::center_data()
           << QGeoBoundingBox()
           << QGeoCoordinate()
           << QGeoCoordinate(0.0, 0.0)
-          << QGeoBoundingBox();
+          << QGeoBoundingBox(QGeoCoordinate(0.0, 0.0), 0.0, 0.0);
 
      QTest::newRow("zero width")
              << QGeoBoundingBox(QGeoCoordinate(10.0, 5.0),

@@ -288,6 +288,11 @@ QGeoCoordinate QGeoBoundingBox::bottomRight() const
 */
 void QGeoBoundingBox::setCenter(const QGeoCoordinate &center)
 {
+    if (!isValid()) {
+        d_ptr->topLeft = center;
+        d_ptr->bottomRight = center;
+        return;
+    }
     double width = this->width();
     double height = this->height();
 
