@@ -51,6 +51,7 @@
 
 #include <QtQuick/QSGTexture>
 #include <QtQuick/QQuickPaintedItem>
+#include <QtDeclarative/QDeclarativeParserStatus>
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"

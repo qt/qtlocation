@@ -48,6 +48,7 @@
 #include <QtCore/QStringList>
 #include <QAbstractListModel>
 #include <QDeclarativeListProperty>
+#include <QtDeclarative/QDeclarativeParserStatus>
 
 #include <QtLocation/QPlaceCategory>
 

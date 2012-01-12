@@ -45,6 +45,7 @@
 #include <QObject>
 #include <QtCore/QUrl>
 #include <QtDeclarative/qdeclarative.h>
+#include <QtDeclarative/QDeclarativeParserStatus>
 #include <qplacesupplier.h>
 
 #include "qdeclarativeplaceicon_p.h"

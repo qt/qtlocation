@@ -44,6 +44,7 @@
 
 #include <qgeocoordinate.h>
 #include <QtQuick/QQuickItem>
+#include <QtDeclarative/QDeclarativeParserStatus>
 #include <QtLocation/QPlaceManager>
 
 #include <QMap>

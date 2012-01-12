@@ -42,6 +42,7 @@
 #ifndef QDECLARATIVERECOMMENDATIONMODEL_P_H
 #define QDECLARATIVERECOMMENDATIONMODEL_P_H
 
+#include <QtDeclarative/QDeclarativeParserStatus>
 #include "qdeclarativesearchmodelbase.h"
 
 QT_BEGIN_NAMESPACE

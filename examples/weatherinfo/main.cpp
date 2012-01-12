@@ -39,10 +39,10 @@
 ****************************************************************************/
 
 #include <QtGui/QGuiApplication>
-#include <QtDeclarative/QQuickView>
+#include <QtQuick/QQuickView>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
-#include <QtDeclarative/QQuickItem>
+#include <QtQuick/QQuickItem>
 
 //! [0]
 #include "appmodel.h"

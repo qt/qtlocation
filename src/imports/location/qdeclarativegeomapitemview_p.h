@@ -45,6 +45,7 @@
 #include "QModelIndex"
 
 #include <QtQuick/QQuickItem>
+#include <QtDeclarative/QDeclarativeParserStatus>
 #include <QtCore/QPointer>
 
 QT_BEGIN_NAMESPACE

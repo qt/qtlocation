@@ -43,6 +43,7 @@
 #define QDECLARATIVECATEGORY_P_H
 
 #include <QtDeclarative/qdeclarative.h>
+#include <QtDeclarative/QDeclarativeParserStatus>
 #include <QObject>
 
 #include <qplacecategory.h>

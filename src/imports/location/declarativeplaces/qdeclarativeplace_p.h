@@ -44,6 +44,7 @@
 
 #include <QObject>
 #include <QDeclarativeListProperty>
+#include <QtDeclarative/QDeclarativeParserStatus>
 #include <qplace.h>
 #include "qdeclarativegeolocation_p.h"
 #include "qdeclarativecategory_p.h"
