@@ -47,14 +47,20 @@ Item {
 
     clip: true
 
+    function showSearchResults() {
+        view.currentIndex = 0;
+        placeContentList.source = "";
+        placeContentList.place = null;
+    }
+
+    function showPlaceDetails(data) {
+        placeDetails.place = data.place;
+        placeDetails.distance = data.distance;
+        view.currentIndex = 1;
+    }
+
     ListView {
         id: view
-
-        function showSearchResults() {
-            view.currentIndex = 0;
-            placeContentList.source = "";
-            placeContentList.place = null;
-        }
 
         orientation: ListView.Horizontal
         interactive: false
@@ -87,12 +93,7 @@ Item {
 
                     model: placeSearchModel
                     delegate: SearchResultDelegate {
-                        onDisplayPlaceDetails: {
-                            placeDetails.place = data.place;
-                            placeDetails.distance = data.distance;
-                            view.currentIndex = 1;
-                        }
-
+                        onDisplayPlaceDetails: showPlaceDetails(data)
                         onSearchFor: placeSearchModel.searchForText(query);
                     }
                 }
@@ -109,11 +110,7 @@ Item {
                     visible: !searchView.visible
                     model: recommendationModel
                     delegate: SearchResultDelegate {
-                        onDisplayPlaceDetails: {
-                            placeDetails.place = data.place;
-                            placeDetails.distance = data.distance;
-                            view.currentIndex = 1;
-                        }
+                        onDisplayPlaceDetails: showPlaceDetails(data)
                     }
                 }
                 //! [PlaceRecommendationModel place list]
@@ -130,7 +127,7 @@ Item {
                     source: "../../resources/left.png"
                     pressedSource: "../../resources/left_pressed.png"
 
-                    onClicked: view.showSearchResults()
+                    onClicked: showSearchResults()
                 }
 
                 PlaceDelegate {
@@ -178,7 +175,7 @@ Item {
 
                     onDeletePlace:  {
                         place.remove();
-                        view.showSearchResults();
+                        showSearchResults();
                     }
                 }
             }

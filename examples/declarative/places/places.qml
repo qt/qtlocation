@@ -389,6 +389,11 @@ Item {
             categories = null;
             execute();
         }
+
+        onStatusChanged: {
+            if (status === PlaceSearchModel.Ready)
+                searchResultView.showSearchResults();
+        }
     }
     //! [PlaceSearchModel model]
 
@@ -478,6 +483,44 @@ Item {
         ]
     }
 
+    Component {
+        id: mapComponent
+
+        MapComponent {
+            z: backgroundRect.z + 1
+            width: page.width
+            height: page.height
+            onMapPressed: page.state = ""
+
+            MapItemView {
+                model: placeSearchModel
+                delegate: MapQuickItem {
+                    coordinate: place.location.coordinate
+
+                    anchorPoint.x: image.width * 0.28
+                    anchorPoint.y: image.height
+
+                    sourceItem: Image {
+                        id: image
+
+                        source: "resources/marker.png"
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                searchResultView.showPlaceDetails({
+                                    distance: model.distance,
+                                    place: model.place,
+                                });
+                                searchResultTab.state = "Open";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     function createMap(placesPlugin) {
         var mapPlugin;
         if (placesPlugin.supported & Plugin.MappingFeature) {
@@ -488,7 +531,7 @@ Item {
 
         if (map)
             map.destroy();
-        map = Qt.createQmlObject('import QtLocation 5.0; import "content/places"; MapComponent { z : backgroundRect.z + 1; width: page.width; height: page.height; onMapPressed: { page.state = "" }}', page);
+        map = mapComponent.createObject(page);
         map.plugin = mapPlugin;
     }
 
