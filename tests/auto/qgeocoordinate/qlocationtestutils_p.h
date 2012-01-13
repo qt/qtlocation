@@ -45,6 +45,8 @@
 #include <QString>
 #include <QTest>
 
+#if !defined(QTRY_COMPARE_WITH_TIMEOUT) // Now provided by QTestLib. #fixme: Remove entirely.
+
 #define QTRY_COMPARE_WITH_TIMEOUT(a,e,t)                       \
     for (int _i = 0; _i < t; _i += 100) {    \
         if ((a) >= (e)) break;                  \
@@ -71,6 +73,7 @@
     }      }                                     \
     QCOMPARE(a, e)
 
+#endif // !defined(QTRY_COMPARE_WITH_TIMEOUT)
 
 class QLocationTestUtils
 {
