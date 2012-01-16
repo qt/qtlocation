@@ -73,41 +73,79 @@ Item {
 
                     Text { id: placeName; text: place.favorite ? place.favorite.name : place.name }
                 }
-                Text { text: distance + "m" }
+                Text { id: distanceText; text: distance + "m"; font.italic: true; font.pointSize: placeName.font.pointSize * 0.8 }
             }
+
+            MouseArea {
+                anchors.fill: parent
+
+                onPressed: placeRoot.state = "Pressed"
+                onReleased: placeRoot.state = ""
+                onCanceled: placeRoot.state = ""
+
+                onClicked: {
+                    if (model.type === undefined || type === PlaceSearchModel.PlaceResult) {
+                        if (!place.detailsFetched)
+                            place.getDetails();
+
+                        root.displayPlaceDetails({
+                                                 distance: model.distance,
+                                                 place: model.place,
+                    });
+                    }
+                }
+            }
+
+            states: [
+                State {
+                    name: ""
+                },
+                State {
+                    name: "Pressed"
+                    PropertyChanges { target: placeName; color: "#1C94FC"}
+                    PropertyChanges { target: distanceText; color: "#1C94FC"}
+                }
+            ]
         }
     }
     //! [PlaceSearchModel place delegate]
 
     Component {
         id: correctionComponent
+        Item {
+            id: correctionRoot
 
-        Text {
-            width: parent.width
-            text: "Did you mean " + correction + "?"
+            Text {
+                id: correctionText
+                width: parent.width
+                text: "Did you mean " + correction + "?"
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onPressed: correctionRoot.state = "Pressed"
+                    onReleased: correctionRoot.state = ""
+                    onCanceled: correctionRoot.state = ""
+
+                    onClicked: root.searchFor(correction);
+                }
+            }
+
+            states: [
+                State {
+                    name: ""
+                },
+                State {
+                    name: "Pressed"
+                    PropertyChanges { target: correctionText; color: "#1C94FC"}
+                }
+            ]
         }
     }
 
     Loader {
         anchors.left: parent.left
         anchors.right: parent.right
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                if (model.type === undefined || type === PlaceSearchModel.PlaceResult) {
-                    if (!place.detailsFetched)
-                        place.getDetails();
-
-                    root.displayPlaceDetails({
-                        distance: model.distance,
-                        place: model.place,
-                    });
-                } else if (type === PlaceSearchModel.CorrectionResult) {
-                    searchFor(correction);
-                }
-            }
-        }
 
         sourceComponent: (model.type === undefined || model.type === PlaceSearchModel.PlaceResult) ? placeComponent : correctionComponent
     }

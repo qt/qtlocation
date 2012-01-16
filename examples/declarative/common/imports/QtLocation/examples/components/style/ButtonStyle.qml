@@ -43,7 +43,7 @@ QtObject {
     id: buttonStyle
     property string background: "../../../../resources/button.sci"
     property string pressedBackground: "../../../../resources/button_pressed.png"
-    property string disabledBackground: "../../../../resources/button_hovered.png"
+    property string disabledBackground: "../../../../resources/button.png"
     property int heightAdjustment: 0
     property int yAdjustment: 0
 }

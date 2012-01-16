@@ -461,7 +461,7 @@ Item {
 
             width: parent.width - catchImage.width
             height: parent.height
-            color: "white"
+            color: "#ECECEC"
             radius: 5
 
             SearchResultView {

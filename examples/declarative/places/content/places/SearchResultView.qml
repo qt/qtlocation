@@ -83,7 +83,7 @@ Item {
 
                     anchors.fill: parent
 
-                    spacing: 5
+                    spacing: 20
 
                     model: placeSearchModel
                     delegate: SearchResultDelegate {
@@ -92,6 +92,8 @@ Item {
                             placeDetails.distance = data.distance;
                             view.currentIndex = 1;
                         }
+
+                        onSearchFor: placeSearchModel.searchForText(query);
                     }
                 }
                 //! [PlaceSearchModel place list]
@@ -123,9 +125,9 @@ Item {
 
                 IconButton {
                     id: placeBackButton
+                    anchors.left:  parent.left
 
                     source: "../../resources/left.png"
-                    hoveredSource: "../../resources/left_hovered.png"
                     pressedSource: "../../resources/left_pressed.png"
 
                     onClicked: view.showSearchResults()
@@ -189,7 +191,6 @@ Item {
                     id: contentListBackButton
 
                     source: "../../resources/left.png"
-                    hoveredSource: "../../resources/left_hovered.png"
                     pressedSource: "../../resources/left_pressed.png"
 
                     onClicked: view.currentIndex = 1
@@ -220,7 +221,6 @@ Item {
                     id: contentBackButton
 
                     source: "../../resources/left.png"
-                    hoveredSource: "../../resources/left_hovered.png"
                     pressedSource: "../../resources/left_pressed.png"
 
                     onClicked: {

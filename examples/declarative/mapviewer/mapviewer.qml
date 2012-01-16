@@ -64,7 +64,7 @@ Item {
     Menu {
         id:mainMenu
         anchors.bottom: parent.bottom
-        z: backgroundRect.z + 2
+        z: backgroundRect.z + 3
 
         Component.onCompleted: {
             addItem("Tools")

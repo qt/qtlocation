@@ -102,7 +102,6 @@ Item {
         visible: model.hasModelChildren
 
         source: "../../resources/right.png"
-        hoveredSource: "../../resources/right_hovered.png"
         pressedSource: "../../resources/right_pressed.png"
 
         onClicked: root.arrowClicked()

@@ -47,6 +47,8 @@ Rectangle {
 
     property bool suggestionsEnabled: true
 
+    color: "#ECECEC"
+
     height: searchBox.height + 20
     Behavior on height {
         NumberAnimation { duration: 250 }
@@ -100,8 +102,9 @@ Rectangle {
         IconButton {
             id: searchButton
 
+            anchors.verticalCenter:  parent.verticalCenter
+
             source: "../../resources/search.png"
-            hoveredSource: "../../resources/search_hovered.png"
             pressedSource: "../../resources/search_pressed.png"
 
             onClicked: {
@@ -114,7 +117,6 @@ Rectangle {
             id: categoryButton
 
             source: "../../resources/categories.png"
-            hoveredSource: "../../resources/categories_hovered.png"
             pressedSource: "../../resources/categories_pressed.png"
 
             onClicked: {
@@ -148,7 +150,6 @@ Rectangle {
     //! [CategoryModel view 2]
         header: IconButton {
             source: "../../resources/left.png"
-            hoveredSource: "../../resources/left_hovered.png"
             pressedSource: "../../resources/left_pressed.png"
 
             onClicked: categoryListModel.rootIndex = categoryListModel.parentModelIndex()

@@ -60,7 +60,7 @@ Item {
 
     Rectangle {
         id: dialogRectangle
-        color: "white"
+        color: "#ECECEC"
         opacity:  1
         width: parent.width - gap
         height: titleBar.height + options.height + gap * 1.5

@@ -16,12 +16,10 @@
         <file>imports/QtLocation/examples/components/TitleBar.qml</file>
         <file>imports/QtLocation/examples/dialogs/Dialog.qml</file>
         <file>resources/busy.png</file>
-        <file>resources/button_hovered.png</file>
         <file>resources/button_pressed.png</file>
         <file>resources/button.png</file>
         <file>resources/button.sci</file>
         <file>resources/catch.png</file>
-        <file>resources/categories_hovered.png</file>
         <file>resources/categories_pressed.png</file>
         <file>resources/categories.png</file>
         <file>resources/checkbox_selected.png</file>
@@ -29,11 +27,9 @@
         <file>resources/cross_hovered.png</file>
         <file>resources/cross_pressed.png</file>
         <file>resources/cross.png</file>
-        <file>resources/hmenuItem_hovered.png</file>
         <file>resources/hmenuItem_pressed.png</file>
         <file>resources/hmenuItem.png</file>
         <file>resources/hmenuItem.sci</file>
-        <file>resources/left_hovered.png</file>
         <file>resources/left_pressed.png</file>
         <file>resources/left.png</file>
         <file>resources/marker_hovered.png</file>
@@ -53,12 +49,10 @@
         <file>resources/quit_hovered.png</file>
         <file>resources/quit_pressed.png</file>
         <file>resources/quit.png</file>
-        <file>resources/right_hovered.png</file>
         <file>resources/right_pressed.png</file>
         <file>resources/right.png</file>
         <file>resources/scale_end.png</file>
         <file>resources/scale.png</file>
-        <file>resources/search_hovered.png</file>
         <file>resources/search_pressed.png</file>
         <file>resources/search.png</file>
         <file>resources/star.png</file>

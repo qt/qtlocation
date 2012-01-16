@@ -81,7 +81,7 @@ Item {
         id: buttonText
         color: checked ? "lawngreen" : "white"
         anchors.centerIn: buttonImage; font.bold: true; font.pixelSize: 14
-        style: Text.Raised; styleColor: "darkblue"
+        style: Text.Normal
         anchors.baseline: parent.bottom
         anchors.baselineOffset: -6
     }
@@ -91,7 +91,6 @@ Item {
             name: "Pressed"
             when: mouseRegion.pressed == true
             PropertyChanges { target: buttonImage; source: style.pressedBackground }
-            PropertyChanges { target: buttonText; style: Text.Sunken }
         },
         State {
             name: "Hovered"
@@ -101,7 +100,7 @@ Item {
         State {
             name: "Disabled"
             when: !enabled
-            PropertyChanges{ target: buttonText; color: "silver" }
+            PropertyChanges{ target: buttonText; color: "dimgray" }
             PropertyChanges{ target: mouseRegion; enabled: false }
         }
     ]

@@ -41,9 +41,9 @@
 import QtQuick 2.0
 
 ButtonStyle {
-    background: "../../../../resources/hmenuItem.sci"
+    background: "../../../../resources/hmenuItem.png"
     pressedBackground: "../../../../resources/hmenuItem_pressed.png"
-    disabledBackground: "../../../../resources/hmenuItem_hovered.png"
+    disabledBackground: "../../../../resources/hmenuItem.png"
     heightAdjustment: 14
     yAdjustment: -7
 }

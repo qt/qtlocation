@@ -51,7 +51,7 @@ Grid {
     property string exclusiveButton: ""
     property bool exclusive: false
     property bool autoWidth: false
-    opacity: 0.9
+    opacity: 1
     rows: (horizontalOrientation) ? 1 : children.length
     columns: (horizontalOrientation) ? children.length : 1
     signal clicked(string button)

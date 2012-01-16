@@ -70,7 +70,7 @@ Item {
     Rectangle {
         id: dialogRectangle
 
-        color: "white"
+        color: "#ECECEC"
         opacity: parent.opacity
         width: parent.width - gap;
         height: listview.height + titleBar.height + buttons.height + gap*1.5
@@ -119,9 +119,7 @@ Item {
 
     Rectangle {
         id: dataRect
-        color: "#C0DCFF"
-        border.width: 1
-        border.color: "dodgerblue"
+        color: "#ECECEC"
         radius: 5
         width:dialogRectangle.width - gap
         height: listview.height// + gap
