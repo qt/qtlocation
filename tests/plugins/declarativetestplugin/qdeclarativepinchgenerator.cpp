@@ -151,22 +151,6 @@ QTouchEvent::TouchPoint QDeclarativePinchGenerator::createTouchPoint(QEvent::Typ
     return touchPoint;
 }
 
-// fixme this is excessive
-QTouchEvent::TouchPoint QDeclarativePinchGenerator::convertToPrimary(QTouchEvent::TouchPoint original)
-{
-    QTouchEvent::TouchPoint touchPoint;
-    touchPoint.setState(original.state());
-    touchPoint.setId(original.id() + 1);
-    touchPoint.setPressure(original.pressure());
-    touchPoint.setPos(original.pos());
-    touchPoint.setLastPos(original.lastPos());
-    touchPoint.setScenePos(original.scenePos());
-    touchPoint.setLastScenePos(original.lastScenePos());
-    touchPoint.setFlags(touchPoint.flags() | QTouchEvent::TouchPoint::Primary);
-    return touchPoint;
-
-}
-
 void QDeclarativePinchGenerator::mouseMoveEvent(QMouseEvent *event)
 {
     if (state_ != Recording || !enabled_) {
@@ -358,11 +342,10 @@ void QDeclarativePinchGenerator::timerEvent(QTimerEvent *event)
     // Set touch points. Master swipe has touchpoints as it was chosen to have more touchpoints.
     // For the other swipe we need to check.
     QList<QTouchEvent::TouchPoint> touchPoints;
-    // The primary touch point generates also mouse events. Does not work at the moment because
+    // The first touch point generates also mouse events. Does not work at the moment because
     // we dispatch the touch event via canvas rather than the qApp. However qApp dispatching
     // seems to miss some events arbitrarily.
-    touchPoints.append(convertToPrimary(swipes_.at(masterSwipe_)->touchPoints.at(replayBookmark_)));
-    //touchPoints.append(swipes_.at(masterSwipe_)->touchPoints.at(replayBookmark_));
+    touchPoints.append(swipes_.at(masterSwipe_)->touchPoints.at(replayBookmark_));
 
     int slaveSwipe(1);
     if (masterSwipe_ == 1)

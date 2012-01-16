@@ -155,7 +155,6 @@ private:
     void setState(GeneratorState state);
     QTouchEvent::TouchPoint mouseEventToTouchPoint(QMouseEvent* event);
     QTouchEvent::TouchPoint createTouchPoint(QEvent::Type type, QPoint pos);
-    QTouchEvent::TouchPoint convertToPrimary(QTouchEvent::TouchPoint original);
     void generateSwipe(QPoint from, QPoint to, int duration, int samples);
 
 private:
