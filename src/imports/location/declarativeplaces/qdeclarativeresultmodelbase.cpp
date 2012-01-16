@@ -42,7 +42,7 @@
 #include "qdeclarativeresultmodelbase_p.h"
 
 QDeclarativeResultModelBase::QDeclarativeResultModelBase(QObject *parent)
-:   QDeclarativeSearchModelBase(parent)
+:   QDeclarativeSearchModelBase(parent), m_favoritesPlugin(0)
 {
     QHash<int, QByteArray> roles = roleNames();
     roles.insert(DistanceRole, "distance");
