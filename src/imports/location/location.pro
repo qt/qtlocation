@@ -83,7 +83,14 @@ include(declarativeplaces/declarativeplaces.pri)
 # as the "/imports" is the default place where qmlviewer looks for plugins
 # (otherwise qmlviewer -I <path> -option is needed)
 
-qmldir.files += $$PWD/qmldir
+# plugin.qmltypes is used by Qt Creator for syntax highlighting and the QML code model.  It needs
+# to be regenerated whenever the QML elements exported change.
+# To regenerate run:
+#     qmlplugindump <import name> <import version> <path to import plugin> > plugins.qmltypes
+# e.g.:
+#     qmlplugindump QtLocation 5.0 imports/QtLocation/libdeclarative_location.so > plugins.qmltypes
+
+qmldir.files += $$PWD/qmldir $$PWD/plugins.qmltypes
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INSTALLS += target qmldir
