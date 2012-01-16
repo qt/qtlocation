@@ -69,7 +69,7 @@ Map {
     property int lastY : -1
     property int pressX : -1
     property int pressY : -1
-    property int jitterThreshold : 10
+    property int jitterThreshold : 30
     property bool followme: false
     property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
     signal showDistance(string distance);
@@ -823,7 +823,11 @@ Map {
         }
 
         onPositionChanged: {
-            map.state = ""
+            if (map.state != "PopupMenu" ||
+                Math.abs(map.pressX - mouse.x ) > map.jitterThreshold ||
+                Math.abs(map.pressY - mouse.y ) > map.jitterThreshold) {
+                map.state = ""
+            }
             if ((mouse.button == Qt.LeftButton) & (map.state == "")) {
                 //                if ((map.lastX != -1) && (map.lastY != -1)) {
                 //                    var dx = mouse.x - map.lastX
