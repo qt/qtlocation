@@ -47,6 +47,7 @@
 
 #include <QDir>
 #include <QMetaType>
+#include <QPixmap>
 #include <QDebug>
 
 #include <Qt3D/qgltexture2d.h>
