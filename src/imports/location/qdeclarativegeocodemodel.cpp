@@ -100,7 +100,7 @@ QT_BEGIN_NAMESPACE
 
     \code
     {
-        geocodeModel.query = "Lot 4, Yellow Brick Rd, Emerald, Australia"
+        geocodeModel.query = "53 Brandl St, Eight Mile Plains, Australia"
         geocodeModel.update()
     }
     \endcode
