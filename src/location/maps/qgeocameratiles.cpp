@@ -84,6 +84,9 @@ public:
     int maxZoom_;
     QSet<QGeoTileSpec> tiles_;
 
+    QSet<QGeoTileSpec> tilesLeft_;
+    QSet<QGeoTileSpec> tilesRight_;
+
     void updateMetadata();
     void updateGeometry();
 
@@ -199,8 +202,13 @@ void QGeoCameraTiles::setMaximumZoomLevel(int maxZoom)
 QSet<QGeoTileSpec> QGeoCameraTiles::tiles() const
 {
     Q_D(const QGeoCameraTiles);
-
     return d->tiles_;
+}
+
+QPair<QSet<QGeoTileSpec>, QSet<QGeoTileSpec> > QGeoCameraTiles::tilesSplitByDateline() const
+{
+    Q_D(const QGeoCameraTiles);
+    return QPair<QSet<QGeoTileSpec>, QSet<QGeoTileSpec> >(d->tilesLeft_, d->tilesRight_);
 }
 
 QGeoCameraTilesPrivate::QGeoCameraTilesPrivate(QSharedPointer<QGeoProjection> projection)
@@ -223,11 +231,37 @@ void QGeoCameraTilesPrivate::updateMetadata()
     }
 
     tiles_ = newTiles;
+
+    newTiles.clear();
+
+    i = tilesLeft_.constBegin();
+    end = tilesLeft_.constEnd();
+
+    for (; i != end; ++i) {
+        QGeoTileSpec tile = *i;
+        newTiles.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), tile.zoom(), tile.x(), tile.y()));
+    }
+
+    tilesLeft_ = newTiles;
+
+    newTiles.clear();
+
+    i = tilesRight_.constBegin();
+    end = tilesRight_.constEnd();
+
+    for (; i != end; ++i) {
+        QGeoTileSpec tile = *i;
+        newTiles.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), tile.zoom(), tile.x(), tile.y()));
+    }
+
+    tilesRight_ = newTiles;
 }
 
 void QGeoCameraTilesPrivate::updateGeometry()
 {
     tiles_.clear();
+    tilesLeft_.clear();
+    tilesRight_.clear();
 
     // Find the frustum from the camera / screen / viewport information
     Frustum f = frustum();
@@ -239,11 +273,13 @@ void QGeoCameraTilesPrivate::updateGeometry()
     QPair<Polygon, Polygon> polygons = clipFootprintToMap(footprint);
 
     if (!polygons.first.isEmpty()) {
-        tiles_.unite(tilesFromPolygon(polygons.first));
+        tilesLeft_ = tilesFromPolygon(polygons.first);
+        tiles_.unite(tilesLeft_);
     }
 
     if (!polygons.second.isEmpty()) {
-        tiles_.unite(tilesFromPolygon(polygons.second));
+        tilesRight_ = tilesFromPolygon(polygons.second);
+        tiles_.unite(tilesRight_);
     }
 }
 

@@ -38,75 +38,48 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeotile_p.h"
+#ifndef QGEOMAPIMAGES_P_H
+#define QGEOMAPIMAGES_P_H
 
-#include <Qt3D/qgltexture2d.h>
-#include <Qt3D/qglscenenode.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QSet>
 
 QT_BEGIN_NAMESPACE
 
-QGeoTile::QGeoTile() {}
+class QGeoMap;
+class QGeoMappingManager;
+class QGeoTileSpec;
 
-QGeoTile::QGeoTile(const QGeoTileSpec &spec)
-        : spec_(spec),
-          texture_(0),
-          sceneNode_(0),
-          bound_(false) {}
+class QGeoMapImagesPrivate;
 
-bool QGeoTile::operator == (const QGeoTile &rhs) const
+class QGeoMapImages
 {
-    return (spec_ == rhs.spec_);
-}
+public:
+    QGeoMapImages(QGeoMap *map);
+    ~QGeoMapImages();
 
-void QGeoTile::setTileSpec(const QGeoTileSpec &spec)
-{
-    spec_ = spec;
-}
+    void setMappingManager(QGeoMappingManager *manager);
 
-QGeoTileSpec QGeoTile::tileSpec() const
-{
-    return spec_;
-}
+    void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
+    QSet<QGeoTileSpec> cachedTiles() const;
 
-void QGeoTile::setTexture(QGLTexture2D *texture)
-{
-    texture_ = texture;
-}
+    void tileFetched(const QGeoTileSpec &tile);
 
-QGLTexture2D* QGeoTile::texture() const
-{
-    return texture_;
-}
-
-void QGeoTile::setSceneNode(QGLSceneNode *sceneNode)
-{
-    sceneNode_ = sceneNode;
-}
-
-QGLSceneNode* QGeoTile::sceneNode() const
-{
-    return sceneNode_;
-}
-
-void QGeoTile::bind()
-{
-    if (bound_)
-        return;
-
-    texture_->bind();
-//    texture_->clearImage();
-
-    bound_ = true;
-}
-
-void QGeoTile::setBound(bool bound)
-{
-    bound_ = bound;
-}
-
-bool QGeoTile::isBound() const
-{
-    return bound_;
-}
+private:
+    QGeoMapImagesPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoMapImages)
+};
 
 QT_END_NAMESPACE
+
+#endif // QGEOMAPIMAGES_P_H

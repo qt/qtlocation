@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOFRUSTUM_P_H
-#define QGEOFRUSTUM_P_H
+#ifndef QGEOMAPGEOMETRY_P_H
+#define QGEOMAPGEOMETRY_P_H
 
 //
 //  W A R N I N G
@@ -52,93 +52,53 @@
 // We mean it.
 //
 
-#include <QHash>
-
-#include <Qt3D/qplane3d.h>
-
-#include "qdoublevector3d_p.h"
+#include <QSet>
+#include <QSize>
+#include <QSharedPointer>
 
 QT_BEGIN_NAMESPACE
 
+class QGeoCameraData;
+class QGeoTileSpec;
+class QGeoProjection;
+
+class QDoubleVector2D;
+
+class QGLSceneNode;
 class QGLCamera;
+class QGLPainter;
+class QGLTexture2D;
 
-class Q_AUTOTEST_EXPORT QGeoFrustum
-{
+class QPointF;
+
+class QGeoMapGeometryPrivate;
+
+class QGeoMapGeometry {
 public:
-    enum Plane {
-        Near = 0x001,
-        Far = 0x002,
-        Right = 0x004,
-        Left = 0x008,
-        Top = 0x010,
-        Bottom = 0x020,
-        TopLeftNear = Top | Left | Near,
-        TopLeftFar = Top | Left | Far,
-        TopRightNear = Top | Right | Near,
-        TopRightFar = Top | Right | Far,
-        BottomLeftNear = Bottom | Left | Near,
-        BottomLeftFar = Bottom | Left | Far,
-        BottomRightNear = Bottom | Right | Near,
-        BottomRightFar = Bottom | Right | Far
-    };
+    QGeoMapGeometry(QSharedPointer<QGeoProjection> projection);
+    ~QGeoMapGeometry();
 
-    Q_DECLARE_FLAGS(Planes, Plane)
+    void setScreenSize(const QSize &size);
+    void setTileSize(int tileSize);
+    void setCameraData(const QGeoCameraData &cameraData_);
+    void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
 
-    QGeoFrustum();
+    void addTile(const QGeoTileSpec &spec, QGLTexture2D *texture);
 
-    void update(const QGLCamera *camera, double aspectRatio, bool updatePlanes = false);
+    QDoubleVector2D screenPositionToMercator(const QPointF &pos) const;
+    QPointF mercatorToScreenPosition(const QDoubleVector2D &mercator) const;
 
-    bool contains(const QDoubleVector3D &center, double radius) const;
+    QGLCamera *camera() const;
+    QGLSceneNode *sceneNode() const;
+    void paintGL(QGLPainter *painter);
 
-    QDoubleVector3D topLeftNear() const {
-        return tln_;
-    }
-    QDoubleVector3D topLeftFar() const {
-        return tlf_;
-    }
-    QDoubleVector3D bottomLeftNear() const {
-        return bln_;
-    }
-    QDoubleVector3D bottomLeftFar() const {
-        return blf_;
-    }
-    QDoubleVector3D topRightNear() const {
-        return trn_;
-    }
-    QDoubleVector3D topRightFar() const {
-        return trf_;
-    }
-    QDoubleVector3D bottomRightNear() const {
-        return brn_;
-    }
-    QDoubleVector3D bottomRightFar() const {
-        return brf_;
-    }
-
-    QPlane3D plane(Planes planes) const;
+    bool verticalLock() const;
 
 private:
-    double hf_;
-    double wf_;
-    QDoubleVector3D cf_;
-    QDoubleVector3D tlf_;
-    QDoubleVector3D trf_;
-    QDoubleVector3D blf_;
-    QDoubleVector3D brf_;
-
-    double hn_;
-    double wn_;
-    QDoubleVector3D cn_;
-    QDoubleVector3D tln_;
-    QDoubleVector3D trn_;
-    QDoubleVector3D bln_;
-    QDoubleVector3D brn_;
-
-    QHash<Planes, QPlane3D> planeHash_;
+    QGeoMapGeometryPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoMapGeometry)
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoFrustum::Planes)
 
 QT_END_NAMESPACE
 
-#endif // QGEOFRUSTUM_P_H
+#endif // QGEOMAPGEOMETRY_P_H

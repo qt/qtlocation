@@ -50,7 +50,6 @@
 #include <QThread>
 
 #include "qgeotilecache_p.h"
-#include "qgeotile_p.h"
 #include "qgeocameradata_p.h"
 #include "qgeomapcontroller_p.h"
 #include "mapnode_p.h"

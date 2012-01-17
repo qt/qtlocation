@@ -57,6 +57,7 @@
 #include <QSet>
 #include <QSize>
 #include <QSizeF>
+#include <QPair>
 
 QT_BEGIN_NAMESPACE
 
@@ -81,6 +82,7 @@ public:
     void setMaximumZoomLevel(int maxZoom);
 
     QSet<QGeoTileSpec> tiles() const;
+    QPair<QSet<QGeoTileSpec>, QSet<QGeoTileSpec> > tilesSplitByDateline() const;
 
 private:
     QGeoCameraTilesPrivate *d_ptr;

@@ -71,7 +71,7 @@ class TileDisk;
 class TileMemory;
 class TileTexture;
 
-class QGLSceneNode;
+class QGLTexture2D;
 
 class QPixmap;
 class QThread;
@@ -95,12 +95,10 @@ public:
     int maxTextureUsage() const;
     int textureUsage() const;
 
-    void GLContextAvailable(QGLSceneNode *parentNode);
+    void GLContextAvailable();
 
     bool contains(const QGeoTileSpec &spec) const;
-    QGeoTile get(const QGeoTileSpec &spec);
-
-    void update(const QGeoTileSpec &spec, const QGeoTile &tile);
+    QGLTexture2D* get(const QGeoTileSpec &spec);
 
     void evictFromDiskCache(TileDisk *td);
     void evictFromMemoryCache(TileMemory *tm);
@@ -126,7 +124,7 @@ private:
     QCache<QGeoTileSpec, TileMemory > memoryCache_;
     QCache<QGeoTileSpec, TileTexture > textureCache_;
 
-    QList<QGeoTile> cleanupList_;
+    QList<QGLTexture2D*> cleanupList_;
 };
 
 QT_END_NAMESPACE

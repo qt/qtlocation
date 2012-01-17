@@ -63,7 +63,6 @@
 #include <QSharedPointer>
 
 #include "qgeocameradata_p.h"
-#include "qgeofrustum_p.h"
 #include "qgeomaptype.h"
 
 #include "qdoublevector3d_p.h"
@@ -77,10 +76,11 @@ class QGeoTileCache;
 class QGeoTileSpec;
 class QGeoMap;
 class QGeoMapController;
-class QGeoMapSphere;
 class QGeoProjection;
 
 class QGeoCameraTiles;
+class QGeoMapImages;
+class QGeoMapGeometry;
 
 class QGLCamera;
 class QGLSceneNode;
@@ -109,13 +109,6 @@ public:
     int height() const;
     double aspectRatio() const;
 
-    QGLSceneNode* createTileSpecNode(const QGeoTileSpec &tileSpec);
-    QGLSceneNode* createTileNode(const QGeoTile &tile);
-
-    QRect specToRect(const QGeoTileSpec &tileSpec) const;
-
-    void update();
-
     const QGeoMapType activeMapType() const;
     void setActiveMapType(const QGeoMapType &mapType);
 
@@ -125,9 +118,6 @@ public:
     void tileFetched(const QGeoTileSpec &spec);
 
 private:
-    void updateGlCamera(QGLCamera* glCamera);
-    void updateFrustum(QGeoFrustum &frustum);
-
     int width_;
     int height_;
     double aspectRatio_;
@@ -140,15 +130,13 @@ private:
 
     QSharedPointer<QGeoProjection> projection_;
 
-    QGLCamera *glCamera_;
-
     QGeoCameraData cameraData_;
-    QGeoFrustum frustum_;
     QSet<QGeoTileSpec> visibleTiles_;
 
     QGeoCameraTiles *cameraTiles_;
+    QGeoMapGeometry *mapGeometry_;
+    QGeoMapImages *mapImages_;
 
-    QGeoMapSphere *sphere_;
     QGeoMapType activeMapType_;
 
     // from map2d_p.h
@@ -158,10 +146,6 @@ private:
 
     double baseHeight_;
     double sideLength_;
-
-    QSizeF viewSize_;
-    QDoubleVector3D eye_;
-    QMatrix4x4 projectionMatrix_;
 };
 
 QT_END_NAMESPACE

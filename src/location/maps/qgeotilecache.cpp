@@ -40,7 +40,6 @@
 ****************************************************************************/
 #include "qgeotilecache_p.h"
 
-#include "qgeotile_p.h"
 #include "qgeotilespec.h"
 
 #include "qgeomappingmanager.h"
@@ -51,7 +50,6 @@
 #include <QDebug>
 
 #include <Qt3D/qgltexture2d.h>
-#include <Qt3D/qglscenenode.h>
 
 Q_DECLARE_METATYPE(QList<QGeoTileSpec>)
 Q_DECLARE_METATYPE(QSet<QGeoTileSpec>)
@@ -95,9 +93,7 @@ public:
     }
 
     QGeoTileSpec spec;
-    bool bound;
     QGLTexture2D *texture;
-    QGLSceneNode *node;
     QGeoTileCache *cache;
 };
 
@@ -172,17 +168,11 @@ int QGeoTileCache::textureUsage() const
     return textureCache_.totalCost();
 }
 
-void QGeoTileCache::GLContextAvailable(QGLSceneNode *parentNode)
+void QGeoTileCache::GLContextAvailable()
 {
     int size = cleanupList_.size();
     for (int i = 0; i < size; ++i) {
-        QGeoTile t = cleanupList_.at(i);
-        QGLSceneNode *node = t.sceneNode();
-        if (node) {
-            parentNode->removeNode(node);
-            delete node;
-        }
-        QGLTexture2D *texture = t.texture();
+        QGLTexture2D* texture = cleanupList_.at(i);
         if (texture) {
             texture->release();
             delete texture;
@@ -196,53 +186,25 @@ bool QGeoTileCache::contains(const QGeoTileSpec &spec) const
     return keys_.contains(spec);
 }
 
-QGeoTile QGeoTileCache::get(const QGeoTileSpec &spec)
+QGLTexture2D* QGeoTileCache::get(const QGeoTileSpec &spec)
 {
     if (textureCache_.contains(spec)) {
         TileTexture *tt = textureCache_.object(spec);
-
-        QGeoTile t = QGeoTile(tt->spec);
-        t.setTexture(tt->texture);
-        t.setSceneNode(tt->node);
-        t.setBound(tt->bound);
-        return t;
+        return tt->texture;
     }
 //    if (memoryCache_.contains(spec)) {
 //        TileMemory *tm = memoryCache_.object(spec);
 //        TileTexture *tt = addToTextureCache(tm->spec, tm->pixmap);
-
-//        QGeoTile t = Tile(tt->spec);
-//        t.setTexture(tt->texture);
-//        t.setSceneNode(tt->node);
-//        t.setBound(tt->bound);
-//        return t;
+//        return tt->texture;
 //    }
     if (diskCache_.contains(spec)) {
         TileDisk *td = diskCache_.object(spec);
 //        TileMemory *tm = addToMemoryCache(td->spec, QPixmap(td->filename));
-//        TileTexture *tt = addToTextureCache(tm->spec, tm->pixmap);
         TileTexture *tt = addToTextureCache(td->spec, QPixmap(td->filename));
-
-        QGeoTile t = QGeoTile(tt->spec);
-        t.setTexture(tt->texture);
-        t.setSceneNode(tt->node);
-        t.setBound(tt->bound);
-        return t;
+        return tt->texture;
     }
 
-    return QGeoTile();
-}
-
-// TODO rename so this is less strange
-// OR do node creation in here somehow
-void QGeoTileCache::update(const QGeoTileSpec &spec, const QGeoTile &tile)
-{
-    TileTexture *tt = textureCache_.object(spec);
-    if (tt) {
-        tt->node = tile.sceneNode();
-        tt->texture = tile.texture();
-        tt->bound = tile.isBound();
-    }
+    return 0;
 }
 
 void QGeoTileCache::insert(const QGeoTileSpec &spec, const QByteArray &bytes, QGeoMappingManager::CacheAreas areas)
@@ -287,10 +249,7 @@ void QGeoTileCache::evictFromMemoryCache(TileMemory * /* tm  */)
 
 void QGeoTileCache::evictFromTextureCache(TileTexture *tt)
 {
-    QGeoTile t(tt->spec);
-    t.setTexture(tt->texture);
-    t.setSceneNode(tt->node);
-    cleanupList_ << t;
+    cleanupList_ << tt->texture;
 }
 
 TileDisk* QGeoTileCache::addToDiskCache(const QGeoTileSpec &spec, const QString &filename)
@@ -350,7 +309,6 @@ TileTexture* QGeoTileCache::addToTextureCache(const QGeoTileSpec &spec, const QP
 //    tt->texture->bind();
 //    tt->texture->clearImage();
 
-    tt->node = 0;
     tt->cache = this;
 
     int textureCost = pixmap.width() * pixmap.height() * pixmap.depth() / 8;;
