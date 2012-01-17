@@ -3,7 +3,7 @@ TARGETPATH = QtLocation
 
 include(qlocationimport.pri)
 
-QT += quick-private network location declarative qt3d core-private gui-private
+QT += quick-private network location declarative-private qt3d core-private gui-private
 
 DESTDIR = $$QT.location.imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH

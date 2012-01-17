@@ -47,6 +47,7 @@
 #include <QDeclarativeParserStatus>
 #include <QAbstractItemModel>
 #include <QDeclarativeContext>
+#include <QtDeclarative/private/qdeclarativeopenmetaobject_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -226,6 +227,10 @@ QDeclarativeGeoMapItemBase* QDeclarativeGeoMapItemView::createItem(int modelRow)
         qWarning() << "QDeclarativeGeoMapItemView Index is not valid: " << modelRow;
         return NULL;
     }
+
+    QObject *model = new QObject(this);
+    QDeclarativeOpenMetaObject *modelMetaObject = new QDeclarativeOpenMetaObject(model);
+
     QHashIterator<int, QByteArray> iterator(model_->roleNames());
     QDeclarativeContext *itemContext = new QDeclarativeContext(qmlContext(this));
     while (iterator.hasNext()) {
@@ -234,19 +239,13 @@ QDeclarativeGeoMapItemBase* QDeclarativeGeoMapItemView::createItem(int modelRow)
         if (!modelData.isValid())
             continue;
 
-        // Currently we only support QObject* type data.
-        QObject* data_ptr = modelData.value<QObject*>();
+        itemContext->setContextProperty(QString::fromLatin1(iterator.value().constData()),
+                                        modelData);
 
-        if (!data_ptr)
-            continue;
-        itemContext->setContextProperty(QLatin1String(iterator.value().data()), data_ptr);
-        itemContext->setContextProperty(QLatin1String("model"), data_ptr);
-        // To avoid name collisions (delegate has same named attribute as model's role)
-        // one can add here that the data is accessible also e.g. via 'model'.
-        // However this requires instantiating a dynamic qobject and assigning it the
-        // dynamic property as property. Dynamic meta object code from declarative
-        // code should be reused. In mobility, e.g. contacts should have an example.
+        modelMetaObject->setValue(iterator.value(), modelData);
     }
+    itemContext->setContextProperty(QLatin1String("model"), model);
+
     QObject* obj = delegate_->create(itemContext);
 
     if (!obj) {
@@ -261,6 +260,7 @@ QDeclarativeGeoMapItemBase* QDeclarativeGeoMapItemView::createItem(int modelRow)
         return 0;
     }
     itemContext->setParent(declMapObj);
+    model->setParent(declMapObj);
     return declMapObj;
 }
 
