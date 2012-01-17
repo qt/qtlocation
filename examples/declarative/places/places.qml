@@ -45,8 +45,8 @@ import "content/places"
 
 Item {
     id: page
-    width: parent ? parent.width : 360
-    height: parent ? parent.height : 640
+    width: (parent && parent.width > 0) ? parent.width : 360
+    height: (parent && parent.height > 0) ? parent.height : 640
     property bool mobileUi: true
     property variant map
     property variant searchRegion : startLocation
@@ -330,8 +330,6 @@ Item {
     OptionsDialog {
         id: optionsDialog
         z: backgroundRect.z + 3
-
-        title: "Search Options"
 
         Behavior on opacity { NumberAnimation { duration: 500 } }
 
