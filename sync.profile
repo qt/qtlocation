@@ -27,7 +27,8 @@
     "qtxmlpatterns" => "refs/heads/master",
     "qtdeclarative" => "refs/heads/master",
     "qtjsbackend" => "refs/heads/master",
-    "qtquick3d" => "refs/heads/qml2"
+    "qtquick3d" => "refs/heads/qml2",
+    "qt3d" => "refs/heads/master"
 );
 
 # compile tests
