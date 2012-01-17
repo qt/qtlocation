@@ -65,7 +65,7 @@ MapQuickItem {  //to be used inside MapComponent only
         height: 144;
         MediaPlayer {
             id: player
-            source: Qt.resolvedUrl("../../demo.mp4")
+            source: Qt.resolvedUrl("../../demo.ogv")
             playing: true
 
             onStopped: {
