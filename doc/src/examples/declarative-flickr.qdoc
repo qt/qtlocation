@@ -33,11 +33,51 @@
     \brief The Flickr example shows how to use the user's current location to
            fetch local content from a web service.
 
+    This is a small example, illustrating one of the very core parts of the
+    QtLocation API: the ability to retrieve and use the user's current
+    geographic location.
+
+    Key QML elements shown in this example:
+    \list
+        \o \l{QtLocation5::PositionSource}{PositionSource}
+        \o \l{XmlListModel}{XmlListModel}
+    \endlist
+
     \image  qml-flickr-1.jpg
 
-    The basic idea is to fetch public images from the Flickr service based on
-    your current location. In case there is no default positioning provider on the platform
-    the application is being run on, the example defaults to use a small NMEA log file
-    (recorded in Australia).
+    \section2 Retrieving the current location
+
+    Retrieving the user's current location is achieved using the PositionSource
+    element. In this example, we instantiate the PositionSource as part of the
+    GeoTab component (the floating "window" describing current location and
+    status).
+
+    \snippet examples/declarative/flickr/flickrmobile/GeoTab.qml possrc
+
+    When the "Locate & update" button is pressed, we first interrogate the
+    PositionSource to check if it has an available backend for positioning
+    data. If it does not, we fall back to using a pre-recorded NMEA log
+    for demonstration. We then instruct the PositionSource to update.
+
+    \snippet examples/declarative/flickr/flickrmobile/GeoTab.qml locatebutton-top
+    \snippet examples/declarative/flickr/flickrmobile/GeoTab.qml locatebutton-clicked
+
+    To share the new position data with the rest of the application, we use
+    properties that we have created on the GeoTab component:
+
+    \snippet examples/declarative/flickr/flickrmobile/GeoTab.qml props
+
+    The longitude and latitude values retrieved here are eventually set on
+    in properties on the RestModel component. The RestModel is an XmlListModel,
+    which retrieves XML data from a URL and creates a data model by performing
+    XPath queries on it.
+
+    In this case, it retrieves data from the Flickr REST API online, based on
+    our current location
+
+    \snippet examples/declarative/flickr/flickrcommon/RestModel.qml restmodel
+
+    This model data is then shown in a variety of Qt Quick views to produce
+    the example application.
 
 */

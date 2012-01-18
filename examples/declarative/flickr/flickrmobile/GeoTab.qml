@@ -45,10 +45,12 @@ import QtLocation 5.0
 Rectangle {
     id: container
     property int maxX: parent.width; property int maxY: parent.height
+//! [props]
     property double latitude
     property double longitude
     latitude: positionSource.position.coordinate.latitude
     longitude: positionSource.position.coordinate.longitude
+//! [props]
 
     width: 300; height: 130
     color: "blue"
@@ -67,24 +69,30 @@ Rectangle {
         drag.minimumX: -(parent.width * (2/3)); drag.maximumX: parent.maxX - (parent.width/3)
         drag.minimumY: -(parent.height/2); drag.maximumY: parent.maxY - (parent.height/2)
     }
+//! [locatebutton-top]
     Button {
         id: locateButton
         text: "Locate & update"
+//! [locatebutton-top]
         anchors {left: parent.left; leftMargin: 5}
         y: 3; height: 32; width: parent.width - 10
+//! [locatebutton-clicked]
         onClicked: {
-            if (positionSource.supportedPositioningMethod == PositionSource.NoPositioningMethod) {
+            if (positionSource.supportedPositioningMethod ==
+                    PositionSource.NoPositioningMethod) {
                 positionSource.nmeaSource = "nmealog.txt";
                 sourceText.text = "(filesource): " + printableMethod(positionSource.supportedPositioningMethod);
             }
             positionSource.update();
         }
     }
+//! [locatebutton-clicked]
+//! [possrc]
     PositionSource {
         id: positionSource
-        //nmeaSource: "nmealog.txt"
-        onPositionChanged: {planet.source = "images/sun.png";}
+        onPositionChanged: { planet.source = "images/sun.png"; }
     }
+//! [possrc]
     function printableMethod(method) {
         if (method == PositionSource.SatellitePositioningMethod)
             return "Satellite";
