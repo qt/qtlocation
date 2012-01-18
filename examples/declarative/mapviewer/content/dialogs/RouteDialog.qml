@@ -66,12 +66,17 @@ Item {
     property int travelMode: RouteQuery.CarTravel             // CarTravel, PedestrianTravel, BicycleTravel, PublicTransitTravel, TruckTravel
     property int routeOptimization: RouteQuery.FastestRoute   // ShortestRoute, FastestRoute, MostEconomicRoute, MostScenicRoute
     property variant features: []                             // NoFeature, TollFeature, HighwayFeature, PublicTransitFeature, FerryFeature, TunnelFeature, DirtRoadFeature, ParksFeature, MotorPoolLaneFeature
+    property color fontColorNormal: "#242424"
+    property color fontColorDisabled: "lightgrey"
+    property color backgroundColorNormal: "#ECECEC"
+    property color backgroundColorEnabled: "#98D0FC"
+    property color backgroundColorDisabled: "grey"
 
     Fader {}
 
     Rectangle {
         id: dialogRectangle
-        color: "white"
+        color: backgroundColorNormal
         opacity: 1
         width: parent.width - gap*2;
         height: options.height + gap*4 + buttons.height + titleBar.height + routeOptions.height
@@ -82,8 +87,6 @@ Item {
             leftMargin: gap
         }
 
-        border.width: 1
-        border.color: "dodgerblue"
         radius: 5
 
         TitleBar {
@@ -132,9 +135,7 @@ Item {
 
                 Rectangle {
                     id: coord
-                    color: enabled ? "#C0DCFF" : "gainsboro"
-                    border.width: 1
-                    border.color: enabled ? "dodgerblue" : "grey"
+                    color: enabled ? backgroundColorEnabled : backgroundColorDisabled
                     radius: 5
                     width:options.width - optionButtonCoord.width - row1.spacing
                     height: longTo.y + longTo.height + gap
@@ -152,7 +153,7 @@ Item {
                             leftMargin: gap
                         }
                         text: "From"
-                        color: enabled ? "black" : "grey"
+                        color: enabled ? fontColorNormal : fontColorDisabled
                         font.pixelSize: 14
                     }
 
@@ -196,7 +197,7 @@ Item {
                             leftMargin: gap;
                         }
                         text: "To"
-                        color: enabled ? "black" : "grey"
+                        color: enabled ? fontColorNormal : fontColorDisabled
                         font.pixelSize: 14
                     }
 
@@ -246,9 +247,7 @@ Item {
 
                 Rectangle {
                     id: address
-                    color: enabled ? "#C0DCFF" : "gainsboro"
-                    border.width: 1
-                    border.color: enabled ? "dodgerblue" : "grey"
+                    color: enabled ? backgroundColorEnabled : backgroundColorDisabled
                     radius: 5
                     width:coord.width
                     height: countryTo.y + countryTo.height + gap
@@ -265,7 +264,7 @@ Item {
                             leftMargin: gap
                         }
                         text: "From"
-                        color: enabled ? "black" : "grey"
+                        color: enabled ? fontColorNormal : fontColorDisabled
                         font.pixelSize: 14
                     }
 
@@ -321,7 +320,7 @@ Item {
                             leftMargin: gap
                         }
                         text: "To"
-                        color: enabled ? "black" : "grey"
+                        color: enabled ? fontColorNormal : fontColorDisabled
                         font.pixelSize: 14
                     }
 

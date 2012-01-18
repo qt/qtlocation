@@ -359,14 +359,14 @@ Map {
             Text {
                 id: indexText
                 text: index + 1
-                color: "royalblue"
+                color: "#242424"
                 font.bold: true
                 font.pixelSize: 14
             }
 //! [routeinfodel1]
             Text {
                 text: instruction
-                color: "royalblue"
+                color: "#242424"
                 wrapMode: Text.Wrap
 //! [routeinfodel1]
                 width: textArea.width - indexText.width - distanceText.width - spacing*4
@@ -376,7 +376,7 @@ Map {
             Text {
                 id: distanceText
                 text: distance
-                color: "royalblue"
+                color: "#242424"
                 font.bold: true
                 font.pixelSize: 14
             }
@@ -392,7 +392,7 @@ Map {
             Text {
                 id: travelTime
                 text: routeInfoModel.travelTime
-                color: "royalblue"
+                color: "#242424"
                 font.bold: true
                 font.pixelSize: 14
                 anchors.left: parent.left
@@ -400,14 +400,14 @@ Map {
             Text {
                 id: distance
                 text: routeInfoModel.distance
-                color: "royalblue"
+                color: "#242424"
                 font.bold: true
                 font.pixelSize: 14
                 anchors.right: parent.right
             }
             Rectangle {
                 id: line
-                color: "royalblue"
+                color: "#242424"
                 width: parent.width
                 height: 2
                 anchors.left: parent.left

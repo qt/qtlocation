@@ -44,6 +44,6 @@ QtObject {
     property string background: "../../../../resources/button.sci"
     property string pressedBackground: "../../../../resources/button_pressed.png"
     property string disabledBackground: "../../../../resources/button.png"
-    property int heightAdjustment: 0
-    property int yAdjustment: 0
+    property color fontcolor_normal: "white"
+    property color fontcolor_selected: "#1c94fc"
 }

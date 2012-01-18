@@ -51,11 +51,22 @@ Item {
     Rectangle {
         anchors.fill: parent
         border.width: 1;
-        border.color: "dodgerblue"
+        border.color: "lightgrey"
         radius: 8
         color: "white"
         opacity: 1
     }
+
+    Rectangle {
+        anchors.left: parent.left
+        anchors.leftMargin: 4
+        anchors.top: parent.top
+        anchors.topMargin: (parent.height - height)/2
+        height: 3
+        width: handle.x - x
+        color: "#1c94fc"
+    }
+
 
     Rectangle {
         id: labelRect
@@ -64,14 +75,14 @@ Item {
         radius: 4
         smooth: true
         color: "white"
-        border.color: "dodgerblue"
+        border.color: "lightgrey"
         anchors.bottom: handle.top
         anchors.bottomMargin: 4
         x: Math.max(Math.min(handle.x + (handle.width - width )/2, slider.width - width),0)
         visible: mouseRegion.pressed
         Text{
             id: label
-            color: "dodgerblue"
+            color: "darkgrey"
             text: Math.round(slider.value *100)/100
             width: font.pointSize * 3.5
             anchors.horizontalCenter: labelRect.horizontalCenter
@@ -83,30 +94,22 @@ Item {
     }
 
     Rectangle {
-        id: handle; smooth: true
+        id: handle;
+        smooth: true
         width: 26;
         y: (slider.height - height)/2;
         x: (slider.value - slider.minimum) * slider.length / (slider.maximum - slider.minimum)
 
         height: width; radius: width/2
         gradient: normalGradient
+        border.width: 2
+        border.color: "white"
 
         Gradient {
             id: normalGradient
-            GradientStop { position: 0.0; color: "dodgerblue" }
-            GradientStop { position: 1.0; color: "mediumblue" }
-        }
-
-        Gradient {
-            id: pressedGradient
-            GradientStop { position: 0.0; color: "dodgerblue" }
-            GradientStop { position: 1.0; color: "navy" }
-        }
-
-        Gradient {
-            id: hoveredGradient
-            GradientStop { position: 0.0; color: "dodgerblue" }
-            GradientStop { position: 1.0; color: "midnightblue" }
+            GradientStop { position: 0.0; color: "#b0b0b0" }
+            GradientStop { position: 0.66; color: "#909090" }
+            GradientStop { position: 1.0; color: "#545454" }
         }
 
         MouseArea {
@@ -117,17 +120,4 @@ Item {
             onPositionChanged: { slider.value = (slider.maximum - slider.minimum) * handle.x / slider.length + slider.minimum; }
         }
     }
-
-    states: [
-        State {
-            name: "Pressed"
-            when: mouseRegion.pressed
-            PropertyChanges { target: handle; gradient: pressedGradient }
-        },
-        State {
-            name: "Hovered"
-            when: mouseRegion.containsMouse
-            PropertyChanges { target: handle; gradient: hoveredGradient }
-        }
-    ]
 }

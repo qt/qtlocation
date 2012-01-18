@@ -67,8 +67,8 @@ Item {
 
     BorderImage {
         id: buttonImage
-        source: style.background
-        width: parent.width; height: parent.height + style.heightAdjustment; y: style.yAdjustment
+        source: container.style.background
+        anchors.fill: parent
     }
 
     MouseArea {
@@ -79,7 +79,7 @@ Item {
     }
     Text {
         id: buttonText
-        color: checked ? "lawngreen" : "white"
+        color: checked ? container.style.fontcolor_selected : container.style.fontcolor_normal
         anchors.centerIn: buttonImage; font.bold: true; font.pixelSize: 14
         style: Text.Normal
         anchors.baseline: parent.bottom
@@ -90,12 +90,12 @@ Item {
         State {
             name: "Pressed"
             when: mouseRegion.pressed == true
-            PropertyChanges { target: buttonImage; source: style.pressedBackground }
+            PropertyChanges { target: buttonImage; source: container.style.pressedBackground }
         },
         State {
             name: "Hovered"
             when: mouseRegion.containsMouse
-            PropertyChanges{ target: buttonImage; source: style.disabledBackground }
+            PropertyChanges{ target: buttonImage; source: container.style.disabledBackground }
         },
         State {
             name: "Disabled"

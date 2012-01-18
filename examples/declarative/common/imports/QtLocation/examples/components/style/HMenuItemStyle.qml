@@ -44,6 +44,6 @@ ButtonStyle {
     background: "../../../../resources/hmenuItem.png"
     pressedBackground: "../../../../resources/hmenuItem_pressed.png"
     disabledBackground: "../../../../resources/hmenuItem.png"
-    heightAdjustment: 14
-    yAdjustment: -7
+    fontcolor_normal: "#242424"
+    fontcolor_selected: "#1c94fc"
 }

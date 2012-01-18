@@ -55,6 +55,7 @@ Item {
         Text {
             id: checkboxText
             font.pixelSize: 14
+            color: "#242424"
         }
     }
     MouseArea {

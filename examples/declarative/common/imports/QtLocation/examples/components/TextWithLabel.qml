@@ -53,7 +53,7 @@ Row {
         id: label;
         width:65;
         enabled: textWithLabel.enabled
-        color: enabled ? "black" : "grey"
+        color: enabled ? "#242424" : "lightgrey"
         anchors {
             top: parent.top;
             topMargin: (inputRectangle.height-height)/2
@@ -66,15 +66,13 @@ Row {
         width: textWithLabel.width - label.width; height: inputField.font.pixelSize * 1.5
         color: enabled ? "white" : "ghostwhite"
 
-        border.width: 1
-        border.color: enabled ? "dodgerblue" : "grey"
         radius: 5
         TextInput {
             id: inputField
             focus: true
             width: parent.width - anchors.leftMargin
             enabled: textWithLabel.enabled
-            color: enabled ? "black" : "grey"
+            color: enabled ? "#242424" : "lightgrey"
             horizontalAlignment: Text.AlignLeft
 
             anchors {

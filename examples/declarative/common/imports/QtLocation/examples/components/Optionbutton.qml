@@ -60,6 +60,7 @@ Item {
         Text {
             id: optionbuttonText
             font.pixelSize: 14
+            color: "#242424"
         }
     }
     MouseArea {
