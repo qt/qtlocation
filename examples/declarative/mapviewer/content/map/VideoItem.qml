@@ -68,9 +68,6 @@ MapQuickItem {  //to be used inside MapComponent only
             source: Qt.resolvedUrl("../../demo.ogv")
             playing: true
 
-            onStopped: {
-                player.play()
-            }
             onError: {
                 if (MediaPlayer.NoError != error) {
                     console.log(errorString)
@@ -81,6 +78,15 @@ MapQuickItem {  //to be used inside MapComponent only
             id: videoItem
             source: player
             anchors.fill: parent
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    if (player.playing)
+                        player.stop()
+                    else
+                        player.play()
+                }
+            }
         }
     }
 }
