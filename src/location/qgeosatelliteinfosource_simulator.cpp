@@ -52,7 +52,6 @@ QGeoSatelliteInfoSourceSimulator::QGeoSatelliteInfoSourceSimulator(QObject *pare
 {
     Simulator::LocationConnection::ensureSimulatorConnection();
 
-    timer->setInterval(5000);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateData()));
     requestTimer->setSingleShot(true);
     connect(requestTimer, SIGNAL(timeout()), this, SLOT(updateData()));
@@ -60,6 +59,10 @@ QGeoSatelliteInfoSourceSimulator::QGeoSatelliteInfoSourceSimulator(QObject *pare
 
 void QGeoSatelliteInfoSourceSimulator::startUpdates()
 {
+    int interval = updateInterval();
+    if (interval < minimumUpdateInterval())
+        interval = minimumUpdateInterval();
+    timer->setInterval(interval);
     timer->start();
 }
 
@@ -80,9 +83,23 @@ void QGeoSatelliteInfoSourceSimulator::requestUpdate(int timeout)
     }
 }
 
+void QGeoSatelliteInfoSourceSimulator::setUpdateInterval(int msec)
+{
+    // msec should be equal to or larger than the minimum update interval; 0 is a special case
+    // that currently behaves as if the interval is set to the minimum update interval
+    if (msec != 0 && msec < minimumUpdateInterval())
+        msec = minimumUpdateInterval();
+
+    QGeoSatelliteInfoSource::setUpdateInterval(msec);
+    if (timer->isActive()) {
+        timer->setInterval(msec);
+        timer->start();
+    }
+}
+
 int QGeoSatelliteInfoSourceSimulator::minimumUpdateInterval() const
 {
-    return 0;
+    return qtPositionInfo()->minimumInterval;
 }
 
 void QGeoSatelliteInfoSourceSimulator::updateData()
@@ -109,4 +126,3 @@ void QGeoSatelliteInfoSourceSimulator::updateData()
 
 #include "moc_qgeosatelliteinfosource_simulator_p.cpp"
 QT_END_NAMESPACE
-
