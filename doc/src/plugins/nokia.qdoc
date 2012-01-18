@@ -107,8 +107,7 @@ The following table lists optional parameters that can be passed to the Nokia pl
 \endtable
 
 \section1 Places
-The Nokia provider remotely accesses places from a REST based server.  It only
-provides read-only access the place repository.  The specific capabilities
+The Nokia provider remotely accesses places (read-only) from a REST based server.  The specific capabilities
 and behaviours are outlined below:
 
 \section2 Capabilities
