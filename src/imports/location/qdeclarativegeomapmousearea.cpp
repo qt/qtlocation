@@ -58,27 +58,54 @@ QT_BEGIN_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
 
-   A MapMouseArea is an invisible item that is typically used in conjunction
-   with a visible map object or map item in order to provide mouse handling.
-   By effectively acting as a proxy, the logic for mouse handling can be
-   contained within a MapMouseArea item.
+    Like a standard Qt Quick \l{MouseArea}, the MapMouseArea provides mouse
+    handling for an item. Creating a normal Qt Quick MouseArea inside a
+    map object element (eg. MapPolygon) will result in undefined behaviour
+    due to the way in which Map objects are rendered, so MapMouseArea exists to
+    provide this functionality instead.
 
-   The \l enabled property is used to enable and disable mouse handling for
-   the proxied item. When disabled, the mouse area becomes transparent to
-   mouse events.
+    The only exception to this is the MapQuickItem, which can have normal
+    MouseArea elements defined within the sourceItem. See the documentation
+    for \l{MapQuickItem} for more details.
 
-   The \l pressed read-only property indicates whether or not the user is
-   holding down a mouse button over the mouse area. This property is often
-   used in bindings between properties in a user interface.
+    The \l enabled property of the MapMouseArea is used to enable and disable
+    mouse handling for the proxied item. When disabled, the mouse area becomes
+    transparent to mouse events.
 
-   Information about the mouse position and button clicks are provided via
-   signals for which event handler properties are defined. The most commonly
-   used involved handling mouse presses and clicks: onClicked, onDoubleClicked,
-   onPressed and onReleased.
+    The \l pressed read-only property indicates whether or not the user is
+    holding down a mouse button over the mouse area. This property is often
+    used in bindings between properties in a user interface.
 
-   MapMouseArea does not intend to be generic mouse area that supports every
-   possible usage, rather it focuses on catering for the major use-cases. Hence there
-   are some implementation limitations:
+    Information about the mouse position and button clicks are provided via
+    signals for which event handler properties are defined. The most commonly
+    used involved handling mouse presses and clicks: onClicked, onDoubleClicked,
+    onPressed and onReleased.
+
+    \section2 Example Usage
+
+    The following example shows a map containing a MapCircle object. When
+    the user clicks the MapCircle, a message is printed to the console.
+
+    \code
+    Map {
+        MapCircle {
+            center: Coordinate { ... }
+            radius: 100
+
+            MapMouseArea {
+                anchors.fill: parent
+
+                onClicked: {
+                    console.log("You clicked the circle!");
+                }
+            }
+        }
+    }
+    \endcode
+
+    \section2 Limitations
+
+    Some important limitations apply to the use of a MapMouseArea:
     \list
         \i The mouse event is guaranteed only to be valid for the
    duration of the signal handler (e.g. onPositionChanged, onClicked). Consequently
@@ -86,8 +113,7 @@ QT_BEGIN_NAMESPACE
    optimize memory usage; we do not want to allocate heap memory every time the mouse
    moves.
         \i Nested mouse areas are not supported (MapMouseArea { MapMouseArea {} }
-        \i Using normal QML MouseArea in MapItem or Map has no effect
-        \i If mouse areas of map overlap, the declaration order is significant (not e.g. 'z' value)
+        \i If two or more MapMouseAreas overlap, the declaration order is significant (not e.g. 'z' value)
         \i Only one MapMouseArea per MapItem is supported, and it always fills the whole MapItem
     \endlist
 

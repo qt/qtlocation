@@ -62,6 +62,9 @@ QT_BEGIN_NAMESPACE
     above the Map, a MapQuickItem will follow the panning (and optionally, the
     zooming) of the Map as if it is on the Map surface.
 
+    The \l{sourceItem} property contains the Qt Quick item to be drawn, which
+    can be any kind of visible element.
+
     \section2 Positioning and Sizing
 
     The positioning of the MapQuickItem on the Map is controlled by two
@@ -82,6 +85,46 @@ QT_BEGIN_NAMESPACE
     default behaviour if \l zoomLevel is not set is for the item to be drawn
     "on the screen" rather than "on the map", so that its size remains the same
     regardless of the zoom level of the Map.
+
+    \section2 Interaction
+
+    MapQuickItem is different to the other map object elements in that it can
+    accept "normal" QtQuick mouse and touch interaction elements as well as
+    the MapMouseArea and friends. For example, for a MapQuickItem, the following
+    two situations are equivalent:
+
+    \code
+    MapQuickItem {
+        sourceItem: Rectangle {
+            width: 20; height: 20
+        }
+
+        MapMouseArea {
+            onClicked: {
+                console.log("clicked!");
+            }
+        }
+    }
+    \endcode
+
+    \code
+    MapQuickItem {
+        sourceItem: Rectangle {
+            width: 20; height: 20
+
+            MouseArea {
+                onClicked: {
+                    console.log("clicked!");
+                }
+            }
+        }
+    }
+    \endcode
+
+    MouseAreas used inside a complex \l{sourceItem} can be used to create, for
+    example, a "close" button within a speech bubble that can be clicked
+    separately to the rest of the bubble, which would be impossible using
+    MapMouseArea alone.
 
     \section2 Performance
 
