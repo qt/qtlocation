@@ -53,20 +53,37 @@ Item {
     width: parent.width
     height: childrenRect.height
 
-    //! [CategoryModel delegate text]
-    Text {
+    Item {
         anchors.left: parent.left
         anchors.right: arrow.left
 
-        text: category.name
-        elide: Text.ElideRight
+        height: Math.max(icon.height, name.height)
+
+        Image {
+            id: icon
+
+            anchors.left: parent.left
+            source: category.icon.url()
+        }
+
+        //! [CategoryModel delegate text]
+        Text {
+            id: name
+
+            anchors.left: icon.right
+            anchors.verticalCenter: icon.verticalCenter
+            anchors.right: parent.right
+
+            text: category.name
+            elide: Text.ElideRight
+        }
+        //! [CategoryModel delegate text]
 
         MouseArea {
             anchors.fill: parent
             onClicked: root.clicked()
         }
     }
-    //! [CategoryModel delegate text]
 
     //! [CategoryModel delegate icon]
     IconButton {

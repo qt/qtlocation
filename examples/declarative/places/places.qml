@@ -384,12 +384,30 @@ Item {
         function searchForCategory(category) {
             searchTerm = "";
             categories = category;
+            limit = -1;
+            offset = 0;
             execute();
         }
 
         function searchForText(text) {
             searchTerm = text;
             categories = null;
+            limit = -1;
+            offset = 0;
+            execute();
+        }
+
+        function previousPage() {
+            if (limit === -1)
+                limit = count;
+            offset = Math.max(0, offset - limit);
+            execute();
+        }
+
+        function nextPage() {
+            if (limit === -1)
+                limit = count;
+            offset += limit;
             execute();
         }
 
@@ -430,7 +448,10 @@ Item {
         id: placesPlugin
 
         parameters: pluginParametersFromMap(pluginParameters)
-        onNameChanged: createMap(placesPlugin);
+        onNameChanged: {
+            createMap(placesPlugin);
+            categoryModel.update();
+        }
     }
 
     Item {

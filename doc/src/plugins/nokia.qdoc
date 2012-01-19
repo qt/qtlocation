@@ -99,11 +99,9 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \o places.host
     \o Search service URL used by search manager.
 \row
-    \o places.referer
-    \o Referer for the places token used for authentication by search manager.
-\row
-    \o places.token
-    \o Client token for the service used for authentication by search manager.
+    \o places.api_version
+    \o Version of the REST API used by the places manager.  Currently versions 1 and 2 are
+       supported.  The default is version 1.
 \endtable
 
 \section1 Parameter Usage Example

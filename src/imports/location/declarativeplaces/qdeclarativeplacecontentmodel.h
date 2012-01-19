@@ -80,6 +80,8 @@ public:
     void clear();
     void clearData();
 
+    void initializeCollection(int totalCount, const QPlaceContent::Collection &collection);
+
     // from QAbstractListModel
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;

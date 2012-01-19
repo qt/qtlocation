@@ -46,36 +46,26 @@
 **
 ****************************************************************************/
 
-#include "qplacecontentreplyimpl.h"
+#include "qplacedetailsreplyimplv1.h"
 
 #if defined(QT_PLACES_LOGGING)
     #include <QDebug>
 #endif
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     Constructor.
 */
-QPlaceContentReplyImpl::QPlaceContentReplyImpl(const QPlaceContentRequest &request, QPlaceRestReply *reply,
-                                               QPlaceManager *manager, QObject *parent)
-:   QPlaceContentReply(parent), restReply(reply), startNumber(0)
-
+QPlaceDetailsReplyImplV1::QPlaceDetailsReplyImplV1(QPlaceRestReply *reply, QPlaceManager *manager, QObject *parent) :
+    QPlaceDetailsReply(parent),
+    restReply(reply)
 {
-    setRequest(request);
-    if (request.contentType() == QPlaceContent::ImageType)
-        parser = new QPlaceJSonMediaParser(this);
-    else if (request.contentType() == QPlaceContent::ReviewType)
-        parser = new QPlaceJSonReviewParser(manager, this);
-    else if (request.contentType() == QPlaceContent::EditorialType)
-        parser = new QPlaceJSonDetailsParser(manager, this);
-    else
-        parser = 0;
+    parser = new QPlaceJSonDetailsParser(manager, this);
 
     if (restReply) {
         restReply->setParent(this);
-        connect(restReply, SIGNAL(finished(const QString &)),
-                parser, SLOT(processData(const QString &)));
+        connect(restReply, SIGNAL(finished(QString)), parser, SLOT(processData(QString)));
         connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
         connect(parser, SIGNAL(finished(QPlaceJSonParser::Error,QString)),
@@ -86,33 +76,17 @@ QPlaceContentReplyImpl::QPlaceContentReplyImpl(const QPlaceContentRequest &reque
 /*!
     Destructor.
 */
-QPlaceContentReplyImpl::~QPlaceContentReplyImpl()
+QPlaceDetailsReplyImplV1::~QPlaceDetailsReplyImplV1()
 {
 }
 
-void QPlaceContentReplyImpl::abort()
+void QPlaceDetailsReplyImplV1::abort()
 {
     if (restReply)
         restReply->cancelProcessing();
 }
 
-void QPlaceContentReplyImpl::setStartNumber(int number)
-{
-    startNumber = number;
-}
-
-void QPlaceContentReplyImpl::restError(QPlaceReply::Error errorId, const QString &errorString)
-{
-    setError(errorId, errorString);
-
-    emit error(this->error(), this->errorString());
-    emit processingError(this, this->error(), this->errorString());
-    setFinished(true);
-    emit finished();
-    emit processingFinished(this);
-}
-
-void QPlaceContentReplyImpl::restError(QPlaceRestReply::Error errorId)
+void QPlaceDetailsReplyImplV1::restError(QPlaceRestReply::Error errorId)
 {
     if (errorId == QPlaceRestReply::Canceled) {
         this->setError(CancelError, "RequestCanceled");
@@ -126,35 +100,13 @@ void QPlaceContentReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceContentReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
+void QPlaceDetailsReplyImplV1::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {
-        if (request().contentType() == QPlaceContent::ImageType) {
-            QPlaceJSonMediaParser * mediaParser = qobject_cast<QPlaceJSonMediaParser*>(parser);
-            QList<QPlaceImage> imageOjects = mediaParser->resultMedia();
-            QPlaceContent::Collection collection;
-            for (int i=0; i < imageOjects.count(); ++i)
-                collection.insert(startNumber +i, imageOjects.at(i));
-            setContent(collection);
-            setTotalCount(mediaParser->allMediaCount());
-        } else if (request().contentType() == QPlaceContent::ReviewType) {
-            QPlaceJSonReviewParser *reviewParser = qobject_cast<QPlaceJSonReviewParser*>(parser);
-            QList<QPlaceReview> reviewObjects = reviewParser->results();
-            QPlaceContent::Collection collection;
-            for (int i=0; i < reviewObjects.count(); ++i)
-                collection.insert(startNumber + i, reviewObjects.at(i));
-            setContent(collection);
-            setTotalCount(reviewParser->allReviewsCount());
-        } else if (request().contentType() == QPlaceContent::EditorialType) {
-            QPlaceJSonDetailsParser *detailsParser =
-                qobject_cast<QPlaceJSonDetailsParser *>(parser);
-
-            const QPlace place = detailsParser->result();
-            QPlaceContent::Collection collection = place.content(QPlaceContent::EditorialType);
-            setContent(collection);
-            setTotalCount(collection.count());
-        }
+        QPlace place = parser->result();
+        place.setDetailsFetched(true);
+        setPlace(place);
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());
@@ -168,3 +120,5 @@ void QPlaceContentReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
     restReply->deleteLater();
     restReply = NULL;
 }
+
+QT_END_NAMESPACE

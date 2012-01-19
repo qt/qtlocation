@@ -46,45 +46,35 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEIMAGEREPLYIMPL_H
-#define QPLACEIMAGEREPLYIMPL_H
+#ifndef QPLACECONTENTREPLYIMPL_H
+#define QPLACECONTENTREPLYIMPL_H
 
-#include <QObject>
-#include <QHash>
-
-#include <qplacecontentreply.h>
-#include "qplacerestreply.h"
-#include "qplacejsonmediaparser.h"
-#include "qplacejsonreviewparser.h"
-#include "qplacejsondetailsparser.h"
+#include <QtNetwork/QNetworkReply>
+#include <QtLocation/QPlaceContentReply>
 
 QT_BEGIN_NAMESPACE
+
+class QPlaceManager;
 
 class QPlaceContentReplyImpl : public QPlaceContentReply
 {
     Q_OBJECT
+
 public:
-    QPlaceContentReplyImpl(const QPlaceContentRequest &request, QPlaceRestReply *reply,
-                           QPlaceManager *manager, QObject *parent = 0);
+    QPlaceContentReplyImpl(const QPlaceContentRequest &request, QNetworkReply *reply,
+                           QObject *parent = 0);
     ~QPlaceContentReplyImpl();
+
     void abort();
-    void setStartNumber(int number);
 
-Q_SIGNALS:
-    void processingFinished(QPlaceReply *reply);
-    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
-
-public slots:
-    void restError(QPlaceReply::Error error, const QString &errorString);
-    void restError(QPlaceRestReply::Error error);
-    void resultReady(const QPlaceJSonParser::Error &error,
-                          const QString &errorMessage);
+private slots:
+    void setError(QPlaceReply::Error error_, const QString &errorString);
+    void replyFinished();
+    void replyError(QNetworkReply::NetworkError error);
 
 private:
-    QPlaceRestReply *restReply;
-    QPlaceJSonParser *parser;
-
-    int startNumber;
+    QPlaceManager *m_manager;
+    QNetworkReply *m_reply;
 };
 
 QT_END_NAMESPACE

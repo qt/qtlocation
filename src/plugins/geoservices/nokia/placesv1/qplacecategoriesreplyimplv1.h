@@ -37,64 +37,44 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QPLACECATEGORIESREPOSITORY_H
-#define QPLACECATEGORIESREPOSITORY_H
+#ifndef QPLACECATEGORIESREPLYIMPL_H
+#define QPLACECATEGORIESREPLYIMPL_H
 
 #include <QObject>
-#include <QWeakPointer>
 #include <QList>
 
-#include <qplacecategory.h>
 #include <qplacereply.h>
+#include "qplacerestreply.h"
 #include "qplacejsoncategoriesparser.h"
-#include "qplacecategoriesreplyimpl.h"
 
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-
-
-class QPlaceCategoriesRepository : public QObject
+class QPlaceCategoriesReplyImplV1 : public QPlaceReply
 {
     Q_OBJECT
 public:
-    static QPlaceCategoriesRepository *instance();
+    explicit QPlaceCategoriesReplyImplV1(QPlaceRestReply *reply, QObject *parent = 0);
+    ~QPlaceCategoriesReplyImplV1();
 
-    ~QPlaceCategoriesRepository();
-
-    QPlaceReply *initializeCategories();
     QPlaceCategoryTree categories() const;
+    QList<QPlaceCategory> categoriesFlat() const;
 
-    QPlaceCategory mapCategory(const QString &number);
-    QString getCategoryTagId(const QPlaceCategory &category);
-    QPlaceCategory findCategoryById(const QString &id);
+    void abort();
 
-public slots:
-    void replyFinished();
+Q_SIGNALS:
+    void processingFinished(QPlaceReply *reply);
+    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
+
+private slots:
+    void restError(QPlaceRestReply::Error error);
+    void resultReady(const QPlaceJSonParser::Error &error,
+                          const QString &errorMessage);
 
 private:
-    void setupCategoriesMapper();
-
-private:
-    QPlaceCategoriesRepository(QObject *parent = 0);
+    QPlaceRestReply *restReply;
+    QPlaceJSonCategoriesParser *parser;
 
     QPlaceCategoryTree m_categoryTree;
-    static QPlaceCategoriesRepository *repositoryInstance;
-    QWeakPointer<QPlaceCategoriesReplyImpl> m_categoriesReply;
 };
 
-QT_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QPLACECATEGORIESREPOSITORY_H
+#endif // QPLACECATEGORIESREPLYIMPL_H

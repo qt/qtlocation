@@ -37,44 +37,44 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
-#ifndef QPLACECATEGORIESREPLYIMPL_H
-#define QPLACECATEGORIESREPLYIMPL_H
+#ifndef QPLACEDETAILSREPLYIMPL_H
+#define QPLACEDETAILSREPLYIMPL_H
 
-#include <QObject>
-#include <QList>
+#include <QtNetwork/QNetworkReply>
+#include <QtLocation/QPlaceDetailsReply>
 
-#include <qplacereply.h>
-#include "qplacerestreply.h"
-#include "qplacejsoncategoriesparser.h"
+QT_BEGIN_NAMESPACE
 
-class QPlaceCategoriesReplyImpl : public QPlaceReply
+class QPlaceManager;
+
+class QPlaceDetailsReplyImpl : public QPlaceDetailsReply
 {
     Q_OBJECT
-public:
-    explicit QPlaceCategoriesReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
-    ~QPlaceCategoriesReplyImpl();
 
-    QPlaceCategoryTree categories() const;
-    QList<QPlaceCategory> categoriesFlat() const;
+public:
+    QPlaceDetailsReplyImpl(QNetworkReply *reply, QObject *parent = 0);
+    ~QPlaceDetailsReplyImpl();
 
     void abort();
 
-Q_SIGNALS:
-    void processingFinished(QPlaceReply *reply);
-    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
-
 private slots:
-    void restError(QPlaceRestReply::Error error);
-    void resultReady(const QPlaceJSonParser::Error &error,
-                          const QString &errorMessage);
+    void setError(QPlaceReply::Error error_, const QString &errorString);
+    void replyFinished();
+    void replyError(QNetworkReply::NetworkError error);
 
 private:
-    QPlaceRestReply *restReply;
-    QPlaceJSonCategoriesParser *parser;
-
-    QPlaceCategoryTree m_categoryTree;
+    QNetworkReply *m_reply;
 };
 
-#endif // QPLACECATEGORIESREPLYIMPL_H
+QT_END_NAMESPACE
+
+#endif // QPLACEDETAILSREPLYIMPL_H

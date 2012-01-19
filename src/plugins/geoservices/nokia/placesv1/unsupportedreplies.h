@@ -39,46 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACECONTENTREPLY_H
-#define QPLACECONTENTREPLY_H
+#ifndef UNSUPPORTED_REPLIES_H
+#define UNSUPPORTED_REPLIES_H
 
-#include "qplacereply.h"
-#include "qplacecontent.h"
-#include "qplacecontentrequest.h"
+#include "../qplacemanagerengine_nokiav1.h"
 
-QT_BEGIN_HEADER
+#include <QtLocation/QPlaceIdReply>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceContentReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceContentReply : public QPlaceReply
+class IdReply : public QPlaceIdReply
 {
     Q_OBJECT
-
 public:
-    explicit QPlaceContentReply(QObject *parent = 0);
-    virtual ~QPlaceContentReply();
+    IdReply(QPlaceIdReply::OperationType type, QPlaceManagerEngineNokiaV1 *engine)
+        : QPlaceIdReply(type, engine), m_engine(engine)
+    {}
+    virtual ~IdReply() {}
 
-    QPlaceReply::Type type() const;
+    void setId(const QString &id) {QPlaceIdReply::setId(id);}
 
-    QPlaceContent::Collection content() const;
-
-    int totalCount() const;
-
-    QPlaceContentRequest request() const;
-
-protected:
-    void setContent(const QPlaceContent::Collection &content);
-    void setTotalCount(int total);
-    void setRequest(const QPlaceContentRequest &request);
+    void triggerDone(QPlaceReply::Error error = QPlaceReply::NoError,
+                     const QString &errorString = QString()) {
+        if (error != QPlaceReply::NoError) {
+            this->setError(error,errorString);
+            QMetaObject::invokeMethod(m_engine, "error", Qt::QueuedConnection,
+                                      Q_ARG(QPlaceReply *,this),
+                                      Q_ARG(QPlaceReply::Error, error),
+                                      Q_ARG(QString, errorString));
+            QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                      Q_ARG(QPlaceReply::Error, error),
+                                      Q_ARG(QString, errorString));
+        }
+        this->setFinished(true);
+        QMetaObject::invokeMethod(m_engine, "finished", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *,this));
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+    }
 
 private:
-    Q_DISABLE_COPY(QPlaceContentReply)
-    Q_DECLARE_PRIVATE(QPlaceContentReply)
+    QPlaceManagerEngineNokiaV1 *m_engine;
+
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

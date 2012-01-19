@@ -37,48 +37,42 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
-#ifndef QPLACECONTENTREPLY_H
-#define QPLACECONTENTREPLY_H
+#ifndef QPLACESEARCHREPLYIMPL_H
+#define QPLACESEARCHREPLYIMPL_H
 
-#include "qplacereply.h"
-#include "qplacecontent.h"
-#include "qplacecontentrequest.h"
-
-QT_BEGIN_HEADER
+#include <QtNetwork/QNetworkReply>
+#include <QtLocation/QPlaceSearchReply>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceContentReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceContentReply : public QPlaceReply
+class QPlaceSearchReplyImpl : public QPlaceSearchReply
 {
     Q_OBJECT
 
 public:
-    explicit QPlaceContentReply(QObject *parent = 0);
-    virtual ~QPlaceContentReply();
+    explicit QPlaceSearchReplyImpl(QNetworkReply *reply, QObject *parent = 0);
+    ~QPlaceSearchReplyImpl();
 
-    QPlaceReply::Type type() const;
+    void abort();
 
-    QPlaceContent::Collection content() const;
-
-    int totalCount() const;
-
-    QPlaceContentRequest request() const;
-
-protected:
-    void setContent(const QPlaceContent::Collection &content);
-    void setTotalCount(int total);
-    void setRequest(const QPlaceContentRequest &request);
+private slots:
+    void setError(QPlaceReply::Error error_, const QString &errorString);
+    void replyFinished();
+    void replyError(QNetworkReply::NetworkError error);
 
 private:
-    Q_DISABLE_COPY(QPlaceContentReply)
-    Q_DECLARE_PRIVATE(QPlaceContentReply)
+    QNetworkReply *m_reply;
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif
+#endif // QPLACESEARCHREPLYIMPL_H

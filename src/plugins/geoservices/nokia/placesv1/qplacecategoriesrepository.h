@@ -46,42 +46,55 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACESEARCHREPLYIMPL_H
-#define QPLACESEARCHREPLYIMPL_H
+#ifndef QPLACECATEGORIESREPOSITORY_H
+#define QPLACECATEGORIESREPOSITORY_H
 
 #include <QObject>
-#include <QHash>
+#include <QWeakPointer>
+#include <QList>
 
-#include <qplacesearchreply.h>
-#include "qplacerestreply.h"
-#include "qplacejsonsearchparser.h"
+#include <qplacecategory.h>
+#include <qplacereply.h>
+#include "qplacejsoncategoriesparser.h"
+#include "qplacecategoriesreplyimplv1.h"
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceSearchReplyImpl : public QPlaceSearchReply
+
+
+class QPlaceCategoriesRepository : public QObject
 {
     Q_OBJECT
 public:
-    explicit QPlaceSearchReplyImpl(QPlaceRestReply *reply, QObject *parent = 0);
-    ~QPlaceSearchReplyImpl();
-    void abort();
+    static QPlaceCategoriesRepository *instance();
 
-Q_SIGNALS:
-    void processingFinished(QPlaceReply *reply);
-    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
+    ~QPlaceCategoriesRepository();
+
+    QPlaceReply *initializeCategories();
+    QPlaceCategoryTree categories() const;
+
+    QPlaceCategory mapCategory(const QString &number);
+    QString getCategoryTagId(const QPlaceCategory &category);
+    QPlaceCategory findCategoryById(const QString &id);
 
 public slots:
-    void setError(QPlaceReply::Error error, const QString &errorString);
-    void restError(QPlaceRestReply::Error error);
-    void resultReady(const QPlaceJSonParser::Error &error,
-                          const QString &errorMessage);
+    void replyFinished();
 
 private:
-    QList<QPlaceSearchResult> filterSecondSearchCenter(const QList<QPlaceSearchResult> &list);
-    QPlaceRestReply *restReply;
-    QPlaceJSonSearchParser *parser;
+    void setupCategoriesMapper();
+
+private:
+    QPlaceCategoriesRepository(QObject *parent = 0);
+
+    QPlaceCategoryTree m_categoryTree;
+    static QPlaceCategoriesRepository *repositoryInstance;
+    QWeakPointer<QPlaceCategoriesReplyImplV1> m_categoriesReply;
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACESEARCHREPLYIMPL_H
+QT_END_HEADER
+
+#endif // QPLACECATEGORIESREPOSITORY_H

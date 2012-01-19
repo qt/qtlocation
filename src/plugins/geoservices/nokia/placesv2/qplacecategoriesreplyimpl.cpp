@@ -39,46 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACECONTENTREPLY_H
-#define QPLACECONTENTREPLY_H
-
-#include "qplacereply.h"
-#include "qplacecontent.h"
-#include "qplacecontentrequest.h"
-
-QT_BEGIN_HEADER
+#include "qplacecategoriesreplyimpl.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceContentReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceContentReply : public QPlaceReply
+QPlaceCategoriesReplyImpl::QPlaceCategoriesReplyImpl(QObject *parent)
+:   QPlaceReply(parent)
 {
-    Q_OBJECT
+}
 
-public:
-    explicit QPlaceContentReply(QObject *parent = 0);
-    virtual ~QPlaceContentReply();
+QPlaceCategoriesReplyImpl::~QPlaceCategoriesReplyImpl()
+{
+}
 
-    QPlaceReply::Type type() const;
+void QPlaceCategoriesReplyImpl::emitFinished()
+{
+    setFinished(true);
+    emit finished();
+}
 
-    QPlaceContent::Collection content() const;
-
-    int totalCount() const;
-
-    QPlaceContentRequest request() const;
-
-protected:
-    void setContent(const QPlaceContent::Collection &content);
-    void setTotalCount(int total);
-    void setRequest(const QPlaceContentRequest &request);
-
-private:
-    Q_DISABLE_COPY(QPlaceContentReply)
-    Q_DECLARE_PRIVATE(QPlaceContentReply)
-};
+void QPlaceCategoriesReplyImpl::setError(QPlaceReply::Error error_, const QString &errorString)
+{
+    QPlaceReply::setError(error_, errorString);
+    emit error(error_, errorString);
+}
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

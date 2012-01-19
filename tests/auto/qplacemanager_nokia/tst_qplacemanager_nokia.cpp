@@ -87,8 +87,6 @@ tst_QPlaceManagerNokia::tst_QPlaceManagerNokia()
 
 void tst_QPlaceManagerNokia::initTestCase()
 {
-    qRegisterMetaType<QPlaceReply::Error>();
-    qRegisterMetaType<QPlaceReply *>();
     qRegisterMetaType<QPlaceIdReply *>();
 
     QStringList providers = QGeoServiceProvider::availableServiceProviders();

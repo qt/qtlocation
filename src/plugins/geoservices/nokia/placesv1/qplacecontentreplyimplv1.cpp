@@ -46,7 +46,7 @@
 **
 ****************************************************************************/
 
-#include "qplacesearchreplyimpl.h"
+#include "qplacecontentreplyimplv1.h"
 
 #if defined(QT_PLACES_LOGGING)
     #include <QDebug>
@@ -57,11 +57,20 @@ QT_USE_NAMESPACE
 /*!
     Constructor.
 */
-QPlaceSearchReplyImpl::QPlaceSearchReplyImpl(QPlaceRestReply *reply, QObject *parent) :
-    QPlaceSearchReply(parent),
-    restReply(reply)
+QPlaceContentReplyImplV1::QPlaceContentReplyImplV1(const QPlaceContentRequest &request, QPlaceRestReply *reply,
+                                               QPlaceManager *manager, QObject *parent)
+:   QPlaceContentReply(parent), restReply(reply), startNumber(0)
+
 {
-    parser = new QPlaceJSonSearchParser(this);
+    setRequest(request);
+    if (request.contentType() == QPlaceContent::ImageType)
+        parser = new QPlaceJSonMediaParser(this);
+    else if (request.contentType() == QPlaceContent::ReviewType)
+        parser = new QPlaceJSonReviewParser(manager, this);
+    else if (request.contentType() == QPlaceContent::EditorialType)
+        parser = new QPlaceJSonDetailsParser(manager, this);
+    else
+        parser = 0;
 
     if (restReply) {
         restReply->setParent(this);
@@ -77,19 +86,25 @@ QPlaceSearchReplyImpl::QPlaceSearchReplyImpl(QPlaceRestReply *reply, QObject *pa
 /*!
     Destructor.
 */
-QPlaceSearchReplyImpl::~QPlaceSearchReplyImpl()
+QPlaceContentReplyImplV1::~QPlaceContentReplyImplV1()
 {
 }
 
-void QPlaceSearchReplyImpl::abort()
+void QPlaceContentReplyImplV1::abort()
 {
     if (restReply)
         restReply->cancelProcessing();
 }
 
-void QPlaceSearchReplyImpl::setError(QPlaceReply::Error errorId, const QString &errorString)
+void QPlaceContentReplyImplV1::setStartNumber(int number)
 {
-    QPlaceReply::setError(errorId, errorString);
+    startNumber = number;
+}
+
+void QPlaceContentReplyImplV1::restError(QPlaceReply::Error errorId, const QString &errorString)
+{
+    setError(errorId, errorString);
+
     emit error(this->error(), this->errorString());
     emit processingError(this, this->error(), this->errorString());
     setFinished(true);
@@ -97,7 +112,7 @@ void QPlaceSearchReplyImpl::setError(QPlaceReply::Error errorId, const QString &
     emit processingFinished(this);
 }
 
-void QPlaceSearchReplyImpl::restError(QPlaceRestReply::Error errorId)
+void QPlaceContentReplyImplV1::restError(QPlaceRestReply::Error errorId)
 {
     if (errorId == QPlaceRestReply::Canceled) {
         this->setError(CancelError, "RequestCanceled");
@@ -111,11 +126,35 @@ void QPlaceSearchReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceSearchReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
+void QPlaceContentReplyImplV1::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {
-        setResults(filterSecondSearchCenter(parser->searchResults()));
+        if (request().contentType() == QPlaceContent::ImageType) {
+            QPlaceJSonMediaParser * mediaParser = qobject_cast<QPlaceJSonMediaParser*>(parser);
+            QList<QPlaceImage> imageOjects = mediaParser->resultMedia();
+            QPlaceContent::Collection collection;
+            for (int i=0; i < imageOjects.count(); ++i)
+                collection.insert(startNumber +i, imageOjects.at(i));
+            setContent(collection);
+            setTotalCount(mediaParser->allMediaCount());
+        } else if (request().contentType() == QPlaceContent::ReviewType) {
+            QPlaceJSonReviewParser *reviewParser = qobject_cast<QPlaceJSonReviewParser*>(parser);
+            QList<QPlaceReview> reviewObjects = reviewParser->results();
+            QPlaceContent::Collection collection;
+            for (int i=0; i < reviewObjects.count(); ++i)
+                collection.insert(startNumber + i, reviewObjects.at(i));
+            setContent(collection);
+            setTotalCount(reviewParser->allReviewsCount());
+        } else if (request().contentType() == QPlaceContent::EditorialType) {
+            QPlaceJSonDetailsParser *detailsParser =
+                qobject_cast<QPlaceJSonDetailsParser *>(parser);
+
+            const QPlace place = detailsParser->result();
+            QPlaceContent::Collection collection = place.content(QPlaceContent::EditorialType);
+            setContent(collection);
+            setTotalCount(collection.count());
+        }
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());
@@ -129,26 +168,3 @@ void QPlaceSearchReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
     restReply->deleteLater();
     restReply = NULL;
 }
-
-QList<QPlaceSearchResult> QPlaceSearchReplyImpl::filterSecondSearchCenter(const QList<QPlaceSearchResult> &list)
-{
-    QList<QPlaceSearchResult> newList;
-    foreach (QPlaceSearchResult res, list) {
-        if (res.type() == QPlaceSearchResult::PlaceResult) {
-            bool isNotSeconSearchCenter = true;
-            foreach (QPlaceCategory cat, res.place().categories()) {
-                if (cat.categoryId() == "second-search-center") {
-                    isNotSeconSearchCenter = false;
-                    break;
-                }
-            }
-            if (isNotSeconSearchCenter) {
-                newList.append(res);
-            }
-        } else if (res.type() == QPlaceSearchResult::CorrectionResult) {
-            newList.append(res);
-        }
-    }
-    return newList;
-}
-

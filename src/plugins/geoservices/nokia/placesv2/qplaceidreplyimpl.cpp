@@ -39,46 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACECONTENTREPLY_H
-#define QPLACECONTENTREPLY_H
-
-#include "qplacereply.h"
-#include "qplacecontent.h"
-#include "qplacecontentrequest.h"
-
-QT_BEGIN_HEADER
+#include "qplaceidreplyimpl.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceContentReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceContentReply : public QPlaceReply
+QPlaceIdReplyImpl::QPlaceIdReplyImpl(QPlaceIdReply::OperationType type, QObject *parent)
+:   QPlaceIdReply(type, parent)
 {
-    Q_OBJECT
+}
 
-public:
-    explicit QPlaceContentReply(QObject *parent = 0);
-    virtual ~QPlaceContentReply();
+QPlaceIdReplyImpl::~QPlaceIdReplyImpl()
+{
+}
 
-    QPlaceReply::Type type() const;
+void QPlaceIdReplyImpl::setId(const QString &id)
+{
+    QPlaceIdReply::setId(id);
+}
 
-    QPlaceContent::Collection content() const;
-
-    int totalCount() const;
-
-    QPlaceContentRequest request() const;
-
-protected:
-    void setContent(const QPlaceContent::Collection &content);
-    void setTotalCount(int total);
-    void setRequest(const QPlaceContentRequest &request);
-
-private:
-    Q_DISABLE_COPY(QPlaceContentReply)
-    Q_DECLARE_PRIVATE(QPlaceContentReply)
-};
+void QPlaceIdReplyImpl::setError(QPlaceReply::Error error_, const QString &errorString)
+{
+    QPlaceIdReply::setError(error_, errorString);
+    emit error(error_, errorString);
+    setFinished(true);
+    emit finished();
+}
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

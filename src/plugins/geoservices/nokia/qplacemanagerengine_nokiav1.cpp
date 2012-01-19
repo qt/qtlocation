@@ -46,24 +46,24 @@
 **
 ****************************************************************************/
 
-#include "qplacemanagerengine_nokia.h"
+#include "qplacemanagerengine_nokiav1.h"
 
 #include <QtLocation/QPlaceContentRequest>
 
-#include "places/qplacecategoriesrepository.h"
-#include "places/qplacecontentreplyimpl.h"
-#include "places/qplacetextpredictionreplyimpl.h"
-#include "places/qplacesearchreplyimpl.h"
-#include "places/qplacerecommendationreplyimpl.h"
-#include "places/qplacedetailsreplyimpl.h"
-#include "places/qplaceratingreplyimpl.h"
-#include "places/qplacerestmanager.h"
-#include "places/qplacerestreply.h"
-#include "places/unsupportedreplies.h"
+#include "placesv1/qplacecategoriesrepository.h"
+#include "placesv1/qplacecontentreplyimplv1.h"
+#include "placesv1/qplacetextpredictionreplyimpl.h"
+#include "placesv1/qplacesearchreplyimplv1.h"
+#include "placesv1/qplacerecommendationreplyimplv1.h"
+#include "placesv1/qplacedetailsreplyimplv1.h"
+#include "placesv1/qplaceratingreplyimpl.h"
+#include "placesv1/qplacerestmanager.h"
+#include "placesv1/qplacerestreply.h"
+#include "placesv1/unsupportedreplies.h"
 
 QT_USE_NAMESPACE
 
-QPlaceManagerEngineNokia::QPlaceManagerEngineNokia(const QMap<QString, QVariant> &parameters,
+QPlaceManagerEngineNokiaV1::QPlaceManagerEngineNokiaV1(const QMap<QString, QVariant> &parameters,
                                                  QGeoServiceProvider::Error *error,
                                                  QString *errorString)
 :   QPlaceManagerEngine(parameters)
@@ -91,16 +91,16 @@ QPlaceManagerEngineNokia::QPlaceManagerEngineNokia(const QMap<QString, QVariant>
         errorString->clear();
 }
 
-QPlaceManagerEngineNokia::~QPlaceManagerEngineNokia()
+QPlaceManagerEngineNokiaV1::~QPlaceManagerEngineNokiaV1()
 {
 }
 
-QPlaceDetailsReply *QPlaceManagerEngineNokia::getPlaceDetails(const QString &placeId)
+QPlaceDetailsReply *QPlaceManagerEngineNokiaV1::getPlaceDetails(const QString &placeId)
 {
-    QPlaceDetailsReplyImpl *reply = NULL;
+    QPlaceDetailsReplyImplV1 *reply = 0;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceRequest(placeId);
     if (restReply) {
-        reply = new QPlaceDetailsReplyImpl(restReply, manager(), this);
+        reply = new QPlaceDetailsReplyImplV1(restReply, manager(), this);
         connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
                 this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
         connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
@@ -109,14 +109,14 @@ QPlaceDetailsReply *QPlaceManagerEngineNokia::getPlaceDetails(const QString &pla
     return reply;
 }
 
-QPlaceContentReply *QPlaceManagerEngineNokia::getPlaceContent(const QString &placeId, const QPlaceContentRequest &request)
+QPlaceContentReply *QPlaceManagerEngineNokiaV1::getPlaceContent(const QString &placeId, const QPlaceContentRequest &request)
 {
-    QPlaceContentReplyImpl *reply;
+    QPlaceContentReplyImplV1 *reply;
     switch (request.contentType()) {
     case QPlaceContent::ImageType: {
             QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceImagesRequest(placeId,
                                                                                                request);
-            reply = new QPlaceContentReplyImpl(request, restReply, manager(), this);
+            reply = new QPlaceContentReplyImplV1(request, restReply, manager(), this);
 
             if (!restReply)
                 QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
@@ -127,7 +127,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getPlaceContent(const QString &pla
     case QPlaceContent::ReviewType: {
             QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendPlaceReviewRequest(placeId,
                                                                                                request);
-            reply = new QPlaceContentReplyImpl(request, restReply, manager(), this);
+            reply = new QPlaceContentReplyImplV1(request, restReply, manager(), this);
 
             if (!restReply)
                 QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
@@ -139,7 +139,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getPlaceContent(const QString &pla
         QPlaceRestReply *restReply =
             QPlaceRestManager::instance()->sendPlaceRequest(placeId);
 
-        reply = new QPlaceContentReplyImpl(request, restReply, manager(), this);
+        reply = new QPlaceContentReplyImplV1(request, restReply, manager(), this);
 
         if (!restReply) {
             QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
@@ -150,7 +150,7 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getPlaceContent(const QString &pla
         break;
     }
     default: {
-            reply = new QPlaceContentReplyImpl(request, 0, manager(), this);
+            reply = new QPlaceContentReplyImplV1(request, 0, manager(), this);
             QMetaObject::invokeMethod(reply, "restError", Qt::QueuedConnection,
                                       Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
                                       Q_ARG(QString, QString("Retrieval of given content type not supported")));
@@ -166,10 +166,10 @@ QPlaceContentReply *QPlaceManagerEngineNokia::getPlaceContent(const QString &pla
     return reply;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineNokia::search(const QPlaceSearchRequest &query)
+QPlaceSearchReply *QPlaceManagerEngineNokiaV1::search(const QPlaceSearchRequest &query)
 {
     //TODO: handling of scope
-    QPlaceSearchReplyImpl *reply = NULL;
+    QPlaceSearchReplyImplV1 *reply = 0;
     QPlaceSearchRequest newQuery = query;
     // search by category
     if (newQuery.categories().count()) {
@@ -182,14 +182,14 @@ QPlaceSearchReply *QPlaceManagerEngineNokia::search(const QPlaceSearchRequest &q
         QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSearchRequest(newQuery);
 
         if (restReply) {
-            reply = new QPlaceSearchReplyImpl(restReply, this);
+            reply = new QPlaceSearchReplyImplV1(restReply, this);
             connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
                     this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
             connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
                     this, SLOT(processingFinished(QPlaceReply*)));
         }
     } else {
-        reply = new QPlaceSearchReplyImpl(0,this);
+        reply = new QPlaceSearchReplyImplV1(0, this);
         QMetaObject::invokeMethod(reply,
                                   "setError",
                                   Qt::QueuedConnection,
@@ -200,14 +200,14 @@ QPlaceSearchReply *QPlaceManagerEngineNokia::search(const QPlaceSearchRequest &q
     return reply;
 }
 
-QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QString &placeId, const QPlaceSearchRequest &query)
+QPlaceSearchReply *QPlaceManagerEngineNokiaV1::recommendations(const QString &placeId, const QPlaceSearchRequest &query)
 {
-    QPlaceRecommendationReplyImpl *reply = NULL;
+    QPlaceRecommendationReplyImplV1 *reply = 0;
     QPlaceSearchRequest newQuery = query;
     newQuery.setSearchTerm(placeId);
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendRecommendationRequest(newQuery, QString());
     if (restReply) {
-        reply = new QPlaceRecommendationReplyImpl(restReply, manager(), this);
+        reply = new QPlaceRecommendationReplyImplV1(restReply, manager(), this);
         connect(reply, SIGNAL(processingError(QPlaceReply*,QPlaceReply::Error,QString)),
                 this, SLOT(processingError(QPlaceReply*,QPlaceReply::Error,QString)));
         connect(reply, SIGNAL(processingFinished(QPlaceReply*)),
@@ -216,7 +216,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokia::recommendations(const QString &plac
     return reply;
 }
 
-QPlaceSearchSuggestionReply *QPlaceManagerEngineNokia::searchSuggestions(const QPlaceSearchRequest &query)
+QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV1::searchSuggestions(const QPlaceSearchRequest &query)
 {
     QPlaceTextPredictionReplyImpl *reply = NULL;
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSuggestionRequest(query);
@@ -230,7 +230,7 @@ QPlaceSearchSuggestionReply *QPlaceManagerEngineNokia::searchSuggestions(const Q
     return reply;
 }
 
-QPlaceIdReply *QPlaceManagerEngineNokia::savePlace(const QPlace &place)
+QPlaceIdReply *QPlaceManagerEngineNokiaV1::savePlace(const QPlace &place)
 {
     IdReply *reply = new IdReply(QPlaceIdReply::SavePlace, this);
     reply->setId(place.placeId());
@@ -238,7 +238,7 @@ QPlaceIdReply *QPlaceManagerEngineNokia::savePlace(const QPlace &place)
     return reply;
 }
 
-QPlaceIdReply *QPlaceManagerEngineNokia::removePlace(const QString &placeId)
+QPlaceIdReply *QPlaceManagerEngineNokiaV1::removePlace(const QString &placeId)
 {
     IdReply *reply = new IdReply(QPlaceIdReply::RemovePlace, this);
     reply->setId(placeId);
@@ -246,7 +246,7 @@ QPlaceIdReply *QPlaceManagerEngineNokia::removePlace(const QString &placeId)
     return reply;
 }
 
-QPlaceIdReply *QPlaceManagerEngineNokia::saveCategory(const QPlaceCategory &category, const QString &parentId)
+QPlaceIdReply *QPlaceManagerEngineNokiaV1::saveCategory(const QPlaceCategory &category, const QString &parentId)
 {
     Q_UNUSED(parentId)
 
@@ -256,7 +256,7 @@ QPlaceIdReply *QPlaceManagerEngineNokia::saveCategory(const QPlaceCategory &cate
     return reply;
 }
 
-QPlaceIdReply *QPlaceManagerEngineNokia::removeCategory(const QString &categoryId)
+QPlaceIdReply *QPlaceManagerEngineNokiaV1::removeCategory(const QString &categoryId)
 {
     IdReply *reply = new IdReply(QPlaceIdReply::RemoveCategory, this);
     reply->setId(categoryId);
@@ -264,7 +264,7 @@ QPlaceIdReply *QPlaceManagerEngineNokia::removeCategory(const QString &categoryI
     return reply;
 }
 
-QPlaceReply *QPlaceManagerEngineNokia::initializeCategories()
+QPlaceReply *QPlaceManagerEngineNokiaV1::initializeCategories()
 {
     QPlaceReply *reply = QPlaceCategoriesRepository::instance()->initializeCategories();
     if (reply) {
@@ -277,25 +277,25 @@ QPlaceReply *QPlaceManagerEngineNokia::initializeCategories()
     return reply;
 }
 
-QString QPlaceManagerEngineNokia::parentCategoryId(const QString &categoryId) const
+QString QPlaceManagerEngineNokiaV1::parentCategoryId(const QString &categoryId) const
 {
     QPlaceCategoryTree tree = QPlaceCategoriesRepository::instance()->categories();
     return tree.value(categoryId).parentId;
 }
 
-QStringList QPlaceManagerEngineNokia::childCategoryIds(const QString &categoryId) const
+QStringList QPlaceManagerEngineNokiaV1::childCategoryIds(const QString &categoryId) const
 {
     QPlaceCategoryTree tree = QPlaceCategoriesRepository::instance()->categories();
     return tree.value(categoryId).childIds;
 }
 
-QPlaceCategory QPlaceManagerEngineNokia::category(const QString &categoryId) const
+QPlaceCategory QPlaceManagerEngineNokiaV1::category(const QString &categoryId) const
 {
     QPlaceCategoryTree tree = QPlaceCategoriesRepository::instance()->categories();
     return tree.value(categoryId).category;
 }
 
-QList<QPlaceCategory> QPlaceManagerEngineNokia::childCategories(const QString &parentId) const
+QList<QPlaceCategory> QPlaceManagerEngineNokiaV1::childCategories(const QString &parentId) const
 {
     QList<QPlaceCategory> results;
     QPlaceCategoryTree tree = QPlaceCategoriesRepository::instance()->categories();
@@ -305,18 +305,18 @@ QList<QPlaceCategory> QPlaceManagerEngineNokia::childCategories(const QString &p
     return results;
 }
 
-QList<QLocale> QPlaceManagerEngineNokia::locales() const
+QList<QLocale> QPlaceManagerEngineNokiaV1::locales() const
 {
     return QPlaceRestManager::instance()->locales();
 }
 
-void QPlaceManagerEngineNokia::setLocales(const QList<QLocale> &locales)
+void QPlaceManagerEngineNokiaV1::setLocales(const QList<QLocale> &locales)
 {
     QPlaceRestManager::instance()->setLocales(locales);
 }
 
 
-QPlaceManager::ManagerFeatures QPlaceManagerEngineNokia::supportedFeatures() const
+QPlaceManager::ManagerFeatures QPlaceManagerEngineNokiaV1::supportedFeatures() const
 {
     return QPlaceManager::RecommendationsFeature
             | QPlaceManager::SearchSuggestionsFeature
@@ -324,14 +324,14 @@ QPlaceManager::ManagerFeatures QPlaceManagerEngineNokia::supportedFeatures() con
             | QPlaceManager::LocaleFeature;
 }
 
-void QPlaceManagerEngineNokia::processingError(QPlaceReply *reply,
+void QPlaceManagerEngineNokiaV1::processingError(QPlaceReply *reply,
                                               const QPlaceReply::Error &errorId,
                                               const QString &errorMessage)
 {
     emit error(reply, errorId, errorMessage);
 }
 
-void QPlaceManagerEngineNokia::processingFinished(QPlaceReply *reply)
+void QPlaceManagerEngineNokiaV1::processingFinished(QPlaceReply *reply)
 {
     emit finished(reply);
 }

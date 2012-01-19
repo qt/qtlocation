@@ -46,7 +46,7 @@
 **
 ****************************************************************************/
 
-#include "qplacerecommendationreplyimpl.h"
+#include "qplacesearchreplyimplv1.h"
 
 #if defined(QT_PLACES_LOGGING)
     #include <QDebug>
@@ -57,11 +57,11 @@ QT_USE_NAMESPACE
 /*!
     Constructor.
 */
-QPlaceRecommendationReplyImpl::QPlaceRecommendationReplyImpl(QPlaceRestReply *reply, QPlaceManager * manager, QObject *parent) :
+QPlaceSearchReplyImplV1::QPlaceSearchReplyImplV1(QPlaceRestReply *reply, QObject *parent) :
     QPlaceSearchReply(parent),
     restReply(reply)
 {
-    parser = new QPlaceJSonRecommendationParser(manager, this);
+    parser = new QPlaceJSonSearchParser(this);
 
     if (restReply) {
         restReply->setParent(this);
@@ -77,17 +77,27 @@ QPlaceRecommendationReplyImpl::QPlaceRecommendationReplyImpl(QPlaceRestReply *re
 /*!
     Destructor.
 */
-QPlaceRecommendationReplyImpl::~QPlaceRecommendationReplyImpl()
+QPlaceSearchReplyImplV1::~QPlaceSearchReplyImplV1()
 {
 }
 
-void QPlaceRecommendationReplyImpl::abort()
+void QPlaceSearchReplyImplV1::abort()
 {
     if (restReply)
         restReply->cancelProcessing();
 }
 
-void QPlaceRecommendationReplyImpl::restError(QPlaceRestReply::Error errorId)
+void QPlaceSearchReplyImplV1::setError(QPlaceReply::Error errorId, const QString &errorString)
+{
+    QPlaceReply::setError(errorId, errorString);
+    emit error(this->error(), this->errorString());
+    emit processingError(this, this->error(), this->errorString());
+    setFinished(true);
+    emit finished();
+    emit processingFinished(this);
+}
+
+void QPlaceSearchReplyImplV1::restError(QPlaceRestReply::Error errorId)
 {
     if (errorId == QPlaceRestReply::Canceled) {
         this->setError(CancelError, "RequestCanceled");
@@ -101,11 +111,11 @@ void QPlaceRecommendationReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceRecommendationReplyImpl::resultReady(const QPlaceJSonRecommendationParser::Error &errorId,
+void QPlaceSearchReplyImplV1::resultReady(const QPlaceJSonParser::Error &errorId,
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {
-        setResults(parser->results());
+        setResults(filterSecondSearchCenter(parser->searchResults()));
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());
@@ -114,8 +124,31 @@ void QPlaceRecommendationReplyImpl::resultReady(const QPlaceJSonRecommendationPa
     setFinished(true);
     emit finished();
     emit processingFinished(this);
-    delete parser;
+    parser->deleteLater();
     parser = NULL;
     restReply->deleteLater();
     restReply = NULL;
 }
+
+QList<QPlaceSearchResult> QPlaceSearchReplyImplV1::filterSecondSearchCenter(const QList<QPlaceSearchResult> &list)
+{
+    QList<QPlaceSearchResult> newList;
+    foreach (QPlaceSearchResult res, list) {
+        if (res.type() == QPlaceSearchResult::PlaceResult) {
+            bool isNotSeconSearchCenter = true;
+            foreach (QPlaceCategory cat, res.place().categories()) {
+                if (cat.categoryId() == "second-search-center") {
+                    isNotSeconSearchCenter = false;
+                    break;
+                }
+            }
+            if (isNotSeconSearchCenter) {
+                newList.append(res);
+            }
+        } else if (res.type() == QPlaceSearchResult::CorrectionResult) {
+            newList.append(res);
+        }
+    }
+    return newList;
+}
+

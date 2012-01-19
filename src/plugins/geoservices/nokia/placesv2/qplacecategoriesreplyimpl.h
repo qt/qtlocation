@@ -39,46 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef UNSUPPORTED_REPLIES_H
-#define UNSUPPORTED_REPLIES_H
+#ifndef QPLACECATEGORIESREPLYIMPL_H
+#define QPLACECATEGORIESREPLYIMPL_H
 
-#include <QtLocation/QPlaceIdReply>
-#include "../qplacemanagerengine_nokia.h"
+#include <QtLocation/QPlaceReply>
 
-QT_USE_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class IdReply : public QPlaceIdReply
+class QPlaceCategoriesReplyImpl : public QPlaceReply
 {
     Q_OBJECT
+
 public:
-    IdReply(QPlaceIdReply::OperationType type, QPlaceManagerEngineNokia *engine)
-        : QPlaceIdReply(type, engine), m_engine(engine)
-    {}
-    virtual ~IdReply() {}
+    explicit QPlaceCategoriesReplyImpl(QObject *parent = 0);
+    ~QPlaceCategoriesReplyImpl();
 
-    void setId(const QString &id) {QPlaceIdReply::setId(id);}
+    void emitFinished();
 
-    void triggerDone(QPlaceReply::Error error = QPlaceReply::NoError,
-                     const QString &errorString = QString()) {
-        if (error != QPlaceReply::NoError) {
-            this->setError(error,errorString);
-            QMetaObject::invokeMethod(m_engine, "error", Qt::QueuedConnection,
-                                      Q_ARG(QPlaceReply *,this),
-                                      Q_ARG(QPlaceReply::Error, error),
-                                      Q_ARG(QString, errorString));
-            QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
-                                      Q_ARG(QPlaceReply::Error, error),
-                                      Q_ARG(QString, errorString));
-        }
-        this->setFinished(true);
-        QMetaObject::invokeMethod(m_engine, "finished", Qt::QueuedConnection,
-                                  Q_ARG(QPlaceReply *,this));
-        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
-    }
-
-private:
-    QPlaceManagerEngineNokia *m_engine;
-
+private slots:
+    void setError(QPlaceReply::Error error_, const QString &errorString);
 };
 
-#endif
+QT_END_NAMESPACE
+
+#endif // QPLACECATEGORIESREPLYIMPL_H

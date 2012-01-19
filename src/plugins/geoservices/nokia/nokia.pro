@@ -37,7 +37,8 @@ SOURCES += \
             qgeoroutingmanagerengine_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp
 
-include(places/places.pri)
+include(placesv1/placesv1.pri)
+include(placesv2/placesv2.pri)
 
 RESOURCES += resource.qrc
 

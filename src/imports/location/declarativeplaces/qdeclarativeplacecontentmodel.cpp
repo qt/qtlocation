@@ -158,6 +158,39 @@ void QDeclarativePlaceContentModel::clearData()
     m_reply = 0;
 }
 
+void QDeclarativePlaceContentModel::initializeCollection(int totalCount, const QPlaceContent::Collection &collection)
+{
+    beginResetModel();
+
+    clearData();
+
+    if (m_contentCount != totalCount) {
+        m_contentCount = totalCount;
+        emit totalCountChanged();
+    }
+
+    QMapIterator<int, QPlaceContent> i(collection);
+    while (i.hasNext()) {
+        i.next();
+
+        const QPlaceContent &content = i.value();
+        if (content.type() != m_type)
+            continue;
+
+        m_content.insert(i.key(), content);
+        if (!m_suppliers.contains(content.supplier().supplierId())) {
+            m_suppliers.insert(content.supplier().supplierId(),
+                               new QDeclarativeSupplier(content.supplier(), m_place->plugin(), this));
+        }
+        if (!m_users.contains(content.user().userId())) {
+            m_users.insert(content.user().userId(),
+                               new QDeclarativePlaceUser(content.user(), this));
+        }
+    }
+
+    endResetModel();
+}
+
 int QDeclarativePlaceContentModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
@@ -259,6 +292,9 @@ void QDeclarativePlaceContentModel::componentComplete()
 
 void QDeclarativePlaceContentModel::fetchFinished()
 {
+    if (!m_reply)
+        return;
+
     QPlaceContentReply *reply = m_reply;
     m_reply = 0;
 

@@ -37,48 +37,50 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
-#ifndef QPLACECONTENTREPLY_H
-#define QPLACECONTENTREPLY_H
+#ifndef QPLACEDETAILSREPLYIMPL_H
+#define QPLACEDETAILSREPLYIMPL_H
 
-#include "qplacereply.h"
-#include "qplacecontent.h"
-#include "qplacecontentrequest.h"
+#include <QObject>
+#include <QHash>
 
-QT_BEGIN_HEADER
+#include <qplacedetailsreply.h>
+#include "qplacerestreply.h"
+#include "qplacejsondetailsparser.h"
+#include <QtLocation/QPlaceManager>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceContentReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceContentReply : public QPlaceReply
+class QPlaceDetailsReplyImplV1 : public QPlaceDetailsReply
 {
     Q_OBJECT
-
 public:
-    explicit QPlaceContentReply(QObject *parent = 0);
-    virtual ~QPlaceContentReply();
+    QPlaceDetailsReplyImplV1(QPlaceRestReply *reply, QPlaceManager *manager, QObject *parent = 0);
+    ~QPlaceDetailsReplyImplV1();
+    void abort();
 
-    QPlaceReply::Type type() const;
+Q_SIGNALS:
+    void processingFinished(QPlaceReply *reply);
+    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
 
-    QPlaceContent::Collection content() const;
-
-    int totalCount() const;
-
-    QPlaceContentRequest request() const;
-
-protected:
-    void setContent(const QPlaceContent::Collection &content);
-    void setTotalCount(int total);
-    void setRequest(const QPlaceContentRequest &request);
+private slots:
+    void restError(QPlaceRestReply::Error error);
+    void resultReady(const QPlaceJSonParser::Error &error,
+                          const QString &errorMessage);
 
 private:
-    Q_DISABLE_COPY(QPlaceContentReply)
-    Q_DECLARE_PRIVATE(QPlaceContentReply)
+    QPlaceRestReply *restReply;
+    QPlaceJSonDetailsParser *parser;
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif
+#endif // QPLACEDETAILSREPLYIMPL_H

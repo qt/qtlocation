@@ -96,6 +96,26 @@ Item {
                         onDisplayPlaceDetails: showPlaceDetails(data)
                         onSearchFor: placeSearchModel.searchForText(query);
                     }
+
+                    footer: Item {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        height: childrenRect.height
+
+                        Button {
+                            text: qsTr("Previous")
+                            onClicked: placeSearchModel.previousPage()
+
+                            anchors.left: parent.left
+                        }
+
+                        Button {
+                            text: qsTr("Next")
+                            onClicked: placeSearchModel.nextPage()
+
+                            anchors.right: parent.right
+                        }
+                    }
                 }
                 //! [PlaceSearchModel place list]
 

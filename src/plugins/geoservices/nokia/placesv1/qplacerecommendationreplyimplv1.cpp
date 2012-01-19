@@ -37,27 +37,36 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
-#include "qplacecategoriesreplyimpl.h"
+#include "qplacerecommendationreplyimplv1.h"
 
 #if defined(QT_PLACES_LOGGING)
     #include <QDebug>
 #endif
 
+QT_USE_NAMESPACE
+
 /*!
     Constructor.
 */
-QPlaceCategoriesReplyImpl::QPlaceCategoriesReplyImpl(QPlaceRestReply *reply, QObject *parent) :
-    QPlaceReply(parent),
+QPlaceRecommendationReplyImplV1::QPlaceRecommendationReplyImplV1(QPlaceRestReply *reply, QPlaceManager * manager, QObject *parent) :
+    QPlaceSearchReply(parent),
     restReply(reply)
 {
-    parser = new QPlaceJSonCategoriesParser(this);
+    parser = new QPlaceJSonRecommendationParser(manager, this);
 
     if (restReply) {
         restReply->setParent(this);
-        connect(restReply, SIGNAL(finished(QString)),
-                parser, SLOT(processData(QString)));
+        connect(restReply, SIGNAL(finished(const QString &)),
+                parser, SLOT(processData(const QString &)));
         connect(restReply, SIGNAL(error(QPlaceRestReply::Error)),
                 this, SLOT(restError(QPlaceRestReply::Error)));
         connect(parser, SIGNAL(finished(QPlaceJSonParser::Error,QString)),
@@ -68,31 +77,17 @@ QPlaceCategoriesReplyImpl::QPlaceCategoriesReplyImpl(QPlaceRestReply *reply, QOb
 /*!
     Destructor.
 */
-QPlaceCategoriesReplyImpl::~QPlaceCategoriesReplyImpl()
+QPlaceRecommendationReplyImplV1::~QPlaceRecommendationReplyImplV1()
 {
 }
 
-QPlaceCategoryTree QPlaceCategoriesReplyImpl::categories() const
+void QPlaceRecommendationReplyImplV1::abort()
 {
-    return m_categoryTree;
-}
-
-QList<QPlaceCategory> QPlaceCategoriesReplyImpl::categoriesFlat() const
-{
-    QList<QPlaceCategory> categories;
-    foreach (const PlaceCategoryNode node, m_categoryTree.values())
-        categories.append(node.category);
-    return categories;
-}
-
-void QPlaceCategoriesReplyImpl::abort()
-{
-    if (restReply) {
+    if (restReply)
         restReply->cancelProcessing();
-    }
 }
 
-void QPlaceCategoriesReplyImpl::restError(QPlaceRestReply::Error errorId)
+void QPlaceRecommendationReplyImplV1::restError(QPlaceRestReply::Error errorId)
 {
     if (errorId == QPlaceRestReply::Canceled) {
         this->setError(CancelError, "RequestCanceled");
@@ -106,11 +101,11 @@ void QPlaceCategoriesReplyImpl::restError(QPlaceRestReply::Error errorId)
     emit processingFinished(this);
 }
 
-void QPlaceCategoriesReplyImpl::resultReady(const QPlaceJSonParser::Error &errorId,
+void QPlaceRecommendationReplyImplV1::resultReady(const QPlaceJSonRecommendationParser::Error &errorId,
                       const QString &errorMessage)
 {
     if (errorId == QPlaceJSonParser::NoError) {
-        m_categoryTree = parser->resultCategories();
+        setResults(parser->results());
     } else if (errorId == QPlaceJSonParser::ParsingError) {
         setError(ParseError, errorMessage);
         emit error(this->error(), this->errorString());
@@ -119,7 +114,7 @@ void QPlaceCategoriesReplyImpl::resultReady(const QPlaceJSonParser::Error &error
     setFinished(true);
     emit finished();
     emit processingFinished(this);
-    parser->deleteLater();
+    delete parser;
     parser = NULL;
     restReply->deleteLater();
     restReply = NULL;

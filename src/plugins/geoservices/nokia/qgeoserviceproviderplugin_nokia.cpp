@@ -51,7 +51,8 @@
 #include "qgeocodingmanagerengine_nokia.h"
 #include "qgeoroutingmanagerengine_nokia.h"
 #include "qgeomappingmanagerengine_nokia.h"
-#include "qplacemanagerengine_nokia.h"
+#include "qplacemanagerengine_nokiav1.h"
+#include "qplacemanagerengine_nokiav2.h"
 
 #include <QtPlugin>
 #include <QNetworkProxy>
@@ -102,7 +103,14 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(c
                                                                                QGeoServiceProvider::Error *error,
                                                                                QString *errorString) const
 {
-    return new QPlaceManagerEngineNokia(parameters, error, errorString);
+    switch (parameters.value(QLatin1String("places.api_version"), 1).toUInt()) {
+    case 1:
+        return new QPlaceManagerEngineNokiaV1(parameters, error, errorString);
+    case 2:
+        return new QPlaceManagerEngineNokiaV2(parameters, error, errorString);
+    }
+
+    return 0;
 }
 
 const QString QGeoServiceProviderFactoryNokia::defaultToken("152022572f0e44e07489c35cd46fa246");

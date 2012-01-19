@@ -64,8 +64,6 @@ QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVarian
                                                      QString *errorString)
 :   QPlaceManagerEngine(parameters)
 {
-    qRegisterMetaType<QPlaceReply::Error>();
-    qRegisterMetaType<QPlaceReply *>();
     qRegisterMetaType<QPlaceCategory>();
 
     m_db = new JsonDbClient(this);

@@ -46,40 +46,58 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACERECOMMENDATIONREPLYIMPL_H
-#define QPLACERECOMMENDATIONREPLYIMPL_H
+#ifndef QPLACEMANAGERENGINE_NOKIAV1_H
+#define QPLACEMANAGERENGINE_NOKIAV1_H
 
-#include <QObject>
-#include <QHash>
-
-#include <qplacesearchreply.h>
-#include "qplacerestreply.h"
-#include "qplacejsonrecommendationparser.h"
+#include <qplacecontent.h>
+#include <qplacemanagerengine.h>
+#include <qgeoserviceprovider.h>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceRecommendationReplyImpl : public QPlaceSearchReply
+class QPlaceContentReply;
+
+class QPlaceManagerEngineNokiaV1 : public QPlaceManagerEngine
 {
     Q_OBJECT
 public:
-    QPlaceRecommendationReplyImpl(QPlaceRestReply *reply, QPlaceManager *manager, QObject *parent = 0);
-    ~QPlaceRecommendationReplyImpl();
-    void abort();
 
-Q_SIGNALS:
-    void processingFinished(QPlaceReply *reply);
-    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
+    QPlaceManagerEngineNokiaV1(const QMap<QString, QVariant> &parameters,
+                             QGeoServiceProvider::Error *error,
+                             QString *errorString);
+    ~QPlaceManagerEngineNokiaV1();
+
+    QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
+
+    QPlaceContentReply *getPlaceContent(const QString &placeId, const QPlaceContentRequest &request);
+
+    QPlaceSearchReply *search(const QPlaceSearchRequest &query);
+
+    QPlaceSearchReply *recommendations(const QString &placeId, const QPlaceSearchRequest &query);
+    QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &query);
+
+    QPlaceIdReply *savePlace(const QPlace &place);
+    QPlaceIdReply *removePlace(const QString &placeId);
+
+    QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId);
+    QPlaceIdReply *removeCategory(const QString &categoryId);
+
+    QPlaceReply *initializeCategories();
+    QString parentCategoryId(const QString &categoryId) const;
+    QStringList childCategoryIds(const QString &categoryId) const;
+    QPlaceCategory category(const QString &categoryId) const;
+    QList<QPlaceCategory> childCategories(const QString &parentId) const;
+
+    QList<QLocale> locales() const;
+    void setLocales(const QList<QLocale> &locales);
+
+    QPlaceManager::ManagerFeatures supportedFeatures() const;
 
 private slots:
-    void restError(QPlaceRestReply::Error error);
-    void resultReady(const QPlaceJSonParser::Error &error,
-                          const QString &errorMessage);
-
-private:
-    QPlaceRestReply *restReply;
-    QPlaceJSonRecommendationParser *parser;
+    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
+    void processingFinished(QPlaceReply *reply);
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACERECOMMENDATIONREPLYIMPL_H
+#endif // QPLACEMANAGERENGINE_NOKIAV1_H

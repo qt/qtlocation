@@ -46,57 +46,33 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEMANAGERENGINE_NOKIA_H
-#define QPLACEMANAGERENGINE_NOKIA_H
+#ifndef QPLACESEARCHSUGGESTIONREPLYIMPL_H
+#define QPLACESEARCHSUGGESTIONREPLYIMPL_H
 
-#include <qplacecontent.h>
-#include <qplacemanagerengine.h>
-#include <qgeoserviceprovider.h>
+#include <QtNetwork/QNetworkReply>
+#include <QtLocation/QPlaceSearchSuggestionReply>
 
 QT_BEGIN_NAMESPACE
-class QPlaceContentReply;
 
-class QPlaceManagerEngineNokia : public QPlaceManagerEngine
+class QPlaceSearchSuggestionReplyImpl : public QPlaceSearchSuggestionReply
 {
     Q_OBJECT
+
 public:
+    explicit QPlaceSearchSuggestionReplyImpl(QNetworkReply *reply, QObject *parent = 0);
+    ~QPlaceSearchSuggestionReplyImpl();
 
-    QPlaceManagerEngineNokia(const QMap<QString, QVariant> &parameters,
-                             QGeoServiceProvider::Error *error,
-                             QString *errorString);
-    ~QPlaceManagerEngineNokia();
-
-    QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
-
-    QPlaceContentReply *getPlaceContent(const QString &placeId, const QPlaceContentRequest &request);
-
-    QPlaceSearchReply *search(const QPlaceSearchRequest &query);
-
-    QPlaceSearchReply *recommendations(const QString &placeId, const QPlaceSearchRequest &query);
-    QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &query);
-
-    QPlaceIdReply *savePlace(const QPlace &place);
-    QPlaceIdReply *removePlace(const QString &placeId);
-
-    QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId);
-    QPlaceIdReply *removeCategory(const QString &categoryId);
-
-    QPlaceReply *initializeCategories();
-    QString parentCategoryId(const QString &categoryId) const;
-    QStringList childCategoryIds(const QString &categoryId) const;
-    QPlaceCategory category(const QString &categoryId) const;
-    QList<QPlaceCategory> childCategories(const QString &parentId) const;
-
-    QList<QLocale> locales() const;
-    void setLocales(const QList<QLocale> &locales);
-
-    QPlaceManager::ManagerFeatures supportedFeatures() const;
+    void abort();
 
 private slots:
-    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
-    void processingFinished(QPlaceReply *reply);
+    void setError(QPlaceReply::Error error_, const QString &errorString);
+    void replyFinished();
+    void replyError(QNetworkReply::NetworkError error);
+
+private:
+    QNetworkReply *m_reply;
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACEMANAGERENGINEIMPL_H
+#endif // QPLACESEARCHSUGGESTIONREPLYIMPL_H

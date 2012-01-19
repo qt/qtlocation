@@ -46,41 +46,35 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACEDETAILSREPLYIMPL_H
-#define QPLACEDETAILSREPLYIMPL_H
+#ifndef QPLACERECOMMENDATIONREPLYIMPL_H
+#define QPLACERECOMMENDATIONREPLYIMPL_H
 
-#include <QObject>
-#include <QHash>
-
-#include <qplacedetailsreply.h>
-#include "qplacerestreply.h"
-#include "qplacejsondetailsparser.h"
-#include <QtLocation/QPlaceManager>
+#include <QtNetwork/QNetworkReply>
+#include <QtLocation/QPlaceSearchReply>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceDetailsReplyImpl : public QPlaceDetailsReply
+class QPlaceManager;
+
+class QPlaceRecommendationReplyImpl : public QPlaceSearchReply
 {
     Q_OBJECT
+
 public:
-    QPlaceDetailsReplyImpl(QPlaceRestReply *reply, QPlaceManager *manager, QObject *parent = 0);
-    ~QPlaceDetailsReplyImpl();
+    QPlaceRecommendationReplyImpl(QNetworkReply *reply, QObject *parent = 0);
+    ~QPlaceRecommendationReplyImpl();
+
     void abort();
 
-Q_SIGNALS:
-    void processingFinished(QPlaceReply *reply);
-    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
-
 private slots:
-    void restError(QPlaceRestReply::Error error);
-    void resultReady(const QPlaceJSonParser::Error &error,
-                          const QString &errorMessage);
+    void setError(QPlaceReply::Error error_, const QString &errorString);
+    void replyFinished();
+    void replyError(QNetworkReply::NetworkError error);
 
 private:
-    QPlaceRestReply *restReply;
-    QPlaceJSonDetailsParser *parser;
+    QNetworkReply *m_reply;
 };
 
 QT_END_NAMESPACE
 
-#endif // QPLACEDETAILSREPLYIMPL_H
+#endif // QPLACERECOMMENDATIONREPLYIMPL_H

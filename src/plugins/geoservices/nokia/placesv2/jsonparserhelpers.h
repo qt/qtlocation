@@ -39,46 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACECONTENTREPLY_H
-#define QPLACECONTENTREPLY_H
+#ifndef JSONPARSERHELPERS_H
+#define JSONPARSERHELPERS_H
 
-#include "qplacereply.h"
-#include "qplacecontent.h"
-#include "qplacecontentrequest.h"
-
-QT_BEGIN_HEADER
+#include <QtLocation/QPlaceContent>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceContentReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceContentReply : public QPlaceReply
-{
-    Q_OBJECT
+class QJsonArray;
+class QJsonObject;
+class QGeoCoordinate;
+class QPlaceContactDetail;
+class QPlaceImage;
+class QPlaceReview;
+class QPlaceEditorial;
+class QPlaceCategory;
 
-public:
-    explicit QPlaceContentReply(QObject *parent = 0);
-    virtual ~QPlaceContentReply();
+QGeoCoordinate parseCoordinate(const QJsonArray &coordinateArray);
+QPlaceSupplier parseSupplier(const QJsonObject &supplierObject);
+QPlaceCategory parseCategory(const QJsonObject &categoryObject);
+QList<QPlaceCategory> parseCategories(const QJsonArray &categoryArray);
+QList<QPlaceContactDetail> parseContactDetails(const QJsonArray &contacts);
 
-    QPlaceReply::Type type() const;
+QPlaceImage parseImage(const QJsonObject &imageObject);
+QPlaceReview parseReview(const QJsonObject &reviewObject);
+QPlaceEditorial parseEditorial(const QJsonObject &editorialObject);
 
-    QPlaceContent::Collection content() const;
-
-    int totalCount() const;
-
-    QPlaceContentRequest request() const;
-
-protected:
-    void setContent(const QPlaceContent::Collection &content);
-    void setTotalCount(int total);
-    void setRequest(const QPlaceContentRequest &request);
-
-private:
-    Q_DISABLE_COPY(QPlaceContentReply)
-    Q_DECLARE_PRIVATE(QPlaceContentReply)
-};
+void parseCollection(QPlaceContent::Type type, const QJsonObject &object,
+                     QPlaceContent::Collection *collection, int *totalCount);
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif
+#endif // JSONPARSERHELPERS_H

@@ -256,8 +256,6 @@ tst_QPlaceManagerJsonDb::tst_QPlaceManagerJsonDb()
 
 void tst_QPlaceManagerJsonDb::initTestCase()
 {
-    qRegisterMetaType<QPlaceReply::Error>();
-    qRegisterMetaType<QPlaceReply *>();
     qRegisterMetaType<QPlaceIdReply *>();
 
     QStringList providers = QGeoServiceProvider::availableServiceProviders();

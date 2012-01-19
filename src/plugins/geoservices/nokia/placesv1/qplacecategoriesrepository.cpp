@@ -83,7 +83,7 @@ QPlaceReply *QPlaceCategoriesRepository::initializeCategories()
 
     QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendCategoriesTreeRequest();
     if (restReply) {
-        m_categoriesReply = new QPlaceCategoriesReplyImpl(restReply);
+        m_categoriesReply = new QPlaceCategoriesReplyImplV1(restReply);
         connect(m_categoriesReply.data(), SIGNAL(finished()),
                 this, SLOT(replyFinished()));
     }

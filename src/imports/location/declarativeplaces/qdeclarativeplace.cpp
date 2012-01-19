@@ -367,13 +367,17 @@ void QDeclarativePlace::setPlace(const QPlace &src)
         emit primaryWebsiteChanged();
     }
 
-    if (previous.placeId() != m_src.placeId()) {
-        if (m_reviewModel)
-            m_reviewModel->clear();
-        if (m_imageModel)
-            m_imageModel->clear();
-        if (m_editorialModel)
-            m_editorialModel->clear();
+    if (m_reviewModel) {
+        m_reviewModel->initializeCollection(m_src.totalContentCount(QPlaceContent::ReviewType),
+                                            m_src.content(QPlaceContent::ReviewType));
+    }
+    if (m_imageModel) {
+        m_imageModel->initializeCollection(m_src.totalContentCount(QPlaceContent::ImageType),
+                                           m_src.content(QPlaceContent::ImageType));
+    }
+    if (m_editorialModel) {
+        m_editorialModel->initializeCollection(m_src.totalContentCount(QPlaceContent::EditorialType),
+                                               m_src.content(QPlaceContent::EditorialType));
     }
 
     synchronizeExtendedAttributes();

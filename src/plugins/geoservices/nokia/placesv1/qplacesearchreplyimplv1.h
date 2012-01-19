@@ -37,48 +37,51 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Ovi services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Ovi services
+** plugin source code.
+**
 ****************************************************************************/
 
-#ifndef QPLACECONTENTREPLY_H
-#define QPLACECONTENTREPLY_H
+#ifndef QPLACESEARCHREPLYIMPL_H
+#define QPLACESEARCHREPLYIMPL_H
 
-#include "qplacereply.h"
-#include "qplacecontent.h"
-#include "qplacecontentrequest.h"
+#include <QObject>
+#include <QHash>
 
-QT_BEGIN_HEADER
+#include <qplacesearchreply.h>
+#include "qplacerestreply.h"
+#include "qplacejsonsearchparser.h"
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceContentReplyPrivate;
-class Q_LOCATION_EXPORT QPlaceContentReply : public QPlaceReply
+class QPlaceSearchReplyImplV1 : public QPlaceSearchReply
 {
     Q_OBJECT
-
 public:
-    explicit QPlaceContentReply(QObject *parent = 0);
-    virtual ~QPlaceContentReply();
+    explicit QPlaceSearchReplyImplV1(QPlaceRestReply *reply, QObject *parent = 0);
+    ~QPlaceSearchReplyImplV1();
+    void abort();
 
-    QPlaceReply::Type type() const;
+Q_SIGNALS:
+    void processingFinished(QPlaceReply *reply);
+    void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
 
-    QPlaceContent::Collection content() const;
-
-    int totalCount() const;
-
-    QPlaceContentRequest request() const;
-
-protected:
-    void setContent(const QPlaceContent::Collection &content);
-    void setTotalCount(int total);
-    void setRequest(const QPlaceContentRequest &request);
+public slots:
+    void setError(QPlaceReply::Error error, const QString &errorString);
+    void restError(QPlaceRestReply::Error error);
+    void resultReady(const QPlaceJSonParser::Error &error,
+                          const QString &errorMessage);
 
 private:
-    Q_DISABLE_COPY(QPlaceContentReply)
-    Q_DECLARE_PRIVATE(QPlaceContentReply)
+    QList<QPlaceSearchResult> filterSecondSearchCenter(const QList<QPlaceSearchResult> &list);
+    QPlaceRestReply *restReply;
+    QPlaceJSonSearchParser *parser;
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif
+#endif // QPLACESEARCHREPLYIMPL_H
