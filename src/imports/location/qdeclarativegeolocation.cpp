@@ -51,8 +51,40 @@ QT_USE_NAMESPACE
 
     \brief The Location element holds location data.
 
-    Location contains many properties holding data of the location like geo coordinates,
-    address, etc.
+    Location elements represent a geographic "location", in a human sense. This
+    consists of a specific Coordinate, as well as an Address and a
+    BoundingBox. The BoundingBox delineates the limits of what geographic area
+    is considered "part of" the location. For example, a Location representing
+    a house would have the Coordinate set to the center of the house's block
+    of land, the Address to its street address, and the BoundingBox would show
+    roughly the limits of the block itself.
+
+    The Location element is most commonly seen as the contents of a search
+    model such as the GeocodeModel. When a GeocodeModel returns the list of
+    locations found for a given query, it represents these as Locatio elements.
+
+    \section2 Example Usage
+
+    The following example shows a simple Location element being declared with
+    a set \l{coordinate} and \l{address}.
+
+    \code
+    Address {
+        id: houseAddress
+        ...
+    }
+
+    Coordinate {
+        id: coord
+        latitude: -27.3; longitude: 153.1
+    }
+
+    Location {
+        coordinate: coord
+        address: houseAddress
+    }
+    \endcode
+
 */
 
 QDeclarativeGeoLocation::QDeclarativeGeoLocation(QObject* parent)
@@ -73,7 +105,7 @@ QDeclarativeGeoLocation::~QDeclarativeGeoLocation()
 }
 
 /*!
-    \qmlproperty QGeoLocation Location::location
+    \qmlproperty QGeoLocation QtLocation5::Location::location
 
     This property is used to provide an interface between C++ and QML code.  First a pointer to a
     Location object must be obtained from C++, then use the \l {QObject::property()}{property()} and
@@ -121,7 +153,7 @@ QGeoLocation QDeclarativeGeoLocation::location()
 }
 
 /*!
-    \qmlproperty string Location::address
+    \qmlproperty Address QtLocation5::Location::address
 
     This property holds address of the location.
 */
@@ -143,12 +175,12 @@ QDeclarativeGeoAddress *QDeclarativeGeoLocation::address()
 }
 
 /*!
-    \qmlproperty string Location::coordinate
+    \qmlproperty Coordinate QtLocation5::Location::coordinate
 
     This property holds display coordinates of the location.
 
-   Note: this property's changed() signal is currently emitted only if the
-   whole element changes, not if only the contents of the element change.
+    Note: this property's changed() signal is currently emitted only if the
+    whole element changes, not if only the contents of the element change.
 */
 void QDeclarativeGeoLocation::setCoordinate(QDeclarativeCoordinate *coordinate)
 {
@@ -168,7 +200,7 @@ QDeclarativeCoordinate *QDeclarativeGeoLocation::coordinate()
 }
 
 /*!
-    \qmlproperty BoundingBox Location::boundingBox
+    \qmlproperty BoundingBox QtLocation5::Location::boundingBox
 
     This property holds bounding box of area on map occupied by location.
 

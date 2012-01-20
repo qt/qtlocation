@@ -57,13 +57,23 @@ QT_BEGIN_NAMESPACE
 
     The Position element holds various positional data, such as \l coordinate,
     (longitude, latitude, and altitude) and \l speed, as well as \l timestamp.
+    Primarily, it is used in the \l{PositionSource::position}{position} property
+    of a \l{PositionSource}, as the basic unit of data available from the system
+    location data source.
 
-    Not all of these are always available (e.g. latitude and longitude may be valid,
-    but speed update has not been received or set manually), and hence there are
-    corresponding validity attributes which can be used when writing applications.
+    Not all properties of a Position object are necessarily valid or available
+    (e.g. latitude and longitude may be valid, but speed update has not been
+    received or set manually). As a result, corresponding "valid" properties
+    are available (eg. \l{coordinate} and \l{longitudeValid}, \l{latitudeValid}
+    etc) to discern whether the data is available and valid in this position
+    update.
 
-    At the time being the Position element is a read-only element (meaning it does
-    not have exposed write accessors), primarily used by \l PositionSource.
+    Position elements are read-only and can only be produced by a PositionSource.
+
+    \section2 Example Usage
+
+    See the example given for the \l{PositionSource} element, or the
+    \l{declarative/flickr}{Flickr} example application.
 
     \sa PositionSource, Coordinate
 

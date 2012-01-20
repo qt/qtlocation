@@ -431,7 +431,29 @@ QMap<QString, QVariant> QDeclarativeGeoServiceProvider::parameterMap() const
     \ingroup qml-QtLocation5-common
     \since QtLocation 5.0
 
-    \brief The PluginParameter element describes the parameter to a \l Plugin.
+    \brief The PluginParameter element describes a parameter to a \l Plugin.
+
+    The PluginParameter element is used to provide a parameter of some kind
+    to a Plugin. Typically these parameters contain details like an application
+    token for access to a service, or a proxy server to use for network access.
+
+    To set such a parameter, declare a PluginParameter inside a \l Plugin
+    element, and give it \l{name} and \l{value} properties. A list of valid
+    parameter names for each plugin is available from the plugin reference
+    page (linked from \l{qtlocation-module}{the QtLocation module page}).
+
+    \section2 Example Usage
+
+    The following example shows an instantiation of the
+    \l{location-plugin-nokia}{Nokia} plugin with a mapping API token specific
+    to the application.
+
+    \code
+    Plugin {
+        name: "nokia"
+        PluginParameter { name: "mapping.token"; value: "SOMETOKEN123" }
+    }
+    \endcode
 */
 
 QDeclarativeGeoServiceProviderParameter::QDeclarativeGeoServiceProviderParameter(QObject *parent)

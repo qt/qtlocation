@@ -51,7 +51,32 @@ QT_BEGIN_NAMESPACE
 
     \brief The Address element presents an address.
 
-    The Address element presents an address of a location.
+    The Address element presents an address of a location. This is used as a
+    unit of data for queries such as (Reverse) Geocoding or Places searches --
+    many of these operations either accept an Address or return one.
+
+    Not all properties of an Address are necessarily available or relevant
+    in all parts of the world and all locales. The \l district, \l state and
+    \l county properties are particularly area-specific for many data sources
+    (including the provided Nokia plugin), and often only one or two of these
+    is available or useful.
+
+    \section2 Example Usage
+
+    The following code snippet shows the declaration of an Address element.
+
+    \code
+    Address {
+        id: address
+        street: "53 Brandl St"
+        city: "Eight Mile Plains"
+        country: "Australia"
+    }
+    \endcode
+
+    This could then be used, for example, as the value of a \l{GeocodeModel}'s
+    \l{GeocodeModel::query}{query} property, to get an exact longitude and
+    latitude for the address.
 
     \sa {QGeoAddress}
 */

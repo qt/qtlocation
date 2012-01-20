@@ -55,24 +55,58 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since QtLocation 5.0
 
-    \brief The PositionSource element allows you to get information about your
-    current position.
+    \brief The PositionSource element provides the device's current position.
 
-    The PositionSource element allows you to get information about your current position.
-    You can receive information about things such as latitude, longitude, altitude, and
-    speed.
+    The PositionSource element provides information about the user device's
+    current position. The position is available as a \l{Position} element, which
+    contains all the standard parameters typically available from GPS and other
+    similar sytems, including longitude, latitude, speed and accuracy details.
 
-    Support for location sources are platform dependent. When declaring a PositionSource element, a
-    default PositionSource source shall be created. Supported positioning methods are held in
-    \l supportedPositioningMethods. As a development convenience, one may also set data file as a source (NMEA format).
-    Location updates are not necessarily started automatically upon element declaration, see \l start, \l stop, \l active
-    and \l update.
+    As different position sources are available on different platforms and
+    devices, these are categorized by their basic type (Satellite, NonSatellite,
+    and AllPositioningMethods). The available methods for the current platform
+    can be enumerated in the \l{supportedPositioningMethods} property.
 
-    Here is very simple example QML to illustrate the usage:
+    To indicate which methods are suitable for your application, set the
+    \l{preferredPositioningMethods} property. If the preferred methods are not
+    available, the default source of location data for the platform will be
+    chosen instead.
 
-    \snippet doc/src/snippets/declarative/declarative-location.qml 0
+    The \l updateInterval property can then be used to indicate how often your
+    application wishes to receive position updates. Once set, the \l{start}(),
+    \l{stop}() and \l{update}() methods can be used to control the operation
+    of the PositionSource, as well as the \l{active} property, which when set
+    is equivalent to calling \l{start}() or \l{stop}().
 
-    \sa {QGeoPositionInfoSource}, {QGeoPositionInfo}, {QNmeaPositionInfoSource}, {QGeoCoordinate}
+    When the PositionSource is active, position updates can be retrieved
+    either by simply using the \l{position} property in a binding (as the
+    value of another item's property), or by providing a handler for the
+    \l{onPositionChanged} signal.
+
+    \section2 Example Usage
+
+    The following example shows a simple PositionSource used to receive
+    updates every second and print the longitude and latitude out to
+    the console.
+
+    \code
+    PositionSource {
+        id: src
+        updateInterval: 1000
+        active: true
+
+        onPositionChanged: {
+            var coord = src.position.coordinate;
+            console.log("Coordinate:", coord.longitude, coord.latitude);
+        }
+    }
+    \endcode
+
+    The \l{declarative/flickr}{Flickr} example application shows how to use
+    a PositionSource in your application to retrieve local data for users
+    from a REST web service.
+
+    \sa {QtLocation5::Position}, {QGeoPositionInfoSource}
 
 */
 
