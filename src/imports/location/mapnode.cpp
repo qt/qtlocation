@@ -51,6 +51,7 @@
 
 MapNode::MapNode(QGeoMap* map): QSGGeometryNode(),
         m_fbo(0),
+        m_fboSurface(0),
         m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4),
         m_texture(0),
         m_map(map),
@@ -65,6 +66,7 @@ MapNode::MapNode(QGeoMap* map): QSGGeometryNode(),
 
 MapNode::~MapNode()
 {
+    delete m_fboSurface;
     delete m_fbo;
 }
 
@@ -108,7 +110,7 @@ void MapNode::updateFBO()
         return;
     }
 
-    painter.pushSurface(&m_fboSurface);
+    painter.pushSurface(m_fboSurface);
 
     glClearColor(0.9, 0.9, 0.9, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -207,9 +209,10 @@ void MapNode::setSize(const QSize &size)
 
 void MapNode::init()
 {
+    delete m_fboSurface;
     delete m_fbo;
     m_fbo = new QOpenGLFramebufferObject(m_size.width(), m_size.height());
-    m_fboSurface.setFramebufferObject(m_fbo);
+    m_fboSurface = new QGLFramebufferObjectSurface(m_fbo);
     m_initialized = true;
 }
 
