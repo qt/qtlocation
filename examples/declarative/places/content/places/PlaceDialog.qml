@@ -128,7 +128,8 @@ Dialog {
         website.value = dialogModel.get(14).inputText;
         modifiedPlace.contactDetails.website = website;
 
-        modifiedPlace.save();
+        place = modifiedPlace;
+        place.save();
     }
     //! [Place save]
 }
