@@ -73,7 +73,7 @@ Item {
 
                     Text { id: placeName; text: place.favorite ? place.favorite.name : place.name }
                 }
-                Text { id: distanceText; text: distance + "m"; font.italic: true; font.pointSize: placeName.font.pointSize * 0.8 }
+                Text { id: distanceText; text: distance + "m"; font.italic: true; }
             }
 
             MouseArea {
