@@ -40,8 +40,10 @@
  ****************************************************************************/
 
 #include "qdeclarativepolygonmapitem_p.h"
+#include <QtGui/private/qtriangulator_p.h>
 #include <QDeclarativeInfo>
 #include <QPainter>
+#include <QPainterPath>
 
 QT_BEGIN_NAMESPACE
 
@@ -111,35 +113,52 @@ struct Vertex
     QVector2D position;
 };
 
-static void updatePolygon(QPolygonF& points,const QGeoMap& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
+static void updatePolygon(QPolygonF& points, const QGeoMap& map,
+                          const QList<QGeoCoordinate> &path,
+                          qreal& w, qreal& h, QPointF& offset)
 {
     qreal minX, maxX, minY, maxY;
-    //TODO: dateline handling
 
+    QPainterPath pp;
     for (int i = 0; i < path.size(); ++i) {
-
         const QGeoCoordinate &coord = path.at(i);
 
         if (!coord.isValid())
             continue;
 
         QPointF point = map.coordinateToScreenPosition(coord, false);
-
         if (i == 0) {
+            offset = point;
+            pp.moveTo(point);
             minX = point.x();
             maxX = point.x();
             minY = point.y();
             maxY = point.y();
         } else {
+            pp.lineTo(point);
             minX = qMin(point.x(), minX);
             maxX = qMax(point.x(), maxX);
             minY = qMin(point.y(), minY);
             maxY = qMax(point.y(), maxY);
         }
-        points.append(point);
     }
+    pp.closeSubpath();
+    pp.translate(-minX, -minY);
+    offset += QPointF(-minX, -minY);
 
-    points.translate(-minX, -minY);
+    QTriangleSet ts = qTriangulate(pp);
+    qreal *vx = ts.vertices.data();
+    if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
+        const quint32 *tx = reinterpret_cast<const quint32*>(ts.indices.data());
+        for (int i = 0; i < (ts.indices.size()/3*3); i++) {
+            points.append(QPointF(vx[tx[i]*2], vx[tx[i]*2+1]));
+        }
+    } else {
+        const quint16 *tx = reinterpret_cast<const quint16*>(ts.indices.data());
+        for (int i = 0; i < (ts.indices.size()/3*3); i++) {
+            points.append(QPointF(vx[tx[i]*2], vx[tx[i]*2+1]));
+        }
+    }
 
     w = maxX - minX;
     h = maxY - minY;
@@ -368,15 +387,15 @@ void QDeclarativePolygonMapItem::updateMapItem()
         qreal w = 0;
         polygon_.clear();
         borderPolygon_.clear();
-        updatePolygon(polygon_, *map(), path_, w, h);
+        updatePolygon(polygon_, *map(), path_, w, h, offset_);
 
         QList<QGeoCoordinate> pathClosed = path_;
-        pathClosed.append(pathClosed.at(0));
+        pathClosed.append(path_.at(0));
         QDeclarativePolylineMapItem::updatePolyline(borderPolygon_, *map(), pathClosed, w, h);
         setWidth(w);
         setHeight(h);
     }
-    setPositionOnMap(path_.at(0), polygon_.at(0));
+    setPositionOnMap(path_.at(0), offset_);
     update();
 }
 
@@ -400,7 +419,7 @@ MapPolygonNode::MapPolygonNode() :
     border_(new MapPolylineNode()),
     geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
 {
-    geometry_.setDrawingMode(GL_TRIANGLE_FAN);
+    geometry_.setDrawingMode(GL_TRIANGLES);
     QSGGeometryNode::setMaterial(&fill_material_);
     QSGGeometryNode::setGeometry(&geometry_);
 
@@ -423,21 +442,11 @@ void MapPolygonNode::update(const QColor& fillColor, const QPolygonF& shape,
 
     int fillVertexCount = 0;
     //note this will not allocate new buffer if the size has not changed
-    fill->allocate(shape.size() + 2);
+    fill->allocate(shape.size());
 
     Vertex *vertices = (Vertex *)fill->vertexData();
-
-    qreal xSum = 0, ySum = 0, count = 0;
-    // skip the center point for now, we'll fill it in afterwards
-    fillVertexCount++;
-    for (int i = 0; i < shape.size(); ++i) {
-        xSum += shape.at(i).x();
-        ySum += shape.at(i).y();
-        count += 1.0;
+    for (int i = 0; i < shape.size(); ++i)
         vertices[fillVertexCount++].position = QVector2D(shape.at(i));
-    }
-    vertices[fillVertexCount++].position = QVector2D(shape.at(0));
-    vertices[0].position = QVector2D(xSum / count, ySum / count);
 
     Q_ASSERT(fillVertexCount == fill->vertexCount());
     markDirty(DirtyGeometry);

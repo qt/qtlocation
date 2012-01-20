@@ -109,6 +109,7 @@ private:
     QPolygonF borderPolygon_;
     bool dirtyGeometry_;
     bool dirtyMaterial_;
+    QPointF offset_;
 };
 
 //////////////////////////////////////////////////////////////////////
