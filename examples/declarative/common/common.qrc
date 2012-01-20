@@ -18,7 +18,6 @@
         <file>resources/busy.png</file>
         <file>resources/button_pressed.png</file>
         <file>resources/button.png</file>
-        <file>resources/button.sci</file>
         <file>resources/catch.png</file>
         <file>resources/categories_pressed.png</file>
         <file>resources/categories.png</file>
@@ -29,16 +28,11 @@
         <file>resources/cross.png</file>
         <file>resources/hmenuItem_pressed.png</file>
         <file>resources/hmenuItem.png</file>
-        <file>resources/hmenuItem.sci</file>
         <file>resources/left_pressed.png</file>
         <file>resources/left.png</file>
         <file>resources/marker_hovered.png</file>
         <file>resources/marker_selected.png</file>
         <file>resources/marker.png</file>
-        <file>resources/menuItem_hovered.png</file>
-        <file>resources/menuItem_pressed.png</file>
-        <file>resources/menuItem.png</file>
-        <file>resources/menuItem.sci</file>
         <file>resources/node_selected.png</file>
         <file>resources/node.png</file>
         <file>resources/option_button_selected.png</file>
@@ -59,6 +53,5 @@
         <file>resources/titlebar.png</file>
         <file>resources/titlebar.sci</file>
         <file>resources/vmenuItem.png</file>
-        <file>resources/vmenuItem.sci</file>
     </qresource>
 </RCC>

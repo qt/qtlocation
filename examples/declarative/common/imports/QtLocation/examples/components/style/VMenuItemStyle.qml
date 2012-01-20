@@ -40,5 +40,5 @@
 import QtQuick 2.0
 
 HMenuItemStyle {
-    background: "../../../../resources/vmenuItem.sci"
+    background: "../../../../resources/vmenuItem.png"
 }

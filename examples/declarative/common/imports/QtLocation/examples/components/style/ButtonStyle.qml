@@ -41,7 +41,7 @@ import QtQuick 2.0
 
 QtObject {
     id: buttonStyle
-    property string background: "../../../../resources/button.sci"
+    property string background: "../../../../resources/button.png"
     property string pressedBackground: "../../../../resources/button_pressed.png"
     property string disabledBackground: "../../../../resources/button.png"
     property color fontcolor_normal: "white"

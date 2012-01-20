@@ -59,7 +59,7 @@ Item {
     Rectangle {
         id: dialogRectangle
 
-        color: "white"
+        color: "#ECECEC"
         width: parent.width - gap;
         height: titleBar.height + message.height + okButton.height + gap*3
         anchors {
@@ -68,8 +68,6 @@ Item {
             leftMargin: gap/2
         }
 
-        border.width: 1
-        border.color: "dodgerblue"
         radius: 5
 
         TitleBar {
