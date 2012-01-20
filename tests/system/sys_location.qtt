@@ -667,6 +667,7 @@ testcase = {
 
     qml_distance_between_points:function(lat1, long1, lat2, long2, distance)
     {
+        // Test meta data
         testTitle = "QML: Maps and Navigation - Distance between points";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
@@ -821,16 +822,30 @@ testcase = {
         ));
     },
 
-/*
+
     qml_current_position: function()
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Current Position";
         testBinary = "qml_location_mapviewer";
         testGoal = "Verify that current position is detected and displayed.";
-        testPreconditions = "Internet connection is required for this test case.";
+        testPreconditions = "Internet connection is required for this test case. GPS signal can be got or simulated.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2888, MOBILITY-65: Basic Location Functionality ";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Tools | |
+        | Select Follow me | |
+        | Wait upto 10 min for a map update | Verify that map is updated with the centre at the current location |"
+        ));
     },
 
     qml_location_is_updated: function()
@@ -842,8 +857,22 @@ testcase = {
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2888, MOBILITY-65: Basic Location Functionality ";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Tools | |
+        | Select Follow me | Verify that map is updated with the centre at the current location |
+        | Change your location | Verify that map centre follows current position without significant delay and quite accurate. |"
+        ));
     },
-*/
+
 
     qml_several_maps:function()
     {
@@ -881,6 +910,31 @@ testcase = {
         ));
     },
 
+    qml_map_logo:function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Logo";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that map can display logo (watermark).";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, QTMOBILITY-796: QML for Maps & Navigation: mapping";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Select Provider button | |
+        | Select nokia provider | Verify that map with logo is displayed on the screen. |"
+        ));
+    },
+
     qml_polyline_mapitem_data: {
         nodes:["-26.15", "152.1", "-28", "-152.6", "-27", "153"],
         nodes_near_dateline:["67", "179.5", "66.5", "0.5", "66.7", "179"]
@@ -888,6 +942,7 @@ testcase = {
 
     qml_polyline_mapitem:function(lat1, long1, lat2, long2, lat3, long3)
     {
+        // Test meta data
         testTitle = "QML: Maps and Navigation - Polyline";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
@@ -938,6 +993,7 @@ testcase = {
 
     qml_polygon_mapitem:function(lat1, long1, lat2, long2, lat3, long3, lat4, long4, lat5, long5)
     {
+        // Test meta data
         testTitle = "QML: Maps and Navigation - Polygon";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
@@ -999,6 +1055,7 @@ testcase = {
 
     qml_circle_mapitem:function(lat1, long1, lat2, long2)
     {
+        // Test meta data
         testTitle = "QML: Maps and Navigation - Circle";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
@@ -1042,6 +1099,7 @@ testcase = {
 
     qml_video_mapitem:function(latitude, longtitude)
     {
+        // Test meta data
         testTitle = "QML: Maps and Navigation - Video";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
@@ -1079,6 +1137,7 @@ testcase = {
 
     qml_image_mapitem:function()
     {
+        // Test meta data
         testTitle = "QML: Maps and Navigation - Image";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
@@ -1116,6 +1175,7 @@ testcase = {
 
     qml_3dqml_mapitem:function(latitude, longtitude)
     {
+        // Test meta data
         testTitle = "QML: Maps and Navigation - 3D QML Item";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
@@ -1203,6 +1263,7 @@ testcase = {
 
     qml_mapitem_interaction:function(latitude, longtitude, city)
     {
+        // Test meta data
         testTitle = "QML: Maps and Navigation - Interaction with mapitems";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
@@ -1259,7 +1320,8 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Select Provider button | |
         | Select nokia provider | |
-        | Select Goto button | |
+        | Select Search button | |
+        | Select Search Center button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
@@ -1304,7 +1366,8 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Select Provider button | |
         | Select nokia provider | |
-        | Select Goto button | |
+        | Select Search button | |
+        | Select Search Center button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
@@ -1341,7 +1404,8 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Select Provider button | |
         | Select nokia provider | |
-        | Select Goto button | |
+        | Select Search button | |
+        | Select Search Center button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
@@ -1381,7 +1445,8 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Select Provider button | |
         | Select nokia provider | |
-        | Select Goto button | |
+        | Select Search button | |
+        | Select Search Center button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
@@ -1416,7 +1481,8 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Select Provider button | |
         | Select nokia provider | |
-        | Select Goto button | |
+        | Select Search button | |
+        | Select Search Center button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
@@ -1456,7 +1522,8 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Select Provider button | |
         | Select nokia provider | |
-        | Select Goto button | |
+        | Select Search button | |
+        | Select Search Center button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
@@ -1495,7 +1562,8 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Select Provider button | |
         | Select nokia provider | |
-        | Select Goto button | |
+        | Select Search button | |
+        | Select Search Center button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
@@ -1534,7 +1602,8 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Select Provider button | |
         | Select nokia provider | |
-        | Select Goto button | |
+        | Select Search button | |
+        | Select Search Center button | |
         | Fill in " + latitude + " in Latitude filed | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
@@ -1546,6 +1615,40 @@ testcase = {
     }
 
     /*
+    qml_categories_management: function()
+        // Test meta data
+        testTitle = "QML: Places - Favorites";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that categories/subcategories can be created, edited and deleted.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
+    },
+
+    qml_places_management: function()
+        // Test meta data
+        testTitle = "QML: Places - Favorites";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that places can be created, edited and deleted.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
+    },
+
+    qml_favorite_places: function()
+    {
+        // Test meta data
+        testTitle = "QML: Places - Favorites";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that places can be found for different locale.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
+    },
+
     qml_places_and_locale: function(latitude, longtitude, locale)
     {
         // Test meta data
@@ -1556,7 +1659,7 @@ testcase = {
         testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MOBILITY-2861";
-    }
+    },
 
     qml_searching_for_places_by_category_inside_bounding_box: function()
     {
