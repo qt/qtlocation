@@ -41,6 +41,7 @@
 
 #include "qdeclarativecirclemapitem_p.h"
 #include "qdeclarativegeomapquickitem_p.h"
+#include "qdeclarativepolygonmapitem_p.h"
 #include "qgeoprojection_p.h"
 #include <cmath>
 #include <QPen>
@@ -124,41 +125,6 @@ inline static qreal qgeocoordinate_degToRad(qreal deg)
 inline static qreal qgeocoordinate_radToDeg(qreal rad)
 {
     return rad * 180 / M_PI;
-}
-
-static void updatePolygon(QPolygonF& points,const QGeoMap& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
-{
-
-    qreal minX, maxX, minY, maxY;
-    //TODO: dateline handling
-
-    for (int i = 0; i < path.size(); ++i) {
-
-        const QGeoCoordinate &coord = path.at(i);
-
-        if (!coord.isValid())
-            continue;
-
-        QPointF point = map.coordinateToScreenPosition(coord, false);
-
-        if (i == 0) {
-            minX = point.x();
-            maxX = point.x();
-            minY = point.y();
-            maxY = point.y();
-        } else {
-            minX = qMin(point.x(), minX);
-            maxX = qMax(point.x(), maxX);
-            minY = qMin(point.y(), minY);
-            maxY = qMax(point.y(), maxY);
-        }
-        points.append(point);
-    }
-
-    points.translate(-minX, -minY);
-
-    w = maxX - minX;
-    h = maxY - minY;
 }
 
 static void calculatePeripheralPoints(QList<QGeoCoordinate>& path, const QGeoCoordinate& center, qreal distance, int steps)
@@ -374,17 +340,39 @@ void QDeclarativeCircleMapItem::updateMapItem()
     if (dirtyPixelGeometry_) {
         qreal w = 0;
         qreal h = 0;
-        circlePolygon_.clear();
-        updatePolygon(circlePolygon_, *map(), circlePath_, w, h);
+
+        QPolygonF newPoly, newBorderPoly;
+        QPointF offset;
+
+        QDeclarativePolygonMapItem::updatePolygon(newPoly, *map(),
+                                                   circlePath_, w, h,
+                                                   offset);
+
+        if (newPoly.size() > 0) {
+            circlePolygon_ = newPoly;
+            offset_ = offset;
+        }
+
         QList<QGeoCoordinate> pathClosed = circlePath_;
         pathClosed.append(pathClosed.at(0));
-        borderPolygon_.clear();
-        QDeclarativePolylineMapItem::updatePolyline(borderPolygon_, *map(), pathClosed, w, h);
+
+        QPainterPath outline;
+        QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
+                                                    pathClosed, w, h,
+                                                    border_.width(),
+                                                    outline, offset);
+
+        if (newBorderPoly.size() > 0) {
+            borderPolygon_ = newBorderPoly;
+            borderPolygon_.translate(offset_ - offset);
+        }
+
         setWidth(w);
         setHeight(h);
     }
 
-    setPositionOnMap(center()->coordinate(), QPointF(width(),height()) / 2);
+    //setPositionOnMap(center()->coordinate(), QPointF(width(),height()) / 2);
+    setPositionOnMap(circlePath_.at(0), offset_);
     update();
 }
 
@@ -392,8 +380,8 @@ void QDeclarativeCircleMapItem::handleCameraDataChanged(const QGeoCameraData& ca
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
-        dirtyPixelGeometry_ = true;
     }
+    dirtyPixelGeometry_ = true;
     updateMapItem();
 }
 
@@ -418,7 +406,7 @@ MapCircleNode::MapCircleNode():
     border_(new MapPolylineNode()),
     geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
 {
-    geometry_.setDrawingMode(GL_TRIANGLE_FAN);
+    geometry_.setDrawingMode(GL_TRIANGLES);
     QSGGeometryNode::setMaterial(&fill_material_);
     QSGGeometryNode::setGeometry(&geometry_);
 
@@ -438,17 +426,13 @@ void MapCircleNode::update(const QColor& fillColor, const QPolygonF& circleShape
 
     int fillVertexCount = 0;
     //note this will not allocate new buffer if the size has not changed
-    fill->allocate(circleShape.size() + 1 + 1); //one for center + one to close the circle
+    fill->allocate(circleShape.size()); //one for center + one to close the circle
 
     Vertex *vertices = (Vertex *)fill->vertexData();
-    //set center
-    vertices[fillVertexCount++].position = QVector2D(center);
-
     for (int i = 0; i < circleShape.size(); ++i) {
         vertices[fillVertexCount++].position = QVector2D(circleShape.at(i));
     }
-    //close circle
-    vertices[fillVertexCount++].position = QVector2D(circleShape.at(0));
+
     Q_ASSERT(fillVertexCount == fill->vertexCount());
 
     markDirty(DirtyGeometry);

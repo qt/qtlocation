@@ -72,42 +72,6 @@
 */
 /* TODO: an example here. do we want to use a RouteModel? */
 
-
-static void updatePolyline(QPolygonF& points,const QGeoMap& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
-{
-
-    qreal minX, maxX, minY, maxY;
-    //TODO: dateline handling
-
-    for (int i = 0; i < path.size(); ++i) {
-
-        const QGeoCoordinate &coord = path.at(i);
-
-        if (!coord.isValid())
-            continue;
-
-        QPointF point = map.coordinateToScreenPosition(coord, false);
-
-        if (i == 0) {
-            minX = point.x();
-            maxX = point.x();
-            minY = point.y();
-            maxY = point.y();
-        } else {
-            minX = qMin(point.x(), minX);
-            maxX = qMax(point.x(), maxX);
-            minY = qMin(point.y(), minY);
-            maxY = qMax(point.y(), maxY);
-        }
-        points.append(point);
-    }
-
-    points.translate(-minX, -minY);
-
-    w = maxX - minX;
-    h = maxY - minY;
-}
-
 QDeclarativeRouteMapItem::QDeclarativeRouteMapItem(QQuickItem *parent):
     QDeclarativeGeoMapItemBase(parent),
     route_(0),
@@ -215,20 +179,29 @@ void QDeclarativeRouteMapItem::updateMapItem()
     if (dirtyGeometry_) {
         qreal h = 0;
         qreal w = 0;
-        polyline_.clear();
-        updatePolyline(polyline_, *map(), path_, w, h);
+        QPolygonF newPolyline;
+        QPointF offset;
+
+        QDeclarativePolylineMapItem::updatePolyline(newPolyline, *map(), path_,
+                                                    w, h, line_.width(),
+                                                    outline_, offset);
+        if (newPolyline.size() > 0) {
+            polyline_ = newPolyline;
+            offset_ = offset;
+        }
+
         setWidth(w);
         setHeight(h);
     }
-    setPositionOnMap(path_.at(0), polyline_.at(0));
+    setPositionOnMap(path_.at(0), offset_);
 }
 
 void QDeclarativeRouteMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
-        dirtyGeometry_ = true;
     }
+    dirtyGeometry_ = true;
     updateMapItem();
 }
 

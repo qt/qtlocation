@@ -42,6 +42,9 @@
 #include "qdeclarativepolylinemapitem_p.h"
 #include <QDeclarativeInfo>
 #include <QPainter>
+#include <QPainterPath>
+#include <QPainterPathStroker>
+#include <QtGui/private/qtriangulator_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -143,13 +146,25 @@ struct Vertex
     QVector2D position;
 };
 
-void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& points,const QGeoMap& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h)
+void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& points,
+                                                 const QGeoMap& map,
+                                                 const QList<QGeoCoordinate> &path,
+                                                 qreal& w, qreal& h,
+                                                 qreal strokeW,
+                                                 QPainterPath &outline,
+                                                 QPointF &offset)
 {
-    qreal minX, maxX, minY, maxY;
-    //TODO: dateline handling
+    // viewport rectangle, for clipping later
+    QPainterPath viewport;
+    QRectF viewRect(-strokeW, -strokeW, map.width()+2*strokeW, map.height()+2*strokeW);
+    viewport.addRect(viewRect);
+
+    QPainterPath pp;
+    QPointF lastPoint, lastAddedPoint;
+
+    bool inView = false;
 
     for (int i = 0; i < path.size(); ++i) {
-
         const QGeoCoordinate &coord = path.at(i);
 
         if (!coord.isValid())
@@ -157,24 +172,68 @@ void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& points,const QGeoMap
 
         QPointF point = map.coordinateToScreenPosition(coord, false);
 
-        if (i == 0) {
-            minX = point.x();
-            maxX = point.x();
-            minY = point.y();
-            maxY = point.y();
-        } else {
-            minX = qMin(point.x(), minX);
-            maxX = qMax(point.x(), maxX);
-            minY = qMin(point.y(), minY);
-            maxY = qMax(point.y(), maxY);
+        if (i == 0)
+            offset = point;
+
+        if (!inView && viewRect.contains(point)) {
+            if (i > 0) {
+                pp.moveTo(lastPoint);
+                pp.lineTo(point);
+            } else {
+                pp.moveTo(point);
+            }
+            lastAddedPoint = point;
+            inView = true;
+        } else if (inView) {
+            if ((point - lastAddedPoint).manhattanLength() > 3 ||
+                    i == path.size() - 1) {
+                pp.lineTo(point);
+                lastAddedPoint = point;
+            }
+
+            if (!viewRect.contains(point))
+                inView = false;
         }
-        points.append(point);
+
+        lastPoint = point;
     }
 
-    points.translate(-minX, -minY);
+    QPainterPath quickClip;
+    quickClip.addRect(-0.5*map.width(), -0.5*map.height(), map.width()*2, map.height()*2);
 
-    w = maxX - minX;
-    h = maxY - minY;
+    QPainterPathStroker st;
+    st.setWidth(strokeW);
+    outline = st.createStroke(pp.intersected(quickClip));
+
+    // really big numbers (> 2^21) break qTriangulate, so we must clip here
+    // to avoid asserting
+    QPainterPath ppi = outline.intersected(viewport);
+
+    // nothing is on the screen
+    if (ppi.elementCount() == 0)
+        return;
+
+    QRectF bb = ppi.boundingRect();
+    w = bb.width();
+    h = bb.height();
+
+    // we need relative coordinates
+    ppi.translate(-bb.left(), -bb.top());
+    offset += QPointF(-bb.left(), -bb.top());
+
+    QTriangleSet ts = qTriangulate(ppi);
+    qreal *vx = ts.vertices.data();
+    if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
+        const quint32 *tx = reinterpret_cast<const quint32*>(ts.indices.data());
+        for (int i = 0; i < (ts.indices.size()/3*3); i++) {
+            points.append(QPointF(vx[tx[i]*2], vx[tx[i]*2+1]));
+        }
+    } else {
+        const quint16 *tx = reinterpret_cast<const quint16*>(ts.indices.data());
+        for (int i = 0; i < (ts.indices.size()/3*3); i++) {
+            points.append(QPointF(vx[tx[i]*2], vx[tx[i]*2+1]));
+        }
+    }
 }
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent) :
@@ -374,13 +433,22 @@ void QDeclarativePolylineMapItem::updateMapItem()
     if (dirtyGeometry_) {
            qreal h = 0;
            qreal w = 0;
-           polyline_.clear();
-           updatePolyline(polyline_, *map(), path_, w, h);
+
+           QPolygonF newPolyline;
+           QPointF offset;
+
+           updatePolyline(newPolyline, *map(), path_, w, h, line_.width(),
+                          outline_, offset);
+           if (newPolyline.size() > 0) {
+               polyline_ = newPolyline;
+               offset_ = offset;
+           }
+
            setWidth(w);
            setHeight(h);
        }
 
-    setPositionOnMap(path_.at(0),polyline_.at(0));
+    setPositionOnMap(path_.at(0), offset_);
     update();
 }
 
@@ -388,8 +456,8 @@ void QDeclarativePolylineMapItem::handleCameraDataChanged(const QGeoCameraData& 
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
-        dirtyGeometry_ = true;
     }
+    dirtyGeometry_ = true;
     updateMapItem();
 }
 
@@ -405,7 +473,7 @@ bool QDeclarativePolylineMapItem::contains(QPointF point)
 MapPolylineNode::MapPolylineNode() :
     geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
 {
-    geometry_.setDrawingMode(GL_LINE_STRIP);
+    geometry_.setDrawingMode(GL_TRIANGLES);
     QSGGeometryNode::setMaterial(&fill_material_);
     QSGGeometryNode::setGeometry(&geometry_);
 }

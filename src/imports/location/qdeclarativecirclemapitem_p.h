@@ -109,6 +109,7 @@ private:
     bool dirtyPixelGeometry_;
     bool dirtyGeoGeometry_;
     bool dirtyMaterial_;
+    QPointF offset_;
 };
 
 //////////////////////////////////////////////////////////////////////

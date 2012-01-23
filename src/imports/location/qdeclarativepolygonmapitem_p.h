@@ -63,6 +63,10 @@ public:
     QDeclarativePolygonMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolygonMapItem();
 
+    static void updatePolygon(QPolygonF &points, const QGeoMap &map,
+                              const QList<QGeoCoordinate> &path,
+                              qreal &w, qreal &h, QPointF &offset);
+
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
     //from QuickItem
     virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);

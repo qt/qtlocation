@@ -265,12 +265,24 @@ void QDeclarativeRectangleMapItem::updateMapItem()
         rectangle_.setTopLeft(QPointF(0, 0));
         rectangle_.setBottomRight(QPointF(w, h));
 
-        borderPoly_.clear();
-        borderPoly_.append(QPointF(0, 0));
-        borderPoly_.append(QPointF(w, 0));
-        borderPoly_.append(QPointF(w, h));
-        borderPoly_.append(QPointF(0, h));
-        borderPoly_.append(borderPoly_.at(0));
+        QList<QGeoCoordinate> pathClosed;
+        pathClosed << topLeft_->coordinate();
+        pathClosed << QGeoCoordinate(topLeft_->latitude(), bottomRight_->longitude());
+        pathClosed << bottomRight_->coordinate();
+        pathClosed << QGeoCoordinate(bottomRight_->latitude(), topLeft_->longitude());
+        pathClosed << pathClosed.first();
+
+        QPolygonF newBorderPoly;
+        QPainterPath outline;
+        QPointF offset;
+        QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
+                                                    pathClosed, w, h,
+                                                    border_.width(),
+                                                    outline, offset);
+        if (newBorderPoly.size() > 0) {
+            newBorderPoly.translate(-1*offset);
+            borderPoly_ = newBorderPoly;
+        }
 
         setWidth(w);
         setHeight(h);

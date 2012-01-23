@@ -86,7 +86,10 @@ public:
     QDeclarativePolylineMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolylineMapItem();
 
-    static void updatePolyline(QPolygonF& points,const QGeoMap& map, const QList<QGeoCoordinate> &path, qreal& w, qreal& h);
+    static void updatePolyline(QPolygonF& points, const QGeoMap& map,
+                               const QList<QGeoCoordinate> &path,
+                               qreal& w, qreal& h, qreal strokeW,
+                               QPainterPath &outline, QPointF &offset);
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
        //from QuickItem
@@ -129,6 +132,8 @@ private:
     QPolygonF polyline_;
     bool dirtyGeometry_;
     bool dirtyMaterial_;
+    QPainterPath outline_;
+    QPointF offset_;
 };
 
 //////////////////////////////////////////////////////////////////////

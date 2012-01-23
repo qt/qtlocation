@@ -95,6 +95,8 @@ private:
     bool dirtyGeometry_;
     bool dirtyMaterial_;
     bool dragActive_;
+    QPointF offset_;
+    QPainterPath outline_;
 };
 
 QT_END_NAMESPACE

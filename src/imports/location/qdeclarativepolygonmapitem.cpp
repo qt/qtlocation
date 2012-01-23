@@ -57,8 +57,7 @@ QT_BEGIN_NAMESPACE
 
     The MapPolygon element displays a polygon on a Map, specified in terms of
     an ordered list of \l Coordinate elements. For best appearance and results,
-    polygons should be simple (not self-intersecting) -- the result of drawing
-    a non-simple polygon is not well-defined.
+    polygons should be simple (not self-intersecting).
 
     The Coordinate elements on the path can be changed after being added to
     the Polygon, and these changes will be reflected in the next frame on the
@@ -77,9 +76,10 @@ QT_BEGIN_NAMESPACE
 
     MapPolygons have a rendering cost that is O(n) with respect to the number
     of vertices. This means that the per frame cost of having a Polygon on the
-    Map grows in direct proportion to the number of points on the Polygon.
-    Additionally, there is a triangulation cost any time the points of the
-    Polygon are updated, which is approximately O(n log n).
+    Map grows in direct proportion to the number of points on the Polygon. There
+    is an additional triangulation cost (approximately O(n log n)) which is
+    currently paid with each frame, but in future may be paid only upon adding
+    or removing points.
 
     Like the other map objects, MapPolygon is normally drawn without a smooth
     appearance. Setting the \l opacity property will force the object to be
@@ -113,12 +113,21 @@ struct Vertex
     QVector2D position;
 };
 
-static void updatePolygon(QPolygonF& points, const QGeoMap& map,
-                          const QList<QGeoCoordinate> &path,
-                          qreal& w, qreal& h, QPointF& offset)
+void QDeclarativePolygonMapItem::updatePolygon(QPolygonF &points,
+                                               const QGeoMap &map,
+                                               const QList<QGeoCoordinate> &path,
+                                               qreal& w, qreal& h,
+                                               QPointF& offset)
 {
-    qreal minX, maxX, minY, maxY;
+    // viewport rectangle, for clipping later
+    QPainterPath viewport;
+    viewport.moveTo(0, 0);
+    viewport.lineTo(map.width(), 0);
+    viewport.lineTo(map.width(), map.height());
+    viewport.lineTo(0, map.height());
+    viewport.closeSubpath();
 
+    // build the actual path
     QPainterPath pp;
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
@@ -130,23 +139,29 @@ static void updatePolygon(QPolygonF& points, const QGeoMap& map,
         if (i == 0) {
             offset = point;
             pp.moveTo(point);
-            minX = point.x();
-            maxX = point.x();
-            minY = point.y();
-            maxY = point.y();
         } else {
             pp.lineTo(point);
-            minX = qMin(point.x(), minX);
-            maxX = qMax(point.x(), maxX);
-            minY = qMin(point.y(), minY);
-            maxY = qMax(point.y(), maxY);
         }
     }
     pp.closeSubpath();
-    pp.translate(-minX, -minY);
-    offset += QPointF(-minX, -minY);
 
-    QTriangleSet ts = qTriangulate(pp);
+    // really big numbers (> 2^21) break qTriangulate, so we must clip here
+    // to avoid asserting
+    QPainterPath ppi = pp.intersected(viewport);
+
+    // nothing is on the screen
+    if (ppi.elementCount() == 0)
+        return;
+
+    QRectF bb = ppi.boundingRect();
+    w = bb.width();
+    h = bb.height();
+
+    // we need relative coordinates
+    ppi.translate(-bb.left(), -bb.top());
+    offset += QPointF(-bb.left(), -bb.top());
+
+    QTriangleSet ts = qTriangulate(ppi);
     qreal *vx = ts.vertices.data();
     if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
         const quint32 *tx = reinterpret_cast<const quint32*>(ts.indices.data());
@@ -159,9 +174,6 @@ static void updatePolygon(QPolygonF& points, const QGeoMap& map,
             points.append(QPointF(vx[tx[i]*2], vx[tx[i]*2+1]));
         }
     }
-
-    w = maxX - minX;
-    h = maxY - minY;
 }
 
 QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
@@ -385,13 +397,28 @@ void QDeclarativePolygonMapItem::updateMapItem()
     if (dirtyGeometry_) {
         qreal h = 0;
         qreal w = 0;
-        polygon_.clear();
-        borderPolygon_.clear();
-        updatePolygon(polygon_, *map(), path_, w, h, offset_);
+
+        QPolygonF newPoly, newBorderPoly;
+        QPointF offset;
+        updatePolygon(newPoly, *map(), path_, w, h, offset);
+
+        if (newPoly.size() > 0) {
+            polygon_ = newPoly;
+            offset_ = offset;
+        }
 
         QList<QGeoCoordinate> pathClosed = path_;
         pathClosed.append(path_.at(0));
-        QDeclarativePolylineMapItem::updatePolyline(borderPolygon_, *map(), pathClosed, w, h);
+        QPainterPath outline;
+        QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
+                                                    pathClosed, w, h,
+                                                    border_.width(),
+                                                    outline, offset);
+        if (newBorderPoly.size() > 0) {
+            borderPolygon_ = newBorderPoly;
+            borderPolygon_.translate(offset_ - offset);
+        }
+
         setWidth(w);
         setHeight(h);
     }
@@ -403,8 +430,8 @@ void QDeclarativePolygonMapItem::handleCameraDataChanged(const QGeoCameraData& c
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
-        dirtyGeometry_ = true;
     }
+    dirtyGeometry_ = true;
     updateMapItem();
 }
 
