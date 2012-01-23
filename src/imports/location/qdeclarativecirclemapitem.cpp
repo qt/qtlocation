@@ -356,11 +356,10 @@ void QDeclarativeCircleMapItem::updateMapItem()
         QList<QGeoCoordinate> pathClosed = circlePath_;
         pathClosed.append(pathClosed.at(0));
 
-        QPainterPath outline;
         QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
                                                     pathClosed, w, h,
                                                     border_.width(),
-                                                    outline, offset);
+                                                    outline_, offset);
 
         if (newBorderPoly.size() > 0) {
             borderPolygon_ = newBorderPoly;
@@ -397,7 +396,7 @@ void QDeclarativeCircleMapItem::dragEnded()
 
 bool QDeclarativeCircleMapItem::contains(QPointF point)
 {
-    return circlePolygon_.containsPoint(point, Qt::OddEvenFill);
+    return outline_.contains(point);
 }
 
 //////////////////////////////////////////////////////////////////////

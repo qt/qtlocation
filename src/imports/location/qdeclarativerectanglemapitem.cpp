@@ -265,11 +265,19 @@ void QDeclarativeRectangleMapItem::updateMapItem()
         rectangle_.setTopLeft(QPointF(0, 0));
         rectangle_.setBottomRight(QPointF(w, h));
 
+        setWidth(w);
+        setHeight(h);
+
         QList<QGeoCoordinate> pathClosed;
+        const double lonW = qAbs(bottomRight_->longitude() - topLeft_->longitude());
+        const double latH = qAbs(bottomRight_->latitude() - topLeft_->latitude());
         pathClosed << topLeft_->coordinate();
-        pathClosed << QGeoCoordinate(topLeft_->latitude(), bottomRight_->longitude());
-        pathClosed << bottomRight_->coordinate();
-        pathClosed << QGeoCoordinate(bottomRight_->latitude(), topLeft_->longitude());
+        pathClosed << QGeoCoordinate(topLeft_->latitude(),
+                                     topLeft_->longitude() + lonW);
+        pathClosed << QGeoCoordinate(topLeft_->latitude() + latH,
+                                     topLeft_->longitude() + lonW);
+        pathClosed << QGeoCoordinate(topLeft_->latitude() + latH,
+                                     topLeft_->longitude());
         pathClosed << pathClosed.first();
 
         QPolygonF newBorderPoly;
@@ -283,9 +291,6 @@ void QDeclarativeRectangleMapItem::updateMapItem()
             newBorderPoly.translate(-1*offset);
             borderPoly_ = newBorderPoly;
         }
-
-        setWidth(w);
-        setHeight(h);
     }
 
     //TODO: add AnchorCoordiante

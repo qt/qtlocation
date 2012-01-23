@@ -110,6 +110,7 @@ private:
     bool dirtyGeoGeometry_;
     bool dirtyMaterial_;
     QPointF offset_;
+    QPainterPath outline_;
 };
 
 //////////////////////////////////////////////////////////////////////
