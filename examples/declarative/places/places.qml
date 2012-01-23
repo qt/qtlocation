@@ -51,6 +51,7 @@ Item {
     property variant map
     property variant searchRegion : startLocation
     property variant searchRegionItem
+    property Plugin favoritesPlugin
 
     onMapChanged: editPlaceDialog.prepareDialog()
 
@@ -347,8 +348,10 @@ Item {
         onCancelButtonClicked: page.state = ""
         onGoButtonClicked: {
             if (isFavoritesEnabled) {
-                placeSearchModel.favoritesPlugin = jsonDbPlugin;
-                recommendationModel.favoritesPlugin = jsonDbPlugin;
+                if (favoritesPlugin == null)
+                    favoritesPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { name: "nokia_places_jsondb" }', page);
+                placeSearchModel.favoritesPlugin = favoritesPlugin;
+                recommendationModel.favoritesPlugin = favoritesPlugin;
             } else {
                 placeSearchModel.favoritesPlugin = null;
                 recommendationModel.favoritesPlugin = null;
@@ -428,11 +431,6 @@ Item {
 
         parameters: pluginParametersFromMap(pluginParameters)
         onNameChanged: createMap(placesPlugin);
-    }
-
-    Plugin {
-        id: jsonDbPlugin
-        name: "nokia_places_jsondb"
     }
 
     Item {

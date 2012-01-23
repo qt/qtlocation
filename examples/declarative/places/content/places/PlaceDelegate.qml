@@ -227,7 +227,7 @@ Item {
                         text: (place.favorite !== null) ? qsTr("Remove Favorite") : qsTr("Save as Favorite");
                         onClicked:  {
                             if (place.favorite === null) {
-                                place.initializeFavorite(jsonDbPlugin);
+                                place.initializeFavorite(placeSearchModel.favoritesPlugin);
                                 place.favorite.statusChanged.connect(updateSaveStatus);
                                 place.favorite.save();
                             } else {
