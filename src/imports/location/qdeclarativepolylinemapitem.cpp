@@ -198,12 +198,9 @@ void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& points,
         lastPoint = point;
     }
 
-    QPainterPath quickClip;
-    quickClip.addRect(-0.5*map.width(), -0.5*map.height(), map.width()*2, map.height()*2);
-
     QPainterPathStroker st;
     st.setWidth(strokeW);
-    outline = st.createStroke(pp.intersected(quickClip));
+    outline = st.createStroke(pp);
 
     // really big numbers (> 2^21) break qTriangulate, so we must clip here
     // to avoid asserting
