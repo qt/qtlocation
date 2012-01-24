@@ -274,9 +274,9 @@ void QDeclarativeRectangleMapItem::updateMapItem()
         pathClosed << topLeft_->coordinate();
         pathClosed << QGeoCoordinate(topLeft_->latitude(),
                                      topLeft_->longitude() + lonW);
-        pathClosed << QGeoCoordinate(topLeft_->latitude() + latH,
+        pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
                                      topLeft_->longitude() + lonW);
-        pathClosed << QGeoCoordinate(topLeft_->latitude() + latH,
+        pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
                                      topLeft_->longitude());
         pathClosed << pathClosed.first();
 
