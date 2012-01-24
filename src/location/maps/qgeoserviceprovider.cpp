@@ -172,6 +172,10 @@ QGeoServiceProvider::~QGeoServiceProvider()
     will attempt to construct a QGeocodingManager instance until the
     construction is successful.
 
+    The QGeocodingManager is owned by this QGeoServiceProvider and should not
+    be deleted separately. Users should assume that deleting the
+    QGeoServiceProvider renders the pointer returned by this method invalid.
+
     After this function has been called, error() and errorString() will
     report any errors which occurred during the construction of the
     QGeocodingManager.
@@ -222,6 +226,10 @@ QGeocodingManager* QGeoServiceProvider::geocodingManager() const
     QGeoMappingManager will be cached, otherwise each call of this function
     will attempt to construct a QGeoMappingManager instance until the
     construction is successful.
+
+    The QGeoMappingManager is owned by this QGeoServiceProvider and should not
+    be deleted separately. Users should assume that deleting the
+    QGeoServiceProvider renders the pointer returned by this method invalid.
 
     After this function has been called, error() and errorString() will
     report any errors which occurred during the construction of the
@@ -275,6 +283,10 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
     will attempt to construct a QGeoRoutingManager instance until the
     construction is successful.
 
+    The QGeoRoutingManager is owned by this QGeoServiceProvider and should not
+    be deleted separately. Users should assume that deleting the
+    QGeoServiceProvider renders the pointer returned by this method invalid.
+
     After this function has been called, error() and errorString() will
     report any errors which occurred during the construction of the
     QGeoRoutingManager.
@@ -326,6 +338,10 @@ QGeoRoutingManager* QGeoServiceProvider::routingManager() const
     QPlaceManager will be cached, otherwise each call of this function
     will attempt to construct a QPlace instance until the
     construction is successful.
+
+    The QGeoPlaceManager is owned by this QGeoServiceProvider and should not
+    be deleted separately. Users should assume that deleting the
+    QGeoServiceProvider renders the pointer returned by this method invalid.
 
     After this function has been called, error() and errorString() will
     report any errors which occurred during the construction of the QPlaceManager.
