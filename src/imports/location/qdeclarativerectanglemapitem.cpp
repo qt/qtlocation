@@ -265,9 +265,6 @@ void QDeclarativeRectangleMapItem::updateMapItem()
         rectangle_.setTopLeft(QPointF(0, 0));
         rectangle_.setBottomRight(QPointF(w, h));
 
-        setWidth(w);
-        setHeight(h);
-
         QList<QGeoCoordinate> pathClosed;
         const double lonW = qAbs(bottomRight_->longitude() - topLeft_->longitude());
         const double latH = qAbs(bottomRight_->latitude() - topLeft_->latitude());
@@ -280,17 +277,25 @@ void QDeclarativeRectangleMapItem::updateMapItem()
                                      topLeft_->longitude());
         pathClosed << pathClosed.first();
 
-        QPolygonF newBorderPoly;
-        QPainterPath outline;
-        QPointF offset;
-        QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
-                                                    pathClosed, w, h,
-                                                    border_.width(),
-                                                    outline, offset);
-        if (newBorderPoly.size() > 0) {
-            newBorderPoly.translate(-1*offset);
-            borderPoly_ = newBorderPoly;
+        if (border_.width() > 0 && border_.color() != Qt::transparent) {
+            QPolygonF newBorderPoly;
+            QPointF offset;
+            QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
+                                                        pathClosed, w, h,
+                                                        border_.width(),
+                                                        borderOutline_, offset);
+            if (newBorderPoly.size() > 0) {
+                newBorderPoly.translate(-1*offset);
+                borderPoly_ = newBorderPoly;
+                borderOutline_.translate(-1*offset);
+            }
+        } else {
+            borderPoly_ = QPolygonF();
+            borderOutline_ = QPainterPath();
         }
+
+        setWidth(w);
+        setHeight(h);
     }
 
     //TODO: add AnchorCoordiante
@@ -302,14 +307,14 @@ void QDeclarativeRectangleMapItem::handleCameraDataChanged(const QGeoCameraData&
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
-        dirtyGeometry_ = true;
     }
+    dirtyGeometry_ = true;
     updateMapItem();
 }
 
 bool QDeclarativeRectangleMapItem::contains(QPointF point)
 {
-    return rectangle_.contains(point);
+    return (rectangle_.contains(point) || borderOutline_.contains(point));
 }
 
 void QDeclarativeRectangleMapItem::dragEnded()

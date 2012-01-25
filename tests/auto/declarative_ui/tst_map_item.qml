@@ -122,6 +122,7 @@ Item {
         MapRectangle {
             id: preMapRect
             color: 'darkcyan'
+            border.width: 0
             topLeft: Coordinate { latitude: 20; longitude: 20}
             bottomRight: Coordinate { latitude: 10; longitude: 30}
             MapMouseArea {
@@ -138,6 +139,7 @@ Item {
         MapCircle {
             id: preMapCircle
             color: 'darkmagenta'
+            border.width: 0
             center: Coordinate { latitude: 10; longitude: 30}
             radius: 400000
             MapMouseArea {
@@ -175,6 +177,7 @@ Item {
         MapPolygon {
             id: preMapPolygon
             color: 'darkgrey'
+            border.width: 0
             path: [
                 Coordinate { latitude: 25; longitude: 5},
                 Coordinate { latitude: 20; longitude: 10},

@@ -65,7 +65,8 @@ public:
 
     static void updatePolygon(QPolygonF &points, const QGeoMap &map,
                               const QList<QGeoCoordinate> &path,
-                              qreal &w, qreal &h, QPointF &offset);
+                              qreal &w, qreal &h, QPointF &offset,
+                              QPainterPath &outline);
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
     //from QuickItem
@@ -114,6 +115,8 @@ private:
     bool dirtyGeometry_;
     bool dirtyMaterial_;
     QPointF offset_;
+    QPainterPath outline_;
+    QPainterPath borderOutline_;
 };
 
 //////////////////////////////////////////////////////////////////////

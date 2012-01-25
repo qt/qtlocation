@@ -117,7 +117,8 @@ void QDeclarativePolygonMapItem::updatePolygon(QPolygonF &points,
                                                const QGeoMap &map,
                                                const QList<QGeoCoordinate> &path,
                                                qreal& w, qreal& h,
-                                               QPointF& offset)
+                                               QPointF& offset,
+                                               QPainterPath &outline)
 {
     // viewport rectangle, for clipping later
     QPainterPath viewport;
@@ -159,6 +160,7 @@ void QDeclarativePolygonMapItem::updatePolygon(QPolygonF &points,
 
     // we need relative coordinates
     ppi.translate(-bb.left(), -bb.top());
+    outline = ppi;
     offset += QPointF(-bb.left(), -bb.top());
 
     QTriangleSet ts = qTriangulate(ppi);
@@ -400,23 +402,29 @@ void QDeclarativePolygonMapItem::updateMapItem()
 
         QPolygonF newPoly, newBorderPoly;
         QPointF offset;
-        updatePolygon(newPoly, *map(), path_, w, h, offset);
+        updatePolygon(newPoly, *map(), path_, w, h, offset, outline_);
 
         if (newPoly.size() > 0) {
             polygon_ = newPoly;
             offset_ = offset;
         }
 
-        QList<QGeoCoordinate> pathClosed = path_;
-        pathClosed.append(path_.at(0));
-        QPainterPath outline;
-        QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
-                                                    pathClosed, w, h,
-                                                    border_.width(),
-                                                    outline, offset);
-        if (newBorderPoly.size() > 0) {
-            borderPolygon_ = newBorderPoly;
-            borderPolygon_.translate(offset_ - offset);
+        if (border_.width() > 0 && border_.color() != Qt::transparent) {
+            QList<QGeoCoordinate> pathClosed = path_;
+            pathClosed.append(path_.at(0));
+
+            QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
+                                                        pathClosed, w, h,
+                                                        border_.width(),
+                                                        borderOutline_, offset);
+            if (newBorderPoly.size() > 0) {
+                borderPolygon_ = newBorderPoly;
+                borderPolygon_.translate(offset_ - offset);
+                borderOutline_.translate(offset_ - offset);
+            }
+        } else {
+            borderPolygon_ = QPolygonF();
+            borderOutline_ = QPainterPath();
         }
 
         setWidth(w);
@@ -437,7 +445,7 @@ void QDeclarativePolygonMapItem::handleCameraDataChanged(const QGeoCameraData& c
 
 bool QDeclarativePolygonMapItem::contains(QPointF point)
 {
-    return borderPolygon_.containsPoint(point, Qt::OddEvenFill);
+    return (outline_.contains(point) || borderOutline_.contains(point));
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -183,7 +183,6 @@ void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& poly,
 
             points << point.x() << point.y();
             pointTypes << QPainterPath::MoveToElement;
-            outline.moveTo(point);
             lastAddedPoint = point;
 
         } else {
@@ -196,16 +195,20 @@ void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& poly,
                     i == path.size() - 1) {
                 points << point.x() << point.y();
                 pointTypes << QPainterPath::LineToElement;
-                outline.lineTo(point);
                 lastAddedPoint = point;
             }
         }
 
         lastPoint = point;
     }
-    outline.closeSubpath();
-    outline.translate(-minX, -minY);
 
+    // add in at least half a stroke width on each side
+    minX -= strokeW / 2;
+    minY -= strokeW / 2;
+    maxX += strokeW / 2;
+    maxY += strokeW / 2;
+
+    // preliminary bounds
     w = maxX - minX;
     h = maxY - minY;
 
@@ -220,12 +223,25 @@ void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& poly,
     // we need relative coordinates
     offset += QPointF(-minX, -minY);
 
+    outline = QPainterPath();
+
+    QPolygonF tri;
     const float *vs = ts.vertices();
     for (int i = 0; i < ts.vertexCount()/2*2; i+=2) {
         QPointF pt(vs[i], vs[i+1]);
         pt += QPointF(-minX, -minY);
         poly << pt;
+
+        tri << pt;
+        if (tri.size() == 4) {
+            tri.remove(0);
+            outline.addPolygon(tri);
+        }
     }
+
+    // final bounds post-triangulation
+    w = outline.boundingRect().width();
+    h = outline.boundingRect().height();
 }
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent) :
@@ -455,9 +471,7 @@ void QDeclarativePolylineMapItem::handleCameraDataChanged(const QGeoCameraData& 
 
 bool QDeclarativePolylineMapItem::contains(QPointF point)
 {
-    // TODO: this currently returns all points _inside_ of the implicitly closed
-    // painterpath whereas we are only interested in the outlines of it
-    return polyline_.contains(point);
+    return outline_.contains(point);
 }
 
 //////////////////////////////////////////////////////////////////////

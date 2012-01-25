@@ -344,9 +344,10 @@ void QDeclarativeCircleMapItem::updateMapItem()
         QPolygonF newPoly, newBorderPoly;
         QPointF offset;
 
+        outline_ = QPainterPath();
         QDeclarativePolygonMapItem::updatePolygon(newPoly, *map(),
                                                    circlePath_, w, h,
-                                                   offset);
+                                                   offset, outline_);
 
         if (newPoly.size() > 0) {
             circlePolygon_ = newPoly;
@@ -356,14 +357,20 @@ void QDeclarativeCircleMapItem::updateMapItem()
         QList<QGeoCoordinate> pathClosed = circlePath_;
         pathClosed.append(pathClosed.at(0));
 
-        QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
-                                                    pathClosed, w, h,
-                                                    border_.width(),
-                                                    outline_, offset);
+        borderOutline_ = QPainterPath();
+        if (border_.width() > 0 && border_.color() != Qt::transparent) {
+            QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
+                                                        pathClosed, w, h,
+                                                        border_.width(),
+                                                        borderOutline_, offset);
 
-        if (newBorderPoly.size() > 0) {
-            borderPolygon_ = newBorderPoly;
-            borderPolygon_.translate(offset_ - offset);
+            if (newBorderPoly.size() > 0) {
+                borderPolygon_ = newBorderPoly;
+                borderPolygon_.translate(offset_ - offset);
+                borderOutline_.translate(offset_ - offset);
+            }
+        } else {
+            borderPolygon_ = QPolygonF();
         }
 
         setWidth(w);
@@ -396,7 +403,7 @@ void QDeclarativeCircleMapItem::dragEnded()
 
 bool QDeclarativeCircleMapItem::contains(QPointF point)
 {
-    return outline_.contains(point);
+    return (outline_.contains(point) || borderOutline_.contains(point));
 }
 
 //////////////////////////////////////////////////////////////////////

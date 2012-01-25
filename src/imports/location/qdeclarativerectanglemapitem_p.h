@@ -107,6 +107,7 @@ private:
     QPolygonF borderPoly_;
     bool dirtyGeometry_;
     bool dirtyMaterial_;
+    QPainterPath borderOutline_;
 };
 
 //////////////////////////////////////////////////////////////////////
