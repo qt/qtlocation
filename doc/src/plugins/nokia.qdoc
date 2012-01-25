@@ -106,6 +106,32 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \o Client token for the service used for authentication by search manager.
 \endtable
 
+\section1 Parameter Usage Example
+
+The following two examples show how to create a Nokia plugin instance with
+a proxy server set for use with routing, and a routing token unique to the
+application.
+
+\section2 QML
+
+\code
+Plugin {
+    name: "nokia"
+    PluginParameter { name: "routing.proxy"; value: "http://127.0.0.1:8080" }
+    PluginParameter { name: "routing.token"; value: "abcdefg12345" }
+}
+\endcode
+
+\section2 C++
+
+\code
+QMap<QString,QVariant> params;
+params["routing.proxy"] = "http://127.0.0.1:8080";
+params["routing.token"] = "abcdefg12345";
+
+QGeoServiceProvider *gsp = new QGeoServiceProvider("nokia", params);
+\endcode
+
 \section1 Places
 The Nokia provider remotely accesses places (read-only) from a REST based server.  The specific capabilities
 and behaviours are outlined below:
