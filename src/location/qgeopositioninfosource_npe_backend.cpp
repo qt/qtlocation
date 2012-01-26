@@ -313,29 +313,32 @@ void QGeoPositionInfoSourceNpeBackend::onStreamReceived(const QVariantMap& map)
 
         else if (action == kpositionUpdate) {
             QVariantMap tmp = map.value(JsonDbString::kDataStr).toMap();
-            QGeoPositionInfo update;
-            QGeoCoordinate coordinate;
-            coordinate.setLatitude(tmp.value(klatitude).toDouble());
-            coordinate.setLongitude(tmp.value(klongitude).toDouble());
-            coordinate.setAltitude(tmp.value(kaltitude).toDouble());
-            if (coordinate.isValid()) {
-                update.setCoordinate(coordinate);
-                update.setAttribute(QGeoPositionInfo::HorizontalAccuracy, tmp.value(khorizontalAccuracy).toReal());
-                update.setAttribute(QGeoPositionInfo::VerticalAccuracy, tmp.value(kverticalAccuracy).toReal());
-                update.setAttribute(QGeoPositionInfo::GroundSpeed, tmp.value(kgroundSpeed).toReal());
-                update.setAttribute(QGeoPositionInfo::VerticalSpeed, tmp.value(kverticalSpeed).toReal());
-                update.setAttribute(QGeoPositionInfo::MagneticVariation, tmp.value(kmagneticVariation).toReal());
-                update.setAttribute(QGeoPositionInfo::Direction, tmp.value(kbearing).toReal());
-                QDateTime timestamp = tmp.value(ktimestamp).toDateTime();
-                update.setTimestamp(timestamp);
-                emit positionUpdated(update);
-                timeoutSent = false;
-                if ( requestTimer->isActive() )
-                    shutdownRequestSession();
-            } else {
-                if (!timeoutSent) {
-                    emit updateTimeout();
-                    timeoutSent = true;
+            bool valid = tmp.value(kvalid).toBool();
+            if (valid) {
+                QGeoPositionInfo update;
+                QGeoCoordinate coordinate;
+                coordinate.setLatitude(tmp.value(klatitude).toDouble());
+                coordinate.setLongitude(tmp.value(klongitude).toDouble());
+                coordinate.setAltitude(tmp.value(kaltitude).toDouble());
+                if (coordinate.isValid()) {
+                    update.setCoordinate(coordinate);
+                    update.setAttribute(QGeoPositionInfo::HorizontalAccuracy, tmp.value(khorizontalAccuracy).toReal());
+                    update.setAttribute(QGeoPositionInfo::VerticalAccuracy, tmp.value(kverticalAccuracy).toReal());
+                    update.setAttribute(QGeoPositionInfo::GroundSpeed, tmp.value(kgroundSpeed).toReal());
+                    update.setAttribute(QGeoPositionInfo::VerticalSpeed, tmp.value(kverticalSpeed).toReal());
+                    update.setAttribute(QGeoPositionInfo::MagneticVariation, tmp.value(kmagneticVariation).toReal());
+                    update.setAttribute(QGeoPositionInfo::Direction, tmp.value(kbearing).toReal());
+                    QDateTime timestamp = tmp.value(ktimestamp).toDateTime();
+                    update.setTimestamp(timestamp);
+                    emit positionUpdated(update);
+                    timeoutSent = false;
+                    if ( requestTimer->isActive() )
+                        shutdownRequestSession();
+                } else {
+                    if (!timeoutSent) {
+                        emit updateTimeout();
+                        timeoutSent = true;
+                    }
                 }
             }
         }
