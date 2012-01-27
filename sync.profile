@@ -32,6 +32,4 @@
 
 # compile tests
 %configtests = (
-    "jsondb" => {},
-    "mtclient" => {},
 );

@@ -54,11 +54,16 @@
 //
 
 #include <qgeopositioninfosource.h>
-#include <mt-client/variantstream.h>
 #include <private/jsondb-strings_p.h>
 #include <qlocalsocket.h>
 #include <qeventloop.h>
 #include <qtimer.h>
+
+#include <QtAddOnJsonStream/jsonstream-global.h>
+
+QT_BEGIN_NAMESPACE_JSONSTREAM
+class JsonStream;
+QT_END_NAMESPACE_JSONSTREAM
 
 Q_USE_JSONDB_NAMESPACE
 
@@ -82,7 +87,7 @@ public Q_SLOTS:
 
 private:
     QLocalSocket* mSocket;
-    VariantStream* mStream;
+    QtAddOn::JsonStream::JsonStream* mStream;
     int minInterval;
     uint supportedMethods;
     QGeoPositionInfo lastPosition;

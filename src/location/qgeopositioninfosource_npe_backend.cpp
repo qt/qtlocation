@@ -42,6 +42,9 @@
 #include "qgeopositioninfosource_npe_backend_p.h"
 #include <sys/stat.h>
 
+#include <QtAddOnJsonStream/jsonstream.h>
+
+QT_USE_NAMESPACE_JSONSTREAM
 
 // API for socket communication towards locationd
 const QString kstartUpdates = QLatin1String("startUpdates");
@@ -92,9 +95,9 @@ bool QGeoPositionInfoSourceNpeBackend::init()
         if (mSocket) {
             connect(mSocket, SIGNAL(connected()), this, SLOT(onSocketConnected()));
             connect(mSocket, SIGNAL(disconnected()), this, SLOT(onSocketDisconnected()));
-            mStream = new VariantStream(mSocket);
+            mStream = new JsonStream(mSocket);
             if (mStream) {
-                connect(mStream, SIGNAL(receive(const QVariantMap&)), this, SLOT(onStreamReceived(const QVariantMap&)), Qt::QueuedConnection);
+                connect(mStream, SIGNAL(messageReceived(const QVariantMap&)), this, SLOT(onStreamReceived(const QVariantMap&)), Qt::QueuedConnection);
             }
             mSocket->connectToServer((QLatin1String)klocationdSocketName);
             return(mSocket->waitForConnected(500)); // wait up to 0.5 seconds to get connected, otherwise return false
@@ -108,11 +111,11 @@ QGeoPositionInfo QGeoPositionInfoSourceNpeBackend::lastKnownPosition(bool fromSa
 {
     QEventLoop loop; // loop to wait for response from locationd (asynchronous socket connection)
     connect( this, SIGNAL(lastKnownPositionReceived()), &loop, SLOT(quit()));
-    QVariantMap action;
-    QVariantMap object;
-    action.insert(JsonDbString::kActionStr, kgetLastKnownPosition);
-    object.insert(ksatelliteOnly, fromSatellitePositioningMethodsOnly);
-    action.insert(JsonDbString::kDataStr, object);
+    QJsonObject action;
+    QJsonObject object;
+    action[JsonDbString::kActionStr] = kgetLastKnownPosition;
+    object[ksatelliteOnly] = fromSatellitePositioningMethodsOnly;
+    action[JsonDbString::kDataStr] = object;
     mStream->send(action);
     loop.exec(); // wait for  signal lastKnownPositionReceived()sent by slot onStreamReceived
     return(lastPosition);
@@ -123,8 +126,8 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceNpeBackend::sup
 {
     QEventLoop loop; // loop to wait for response from locationd (asynchronous socket connection)
     connect( this, SIGNAL(supportedPositioningMethodsReceived()), &loop, SLOT(quit()));
-    QVariantMap action;
-    action.insert(JsonDbString::kActionStr, kgetSupportedMethods);
+    QJsonObject action;
+    action[JsonDbString::kActionStr] = kgetSupportedMethods;
     mStream->send(action);
     loop.exec(); // wait for supportedPositioningMethodsReceived() signal sent by slot onStreamReceived
     switch (supportedMethods){
@@ -140,21 +143,21 @@ QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceNpeBackend::sup
 
 void QGeoPositionInfoSourceNpeBackend::setUpdateInterval(int msec)
 {
-    QVariantMap action;
     QEventLoop loop; // loop to wait for response from locationd (asynchronous socket connection)
     connect( this, SIGNAL(minimumUpdateIntervalReceived()), &loop, SLOT(quit()));
-    action.insert(JsonDbString::kActionStr, kgetMinimumUpdateInterval);
+    QJsonObject action;
+    action[JsonDbString::kActionStr] = kgetMinimumUpdateInterval;
     mStream->send(action);
     loop.exec(); // wait for minimumUpdateIntervalReceived() signal sent by slot onStreamReceived
     if (msec < minInterval && msec != 0)
         msec = minInterval;
     QGeoPositionInfoSource::setUpdateInterval(msec);
     if (!requestTimer->isActive()) {
-    QVariantMap actionUpdate;
-    QVariantMap object;
-    actionUpdate.insert(JsonDbString::kActionStr, ksetUpdateInterval);
-    object.insert(kinterval, msec);
-    actionUpdate.insert(JsonDbString::kDataStr, object);
+    QJsonObject actionUpdate;
+    QJsonObject object;
+    actionUpdate[JsonDbString::kActionStr] = ksetUpdateInterval;
+    object[kinterval] = msec;
+    actionUpdate[JsonDbString::kDataStr] = object;
     mStream->send(actionUpdate);
     }
 }
@@ -163,21 +166,21 @@ void QGeoPositionInfoSourceNpeBackend::setUpdateInterval(int msec)
 void QGeoPositionInfoSourceNpeBackend::setPreferredPositioningMethods(PositioningMethods sources)
 {
     QGeoPositionInfoSource::setPreferredPositioningMethods(sources);
-    QVariantMap action;
-    QVariantMap object;
-    action.insert(JsonDbString::kActionStr, ksetPreferredMethod);
-    object.insert(kmethod, (uint)sources);
-    action.insert(JsonDbString::kDataStr, object);
+    QJsonObject action;
+    QJsonObject object;
+    action[JsonDbString::kActionStr] = ksetPreferredMethod;
+    object[kmethod] = int(sources);
+    action[JsonDbString::kDataStr] = object;
     mStream->send(action);
 }
 
 
 int QGeoPositionInfoSourceNpeBackend::minimumUpdateInterval() const
 {
-    QVariantMap action;
+    QJsonObject action;
     QEventLoop loop; // loop to wait for response from locationd (asynchronous socket connection)
     connect( this, SIGNAL(minimumUpdateIntervalReceived()), &loop, SLOT(quit()));
-    action.insert(JsonDbString::kActionStr, kgetMinimumUpdateInterval);
+    action[JsonDbString::kActionStr] = kgetMinimumUpdateInterval;
     mStream->send(action);
     loop.exec(); // wait for minimumUpdateIntervalReceived() signal sent by slot onStreamReceived
     return(minInterval);
@@ -188,8 +191,8 @@ void QGeoPositionInfoSourceNpeBackend::startUpdates()
 {
     if (!locationOngoing) {
         locationOngoing = true;
-        QVariantMap action;
-        action.insert(JsonDbString::kActionStr, kstartUpdates);
+        QJsonObject action;
+        action[JsonDbString::kActionStr] = kstartUpdates;
         mStream->send(action);
     }
 }
@@ -199,8 +202,8 @@ void QGeoPositionInfoSourceNpeBackend::stopUpdates()
 {
     if ( locationOngoing && !requestTimer->isActive() ) {
         locationOngoing = false;
-        QVariantMap action;
-        action.insert(JsonDbString::kActionStr, kstopUpdates);
+        QJsonObject action;
+        action[JsonDbString::kActionStr] = kstopUpdates;
         mStream->send(action);
     }
 }
@@ -222,18 +225,18 @@ void QGeoPositionInfoSourceNpeBackend::requestUpdate(int timeout)
         // get position as fast as possible in case of ongoing satellite based session
         if ( locationOngoing ) {
             if ( QGeoPositionInfoSource::updateInterval() != minimumInterval) {
-                QVariantMap actionUpdate;
-                QVariantMap object;
-                actionUpdate.insert(JsonDbString::kActionStr, ksetUpdateInterval);
-                object.insert(kinterval, minimumInterval);
-                actionUpdate.insert(JsonDbString::kDataStr, object);
+                QJsonObject actionUpdate;
+                QJsonObject object;
+                actionUpdate[JsonDbString::kActionStr] = ksetUpdateInterval;
+                object[kinterval] = minimumInterval;
+                actionUpdate[JsonDbString::kDataStr] = object;
                 mStream->send(actionUpdate);
             }
         }
         // request the update only if no tracking session is active
         if ( !locationOngoing) {
-            QVariantMap action;
-            action.insert(JsonDbString::kActionStr, krequestUpdate);
+            QJsonObject action;
+            action[JsonDbString::kActionStr] = krequestUpdate;
             mStream->send(action);
         }
         requestTimer->start(timeout);

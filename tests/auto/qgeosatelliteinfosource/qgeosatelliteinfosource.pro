@@ -11,6 +11,4 @@ HEADERS += testqgeosatelliteinfosource_p.h \
 
 QT += location testlib
 
-contains(config_test_jsondb, yes): contains(config_test_mtclient, yes) {
-    DEFINES += NPE_BACKEND
-}
+!isEmpty(QT.jsondb.name):!isEmpty(QT.jsonstream.name):!simulator:DEFINES += NPE_BACKEND

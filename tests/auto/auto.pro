@@ -52,6 +52,4 @@ SUBDIRS += geotestplugin \
 
 !mac: SUBDIRS += declarative_ui
 
-contains(config_test_jsondb, yes) {
-    SUBDIRS += qplacemanager_jsondb
-}
+!isEmpty(QT.jsondb.name):SUBDIRS += qplacemanager_jsondb

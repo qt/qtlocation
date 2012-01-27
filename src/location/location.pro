@@ -87,18 +87,13 @@ meego {
     }
 }
 
-contains(config_test_jsondb, yes):contains(config_test_mtclient, yes):!simulator {
+!isEmpty(QT.jsondb.name):!isEmpty(QT.jsonstream.name):!simulator {
     DEFINES += NPE_BACKEND
-    QT += jsondb-private
+    QT += jsondb-private jsonstream
     SOURCES += qgeopositioninfosource_npe_backend.cpp\
                qgeosatelliteinfosource_npe_backend.cpp
     PRIVATE_HEADERS += qgeopositioninfosource_npe_backend_p.h\
                        qgeosatelliteinfosource_npe_backend_p.h
-
-    unix{
-      CONFIG += link_pkgconfig
-      PKGCONFIG += mt-client
-    }
 }
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
