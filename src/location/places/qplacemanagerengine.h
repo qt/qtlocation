@@ -88,7 +88,7 @@ public:
     virtual QList<QLocale> locales() const = 0;
     virtual void setLocales(const QList<QLocale> &locales) = 0;
 
-    virtual QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags) = 0;
+    virtual QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const;
 
     virtual QPlace compatiblePlace(const QPlace &original) const;
 

@@ -45,6 +45,8 @@
 
 #include <QtCore/QMetaType>
 
+#include "qplaceicon.h"
+
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -171,6 +173,17 @@ QPlaceMatchReply * QPlaceManagerEngine::matchingPlaces(const QPlaceMatchRequest 
     return reply;
 }
 
+/*!
+    QUrl QPlaceManagerEngine::constructIconUrl(const QPlaceIcon &icon, const QSize &size)
+
+    Constructs an icon url from a given \a icon, \a size.  The URL of the icon
+    image that most closely matches the given parameters is returned.
+*/
+QUrl QPlaceManagerEngine::constructIconUrl(const QPlaceIcon &icon, const QSize &size) const
+{
+    return QUrl();
+}
+
 QPlaceManagerEnginePrivate::QPlaceManagerEnginePrivate()
     :   managerVersion(-1), manager(0)
 {
@@ -286,13 +299,6 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     \fn void QPlaceManagerEngine::setLocales(const QList<QLocale> &locales)
 
     Set the list of preferred \a locales.
-*/
-
-/*!
-    \fn QUrl QPlaceManagerEngine::constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)
-
-    Constructs an icon url from a given \a icon, \a size and \a flags.  The URL of the icon
-    image that most closely matches the given parameters is returned.
 */
 
 /*!

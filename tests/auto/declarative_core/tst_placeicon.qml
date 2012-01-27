@@ -51,53 +51,58 @@ TestCase {
     Icon { id: emptyIcon }
 
     function test_empty() {
-        compare(emptyIcon.baseUrl, "");
-        compare(emptyIcon.fullUrl, "");
         compare(emptyIcon.plugin, null);
+        compare(emptyIcon.parameters.keys().length, 0)
     }
+
 
     Icon {
-        id: qmlIconBase
-
-        plugin: testPlugin
-
-        baseUrl: "http://example.com/icon"
+        id: qmlIconSingleUrl
     }
 
-    function test_qmlConstructedIconBase() {
-        compare(qmlIconBase.baseUrl, "http://example.com/icon");
-        compare(qmlIconBase.fullUrl, "");
-        compare(qmlIconBase.plugin, testPlugin);
+    function test_qmlSingleUrlIcon() {
+        qmlIconSingleUrl.parameters.singleUrl = "http://example.com/icon.png"
 
-        var u = qmlIconBase.url(Qt.size(64, 64), Icon.Normal | Icon.List);
-        verify(u !== "");
-        verify(u !== "http://example.com/icon");
-    }
+        var u = qmlIconSingleUrl.url(Qt.size(64, 64));
+        compare(u, "http://example.com/icon.png");
 
-    Icon {
-        id: qmlIconFull
+        u = qmlIconSingleUrl.url(Qt.size(20, 20));
+        compare(u, "http://example.com/icon.png");
 
-        plugin: testPlugin
-
-        fullUrl: "http://example.com/icon.png"
-    }
-
-    function test_qmlConstructedIconFull() {
-        compare(qmlIconFull.baseUrl, "");
-        compare(qmlIconFull.fullUrl, "http://example.com/icon.png");
-        compare(qmlIconFull.plugin, testPlugin);
-
-        var u = qmlIconFull.url(Qt.size(64, 64), Icon.Normal | Icon.List);
-        compare(u, qmlIconFull.fullUrl);
-    }
-
-    Icon {
-        id: testIcon
+        qmlIconSingleUrl.parameters.singleUrl = "/home/user/icon.png"
+        u = qmlIconSingleUrl.url(Qt.size(20, 20));
+        compare(u, "file:///home/user/icon.png");
     }
 
     Plugin {
         id: testPlugin
         name: "qmlgeo.test.plugin"
+    }
+
+    Icon {
+        id: qmlIconParams
+        plugin: testPlugin
+    }
+
+    function test_qmlIconParams() {
+        compare(qmlIconParams.plugin, testPlugin);
+        qmlIconParams.parameters.s = "http://example.com/icon_small.png"
+        qmlIconParams.parameters.m = "http://example.com/icon_medium.png"
+        qmlIconParams.parameters.l = "http://example.com/icon_large.png"
+
+        compare(qmlIconParams.url(Qt.size(10, 10)), "http://example.com/icon_small.png");
+        compare(qmlIconParams.url(Qt.size(20, 20)), "http://example.com/icon_small.png");
+        compare(qmlIconParams.url(Qt.size(24, 24)), "http://example.com/icon_small.png");
+        compare(qmlIconParams.url(Qt.size(25, 25)), "http://example.com/icon_medium.png");
+        compare(qmlIconParams.url(Qt.size(30, 30)), "http://example.com/icon_medium.png");
+        compare(qmlIconParams.url(Qt.size(39, 39)), "http://example.com/icon_medium.png");
+        compare(qmlIconParams.url(Qt.size(40, 40)), "http://example.com/icon_large.png");
+        compare(qmlIconParams.url(Qt.size(50, 50)), "http://example.com/icon_large.png");
+        compare(qmlIconParams.url(Qt.size(60, 60)), "http://example.com/icon_large.png");
+    }
+
+    Icon {
+        id: testIcon
     }
 
     function test_setAndGet_data() {
@@ -130,79 +135,6 @@ TestCase {
             compare(testIcon[data.property], data.reset);
         }
         compare(signalSpy.count, 2);
-
-        signalSpy.destroy();
-    }
-
-    Icon {
-        id: baseIcon
-        plugin: testPlugin
-    }
-
-    function test_baseUrl() {
-        var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        signalSpy.target = baseIcon;
-        signalSpy.signalName = "baseUrlChanged";
-
-        // set baseUrl to something new
-        var baseUrl = "http://example.com/base-icon"
-        baseIcon.baseUrl = baseUrl;
-        compare(baseIcon.baseUrl, baseUrl);
-        compare(signalSpy.count, 1);
-        verify(baseIcon.fullUrl, "");
-
-        // set property to the same value (signals spy should not increase)
-        baseIcon.baseUrl = baseUrl;
-        compare(baseIcon.baseUrl, baseUrl);
-        compare(signalSpy.count, 1);
-        verify(baseIcon.fullUrl, "");
-
-        // verify that url() method returns something different
-        var url = baseIcon.url(Qt.size(64, 64), Icon.Normal | Icon.List);
-        verify(url != "");
-        verify(url != baseUrl);
-
-        // reset property
-        baseIcon.baseUrl = "";
-        compare(baseIcon.baseUrl, "");
-        compare(signalSpy.count, 2);
-        verify(baseIcon.fullUrl, "");
-
-        signalSpy.destroy();
-    }
-
-    Icon {
-        id: fullIcon
-        plugin: testPlugin
-    }
-
-    function test_fullUrl() {
-        var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
-        signalSpy.target = fullIcon;
-        signalSpy.signalName = "fullUrlChanged";
-
-        // set fullUrl to something new
-        var fullUrl = "http://example.com/full-icon.png"
-        fullIcon.fullUrl = fullUrl;
-        compare(fullIcon.fullUrl, fullUrl);
-        compare(signalSpy.count, 1);
-        verify(fullIcon.baseUrl, "");
-
-        // set property to the same value (signals spy should not increase)
-        fullIcon.fullUrl = fullUrl;
-        compare(fullIcon.fullUrl, fullUrl);
-        compare(signalSpy.count, 1);
-        verify(fullIcon.baseUrl, "");
-
-        // verify that url() method returns something different
-        var url = fullIcon.url(Qt.size(64, 64), Icon.Normal | Icon.List);
-        compare(url, fullUrl);
-
-        // reset property
-        fullIcon.fullUrl = "";
-        compare(fullIcon.fullUrl, "");
-        compare(signalSpy.count, 2);
-        verify(fullIcon.baseUrl, "");
 
         signalSpy.destroy();
     }

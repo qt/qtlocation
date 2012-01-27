@@ -69,7 +69,9 @@ TestCase {
         visibility: Category.DeviceVisibility
 
         icon: Icon {
-            fullUrl: "http://example.com/icons/test-category.png"
+            Component.onCompleted:  {
+                parameters.singleUrl = "http://example.com/icons/test-category.png"
+            }
         }
     }
 
@@ -80,7 +82,8 @@ TestCase {
         compare(qmlCategory.status, Category.Ready);
         compare(qmlCategory.plugin, testPlugin);
         verify(qmlCategory.icon);
-        compare(qmlCategory.icon.fullUrl, "http://example.com/icons/test-category.png");
+        compare(qmlCategory.icon.url(), "http://example.com/icons/test-category.png");
+        compare(qmlCategory.icon.parameters.singleUrl, "http://example.com/icons/test-category.png");
         compare(qmlCategory.icon.plugin, qmlCategory.plugin);
     }
 

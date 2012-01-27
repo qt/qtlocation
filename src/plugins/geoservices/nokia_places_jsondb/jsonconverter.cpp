@@ -95,7 +95,6 @@ QVariantMap JsonConverter::addToJsonMap(const QVariant &var, const QPlaceCategor
 
     map.insert(JsonConverter::Type, JsonConverter::CategoryType);
     map.insert(JsonConverter::Name, category.name());
-    map.insert(JsonConverter::IconUrl, category.icon().fullUrl().toString());
     return map;
 }
 
@@ -168,8 +167,6 @@ QVariantMap JsonConverter::addToJsonMap(const QVariant &var, const QPlace &place
         emailsJson.append(detailMap);
     }
     map.insert(JsonConverter::Emails, emailsJson);
-
-    map.insert(JsonConverter::IconUrl, place.icon().fullUrl().toString());
 
     QStringList categoryUuids;
     foreach (const QPlaceCategory &category, place.categories())
@@ -276,13 +273,6 @@ QPlace JsonConverter::convertJsonMapToPlace(const QVariantMap &placeMap,
         place.appendContactDetail(QPlaceContactDetail::Email, detail);
     }
 
-    if (placeMap.keys().contains(JsonConverter::IconUrl) && !placeMap.value(JsonConverter::IconUrl).toString().isEmpty()) {
-        QPlaceIcon icon;
-        icon.setFullUrl(QUrl(placeMap.value(JsonConverter::IconUrl).toUrl()));
-        icon.setManager(engine->manager());
-        place.setIcon(icon);
-    }
-
     QStringList categoryUuidList = placeMap.value(JsonConverter::CategoryUuids).toStringList();
     QPlaceCategory cat;
     QList<QPlaceCategory> categories;
@@ -305,6 +295,28 @@ QPlace JsonConverter::convertJsonMapToPlace(const QVariantMap &placeMap,
         }
     }
 
+    QVariantMap iconParameters;
+    QVariantMap thumbnails = placeMap.value(JsonConverter::Thumbnails).toMap();
+
+    QList<QLatin1String> sizes;
+    sizes << JsonConverter::Small << JsonConverter::Medium << JsonConverter::Large << JsonConverter::Fullscreen;
+
+    foreach (const QLatin1String &size, sizes) {
+        if (thumbnails.contains(size)) {
+            QVariantMap thumbnail = thumbnails.value(size).toMap();
+            iconParameters.insert(QString(size) + QLatin1String("Url"), QUrl::fromUserInput(thumbnail.value(JsonConverter::Url).toString()));
+            QSize sizeDimensions = QSize(thumbnail.value(JsonConverter::Width).toInt(), thumbnail.value(JsonConverter::Height).toInt());
+            iconParameters.insert(QString(size) + QLatin1String("Size"), sizeDimensions);
+        }
+    }
+
+    if (!thumbnails.isEmpty()) {
+        QPlaceIcon icon;
+        icon.setParameters(iconParameters);
+        icon.setManager(engine->manager());
+        place.setIcon(icon);
+    }
+
     return place;
 }
 
@@ -314,13 +326,6 @@ QPlaceCategory JsonConverter::convertJsonMapToCategory(const QVariantMap &catego
     QPlaceCategory category;
     category.setName(categoryMap.value(JsonConverter::Name).toString());
     category.setCategoryId(categoryMap.value(JsonConverter::Uuid).toString());
-
-    if (categoryMap.keys().contains(JsonConverter::IconUrl) && !categoryMap.value(JsonConverter::IconUrl).toString().isEmpty()) {
-        QPlaceIcon icon;
-        icon.setFullUrl(QUrl(categoryMap.value(JsonConverter::IconUrl).toUrl()));
-        icon.setManager(engine->manager());
-        category.setIcon(icon);
-    }
 
     return category;
 }

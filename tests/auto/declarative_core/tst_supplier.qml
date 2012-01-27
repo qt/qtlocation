@@ -65,7 +65,9 @@ TestCase {
         url: "http://example.com/test-supplier-id"
 
         icon: Icon {
-            fullUrl: "http://example.com/icons/test-supplier.png"
+            Component.onCompleted:  {
+                parameters.singleUrl = "http://example.com/icons/test-supplier.png"
+            }
         }
     }
 
@@ -74,7 +76,7 @@ TestCase {
         compare(qmlSupplier.name, "Test Supplier");
         compare(qmlSupplier.url, "http://example.com/test-supplier-id");
         verify(qmlSupplier.icon);
-        compare(qmlSupplier.icon.fullUrl, "http://example.com/icons/test-supplier.png");
+        compare(qmlSupplier.icon.parameters.singleUrl, "http://example.com/icons/test-supplier.png");
     }
 
     Supplier {

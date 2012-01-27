@@ -46,7 +46,6 @@
 
 QT_USE_NAMESPACE
 
-
 QPlaceIconPrivate::QPlaceIconPrivate()
     : QSharedData(), manager(0)
 {
@@ -55,8 +54,7 @@ QPlaceIconPrivate::QPlaceIconPrivate()
 QPlaceIconPrivate::QPlaceIconPrivate(const QPlaceIconPrivate&other)
     : QSharedData(other),
       manager(other.manager),
-      baseUrl(other.baseUrl),
-      fullUrl(other.fullUrl)
+      parameters(other.parameters)
 {
 }
 
@@ -67,16 +65,14 @@ QPlaceIconPrivate::~QPlaceIconPrivate()
 QPlaceIconPrivate &QPlaceIconPrivate::operator=(const QPlaceIconPrivate &other)
 {
     manager = other.manager;
-    baseUrl = other.baseUrl;
-    fullUrl = other.fullUrl;
+    parameters = other.parameters;
     return *this;
 }
 
 bool QPlaceIconPrivate::operator == (const QPlaceIconPrivate &other) const
 {
     return manager == other.manager
-            && baseUrl == other.baseUrl
-            && fullUrl == other.fullUrl;
+            && parameters == other.parameters;
 }
 
 /*!
@@ -90,60 +86,28 @@ bool QPlaceIconPrivate::operator == (const QPlaceIconPrivate &other) const
 
     \section2 Usage
     The typical usage of an icon is to use the url() function to specify
-    a preferred size and set of flags.
+    a preferred icon size.
 
     \snippet snippets/places/requesthandler.h icon
 
-    Note that the parameters are \e {preferred} only.  If a manager backend
-    does not support one or more of the specified parameters, the url of the icon that most
+    The icons are typically backend dependent, if a manager backend does not support a given size, the URL of the icon that most
     closely matches those parameters is returned.
 
-    \target Icon internals
-    \section2 Internals
-    Icons are tightly coupled to a particular manager and always have a pointer
-    to that manager.  The icon does not have ownership of this pointer.
+    The icon class also has a key-value set of parameters.  The precise keys one
+    needs to use depends on the \l {Information about plugins} {plugin backend} being used.  These parameters influence
+    which icon URL is returned by the manager and may also be used to specify icon URL locations when saving icons.
 
-    The internals of the icon work by specifying either a \e {base} or a
-    \e {full} url.
-
-    A \e {base} url may be an incomplete url of the form \e {http://example.com/icon}.
-    When a set of icon parameters is provided to the url() function, the manager
-    constructs a complete icon url such as \e {http://example.com/icon_32x32_selected.png}.
-
-    A \e {full} url is a complete url which may look something like \e {http://example.com/myicon.png}
-    When a full url is specified the url() will always return the complete url.
-
-    Only one \e {base} or \e {full} url may be specified for a single icon, setting one implies clearing the other.
-    Whether full and or base urls are supported depends on the manager backend.
-
-    Any valid URL may be returned by the backend, but it would typically
-    be either a http://, file://, or data:// URL.
+    If there is only ever one image for an icon, then QPlaceIcon::SingleUrl can be used as a parameter
+    key with a QUrl as the associated value.  If this key is set, then the url() function will always return the specified URL
+    and not defer to any manager.
 */
 
 /*!
-    \enum QPlaceIcon::IconFlag
-
-    This enum is used to specify different icon states and types.
-
-    The state flags are:
-    \value Normal   An icon with no state modifications.  This flag indicates that the user is not
-                    interacting with the icon, but the functionality represented by the icon is
-                    available.
-    \value Disabled An icon with a disabled appearance.  This flag indicates that the functionality
-                    represented by the icon is not available.
-    \value Active   An icon with an active appearance.  This flag indicates that the functionality
-                    represented by the icon is available and the user is interacting with the icon,
-                    for example, touching it.
-    \value Selected An icon with a selected appearance.  This flag indicates that the item represented
-               by the icon is selected.
-
-
-    The type flags are:
-    \value Map An icon intended for display on a map
-    \value List An icon intended for display in a list.
-
-    You can use at most one state and one type flag at a time.
+    Parameter key for an icon that always has a single image URL.  The paramter value to be used with this key
+    is a QUrl.  An icon with this parameter set will always return the specified URL regardless
+    of the requested size when url() is called.
 */
+const QString QPlaceIcon::SingleUrl(QLatin1String("singleUrl"));
 
 /*!
     Constructs an icon.
@@ -192,70 +156,47 @@ bool QPlaceIcon::operator==(const QPlaceIcon &other) const
 */
 
 /*!
-    Returns an icon url according to the given \a size and \a flags.
-    If a base url has been set by setBaseUrl(), the url to the image that best
-    fits the specified parameters is returned.
+    Returns an icon URL according to the given \a size.
 
-    If a full url has been set by setFullUrl(), the full url is returned.
-
-    If no manager has been assigned to the icon a default constructed QUrl
+    If no manager has been assigned to the icon, and the parameters do not contain the QPlaceIcon::SingleUrl key, a default constructed QUrl
     is returned.
 */
-QUrl QPlaceIcon::url(const QSize &size, QPlaceIcon::IconFlags flags) const
+QUrl QPlaceIcon::url(const QSize &size) const
 {
+    if (d->parameters.contains(QPlaceIcon::SingleUrl)) {
+        QVariant value = d->parameters.value(QPlaceIcon::SingleUrl);
+        if (value.type() == QVariant::Url)
+            return value.toUrl();
+
+        return QUrl();
+    }
+
     if (!d->manager)
         return QUrl();
 
-    if (!d->fullUrl.isEmpty())
-        return d->fullUrl;
-
-
-    return d->manager->d->constructIconUrl(*this, size, flags);
+    return d->manager->d->constructIconUrl(*this, size);
 }
 
 /*!
-    Sets a full \a url of the resource that represents the image of this
-    icon.  Because a full URL is being set, specifying different
-    sizes and flags into the url() function will have no effect.
+    Returns a set of parameters for the icon that are manager/plugin specific.
+    These parameters are used by the manager to return the appropriate
+    URL when url() is called and to specify locations to save to
+    when saving icons.
 
-    When calling the this function, the baseUrl() is implictly
-    cleared.
+    Consult the \l {Information about plugins} {plugin documentation}
+    for what parameters are supported and how they should be used.
 */
-void QPlaceIcon::setFullUrl(const QUrl &url)
+QVariantMap QPlaceIcon::parameters() const
 {
-    d->fullUrl = url;
-    d->baseUrl.clear();
+    return d->parameters;
 }
 
 /*!
-    Returns a the full url that the icon is based off.
-    \sa baseUrl()
+    Sets the parameters of the icon.
 */
-QUrl QPlaceIcon::fullUrl() const
+void QPlaceIcon::setParameters(const QVariantMap &parameters)
 {
-    return d->fullUrl;
-}
-
-/*!
-    Returns a base url that the complete icon url is based off.
-
-    E.g. the base url may be http://example.com/icon.
-    When calling the url() function the, base url may be used to construct: http://example.com/icon_32x32_selected.png
-*/
-QUrl QPlaceIcon::baseUrl() const
-{
-    return d->baseUrl;
-}
-
-/*!
-    Sets a base \a url that the complete icon url returned by url() is based off.
-
-    When calling this function, the fullUrl() is implicitly cleared.
-*/
-void QPlaceIcon::setBaseUrl(const QUrl &url)
-{
-    d->baseUrl = url;
-    d->fullUrl.clear();
+    d->parameters = parameters;
 }
 
 /*!
@@ -280,7 +221,6 @@ void QPlaceIcon::setManager(QPlaceManager *manager)
 */
 bool QPlaceIcon::isEmpty() const
 {
-    return (d->baseUrl.isEmpty()
-            && d->fullUrl.isEmpty()
-            && d->manager == 0);
+    return (d->manager == 0
+            && d->parameters.isEmpty());
 }

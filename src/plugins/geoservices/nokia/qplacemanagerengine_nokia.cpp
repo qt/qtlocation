@@ -315,13 +315,6 @@ void QPlaceManagerEngineNokia::setLocales(const QList<QLocale> &locales)
     QPlaceRestManager::instance()->setLocales(locales);
 }
 
-QUrl QPlaceManagerEngineNokia::constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)
-{
-    Q_UNUSED(icon)
-    Q_UNUSED(size)
-    Q_UNUSED(flags)
-    return QUrl();
-}
 
 QPlaceManager::ManagerFeatures QPlaceManagerEngineNokia::supportedFeatures() const
 {

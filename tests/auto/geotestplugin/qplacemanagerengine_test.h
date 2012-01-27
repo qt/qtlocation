@@ -358,12 +358,40 @@ public:
         m_locales = locales;
     }
 
-    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)
-    {
-        Q_UNUSED(flags)
+    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const {
+        QList<QPair<int, QUrl> > candidates;
 
-        const QString url = icon.baseUrl().toString() + QLatin1String("_%1x%2.png");
-        return url.arg(size.width()).arg(size.height());
+        QMap<QString, int> sizeDictionary;
+        sizeDictionary.insert(QLatin1String("s"), 20);
+        sizeDictionary.insert(QLatin1String("m"), 30);
+        sizeDictionary.insert(QLatin1String("l"), 50);
+
+        QStringList sizeKeys;
+        sizeKeys << QLatin1String("s") << QLatin1String("m") << QLatin1String("l");
+
+        foreach (const QString &sizeKey, sizeKeys)
+        {
+            if (icon.parameters().contains(sizeKey))
+                candidates.append(QPair<int, QUrl>(sizeDictionary.value(sizeKey),
+                                  icon.parameters().value(sizeKey).toUrl()));
+        }
+
+        if (candidates.isEmpty())
+            return QUrl();
+        else if (candidates.count() == 1) {
+            return candidates.first().second;
+        } else {
+            //we assume icons are squarish so we can use height to
+            //determine which particular icon to return
+            int requestedHeight = size.height();
+
+            for (int i = 0; i < candidates.count() - 1; ++i) {
+                int thresholdHeight = (candidates.at(i).first + candidates.at(i+1).first) / 2;
+                if (requestedHeight < thresholdHeight)
+                    return candidates.at(i).second;
+            }
+            return candidates.last().second;
+        }
     }
 
     QPlaceManager::ManagerFeatures supportedFeatures() const {

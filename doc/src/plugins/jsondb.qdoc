@@ -55,8 +55,8 @@ capabiliies are outlined below:
         \o Read/Write
         \o read/write
     \row
-        \o Icon url type(see \l {Icon internals} {QPlaceIcon})
-        \o full  url
+        \o Icons
+        \o yes
     \row
         \o Search term suggestions
         \o no
@@ -123,10 +123,135 @@ available details are fetched during a search.  The JsonDb plugin
 does not support saving of any other details.
 
 \section3 Icons
-The icon urls for the JsonDb plugin take the form of a file path.
-There can only be one icon image per icon, hence only the
-\l {Icon internals} {full url} is supported.  No icon variations are
-supported.
+\section4 Parameter Reference
+The JsonDbPlugin supports the following icon parameter values
+\table
+    \header
+        \o Key
+        \o Value
+    \row
+        \o smallUrl
+        \o Holds the URL for the small icon
+    \row
+        \o smallSize
+        \o Holds the dimensions of the small icon
+    \row
+        \o smallSourceUrl
+        \o Holds the source URL from which the small icon is to be copied from.
+    \row
+        \o mediumUrl
+        \o Holds the URL for the medium sized icon.
+    \row
+        \o mediumSize
+        \o Holds the dimensions of the medium sized icon.
+    \row
+        \o mediumSourceUrl
+        \o Holds the source URL from which the medium icon is to be copied from.
+    \row
+        \o largeUrl
+        \o Holds the URL for the large icon.
+    \row
+        \o largeSize
+        \o Holds the dimensions of the large icon.
+    \row
+        \o largeSourceUrl
+        \o Holds the source URL from which the large icon is to be copied from.
+    \row
+        \o fullscreenUrl
+        \o Holds the URL for the fullscreen icon.
+    \row
+        \o fullscreenSize
+        \o Holds the dimensions of the fullscreen icon.
+    \row
+        \o fullscreenSourceUrl
+        \o Holds the source URL from which the fullscreen icon is to be copied from.
+\endtable
+
+In C++ the value of the URLs must always be a QUrl.
+In QML the values of the URLs may be url or string types.
+
+\section4 Typical Usage
+During a typical place search, the icon parameters might be populated like so
+\code
+smallUrl: file:///foo/bar/icon_s.png
+smallSize: QSize(20,20)
+largeUrl: file:///foo/bar/icon_l.png
+largeSize: QSize(50,50)
+\endcode
+
+Only small and large icons were available in this case.  Note that for a given size URL, its dimensions will also be populated.
+These URLs and dimensions are used by the JsonDb plugin to determine the correct URL to return when QPlaceIcon::url() or \l {QtLocation5::Icon::url()} {Icon::url()}
+is called.
+
+If we wish to change the icons we, can simply specify a different set of parameter values and then save the place/category containing the icon.
+\code
+smallUrl: file:///opt/icons/new_icon_small.png
+(smallSize: QSize(20,20)) //optional
+largeUrl: file:///opt/icons/new_icon_large.png
+(largeSize: QSize(50,50)) // optional
+\endcode
+
+All we need to do is set the URLs to where the new icon image is.  The size typically does not need to be specified
+since it is generally automatically calculated.  In some cases where the size cannot be calculated, e.g. if the
+specified URL cannot currently be accessed, it is necessary to specify a recommended size.
+If the size of the image can be calculated and a size is also specified, then the specified size is ignored.
+
+\section4 Copying icons to a specified destination
+When copying or saving icons, we use the source parameters to hold the URL of the source image we are copying from
+\code
+smallSourceUrl: file:///foo/icon_s.png
+smallUrl: file:///bar/icon_small.png
+(smallSize: QSize(20,20) //optional
+\endcode
+
+Using the parameters above will copy the icon from \c smallSourceUrl to the \c smallUrl.  At present both the
+smallSourceUrl and smallUrl must be local file URLs.  If the smallUrl already exists, it is overwritten, otherwise it is created.
+\c smallSize typically does not need to be set since an attempt will be made to calculate the icon's size.   In some cases where the size cannot be calculated, e.g. if the
+specified URL cannot currently be accessed, it is necessary to specify a recommended size.
+If the size of the image can be calculated and a size is also specified, then the specified size is ignored.
+
+\section4 Copying icons without a specified destination
+It is possible to copy icons, when a place/category is saved, and not have to specify a destination.  In this case a data URL will be
+created for the icon in the underlying database.  A data URL contains the icon image embedded into the URL itself.  A destination
+size is chosen for the icon depending on it's calculated size.
+
+\code
+//input parameters
+smallSourceUrl: file:///foo/icon_small.png
+
+//(1) Result if the source icon's actual size corresponded to small
+smallUrl: data:image/png;base64,iVBORw0K….
+smallSize: QSize(20,20)
+
+//(2) Result if the source icon's actual size corresponded to medium
+mediumUrl: data:image/png;base64,iVBORw0K….
+mediumSize: QSize(30,30)
+\endcode
+
+The above shows that for a given input source URL, an appropriate destination is chosen for the data URL.
+The icon will not necessarily be placed into smallUrl, since the size is calculated and a destination
+chosen.  The image at the sourceUrl must always been accessible so that the data URL can be generated,
+consequently this preprequisite also means that a size need not be specified since can always be calculated.
+
+This behaviour of automatically choosing a destination is necessary because when an icon from a different plugin is saved,
+it isn't known whether there is only one URL by the JsonDb plugin.  When creating a compatible place from another
+plugin, the JsonDbPlugin tries to get the URLs for the standard small, medium and large sizes.  It is possible
+however that all these may end up being the same URL.  The JsonDb plugn filters out these duplicates and chooses
+an appropriate destination based on size.
+\code
+//The resultant place's icon after calling QPlaceManager::compatiblePlace()
+smallSourceUrl: file:///bar/foo.png
+mediumSourceUrl: file:///bar/foo.png
+largeSourceUrl: file:///bar/foo.png
+
+//on save, the plugin filters out the duplicates and determines an appropriate size
+//in this case the data URL for the large size has been created.
+largeUrl: data:image/png;base64,qVyOZw0p….
+largeSize: QSize(50,50)
+\endcode
+
+The fullscreen icon is never retrieved and converted into a data URL because data URLs are only meant
+for small icon images.
 
 \section3 Visibility scope
 The JsonDb plugin only supports places of the QtLocation::PrivateVisibility scope.

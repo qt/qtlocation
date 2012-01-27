@@ -167,8 +167,7 @@ void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
 
     if (m_icon && m_icon->parent() == this) {
         m_icon->setPlugin(m_plugin);
-        m_icon->setBaseUrl(m_category.icon().baseUrl());
-        m_icon->setFullUrl(m_category.icon().fullUrl());
+        m_icon->setIcon(m_category.icon());
     } else if (!m_icon || m_icon->parent() != this){
         m_icon = new QDeclarativePlaceIcon(m_category.icon(), m_plugin, this);
         emit iconChanged();

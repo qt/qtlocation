@@ -123,7 +123,9 @@ tst_qmlinterface::tst_qmlinterface()
     m_category.setName(QLatin1String("Test category"));
     m_category.setCategoryId(QLatin1String("test-category-id"));
 
-    m_icon.setFullUrl(QUrl(QLatin1String("http://www.example.com/test-icon.png")));
+    QVariantMap iconParams;
+    iconParams.insert(QPlaceIcon::SingleUrl, QUrl(QLatin1String("http://www.example.com/test-icon.png")));
+    m_icon.setParameters(iconParams);
 
     m_ratings.setAverage(3.5);
     m_ratings.setMaximum(5.0);

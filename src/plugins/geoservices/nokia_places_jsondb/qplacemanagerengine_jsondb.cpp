@@ -257,9 +257,7 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
     foreach (const QString &contactType, original.contactTypes())
         place.setContactDetails(contactType, original.contactDetails(contactType));
 
-
     place.setVisibility(QtLocation::UnspecifiedVisibility);
-
 
     QStringList attributeTypes = original.extendedAttributeTypes();
     foreach (const QString &attributeType, attributeTypes) {
@@ -274,15 +272,76 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
                                    alternativeId);
     }
 
+    QVariantMap parameters;
+    QPlaceIcon originalIcon = original.icon();
+    if (!originalIcon.isEmpty()) {
+        if (originalIcon.parameters().contains(QPlaceIcon::SingleUrl)) {
+            parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
+        } else if (originalIcon.manager()) {
+            if (!originalIcon.url(Icon::SmallSize).isEmpty())
+                parameters.insert(Icon::SmallSource, originalIcon.url(Icon::SmallSize));
+            if (!originalIcon.url(Icon::MediumSize).isEmpty())
+                parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
+            if (!originalIcon.url(Icon::LargeSize).isEmpty())
+                parameters.insert(Icon::LargeSource, originalIcon.url(Icon::LargeSize));
+        }
+    }
+
+    if (!parameters.isEmpty()) {
+        QPlaceIcon icon;
+        icon.setParameters(parameters);
+        icon.setManager(manager());
+        place.setIcon(icon);
+    }
+
     return place;
 }
 
-QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags)
-{
-    Q_UNUSED(size)
-    Q_UNUSED(flags)
 
-    return icon.fullUrl();
+QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const QSize &size) const
+{
+    QList<QPair<int, QUrl> > candidates;
+    //TODO: possible optimizations
+    QMap<QString, QSize> sizeDictionary;
+    sizeDictionary.insert(Icon::SmallDestination, Icon::SmallSize);
+
+    sizeDictionary.insert(Icon::MediumDestination, Icon::MediumSize);
+    sizeDictionary.insert(Icon::LargeDestination, Icon::LargeSize);
+    sizeDictionary.insert(Icon::FullscreenDestination, Icon::FullscreenSize);
+
+    QStringList sizeKeys;
+    sizeKeys << "small" <<  "medium" << "large"
+             << "fullscreen";
+
+    foreach (const QString &sizeKey, sizeKeys) {
+        if (icon.parameters().contains(sizeKey + QLatin1String("Url"))) {
+            QSize destSize = icon.parameters().value(sizeKey + QLatin1String("Size")).toSize();
+            if (destSize.isEmpty()) {
+                candidates.append(QPair<int, QUrl>(sizeDictionary.value(sizeKey + QLatin1String("Url")).height(),
+                                                   icon.parameters().value(sizeKey + QLatin1String("Url")).toUrl()));
+            } else {
+                candidates.append(QPair<int, QUrl>(destSize.height(),
+                                                   icon.parameters().value(sizeKey + QLatin1String("Url")).toUrl()));
+            }
+        }
+    }
+
+    if (candidates.isEmpty())
+        return QUrl();
+    else if (candidates.count() == 1) {
+        return candidates.first().second;
+    } else {
+        //we assume icons are squarish so we can use height to
+        //determine which particular icon to return
+        int requestedHeight = size.height();
+
+        for (int i = 0; i < candidates.count() - 1; ++i) {
+            int thresholdHeight = (candidates.at(i).first + candidates.at(i+1).first) / 2;
+            if (requestedHeight < thresholdHeight)
+                return candidates.at(i).second;
+        }
+        return candidates.last().second;
+    }
 }
 
 QPlaceManager::ManagerFeatures QPlaceManagerEngineJsonDb::supportedFeatures() const
@@ -321,23 +380,6 @@ void QPlaceManagerEngineJsonDb::processJsonDbError(int id, int code, const QStri
     }
 }
 
-bool QPlaceManagerEngineJsonDb::waitForRequest(int reqId, QVariantMap *variantMap) const
-{
-    m_helperMap.insert(reqId, QVariant());
-    m_eventLoop.exec(QEventLoop::AllEvents);
-
-    QVariant response = m_helperMap.value(reqId);
-    if (response.type() == QVariant::Bool) {
-        if (variantMap)
-            *variantMap = QVariantMap();
-        return false;
-    } else {
-        if (variantMap)
-            *variantMap = response.toMap();
-        return true;
-    }
-}
-
 void QPlaceManagerEngineJsonDb::processJsonDbNotification(const QString &notifyUuid, const QtAddOn::JsonDb::JsonDbNotification &notification)
 {
     Q_ASSERT(notifyUuid == m_notificationUuid);
@@ -364,5 +406,22 @@ void QPlaceManagerEngineJsonDb::processJsonDbNotification(const QString &notifyU
             emit categoryUpdated(category, parentId);
         else if (notification.action() & JsonDbClient::NotifyRemove)
             emit categoryRemoved(category.categoryId(), parentId);
+    }
+}
+
+bool QPlaceManagerEngineJsonDb::waitForRequest(int reqId, QVariantMap *variantMap) const
+{
+    m_helperMap.insert(reqId, QVariant());
+    m_eventLoop.exec(QEventLoop::AllEvents);
+
+    QVariant response = m_helperMap.value(reqId);
+    if (response.type() == QVariant::Bool) {
+        if (variantMap)
+            *variantMap = QVariantMap();
+        return false;
+    } else {
+        if (variantMap)
+            *variantMap = response.toMap();
+        return true;
     }
 }

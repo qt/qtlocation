@@ -105,8 +105,10 @@ TestCase {
             supplierId: "supplier-id-1"
             url: "http://www.example.com/supplier-id-1/"
             icon: Icon{
-                fullUrl: "http://www.example.com/supplier-id-1/icon"
                 plugin: testPlugin
+                Component.onCompleted:  {
+                    parameters.singleUrl = "http://www.example.com/supplier-id-1/icon"
+                }
             }
         }
 
@@ -124,7 +126,9 @@ TestCase {
         ]
 
         icon: Icon {
-            fullUrl: "http://example.com/test-place.png"
+            Component.onCompleted: {
+                savePlace.icon.parameters.singleUrl = "http://example.com/test-place.png";
+            }
         }
     }
 
@@ -182,10 +186,17 @@ TestCase {
             if (place1.supplier.icon !== null && place2.supplier.icon === null)
                 return false;
             if (place1.supplier.icon !== null && place2.supplier.icon !== null) {
-                if (place1.supplier.icon.fullUrl !== place2.supplier.icon.fullUrl)
+                if (place1.supplier.icon.parameters.keys().length !== place2.supplier.icon.parameters.keys().length) {
                     return false;
-                if (place1.supplier.icon.baseUrl !== place2.supplier.icon.baseUrl)
-                    return false;
+                }
+
+                var keys = place1.supplier.icon.parameters.keys() + place2.supplier.icon.parameters.keys();
+                for (var i = 0; i < keys.length; ++i) {
+                    if (place1.supplier.icon.parameters[keys[i]] != place2.supplier.icon.parameters[keys[i]]) {
+                        return false;
+                    }
+                }
+
                 if (place1.supplier.icon.plugin !== place2.supplier.icon.plugin)
                     return false;
             }
@@ -270,13 +281,18 @@ TestCase {
                 console.log(place1.icon.plugin + " " + place2.icon.plugin);
                 return false;
             }
-            if (place1.icon.baseUrl !== place2.icon.baseUrl) {
+
+            if (place1.icon.parameters.keys().length !== place2.icon.parameters.keys().length) {
                 console.log("f4");
                 return false;
             }
-            if (place1.icon.fullUrl !== place2.icon.fullUrl) {
-                console.log("f5");
-                return false;
+
+            var keys = place1.icon.parameters.keys() + place2.icon.parameters.keys();
+            for (var i = 0; i < keys.length; ++i) {
+                if (place1.icon.parameters[keys[i]]
+                        != place2.icon.parameters[keys[i]]) {
+                    return false;
+                }
             }
         }
 
@@ -309,16 +325,12 @@ TestCase {
         compare(emptyPlace.location.address.state, '');
         compare(emptyPlace.location.address.country, '');
 
-        compare(emptyPlace.icon.fullUrl, '');
-        compare(emptyPlace.icon.baseUrl, '');
         compare(emptyPlace.icon.plugin, null);
 
         compare(emptyPlace.supplier.name, '');
         compare(emptyPlace.supplier.supplierId, '');
         compare(emptyPlace.supplier.url, '');
 
-        compare(emptyPlace.supplier.icon.fullUrl, '');
-        compare(emptyPlace.supplier.icon.baseUrl, '');
         compare(emptyPlace.supplier.icon.plugin, null);
 
         compare(emptyPlace.reviewModel.totalCount, -1);
@@ -525,7 +537,6 @@ TestCase {
         // SignalSpy.wait() doesn't seem to work here
         //signalSpy.wait();
         wait(0);
-
         compare(savePlace.status, Place.Error);
 
         // try again without an invalid placeId

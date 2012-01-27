@@ -145,8 +145,8 @@ and behaviours are outlined below:
         \o Read/Write
         \o read-only
     \row
-        \o Icon url type(see \l {Icon internals} {QPlaceIcon})
-        \o not supported
+        \o Icons
+        \o No
     \row
         \o Search term suggestions
         \o yes

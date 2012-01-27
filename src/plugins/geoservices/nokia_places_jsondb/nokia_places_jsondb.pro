@@ -1,7 +1,7 @@
 load(qt_module)
 
 TARGET = qtgeoservices_nokia_places_jsondb
-QT += location
+QT += location gui
 
 load(qt_plugin)
 
@@ -19,7 +19,8 @@ HEADERS += \
             reply.h \
             unsupportedreplies.h \
             macro.h \
-            idreply.h
+            idreply.h \
+            icon.h
 
 SOURCES += \
             qgeoserviceproviderplugin_jsondb.cpp \
@@ -29,7 +30,8 @@ SOURCES += \
             searchreply.cpp \
             detailsreply.cpp \
             reply.cpp \
-            idreply.cpp
+            idreply.cpp \
+            icon.cpp
 
 INCLUDEPATH += $$QT.location.includes
 

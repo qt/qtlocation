@@ -292,7 +292,7 @@ public:
     void icon() {
         QPlace place;
         //! [icon]
-        QUrl iconSourceUrl = place.icon().url(QSize(32,32), QPlaceIcon::Selected | QPlaceIcon::List);
+        QUrl iconSourceUrl = place.icon().url(QSize(32,32));
 
         //A default icon may also be requested like so
         iconSourceUrl = place.icon().url();

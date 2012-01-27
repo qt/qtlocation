@@ -46,35 +46,23 @@
 
 #include <qplaceicon.h>
 #include <QtDeclarative/qdeclarative.h>
+#include <QtDeclarative/QDeclarativePropertyMap>
 
 #include <QObject>
 
 QT_BEGIN_NAMESPACE
 
+class QDeclarativePropertyMap;
+
 class QDeclarativePlaceIcon : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(IconFlag)
-    Q_FLAGS(IconFlags)
 
     Q_PROPERTY(QPlaceIcon icon READ icon WRITE setIcon)
-    Q_PROPERTY(QUrl baseUrl READ baseUrl WRITE setBaseUrl NOTIFY baseUrlChanged)
-    Q_PROPERTY(QUrl fullUrl READ fullUrl WRITE setFullUrl NOTIFY fullUrlChanged)
+    Q_PROPERTY(QObject *parameters READ parameters NOTIFY parametersChanged)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
 
 public:
-    enum IconFlag {
-        Normal = QPlaceIcon::Normal,
-        Disabled = QPlaceIcon::Disabled,
-        Active = QPlaceIcon::Active,
-        Selected = QPlaceIcon::Selected,
-
-        Map = QPlaceIcon::Map,
-        List = QPlaceIcon::List
-    };
-
-    Q_DECLARE_FLAGS(IconFlags, IconFlag)
-
     explicit QDeclarativePlaceIcon(QObject* parent = 0);
     QDeclarativePlaceIcon(const QPlaceIcon &src, QDeclarativeGeoServiceProvider *plugin, QObject* parent = 0);
     ~QDeclarativePlaceIcon();
@@ -82,32 +70,26 @@ public:
     QPlaceIcon icon() const;
     void setIcon(const QPlaceIcon &src);
 
-    Q_INVOKABLE QUrl url(const QSize &size = QSize(), QDeclarativePlaceIcon::IconFlags flags = Normal) const;
+    Q_INVOKABLE QUrl url(const QSize &size = QSize()) const;
 
-    QUrl fullUrl() const;
-    void setFullUrl(const QUrl &fullUrl);
-
-    QUrl baseUrl() const;
-    void setBaseUrl(const QUrl &baseUrl);
+    QDeclarativePropertyMap *parameters() const;
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;
 
 signals:
-    void baseUrlChanged();
-    void fullUrlChanged();
     void pluginChanged();
+    void parametersChanged(); //in practice is never emitted since parameters cannot be re-assigned
+                              //the declaration is needed to avoid warnings about non-notifyable properties
 
 private:
     QPlaceManager *manager() const;
-    QUrl m_baseUrl;
-    QUrl m_fullUrl;
+    void initParameters(const QVariantMap &parameterMap);
     QDeclarativeGeoServiceProvider *m_plugin;
+    QDeclarativePropertyMap *m_parameters;
 };
 
 QT_END_NAMESPACE
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QDeclarativePlaceIcon::IconFlags))
 
 #endif
 

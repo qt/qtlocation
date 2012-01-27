@@ -83,58 +83,16 @@ Also note that the \c finished signals should always be emitted when a reply is 
 an error has been encountred, i.e. if there is an error, both the \c error and \c finished signals
 should be emitted while if there is no error, only the \c finished signals are emitted.
 
-\section1 Icon Urls
-
+\section1 Icon URLs
 Icon URLs are provided through the QPlaceManagerEngine::constructIconUrl() function.
-Two important concepts regarding icons that needs to be discused
-is that of the \e baseUrl and \e fullUrl.
-A \e {baseUrl} is an incomplete URL similar to the following:
-\code
-http://www.example.com/icons/icon_
-or
-file://home/user/icons/icon_
-or
-http://www.example.com/icons/icon
-or
-file://home/user/icons/icon
-\endcode
+The expected behaviour is that the engine will use the QPlaceIcon::parameters()
+in order to construct an appropriate URL.  When a QPlace object is returned
+from the manager either from a search or a query to get place details,
+it is expected the engine will correctly populate the parameters as necessary.
 
-A \e {fullUrl} is a complete URL like:
-\code
-http://www.example.com/icons/icon.png
-or
-file://home/user/icons/icon.png
-\endcode
-
-The purpose of the \e {baseUrl} is to accommodate different variations
-of the same icon.  e.g. A server may provide icons with dimensions of
-16x16 but also 48x48 to allow for clients which have different form factors.
-Some providers may have a set of icons suited for maps, as well as another
-set more suited for lists.  These kinds of engines populate the \e {baseUrl} of a place's
-QPlaceIcon,
-
-The \e {baseUrl} is used in conjunction with the
-requested size and usage flag parameters of
-QPlaceManagerEngine::constructIconUrl() to give the closest matching
-url of the icon.  e.g.
-\code
-//base
-http://www.example.com/icons/icon_
-//constructed icons
-http://www.example.com/icons/icon_48_selected.png
-http://www.example.com/icons/icon_16_map.png
-http://www.example.com/icons/icon_16_selected_map.png
-\endcode
-
-If a datastore does not support icon variations, then the \e {fullUrl}
-of the QPlaceIcon should be populated.  The \e baseUrl and \e {fullUrl}
-are mutually exclusive, if one is set the other is implicitly cleared.
-If the \e {fullUrl} of an icon is used, then the manager engine should
-always returns the contents of the \e {fullUrl} as is, regardless of
-the variation parameters specified.
-
-\note It is possible for icon URLs to be \l {http://dataurl.net}{data URLs} where the icon image
-itself is embedded into the URL.
+The backend is free to choose what the parameter key and values are, however
+if a backend only ever has one URL per icon it is recommended that the QPlaceIcon::SingleUrl
+be used as the key.
 
 \section1 Categories
 The categories of a manager engine are relatively static entities; for engines accessing
@@ -143,11 +101,17 @@ querying a server every time QPlaceManagerEngine::initializeCategories() is call
 Depending on how dynamic the categories are, always downloading the freshest
 set of categories may be more appropriate.
 
-\section1 Saving between managers.
+\section1 Saving places to the manager
 A place generally cannot be saved directly between managers as is because it contains manager specific data such as icons
-and categories.  In order to facilitate saving between managers, engine implementers should implement
+and categories.  In order to facilitate saving to one's own manager, engine implementers should implement
 the QPlaceManagerEngine::compatiblePlace() function.  This function returns a copy of the input place
 with properties pruned or modified as necessary such that the copy can be saved into manager.
+
+Construction of a compatible place may involve ignoring certain properties from the
+original place, e.g. if contact details are not supported, these are left out of the
+compatible place.  Other times it may involve modifying certain properties, e.g.
+modifying the icon parameters to facilitate copying or downloading of the original
+place's icon to a location that the backend can access.
 
 \section1 Cross-referencing places between managers.
 Sometimes a situation may arise where we wish to cross-reference and match places between managers.

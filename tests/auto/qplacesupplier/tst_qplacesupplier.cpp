@@ -107,14 +107,16 @@ void tst_QPlaceSupplier::iconTest()
     QPlaceSupplier testObj;
     QVERIFY(testObj.icon().isEmpty());
     QPlaceIcon icon;
-    icon.setFullUrl(QUrl::fromEncoded("http://example.com/icon.png"));
+    QVariantMap iconParams;
+    iconParams.insert(QPlaceIcon::SingleUrl, QUrl::fromEncoded("http://example.com/icon.png"));
+    icon.setParameters(iconParams);
     testObj.setIcon(icon);
     QCOMPARE(testObj.icon(), icon);
-    QCOMPARE(testObj.icon().fullUrl(), QUrl::fromEncoded("http://example.com/icon.png"));
+    QCOMPARE(testObj.icon().url(), QUrl::fromEncoded("http://example.com/icon.png"));
 
     testObj.setIcon(QPlaceIcon());
     QVERIFY(testObj.icon().isEmpty());
-    QCOMPARE(testObj.icon().fullUrl(), QUrl());
+    QCOMPARE(testObj.icon().url(), QUrl());
 }
 
 void tst_QPlaceSupplier::operatorsTest()
@@ -122,7 +124,9 @@ void tst_QPlaceSupplier::operatorsTest()
     QPlaceSupplier testObj;
     testObj.setName(QLatin1String("Acme"));
     QPlaceIcon icon;
-    icon.setFullUrl(QUrl::fromEncoded("http://example.com/testUrl"));
+    QVariantMap iconParams;
+    iconParams.insert(QPlaceIcon::SingleUrl, QUrl::fromEncoded("http://example.com/icon.png"));
+    icon.setParameters(iconParams);
     testObj.setIcon(icon);
     testObj.setSupplierId(QLatin1String("34292"));
 

@@ -83,6 +83,8 @@ public:
     QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId);
     QPlaceIdReply *removeCategory(const QString &categoryId);
 
+    QPlaceMatchReply * matchingPlaces(const QPlaceMatchRequest &request);
+
     QPlaceReply *initializeCategories();
     QString parentCategoryId(const QString &categoryId) const;
     QStringList childrenCategoryIds(const QString &categoryId) const;
@@ -94,7 +96,7 @@ public:
     void setLocales(const QList<QLocale> &locales);
 
     QPlace compatiblePlace(const QPlace &original) const;
-    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size, QPlaceIcon::IconFlags flags);
+    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const;
     QPlaceManager::ManagerFeatures supportedFeatures() const;
 
     JsonDbClient *db() { return m_db;}
@@ -106,7 +108,6 @@ public:
                 .arg(JsonConverter::Type).arg(JsonConverter::CategoryType).arg(JsonConverter::Uuid).arg(categoryUuid);
     }
 
-    QPlaceMatchReply * matchingPlaces(const QPlaceMatchRequest &request);
 public slots:
     void processJsonDbResponse(int id, const QVariant &data);
     void processJsonDbError(int id, int code, const QString &error);

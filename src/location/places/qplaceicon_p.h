@@ -71,8 +71,7 @@ public:
     bool operator == (const QPlaceIconPrivate &other) const;
 
     QPlaceManager *manager;
-    QUrl baseUrl;
-    QUrl fullUrl;
+    QVariantMap parameters;
 };
 
 QT_END_NAMESPACE

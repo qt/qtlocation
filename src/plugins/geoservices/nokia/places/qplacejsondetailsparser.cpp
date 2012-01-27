@@ -211,7 +211,7 @@ QPlace QPlaceJSonDetailsParser::buildPlace(const QJSValue &placeValue, QPlaceMan
         buildPlace(placeValue, &newPlace);
     }
 
-    if (!newPlace.icon().baseUrl().isEmpty() || !newPlace.icon().fullUrl().isEmpty()) {
+    if (!newPlace.icon().parameters().isEmpty()) {
         QPlaceIcon icon = newPlace.icon();
         icon.setManager(manager);
         newPlace.setIcon(icon);
@@ -301,7 +301,9 @@ void QPlaceJSonDetailsParser::processMainProvider(const QJSValue &placeValue, QP
     value = placeValue.property(place_provider_url);
     if (value.isValid() && !value.toString().isEmpty()){
         QPlaceIcon icon;
-        icon.setBaseUrl(value.toString());
+        QVariantMap iconParams;
+        iconParams.insert(QPlaceIcon::SingleUrl, QUrl(value.toString()));
+        icon.setParameters(iconParams);
         //Note: the icon manager is set in QPlaceJSonDetailsParser::buildPlace()
         sup.setIcon(icon);
     }
@@ -600,7 +602,9 @@ void QPlaceJSonDetailsParser::processPremiumContent(const QJSValue &content, QPl
     value = content.property(place_premiumcontent_content_providerIconUrl_element);
     if (value.isValid() && !value.toString().isEmpty()) {
         QPlaceIcon icon;
-        icon.setFullUrl(QUrl::fromEncoded(value.toString().toAscii()));
+        QVariantMap iconParams;
+        iconParams.insert(QPlaceIcon::SingleUrl, QUrl::fromEncoded(value.toString().toAscii()));
+        icon.setParameters(iconParams);
         //note: the icon manager is set in QPlaceJSonDetailsParser::buildPlace()
         supplier.setIcon(icon);
     }

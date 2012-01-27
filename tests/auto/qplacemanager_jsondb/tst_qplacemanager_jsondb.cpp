@@ -43,6 +43,7 @@
 #include <QString>
 #include <QtTest/QtTest>
 #include <QtCore/qnumeric.h>
+#include <QtGui/QImageReader>
 
 #include <qgeoboundingbox.h>
 #include <qgeoboundingcircle.h>
@@ -82,6 +83,16 @@ QT_USE_NAMESPACE
 class tst_QPlaceManagerJsonDb : public QObject
 {
     Q_OBJECT
+    enum UrlCorrectnes {
+        ValidUrl,
+        NoSchemeUrl
+    };
+
+    enum DestinationExists {
+        Exists,
+        DoesNotExist
+    };
+
 public:
     tst_QPlaceManagerJsonDb();
 
@@ -102,7 +113,6 @@ private Q_SLOTS:
     void searchWithLexicalPlaceNameHint();
     void searchWithDistanceHint();
     void searchByCategory();
-    void icons();
     void unsupportedFunctions();
     void supportedFeatures();
     void categoryFunctions();
@@ -114,6 +124,18 @@ private Q_SLOTS:
     void compatiblePlace();
     void extendedAttribute();
     void matchingPlaces();
+    void iconSourceDestination();
+    void iconSourceDestination_data();
+    void iconSourceOnly();
+    void iconSourceOnly_data();
+    void iconDestinationOnly();
+    void iconDestinationOnly_data();
+    void iconSavedFromDifferentManager();
+    void iconFormats();
+    void iconFormats_data();
+    void iconUrls();
+    void iconUrls_data();
+    void constructIconUrl();
 
 private:
     bool doSavePlace(const QPlace &place,
@@ -158,11 +180,53 @@ private:
 
     bool compareResults(const QList<QPlaceSearchResult> &results, const QList<QPlace> &expectedResults);
 
+    QImage dataUrlToImage(const QUrl &url);
+
+    static const QString SmallSource;
+    static const QString SmallDestination;
+    static const QString SmallDestinationSize;
+    static const QString MediumSource;
+    static const QString MediumDestination;
+    static const QString MediumDestinationSize;
+    static const QString LargeSource;
+    static const QString LargeDestination;
+    static const QString LargeDestinationSize;
+    static const QString FullscreenSource;
+    static const QString FullscreenDestination;
+    static const QString FullscreenDestinationSize;
+
+    static const QSize SmallSize;
+    static const QSize MediumSize;
+    static const QSize LargeSize;
+    static const QSize FullscreenSize;
+
     QGeoServiceProvider *provider;
     QPlaceManager *placeManager;
     QCoreApplication *coreApp;
     JsonDbCleaner *dbCleaner ;
 };
+
+//These constants are equivalent to those from the jsondb plugin icon class
+const QString tst_QPlaceManagerJsonDb::SmallSource("smallSourceUrl");
+const QString tst_QPlaceManagerJsonDb::SmallDestination("smallUrl");
+const QString tst_QPlaceManagerJsonDb::SmallDestinationSize("smallSize");
+
+const QString tst_QPlaceManagerJsonDb::MediumSource("mediumSourceUrl");
+const QString tst_QPlaceManagerJsonDb::MediumDestination("mediumUrl");
+const QString tst_QPlaceManagerJsonDb::MediumDestinationSize("mediumSize");
+
+const QString tst_QPlaceManagerJsonDb::LargeSource("largeSourceUrl");
+const QString tst_QPlaceManagerJsonDb::LargeDestination("largeUrl");
+const QString tst_QPlaceManagerJsonDb::LargeDestinationSize("largeSize");
+
+const QString tst_QPlaceManagerJsonDb::FullscreenSource("fullscreenSourceUrl");
+const QString tst_QPlaceManagerJsonDb::FullscreenDestination("fullscreenUrl");
+const QString tst_QPlaceManagerJsonDb::FullscreenDestinationSize("fullscreenSize");
+
+const QSize tst_QPlaceManagerJsonDb::SmallSize = QSize(20,20);
+const QSize tst_QPlaceManagerJsonDb::MediumSize = QSize(30,30);
+const QSize tst_QPlaceManagerJsonDb::LargeSize = QSize(50, 50);
+const QSize tst_QPlaceManagerJsonDb::FullscreenSize = QSize(320, 480);
 
 tst_QPlaceManagerJsonDb::tst_QPlaceManagerJsonDb()
 {
@@ -182,7 +246,7 @@ void tst_QPlaceManagerJsonDb::initTestCase()
     qRegisterMetaType<QPlaceIdReply *>();
 
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
-    providers.contains("nokia_places_jsondb");
+    QVERIFY(providers.contains("nokia_places_jsondb"));
 
     provider = new QGeoServiceProvider("nokia_places_jsondb");
     placeManager = provider->placeManager();
@@ -241,7 +305,6 @@ void tst_QPlaceManagerJsonDb::saveAndRemovePlace()
 
     //try removing a place that does not exist;
     QVERIFY(doRemovePlace(place, QPlaceReply::PlaceDoesNotExistError));
-
 
     place.setVisibility(QtLocation::PublicVisibility);
 
@@ -1079,58 +1142,6 @@ void tst_QPlaceManagerJsonDb::searchByCategory()
     QCOMPARE(places.at(0), krustyBurger);
 }
 
-void tst_QPlaceManagerJsonDb::icons()
-{
-    QPlaceIcon icon;
-    icon.setManager(placeManager);
-    icon.setFullUrl(QUrl(QLatin1String("/icons/placeicon.jpg")));
-
-    //check that we can get the url from the icon
-    QCOMPARE(icon.url(), QUrl(QLatin1String("/icons/placeicon.jpg")));
-
-    //check that we can save and retrieve a place with the icon
-    //intact.
-    QPlace place;
-    place.setIcon(icon);
-    QString placeId;
-    QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
-
-    QPlace retrievedPlace;
-    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
-    QCOMPARE(retrievedPlace.icon().url(),  QUrl(QLatin1String("/icons/placeicon.jpg")));
-
-    QPlaceIcon categoryIcon;
-    categoryIcon.setManager(placeManager);
-    categoryIcon.setFullUrl(QUrl(QLatin1String("/icons/motel.jpg")));
-
-    QPlaceCategory motel;
-    motel.setIcon(categoryIcon);
-    QString categoryId;
-    QVERIFY(doSaveCategory(motel, "", QPlaceReply::NoError, &categoryId));
-    motel.setCategoryId(categoryId);
-
-    QList<QPlaceCategory> categories = placeManager->childCategories();
-    QCOMPARE(categories.count(), 1);
-    QCOMPARE(categories.at(0).icon().url(), QUrl(QLatin1String("/icons/motel.jpg")));
-
-    //test modification of an icon of an existin category
-    categoryIcon.setFullUrl(QUrl(QLatin1String("/icons/motel2.jpg")));
-    motel.setIcon(categoryIcon);
-    QVERIFY(doSaveCategory(motel, "", QPlaceReply::NoError, &categoryId));
-
-    categories = placeManager->childCategories();
-    QCOMPARE(categories.count(), 1);
-    QCOMPARE(categories.at(0).icon().url(), QUrl(QLatin1String("/icons/motel2.jpg")));
-
-    //try saving an empty icon to the category
-    motel.setIcon(QPlaceIcon());
-    QVERIFY(doSaveCategory(motel, "", QPlaceReply::NoError, &categoryId));
-    categories = placeManager->childCategories();
-    QCOMPARE(categories.count(), 1);
-    QCOMPARE(categories.at(0).icon().url(), QUrl());
-    QVERIFY(categories.at(0).icon().isEmpty());
-}
-
 void tst_QPlaceManagerJsonDb::unsupportedFunctions()
 {
     QPlace place;
@@ -1456,6 +1467,9 @@ void tst_QPlaceManagerJsonDb::categoryNotifications()
 
 void tst_QPlaceManagerJsonDb::compatiblePlace()
 {
+    QGeoServiceProvider geoTest("qmlgeo.test.plugin");
+    QPlaceManager *geoTestManager = geoTest.placeManager();
+
     QPlace place;
     place.setPlaceId(QLatin1String("123"));
     place.setName(QLatin1String("Moe's Tavern"));
@@ -1499,6 +1513,15 @@ void tst_QPlaceManagerJsonDb::compatiblePlace()
     attribute.setLabel(QLatin1String("Smoking"));
     attribute.setText(QLatin1String("Yes"));
 
+    QPlaceIcon icon;
+    QVariantMap iconParams;
+    iconParams.insert("s", "www.example.com/small.png");
+    iconParams.insert("m", "www.example.com/medium.png");
+    iconParams.insert("l", "www.example.com/large.png");
+    icon.setParameters(iconParams);
+    icon.setManager(geoTestManager);
+    place.setIcon(icon);
+
     place.setExtendedAttribute(QLatin1String("Smoking"), attribute);
 
     place.setVisibility(QtLocation::PublicVisibility);
@@ -1523,6 +1546,10 @@ void tst_QPlaceManagerJsonDb::compatiblePlace()
     QVERIFY(compatPlace.content(QPlaceContent::ReviewType).isEmpty());
     QVERIFY(compatPlace.content(QPlaceContent::EditorialType).isEmpty());
     QCOMPARE(compatPlace.totalContentCount(QPlaceContent::ImageType), 0);
+
+    QCOMPARE(compatPlace.icon().parameters().value(SmallSource).toString(),  QLatin1String("www.example.com/small.png"));
+    QCOMPARE(compatPlace.icon().parameters().value(MediumSource).toString(),  QLatin1String("www.example.com/medium.png"));
+    QCOMPARE(compatPlace.icon().parameters().value(LargeSource).toString(),  QLatin1String("www.example.com/large.png"));
 
     QVERIFY(compatPlace.extendedAttributeTypes().isEmpty());
     QCOMPARE(compatPlace.extendedAttribute(QLatin1String("Smoking")), QPlaceAttribute());
@@ -1615,6 +1642,633 @@ void tst_QPlaceManagerJsonDb::matchingPlaces()
     QCOMPARE(places.at(2), place2Saved);
 }
 
+void tst_QPlaceManagerJsonDb::iconSourceDestination()
+{
+    //We test that an input source icon is correctly copied to it's specified destination
+    //Source and Destination urls are provided
+    QFETCH(QString, sourceIconResource);
+    QFETCH(QSize, iconSize);
+    QFETCH(QString, iconType);
+    QFETCH(QString, source);
+    QFETCH(QString, specifiedDestination);
+
+    for (int destUrlCorrectness = ValidUrl; destUrlCorrectness != (NoSchemeUrl +1); ++destUrlCorrectness) {
+        for (int destFileExists = Exists; destFileExists != (DoesNotExist + 1); ++destFileExists) {
+            QPlace place;
+            place.setName("place");
+            QPlaceIcon icon;
+            QVariantMap iconParams;
+
+            QTemporaryFile sourceIconFile;
+
+            if (iconType.startsWith(QLatin1String("file"))) {
+                QImage sourceIconImage(sourceIconResource);
+                sourceIconFile.open();
+                sourceIconImage.save(sourceIconFile.fileName(), QImageReader::imageFormat(sourceIconResource));
+                if (iconType == QLatin1String("file"))
+                    iconParams.insert(source, QUrl::fromLocalFile(sourceIconFile.fileName()));
+                else if (iconType == QLatin1String("file_improperUrl"))
+                    iconParams.insert(source, QUrl(sourceIconFile.fileName()));
+                else
+                    qFatal("Unknown icon type");
+            } else if (iconType == QLatin1String("dataUrl")) {
+                QFile sourceIcon(sourceIconResource);
+                sourceIcon.open(QIODevice::ReadOnly);
+                QString mimeType;
+                if (QImageReader::imageFormat(sourceIconResource) == "png")
+                    mimeType = QLatin1String("image/png");
+                QUrl dataUrl(QString::fromLatin1("data:") + mimeType + QLatin1String(";base64,") + sourceIcon.readAll().toBase64());
+                iconParams.insert(source, dataUrl);
+            }
+
+            QTemporaryDir tempDir;
+            QVERIFY(tempDir.isValid());
+            QString destIconFileName = tempDir.path() + QLatin1String("/tempFile");
+            if (destFileExists == Exists) {
+                QFile destFile(destIconFileName);
+                destFile.open(QIODevice::ReadWrite);
+                destFile.close();
+            }//else must be creating a new destination file
+
+            if (destUrlCorrectness == ValidUrl)
+                iconParams.insert(specifiedDestination, QUrl::fromLocalFile(destIconFileName));
+            else  //must be no scheme url
+                iconParams.insert(specifiedDestination, QUrl(destIconFileName));
+
+            icon.setParameters(iconParams);
+            place.setIcon(icon);
+
+            QString placeId;
+            QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+
+            QPlace retrievedPlace;
+            QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+
+            QVERIFY(retrievedPlace.icon().parameters().contains(specifiedDestination));
+
+            QUrl retrievedUrl = retrievedPlace.icon().parameters().value(specifiedDestination).toUrl();
+
+            QImage retrievedImage;
+
+            QVERIFY(retrievedUrl.scheme().compare(QLatin1String("file"), Qt::CaseInsensitive) == 0);
+            retrievedImage = QImage(retrievedUrl.toLocalFile());
+
+            QCOMPARE(retrievedImage.size(), iconSize);
+        }
+    }
+}
+
+void tst_QPlaceManagerJsonDb::iconSourceDestination_data()
+{
+    QTest::addColumn<QString>("sourceIconResource");
+    QTest::addColumn<QSize>("iconSize");
+    QTest::addColumn<QString>("iconType");
+    QTest::addColumn<QString>("source");
+    QTest::addColumn<QString>("specifiedDestination");
+
+    //Specify source and destionation, expect file to be copied into destination file
+    QTest::newRow("source destination small file") << ":/resources/icon_small.png" << QSize(20,20) << "file" << SmallSource << SmallDestination;
+    QTest::newRow("source destination medium file") << ":/resources/icon_medium.png" << QSize(30,30) << "file" << MediumSource << MediumDestination;
+    QTest::newRow("source destination large file") << ":/resources/icon_large.png" << QSize(50,50) << "file" << LargeSource << LargeDestination;
+    QTest::newRow("source destination fullscreen file") << ":/resources/icon_fullscreen.png" << QSize(320,480) << "file" << FullscreenSource << FullscreenDestination;
+
+    //Specify source and destination, expect data url to be copied into destination url
+    QTest::newRow("source destination small dataUrl") << ":/resources/icon_small.png" << QSize(20,20) << "dataUrl" << SmallSource << SmallDestination;
+    QTest::newRow("source destination medium dataUrl") << ":/resources/icon_medium.png" << QSize(30,30) << "dataUrl" << MediumSource << MediumDestination;
+    QTest::newRow("source destination large dataUrl") << ":/resources/icon_large.png" << QSize(50,50) << "dataUrl" << LargeSource << LargeDestination;
+    QTest::newRow("source destination fullscreen dataUrl") << ":/resources/icon_fullscreen.png" << QSize(320,480) << "dataUrl" << FullscreenSource << FullscreenDestination;
+
+    //try using improper source file urls, e.g. /some/path rather than file:///some/path
+    QTest::newRow("source destination small file_improperUrl") << ":/resources/icon_small.png" << QSize(20,20) << "file_improperUrl" << SmallSource << SmallDestination;
+    QTest::newRow("source destination medium file_improperUrl") << ":/resources/icon_medium.png" << QSize(30,30) << "file_improperUrl" << MediumSource << MediumDestination;
+    QTest::newRow("source destination large file_improperUrl") << ":/resources/icon_large.png" << QSize(50,50) << "file_improperUrl" << LargeSource << LargeDestination;
+    QTest::newRow("source destination fullscreen file_improperUrl") << ":/resources/icon_fullscreen.png" << QSize(320,480) << "file_improperUrl" << FullscreenSource << FullscreenDestination;
+}
+
+void tst_QPlaceManagerJsonDb::iconSourceOnly()
+{
+    //We test that a dataUrl is generated from the given input icon
+    //Soucre urls are provided while destination urls
+    QFETCH(QString, sourceIconResource);
+    QFETCH(QSize, iconSize);
+    QFETCH(QString, iconType);
+    QFETCH(QString, source);
+    QFETCH(QString, expectedDestination);
+
+    QPlace place;
+    place.setName("place");
+    QPlaceIcon icon;
+    QVariantMap iconParams;
+
+    QTemporaryFile sourceIconFile;
+    if (iconType.startsWith(QLatin1String("file"))) {
+        QImage sourceIconImage(sourceIconResource);
+        sourceIconFile.open();
+        sourceIconImage.save(sourceIconFile.fileName(), QImageReader::imageFormat(sourceIconResource));
+        if (iconType == QLatin1String("file"))
+            iconParams.insert(source, QUrl::fromLocalFile(sourceIconFile.fileName()));
+        else if (iconType == QLatin1String("file_improperUrl"))
+            iconParams.insert(source, QUrl(sourceIconFile.fileName()));
+        else
+            qFatal("Unknown iconType");
+    } else if (iconType == QLatin1String("dataUrl")) {
+        QFile sourceIcon(sourceIconResource);
+        sourceIcon.open(QIODevice::ReadOnly);
+        QString mimeType;
+        if (QImageReader::imageFormat(sourceIconResource) == "png")
+            mimeType = QLatin1String("image/png");
+        else
+            qFatal("Unexpected image format");
+        QUrl dataUrl(QString::fromLatin1("data:") + mimeType + QLatin1String(";base64,") + sourceIcon.readAll().toBase64());
+        iconParams.insert(source, dataUrl);
+    } else if (iconType == QLatin1String("unaccessible_webUrl")) {
+        iconParams.insert(source, QUrl(sourceIconResource));
+    }
+
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+    QString placeId;
+
+    if (iconType == QLatin1String("unaccessible_webUrl")) {
+        QVERIFY(doSavePlace(place,QPlaceReply::BadArgumentError));
+    } else {
+        QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+        QPlace retrievedPlace;
+        QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+        if (expectedDestination != QString()) {
+            QVERIFY(retrievedPlace.icon().parameters().contains(expectedDestination));
+
+            QUrl retrievedUrl = retrievedPlace.icon().parameters().value(expectedDestination).toUrl();
+            QImage retrievedImage;
+            if (expectedDestination != QString())
+                QVERIFY(retrievedUrl.scheme().compare(QLatin1String("data"), Qt::CaseInsensitive) == 0);
+            retrievedImage = dataUrlToImage(retrievedUrl);
+            QCOMPARE(retrievedImage.size(), iconSize);
+        }
+    }
+}
+
+void tst_QPlaceManagerJsonDb::iconSourceOnly_data()
+{
+    QTest::addColumn<QString>("sourceIconResource");
+    QTest::addColumn<QSize>("iconSize");
+    QTest::addColumn<QString>("iconType");
+    QTest::addColumn<QString>("source");
+    QTest::addColumn<QString>("expectedDestination");
+
+    //input icon is a file
+    QTest::newRow("source small file") << ":/resources/icon_small.png" << SmallSize << "file" << SmallSource <<  SmallDestination;
+    QTest::newRow("source medium file") << ":/resources/icon_medium.png" << MediumSize << "file" << MediumSource <<  MediumDestination;
+    QTest::newRow("source large file") << ":/resources/icon_large.png" << LargeSize << "file" << LargeSource <<  LargeDestination;
+    QTest::newRow("source fullscreen file") << ":/resources/icon_fullscreen.png" << FullscreenSize << "file" << FullscreenSource << ""; //fullscreen icons shouldn't be saved as data urls
+
+    //input is a file but an improper url (e.g of the format /some/path instead of file:///some/path)
+    QTest::newRow("source small file_improperUrl") << ":/resources/icon_small.png" << SmallSize << "file_improperUrl" << SmallSource <<  SmallDestination;
+    QTest::newRow("source medium file_improperUrl") << ":/resources/icon_medium.png" << MediumSize << "file_improperUrl" << MediumSource <<  MediumDestination;
+    QTest::newRow("source large file_improperUrl") << ":/resources/icon_large.png" << LargeSize << "file_improperUrl" << LargeSource <<  LargeDestination;
+    QTest::newRow("source fullscreen file_improperUrl") << ":/resources/icon_fullscreen.png" << FullscreenSize << "file_improperUrl" << FullscreenSource << ""; //fullscreen icons shouldn't be saved as data urls
+
+    //input icon is a data url
+    QTest::newRow("source small dataUrl") << ":/resources/icon_small.png" << SmallSize << "dataUrl" << SmallSource << SmallDestination;
+    QTest::newRow("source medium dataUrl") << ":/resources/icon_medium.png" << MediumSize << "dataUrl" << MediumSource << MediumDestination;
+    QTest::newRow("source large dataUrl") << ":/resources/icon_large.png" << LargeSize << "dataUrl" << LargeSource << LargeDestination;
+    QTest::newRow("source fullscreen dataUrl") << ":/resources/icon_fullscreen.png" << FullscreenSize << "dataUrl" << FullscreenSource << ""; //fullscreen icons shouldn't be saved as data urls
+
+    //input icon is a non reachable url
+    QTest::newRow("source small unaccessible_webUrl") << "www.example.com/icon_small.png" << SmallSize << "unaccessible_webUrl" << SmallSource << SmallDestination;
+    QTest::newRow("source medium unaccessible_webUrl") << "www.example.com/icon_medium.png" << MediumSize << "unaccessible_webUrl" << MediumSource << MediumDestination;
+    QTest::newRow("source large unaccessible_webUrl") << "www.example.com/icon_large.png" << LargeSize << "unaccessible_webUrl" << LargeSource << LargeDestination;
+    QTest::newRow("source fullscreen unaccessible_webUrl") << "www.example.com/icon_fullscreen.png" << FullscreenSize << "unaccessible_webUrl" << FullscreenSource << ""; //fullscreen icons shouldn't be saved as data urls
+}
+
+void tst_QPlaceManagerJsonDb::iconDestinationOnly()
+{
+    //We test when a destination url is provided, that it is correctly saved
+    //No soure urls are provided while destination urls are.
+    QFETCH(QString, destination);
+    QFETCH(QUrl, destinationUrl);
+    QFETCH(QSize, specifiedSize);
+    QFETCH(QString, iconResource); //empty reosurce indicates icon is not reachable/accessible
+
+    QString destinationSize = destination;
+    destinationSize.replace(QLatin1String("Url"), QLatin1String("Size"));
+
+    QVariantMap iconParams;
+
+    QTemporaryFile destinationFile;
+    QSize size;
+    if (destinationUrl.toString().startsWith("_autogenerated_file_")) {
+        QImage iconImage(iconResource);
+        destinationFile.open();
+        iconImage.save(destinationFile.fileName(), QImageReader::imageFormat(iconResource));
+        size = iconImage.size();
+
+        if (destinationUrl == QUrl("_autogenerated_file_no_scheme_url_"))
+            destinationUrl = QUrl::fromLocalFile(destinationFile.fileName());
+        else
+            destinationUrl = QUrl::fromLocalFile(destinationFile.fileName());
+    } else if (destinationUrl == QUrl("_data_url_")) {
+        QFile iconFile(iconResource);
+        iconFile.open(QIODevice::ReadOnly);
+
+        QString mimeType;
+        if (QImageReader::imageFormat(iconResource) == "png")
+            mimeType = QLatin1String("image/png");
+
+        QImage iconImage(iconResource);
+        size = iconImage.size();
+
+        destinationUrl = QUrl(QString::fromLatin1("data:") + mimeType + QLatin1String(";base64,") + iconFile.readAll().toBase64());
+    }
+
+    iconParams.insert(destination, destinationUrl);
+
+    if (!specifiedSize.isEmpty())
+        iconParams.insert(destinationSize, specifiedSize);
+
+    QPlace place;
+    place.setName("Place");
+    QPlaceIcon icon;
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+    QString placeId;
+
+    if (specifiedSize.isEmpty() && iconResource.isEmpty()) {
+        QVERIFY(doSavePlace(place, QPlaceReply::BadArgumentError));
+        return;
+    } else {
+        QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+    }
+
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(destination));
+    QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), destinationUrl);
+
+    if (!specifiedSize.isEmpty() && iconResource.isEmpty()) {
+        QVERIFY(retrievedPlace.icon().parameters().contains(destinationSize));
+        QCOMPARE(retrievedPlace.icon().parameters().value(destinationSize).toSize(), specifiedSize);
+    } else {
+        QCOMPARE(retrievedPlace.icon().parameters().value(destinationSize).toSize(), size);
+    }
+}
+
+void tst_QPlaceManagerJsonDb::iconDestinationOnly_data()
+{
+    QTest::addColumn<QString>("destination");
+    QTest::addColumn<QUrl>("destinationUrl");
+    QTest::addColumn<QSize>("specifiedSize");
+    QTest::addColumn<QString>("iconResource");
+
+    //destination url is local file, no size is specified
+    QTest::newRow("destination small file no_size_provided") << SmallDestination  << QUrl("_autogenerated_file_") << QSize() << ":/resources/icon_small.png";
+    QTest::newRow("destination medium file no_size_provided") << MediumDestination  << QUrl("_autogenerated_file_") << QSize() << ":/resources/icon_medium.png";
+    QTest::newRow("destination large file no_size_provided") << LargeDestination  << QUrl("_autogenerated_file_") << QSize() << ":/resources/icon_large.png";
+    QTest::newRow("destination fullscreen file no_size_provided") << FullscreenDestination  << QUrl("_autogenerated_file_") << QSize() << ":/resources/icon_fullscreen.png";
+
+    //destination url is local file, no size is specified, the url has no scheme
+    QTest::newRow("destination small file no_size_provided") << SmallDestination  << QUrl("_autogenerated_file_no_scheme_url_") << QSize() << ":/resources/icon_small.png";
+    QTest::newRow("destination medium file no_size_provided") << MediumDestination  << QUrl("_autogenerated_file_no_scheme_url_") << QSize() << ":/resources/icon_medium.png";
+    QTest::newRow("destination large file no_size_provided") << LargeDestination  << QUrl("_autogenerated_file_no_scheme_url_") << QSize() << ":/resources/icon_large.png";
+    QTest::newRow("destination fullscreen file no_size_provided") << FullscreenDestination  << QUrl("_autogenerated_file_no_scheme_url_") << QSize() << ":/resources/icon_fullscreen.png";
+
+    //destination url is local file and an (inaccurate) size is specified, (the actual size of file should take precedence)
+    QTest::newRow("destination small file size_provided") << SmallDestination  << QUrl("_autogenerated_file_") << QSize(86,99) << ":/resources/icon_small.png";
+    QTest::newRow("destination medium file size_provided") << MediumDestination  << QUrl("_autogenerated_file_") << QSize(86, 99) << ":/resources/icon_medium.png";
+    QTest::newRow("destination large file size_provided") << LargeDestination  << QUrl("_autogenerated_file_") << QSize(86, 99) << ":/resources/icon_large.png";
+    QTest::newRow("destination fulscreen file size_provided") << FullscreenDestination  << QUrl("_autogenerated_file_") << QSize(86, 99) << ":/resources/icon_fullscreen.png";
+
+    //destination url is a data url, no size is specified
+    QTest::newRow("destination small dataurl no_size_provided") << SmallDestination  << QUrl("_data_url_") << QSize() << ":/resources/icon_small.png";
+    QTest::newRow("destination medium dataurl no_size_provided") << MediumDestination  << QUrl("_data_url_") << QSize() << ":/resources/icon_medium.png";
+    QTest::newRow("destination large dataurl no_size_provided") << LargeDestination  << QUrl("_data_url_") << QSize() << ":/resources/icon_large.png";
+    QTest::newRow("destination fullscreen dataurl no_size_provided") << FullscreenDestination  << QUrl("_data_url_") << QSize() << ":/resources/icon_fullscreen.png";
+
+    //destination url is a data url, and an (inaccurate) size is specified, (the actual size of the icon should take precedence)
+    QTest::newRow("destination small dataurl size_provided") << SmallDestination  << QUrl("_data_url_") << QSize(86,99) << ":/resources/icon_small.png";
+    QTest::newRow("destination medium dataurl size_provided") << MediumDestination  << QUrl("_data_url_") << QSize(86, 99) << ":/resources/icon_medium.png";
+    QTest::newRow("destination large dataurl size_provided") << LargeDestination  << QUrl("_data_url_") << QSize(86, 99) << ":/resources/icon_large.png";
+    QTest::newRow("destination fullscreen dataurl size_provided") << FullscreenDestination  << QUrl("_data_url_") << QSize(86, 99) << ":/resources/icon_fullscreen.png";
+
+    //destination url is not accessible and size is specified
+    QTest::newRow("destination small unaccessible_webUrl size_provided") << SmallDestination << QUrl("http://www.example.com/iconS.png") << SmallSize << "";
+    QTest::newRow("destination medium unaccessible_webUrl size_provided") << MediumDestination << QUrl("http://www.example.com/iconM.png") << MediumSize << "" ;
+    QTest::newRow("destination large unaccessible_webUrl size_provided") << LargeDestination << QUrl("http://www.example.com/iconL.png") << LargeSize << "";
+    QTest::newRow("destination fullscreen unaccessible_webUrl size_provided") << FullscreenDestination << QUrl("http://www.example.com/iconF.png") << FullscreenSize << "";
+
+    //destination url is accessible and no size is provided, expect failure to save
+    QTest::newRow("destination small unaccessible_webUrl no_size_provided") << SmallDestination << QUrl("http://www.example.com/iconS.png") << QSize() << "";
+    QTest::newRow("destination medium unaccessible_webUrl no_size_provided") << MediumDestination << QUrl("http://www.example.com/iconM.png") << QSize() << "" ;
+    QTest::newRow("destination large unaccessible_webUrl no_size_provided") << LargeDestination << QUrl("http://www.example.com/iconL.png") << QSize() << "";
+    QTest::newRow("destination fullscreen unaccessible_webUrl no_size_provided") << FullscreenDestination << QUrl("http://www.example.com/iconL.png") << QSize() << "";
+}
+
+void tst_QPlaceManagerJsonDb::iconSavedFromDifferentManager()
+{
+    QGeoServiceProvider geoTest("qmlgeo.test.plugin");
+    QPlaceManager *geoTestManager = geoTest.placeManager();
+
+    QPlaceIcon icon;
+    icon.setManager(geoTestManager);
+    QVariantMap iconParams;
+
+    QTemporaryFile sourceIconFile;
+    QImage sourceIconImage(":/resources/icon_small.png");
+    sourceIconFile.open();
+    sourceIconImage.save(sourceIconFile.fileName(), "png");
+
+    //try an icon from another manager which different icons for each size variant
+    //check that we get correctly generated data urls
+    iconParams.insert("s", QUrl::fromLocalFile(":/resources/icon_small.png"));
+    iconParams.insert("m", QUrl::fromLocalFile(":/resources/icon_medium.png"));
+    iconParams.insert("l", QUrl::fromLocalFile(":/resources/icon_large.png"));
+    iconParams.insert("f", QUrl::fromLocalFile(":/resources/icon_fullscreen.png"));
+    icon.setParameters(iconParams);
+
+    QPlace place;
+    place.setName("Place");
+    place.setIcon(icon);
+
+    QPlace compatiblePlace = placeManager->compatiblePlace(place);
+    QString placeId;
+    QVERIFY(doSavePlace(compatiblePlace,QPlaceReply::NoError, &placeId));
+
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(SmallDestination));
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(SmallDestinationSize));
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(MediumDestination));
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(MediumDestinationSize));
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(LargeDestination));
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(LargeDestinationSize));
+
+    //we don't expect fullscreen icon urls to be download into data urls
+    //data urls are only meant for small icons
+    QVERIFY(!retrievedPlace.icon().parameters().keys().contains(FullscreenDestination));
+
+    QImage smallImage = dataUrlToImage(retrievedPlace.icon().parameters().value(SmallDestination).toUrl());
+    QImage mediumImage = dataUrlToImage(retrievedPlace.icon().parameters().value(MediumDestination).toUrl());
+    QImage largeImage = dataUrlToImage(retrievedPlace.icon().parameters().value(LargeDestination).toUrl());
+
+    QCOMPARE(smallImage.size(), SmallSize);
+    QCOMPARE(mediumImage.size(), MediumSize);
+    QCOMPARE(largeImage.size(), LargeSize);
+
+    QCOMPARE(retrievedPlace.icon().parameters().value(SmallDestinationSize).toSize(), SmallSize);
+    QCOMPARE(retrievedPlace.icon().parameters().value(MediumDestinationSize).toSize(), MediumSize);
+    QCOMPARE(retrievedPlace.icon().parameters().value(LargeDestinationSize).toSize(), LargeSize);
+
+    //try an icon from another manaager which has only a single size variant
+    //check that we get only one size variant
+    iconParams.clear();
+    iconParams.insert("s", QUrl::fromLocalFile(":/resources/icon_small.png"));
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+    compatiblePlace = placeManager->compatiblePlace(place);
+    QVERIFY(doSavePlace(compatiblePlace,QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+
+    QCOMPARE(retrievedPlace.icon().parameters().keys().count(), 2);
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(SmallDestination));
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(SmallDestinationSize));
+    smallImage = dataUrlToImage(retrievedPlace.icon().parameters().value(SmallDestination).toUrl());
+    QCOMPARE(smallImage.size(), SmallSize);
+    QSize size = retrievedPlace.icon().parameters().value(SmallDestinationSize).toSize();
+    QCOMPARE(size, SmallSize);
+
+    //try an icon from a manager which has sizes which don't exactly match the standard expected icons
+    //sizes, check that dataUrls are generated for the appropriate size variant
+    iconParams.clear();
+    iconParams.insert("m", QUrl::fromLocalFile(":/resources/icon_24x24.png"));
+    iconParams.insert("l", QUrl::fromLocalFile(":/resources/icon_40x40.png"));
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+    compatiblePlace = placeManager->compatiblePlace(place);
+    QVERIFY(doSavePlace(compatiblePlace,QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.icon().parameters().keys().count(), 4);
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(SmallDestination));
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(SmallDestinationSize));
+    smallImage = dataUrlToImage(retrievedPlace.icon().parameters().value(SmallDestination).toUrl());
+    QCOMPARE(smallImage.size(), QSize(24,24));
+    size = retrievedPlace.icon().parameters().value(SmallDestinationSize).toSize();
+    QCOMPARE(size, QSize(24,24));
+
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(LargeDestination));
+    QVERIFY(retrievedPlace.icon().parameters().keys().contains(LargeDestinationSize));
+    smallImage = dataUrlToImage(retrievedPlace.icon().parameters().value(LargeDestination).toUrl());
+    QCOMPARE(smallImage.size(), QSize(40,40));
+    size = retrievedPlace.icon().parameters().value(LargeDestinationSize).toSize();
+    QCOMPARE(size, QSize(40,40));
+}
+
+void tst_QPlaceManagerJsonDb::iconFormats()
+{
+    QFETCH(QByteArray, imageFormat);
+    QFETCH(QString, mimeType);
+
+    QTemporaryFile sourceIconFile;
+    sourceIconFile.open();
+    QImage sourceIconImage;
+
+    if (imageFormat == "svg") {
+        QFile file(":/resources/icon_small.svg");
+        file.open(QIODevice::ReadOnly);
+        sourceIconFile.write(file.readAll());
+        sourceIconFile.close();
+    } else {
+        QVERIFY(sourceIconImage.load(":/resources/icon_small.png"));
+        QVERIFY(sourceIconImage.save(&sourceIconFile, imageFormat));
+    }
+
+    QVariantMap iconParams;
+    iconParams.insert(SmallSource, QUrl::fromLocalFile(sourceIconFile.fileName()));
+
+    QPlace place;
+    place.setName("place");
+    QPlaceIcon icon;
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+
+    QString placeId;
+
+    if (imageFormat == "tiff")
+        QEXPECT_FAIL("", "tiff format known to fail as documented in QTBUG-23898", Abort);
+
+    QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+
+    QRegExp regExp("^data:(.*);.*$");
+    regExp.indexIn(retrievedPlace.icon().parameters().value(SmallDestination).toUrl().toString());
+    QCOMPARE(regExp.cap(1), mimeType);
+}
+
+void tst_QPlaceManagerJsonDb::iconFormats_data()
+{
+    QTest::addColumn<QByteArray>("imageFormat");
+    QTest::addColumn<QString>("mimeType");
+
+    QTest::newRow("bmp") << QByteArray("bmp") << "image/bmp";
+    QTest::newRow("jpg") << QByteArray("jpg") << "image/jpeg";
+    QTest::newRow("jpeg") << QByteArray("jpeg") << "image/jpeg";
+    QTest::newRow("png") << QByteArray("png") << "image/png";
+    QTest::newRow("pbm") << QByteArray("pbm") << "image/x-portable-bitmap";
+    QTest::newRow("pgm") << QByteArray("pgm") << "image/x-portable-graymap";
+    QTest::newRow("ppm") << QByteArray("ppm") << "image/x-portable-pixmap";
+    QTest::newRow("tiff") << QByteArray("tiff") << "image/tiff";
+    QTest::newRow("xbm") << QByteArray("xbm") << "image/x-xbitmap";
+    QTest::newRow("xpm") << QByteArray("xpm") << "image/x-xpixmap";
+    QTest::newRow("svg") << QByteArray("svg") << "image/svg+xml";
+}
+
+void tst_QPlaceManagerJsonDb::iconUrls()
+{
+    QFETCH(QString, sizeType);
+    QFETCH(QSize, size);
+
+    QString source = sizeType + QLatin1String("SourceUrl");
+    QString destination = sizeType + QLatin1String("Url");
+    QString destinationSize = sizeType + QLatin1String("Size");
+
+    QPlace place;
+    place.setName("place");
+    QPlaceIcon icon;
+    QVariantMap iconParams;
+
+    //test conversion to valid url, in this care using a valid file scheme
+    iconParams.insert(destination, QUrl("/home/user/icon.png"));
+    iconParams.insert(destinationSize, size);
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+
+    QString placeId;
+    QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), QUrl("file:///home/user/icon.png"));
+
+    //test conversion to valid url,
+    iconParams.insert(destination, QUrl("qrc:/home/user/icon.png"));
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+    QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), QUrl("qrc:///home/user/icon.png"));
+
+    iconParams.insert(destination, QUrl("qrc:///home/user/icon.png"));
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+    QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), QUrl("qrc:///home/user/icon.png"));
+
+    //test urls that are non-encoded and encoded
+    iconParams.insert(destination, QUrl("qrc:///home/user/i con.png"));
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+    QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), QUrl("qrc:///home/user/i con.png"));
+
+    iconParams.insert(destination, QUrl("qrc:///home/user/ico%20n.png"));
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+    QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), QUrl("qrc:///home/user/ico n.png"));
+
+    //try using a QString instead of a url in the parameters
+    iconParams.insert(destination, "www.example.com");
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+    QVERIFY(doSavePlace(place,QPlaceReply::BadArgumentError, &placeId));
+
+    //try using a QString instead of a url in the parameters
+    iconParams.insert(source, "www.example.com");
+    icon.setParameters(iconParams);
+    place.setIcon(icon);
+    QVERIFY(doSavePlace(place,QPlaceReply::BadArgumentError, &placeId));
+}
+
+void tst_QPlaceManagerJsonDb::iconUrls_data()
+{
+    QTest::addColumn<QString>("sizeType");
+    QTest::addColumn<QSize>("size");
+
+    QTest::newRow("small") << "small" << SmallSize;
+    QTest::newRow("medium") << "medium" << MediumSize;
+    QTest::newRow("large") << "large" << LargeSize;
+    QTest::newRow("fullscreen") << "fullscreen" << FullscreenSize;
+}
+
+void tst_QPlaceManagerJsonDb::constructIconUrl()
+{
+    QPlaceIcon icon;
+    QVariantMap iconParams;
+
+    //try with all possible size buckets set
+    iconParams.insert(SmallDestination, QUrl("http://www.example.com/icon_small.png"));
+    iconParams.insert(SmallDestinationSize, SmallSize);
+    iconParams.insert(MediumDestination, QUrl("http://www.example.com/icon_medium.png"));
+    iconParams.insert(MediumDestinationSize, MediumSize);
+    iconParams.insert(LargeDestination, QUrl("http://www.example.com/icon_large.png"));
+    iconParams.insert(LargeDestinationSize, LargeSize);
+    iconParams.insert(FullscreenDestination, QUrl("http://www.example.com/icon_fullscreen.png"));
+    iconParams.insert(FullscreenDestinationSize, FullscreenSize);
+
+    icon.setParameters(iconParams);
+    icon.setManager(placeManager);
+
+    QCOMPARE(icon.url(SmallSize), QUrl("http://www.example.com/icon_small.png"));
+    QCOMPARE(icon.url(MediumSize), QUrl("http://www.example.com/icon_medium.png"));
+    QCOMPARE(icon.url(LargeSize), QUrl("http://www.example.com/icon_large.png"));
+    QCOMPARE(icon.url(FullscreenSize), QUrl("http://www.example.com/icon_fullscreen.png"));
+
+    //try with only a single destination icon set
+    iconParams.clear();
+    iconParams.insert(LargeDestination, QUrl("http://www.example.com/icon_large.png"));
+    iconParams.insert(LargeDestinationSize, LargeSize);
+    icon.setParameters(iconParams);
+
+    QCOMPARE(icon.url(SmallSize), QUrl("http://www.example.com/icon_large.png"));
+    QCOMPARE(icon.url(MediumSize), QUrl("http://www.example.com/icon_large.png"));
+    QCOMPARE(icon.url(LargeSize), QUrl("http://www.example.com/icon_large.png"));
+    QCOMPARE(icon.url(FullscreenSize), QUrl("http://www.example.com/icon_large.png"));
+
+    //try requesting non-standard sizes and don't populate all size buckets
+    iconParams.clear();
+    iconParams.insert(SmallDestination, QUrl("http://www.example.com/icon_small.png"));
+    iconParams.insert(SmallDestinationSize, SmallSize);
+    iconParams.insert(LargeDestination, QUrl("http://www.example.com/icon_large.png"));
+    iconParams.insert(LargeDestinationSize, LargeSize);
+    icon.setParameters(iconParams);
+
+    QCOMPARE(icon.url(QSize(10,10)), QUrl("http://www.example.com/icon_small.png"));
+    QCOMPARE(icon.url(QSize(34,34)), QUrl("http://www.example.com/icon_small.png"));
+    QCOMPARE(icon.url(QSize(35,35)), QUrl("http://www.example.com/icon_large.png"));
+    QCOMPARE(icon.url(QSize(60,60)), QUrl("http://www.example.com/icon_large.png"));
+
+    //try the icons themselves haveing non standard sizes
+    iconParams.clear();
+    iconParams.insert(SmallDestination, QUrl("http://www.example.com/icon_small.png"));
+    iconParams.insert(SmallDestinationSize, QSize(25,25));
+    iconParams.insert(LargeDestination, QUrl("http://www.example.com/icon_large.png"));
+    iconParams.insert(LargeDestinationSize, QSize(35,35));
+    icon.setParameters(iconParams);
+
+    QCOMPARE(icon.url(QSize(24,24)), QUrl("http://www.example.com/icon_small.png"));
+    QCOMPARE(icon.url(QSize(29,29)), QUrl("http://www.example.com/icon_small.png"));
+    QCOMPARE(icon.url(QSize(30,30)), QUrl("http://www.example.com/icon_large.png"));
+    QCOMPARE(icon.url(QSize(60,60)), QUrl("http://www.example.com/icon_large.png"));
+
+    //TODO: edge case testing for all combinations
+}
+
 void tst_QPlaceManagerJsonDb::cleanup()
 {
     QSignalSpy cleanSpy(dbCleaner, SIGNAL(dbCleaned()));
@@ -1634,6 +2288,7 @@ bool tst_QPlaceManagerJsonDb::doSavePlace(const QPlace &place,
 
     if (saveReply->id().isEmpty() && expectedError == QPlaceReply::NoError) {
         qWarning("ID is empty in reply for save operation");
+        qWarning() << "Error string = " << saveReply->errorString();
         isSuccessful = false;
     }
 
@@ -1849,6 +2504,26 @@ bool tst_QPlaceManagerJsonDb::compareResults(const QList<QPlaceSearchResult> &re
         expectedPlaceCoords.insert(place.location().coordinate().toString());
     }
     return actualPlaceCoords == expectedPlaceCoords;
+}
+
+QImage tst_QPlaceManagerJsonDb::dataUrlToImage(const QUrl &url)
+{
+    QByteArray data = QByteArray::fromPercentEncoding(url.toEncoded());
+    data.remove(0,5);
+    int pos = data.indexOf(',');
+    if (pos != -1) {
+        QByteArray payload = QByteArray::fromBase64(data.mid(pos + 1));
+        data.truncate(pos);
+
+        if (!data.endsWith(";base64")) {
+            qWarning() << "Data url payload not base64 encoded";
+            return QImage();
+        }
+
+         return QImage::fromData(payload);
+    }
+
+    return QImage();
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceManagerJsonDb)

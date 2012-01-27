@@ -44,6 +44,7 @@
 #include <QtCore/QObject>
 #include <QtLocation/QPlaceIdReply>
 
+#include "icon.h"
 #include "macro.h"
 #include "qplacemanagerengine_jsondb.h"
 
@@ -82,8 +83,16 @@ class SavePlaceReply : public IdReply
     enum State {
         Initial,
         CheckIfExists,
+        GetIcons,
         GetCategories,
         Saving
+    };
+
+    enum IconDestination {
+        Small,
+        Medium,
+        Large,
+        FullScreen
     };
 
 public:
@@ -93,16 +102,26 @@ public:
     void setPlace(const QPlace &place);
     void start();
     void enterGetCategoriesState();
+    void enterGetIconsState();
 
 private slots:
+    void processIcons();
+
     void processResponse(int id, const QVariant &data);
     void processError(int id, int code, const QString &errorString);
+
+private:
+    void trySetDestination(const QString &destination);
+    QUrl convertToUrl(const QVariant &var, bool *ok);
 
 private:
     QPlace m_place;
     int m_reqId;
     State m_state;
     QVariantMap m_placeMap;
+    QList<Icon *> m_icons;
+    int currIconIndex;
+    QStringList m_specifiedDestinations;
 };
 
 class RemovePlaceReply : public IdReply

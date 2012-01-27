@@ -13,4 +13,4 @@ QT += location testlib
 DEFINES += QT_ADDON_JSONDB_LIB
 QT += jsondb
 
-
+RESOURCES += resources.qrc

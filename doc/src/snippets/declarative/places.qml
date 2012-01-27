@@ -103,9 +103,15 @@ Item {
 
     //! [Icon]
     Image {
-        source: icon.url(Qt.size(64, 64), Icon.Selected | Icon.List)
+        source: icon.url(Qt.size(64, 64))
     }
     //! [Icon]
+
+    Image {
+    //! [Icon default]
+    source: icon.url()
+    //! [Icon default]
+    }
 
     //! [PlaceSearchModel]
     PlaceSearchModel {

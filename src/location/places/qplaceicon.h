@@ -60,19 +60,7 @@ class QPlaceIconPrivate;
 class Q_LOCATION_EXPORT QPlaceIcon
 {
 public:
-    Q_ENUMS(QPlaceIcon::IconType)
-
-    enum IconFlag {
-        Normal = 0,
-        Disabled = 1,
-        Active = 2,
-        Selected = 4,
-
-        Map = 8,
-        List = 16
-    };
-
-    Q_DECLARE_FLAGS(IconFlags, IconFlag)
+    static const QString SingleUrl;
 
     QPlaceIcon();
     QPlaceIcon(const QPlaceIcon &other);
@@ -85,24 +73,19 @@ public:
         return !(*this == other);
     }
 
-    QUrl url(const QSize &size = QSize(), IconFlags flags = 0) const;
-
-    void setFullUrl(const QUrl &url);
-    QUrl fullUrl() const;
-
-    QUrl baseUrl() const;
-    void setBaseUrl(const QUrl &url);
+    QUrl url(const QSize &size = QSize()) const;
 
     QPlaceManager *manager() const;
     void setManager(QPlaceManager *manager);
+
+    QVariantMap parameters() const;
+    void setParameters(const QVariantMap &parameters);
 
     bool isEmpty() const;
 
 private:
     QSharedDataPointer<QPlaceIconPrivate> d;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceIcon::IconFlags)
 
 QT_END_NAMESPACE
 

@@ -45,7 +45,6 @@
 #include <QtLocation/QPlaceManager>
 #include <QtDeclarative/QDeclarativeInfo>
 
-
 QT_USE_NAMESPACE
 
 /*!
@@ -54,34 +53,46 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places
     \since QtLocation 5.0
 
-    \brief The Icon element represents an icon image source which can have multiple states and
-           sizes.
+    \brief The Icon element represents an icon image source which can have multiple sizes.
 
-    The Icon element can be used in conjunction with an \l Image element to display an icon in
-    multiple states and sizes.  The \l url() function is used to construct an icon url from the
-    \l baseUrl property and the desired icon size and state.  For example the following code will
-    display a 64x64 pixel icon for a list in the selected state.
+    The Icon element can be used in conjunction with an \l Image element to display an icon.
+    The \l url() function is used to construct an icon URL of a requested size,
+    the icon which most closely matches the requested size is returned.
+
+    The Icon element also has a parameters map which is a set of key value pairs.  The precise
+    keys to use depends on the \l {Information about plugins} {plugin backend} being used.
+    The parameters map is used by the \l Plugin to determine which URL to return.
+
+    In the case where an icon can only possibly have one image URL, the
+    parameter key of \c "singleUrl" can be used with a QUrl value.  Any Icon with this
+    parameter will always return the specified URL regardless of the requested icon
+    size and not defer to any Plugin.
+
+    The following code shows how to display a 64x64 pixel icon:
 
     \snippet snippets/declarative/places.qml QtQuick import
     \snippet snippets/declarative/places.qml QtLocation import
     \codeline
     \snippet snippets/declarative/places.qml Icon
+
+    Alternatively, a default sized icon can be specified like so:
+    \snippet snippets/declarative/places.qml Icon default
 */
 
 QDeclarativePlaceIcon::QDeclarativePlaceIcon(QObject *parent)
-    : QObject(parent), m_plugin(0)
+    : QObject(parent), m_plugin(0), m_parameters(new QDeclarativePropertyMap(this))
 {
 }
 
 QDeclarativePlaceIcon::QDeclarativePlaceIcon(const QPlaceIcon &icon, QDeclarativeGeoServiceProvider *plugin, QObject *parent)
-    :QObject(parent)
+    : QObject(parent), m_parameters(new QDeclarativePropertyMap(this))
 {
-    m_baseUrl = icon.baseUrl();
-    m_fullUrl = icon.fullUrl();
     if (icon.isEmpty())
         m_plugin = 0;
     else
         m_plugin = plugin;
+
+    initParameters(icon.parameters());
 }
 
 QDeclarativePlaceIcon::~QDeclarativePlaceIcon()
@@ -90,16 +101,25 @@ QDeclarativePlaceIcon::~QDeclarativePlaceIcon()
 
 QPlaceIcon QDeclarativePlaceIcon::icon() const
 {
-    QPlaceIcon icon;
+    QPlaceIcon result;
 
     if (m_plugin)
-        icon.setManager(manager());
-    if (!m_baseUrl.isEmpty())
-        icon.setBaseUrl(m_baseUrl);
-    else if (!m_fullUrl.isEmpty())
-        icon.setFullUrl(m_fullUrl);
+        result.setManager(manager());
+    else
+        result.setManager(0);
 
-    return icon;
+    QVariantMap params;
+    foreach (const QString &key, m_parameters->keys()) {
+        QVariant value = m_parameters->value(key);
+        if (value.type() == QVariant::Url && !value.toUrl().isEmpty())
+            params.insert(key, value);
+        else if (value.type() == QVariant::String && !value.toString().isEmpty())
+            params.insert(key, QUrl::fromUserInput(value.toString()));
+    }
+
+    result.setParameters(params);
+
+    return result;
 }
 
 /*!
@@ -119,119 +139,41 @@ QPlaceIcon QDeclarativePlaceIcon::icon() const
 */
 void QDeclarativePlaceIcon::setIcon(const QPlaceIcon &src)
 {
-    bool baseChanged = m_baseUrl != src.baseUrl();
-    bool fullChanged = m_fullUrl != src.fullUrl();
-
-    if (baseChanged)
-        m_baseUrl = src.baseUrl();
-    if (fullChanged)
-        m_fullUrl = src.fullUrl();
-
-    if (baseChanged)
-        emit baseUrlChanged();
-    if (fullChanged)
-        emit fullUrlChanged();
+    initParameters(src.parameters());
 }
 
 /*!
-    \qmlmethod url Icon::url(size size, IconFlags flags)
+    \qmlmethod url Icon::url(size size)
 
-    Returns a url for the icon best suited to the given \a size and \a flags.
+    Returns a URL for the icon image that most closely matches the given \a size.
 
-    The \a flags parameter is a bitwise or combination of
+    If no plugin has been assigned to the icon, and the parameters do not contain the 'singleUrl' key, a default constructed URL
+    is returned.
 
-    \table
-        \row
-            \o Icon.Normal
-            \o An icon with no state modifications.  This flag indicates that the user is not
-               interacting with the icon, but the functionality represented by the icon is
-               available.
-        \row
-            \o Icon.Disabled
-            \o An icon with a disabled appearance.  This flag indicates that the functionality
-               represented by the icon is not available.
-        \row
-            \o Icon.Active
-            \o An icon with an active appearance.  This flag indicates that the functionality
-               represented by the icon is available and the user is interacting with the icon,
-               for example, touching it.
-        \row
-            \o Icon.Selected
-            \o An icon with a selected appearance.  This flag indicates that the item represented
-               by the icon is selected.
-        \row
-            \o Icon.Map
-            \o An icon intended for display on a \l {QtLocation5::Map}{Map}.
-        \row
-            \o Icon.List
-            \o An icon intended for display in a list.
-    \endtable
-
-    If the \l fullUrl property is set, this method will return \l fullUrl, otherwise it will
-    construct an url from the \l baseUrl and the given \a size and \a flags.  If an explicit icon
-    for the given set of flags does not exist an url for the closest matched icon will be returned.
 */
-QUrl QDeclarativePlaceIcon::url(const QSize &size, QDeclarativePlaceIcon::IconFlags flags) const
+QUrl QDeclarativePlaceIcon::url(const QSize &size) const
 {
-    return icon().url(size, QPlaceIcon::IconFlags(int(flags)));
+    return icon().url(size);
 }
 
 /*!
-    \qmlproperty url Icon::fullUrl
+    \qmlproperty Object Icon::parameters
 
-    This property holds the full url of the icon of the place.  Setting this property implies that
-    the \l baseUrl property is cleared. If this property is set \l url() will always return the
-    full url regardless of the of the parameters passed to it.
+    This property holds the parameters of the icon and is a map.  These parameters
+    are used by the plugin to return the appropriate URL when url() is called and to
+    specify locations to save to when saving icons.
+
+    Consult the \l {Information about plugins} {plugin documentation}
+    for what parameters are supported and how they should be used.
+
+    Note, due to limitations of the QDeclarativePropertyMap, it is not possible
+    to declaratively specify the parameters in QML, assignment of parameters keys
+    and values can only be accomplished by javascript.
+
 */
-QUrl QDeclarativePlaceIcon::fullUrl() const
+QDeclarativePropertyMap *QDeclarativePlaceIcon::parameters() const
 {
-    return m_fullUrl;
-}
-
-void QDeclarativePlaceIcon::setFullUrl(const QUrl &url)
-{
-    if (m_fullUrl == url)
-        return;
-
-    m_fullUrl = url;
-
-    if (!m_baseUrl.isEmpty()) {
-        m_baseUrl.clear();
-        emit baseUrlChanged();
-    }
-
-    emit fullUrlChanged();
-}
-
-/*!
-    \qmlproperty url Icon::baseUrl
-
-    This property holds the base url which is used to construct a complete icon url by the
-    \l url() method.  Settings this property implies that the \l fullUrl property is cleared.
-
-    An example base url might be \c {http://example.com/icon}.  Depending on the parameters passed
-    to \l url() the returned complete url may be something like
-    \c {http://example.com/icon_32x32_selected.png}.  The format of the url returned by \l url() is
-    dependent on the \l plugin.
-*/
-QUrl QDeclarativePlaceIcon::baseUrl() const
-{
-    return m_baseUrl;
-}
-
-void QDeclarativePlaceIcon::setBaseUrl(const QUrl &url)
-{
-    if (m_baseUrl == url)
-        return;
-
-    m_baseUrl = url;
-
-    if (!m_fullUrl.isEmpty()) {
-        m_fullUrl.clear();
-        emit fullUrlChanged();
-    }
-
-    emit baseUrlChanged();
+    return m_parameters;
 }
 
 /*!
@@ -287,4 +229,17 @@ QPlaceManager *QDeclarativePlaceIcon::manager() const
     return placeManager;
 }
 
+void QDeclarativePlaceIcon::initParameters(const QVariantMap &parameterMap)
+{
+    //clear out old parameters
+    foreach (const QString &key, m_parameters->keys())
+        m_parameters->clear(key);
 
+    foreach (const QString &key, parameterMap.keys()) {
+        QVariant value = parameterMap.value(key);
+        if (value.type() == QVariant::Url)
+            m_parameters->insert(key, value);
+        else if (value.type() == QVariant::String)
+            m_parameters->insert(key, QUrl::fromUserInput(value.toString()));
+    }
+}
