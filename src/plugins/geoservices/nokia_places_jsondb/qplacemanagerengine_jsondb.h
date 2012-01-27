@@ -50,6 +50,7 @@
 #include <QtAddOnJsonDb/jsondb-global.h>
 #include <QtAddOnJsonDb/jsondb-notification.h>
 #include <QtCore/QEventLoop>
+#include <QtCore/QMutex>
 
 QT_ADDON_JSONDB_BEGIN_NAMESPACE
 class JsonDbClient;
@@ -58,6 +59,14 @@ QT_ADDON_JSONDB_END_NAMESPACE
 QT_ADDON_JSONDB_USE_NAMESPACE
 
 QT_BEGIN_NAMESPACE
+
+struct CategoryNode {
+    QString parentId;
+    QStringList childIds;
+    QPlaceCategory category;
+};
+
+typedef QMap<QString, CategoryNode> CategoryTree;
 
 class QPlaceManagerEngineJsonDb : public QPlaceManagerEngine
 {
@@ -108,20 +117,19 @@ public:
                 .arg(JsonConverter::Type).arg(JsonConverter::CategoryType).arg(JsonConverter::Uuid).arg(categoryUuid);
     }
 
+    void setCategoryTree(const CategoryTree &tree);
+
 public slots:
-    void processJsonDbResponse(int id, const QVariant &data);
-    void processJsonDbError(int id, int code, const QString &error);
     void processJsonDbNotification(const QString &notifyUuid,
                                    const QtAddOn::JsonDb::JsonDbNotification &notification);
 
 private:
-    bool waitForRequest(int reqId, QVariantMap *variantMap) const;
-
     JsonDbClient *m_db;
-    mutable QMap<int, QVariant> m_helperMap;
-    mutable QEventLoop m_eventLoop;
     QString m_notificationUuid;
     int m_notificationReqId;
+
+    mutable QMutex m_treeMutex;
+    CategoryTree m_tree;
 
     friend class SaveReply;
     friend class MediaReply;
@@ -130,6 +138,7 @@ private:
     friend class ReviewReply;
     friend class Reply;
     friend class SearchReply;
+    friend class CategoryInitReply;
 };
 
 QT_END_NAMESPACE

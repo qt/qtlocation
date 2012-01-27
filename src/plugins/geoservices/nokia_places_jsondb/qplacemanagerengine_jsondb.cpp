@@ -43,6 +43,8 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/qnumeric.h>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
 
 #include <QtAddOnJsonDb/jsondb-client.h>
 #include <QtAddOnJsonDb/jsondb-error.h>
@@ -50,6 +52,7 @@
 #include "detailsreply.h"
 #include "reply.h"
 #include "idreply.h"
+#include "initreply.h"
 #include "matchreply.h"
 #include "searchreply.h"
 #include "unsupportedreplies.h"
@@ -66,11 +69,6 @@ QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVarian
     qRegisterMetaType<QPlaceCategory>();
 
     m_db = new JsonDbClient(this);
-
-    connect(m_db, SIGNAL(response(int,QVariant)),
-            this, SLOT(processJsonDbResponse(int,QVariant)));
-    connect(m_db, SIGNAL(error(int,int,QString)),
-            this, SLOT(processJsonDbError(int,int,QString)));
 
     m_notificationUuid = m_db->registerNotification(JsonDbClient::NotifyCreate | JsonDbClient::NotifyUpdate | JsonDbClient::NotifyRemove,
                                 QString::fromLatin1("[?%1 = \"%2\" | %1 = \"%3\" ]").arg(JsonConverter::Type).arg(JsonConverter::PlaceType).arg(JsonConverter::CategoryType),
@@ -164,71 +162,46 @@ QPlaceIdReply *QPlaceManagerEngineJsonDb::removeCategory(const QString &category
 
 QPlaceReply *QPlaceManagerEngineJsonDb::initializeCategories()
 {
-    Reply *reply = new Reply(this);
-    reply->triggerDone();
+    CategoryInitReply *reply = new CategoryInitReply(this);
+    reply->start();
     return reply;
 }
 
 QString QPlaceManagerEngineJsonDb::parentCategoryId(const QString &categoryId) const
 {
-    int reqId = m_db->query(QString("[?%1=\"%2\"][?%3 = \"%4\"]").arg(JsonConverter::Type).arg(JsonConverter::CategoryType)
-                                      .arg(JsonConverter::Uuid).arg(categoryId));
-
-    QVariantMap responseMap;
-    //TODO: don't spin the event loop, instead try and have all category
-    //      data cached since it shouldn't be too large.
-    if (!waitForRequest(reqId, &responseMap)) {
-        return QString();
-    }
-
-    if (responseMap.value(JsonConverter::Length).toInt() <= 0)
-        return QString();
-
-    return responseMap.value(JsonConverter::Data).toList()
-            .first().toMap().value(JsonConverter::CategoryParentId).toString();
+    QMutexLocker locker(&m_treeMutex);
+    return m_tree.value(categoryId).parentId;
 }
 
 QStringList QPlaceManagerEngineJsonDb::childCategoryIds(const QString &categoryId) const
 {
-    QStringList result;
-    QList<QPlaceCategory> children = childCategories(categoryId);
-    foreach (const QPlaceCategory &child, children)
-        result.append(child.categoryId());
-
-    return result;
+    QMutexLocker locker(&m_treeMutex);
+    QStringList childrenIds = m_tree.value(categoryId).childIds;
+    return childrenIds;
 }
 
 QPlaceCategory QPlaceManagerEngineJsonDb::category(const QString &categoryId) const
 {
-    if (categoryId.isEmpty())
-        return QPlaceCategory();
+    QMutexLocker locker(&m_treeMutex);
 
-    int reqId =  m_db->query(queryCategoryString(categoryId));
-    QVariantMap response;
-    if (!waitForRequest(reqId, &response))
+    if (m_tree.contains(categoryId))
+        return m_tree.value(categoryId).category;
+    else
         return QPlaceCategory();
-
-    if (response.value(JsonConverter::Length).toInt() <= 0) {
-        return QPlaceCategory();
-    }
-
-    return JsonConverter::convertJsonMapToCategory(response.value(JsonConverter::Data).toList().first().toMap(), this);
 }
 
 QList<QPlaceCategory> QPlaceManagerEngineJsonDb::childCategories(const QString &parentId) const
 {
-    int reqId = m_db->query(QString("[?%1=\"%2\"][?%3 = \"%4\"]").arg(JsonConverter::Type).arg(JsonConverter::CategoryType)
-                .arg(JsonConverter::CategoryParentId).arg(parentId));
+    QMutexLocker locker(&m_treeMutex);
 
-    QVariantMap responseMap;
-    if (!waitForRequest(reqId, &responseMap)) {
-        return QList<QPlaceCategory>();
+    QStringList childrenIds = m_tree.value(parentId).childIds;
+    QList<QPlaceCategory> categories;
+    foreach (const QString &childId, childrenIds) {
+        if (m_tree.contains(childId))
+            categories.append(m_tree.value(childId).category);
     }
 
-    if (responseMap.value(JsonConverter::Length).toInt() <= 0)
-        return QList<QPlaceCategory>();
-
-    return JsonConverter::convertJsonResponseToCategories(responseMap, this);
+    return categories;
 }
 
 QList<QLocale> QPlaceManagerEngineJsonDb::locales() const
@@ -361,23 +334,10 @@ QPlaceMatchReply * QPlaceManagerEngineJsonDb::matchingPlaces(const QPlaceMatchRe
     return reply;
 }
 
-void QPlaceManagerEngineJsonDb::processJsonDbResponse(int id, const QVariant &data)
+void QPlaceManagerEngineJsonDb::setCategoryTree(const CategoryTree &tree)
 {
-    if (m_helperMap.contains(id)) {
-        m_helperMap.insert(id, data);
-        m_eventLoop.exit();
-    }
-}
-
-void QPlaceManagerEngineJsonDb::processJsonDbError(int id, int code, const QString &jsonDbErrorString)
-{
-    Q_UNUSED(code)
-    Q_UNUSED(jsonDbErrorString)
-
-    if (m_helperMap.contains(id)) {
-        m_helperMap.insert(id, false);
-        m_eventLoop.exit();
-    }
+    QMutexLocker locker(&m_treeMutex);
+    m_tree = tree;
 }
 
 void QPlaceManagerEngineJsonDb::processJsonDbNotification(const QString &notifyUuid, const QtAddOn::JsonDb::JsonDbNotification &notification)
@@ -406,22 +366,5 @@ void QPlaceManagerEngineJsonDb::processJsonDbNotification(const QString &notifyU
             emit categoryUpdated(category, parentId);
         else if (notification.action() & JsonDbClient::NotifyRemove)
             emit categoryRemoved(category.categoryId(), parentId);
-    }
-}
-
-bool QPlaceManagerEngineJsonDb::waitForRequest(int reqId, QVariantMap *variantMap) const
-{
-    m_helperMap.insert(reqId, QVariant());
-    m_eventLoop.exec(QEventLoop::AllEvents);
-
-    QVariant response = m_helperMap.value(reqId);
-    if (response.type() == QVariant::Bool) {
-        if (variantMap)
-            *variantMap = QVariantMap();
-        return false;
-    } else {
-        if (variantMap)
-            *variantMap = response.toMap();
-        return true;
     }
 }

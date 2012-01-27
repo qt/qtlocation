@@ -20,7 +20,8 @@ HEADERS += \
             unsupportedreplies.h \
             macro.h \
             idreply.h \
-            icon.h
+            icon.h \
+            initreply.h
 
 SOURCES += \
             qgeoserviceproviderplugin_jsondb.cpp \
@@ -31,10 +32,10 @@ SOURCES += \
             detailsreply.cpp \
             reply.cpp \
             idreply.cpp \
-            icon.cpp
+            icon.cpp \
+            initreply.cpp
 
 INCLUDEPATH += $$QT.location.includes
-
 
 DEFINES += QT_ADDON_JSONDB_LIB
 QT += jsondb
