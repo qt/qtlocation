@@ -556,23 +556,26 @@ void tst_QPlaceManagerJsonDb::savePlaceWithCategory()
 
 void tst_QPlaceManagerJsonDb::searchByName()
 {
-    QPlace adelaide, adel, ad, brisbane;
+    QPlace adelaide, adel, ad, brisbane, brandel;
     adelaide.setName("Adelaide");
     adel.setName("adel");
     ad.setName("ad");
     brisbane.setName("brisbane");
+    brisbane.setName("brandel");
 
     QList<QPlace> places;
     places << adelaide << adel << ad << brisbane;
     doSavePlaces(places);
 
-    //test that search has a 'startsWith' behaviour
+    //test that search has exhibits substring behaviour
     //and is case insensitive
     QPlaceSearchRequest request;
     request.setSearchTerm("adel");
     QList<QPlaceSearchResult> results;
     QVERIFY(doSearch(request, &results));
-    QCOMPARE(results.count(), 2);
+    QList<QPlace> expectedPlaces;
+    expectedPlaces << adelaide << adel << brandel;
+    QVERIFY(compareResults(results, expectedPlaces));
 
     //Search for a non-exisent place
     request.setSearchTerm("Nowhere");
