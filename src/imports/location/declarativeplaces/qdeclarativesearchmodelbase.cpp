@@ -217,7 +217,7 @@ void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvide
         if (serviceProvider) {
             QPlaceManager *placeManager = serviceProvider->placeManager();
             if (placeManager) {
-                if (placeManager->childrenCategoryIds().isEmpty()) {
+                if (placeManager->childCategoryIds().isEmpty()) {
                     QPlaceReply *reply = placeManager->initializeCategories();
                     connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
                 }

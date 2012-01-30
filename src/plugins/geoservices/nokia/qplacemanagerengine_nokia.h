@@ -83,7 +83,7 @@ public:
 
     QPlaceReply *initializeCategories();
     QString parentCategoryId(const QString &categoryId) const;
-    QStringList childrenCategoryIds(const QString &categoryId) const;
+    QStringList childCategoryIds(const QString &categoryId) const;
     QPlaceCategory category(const QString &categoryId) const;
     QList<QPlaceCategory> childCategories(const QString &parentId) const;
 

@@ -80,7 +80,7 @@ public:
 
     virtual QPlaceReply *initializeCategories() = 0;
     virtual QString parentCategoryId(const QString &categoryId) const = 0;
-    virtual QStringList childrenCategoryIds(const QString &categoryId) const = 0;
+    virtual QStringList childCategoryIds(const QString &categoryId) const = 0;
     virtual QPlaceCategory category(const QString &categoryId) const = 0;
 
     virtual QList<QPlaceCategory> childCategories(const QString &parentId) const = 0;

@@ -190,7 +190,7 @@
         \o QPlaceManager::childCategories()
         \o QPlaceManager::category()
         \o QPlaceManager::parentCategoryId()
-        \o QPlaceManager::childrenCategoryIds();
+        \o QPlaceManager::childCategoryIds();
     \endlist
 
     To retrieve the top level categories

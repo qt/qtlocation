@@ -262,10 +262,10 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 */
 
 /*!
-    \fn QStringList QPlaceManagerEngine::childrenCategoryIds(const QString &categoryId) const
+    \fn QStringList QPlaceManagerEngine::childCategoryIds(const QString &parentId) const
 
-    Returns the children category ids of the category corresponding to \a categoryId.
-    If \a categoryId is empty then all top level category ids are returned.
+    Returns the child category ids of the category corresponding to \a parentId.
+    If \a parentId is empty then all top level category ids are returned.
 */
 
 /*!

@@ -328,7 +328,7 @@ public:
         return QString();
     }
 
-    virtual QStringList childrenCategoryIds(const QString &categoryId) const
+    virtual QStringList childCategoryIds(const QString &categoryId) const
     {
         return m_childCategories.value(categoryId);
     }

@@ -188,7 +188,7 @@ QString QPlaceManagerEngineJsonDb::parentCategoryId(const QString &categoryId) c
             .first().toMap().value(JsonConverter::CategoryParentId).toString();
 }
 
-QStringList QPlaceManagerEngineJsonDb::childrenCategoryIds(const QString &categoryId) const
+QStringList QPlaceManagerEngineJsonDb::childCategoryIds(const QString &categoryId) const
 {
     QStringList result;
     QList<QPlaceCategory> children = childCategories(categoryId);

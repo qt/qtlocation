@@ -122,7 +122,7 @@ QT_BEGIN_NAMESPACE
         \o QPlaceManager::childCategories()
         \o QPlaceManager::category()
         \o QPlaceManager::parentCategoryId()
-        \o QPlaceManager::childrenCategoryIds();
+        \o QPlaceManager::childCategoryIds();
     \endlist
 
     If the categories need to be refreshed or reloaded, the initializeCategories() function
@@ -325,12 +325,12 @@ QString QPlaceManager::parentCategoryId(const QString &categoryId) const
 }
 
 /*!
-    Returns the children category ids of the category corresponding to \a categoryId.
-    If \a categoryId is empty then all top level category ids are returned.
+    Returns the child category ids of the category corresponding to \a parentId.
+    If \a parentId is empty then all top level category ids are returned.
 */
-QStringList QPlaceManager::childrenCategoryIds(const QString &categoryId) const
+QStringList QPlaceManager::childCategoryIds(const QString &parentId) const
 {
-    return d->childrenCategoryIds(categoryId);
+    return d->childCategoryIds(parentId);
 }
 
 /*!

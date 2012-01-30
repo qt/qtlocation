@@ -283,7 +283,7 @@ QString QPlaceManagerEngineNokia::parentCategoryId(const QString &categoryId) co
     return tree.value(categoryId).parentId;
 }
 
-QStringList QPlaceManagerEngineNokia::childrenCategoryIds(const QString &categoryId) const
+QStringList QPlaceManagerEngineNokia::childCategoryIds(const QString &categoryId) const
 {
     QPlaceCategoryTree tree = QPlaceCategoriesRepository::instance()->categories();
     return tree.value(categoryId).childIds;

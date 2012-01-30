@@ -1207,16 +1207,16 @@ void tst_QPlaceManagerJsonDb::categoryFunctions()
     QCOMPARE(placeManager->parentCategoryId(QLatin1String("does-not-exist")), QString());
 
     //try find the child ids
-    QStringList childIds = placeManager->childrenCategoryIds(restaurant.categoryId());
+    QStringList childIds = placeManager->childCategoryIds(restaurant.categoryId());
     QVERIFY(childIds.contains(fastFood.categoryId()));
     QVERIFY(childIds.contains(fineDining.categoryId()));
     QCOMPARE(childIds.count(), 2);
 
     //try find the child id of a category without a child
-    QCOMPARE(placeManager->childrenCategoryIds(fineDining.categoryId()), QStringList());
+    QCOMPARE(placeManager->childCategoryIds(fineDining.categoryId()), QStringList());
 
     //try to find child ids of a non-existent category
-    QCOMPARE(placeManager->childrenCategoryIds(QLatin1String("does-not-exist")), QStringList());
+    QCOMPARE(placeManager->childCategoryIds(QLatin1String("does-not-exist")), QStringList());
 
     //try to find a category by it's id
     QCOMPARE(placeManager->category(fastFood.categoryId()), fastFood);
