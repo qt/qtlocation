@@ -110,9 +110,9 @@ void QPlaceJSonCategoriesParser::processJSonData(const QJSValue &sv)
     PlaceCategoryNode rootNode;
     m_tree.insert(QString(), rootNode);
 
-    if (sv.isValid()) {
+    if (!sv.isUndefined()) {
         QJSValue sv2 = sv.property(place_categories_element);
-        if (sv2.isValid()) {
+        if (!sv2.isUndefined()) {
             processCategories(sv2, QString(), &m_tree);
             emit finished(NoError, QString());
         } else {
@@ -129,7 +129,7 @@ void QPlaceJSonCategoriesParser::processCategories(const QJSValue &categories, c
     Q_ASSERT(tree->contains(parentId));
 
     QJSValue value = categories.property(place_category_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             while (it.hasNext()) {
@@ -156,7 +156,7 @@ void QPlaceJSonCategoriesParser::processCategories(const QJSValue &categories, c
     }
 
     value = categories.property(place_group_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             while (it.hasNext()) {
@@ -176,10 +176,10 @@ PlaceCategoryNode QPlaceJSonCategoriesParser::processCategory(const QJSValue &ca
     PlaceCategoryNode categoryNode;
     categoryNode.parentId = parentId;
     QJSValue value = categoryValue.property(place_category_id_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         categoryNode.category.setCategoryId(value.toString());
         value = categoryValue.property(place_category_name_element);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             categoryNode.category.setName(value.toString());
         }
     }
@@ -189,7 +189,7 @@ PlaceCategoryNode QPlaceJSonCategoriesParser::processCategory(const QJSValue &ca
 void QPlaceJSonCategoriesParser::processGroup(const QJSValue &group, const QString &parentId, QPlaceCategoryTree *tree)
 {
     QJSValue value = group.property(place_groupingcategory_element);
-    if (!value.isValid())
+    if (value.isUndefined())
         return;
 
     PlaceCategoryNode catNode = processCategory(value, parentId);

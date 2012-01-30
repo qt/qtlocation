@@ -95,18 +95,18 @@ QPlaceImage QPlaceJSonMediaParser::buildMediaObject(const QJSValue &media)
 {
     QPlaceImage newMedia;
     QJSValue value = media.property(media_url);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newMedia.setUrl(QUrl::fromEncoded(value.toString().toAscii()));
         newMedia.setImageId(value.toString());
     }
 
     QString name, id, icon;
     value = media.property(media_provider_name);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         name = value.toString();
     }
     value = media.property(media_provider_id);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         id = value.toString();
     }
     if (!name.isEmpty() || !id.isEmpty()) {
@@ -123,9 +123,9 @@ void QPlaceJSonMediaParser::processJSonData(const QJSValue &sv)
 {
     media.clear();
 
-    if (sv.isValid()) {
+    if (!sv.isUndefined()) {
         QJSValue sv2 = sv.property(media_objects_element);
-        if (sv2.isValid()) {
+        if (!sv2.isUndefined()) {
             processMedia(sv2);
             emit finished(NoError, QString());
         } else {
@@ -139,7 +139,7 @@ void QPlaceJSonMediaParser::processJSonData(const QJSValue &sv)
 void QPlaceJSonMediaParser::processMedia(const QJSValue &mediaElement)
 {
     QJSValue value = mediaElement.property(media_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             while (it.hasNext()) {
@@ -154,7 +154,7 @@ void QPlaceJSonMediaParser::processMedia(const QJSValue &mediaElement)
         }
     }
     value = mediaElement.property(media_count);
-    if (value.isValid()) {
-        allMedia = value.toInt32();
+    if (!value.isUndefined()) {
+        allMedia = value.toInt();
     }
 }

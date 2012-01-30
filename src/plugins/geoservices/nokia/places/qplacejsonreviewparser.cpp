@@ -113,49 +113,49 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QJSValue &review, QPlaceM
     QPlaceSupplier supplier;
 
     QJSValue value = review.property(review_id_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newReview.setReviewId(value.toString());
     }
     value = review.property(review_date_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newReview.setDateTime(QDateTime::fromString(value.toString()));
     }
 
     value = review.property(review_originator_element);
-    if (value.isValid() && !value.toString().isEmpty())
+    if (!value.isUndefined() && !value.toString().isEmpty())
         supplier.setUrl(value.toString());
 
     value = review.property(review_description_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newReview.setText(value.toString());
     }
     value = review.property(review_title_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newReview.setTitle(value.toString());
     }
     value = review.property(review_username_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         QPlaceUser user = newReview.user();
         user.setName(value.toString());
         newReview.setUser(user);
     }
     value = review.property(review_userid_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         QPlaceUser user = newReview.user();
         user.setUserId(value.toString());
         newReview.setUser(user);
     }
 
     value = review.property(review_vendorname_element);
-    if (value.isValid() && !value.toString().isEmpty())
+    if (!value.isUndefined() && !value.toString().isEmpty())
         supplier.setName(value.toString());
 
     value = review.property(review_vendor_element);
-    if (value.isValid() && !value.toString().isEmpty())
+    if (!value.isUndefined() && !value.toString().isEmpty())
         supplier.setSupplierId(value.toString());
 
     value = review.property(review_vendoricon_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         QPlaceIcon icon;
         QVariantMap iconParams;
         iconParams.insert(QPlaceIcon::SingleUrl, QUrl::fromEncoded(value.toString().toAscii()));
@@ -165,7 +165,7 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QJSValue &review, QPlaceM
     }
 
     value = review.property(review_rating_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         bool isConverted;
         double number = value.toString().toDouble(&isConverted);
         if (isConverted) {
@@ -183,9 +183,9 @@ void QPlaceJSonReviewParser::processJSonData(const QJSValue &sv)
 {
     reviews.clear();
 
-    if (sv.isValid()) {
+    if (!sv.isUndefined()) {
         QJSValue sv2 = sv.property(reviews_element);
-        if (sv2.isValid()) {
+        if (!sv2.isUndefined()) {
             processReviews(sv2);
             emit finished(NoError, QString());
         } else {
@@ -199,7 +199,7 @@ void QPlaceJSonReviewParser::processJSonData(const QJSValue &sv)
 void QPlaceJSonReviewParser::processReviews(const QJSValue &reviewsElement)
 {
     QJSValue value = reviewsElement.property(review_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             while (it.hasNext()) {
@@ -214,7 +214,7 @@ void QPlaceJSonReviewParser::processReviews(const QJSValue &reviewsElement)
         }
     }
     value = reviewsElement.property(review_count);
-    if (value.isValid()) {
-        allReviews = value.toInt32();
+    if (!value.isUndefined()) {
+        allReviews = value.toInt();
     }
 }

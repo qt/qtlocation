@@ -70,8 +70,8 @@ void QPlaceJSonTextPredictionParser::processJSonData(const QJSValue &sv)
 {
     suggestions.clear();
 
-    if (sv.isValid() && sv.isArray()) {
-        quint32 len = sv.property("length").toUInt32();
+    if (!sv.isUndefined() && sv.isArray()) {
+        quint32 len = sv.property("length").toUInt();
         for (quint32 i = 0; i < len; ++i)
             suggestions << sv.property(i).toString();
 

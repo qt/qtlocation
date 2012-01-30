@@ -207,7 +207,7 @@ QPlaceJSonDetailsParser::~QPlaceJSonDetailsParser()
 QPlace QPlaceJSonDetailsParser::buildPlace(const QJSValue &placeValue, QPlaceManager *manager)
 {
     QPlace newPlace;
-    if (placeValue.isValid()) {
+    if (!placeValue.isUndefined()) {
         buildPlace(placeValue, &newPlace);
     }
 
@@ -232,9 +232,9 @@ QPlace QPlaceJSonDetailsParser::result()
 
 void QPlaceJSonDetailsParser::processJSonData(const QJSValue &sv)
 {
-    if (sv.isValid()) {
+    if (!sv.isUndefined()) {
         QJSValue placeProperty = sv.property(place_place_element);
-        if (placeProperty.isValid()) {
+        if (!placeProperty.isUndefined()) {
             place = buildPlace(placeProperty, m_manager);
             emit finished(NoError, QString());
         } else {
@@ -247,42 +247,42 @@ void QPlaceJSonDetailsParser::processJSonData(const QJSValue &sv)
 
 void QPlaceJSonDetailsParser::buildPlace(const QJSValue &placeValue, QPlace *targetPlace)
 {
-    if (placeValue.isValid()) {
+    if (!placeValue.isUndefined()) {
         QJSValue value = placeValue.property(place_id_element);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             targetPlace->setPlaceId(value.toString());
         }
         processMainProvider(placeValue, targetPlace);
         value = placeValue.property(place_categories_element);
-        if (value.isValid()) {
+        if (!value.isUndefined()) {
             processCategories(value, targetPlace);
         }
         value = placeValue.property(place_contact_element);
-        if (value.isValid()) {
+        if (!value.isUndefined()) {
             processContacts(value, targetPlace);
         }
         value = placeValue.property(place_tags_element);
-        if (value.isValid()) {
+        if (!value.isUndefined()) {
             processTags(value, targetPlace);
         }
         value = placeValue.property(place_names_element);
-        if (value.isValid()) {
+        if (!value.isUndefined()) {
             processNames(value, targetPlace);
         }
         value = placeValue.property(place_ratings_element);
-        if (value.isValid()) {
+        if (!value.isUndefined()) {
             processRatings(value, targetPlace);
         }
         value = placeValue.property(place_location_element);
-        if (value.isValid()) {
+        if (!value.isUndefined()) {
             processLocation(value, targetPlace);
         }
         value = placeValue.property(place_adcontent_element);
-        if (value.isValid()) {
+        if (!value.isUndefined()) {
             processAdContent(value, targetPlace);
         }
         value = placeValue.property(place_premiumcontent_element);
-        if (value.isValid()) {
+        if (!value.isUndefined()) {
             processPremiumContents(value, targetPlace);
         }
     }
@@ -292,14 +292,14 @@ void QPlaceJSonDetailsParser::processMainProvider(const QJSValue &placeValue, QP
 {
     QPlaceSupplier sup;
     QJSValue value = placeValue.property(place_provider);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         sup.setName(value.toString());
     }
     else {
         return;
     }
     value = placeValue.property(place_provider_url);
-    if (value.isValid() && !value.toString().isEmpty()){
+    if (!value.isUndefined() && !value.toString().isEmpty()){
         QPlaceIcon icon;
         QVariantMap iconParams;
         iconParams.insert(QPlaceIcon::SingleUrl, QUrl(value.toString()));
@@ -348,7 +348,7 @@ void QPlaceJSonDetailsParser::processRatings(const QJSValue &ratings, QPlace *ta
 {
     QPlaceRatings *rating = NULL;
     QJSValue value = ratings.property(place_rating_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             while (it.hasNext()) {
@@ -377,10 +377,10 @@ QPlaceRatings *QPlaceJSonDetailsParser::processRating(const QJSValue &ratingElem
     QPlaceRatings *rating = NULL;
     QJSValue value = ratingElement.property(place_rating_type_element);
     // Only overall elements are interesting
-    if (value.isValid() && value.toString() == place_rating_type_overall_element) {
+    if (!value.isUndefined() && value.toString() == place_rating_type_overall_element) {
         rating = new QPlaceRatings();
         value = ratingElement.property(place_rating_count_element);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             bool isConverted;
             uint ratingValue = value.toString().toInt(&isConverted);
             if (isConverted) {
@@ -388,7 +388,7 @@ QPlaceRatings *QPlaceJSonDetailsParser::processRating(const QJSValue &ratingElem
             }
         }
         value = ratingElement.property(place_rating_rating_element);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             bool isConverted;
             double ratingValue = value.toString().toDouble(&isConverted);
             if (isConverted) {
@@ -403,39 +403,39 @@ void QPlaceJSonDetailsParser::processAddress(const QJSValue &address, QGeoLocati
 {
     QGeoAddress newAddress;
     QJSValue value = address.property(place_address_street);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setStreet(value.toString());
     }
     value = address.property(place_address_country);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setCountry(value.toString());
     }
     value = address.property(place_address_county);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setCounty(value.toString());
     }
     value = address.property(place_address_country_code);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setCountry(value.toString());
     }
     value = address.property(place_address_state);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setState(value.toString());
     }
     value = address.property(place_address_city);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setCity(value.toString());
     }
     value = address.property(place_address_code);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setPostalCode(value.toString());
     }
     value = address.property(place_address_district);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setDistrict(value.toString());
     }
     value = address.property(place_address_house_number);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setStreet(value.toString() + " " + newAddress.street());
     }
     location->setAddress(newAddress);
@@ -445,10 +445,10 @@ void QPlaceJSonDetailsParser::processLocation(const QJSValue &location, QPlace *
 {
     QGeoLocation newLocation;
     QJSValue property = location.property(place_geoCoordinates_element);
-    if (property.isValid()) {
+    if (!property.isUndefined()) {
         QGeoCoordinate pos;
         QJSValue value = property.property(place_geoCoordinates_longitude_value);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             bool isConverted;
             double longitude = value.toString().toDouble(&isConverted);
             if (isConverted) {
@@ -456,7 +456,7 @@ void QPlaceJSonDetailsParser::processLocation(const QJSValue &location, QPlace *
             }
         }
         value = property.property(place_geoCoordinates_latitude_value);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             bool isConverted;
             double latitude = value.toString().toDouble(&isConverted);
             if (isConverted) {
@@ -466,7 +466,7 @@ void QPlaceJSonDetailsParser::processLocation(const QJSValue &location, QPlace *
         newLocation.setCoordinate(pos);
     }
     property = location.property(place_address_element);
-    if (property.isValid()) {
+    if (!property.isUndefined()) {
         processAddress(property, &newLocation);
     }
     targetPlace->setLocation(newLocation);
@@ -477,19 +477,19 @@ void QPlaceJSonDetailsParser::processTags(const QJSValue &tags, QPlace *targetPl
     Q_UNUSED(targetPlace)
 
     QStringList newTags;
-    if (tags.isValid()) {
+    if (!tags.isUndefined()) {
         if (tags.isArray()) {
             QJSValueIterator it(tags);
             while (it.hasNext()) {
                 it.next();
                 QJSValue value = it.value().property(place_tags_value_element);
-                if (value.isValid() && !value.toString().isEmpty()) {
+                if (!value.isUndefined() && !value.toString().isEmpty()) {
                     newTags.append(value.toString());
                 }
             }
         } else {
             QJSValue value = tags.property(place_tags_value_element);
-            if (value.isValid() && !value.toString().isEmpty()) {
+            if (!value.isUndefined() && !value.toString().isEmpty()) {
                 newTags.append(value.toString());
             }
         }
@@ -502,9 +502,9 @@ void QPlaceJSonDetailsParser::processTags(const QJSValue &tags, QPlace *targetPl
 void QPlaceJSonDetailsParser::processNames(const QJSValue &names, QPlace *targetPlace)
 {
     QJSValue value = names.property(place_alternativenames_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         value = value.property(place_name_localized_element);
-        if (value.isValid()) {
+        if (!value.isUndefined()) {
             QStringList list;
             if (value.isArray()) {
                 QJSValueIterator it(value);
@@ -531,7 +531,7 @@ void QPlaceJSonDetailsParser::processNames(const QJSValue &names, QPlace *target
         }
     }
     value = names.property(place_name_default_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         QString name = processName(value);
         if (!name.isEmpty()) {
             targetPlace->setName(name);
@@ -543,7 +543,7 @@ QString QPlaceJSonDetailsParser::processName(const QJSValue &nameValue)
 {
     QString name;
     QJSValue value = nameValue.property(place_name_value_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         name = value.toString();
     }
     return name;
@@ -552,7 +552,7 @@ QString QPlaceJSonDetailsParser::processName(const QJSValue &nameValue)
 void QPlaceJSonDetailsParser::processPremiumContents(const QJSValue &premiumContent, QPlace *targetPlace)
 {
     QJSValue value = premiumContent.property(place_premiumcontent_version_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             while (it.hasNext()) {
@@ -571,7 +571,7 @@ void QPlaceJSonDetailsParser::processPremiumContents(const QJSValue &premiumCont
 void QPlaceJSonDetailsParser::processPremiumVersion(const QJSValue &content, QPlace *targetPlace)
 {
     QJSValue value = content.property(place_premiumcontent_content_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             while (it.hasNext()) {
@@ -592,15 +592,15 @@ void QPlaceJSonDetailsParser::processPremiumContent(const QJSValue &content, QPl
     QPlaceSupplier supplier;
 
     QJSValue value = content.property(place_premiumcontent_content_providername_element);
-    if (value.isValid() && !value.toString().isEmpty())
+    if (!value.isUndefined() && !value.toString().isEmpty())
         supplier.setName(value.toString());
 
     value = content.property(place_premiumcontent_content_provider_element);
-    if (value.isValid() && !value.toString().isEmpty())
+    if (!value.isUndefined() && !value.toString().isEmpty())
         supplier.setSupplierId(value.toString());
 
     value = content.property(place_premiumcontent_content_providerIconUrl_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         QPlaceIcon icon;
         QVariantMap iconParams;
         iconParams.insert(QPlaceIcon::SingleUrl, QUrl::fromEncoded(value.toString().toAscii()));
@@ -622,11 +622,11 @@ void QPlaceJSonDetailsParser::processPremiumContentDescription(const QJSValue &c
 {
     QJSValue value = content.property(place_premiumcontent_content_desc_element);
     QPlaceEditorial desc;
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         desc.setText(value.toString());
     } else {
         value = content.property(place_premiumcontent_content_shortdesc_element);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             desc.setText(value.toString());
         }
     }
@@ -635,17 +635,17 @@ void QPlaceJSonDetailsParser::processPremiumContentDescription(const QJSValue &c
         return;
     }
     value = content.property(place_premiumcontent_content_name_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         desc.setTitle(value.toString());
     }
     value = content.property(place_premiumcontent_content_vendorurl_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         QPlaceSupplier supplier = desc.supplier();
         supplier.setUrl(value.toString());
         desc.setSupplier(supplier);
     }
     value = content.property(place_premiumcontent_content_language_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         desc.setLanguage(value.toString());
     }
     desc.setSupplier(supplier);
@@ -665,7 +665,7 @@ void QPlaceJSonDetailsParser::processPremiumContentMediaObjects(const QJSValue &
                                                                 QPlace *targetPlace)
 {
     QJSValue value = content.property(place_premiumcontent_content_media_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             //Note: Currently only image types are supported by the server
@@ -708,12 +708,12 @@ QPlaceImage *QPlaceJSonDetailsParser::processPremiumContentMediaObject(const QJS
 {
     QPlaceImage *obj = NULL;
     QJSValue value = content.property(place_premiumcontent_content_mediaurl_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         obj = new QPlaceImage();
         obj->setUrl(QUrl::fromEncoded(value.toString().toAscii()));
         obj->setImageId(value.toString());
         value = content.property(place_premiumcontent_content_mediamimetype_element);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             obj->setMimeType(value.toString());
         }
     }
@@ -723,19 +723,19 @@ QPlaceImage *QPlaceJSonDetailsParser::processPremiumContentMediaObject(const QJS
 void QPlaceJSonDetailsParser::processAdContent(const QJSValue &content, QPlace *targetPlace)
 {
     QJSValue value = content.property(place_adcontent_descriptions_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         processAdContentDescriptions(value, targetPlace);
     }
     value = content.property(place_adcontent_medias_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         processAdContentMediaObjects(value, targetPlace);
     }
     value = content.property(place_adcontent_paymentmethods_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         processAdContentPaymentMethods(value, targetPlace);
     }
     value = content.property(place_adcontent_hours_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         processAdContentBusinessHours(value, targetPlace);
     }
 }
@@ -743,7 +743,7 @@ void QPlaceJSonDetailsParser::processAdContent(const QJSValue &content, QPlace *
 void QPlaceJSonDetailsParser::processAdContentDescriptions(const QJSValue &content, QPlace *targetPlace)
 {
     QJSValue value = content.property(place_adcontent_description_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
 
@@ -789,11 +789,11 @@ QPlaceEditorial *QPlaceJSonDetailsParser::processAdContentDescription(const QJSV
 {
     QPlaceEditorial *description = NULL;
     QJSValue value = content.property(place_adcontent_localizedDescription_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         description = new QPlaceEditorial();
         description->setText(value.toString());
         value = content.property(place_adcontent_descriptionLanguage_element);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             description->setLanguage(value.toString());
         }
     }
@@ -803,7 +803,7 @@ QPlaceEditorial *QPlaceJSonDetailsParser::processAdContentDescription(const QJSV
 void QPlaceJSonDetailsParser::processAdContentMediaObjects(const QJSValue &content, QPlace *targetPlace)
 {
     QJSValue value = content.property(place_adcontent_media_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             //The server only has images for now.
@@ -847,11 +847,11 @@ QPlaceImage *QPlaceJSonDetailsParser::processAdContentMediaObject(const QJSValue
     QString mediaUrl;
 
     QJSValue value = content.property(place_adcontent_media_mime_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         mediaMimeType = value.toString();
     }
     value = content.property(place_adcontent_media_url_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         mediaUrl = value.toString();
     }
     if (!mediaMimeType.isEmpty() || !mediaUrl.isEmpty()) {
@@ -866,7 +866,7 @@ QPlaceImage *QPlaceJSonDetailsParser::processAdContentMediaObject(const QJSValue
 void QPlaceJSonDetailsParser::processAdContentPaymentMethods(const QJSValue &content, QPlace *targetPlace)
 {
     QJSValue value = content.property(place_adcontent_paymentmethod_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         QStringList list;
         if (value.isArray()) {
             QJSValueIterator it(value);
@@ -899,7 +899,7 @@ QString QPlaceJSonDetailsParser::processAdContentPaymentMethod(const QJSValue &c
 {
     QString obj;
     QJSValue value = content.property(place_adcontent_paymentmethod_name_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         obj = value.toString();
     }
     return obj;
@@ -908,15 +908,15 @@ QString QPlaceJSonDetailsParser::processAdContentPaymentMethod(const QJSValue &c
 void QPlaceJSonDetailsParser::processAdContentBusinessHours(const QJSValue &content, QPlace *targetPlace)
 {
     QJSValue value = content.property(place_adcontent_hours_annualclosingsnotes_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         processAdContentClosingsNotes(value, targetPlace);
     }
     value = content.property(place_adcontent_hours_open_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         processAdContentOpeningHours(value, targetPlace);
     }
     value = content.property(place_adcontent_hours_openingnotes_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         processAdContentOpeningNotes(value, targetPlace);
     }
 }
@@ -927,7 +927,7 @@ void QPlaceJSonDetailsParser::processAdContentClosingsNotes(const QJSValue &cont
     Q_UNUSED(targetPlace)
 
     QJSValue value = content.property(place_adcontent_hours_annualclosingsnote_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             while (it.hasNext()) {
@@ -960,7 +960,7 @@ QString QPlaceJSonDetailsParser::processAdContentClosingsNote(const QJSValue &co
 {
     QString ret;
     QJSValue value = content.property(place_adcontent_hours_annualclosingsnote_v_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         ret = value.toString();
     }
     return ret;
@@ -972,7 +972,7 @@ void QPlaceJSonDetailsParser::processAdContentOpeningHours(const QJSValue &conte
     Q_UNUSED(targetPlace)
 
     QJSValue value = content.property(place_adcontent_hours_open_hours_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             while (it.hasNext()) {
@@ -1004,7 +1004,7 @@ void QPlaceJSonDetailsParser::processAdContentOpeningHoursElement(const QJSValue
     //parse but do nothing else
 
     QJSValue value = content.property(place_adcontent_hours_open_day_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         QString day = value.toString();
         if (place_premiumcontent_content_monday == day) {
         } else if (place_premiumcontent_content_tuesday == day) {
@@ -1017,11 +1017,11 @@ void QPlaceJSonDetailsParser::processAdContentOpeningHoursElement(const QJSValue
     }
     QTime start, end;
     value = content.property(place_adcontent_hours_open_from_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         start = QTime::fromString(value.toString(),"hh:mm");
     }
     value = content.property(place_adcontent_hours_open_to_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         end = QTime::fromString(value.toString(),"hh:mm");
     }
     return;
@@ -1030,7 +1030,7 @@ void QPlaceJSonDetailsParser::processAdContentOpeningHoursElement(const QJSValue
 void QPlaceJSonDetailsParser::processAdContentOpeningNotes(const QJSValue &content, QPlace *targetPlace)
 {
     QJSValue value = content.property(place_adcontent_hours_openingnote_element);
-    if (value.isValid()) {
+    if (!value.isUndefined()) {
         if (value.isArray()) {
             QJSValueIterator it(value);
             while (it.hasNext()) {
@@ -1064,7 +1064,7 @@ QString QPlaceJSonDetailsParser::processAdContentOpeningNote(const QJSValue &con
 {
     QString ret;
     QJSValue value = content.property(place_adcontent_hours_openingnote_v_element);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         ret = value.toString();
     }
     return ret;

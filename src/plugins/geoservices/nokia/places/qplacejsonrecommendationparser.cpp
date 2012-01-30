@@ -84,9 +84,9 @@ void QPlaceJSonRecommendationParser::processJSonData(const QJSValue &sv)
 {
     searchResults.clear();
 
-    if (sv.isValid()) {
+    if (!sv.isUndefined()) {
         QJSValue sv2 = sv.property(recommendations_element);
-        if (sv2.isValid()) {
+        if (!sv2.isUndefined()) {
             QJSValueIterator it(sv2.property(recommendations_nearby_element));
             while (it.hasNext()) {
                 it.next();
@@ -109,7 +109,7 @@ void QPlaceJSonRecommendationParser::processResultElement(const QJSValue &value)
 
     // Processing properties
     QJSValue distance = value.property(recommendations_distance_element);
-    if (distance.isValid() && !distance.toString().isEmpty()) {
+    if (!distance.isUndefined() && !distance.toString().isEmpty()) {
         bool isConverted;
         double distanceValue = distance.toString().toDouble(&isConverted);
         if (isConverted) {
@@ -117,7 +117,7 @@ void QPlaceJSonRecommendationParser::processResultElement(const QJSValue &value)
         }
     }
     QJSValue place = value.property(recommendations_place_element);
-    if (place.isValid()) {
+    if (!place.isUndefined()) {
         QPlace newPlace = QPlaceJSonDetailsParser::buildPlace(place, m_manager);
         result.setPlace(newPlace);
         searchResults.append(result);

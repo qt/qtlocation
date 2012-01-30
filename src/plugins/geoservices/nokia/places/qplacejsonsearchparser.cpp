@@ -127,9 +127,9 @@ void QPlaceJSonSearchParser::processJSonData(const QJSValue &sv)
 {
     searchResultsList.clear();
 
-    if (sv.isValid()) {
+    if (!sv.isUndefined()) {
         QJSValue results = sv.property(search_results_element);
-        if (results.isValid()) {
+        if (!results.isUndefined()) {
             QJSValueIterator it(results);
             while (it.hasNext()) {
                 it.next();
@@ -151,14 +151,14 @@ void QPlaceJSonSearchParser::processResultElement(const QJSValue &value)
 {
     // Procesing DYM string
     QJSValue type = value.property(search_type_element);
-    if (type.isValid() && type.toString() == search_type_dym_value) {
+    if (!type.isUndefined() && type.toString() == search_type_dym_value) {
         QJSValue properties = value.property(search_properties_element);
-        if (properties.isValid()) {
+        if (!properties.isUndefined()) {
             QJSValue title = properties.property(search_properties_title_value);
-            if (title.isValid() && !title.toString().isEmpty()) {
+            if (!title.isUndefined() && !title.toString().isEmpty()) {
                 QPlaceSearchResult result;
                 QJSValue type = properties.property(search_type_element);
-                if (type.isValid()) {
+                if (!type.isUndefined()) {
                     result = processPlaceElement(value);
                 }
                 result.setType(QPlaceSearchResult::CorrectionResult);
@@ -180,10 +180,10 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QJSValue &r
 
     // Processing properties
     QJSValue properties = results.property(search_properties_element);
-    if (properties.isValid()) {
+    if (!properties.isUndefined()) {
         // QSearchResult properties
         QJSValue distance = properties.property(search_properties_distance_value);
-        if (distance.isValid() && !distance.toString().isEmpty()) {
+        if (!distance.isUndefined() && !distance.toString().isEmpty()) {
             bool isConverted;
             double distanceValue = distance.toString().toDouble(&isConverted);
             if (isConverted) {
@@ -192,21 +192,21 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QJSValue &r
         }
         // Place properties
         QJSValue value = properties.property(search_properties_title_value);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             newPlace.setName(value.toString());
         }
         value = properties.property(search_properties_placeid_value);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             newPlace.setPlaceId(value.toString());
         }
         value = properties.property(search_properties_description_value);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             //The JSON data specification defines short description
             //but our API doesn't expose this so we
             //parse and skip assignment
         }
         value = properties.property(search_properties_supliers_value);
-        if (value.isValid() && !value.toString().isEmpty()) {
+        if (!value.isUndefined() && !value.toString().isEmpty()) {
             QPlaceSupplier sup;
             sup.setName(value.toString());
             newPlace.setSupplier(QPlaceSuppliersRepository::instance()->addSupplier(sup));
@@ -216,7 +216,7 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QJSValue &r
         processLocation(properties, &newPlace);
 
         value = results.property(search_categories_element);
-        if (value.isValid()) {
+        if (!value.isUndefined()) {
             processCategories(value, &newPlace);
         }
     }
@@ -233,14 +233,14 @@ QPlaceSearchResult QPlaceJSonSearchParser::processPlaceElement(const QJSValue &r
 void QPlaceJSonSearchParser::processContacts(const QJSValue &properties, QPlace *place)
 {
     QJSValue value = properties.property(search_properties_url_value);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         QPlaceContactDetail contactDetail;
         contactDetail.setLabel(tr("Website"));
         contactDetail.setValue(value.toString());
         place->appendContactDetail(QPlaceContactDetail::Website, contactDetail);
     }
     value = properties.property(search_properties_phone_value);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         QPlaceContactDetail contactDetail;
         contactDetail.setLabel(tr("Phone"));
         contactDetail.setValue(value.toString());
@@ -258,7 +258,7 @@ void QPlaceJSonSearchParser::processCategories(const QJSValue &categories, QPlac
         // array contains count as last element
         if (it.name() != "length") {
             QJSValue value = it.value().property(search_categories_id_value);
-            if (value.isValid() && !value.toString().isEmpty()) {
+            if (!value.isUndefined() && !value.toString().isEmpty()) {
                 QPlaceCategory category = QPlaceCategoriesRepository::instance()->mapCategory(
                             value.toString());
                 if (!category.categoryId().isEmpty()) {
@@ -273,7 +273,7 @@ void QPlaceJSonSearchParser::processCategories(const QJSValue &categories, QPlac
 void QPlaceJSonSearchParser::processRating(const QJSValue &properties, QPlace *place)
 {
     QJSValue value = properties.property(search_properties_rating_value);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         bool isConverted;
         double ratingValue = value.toString().toDouble(&isConverted);
         if (isConverted) {
@@ -288,39 +288,39 @@ void QPlaceJSonSearchParser::processAddress(const QJSValue &properties, QGeoLoca
 {
     QGeoAddress newAddress;
     QJSValue value = properties.property(search_properties_address_country);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setCountry(value.toString());
     }
     value = properties.property(search_properties_address_county);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setCounty(value.toString());
     }
     value = properties.property(search_properties_address_country_code);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setCountry(value.toString());
     }
     value = properties.property(search_properties_address_state);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setState(value.toString());
     }
     value = properties.property(search_properties_address_code);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setPostalCode(value.toString());
     }
     value = properties.property(search_properties_address_city);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setCity(value.toString());
     }
     value = properties.property(search_properties_address_district);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setDistrict(value.toString());
     }
     value = properties.property(search_properties_address_street);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         newAddress.setStreet(value.toString());
     }
     value = properties.property(search_properties_address_house_number);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         //TODO: need to figure out how to deal with street number
         //and whether to keep it separate from street.
         newAddress.setStreet(value.toString() + " " + newAddress.street());
@@ -339,11 +339,11 @@ void QPlaceJSonSearchParser::processLocation(const QJSValue &properties, QPlace 
 
     // display position
     QJSValue value = properties.property(search_properties_latitude_value);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         latitude = value.toString().toDouble(&latOK);
     }
     value = properties.property(search_properties_longitude_value);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         longitude = value.toString().toDouble(&lonOK);
     }
     if (latOK && lonOK) {
@@ -359,11 +359,11 @@ void QPlaceJSonSearchParser::processLocation(const QJSValue &properties, QPlace 
     latOK = false;
     lonOK = false;
     value = properties.property(search_properties_latitude_bb1_value);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         latitude = value.toString().toDouble(&latOK);
     }
     value = properties.property(search_properties_longitude_bb1_value);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         longitude = value.toString().toDouble(&lonOK);
     }
     if (latOK && lonOK) {
@@ -374,11 +374,11 @@ void QPlaceJSonSearchParser::processLocation(const QJSValue &properties, QPlace 
     latOK = false;
     lonOK = false;
     value = properties.property(search_properties_latitude_bb2_value);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         latitude = value.toString().toDouble(&latOK);
     }
     value = properties.property(search_properties_longitude_bb2_value);
-    if (value.isValid() && !value.toString().isEmpty()) {
+    if (!value.isUndefined() && !value.toString().isEmpty()) {
         longitude = value.toString().toDouble(&lonOK);
     }
     if (latOK && lonOK) {
