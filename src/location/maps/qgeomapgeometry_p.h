@@ -83,6 +83,8 @@ public:
     void setCameraData(const QGeoCameraData &cameraData_);
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
 
+    void setUseVerticalLock(bool lock);
+
     void addTile(const QGeoTileSpec &spec, QGLTexture2D *texture);
 
     QDoubleVector2D screenPositionToMercator(const QPointF &pos) const;

@@ -98,6 +98,7 @@ public:
     double screenWidth_;
     double screenHeight_;
 
+    bool useVerticalLock_;
     bool verticalLock_;
 
     void addTile(const QGeoTileSpec &spec, QGLTexture2D *texture);
@@ -119,6 +120,12 @@ QGeoMapGeometry::QGeoMapGeometry(QSharedPointer<QGeoProjection> projection)
 QGeoMapGeometry::~QGeoMapGeometry()
 {
     delete d_ptr;
+}
+
+void QGeoMapGeometry::setUseVerticalLock(bool lock)
+{
+    Q_D(QGeoMapGeometry);
+    d->useVerticalLock_ = lock;
 }
 
 void QGeoMapGeometry::setScreenSize(const QSize &size)
@@ -200,6 +207,7 @@ QGeoMapGeometryPrivate::QGeoMapGeometryPrivate(QSharedPointer<QGeoProjection> pr
       tileXWrapsBelow_(0),
       screenOffsetX_(0.0),
       screenOffsetY_(0.0),
+      useVerticalLock_(false),
       verticalLock_(false) {}
 
 QGeoMapGeometryPrivate::~QGeoMapGeometryPrivate()
@@ -475,7 +483,7 @@ void QGeoMapGeometryPrivate::setupCamera()
     center.setY(1.0 * minTileY_ - center.y());
 
     // letter box vertically
-    if (mercatorHeight_ > 1.0 * zpow2) {
+    if (useVerticalLock_ && (mercatorHeight_ > 1.0 * zpow2)) {
         center.setY(-1.0 * zpow2 / 2.0);
         mercatorCenterY_ = zpow2 / 2.0;
         screenOffsetY_ = screenSize_.height() * (0.5 - zpow2 / (2 * mercatorHeight_));
