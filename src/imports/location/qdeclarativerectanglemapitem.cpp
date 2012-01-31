@@ -251,6 +251,9 @@ void QDeclarativeRectangleMapItem::updateMapItem()
         return;
 
     if (dirtyGeometry_) {
+        /* This is really naive. we should probably put this through the
+         * real triangulator and transform each corner? */
+
         QPointF p1 = map()->coordinateToScreenPosition(topLeft_->coordinate(), false);
         QPointF p2 = map()->coordinateToScreenPosition(bottomRight_->coordinate(), false);
 
@@ -265,41 +268,48 @@ void QDeclarativeRectangleMapItem::updateMapItem()
         rectangle_.setTopLeft(QPointF(0, 0));
         rectangle_.setBottomRight(QPointF(w, h));
 
-        QList<QGeoCoordinate> pathClosed;
-        const double lonW = qAbs(bottomRight_->longitude() - topLeft_->longitude());
-        const double latH = qAbs(bottomRight_->latitude() - topLeft_->latitude());
-        pathClosed << topLeft_->coordinate();
-        pathClosed << QGeoCoordinate(topLeft_->latitude(),
-                                     topLeft_->longitude() + lonW);
-        pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
-                                     topLeft_->longitude() + lonW);
-        pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
-                                     topLeft_->longitude());
-        pathClosed << pathClosed.first();
-
         if (border_.width() > 0 && border_.color() != Qt::transparent) {
+
             QPolygonF newBorderPoly;
             QPointF offset;
+
+            /* We need a closed path as input to updatePolyline, so we get
+             * to make one */
+            QList<QGeoCoordinate> pathClosed;
+            const double lonW = qAbs(bottomRight_->longitude() - topLeft_->longitude());
+            const double latH = qAbs(bottomRight_->latitude() - topLeft_->latitude());
+            pathClosed << topLeft_->coordinate();
+            pathClosed << QGeoCoordinate(topLeft_->latitude(),
+                                         topLeft_->longitude() + lonW);
+            pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
+                                         topLeft_->longitude() + lonW);
+            pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
+                                         topLeft_->longitude());
+            pathClosed << pathClosed.first();
+
             QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
                                                         pathClosed, w, h,
                                                         border_.width(),
                                                         borderOutline_, offset);
+
+            // Can return zero points if nothing is visible
             if (newBorderPoly.size() > 0) {
-                newBorderPoly.translate(-1*offset);
+                offset_ = offset;
+                rectangle_.translate(offset_);
                 borderPoly_ = newBorderPoly;
-                borderOutline_.translate(-1*offset);
             }
+
         } else {
             borderPoly_ = QPolygonF();
             borderOutline_ = QPainterPath();
+            offset_ = QPointF(0,0);
         }
 
         setWidth(w);
         setHeight(h);
     }
 
-    //TODO: add AnchorCoordiante
-    setPositionOnMap(topLeft_->coordinate(), QPointF(0, 0));
+    setPositionOnMap(topLeft_->coordinate(), offset_);
     update();
 }
 

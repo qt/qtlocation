@@ -342,42 +342,64 @@ void QDeclarativeCircleMapItem::updateMapItem()
         qreal h = 0;
 
         QPolygonF newPoly, newBorderPoly;
-        QPointF offset;
+        QPainterPath newOutline, newBorderOutline;
+        QPointF offset, borderOffset;
 
-        outline_ = QPainterPath();
+        // First, regenerate the fill region
         QDeclarativePolygonMapItem::updatePolygon(newPoly, *map(),
                                                    circlePath_, w, h,
-                                                   offset, outline_);
+                                                   offset, newOutline);
 
+        // If we get zero points back, no part of the fill is on the screen
         if (newPoly.size() > 0) {
             circlePolygon_ = newPoly;
-            offset_ = offset;
+            outline_ = newOutline;
         }
+        /* No "else" here -- we don't want to update polygon and outline
+         * with the empty poly, as this will break any mouse area that may
+         * still be partially visible */
 
-        QList<QGeoCoordinate> pathClosed = circlePath_;
-        pathClosed.append(pathClosed.at(0));
-
-        borderOutline_ = QPainterPath();
         if (border_.width() > 0 && border_.color() != Qt::transparent) {
+
+            // Polyline code won't close the path for us
+            QList<QGeoCoordinate> pathClosed = circlePath_;
+            pathClosed.append(pathClosed.at(0));
+
+            // Now regenerate the stroked border region
             QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
                                                         pathClosed, w, h,
                                                         border_.width(),
-                                                        borderOutline_, offset);
-
+                                                        newBorderOutline,
+                                                        borderOffset);
+            // Once again, it can return no points if nothing is visible
             if (newBorderPoly.size() > 0) {
                 borderPolygon_ = newBorderPoly;
-                borderPolygon_.translate(offset_ - offset);
-                borderOutline_.translate(offset_ - offset);
+                borderOutline_ = newBorderOutline;
+
+                /* See qdeclarativepolygonmapitem.cpp for the rationale here */
+                offset_ = QPointF(qMax(offset.x(), borderOffset.x()),
+                                  qMax(offset.y(), borderOffset.y()));
+
+                borderPolygon_.translate(offset_ - borderOffset);
+                borderOutline_.translate(offset_ - borderOffset);
+
+                // Only re-translate these if we generated a new fill
+                if (newPoly.size() > 0) {
+                    circlePolygon_.translate(offset_ - offset);
+                    outline_.translate(offset_ - offset);
+                }
             }
         } else {
             borderPolygon_ = QPolygonF();
+            borderOutline_ = QPainterPath();
+            // If we have no border, just use the clipping offset of the fill
+            offset_ = offset;
         }
 
         setWidth(w);
         setHeight(h);
     }
 
-    //setPositionOnMap(center()->coordinate(), QPointF(width(),height()) / 2);
     setPositionOnMap(circlePath_.at(0), offset_);
     update();
 }

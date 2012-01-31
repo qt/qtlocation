@@ -401,35 +401,73 @@ void QDeclarativePolygonMapItem::updateMapItem()
         qreal w = 0;
 
         QPolygonF newPoly, newBorderPoly;
-        QPointF offset;
-        updatePolygon(newPoly, *map(), path_, w, h, offset, outline_);
+        QPainterPath outline, borderOutline;
+        QPointF offset, borderOffset;
 
+        // First, regenerate the fill region
+        updatePolygon(newPoly, *map(), path_, w, h, offset, outline);
+
+        // If we get zero points back, no part of the fill is on the screen
         if (newPoly.size() > 0) {
             polygon_ = newPoly;
-            offset_ = offset;
+            outline_ = outline;
         }
+        /* No "else" here -- we don't want to update polygon_ and outline_
+         * with the empty poly, as this will break any mouse area that may
+         * still be partially visible */
 
         if (border_.width() > 0 && border_.color() != Qt::transparent) {
+
+            // Polyline code won't close the path for us
             QList<QGeoCoordinate> pathClosed = path_;
             pathClosed.append(path_.at(0));
 
+            // Now regenerate the stroked border region
             QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
                                                         pathClosed, w, h,
                                                         border_.width(),
-                                                        borderOutline_, offset);
+                                                        borderOutline,
+                                                        borderOffset);
+
+            // Once again, it can return no points if nothing is visible
             if (newBorderPoly.size() > 0) {
                 borderPolygon_ = newBorderPoly;
-                borderPolygon_.translate(offset_ - offset);
-                borderOutline_.translate(offset_ - offset);
+                borderOutline_ = borderOutline;
+
+                /* This is a little tricky: both triangulators after clipping
+                 * will return an 'offset' value, which is the distance between
+                 * their local (0,0) and the location of the first point in the
+                 * path.
+                 *
+                 * The two 'offset' values could be different, so we compute
+                 * the maximum of X and Y and translate both paths to that.
+                 * This way, the first point is right on the anchor coordinate
+                 * still, but any parts of our object that extend further up
+                 * or left of the anchor are still part of the object */
+
+                offset_ = QPointF(qMax(offset.x(), borderOffset.x()),
+                                  qMax(offset.y(), borderOffset.y()));
+
+                borderPolygon_.translate(offset_ - borderOffset);
+                borderOutline_.translate(offset_ - borderOffset);
+
+                // Only re-translate these if we generated a new fill
+                if (newPoly.size() > 0) {
+                    polygon_.translate(offset_ - offset);
+                    outline_.translate(offset_ - offset);
+                }
             }
         } else {
             borderPolygon_ = QPolygonF();
             borderOutline_ = QPainterPath();
+            // If we have no border, just use the clipping offset of the fill
+            offset_ = offset;
         }
 
         setWidth(w);
         setHeight(h);
     }
+
     setPositionOnMap(path_.at(0), offset_);
     update();
 }
