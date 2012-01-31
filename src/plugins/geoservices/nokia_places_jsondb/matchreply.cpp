@@ -144,6 +144,8 @@ void MatchReply::processResponse(int id, const QVariant &data)
 
 void MatchReply::processError(int id, int code, const QString &jsonDbErrorString)
 {
+    Q_UNUSED(id);
+
     QPlaceReply::Error error = QPlaceReply::UnknownError;
     QString errorString = QString::fromLatin1("Unknown error occurred operation: jsondb error code =%1, erroString=%2").
                   arg(code).arg(jsonDbErrorString);

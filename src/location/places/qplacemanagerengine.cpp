@@ -168,8 +168,10 @@ QPlace QPlaceManagerEngine::compatiblePlace(const QPlace &original) const
 */
 QPlaceMatchReply * QPlaceManagerEngine::matchingPlaces(const QPlaceMatchRequest &request)
 {
+    Q_UNUSED(request);
+
     MatchReply *reply = new MatchReply(this);
-    reply->triggerDone(QPlaceReply::UnsupportedError, "Place matching is not supported");
+    reply->triggerDone(QPlaceReply::UnsupportedError, QStringLiteral("Place matching is not supported"));
     return reply;
 }
 
@@ -181,6 +183,9 @@ QPlaceMatchReply * QPlaceManagerEngine::matchingPlaces(const QPlaceMatchRequest 
 */
 QUrl QPlaceManagerEngine::constructIconUrl(const QPlaceIcon &icon, const QSize &size) const
 {
+    Q_UNUSED(icon);
+    Q_UNUSED(size);
+
     return QUrl();
 }
 

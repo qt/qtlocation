@@ -125,7 +125,7 @@ void QPlaceMatchRequestPrivate::clear()
    \variable QPlaceMatchRequest::AlternativeId
    The key to specify that matching is to be accomplished via an alternative place id.
 */
-const QString QPlaceMatchRequest::AlternativeId("alternativeId");
+const QString QPlaceMatchRequest::AlternativeId(QLatin1String("alternativeId"));
 
 /*!
     Default constructor. Constructs an new request object.

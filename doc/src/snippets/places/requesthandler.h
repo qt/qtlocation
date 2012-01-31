@@ -307,6 +307,7 @@ public:
         QPlace place = manager->compatiblePlace(result.place());
         saveReply = manager->savePlace(place);
         //! [ Save to different manager]
+        saveReply->abort();//needed to avoid warnings
     }
 
     void ratings() {

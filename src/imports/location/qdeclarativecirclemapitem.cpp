@@ -446,6 +446,8 @@ MapCircleNode::~MapCircleNode() {}
 void MapCircleNode::update(const QColor& fillColor, const QPolygonF& circleShape, const QPointF& center,
                            const QPolygonF& borderShape, const QColor& borderColor, qreal borderWidth)
 {
+    Q_UNUSED(center);
+
     if (circleShape.size() == 0 || borderShape.size() == 0)
         return;
 

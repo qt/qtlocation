@@ -323,6 +323,8 @@ QPlace JsonConverter::convertJsonMapToPlace(const QVariantMap &placeMap,
 QPlaceCategory JsonConverter::convertJsonMapToCategory(const QVariantMap &categoryMap,
                                                        const QPlaceManagerEngineJsonDb *engine)
 {
+    Q_UNUSED(engine);
+
     QPlaceCategory category;
     category.setName(categoryMap.value(JsonConverter::Name).toString());
     category.setCategoryId(categoryMap.value(JsonConverter::Uuid).toString());

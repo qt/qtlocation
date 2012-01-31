@@ -409,8 +409,9 @@ QUrl SavePlaceReply::convertToUrl(const QVariant &var, bool *ok)
         break;
     }
     default:
-        return QUrl();
+        break;
     }
+    return QUrl();
 }
 
 //-------RemovePlaceReply
@@ -689,6 +690,8 @@ void RemoveCategoryReply::processResponse(int id, const QVariant &data)
     //TODO: need to handle removal of category related information still
     //      in the Place objects
     switch (m_state) {
+    case RemoveCategoryReply::Initial :
+        break;
     case (RemoveCategoryReply::GetCategory) : {
         /*
             Expected data format example

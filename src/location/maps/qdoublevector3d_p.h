@@ -279,12 +279,12 @@ inline bool qFuzzyCompare(const QDoubleVector3D& v1, const QDoubleVector3D& v2)
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-Q_GUI_EXPORT QDebug operator<<(QDebug dbg, const QDoubleVector3D &vector);
+QDebug operator<<(QDebug dbg, const QDoubleVector3D &vector);
 #endif
 
 #ifndef QT_NO_DATASTREAM
-Q_GUI_EXPORT QDataStream &operator<<(QDataStream &, const QDoubleVector3D &);
-Q_GUI_EXPORT QDataStream &operator>>(QDataStream &, QDoubleVector3D &);
+QDataStream &operator<<(QDataStream &, const QDoubleVector3D &);
+QDataStream &operator>>(QDataStream &, QDoubleVector3D &);
 #endif
 
 QT_END_NAMESPACE
