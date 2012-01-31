@@ -27,101 +27,172 @@
 
 
 /*!
-\page location-maps.html
-\title Maps
-\previouspage {qtlocation-cpp.html}{QtLocation}
+\page location-maps-qml.html
+\title Maps & Navigation (QML)
+\previouspage {qtlocation-module.html}{QtLocation}
 
-\brief Maps is the part of the Location API that deals with maps,
-their contents and navigation through the maps.
+\brief Provides QtQuick user interfaces for displaying, navigating and
+       interacting with maps, as well as geocoding and navigation.
 
-\section1 Maps and Navigation
+\bold{Maps & Navigation} provides QtQuick user interface elements for
+displaying geographic information on a map, as well as allowing user
+interaction with map objects and the display itself. It also contains
+utilities for geocoding (finding a geographic coordinate from a street
+address) and navigation (including driving and walking directions).
 
-The Maps and Navigation API is based on plugins.
+It builds upon the API concepts and elements in the
+\l{qtlocation-positioning-qml.html}{QML Positioning API}.
 
-Since most providers of mapping, geocoding and routing information offer
-no guarantees that their data is interoperable with the data provided by
-other services, the plugins are used to group the functionality per
-service provider.
+\section1 Maps
 
-The plugins are accessed via QGeoServiceProvider.
+\section2 Displaying maps
 
-\code
-    QGeoMappingManager *mappingManager = 0;
-    QGeoRoutingManager *routingManager = 0;
-    QGeoSearchManager *searchManager = 0;
+Displaying a map is done using the \l{QtLocation5::Map}{Map} QML element,
+which comes provided with many basic interaction utilities including the
+\l{QtLocation5::MapFlickable}{MapFlickable} and
+\l{QtLocation5::MapPinchArea}{MapPinchArea}. The Map element draws the map
+on-screen using OpenGL (ES), allowing for hardware-accelerated rendering where
+available.
 
-    QGeoServiceProvider serviceProvider("plugin name");
+\bold{Key elements}
+\table
+    \row
+        \o \l{QtLocation5::Plugin}{Plugin}
+        \o A plugin element is necessary before creating a Map.
+    \row
+        \o \l{QtLocation5::Map}{Map}
+        \o QtQuick item to display a map on-screen
+    \row
+        \o \l{QtLocation5::MapFlickable}{MapFlickable}
+        \o Interaction helper for the "flick" panning gesture on a Map.
+    \row
+        \o \l{QtLocation5::MapPinchArea}{MapPinchArea}
+        \o Interaction helper for the "pinch to zoom" gesture on a Map.
+\endtable
 
-    if (serviceProvider.error() == QGeoServiceProvider::NoError) {
-        mappingManager = serviceProvider.mappingManager();
-        routingManager = serviceProvider.routingManager();
-        searchManager = serviceProvider.searchManager();
-    }
-\endcode
+\section2 Putting objects on a Map
 
-\bold {Important notice:} \e {The map data provided by the offline plug-in is
-place-shifted for the area of the People’s Republic of China. To provide
-un-shifted maps of China in an application, the application developer must
-first obtain permission from Chinese officials. The Qt Location
-API cannot offer this on the API level.}
+Maps can also contain map objects, which are used to display information on
+its surface. There is a set of basic pre-defined map objects, as well as the
+ability to implement custom objects using the
+\l{QtLocation5::MapQuickItem}{MapQuickItem} element, which can contain any
+standard QtQuick item.
 
-\section2 Mapping
+\bold{Key elements}
+\table
+    \row
+        \o \l{QtLocation5::MapCircle}{MapCircle}
+        \o Geographic circle (all points at a set distance from a center), optionally with a border.
+    \row
+        \o \l{QtLocation5::MapRectangle}{MapRectangle}
+        \o Rectangle in lat/lon space, optional border
+    \row
+        \o \l{QtLocation5::MapPolygon}{MapPolygon}
+        \o Polygon made of an arbitrary list of \l{QtLocation5::Coordinate}{Coordinate} elements
+    \row
+        \o \l{QtLocation5::MapPolyline}{MapPolyline}
+        \o Polyline made of an arbitrary list of \l{QtLocation5::Coordinate}{Coordinate} elements
+\endtable
+\table
+    \row
+        \o \l{QtLocation5::MapQuickItem}{MapQuickItem}
+        \o Turns any arbitrary QtQuick Item into a map object.
+\endtable
 
-The QGraphicsGeoMap class is the main class used for displaying and interacting
-with maps. It is designed for use within the Graphics View Framework, and is
-a subclass of QGraphicsWidget.
+\section2 Model-view design with Map objects
 
-The QGeoMappingManager provides most of the functionality required by
-QGraphicsGeoMap.  The details of QGeoMappingManager are mostly only important
-to plugin implementers, as regular users should not need to make use of
-QGeoMappingManager outside of the QGraphicsGeoMap constructor:
-\code
-    QGraphicsGeoMap *map = new QGraphicsGeoMap(mappingManager);
-\endcode
+To automatically generate Map objects based on the contents of a QtQuick
+model (eg a ListModel item), the \l{QtLocation5::MapItemView}{MapItemView}
+element is available. It accepts any Map object as its delegate, and can
+only be created within a \l{QtLocation5::Map}{Map}.
 
-\annotatedlist QtLocation-maps
+\bold{Key elements}
+\table
+    \row
+        \o \l{QtLocation5::MapItemView}{MapItemView}
+        \o Populates a Map with Map objects based on a model.
+\endtable
 
-\section3 \bold{Map objects}
+\section2 Interaction with Map objects
 
-QGeoMapObject and its subclasses provide the ability to add graphics to the map
-specified in terms of coordinates and distances. QGeoMapObject instances can
-also be grouped into hierarchies in order to simplify the process of creating
-compound objects and managing groups of objects.
+Interaction with the pre-defined Map objects is done using the
+\l{QtLocation5::MapMouseArea}{MapMouseArea} element, which behaves much like a
+normal QtQuick MouseArea. MapQuickItems can also contain MapMouseArea elements,
+but can additionally use normal QtQuick MouseAreas to provide interaction.
 
-\annotatedlist maps-mapping-objects
+Properties of Map objects that influence their appearance on the display can
+be changed at any time, and many can also be used in animations. Animating
+coordinate-based map objects, such as MapPolygon and MapPolyline, is not yet
+available.
 
-\section2 Routing
+\bold{Key elements}
+\table
+    \row
+        \o \l{QtLocation5::MapMouseArea}{MapMouseArea}
+        \o Accepts mouse events for a pre-defined Map object (eg MapCircle)
+    \row
+        \o \l{QtLocation5::MapMouseEvent}{MapMouseEvent}
+        \o Provides additional information unique to mouse events on a Map.
+\endtable
 
-QGeoRoutingManager handles requests for routing information.
+\section1 Geocoding -- address to coordinate and vice versa
 
-The requests are created as QGeoRouteRequest instances, which are
-passed to QGeoRoutingManager::calculateRoute().  The returned
-QGeoRouteReply instance will contain the result of the request when
-it is completed.
+A geocoding query in QML is performed using the
+\l{QtLocation5::GeocodeModel}{GeocodeModel} element. For an address-to-coordinate
+query, its \c{query} property may be set to either an
+\l{QtLocation5::Address}{Address} element, or a string containing the textual
+form of the address to search for. To perform the reverse, the same property
+can be set to a Coordinate instead. Results are made available in the contents
+of the model.
 
-The QGeoRoute class describes the resulting route.  Each route is
-broken up into a number of QGeoRouteSegment instances, with the division
-usually occurring at either user specified waypoints or at changes in the
-mode of transport, like when changing from a train to a bus.
+\bold{Key elements}
+\table
+    \row
+        \o \l{QtLocation5::Plugin}{Plugin}
+        \o A Plugin element is necessary before creating a GeocodeModel
+    \row
+        \o \l{QtLocation5::GeocodeModel}{GeocodeModel}
+        \o Performs geocoding queries and gives results as a model
+    \row
+        \o \l{QtLocation5::Address}{Address}
+        \o Structured address for use in queries and results of geocoding
+\endtable
 
-Each QGeoRouteSegment has a QGeoNavigationInstruction instance which
-describes the instructions that would be issued to a user attempting
-to follow a route.  These instructions a location, which is typically
-somewhere near the end of the associated QGeoRouteSegment, and
-instruction text describing how the next QGeoRouteSegment should be reached.
+\section1 Routing and navigation
 
-\annotatedlist QtLocation-routing
+*/
 
-\section2 Geocoding
 
-QGeoSearchManager handles geocoding, reverse geocoding.
+/*!
+\page location-maps-cpp.html
+\title Maps & Navigation (C++)
+\previouspage {qtlocation-module.html}{QtLocation}
 
-\annotatedlist QtLocation-geocoding
+\brief Provides C++ classes for Geocoding and Navigation.
 
-\section1 Map Examples
+\bold{Maps & Navigation} provides C++ utilities for geocoding (finding a
+geographic coordinate from a street address) and navigation (including driving
+and walking directions).
 
-\l {Declarative Map Viewer Example}
+\section1 Geocoding
 
-\l {LightMaps Example}
+In C++, an address-to-coordinate query is performed using the
+\l{QGeocodingManager::geocode()}{geocode()} method of the QGeocodingManager
+class. For coordinate-to-address queries, the
+\l{QGeocodingManager::reverseGeocode()}{reverseGeocode()} method is available
+on the same class. Instances of QGeocodingManager are available via
+\l{QGeoServiceProvider}.
 
+\bold{Key classes}
+\table
+    \row
+        \o \l{QGeoServiceProvider}
+        \o Provides a QGeocodingManager instance ready for use
+    \row
+        \o \l{QGeocodingManager}
+        \o Accepts queries and produces QGeocodeReply objects
+    \row
+        \o \l{QGeocodeReply}
+        \o Contains the results of a geocoding query
+\endtable
 */

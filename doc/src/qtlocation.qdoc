@@ -35,30 +35,79 @@
 The QtLocation API provides location positioning, mapping, navigation and place search via QML
 and C++ interfaces.
 
-\section1 Information for Application Writers
+\section1 Overview
 
-Applications can access QtLocation using QML or C++.
+QtLocation is split into three core sub-modules, which each have QML and C++
+APIs.
+
+\section3 Positioning
+Positioning includes all the functionality necessary to find and work with geographic
+coordinates, including working out the user's current position on the Earth's surface
+using GPS, GLONASS, or other available services.
+\table
+\row
+    \o Positioning introduction & overview:
+    \o \l{location-positioning-qml.html}{for QML}
+    \o \l{location-positioning-cpp.html}{for C++}
+\endtable
+
+\section3 Places
+Places is
+the natural complement to Positioning, providing a source of geographic
+data about places of interest (POIs). As well as providing the location,
+size and other vitals about a POI, the Places API can also retrieve images,
+reviews and other rich content, and integrate with platform sources of
+a user's favourites.
+\table
+\row
+    \o Places introduction & overview:
+    \o \l{location-places-qml.html}{for QML}
+    \o \l{location-places-cpp.html}{for C++}
+\endtable
+
+\section3 Maps & Navigation
+Maps & Navigation provides QtQuick user
+interface elements for displaying geographic information on a map, as
+well as allowing user interaction with map objects and the display itself.
+It also contains utilities for geocoding (finding a geographic coordinate
+from a street address) and navigation (including driving and walking
+directions).
+\table
+\row
+    \o Maps and Nav. introduction & overview:
+    \o \l{location-maps-qml.html}{for QML}
+    \o \l{location-maps-cpp.html}{for C++}
+\endtable
+
+
+\section1 API references and examples
+
+Alphabetized lists of all classes and elements in the API, as well as detailed
+example applications to demonstrate their usage.
 
 \table
     \row
-        \o \l {QtLocation 5.x}{QML API}
-        \o Information about the QtLocation QML API
+        \o \l {QtLocation 5.x}{QML API Reference}
+        \o Full list of QML elements in the QtLocation API
     \row
-        \o \l {QtLocation C++ API}{C++ API}
-        \o Information about the QtLocation C++ API
+        \o \l {QtLocation C++ API}{C++ API Reference}
+        \o Full list of C++ classes and methods in the QtLocation API
     \row
-        \o \l {QtLocation Examples}{Examples}
+        \o \l {QtLocation Examples}{Example Apps}
         \o Examples demonstrating use of the QtLocation APIs
 \endtable
 
-\section1 Information about plugins
+\section1 Plugin references and parameters
 
-The QtLocation API uses plugins to enable location services to be implemented by multiple service
-providers.
+Information about plugins, important notes on their usage, parameters that can
+be provided to influence their behavior.
 
 \annotatedlist QtLocation-plugins
 
-\section1 Information for Backend Implementers
+\section1 Porting and implementing new back-ends
+
+For systems integrators and distributors, information relating to making
+QtLocation available for a new platform.
 
 \table
     \row

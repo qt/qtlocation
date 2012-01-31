@@ -26,10 +26,20 @@
 ****************************************************************************/
 
 /*!
-\page location-positioning.html
+    \page location-positioning-qml.html
 
-\title Location Positioning
-\previouspage {qtlocation-cpp.html}{QtLocation}
+    \title Positioning (QML)
+    \previouspage {qtlocation-module.html}{QtLocation}
+
+    \brief The Location Positioning API enables location positioning by means of
+    GPS or an NMEA data source.
+*/
+
+/*!
+\page location-positioning-cpp.html
+
+\title Positioning (C++)
+\previouspage {qtlocation-module.html}{QtLocation}
 
 \brief The Location Positioning API enables location positioning by means of
 GPS or an NMEA data source.

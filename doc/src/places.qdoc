@@ -25,11 +25,18 @@
 **
 ****************************************************************************/
 
+/*!
+    \page location-places-qml.html
+    \title Places (QML)
+    \previouspage {qtlocation-module.html}{QtLocation}
+
+
+*/
 
 /*!
-    \page location-places.html
-    \title Places
-    \previouspage {qtlocation-cpp.html}{QtLocation}
+    \page location-places-cpp.html
+    \title Places (C++)
+    \previouspage {qtlocation-module.html}{QtLocation}
 
     \section1 Overview
 
