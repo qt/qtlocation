@@ -59,7 +59,7 @@ Item {
         id: backgroundRect
         anchors.fill: parent
         color: "lightgrey"
-        z:2
+        z: 2
     }
 
     //=====================Menu=====================
@@ -154,7 +154,7 @@ Item {
     //=====================Dialogs=====================
     PlaceDialog {
         id: editPlaceDialog
-        z: backgroundRect.z + 3
+        z: backgroundRect.z + 4
 
         onCancelButtonClicked: page.state = ""
 
@@ -181,7 +181,7 @@ Item {
 
     CategoryDialog {
         id: editCategoryDialog
-        z: backgroundRect.z + 3
+        z: backgroundRect.z + 4
 
         onCancelButtonClicked: page.state = ""
 
@@ -208,7 +208,7 @@ Item {
 
     Dialog {
         id: searchCenterDialog
-        z: backgroundRect.z + 3
+        z: backgroundRect.z + 4
 
         title: "Search center"
 
@@ -240,7 +240,7 @@ Item {
 
     Dialog {
         id: searchBoxDialog
-        z: backgroundRect.z + 3
+        z: backgroundRect.z + 4
 
         title: "Search Bounding Box"
 
@@ -286,7 +286,7 @@ Item {
 
     Dialog {
         id: searchCircleDialog
-        z: backgroundRect.z + 3
+        z: backgroundRect.z + 4
 
         title: "Search Bounding Circle"
 
@@ -330,7 +330,7 @@ Item {
 
     OptionsDialog {
         id: optionsDialog
-        z: backgroundRect.z + 3
+        z: backgroundRect.z + 4
 
         Behavior on opacity { NumberAnimation { duration: 500 } }
 
@@ -423,7 +423,7 @@ Item {
         anchors.top: page.top
         anchors.topMargin: page.mobileUi ? 20 : 0
         width: parent.width
-        z: map ? map.z + 2 : 0
+        z: backgroundRect.z + 3
     }
 
     Plugin {
@@ -436,7 +436,7 @@ Item {
     Item {
         id: searchResultTab
 
-        z: map ? map.z + 1 : 0
+        z: backgroundRect.z + 2
         height: parent.height - 180
         width: parent.width
         x: -5 - searchResultTabPage.width
