@@ -281,7 +281,7 @@ testcase = {
         | Select Tools button | |
         | Select Geocode menu item | |
         | Select Clear All button | |
-        | Fill in " + street + " in Street filed | |
+        | Fill in " + street + " in Street field | |
         | Fill in " + city + " in City field | |
         | Fill in " + country + " in Country field | |
         | Select Go! button | |
@@ -393,7 +393,7 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Select Tools button | |
         | Select Reverse Geocode | |
-        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
         | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
@@ -430,9 +430,9 @@ testcase = {
         | Select Tools button | |
         | Select Route menu item | |
         | Fill in " + lat1 + " in From Latitude field | |
-        | Fill in " + long1 + " in From Longitude filed | |
+        | Fill in " + long1 + " in From Longitude field | |
         | Fill in " + lat2 + " in To Latitude field | |
-        | Fill in " + long2 + " in To Longitude filed | |
+        | Fill in " + long2 + " in To Longitude field | |
         | Select Go! button | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
         ));
@@ -468,9 +468,9 @@ testcase = {
         | Select Route menu item | |
         | Select second option group to enter start and end points as address | |
         | Fill in " + city1 + " in From City field | |
-        | Fill in " + country1 + " in From Country filed | |
+        | Fill in " + country1 + " in From Country field | |
         | Fill in " + city2 + " in To City field | |
-        | Fill in " + country2 + " in To Country filed | |
+        | Fill in " + country2 + " in To Country field | |
         | Select Go! button | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
         ));
@@ -507,17 +507,17 @@ testcase = {
         | Create third Marker | |
         | Long Press on the first marker | |
         | Select Move To menu item | |
-        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
         | Long Press on the second marker | |
         | Select Move To menu item | |
-        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
         | Long Press on the third marker | |
         | Select Move To menu item | |
-        | Fill in " + lat3 + " in Latitude filed | |
+        | Fill in " + lat3 + " in Latitude field | |
         | Fill in " + long3 + " in Longitude | |
         | Press Go! button | |
         | Long press on the map | |
@@ -557,9 +557,9 @@ testcase = {
         | Select Route menu item | |
         | Selec first option group | |
         | Fill in " + lat1 + " in From Latitude field | |
-        | Fill in " + long1 + " in From Longitude filed | |
+        | Fill in " + long1 + " in From Longitude field | |
         | Fill in " + lat2 + " in To Latitude field | |
-        | Fill in " + long2 + " in To Longitude filed | |
+        | Fill in " + long2 + " in To Longitude field | |
         | Select Go! button | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
         | Open " + url2 + " url in a desktop browser | |
@@ -602,9 +602,9 @@ testcase = {
         | Select Route menu item | |
         | Selec first option group | |
         | Fill in " + lat1 + " in From Latitude field | |
-        | Fill in " + long1 + " in From Longitude filed | |
+        | Fill in " + long1 + " in From Longitude field | |
         | Fill in " + lat2 + " in To Latitude field | |
-        | Fill in " + long2 + " in To Longitude filed | |
+        | Fill in " + long2 + " in To Longitude field | |
         | Select *Avoid toll roads* checkbox | |
         | Select Go! button | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
@@ -647,9 +647,9 @@ testcase = {
         | Select Route menu item | |
         | Selec first option group | |
         | Fill in " + lat1 + " in From Latitude field | |
-        | Fill in " + long1 + " in From Longitude filed | |
+        | Fill in " + long1 + " in From Longitude field | |
         | Fill in " + lat2 + " in To Latitude field | |
-        | Fill in " + long2 + " in To Longitude filed | |
+        | Fill in " + long2 + " in To Longitude field | |
         | Select Go! button | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
         | Open " + url2 + " url in a desktop browser | |
@@ -690,12 +690,12 @@ testcase = {
         | Create another Marker via Long Press | |
         | Long Press on the first marker | |
         | Select Move To menu item | |
-        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
         | Long Press on the second marker | |
         | Select Move To menu item | |
-        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
         | Long Press on the first marker | |
@@ -733,12 +733,12 @@ testcase = {
         | Create another Marker via Long Press | |
         | Long Press on the first marker | |
         | Select Move To menu item | |
-        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
         | Long Press on the second marker | |
         | Select Move To menu item | |
-        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
         | Pan map to the left so the map center crosses dateline | Verify that there are 2 markers on the screen |
@@ -753,7 +753,7 @@ testcase = {
         greek_place:["38", "24", "el", "Greek"]
     },
 
-    qml_geocoding_and_locale: function(latitude, longtitude, locale, language)
+    qml_geocoding_and_locale: function(latitude, longitude, locale, language)
     {
         // Test meta data
         testTitle = "QML: Geocoding - Locale handling";
@@ -774,13 +774,13 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
         | Select Reverse geocode | |
-        | Fill in " + latitude + " in Latitude filed | |
-        | Fill in " + longtitude + " in Longitude field | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude field | |
         | Select Go! | |
         | Wait for success geocode message | Verify that address is in English|
         | Select *en* button | |
         | Select Other | |
-        | Fill in " + locale + " in Language filed | |
+        | Fill in " + locale + " in Language field | |
         | Select Go! | |
         | Select Reverse geocode | |
         | Select Go! | |
@@ -966,17 +966,17 @@ testcase = {
         | Create third Marker | |
         | Press and Hold on the first marker | |
         | Select Move To button | |
-        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the second marker | |
         | Select Move To button | |
-        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the third marker | |
         | Select Move To button | |
-        | Fill in " + lat3 + " in Latitude filed | |
+        | Fill in " + lat3 + " in Latitude field | |
         | Fill in " + long3 + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the first marker | |
@@ -1019,27 +1019,27 @@ testcase = {
         | Create fifth Marker | |
         | Press and Hold on the first marker | |
         | Select Move To button | |
-        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the second marker | |
         | Select Move To button | |
-        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the third marker | |
         | Select Move To button | |
-        | Fill in " + lat3 + " in Latitude filed | |
+        | Fill in " + lat3 + " in Latitude field | |
         | Fill in " + long3 + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the fourth marker | |
         | Select Move To button | |
-        | Fill in " + lat4 + " in Latitude filed | |
+        | Fill in " + lat4 + " in Latitude field | |
         | Fill in " + long4 + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the fifth marker | |
         | Select Move To button | |
-        | Fill in " + lat5 + " in Latitude filed | |
+        | Fill in " + lat5 + " in Latitude field | |
         | Fill in " + long5 + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the first marker | |
@@ -1078,12 +1078,12 @@ testcase = {
         | Create second Marker | |
         | Press and Hold on the first marker | |
         | Select Move To button | |
-        | Fill in " + lat1 + " in Latitude filed | |
+        | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the second marker | |
         | Select Move To button | |
-        | Fill in " + lat2 + " in Latitude filed | |
+        | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the first marker | |
@@ -1097,7 +1097,7 @@ testcase = {
         nodes_near_dateline:["-27", "179"]
     },
 
-    qml_video_mapitem:function(latitude, longtitude)
+    qml_video_mapitem:function(latitude, longitude)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Video";
@@ -1121,8 +1121,8 @@ testcase = {
         | Select Add Marker button | |
         | Press and Hold on the marker | |
         | Select Move To button | |
-        | Fill in " + latitude + " in Latitude filed | |
-        | Fill in " + longtitude + " in Longitude | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the marker | |
         | Select Draw... button | |
@@ -1135,7 +1135,7 @@ testcase = {
         nodes_near_dateline:["-27", "179"]
     },
 
-    qml_image_mapitem:function()
+    qml_image_mapitem:function(latitude,longitude)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Image";
@@ -1159,8 +1159,8 @@ testcase = {
         | Select Add Marker button | |
         | Press and Hold on the marker | |
         | Select Move To button | |
-        | Fill in " + latitude + " in Latitude filed | |
-        | Fill in " + longtitude + " in Longitude | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the marker | |
         | Select Draw... button | |
@@ -1173,7 +1173,7 @@ testcase = {
         nodes_near_dateline:["-27", "179"]
     },
 
-    qml_3dqml_mapitem:function(latitude, longtitude)
+    qml_3dqml_mapitem:function(latitude, longitude)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - 3D QML Item";
@@ -1197,8 +1197,8 @@ testcase = {
         | Select Add Marker button | |
         | Press and Hold on the marker | |
         | Select Move To button | |
-        | Fill in " + latitude + " in Latitude filed | |
-        | Fill in " + longtitude + " in Longitude | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the marker | |
         | Select Draw... button | |
@@ -1261,7 +1261,7 @@ testcase = {
         nodes:["-27.3644", "153.0178", "Sydney"],
     },
 
-    qml_mapitem_interaction:function(latitude, longtitude, city)
+    qml_mapitem_interaction:function(latitude, longitude, city)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Interaction with mapitems";
@@ -1285,8 +1285,8 @@ testcase = {
         | Select Add Marker button | |
         | Press and Hold on the marker | Verify that popup menu appears |
         | Select Move To button | |
-        | Fill in " + latitude + " in Latitude filed | |
-        | Fill in " + longtitude + " in Longitude | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude | |
         | Select Go! button | Verify that marker places next to " + city + "|
         | Drag the marker | Verify that marker can be dragged correctly |"
         ));
@@ -1322,7 +1322,7 @@ testcase = {
         | Select nokia provider | |
         | Select Search button | |
         | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
         | Select Categories button | |
@@ -1349,7 +1349,7 @@ testcase = {
         testTitle = "QML: Places - Searching by text string for the given position";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
-        testGoal = "Verify that places can be found.";
+        testGoal = "Verify that places can be found or user is infirmed about the error.";
         testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-190: Place Discovery";
@@ -1368,12 +1368,12 @@ testcase = {
         | Select nokia provider | |
         | Select Search button | |
         | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
-        | Fill in " + search_string + " | |
+        | Fill in " + search_string + " in Search field | |
         | Select Search button | |
-        | Expand panel with results | Verify that number of found places corresponds to the open web page. Verify that details of the first place is the same. |"
+        | Expand panel with results | Verify that number of found places corresponds to the open web page. |"
         ));
     },
 
@@ -1406,10 +1406,10 @@ testcase = {
         | Select nokia provider | |
         | Select Search button | |
         | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
-        | Fill in " + search_string + " | |
+        | Fill in " + search_string + " in Search field | |
         | Select Search button | |
         | Expand panel with results | |
         | Select " + place + " | |
@@ -1447,15 +1447,15 @@ testcase = {
         | Select nokia provider | |
         | Select Search button | |
         | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
-        | Fill in " + search_string + " | Verify that list of suggested places corresponds to the open web page. |"
+        | Fill in " + search_string + " in Search field | Verify that list of suggested places corresponds to the open web page. |"
         ));
     },
 
     qml_place_editorials_data: {
-        search_string:["-27.5", "153", "sushi", "Oz Sushi 1865m", "Oz sushi", "http://places.maps.ovi.com/rest/v1/places/036r7hg9-3e09424ccf6246d49ac94c367386376b"]
+        search_string:["-48.9", "2.4", "sushi", "Nakagawa 2838m", "Untitled editorial", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a"]
     },
 
     qml_place_editorials: function(latitude, longitude, search_string, place, editorial, url)
@@ -1483,10 +1483,10 @@ testcase = {
         | Select nokia provider | |
         | Select Search button | |
         | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
-        | Fill in " + search_string + " | |
+        | Fill in " + search_string + " in Search field | |
         | Select Search button | |
         | Expand panel with results | |
         | Select " + place + " | |
@@ -1524,10 +1524,10 @@ testcase = {
         | Select nokia provider | |
         | Select Search button | |
         | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
-        | Fill in " + search_string + " | |
+        | Fill in " + search_string + " in Search field | |
         | Select Search button | |
         | Expand panel with results | |
         | Select " + place + " | |
@@ -1536,7 +1536,7 @@ testcase = {
     },
 
     qml_place_reviews_data: {
-        search_string:["48.9", "2.4", "sushi", "Nakagawa 2838m", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a/reviews"]
+        search_string:["48.9", "2.4", "sushi", "Nakagawa 2838m", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a/reviews?&start=0&limit=100"]
     },
 
     qml_place_reviews: function(latitude, longitude, search_string, place, url)
@@ -1564,10 +1564,10 @@ testcase = {
         | Select nokia provider | |
         | Select Search button | |
         | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
-        | Fill in " + search_string + " | |
+        | Fill in " + search_string + " in Search field | |
         | Select Search button | |
         | Expand panel with results | |
         | Select " + place + " | |
@@ -1576,7 +1576,7 @@ testcase = {
     },
 
     qml_place_retrieval_data: {
-        search_string:["-27.5", "153", "sushi", "Oz Sushi 1865m", "http://places.maps.ovi.com/rest/v1/places/036r7hg9-3e09424ccf6246d49ac94c367386376b"]
+        search_string:["48.9", "2.4", "sushi", "Nakagawa 2838m", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a"]
     },
 
     qml_place_retrieval: function(latitude, longitude, search_string, place, url)
@@ -1604,52 +1604,159 @@ testcase = {
         | Select nokia provider | |
         | Select Search button | |
         | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude filed | |
+        | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude field | |
         | Select Go! button | |
-        | Fill in " + search_string + " | |
+        | Fill in " + search_string + " in Search field | |
         | Select Search button | |
         | Expand panel with results | |
         | Select " + place + " | Verify that rating, address, category and contact details correspond to the open web page. |"
         ));
-    }
-
-    /*
-    qml_categories_management: function()
-        // Test meta data
-        testTitle = "QML: Places - Favorites";
-        testBinary = "qml_location_places";
-        testSource = "$QTDIR/qtlocation/examples/declarative/places"
-        testGoal = "Verify that categories/subcategories can be created, edited and deleted.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
-        testGroups = "BAT,5.0";
-        testRequirements = "MOBILITY-2861";
     },
 
-    qml_places_management: function()
+    qml_categories_management_data: {
+        category:["mycategory", "mynewcategory"]
+    },
+
+    qml_categories_management: function(name, newname)
+    {
         // Test meta data
-        testTitle = "QML: Places - Favorites";
+        testTitle = "QML: Places - Creating, editing and deleting categories";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that categories can be created, edited and deleted.";
+        testPreconditions = "Jsondb plugin is available. Jsondb is in initial state.";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-192: Place interaction";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Provider button | |
+        | Select nokia_places_jsondb provider | |
+        | Select Category button | Verify that there are no categories |
+        | Select Category button | |
+        | Select New button | |
+        | Select Category button | |
+        | Fill in " + name + " in Name field | |
+        | Select Go! button | |
+        | Select Category button | Verify that there is only " + name + " |
+        | Select Edit button | |
+        | Fill in " + newname + " in Name field | |
+        | Select Go! button | |
+        | Select Category button | Verify that there is only " + newname + "  |
+        | Select Delete button | Verify that there are no categories | "
+        ));
+    },
+
+    qml_places_management_data: {
+        place:["myplace", "mynewplace","-27.5", "153"]
+    },
+
+    qml_places_management: function(name, newname, latitude,longitude)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Creating, editing and deleting places";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that places can be created, edited and deleted.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Jsondb plugin is available. Jsondb is in initial state.";
         testGroups = "BAT,5.0";
-        testRequirements = "MOBILITY-2861";
+        testRequirements = "MTMW-192: Place interaction";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Provider button | |
+        | Select nokia_places_jsondb provider | |
+        | Select New button | |
+        | Select Place button | |
+        | Fill in " + name + " in Name field | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude field | |
+        | Select Go! button | |
+        | Fill in " + name + " in search field | |
+        | Select Search button | |
+        | Expand panel with results | Verify that only " + name + " is found in 0m away |
+        | Select " + name + " | |
+        | Select Edit button | |
+        | Fill in " + newname + " in Name field | |
+        | Select Go! button | |
+        | Fill in " + name + " in search field | |
+        | Select Search button | Verify that no places are found |
+        | Fill in " + newname + " in search field | |
+        | Select Search button | Verify that only " + newname + " is found in 0m away |
+        | Select " + newname + " | |
+        | Select Delete button | |
+        | Fill in " + newname + " in Search field | |
+        | Select Search button | Verify that no places are found |"
+        ));
     },
 
-    qml_favorite_places: function()
+    qml_favorite_places_data: {
+        search_string:["-27.5", "153", "sushi", "Oz Sushi" ]
+    },
+
+    qml_favorite_places: function(latitude, longitude, search_string, place )
     {
         // Test meta data
         testTitle = "QML: Places - Favorites";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
-        testGoal = "Verify that places can be found for different locale.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGoal = "Verify that places can be marked as favorite.";
+        testPreconditions = "Jsondb plugin is available. Jsondb is in initial state.";
         testGroups = "BAT,5.0";
         testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Provider button | |
+        | Select nokia provider | |
+        | Select Search button | |
+        | Select Search Center button | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude field | |
+        | Select Go! button | |
+        | Select Search button | |
+        | Select Search Options button | |
+        | Select Enable favorites button | |
+        | Fill in " + search_string + " in Search field | |
+        | Select Search button | |
+        | Expand panel with results | |
+        | Select " + place + " | |
+        | Select Save as Favorite button | |
+        | Select back button | Verify that " + place + " has a star |
+        | Select " + place + " | |
+        | Select Remove Favorite button | |
+        | Select back button | Verify that " + place + " has no star |"
+        ));
     },
 
-    qml_places_and_locale: function(latitude, longtitude, locale)
+    qml_places_and_locale_data: {
+        greek_string:["38", "24", "pizza", "el", "Greek"],
+        english_string:["38", "24", "pizza", "en", "English"]
+    },
+
+    qml_places_and_locale: function(latitude, longitude, search_string, locale, language)
     {
         // Test meta data
         testTitle = "QML: Places - Locale handling";
@@ -1659,8 +1766,35 @@ testcase = {
         testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
         testGroups = "BAT,5.0";
         testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Provider button | |
+        | Select nokia provider | |
+        | Select Search button | |
+        | Select Search Options button | |
+        | Fill in " + locale + " in Locale(s) field |
+        | Select OK button | |
+        | Select Search button | |
+        | Select Search Center button | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude field | |
+        | Select Go! button | |
+        | Fill in " + search_string + " in Search field | |
+        | Select Search button | |
+        | Expand panel with seacrh results | |
+        | Select the fist place | Verify that Category name is in " + language + "|"
+       ));
     },
 
+/*
     qml_searching_for_places_by_category_inside_bounding_box: function()
     {
         // Test meta data
@@ -1668,21 +1802,111 @@ testcase = {
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that places can be found.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Jsondb plugin is available";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-190: Place Discovery";
     },
+*/
 
-    qml_searching_for_places_by_text_string_inside_bounding_box: function()
+    qml_searching_for_places_by_string_inside_bounding_box_data: {
+        data: ["sushi 1", "-27.5", "153", "place 2", "-27", "153", "-27.1", "153", "0.3", "0.3", "sushi" ]
+    },
+
+    qml_searching_for_places_by_string_inside_bounding_box: function(name1, lat1, long1, name2, lat2, long2, box_lat, box_long, box_width, box_height, search_string)
     {
         // Test meta data
         testTitle = "QML: Places - Searching by text string inside bounding box";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that places can be found.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Jsondb plugin is available. Jsondb is in initial state.";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-190: Place Discovery";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Provider button | |
+        | Select nokia_places_jsondb provider | |
+        | Select New button | |
+        | Select Place button | |
+        | Fill in " + name1 + " in Name field | |
+        | Fill in " + lat1 + " in Latitude field | |
+        | Fill in " + long1 + " in Longitude field | |
+        | Select Go! button | |
+        | Select New button | |
+        | Select Place button | |
+        | Fill in " + name2 + " in Name field | |
+        | Fill in " + lat2 + " in Latitude field | |
+        | Fill in " + long2 + " in Longitude field | |
+        | Select Go! button | |
+        | Select Search | |
+        | Select Search Bounding Box | |
+        | Fill in " + box_lat + " in Latitude field | |
+        | Fill in " + box_long + " in Longitude field | |
+        | Fill in " + box_width + " in Width field | |
+        | Fill in " + box_height + " in Height field | |
+        | Select Go! button | |
+        | Fill in " + search_string + " in Search field | |
+        | Select Search button | |
+        | Expand panel with seacrh results | Verify that only " + name2 + " is listed |"
+       ));
+    },
+
+    qml_searching_for_places_by_string_inside_bounding_circle_data: {
+        data: ["sushi 1", "-27.5", "153", "place 2", "-27", "153", "-27.5", "153", "10000", "sushi" ]
+    },
+
+    qml_searching_for_places_by_string_inside_bounding_circle: function(name1, lat1, long1, name2, lat2, long2, centre_lat, centre_long, radius, search_string)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Searching by text string inside bounding box";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that places can be found.";
+        testPreconditions = "Jsondb plugin is available. Jsondb is in initial state.";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-190: Place Discovery";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Provider button | |
+        | Select nokia_places_jsondb provider | |
+        | Select New button | |
+        | Select Place button | |
+        | Fill in " + name1 + " in Name field | |
+        | Fill in " + lat1 + " in Latitude field | |
+        | Fill in " + long1 + " in Longitude field | |
+        | Select Go! button | |
+        | Select New button | |
+        | Select Place button | |
+        | Fill in " + name2 + " in Name field | |
+        | Fill in " + lat2 + " in Latitude field | |
+        | Fill in " + long2 + " in Longitude field | |
+        | Select Go! button | |
+        | Select Search | |
+        | Select Search Bounding Circle | |
+        | Fill in " + centre_lat + " in Latitude field | |
+        | Fill in " + centre_long + " in Longitude field | |
+        | Fill in " + radius + " in Width field | |
+        | Select Go! button | |
+        | Fill in " + search_string + " in Search field | |
+        | Select Search button | |
+        | Expand panel with seacrh results | Verify that only " + name1 + " is listed |"
+       ));
     }
-*/
+
 }  // end of testcase
