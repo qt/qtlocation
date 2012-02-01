@@ -52,21 +52,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoProjection::QGeoProjection() {}
-
-QGeoProjection::~QGeoProjection() {}
-
-QDoubleVector3D QGeoProjection::mercatorToPoint(const QDoubleVector2D &mercator) const
-{
-    return this->coordToPoint(mercatorToCoord(mercator));
-}
-
-QDoubleVector2D QGeoProjection::pointToMercator(const QDoubleVector3D &point) const
-{
-    return coordToMercator(this->pointToCoord(point));
-}
-
-QDoubleVector2D QGeoProjection::coordToMercator(const QGeoCoordinate &coord) const
+QDoubleVector2D QGeoProjection::coordToMercator(const QGeoCoordinate &coord)
 {
     const double pi = M_PI;
 
@@ -86,7 +72,7 @@ double QGeoProjection::realmod(const double a, const double b)
     return a - static_cast<double>(div) * b;
 }
 
-QGeoCoordinate QGeoProjection::mercatorToCoord(const QDoubleVector2D &mercator) const
+QGeoCoordinate QGeoProjection::mercatorToCoord(const QDoubleVector2D &mercator)
 {
     const double pi = M_PI;
 

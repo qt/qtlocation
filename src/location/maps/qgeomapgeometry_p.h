@@ -54,13 +54,14 @@
 
 #include <QSet>
 #include <QSize>
-#include <QSharedPointer>
+
+#include "qgeocoordinateinterpolator_p.h"
 
 QT_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
 class QGeoCameraData;
 class QGeoTileSpec;
-class QGeoProjection;
 
 class QDoubleVector2D;
 
@@ -75,7 +76,7 @@ class QGeoMapGeometryPrivate;
 
 class QGeoMapGeometry {
 public:
-    QGeoMapGeometry(QSharedPointer<QGeoProjection> projection);
+    QGeoMapGeometry();
     ~QGeoMapGeometry();
 
     void setScreenSize(const QSize &size);
@@ -95,6 +96,8 @@ public:
     void paintGL(QGLPainter *painter);
 
     bool verticalLock() const;
+
+    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator() const;
 
 private:
     QGeoMapGeometryPrivate *d_ptr;

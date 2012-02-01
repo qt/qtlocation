@@ -95,7 +95,7 @@ QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
 
 void QGeoMappingManagerEngineNokia::init()
 {
-    setTileSize(QSize(256, 256));
+    setTileSize(256);
 
     QList<QGeoMapType> types;
     types << QGeoMapType(QGeoMapType::StreetMap,tr("Street Map"),tr("Nokia Street Map"), false, 1);
@@ -278,12 +278,11 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTileSpec &spec
     return requestString;
 }
 
-QString QGeoMappingManagerEngineNokia::sizeToStr(const QSize &size)
+QString QGeoMappingManagerEngineNokia::sizeToStr(int size)
 {
     static const QString s256("256");
     static const QString s128("128");
-    if (size.height() >= LARGE_TILE_DIMENSION ||
-            size.width() >= LARGE_TILE_DIMENSION)
+    if (size >= LARGE_TILE_DIMENSION)
         return s256;
     else
         return s128;

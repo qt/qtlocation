@@ -38,43 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOPROJECTION2D_P_H
-#define QGEOPROJECTION2D_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qgeoprojection_p.h"
+#include "qgeocoordinateinterpolator_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QGeoProjection2D : public QGeoProjection
-{
-public:
-    QGeoProjection2D(double baseHeight, double sideLength);
-    virtual ~QGeoProjection2D();
+QGeoCoordinateInterpolator::QGeoCoordinateInterpolator() {}
 
-    virtual QDoubleVector3D coordToPoint(const QGeoCoordinate &coord) const;
-    virtual QGeoCoordinate pointToCoord(const QDoubleVector3D &point) const;
-
-    virtual QDoubleVector3D mercatorToPoint(const QDoubleVector2D &mercator) const;
-    virtual QDoubleVector2D pointToMercator(const QDoubleVector3D &point) const;
-
-    virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress);
-
-private:
-    double baseHeight_;
-    double sideLength_;
-};
+QGeoCoordinateInterpolator::~QGeoCoordinateInterpolator() {}
 
 QT_END_NAMESPACE
-
-#endif // QGEOPROJECTION2D_P_H

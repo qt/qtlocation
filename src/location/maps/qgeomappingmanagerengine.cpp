@@ -376,13 +376,13 @@ qreal QGeoMappingManagerEngine::maximumZoomLevel() const
 //    d->supportedConnectivityModes = connectivityModes;
 //}
 
-void QGeoMappingManagerEngine::setTileSize(const QSize &tileSize)
+void QGeoMappingManagerEngine::setTileSize(int tileSize)
 {
     Q_D(QGeoMappingManagerEngine);
     d->tileSize = tileSize;
 }
 
-QSize QGeoMappingManagerEngine::tileSize() const
+int QGeoMappingManagerEngine::tileSize() const
 {
     Q_D(const QGeoMappingManagerEngine);
     return d->tileSize;

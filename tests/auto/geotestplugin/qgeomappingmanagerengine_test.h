@@ -100,7 +100,7 @@ public:
 
     void init()
     {
-        setTileSize(QSize(256, 256));
+        setTileSize(256);
         QList<QGeoMapType> types;
         types << QGeoMapType(QGeoMapType::StreetMap,tr("Street Map"),tr("Test Street Map"), false, 1);
         setSupportedMapTypes(types);

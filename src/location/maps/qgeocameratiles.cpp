@@ -72,10 +72,9 @@ typedef QVector<QDoubleVector3D> Polygon;
 
 class QGeoCameraTilesPrivate {
 public:
-    QGeoCameraTilesPrivate(QSharedPointer<QGeoProjection> projection);
+    QGeoCameraTilesPrivate();
     ~QGeoCameraTilesPrivate();
 
-    QSharedPointer<QGeoProjection> projection_;
     QString pluginString_;
     QGeoMapType mapType_;
     QGeoCameraData camera_;
@@ -125,8 +124,8 @@ public:
     };
 };
 
-QGeoCameraTiles::QGeoCameraTiles(QSharedPointer<QGeoProjection> projection)
-    : d_ptr(new QGeoCameraTilesPrivate(projection)) {}
+QGeoCameraTiles::QGeoCameraTiles()
+    : d_ptr(new QGeoCameraTilesPrivate()) {}
 
 QGeoCameraTiles::~QGeoCameraTiles()
 {
@@ -211,8 +210,7 @@ QPair<QSet<QGeoTileSpec>, QSet<QGeoTileSpec> > QGeoCameraTiles::tilesSplitByDate
     return QPair<QSet<QGeoTileSpec>, QSet<QGeoTileSpec> >(d->tilesLeft_, d->tilesRight_);
 }
 
-QGeoCameraTilesPrivate::QGeoCameraTilesPrivate(QSharedPointer<QGeoProjection> projection)
-    : projection_(projection) {}
+QGeoCameraTilesPrivate::QGeoCameraTilesPrivate() {}
 
 QGeoCameraTilesPrivate::~QGeoCameraTilesPrivate() {}
 
@@ -292,7 +290,7 @@ Frustum QGeoCameraTilesPrivate::frustum() const
 {
     int zpow2 = 1 << camera_.zoomLevel();
 
-    QDoubleVector3D center = zpow2 * projection_->coordToMercator(camera_.center());
+    QDoubleVector3D center = zpow2 * QGeoProjection::coordToMercator(camera_.center());
     center.setZ(0.0);
 
     double f = qMin(screenSize_.width(), screenSize_.height()) / (1.0 * tileSize_);

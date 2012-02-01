@@ -91,6 +91,8 @@ public:
     QList<QGeoMapType> supportedMapTypes() const;
  //    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
 
+    int tileSize() const;
+
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
 

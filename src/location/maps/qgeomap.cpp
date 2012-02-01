@@ -44,7 +44,6 @@
 #include "qgeotilecache_p.h"
 #include "qgeotilespec.h"
 #include "qgeoprojection_p.h"
-#include "qgeoprojection2d_p.h"
 #include "qgeomapcontroller_p.h"
 #include "qdoublevector2d_p.h"
 #include "qdoublevector3d_p.h"
@@ -74,13 +73,8 @@
 QT_BEGIN_NAMESPACE
 
 QGeoMap::QGeoMap(QGeoTileCache *cache, QObject *parent)
-    : QObject(parent)
-{
-//    d_ptr = new Map3DPrivate(this, cache, 20000.0);
-
-    // edge is 2^max zoom * 4
-    d_ptr = new QGeoMapPrivate(this, cache, 20, 256);
-}
+    : QObject(parent),
+      d_ptr(new QGeoMapPrivate(this, cache)) {}
 
 QGeoMap::~QGeoMap()
 {
@@ -204,35 +198,21 @@ const QGeoMapType QGeoMap::activeMapType() const
     return d->activeMapType();
 }
 
-QGeoMapPrivate::QGeoMapPrivate(QGeoMap *parent, QGeoTileCache *cache, int maxZoom, int tileSize)
+QGeoMapPrivate::QGeoMapPrivate(QGeoMap *parent, QGeoTileCache *cache)
     : map_(parent),
       cache_(cache),
       manager_(0),
       controller_(0),
+      cameraTiles_(new QGeoCameraTiles()),
+      mapGeometry_(new QGeoMapGeometry()),
       mapImages_(0),
-      activeMapType_(QGeoMapType()),
-      maxZoom_(maxZoom),
-      tileSize_(tileSize),
-      baseHeight_(100.0)
-{
-    sideLength_ = pow(2.0, 1.0 * maxZoom_) * tileSize;
-
-    projection_ = QSharedPointer<QGeoProjection>(new QGeoProjection2D(baseHeight_, sideLength_));
-
-    cameraTiles_ = new QGeoCameraTiles(projection_);
-    cameraTiles_->setTileSize(tileSize_);
-    cameraTiles_->setMaximumZoomLevel(maxZoom_);
-
-    mapGeometry_ = new QGeoMapGeometry(projection_);
-    mapGeometry_->setTileSize(tileSize_);
-}
+      activeMapType_(QGeoMapType()) {}
 
 QGeoMapPrivate::~QGeoMapPrivate()
 {
     // controller_ is a child of map_, don't need to delete it here
 
-    if (mapImages_)
-        delete mapImages_;
+    delete mapImages_;
     delete mapGeometry_;
     delete cameraTiles_;
 
@@ -250,8 +230,13 @@ void QGeoMapPrivate::setMappingManager(QGeoMappingManager *manager)
 {
     if (manager) {
         manager->registerMap(map_);
-        pluginString_ = manager->managerName() + QLatin1String("_") + QString::number(manager->managerVersion());
 
+        cameraTiles_->setMaximumZoomLevel(static_cast<int>(ceil(manager->maximumZoomLevel())));
+
+        cameraTiles_->setTileSize(manager->tileSize());
+        mapGeometry_->setTileSize(manager->tileSize());
+
+        pluginString_ = manager->managerName() + QLatin1String("_") + QString::number(manager->managerVersion());
         cameraTiles_->setPluginString(pluginString_);
 
         mapImages_ = new QGeoMapImages(map_);
@@ -266,7 +251,7 @@ void QGeoMapPrivate::setMappingManager(QGeoMappingManager *manager)
 QGeoMapController* QGeoMapPrivate::mapController()
 {
     if (!controller_)
-        controller_ = new QGeoMapController(map_, projection_);
+        controller_ = new QGeoMapController(map_, mapGeometry_->coordinateInterpolator());
     return controller_;
 }
 
@@ -288,7 +273,7 @@ void QGeoMapPrivate::setCameraData(const QGeoCameraData &cameraData)
     }
 
     cameraData_.setAspectRatio(aspectRatio_);
-    cameraData_.setProjection(projection_.toWeakRef());
+    cameraData_.setCoordinateInterpolator(mapGeometry_->coordinateInterpolator().toWeakRef());
 
     cameraTiles_->setCamera(cameraData_);
     visibleTiles_ = cameraTiles_->tiles();
@@ -379,12 +364,12 @@ void QGeoMapPrivate::paintGL(QGLPainter *painter)
 
 QGeoCoordinate QGeoMapPrivate::screenPositionToCoordinate(const QPointF &pos) const
 {
-    return projection_->mercatorToCoord(mapGeometry_->screenPositionToMercator(pos));
+    return QGeoProjection::mercatorToCoord(mapGeometry_->screenPositionToMercator(pos));
 }
 
 QPointF QGeoMapPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 {
-    return mapGeometry_->mercatorToScreenPosition(projection_->coordToMercator(coordinate));
+    return mapGeometry_->mercatorToScreenPosition(QGeoProjection::coordToMercator(coordinate));
 }
 
 QT_END_NAMESPACE

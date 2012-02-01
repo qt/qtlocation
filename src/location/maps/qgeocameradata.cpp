@@ -70,7 +70,7 @@ public:
     int zoomLevel_;
     double zoomFactor_;
 
-    QWeakPointer<QGeoProjection> projection_;
+    QWeakPointer<QGeoCoordinateInterpolator> interpolator_;
 };
 
 QGeoCameraDataPrivate::QGeoCameraDataPrivate()
@@ -93,7 +93,7 @@ QGeoCameraDataPrivate::QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs)
       aspectRatio_(rhs.aspectRatio_),
       zoomLevel_(rhs.zoomLevel_),
       zoomFactor_(rhs.zoomFactor_),
-      projection_(rhs.projection_) {}
+      interpolator_(rhs.interpolator_) {}
 
 QGeoCameraDataPrivate& QGeoCameraDataPrivate::operator = (const QGeoCameraDataPrivate &rhs)
 {
@@ -105,11 +105,11 @@ QGeoCameraDataPrivate& QGeoCameraDataPrivate::operator = (const QGeoCameraDataPr
     aspectRatio_ = rhs.aspectRatio_;
     zoomLevel_ = rhs.zoomLevel_;
     zoomFactor_ = rhs.zoomFactor_;
-    QSharedPointer<QGeoProjection> p = rhs.projection_.toStrongRef();
-    if (p)
-        projection_ = p.toWeakRef();
+    QSharedPointer<QGeoCoordinateInterpolator> i = rhs.interpolator_.toStrongRef();
+    if (i)
+        interpolator_ = i.toWeakRef();
     else
-        projection_.clear();
+        interpolator_.clear();
 
     return *this;
 }
@@ -133,14 +133,14 @@ QVariant cameraInterpolator(const QGeoCameraData &start,
     QGeoCameraData result = start;
 
 
-    QSharedPointer<QGeoProjection> p = start.projection();
-    if (!p)
-        p = end.projection();
+    QSharedPointer<QGeoCoordinateInterpolator> i = start.coordinateInterpolator();
+    if (!i)
+        i = end.coordinateInterpolator();
 
-    if (!p)
+    if (!i)
         result.setCenter(start.center());
     else
-        result.setCenter(p->interpolate(start.center(), end.center(), progress));
+        result.setCenter(i->interpolate(start.center(), end.center(), progress));
 
     double sf = 1.0 - progress;
     double ef = progress;
@@ -278,14 +278,14 @@ double QGeoCameraData::zoomFactor() const
     return d->zoomFactor_;
 }
 
-void QGeoCameraData::setProjection(QSharedPointer<QGeoProjection> projection)
+void QGeoCameraData::setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator)
 {
-    d->projection_ = projection.toWeakRef();
+    d->interpolator_ = interpolator.toWeakRef();
 }
 
-QSharedPointer<QGeoProjection> QGeoCameraData::projection() const
+QSharedPointer<QGeoCoordinateInterpolator> QGeoCameraData::coordinateInterpolator() const
 {
-    return d->projection_.toStrongRef();
+    return d->interpolator_.toStrongRef();
 }
 
 QT_END_NAMESPACE

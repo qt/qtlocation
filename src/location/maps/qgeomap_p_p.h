@@ -89,7 +89,7 @@ class QGLPainter;
 class QGeoMapPrivate
 {
 public:
-    QGeoMapPrivate(QGeoMap *parent, QGeoTileCache *cache, int maxZoom, int tileSize);
+    QGeoMapPrivate(QGeoMap *parent, QGeoTileCache *cache);
     virtual ~QGeoMapPrivate();
 
     QGeoTileCache* tileCache();
@@ -128,8 +128,6 @@ private:
     QString pluginString_;
     QGeoMapController *controller_;
 
-    QSharedPointer<QGeoProjection> projection_;
-
     QGeoCameraData cameraData_;
     QSet<QGeoTileSpec> visibleTiles_;
 
@@ -138,14 +136,6 @@ private:
     QGeoMapImages *mapImages_;
 
     QGeoMapType activeMapType_;
-
-    // from map2d_p.h
-
-    int maxZoom_;
-    int tileSize_;
-
-    double baseHeight_;
-    double sideLength_;
 };
 
 QT_END_NAMESPACE

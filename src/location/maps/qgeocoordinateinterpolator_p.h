@@ -38,9 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QGEOMAPPINGMANAGERENGINE_P_H
-#define QGEOMAPPINGMANAGERENGINE_P_H
+#ifndef QGEOCOORDINATEINTERPOLATOR_P_H
+#define QGEOCOORDINATEINTERPOLATOR_P_H
 
 //
 //  W A R N I N G
@@ -53,55 +52,19 @@
 // We mean it.
 //
 
-//#include "qgraphicsgeomap.h"
-
-#include <QSize>
-#include <QList>
-#include <QMap>
-#include <QLocale>
-#include <QTimer>
-#include "qgeomaptype.h"
-#include "qgeomappingmanager.h"
-
-class QGeoTileSpec;
-class QGeoTiledMapReply;
+#include "qgeocoordinate.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMappingManagerEnginePrivate
+class QGeoCoordinateInterpolator
 {
 public:
-    QGeoMappingManagerEnginePrivate();
-    virtual ~QGeoMappingManagerEnginePrivate();
+    QGeoCoordinateInterpolator();
+    virtual ~QGeoCoordinateInterpolator();
 
-    QMap<QString, QVariant> parameters;
-
-    QString managerName;
-    int managerVersion;
-
-    QList<QGeoMapType> supportedMapTypes;
-//    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes;
-    int tileSize;
-    qreal minimumZoomLevel;
-    qreal maximumZoomLevel;
-    bool supportsBearing;
-    bool supportsTilting;
-    qreal minimumTilt;
-    qreal maximumTilt;
-    QGeoMappingManager::CacheAreas cacheHint;
-
-    QLocale locale;
-    bool started_;
-    bool initialized;
-    bool stopped_;
-    QTimer *timer_;
-    QList<QGeoTileSpec> queue_;
-    QHash<QGeoTileSpec, QGeoTiledMapReply*> invmap_;
-
-private:
-    Q_DISABLE_COPY(QGeoMappingManagerEnginePrivate)
+    virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress) = 0;
 };
 
 QT_END_NAMESPACE
 
-#endif
+#endif // QGEOCOORDINATEINTERPOLATOR_P_H

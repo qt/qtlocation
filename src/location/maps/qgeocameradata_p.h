@@ -55,6 +55,8 @@
 #include "qgeocoordinate.h"
 #include "qgeoprojection_p.h"
 
+#include "qgeocoordinateinterpolator_p.h"
+
 #include <QMetaType>
 
 #include <QSharedPointer>
@@ -100,8 +102,8 @@ public:
     void setZoomFactor(double zoomFactor);
     double zoomFactor() const;
 
-    void setProjection(QSharedPointer<QGeoProjection> projection);
-    QSharedPointer<QGeoProjection> projection() const;
+    void setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator);
+    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator() const;
 
 private:
     QSharedDataPointer<QGeoCameraDataPrivate> d;

@@ -318,6 +318,16 @@ QList<QGeoMapType> QGeoMappingManager::supportedMapTypes() const
 //}
 
 /*!
+    Returns the length of the edge of the tiles returned by this manager.
+
+    The tiles are assumed to be square.
+*/
+int QGeoMappingManager::tileSize() const
+{
+    return d_ptr->engine->tileSize();
+}
+
+/*!
     Returns the minimum zoom level supported by this manager.
 
     Larger values of the zoom level correspond to more detailed views of the

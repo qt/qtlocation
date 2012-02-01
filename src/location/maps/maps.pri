@@ -30,6 +30,7 @@ PRIVATE_HEADERS += \
                     maps/qgeocodereply_p.h \
                     maps/qgeocodingmanagerengine_p.h \
                     maps/qgeocodingmanager_p.h \
+                    maps/qgeocoordinateinterpolator_p.h \
                     maps/qgeomaneuver_p.h \
                     maps/qgeomapcontroller_p.h \
                     maps/qgeomapgeometry_p.h \
@@ -39,7 +40,6 @@ PRIVATE_HEADERS += \
                     maps/qgeomappingmanagerengine_p.h \
                     maps/qgeomappingmanager_p.h \
                     maps/qgeomaptype_p.h \
-                    maps/qgeoprojection2d_p.h \
                     maps/qgeoprojection_p.h \
                     maps/qgeoroute_p.h \
                     maps/qgeoroutereply_p.h \
@@ -60,6 +60,7 @@ SOURCES += \
             maps/qgeocodereply.cpp \
             maps/qgeocodingmanager.cpp \
             maps/qgeocodingmanagerengine.cpp \
+            maps/qgeocoordinateinterpolator.cpp \
             maps/qgeomaneuver.cpp \
             maps/qgeomapcontroller.cpp \
             maps/qgeomapgeometry.cpp \
@@ -68,7 +69,6 @@ SOURCES += \
             maps/qgeomappingmanager.cpp \
             maps/qgeomappingmanagerengine.cpp \
             maps/qgeomaptype.cpp \
-            maps/qgeoprojection2d.cpp \
             maps/qgeoprojection.cpp \
             maps/qgeoroute.cpp \
             maps/qgeoroutereply.cpp \

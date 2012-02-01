@@ -56,6 +56,7 @@
 
 #include "qgeocoordinate.h"
 #include "qgeocameradata_p.h"
+#include "qgeocoordinateinterpolator_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -65,17 +66,17 @@ class Q_LOCATION_EXPORT AnimatableCoordinate {
 public:
     AnimatableCoordinate();
     AnimatableCoordinate(const QGeoCoordinate &coordinate,
-                         QSharedPointer<QGeoProjection> projection);
+                         QSharedPointer<QGeoCoordinateInterpolator> interpolator);
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
 
-    QSharedPointer<QGeoProjection> projection() const;
-    void setProjection(QSharedPointer<QGeoProjection> projection);
+    QSharedPointer<QGeoCoordinateInterpolator> interpolator() const;
+    void setInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator);
 
 private:
     QGeoCoordinate coordinate_;
-    QSharedPointer<QGeoProjection> projection_;
+    QSharedPointer<QGeoCoordinateInterpolator> interpolator_;
 };
 
 class Q_LOCATION_EXPORT QGeoMapController : public QObject
@@ -89,7 +90,7 @@ class Q_LOCATION_EXPORT QGeoMapController : public QObject
     Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged)
 
 public:
-    QGeoMapController(QGeoMap *map, QSharedPointer<QGeoProjection> projection);
+    QGeoMapController(QGeoMap *map, QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator);
     ~QGeoMapController();
 
     AnimatableCoordinate center() const;
@@ -121,7 +122,7 @@ signals:
 
 private:
     QGeoMap *map_;
-    QSharedPointer<QGeoProjection> projection_;
+    QSharedPointer<QGeoCoordinateInterpolator> interpolator_;
     QGeoCameraData oldCameraData_;
 };
 

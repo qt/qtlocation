@@ -53,7 +53,6 @@
 //
 
 #include <QtLocation/qlocationglobal.h>
-#include <QSharedPointer>
 #include <QSet>
 #include <QSize>
 #include <QSizeF>
@@ -61,7 +60,6 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoProjection;
 class QGeoCameraData;
 class QGeoTileSpec;
 class QGeoMapType;
@@ -70,7 +68,7 @@ class QGeoCameraTilesPrivate;
 
 class Q_LOCATION_EXPORT QGeoCameraTiles {
 public:
-    QGeoCameraTiles(QSharedPointer<QGeoProjection> projection);
+    QGeoCameraTiles();
     ~QGeoCameraTiles();
 
     void setCamera(const QGeoCameraData &camera);

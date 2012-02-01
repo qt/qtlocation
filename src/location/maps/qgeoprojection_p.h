@@ -58,24 +58,13 @@ QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 class QDoubleVector2D;
-class QDoubleVector3D;
 
 class Q_AUTOTEST_EXPORT QGeoProjection
 {
 public:
-    QGeoProjection();
-    virtual ~QGeoProjection();
+    static QDoubleVector2D coordToMercator(const QGeoCoordinate &coord);
+    static QGeoCoordinate mercatorToCoord(const QDoubleVector2D &mercator);
 
-    virtual QDoubleVector3D coordToPoint(const QGeoCoordinate &coord) const = 0;
-    virtual QGeoCoordinate pointToCoord(const QDoubleVector3D &point) const = 0;
-
-    QDoubleVector2D coordToMercator(const QGeoCoordinate &coord) const;
-    QGeoCoordinate mercatorToCoord(const QDoubleVector2D &mercator) const;
-
-    virtual QDoubleVector3D mercatorToPoint(const QDoubleVector2D &mercator) const;
-    virtual QDoubleVector2D pointToMercator(const QDoubleVector3D &point) const;
-
-    virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress) = 0;
 private:
     static double realmod(const double a, const double b);
 };

@@ -313,8 +313,7 @@ void QDeclarativeGeoMapFlickable::updateCamera(int dx, int dy, int timeMs)
         //qDebug() << "Will do flick animation dx (pix), dy (pix), time (ms): " << dx << dy << timeMs;
         if (animation_->state() == QPropertyAnimation::Running)
             animation_->stop();
-        AnimatableCoordinate animationEndCoordinate;
-        animationEndCoordinate.setProjection(animationStartCoordinate.projection());
+        AnimatableCoordinate animationEndCoordinate = map_->mapController()->center();
         animation_->setDuration(timeMs);
         coordinate.setLongitude(coordinate.longitude() - (dx / pow(2.0, map_->mapController()->zoom())));
         coordinate.setLatitude(coordinate.latitude() + (dy / pow(2.0, map_->mapController()->zoom())));

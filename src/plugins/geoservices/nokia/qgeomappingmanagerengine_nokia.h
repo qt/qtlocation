@@ -96,7 +96,7 @@ private:
 
     QString getRequestString(const QGeoTileSpec &spec) const;
 
-    static QString sizeToStr(const QSize &size);
+    static QString sizeToStr(int size);
     static QString mapIdToStr(int mapId);
 
     void setHost(const QString& host);
