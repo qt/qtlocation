@@ -65,7 +65,8 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.right: row.left
         anchors.rightMargin: 10
-        anchors.verticalCenter: row.verticalCenter
+        anchors.top: parent.top
+        anchors.topMargin: 10
 
         BusyIndicator {
             height: parent.height * 0.8
@@ -97,6 +98,8 @@ Rectangle {
 
         anchors.right: parent.right
         anchors.rightMargin: 10
+        anchors.top: parent.top
+        anchors.topMargin: 10
         spacing: 10
 
         IconButton {
