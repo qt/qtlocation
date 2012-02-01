@@ -178,7 +178,7 @@ private:
     bool checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError);
 
 
-    bool compareResults(const QList<QPlaceSearchResult> &results, const QList<QPlace> &expectedResults);
+    bool compareResultsByName(const QList<QPlaceSearchResult> &results, const QList<QPlace> &expectedResults);
 
     QImage dataUrlToImage(const QUrl &url);
 
@@ -577,15 +577,15 @@ void tst_QPlaceManagerJsonDb::savePlaceWithCategory()
 
 void tst_QPlaceManagerJsonDb::searchByName()
 {
-    QPlace adelaide, adel, ad, brisbane, brandel;
+    QPlace adelaide, adel, ad, brisbane, bradel;
     adelaide.setName("Adelaide");
     adel.setName("adel");
     ad.setName("ad");
     brisbane.setName("brisbane");
-    brisbane.setName("brandel");
+    bradel.setName("bradel");
 
     QList<QPlace> places;
-    places << adelaide << adel << ad << brisbane;
+    places << adelaide << adel << ad << brisbane << bradel;
     doSavePlaces(places);
 
     //test that search has exhibits substring behaviour
@@ -595,8 +595,8 @@ void tst_QPlaceManagerJsonDb::searchByName()
     QList<QPlaceSearchResult> results;
     QVERIFY(doSearch(request, &results));
     QList<QPlace> expectedPlaces;
-    expectedPlaces << adelaide << adel << brandel;
-    QVERIFY(compareResults(results, expectedPlaces));
+    expectedPlaces << adelaide << adel << bradel;
+    QVERIFY(compareResultsByName(results, expectedPlaces));
 
     //Search for a non-exisent place
     request.setSearchTerm("Nowhere");
@@ -2519,17 +2519,27 @@ bool tst_QPlaceManagerJsonDb::doMatch(const QPlaceMatchRequest &request,
     return isSuccessful;
 }
 
-bool tst_QPlaceManagerJsonDb::compareResults(const QList<QPlaceSearchResult> &results,
+//Assumes all place names are unique
+bool tst_QPlaceManagerJsonDb::compareResultsByName(const QList<QPlaceSearchResult> &results,
                                              const QList<QPlace> &expectedResults)
 {
-    QSet<QString> actualPlaceCoords;
+    QSet<QString> resultNames;
     foreach (const QPlaceSearchResult &result, results)
-        actualPlaceCoords.insert(result.place().location().coordinate().toString());
-    QSet<QString> expectedPlaceCoords;
-    foreach (const QPlace &place, expectedResults) {
-        expectedPlaceCoords.insert(place.location().coordinate().toString());
+        resultNames.insert(result.place().name());
+
+    QSet<QString> expectedNames;
+    foreach (const QPlace &place, expectedResults)
+        expectedNames.insert(place.name());
+
+    bool isMatch = (resultNames == expectedNames);
+    if (results.count() != expectedResults.count() || !isMatch) {
+        qWarning() << "comparison of results by name does not match";
+        qWarning() << "result names: " << resultNames;
+        qWarning() << "expected names: " << expectedNames;
+        return false;
     }
-    return actualPlaceCoords == expectedPlaceCoords;
+
+    return isMatch;
 }
 
 QImage tst_QPlaceManagerJsonDb::dataUrlToImage(const QUrl &url)

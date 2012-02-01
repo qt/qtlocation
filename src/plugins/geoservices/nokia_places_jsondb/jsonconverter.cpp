@@ -66,7 +66,7 @@ QString JsonConverter::convertToQueryString(const QPlaceSearchRequest &request)
 {
     QString queryString;
     if (!request.searchTerm().isEmpty()) {
-        queryString += QString::fromLatin1("[?%1=\"%2\"][?%3 =~ \"!%4!i\"]")
+        queryString += QString::fromLatin1("[?%1=\"%2\"][?%3 =~ \"!.*%4.*!i\"]")
                         .arg(JsonConverter::Type).arg(JsonConverter::PlaceType).arg(JsonConverter::Name).arg(request.searchTerm());
     }
 
