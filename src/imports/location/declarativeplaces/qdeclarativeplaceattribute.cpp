@@ -45,6 +45,7 @@
     \qmlclass ExtendedAttributes QDeclarativePropertyMap
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
     \since QtLocation 5.0
 
     \brief The ExtendedAttributes element holds additional data about a \l Place.
@@ -98,6 +99,7 @@
     \qmlclass PlaceAttribute QDeclarativePlaceAttribute
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
     \since QtLocation 5.0
 
     \brief The PlaceAttribute element holds generic place attribute information.

@@ -45,6 +45,7 @@
     \qmlclass ContactDetails QDeclarativePropertyMap
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
     \since QtLocation 5.0
 
     \brief The ContactDetails element holds contact details for a \l Place.
@@ -100,6 +101,7 @@
     \qmlclass ContactDetail QDeclarativeContactDetail
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
     \since QtLocation 5.0
 
     \brief The ContactDetail element holds a contact detail such as a phone number or a website

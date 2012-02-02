@@ -51,6 +51,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass ReviewModel QDeclarativeReviewModel
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-models
     \since QtLocation 5.0
 
     \brief The ReviewModel element provides access to reviews of a \l Place.

@@ -53,6 +53,8 @@ QT_USE_NAMESPACE
     \qmlclass Category QDeclarativeCategory
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
+
     \since QtLocation 5.0
 
     \brief The Category element represents a category that a \l Place can be associated with.

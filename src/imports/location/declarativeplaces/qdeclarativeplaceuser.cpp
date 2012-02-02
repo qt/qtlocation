@@ -47,6 +47,7 @@ QT_USE_NAMESPACE
     \qmlclass User QDeclarativePlaceUser
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
     \since QtLocation 5.0
 
     \brief The User element identifies a user who contributed a particular \l Place content item.

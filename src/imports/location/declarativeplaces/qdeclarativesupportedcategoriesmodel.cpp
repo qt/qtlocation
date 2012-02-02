@@ -53,6 +53,7 @@ QT_USE_NAMESPACE
     \qmlclass CategoryModel QDeclarativeSupportedCategoriesModel
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-models
     \since QtLocation 5.0
 
     \brief The CategoryModel element provides a model of the categories supported by a \l Plugin.

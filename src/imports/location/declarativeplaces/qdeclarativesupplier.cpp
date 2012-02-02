@@ -49,6 +49,7 @@ QT_USE_NAMESPACE
     \qmlclass Supplier QDeclarativeSupplier
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
     \since QtLocation 5.0
 
     \brief The Supplier element holds supplier data.

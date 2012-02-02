@@ -51,6 +51,7 @@ QT_USE_NAMESPACE
     \qmlclass Icon QDeclarativePlaceIcon
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
     \since QtLocation 5.0
 
     \brief The Icon element represents an icon image source which can have multiple sizes.

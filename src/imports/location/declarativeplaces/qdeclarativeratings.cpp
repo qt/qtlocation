@@ -47,6 +47,7 @@ QT_USE_NAMESPACE
     \qmlclass Ratings QDeclarativeRatings
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
     \since QtLocation 5.0
 
     \brief The Ratings element holds place rating information.

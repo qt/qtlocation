@@ -46,9 +46,12 @@ import QtLocation 5.0
 //! [QtLocation import]
 
 Item {
+    //! [Initialize Plugin]
     Plugin {
         id: myPlugin
+        name: "nokia"
     }
+    //! [Initialize Plugin]
 
     Place {
         id: place
@@ -253,10 +256,54 @@ Item {
     }
     //! [Place savePlace def]
 
+
+    //! [Search MapItemView]
+    MapItemView {
+        model: searchModel
+        delegate: MapQuickItem {
+            coordinate: place.location.coordinate
+
+            anchorPoint.x: image.width * 0.5
+            anchorPoint.y: image.height
+
+            sourceItem: Image {
+                id: image
+                source: "marker.png"
+            }
+        }
+    }
+    //! [Search MapItemView]
+
+    function fetchDetails() {
+        //! [Place fetchDetails]
+        if (!place.detailsFetched)
+            place.getDetails();
+        //! [Place fetchDetails]
+    }
+
     function savePlace() {
     //! [Place savePlace]
         myPlace.save();
     //! [Place savePlace]
+    }
+
+    function createAndSavePlace() {
+        //! [Place createAndSavePlace]
+        //creating and saving a place
+        var place = Qt.createQmlObject('import QtLocation 5.0; Place { }', parent);
+        place.plugin = myPlugin;
+        place.name = "New York";
+        place.location.coordinate.latitude = 40.7
+        place.location.coordinate.longitude = -74.0
+        place.save();
+        //! [Place createAndSavePlace]
+    }
+
+    function removePlace() {
+        //! [Place removePlace]
+        //removing a place
+        place.remove();
+        //! [Place removePlace]
     }
 
     function saveToNewPlugin() {

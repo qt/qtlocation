@@ -27,10 +27,78 @@
 
 /*!
     \page location-places-qml.html
-    \title Places (QML)
-    \previouspage {qtlocation-module.html}{QtLocation}
+    \title QML Places API
+    \previouspage {qtlocation-qml.html}{QtLocation}
 
+    \section1 Overview
 
+    The Places API allows users to discover places/points of interest
+    and view details about them such as address and contact information;
+    some places may even have rich content such as images and reviews.
+    The Places API also facilitates management of places and
+    categories, allowing users to save and remove them.
+
+    \section1 Quickstart Tutorial
+
+    \section2 Plugin Initialization
+    A \l Plugin is an abstraction for a backend.  One \l Plugin might access places from a REST server
+    while another may access places from a local database.  The following instantiates a Plugin element
+    by providing a name of "nokia".  The Plugin name identifies which backend to choose from.
+    Note that different Plugin backends may have different nuances and behaviours, refer to
+    the \l {Plugin references and parameters}{Plugin References} for these details.
+
+    \snippet snippets/declarative/places.qml Initialize Plugin
+
+    \section2 Searching
+    Searching is accomplished via the \l PlaceSearchModel.  To instantiate a \l PlaceSearchModel we
+    provide a \l Plugin and some search parameters such as a search center and search text.  The model
+    can be used with a \l ListView and delegate to display the results.  A search operation
+    is started by invoking the PlaceSearchModel::execute() method.
+
+    \snippet snippets/declarative/places.qml PlaceSearchModel
+
+    The \l PlaceSearchModel can also be used in conjuction with a MapItemView to display
+    markers on a map.  The MapItemView's model is set to the search model, and for the delegate
+    we use a MapQuickItem to display and position a given marker image.  A marker is shown
+    for every place that was found by the search model.
+
+    \snippet snippets/declarative/places.qml Search MapItemView
+
+    The search model may also be used to specify whether corrections are returned.
+    See the documentation for \l PlaceSearchModel for details.
+
+    \section2 Fetching details
+    In order to save bandwidth, sometimes a backend will only return places which
+    are partially populated with details.  This can be checked with the
+    Place::detailsFetched property which indicates whether all availalable details
+    have been fetched or not.  If not the Place::getDetails() method can be invoked.
+
+    \snippet snippets/declarative/places.qml Place fetchDetails
+
+    \section2 Saving/Removing a place.
+    Some backends may support saving/removing of places, this can be done by
+    calling the Place::save() or Place::remove() function.  Note that in order
+    to save a \l Place, a \l Plugin must be assigned to specify which backend we
+    are saving to.
+
+    \snippet snippets/declarative/places.qml Place createAndSavePlace
+    \codeline
+    \snippet snippets/declarative/places.qml Place removePlace
+
+    \section2 Learn More
+    The above quickstart tutorial only exhibits a subset of Places functionality.
+    Refer to the \l {Places Elements} shown below for richer content such as \l {PlaceRecommendationModel} {recommendations},
+    \l {ImageModel} {images}, \l {ReviewModel} {reviews} etc, as well as more indepth descriptions and explanations.
+
+    See also the \l {Places (QML)}{QML Places Example} for a more comprehensive demonstration on how
+    to use the API.
+
+    \section1 Places Elements
+    \section2 Data Elements
+    \annotatedlist qml-QtLocation5-places-data
+
+    \section2 Models
+    \annotatedlist qml-QtLocation5-places-models
 */
 
 /*!
