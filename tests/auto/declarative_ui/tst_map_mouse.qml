@@ -260,7 +260,7 @@ Item {
         }
         function real_press_and_hold(target, x,y) {
             mousePress(target,x,y)
-            wait(850) // threshold is 800 ms
+            wait(1000) // threshold is 800 ms
             mouseRelease(target,x, y)
         }
 

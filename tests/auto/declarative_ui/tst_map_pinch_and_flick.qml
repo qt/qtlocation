@@ -561,8 +561,8 @@ Item {
                         Qt.point(50,50),  // point1To
                         Qt.point(100,50), // point2From
                         Qt.point(50,50),  // point2To
-                        20,               // interval between touch events (swipe1), default 20ms
-                        20,               // interval between touch events (swipe2), default 20ms
+                        40,               // interval between touch events (swipe1), default 20ms
+                        40,               // interval between touch events (swipe2), default 20ms
                         10,               // number of touchevents in point1from -> point1to, default 10
                         10);              // number of touchevents in point2from -> point2to, default 10
             tryCompare(pinchStartedSpy, "count", 1);
@@ -578,7 +578,7 @@ Item {
             compare(map.lastPinchEvent.pointCount, 2)
             tryCompare(pinchActiveSpy, "count", 1) // check that pinch is active
             compare(map.pinch.active, true)
-            wait(100)
+            wait(200)
             // check the pinch event data for pinchUpdated
             compare(map.lastPinchEvent.center.x, 50)
             compare(map.lastPinchEvent.center.y, 50)
@@ -609,14 +609,18 @@ Item {
             // 2. typical zoom out
             clear_data();
             map.pinch.maximumZoomLevelChange = 2
-            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),Qt.point(50,50), Qt.point(100,50));
+            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),
+                                 Qt.point(50,50), Qt.point(100,50),
+                                 40, 40, 10, 10);
             tryCompare(pinchStartedSpy, "count", 1);
             tryCompare(pinchFinishedSpy, "count", 1);
             verify(pinchUpdatedSpy.count >= 5); // verify 'sane' number of updates received
             compare(map.zoomLevel, 9)
             // 3. zoom in and back out (direction change during same pinch)
             clear_data();
-            pinchGenerator.pinch(Qt.point(0,50), Qt.point(100,50), Qt.point(100,50),Qt.point(0,50));
+            pinchGenerator.pinch(Qt.point(0,50), Qt.point(100,50),
+                                 Qt.point(100,50),Qt.point(0,50),
+                                 40, 40, 10, 10);
             tryCompare(pinchStartedSpy, "count", 1);
             tryCompare(pinchFinishedSpy, "count", 1);
             verify(pinchUpdatedSpy.count >= 5); // verify 'sane' number of updates received
@@ -625,14 +629,18 @@ Item {
             clear_data();
             map.pinch.maximumZoomLevelChange = 4
             compare (map.pinch.maximumZoomLevelChange, 4)
-            pinchGenerator.pinch(Qt.point(0,50),Qt.point(50,50),Qt.point(100,50),Qt.point(50,50));
+            pinchGenerator.pinch(Qt.point(0,50),Qt.point(50,50),
+                                 Qt.point(100,50),Qt.point(50,50),
+                                 40, 40, 10, 10);
             tryCompare(pinchFinishedSpy, "count", 1);
             compare(map.zoomLevel, 7)
             // 5. typical zoom out with different change level
             clear_data();
             map.pinch.maximumZoomLevelChange = 1
             compare (map.pinch.maximumZoomLevelChange, 1)
-            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),Qt.point(50,50), Qt.point(100,50));
+            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),
+                                 Qt.point(50,50), Qt.point(100,50),
+                                 40, 40, 10, 10);
             tryCompare(pinchFinishedSpy, "count", 1);
             compare(map.zoomLevel, 7.5)
 
@@ -701,8 +709,10 @@ Item {
             clear_data()
             map.pinch.enabled = false
             map.pinch.maximumZoomLevelChange = 2
-            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),Qt.point(50,50), Qt.point(100,50));
-            wait(100);
+            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),
+                                 Qt.point(50,50), Qt.point(100,50),
+                                 40, 40, 10, 10);
+            wait(200);
             compare(pinchActiveSpy.count, 0)
             compare(map.pinch.active, false)
             compare(pinchStartedSpy.count, 0)
@@ -714,8 +724,10 @@ Item {
 
             // 11. pinch disabling during pinching
             clear_data()
-            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),Qt.point(50,50), Qt.point(100,50));
-            wait(250)
+            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),
+                                 Qt.point(50,50), Qt.point(100,50),
+                                 40, 40, 10, 10);
+            wait(300)
             map.pinch.enabled = false
             // check that pinch is active. then disable the pinch. pinch area should still process
             // as long as it is active
@@ -732,9 +744,11 @@ Item {
             // 12. check nuthin happens if no active gestures
             clear_data()
             map.pinch.activeGestures = MapPinchArea.NoGesture
-            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),Qt.point(50,50), Qt.point(100,50));
+            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),
+                                 Qt.point(50,50), Qt.point(100,50),
+                                 40, 40, 10, 10);
             tryCompare(pinchStartedSpy, "count", 0);
-            wait(250);
+            wait(300);
             compare(pinchUpdatedSpy.count, 0);
             compare(pinchStartedSpy.count, 0);
             compare(map.zoomLevel, 8.5)
@@ -743,7 +757,9 @@ Item {
             // 13. manually changing zoom level during active pinch zoom
             clear_data();
             map.pinch.maximumZoomLevelChange = 2
-            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),Qt.point(50,50), Qt.point(100,50));
+            pinchGenerator.pinch(Qt.point(50,50), Qt.point(0,50),
+                                 Qt.point(50,50), Qt.point(100,50),
+                                 40, 40, 10, 10);
             tryCompare(pinchStartedSpy, "count", 1);
             tryCompare(pinchActiveSpy, "count", 1)
             compare(map.pinch.active, true)
@@ -755,7 +771,9 @@ Item {
             clear_data()
             map.pinch.maximumZoomLevelChange = 4
             map.zoomLevel = map.minimumZoomLevel + 0.5
-            pinchGenerator.pinch(Qt.point(0,50),Qt.point(50,50),Qt.point(100,50),Qt.point(50,50));
+            pinchGenerator.pinch(Qt.point(0,50),Qt.point(50,50),
+                                 Qt.point(100,50),Qt.point(50,50),
+                                 40, 40, 10, 10);
             tryCompare(pinchFinishedSpy, "count", 1);
             compare(map.zoomLevel, map.minimumZoomLevel)
             map.zoomLevel = map.maximumZoomLevel - 0.5
@@ -766,8 +784,10 @@ Item {
             // 15. check that pinch accepted works (rejection)
             clear_data()
             map.rejectPinch = true
-            pinchGenerator.pinch(Qt.point(0,50),Qt.point(50,50),Qt.point(100,50),Qt.point(50,50));
-            wait(250)
+            pinchGenerator.pinch(Qt.point(0,50),Qt.point(50,50),
+                                 Qt.point(100,50),Qt.point(50,50),
+                                 40, 40, 10, 10);
+            wait(300)
             compare(pinchUpdatedSpy.count, 0)
             compare(pinchFinishedSpy.count, 0)
             compare(map.pinch.active, false)
