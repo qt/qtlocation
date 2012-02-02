@@ -253,8 +253,7 @@ void QGeoMappingManagerEngine::handleReply(QGeoTiledMapReply *reply, const QGeoT
     }
 
     if (reply->error() == QGeoTiledMapReply::NoError) {
-        QByteArray bytes = reply->mapImageData();
-        emit tileFinished(spec, bytes);
+        emit tileFinished(spec, reply->mapImageData(), reply->mapImageFormat());
     } else {
         emit tileError(spec, reply->errorString());
     }

@@ -106,9 +106,9 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
     qRegisterMetaType<QGeoTileSpec>();
 
     connect(d_ptr->engine,
-            SIGNAL(tileFinished(QGeoTileSpec,QByteArray)),
+            SIGNAL(tileFinished(QGeoTileSpec,QByteArray,QString)),
             this,
-            SLOT(engineTileFinished(QGeoTileSpec,QByteArray)),
+            SLOT(engineTileFinished(QGeoTileSpec,QByteArray,QString)),
             Qt::QueuedConnection);
     connect(d_ptr->engine,
             SIGNAL(tileError(QGeoTileSpec,QString)),
@@ -262,7 +262,7 @@ void QGeoMappingManager::updateTileRequests(QGeoMap *map,
                               Q_ARG(QSet<QGeoTileSpec>, cancelTiles));
 }
 
-void QGeoMappingManager::engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes)
+void QGeoMappingManager::engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format)
 {
     QSet<QGeoTileCache*> caches;
 
@@ -290,7 +290,7 @@ void QGeoMappingManager::engineTileFinished(const QGeoTileSpec &spec, const QByt
     cache_iter cache = caches.constBegin();
     cache_iter cacheEnd = caches.constEnd();
     for (; cache != cacheEnd; ++cache) {
-        (*cache)->insert(spec, bytes, d_ptr->engine->cacheHint());
+        (*cache)->insert(spec, bytes, format, d_ptr->engine->cacheHint());
     }
 
     map = maps.constBegin();

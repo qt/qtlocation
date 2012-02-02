@@ -104,7 +104,10 @@ public:
     void evictFromMemoryCache(TileMemory *tm);
     void evictFromTextureCache(TileTexture *tt);
 
-    void insert(const QGeoTileSpec &spec, const QByteArray &bytes, QGeoMappingManager::CacheAreas areas = QGeoMappingManager::AllCaches);
+    void insert(const QGeoTileSpec &spec,
+                const QByteArray &bytes,
+                const QString &format,
+                QGeoMappingManager::CacheAreas areas = QGeoMappingManager::AllCaches);
     void handleError(const QGeoTileSpec &spec, const QString &errorString);
 
 private:
@@ -114,7 +117,7 @@ private:
     TileMemory* addToMemoryCache(const QGeoTileSpec &spec, const QPixmap &pixmap);
     TileTexture* addToTextureCache(const QGeoTileSpec &spec, const QPixmap &pixmap);
 
-    static QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &directory);
+    static QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory);
     static QGeoTileSpec filenameToTileSpec(const QString &filename);
 
     QString directory_;

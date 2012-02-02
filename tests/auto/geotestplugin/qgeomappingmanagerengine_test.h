@@ -139,7 +139,7 @@ public:
         pm.save(&buffer, "PNG");
 
         mappingReply_->callSetMapImageData(bytes);
-        mappingReply_->callSetMapImageFormat("PNG");
+        mappingReply_->callSetMapImageFormat("png");
         mappingReply_->callSetFinished(true);
 
         return static_cast<QGeoTiledMapReply*>(mappingReply_);

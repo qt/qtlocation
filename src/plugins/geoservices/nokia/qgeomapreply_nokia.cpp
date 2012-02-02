@@ -119,7 +119,7 @@ void QGeoMapReplyNokia::networkFinished()
 //    }
 
     setMapImageData(m_reply->readAll());
-    setMapImageFormat("PNG");
+    setMapImageFormat("png");
     setFinished(true);
 
     m_reply->deleteLater();

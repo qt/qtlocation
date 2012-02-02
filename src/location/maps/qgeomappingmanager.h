@@ -109,11 +109,10 @@ public:
     QLocale locale() const;
 
 private Q_SLOTS:
-    void engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes);
+    void engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
     void engineTileError(const QGeoTileSpec &spec, const QString &errorString);
 
 Q_SIGNALS:
-    void tileFinished(const QGeoTileSpec &spec, const QByteArray &bytes);
     void tileError(const QGeoTileSpec &spec, const QString &errorString);
     void initialized();
 

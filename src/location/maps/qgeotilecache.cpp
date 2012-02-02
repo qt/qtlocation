@@ -207,18 +207,22 @@ QGLTexture2D* QGeoTileCache::get(const QGeoTileSpec &spec)
     return 0;
 }
 
-void QGeoTileCache::insert(const QGeoTileSpec &spec, const QByteArray &bytes, QGeoMappingManager::CacheAreas areas)
+void QGeoTileCache::insert(const QGeoTileSpec &spec,
+                           const QByteArray &bytes,
+                           const QString &format,
+                           QGeoMappingManager::CacheAreas areas)
 {
     keys_.insert(spec);
 
     QPixmap pixmap;
+    // TODO use format string here to hint to the loading code?
     if (!pixmap.loadFromData(bytes)) {
         handleError(spec, QLatin1String("Problem with tile image"));
         return;
     }
 
     if (areas & QGeoMappingManager::DiskCache) {
-        QString filename = tileSpecToFilename(spec, directory_);
+        QString filename = tileSpecToFilename(spec, format, directory_);
 
         QFile file(filename);
         file.open(QIODevice::WriteOnly);
@@ -328,7 +332,8 @@ void QGeoTileCache::handleError(const QGeoTileSpec &, const QString &error)
 void QGeoTileCache::loadTiles()
 {
     QStringList formats;
-    formats << QLatin1String("*.png");
+    //formats << QLatin1String("*.png");
+    formats << QLatin1String("*.*");
 
     QDir dir(directory_);
     //QStringList files = dir.entryList(formats, QDir::Files, QDir::Time | QDir::Reversed);
@@ -346,7 +351,7 @@ void QGeoTileCache::loadTiles()
 
 }
 
-QString QGeoTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &directory)
+QString QGeoTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory)
 {
     QString filename = spec.plugin();
     filename += QLatin1String("-");
@@ -357,7 +362,8 @@ QString QGeoTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QStrin
     filename += QString::number(spec.x());
     filename += QLatin1String("-");
     filename += QString::number(spec.y());
-    filename += QLatin1String(".png");
+    filename += QLatin1String(".");
+    filename += format;
 
     QDir dir = QDir(directory);
 
@@ -367,13 +373,13 @@ QString QGeoTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QStrin
 QGeoTileSpec QGeoTileCache::filenameToTileSpec(const QString &filename)
 {
     QGeoTileSpec emptySpec;
-    QString extension = QLatin1String(".png");
 
-    if (!filename.endsWith(extension))
+    QStringList parts = filename.split('.');
+
+    if (parts.length() != 2)
         return emptySpec;
 
-    QString name = filename;
-    name.chop(extension.length());
+    QString name = parts.at(0);
     QStringList fields = name.split('-');
 
     if (fields.length() != 5)
