@@ -53,6 +53,7 @@
 //
 
 #include <QSet>
+#include <QSharedPointer>
 #include <QSize>
 
 #include "qgeocoordinateinterpolator_p.h"
