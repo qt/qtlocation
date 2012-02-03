@@ -210,7 +210,9 @@ QPair<QSet<QGeoTileSpec>, QSet<QGeoTileSpec> > QGeoCameraTiles::tilesSplitByDate
     return QPair<QSet<QGeoTileSpec>, QSet<QGeoTileSpec> >(d->tilesLeft_, d->tilesRight_);
 }
 
-QGeoCameraTilesPrivate::QGeoCameraTilesPrivate() {}
+QGeoCameraTilesPrivate::QGeoCameraTilesPrivate()
+    : tileSize_(0),
+      maxZoom_(0) {}
 
 QGeoCameraTilesPrivate::~QGeoCameraTilesPrivate() {}
 

@@ -76,12 +76,13 @@ public:
 QGeoCameraDataPrivate::QGeoCameraDataPrivate()
     : QSharedData(),
       center_(-27.5, 153),
-      distance_(0.02),
+      distance_(0.0),
       bearing_(0.0),
       tilt_(0.0),
       roll_(0.0),
       aspectRatio_(1.0),
-      zoomLevel_(9) {}
+      zoomLevel_(9),
+      zoomFactor_(9.0) {}
 
 QGeoCameraDataPrivate::QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs)
     : QSharedData(rhs),

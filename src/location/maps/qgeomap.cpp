@@ -199,7 +199,10 @@ const QGeoMapType QGeoMap::activeMapType() const
 }
 
 QGeoMapPrivate::QGeoMapPrivate(QGeoMap *parent, QGeoTileCache *cache)
-    : map_(parent),
+    : width_(0),
+      height_(0),
+      aspectRatio_(0.0),
+      map_(parent),
       cache_(cache),
       manager_(0),
       controller_(0),
