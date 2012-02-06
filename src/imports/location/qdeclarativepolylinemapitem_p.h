@@ -43,6 +43,7 @@
 #define QDECLARATIVEPOLYLINEMAPITEM
 
 #include "qdeclarativegeomapitembase_p.h"
+#include "qgeomapitemgeometry_p.h"
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
@@ -75,6 +76,24 @@ private:
     QColor color_;
 };
 
+class QGeoMapPolylineGeometry : public QGeoMapItemGeometry
+{
+    Q_OBJECT
+
+public:
+    explicit QGeoMapPolylineGeometry(QObject *parent = 0);
+
+    void updateSourcePoints(const QGeoMap &map,
+                            const QList<QGeoCoordinate> &path);
+
+    void updateScreenPoints(const QGeoMap &map,
+                            qreal strokeWidth);
+
+private:
+    QVector<qreal> srcPoints_;
+    QVector<QPainterPath::ElementType> srcPointTypes_;
+};
+
 class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
@@ -85,11 +104,6 @@ class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
 public:
     QDeclarativePolylineMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolylineMapItem();
-
-    static void updatePolyline(QPolygonF& points, const QGeoMap& map,
-                               const QList<QGeoCoordinate> &path,
-                               qreal& w, qreal& h, qreal strokeW,
-                               QPainterPath &outline, QPointF &offset);
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
        //from QuickItem
@@ -103,6 +117,8 @@ public:
     bool contains(QPointF point);
 
     QDeclarativeMapLineProperties *line();
+
+    inline QList<QDeclarativeCoordinate*> &path() { return coordPath_; }
 
 Q_SIGNALS:
     void pathChanged();
@@ -129,11 +145,8 @@ private:
     QList<QGeoCoordinate> path_;
     QColor color_;
     qreal zoomLevel_;
-    QPolygonF polyline_;
-    bool dirtyGeometry_;
     bool dirtyMaterial_;
-    QPainterPath outline_;
-    QPointF offset_;
+    QGeoMapPolylineGeometry geometry_;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -145,7 +158,7 @@ public:
     MapPolylineNode();
     ~MapPolylineNode();
 
-    void update(const QColor& fillColor, const QPolygonF& shape, qreal width);
+    void update(const QColor& fillColor, const QGeoMapItemGeometry *shape);
 
 private:
     QSGFlatColorMaterial fill_material_;

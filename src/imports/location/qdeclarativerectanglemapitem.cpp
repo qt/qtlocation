@@ -40,7 +40,10 @@
 ****************************************************************************/
 
 #include "qdeclarativerectanglemapitem_p.h"
+#include "qdeclarativepolygonmapitem_p.h"
 #include <QPainter>
+#include <QRectF>
+#include <QPointF>
 
 QT_BEGIN_NAMESPACE
 
@@ -100,13 +103,48 @@ struct Vertex
     QVector2D position;
 };
 
+QGeoMapRectangleGeometry::QGeoMapRectangleGeometry(QObject *parent) :
+    QGeoMapItemGeometry(parent)
+{
+}
+
+void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
+                                            const QGeoCoordinate &topLeft,
+                                            const QGeoCoordinate &bottomRight)
+{
+    if (!screenDirty_ && !sourceDirty_)
+        return;
+
+    QPointF tl = map.coordinateToScreenPosition(topLeft, false);
+    QPointF br = map.coordinateToScreenPosition(bottomRight, false);
+    QRectF re(tl, br);
+    re.translate(-1 * tl);
+
+    screenTriangles_.clear();
+    screenTriangles_.reserve(6);
+
+    screenTriangles_ << re.topLeft().x() << re.topLeft().y();
+    screenTriangles_ << re.topRight().x() << re.topRight().y();
+    screenTriangles_ << re.bottomLeft().x() << re.bottomLeft().y();
+
+    screenTriangles_ << re.topRight().x() << re.topRight().y();
+    screenTriangles_ << re.bottomLeft().x() << re.bottomLeft().y();
+    screenTriangles_ << re.bottomRight().x() << re.bottomRight().y();
+
+    firstPointOffset_ = QPointF(0,0);
+    srcOrigin_ = topLeft;
+    screenBounds_ = re;
+
+    screenOutline_ = QPainterPath();
+    screenOutline_.addRect(re);
+}
+
 QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent):
     QDeclarativeGeoMapItemBase(parent),
     topLeft_(0),
     bottomRight_(0),
     color_(Qt::transparent),
     zoomLevel_(0.0),
-    dirtyGeometry_(true),
     dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
@@ -125,7 +163,8 @@ void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap 
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
         QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)),this, SLOT(handleCameraDataChanged(QGeoCameraData)));
-        dirtyGeometry_ = true;
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
         updateMapItem();
     }
 }
@@ -162,7 +201,8 @@ void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
         connect(topLeft_, SIGNAL(coordinateChanged(QGeoCoordinate)),
                 this, SLOT(updateMapItemAssumeDirty()));
     }
-    dirtyGeometry_ = true;
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
     updateMapItem();
     emit topLeftChanged(topLeft_);
 }
@@ -174,7 +214,8 @@ QDeclarativeCoordinate* QDeclarativeRectangleMapItem::topLeft()
 
 void QDeclarativeRectangleMapItem::updateMapItemAssumeDirty()
 {
-    dirtyGeometry_ = true;
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
     updateMapItem();
 }
 
@@ -194,7 +235,8 @@ void QDeclarativeRectangleMapItem::setBottomRight(QDeclarativeCoordinate *bottom
         connect(bottomRight_, SIGNAL(coordinateChanged(QGeoCoordinate)),
                 this, SLOT(updateMapItemAssumeDirty()));
     }
-    dirtyGeometry_ = true;
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
     updateMapItem();
     emit bottomRightChanged(bottomRight_);
 }
@@ -229,16 +271,17 @@ QSGNode* QDeclarativeRectangleMapItem::updatePaintNode(QSGNode* oldNode, UpdateP
 {
     Q_UNUSED(data);
 
-    MapRectangleNode *node = static_cast<MapRectangleNode*>(oldNode);
+    MapPolygonNode *node = static_cast<MapPolygonNode*>(oldNode);
 
     if (!node) {
-        node = new MapRectangleNode();
+        node = new MapPolygonNode();
     }
 
     //TODO: update only material
-    if (dirtyGeometry_ || dirtyMaterial_) {
-        node->update(color_, rectangle_, borderPoly_, border_.color(), border_.width());
-        dirtyGeometry_ = false;
+    if (geometry_.isScreenDirty() || borderGeometry_.isScreenDirty() || dirtyMaterial_) {
+        node->update(color_, border_.color(), &geometry_, &borderGeometry_);
+        geometry_.markClean();
+        borderGeometry_.markClean();
         dirtyMaterial_ = false;
     }
     return node;
@@ -250,66 +293,39 @@ void QDeclarativeRectangleMapItem::updateMapItem()
             || !bottomRight() || !bottomRight()->coordinate().isValid())
         return;
 
-    if (dirtyGeometry_) {
-        /* This is really naive. we should probably put this through the
-         * real triangulator and transform each corner? */
+    geometry_.updatePoints(*map(), topLeft_->coordinate(),
+                           bottomRight_->coordinate());
 
-        QPointF p1 = map()->coordinateToScreenPosition(topLeft_->coordinate(), false);
-        QPointF p2 = map()->coordinateToScreenPosition(bottomRight_->coordinate(), false);
+    QList<QGeoCoordinate> pathClosed;
+    const double lonW = qAbs(bottomRight_->longitude() - topLeft_->longitude());
+    const double latH = qAbs(bottomRight_->latitude() - topLeft_->latitude());
+    pathClosed << topLeft_->coordinate();
+    pathClosed << QGeoCoordinate(topLeft_->latitude(),
+                                 topLeft_->longitude() + lonW);
+    pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
+                                 topLeft_->longitude() + lonW);
+    pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
+                                 topLeft_->longitude());
+    pathClosed << pathClosed.first();
 
-        qreal minX = qMin(p1.x(), p2.x());
-        qreal maxX = qMax(p1.x(), p2.x());
-        qreal minY = qMin(p1.y(), p2.y());
-        qreal maxY = qMax(p1.y(), p2.y());
+    if (border_.color() != Qt::transparent && border_.width() > 0) {
+        borderGeometry_.updateSourcePoints(*map(), pathClosed);
+        borderGeometry_.updateScreenPoints(*map(), border_.width());
 
-        qreal w = maxX - minX;
-        qreal h = maxY - minY;
+        QList<QGeoMapItemGeometry*> geoms;
+        geoms << &geometry_ << &borderGeometry_;
+        QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
 
-        rectangle_.setTopLeft(QPointF(0, 0));
-        rectangle_.setBottomRight(QPointF(w, h));
+        setWidth(combined.width());
+        setHeight(combined.height());
+    } else {
+        borderGeometry_.clear();
 
-        if (border_.width() > 0 && border_.color() != Qt::transparent) {
-
-            QPolygonF newBorderPoly;
-            QPointF offset;
-
-            /* We need a closed path as input to updatePolyline, so we get
-             * to make one */
-            QList<QGeoCoordinate> pathClosed;
-            const double lonW = qAbs(bottomRight_->longitude() - topLeft_->longitude());
-            const double latH = qAbs(bottomRight_->latitude() - topLeft_->latitude());
-            pathClosed << topLeft_->coordinate();
-            pathClosed << QGeoCoordinate(topLeft_->latitude(),
-                                         topLeft_->longitude() + lonW);
-            pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
-                                         topLeft_->longitude() + lonW);
-            pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
-                                         topLeft_->longitude());
-            pathClosed << pathClosed.first();
-
-            QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
-                                                        pathClosed, w, h,
-                                                        border_.width(),
-                                                        borderOutline_, offset);
-
-            // Can return zero points if nothing is visible
-            if (newBorderPoly.size() > 0) {
-                offset_ = offset;
-                rectangle_.translate(offset_);
-                borderPoly_ = newBorderPoly;
-            }
-
-        } else {
-            borderPoly_ = QPolygonF();
-            borderOutline_ = QPainterPath();
-            offset_ = QPointF(0,0);
-        }
-
-        setWidth(w);
-        setHeight(h);
+        setWidth(geometry_.screenBoundingBox().width());
+        setHeight(geometry_.screenBoundingBox().height());
     }
 
-    setPositionOnMap(topLeft_->coordinate(), offset_);
+    setPositionOnMap(pathClosed.at(0), geometry_.firstPointOffset());
     update();
 }
 
@@ -317,14 +333,17 @@ void QDeclarativeRectangleMapItem::handleCameraDataChanged(const QGeoCameraData&
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
     }
-    dirtyGeometry_ = true;
+    geometry_.markScreenDirty();
+    borderGeometry_.markScreenDirty();
     updateMapItem();
 }
 
 bool QDeclarativeRectangleMapItem::contains(QPointF point)
 {
-    return (rectangle_.contains(point) || borderOutline_.contains(point));
+    return (geometry_.contains(point) || borderGeometry_.contains(point));
 }
 
 void QDeclarativeRectangleMapItem::dragEnded()
@@ -342,50 +361,5 @@ void QDeclarativeRectangleMapItem::dragEnded()
 }
 
 //////////////////////////////////////////////////////////////////////
-
-MapRectangleNode::MapRectangleNode():
-    geometry_(QSGGeometry::defaultAttributes_Point2D(),0),
-    border_(new MapPolylineNode())
-{
-    geometry_.setDrawingMode(GL_TRIANGLE_STRIP);
-    QSGGeometryNode::setMaterial(&fillMaterial_);
-    QSGGeometryNode::setGeometry(&geometry_);
-
-    appendChildNode(border_);
-}
-
-MapRectangleNode::~MapRectangleNode()
-{
-}
-
-void MapRectangleNode::update(const QColor& fillColor, const QRectF& shape, const QPolygonF& borderPoly, const QColor& borderColor, qreal borderWidth)
-{
-    QSGGeometry *fill = QSGGeometryNode::geometry();
-
-    Q_ASSERT(fill->sizeOfVertex() == sizeof(Vertex));
-
-    int fillVertexCount = 0;
-    //note this will not allocate new buffer if the size has not changed
-    fill->allocate(4);
-
-    Vertex *vertices = (Vertex *)fill->vertexData();
-
-    //set corners
-    vertices[fillVertexCount++].position = QVector2D(shape.left(), shape.top());
-    vertices[fillVertexCount++].position = QVector2D(shape.right(),shape.top());
-    vertices[fillVertexCount++].position = QVector2D(shape.left(),shape.bottom());
-    vertices[fillVertexCount++].position = QVector2D(shape.right(), shape.bottom());
-
-    Q_ASSERT(fillVertexCount == fill->vertexCount());
-
-    markDirty(DirtyGeometry);
-
-    if (fillColor != fillMaterial_.color()) {
-        fillMaterial_.setColor(fillColor);
-        setMaterial(&fillMaterial_);
-    }
-
-    border_->update(borderColor, borderPoly, borderWidth);
-}
 
 QT_END_NAMESPACE

@@ -39,65 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVEROUTEMAPITEM_H_
-#define QDECLARATIVEROUTEMAPITEM_H_
-
-#include "qdeclarativegeomapitembase_p.h"
-#include "qdeclarativecoordinate_p.h"
-#include "qdeclarativegeomap_p.h"
-#include "qdeclarativepolylinemapitem_p.h"
-#include <QPen>
-#include <QBrush>
+#include "qgeomapitemgeometry_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeGeoRoute;
-
-class QDeclarativeRouteMapItem : public QDeclarativeGeoMapItemBase
+QGeoMapItemGeometry::QGeoMapItemGeometry(QObject *parent) :
+    QObject(parent),
+    sourceDirty_(true),
+    screenDirty_(true)
 {
-    Q_OBJECT
+}
 
-    Q_PROPERTY(QDeclarativeGeoRoute* route READ route WRITE setRoute NOTIFY routeChanged)
-    Q_PROPERTY(QDeclarativeMapLineProperties *line READ line CONSTANT)
+void QGeoMapItemGeometry::translate(const QPointF &offset)
+{
+    for (int i = 0; i < screenTriangles_.size()/2*2; i += 2) {
+        screenTriangles_[i] += offset.x();
+        screenTriangles_[i+1] += offset.y();
+    }
+    firstPointOffset_ += offset;
+    screenOutline_.translate(offset);
+    screenBounds_.translate(offset);
+}
 
-public:
-    QDeclarativeRouteMapItem(QQuickItem *parent = 0);
-    ~QDeclarativeRouteMapItem();
+QRectF QGeoMapItemGeometry::translateToCommonOrigin(QList<QGeoMapItemGeometry *> geoms)
+{
+    QGeoCoordinate origin = geoms.at(0)->origin();
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
-    //from QuickItem
-    virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
+    QPainterPath brects;
 
-    QDeclarativeGeoRoute* route() const;
-    void setRoute(QDeclarativeGeoRoute *route);
+    // first get max offset
+    QPointF maxOffset = geoms.at(0)->firstPointOffset();
+    foreach (QGeoMapItemGeometry *g, geoms) {
+        Q_ASSERT(g->origin() == origin);
+        QPointF o = g->firstPointOffset();
+        maxOffset.setX(qMax(o.x(), maxOffset.x()));
+        maxOffset.setY(qMax(o.y(), maxOffset.y()));
+    }
 
-    QDeclarativeMapLineProperties *line();
+    // then translate everything
+    foreach (QGeoMapItemGeometry *g, geoms) {
+        g->translate(maxOffset - g->firstPointOffset());
+        brects.addRect(g->screenBoundingBox());
+    }
 
-    bool contains(QPointF point);
-
-Q_SIGNALS:
-    void routeChanged(const QDeclarativeGeoRoute *route);
-
-protected Q_SLOTS:
-    virtual void updateMapItem();
-    void updateAfterLinePropertiesChanged();
-
-private Q_SLOTS:
-    // map size changed
-    void handleCameraDataChanged(const QGeoCameraData& cameraData);
-
-private:
-    QDeclarativeMapLineProperties line_;
-    QDeclarativeGeoRoute* route_;
-    qreal zoomLevel_;
-    QList<QGeoCoordinate> path_;
-    bool dirtyMaterial_;
-    bool dragActive_;
-    QGeoMapPolylineGeometry geometry_;
-};
+    return brects.boundingRect();
+}
 
 QT_END_NAMESPACE
-
-QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeRouteMapItem));
-
-#endif /* QDECLARATIVEROUTEMAPITEM_H_ */

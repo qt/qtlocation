@@ -43,11 +43,24 @@
 #define QDECLARATIVERECTANGLEMAPITEM_H_
 
 #include "qdeclarativegeomapitembase_p.h"
+#include "qgeomapitemgeometry_p.h"
 #include "qdeclarativepolylinemapitem_p.h"
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
 QT_BEGIN_NAMESPACE
+
+class QGeoMapRectangleGeometry : public QGeoMapItemGeometry
+{
+    Q_OBJECT
+
+public:
+    explicit QGeoMapRectangleGeometry(QObject *parent = 0);
+
+    void updatePoints(const QGeoMap &map,
+                      const QGeoCoordinate &topLeft,
+                      const QGeoCoordinate &bottomRight);
+};
 
 class MapRectangleNode;
 
@@ -103,33 +116,12 @@ private:
     QDeclarativeMapLineProperties border_;
     QColor color_;
     qreal zoomLevel_;
-    QRectF rectangle_;
-    QPolygonF borderPoly_;
-    bool dirtyGeometry_;
     bool dirtyMaterial_;
-    QPainterPath borderOutline_;
-    QPointF offset_;
+    QGeoMapRectangleGeometry geometry_;
+    QGeoMapPolylineGeometry borderGeometry_;
 };
 
 //////////////////////////////////////////////////////////////////////
-
-class MapRectangleNode: public QSGGeometryNode
-{
-
-public:
-    MapRectangleNode();
-    ~MapRectangleNode();
-
-    void update(const QColor& fillColor, const QRectF& shape,
-                const QPolygonF& borderPoly, const QColor& borderColor,
-                qreal borderWidth);
-
-private:
-    QSGFlatColorMaterial fillMaterial_;
-    QSGGeometry geometry_;
-    MapPolylineNode *border_;
-
-};
 
 QT_END_NAMESPACE
 

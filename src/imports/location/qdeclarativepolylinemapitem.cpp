@@ -149,25 +149,26 @@ struct Vertex
     QVector2D position;
 };
 
-void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& poly,
-                                                 const QGeoMap& map,
-                                                 const QList<QGeoCoordinate> &path,
-                                                 qreal& w, qreal& h,
-                                                 qreal strokeW,
-                                                 QPainterPath &outline,
-                                                 QPointF &offset)
+QGeoMapPolylineGeometry::QGeoMapPolylineGeometry(QObject *parent) :
+    QGeoMapItemGeometry(parent)
+{
+}
+
+void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
+                                                 const QList<QGeoCoordinate> &path)
 {
     qreal minX, minY, maxX, maxY;
 
-    QVector<qreal> points;
-    points.reserve(path.size()*2);
-    QVector<QPainterPath::ElementType> pointTypes;
-    pointTypes.reserve(path.size());
+    if (!sourceDirty_)
+        return;
 
-    QPointF lastPoint, lastAddedPoint;
+    // clear the old data and reserve enough memory
+    srcPoints_.clear();
+    srcPoints_.reserve(path.size()*2);
+    srcPointTypes_.clear();
+    srcPointTypes_.reserve(path.size());
 
-    QRectF viewport(0, 0, map.width(), map.height());
-
+    QPointF origin, lastPoint, lastAddedPoint;
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
 
@@ -177,15 +178,20 @@ void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& poly,
         QPointF point = map.coordinateToScreenPosition(coord, false);
 
         if (i == 0) {
-            offset = point;
+            srcOrigin_ = coord;
+            origin = point;
+            point = QPointF(0,0);
+
             minX = (maxX = point.x());
             minY = (maxY = point.y());
 
-            points << point.x() << point.y();
-            pointTypes << QPainterPath::MoveToElement;
+            srcPoints_ << point.x() << point.y();
+            srcPointTypes_ << QPainterPath::MoveToElement;
             lastAddedPoint = point;
 
         } else {
+            point -= origin;
+
             minX = qMin(point.x(), minX);
             minY = qMin(point.y(), minY);
             maxX = qMax(point.x(), maxX);
@@ -193,8 +199,8 @@ void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& poly,
 
             if ((point - lastAddedPoint).manhattanLength() > 3 ||
                     i == path.size() - 1) {
-                points << point.x() << point.y();
-                pointTypes << QPainterPath::LineToElement;
+                srcPoints_ << point.x() << point.y();
+                srcPointTypes_ << QPainterPath::LineToElement;
                 lastAddedPoint = point;
             }
         }
@@ -202,52 +208,62 @@ void QDeclarativePolylineMapItem::updatePolyline(QPolygonF& poly,
         lastPoint = point;
     }
 
-    // add in at least half a stroke width on each side
-    minX -= strokeW / 2;
-    minY -= strokeW / 2;
-    maxX += strokeW / 2;
-    maxY += strokeW / 2;
+    sourceBounds_ = QRectF(QPointF(minX, minY), QPointF(maxX, maxY));
+}
 
-    // preliminary bounds
-    w = maxX - minX;
-    h = maxY - minY;
+void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
+                                                 qreal strokeWidth)
+{
+    if (!screenDirty_)
+        return;
 
-    QVectorPath vp(points.data(), pointTypes.size(), pointTypes.data());
+    QPointF origin = map.coordinateToScreenPosition(srcOrigin_, false);
+
+    // Create the viewport rect in the same coordinate system
+    // as the actual points
+    QRectF viewport(0, 0, map.width(), map.height());
+    viewport.translate(-1 * origin);
+
+    QVectorPath vp(srcPoints_.data(), srcPointTypes_.size(),
+                   srcPointTypes_.data());
     QTriangulatingStroker ts;
-    ts.process(vp, QPen(QBrush(Qt::black), strokeW), viewport);
+    ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), viewport);
 
-    // nothing is on the screen
+    // Nothing is on the screen
     if (ts.vertexCount() == 0)
         return;
 
-    // we need relative coordinates
-    offset += QPointF(-minX, -minY);
+    screenOutline_ = QPainterPath();
 
-    outline = QPainterPath();
+    // QTriangulatingStroker#vertexCount is actually the length of the array,
+    // not the number of vertices
+    screenTriangles_.clear();
+    screenTriangles_.reserve(ts.vertexCount());
+
+    // Our target coordinate system has (0,0) at the top-left-most point, rather
+    // than at the first point, so the first point will have an offset
+    firstPointOffset_ = -1*(sourceBounds_.topLeft() -
+            QPointF(strokeWidth, strokeWidth));
 
     QPolygonF tri;
     const float *vs = ts.vertices();
     for (int i = 0; i < ts.vertexCount()/2*2; i+=2) {
-        QPointF pt(vs[i], vs[i+1]);
-        pt += QPointF(-minX, -minY);
-        poly << pt;
+        screenTriangles_ << vs[i] + firstPointOffset_.x()
+                         << vs[i+1] + firstPointOffset_.y();
 
-        tri << pt;
+        tri << QPointF(screenTriangles_[i], screenTriangles_[i+1]);
         if (tri.size() == 4) {
             tri.remove(0);
-            outline.addPolygon(tri);
+            screenOutline_.addPolygon(tri);
         }
     }
 
-    // final bounds post-triangulation
-    w = outline.boundingRect().width();
-    h = outline.boundingRect().height();
+    screenBounds_ = screenOutline_.boundingRect();
 }
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent) :
     QDeclarativeGeoMapItemBase(parent),
     zoomLevel_(0.0),
-    dirtyGeometry_(true),
     dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
@@ -264,7 +280,7 @@ QDeclarativePolylineMapItem::~QDeclarativePolylineMapItem()
 void QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged()
 {
     // mark dirty just in case we're a width change
-    dirtyGeometry_ = true;
+    geometry_.markSourceDirty();
     updateMapItem();
 }
 
@@ -274,9 +290,9 @@ void QDeclarativePolylineMapItem::updateAfterCoordinateChanged()
     if (coord) {
         // TODO: maybe use a QHash instead of indexOf here?
         int idx = this->coordPath_.indexOf(coord);
-        this->path_.replace(idx, coord->coordinate());
-        this->dirtyGeometry_ = true;
-        this->updateMapItem();
+        path_.replace(idx, coord->coordinate());
+        geometry_.markSourceDirty();
+        updateMapItem();
     }
 }
 
@@ -285,7 +301,7 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map){
         QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(handleCameraDataChanged(QGeoCameraData)));
-        dirtyGeometry_ = true;
+        geometry_.markSourceDirty();
         updateMapItem();
     }
 }
@@ -313,7 +329,7 @@ void QDeclarativePolylineMapItem::path_append(QDeclarativeListProperty<QDeclarat
 
     item->coordPath_.append(coordinate);
     item->path_.append(coordinate->coordinate());
-    item->dirtyGeometry_ = true;
+    item->geometry_.markSourceDirty();
     item->updateMapItem();
     emit item->pathChanged();
 }
@@ -338,7 +354,7 @@ void QDeclarativePolylineMapItem::path_clear(
     qDeleteAll(item->coordPath_);
     item->coordPath_.clear();
     item->path_.clear();
-    item->dirtyGeometry_ = true;
+    item->geometry_.markSourceDirty();
     item->updateMapItem();
     emit item->pathChanged();
 }
@@ -359,7 +375,7 @@ void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordina
     QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                      this, SLOT(updateAfterCoordinateChanged()));
 
-    dirtyGeometry_ = true;
+    geometry_.markSourceDirty();
     updateMapItem();
     emit pathChanged();
 }
@@ -392,7 +408,7 @@ void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate* coord
     QObject::disconnect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                         this, SLOT(updateAfterCoordinateChanged()));
 
-    dirtyGeometry_ = true;
+    geometry_.markSourceDirty();
     updateMapItem();
     emit pathChanged();
 }
@@ -414,6 +430,30 @@ QDeclarativeMapLineProperties *QDeclarativePolylineMapItem::line()
     return &line_;
 }
 
+void QDeclarativePolylineMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
+{
+    if (cameraData.zoomFactor() != zoomLevel_) {
+        zoomLevel_ = cameraData.zoomFactor();
+        geometry_.markSourceDirty();
+    }
+    geometry_.markScreenDirty();
+    updateMapItem();
+}
+
+void QDeclarativePolylineMapItem::updateMapItem()
+{
+    if (!map() || path_.count() == 0)
+        return;
+
+    geometry_.updateSourcePoints(*map(), path_);
+    geometry_.updateScreenPoints(*map(), line_.width());
+    setWidth(geometry_.screenBoundingBox().width());
+    setHeight(geometry_.screenBoundingBox().height());
+
+    setPositionOnMap(path_.at(0), geometry_.firstPointOffset());
+    update();
+}
+
 QSGNode* QDeclarativePolylineMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
@@ -425,53 +465,16 @@ QSGNode* QDeclarativePolylineMapItem::updatePaintNode(QSGNode* oldNode, UpdatePa
     }
 
     //TODO: update only material
-    if (dirtyGeometry_ || dirtyMaterial_) {
-        node->update(line_.color(), polyline_, line_.width());
-        dirtyGeometry_ = false;
-        dirtyMaterial_ = false;
+    if (geometry_.isScreenDirty() || dirtyMaterial_) {
+        node->update(line_.color(), &geometry_);
+        geometry_.markClean();
     }
     return node;
 }
 
-void QDeclarativePolylineMapItem::updateMapItem()
-{
-    if (!map() || path_.count() == 0)
-        return;
-
-    if (dirtyGeometry_) {
-           qreal h = 0;
-           qreal w = 0;
-
-           QPolygonF newPolyline;
-           QPointF offset;
-
-           updatePolyline(newPolyline, *map(), path_, w, h, line_.width(),
-                          outline_, offset);
-           if (newPolyline.size() > 0) {
-               polyline_ = newPolyline;
-               offset_ = offset;
-           }
-
-           setWidth(w);
-           setHeight(h);
-       }
-
-    setPositionOnMap(path_.at(0), offset_);
-    update();
-}
-
-void QDeclarativePolylineMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
-{
-    if (cameraData.zoomFactor() != zoomLevel_) {
-        zoomLevel_ = cameraData.zoomFactor();
-    }
-    dirtyGeometry_ = true;
-    updateMapItem();
-}
-
 bool QDeclarativePolylineMapItem::contains(QPointF point)
 {
-    return outline_.contains(point);
+    return geometry_.contains(point);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -489,25 +492,24 @@ MapPolylineNode::~MapPolylineNode()
 {
 }
 
-void MapPolylineNode::update(const QColor& fillColor, const QPolygonF& shape, qreal width)
+void MapPolylineNode::update(const QColor& fillColor,
+                             const QGeoMapItemGeometry* shape)
 {
-    if (shape.size() == 0)
+    if (shape->size() == 0)
         return;
 
     QSGGeometry *fill = QSGGeometryNode::geometry();
-
-    fill->setLineWidth(width);
 
     Q_ASSERT(fill->sizeOfVertex() == sizeof(Vertex));
 
     int fillVertexCount = 0;
     //note this will not allocate new buffer if the size has not changed
-    fill->allocate(shape.size());
+    fill->allocate(shape->size());
 
     Vertex *vertices = (Vertex *)fill->vertexData();
 
-    for (int i = 0; i < shape.size(); ++i) {
-        vertices[fillVertexCount++].position = QVector2D(shape.at(i));
+    for (int i = 0; i < shape->size(); ++i) {
+        vertices[fillVertexCount++].position = shape->vertex(i);
     }
 
     Q_ASSERT(fillVertexCount == fill->vertexCount());
@@ -518,8 +520,6 @@ void MapPolylineNode::update(const QColor& fillColor, const QPolygonF& shape, qr
         fill_material_.setColor(fillColor);
         setMaterial(&fill_material_);
     }
-
-    //TODO: implement me : borders , gradient
 }
 
 QT_END_NAMESPACE

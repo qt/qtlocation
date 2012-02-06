@@ -185,8 +185,6 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent):
     color_(Qt::transparent),
     radius_(0),
     zoomLevel_(0.0),
-    dirtyPixelGeometry_(true),
-    dirtyGeoGeometry_(true),
     dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
@@ -217,7 +215,8 @@ QDeclarativeMapLineProperties *QDeclarativeCircleMapItem::border()
 
 void QDeclarativeCircleMapItem::updateMapItemAssumeDirty()
 {
-    dirtyGeoGeometry_ = true;
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
     updateMapItem();
 }
 
@@ -226,7 +225,8 @@ void QDeclarativeCircleMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *ma
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
         QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(handleCameraDataChanged(QGeoCameraData)));
-        dirtyGeoGeometry_ = true;
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
         updateMapItem();
     }
 }
@@ -251,7 +251,8 @@ void QDeclarativeCircleMapItem::setCenter(QDeclarativeCoordinate *center)
                 this, SLOT(updateMapItemAssumeDirty()));
     }
 
-    dirtyGeoGeometry_ = true;
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
     updateMapItem();
     emit centerChanged(center_);
 }
@@ -295,7 +296,8 @@ void QDeclarativeCircleMapItem::setRadius(qreal radius)
         return;
 
     radius_ = radius;
-    dirtyGeoGeometry_ = true;
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
     updateMapItem();
     emit radiusChanged(radius);
 }
@@ -310,16 +312,16 @@ QSGNode* QDeclarativeCircleMapItem::updatePaintNode(QSGNode* oldNode, UpdatePain
 {
     Q_UNUSED(data);
 
-    MapCircleNode *node = static_cast<MapCircleNode*>(oldNode);
+    MapPolygonNode *node = static_cast<MapPolygonNode*>(oldNode);
 
     if (!node)
-        node = new MapCircleNode();
+        node = new MapPolygonNode();
 
     //TODO: update only material
-    if (dirtyPixelGeometry_ || dirtyMaterial_) {
-        node->update(color_,circlePolygon_,QPointF(width()/2,height()/2),
-                     borderPolygon_, border_.color(), border_.width());
-        dirtyPixelGeometry_ = false;
+    if (geometry_.isScreenDirty() || borderGeometry_.isScreenDirty() || dirtyMaterial_) {
+        node->update(color_, border_.color(), &geometry_, &borderGeometry_);
+        geometry_.markClean();
+        borderGeometry_.markClean();
         dirtyMaterial_ = false;
     }
     return node;
@@ -330,77 +332,35 @@ void QDeclarativeCircleMapItem::updateMapItem()
     if (!map() || !center() || !center()->coordinate().isValid())
         return;
 
-    if (dirtyGeoGeometry_) {
+    if (geometry_.isSourceDirty()) {
         circlePath_.clear();
-        calculatePeripheralPoints(circlePath_, center_->coordinate(), radius_, 125);
-        dirtyGeoGeometry_ = false;
-        dirtyPixelGeometry_ = true;
+        calculatePeripheralPoints(circlePath_, center_->coordinate(),
+                                  radius_, 125);
     }
 
-    if (dirtyPixelGeometry_) {
-        qreal w = 0;
-        qreal h = 0;
+    geometry_.updateSourcePoints(*map(), circlePath_);
+    geometry_.updateScreenPoints(*map());
 
-        QPolygonF newPoly, newBorderPoly;
-        QPainterPath newOutline, newBorderOutline;
-        QPointF offset, borderOffset;
+    if (border_.color() != Qt::transparent && border_.width() > 0) {
+        QList<QGeoCoordinate> closedPath = circlePath_;
+        closedPath << closedPath.first();
+        borderGeometry_.updateSourcePoints(*map(), closedPath);
+        borderGeometry_.updateScreenPoints(*map(), border_.width());
 
-        // First, regenerate the fill region
-        QDeclarativePolygonMapItem::updatePolygon(newPoly, *map(),
-                                                   circlePath_, w, h,
-                                                   offset, newOutline);
+        QList<QGeoMapItemGeometry*> geoms;
+        geoms << &geometry_ << &borderGeometry_;
+        QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
 
-        // If we get zero points back, no part of the fill is on the screen
-        if (newPoly.size() > 0) {
-            circlePolygon_ = newPoly;
-            outline_ = newOutline;
-        }
-        /* No "else" here -- we don't want to update polygon and outline
-         * with the empty poly, as this will break any mouse area that may
-         * still be partially visible */
+        setWidth(combined.width());
+        setHeight(combined.height());
+    } else {
+        borderGeometry_.clear();
 
-        if (border_.width() > 0 && border_.color() != Qt::transparent) {
-
-            // Polyline code won't close the path for us
-            QList<QGeoCoordinate> pathClosed = circlePath_;
-            pathClosed.append(pathClosed.at(0));
-
-            // Now regenerate the stroked border region
-            QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
-                                                        pathClosed, w, h,
-                                                        border_.width(),
-                                                        newBorderOutline,
-                                                        borderOffset);
-            // Once again, it can return no points if nothing is visible
-            if (newBorderPoly.size() > 0) {
-                borderPolygon_ = newBorderPoly;
-                borderOutline_ = newBorderOutline;
-
-                /* See qdeclarativepolygonmapitem.cpp for the rationale here */
-                offset_ = QPointF(qMax(offset.x(), borderOffset.x()),
-                                  qMax(offset.y(), borderOffset.y()));
-
-                borderPolygon_.translate(offset_ - borderOffset);
-                borderOutline_.translate(offset_ - borderOffset);
-
-                // Only re-translate these if we generated a new fill
-                if (newPoly.size() > 0) {
-                    circlePolygon_.translate(offset_ - offset);
-                    outline_.translate(offset_ - offset);
-                }
-            }
-        } else {
-            borderPolygon_ = QPolygonF();
-            borderOutline_ = QPainterPath();
-            // If we have no border, just use the clipping offset of the fill
-            offset_ = offset;
-        }
-
-        setWidth(w);
-        setHeight(h);
+        setWidth(geometry_.screenBoundingBox().width());
+        setHeight(geometry_.screenBoundingBox().height());
     }
 
-    setPositionOnMap(circlePath_.at(0), offset_);
+    setPositionOnMap(circlePath_.at(0), geometry_.firstPointOffset());
     update();
 }
 
@@ -408,8 +368,11 @@ void QDeclarativeCircleMapItem::handleCameraDataChanged(const QGeoCameraData& ca
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
     }
-    dirtyPixelGeometry_ = true;
+    geometry_.markScreenDirty();
+    borderGeometry_.markScreenDirty();
     updateMapItem();
 }
 
@@ -425,53 +388,9 @@ void QDeclarativeCircleMapItem::dragEnded()
 
 bool QDeclarativeCircleMapItem::contains(QPointF point)
 {
-    return (outline_.contains(point) || borderOutline_.contains(point));
+    return (geometry_.contains(point) || borderGeometry_.contains(point));
 }
 
 //////////////////////////////////////////////////////////////////////
-
-MapCircleNode::MapCircleNode():
-    border_(new MapPolylineNode()),
-    geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
-{
-    geometry_.setDrawingMode(GL_TRIANGLES);
-    QSGGeometryNode::setMaterial(&fill_material_);
-    QSGGeometryNode::setGeometry(&geometry_);
-
-    appendChildNode(border_);
-}
-
-MapCircleNode::~MapCircleNode() {}
-
-void MapCircleNode::update(const QColor& fillColor, const QPolygonF& circleShape, const QPointF& center,
-                           const QPolygonF& borderShape, const QColor& borderColor, qreal borderWidth)
-{
-    Q_UNUSED(center);
-
-    if (circleShape.size() == 0 || borderShape.size() == 0)
-        return;
-
-    QSGGeometry *fill = QSGGeometryNode::geometry();
-    Q_ASSERT(fill->sizeOfVertex() == sizeof(Vertex));
-
-    int fillVertexCount = 0;
-    //note this will not allocate new buffer if the size has not changed
-    fill->allocate(circleShape.size()); //one for center + one to close the circle
-
-    Vertex *vertices = (Vertex *)fill->vertexData();
-    for (int i = 0; i < circleShape.size(); ++i) {
-        vertices[fillVertexCount++].position = QVector2D(circleShape.at(i));
-    }
-
-    Q_ASSERT(fillVertexCount == fill->vertexCount());
-
-    markDirty(DirtyGeometry);
-
-    if (fillColor != fill_material_.color()) {
-        fill_material_.setColor(fillColor);
-        setMaterial(&fill_material_);
-    }
-    border_->update(borderColor, borderShape, borderWidth);
-}
 
 QT_END_NAMESPACE

@@ -113,23 +113,20 @@ struct Vertex
     QVector2D position;
 };
 
-void QDeclarativePolygonMapItem::updatePolygon(QPolygonF &points,
-                                               const QGeoMap &map,
-                                               const QList<QGeoCoordinate> &path,
-                                               qreal& w, qreal& h,
-                                               QPointF& offset,
-                                               QPainterPath &outline)
+QGeoMapPolygonGeometry::QGeoMapPolygonGeometry(QObject *parent) :
+    QGeoMapItemGeometry(parent)
 {
-    // viewport rectangle, for clipping later
-    QPainterPath viewport;
-    viewport.moveTo(0, 0);
-    viewport.lineTo(map.width(), 0);
-    viewport.lineTo(map.width(), map.height());
-    viewport.lineTo(0, map.height());
-    viewport.closeSubpath();
+}
+
+void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
+                                                const QList<QGeoCoordinate> &path)
+{
+    if (!sourceDirty_)
+        return;
 
     // build the actual path
-    QPainterPath pp;
+    QPointF origin;
+    srcPath_ = QPainterPath();
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
 
@@ -138,51 +135,72 @@ void QDeclarativePolygonMapItem::updatePolygon(QPolygonF &points,
 
         QPointF point = map.coordinateToScreenPosition(coord, false);
         if (i == 0) {
-            offset = point;
-            pp.moveTo(point);
+            origin = point;
+            srcOrigin_ = coord;
+            srcPath_.moveTo(point - origin);
         } else {
-            pp.lineTo(point);
+            srcPath_.lineTo(point - origin);
         }
     }
-    pp.closeSubpath();
+    srcPath_.closeSubpath();
 
-    // really big numbers (> 2^21) break qTriangulate, so we must clip here
-    // to avoid asserting
-    QPainterPath ppi = pp.intersected(viewport);
+    sourceBounds_ = srcPath_.boundingRect();
+}
 
-    // nothing is on the screen
+void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
+{
+    if (!screenDirty_)
+        return;
+
+    QPointF origin = map.coordinateToScreenPosition(srcOrigin_, false);
+
+    // Create the viewport rect in the same coordinate system
+    // as the actual points
+    QRectF viewport(0, 0, map.width(), map.height());
+    viewport.translate(-1 * origin);
+
+    QPainterPath vpPath;
+    vpPath.addRect(viewport);
+
+    // get the clipped version of the path
+    QPainterPath ppi = srcPath_.intersected(vpPath);
+
+    // Nothing on the screen
     if (ppi.elementCount() == 0)
         return;
 
+    // translate the path into top-left-centric coordinates
     QRectF bb = ppi.boundingRect();
-    w = bb.width();
-    h = bb.height();
-
-    // we need relative coordinates
     ppi.translate(-bb.left(), -bb.top());
-    outline = ppi;
-    offset += QPointF(-bb.left(), -bb.top());
+    firstPointOffset_ = -1 * bb.topLeft();
+
+    screenOutline_ = ppi;
 
     QTriangleSet ts = qTriangulate(ppi);
     qreal *vx = ts.vertices.data();
+
+    screenTriangles_.clear();
+    screenTriangles_.reserve(ts.indices.size());
+
     if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
         const quint32 *tx = reinterpret_cast<const quint32*>(ts.indices.data());
         for (int i = 0; i < (ts.indices.size()/3*3); i++) {
-            points.append(QPointF(vx[tx[i]*2], vx[tx[i]*2+1]));
+            screenTriangles_ << vx[tx[i]*2] << vx[tx[i]*2+1];
         }
     } else {
         const quint16 *tx = reinterpret_cast<const quint16*>(ts.indices.data());
         for (int i = 0; i < (ts.indices.size()/3*3); i++) {
-            points.append(QPointF(vx[tx[i]*2], vx[tx[i]*2+1]));
+            screenTriangles_ << vx[tx[i]*2] << vx[tx[i]*2+1];
         }
     }
+
+    screenBounds_ = ppi.boundingRect();
 }
 
 QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
     QDeclarativeGeoMapItemBase(parent),
     color_(Qt::transparent),
     zoomLevel_(0.0),
-    dirtyGeometry_(true),
     dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
@@ -194,7 +212,7 @@ QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
 
 void QDeclarativePolygonMapItem::handleBorderUpdated()
 {
-    dirtyGeometry_ = true;
+    borderGeometry_.markSourceDirty();
     updateMapItem();
 }
 
@@ -205,7 +223,8 @@ void QDeclarativePolygonMapItem::updateAfterCoordinateChanged()
         // TODO: maybe use a QHash instead of indexOf here?
         int idx = this->coordPath_.indexOf(coord);
         this->path_.replace(idx, coord->coordinate());
-        this->dirtyGeometry_ = true;
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
         this->updateMapItem();
     }
 }
@@ -235,7 +254,8 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *m
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
         QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(handleCameraDataChanged(QGeoCameraData)));
-        dirtyGeometry_ = true;
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
         updateMapItem();
     }
 }
@@ -265,7 +285,8 @@ void QDeclarativePolygonMapItem::path_append(
     QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                      item, SLOT(updateAfterCoordinateChanged()));
 
-    item->dirtyGeometry_ = true;
+    item->geometry_.markSourceDirty();
+    item->borderGeometry_.markSourceDirty();
     item->updateMapItem();
     emit item->pathChanged();
 }
@@ -290,7 +311,8 @@ void QDeclarativePolygonMapItem::path_clear(
     qDeleteAll(item->coordPath_);
     item->coordPath_.clear();
     item->path_.clear();
-    item->dirtyGeometry_ = true;
+    item->geometry_.markSourceDirty();
+    item->borderGeometry_.markSourceDirty();
     item->updateMapItem();
     emit item->pathChanged();
 }
@@ -311,7 +333,8 @@ void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate* coordinat
     QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                      this, SLOT(updateAfterCoordinateChanged()));
 
-    dirtyGeometry_ = true;
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
     updateMapItem();
     emit pathChanged();
 }
@@ -345,7 +368,8 @@ void QDeclarativePolygonMapItem::removeCoordinate(QDeclarativeCoordinate* coordi
     QObject::disconnect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                         this, SLOT(updateAfterCoordinateChanged()));
 
-    dirtyGeometry_ = true;
+    geometry_.markSourceDirty();
+    borderGeometry_.markSourceDirty();
     updateMapItem();
     emit pathChanged();
 }
@@ -383,9 +407,10 @@ QSGNode* QDeclarativePolygonMapItem::updatePaintNode(QSGNode* oldNode, UpdatePai
         node = new MapPolygonNode();
 
     //TODO: update only material
-    if (dirtyGeometry_ || dirtyMaterial_) {
-        node->update(color_, polygon_, borderPolygon_,  border_.color(), border_.width());
-        dirtyGeometry_ = false;
+    if (geometry_.isScreenDirty() || borderGeometry_.isScreenDirty() || dirtyMaterial_) {
+        node->update(color_, border_.color(), &geometry_, &borderGeometry_);
+        geometry_.markClean();
+        borderGeometry_.markClean();
         dirtyMaterial_ = false;
     }
     return node;
@@ -396,79 +421,29 @@ void QDeclarativePolygonMapItem::updateMapItem()
     if (!map() || path_.count() == 0)
         return;
 
-    if (dirtyGeometry_) {
-        qreal h = 0;
-        qreal w = 0;
+    geometry_.updateSourcePoints(*map(), path_);
+    geometry_.updateScreenPoints(*map());
 
-        QPolygonF newPoly, newBorderPoly;
-        QPainterPath outline, borderOutline;
-        QPointF offset, borderOffset;
+    if (border_.color() != Qt::transparent && border_.width() > 0) {
+        QList<QGeoCoordinate> closedPath = path_;
+        closedPath << closedPath.first();
+        borderGeometry_.updateSourcePoints(*map(), closedPath);
+        borderGeometry_.updateScreenPoints(*map(), border_.width());
 
-        // First, regenerate the fill region
-        updatePolygon(newPoly, *map(), path_, w, h, offset, outline);
+        QList<QGeoMapItemGeometry*> geoms;
+        geoms << &geometry_ << &borderGeometry_;
+        QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
 
-        // If we get zero points back, no part of the fill is on the screen
-        if (newPoly.size() > 0) {
-            polygon_ = newPoly;
-            outline_ = outline;
-        }
-        /* No "else" here -- we don't want to update polygon_ and outline_
-         * with the empty poly, as this will break any mouse area that may
-         * still be partially visible */
+        setWidth(combined.width());
+        setHeight(combined.height());
+    } else {
+        borderGeometry_.clear();
 
-        if (border_.width() > 0 && border_.color() != Qt::transparent) {
-
-            // Polyline code won't close the path for us
-            QList<QGeoCoordinate> pathClosed = path_;
-            pathClosed.append(path_.at(0));
-
-            // Now regenerate the stroked border region
-            QDeclarativePolylineMapItem::updatePolyline(newBorderPoly, *map(),
-                                                        pathClosed, w, h,
-                                                        border_.width(),
-                                                        borderOutline,
-                                                        borderOffset);
-
-            // Once again, it can return no points if nothing is visible
-            if (newBorderPoly.size() > 0) {
-                borderPolygon_ = newBorderPoly;
-                borderOutline_ = borderOutline;
-
-                /* This is a little tricky: both triangulators after clipping
-                 * will return an 'offset' value, which is the distance between
-                 * their local (0,0) and the location of the first point in the
-                 * path.
-                 *
-                 * The two 'offset' values could be different, so we compute
-                 * the maximum of X and Y and translate both paths to that.
-                 * This way, the first point is right on the anchor coordinate
-                 * still, but any parts of our object that extend further up
-                 * or left of the anchor are still part of the object */
-
-                offset_ = QPointF(qMax(offset.x(), borderOffset.x()),
-                                  qMax(offset.y(), borderOffset.y()));
-
-                borderPolygon_.translate(offset_ - borderOffset);
-                borderOutline_.translate(offset_ - borderOffset);
-
-                // Only re-translate these if we generated a new fill
-                if (newPoly.size() > 0) {
-                    polygon_.translate(offset_ - offset);
-                    outline_.translate(offset_ - offset);
-                }
-            }
-        } else {
-            borderPolygon_ = QPolygonF();
-            borderOutline_ = QPainterPath();
-            // If we have no border, just use the clipping offset of the fill
-            offset_ = offset;
-        }
-
-        setWidth(w);
-        setHeight(h);
+        setWidth(geometry_.screenBoundingBox().width());
+        setHeight(geometry_.screenBoundingBox().height());
     }
 
-    setPositionOnMap(path_.at(0), offset_);
+    setPositionOnMap(path_.at(0), geometry_.firstPointOffset());
     update();
 }
 
@@ -476,14 +451,17 @@ void QDeclarativePolygonMapItem::handleCameraDataChanged(const QGeoCameraData& c
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
     }
-    dirtyGeometry_ = true;
+    geometry_.markScreenDirty();
+    borderGeometry_.markScreenDirty();
     updateMapItem();
 }
 
 bool QDeclarativePolygonMapItem::contains(QPointF point)
 {
-    return (outline_.contains(point) || borderOutline_.contains(point));
+    return (geometry_.contains(point) || borderGeometry_.contains(point));
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -503,10 +481,11 @@ MapPolygonNode::~MapPolygonNode()
 {
 }
 
-void MapPolygonNode::update(const QColor& fillColor, const QPolygonF& shape,
-                            const QPolygonF& borderShape, const QColor& borderColor, qreal borderWidth)
+void MapPolygonNode::update(const QColor& fillColor, const QColor& borderColor,
+                            const QGeoMapItemGeometry *fillShape,
+                            const QGeoMapItemGeometry *borderShape)
 {
-    if (shape.size() == 0)
+    if (fillShape->size() == 0)
         return;
 
     QSGGeometry *fill = QSGGeometryNode::geometry();
@@ -515,11 +494,11 @@ void MapPolygonNode::update(const QColor& fillColor, const QPolygonF& shape,
 
     int fillVertexCount = 0;
     //note this will not allocate new buffer if the size has not changed
-    fill->allocate(shape.size());
+    fill->allocate(fillShape->size());
 
     Vertex *vertices = (Vertex *)fill->vertexData();
-    for (int i = 0; i < shape.size(); ++i)
-        vertices[fillVertexCount++].position = QVector2D(shape.at(i));
+    for (int i = 0; i < fillShape->size(); ++i)
+        vertices[fillVertexCount++].position = fillShape->vertex(i);
 
     Q_ASSERT(fillVertexCount == fill->vertexCount());
     markDirty(DirtyGeometry);
@@ -528,7 +507,7 @@ void MapPolygonNode::update(const QColor& fillColor, const QPolygonF& shape,
         fill_material_.setColor(fillColor);
         setMaterial(&fill_material_);
     }
-    border_->update(borderColor, borderShape, borderWidth);
+    border_->update(borderColor, borderShape);
 }
 
 QT_END_NAMESPACE

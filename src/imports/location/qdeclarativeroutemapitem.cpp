@@ -92,7 +92,7 @@ QDeclarativeRouteMapItem::~QDeclarativeRouteMapItem()
 void QDeclarativeRouteMapItem::updateAfterLinePropertiesChanged()
 {
     // mark dirty just in case we're a width change
-    dirtyGeometry_ = true;
+    geometry_.markSourceDirty();
     updateMapItem();
 }
 
@@ -101,7 +101,7 @@ void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
         QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(handleCameraDataChanged(QGeoCameraData)));
-        dirtyGeometry_ = true;
+        geometry_.markSourceDirty();
         updateMapItem();
     }
 }
@@ -129,7 +129,7 @@ void QDeclarativeRouteMapItem::setRoute(QDeclarativeGeoRoute *route)
         path_ = QList<QGeoCoordinate>();
     }
 
-    dirtyGeometry_ = true;
+    geometry_.markSourceDirty();
     updateMapItem();
     emit routeChanged(route_);
 
@@ -146,9 +146,9 @@ QSGNode* QDeclarativeRouteMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaint
     }
 
     //TODO: update only material
-    if (dirtyGeometry_ || dirtyMaterial_) {
-        node->update(line_.color(), polyline_, line_.width());
-        dirtyGeometry_ = false;
+    if (geometry_.isScreenDirty() || dirtyMaterial_) {
+        node->update(line_.color(), &geometry_);
+        geometry_.markClean();
         dirtyMaterial_ = false;
     }
     return node;
@@ -176,36 +176,25 @@ void QDeclarativeRouteMapItem::updateMapItem()
     if (!map() || path_.isEmpty())
         return;
 
-    if (dirtyGeometry_) {
-        qreal h = 0;
-        qreal w = 0;
-        QPolygonF newPolyline;
-        QPointF offset;
+    geometry_.updateSourcePoints(*map(), path_);
+    geometry_.updateScreenPoints(*map(), line_.width());
+    setWidth(geometry_.screenBoundingBox().width());
+    setHeight(geometry_.screenBoundingBox().height());
 
-        QDeclarativePolylineMapItem::updatePolyline(newPolyline, *map(), path_,
-                                                    w, h, line_.width(),
-                                                    outline_, offset);
-        if (newPolyline.size() > 0) {
-            polyline_ = newPolyline;
-            offset_ = offset;
-        }
-
-        setWidth(w);
-        setHeight(h);
-    }
-    setPositionOnMap(path_.at(0), offset_);
+    setPositionOnMap(path_.at(0), geometry_.firstPointOffset());
 }
 
 void QDeclarativeRouteMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
 {
     if (cameraData.zoomFactor() != zoomLevel_) {
         zoomLevel_ = cameraData.zoomFactor();
+        geometry_.markSourceDirty();
     }
-    dirtyGeometry_ = true;
+    geometry_.markScreenDirty();
     updateMapItem();
 }
 
 bool QDeclarativeRouteMapItem::contains(QPointF point)
 {
-    return polyline_.contains(point);
+    return geometry_.contains(point);
 }

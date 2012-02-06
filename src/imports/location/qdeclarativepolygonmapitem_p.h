@@ -44,12 +44,29 @@
 
 #include "qdeclarativegeomapitembase_p.h"
 #include "qdeclarativepolylinemapitem_p.h"
+#include "qgeomapitemgeometry_p.h"
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
 QT_BEGIN_NAMESPACE
 
 class MapPolygonNode;
+
+class QGeoMapPolygonGeometry : public QGeoMapItemGeometry
+{
+    Q_OBJECT
+
+public:
+    explicit QGeoMapPolygonGeometry(QObject *parent = 0);
+
+    void updateSourcePoints(const QGeoMap &map,
+                            const QList<QGeoCoordinate> &path);
+
+    void updateScreenPoints(const QGeoMap &map);
+
+private:
+    QPainterPath srcPath_;
+};
 
 class QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
 {
@@ -62,11 +79,6 @@ class QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
 public:
     QDeclarativePolygonMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolygonMapItem();
-
-    static void updatePolygon(QPolygonF &points, const QGeoMap &map,
-                              const QList<QGeoCoordinate> &path,
-                              qreal &w, qreal &h, QPointF &offset,
-                              QPainterPath &outline);
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
     //from QuickItem
@@ -110,13 +122,9 @@ private:
     QList<QGeoCoordinate> path_;
     QColor color_;
     qreal zoomLevel_;
-    QPolygonF polygon_;
-    QPolygonF borderPolygon_;
-    bool dirtyGeometry_;
     bool dirtyMaterial_;
-    QPointF offset_;
-    QPainterPath outline_;
-    QPainterPath borderOutline_;
+    QGeoMapPolygonGeometry geometry_;
+    QGeoMapPolylineGeometry borderGeometry_;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -128,8 +136,9 @@ public:
     MapPolygonNode();
     ~MapPolygonNode();
 
-    void update(const QColor& fillColor, const QPolygonF& shape,
-                const QPolygonF& borderShape, const QColor& borderColor, qreal borderWidth);
+    void update(const QColor& fillColor, const QColor& borderColor,
+                const QGeoMapItemGeometry *fillShape,
+                const QGeoMapItemGeometry *borderShape);
 
 private:
     QSGFlatColorMaterial fill_material_;

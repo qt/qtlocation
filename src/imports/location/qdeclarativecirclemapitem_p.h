@@ -44,13 +44,13 @@
 
 #include "qdeclarativegeomapitembase_p.h"
 #include "qdeclarativepolylinemapitem_p.h"
+#include "qdeclarativepolygonmapitem_p.h"
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
 
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoMapQuickItem;
-class MapCircleNode;
 
 class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
 {
@@ -104,33 +104,12 @@ private:
     qreal radius_;
     qreal zoomLevel_;
     QList<QGeoCoordinate> circlePath_;
-    QPolygonF circlePolygon_;
-    QPolygonF borderPolygon_;
-    bool dirtyPixelGeometry_;
-    bool dirtyGeoGeometry_;
     bool dirtyMaterial_;
-    QPointF offset_;
-    QPainterPath outline_;
-    QPainterPath borderOutline_;
+    QGeoMapPolygonGeometry geometry_;
+    QGeoMapPolylineGeometry borderGeometry_;
 };
 
 //////////////////////////////////////////////////////////////////////
-
-class MapCircleNode: public QSGGeometryNode
-{
-
-public:
-    MapCircleNode();
-    ~MapCircleNode();
-
-    void update(const QColor& fillColor, const QPolygonF& circleShape, const QPointF& center,
-                const QPolygonF& borderShape, const QColor& borderColor, qreal borderWidth);
-
-private:
-    QSGFlatColorMaterial fill_material_;
-    MapPolylineNode *border_;
-    QSGGeometry geometry_;
-};
 
 QT_END_NAMESPACE
 
