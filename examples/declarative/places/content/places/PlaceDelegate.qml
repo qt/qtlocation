@@ -78,7 +78,19 @@ Item {
 
             Group { text: qsTr("Address") }
             Text { text: distance + "m away" }
-            Text { text: place ? place.location.address.street : "" }
+            Text {
+                function placeAddress(place) {
+                    if (!place)
+                        return "";
+
+                    if (place.location.address.formattedAddress.length > 0)
+                        return place.location.address.formattedAddress;
+
+                    return place.location.address.street;
+                }
+
+                text: placeAddress(place)
+            }
 
             Group {
                 text: qsTr("Categories")

@@ -55,6 +55,7 @@ public:
 
 private Q_SLOTS:
     void constructorTest();
+    void formattedAddress();
 //TODO: there are various field we don't have yet in QGeoAddress
 //       will need to either remove or enable these tests
 //    void additionalDataTest();
@@ -88,6 +89,14 @@ void tst_QGeoAddress::constructorTest()
     QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
     delete testObjPtr;
+}
+
+void tst_QGeoAddress::formattedAddress()
+{
+    QGeoAddress address;
+    QVERIFY(address.formattedAddress().isEmpty());
+    address.setFormattedAddress(QLatin1String("123 Fake Street\nSpringfield"));
+    QCOMPARE(address.formattedAddress(), QLatin1String("123 Fake Street\nSpringfield"));
 }
 
 void tst_QGeoAddress::cityTest()
@@ -235,6 +244,10 @@ void tst_QGeoAddress::emptyClearTest()
     testObj.clear();
 
     testObj.setStreet(QLatin1String("street"));
+    QVERIFY(!testObj.isEmpty());
+    testObj.clear();
+
+    testObj.setFormattedAddress(QLatin1String("formatted address"));
     QVERIFY(!testObj.isEmpty());
     testObj.clear();
 

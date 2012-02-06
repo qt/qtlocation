@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
@@ -63,7 +62,8 @@ QGeoAddressPrivate::QGeoAddressPrivate(const QGeoAddressPrivate &other)
         sCity(other.sCity),
         sDistrict(other.sDistrict),
         sStreet(other.sStreet),
-        sPostalCode(other.sPostalCode)
+        sPostalCode(other.sPostalCode),
+        sFormattedAddress(other.sFormattedAddress)
 {
 }
 
@@ -141,7 +141,8 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
            d->sCity == other.city() &&
            d->sDistrict == other.district() &&
            d->sStreet == other.street() &&
-           d->sPostalCode == other.postalCode();
+           d->sPostalCode == other.postalCode() &&
+           d->sFormattedAddress == other.formattedAddress();
 }
 
 /*!
@@ -150,6 +151,23 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
     Returns true if this address is not equal to \a other,
     otherwise returns false.
 */
+
+/*!
+    Returns the address as a formatted string.  The format of the string is typically what you
+    would find on an envelope.  The format of the string is provided by the plugin.
+*/
+QString QGeoAddress::formattedAddress() const
+{
+    return d->sFormattedAddress;
+}
+
+/*!
+    Sets the formatted address to \a address.
+*/
+void QGeoAddress::setFormattedAddress(const QString &address)
+{
+    d->sFormattedAddress = address;
+}
 
 /*!
     Returns the country name.
@@ -302,7 +320,8 @@ bool QGeoAddress::isEmpty() const
            d->sCity.isEmpty() &&
            d->sDistrict.isEmpty() &&
            d->sStreet.isEmpty() &&
-           d->sPostalCode.isEmpty();
+           d->sPostalCode.isEmpty() &&
+           d->sFormattedAddress.isEmpty();
 
 }
 
@@ -319,6 +338,7 @@ void QGeoAddress::clear()
     d->sDistrict.clear();
     d->sStreet.clear();
     d->sPostalCode.clear();
+    d->sFormattedAddress.clear();
 }
 
 QT_END_NAMESPACE

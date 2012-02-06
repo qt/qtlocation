@@ -114,6 +114,7 @@ QGeoAddress QDeclarativeGeoAddress::address() const
 void QDeclarativeGeoAddress::setAddress(const QGeoAddress& address)
 {
     // Elaborate but takes care of emiting needed signals
+    setFormattedAddress(address.formattedAddress());
     setCountry(address.country());
     setCountryCode(address.countryCode());
     setState(address.state());
@@ -123,6 +124,28 @@ void QDeclarativeGeoAddress::setAddress(const QGeoAddress& address)
     setStreet(address.street());
     setPostalCode(address.postalCode());
     m_address = address;
+}
+
+/*!
+    \qmlproperty string QtLocation5::Address::formattedAddress
+
+    This property holds the formatted address.  This property may not always be set but if it is
+    it can be used to display a correctly formatted address.  The format of the address is
+    typically what you would find on an envelope.  The format of the string is provided by the
+    \l Plugin.
+*/
+QString QDeclarativeGeoAddress::formattedAddress() const
+{
+    return m_address.formattedAddress();
+}
+
+void QDeclarativeGeoAddress::setFormattedAddress(const QString &address)
+{
+    if (m_address.formattedAddress() == address)
+        return;
+
+    m_address.setFormattedAddress(address);
+    emit formattedAddressChanged();
 }
 
 QString QDeclarativeGeoAddress::country() const

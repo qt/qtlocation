@@ -53,6 +53,7 @@ class QDeclarativeGeoAddress : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QGeoAddress address READ address WRITE setAddress)
+    Q_PROPERTY(QString formattedAddress READ formattedAddress WRITE setFormattedAddress NOTIFY formattedAddressChanged)
     Q_PROPERTY(QString country READ country WRITE setCountry NOTIFY countryChanged)
     Q_PROPERTY(QString countryCode READ countryCode WRITE setCountryCode NOTIFY countryCodeChanged)
     Q_PROPERTY(QString state READ state WRITE setState NOTIFY stateChanged)
@@ -67,6 +68,9 @@ public:
     QDeclarativeGeoAddress(const QGeoAddress& address, QObject* parent = 0);
     QGeoAddress address() const;
     void setAddress(const QGeoAddress& address);
+
+    QString formattedAddress() const;
+    void setFormattedAddress(const QString &address);
 
     QString country() const;
     void setCountry(const QString& country);
@@ -86,6 +90,7 @@ public:
     void setPostalCode(const QString& postalCode);
 
 signals:
+    void formattedAddressChanged();
     void countryChanged();
     void countryCodeChanged();
     void stateChanged();

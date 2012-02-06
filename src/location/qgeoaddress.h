@@ -67,6 +67,9 @@ public:
         return !(other == *this);
     }
 
+    QString formattedAddress() const;
+    void setFormattedAddress(const QString &address);
+
     QString country() const;
     void setCountry(const QString &country);
 
