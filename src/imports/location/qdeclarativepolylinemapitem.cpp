@@ -211,6 +211,119 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
     sourceBounds_ = QRectF(QPointF(minX, minY), QPointF(maxX, maxY));
 }
 
+////////////////////////////////////////////////////////////////////////////
+/* Polyline clip */
+
+enum ClipPointType {
+    InsidePoint  = 0x00,
+    LeftPoint    = 0x01,
+    RightPoint   = 0x02,
+    BottomPoint  = 0x04,
+    TopPoint     = 0x08
+};
+
+static inline int clipPointType(qreal x, qreal y, const QRectF &rect)
+{
+    int type = InsidePoint;
+    if (x < rect.left())
+        type |= LeftPoint;
+    else if (x > rect.right())
+        type |= RightPoint;
+    if (y < rect.top())
+        type |= TopPoint;
+    else if (y > rect.bottom())
+        type |= BottomPoint;
+    return type;
+}
+
+static void clipSegmentToRect(qreal x0, qreal y0, qreal x1, qreal y1,
+                              const QRectF &clipRect,
+                              QVector<qreal> &outPoints,
+                              QVector<QPainterPath::ElementType> &outTypes)
+{
+    int type0 = clipPointType(x0, y0, clipRect);
+    int type1 = clipPointType(x1, y1, clipRect);
+    bool accept = false;
+
+    while (true) {
+        if (!(type0 | type1)) {
+            accept = true;
+            break;
+        } else if (type0 & type1) {
+            break;
+        } else {
+            qreal x, y;
+            int outsideType = type0 ? type0 : type1;
+
+            if (outsideType & BottomPoint) {
+                x = x0 + (x1 - x0) * (clipRect.bottom() - y0) / (y1 - y0);
+                y = clipRect.bottom() - 0.1;
+            } else if (outsideType & TopPoint) {
+                x = x0 + (x1 - x0) * (clipRect.top() - y0) / (y1 - y0);
+                y = clipRect.top() + 0.1;
+            } else if (outsideType & RightPoint) {
+                y = y0 + (y1 - y0) * (clipRect.right() - x0) / (x1 - x0);
+                x = clipRect.right() - 0.1;
+            } else if (outsideType & LeftPoint) {
+                y = y0 + (y1 - y0) * (clipRect.left() - x0) / (x1 - x0);
+                x = clipRect.left() + 0.1;
+            }
+
+            if (outsideType == type0) {
+                x0 = x;
+                y0 = y;
+                type0 = clipPointType(x0, y0, clipRect);
+            } else {
+                x1 = x;
+                y1 = y;
+                type1 = clipPointType(x1, y1, clipRect);
+            }
+        }
+    }
+
+    if (accept) {
+        if (outPoints.size() >= 2) {
+            qreal lastX, lastY;
+            lastY = outPoints.at(outPoints.size()-1);
+            lastX = outPoints.at(outPoints.size()-2);
+
+            if (!qFuzzyCompare(lastY, y0) || !qFuzzyCompare(lastX, x0)) {
+                outTypes << QPainterPath::MoveToElement;
+                outPoints << x0 << y0;
+            }
+        } else {
+            outTypes << QPainterPath::MoveToElement;
+            outPoints << x0 << y0;
+        }
+
+        outTypes << QPainterPath::LineToElement;
+        outPoints << x1 << y1;
+    }
+}
+
+static void clipPathToRect(const QVector<qreal> &points,
+                           const QVector<QPainterPath::ElementType> &types,
+                           const QRectF &clipRect,
+                           QVector<qreal> &outPoints,
+                           QVector<QPainterPath::ElementType> &outTypes)
+{
+    outPoints.clear();
+    outPoints.reserve(points.size());
+    outTypes.clear();
+    outTypes.reserve(types.size());
+
+    qreal lastX, lastY;
+    for (int i = 0; i < types.size(); i++) {
+        if (i > 0 && types[i] != QPainterPath::MoveToElement) {
+            qreal x = points[i*2], y = points[i*2+1];
+            clipSegmentToRect(lastX, lastY, x, y, clipRect, outPoints, outTypes);
+        }
+
+        lastX = points[i*2];
+        lastY = points[i*2+1];
+    }
+}
+
 void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
                                                  qreal strokeWidth)
 {
@@ -222,10 +335,15 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     // Create the viewport rect in the same coordinate system
     // as the actual points
     QRectF viewport(0, 0, map.width(), map.height());
+    viewport.adjust(-strokeWidth, -strokeWidth, strokeWidth, strokeWidth);
     viewport.translate(-1 * origin);
 
-    QVectorPath vp(srcPoints_.data(), srcPointTypes_.size(),
-                   srcPointTypes_.data());
+    // Perform clipping to the viewport limits
+    QVector<qreal> points;
+    QVector<QPainterPath::ElementType> types;
+    clipPathToRect(srcPoints_, srcPointTypes_, viewport, points, types);
+
+    QVectorPath vp(points.data(), types.size(), types.data());
     QTriangulatingStroker ts;
     ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), viewport);
 
@@ -233,32 +351,29 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     if (ts.vertexCount() == 0)
         return;
 
-    screenOutline_ = QPainterPath();
-
     // QTriangulatingStroker#vertexCount is actually the length of the array,
     // not the number of vertices
     screenTriangles_.clear();
     screenTriangles_.reserve(ts.vertexCount());
 
-    // Our target coordinate system has (0,0) at the top-left-most point, rather
-    // than at the first point, so the first point will have an offset
-    firstPointOffset_ = -1*(sourceBounds_.topLeft() -
-            QPointF(strokeWidth, strokeWidth));
+    screenOutline_ = QPainterPath();
 
     QPolygonF tri;
     const float *vs = ts.vertices();
     for (int i = 0; i < ts.vertexCount()/2*2; i+=2) {
-        screenTriangles_ << vs[i] + firstPointOffset_.x()
-                         << vs[i+1] + firstPointOffset_.y();
+        screenTriangles_ << vs[i] << vs[i+1];
 
-        tri << QPointF(screenTriangles_[i], screenTriangles_[i+1]);
+        tri << QPointF(vs[i], vs[i+1]);
         if (tri.size() == 4) {
             tri.remove(0);
             screenOutline_.addPolygon(tri);
         }
     }
 
-    screenBounds_ = screenOutline_.boundingRect();
+    QRectF bb = screenOutline_.boundingRect();
+    screenBounds_ = bb;
+    firstPointOffset_ = QPointF(0,0);
+    this->translate(-1 * bb.topLeft());
 }
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent) :
