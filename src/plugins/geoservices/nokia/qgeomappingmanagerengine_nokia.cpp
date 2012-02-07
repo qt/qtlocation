@@ -50,6 +50,7 @@
 #include "qgeomapreply_nokia.h"
 
 #include <qgeotilespec.h>
+#include "qgeocameracapabilities_p.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkDiskCache>
@@ -90,12 +91,17 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     Q_UNUSED(errorString)
 
     setHost(MAPTILES_HOST);
-    setMinimumZoomLevel(0.0);
-    setMaximumZoomLevel(20.0);
 
 #ifdef USE_CHINA_NETWORK_REGISTRATION
     m_networkInfo = 0;
 #endif
+
+    QGeoCameraCapabilities capabilities;
+
+    capabilities.setMinimumZoomLevel(0.0);
+    capabilities.setMaximumZoomLevel(20.0);
+
+    setCameraCapabilities(capabilities);
 }
 
 QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}

@@ -43,6 +43,7 @@ include(placesv2/placesv2.pri)
 RESOURCES += resource.qrc
 
 INCLUDEPATH += $$QT.location.includes
+INCLUDEPATH += ../../../location/maps
 
 target.path += $$[QT_INSTALL_PLUGINS]/geoservices
 INSTALLS += target

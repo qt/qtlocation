@@ -47,6 +47,7 @@
 
 #include "qgeomap_p.h"
 #include "qgeomap_p_p.h"
+#include "qgeocameracapabilities_p.h"
 #include "qgeotilecache_p.h"
 #include "qgeotilespec.h"
 
@@ -328,36 +329,6 @@ int QGeoMappingManager::tileSize() const
 }
 
 /*!
-    Returns the minimum zoom level supported by this manager.
-
-    Larger values of the zoom level correspond to more detailed views of the
-    map.
-*/
-qreal QGeoMappingManager::minimumZoomLevel() const
-{
-    return d_ptr->engine->minimumZoomLevel();
-}
-
-/*!
-    Returns the maximum zoom level supported by this manager.
-
-    Larger values of the zoom level correspond to more detailed views of the
-    map.
-*/
-qreal QGeoMappingManager::maximumZoomLevel() const
-{
-    return d_ptr->engine->maximumZoomLevel();
-}
-
-/*!
-    Return whether bearing is supported by this manager.
-*/
-bool QGeoMappingManager::supportsBearing() const
-{
-    return d_ptr->engine->supportsBearing();
-}
-
-/*!
     Return whether the manager has been initialized
     (will be done automatically but may take some time).
 
@@ -367,35 +338,12 @@ bool QGeoMappingManager::isInitialized() const
     return d_ptr->engine->isInitialized();
 }
 
-
 /*!
-    Return whether tilting is supported by this manager.
+    Returns the camera capabilities supported by this manager.
 */
-bool QGeoMappingManager::supportsTilting() const
+QGeoCameraCapabilities QGeoMappingManager::cameraCapabilities() const
 {
-    return d_ptr->engine->supportsTilting();
-}
-
-/*!
-    Returns minimum tilt supported by this manager.
-
-    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
-    surface i.e. looking straight down to earth.
-*/
-qreal QGeoMappingManager::minimumTilt() const
-{
-    return d_ptr->engine->minimumTilt();
-}
-
-/*!
-    Returns maximum tilt supported by this manager.
-
-    Value in degrees where 0 is equivalent to 90 degrees between view and earth's
-    surface i.e. looking straight down to earth.
-*/
-qreal QGeoMappingManager::maximumTilt() const
-{
-    return d_ptr->engine->maximumTilt();
+    return d_ptr->engine->cameraCapabilities();
 }
 
 /*!

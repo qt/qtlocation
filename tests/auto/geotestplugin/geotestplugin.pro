@@ -3,6 +3,8 @@ load(qt_plugin)
 TARGET = qtgeoservices_qmltestplugin
 QT += location
 
+INCLUDEPATH += ../../../src/location/maps
+
 DESTDIR = $$QT.location.plugins/geoservices
 
 HEADERS += qgeocodingmanagerengine_test.h \

@@ -58,6 +58,7 @@ QT_BEGIN_NAMESPACE
 class QLocale;
 
 class QGeoBoundingBox;
+class QGeoCameraCapabilities;
 class QGeoCoordinate;
 class QGeoMapData;
 class QGeoMappingManagerPrivate;
@@ -86,14 +87,7 @@ public:
 
     int tileSize() const;
 
-    qreal minimumZoomLevel() const;
-    qreal maximumZoomLevel() const;
-
-    bool supportsBearing() const;
-
-    bool supportsTilting() const;
-    qreal minimumTilt() const;
-    qreal maximumTilt() const;
+    QGeoCameraCapabilities cameraCapabilities() const;
 
     QGeoMappingManager::CacheAreas cacheHint() const;
 
@@ -126,14 +120,7 @@ protected:
 
     void setTileSize(int tileSize);
 
-    void setMinimumZoomLevel(qreal minimumZoom);
-    void setMaximumZoomLevel(qreal maximumZoom);
-
-    void setMaximumTilt(qreal maximumTilt);
-    void setMinimumTilt(qreal minimumTilt);
-
-    void setSupportsBearing(bool supportsBearing);
-    void setSupportsTilting(bool supportsTilting);
+    void setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities);
 
     void setCacheHint(QGeoMappingManager::CacheAreas cacheHint);
 

@@ -52,6 +52,7 @@
 #include <qgeotiledmapreply.h>
 #include "qgeomaptype.h"
 #include "qgeotilespec.h"
+#include "qgeocameracapabilities_p.h"
 
 #include <QTimer>
 #include <QDebug>
@@ -94,8 +95,11 @@ public:
         if (parameters.contains("finishRequestImmediately"))
             finishRequestImmediately_ = qvariant_cast<bool>(parameters.value("finishRequestImmediately"));
         setLocale(QLocale (QLocale::German, QLocale::Germany));
-        setMinimumZoomLevel(0.0);
-        setMaximumZoomLevel(20.0);
+        QGeoCameraCapabilities capabilities;
+        capabilities.setMinimumZoomLevel(0.0);
+        capabilities.setMaximumZoomLevel(20.0);
+        capabilities.setSupportsBearing(true);
+        setCameraCapabilities(capabilities);
     }
 
     void init()

@@ -4,6 +4,7 @@ INCLUDEPATH += maps
 QT += network 3d
 
 PUBLIC_HEADERS += \
+                    maps/qgeocameracapabilities_p.h \
                     maps/qgeocodereply.h \
                     maps/qgeocodingmanagerengine.h \
                     maps/qgeocodingmanager.h \
@@ -55,6 +56,7 @@ PRIVATE_HEADERS += \
 SOURCES += \
             maps/qdoublevector2d.cpp \
             maps/qdoublevector3d.cpp \
+            maps/qgeocameracapabilities.cpp \
             maps/qgeocameradata.cpp \
             maps/qgeocameratiles.cpp \
             maps/qgeocodereply.cpp \

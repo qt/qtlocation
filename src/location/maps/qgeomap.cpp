@@ -44,6 +44,7 @@
 #include "qgeotilecache_p.h"
 #include "qgeotilespec.h"
 #include "qgeoprojection_p.h"
+#include "qgeocameracapabilities_p.h"
 #include "qgeomapcontroller_p.h"
 #include "qdoublevector2d_p.h"
 #include "qdoublevector3d_p.h"
@@ -234,7 +235,7 @@ void QGeoMapPrivate::setMappingManager(QGeoMappingManager *manager)
     if (manager) {
         manager->registerMap(map_);
 
-        cameraTiles_->setMaximumZoomLevel(static_cast<int>(ceil(manager->maximumZoomLevel())));
+        cameraTiles_->setMaximumZoomLevel(static_cast<int>(ceil(manager->cameraCapabilities().maximumZoomLevel())));
 
         cameraTiles_->setTileSize(manager->tileSize());
         mapGeometry_->setTileSize(manager->tileSize());
@@ -273,6 +274,31 @@ void QGeoMapPrivate::setCameraData(const QGeoCameraData &cameraData)
         QGeoCoordinate coord = cameraData_.center();
         coord.setLatitude(lat);
         cameraData_.setCenter(coord);
+    }
+
+    if (manager_) {
+        QGeoCameraCapabilities capabilities = manager_->cameraCapabilities();
+        if (cameraData_.zoomFactor() < capabilities.minimumZoomLevel())
+            cameraData_.setZoomFactor(capabilities.minimumZoomLevel());
+
+        if (cameraData_.zoomFactor() > capabilities.maximumZoomLevel())
+            cameraData_.setZoomFactor(capabilities.maximumZoomLevel());
+
+        if (!capabilities.supportsBearing())
+            cameraData_.setBearing(0.0);
+
+        if (capabilities.supportsTilting()) {
+            if (cameraData_.tilt() < capabilities.minimumTilt())
+                cameraData_.setTilt(capabilities.minimumTilt());
+
+            if (cameraData_.tilt() > capabilities.maximumTilt())
+                cameraData_.setTilt(capabilities.maximumTilt());
+        } else {
+            cameraData_.setTilt(0.0);
+        }
+
+        if (!capabilities.supportsRolling())
+            cameraData_.setRoll(0.0);
     }
 
     cameraData_.setAspectRatio(aspectRatio_);

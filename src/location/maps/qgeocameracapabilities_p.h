@@ -38,9 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QGEOMAPPINGMANAGERENGINE_P_H
-#define QGEOMAPPINGMANAGERENGINE_P_H
+#ifndef QGEOCAMERACAPABILITIES_P_H
+#define QGEOCAMERACAPABILITIES_P_H
 
 //
 //  W A R N I N G
@@ -53,51 +52,47 @@
 // We mean it.
 //
 
-//#include "qgraphicsgeomap.h"
+#include <QSharedDataPointer>
 
-#include <QSize>
-#include <QList>
-#include <QMap>
-#include <QLocale>
-#include <QTimer>
-#include "qgeomaptype.h"
-#include "qgeomappingmanager.h"
-#include "qgeocameracapabilities_p.h"
-
-class QGeoTileSpec;
-class QGeoTiledMapReply;
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMappingManagerEnginePrivate
-{
+class QGeoCameraCapabilitiesPrivate;
+
+class Q_LOCATION_EXPORT QGeoCameraCapabilities {
 public:
-    QGeoMappingManagerEnginePrivate();
-    virtual ~QGeoMappingManagerEnginePrivate();
+    QGeoCameraCapabilities();
+    QGeoCameraCapabilities(const QGeoCameraCapabilities &other);
+    ~QGeoCameraCapabilities();
 
-    QMap<QString, QVariant> parameters;
+    QGeoCameraCapabilities& operator = (const QGeoCameraCapabilities &other);
 
-    QString managerName;
-    int managerVersion;
+    void setMinimumZoomLevel(double minimumZoomLevel);
+    double minimumZoomLevel() const;
 
-    QList<QGeoMapType> supportedMapTypes;
-//    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes;
-    int tileSize;
-    QGeoCameraCapabilities cameraCapabilities_;
-    QGeoMappingManager::CacheAreas cacheHint;
+    void setMaximumZoomLevel(double maximumZoomLevel);
+    double maximumZoomLevel() const;
 
-    QLocale locale;
-    bool started_;
-    bool initialized;
-    bool stopped_;
-    QTimer *timer_;
-    QList<QGeoTileSpec> queue_;
-    QHash<QGeoTileSpec, QGeoTiledMapReply*> invmap_;
+    void setSupportsBearing(bool supportsBearing);
+    bool supportsBearing() const;
+
+    void setSupportsRolling(bool supportsRolling);
+    bool supportsRolling() const;
+
+    void setSupportsTilting(bool supportsTilting);
+    bool supportsTilting() const;
+
+    void setMinimumTilt(double minimumTilt);
+    double minimumTilt() const;
+
+    void setMaximumTilt(double maximumTilt);
+    double maximumTilt() const;
 
 private:
-    Q_DISABLE_COPY(QGeoMappingManagerEnginePrivate)
+    QSharedDataPointer<QGeoCameraCapabilitiesPrivate> d;
 };
 
 QT_END_NAMESPACE
 
-#endif
+#endif // QGEOCAMERACAPABILITIES_P_H
