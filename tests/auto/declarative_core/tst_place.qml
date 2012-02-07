@@ -534,10 +534,7 @@ TestCase {
 
         compare(savePlace.status, Place.Saving);
 
-        // SignalSpy.wait() doesn't seem to work here
-        //signalSpy.wait();
-        wait(0);
-        compare(savePlace.status, Place.Error);
+        tryCompare(savePlace, "status", Place.Error);
 
         // try again without an invalid placeId
         savePlace.placeId = "";
@@ -545,9 +542,7 @@ TestCase {
 
         compare(savePlace.status, Place.Saving);
 
-        wait(0);
-
-        compare(savePlace.status, Place.Ready);
+        tryCompare(savePlace, "status", Place.Ready);
 
         verify(savePlace.placeId !== "");
 
@@ -566,20 +561,14 @@ TestCase {
         readPlace.getDetails();
 
         compare(readPlace.status, Place.Fetching);
-
-        wait(0);
-
-        compare(readPlace.status, Place.Error);
+        tryCompare(readPlace, "status", Place.Error);
 
         readPlace.placeId = "invalid-id";
 
         readPlace.getDetails();
 
         compare(readPlace.status, Place.Fetching);
-
-        wait(0);
-
-        compare(readPlace.status, Place.Error);
+        tryCompare(readPlace, "status", Place.Error);
 
         readPlace.placeId = savePlace.placeId;
 
@@ -589,10 +578,7 @@ TestCase {
         readPlace.getDetails();
 
         compare(readPlace.status, Place.Fetching);
-
-        wait(0);
-
-        compare(readPlace.status, Place.Ready);
+        tryCompare(readPlace, "status", Place.Ready);
 
         // verify that read place is the same as what we saved
         verify(compare_place(readPlace, savePlace));
@@ -612,38 +598,26 @@ TestCase {
         removePlace.remove();
 
         compare(removePlace.status, Place.Removing);
-
-        wait(0);
-
-        compare(removePlace.status, Place.Error);
+        tryCompare(removePlace, "status", Place.Error);
 
         removePlace.placeId = "invalid-id";
 
         removePlace.remove();
 
         compare(removePlace.status, Place.Removing);
-
-        wait(0);
-
-        compare(removePlace.status, Place.Error);
+        tryCompare(removePlace, "status", Place.Error);
 
         removePlace.placeId = savePlace.placeId;
 
         removePlace.remove();
 
         compare(removePlace.status, Place.Removing);
-
-        wait(0);
-
-        compare(removePlace.status, Place.Ready);
+        tryCompare(removePlace, "status", Place.Ready);
 
         removePlace.getDetails();
 
         compare(removePlace.status, Place.Fetching);
-
-        wait(0);
-
-        compare(removePlace.status, Place.Error);
+        tryCompare(removePlace, "status", Place.Error);
 
         signalSpy.destroy();
     }

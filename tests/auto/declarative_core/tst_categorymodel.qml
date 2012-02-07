@@ -117,13 +117,11 @@ TestCase {
         // set the plugin
         categoryModel.model.plugin = testPlugin;
 
+        tryCompare(categoryModel.model, "status", CategoryModel.Updating);
         compare(modelSpy.count, 1);
-        compare(categoryModel.model.status, CategoryModel.Updating);
 
-        wait(0);
-
+        tryCompare(categoryModel.model, "status", CategoryModel.Ready);
         compare(modelSpy.count, 2);
-        compare(categoryModel.model.status, CategoryModel.Ready);
 
         var expectedNames = [ "Accommodation", "Park" ];
 
@@ -183,13 +181,11 @@ TestCase {
         categoryModel.model.hierarchical = false;
         categoryModel.model.plugin = testPlugin;
 
+        tryCompare(categoryModel.model, "status", CategoryModel.Updating);
         compare(modelSpy.count, 1);
-        compare(categoryModel.model.status, CategoryModel.Updating);
 
-        wait(0);
-
+        tryCompare(categoryModel.model, "status", CategoryModel.Ready);
         compare(modelSpy.count, 2);
-        compare(categoryModel.model.status, CategoryModel.Ready);
 
         var expectedNames = [ "Accommodation", "Camping", "Hotel", "Motel", "Park" ];
 

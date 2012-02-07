@@ -163,9 +163,7 @@ TestCase {
         modelSpy.target = categoryModel.model;
         modelSpy.signalName = "statusChanged"
 
-        wait(0);
-
-        compare(categoryModel.model.status, CategoryModel.Ready);
+        tryCompare(categoryModel.model, "status", CategoryModel.Ready);
         compare(categoryModel.count, 0);
 
         var signalSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
@@ -178,11 +176,9 @@ TestCase {
         saveCategory.save();
 
         compare(saveCategory.status, Category.Saving);
+        verify(saveCategory.errorString().length === 0);
 
-        wait(0);
-
-        compare(saveCategory.status, Category.Error);
-
+        tryCompare(saveCategory, "status", Category.Error);
         verify(saveCategory.errorString().length > 0);
 
         // try again without an invalid categoryId
@@ -191,9 +187,7 @@ TestCase {
 
         compare(saveCategory.status, Category.Saving);
 
-        wait(0);
-
-        compare(saveCategory.status, Category.Ready);
+        tryCompare(saveCategory, "status", Category.Ready);
         verify(saveCategory.errorString().length === 0);
 
         verify(saveCategory.categoryId !== "");
@@ -202,8 +196,8 @@ TestCase {
         // Verify that the category was added to the model
         categoryModel.model.update();
         compare(categoryModel.model.status, CategoryModel.Updating);
-        wait(0);
-        compare(categoryModel.model.status, CategoryModel.Ready);
+
+        tryCompare(categoryModel.model, "status", CategoryModel.Ready);
 
         compare(categoryModel.count, 1);
         var modelCategory = categoryModel.model.data(categoryModel.modelIndex(0),
@@ -217,17 +211,15 @@ TestCase {
 
         compare(saveCategory.status, Category.Removing);
 
-        wait(0);
-
-        compare(saveCategory.status, Category.Ready);
+        tryCompare(saveCategory, "status", Category.Ready);
         verify(saveCategory.errorString().length === 0);
 
 
         // Verify that the category was removed from the model
         categoryModel.model.update();
         compare(categoryModel.model.status, CategoryModel.Updating);
-        wait(0);
-        compare(categoryModel.model.status, CategoryModel.Ready);
+
+        tryCompare(categoryModel.model, "status", CategoryModel.Ready);
 
         compare(categoryModel.count, 0);
 
@@ -237,9 +229,7 @@ TestCase {
 
         compare(saveCategory.status, Category.Removing);
 
-        wait(0);
-
-        compare(saveCategory.status, Category.Error);
+        tryCompare(saveCategory, "status", Category.Error);
 
         verify(saveCategory.errorString().length > 0);
 
@@ -256,7 +246,7 @@ TestCase {
 
         saveCategory.save();
 
-        compare(saveCategory.status, Category.Error);
+        tryCompare(saveCategory, "status", Category.Error);
 
         verify(saveCategory.errorString().length > 0);
         compare(saveCategory.categoryId, "");
