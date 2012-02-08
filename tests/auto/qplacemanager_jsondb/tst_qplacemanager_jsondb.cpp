@@ -62,11 +62,26 @@
 
 #include "jsondbcleaner.h"
 
+//Use until QTRY_VERIFY_WITH_TIMEOUT is available
+#ifndef TRY_VERIFY_WITH_TIMEOUT
+#define TRY_VERIFY_WITH_TIMEOUT(__expr, __timeout) \
+         do { \
+         const int __step = 50; \
+         if (!(__expr)) { \
+             QTest::qWait(0); \
+         } \
+         for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+             QTest::qWait(__step); \
+         } \
+         QVERIFY(__expr); \
+     } while (0)
+#endif
+
 #ifndef WAIT_UNTIL
 #define WAIT_UNTIL(__expr) \
         do { \
         const int __step = 50; \
-        const int __timeout = 5000; \
+        const int __timeout = 10000; \
         if (!(__expr)) { \
             QTest::qWait(0); \
         } \
@@ -2123,14 +2138,22 @@ void tst_QPlaceManagerJsonDb::iconFormats()
     if (imageFormat == "tiff")
         QEXPECT_FAIL("", "tiff format known to fail as documented in QTBUG-23898", Abort);
 
-    QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+    if (imageFormat == "svg" && !QImageReader::supportedImageFormats().contains("svg")) {
+        //svg format is not supported therefore saving of the icon should fail
+        //in this instance we are creating a data url and therefore need to be
+        //able to detect the image format and mime type.
+        QVERIFY(doSavePlace(place,QPlaceReply::BadArgumentError));
+    } else {
+        QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
 
-    QPlace retrievedPlace;
-    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+        QPlace retrievedPlace;
+        QVERIFY(doFetchDetails(placeId, &retrievedPlace));
 
-    QRegExp regExp("^data:(.*);.*$");
-    regExp.indexIn(retrievedPlace.icon().parameters().value(SmallDestination).toUrl().toString());
-    QCOMPARE(regExp.cap(1), mimeType);
+        QRegExp regExp("^data:(.*);.*$");
+        regExp.indexIn(retrievedPlace.icon().parameters().value(SmallDestination).toUrl().toString());
+        QCOMPARE(regExp.cap(1), mimeType);
+        QCOMPARE(dataUrlToImage(retrievedPlace.icon().parameters().value(SmallDestination).toUrl()).size(), SmallSize);
+    }
 }
 
 void tst_QPlaceManagerJsonDb::iconFormats_data()
@@ -2328,7 +2351,7 @@ void tst_QPlaceManagerJsonDb::doSavePlaces(QList<QPlace> &places)
     foreach (QPlace place, places) {
         saveReply = placeManager->savePlace(place);
         QSignalSpy saveSpy(saveReply, SIGNAL(finished()));
-        QTRY_VERIFY(saveSpy.count() == 1);
+        TRY_VERIFY_WITH_TIMEOUT(saveSpy.count() == 1, 10000);
         QCOMPARE(saveReply->error(), QPlaceReply::NoError);
         saveSpy.clear();
     }
@@ -2343,7 +2366,7 @@ void tst_QPlaceManagerJsonDb::doSavePlaces(const QList<QPlace *> &places)
         count++;
         saveReply = placeManager->savePlace(*place);
         QSignalSpy saveSpy(saveReply, SIGNAL(finished()));
-        QTRY_VERIFY(saveSpy.count() == 1);
+        TRY_VERIFY_WITH_TIMEOUT(saveSpy.count() == 1, 10000);
         QCOMPARE(saveReply->error(), QPlaceReply::NoError);
         place->setPlaceId(saveReply->id());
         saveSpy.clear();

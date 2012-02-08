@@ -217,14 +217,20 @@ void SavePlaceReply::processIcons()
 
         //try to set small,medium and large destinations if they haven't already been explicitly specified
         //and there are icons with unspecified destinations. (essentially we are creating data urls if necessary)
-        if (!specifiedDestinations.contains(Icon::SmallDestination))
-            trySetDestination(Icon::SmallDestination);
+        if (!specifiedDestinations.contains(Icon::SmallDestination)) {
+            if (!trySetDestination(Icon::SmallDestination))
+                return;
+        }
 
-        if (!specifiedDestinations.contains(Icon::MediumDestination))
-            trySetDestination(Icon::MediumDestination);
+        if (!specifiedDestinations.contains(Icon::MediumDestination)) {
+            if (!trySetDestination(Icon::MediumDestination))
+                return;
+        }
 
-        if (!specifiedDestinations.contains(Icon::LargeDestination))
-            trySetDestination(Icon::LargeDestination);
+        if (!specifiedDestinations.contains(Icon::LargeDestination)) {
+            if (!trySetDestination(Icon::LargeDestination))
+                    return;
+        }
 
         //Note that we don't try and set the destination for full screen thumbnails
         //since data urls are meant to be just for small images
@@ -358,7 +364,7 @@ void SavePlaceReply::processError(int id, int code, const QString &jsonDbErrorSt
     }
 }
 
-void SavePlaceReply::trySetDestination(const QString &destination)
+bool SavePlaceReply::trySetDestination(const QString &destination)
 {
     static int threshold;
     int height;
@@ -388,8 +394,13 @@ void SavePlaceReply::trySetDestination(const QString &destination)
             currIcon->setDestination(destination);
         }
     }
-    if (currIcon)
-        currIcon->setDestinationDataUrl();
+
+    if (currIcon && !currIcon->createDestinationDataUrl()) {
+        triggerDone(currIcon->error(), currIcon->errorString());
+        return false;
+    }
+
+    return true;
 }
 
 QUrl SavePlaceReply::convertToUrl(const QVariant &var, bool *ok)

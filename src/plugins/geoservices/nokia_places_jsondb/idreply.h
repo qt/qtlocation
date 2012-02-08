@@ -111,7 +111,7 @@ private slots:
     void processError(int id, int code, const QString &errorString);
 
 private:
-    void trySetDestination(const QString &destination);
+    bool trySetDestination(const QString &destination);
     QUrl convertToUrl(const QVariant &var, bool *ok);
 
 private:

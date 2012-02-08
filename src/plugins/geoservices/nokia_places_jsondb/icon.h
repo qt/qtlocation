@@ -91,7 +91,7 @@ public:
     QUrl sourceUrl() const;
 
     QUrl destinationUrl() const;
-    void setDestinationDataUrl();
+    bool createDestinationDataUrl();
 
     QString destination() const;
     void setDestination(const QString &destination);
