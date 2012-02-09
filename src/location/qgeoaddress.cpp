@@ -63,7 +63,7 @@ QGeoAddressPrivate::QGeoAddressPrivate(const QGeoAddressPrivate &other)
         sDistrict(other.sDistrict),
         sStreet(other.sStreet),
         sPostalCode(other.sPostalCode),
-        sFormattedAddress(other.sFormattedAddress)
+        sText(other.sText)
 {
 }
 
@@ -142,7 +142,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
            d->sDistrict == other.district() &&
            d->sStreet == other.street() &&
            d->sPostalCode == other.postalCode() &&
-           d->sFormattedAddress == other.formattedAddress();
+           d->sText == other.text();
 }
 
 /*!
@@ -153,20 +153,24 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
 */
 
 /*!
-    Returns the address as a formatted string.  The format of the string is typically what you
-    would find on an envelope.  The format of the string is provided by the plugin.
+    Returns the address as a single formatted string.  If the returned string is not empty then
+    it is the recommended string to use to display the address to the user.
+
+    The address text may contain a subset of all address properties and is provided by the
+    plugin.  A common pattern is for the text to take the format of an address as found on an
+    envelope, but this is not always necessarily the case.
 */
-QString QGeoAddress::formattedAddress() const
+QString QGeoAddress::text() const
 {
-    return d->sFormattedAddress;
+    return d->sText;
 }
 
 /*!
-    Sets the formatted address to \a address.
+    Sets the address text to \a address.
 */
-void QGeoAddress::setFormattedAddress(const QString &address)
+void QGeoAddress::setText(const QString &address)
 {
-    d->sFormattedAddress = address;
+    d->sText = address;
 }
 
 /*!
@@ -321,7 +325,7 @@ bool QGeoAddress::isEmpty() const
            d->sDistrict.isEmpty() &&
            d->sStreet.isEmpty() &&
            d->sPostalCode.isEmpty() &&
-           d->sFormattedAddress.isEmpty();
+           d->sText.isEmpty();
 
 }
 
@@ -338,7 +342,7 @@ void QGeoAddress::clear()
     d->sDistrict.clear();
     d->sStreet.clear();
     d->sPostalCode.clear();
-    d->sFormattedAddress.clear();
+    d->sText.clear();
 }
 
 QT_END_NAMESPACE

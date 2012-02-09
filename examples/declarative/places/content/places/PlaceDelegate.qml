@@ -83,8 +83,8 @@ Item {
                     if (!place)
                         return "";
 
-                    if (place.location.address.formattedAddress.length > 0)
-                        return place.location.address.formattedAddress;
+                    if (place.location.address.text.length > 0)
+                        return place.location.address.text;
 
                     return place.location.address.street;
                 }

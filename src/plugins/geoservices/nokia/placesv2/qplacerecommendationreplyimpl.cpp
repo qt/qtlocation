@@ -119,7 +119,7 @@ void QPlaceRecommendationReplyImpl::replyFinished()
 
         const QString vicinity = item.value(QLatin1String("vicinity")).toString();
         QGeoAddress address;
-        address.setFormattedAddress(vicinity);
+        address.setText(vicinity);
         location.setAddress(address);
 
         place.setLocation(location);

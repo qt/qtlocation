@@ -165,7 +165,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
 
     QJsonObject addressObject = locationObject.value(QLatin1String("address")).toObject();
 
-    address.setFormattedAddress(addressObject.value(QLatin1String("text")).toString());
+    address.setText(addressObject.value(QLatin1String("text")).toString());
 
     address.setCountry(addressObject.value(QLatin1String("country")).toString());
     address.setCountryCode(addressObject.value(QLatin1String("countryCode")).toString());

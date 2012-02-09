@@ -73,7 +73,7 @@ public:
     QString sDistrict; //!< district field
     QString sStreet; //!< street name field
     QString sPostalCode; //!< postal code field
-    QString sFormattedAddress;
+    QString sText;
 };
 
 QT_END_NAMESPACE
