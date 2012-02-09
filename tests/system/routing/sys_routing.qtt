@@ -1,0 +1,341 @@
+/****************************************************************************
+**
+** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/
+**
+** This file is part of the test suite of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/location
+
+testcase = {
+
+    qml_route_for_two_points_data: {
+        close_points:["-27.575", "153.088", "-27.465", "153.023", "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.575,153.088&waypoint1=-27.465,153.023&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T21:51:25Z&instructionformat=text&language=en_AU"],
+        medium_distant_points:["-27.4709", "153.0235", "-33.8689", "151.2071", "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.4709,153.0235&waypoint1=-33.8689,151.2071&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T21:52:33Z&instructionformat=text&language=en_AU"],
+        distant_points:["-27.4709", "153.0235", "56.3167", "44", "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.4709,153.0235&waypoint1=56.3167,44&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T21:54:35Z&instructionformat=text&language=en_AU"]
+    },
+
+    qml_route_for_two_points: function(lat1, long1, lat2, long2, url)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Route for two points";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Tools button | |
+        | Select Route menu item | |
+        | Fill in " + lat1 + " in From Latitude field | |
+        | Fill in " + long1 + " in From Longitude field | |
+        | Fill in " + lat2 + " in To Latitude field | |
+        | Fill in " + long2 + " in To Longitude field | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+
+    qml_route_for_two_addresses_data: {
+        points:["Brandle st","Eight Mile Plains", "Australia", "Brunswick st", "New Farm", "Australia", "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5791,153.098&waypoint1=-27.4622,153.0398&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:03:58Z&instructionformat=text&language=en_AU"],
+    },
+
+
+    qml_route_for_two_addresses: function(street1, city1, country1, street2, city2, country2, url) {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Route for two addresses";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Tools button | |
+        | Select Route menu item | |
+        | Select second option group to enter start and end points as address | |
+        | Fill in " + city1 + " in From City field | |
+        | Fill in " + country1 + " in From Country field | |
+        | Fill in " + city2 + " in To City field | |
+        | Fill in " + country2 + " in To Country field | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+    qml_route_for_three_points_data:{
+        points:["-27.575", "153.088", "-27.465", "153.023", "-27.3614", "153.0043", "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.575,153.088&waypoint1=-27.465,153.023&waypoint2=-27.36140072373,153.004295826&mode0=shortest;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:05:50Z&instructionformat=text&language=en_AU"]
+    },
+
+    qml_route_for_three_points: function(lat1, long1, lat2, long2, lat3, long3, url)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Route for several waypoints";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Long press on the map | |
+        | Select Add Marker menu item | |
+        | Create another Marker via Long Press | |
+        | Create third Marker | |
+        | Long Press on the first marker | |
+        | Select Move To menu item | |
+        | Fill in " + lat1 + " in Latitude field | |
+        | Fill in " + long1 + " in Longitude | |
+        | Select Go! button | |
+        | Long Press on the second marker | |
+        | Select Move To menu item | |
+        | Fill in " + lat2 + " in Latitude field | |
+        | Fill in " + long2 + " in Longitude | |
+        | Select Go! button | |
+        | Long Press on the third marker | |
+        | Select Move To menu item | |
+        | Fill in " + lat3 + " in Latitude field | |
+        | Fill in " + long3 + " in Longitude | |
+        | Press Go! button | |
+        | Long press on the map | |
+        | Select Route To The Next Points | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+    qml_travel_mode_data: {
+        point:["-27.5789", "153.0919", "-27.5792", "153.096",
+               "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5789,153.0919&waypoint1=-27.5792,153.096&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:07:16Z&instructionformat=text&language=en_AU",
+               "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5789,153.0919&waypoint1=-27.5792,153.096&mode0=fastestNow;pedestrian&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:07:51Z&instructionformat=text&language=en_AU"]
+    },
+
+    qml_travel_mode: function(lat1, long1, lat2, long2, url1, url2)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Travel mode (Car and Pedestrian)";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url1 + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Tools button | |
+        | Select Route menu item | |
+        | Selec first option group | |
+        | Fill in " + lat1 + " in From Latitude field | |
+        | Fill in " + long1 + " in From Longitude field | |
+        | Fill in " + lat2 + " in To Latitude field | |
+        | Fill in " + long2 + " in To Longitude field | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
+        | Open " + url2 + " url in a desktop browser | |
+        | Select Tools button | |
+        | Select Route menu item | |
+        | Select *Pedestrian* option button | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+    qml_travel_feature_type: {
+        points:["-27.5299", "153.0713", "-27.4395", "153.0504",
+                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5299,153.0713&waypoint1=-27.4395,153.0504&mode0=fastestNow;car;tollroad:-1&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:16:14Z&instructionformat=text&language=en_AU",
+                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5299,153.0713&waypoint1=-27.4395,153.0504&mode0=fastestNow;car;tollroad:-1,motorway:-1&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:16:37Z&instructionformat=text&language=en_AU"]
+    },
+
+    qml_route_feature_type: function(lat1, long1, lat2, long2, url1, url2)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Route features (Avoid Highways and Avoid Tool Road)";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url1 + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Tools button | |
+        | Select Route menu item | |
+        | Selec first option group | |
+        | Fill in " + lat1 + " in From Latitude field | |
+        | Fill in " + long1 + " in From Longitude field | |
+        | Fill in " + lat2 + " in To Latitude field | |
+        | Fill in " + long2 + " in To Longitude field | |
+        | Select *Avoid toll roads* checkbox | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
+        | Select Tools button | |
+        | Select Route menu item | |
+        | Select *Avoid highways* checkbox | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+    qml_route_optimization_data: {
+        points:["-27.5013", "153.1002", "-27.4395", "153.0504",
+                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5013,153.1002&waypoint1=-27.4395,153.0504&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:55:13Z&instructionformat=text&language=en_AU",
+                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5013,153.1002&waypoint1=-27.4395,153.0504&mode0=shortest;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:56:07Z&instructionformat=text&language=en_AU"]
+    },
+
+    qml_route_optimization: function(lat1, long1, lat2, long2, url1, url2)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Route optimization (Shortest and Fastest)";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can be calculated.";
+        testPreconditions = "Internet connection is required for this test case";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-235: QML Routing";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Open " + url1 + " url in a desktop browser | |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Tools button | |
+        | Select Route menu item | |
+        | Selec first option group | |
+        | Fill in " + lat1 + " in From Latitude field | |
+        | Fill in " + long1 + " in From Longitude field | |
+        | Fill in " + lat2 + " in To Latitude field | |
+        | Fill in " + long2 + " in To Longitude field | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
+        | Open " + url2 + " url in a desktop browser | |
+        | Select Tools button | |
+        | Select Route menu item | |
+        | Select *Shortest* option button | |
+        | Select Go! button | |
+        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
+        ));
+    },
+
+    qml_routing_and_locale: function()
+    {
+        // Test meta data
+        testTitle = "QML: Routing - Locale handling";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that route information can be present in different languages and measurement systems.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT,5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally |
+        | Select Tools | |
+        | Select Route | |
+        | Select Go! | |
+        | Expand information about rhe route | Verify that instructions is in English and uses imperial system |
+        | Close info tab |
+        | Select En button | |
+        | Select Fr | |
+        | Select Tools | |
+        | Select Route | |
+        | Select Go! | |
+        | Expand information about rhe route | Verify that instructions is in Franch and uses metric system |"
+        ));
+    }
+
+}  // end of testcase

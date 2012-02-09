@@ -1,0 +1,403 @@
+/****************************************************************************
+**
+** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/
+**
+** This file is part of the test suite of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+//TESTED_COMPONENT=src/location
+
+testcase = {
+
+    qml_polyline_mapitem_data: {
+        nodes:["-26.15", "152.1", "-28", "-152.6", "-27", "153"],
+        nodes_near_dateline:["67", "179.5", "66.5", "0.5", "66.7", "179"]
+    },
+
+    qml_polyline_mapitem:function(lat1, long1, lat2, long2, lat3, long3)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Polyline";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that polyline can be drawn on map.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Create second Marker | |
+        | Create third Marker | |
+        | Press and Hold on the first marker | |
+        | Select Move To button | |
+        | Fill in " + lat1 + " in Latitude field | |
+        | Fill in " + long1 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the second marker | |
+        | Select Move To button | |
+        | Fill in " + lat2 + " in Latitude field | |
+        | Fill in " + long2 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the third marker | |
+        | Select Move To button | |
+        | Fill in " + lat3 + " in Latitude field | |
+        | Fill in " + long3 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the first marker | |
+        | Select Draw... button | |
+        | Select Polyline button | Verify that polyine is drawn correctly. |"
+        ));
+    },
+
+    qml_polygon_mapitem_data: {
+        pentagon:["-27", "150", "-27", "-170", "-26", "155", "-25", "160", "-26", "167"],
+        concave_pentagon:["-27", "150", "-27", "-170", "-26", "155", "-26.5", "160", "-26", "167"],
+        pentagon_crossing_dateline:["67", "179.5", "66.8", "0.6", "66.4", "0.8", "66", "0", "66.9", "179.1"]
+    },
+
+    qml_polygon_mapitem:function(lat1, long1, lat2, long2, lat3, long3, lat4, long4, lat5, long5)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Polygon";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that polygon can be drawn on map.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Create second Marker | |
+        | Create third Marker | |
+        | Create fourth Marker | |
+        | Create fifth Marker | |
+        | Press and Hold on the first marker | |
+        | Select Move To button | |
+        | Fill in " + lat1 + " in Latitude field | |
+        | Fill in " + long1 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the second marker | |
+        | Select Move To button | |
+        | Fill in " + lat2 + " in Latitude field | |
+        | Fill in " + long2 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the third marker | |
+        | Select Move To button | |
+        | Fill in " + lat3 + " in Latitude field | |
+        | Fill in " + long3 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the fourth marker | |
+        | Select Move To button | |
+        | Fill in " + lat4 + " in Latitude field | |
+        | Fill in " + long4 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the fifth marker | |
+        | Select Move To button | |
+        | Fill in " + lat5 + " in Latitude field | |
+        | Fill in " + long5 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the first marker | |
+        | Select Draw... button | |
+        | Select Polygon button | Verify that polgon is drawn correctly. |"
+        ));
+    },
+
+    qml_circle_mapitem_data:{
+        nodes:["-27", "150", "-27", "-170"],
+        nodes_near_dateline:["67", "179.5", "66.8", "0.6"]
+    },
+
+    qml_circle_mapitem:function(lat1, long1, lat2, long2)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Circle";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that circle can be drawn on map.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Create second Marker | |
+        | Press and Hold on the first marker | |
+        | Select Move To button | |
+        | Fill in " + lat1 + " in Latitude field | |
+        | Fill in " + long1 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the second marker | |
+        | Select Move To button | |
+        | Fill in " + lat2 + " in Latitude field | |
+        | Fill in " + long2 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the first marker | |
+        | Select Draw... button | |
+        | Select Circle button | Verify that circle is drawn correctly. |"
+        ));
+    },
+
+    qml_video_mapitem_data:{
+        nodes:["-27", "150"],
+        nodes_near_dateline:["-27", "179"]
+    },
+
+    qml_video_mapitem:function(latitude, longitude)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Video";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that video can be placed on map.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Press and Hold on the marker | |
+        | Select Move To button | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the marker | |
+        | Select Draw... button | |
+        | Select Video button | Verify that video is positioned correctly and it plays. |"
+        ));
+    },
+
+    qml_image_mapitem_data:{
+        nodes:["-27", "150"],
+        nodes_near_dateline:["-27", "179"]
+    },
+
+    qml_image_mapitem:function(latitude,longitude)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Image";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that circle can be drawn on map.";
+        testPreconditions = "Internet connection is required for this test casei.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Press and Hold on the marker | |
+        | Select Move To button | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the marker | |
+        | Select Draw... button | |
+        | Select Image button | Verify that image is drawn correctly. |"
+        ));
+    },
+
+    qml_3dqml_mapitem_data:{
+        nodes:["-27", "150"],
+        nodes_near_dateline:["-27", "179"]
+    },
+
+    qml_3dqml_mapitem:function(latitude, longitude)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - 3D QML Item";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that 3D QML item can be drawn on map.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Press and Hold on the marker | |
+        | Select Move To button | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the marker | |
+        | Select Draw... button | |
+        | Select 3D QML Item button | Verify that rotating cube is on the map. |"
+        ));
+    },
+
+    qml_mapitems_zooming: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Mapitem object zooming";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that markers, image, 3d item and video objects are not scaled, verify that polyline, polygon, circle and rectangle are scaled.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, QTMOBILITY-757: Be able to prevent a QGeoMapPixmapObject from being scaled when zooming occurs, QTMOBILITY-701: Add a QGraphicsItem based map object.";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Create second Marker | |
+        | Create third Marker | |
+        | Create fourth Marker | |
+        | Press and Hold on the first marker | |
+        | Select Draw... button | |
+        | Select Polyline | |
+        | Press and Hold on the first marker | |
+        | Select Draw... button | |
+        | Select Rectangle | |
+        | Press and Hold on the second marker | |
+        | Select Draw... button | |
+        | Select Polygon | |
+        | Press and Hold on the second marker | |
+        | Select Draw... button | |
+        | Select Image | |
+        | Press and Hold on the third marker | |
+        | Select Draw... button | |
+        | Select Circle | |
+        | Press and Hold on the third marker | |
+        | Select Draw... button | |
+        | Select 3D QML Item | |
+        | Press and Hold on the fourth marker | |
+        | Select Draw... button | |
+        | Select Video | |
+        | Zoom in the map | Verify that polyline, polygon, rectangle and circle are scaled and video, image, 3dqml item are not scaled |
+        | Zoom out the map | Verify that polyline, polygon, rectangle and circle are scaled and video, image, 3dqml item are not scaled |"
+        ));
+    },
+
+    qml_mapitem_interaction_data:{
+        nodes:["-27.3644", "153.0178", "Sydney"],
+    },
+
+    qml_mapitem_interaction:function(latitude, longitude, city)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that mapitems can handle touch/mouse events.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Press and Hold on the marker | Verify that popup menu appears |
+        | Select Move To button | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude | |
+        | Select Go! button | Verify that marker places next to " + city + "|
+        | Drag the marker | Verify that marker can be dragged correctly |"
+        ));
+    }
+
+}  // end of testcase
