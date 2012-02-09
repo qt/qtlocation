@@ -190,6 +190,13 @@ void QDeclarativeRouteMapItem::handleCameraDataChanged(const QGeoCameraData& cam
         zoomLevel_ = cameraData.zoomFactor();
         geometry_.markSourceDirty();
     }
+
+    QSizeF sz = QSizeF(quickMap()->width(), quickMap()->height());
+    if (sz != mapSize_) {
+        mapSize_ = sz;
+        geometry_.markSourceDirty();
+    }
+
     geometry_.markScreenDirty();
     updateMapItem();
 }

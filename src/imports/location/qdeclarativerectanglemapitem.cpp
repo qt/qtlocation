@@ -336,6 +336,14 @@ void QDeclarativeRectangleMapItem::handleCameraDataChanged(const QGeoCameraData&
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }
+
+    QSizeF sz = QSizeF(quickMap()->width(), quickMap()->height());
+    if (sz != mapSize_) {
+        mapSize_ = sz;
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
+    }
+
     geometry_.markScreenDirty();
     borderGeometry_.markScreenDirty();
     updateMapItem();

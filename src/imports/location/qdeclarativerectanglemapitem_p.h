@@ -117,6 +117,7 @@ private:
     QColor color_;
     qreal zoomLevel_;
     bool dirtyMaterial_;
+    QSizeF mapSize_;
     QGeoMapRectangleGeometry geometry_;
     QGeoMapPolylineGeometry borderGeometry_;
 };

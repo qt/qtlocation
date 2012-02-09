@@ -122,6 +122,7 @@ private:
     QList<QGeoCoordinate> path_;
     QColor color_;
     qreal zoomLevel_;
+    QSizeF mapSize_;
     bool dirtyMaterial_;
     QGeoMapPolygonGeometry geometry_;
     QGeoMapPolylineGeometry borderGeometry_;

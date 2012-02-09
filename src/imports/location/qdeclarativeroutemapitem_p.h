@@ -93,6 +93,7 @@ private:
     QList<QGeoCoordinate> path_;
     bool dirtyMaterial_;
     bool dragActive_;
+    QSizeF mapSize_;
     QGeoMapPolylineGeometry geometry_;
 };
 

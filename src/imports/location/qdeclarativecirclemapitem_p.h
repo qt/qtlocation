@@ -103,6 +103,7 @@ private:
     QColor color_;
     qreal radius_;
     qreal zoomLevel_;
+    QSizeF mapSize_;
     QList<QGeoCoordinate> circlePath_;
     bool dirtyMaterial_;
     QGeoMapPolygonGeometry geometry_;
