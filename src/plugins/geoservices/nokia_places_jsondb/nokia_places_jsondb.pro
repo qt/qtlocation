@@ -37,8 +37,7 @@ SOURCES += \
 
 INCLUDEPATH += $$QT.location.includes
 
-DEFINES += QT_ADDON_JSONDB_LIB
-QT += jsondb
+QT += jsondbcompat
 
 target.path += $$[QT_INSTALL_PLUGINS]/geoservices
 INSTALLS += target
