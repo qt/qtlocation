@@ -45,6 +45,8 @@
 #include <QtCore/QMetaType>
 #include <QString>
 
+#include <QSharedDataPointer>
+
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
@@ -79,8 +81,7 @@ public:
     bool operator < (const QGeoTileSpec &rhs) const;
 
 private:
-    QGeoTileSpecPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoTileSpec)
+    QSharedDataPointer<QGeoTileSpecPrivate> d;
 };
 
 unsigned int qHash(const QGeoTileSpec &spec);

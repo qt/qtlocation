@@ -45,86 +45,76 @@
 QT_BEGIN_NAMESPACE
 
 QGeoTileSpec::QGeoTileSpec()
-    : d_ptr(new QGeoTileSpecPrivate()) {}
+    : d(QSharedDataPointer<QGeoTileSpecPrivate>(new QGeoTileSpecPrivate())) {}
 
 QGeoTileSpec::QGeoTileSpec(const QString &plugin, int mapId, int zoom, int x, int y)
-        : d_ptr(new QGeoTileSpecPrivate(plugin, mapId, zoom, x, y)) {}
+        : d(QSharedDataPointer<QGeoTileSpecPrivate>(new QGeoTileSpecPrivate(plugin, mapId, zoom, x, y))) {}
 
 QGeoTileSpec::QGeoTileSpec(const QGeoTileSpec &other)
-    : d_ptr(new QGeoTileSpecPrivate(*(other.d_ptr))) {}
+    : d(other.d) {}
 
 QGeoTileSpec::~QGeoTileSpec() {
-    delete d_ptr;
 }
 
 QGeoTileSpec& QGeoTileSpec::operator = (const QGeoTileSpec &other)
 {
-    d_ptr->operator=(*(other.d_ptr));
+    d = other.d;
     return *this;
 }
 
 QString QGeoTileSpec::plugin() const
 {
-    Q_D(const QGeoTileSpec);
     return d->plugin_;
 }
 
 void QGeoTileSpec::setZoom(int zoom)
 {
-    Q_D(QGeoTileSpec);
     d->zoom_ = zoom;
 }
 
 int QGeoTileSpec::zoom() const
 {
-    Q_D(const QGeoTileSpec);
     return d->zoom_;
 }
 
 void QGeoTileSpec::setX(int x)
 {
-    Q_D(QGeoTileSpec);
     d->x_ = x;
 }
 
 int QGeoTileSpec::x() const
 {
-    Q_D(const QGeoTileSpec);
     return d->x_;
 }
 
 void QGeoTileSpec::setY(int y)
 {
-    Q_D(QGeoTileSpec);
     d->y_ = y;
 }
 
 int QGeoTileSpec::y() const
 {
-    Q_D(const QGeoTileSpec);
     return d->y_;
 }
 
 void QGeoTileSpec::setMapId(int mapId)
 {
-    Q_D(QGeoTileSpec);
     d->mapId_ = mapId;
 }
 
 int QGeoTileSpec::mapId() const
 {
-    Q_D(const QGeoTileSpec);
     return d->mapId_;
 }
 
 bool QGeoTileSpec::operator == (const QGeoTileSpec &rhs) const
 {
-    return (d_ptr->operator == (*(rhs.d_ptr)));
+    return (*(d.constData()) == *(rhs.d.constData()));
 }
 
 bool QGeoTileSpec::operator < (const QGeoTileSpec &rhs) const
 {
-    return (d_ptr->operator < (*(rhs.d_ptr)));
+    return (*(d.constData()) < *(rhs.d.constData()));
 }
 
 unsigned int qHash(const QGeoTileSpec &spec)
@@ -150,7 +140,8 @@ QGeoTileSpecPrivate::QGeoTileSpecPrivate()
     y_(-1) {}
 
 QGeoTileSpecPrivate::QGeoTileSpecPrivate(const QGeoTileSpecPrivate &other)
-    : plugin_(other.plugin_),
+    : QSharedData(other),
+      plugin_(other.plugin_),
       mapId_(other.mapId_),
       zoom_(other.zoom_),
       x_(other.x_),

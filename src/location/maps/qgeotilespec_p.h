@@ -53,10 +53,11 @@
 //
 
 #include <QString>
+#include <QSharedData>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTileSpecPrivate
+class QGeoTileSpecPrivate : public QSharedData
 {
 public:
     QGeoTileSpecPrivate();
