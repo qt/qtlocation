@@ -458,31 +458,38 @@ Item {
         id: searchResultTab
 
         z: backgroundRect.z + 2
-        height: parent.height - 180
+        height: parent.height - searchBox.baseHeight - mainMenu.height
         width: parent.width
-        x: -5 - searchResultTabPage.width
-        y: 60
+        x: 0
+        y: mainMenu.height - height + catchImage.width
 
-        Behavior on x { PropertyAnimation { duration: 300; easing.type: Easing.InOutQuad } }
+        opacity: 0
+
+        property bool open: false
+
+        Behavior on y { PropertyAnimation { duration: 300; easing.type: Easing.InOutQuad } }
+        Behavior on opacity { PropertyAnimation { duration: 300 } }
 
         Image {
             id: catchImage
 
             source: "resources/catch.png"
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
+            rotation: 90
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: (width - height) / 2
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: searchResultTab.state = (searchResultTab.state === "") ? "Open" : ""
+                onClicked: searchResultTab.open = !searchResultTab.open;
             }
         }
 
         Rectangle {
             id: searchResultTabPage
 
-            width: parent.width - catchImage.width
-            height: parent.height
+            width: parent.width
+            height: parent.height - catchImage.width
             color: "#ECECEC"
             radius: 5
 
@@ -496,8 +503,19 @@ Item {
 
         states: [
             State {
+                name: ""
+                when: placeSearchModel.count == 0 && recommendationModel.count == 0
+                PropertyChanges { target: searchResultTab; open: false }
+            },
+            State {
+                name: "Close"
+                when: (placeSearchModel.count > 0 || recommendationModel.count > 0) && !searchResultTab.open
+                PropertyChanges { target: searchResultTab; opacity: 1 }
+            },
+            State {
                 name: "Open"
-                PropertyChanges { target: searchResultTab; x: 0 }
+                when: (placeSearchModel.count > 0 || recommendationModel.count > 0) && searchResultTab.open
+                PropertyChanges { target: searchResultTab; y: mainMenu.height; opacity: 1 }
             }
         ]
     }

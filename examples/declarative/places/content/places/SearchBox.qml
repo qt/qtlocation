@@ -46,10 +46,11 @@ Rectangle {
     id: searchRectangle
 
     property bool suggestionsEnabled: true
+    readonly property int baseHeight: searchBox.height + 20
 
     color: "#ECECEC"
 
-    height: searchBox.height + 20
+    height: baseHeight
     Behavior on height {
         NumberAnimation { duration: 250 }
     }
