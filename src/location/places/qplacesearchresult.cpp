@@ -83,7 +83,7 @@ bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &othe
     There are two types of search result.  The first is a
     \l {QPlaceSearchResult::PlaceResult} {place result}, which contains
     a place that matched a search request, but also metadata about the place
-    such as the distance from the search center of a search request(if it had one).
+    such as the distance from the search center of a search request (if it had one).
 
     The other type is a \l {QPlaceSearchResult::CorrectionResult}{correction}, which
     contains an alternative search term that may better reflect the

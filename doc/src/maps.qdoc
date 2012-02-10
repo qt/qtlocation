@@ -140,7 +140,7 @@ available.
 A geocoding query in QML is performed using the
 \l{QtLocation5::GeocodeModel}{GeocodeModel} element. For an address-to-coordinate
 query, its \c{query} property may be set to either an
-\l{QtLocation5::Address}{Address} element, or a string containing the textual
+\l{QtLocation5::Address}{Address} element or a string containing the textual
 form of the address to search for. To perform the reverse, the same property
 can be set to a Coordinate instead. Results are made available in the contents
 of the model.

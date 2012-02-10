@@ -42,7 +42,7 @@ the backend function implementations which are called by the manager.
 A places backend implementer needs to derive from QPlaceManagerEngine
 and provide implementations for the abstract virtual functions.  Most of these
 functions are asynchronous and so implementers will also need to derive
-the appropriate \l {Places Reply Classes}{reply classes}.  The reply objects are reponsible for managing
+the appropriate \l {Places Reply Classes}{reply classes}.  The reply objects are responsible for managing
 an asynchronous request; they are used to notify when a request is complete
 and hold the results of that request.
 
@@ -53,7 +53,7 @@ A reply object would be inherited as follows:
 \snippet snippets/places/requesthandler.h Implement reply pt2
 
 The protected functions of QPlaceSearchReply::setResults() and QPlaceSearchReply::setRequest()
-are made publically accessible so the plugin can assign results and requests.  Because
+are made publicly accessible so the plugin can assign results and requests.  Because
 these functions are not publically exported, accessibility is not so much of an issue.
 An alternative would have been to declare a friend class in SearchReply.
 
@@ -80,7 +80,7 @@ and QPlaceManagerEngine::error() signals are emitted at the next event loop.
 asynchronous notification mechanism)
 
 Also note that the \c finished signals should always be emitted when a reply is complete, even if
-an error has been encountred, i.e. if there is an error, both the \c error and \c finished signals
+an error has been encountered, i.e. if there is an error, both the \c error and \c finished signals
 should be emitted while if there is no error, only the \c finished signals are emitted.
 
 \section1 Icon URLs
@@ -101,7 +101,7 @@ querying a server every time QPlaceManagerEngine::initializeCategories() is call
 Depending on how dynamic the categories are, always downloading the freshest
 set of categories may be more appropriate.
 
-\section1 Saving places to the manager
+\section1 Saving Places to the Manager
 A place generally cannot be saved directly between managers as is because it contains manager specific data such as icons
 and categories.  In order to facilitate saving to one's own manager, engine implementers should implement
 the QPlaceManagerEngine::compatiblePlace() function.  This function returns a copy of the input place
@@ -113,17 +113,16 @@ compatible place.  Other times it may involve modifying certain properties, e.g.
 modifying the icon parameters to facilitate copying or downloading of the original
 place's icon to a location that the backend can access.
 
-\section1 Cross-referencing places between managers.
+\section1 Cross-referencing Places Between Managers.
 Sometimes a situation may arise where we wish to cross-reference and match places between managers.
 Such a situation may arise where one manager provides read-only access to places (origin manager), while another second r/w
-manager (destnation manager) is used to save selected favorites from the first.  During a search of the origin manager, we may want to
+manager (destination manager) is used to save selected favorites from the first.  During a search of the origin manager, we may want to
 know which ones have been 'favorited' into the destination manager and perhaps display the customized favorite name
 rather than the original name.
 
-\section2 Alternative Id cross-referencing
-In order to accomplish cross-referencing, there needs to be a link from between the original place and the favorited place
-and this is typically handled via an alternative id attribute.  The favorited place contains an alternative id attrbute which has the
-id of the original place.
+\section2 Alternative Id Cross-Referencing
+In order to accomplish cross-referencing, there needs to be a link between the original place and the favorited place
+and this is typically handled via an alternative id attribute.  The favorited place contains an alternative id attribute which has the id of the original place.
 
 \input place-crossref.qdocinc
 
@@ -144,7 +143,7 @@ Note that if the destination manager is to facilitate saving and cross-referenci
 accommodate saving of arbitrary key value pairs since we cannot know the provider names before hand, nor can we know what structure the
 ids will be.
 
-\section3 Other methods of linking
+\section3 Other Methods of Linking
 If an origin manager does not supply a place id, it may be necessary to provide some other means of cross-referencing/matching.
 One approach might be to do so via the place coordinates, if the coordinate of a place in the origin manager is identical or close
 to a place in the destination manager, there is a high likelihood that they are the same place.
@@ -155,6 +154,6 @@ of each other, they can be considered the same place.
 Generally however it is recommended that cross referencing be implemented via alternative ids as mentioned above.
 
 \section3 User readable vs non-user readable extended attributes
-If an attribute is not intended to be readble by end users, the label field should be kept
+If an attribute is not intended to be readable by end users, the label field should be kept
 empty as an indicator of this fact.
 */

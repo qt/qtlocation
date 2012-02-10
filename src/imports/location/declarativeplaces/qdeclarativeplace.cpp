@@ -66,7 +66,7 @@ QT_USE_NAMESPACE
     \brief The Place element represents a place.
 
     The Place element represents a physical location with additional metadata describing that
-    location.  Constrasted with \l Location, \l Address, and \l Coordinate elements which are used
+    location.  Contrasted with \l Location, \l Address, and \l Coordinate elements which are used
     to describe where a location is.  The basic properties of a Place are its \l name and
     \l location.
 
@@ -77,11 +77,11 @@ QT_USE_NAMESPACE
     will be set to Place.Fetching when the details are being fetched.
 
     The Place element has many properties holding information about the place.  Details on how to
-    contact the place are available from the \l contactDetails property.  Convienence properties
+    contact the place are available from the \l contactDetails property.  Convenience properties
     for obtaining the primary \l {primaryPhone}{phone}, \l {primaryFax}{fax},
     \l {primaryEmail}{email} and \l {primaryWebsite}{website} are also available.
 
-    Each place is is assigned zero or more \l categories.  Categories are typically used when
+    Each place is assigned zero or more \l categories.  Categories are typically used when
     searching for a particular type of place, such as a restaurant or hotel.  Some places have a
     \l ratings object, which gives an indication of the quality of the place.
 

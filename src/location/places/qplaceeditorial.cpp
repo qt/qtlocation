@@ -87,7 +87,7 @@ bool QPlaceEditorialPrivate::compare(const QPlaceContentPrivate *other) const
 */
 
 /*!
-    Constructs an new editorial object.
+    Constructs a new editorial object.
 */
 QPlaceEditorial::QPlaceEditorial()
 :   QPlaceContent(new QPlaceEditorialPrivate)

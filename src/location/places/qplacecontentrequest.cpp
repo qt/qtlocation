@@ -150,7 +150,7 @@ bool QPlaceContentRequest::operator!= (const QPlaceContentRequest &other) const
 }
 
 /*!
-    Returns the type of content to be requested, eg reviews or images
+    Returns the type of content to be requested, e.g. reviews or images
 */
 QPlaceContent::Type QPlaceContentRequest::contentType() const
 {

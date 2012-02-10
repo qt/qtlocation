@@ -158,7 +158,7 @@ int QGeocodingManagerEngine::managerVersion() const
 
     Once the operation has completed, QGeocodeReply::locations() can be used to
     retrieve the results, which will consist of a list of QGeoLocation objects.
-    These object represent a combination of coordinate and address data.
+    These objects represent a combination of coordinate and address data.
 
     The address data returned in the results may be different from \a address.
     This will usually occur if the geocoding service backend uses a different
@@ -197,7 +197,7 @@ QGeocodeReply* QGeocodingManagerEngine::geocode(const QGeoAddress &address,
     QGeocodeReply::UnsupportedOptionError will occur.
 
     At that point QGeocodeReply::locations() can be used to retrieve the
-    results, which will consist of a list of QGeoLocation objects. These object
+    results, which will consist of a list of QGeoLocation objects. These objects
     represent a combination of coordinate and address data.
 
     The coordinate data returned in the results may be different from \a
@@ -239,7 +239,7 @@ QGeocodeReply* QGeocodingManagerEngine::reverseGeocode(const QGeoCoordinate &coo
 
     Once the operation has completed, QGeocodeReply::locations() can be used to
     retrieve the results, which will consist of a list of QGeoLocation objects.
-    These object represent a combination of coordinate and address data.
+    These objects represent a combination of coordinate and address data.
 
     If \a limit is -1 the entire result set will be returned, otherwise at most
     \a limit results will be returned.
@@ -312,7 +312,7 @@ bool QGeocodingManagerEngine::supportsReverseGeocoding() const
 }
 
 /*!
-    Sets the locale to be used by the this manager to \a locale.
+    Sets the locale to be used by this manager to \a locale.
 
     If this geocoding manager supports returning the results
     in different languages, they will be returned in the language of \a locale.

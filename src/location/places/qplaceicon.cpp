@@ -93,9 +93,11 @@ bool QPlaceIconPrivate::operator == (const QPlaceIconPrivate &other) const
     The icons are typically backend dependent, if a manager backend does not support a given size, the URL of the icon that most
     closely matches those parameters is returned.
 
-    The icon class also has a key-value set of parameters.  The precise keys one
-    needs to use depends on the \l {Information about plugins} {plugin backend} being used.  These parameters influence
-    which icon URL is returned by the manager and may also be used to specify icon URL locations when saving icons.
+    The icon class also has a key-value set of parameters.  The precise key one
+    needs to use depends on the \l {Information about plugins} {plugin backend}
+    being used.  These parameters influence which icon URL is returned by
+    the manager and may also be used to specify icon URL locations when
+    saving icons.
 
     If there is only ever one image for an icon, then QPlaceIcon::SingleUrl can be used as a parameter
     key with a QUrl as the associated value.  If this key is set, then the url() function will always return the specified URL

@@ -70,7 +70,7 @@ bool QPlaceUserPrivate::operator==(const QPlaceUserPrivate &other) const
     \ingroup QtLocation-places-data
     \since QtLocation 5.0
 
-    \brief The QPlaceUser class represents a individual user.
+    \brief The QPlaceUser class represents an individual user.
 */
 
 /*!

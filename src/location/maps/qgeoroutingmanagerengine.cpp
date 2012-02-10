@@ -62,18 +62,18 @@ QT_BEGIN_NAMESPACE
     QGeoRouteReply::UnsupportedOptionError.
 
     If the routing service supports updating routes as they are being
-    travelled, the subclass should provide an implementation of updateRoute()
+    traveled, the subclass should provide an implementation of updateRoute()
     and call setSupportsRouteUpdates(true) at some point in time before
     updateRoute() is called.
 
     The function setSupportsRouteUpdates() is one of several functions which
     configure the reported capabilities of the engine.  If the capabilities
     of an engine differ from the default values these functions should be
-    used so that the reported capabilies are accurate.
+    used so that the reported capabilities are accurate.
 
     It is important that this is done before calculateRoute(), updateRoute()
     or any of the capability reporting functions are used to prevent
-    incorrect or inconsistent behaviour.
+    incorrect or inconsistent behavior.
 
     A subclass of QGeoRouteManagerEngine will often make use of a subclass
     fo QGeoRouteReply internally, in order to add any engine-specific
@@ -315,7 +315,7 @@ QGeoRouteRequest::FeatureTypes QGeoRoutingManagerEngine::supportedFeatureTypes()
 
     It is important that subclasses use this method to ensure that the engine
     reports its capabilities correctly.  If this function is not used the
-    engine will report that it supports no feaure weights at all.
+    engine will report that it supports no feature weights at all.
 */
 void QGeoRoutingManagerEngine::setSupportedFeatureWeights(QGeoRouteRequest::FeatureWeights featureWeights)
 {
@@ -375,7 +375,7 @@ QGeoRouteRequest::SegmentDetails QGeoRoutingManagerEngine::supportedSegmentDetai
 }
 
 /*!
-    Sets the levels of detail for navigation manuevers which can be
+    Sets the levels of detail for navigation maneuvers which can be
     requested by this engine to \a maneuverDetails.
 
     It is important that subclasses use this method to ensure that the engine
@@ -397,7 +397,7 @@ QGeoRouteRequest::ManeuverDetails QGeoRoutingManagerEngine::supportedManeuverDet
 }
 
 /*!
-    Sets the locale to be used by the this manager to \a locale.
+    Sets the locale to be used by this manager to \a locale.
 
     If this routing manager supports returning addresses and instructions
     in different languages, they will be returned in the language of \a locale.

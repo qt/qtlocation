@@ -192,7 +192,7 @@ QString QPlaceContactDetail::value() const
 }
 
 /*!
-    Sets the \a value of the this contact detail.
+    Sets the \a value of this contact detail.
 */
 void QPlaceContactDetail::setValue(const QString &value)
 {

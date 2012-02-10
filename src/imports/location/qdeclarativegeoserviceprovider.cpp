@@ -63,7 +63,7 @@ QT_BEGIN_NAMESPACE
     Plugins are used by \l Map, \l RouteModel, and \l GeocodeModel
     elements, as well as a variety of others.
 
-    Plugins recognised by the system have a \l name property, a simple string
+    Plugins recognized by the system have a \l name property, a simple string
     normally indicating the name of the service that the Plugin retrieves
     data from. They also have a variety of features, which can be enumerated
     using the \l supported property.
@@ -313,7 +313,7 @@ bool QDeclarativeGeoServiceProvider::ready() const
             \o The plugin can provide place data information localized according to a set of preferred locales (0x80).
         \row
             \o Plugin.NotificationsFeature
-            \o The plugin has notfication mechanisms for when places/categories are added/modified/removed (0x100).
+            \o The plugin has notification mechanisms for when places/categories are added/modified/removed (0x100).
     \endtable
 */
 QDeclarativeGeoServiceProvider::PlacesFeatures QDeclarativeGeoServiceProvider::supportedPlacesFeatures() const

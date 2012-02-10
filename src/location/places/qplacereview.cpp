@@ -140,7 +140,7 @@ void QPlaceReview::setDateTime(const QDateTime &dateTime)
 /*!
     Returns a textual description of the place.
 
-    Depending on the provider the text could be rich(HTML based) or plain text.
+    Depending on the provider the text could be rich (HTML based) or plain text.
 */
 QString QPlaceReview::text() const
 {

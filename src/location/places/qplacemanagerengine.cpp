@@ -201,12 +201,12 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 /*!
     \fn QPlaceDetailsReply *QPlaceManagerEngine::getPlaceDetails(const QString &placeId)
 
-    Retrieves a details of place corresponding to the given \a placeId.
+    Retrieves details of place corresponding to the given \a placeId.
 */
 
 /*! \fn QPlaceContentReply *QPlaceManagerEngine::getPlaceContent(const QString &placeId, const QPlaceContentRequest &request)
 
-    Retrieves content for the place correspoinding to \a placeId, according to the parameters specified in
+    Retrieves content for the place corresponding to \a placeId, according to the parameters specified in
     \a request.
 */
 
@@ -355,7 +355,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     \fn void QPlaceManagerEngine::placeUpdated(const QString &placeId)
 
     This signal is emitted if a place has been modified in the manager engine's datastore.
-    The particular modifed place is specified by \a placeId.
+    The particular modified place is specified by \a placeId.
 
     This signal is only emitted by manager engines that support the QPlaceManager::NotificationsFeature.
 */
@@ -391,7 +391,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 /*!
     \fn void QPlaceManagerEngine::categoryRemoved(const QString &categoryId, const QString &parentId)
 
-    This signal is emitted when the category correspoinding to \a categoryId has
+    This signal is emitted when the category corresponding to \a categoryId has
     been removed from the manager engine's datastore.  The parent of the removed category
     is specified by \a parentId.
 

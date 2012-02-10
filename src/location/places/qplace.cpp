@@ -595,7 +595,7 @@ void QPlace::setVisibility(QtLocation::Visibility visibility)
 
     The default visibility of a new place is set to QtLocatin::Unspecified visibility.
     If a place is saved with unspecified visibility the backend chooses an appropriate
-    default visibilty to use when saving.
+    default visibility to use when saving.
 */
 QtLocation::Visibility QPlace::visibility() const
 {

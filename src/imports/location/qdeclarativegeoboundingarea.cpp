@@ -49,7 +49,7 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since QtLocation 5.0
 
-    \brief The BoundingArea element represent an abstract geographic area.
+    \brief The BoundingArea element represents an abstract geographic area.
 
     The BoundingArea element is not intended to be instantiated by the developer.  Use BoundingBox
     or BoundingCircle instead.

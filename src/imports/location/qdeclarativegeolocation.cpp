@@ -61,7 +61,7 @@ QT_USE_NAMESPACE
 
     The Location element is most commonly seen as the contents of a search
     model such as the GeocodeModel. When a GeocodeModel returns the list of
-    locations found for a given query, it represents these as Locatio elements.
+    locations found for a given query, it represents these as Location elements.
 
     \section2 Example Usage
 

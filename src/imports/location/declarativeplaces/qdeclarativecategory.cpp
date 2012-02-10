@@ -301,7 +301,7 @@ QString QDeclarativeCategory::errorString() const
                the category.
         \row
             \o Category.Saving
-            \o The category is currently being saved, no other operations may be perfomed until the
+            \o The category is currently being saved, no other operations may be performed until the
                current operation completes.
         \row
             \o Category.Removing

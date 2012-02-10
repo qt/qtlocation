@@ -54,7 +54,7 @@ QT_USE_NAMESPACE
 
     \brief The Supplier element holds supplier data.
 
-    Supplier cointains many properties holding data of the supplier like name,
+    Supplier contains many properties holding data of the supplier like name,
     id, etc.
 */
 

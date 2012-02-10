@@ -330,7 +330,7 @@ bool QGeoAddress::isEmpty() const
 }
 
 /*!
-    Clears the all the address' data fields.
+    Clears all of the address' data fields.
 */
 void QGeoAddress::clear()
 {

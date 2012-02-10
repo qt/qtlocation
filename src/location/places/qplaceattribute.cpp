@@ -87,7 +87,7 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
         \o QPlaceAttribute::Provider
     \endlist
 
-    There is a class of attributes types of the format x_id_<provider> e.g. x_id_nokia.
+    There is a class of attribute types of the format x_id_<provider> e.g. x_id_nokia.
     This class of attributes are alternative ids of the place, from the specified provider's
     perspective.
 
@@ -110,7 +110,7 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
 
 /*!
    \variable QPlaceAttribute::OpeningHours
-   The constant to specify an opening hours attribute.
+   Specifies the opening hours.
 */
 const QString QPlaceAttribute::OpeningHours(QLatin1String("openingHours"));
 

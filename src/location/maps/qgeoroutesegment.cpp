@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 
     \brief The QGeoRouteSegment class represents a segment of a route.
 
-    A QGeoRouteSegment instance has information about the physcial layout
+    A QGeoRouteSegment instance has information about the physical layout
     of the route segment, the length of the route and estimated time required
     to traverse the route segment and an optional QGeoManeuver associated with
     the end of the route segment.

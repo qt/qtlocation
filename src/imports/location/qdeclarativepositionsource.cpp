@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
     The PositionSource element provides information about the user device's
     current position. The position is available as a \l{Position} element, which
     contains all the standard parameters typically available from GPS and other
-    similar sytems, including longitude, latitude, speed and accuracy details.
+    similar systems, including longitude, latitude, speed and accuracy details.
 
     As different position sources are available on different platforms and
     devices, these are categorized by their basic type (Satellite, NonSatellite,

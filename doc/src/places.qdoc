@@ -230,7 +230,7 @@
     \section3 Saving between managers
     When saving places between managers, there are a few things to be aware of.
     Some fields of a place such as the id, categories and icons are manager specific entities
-    e.g. the categories in one manager may not be recognised in another.
+    e.g. the categories in one manager may not be recognized in another.
     Therefore trying to save a place directly from one manager to another is not possible.
 
     The typical approach is to use the QPlaceManager::compatiblePlace() function,
@@ -311,7 +311,7 @@
     The matching mechanism can vary between managers, but is typically accomplished through an alternative id.
     As part of the save process, the place id from the origin manager is saved as an alternative id attribute in the destination manager
     (which can have it's own place id scheme).  In the following example, the origin manager is from the 'nokia' QGeoServiceProider, therefore
-    as part of the saving process an alternative id attriubute, x_id_nokia, is set for the place saved into the destination manager
+    as part of the saving process an alternative id attribute, x_id_nokia, is set for the place saved into the destination manager
     (when QPlaceManager::compatiblePlace() is called)
 
     \input place-crossref.qdocinc

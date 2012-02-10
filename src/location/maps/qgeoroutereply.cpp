@@ -148,7 +148,7 @@ bool QGeoRouteReply::isFinished() const
     Sets the error state of this reply to \a error and the textual
     representation of the error to \a errorString.
 
-    This wil also cause error() and finished() signals to be emitted, in that
+    This will also cause error() and finished() signals to be emitted, in that
     order.
 */
 void QGeoRouteReply::setError(QGeoRouteReply::Error error, const QString &errorString)

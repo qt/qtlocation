@@ -61,7 +61,7 @@ QT_USE_NAMESPACE
     the icon which most closely matches the requested size is returned.
 
     The Icon element also has a parameters map which is a set of key value pairs.  The precise
-    keys to use depends on the \l {Information about plugins} {plugin backend} being used.
+    keys to use depend on the \l {Information about plugins} {plugin backend} being used.
     The parameters map is used by the \l Plugin to determine which URL to return.
 
     In the case where an icon can only possibly have one image URL, the
@@ -180,7 +180,7 @@ QDeclarativePropertyMap *QDeclarativePlaceIcon::parameters() const
 /*!
     \qmlproperty Plugin Icon::plugin
 
-    The property holds plugin the that is reponsible for managing this icon.
+    The property holds the plugin that is responsible for managing this icon.
 */
 QDeclarativeGeoServiceProvider* QDeclarativePlaceIcon::plugin() const
 {

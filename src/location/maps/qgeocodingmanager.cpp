@@ -157,14 +157,14 @@ int QGeocodingManager::managerVersion() const
 
     Once the operation has completed, QGeocodeReply::locations() can be used to
     retrieve the results, which will consist of a list of QGeoLocation objects.
-    These object represent a combination of coordinate and address data.
+    These objects represent a combination of coordinate and address data.
 
     The address data returned in the results may be different from \a address.
     This will usually occur if the geocoding service backend uses a different
     canonical form of addresses or if \a address was only partially filled out.
 
     If \a bounds is non-null and valid QGeoBoundingArea it will be used to
-    limit the results to thos that are contained within \a bounds. This is
+    limit the results to those that are contained within \a bounds. This is
     particularly useful if \a address is only partially filled out, as the
     service will attempt to geocode all matches for the specified data.
 
@@ -196,7 +196,7 @@ QGeocodeReply* QGeocodingManager::geocode(const QGeoAddress &address, QGeoBoundi
     QGeocodeReply::UnsupportedOptionError will occur.
 
     At that point QGeocodeReply::locations() can be used to retrieve the
-    results, which will consist of a list of QGeoLocation objects. These object
+    results, which will consist of a list of QGeoLocation objects. These objects
     represent a combination of coordinate and address data.
 
     The coordinate data returned in the results may be different from \a
@@ -211,7 +211,7 @@ QGeocodeReply* QGeocodingManager::geocode(const QGeoAddress &address, QGeoBoundi
     the street address, the city, the state and the country.
 
     If \a bounds is non-null and a valid QGeoBoundingBox it will be used to
-    limit the results to thos that are contained within \a bounds.
+    limit the results to those that are contained within \a bounds.
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeocodingManager::finished(),
@@ -237,7 +237,7 @@ QGeocodeReply* QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinat
 
     Once the operation has completed, QGeocodeReply::locations() can be used to
     retrieve the results, which will consist of a list of QGeoLocation objects.
-    These object represent a combination of coordinate and address data.
+    These objects represent a combination of coordinate and address data.
 
     If \a limit is -1 the entire result set will be returned, otherwise at most
     \a limit results will be returned.
@@ -248,7 +248,7 @@ QGeocodeReply* QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinat
     The \a limit and \a offset results are used together to implement paging.
 
     If \a bounds is non-null and a valid QGeoBoundingArea it will be used to
-    limit the results to thos that are contained within \a bounds.
+    limit the results to those that are contained within \a bounds.
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeocodingManager::finished(),
@@ -290,7 +290,7 @@ bool QGeocodingManager::supportsReverseGeocoding() const
 }
 
 /*!
-    Sets the locale to be used by the this manager to \a locale.
+    Sets the locale to be used by this manager to \a locale.
 
     If this geocoding manager supports returning the results
     in different languages, they will be returned in the language of \a locale.

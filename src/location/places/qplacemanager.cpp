@@ -460,7 +460,7 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
     \fn void QPlaceManager::placeUpdated(const QString &placeId)
 
     This signal is emitted if a place has been modified in the manager's datastore.
-    The particular modifed place is specified by \a placeId.
+    The particular modified place is specified by \a placeId.
 
     This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
 */
@@ -496,7 +496,7 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
 /*!
     \fn void QPlaceManager::categoryRemoved(const QString &categoryId, const QString &parentId)
 
-    This signal is emitted when the category correspoinding to \a categoryId has
+    This signal is emitted when the category corresponding to \a categoryId has
     been removed from the manager's datastore.  The parent of the removed category
     is specified by \a parentId.
 

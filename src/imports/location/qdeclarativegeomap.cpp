@@ -79,7 +79,7 @@ QT_BEGIN_NAMESPACE
     the capability to also display interactive objects tied to the map's
     surface.
 
-    There are a variety of different ways to visualise the Earth's surface
+    There are a variety of different ways to visualize the Earth's surface
     in a 2-dimensional manner, but all of them involve some kind of projection:
     a mathematical relationship between the 3D coordinates (latitude, longitude
     and altitude) and 2D coordinates (X and Y in pixels) on the screen.
@@ -108,8 +108,8 @@ QT_BEGIN_NAMESPACE
     \section2 Map Objects
 
     Map objects can be declared within the body of a Map element in QML and will
-    automatically appear on the Map. To add objects programatically, first be
-    sure they are created with the Map as their parent (eg. in an argument to
+    automatically appear on the Map. To add objects programmatically, first be
+    sure they are created with the Map as their parent (e.g. in an argument to
     Component::createObject), and then call the \l addMapItem method on the Map.
     A corresponding \l removeMapItem method also exists to do the opposite and
     remove an object from the Map.
@@ -125,7 +125,7 @@ QT_BEGIN_NAMESPACE
     time by using the \l flick and \l pinch objects. These properties themselves
     are read-only: the actual Flickable and PinchArea are constructed specially
     at startup and cannot be replaced or destroyed. Their properties can be
-    altered, however, to control their behaviour.
+    altered, however, to control their behavior.
 
     Mouse and touch interaction with Maps and map objects is slightly different
     to ordinary QML elements. In a Map or Map object, you will need to make use
@@ -137,7 +137,7 @@ QT_BEGIN_NAMESPACE
     \section2 Performance
 
     Maps are rendered using OpenGL (ES) and the Qt Scene Graph stack, and as
-    a result are quite performant where GL accelerated hardware is available.
+    a result perform quite well where GL accelerated hardware is available.
 
     For "online" Map plugins, network bandwidth and latency can be major
     contributors to the user's perception of performance. Extensive caching is

@@ -72,8 +72,8 @@
             \o The name of the provider that a place is sourced from
         \row
             \o x_id_<provider> (e.g x_id_nokia)
-            \o An alterantive id which identifies the place from the
-               persective of the specified provider.
+            \o An alternative id which identifies the place from the
+               perspective of the specified provider.
     \endtable
 
     Some attributes may not be intended to be readable by end users, the label field

@@ -349,7 +349,7 @@ QGeoRouteRequest::ManeuverDetails QGeoRoutingManager::supportedManeuverDetails()
 }
 
 /*!
-    Sets the locale to be used by the this manager to \a locale.
+    Sets the locale to be used by this manager to \a locale.
 
     If this routing manager supports returning addresses and instructions
     in different languages, they will be returned in the language of \a locale.

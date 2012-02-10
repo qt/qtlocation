@@ -94,7 +94,7 @@ QT_BEGIN_NAMESPACE
     \qmlproperty int QtLocation5::MapPinchEvent::pointCount
 
     This read-only property holds the number of points currently touched.
-    The MapPinch will not react until two touch points have initited a gesture,
+    The MapPinch will not react until two touch points have initiated a gesture,
     but will remain active until all touch points have been released.
 */
 

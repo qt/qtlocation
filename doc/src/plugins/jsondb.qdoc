@@ -44,7 +44,7 @@ The JsonDb GeoServices plugin can be loaded by using the plugin key "nokia_place
 \section1 Places
 The Nokia JsonDb provider accesses places stored locally on device.
 It provides read/write access to the place repository.  The specific
-capabiliies are outlined below:
+capabilities are outlined below:
 
 \section2 Capabilities
 \table
@@ -211,9 +211,11 @@ specified URL cannot currently be accessed, it is necessary to specify a recomme
 If the size of the image can be calculated and a size is also specified, then the specified size is ignored.
 
 \section4 Copying icons without a specified destination
-It is possible to copy icons, when a place/category is saved, and not have to specify a destination.  In this case a data URL will be
-created for the icon in the underlying database.  A data URL contains the icon image embedded into the URL itself.  A destination
-size is chosen for the icon depending on it's calculated size.
+It is possible to copy icons, when a place/category is saved and not have to
+specify a destination.  In this case, a data URL will be created for the icon
+in the underlying database.  A data URL contains the icon image embedded
+into the URL itself.  A destination size is chosen for the icon depending
+on it's calculated size.
 
 \code
 //input parameters
@@ -231,9 +233,9 @@ mediumSize: QSize(30,30)
 The above shows that for a given input source URL, an appropriate destination is chosen for the data URL.
 The icon will not necessarily be placed into smallUrl, since the size is calculated and a destination
 chosen.  The image at the sourceUrl must always been accessible so that the data URL can be generated,
-consequently this preprequisite also means that a size need not be specified since can always be calculated.
+consequently this prerequisite also means that a size need not be specified since can always be calculated.
 
-This behaviour of automatically choosing a destination is necessary because when an icon from a different plugin is saved,
+This behavior of automatically choosing a destination is necessary because when an icon from a different plugin is saved,
 it isn't known whether there is only one URL by the JsonDb plugin.  When creating a compatible place from another
 plugin, the JsonDbPlugin tries to get the URLs for the standard small, medium and large sizes.  It is possible
 however that all these may end up being the same URL.  The JsonDb plugn filters out these duplicates and chooses
@@ -246,7 +248,7 @@ largeSourceUrl: file:///bar/foo.png
 
 //on save, the plugin filters out the duplicates and determines an appropriate size
 //in this case the data URL for the large size has been created.
-largeUrl: data:image/png;base64,qVyOZw0p….
+largeUrl: data:image/png;base64,qVyOZw0p
 largeSize: QSize(50,50)
 \endcode
 
