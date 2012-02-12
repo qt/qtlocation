@@ -65,8 +65,9 @@ public:
     QDeclarativeGeoMap* quickMap() {return quickMap_;}
     QGeoMap* map() {return map_;}
 
-protected Q_SLOT:
+protected Q_SLOTS:
     virtual void updateMapItem() = 0;
+    virtual void afterChildrenChanged();
 
 private:
     QGeoMap* map_;

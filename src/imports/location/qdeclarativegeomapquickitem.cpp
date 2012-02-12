@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapquickitem_p.h"
+#include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include <QtDeclarative/qdeclarativeinfo.h>
 
@@ -247,6 +248,27 @@ void QDeclarativeGeoMapQuickItem::setSourceItem(QQuickItem* sourceItem)
 QQuickItem* QDeclarativeGeoMapQuickItem::sourceItem()
 {
     return sourceItem_;
+}
+
+void QDeclarativeGeoMapQuickItem::afterChildrenChanged()
+{
+    QList<QQuickItem*> kids = childItems();
+    if (kids.size() > 0) {
+        bool printedWarning = false;
+        foreach (QQuickItem *i, kids) {
+            if (i->flags() & QQuickItem::ItemHasContents
+                    && !qobject_cast<QDeclarativeGeoMapMouseArea*>(i)
+                    && sourceItem_ != i) {
+                if (!printedWarning) {
+                    qmlInfo(this) << "Use the sourceItem property for the contained item, direct children are not supported";
+                    printedWarning = true;
+                }
+
+                qmlInfo(i) << "deleting this child";
+                i->deleteLater();
+            }
+        }
+    }
 }
 
 /*!

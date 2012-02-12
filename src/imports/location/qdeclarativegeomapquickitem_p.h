@@ -86,6 +86,7 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     virtual void updateMapItem();
+    virtual void afterChildrenChanged();
 
 private:
     qreal scaleFactor();

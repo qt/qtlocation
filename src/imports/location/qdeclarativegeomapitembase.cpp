@@ -40,6 +40,8 @@
 ****************************************************************************/
 
 #include "qdeclarativegeomapitembase_p.h"
+#include "qdeclarativegeomapmousearea_p.h"
+#include <QDeclarativeInfo>
 
 QT_BEGIN_NAMESPACE
 
@@ -48,6 +50,8 @@ QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
       map_(0),
       quickMap_(0)
 {
+    connect(this, SIGNAL(childrenChanged()),
+            this, SLOT(afterChildrenChanged()));
 }
 
 QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
@@ -56,6 +60,25 @@ QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
         quickMap_->removeMapItem(this);
 }
 
+void QDeclarativeGeoMapItemBase::afterChildrenChanged()
+{
+    QList<QQuickItem*> kids = childItems();
+    if (kids.size() > 0) {
+        bool printedWarning = false;
+        foreach (QQuickItem *i, kids) {
+            if (i->flags() & QQuickItem::ItemHasContents
+                    && !qobject_cast<QDeclarativeGeoMapMouseArea*>(i)) {
+                if (!printedWarning) {
+                    qmlInfo(this) << "Geographic map items do not support child items";
+                    printedWarning = true;
+                }
+
+                qmlInfo(i) << "deleting this child";
+                i->deleteLater();
+            }
+        }
+    }
+}
 
 bool QDeclarativeGeoMapItemBase::contains(QPointF point)
 {
