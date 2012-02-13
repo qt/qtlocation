@@ -95,6 +95,18 @@ QGeoCoordinate QGeoCoordinateInterpolator2D::interpolate(const QGeoCoordinate &s
 
     if (0.5 < qAbs(e.x() - s.x())) {
         // handle dateline crossing
+        double ex = e.x();
+        double sx = s.x();
+        if (ex < sx)
+            sx -= 1.0;
+        else if (sx < ex)
+            ex -= 1.0;
+
+        x = (1.0 - progress) * sx + progress * ex;
+
+        if (!qFuzzyIsNull(x) && (x < 0.0))
+            x += 1.0;
+
     } else {
         x = (1.0 - progress) * s.x() + progress * e.x();
     }
