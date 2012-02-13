@@ -147,7 +147,6 @@ void SearchReply::processResponse(int id, const QVariant &data)
         QList<QPlaceSearchResult> results;
         QPlaceSearchResult result;
         result.setType(QPlaceSearchResult::PlaceResult);
-        bool resultsAlreadySet = false;
 
         if (request().searchArea() != 0) {
             QGeoBoundingArea *searchArea = request().searchArea();
@@ -180,7 +179,6 @@ void SearchReply::processResponse(int id, const QVariant &data)
                         }
                     }
                 }
-                resultsAlreadySet = true;
 
                 //TODO: we can optimize this using a bounding box to cull candidates
                 //      and then use distance comparisons for the rest.
@@ -194,9 +192,9 @@ void SearchReply::processResponse(int id, const QVariant &data)
                 double tlx = box->topLeft().longitude();
                 double brx = box->bottomRight().longitude();
 
-                QGeoCoordinate coord;
                 foreach (const QPlace &place, places) {
-                    coord = place.location().coordinate();
+                    const QGeoCoordinate& coord = place.location().coordinate();
+
                     if (coord.latitude() > tly)
                         places.removeAll(place);
                     if (coord.latitude() < bry)
@@ -214,16 +212,18 @@ void SearchReply::processResponse(int id, const QVariant &data)
                         }
                     }
                 }
+
+                const QGeoCoordinate bCenter = box->center();
+                foreach (const QPlace &place, places) {
+                    const QGeoCoordinate coord = place.location().coordinate();
+                    qreal distance = bCenter.distanceTo(coord);
+                    result.setPlace(place);
+                    result.setDistance(distance);
+                    results.append(result);
+                }
             }
         }
 
-        //if we haven't already filled in the results, fill them in now
-        if (!resultsAlreadySet) {
-            foreach (const QPlace &place, places) {
-                result.setPlace(place);
-                results.append(result);
-            }
-        }
 
         setResults(results);
 
