@@ -43,6 +43,31 @@
 
 testcase = {
 
+    qml_static_mapobjects:function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Static Map Objects";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that static map objects can be drawn.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen. |
+        | | Verify that there are 2 circles associated with Nokia and Eight Mile Plains labels. |
+        | Zoom in the map | Verify that map still has the circles. |"
+        ));
+    },
+
     qml_polyline_mapitem_data: {
         nodes:["-26.15", "152.1", "-28", "-152.6", "-27", "153"],
         nodes_near_dateline:["67", "179.5", "66.5", "0.5", "66.7", "179"]
