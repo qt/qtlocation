@@ -54,14 +54,11 @@
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanagerengine.h>
 
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-#include <qnetworkinfo.h>
-#endif
-
 QT_BEGIN_NAMESPACE
 
 class QNetworkAccessManager;
 class QNetworkDiskCache;
+class QNetworkInfo;
 
 class QGeoTiledMapReply;
 class QGeoTileSpec;
@@ -112,7 +109,7 @@ private:
     QString m_applicationId;
 
 #ifdef USE_CHINA_NETWORK_REGISTRATION
-    QNetworkInfo m_networkInfo;
+    QNetworkInfo *m_networkInfo;
 #endif
 };
 

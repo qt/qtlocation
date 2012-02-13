@@ -57,6 +57,9 @@
 #include <QSize>
 #include <QDir>
 #include <QUrl>
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+#include <QtSystemInfo/QNetworkInfo>
+#endif
 
 #define LARGE_TILE_DIMENSION 256
 
@@ -89,6 +92,10 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
     setHost(MAPTILES_HOST);
     setMinimumZoomLevel(0.0);
     setMaximumZoomLevel(20.0);
+
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    m_networkInfo = 0;
+#endif
 }
 
 QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia() {}
@@ -187,9 +194,10 @@ void QGeoMappingManagerEngineNokia::init()
 #endif
 
 #ifdef USE_CHINA_NETWORK_REGISTRATION
-    connect(&m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(int, const QString&)),
+    m_networkInfo = new QNetworkInfo(this);
+    connect(m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(int, const QString&)),
             SLOT(currentMobileCountryCodeChanged(int, const QString&)));
-    currentMobileCountryCodeChanged(0, m_networkInfo.currentMobileCountryCode(0));
+    currentMobileCountryCodeChanged(0, m_networkInfo->currentMobileCountryCode(0));
 #endif
 
     if (!isValidParameter(m_applicationId) || !isValidParameter(m_referer)) {
