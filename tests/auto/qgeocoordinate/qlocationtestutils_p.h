@@ -45,36 +45,6 @@
 #include <QString>
 #include <QTest>
 
-#if !defined(QTRY_COMPARE_WITH_TIMEOUT) // Now provided by QTestLib. #fixme: Remove entirely.
-
-#define QTRY_COMPARE_WITH_TIMEOUT(a,e,t)                       \
-    for (int _i = 0; _i < t; _i += 100) {    \
-        if ((a) >= (e)) break;                  \
-        QTest::qWait(100);                      \
-    }                                           \
-    QCOMPARE(a, e)
-
-#define QTRY_VERIFY_WITH_TIMEOUT(a,t)                       \
-    for (int _i = 0; _i < t; _i += 100) {    \
-        if (a) break;                  \
-        QTest::qWait(100);                      \
-    }                                           \
-    QVERIFY(a)
-
-#define QTRY_COMPARE_WITH_TIMEOUT_RANGE(a,e,t1,t2) {                      \
-    int _i;         \
-    for (_i = 0; _i < t1; _i += 100) {    \
-        if ((a) >= (e)) {char str[100]; sprintf(str, "Got signal earlier than expected, i = %d, n = %d", _i, e);QFAIL((const char *)str); break;}                  \
-        QTest::qWait(100);                      \
-    }                                           \
-    for (; _i < t2; _i += 100) {    \
-        if ((a) >= (e))  break;                  \
-        QTest::qWait(100);                      \
-    }      }                                     \
-    QCOMPARE(a, e)
-
-#endif // !defined(QTRY_COMPARE_WITH_TIMEOUT)
-
 class QLocationTestUtils
 {
 public:
