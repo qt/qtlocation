@@ -278,7 +278,10 @@ QString QDeclarativeGeoAddress::street() const
 /*!
   \qmlproperty string QtLocation5::Address::street
 
-  This property holds the street of the address.
+  This property holds the street of the address but
+  may also contain things like a unit number, a building
+  name, or anything else that might be used to
+  distinguish one address from another.
 
   */
 
