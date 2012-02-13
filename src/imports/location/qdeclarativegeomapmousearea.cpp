@@ -175,20 +175,23 @@ void QDeclarativeGeoMapMouseArea::mousePressEvent(QMouseEvent *event)
     QQuickItem* pmi = parentMapItem();
     if (pmi && qobject_cast<QDeclarativeGeoMap*>(pmi))
         qobject_cast<QDeclarativeGeoMap*>(pmi)->mouseEvent(event);
+
     // ignore event if it misses non-rectangular geometry (e.g. circle, route)
     bool contains = true;
     if (pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi))
          contains = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->contains(event->pos());
-    if (!contains)
-        event->ignore();
-    else
+
+    if (contains)
         QQuickMouseArea::mousePressEvent(event);
+    else
+        event->ignore();
 }
 
 void QDeclarativeGeoMapMouseArea::mouseReleaseEvent(QMouseEvent *event)
 {
     // map element's flickable may use the event
     QQuickItem* pmi = parentMapItem();
+
     if (pmi && qobject_cast<QDeclarativeGeoMap*>(pmi)) {
         qobject_cast<QDeclarativeGeoMap*>(pmi)->mouseEvent(event);
     } else if (dragActive_ && pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)) {
@@ -197,6 +200,7 @@ void QDeclarativeGeoMapMouseArea::mouseReleaseEvent(QMouseEvent *event)
         qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->dragEnded();
         dragActive_ = false;
     }
+
     QQuickMouseArea::mouseReleaseEvent(event);
 }
 
@@ -211,7 +215,58 @@ void QDeclarativeGeoMapMouseArea::mouseMoveEvent(QMouseEvent *event)
     QQuickItem* pmi = parentMapItem();
     if (pmi && qobject_cast<QDeclarativeGeoMap*>(pmi))
         qobject_cast<QDeclarativeGeoMap*>(pmi)->mouseEvent(event);
+
     QQuickMouseArea::mouseMoveEvent(event);
+}
+
+void QDeclarativeGeoMapMouseArea::hoverEnterEvent(QHoverEvent *event)
+{
+    QQuickItem* pmi = parentMapItem();
+    bool contains = true;
+    if (pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi))
+         contains = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->contains(event->pos());
+
+    /* for many objects it's doubtful this will ever be true */
+    if (!hovered() && contains)
+        QQuickMouseArea::hoverEnterEvent(event);
+    else
+        event->ignore();
+}
+
+void QDeclarativeGeoMapMouseArea::hoverMoveEvent(QHoverEvent *event)
+{
+    QQuickItem* pmi = parentMapItem();
+    bool contains = true;
+    if (pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi))
+         contains = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->contains(event->pos());
+
+    /* we may have already entered the object from scenegraph's perspective
+     * (ie, the hoverEnterEvent fired and we ignored it), so make sure our
+     * state is set correctly here */
+    if (hovered() && !contains)
+        QQuickMouseArea::hoverLeaveEvent(event);
+    else if (!hovered() && contains)
+        QQuickMouseArea::hoverEnterEvent(event);
+    else if (hovered() && contains)
+        QQuickMouseArea::hoverMoveEvent(event);
+    else
+        event->ignore();
+}
+
+void QDeclarativeGeoMapMouseArea::hoverLeaveEvent(QHoverEvent *event)
+{
+    QQuickItem* pmi = parentMapItem();
+    bool contains = true;
+    if (pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi))
+         contains = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->contains(event->pos());
+
+    if (!hovered() && contains)
+        QQuickMouseArea::hoverEnterEvent(event);
+
+    if (hovered())
+        QQuickMouseArea::hoverLeaveEvent(event);
+    else
+        event->ignore();
 }
 
 QQuickItem* QDeclarativeGeoMapMouseArea::parentMapItem()
