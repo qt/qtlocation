@@ -135,14 +135,16 @@ Item {
                 topMargin: gap/2
                 left: parent.left
                 leftMargin: gap/2
+                right: parent.right
+                rightMargin: gap/2
             }
             model: dialogModel
             delegate: listDelegate
             spacing: gap/2
-            interactive: false
-            Component.onCompleted: {
-                height = (listItemHeight + gap/2)*length + gap/2
-            }
+            clip: true
+            snapMode: ListView.SnapToItem
+            interactive: height < (listItemHeight + gap/2)*length + gap/2
+            height: Math.min(dialog.height * 0.7, (listItemHeight + gap/2)*length + gap/2)
         }
     }
 
