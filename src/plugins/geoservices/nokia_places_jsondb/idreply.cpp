@@ -43,8 +43,8 @@
 #include "qplacemanagerengine_jsondb.h"
 #include "jsonconverter.h"
 
-#include <QtAddOnJsonDb/jsondb-client.h>
-#include <QtAddOnJsonDb/jsondb-error.h>
+#include <QtJsonDbCompat/jsondb-client.h>
+#include <QtJsonDbCompat/jsondb-error.h>
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QUuid>

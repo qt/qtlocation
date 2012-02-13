@@ -42,7 +42,7 @@
 #include "matchreply.h"
 #include "jsonconverter.h"
 
-#include <QtAddOnJsonDb/jsondb-client.h>
+#include <QtJsonDbCompat/jsondb-client.h>
 #include <QtCore/qnumeric.h>
 #include <QtCore/QDebug>
 #include <QtLocation/QGeoBoundingCircle>

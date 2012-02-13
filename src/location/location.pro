@@ -89,7 +89,7 @@ meego {
 
 !isEmpty(QT.jsondb.name):!isEmpty(QT.jsonstream.name):!simulator {
     DEFINES += NPE_BACKEND
-    QT += jsondb-private jsonstream
+    QT += jsondbcompat-private jsonstream
     SOURCES += qgeopositioninfosource_npe_backend.cpp\
                qgeosatelliteinfosource_npe_backend.cpp
     PRIVATE_HEADERS += qgeopositioninfosource_npe_backend_p.h\

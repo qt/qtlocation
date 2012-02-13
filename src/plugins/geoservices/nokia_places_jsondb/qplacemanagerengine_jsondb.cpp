@@ -46,8 +46,8 @@
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
 
-#include <QtAddOnJsonDb/jsondb-client.h>
-#include <QtAddOnJsonDb/jsondb-error.h>
+#include <QtJsonDbCompat/jsondb-client.h>
+#include <QtJsonDbCompat/jsondb-error.h>
 
 #include "detailsreply.h"
 #include "reply.h"

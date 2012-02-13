@@ -47,8 +47,8 @@
 #include <qplacemanagerengine.h>
 #include <qgeoserviceprovider.h>
 
-#include <QtAddOnJsonDb/jsondb-global.h>
-#include <QtAddOnJsonDb/jsondb-notification.h>
+#include <QtJsonDbCompat/jsondb-global.h>
+#include <QtJsonDbCompat/jsondb-notification.h>
 #include <QtCore/QEventLoop>
 #include <QtCore/QMutex>
 
