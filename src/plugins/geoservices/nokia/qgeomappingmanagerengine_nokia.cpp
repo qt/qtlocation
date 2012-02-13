@@ -200,8 +200,9 @@ void QGeoMappingManagerEngineNokia::init()
     currentMobileCountryCodeChanged(0, m_networkInfo->currentMobileCountryCode(0));
 #endif
 
-    if (!isValidParameter(m_applicationId) || !isValidParameter(m_referer)) {
-        qWarning() << "Qt Location requires usage of app_id and token parameters obtained from:";
+    if (!isValidParameter(m_applicationId) || !isValidParameter(m_token)) {
+        qWarning() << "This plug in must have a valid \"app_id\" and \"token\".";
+        qWarning() << "These may be obtained from:";
         qWarning() << "https://api.forum.nokia.com/ovi-api/ui/registration";
     }
 
