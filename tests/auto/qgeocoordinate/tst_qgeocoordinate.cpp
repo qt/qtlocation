@@ -521,7 +521,7 @@ private slots:
             << qreal(1374820.1618767744)
             << qreal(211.1717286649)
 // the following platforms use float for qreal
-#if !defined(QT_NO_FPU) && !defined(QT_ARCH_ARM) && !defined(QT_ARCH_WINDOWSCE) && !defined(QT_ARCH_SYMBIAN)
+#if !defined(QT_NO_FPU) && !defined(Q_PROCESSOR_ARM) && !defined(Q_OS_WINCE) && !defined(Q_OS_SYMBIAN)
             << MELBOURNE;
 #else
             << QGeoCoordinate(-37.8142515084775, 144.963170622944);
@@ -531,7 +531,7 @@ private slots:
             << qreal(5570538.4987236429)
             << qreal(288.3388804508)
 // the following platforms use float for qreal
-#if !defined(QT_NO_FPU) && !defined(QT_ARCH_ARM) && !defined(QT_ARCH_WINDOWSCE) && !defined(QT_ARCH_SYMBIAN)
+#if !defined(QT_NO_FPU) && !defined(Q_PROCESSOR_ARM) && !defined(Q_OS_WINCE) && !defined(Q_OS_SYMBIAN)
             << NEW_YORK;
 #else
             << QGeoCoordinate(40.7145220608416, -74.0071216045375);
@@ -541,7 +541,7 @@ private slots:
             << qreal(20015109.4154876769)
             << qreal(180.0)
 // the following platforms use float for qreal
-#if !defined(QT_NO_FPU) && !defined(QT_ARCH_ARM) && !defined(QT_ARCH_WINDOWSCE) && !defined(QT_ARCH_SYMBIAN)
+#if !defined(QT_NO_FPU) && !defined(Q_PROCESSOR_ARM) && !defined(Q_OS_WINCE) && !defined(Q_OS_SYMBIAN)
             << SOUTH_POLE;
 #else
             << QGeoCoordinate(-89.9999947369857, -90.0);

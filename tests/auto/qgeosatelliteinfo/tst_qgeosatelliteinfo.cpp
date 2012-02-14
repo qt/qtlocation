@@ -74,7 +74,7 @@ QList<qreal> tst_qgeosatelliteinfo_qrealTestValues()
     QList<qreal> values;
 
 // the following platforms use float for qreal
-#if !defined(QT_NO_FPU) && !defined(QT_ARCH_ARM) && !defined(QT_ARCH_WINDOWSCE) && !defined(QT_ARCH_SYMBIAN)
+#if !defined(QT_NO_FPU) && !defined(Q_PROCESSOR_ARM) && !defined(Q_OS_WINCE) && !defined(Q_OS_SYMBIAN)
     if (qreal(DBL_MIN) == DBL_MIN)
         values << DBL_MIN;
 #endif
@@ -84,7 +84,7 @@ QList<qreal> tst_qgeosatelliteinfo_qrealTestValues()
     values << FLT_MAX;
 
 // the following platforms use float for qreal
-#if !defined(QT_NO_FPU) && !defined(QT_ARCH_ARM) && !defined(QT_ARCH_WINDOWSCE) && !defined(QT_ARCH_SYMBIAN)
+#if !defined(QT_NO_FPU) && !defined(Q_PROCESSOR_ARM) && !defined(Q_OS_WINCE) && !defined(Q_OS_SYMBIAN)
     if (qreal(DBL_MAX) == DBL_MAX)
         values << DBL_MAX;
 #endif
