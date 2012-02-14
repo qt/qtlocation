@@ -94,6 +94,7 @@ class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParser
     Q_PROPERTY(PluginFeatures supported READ supportedFeatures NOTIFY supportedFeaturesChanged)
     Q_PROPERTY(PlacesFeatures supportedPlacesFeatures READ supportedPlacesFeatures NOTIFY supportedPlacesFeaturesChanged)
     Q_PROPERTY(QStringList locales READ locales WRITE setLocales NOTIFY localesChanged)
+    Q_PROPERTY(QStringList preferred READ preferred WRITE setPreferred NOTIFY preferredChanged)
 
     Q_CLASSINFO("DefaultProperty", "parameters")
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -150,6 +151,9 @@ public:
 
     PlacesFeatures supportedPlacesFeatures() const;
 
+    QStringList preferred() const;
+    void setPreferred(const QStringList &val);
+
     QGeoServiceProvider *sharedGeoServiceProvider();
 
     QStringList locales() const;
@@ -163,6 +167,7 @@ Q_SIGNALS:
     void supportedFeaturesChanged(const PluginFeatures &features);
     void requiredFeaturesChanged(const PluginFeatures &features);
     void supportedPlacesFeaturesChanged(const PlacesFeatures &features);
+    void preferredChanged(const QStringList &preferences);
 
 private:
     static void parameter_append(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *mapObject);
@@ -178,6 +183,7 @@ private:
     PluginFeatures required_;
     bool complete_;
     QStringList locales_;
+    QStringList prefer_;
     PlacesFeatures placesFeatures_;
     Q_DISABLE_COPY(QDeclarativeGeoServiceProvider)
 };

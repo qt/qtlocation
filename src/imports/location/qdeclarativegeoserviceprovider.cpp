@@ -45,6 +45,7 @@
 #include "qgeomappingmanager.h"
 #include "qgeoroutingmanager.h"
 #include <QtCore/QStringList>
+#include <QDeclarativeInfo>
 
 #include <QDebug>
 
@@ -70,19 +71,21 @@ QT_BEGIN_NAMESPACE
 
     When a Plugin element is created, it is "detached" and not associated with
     any actual service plugin. Once it has received information via setting
-    its \l name or \l required properties, it will choose an appropriate
-    service plugin to attach to. Plugin elements can only be attached once;
-    to use multiple plugins, create multiple Plugin elements.
+    its \l name, \l preferred, or \l required properties, it will choose an
+    appropriate service plugin to attach to. Plugin elements can only be
+    attached once; to use multiple plugins, create multiple Plugin elements.
 
     \section2 Example Usage
 
     The following snippet shows a Plugin element being created with the
-    \l required property set. This Plugin will attach to the first plugin
-    found that supports both Mapping and Geocoding.
+    \l required and \l preferred properties set. This Plugin will attach to the
+    first plugin found plugin that supports both mapping and geocoding, and will
+    prefer plugins named "nokia" or "foo" to any others.
 
     \code
     Plugin {
         id: plugin
+        preferred: ["nokia", "foo"]
         required: Plugin.MappingFeature | Plugin.GeocodingFeature
     }
     \endcode
@@ -202,8 +205,33 @@ void QDeclarativeGeoServiceProvider::componentComplete()
         update();
         return;
     }
-    if (required_ != NoFeatures) {
+    if (required_ != NoFeatures || prefer_.size() > 0) {
         QStringList providers = QGeoServiceProvider::availableServiceProviders();
+
+        /* first check any preferred plugins */
+        foreach (QString name, prefer_) {
+            if (providers.contains(name)) {
+                // so we don't try it again later
+                providers.removeAll(name);
+
+                if (sharedProvider_)
+                    delete sharedProvider_;
+                sharedProvider_ = 0;
+                name_ = name;
+                // do an update with no emits
+                update(false);
+
+                if ((supported_ & required_) == required_) {
+                    // run it again to send the notifications
+                    emit nameChanged(name_);
+                    emit supportedFeaturesChanged(supported_);
+                    emit supportedPlacesFeaturesChanged(placesFeatures_);
+                    return;
+                }
+            }
+        }
+
+        /* then try the rest */
         foreach (QString name, providers) {
             if (sharedProvider_)
                 delete sharedProvider_;
@@ -217,9 +245,11 @@ void QDeclarativeGeoServiceProvider::componentComplete()
                 emit nameChanged(name_);
                 emit supportedFeaturesChanged(supported_);
                 emit supportedPlacesFeaturesChanged(placesFeatures_);
-                break;
+                return;
             }
         }
+
+        qmlInfo(this) << "Could not find a plugin with the required features to attach to";
     }
 }
 
@@ -270,6 +300,24 @@ void QDeclarativeGeoServiceProvider::setRequiredFeatures(const PluginFeatures &f
 {
     required_ = features;
     emit requiredFeaturesChanged(required_);
+}
+
+/*!
+    \qmlproperty list<string> Plugin::preferred
+
+    This property contains an ordered list of preferred plugin names, which
+    will be checked for the required features set in \l{Plugin::required}{required}
+    before any other available plugins are checked.
+*/
+QStringList QDeclarativeGeoServiceProvider::preferred() const
+{
+    return prefer_;
+}
+
+void QDeclarativeGeoServiceProvider::setPreferred(const QStringList &val)
+{
+    prefer_ = val;
+    emit preferredChanged(prefer_);
 }
 
 bool QDeclarativeGeoServiceProvider::ready() const
