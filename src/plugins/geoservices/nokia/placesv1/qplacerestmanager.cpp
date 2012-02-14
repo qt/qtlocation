@@ -47,6 +47,7 @@
 ****************************************************************************/
 
 #include "qplacerestmanager.h"
+#include "qplacecategoriesrepository.h"
 
 #include <QtNetwork>
 #include <QHash>
@@ -70,6 +71,7 @@ const char *images = "/images?";
 const char *categoriesTree = "categories/find-places/grouped";
 
 const char *const_query = "&q=";
+const char *const_catQuery = "&ta=";
 const char *const_lat = "&lat=";
 const char *const_lon = "&lon=";
 const char *const_top = "&vpn=";
@@ -190,8 +192,7 @@ QPlaceRestReply *QPlaceRestManager::sendCategoriesTreeRequest()
 */
 QPlaceRestReply *QPlaceRestManager::sendSuggestionRequest(const QPlaceSearchRequest &query)
 {
-    return sendGeneralRequest(prepareSearchRequest(query)
-            + const_query + query.searchTerm() + "&lh=1");
+    return sendGeneralRequest(prepareSearchRequest(query) + QLatin1String("&lh=1"));
 }
 
 /*!
@@ -199,8 +200,7 @@ QPlaceRestReply *QPlaceRestManager::sendSuggestionRequest(const QPlaceSearchRequ
 */
 QPlaceRestReply *QPlaceRestManager::sendSearchRequest(const QPlaceSearchRequest &query)
 {
-    return sendGeneralRequest(prepareSearchRequest(query)
-            + const_query + query.searchTerm());
+    return sendGeneralRequest(prepareSearchRequest(query));
 }
 
 QPlaceRestReply *QPlaceRestManager::postRatingRequest(const QString &placeId, const QString &userId, int value)
@@ -292,6 +292,17 @@ QString QPlaceRestManager::prepareSearchRequest(const QPlaceSearchRequest &query
             searchString += const_right + QString::number(box->bottomRight().longitude());
         }
     }
+
+    if (!query.categories().isEmpty()) {
+        QStringList ids;
+        foreach (const QPlaceCategory &category, query.categories())
+            ids.append(QPlaceCategoriesRepository::instance()->getCategoryTagId(category));
+
+        searchString += const_catQuery + ids.join(QLatin1String(","));
+    }
+
+    if (!query.searchTerm().isEmpty())
+        searchString += const_query + query.searchTerm();
 
     // processing limit
     if (query.limit() > 0){

@@ -168,18 +168,12 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV1::getPlaceContent(const QString &p
 
 QPlaceSearchReply *QPlaceManagerEngineNokiaV1::search(const QPlaceSearchRequest &query)
 {
-    //TODO: handling of scope
     QPlaceSearchReplyImplV1 *reply = 0;
-    QPlaceSearchRequest newQuery = query;
-    // search by category
-    if (newQuery.categories().count()) {
-        newQuery.setSearchTerm(query.categories().at(0).name());
-    }
 
     if (query.visibilityScope() == QtLocation::UnspecifiedVisibility ||
         query.visibilityScope() == QtLocation::PublicVisibility) {
 
-        QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSearchRequest(newQuery);
+        QPlaceRestReply *restReply = QPlaceRestManager::instance()->sendSearchRequest(query);
 
         if (restReply) {
             reply = new QPlaceSearchReplyImplV1(restReply, this);
