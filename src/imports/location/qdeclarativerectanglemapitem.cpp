@@ -41,7 +41,8 @@
 
 #include "qdeclarativerectanglemapitem_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
-#include <QPainter>
+#include <QPainterPath>
+#include <qnumeric.h>
 #include <QRectF>
 #include <QPointF>
 
@@ -117,6 +118,14 @@ void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
 
     QPointF tl = map.coordinateToScreenPosition(topLeft, false);
     QPointF br = map.coordinateToScreenPosition(bottomRight, false);
+
+    // We can get NaN if the map isn't set up correctly, or the projection
+    // is faulty -- probably best thing to do is abort
+    if (!qIsFinite(tl.x()) || !qIsFinite(tl.y()))
+        return;
+    if (!qIsFinite(br.x()) || !qIsFinite(br.y()))
+        return;
+
     QRectF re(tl, br);
     re.translate(-1 * tl);
 

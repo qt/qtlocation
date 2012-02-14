@@ -44,6 +44,7 @@
 #include <QDeclarativeInfo>
 #include <QPainter>
 #include <QPainterPath>
+#include <qnumeric.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -134,6 +135,12 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
             continue;
 
         QPointF point = map.coordinateToScreenPosition(coord, false);
+
+        // We can get NaN if the map isn't set up correctly, or the projection
+        // is faulty -- probably best thing to do is abort
+        if (!qIsFinite(point.x()) || !qIsFinite(point.y()))
+            return;
+
         if (i == 0) {
             origin = point;
             srcOrigin_ = coord;

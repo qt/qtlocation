@@ -44,6 +44,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPainterPathStroker>
+#include <qnumeric.h>
 
 #include <QtGui/private/qvectorpath_p.h>
 #include <QtGui/private/qopengltriangulatingstroker_p.h>
@@ -176,6 +177,11 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
             continue;
 
         QPointF point = map.coordinateToScreenPosition(coord, false);
+
+        // We can get NaN if the map isn't set up correctly, or the projection
+        // is faulty -- probably best thing to do is abort
+        if (!qIsFinite(point.x()) || !qIsFinite(point.y()))
+            return;
 
         if (i == 0) {
             srcOrigin_ = coord;
@@ -332,6 +338,9 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
 
     QPointF origin = map.coordinateToScreenPosition(srcOrigin_, false);
 
+    if (!qIsFinite(origin.x()) || !qIsFinite(origin.y()))
+        return;
+
     // Create the viewport rect in the same coordinate system
     // as the actual points
     QRectF viewport(0, 0, map.width(), map.height());
@@ -362,6 +371,9 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     const float *vs = ts.vertices();
     for (int i = 0; i < ts.vertexCount()/2*2; i+=2) {
         screenTriangles_ << vs[i] << vs[i+1];
+
+        if (!qIsFinite(vs[i]) || !qIsFinite(vs[i+1]))
+            break;
 
         tri << QPointF(vs[i], vs[i+1]);
         if (tri.size() == 4) {
