@@ -81,7 +81,8 @@ const char *const_right = "&vpe=";
 const char *const_limit = "&to=";
 const char *const_offset = "&of=";
 const char *const_dym = "&dym=";
-const char *const_views = "?vi=where"; // address, poi or where (both)
+const char *const_views = "?vi=where"; // address, places or where (both)
+const char *const_placeView = "?vi=places";
 const char *const_deviceproductid = "&dv=oviMaps"; // oviMaps, ml, rv
 
 const char *const_review_start = "&start=";
@@ -276,7 +277,11 @@ QString QPlaceRestManager::prepareSearchRequest(const QPlaceSearchRequest &query
 {
     QString searchString(searchServer);
     // add view and device parameters
-    searchString += const_views;
+    if (query.categories().isEmpty())
+        searchString += const_views;
+    else
+        searchString += const_placeView;    // When searching by category use place view.
+
     searchString += const_deviceproductid;
     // process search center
     if (query.searchArea() != NULL) {
