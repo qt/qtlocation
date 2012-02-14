@@ -1,7 +1,7 @@
 
 INCLUDEPATH += maps
 
-QT += network qt3d
+QT += network 3d
 
 PUBLIC_HEADERS += \
                     maps/qgeocodereply.h \
