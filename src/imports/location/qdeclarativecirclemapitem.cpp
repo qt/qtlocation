@@ -366,8 +366,8 @@ void QDeclarativeCircleMapItem::updateMapItem()
 
 void QDeclarativeCircleMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
 {
-    if (cameraData.zoomFactor() != zoomLevel_) {
-        zoomLevel_ = cameraData.zoomFactor();
+    if (cameraData.zoomLevel() != zoomLevel_) {
+        zoomLevel_ = cameraData.zoomLevel();
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }

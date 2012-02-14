@@ -375,20 +375,14 @@ void QDeclarativeGeoMap::keyPressEvent(QKeyEvent *e)
         }
     } else if (e->key() == Qt::Key_Plus) {
         if (e->modifiers() & Qt::ShiftModifier) {
-            cameraData.setDistance(cameraData.distance() / 2.0);
-            cameraData.setZoomLevel(cameraData.zoomLevel() + 1);
+            cameraData.setZoomLevel(cameraData.zoomLevel() + 1.0);
             map_->setCameraData(cameraData);
-        } else {
-            cameraData.setDistance(cameraData.distance() / 1.1);
         }
     } else if (e->key() == Qt::Key_Minus) {
         if (e->modifiers() & Qt::ShiftModifier) {
-            if (cameraData.zoomLevel() != 1)
-                cameraData.setZoomLevel(cameraData.zoomLevel() - 1);
-            cameraData.setDistance(cameraData.distance() * 2.0);
+            if (cameraData.zoomLevel() != 1.0)
+                cameraData.setZoomLevel(cameraData.zoomLevel() - 1.0);
             map_->setCameraData(cameraData);
-        } else {
-            cameraData.setDistance(cameraData.distance() * 1.1);
         }
     } else if (e->key() == Qt::Key_U) {
         map_->setCameraData(cameraData);

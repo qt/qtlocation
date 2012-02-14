@@ -134,8 +134,8 @@ void QGeoMapController::cameraDataChanged(const QGeoCameraData &cameraData)
     if (oldCameraData_.roll() != cameraData.roll())
         emit rollChanged(cameraData.roll());
 
-    if (oldCameraData_.zoomFactor() != cameraData.zoomFactor())
-        emit zoomChanged(cameraData.zoomFactor());
+    if (oldCameraData_.zoomLevel() != cameraData.zoomLevel())
+        emit zoomChanged(cameraData.zoomLevel());
 
     oldCameraData_ = cameraData;
 }
@@ -206,17 +206,17 @@ void QGeoMapController::setRoll(qreal roll)
 
 qreal QGeoMapController::zoom() const
 {
-    return map_->cameraData().zoomFactor();
+    return map_->cameraData().zoomLevel();
 }
 
 void QGeoMapController::setZoom(qreal zoom)
 {
     QGeoCameraData cd = map_->cameraData();
 
-    if (zoom == cd.zoomFactor())
+    if (zoom == cd.zoomLevel())
         return;
 
-    cd.setZoomFactor(zoom);
+    cd.setZoomLevel(zoom);
     map_->setCameraData(cd);
 }
 

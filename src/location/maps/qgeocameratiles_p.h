@@ -73,14 +73,13 @@ public:
 
     void setCamera(const QGeoCameraData &camera);
     void setScreenSize(const QSize &size);
-    void setPluginString(const QString &pluginString);
-    void setMapType(const QGeoMapType &mapType);
-
     void setTileSize(int tileSize);
     void setMaximumZoomLevel(int maxZoom);
 
+    void setPluginString(const QString &pluginString);
+    void setMapType(const QGeoMapType &mapType);
+
     QSet<QGeoTileSpec> tiles() const;
-    QPair<QSet<QGeoTileSpec>, QSet<QGeoTileSpec> > tilesSplitByDateline() const;
 
 private:
     QGeoCameraTilesPrivate *d_ptr;

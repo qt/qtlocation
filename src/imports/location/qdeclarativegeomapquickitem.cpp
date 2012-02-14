@@ -362,7 +362,7 @@ qreal QDeclarativeGeoMapQuickItem::scaleFactor()
     qreal scale = 1.0;
     // use 1+x to avoid fuzzy compare against zero
     if (!qFuzzyCompare(1.0 + zoomLevel_, 1.0))
-        scale = pow(0.5, zoomLevel_ - map()->cameraData().zoomFactor());
+        scale = pow(0.5, zoomLevel_ - map()->cameraData().zoomLevel());
     return scale;
 }
 

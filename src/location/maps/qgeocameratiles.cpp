@@ -83,13 +83,11 @@ public:
     int maxZoom_;
     QSet<QGeoTileSpec> tiles_;
 
-    QSet<QGeoTileSpec> tilesLeft_;
-    QSet<QGeoTileSpec> tilesRight_;
+    int intZoomLevel_;
+    int sideLength_;
 
     void updateMetadata();
     void updateGeometry();
-
-    double sideLength() const;
 
     Frustum frustum() const;
 
@@ -140,6 +138,10 @@ void QGeoCameraTiles::setCamera(const QGeoCameraData &camera)
         return;
 
     d->camera_ = camera;
+
+    d->intZoomLevel_ = static_cast<int>(floor(d->camera_.zoomLevel()));
+    d->sideLength_ = 1 << d->intZoomLevel_;
+
     d->updateGeometry();
 }
 
@@ -204,15 +206,11 @@ QSet<QGeoTileSpec> QGeoCameraTiles::tiles() const
     return d->tiles_;
 }
 
-QPair<QSet<QGeoTileSpec>, QSet<QGeoTileSpec> > QGeoCameraTiles::tilesSplitByDateline() const
-{
-    Q_D(const QGeoCameraTiles);
-    return QPair<QSet<QGeoTileSpec>, QSet<QGeoTileSpec> >(d->tilesLeft_, d->tilesRight_);
-}
-
 QGeoCameraTilesPrivate::QGeoCameraTilesPrivate()
     : tileSize_(0),
-      maxZoom_(0) {}
+      maxZoom_(0),
+      intZoomLevel_(0),
+      sideLength_(0) {}
 
 QGeoCameraTilesPrivate::~QGeoCameraTilesPrivate() {}
 
@@ -231,37 +229,11 @@ void QGeoCameraTilesPrivate::updateMetadata()
     }
 
     tiles_ = newTiles;
-
-    newTiles.clear();
-
-    i = tilesLeft_.constBegin();
-    end = tilesLeft_.constEnd();
-
-    for (; i != end; ++i) {
-        QGeoTileSpec tile = *i;
-        newTiles.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), tile.zoom(), tile.x(), tile.y()));
-    }
-
-    tilesLeft_ = newTiles;
-
-    newTiles.clear();
-
-    i = tilesRight_.constBegin();
-    end = tilesRight_.constEnd();
-
-    for (; i != end; ++i) {
-        QGeoTileSpec tile = *i;
-        newTiles.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), tile.zoom(), tile.x(), tile.y()));
-    }
-
-    tilesRight_ = newTiles;
 }
 
 void QGeoCameraTilesPrivate::updateGeometry()
 {
     tiles_.clear();
-    tilesLeft_.clear();
-    tilesRight_.clear();
 
     // Find the frustum from the camera / screen / viewport information
     Frustum f = frustum();
@@ -273,31 +245,24 @@ void QGeoCameraTilesPrivate::updateGeometry()
     QPair<Polygon, Polygon> polygons = clipFootprintToMap(footprint);
 
     if (!polygons.first.isEmpty()) {
-        tilesLeft_ = tilesFromPolygon(polygons.first);
-        tiles_.unite(tilesLeft_);
+        QSet<QGeoTileSpec> tilesLeft = tilesFromPolygon(polygons.first);
+        tiles_.unite(tilesLeft);
     }
 
     if (!polygons.second.isEmpty()) {
-        tilesRight_ = tilesFromPolygon(polygons.second);
-        tiles_.unite(tilesRight_);
+        QSet<QGeoTileSpec> tilesRight = tilesFromPolygon(polygons.second);
+        tiles_.unite(tilesRight);
     }
-}
-
-double QGeoCameraTilesPrivate::sideLength() const
-{
-    return double(1 << camera_.zoomLevel());
 }
 
 Frustum QGeoCameraTilesPrivate::frustum() const
 {
-    int zpow2 = 1 << camera_.zoomLevel();
-
-    QDoubleVector3D center = zpow2 * QGeoProjection::coordToMercator(camera_.center());
+    QDoubleVector3D center = sideLength_ * QGeoProjection::coordToMercator(camera_.center());
     center.setZ(0.0);
 
     double f = qMin(screenSize_.width(), screenSize_.height()) / (1.0 * tileSize_);
 
-    double z = pow(2.0, camera_.zoomFactor() - camera_.zoomLevel());
+    double z = pow(2.0, camera_.zoomLevel() - intZoomLevel_);
 
     double altitude = f / (2.0 * z);
     QDoubleVector3D eye = center;
@@ -307,7 +272,7 @@ Frustum QGeoCameraTilesPrivate::frustum() const
     QDoubleVector3D side = QDoubleVector3D::normal(view, QDoubleVector3D(0.0, 1.0, 0.0));
     QDoubleVector3D up = QDoubleVector3D::normal(side, view);
 
-    double nearPlane = zpow2 / (1.0 * tileSize_ * (1 << maxZoom_));
+    double nearPlane = sideLength_ / (1.0 * tileSize_ * (1 << maxZoom_));
     double farPlane = 3.0;
 
     double aspectRatio = 1.0 * screenSize_.width() / screenSize_.height();
@@ -539,7 +504,7 @@ QPair<Polygon, Polygon> QGeoCameraTilesPrivate::clipFootprintToMap(const Polygon
     bool clipY0 = false;
     bool clipY1 = false;
 
-    double side = sideLength();
+    double side = 1.0 * sideLength_;
 
     typedef Polygon::iterator iter;
     typedef Polygon::const_iterator const_iter;
@@ -635,17 +600,11 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
     if (numPoints == 0)
         return QSet<QGeoTileSpec>();
 
-    int zoomLevel = camera_.zoomLevel();
-
     int minY = -1;
     int maxY = -1;
 
-    int zpow2 = 1 << zoomLevel;
-
     QVector<int> tilesX(polygon.size());
     QVector<int> tilesY(polygon.size());
-
-    double side = sideLength();
 
     for (int i = 0; i < numPoints; ++i) {
 
@@ -654,15 +613,15 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
         int x = 0;
         int y = 0;
 
-        if (qFuzzyCompare(p.x(), side))
-            x = zpow2 - 1;
+        if (qFuzzyCompare(p.x(), sideLength_ * 1.0))
+            x = sideLength_ - 1;
         else
-            x = static_cast<int>(p.x()) % zpow2;
+            x = static_cast<int>(p.x()) % sideLength_;
 
-        if (qFuzzyCompare(p.y(), side))
-            y = zpow2 - 1;
+        if (qFuzzyCompare(p.y(), sideLength_ * 1.0))
+            y = sideLength_ - 1;
         else
-            y = static_cast<int>(p.y()) % zpow2;
+            y = static_cast<int>(p.y()) % sideLength_;
 
         if (minY == -1) {
             minY = y;
@@ -733,13 +692,15 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
 
     QSet<QGeoTileSpec> results;
 
+    int z = intZoomLevel_;
+
     int size = map.minX.size();
     for (int i = 0; i < size; ++i) {
         int y = map.minY + i;
         int minX = map.minX[i];
         int maxX = map.maxX[i];
         for (int x = minX; x <= maxX; ++x) {
-            results.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), zoomLevel, x, y));
+            results.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), z, x, y));
         }
     }
 

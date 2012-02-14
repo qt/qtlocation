@@ -133,6 +133,9 @@ public:
 
     double scaleFactor_;
 
+    int intZoomLevel_;
+    int sideLength_;
+
     QHash<QGeoTileSpec, QGLSceneNode*> nodes_;
 
     int minTileX_;
@@ -200,6 +203,8 @@ void QGeoMapGeometry::setCameraData(const QGeoCameraData &cameraData)
 {
     Q_D(QGeoMapGeometry);
     d->cameraData_ = cameraData;
+    d->intZoomLevel_ = static_cast<int>(floor(d->cameraData_.zoomLevel()));
+    d->sideLength_ = 1 << d->intZoomLevel_;
 }
 
 void QGeoMapGeometry::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
@@ -261,6 +266,8 @@ QGeoMapGeometryPrivate::QGeoMapGeometryPrivate()
       camera_(new QGLCamera()),
       sceneNode_(new QGLSceneNode()),
       scaleFactor_(10.0),
+      intZoomLevel_(0),
+      sideLength_(0),
       minTileX_(-1),
       minTileY_(-1),
       maxTileX_(-1),
@@ -280,37 +287,33 @@ QGeoMapGeometryPrivate::~QGeoMapGeometryPrivate()
 
 QDoubleVector2D QGeoMapGeometryPrivate::screenPositionToMercator(const QPointF &pos) const
 {
-    int zpow2 = 1 << cameraData_.zoomLevel();
-
     double x = mercatorWidth_ * (((pos.x() - screenOffsetX_) / screenWidth_) - 0.5);
     x += mercatorCenterX_;
 
-    if (x > 1.0 * zpow2)
-        x -= 1.0 * zpow2;
+    if (x > 1.0 * sideLength_)
+        x -= 1.0 * sideLength_;
     if (x < 0.0)
-        x += 1.0 * zpow2;
+        x += 1.0 * sideLength_;
 
-    x /= 1.0 * zpow2;
+    x /= 1.0 * sideLength_;
 
     double y = mercatorHeight_ * (((pos.y() - screenOffsetY_) / screenHeight_) - 0.5);
     y += mercatorCenterY_;
-    y /= 1.0 * zpow2;
+    y /= 1.0 * sideLength_;
 
     return QDoubleVector2D(x, y);
 }
 
 QPointF QGeoMapGeometryPrivate::mercatorToScreenPosition(const QDoubleVector2D &mercator) const
 {
-    int zpow2 = 1 << cameraData_.zoomLevel();
-
-    double mx = zpow2 * mercator.x();
+    double mx = sideLength_ * mercator.x();
 
     double lb = mercatorCenterX_ - mercatorWidth_ / 2.0;
     if (lb < 0.0)
-        lb += zpow2;
+        lb += sideLength_;
     double ub = mercatorCenterX_ + mercatorWidth_ / 2.0;
-    if (zpow2 < ub)
-        ub -= zpow2;
+    if (sideLength_ < ub)
+        ub -= sideLength_;
 
     double m = (mx - mercatorCenterX_) / mercatorWidth_;
 
@@ -318,28 +321,27 @@ QPointF QGeoMapGeometryPrivate::mercatorToScreenPosition(const QDoubleVector2D &
     if (qFuzzyCompare(ub - lb + 1.0, 1.0) || (ub < lb) ) {
         if (mercatorCenterX_ < ub) {
             if (lb < mx) {
-                m = (mx - mercatorCenterX_ - zpow2) / mercatorWidth_;
+                m = (mx - mercatorCenterX_ - sideLength_) / mercatorWidth_;
             }
         } else if (lb < mercatorCenterX_) {
             if (mx < ub) {
-                m = (mx - mercatorCenterX_ + zpow2) / mercatorWidth_;
+                m = (mx - mercatorCenterX_ + sideLength_) / mercatorWidth_;
             }
         }
     }
 
     double x = screenWidth_ * (0.5 + m);
-    double y = screenHeight_ * (0.5 + (zpow2 * mercator.y() - mercatorCenterY_) / mercatorHeight_);
+    double y = screenHeight_ * (0.5 + (sideLength_ * mercator.y() - mercatorCenterY_) / mercatorHeight_);
 
     return QPointF(x + screenOffsetX_, y + screenOffsetY_);
 }
 
 void QGeoMapGeometryPrivate::addTile(const QGeoTileSpec &spec, QGLTexture2D *texture)
 {
-    int zpow2 = 1 << cameraData_.zoomLevel();
     int x = spec.x();
 
     if (x < tileXWrapsBelow_)
-        x += zpow2;
+        x += sideLength_;
 
     if ((x < minTileX_)
             || (maxTileX_ < x)
@@ -450,7 +452,6 @@ void QGeoMapGeometryPrivate::setTileBounds()
     iter i = visibleTiles_.constBegin();
     iter end = visibleTiles_.constEnd();
 
-    int zpow2 = 1 << cameraData_.zoomLevel();
     bool hasFarLeft = false;
     bool hasFarRight = false;
     bool hasMidLeft = false;
@@ -460,11 +461,11 @@ void QGeoMapGeometryPrivate::setTileBounds()
         int x = (*i).x();
         if (x == 0)
             hasFarLeft = true;
-        else if (x == (zpow2 - 1))
+        else if (x == (sideLength_ - 1))
             hasFarRight = true;
-        else if (x == ((zpow2 / 2) - 1)) {
+        else if (x == ((sideLength_ / 2) - 1)) {
             hasMidLeft = true;
-        } else if (x == (zpow2 / 2)) {
+        } else if (x == (sideLength_ / 2)) {
             hasMidRight = true;
         }
     }
@@ -473,9 +474,9 @@ void QGeoMapGeometryPrivate::setTileBounds()
 
     if (hasFarLeft && hasFarRight) {
         if (!hasMidRight) {
-            tileXWrapsBelow_ = zpow2 / 2;
+            tileXWrapsBelow_ = sideLength_ / 2;
         } else if (!hasMidLeft) {
-            tileXWrapsBelow_ = (zpow2 / 2) - 1;
+            tileXWrapsBelow_ = (sideLength_ / 2) - 1;
         }
     }
 
@@ -485,7 +486,7 @@ void QGeoMapGeometryPrivate::setTileBounds()
 
     int x = tile.x();
     if (tile.x() < tileXWrapsBelow_)
-        x += zpow2;
+        x += sideLength_;
 
     minTileX_ = x;
     maxTileX_ = x;
@@ -498,7 +499,7 @@ void QGeoMapGeometryPrivate::setTileBounds()
         tile = *i;
         int x = tile.x();
         if (tile.x() < tileXWrapsBelow_)
-            x += zpow2;
+            x += sideLength_;
 
         minTileX_ = qMin(minTileX_, x);
         maxTileX_ = qMax(maxTileX_, x);
@@ -509,11 +510,9 @@ void QGeoMapGeometryPrivate::setTileBounds()
 
 void QGeoMapGeometryPrivate::setupCamera()
 {
-    int zpow2 = 1 << cameraData_.zoomLevel();
-
     double f = 1.0 * qMin(screenSize_.width(), screenSize_.height());
 
-    double z = pow(2.0, cameraData_.zoomFactor() - cameraData_.zoomLevel());
+    double z = pow(2.0, cameraData_.zoomLevel() - intZoomLevel_);
 
     double altitude = scaleFactor_ * f / (4.0 * z);
 
@@ -533,10 +532,10 @@ void QGeoMapGeometryPrivate::setupCamera()
 
     double edge = scaleFactor_ * tileSize_;
 
-    QDoubleVector3D center = (zpow2 * QGeoProjection::coordToMercator(cameraData_.center()));
+    QDoubleVector3D center = (sideLength_ * QGeoProjection::coordToMercator(cameraData_.center()));
 
     if (center.x() < tileXWrapsBelow_)
-        center.setX(center.x() + 1.0 * zpow2);
+        center.setX(center.x() + 1.0 * sideLength_);
 
     mercatorCenterX_ = center.x();
     mercatorCenterY_ = center.y();
@@ -545,12 +544,12 @@ void QGeoMapGeometryPrivate::setupCamera()
     center.setY(1.0 * minTileY_ - center.y());
 
     // letter box vertically
-    if (useVerticalLock_ && (mercatorHeight_ > 1.0 * zpow2)) {
-        center.setY(-1.0 * zpow2 / 2.0);
-        mercatorCenterY_ = zpow2 / 2.0;
-        screenOffsetY_ = screenSize_.height() * (0.5 - zpow2 / (2 * mercatorHeight_));
+    if (useVerticalLock_ && (mercatorHeight_ > 1.0 * sideLength_)) {
+        center.setY(-1.0 * sideLength_ / 2.0);
+        mercatorCenterY_ = sideLength_ / 2.0;
+        screenOffsetY_ = screenSize_.height() * (0.5 - sideLength_ / (2 * mercatorHeight_));
         screenHeight_ = screenSize_.height() - 2 * screenOffsetY_;
-        mercatorHeight_ = 1.0 * zpow2;
+        mercatorHeight_ = 1.0 * sideLength_;
         verticalLock_ = true;
     } else {
         screenOffsetY_ = 0.0;
@@ -558,10 +557,10 @@ void QGeoMapGeometryPrivate::setupCamera()
         verticalLock_ = false;
     }
 
-    if (mercatorWidth_ > 1.0 * zpow2) {
-        screenOffsetX_ = screenSize_.width() * (0.5 - (zpow2 / (2 * mercatorWidth_)));
+    if (mercatorWidth_ > 1.0 * sideLength_) {
+        screenOffsetX_ = screenSize_.width() * (0.5 - (sideLength_ / (2 * mercatorWidth_)));
         screenWidth_ = screenSize_.width() - 2 * screenOffsetX_;
-        mercatorWidth_ = 1.0 * zpow2;
+        mercatorWidth_ = 1.0 * sideLength_;
     } else {
         screenOffsetX_ = 0.0;
         screenWidth_ = screenSize_.width();
@@ -632,32 +631,32 @@ void QGeoMapGeometryPrivate::paintGL(QGLPainter *painter)
 
     glDisable(GL_DEPTH_TEST);
 
-    double sideLength_ = scaleFactor_ * tileSize_ * (1 << cameraData_.zoomLevel());
+    double sideLength = scaleFactor_ * tileSize_ * sideLength_;
 
     QDoubleVector3D c = QDoubleVector3D(camera->center());
-    c.setX(c.x() + sideLength_);
+    c.setX(c.x() + sideLength);
     camera->setCenter(c);
 
     QDoubleVector3D e = QDoubleVector3D(camera->eye());
-    e.setX(e.x() + sideLength_);
+    e.setX(e.x() + sideLength);
     camera->setEye(e);
 
     painter->setCamera(camera);
     painter->projectionMatrix().scale(1, -1, 1);
     sceneNode_->draw(painter);
 
-    c.setX(c.x() - 2 * sideLength_);
+    c.setX(c.x() - 2 * sideLength);
     camera->setCenter(c);
-    e.setX(e.x() - 2 * sideLength_);
+    e.setX(e.x() - 2 * sideLength);
     camera->setEye(e);
 
     painter->setCamera(camera);
     painter->projectionMatrix().scale(1, -1, 1);
     sceneNode_->draw(painter);
 
-    c.setX(c.x() + sideLength_);
+    c.setX(c.x() + sideLength);
     camera->setCenter(c);
-    e.setX(e.x() + sideLength_);
+    e.setX(e.x() + sideLength);
     camera->setEye(e);
 
     painter->setCamera(camera);

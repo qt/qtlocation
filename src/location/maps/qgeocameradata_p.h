@@ -90,17 +90,8 @@ public:
     void setRoll(double roll);
     double roll() const;
 
-    void setAspectRatio(double aspectRatio);
-    double aspectRatio() const;
-
-    void setDistance(double distance);
-    double distance() const;
-
-    void setZoomLevel(int zoomLevel);
-    int zoomLevel() const;
-
-    void setZoomFactor(double zoomFactor);
-    double zoomFactor() const;
+    void setZoomLevel(double zoomLevel);
+    double zoomLevel() const;
 
     void setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator);
     QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator() const;

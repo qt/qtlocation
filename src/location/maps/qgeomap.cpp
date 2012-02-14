@@ -278,11 +278,11 @@ void QGeoMapPrivate::setCameraData(const QGeoCameraData &cameraData)
 
     if (manager_) {
         QGeoCameraCapabilities capabilities = manager_->cameraCapabilities();
-        if (cameraData_.zoomFactor() < capabilities.minimumZoomLevel())
-            cameraData_.setZoomFactor(capabilities.minimumZoomLevel());
+        if (cameraData_.zoomLevel() < capabilities.minimumZoomLevel())
+            cameraData_.setZoomLevel(capabilities.minimumZoomLevel());
 
-        if (cameraData_.zoomFactor() > capabilities.maximumZoomLevel())
-            cameraData_.setZoomFactor(capabilities.maximumZoomLevel());
+        if (cameraData_.zoomLevel() > capabilities.maximumZoomLevel())
+            cameraData_.setZoomLevel(capabilities.maximumZoomLevel());
 
         if (!capabilities.supportsBearing())
             cameraData_.setBearing(0.0);
@@ -301,7 +301,6 @@ void QGeoMapPrivate::setCameraData(const QGeoCameraData &cameraData)
             cameraData_.setRoll(0.0);
     }
 
-    cameraData_.setAspectRatio(aspectRatio_);
     cameraData_.setCoordinateInterpolator(mapGeometry_->coordinateInterpolator().toWeakRef());
 
     cameraTiles_->setCamera(cameraData_);
