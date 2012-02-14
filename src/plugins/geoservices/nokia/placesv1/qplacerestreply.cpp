@@ -112,7 +112,8 @@ void QPlaceRestReply::replyFinished()
         emit error(QPlaceRestReply::Canceled);
     } else {
 #if defined(QT_PLACES_LOGGING)
-        qDebug() << "Network Error - " + QString::number(error);
+        QString errorString = QString::number(QPlaceRestReply::NetworkError);
+        qDebug() << "Network Error - " + errorString;
 #endif
         emit error(QPlaceRestReply::NetworkError);
     }

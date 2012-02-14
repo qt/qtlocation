@@ -215,7 +215,7 @@ QPlaceRestReply *QPlaceRestManager::postRatingRequest(const QString &placeId, co
     request.setRawHeader("Accept", "application/json");
     request.setRawHeader("X-Ovi-NcimUser", userId.toUtf8());
 
-#if defined(QPLACES_LOGGING)
+#if defined(QT_PLACES_LOGGING)
     qDebug() << "QRestDataProvider::sendGeneralRequest: " + url;
 #endif
     QByteArray data = "{ratings:{rating:[{value:" + QString::number(value).toAscii() + ",type:OVERALL}]}}";
@@ -240,13 +240,13 @@ QPlaceRestReply *QPlaceRestManager::sendGeneralRequest(const QUrl &url)
     QNetworkRequest request;
     request.setUrl(url);
 
-#if defined(QPLACES_LOGGING)
-    qDebug() << "QRestDataProvider::sendGeneralRequest: Language - " + createLocaleString();
+#if defined(QT_PLACES_LOGGING)
+    qDebug() << "QRestDataProvider::sendGeneralRequest: Language - " + createLanguageString();
 #endif
 
     request.setRawHeader("Accept-Language", createLanguageString());
 
-#if defined(QPLACES_LOGGING)
+#if defined(QT_PLACES_LOGGING)
     qDebug() << "QRestDataProvider::sendGeneralRequest: " + url.toString();
 #endif
 
@@ -317,7 +317,7 @@ QString QPlaceRestManager::prepareSearchRequest(const QPlaceSearchRequest &query
         searchString += const_dym + QString::number(query.maximumCorrections());
     }
 
-#if defined(QPLACES_LOGGING)
+#if defined(QT_PLACES_LOGGING)
     qDebug() << "QRestDataProvider::prepareSearchRequest: " + searchString;
 #endif
 
