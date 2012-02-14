@@ -284,18 +284,23 @@ QString QPlaceRestManager::prepareSearchRequest(const QPlaceSearchRequest &query
 
     searchString += const_deviceproductid;
     // process search center
-    if (query.searchArea() != NULL) {
-        if (query.searchArea()->type() == QGeoBoundingArea::CircleType) {
-            QGeoBoundingCircle * circle = static_cast<QGeoBoundingCircle *>(query.searchArea());
-            searchString += const_lat + QString::number(circle->center().latitude());
-            searchString += const_lon + QString::number(circle->center().longitude());
-        } else if (query.searchArea()->type() == QGeoBoundingArea::BoxType) {
-            QGeoBoundingBox *box = static_cast<QGeoBoundingBox *> (query.searchArea());
-            searchString += const_top + QString::number(box->topLeft().latitude());
-            searchString += const_left + QString::number(box->topLeft().longitude());
-            searchString += const_bottom + QString::number(box->bottomRight().latitude());
-            searchString += const_right + QString::number(box->bottomRight().longitude());
-        }
+    switch (query.searchArea().type()) {
+    case QGeoBoundingArea::CircleType: {
+        QGeoBoundingCircle circle = query.searchArea();
+        searchString += const_lat + QString::number(circle.center().latitude());
+        searchString += const_lon + QString::number(circle.center().longitude());
+        break;
+    }
+    case QGeoBoundingArea::BoxType: {
+        QGeoBoundingBox box = query.searchArea();
+        searchString += const_top + QString::number(box.topLeft().latitude());
+        searchString += const_left + QString::number(box.topLeft().longitude());
+        searchString += const_bottom + QString::number(box.bottomRight().latitude());
+        searchString += const_right + QString::number(box.bottomRight().longitude());
+        break;
+    }
+    default:
+        ;
     }
 
     if (!query.categories().isEmpty()) {

@@ -69,7 +69,7 @@ public:
     void  callSetLimit ( int limit ) {setLimit(limit);}
     void  callSetOffset ( int offset ) {setOffset(offset);}
     void  callSetLocations ( const QList<QGeoLocation> & locations ) {setLocations(locations);}
-    void  callSetViewport ( QGeoBoundingArea * viewport ) {setViewport(viewport);}
+    void  callSetViewport ( const QGeoBoundingArea &viewport ) {setViewport(viewport);}
 
 };
 

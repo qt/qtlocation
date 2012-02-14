@@ -75,11 +75,23 @@ QT_BEGIN_NAMESPACE
     in the center of the bounding box.
 */
 
+inline QGeoBoundingBoxPrivate *QGeoBoundingBox::d_func()
+{
+    return static_cast<QGeoBoundingBoxPrivate *>(d_ptr.data());
+}
+
+inline const QGeoBoundingBoxPrivate *QGeoBoundingBox::d_func() const
+{
+    return static_cast<const QGeoBoundingBoxPrivate *>(d_ptr.constData());
+}
+
 /*!
     Constructs a new, invalid bounding box.
 */
 QGeoBoundingBox::QGeoBoundingBox()
-        : d_ptr(new QGeoBoundingBoxPrivate()) {}
+:   QGeoBoundingArea(new QGeoBoundingBoxPrivate)
+{
+}
 
 /*!
     Constructs a new bounding box centered at \a center with a
@@ -92,10 +104,10 @@ QGeoBoundingBox::QGeoBoundingBox()
     the center of the truncated bounding box.
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &center, double degreesWidth, double degreesHeight)
-        : d_ptr(new QGeoBoundingBoxPrivate(center, center))
 {
-        setWidth(degreesWidth);
-        setHeight(degreesHeight);
+    d_ptr = new QGeoBoundingBoxPrivate(center, center);
+    setWidth(degreesWidth);
+    setHeight(degreesHeight);
 }
 
 /*!
@@ -103,14 +115,27 @@ QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &center, double degreesWid
     topLeft and a bottom right coordinate \a bottomRight.
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
-        : d_ptr(new QGeoBoundingBoxPrivate(topLeft, bottomRight)) {}
+{
+    d_ptr = new QGeoBoundingBoxPrivate(topLeft, bottomRight);
+}
 
 /*!
     Constructs a bounding box from the contents of \a other.
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingBox &other)
-        : QGeoBoundingArea(other),
-          d_ptr(other.d_ptr) {}
+:   QGeoBoundingArea(other)
+{
+}
+
+/*!
+    Constructs a bounding box from the contents of \a other.
+*/
+QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingArea &other)
+:   QGeoBoundingArea(other)
+{
+    if (type() != QGeoBoundingArea::BoxType)
+        d_ptr = new QGeoBoundingBoxPrivate;
+}
 
 /*!
     Destroys this bounding box.
@@ -129,31 +154,13 @@ QGeoBoundingBox& QGeoBoundingBox::operator = (const QGeoBoundingBox & other)
 }
 
 /*!
-    Returns whether this bounding box is equal to the \a other area.
-*/
-bool QGeoBoundingBox::operator == (const QGeoBoundingArea &other) const
-{
-    if (other.type() == QGeoBoundingArea::BoxType) {
-        const QGeoBoundingBox *otherPointer = static_cast<const QGeoBoundingBox*>(&other);
-        return ((*(d_ptr.constData()) == *(otherPointer->d_ptr.constData())));
-    } else {
-        return false;
-    }
-}
-
-/*!
     Returns whether this bounding box is equal to \a other.
 */
 bool QGeoBoundingBox::operator == (const QGeoBoundingBox &other) const
 {
-    return ((*(d_ptr.constData()) == *(other.d_ptr.constData())));
-}
+    Q_D(const QGeoBoundingBox);
 
-/*!
-    Returns whether this bounding box is not equal to \a other.
-*/
-bool QGeoBoundingBox::operator != (const QGeoBoundingArea &other) const {
-    return !(*this == other);
+    return *d == *other.d_func();
 }
 
 /*!
@@ -161,45 +168,24 @@ bool QGeoBoundingBox::operator != (const QGeoBoundingArea &other) const {
 */
 bool QGeoBoundingBox::operator != (const QGeoBoundingBox &other) const
 {
-    return !(this->operator==(other));
+    Q_D(const QGeoBoundingBox);
+
+    return !(*d == *other.d_func());
 }
 
-/*!
-    Returns QGeoBoundingArea::BoxType to identify this as
-    a QGeoBoundingBox instance.
-
-    This function is provided to help find the specific type of
-    aQGeoBoundingArea instance.
-*/
-QGeoBoundingArea::AreaType QGeoBoundingBox::type() const
+bool QGeoBoundingBoxPrivate::isValid() const
 {
-    return QGeoBoundingArea::BoxType;
+    return topLeft.isValid() && bottomRight.isValid() &&
+           topLeft.latitude() >= bottomRight.latitude();
 }
 
-/*!
-    Returns whether this bounding box is valid.
-
-    A valid bounding box has valid top left and bottom right coordinates and
-    has a top left coordinate with latitude greater than or equal to the
-    latitude of the bottom right coordinate.
-*/
-bool QGeoBoundingBox::isValid() const
+bool QGeoBoundingBoxPrivate::isEmpty() const
 {
-    return (d_ptr->topLeft.isValid()
-            && d_ptr->bottomRight.isValid()
-            && d_ptr->topLeft.latitude() >= d_ptr->bottomRight.latitude());
-}
+    if (!isValid())
+        return true;
 
-/*!
-    Returns whether this bounding box has a geometrical area of 0.
-
-    Returns true if this bounding box is invalid.
-*/
-bool QGeoBoundingBox::isEmpty() const
-{
-    return (!isValid()
-            || (d_ptr->topLeft.latitude() == d_ptr->bottomRight.latitude())
-            || (d_ptr->topLeft.longitude() == d_ptr->bottomRight.longitude()));
+    return topLeft.latitude() == bottomRight.latitude() ||
+           topLeft.longitude() == bottomRight.longitude();
 }
 
 /*!
@@ -207,7 +193,9 @@ bool QGeoBoundingBox::isEmpty() const
 */
 void QGeoBoundingBox::setTopLeft(const QGeoCoordinate &topLeft)
 {
-    d_ptr->topLeft = topLeft;
+    Q_D(QGeoBoundingBox);
+
+    d->topLeft = topLeft;
 }
 
 /*!
@@ -215,7 +203,9 @@ void QGeoBoundingBox::setTopLeft(const QGeoCoordinate &topLeft)
 */
 QGeoCoordinate QGeoBoundingBox::topLeft() const
 {
-    return d_ptr->topLeft;
+    Q_D(const QGeoBoundingBox);
+
+    return d->topLeft;
 }
 
 /*!
@@ -223,8 +213,10 @@ QGeoCoordinate QGeoBoundingBox::topLeft() const
 */
 void QGeoBoundingBox::setTopRight(const QGeoCoordinate &topRight)
 {
-    d_ptr->topLeft.setLatitude(topRight.latitude());
-    d_ptr->bottomRight.setLongitude(topRight.longitude());
+    Q_D(QGeoBoundingBox);
+
+    d->topLeft.setLatitude(topRight.latitude());
+    d->bottomRight.setLongitude(topRight.longitude());
 }
 
 /*!
@@ -236,7 +228,9 @@ QGeoCoordinate QGeoBoundingBox::topRight() const
     if (!isValid())
         return QGeoCoordinate();
 
-    return QGeoCoordinate(d_ptr->topLeft.latitude(), d_ptr->bottomRight.longitude());
+    Q_D(const QGeoBoundingBox);
+
+    return QGeoCoordinate(d->topLeft.latitude(), d->bottomRight.longitude());
 }
 
 /*!
@@ -244,8 +238,10 @@ QGeoCoordinate QGeoBoundingBox::topRight() const
 */
 void QGeoBoundingBox::setBottomLeft(const QGeoCoordinate &bottomLeft)
 {
-    d_ptr->bottomRight.setLatitude(bottomLeft.latitude());
-    d_ptr->topLeft.setLongitude(bottomLeft.longitude());
+    Q_D(QGeoBoundingBox);
+
+    d->bottomRight.setLatitude(bottomLeft.latitude());
+    d->topLeft.setLongitude(bottomLeft.longitude());
 }
 
 /*!
@@ -257,7 +253,9 @@ QGeoCoordinate QGeoBoundingBox::bottomLeft() const
     if (!isValid())
         return QGeoCoordinate();
 
-    return QGeoCoordinate(d_ptr->bottomRight.latitude(), d_ptr->topLeft.longitude());
+    Q_D(const QGeoBoundingBox);
+
+    return QGeoCoordinate(d->bottomRight.latitude(), d->topLeft.longitude());
 }
 
 /*!
@@ -265,7 +263,9 @@ QGeoCoordinate QGeoBoundingBox::bottomLeft() const
 */
 void QGeoBoundingBox::setBottomRight(const QGeoCoordinate &bottomRight)
 {
-    d_ptr->bottomRight = bottomRight;
+    Q_D(QGeoBoundingBox);
+
+    d->bottomRight = bottomRight;
 }
 
 /*!
@@ -273,7 +273,9 @@ void QGeoBoundingBox::setBottomRight(const QGeoCoordinate &bottomRight)
 */
 QGeoCoordinate QGeoBoundingBox::bottomRight() const
 {
-    return d_ptr->bottomRight;
+    Q_D(const QGeoBoundingBox);
+
+    return d->bottomRight;
 }
 
 /*!
@@ -288,9 +290,11 @@ QGeoCoordinate QGeoBoundingBox::bottomRight() const
 */
 void QGeoBoundingBox::setCenter(const QGeoCoordinate &center)
 {
+    Q_D(QGeoBoundingBox);
+
     if (!isValid()) {
-        d_ptr->topLeft = center;
-        d_ptr->bottomRight = center;
+        d->topLeft = center;
+        d->bottomRight = center;
         return;
     }
     double width = this->width();
@@ -336,8 +340,8 @@ void QGeoBoundingBox::setCenter(const QGeoCoordinate &center)
         brLon = 180.0;
     }
 
-    d_ptr->topLeft = QGeoCoordinate(tlLat, tlLon);
-    d_ptr->bottomRight = QGeoCoordinate(brLat, brLon);
+    d->topLeft = QGeoCoordinate(tlLat, tlLon);
+    d->bottomRight = QGeoCoordinate(brLat, brLon);
 }
 
 /*!
@@ -348,10 +352,12 @@ QGeoCoordinate QGeoBoundingBox::center() const
     if (!isValid())
         return QGeoCoordinate();
 
-    double cLat = (d_ptr->topLeft.latitude() + d_ptr->bottomRight.latitude()) / 2.0;
+    Q_D(const QGeoBoundingBox);
 
-    double cLon = (d_ptr->bottomRight.longitude() + d_ptr->topLeft.longitude()) / 2.0;
-    if (d_ptr->topLeft.longitude() > d_ptr->bottomRight.longitude()) {
+    double cLat = (d->topLeft.latitude() + d->bottomRight.latitude()) / 2.0;
+
+    double cLon = (d->bottomRight.longitude() + d->topLeft.longitude()) / 2.0;
+    if (d->topLeft.longitude() > d->bottomRight.longitude()) {
         cLon = cLon - 180.0;
     }
 
@@ -383,14 +389,16 @@ void QGeoBoundingBox::setWidth(double degreesWidth)
     if (degreesWidth < 0.0)
         return;
 
+    Q_D(QGeoBoundingBox);
+
     if (degreesWidth >= 360.0) {
-        d_ptr->topLeft.setLongitude(-180.0);
-        d_ptr->bottomRight.setLongitude(180.0);
+        d->topLeft.setLongitude(-180.0);
+        d->bottomRight.setLongitude(180.0);
         return;
     }
 
-    double tlLat = d_ptr->topLeft.latitude();
-    double brLat = d_ptr->bottomRight.latitude();
+    double tlLat = d->topLeft.latitude();
+    double brLat = d->bottomRight.latitude();
 
     QGeoCoordinate c = center();
 
@@ -408,8 +416,8 @@ void QGeoBoundingBox::setWidth(double degreesWidth)
     if (brLon > 180.0)
         brLon -= 360.0;
 
-    d_ptr->topLeft = QGeoCoordinate(tlLat, tlLon);
-    d_ptr->bottomRight = QGeoCoordinate(brLat, brLon);
+    d->topLeft = QGeoCoordinate(tlLat, tlLon);
+    d->bottomRight = QGeoCoordinate(brLat, brLon);
 }
 
 /*!
@@ -422,7 +430,9 @@ double QGeoBoundingBox::width() const
     if (!isValid())
         return qQNaN();
 
-    double result = d_ptr->bottomRight.longitude() - d_ptr->topLeft.longitude();
+    Q_D(const QGeoBoundingBox);
+
+    double result = d->bottomRight.longitude() - d->topLeft.longitude();
     if (result < 0.0)
         result += 360.0;
     if (result > 360.0)
@@ -460,8 +470,10 @@ void QGeoBoundingBox::setHeight(double degreesHeight)
         degreesHeight = 180.0;
     }
 
-    double tlLon = d_ptr->topLeft.longitude();
-    double brLon = d_ptr->bottomRight.longitude();
+    Q_D(QGeoBoundingBox);
+
+    double tlLon = d->topLeft.longitude();
+    double brLon = d->bottomRight.longitude();
 
     QGeoCoordinate c = center();
 
@@ -488,8 +500,8 @@ void QGeoBoundingBox::setHeight(double degreesHeight)
         brLat = -90.0;
     }
 
-    d_ptr->topLeft = QGeoCoordinate(tlLat, tlLon);
-    d_ptr->bottomRight = QGeoCoordinate(brLat, brLon);
+    d->topLeft = QGeoCoordinate(tlLat, tlLon);
+    d->bottomRight = QGeoCoordinate(brLat, brLon);
 }
 
 /*!
@@ -502,26 +514,23 @@ double QGeoBoundingBox::height() const
     if (!isValid())
         return qQNaN();
 
-    double result = d_ptr->topLeft.latitude() - d_ptr->bottomRight.latitude();
+    Q_D(const QGeoBoundingBox);
+
+    double result = d->topLeft.latitude() - d->bottomRight.latitude();
     if (result < 0.0)
         result = qQNaN();
     return result;
 }
 
-/*!
-    Returns whether the coordinate \a coordinate is contained within this
-    bounding box.
-*/
-bool QGeoBoundingBox::contains(const QGeoCoordinate &coordinate) const
+bool QGeoBoundingBoxPrivate::contains(const QGeoCoordinate &coordinate) const
 {
-
     if (!isValid() || !coordinate.isValid())
         return false;
 
-    double left = d_ptr->topLeft.longitude();
-    double right = d_ptr->bottomRight.longitude();
-    double top = d_ptr->topLeft.latitude();
-    double bottom = d_ptr->bottomRight.latitude();
+    double left = topLeft.longitude();
+    double right = bottomRight.longitude();
+    double top = topLeft.latitude();
+    double bottom = bottomRight.latitude();
 
     double lon = coordinate.longitude();
     double lat = coordinate.latitude();
@@ -554,10 +563,12 @@ bool QGeoBoundingBox::contains(const QGeoCoordinate &coordinate) const
 */
 bool QGeoBoundingBox::contains(const QGeoBoundingBox &boundingBox) const
 {
-    return (contains(boundingBox.topLeft())
-            && contains(boundingBox.topRight())
-            && contains(boundingBox.bottomLeft())
-            && contains(boundingBox.bottomRight()));
+    Q_D(const QGeoBoundingBox);
+
+    return (d->contains(boundingBox.topLeft())
+            && d->contains(boundingBox.topRight())
+            && d->contains(boundingBox.bottomLeft())
+            && d->contains(boundingBox.bottomRight()));
 }
 
 /*!
@@ -570,15 +581,17 @@ bool QGeoBoundingBox::contains(const QGeoBoundingBox &boundingBox) const
 */
 bool QGeoBoundingBox::intersects(const QGeoBoundingBox &boundingBox) const
 {
-    double left1 = d_ptr->topLeft.longitude();
-    double right1 = d_ptr->bottomRight.longitude();
-    double top1 = d_ptr->topLeft.latitude();
-    double bottom1 = d_ptr->bottomRight.latitude();
+    Q_D(const QGeoBoundingBox);
 
-    double left2 = boundingBox.d_ptr->topLeft.longitude();
-    double right2 = boundingBox.d_ptr->bottomRight.longitude();
-    double top2 = boundingBox.d_ptr->topLeft.latitude();
-    double bottom2 = boundingBox.d_ptr->bottomRight.latitude();
+    double left1 = d->topLeft.longitude();
+    double right1 = d->bottomRight.longitude();
+    double top1 = d->topLeft.latitude();
+    double bottom1 = d->bottomRight.latitude();
+
+    double left2 = boundingBox.d_func()->topLeft.longitude();
+    double right2 = boundingBox.d_func()->bottomRight.longitude();
+    double top2 = boundingBox.d_func()->topLeft.latitude();
+    double bottom2 = boundingBox.d_func()->bottomRight.latitude();
 
     if (top1 < bottom2)
         return false;
@@ -627,10 +640,12 @@ void QGeoBoundingBox::translate(double degreesLatitude, double degreesLongitude)
 {
     // TODO handle dlat, dlon larger than 360 degrees
 
-    double tlLat = d_ptr->topLeft.latitude();
-    double tlLon = d_ptr->topLeft.longitude();
-    double brLat = d_ptr->bottomRight.latitude();
-    double brLon = d_ptr->bottomRight.longitude();
+    Q_D(QGeoBoundingBox);
+
+    double tlLat = d->topLeft.latitude();
+    double tlLon = d->topLeft.longitude();
+    double brLat = d->bottomRight.latitude();
+    double brLon = d->bottomRight.longitude();
 
     if ((tlLat != 90.0) || (brLat != -90.0)) {
         tlLat += degreesLatitude;
@@ -664,8 +679,8 @@ void QGeoBoundingBox::translate(double degreesLatitude, double degreesLongitude)
     if (brLat < -90.0)
         brLat = -90.0;
 
-    d_ptr->topLeft = QGeoCoordinate(tlLat, tlLon);
-    d_ptr->bottomRight = QGeoCoordinate(brLat, brLon);
+    d->topLeft = QGeoCoordinate(tlLat, tlLon);
+    d->bottomRight = QGeoCoordinate(brLat, brLon);
 }
 
 /*!
@@ -725,15 +740,17 @@ QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingB
 {
     // If non-intersecting goes for most narrow box
 
-    double left1 = d_ptr->topLeft.longitude();
-    double right1 = d_ptr->bottomRight.longitude();
-    double top1 = d_ptr->topLeft.latitude();
-    double bottom1 = d_ptr->bottomRight.latitude();
+    Q_D(QGeoBoundingBox);
 
-    double left2 = boundingBox.d_ptr->topLeft.longitude();
-    double right2 = boundingBox.d_ptr->bottomRight.longitude();
-    double top2 = boundingBox.d_ptr->topLeft.latitude();
-    double bottom2 = boundingBox.d_ptr->bottomRight.latitude();
+    double left1 = d->topLeft.longitude();
+    double right1 = d->bottomRight.longitude();
+    double top1 = d->topLeft.latitude();
+    double bottom1 = d->bottomRight.latitude();
+
+    double left2 = boundingBox.d_func()->topLeft.longitude();
+    double right2 = boundingBox.d_func()->bottomRight.longitude();
+    double top2 = boundingBox.d_func()->topLeft.latitude();
+    double bottom2 = boundingBox.d_func()->bottomRight.latitude();
 
     double top = qMax(top1, top2);
     double bottom = qMin(bottom1, bottom2);
@@ -816,49 +833,47 @@ QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingB
         right = 180;
     }
 
-    d_ptr->topLeft = QGeoCoordinate(top, left);
-    d_ptr->bottomRight = QGeoCoordinate(bottom, right);
+    d->topLeft = QGeoCoordinate(top, left);
+    d->bottomRight = QGeoCoordinate(bottom, right);
 
     return *this;
-}
-
-/*!
-    Returns a pointer to a deep copy of this bounding box.
-*/
-QGeoBoundingArea *QGeoBoundingBox::clone() const
-{
-    return new QGeoBoundingBox(*this);
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate()
-    : QSharedData() {}
+:   QGeoBoundingAreaPrivate(QGeoBoundingArea::BoxType)
+{
+}
 
-QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
-        : QSharedData(),
-        topLeft(topLeft),
-        bottomRight(bottomRight) {}
+QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &topLeft,
+                                               const QGeoCoordinate &bottomRight)
+:   QGeoBoundingAreaPrivate(QGeoBoundingArea::BoxType), topLeft(topLeft), bottomRight(bottomRight)
+{
+}
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other)
-        : QSharedData(),
-        topLeft(other.topLeft),
-        bottomRight(other.bottomRight) {}
+:   QGeoBoundingAreaPrivate(QGeoBoundingArea::BoxType), topLeft(other.topLeft),
+    bottomRight(other.bottomRight)
+{
+}
 
 QGeoBoundingBoxPrivate::~QGeoBoundingBoxPrivate() {}
 
-QGeoBoundingBoxPrivate& QGeoBoundingBoxPrivate::operator= (const QGeoBoundingBoxPrivate & other)
+QGeoBoundingAreaPrivate *QGeoBoundingBoxPrivate::clone() const
 {
-    topLeft = other.topLeft;
-    bottomRight = other.bottomRight;
-
-    return *this;
+    return new QGeoBoundingBoxPrivate(*this);
 }
 
-bool QGeoBoundingBoxPrivate::operator== (const QGeoBoundingBoxPrivate &other) const
+bool QGeoBoundingBoxPrivate::operator==(const QGeoBoundingAreaPrivate &other) const
 {
-    return ((topLeft == other.topLeft) && (bottomRight == other.bottomRight));
+    if (!QGeoBoundingAreaPrivate::operator==(other))
+        return false;
+
+    const QGeoBoundingBoxPrivate &otherBox = static_cast<const QGeoBoundingBoxPrivate &>(other);
+
+    return topLeft == otherBox.topLeft && bottomRight == otherBox.bottomRight;
 }
 
 QT_END_NAMESPACE

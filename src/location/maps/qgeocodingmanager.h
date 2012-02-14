@@ -70,14 +70,14 @@ public:
     int managerVersion() const;
 
     QGeocodeReply* geocode(const QGeoAddress &address,
-                             QGeoBoundingArea *bounds = 0);
+                           const QGeoBoundingArea &bounds = QGeoBoundingArea());
     QGeocodeReply* geocode(const QString &searchString,
                             int limit = -1,
                             int offset = 0,
-                            QGeoBoundingArea *bounds = 0);
+                           const QGeoBoundingArea &bounds = QGeoBoundingArea());
 
     QGeocodeReply* reverseGeocode(const QGeoCoordinate &coordinate,
-                                    QGeoBoundingArea *bounds = 0);
+                                  const QGeoBoundingArea &bounds = QGeoBoundingArea());
 
     bool supportsGeocoding() const;
     bool supportsReverseGeocoding() const;

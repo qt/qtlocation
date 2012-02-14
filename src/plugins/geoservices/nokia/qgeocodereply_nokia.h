@@ -58,7 +58,7 @@ class QGeocodeReplyNokia : public QGeocodeReply
 {
     Q_OBJECT
 public:
-    QGeocodeReplyNokia(QNetworkReply *reply, int limit, int offset, QGeoBoundingArea *viewport, QObject *parent = 0);
+    QGeocodeReplyNokia(QNetworkReply *reply, int limit, int offset, const QGeoBoundingArea &viewport, QObject *parent = 0);
     ~QGeocodeReplyNokia();
 
     void abort();

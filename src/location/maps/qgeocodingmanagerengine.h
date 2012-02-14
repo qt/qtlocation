@@ -68,13 +68,13 @@ public:
     int managerVersion() const;
 
     virtual QGeocodeReply* geocode(const QGeoAddress &address,
-                                     QGeoBoundingArea *bounds);
+                                     const QGeoBoundingArea &bounds);
     virtual QGeocodeReply* geocode(const QString &address,
                                     int limit,
                                     int offset,
-                                    QGeoBoundingArea *bounds);
+                                    const QGeoBoundingArea &bounds);
     virtual QGeocodeReply* reverseGeocode(const QGeoCoordinate &coordinate,
-                                            QGeoBoundingArea *bounds);
+                                          const QGeoBoundingArea &bounds);
 
 
 

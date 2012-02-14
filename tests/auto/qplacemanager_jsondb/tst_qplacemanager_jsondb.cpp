@@ -743,7 +743,7 @@ void tst_QPlaceManagerJsonDb::searchByBox()
     doSavePlaces(places);
 
     QPlaceSearchRequest request;
-    request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(5.0, -5.0), QGeoCoordinate(-5.0, 5.0)));
+    request.setSearchArea(QGeoBoundingBox(QGeoCoordinate(5.0, -5.0), QGeoCoordinate(-5.0, 5.0)));
 
     QList<QPlaceSearchResult> results1;
     doSearch(request, &results1);
@@ -763,7 +763,7 @@ void tst_QPlaceManagerJsonDb::searchByBox()
 
     QCOMPARE(testSet1, inBoxSet1);
 
-    request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(5.0, 10.0), QGeoCoordinate(-5.0, 20.0)));
+    request.setSearchArea(QGeoBoundingBox(QGeoCoordinate(5.0, 10.0), QGeoCoordinate(-5.0, 20.0)));
     QList<QPlace> places2;
     doSearch(request, &places2);
     QCOMPARE(places2.size(), inBox2.size());
@@ -778,7 +778,7 @@ void tst_QPlaceManagerJsonDb::searchByBox()
 
     QCOMPARE(testSet2, inBoxSet2);
 
-    request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(20.0, -5.0), QGeoCoordinate(10.0, 5.0)));
+    request.setSearchArea(QGeoBoundingBox(QGeoCoordinate(20.0, -5.0), QGeoCoordinate(10.0, 5.0)));
     QList<QPlace> places3;
     doSearch(request, &places3);
 
@@ -794,7 +794,7 @@ void tst_QPlaceManagerJsonDb::searchByBox()
 
     QCOMPARE(testSet3, inBoxSet3);
 
-    request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(20.0, 10.0), QGeoCoordinate(10.0, 20.0)));
+    request.setSearchArea(QGeoBoundingBox(QGeoCoordinate(20.0, 10.0), QGeoCoordinate(10.0, 20.0)));
     QList<QPlace> places4;
     doSearch(request, &places4);
     QCOMPARE(places4.size(), inBox4.size());
@@ -809,7 +809,7 @@ void tst_QPlaceManagerJsonDb::searchByBox()
 
     QCOMPARE(testSet4, inBoxSet4);
 
-    request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(5.0, 175.0), QGeoCoordinate(-5.0, -175.0)));
+    request.setSearchArea(QGeoBoundingBox(QGeoCoordinate(5.0, 175.0), QGeoCoordinate(-5.0, -175.0)));
     QList<QPlace> places5;
     doSearch(request, &places5);
     QCOMPARE(places5.size(), inBox5.size());
@@ -835,17 +835,17 @@ void tst_QPlaceManagerJsonDb::searchByBox()
     QCOMPARE(testSet5, inBoxSet5);
 
     //try a box that finds nothing
-    request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(-70,-70), QGeoCoordinate(-80,-60)));
+    request.setSearchArea(QGeoBoundingBox(QGeoCoordinate(-70,-70), QGeoCoordinate(-80,-60)));
     QVERIFY(doSearch(request, &places));
     QCOMPARE(places.count(), 0);
 
     //--- Test error conditions
     //bottom right latitude > top left latitude
-    request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(20,20), QGeoCoordinate(50,30)));
+    request.setSearchArea(QGeoBoundingBox(QGeoCoordinate(20,20), QGeoCoordinate(50,30)));
     QVERIFY(doSearch(request,&places, QPlaceReply::BadArgumentError));
 
     //try an invalid coordinate for one of the corners
-    request.setSearchArea(new QGeoBoundingBox(QGeoCoordinate(qQNaN(),20),QGeoCoordinate(10,30)));
+    request.setSearchArea(QGeoBoundingBox(QGeoCoordinate(qQNaN(),20),QGeoCoordinate(10,30)));
     QVERIFY(doSearch(request,&places, QPlaceReply::BadArgumentError));
 }
 
@@ -961,7 +961,7 @@ void tst_QPlaceManagerJsonDb::searchByCircle()
 
         QPlaceSearchRequest request;
         for (int j = 0; j < filterCoords.size(); ++j) {
-            request.setSearchArea(new QGeoBoundingCircle(filterCoords.at(j),dist));
+            request.setSearchArea(QGeoBoundingCircle(filterCoords.at(j),dist));
 
             if (i ==2 || i ==3) {
                 //TODO: Testing poles, ignore fo rnow
@@ -992,55 +992,55 @@ void tst_QPlaceManagerJsonDb::searchByCircle()
     //--- Test error conditions and edge cases
     //try a circle that covers the north pole
     QPlaceSearchRequest request;
-    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(89.91,0),11000));
+    request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(89.91,0),11000));
     QVERIFY(doSearch(request,&places, QPlaceReply::BadArgumentError));
     QCOMPARE(places.count(), 0);
 
     //try a circle that's close to but does not cover the north pole
-    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(89.91,0),9000));
+    request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(89.91,0),9000));
     QVERIFY(doSearch(request,&places, QPlaceReply::NoError));
 
     //try a circle that covers the south pole
-    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(-89.91,180),11000));
+    request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(-89.91,180),11000));
     QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
     QCOMPARE(places.count(), 0);
 
     //try a circle that's close to but does not cover the south pole
-    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(-89.91,180),9000));
+    request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(-89.91,180),9000));
     QVERIFY(doSearch(request, &places, QPlaceReply::NoError));
 
     //try a radius of 0
-    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(11.0,11.0), 0));
+    request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(11.0,11.0), 0));
     QVERIFY(doSearch(request, &places));
     QCOMPARE(places.count(), 1);
     QCOMPARE(places.at(0).location().coordinate().latitude(), 11.0);
     QCOMPARE(places.at(0).location().coordinate().longitude(), 11.0);
 
     //try an invalid center
-    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(), 5000));
+    request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(), 5000));
     QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
     QVERIFY(places.isEmpty());
 
     //try an invalid latitude for the center
-    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(qQNaN(),50), 5000));
+    request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(qQNaN(),50), 5000));
     QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
     QVERIFY(places.isEmpty());
 
     //try a proximity filter with an out of range latitude
-    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(90,10), 5000));
+    request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(90,10), 5000));
     QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
     QVERIFY(places.isEmpty());
 
-    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(150,10), 5000));
+    request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(150,10), 5000));
     QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
     QVERIFY(places.isEmpty());
 
     //try a proximity filter with an out of range longitude
-    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(-12,180.1),5000));
+    request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(-12,180.1),5000));
     QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
     QVERIFY(places.isEmpty());
 
-    request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(-12,-180.1),5000));
+    request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(-12,-180.1),5000));
     QVERIFY(doSearch(request, &places, QPlaceReply::BadArgumentError));
     QVERIFY(places.isEmpty());
 }
@@ -1112,7 +1112,7 @@ void tst_QPlaceManagerJsonDb::searchWithDistanceHint()
     doSavePlaces(places);
 
     QPlaceSearchRequest searchRequest;
-    QGeoBoundingCircle *circle = new QGeoBoundingCircle(QGeoCoordinate(20,20));
+    QGeoBoundingCircle circle(QGeoCoordinate(20,20));
     searchRequest.setSearchArea(circle);
     searchRequest.setRelevanceHint(QPlaceSearchRequest::DistanceHint);
     QList<QPlace> results;
@@ -1126,7 +1126,7 @@ void tst_QPlaceManagerJsonDb::searchWithDistanceHint()
     QCOMPARE(results.at(5), place5);
 
     qreal radius = QGeoCoordinate(20,20).distanceTo(QGeoCoordinate(20,50));
-    circle->setRadius(radius);
+    circle.setRadius(radius);
 
     QVERIFY(doSearch(searchRequest, &results));
     QCOMPARE(results.count(),4);
@@ -1136,7 +1136,7 @@ void tst_QPlaceManagerJsonDb::searchWithDistanceHint()
     QCOMPARE(results.at(3), place2);
 
     //try radius less than 1
-    circle->setRadius(-5);
+    circle.setRadius(-5);
     QVERIFY(doSearch(searchRequest, &results));
     QCOMPARE(results.count(), 6);
     QCOMPARE(results.at(0), place1);

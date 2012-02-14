@@ -102,8 +102,8 @@ void tst_QPlaceSearchReply::requestTest()
     request.setLimit(10);
     request.setOffset(50);
 
-    QGeoBoundingCircle *circle = new QGeoBoundingCircle();
-    circle->setCenter(QGeoCoordinate(10,20));
+    QGeoBoundingCircle circle;
+    circle.setCenter(QGeoCoordinate(10,20));
     request.setSearchArea(circle);
 
     request.setSearchTerm("pizza");

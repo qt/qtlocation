@@ -77,7 +77,7 @@ public:
     Error error() const;
     QString errorString() const;
 
-    QGeoBoundingArea* viewport() const;
+    QGeoBoundingArea viewport() const;
     QList<QGeoLocation>locations() const;
 
     int limit() const;
@@ -95,7 +95,7 @@ protected:
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);
 
-    void setViewport(QGeoBoundingArea *viewport);
+    void setViewport(const QGeoBoundingArea &viewport);
     void addLocation(const QGeoLocation &location);
     void setLocations(const QList<QGeoLocation> &locations);
 

@@ -3,7 +3,7 @@
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,59 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOBOUNDINGCIRCLE_H
-#define QGEOBOUNDINGCIRCLE_H
+#include <QtTest/QtTest>
+#include <QtLocation/QGeoBoundingArea>
 
-#include "qgeoboundingarea.h"
-
-#include <QSharedDataPointer>
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-
-
-class QGeoCoordinate;
-class QGeoBoundingCirclePrivate;
-
-class Q_LOCATION_EXPORT QGeoBoundingCircle : public QGeoBoundingArea
+class tst_qgeoboundingarea : public QObject
 {
-public:
-    QGeoBoundingCircle();
-    QGeoBoundingCircle(const QGeoCoordinate &center, qreal radius = -1.0);
-    QGeoBoundingCircle(const QGeoBoundingCircle &other);
-    QGeoBoundingCircle(const QGeoBoundingArea &other);
+    Q_OBJECT
 
-    ~QGeoBoundingCircle();
-
-    QGeoBoundingCircle& operator = (const QGeoBoundingCircle &other);
-
-    using QGeoBoundingArea::operator==;
-    bool operator==(const QGeoBoundingCircle &other) const;
-
-    using QGeoBoundingArea::operator!=;
-    bool operator!=(const QGeoBoundingCircle &other) const;
-
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
-
-    void setRadius(qreal radius);
-    qreal radius() const;
-
-    void translate(double degreesLatitude, double degreesLongitude);
-    QGeoBoundingCircle translated(double degreesLatitude, double degreesLongitude) const;
-
-private:
-    inline QGeoBoundingCirclePrivate *d_func();
-    inline const QGeoBoundingCirclePrivate *d_func() const;
+private slots:
+    void testArea();
 };
 
-QT_END_NAMESPACE
+void tst_qgeoboundingarea::testArea()
+{
+    QGeoBoundingArea area;
+    QVERIFY(!area.isValid());
+    QVERIFY(area.isEmpty());
+    QCOMPARE(area.type(), QGeoBoundingArea::UnknownType);
+    QVERIFY(!area.contains(QGeoCoordinate()));
 
-Q_DECLARE_METATYPE(QGeoBoundingCircle)
+    // QGeoBoundingArea never constructs a QGeoBoundingAreaPrivate.  Hence d_ptr is always 0.
 
-QT_END_HEADER
+    QGeoBoundingArea area2;
 
-#endif
+    QCOMPARE(area, area2);
 
+    area = area2;
+
+    QCOMPARE(area, area2);
+
+    QGeoBoundingArea area3(area2);
+
+    QCOMPARE(area2, area3);
+}
+
+QTEST_MAIN(tst_qgeoboundingarea)
+#include "tst_qgeoboundingarea.moc"

@@ -83,8 +83,8 @@ public:
     void setCategory(const QPlaceCategory &category);
     void setCategories(const QList<QPlaceCategory> &categories);
 
-    QGeoBoundingArea *searchArea() const;
-    void setSearchArea(QGeoBoundingArea *area);
+    QGeoBoundingArea searchArea() const;
+    void setSearchArea(const QGeoBoundingArea &area);
 
     int maximumCorrections() const;
     void setMaximumCorrections(int number);

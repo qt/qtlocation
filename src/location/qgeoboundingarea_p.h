@@ -39,59 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOBOUNDINGCIRCLE_H
-#define QGEOBOUNDINGCIRCLE_H
+#ifndef QGEOBOUNDINGAREA_P_H
+#define QGEOBOUNDINGAREA_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QtCore/QSharedData>
 
 #include "qgeoboundingarea.h"
 
-#include <QSharedDataPointer>
-
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
-
-
-class QGeoCoordinate;
-class QGeoBoundingCirclePrivate;
-
-class Q_LOCATION_EXPORT QGeoBoundingCircle : public QGeoBoundingArea
+class QGeoBoundingAreaPrivate : public QSharedData
 {
 public:
-    QGeoBoundingCircle();
-    QGeoBoundingCircle(const QGeoCoordinate &center, qreal radius = -1.0);
-    QGeoBoundingCircle(const QGeoBoundingCircle &other);
-    QGeoBoundingCircle(const QGeoBoundingArea &other);
+    QGeoBoundingAreaPrivate(QGeoBoundingArea::AreaType type);
+    virtual ~QGeoBoundingAreaPrivate();
 
-    ~QGeoBoundingCircle();
+    virtual bool isValid() const = 0;
+    virtual bool isEmpty() const = 0;
+    virtual bool contains(const QGeoCoordinate &coordinate) const = 0;
 
-    QGeoBoundingCircle& operator = (const QGeoBoundingCircle &other);
+    virtual QGeoBoundingAreaPrivate *clone() const = 0;
 
-    using QGeoBoundingArea::operator==;
-    bool operator==(const QGeoBoundingCircle &other) const;
+    virtual bool operator==(const QGeoBoundingAreaPrivate &other) const;
 
-    using QGeoBoundingArea::operator!=;
-    bool operator!=(const QGeoBoundingCircle &other) const;
-
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
-
-    void setRadius(qreal radius);
-    qreal radius() const;
-
-    void translate(double degreesLatitude, double degreesLongitude);
-    QGeoBoundingCircle translated(double degreesLatitude, double degreesLongitude) const;
-
-private:
-    inline QGeoBoundingCirclePrivate *d_func();
-    inline const QGeoBoundingCirclePrivate *d_func() const;
+    QGeoBoundingArea::AreaType type;
 };
+
+// don't use the copy constructor when detaching from a QSharedDataPointer, use virtual clone()
+// call instead.
+template <>
+Q_INLINE_TEMPLATE QGeoBoundingAreaPrivate *QSharedDataPointer<QGeoBoundingAreaPrivate>::clone()
+{
+    return d->clone();
+}
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QGeoBoundingCircle)
-
-QT_END_HEADER
-
-#endif
-
+#endif // QGEOBOUNDINGAREA_P_H

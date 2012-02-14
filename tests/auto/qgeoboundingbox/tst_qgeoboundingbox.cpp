@@ -95,8 +95,11 @@ private slots:
     void unite();
     void unite_data();
 
-    void clone();
     void areaComparison();
+    void areaComparison_data();
+
+    void circleComparison();
+    void circleComparison_data();
 };
 
 void tst_QGeoBoundingBox::default_constructor()
@@ -136,6 +139,16 @@ void tst_QGeoBoundingBox::copy_constructor()
     b2.setBottomRight(QGeoCoordinate(0.0, 30.0));
     QCOMPARE(b1.topLeft(), QGeoCoordinate(10.0, 0.0));
     QCOMPARE(b1.bottomRight(), QGeoCoordinate(0.0, 10.0));
+
+    QGeoBoundingArea area;
+    QGeoBoundingBox areaBox(area);
+    QVERIFY(!areaBox.isValid());
+    QVERIFY(areaBox.isEmpty());
+
+    QGeoBoundingCircle circle;
+    QGeoBoundingBox circleBox(circle);
+    QVERIFY(!circleBox.isValid());
+    QVERIFY(circleBox.isEmpty());
 }
 
 void tst_QGeoBoundingBox::destructor()
@@ -152,30 +165,65 @@ void tst_QGeoBoundingBox::assignment()
     QGeoBoundingBox b2 = QGeoBoundingBox(QGeoCoordinate(20.0, 0.0),
                                          QGeoCoordinate(0.0, 20.0));
 
+    QVERIFY(b1 != b2);
+
     b2 = b1;
     QCOMPARE(b2.topLeft(), QGeoCoordinate(10.0, 0.0));
     QCOMPARE(b2.bottomRight(), QGeoCoordinate(0.0, 10.0));
+    QCOMPARE(b1, b2);
 
     b2.setTopLeft(QGeoCoordinate(30.0, 0.0));
     b2.setBottomRight(QGeoCoordinate(0.0, 30.0));
     QCOMPARE(b1.topLeft(), QGeoCoordinate(10.0, 0.0));
     QCOMPARE(b1.bottomRight(), QGeoCoordinate(0.0, 10.0));
+
+    // Assign b1 to an area
+    QGeoBoundingArea area = b1;
+    QCOMPARE(area.type(), b1.type());
+    QVERIFY(area == b1);
+
+    // Assign the area back to a bounding box
+    QGeoBoundingBox ba = area;
+    QCOMPARE(ba.topLeft(), b1.topLeft());
+    QCOMPARE(ba.bottomRight(), b1.bottomRight());
+
+    // Check that the copy is not modified when modifying the original.
+    b1.setTopLeft(QGeoCoordinate(80, 30));
+    QVERIFY(ba.topLeft() != b1.topLeft());
+    QVERIFY(ba != b1);
 }
 
 void tst_QGeoBoundingBox::equality()
 {
-    QFETCH(QGeoBoundingBox, input1);
-    QFETCH(QGeoBoundingBox, input2);
+    QFETCH(QGeoBoundingBox, box1);
+    QFETCH(QGeoBoundingBox, box2);
+    QFETCH(QGeoBoundingArea, area1);
+    QFETCH(QGeoBoundingArea, area2);
     QFETCH(bool, equal);
 
-    QCOMPARE((input1 == input2), equal);
-    QCOMPARE((input1 != input2), !equal);
+    // compare boxes
+    QCOMPARE((box1 == box2), equal);
+    QCOMPARE((box1 != box2), !equal);
+
+    // compare areas
+    QCOMPARE((area1 == area2), equal);
+    QCOMPARE((area1 != area2), !equal);
+
+    // compare area to box
+    QCOMPARE((area1 == box2), equal);
+    QCOMPARE((area1 != box2), !equal);
+
+    // compare box to area
+    QCOMPARE((box1 == area2), equal);
+    QCOMPARE((box1 != area2), !equal);
 }
 
 void tst_QGeoBoundingBox::equality_data()
 {
-    QTest::addColumn<QGeoBoundingBox>("input1");
-    QTest::addColumn<QGeoBoundingBox>("input2");
+    QTest::addColumn<QGeoBoundingBox>("box1");
+    QTest::addColumn<QGeoBoundingBox>("box2");
+    QTest::addColumn<QGeoBoundingArea>("area1");
+    QTest::addColumn<QGeoBoundingArea>("area2");
     QTest::addColumn<bool>("equal");
 
     QGeoCoordinate c1(10, 5);
@@ -189,14 +237,20 @@ void tst_QGeoBoundingBox::equality_data()
     QGeoBoundingBox b4(c1, c3);
     QGeoBoundingBox b5(c1, c2);
 
+    QGeoBoundingArea a1(b1);
+    QGeoBoundingArea a2(b2);
+    QGeoBoundingArea a3(b3);
+    QGeoBoundingArea a4(b4);
+    QGeoBoundingArea a5(b5);
+
     QTest::newRow("all unequal")
-            << b1 << b2 << false;
+            << b1 << b2 << a1 << a2 << false;
     QTest::newRow("top left unequal")
-            << b1 << b3 << false;
+            << b1 << b3 << a1 << a3 << false;
     QTest::newRow("bottom right unequal")
-            << b1 << b4 << false;
+            << b1 << b4 << a1 << a4 << false;
     QTest::newRow("equal")
-            << b1 << b5 << true;
+            << b1 << b5 << a1 << a5 << true;
 }
 
 void tst_QGeoBoundingBox::isValid()
@@ -205,6 +259,9 @@ void tst_QGeoBoundingBox::isValid()
     QFETCH(bool, valid);
 
     QCOMPARE(input.isValid(), valid);
+
+    QGeoBoundingArea area = input;
+    QCOMPARE(area.isValid(), valid);
 }
 
 void tst_QGeoBoundingBox::isValid_data()
@@ -234,6 +291,9 @@ void tst_QGeoBoundingBox::isEmpty()
     QFETCH(bool, empty);
 
     QCOMPARE(input.isEmpty(), empty);
+
+    QGeoBoundingArea area = input;
+    QCOMPARE(area.isEmpty(), empty);
 }
 
 void tst_QGeoBoundingBox::isEmpty_data()
@@ -895,6 +955,9 @@ void tst_QGeoBoundingBox::containsCoord()
     QFETCH(bool, contains);
 
     QCOMPARE(box.contains(coord), contains);
+
+    QGeoBoundingArea area = box;
+    QCOMPARE(area.contains(coord), contains);
 }
 
 void tst_QGeoBoundingBox::containsCoord_data()
@@ -2127,60 +2190,61 @@ void tst_QGeoBoundingBox::unite_data()
                                 QGeoCoordinate(-30.0, 180.0));
 }
 
-void tst_QGeoBoundingBox::clone()
+void tst_QGeoBoundingBox::areaComparison_data()
 {
-    //check that the clone copies the same data as the original
-    QGeoBoundingBox originalBox;
-    originalBox.setTopLeft(QGeoCoordinate(20,20));
-    originalBox.setBottomRight(QGeoCoordinate(10,30));
+    QTest::addColumn<QGeoBoundingArea>("area");
+    QTest::addColumn<QGeoBoundingBox>("box");
+    QTest::addColumn<bool>("equal");
 
-    QGeoBoundingArea *areaPtr = originalBox.clone();
-    QVERIFY(areaPtr->type() == QGeoBoundingArea::BoxType);
-    QGeoBoundingBox *clonedBoxPtr;
-    clonedBoxPtr = static_cast<QGeoBoundingBox*>(areaPtr);
-    QVERIFY2(clonedBoxPtr->topLeft() == QGeoCoordinate(20,20),
-             "Clone's top left coord does not match original");
-    QVERIFY2(clonedBoxPtr->bottomRight() == QGeoCoordinate(10,30),
-             "Clone's bottom right coord does not match original");
+    QGeoBoundingBox b1(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
+    QGeoBoundingBox b2(QGeoCoordinate(20.0, 0.0), QGeoCoordinate(0.0, 20.0));
+    QGeoBoundingCircle c(QGeoCoordinate(0.0, 0.0), 10);
 
-    //check that when the original is altered, the clone remains unaltered.
-    originalBox.setTopLeft(QGeoCoordinate(80,30));
-    originalBox.setBottomRight(QGeoCoordinate(10,40));
-
-    QVERIFY2(originalBox.topLeft() == QGeoCoordinate(80,30),
-             "Original's top left coord has not changed");
-    QVERIFY2(originalBox.bottomRight() == QGeoCoordinate(10,40),
-             "Original's bottom right coord has not changed");
-
-    QVERIFY2(clonedBoxPtr->topLeft() == QGeoCoordinate(20,20),
-             "Clone's top left coord references the original's");
-    QVERIFY2(clonedBoxPtr->bottomRight() == QGeoCoordinate(10,30),
-             "Clone's bottom right coord references the original's");
+    QTest::newRow("default constructed") << QGeoBoundingArea() << QGeoBoundingBox() << false;
+    QTest::newRow("b1 b1") << QGeoBoundingArea(b1) << b1 << true;
+    QTest::newRow("b1 b2") << QGeoBoundingArea(b1) << b2 << false;
+    QTest::newRow("b2 b1") << QGeoBoundingArea(b2) << b1 << false;
+    QTest::newRow("b2 b2") << QGeoBoundingArea(b2) << b2 << true;
+    QTest::newRow("c b1") << QGeoBoundingArea(c) << b1 << false;
 }
 
 void tst_QGeoBoundingBox::areaComparison()
 {
-    QGeoBoundingBox b1(QGeoCoordinate(20,20), QGeoCoordinate(10,30));
-    QGeoBoundingBox b2(QGeoCoordinate(20,20), QGeoCoordinate(10,30));
-    QGeoBoundingBox b3(QGeoCoordinate(40,40), QGeoCoordinate(10,30));
+    QFETCH(QGeoBoundingArea, area);
+    QFETCH(QGeoBoundingBox, box);
+    QFETCH(bool, equal);
 
-    QVERIFY(b1 == b2);
-    QVERIFY(!(b1 != b2));
+    QCOMPARE((area == box), equal);
+    QCOMPARE((area != box), !equal);
 
-    QVERIFY(!(b1 == b3));
-    QVERIFY(b1 != b3);
+    QCOMPARE((box == area), equal);
+    QCOMPARE((box != area), !equal);
+}
 
-    QGeoBoundingCircle c1(QGeoCoordinate(20,20), 5000);
-    QVERIFY(!(b1 == c1));
-    QVERIFY(b1 != c1);
+void tst_QGeoBoundingBox::circleComparison_data()
+{
+    QTest::addColumn<QGeoBoundingCircle>("circle");
+    QTest::addColumn<QGeoBoundingBox>("box");
+    QTest::addColumn<bool>("equal");
 
-    QGeoBoundingArea *b2Ptr = &b2;
-    QVERIFY(b1 == *b2Ptr);
-    QVERIFY(!(b1 != *b2Ptr));
+    QGeoBoundingBox b(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
+    QGeoBoundingCircle c(QGeoCoordinate(0.0, 0.0), 10);
 
-    QGeoBoundingArea *b3Ptr = &b3;
-    QVERIFY(!(b1 == *b3Ptr));
-    QVERIFY(b1 != *b3Ptr);
+    QTest::newRow("default constructed") << QGeoBoundingCircle() << QGeoBoundingBox() << false;
+    QTest::newRow("c b") << c << b << false;
+}
+
+void tst_QGeoBoundingBox::circleComparison()
+{
+    QFETCH(QGeoBoundingCircle, circle);
+    QFETCH(QGeoBoundingBox, box);
+    QFETCH(bool, equal);
+
+    QCOMPARE((circle == box), equal);
+    QCOMPARE((circle != box), !equal);
+
+    QCOMPARE((box == circle), equal);
+    QCOMPARE((box != circle), !equal);
 }
 
 QTEST_MAIN(tst_QGeoBoundingBox)

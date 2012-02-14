@@ -93,9 +93,9 @@ QGeoBoundingCircle QDeclarativeGeoBoundingCircle::circle() const
     return m_circle;
 }
 
-QGeoBoundingArea *QDeclarativeGeoBoundingCircle::area() const
+QGeoBoundingArea QDeclarativeGeoBoundingCircle::area() const
 {
-    return m_circle.clone();
+    return circle();
 }
 
 /*!

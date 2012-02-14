@@ -170,7 +170,7 @@ protected:
 
 private:
     void setLocations(const QList<QGeoLocation> &locations);
-    QGeoBoundingArea* boundingArea();
+    QGeoBoundingArea boundingArea();
     void abortRequest();
     QGeocodeReply* reply_;
 

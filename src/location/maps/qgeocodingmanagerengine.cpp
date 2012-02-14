@@ -175,7 +175,7 @@ int QGeocodingManagerEngine::managerVersion() const
     QGeocodeReply::error() with deleteLater().
 */
 QGeocodeReply* QGeocodingManagerEngine::geocode(const QGeoAddress &address,
-        QGeoBoundingArea *bounds)
+        const QGeoBoundingArea &bounds)
 {
     Q_UNUSED(address)
     Q_UNUSED(bounds)
@@ -220,7 +220,7 @@ QGeocodeReply* QGeocodingManagerEngine::geocode(const QGeoAddress &address,
     QGeocodeReply::error() with deleteLater().
 */
 QGeocodeReply* QGeocodingManagerEngine::reverseGeocode(const QGeoCoordinate &coordinate,
-        QGeoBoundingArea *bounds)
+        const QGeoBoundingArea &bounds)
 {
     Q_UNUSED(coordinate)
     Q_UNUSED(bounds)
@@ -260,7 +260,7 @@ QGeocodeReply* QGeocodingManagerEngine::reverseGeocode(const QGeoCoordinate &coo
 QGeocodeReply* QGeocodingManagerEngine::geocode(const QString &address,
         int limit,
         int offset,
-        QGeoBoundingArea *bounds)
+        const QGeoBoundingArea &bounds)
 {
     Q_UNUSED(address)
     Q_UNUSED(limit)

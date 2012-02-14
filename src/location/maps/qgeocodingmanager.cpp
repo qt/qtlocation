@@ -173,7 +173,7 @@ int QGeocodingManager::managerVersion() const
     QGeocodingManager::error(), QGeocodeReply::finished() or
     QGeocodeReply::error() with deleteLater().
 */
-QGeocodeReply* QGeocodingManager::geocode(const QGeoAddress &address, QGeoBoundingArea *bounds)
+QGeocodeReply* QGeocodingManager::geocode(const QGeoAddress &address, const QGeoBoundingArea &bounds)
 {
 //    if (!d_ptr->engine)
 //        return new QGeocodeReply(QGeocodeReply::EngineNotSetError, "The geocoding manager was not created with a valid engine.", this);
@@ -218,7 +218,7 @@ QGeocodeReply* QGeocodingManager::geocode(const QGeoAddress &address, QGeoBoundi
     QGeocodingManager::error(), QGeocodeReply::finished() or
     QGeocodeReply::error() with deleteLater().
 */
-QGeocodeReply* QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinate, QGeoBoundingArea *bounds)
+QGeocodeReply* QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinate, const QGeoBoundingArea &bounds)
 {
 //    if (!d_ptr->engine)
 //        return new QGeocodeReply(QGeocodeReply::EngineNotSetError, "The geocoding manager was not created with a valid engine.", this);
@@ -258,7 +258,7 @@ QGeocodeReply* QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinat
 QGeocodeReply* QGeocodingManager::geocode(const QString &address,
         int limit,
         int offset,
-        QGeoBoundingArea *bounds)
+        const QGeoBoundingArea &bounds)
 {
 //    if (!d_ptr->engine)
 //        return new QGeocodeReply(QGeocodeReply::EngineNotSetError, "The geocoding manager was not created with a valid engine.", this);

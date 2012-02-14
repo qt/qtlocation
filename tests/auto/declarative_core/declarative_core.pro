@@ -9,4 +9,3 @@ SOURCES += main.cpp
 QT += location quick
 
 OTHER_FILES += *.qml
-

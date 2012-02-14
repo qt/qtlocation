@@ -53,13 +53,12 @@
 // We mean it.
 //
 
+#include "qgeoboundingarea_p.h"
 #include "qgeocoordinate.h"
-
-#include <QSharedData>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoBoundingBoxPrivate : public QSharedData
+class QGeoBoundingBoxPrivate : public QGeoBoundingAreaPrivate
 {
 public:
     QGeoBoundingBoxPrivate();
@@ -67,9 +66,13 @@ public:
     QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other);
     ~QGeoBoundingBoxPrivate();
 
-    QGeoBoundingBoxPrivate& operator= (const QGeoBoundingBoxPrivate &other);
+    bool isValid() const;
+    bool isEmpty() const;
+    bool contains(const QGeoCoordinate &coordinate) const;
 
-    bool operator== (const QGeoBoundingBoxPrivate &other) const;
+    QGeoBoundingAreaPrivate *clone() const;
+
+    bool operator==(const QGeoBoundingAreaPrivate &other) const;
 
     QGeoCoordinate topLeft;
     QGeoCoordinate bottomRight;

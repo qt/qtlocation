@@ -141,14 +141,14 @@ void QDeclarativeGeocodeModel::componentComplete()
         update();
 }
 
-QGeoBoundingArea* QDeclarativeGeocodeModel::boundingArea()
+QGeoBoundingArea QDeclarativeGeocodeModel::boundingArea()
 {
     if (qobject_cast<QDeclarativeGeoBoundingBox*>(boundingArea_) && boundingBox_.isValid()) {
-        return &boundingBox_;
+        return boundingBox_;
     } else if (qobject_cast<QDeclarativeGeoBoundingCircle*>(boundingArea_) && boundingCircle_.isValid()) {
-        return &boundingCircle_;
+        return boundingCircle_;
     }
-    return 0;
+    return QGeoBoundingArea();
 }
 
 /*!

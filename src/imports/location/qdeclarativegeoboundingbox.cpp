@@ -95,9 +95,9 @@ QGeoBoundingBox QDeclarativeGeoBoundingBox::box()
     return m_box;
 }
 
-QGeoBoundingArea *QDeclarativeGeoBoundingBox::area() const
+QGeoBoundingArea QDeclarativeGeoBoundingBox::area() const
 {
-    return m_box.clone();
+    return m_box;
 }
 
 /*!

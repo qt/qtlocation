@@ -67,7 +67,7 @@ public:
         //1) Make an appropriate request
         QPlaceSearchRequest searchRequest;
         searchRequest.setSearchTerm("ice cream");
-        searchRequest.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
+        searchRequest.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
 
         //2) Use the manager to initiate a request and retreive a reply object
         QPlaceSearchReply * searchReply = manager->search(searchRequest);
@@ -84,7 +84,7 @@ public:
         //instantiate request and set parameters
         QPlaceSearchRequest searchRequest;
         searchRequest.setSearchTerm("ice cream");
-        searchRequest.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
+        searchRequest.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
 
         //send off a search request
         /*QPlaceSearchReply * */ searchReply = manager->search(searchRequest);
@@ -153,7 +153,7 @@ public:
         //! [Suggestion request]
         QPlaceSearchRequest request;
         request.setSearchTerm("piz");
-        request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
+        request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
         /* QPlaceSearchSuggestion * */suggestionReply = manager->searchSuggestions(request);
         connect(suggestionReply, SIGNAL(finished()), this, SLOT(handleSuggestionReply()));
         //! [Suggestion request]
@@ -163,7 +163,7 @@ public:
     {
         //! [Recommendation]
         QPlaceSearchRequest request;
-        request.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
+        request.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(12.34, 56.78)));
 
         /* QPlaceSearchReply * */ recommendationReply = manager->recommendations(place.placeId(), request);
         connect(recommendationReply, SIGNAL(finished()), this, SLOT(handleRecommendationReply()));
@@ -242,7 +242,7 @@ public:
         searchRequest.setSearchTerm("Fast food"); //search term for what we are interested in
 
         //set a search center
-        searchRequest.setSearchArea(new QGeoBoundingCircle(QGeoCoordinate(2.3, 48.87)));
+        searchRequest.setSearchArea(QGeoBoundingCircle(QGeoCoordinate(2.3, 48.87)));
 
         //set a distance hint as a relevancy hint.
         //closer places have greater weighting in the ranking of results.

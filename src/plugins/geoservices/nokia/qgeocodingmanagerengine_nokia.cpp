@@ -112,7 +112,7 @@ QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(const QMap<QString, Q
 QGeocodingManagerEngineNokia::~QGeocodingManagerEngineNokia() {}
 
 QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
-        QGeoBoundingArea *bounds)
+        const QGeoBoundingArea &bounds)
 {
     if (!supportsGeocoding()) {
         QGeocodeReply *reply = new QGeocodeReply(QGeocodeReply::UnsupportedOptionError, "Geocoding is not supported by this service provider.", this);
@@ -168,7 +168,7 @@ QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
 }
 
 QGeocodeReply* QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
-        QGeoBoundingArea *bounds)
+        const QGeoBoundingArea &bounds)
 {
     if (!supportsReverseGeocoding()) {
         QGeocodeReply *reply = new QGeocodeReply(QGeocodeReply::UnsupportedOptionError, "Reverse geocoding is not supported by this service provider.", this);
@@ -195,7 +195,7 @@ QGeocodeReply* QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate
 QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QString &address,
         int limit,
         int offset,
-        QGeoBoundingArea *bounds)
+        const QGeoBoundingArea &bounds)
 {
     QString requestString = "http://";
     requestString += m_host;
@@ -224,7 +224,7 @@ QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QString &address,
 }
 
 QGeocodeReply* QGeocodingManagerEngineNokia::geocode(QString requestString,
-        QGeoBoundingArea *bounds,
+        const QGeoBoundingArea &bounds,
         int limit,
         int offset)
 {

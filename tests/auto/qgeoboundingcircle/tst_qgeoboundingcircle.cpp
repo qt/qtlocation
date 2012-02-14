@@ -53,6 +53,7 @@ class tst_QGeoBoundingCircle : public QObject
 private slots:
     void defaultConstructor();
     void centerRadiusConstructor();
+    void assignment();
 
     void comparison();
     void type();
@@ -72,7 +73,11 @@ private slots:
     void contains_data();
     void contains();
 
-    void clone();
+    void areaComparison();
+    void areaComparison_data();
+
+    void boxComparison();
+    void boxComparison_data();
 };
 
 void tst_QGeoBoundingCircle::defaultConstructor()
@@ -87,6 +92,39 @@ void tst_QGeoBoundingCircle::centerRadiusConstructor()
     QGeoBoundingCircle c(QGeoCoordinate(1,1), qreal(50.0));
     QCOMPARE(c.center(), QGeoCoordinate(1,1));
     QCOMPARE(c.radius(), qreal(50.0));
+}
+
+void tst_QGeoBoundingCircle::assignment()
+{
+    QGeoBoundingCircle c1 = QGeoBoundingCircle(QGeoCoordinate(10.0, 0.0), 20.0);
+    QGeoBoundingCircle c2 = QGeoBoundingCircle(QGeoCoordinate(20.0, 0.0), 30.0);
+
+    QVERIFY(c1 != c2);
+
+    c2 = c1;
+    QCOMPARE(c2.center(), QGeoCoordinate(10.0, 0.0));
+    QCOMPARE(c2.radius(), 20.0);
+    QCOMPARE(c1, c2);
+
+    c2.setCenter(QGeoCoordinate(30.0, 0.0));
+    c2.setRadius(15.0);
+    QCOMPARE(c1.center(), QGeoCoordinate(10.0, 0.0));
+    QCOMPARE(c1.radius(), 20.0);
+
+    // Assign c1 to an area
+    QGeoBoundingArea area = c1;
+    QCOMPARE(area.type(), c1.type());
+    QVERIFY(area == c1);
+
+    // Assign the area back to a bounding circle
+    QGeoBoundingCircle ca = area;
+    QCOMPARE(ca.center(), c1.center());
+    QCOMPARE(ca.radius(), c1.radius());
+
+    // Check that the copy is not modified when modifying the original.
+    c1.setCenter(QGeoCoordinate(15.0, 15.0));
+    QVERIFY(ca.center() != c1.center());
+    QVERIFY(ca != c1);
 }
 
 void tst_QGeoBoundingCircle::comparison()
@@ -209,6 +247,9 @@ void tst_QGeoBoundingCircle::valid()
 
     QGeoBoundingCircle c(center, radius);
     QCOMPARE(c.isValid(), valid);
+
+    QGeoBoundingArea area = c;
+    QCOMPARE(c.isValid(), valid);
 }
 
 void tst_QGeoBoundingCircle::empty_data()
@@ -234,6 +275,9 @@ void tst_QGeoBoundingCircle::empty()
 
     QGeoBoundingCircle c(center, radius);
     QCOMPARE(c.isEmpty(), empty);
+
+    QGeoBoundingArea area = c;
+    QCOMPARE(area.isEmpty(), empty);
 }
 
 void tst_QGeoBoundingCircle::contains_data()
@@ -264,34 +308,66 @@ void tst_QGeoBoundingCircle::contains()
 
     QGeoBoundingCircle c(center, radius);
     QCOMPARE(c.contains(probe), result);
+
+    QGeoBoundingArea area = c;
+    QCOMPARE(area.contains(probe), result);
 }
 
-void tst_QGeoBoundingCircle::clone()
+void tst_QGeoBoundingCircle::areaComparison_data()
 {
-    //check that the clone copies the same data as the original
-    QGeoBoundingCircle originalCircle;
-    originalCircle.setCenter(QGeoCoordinate(1,1));
-    originalCircle.setRadius(500.0);
-    QGeoBoundingArea *areaPtr = originalCircle.clone();
-    QVERIFY(areaPtr->type() == QGeoBoundingArea::CircleType);
-    QGeoBoundingCircle *clonedCirclePtr;
-    clonedCirclePtr = static_cast<QGeoBoundingCircle*>(areaPtr);
-    QVERIFY2(clonedCirclePtr->center() == QGeoCoordinate(1,1),
-             "Center of clone does not match original");
-    QVERIFY2(clonedCirclePtr->radius() == 500.0,
-             "Radius of clone does not match original");
+    QTest::addColumn<QGeoBoundingArea>("area");
+    QTest::addColumn<QGeoBoundingCircle>("circle");
+    QTest::addColumn<bool>("equal");
 
-    //check that when the original is altered, the clone remains unaltered.
-    originalCircle.setCenter(QGeoCoordinate(9,9));
-    originalCircle.setRadius(99.9);
+    QGeoBoundingCircle c1(QGeoCoordinate(10.0, 0.0), 10.0);
+    QGeoBoundingCircle c2(QGeoCoordinate(20.0, 10.0), 20.0);
+    QGeoBoundingBox b(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
 
-    QVERIFY2(originalCircle.center() == QGeoCoordinate(9,9),
-             "Center of original has not changed");
-    QCOMPARE(originalCircle.radius(), 99.9);
+    QTest::newRow("default constructed") << QGeoBoundingArea() << QGeoBoundingCircle() << false;
+    QTest::newRow("c1 c1") << QGeoBoundingArea(c1) << c1 << true;
+    QTest::newRow("c1 c2") << QGeoBoundingArea(c1) << c2 << false;
+    QTest::newRow("c2 c1") << QGeoBoundingArea(c2) << c1 << false;
+    QTest::newRow("c2 c2") << QGeoBoundingArea(c2) << c2 << true;
+    QTest::newRow("b c1") << QGeoBoundingArea(b) << c1 << false;
+}
 
-    QVERIFY2(clonedCirclePtr->center() == QGeoCoordinate(1,1),
-             "Center of clone references center of original");
-    QCOMPARE(clonedCirclePtr->radius(), 500.0);
+void tst_QGeoBoundingCircle::areaComparison()
+{
+    QFETCH(QGeoBoundingArea, area);
+    QFETCH(QGeoBoundingCircle, circle);
+    QFETCH(bool, equal);
+
+    QCOMPARE((area == circle), equal);
+    QCOMPARE((area != circle), !equal);
+
+    QCOMPARE((circle == area), equal);
+    QCOMPARE((circle != area), !equal);
+}
+
+void tst_QGeoBoundingCircle::boxComparison_data()
+{
+    QTest::addColumn<QGeoBoundingBox>("box");
+    QTest::addColumn<QGeoBoundingCircle>("circle");
+    QTest::addColumn<bool>("equal");
+
+    QGeoBoundingCircle c(QGeoCoordinate(10.0, 0.0), 10.0);
+    QGeoBoundingBox b(QGeoCoordinate(10.0, 0.0), QGeoCoordinate(0.0, 10.0));
+
+    QTest::newRow("default constructed") << QGeoBoundingBox() << QGeoBoundingCircle() << false;
+    QTest::newRow("b c") << b << c << false;
+}
+
+void tst_QGeoBoundingCircle::boxComparison()
+{
+    QFETCH(QGeoBoundingBox, box);
+    QFETCH(QGeoBoundingCircle, circle);
+    QFETCH(bool, equal);
+
+    QCOMPARE((box == circle), equal);
+    QCOMPARE((box != circle), !equal);
+
+    QCOMPARE((circle == box), equal);
+    QCOMPARE((circle != box), !equal);
 }
 
 QTEST_MAIN(tst_QGeoBoundingCircle)

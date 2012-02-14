@@ -68,7 +68,7 @@ public:
     void  callSetLimit ( int limit ) {setLimit(limit);}
     void  callSetOffset ( int offset ) {setOffset(offset);}
     void  callSetLocations ( const QList<QGeoLocation> & locations ) {setLocations(locations);}
-    void  callSetViewport ( QGeoBoundingArea * viewport ) {setViewport(viewport);}
+    void  callSetViewport ( const QGeoBoundingArea &viewport ) {setViewport(viewport);}
     void abort() {
         emit aborted();
     }
@@ -108,7 +108,7 @@ public:
     QGeocodeReply* geocode(const QString &searchString,
                             int limit = -1,
                             int offset = 0,
-                            QGeoBoundingArea *bounds = 0)
+                            const QGeoBoundingArea &bounds = QGeoBoundingArea())
     {
         geocodeReply_ = new GeocodeReplyTest();
         connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
@@ -140,7 +140,7 @@ public:
         return static_cast<QGeocodeReply*>(geocodeReply_);
     }
 
-    QGeocodeReply*  geocode ( const QGeoAddress & address, QGeoBoundingArea * bounds )
+    QGeocodeReply*  geocode ( const QGeoAddress & address, const QGeoBoundingArea &bounds )
     {
         geocodeReply_ = new GeocodeReplyTest();
         connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
@@ -227,7 +227,7 @@ public:
         }
     }
 
-    QGeocodeReply*  reverseGeocode ( const QGeoCoordinate & coordinate, QGeoBoundingArea * bounds )
+    QGeocodeReply*  reverseGeocode ( const QGeoCoordinate & coordinate, const QGeoBoundingArea &bounds )
     {
         geocodeReply_ = new GeocodeReplyTest();
         connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));

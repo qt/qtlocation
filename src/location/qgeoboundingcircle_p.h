@@ -53,13 +53,12 @@
 // We mean it.
 //
 
+#include "qgeoboundingarea_p.h"
 #include "qgeocoordinate.h"
-
-#include <QSharedData>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoBoundingCirclePrivate : public QSharedData
+class QGeoBoundingCirclePrivate : public QGeoBoundingAreaPrivate
 {
 public:
     QGeoBoundingCirclePrivate();
@@ -67,9 +66,13 @@ public:
     QGeoBoundingCirclePrivate(const QGeoBoundingCirclePrivate &other);
     ~QGeoBoundingCirclePrivate();
 
-    QGeoBoundingCirclePrivate& operator= (const QGeoBoundingCirclePrivate &other);
+    bool isValid() const;
+    bool isEmpty() const;
+    bool contains(const QGeoCoordinate &coordinate) const;
 
-    bool operator== (const QGeoBoundingCirclePrivate &other) const;
+    QGeoBoundingAreaPrivate *clone() const;
+
+    bool operator==(const QGeoBoundingAreaPrivate &other) const;
 
     QGeoCoordinate center;
     qreal radius;

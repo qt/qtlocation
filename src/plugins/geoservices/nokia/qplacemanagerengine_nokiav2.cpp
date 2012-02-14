@@ -237,16 +237,18 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &p
     return reply;
 }
 
-static QString boundingAreaToLatLong(QGeoBoundingArea *area)
+static QString boundingAreaToLatLong(const QGeoBoundingArea &area)
 {
     QGeoCoordinate center;
-    switch (area->type()) {
+    switch (area.type()) {
     case QGeoBoundingArea::BoxType:
-        center = static_cast<QGeoBoundingBox *>(area)->center();
+        center = QGeoBoundingBox(area).center();
         break;
     case QGeoBoundingArea::CircleType:
-        center = static_cast<QGeoBoundingCircle *>(area)->center();
+        center = QGeoBoundingCircle(area).center();
         break;
+    default:
+        return QString();
     }
 
     return QString::number(center.latitude()) + QLatin1Char(',') +
@@ -270,7 +272,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         queryItems.append(qMakePair<QString, QString>(QLatin1String("q"), query.searchTerm()));
 
-        if (query.searchArea()) {
+        if (query.searchArea().isValid()) {
             queryItems.append(qMakePair<QString, QString>(QLatin1String("at"),
                                                           boundingAreaToLatLong(query.searchArea())));
         }
@@ -308,7 +310,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         queryItems.append(qMakePair<QString, QString>(QLatin1String("cat"),
                                                       ids.join(QLatin1String(","))));
 
-        if (query.searchArea()) {
+        if (query.searchArea().isValid()) {
             queryItems.append(qMakePair<QString, QString>(QLatin1String("at"),
                                                           boundingAreaToLatLong(query.searchArea())));
         }
@@ -381,7 +383,7 @@ QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const
 
     queryItems.append(qMakePair<QString, QString>(QLatin1String("q"), query.searchTerm()));
 
-    if (query.searchArea()) {
+    if (query.searchArea().isValid()) {
         queryItems.append(qMakePair<QString, QString>(QLatin1String("at"),
                                                       boundingAreaToLatLong(query.searchArea())));
     }

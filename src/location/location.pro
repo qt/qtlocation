@@ -38,6 +38,7 @@ PUBLIC_HEADERS += \
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
+                    qgeoboundingarea_p.h \
                     qgeoboundingbox_p.h \
                     qgeoboundingcircle_p.h \
                     qgeolocation_p.h \

@@ -42,15 +42,11 @@
 #ifndef QGEOBOUNDINGBOX_H
 #define QGEOBOUNDINGBOX_H
 
-#include "qgeoboundingarea.h"
-
-#include <QSharedDataPointer>
+#include <QtLocation/QGeoBoundingArea>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
-
-
 
 class QGeoCoordinate;
 class QGeoBoundingBoxPrivate;
@@ -61,22 +57,18 @@ public:
     QGeoBoundingBox();
     QGeoBoundingBox(const QGeoCoordinate &center, double degreesWidth, double degreesHeight);
     QGeoBoundingBox(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
-
     QGeoBoundingBox(const QGeoBoundingBox &other);
+    QGeoBoundingBox(const QGeoBoundingArea &other);
+
     ~QGeoBoundingBox();
 
     QGeoBoundingBox& operator = (const QGeoBoundingBox &other);
 
-    bool operator == (const QGeoBoundingArea &other) const;
-    bool operator == (const QGeoBoundingBox &other) const;
+    using QGeoBoundingArea::operator==;
+    bool operator==(const QGeoBoundingBox &other) const;
 
-    bool operator != (const QGeoBoundingArea &other) const;
-    bool operator != (const QGeoBoundingBox &other) const;
-
-    QGeoBoundingArea::AreaType type() const;
-
-    bool isValid() const;
-    bool isEmpty() const;
+    using QGeoBoundingArea::operator!=;
+    bool operator!=(const QGeoBoundingBox &other) const;
 
     void setTopLeft(const QGeoCoordinate &topLeft);
     QGeoCoordinate topLeft() const;
@@ -99,7 +91,7 @@ public:
     void setHeight(double degreesHeight);
     double height() const;
 
-    bool contains(const QGeoCoordinate &coordinate) const;
+    using QGeoBoundingArea::contains;
     bool contains(const QGeoBoundingBox &boundingBox) const;
     bool intersects(const QGeoBoundingBox &boundingBox) const;
 
@@ -110,10 +102,9 @@ public:
     QGeoBoundingBox operator | (const QGeoBoundingBox &boundingBox) const;
     QGeoBoundingBox& operator |= (const QGeoBoundingBox &boundingBox);
 
-    QGeoBoundingArea *clone() const;
-
 private:
-    QSharedDataPointer<QGeoBoundingBoxPrivate> d_ptr;
+    inline QGeoBoundingBoxPrivate *d_func();
+    inline const QGeoBoundingBoxPrivate *d_func() const;
 };
 
 inline QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &boundingBox) const

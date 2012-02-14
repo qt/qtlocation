@@ -65,25 +65,50 @@ QT_BEGIN_NAMESPACE
     or if the radius is less than zero.
 */
 
+inline QGeoBoundingCirclePrivate *QGeoBoundingCircle::d_func()
+{
+    return static_cast<QGeoBoundingCirclePrivate *>(d_ptr.data());
+}
+
+inline const QGeoBoundingCirclePrivate *QGeoBoundingCircle::d_func() const
+{
+    return static_cast<const QGeoBoundingCirclePrivate *>(d_ptr.constData());
+}
+
 /*!
     Constructs a new, invalid bounding circle.
 */
 QGeoBoundingCircle::QGeoBoundingCircle()
-        : d_ptr(new QGeoBoundingCirclePrivate()) {}
+:   QGeoBoundingArea(new QGeoBoundingCirclePrivate)
+{
+}
 
 /*!
     Constructs a new bounding circle centered at \a center and with a radius of \a
     radius meters.
 */
 QGeoBoundingCircle::QGeoBoundingCircle(const QGeoCoordinate &center, qreal radius)
-        : d_ptr(new QGeoBoundingCirclePrivate(center, radius)) {}
+{
+    d_ptr = new QGeoBoundingCirclePrivate(center, radius);
+}
 
 /*!
     Constructs a new bounding circle from the contents of \a other.
 */
 QGeoBoundingCircle::QGeoBoundingCircle(const QGeoBoundingCircle &other)
-        : QGeoBoundingArea(other),
-          d_ptr(other.d_ptr) {}
+:   QGeoBoundingArea(other)
+{
+}
+
+/*!
+    Constructs a new bounding circle from the contents of \a other.
+*/
+QGeoBoundingCircle::QGeoBoundingCircle(const QGeoBoundingArea &other)
+:   QGeoBoundingArea(other)
+{
+    if (type() != QGeoBoundingArea::CircleType)
+        d_ptr = new QGeoBoundingCirclePrivate;
+}
 
 /*!
     Destroys this bounding circle.
@@ -104,72 +129,31 @@ QGeoBoundingCircle& QGeoBoundingCircle::operator = (const QGeoBoundingCircle & o
 /*!
     Returns whether this bounding circle is equal to \a other.
 */
-bool QGeoBoundingCircle::operator == (const QGeoBoundingArea &other) const
+bool QGeoBoundingCircle::operator==(const QGeoBoundingCircle &other) const
 {
-    if (other.type() == QGeoBoundingArea::CircleType) {
-        const QGeoBoundingCircle *otherPointer = static_cast<const QGeoBoundingCircle*>(&other);
-        return ((*(d_ptr.constData()) == *(otherPointer->d_ptr.constData())));
-    } else {
-        return false;
-    }
-}
+    Q_D(const QGeoBoundingCircle);
 
-/*!
-    Returns whether this bounding circle is equal to \a other.
-*/
-bool QGeoBoundingCircle::operator == (const QGeoBoundingCircle &other) const
-{
-    return ((*(d_ptr.constData()) == *(other.d_ptr.constData())));
+    return *d == *other.d_func();
 }
 
 /*!
     Returns whether this bounding circle is not equal to \a other.
 */
-bool QGeoBoundingCircle::operator != (const QGeoBoundingArea &other) const {
-    return !(*this == other);
+bool QGeoBoundingCircle::operator!=(const QGeoBoundingCircle &other) const
+{
+    Q_D(const QGeoBoundingCircle);
+
+    return !(*d == *other.d_func());
 }
 
-/*!
-    Returns whether this bounding circle is not equal to \a other.
-*/
-bool QGeoBoundingCircle::operator != (const QGeoBoundingCircle &other) const
+bool QGeoBoundingCirclePrivate::isValid() const
 {
-    return !(this->operator==(other));
+    return center.isValid() && !qIsNaN(radius) && radius >= -1e-7;
 }
 
-/*!
-    Returns QGeoBoundingArea::CircleType to identify this as a
-    QGeoBoundingCircle instance.
-
-    This function is provided to help find the specific type of
-    aQGeoBoundingArea instance.
-*/
-QGeoBoundingArea::AreaType QGeoBoundingCircle::type() const
+bool QGeoBoundingCirclePrivate::isEmpty() const
 {
-    return QGeoBoundingArea::CircleType;
-}
-
-/*!
-    Returns whether this bounding circle is valid.
-
-    A valid bounding circle has a valid center coordinate and a radius
-    greater than or equal to zero.
-*/
-bool QGeoBoundingCircle::isValid() const
-{
-    return (d_ptr->center.isValid()
-            && !qIsNaN(d_ptr->radius)
-            && d_ptr->radius >= -1e-7);
-}
-
-/*!
-    Returns whether this bounding circle has a geometrical area of zero.
-
-    Returns true if this bounding circle is invalid.
-*/
-bool QGeoBoundingCircle::isEmpty() const
-{
-    return (!isValid() || (d_ptr->radius <= 1e-7));
+    return !isValid() || radius <= 1e-7;
 }
 
 /*!
@@ -177,7 +161,9 @@ bool QGeoBoundingCircle::isEmpty() const
 */
 void QGeoBoundingCircle::setCenter(const QGeoCoordinate &center)
 {
-    d_ptr->center = center;
+    Q_D(QGeoBoundingCircle);
+
+    d->center = center;
 }
 
 /*!
@@ -185,7 +171,9 @@ void QGeoBoundingCircle::setCenter(const QGeoCoordinate &center)
 */
 QGeoCoordinate QGeoBoundingCircle::center() const
 {
-    return d_ptr->center;
+    Q_D(const QGeoBoundingCircle);
+
+    return d->center;
 }
 
 /*!
@@ -193,7 +181,9 @@ QGeoCoordinate QGeoBoundingCircle::center() const
 */
 void QGeoBoundingCircle::setRadius(qreal radius)
 {
-    d_ptr->radius = radius;
+    Q_D(QGeoBoundingCircle);
+
+    d->radius = radius;
 }
 
 /*!
@@ -201,23 +191,17 @@ void QGeoBoundingCircle::setRadius(qreal radius)
 */
 qreal QGeoBoundingCircle::radius() const
 {
-    return d_ptr->radius;
+    Q_D(const QGeoBoundingCircle);
+
+    return d->radius;
 }
 
-/*!
-    Returns whether the coordinate \a coordinate is contained within this
-    bounding circle.
-*/
-bool QGeoBoundingCircle::contains(const QGeoCoordinate &coordinate) const
+bool QGeoBoundingCirclePrivate::contains(const QGeoCoordinate &coordinate) const
 {
-
     if (!isValid() || !coordinate.isValid())
         return false;
 
-    if (d_ptr->center.distanceTo(coordinate) <= d_ptr->radius)
-        return true;
-
-    return false;
+    return center.distanceTo(coordinate) <= radius;
 }
 
 /*!
@@ -231,8 +215,10 @@ void QGeoBoundingCircle::translate(double degreesLatitude, double degreesLongitu
 {
     // TODO handle dlat, dlon larger than 360 degrees
 
-    double lat = d_ptr->center.latitude();
-    double lon = d_ptr->center.longitude();
+    Q_D(QGeoBoundingCircle);
+
+    double lat = d->center.latitude();
+    double lon = d->center.longitude();
 
     lat += degreesLatitude;
     lon += degreesLongitude;
@@ -258,7 +244,7 @@ void QGeoBoundingCircle::translate(double degreesLatitude, double degreesLongitu
             lon -= 180;
     }
 
-    d_ptr->center = QGeoCoordinate(lat, lon);
+    d->center = QGeoCoordinate(lat, lon);
 }
 
 /*!
@@ -277,44 +263,40 @@ QGeoBoundingCircle QGeoBoundingCircle::translated(double degreesLatitude, double
     return result;
 }
 
-/*!
-    Returns a pointer to a deep copy of this bounding circle.
-*/
-QGeoBoundingArea *QGeoBoundingCircle::clone() const
-{
-    return new QGeoBoundingCircle(*this);
-}
-
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoBoundingCirclePrivate::QGeoBoundingCirclePrivate()
-    : QSharedData(),
-    radius(-1.0) {}
+:   QGeoBoundingAreaPrivate(QGeoBoundingArea::CircleType), radius(-1.0)
+{
+}
 
 QGeoBoundingCirclePrivate::QGeoBoundingCirclePrivate(const QGeoCoordinate &center, qreal radius)
-        : QSharedData(),
-        center(center),
-        radius(radius) {}
+:   QGeoBoundingAreaPrivate(QGeoBoundingArea::CircleType), center(center), radius(radius)
+{
+}
 
 QGeoBoundingCirclePrivate::QGeoBoundingCirclePrivate(const QGeoBoundingCirclePrivate &other)
-        : QSharedData(),
-        center(other.center),
-        radius(other.radius) {}
+:   QGeoBoundingAreaPrivate(QGeoBoundingArea::CircleType), center(other.center),
+    radius(other.radius)
+{
+}
 
 QGeoBoundingCirclePrivate::~QGeoBoundingCirclePrivate() {}
 
-QGeoBoundingCirclePrivate& QGeoBoundingCirclePrivate::operator= (const QGeoBoundingCirclePrivate & other)
+QGeoBoundingAreaPrivate *QGeoBoundingCirclePrivate::clone() const
 {
-    center = other.center;
-    radius = other.radius;
-
-    return *this;
+    return new QGeoBoundingCirclePrivate(*this);
 }
 
-bool QGeoBoundingCirclePrivate::operator== (const QGeoBoundingCirclePrivate &other) const
+bool QGeoBoundingCirclePrivate::operator==(const QGeoBoundingAreaPrivate &other) const
 {
-    return ((center == other.center) && (radius == other.radius));
+    if (!QGeoBoundingAreaPrivate::operator==(other))
+        return false;
+
+    const QGeoBoundingCirclePrivate &otherCircle = static_cast<const QGeoBoundingCirclePrivate &>(other);
+
+    return radius == otherCircle.radius && center == otherCircle.center;
 }
 
 QT_END_NAMESPACE

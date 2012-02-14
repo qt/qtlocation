@@ -131,17 +131,14 @@ void tst_QGeocodingManager::search()
     QString search = "Berlin. Invaliendenstrasse";
     int limit = 10;
     int offset = 2;
-    QGeoBoundingBox *bounds = new QGeoBoundingBox ();
 
-    QGeocodeReply * reply = qgeocodingmanager->geocode(search, limit,offset,bounds);
+    QGeocodeReply * reply = qgeocodingmanager->geocode(search, limit,offset);
 
     QCOMPARE(reply->errorString(),search);
     QCOMPARE(signalfinished->count(),1);
     QCOMPARE(signalerror->count(),0);
 
     delete reply;
-    delete bounds;
-
 }
 
 void tst_QGeocodingManager::geocode()
@@ -153,16 +150,13 @@ void tst_QGeocodingManager::geocode()
     QString city = "Berlin";
     address->setCity(city);
 
-    QGeoBoundingBox *bounds = new QGeoBoundingBox ();
-
-    QGeocodeReply *reply = qgeocodingmanager->geocode(*address,bounds);
+    QGeocodeReply *reply = qgeocodingmanager->geocode(*address);
 
     QCOMPARE(reply->errorString(),city);
     QCOMPARE(signalfinished->count(),1);
     QCOMPARE(signalerror->count(),0);
 
     delete address;
-    delete bounds;
     delete reply;
 }
 
@@ -172,16 +166,14 @@ void tst_QGeocodingManager::reverseGeocode()
     QCOMPARE(signalfinished->count(),0);
 
     QGeoCoordinate *coordinate = new QGeoCoordinate (34.34 , 56.65);
-    QGeoBoundingBox *bounds = new QGeoBoundingBox ();
 
-    QGeocodeReply *reply = qgeocodingmanager->reverseGeocode(*coordinate,bounds);
+    QGeocodeReply *reply = qgeocodingmanager->reverseGeocode(*coordinate);
 
     QCOMPARE(reply->errorString(),coordinate->toString());
     QCOMPARE(signalfinished->count(),1);
     QCOMPARE(signalerror->count(),0);
 
     delete coordinate;
-    delete bounds;
     delete reply;
 
 

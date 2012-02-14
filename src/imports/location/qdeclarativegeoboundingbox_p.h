@@ -69,7 +69,7 @@ public:
     explicit QDeclarativeGeoBoundingBox(const QGeoBoundingBox &box, QObject *parent = 0);
     void setBox(const QGeoBoundingBox& box);
     QGeoBoundingBox box();
-    virtual QGeoBoundingArea *area() const;
+    QGeoBoundingArea area() const;
 
     Q_INVOKABLE bool contains(QDeclarativeCoordinate* coordinate);
     QDeclarativeCoordinate* bottomLeft();

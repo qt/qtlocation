@@ -29,6 +29,7 @@ SUBDIRS += geotestplugin \
            qgeocodingmanagerplugins \
            qgeoaddress \
            qgeoareamonitor \
+           qgeoboundingarea \
            qgeoboundingbox \
            qgeoboundingcircle \
            qgeocodereply \

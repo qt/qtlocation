@@ -42,37 +42,52 @@
 #ifndef QGEOBOUNDINGAREA_H
 #define QGEOBOUNDINGAREA_H
 
-#include "qgeocoordinate.h"
-
-#include <QSharedDataPointer>
+#include <QtCore/QSharedDataPointer>
+#include <QtLocation/QGeoCoordinate>
 
 QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
+class QGeoBoundingAreaPrivate;
 
 class Q_LOCATION_EXPORT QGeoBoundingArea
 {
 public:
+    QGeoBoundingArea();
+    QGeoBoundingArea(const QGeoBoundingArea &other);
+    ~QGeoBoundingArea();
+
     enum AreaType {
+        UnknownType,
         BoxType,
         CircleType
     };
 
-    virtual ~QGeoBoundingArea();
+    AreaType type() const;
 
-    virtual AreaType type() const = 0;
+    bool isValid() const;
+    bool isEmpty() const;
+    bool contains(const QGeoCoordinate &coordinate) const;
 
-    virtual bool isValid() const = 0;
-    virtual bool isEmpty() const = 0;
-    virtual bool contains(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoBoundingArea *clone() const = 0;
-    virtual bool operator == (const QGeoBoundingArea &other) const = 0;
-    virtual bool operator != (const QGeoBoundingArea &other) const = 0;
+    bool operator==(const QGeoBoundingArea &other) const;
+    bool operator!=(const QGeoBoundingArea &other) const;
+
+    QGeoBoundingArea &operator=(const QGeoBoundingArea &other);
+
+protected:
+    QGeoBoundingArea(QGeoBoundingAreaPrivate *d);
+
+    QSharedDataPointer<QGeoBoundingAreaPrivate> d_ptr;
+
+private:
+    inline QGeoBoundingAreaPrivate *d_func();
+    inline const QGeoBoundingAreaPrivate *d_func() const;
 };
 
 QT_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QGeoBoundingArea)
 
 QT_END_HEADER
 

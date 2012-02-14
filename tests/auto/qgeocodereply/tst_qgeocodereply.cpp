@@ -277,9 +277,9 @@ void tst_QGeocodeReply::viewport()
 
     qgeoboundingbox = new QGeoBoundingBox (*qgeocoordinate, 0.5 , 0.5);
 
-    reply->callSetViewport(qgeoboundingbox);
+    reply->callSetViewport(*qgeoboundingbox);
 
-    QCOMPARE (reply->viewport(), static_cast<QGeoBoundingArea*>(qgeoboundingbox));
+    QCOMPARE (reply->viewport(), static_cast<const QGeoBoundingArea &>(*qgeoboundingbox));
 
     delete qgeocoordinate;
     delete qgeoboundingbox;

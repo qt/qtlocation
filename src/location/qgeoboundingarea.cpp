@@ -40,8 +40,23 @@
 ****************************************************************************/
 
 #include "qgeoboundingarea.h"
+#include "qgeoboundingarea_p.h"
 
 QT_BEGIN_NAMESPACE
+
+QGeoBoundingAreaPrivate::QGeoBoundingAreaPrivate(QGeoBoundingArea::AreaType type)
+:   type(type)
+{
+}
+
+QGeoBoundingAreaPrivate::~QGeoBoundingAreaPrivate()
+{
+}
+
+bool QGeoBoundingAreaPrivate::operator==(const QGeoBoundingAreaPrivate &other) const
+{
+    return type == other.type;
+}
 
 /*!
     \class QGeoBoundingArea
@@ -69,59 +84,125 @@ QT_BEGIN_NAMESPACE
     \value CircleType A circular bounding area.
 */
 
+inline QGeoBoundingAreaPrivate *QGeoBoundingArea::d_func()
+{
+    return static_cast<QGeoBoundingAreaPrivate *>(d_ptr.data());
+}
+
+inline const QGeoBoundingAreaPrivate *QGeoBoundingArea::d_func() const
+{
+    return static_cast<const QGeoBoundingAreaPrivate *>(d_ptr.constData());
+}
+
+QGeoBoundingArea::QGeoBoundingArea()
+{
+}
+
+QGeoBoundingArea::QGeoBoundingArea(const QGeoBoundingArea &other)
+:   d_ptr(other.d_ptr)
+{
+}
+
+QGeoBoundingArea::QGeoBoundingArea(QGeoBoundingAreaPrivate *d)
+:   d_ptr(d)
+{
+}
+
 /*!
     Destroys this bounding area.
 */
-QGeoBoundingArea::~QGeoBoundingArea() {}
+QGeoBoundingArea::~QGeoBoundingArea()
+{
+}
 
 /*!
-\fn virtual QGeoBoundingArea::AreaType QGeoBoundingArea::type() const
-
-Returns the type of this area.
+    Returns the type of this area.
 */
+QGeoBoundingArea::AreaType QGeoBoundingArea::type() const
+{
+    Q_D(const QGeoBoundingArea);
+
+    if (d)
+        return d->type;
+    else
+        return UnknownType;
+}
 
 /*!
-\fn bool QGeoBoundingArea::isValid() const
+    Returns whether this bounding area is valid.
 
-Returns whether this bounding area is valid.
-
-An area is considered to be invalid if some of the data that is required to
-unambiguously describe the area has not been set or has been set to an
-unsuitable value.
+    An area is considered to be invalid if some of the data that is required to
+    unambiguously describe the area has not been set or has been set to an
+    unsuitable value.
 */
+bool QGeoBoundingArea::isValid() const
+{
+    Q_D(const QGeoBoundingArea);
+
+    if (d)
+        return d->isValid();
+    else
+        return false;
+}
 
 /*!
-\fn bool QGeoBoundingArea::isEmpty() const
+    Returns whether this bounding area is empty.
 
-Returns whether this bounding area is empty.
-
-An empty area is a region which has a geometrical area of 0.
+    An empty area is a region which has a geometrical area of 0.
 */
+bool QGeoBoundingArea::isEmpty() const
+{
+    Q_D(const QGeoBoundingArea);
+
+    if (d)
+        return d->isEmpty();
+    else
+        return true;
+}
 
 /*!
-\fn bool QGeoBoundingArea::contains(const QGeoCoordinate &coordinate) const
-
-Returns whether the coordinate \a coordinate is contained within this
-area.
+    Returns whether the coordinate \a coordinate is contained within this area.
 */
+bool QGeoBoundingArea::contains(const QGeoCoordinate &coordinate) const
+{
+    Q_D(const QGeoBoundingArea);
+
+    if (d)
+        return d->contains(coordinate);
+    else
+        return false;
+}
+
 
 /*!
-\fn QGeoBoundingArea* QGeoBoundingArea::clone() const
-
-Creates a new QGeoBoundingArea that is a deep copy of this bounding area.
+    Returns true if the \a other bounding area is equivalent to this bounding area, otherwise
+    returns false
 */
+bool QGeoBoundingArea::operator==(const QGeoBoundingArea &other) const
+{
+    Q_D(const QGeoBoundingArea);
 
-/*!
-\fn bool QGeoBoundingArea::operator==(const QGeoBoundingArea &other) const
+    if (d == other.d_func())
+        return true;
 
-  Returns true if the \a other bounding area is equivalent to this bounding area,
-  otherwise returns false.
-*/
+    if (d && !other.d_func())
+        return false;
 
-/*!
-    \fn bool QGeoBoundingArea::operator!=(const QGeoBoundingArea &other) const
-    Returns true if \a other is not equivalent to this bounding area,
-    otherwise returns false.
-*/
+    if (!d && other.d_func())
+        return false;
+
+    return *d == *other.d_func();
+}
+
+bool QGeoBoundingArea::operator!=(const QGeoBoundingArea &other) const
+{
+    return !(*this == other);
+}
+
+QGeoBoundingArea &QGeoBoundingArea::operator=(const QGeoBoundingArea &other)
+{
+    d_ptr = other.d_ptr;
+    return *this;
+}
 
 QT_END_NAMESPACE

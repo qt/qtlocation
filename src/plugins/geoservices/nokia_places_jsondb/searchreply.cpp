@@ -70,27 +70,25 @@ void SearchReply::start()
     connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
     connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
 
-    if (request().searchArea() != 0) {
-        QGeoBoundingArea *searchArea = request().searchArea();
-        if (searchArea->type() == QGeoBoundingArea::BoxType) {
-            QGeoBoundingBox *box = static_cast<QGeoBoundingBox *>(searchArea);
-            if (!box->isValid()) {
-                triggerDone(QPlaceReply::BadArgumentError,
-                                QString::fromLatin1("Bounding box search area is invalid"));
-                return;
-            }
-        } else if (searchArea->type() == QGeoBoundingArea::CircleType) {
-            QGeoBoundingCircle *circle = static_cast<QGeoBoundingCircle *>(searchArea);
-            if (!circle->center().isValid() || qIsNaN(circle->center().latitude()) || qIsNaN(circle->center().longitude())) {
-                triggerDone(QPlaceReply::BadArgumentError,
-                            QString::fromLatin1("The center of the search area is an invalid coordinate"));
-                return;
-            }
-            if (circle->contains(QGeoCoordinate(90,0)) || circle->contains(QGeoCoordinate(-90,0))) {
-                triggerDone(QPlaceReply::BadArgumentError,
-                            QString::fromLatin1("The search area contains the north or south pole"));
-                return;
-            }
+    if (request().searchArea().type() == QGeoBoundingArea::BoxType) {
+        QGeoBoundingBox box(request().searchArea());
+        if (!box.isValid()) {
+            triggerDone(QPlaceReply::BadArgumentError,
+                        QString::fromLatin1("Bounding box search area is invalid"));
+            return;
+        }
+    } else if (request().searchArea().type() == QGeoBoundingArea::CircleType) {
+        QGeoBoundingCircle circle(request().searchArea());
+        if (!circle.center().isValid() || qIsNaN(circle.center().latitude()) || qIsNaN(circle.center().longitude())) {
+            triggerDone(QPlaceReply::BadArgumentError,
+                        QString::fromLatin1("The center of the search area is an invalid coordinate"));
+            return;
+        }
+
+        if (circle.contains(QGeoCoordinate(90,0)) || circle.contains(QGeoCoordinate(-90,0))) {
+            triggerDone(QPlaceReply::BadArgumentError,
+                        QString::fromLatin1("The search area contains the north or south pole"));
+            return;
         }
     }
 
@@ -148,79 +146,76 @@ void SearchReply::processResponse(int id, const QVariant &data)
         QPlaceSearchResult result;
         result.setType(QPlaceSearchResult::PlaceResult);
 
-        if (request().searchArea() != 0) {
-            QGeoBoundingArea *searchArea = request().searchArea();
-            if (searchArea->type() == QGeoBoundingArea::CircleType) {
-                QGeoBoundingCircle *circle = static_cast<QGeoBoundingCircle*>(searchArea);
+        if (request().searchArea().type() == QGeoBoundingArea::CircleType) {
+            QGeoBoundingCircle circle(request().searchArea());
 
-                QPlace place;
-                for (int i=0; i < places.count(); ++i) {
-                    place = places.at(i);
-                    qreal dist = circle->center().distanceTo(place.location().coordinate());
-                    if (dist < circle->radius() || qFuzzyCompare(dist, circle->radius()) || circle->radius() < 0.0) {
-                        result.setDistance(dist);
-                        result.setPlace(place);
-
-                        if (request().relevanceHint() == QPlaceSearchRequest::DistanceHint) {
-                            //TODO: we can optimize this insertion sort
-                            bool added = false;
-                            for (int i=0; i < results.count(); ++i) {
-                                if (result.distance() < results.at(i).distance() || qFuzzyCompare(result.distance(),results.at(i).distance())) {
-                                    results.insert(i, result);
-                                    added = true;
-                                    break;
-                                }
-                            }
-                            if (!added)
-                                results.append(result);
-
-                        } else {
-                            results.append(result);
-                        }
-                    }
-                }
-
-                //TODO: we can optimize this using a bounding box to cull candidates
-                //      and then use distance comparisons for the rest.
-
-            } else if (searchArea->type() == QGeoBoundingArea::BoxType) {
-                //There seem to be some issues with using the comparison operators
-                //so for now we filter in the plugin code
-                QGeoBoundingBox *box = static_cast<QGeoBoundingBox *>(searchArea);
-                double tly = box->topLeft().latitude();
-                double bry = box->bottomRight().latitude();
-                double tlx = box->topLeft().longitude();
-                double brx = box->bottomRight().longitude();
-
-                foreach (const QPlace &place, places) {
-                    const QGeoCoordinate& coord = place.location().coordinate();
-
-                    if (coord.latitude() > tly)
-                        places.removeAll(place);
-                    if (coord.latitude() < bry)
-                        places.removeAll(place);
-
-                    bool lonWrap = (tlx > brx); //box wraps over the dateline
-
-                    if (!lonWrap) {
-                        if (coord.longitude() < tlx || coord.longitude() > brx) {
-                            places.removeAll(place);
-                        }
-                    } else {
-                        if (coord.longitude() < tlx && coord.longitude() > brx) {
-                            places.removeAll(place);
-                        }
-                    }
-                }
-
-                const QGeoCoordinate bCenter = box->center();
-                foreach (const QPlace &place, places) {
-                    const QGeoCoordinate coord = place.location().coordinate();
-                    qreal distance = bCenter.distanceTo(coord);
+            QPlace place;
+            for (int i=0; i < places.count(); ++i) {
+                place = places.at(i);
+                qreal dist = circle.center().distanceTo(place.location().coordinate());
+                if (dist < circle.radius() || qFuzzyCompare(dist, circle.radius()) || circle.radius() < 0.0) {
+                    result.setDistance(dist);
                     result.setPlace(place);
-                    result.setDistance(distance);
-                    results.append(result);
+
+                    if (request().relevanceHint() == QPlaceSearchRequest::DistanceHint) {
+                        //TODO: we can optimize this insertion sort
+                        bool added = false;
+                        for (int i=0; i < results.count(); ++i) {
+                            if (result.distance() < results.at(i).distance() || qFuzzyCompare(result.distance(),results.at(i).distance())) {
+                                results.insert(i, result);
+                                added = true;
+                                break;
+                            }
+                        }
+                        if (!added)
+                            results.append(result);
+
+                    } else {
+                        results.append(result);
+                    }
                 }
+            }
+
+            //TODO: we can optimize this using a bounding box to cull candidates
+            //      and then use distance comparisons for the rest.
+
+        } else if (request().searchArea().type() == QGeoBoundingArea::BoxType) {
+            //There seem to be some issues with using the comparison operators
+            //so for now we filter in the plugin code
+            QGeoBoundingBox box(request().searchArea());
+            double tly = box.topLeft().latitude();
+            double bry = box.bottomRight().latitude();
+            double tlx = box.topLeft().longitude();
+            double brx = box.bottomRight().longitude();
+
+            foreach (const QPlace &place, places) {
+                const QGeoCoordinate& coord = place.location().coordinate();
+
+                if (coord.latitude() > tly)
+                    places.removeAll(place);
+                if (coord.latitude() < bry)
+                    places.removeAll(place);
+
+                bool lonWrap = (tlx > brx); //box wraps over the dateline
+
+                if (!lonWrap) {
+                    if (coord.longitude() < tlx || coord.longitude() > brx) {
+                        places.removeAll(place);
+                    }
+                } else {
+                    if (coord.longitude() < tlx && coord.longitude() > brx) {
+                        places.removeAll(place);
+                    }
+                }
+            }
+
+            const QGeoCoordinate bCenter = box.center();
+            foreach (const QPlace &place, places) {
+                const QGeoCoordinate coord = place.location().coordinate();
+                qreal distance = bCenter.distanceTo(coord);
+                result.setPlace(place);
+                result.setDistance(distance);
+                results.append(result);
             }
         }
 

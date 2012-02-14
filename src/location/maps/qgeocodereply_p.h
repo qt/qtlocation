@@ -74,7 +74,7 @@ public:
     QString errorString;
     bool isFinished;
 
-    QGeoBoundingArea* viewport;
+    QGeoBoundingArea viewport;
     QList<QGeoLocation> locations;
 
     int limit;

@@ -62,7 +62,7 @@ public:
 
     QString searchTerm;
     QList<QPlaceCategory> categories;
-    QGeoBoundingArea  *searchArea;
+    QGeoBoundingArea searchArea;
     int dymNumber;
     QtLocation::VisibilityScope visibilityScope;
     QPlaceSearchRequest::RelevanceHint relevanceHint;
@@ -71,10 +71,9 @@ public:
 };
 
 QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
-    :   QSharedData(),
-        searchArea(0), dymNumber(0),
-        visibilityScope(QtLocation::UnspecifiedVisibility), relevanceHint(QPlaceSearchRequest::UnspecifiedHint),
-        limit(-1), offset(0)
+:   QSharedData(), dymNumber(0),
+    visibilityScope(QtLocation::UnspecifiedVisibility), relevanceHint(QPlaceSearchRequest::UnspecifiedHint),
+    limit(-1), offset(0)
 {
 }
 
@@ -82,22 +81,17 @@ QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequest
     : QSharedData(other),
       searchTerm(other.searchTerm),
       categories(other.categories),
+      searchArea(other.searchArea),
       dymNumber(other.dymNumber),
       visibilityScope(other.visibilityScope),
       relevanceHint(other.relevanceHint),
       limit(other.limit),
       offset(other.offset)
 {
-
-    if (other.searchArea)
-        searchArea = other.searchArea->clone();
-    else
-        searchArea = 0;
 }
 
 QPlaceSearchRequestPrivate::~QPlaceSearchRequestPrivate()
 {
-    delete searchArea;
 }
 
 QPlaceSearchRequestPrivate &QPlaceSearchRequestPrivate::operator=(const QPlaceSearchRequestPrivate &other)
@@ -105,10 +99,7 @@ QPlaceSearchRequestPrivate &QPlaceSearchRequestPrivate::operator=(const QPlaceSe
     if (this != &other) {
         searchTerm = other.searchTerm;
         categories = other.categories;
-        if (other.searchArea)
-            searchArea = other.searchArea->clone();
-        else
-            searchArea = 0;
+        searchArea = other.searchArea;
         dymNumber = other.dymNumber;
         visibilityScope = other.visibilityScope;
         relevanceHint = other.relevanceHint;
@@ -121,28 +112,14 @@ QPlaceSearchRequestPrivate &QPlaceSearchRequestPrivate::operator=(const QPlaceSe
 
 bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &other) const
 {
-    bool searchAreaMatch = false;
-    if ((searchArea == 0) && (other.searchArea == 0)) {
-        searchAreaMatch = true;
-    } else if (searchArea && other.searchArea) {
-        if (*searchArea == *(other.searchArea))
-            searchAreaMatch = true;
-        else
-            searchAreaMatch = false;
-    } else {
-        searchAreaMatch = false;
-    }
-
-    return (
-            searchTerm == other.searchTerm
-            && categories == other.categories
-            && dymNumber == other.dymNumber
-            && searchAreaMatch
-            && visibilityScope == other.visibilityScope
-            && relevanceHint == other.relevanceHint
-            && limit == other.limit
-            && offset == other.offset
-    );
+    return searchTerm == other.searchTerm &&
+           categories == other.categories &&
+           searchArea == other.searchArea &&
+           dymNumber == other.dymNumber &&
+           visibilityScope == other.visibilityScope &&
+           relevanceHint == other.relevanceHint &&
+           limit == other.limit &&
+           offset == other.offset;
 }
 
 void QPlaceSearchRequestPrivate::clear()
@@ -151,8 +128,7 @@ void QPlaceSearchRequestPrivate::clear()
     offset = 0;
     searchTerm.clear();
     categories.clear();
-    delete searchArea;
-    searchArea = 0;
+    searchArea = QGeoBoundingArea();
     dymNumber = 0;
     visibilityScope = QtLocation::UnspecifiedVisibility;
     relevanceHint = QPlaceSearchRequest::UnspecifiedHint;
@@ -315,25 +291,21 @@ void QPlaceSearchRequest::setCategories(const QList<QPlaceCategory> &categories)
 }
 
 /*!
-    Returns search area.  The default search area is a null pointer.
+    Returns the search area which will be used to limit search results.  The default search area is
+    an invalid QGeoBoundingArea, indicating that no specific search area is defined.
 */
-QGeoBoundingArea *QPlaceSearchRequest::searchArea() const
+QGeoBoundingArea QPlaceSearchRequest::searchArea() const
 {
     Q_D(const QPlaceSearchRequest);
     return d->searchArea;
 }
 
 /*!
-    Sets the search request to search within the given \a area.  Ownership of the \a area is
-    transferred to the request,  who is now responsible for pointer deletion.  If a new \a area
-    is being assigned, the old area is deleted.
+    Sets the search request to search within the given \a area.
 */
-void QPlaceSearchRequest::setSearchArea(QGeoBoundingArea *area)
+void QPlaceSearchRequest::setSearchArea(const QGeoBoundingArea &area)
 {
     Q_D(QPlaceSearchRequest);
-    if (d->searchArea != area)
-        delete d->searchArea;
-
     d->searchArea = area;
 }
 

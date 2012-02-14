@@ -51,7 +51,8 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeocodeReplyNokia::QGeocodeReplyNokia(QNetworkReply *reply, int limit, int offset, QGeoBoundingArea *viewport, QObject *parent)
+QGeocodeReplyNokia::QGeocodeReplyNokia(QNetworkReply *reply, int limit, int offset,
+                                       const QGeoBoundingArea &viewport, QObject *parent)
         : QGeocodeReply(parent),
         m_reply(reply)
 {
@@ -102,10 +103,10 @@ void QGeocodeReplyNokia::networkFinished()
     QGeoCodeXmlParser parser;
     if (parser.parse(m_reply)) {
         QList<QGeoLocation> locations = parser.results();
-        QGeoBoundingArea *bounds = viewport();
-        if (bounds) {
+        QGeoBoundingArea bounds = viewport();
+        if (bounds.isValid()) {
             for (int i = locations.size() - 1; i >= 0; --i) {
-                if (!bounds->contains(locations[i].coordinate()))
+                if (!bounds.contains(locations[i].coordinate()))
                     locations.removeAt(i);
             }
         }
