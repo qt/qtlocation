@@ -866,7 +866,8 @@ void QDeclarativeGeoRouteQuery::clearWaypoints()
 /*!
     \qmlmethod QtLocation5::RouteModel::setFeatureWeight(FeatureType, FeatureWeight)
 
-    Defines the weight to associate with a feature during the planning of a route.
+    Defines the weight to associate with a feature during the planning of a
+    route.
 
     Following lists the possible feature weights:
 
@@ -885,15 +886,7 @@ void QDeclarativeGeoRouteQuery::clearWaypoints()
 void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType featureType, FeatureWeight featureWeight)
 {
     if (featureType == NoFeature && !request_.featureTypes().isEmpty()) {
-        // reset all feature types.
-        QList<QGeoRouteRequest::FeatureType> featureTypes = request_.featureTypes();
-        for (int i = 0; i < featureTypes.count(); ++i) {
-            request_.setFeatureWeight(featureTypes.at(i), QGeoRouteRequest::NeutralFeatureWeight);
-        }
-        if (complete_) {
-            emit featureTypesChanged();
-            emit queryDetailsChanged();
-        }
+        resetFeatureWeights();
         return;
     }
 
@@ -907,6 +900,24 @@ void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType featureType, Featur
     if (complete_ && ((originalWeight == NeutralFeatureWeight) || (featureWeight == NeutralFeatureWeight))) {
         // featureTypes should now give a different list, because the original and new weight
         // were not same, and other one was neutral weight
+        emit featureTypesChanged();
+        emit queryDetailsChanged();
+    }
+}
+
+/*!
+    \qmlmethod QtLocation5::RouteModel::resetFeatureWeights()
+
+    Resets all feature weights to their default state (NeutralFeatureWeight).
+*/
+void QDeclarativeGeoRouteQuery::resetFeatureWeights()
+{
+    // reset all feature types.
+    QList<QGeoRouteRequest::FeatureType> featureTypes = request_.featureTypes();
+    for (int i = 0; i < featureTypes.count(); ++i) {
+        request_.setFeatureWeight(featureTypes.at(i), QGeoRouteRequest::NeutralFeatureWeight);
+    }
+    if (complete_) {
         emit featureTypesChanged();
         emit queryDetailsChanged();
     }

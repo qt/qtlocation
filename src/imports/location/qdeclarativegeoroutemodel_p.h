@@ -274,6 +274,7 @@ public:
 
     Q_INVOKABLE void setFeatureWeight(FeatureType featureType, FeatureWeight featureWeight);
     Q_INVOKABLE int featureWeight(FeatureType featureType);
+    Q_INVOKABLE void resetFeatureWeights();
 
     /*
     feature weights
