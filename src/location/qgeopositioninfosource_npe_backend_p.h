@@ -58,8 +58,7 @@
 #include <qlocalsocket.h>
 #include <qeventloop.h>
 #include <qtimer.h>
-
-#include <QtAddOnJsonStream/jsonstream-global.h>
+#include <QtAddOnJsonStream/jsonstream.h>
 
 QT_BEGIN_NAMESPACE_JSONSTREAM
 class JsonStream;
@@ -102,7 +101,7 @@ Q_SIGNALS:
     void lastKnownPositionReceived();
 
 private Q_SLOTS:
-    void onStreamReceived(const QVariantMap& map);
+    void onStreamReceived(const QJsonObject &jsonObject);
     void onSocketConnected();
     void onSocketDisconnected();
     void requestTimerExpired();

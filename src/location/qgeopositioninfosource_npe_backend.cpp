@@ -42,8 +42,6 @@
 #include "qgeopositioninfosource_npe_backend_p.h"
 #include <sys/stat.h>
 
-#include <QtAddOnJsonStream/jsonstream.h>
-
 QT_USE_NAMESPACE_JSONSTREAM
 
 // API for socket communication towards locationd
@@ -84,6 +82,7 @@ QGeoPositionInfoSourceNpeBackend::QGeoPositionInfoSourceNpeBackend(QObject *pare
 {
     requestTimer = new QTimer(this);
     QObject::connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimerExpired()));
+    qRegisterMetaType<QJsonObject>("QJsonObject");
 }
 
 
@@ -97,7 +96,7 @@ bool QGeoPositionInfoSourceNpeBackend::init()
             connect(mSocket, SIGNAL(disconnected()), this, SLOT(onSocketDisconnected()));
             mStream = new JsonStream(mSocket);
             if (mStream) {
-                connect(mStream, SIGNAL(messageReceived(const QVariantMap&)), this, SLOT(onStreamReceived(const QVariantMap&)), Qt::QueuedConnection);
+                connect(mStream, SIGNAL(messageReceived(const QJsonObject&)), this, SLOT(onStreamReceived(const QJsonObject&)), Qt::QueuedConnection);
             }
             mSocket->connectToServer((QLatin1String)klocationdSocketName);
             return(mSocket->waitForConnected(500)); // wait up to 0.5 seconds to get connected, otherwise return false
@@ -264,9 +263,10 @@ void QGeoPositionInfoSourceNpeBackend::shutdownRequestSession()
 }
 
 
-void QGeoPositionInfoSourceNpeBackend::onStreamReceived(const QVariantMap& map)
+void QGeoPositionInfoSourceNpeBackend::onStreamReceived(const QJsonObject& jsonObject)
 {
     // this slot handles the communication received from locationd socket
+    QVariantMap map = jsonObject.toVariantMap();
     if (map.contains(JsonDbString::kActionStr)) {
         QString action = map.value(JsonDbString::kActionStr).toString();
 
