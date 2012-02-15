@@ -61,6 +61,8 @@
 #include <QtSystemInfo/QNetworkInfo>
 #endif
 
+#include <map>
+
 #define LARGE_TILE_DIMENSION 256
 
 #define DISK_CACHE_MAX_SIZE 50*1024*1024  //50MB
