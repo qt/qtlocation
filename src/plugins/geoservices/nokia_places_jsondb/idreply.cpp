@@ -41,14 +41,11 @@
 
 #include "idreply.h"
 #include "qplacemanagerengine_jsondb.h"
-#include "jsonconverter.h"
+#include "jsondb.h"
 
-#include <QtJsonDbCompat/jsondb-client.h>
-#include <QtJsonDbCompat/jsondb-error.h>
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QUuid>
-
 
 IdReply::IdReply(QPlaceIdReply::OperationType operationType,
                  QPlaceManagerEngineJsonDb *engine)
@@ -106,48 +103,21 @@ void SavePlaceReply::setPlace(const QPlace &place)
 
 void SavePlaceReply::start()
 {
-    connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
-    connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
-
     if (m_place.visibility() & QtLocation::PublicVisibility) {
         triggerDone(QPlaceReply::UnsupportedError, QString::fromLatin1("Saving to public scope in unsupported"));
         return;
     } else {
-        if (m_place.placeId().isEmpty()) {
-            enterGetCategoriesState();
-        } else {
-            m_state = SavePlaceReply::CheckIfExists;
-            m_reqId = db()->query(QString::fromLatin1("[?%1=\"%2\"][?%3 = \"%4\"]").arg(JsonConverter::Type).arg(JsonConverter::PlaceType)
-                                  .arg(JsonConverter::Uuid).arg(m_place.placeId()));
-        }
+        if (m_place.placeId().isEmpty())
+            db()->getCategories(m_place.categories(), this, SLOT(getCategoriesForPlaceFinished()));
+        else
+            db()->getPlace(m_place.placeId(), this, SLOT(checkIfExistsFinished()));
     }
 }
 
-void SavePlaceReply::enterGetCategoriesState()
+void SavePlaceReply::getIcons()
 {
-    QVariantList categoryUuids;
-    foreach (const QPlaceCategory &category, m_place.categories())
-        categoryUuids.append(category.categoryId());
-
-    QString queryString = QString::fromLatin1("[?%1=\"%2\"]").arg(JsonConverter::Type).arg(JsonConverter::CategoryType)
-            + QString::fromLatin1("[?%1 in %categoryUuids]").arg(JsonConverter::Uuid);
-
-    QVariantMap bindingsMap;
-    bindingsMap.insert(QLatin1String("categoryUuids"), categoryUuids);
-
-    QVariantMap queryObj;
-    queryObj.insert(JsonConverter::Query, queryString);
-    queryObj.insert(JsonConverter::Bindings, bindingsMap);
-
-    m_state = SavePlaceReply::GetCategories;
-    m_reqId = db()->find(queryObj);
-}
-
-void SavePlaceReply::enterGetIconsState()
-{
-    m_state = SavePlaceReply::GetIcons;
     QStringList prefixes;
-    prefixes << "small" << "medium" << "large" << "fullscreen";
+    prefixes << QStringLiteral("small") << QStringLiteral("medium") << QStringLiteral("large") << QStringLiteral("fullscreen");
 
     QList<QUrl> uniqueInputUrls; //unique source urls that have been supplied without associated destinations
     foreach (const QString &prefix, prefixes) {
@@ -203,9 +173,6 @@ void SavePlaceReply::processIcons()
         currIconIndex++;
         return;
     } else {
-        QVariantMap thumbnailsMap;
-        QVariantMap thumbnailMap;
-
         bool error = false;
 
         //try to set destinations for icons which were not already set
@@ -217,26 +184,29 @@ void SavePlaceReply::processIcons()
 
         //try to set small,medium and large destinations if they haven't already been explicitly specified
         //and there are icons with unspecified destinations. (essentially we are creating data urls if necessary)
-        if (!specifiedDestinations.contains(Icon::SmallDestination)) {
-            if (!trySetDestination(Icon::SmallDestination))
-                return;
-        }
+        if (!specifiedDestinations.contains(Icon::SmallDestination))
+            trySetDestination(Icon::SmallDestination);
 
-        if (!specifiedDestinations.contains(Icon::MediumDestination)) {
-            if (!trySetDestination(Icon::MediumDestination))
-                return;
-        }
+        if (!specifiedDestinations.contains(Icon::MediumDestination))
+            trySetDestination(Icon::MediumDestination);
 
-        if (!specifiedDestinations.contains(Icon::LargeDestination)) {
-            if (!trySetDestination(Icon::LargeDestination))
-                    return;
-        }
+        if (!specifiedDestinations.contains(Icon::LargeDestination))
+            trySetDestination(Icon::LargeDestination);
 
         //Note that we don't try and set the destination for full screen thumbnails
         //since data urls are meant to be just for small images
 
+        //if we have an existing place, we try to preserve existing properties
+        //of the thumbnail objects, but we completely remove/replace the fields
+        //that are relevant for the QtLocation API.
+        QJsonObject thumbnailsJson = m_placeJson.value(JsonDb::Thumbnails).toObject();
+        thumbnailsJson.remove(JsonDb::Small);
+        thumbnailsJson.remove(JsonDb::Medium);
+        thumbnailsJson.remove(JsonDb::Large);
+        thumbnailsJson.remove(JsonDb::Fullscreen);
+
         foreach (Icon *icon, m_icons) {
-            thumbnailMap.clear();
+            QJsonObject thumbnailJson;
             if (icon->error() != QPlaceReply::NoError) {
                 triggerDone(icon->error(), icon->errorString());
                 error = true;
@@ -252,10 +222,10 @@ void SavePlaceReply::processIcons()
                 }
             }
 
-            thumbnailMap.insert(JsonConverter::Url, icon->destinationUrl().toString());
+            thumbnailJson.insert(JsonDb::Url, icon->destinationUrl().toString());
             if (icon->size().isValid()) {
-                thumbnailMap.insert(JsonConverter::Height, icon->size().height());
-                thumbnailMap.insert(JsonConverter::Width, icon->size().width());
+                thumbnailJson.insert(JsonDb::Height, icon->size().height());
+                thumbnailJson.insert(JsonDb::Width, icon->size().width());
             } else {
                 //size of icon could not be calculated, therefore rely on manually specified size
                 if (!icon->specifiedSize().isValid()) {
@@ -263,29 +233,25 @@ void SavePlaceReply::processIcons()
                     error = true;
                     break;
                 }
-                thumbnailMap.insert(JsonConverter::Height, icon->specifiedSize().height());
-                thumbnailMap.insert(JsonConverter::Width, icon->specifiedSize().width());
+                thumbnailJson.insert(JsonDb::Height, icon->specifiedSize().height());
+                thumbnailJson.insert(JsonDb::Width, icon->specifiedSize().width());
             }
 
             if (icon->destination() == Icon::SmallDestination)
-                thumbnailsMap.insert(JsonConverter::Small, thumbnailMap);
+                thumbnailsJson.insert(JsonDb::Small, thumbnailJson);
             else if (icon->destination() == Icon::MediumDestination)
-                thumbnailsMap.insert(JsonConverter::Medium, thumbnailMap);
+                thumbnailsJson.insert(JsonDb::Medium, thumbnailJson);
             else if (icon->destination() == Icon::LargeDestination)
-                thumbnailsMap.insert(JsonConverter::Large, thumbnailMap);
+                thumbnailsJson.insert(JsonDb::Large, thumbnailJson);
             else
-                thumbnailsMap.insert(JsonConverter::Fullscreen, thumbnailMap);
+                thumbnailsJson.insert(JsonDb::Fullscreen, thumbnailJson);
         }
 
         if (!error) {
-            m_placeMap.insert(JsonConverter::Thumbnails, thumbnailsMap);
+            m_placeJson.insert(JsonDb::Thumbnails, thumbnailsJson);
 
             //proceed to save
-            m_state = SavePlaceReply::Saving;
-            if (m_place.placeId().isEmpty())
-                m_reqId = db()->create(m_placeMap);
-            else
-                m_reqId = db()->update(m_placeMap);
+            db()->write(m_placeJson, this, SLOT(savingFinished()));
         }
 
         qDeleteAll(m_icons);
@@ -293,78 +259,77 @@ void SavePlaceReply::processIcons()
     }
 }
 
-void SavePlaceReply::processResponse(int id, const QVariant &data)
+void SavePlaceReply::checkIfExistsFinished()
 {
-    if (id != m_reqId)
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
+    QList<QJsonObject> results = request->takeResults();
+
+    if (results.isEmpty()) {
+        triggerDone(QPlaceReply::PlaceDoesNotExistError, QStringLiteral("Specified place does not exist"));
         return;
+    }
 
-    if (m_state == SavePlaceReply::CheckIfExists) {
-        if (data.toMap().value(JsonConverter::Length).toInt() == 0) {
-            triggerDone(QPlaceReply::PlaceDoesNotExistError, QString::fromLatin1("Specified place does not exist"));
-            return;
-        }
+    m_placeJson = results.takeFirst();
+    db()->getCategories(m_place.categories(), this, SLOT(getCategoriesForPlaceFinished()));
+}
 
-        m_placeMap = data.toMap().value(JsonConverter::Data).toList().first().toMap();
+void SavePlaceReply::getCategoriesForPlaceFinished()
+{
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
+    QList<QJsonObject> results = request->takeResults();
 
-        enterGetCategoriesState();
-    } else if (m_state == SavePlaceReply::GetCategories) {
-        if (data.toMap().value(JsonConverter::Length).toInt() < m_place.categories().count()) {
-            triggerDone(QPlaceReply::CategoryDoesNotExistError,
-                            QLatin1String("Specified categories does not exist for place"));
-            return;
-        } else if (data.toMap().value(JsonConverter::Length).toInt() > m_place.categories().count()) {
-            triggerDone(QPlaceReply::UnknownError,
-                        QLatin1String("Too many categories found for a place")); //should never happen
-            return;
-        }
-
-        QList<QVariantMap> categoriesJson = JsonConverter::convertToListOfMaps(data);
-        QStringList allCategoryUuids;
-        foreach (const QVariantMap categoryMap, categoriesJson)
-            allCategoryUuids.append(categoryMap.value(JsonConverter::Ancestors).toStringList());
-        allCategoryUuids.removeDuplicates();
-
-        m_placeMap.insert(JsonConverter::AllCategoryUuids, allCategoryUuids);
-        m_placeMap = JsonConverter::addToJsonMap(m_placeMap, m_place);
-
-        enterGetIconsState();
+    if (results.count() < m_place.categories().count()) {
+        triggerDone(QPlaceReply::CategoryDoesNotExistError,
+                        QStringLiteral("Specified categories does not exist for place"));
         return;
-    } else if (m_state == SavePlaceReply::Saving) {
-        /*
-        Expected data format
-        {
-        "uuid":<uuid>,
-        "_version": <version>
-        }*/
-        setId(data.toMap().value(JsonConverter::Uuid).toString());
+    } else if (results.count() > m_place.categories().count()) {
+        triggerDone(QPlaceReply::UnknownError,
+                    QStringLiteral("Too many categories found for a place")); //should never happen
+        return;
+    }
+
+    QStringList allCategoryUuids;
+    foreach (const QJsonObject &categoryJson, results)
+        allCategoryUuids.append(categoryJson.value(JsonDb::Lineage).toVariant().toStringList());
+    allCategoryUuids.removeDuplicates();
+
+    m_placeJson.insert(JsonDb::AllCategoryUuids, QJsonArray::fromStringList(allCategoryUuids));
+    JsonDb::addToJson(&m_placeJson, m_place);
+
+    getIcons();
+    return;
+}
+
+void SavePlaceReply::savingFinished()
+{
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
+    QList<QJsonObject> results = request->takeResults();
+
+    if (results.count() != 1) {
+        triggerDone(QPlaceReply::UnknownError, QStringLiteral("Saving a place resulted in ") + results.count() + QStringLiteral("places being saved"));
+    } else {
+        setId(results.first().value(JsonDb::Uuid).toString());
         triggerDone();
     }
 }
 
-void SavePlaceReply::processError(int id, int code, const QString &jsonDbErrorString)
+void SavePlaceReply::requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString)
 {
-    if (id != m_reqId)
-        return;
-
-    if (m_state == SavePlaceReply::CheckIfExists) {
-        triggerDone(QPlaceReply::UnknownError, QString::fromLatin1("Error saving place from jsondb, could not "
-                                                              "determine if place exists"));
-        return;
-    }
-
-    if (code == JsonDbError::MissingObject) {
-        triggerDone(QPlaceReply::PlaceDoesNotExistError, QLatin1String("Place does not exist"));
+    if (dbCode == QJsonDbRequest::MissingObject) {
+        triggerDone(QPlaceReply::PlaceDoesNotExistError, QStringLiteral("Place does not exist"));
         return;
     } else {
-        QPlaceReply::Error error = QPlaceReply::UnknownError;
-        QString errorString = QString::fromLatin1("Unknown error occurred during save place operation: jsondb error code =%1, erroString=%2")
-                      .arg(code).arg(jsonDbErrorString);
-        triggerDone(error, errorString);
+        QString errorString = QString::fromLatin1("Unknown error occurred during save place operation: jsondb error code = %1, erroString = %2")
+                      .arg(dbCode).arg(dbErrorString);
+        triggerDone(QPlaceReply::UnknownError, errorString);
         return;
     }
 }
 
-bool SavePlaceReply::trySetDestination(const QString &destination)
+void SavePlaceReply::trySetDestination(const QString &destination)
 {
     static int threshold;
     int height;
@@ -395,12 +360,8 @@ bool SavePlaceReply::trySetDestination(const QString &destination)
         }
     }
 
-    if (currIcon && !currIcon->createDestinationDataUrl()) {
-        triggerDone(currIcon->error(), currIcon->errorString());
-        return false;
-    }
-
-    return true;
+    if (currIcon)
+        currIcon->setDestinationDataUrl();
 }
 
 QUrl SavePlaceReply::convertToUrl(const QVariant &var, bool *ok)
@@ -443,67 +404,37 @@ void RemovePlaceReply::setId(const QString &placeId)
 
 void RemovePlaceReply::start()
 {
-    connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
-    connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
-
-    QVariantMap jsonMap;
-    jsonMap.insert(JsonConverter::Uuid, id());
-    jsonMap.insert(JsonConverter::Type, JsonConverter::PlaceType);
-    m_reqId = db()->remove(jsonMap);
+    db()->getPlace(id(), this, SLOT(checkIfExistsFinished()));
 }
 
-void RemovePlaceReply::processResponse(int id, const QVariant &data)
+void RemovePlaceReply::checkIfExistsFinished()
 {
-    if (id != m_reqId)
-        return;
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
+    QList<QJsonObject> results = request->takeResults();
 
-    /*
-        Expected data format example
-        {
-        "count":1,
-        "data":[
-            {
-            "_uuid":"8c196304-509c-5c45-0a07-0ea25a280f10523d"
-            }],
-        "error":[]
-        }
-    */
-    QVariantMap jsonResponse = data.toMap();
-    if (jsonResponse.value(QLatin1String("count")).toInt() <= 0) {
-        triggerDone(QPlaceReply::UnknownError,
-                             QString::fromLatin1("JsonDb response does not contain a uuid"
-                                "for a removal request"));
+    if (results.isEmpty()) {
+        triggerDone(QPlaceReply::PlaceDoesNotExistError, QStringLiteral("Specified place does not exist"));
         return;
-    } else {
-        QVariantMap jsonResponse = data.toMap();
-        QString uuid = jsonResponse.value(JsonConverter::Data)
-                .toList().at(0).toMap().value(JsonConverter::Uuid).toString();
-        if (uuid != IdReply::id()) {
-            triggerDone(QPlaceReply::UnknownError,
-                                 QString::fromLatin1("JsonDb Response UUID does not match that in request"
-                                    "for a removal operation\n"
-                                    "JsonDb UUID: %1"
-                                    "Request UUID: %2").arg(uuid).arg(IdReply::id()));
-            return;
-        } else {
-            triggerDone();
-            return;
-        }
     }
+
+    db()->remove(results.first(), this, SLOT(removeFinished()));
 }
 
-void RemovePlaceReply::processError(int id, int code, const QString &jsonDbErrorString)
+void RemovePlaceReply::removeFinished()
 {
-    if (id != m_reqId)
-        return;
+    triggerDone();
+}
 
-    if (code == JsonDbError::MissingObject) {
-        triggerDone(QPlaceReply::PlaceDoesNotExistError, QLatin1String("Place does not exist"));
+void RemovePlaceReply::requestError(QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString)
+{
+    if (dbCode == QJsonDbRequest::MissingObject) {
+        triggerDone(QPlaceReply::PlaceDoesNotExistError, QStringLiteral("Place does not exist"));
         return;
     } else {
         QPlaceReply::Error error = QPlaceReply::UnknownError;
         QString errorString = QString::fromLatin1("Unknown error occurred during remove place operation: jsondb error code =%1, erroString=%2").
-                      arg(code).arg(jsonDbErrorString);
+                      arg(dbCode).arg(dbErrorString);
         triggerDone(error, errorString);
         return;
     }
@@ -532,138 +463,145 @@ void SaveCategoryReply::setParentId(const QString &parentId)
 
 void SaveCategoryReply::start()
 {
-   connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
-   connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
-
-
     //check if parentExists
-   if (!m_parentId.isEmpty()) {
-       m_state = SaveCategoryReply::CheckParentExists;
-       m_reqId = db()->query(m_engine->queryCategoryString(m_parentId));
-   } else {
-       doSave();
-   }
+   if (!m_parentId.isEmpty())
+       db()->getCategory(m_parentId, this, SLOT(checkParentExistsFinished()));
+   else
+       db()->write(prepareCategoryJson(), this, SLOT(savingFinished()));
 }
 
-void SaveCategoryReply::doSave()
+void SaveCategoryReply::checkParentExistsFinished()
 {
-    m_state = Saving;
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
+    QList<QJsonObject> results = request->takeResults();
 
-    if (m_category.categoryId().isEmpty())
-        m_category.setCategoryId(QUuid::createUuid().toString());
-    QVariantMap categoryMap = JsonConverter::convertToJsonMap(m_category);
-
-    m_newAncestors.append(m_category.categoryId());
-    categoryMap.insert(JsonConverter::Ancestors, m_newAncestors);
-    categoryMap.insert(JsonConverter::CategoryParentId,  m_parentId);
-    m_reqId = db()->update(categoryMap);
-}
-
-void SaveCategoryReply::processResponse(int id, const QVariant &data)
-{
-    if (id != m_reqId)
+    if (results.isEmpty()) {
+        triggerDone(QPlaceReply::CategoryDoesNotExistError, QStringLiteral("Parent category does not exist"));
         return;
-
-    if (m_state == SaveCategoryReply::CheckParentExists) {
-        if (data.toMap().value(JsonConverter::Length).toInt() <= 0) {
-            triggerDone(QPlaceReply::CategoryDoesNotExistError, "Parent category does not exist");
-            return;
-        }
-
-        QVariantMap parentMap = data.toMap().value(JsonConverter::Data).toList().at(0).toMap();
-        m_newAncestors = parentMap.value(JsonConverter::Ancestors).toStringList();
-
+    } else if (results.count() > 1) {
+        triggerDone(QPlaceReply::UnknownError,
+                    QStringLiteral("More than one category was found corresponding to (parent) id") + m_parentId);
+        return;
+    } else {
+        QJsonObject parentJson = results.first();
+        m_newAncestors = parentJson.value(JsonDb::Lineage).toArray();
         if (!m_category.categoryId().isEmpty()) {
-            m_state = SaveCategoryReply::GetCurrentCategory;
-            m_reqId = db()->query(m_engine->queryCategoryString(m_category.categoryId()));
+            db()->getCategory(m_category.categoryId(), this, SLOT(getCurrentCategoryFinished()));
             return;
         }
+        db()->write(prepareCategoryJson(), this, SLOT(savingFinished()));
+        return;
+    }
+}
 
-        doSave();
-    } else if (m_state == SaveCategoryReply::GetCurrentCategory) {
-        if (data.toMap().value(JsonConverter::Length).toInt() == 0) {
-            triggerDone(QPlaceReply::CategoryDoesNotExistError, "Category does not exist");
-            return;
-        }
+void SaveCategoryReply::getCurrentCategoryFinished()
+{
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
+    QList<QJsonObject> results = request->takeResults();
 
-        QVariantMap categoryMap = data.toMap().value(JsonConverter::Data).toList().first().toMap();
-        m_oldAncestors = categoryMap.value(JsonConverter::Ancestors).toStringList();
-        m_oldAncestors.removeLast();  //remove the current category from the ancestor list
+    if (results.isEmpty()) {
+        triggerDone(QPlaceReply::CategoryDoesNotExistError, "Category does not exist");
+        return;
+    } else {
+        QJsonObject categoryJson = results.first();
+        m_oldAncestors = categoryJson.value(JsonDb::Lineage).toArray();
+        m_oldAncestors.removeLast();
 
         //if the new parent is different from the old, if so we need to change the ancestors
-        //of the category and it's descendents
-        if (m_parentId != categoryMap.value(JsonConverter::CategoryParentId)) {
-
-            QString getDescendantsQuery = QString("[?%1=\"%2\"]").arg(JsonConverter::Type).arg(JsonConverter::CategoryType);
-            foreach (const QVariant &ancestor, m_oldAncestors)
-                getDescendantsQuery += QString("[?%1 contains \"%2\"]").arg(JsonConverter::Ancestors).arg(ancestor.toString());
-
-            m_reqId = db()->query(getDescendantsQuery);
-            m_state = SaveCategoryReply::GetParentDescendants;
-        } else {
-            m_state = SaveCategoryReply::Saving;
-            m_reqId = db()->update(JsonConverter::addToJsonMap(categoryMap, m_category));
-        }
-
-    } else if (m_state == SaveCategoryReply::GetParentDescendants) {
-        if (data.toMap().value(JsonConverter::Data).toList().length() == 0) {
-            triggerDone(QPlaceReply::CategoryDoesNotExistError, QLatin1String("Category could not be found while searching for the parent's "
-                                                                "descendants"));
-            return;
-        }
-
-        QStringList ancestors;
-        QStringList newAncestors;
-        QVariantList jsonMapCategories;
-        QVariantMap categoryMap;
-        foreach (QVariant var, data.toMap().value(JsonConverter::Data).toList()) {
-            categoryMap = var.toMap();
-            ancestors = categoryMap.value(JsonConverter::Ancestors).toStringList();
-
+        //of it's descendants and the ancestors of itself
+        if (m_parentId != categoryJson.value(JsonDb::CategoryParentId).toString()) {
+            QString getDescendantsAndSelf = QString::fromLatin1("[?_type=\"%1\"]").arg(JsonDb::CategoryType);
             for (int i = 0; i < m_oldAncestors.count(); ++i)
-               ancestors.removeFirst();
+                getDescendantsAndSelf += QString::fromLatin1("[?%1 contains \"%2\"]").arg(JsonDb::Lineage).arg(m_oldAncestors.at(i).toString());
+            getDescendantsAndSelf += QString::fromLatin1("[?%1 contains \"%2\"]").arg(JsonDb::Lineage).arg(m_category.categoryId());
 
-            newAncestors = m_newAncestors;
-            newAncestors.append(ancestors);
+            db()->read(getDescendantsAndSelf, this, SLOT(getDescendantsAndSelfFinished()));
+        } else {
+            JsonDb::addToJson(&categoryJson, m_category);
 
-            categoryMap.insert(JsonConverter::Ancestors, newAncestors);
-
-            if (categoryMap.value(JsonConverter::Uuid).toString() == m_category.categoryId()) {
-                categoryMap = JsonConverter::addToJsonMap(categoryMap, m_category);
-                categoryMap.insert(JsonConverter::CategoryParentId, m_parentId);
-            }
-
-            jsonMapCategories.append(categoryMap);
-        }
-
-        m_state = SaveCategoryReply::Saving;
-        m_reqId = db()->update(jsonMapCategories);
-
-    } else if (m_state == SaveCategoryReply::Saving) {
-        if (data.type() == QVariant::Map) {
-            setId(data.toMap().value(JsonConverter::Uuid).toString());
-            triggerDone();
-        } else if (data.type() == QVariant::List) {
-            setId(m_category.categoryId());
-            triggerDone();
+            db()->write(categoryJson, this, SLOT(savingFinished()));
         }
     }
 }
 
-void SaveCategoryReply::processError(int id, int code, const QString &jsonDbErrorString)
+void SaveCategoryReply::getDescendantsAndSelfFinished()
 {
-    if (id != m_reqId)
-        return;
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
+    QList<QJsonObject> results = request->takeResults();
 
-    if (code == JsonDbError::MissingObject) {
-        triggerDone(QPlaceReply::CategoryDoesNotExistError, QLatin1String("Category does not exist"));
+    if (results.isEmpty()) {
+        triggerDone(QPlaceReply::CategoryDoesNotExistError, QStringLiteral("Category and it's descendants couldn ot be found"));
+        return;
+    }
+
+    QList<QJsonObject> categoriesJson;
+    for (int i = 0; i < results.count(); ++i) {
+        QJsonObject categoryJson = results.at(i);
+        QJsonArray lineage = categoryJson.value(JsonDb::Lineage).toArray();
+        for (int i = 0; i < m_oldAncestors.count(); ++i)
+           lineage.removeFirst();
+
+        for (int i = m_newAncestors.count() - 1; i >= 0; --i)
+            lineage.prepend(m_newAncestors.at(i));
+
+        categoryJson.insert(JsonDb::Lineage, lineage);
+
+        if (categoryJson.value(JsonDb::Uuid).toString() == m_category.categoryId()) {
+            JsonDb::addToJson(&categoryJson, m_category);
+            categoryJson.insert(JsonDb::CategoryParentId, m_parentId);
+        }
+
+        categoriesJson.append(categoryJson);
+    }
+
+    db()->write(categoriesJson, this, SLOT(savingFinished()));
+}
+
+void SaveCategoryReply::savingFinished()
+{
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
+    QList<QJsonObject> results = request->takeResults();
+
+    if (!m_category.categoryId().isEmpty()) //must've been saving an existing category
+        setId(m_category.categoryId());
+    else
+        setId(results.first().value(JsonDb::Uuid).toString()); //must've been saving a new category
+
+    triggerDone();
+}
+
+QJsonObject SaveCategoryReply::prepareCategoryJson()
+{
+    //if it is a new category we need to predefine the category id so we can
+    //save it in the lineage
+    if (m_category.categoryId().isEmpty())
+        m_category.setCategoryId(QUuid::createUuid().toString());
+
+    QJsonObject categoryJson;
+    JsonDb::addToJson(&categoryJson, m_category);
+
+    QJsonArray lineage = m_newAncestors;
+    lineage.append(m_category.categoryId());
+    categoryJson.insert(JsonDb::Lineage, lineage);
+    categoryJson.insert(JsonDb::CategoryParentId,  m_parentId);
+
+    return categoryJson;
+}
+
+void SaveCategoryReply::requestError(QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString)
+{
+    if (dbCode == QJsonDbRequest::MissingObject) {
+        triggerDone(QPlaceReply::CategoryDoesNotExistError, QStringLiteral("Category does not exist"));
         return;
     } else {
-        QPlaceReply::Error error = QPlaceReply::UnknownError;
         QString errorString = QString::fromLatin1("Unknown error occurred during save category operation: "
                                                   "jsondb error code = %1, erroString = %2")
-                      .arg(code).arg(jsonDbErrorString);
-        triggerDone(error, errorString);
+                      .arg(dbCode).arg(dbErrorString);
+        triggerDone(QPlaceReply::UnknownError, errorString);
         return;
     }
 }
@@ -686,89 +624,67 @@ void RemoveCategoryReply::setId(const QString &categoryId)
 
 void RemoveCategoryReply::start()
 {
-    connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
-    connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
-
-    m_state = RemoveCategoryReply::GetCategory;
-    m_reqId = db()->query(m_engine->queryCategoryString(id()));
+    db()->getCategory(id(), this, SLOT(getCategoryFinished()));
 }
 
-void RemoveCategoryReply::processResponse(int id, const QVariant &data)
+void RemoveCategoryReply::getCategoryFinished()
 {
-    if (id != m_reqId)
-        return;
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
+    QList<QJsonObject> results = request->takeResults();
 
-    //TODO: need to handle removal of category related information still
-    //      in the Place objects
-    switch (m_state) {
-    case RemoveCategoryReply::Initial :
-        break;
-    case (RemoveCategoryReply::GetCategory) : {
-        /*
-            Expected data format example
-            {
-            "count":1,
-            "data":[
-                {
-                "_uuid":"8c196304-509c-5c45-0a07-0ea25a280f10523d"
-                }],
-            "error":[]
-            }
-        */
-        if (data.toMap().value(JsonConverter::Length).toInt() <= 0) {
-            triggerDone(QPlaceReply::CategoryDoesNotExistError,
-                        QLatin1String("Trying to remove category that does not exist"));
-            return;
-        } else {
-             QVariantMap categoryMap = data.toMap().value(JsonConverter::Data)
-                                        .toList().at(0).toMap();
-            QString uuid = categoryMap.value(JsonConverter::Uuid).toString();
-            if (uuid != IdReply::id()) {
-                triggerDone(QPlaceReply::UnknownError,
-                            QString::fromLatin1(" Response UUID does not match that in the request"
-                               "for a category removal"
-                               "JsonDb UUID: %1"
-                               "Request UUID: %2").arg(uuid).arg(IdReply::id()));
-                return;
-            } else {
-                QString queryString = QString::fromLatin1("[?%1=\"%2\"]").arg(JsonConverter::Type).arg(JsonConverter::CategoryType);
-                QStringList ancestors = categoryMap.value(JsonConverter::Ancestors).toStringList();
-                foreach (const QString &ancestor, ancestors)
-                    queryString += QString::fromLatin1("[?%1 contains \"%2\"]").arg(JsonConverter::Ancestors).arg(ancestor);
-
-                m_state = RemoveCategoryReply::GetCategoriesToBeRemoved;
-                m_reqId = db()->query(queryString);
-            }
-        }
-        break;
-    }
-    case (RemoveCategoryReply::GetCategoriesToBeRemoved) : {
-        QVariant categoriesJson = data.toMap().value("data");
-        m_state = RemoveCategoryReply::RemoveCategories;
-        m_reqId = db()->remove(categoriesJson);
-        break;
-    }
-    case (RemoveCategoryReply::RemoveCategories) : {
-        triggerDone();
-    }
-    }
-}
-
-void RemoveCategoryReply::processError(int id, int code, const QString &jsonDbErrorString)
-{
-    if (id != m_reqId)
-        return;
-
-    if (code == JsonDbError::MissingObject) {
-        triggerDone(QPlaceReply::CategoryDoesNotExistError, QLatin1String("Category does not exist"));
+    if (results.isEmpty()) {
+        triggerDone(QPlaceReply::CategoryDoesNotExistError,
+                    QStringLiteral("Trying to remove category that does not exist"));
         return;
     } else {
-        QPlaceReply::Error error = QPlaceReply::UnknownError;
-        QString errorString = QString::fromLatin1("Unknown error occurred during remove place operation: jsondb error code =%1, erroString=%2").
-                      arg(code).arg(jsonDbErrorString);
-        triggerDone(error, errorString);
-        return;
+        QJsonObject categoryJson = results.first();
+        QString uuid = categoryJson.value(JsonDb::Uuid).toString();
+        if (uuid != id()) {
+            triggerDone(QPlaceReply::UnknownError,
+                        QString::fromLatin1(" Response UUID does not match that in the request"
+                           "for a category removal"
+                           "JsonDb UUID: %1"
+                           "Request UUID: %2").arg(uuid).arg(id()));
+            return;
+        } else {
+            //now check if there are any child categories which need to be removed as well
+            QString queryString = QString::fromLatin1("[?%1=\"%2\"]").arg(JsonDb::Type).arg(JsonDb::CategoryType);
+            QStringList lineage = categoryJson.value(JsonDb::Lineage).toVariant().toStringList();
+            foreach (const QString &ancestor, lineage)
+                queryString += QString::fromLatin1("[?%1 contains \"%2\"]").arg(JsonDb::Lineage).arg(ancestor);
+
+            db()->read(queryString, this, SLOT(getCategoriesToBeRemovedFinished()));
+        }
     }
 }
 
+void RemoveCategoryReply::getCategoriesToBeRemovedFinished()
+{
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
+    QList<QJsonObject> results = request->takeResults();
 
+    if (!results.isEmpty())
+        db()->remove(results, this, SLOT(removeFinished()));
+    else
+        removeFinished();
+}
+
+void RemoveCategoryReply::removeFinished()
+{
+    triggerDone();
+}
+
+void RemoveCategoryReply::requestError(QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString)
+{
+    if (dbCode == QJsonDbRequest::MissingObject) {
+        triggerDone(QPlaceReply::CategoryDoesNotExistError, QStringLiteral("Category does not exist"));
+        return;
+    } else {
+        QString errorString = QString::fromLatin1("Unknown error occurred during remove place operation: jsondb error code =%1, erroString=%2").
+                      arg(dbCode).arg(dbErrorString);
+        triggerDone(QPlaceReply::UnknownError, errorString);
+        return;
+    }
+}

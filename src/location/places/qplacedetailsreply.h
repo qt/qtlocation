@@ -49,8 +49,6 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
 class QPlaceDetailsReplyPrivate;
 class Q_LOCATION_EXPORT QPlaceDetailsReply : public QPlaceReply
 {

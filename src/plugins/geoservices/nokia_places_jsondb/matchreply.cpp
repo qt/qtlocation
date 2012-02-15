@@ -40,11 +40,12 @@
 ****************************************************************************/
 
 #include "matchreply.h"
-#include "jsonconverter.h"
+#include "jsondb.h"
 
-#include <QtJsonDbCompat/jsondb-client.h>
 #include <QtCore/qnumeric.h>
+#include <QtCore/QJsonArray>
 #include <QtCore/QDebug>
+#include <QtJsonDb/QJsonDbReadRequest>
 #include <QtLocation/QGeoBoundingCircle>
 
 MatchReply::MatchReply(QPlaceManagerEngineJsonDb *engine)
@@ -68,19 +69,19 @@ void MatchReply::setRequest(const QPlaceMatchRequest &request)
 
 void MatchReply::start()
 {
-    connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
-    connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
-
-    m_inputPlaces = request().places();
-
-    if (m_inputPlaces.count() > 0) {
+    if (!request().places().isEmpty()) {
         if (request().parameters().contains(QPlaceMatchRequest::AlternativeId)) {
-            QString alternativeId = m_inputPlaces.takeFirst().placeId();
-            findPlace(alternativeId);
+            QStringList ids;
+            foreach (const QPlace &place, request().places())
+                ids.append(place.placeId());
+
+            db()->findPlacesByAlternativeId(request().parameters().value(QPlaceMatchRequest::AlternativeId).toString(), ids,
+                                                                      this, SLOT(findByAlternativeIdFinished()));
         } else if (request().parameters().contains(QLatin1String("proximityRange"))) {
-            findPlaceByProximity();
+            //we need to filter in plugin code so get all places and then filter by proximity
+            db()->findAllPlaces(this, SLOT(findByProximityFinished()));
         } else {
-            for (int i=0; i < m_inputPlaces.count(); ++i)
+            for (int i=0; i < request().places().count(); ++i)
                 m_outputPlaces.append(QPlace());
             triggerDone();
         }
@@ -89,38 +90,48 @@ void MatchReply::start()
     }
 }
 
-void MatchReply::processResponse(int id, const QVariant &data)
+void MatchReply::findByAlternativeIdFinished()
 {
-    if (id != m_reqId)
-        return;
+    QJsonDbRequest *jsonDbRequest = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(jsonDbRequest);
+    QList<QJsonObject> results = jsonDbRequest->takeResults();
 
-    if (request().parameters().contains(QPlaceMatchRequest::AlternativeId)) {
-        if (data.toMap().value(JsonConverter::Length).toInt() > 0) {
-            QList<QPlace> places = JsonConverter::convertJsonResponseToPlaces(data, m_engine);
-            m_outputPlaces.append(places.first());
-        } else {
-            m_outputPlaces.append(QPlace());
+    QMap<QString, QPlace> placesMap;
+    foreach (const QJsonObject &placeJson, results) {
+        QPlace place = JsonDb::convertJsonObjectToPlace(placeJson, m_engine);
+        if (!place.placeId().isEmpty()) {
+            QString alternativeIdKey = request().parameters().value(QPlaceMatchRequest::AlternativeId).toString();
+            placesMap.insert(place.extendedAttribute(alternativeIdKey).text(), place);
         }
+    }
 
-        if (!m_inputPlaces.isEmpty()) {
-            QString alternativeId = m_inputPlaces.takeFirst().placeId();
-            findPlace(alternativeId);
-            return;
-        } else {
-            setPlaces(m_outputPlaces);
-            triggerDone();
-        }
-    } else if (request().parameters().contains(QLatin1String("proximityRange"))) {
-        qreal range = request().parameters().value(QLatin1String("proximityRange")).toReal();
+    foreach (const QPlace &place, request().places())
+        m_outputPlaces.append(placesMap.value(place.placeId()));
 
-        //TODO: optimize proximity match
-        if (data.toMap().value(JsonConverter::Length).toInt() > 0) {
-            QList<QPlace> candidatePlaces = JsonConverter::convertJsonResponseToPlaces(data, m_engine);
+    QStringList categoryUuids = JsonDb::categoryIds(m_outputPlaces);
+    if (!categoryUuids.isEmpty()) {
+        db()->getCategories(categoryUuids, this, SLOT(getCategoriesForPlacesFinished()));
+    } else {
+        setPlaces(m_outputPlaces);
+        triggerDone();
+    }
+}
 
-            bool isFound;
-            foreach (const QPlace &m_inputPlace, request().places()) {
-                isFound = false;
-                foreach (const QPlace &candidatePlace, candidatePlaces) {
+void MatchReply::findByProximityFinished()
+{
+    QJsonDbRequest *jsonDbRequest = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(jsonDbRequest);
+    QList<QJsonObject> jsonDbResults = jsonDbRequest->takeResults();
+
+    qreal range = request().parameters().value(QLatin1String("proximityRange")).toReal();
+
+    //TODO: optimize proximity match
+    if (!jsonDbResults.isEmpty()) {
+        QList<QPlace> candidatePlaces = JsonDb::convertJsonObjectsToPlaces(jsonDbResults, m_engine);
+        foreach (const QPlace &m_inputPlace, request().places()) {
+            bool isFound = false;
+            foreach (const QPlace &candidatePlace, candidatePlaces) {
+                if (m_inputPlace.location().coordinate().isValid() && candidatePlace.location().coordinate().isValid()) {
                     qreal dist = candidatePlace.location().coordinate().distanceTo(m_inputPlace.location().coordinate());
                     if ((dist < range) || qFuzzyCompare(dist, range)) {
                         m_outputPlaces.append(candidatePlace);
@@ -128,60 +139,55 @@ void MatchReply::processResponse(int id, const QVariant &data)
                         break;
                     }
                 }
-                if (!isFound)
-                    m_outputPlaces.append(QPlace());
             }
-        } else {
-            //no matches, therefore output places are filled with a default constructed place for each input place
-            for (int i=0; i < m_inputPlaces.count(); ++i)
+            if (!isFound)
                 m_outputPlaces.append(QPlace());
         }
+    } else {
+        //no matches, therefore output places are filled with a default constructed place for each input place
+        for (int i = 0; i < request().places().count(); ++i)
+            m_outputPlaces.append(QPlace());
+    }
 
+    QStringList categoryUuids = JsonDb::categoryIds(m_outputPlaces);
+    if (!categoryUuids.isEmpty()) {
+        db()->getCategories(categoryUuids, this, SLOT(getCategoriesForPlacesFinished()));
+    } else {
         setPlaces(m_outputPlaces);
         triggerDone();
     }
 }
 
-void MatchReply::processError(int id, int code, const QString &jsonDbErrorString)
+void MatchReply::getCategoriesForPlacesFinished()
 {
-    Q_UNUSED(id);
+    QJsonDbRequest *jsonDbRequest = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(jsonDbRequest);
+    QList<QJsonObject> jsonDbResults = jsonDbRequest->takeResults();
 
-    QPlaceReply::Error error = QPlaceReply::UnknownError;
-    QString errorString = QString::fromLatin1("Unknown error occurred operation: jsondb error code =%1, erroString=%2").
-                  arg(code).arg(jsonDbErrorString);
-    triggerDone(error, errorString);
+    QMap<QString, QPlaceCategory> categoryMap;
+    foreach (const QJsonObject &jsonResult, jsonDbResults) {
+        QPlaceCategory category = JsonDb::convertJsonObjectToCategory(jsonResult, m_engine);
+        if (!category.categoryId().isEmpty())
+            categoryMap.insert(category.categoryId(), category);
+    }
+
+    for (int i = 0; i < m_outputPlaces.count(); ++i) {
+        QList<QPlaceCategory> categories;
+        foreach (const QPlaceCategory &category, m_outputPlaces[i].categories())  {
+            if (categoryMap.contains(category.categoryId())) {
+                categories.append(categoryMap.value(category.categoryId()));
+            }
+        }
+        m_outputPlaces[i].setCategories(categories);
+    }
+
+    setPlaces(m_outputPlaces);
+    triggerDone();
 }
 
-void MatchReply::findPlace(const QString &alternativeId)
+void MatchReply::requestError(QJsonDbRequest::ErrorCode code, const QString &errorString)
 {
-    QString extId = QString(JsonConverter::ExtendedAttributes) + QLatin1String(".")
-            + request().parameters().value(QPlaceMatchRequest::AlternativeId).toString() + QLatin1String(".") +
-                                   JsonConverter::Text;
-
-    QString queryString = QString::fromLatin1("[?%1 = %placeType]").arg(JsonConverter::Type)
-            + QString::fromLatin1("[?%1 = %expectedId]").arg(extId);
-
-    QVariantMap bindingsMap;
-    bindingsMap.insert(QLatin1String("placeType"), JsonConverter::PlaceType);
-    bindingsMap.insert(QLatin1String("expectedId"), alternativeId);
-    QVariantMap queryObj;
-    queryObj.insert(JsonConverter::Query, queryString);
-    queryObj.insert(JsonConverter::Bindings, bindingsMap);
-    m_state = MatchReply::GetPlaces;
-    m_reqId = db()->find(queryObj);
+    QString errorString_ = QString::fromLatin1("Unknown error occurred operation: jsondb error code =%1, erroString=%2").
+                  arg(code).arg(errorString);
+    triggerDone(QPlaceReply::UnknownError, errorString_);
 }
-
-void MatchReply::findPlaceByProximity()
-{
-    //TODO: optimize proximity match
-    QString queryString = QString::fromLatin1("[?%1= %placeType]").arg(JsonConverter::Type);
-    QVariantMap bindingsMap;
-    bindingsMap.insert(QLatin1String("placeType"), JsonConverter::PlaceType);
-
-    QVariantMap queryObj;
-    queryObj.insert(JsonConverter::Query, queryString);
-    queryObj.insert(JsonConverter::Bindings, bindingsMap);
-    m_state = MatchReply::GetPlaces;
-    m_reqId = db()->find(queryObj);
-}
-

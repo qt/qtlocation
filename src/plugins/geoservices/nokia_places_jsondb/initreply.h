@@ -62,15 +62,14 @@ public:
     void processNodeQueue();
 
 protected:
-    JsonDbClient *db();
+    JsonDb *db() { return m_engine->db(); }
 
 private slots:
-    void processResponse(int id, const QVariant &data);
-    void processError(int id, int code, const QString &);
+    void requestFinished();
+    void requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString);
 
 private:
     QPlaceManagerEngineJsonDb *m_engine;
-    int m_reqId;
     CategoryTree m_tree;
     QList<CategoryNode> m_queue;
 };

@@ -41,10 +41,10 @@
 
 #include "searchreply.h"
 
-#include <QtJsonDbCompat/jsondb-client.h>
 #include <QtCore/qnumeric.h>
 #include <QtCore/QDebug>
 #include <QtLocation/QGeoBoundingCircle>
+#include <QtJsonDb/QJsonDbReadRequest>
 
 SearchReply::SearchReply(QPlaceManagerEngineJsonDb *engine)
     : QPlaceSearchReply(engine), m_engine(engine)
@@ -67,9 +67,6 @@ void SearchReply::setRequest(const QPlaceSearchRequest &request)
 
 void SearchReply::start()
 {
-    connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
-    connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
-
     if (request().searchArea().type() == QGeoBoundingArea::BoxType) {
         QGeoBoundingBox box(request().searchArea());
         if (!box.isValid()) {
@@ -84,7 +81,6 @@ void SearchReply::start()
                         QString::fromLatin1("The center of the search area is an invalid coordinate"));
             return;
         }
-
         if (circle.contains(QGeoCoordinate(90,0)) || circle.contains(QGeoCoordinate(-90,0))) {
             triggerDone(QPlaceReply::BadArgumentError,
                         QString::fromLatin1("The search area contains the north or south pole"));
@@ -92,170 +88,153 @@ void SearchReply::start()
         }
     }
 
-    QString queryString = JsonConverter::convertToQueryString(request());
-    if (!request().categories().isEmpty()) {
-        for (int i = 0;  i < request().categories().count(); ++i) {
-            if (i == 0) {
-                queryString += QString::fromLatin1("[?%1 contains \"%2\" ")
-                        .arg(JsonConverter::AllCategoryUuids).arg(request().categories().at(i).categoryId());
-            } else {
-                queryString += QString::fromLatin1("| ?%1 contains \"%2\" ")
-                .arg(JsonConverter::AllCategoryUuids).arg(request().categories().at(i).categoryId());
-            }
-        }
-        queryString += QString::fromLatin1("]");
-    }
-
-    m_state = SearchReply::Search;
-    m_reqId = db()->query(queryString);
+    db()->searchForPlaces(request(), this, SLOT(searchFinished()));
 }
 
-void SearchReply::processResponse(int id, const QVariant &data)
+void SearchReply::searchFinished()
 {
-    if (id != m_reqId)
-        return;
+    QJsonDbRequest *jsonDbRequest = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(jsonDbRequest);
+    QList<QJsonObject> jsonResults = jsonDbRequest->takeResults();
 
-    if (m_state == SearchReply::GetCategories) {
-        QVariantList categoriesJson = data.toMap().value(QLatin1String("data")).toList();
-        QMap<QString, QPlaceCategory> categoriesCollection;
-        QPlaceCategory cat;
-        foreach (const QVariant categoryJson, categoriesJson) {
-            cat = JsonConverter::convertJsonMapToCategory(categoryJson.toMap(), m_engine);
-            categoriesCollection.insert(cat.categoryId(), cat);
-        }
+    QList<QPlace> places = JsonDb::convertJsonObjectsToPlaces(jsonResults, m_engine);
+    QList<QPlaceSearchResult> results;
+    QPlaceSearchResult result;
+    result.setType(QPlaceSearchResult::PlaceResult);
 
-        QList<QPlaceSearchResult> resultList = results();
-        QList<QPlaceCategory> categories;
+    if (request().searchArea().type() == QGeoBoundingArea::CircleType) {
+        QGeoBoundingCircle circle(request().searchArea());
+
         QPlace place;
-        for (int i=0; i < resultList.count(); ++i) {
-            categories.clear();
-            place = resultList.at(i).place();
-            foreach (const QPlaceCategory &cat, place.categories()) {
-                if (!cat.categoryId().isEmpty() && categoriesCollection.contains(cat.categoryId()))
-                    categories.append(categoriesCollection.value(cat.categoryId()));
+        for (int i=0; i < places.count(); ++i) {
+            place = places.at(i);
+
+            qreal dist = circle.center().distanceTo(place.location().coordinate());
+            if (dist < circle.radius() || qFuzzyCompare(dist, circle.radius()) || circle.radius() < 0.0) {
+                result.setDistance(dist);
+                result.setPlace(place);
+
+                if (request().relevanceHint() == QPlaceSearchRequest::DistanceHint) {
+                    //TODO: we can optimize this insertion sort
+                    bool added = false;
+                    for (int i=0; i < results.count(); ++i) {
+                        if (result.distance() < results.at(i).distance() || qFuzzyCompare(result.distance(),results.at(i).distance())) {
+                            results.insert(i, result);
+                            added = true;
+                            break;
+                        }
+                    }
+                    if (!added)
+                        results.append(result);
+
+                } else {
+                    results.append(result);
+                }
             }
-            place.setCategories(categories);
-            resultList[i].setPlace(place);
         }
-        setResults(resultList);
+        //TODO: we can optimize this using a bounding box to cull candidates
+        //      and then use distance comparisons for the rest.
+
+    } else if (request().searchArea().type() == QGeoBoundingArea::BoxType) {
+        //There seem to be some issues with using the comparison operators
+        //so for now we filter in the plugin code
+        QGeoBoundingBox box(request().searchArea());
+        double tly = box.topLeft().latitude();
+        double bry = box.bottomRight().latitude();
+        double tlx = box.topLeft().longitude();
+        double brx = box.bottomRight().longitude();
+
+        foreach (const QPlace &place, places) {
+            const QGeoCoordinate &coord = place.location().coordinate();
+            if (coord.latitude() > tly)
+                places.removeAll(place);
+            if (coord.latitude() < bry)
+                places.removeAll(place);
+
+            bool lonWrap = (tlx > brx); //box wraps over the dateline
+            if (!lonWrap) {
+                if (coord.longitude() < tlx || coord.longitude() > brx) {
+                    places.removeAll(place);
+                }
+            } else {
+                if (coord.longitude() < tlx && coord.longitude() > brx) {
+                    places.removeAll(place);
+                }
+            }
+        }
+
+        const QGeoCoordinate bCenter = box.center();
+        foreach (const QPlace &place, places) {
+            const QGeoCoordinate &coord = place.location().coordinate();
+            qreal distance = bCenter.distanceTo(coord);
+            result.setPlace(place);
+            result.setDistance(distance);
+            results.append(result);
+        }
+    } else {
+        foreach (const QPlace &place, places) {
+            result.setPlace(place);
+            results.append(result);
+        }
+    }
+
+    setResults(results);
+
+    //See if we have to fetch any category data
+    QStringList categoryUuids;
+    foreach (const QPlaceSearchResult &result, results) {
+        if (!result.place().categories().isEmpty()) {
+            foreach (const QPlaceCategory &category, result.place().categories())
+                categoryUuids.append(category.categoryId());
+        }
+        categoryUuids.removeDuplicates();
+    }
+
+    if (!categoryUuids.isEmpty()) {
+        db()->getCategories(categoryUuids,
+                            this, SLOT(getCategoriesForPlacesFinished()));
+        return;
+    } else {
         triggerDone();
         return;
-    } else if (m_state == SearchReply::Search) {
-        QList<QPlace> places = JsonConverter::convertJsonResponseToPlaces(data, m_engine);
-        QList<QPlaceSearchResult> results;
-        QPlaceSearchResult result;
-        result.setType(QPlaceSearchResult::PlaceResult);
-
-        if (request().searchArea().type() == QGeoBoundingArea::CircleType) {
-            QGeoBoundingCircle circle(request().searchArea());
-
-            QPlace place;
-            for (int i=0; i < places.count(); ++i) {
-                place = places.at(i);
-                qreal dist = circle.center().distanceTo(place.location().coordinate());
-                if (dist < circle.radius() || qFuzzyCompare(dist, circle.radius()) || circle.radius() < 0.0) {
-                    result.setDistance(dist);
-                    result.setPlace(place);
-
-                    if (request().relevanceHint() == QPlaceSearchRequest::DistanceHint) {
-                        //TODO: we can optimize this insertion sort
-                        bool added = false;
-                        for (int i=0; i < results.count(); ++i) {
-                            if (result.distance() < results.at(i).distance() || qFuzzyCompare(result.distance(),results.at(i).distance())) {
-                                results.insert(i, result);
-                                added = true;
-                                break;
-                            }
-                        }
-                        if (!added)
-                            results.append(result);
-
-                    } else {
-                        results.append(result);
-                    }
-                }
-            }
-
-            //TODO: we can optimize this using a bounding box to cull candidates
-            //      and then use distance comparisons for the rest.
-
-        } else if (request().searchArea().type() == QGeoBoundingArea::BoxType) {
-            //There seem to be some issues with using the comparison operators
-            //so for now we filter in the plugin code
-            QGeoBoundingBox box(request().searchArea());
-            double tly = box.topLeft().latitude();
-            double bry = box.bottomRight().latitude();
-            double tlx = box.topLeft().longitude();
-            double brx = box.bottomRight().longitude();
-
-            foreach (const QPlace &place, places) {
-                const QGeoCoordinate& coord = place.location().coordinate();
-
-                if (coord.latitude() > tly)
-                    places.removeAll(place);
-                if (coord.latitude() < bry)
-                    places.removeAll(place);
-
-                bool lonWrap = (tlx > brx); //box wraps over the dateline
-
-                if (!lonWrap) {
-                    if (coord.longitude() < tlx || coord.longitude() > brx) {
-                        places.removeAll(place);
-                    }
-                } else {
-                    if (coord.longitude() < tlx && coord.longitude() > brx) {
-                        places.removeAll(place);
-                    }
-                }
-            }
-
-            const QGeoCoordinate bCenter = box.center();
-            foreach (const QPlace &place, places) {
-                const QGeoCoordinate coord = place.location().coordinate();
-                qreal distance = bCenter.distanceTo(coord);
-                result.setPlace(place);
-                result.setDistance(distance);
-                results.append(result);
-            }
-        } else {
-            foreach (const QPlace &place, places) {
-                result.setPlace(place);
-                results.append(result);
-            }
-        }
-
-        setResults(results);
-
-        //See if we have to fetch any category data
-        QStringList categoryUuids;
-        foreach (const QPlaceSearchResult &result, results) {
-            if (!result.place().categories().isEmpty()) {
-                foreach (const QPlaceCategory &category, result.place().categories())
-                    categoryUuids.append(category.categoryId());
-            }
-            categoryUuids.removeDuplicates();
-        }
-
-        if (!categoryUuids.isEmpty()) {
-            QString queryString = QString::fromLatin1("[?%1 in [\"%2\"]]")
-            .arg(JsonConverter::Uuid).arg(categoryUuids.join(","));
-            m_state = SearchReply::GetCategories;
-            m_reqId = db()->query(queryString);
-            return;
-        } else {
-            triggerDone();
-            return;
-        }
     }
 }
 
-void SearchReply::processError(int id, int code, const QString &jsonDbErrorString)
+void SearchReply::getCategoriesForPlacesFinished()
 {
-    Q_UNUSED(id);
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
+    QList<QJsonObject> jsonResults = request->takeResults();
 
-    QPlaceReply::Error error = QPlaceReply::UnknownError;
-    QString errorString = QString::fromLatin1("Unknown error occurred operation: jsondb error code =%1, erroString=%2").
-                  arg(code).arg(jsonDbErrorString);
-    triggerDone(error, errorString);
+    QMap<QString, QPlaceCategory> categoriesCollection;
+    foreach (const QJsonObject &categoryJson, jsonResults) {
+        if (!categoriesCollection.contains(categoryJson.value(JsonDb::Uuid).toString())) {
+            QPlaceCategory category = JsonDb::convertJsonObjectToCategory(categoryJson, m_engine);
+            categoriesCollection.insert(category.categoryId(), category);
+        }
+    }
+
+    QList<QPlaceSearchResult> resultList = results();
+    QList<QPlaceCategory> categories;
+    QPlace place;
+    for (int i=0; i < resultList.count(); ++i) {
+        categories.clear();
+        place = resultList.at(i).place();
+        foreach (const QPlaceCategory &cat, place.categories()) {
+            if (!cat.categoryId().isEmpty() && categoriesCollection.contains(cat.categoryId()))
+                categories.append(categoriesCollection.value(cat.categoryId()));
+        }
+        place.setCategories(categories);
+        resultList[i].setPlace(place);
+    }
+    setResults(resultList);
+    triggerDone();
+    return;
 }
 
+void SearchReply::requestError(QJsonDbRequest::ErrorCode code, const QString &errorString)
+{
+    QString errorString_ = QString::fromLatin1("Unknown error occurred operation: jsondb error code =%1, erroString=%2").
+                  arg(code).arg(errorString);
+    triggerDone(QPlaceReply::UnknownError, errorString_);
+}

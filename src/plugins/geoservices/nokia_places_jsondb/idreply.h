@@ -42,6 +42,8 @@
 #define IDREPLY_H
 
 #include <QtCore/QObject>
+#include <QtCore/QJsonArray>
+#include <QtJsonDb/QJsonDbRequest>
 #include <QtLocation/QPlaceIdReply>
 
 #include "icon.h"
@@ -53,6 +55,7 @@ QT_BEGIN_NAMESPACE
 class IdReply : public QPlaceIdReply
 {
     Q_OBJECT
+
 public:
     IdReply(QPlaceIdReply::OperationType operationType, QPlaceManagerEngineJsonDb *engine);
     virtual ~IdReply();
@@ -70,7 +73,7 @@ public:
 
 protected:
     QPlaceManagerEngineJsonDb *m_engine;
-    JsonDbClient *db() { return m_engine->db();}
+    JsonDb *db() { return m_engine->db(); }
 
 private:
     bool m_isUpdate;
@@ -80,13 +83,6 @@ private:
 class SavePlaceReply : public IdReply
 {
     Q_OBJECT
-    enum State {
-        Initial,
-        CheckIfExists,
-        GetIcons,
-        GetCategories,
-        Saving
-    };
 
     enum IconDestination {
         Small,
@@ -101,24 +97,22 @@ public:
 
     void setPlace(const QPlace &place);
     void start();
-    void enterGetCategoriesState();
-    void enterGetIconsState();
 
 private slots:
+    void checkIfExistsFinished();
+    void getCategoriesForPlaceFinished();
     void processIcons();
+    void savingFinished();
 
-    void processResponse(int id, const QVariant &data);
-    void processError(int id, int code, const QString &errorString);
+    void requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString);
 
 private:
-    bool trySetDestination(const QString &destination);
+    void getIcons();
+    void trySetDestination(const QString &destination);
     QUrl convertToUrl(const QVariant &var, bool *ok);
 
-private:
     QPlace m_place;
-    int m_reqId;
-    State m_state;
-    QVariantMap m_placeMap;
+    QJsonObject m_placeJson;
     QList<Icon *> m_icons;
     int currIconIndex;
     QStringList m_specifiedDestinations;
@@ -127,6 +121,7 @@ private:
 class RemovePlaceReply : public IdReply
 {
     Q_OBJECT
+
 public:
     RemovePlaceReply(QPlaceManagerEngineJsonDb *engine);
     virtual ~RemovePlaceReply();
@@ -134,23 +129,14 @@ public:
     void start();
 
 private slots:
-    void processResponse(int id, const QVariant &data);
-    void processError(int id, int code, const QString &errorString);
-
-private:
-    int m_reqId;
+    void checkIfExistsFinished();
+    void removeFinished();
+    void requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString);
 };
 
 class SaveCategoryReply : public IdReply
 {
     Q_OBJECT
-    enum State {
-        Initial,
-        CheckParentExists,
-        GetCurrentCategory,
-        GetParentDescendants,
-        Saving
-    };
 
 public:
     SaveCategoryReply(QPlaceManagerEngineJsonDb *engine);
@@ -159,30 +145,26 @@ public:
     void setParentId(const QString &parentId);
     void start();
 
-    void doSave();
-
 private slots:
-    void processResponse(int id, const QVariant &data);
-    void processError(int id, int code, const QString &errorString);
+    void checkParentExistsFinished();
+    void getCurrentCategoryFinished();
+    void getDescendantsAndSelfFinished();
+    void savingFinished();
+
+    void requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString);
 
 private:
+    QJsonObject prepareCategoryJson();
+
     QPlaceCategory m_category;
     QString m_parentId;
-    int m_reqId;
-    State m_state;
-    QStringList m_newAncestors;
-    QStringList m_oldAncestors;
+    QJsonArray m_newAncestors;
+    QJsonArray m_oldAncestors;
 };
 
 class RemoveCategoryReply : public IdReply
 {
     Q_OBJECT
-    enum State {
-        Initial,
-        GetCategory,
-        GetCategoriesToBeRemoved,
-        RemoveCategories
-    };
 
 public:
     RemoveCategoryReply(QPlaceManagerEngineJsonDb *engine);
@@ -191,12 +173,13 @@ public:
     void start();
 
 private slots:
-    void processResponse(int id, const QVariant &data);
-    void processError(int id, int code, const QString &errorString);
+    void getCategoryFinished();
+    void getCategoriesToBeRemovedFinished();
+    void removeFinished();
+    void requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString);
 
 private:
     int m_reqId;
-    State m_state;
 };
 
 QT_END_NAMESPACE

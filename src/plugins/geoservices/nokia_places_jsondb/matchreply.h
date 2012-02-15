@@ -54,11 +54,6 @@ class MatchReply : public QPlaceMatchReply
 {
     Q_OBJECT
 
-    enum State {
-       Initial,
-       GetPlaces
-    };
-
 public:
     MatchReply(QPlaceManagerEngineJsonDb *engine);
     virtual ~MatchReply();
@@ -70,20 +65,16 @@ public:
     void start();
 
 protected:
-    JsonDbClient *db() {return m_engine->db();}
+    JsonDb *db() { return m_engine->db(); }
 
 private slots:
-    void processResponse(int id, const QVariant &data);
-    void processError(int id, int code, const QString &);
+    void findByAlternativeIdFinished();
+    void findByProximityFinished();
+    void getCategoriesForPlacesFinished();
+    void requestError(QtJsonDb::QJsonDbRequest::ErrorCode code, const QString &dbErrorString);
 
 private:
-    void findPlace(const QString &id);
-    void findPlaceByProximity();
-
     QPlaceManagerEngineJsonDb *m_engine;
-    State m_state;
-    int m_reqId;
-    QList<QPlace> m_inputPlaces;
     QList<QPlace> m_outputPlaces;
 };
 

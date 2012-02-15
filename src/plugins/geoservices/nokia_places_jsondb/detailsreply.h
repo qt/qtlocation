@@ -41,22 +41,18 @@
 #ifndef DETAILSREPLY_H
 #define DETAILSREPLY_H
 
+#include "macro.h"
+
 #include <qplacedetailsreply.h>
 #include <qplacemanagerengine_jsondb.h>
 
-#include "macro.h"
+#include <QtJsonDb/QJsonDbRequest>
 
 QT_BEGIN_NAMESPACE
 
 class DetailsReply : public QPlaceDetailsReply
 {
     Q_OBJECT
-    enum State {
-        Initial,
-        GetCategories,
-        GetPlace
-    };
-
 public:
     DetailsReply(QPlaceManagerEngineJsonDb *engine);
     virtual ~DetailsReply();
@@ -68,17 +64,16 @@ public:
     void start();
 
 protected:
-    JsonDbClient *db() {return m_engine->db();}
+    JsonDb *db() { return m_engine->db(); }
 
 private slots:
-    void processResponse(int id, const QVariant &data);
-    void processError(int id, int code, const QString &errorString);
+    void getPlaceFinished();
+    void getCategoriesForPlaceFinished();
+    void requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString);
 
 private:
     QPlaceManagerEngineJsonDb *m_engine;
     QString m_placeId;
-    int m_reqId;
-    State m_state;
 };
 
 QT_END_NAMESPACE

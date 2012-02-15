@@ -40,12 +40,12 @@
 ****************************************************************************/
 
 #include "initreply.h"
-#include "jsonconverter.h"
+#include "jsondb.h"
 
 #include <QtCore/QStringList>
 
 CategoryInitReply::CategoryInitReply(QPlaceManagerEngineJsonDb *engine)
-    : QPlaceReply(engine), m_engine(engine), m_reqId(-1)
+    : QPlaceReply(engine), m_engine(engine)
 {
 }
 
@@ -55,9 +55,6 @@ CategoryInitReply::~CategoryInitReply()
 
 void CategoryInitReply::start()
 {
-    connect(db(), SIGNAL(response(int,QVariant)), this, SLOT(processResponse(int,QVariant)));
-    connect(db(), SIGNAL(error(int,int,QString)), this, SLOT(processError(int,int,QString)));
-
     CategoryNode rootNode;
     m_queue.append(rootNode);
     processNodeQueue();
@@ -67,9 +64,7 @@ void CategoryInitReply::processNodeQueue()
 {
     if (!m_queue.isEmpty()) {
         QString categoryId = m_queue.first().category.categoryId();
-        //find children
-        m_reqId = db()->query(QString("[?%1=\"%2\"][?%3 = \"%4\"]").arg(JsonConverter::Type).arg(JsonConverter::CategoryType)
-                    .arg(JsonConverter::CategoryParentId).arg(categoryId));
+        db()->getChildCategories(categoryId, this, SLOT(requestFinished()));
     } else {
         m_engine->setCategoryTree(m_tree);
         triggerDone(QPlaceReply::NoError);
@@ -77,21 +72,15 @@ void CategoryInitReply::processNodeQueue()
     }
 }
 
-JsonDbClient *CategoryInitReply::db()
+void CategoryInitReply::requestFinished()
 {
-    return m_engine->db();
-}
-
-void CategoryInitReply::processResponse(int id, const QVariant &data)
-{
-    if (id != m_reqId)
-        return;
-
     Q_ASSERT(!m_queue.isEmpty());
 
-    QList<QPlaceCategory> categories = JsonConverter::convertJsonResponseToCategories(data.toMap(),
-                                                                                      m_engine);
+    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
+    Q_ASSERT(request);
 
+    QList<QPlaceCategory> categories = JsonDb::convertJsonObjectsToCategories(request->takeResults(),
+                                                                         m_engine);
     foreach (const QPlaceCategory &category, categories) {
         CategoryNode node;
         node.category = category;
@@ -110,12 +99,9 @@ void CategoryInitReply::processResponse(int id, const QVariant &data)
     processNodeQueue();
 }
 
-void CategoryInitReply::processError(int id, int code, const QString &jsonDbErrorString)
+void CategoryInitReply::requestError(QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString)
 {
-    Q_UNUSED(id)
-
-    QPlaceReply::Error error = QPlaceReply::UnknownError;
     QString errorString = QString::fromLatin1("Unknown error occurred operation: jsondb error code =%1, erroString=%2").
-                  arg(code).arg(jsonDbErrorString);
-    triggerDone(error, errorString);
+                  arg(dbCode).arg(dbErrorString);
+    triggerDone(QPlaceReply::UnknownError, errorString);
 }

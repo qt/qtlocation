@@ -1,15 +1,15 @@
 !no_system_tests:CONFIG += testcase
 TARGET = tst_qplacemanager_jsondb
 
-HEADERS += jsondbcleaner.h
+HEADERS += jsondbutils.h
 
 SOURCES += tst_qplacemanager_jsondb.cpp \
-           jsondbcleaner.cpp
+           jsondbutils.cpp
 
 
 
 QT += location testlib
 
-QT += jsondbcompat
+QT += jsondb
 
 RESOURCES += resources.qrc

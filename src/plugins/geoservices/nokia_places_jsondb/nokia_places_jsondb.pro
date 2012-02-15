@@ -12,11 +12,10 @@ DESTDIR = $$QT.location.plugins/geoservices
 HEADERS += \
             qgeoserviceproviderplugin_jsondb.h \
             qplacemanagerengine_jsondb.h \
-            jsonconverter.h \
+            jsondb.h \
             matchreply.h \
             searchreply.h \
             detailsreply.h \
-            reply.h \
             unsupportedreplies.h \
             macro.h \
             idreply.h \
@@ -26,18 +25,17 @@ HEADERS += \
 SOURCES += \
             qgeoserviceproviderplugin_jsondb.cpp \
             qplacemanagerengine_jsondb.cpp \
-            jsonconverter.cpp \
+            jsondb.cpp \
             matchreply.cpp \
             searchreply.cpp \
             detailsreply.cpp \
-            reply.cpp \
             idreply.cpp \
             icon.cpp \
             initreply.cpp
 
 INCLUDEPATH += $$QT.location.includes
 
-QT += jsondbcompat
+QT += jsondb
 
 target.path += $$[QT_INSTALL_PLUGINS]/geoservices
 INSTALLS += target

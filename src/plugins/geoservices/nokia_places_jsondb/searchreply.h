@@ -46,19 +46,14 @@
 
 #include <qplacesearchreply.h>
 
-#include <QObject>
+#include <QtCore/QObject>
+#include <QtJsonDb/QJsonDbRequest>
 
 QT_BEGIN_NAMESPACE
 
 class SearchReply : public QPlaceSearchReply
 {
     Q_OBJECT
-
-    enum State {
-       Initial,
-       GetCategories,
-       Search
-    };
 
 public:
     SearchReply(QPlaceManagerEngineJsonDb *engine);
@@ -71,16 +66,19 @@ public:
     void start();
 
 protected:
-    JsonDbClient *db() {return m_engine->db();}
+    JsonDb *db() { return m_engine->db(); }
 
 private slots:
-    void processResponse(int id, const QVariant &data);
-    void processError(int id, int code, const QString &);
+    //first perform search for places, then retrieve category
+    //information for received places
+    void searchFinished();
+    void getCategoriesForPlacesFinished();
+
+    void requestError(QtJsonDb::QJsonDbRequest::ErrorCode code, const QString &dbErrorString);
 
 private:
+    QJsonDbRequest *searchRequest(const QPlaceSearchRequest &request);
     QPlaceManagerEngineJsonDb *m_engine;
-    State m_state;
-    int m_reqId;
 };
 
 QT_END_NAMESPACE

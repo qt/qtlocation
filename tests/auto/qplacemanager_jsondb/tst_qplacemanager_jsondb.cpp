@@ -60,7 +60,10 @@
 #include <qplaceimage.h>
 #include <qplacesupplier.h>
 
-#include "jsondbcleaner.h"
+#include "jsondbutils.h"
+
+#include <QtJsonDb/QJsonDbCreateRequest>
+#include <QtJsonDb/QJsonDbReadRequest>
 
 //Use until QTRY_VERIFY_WITH_TIMEOUT is available
 #ifndef TRY_VERIFY_WITH_TIMEOUT
@@ -92,6 +95,7 @@
 #endif
 
 Q_DECLARE_METATYPE(QPlaceIdReply *);
+Q_DECLARE_METATYPE(QJsonObject);
 
 QT_USE_NAMESPACE
 
@@ -116,7 +120,9 @@ private Q_SLOTS:
     void cleanup();
 
     void saveAndRemovePlace();
+    void simpleUpdatePlace();
     void updatePlace();
+    void updatePlace_data();
     void simpleSaveAndRemoveCategory();
     void saveAndRemoveCategory();
     void updateCategory();
@@ -139,6 +145,7 @@ private Q_SLOTS:
     void compatiblePlace();
     void extendedAttribute();
     void matchingPlaces();
+    void matchingPlaces_data();
     void iconSourceDestination();
     void iconSourceDestination_data();
     void iconSourceOnly();
@@ -192,7 +199,6 @@ private:
 
     bool checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError);
 
-
     bool compareResultsByName(const QList<QPlaceSearchResult> &results, const QList<QPlace> &expectedResults);
 
     QImage dataUrlToImage(const QUrl &url);
@@ -218,7 +224,7 @@ private:
     QGeoServiceProvider *provider;
     QPlaceManager *placeManager;
     QCoreApplication *coreApp;
-    JsonDbCleaner *dbCleaner ;
+    JsonDbUtils *dbUtils ;
 };
 
 //These constants are equivalent to those from the jsondb plugin icon class
@@ -251,17 +257,18 @@ tst_QPlaceManagerJsonDb::tst_QPlaceManagerJsonDb()
     char **argv=0;
     coreApp = new QCoreApplication(argc, argv);
 
-    dbCleaner = new JsonDbCleaner(this);
+    dbUtils = new JsonDbUtils(this);
 }
 
 void tst_QPlaceManagerJsonDb::initTestCase()
 {
     qRegisterMetaType<QPlaceIdReply *>();
+    qRegisterMetaType<QJsonObject>();
 
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
-    QVERIFY(providers.contains("nokia_places_jsondb"));
+    QVERIFY(providers.contains(QStringLiteral("nokia_places_jsondb")));
 
-    provider = new QGeoServiceProvider("nokia_places_jsondb");
+    provider = new QGeoServiceProvider(QStringLiteral("nokia_places_jsondb"));
     placeManager = provider->placeManager();
     QVERIFY(placeManager);
 
@@ -271,32 +278,32 @@ void tst_QPlaceManagerJsonDb::initTestCase()
 void tst_QPlaceManagerJsonDb::saveAndRemovePlace()
 {
     QPlace place;
-    place.setName("Char");
+    place.setName(QStringLiteral("Char"));
     QGeoLocation location;
 
     location.setCoordinate(QGeoCoordinate(10,20));
 
     QGeoAddress address;
-    address.setStreet("1 test street");
-    address.setCity("New york");
-    address.setCountry("USA");
+    address.setStreet(QStringLiteral("1 test street"));
+    address.setCity(QStringLiteral("New york"));
+    address.setCountry(QStringLiteral("USA"));
     location.setAddress(address);
     place.setLocation(location);
 
     QPlaceContactDetail phone;
-    phone.setValue("555-5555");
+    phone.setValue(QStringLiteral("555-5555"));
     place.appendContactDetail(QPlaceContactDetail::Phone, phone);
 
     QPlaceContactDetail fax;
-    fax.setValue("999-9999");
+    fax.setValue(QStringLiteral("999-9999"));
     place.appendContactDetail(QPlaceContactDetail::Fax, fax);
 
     QPlaceContactDetail email;
-    email.setValue("email@adddresss.com");
+    email.setValue(QStringLiteral("email@adddresss.com"));
     place.appendContactDetail(QPlaceContactDetail::Email, email);
 
     QPlaceContactDetail website;
-    website.setValue("www.example.com");
+    website.setValue(QStringLiteral("www.example.com"));
     place.appendContactDetail(QPlaceContactDetail::Website, website);
 
     //Save a place
@@ -324,13 +331,13 @@ void tst_QPlaceManagerJsonDb::saveAndRemovePlace()
     QVERIFY(doSavePlace(place, QPlaceReply::UnsupportedError, 0));
 }
 
-void tst_QPlaceManagerJsonDb::updatePlace()
+void tst_QPlaceManagerJsonDb::simpleUpdatePlace()
 {
     //save a place and check that we can retrieve it
     QPlace place;
-    place.setName("Sydney");
+    place.setName(QStringLiteral("Sydney"));
     QGeoAddress address;
-    address.setStreet("original street");
+    address.setStreet(QStringLiteral("original street"));
     QGeoLocation location;
     location.setAddress(address);
     place.setLocation(location);
@@ -340,29 +347,471 @@ void tst_QPlaceManagerJsonDb::updatePlace()
     QVERIFY(doFetchDetails(placeId, &place));
 
     //update the place again with some changes
-    place.setName(QLatin1String("Brisbane"));
-    address.setStreet(QLatin1String("new street"));
-    address.setCountry(QLatin1String("Australia"));
+    place.setName(QStringLiteral("Brisbane"));
+    address.setStreet(QStringLiteral("new street"));
+    address.setCountry(QStringLiteral("Australia"));
     location.setAddress(address);
     place.setLocation(location);
 
     QPlace retrievedPlace;
     QVERIFY(doSavePlace(place, QPlaceReply::NoError));
     QVERIFY(doFetchDetails(place.placeId(), &retrievedPlace));
-    QCOMPARE(retrievedPlace.name(), QLatin1String("Brisbane"));
-    QCOMPARE(retrievedPlace.location().address().street(), QLatin1String("new street"));
-    QCOMPARE(retrievedPlace.location().address().country(), QLatin1String("Australia"));
+    QCOMPARE(retrievedPlace.name(), QStringLiteral("Brisbane"));
+    QCOMPARE(retrievedPlace.location().address().street(), QStringLiteral("new street"));
+    QCOMPARE(retrievedPlace.location().address().country(), QStringLiteral("Australia"));
 
     //try updating a non-existent place
     place.setPlaceId("Non-existent id");
     QVERIFY(doSavePlace(place, QPlaceReply::PlaceDoesNotExistError));
 }
 
+void tst_QPlaceManagerJsonDb::updatePlace()
+{
+    const QUrl IconUrl(QStringLiteral("file://opt/myicon.png"));
+    const QSize IconSize(20,20);
+
+    QPlaceAttribute smoking;
+    smoking.setLabel(QStringLiteral("Smoking"));
+    smoking.setText(QStringLiteral("yes"));
+
+    QPlaceAttribute noSmoking;
+    noSmoking.setLabel(QStringLiteral("Smoking"));
+    noSmoking.setText(QStringLiteral("no"));
+
+    QPlaceAttribute bus;
+    bus.setLabel(QStringLiteral("Bus stop"));
+    bus.setText(QStringLiteral("yes"));
+
+    QPlaceContactDetail contactDetail;
+    contactDetail.setLabel(QStringLiteral("contact label"));
+    contactDetail.setValue(QStringLiteral("contact value"));
+
+    QFETCH(QString, field);
+    qDebug(); //this simply provides visual output on what is being tested
+
+    QString categoryId;
+    QPlaceCategory pizza;
+    pizza.setName(QStringLiteral("pizza"));
+    QVERIFY(doSaveCategory(pizza, QPlaceReply::NoError, &categoryId));
+    pizza.setCategoryId(categoryId);
+
+    QPlaceCategory burgers;
+    burgers.setName(QStringLiteral("burgers"));
+    QVERIFY(doSaveCategory(burgers, QPlaceReply::NoError, &categoryId));
+    burgers.setCategoryId(categoryId);
+
+    //save minimal place
+    QPlace place;
+    place.setName(QStringLiteral("place1"));
+
+    QGeoAddress address;
+    address.setCountryCode(QStringLiteral("USA"));
+
+    QGeoLocation location;
+    location.setCoordinate(QGeoCoordinate(10,10));
+    location.setAddress(address);
+    place.setLocation(location);
+
+    QPlaceIcon icon;
+    QVariantMap iconParameters;
+    iconParameters.insert(QStringLiteral("fullscreenUrl"), QUrl("file://opt/icon.png"));
+    iconParameters.insert(QStringLiteral("fullscreenSize"), QSize(320, 480));
+
+    place.setVisibility(QtLocation::DeviceVisibility);
+    QString placeId;
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+    place.setPlaceId(placeId);
+
+    dbUtils->fetchPlaceJson(placeId);
+    QSignalSpy spy(dbUtils, SIGNAL(placeFetched(QJsonObject)));
+    QTRY_VERIFY(spy.count() == 1);
+    QJsonObject placeJson = spy.at(0).at(0).value<QJsonObject>();
+    spy.clear();
+
+    //we need to verify that other properties are not overwritten
+    placeJson.insert(QStringLiteral("description"), QStringLiteral("simpson residence"));
+    QJsonObject locationJson = placeJson.value(JsonDbUtils::Location).toObject();
+    locationJson.insert(QStringLiteral("launchUrl"), QStringLiteral("http://www.example.com"));
+    placeJson.insert(JsonDbUtils::Location, locationJson);
+
+    dbUtils->savePlaceJson(placeJson);
+    QSignalSpy saveSpy(dbUtils, SIGNAL(placeSaved()));
+    QTRY_VERIFY(saveSpy.count() == 1);
+
+    //modify all fields
+    if (field == QStringLiteral("category")) {
+        place.setCategory(pizza);
+    } else if (field == QStringLiteral("coordinate")) {
+        location.setCoordinate(QGeoCoordinate(20,20));
+        place.setLocation(location);
+    } else if (field == QStringLiteral("no coord with address")) {
+        location.setCoordinate(QGeoCoordinate());
+        address.setStreet(QStringLiteral("42 Evergreen Terrace"));
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("street")) {
+        address.setStreet(QStringLiteral("42 Evergreen Terrace"));
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("district")) {
+        address.setDistrict(QStringLiteral("Henderson"));;
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("city")) {
+        address.setCity("Springfield");
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("county")) {
+        address.setCounty(QStringLiteral("Lane County"));
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("state")) {
+        address.setState(QStringLiteral("Oregon"));
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("country")) {
+        address.setCountry(QStringLiteral("United States of America"));
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("country code")) {
+        address.setCountryCode("AUS");
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("clear address")) {
+        location.setAddress(QGeoAddress());
+        place.setLocation(location);
+    } else if (field == QStringLiteral("small icon")) {
+        iconParameters.insert(JsonDbUtils::SmallIconParam, IconUrl);
+        iconParameters.insert(JsonDbUtils::SmallIconSizeParam, IconSize);
+        icon.setParameters(iconParameters);
+        place.setIcon(icon);
+    } else if (field == QStringLiteral("medium icon")) {
+        iconParameters.insert(JsonDbUtils::MediumIconParam, IconUrl);
+        iconParameters.insert(JsonDbUtils::MediumIconSizeParam, IconSize);
+        icon.setParameters(iconParameters);
+        place.setIcon(icon);
+    } else if (field == QStringLiteral("large icon")) {
+        iconParameters.insert(JsonDbUtils::LargeIconParam, IconUrl);
+        iconParameters.insert(JsonDbUtils::LargeIconSizeParam, IconSize);
+        icon.setParameters(iconParameters);
+        place.setIcon(icon);
+    } else if (field == QStringLiteral("fullscreen icon")) {
+        iconParameters.insert(JsonDbUtils::FullscreenIconParam, IconUrl);
+        iconParameters.insert(JsonDbUtils::FullscreenIconSizeParam, IconSize);
+        icon.setParameters(iconParameters);
+        place.setIcon(icon);
+    }  else if (field == QStringLiteral("name")) {
+        place.setName(QStringLiteral("home"));
+    } else if (field == QStringLiteral("extended attribute") || field == QStringLiteral("clear extended attributes")) {
+        place.setExtendedAttribute("smoking", smoking);
+        place.setExtendedAttribute("bus", bus);
+    } else if (field == QStringLiteral("phone")) {
+        place.appendContactDetail(QPlaceContactDetail::Phone, contactDetail);
+    } else if (field == QStringLiteral("fax")) {
+        place.appendContactDetail(QPlaceContactDetail::Fax, contactDetail);
+    } else if (field == QStringLiteral("email")) {
+        place.appendContactDetail(QPlaceContactDetail::Email, contactDetail);
+    } else if (field == QStringLiteral("website")) {
+        place.appendContactDetail(QPlaceContactDetail::Website, contactDetail);
+    }
+
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError));
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+
+    dbUtils->fetchPlaceJson(placeId);
+    QTRY_VERIFY(spy.count() == 1);
+    placeJson = spy.at(0).at(0).value<QJsonObject>();
+    spy.clear();
+
+    locationJson = placeJson.value(JsonDbUtils::Location).toObject();
+    QJsonObject addressJson = locationJson.value(JsonDbUtils::Address).toObject();
+    QJsonObject thumbnailsJson = placeJson.value(JsonDbUtils::Thumbnails).toObject();
+    QJsonObject attributesJson = placeJson.value(JsonDbUtils::ExtendedAttributes).toObject();
+
+    QCOMPARE(placeJson.value(QStringLiteral("description")).toString(), QStringLiteral("simpson residence"));
+    QCOMPARE(locationJson.value(QStringLiteral("launchUrl")).toString(), QStringLiteral("http://www.example.com"));
+
+    if (field == QStringLiteral("category")) {
+        QCOMPARE(retrievedPlace.categories().count(), 1);
+        QVERIFY(retrievedPlace.categories().contains(pizza));
+        QVERIFY(placeJson.contains(JsonDbUtils::CategoryUuids));
+
+        place.setCategories(QList<QPlaceCategory>());
+    } else if (field == QStringLiteral("coordinate")) {        iconParameters.insert(JsonDbUtils::MediumIconParam, IconUrl);
+        iconParameters.insert(JsonDbUtils::MediumIconSizeParam, IconSize);
+        icon.setParameters(iconParameters);
+        place.setIcon(icon);
+        QCOMPARE(retrievedPlace.location().coordinate(), QGeoCoordinate(20,20));
+    } else if (field == QStringLiteral("no coord with address")) {
+        QCOMPARE(retrievedPlace.location().coordinate(), QGeoCoordinate());
+        QCOMPARE(retrievedPlace.location().address().street(), QStringLiteral("42 Evergreen Terrace"));
+        QVERIFY(!locationJson.contains(JsonDbUtils::Coordinate));
+        QVERIFY(locationJson.contains(JsonDbUtils::Address));
+    } else if (field == QStringLiteral("street")) {
+        QCOMPARE(retrievedPlace.location().address().street(), QStringLiteral("42 Evergreen Terrace"));
+        QCOMPARE(addressJson.keys().count(), 2);
+        QVERIFY(addressJson.keys().contains(JsonDbUtils::Street));
+
+        address.setStreet(QString());
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("district")) {
+        QCOMPARE(retrievedPlace.location().address().district(), QStringLiteral("Henderson"));
+        QCOMPARE(addressJson.keys().count(), 2);
+        QVERIFY(addressJson.keys().contains(JsonDbUtils::District));
+
+        address.setDistrict(QString());
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("city")) {
+        QCOMPARE(retrievedPlace.location().address().city(), QStringLiteral("Springfield"));
+        QCOMPARE(addressJson.keys().count(), 2);
+        QVERIFY(addressJson.keys().contains(JsonDbUtils::City));
+
+        address.setCity(QString());
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("county")) {
+        QCOMPARE(retrievedPlace.location().address().county(), QStringLiteral("Lane County"));
+        QCOMPARE(addressJson.keys().count(), 2);
+        QVERIFY(addressJson.keys().contains(JsonDbUtils::County));
+
+        address.setCounty(QString());
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("state")) {
+        QCOMPARE(retrievedPlace.location().address().state(), QStringLiteral("Oregon"));
+        QCOMPARE(addressJson.keys().count(), 2);
+        QVERIFY(addressJson.keys().contains(JsonDbUtils::State));
+
+        address.setState(QString());
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("country")) {
+        QCOMPARE(retrievedPlace.location().address().country(), QStringLiteral("United States of America"));
+        QCOMPARE(addressJson.keys().count(), 2);
+        QVERIFY(addressJson.keys().contains(JsonDbUtils::Country));
+
+        address.setCountry(QString());
+        location.setAddress(address);
+        place.setLocation(location);
+    } else if (field == QStringLiteral("country code")) {
+        QCOMPARE(retrievedPlace.location().address().countryCode(), QStringLiteral("AUS"));
+        QCOMPARE(addressJson.keys().count(), 1);
+        QVERIFY(addressJson.keys().contains(JsonDbUtils::CountryCode));
+
+        address.setStreet(QStringLiteral("742 Evergreen Tce"));//this is assigned so that the entire address object
+                                               //is not removed in jsondb
+        address.setCountryCode(QString());
+        location.setAddress(address);
+        place.setLocation(location);
+    }  else if (field == QStringLiteral("clear address")) {
+        QVERIFY(retrievedPlace.location().address().isEmpty());
+        QVERIFY(!locationJson.keys().contains(JsonDbUtils::Address));
+    } else if (field == QStringLiteral("small icon")) {
+        QCOMPARE(retrievedPlace.icon().parameters().value(JsonDbUtils::SmallIconParam).toUrl(), IconUrl);
+        QCOMPARE(retrievedPlace.icon().parameters().value(JsonDbUtils::SmallIconSizeParam).toSize(), IconSize);
+
+        iconParameters.remove(JsonDbUtils::SmallIconParam);
+        iconParameters.remove(JsonDbUtils::SmallIconSizeParam);
+        icon.setParameters(iconParameters);
+        place.setIcon(icon);
+    } else if (field == QStringLiteral("medium icon")) {
+        QCOMPARE(retrievedPlace.icon().parameters().value(JsonDbUtils::MediumIconParam).toUrl(), IconUrl);
+        QCOMPARE(retrievedPlace.icon().parameters().value(JsonDbUtils::MediumIconSizeParam).toSize(), IconSize);
+
+        iconParameters.remove(JsonDbUtils::MediumIconParam);
+        iconParameters.remove(JsonDbUtils::MediumIconSizeParam);
+        icon.setParameters(iconParameters);
+        place.setIcon(icon);
+    } else if (field == QStringLiteral("large icon")) {
+        QCOMPARE(retrievedPlace.icon().parameters().value(JsonDbUtils::LargeIconParam).toUrl(), IconUrl);
+        QCOMPARE(retrievedPlace.icon().parameters().value(JsonDbUtils::LargeIconSizeParam).toSize(), IconSize);
+
+        iconParameters.remove(JsonDbUtils::LargeIconParam);
+        iconParameters.remove(JsonDbUtils::LargeIconSizeParam);
+        icon.setParameters(iconParameters);
+        place.setIcon(icon);
+    } else if (field == QStringLiteral("fullscreen icon")) {
+        QCOMPARE(retrievedPlace.icon().parameters().value(JsonDbUtils::FullscreenIconParam).toUrl(), IconUrl);
+        QCOMPARE(retrievedPlace.icon().parameters().value(JsonDbUtils::FullscreenIconSizeParam).toSize(), IconSize);
+
+        iconParameters.remove(JsonDbUtils::FullscreenIconParam);
+        iconParameters.remove(JsonDbUtils::FullscreenIconSizeParam);
+
+        iconParameters.insert(JsonDbUtils::SmallIconParam, IconUrl);      //this is assigned so the entire
+        iconParameters.insert(JsonDbUtils::SmallIconSizeParam, IconSize);  //thumbnails jsondb object is not removed.
+
+        icon.setParameters(iconParameters);
+        place.setIcon(icon);
+    } else if (field == QStringLiteral("name")) {
+        QCOMPARE(retrievedPlace.name(), QStringLiteral("home"));
+    } else if (field == QStringLiteral("extended attribute")) {
+        QCOMPARE(retrievedPlace.extendedAttributeTypes().count(), 2);
+        QCOMPARE(retrievedPlace.extendedAttribute(QStringLiteral("smoking")), smoking);
+        QCOMPARE(retrievedPlace.extendedAttribute("bus"), bus);
+
+        QVERIFY(attributesJson.keys().contains(QStringLiteral("smoking")));
+        QVERIFY(attributesJson.keys().contains(QStringLiteral("bus")));
+
+        place.setExtendedAttribute(QStringLiteral("smoking"), noSmoking);
+    } else if (field == QStringLiteral("clear extended attributes")) {
+        QCOMPARE(retrievedPlace.extendedAttributeTypes().count(), 2);
+        QCOMPARE(retrievedPlace.extendedAttribute(QStringLiteral("smoking")), smoking);
+        QCOMPARE(retrievedPlace.extendedAttribute(QStringLiteral("bus")), bus);
+
+        QVERIFY(attributesJson.keys().contains(QStringLiteral("smoking")));
+        QVERIFY(attributesJson.keys().contains(QStringLiteral("bus")));
+
+        place.removeExtendedAttribute(QStringLiteral("smoking"));
+        place.removeExtendedAttribute(QStringLiteral("bus"));
+    } else if (field == QStringLiteral("phone")) {
+        QVERIFY(place.contactTypes().contains(QPlaceContactDetail::Phone));
+        QCOMPARE(place.contactDetails(QPlaceContactDetail::Phone).first(), contactDetail);
+        QVERIFY(placeJson.contains(JsonDbUtils::Phones));
+
+        place.removeContactDetails(QPlaceContactDetail::Phone);
+    } else if (field == QStringLiteral("fax")) {
+        QVERIFY(place.contactTypes().contains(QPlaceContactDetail::Fax));
+        QCOMPARE(place.contactDetails(QPlaceContactDetail::Fax).first(), contactDetail);
+        QVERIFY(placeJson.contains(JsonDbUtils::Phones));
+
+        place.removeContactDetails(QPlaceContactDetail::Fax);
+    } else if (field == QStringLiteral("email")) {
+        QVERIFY(place.contactTypes().contains(QPlaceContactDetail::Email));
+        QCOMPARE(place.contactDetails(QPlaceContactDetail::Email).first(), contactDetail);
+        QVERIFY(placeJson.contains(JsonDbUtils::Emails));
+
+        place.removeContactDetails(QPlaceContactDetail::Email);
+    } else if (field == QStringLiteral("website")) {
+        QVERIFY(place.contactTypes().contains(QPlaceContactDetail::Website));
+        QCOMPARE(place.contactDetails(QPlaceContactDetail::Website).first(), contactDetail);
+        QVERIFY(placeJson.contains(JsonDbUtils::Websites));
+
+        place.removeContactDetails(QPlaceContactDetail::Website);
+    } else {
+        QFAIL("Unknown test case");
+    }
+
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError));
+
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    dbUtils->fetchPlaceJson(placeId);
+    QTRY_VERIFY(spy.count() == 1);
+    placeJson = spy.at(0).at(0).value<QJsonObject>();
+    locationJson = placeJson.value(JsonDbUtils::Location).toObject();
+    addressJson = locationJson.value(JsonDbUtils::Address).toObject();
+    thumbnailsJson = placeJson.value(JsonDbUtils::Thumbnails).toObject();
+    attributesJson = placeJson.value(JsonDbUtils::ExtendedAttributes).toObject();
+    spy.clear();
+
+    QCOMPARE(placeJson.value(QStringLiteral("description")).toString(), QStringLiteral("simpson residence"));
+    QCOMPARE(locationJson.value(QStringLiteral("launchUrl")).toString(), QStringLiteral("http://www.example.com"));
+
+    if (field == QStringLiteral("category")) {
+        QCOMPARE(retrievedPlace.categories().count(), 0);
+        QVERIFY(!placeJson.contains(JsonDbUtils::CategoryUuids));
+    } else if (field == QStringLiteral("street")) {
+        QCOMPARE(retrievedPlace.location().address().street(), QString());
+        QVERIFY(!addressJson.contains(JsonDbUtils::Street));
+    } else if (field == QStringLiteral("district")) {
+        QCOMPARE(retrievedPlace.location().address().district(), QString());
+        QVERIFY(!addressJson.contains(JsonDbUtils::District));
+    } else if (field == QStringLiteral("city")) {
+        QCOMPARE(retrievedPlace.location().address().city(), QString());
+        QVERIFY(!addressJson.contains(JsonDbUtils::City));
+    } else if (field == QStringLiteral("county")) {
+        QCOMPARE(retrievedPlace.location().address().county(), QString());
+        QVERIFY(!addressJson.contains(JsonDbUtils::County));
+    } else if (field == QStringLiteral("state")) {
+        QCOMPARE(retrievedPlace.location().address().state(), QString());
+        QVERIFY(!addressJson.contains(JsonDbUtils::State));
+    } else if (field == QStringLiteral("country")) {
+        QCOMPARE(retrievedPlace.location().address().country(), QString());
+        QVERIFY(!addressJson.contains(JsonDbUtils::Country));
+    } else if (field == QStringLiteral("country code")) {
+        QCOMPARE(retrievedPlace.location().address().countryCode(), QString());
+        QVERIFY(!addressJson.contains(JsonDbUtils::CountryCode));
+    } else if (field == QStringLiteral("small icon")) {
+        QVERIFY(!retrievedPlace.icon().parameters().contains(JsonDbUtils::SmallIconParam));
+        QVERIFY(!retrievedPlace.icon().parameters().contains(JsonDbUtils::SmallIconSizeParam));
+        QVERIFY(!thumbnailsJson.contains(JsonDbUtils::Small));
+    } else if (field == QStringLiteral("medium icon")) {
+        QVERIFY(!retrievedPlace.icon().parameters().contains(JsonDbUtils::MediumIconParam));
+        QVERIFY(!retrievedPlace.icon().parameters().contains(JsonDbUtils::MediumIconSizeParam));
+        QVERIFY(!thumbnailsJson.contains(JsonDbUtils::Medium));
+    } else if (field == QStringLiteral("large icon")) {
+        QVERIFY(!retrievedPlace.icon().parameters().contains(JsonDbUtils::LargeIconParam));
+        QVERIFY(!retrievedPlace.icon().parameters().contains(JsonDbUtils::LargeIconSizeParam));
+        QVERIFY(!thumbnailsJson.contains(JsonDbUtils::Large));
+    } else if (field == QStringLiteral("fullscreen icon")) {
+        QVERIFY(!retrievedPlace.icon().parameters().contains(JsonDbUtils::FullscreenIconParam));
+        QVERIFY(!retrievedPlace.icon().parameters().contains(JsonDbUtils::FullscreenIconParam));
+        QVERIFY(!thumbnailsJson.contains(JsonDbUtils::Fullscreen));
+    } else if (field == QStringLiteral("extended attribute")) {
+        QCOMPARE(retrievedPlace.extendedAttribute("smoking"), noSmoking);
+        QCOMPARE(retrievedPlace.extendedAttribute("bus"), bus);
+
+        QVERIFY(attributesJson.keys().contains(QStringLiteral("smoking")));
+        QVERIFY(attributesJson.keys().contains(QStringLiteral("bus")));
+    } else if (field == QStringLiteral("clear extended attributes")) {
+        QVERIFY(retrievedPlace.extendedAttributeTypes().isEmpty());
+        QVERIFY(!placeJson.keys().contains(JsonDbUtils::ExtendedAttributes));
+    } else if (field == QStringLiteral("phone")) {
+        QVERIFY(retrievedPlace.contactTypes().isEmpty());
+        QVERIFY(!placeJson.contains(JsonDbUtils::Phones));
+    } else if (field == QStringLiteral("fax")) {
+        QVERIFY(retrievedPlace.contactTypes().isEmpty());
+        QVERIFY(!placeJson.contains(JsonDbUtils::Phones));
+    } else if (field == QStringLiteral("email")) {
+        QVERIFY(retrievedPlace.contactTypes().isEmpty());
+        QVERIFY(!placeJson.contains(JsonDbUtils::Emails));
+    } else if (field == QStringLiteral("website")) {
+        QVERIFY(retrievedPlace.contactTypes().isEmpty());
+        QVERIFY(!placeJson.contains(JsonDbUtils::Websites));
+    } else if (field == QStringLiteral("coordinate") || field == QStringLiteral("no coord with address")
+               || field == QStringLiteral("clear address") || field == QStringLiteral("name")) {
+        //no further tests required for these cases
+    } else {
+        QFAIL("Unknown test case");
+    }
+}
+
+void tst_QPlaceManagerJsonDb::updatePlace_data()
+{
+    QTest::addColumn<QString>("field");
+
+    QTest::newRow("category") << "category";
+    QTest::newRow("coordinate") << "coordinate";
+    QTest::newRow("no coord with address") << "no coord with address";
+    QTest::newRow("street") << "street";
+    QTest::newRow("district") << "district";
+    QTest::newRow("city") << "city";
+    QTest::newRow("county") << "county";
+    QTest::newRow("state") << "state";
+    QTest::newRow("country") << "country";
+    QTest::newRow("country code") << "country code";
+    QTest::newRow("clear address") << "clear address";
+    QTest::newRow("small icon") << "small icon";
+    QTest::newRow("medium icon") << "medium icon";
+    QTest::newRow("large icon") << "large icon";
+    QTest::newRow("fullscreen icon") << "fullscreen icon";
+    QTest::newRow("name") << "name";
+    QTest::newRow("extended attribute") << "extended attribute"; //initially set two attributes, modify then remove one, verify other is unchanged
+    QTest::newRow("clear extended attributes") << "clear extended attributes"; //initially set two attributes clear them,
+                                                                            //ensure attribute property does not exist in jsondb
+    QTest::newRow("phone") << "phone";
+    QTest::newRow("fax") << "fax";
+    QTest::newRow("email") << "email";
+    QTest::newRow("website") << "website";
+}
+
 void tst_QPlaceManagerJsonDb::simpleSaveAndRemoveCategory()
 {
     QString categoryId;
     QPlaceCategory restaurant;
-    restaurant.setName("Restaurant");
+    restaurant.setName(QStringLiteral("Restaurant"));
 
     //check saving of category
     QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
@@ -390,47 +839,47 @@ void tst_QPlaceManagerJsonDb::saveAndRemoveCategory()
 {
     QString categoryId;
     QPlaceCategory restaurant;
-    restaurant.setName("Restaurant");
+    restaurant.setName(QStringLiteral("Restaurant"));
     QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
     restaurant.setCategoryId(categoryId);
 
     QPlaceCategory fastFood;
-    fastFood.setName("Fast Food");
+    fastFood.setName(QStringLiteral("Fast Food"));
     QVERIFY(doSaveCategory(fastFood, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
     fastFood.setCategoryId(categoryId);
 
     QPlaceCategory fineDining;
-    fineDining.setName("Fine dining");
+    fineDining.setName(QStringLiteral("Fine dining"));
     QVERIFY(doSaveCategory(fineDining, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
     fineDining.setCategoryId(categoryId);
 
     QPlaceCategory pancakes;
-    pancakes.setName("Pancakes");
+    pancakes.setName(QStringLiteral("Pancakes"));
     QVERIFY(doSaveCategory(pancakes, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
     pancakes.setCategoryId(categoryId);
 
     QPlaceCategory pizza;
-    pizza.setName("Pizza");
+    pizza.setName(QStringLiteral("Pizza"));
     QVERIFY(doSaveCategory(pizza, fastFood.categoryId(), QPlaceReply::NoError, &categoryId));
     pizza.setCategoryId(categoryId);
 
     QPlaceCategory burgers;
-    burgers.setName("burgers");
+    burgers.setName(QStringLiteral("burgers"));
     QVERIFY(doSaveCategory(burgers, fastFood.categoryId(), QPlaceReply::NoError, &categoryId));
     burgers.setCategoryId(categoryId);
 
     QPlaceCategory accommodation;
-    accommodation.setName("Accommodation");
+    accommodation.setName(QStringLiteral("Accommodation"));
     QVERIFY(doSaveCategory(accommodation, QPlaceReply::NoError,&categoryId));
     accommodation.setCategoryId(categoryId);
 
     QPlaceCategory hotel;
-    hotel.setName("Hotel");
+    hotel.setName(QStringLiteral("Hotel"));
     QVERIFY(doSaveCategory(hotel, accommodation.categoryId(), QPlaceReply::NoError, &categoryId));
     hotel.setCategoryId(categoryId);
 
     QPlaceCategory motel;
-    motel.setName("Motel");
+    motel.setName(QStringLiteral("Motel"));
     QVERIFY(doSaveCategory(motel, accommodation.categoryId(), QPlaceReply::NoError, &categoryId));
     motel.setCategoryId(categoryId);
     QPlaceReply *catInitReply = placeManager->initializeCategories();
@@ -482,7 +931,7 @@ void tst_QPlaceManagerJsonDb::updateCategory()
 {
     //Test updating a category name
     QPlaceCategory category;
-    category.setName("Foood");
+    category.setName(QStringLiteral("Foood"));
     QString categoryId;
     QVERIFY(doSaveCategory(category, QPlaceReply::NoError, &categoryId));
     category.setCategoryId(categoryId);
@@ -493,7 +942,7 @@ void tst_QPlaceManagerJsonDb::updateCategory()
     categories = placeManager->childCategories();
     QVERIFY(categories.contains(category));
 
-    category.setName("Food");
+    category.setName(QStringLiteral("Food"));
     QVERIFY(doSaveCategory(category, QPlaceReply::NoError, &categoryId));
     catInitReply = placeManager->initializeCategories();
     QVERIFY(checkSignals(catInitReply, QPlaceReply::NoError));
@@ -504,32 +953,32 @@ void tst_QPlaceManagerJsonDb::updateCategory()
 
     //Test updating a category's parent
     QPlaceCategory restaurant;
-    restaurant.setName("Restaurant");
+    restaurant.setName(QStringLiteral("Restaurant"));
     QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
     restaurant.setCategoryId(categoryId);
 
     QPlaceCategory fastFood;
-    fastFood.setName("Fast Food");
+    fastFood.setName(QStringLiteral("Fast Food"));
     QVERIFY(doSaveCategory(fastFood, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
     fastFood.setCategoryId(categoryId);
 
     QPlaceCategory fineDining;
-    fineDining.setName("Fine dining");
+    fineDining.setName(QStringLiteral("Fine dining"));
     QVERIFY(doSaveCategory(fineDining, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
     fineDining.setCategoryId(categoryId);
 
     QPlaceCategory pancakes;
-    pancakes.setName("Pancakes");
+    pancakes.setName(QStringLiteral("Pancakes"));
     QVERIFY(doSaveCategory(pancakes, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
     pancakes.setCategoryId(categoryId);
 
     QPlaceCategory pizza;
-    pizza.setName("Pizza");
+    pizza.setName(QStringLiteral("Pizza"));
     QVERIFY(doSaveCategory(pizza, fastFood.categoryId(), QPlaceReply::NoError, &categoryId));
     pizza.setCategoryId(categoryId);
 
     QPlaceCategory burgers;
-    burgers.setName("burgers");
+    burgers.setName(QStringLiteral("burgers"));
     QVERIFY(doSaveCategory(burgers, fastFood.categoryId(), QPlaceReply::NoError, &categoryId));
     burgers.setCategoryId(categoryId);
 
@@ -553,13 +1002,13 @@ void tst_QPlaceManagerJsonDb::savePlaceWithCategory()
 {
     QString categoryId;
     QPlaceCategory restaurant;
-    restaurant.setName("Restaurant");
+    restaurant.setName(QStringLiteral("Restaurant"));
     QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
     restaurant.setCategoryId(categoryId);
 
     QString placeId;
     QPlace monolithBurgers;
-    monolithBurgers.setName("Monolith burgers");
+    monolithBurgers.setName(QStringLiteral("Monolith burgers"));
     monolithBurgers.setCategory(restaurant);
     QVERIFY(doSavePlace(monolithBurgers,QPlaceReply::NoError, &placeId));
     monolithBurgers.setPlaceId(placeId);
@@ -571,7 +1020,7 @@ void tst_QPlaceManagerJsonDb::savePlaceWithCategory()
 
     //update place with multiple categories
     QPlaceCategory facilities;
-    facilities.setName("facilities");
+    facilities.setName(QStringLiteral("facilities"));
     QVERIFY(doSaveCategory(facilities, QPlaceReply::NoError, &categoryId));
     facilities.setCategoryId(categoryId);
 
@@ -591,11 +1040,11 @@ void tst_QPlaceManagerJsonDb::savePlaceWithCategory()
 void tst_QPlaceManagerJsonDb::searchByName()
 {
     QPlace adelaide, adel, ad, brisbane, bradel;
-    adelaide.setName("Adelaide");
-    adel.setName("adel");
-    ad.setName("ad");
-    brisbane.setName("brisbane");
-    bradel.setName("bradel");
+    adelaide.setName(QStringLiteral("Adelaide"));
+    adel.setName(QStringLiteral("adel"));
+    ad.setName(QStringLiteral("ad"));
+    brisbane.setName(QStringLiteral("brisbane"));
+    bradel.setName(QStringLiteral("bradel"));
 
     QList<QPlace> places;
     places << adelaide << adel << ad << brisbane << bradel;
@@ -604,7 +1053,7 @@ void tst_QPlaceManagerJsonDb::searchByName()
     //test that search has exhibits substring behaviour
     //and is case insensitive
     QPlaceSearchRequest request;
-    request.setSearchTerm("adel");
+    request.setSearchTerm(QStringLiteral("adel"));
     QList<QPlaceSearchResult> results;
     QVERIFY(doSearch(request, &results));
     QList<QPlace> expectedPlaces;
@@ -612,7 +1061,7 @@ void tst_QPlaceManagerJsonDb::searchByName()
     QVERIFY(compareResultsByName(results, expectedPlaces));
 
     //Search for a non-exisent place
-    request.setSearchTerm("Nowhere");
+    request.setSearchTerm(QStringLiteral("Nowhere"));
     QVERIFY(doSearch(request, &results));
     QCOMPARE(results.count(), 0);
 }
@@ -974,9 +1423,9 @@ void tst_QPlaceManagerJsonDb::searchByCircle()
 
             if (places.size() != plCoords.size()) {
                 for (int k = 0; k < places.size(); ++k)
-                    qWarning() << "pl" << places.at(k).location().coordinate().toString(QGeoCoordinate::Degrees);
+                    qWarning() << QStringLiteral("pl") << places.at(k).location().coordinate().toString(QGeoCoordinate::Degrees);
                 for (int k = 0; k < plCoords.size(); ++k)
-                    qWarning() << "plCoords" << plCoords.at(k).toString(QGeoCoordinate::Degrees);
+                    qWarning() << QStringLiteral("plCoords") << plCoords.at(k).toString(QGeoCoordinate::Degrees);
             }
 
             QCOMPARE(places.size(), plCoords.size());
@@ -1048,10 +1497,10 @@ void tst_QPlaceManagerJsonDb::searchByCircle()
 void tst_QPlaceManagerJsonDb::searchWithLexicalPlaceNameHint()
 {
     QPlace melbourne, sydney, adelaide, brisbane;
-    melbourne.setName(QLatin1String("Melbourne"));
-    sydney.setName(QLatin1String("Sydney"));
-    adelaide.setName(QLatin1String("Adelaide"));
-    brisbane.setName(QLatin1String("Brisbane"));
+    melbourne.setName(QStringLiteral("Melbourne"));
+    sydney.setName(QStringLiteral("Sydney"));
+    adelaide.setName(QStringLiteral("Adelaide"));
+    brisbane.setName(QStringLiteral("Brisbane"));
 
     QList<QPlace *> places;
     places << &melbourne << &sydney << &adelaide << &brisbane;
@@ -1073,38 +1522,38 @@ void tst_QPlaceManagerJsonDb::searchWithDistanceHint()
     QList<QPlace *> places;
 
     QPlace place1;
-    place1.setName(QLatin1String("LM1"));
+    place1.setName(QStringLiteral("LM1"));
     QGeoLocation location;
     location.setCoordinate(QGeoCoordinate(20,19));
     place1.setLocation(location);
     places << &place1;
 
     QPlace place2;
-    place2.setName(QLatin1String("LM2"));
+    place2.setName(QStringLiteral("LM2"));
     location.setCoordinate(QGeoCoordinate(20,50));
     place2.setLocation(location);
     places << &place2;
 
     QPlace place3;
-    place3.setName(QLatin1String("LM3"));
+    place3.setName(QStringLiteral("LM3"));
     location.setCoordinate(QGeoCoordinate(20, 30));
     place3.setLocation(location);
     places << &place3;
 
     QPlace place4;
-    place4.setName(QLatin1String("LM4"));
+    place4.setName(QStringLiteral("LM4"));
     location.setCoordinate(QGeoCoordinate(5,20));
     place4.setLocation(location);
     places << &place4;
 
     QPlace place5;
-    place5.setName(QLatin1String("LM5"));
+    place5.setName(QStringLiteral("LM5"));
     location.setCoordinate(QGeoCoordinate(80,20));
     place5.setLocation(location);
     places << &place5;
 
     QPlace place6;
-    place6.setName(QLatin1String("LM6"));
+    place6.setName(QStringLiteral("LM6"));
     location.setCoordinate(QGeoCoordinate(60,20));
     place6.setLocation(location);
     places << &place6;
@@ -1155,13 +1604,13 @@ void tst_QPlaceManagerJsonDb::searchByCategory()
 {
     QString categoryId;
     QPlaceCategory restaurant;
-    restaurant.setName("Restaurant");
+    restaurant.setName(QStringLiteral("Restaurant"));
     QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
     restaurant.setCategoryId(categoryId);
 
     QString placeId;
     QPlace park;
-    park.setName("Park");
+    park.setName(QStringLiteral("Park"));
     QVERIFY(doSavePlace(park, QPlaceReply::NoError, &placeId));
     park.setPlaceId(placeId);
 
@@ -1169,7 +1618,7 @@ void tst_QPlaceManagerJsonDb::searchByCategory()
     categories << restaurant;
 
     QPlace krustyBurger;
-    krustyBurger.setName("Krusty burger");
+    krustyBurger.setName(QStringLiteral("Krusty burger"));
     krustyBurger.setCategories(categories);
     QVERIFY(doSavePlace(krustyBurger, QPlaceReply::NoError, &placeId));
     krustyBurger.setPlaceId(placeId);
@@ -1185,7 +1634,7 @@ void tst_QPlaceManagerJsonDb::searchByCategory()
 void tst_QPlaceManagerJsonDb::unsupportedFunctions()
 {
     QPlace place;
-    place.setPlaceId("id");
+    place.setPlaceId(QStringLiteral("id"));
     QPlaceContentRequest request;
     request.setContentType(QPlaceContent::ImageType);
     request.setLimit(5);
@@ -1223,17 +1672,17 @@ void tst_QPlaceManagerJsonDb::categoryFunctions()
 {
     QString categoryId;
     QPlaceCategory restaurant;
-    restaurant.setName(QLatin1String("Restaurant"));
+    restaurant.setName(QStringLiteral("Restaurant"));
     QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
     restaurant.setCategoryId(categoryId);
 
     QPlaceCategory fastFood;
-    fastFood.setName(QLatin1String("Fast Food"));
+    fastFood.setName(QStringLiteral("Fast Food"));
     QVERIFY(doSaveCategory(fastFood, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
     fastFood.setCategoryId(categoryId);
 
     QPlaceCategory fineDining;
-    fineDining.setName(QLatin1String("Fine dining"));
+    fineDining.setName(QStringLiteral("Fine dining"));
     QVERIFY(doSaveCategory(fineDining, restaurant.categoryId(), QPlaceReply::NoError, &categoryId));
     fineDining.setCategoryId(categoryId);
     QPlaceReply *reply = placeManager->initializeCategories();
@@ -1246,7 +1695,7 @@ void tst_QPlaceManagerJsonDb::categoryFunctions()
     QCOMPARE(placeManager->parentCategoryId(restaurant.categoryId()), QString());
 
     //try find the parent id of a non-existent category.
-    QCOMPARE(placeManager->parentCategoryId(QLatin1String("does-not-exist")), QString());
+    QCOMPARE(placeManager->parentCategoryId(QStringLiteral("does-not-exist")), QString());
 
     //try find the child ids
     QStringList childIds = placeManager->childCategoryIds(restaurant.categoryId());
@@ -1258,13 +1707,13 @@ void tst_QPlaceManagerJsonDb::categoryFunctions()
     QCOMPARE(placeManager->childCategoryIds(fineDining.categoryId()), QStringList());
 
     //try to find child ids of a non-existent category
-    QCOMPARE(placeManager->childCategoryIds(QLatin1String("does-not-exist")), QStringList());
+    QCOMPARE(placeManager->childCategoryIds(QStringLiteral("does-not-exist")), QStringList());
 
     //try to find a category by it's id
     QCOMPARE(placeManager->category(fastFood.categoryId()), fastFood);
 
     //try to find a category with a non-existent id
-    QCOMPARE(placeManager->category(QLatin1String("does-not-exist")), QPlaceCategory());
+    QCOMPARE(placeManager->category(QStringLiteral("does-not-exist")), QPlaceCategory());
 }
 
 void tst_QPlaceManagerJsonDb::contactDetails()
@@ -1272,10 +1721,10 @@ void tst_QPlaceManagerJsonDb::contactDetails()
     QFETCH(QString, contactType);
     QPlace place;
     //create a place with a single contact detail of a given type
-    place.setName(QLatin1String("place"));
+    place.setName(QStringLiteral("place"));
     QPlaceContactDetail detail;
-    detail.setLabel(QLatin1String("detailLabel"));
-    detail.setValue(QLatin1String("detail"));
+    detail.setLabel(QStringLiteral("detailLabel"));
+    detail.setValue(QStringLiteral("detail"));
     place.appendContactDetail(contactType, detail);
 
     QString placeId;
@@ -1290,11 +1739,11 @@ void tst_QPlaceManagerJsonDb::contactDetails()
 
     //add multiple details of a given type;
     QPlaceContactDetail detail2;
-    detail2.setLabel("detail2Label");
-    detail2.setValue(QLatin1String("detail2"));
+    detail2.setLabel(QStringLiteral("detail2Label"));
+    detail2.setValue(QStringLiteral("detail2"));
     QPlaceContactDetail detail3;
-    detail3.setLabel("detail3Label");
-    detail3.setValue(QLatin1String("detail3"));
+    detail3.setLabel(QStringLiteral("detail3Label"));
+    detail3.setValue(QStringLiteral("detail3"));
 
     place.appendContactDetail(contactType, detail2);
     place.appendContactDetail(contactType, detail3);
@@ -1347,39 +1796,39 @@ void tst_QPlaceManagerJsonDb::mulipleDetailTypes()
 {
     //try saving a place with multiple detail types simultaneously.
     QPlace place;
-    place.setName("Char");
+    place.setName(QStringLiteral("Char"));
 
     QPlaceContactDetail phone;
-    phone.setLabel("phone1");
-    phone.setValue("555-5555");
+    phone.setLabel(QStringLiteral("phone1"));
+    phone.setValue(QStringLiteral("555-5555"));
     QPlaceContactDetail phone2;
-    phone2.setLabel("phone2");
-    phone2.setValue("444-4444");
+    phone2.setLabel(QStringLiteral("phone2"));
+    phone2.setValue(QStringLiteral("444-4444"));
     QList<QPlaceContactDetail> phones;
     place.setContactDetails(QPlaceContactDetail::Phone, phones);
 
     QPlaceContactDetail fax;
-    fax.setLabel("fax1");
-    fax.setValue("999-9999");
+    fax.setLabel(QStringLiteral("fax1"));
+    fax.setValue(QStringLiteral("999-9999"));
     QPlaceContactDetail fax2;
-    fax2.setLabel("fax2");
-    fax2.setValue("999-9999");
+    fax2.setLabel(QStringLiteral("fax2"));
+    fax2.setValue(QStringLiteral("999-9999"));
     QList<QPlaceContactDetail> faxes;
     place.setContactDetails(QPlaceContactDetail::Fax, faxes);
 
     QPlaceContactDetail email;
-    email.setValue("email@adddress.com");
+    email.setValue(QStringLiteral("email@adddress.com"));
     QPlaceContactDetail email2;
-    email2.setValue("email2@adddress.com");
+    email2.setValue(QStringLiteral("email2@adddress.com"));
     place.appendContactDetail(QPlaceContactDetail::Email, email);
     place.appendContactDetail(QPlaceContactDetail::Email, email2);
 
     QPlaceContactDetail website;
-    website.setLabel("website");
-    website.setValue("www.example.com");
+    website.setLabel(QStringLiteral("website"));
+    website.setValue(QStringLiteral("www.example.com"));
     QPlaceContactDetail website2;
-    website2.setLabel("website2");
-    website2.setValue("www.example2.com");
+    website2.setLabel(QStringLiteral("website2"));
+    website2.setValue(QStringLiteral("www.example2.com"));
     place.appendContactDetail(QPlaceContactDetail::Website, website);
     place.appendContactDetail(QPlaceContactDetail::Website, website2);
 
@@ -1395,7 +1844,7 @@ void tst_QPlaceManagerJsonDb::mulipleDetailTypes()
 
     //try adding some more, changing and removing details of different types
     //when updating a place.
-    phone2.setValue("222-2222");  //modify detail
+    phone2.setValue(QStringLiteral("222-2222"));  //modify detail
     phones.clear();
     phones << phone << phone2;
     place.setContactDetails(QPlaceContactDetail::Phone, phones);
@@ -1410,8 +1859,8 @@ void tst_QPlaceManagerJsonDb::mulipleDetailTypes()
 
     //add more of a detail
     QPlaceContactDetail website3;
-    website3.setLabel("website3");
-    website3.setValue("www.example3.com");
+    website3.setLabel(QStringLiteral("website3"));
+    website3.setValue(QStringLiteral("www.example3.com"));
     place.appendContactDetail(QPlaceContactDetail::Website, website3);
 
     QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
@@ -1427,7 +1876,7 @@ void tst_QPlaceManagerJsonDb::placeNotifications()
 
     //create place
     QPlace place;
-    place.setName("Char");
+    place.setName(QStringLiteral("Char"));
     QString placeId;
     QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
     place.setPlaceId(placeId);
@@ -1464,7 +1913,7 @@ void tst_QPlaceManagerJsonDb::categoryNotifications()
     //create category
     QString restaurantId;
     QPlaceCategory restaurant;
-    restaurant.setName("Restaurant");
+    restaurant.setName(QStringLiteral("Restaurant"));
     QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &restaurantId));
     restaurant.setCategoryId(restaurantId);
     QTRY_VERIFY(createSpy.count() == 1);
@@ -1473,7 +1922,7 @@ void tst_QPlaceManagerJsonDb::categoryNotifications()
     QVERIFY(removeSpy.count() == 0);
 
     //modify category
-    restaurant.setName("RESTAURANT");
+    restaurant.setName(QStringLiteral("RESTAURANT"));
     QVERIFY(doSaveCategory(restaurant));
     QTRY_VERIFY(updateSpy.count() == 1);
     updateSpy.clear();
@@ -1496,7 +1945,7 @@ void tst_QPlaceManagerJsonDb::categoryNotifications()
     //save a category as a child
     QString steakId;
     QPlaceCategory steak;
-    steak.setName("Steak");
+    steak.setName(QStringLiteral("Steak"));
 
     QVERIFY(doSaveCategory(steak, restaurantId, QPlaceReply::NoError, &steakId));
     steak.setCategoryId(steakId);
@@ -1509,21 +1958,21 @@ void tst_QPlaceManagerJsonDb::categoryNotifications()
 
 void tst_QPlaceManagerJsonDb::compatiblePlace()
 {
-    QGeoServiceProvider geoTest("qmlgeo.test.plugin");
+    QGeoServiceProvider geoTest(QStringLiteral("qmlgeo.test.plugin"));
     QPlaceManager *geoTestManager = geoTest.placeManager();
 
     QPlace place;
-    place.setPlaceId(QLatin1String("123"));
-    place.setName(QLatin1String("Moe's Tavern"));
+    place.setPlaceId(QStringLiteral("123"));
+    place.setName(QStringLiteral("Moe's Tavern"));
 
     QGeoAddress address;
-    address.setStreet(QLatin1String("93 Brewing Ave"));
-    address.setDistrict(QLatin1String("Maine"));
-    address.setCity(QLatin1String("Springfield"));
-    address.setCounty(QLatin1String("Jackson"));
-    address.setState(QLatin1String("Minnesota"));
-    address.setCountry("Unisted Statess");
-    address.setCountryCode("USA");
+    address.setStreet(QStringLiteral("93 Brewing Ave"));
+    address.setDistrict(QStringLiteral("Maine"));
+    address.setCity(QStringLiteral("Springfield"));
+    address.setCounty(QStringLiteral("Jackson"));
+    address.setState(QStringLiteral("Minnesota"));
+    address.setCountry(QStringLiteral("Unisted Statess"));
+    address.setCountryCode(QStringLiteral("USA"));
     QGeoCoordinate coord(56,34,5);
 
     QGeoLocation location;
@@ -1533,18 +1982,18 @@ void tst_QPlaceManagerJsonDb::compatiblePlace()
     place.setLocation(location);
 
     QPlaceContactDetail phone;
-    phone.setLabel("Phone");
-    phone.setValue("555-1793");
+    phone.setLabel(QStringLiteral("Phone"));
+    phone.setValue(QStringLiteral("555-1793"));
     place.appendContactDetail(QPlaceContactDetail::Phone, phone);
 
     QPlaceSupplier supplier;
-    supplier.setName("Springfield brewery");
-    supplier.setSupplierId("ID");
+    supplier.setName(QStringLiteral("Springfield brewery"));
+    supplier.setSupplierId(QStringLiteral("ID"));
 
     place.setSupplier(supplier);
 
     QPlaceImage image;
-    image.setImageId("798");
+    image.setImageId(QStringLiteral("798"));
     image.setUrl(QUrl("http://image.com/"));
     QPlaceContent::Collection imageCollection;
     imageCollection.insert(0,image);
@@ -1552,26 +2001,26 @@ void tst_QPlaceManagerJsonDb::compatiblePlace()
     place.setTotalContentCount(QPlaceContent::ImageType, 1);
 
     QPlaceAttribute attribute;
-    attribute.setLabel(QLatin1String("Smoking"));
-    attribute.setText(QLatin1String("Yes"));
+    attribute.setLabel(QStringLiteral("Smoking"));
+    attribute.setText(QStringLiteral("Yes"));
 
     QPlaceIcon icon;
     QVariantMap iconParams;
-    iconParams.insert("s", "www.example.com/small.png");
-    iconParams.insert("m", "www.example.com/medium.png");
-    iconParams.insert("l", "www.example.com/large.png");
+    iconParams.insert(QStringLiteral("s"), QStringLiteral("www.example.com/small.png"));
+    iconParams.insert(QStringLiteral("m"), QStringLiteral("www.example.com/medium.png"));
+    iconParams.insert(QStringLiteral("l"), QStringLiteral("www.example.com/large.png"));
     icon.setParameters(iconParams);
     icon.setManager(geoTestManager);
     place.setIcon(icon);
 
-    place.setExtendedAttribute(QLatin1String("Smoking"), attribute);
+    place.setExtendedAttribute(QStringLiteral("Smoking"), attribute);
 
     place.setVisibility(QtLocation::PublicVisibility);
 
     QPlace compatPlace = placeManager->compatiblePlace(place);
 
     QVERIFY(compatPlace.placeId().isEmpty());
-    QCOMPARE(compatPlace.name(),QLatin1String("Moe's Tavern"));
+    QCOMPARE(compatPlace.name(),QStringLiteral("Moe's Tavern"));
     QCOMPARE(compatPlace.location().address(), address);
     QVERIFY(compatPlace.location().coordinate() != location.coordinate());
     location.setCoordinate(QGeoCoordinate(56,34));
@@ -1589,12 +2038,12 @@ void tst_QPlaceManagerJsonDb::compatiblePlace()
     QVERIFY(compatPlace.content(QPlaceContent::EditorialType).isEmpty());
     QCOMPARE(compatPlace.totalContentCount(QPlaceContent::ImageType), 0);
 
-    QCOMPARE(compatPlace.icon().parameters().value(SmallSource).toString(),  QLatin1String("www.example.com/small.png"));
-    QCOMPARE(compatPlace.icon().parameters().value(MediumSource).toString(),  QLatin1String("www.example.com/medium.png"));
-    QCOMPARE(compatPlace.icon().parameters().value(LargeSource).toString(),  QLatin1String("www.example.com/large.png"));
+    QCOMPARE(compatPlace.icon().parameters().value(SmallSource).toString(),  QStringLiteral("www.example.com/small.png"));
+    QCOMPARE(compatPlace.icon().parameters().value(MediumSource).toString(),  QStringLiteral("www.example.com/medium.png"));
+    QCOMPARE(compatPlace.icon().parameters().value(LargeSource).toString(),  QStringLiteral("www.example.com/large.png"));
 
-    QVERIFY(compatPlace.extendedAttributeTypes().isEmpty());
-    QCOMPARE(compatPlace.extendedAttribute(QLatin1String("Smoking")), QPlaceAttribute());
+    QVERIFY(compatPlace.extendedAttributeTypes().contains(QStringLiteral("Smoking")));
+    QCOMPARE(compatPlace.extendedAttribute(QStringLiteral("Smoking")), attribute);
 
     QCOMPARE(compatPlace.visibility(), QtLocation::UnspecifiedVisibility);
 }
@@ -1602,28 +2051,51 @@ void tst_QPlaceManagerJsonDb::compatiblePlace()
 void tst_QPlaceManagerJsonDb::extendedAttribute()
 {
     QPlaceAttribute attribute;
-    attribute.setLabel(QLatin1String("x_id_nokia"));
-    attribute.setText(QLatin1String("ae562"));
+    attribute.setLabel(QStringLiteral("x_id_nokia"));
+    attribute.setText(QStringLiteral("ae562"));
     QPlace place;
-    place.setExtendedAttribute(QLatin1String("x_id_nokia"), attribute);
+    place.setExtendedAttribute(QStringLiteral("x_id_nokia"), attribute);
 
     QString placeId;
     QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
 
     QPlace retrievedPlace;
     QVERIFY(doFetchDetails(placeId,&retrievedPlace));
-    QVERIFY(retrievedPlace.extendedAttributeTypes().contains(QLatin1String("x_id_nokia")));
+    QVERIFY(retrievedPlace.extendedAttributeTypes().contains(QStringLiteral("x_id_nokia")));
 }
 
 void tst_QPlaceManagerJsonDb::matchingPlaces()
 {
-    QPlace place1;
-    place1.setPlaceId(QLatin1String("abcd"));
-    place1.setName("place1");
+    QFETCH(QString, matchType);
 
-    QPlaceAttribute origin1;
-    origin1.setText("nokia");
-    place1.setExtendedAttribute(QLatin1String("x_provider"), origin1);
+    QString categoryId;
+    QPlaceCategory restaurant;
+    restaurant.setName(QStringLiteral("Restaurant"));
+    QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
+    restaurant.setCategoryId(categoryId);
+
+    QPlaceCategory park;
+    park.setName(QStringLiteral("Park"));
+    QVERIFY(doSaveCategory(park, QPlaceReply::NoError, &categoryId));
+    park.setCategoryId(categoryId);
+
+    QPlaceCategory travel;
+    travel.setName(QStringLiteral("Travel"));
+    QVERIFY(doSaveCategory(travel, QPlaceReply::NoError, &categoryId));
+    travel.setCategoryId(categoryId);
+
+    QPlace place1;
+    place1.setPlaceId(QStringLiteral("abcd"));
+    place1.setName(QStringLiteral("place1"));
+    QGeoLocation location;
+    location.setCoordinate(QGeoCoordinate(1,1));
+    place1.setLocation(location);
+
+    if (matchType == QPlaceMatchRequest::AlternativeId) {
+        QPlaceAttribute origin1;
+        origin1.setText(QStringLiteral("nokia"));
+        place1.setExtendedAttribute(QStringLiteral("x_provider"), origin1);
+    }
 
     QPlace place1Saved;
     place1Saved = placeManager->compatiblePlace(place1);
@@ -1640,7 +2112,10 @@ void tst_QPlaceManagerJsonDb::matchingPlaces()
 
     QPlaceMatchRequest matchRequest;
     QVariantMap parameters;
-    parameters.insert(QPlaceMatchRequest::AlternativeId, QLatin1String("x_id_nokia"));
+    if (matchType == QPlaceMatchRequest::AlternativeId)
+        parameters.insert(QPlaceMatchRequest::AlternativeId, QStringLiteral("x_id_nokia"));
+    else
+        parameters.insert(QStringLiteral("proximityRange"), 0);
     matchRequest.setParameters(parameters);
     matchRequest.setResults(results);
     QList<QPlace> places;
@@ -1650,22 +2125,26 @@ void tst_QPlaceManagerJsonDb::matchingPlaces()
 
     //try matching multiple places
     QPlace nonMatchingPlace;
-    nonMatchingPlace.setName("Non matching");
-    nonMatchingPlace.setPlaceId(QLatin1String("1234"));
+    nonMatchingPlace.setName(QStringLiteral("Non matching"));
+    nonMatchingPlace.setPlaceId(QStringLiteral("1234"));
     QPlaceAttribute originNonMatch;
-    originNonMatch.setText(QLatin1String("nokia"));
-    nonMatchingPlace.setExtendedAttribute(QLatin1String("x_provider"),originNonMatch);
+    originNonMatch.setText(QStringLiteral("nokia"));
+    nonMatchingPlace.setExtendedAttribute(QStringLiteral("x_provider"),originNonMatch);
     QPlaceSearchResult nonMatchingResult;
     nonMatchingResult.setPlace(nonMatchingPlace);
     results.insert(1, nonMatchingResult);
 
     QPlace place2;
-    place2.setName(QLatin1String("place2"));
-    place2.setPlaceId(QLatin1String("efgh"));
+    place2.setName(QStringLiteral("place2"));
+    place2.setPlaceId(QStringLiteral("efgh"));
+    location.setCoordinate(QGeoCoordinate(2,2));
+    place2.setLocation(location);
 
-    QPlaceAttribute origin2;
-    origin2.setText(QLatin1String("nokia"));
-    place2.setExtendedAttribute(QLatin1String("x_provider"), origin2);
+    if (matchType == QPlaceMatchRequest::AlternativeId) {
+        QPlaceAttribute origin2;
+        origin2.setText(QStringLiteral("nokia"));
+        place2.setExtendedAttribute(QStringLiteral("x_provider"), origin2);
+    }
 
     QPlace place2Saved = placeManager->compatiblePlace(place2);
     QVERIFY(doSavePlace(place2Saved, QPlaceReply::NoError, &placeId));
@@ -1680,8 +2159,29 @@ void tst_QPlaceManagerJsonDb::matchingPlaces()
     QVERIFY(doMatch(matchRequest, &places));
     QCOMPARE(places.count(), 3);
     QCOMPARE(places.at(0), place1Saved);
+
     QCOMPARE(places.at(1), QPlace());
     QCOMPARE(places.at(2), place2Saved);
+
+    //check that if we have assigned categories, the results with return those
+    //categories in a match
+    QList<QPlaceCategory> categories;
+    categories << restaurant << travel;
+    place2Saved.setCategories(categories);
+    QVERIFY(doSavePlace(place2Saved, QPlaceReply::NoError, &placeId));
+
+    QVERIFY(doMatch(matchRequest, &places));
+    QCOMPARE(places.count(), 3);
+    QCOMPARE(places.at(0), place1Saved);
+    QCOMPARE(places.at(1), QPlace());
+    QCOMPARE(places.at(2), place2Saved);
+}
+
+void tst_QPlaceManagerJsonDb::matchingPlaces_data()
+{
+    QTest::addColumn<QString>("matchType");
+    QTest::newRow("Alternative Id") << QPlaceMatchRequest::AlternativeId;
+    QTest::newRow("Proximity") << "proximity";
 }
 
 void tst_QPlaceManagerJsonDb::iconSourceDestination()
@@ -1707,25 +2207,25 @@ void tst_QPlaceManagerJsonDb::iconSourceDestination()
                 QImage sourceIconImage(sourceIconResource);
                 sourceIconFile.open();
                 sourceIconImage.save(sourceIconFile.fileName(), QImageReader::imageFormat(sourceIconResource));
-                if (iconType == QLatin1String("file"))
+                if (iconType == QStringLiteral("file"))
                     iconParams.insert(source, QUrl::fromLocalFile(sourceIconFile.fileName()));
-                else if (iconType == QLatin1String("file_improperUrl"))
+                else if (iconType == QStringLiteral("file_improperUrl"))
                     iconParams.insert(source, QUrl(sourceIconFile.fileName()));
                 else
                     qFatal("Unknown icon type");
-            } else if (iconType == QLatin1String("dataUrl")) {
+            } else if (iconType == QStringLiteral("dataUrl")) {
                 QFile sourceIcon(sourceIconResource);
                 sourceIcon.open(QIODevice::ReadOnly);
                 QString mimeType;
                 if (QImageReader::imageFormat(sourceIconResource) == "png")
-                    mimeType = QLatin1String("image/png");
-                QUrl dataUrl(QString::fromLatin1("data:") + mimeType + QLatin1String(";base64,") + sourceIcon.readAll().toBase64());
+                    mimeType = QStringLiteral("image/png");
+                QUrl dataUrl(QString::fromLatin1("data:") + mimeType + QStringLiteral(";base64,") + sourceIcon.readAll().toBase64());
                 iconParams.insert(source, dataUrl);
             }
 
             QTemporaryDir tempDir;
             QVERIFY(tempDir.isValid());
-            QString destIconFileName = tempDir.path() + QLatin1String("/tempFile");
+            QString destIconFileName = tempDir.path() + QStringLiteral("/tempFile");
             if (destFileExists == Exists) {
                 QFile destFile(destIconFileName);
                 destFile.open(QIODevice::ReadWrite);
@@ -1807,23 +2307,23 @@ void tst_QPlaceManagerJsonDb::iconSourceOnly()
         QImage sourceIconImage(sourceIconResource);
         sourceIconFile.open();
         sourceIconImage.save(sourceIconFile.fileName(), QImageReader::imageFormat(sourceIconResource));
-        if (iconType == QLatin1String("file"))
+        if (iconType == QStringLiteral("file"))
             iconParams.insert(source, QUrl::fromLocalFile(sourceIconFile.fileName()));
-        else if (iconType == QLatin1String("file_improperUrl"))
+        else if (iconType == QStringLiteral("file_improperUrl"))
             iconParams.insert(source, QUrl(sourceIconFile.fileName()));
         else
             qFatal("Unknown iconType");
-    } else if (iconType == QLatin1String("dataUrl")) {
+    } else if (iconType == QStringLiteral("dataUrl")) {
         QFile sourceIcon(sourceIconResource);
         sourceIcon.open(QIODevice::ReadOnly);
         QString mimeType;
         if (QImageReader::imageFormat(sourceIconResource) == "png")
-            mimeType = QLatin1String("image/png");
+            mimeType = QStringLiteral("image/png");
         else
             qFatal("Unexpected image format");
-        QUrl dataUrl(QString::fromLatin1("data:") + mimeType + QLatin1String(";base64,") + sourceIcon.readAll().toBase64());
+        QUrl dataUrl(QString::fromLatin1("data:") + mimeType + QStringLiteral(";base64,") + sourceIcon.readAll().toBase64());
         iconParams.insert(source, dataUrl);
-    } else if (iconType == QLatin1String("unaccessible_webUrl")) {
+    } else if (iconType == QStringLiteral("unaccessible_webUrl")) {
         iconParams.insert(source, QUrl(sourceIconResource));
     }
 
@@ -1831,7 +2331,7 @@ void tst_QPlaceManagerJsonDb::iconSourceOnly()
     place.setIcon(icon);
     QString placeId;
 
-    if (iconType == QLatin1String("unaccessible_webUrl")) {
+    if (iconType == QStringLiteral("unaccessible_webUrl")) {
         QVERIFY(doSavePlace(place,QPlaceReply::BadArgumentError));
     } else {
         QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
@@ -1915,7 +2415,7 @@ void tst_QPlaceManagerJsonDb::iconDestinationOnly()
 
         QString mimeType;
         if (QImageReader::imageFormat(iconResource) == "png")
-            mimeType = QLatin1String("image/png");
+            mimeType = QStringLiteral("image/png");
 
         QImage iconImage(iconResource);
         size = iconImage.size();
@@ -2111,6 +2611,9 @@ void tst_QPlaceManagerJsonDb::iconFormats()
     QFETCH(QByteArray, imageFormat);
     QFETCH(QString, mimeType);
 
+    if (imageFormat == "svg")
+        QSKIP("There is currently a crash issue with QImage and svg, see QTBUG-24468, so skip for now");
+
     QTemporaryFile sourceIconFile;
     sourceIconFile.open();
     QImage sourceIconImage;
@@ -2135,9 +2638,6 @@ void tst_QPlaceManagerJsonDb::iconFormats()
     place.setIcon(icon);
 
     QString placeId;
-
-    if (imageFormat == "tiff")
-        QEXPECT_FAIL("", "tiff format known to fail as documented in QTBUG-23898", Abort);
 
     if (imageFormat == "svg" && !QImageReader::supportedImageFormats().contains("svg")) {
         //svg format is not supported therefore saving of the icon should fail
@@ -2180,9 +2680,9 @@ void tst_QPlaceManagerJsonDb::iconUrls()
     QFETCH(QString, sizeType);
     QFETCH(QSize, size);
 
-    QString source = sizeType + QLatin1String("SourceUrl");
-    QString destination = sizeType + QLatin1String("Url");
-    QString destinationSize = sizeType + QLatin1String("Size");
+    QString source = sizeType + QStringLiteral("SourceUrl");
+    QString destination = sizeType + QStringLiteral("Url");
+    QString destinationSize = sizeType + QStringLiteral("Size");
 
     QPlace place;
     place.setName("place");
@@ -2321,8 +2821,8 @@ void tst_QPlaceManagerJsonDb::constructIconUrl()
 
 void tst_QPlaceManagerJsonDb::cleanup()
 {
-    QSignalSpy cleanSpy(dbCleaner, SIGNAL(dbCleaned()));
-    dbCleaner->cleanDb();
+    QSignalSpy cleanSpy(dbUtils, SIGNAL(dbCleaned()));
+    dbUtils->cleanDb();
     QTRY_VERIFY(cleanSpy.count() == 1);
 }
 
@@ -2341,6 +2841,9 @@ bool tst_QPlaceManagerJsonDb::doSavePlace(const QPlace &place,
         qWarning() << "Error string = " << saveReply->errorString();
         isSuccessful = false;
     }
+
+    if (!isSuccessful)
+        qWarning() << "Error string = " << saveReply->errorString();
 
     return isSuccessful;
 }
@@ -2381,6 +2884,10 @@ bool tst_QPlaceManagerJsonDb::doRemovePlace(const QPlace &place,
     bool isSuccessful = false;
     isSuccessful = checkSignals(removeReply, expectedError)
                     && (removeReply->id() == place.placeId());
+
+    if (!isSuccessful)
+        qWarning() << "Place removal unsuccessful errorString = " << removeReply->errorString();
+
     return isSuccessful;
 }
 
@@ -2410,6 +2917,10 @@ bool tst_QPlaceManagerJsonDb::doFetchDetails(QString placeId, QPlace *place, QPl
     QPlaceDetailsReply *detailsReply = placeManager->getPlaceDetails(placeId);
     bool success = checkSignals(detailsReply, expectedError);
     *place = detailsReply->place();
+
+    if (!success)
+        qDebug() << "Error string = " << detailsReply->errorString();
+
     return success;
 }
 
@@ -2436,6 +2947,9 @@ bool tst_QPlaceManagerJsonDb::doSaveCategory(const QPlaceCategory &category,
 
     if (categoryId != 0)
         *categoryId = idReply->id();
+
+    if (!isSuccessful)
+        qDebug() << "Error string =" << idReply->errorString();
     return isSuccessful;
 }
 

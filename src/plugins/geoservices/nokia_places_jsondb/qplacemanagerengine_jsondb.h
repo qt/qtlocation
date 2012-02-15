@@ -42,23 +42,20 @@
 #ifndef QPLACEMANAGERENGINE_NOKIA_JSONDB_H
 #define QPLACEMANAGERENGINE_NOKIA_JSONDB_H
 
-#include "jsonconverter.h"
+#include "jsondb.h"
 
 #include <qplacemanagerengine.h>
 #include <qgeoserviceprovider.h>
 
-#include <QtJsonDbCompat/jsondb-global.h>
-#include <QtJsonDbCompat/jsondb-notification.h>
 #include <QtCore/QEventLoop>
 #include <QtCore/QMutex>
 
-QT_ADDON_JSONDB_BEGIN_NAMESPACE
-class JsonDbClient;
-QT_ADDON_JSONDB_END_NAMESPACE
-
-QT_ADDON_JSONDB_USE_NAMESPACE
+#include <QtJsonDb/QJsonDbConnection>
+#include <QtJsonDb/QJsonDbWatcher>
 
 QT_BEGIN_NAMESPACE
+
+QT_USE_NAMESPACE_JSONDB
 
 struct CategoryNode {
     QString parentId;
@@ -108,25 +105,17 @@ public:
     QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const;
     QPlaceManager::ManagerFeatures supportedFeatures() const;
 
-    JsonDbClient *db() { return m_db;}
+    JsonDb *db() { return m_jsonDb;}
     QPlaceManager *manager() const { return QPlaceManagerEngine::manager(); }
-
-    QString queryCategoryString(const QString &categoryUuid) const
-    {
-        return QString::fromLatin1("[?%1=\"%2\"][?%3 = \"%4\"]")
-                .arg(JsonConverter::Type).arg(JsonConverter::CategoryType).arg(JsonConverter::Uuid).arg(categoryUuid);
-    }
-
     void setCategoryTree(const CategoryTree &tree);
 
-public slots:
-    void processJsonDbNotification(const QString &notifyUuid,
-                                   const QtAddOn::JsonDb::JsonDbNotification &notification);
+private slots:
+    void processPlaceNotifications(const QList<QJsonDbNotification> &notifications);
+    void processCategoryNotifications(const QList<QJsonDbNotification> &notifications);
+    void notificationsError(QtJsonDb::QJsonDbWatcher::ErrorCode code, const QString &errorString);
 
 private:
-    JsonDbClient *m_db;
-    QString m_notificationUuid;
-    int m_notificationReqId;
+    JsonDb *m_jsonDb;
 
     mutable QMutex m_treeMutex;
     CategoryTree m_tree;

@@ -41,36 +41,29 @@
 
 #include "qplacemanagerengine_jsondb.h"
 
-#include <QtCore/QDebug>
-#include <QtCore/qnumeric.h>
-#include <QtCore/QMutex>
-#include <QtCore/QMutexLocker>
-
-#include <QtJsonDbCompat/jsondb-client.h>
-#include <QtJsonDbCompat/jsondb-error.h>
-
 #include "detailsreply.h"
-#include "reply.h"
 #include "idreply.h"
 #include "initreply.h"
 #include "matchreply.h"
 #include "searchreply.h"
 #include "unsupportedreplies.h"
 
+#include <QtCore/QDebug>
+#include <QtCore/qnumeric.h>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
+
 QT_USE_NAMESPACE
 
 QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVariant> &parameters,
                                                      QGeoServiceProvider::Error *error,
                                                      QString *errorString)
-:   QPlaceManagerEngine(parameters)
+    :   QPlaceManagerEngine(parameters), m_jsonDb(new JsonDb())
 {
-    qRegisterMetaType<QPlaceCategory>();
-
-    m_db = new JsonDbClient(this);
-
-    m_notificationUuid = m_db->registerNotification(JsonDbClient::NotifyCreate | JsonDbClient::NotifyUpdate | JsonDbClient::NotifyRemove,
-                                QString::fromLatin1("[?%1 = \"%2\" | %1 = \"%3\" ]").arg(JsonConverter::Type).arg(JsonConverter::PlaceType).arg(JsonConverter::CategoryType),
-                                QString(), this, SLOT(processJsonDbNotification(QString,QtAddOn::JsonDb::JsonDbNotification)));
+    connect(m_jsonDb, SIGNAL(placeNotifications(QList<QJsonDbNotification>)),
+            this, SLOT(processPlaceNotifications(QList<QJsonDbNotification>)));
+    connect(m_jsonDb, SIGNAL(categoryNotifications(QList<QJsonDbNotification>)),
+            this, SLOT(processCategoryNotifications(QList<QJsonDbNotification>)));
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
@@ -78,7 +71,7 @@ QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVarian
 
 QPlaceManagerEngineJsonDb::~QPlaceManagerEngineJsonDb()
 {
-    delete m_db;
+    delete m_jsonDb;
 }
 
 QPlaceDetailsReply *QPlaceManagerEngineJsonDb::getPlaceDetails(const QString &placeId)
@@ -231,10 +224,8 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
     place.setVisibility(QtLocation::UnspecifiedVisibility);
 
     QStringList attributeTypes = original.extendedAttributeTypes();
-    foreach (const QString &attributeType, attributeTypes) {
-        if (attributeType.startsWith(QLatin1String("x_id")))
-            place.setExtendedAttribute(attributeType, original.extendedAttribute(attributeType));
-    }
+    foreach (const QString &attributeType, attributeTypes)
+        place.setExtendedAttribute(attributeType, original.extendedAttribute(attributeType));
 
     if (attributeTypes.contains(QLatin1String("x_provider")) && !original.extendedAttribute(QLatin1String("x_provider")).text().isEmpty()) {
         QPlaceAttribute alternativeId;
@@ -267,7 +258,6 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
 
     return place;
 }
-
 
 QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const QSize &size) const
 {
@@ -313,6 +303,7 @@ QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const Q
         }
         return candidates.last().second;
     }
+    return QUrl();
 }
 
 QPlaceManager::ManagerFeatures QPlaceManagerEngineJsonDb::supportedFeatures() const
@@ -338,31 +329,33 @@ void QPlaceManagerEngineJsonDb::setCategoryTree(const CategoryTree &tree)
     m_tree = tree;
 }
 
-void QPlaceManagerEngineJsonDb::processJsonDbNotification(const QString &notifyUuid, const QtAddOn::JsonDb::JsonDbNotification &notification)
+void QPlaceManagerEngineJsonDb::processPlaceNotifications(const QList<QJsonDbNotification> &notifications)
 {
-    Q_ASSERT(notifyUuid == m_notificationUuid);
-    QVariantMap object = notification.object();
-    if (object.value(JsonConverter::Type).toString() == JsonConverter::PlaceType) {
-        if (notification.action() & JsonDbClient::NotifyCreate)
-            emit placeAdded(object.value(JsonConverter::Uuid).toString());
-        else if (notification.action() & JsonDbClient::NotifyUpdate)
-            emit placeUpdated(object.value(JsonConverter::Uuid).toString());
-        else if (notification.action() & JsonDbClient::NotifyRemove)
-            emit placeRemoved(object.value(JsonConverter::Uuid).toString());
-    } else if (object.value(JsonConverter::Type).toString() == JsonConverter::CategoryType) {
-        QPlaceCategory category = JsonConverter::convertJsonMapToCategory(object, this);
-        QStringList ancestors = object.value(JsonConverter::Ancestors).toStringList();
-        QString parentId;
-        if (ancestors.count() >= 2) {
-            ancestors.takeLast();//last element in ancestors is always the uuid of the catgory itself
-            parentId = ancestors.takeLast(); //the 2nd last element must be the parent;
-        }
+    foreach (const QJsonDbNotification &notification, notifications) {
+        if (notification.action() == QJsonDbWatcher::Created)
+            emit placeAdded(notification.object().value(JsonDb::Uuid).toString());
+        else if (notification.action() == QJsonDbWatcher::Updated)
+            emit placeUpdated(notification.object().value(JsonDb::Uuid).toString());
+        else if (notification.action() == QJsonDbWatcher::Removed)
+            emit placeRemoved(notification.object().value(JsonDb::Uuid).toString());
+    }
+}
 
-        if (notification.action() & JsonDbClient::NotifyCreate)
+void QPlaceManagerEngineJsonDb::processCategoryNotifications(const QList<QJsonDbNotification> &notifications)
+{
+    foreach (const QJsonDbNotification &notification, notifications) {
+        QPlaceCategory category = JsonDb::convertJsonObjectToCategory(notification.object(), this);
+        QString parentId = notification.object().value(JsonDb::CategoryParentId).toString();
+        if (notification.action() == QJsonDbWatcher::Created)
             emit categoryAdded(category, parentId);
-        else if (notification.action() & JsonDbClient::NotifyUpdate)
+        else if (notification.action() == QJsonDbWatcher::Updated)
             emit categoryUpdated(category, parentId);
-        else if (notification.action() & JsonDbClient::NotifyRemove)
+        else if (notification.action() == QJsonDbWatcher::Removed)
             emit categoryRemoved(category.categoryId(), parentId);
     }
+}
+
+void QPlaceManagerEngineJsonDb::notificationsError(QJsonDbWatcher::ErrorCode code, const QString &errorString)
+{
+    qWarning() << Q_FUNC_INFO << " Error code: " << code << " Error String: " << errorString;
 }

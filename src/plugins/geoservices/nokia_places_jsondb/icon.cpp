@@ -149,25 +149,10 @@ QUrl Icon::destinationUrl() const
     return m_destinationUrl;
 }
 
-bool Icon::createDestinationDataUrl()
+void Icon::setDestinationDataUrl()
 {
-    if (m_inputFormat.isEmpty()) {
-        m_error = QPlaceReply::BadArgumentError;
-        m_errorString = QString::fromLatin1("Format of input file could not be detected, data url could not be generated for icon.\n")
-                + QLatin1String("Source url:") + m_sourceUrl.toString();
-        return false;
-    }
-
     QString mimeType = imageFormatToMimeType(m_inputFormat);
-    if (mimeType.isEmpty()) {
-        m_error = QPlaceReply::BadArgumentError;
-        m_errorString = QString::fromLatin1("Mime type of input file was not recognized, data url could not be generated for icon.\n")
-                + QLatin1String("Source url:") + m_sourceUrl.toString();
-        return false;
-    }
-
     m_destinationUrl = QUrl(QString::fromLatin1("data:") + mimeType + QLatin1String(";base64,") + m_payload.toBase64());
-    return true;
 }
 
 QString Icon::destination() const
@@ -202,6 +187,13 @@ bool Icon::initImage(const QUrl &url)
 
             QImageReader imageReader(fileName);
             m_inputFormat = imageReader.format();
+
+            if (m_inputFormat.isEmpty()) {
+                m_error = QPlaceReply::UnsupportedError;
+                m_errorString = QStringLiteral("Format of input file could not be detected");
+                return false;
+            }
+
             m_size = imageReader.size();
             return true;
         } else {
@@ -219,7 +211,7 @@ bool Icon::initImage(const QUrl &url)
 
             if (!data.endsWith(";base64")) {
                 m_error = QPlaceReply::BadArgumentError;
-                m_errorString = "Icon data urls must be base 64 encoded";
+                m_errorString = QStringLiteral("Icon data urls must be base 64 encoded");
                 return false;
             }
 
