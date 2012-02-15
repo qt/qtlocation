@@ -62,11 +62,11 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \o mapping.host
     \o Map tile service URL used by mapping manager.
 \row
-    \o mapping.referer
-    \o Referer for the mapping token used for authentication by mapping manager.
+    \o mapping.app_id
+    \o Client app_id part of the app_id/token pair used for authentication by mapping manager.
 \row
     \o mapping.token
-    \o Client token for the service used for authentication by mapping manager.
+    \o Client token part of the app_id/token pair for the service used for authentication by mapping manager.
 \row
     \o mapping.cache.directory
     \o Map tile cache directory used as network disk cache.

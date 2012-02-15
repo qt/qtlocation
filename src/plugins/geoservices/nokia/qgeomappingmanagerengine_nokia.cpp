@@ -81,8 +81,6 @@ const char* MAPTILES_HOST_CN = "a-k.maptile.maps.svc.nokia.com.cn";
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoMappingManagerEngine(parameters),
         m_cache(0),
-        m_token(QGeoServiceProviderFactoryNokia::defaultToken),
-        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer),
         m_firstSubdomain(QChar::Null),
         m_maxSubdomains(0)
 {
@@ -144,10 +142,6 @@ void QGeoMappingManagerEngineNokia::init()
         QString host = parameters.value("mapping.host").toString();
         if (!host.isEmpty())
             setHost(host);
-    }
-
-    if (parameters.contains("mapping.referer")) {
-        m_referer = parameters.value("mapping.referer").toString();
     }
 
     if (parameters.contains("mapping.app_id")) {
@@ -268,21 +262,15 @@ QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoTileSpec &spec
     static const QString slashpng("/png8");
     requestString += slashpng;
 
-    if (!m_token.isEmpty()) {
+    if (!m_token.isEmpty() && !m_applicationId.isEmpty()) {
         requestString += "?token=";
         requestString += m_token;
-
-        if (!m_referer.isEmpty()) {
-            requestString += "&referer=";
-            requestString += m_referer;
-        }
-    } else if (!m_referer.isEmpty()) {
-        requestString += "?referer=";
-        requestString += m_referer;
-    }
-    if (!m_applicationId.isEmpty()) {
         requestString += "&app_id=";
         requestString += m_applicationId;
+    }
+    // Remove the code below when app_id and token are fully enforced
+    else {
+        requestString += "?token=ThisWillCeaseToWork";
     }
     return requestString;
 }
@@ -323,11 +311,6 @@ QString QGeoMappingManagerEngineNokia::mapIdToStr(int mapId)
 
     qWarning() << "Unknown mapId: " << mapId;
     return "normal.day";
-}
-
-const QString & QGeoMappingManagerEngineNokia::referer() const
-{
-    return m_referer;
 }
 
 const QString & QGeoMappingManagerEngineNokia::token() const

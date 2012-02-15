@@ -103,7 +103,6 @@ private:
     QNetworkDiskCache *m_cache;
     QString m_host;
     QString m_token;
-    QString m_referer;
     QChar m_firstSubdomain;
     unsigned char m_maxSubdomains;
     QString m_applicationId;
