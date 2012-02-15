@@ -43,8 +43,6 @@ import QtQuick 2.0
 Image {
     id: root
 
-    property bool running: false
-
     source: "../../../../resources/busy.png"
 
     RotationAnimation on rotation {
@@ -52,5 +50,6 @@ Image {
         from: 0
         to: 360
         duration: 500
+        running: root.visible
     }
 }

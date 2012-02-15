@@ -76,8 +76,7 @@ Rectangle {
             anchors.right: parent.right
             anchors.rightMargin: 3
 
-            running: placeSearchModel.status === PlaceSearchModel.Executing
-            visible: running
+            visible: placeSearchModel.status === PlaceSearchModel.Executing
         }
 
         //! [PlaceSearchSuggestionModel search text changed]
@@ -186,7 +185,6 @@ Rectangle {
         id: busy
 
         visible: false
-        running: visible
 
         anchors.centerIn: parent
     }
