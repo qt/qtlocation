@@ -56,6 +56,7 @@ QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
 
 QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
 {
+    disconnect(this, SLOT(afterChildrenChanged()));
     if (quickMap_)
         quickMap_->removeMapItem(this);
 }

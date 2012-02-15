@@ -151,7 +151,6 @@ QT_BEGIN_NAMESPACE
 QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
     : QDeclarativeGeoMapItemBase(parent),
       coordinate_(&internalCoordinate_),
-      sourceItem_(0),
       zoomLevel_(0.0),
       inUpdate_(false),
       mapAndSourceItemSet_(false)
@@ -236,7 +235,7 @@ QDeclarativeCoordinate* QDeclarativeGeoMapQuickItem::coordinate()
 */
 void QDeclarativeGeoMapQuickItem::setSourceItem(QQuickItem* sourceItem)
 {
-    if (sourceItem == sourceItem_)
+    if (sourceItem_.data() == sourceItem)
         return;
     sourceItem_ = sourceItem;
 
@@ -247,7 +246,7 @@ void QDeclarativeGeoMapQuickItem::setSourceItem(QQuickItem* sourceItem)
 
 QQuickItem* QDeclarativeGeoMapQuickItem::sourceItem()
 {
-    return sourceItem_;
+    return sourceItem_.data();
 }
 
 void QDeclarativeGeoMapQuickItem::afterChildrenChanged()
@@ -258,7 +257,7 @@ void QDeclarativeGeoMapQuickItem::afterChildrenChanged()
         foreach (QQuickItem *i, kids) {
             if (i->flags() & QQuickItem::ItemHasContents
                     && !qobject_cast<QDeclarativeGeoMapMouseArea*>(i)
-                    && sourceItem_ != i) {
+                    && sourceItem_.data() != i) {
                 if (!printedWarning) {
                     qmlInfo(this) << "Use the sourceItem property for the contained item, direct children are not supported";
                     printedWarning = true;
@@ -327,7 +326,7 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
 {
     if (!quickMap() && sourceItem_) {
         mapAndSourceItemSet_ = false;
-        sourceItem_->setParentItem(0);
+        sourceItem_.data()->setParentItem(0);
         return;
     }
 
@@ -338,18 +337,22 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
 
     if (!mapAndSourceItemSet_ && quickMap() && map() && sourceItem_) {
         mapAndSourceItemSet_ = true;
-        sourceItem_->setParentItem(this);
-        sourceItem_->setTransformOrigin(QQuickItem::TopLeft);
-        connect(sourceItem_, SIGNAL(xChanged()), this, SLOT(updateMapItem()));
-        connect(sourceItem_, SIGNAL(yChanged()), this, SLOT(updateMapItem()));
-        connect(sourceItem_, SIGNAL(widthChanged()), this, SLOT(updateMapItem()));
-        connect(sourceItem_, SIGNAL(heightChanged()), this, SLOT(updateMapItem()));
+        sourceItem_.data()->setParentItem(this);
+        sourceItem_.data()->setTransformOrigin(QQuickItem::TopLeft);
+        connect(sourceItem_.data(), SIGNAL(xChanged()),
+                this, SLOT(updateMapItem()));
+        connect(sourceItem_.data(), SIGNAL(yChanged()),
+                this, SLOT(updateMapItem()));
+        connect(sourceItem_.data(), SIGNAL(widthChanged()),
+                this, SLOT(updateMapItem()));
+        connect(sourceItem_.data(), SIGNAL(heightChanged()),
+                this, SLOT(updateMapItem()));
     }
 
-    sourceItem_->setScale(scaleFactor());
-    sourceItem_->setPos(QPointF(0,0));
-    setWidth(sourceItem_->width());
-    setHeight(sourceItem_->height());
+    sourceItem_.data()->setScale(scaleFactor());
+    sourceItem_.data()->setPos(QPointF(0,0));
+    setWidth(sourceItem_.data()->width());
+    setHeight(sourceItem_.data()->height());
     setPositionOnMap(coordinate()->coordinate(), scaleFactor() * anchorPoint_);
     update();
 }

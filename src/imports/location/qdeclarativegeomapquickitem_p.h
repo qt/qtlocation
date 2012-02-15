@@ -92,7 +92,7 @@ private:
     qreal scaleFactor();
     QDeclarativeCoordinate* coordinate_;
     QDeclarativeCoordinate internalCoordinate_;
-    QQuickItem* sourceItem_;
+    QWeakPointer<QQuickItem> sourceItem_;
     QPointF anchorPoint_;
     qreal zoomLevel_;
     bool inUpdate_;
