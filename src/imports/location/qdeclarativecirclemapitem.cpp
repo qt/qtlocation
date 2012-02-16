@@ -175,7 +175,7 @@ static void calculatePeripheralPoints(QList<QGeoCoordinate>& path, const QGeoCoo
         } else if (lon2 > 180.0) {
             lon2 -= 360.0;
         }
-        path << QGeoCoordinate(lat2, lon2, 0.0f);
+        path << QGeoCoordinate(lat2, lon2, center.altitude());
     }
 }
 
