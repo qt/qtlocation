@@ -76,12 +76,12 @@ namespace JsonConverter
     static QLatin1String Data("data");
 
     static QLatin1String Name("displayName");
-    static QLatin1String PlaceType("com.nokia.mp.location.Place");
+    static QLatin1String PlaceType("com.nokia.mt.location.Place");
     static QLatin1String CategoryUuids("categoryUuids"); //only categories that are directly assigned to a place
     static QLatin1String AllCategoryUuids("allCategoryUuids"); //all categories that a place belongs to,
                                                              //it includes all ancestors of the assigned categories
 
-    static QLatin1String CategoryType("com.nokia.mp.location.PlaceCategory");
+    static QLatin1String CategoryType("com.nokia.mt.location.PlaceCategory");
     static QLatin1String Ancestors("ancestors");  //includes all ancestor category ids and also the current category id
                                                   //as the last element.   The first category is a top level category id.
     static QLatin1String CategoryParentId("parentId");
