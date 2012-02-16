@@ -56,7 +56,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinateInterpolator
+class Q_LOCATION_EXPORT QGeoCoordinateInterpolator
 {
 public:
     QGeoCoordinateInterpolator();
