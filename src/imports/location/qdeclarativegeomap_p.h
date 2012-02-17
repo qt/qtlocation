@@ -56,7 +56,6 @@
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
 #include "qgeomapcontroller_p.h"
-#include "qgeomappingmanager.h"
 
 //#define QT_DECLARATIVE_LOCATION_TRACE 1
 
@@ -82,6 +81,7 @@ class QGeoTileCache;
 class Tile;
 class QGeoTileSpec;
 class QGeoMapSphere;
+class QGeoMappingManager;
 
 class QGeoCoordinate;
 class QGeoMapObject;

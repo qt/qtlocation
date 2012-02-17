@@ -61,23 +61,11 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new engine with the specified \a parent, using \a parameters
-    to pass any implementation specific data to the engine.
+    Constructs a new engine with the specified \a parent.
 */
-QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent)
+QGeoMappingManagerEngine::QGeoMappingManagerEngine(QObject *parent)
     : QObject(parent),
-      d_ptr(new QGeoMappingManagerEnginePrivate())
-{
-    d_ptr->parameters = parameters;
-    d_ptr->initialized = false;
-}
-
-/*!
-  \internal
-*/
-QGeoMappingManagerEngine::QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent)
-    : QObject(parent),
-      d_ptr(dd) {}
+      d_ptr(new QGeoMappingManagerEnginePrivate()) {}
 
 /*!
     Destroys this engine.
@@ -88,167 +76,16 @@ QGeoMappingManagerEngine::~QGeoMappingManagerEngine()
     delete d;
 }
 
-QMap<QString, QVariant> QGeoMappingManagerEngine::parameters() const
-{
-    Q_D(const QGeoMappingManagerEngine);
-    return d->parameters;
-}
-
 /*!
-    Initializes the engine. Subclasses of QGeoMappingManagerEngine may
-    implement this function to perform (potentially asynchronous) initialization.
-
-    Static/already known data (such as min/max zoom levels) is better to
-    initialize already earlier (e.g. in constructor).
-
-    Once subclasses are done with initialization, they should call this baseclass
-    implementation of init().
+    Marks the engine as initialized. Subclasses of QGeoMappingManagerEngine are to
+    call this method after performing implementation-specific initializatioin within
+    the constructor.
 */
-void QGeoMappingManagerEngine::init()
+void QGeoMappingManagerEngine::engineInitialized()
 {
     Q_D(QGeoMappingManagerEngine);
-    if (d->stopped_)
-        return;
     d->initialized = true;
     emit initialized();
-}
-
-void QGeoMappingManagerEngine::threadStarted()
-{
-    Q_D(QGeoMappingManagerEngine);
-
-    if (d->stopped_)
-        return;
-
-    init();
-
-    d->timer_ = new QTimer(this);
-
-    d->timer_->setInterval(0);
-
-    connect(d->timer_,
-            SIGNAL(timeout()),
-            this,
-            SLOT(requestNextTile()));
-
-    d->started_ = true;
-    if (!d->queue_.isEmpty())
-        d->timer_->start();
-}
-
-void QGeoMappingManagerEngine::threadFinished()
-{
-    Q_D(QGeoMappingManagerEngine);
-    d->stopped_ = true;
-    disconnect(d->timer_);
-    d->timer_->stop();
-    this->deleteLater();
-}
-
-void QGeoMappingManagerEngine::updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded,
-                                                  const QSet<QGeoTileSpec> &tilesRemoved)
-{
-    Q_D(QGeoMappingManagerEngine);
-
-    if (d->stopped_)
-        return;
-
-    cancelTileRequests(tilesRemoved);
-
-    d->queue_ += tilesAdded.toList();
-
-    if (!d->queue_.empty())
-        d->timer_->start();
-}
-
-void QGeoMappingManagerEngine::cancelTileRequests(const QSet<QGeoTileSpec> &tiles)
-{
-    Q_D(QGeoMappingManagerEngine);
-
-    typedef QSet<QGeoTileSpec>::const_iterator tile_iter;
-    tile_iter tile = tiles.constBegin();
-    tile_iter end = tiles.constEnd();
-    for (; tile != end; ++tile) {
-        QGeoTiledMapReply* reply = d->invmap_.value(*tile, 0);
-        if (reply) {
-            d->invmap_.remove(*tile);
-            reply->abort();
-            reply->deleteLater();
-        }
-        d->queue_.removeAll(*tile);
-    }
-
-    if (d->queue_.isEmpty())
-        d->timer_->stop();
-}
-
-void QGeoMappingManagerEngine::requestNextTile()
-{
-    Q_D(QGeoMappingManagerEngine);
-
-    if (d->stopped_)
-        return;
-
-    if (d->queue_.isEmpty()) {
-        d->timer_->stop();
-        return;
-    }
-
-    QGeoTileSpec ts = d->queue_.takeFirst();
-
-    QGeoTiledMapReply *reply = getTileImage(ts);
-
-    if (reply->isFinished()) {
-        handleReply(reply, ts);
-    } else {
-        connect(reply,
-                SIGNAL(finished()),
-                this,
-                SLOT(finished()));
-
-        d->invmap_.insert(ts, reply);
-    }
-
-    if (d->queue_.isEmpty())
-        d->timer_->stop();
-}
-
-void QGeoMappingManagerEngine::finished()
-{
-    Q_D(QGeoMappingManagerEngine);
-
-    QGeoTiledMapReply *reply = qobject_cast<QGeoTiledMapReply*>(sender());
-    if (!reply)
-        return;
-
-    QGeoTileSpec spec = reply->tileSpec();
-
-    if (!d->invmap_.contains(spec)) {
-        reply->deleteLater();
-        return;
-    }
-
-    d->invmap_.remove(spec);
-
-    handleReply(reply, spec);
-}
-
-void QGeoMappingManagerEngine::handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec)
-{
-    Q_D(QGeoMappingManagerEngine);
-
-    if (d->stopped_) {
-        reply->deleteLater();
-        return;
-    }
-
-    if (reply->error() == QGeoTiledMapReply::NoError) {
-        emit tileFinished(spec, reply->mapImageData(), reply->mapImageFormat());
-    } else {
-        emit tileError(spec, reply->errorString());
-    }
-
-    reply->deleteLater();
 }
 
 /*!
@@ -315,18 +152,17 @@ void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGeoMapType> &su
     d->supportedMapTypes = supportedMapTypes;
 }
 
-void QGeoMappingManagerEngine::setTileSize(int tileSize)
+QGeoCameraCapabilities QGeoMappingManagerEngine::cameraCapabilities()
 {
     Q_D(QGeoMappingManagerEngine);
-    d->tileSize = tileSize;
+    return d->capabilities_;
 }
 
-int QGeoMappingManagerEngine::tileSize() const
+void QGeoMappingManagerEngine::setCameraCapabilities(const QGeoCameraCapabilities &capabilities)
 {
-    Q_D(const QGeoMappingManagerEngine);
-    return d->tileSize;
+    Q_D(QGeoMappingManagerEngine);
+    d->capabilities_ = capabilities;
 }
-
 
 /*!
     Return whether the engine has been initialized and is ready to be used.
@@ -339,45 +175,7 @@ bool QGeoMappingManagerEngine::isInitialized() const
 }
 
 /*!
-    \fn void QGeoMappingManagerEngine::initialized()
-
-    This signal is emitted when the mapping manager has been initialized
-    and is ready to be used.
-
-    Subclasses of QGeoMappingManagerEngine should call the
-    QGeoMappingManagerEngine init() when they have initialized themselves.
-*/
-
-/*!
-    Sets the camera capabilities associated with this engine to \a cameraCapabilities.
-
-    This is used to limit the modifications applied to the camera associated with
-    maps created for use with this plugin.
-
-    Since different plugins support different ranges of zoom levels, and
-    have different capabilities with respect to the support of things like
-    bearing and tilting, this information is important.
-
-    Subclasses of QGeoMappingManagerEngine should use this function to ensure
-    cameraCapabilities() provides accurate information.
-*/
-void QGeoMappingManagerEngine::setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities)
-{
-    Q_D(QGeoMappingManagerEngine);
-    d->cameraCapabilities_ = cameraCapabilities;
-}
-
-/*!
-    Returns the camera capabilities associated with this engine.
-*/
-QGeoCameraCapabilities QGeoMappingManagerEngine::cameraCapabilities() const
-{
-    Q_D(const QGeoMappingManagerEngine);
-    return d->cameraCapabilities_;
-}
-
-/*!
-    Sets the locale to be used by this manager to \a locale.
+    Sets the locale to be used by the this manager to \a locale.
 
     If this mapping manager supports returning map labels
     in different languages, they will be returned in the language of \a locale.
@@ -398,26 +196,12 @@ QLocale QGeoMappingManagerEngine::locale() const
     return d_ptr->locale;
 }
 
-QGeoMappingManager::CacheAreas QGeoMappingManagerEngine::cacheHint() const
-{
-    Q_D(const QGeoMappingManagerEngine);
-    return d->cacheHint;
-}
-
-void QGeoMappingManagerEngine::setCacheHint(QGeoMappingManager::CacheAreas cacheHint)
-{
-    Q_D(QGeoMappingManagerEngine);
-    d->cacheHint = cacheHint;
-}
-
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
     : managerVersion(-1),
-    cacheHint(QGeoMappingManager::AllCaches),
-    started_(false),
-    stopped_(false) {}
+      initialized(false) {}
 
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 

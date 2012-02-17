@@ -298,6 +298,7 @@ Item {
 
         function test_wheel() {
             clear_data()
+            wait(500);
             // on map but without mouse area
             mouseWheel(map, 5, 5, 15, Qt.LeftButton, Qt.NoModifiers)
             compare(mapWheelSpy.count, 1)
@@ -350,6 +351,7 @@ Item {
         function test_basic_position_changed() {
             // tests basic position changed/move when button is being pressed
             clear_data();
+            wait(500);
             mousePress(map, 5, 25)
             compare(mouseUpperPressedSpy.count, 1)
             compare(mouseUpper.lastAccepted, true)
@@ -470,6 +472,7 @@ Item {
 
         function test_basic_press_release() {
             clear_data()
+            wait(500);
             // send to emptiness
             mousePress(map, 5, 5)
             compare(mouseUpperPressedSpy.count, 0)
@@ -539,6 +542,7 @@ Item {
 
         function test_basic_click() {
             clear_data();
+            wait(500);
 
             mouseClick(map, 5, 5, Qt.RightButton, Qt.AltModifier)
             compare(mouseUpperClickedSpy.count, 0)
@@ -606,6 +610,7 @@ Item {
 
         function test_basic_double_click() {
             clear_data();
+            wait(500);
             real_double_click(map, 5, 5)
 
             compare(mouseUpperDoubleClickedSpy.count, 0)
@@ -670,6 +675,7 @@ Item {
 
         function test_zzz_basic_press_and_hold() { // _zzz_ to ensure execution last (takes time)
             clear_data();
+            wait(1000);
             real_press_and_hold(map, 5, 5)
             compare(mouseUpperPressAndHoldSpy.count, 0)
             compare(mouseLowerPressAndHoldSpy.count, 0)

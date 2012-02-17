@@ -38,8 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qgeomap_p.h"
-#include "qgeomap_p_p.h"
+#include "qgeomapdata_p.h"
 
 #include "qgeotilecache_p.h"
 #include "qgeotilespec.h"
@@ -73,346 +74,93 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoMap::QGeoMap(QGeoTileCache *cache, QObject *parent)
+QGeoMap::QGeoMap(QGeoMapData *mapData, QObject *parent)
     : QObject(parent),
-      d_ptr(new QGeoMapPrivate(this, cache)) {}
+      mapData_(mapData)
+{
+    connect(mapData_, SIGNAL(cameraDataChanged(const QGeoCameraData&)), this, SIGNAL(cameraDataChanged(const QGeoCameraData&)));
+    connect(mapData_, SIGNAL(updateRequired()), this, SIGNAL(updateRequired()));
+    connect(mapData_, SIGNAL(activeMapTypeChanged()), this, SIGNAL(activeMapTypeChanged()));
+}
 
 QGeoMap::~QGeoMap()
 {
-    delete d_ptr;
-}
-
-QGeoTileCache* QGeoMap::tileCache()
-{
-    Q_D(QGeoMap);
-    return d->tileCache();
+    delete mapData_;
 }
 
 QGeoMapController* QGeoMap::mapController()
 {
-    Q_D(QGeoMap);
-    return d->mapController();
-}
-
-void QGeoMap::setMappingManager(QGeoMappingManager *manager)
-{
-    Q_D(QGeoMap);
-    d->setMappingManager(manager);
-}
-
-void QGeoMap::paintGL(QGLPainter *painter)
-{
-    Q_D(QGeoMap);
-    d->paintGL(painter);
+    return mapData_->mapController();
 }
 
 QGLCamera* QGeoMap::glCamera() const
 {
-    Q_D(const QGeoMap);
-    return d->glCamera();
+    return mapData_->glCamera();
+}
+
+void QGeoMap::paintGL(QGLPainter *painter)
+{
+    mapData_->paintGL(painter);
 }
 
 void QGeoMap::resize(int width, int height)
 {
-    Q_D(QGeoMap);
-    d->resize(width, height);
-
-    // always emit this signal to trigger items to redraw
-    emit cameraDataChanged(d->cameraData());
+    mapData_->resize(width, height);
 }
 
 int QGeoMap::width() const
 {
-    Q_D(const QGeoMap);
-    return d->width();
+    return mapData_->width();
 }
 
 int QGeoMap::height() const
 {
-    Q_D(const QGeoMap);
-    return d->height();
-}
-
-void QGeoMap::setCameraData(const QGeoCameraData &cameraData)
-{
-    Q_D(QGeoMap);
-
-    if (cameraData == d->cameraData())
-        return;
-
-    d->setCameraData(cameraData);
-    update();
-
-    emit cameraDataChanged(d->cameraData());
-}
-
-QGeoCameraData QGeoMap::cameraData() const
-{
-    Q_D(const QGeoMap);
-    return d->cameraData();
+    return mapData_->height();
 }
 
 QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
 {
-    Q_D(const QGeoMap);
-    if (d->manager())
-        return d->manager()->cameraCapabilities();
-    else
-        return QGeoCameraCapabilities();
+    return mapData_->cameraCapabilities();
 }
 
-void QGeoMap::update()
+void QGeoMap::setCameraData(const QGeoCameraData &cameraData)
 {
-    emit updateRequired();
+    mapData_->setCameraData(cameraData);
+}
+
+QGeoCameraData QGeoMap::cameraData() const
+{
+    return mapData_->cameraData();
 }
 
 QGeoCoordinate QGeoMap::screenPositionToCoordinate(const QPointF &pos, bool clipToViewport) const
 {
-    Q_D(const QGeoMap);
-    if (clipToViewport) {
-        int w = d->width();
-        int h = d->height();
-
-        if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
-            return QGeoCoordinate();
-    }
-
-    return d->screenPositionToCoordinate(pos);
+    return mapData_->screenPositionToCoordinate(pos, clipToViewport);
 }
 
 QPointF QGeoMap::coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport) const
 {
-    Q_D(const QGeoMap);
-    QPointF pos = d->coordinateToScreenPosition(coordinate);
+    return mapData_->coordinateToScreenPosition(coordinate, clipToViewport);
+}
 
-    if (clipToViewport) {
-        int w = d->width();
-        int h = d->height();
-
-        if ((pos.x() < 0) || (w < pos.x()) || (pos.y() < 0) || (h < pos.y()))
-            return QPointF(qQNaN(), qQNaN());
-    }
-
-    return pos;
+void QGeoMap::update()
+{
+    emit mapData_->update();
 }
 
 void QGeoMap::setActiveMapType(const QGeoMapType type)
 {
-    Q_D(QGeoMap);
-    d->setActiveMapType(type);
+    mapData_->setActiveMapType(type);
 }
 
 const QGeoMapType QGeoMap::activeMapType() const
 {
-    Q_D(const QGeoMap);
-    return d->activeMapType();
+    return mapData_->activeMapType();
 }
 
-QGeoMapPrivate::QGeoMapPrivate(QGeoMap *parent, QGeoTileCache *cache)
-    : width_(0),
-      height_(0),
-      aspectRatio_(0.0),
-      map_(parent),
-      cache_(cache),
-      controller_(0),
-      cameraTiles_(new QGeoCameraTiles()),
-      mapGeometry_(new QGeoMapGeometry()),
-      mapImages_(0),
-      activeMapType_(QGeoMapType()) {}
-
-QGeoMapPrivate::~QGeoMapPrivate()
+QString QGeoMap::pluginString()
 {
-    // controller_ is a child of map_, don't need to delete it here
-
-    delete mapImages_;
-    delete mapGeometry_;
-    delete cameraTiles_;
-
-    if (manager_)
-        manager_.data()->deregisterMap(map_);
-    // TODO map items are not deallocated!
-    // However: how to ensure this is done in rendering thread?
-}
-
-QGeoTileCache* QGeoMapPrivate::tileCache()
-{
-    return cache_;
-}
-
-void QGeoMapPrivate::setMappingManager(QGeoMappingManager *manager)
-{
-    if (manager_)
-        manager_.data()->deregisterMap(map_);
-
-    if (manager) {
-        manager->registerMap(map_);
-
-        cameraTiles_->setMaximumZoomLevel(static_cast<int>(ceil(manager->cameraCapabilities().maximumZoomLevel())));
-
-        cameraTiles_->setTileSize(manager->tileSize());
-        mapGeometry_->setTileSize(manager->tileSize());
-
-        pluginString_ = manager->managerName() + QLatin1String("_") + QString::number(manager->managerVersion());
-        cameraTiles_->setPluginString(pluginString_);
-
-        mapImages_ = new QGeoMapImages(map_);
-        mapImages_->setMappingManager(manager);
-    }
-
-    manager_ = manager;
-}
-
-QGeoMapController* QGeoMapPrivate::mapController()
-{
-    if (!controller_)
-        controller_ = new QGeoMapController(map_, mapGeometry_->coordinateInterpolator());
-    return controller_;
-}
-
-QGLCamera* QGeoMapPrivate::glCamera() const
-{
-    return mapGeometry_->camera();
-}
-
-void QGeoMapPrivate::setCameraData(const QGeoCameraData &cameraData)
-{
-    double lat = cameraData_.center().latitude();
-
-    cameraData_ = cameraData;
-
-    if (mapGeometry_->verticalLock()) {
-        QGeoCoordinate coord = cameraData_.center();
-        coord.setLatitude(lat);
-        cameraData_.setCenter(coord);
-    }
-
-    if (manager_) {
-        QGeoCameraCapabilities capabilities = manager_.data()->cameraCapabilities();
-        if (cameraData_.zoomLevel() < capabilities.minimumZoomLevel())
-            cameraData_.setZoomLevel(capabilities.minimumZoomLevel());
-
-        if (cameraData_.zoomLevel() > capabilities.maximumZoomLevel())
-            cameraData_.setZoomLevel(capabilities.maximumZoomLevel());
-
-        if (!capabilities.supportsBearing())
-            cameraData_.setBearing(0.0);
-
-        if (capabilities.supportsTilting()) {
-            if (cameraData_.tilt() < capabilities.minimumTilt())
-                cameraData_.setTilt(capabilities.minimumTilt());
-
-            if (cameraData_.tilt() > capabilities.maximumTilt())
-                cameraData_.setTilt(capabilities.maximumTilt());
-        } else {
-            cameraData_.setTilt(0.0);
-        }
-
-        if (!capabilities.supportsRolling())
-            cameraData_.setRoll(0.0);
-    }
-
-    cameraData_.setCoordinateInterpolator(mapGeometry_->coordinateInterpolator().toWeakRef());
-
-    cameraTiles_->setCamera(cameraData_);
-    visibleTiles_ = cameraTiles_->tiles();
-
-    mapGeometry_->setCameraData(cameraData_);
-    mapGeometry_->setVisibleTiles(visibleTiles_);
-
-    if (mapImages_) {
-        mapImages_->setVisibleTiles(visibleTiles_);
-
-        //QSet<QGeoTileSpec> cachedTiles = mapImages_->cachedTiles();
-        // TODO make this more efficient
-        QSet<QGeoTileSpec> cachedTiles = visibleTiles_;
-
-        typedef QSet<QGeoTileSpec>::const_iterator iter;
-        iter i = cachedTiles.constBegin();
-        iter end = cachedTiles.constEnd();
-        for (; i != end; ++i) {
-            QGeoTileSpec tile = *i;
-            if (cache_->contains(tile))
-                mapGeometry_->addTile(tile, cache_->get(tile));
-        }
-
-        if (!cachedTiles.isEmpty())
-            map_->update();
-
-    }
-}
-
-QGeoCameraData QGeoMapPrivate::cameraData() const
-{
-    return cameraData_;
-}
-
-QGeoMappingManager *QGeoMapPrivate::manager() const
-{
-    return manager_.data();
-}
-
-void QGeoMapPrivate::resize(int width, int height)
-{
-    width_ = width;
-    height_ = height;
-    aspectRatio_ = 1.0 * width_ / height_;
-    cameraTiles_->setScreenSize(QSize(width, height));
-    mapGeometry_->setScreenSize(QSize(width, height));
-    setCameraData(cameraData_);
-}
-
-int QGeoMapPrivate::width() const
-{
-    return width_;
-}
-
-int QGeoMapPrivate::height() const
-{
-    return height_;
-}
-
-double QGeoMapPrivate::aspectRatio() const
-{
-    return aspectRatio_;
-}
-
-void QGeoMapPrivate::setActiveMapType(const QGeoMapType &type)
-{
-    activeMapType_ = type;
-    cameraTiles_->setMapType(type);
-    visibleTiles_ = cameraTiles_->tiles();
-
-    setCameraData(cameraData_);
-
-    map_->update();
-}
-
-const QGeoMapType QGeoMapPrivate::activeMapType() const
-{
-  return activeMapType_;
-}
-
-void QGeoMapPrivate::tileFetched(const QGeoTileSpec &spec)
-{
-    if (cache_->contains(spec))
-        mapGeometry_->addTile(spec, cache_->get(spec));
-    mapImages_->tileFetched(spec);
-    map_->update();
-}
-
-void QGeoMapPrivate::paintGL(QGLPainter *painter)
-{
-    mapGeometry_->paintGL(painter);
-}
-
-QGeoCoordinate QGeoMapPrivate::screenPositionToCoordinate(const QPointF &pos) const
-{
-    return QGeoProjection::mercatorToCoord(mapGeometry_->screenPositionToMercator(pos));
-}
-
-QPointF QGeoMapPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
-{
-    return mapGeometry_->mercatorToScreenPosition(QGeoProjection::coordToMercator(coordinate));
+    return mapData_->pluginString();
 }
 
 QT_END_NAMESPACE

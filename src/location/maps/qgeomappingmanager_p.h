@@ -61,23 +61,13 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMap;
-class QGeoTileCache;
-class QGeoTileSpec;
-class QGeoMappingManagerEngine;
-
 class QGeoMappingManagerPrivate
 {
 public:
     QGeoMappingManagerPrivate();
     ~QGeoMappingManagerPrivate();
 
-    QThread *thread;
     QGeoMappingManagerEngine *engine;
-
-    QHash<QGeoTileCache*, QSet<QGeoMap*> > caches;
-    QHash<QGeoMap*, QSet<QGeoTileSpec> > mapHash;
-    QHash<QGeoTileSpec, QSet<QGeoMap*> > tileHash;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerPrivate)

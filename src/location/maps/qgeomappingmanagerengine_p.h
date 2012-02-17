@@ -72,25 +72,16 @@ class QGeoMappingManagerEnginePrivate
 {
 public:
     QGeoMappingManagerEnginePrivate();
-    virtual ~QGeoMappingManagerEnginePrivate();
-
-    QMap<QString, QVariant> parameters;
+    ~QGeoMappingManagerEnginePrivate();
 
     QString managerName;
     int managerVersion;
 
     QList<QGeoMapType> supportedMapTypes;
-    int tileSize;
-    QGeoCameraCapabilities cameraCapabilities_;
-    QGeoMappingManager::CacheAreas cacheHint;
+    QGeoCameraCapabilities capabilities_;
 
     QLocale locale;
-    bool started_;
     bool initialized;
-    bool stopped_;
-    QTimer *timer_;
-    QList<QGeoTileSpec> queue_;
-    QHash<QGeoTileSpec, QGeoTiledMapReply*> invmap_;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEnginePrivate)

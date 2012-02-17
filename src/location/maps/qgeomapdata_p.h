@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAP_P_P_H
-#define QGEOMAP_P_P_H
+#ifndef QGEOMAPDATA_P_H
+#define QGEOMAPDATA_P_H
 
 //
 //  W A R N I N G
@@ -52,94 +52,81 @@
 // We mean it.
 //
 
-#include <QList>
-#include <QSet>
-#include <QVector>
-#include <QPair>
-#include <QPolygonF>
-#include <QSizeF>
-#include <QMatrix4x4>
-#include <QString>
-#include <QSharedPointer>
-#include <QWeakPointer>
+#include <QObject>
 
 #include "qgeocameradata_p.h"
 #include "qgeomaptype.h"
-
-#include "qdoublevector3d_p.h"
+#include "qgeocoordinateinterpolator_p.h"
+#include "qgeocoordinateinterpolator_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMappingManager;
+class QGeoCoordinate;
 
-class QGeoTile;
-class QGeoTileCache;
-class QGeoTileSpec;
-class QGeoMap;
+class QGeoMappingManagerEngine;
+
+class QGeoMapDataPrivate;
+class MapItem;
 class QGeoMapController;
-class QGeoProjection;
-
-class QGeoCameraTiles;
-class QGeoMapImages;
-class QGeoMapGeometry;
+class QGeoCameraCapabilities;
 
 class QGLCamera;
-class QGLSceneNode;
 class QGLPainter;
+class QGeoMap;
 
-class QGeoMapPrivate
+class QPointF;
+
+class Q_LOCATION_EXPORT QGeoMapData : public QObject
 {
+    Q_OBJECT
 public:
-    QGeoMapPrivate(QGeoMap *parent, QGeoTileCache *cache);
-    virtual ~QGeoMapPrivate();
-
-    QGeoTileCache* tileCache();
-
-    void setMappingManager(QGeoMappingManager *manager);
-    QGeoMappingManager *manager() const;
+    QGeoMapData(QGeoMappingManagerEngine *engine, QObject *parent = 0);
+    virtual ~QGeoMapData();
 
     QGeoMapController* mapController();
 
     QGLCamera* glCamera() const;
-    void paintGL(QGLPainter *painter);
-
-    void setCameraData(const QGeoCameraData &cameraData);
-    QGeoCameraData cameraData() const;
+    virtual void paintGL(QGLPainter *painter) = 0;
 
     void resize(int width, int height);
     int width() const;
     int height() const;
-    double aspectRatio() const;
 
+    void setCameraData(const QGeoCameraData &cameraData);
+    QGeoCameraData cameraData() const;
+
+    void setActiveMapType(const QGeoMapType mapType);
     const QGeoMapType activeMapType() const;
-    void setActiveMapType(const QGeoMapType &mapType);
 
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator();
 
-    void tileFetched(const QGeoTileSpec &spec);
+    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const = 0;
+    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const = 0;
+
+    QString pluginString();
+    QGeoCameraCapabilities cameraCapabilities();
+
+protected:
+    void setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator);
+    QGeoMappingManagerEngine *engine();
+
+    virtual void mapResized(int width, int height) = 0;
+    virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0;
+    virtual void changeActiveMapType(const QGeoMapType mapType) = 0;
+
+public Q_SLOTS:
+    void update();
+
+Q_SIGNALS:
+    void cameraDataChanged(const QGeoCameraData &cameraData);
+    void updateRequired();
+    void activeMapTypeChanged();
 
 private:
-    int width_;
-    int height_;
-    double aspectRatio_;
-
-    QGeoMap *map_;
-    QGeoTileCache* cache_;
-    QWeakPointer<QGeoMappingManager> manager_;
-    QString pluginString_;
-    QGeoMapController *controller_;
-
-    QGeoCameraData cameraData_;
-    QSet<QGeoTileSpec> visibleTiles_;
-
-    QGeoCameraTiles *cameraTiles_;
-    QGeoMapGeometry *mapGeometry_;
-    QGeoMapImages *mapImages_;
-
-    QGeoMapType activeMapType_;
+    QGeoMapDataPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoMapData)
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAP_P_P_H
+#endif // QGEOMAP_P_H

@@ -37,47 +37,67 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QGEOMAPDATA_NOKIA_H
-#define QGEOMAPDATA_NOKIA_H
+#ifndef QGEOTILEFETCHER_H
+#define QGEOTILEFETCHER_H
 
-#include "qgeotiledmapdata_p.h"
-#include <QPixmap>
-#include <QNetworkReply>
+#include <QObject>
+#include <qlocationglobal.h>
+#include "qgeomaptype.h"
+#include "qgeotiledmappingmanagerengine.h"
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTileCache;
+class QGeoMapRequestOptions;
 
-class QGeoTiledMapDataNokia: public QGeoTiledMapData
+class QGeoTileFetcherPrivate;
+class QGeoTiledMappingManagerEngine;
+class QGeoTiledMapReply;
+class QGeoTileSpec;
+
+class Q_LOCATION_EXPORT QGeoTileFetcher : public QObject
 {
-Q_OBJECT
-public:
-    QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
-    ~QGeoTiledMapDataNokia();
+    Q_OBJECT
 
-    QString getViewCopyright();
+public:
+    QGeoTileFetcher(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
+    virtual ~QGeoTileFetcher();
+
+public Q_SLOTS:
+    void threadStarted();
+    void threadFinished();
+    void updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded, const QSet<QGeoTileSpec> &tilesRemoved);
+    void cancelTileRequests(const QSet<QGeoTileSpec> &tiles);
+
+private Q_SLOTS:
+    void requestNextTile();
+    void finished();
+
+Q_SIGNALS:
+    void tileFinished(const QGeoTileSpec &spec, const QByteArray &bytes);
+    void tileError(const QGeoTileSpec &spec, const QString &errorString);
+
+protected:
+    virtual bool init();
+    QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
 
 private:
-    Q_DISABLE_COPY(QGeoTiledMapDataNokia)
+    QGeoTileFetcherPrivate* d_ptr;
 
-    QPixmap watermark;
+    virtual QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec) = 0;
+    void handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec);
 
-    QPixmap lastCopyright;
-    QString lastCopyrightText;
-    QRect lastViewport;
-    QRect lastCopyrightRect;
-    QNetworkAccessManager *m_networkManager;
+    Q_DECLARE_PRIVATE(QGeoTileFetcher)
+    Q_DISABLE_COPY(QGeoTileFetcher)
+
+    friend class QGeoTiledMappingManagerEngine;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPDATA_NOKIA_H
+QT_END_HEADER
+
+#endif

@@ -58,11 +58,9 @@
 #include <QCache>
 #include <QSet>
 
-#include "qgeomappingmanager.h"
+#include "qgeotiledmappingmanagerengine.h"
 
 QT_BEGIN_NAMESPACE
-
-class QGeoMappingManager;
 
 class QGeoTileSpec;
 class QGeoTile;
@@ -107,7 +105,7 @@ public:
     void insert(const QGeoTileSpec &spec,
                 const QByteArray &bytes,
                 const QString &format,
-                QGeoMappingManager::CacheAreas areas = QGeoMappingManager::AllCaches);
+                QGeoTiledMappingManagerEngine::CacheAreas areas = QGeoTiledMappingManagerEngine::AllCaches);
     void handleError(const QGeoTileSpec &spec, const QString &errorString);
 
 private:
@@ -121,7 +119,6 @@ private:
     static QGeoTileSpec filenameToTileSpec(const QString &filename);
 
     QString directory_;
-
     QSet<QGeoTileSpec> keys_;
     QCache<QGeoTileSpec, TileDisk > diskCache_;
     QCache<QGeoTileSpec, TileMemory > memoryCache_;

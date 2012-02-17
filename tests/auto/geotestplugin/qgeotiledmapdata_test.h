@@ -3,7 +3,7 @@
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -37,47 +37,23 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QGEOMAPDATA_NOKIA_H
-#define QGEOMAPDATA_NOKIA_H
+#ifndef QGEOTILEDMAPDATA_TEST_H
+#define QGEOTILEDMAPDATA_TEST_H
 
-#include "qgeotiledmapdata_p.h"
-#include <QPixmap>
-#include <QNetworkReply>
+#include <qgeotiledmapdata_p.h>
 
-QT_BEGIN_NAMESPACE
+QT_USE_NAMESPACE
 
-class QGeoTileCache;
 
-class QGeoTiledMapDataNokia: public QGeoTiledMapData
+class QGeoTiledMapDataTest: public QGeoTiledMapData
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
-    ~QGeoTiledMapDataNokia();
+    QGeoTiledMapDataTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0)
+        : QGeoTiledMapData(engine, parent) {}
 
-    QString getViewCopyright();
-
-private:
-    Q_DISABLE_COPY(QGeoTiledMapDataNokia)
-
-    QPixmap watermark;
-
-    QPixmap lastCopyright;
-    QString lastCopyrightText;
-    QRect lastViewport;
-    QRect lastCopyrightRect;
-    QNetworkAccessManager *m_networkManager;
 };
 
-QT_END_NAMESPACE
-
-#endif // QGEOMAPDATA_NOKIA_H
+#endif

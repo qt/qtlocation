@@ -37,47 +37,80 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
+#ifndef QGEOTILEDMAPDATA_P_P_H
+#define QGEOTILEDMAPDATA_P_P_H
 
-#ifndef QGEOMAPDATA_NOKIA_H
-#define QGEOMAPDATA_NOKIA_H
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qgeotiledmapdata_p.h"
-#include <QPixmap>
-#include <QNetworkReply>
+#include <QList>
+#include <QSet>
+#include <QVector>
+#include <QPair>
+#include <QPolygonF>
+#include <QSizeF>
+#include <QMatrix4x4>
+#include <QString>
+#include <QSharedPointer>
+
+#include "qgeocameradata_p.h"
+#include "qgeomaptype.h"
+
+#include "qdoublevector3d_p.h"
 
 QT_BEGIN_NAMESPACE
 
+class QGeoTile;
 class QGeoTileCache;
+class QGeoTileSpec;
+class QGeoMapController;
+class QGeoProjection;
 
-class QGeoTiledMapDataNokia: public QGeoTiledMapData
+class QGeoCameraTiles;
+class QGeoMapImages;
+class QGeoMapGeometry;
+
+class QGLSceneNode;
+
+class QGeoTiledMapDataPrivate
 {
-Q_OBJECT
 public:
-    QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
-    ~QGeoTiledMapDataNokia();
+    QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoTiledMappingManagerEngine *engine);
+    ~QGeoTiledMapDataPrivate();
 
-    QString getViewCopyright();
+    QGeoTileCache* tileCache();
+
+    void paintGL(QGLPainter *painter);
+
+    void changeCameraData(const QGeoCameraData &oldCameraData);
+    void changeActiveMapType(const QGeoMapType mapType);
+    void resized(int width, int height);
+
+    QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
+    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+
+    void tileFetched(const QGeoTileSpec &spec);
 
 private:
-    Q_DISABLE_COPY(QGeoTiledMapDataNokia)
+    QGeoTiledMapData *map_;
+    QGeoTileCache* cache_;
 
-    QPixmap watermark;
+    QSet<QGeoTileSpec> visibleTiles_;
 
-    QPixmap lastCopyright;
-    QString lastCopyrightText;
-    QRect lastViewport;
-    QRect lastCopyrightRect;
-    QNetworkAccessManager *m_networkManager;
+    QGeoCameraTiles *cameraTiles_;
+    QGeoMapGeometry *mapGeometry_;
+    QGeoMapImages *mapImages_;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPDATA_NOKIA_H
+#endif // QGEOTILEDMAP_P_P_H

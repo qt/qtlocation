@@ -50,7 +50,7 @@
 
 #include "qgeocodingmanagerengine_nokia.h"
 #include "qgeoroutingmanagerengine_nokia.h"
-#include "qgeomappingmanagerengine_nokia.h"
+#include "qgeotiledmappingmanagerengine_nokia.h"
 #include "qplacemanagerengine_nokiav1.h"
 #include "qplacemanagerengine_nokiav2.h"
 
@@ -74,7 +74,7 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerE
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    return new QGeoMappingManagerEngineNokia(parameters, error, errorString);
+    return new QGeoTiledMappingManagerEngineNokia(parameters, error, errorString);
 }
 
 QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,

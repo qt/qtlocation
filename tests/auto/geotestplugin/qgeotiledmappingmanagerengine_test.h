@@ -3,7 +3,7 @@
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -37,47 +37,58 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QGEOMAPDATA_NOKIA_H
-#define QGEOMAPDATA_NOKIA_H
+#ifndef QGEOTILEDMAPPINGMANAGERENGINE_TEST_H
+#define QGEOTILEDMAPPINGMANAGERENGINE_TEST_H
 
-#include "qgeotiledmapdata_p.h"
-#include <QPixmap>
-#include <QNetworkReply>
+#include <qgeoserviceprovider.h>
+#include <qgeotiledmappingmanagerengine.h>
+#include <QLocale>
+#include <qgeotiledmapreply.h>
+#include "qgeomaptype.h"
+#include "qgeocameracapabilities_p.h"
 
-QT_BEGIN_NAMESPACE
+#include "qgeotiledmapdata_test.h"
+#include "qgeotilefetcher_test.h"
 
-class QGeoTileCache;
+#include <QTimer>
+#include <QDebug>
+#include <QTimerEvent>
 
-class QGeoTiledMapDataNokia: public QGeoTiledMapData
+QT_USE_NAMESPACE
+
+class QGeoTiledMappingManagerEngineTest: public QGeoTiledMappingManagerEngine
 {
 Q_OBJECT
 public:
-    QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
-    ~QGeoTiledMapDataNokia();
+    QGeoTiledMappingManagerEngineTest(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error, QString *errorString) :
+        QGeoTiledMappingManagerEngine()
+    {
+        Q_UNUSED(error)
+        Q_UNUSED(errorString)
 
-    QString getViewCopyright();
+        setLocale(QLocale (QLocale::German, QLocale::Germany));
+        QGeoCameraCapabilities capabilities;
+        capabilities.setMinimumZoomLevel(0.0);
+        capabilities.setMaximumZoomLevel(20.0);
+        capabilities.setSupportsBearing(true);
+        setCameraCapabilities(capabilities);
 
-private:
-    Q_DISABLE_COPY(QGeoTiledMapDataNokia)
+        setTileSize(QSize(256, 256));
 
-    QPixmap watermark;
+        QGeoTileFetcherTest *fetcher = new QGeoTileFetcherTest(this);
+        fetcher->setParams(&parameters);
+        fetcher->setTileSize(QSize(256, 255));
+        setTileFetcher(fetcher);
+    }
 
-    QPixmap lastCopyright;
-    QString lastCopyrightText;
-    QRect lastViewport;
-    QRect lastCopyrightRect;
-    QNetworkAccessManager *m_networkManager;
+    QGeoMapData *createMapData()
+    {
+        return new QGeoTiledMapDataTest(this);;
+    }
+
 };
 
-QT_END_NAMESPACE
-
-#endif // QGEOMAPDATA_NOKIA_H
+#endif

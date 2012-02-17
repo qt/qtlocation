@@ -56,6 +56,7 @@
 
 #include "qgeocameradata_p.h"
 #include "qgeomaptype.h"
+#include "qgeocoordinateinterpolator_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -63,14 +64,13 @@ class QGeoCoordinate;
 
 class QGeoMappingManager;
 
-class QGeoTileCache;
-class QGeoMapPrivate;
 class MapItem;
 class QGeoMapController;
 class QGeoCameraCapabilities;
 
 class QGLCamera;
 class QGLPainter;
+class QGeoMapData;
 
 class QPointF;
 
@@ -82,12 +82,8 @@ class Q_LOCATION_EXPORT QGeoMap : public QObject
     Q_PROPERTY(QGeoMapType activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
 
 public:
-    QGeoMap(QGeoTileCache *cache, QObject *parent = 0);
+    QGeoMap(QGeoMapData *mapData, QObject *parent = 0);
     virtual ~QGeoMap();
-
-    QGeoTileCache* tileCache();
-
-    void setMappingManager(QGeoMappingManager *manager);
 
     QGeoMapController* mapController();
 
@@ -108,19 +104,18 @@ public:
     void setActiveMapType(const QGeoMapType mapType);
     const QGeoMapType activeMapType() const;
 
+    QString pluginString();
+
 public Q_SLOTS:
     void update();
 
 Q_SIGNALS:
-    void updateRequired();
     void cameraDataChanged(const QGeoCameraData &cameraData);
+    void updateRequired();
     void activeMapTypeChanged();
 
 private:
-    QGeoMapPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMap)
-
-    friend class QGeoMappingManager;
+    QGeoMapData *mapData_;
 };
 
 QT_END_NAMESPACE

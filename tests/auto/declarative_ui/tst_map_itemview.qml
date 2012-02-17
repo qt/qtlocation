@@ -178,7 +178,7 @@ Item {
     }
 
     RouteModel {id: routeModel; plugin: testPlugin_immediate; query: routeQuery }
-    SignalSpy {id: mapItemsChangedSpy; target: mapForViewWithoutPlugin; signalName: "mapItemsChanged"}
+    SignalSpy {id: mapItemsChangedSpy; target: mapForTestingRouteModel; signalName: "mapItemsChanged"}
 
     Map {
         id: mapForView;
@@ -207,28 +207,11 @@ Item {
     }
 
     Map {
-        id: mapForViewWithoutPlugin;
+        id: mapForTestingRouteModel;
+        plugin: testPlugin;
         center: mapDefaultCenter;
         anchors.fill: parent;
         zoomLevel: 2
-        MapCircle {
-            id: internalCircle2
-            radius: 2000000
-            center: mapDefaultCenter
-        }
-        MapItemView {
-            id: theItemView2
-            model: testModel
-            delegate: Component {
-                MapCircle {
-                    radius: 1500000
-                    center: Coordinate {
-                        latitude: modeldata.coordinate.latitude;
-                        longitude: modeldata.coordinate.longitude;
-                    }
-                }
-            }
-        }
         MapItemView {
             id: routeItemView
             model: routeModel
@@ -374,80 +357,62 @@ Item {
             compare(mapForView.mapItems.length, 4)
         }
 
-        SignalSpy {id: pluginChangedSpy; target: mapForViewWithoutPlugin; signalName: "pluginChanged"}
-        function test_plugin_set_later() {
-            testModel.datacount = 7
-            testModel.update()
-            compare(mapForViewWithoutPlugin.mapItems.length, 8) // 7 from testModel, + 1 from mapcircle
-            mapForViewWithoutPlugin.plugin = testPlugin
-            tryCompare(pluginChangedSpy, "count", 1, 1000)
-            compare(mapForViewWithoutPlugin.mapItems.length, 8)
-            mapForViewWithoutPlugin.clearMapItems();
-            compare(mapForViewWithoutPlugin.mapItems.length, 0)
-            testModel.reset();
-            compare(mapForViewWithoutPlugin.mapItems.length, 0)
-            testModel.reset();
-            testModel.datacount = 7
-            testModel.update()
-            compare(mapForViewWithoutPlugin.mapItems.length, 7)
-        }
-
         function test_routemodel() {
             testModel.reset();
             mapItemsChangedSpy.clear()
-            compare(mapForViewWithoutPlugin.mapItems.length, 0) // precondition
+            compare(mapForTestingRouteModel.mapItems.length, 0) // precondition
             compare(mapItemsChangedSpy.count, 0)
             routeQuery.numberAlternativeRoutes = 4
             routeModel.update();
-            compare(mapForViewWithoutPlugin.mapItems.length, 4)
+            compare(mapForTestingRouteModel.mapItems.length, 4)
             routeQuery.numberAlternativeRoutes = 3
             routeModel.update();
-            compare(mapForViewWithoutPlugin.mapItems.length, 3)
+            compare(mapForTestingRouteModel.mapItems.length, 3)
             routeModel.clear();
-            compare(mapForViewWithoutPlugin.mapItems.length, 0)
+            compare(mapForTestingRouteModel.mapItems.length, 0)
             routeModel.clear(); // clear empty model
             routeQuery.numberAlternativeRoutes = 3
             routeModel.update();
-            compare(mapForViewWithoutPlugin.mapItems.length, 3)
-            mapForViewWithoutPlugin.addMapItem(externalCircle2)
-            compare(mapForViewWithoutPlugin.mapItems.length, 4)
-            compare(mapForViewWithoutPlugin.mapItems[3], externalCircle2)
+            compare(mapForTestingRouteModel.mapItems.length, 3)
+            mapForTestingRouteModel.addMapItem(externalCircle2)
+            compare(mapForTestingRouteModel.mapItems.length, 4)
+            compare(mapForTestingRouteModel.mapItems[3], externalCircle2)
             routeModel.reset();
-            compare(mapForViewWithoutPlugin.mapItems.length, 1)
-            mapForViewWithoutPlugin.clearMapItems()
-            compare(mapForViewWithoutPlugin.mapItems.length, 0)
+            compare(mapForTestingRouteModel.mapItems.length, 1)
+            mapForTestingRouteModel.clearMapItems()
+            compare(mapForTestingRouteModel.mapItems.length, 0)
 
             // Test the mapItems list
-            mapForViewWithoutPlugin.addMapItem(externalCircle2)
-            compare(mapForViewWithoutPlugin.mapItems.length, 1)
-            compare(mapForViewWithoutPlugin.mapItems[0], externalCircle2)
+            mapForTestingRouteModel.addMapItem(externalCircle2)
+            compare(mapForTestingRouteModel.mapItems.length, 1)
+            compare(mapForTestingRouteModel.mapItems[0], externalCircle2)
 
-            mapForViewWithoutPlugin.addMapItem(externalRectangle)
-            compare(mapForViewWithoutPlugin.mapItems.length, 2)
-            compare(mapForViewWithoutPlugin.mapItems[1], externalRectangle)
+            mapForTestingRouteModel.addMapItem(externalRectangle)
+            compare(mapForTestingRouteModel.mapItems.length, 2)
+            compare(mapForTestingRouteModel.mapItems[1], externalRectangle)
 
-            mapForViewWithoutPlugin.addMapItem(externalRectangle)
-            compare(mapForViewWithoutPlugin.mapItems.length, 2)
-            compare(mapForViewWithoutPlugin.mapItems[1], externalRectangle)
+            mapForTestingRouteModel.addMapItem(externalRectangle)
+            compare(mapForTestingRouteModel.mapItems.length, 2)
+            compare(mapForTestingRouteModel.mapItems[1], externalRectangle)
 
-            mapForViewWithoutPlugin.addMapItem(externalPolygon)
-            compare(mapForViewWithoutPlugin.mapItems.length, 3)
-            compare(mapForViewWithoutPlugin.mapItems[2], externalPolygon)
+            mapForTestingRouteModel.addMapItem(externalPolygon)
+            compare(mapForTestingRouteModel.mapItems.length, 3)
+            compare(mapForTestingRouteModel.mapItems[2], externalPolygon)
 
-            mapForViewWithoutPlugin.addMapItem(externalQuickItem)
-            compare(mapForViewWithoutPlugin.mapItems.length, 4)
-            compare(mapForViewWithoutPlugin.mapItems[3], externalQuickItem)
+            mapForTestingRouteModel.addMapItem(externalQuickItem)
+            compare(mapForTestingRouteModel.mapItems.length, 4)
+            compare(mapForTestingRouteModel.mapItems[3], externalQuickItem)
 
-            mapForViewWithoutPlugin.removeMapItem(externalCircle2)
-            compare(mapForViewWithoutPlugin.mapItems.length, 3)
-            compare(mapForViewWithoutPlugin.mapItems[0], externalRectangle)
+            mapForTestingRouteModel.removeMapItem(externalCircle2)
+            compare(mapForTestingRouteModel.mapItems.length, 3)
+            compare(mapForTestingRouteModel.mapItems[0], externalRectangle)
 
-            mapForViewWithoutPlugin.removeMapItem(externalRectangle)
-            compare(mapForViewWithoutPlugin.mapItems.length, 2)
-            compare(mapForViewWithoutPlugin.mapItems[0], externalPolygon)
+            mapForTestingRouteModel.removeMapItem(externalRectangle)
+            compare(mapForTestingRouteModel.mapItems.length, 2)
+            compare(mapForTestingRouteModel.mapItems[0], externalPolygon)
 
-            mapForViewWithoutPlugin.clearMapItems()
-            compare(mapForViewWithoutPlugin.mapItems.length, 0)
+            mapForTestingRouteModel.clearMapItems()
+            compare(mapForTestingRouteModel.mapItems.length, 0)
         }
     }
 }

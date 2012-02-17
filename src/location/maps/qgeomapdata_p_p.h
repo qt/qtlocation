@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAPGEOMETRY_P_H
-#define QGEOMAPGEOMETRY_P_H
+#ifndef QGEOMAPDATA_P_P_H
+#define QGEOMAPDATA_P_P_H
 
 //
 //  W A R N I N G
@@ -52,55 +52,75 @@
 // We mean it.
 //
 
+#include <QList>
 #include <QSet>
+#include <QVector>
+#include <QPair>
+#include <QPolygonF>
+#include <QSizeF>
+#include <QMatrix4x4>
+#include <QString>
 #include <QSharedPointer>
-#include <QSize>
+
+#include "qgeocameradata_p.h"
+#include "qgeomaptype.h"
+
+#include "qdoublevector3d_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoCameraData;
-class QGeoTileSpec;
+class QGeoMappingManagerEngine;
 
-class QDoubleVector2D;
+class QGeoMapData;
+class QGeoMapController;
 
-class QGLSceneNode;
 class QGLCamera;
 class QGLPainter;
-class QGLTexture2D;
 
-class QPointF;
-
-class QGeoMapGeometryPrivate;
-
-class QGeoMapGeometry {
+class QGeoMapDataPrivate
+{
 public:
-    QGeoMapGeometry();
-    ~QGeoMapGeometry();
+    QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMapData *parent);
+    virtual ~QGeoMapDataPrivate();
 
-    void setScreenSize(const QSize &size);
-    void setTileSize(int tileSize);
-    void setCameraData(const QGeoCameraData &cameraData_);
-    void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
+    QGeoMappingManagerEngine *engine() const;
 
-    void setUseVerticalLock(bool lock);
+    QGeoMapController* mapController();
 
-    void addTile(const QGeoTileSpec &spec, QGLTexture2D *texture);
+    QGLCamera* glCamera() const;
 
-    QDoubleVector2D screenPositionToMercator(const QPointF &pos) const;
-    QPointF mercatorToScreenPosition(const QDoubleVector2D &mercator) const;
+    void setCameraData(const QGeoCameraData &cameraData);
+    QGeoCameraData cameraData() const;
 
-    QGLCamera *camera() const;
-    QGLSceneNode *sceneNode() const;
-    void paintGL(QGLPainter *painter);
+    void resize(int width, int height);
+    int width() const;
+    int height() const;
+    double aspectRatio() const;
 
-    bool verticalLock() const;
+    const QGeoMapType activeMapType() const;
+    void setActiveMapType(const QGeoMapType &mapType);
+    QString pluginString();
+
+    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator() const;
+    void setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator);
 
 private:
-    QGeoMapGeometryPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMapGeometry)
+    int width_;
+    int height_;
+    double aspectRatio_;
+
+    QGLCamera *camera_;
+    QGeoMapData *map_;
+    QGeoMappingManagerEngine *engine_;
+    QString pluginString_;
+    QGeoMapController *controller_;
+
+    QGeoCameraData cameraData_;
+    QGeoMapType activeMapType_;
+
+    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator_;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPGEOMETRY_P_H
+#endif // QGEOMAP_P_P_H

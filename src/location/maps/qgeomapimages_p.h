@@ -56,19 +56,18 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMap;
-class QGeoMappingManager;
+class QGeoTiledMapData;
+class QGeoTiledMappingManagerEngine;
 class QGeoTileSpec;
+class QGeoTileCache;
 
 class QGeoMapImagesPrivate;
 
 class QGeoMapImages
 {
 public:
-    QGeoMapImages(QGeoMap *map);
+    QGeoMapImages(QGeoTiledMapData *map, QGeoTileCache *cache);
     ~QGeoMapImages();
-
-    void setMappingManager(QGeoMappingManager *manager);
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
     QSet<QGeoTileSpec> cachedTiles() const;

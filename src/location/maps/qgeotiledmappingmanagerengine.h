@@ -46,38 +46,87 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPDATA_NOKIA_H
-#define QGEOMAPDATA_NOKIA_H
+#ifndef QGEOTILEDMAPPINGMANAGERENGINE_H
+#define QGEOTILEDMAPPINGMANAGERENGINE_H
 
-#include "qgeotiledmapdata_p.h"
-#include <QPixmap>
-#include <QNetworkReply>
+#include <QObject>
+#include <QSize>
+#include <QPair>
+#include <QtLocation/qlocationglobal.h>
+#include "qgeomaptype.h"
+#include "qgeomappingmanagerengine.h"
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+class QGeoTiledMappingManagerEnginePrivate;
+class QGeoMapRequestOptions;
+class QGeoTileFetcher;
+
+class QGeoTileSpec;
+class QGeoTiledMapData;
 class QGeoTileCache;
 
-class QGeoTiledMapDataNokia: public QGeoTiledMapData
+class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
 {
-Q_OBJECT
-public:
-    QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
-    ~QGeoTiledMapDataNokia();
+    Q_OBJECT
 
-    QString getViewCopyright();
+public:
+    enum CacheArea {
+        DiskCache = 0x01,
+        MemoryCache = 0x02,
+        TextureCache = 0x04,
+        AllCaches = 0xFF
+    };
+    Q_DECLARE_FLAGS(CacheAreas, CacheArea)
+
+    QGeoTiledMappingManagerEngine(QObject *parent = 0);
+    virtual ~QGeoTiledMappingManagerEngine();
+
+    QGeoTileFetcher *tileFetcher();
+
+    virtual QGeoMap* createMap(QObject *parent);
+
+    void registerMap(QGeoTiledMapData *map);
+    void deregisterMap(QGeoTiledMapData *map);
+
+    QSize tileSize() const;
+
+    void updateTileRequests(QGeoTiledMapData *map,
+                            const QSet<QGeoTileSpec> &tilesAdded,
+                            const QSet<QGeoTileSpec> &tilesRemoved);
+
+    QGeoTileCache *tileCache();
+
+    QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
+
+private Q_SLOTS:
+    void engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes);
+    void engineTileError(const QGeoTileSpec &spec, const QString &errorString);
+
+Q_SIGNALS:
+    void tileFinished(const QGeoTileSpec &spec, const QByteArray &bytes);
+    void tileError(const QGeoTileSpec &spec, const QString &errorString);
+
+protected:
+    void setTileFetcher(QGeoTileFetcher *fetcher);
+    void setTileSize(const QSize &tileSize);
+    void setCacheHint(QGeoTiledMappingManagerEngine::CacheAreas cacheHint);
 
 private:
-    Q_DISABLE_COPY(QGeoTiledMapDataNokia)
+    QGeoTiledMappingManagerEnginePrivate* d_ptr;
 
-    QPixmap watermark;
+    Q_DECLARE_PRIVATE(QGeoTiledMappingManagerEngine)
+    Q_DISABLE_COPY(QGeoTiledMappingManagerEngine)
 
-    QPixmap lastCopyright;
-    QString lastCopyrightText;
-    QRect lastViewport;
-    QRect lastCopyrightRect;
-    QNetworkAccessManager *m_networkManager;
+    friend class QGeoTileFetcher;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoTiledMappingManagerEngine::CacheAreas)
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPDATA_NOKIA_H
+QT_END_HEADER
+
+#endif

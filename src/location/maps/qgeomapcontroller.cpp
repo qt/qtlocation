@@ -41,7 +41,7 @@
 
 #include "qgeomapcontroller_p.h"
 
-#include "qgeomap_p.h"
+#include "qgeomapdata_p.h"
 #include "qgeoprojection_p.h"
 
 #include <QPointF>
@@ -102,7 +102,7 @@ void AnimatableCoordinate::setInterpolator(QSharedPointer<QGeoCoordinateInterpol
     interpolator_ = interpolator;
 }
 
-QGeoMapController::QGeoMapController(QGeoMap *map, QSharedPointer<QGeoCoordinateInterpolator> interpolator)
+QGeoMapController::QGeoMapController(QGeoMapData *map, QSharedPointer<QGeoCoordinateInterpolator> interpolator)
     : QObject(map),
       map_(map),
       interpolator_(interpolator)
@@ -112,7 +112,7 @@ QGeoMapController::QGeoMapController(QGeoMap *map, QSharedPointer<QGeoCoordinate
 
     oldCameraData_ = map_->cameraData();
 
-    connect(map,
+    connect(map_,
             SIGNAL(cameraDataChanged(QGeoCameraData)),
             this,
             SLOT(cameraDataChanged(QGeoCameraData)));

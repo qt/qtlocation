@@ -57,7 +57,7 @@
 #include <cmath>
 
 #include <qgeoserviceprovider.h>
-#include <qgeomappingmanager.h>
+#include "qgeomappingmanager.h"
 
 #include <QtQml/QQmlContext>
 #include <QtQml/qqmlinfo.h>
@@ -196,7 +196,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
         pinchArea_(0),
         canvas_(0),
         touchTimer_(-1),
-        tileCache_(0)
+        map_(0)
 {
     QLOC_TRACE0;
     setAcceptHoverEvents(false);
@@ -204,11 +204,7 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     setFlags(QQuickItem::ItemHasContents | QQuickItem::ItemClipsChildrenToShape);
 
     // Create internal flickable and pinch area.
-    tileCache_ = new QGeoTileCache();
-    map_ = new QGeoMap(tileCache_, this);
-    map_->setActiveMapType(QGeoMapType());
     flickable_ = new QDeclarativeGeoMapFlickable(this);
-    flickable_->setMap(map_);
     pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
 }
 
@@ -226,6 +222,9 @@ void QDeclarativeGeoMap::pluginReady()
 {
     serviceProvider_  = plugin_->sharedGeoServiceProvider();
     mappingManager_ = serviceProvider_->mappingManager();
+    map_ = mappingManager_->createMap(this);
+    flickable_->setMap(map_);
+    pinchArea_->zoomLevelLimits(mappingManager_->cameraCapabilities().minimumZoomLevel(), mappingManager_->cameraCapabilities().maximumZoomLevel());
 
     if (!mappingManager_  || serviceProvider_->error() != QGeoServiceProvider::NoError) {
            qmlInfo(this) << tr("Warning: Plugin does not support mapping.");
@@ -405,6 +404,9 @@ QSGNode* QDeclarativeGeoMap::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
         node = new MapNode(map_);
     }
 
+    if (!mappingManagerInitialized_)
+        return 0;
+
     node->setSize(QSize(width(), height()));
     node->update();
 
@@ -443,6 +445,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 {
     mappingManagerInitialized_ = true;
 
+    map_->setActiveMapType(QGeoMapType());
+    flickable_->setMap(map_);
+
     pinchArea_->zoomLevelLimits(mappingManager_->cameraCapabilities().minimumZoomLevel(),
                                 mappingManager_->cameraCapabilities().maximumZoomLevel());
 
@@ -472,7 +477,6 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             this,
             SLOT(mapZoomLevelChanged(qreal)));
 
-    map_->setMappingManager(mappingManager_);
     map_->resize(width(), height());
     AnimatableCoordinate acenter = map_->mapController()->center();
     acenter.setCoordinate(center()->coordinate());
@@ -965,6 +969,9 @@ QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
 
 void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
+    if (!mappingManagerInitialized_)
+        return;
+
     map_->resize(newGeometry.width(), newGeometry.height());
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
 }

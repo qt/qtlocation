@@ -46,72 +46,30 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGMANAGERENGINE_NOKIA_H
-#define QGEOMAPPINGMANAGERENGINE_NOKIA_H
+#ifndef QGEOTILEDMAPPINGMANAGERENGINE_NOKIA_H
+#define QGEOTILEDMAPPINGMANAGERENGINE_NOKIA_H
 
-#include "qgeoserviceproviderplugin_nokia.h"
-
-#include <qgeoserviceprovider.h>
-#include <qgeomappingmanagerengine.h>
+#include "qgeotiledmappingmanagerengine.h"
+#include <QGeoServiceProvider>
 
 QT_BEGIN_NAMESPACE
 
-class QNetworkAccessManager;
-class QNetworkDiskCache;
-class QNetworkInfo;
-
-class QGeoTiledMapReply;
-class QGeoTileSpec;
-
-class QGeoMappingManagerEngineNokia : public QGeoMappingManagerEngine
+class QGeoTiledMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
 {
     Q_OBJECT
+
 public:
-    QGeoMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters,
-                                  QGeoServiceProvider::Error *error,
-                                  QString *errorString);
-    ~QGeoMappingManagerEngineNokia();
+    QGeoTiledMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters,
+                                       QGeoServiceProvider::Error *error,
+                                       QString *errorString);
+    ~QGeoTiledMappingManagerEngineNokia();
 
-    void init();
+    virtual QGeoMapData* createMapData();
 
-    QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec);
-
-    const QString& host() const;
-    QChar firstSubdomain() const;
-    unsigned char maxSubdomains() const;
-    const QString& token() const;
-    const QString& applicationId() const;
-    const QString& referer() const;
-
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-private Q_SLOTS:
-    void currentMobileCountryCodeChanged(int interface, const QString& mcc);
-#endif
-
-private:
-    Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
-
-    QString getRequestString(const QGeoTileSpec &spec) const;
-
-    static QString sizeToStr(int size);
-    static QString mapIdToStr(int mapId);
-
-    void setHost(const QString& host);
-    bool isValidParameter(const QString& param);
-
-    QNetworkAccessManager *m_networkManager;
-    QNetworkDiskCache *m_cache;
-    QString m_host;
-    QString m_token;
-    QChar m_firstSubdomain;
-    unsigned char m_maxSubdomains;
-    QString m_applicationId;
-
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-    QNetworkInfo *m_networkInfo;
-#endif
+protected:
+    void initialize();
 };
 
 QT_END_NAMESPACE
 
-#endif
+#endif // QGEOTILEDMAPPINGMANAGERENGINE_NOKIA_H

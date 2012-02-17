@@ -46,38 +46,82 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPDATA_NOKIA_H
-#define QGEOMAPDATA_NOKIA_H
+#ifndef QGEOTILEFETCHER_NOKIA_H
+#define QGEOTILEFETCHER_NOKIA_H
 
-#include "qgeotiledmapdata_p.h"
-#include <QPixmap>
-#include <QNetworkReply>
+#include "qgeoserviceproviderplugin_nokia.h"
+
+#include <QGeoServiceProvider>
+#include "qgeotilefetcher.h"
+
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+#include <qnetworkinfo.h>
+#endif
 
 QT_BEGIN_NAMESPACE
 
+class QNetworkAccessManager;
+class QNetworkDiskCache;
+
+class QGeoTiledMapReply;
+class QGeoTileSpec;
 class QGeoTileCache;
+class QGeoTiledMappingManagerEngine;
 
-class QGeoTiledMapDataNokia: public QGeoTiledMapData
+class QGeoTileFetcherNokia : public QGeoTileFetcher
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
-    ~QGeoTiledMapDataNokia();
+    QGeoTileFetcherNokia(QGeoTiledMappingManagerEngine *engine);
+    ~QGeoTileFetcherNokia();
 
-    QString getViewCopyright();
+    bool init();
+
+    QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec);
+
+    const QString& host() const;
+    QChar firstSubdomain() const;
+    unsigned char maxSubdomains() const;
+    const QString& token() const;
+    const QString& applicationId() const;
+    const QString& referer() const;
+
+    void setParams(const QMap<QString, QVariant> *parameters);
+    void setTileSize(QSize tileSize);
+
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+private Q_SLOTS:
+    void currentMobileCountryCodeChanged(int interface, const QString& mcc);
+#endif
 
 private:
-    Q_DISABLE_COPY(QGeoTiledMapDataNokia)
+    Q_DISABLE_COPY(QGeoTileFetcherNokia)
 
-    QPixmap watermark;
+    QString getRequestString(const QGeoTileSpec &spec);
 
-    QPixmap lastCopyright;
-    QString lastCopyrightText;
-    QRect lastViewport;
-    QRect lastCopyrightRect;
+    static QString sizeToStr(const QSize &size);
+    static QString mapIdToStr(int mapId);
+
+    void setHost(const QString& host);
+    bool isValidParameter(const QString& param);
+
     QNetworkAccessManager *m_networkManager;
+    QNetworkDiskCache *m_cache;
+    const QMap<QString, QVariant> *m_parameters;
+    QSize m_tileSize;
+    QString m_host;
+    QString m_token;
+    QString m_referer;
+    QChar m_firstSubdomain;
+
+    unsigned char m_maxSubdomains;
+    QString m_applicationId;
+
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    QNetworkInfo m_networkInfo;
+#endif
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPDATA_NOKIA_H
+#endif

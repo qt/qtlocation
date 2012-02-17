@@ -60,7 +60,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMap;
+class QGeoMapData;
 
 class Q_LOCATION_EXPORT AnimatableCoordinate {
 public:
@@ -90,7 +90,7 @@ class Q_LOCATION_EXPORT QGeoMapController : public QObject
     Q_PROPERTY(qreal zoom READ zoom WRITE setZoom NOTIFY zoomChanged)
 
 public:
-    QGeoMapController(QGeoMap *map, QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator);
+    QGeoMapController(QGeoMapData *map, QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator);
     ~QGeoMapController();
 
     AnimatableCoordinate center() const;
@@ -121,7 +121,7 @@ signals:
     void zoomChanged(qreal zoom);
 
 private:
-    QGeoMap *map_;
+    QGeoMapData *map_;
     QSharedPointer<QGeoCoordinateInterpolator> interpolator_;
     QGeoCameraData oldCameraData_;
 };

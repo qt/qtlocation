@@ -62,62 +62,6 @@
 #include <cmath>
 
 QT_BEGIN_NAMESPACE
-
-class QGeoCoordinateInterpolator2D : public QGeoCoordinateInterpolator
-{
-public:
-    QGeoCoordinateInterpolator2D();
-    virtual ~QGeoCoordinateInterpolator2D();
-
-    virtual QGeoCoordinate interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress);
-};
-
-QGeoCoordinateInterpolator2D::QGeoCoordinateInterpolator2D() {}
-
-QGeoCoordinateInterpolator2D::~QGeoCoordinateInterpolator2D() {}
-
-QGeoCoordinate QGeoCoordinateInterpolator2D::interpolate(const QGeoCoordinate &start, const QGeoCoordinate &end, qreal progress)
-{
-    if (start == end) {
-        if (progress < 0.5) {
-            return start;
-        } else {
-            return end;
-        }
-    }
-
-    QGeoCoordinate s2 = start;
-    QGeoCoordinate e2 = end;
-    QDoubleVector2D s = QGeoProjection::coordToMercator(s2);
-    QDoubleVector2D e = QGeoProjection::coordToMercator(e2);
-
-    double x = s.x();
-
-    if (0.5 < qAbs(e.x() - s.x())) {
-        // handle dateline crossing
-        double ex = e.x();
-        double sx = s.x();
-        if (ex < sx)
-            sx -= 1.0;
-        else if (sx < ex)
-            ex -= 1.0;
-
-        x = (1.0 - progress) * sx + progress * ex;
-
-        if (!qFuzzyIsNull(x) && (x < 0.0))
-            x += 1.0;
-
-    } else {
-        x = (1.0 - progress) * s.x() + progress * e.x();
-    }
-
-    double y = (1.0 - progress) * s.y() + progress * e.y();
-
-    QGeoCoordinate result = QGeoProjection::mercatorToCoord(QDoubleVector2D(x, y));
-    result.setAltitude((1.0 - progress) * start.altitude() + progress * end.altitude());
-    return result;
-}
-
 class QGeoMapGeometryPrivate {
 public:
     QGeoMapGeometryPrivate();
@@ -157,8 +101,6 @@ public:
     bool useVerticalLock_;
     bool verticalLock_;
 
-    QSharedPointer<QGeoCoordinateInterpolator> coordinateInterpolator_;
-
     void addTile(const QGeoTileSpec &spec, QGLTexture2D *texture);
 
     QDoubleVector2D screenPositionToMercator(const QPointF &pos) const;
@@ -171,7 +113,6 @@ public:
 
     void paintGL(QGLPainter *painter);
 };
-
 
 QGeoMapGeometry::QGeoMapGeometry()
     : d_ptr(new QGeoMapGeometryPrivate()) {}
@@ -255,12 +196,6 @@ void QGeoMapGeometry::paintGL(QGLPainter *painter)
     d->paintGL(painter);
 }
 
-QSharedPointer<QGeoCoordinateInterpolator> QGeoMapGeometry::coordinateInterpolator() const
-{
-    Q_D(const QGeoMapGeometry);
-    return d->coordinateInterpolator_;
-}
-
 QGeoMapGeometryPrivate::QGeoMapGeometryPrivate()
     : tileSize_(0),
       camera_(new QGLCamera()),
@@ -276,8 +211,7 @@ QGeoMapGeometryPrivate::QGeoMapGeometryPrivate()
       screenOffsetX_(0.0),
       screenOffsetY_(0.0),
       useVerticalLock_(false),
-      verticalLock_(false),
-      coordinateInterpolator_(QSharedPointer<QGeoCoordinateInterpolator>(new QGeoCoordinateInterpolator2D())) {}
+      verticalLock_(false) {}
 
 QGeoMapGeometryPrivate::~QGeoMapGeometryPrivate()
 {

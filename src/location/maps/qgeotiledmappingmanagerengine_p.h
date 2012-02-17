@@ -37,47 +37,56 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QGEOMAPDATA_NOKIA_H
-#define QGEOMAPDATA_NOKIA_H
 
-#include "qgeotiledmapdata_p.h"
-#include <QPixmap>
-#include <QNetworkReply>
+#ifndef QGEOTILEDMAPPINGMANAGER_P_H
+#define QGEOTILEDMAPPINGMANAGER_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QSize>
+#include <QList>
+#include <QHash>
+#include <QSet>
+#include <QThread>
+#include "qgeotiledmappingmanagerengine.h"
 
 QT_BEGIN_NAMESPACE
 
+class QGeoTiledMapData;
 class QGeoTileCache;
+class QGeoTileSpec;
+class QGeoTileFetcher;
 
-class QGeoTiledMapDataNokia: public QGeoTiledMapData
+class QGeoTiledMappingManagerEnginePrivate
 {
-Q_OBJECT
 public:
-    QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
-    ~QGeoTiledMapDataNokia();
+    QGeoTiledMappingManagerEnginePrivate();
+    ~QGeoTiledMappingManagerEnginePrivate();
 
-    QString getViewCopyright();
+    QThread *thread;
+    QSize tileSize;
+    QHash<QGeoTileCache*, QSet<QGeoTiledMapData*> > caches;
+    QHash<QGeoTiledMapData*, QSet<QGeoTileSpec> > mapHash;
+    QHash<QGeoTileSpec, QSet<QGeoTiledMapData*> > tileHash;
+    QGeoTiledMappingManagerEngine::CacheAreas cacheHint;
+    QGeoTileCache *tileCache_;
+    QGeoTileFetcher *fetcher_;
 
 private:
-    Q_DISABLE_COPY(QGeoTiledMapDataNokia)
-
-    QPixmap watermark;
-
-    QPixmap lastCopyright;
-    QString lastCopyrightText;
-    QRect lastViewport;
-    QRect lastCopyrightRect;
-    QNetworkAccessManager *m_networkManager;
+    Q_DISABLE_COPY(QGeoTiledMappingManagerEnginePrivate)
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPDATA_NOKIA_H
+#endif

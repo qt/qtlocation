@@ -63,23 +63,22 @@ QT_BEGIN_NAMESPACE
 class QLocale;
 
 class QGeoBoundingBox;
-class QGeoCameraCapabilities;
 class QGeoCoordinate;
 class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
 
 class QGeoMappingManagerEnginePrivate;
-
-class QGeoTiledMapReply;
-class QGeoTileSpec;
+class QGeoMapData;
 
 class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
 {
     Q_OBJECT
 
 public:
-    QGeoMappingManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
+    QGeoMappingManagerEngine(QObject *parent = 0);
     virtual ~QGeoMappingManagerEngine();
+
+    virtual QGeoMapData* createMapData() = 0;
 
     QMap<QString, QVariant> parameters() const;
 
@@ -88,50 +87,24 @@ public:
 
     QList<QGeoMapType> supportedMapTypes() const;
 
-    int tileSize() const;
-
-    QGeoCameraCapabilities cameraCapabilities() const;
-
-    QGeoMappingManager::CacheAreas cacheHint() const;
+    QGeoCameraCapabilities cameraCapabilities();
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
-    virtual void init();
     bool isInitialized() const;
 
-public Q_SLOTS:
-    void threadStarted();
-    void threadFinished();
-    void updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded, const QSet<QGeoTileSpec> &tilesRemoved);
-    void cancelTileRequests(const QSet<QGeoTileSpec> &tiles);
-
-private Q_SLOTS:
-    void requestNextTile();
-    void finished();
-
 Q_SIGNALS:
-    void tileFinished(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
-    void tileError(const QGeoTileSpec &spec, const QString &errorString);
     void initialized();
 
 protected:
-    QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
-
     void setSupportedMapTypes(const QList<QGeoMapType> &supportedMapTypes);
+    void setCameraCapabilities(const QGeoCameraCapabilities &capabilities);
 
-    void setTileSize(int tileSize);
-
-    void setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities);
-
-    void setCacheHint(QGeoMappingManager::CacheAreas cacheHint);
-
-    QGeoMappingManagerEnginePrivate* d_ptr;
+    void engineInitialized();
 
 private:
-    virtual QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec) = 0;
-
-    void handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec);
+    QGeoMappingManagerEnginePrivate* d_ptr;
 
     void setManagerName(const QString &managerName);
     void setManagerVersion(int managerVersion);

@@ -45,7 +45,6 @@
 #include <QObject>
 #include <QSize>
 #include <QPair>
-#include <QSharedPointer>
 #include <QtLocation/qlocationglobal.h>
 #include "qgeomaptype.h"
 
@@ -53,74 +52,49 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+class QGeoMap;
 class QLocale;
 class QGeoBoundingBox;
-class QGeoCameraCapabilities;
 class QGeoCoordinate;
 class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
 class QGeoMappingManagerEngine;
-class QGeoTiledMapReply;
+class QGeoCameraCapabilities;
 
-class QGeoTileSpec;
-class QGeoMap;
 
 class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
 {
     Q_OBJECT
 
 public:
-    enum CacheArea {
-        DiskCache = 0x01,
-        MemoryCache = 0x02,
-        TextureCache = 0x04,
-        AllCaches = 0xFF
-    };
-    Q_DECLARE_FLAGS(CacheAreas, CacheArea)
-
     ~QGeoMappingManager();
 
     QString managerName() const;
     int managerVersion() const;
 
-    void registerMap(QGeoMap *map);
-    void deregisterMap(QGeoMap *map);
-
-    void updateTileRequests(QGeoMap *map,
-                            const QSet<QGeoTileSpec> &tilesAdded,
-                            const QSet<QGeoTileSpec> &tilesRemoved);
+    QGeoMap* createMap(QObject *parent);
 
     QList<QGeoMapType> supportedMapTypes() const;
-
-    int tileSize() const;
 
     bool isInitialized() const;
 
     QGeoCameraCapabilities cameraCapabilities() const;
 
-    CacheAreas cacheHint() const;
-
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
-private Q_SLOTS:
-    void engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
-    void engineTileError(const QGeoTileSpec &spec, const QString &errorString);
-
 Q_SIGNALS:
-    void tileError(const QGeoTileSpec &spec, const QString &errorString);
     void initialized();
 
-private:
+protected:
     QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
 
-    QSharedPointer<QGeoMappingManagerPrivate> d_ptr;
+private:
+    QGeoMappingManagerPrivate* d_ptr;
     Q_DISABLE_COPY(QGeoMappingManager)
 
     friend class QGeoServiceProvider;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoMappingManager::CacheAreas)
 
 QT_END_NAMESPACE
 

@@ -41,8 +41,8 @@
 #include "qgeomapimages_p.h"
 
 #include "qgeotilespec.h"
-#include "qgeomap_p.h"
-#include "qgeomappingmanager.h"
+#include "qgeotiledmapdata_p.h"
+#include "qgeotiledmappingmanagerengine.h"
 #include "qgeotilecache_p.h"
 
 QT_BEGIN_NAMESPACE
@@ -50,12 +50,11 @@ QT_BEGIN_NAMESPACE
 class QGeoMapImagesPrivate
 {
 public:
-    QGeoMapImagesPrivate(QGeoMap *map);
+    QGeoMapImagesPrivate(QGeoTiledMapData *map, QGeoTileCache *cache);
     ~QGeoMapImagesPrivate();
 
-    QGeoMap *map_;
+    QGeoTiledMapData *map_;
     QGeoTileCache *cache_;
-    QGeoMappingManager *manager_;
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
     void tileFetched(const QGeoTileSpec &tile);
@@ -65,20 +64,12 @@ public:
     QSet<QGeoTileSpec> requested_;
 };
 
-QGeoMapImages::QGeoMapImages(QGeoMap *map)
-    : d_ptr(new QGeoMapImagesPrivate(map))
-{
-}
+QGeoMapImages::QGeoMapImages(QGeoTiledMapData *map, QGeoTileCache *cache)
+    : d_ptr(new QGeoMapImagesPrivate(map, cache)) {}
 
 QGeoMapImages::~QGeoMapImages()
 {
     delete d_ptr;
-}
-
-void QGeoMapImages::setMappingManager(QGeoMappingManager *manager)
-{
-    Q_D(QGeoMapImages);
-    d->manager_ = manager;
 }
 
 void QGeoMapImages::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
@@ -99,14 +90,9 @@ void QGeoMapImages::tileFetched(const QGeoTileSpec &tile)
     d->tileFetched(tile);
 }
 
-QGeoMapImagesPrivate::QGeoMapImagesPrivate(QGeoMap *map)
+QGeoMapImagesPrivate::QGeoMapImagesPrivate(QGeoTiledMapData *map, QGeoTileCache *cache)
     : map_(map),
-      cache_(0),
-      manager_(0)
-{
-    if (map_)
-        cache_ = map_->tileCache();
-}
+      cache_(cache) {}
 
 QGeoMapImagesPrivate::~QGeoMapImagesPrivate()
 {
@@ -139,8 +125,8 @@ void QGeoMapImagesPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
     requested_ += requestTiles;
 
     if (!requestTiles.isEmpty() || !cancelTiles.isEmpty()) {
-        if (manager_) {
-            manager_->updateTileRequests(map_, requestTiles, cancelTiles);
+        if (map_) {
+            map_->updateTileRequests(requestTiles, cancelTiles);
         }
     }
 }

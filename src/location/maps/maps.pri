@@ -9,8 +9,10 @@ PUBLIC_HEADERS += \
                     maps/qgeocodingmanagerengine.h \
                     maps/qgeocodingmanager.h \
                     maps/qgeomaneuver.h \
-                    maps/qgeomappingmanagerengine.h \
+                    maps/qgeotilefetcher.h \
                     maps/qgeomappingmanager.h \
+                    maps/qgeomappingmanagerengine.h \
+                    maps/qgeotiledmappingmanagerengine.h \
                     maps/qgeomaptype.h \
                     maps/qgeoroute.h \
                     maps/qgeoroutereply.h \
@@ -37,9 +39,14 @@ PRIVATE_HEADERS += \
                     maps/qgeomapgeometry_p.h \
                     maps/qgeomapimages_p.h \
                     maps/qgeomap_p.h \
-                    maps/qgeomap_p_p.h \
-                    maps/qgeomappingmanagerengine_p.h \
+                    maps/qgeomapdata_p.h \
+                    maps/qgeomapdata_p_p.h \
+                    maps/qgeotiledmapdata_p.h \
+                    maps/qgeotiledmapdata_p_p.h \
+                    maps/qgeotilefetcher_p.h \
                     maps/qgeomappingmanager_p.h \
+                    maps/qgeomappingmanagerengine_p.h \
+                    maps/qgeotiledmappingmanagerengine_p.h \
                     maps/qgeomaptype_p.h \
                     maps/qgeoprojection_p.h \
                     maps/qgeoroute_p.h \
@@ -68,8 +75,12 @@ SOURCES += \
             maps/qgeomapgeometry.cpp \
             maps/qgeomapimages.cpp \
             maps/qgeomap.cpp \
+            maps/qgeomapdata.cpp \
+            maps/qgeotiledmapdata.cpp \
             maps/qgeomappingmanager.cpp \
             maps/qgeomappingmanagerengine.cpp \
+            maps/qgeotiledmappingmanagerengine.cpp \
+            maps/qgeotilefetcher.cpp \
             maps/qgeomaptype.cpp \
             maps/qgeoprojection.cpp \
             maps/qgeoroute.cpp \

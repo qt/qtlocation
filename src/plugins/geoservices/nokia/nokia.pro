@@ -18,7 +18,9 @@ HEADERS += \
             qgeocodereply_nokia.h \
             qgeocodexmlparser.h \
             qgeocodingmanagerengine_nokia.h \
-            qgeomappingmanagerengine_nokia.h \
+            qgeotiledmappingmanagerengine_nokia.h \
+            qgeotilefetcher_nokia.h \
+            qgeotiledmapdata_nokia.h \
             qgeomapreply_nokia.h \
             qgeoroutereply_nokia.h \
             qgeoroutexmlparser.h \
@@ -30,7 +32,9 @@ SOURCES += \
             qgeocodereply_nokia.cpp \
             qgeocodexmlparser.cpp \
             qgeocodingmanagerengine_nokia.cpp \
-            qgeomappingmanagerengine_nokia.cpp \
+            qgeotiledmappingmanagerengine_nokia.cpp \
+            qgeotilefetcher_nokia.cpp \
+            qgeotiledmapdata_nokia.cpp \
             qgeomapreply_nokia.cpp \
             qgeoroutereply_nokia.cpp \
             qgeoroutexmlparser.cpp \

@@ -210,7 +210,7 @@ QGLTexture2D* QGeoTileCache::get(const QGeoTileSpec &spec)
 void QGeoTileCache::insert(const QGeoTileSpec &spec,
                            const QByteArray &bytes,
                            const QString &format,
-                           QGeoMappingManager::CacheAreas areas)
+                           QGeoTiledMappingManagerEngine::CacheAreas areas)
 {
     keys_.insert(spec);
 
@@ -221,7 +221,7 @@ void QGeoTileCache::insert(const QGeoTileSpec &spec,
         return;
     }
 
-    if (areas & QGeoMappingManager::DiskCache) {
+    if (areas & QGeoTiledMappingManagerEngine::DiskCache) {
         QString filename = tileSpecToFilename(spec, format, directory_);
 
         QFile file(filename);
@@ -232,11 +232,11 @@ void QGeoTileCache::insert(const QGeoTileSpec &spec,
         addToDiskCache(spec, filename);
     }
 
-    if (areas & QGeoMappingManager::MemoryCache) {
+    if (areas & QGeoTiledMappingManagerEngine::MemoryCache) {
 //        addToMemoryCache(spec, pixmap);
     }
 
-    if (areas & QGeoMappingManager::TextureCache) {
+    if (areas & QGeoTiledMappingManagerEngine::TextureCache) {
         addToTextureCache(spec, pixmap);
     }
 }
