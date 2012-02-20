@@ -48,51 +48,51 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
 class QPlaceManagerEnginePrivate;
 
 class Q_LOCATION_EXPORT QPlaceManagerEngine : public QObject
 {
     Q_OBJECT
-public:
 
+public:
     QPlaceManagerEngine(const QMap<QString, QVariant> &parameters, QObject *parent = 0);
     virtual ~QPlaceManagerEngine();
 
     QString managerName() const;
     int managerVersion() const;
 
-    virtual QPlaceDetailsReply *getPlaceDetails(const QString &placeId) = 0;
+    virtual QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
 
-    virtual QPlaceContentReply *getPlaceContent(const QString &placeId, const QPlaceContentRequest &request) = 0;
+    virtual QPlaceContentReply *getPlaceContent(const QString &placeId,
+                                                const QPlaceContentRequest &request);
 
-    virtual QPlaceSearchReply *search(const QPlaceSearchRequest &request) = 0;
+    virtual QPlaceSearchReply *search(const QPlaceSearchRequest &request);
 
-    virtual QPlaceSearchReply *recommendations(const QString &placeId, const QPlaceSearchRequest &request) = 0;
-    virtual QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &request) = 0;
+    virtual QPlaceSearchReply *recommendations(const QString &placeId,
+                                               const QPlaceSearchRequest &request);
+    virtual QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &request);
 
-    virtual QPlaceIdReply *savePlace(const QPlace &place) = 0;
-    virtual QPlaceIdReply *removePlace(const QString &placeId) = 0;
+    virtual QPlaceIdReply *savePlace(const QPlace &place);
+    virtual QPlaceIdReply *removePlace(const QString &placeId);
 
-    virtual QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId) = 0;
-    virtual QPlaceIdReply *removeCategory(const QString &categoryId) = 0;
+    virtual QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId);
+    virtual QPlaceIdReply *removeCategory(const QString &categoryId);
 
-    virtual QPlaceReply *initializeCategories() = 0;
-    virtual QString parentCategoryId(const QString &categoryId) const = 0;
-    virtual QStringList childCategoryIds(const QString &categoryId) const = 0;
-    virtual QPlaceCategory category(const QString &categoryId) const = 0;
+    virtual QPlaceReply *initializeCategories();
+    virtual QString parentCategoryId(const QString &categoryId) const;
+    virtual QStringList childCategoryIds(const QString &categoryId) const;
+    virtual QPlaceCategory category(const QString &categoryId) const;
 
-    virtual QList<QPlaceCategory> childCategories(const QString &parentId) const = 0;
+    virtual QList<QPlaceCategory> childCategories(const QString &parentId) const;
 
-    virtual QList<QLocale> locales() const = 0;
-    virtual void setLocales(const QList<QLocale> &locales) = 0;
+    virtual QList<QLocale> locales() const;
+    virtual void setLocales(const QList<QLocale> &locales);
 
     virtual QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const;
 
     virtual QPlace compatiblePlace(const QPlace &original) const;
 
-    virtual QPlaceManager::ManagerFeatures supportedFeatures() const = 0;
+    virtual QPlaceManager::ManagerFeatures supportedFeatures() const;
 
     virtual QPlaceMatchReply *matchingPlaces(const QPlaceMatchRequest &request);
 

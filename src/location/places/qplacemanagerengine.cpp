@@ -141,6 +141,188 @@ int QPlaceManagerEngine::managerVersion() const
 }
 
 /*!
+    Retrieves details of place corresponding to the given \a placeId.
+*/
+QPlaceDetailsReply *QPlaceManagerEngine::getPlaceDetails(const QString &placeId)
+{
+    Q_UNUSED(placeId)
+
+    return new QPlaceDetailsReplyUnsupported(this);
+}
+
+/*!
+    Retrieves content for the place corresponding to \a placeId, according to the parameters
+    specified in \a request.
+*/
+QPlaceContentReply *QPlaceManagerEngine::getPlaceContent(const QString &placeId,
+                                                         const QPlaceContentRequest &request)
+{
+    Q_UNUSED(placeId)
+    Q_UNUSED(request)
+
+    return new QPlaceContentReplyUnsupported(this);
+}
+
+/*!
+    Searches for places according to the parameters specified in \a request.
+*/
+QPlaceSearchReply *QPlaceManagerEngine::search(const QPlaceSearchRequest &request)
+{
+    Q_UNUSED(request)
+
+    return new QPlaceSearchReplyUnsupported(QStringLiteral("Place search is not supported."),
+                                            this);
+}
+
+/*!
+    Provides recommendations for places that are similar to the place identified by \a placeId,
+    and using the parameters as specified in \a request.
+*/
+QPlaceSearchReply *QPlaceManagerEngine::recommendations(const QString &placeId,
+                                                        const QPlaceSearchRequest &request)
+{
+    Q_UNUSED(placeId)
+    Q_UNUSED(request)
+
+    return new QPlaceSearchReplyUnsupported(
+                QStringLiteral("Place recommendations are not supported."), this);
+}
+
+/*!
+    Requests a set of search term suggestions according to the parameters specified in \a request.
+*/
+QPlaceSearchSuggestionReply *QPlaceManagerEngine::searchSuggestions(
+        const QPlaceSearchRequest &request)
+{
+    Q_UNUSED(request)
+
+    return new QPlaceSearchSuggestionReplyUnsupported(this);
+}
+
+/*!
+    Saves a specified \a place to the manager engine's datastore.
+*/
+QPlaceIdReply *QPlaceManagerEngine::savePlace(const QPlace &place)
+{
+    Q_UNUSED(place)
+
+    return new QPlaceIdReplyUnsupported(QStringLiteral("Save place is not supported"),
+                                        QPlaceIdReply::SavePlace, this);
+}
+
+/*!
+    Removes the place corresponding to \a placeId from the manager engine's datastore.
+*/
+QPlaceIdReply *QPlaceManagerEngine::removePlace(const QString &placeId)
+{
+    Q_UNUSED(placeId)
+
+    return new QPlaceIdReplyUnsupported(QStringLiteral("Remove place is not supported"),
+                                        QPlaceIdReply::RemovePlace, this);
+}
+
+/*!
+    Saves a \a category that is a child of the category specified by \a parentId.  An empty
+    \a parentId means \a category is saved as a top level category.
+*/
+QPlaceIdReply *QPlaceManagerEngine::saveCategory(const QPlaceCategory &category,
+                                                 const QString &parentId)
+{
+    Q_UNUSED(category)
+    Q_UNUSED(parentId)
+
+    return new QPlaceIdReplyUnsupported(QStringLiteral("Save category is not supported"),
+                                        QPlaceIdReply::SaveCategory, this);
+}
+
+/*!
+    Removes the category corresponding to \a categoryId from the manager engine's datastore.
+*/
+
+QPlaceIdReply *QPlaceManagerEngine::removeCategory(const QString &categoryId)
+{
+    Q_UNUSED(categoryId)
+
+    return new QPlaceIdReplyUnsupported(QStringLiteral("Remove category is not supported"),
+                                        QPlaceIdReply::RemoveCategory, this);
+}
+
+/*!
+    Initializes the categories of the manager engine.
+*/
+QPlaceReply *QPlaceManagerEngine::initializeCategories()
+{
+    return new QPlaceReplyUnsupported(QStringLiteral("Categories are not supported."), this);
+}
+
+/*!
+    Returns the parent category id of the category corresponding to \a categoryId.
+*/
+QString QPlaceManagerEngine::parentCategoryId(const QString &categoryId) const
+{
+    Q_UNUSED(categoryId)
+
+    return QString();
+}
+
+/*!
+    Returns the child category ids of the category corresponding to \a parentId.  If \a parentId is
+    empty then all top level category ids are returned.
+*/
+QStringList QPlaceManagerEngine::childCategoryIds(const QString &categoryId) const
+{
+    Q_UNUSED(categoryId)
+
+    return QStringList();
+}
+
+/*!
+    Returns the category corresponding to the given \a categoryId.
+*/
+QPlaceCategory QPlaceManagerEngine::category(const QString &categoryId) const
+{
+    Q_UNUSED(categoryId)
+
+    return QPlaceCategory();
+}
+
+/*!
+    Returns a list of categories that are children of the category corresponding to \a parentId.
+    If \a parentId is empty, all the top level categories are returned.
+*/
+QList<QPlaceCategory> QPlaceManagerEngine::childCategories(const QString &parentId) const
+{
+    Q_UNUSED(parentId)
+
+    return QList<QPlaceCategory>();
+}
+
+/*!
+    Returns a list of preferred locales. The locales are used as a hint to the manager engine for
+    what language place and category details should be returned in.
+
+    If the first specified locale cannot be accommodated, the manager engine falls back to the next
+    and so forth.
+
+    Support for locales may vary from provider to provider.  For those that do support it, by
+    default, the \l {QLocale::setDefault()}{global default locale} will be used.  If the manager
+    engine has no locales assigned to it, it implicitly uses the global default locale.  For
+    engines that do not support locales, the locale list is always empty.
+*/
+QList<QLocale> QPlaceManagerEngine::locales() const
+{
+    return QList<QLocale>();
+}
+
+/*!
+    Set the list of preferred \a locales.
+*/
+void QPlaceManagerEngine::setLocales(const QList<QLocale> &locales)
+{
+    Q_UNUSED(locales)
+}
+
+/*!
     Returns the manager instance used to create this engine.
 */
 QPlaceManager *QPlaceManagerEngine::manager() const
@@ -163,16 +345,23 @@ QPlace QPlaceManagerEngine::compatiblePlace(const QPlace &original) const
 }
 
 /*!
+    Returns a set of flags indicating what particular features this manager engine instance
+    supports.
+*/
+QPlaceManager::ManagerFeatures QPlaceManagerEngine::supportedFeatures() const
+{
+    return QPlaceManager::NoFeatures;
+}
+
+/*!
     Returns a reply which contains a list of places which correspond/match those
     specified in \a request.
 */
 QPlaceMatchReply * QPlaceManagerEngine::matchingPlaces(const QPlaceMatchRequest &request)
 {
-    Q_UNUSED(request);
+    Q_UNUSED(request)
 
-    MatchReply *reply = new MatchReply(this);
-    reply->triggerDone(QPlaceReply::UnsupportedError, QStringLiteral("Place matching is not supported"));
-    return reply;
+    return new QPlaceMatchReplyUnsupported(this);
 }
 
 /*!
@@ -197,120 +386,6 @@ QPlaceManagerEnginePrivate::QPlaceManagerEnginePrivate()
 QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 {
 }
-
-/*!
-    \fn QPlaceDetailsReply *QPlaceManagerEngine::getPlaceDetails(const QString &placeId)
-
-    Retrieves details of place corresponding to the given \a placeId.
-*/
-
-/*! \fn QPlaceContentReply *QPlaceManagerEngine::getPlaceContent(const QString &placeId, const QPlaceContentRequest &request)
-
-    Retrieves content for the place corresponding to \a placeId, according to the parameters specified in
-    \a request.
-*/
-
-/*!
-    \fn QPlaceSearchReply *QPlaceManagerEngine::search(const QPlaceSearchRequest &request)
-
-    Searches for places according to the parameters specified in \a request.
-*/
-
-/*!
-    \fn QPlaceSearchReply *QPlaceManagerEngine::recommendations(const QString &placeId, const QPlaceSearchRequest &request)
-
-    Provides recommendations for places that are similar to the place identified by \a placeId,
-    and using the parameters as specified in \a request.
-*/
-
-/*!
-    \fn QPlaceSearchSuggestionReply *QPlaceManagerEngine::searchSuggestions(const QPlaceSearchRequest &request)
-
-    Requests a set of search term suggestions according to the parameters specified in \a request.
-*/
-
-/*!
-    \fn QPlaceIdReply *QPlaceManagerEngine::savePlace(const QPlace &place)
-
-    Saves a specified \a place to the manager engine's datastore.
-*/
-
-/*!
-    \fn QPlaceIdReply *QPlaceManagerEngine::removePlace(const QString &placeId)
-
-    Removes the place corresponding to \a placeId from the manager engine's datastore.
-*/
-
-/*!
-    \fn QPlaceIdReply *QPlaceManagerEngine::saveCategory(const QPlaceCategory &category, const QString &parentId)
-
-    Saves a \a category that is a child of the category specified by \a parentId.
-    An empty \a parentId means \a category is saved as a top level category.
-*/
-
-/*!
-    \fn QPlaceIdReply *QPlaceManagerEngine::removeCategory(const QString &categoryId)
-
-    Removes the category corresponding to \a categoryId from the manager engine's datastore.
-*/
-
-/*!
-    \fn QPlaceReply *QPlaceManagerEngine::initializeCategories()
-
-    Initializes the categories of the manager engine.
-*/
-
-/*!
-    \fn QString QPlaceManagerEngine::parentCategoryId(const QString &categoryId) const
-
-    Returns the parent category id of the category corresponding to \a categoryId.
-*/
-
-/*!
-    \fn QStringList QPlaceManagerEngine::childCategoryIds(const QString &parentId) const
-
-    Returns the child category ids of the category corresponding to \a parentId.
-    If \a parentId is empty then all top level category ids are returned.
-*/
-
-/*!
-    \fn QPlaceCategory QPlaceManagerEngine::category(const QString &categoryId) const
-
-    Returns the category corresponding to the given \a categoryId.
-*/
-
-/*!
-    \fn QList<QPlaceCategory> QPlaceManagerEngine::childCategories(const QString &parentId) const
-
-    Returns a list of categories that are children of the category corresponding to \a parentId.
-    If \a parentId is empty, all the top level categories are returned.
-*/
-
-/*!
-    \fn QList<QLocale> QPlaceManagerEngine::locales() const
-
-    Returns a list of preferred locales. The locales are used as a hint to the manager engine for what language
-    place and category details should be returned in.
-
-    If the first specified locale cannot be accommodated, the manager engine falls back to the next and so forth.
-
-    Support for locales may vary from provider to provider.  For those that do support it,
-    by default, the global default locale is set as the manager engine's only locale.  If the
-    manager engine has no locales assigned to it, it implicitly uses the global default locale.
-    For engines that do not support locales, the locale list is always empty.
-*/
-
-/*!
-    \fn void QPlaceManagerEngine::setLocales(const QList<QLocale> &locales)
-
-    Set the list of preferred \a locales.
-*/
-
-/*!
-    \fn QPlaceManager::ManagerFeatures QPlaceManagerEngine::supportedFeatures() const
-
-    Returns a set of flags indicating what particular features this manager engine instance supports.
-*/
 
 /*!
     \fn void QPlaceManagerEngine::finished(QPlaceReply* reply)

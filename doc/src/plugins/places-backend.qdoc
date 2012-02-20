@@ -39,18 +39,31 @@ The QPlaceManager interface, provided to clients to allow access to place inform
 depends directly on an implementation of QPlaceManagerEngine.  The engine provides
 the backend function implementations which are called by the manager.
 
-A places backend implementer needs to derive from QPlaceManagerEngine
-and provide implementations for the abstract virtual functions.  Most of these
-functions are asynchronous and so implementers will also need to derive
-the appropriate \l {Places Reply Classes}{reply classes}.  The reply objects are responsible for managing
-an asynchronous request; they are used to notify when a request is complete
-and hold the results of that request.
+A places backend implementer needs to derive from QPlaceManagerEngine and provide implementations
+for the virtual functions relevant for their backend.  Most of these functions are asynchronous and
+so implementers will also need to derive the appropriate \l {Places Reply Classes}{reply classes}.
+The reply objects are responsible for managing an asynchronous request; they are used to notify
+when a request is complete and hold the results of that request.  QPlaceManagerEngine provides a
+default implementation for all virtual functions.  The default implementations for the asynchronous
+functions return a reply that will emit the error() and finished() signals at the next iteration
+through the event loop.
 
 \section1 Implementing/Inheriting reply objects
 A reply object would be inherited as follows:
 \snippet snippets/places/requesthandler.h Implement reply pt1
 \dots
 \snippet snippets/places/requesthandler.h Implement reply pt2
+
+The implementation of a QPlaceManagerEngine must ensure that any signals emitted by the reply
+objects are delayed until the request functions have returned and the application code has a chance
+to connect those signals to slots.  The typical approach is to use \l {QMetaObject::invokeMethod()}
+with a \l {Qt::QueuedConnection} to emit the signals.
+
+\snippet snippets/places/requesthandler.h Trigger done
+
+Note that the \c finished signals should always be emitted when a reply is complete, even if
+an error has been encountered, i.e. if there is an error, both the \c error and \c finished signals
+should be emitted while if there is no error, only the \c finished signals are emitted.
 
 The protected functions of QPlaceSearchReply::setResults() and QPlaceSearchReply::setRequest()
 are made publicly accessible so the plugin can assign results and requests.  Because
@@ -62,26 +75,6 @@ fails to discard the replies when finished, the engine can clean those upon dest
 Commonly, the reply also has a pointer reference back to the engine, which may be used
 to emit the QPlaceManagerEngine::finished() and QPlaceManagerEngine::error() signals.  This is
 just one of many ways the reply could be implemented.
-
-Usually the QPlaceReply::finished() signal of the reply is somehow tied to a notification mechanism of the
-implementation e.g. for a network based engine, the reply's finished signal may be
-emitted from a slot which is in turn is invoked by a QNetworkReply::finished() signal.
-Sometimes however, we may want to emit the QPlaceReply::finished() signal without
-depending upon an underlying asynchronous notification mechanism.  This
-is a common case when a portion of functionality is not supported.  For example,
-a backend may not support search term suggestions, so we need a way to trigger the finished
-signal (and error signals), but there's no underlying asynchronous mechanism to do so.  In this case,
-the typical approach is to use QMetaObject::invokeMethod() with a Qt::QueuedConnection,
-so that the QPlaceReply::finished(), QPlaceReply::error(), QPlaceManagerEngine::finished()
-and QPlaceManagerEngine::error() signals are emitted at the next event loop.
-
-\snippet snippets/places/requesthandler.h Trigger done
-(\note  the above code is not necessary if there already is an underlying
-asynchronous notification mechanism)
-
-Also note that the \c finished signals should always be emitted when a reply is complete, even if
-an error has been encountered, i.e. if there is an error, both the \c error and \c finished signals
-should be emitted while if there is no error, only the \c finished signals are emitted.
 
 \section1 Icon URLs
 Icon URLs are provided through the QPlaceManagerEngine::constructIconUrl() function.

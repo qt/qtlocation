@@ -42,38 +42,179 @@
 #ifndef UNSUPPORTEDREPLIES_P_H
 #define UNSUPPORTEDREPLIES_P_H
 
+#include "qplacedetailsreply.h"
+#include "qplacecontentreply.h"
+#include "qplacesearchreply.h"
+#include "qplacesearchsuggestionreply.h"
+#include "qplaceidreply.h"
+
 #include "qplacematchreply.h"
 #include "qplacemanagerengine.h"
 
-class MatchReply : public QPlaceMatchReply
+class QPlaceDetailsReplyUnsupported : public QPlaceDetailsReply
 {
     Q_OBJECT
+
 public:
-    MatchReply(QPlaceManagerEngine *engine)
-        : QPlaceMatchReply(engine), m_engine(engine)
-    {}
-    virtual ~MatchReply() {}
-
-    void triggerDone(QPlaceReply::Error error = QPlaceReply::NoError,
-                     const QString &errorString = QString()) {
-        if (error != QPlaceReply::NoError) {
-            this->setError(error,errorString);
-            QMetaObject::invokeMethod(m_engine, "error", Qt::QueuedConnection,
-                                      Q_ARG(QPlaceReply *,this),
-                                      Q_ARG(QPlaceReply::Error, error),
-                                      Q_ARG(QString, errorString));
-            QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
-                                      Q_ARG(QPlaceReply::Error, error),
-                                      Q_ARG(QString, errorString));
-        }
-        this->setFinished(true);
-        QMetaObject::invokeMethod(m_engine, "finished", Qt::QueuedConnection,
-                                  Q_ARG(QPlaceReply *,this));
+    QPlaceDetailsReplyUnsupported(QPlaceManagerEngine *parent)
+    :   QPlaceDetailsReply(parent)
+    {
+        setError(QPlaceReply::UnsupportedError,
+                 QStringLiteral("Getting place details is not supported."));
+        setFinished(this);
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(parent, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this),
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
         QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(parent, "finished", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this));
     }
+};
 
-private:
-    QPlaceManagerEngine *m_engine;
+class QPlaceContentReplyUnsupported : public QPlaceContentReply
+{
+    Q_OBJECT
+
+public:
+    QPlaceContentReplyUnsupported(QPlaceManagerEngine *parent)
+    :   QPlaceContentReply(parent)
+    {
+        setError(QPlaceReply::UnsupportedError,
+                 QStringLiteral("Place content is not supported."));
+        setFinished(this);
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(parent, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this),
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(parent, "finished", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this));
+    }
+};
+
+class QPlaceSearchReplyUnsupported : public QPlaceSearchReply
+{
+    Q_OBJECT
+
+public:
+    QPlaceSearchReplyUnsupported(const QString &message, QPlaceManagerEngine *parent)
+    :   QPlaceSearchReply(parent)
+    {
+        setError(QPlaceReply::UnsupportedError, message);
+        setFinished(this);
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(parent, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this),
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(parent, "finished", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this));
+    }
+};
+
+class QPlaceSearchSuggestionReplyUnsupported : public QPlaceSearchSuggestionReply
+{
+    Q_OBJECT
+
+public:
+    QPlaceSearchSuggestionReplyUnsupported(QPlaceManagerEngine *parent)
+    :   QPlaceSearchSuggestionReply(parent)
+    {
+        setError(QPlaceReply::UnsupportedError,
+                 QStringLiteral("Place search suggestions are not supported."));
+        setFinished(this);
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(parent, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this),
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(parent, "finished", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this));
+    }
+};
+
+class QPlaceIdReplyUnsupported : public QPlaceIdReply
+{
+    Q_OBJECT
+
+public:
+    QPlaceIdReplyUnsupported(const QString &message, QPlaceIdReply::OperationType type,
+                             QPlaceManagerEngine *parent)
+    :   QPlaceIdReply(type, parent)
+    {
+        setError(QPlaceReply::UnsupportedError, message);
+        setFinished(this);
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(parent, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this),
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(parent, "finished", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this));
+    }
+};
+
+class QPlaceReplyUnsupported : public QPlaceReply
+{
+    Q_OBJECT
+
+public:
+    QPlaceReplyUnsupported(const QString &message, QPlaceManagerEngine *parent)
+    :   QPlaceReply(parent)
+    {
+        setError(QPlaceReply::UnsupportedError, message);
+        setFinished(this);
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(parent, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this),
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(parent, "finished", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this));
+    }
+};
+
+class QPlaceMatchReplyUnsupported : public QPlaceMatchReply
+{
+    Q_OBJECT
+
+public:
+    QPlaceMatchReplyUnsupported(QPlaceManagerEngine *parent)
+    :   QPlaceMatchReply(parent)
+    {
+        setError(QPlaceReply::UnsupportedError,
+                 QStringLiteral("Place matching is not supported."));
+        setFinished(this);
+        QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(parent, "error", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this),
+                                  Q_ARG(QPlaceReply::Error, error()),
+                                  Q_ARG(QString, errorString()));
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(parent, "finished", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply *, this));
+    }
 };
 
 #endif

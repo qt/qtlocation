@@ -8,6 +8,7 @@ SUBDIRS += qplace \
            qplacedetailsreply \
            qplaceeditorial \
            qplacemanager \
+           qplacemanager_unsupported \
            qplacemanager_nokia \
            qplacematchreply \
            qplacematchrequest \
@@ -24,6 +25,7 @@ SUBDIRS += qplace \
            qmlinterface
 
 SUBDIRS += geotestplugin \
+           placesplugin_unsupported \
            positionplugin \
            positionplugintest \
            qgeocodingmanagerplugins \
