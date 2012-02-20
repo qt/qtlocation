@@ -237,7 +237,8 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &p
     return reply;
 }
 
-static QString boundingAreaToLatLong(const QGeoBoundingArea &area)
+static void addAtForBoundingArea(const QGeoBoundingArea &area,
+                                 QList<QPair<QString, QString> > *queryItems)
 {
     QGeoCoordinate center;
     switch (area.type()) {
@@ -247,12 +248,17 @@ static QString boundingAreaToLatLong(const QGeoBoundingArea &area)
     case QGeoBoundingArea::CircleType:
         center = QGeoBoundingCircle(area).center();
         break;
-    default:
-        return QString();
+    case QGeoBoundingArea::UnknownType:
+        break;
     }
 
-    return QString::number(center.latitude()) + QLatin1Char(',') +
-           QString::number(center.longitude());
+    if (!center.isValid())
+        return;
+
+    queryItems->append(qMakePair<QString, QString>(QLatin1String("at"),
+                                                   QString::number(center.latitude()) +
+                                                   QLatin1Char(',') +
+                                                   QString::number(center.longitude())));
 }
 
 QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest &query)
@@ -272,10 +278,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         queryItems.append(qMakePair<QString, QString>(QLatin1String("q"), query.searchTerm()));
 
-        if (query.searchArea().isValid()) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("at"),
-                                                          boundingAreaToLatLong(query.searchArea())));
-        }
+        addAtForBoundingArea(query.searchArea(), &queryItems);
 
         queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("plain")));
 
@@ -310,10 +313,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         queryItems.append(qMakePair<QString, QString>(QLatin1String("cat"),
                                                       ids.join(QLatin1String(","))));
 
-        if (query.searchArea().isValid()) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("at"),
-                                                          boundingAreaToLatLong(query.searchArea())));
-        }
+        addAtForBoundingArea(query.searchArea(), &queryItems);
 
         queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("plain")));
 
@@ -383,10 +383,7 @@ QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const
 
     queryItems.append(qMakePair<QString, QString>(QLatin1String("q"), query.searchTerm()));
 
-    if (query.searchArea().isValid()) {
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("at"),
-                                                      boundingAreaToLatLong(query.searchArea())));
-    }
+    addAtForBoundingArea(query.searchArea(), &queryItems);
 
     requestUrl.setQueryItems(queryItems);
 
