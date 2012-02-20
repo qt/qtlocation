@@ -83,8 +83,10 @@ Rectangle {
         onTextChanged: {
             if (searchRectangle.suggestionsEnabled) {
                 if (text.length >= 3) {
-                    suggestionModel.searchTerm = text;
-                    suggestionModel.execute();
+                    if (suggestionModel != null) {
+                        suggestionModel.searchTerm = text;
+                        suggestionModel.execute();
+                    }
                 } else {
                     searchRectangle.state = "";
                 }
