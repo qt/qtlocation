@@ -84,9 +84,9 @@ private:
     QSharedDataPointer<QGeoTileSpecPrivate> d;
 };
 
-unsigned int qHash(const QGeoTileSpec &spec);
+Q_LOCATION_EXPORT unsigned int qHash(const QGeoTileSpec &spec);
 
-QDebug operator<<(QDebug, const QGeoTileSpec &);
+Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QGeoTileSpec &);
 
 QT_END_NAMESPACE
 

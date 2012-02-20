@@ -34,6 +34,7 @@ SUBDIRS += geotestplugin \
            qgeoboundingarea \
            qgeoboundingbox \
            qgeoboundingcircle \
+           qgeocameratiles \
            qgeocodereply \
            qgeocodingmanager \
            qgeocoordinate \

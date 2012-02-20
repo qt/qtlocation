@@ -53,17 +53,18 @@
 //
 
 #include "qglobal.h"
+#include "QtLocation/qlocationglobal.h"
 
 QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 class QDoubleVector2D;
 
-class Q_AUTOTEST_EXPORT QGeoProjection
+class Q_LOCATION_EXPORT QGeoProjection
 {
 public:
-    static QDoubleVector2D coordToMercator(const QGeoCoordinate &coord);
-    static QGeoCoordinate mercatorToCoord(const QDoubleVector2D &mercator);
+    Q_AUTOTEST_EXPORT static QDoubleVector2D coordToMercator(const QGeoCoordinate &coord);
+    Q_AUTOTEST_EXPORT static QGeoCoordinate mercatorToCoord(const QDoubleVector2D &mercator);
 
 private:
     static double realmod(const double a, const double b);
