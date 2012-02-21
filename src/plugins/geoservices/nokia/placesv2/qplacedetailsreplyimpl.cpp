@@ -321,6 +321,10 @@ void QPlaceDetailsReplyImpl::replyFinished()
     //    QJsonObject relatedObject = object.value(QLatin1String("related")).toObject();
     //}
 
+    QPlaceAttribute provider;
+    provider.setText(QLatin1String("nokia"));
+    place.setExtendedAttribute(QPlaceAttribute::Provider, provider);
+
     place.setDetailsFetched(true);
     setPlace(place);
 

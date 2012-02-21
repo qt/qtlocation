@@ -162,6 +162,10 @@ void QPlaceSearchReplyImpl::replyFinished()
 
         //const QString refId = item.value(QLatin1String("refId")).toString();
 
+        QPlaceAttribute provider;
+        provider.setText(QLatin1String("nokia"));
+        place.setExtendedAttribute(QPlaceAttribute::Provider, provider);
+
         result.setPlace(place);
 
         results.append(result);
