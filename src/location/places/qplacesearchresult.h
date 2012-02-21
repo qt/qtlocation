@@ -88,6 +88,9 @@ public:
     QString correction() const;
     void setCorrection(const QString &correction);
 
+    bool isSponsored() const;
+    void setSponsored(bool sponsored);
+
 private:
     QSharedDataPointer<QPlaceSearchResultPrivate> d;
 };

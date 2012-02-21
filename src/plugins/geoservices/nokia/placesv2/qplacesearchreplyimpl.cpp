@@ -153,7 +153,7 @@ void QPlaceSearchReplyImpl::replyFinished()
 
         //QJsonArray having = item.value(QLatin1String("having")).toArray();
 
-        //bool sponsored = item.value(QLatin1String("sponsored")).toBool();
+        result.setSponsored(item.value(QLatin1String("sponsored")).toBool());
 
         QUrl href = item.value(QLatin1String("href")).toString();
         //QUrl type = item.value(QLatin1String("type")).toString();

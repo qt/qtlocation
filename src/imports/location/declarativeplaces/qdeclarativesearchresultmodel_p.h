@@ -117,7 +117,8 @@ private slots:
 private:
     enum Roles {
         SearchResultTypeRole = QDeclarativeResultModelBase::PlaceRole + 1,
-        CorrectionRole
+        CorrectionRole,
+        SponsoredRole
     };
 
     int getRow(const QString &placeId) const;

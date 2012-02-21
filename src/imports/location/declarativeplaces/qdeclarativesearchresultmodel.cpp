@@ -74,6 +74,10 @@ QT_USE_NAMESPACE
     \l offset and \l limit properties are set the search results between \l offset and
     (\l offset + \l limit - 1) will be returned.
 
+    The PlaceSearchModel returns both sponsored and
+    \l {http://en.wikipedia.org/wiki/Organic_search}{organic search results}.  Sponsored search
+    results will have the \c sponsored role set to true.
+
     The model returns data for the following roles:
 
     \table
@@ -92,8 +96,13 @@ QT_USE_NAMESPACE
         \row
             \o place
             \o \l Place
-            \o Valid only when they \c type role is \c PlaceResult, an object representing the
+            \o Valid only when the \c type role is \c PlaceResult, an object representing the
                place.
+        \row
+            \o sponsored
+            \o bool
+            \o Valid only when the \c type role is \c PlaceResult, true if the search result is a
+               sponsored result.
         \row
             \o correction
             \o string
@@ -215,6 +224,7 @@ QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
     QHash<int, QByteArray> roles = roleNames();
     roles.insert(SearchResultTypeRole, "type");
     roles.insert(CorrectionRole, "correction");
+    roles.insert(SponsoredRole, "sponsored");
     setRoleNames(roles);
 }
 
@@ -405,6 +415,8 @@ QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role)
         return m_results.at(index.row()).type();
     case CorrectionRole:
         return m_results.at(index.row()).correction();
+    case SponsoredRole:
+        return m_results.at(index.row()).isSponsored();
     default:
         return QDeclarativeResultModelBase::data(index, role);
     }

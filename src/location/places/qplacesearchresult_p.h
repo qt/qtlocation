@@ -62,6 +62,7 @@ public:
     QPlaceSearchResult::SearchResultType type;
     QPlace place;
     QString correction;
+    bool sponsored;
 };
 
 QT_END_NAMESPACE

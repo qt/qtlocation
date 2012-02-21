@@ -46,7 +46,8 @@
 QT_USE_NAMESPACE
 
 QPlaceSearchResultPrivate::QPlaceSearchResultPrivate()
-    :   QSharedData(), distance(qQNaN()), type(QPlaceSearchResult::UnknownSearchResult)
+:   QSharedData(), distance(qQNaN()), type(QPlaceSearchResult::UnknownSearchResult),
+    sponsored(false)
 {
 }
 
@@ -57,6 +58,7 @@ QPlaceSearchResultPrivate::QPlaceSearchResultPrivate(const QPlaceSearchResultPri
     type = other.type;
     place = other.place;
     correction = other.correction;
+    sponsored = other.sponsored;
 }
 
 QPlaceSearchResultPrivate::~QPlaceSearchResultPrivate()
@@ -68,7 +70,8 @@ bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &othe
     return distance == other.distance &&
            type == other.type &&
            place == other.place &&
-           correction == other.correction;
+           correction == other.correction &&
+           sponsored == other.sponsored;
 }
 
 /*!
@@ -80,10 +83,11 @@ bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &othe
 
     \brief The QPlaceSearchResult class represents a search result.
 
-    There are two types of search result.  The first is a
+    There are two types of search results.  The first is a
     \l {QPlaceSearchResult::PlaceResult} {place result}, which contains
-    a place that matched a search request, but also metadata about the place
-    such as the distance from the search center of a search request (if it had one).
+    a place that matched the search request, but also metadata about the place
+    such as the distance from the search center of a search request and whether the result is a
+    sponsored or \l {http://en.wikipedia.org/wiki/Organic_search}{organic} search result.
 
     The other type is a \l {QPlaceSearchResult::CorrectionResult}{correction}, which
     contains an alternative search term that may better reflect the
@@ -214,4 +218,24 @@ QString QPlaceSearchResult::correction() const
 void QPlaceSearchResult::setCorrection(const QString &correction)
 {
     d->correction = correction;
+}
+
+/*!
+    Returns true if the search result represents a sponsored result.
+
+    \sa setSponsored()
+*/
+bool QPlaceSearchResult::isSponsored() const
+{
+    return d->sponsored;
+}
+
+/*!
+    Sets whether the search result represents a \a sponsored result or not.
+
+    \sa isSponsored()
+*/
+void QPlaceSearchResult::setSponsored(bool sponsored)
+{
+    d->sponsored = sponsored;
 }

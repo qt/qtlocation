@@ -60,6 +60,12 @@ Item {
             height: childrenRect.height
             width: parent.width
 
+            Rectangle {
+                anchors.fill: parent
+                color: "#dbffde"
+                visible: sponsored
+            }
+
             Column {
                 width: parent.width
 
@@ -74,6 +80,13 @@ Item {
                     Text { id: placeName; text: place.favorite ? place.favorite.name : place.name }
                 }
                 Text { id: distanceText; text: distance + "m"; font.italic: true; }
+                Text {
+                    text: qsTr("Sponsored result")
+                    horizontalAlignment: Text.AlignRight
+                    font.pixelSize: 8
+                    width: parent.width
+                    visible: sponsored
+                }
             }
 
             MouseArea {
