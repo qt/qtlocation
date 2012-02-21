@@ -90,7 +90,6 @@ public:
                             const QSet<QGeoTileSpec> &tilesRemoved);
 
     QList<QGeoMapType> supportedMapTypes() const;
- //    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
 
     int tileSize() const;
 

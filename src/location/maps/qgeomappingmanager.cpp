@@ -65,24 +65,6 @@ QT_BEGIN_NAMESPACE
 
     \brief The QGeoMappingManager class provides support for displaying
     and interacting with maps.
-
-    A QGeoMappingManager instance can create QGeoMapData instances with
-    createMapData(). The QGeoMapData instances can be used to contain and
-    manage information concerning what a particular QGraphicsGeoMap is viewing.
-
-    The functions in this class will typically not be used by clients of this
-    API, as the most common uses will only need to obtain a QGeoMappingManager
-    instance and associate it with a QGraphicsGeoMap instance:
-    \code
-        QGeoServiceProvider serviceProvider("nokia");
-        QGeoMappingManager *manager = serviceProvider.mappingManager();
-        QGraphicsGeoMap *geoMap = new QGraphicsGeoMap(manager);
-    \endcode
-
-    This could have been simplified by having the plugin return a
-    QGraphicsGeoMap instance instead, but this approach allows users to
-    subclass QGraphicsGeoMap in order to override the standard event handlers
-    and implement custom map behaviours.
 */
 
 /*!
@@ -309,14 +291,6 @@ QList<QGeoMapType> QGeoMappingManager::supportedMapTypes() const
 {
     return d_ptr->engine->supportedMapTypes();
 }
-
-///*!
-//    Returns a list of the connectivity modes supported by this manager.
-//*/
-//QList<QGraphicsGeoMap::ConnectivityMode> QGeoMappingManager::supportedConnectivityModes() const
-//{
-//    return d_ptr->engine->supportedConnectivityModes();
-//}
 
 /*!
     Returns the length of the edge of the tiles returned by this manager.

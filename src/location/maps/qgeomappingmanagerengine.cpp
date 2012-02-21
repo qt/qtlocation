@@ -58,16 +58,6 @@ QT_BEGIN_NAMESPACE
     \brief The QGeoMappingManagerEngine class provides an interface and convenience methods
     to implementors of QGeoServiceProvider plugins who want to provide support for displaying
     and interacting with maps.
-
-    Subclasses of QGeoMappingManagerEngine need to provide an implementations
-    of createMapData(). The QGeoMapData instances returned by createMapData()
-    can be used to contain and manage information concerning what a particular
-    QGraphicsGeoMap is viewing.
-
-    Most of the other functions configure the reported capabilities of the engine.
-    It is important that these functions are called before createMapData() or any of the
-    capability reporting functions are used to prevent incorrect or
-    inconsistent behaviour.
 */
 
 /*!
@@ -324,31 +314,6 @@ void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGeoMapType> &su
     Q_D(QGeoMappingManagerEngine);
     d->supportedMapTypes = supportedMapTypes;
 }
-
-///*!
-//    Returns a list of the connectivity modes supported by this engine.
-//*/
-//QList<QGraphicsGeoMap::ConnectivityMode> QGeoMappingManagerEngine::supportedConnectivityModes() const
-//{
-//    Q_D(const QGeoMappingManagerEngine);
-//    return d->supportedConnectivityModes;
-//}
-
-///*!
-//    Sets the list of connectivity modes supported by this engine to \a connectivityModes.
-
-//    Subclasses of QGeoMappingManagerEngine should use this function to ensure
-//    that supportedConnectivityModes() provides accurate information.
-
-//    If createMapData does not specify a connectivity mode the first mode from
-//    \a connectivityModes will be used, or QGraphicsGeoMap::NoConnectivity will
-//    be used if \a connectivityModes is empty.
-//*/
-//void QGeoMappingManagerEngine::setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes)
-//{
-//    Q_D(QGeoMappingManagerEngine);
-//    d->supportedConnectivityModes = connectivityModes;
-//}
 
 void QGeoMappingManagerEngine::setTileSize(int tileSize)
 {

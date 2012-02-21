@@ -53,8 +53,6 @@
 // We mean it.
 //
 
-//#include "qgraphicsgeomap.h"
-
 #include <QSize>
 #include <QList>
 #include <QMap>
@@ -81,7 +79,6 @@ public:
     int managerVersion;
 
     QList<QGeoMapType> supportedMapTypes;
-//    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes;
     int tileSize;
     QGeoCameraCapabilities cameraCapabilities_;
     QGeoMappingManager::CacheAreas cacheHint;

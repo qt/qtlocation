@@ -60,7 +60,6 @@ class QLocale;
 class QGeoBoundingBox;
 class QGeoCameraCapabilities;
 class QGeoCoordinate;
-class QGeoMapData;
 class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
 
@@ -83,7 +82,6 @@ public:
     int managerVersion() const;
 
     QList<QGeoMapType> supportedMapTypes() const;
-//    QList<QGraphicsGeoMap::ConnectivityMode> supportedConnectivityModes() const;
 
     int tileSize() const;
 
@@ -116,7 +114,6 @@ protected:
     QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
 
     void setSupportedMapTypes(const QList<QGeoMapType> &supportedMapTypes);
-//    void setSupportedConnectivityModes(const QList<QGraphicsGeoMap::ConnectivityMode> &connectivityModes);
 
     void setTileSize(int tileSize);
 
