@@ -212,7 +212,9 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
 
     int maneuverIndex = 0;
     for (int i = 0; i < segments.count(); ++i) {
-        while ((maneuverIndex < maneuvers.size()) && maneuvers.at(maneuverIndex).toId.isEmpty()) {
+        // In case there is a maneuver in the middle of the list with no
+        // link ID attached, attach it to the next available segment
+        while ((maneuverIndex < maneuvers.size() - 1) && maneuvers.at(maneuverIndex).toId.isEmpty()) {
             QGeoRouteSegment segment;
             segment.setManeuver(maneuvers.at(maneuverIndex).maneuver);
             QList<QGeoCoordinate> path; // use instruction position as one point segment path
@@ -221,6 +223,7 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
             routeSegments.append(segment);
             ++maneuverIndex;
         }
+
         QGeoRouteSegment segment = segments.at(i).segment;
         if ((maneuverIndex < maneuvers.size()) && segments.at(i).id == maneuvers.at(maneuverIndex).toId) {
             segment.setManeuver(maneuvers.at(maneuverIndex).maneuver);
@@ -229,6 +232,19 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
         routeSegments.append(segment);
     }
 
+    // For the final maneuver in the list, make sure to attach it to the very
+    // last segment on the path, this is why we don't process the last
+    // maneuver in the loop above
+    while (maneuverIndex < maneuvers.size()) {
+        QGeoRouteSegment segment;
+        segment.setManeuver(maneuvers.at(maneuverIndex).maneuver);
+        QList<QGeoCoordinate> path; // use instruction position as one point segment path
+        path.append(maneuvers.at(maneuverIndex).maneuver.position());
+        segment.setPath(path);
+
+        routeSegments.append(segment);
+        ++maneuverIndex;
+    }
 
     QList<QGeoRouteSegment> compactedRouteSegments;
     compactedRouteSegments.append(routeSegments.first());
@@ -240,9 +256,9 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
 
         QGeoRouteSegment lastSegment = compactedRouteSegments.last();
 
-        if (lastSegment.maneuver().isValid())
+        if (lastSegment.maneuver().isValid()) {
             compactedRouteSegments.append(segment);
-        else {
+        } else {
             compactedRouteSegments.removeLast();
             lastSegment.setDistance(lastSegment.distance() + segment.distance());
             lastSegment.setTravelTime(lastSegment.travelTime() + segment.travelTime());
@@ -253,43 +269,6 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
             compactedRouteSegments.append(lastSegment);
         }
     }
-
-//    //Add the first instruction as starting point
-//    if (maneuvers.count() > 0) {
-//        QGeoRouteSegment segment;
-//        segment.setManeuver(maneuvers[0].maneuver);
-//        QList<QGeoCoordinate> path; // use instruction position as one point segment path
-//        path.append(maneuvers[0].maneuver.position());
-//        segment.setPath(path);
-//        routesegments.append(segment);
-//        maneuvers.removeAt(0);
-//    }
-
-//    for (int i = 0; i < segments.count(); ++i) {
-//        if (segments[i].maneuverId.isEmpty()) {
-//            routesegments.append(segments[i].segment);
-//        } else {
-//            for (int j = 0; j < maneuvers.count(); ++j) {
-//                if (maneuvers[j].id == segments[i].maneuverId
-//                        && segments[i].segment.maneuver().instructionText().isEmpty()) {
-//                    segments[i].segment.setManeuver(maneuvers[j].maneuver);
-//                    routesegments.append(segments[i].segment);
-//                    maneuvers.removeAt(j);
-//                    break;
-//                } else {
-//                    //Add orphan instruction into new empty segment
-//                    QGeoRouteSegment segment;
-//                    segment.setManeuver(maneuvers[j].maneuver);
-//                    QList<QGeoCoordinate> path; // use instruction position as one point segment path
-//                    path.append(maneuvers[j].maneuver.position());
-//                    segment.setPath(path);
-//                    routesegments.append(segment);
-//                    maneuvers.removeAt(j);
-//                    --j;
-//                }
-//            }
-//        }
-//    }
 
     if (compactedRouteSegments.size() > 0) {
         route->setFirstRouteSegment(compactedRouteSegments.at(0));
