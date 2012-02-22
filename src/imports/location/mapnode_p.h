@@ -87,7 +87,7 @@ private:
 private:
     QOpenGLFramebufferObject *m_fbo;
     QGLFramebufferObjectSurface *m_fboSurface;
-    QSGOpaqueTextureMaterial m_opagueMaterial;
+    QSGOpaqueTextureMaterial m_opaqueMaterial;
     QSGTextureMaterial m_material;
     QSGGeometry m_geometry;
     QSGPlainTexture *m_texture;

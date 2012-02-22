@@ -59,7 +59,7 @@ MapNode::MapNode(QGeoMap* map): QSGGeometryNode(),
         m_dirtyFBO(false)
 {
     setMaterial(&m_material);
-    setOpaqueMaterial(&m_opagueMaterial);
+    setOpaqueMaterial(&m_opaqueMaterial);
     setGeometry(&m_geometry);
     // setFlag(UsePreprocess);
 }
@@ -193,7 +193,7 @@ void MapNode::updateFBO()
     m_texture->setOwnsTexture(false);
     m_texture->setTextureSize(m_fbo->size());
     m_texture->setTextureId(m_fbo->texture());
-    m_opagueMaterial.setTexture(m_texture);
+    m_opaqueMaterial.setTexture(m_texture);
     m_material.setTexture(m_texture);
 }
 
