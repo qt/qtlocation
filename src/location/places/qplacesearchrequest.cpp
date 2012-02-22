@@ -339,7 +339,7 @@ QtLocation::VisibilityScope QPlaceSearchRequest::visibilityScope() const
 }
 
 /*!
-    Sets the visibiliy \a scope used when searching for places.
+    Sets the visibility \a scope used when searching for places.
 */
 void QPlaceSearchRequest::setVisibilityScope(QtLocation::VisibilityScope scope)
 {
@@ -349,7 +349,7 @@ void QPlaceSearchRequest::setVisibilityScope(QtLocation::VisibilityScope scope)
 
 /*!
     Returns the relevance hint of the request.  The hint is given to the provider
-    to help but not dictate the ranking of results.  eg providng a distance hint
+    to help but not dictate the ranking of results.  e.g. providing a distance hint
     may give closer places a higher ranking but it doesn't necessarily mean
     that he results will be ordered strictly according to distance.
 */

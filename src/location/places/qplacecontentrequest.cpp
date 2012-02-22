@@ -97,7 +97,7 @@ void QPlaceContentRequestPrivate::clear()
 */
 
 /*!
-    Constructs an new request object.
+    Constructs a new request object.
 */
 QPlaceContentRequest::QPlaceContentRequest()
     : d_ptr(new QPlaceContentRequestPrivate())

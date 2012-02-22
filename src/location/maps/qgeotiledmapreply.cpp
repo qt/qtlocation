@@ -84,7 +84,7 @@ QT_BEGIN_NAMESPACE
     \value CommunicationError
         An error occurred while communicating with the service provider.
     \value ParseError
-        The response from the service provider was in an unrecognizable format.
+        The response from the service provider was in an unrecognizable format
         supported by the service provider.
     \value UnknownError
         An error occurred which does not fit into any of the other categories.
@@ -146,7 +146,7 @@ bool QGeoTiledMapReply::isFinished() const
     Sets the error state of this reply to \a error and the textual
     representation of the error to \a errorString.
 
-    This wil also cause error() and finished() signals to be emitted, in that
+    This will also cause error() and finished() signals to be emitted, in that
     order.
 */
 void QGeoTiledMapReply::setError(QGeoTiledMapReply::Error error, const QString &errorString)

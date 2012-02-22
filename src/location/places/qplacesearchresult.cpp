@@ -104,7 +104,7 @@ bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &othe
 */
 
 /*!
-    Constructs an new search result.
+    Constructs a new search result.
 */
 QPlaceSearchResult::QPlaceSearchResult()
     : d(new QPlaceSearchResultPrivate)

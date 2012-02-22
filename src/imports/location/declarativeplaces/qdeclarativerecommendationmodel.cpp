@@ -232,7 +232,7 @@ void QDeclarativeRecommendationModel::setPlaceId(const QString &placeId)
 /*!
     \qmlproperty string PlaceRecommendationModel::count
 
-    This properties holds the number of results the model has.
+    This property holds the number of results the model has.
 */
 
 /*!

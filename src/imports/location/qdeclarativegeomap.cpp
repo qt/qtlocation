@@ -867,13 +867,13 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
     Adds the given MapItem to the Map (e.g. MapQuickItem, MapCircle). If the object
     already is on the Map, it will not be added again.
 
-    As an example, consider you have a MapCircle presenting your current position:
+    As an example, consider the case where you have a MapCircle representing your current position:
 
     \snippet TODO
     You can add it to Map (alternatively it can be defined as a child element of the Map):
 
     \snippet TODO
-    Note: MapItemViews can not be added with this method.
+    Note: MapItemViews cannot be added with this method.
 */
 
 void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
@@ -916,7 +916,7 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
     updateMutex_.lock();
     item->setParentItem(0);
     item->setMap(0, 0);
-    // these can be optmized for perf, as we already check the 'contains' above
+    // these can be optimized for perf, as we already check the 'contains' above
     mapItems_.removeOne(item);
     emit mapItemsChanged();
     updateMutex_.unlock();

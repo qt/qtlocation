@@ -88,7 +88,7 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
     \endlist
 
     There is a class of attribute types of the format x_id_<provider> e.g. x_id_nokia.
-    This class of attributes are alternative ids of the place, from the specified provider's
+    This class of attributes is a set of alternative ids of the place, from the specified provider's
     perspective.
 
     The above types are used to access and modify attributes in QPlace via:

@@ -472,7 +472,7 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
 /*!
     \qmlproperty string PlaceSearchModel::count
 
-    This properties holds the number of results the model has.
+    This property holds the number of results the model has.
 */
 
 void QDeclarativeSearchResultModel::placeUpdated(const QString &placeId)

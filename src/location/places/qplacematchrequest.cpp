@@ -128,7 +128,7 @@ void QPlaceMatchRequestPrivate::clear()
 const QString QPlaceMatchRequest::AlternativeId(QLatin1String("alternativeId"));
 
 /*!
-    Default constructor. Constructs an new request object.
+    Default constructor. Constructs a new request object.
 */
 QPlaceMatchRequest::QPlaceMatchRequest()
     : d_ptr(new QPlaceMatchRequestPrivate())

@@ -149,7 +149,7 @@ QT_USE_NAMESPACE
 
     \section2 Favorites
     The Places API supports the concept of favorites. Favorites are generally implemented
-    by using two plugins, the first plugin is typically a r/o source of places(origin plugin) and a second
+    by using two plugins, the first plugin is typically a r/o source of places (origin plugin) and a second
     r/w plugin (destination plugin) is used to store places from the origin as favorites.
 
     Each Place has a favorite property which is intended to contain the corresponding place
@@ -544,7 +544,7 @@ QString QDeclarativePlace::name() const
 
     This property holds the unique identifier of the place.  The place id is only meaningful to the
     \l Plugin that generated it and is not transferable between \l {Plugin}{Plugins}.  The place id
-    is not guarinteed to be universally unique, but unique within the \l Plugin that generated it.
+    is not guaranteed to be universally unique, but unique within the \l Plugin that generated it.
 
     If only the place id is known, all other place data can fetched from the \l Plugin.
 
@@ -609,7 +609,7 @@ bool QDeclarativePlace::detailsFetched() const
                the place.
         \row
             \o Place.Saving
-            \o The place is currently being saved, no other operations may be perfomed until
+            \o The place is currently being saved, no other operation may be performed until
                complete.
         \row
             \o Place.Fetching
@@ -718,9 +718,9 @@ void QDeclarativePlace::contactsModified(const QString &key, const QVariant &val
 /*!
     \qmlmethod void Place::getDetails()
 
-    This methods starts fetching place details.
+    This method starts fetching place details.
 
-    The \l status property will change to Place.Fetching while the fetch is in progress.  On
+    The \l status property will change to Place. Fetching while the fetch is in progress.  On
     success the element properties will be updated, \l status will be set to Place.Ready and
     \l detailsFetched will be set to true.  On error \l status will be set to Place.Error.  The
     \l errorString() method can be used to get the details of the error.
@@ -1067,7 +1067,7 @@ void QDeclarativePlace::synchronizeContacts()
 /*
     Helper function to emit the signals for the primary___()
     fields.  It is expected that the values of the primary___()
-    functions have alread been modified to new values.
+    functions have already been modified to new values.
 */
 void QDeclarativePlace::primarySignalsEmission(const QString &type)
 {

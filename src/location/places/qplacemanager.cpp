@@ -63,7 +63,7 @@ QT_BEGIN_NAMESPACE
             \o Description
         \row
             \o Searching for places
-            \o Using set of parameters such as a seach term and search area, relevant places
+            \o Using set of parameters such as a search term and search area, relevant places
                can be returned to the user.
         \row
             \o Categories
@@ -358,7 +358,7 @@ QList<QPlaceCategory> QPlaceManager::childCategories(const QString &parentId) co
 
     Support for locales may vary from provider to provider.  For those that do support it,
     by default, the global default locale is set as the manager's only locale.  If the manager
-    has no locales assigned to it, it impliclty uses the global default locale.
+    has no locales assigned to it, it implicitly uses the global default locale.
     For managers that do not support locales, the locale list is always empty.
 */
 QList<QLocale> QPlaceManager::locales() const

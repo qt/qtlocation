@@ -452,7 +452,7 @@ double QGeoBoundingBox::width() const
     If the change in height would cause the bounding box to cross a pole
     the height is adjusted such that the bounding box only touches the pole.
 
-    This changes is done such that the center coordinate is still at the
+    This change is done such that the center coordinate is still at the
     center of the bounding box, which may result in a bounding box with
     a smaller height than might otherwise be expected.
 

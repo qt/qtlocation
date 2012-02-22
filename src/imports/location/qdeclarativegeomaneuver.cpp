@@ -185,8 +185,8 @@ QDeclarativeCoordinate* QDeclarativeGeoManeuver::waypoint() const
 /*!
     \qmlproperty bool RouteManeuver::waypointValid
 
-    This read-only property holds whether this the \l waypoint associated with this
-    maneuver is valid.
+    This read-only property holds whether this \l waypoint, associated with this
+    maneuver, is valid or not.
 */
 
 bool QDeclarativeGeoManeuver::waypointValid() const
