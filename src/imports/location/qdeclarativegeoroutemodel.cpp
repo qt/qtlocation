@@ -545,6 +545,44 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-routing
     \since QtLocation 5.0
+
+    \brief The RouteQuery element is used to provide query parameters to a
+           RouteModel.
+
+    A RouteQuery contains all the parameters necessary to make a request
+    to a routing service, which can then populate the contents of a RouteModel.
+
+    These parameters describe key details of the route, such as \l waypoints to
+    pass through, \l excludedAreas to avoid, the \l travelModes in use, as well
+    as detailed preferences on how to optimize the route and what features
+    to prefer or avoid along the path (such as toll roads, highways, etc).
+
+    RouteQuery elements are used exclusively to fill out the value of a
+    RouteModel's \l{RouteModel::query}{query} property, which can then begin
+    the retrieval process to populate the model.
+
+    \section2 Example Usage
+
+    The following snipped shows an incomplete example of creating a RouteQuery
+    element and setting it as the value of a RouteModel's \l{RouteModel::query}{query}
+    property.
+
+    \code
+    RouteQuery {
+        id: aQuery
+    }
+
+    RouteModel {
+        query: aQuery
+        autoUpdate: false
+    }
+    \endcode
+
+    For a more complete example, see the documentation for the \l{RouteModel}
+    element, and the Mapviewer example.
+
+    \sa RouteModel
+
 */
 
 QDeclarativeGeoRouteQuery::QDeclarativeGeoRouteQuery(QObject *parent)
@@ -719,7 +757,7 @@ void QDeclarativeGeoRouteQuery::exclusions_clear(QDeclarativeListProperty<QDecla
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::addExcludedArea(BoundingBox)
+    \qmlmethod QtLocation5::RouteQuery::addExcludedArea(BoundingBox)
 
     Adds the given area to excluded areas (areas that the route must not cross).
     Same area can only be added once.
@@ -749,7 +787,7 @@ void QDeclarativeGeoRouteQuery::addExcludedArea(QDeclarativeGeoBoundingBox* area
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::removeExcludedArea(BoundingBox)
+    \qmlmethod QtLocation5::RouteQuery::removeExcludedArea(BoundingBox)
 
     Removes the given area to excluded areas (areas that the route must not cross).
 
@@ -773,7 +811,7 @@ void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoBoundingBox* a
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::clearExcludedAreas()
+    \qmlmethod QtLocation5::RouteQuery::clearExcludedAreas()
 
     Clears all excluded areas (areas that the route must not cross).
 
@@ -792,7 +830,7 @@ void QDeclarativeGeoRouteQuery::clearExcludedAreas()
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::addWaypoint(Coordinate)
+    \qmlmethod QtLocation5::RouteQuery::addWaypoint(Coordinate)
 
     Appends a coordinate to the list of waypoints. Same coordinate
     can be set multiple times.
@@ -817,7 +855,7 @@ void QDeclarativeGeoRouteQuery::addWaypoint(QDeclarativeCoordinate* waypoint)
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::removeWaypoint(Coordinate)
+    \qmlmethod QtLocation5::RouteQuery::removeWaypoint(Coordinate)
 
     Removes the given from the list of waypoints. In case same coordinate
     appears multiple times, the most recently added coordinate instance is
@@ -845,7 +883,7 @@ void QDeclarativeGeoRouteQuery::removeWaypoint(QDeclarativeCoordinate* waypoint)
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::clearWaypoints
+    \qmlmethod QtLocation5::RouteQuery::clearWaypoints
 
     Clear all waypoints.
 
@@ -864,7 +902,7 @@ void QDeclarativeGeoRouteQuery::clearWaypoints()
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::setFeatureWeight(FeatureType, FeatureWeight)
+    \qmlmethod QtLocation5::RouteQuery::setFeatureWeight(FeatureType, FeatureWeight)
 
     Defines the weight to associate with a feature during the planning of a
     route.
@@ -906,7 +944,7 @@ void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType featureType, Featur
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::resetFeatureWeights()
+    \qmlmethod QtLocation5::RouteQuery::resetFeatureWeights()
 
     Resets all feature weights to their default state (NeutralFeatureWeight).
 */
