@@ -159,7 +159,13 @@ Map {
             left: parent.left
         }
         width: parent.width - anchors.rightMargin - anchors.leftMargin
+
         value: map.zoomLevel
+
+        Binding {
+            target: zoomSlider; property: "value"; value: map.zoomLevel
+        }
+
         onValueChanged: {
             map.zoomLevel = value
         }
