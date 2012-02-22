@@ -195,6 +195,12 @@ QT_USE_NAMESPACE
     \sa execute(), status
 */
 
+/*!
+    \qmlmethod PlaceRecommendationModel::clear()
+
+    Clears the current place recommendations stored in the model.
+*/
+
 QDeclarativeRecommendationModel::QDeclarativeRecommendationModel(QObject *parent)
 :   QDeclarativeResultModelBase(parent)
 {

@@ -110,6 +110,13 @@ Item {
                         }
 
                         Button {
+                            text: qsTr("Clear")
+                            onClicked: placeSearchModel.clear()
+
+                            anchors.horizontalCenter: parent.horizontalCenter
+                        }
+
+                        Button {
                             text: qsTr("Next")
                             onClicked: placeSearchModel.nextPage()
 

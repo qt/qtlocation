@@ -81,6 +81,8 @@ void QDeclarativeResultModelBase::setFavoritesMatchParameters(const QVariantMap 
 
 void QDeclarativeResultModelBase::clearData()
 {
+    QDeclarativeSearchModelBase::clearData();
+
     qDeleteAll(m_places);
     m_places.clear();
     m_results.clear();

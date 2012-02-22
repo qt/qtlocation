@@ -166,6 +166,12 @@ QT_USE_NAMESPACE
     \sa execute(), status
 */
 
+/*!
+    \qmlmethod PlaceSearchSuggestionModel::clear()
+
+    Clears the current search suggestions stored in the model.
+*/
+
 QDeclarativeSearchSuggestionModel::QDeclarativeSearchSuggestionModel(QObject *parent)
 :   QDeclarativeSearchModelBase(parent)
 {
@@ -210,6 +216,8 @@ QStringList QDeclarativeSearchSuggestionModel::suggestions() const
 
 void QDeclarativeSearchSuggestionModel::clearData()
 {
+    QDeclarativeSearchModelBase::clearData();
+
     m_suggestions.clear();
 }
 

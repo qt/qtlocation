@@ -218,6 +218,12 @@ QT_USE_NAMESPACE
     \sa execute(), status
 */
 
+/*!
+    \qmlmethod PlaceSearchModel::clear()
+
+    Clears the current search results stored in the model.
+*/
+
 QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
 :   QDeclarativeResultModelBase(parent)
 {

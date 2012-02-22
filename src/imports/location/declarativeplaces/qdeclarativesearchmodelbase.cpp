@@ -178,6 +178,13 @@ void QDeclarativeSearchModelBase::cancel()
     setStatus(Ready);
 }
 
+void QDeclarativeSearchModelBase::clear()
+{
+    beginResetModel();
+    clearData();
+    endResetModel();
+}
+
 QString QDeclarativeSearchModelBase::errorString() const
 {
     return m_errorString;

@@ -99,6 +99,7 @@ public:
 
     Q_INVOKABLE void execute();
     Q_INVOKABLE void cancel();
+    Q_INVOKABLE void clear();
 
     Q_INVOKABLE QString errorString() const;
 
