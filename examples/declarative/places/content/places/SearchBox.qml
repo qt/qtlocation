@@ -69,15 +69,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 10
 
-        BusyIndicator {
-            height: parent.height * 0.8
-            width: height
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 3
-
-            visible: placeSearchModel.status === PlaceSearchModel.Executing
-        }
+        busy: placeSearchModel.status === PlaceSearchModel.Executing
 
         //! [PlaceSearchSuggestionModel search text changed]
         onTextChanged: {

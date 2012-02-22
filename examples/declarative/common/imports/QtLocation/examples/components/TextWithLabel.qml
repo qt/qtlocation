@@ -48,6 +48,7 @@ Row {
     property alias text: inputField.text
     property alias labelWidth: label.width
     property alias font: inputField.font
+    property alias busy: busyIndicator.visible
 
     Text {
         id: label;
@@ -81,6 +82,18 @@ Row {
                 leftMargin: 5
             }
             font.pixelSize: 14
+
+            BusyIndicator {
+                id: busyIndicator
+                height: parent.height * 0.8
+                width: height
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.rightMargin: parent.height * 0.1
+                anchors.topMargin: parent.height * 0.1
+                anchors.top: parent.top
+                anchors.right: parent.right
+                visible: false
+            }
         }
     }
 }
