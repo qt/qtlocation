@@ -75,11 +75,13 @@ void QGeoSatelliteInfoSourceSimulator::requestUpdate(int timeout)
 {
     if (!requestTimer->isActive()) {
         // Get a single update within timeframe
-        if (timeout < 0)
+        if (timeout == 0)
+            timeout = minimumUpdateInterval();
+
+        if (timeout < minimumUpdateInterval())
             emit requestTimeout();
-        else {
-            requestTimer->start(timeout * qreal(0.75));
-        }
+        else
+            requestTimer->start(timeout);
     }
 }
 
