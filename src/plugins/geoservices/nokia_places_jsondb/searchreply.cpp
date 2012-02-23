@@ -217,8 +217,12 @@ void SearchReply::processResponse(int id, const QVariant &data)
                 result.setDistance(distance);
                 results.append(result);
             }
+        } else {
+            foreach (const QPlace &place, places) {
+                result.setPlace(place);
+                results.append(result);
+            }
         }
-
 
         setResults(results);
 
