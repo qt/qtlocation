@@ -1127,8 +1127,9 @@ void tst_QPlaceManagerJsonDb::searchWithDistanceHint()
 
     qreal radius = QGeoCoordinate(20,20).distanceTo(QGeoCoordinate(20,50));
     circle.setRadius(radius);
-
+    searchRequest.setSearchArea(circle);
     QVERIFY(doSearch(searchRequest, &results));
+
     QCOMPARE(results.count(),4);
     QCOMPARE(results.at(0), place1);
     QCOMPARE(results.at(1), place3);
@@ -1137,7 +1138,9 @@ void tst_QPlaceManagerJsonDb::searchWithDistanceHint()
 
     //try radius less than 1
     circle.setRadius(-5);
+    searchRequest.setSearchArea(circle);
     QVERIFY(doSearch(searchRequest, &results));
+
     QCOMPARE(results.count(), 6);
     QCOMPARE(results.at(0), place1);
     QCOMPARE(results.at(1), place3);
