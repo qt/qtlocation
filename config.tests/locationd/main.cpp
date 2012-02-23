@@ -39,54 +39,11 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSATELLITEINFOSOURCE_NPE_BACKEND_H
-#define QGEOSATELLITEINFOSOURCE_NPE_BACKEND_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qgeosatelliteinfosource.h"
-#include <qtimer.h>
 #include <locationdaemonconnection.h>
 
-
-class QGeoSatelliteInfoSourceNpeBackend: public QGeoSatelliteInfoSource
+int main()
 {
-    Q_OBJECT
-
-public:
-    QGeoSatelliteInfoSourceNpeBackend(QObject *parent = 0);
-    bool init();
-    void setUpdateInterval(int interval);
-    int minimumUpdateInterval() const;
-    QGeoSatelliteInfoSource::Error error() const;
-
-public Q_SLOTS:
-    void startUpdates();
-    void stopUpdates();
-    void requestUpdate(int timeout = 5000);
-
-private:
-    void setError(QGeoSatelliteInfoSource::Error satelliteError);
-    void shutdownRequestSession();
-    LocationDaemonConnection* m_locationdConn;
-    bool satOngoing;
-    QTimer* requestTimer;
-    QGeoSatelliteInfoSource::Error mSatelliteError;
-
-
-private Q_SLOTS:
-    void onSatelliteUpdate(const QList<SatelliteData>& satellites);
-    void onConnectionError(LocationDaemonConnection::SocketError socketError);
-    void requestTimerExpired();
-};
-
-#endif // QGEOSATELLITEINFOSOURCE_NPE_BACKEND_H
+    LocationDaemonConnection* m_locationdConn = new LocationDaemonConnection(0);
+    delete (m_locationdConn);
+    return 0;
+}

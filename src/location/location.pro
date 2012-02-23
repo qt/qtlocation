@@ -88,9 +88,14 @@ meego {
     }
 }
 
-!isEmpty(QT.jsondb.name):!isEmpty(QT.jsonstream.name):!simulator {
+contains(config_test_locationd, yes):!simulator {
     DEFINES += NPE_BACKEND
-    QT += jsondbcompat-private jsonstream
+    INCLUDEPATH += $$[QT_INSTALL_PREFIX]/include/mtlocationd
+#unix {
+#    CONFIG += link_pkgconfig
+#    PKGCONFIG += mtlocationd
+#}
+    LIBS += -lmtlocationd
     SOURCES += qgeopositioninfosource_npe_backend.cpp\
                qgeosatelliteinfosource_npe_backend.cpp
     PRIVATE_HEADERS += qgeopositioninfosource_npe_backend_p.h\

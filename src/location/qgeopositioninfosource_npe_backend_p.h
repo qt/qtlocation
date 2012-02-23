@@ -53,18 +53,10 @@
 // We mean it.
 //
 
-#include <qgeopositioninfosource.h>
-#include <private/jsondb-strings_p.h>
-#include <qlocalsocket.h>
-#include <qeventloop.h>
+#include "qgeopositioninfosource.h"
 #include <qtimer.h>
-#include <QtAddOnJsonStream/jsonstream.h>
+#include <locationdaemonconnection.h>
 
-QT_BEGIN_NAMESPACE_JSONSTREAM
-class JsonStream;
-QT_END_NAMESPACE_JSONSTREAM
-
-Q_USE_JSONDB_NAMESPACE
 
 class QGeoPositionInfoSourceNpeBackend : public QGeoPositionInfoSource
 {
@@ -78,7 +70,7 @@ public:
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly = false) const;
     PositioningMethods supportedPositioningMethods() const;
     int minimumUpdateInterval() const;
-    Error error() const;
+    QGeoPositionInfoSource::Error error() const;
 
 public Q_SLOTS:
     void startUpdates();
@@ -86,28 +78,18 @@ public Q_SLOTS:
     void requestUpdate(int timeout = 5000);
 
 private:
-    QLocalSocket* mSocket;
-    QtAddOn::JsonStream::JsonStream* mStream;
-    int minInterval;
-    uint supportedMethods;
-    QGeoPositionInfo lastPosition;
+    void setError(QGeoPositionInfoSource::Error positionError);
+    void shutdownRequestSession();
+    LocationDaemonConnection* m_locationdConn;
     bool locationOngoing;
     bool timeoutSent;
     QTimer* requestTimer;
     QGeoPositionInfoSource::Error mPositionError;
-    void setError(QGeoPositionInfoSource::Error positionError);
-    void shutdownRequestSession();
 
-Q_SIGNALS:
-    void minimumUpdateIntervalReceived();
-    void supportedPositioningMethodsReceived();
-    void lastKnownPositionReceived();
 
 private Q_SLOTS:
-    void onStreamReceived(const QJsonObject &jsonObject);
-    void onSocketConnected();
-    void onSocketDisconnected();
-    void onSocketError(QLocalSocket::LocalSocketError);
+    void onPositionUpdate(const PositionData &position);
+    void onConnectionError(LocationDaemonConnection::SocketError socketError);
     void requestTimerExpired();
 };
 

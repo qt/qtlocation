@@ -40,30 +40,7 @@
 ****************************************************************************/
 
 #include "qgeosatelliteinfosource_npe_backend_p.h"
-#include <sys/stat.h>
-
-QT_USE_NAMESPACE_JSONSTREAM
-
-
-// API for socket communication towards locationd
-const QString ksatelliteStartUpdates = QLatin1String("satelliteStartUpdates");
-const QString ksatelliteRequestUpdate = QLatin1String("satelliteRequestUpdate");
-const QString ksatelliteStopUpdates = QLatin1String("satelliteStopUpdates");
-const QString ksatelliteInfoUpdate = QLatin1String("satelliteInfoUpdate");
-const QString ksetUpdateInterval = QLatin1String("setUpdateInterval");
-const QString kgetMinimumUpdateInterval = QLatin1String("getMinimumUpdateInterval");
-const QString kgetMinimumUpdateIntervalReply = QLatin1String("getMinimumUpdateIntervalReply");
-// Attributes for socket communication towards locationd
-const QString ksatId = QLatin1String("satId");
-const QString kazimuth = QLatin1String("azimuth");
-const QString kelevation = QLatin1String("elevation");
-const QString ksignalStrength = QLatin1String("signalStrength");
-const QString ksatList = QLatin1String("satList");
-const QString ksystem = QLatin1String("system"); // {"GPS", "SBASS", "GLONASS", "QZSS", "IMES"}
-const QString kGPS = QLatin1String("GPS");
-const QString kGLONASS = QLatin1String("GLONASS");
-const QString ksatStatus = QLatin1String("satStatus");
-const QString kinterval = QLatin1String("interval");
+#include <qdebug.h>
 
 
 // Bitmask Table for satStatus
@@ -74,66 +51,39 @@ const QString kinterval = QLatin1String("interval");
 
 
 QGeoSatelliteInfoSourceNpeBackend::QGeoSatelliteInfoSourceNpeBackend(QObject *parent): QGeoSatelliteInfoSource(parent),
-    satOngoing(false), mSatelliteError(QGeoSatelliteInfoSource::UnknownSourceError)
+    satOngoing(false), mSatelliteError(QGeoSatelliteInfoSource::UnknownSourceError), m_locationdConn(0)
 {
     requestTimer = new QTimer(this);
     QObject::connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimerExpired()));
-    qRegisterMetaType<QJsonObject>("QJsonObject");
 }
 
 
 bool QGeoSatelliteInfoSourceNpeBackend::init()
 {
-    struct stat buf;
-    if (stat("/var/run/locationd/locationd.socket", &buf) == 0) {
-        mSocket = new QLocalSocket(this);
-        if (mSocket) {
-            connect(mSocket, SIGNAL(connected()), this, SLOT(onSocketConnected()));
-            connect(mSocket, SIGNAL(disconnected()), this, SLOT(onSocketDisconnected()));
-            connect(mSocket, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onSocketError(QLocalSocket::LocalSocketError)));
-            mStream = new JsonStream(mSocket);
-            if (mStream) {
-                connect(mStream, SIGNAL(messageReceived(const QJsonObject&)), this, SLOT(onStreamReceived(const QJsonObject&)), Qt::QueuedConnection);
-            }
-            mSocket->connectToServer((QLatin1String)"/var/run/locationd/locationd.socket");
-            return(mSocket->waitForConnected(500)); // wait up to 0.5 seconds to get connected, otherwise return false
-        }
-    }
-    return(false);
+    m_locationdConn = new LocationDaemonConnection(this);
+    //check for Error: Could not connect to socket (locationd not started?)
+    if (!m_locationdConn->connected())
+        return(false);
+    connect(m_locationdConn, SIGNAL(satelliteUpdate(QList<SatelliteData>)), this, SLOT(onSatelliteUpdate(QList<SatelliteData>)));
+    connect(m_locationdConn, SIGNAL(connectionError(LocationDaemonConnection::SocketError)), this, SLOT(onConnectionError(LocationDaemonConnection::SocketError)));
+    return(true);
 }
 
 
 void QGeoSatelliteInfoSourceNpeBackend::setUpdateInterval(int msec)
 {
-    QEventLoop loop; // loop to wait for response from locationd (asynchronous socket connection)
-    connect( this, SIGNAL(minimumUpdateIntervalReceived()), &loop, SLOT(quit()));
-    QJsonObject action;
-    action[JsonDbString::kActionStr] = kgetMinimumUpdateInterval;
-    mStream->send(action);
-    loop.exec(); // wait for minimumUpdateIntervalReceived() signal sent by slot onStreamReceived
+    int minInterval = m_locationdConn->minimumUpdateInterval();
     if (msec < minInterval && msec != 0)
         msec = minInterval;
     QGeoSatelliteInfoSource::setUpdateInterval(msec);
-    if (!requestTimer->isActive()) {
-        QJsonObject actionUpdate;
-        QJsonObject object;
-        actionUpdate[JsonDbString::kActionStr] = ksetUpdateInterval;
-        object[kinterval] = msec;
-        actionUpdate[JsonDbString::kDataStr] = object;
-        mStream->send(actionUpdate);
-    }
+    if (!requestTimer->isActive())
+        m_locationdConn->setUpdateInterval(msec);
 }
 
 
 int QGeoSatelliteInfoSourceNpeBackend::minimumUpdateInterval() const
 {
-    QEventLoop loop; // loop to wait for response from locationd (asynchronous socket connection)
-    connect( this, SIGNAL(minimumUpdateIntervalReceived()), &loop, SLOT(quit()));
-    QJsonObject action;
-    action[JsonDbString::kActionStr] = kgetMinimumUpdateInterval;
-    mStream->send(action);
-    loop.exec(); // wait for minimumUpdateIntervalReceived() signal sent by slot onStreamReceived
-    return(minInterval);
+    return(m_locationdConn->minimumUpdateInterval());
 }
 
 
@@ -141,9 +91,7 @@ void QGeoSatelliteInfoSourceNpeBackend::startUpdates()
 {
     if (!satOngoing) {
         satOngoing = true;
-        QJsonObject action;
-        action[JsonDbString::kActionStr] = ksatelliteStartUpdates;
-        mStream->send(action);
+        m_locationdConn->startSatelliteUpdates();
     }
 }
 
@@ -152,9 +100,7 @@ void QGeoSatelliteInfoSourceNpeBackend::stopUpdates()
 {
     if (satOngoing && !requestTimer->isActive()) {
         satOngoing = false;
-        QJsonObject action;
-        action[JsonDbString::kActionStr] = ksatelliteStopUpdates;
-        mStream->send(action);
+        m_locationdConn->stopSatelliteUpdates();
     }
 }
 
@@ -173,21 +119,12 @@ void QGeoSatelliteInfoSourceNpeBackend::requestUpdate(int timeout)
         }
         // get satellite update as fast as possible in case of ongoing tracking session
         if ( satOngoing ) {
-            if ( QGeoSatelliteInfoSource::updateInterval() != minimumInterval) {
-                QJsonObject actionUpdate;
-                QJsonObject object;
-                actionUpdate[JsonDbString::kActionStr] = ksetUpdateInterval;
-                object[kinterval] = minimumInterval;
-                actionUpdate[JsonDbString::kDataStr] = object;
-                mStream->send(actionUpdate);
-            }
+            if ( QGeoSatelliteInfoSource::updateInterval() != minimumInterval)
+                m_locationdConn->setUpdateInterval(minimumInterval);
         }
         // request the update only if no tracking session is active
-        if ( !satOngoing) {
-            QJsonObject action;
-            action[JsonDbString::kActionStr] = ksatelliteRequestUpdate;
-            mStream->send(action);
-        }
+        if ( !satOngoing)
+            m_locationdConn->requestSatelliteUpdate();
         requestTimer->start(timeout);
     }
 }
@@ -212,57 +149,40 @@ void QGeoSatelliteInfoSourceNpeBackend::shutdownRequestSession()
 }
 
 
-void QGeoSatelliteInfoSourceNpeBackend::onStreamReceived(const QJsonObject& jsonObject)
+void QGeoSatelliteInfoSourceNpeBackend::onSatelliteUpdate(const QList<SatelliteData>& satellites)
 {
-    // this slot handles the communication received from locationd socket
-    QVariantMap map = jsonObject.toVariantMap();
-    if (map.contains(JsonDbString::kActionStr)) {
-        QString action = map.value(JsonDbString::kActionStr).toString();
+    QList<QGeoSatelliteInfo> inUse;
+    QList<QGeoSatelliteInfo> inView;
+    QListIterator<SatelliteData> it(satellites);
 
-        if (action == kgetMinimumUpdateIntervalReply) {
-            QVariantMap tmp = map.value(JsonDbString::kDataStr).toMap();
-            minInterval = tmp.value(kinterval).toInt();
-            emit minimumUpdateIntervalReceived();
-        }
-
-        if (action == ksatelliteInfoUpdate) {
-            QVariantMap sat_info = map.value(JsonDbString::kDataStr).toMap();
-            if (sat_info.contains(ksatList))
-            {
-                QVariantList sat_list = sat_info.value(ksatList).toList();
-                QList<QGeoSatelliteInfo> inUse;
-                QList<QGeoSatelliteInfo> inView;
-                if (!sat_list.isEmpty()) {
-                    while (!sat_list.isEmpty())
-                    {
-                        QVariantMap sat_elem = sat_list.takeFirst().toMap();
-                        QGeoSatelliteInfo satinfo;
-                        satinfo.setAttribute(QGeoSatelliteInfo::Elevation, sat_elem.value(kelevation).toReal());
-                        satinfo.setAttribute(QGeoSatelliteInfo::Azimuth, sat_elem.value(kazimuth).toReal());
-                        satinfo.setSatelliteIdentifier(sat_elem.value(ksatId).toInt());
-                        satinfo.setSignalStrength(sat_elem.value(ksignalStrength).toInt());
-                        if (sat_elem.value(ksystem).toString() == kGPS)
-                            satinfo.setSatelliteSystem(QGeoSatelliteInfo::GPS);
-                        else if (sat_elem.value(ksystem).toString() == kGLONASS)
-                            satinfo.setSatelliteSystem(QGeoSatelliteInfo::GLONASS);
-                        else
-                            satinfo.setSatelliteSystem(QGeoSatelliteInfo::Undefined);
-                        if (sat_elem.value(ksatStatus).toUInt() & SATELLITES_STATUS_VISIBLE) {
-                            inView.append(satinfo);
-                            if (sat_elem.value(ksatStatus).toUInt() & SATELLITES_STATUS_USED_POS)
-                                inUse.append(satinfo);
-                        }
-                    }
-                    if (inUse.count() > 0) // emit updated signal if satellite list is not empty
-                        emit satellitesInUseUpdated(inUse);
-                    qDebug() << "emit satelliteUpdated signals: in use count: " << inUse.count() << ", in view count: " <<inView.count();
-                    if (inView.count() > 0)
-                        emit satellitesInViewUpdated(inView);
-                    if ( requestTimer->isActive() )
-                        shutdownRequestSession();
-                }
+    if (!satellites.empty()) {
+        while (it.hasNext())
+        {
+            QGeoSatelliteInfo satinfo;
+            const SatelliteData& satellite = it.next();
+            satinfo.setAttribute(QGeoSatelliteInfo::Elevation, satellite.elevation);
+            satinfo.setAttribute(QGeoSatelliteInfo::Azimuth, satellite.azimuth);
+            satinfo.setSatelliteIdentifier(satellite.id);
+            satinfo.setSignalStrength(satellite.signalStrength);
+            if (satellite.satSystem == LocationdStrings::PositionInfo::kGPS)
+                satinfo.setSatelliteSystem(QGeoSatelliteInfo::GPS);
+            else if (satellite.satSystem == LocationdStrings::PositionInfo::kGLONASS)
+                satinfo.setSatelliteSystem(QGeoSatelliteInfo::GLONASS);
+            else
+                satinfo.setSatelliteSystem(QGeoSatelliteInfo::Undefined);
+            if (satellite.status & SATELLITES_STATUS_VISIBLE) {
+                inView.append(satinfo);
+                if (satellite.status & SATELLITES_STATUS_USED_POS)
+                    inUse.append(satinfo);
             }
         }
+        if (inUse.count() > 0) // emit updated signal if satellite list is not empty
+            emit satellitesInUseUpdated(inUse);
+        qDebug() << "emit satelliteUpdated signals: in use count: " << inUse.count() << ", in view count: " <<inView.count();
+        if (inView.count() > 0)
+            emit satellitesInViewUpdated(inView);
+        if ( requestTimer->isActive() )
+            shutdownRequestSession();
     }
 }
 
@@ -280,26 +200,16 @@ void QGeoSatelliteInfoSourceNpeBackend::setError(QGeoSatelliteInfoSource::Error 
 }
 
 
-void QGeoSatelliteInfoSourceNpeBackend::onSocketError(QLocalSocket::LocalSocketError mError)
+void QGeoSatelliteInfoSourceNpeBackend::onConnectionError(LocationDaemonConnection::SocketError socketError)
 {
-    switch (mError) {
-    case QLocalSocket::PeerClosedError:
+    switch (socketError) {
+    case LocationDaemonConnection::ClosedError:
         setError(ClosedError);
         break;
-    case QLocalSocket::SocketAccessError:
+    case LocationDaemonConnection::AccessError:
         setError(AccessError);
         break;
     default:
         setError(UnknownSourceError);
     }
-}
-
-
-void QGeoSatelliteInfoSourceNpeBackend::onSocketConnected()
-{
-}
-
-
-void QGeoSatelliteInfoSourceNpeBackend::onSocketDisconnected()
-{
 }

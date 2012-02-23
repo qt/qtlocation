@@ -32,4 +32,5 @@
 
 # compile tests
 %configtests = (
+            "locationd" => {},
 );
