@@ -8,5 +8,6 @@ SOURCES += main.cpp
 
 QT += location quick
 
-OTHER_FILES += *.qml
+OTHER_FILES = *.qml
+TESTDATA = $$OTHER_FILES
 
