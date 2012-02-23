@@ -26,16 +26,6 @@
 ****************************************************************************/
 
 /*!
-    \page location-positioning-qml.html
-
-    \title Positioning (QML)
-    \previouspage {qtlocation-module.html}{QtLocation}
-
-    \brief The Location Positioning API enables location positioning by means of
-    GPS or an NMEA data source.
-*/
-
-/*!
 \page location-positioning-cpp.html
 
 \title Positioning (C++)
@@ -237,7 +227,7 @@ and \tt {make install}.
 
 \section3 \bold{Flickr Example}
 
-The \l{Declarative Flickr}{Flickr Example} uses the Location to download thumbnail
+The \l{Flickr QML}{Flickr Example} uses the Location to download thumbnail
 images from Flickr relevant to the current location.
 
 
