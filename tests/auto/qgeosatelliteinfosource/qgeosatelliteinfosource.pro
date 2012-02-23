@@ -11,4 +11,8 @@ HEADERS += testqgeosatelliteinfosource_p.h \
 
 QT += location testlib
 
-!isEmpty(QT.jsondb.name):!isEmpty(QT.jsonstream.name):!simulator:DEFINES += NPE_BACKEND
+# Define whether a satellite source is available.  This must match the logic in
+# src/location/location.pro or the test will fail on some platforms.
+maemo6|meego:DEFINES += SATELLITE_SOURCE_AVAILABLE
+contains(config_test_locationd, yes):!simulator:DEFINES += SATELLITE_SOURCE_AVAILABLE
+simulator:DEFINES += SATELLITE_SOURCE_AVAILABLE

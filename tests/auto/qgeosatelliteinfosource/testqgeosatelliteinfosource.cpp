@@ -175,8 +175,8 @@ void TestQGeoSatelliteInfoSource::createDefaultSource()
 {
     QObject *parent = new QObject;
     QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(parent);
-    // currently only NPE_BACKEND provides a source
-#if defined(NPE_BACKEND)
+    // Satellite sources are available when SATELLITE_SOURCE_AVAILABLE is defined
+#if defined(SATELLITE_SOURCE_AVAILABLE)
     QVERIFY(source != 0);
 #else
     QVERIFY(source == 0);
@@ -187,7 +187,7 @@ void TestQGeoSatelliteInfoSource::createDefaultSource()
 void TestQGeoSatelliteInfoSource::createDefaultSource_noParent()
 {
     QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(0);
-#if defined(NPE_BACKEND)
+#if defined(SATELLITE_SOURCE_AVAILABLE)
     QVERIFY(source != 0);
 #else
     QVERIFY(source == 0);
