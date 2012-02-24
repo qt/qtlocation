@@ -211,6 +211,7 @@ Item {
                                 case Place.Error:
                                     saveStatus.text = "Save Failed";
                                     saveStatus.visible = true;
+                                    console.log(place.favorite.errorString());
                                     break;
                                 default:
                                 }
