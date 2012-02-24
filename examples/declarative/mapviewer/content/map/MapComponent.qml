@@ -283,68 +283,45 @@ Map {
         MapRoute {
             route: routeData
 
-            line.color: "lime"
+            line.color: routeMouseArea.containsMouse ? "lime" : "red"
             line.width: 5
             smooth: true
             opacity: 0.8
 //! [routedelegate0]
             MapMouseArea {
                 id: routeMouseArea
-
+                anchors.fill: parent
                 hoverEnabled: true
+
                 onPressed : {
-                    //routeTimer.start();
+                    map.resetState();
                     map.state = ""
-                    map.lastX = mouse.x
-                    map.lastY = mouse.y
+                    map.lastX = mouse.x + parent.x
+                    map.lastY = mouse.y + parent.y
+                    map.pressX = mouse.x + parent.x
+                    map.pressY = mouse.y + parent.y
                 }
-                onReleased : {
-                    /*
-                        if (routeTimer.running){ //SHORT PRESS
-                            routeTimer.stop()
-                            map.lastX = -1
-                            map.lastY = -1
-                        }
-                        */// This is available in all editors.
-                }
+
                 onPositionChanged: {
-                    /*
-                        if (routeTimer.running) routeTimer.stop()
-                        if (map.state == "") {
-                            map.lastX = mouse.x
-                            map.lastY = mouse.y
-                        }
-                        */
-                }
-                /*
-                    Timer {
-                        id: routeTimer
-                        interval: longPressDuration; running: false; repeat: false
-                        onTriggered: { //LONG PRESS
-                            map.state = "RoutePopupMenu"
-                        }
+                    if (map.state != "RoutePopupMenu" ||
+                        Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
+                        Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
+                        map.state = ""
                     }
-                    */
+                    if ((mouse.button == Qt.LeftButton) & (map.state == "")) {
+                        map.lastX = mouse.x + parent.x
+                        map.lastY = mouse.y + parent.y
+                    }
+                }
+
+                onPressAndHold:{
+                    if (Math.abs(map.pressX - parent.x- mouse.x ) < map.jitterThreshold
+                            && Math.abs(map.pressY - parent.y - mouse.y ) < map.jitterThreshold) {
+                        map.state = "RoutePopupMenu"
+                    }
+                }
             }
         }
-        /*
-            MapQuickItem {
-                coordinate: routeData.path[0]
-                anchorPoint.x: -5
-                anchorPoint.y: -5
-                sourceItem: Image {
-                    source: routeMouseArea.containsMouse ? "resources/node_selected.png" : "resources/node.png"
-                }
-            }
-            MapQuickItem {
-                coordinate: routeData.path[path.path.length-1]
-                anchorPoint.x: -5
-                anchorPoint.y: -5
-                sourceItem: Image {
-                    source: routeMouseArea.containsMouse ? "resources/node_selected.png" : "resources/node.png"
-                }
-            }
-            */
 //! [routedelegate1]
     }
 //! [routedelegate1]
@@ -778,13 +755,13 @@ Map {
         y: 0
 
         onClicked: {
-            /*            switch (button) {
+            switch (button) {
                 case "Delete": {//delete route
                     routeModel.clear()
                     routeInfoModel.update()
                     break;
                 }
-            }*/
+            }
             map.state = ""
         }
         Component.onCompleted: {
