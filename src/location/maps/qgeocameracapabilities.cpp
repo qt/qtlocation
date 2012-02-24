@@ -57,6 +57,10 @@ public:
     bool supportsBearing_;
     bool supportsRolling_;
     bool supportsTilting_;
+
+    // this is mutable so that it can be set from accessor functions that are const
+    mutable bool valid_;
+
     double minZoom_;
     double maxZoom_;
     double minTilt_;
@@ -67,6 +71,7 @@ QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate()
     : supportsBearing_(false),
       supportsRolling_(false),
       supportsTilting_(false),
+      valid_(false),
       minZoom_(0.0),
       maxZoom_(0.0),
       minTilt_(0.0),
@@ -78,6 +83,7 @@ QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate(const QGeoCameraCap
       supportsBearing_(other.supportsBearing_),
       supportsRolling_(other.supportsRolling_),
       supportsTilting_(other.supportsTilting_),
+      valid_(other.valid_),
       minZoom_(other.minZoom_),
       maxZoom_(other.maxZoom_),
       minTilt_(other.minTilt_),
@@ -90,6 +96,7 @@ QGeoCameraCapabilitiesPrivate& QGeoCameraCapabilitiesPrivate::operator = (const 
     supportsBearing_ = other.supportsBearing_;
     supportsRolling_ = other.supportsRolling_;
     supportsTilting_ = other.supportsTilting_;
+    valid_ = other.valid_;
     minZoom_ = other.minZoom_;
     maxZoom_ = other.maxZoom_;
     minTilt_ = other.minTilt_;
@@ -143,6 +150,17 @@ QGeoCameraCapabilities& QGeoCameraCapabilities::operator = (const QGeoCameraCapa
 }
 
 /*!
+    Returns whether this instance of the class is considered "valid". To be
+    valid, the instance must have had at least one capability set (to either
+    true or false) using a set method, or copied from another instance
+    (such as by the assignment operator).
+*/
+bool QGeoCameraCapabilities::isValid() const
+{
+    return d->valid_;
+}
+
+/*!
     Sets the minimum zoom level supported by the associated plugin to \a maximumZoomLevel.
 
     Larger values of the zoom level correspond to more detailed views of the
@@ -151,6 +169,7 @@ QGeoCameraCapabilities& QGeoCameraCapabilities::operator = (const QGeoCameraCapa
 void QGeoCameraCapabilities::setMinimumZoomLevel(double minimumZoomLevel)
 {
     d->minZoom_ = minimumZoomLevel;
+    d->valid_ = true;
 }
 
 /*!
@@ -173,6 +192,7 @@ double QGeoCameraCapabilities::minimumZoomLevel() const
 void QGeoCameraCapabilities::setMaximumZoomLevel(double maximumZoomLevel)
 {
     d->maxZoom_ = maximumZoomLevel;
+    d->valid_ = true;
 }
 
 /*!
@@ -193,6 +213,7 @@ double QGeoCameraCapabilities::maximumZoomLevel() const
 void QGeoCameraCapabilities::setSupportsBearing(bool supportsBearing)
 {
     d->supportsBearing_ = supportsBearing;
+    d->valid_ = true;
 }
 
 /*!
@@ -211,6 +232,7 @@ bool QGeoCameraCapabilities::supportsBearing() const
 void QGeoCameraCapabilities::setSupportsRolling(bool supportsRolling)
 {
     d->supportsRolling_ = supportsRolling;
+    d->valid_ = true;
 }
 
 /*!
@@ -229,6 +251,7 @@ bool QGeoCameraCapabilities::supportsRolling() const
 void QGeoCameraCapabilities::setSupportsTilting(bool supportsTilting)
 {
     d->supportsTilting_ = supportsTilting;
+    d->valid_ = true;
 }
 
 /*!
@@ -249,6 +272,7 @@ bool QGeoCameraCapabilities::supportsTilting() const
 void QGeoCameraCapabilities::setMinimumTilt(double minimumTilt)
 {
     d->minTilt_ = minimumTilt;
+    d->valid_ = true;
 }
 
 /*!
@@ -260,6 +284,7 @@ void QGeoCameraCapabilities::setMinimumTilt(double minimumTilt)
 double QGeoCameraCapabilities::minimumTilt() const
 {
     return d->minTilt_;
+    d->valid_ = true;
 }
 
 /*!
@@ -271,6 +296,7 @@ double QGeoCameraCapabilities::minimumTilt() const
 void QGeoCameraCapabilities::setMaximumTilt(double maximumTilt)
 {
     d->maxTilt_ = maximumTilt;
+    d->valid_ = true;
 }
 
 /*!

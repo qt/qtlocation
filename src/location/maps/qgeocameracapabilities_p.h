@@ -89,6 +89,8 @@ public:
     void setMaximumTilt(double maximumTilt);
     double maximumTilt() const;
 
+    bool isValid() const;
+
 private:
     QSharedDataPointer<QGeoCameraCapabilitiesPrivate> d;
 };

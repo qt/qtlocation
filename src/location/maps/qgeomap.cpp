@@ -152,6 +152,15 @@ QGeoCameraData QGeoMap::cameraData() const
     return d->cameraData();
 }
 
+QGeoCameraCapabilities QGeoMap::cameraCapabilities() const
+{
+    Q_D(const QGeoMap);
+    if (d->manager())
+        return d->manager()->cameraCapabilities();
+    else
+        return QGeoCameraCapabilities();
+}
+
 void QGeoMap::update()
 {
     emit updateRequired();
@@ -334,6 +343,11 @@ void QGeoMapPrivate::setCameraData(const QGeoCameraData &cameraData)
 QGeoCameraData QGeoMapPrivate::cameraData() const
 {
     return cameraData_;
+}
+
+QGeoMappingManager *QGeoMapPrivate::manager() const
+{
+    return manager_;
 }
 
 void QGeoMapPrivate::resize(int width, int height)

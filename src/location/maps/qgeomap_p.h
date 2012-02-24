@@ -67,6 +67,7 @@ class QGeoTileCache;
 class QGeoMapPrivate;
 class MapItem;
 class QGeoMapController;
+class QGeoCameraCapabilities;
 
 class QGLCamera;
 class QGLPainter;
@@ -99,6 +100,7 @@ public:
 
     void setCameraData(const QGeoCameraData &cameraData);
     QGeoCameraData cameraData() const;
+    QGeoCameraCapabilities cameraCapabilities() const;
 
     QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const;
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;

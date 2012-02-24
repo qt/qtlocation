@@ -95,6 +95,7 @@ public:
     QGeoTileCache* tileCache();
 
     void setMappingManager(QGeoMappingManager *manager);
+    QGeoMappingManager *manager() const;
 
     QGeoMapController* mapController();
 
