@@ -516,16 +516,11 @@ Item {
             }
         }
 
-        onSliderUpdated: {
-            page.state = ""
-        }
+
     */
 
 /*
-        onShowGeocodeInfo:{
-            messageDialog.state = "LocationInfo"
-            page.state = "Message"
-        }
+
     }
 */
     function geocodeMessage(){
@@ -572,7 +567,6 @@ Item {
                                            z : backgroundRect.z + 1;\
                                            width: page.width;\
                                            height: page.height;\
-                                           onMapPressed:{page.state = ""}\
                                            onFollowmeChanged: {toolsMenu.update()}\
                                            onSupportedMapTypesChanged: {mapTypeMenu.update()}\
                                            onCoordinatesCaptured: {\
@@ -603,6 +597,13 @@ Item {
                                            }\
                                            onRequestLocale:{\
                                                page.state = "Locale";\
+                                           }\
+                                           onShowGeocodeInfo:{\
+                                               messageDialog.state = "LocationInfo";\
+                                               page.state = "Message";\
+                                           }\
+                                           onResetState: {\
+                                               page.state = "";\
                                            }\
                                        }',page)
             map.plugin = plugin

@@ -62,8 +62,7 @@ Map {
     property variant mapItems
     property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
     property int currentMarker
-    signal mapPressed() // replace with
-    // signal mousePressed(MouseEvent mouse) when QTBUG-14550 is fixed
+    signal resetState()
 
     property int lastX : -1
     property int lastY : -1
@@ -168,6 +167,8 @@ Map {
 
         onValueChanged: {
             map.zoomLevel = value
+            map.state=""
+            map.resetState()
         }
     }
 
@@ -263,7 +264,7 @@ Map {
     }
 //! [geocodemodel1]
 
-//  signal showGeocodeInfo()
+    signal showGeocodeInfo()
     signal moveMarker()
 
     signal geocodeFinished()
@@ -354,48 +355,43 @@ Map {
 
         MapCircle {
             radius: 1000
-            color: circleMouseArea.containsMouse ? "#8000FF00" : "#80FF0000"
+            color: circleMouseArea.containsMouse ? "lime" : "red"
+            opacity: 0.6
             center: locationData.coordinate
 //! [pointdel0]
             MapMouseArea {
+                anchors.fill:parent
                 id: circleMouseArea
                 hoverEnabled: true
+
                 onPressed : {
-                    /*
-                    circleTimer.start()
+                    map.resetState();
                     map.state = ""
-                    map.lastX = mouse.x
-                    map.lastY = mouse.y
-                    */
+                    map.lastX = mouse.x + parent.x
+                    map.lastY = mouse.y + parent.y
+                    map.pressX = mouse.x + parent.x
+                    map.pressY = mouse.y + parent.y
                 }
-                onReleased : {
-                    /*
-                    if (circleTimer.running) {//SHORT PRESS
-                        circleTimer.stop();
-                        map.lastX = -1
-                        map.lastY = -1
-                    }
-                    */
-                }
+
                 onPositionChanged: {
-                    /*
-                    if (circleTimer.running) circleTimer.stop()
-                    if ((mouse.button == Qt.LeftButton) && (map.state == "")) radius = center.distanceTo(mouseArea.mouseToCoordinate(mouse))
-                    if (map.state == "") {
-                        map.lastX = mouse.x
-                        map.lastY = mouse.y
+                    if (map.state != "PointPopupMenu" ||
+                        Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
+                        Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
+                        map.state = ""
+                        if (pressed) parent.radius = parent.center.distanceTo(mouseToCoordinate(mouse))
                     }
-                    */
+                    if ((mouse.button == Qt.LeftButton) & (map.state == "")) {
+                        map.lastX = mouse.x + parent.x
+                        map.lastY = mouse.y + parent.y
+                    }
                 }
-                /*
-                Timer {
-                    id: circleTimer
-                    interval: longPressDuration; running: false; repeat: false
-                    onTriggered: { //LONG PRESS
+
+                onPressAndHold:{
+                    if (Math.abs(map.pressX - parent.x- mouse.x ) < map.jitterThreshold
+                            && Math.abs(map.pressY - parent.y - mouse.y ) < map.jitterThreshold) {
                         map.state = "PointPopupMenu"
                     }
                 }
-                */
             }
 //! [pointdel1]
         }
@@ -808,7 +804,7 @@ Map {
         y: 0
 
         onClicked: {
-            /*            switch (button) {
+            switch (button) {
                 case "Info": {
                     map.showGeocodeInfo()
                     break;
@@ -817,7 +813,7 @@ Map {
                     geocodeModel.clear()
                     break;
                 }
-            }*/
+            }
             map.state = ""
         }
         Component.onCompleted: {
@@ -863,7 +859,7 @@ Map {
         anchors.fill: parent
 
         onPressed : {
-            mapPressed();
+            map.resetState();
             map.state = ""
             map.lastX = mouse.x
             map.lastY = mouse.y
