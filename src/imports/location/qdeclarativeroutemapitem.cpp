@@ -182,6 +182,7 @@ void QDeclarativeRouteMapItem::updateMapItem()
     setHeight(geometry_.screenBoundingBox().height());
 
     setPositionOnMap(path_.at(0), geometry_.firstPointOffset());
+    update();
 }
 
 void QDeclarativeRouteMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
