@@ -26,3 +26,6 @@ SUBDIRS += module_qtlocation_src \
            module_qtlocation_examples \
            module_qtlocation_tests \
            module_qtlocation_doc
+
+include(doc/config/qtlocation_doc.pri)
+
