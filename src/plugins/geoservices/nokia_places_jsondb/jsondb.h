@@ -156,6 +156,9 @@ public:
     static const QLatin1String Large;
     static const QLatin1String Fullscreen;
 
+    static const QLatin1String VisibilityScope;
+    static const QLatin1String DeviceVisibility;
+
 signals:
     void placeNotifications(QList<QJsonDbNotification> notifications);
     void categoryNotifications(QList<QJsonDbNotification> notifications);

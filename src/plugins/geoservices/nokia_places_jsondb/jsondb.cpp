@@ -108,6 +108,9 @@ const QLatin1String JsonDb::Medium("medium");
 const QLatin1String JsonDb::Large("large");
 const QLatin1String JsonDb::Fullscreen("fullscreen");
 
+const QLatin1String JsonDb::VisibilityScope("visibilityScope");
+const QLatin1String JsonDb::DeviceVisibility("device");
+
 JsonDb::JsonDb()
     : m_connection(new QJsonDbConnection),
       m_placeWatcher(new QJsonDbWatcher(this)),
@@ -315,7 +318,7 @@ void JsonDb::addToJson(QJsonObject *jsonObj, const QPlace &place)
         jsonObj->remove(JsonDb::ExtendedAttributes);
     }
 
-    return;
+    jsonObj->insert(JsonDb::VisibilityScope, JsonDb::DeviceVisibility);
 }
 
 QJsonObject JsonDb::convertToJson(const QPlace &place)
@@ -591,6 +594,8 @@ QPlace JsonDb::convertJsonObjectToPlace(const QJsonObject &placeJson,
         icon.setManager(engine->manager());
         place.setIcon(icon);
     }
+
+    place.setVisibility(QtLocation::DeviceVisibility);
 
     return place;
 }
