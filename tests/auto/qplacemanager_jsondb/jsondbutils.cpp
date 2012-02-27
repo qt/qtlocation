@@ -69,7 +69,7 @@ const QLatin1String JsonDbUtils::CategoryType("com.nokia.mt.location.PlaceCatego
 //as the last element.   The first category is a top level category id.
 const QLatin1String JsonDbUtils::Lineage("lineageUuids");
 
-const QLatin1String JsonDbUtils::CategoryParentId("parentId");
+const QLatin1String JsonDbUtils::CategoryParentId("parentUuid");
 
 const QLatin1String JsonDbUtils::NotificationType("notification");
 const QLatin1String JsonDbUtils::Actions("actions");
@@ -85,7 +85,7 @@ const QLatin1String JsonDbUtils::Street("street");
 const QLatin1String JsonDbUtils::District("district");
 const QLatin1String JsonDbUtils::City("locality");
 const QLatin1String JsonDbUtils::County("county");
-const QLatin1String JsonDbUtils::State("state");
+const QLatin1String JsonDbUtils::State("region");
 const QLatin1String JsonDbUtils::Country("country");
 const QLatin1String JsonDbUtils::CountryCode("countryCode");
 const QLatin1String JsonDbUtils::PostalCode("postalCode");
@@ -98,8 +98,8 @@ const QLatin1String JsonDbUtils::Emails("emails");
 const QLatin1String JsonDbUtils::Websites("urls");
 
 const QLatin1String JsonDbUtils::PhoneSubType("subType");
-const QLatin1String JsonDbUtils::SubTypeFax("Fax");
-const QLatin1String JsonDbUtils::SubTypeLandline("Landline");
+const QLatin1String JsonDbUtils::SubTypeFax("fax");
+const QLatin1String JsonDbUtils::SubTypeLandline("landline");
 
 const QLatin1String JsonDbUtils::Label("label");
 const QLatin1String JsonDbUtils::Value("value");

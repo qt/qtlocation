@@ -63,10 +63,7 @@ const QLatin1String JsonDb::AllCategoryUuids("allCategoryUuids"); //all categori
 const QLatin1String JsonDb::CategoryType("com.nokia.mt.location.PlaceCategory");
 const QLatin1String JsonDb::Lineage("lineageUuids");  //includes all ancestor category ids and also the current category id
                                               //as the last element.   The first category is a top level category id.
-const QLatin1String JsonDb::CategoryParentId("parentId");
-
-const QLatin1String JsonDb::NotificationType("notification");
-const QLatin1String JsonDb::Actions("actions");
+const QLatin1String JsonDb::CategoryParentId("parentUuid");
 
 //coord
 const QLatin1String JsonDb::Coordinate("geo");
@@ -79,7 +76,7 @@ const QLatin1String JsonDb::Street("street");
 const QLatin1String JsonDb::District("district");
 const QLatin1String JsonDb::City("locality");
 const QLatin1String JsonDb::County("county");
-const QLatin1String JsonDb::State("state");
+const QLatin1String JsonDb::State("region");
 const QLatin1String JsonDb::Country("country");
 const QLatin1String JsonDb::CountryCode("countryCode");
 const QLatin1String JsonDb::PostalCode("postalCode");
@@ -92,8 +89,8 @@ const QLatin1String JsonDb::Emails("emails");
 const QLatin1String JsonDb::Websites("urls");
 
 const QLatin1String JsonDb::PhoneSubType("subType");
-const QLatin1String JsonDb::SubTypeFax("Fax");
-const QLatin1String JsonDb::SubTypeLandline("Landline");
+const QLatin1String JsonDb::SubTypeFax("fax");
+const QLatin1String JsonDb::SubTypeLandline("landline");
 
 const QLatin1String JsonDb::Label("label");
 const QLatin1String JsonDb::Value("value");
@@ -659,7 +656,7 @@ void JsonDb::getCategories(const QStringList &uuids, QObject *parent, const char
 void JsonDb::getChildCategories(const QString &uuid, QObject *parent, const char *slot)
 {
     QJsonDbReadRequest *request = new QJsonDbReadRequest(parent);
-    request->setQuery(QStringLiteral("[?_type=%type][?parentId=%uuid]"));
+    request->setQuery(QStringLiteral("[?_type=%type][?") + JsonDb::CategoryParentId + QStringLiteral("=%uuid]"));
     request->bindValue(QStringLiteral("type"), JsonDb::CategoryType);
     request->bindValue(QStringLiteral("uuid"), uuid);
 

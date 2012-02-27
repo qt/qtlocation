@@ -113,9 +113,6 @@ public:
                                                   //as the last element.   The first category is a top level category id.
     static const QLatin1String CategoryParentId;
 
-    static const QLatin1String NotificationType;
-    static const QLatin1String Actions;
-
     //coord
     static const QLatin1String Coordinate;
     static const QLatin1String Latitude;
