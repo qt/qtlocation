@@ -142,6 +142,10 @@ private Q_SLOTS:
     void iconFormats_data();
     void iconUrls();
     void iconUrls_data();
+#ifdef REMOTE_TEST
+    void iconDownload();
+    void iconDownload_data();
+#endif
     void constructIconUrl();
 
 private:
@@ -2354,7 +2358,7 @@ void tst_QPlaceManagerJsonDb::iconSourceOnly()
             qFatal("Unexpected image format");
         QUrl dataUrl(QString::fromLatin1("data:") + mimeType + QLatin1String(";base64,") + sourceIcon.readAll().toBase64());
         iconParams.insert(source, dataUrl);
-    } else if (iconType == QLatin1String("unaccessible_webUrl")) {
+    } else if (iconType == QLatin1String("accessible_incorrectWebUrl") || iconType == QLatin1String("unaccessible_webUrl")) {
         iconParams.insert(source, QUrl(sourceIconResource));
     }
 
@@ -2362,8 +2366,10 @@ void tst_QPlaceManagerJsonDb::iconSourceOnly()
     place.setIcon(icon);
     QString placeId;
 
-    if (iconType == QLatin1String("unaccessible_webUrl")) {
-        QVERIFY(doSavePlace(place,QPlaceReply::BadArgumentError));
+    if (iconType == QLatin1String("accessible_incorrectWebUrl")) {
+        QVERIFY(doSavePlace(place,QPlaceReply::UnsupportedError));
+    } else if (iconType == QLatin1String("unaccessible_webUrl")){
+        QVERIFY(doSavePlace(place,QPlaceReply::CommunicationError));
     } else {
         QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
         QPlace retrievedPlace;
@@ -2407,11 +2413,19 @@ void tst_QPlaceManagerJsonDb::iconSourceOnly_data()
     QTest::newRow("source large dataUrl") << ":/resources/icon_large.png" << LargeSize << "dataUrl" << LargeSource << LargeDestination;
     QTest::newRow("source fullscreen dataUrl") << ":/resources/icon_fullscreen.png" << FullscreenSize << "dataUrl" << FullscreenSource << ""; //fullscreen icons shouldn't be saved as data urls
 
-    //input icon is a non reachable url
-    QTest::newRow("source small unaccessible_webUrl") << "www.example.com/icon_small.png" << SmallSize << "unaccessible_webUrl" << SmallSource << SmallDestination;
-    QTest::newRow("source medium unaccessible_webUrl") << "www.example.com/icon_medium.png" << MediumSize << "unaccessible_webUrl" << MediumSource << MediumDestination;
-    QTest::newRow("source large unaccessible_webUrl") << "www.example.com/icon_large.png" << LargeSize << "unaccessible_webUrl" << LargeSource << LargeDestination;
-    QTest::newRow("source fullscreen unaccessible_webUrl") << "www.example.com/icon_fullscreen.png" << FullscreenSize << "unaccessible_webUrl" << FullscreenSource << ""; //fullscreen icons shouldn't be saved as data urls
+#ifdef REMOTE_TEST
+    //input icon is a reachable url, but does not reference an image
+    QTest::newRow("source small accessible_incorrectWebUrl") << "www.example.com/icon_small.png" << SmallSize << "accessible_incorrectWebUrl" << SmallSource << SmallDestination;
+    QTest::newRow("source medium accessible_incorrectWebUrl") << "www.example.com/icon_medium.png" << MediumSize << "accessible_incorrectWebUrl" << MediumSource << MediumDestination;
+    QTest::newRow("source large accessible_incorrectWebUrl") << "www.example.com/icon_large.png" << LargeSize << "accessible_incorrectWebUrl" << LargeSource << LargeDestination;
+    QTest::newRow("source fullscreen accessible_incorrectWebUrl") << "www.example.com/icon_fullscreen.png" << FullscreenSize << "accessible_incorrectWebUrl" << FullscreenSource << ""; //fullscreen icons shouldn't be saved as data urls
+#endif
+
+    //input icon is an unnaccessible url
+    QTest::newRow("source small unaccessible_webUrl") << "www.non-existetent-example.com/icon_small.png" << SmallSize << "unaccessible_webUrl" << SmallSource << SmallDestination;
+    QTest::newRow("source medium unaccessible_webUrl") << "www.non-existetent-example.com/icon_medium.png" << MediumSize << "unaccessible_webUrl" << MediumSource << MediumDestination;
+    QTest::newRow("source large unaccessible_webUrl") << "www.non-existetent-example.com/icon_large.png" << LargeSize << "unaccessible_webUrl" << LargeSource << LargeDestination;
+    QTest::newRow("source fullscreen unaccessible_webUrl") << "www.non-existetent-example.com/icon_fullscreen.png" << FullscreenSize << "unaccessible_webUrl" << FullscreenSource << ""; //fullscreen icons shouldn't be saved as data urls
 }
 
 void tst_QPlaceManagerJsonDb::iconDestinationOnly()
@@ -2524,17 +2538,17 @@ void tst_QPlaceManagerJsonDb::iconDestinationOnly_data()
     QTest::newRow("destination large dataurl size_provided") << LargeDestination  << QUrl("_data_url_") << QSize(86, 99) << ":/resources/icon_large.png";
     QTest::newRow("destination fullscreen dataurl size_provided") << FullscreenDestination  << QUrl("_data_url_") << QSize(86, 99) << ":/resources/icon_fullscreen.png";
 
-    //destination url is not accessible and size is specified
-    QTest::newRow("destination small unaccessible_webUrl size_provided") << SmallDestination << QUrl("http://www.example.com/iconS.png") << SmallSize << "";
-    QTest::newRow("destination medium unaccessible_webUrl size_provided") << MediumDestination << QUrl("http://www.example.com/iconM.png") << MediumSize << "" ;
-    QTest::newRow("destination large unaccessible_webUrl size_provided") << LargeDestination << QUrl("http://www.example.com/iconL.png") << LargeSize << "";
-    QTest::newRow("destination fullscreen unaccessible_webUrl size_provided") << FullscreenDestination << QUrl("http://www.example.com/iconF.png") << FullscreenSize << "";
+    //destination url is unaccessible, and size is specified
+    QTest::newRow("destination small unaccessible_webUrl size_provided") << SmallDestination << QUrl("http://www.non-existetent-example.com/iconS.png") << SmallSize << "";
+    QTest::newRow("destination medium unaccessible_webUrl size_provided") << MediumDestination << QUrl("http://www.non-existetent-example.com/iconM.png") << MediumSize << "" ;
+    QTest::newRow("destination large unaccessible_webUrl size_provided") << LargeDestination << QUrl("http://www.non-existetent-example.com/iconL.png") << LargeSize << "";
+    QTest::newRow("destination fullscreen unaccessible_webUrl size_provided") << FullscreenDestination << QUrl("http://www.non-existetent-example.com/iconF.png") << FullscreenSize << "";
 
-    //destination url is accessible and no size is provided, expect failure to save
-    QTest::newRow("destination small unaccessible_webUrl no_size_provided") << SmallDestination << QUrl("http://www.example.com/iconS.png") << QSize() << "";
-    QTest::newRow("destination medium unaccessible_webUrl no_size_provided") << MediumDestination << QUrl("http://www.example.com/iconM.png") << QSize() << "" ;
-    QTest::newRow("destination large unaccessible_webUrl no_size_provided") << LargeDestination << QUrl("http://www.example.com/iconL.png") << QSize() << "";
-    QTest::newRow("destination fullscreen unaccessible_webUrl no_size_provided") << FullscreenDestination << QUrl("http://www.example.com/iconL.png") << QSize() << "";
+    //destination url is unaccessible and no size is provided, expect failure to save
+    QTest::newRow("destination small unaccessible_webUrl no_size_provided") << SmallDestination << QUrl("http://www.non-existetent-example.com/iconS.png") << QSize() << "";
+    QTest::newRow("destination medium unaccessible_webUrl no_size_provided") << MediumDestination << QUrl("http://www.non-existetent-example.com/iconM.png") << QSize() << "" ;
+    QTest::newRow("destination large unaccessible_webUrl no_size_provided") << LargeDestination << QUrl("http://www.non-existetent-example.com/iconL.png") << QSize() << "";
+    QTest::newRow("destination fullscreen unaccessible_webUrl no_size_provided") << FullscreenDestination << QUrl("http://www.non-existetent-example.com/iconL.png") << QSize() << "";
 }
 
 void tst_QPlaceManagerJsonDb::iconSavedFromDifferentManager()
@@ -2789,6 +2803,97 @@ void tst_QPlaceManagerJsonDb::iconUrls_data()
     QTest::newRow("large") << "large" << LargeSize;
     QTest::newRow("fullscreen") << "fullscreen" << FullscreenSize;
 }
+
+#ifdef REMOTE_TEST
+void tst_QPlaceManagerJsonDb::iconDownload()
+{
+    QFETCH(QString, sizeType);
+    QFETCH(QString, destinationType);
+    QFETCH(QString, errorCondition);
+
+    QPlace place;
+    place.setName("place");
+    QGeoCoordinate coord(10,10);
+    QGeoLocation location;
+    location.setCoordinate((coord));
+    place.setLocation(location);
+
+    QPlaceIcon icon;
+    QVariantMap parameters;
+
+    QString source = sizeType + QLatin1String("SourceUrl");
+    if (errorCondition == "no error")
+        parameters.insert(source, QUrl("http://download.ch1.qa.vcdn.nokia.com/p/d/places2/icons/categories/01.icon"));
+    else if (errorCondition == "unreachable host")
+        parameters.insert(source, QUrl("http://doesnotexist_aef32.com/01.icon"));
+    else
+        QFAIL("Unknown error condition");
+
+    QTemporaryDir tempDir;
+    if (destinationType.startsWith(QLatin1String("file"))) {
+        QVERIFY(tempDir.isValid());
+        QString destIconFileName = tempDir.path() + QLatin1String("/tempFile");
+
+        if (destinationType == QLatin1String("file existing")) {
+            QFile destFile(destIconFileName);
+            destFile.open(QIODevice::ReadWrite);
+            destFile.close();
+        }
+        parameters.insert(sizeType + QLatin1String("Url"), QUrl::fromLocalFile(destIconFileName));
+    }
+
+    icon.setParameters(parameters);
+    place.setIcon(icon);
+
+    QString placeId;
+
+    if (errorCondition == "no error") {
+        QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+
+        QPlace retrievedPlace;
+
+        QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+
+        QImage image;
+        if (destinationType == "dataUrl")
+            image = dataUrlToImage(retrievedPlace.icon().url());
+        else if (destinationType.startsWith("file"))
+            image = QImage(retrievedPlace.icon().url().toLocalFile());
+
+        QCOMPARE(image.size(), QSize(60, 65));
+    } else if (errorCondition == "unreachable host") {
+        QVERIFY(doSavePlace(place, QPlaceReply::CommunicationError));
+    }
+
+    //Hardening Extension: Potentially there could be more thorough tests here to handle
+    //different icon sizes coming from the server
+}
+
+void tst_QPlaceManagerJsonDb::iconDownload_data()
+{
+    QTest::addColumn<QString>("sizeType");
+    QTest::addColumn<QString>("destinationType");
+    QTest::addColumn<QString>("errorCondition");
+
+    QStringList sizeTypes;
+    sizeTypes << JsonDbUtils::Small << JsonDbUtils::Medium << JsonDbUtils::Large;
+
+    QStringList destinationTypes;
+    destinationTypes << QLatin1String("dataUrl") << QLatin1String("file new") << QLatin1String("file existing");
+
+    QStringList errorConditions;
+    errorConditions << QLatin1String("no error") << QLatin1String("unreachable host");
+
+    foreach (const QString &sizeType, sizeTypes) {
+        foreach (const QString &destinationType, destinationTypes) {
+            foreach (const QString &errorCondition, errorConditions) {
+                QByteArray dataTag = (sizeType + QLatin1String(" ") + destinationType + QLatin1String(" ") + errorCondition).toLatin1();
+                QTest::newRow(dataTag.constData()) << sizeType << destinationType << errorCondition;
+            }
+        }
+    }
+}
+#endif
 
 void tst_QPlaceManagerJsonDb::constructIconUrl()
 {

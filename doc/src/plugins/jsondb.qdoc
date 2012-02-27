@@ -137,7 +137,7 @@ The JsonDbPlugin supports the following icon parameter values
         \li Holds the dimensions of the small icon
     \row
         \li smallSourceUrl
-        \li Holds the source URL from which the small icon is to be copied from.
+        \li Holds the source URL from which the small icon is to be copied/downloaded from.
     \row
         \li mediumUrl
         \li Holds the URL for the medium sized icon.
@@ -146,7 +146,7 @@ The JsonDbPlugin supports the following icon parameter values
         \li Holds the dimensions of the medium sized icon.
     \row
         \li mediumSourceUrl
-        \li Holds the source URL from which the medium icon is to be copied from.
+        \li Holds the source URL from which the medium icon is to be copied/downloaded from.
     \row
         \li largeUrl
         \li Holds the URL for the large icon.
@@ -155,7 +155,7 @@ The JsonDbPlugin supports the following icon parameter values
         \li Holds the dimensions of the large icon.
     \row
         \li largeSourceUrl
-        \li Holds the source URL from which the large icon is to be copied from.
+        \li Holds the source URL from which the large icon is to be copied/downloaded from.
     \row
         \li fullscreenUrl
         \li Holds the URL for the fullscreen icon.
@@ -164,7 +164,7 @@ The JsonDbPlugin supports the following icon parameter values
         \li Holds the dimensions of the fullscreen icon.
     \row
         \li fullscreenSourceUrl
-        \li Holds the source URL from which the fullscreen icon is to be copied from.
+        \li Holds the source URL from which the fullscreen icon is to be copied/downloaded from.
 \endtable
 
 In C++ the value of the URLs must always be a QUrl.
@@ -196,21 +196,21 @@ since it is generally automatically calculated.  In some cases where the size ca
 specified URL cannot currently be accessed, it is necessary to specify a recommended size.
 If the size of the image can be calculated and a size is also specified, then the specified size is ignored.
 
-\section4 Copying icons to a specified destination
-When copying or saving icons, we use the source parameters to hold the URL of the source image we are copying from
+\section4 Copying/Downloading icons to a specified destination
+When saving icons, we use the source parameters to hold the URL of the source image we are copying from
 \code
-smallSourceUrl: file:///foo/icon_s.png
+smallSourceUrl: http://www.example.com/icon_s.png
 smallUrl: file:///bar/icon_small.png
 (smallSize: QSize(20,20) //optional
 \endcode
 
-Using the parameters above will copy the icon from \c smallSourceUrl to the \c smallUrl.  At present both the
-smallSourceUrl and smallUrl must be local file URLs.  If the smallUrl already exists, it is overwritten, otherwise it is created.
+Using the parameters above will copy the icon from \c smallSourceUrl to the \c smallUrl.  The smallSourceUrl can be a remote or local URL,
+but the smallUrl must be local.  If the smallUrl already exists, it is overwritten, otherwise it is created.
 \c smallSize typically does not need to be set since an attempt will be made to calculate the icon's size.   In some cases where the size cannot be calculated, e.g. if the
 specified URL cannot currently be accessed, it is necessary to specify a recommended size.
 If the size of the image can be calculated and a size is also specified, then the specified size is ignored.
 
-\section4 Copying icons without a specified destination
+\section4 Copying/Downloading icons without a specified destination
 It is possible to copy icons, when a place/category is saved and not have to
 specify a destination.  In this case, a data URL will be created for the icon
 in the underlying database.  A data URL contains the icon image embedded
@@ -219,7 +219,7 @@ on it's calculated size.
 
 \code
 //input parameters
-smallSourceUrl: file:///foo/icon_small.png
+smallSourceUrl: http://www.example.com/icon_small.png
 
 //(1) Result if the source icon's actual size corresponded to small
 smallUrl: data:image/png;base64,iVBORw0K….
@@ -242,13 +242,13 @@ however that all these may end up being the same URL.  The JsonDb plugn filters 
 an appropriate destination based on size.
 \code
 //The resultant place's icon after calling QPlaceManager::compatiblePlace()
-smallSourceUrl: file:///bar/foo.png
-mediumSourceUrl: file:///bar/foo.png
-largeSourceUrl: file:///bar/foo.png
+smallSourceUrl: http://www.example.com/foo.png
+mediumSourceUrl: http://www.example.com/foo.png
+largeSourceUrl: http://www.example.com/foo.png
 
 //on save, the plugin filters out the duplicates and determines an appropriate size
 //in this case the data URL for the large size has been created.
-largeUrl: data:image/png;base64,qVyOZw0p
+largeUrl: data:image/png;base64,qVyOZw0p...
 largeSize: QSize(50,50)
 \endcode
 

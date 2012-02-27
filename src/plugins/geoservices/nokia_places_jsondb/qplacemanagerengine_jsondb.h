@@ -57,6 +57,8 @@ QT_BEGIN_NAMESPACE
 
 QT_USE_NAMESPACE_JSONDB
 
+class QNetworkAccessManager;
+
 struct CategoryNode {
     QString parentId;
     QStringList childIds;
@@ -108,18 +110,20 @@ public:
     QPlaceManager *manager() const { return QPlaceManagerEngine::manager(); }
     void setCategoryTree(const CategoryTree &tree);
 
+    QNetworkAccessManager *networkAccessManager();
+
 private slots:
     void processPlaceNotifications(const QList<QJsonDbNotification> &notifications);
     void processCategoryNotifications(const QList<QJsonDbNotification> &notifications);
     void notificationsError(QtJsonDb::QJsonDbWatcher::ErrorCode code, const QString &errorString);
 
 private:
-    bool isSupportedScheme(const QString &scheme) const;
-
     JsonDb *m_jsonDb;
 
     mutable QMutex m_treeMutex;
     CategoryTree m_tree;
+
+    QNetworkAccessManager *m_netManager;
 
     friend class SaveReply;
     friend class MediaReply;

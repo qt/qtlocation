@@ -52,14 +52,19 @@
 #include <QtCore/qnumeric.h>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
+#include <QtNetwork/QNetworkAccessManager>
 
 QT_USE_NAMESPACE
+
+Q_DECLARE_METATYPE(QJsonObject);
 
 QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVariant> &parameters,
                                                      QGeoServiceProvider::Error *error,
                                                      QString *errorString)
-    :   QPlaceManagerEngine(parameters), m_jsonDb(new JsonDb())
+    :   QPlaceManagerEngine(parameters), m_jsonDb(new JsonDb()), m_netManager(0)
 {
+    qRegisterMetaType<QJsonObject>();
+
     connect(m_jsonDb, SIGNAL(placeNotifications(QList<QJsonDbNotification>)),
             this, SLOT(processPlaceNotifications(QList<QJsonDbNotification>)));
     connect(m_jsonDb, SIGNAL(categoryNotifications(QList<QJsonDbNotification>)),
@@ -71,6 +76,7 @@ QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVarian
 
 QPlaceManagerEngineJsonDb::~QPlaceManagerEngineJsonDb()
 {
+    delete m_netManager;
     delete m_jsonDb;
 }
 
@@ -238,14 +244,13 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
     QPlaceIcon originalIcon = original.icon();
     if (!originalIcon.isEmpty()) {
         if (originalIcon.parameters().contains(QPlaceIcon::SingleUrl)) {
-            if (isSupportedScheme(originalIcon.url(Icon::MediumSize).scheme()))
                 parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
         } else if (originalIcon.manager()) {
-            if (!originalIcon.url(Icon::SmallSize).isEmpty() && isSupportedScheme(originalIcon.url(Icon::SmallSize).scheme()))
+            if (!originalIcon.url(Icon::SmallSize).isEmpty())
                 parameters.insert(Icon::SmallSource, originalIcon.url(Icon::SmallSize));
-            if (!originalIcon.url(Icon::MediumSize).isEmpty() && isSupportedScheme(originalIcon.url(Icon::MediumSize).scheme()))
+            if (!originalIcon.url(Icon::MediumSize).isEmpty())
                 parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
-            if (!originalIcon.url(Icon::LargeSize).isEmpty() && isSupportedScheme(originalIcon.url(Icon::LargeSize).scheme()))
+            if (!originalIcon.url(Icon::LargeSize).isEmpty())
                 parameters.insert(Icon::LargeSource, originalIcon.url(Icon::LargeSize));
         }
     }
@@ -321,6 +326,13 @@ void QPlaceManagerEngineJsonDb::setCategoryTree(const CategoryTree &tree)
     m_tree = tree;
 }
 
+QNetworkAccessManager *QPlaceManagerEngineJsonDb::networkAccessManager()
+{
+    if (!m_netManager)
+        m_netManager = new QNetworkAccessManager(this);
+    return m_netManager;
+}
+
 void QPlaceManagerEngineJsonDb::processPlaceNotifications(const QList<QJsonDbNotification> &notifications)
 {
     foreach (const QJsonDbNotification &notification, notifications) {
@@ -350,13 +362,4 @@ void QPlaceManagerEngineJsonDb::processCategoryNotifications(const QList<QJsonDb
 void QPlaceManagerEngineJsonDb::notificationsError(QJsonDbWatcher::ErrorCode code, const QString &errorString)
 {
     qWarning() << Q_FUNC_INFO << " Error code: " << code << " Error String: " << errorString;
-}
-
-//this only for schemes for source icon urls.
-bool QPlaceManagerEngineJsonDb::isSupportedScheme(const QString &scheme) const
-{
-    if (scheme.isEmpty() || (scheme.compare(QStringLiteral("data"), Qt::CaseInsensitive) == 0) || (scheme.compare(QStringLiteral("file"), Qt::CaseInsensitive) == 0))
-        return true;
-    else
-        return false;
 }

@@ -49,6 +49,7 @@
 #include "icon.h"
 #include "macro.h"
 #include "qplacemanagerengine_jsondb.h"
+#include "iconhandler.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -71,11 +72,13 @@ public:
 
     virtual void start();
 
+    QPlaceManagerEngineJsonDb *engine() { return m_engine; }
+
 protected:
-    QPlaceManagerEngineJsonDb *m_engine;
     JsonDb *db() { return m_engine->db(); }
 
 private:
+    QPlaceManagerEngineJsonDb *m_engine;
     bool m_isUpdate;
     QString m_parentCategoryId;
 };
@@ -101,21 +104,16 @@ public:
 private slots:
     void checkIfExistsFinished();
     void getCategoriesForPlaceFinished();
-    void processIcons();
+    void processIconsFinished(const QJsonObject &thumbnailsJson);
     void savingFinished();
 
     void requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString);
 
 private:
-    void getIcons();
-    void trySetDestination(const QString &destination);
-    QUrl convertToUrl(const QVariant &var, bool *ok);
-
     QPlace m_place;
     QJsonObject m_placeJson;
-    QList<Icon *> m_icons;
-    int currIconIndex;
     QStringList m_specifiedDestinations;
+    IconHandler *m_iconHandler;
 };
 
 class RemovePlaceReply : public IdReply

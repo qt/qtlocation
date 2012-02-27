@@ -88,12 +88,13 @@ void IdReply::start()
 }
 
 SavePlaceReply::SavePlaceReply(QPlaceManagerEngineJsonDb *engine)
-    : IdReply(QPlaceIdReply::SavePlace, engine), currIconIndex(0)
+    : IdReply(QPlaceIdReply::SavePlace, engine), m_iconHandler(0)
 {
 }
 
 SavePlaceReply::~SavePlaceReply()
 {
+    delete m_iconHandler;
 }
 
 void SavePlaceReply::setPlace(const QPlace &place)
@@ -115,157 +116,28 @@ void SavePlaceReply::start()
     }
 }
 
-void SavePlaceReply::getIcons()
+void SavePlaceReply::processIconsFinished(const QJsonObject &thumbnailsJson)
 {
-    QStringList prefixes;
-    prefixes << QStringLiteral("small") << QStringLiteral("medium") << QStringLiteral("large") << QStringLiteral("fullscreen");
-
-    QList<QUrl> uniqueInputUrls; //unique source urls that have been supplied without associated destinations
-    foreach (const QString &prefix, prefixes) {
-        bool ok;
-        QUrl sourceUrl = convertToUrl(m_place.icon().parameters().value(prefix + QLatin1String("SourceUrl"), QUrl()), &ok);
-        if (!ok) {
-            triggerDone(QPlaceReply::BadArgumentError, QString::fromLatin1("icon parameter for key: ") + prefix + QLatin1String("SourceUrl")
-                        + QLatin1String(" was not a QUrl object"));
-            return;
-        }
-        QUrl destinationUrl = convertToUrl(m_place.icon().parameters().value(prefix + QLatin1String("Url"), QUrl()), &ok);
-        if (!ok) {
-            triggerDone(QPlaceReply::BadArgumentError, QString::fromLatin1("icon parameter for key: ") + prefix + QLatin1String("Url")
-                        + QLatin1String(" was not a QUrl object"));
-            return;
-        }
-
-        if (destinationUrl.isEmpty()) {
-            if (sourceUrl.isEmpty() || uniqueInputUrls.contains(sourceUrl))
-                continue;
-            else
-                uniqueInputUrls.append(sourceUrl);
-        }
-
-        QString destination;
-        if (!destinationUrl.isEmpty())
-            destination = prefix + QLatin1String("Url");
-
-        Icon *icon = new Icon(sourceUrl, destinationUrl, destination);
-        if (m_place.icon().parameters().contains(prefix + QLatin1String("Size")))
-            icon->setSpecifiedSize(m_place.icon().parameters().value(prefix + QLatin1String("Size")).toSize());
-
-        m_icons.append(icon);
-    }
-
-    processIcons();
-}
-
-void SavePlaceReply::processIcons()
-{
-    if (qobject_cast<Icon *>(sender())) {
-        Icon *senderIcon = qobject_cast<Icon *>(sender());
-        if (senderIcon->error() != QPlaceReply::NoError) {
-            triggerDone(senderIcon->error(), senderIcon->errorString());
-            return;
-        }
-    }
-
-    if (currIconIndex < m_icons.count()) {
-        Icon *icon = m_icons.at(currIconIndex);
-        connect(icon, SIGNAL(initializationFinished()), this, SLOT(processIcons()), Qt::QueuedConnection);
-        icon->initialize();
-        currIconIndex++;
+    if (m_iconHandler->error() != QPlaceReply::NoError) {
+        triggerDone(m_iconHandler->error(), m_iconHandler->errorString());
         return;
-    } else {
-        bool error = false;
-
-        //try to set destinations for icons which were not already set
-        QStringList specifiedDestinations;
-        foreach (Icon *icon, m_icons) {
-            if (!icon->destination().isEmpty())
-                specifiedDestinations.append(icon->destination());
-        }
-
-        //try to set small,medium and large destinations if they haven't already been explicitly specified
-        //and there are icons with unspecified destinations. (essentially we are creating data urls if necessary)
-        if (!specifiedDestinations.contains(Icon::SmallDestination))
-            trySetDestination(Icon::SmallDestination);
-
-        if (!specifiedDestinations.contains(Icon::MediumDestination))
-            trySetDestination(Icon::MediumDestination);
-
-        if (!specifiedDestinations.contains(Icon::LargeDestination))
-            trySetDestination(Icon::LargeDestination);
-
-        //Note that we don't try and set the destination for full screen thumbnails
-        //since data urls are meant to be just for small images
-
-        //if we have an existing place, we try to preserve existing properties
-        //of the thumbnail objects, but we completely remove/replace the fields
-        //that are relevant for the QtLocation API.
-        QJsonObject thumbnailsJson = m_placeJson.value(JsonDb::Thumbnails).toObject();
-        thumbnailsJson.remove(JsonDb::Small);
-        thumbnailsJson.remove(JsonDb::Medium);
-        thumbnailsJson.remove(JsonDb::Large);
-        thumbnailsJson.remove(JsonDb::Fullscreen);
-
-        foreach (Icon *icon, m_icons) {
-            QJsonObject thumbnailJson;
-            if (icon->error() != QPlaceReply::NoError) {
-                triggerDone(icon->error(), icon->errorString());
-                error = true;
-                break;
-            }
-
-            if (!icon->sourceUrl().isEmpty()
-                    && icon->destinationUrl().scheme().compare(QLatin1String("file")) == 0) {
-                if (!icon->copy()) {
-                    triggerDone(icon->error(), icon->errorString());
-                    error = true;
-                    break;
-                }
-            }
-
-            thumbnailJson.insert(JsonDb::Url, icon->destinationUrl().toString());
-            if (icon->size().isValid()) {
-                thumbnailJson.insert(JsonDb::Height, icon->size().height());
-                thumbnailJson.insert(JsonDb::Width, icon->size().width());
-            } else {
-                //size of icon could not be calculated, therefore rely on manually specified size
-                if (!icon->specifiedSize().isValid()) {
-                    triggerDone(QPlaceReply::BadArgumentError, QLatin1String("Size of icon could not be generated nor was it validly specified"));
-                    error = true;
-                    break;
-                }
-                thumbnailJson.insert(JsonDb::Height, icon->specifiedSize().height());
-                thumbnailJson.insert(JsonDb::Width, icon->specifiedSize().width());
-            }
-
-            if (icon->destination() == Icon::SmallDestination)
-                thumbnailsJson.insert(JsonDb::Small, thumbnailJson);
-            else if (icon->destination() == Icon::MediumDestination)
-                thumbnailsJson.insert(JsonDb::Medium, thumbnailJson);
-            else if (icon->destination() == Icon::LargeDestination)
-                thumbnailsJson.insert(JsonDb::Large, thumbnailJson);
-            else
-                thumbnailsJson.insert(JsonDb::Fullscreen, thumbnailJson);
-        }
-
-        if (!error) {
-            m_placeJson.insert(JsonDb::Thumbnails, thumbnailsJson);
-
-            QString currentDateTime = QDateTime::currentDateTime().toString(Qt::ISODate);
-            if (m_place.placeId().isEmpty()) {
-                m_placeJson.insert(JsonDb::CreatedDateTime, currentDateTime);
-                m_placeJson.insert(JsonDb::ModifiedDateTime, currentDateTime);
-            } else {
-                m_placeJson.insert(JsonDb::ModifiedDateTime, currentDateTime);
-            }
-
-            //proceed to save
-            db()->write(m_placeJson, this, SLOT(savingFinished()));
-        }
-
-        qDeleteAll(m_icons);
-        m_icons.clear();
     }
+
+    if (!thumbnailsJson.isEmpty())
+        m_placeJson.insert(JsonDb::Thumbnails, thumbnailsJson);
+
+    delete m_iconHandler;
+    m_iconHandler = 0;
+
+    QString currentDateTime = QDateTime::currentDateTime().toString(Qt::ISODate);
+    if (m_place.placeId().isEmpty()) {
+        m_placeJson.insert(JsonDb::CreatedDateTime, currentDateTime);
+        m_placeJson.insert(JsonDb::ModifiedDateTime, currentDateTime);
+    } else {
+        m_placeJson.insert(JsonDb::ModifiedDateTime, currentDateTime);
+    }
+
+    db()->write(m_placeJson, this, SLOT(savingFinished()));
 }
 
 void SavePlaceReply::checkIfExistsFinished()
@@ -307,8 +179,9 @@ void SavePlaceReply::getCategoriesForPlaceFinished()
     m_placeJson.insert(JsonDb::AllCategoryUuids, QJsonArray::fromStringList(allCategoryUuids));
     JsonDb::addToJson(&m_placeJson, m_place);
 
-    getIcons();
-    return;
+    m_iconHandler = new IconHandler(m_place.icon(), m_placeJson.value(JsonDb::Thumbnails).toObject(),
+                                    const_cast<SavePlaceReply *>(this));
+    connect(m_iconHandler, SIGNAL(finished(QJsonObject)), this, SLOT(processIconsFinished(QJsonObject)));
 }
 
 void SavePlaceReply::savingFinished()
@@ -336,63 +209,6 @@ void SavePlaceReply::requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, co
         triggerDone(QPlaceReply::UnknownError, errorString);
         return;
     }
-}
-
-void SavePlaceReply::trySetDestination(const QString &destination)
-{
-    static int threshold;
-    int height;
-
-    //assumption is that icons are squarish
-    //so we can rely on height as a means to detect which size bucket
-    //the icon belongs to
-    if (destination == Icon::SmallDestination) {
-        threshold = (Icon::SmallSize.height() + Icon::MediumSize.height()) / 2;
-        height = Icon::SmallSize.height();
-    } else if (destination == Icon::MediumDestination) {
-        threshold = (Icon::MediumSize.height() + Icon::LargeSize.height()) / 2;
-        height = Icon::MediumSize.height();
-    } else if (destination == Icon::LargeDestination) {
-        threshold = Icon::LargeSize.height() * 2;
-        height = Icon::LargeSize.height();
-    } //note fullscreen thumbnails should not be set as data urls.
-
-    Icon *currIcon = 0;
-    foreach (Icon *icon, m_icons) {
-        if (icon->destination().isEmpty()
-                && icon->size().height() < threshold
-                && (currIcon == 0 ||  qAbs(icon->size().height() - height) < qAbs(currIcon->size().height() - height))) {
-            if (currIcon)
-                currIcon->setDestination(QString());
-            currIcon = icon;
-            currIcon->setDestination(destination);
-        }
-    }
-
-    if (currIcon)
-        currIcon->setDestinationDataUrl();
-}
-
-QUrl SavePlaceReply::convertToUrl(const QVariant &var, bool *ok)
-{
-    if (ok)
-        *ok = false;
-
-    switch (var.type()) {
-    case (QVariant::Url): {
-        if (ok)
-            *ok = true;
-        QUrl url = var.toUrl();
-        if (url.scheme().isEmpty())
-            return QUrl::fromUserInput(url.toString());
-        else
-            return url;
-        break;
-    }
-    default:
-        break;
-    }
-    return QUrl();
 }
 
 //-------RemovePlaceReply

@@ -20,6 +20,7 @@ HEADERS += \
             macro.h \
             idreply.h \
             icon.h \
+            iconhandler.h \
             initreply.h
 
 SOURCES += \
@@ -31,6 +32,7 @@ SOURCES += \
             detailsreply.cpp \
             idreply.cpp \
             icon.cpp \
+            iconhandler.cpp \
             initreply.cpp
 
 INCLUDEPATH += $$QT.location.includes

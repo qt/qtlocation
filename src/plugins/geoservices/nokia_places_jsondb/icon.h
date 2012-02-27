@@ -47,6 +47,12 @@
 #include <QtGui/QImage>
 #include <QtLocation/QPlaceReply>
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
+class IconHandler;
+
 class Icon : public QObject
 {
     Q_OBJECT
@@ -77,7 +83,8 @@ public:
     static const QLatin1String LargeDestinationSize;
     static const QLatin1String FullscreenDestinationSize;
 
-    Icon(const QUrl &sourceUrl, const QUrl &destinationUrl, const QString &destination);
+    Icon(IconHandler *parent);
+    ~Icon();
 
     void initialize();
 
@@ -89,8 +96,10 @@ public:
     void setSpecifiedSize(const QSize &size);
 
     QUrl sourceUrl() const;
+    void setSourceUrl(const QUrl &url);
 
     QUrl destinationUrl() const;
+    void setDestinationUrl(const QUrl &url);
     void setDestinationDataUrl();
 
     QString destination() const;
@@ -102,8 +111,10 @@ public:
 Q_SIGNALS:
     void initializationFinished();
 
+private slots:
+    void iconFetchFinished();
+
 private:
-    bool initImage(const QUrl &url);
     static QString imageFormatToMimeType(const QByteArray &format);
 
     QByteArray m_inputFormat;
@@ -113,9 +124,14 @@ private:
     QSize m_specifiedSize;
     QSize m_size;
     QByteArray m_payload;
+    IconHandler *m_iconHandler;
 
     mutable QPlaceReply::Error m_error;
     mutable QString m_errorString;
 };
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

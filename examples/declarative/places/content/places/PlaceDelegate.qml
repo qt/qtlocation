@@ -68,10 +68,23 @@ Item {
             spacing: 2
             clip: true
 
-            Text {
-                text: place ? place.name : ""
-                font.pixelSize: 16
-                font.bold: true
+            Row {
+                width: parent.width
+
+                Image {
+                    id: iconImage
+                    width: 40
+                    height: 40
+                    source: place ? place.icon.url(Qt.size(40,40)) : ""
+                    visible: source != ""
+                }
+
+                Text {
+                    id: placeName
+                    text: place ? place.name : ""
+                    font.pixelSize: 16
+                    font.bold: true
+                }
             }
 
             RatingView { rating: (place && place.ratings) ? place.ratings.average : 0 }

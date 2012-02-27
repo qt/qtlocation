@@ -40,11 +40,14 @@
 ****************************************************************************/
 
 #include "icon.h"
+#include "iconhandler.h"
 
 #include <QtCore/QBuffer>
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
 #include <QtGui/QImageReader>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
 
 const QSize Icon::SmallSize(QSize(20,20));
 const QSize Icon::MediumSize(QSize(30,30));
@@ -66,38 +69,32 @@ const QLatin1String Icon::MediumDestinationSize("mediumSize");
 const QLatin1String Icon::LargeDestinationSize("largeSize");
 const QLatin1String Icon::FullscreenDestinationSize("fullscreenSize");
 
-Icon::Icon(const QUrl &sourceUrl, const QUrl &destinationUrl, const QString &destination)
-    : m_sourceUrl(sourceUrl), m_destinationUrl(destinationUrl),
-      m_destination(destination), m_error(QPlaceReply::NoError)
+Icon::Icon(IconHandler *parent)
+    : QObject(parent), m_iconHandler(parent), m_error(QPlaceReply::NoError)
+{
+    Q_ASSERT(parent);
+}
+
+Icon::~Icon()
 {
 }
 
+//initialization in the case of having a source icon url involves fetching the icon
+//data and determining its size
+//initialization in the case of having a destination icon url only involves _attempting_
+//to fetch it in order to calculate its size.  If this cannot be done, the
+//user specified size is used.
 void Icon::initialize()
 {
-    if (m_sourceUrl.scheme().compare(QLatin1String("file"), Qt::CaseInsensitive) == 0) {
-        initImage(m_sourceUrl);
-    } else if (m_sourceUrl.scheme().compare(QLatin1String("data"), Qt::CaseInsensitive) == 0) {
-        initImage(m_sourceUrl);
-    } else if (m_sourceUrl.isEmpty() && !m_destinationUrl.isEmpty()) {
-        //see if we can get the image and hence size of the icon directly from the destinationUrl
-        //if we can't then just set the size to the user specified size.
-        if (!initImage(m_destinationUrl)) {
-            if (m_specifiedSize == QSize()) {
-                m_error = QPlaceReply::BadArgumentError;
-                m_errorString = QLatin1String("Cannot obtain size of destination icon url");
-            } else {
-                m_error = QPlaceReply::NoError; //reset error back to empty because the inability
-                m_errorString = QString();      //to access the destination url is not an error.
+    QNetworkAccessManager *netManager = m_iconHandler->networkAccessManager();
+    QNetworkRequest request;
 
-                m_size = m_specifiedSize;
-            }
-        }
-    } else {
-        m_error = QPlaceReply::BadArgumentError;
-        m_errorString = QStringLiteral("Unrecognised source icon URL scheme:") + m_sourceUrl.toString();
-    }
-
-    emit initializationFinished();
+    if (m_sourceUrl.isEmpty() && !m_destinationUrl.isEmpty())
+        request.setUrl(m_destinationUrl);
+    else
+        request.setUrl(m_sourceUrl);
+    QNetworkReply *reply = netManager->get(request);
+    connect(reply, SIGNAL(finished()), this, SLOT(iconFetchFinished()));
 }
 
 bool Icon::copy() const
@@ -144,9 +141,19 @@ QUrl Icon::sourceUrl() const
     return m_sourceUrl;
 }
 
+void Icon::setSourceUrl(const QUrl &url)
+{
+    m_sourceUrl = url;
+}
+
 QUrl Icon::destinationUrl() const
 {
     return m_destinationUrl;
+}
+
+void Icon::setDestinationUrl(const QUrl &url)
+{
+    m_destinationUrl = url;
 }
 
 void Icon::setDestinationDataUrl()
@@ -175,61 +182,44 @@ QString Icon::errorString() const
     return m_errorString;
 }
 
-bool Icon::initImage(const QUrl &url)
+void Icon::iconFetchFinished()
 {
-    if (url.scheme().compare(QLatin1String("file"), Qt::CaseInsensitive) == 0) {
-        QString fileName = url.toLocalFile();
-        if (!fileName.isEmpty() && QFile::exists(fileName)) {
-            QFile file(fileName);
-            file.open(QIODevice::ReadOnly);
-            m_payload = file.readAll();
-            file.close();
+    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
 
-            QImageReader imageReader(fileName);
-            m_inputFormat = imageReader.format();
+    if (reply->error() == QNetworkReply::NoError) {
+        m_payload = reply->readAll();
+        m_size = QImage::fromData(m_payload).size();
+        QBuffer buffer(&m_payload);
+        buffer.open(QIODevice::ReadOnly);
+        m_inputFormat = QImageReader::imageFormat(&buffer);
 
-            if (m_inputFormat.isEmpty()) {
-                m_error = QPlaceReply::UnsupportedError;
-                m_errorString = QStringLiteral("Format of input file could not be detected");
-                return false;
-            }
-
-            m_size = imageReader.size();
-            return true;
-        } else {
-            m_error = QPlaceReply::BadArgumentError;
-            m_errorString = QString::fromLatin1("Icon file does not exist:") +  url.toString();
-            return false;
-        }
-    } else if (url.scheme().compare(QLatin1String("data"), Qt::CaseInsensitive) == 0) {
-        QByteArray data = QByteArray::fromPercentEncoding(url.toEncoded());
-        data.remove(0,5);
-        int pos = data.indexOf(',');
-        if (pos != -1) {
-            m_payload = QByteArray::fromBase64(data.mid(pos + 1));
-            data.truncate(pos);
-
-            if (!data.endsWith(";base64")) {
-                m_error = QPlaceReply::BadArgumentError;
-                m_errorString = QStringLiteral("Icon data urls must be base 64 encoded");
-                return false;
-            }
-
-            m_size = QImage::fromData(m_payload).size();
-            QBuffer buffer(&m_payload);
-            buffer.open(QIODevice::ReadOnly);
-            m_inputFormat = QImageReader::imageFormat(&buffer);
-            return true;
-        } else {
-            m_error = QPlaceReply::BadArgumentError;
-            m_errorString = "Could not parse icon data url";
-            return false;
+        if (m_inputFormat.isEmpty() && !m_sourceUrl.isEmpty()) {
+            m_error = QPlaceReply::UnsupportedError;
+            m_errorString = QString::fromLatin1("Format of source icon file could not be determined, url:") + m_sourceUrl.toString();
         }
     } else {
-        m_error = QPlaceReply::BadArgumentError;
-        m_errorString = "Unsupported url scheme";
-        return false;
+        m_error = QPlaceReply::CommunicationError;
+        m_errorString = reply->errorString();
     }
+
+    //we've tried to retrieve the destination url to try automatically calculate its size
+    // this was not possible so set the size to the user specified size.
+    if (m_sourceUrl.isEmpty() && !m_destinationUrl.isEmpty()) {
+        if (m_specifiedSize == QSize() && m_size == QSize()) {
+            m_error = QPlaceReply::BadArgumentError;
+            m_errorString = QLatin1String("Cannot obtain size of destination icon url");
+        } else {
+            if (m_size.isEmpty())
+                m_size = m_specifiedSize;
+            m_error = QPlaceReply::NoError; //reset error back to empty because the inability
+            m_errorString = QString();      //to access the destination url is not an error.
+        }
+    }
+
+    reply->deleteLater();
+    reply = 0;
+
+    emit initializationFinished();
 }
 
 QString Icon::imageFormatToMimeType(const QByteArray &format)
