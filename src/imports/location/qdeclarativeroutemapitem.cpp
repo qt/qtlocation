@@ -42,6 +42,7 @@
 
 #include "qdeclarativeroutemapitem_p.h"
 #include "qdeclarativepolylinemapitem_p.h"
+#include "qgeocameracapabilities_p.h"
 #include "qdeclarativegeoroute_p.h"
 #include <QtDeclarative/QDeclarativeInfo>
 #include <QtGui/QPainter>
@@ -74,8 +75,7 @@
 
 QDeclarativeRouteMapItem::QDeclarativeRouteMapItem(QQuickItem *parent):
     QDeclarativeGeoMapItemBase(parent),
-    route_(0),
-    zoomLevel_(0.0)
+    route_(0)
 {
     setFlag(ItemHasContents, true);
     line_.setWidth(3.0);
@@ -100,7 +100,6 @@ void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
-        QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(handleCameraDataChanged(QGeoCameraData)));
         geometry_.markSourceDirty();
         updateMapItem();
     }
@@ -185,16 +184,24 @@ void QDeclarativeRouteMapItem::updateMapItem()
     update();
 }
 
-void QDeclarativeRouteMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
+void QDeclarativeRouteMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
-    if (cameraData.zoomLevel() != zoomLevel_) {
-        zoomLevel_ = cameraData.zoomLevel();
+    // if the scene is tilted, we must regenerate our geometry every frame
+    if (map()->cameraCapabilities().supportsTilting()
+            && (event.cameraData.tilt() > 0.1
+                || event.cameraData.tilt() < -0.1)) {
         geometry_.markSourceDirty();
     }
 
-    QSizeF sz = QSizeF(quickMap()->width(), quickMap()->height());
-    if (sz != mapSize_) {
-        mapSize_ = sz;
+    // if the scene is rolled, we must regen too
+    if (map()->cameraCapabilities().supportsRolling()
+            && (event.cameraData.roll() > 0.1
+                || event.cameraData.roll() < -0.1)) {
+        geometry_.markSourceDirty();
+    }
+
+    // otherwise, only regen on rotate, resize and zoom
+    if (event.bearingChanged || event.mapSizeChanged || event.zoomLevelChanged) {
         geometry_.markSourceDirty();
     }
 

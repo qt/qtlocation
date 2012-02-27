@@ -127,10 +127,7 @@ protected Q_SLOTS:
     virtual void updateMapItem();
     void updateAfterLinePropertiesChanged();
     void updateAfterCoordinateChanged();
-
-private Q_SLOTS:
-    // map size changed
-    void handleCameraDataChanged(const QGeoCameraData& cameraData);
+    void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
 
 private:
     static void path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
@@ -144,9 +141,7 @@ private:
     QList<QDeclarativeCoordinate*> coordPath_;
     QList<QGeoCoordinate> path_;
     QColor color_;
-    qreal zoomLevel_;
     bool dirtyMaterial_;
-    QSizeF mapSize_;
     QGeoMapPolylineGeometry geometry_;
 };
 

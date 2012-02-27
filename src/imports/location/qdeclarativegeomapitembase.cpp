@@ -41,9 +41,32 @@
 
 #include "qdeclarativegeomapitembase_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
+#include "qgeocameradata_p.h"
 #include <QDeclarativeInfo>
 
 QT_BEGIN_NAMESPACE
+
+QGeoMapViewportChangeEvent::QGeoMapViewportChangeEvent()
+    : zoomLevelChanged(false),
+      centerChanged(false),
+      mapSizeChanged(false),
+      tiltChanged(false),
+      bearingChanged(false),
+      rollChanged(false)
+{
+}
+
+QGeoMapViewportChangeEvent::QGeoMapViewportChangeEvent(const QGeoMapViewportChangeEvent &other)
+    : cameraData(other.cameraData),
+      mapSize(other.mapSize),
+      zoomLevelChanged(other.zoomLevelChanged),
+      centerChanged(other.centerChanged),
+      mapSizeChanged(other.mapSizeChanged),
+      tiltChanged(other.tiltChanged),
+      bearingChanged(other.bearingChanged),
+      rollChanged(other.rollChanged)
+{
+}
 
 QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
     : QQuickItem(parent),
@@ -104,8 +127,42 @@ void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
         quickMap_->disconnect(this);
     if (map_)
         map_->disconnect(this);
+
     quickMap_ = quickMap;
     map_ = map;
+
+    if (map_ && quickMap_) {
+        connect(map_, SIGNAL(cameraDataChanged(QGeoCameraData)),
+                this, SLOT(baseCameraDataChanged(QGeoCameraData)));
+        lastSize_ = QSizeF(quickMap_->width(), quickMap_->height());
+        lastCameraData_ = map_->cameraData();
+    }
+}
+
+void QDeclarativeGeoMapItemBase::baseCameraDataChanged(const QGeoCameraData &cameraData)
+{
+    QGeoMapViewportChangeEvent evt;
+    evt.cameraData = cameraData;
+    evt.mapSize = QSizeF(quickMap_->width(), quickMap_->height());
+
+    if (evt.mapSize != lastSize_)
+        evt.mapSizeChanged = true;
+
+    if (cameraData.bearing() != lastCameraData_.bearing())
+        evt.bearingChanged = true;
+    if (cameraData.center() != lastCameraData_.center())
+        evt.centerChanged = true;
+    if (cameraData.roll() != lastCameraData_.roll())
+        evt.rollChanged = true;
+    if (cameraData.tilt() != lastCameraData_.tilt())
+        evt.tiltChanged = true;
+    if (cameraData.zoomLevel() != lastCameraData_.zoomLevel())
+        evt.zoomLevelChanged = true;
+
+    lastSize_ = evt.mapSize;
+    lastCameraData_ = cameraData;
+
+    afterViewportChanged(evt);
 }
 
 void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate& coordinate, const QPointF& offset)

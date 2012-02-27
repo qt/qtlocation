@@ -357,6 +357,11 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
     update();
 }
 
+void QDeclarativeGeoMapQuickItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
+{
+    // do nothing
+}
+
 qreal QDeclarativeGeoMapQuickItem::scaleFactor()
 {
     qreal scale = 1.0;

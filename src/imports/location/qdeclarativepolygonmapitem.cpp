@@ -40,6 +40,7 @@
  ****************************************************************************/
 
 #include "qdeclarativepolygonmapitem_p.h"
+#include "qgeocameracapabilities_p.h"
 #include <QtGui/private/qtriangulator_p.h>
 #include <QDeclarativeInfo>
 #include <QPainter>
@@ -207,7 +208,6 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
     QDeclarativeGeoMapItemBase(parent),
     color_(Qt::transparent),
-    zoomLevel_(0.0),
     dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
@@ -260,7 +260,6 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *m
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
-        QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(handleCameraDataChanged(QGeoCameraData)));
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
         updateMapItem();
@@ -454,17 +453,26 @@ void QDeclarativePolygonMapItem::updateMapItem()
     update();
 }
 
-void QDeclarativePolygonMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
+void QDeclarativePolygonMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
-    if (cameraData.zoomLevel() != zoomLevel_) {
-        zoomLevel_ = cameraData.zoomLevel();
+    // if the scene is tilted, we must regenerate our geometry every frame
+    if (map()->cameraCapabilities().supportsTilting()
+            && (event.cameraData.tilt() > 0.1
+                || event.cameraData.tilt() < -0.1)) {
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }
 
-    QSizeF sz = QSizeF(quickMap()->width(), quickMap()->height());
-    if (sz != mapSize_) {
-        mapSize_ = sz;
+    // if the scene is rolled, we must regen too
+    if (map()->cameraCapabilities().supportsRolling()
+            && (event.cameraData.roll() > 0.1
+                || event.cameraData.roll() < -0.1)) {
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
+    }
+
+    // otherwise, only regen on rotate, resize and zoom
+    if (event.bearingChanged || event.mapSizeChanged || event.zoomLevelChanged) {
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }

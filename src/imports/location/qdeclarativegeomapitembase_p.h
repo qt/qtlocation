@@ -49,6 +49,23 @@
 
 QT_BEGIN_NAMESPACE
 
+class QGeoMapViewportChangeEvent
+{
+public:
+    QGeoMapViewportChangeEvent();
+    QGeoMapViewportChangeEvent(const QGeoMapViewportChangeEvent &other);
+
+    QGeoCameraData cameraData;
+    QSizeF mapSize;
+
+    bool zoomLevelChanged;
+    bool centerChanged;
+    bool mapSizeChanged;
+    bool tiltChanged;
+    bool bearingChanged;
+    bool rollChanged;
+};
+
 class QDeclarativeGeoMapItemBase : public QQuickItem
 {
     Q_OBJECT
@@ -68,10 +85,17 @@ public:
 protected Q_SLOTS:
     virtual void updateMapItem() = 0;
     virtual void afterChildrenChanged();
+    virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) = 0;
+
+private Q_SLOTS:
+    void baseCameraDataChanged(const QGeoCameraData &camera);
 
 private:
     QGeoMap* map_;
     QDeclarativeGeoMap* quickMap_;
+
+    QSizeF lastSize_;
+    QGeoCameraData lastCameraData_;
 };
 
 QT_END_NAMESPACE

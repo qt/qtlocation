@@ -90,9 +90,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
     virtual void updateMapItem();
     void updateMapItemAssumeDirty();
-
-private Q_SLOTS:
-    void handleCameraDataChanged(const QGeoCameraData& cameraData);
+    void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
 
 private:
     //TODO: pimpl
@@ -102,8 +100,6 @@ private:
     QDeclarativeMapLineProperties border_;
     QColor color_;
     qreal radius_;
-    qreal zoomLevel_;
-    QSizeF mapSize_;
     QList<QGeoCoordinate> circlePath_;
     bool dirtyMaterial_;
     QGeoMapPolygonGeometry geometry_;

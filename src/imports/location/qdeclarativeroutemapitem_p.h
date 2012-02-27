@@ -81,19 +81,14 @@ Q_SIGNALS:
 protected Q_SLOTS:
     virtual void updateMapItem();
     void updateAfterLinePropertiesChanged();
-
-private Q_SLOTS:
-    // map size changed
-    void handleCameraDataChanged(const QGeoCameraData& cameraData);
+    void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
 
 private:
     QDeclarativeMapLineProperties line_;
     QDeclarativeGeoRoute* route_;
-    qreal zoomLevel_;
     QList<QGeoCoordinate> path_;
     bool dirtyMaterial_;
     bool dragActive_;
-    QSizeF mapSize_;
     QGeoMapPolylineGeometry geometry_;
 };
 

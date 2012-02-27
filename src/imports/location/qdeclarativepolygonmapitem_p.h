@@ -103,10 +103,10 @@ Q_SIGNALS:
 protected Q_SLOTS:
     virtual void updateMapItem();
     void handleBorderUpdated();
+    void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
 
 private Q_SLOTS:
     // map size changed
-    void handleCameraDataChanged(const QGeoCameraData& cameraData);
     void updateAfterCoordinateChanged();
 
 private:
@@ -121,8 +121,6 @@ private:
     QList<QDeclarativeCoordinate*> coordPath_;
     QList<QGeoCoordinate> path_;
     QColor color_;
-    qreal zoomLevel_;
-    QSizeF mapSize_;
     bool dirtyMaterial_;
     QGeoMapPolygonGeometry geometry_;
     QGeoMapPolylineGeometry borderGeometry_;

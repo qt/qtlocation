@@ -42,6 +42,7 @@
 #include "qdeclarativecirclemapitem_p.h"
 #include "qdeclarativegeomapquickitem_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
+#include "qgeocameracapabilities_p.h"
 #include "qgeoprojection_p.h"
 #include <cmath>
 #include <QPen>
@@ -184,7 +185,6 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent):
     center_(0),
     color_(Qt::transparent),
     radius_(0),
-    zoomLevel_(0.0),
     dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
@@ -224,7 +224,6 @@ void QDeclarativeCircleMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *ma
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
-        QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(handleCameraDataChanged(QGeoCameraData)));
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
         updateMapItem();
@@ -364,17 +363,26 @@ void QDeclarativeCircleMapItem::updateMapItem()
     update();
 }
 
-void QDeclarativeCircleMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
+void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
-    if (cameraData.zoomLevel() != zoomLevel_) {
-        zoomLevel_ = cameraData.zoomLevel();
+    // if the scene is tilted, we must regenerate our geometry every frame
+    if (map()->cameraCapabilities().supportsTilting()
+            && (event.cameraData.tilt() > 0.1
+                || event.cameraData.tilt() < -0.1)) {
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }
 
-    QSizeF sz = QSizeF(quickMap()->width(), quickMap()->height());
-    if (sz != mapSize_) {
-        mapSize_ = sz;
+    // if the scene is rolled, we must regen too
+    if (map()->cameraCapabilities().supportsRolling()
+            && (event.cameraData.roll() > 0.1
+                || event.cameraData.roll() < -0.1)) {
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
+    }
+
+    // otherwise, only regen on rotate, resize and zoom
+    if (event.bearingChanged || event.mapSizeChanged || event.zoomLevelChanged) {
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }

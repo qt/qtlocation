@@ -87,6 +87,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
     virtual void updateMapItem();
     virtual void afterChildrenChanged();
+    void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
 
 private:
     qreal scaleFactor();

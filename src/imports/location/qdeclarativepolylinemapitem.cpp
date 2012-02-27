@@ -40,6 +40,7 @@
  ****************************************************************************/
 
 #include "qdeclarativepolylinemapitem_p.h"
+#include "qgeocameracapabilities_p.h"
 #include <QDeclarativeInfo>
 #include <QPainter>
 #include <QPainterPath>
@@ -390,7 +391,6 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent) :
     QDeclarativeGeoMapItemBase(parent),
-    zoomLevel_(0.0),
     dirtyMaterial_(true)
 {
     setFlag(ItemHasContents, true);
@@ -427,7 +427,6 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map){
-        QObject::connect(map, SIGNAL(cameraDataChanged(QGeoCameraData)), this, SLOT(handleCameraDataChanged(QGeoCameraData)));
         geometry_.markSourceDirty();
         updateMapItem();
     }
@@ -557,16 +556,24 @@ QDeclarativeMapLineProperties *QDeclarativePolylineMapItem::line()
     return &line_;
 }
 
-void QDeclarativePolylineMapItem::handleCameraDataChanged(const QGeoCameraData& cameraData)
+void QDeclarativePolylineMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
-    if (cameraData.zoomLevel() != zoomLevel_) {
-        zoomLevel_ = cameraData.zoomLevel();
+    // if the scene is tilted, we must regenerate our geometry every frame
+    if (map()->cameraCapabilities().supportsTilting()
+            && (event.cameraData.tilt() > 0.1
+                || event.cameraData.tilt() < -0.1)) {
         geometry_.markSourceDirty();
     }
 
-    QSizeF sz = QSizeF(quickMap()->width(), quickMap()->height());
-    if (sz != mapSize_) {
-        mapSize_ = sz;
+    // if the scene is rolled, we must regen too
+    if (map()->cameraCapabilities().supportsRolling()
+            && (event.cameraData.roll() > 0.1
+                || event.cameraData.roll() < -0.1)) {
+        geometry_.markSourceDirty();
+    }
+
+    // otherwise, only regen on rotate, resize and zoom
+    if (event.bearingChanged || event.mapSizeChanged || event.zoomLevelChanged) {
         geometry_.markSourceDirty();
     }
 
