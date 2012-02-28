@@ -1,0 +1,20 @@
+{
+    "Keys": ["nokia"],
+    "Provider": "nokia",
+    "Version": 100,
+    "Experimental": false,
+    "Features": [
+        "OnlineRoutingFeature",
+        "RouteUpdatesFeature",
+        "AlternativeRoutesFeature",
+        "ExcludeAreasRoutingFeature",
+        "OnlineGeocodingFeature",
+        "OnlineMappingFeature",
+        "OnlinePlacesFeature",
+        "ReverseGeocodingFeature",
+        "PlaceRecommendationsFeature",
+        "SearchSuggestionsFeature",
+        "CorrectionsFeature",
+        "LocalizedPlacesFeature"
+    ]
+}

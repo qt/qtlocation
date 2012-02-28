@@ -77,20 +77,12 @@ public:
                                           const QGeoBoundingArea &bounds);
 
 
-
-    bool supportsGeocoding() const;
-    bool supportsReverseGeocoding() const;
-
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
 Q_SIGNALS:
     void finished(QGeocodeReply* reply);
     void error(QGeocodeReply* reply, QGeocodeReply::Error error, QString errorString = QString());
-
-protected:
-    void setSupportsGeocoding(bool supported);
-    void setSupportsReverseGeocoding(bool supported);
 
 private:
     void setManagerName(const QString &managerName);

@@ -61,9 +61,6 @@ public:
     {
         Q_UNUSED(error)
         Q_UNUSED(errorString)
-        setSupportsRouteUpdates(true);
-        setSupportsAlternativeRoutes(true);
-        setSupportsExcludeAreas(true);
         setSupportedTravelModes(QGeoRouteRequest::PedestrianTravel);
         setSupportedFeatureTypes(QGeoRouteRequest::TollFeature);
         setSupportedFeatureWeights(QGeoRouteRequest::PreferFeatureWeight);

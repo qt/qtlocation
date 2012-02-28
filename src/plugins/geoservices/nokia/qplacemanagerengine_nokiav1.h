@@ -91,8 +91,6 @@ public:
     QList<QLocale> locales() const;
     void setLocales(const QList<QLocale> &locales);
 
-    QPlaceManager::ManagerFeatures supportedFeatures() const;
-
 private slots:
     void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
     void processingFinished(QPlaceReply *reply);

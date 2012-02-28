@@ -45,6 +45,7 @@ import QtLocation 5.0
 
 Item {
 
+    Plugin { id: unattachedPlugin }
     Plugin { id: nokiaPlugin; name: "nokia"}
     Plugin { id: invalidPlugin; name: "invalid"}
     Plugin { id: testPlugin;
@@ -56,9 +57,15 @@ Item {
                 PluginParameter { name: "validateWellKnownValues"; value: true}
             ]
         }
-    Plugin { id: requiredPlugin; required: Plugin.MappingFeature | Plugin.GeocodingFeature }
-    SignalSpy {id: invalidFeaturesSpy; target: invalidPlugin; signalName: "supportedFeaturesChanged"}
-    SignalSpy {id: invalidSupportedPlacesFeaturesSpy; target: invalidPlugin; signalName: "supportedPlacesFeaturesChanged"}
+    SignalSpy {id: invalidAttachedSpy; target: invalidPlugin; signalName: "attached"}
+
+    Plugin { id: requiredPlugin;
+        required {
+            mapping: Plugin.OfflineMappingFeature;
+            geocoding: Plugin.OfflineGeocodingFeature;
+            places: Plugin.AnyPlacesFeatures;
+        }
+    }
 
     TestCase {
         name: "Plugin properties"
@@ -67,68 +74,65 @@ Item {
             verify (invalidPlugin.availableServiceProviders.indexOf('qmlgeo.test.plugin') > -1) // at least test plugin must be present
 
             // invalid plugins should have no features
-            compare(invalidPlugin.supported, Plugin.NoFeatures)
+            verify(invalidPlugin.isAttached)
+            verify(!(invalidPlugin.supportsMapping()))
+            verify(!(invalidPlugin.supportsGeocoding()))
+            verify(!(invalidPlugin.supportsRouting()))
+            verify(!(invalidPlugin.supportsPlaces()))
 
             if (invalidPlugin.availableServiceProviders.indexOf('qmlgeo.test.plugin') > -1) {
-                var nokiaFeatures = (Plugin.GeocodingFeature |
-                                     Plugin.ReverseGeocodingFeature |
-                                     Plugin.RoutingFeature |
-                                     Plugin.MappingFeature |
-                                     Plugin.AnyPlacesFeature)
-                compare(nokiaPlugin.supported & nokiaFeatures, nokiaFeatures)
+                verify(testPlugin.isAttached)
+                verify(testPlugin.supportsMapping())
+                verify(testPlugin.supportsGeocoding())
+                verify(testPlugin.supportsPlaces())
+                verify(testPlugin.supportsRouting())
             }
 
-            var testFeatures =  (Plugin.GeocodingFeature |
-                                 Plugin.ReverseGeocodingFeature |
-                                 Plugin.RoutingFeature |
-                                 Plugin.MappingFeature |
-                                 Plugin.AnyPlacesFeature)
-            compare(testPlugin.supported & testFeatures, testFeatures)
+            if (invalidPlugin.availableServiceProviders.indexOf('nokia')) {
+                verify(nokiaPlugin.isAttached)
+                verify(nokiaPlugin.supportsMapping(Plugin.OnlineMappingFeature))
+                verify(nokiaPlugin.supportsGeocoding(Plugin.OnlineGeocodingFeature))
+                verify(nokiaPlugin.supportsRouting(Plugin.OnlineRoutingFeature))
+            }
+
+            verify(!unattachedPlugin.isAttached)
 
             // test changing name of plugin
-            invalidFeaturesSpy.clear()
-            compare(invalidFeaturesSpy.count, 0)
+            invalidAttachedSpy.clear()
+            compare(invalidAttachedSpy.count, 0)
             invalidPlugin.name = 'qmlgeo.test.plugin'
-            compare(invalidFeaturesSpy.count, 1)
-            compare(invalidPlugin.supported & testFeatures, testFeatures)
+            tryCompare(invalidAttachedSpy, 'count', 1)
+            verify(invalidPlugin.isAttached)
+
+            verify(invalidPlugin.supportsMapping())
+            verify(invalidPlugin.supportsGeocoding())
+            verify(invalidPlugin.supportsRouting())
+            verify(invalidPlugin.supportsPlaces())
 
             invalidPlugin.name = ''
-            compare(invalidFeaturesSpy.count, 2)
+            compare(invalidAttachedSpy.count, 2)
 
-            compare(invalidPlugin.supported, Plugin.NoFeatures)
+            verify(!invalidPlugin.supportsMapping())
+            verify(!invalidPlugin.supportsGeocoding())
+            verify(!invalidPlugin.supportsRouting())
+            verify(!invalidPlugin.supportsPlaces())
         }
 
         function test_required() {
             // the required plugin should either get nokia or qmlgeo.test.plugin
             // either way the name will be non-empty and it'll meet the spec
             verify(requiredPlugin.name !== "")
-            verify((requiredPlugin.supported & requiredPlugin.required) === requiredPlugin.required)
+            verify(requiredPlugin.supportsMapping(requiredPlugin.required.mapping))
+            verify(requiredPlugin.supportsGeocoding(requiredPlugin.required.geocoding))
+            verify(requiredPlugin.supportsPlaces(requiredPlugin.required.places))
         }
 
         function test_placesFeatures() {
-            verify((testPlugin.supportedPlacesFeatures & Plugin.SavePlaceFeature) === Plugin.SavePlaceFeature);
-            verify((testPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature) === Plugin.SaveCategoryFeature);
-            verify((testPlugin.supportedPlacesFeatures & Plugin.SearchSuggestionsFeature) === Plugin.SearchSuggestionsFeature);
-            verify((testPlugin.supportedPlacesFeatures & Plugin.CorrectionsFeature) === 0);
-            verify((testPlugin.supportedPlacesFeatures & Plugin.RemovePlaceFeature) === 0);
-
-            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.SavePlaceFeature) === 0);
-            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.RemovePlaceFeature) === 0);
-            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature) === 0);
-            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.RemoveCategoryFeature) === 0);
-            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.RecommendationsFeature) === Plugin.RecommendationsFeature);
-            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.SearchSuggestionsFeature) === Plugin.SearchSuggestionsFeature);
-            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.CorrectionsFeature) === Plugin.CorrectionsFeature);
-            verify((nokiaPlugin.supportedPlacesFeatures & Plugin.LocaleFeature) === Plugin.LocaleFeature);
-
-            invalidSupportedPlacesFeaturesSpy.clear();
-            invalidPlugin.name = 'qmlgeo.test.plugin';
-            compare(invalidSupportedPlacesFeaturesSpy.count, 1);
-            invalidPlugin.name = '';
-            compare(invalidSupportedPlacesFeaturesSpy.count, 2);
-
-            invalidFeaturesSpy.clear();
-            invalidSupportedPlacesFeaturesSpy.clear();
+            verify(testPlugin.supportsPlaces(Plugin.SavePlaceFeature))
+            verify(testPlugin.supportsPlaces(Plugin.SaveCategoryFeature))
+            verify(testPlugin.supportsPlaces(Plugin.SearchSuggestionsFeature))
+            verify(!testPlugin.supportsPlaces(Plugin.CorrectionsFeature))
+            verify(!testPlugin.supportsPlaces(Plugin.RemovePlaceFeature))
         }
 
         function test_locale() {

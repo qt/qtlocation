@@ -11,3 +11,6 @@ SOURCES += qgeoserviceproviderplugin_test.cpp
 
 target.path += $$[QT_INSTALL_PLUGINS]/geoservices
 INSTALLS += target
+
+OTHER_FILES += \
+    placesplugin.json

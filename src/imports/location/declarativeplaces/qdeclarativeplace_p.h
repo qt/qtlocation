@@ -204,6 +204,7 @@ signals:
 private slots:
     void finished();
     void contactsModified(const QString &, const QVariant &);
+    void pluginReady();
 
 private:
     void synchronizeCategories();

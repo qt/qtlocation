@@ -45,6 +45,7 @@
 #include <QMap>
 #include <QVariant>
 #include <QString>
+#include <QObject>
 
 #include <QtLocation/qlocationglobal.h>
 
@@ -52,8 +53,7 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
+class QLocale;
 class QStringList;
 class QGeocodingManager;
 class QGeoMappingManager;
@@ -65,8 +65,10 @@ class QGeoRoutingManagerEngine;
 class QPlaceManagerEngine;
 class QGeoServiceProviderPrivate;
 
-class Q_LOCATION_EXPORT QGeoServiceProvider
+class Q_LOCATION_EXPORT QGeoServiceProvider : public QObject
 {
+    Q_OBJECT
+
 public:
     enum Error {
         NoError,
@@ -76,11 +78,74 @@ public:
         ConnectionError
     };
 
+    enum RoutingFeature {
+        NoRoutingFeatures               = 0,
+        OnlineRoutingFeature            = (1<<0),
+        OfflineRoutingFeature           = (1<<1),
+        LocalizedRoutingFeature         = (1<<2),
+        RouteUpdatesFeature             = (1<<3),
+        AlternativeRoutesFeature        = (1<<4),
+        ExcludeAreasRoutingFeature      = (1<<5),
+        AnyRoutingFeatures              = ~(0)
+    };
+
+    enum GeocodingFeature {
+        NoGeocodingFeatures             = 0,
+        OnlineGeocodingFeature          = (1<<0),
+        OfflineGeocodingFeature         = (1<<1),
+        ReverseGeocodingFeature         = (1<<2),
+        LocalizedGeocodingFeature       = (1<<3),
+        AnyGeocodingFeatures            = ~(0)
+    };
+
+    enum MappingFeature {
+        NoMappingFeatures               = 0,
+        OnlineMappingFeature            = (1<<0),
+        OfflineMappingFeature           = (1<<1),
+        LocalizedMappingFeature         = (1<<2),
+        AnyMappingFeatures              = ~(0)
+    };
+
+    enum PlacesFeature {
+        NoPlacesFeatures                = 0,
+        OnlinePlacesFeature             = (1<<0),
+        OfflinePlacesFeature            = (1<<1),
+        SavePlaceFeature                = (1<<2),
+        RemovePlaceFeature              = (1<<3),
+        SaveCategoryFeature             = (1<<4),
+        RemoveCategoryFeature           = (1<<5),
+        PlaceRecommendationsFeature     = (1<<6),
+        SearchSuggestionsFeature        = (1<<7),
+        CorrectionsFeature              = (1<<8),
+        LocalizedPlacesFeature          = (1<<9),
+        NotificationsFeature            = (1<<10),
+        PlaceMatchingFeature            = (1<<11),
+        AnyPlacesFeatures               = ~(0)
+    };
+
+    Q_DECLARE_FLAGS(RoutingFeatures, RoutingFeature)
+    Q_FLAGS(RoutingFeatures)
+
+    Q_DECLARE_FLAGS(GeocodingFeatures, GeocodingFeature)
+    Q_FLAGS(GeocodingFeatures)
+
+    Q_DECLARE_FLAGS(MappingFeatures, MappingFeature)
+    Q_FLAGS(MappingFeatures)
+
+    Q_DECLARE_FLAGS(PlacesFeatures, PlacesFeature)
+    Q_FLAGS(PlacesFeatures)
+
     static QStringList availableServiceProviders();
     QGeoServiceProvider(const QString &providerName,
-                        const QMap<QString,QVariant> &parameters = (QMap<QString,QVariant>()));
+                        const QMap<QString,QVariant> &parameters = (QMap<QString,QVariant>()),
+                        bool allowExperimental = false);
 
     ~QGeoServiceProvider();
+
+    RoutingFeatures routingFeatures() const;
+    GeocodingFeatures geocodingFeatures() const;
+    MappingFeatures mappingFeatures() const;
+    PlacesFeatures placesFeatures() const;
 
     QGeocodingManager* geocodingManager() const;
     QGeoMappingManager* mappingManager() const;
@@ -89,6 +154,10 @@ public:
 
     Error error() const;
     QString errorString() const;
+
+    void setParameters(const QMap<QString, QVariant> &parameters);
+    void setLocale(const QLocale &locale);
+    void setAllowExperimental(bool allow);
 
 private:
     QGeoServiceProviderPrivate* d_ptr;

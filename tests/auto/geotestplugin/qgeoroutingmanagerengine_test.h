@@ -120,9 +120,6 @@ public:
                     QGeoRouteRequest::CarTravel | QGeoRouteRequest::PedestrianTravel |
                     QGeoRouteRequest::BicycleTravel | QGeoRouteRequest::PublicTransitTravel |
                     QGeoRouteRequest::TruckTravel );
-        setSupportsAlternativeRoutes ( true );
-        setSupportsExcludeAreas ( true );
-        setSupportsRouteUpdates ( true );
     }
 
     virtual QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request)

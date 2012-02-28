@@ -560,10 +560,10 @@ Item {
 
     function createMap(placesPlugin) {
         var mapPlugin;
-        if (placesPlugin.supported & Plugin.MappingFeature) {
+        if (placesPlugin.supportsMapping()) {
             mapPlugin = placesPlugin;
         } else {
-            mapPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { required: Plugin.MappingFeature }', page);
+            mapPlugin = Qt.createQmlObject('import QtLocation 5.0; Plugin { required.mapping: Plugin.AnyMappingFeatures }', page);
         }
 
         if (map)
@@ -577,8 +577,8 @@ Item {
         var myArray = new Array;
         for (var i = 0; i < plugin.availableServiceProviders.length; i++) {
             var tempPlugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
-            //note this will allocate all the plugin managers and resources
-            if (tempPlugin.supported & Plugin.AnyPlacesFeature)
+
+            if (tempPlugin.supportsPlaces())
                 myArray.push(tempPlugin.name)
         }
 

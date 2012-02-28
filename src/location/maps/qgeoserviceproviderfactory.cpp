@@ -65,25 +65,6 @@ QT_BEGIN_NAMESPACE
 Destroys this QGeoServiceProviderFactory instance.
 */
 
-
-/*!
-\fn QString QGeoServiceProviderFactory::providerName() const
-
-Returns the string used to identify the service provider behind this implementation.
-
-The combination of providerName() and providerVersion() should be unique
-amongst the plugins.
-*/
-
-/*!
-\fn int QGeoServiceProviderFactory::providerVersion() const
-
-Returns the version of the plugin.
-
-The combination of providerName() and providerVersion() should be unique
-amongst the plugins.
-*/
-
 /*!
     Returns a new QGeocodingManagerEngine instance, initialized with \a
     parameters, which implements the location geocoding functionality.

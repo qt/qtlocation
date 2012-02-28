@@ -272,46 +272,6 @@ QGeocodeReply* QGeocodingManagerEngine::geocode(const QString &address,
 }
 
 /*!
-    Sets whether geocoding is supported by this engine to \a supported.
-
-    It is important that subclasses use this method to ensure that the engine
-    reports its capabilities correctly.  If this function is not used the
-    engine will report that it does not support geocoding.
-*/
-void QGeocodingManagerEngine::setSupportsGeocoding(bool supported)
-{
-    d_ptr->supportsGeocoding = supported;
-}
-
-/*!
-    Returns whether this engine supports geocoding.
-*/
-bool QGeocodingManagerEngine::supportsGeocoding() const
-{
-    return d_ptr->supportsGeocoding;
-}
-
-/*!
-    Sets whether reverse geocoding is supported by this engine to \a supported.
-
-    It is important that subclasses use this method to ensure that the engine
-    reports its capabilities correctly.  If this function is not used the
-    engine will report that it does not support reverse geocoding.
-*/
-void QGeocodingManagerEngine::setSupportsReverseGeocoding(bool supported)
-{
-    d_ptr->supportsReverseGeocoding = supported;
-}
-
-/*!
-    Returns whether this engine supports reverse geocoding.
-*/
-bool QGeocodingManagerEngine::supportsReverseGeocoding() const
-{
-    return d_ptr->supportsReverseGeocoding;
-}
-
-/*!
     Sets the locale to be used by this manager to \a locale.
 
     If this geocoding manager supports returning the results
@@ -367,9 +327,8 @@ QLocale QGeocodingManagerEngine::locale() const
 *******************************************************************************/
 
 QGeocodingManagerEnginePrivate::QGeocodingManagerEnginePrivate()
-    : managerVersion(-1),
-      supportsGeocoding(false),
-      supportsReverseGeocoding(false) {}
+    : managerVersion(-1)
+{}
 
 QGeocodingManagerEnginePrivate::~QGeocodingManagerEnginePrivate()
 {

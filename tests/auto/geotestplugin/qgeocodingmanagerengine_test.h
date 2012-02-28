@@ -100,8 +100,6 @@ public:
         if (parameters.contains("validateWellKnownValues"))
             validateWellKnownValues_ = qvariant_cast<bool>(parameters.value("validateWellKnownValues"));
 
-        setSupportsGeocoding(supported_);
-        setSupportsReverseGeocoding(supported_);
         setLocale(QLocale (QLocale::German, QLocale::Germany));
     }
 

@@ -309,15 +309,6 @@ void QPlaceManagerEngineNokiaV1::setLocales(const QList<QLocale> &locales)
     QPlaceRestManager::instance()->setLocales(locales);
 }
 
-
-QPlaceManager::ManagerFeatures QPlaceManagerEngineNokiaV1::supportedFeatures() const
-{
-    return QPlaceManager::RecommendationsFeature
-            | QPlaceManager::SearchSuggestionsFeature
-            | QPlaceManager::CorrectionsFeature
-            | QPlaceManager::LocaleFeature;
-}
-
 void QPlaceManagerEngineNokiaV1::processingError(QPlaceReply *reply,
                                               const QPlaceReply::Error &errorId,
                                               const QString &errorMessage)

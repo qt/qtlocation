@@ -208,66 +208,6 @@ QGeoRouteReply* QGeoRoutingManagerEngine::updateRoute(const QGeoRoute &route, co
 }
 
 /*!
-    Sets whether this engine supports updating routes to \a supported.
-
-    It is important that subclasses use this method to ensure that the engine
-    reports its capabilities correctly.  If this function is not used the
-    engine will report that it does not support updating routes.
-*/
-void QGeoRoutingManagerEngine::setSupportsRouteUpdates(bool supported)
-{
-    d_ptr->supportsRouteUpdates = supported;
-}
-
-/*!
-    Returns whether this engine supports updating routes.
-*/
-bool QGeoRoutingManagerEngine::supportsRouteUpdates() const
-{
-    return d_ptr->supportsRouteUpdates;
-}
-
-/*!
-    Sets whether this engine supports request for alternative routes to \a supported.
-
-    It is important that subclasses use this method to ensure that the engine
-    reports its capabilities correctly.  If this function is not used the
-    engine will report that it does not support alternative routes.
-*/
-void QGeoRoutingManagerEngine::setSupportsAlternativeRoutes(bool supported)
-{
-    d_ptr->supportsAlternativeRoutes = supported;
-}
-
-/*!
-    Returns whether this engine supports request for alternative routes.
-*/
-bool QGeoRoutingManagerEngine::supportsAlternativeRoutes() const
-{
-    return d_ptr->supportsAlternativeRoutes;
-}
-
-/*!
-    Sets whether this engine supports request for excluding areas from routes to \a supported.
-
-    It is important that subclasses use this method to ensure that the engine
-    reports its capabilities correctly.  If this function is not used the
-    engine will report that it does not support excluding areas.
-*/
-void QGeoRoutingManagerEngine::setSupportsExcludeAreas(bool supported)
-{
-    d_ptr->supportsExcludeAreas = supported;
-}
-
-/*!
-    Returns whether this engine supports the exclusion of areas from routes.
-*/
-bool QGeoRoutingManagerEngine::supportsExcludeAreas() const
-{
-    return d_ptr->supportsExcludeAreas;
-}
-
-/*!
     Sets the travel modes supported by this engine to \a travelModes.
 
     It is important that subclasses use this method to ensure that the engine
@@ -451,10 +391,7 @@ Use deleteLater() instead.
 *******************************************************************************/
 
 QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate()
-    : managerVersion(-1),
-      supportsRouteUpdates(false),
-      supportsAlternativeRoutes(false),
-      supportsExcludeAreas(false)
+    : managerVersion(-1)
 {
 }
 

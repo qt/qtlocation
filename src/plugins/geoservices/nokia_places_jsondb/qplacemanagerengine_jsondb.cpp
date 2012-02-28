@@ -307,15 +307,6 @@ QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const Q
     return QUrl();
 }
 
-QPlaceManager::ManagerFeatures QPlaceManagerEngineJsonDb::supportedFeatures() const
-{
-    return QPlaceManager::SavePlaceFeature |
-           QPlaceManager::RemovePlaceFeature |
-           QPlaceManager::SaveCategoryFeature |
-           QPlaceManager::RemoveCategoryFeature |
-           QPlaceManager::MatchingFeature;
-}
-
 QPlaceMatchReply * QPlaceManagerEngineJsonDb::matchingPlaces(const QPlaceMatchRequest &request)
 {
     MatchReply *reply = new MatchReply(this);

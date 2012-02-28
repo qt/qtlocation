@@ -399,14 +399,6 @@ QPlace QPlaceManager::compatiblePlace(const QPlace &original)
 }
 
 /*!
-    Returns a set of flags indicating what particular features this manager instance supports.
-*/
-QPlaceManager::ManagerFeatures QPlaceManager::supportedFeatures() const
-{
-    return d->supportedFeatures();
-}
-
-/*!
     Returns a reply which contains a list of places which correspond/match those
     specified in the \a request.  The places specified in the request come from a
     different manager.

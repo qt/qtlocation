@@ -345,15 +345,6 @@ QPlace QPlaceManagerEngine::compatiblePlace(const QPlace &original) const
 }
 
 /*!
-    Returns a set of flags indicating what particular features this manager engine instance
-    supports.
-*/
-QPlaceManager::ManagerFeatures QPlaceManagerEngine::supportedFeatures() const
-{
-    return QPlaceManager::NoFeatures;
-}
-
-/*!
     Returns a reply which contains a list of places which correspond/match those
     specified in \a request.
 */

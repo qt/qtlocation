@@ -51,21 +51,6 @@ QGeoServiceProviderFactoryJsonDb::QGeoServiceProviderFactoryJsonDb() {}
 
 QGeoServiceProviderFactoryJsonDb::~QGeoServiceProviderFactoryJsonDb() {}
 
-QString QGeoServiceProviderFactoryJsonDb::providerName() const
-{
-    return QLatin1String("nokia_places_jsondb");
-}
-
-QStringList QGeoServiceProviderFactoryJsonDb::keys() const
-{
-    return QStringList() << QLatin1String("nokia_places_jsondb");
-}
-
-int QGeoServiceProviderFactoryJsonDb::providerVersion() const
-{
-    return 1;
-}
-
 QGeocodingManagerEngine* QGeoServiceProviderFactoryJsonDb::createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
@@ -105,7 +90,5 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryJsonDb::createPlaceManagerEngine(
 {
     return new QPlaceManagerEngineJsonDb(parameters, error, errorString);
 }
-
-Q_EXPORT_PLUGIN2(qtgeoservices_nokia_places_jsondb, QGeoServiceProviderFactoryJsonDb)
 
 QT_END_NAMESPACE

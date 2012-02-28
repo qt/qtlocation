@@ -273,30 +273,6 @@ QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QG
 }
 
 /*!
-    Returns whether this manager supports updating routes.
-*/
-bool QGeoRoutingManager::supportsRouteUpdates() const
-{
-    return d_ptr->engine->supportsRouteUpdates();
-}
-
-/*!
-    Returns whether this manager supports request for alternative routes.
-*/
-bool QGeoRoutingManager::supportsAlternativeRoutes() const
-{
-    return d_ptr->engine->supportsAlternativeRoutes();
-}
-
-/*!
-    Returns whether this engine supports the exclusion of areas from routes.
-*/
-bool QGeoRoutingManager::supportsExcludeAreas() const
-{
-    return d_ptr->engine->supportsExcludeAreas();
-}
-
-/*!
     Returns the travel modes supported by this manager.
 */
 QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const

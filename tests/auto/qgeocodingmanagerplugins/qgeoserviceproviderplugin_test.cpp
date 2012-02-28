@@ -52,25 +52,8 @@ QGeoServiceProviderFactoryTest::~QGeoServiceProviderFactoryTest()
 {
 }
 
-QString QGeoServiceProviderFactoryTest::providerName() const
-{
-    return "static.geocode.test.plugin";
-}
-
-QStringList QGeoServiceProviderFactoryTest::keys() const
-{
-    return QStringList() << QLatin1String("static.geocode.test.plugin");
-}
-
-int QGeoServiceProviderFactoryTest::providerVersion() const
-{
-    return 3;
-}
-
 QGeocodingManagerEngine* QGeoServiceProviderFactoryTest::createGeocodingManagerEngine(const QMap<
     QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
 {
     return new QGeocodingManagerEngineTest(parameters, error, errorString);
 }
-
-Q_EXPORT_PLUGIN2(qtgeoservices_staticgeocodingplugin, QGeoServiceProviderFactoryTest)

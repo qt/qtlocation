@@ -394,12 +394,6 @@ public:
         }
     }
 
-    QPlaceManager::ManagerFeatures supportedFeatures() const {
-        return QPlaceManager::SavePlaceFeature
-               | QPlaceManager::SaveCategoryFeature
-               | QPlaceManager::SearchSuggestionsFeature;
-    }
-
     QPlace compatiblePlace(const QPlace &original) const {
         QPlace place;
         place.setName(original.name());

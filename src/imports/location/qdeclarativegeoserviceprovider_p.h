@@ -45,6 +45,7 @@
 #include <qgeocoordinate.h>
 #include <QtQuick/QQuickItem>
 #include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
 
 #include <QMap>
@@ -52,8 +53,6 @@
 #include <QVariant>
 
 QT_BEGIN_NAMESPACE
-
-class QGeoServiceProvider;
 
 class QDeclarativeGeoServiceProviderParameter : public QObject
 {
@@ -81,20 +80,24 @@ private:
     QVariant value_;
 };
 
+class QDeclarativeGeoServiceProviderRequirements;
+
 class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
-    Q_ENUMS (PlacesFeature)
-    Q_ENUMS (PluginFeature)
+    Q_ENUMS(RoutingFeature)
+    Q_ENUMS(GeocodingFeature)
+    Q_ENUMS(MappingFeature)
+    Q_ENUMS(PlacesFeature)
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QStringList availableServiceProviders READ availableServiceProviders CONSTANT)
     Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> parameters READ parameters)
-    Q_PROPERTY(PluginFeatures required READ requiredFeatures WRITE setRequiredFeatures NOTIFY requiredFeaturesChanged)
-    Q_PROPERTY(PluginFeatures supported READ supportedFeatures NOTIFY supportedFeaturesChanged)
-    Q_PROPERTY(PlacesFeatures supportedPlacesFeatures READ supportedPlacesFeatures NOTIFY supportedPlacesFeaturesChanged)
+    Q_PROPERTY(QDeclarativeGeoServiceProviderRequirements *required READ requirements)
     Q_PROPERTY(QStringList locales READ locales WRITE setLocales NOTIFY localesChanged)
     Q_PROPERTY(QStringList preferred READ preferred WRITE setPreferred NOTIFY preferredChanged)
+    Q_PROPERTY(bool allowExperimental READ allowExperimental WRITE setAllowExperimental NOTIFY allowExperimentalChanged)
+    Q_PROPERTY(bool isAttached READ isAttached NOTIFY attached)
 
     Q_CLASSINFO("DefaultProperty", "parameters")
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -103,31 +106,59 @@ public:
     QDeclarativeGeoServiceProvider(QObject *parent = 0);
     ~QDeclarativeGeoServiceProvider();
 
-    enum PluginFeature {
-        NoFeatures                 = 0x00000000,
-        GeocodingFeature           = 0x00000001,
-        ReverseGeocodingFeature    = 0x00000002,
-        RoutingFeature             = 0x00000004,
-        MappingFeature             = 0x00000008,
-        AnyPlacesFeature           = 0x00000010
+    enum RoutingFeature {
+        NoRoutingFeatures               = QGeoServiceProvider::NoRoutingFeatures,
+        OnlineRoutingFeature            = QGeoServiceProvider::OnlineRoutingFeature,
+        OfflineRoutingFeature           = QGeoServiceProvider::OfflineRoutingFeature,
+        LocalizedRoutingFeature         = QGeoServiceProvider::LocalizedRoutingFeature,
+        RouteUpdatesFeature             = QGeoServiceProvider::RouteUpdatesFeature,
+        AlternativeRoutesFeature        = QGeoServiceProvider::AlternativeRoutesFeature,
+        ExcludeAreasRoutingFeature      = QGeoServiceProvider::ExcludeAreasRoutingFeature,
+        AnyRoutingFeatures              = QGeoServiceProvider::AnyRoutingFeatures
     };
 
-    Q_DECLARE_FLAGS(PluginFeatures, PluginFeature)
-    Q_FLAGS(PluginFeatures)
+    enum GeocodingFeature {
+        NoGeocodingFeatures             = QGeoServiceProvider::NoGeocodingFeatures,
+        OnlineGeocodingFeature          = QGeoServiceProvider::OnlineGeocodingFeature,
+        OfflineGeocodingFeature         = QGeoServiceProvider::OfflineGeocodingFeature,
+        ReverseGeocodingFeature         = QGeoServiceProvider::ReverseGeocodingFeature,
+        LocalizedGeocodingFeature       = QGeoServiceProvider::LocalizedGeocodingFeature,
+        AnyGeocodingFeatures            = QGeoServiceProvider::AnyGeocodingFeatures
+    };
+
+    enum MappingFeature {
+        NoMappingFeatures               = QGeoServiceProvider::NoMappingFeatures,
+        OnlineMappingFeature            = QGeoServiceProvider::OnlineMappingFeature,
+        OfflineMappingFeature           = QGeoServiceProvider::OfflineMappingFeature,
+        LocalizedMappingFeature         = QGeoServiceProvider::LocalizedMappingFeature,
+        AnyMappingFeatures              = QGeoServiceProvider::AnyMappingFeatures
+    };
 
     enum PlacesFeature {
-        NoPlaceFeatures = QPlaceManager::NoFeatures,
-        SavePlaceFeature = QPlaceManager::SavePlaceFeature,
-        RemovePlaceFeature = QPlaceManager::RemovePlaceFeature,
-        SaveCategoryFeature = QPlaceManager:: SaveCategoryFeature,
-        RemoveCategoryFeature = QPlaceManager::RemoveCategoryFeature,
-        RecommendationsFeature = QPlaceManager::RecommendationsFeature,
-        SearchSuggestionsFeature = QPlaceManager::SearchSuggestionsFeature,
-        CorrectionsFeature = QPlaceManager::CorrectionsFeature,
-        LocaleFeature = QPlaceManager::LocaleFeature,
-        NotificationsFeature = QPlaceManager::NotificationsFeature,
-        FavoritesMatchingFeature = QPlaceManager::MatchingFeature
+        NoPlacesFeatures                = QGeoServiceProvider::NoPlacesFeatures,
+        OnlinePlacesFeature             = QGeoServiceProvider::OnlinePlacesFeature,
+        OfflinePlacesFeature            = QGeoServiceProvider::OfflinePlacesFeature,
+        SavePlaceFeature                = QGeoServiceProvider::SavePlaceFeature,
+        RemovePlaceFeature              = QGeoServiceProvider::RemovePlaceFeature,
+        SaveCategoryFeature             = QGeoServiceProvider::SaveCategoryFeature,
+        RemoveCategoryFeature           = QGeoServiceProvider::RemoveCategoryFeature,
+        PlaceRecommendationsFeature     = QGeoServiceProvider::PlaceRecommendationsFeature,
+        SearchSuggestionsFeature        = QGeoServiceProvider::SearchSuggestionsFeature,
+        CorrectionsFeature              = QGeoServiceProvider::CorrectionsFeature,
+        LocalizedPlacesFeature          = QGeoServiceProvider::LocalizedPlacesFeature,
+        NotificationsFeature            = QGeoServiceProvider::NotificationsFeature,
+        PlaceMatchingFeature            = QGeoServiceProvider::PlaceMatchingFeature,
+        AnyPlacesFeatures               = QGeoServiceProvider::AnyPlacesFeatures
     };
+
+    Q_DECLARE_FLAGS(RoutingFeatures, RoutingFeature)
+    Q_FLAGS(RoutingFeatures)
+
+    Q_DECLARE_FLAGS(GeocodingFeatures, GeocodingFeature)
+    Q_FLAGS(GeocodingFeatures)
+
+    Q_DECLARE_FLAGS(MappingFeatures, MappingFeature)
+    Q_FLAGS(MappingFeatures)
 
     Q_DECLARE_FLAGS(PlacesFeatures, PlacesFeature)
     Q_FLAGS(PlacesFeatures)
@@ -144,55 +175,104 @@ public:
 
     QStringList availableServiceProviders();
 
-    PluginFeatures supportedFeatures() const;
-
-    PluginFeatures requiredFeatures() const;
-    void setRequiredFeatures(const PluginFeatures &features);
-
-    PlacesFeatures supportedPlacesFeatures() const;
+    QDeclarativeGeoServiceProviderRequirements *requirements() const;
 
     QStringList preferred() const;
     void setPreferred(const QStringList &val);
 
-    QGeoServiceProvider *sharedGeoServiceProvider();
+    QGeoServiceProvider *sharedGeoServiceProvider() const;
+
+    Q_INVOKABLE bool supportsRouting(const RoutingFeatures &feature = AnyRoutingFeatures) const;
+    Q_INVOKABLE bool supportsGeocoding(const GeocodingFeatures &feature = AnyGeocodingFeatures) const;
+    Q_INVOKABLE bool supportsMapping(const MappingFeatures &feature = AnyMappingFeatures) const;
+    Q_INVOKABLE bool supportsPlaces(const PlacesFeatures &feature = AnyPlacesFeatures) const;
 
     QStringList locales() const;
     void setLocales(const QStringList &locales);
 
-    bool ready() const;
+    bool isAttached() const;
+
+    void setAllowExperimental(bool allow);
+    bool allowExperimental() const;
 
 Q_SIGNALS:
     void nameChanged(const QString &name);
     void localesChanged();
-    void supportedFeaturesChanged(const PluginFeatures &features);
-    void requiredFeaturesChanged(const PluginFeatures &features);
-    void supportedPlacesFeaturesChanged(const PlacesFeatures &features);
+    void attached();
     void preferredChanged(const QStringList &preferences);
+    void allowExperimentalChanged(bool allow);
 
 private:
     static void parameter_append(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *mapObject);
     static int parameter_count(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
     static QDeclarativeGeoServiceProviderParameter* parameter_at(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index);
     static void parameter_clear(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
-    void update(bool doEmit = true);
 
     QGeoServiceProvider *sharedProvider_;
     QString name_;
     QList<QDeclarativeGeoServiceProviderParameter*> parameters_;
-    PluginFeatures supported_;
-    PluginFeatures required_;
+    QDeclarativeGeoServiceProviderRequirements *required_;
     bool complete_;
+    bool experimental_;
     QStringList locales_;
     QStringList prefer_;
-    PlacesFeatures placesFeatures_;
     Q_DISABLE_COPY(QDeclarativeGeoServiceProvider)
+};
+
+class QDeclarativeGeoServiceProviderRequirements : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QDeclarativeGeoServiceProvider::MappingFeatures mapping
+               READ mappingRequirements WRITE setMappingRequirements
+               NOTIFY mappingRequirementsChanged)
+    Q_PROPERTY(QDeclarativeGeoServiceProvider::RoutingFeatures routing
+               READ routingRequirements WRITE setRoutingRequirements
+               NOTIFY routingRequirementsChanged)
+    Q_PROPERTY(QDeclarativeGeoServiceProvider::GeocodingFeatures geocoding
+               READ geocodingRequirements WRITE setGeocodingRequirements
+               NOTIFY geocodingRequirementsChanged)
+    Q_PROPERTY(QDeclarativeGeoServiceProvider::PlacesFeatures places
+               READ placesRequirements WRITE setPlacesRequirements
+               NOTIFY placesRequirementsChanged)
+
+public:
+    QDeclarativeGeoServiceProviderRequirements(QObject *parent = 0);
+    ~QDeclarativeGeoServiceProviderRequirements();
+
+    QDeclarativeGeoServiceProvider::MappingFeatures mappingRequirements() const;
+    void setMappingRequirements(const QDeclarativeGeoServiceProvider::MappingFeatures &features);
+
+    QDeclarativeGeoServiceProvider::RoutingFeatures routingRequirements() const;
+    void setRoutingRequirements(const QDeclarativeGeoServiceProvider::RoutingFeatures &features);
+
+    QDeclarativeGeoServiceProvider::GeocodingFeatures geocodingRequirements() const;
+    void setGeocodingRequirements(const QDeclarativeGeoServiceProvider::GeocodingFeatures &features);
+
+    QDeclarativeGeoServiceProvider::PlacesFeatures placesRequirements() const;
+    void setPlacesRequirements(const QDeclarativeGeoServiceProvider::PlacesFeatures &features);
+
+    Q_INVOKABLE bool matches(const QGeoServiceProvider *provider) const;
+
+signals:
+    void mappingRequirementsChanged(const QDeclarativeGeoServiceProvider::MappingFeatures &features);
+    void routingRequirementsChanged(const QDeclarativeGeoServiceProvider::RoutingFeatures &features);
+    void geocodingRequirementsChanged(const QDeclarativeGeoServiceProvider::GeocodingFeatures &features);
+    void placesRequirementsChanged(const QDeclarativeGeoServiceProvider::PlacesFeatures &features);
+
+    void requirementsChanged();
+
+private:
+    QDeclarativeGeoServiceProvider::MappingFeatures mapping_;
+    QDeclarativeGeoServiceProvider::RoutingFeatures routing_;
+    QDeclarativeGeoServiceProvider::GeocodingFeatures geocoding_;
+    QDeclarativeGeoServiceProvider::PlacesFeatures places_;
+
 };
 
 QT_END_NAMESPACE
 
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProviderParameter));
+QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProviderRequirements));
 QML_DECLARE_TYPE(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProvider));
-Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProvider::PlacesFeatures))
-Q_DECLARE_OPERATORS_FOR_FLAGS(QT_PREPEND_NAMESPACE(QDeclarativeGeoServiceProvider::PluginFeatures))
 
 #endif

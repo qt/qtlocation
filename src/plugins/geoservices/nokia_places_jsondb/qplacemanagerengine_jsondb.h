@@ -103,7 +103,6 @@ public:
 
     QPlace compatiblePlace(const QPlace &original) const;
     QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const;
-    QPlaceManager::ManagerFeatures supportedFeatures() const;
 
     JsonDb *db() { return m_jsonDb;}
     QPlaceManager *manager() const { return QPlaceManagerEngine::manager(); }

@@ -55,21 +55,6 @@ QGeoServiceProviderFactoryTest::~QGeoServiceProviderFactoryTest()
 {
 }
 
-QString QGeoServiceProviderFactoryTest::providerName() const
-{
-    return "qmlgeo.test.plugin";
-}
-
-QStringList QGeoServiceProviderFactoryTest::keys() const
-{
-    return QStringList() << QLatin1String("qmlgeo.test.plugin");
-}
-
-int QGeoServiceProviderFactoryTest::providerVersion() const
-{
-    return 3;
-}
-
 QGeoRoutingManagerEngine* QGeoServiceProviderFactoryTest::createRoutingManagerEngine (
             const QMap<QString, QVariant> & parameters,
             QGeoServiceProvider::Error * error, QString * errorString ) const
@@ -100,5 +85,3 @@ QPlaceManagerEngine* QGeoServiceProviderFactoryTest::createPlaceManagerEngine(
     Q_UNUSED(errorString);
     return new QPlaceManagerEngineTest(parameters);
 }
-
-Q_EXPORT_PLUGIN2(qtgeoservices_qmltestplugin, QGeoServiceProviderFactoryTest)

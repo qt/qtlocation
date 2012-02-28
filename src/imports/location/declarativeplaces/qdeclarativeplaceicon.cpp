@@ -198,6 +198,16 @@ void QDeclarativePlaceIcon::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     if (!m_plugin)
         return;
 
+    if (m_plugin->isAttached()) {
+        pluginReady();
+    } else {
+        connect(m_plugin, SIGNAL(attached()),
+                this, SLOT(pluginReady()));
+    }
+}
+
+void QDeclarativePlaceIcon::pluginReady()
+{
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {

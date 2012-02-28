@@ -96,6 +96,11 @@ void tst_QPlaceManagerUnsupported::initTestCase()
     QVERIFY(providers.contains("test.places.unsupported"));
 
     m_provider = new QGeoServiceProvider("test.places.unsupported");
+    QVERIFY(m_provider);
+    QCOMPARE(m_provider->error(), QGeoServiceProvider::NotSupportedError);
+    m_provider->setAllowExperimental(true);
+    QCOMPARE(m_provider->error(), QGeoServiceProvider::NoError);
+
     m_manager = m_provider->placeManager();
     QVERIFY(m_manager);
 }
@@ -109,7 +114,7 @@ void tst_QPlaceManagerUnsupported::testMetadata()
 {
     QCOMPARE(m_manager->managerName(), QLatin1String("test.places.unsupported"));
     QCOMPARE(m_manager->managerVersion(), 1);
-    QCOMPARE(m_manager->supportedFeatures(), QPlaceManager::NoFeatures);
+    QCOMPARE(m_provider->placesFeatures(), QGeoServiceProvider::NoPlacesFeatures);
 }
 
 void tst_QPlaceManagerUnsupported::testLocales()

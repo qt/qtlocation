@@ -71,9 +71,6 @@ public:
     QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
     QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
 
-    bool supportsRouteUpdates() const;
-    bool supportsAlternativeRoutes() const;
-    bool supportsExcludeAreas() const;
     QGeoRouteRequest::TravelModes supportedTravelModes() const;
     QGeoRouteRequest::FeatureTypes supportedFeatureTypes() const;
     QGeoRouteRequest::FeatureWeights supportedFeatureWeights() const;

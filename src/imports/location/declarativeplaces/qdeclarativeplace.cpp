@@ -230,6 +230,17 @@ void QDeclarativePlace::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     m_plugin = plugin;
     if (m_complete)
         emit pluginChanged();
+
+    if (m_plugin->isAttached()) {
+        pluginReady();
+    } else {
+        connect(m_plugin, SIGNAL(attached()),
+                this, SLOT(pluginReady()));
+    }
+}
+
+void QDeclarativePlace::pluginReady()
+{
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {

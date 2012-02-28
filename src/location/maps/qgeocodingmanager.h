@@ -79,9 +79,6 @@ public:
     QGeocodeReply* reverseGeocode(const QGeoCoordinate &coordinate,
                                   const QGeoBoundingArea &bounds = QGeoBoundingArea());
 
-    bool supportsGeocoding() const;
-    bool supportsReverseGeocoding() const;
-
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 

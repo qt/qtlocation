@@ -271,25 +271,6 @@ QGeocodeReply* QGeocodingManager::geocode(const QString &address,
 }
 
 /*!
-    Returns whether this manager supports geocoding.
-*/
-bool QGeocodingManager::supportsGeocoding() const
-{
-//    if (!d_ptr->engine)
-//        return false;
-
-    return d_ptr->engine->supportsGeocoding();
-}
-
-/*!
-    Returns whether this manager supports reverse geocoding.
-*/
-bool QGeocodingManager::supportsReverseGeocoding() const
-{
-    return d_ptr->engine->supportsReverseGeocoding();
-}
-
-/*!
     Sets the locale to be used by this manager to \a locale.
 
     If this geocoding manager supports returning the results

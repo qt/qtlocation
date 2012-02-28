@@ -76,20 +76,20 @@ void tst_QGeocodingManager::cleanup()
 void tst_QGeocodingManager::loadGeocodingManager()
 {
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
-    QVERIFY(providers.contains("static.geocode.test.plugin"));
+    QVERIFY(providers.contains("geocode.test.plugin"));
 
-    qgeoserviceprovider = new QGeoServiceProvider("static.geocode.test.plugin");
+    qgeoserviceprovider = new QGeoServiceProvider("geocode.test.plugin");
     QVERIFY(qgeoserviceprovider);
+    QCOMPARE(qgeoserviceprovider->error(), QGeoServiceProvider::NotSupportedError);
+
+    qgeoserviceprovider->setAllowExperimental(true);
     QCOMPARE(qgeoserviceprovider->error(), QGeoServiceProvider::NoError);
+    QCOMPARE(qgeoserviceprovider->geocodingFeatures(),
+             QGeoServiceProvider::OfflineGeocodingFeature
+             | QGeoServiceProvider::ReverseGeocodingFeature);
 
     qgeocodingmanager = qgeoserviceprovider->geocodingManager();
     QVERIFY(qgeocodingmanager);
-}
-
-void tst_QGeocodingManager::supports()
-{
-    QVERIFY(qgeocodingmanager->supportsGeocoding());
-    QVERIFY(qgeocodingmanager->supportsReverseGeocoding());
 }
 
 void tst_QGeocodingManager::locale()
@@ -112,13 +112,13 @@ void tst_QGeocodingManager::locale()
 
 void tst_QGeocodingManager::name()
 {
-    QString name = "static.geocode.test.plugin";
+    QString name = "geocode.test.plugin";
     QCOMPARE(qgeocodingmanager->managerName(),name);
 }
 
 void tst_QGeocodingManager::version()
 {
-    int version=3;
+    int version=100;
     QCOMPARE(qgeocodingmanager->managerVersion(),version);
 
 }

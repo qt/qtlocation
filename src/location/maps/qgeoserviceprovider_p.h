@@ -56,6 +56,9 @@
 #include "qgeoserviceprovider.h"
 
 #include <QHash>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QLocale>
 
 QT_BEGIN_NAMESPACE
 
@@ -71,11 +74,15 @@ public:
     QGeoServiceProviderPrivate();
     ~QGeoServiceProviderPrivate();
 
-    void loadPlugin(const QString &providerName, const QMap<QString, QVariant> &parameters);
-
+    void loadMeta();
+    void loadPlugin(const QMap<QString, QVariant> &parameters);
+    void unload();
     QGeoServiceProviderFactory *factory;
+    QJsonObject metaData;
 
     QMap<QString, QVariant> parameterMap;
+
+    bool experimental;
 
     QGeocodingManager *geocodingManager;
     QGeoRoutingManager *routingManager;
@@ -95,9 +102,13 @@ public:
     QGeoServiceProvider::Error error;
     QString errorString;
 
-    static QHash<QString, QGeoServiceProviderFactory*> plugins(bool reload = false);
-    static void loadDynamicPlugins(QHash<QString, QGeoServiceProviderFactory*> *plugins);
-    static void loadStaticPlugins(QHash<QString, QGeoServiceProviderFactory*> *plugins);
+    QString providerName;
+
+    QLocale locale;
+    bool localeSet;
+
+    static QHash<QString, QJsonObject> plugins(bool reload = false);
+    static void loadPluginMetadata(QHash<QString, QJsonObject> &list);
 };
 
 QT_END_NAMESPACE

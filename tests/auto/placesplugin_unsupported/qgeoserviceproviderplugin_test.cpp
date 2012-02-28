@@ -52,21 +52,6 @@ QGeoServiceProviderFactoryTest::~QGeoServiceProviderFactoryTest()
 {
 }
 
-QString QGeoServiceProviderFactoryTest::providerName() const
-{
-    return "test.places.unsupported";
-}
-
-QStringList QGeoServiceProviderFactoryTest::keys() const
-{
-    return QStringList() << QLatin1String("test.places.unsupported");
-}
-
-int QGeoServiceProviderFactoryTest::providerVersion() const
-{
-    return 1;
-}
-
 QPlaceManagerEngine *QGeoServiceProviderFactoryTest::createPlaceManagerEngine(
         const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error, QString *errorString) const
@@ -76,5 +61,3 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryTest::createPlaceManagerEngine(
 
     return new QPlaceManagerEngine(parameters);
 }
-
-Q_EXPORT_PLUGIN2(qtgeoservices_placesplugin_unsupported, QGeoServiceProviderFactoryTest)

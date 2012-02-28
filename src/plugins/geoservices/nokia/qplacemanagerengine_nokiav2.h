@@ -105,8 +105,6 @@ public:
     QList<QLocale> locales() const;
     void setLocales(const QList<QLocale> &locales);
 
-    QPlaceManager::ManagerFeatures supportedFeatures() const;
-
 private:
     QNetworkReply *sendRequest(const QUrl &url);
     QByteArray createLanguageString() const;

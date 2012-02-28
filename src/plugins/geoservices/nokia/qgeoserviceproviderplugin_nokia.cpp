@@ -63,21 +63,6 @@ QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia() {}
 
 QGeoServiceProviderFactoryNokia::~QGeoServiceProviderFactoryNokia() {}
 
-QString QGeoServiceProviderFactoryNokia::providerName() const
-{
-    return "nokia";
-}
-
-QStringList QGeoServiceProviderFactoryNokia::keys() const
-{
-    return QStringList() << QLatin1String("nokia");
-}
-
-int QGeoServiceProviderFactoryNokia::providerVersion() const
-{
-    return 1;
-}
-
 QGeocodingManagerEngine* QGeoServiceProviderFactoryNokia::createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
@@ -115,7 +100,5 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(c
 
 const QString QGeoServiceProviderFactoryNokia::defaultToken("152022572f0e44e07489c35cd46fa246");
 const QString QGeoServiceProviderFactoryNokia::defaultReferer("qtlocationapi");
-
-Q_EXPORT_PLUGIN2(qtgeoservices_nokia, QGeoServiceProviderFactoryNokia)
 
 QT_END_NAMESPACE

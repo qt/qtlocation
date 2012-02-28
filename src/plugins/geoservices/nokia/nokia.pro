@@ -48,3 +48,6 @@ INCLUDEPATH += ../../../location/maps
 target.path += $$[QT_INSTALL_PLUGINS]/geoservices
 INSTALLS += target
 
+OTHER_FILES += \
+    nokia_plugin.json
+

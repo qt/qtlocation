@@ -69,7 +69,7 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
         if (!proxy.isEmpty()) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
-                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, 
+                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
                     proxyUrl.host(),
                     proxyUrl.port(8080),
                     proxyUrl.userName(),
@@ -94,10 +94,6 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     else if (parameters.contains("token")) {
         m_token = parameters.value("token").toString();
     }
-
-    setSupportsRouteUpdates(true);
-    setSupportsAlternativeRoutes(true);
-    setSupportsExcludeAreas(true);
 
     QGeoRouteRequest::FeatureTypes featureTypes;
     featureTypes |= QGeoRouteRequest::TollFeature;
@@ -231,9 +227,6 @@ bool QGeoRoutingManagerEngineNokia::checkEngineSupport(const QGeoRouteRequest &r
 QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRouteRequest &request)
 {
     bool supported = checkEngineSupport(request, request.travelModes());
-
-    if ((request.numberAlternativeRoutes() != 0) && !supportsAlternativeRoutes())
-        supported = false;
 
     if (!supported)
         return "";

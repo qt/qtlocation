@@ -430,10 +430,10 @@ void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     plugin_ = plugin;
     emit pluginChanged(plugin_);
 
-    if (plugin_->ready()) {
+    if (plugin_->isAttached()) {
         pluginReady();
     } else {
-        connect(plugin_, SIGNAL(supportedFeaturesChanged(PluginFeatures)),
+        connect(plugin_, SIGNAL(attached()),
                 this, SLOT(pluginReady()));
     }
 }

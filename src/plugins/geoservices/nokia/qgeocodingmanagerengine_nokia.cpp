@@ -98,10 +98,6 @@ QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(const QMap<QString, Q
         m_token = parameters.value("token").toString();
     }
 
-
-    setSupportsGeocoding(true);
-    setSupportsReverseGeocoding(true);
-
     if (error)
         *error = QGeoServiceProvider::NoError;
 
@@ -114,12 +110,6 @@ QGeocodingManagerEngineNokia::~QGeocodingManagerEngineNokia() {}
 QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
         const QGeoBoundingArea &bounds)
 {
-    if (!supportsGeocoding()) {
-        QGeocodeReply *reply = new QGeocodeReply(QGeocodeReply::UnsupportedOptionError, "Geocoding is not supported by this service provider.", this);
-        emit error(reply, reply->error(), reply->errorString());
-        return reply;
-    }
-
     QString requestString = "http://";
     requestString += m_host;
     requestString += "/geocoder/gc/2.0?referer=" + m_referer;
@@ -170,12 +160,6 @@ QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
 QGeocodeReply* QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
         const QGeoBoundingArea &bounds)
 {
-    if (!supportsReverseGeocoding()) {
-        QGeocodeReply *reply = new QGeocodeReply(QGeocodeReply::UnsupportedOptionError, "Reverse geocoding is not supported by this service provider.", this);
-        emit error(reply, reply->error(), reply->errorString());
-        return reply;
-    }
-
     QString requestString = "http://";
     requestString += m_host;
     requestString += "/geocoder/rgc/2.0?referer=" + m_referer;

@@ -50,14 +50,13 @@ QT_USE_NAMESPACE
 class QGeoServiceProviderFactoryTest: public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QGeoServiceProviderFactory:QFactoryInterface)
+    Q_INTERFACES(QGeoServiceProviderFactory)
+    Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/5.0"
+                      FILE "routing_plugin.json")
+
 public:
     QGeoServiceProviderFactoryTest();
     ~QGeoServiceProviderFactoryTest();
-
-    QString providerName() const;
-    int providerVersion() const;
-    QStringList keys() const;
 
     QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error, QString *errorString) const;

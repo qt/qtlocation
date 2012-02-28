@@ -127,6 +127,16 @@ void QDeclarativeCategory::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     if (!m_plugin)
         return;
 
+    if (m_plugin->isAttached()) {
+        pluginReady();
+    } else {
+        connect(m_plugin, SIGNAL(attached()),
+                this, SLOT(pluginReady()));
+    }
+}
+
+void QDeclarativeCategory::pluginReady()
+{
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
@@ -428,6 +438,11 @@ QPlaceManager *QDeclarativeCategory::manager()
     }
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+    if (!serviceProvider) {
+        m_errorString = tr("Plugin not valid");
+        setStatus(Error);
+        return 0;
+    }
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
         m_errorString = tr("Places not supported by %1 plugin.").arg(m_plugin->name());

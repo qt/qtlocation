@@ -82,6 +82,9 @@ signals:
     void parametersChanged(); //in practice is never emitted since parameters cannot be re-assigned
                               //the declaration is needed to avoid warnings about non-notifyable properties
 
+private Q_SLOTS:
+    void pluginReady();
+
 private:
     QPlaceManager *manager() const;
     void initParameters(const QVariantMap &parameterMap);

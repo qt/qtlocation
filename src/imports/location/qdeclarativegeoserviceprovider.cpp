@@ -94,16 +94,16 @@ QT_BEGIN_NAMESPACE
 QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
 :   QObject(parent),
     sharedProvider_(0),
-    supported_(NoFeatures),
-    required_(NoFeatures),
+    required_(new QDeclarativeGeoServiceProviderRequirements),
     complete_(false),
-    placesFeatures_(NoPlaceFeatures)
+    experimental_(false)
 {
     locales_.append(QLocale().name());
 }
 
 QDeclarativeGeoServiceProvider::~QDeclarativeGeoServiceProvider()
 {
+    delete required_;
     delete sharedProvider_;
 }
 
@@ -121,68 +121,12 @@ void QDeclarativeGeoServiceProvider::setName(const QString &name)
 
     name_ = name;
     delete sharedProvider_;
-    sharedProvider_ = 0;
-    if (complete_)
-        update();
+    sharedProvider_ = new QGeoServiceProvider(name_, parameterMap());
+    sharedProvider_->setLocale(locales_.at(0));
+    sharedProvider_->setAllowExperimental(experimental_);
+
     emit nameChanged(name_);
-}
-
-void QDeclarativeGeoServiceProvider::update(bool doEmit)
-{
-    supported_ = NoFeatures;
-    placesFeatures_ = NoPlaceFeatures;
-
-    QGeoServiceProvider *serviceProvider = sharedGeoServiceProvider();
-    if (!serviceProvider  || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        if (doEmit) {
-            emit supportedFeaturesChanged(supported_);
-            emit supportedPlacesFeaturesChanged(placesFeatures_);
-        }
-        return;
-    }
-
-    if (locales_.isEmpty())
-        locales_.append(QLocale().name());
-
-    Q_ASSERT(!locales_.isEmpty());
-    QGeocodingManager* geocodingManager = serviceProvider->geocodingManager();
-    if (geocodingManager && serviceProvider->error() == QGeoServiceProvider::NoError) {
-        if (geocodingManager->supportsGeocoding())
-            supported_ |= GeocodingFeature;
-        if (geocodingManager->supportsReverseGeocoding())
-            supported_ |= ReverseGeocodingFeature;
-        geocodingManager->setLocale(QLocale(locales_.at(0)));
-    }
-
-    QGeoRoutingManager* routingManager = serviceProvider->routingManager();
-    if (routingManager  && serviceProvider->error() == QGeoServiceProvider::NoError) {
-        supported_ |= RoutingFeature;
-        routingManager->setLocale(QLocale(locales_.at(0)));
-    }
-
-
-    QGeoMappingManager* mappingManager = serviceProvider->mappingManager();
-    if (mappingManager  && serviceProvider->error() == QGeoServiceProvider::NoError) {
-        supported_ |= MappingFeature;
-        mappingManager->setLocale(QLocale(locales_.at(0)));
-    }
-
-    QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (placeManager && serviceProvider->error() == QGeoServiceProvider::NoError) {
-        placesFeatures_ = static_cast<QDeclarativeGeoServiceProvider::PlacesFeatures> ((int)placeManager->supportedFeatures());
-        supported_ |= AnyPlacesFeature;
-
-        QList<QLocale> localePreferences;
-        foreach (const QString &locale, locales_)
-            localePreferences.append(locale);
-
-        placeManager->setLocales(localePreferences);
-    }
-
-    if (doEmit) {
-        emit supportedFeaturesChanged(supported_);
-        emit supportedPlacesFeaturesChanged(placesFeatures_);
-    }
+    emit attached();
 }
 
 /*!
@@ -202,10 +146,15 @@ void QDeclarativeGeoServiceProvider::componentComplete()
 {
     complete_ = true;
     if (!name_.isEmpty()) {
-        update();
         return;
     }
-    if (required_ != NoFeatures || prefer_.size() > 0) {
+
+    if (!prefer_.isEmpty()
+            || required_->mappingRequirements() != NoMappingFeatures
+            || required_->routingRequirements() != NoRoutingFeatures
+            || required_->geocodingRequirements() != NoGeocodingFeatures
+            || required_->placesRequirements() != NoPlacesFeatures) {
+
         QStringList providers = QGeoServiceProvider::availableServiceProviders();
 
         /* first check any preferred plugins */
@@ -214,18 +163,9 @@ void QDeclarativeGeoServiceProvider::componentComplete()
                 // so we don't try it again later
                 providers.removeAll(name);
 
-                if (sharedProvider_)
-                    delete sharedProvider_;
-                sharedProvider_ = 0;
-                name_ = name;
-                // do an update with no emits
-                update(false);
-
-                if ((supported_ & required_) == required_) {
-                    // run it again to send the notifications
-                    emit nameChanged(name_);
-                    emit supportedFeaturesChanged(supported_);
-                    emit supportedPlacesFeaturesChanged(placesFeatures_);
+                QGeoServiceProvider sp(name, parameterMap());
+                if (required_->matches(&sp)) {
+                    setName(name);
                     return;
                 }
             }
@@ -233,18 +173,9 @@ void QDeclarativeGeoServiceProvider::componentComplete()
 
         /* then try the rest */
         foreach (QString name, providers) {
-            if (sharedProvider_)
-                delete sharedProvider_;
-            sharedProvider_ = 0;
-            name_ = name;
-            // do an update with no emits
-            update(false);
-
-            if ((supported_ & required_) == required_) {
-                // run it again to send the notifications
-                emit nameChanged(name_);
-                emit supportedFeaturesChanged(supported_);
-                emit supportedPlacesFeaturesChanged(placesFeatures_);
+            QGeoServiceProvider sp(name, parameterMap());
+            if (required_->matches(&sp)) {
+                setName(name);
                 return;
             }
         }
@@ -258,18 +189,48 @@ QString QDeclarativeGeoServiceProvider::name() const
     return name_;
 }
 
-/*!
-    \qmlproperty enumeration Plugin::supported
-
-    This property enumerates all supported features of the currently attached
-    plugin. Its value will be equal to \c{Plugin.NoFeatures} until the Plugin
-    is attached.
-
-    See \l required for a list of possible enumeration values.
-*/
-QDeclarativeGeoServiceProvider::PluginFeatures QDeclarativeGeoServiceProvider::supportedFeatures() const
+bool QDeclarativeGeoServiceProvider::supportsGeocoding(const GeocodingFeatures &feature) const
 {
-    return supported_;
+    QGeoServiceProvider *sp = sharedGeoServiceProvider();
+    QGeoServiceProvider::GeocodingFeatures f =
+            static_cast<QGeoServiceProvider::GeocodingFeature>(int(feature));
+    if (f == QGeoServiceProvider::AnyGeocodingFeatures)
+        return (sp && (sp->geocodingFeatures() != QGeoServiceProvider::NoGeocodingFeatures));
+    else
+        return (sp && (sp->geocodingFeatures() & f) == f);
+}
+
+bool QDeclarativeGeoServiceProvider::supportsMapping(const MappingFeatures &feature) const
+{
+    QGeoServiceProvider *sp = sharedGeoServiceProvider();
+    QGeoServiceProvider::MappingFeatures f =
+            static_cast<QGeoServiceProvider::MappingFeature>(int(feature));
+    if (f == QGeoServiceProvider::AnyMappingFeatures)
+        return (sp && (sp->mappingFeatures() != QGeoServiceProvider::NoMappingFeatures));
+    else
+        return (sp && (sp->mappingFeatures() & f) == f);
+}
+
+bool QDeclarativeGeoServiceProvider::supportsRouting(const RoutingFeatures &feature) const
+{
+    QGeoServiceProvider *sp = sharedGeoServiceProvider();
+    QGeoServiceProvider::RoutingFeatures f =
+            static_cast<QGeoServiceProvider::RoutingFeature>(int(feature));
+    if (f == QGeoServiceProvider::AnyRoutingFeatures)
+        return (sp && (sp->routingFeatures() != QGeoServiceProvider::NoRoutingFeatures));
+    else
+        return (sp && (sp->routingFeatures() & f) == f);
+}
+
+bool QDeclarativeGeoServiceProvider::supportsPlaces(const PlacesFeatures &feature) const
+{
+    QGeoServiceProvider *sp = sharedGeoServiceProvider();
+    QGeoServiceProvider::PlacesFeatures f =
+            static_cast<QGeoServiceProvider::PlacesFeature>(int(feature));
+    if (f == QGeoServiceProvider::AnyPlacesFeatures)
+        return (sp && (sp->placesFeatures() != QGeoServiceProvider::NoPlacesFeatures));
+    else
+        return (sp && (sp->placesFeatures() & f) == f);
 }
 
 /*!
@@ -291,15 +252,9 @@ QDeclarativeGeoServiceProvider::PluginFeatures QDeclarativeGeoServiceProvider::s
     \li Plugin.AnyPlacesFeature
     \endlist
 */
-QDeclarativeGeoServiceProvider::PluginFeatures QDeclarativeGeoServiceProvider::requiredFeatures() const
+QDeclarativeGeoServiceProviderRequirements *QDeclarativeGeoServiceProvider::requirements() const
 {
     return required_;
-}
-
-void QDeclarativeGeoServiceProvider::setRequiredFeatures(const PluginFeatures &features)
-{
-    required_ = features;
-    emit requiredFeaturesChanged(required_);
 }
 
 /*!
@@ -320,65 +275,36 @@ void QDeclarativeGeoServiceProvider::setPreferred(const QStringList &val)
     emit preferredChanged(prefer_);
 }
 
-bool QDeclarativeGeoServiceProvider::ready() const
+/*!
+    \qmlproperty bool Plugin::isAttached
+*/
+bool QDeclarativeGeoServiceProvider::isAttached() const
 {
-    return complete_;
+    return (sharedProvider_ != 0);
 }
 
 /*!
-    \qmlproperty enumeration Plugin::supportedPlacesFeatures
-
-    This property holds a set of flags indicating what Places related features are provided by the
-    plugin. It can be a binary concatenation of the following values:
-
-    \table
-        \row
-            \li Plugin.NoFeatures
-            \li No features specified/supported (value: 0x0).
-        \row
-            \li Plugin.SavePlaceFeature
-            \li The plugin can be used to save places (value: 0x1).
-        \row
-            \li Plugin.RemovePlaceFeature
-            \li The plugin can be used to remove places (value: 0x2).
-        \row
-            \li Plugin.SaveCategoryFeature
-            \li The plugin can be used to save categories (value: 0x4).
-        \row
-            \li Plugin.RemoveCategoryFeature
-            \li The plugin can be used to remove categories (value: 0x8).
-        \row
-            \li Plugin.RecommendationsFeature
-            \li The plugin can provide recommendations (value: 0x10).
-        \row
-            \li Plugin.SearchSuggestionsFeature\
-            \li The plugin can be used to provide search term suggestions (value: 0x20).
-        \row
-            \li Plugin.CorrectionsFeature
-            \li The plugin can provide search term corrections (value: 0x40).
-        \row
-            \li Plugin.LocaleFeature
-            \li The plugin can provide place data information localized according to a set of preferred locales (value: 0x80).
-        \row
-            \li Plugin.NotificationsFeature
-            \li The plugin has notification mechanisms for when places/categories are added/modified/removed (value: 0x100).
-        \row
-            \li Plugin.FavoritesMatchingFeature
-            \li The plugin has a mechanism to match places against places from other plugins (value: 0x200).
-    \endtable
+    \qmlproperty bool Plugin::allowExperimental
 */
-QDeclarativeGeoServiceProvider::PlacesFeatures QDeclarativeGeoServiceProvider::supportedPlacesFeatures() const
+bool QDeclarativeGeoServiceProvider::allowExperimental() const
 {
-    if ((supported_ & AnyPlacesFeature) == 0)
-        return QDeclarativeGeoServiceProvider::NoPlaceFeatures;
-    return placesFeatures_;
+    return experimental_;
 }
 
-QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider()
+void QDeclarativeGeoServiceProvider::setAllowExperimental(bool allow)
 {
-    if (!sharedProvider_)
-        sharedProvider_ = new QGeoServiceProvider(name(), parameterMap());
+    if (experimental_ == allow)
+        return;
 
+    experimental_ = allow;
+    if (sharedProvider_)
+        sharedProvider_->setAllowExperimental(allow);
+
+    emit allowExperimentalChanged(allow);
+}
+
+QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider() const
+{
     return sharedProvider_;
 }
 
@@ -416,8 +342,8 @@ void QDeclarativeGeoServiceProvider::setLocales(const QStringList &locales)
     if (locales_.isEmpty())
         locales_.append(QLocale().name());
 
-    if (complete_)
-        update();
+    if (sharedProvider_)
+        sharedProvider_->setLocale(locales_.at(0));
 
     emit localesChanged();
 }
@@ -440,9 +366,10 @@ QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> QDeclarativeGe
 
 void QDeclarativeGeoServiceProvider::parameter_append(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *parameter)
 {
-    static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->parameters_.append(parameter);
-    delete static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->sharedProvider_;
-    static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->sharedProvider_ = 0;
+    QDeclarativeGeoServiceProvider *p = static_cast<QDeclarativeGeoServiceProvider*>(prop->object);
+    p->parameters_.append(parameter);
+    if (p->sharedProvider_)
+        p->sharedProvider_->setParameters(p->parameterMap());
 }
 
 int QDeclarativeGeoServiceProvider::parameter_count(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop)
@@ -457,9 +384,10 @@ QDeclarativeGeoServiceProviderParameter* QDeclarativeGeoServiceProvider::paramet
 
 void QDeclarativeGeoServiceProvider::parameter_clear(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop)
 {
-    static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->parameters_.clear();
-    delete static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->sharedProvider_;
-    static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->sharedProvider_ = 0;
+    QDeclarativeGeoServiceProvider *p = static_cast<QDeclarativeGeoServiceProvider*>(prop->object);
+    p->parameters_.clear();
+    if (p->sharedProvider_)
+        p->sharedProvider_->setParameters(p->parameterMap());
 }
 
 QMap<QString, QVariant> QDeclarativeGeoServiceProvider::parameterMap() const
@@ -473,6 +401,134 @@ QMap<QString, QVariant> QDeclarativeGeoServiceProvider::parameterMap() const
 
     return map;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+
+QDeclarativeGeoServiceProviderRequirements::QDeclarativeGeoServiceProviderRequirements(QObject *parent)
+    : QObject(parent),
+      mapping_(QDeclarativeGeoServiceProvider::NoMappingFeatures),
+      routing_(QDeclarativeGeoServiceProvider::NoRoutingFeatures),
+      geocoding_(QDeclarativeGeoServiceProvider::NoGeocodingFeatures),
+      places_(QDeclarativeGeoServiceProvider::NoPlacesFeatures)
+{
+}
+
+QDeclarativeGeoServiceProviderRequirements::~QDeclarativeGeoServiceProviderRequirements()
+{
+}
+
+QDeclarativeGeoServiceProvider::MappingFeatures QDeclarativeGeoServiceProviderRequirements::mappingRequirements() const
+{
+    return mapping_;
+}
+
+void QDeclarativeGeoServiceProviderRequirements::setMappingRequirements(const QDeclarativeGeoServiceProvider::MappingFeatures &features)
+{
+    if (mapping_ == features)
+        return;
+
+    mapping_ = features;
+    emit mappingRequirementsChanged(mapping_);
+    emit requirementsChanged();
+}
+
+QDeclarativeGeoServiceProvider::RoutingFeatures QDeclarativeGeoServiceProviderRequirements::routingRequirements() const
+{
+    return routing_;
+}
+
+void QDeclarativeGeoServiceProviderRequirements::setRoutingRequirements(const QDeclarativeGeoServiceProvider::RoutingFeatures &features)
+{
+    if (routing_ == features)
+        return;
+
+    routing_ = features;
+    emit routingRequirementsChanged(routing_);
+    emit requirementsChanged();
+}
+
+QDeclarativeGeoServiceProvider::GeocodingFeatures QDeclarativeGeoServiceProviderRequirements::geocodingRequirements() const
+{
+    return geocoding_;
+}
+
+void QDeclarativeGeoServiceProviderRequirements::setGeocodingRequirements(const QDeclarativeGeoServiceProvider::GeocodingFeatures &features)
+{
+    if (geocoding_ == features)
+        return;
+
+    geocoding_ = features;
+    emit geocodingRequirementsChanged(geocoding_);
+    emit requirementsChanged();
+}
+
+QDeclarativeGeoServiceProvider::PlacesFeatures QDeclarativeGeoServiceProviderRequirements::placesRequirements() const
+{
+    return places_;
+}
+
+void QDeclarativeGeoServiceProviderRequirements::setPlacesRequirements(const QDeclarativeGeoServiceProvider::PlacesFeatures &features)
+{
+    if (places_ == features)
+        return;
+
+    places_ = features;
+    emit placesRequirementsChanged(places_);
+    emit requirementsChanged();
+}
+
+bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvider *provider) const
+{
+    QGeoServiceProvider::MappingFeatures mapping =
+            static_cast<QGeoServiceProvider::MappingFeatures>(int(mapping_));
+
+    // extra curlies here to avoid "dangling" else, which could belong to either if
+    // same goes for all the rest of these blocks
+    if (mapping == QGeoServiceProvider::AnyMappingFeatures) {
+        if (provider->mappingFeatures() == QGeoServiceProvider::NoMappingFeatures)
+            return false;
+    } else {
+        if ((provider->mappingFeatures() & mapping) != mapping)
+            return false;
+    }
+
+    QGeoServiceProvider::RoutingFeatures routing =
+            static_cast<QGeoServiceProvider::RoutingFeatures>(int(routing_));
+
+    if (routing == QGeoServiceProvider::AnyRoutingFeatures) {
+        if (provider->routingFeatures() == QGeoServiceProvider::NoRoutingFeatures)
+            return false;
+    } else {
+        if ((provider->routingFeatures() & routing) != routing)
+            return false;
+    }
+
+    QGeoServiceProvider::GeocodingFeatures geocoding =
+            static_cast<QGeoServiceProvider::GeocodingFeatures>(int(geocoding_));
+
+    if (geocoding == QGeoServiceProvider::AnyGeocodingFeatures) {
+        if (provider->geocodingFeatures() == QGeoServiceProvider::NoGeocodingFeatures)
+            return false;
+    } else {
+        if ((provider->geocodingFeatures() & geocoding) != geocoding)
+            return false;
+    }
+
+    QGeoServiceProvider::PlacesFeatures places =
+            static_cast<QGeoServiceProvider::PlacesFeatures>(int(places_));
+
+    if (places == QGeoServiceProvider::AnyPlacesFeatures) {
+        if (provider->placesFeatures() == QGeoServiceProvider::NoPlacesFeatures)
+            return false;
+    } else {
+        if ((provider->placesFeatures() & places) != places)
+            return false;
+    }
+
+    return true;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 

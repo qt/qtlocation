@@ -80,8 +80,6 @@ public:
     {
         Q_UNUSED(error)
         Q_UNUSED(errorString)
-        setSupportsGeocoding(true);
-        setSupportsReverseGeocoding(true);
         setLocale(QLocale(QLocale::German, QLocale::Germany));
     }
 

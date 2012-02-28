@@ -69,9 +69,6 @@ public:
     QString managerName;
     int managerVersion;
 
-    bool supportsRouteUpdates;
-    bool supportsAlternativeRoutes;
-    bool supportsExcludeAreas;
     QGeoRouteRequest::TravelModes supportedTravelModes;
     QGeoRouteRequest::FeatureTypes supportedFeatureTypes;
     QGeoRouteRequest::FeatureWeights supportedFeatureWeights;

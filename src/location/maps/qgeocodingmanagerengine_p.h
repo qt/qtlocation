@@ -69,9 +69,6 @@ public:
     QString managerName;
     int managerVersion;
 
-    bool supportsGeocoding;
-    bool supportsReverseGeocoding;
-
     QLocale locale;
 
 private:

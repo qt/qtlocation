@@ -92,8 +92,6 @@ public:
 
     virtual QPlace compatiblePlace(const QPlace &original) const;
 
-    virtual QPlaceManager::ManagerFeatures supportedFeatures() const;
-
     virtual QPlaceMatchReply *matchingPlaces(const QPlaceMatchRequest &request);
 
 Q_SIGNALS:

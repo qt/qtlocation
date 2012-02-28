@@ -555,12 +555,15 @@ Item {
             plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"; parameters: page.parameters}', page)
         else
             plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin{ name:"' + provider + '"}', page)
-        var wanted = (Plugin.MappingFeature | Plugin.GeocodingFeature | Plugin.ReverseGeocodingFeature | Plugin.RoutingFeature)
-        if ((plugin.supported & wanted) == wanted) {
+        if (plugin.supportsMapping()
+                && plugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)
+                && plugin.supportsRouting()) {
+
             if (map) {
                 map.destroy()
                 minimap = null
             }
+
             map = Qt.createQmlObject ('import QtLocation 5.0;\
                                        import "content/map";\
                                        MapComponent{\
@@ -613,12 +616,13 @@ Item {
     function getPlugins(){
         var plugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {}', page)
         var tempPlugin
-        var wanted = (Plugin.MappingFeature | Plugin.GeocodingFeature | Plugin.ReverseGeocodingFeature | Plugin.RoutingFeature)
         var myArray = new Array()
         for (var i = 0; i<plugin.availableServiceProviders.length; i++){
             tempPlugin = Qt.createQmlObject ('import QtLocation 5.0; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', page)
-            //note this will allocate all the plugin managers and resources
-            if ((tempPlugin.supported & wanted) == wanted) {
+
+            if (tempPlugin.supportsMapping()
+                    && tempPlugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)
+                    && tempPlugin.supportsRouting()) {
                 myArray.push(tempPlugin.name)
             }
         }

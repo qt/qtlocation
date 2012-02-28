@@ -91,6 +91,8 @@ void tst_QPlaceManager::initTestCase()
     QVERIFY(providers.contains("qmlgeo.test.plugin"));
 
     provider = new QGeoServiceProvider("qmlgeo.test.plugin");
+    QCOMPARE(provider->placesFeatures() & QGeoServiceProvider::OfflinePlacesFeature,
+             QGeoServiceProvider::OfflinePlacesFeature);
     placeManager = provider->placeManager();
     QVERIFY(placeManager);
 }
@@ -98,7 +100,7 @@ void tst_QPlaceManager::initTestCase()
 void tst_QPlaceManager::testMetadata()
 {
     QCOMPARE(placeManager->managerName(), QLatin1String("qmlgeo.test.plugin"));
-    QCOMPARE(placeManager->managerVersion(), 3);
+    QCOMPARE(placeManager->managerVersion(), 100);
 }
 
 void tst_QPlaceManager::testLocales()

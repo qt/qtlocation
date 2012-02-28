@@ -50,15 +50,13 @@ QT_BEGIN_NAMESPACE
 class QGeoServiceProviderFactoryJsonDb : public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QGeoServiceProviderFactory:QFactoryInterface)
+    Q_INTERFACES(QGeoServiceProviderFactory)
+    Q_PLUGIN_METADATA(IID "org.qt-project.qt.geoservice.serviceproviderfactory/5.0"
+                      FILE "nokia_plugin_jsondb.json")
+
 public:
     QGeoServiceProviderFactoryJsonDb();
     ~QGeoServiceProviderFactoryJsonDb();
-
-    QString providerName() const;
-    int providerVersion() const;
-
-    QStringList keys() const;
 
     QGeocodingManagerEngine* createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,

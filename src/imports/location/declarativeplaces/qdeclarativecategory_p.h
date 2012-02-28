@@ -125,6 +125,7 @@ signals:
 
 private slots:
     void replyFinished();
+    void pluginReady();
 
 private:
     QPlaceManager *manager();

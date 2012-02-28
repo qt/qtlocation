@@ -67,7 +67,6 @@ private Q_SLOTS:
     void cleanupTestCase();
     void init();
     void cleanup();
-    void supports();
     void locale();
     void name();
     void version();

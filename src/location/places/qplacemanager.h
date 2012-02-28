@@ -72,23 +72,6 @@ class Q_LOCATION_EXPORT QPlaceManager : public QObject
 {
     Q_OBJECT
 public:
-    enum ManagerFeature {
-        NoFeatures              = 0x0,
-        SavePlaceFeature        = 0x1,
-        RemovePlaceFeature      = 0x2,
-        SaveCategoryFeature     = 0x4,
-        RemoveCategoryFeature   = 0x8,
-        RecommendationsFeature  = 0x10,
-        SearchSuggestionsFeature   = 0x20,
-        CorrectionsFeature      = 0x40,
-        LocaleFeature           = 0x80,
-        NotificationsFeature    = 0x100,
-        MatchingFeature         = 0x200
-    };
-
-    Q_DECLARE_FLAGS(ManagerFeatures, ManagerFeature)
-    Q_FLAGS(ManagerFeatures)
-
     ~QPlaceManager();
 
     QString managerName() const;
@@ -123,8 +106,6 @@ public:
 
     QPlace compatiblePlace(const QPlace &place);
 
-    ManagerFeatures supportedFeatures() const;
-
     QPlaceMatchReply *matchingPlaces(const QPlaceMatchRequest &request) const;
 
 Q_SIGNALS:
@@ -148,8 +129,6 @@ private:
     friend class QGeoServiceProvider;
     friend class QPlaceIcon;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QPlaceManager::ManagerFeatures)
 
 QT_END_NAMESPACE
 

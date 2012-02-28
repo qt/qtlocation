@@ -68,10 +68,18 @@ void tst_QGeoRoutingManager::cleanup()
 void tst_QGeoRoutingManager::loadRoutingManager()
 {
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
-    QVERIFY(providers.contains("static.georoute.test.plugin"));
+    QVERIFY(providers.contains("georoute.test.plugin"));
 
-    qgeoserviceprovider = new QGeoServiceProvider("static.georoute.test.plugin");
+    qgeoserviceprovider = new QGeoServiceProvider("georoute.test.plugin");
     QVERIFY(qgeoserviceprovider);
+    QCOMPARE(qgeoserviceprovider->error(), QGeoServiceProvider::NotSupportedError);
+    qgeoserviceprovider->setAllowExperimental(true);
+
+    QCOMPARE(qgeoserviceprovider->routingFeatures(),
+             QGeoServiceProvider::OfflineRoutingFeature
+             | QGeoServiceProvider::AlternativeRoutesFeature
+             | QGeoServiceProvider::RouteUpdatesFeature
+             | QGeoServiceProvider::ExcludeAreasRoutingFeature);
     QCOMPARE(qgeoserviceprovider->error(), QGeoServiceProvider::NoError);
 
     qgeoroutingmanager = qgeoserviceprovider->routingManager();
@@ -81,9 +89,6 @@ void tst_QGeoRoutingManager::loadRoutingManager()
 
 void tst_QGeoRoutingManager::supports()
 {
-    QVERIFY(qgeoroutingmanager->supportsAlternativeRoutes());
-    QVERIFY(qgeoroutingmanager->supportsRouteUpdates());
-    QVERIFY(qgeoroutingmanager->supportsExcludeAreas());
     QCOMPARE(qgeoroutingmanager->supportedTravelModes(),QGeoRouteRequest::PedestrianTravel);
     QCOMPARE(qgeoroutingmanager->supportedFeatureTypes(),QGeoRouteRequest::TollFeature);
     QCOMPARE(qgeoroutingmanager->supportedFeatureWeights(),QGeoRouteRequest::PreferFeatureWeight);
@@ -109,13 +114,13 @@ void tst_QGeoRoutingManager::locale()
 
 void tst_QGeoRoutingManager::name()
 {
-    QString name = "static.georoute.test.plugin";
+    QString name = "georoute.test.plugin";
     QCOMPARE(qgeoroutingmanager->managerName(), name);
 }
 
 void tst_QGeoRoutingManager::version()
 {
-    QCOMPARE(qgeoroutingmanager->managerVersion(), 2);
+    QCOMPARE(qgeoroutingmanager->managerVersion(), 100);
 }
 
 void tst_QGeoRoutingManager::calculate()

@@ -116,6 +116,7 @@ public:
 
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 5, 0, "Plugin");
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
+            qmlRegisterUncreatableType<QDeclarativeGeoServiceProviderRequirements>(uri, 5, 0, "PluginRequirements", QDeclarativeGeoMapItemBase::tr("PluginRequirements is not intended instantiable by developer"));
             qmlRegisterType<QDeclarativeGeoMap>(uri, 5, 0, "Map");
 
             qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase>(uri, 5, 0, "GeoMapItemBase",QDeclarativeGeoMapItemBase::tr("GeoMapItemBase is not intended instantiable by developer."));

@@ -52,25 +52,8 @@ QGeoServiceProviderFactoryTest::~QGeoServiceProviderFactoryTest()
 {
 }
 
-QString QGeoServiceProviderFactoryTest::providerName() const
-{
-    return "static.georoute.test.plugin";
-}
-
-QStringList QGeoServiceProviderFactoryTest::keys() const
-{
-    return QStringList() << QLatin1String("static.georoute.test.plugin");
-}
-
-int QGeoServiceProviderFactoryTest::providerVersion() const
-{
-    return 2;
-}
-
 QGeoRoutingManagerEngine* QGeoServiceProviderFactoryTest::createRoutingManagerEngine(const QMap<
     QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
 {
     return new QGeoRoutingManagerEngineTest(parameters, error, errorString);
 }
-
-Q_EXPORT_PLUGIN2(qtgeoservices_staticroutingplugin, QGeoServiceProviderFactoryTest)

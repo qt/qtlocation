@@ -269,10 +269,10 @@ void QDeclarativeGeocodeModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     if (!plugin)
         return;
 
-    if (plugin_->ready()) {
+    if (plugin_->isAttached()) {
         pluginReady();
     } else {
-        connect(plugin_, SIGNAL(supportedFeaturesChanged(PluginFeatures)),
+        connect(plugin_, SIGNAL(attached()),
                 this, SLOT(pluginReady()));
     }
 }
