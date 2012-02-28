@@ -44,9 +44,9 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QVariant>
 #include <QtCore/QStringList>
-#include <QtJsonDb>
 #include <QtJsonDb/QJsonDbRequest>
 #include <QtJsonDb/QJsonDbNotification>
+#include <QtJsonDb/QJsonDbConnection>
 
 QT_BEGIN_NAMESPACE
 
@@ -56,8 +56,6 @@ class QPlaceManagerEngineJsonDb;
 class QPlace;
 class QPlaceSearchRequest;
 class QPlaceCategory;
-class QtJsonDb::QJsonDbConnection;
-
 
 class JsonDb : public QObject {
     Q_OBJECT
