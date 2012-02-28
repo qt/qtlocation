@@ -160,8 +160,7 @@ void tst_QNmeaPositionInfoSource::beginWithBufferedData()
         source.requestUpdate();
 
     if (m_mode == QNmeaPositionInfoSource::RealTimeMode) {
-        QTest::qWait(300);
-        QCOMPARE(spy.count(), 0);
+        QTRY_COMPARE_WITH_TIMEOUT(spy.count(), 0, 300);
     } else {
         if (trigger == StartUpdatesMethod) {
             QTRY_COMPARE(spy.count(), dateTimes.count());
@@ -238,8 +237,6 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addMSecs(2200)).toLatin1());
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(9)).toLatin1());
 
-        int i = 0;
-
         QTime t;
         t.start();
 
@@ -252,59 +249,43 @@ void tst_QNmeaPositionInfoSource::startUpdates_withTimeout()
 
         spyUpdate.clear();
 
-        i = 0;
-        for (; i < 75; ++i) {
-            QTest::qWait(100);
-            if ((spyUpdate.count() == 0) && (spyTimeout.count() == 1))
-                break;
-        }
-        QVERIFY((spyUpdate.count() == 0) && (spyTimeout.count() == 1));
+        QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() == 0) && (spyTimeout.count() == 1), 7500);
         spyTimeout.clear();
 
-        for (; i < 75; ++i) {
-            QTest::qWait(100);
-            if ((spyUpdate.count() == 1) && (spyTimeout.count() == 0))
-                break;
-        }
-        QVERIFY((spyUpdate.count() == 1) && (spyTimeout.count() == 0));
+        QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() == 1) && (spyTimeout.count() == 0), 7500);
 
     } else {
-        QTest::qWait(900);
         // dt + 900
-        QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
+        QTRY_VERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
+
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(1)).toLatin1());
-        QTest::qWait(300);
         // dt + 1200
-        QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
+        QTRY_VERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
         spyUpdate.clear();
 
-        QTest::qWait(700);
         // dt + 1900
-        QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
+        QTRY_VERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(2)).toLatin1());
-        QTest::qWait(300);
+
         // dt + 2200
-        QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
+        QTRY_VERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
         spyUpdate.clear();
 
-        QTest::qWait(700);
         // dt + 2900
-        QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
+        QTRY_VERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 0);
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(3)).toLatin1());
-        QTest::qWait(300);
+
         // dt + 3200
-        QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
+        QTRY_VERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
         spyUpdate.clear();
 
-        QTest::qWait(3700);
         // dt + 6900
-        QVERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 1);
+        QTRY_VERIFY(spyUpdate.count() == 0 && spyTimeout.count() == 1);
         spyTimeout.clear();
-
         proxy->feedBytes(QLocationTestUtils::createRmcSentence(dt.addSecs(7)).toLatin1());
-        QTest::qWait(300);
+
         // dt + 7200
-        QVERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
+        QTRY_VERIFY(spyUpdate.count() == 1 && spyTimeout.count() == 0);
         spyUpdate.clear();
     }
 }
@@ -479,8 +460,7 @@ void tst_QNmeaPositionInfoSource::requestUpdate_after_start()
     spyUpdate.clear();
 
     // Update has been emitted for requestUpdate(), shouldn't be emitted for startUpdates()
-    QTest::qWait(1000);
-    QCOMPARE(spyUpdate.count(), 0);
+    QTRY_COMPARE_WITH_TIMEOUT(spyUpdate.count(), 0, 1000);
 }
 
 void tst_QNmeaPositionInfoSource::testWithBadNmea()
