@@ -598,10 +598,6 @@ Item {
     //=====================States of page=====================
     states: [
         State {
-            name: ""
-            PropertyChanges { target: map; focus: true }
-        },
-        State {
             name: "Provider"
             PropertyChanges { target: providerMenu; y: page.height - providerMenu.height - mainMenu.height }
         },

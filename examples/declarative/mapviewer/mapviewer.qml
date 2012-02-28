@@ -639,10 +639,6 @@ Item {
     //=====================States of page=====================
     states: [
         State {
-            name: ""
-            PropertyChanges { target: map; focus: true }
-        },
-        State {
             name: "RevGeocode"
             PropertyChanges { target: reverseGeocodeDialog; opacity: 1 }
         },

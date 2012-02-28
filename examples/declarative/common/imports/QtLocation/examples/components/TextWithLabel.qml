@@ -70,7 +70,6 @@ Row {
         radius: 5
         TextInput {
             id: inputField
-            focus: true
             width: parent.width - anchors.leftMargin
             enabled: textWithLabel.enabled
             color: enabled ? "#242424" : "lightgrey"
