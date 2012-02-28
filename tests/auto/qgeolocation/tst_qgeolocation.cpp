@@ -224,5 +224,39 @@ void tst_QGeoLocation::comparison_data()
     QTest::newRow("coordinate") << "coordinate";
 }
 
+void tst_QGeoLocation::isEmpty()
+{
+    QGeoAddress address;
+    address.setCity(QLatin1String("Braunschweig"));
+    QVERIFY(!address.isEmpty());
+
+    QGeoBoundingBox boundingBox;
+    boundingBox.setTopLeft(QGeoCoordinate(1, -1));
+    boundingBox.setBottomRight(QGeoCoordinate(-1, 1));
+    QVERIFY(!boundingBox.isEmpty());
+
+    QGeoLocation location;
+
+    QVERIFY(location.isEmpty());
+
+    // address
+    location.setAddress(address);
+    QVERIFY(!location.isEmpty());
+    location.setAddress(QGeoAddress());
+    QVERIFY(location.isEmpty());
+
+    // coordinate
+    location.setCoordinate(QGeoCoordinate(1, 2));
+    QVERIFY(!location.isEmpty());
+    location.setCoordinate(QGeoCoordinate());
+    QVERIFY(location.isEmpty());
+
+    // bounding box
+    location.setBoundingBox(boundingBox);
+    QVERIFY(!location.isEmpty());
+    location.setBoundingBox(QGeoBoundingBox());
+    QVERIFY(location.isEmpty());
+}
+
 QTEST_APPLESS_MAIN(tst_QGeoLocation);
 

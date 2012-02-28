@@ -63,6 +63,11 @@ bool QPlaceRatingsPrivate::operator==(const QPlaceRatingsPrivate &other) const
     return average == other.average && maximum == other.maximum && count == other.count;
 }
 
+bool QPlaceRatingsPrivate::isEmpty() const
+{
+    return count == 0 && average == 0 && maximum == 0;
+}
+
 /*!
     \class QPlaceRatings
     \inmodule QtLocation
@@ -175,4 +180,12 @@ int QPlaceRatings::count() const
 void QPlaceRatings::setCount(int count)
 {
     d->count = count;
+}
+
+/*!
+    Returns true if all fields of the place ratings are 0; otherwise returns false.
+*/
+bool QPlaceRatings::isEmpty() const
+{
+    return d->isEmpty();
 }

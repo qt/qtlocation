@@ -56,6 +56,8 @@ public:
 
     bool operator==(const QPlaceRatingsPrivate &other) const;
 
+    bool isEmpty() const;
+
     qreal average;
     qreal maximum;
     int count;

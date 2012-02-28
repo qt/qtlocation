@@ -60,6 +60,8 @@ public:
 
     bool operator==(const QPlaceSupplierPrivate &other) const;
 
+    bool isEmpty() const;
+
     QString name;
     QString supplierId;
     QUrl url;

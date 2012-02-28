@@ -80,6 +80,8 @@ public:
     QGeoBoundingBox boundingBox() const;
     void setBoundingBox(const QGeoBoundingBox &box);
 
+    bool isEmpty() const;
+
 private:
     QSharedDataPointer<QGeoLocationPrivate> d;
 };

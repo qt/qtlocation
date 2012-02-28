@@ -128,6 +128,8 @@ public:
     QtLocation::Visibility visibility() const;
     void setVisibility(QtLocation::Visibility visibility);
 
+    bool isEmpty() const;
+
 private:
     QSharedDataPointer<QPlacePrivate> d_ptr;
 

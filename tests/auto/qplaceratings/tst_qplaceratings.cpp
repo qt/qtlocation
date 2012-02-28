@@ -58,6 +58,7 @@ private Q_SLOTS:
     void averageTest();
     void countTest();
     void operatorsTest();
+    void isEmptyTest();
 };
 
 tst_QPlaceRatings::tst_QPlaceRatings()
@@ -102,6 +103,28 @@ void tst_QPlaceRatings::operatorsTest()
     QVERIFY2(testObj == testObj2, "Not copied correctly");
     testObj2.setCount(-10);
     QVERIFY2(testObj != testObj2, "Object should be different");
+}
+
+void tst_QPlaceRatings::isEmptyTest()
+{
+    QPlaceRatings ratings;
+
+    QVERIFY(ratings.isEmpty());
+
+    ratings.setCount(1);
+    QVERIFY(!ratings.isEmpty());
+    ratings.setCount(0);
+    QVERIFY(ratings.isEmpty());
+
+    ratings.setMaximum(1);
+    QVERIFY(!ratings.isEmpty());
+    ratings.setMaximum(0);
+    QVERIFY(ratings.isEmpty());
+
+    ratings.setAverage(1);
+    QVERIFY(!ratings.isEmpty());
+    ratings.setAverage(0);
+    QVERIFY(ratings.isEmpty());
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceRatings);

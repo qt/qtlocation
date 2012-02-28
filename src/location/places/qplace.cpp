@@ -603,6 +603,15 @@ QtLocation::Visibility QPlace::visibility() const
     return d->visibility;
 }
 
+/*!
+    Returns a boolean indicating whether the all the fields of the place are empty or not.
+*/
+bool QPlace::isEmpty() const
+{
+    Q_D(const QPlace);
+    return d->isEmpty();
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -683,6 +692,25 @@ bool QPlacePrivate::operator== (const QPlacePrivate &other) const
             && extendedAttributes == other.extendedAttributes
             && visibility == other.visibility
             && icon == other.icon
+            );
+}
+
+
+bool QPlacePrivate::isEmpty() const
+{
+    return (categories.isEmpty()
+            && location.isEmpty()
+            && ratings.isEmpty()
+            && supplier.isEmpty()
+            && contentCollections.isEmpty()
+            && contentCounts.isEmpty()
+            && name.isEmpty()
+            && placeId.isEmpty()
+            && attribution.isEmpty()
+            && contacts.isEmpty()
+            && extendedAttributes.isEmpty()
+            && QtLocation::UnspecifiedVisibility == visibility
+            && icon.isEmpty()
             );
 }
 

@@ -76,6 +76,8 @@ public:
 
     bool operator==(const QPlacePrivate &other) const;
 
+    bool isEmpty() const;
+
     QList<QPlaceCategory> categories;
     QGeoLocation location;
     QPlaceRatings ratings;

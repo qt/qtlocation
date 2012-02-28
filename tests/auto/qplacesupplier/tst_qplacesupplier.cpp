@@ -60,6 +60,7 @@ private Q_SLOTS:
     void urlTest();
     void iconTest();
     void operatorsTest();
+    void isEmptyTest();
 };
 
 tst_QPlaceSupplier::tst_QPlaceSupplier()
@@ -135,6 +136,43 @@ void tst_QPlaceSupplier::operatorsTest()
     QVERIFY2(testObj == testObj2, "Not copied correctly");
     testObj2.setSupplierId(QLatin1String("testValue2"));
     QVERIFY2(testObj != testObj2, "Object should be different");
+}
+
+void tst_QPlaceSupplier::isEmptyTest()
+{
+    QPlaceIcon icon;
+    QVariantMap iconParametersMap;
+    iconParametersMap.insert(QLatin1String("Para"), QLatin1String("meter"));
+    icon.setParameters(iconParametersMap);
+    QVERIFY(!icon.isEmpty());
+
+    QPlaceSupplier supplier;
+
+    QVERIFY(supplier.isEmpty());
+
+    // name
+    supplier.setName(QLatin1String("Name"));
+    QVERIFY(!supplier.isEmpty());
+    supplier.setName(QString());
+    QVERIFY(supplier.isEmpty());
+
+    // supplierId
+    supplier.setSupplierId(QLatin1String("1"));
+    QVERIFY(!supplier.isEmpty());
+    supplier.setSupplierId(QString());
+    QVERIFY(supplier.isEmpty());
+
+    // url
+    supplier.setUrl(QUrl(QLatin1String("www.example.com")));
+    QVERIFY(!supplier.isEmpty());
+    supplier.setUrl(QUrl());
+    QVERIFY(supplier.isEmpty());
+
+    // icon
+    supplier.setIcon(icon);
+    QVERIFY(!supplier.isEmpty());
+    supplier.setIcon(QPlaceIcon());
+    QVERIFY(supplier.isEmpty());
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceSupplier);

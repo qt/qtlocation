@@ -56,6 +56,8 @@ public:
 
     bool operator==(const QGeoLocationPrivate &other) const;
 
+    bool isEmpty() const;
+
     QGeoAddress address;
     QGeoCoordinate coordinate;
     QGeoBoundingBox viewport;

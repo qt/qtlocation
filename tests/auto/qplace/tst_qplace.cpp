@@ -78,6 +78,7 @@ private Q_SLOTS:
     void operatorsTest();
     void extendedAttributeTest();
     void visibilityTest();
+    void isEmptyTest();
 };
 
 tst_Place::tst_Place()
@@ -563,6 +564,119 @@ void tst_Place::visibilityTest()
     place.setVisibility(QtLocation::DeviceVisibility);
 
     QCOMPARE(place.visibility(), QtLocation::DeviceVisibility);
+}
+
+void tst_Place::isEmptyTest()
+{
+    QGeoLocation location;
+    location.setCoordinate(QGeoCoordinate(6.788697, 51.224679));
+    QVERIFY(!location.isEmpty());
+
+    QPlaceCategory category;
+
+    QPlaceRatings ratings;
+    ratings.setCount(1);
+    QVERIFY(!ratings.isEmpty());
+
+    QPlaceSupplier supplier;
+    supplier.setName(QLatin1String("Foo & Bar Imports"));
+    QVERIFY(!supplier.isEmpty());
+
+    QPlaceIcon icon;
+    QVariantMap iconParametersMap;
+    iconParametersMap.insert(QLatin1String("Para"), QLatin1String("meter"));
+    icon.setParameters(iconParametersMap);
+    QVERIFY(!icon.isEmpty());
+
+    QPlaceContent content;
+    QPlaceContent::Collection contentCollection;
+    contentCollection.insert(42, content);
+
+    QPlaceAttribute attribute;
+    attribute.setLabel(QLatin1String("noodle"));
+
+    QPlaceContactDetail contactDetail;
+
+
+    QPlace place;
+
+    // default constructed
+    QVERIFY(place.isEmpty());
+
+    // categories
+    place.setCategory(category);
+    QVERIFY(!place.isEmpty());
+    place.categories().clear();
+    place = QPlace();
+
+    // location
+    place.setLocation(location);
+    QVERIFY(!place.isEmpty());
+    place.setLocation(QGeoLocation());
+    QVERIFY(place.isEmpty());
+
+    // ratings
+    place.setRatings(ratings);
+    QVERIFY(!place.isEmpty());
+    place.setRatings(QPlaceRatings());
+    QVERIFY(place.isEmpty());
+
+    // supplier
+    place.setSupplier(supplier);
+    QVERIFY(!place.isEmpty());
+    place.setSupplier(QPlaceSupplier());
+    QVERIFY(place.isEmpty());
+
+    // attribution
+    place.setAttribution(QLatin1String("attr"));
+    QVERIFY(!place.isEmpty());
+    place.setAttribution(QString());
+    QVERIFY(place.isEmpty());
+
+    // icon
+    place.setIcon(icon);
+    QVERIFY(!place.isEmpty());
+    place.setIcon(QPlaceIcon());
+    QVERIFY(place.isEmpty());
+
+    // content
+    place.insertContent(QPlaceContent::EditorialType, contentCollection);
+    QVERIFY(!place.isEmpty());
+    place = QPlace();
+
+    // name
+    place.setName(QLatin1String("Naniwa"));
+    QVERIFY(!place.isEmpty());
+    place.setName(QString());
+    QVERIFY(place.isEmpty());
+
+    // placeId
+    place.setPlaceId(QLatin1String("naniwa"));
+    QVERIFY(!place.isEmpty());
+    place.setPlaceId(QString());
+    QVERIFY(place.isEmpty());
+
+    // extendedAttributes
+    place.setExtendedAttribute(QLatin1String("part"), attribute);
+    QVERIFY(!place.isEmpty());
+    place.removeExtendedAttribute(QLatin1String("part"));
+    QVERIFY(place.isEmpty());
+
+    // extendedAttributes
+    place.setDetailsFetched(true);
+    QVERIFY(place.isEmpty());
+
+    // contact detail
+    place.appendContactDetail(QLatin1String("phone"), contactDetail);
+    QVERIFY(!place.isEmpty());
+    place.removeContactDetails(QLatin1String("phone"));
+    QVERIFY(place.isEmpty());
+
+    // visiblity
+    place.setVisibility(QtLocation::DeviceVisibility);
+    QVERIFY(!place.isEmpty());
+    place.setVisibility(QtLocation::UnspecifiedVisibility);
+    QVERIFY(place.isEmpty());
 }
 
 QTEST_APPLESS_MAIN(tst_Place)

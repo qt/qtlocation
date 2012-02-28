@@ -76,6 +76,8 @@ public:
     qreal maximum() const;
     void setMaximum(qreal max);
 
+    bool isEmpty() const;
+
 private:
     QSharedDataPointer<QPlaceRatingsPrivate> d;
 };

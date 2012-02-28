@@ -71,6 +71,15 @@ bool QPlaceSupplierPrivate::operator==(const QPlaceSupplierPrivate &other) const
     );
 }
 
+bool QPlaceSupplierPrivate::isEmpty() const
+{
+    return (name.isEmpty()
+            && supplierId.isEmpty()
+            && url.isEmpty()
+            && icon.isEmpty()
+            );
+}
+
 /*!
     \class QPlaceSupplier
     \inmodule QtLocation
@@ -198,4 +207,12 @@ QPlaceIcon QPlaceSupplier::icon() const
 void QPlaceSupplier::setIcon(const QPlaceIcon &icon)
 {
     d->icon = icon;
+}
+
+/*!
+    Returns true if all fields of the place supplier are 0; otherwise returns false.
+*/
+bool QPlaceSupplier::isEmpty() const
+{
+    return d->isEmpty();
 }

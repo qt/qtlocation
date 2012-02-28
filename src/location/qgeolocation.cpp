@@ -69,6 +69,14 @@ bool QGeoLocationPrivate::operator==(const QGeoLocationPrivate &other) const
 
 }
 
+bool QGeoLocationPrivate::isEmpty() const
+{
+    return (address.isEmpty()
+            && !coordinate.isValid()
+            && viewport.isEmpty()
+            );
+}
+
 /*!
     \class QGeoLocation
     \inmodule QtLocation
@@ -176,4 +184,12 @@ QGeoBoundingBox QGeoLocation::boundingBox() const
 void QGeoLocation::setBoundingBox(const QGeoBoundingBox &boundingBox)
 {
     d->viewport = boundingBox;
+}
+
+/*!
+    Returns true if all fields of the location are 0; otherwise returns false.
+*/
+bool QGeoLocation::isEmpty() const
+{
+    return d->isEmpty();
 }
