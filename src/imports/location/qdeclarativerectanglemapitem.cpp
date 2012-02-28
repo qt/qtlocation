@@ -275,6 +275,15 @@ void QDeclarativeRectangleMapItem::setColor(const QColor &color)
     emit colorChanged(color_);
 }
 
+/*!
+  \qmlproperty real MapRectangle::opacity
+
+  This property holds the opacity of the item.  Opacity is specified as a
+  number between 0 (fully transparent) and 1 (fully opaque).  The default is 1.
+
+  If an item's opacity is set to 0, the item will no longer receive mouse
+  events. In contrast, setting the visible property to false stops mouse events.
+*/
 QSGNode* QDeclarativeRectangleMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
