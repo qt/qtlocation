@@ -238,13 +238,14 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
     QPlaceIcon originalIcon = original.icon();
     if (!originalIcon.isEmpty()) {
         if (originalIcon.parameters().contains(QPlaceIcon::SingleUrl)) {
-            parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
-        } else if (originalIcon.manager()) {
-            if (!originalIcon.url(Icon::SmallSize).isEmpty())
-                parameters.insert(Icon::SmallSource, originalIcon.url(Icon::SmallSize));
-            if (!originalIcon.url(Icon::MediumSize).isEmpty())
+            if (isSupportedScheme(originalIcon.url(Icon::MediumSize).scheme()))
                 parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
-            if (!originalIcon.url(Icon::LargeSize).isEmpty())
+        } else if (originalIcon.manager()) {
+            if (!originalIcon.url(Icon::SmallSize).isEmpty() && isSupportedScheme(originalIcon.url(Icon::SmallSize).scheme()))
+                parameters.insert(Icon::SmallSource, originalIcon.url(Icon::SmallSize));
+            if (!originalIcon.url(Icon::MediumSize).isEmpty() && isSupportedScheme(originalIcon.url(Icon::MediumSize).scheme()))
+                parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
+            if (!originalIcon.url(Icon::LargeSize).isEmpty() && isSupportedScheme(originalIcon.url(Icon::LargeSize).scheme()))
                 parameters.insert(Icon::LargeSource, originalIcon.url(Icon::LargeSize));
         }
     }
@@ -358,4 +359,13 @@ void QPlaceManagerEngineJsonDb::processCategoryNotifications(const QList<QJsonDb
 void QPlaceManagerEngineJsonDb::notificationsError(QJsonDbWatcher::ErrorCode code, const QString &errorString)
 {
     qWarning() << Q_FUNC_INFO << " Error code: " << code << " Error String: " << errorString;
+}
+
+//this only for schemes for source icon urls.
+bool QPlaceManagerEngineJsonDb::isSupportedScheme(const QString &scheme) const
+{
+    if (scheme.isEmpty() || (scheme.compare(QStringLiteral("data"), Qt::CaseInsensitive) == 0) || (scheme.compare(QStringLiteral("file"), Qt::CaseInsensitive) == 0))
+        return true;
+    else
+        return false;
 }

@@ -115,6 +115,8 @@ private slots:
     void notificationsError(QtJsonDb::QJsonDbWatcher::ErrorCode code, const QString &errorString);
 
 private:
+    bool isSupportedScheme(const QString &scheme) const;
+
     JsonDb *m_jsonDb;
 
     mutable QMutex m_treeMutex;

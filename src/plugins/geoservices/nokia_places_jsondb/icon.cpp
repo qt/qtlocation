@@ -94,7 +94,7 @@ void Icon::initialize()
         }
     } else {
         m_error = QPlaceReply::BadArgumentError;
-        m_errorString = QLatin1String("Unrecognised source icon URL scheme");
+        m_errorString = QStringLiteral("Unrecognised source icon URL scheme:") + m_sourceUrl.toString();
     }
 
     emit initializationFinished();
