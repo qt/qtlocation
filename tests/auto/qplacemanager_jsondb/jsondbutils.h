@@ -139,6 +139,9 @@ public:
     static const QLatin1String LargeIconSizeParam;
     static const QLatin1String FullscreenIconSizeParam;
 
+    static const QLatin1String CreatedDateTime;
+    static const QLatin1String ModifiedDateTime;
+
 public slots:
     void getPlacesFinished();
     void removePlacesFinished();

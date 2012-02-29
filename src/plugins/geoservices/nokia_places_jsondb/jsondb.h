@@ -157,6 +157,9 @@ public:
     static const QLatin1String VisibilityScope;
     static const QLatin1String DeviceVisibility;
 
+    static const QLatin1String CreatedDateTime;
+    static const QLatin1String ModifiedDateTime;
+
 signals:
     void placeNotifications(QList<QJsonDbNotification> notifications);
     void categoryNotifications(QList<QJsonDbNotification> notifications);

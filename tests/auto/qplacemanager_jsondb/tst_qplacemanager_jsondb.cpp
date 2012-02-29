@@ -349,6 +349,25 @@ void tst_QPlaceManagerJsonDb::simpleUpdatePlace()
 
     QString placeId;
     QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+
+    //check that created and modified date time has been set
+    QDateTime currentDateTime = QDateTime::currentDateTime();
+    dbUtils->fetchPlaceJson(placeId);
+    QSignalSpy spy(dbUtils, SIGNAL(placeFetched(QJsonObject)));
+    QTRY_VERIFY(spy.count() == 1);
+    QJsonObject placeJson = spy.at(0).at(0).value<QJsonObject>();
+    spy.clear();
+
+    QVERIFY(placeJson.contains(JsonDbUtils::CreatedDateTime));
+    QVERIFY(placeJson.contains(JsonDbUtils::ModifiedDateTime));
+    QDateTime createdDateTime = placeJson.value(JsonDbUtils::CreatedDateTime).toVariant().toDateTime();
+    QDateTime modifiedDateTime = placeJson.value(JsonDbUtils::ModifiedDateTime).toVariant().toDateTime();
+    QCOMPARE(createdDateTime, modifiedDateTime);
+    QVERIFY(createdDateTime.secsTo(currentDateTime) < 10);
+    QTest::qWait(1100); //stabilize test by waiting before updating to ensure modification
+                        //time will change.  The DateTime is stored in ISO format which only
+                        //has a resolution of seconds
+
     QVERIFY(doFetchDetails(placeId, &place));
 
     //update the place again with some changes
@@ -360,6 +379,20 @@ void tst_QPlaceManagerJsonDb::simpleUpdatePlace()
 
     QPlace retrievedPlace;
     QVERIFY(doSavePlace(place, QPlaceReply::NoError));
+
+    //check that the created datetime is the same, while the modified date time has changed.
+    currentDateTime = QDateTime::currentDateTime();
+    dbUtils->fetchPlaceJson(placeId);
+    QTRY_VERIFY(spy.count() == 1);
+    placeJson = spy.at(0).at(0).value<QJsonObject>();
+    spy.clear();
+
+    QVERIFY(placeJson.contains(JsonDbUtils::CreatedDateTime));
+    QVERIFY(placeJson.contains(JsonDbUtils::ModifiedDateTime));
+    QCOMPARE(placeJson.value(JsonDbUtils::CreatedDateTime).toVariant().toDateTime(), createdDateTime);
+    QVERIFY(placeJson.value(JsonDbUtils::ModifiedDateTime).toVariant().toDateTime() != modifiedDateTime);
+    QVERIFY(placeJson.value(JsonDbUtils::ModifiedDateTime).toVariant().toDateTime().secsTo(currentDateTime) < 10);
+
     QVERIFY(doFetchDetails(place.placeId(), &retrievedPlace));
     QCOMPARE(retrievedPlace.name(), QLatin1String("Brisbane"));
     QCOMPARE(retrievedPlace.location().address().street(), QLatin1String("new street"));

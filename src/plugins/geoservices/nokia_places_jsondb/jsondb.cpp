@@ -111,6 +111,9 @@ const QLatin1String JsonDb::Fullscreen("fullscreen");
 const QLatin1String JsonDb::VisibilityScope("visibilityScope");
 const QLatin1String JsonDb::DeviceVisibility("device");
 
+const QLatin1String JsonDb::CreatedDateTime("createdDateTime");
+const QLatin1String JsonDb::ModifiedDateTime("modifiedDateTime");
+
 JsonDb::JsonDb()
     : m_connection(new QJsonDbConnection),
       m_placeWatcher(new QJsonDbWatcher(this)),

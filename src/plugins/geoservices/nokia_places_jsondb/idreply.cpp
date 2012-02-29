@@ -46,6 +46,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QUuid>
+#include <QtCore/QDateTime>
 
 IdReply::IdReply(QPlaceIdReply::OperationType operationType,
                  QPlaceManagerEngineJsonDb *engine)
@@ -249,6 +250,14 @@ void SavePlaceReply::processIcons()
 
         if (!error) {
             m_placeJson.insert(JsonDb::Thumbnails, thumbnailsJson);
+
+            QString currentDateTime = QDateTime::currentDateTime().toString(Qt::ISODate);
+            if (m_place.placeId().isEmpty()) {
+                m_placeJson.insert(JsonDb::CreatedDateTime, currentDateTime);
+                m_placeJson.insert(JsonDb::ModifiedDateTime, currentDateTime);
+            } else {
+                m_placeJson.insert(JsonDb::ModifiedDateTime, currentDateTime);
+            }
 
             //proceed to save
             db()->write(m_placeJson, this, SLOT(savingFinished()));

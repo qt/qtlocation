@@ -127,6 +127,9 @@ const QLatin1String JsonDbUtils::MediumIconSizeParam("mediumSize");
 const QLatin1String JsonDbUtils::LargeIconSizeParam("largeSize");
 const QLatin1String JsonDbUtils::FullscreenIconSizeParam("fullscreenSize");
 
+const QLatin1String JsonDbUtils::CreatedDateTime("createdDateTime");
+const QLatin1String JsonDbUtils::ModifiedDateTime("modifiedDateTime");
+
 JsonDbUtils::JsonDbUtils(QObject *parent)
     : QObject(parent)
 {
