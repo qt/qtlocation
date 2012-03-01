@@ -61,6 +61,16 @@ QT_BEGIN_NAMESPACE
     vertices of the graph.
 
     The primary means of acquiring Route elements is via Routes via \l RouteModel.
+
+    \section1 Example
+
+    The following QML snipplet demonstrates how to print information about a
+    route segment:
+
+    \snippet snippets/declarative/routing.qml QtQuick import
+    \snippet snippets/declarative/routing.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/routing.qml RouteSegment
 */
 
 QDeclarativeGeoRouteSegment::QDeclarativeGeoRouteSegment(QObject *parent)
@@ -96,7 +106,7 @@ int QDeclarativeGeoRouteSegment::travelTime() const
 }
 
 /*!
-    \qmlproperty int QtLocation5::RouteSegment::distance
+    \qmlproperty real QtLocation5::RouteSegment::distance
 
     Read-only property which holds the distance covered by this segment of the route, in meters.
 
@@ -108,7 +118,7 @@ qreal QDeclarativeGeoRouteSegment::distance() const
 }
 
 /*!
-    \qmlproperty int QtLocation5::RouteSegment::maneuver
+    \qmlproperty RouteManeuver QtLocation5::RouteSegment::maneuver
 
     Read-only property which holds the maneuver for this route segment.
 
@@ -121,7 +131,7 @@ QDeclarativeGeoManeuver* QDeclarativeGeoRouteSegment::maneuver() const
     return maneuver_;
 }
 
-/*
+/*!
     \qmlproperty QDeclarativeListProperty<Coordinate> QtLocation5::RouteSegment::path
 
     Read-only property which holds the geographical coordinates of this segment.

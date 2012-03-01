@@ -59,6 +59,16 @@ QT_BEGIN_NAMESPACE
     The most interesting information held in a RouteManeuver instance is
     normally the textual navigation to provide and the position at which to
     provide it, accessible by \l instructionText and \l position respectively.
+
+    \section1 Example
+
+    The following QML snipplet demonstrates how to print information about a
+    route maneuver:
+
+    \snippet snippets/declarative/routing.qml QtQuick import
+    \snippet snippets/declarative/routing.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/routing.qml RouteManeuver
 */
 
 QDeclarativeGeoManeuver::QDeclarativeGeoManeuver(QObject *parent)
@@ -156,7 +166,7 @@ int QDeclarativeGeoManeuver::timeToNextInstruction() const
 }
 
 /*!
-    \qmlproperty qreal RouteManeuver::distanceToNextInstruction
+    \qmlproperty real RouteManeuver::distanceToNextInstruction
 
     This read-only property holds the distance, in meters, between the point at which
     the associated instruction was issued and the point that the next instruction should

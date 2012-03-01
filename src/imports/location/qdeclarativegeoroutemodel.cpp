@@ -883,9 +883,9 @@ void QDeclarativeGeoRouteQuery::removeWaypoint(QDeclarativeCoordinate* waypoint)
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteQuery::clearWaypoints
+    \qmlmethod QtLocation5::RouteQuery::clearWaypoints()
 
-    Clear all waypoints.
+    Clears all waypoints.
 
     \sa removeWaypoint addWaypoints
 */
@@ -917,7 +917,7 @@ void QDeclarativeGeoRouteQuery::clearWaypoints()
     \o RouteModel.DisallowFeatureWeight - Only routes which do not contain the feature will be considered, otherwise no route will be returned
     \endlist
 
-    \sa featureTypes
+    \sa featureTypes, resetFeatureWeights, featureWeight
 
 */
 
@@ -947,6 +947,8 @@ void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType featureType, Featur
     \qmlmethod QtLocation5::RouteQuery::resetFeatureWeights()
 
     Resets all feature weights to their default state (NeutralFeatureWeight).
+
+    \sa featureTypes, setFeatureWeights, featureWeight
 */
 void QDeclarativeGeoRouteQuery::resetFeatureWeights()
 {
@@ -960,6 +962,14 @@ void QDeclarativeGeoRouteQuery::resetFeatureWeights()
         emit queryDetailsChanged();
     }
 }
+
+/*!
+    \qmlmethod FeatureWeight QtLocation5::RouteQuery::featureWeight(FeatureType featureType)
+
+    Gets the weight for the \a featureType.
+
+    \sa featureTypes, setFeatureWeight, resetFeatureWeights
+*/
 
 int QDeclarativeGeoRouteQuery::featureWeight(FeatureType featureType)
 {
@@ -994,7 +1004,7 @@ void QDeclarativeGeoRouteQuery::setTravelModes(QDeclarativeGeoRouteQuery::Travel
 
 
 /*!
-    \qmlproperty SegmentDetail RouteQuery::segmentDetails
+    \qmlproperty SegmentDetail RouteQuery::segmentDetail
 
     The level of detail which will be used in the representation of routing segments.
     Values can be combined with OR ('|') -operator.
@@ -1024,7 +1034,7 @@ QDeclarativeGeoRouteQuery::SegmentDetail QDeclarativeGeoRouteQuery::segmentDetai
 }
 
 /*!
-    \qmlproperty ManeuverDetail RouteQuery::maneuverDetails
+    \qmlproperty ManeuverDetail RouteQuery::maneuverDetail
 
     The level of detail which will be used in the representation of routing maneuvers.
     Values can be combined with OR ('|') -operator.

@@ -59,6 +59,16 @@ QT_BEGIN_NAMESPACE
     describe subsections of the route in greater detail.
 
     The primary means of acquiring Route elements is \l RouteModel.
+
+    \section1 Example
+
+    This example shows how to display a route's maneuvers in a ListView:
+
+    \snippet snippets/declarative/routing.qml QtQuick import
+    \snippet snippets/declarative/routing.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/routing.qml Route Maneuver List
+
 */
 
 QDeclarativeGeoRoute::QDeclarativeGeoRoute(QObject *parent)
@@ -131,7 +141,7 @@ int QDeclarativeGeoRoute::travelTime() const
 }
 
 /*!
-    \qmlproperty int QtLocation5::Route::distance
+    \qmlproperty real QtLocation5::Route::distance
 
     Read-only property which holds distance covered by this route, in meters.
 */
@@ -141,7 +151,7 @@ qreal QDeclarativeGeoRoute::distance() const
     return route_.distance();
 }
 
-/*
+/*!
     \qmlproperty QDeclarativeListProperty<Coordinate> QtLocation5::Route::path
 
     Read-only property which holds the geographical coordinates of this route.
@@ -195,7 +205,7 @@ void QDeclarativeGeoRoute::clearPath()
     path_.clear();
 }
 
-/*
+/*!
     \qmlproperty QDeclarativeListProperty<RouteSegment> QtLocation5::Route::segments
 
     Read-only property which holds the list of \l RouteSegment elements of this route.
