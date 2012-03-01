@@ -358,10 +358,13 @@ bool QDeclarativeGeoServiceProvider::ready() const
             \o The plugin can provide search term corrections (value: 0x40).
         \row
             \o Plugin.LocaleFeature
-            \o The plugin can provide place data information localized according to a set of preferred locales (0x80).
+            \o The plugin can provide place data information localized according to a set of preferred locales (value: 0x80).
         \row
             \o Plugin.NotificationsFeature
-            \o The plugin has notification mechanisms for when places/categories are added/modified/removed (0x100).
+            \o The plugin has notification mechanisms for when places/categories are added/modified/removed (value: 0x100).
+        \row
+            \o Plugin.FavoritesMatchingFeature
+            \o The plugin has a mechanism to match places against places from other plugins (value: 0x200).
     \endtable
 */
 QDeclarativeGeoServiceProvider::PlacesFeatures QDeclarativeGeoServiceProvider::supportedPlacesFeatures() const
