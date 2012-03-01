@@ -390,17 +390,48 @@ testcase = {
         ));
     },
 
-    qml_mapitem_interaction_data:{
+    qml_mapquickitem_updating_coordinates_data:{
         nodes:["-27.3644", "153.0178", "Sydney"],
     },
 
-    qml_mapitem_interaction:function(latitude, longitude, city)
+    qml_mapquickitem_updating_coordinates: function(latitude, longitude, city)
     {
         // Test meta data
-        testTitle = "QML: Maps and Navigation - Interaction with mapitems";
+        testTitle = "QML: Maps and Navigation - Updating coordinates of mapitems";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
-        testGoal = "Verify that mapitems can handle touch/mouse events.";
+        testGoal = "Verify that new coordinates can be set to mapitem.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, QTBUG-23329";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Press and Hold on the marker | |
+        | Select Move To button | |
+        | Fill in " + latitude + " in Latitude field | |
+        | Fill in " + longitude + " in Longitude | |
+        | Select Go! button | Verify that marker places next to " + city + " |
+        | Pan the map | Verify that marker doesn't change it's coordinate. |"
+        ));
+    },
+
+    qml_mapquickitem_interaction: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Interaction with MapQuickItems";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that mapitem can handle touch/mouse events.";
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
         testRequirements = "MOBILITY-2861";
@@ -417,12 +448,156 @@ testcase = {
         | Press and Hold on the map | |
         | Select Add Marker button | |
         | Press and Hold on the marker | Verify that popup menu appears |
+        | Press on the map | Verify that popup menu disappears | |
+        | Pan the map | Verify that marker doesn't change it's coordinate. |
+        | Flick the map both ways | Verify that marker doesn't change it's coordinate. |
+        | Drag the marker | Verify that marker can be dragged correctly. |"
+        ));
+    },
+
+
+    qml_mapquickitem_contains_mouse: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Mapitems contained mouse";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that mapitem can correctly detect wheter the mouse is inside the mouse area or not.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, QTBUG-20096";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Select Tools | |
+        | Select Reverse geocode | |
+        | Select Go! | |
+        | Wait for successful geocode results | |
+        | Select Ok button | |
+        | Zoom in approximately to level 15 | |
+        | Press and Hold on the circle | Verify that the circle is green. |
+        | | Verify that popup menu appears. |
+        | Select Info | Verify that the circle is red. |"
+        ));
+    },
+
+    qml_mapitem_bounding_box_events: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Bounding box events of mapitems";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that mouse events can go through bounding box of a mapitemroute.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, QTBUG-24537";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Select Tools | |
+        | Select Reverse geocode | |
+        | Select Go! | |
+        | Wait for successful geocode results | |
+        | Select Ok button | |
+        | Zoom in approximately to level 15 | |
+        | Select Tools | |
+        | Select Route | |
+        | Select Go! button | |
+        | Wait for successful route result | |
+        | Press and Hold on the circle inside route's bounding box | Verify that circle is green. |"
+        ));
+    },
+
+    qml_route_interaction: function()
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Interaction with route";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that route can handle touch/mouse events.";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Select Tools | |
+        | Select Route | |
+        | Select Go! button | |
+        | Wait for successful route result | |
+        | Press and Hold on the route | Verify that route is green. |
+        | Select Delete | Verify that route was red before deleting. |"
+        ));
+    },
+
+
+    qml_mapitem_border_interaction:{
+        nodes:["-27.1144", "152.6594", "-27.7434", "153.3021"],
+    },
+
+    qml_mapitem_border_interaction:function(rectlat1, rectlong1, rectlat2, rectlong2)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Interaction with borders of mapitems";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that mapitem's border can handle touch/mouse events ().";
+        testPreconditions = "Internet connection is required for this test case.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MOBILITY-2861, QTBUG-23985";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Press and Hold on the map | |
+//        | Select Add Marker button | |
+        | Press and Hold on the map | |
+        | Select Add Marker button | |
+        | Press and Hold on the first marker | |
         | Select Move To button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude | |
-        | Select Go! button | Verify that marker places next to " + city + "|
-        | Drag the marker | Verify that marker can be dragged correctly |"
+        | Fill in " + rectlat1 + " in Latitude field | |
+        | Fill in " + rectlong1 + " in Longitude | |
+        | Select Go! button | |
+        | Press and Hold on the second marker | |
+        | Select Move To button | |
+        | Fill in " + rectlat2 + " in Latitude field | |
+        | Fill in " + rectlong2 + " in Longitude | |
+        | Select Go! button | |
+        | Pan the map to see both Markers |
+        | Press and Hold on the first marker | |
+        | Select Draw | |
+        | Select Rectangle | |
+        | Press and Hold on the left border | Verify that rectangle is green. |
+        | Press and Hold on the top border | Verify that rectangle is green. |
+        | Press and Hold on the right border | Verify that rectangle is green. |
+        | Press and Hold on the bottom border | Verify that rectangle is green. |"
         ));
     }
-
 }  // end of testcase
