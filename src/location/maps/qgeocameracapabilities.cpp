@@ -117,9 +117,7 @@ QGeoCameraCapabilitiesPrivate& QGeoCameraCapabilitiesPrivate::operator = (const 
     be able to support, bearing, tilting and rolling of the camera.
 
     This class describes what the plugin supports, and is used to restrict changes to the camera information
-    associated with a QGeoMap such that the camera information stays within these limits.
-
-    TODO Private API warning?
+    associated with a \l QGeoMap such that the camera information stays within these limits.
 */
 
 /*!

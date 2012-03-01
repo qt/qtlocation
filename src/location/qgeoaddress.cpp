@@ -79,9 +79,23 @@ QGeoAddressPrivate::~QGeoAddressPrivate()
     \ingroup QtLocation-places
     \since QtLocation 5.0
 
-    \brief The QGeoAddress class represents an address
+    \brief The QGeoAddress class represents an address of a \l QGeoLocation.
 
-    This class represents an address of a location.
+    The address' attributes are normalized to US feature names and can be mapped
+    to the local feature levels (e.g. State matches "Bundesland" in Germany).
+
+    The address contains a \l text() for displaying purposes and additional
+    properties to access the components of an address:
+
+    \list
+        \o QGeoAddress::country()
+        \o QGeoAddress::countryCode()
+        \o QGeoAddress::state()
+        \o QGeoAddress::city()
+        \o QGeoAddress::district()
+        \o QGeoAddress::street()
+        \o QGeoAddress::postalCode()
+    \endlist
 */
 
 /*!
