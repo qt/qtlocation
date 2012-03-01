@@ -79,7 +79,7 @@ class QDeclarativeSupportedCategoriesModel : public QAbstractItemModel, public Q
     Q_PROPERTY(Status status READ status NOTIFY statusChanged);
 
     Q_INTERFACES(QQmlParserStatus)
-    Q_ENUMS(Roles)
+    Q_ENUMS(Roles) //The Roles enum is for internal usage only.
 
 public:
     explicit QDeclarativeSupportedCategoriesModel(QObject *parent = 0);
@@ -100,7 +100,7 @@ public:
 
     enum Roles {
         CategoryRole = Qt::UserRole
-    };
+    };  //for internal usage only
 
     enum Status {Ready, Updating, Error};
 

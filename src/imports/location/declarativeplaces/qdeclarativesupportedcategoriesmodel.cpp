@@ -128,6 +128,11 @@ QT_USE_NAMESPACE
     \endlist
 */
 
+/*!
+    \internal
+    \enum QDeclarativeSupportedCategoriesModel::Roles
+*/
+
 QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent)
 :   QAbstractItemModel(parent), m_plugin(0), m_hierarchical(true), m_complete(false)
 {
@@ -199,6 +204,9 @@ QModelIndex QDeclarativeSupportedCategoriesModel::parent(const QModelIndex &chil
     return index(childNode->parentId);
 }
 
+/*!
+    \internal
+*/
 QVariant QDeclarativeSupportedCategoriesModel::data(const QModelIndex &index, int role) const
 {
     PlaceCategoryNode *node = static_cast<PlaceCategoryNode*>(index.internalPointer());
