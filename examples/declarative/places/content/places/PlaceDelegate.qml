@@ -152,8 +152,20 @@ Item {
                 id: extendedAttributes
                 model: place ? place.extendedAttributes.keys() : null
                 delegate: Text {
-                    text: place.extendedAttributes[modelData].label +
-                          place.extendedAttributes[modelData].text
+                    text: {
+                        var attributes = place.extendedAttributes;
+                        var attribute = attributes[modelData];
+                        if (attribute) {
+                            if (attribute.label) {
+                                if (attribute.text) {
+                                    return attribute.label + ": " + attribute.text;
+                                }
+                            } else if (attribute.text) {
+                                return attribute.text;
+                            }
+                        }
+                        return ""
+                    }
                     width: c.width
                     wrapMode: Text.WordWrap
                 }
