@@ -93,6 +93,16 @@ QT_BEGIN_NAMESPACE
             \o string
             \o Attribution text which must be displayed when displaying the editorial.
     \endtable
+
+    \section Example
+
+    The following example shows how to display editorials for a place:
+
+    \snippet snippets/declarative/places.qml QtQuick import
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml EditorialModel
+
 */
 
 /*!

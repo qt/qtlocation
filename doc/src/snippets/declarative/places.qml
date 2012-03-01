@@ -180,6 +180,112 @@ Item {
     }
     //! [SearchSuggestionModel]
 
+    //! [EditorialModel]
+    EditorialModel {
+        id: editorialModel
+        batchSize: 3
+        place: place
+    }
+
+    ListView {
+        model: editorialModel
+        delegate: Item {
+            anchors.fill: parent
+
+            Column {
+                width: parent.width
+                clip: true
+
+                Text {
+                    text: title
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: 24
+                }
+
+                Text {
+                    text: text
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: 20
+                }
+
+                Row {
+                    Image {
+                        width: 16
+                        height: 16
+
+                        source: supplier.icon.url(Qt.size(width, height), Icon.List)
+                    }
+
+                    Text {
+                        text: "Provided by " + supplier.name
+                        font.pixelSize: 16
+                    }
+                }
+
+                Text {
+                    text: "Contributed by " + user.name
+                    font.pixelSize: 16
+                }
+
+                Text {
+                    text: attribution
+                    font.pixelSize: 8
+                }
+            }
+        }
+    }
+    //! [EditorialModel]
+
+    //! [ImageModel]
+    ImageModel {
+        id: imageModel
+        batchSize: 3
+        place: place
+    }
+
+    ListView {
+        anchors.top: parent.top
+        anchors.bottom: position.top
+        width: parent.width
+        spacing: 10
+
+        model: imageModel
+        orientation: ListView.Horizontal
+        snapMode: ListView.SnapOneItem
+
+        delegate: Item {
+            width: listView.width
+            height: listView.height
+
+            Image {
+                anchors.fill: parent
+                source: url
+                fillMode: Image.PreserveAspectFit
+            }
+
+            Text {
+                text: supplier.name + "\n" + supplier.url
+                width: parent.width
+                anchors.bottom: parent.bottom
+            }
+        }
+    }
+    //! [ImageModel]
+
+    //! [Supplier]
+    Supplier {
+        id: placeSupplier
+        name: "Example"
+        url: "http://www.example.com/"
+    }
+
+    Text {
+        text: "This place is was provided by " + placeSupplier.name + "\n" + placeSupplier.url
+    }
+    //! [Supplier]
+
     //! [Ratings]
     Text {
         text: "This place is rated " + place.ratings.average + " out of " + place.ratings.maximum + " stars."
@@ -224,7 +330,6 @@ Item {
         place.contactDetails.phone = numbers;
     }
     //! [ContactDetails write multiple]
-
 
     //! [ContactDetails phoneList]
     ListView {

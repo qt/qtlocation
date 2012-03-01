@@ -52,10 +52,25 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places-data
     \since QtLocation 5.0
 
-    \brief The Supplier element holds supplier data.
+    \brief The Supplier element holds data regarding the supplier of a place,
+    a place's image, review, or editorial.
 
-    Supplier contains many properties holding data of the supplier like name,
-    id, etc.
+    Each instance represents a set of data about a supplier, which can include
+    supplier's name, url and icon.  The supplier is typically a business or organization.
+
+    Note: The Places API only supports suppliers as 'retrieve-only' objects.  Submitting
+    suppliers to a provider is not a supported use case.
+
+    \sa ImageModel, ReviewModel, EditorialModel
+
+    \section1 Example
+
+    The following example shows how to create and display a supplier in QML:
+
+    \snippet snippets/declarative/places.qml QtQuick import
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml Supplier
 */
 
 QDeclarativeSupplier::QDeclarativeSupplier(QObject* parent)

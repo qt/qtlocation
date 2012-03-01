@@ -201,6 +201,16 @@ QT_USE_NAMESPACE
     Clears the current place recommendations stored in the model.
 */
 
+/*!
+    \qmlproperty string QtLocation5::PlaceRecommendationModel::errorString
+
+    This read-only property holds the textual presentation of latest place recommendation model error.
+    If no error has occurred or if the model was cleared, an empty string is returned.
+
+    An empty string may also be returned if an error occurred which has no associated
+    textual representation.
+*/
+
 QDeclarativeRecommendationModel::QDeclarativeRecommendationModel(QObject *parent)
 :   QDeclarativeResultModelBase(parent)
 {

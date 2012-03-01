@@ -65,6 +65,8 @@
         \o website
     \endlist
 
+    \section1 Examples
+
     The following example shows how to access all \l {QtLocation5::ContactDetail}{ContactDetails}
     and print them to the console:
 
@@ -110,6 +112,18 @@
     The ContactDetail provides a single detail on how one could contact a \l Place.  The
     ContactDetail consists of a \l label, which is a localized string describing the contact
     method, and a \l value representing the actual contact detail.
+
+    \section1 Examples
+
+    The following example demonstrates how to assign a single phone number to a place in javascript:
+    \snippet snippets/declarative/places.qml  ContactDetails write single
+
+    The following demonstrates how to assign multiple phone numbers to a place in javascript:
+    \snippet snippets/declarative/places.qml  ContactDetails write multiple
+
+    Note, due to limitations of the QDeclarativePropertyMap, it is not possible
+    to declaratively specify the contact details in QML, it can only be accomplished
+    via javascript.
 */
 QDeclarativeContactDetail::QDeclarativeContactDetail(QObject *parent)
     : QObject(parent)

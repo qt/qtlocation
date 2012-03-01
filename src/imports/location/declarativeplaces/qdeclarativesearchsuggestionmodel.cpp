@@ -172,6 +172,17 @@ QT_USE_NAMESPACE
     Clears the current search suggestions stored in the model.
 */
 
+
+/*!
+    \qmlproperty string QtLocation5::PlaceSearchSuggestionModel::errorString
+
+    This read-only property holds the textual presentation of latest search suggestion model error.
+    If no error has occurred, or if the model was cleared, an empty string is returned.
+
+    An empty string may also be returned if an error occurred which has no associated
+    textual representation.
+*/
+
 QDeclarativeSearchSuggestionModel::QDeclarativeSearchSuggestionModel(QObject *parent)
 :   QDeclarativeSearchModelBase(parent)
 {

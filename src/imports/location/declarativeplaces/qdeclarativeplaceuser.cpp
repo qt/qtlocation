@@ -56,6 +56,16 @@ QT_USE_NAMESPACE
     provides information about that user.
 
     \sa ImageModel, ReviewModel, EditorialModel
+
+    \section1 Example
+
+    The following example shows how to display information about the user who
+    submitted an editorial:
+
+    \snippet snippets/declarative/places.qml QtQuick import
+    \snippet snippets/declarative/places.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/places.qml EditorialModel
 */
 
 QDeclarativePlaceUser::QDeclarativePlaceUser(QObject* parent)

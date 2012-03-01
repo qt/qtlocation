@@ -99,6 +99,35 @@ QT_USE_NAMESPACE
     list.  The default is true.
 */
 
+/*!
+    \qmlmethod string QtLocation5::CategoryModel::data(ModelIndex index, int role)
+    \internal
+
+    This method retrieves the the model's data per \a index and \a role.
+*/
+
+/*!
+    \qmlproperty string QtLocation5::CategoryModel::errorString
+
+    This read-only property holds the textual presentation of latest category model error.
+    If no error has occurred, an empty string is returned.
+
+    An empty string may also be returned if an error occurred which has no associated
+    textual representation.
+*/
+
+/*!
+    \qmlproperty enumeration QtLocation5::CategoryModel::status
+
+    This read-only property holds the current status of the model.
+
+    \list
+    \o CategoryModel.Ready - Category request(s) have finished successfully.
+    \o CategoryModel.Updating - Category request has been issued but not yet finished
+    \o CategoryModel.Error - An error has occurred, details are in \l errorString
+    \endlist
+*/
+
 QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent)
 :   QAbstractItemModel(parent), m_plugin(0), m_hierarchical(true), m_complete(false)
 {

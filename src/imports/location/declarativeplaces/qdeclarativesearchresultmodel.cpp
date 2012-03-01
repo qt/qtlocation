@@ -110,6 +110,24 @@ QT_USE_NAMESPACE
                the search term.
     \endtable
 
+    \section2 Search result types
+
+    The \c type role can take on the following values:
+
+    \table
+        \row
+            \o PlaceSearchModel.PlaceResult
+            \o The search result contains a place.
+        \row
+            \o PlaceSearchModel.CorrectionResult
+            \o The search result contains a search term correction.
+        \row
+            \o PlaceSearchModel.UnknownSearchResult
+            \o The contents of the search result are unknown.
+    \endtable
+
+    \section1 Example
+
     The following example shows how to use the PlaceSearchModel to search for Pizza restaurants in
     close proximity of a given position.
 
@@ -222,6 +240,16 @@ QT_USE_NAMESPACE
     \qmlmethod PlaceSearchModel::clear()
 
     Clears the current search results stored in the model.
+*/
+
+/*!
+    \qmlproperty string QtLocation5::PlaceSearchModel::errorString
+
+    This read-only property holds the textual presentation of latest place search model error.
+    If no error has occurred or if the model was cleared an empty string is returned.
+
+    An empty string may also be returned if an error occurred which has no associated
+    textual representation.
 */
 
 QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
