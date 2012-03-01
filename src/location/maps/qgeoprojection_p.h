@@ -63,8 +63,8 @@ class QDoubleVector2D;
 class Q_LOCATION_EXPORT QGeoProjection
 {
 public:
-    Q_AUTOTEST_EXPORT static QDoubleVector2D coordToMercator(const QGeoCoordinate &coord);
-    Q_AUTOTEST_EXPORT static QGeoCoordinate mercatorToCoord(const QDoubleVector2D &mercator);
+    static QDoubleVector2D coordToMercator(const QGeoCoordinate &coord);
+    static QGeoCoordinate mercatorToCoord(const QDoubleVector2D &mercator);
 
 private:
     static double realmod(const double a, const double b);
