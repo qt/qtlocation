@@ -95,7 +95,7 @@
     categories \l {Category::remove()}{remove()} method.  The \e onEditClicked handler will display
     a dialog to edit the category.
 
-    The \e CategoryDelegate displays the category name and emits the \bold clicked() signal when
+    The \e CategoryDelegate displays the category name and emits the \b clicked() signal when
     the text is clicked:
 
     \snippet declarative/places/content/places/CategoryDelegate.qml CategoryModel delegate text
@@ -150,7 +150,7 @@
     \e searchRegion object which is a \l BoundingCircle with a center that is linked to the current
     location displayed on the \l Map.
 
-    Finally, we define two helper functions \bold searchForCategory() and \bold {searchForText()},
+    Finally, we define two helper functions \b searchForCategory() and \b {searchForText()},
     which set either the \l {PlaceSearchModel::categories}{categories} or
     \l {PlaceSearchModel::searchTerm}{searchTerm} properties and invokes the
     \l {PlaceSearchModel::execute()}{execute()} method to start the place search.  The search

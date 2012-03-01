@@ -53,23 +53,23 @@ The online plugin uses the tiled map classes, which cache tile data in heap memo
 The following table lists optional parameters that can be passed to the Nokia plugin.
 \table
 \header
-    \o Parameter
-    \o Description
+    \li Parameter
+    \li Description
 \row
-    \o mapping.proxy
-    \o Proxy server URL used by mapping manager.
+    \li mapping.proxy
+    \li Proxy server URL used by mapping manager.
 \row
-    \o mapping.host
-    \o Map tile service URL used by mapping manager.
+    \li mapping.host
+    \li Map tile service URL used by mapping manager.
 \row
-    \o mapping.app_id
-    \o Client app_id part of the app_id/token pair used for authentication by mapping manager.
+    \li mapping.app_id
+    \li Client app_id part of the app_id/token pair used for authentication by mapping manager.
 \row
-    \o mapping.token
-    \o Client token part of the app_id/token pair for the service used for authentication by mapping manager.
+    \li mapping.token
+    \li Client token part of the app_id/token pair for the service used for authentication by mapping manager.
 \row
-    \o mapping.cache.directory
-    \o Map tile cache directory used as network disk cache.
+    \li mapping.cache.directory
+    \li Map tile cache directory used as network disk cache.
 
     Default place for the cache is "maptiles" directory in system temp.
 
@@ -78,29 +78,29 @@ The following table lists optional parameters that can be passed to the Nokia pl
 
     Map tiles will expire and are refetched 14 days after download.
 \row
-    \o mapping.cache.size
-    \o Map tile cache size. Maximum size of the cache is 50MB.
+    \li mapping.cache.size
+    \li Map tile cache size. Maximum size of the cache is 50MB.
 \row
-    \o routing.proxy
-    \o Proxy server URL used by routing manager.
+    \li routing.proxy
+    \li Proxy server URL used by routing manager.
 \row
-    \o routing.host
-    \o Routing service URL used by routing manager.
+    \li routing.host
+    \li Routing service URL used by routing manager.
 \row
-    \o routing.referer
-    \o Referer for the routing token used for authentication by routing manager.
+    \li routing.referer
+    \li Referer for the routing token used for authentication by routing manager.
 \row
-    \o routing.token
-    \o Client token for the service used for authentication by routing manager.
+    \li routing.token
+    \li Client token for the service used for authentication by routing manager.
 \row
-    \o places.proxy
-    \o Proxy server URL used by search manager.
+    \li places.proxy
+    \li Proxy server URL used by search manager.
 \row
-    \o places.host
-    \o Search service URL used by search manager.
+    \li places.host
+    \li Search service URL used by search manager.
 \row
-    \o places.api_version
-    \o Version of the REST API used by the places manager.  Currently versions 1 and 2 are
+    \li places.api_version
+    \li Version of the REST API used by the places manager.  Currently versions 1 and 2 are
        supported.  The default is version 1.
 \endtable
 
@@ -137,82 +137,82 @@ and behaviours are outlined below:
 \section2 Capabilities
 \table
     \row
-        \o Storage
-        \o remote
+        \li Storage
+        \li remote
     \row
-        \o Read/Write
-        \o read-only
+        \li Read/Write
+        \li read-only
     \row
-        \o Icons
-        \o No
+        \li Icons
+        \li No
     \row
-        \o Search term suggestions
-        \o yes
+        \li Search term suggestions
+        \li yes
     \row
-        \o Recommendations
-        \o yes
+        \li Recommendations
+        \li yes
     \row
-        \o Category structure
-        \o Hierarchical
+        \li Category structure
+        \li Hierarchical
     \row
-        \o (Rich) Content images
-        \o yes
+        \li (Rich) Content images
+        \li yes
     \row
-        \o (Rich) Content reviews
-        \o yes
+        \li (Rich) Content reviews
+        \li yes
     \row
-        \o (Rich) Content editorials
-        \o yes
+        \li (Rich) Content editorials
+        \li yes
     \row
-        \o All details fetched during search
-        \o no
+        \li All details fetched during search
+        \li no
     \row
-        \o Paging offset index
-        \o no
+        \li Paging offset index
+        \li no
     \row
-        \o Paging limit
-        \o yes
+        \li Paging limit
+        \li yes
     \row
-        \o Distance relevance hint
-        \o no
+        \li Distance relevance hint
+        \li no
     \row
-        \o Lexical name relevance hint
-        \o no
+        \li Lexical name relevance hint
+        \li no
     \row
-        \o Search term corrections
-        \o no
+        \li Search term corrections
+        \li no
     \row
-        \o Extended Attributes
-        \o no
+        \li Extended Attributes
+        \li no
     \row
-        \o Notifications for added/removed places/categories
-        \o no
+        \li Notifications for added/removed places/categories
+        \li no
     \row
-        \o visibility scopes
-        \o public
+        \li visibility scopes
+        \li public
     \row
-        \o favorites matching/(usable as favoritesPlugin)
-        \o no
+        \li favorites matching/(usable as favoritesPlugin)
+        \li no
 \endtable
 
 \section2 Plugin specific behaviours
 \section3 Search
 The following list shows what core place data is returned during a place search:
 \list
-\o name
-\o location
-\o contact information
-\o attribution
-\o categories
-\o rating
-\o visibility
+\li name
+\li location
+\li contact information
+\li attribution
+\li categories
+\li rating
+\li visibility
 \endlist
 
 The following list shows further details that may be retrieved
 via QPlaceManager::getDetails()
 \list
-\o supplier
-\o extended attributes
+\li supplier
+\li extended attributes
 \endlist
 
 \section3 Addresses vs POIs

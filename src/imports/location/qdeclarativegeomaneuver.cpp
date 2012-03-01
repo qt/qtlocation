@@ -132,18 +132,18 @@ QString QDeclarativeGeoManeuver::instructionText() const
     that is associated with a RouteManeuver.
 
     \list
-    \o RouteModel.NoDirection - There is no direction associated with the instruction text
-    \o RouteModel.DirectionForward - The instruction indicates that the direction of travel does not need to change
-    \o RouteModel.DirectionBearRight - The instruction indicates that the direction of travel should bear to the right
-    \o RouteModel.DirectionLightRight - The instruction indicates that a light turn to the right is required
-    \o RouteModel.DirectionRight - The instruction indicates that a turn to the right is required
-    \o RouteModel.DirectionHardRight - The instruction indicates that a hard turn to the right is required
-    \o RouteModel.DirectionUTurnRight - The instruction indicates that a u-turn to the right is required
-    \o RouteModel.DirectionUTurnLeft - The instruction indicates that a u-turn to the left is required
-    \o RouteModel.DirectionHardLeft - The instruction indicates that a hard turn to the left is required
-    \o RouteModel.DirectionLeft - The instruction indicates that a turn to the left is required
-    \o RouteModel.DirectionLightLeft - The instruction indicates that a light turn to the left is required
-    \o RouteModel.DirectionBearLeft - The instruction indicates that the direction of travel should bear to the left
+    \li RouteModel.NoDirection - There is no direction associated with the instruction text
+    \li RouteModel.DirectionForward - The instruction indicates that the direction of travel does not need to change
+    \li RouteModel.DirectionBearRight - The instruction indicates that the direction of travel should bear to the right
+    \li RouteModel.DirectionLightRight - The instruction indicates that a light turn to the right is required
+    \li RouteModel.DirectionRight - The instruction indicates that a turn to the right is required
+    \li RouteModel.DirectionHardRight - The instruction indicates that a hard turn to the right is required
+    \li RouteModel.DirectionUTurnRight - The instruction indicates that a u-turn to the right is required
+    \li RouteModel.DirectionUTurnLeft - The instruction indicates that a u-turn to the left is required
+    \li RouteModel.DirectionHardLeft - The instruction indicates that a hard turn to the left is required
+    \li RouteModel.DirectionLeft - The instruction indicates that a turn to the left is required
+    \li RouteModel.DirectionLightLeft - The instruction indicates that a light turn to the left is required
+    \li RouteModel.DirectionBearLeft - The instruction indicates that the direction of travel should bear to the left
     \endlist
 */
 

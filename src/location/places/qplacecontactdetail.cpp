@@ -72,18 +72,18 @@ to the end user that describes that detail value which is the actual phone numbe
 
 The QPlaceContactDetail class defines some constant strings which characterize standard \e {contact types}.
 \list
-    \o QPlaceContactDetail::Phone
-    \o QPlaceContactDetail::Email
-    \o QPlaceContactDetail::Website
-    \o QPlaceContactDetail::Fax
+    \li QPlaceContactDetail::Phone
+    \li QPlaceContactDetail::Email
+    \li QPlaceContactDetail::Website
+    \li QPlaceContactDetail::Fax
 \endlist
 
 These types are used to access and modify contact details in QPlace via:
 \list
-    \o QPlace::contactDetails()
-    \o QPlace::setContactDetails()
-    \o QPlace::appendContactDetail()
-    \o QPlace::contactTypes()
+    \li QPlace::contactDetails()
+    \li QPlace::setContactDetails()
+    \li QPlace::appendContactDetail()
+    \li QPlace::contactTypes()
 \endlist
 
 The \e {contact type} is intended to be a string type so that providers are able to introduce new contact

@@ -65,46 +65,46 @@ QT_BEGIN_NAMESPACE
 
     \table
         \header
-            \o Role
-            \o Type
-            \o Description
+            \li Role
+            \li Type
+            \li Description
         \row
-            \o dateTime
-            \o datetime
-            \o The date and time that the review was posted.
+            \li dateTime
+            \li datetime
+            \li The date and time that the review was posted.
         \row
-            \o text
-            \o string
-            \o The review's textual description of the place.  It can be either rich (HTML based) text or plain text
+            \li text
+            \li string
+            \li The review's textual description of the place.  It can be either rich (HTML based) text or plain text
                depending on the provider.
         \row
-            \o language
-            \o string
-            \o The language that the review is written in.
+            \li language
+            \li string
+            \li The language that the review is written in.
         \row
-            \o rating
-            \o real
-            \o The rating that the reviewer gave to the place.
+            \li rating
+            \li real
+            \li The rating that the reviewer gave to the place.
         \row
-            \o reviewId
-            \o string
-            \o The id of the review.
+            \li reviewId
+            \li string
+            \li The id of the review.
         \row
-            \o title
-            \o string
-            \o The title of the review.
+            \li title
+            \li string
+            \li The title of the review.
         \row
-            \o supplier
-            \o \l Supplier
-            \o The supplier of the editorial.
+            \li supplier
+            \li \l Supplier
+            \li The supplier of the editorial.
         \row
-            \o user
-            \o \l {QtLocation5::User}{User}
-            \o The user who contributed the editorial.
+            \li user
+            \li \l {QtLocation5::User}{User}
+            \li The user who contributed the editorial.
         \row
-            \o attribution
-            \o string
-            \o Attribution text which must be displayed when displaying the editorial.
+            \li attribution
+            \li string
+            \li Attribution text which must be displayed when displaying the editorial.
     \endtable
 */
 

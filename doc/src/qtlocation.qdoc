@@ -46,9 +46,9 @@ coordinates, including working out the user's current position on the Earth's su
 using GPS, GLONASS, or other available services.
 \table
 \row
-    \o Positioning introduction & overview:
-    \o \l{location-positioning-qml.html}{for QML}
-    \o \l{location-positioning-cpp.html}{for C++}
+    \li Positioning introduction & overview:
+    \li \l{location-positioning-qml.html}{for QML}
+    \li \l{location-positioning-cpp.html}{for C++}
 \endtable
 
 \section3 Places
@@ -60,9 +60,9 @@ reviews and other rich content, and integrate with platform sources of
 a user's favorites.
 \table
 \row
-    \o Places introduction & overview:
-    \o \l{location-places-qml.html}{for QML}
-    \o \l{location-places-cpp.html}{for C++}
+    \li Places introduction & overview:
+    \li \l{location-places-qml.html}{for QML}
+    \li \l{location-places-cpp.html}{for C++}
 \endtable
 
 \section3 Maps & Navigation
@@ -74,9 +74,9 @@ from a street address) and navigation (including driving and walking
 directions).
 \table
 \row
-    \o Maps and Nav. introduction & overview:
-    \o \l{location-maps-qml.html}{for QML}
-    \o \l{location-maps-cpp.html}{for C++}
+    \li Maps and Nav. introduction & overview:
+    \li \l{location-maps-qml.html}{for QML}
+    \li \l{location-maps-cpp.html}{for C++}
 \endtable
 
 
@@ -87,14 +87,14 @@ example applications to demonstrate their usage.
 
 \table
     \row
-        \o \l {QtLocation 5.x}{QML API Reference}
-        \o Full list of QML elements in the QtLocation API
+        \li \l {QtLocation 5.x}{QML API Reference}
+        \li Full list of QML elements in the QtLocation API
     \row
-        \o \l {QtLocation C++ API}{C++ API Reference}
-        \o Full list of C++ classes and methods in the QtLocation API
+        \li \l {QtLocation C++ API}{C++ API Reference}
+        \li Full list of C++ classes and methods in the QtLocation API
     \row
-        \o \l {QtLocation Examples}{Example Apps}
-        \o Examples demonstrating use of the QtLocation APIs
+        \li \l {QtLocation Examples}{Example Apps}
+        \li Examples demonstrating use of the QtLocation APIs
 \endtable
 
 \section1 Plugin references and parameters
@@ -111,10 +111,10 @@ QtLocation available for a new platform.
 
 \table
     \row
-        \o \l {QtLocation GeoServices}{GeoServices}
-        \o Information about the QtLocation GeoServices plugins
+        \li \l {QtLocation GeoServices}{GeoServices}
+        \li Information about the QtLocation GeoServices plugins
     \row
-        \o \l {Places Backend} {Places}
-        \o Information for \l {Places Backend} Implementors
+        \li \l {Places Backend} {Places}
+        \li Information for \l {Places Backend} Implementors
 \endtable
 */

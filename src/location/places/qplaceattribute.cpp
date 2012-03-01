@@ -82,9 +82,9 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
     \section2 Attribute Types
     The QPlaceAttribute class defines some constant strings which characterize standard \e {attribute types}.
     \list
-        \o QPlaceAttribute::OpeningHours
-        \o QPlaceAttribute::Payment
-        \o QPlaceAttribute::Provider
+        \li QPlaceAttribute::OpeningHours
+        \li QPlaceAttribute::Payment
+        \li QPlaceAttribute::Provider
     \endlist
 
     There is a class of attribute types of the format x_id_<provider> e.g. x_id_nokia.
@@ -93,10 +93,10 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
 
     The above types are used to access and modify attributes in QPlace via:
     \list
-        \o QPlace::extendedAttribute()
-        \o QPlace::setExtendedAttribute()
-        \o QPlace::removeExtendedAttribute()
-        \o QPlace::removeExtendedAttribute()
+        \li QPlace::extendedAttribute()
+        \li QPlace::setExtendedAttribute()
+        \li QPlace::removeExtendedAttribute()
+        \li QPlace::removeExtendedAttribute()
     \endlist
 
     The \e {attribute type} is a string type so that providers are able to introduce

@@ -226,20 +226,20 @@ QString QDeclarativeCategory::name() const
 
     \table
         \row
-            \o Category.UnspecifiedVisibility
-            \o The visibility of the category is unspecified, the default visibility of the plugin
+            \li Category.UnspecifiedVisibility
+            \li The visibility of the category is unspecified, the default visibility of the plugin
                will be used.
         \row
-            \o Category.DeviceVisibility
-            \o The category is limited to the current device.  The category will not be transferred
+            \li Category.DeviceVisibility
+            \li The category is limited to the current device.  The category will not be transferred
                off of the device.
         \row
-            \o Category.PrivateVisibility
-            \o The category is private to the current user.  The category may be transferred to an
+            \li Category.PrivateVisibility
+            \li The category is private to the current user.  The category may be transferred to an
                online service but is only ever visible to the current user.
         \row
-            \o Category.PublicVisibility
-            \o The category is public.
+            \li Category.PublicVisibility
+            \li The category is public.
     \endtable
 */
 QDeclarativeCategory::Visibility QDeclarativeCategory::visibility() const
@@ -296,20 +296,20 @@ QString QDeclarativeCategory::errorString() const
 
     \table
         \row
-            \o Category.Ready
-            \o No Error occurred during the last operation, further operations may be performed on
+            \li Category.Ready
+            \li No Error occurred during the last operation, further operations may be performed on
                the category.
         \row
-            \o Category.Saving
-            \o The category is currently being saved, no other operations may be performed until the
+            \li Category.Saving
+            \li The category is currently being saved, no other operations may be performed until the
                current operation completes.
         \row
-            \o Category.Removing
-            \o The category is currently being removed, no other operations can be performed until
+            \li Category.Removing
+            \li The category is currently being removed, no other operations can be performed until
                the current operation completes.
         \row
-            \o Category.Error
-            \o An error occurred during the last operation, further operations can still be
+            \li Category.Error
+            \li An error occurred during the last operation, further operations can still be
                performed on the category.
     \endtable
 */

@@ -334,7 +334,7 @@ int QGeoPositionInfoSource::updateInterval() const
     If \a methods does not include any methods supported by the source, the
     preferred methods will be set to the set of methods which the source supports.
 
-    \bold {Note:} When reimplementing this method, subclasses must call the
+    \b {Note:} When reimplementing this method, subclasses must call the
     base method implementation to ensure preferredPositioningMethods() returns the correct value.
 
     \sa supportedPositioningMethods()

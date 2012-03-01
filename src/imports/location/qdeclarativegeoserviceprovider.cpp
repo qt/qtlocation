@@ -283,12 +283,12 @@ QDeclarativeGeoServiceProvider::PluginFeatures QDeclarativeGeoServiceProvider::s
     may be set:
 
     \list
-    \o Plugin.NoFeatures
-    \o Plugin.GeocodingFeature
-    \o Plugin.ReverseGeocodingFeature
-    \o Plugin.RoutingFeature
-    \o Plugin.MappingFeature
-    \o Plugin.AnyPlacesFeature
+    \li Plugin.NoFeatures
+    \li Plugin.GeocodingFeature
+    \li Plugin.ReverseGeocodingFeature
+    \li Plugin.RoutingFeature
+    \li Plugin.MappingFeature
+    \li Plugin.AnyPlacesFeature
     \endlist
 */
 QDeclarativeGeoServiceProvider::PluginFeatures QDeclarativeGeoServiceProvider::requiredFeatures() const
@@ -333,38 +333,38 @@ bool QDeclarativeGeoServiceProvider::ready() const
 
     \table
         \row
-            \o Plugin.NoFeatures
-            \o No features specified/supported (value: 0x0).
+            \li Plugin.NoFeatures
+            \li No features specified/supported (value: 0x0).
         \row
-            \o Plugin.SavePlaceFeature
-            \o The plugin can be used to save places (value: 0x1).
+            \li Plugin.SavePlaceFeature
+            \li The plugin can be used to save places (value: 0x1).
         \row
-            \o Plugin.RemovePlaceFeature
-            \o The plugin can be used to remove places (value: 0x2).
+            \li Plugin.RemovePlaceFeature
+            \li The plugin can be used to remove places (value: 0x2).
         \row
-            \o Plugin.SaveCategoryFeature
-            \o The plugin can be used to save categories (value: 0x4).
+            \li Plugin.SaveCategoryFeature
+            \li The plugin can be used to save categories (value: 0x4).
         \row
-            \o Plugin.RemoveCategoryFeature
-            \o The plugin can be used to remove categories (value: 0x8).
+            \li Plugin.RemoveCategoryFeature
+            \li The plugin can be used to remove categories (value: 0x8).
         \row
-            \o Plugin.RecommendationsFeature
-            \o The plugin can provide recommendations (value: 0x10).
+            \li Plugin.RecommendationsFeature
+            \li The plugin can provide recommendations (value: 0x10).
         \row
-            \o Plugin.SearchSuggestionsFeature\
-            \o The plugin can be used to provide search term suggestions (value: 0x20).
+            \li Plugin.SearchSuggestionsFeature\
+            \li The plugin can be used to provide search term suggestions (value: 0x20).
         \row
-            \o Plugin.CorrectionsFeature
-            \o The plugin can provide search term corrections (value: 0x40).
+            \li Plugin.CorrectionsFeature
+            \li The plugin can provide search term corrections (value: 0x40).
         \row
-            \o Plugin.LocaleFeature
-            \o The plugin can provide place data information localized according to a set of preferred locales (value: 0x80).
+            \li Plugin.LocaleFeature
+            \li The plugin can provide place data information localized according to a set of preferred locales (value: 0x80).
         \row
-            \o Plugin.NotificationsFeature
-            \o The plugin has notification mechanisms for when places/categories are added/modified/removed (value: 0x100).
+            \li Plugin.NotificationsFeature
+            \li The plugin has notification mechanisms for when places/categories are added/modified/removed (value: 0x100).
         \row
-            \o Plugin.FavoritesMatchingFeature
-            \o The plugin has a mechanism to match places against places from other plugins (value: 0x200).
+            \li Plugin.FavoritesMatchingFeature
+            \li The plugin has a mechanism to match places against places from other plugins (value: 0x200).
     \endtable
 */
 QDeclarativeGeoServiceProvider::PlacesFeatures QDeclarativeGeoServiceProvider::supportedPlacesFeatures() const
@@ -392,9 +392,9 @@ QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider()
     "language[_script][_country]" or "C", where:
 
     \list
-    \i language is a lowercase, two-letter, ISO 639 language code,
-    \i script is a titlecase, four-letter, ISO 15924 script code,
-    \i country is an uppercase, two- or three-letter, ISO 3166 country code (also "419" as defined by United Nations),
+    \li language is a lowercase, two-letter, ISO 639 language code,
+    \li script is a titlecase, four-letter, ISO 15924 script code,
+    \li country is an uppercase, two- or three-letter, ISO 3166 country code (also "419" as defined by United Nations),
     \endlist
 
 

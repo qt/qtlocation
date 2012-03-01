@@ -59,35 +59,35 @@ QT_BEGIN_NAMESPACE
     The following table gives an overview of the functionality provided by the QPlaceManager
     \table
         \header
-            \o Functionality
-            \o Description
+            \li Functionality
+            \li Description
         \row
-            \o Searching for places
-            \o Using set of parameters such as a search term and search area, relevant places
+            \li Searching for places
+            \li Using set of parameters such as a search term and search area, relevant places
                can be returned to the user.
         \row
-            \o Categories
-            \o Places can be classified as belonging to different categories.  The
+            \li Categories
+            \li Places can be classified as belonging to different categories.  The
                manager supports access to these categories.
         \row
-            \o Search term suggestions
-            \o Given a partially complete search term, a list of potential
+            \li Search term suggestions
+            \li Given a partially complete search term, a list of potential
                search terms can be given.
         \row
-            \o Recommendations
-            \o Given an existing place, a set of similar recommended places can
+            \li Recommendations
+            \li Given an existing place, a set of similar recommended places can
                be suggested to the user.
         \row
-            \o Rich Content
-            \o Rich content such as images, reviews etc can be retrieved in a paged
+            \li Rich Content
+            \li Rich content such as images, reviews etc can be retrieved in a paged
                fashion.
         \row
-            \o Place/Category management
-            \o Places and categories may be saved and removed.  It is possible
+            \li Place/Category management
+            \li Places and categories may be saved and removed.  It is possible
                for notifications to be given when this happens.
         \row
-            \o Localization
-            \o Different locales may be specified to return place
+            \li Localization
+            \li Different locales may be specified to return place
                data in different languages.
     \endtable
 
@@ -119,10 +119,10 @@ QT_BEGIN_NAMESPACE
     following functions:
 
     \list
-        \o QPlaceManager::childCategories()
-        \o QPlaceManager::category()
-        \o QPlaceManager::parentCategoryId()
-        \o QPlaceManager::childCategoryIds();
+        \li QPlaceManager::childCategories()
+        \li QPlaceManager::category()
+        \li QPlaceManager::parentCategoryId()
+        \li QPlaceManager::childCategoryIds();
     \endlist
 
     If the categories need to be refreshed or reloaded, the initializeCategories() function

@@ -73,17 +73,17 @@ QT_USE_NAMESPACE
 
     \table
         \header
-            \o Role
-            \o Type
-            \o Description
+            \li Role
+            \li Type
+            \li Description
         \row
-            \o distance
-            \o real
-            \o The distance to the place.
+            \li distance
+            \li real
+            \li The distance to the place.
         \row
-            \o place
-            \o \l Place
-            \o The place.
+            \li place
+            \li \l Place
+            \li The place.
     \endtable
 
     The following example shows how to use the PlaceRecommendationModel to search for recommendations in
@@ -166,14 +166,14 @@ QT_USE_NAMESPACE
 
     \table
         \row
-            \o PlaceRecommendationModel.Ready
-            \o The search query has completed and the result are available.
+            \li PlaceRecommendationModel.Ready
+            \li The search query has completed and the result are available.
         \row
-            \o PlaceRecommendationModel.Executing
-            \o A search query is currently being executed.
+            \li PlaceRecommendationModel.Executing
+            \li A search query is currently being executed.
         \row
-            \o PlaceRecommendationModel.Error
-            \o An error occurred when executing the previous search query.
+            \li PlaceRecommendationModel.Error
+            \li An error occurred when executing the previous search query.
     \endtable
 */
 

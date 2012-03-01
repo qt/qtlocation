@@ -454,26 +454,26 @@ QGeoCoordinate QGeoCoordinate::atDistanceAndAzimuth(qreal distance, qreal azimut
 
     \table
     \header
-        \o \a format value
-        \o Returned string
+        \li \a format value
+        \li Returned string
     \row
-        \o \l Degrees
-        \o -27.46758\unicode{0xB0}, 153.02789\unicode{0xB0}, 28.1m
+        \li \l Degrees
+        \li -27.46758\unicode{0xB0}, 153.02789\unicode{0xB0}, 28.1m
     \row
-        \o \l DegreesWithHemisphere
-        \o 27.46758\unicode{0xB0} S, 153.02789\unicode{0xB0} E, 28.1m
+        \li \l DegreesWithHemisphere
+        \li 27.46758\unicode{0xB0} S, 153.02789\unicode{0xB0} E, 28.1m
     \row
-        \o \l DegreesMinutes
-        \o -27\unicode{0xB0} 28.054', 153\unicode{0xB0} 1.673', 28.1m
+        \li \l DegreesMinutes
+        \li -27\unicode{0xB0} 28.054', 153\unicode{0xB0} 1.673', 28.1m
     \row
-        \o \l DegreesMinutesWithHemisphere
-        \o 27\unicode{0xB0} 28.054 S', 153\unicode{0xB0} 1.673' E, 28.1m
+        \li \l DegreesMinutesWithHemisphere
+        \li 27\unicode{0xB0} 28.054 S', 153\unicode{0xB0} 1.673' E, 28.1m
     \row
-        \o \l DegreesMinutesSeconds
-        \o -27\unicode{0xB0} 28' 3.2", 153\unicode{0xB0} 1' 40.4", 28.1m
+        \li \l DegreesMinutesSeconds
+        \li -27\unicode{0xB0} 28' 3.2", 153\unicode{0xB0} 1' 40.4", 28.1m
     \row
-        \o \l DegreesMinutesSecondsWithHemisphere
-        \o 27\unicode{0xB0} 28' 3.2" S, 153\unicode{0xB0} 1' 40.4" E, 28.1m
+        \li \l DegreesMinutesSecondsWithHemisphere
+        \li 27\unicode{0xB0} 28' 3.2" S, 153\unicode{0xB0} 1' 40.4" E, 28.1m
     \endtable
 
     The altitude field is omitted if no altitude is set.

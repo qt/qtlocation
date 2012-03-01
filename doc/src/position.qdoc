@@ -41,10 +41,10 @@ surface \unicode {0x2014} as provided by a latitude-longitude coordinate
 \unicode {0x2014} along with associated data, such as:
 
     \list
-    \o The date and time at which the position was reported
-    \o The velocity of the device that reported the position
-    \o The altitude of the reported position (height above sea level)
-    \o The bearing of the device in degrees, relative to true north
+    \li The date and time at which the position was reported
+    \li The velocity of the device that reported the position
+    \li The altitude of the reported position (height above sea level)
+    \li The bearing of the device in degrees, relative to true north
     \endlist
 
 This data can be extracted through a variety of methods. One of the most
@@ -192,9 +192,9 @@ Here is the definition of the \c LogFilePositionSource class:
 The main methods overrided by the subclass are:
 
     \list
-    \o \l{QGeoPositionInfoSource::startUpdates()}{startUpdates()}: called by client applications to start regular position updates
-    \o \l{QGeoPositionInfoSource::stopUpdates()}{stopUpdates()}: called by client applications to stop regular position updates
-    \o \l{QGeoPositionInfoSource::requestUpdate()}{requestUpdate()}: called by client applications to request a single update, with a specified timeout
+    \li \l{QGeoPositionInfoSource::startUpdates()}{startUpdates()}: called by client applications to start regular position updates
+    \li \l{QGeoPositionInfoSource::stopUpdates()}{stopUpdates()}: called by client applications to stop regular position updates
+    \li \l{QGeoPositionInfoSource::requestUpdate()}{requestUpdate()}: called by client applications to request a single update, with a specified timeout
     \endlist
 
 When a position update is available, the subclass emits the
@@ -225,7 +225,7 @@ and \tt {make install}.
 
 \section1 Examples
 
-\section3 \bold{Flickr Example}
+\section3 \b{Flickr Example}
 
 The \l{Flickr QML}{Flickr Example} uses the Location to download thumbnail
 images from Flickr relevant to the current location.

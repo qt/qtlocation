@@ -74,10 +74,10 @@ QT_BEGIN_NAMESPACE
     For convenience there are a set of functions which return the value
     of the first contact detail of each type.
     \list
-        \o QPlace::primaryPhone()
-        \o QPlace::primaryEmail()
-        \o QPlace::primaryWebsite()
-        \o QPlace::primaryFax()
+        \li QPlace::primaryPhone()
+        \li QPlace::primaryEmail()
+        \li QPlace::primaryWebsite()
+        \li QPlace::primaryFax()
     \endlist
 
     \section2 Extended Attributes

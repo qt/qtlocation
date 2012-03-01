@@ -59,20 +59,20 @@
     be qualified by a unique prefix to avoid clashes.
     \table
         \header
-            \o key
-            \o description
+            \li key
+            \li description
         \row
-            \o openingHours
-            \o The trading hours of the place
+            \li openingHours
+            \li The trading hours of the place
         \row
-            \o payment
-            \o The types of payment the place accepts, e.g. visa, mastercard etc.
+            \li payment
+            \li The types of payment the place accepts, e.g. visa, mastercard etc.
         \row
-            \o x_provider
-            \o The name of the provider that a place is sourced from
+            \li x_provider
+            \li The name of the provider that a place is sourced from
         \row
-            \o x_id_<provider> (e.g x_id_nokia)
-            \o An alternative id which identifies the place from the
+            \li x_id_<provider> (e.g x_id_nokia)
+            \li An alternative id which identifies the place from the
                perspective of the specified provider.
     \endtable
 

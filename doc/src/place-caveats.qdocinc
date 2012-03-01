@@ -4,13 +4,13 @@
 
     The Places API only supports saving of the following \e {core details}:
     \list
-        \o name
-        \o place id
-        \o location
-        \o contact details
-        \o icon
-        \o categories
-        \o visibility scope
+        \li name
+        \li place id
+        \li location
+        \li contact details
+        \li icon
+        \li categories
+        \li visibility scope
     \endlist
 
     It is possible that providers may only support a subset of these.

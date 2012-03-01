@@ -604,24 +604,24 @@ bool QDeclarativePlace::detailsFetched() const
 
     \table
         \row
-            \o Place.Ready
-            \o No Error occurred during the last operation, further operations may be performed on
+            \li Place.Ready
+            \li No Error occurred during the last operation, further operations may be performed on
                the place.
         \row
-            \o Place.Saving
-            \o The place is currently being saved, no other operation may be performed until
+            \li Place.Saving
+            \li The place is currently being saved, no other operation may be performed until
                complete.
         \row
-            \o Place.Fetching
-            \o The place details are currently being fetched, no other operations may be performed
+            \li Place.Fetching
+            \li The place details are currently being fetched, no other operations may be performed
                until complete.
         \row
-            \o Place.Removing
-            \o The place is currently being removed, no other operations can be performed until
+            \li Place.Removing
+            \li The place is currently being removed, no other operations can be performed until
                complete.
         \row
-            \o Place.Error
-            \o An error occurred during the last operation, further operations can still be
+            \li Place.Error
+            \li An error occurred during the last operation, further operations can still be
                performed on the place.
     \endtable
 
@@ -937,20 +937,20 @@ void QDeclarativePlace::synchronizeCategories()
 
     \table
         \row
-            \o Place.UnspecifiedVisibility
-            \o The visibility of the place is unspecified, the default visibility of the \l plugin
+            \li Place.UnspecifiedVisibility
+            \li The visibility of the place is unspecified, the default visibility of the \l plugin
                will be used.
         \row
-            \o Place.DeviceVisibility
-            \o The place is limited to the current device.  The place will not be transferred off
+            \li Place.DeviceVisibility
+            \li The place is limited to the current device.  The place will not be transferred off
                of the device.
         \row
-            \o Place.PrivateVisibility
-            \o The place is private to the current user.  The place may be transferred to an online
+            \li Place.PrivateVisibility
+            \li The place is private to the current user.  The place may be transferred to an online
                service but is only ever visible to the current user.
         \row
-            \o Place.PublicVisibility
-            \o The place is public.
+            \li Place.PublicVisibility
+            \li The place is public.
     \endtable
 */
 QDeclarativePlace::Visibility QDeclarativePlace::visibility() const

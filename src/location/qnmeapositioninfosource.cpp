@@ -518,7 +518,7 @@ QNmeaPositionInfoSource::UpdateMode QNmeaPositionInfoSource::updateMode() const
     The source device can only be set once and must be set before calling
     startUpdates() or requestUpdate().
 
-    \bold {Note:} The \a device must emit QIODevice::readyRead() for the
+    \b {Note:} The \a device must emit QIODevice::readyRead() for the
     source to be notified when data is available for reading.
     QNmeaPositionInfoSource does not assume the ownership of the device,
     and hence does not deallocate it upon destruction.

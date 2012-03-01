@@ -66,13 +66,13 @@ QT_USE_NAMESPACE
 
     \table
         \header
-            \o Role
-            \o Type
-            \o Description
+            \li Role
+            \li Type
+            \li Description
         \row
-            \o category
-            \o \l Category
-            \o Category object for the current item.
+            \li category
+            \li \l Category
+            \li Category object for the current item.
     \endtable
 
     The following example displays a flat list of all available categories:
@@ -501,15 +501,15 @@ QString QDeclarativeSupportedCategoriesModel::errorString() const
 
     \table
         \row
-            \o CategoryModel.Ready
-            \o No Error occurred during the last operation, further operations may be performed on
+            \li CategoryModel.Ready
+            \li No Error occurred during the last operation, further operations may be performed on
                the model.
         \row
-            \o CategoryModel.Updating
-            \o The model is being updated, no other operations may be performed until complete.
+            \li CategoryModel.Updating
+            \li The model is being updated, no other operations may be performed until complete.
         \row
-            \o CategoryModel.Error
-            \o An error occurred during the last operation, further operations can still be
+            \li CategoryModel.Error
+            \li An error occurred during the last operation, further operations can still be
                performed on the model.
     \endtable
 */

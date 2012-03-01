@@ -49,73 +49,73 @@ capabilities are outlined below:
 \section2 Capabilities
 \table
     \row
-        \o Storage
-        \o local
+        \li Storage
+        \li local
     \row
-        \o Read/Write
-        \o read/write
+        \li Read/Write
+        \li read/write
     \row
-        \o Icons
-        \o yes
+        \li Icons
+        \li yes
     \row
-        \o Search term suggestions
-        \o no
+        \li Search term suggestions
+        \li no
     \row
-        \o Recommendations
-        \o no
+        \li Recommendations
+        \li no
     \row
-        \o Category structure
-        \o Hierarchical
+        \li Category structure
+        \li Hierarchical
     \row
-        \o (Rich) Content images
-        \o no
+        \li (Rich) Content images
+        \li no
     \row
-        \o (Rich) Content reviews
-        \o no
+        \li (Rich) Content reviews
+        \li no
     \row
-        \o (Rich) Content editorials
-        \o no
+        \li (Rich) Content editorials
+        \li no
     \row
-        \o All details fetched during search
-        \o yes
+        \li All details fetched during search
+        \li yes
     \row
-        \o Paging offset index
-        \o yes
+        \li Paging offset index
+        \li yes
     \row
-        \o Paging limit
-        \o yes
+        \li Paging limit
+        \li yes
     \row
-        \o Distance relevance hint
-        \o yes
+        \li Distance relevance hint
+        \li yes
     \row
-        \o Lexical name relevance hint
-        \o yes
+        \li Lexical name relevance hint
+        \li yes
     \row
-        \o Search term corrections
-        \o no
+        \li Search term corrections
+        \li no
     \row
-        \o Extended Attributes
-        \o no
+        \li Extended Attributes
+        \li no
     \row
-        \o Notifications for added/removed places/categories
-        \o yes
+        \li Notifications for added/removed places/categories
+        \li yes
     \row
-        \o visibility scopes
-        \o device
+        \li visibility scopes
+        \li device
     \row
-        \o favorites matching/(usable as favoritesPlugin)
-        \o yes
+        \li favorites matching/(usable as favoritesPlugin)
+        \li yes
 \endtable
 
 \section2 Plugin specific behaviours
 \section3 Search
 The following list shows what core place data is returned during a place search:
 \list
-\o name
-\o location
-\o contact information
-\o icon
-\o categories
+\li name
+\li location
+\li contact information
+\li icon
+\li categories
 \endlist
 
 The JsonDb plugin does not support any other details so all
@@ -127,44 +127,44 @@ does not support saving of any other details.
 The JsonDbPlugin supports the following icon parameter values
 \table
     \header
-        \o Key
-        \o Value
+        \li Key
+        \li Value
     \row
-        \o smallUrl
-        \o Holds the URL for the small icon
+        \li smallUrl
+        \li Holds the URL for the small icon
     \row
-        \o smallSize
-        \o Holds the dimensions of the small icon
+        \li smallSize
+        \li Holds the dimensions of the small icon
     \row
-        \o smallSourceUrl
-        \o Holds the source URL from which the small icon is to be copied from.
+        \li smallSourceUrl
+        \li Holds the source URL from which the small icon is to be copied from.
     \row
-        \o mediumUrl
-        \o Holds the URL for the medium sized icon.
+        \li mediumUrl
+        \li Holds the URL for the medium sized icon.
     \row
-        \o mediumSize
-        \o Holds the dimensions of the medium sized icon.
+        \li mediumSize
+        \li Holds the dimensions of the medium sized icon.
     \row
-        \o mediumSourceUrl
-        \o Holds the source URL from which the medium icon is to be copied from.
+        \li mediumSourceUrl
+        \li Holds the source URL from which the medium icon is to be copied from.
     \row
-        \o largeUrl
-        \o Holds the URL for the large icon.
+        \li largeUrl
+        \li Holds the URL for the large icon.
     \row
-        \o largeSize
-        \o Holds the dimensions of the large icon.
+        \li largeSize
+        \li Holds the dimensions of the large icon.
     \row
-        \o largeSourceUrl
-        \o Holds the source URL from which the large icon is to be copied from.
+        \li largeSourceUrl
+        \li Holds the source URL from which the large icon is to be copied from.
     \row
-        \o fullscreenUrl
-        \o Holds the URL for the fullscreen icon.
+        \li fullscreenUrl
+        \li Holds the URL for the fullscreen icon.
     \row
-        \o fullscreenSize
-        \o Holds the dimensions of the fullscreen icon.
+        \li fullscreenSize
+        \li Holds the dimensions of the fullscreen icon.
     \row
-        \o fullscreenSourceUrl
-        \o Holds the source URL from which the fullscreen icon is to be copied from.
+        \li fullscreenSourceUrl
+        \li Holds the source URL from which the fullscreen icon is to be copied from.
 \endtable
 
 In C++ the value of the URLs must always be a QUrl.
@@ -265,13 +265,13 @@ The JsonDb plugin can be used as a favorites store and thus supports the followi
 parameters.
 \table
     \header
-        \o key
-        \o value
+        \li key
+        \li value
     \row
-        \o "alternativeId" (aka QPlaceMatchRequest::AlternativeId)
-        \o  alternative id attribute type, of the form "x_id_<provider name>" eg "x_id_nokia"
+        \li "alternativeId" (aka QPlaceMatchRequest::AlternativeId)
+        \li  alternative id attribute type, of the form "x_id_<provider name>" eg "x_id_nokia"
     \row
-        \o "proximity"
-        \o The distance (m) allowed between places in order to be considered a match.
+        \li "proximity"
+        \li The distance (m) allowed between places in order to be considered a match.
 \endtable
 */

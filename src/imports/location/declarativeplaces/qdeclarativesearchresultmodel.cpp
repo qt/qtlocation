@@ -82,31 +82,31 @@ QT_USE_NAMESPACE
 
     \table
         \header
-            \o Role
-            \o Type
-            \o Description
+            \li Role
+            \li Type
+            \li Description
         \row
-            \o type
-            \o enum
-            \o The type of search result.
+            \li type
+            \li enum
+            \li The type of search result.
         \row
-            \o distance
-            \o real
-            \o Valid only when the \c type role is \c PlaceResult, the distance to the place.
+            \li distance
+            \li real
+            \li Valid only when the \c type role is \c PlaceResult, the distance to the place.
         \row
-            \o place
-            \o \l Place
-            \o Valid only when the \c type role is \c PlaceResult, an object representing the
+            \li place
+            \li \l Place
+            \li Valid only when the \c type role is \c PlaceResult, an object representing the
                place.
         \row
-            \o sponsored
-            \o bool
-            \o Valid only when the \c type role is \c PlaceResult, true if the search result is a
+            \li sponsored
+            \li bool
+            \li Valid only when the \c type role is \c PlaceResult, true if the search result is a
                sponsored result.
         \row
-            \o correction
-            \o string
-            \o Valid only when the \c type role is \c CorrectionResult, a suggested correction to
+            \li correction
+            \li string
+            \li Valid only when the \c type role is \c CorrectionResult, a suggested correction to
                the search term.
     \endtable
 
@@ -208,14 +208,14 @@ QT_USE_NAMESPACE
 
     \table
         \row
-            \o PlaceSearchModel.Ready
-            \o The search query has completed and the result are available.
+            \li PlaceSearchModel.Ready
+            \li The search query has completed and the result are available.
         \row
-            \o PlaceSearchModel.Executing
-            \o A search query is currently being executed.
+            \li PlaceSearchModel.Executing
+            \li A search query is currently being executed.
         \row
-            \o PlaceSearchModel.Error
-            \o An error occurred when executing the previous search query.
+            \li PlaceSearchModel.Error
+            \li An error occurred when executing the previous search query.
     \endtable
 */
 
@@ -355,15 +355,15 @@ void QDeclarativeSearchResultModel::categories_clear(QDeclarativeListProperty<QD
 
     \table
         \row
-            \o SearchResultModel.UnspecifiedHint
-            \o No relevance hint is given to the provider.
+            \li SearchResultModel.UnspecifiedHint
+            \li No relevance hint is given to the provider.
         \row
-            \o SearchResultModel.DistanceHint
-            \o The distance of the place from the user's current location is important to the user.
+            \li SearchResultModel.DistanceHint
+            \li The distance of the place from the user's current location is important to the user.
                This hint is only meaningful when a circular search area is used.
         \row
-            \o SearchResultModel.LexicalPlaceNameHint
-            \o The lexical ordering of place names (in ascending alphabetical order) is relevant to
+            \li SearchResultModel.LexicalPlaceNameHint
+            \li The lexical ordering of place names (in ascending alphabetical order) is relevant to
                the user.  This hint is useful for providers based on a local data store.
     \endtable
 */
@@ -409,18 +409,18 @@ void QDeclarativeSearchResultModel::setMaximumCorrections(int corrections)
 
     \table
         \row
-            \o Place.UnspecifiedVisibility
-            \o No explicit visibility scope specified, places with any visibility may be part of
+            \li Place.UnspecifiedVisibility
+            \li No explicit visibility scope specified, places with any visibility may be part of
                search results.
         \row
-            \o Place.DeviceVisibility
-            \o Only places stored on the local device will be part of the search results.
+            \li Place.DeviceVisibility
+            \li Only places stored on the local device will be part of the search results.
         \row
-            \o Place.PrivateVisibility
-            \o Only places that are private to the current user will be part of the search results.
+            \li Place.PrivateVisibility
+            \li Only places that are private to the current user will be part of the search results.
         \row
-            \o Place.PublicVisibility
-            \o Only places that are public will be part of the search results.
+            \li Place.PublicVisibility
+            \li Only places that are public will be part of the search results.
     \endtable
 */
 QDeclarativePlace::Visibility QDeclarativeSearchResultModel::visibilityScope() const

@@ -59,10 +59,10 @@
     additional keys.
 
     \list
-        \o phone
-        \o fax
-        \o email
-        \o website
+        \li phone
+        \li fax
+        \li email
+        \li website
     \endlist
 
     \section1 Examples

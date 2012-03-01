@@ -4,8 +4,8 @@ A QPlace object represents a place by acting as a container for various informat
 This information can be divided into 2 broad classifications
 
 \list
-\o Details
-\o Rich content
+\li Details
+\li Rich content
 \endlist
 
 The place details consist of properties of the place, such as the name, location, contact information etc.

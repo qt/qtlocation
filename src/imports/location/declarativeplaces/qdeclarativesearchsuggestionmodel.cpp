@@ -77,13 +77,13 @@ QT_USE_NAMESPACE
 
     \table
         \header
-            \o Role
-            \o Type
-            \o Description
+            \li Role
+            \li Type
+            \li Description
         \row
-            \o suggestion
-            \o string
-            \o Suggested search term.
+            \li suggestion
+            \li string
+            \li Suggested search term.
     \endtable
 
     The following example shows how to use the PlaceSearchSuggestionModel to get suggested search terms
@@ -138,14 +138,14 @@ QT_USE_NAMESPACE
 
     \table
         \row
-            \o SearchSuggestionModel.Ready
-            \o The search query has completed and the result are available.
+            \li SearchSuggestionModel.Ready
+            \li The search query has completed and the result are available.
         \row
-            \o SearchSuggestionModel.Executing
-            \o A search query is currently being executed.
+            \li SearchSuggestionModel.Executing
+            \li A search query is currently being executed.
         \row
-            \o SearchSuggestionModel.Error
-            \o An error occurred when executing the previous search query.
+            \li SearchSuggestionModel.Error
+            \li An error occurred when executing the previous search query.
     \endtable
 */
 

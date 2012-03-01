@@ -41,10 +41,10 @@ surface \unicode {0x2014} as provided by a latitude-longitude coordinate
 \unicode {0x2014} along with associated data, such as:
 
     \list
-    \o The date and time at which the position was reported
-    \o The velocity of the device that reported the position
-    \o The altitude of the reported position (height above sea level)
-    \o The bearing of the device in degrees, relative to true north
+    \li The date and time at which the position was reported
+    \li The velocity of the device that reported the position
+    \li The altitude of the reported position (height above sea level)
+    \li The bearing of the device in degrees, relative to true north
     \endlist
 
 This data can be extracted through a variety of methods. One of the most
@@ -81,7 +81,7 @@ Rectangle {
 \endcode
 
 
-\section2 \bold{Flickr Example}
+\section2 \b{Flickr Example}
 
 The \l{Flickr (QML)}{Flickr Example} uses the Location to download thumbnail
 images from Flickr relevant to the current location.

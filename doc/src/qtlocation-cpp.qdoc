@@ -51,14 +51,14 @@ QtLocation C++ API.
 
 \table
     \row
-        \o \l {Location Positioning}
-        \o Retrieving information about the current position.
+        \li \l {Location Positioning}
+        \li Retrieving information about the current position.
     \row
-        \o \l {Maps}{Maps and Navigation}
-        \o Displaying maps and finding routes.
+        \li \l {Maps}{Maps and Navigation}
+        \li Displaying maps and finding routes.
     \row
-        \o \l {Places}
-        \o Searching for and managing points of interest.
+        \li \l {Places}
+        \li Searching for and managing points of interest.
 \endtable
 
 

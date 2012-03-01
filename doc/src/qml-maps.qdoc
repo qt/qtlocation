@@ -159,29 +159,29 @@ The \l RouteQuery properties can include
 
 \table 60%
     \row
-        \o \l {RouteQuery::}{numberAlternativeRoutes}
-        \o The number of alternative routes
+        \li \l {RouteQuery::}{numberAlternativeRoutes}
+        \li The number of alternative routes
     \row
-        \o \l {RouteQuery::}{travelModes}
-        \o Travel modes
+        \li \l {RouteQuery::}{travelModes}
+        \li Travel modes
     \row
-        \o \l {RouteQuery::}{routeOptimizations}
-        \o Required route optimizations
+        \li \l {RouteQuery::}{routeOptimizations}
+        \li Required route optimizations
     \row
-        \o \l {RouteQuery::}{segmentDetails}
-        \o Level of detail in segments
+        \li \l {RouteQuery::}{segmentDetails}
+        \li Level of detail in segments
     \row
-        \o \l {RouteQuery::}{maneuverDetails}
-        \o Level of detail in maneuvers between segments
+        \li \l {RouteQuery::}{maneuverDetails}
+        \li Level of detail in maneuvers between segments
     \row
-        \o \l {RouteQuery::}{waypoints}
-        \o A list of waypoints
+        \li \l {RouteQuery::}{waypoints}
+        \li A list of waypoints
     \row
-        \o \l {RouteQuery::}{excludedAreas}
-        \o A list of excluded areas that the route must not cross
+        \li \l {RouteQuery::}{excludedAreas}
+        \li A list of excluded areas that the route must not cross
     \row
-        \o \l {RouteQuery::}{featureTypes}
-        \o Relevant map features, e.g. highway, ferry
+        \li \l {RouteQuery::}{featureTypes}
+        \li Relevant map features, e.g. highway, ferry
 \endtable
 
 

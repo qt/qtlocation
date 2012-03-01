@@ -87,7 +87,7 @@ bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
     a user from a supplier is contributing content, hence both fields could
     be filled in simultaneously.
 
-    \bold {Note:} Some providers may \e {require} that the attribution string be displayed
+    \b {Note:} Some providers may \e {require} that the attribution string be displayed
     to the user whenever a piece of content is viewed.
 
     Conversion between QPlaceContent and it's subclasses can be easily performed without
@@ -240,7 +240,7 @@ void QPlaceContent::setUser(const QPlaceUser &user)
 /*!
     Returns a rich text attribution string.
 
-    \bold {Note}: Some providers may require that the attribution
+    \b {Note}: Some providers may require that the attribution
     of a particular content item always be displayed
     when the content item is shown.
 */

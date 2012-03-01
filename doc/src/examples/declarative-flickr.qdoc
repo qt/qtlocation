@@ -39,8 +39,8 @@
 
     Key QML elements shown in this example:
     \list
-        \o \l{QtLocation5::PositionSource}{PositionSource}
-        \o \l{XmlListModel}{XmlListModel}
+        \li \l{QtLocation5::PositionSource}{PositionSource}
+        \li \l{XmlListModel}{XmlListModel}
     \endlist
 
     \image  qml-flickr-1.jpg

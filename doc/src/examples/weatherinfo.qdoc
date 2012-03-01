@@ -37,8 +37,8 @@
     Key QtLocation classes used in this example:
 
     \list
-    \o \l{QGeoPositionInfo}
-    \o \l{QGeoPositionInfoSource}
+    \li \l{QGeoPositionInfo}
+    \li \l{QGeoPositionInfoSource}
     \endlist
 
     \image ../images/example-weatherinfo.png

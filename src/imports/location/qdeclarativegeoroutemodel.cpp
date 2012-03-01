@@ -384,10 +384,10 @@ void QDeclarativeGeoRouteModel::setStatus(QDeclarativeGeoRouteModel::Status stat
     This read-only property holds the current status of the model.
 
     \list
-    \o RouteModel.Null - No route requests have been issued or \l reset has been called.
-    \o RouteModel.Ready - Route request(s) have finished successfully.
-    \o RouteModel.Loading - Route request has been issued but not yet finished
-    \o RouteModel.Error - Routing error has occurred, details are in \l error and \l errorString
+    \li RouteModel.Null - No route requests have been issued or \l reset has been called.
+    \li RouteModel.Ready - Route request(s) have finished successfully.
+    \li RouteModel.Loading - Route request has been issued but not yet finished
+    \li RouteModel.Error - Routing error has occurred, details are in \l error and \l errorString
     \endlist
 */
 
@@ -428,12 +428,12 @@ QString QDeclarativeGeoRouteModel::errorString() const
     This read-only property holds the latest error value of the routing request.
 
     \list
-    \o RouteModel.NoError - No error has occurred
-    \o RouteModel.EngineNotSetError - The plugin/service provider used does not support routing
-    \o RouteModel.CommunicationError - An error occurred while communicating with the service provider
-    \o RouteModel.ParseError - The response from the service provider was in an unrecognizable format
-    \o RouteModel.UnsupportedOptionError - The requested operation or one of the options for the operation are not supported by the service provider.
-    \o RouteModel.UnknownError - An error occurred which does not fit into any of the other categories
+    \li RouteModel.NoError - No error has occurred
+    \li RouteModel.EngineNotSetError - The plugin/service provider used does not support routing
+    \li RouteModel.CommunicationError - An error occurred while communicating with the service provider
+    \li RouteModel.ParseError - The response from the service provider was in an unrecognizable format
+    \li RouteModel.UnsupportedOptionError - The requested operation or one of the options for the operation are not supported by the service provider.
+    \li RouteModel.UnknownError - An error occurred which does not fit into any of the other categories
     \endlist
 */
 
@@ -611,15 +611,15 @@ void QDeclarativeGeoRouteQuery::componentComplete()
     route. Features with a weight of NeutralFeatureWeight will not be returned.
 
     \list
-    \o RouteModel.NoFeature - No features will be taken into account when planning the route
-    \o RouteModel.TollFeature - Consider tollways when planning the route
-    \o RouteModel.HighwayFeature - Consider highways when planning the route
-    \o RouteModel.PublicTransitFeature - Consider public transit when planning the route
-    \o RouteModel.FerryFeature - Consider ferries when planning the route
-    \o RouteModel.TunnelFeature - Consider tunnels when planning the route
-    \o RouteModel.DirtRoadFeature - Consider dirt roads when planning the route
-    \o RouteModel.ParksFeature - Consider parks when planning the route
-    \o RouteModel.MotorPoolLaneFeature - Consider motor pool lanes when planning the route
+    \li RouteModel.NoFeature - No features will be taken into account when planning the route
+    \li RouteModel.TollFeature - Consider tollways when planning the route
+    \li RouteModel.HighwayFeature - Consider highways when planning the route
+    \li RouteModel.PublicTransitFeature - Consider public transit when planning the route
+    \li RouteModel.FerryFeature - Consider ferries when planning the route
+    \li RouteModel.TunnelFeature - Consider tunnels when planning the route
+    \li RouteModel.DirtRoadFeature - Consider dirt roads when planning the route
+    \li RouteModel.ParksFeature - Consider parks when planning the route
+    \li RouteModel.MotorPoolLaneFeature - Consider motor pool lanes when planning the route
     \endlist
 
     \sa setFeatureWeight featureWeight
@@ -910,11 +910,11 @@ void QDeclarativeGeoRouteQuery::clearWaypoints()
     Following lists the possible feature weights:
 
     \list
-    \o RouteModel.NeutralFeatureWeight - The presence or absence of the feature will not affect the planning of the route
-    \o RouteModel.PreferFeatureWeight - Routes which contain the feature will be preferred over those that do not
-    \o RouteModel.RequireFeatureWeight - Only routes which contain the feature will be considered, otherwise no route will be returned
-    \o RouteModel.AvoidFeatureWeight - Routes which do not contain the feature will be preferred over those that do
-    \o RouteModel.DisallowFeatureWeight - Only routes which do not contain the feature will be considered, otherwise no route will be returned
+    \li RouteModel.NeutralFeatureWeight - The presence or absence of the feature will not affect the planning of the route
+    \li RouteModel.PreferFeatureWeight - Routes which contain the feature will be preferred over those that do not
+    \li RouteModel.RequireFeatureWeight - Only routes which contain the feature will be considered, otherwise no route will be returned
+    \li RouteModel.AvoidFeatureWeight - Routes which do not contain the feature will be preferred over those that do
+    \li RouteModel.DisallowFeatureWeight - Only routes which do not contain the feature will be considered, otherwise no route will be returned
     \endlist
 
     \sa featureTypes, resetFeatureWeights, featureWeight
@@ -1010,8 +1010,8 @@ void QDeclarativeGeoRouteQuery::setTravelModes(QDeclarativeGeoRouteQuery::Travel
     Values can be combined with OR ('|') -operator.
 
     \list
-    \o RouteModel.NoSegmentData - No segment data should be included with the route
-    \o RouteModel.BasicSegmentData - Basic segment data will be included with the route
+    \li RouteModel.NoSegmentData - No segment data should be included with the route
+    \li RouteModel.BasicSegmentData - Basic segment data will be included with the route
     \endlist
 
     The default value is RouteModel.BasicSegmentData
@@ -1040,8 +1040,8 @@ QDeclarativeGeoRouteQuery::SegmentDetail QDeclarativeGeoRouteQuery::segmentDetai
     Values can be combined with OR ('|') -operator.
 
     \list
-    \o RouteModel.NoManeuvers - No maneuvers should be included with the route
-    \o RouteModel.BasicManeuvers - Basic maneuvers will be included with the route
+    \li RouteModel.NoManeuvers - No maneuvers should be included with the route
+    \li RouteModel.BasicManeuvers - Basic maneuvers will be included with the route
     \endlist
 
     The default value is RouteModel.BasicManeuvers
@@ -1070,11 +1070,11 @@ QDeclarativeGeoRouteQuery::ManeuverDetail QDeclarativeGeoRouteQuery::maneuverDet
     Values can be combined with OR ('|') -operator.
 
     \list
-    \o RouteModel.CarTravel - The route will be optimized for someone who is driving a car
-    \o RouteModel.PedestrianTravel - The route will be optimized for someone who is walking
-    \o RouteModel.BicycleTravel - The route will be optimized for someone who is riding a bicycle
-    \o RouteModel.PublicTransitTravel - The route will be optimized for someone who is making use of public transit
-    \o RouteModel.TruckTravel - The route will be optimized for someone who is driving a truck
+    \li RouteModel.CarTravel - The route will be optimized for someone who is driving a car
+    \li RouteModel.PedestrianTravel - The route will be optimized for someone who is walking
+    \li RouteModel.BicycleTravel - The route will be optimized for someone who is riding a bicycle
+    \li RouteModel.PublicTransitTravel - The route will be optimized for someone who is making use of public transit
+    \li RouteModel.TruckTravel - The route will be optimized for someone who is driving a truck
     \endlist
 
     The default value is RouteQuery.CarTravel
@@ -1130,10 +1130,10 @@ void QDeclarativeGeoRouteQuery::setRouteOptimizations(QDeclarativeGeoRouteQuery:
     Values can be combined with OR ('|') -operator.
 
     \list
-    \o RouteModel.ShortestRoute - Minimize the length of the journey
-    \o RouteModel.FastestRoute - Minimize the traveling time for the journey
-    \o RouteModel.MostEconomicRoute - Minimize the cost of the journey
-    \o RouteModel.MostScenicRoute - Maximize the scenic potential of the journey
+    \li RouteModel.ShortestRoute - Minimize the length of the journey
+    \li RouteModel.FastestRoute - Minimize the traveling time for the journey
+    \li RouteModel.MostEconomicRoute - Minimize the cost of the journey
+    \li RouteModel.MostScenicRoute - Maximize the scenic potential of the journey
     \endlist
 
     The default value is RouteQuery.FastestRoute

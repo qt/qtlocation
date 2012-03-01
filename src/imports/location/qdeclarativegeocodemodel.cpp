@@ -380,10 +380,10 @@ void QDeclarativeGeocodeModel::geocodeError(QGeocodeReply *reply,
     This read-only property holds the current status of the model.
 
     \list
-    \o GeocodeModel.Null - No geocode requests have been issued or \l reset has been called.
-    \o GeocodeModel.Ready - Geocode request(s) have finished successfully.
-    \o GeocodeModel.Loading - Geocode request has been issued but not yet finished
-    \o GeocodeModel.Error - Geocoding error has occurred, details are in \l error and \l errorString
+    \li GeocodeModel.Null - No geocode requests have been issued or \l reset has been called.
+    \li GeocodeModel.Ready - Geocode request(s) have finished successfully.
+    \li GeocodeModel.Loading - Geocode request has been issued but not yet finished
+    \li GeocodeModel.Error - Geocoding error has occurred, details are in \l error and \l errorString
     \endlist
 */
 
@@ -406,13 +406,13 @@ void QDeclarativeGeocodeModel::setStatus(QDeclarativeGeocodeModel::Status status
     This read-only property holds the latest error value of the geocoding request.
 
     \list
-    \o GeocodeModel.NoError - No error has occurred
-    \o GeocodeModel.EngineNotSetError - The plugin/service provider used does not support (reverse) geocoding
-    \o GeocodeModel.CommunicationError - An error occurred while communicating with the service provider
-    \o GeocodeModel.ParseError - The response from the service provider was in an unrecognizable format
-    \o GeocodeModel.UnsupportedOptionError - The requested operation or one of the options for the operation are not supported by the service provider.
-    \o GeocodeModel.CombinationError - An error occurred while results where being combined from multiple sources
-    \o GeocodeModel.UnknownError - An error occurred which does not fit into any of the other categories
+    \li GeocodeModel.NoError - No error has occurred
+    \li GeocodeModel.EngineNotSetError - The plugin/service provider used does not support (reverse) geocoding
+    \li GeocodeModel.CommunicationError - An error occurred while communicating with the service provider
+    \li GeocodeModel.ParseError - The response from the service provider was in an unrecognizable format
+    \li GeocodeModel.UnsupportedOptionError - The requested operation or one of the options for the operation are not supported by the service provider.
+    \li GeocodeModel.CombinationError - An error occurred while results where being combined from multiple sources
+    \li GeocodeModel.UnknownError - An error occurred which does not fit into any of the other categories
     \endlist
 */
 
@@ -589,9 +589,9 @@ void QDeclarativeGeocodeModel::reset()
     the type of action to be performed:
 
     \list
-    \o Address - Geocoding (address to coordinate)
-    \o Coordinate - Reverse geocoding (coordinate to address)
-    \o string - Geocoding (address to coordinate)
+    \li Address - Geocoding (address to coordinate)
+    \li Coordinate - Reverse geocoding (coordinate to address)
+    \li string - Geocoding (address to coordinate)
     \endlist
 */
 

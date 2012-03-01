@@ -267,10 +267,10 @@ void QDeclarativePositionSource::setPreferredPositioningMethods(QGeoPositionInfo
     current source.
 
     \list
-    \o NoPositioningMethod - No positioning methods supported (no source).
-    \o SatellitePositioningMethod - Satellite-based positioning methods such as GPS is supported.
-    \o NonSatellitePositioningMethod - Non satellite methods are supported.
-    \o AllPositioningMethods - Combination of methods are supported.
+    \li NoPositioningMethod - No positioning methods supported (no source).
+    \li SatellitePositioningMethod - Satellite-based positioning methods such as GPS is supported.
+    \li NonSatellitePositioningMethod - Non satellite methods are supported.
+    \li AllPositioningMethods - Combination of methods are supported.
     \endlist
 
 */
@@ -297,9 +297,9 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::suppo
     current source.
 
     \list
-    \o SatellitePositioningMethod - Satellite-based positioning methods such as GPS is supported.
-    \o NonSatellitePositioningMethod - Non satellite methods are supported.
-    \o AllPositioningMethods - Combination of methods are supported.
+    \li SatellitePositioningMethod - Satellite-based positioning methods such as GPS is supported.
+    \li NonSatellitePositioningMethod - Non satellite methods are supported.
+    \li AllPositioningMethods - Combination of methods are supported.
     \endlist
 
 */
@@ -484,12 +484,12 @@ QDeclarativePositionSource::SourceError QDeclarativePositionSource::sourceError(
     This property holds the error which last occured with the PositionSource.
 
     \list
-    \o AccessError - The connection setup to the remote positioning backend failed because the
+    \li AccessError - The connection setup to the remote positioning backend failed because the
         application lacked the required privileges.
-    \o ClosedError - The remote positioning backend closed the connection, which happens e.g. in case
+    \li ClosedError - The remote positioning backend closed the connection, which happens e.g. in case
         the user is switching location services to off. This object becomes invalid and should be deleted.
         A new source can be declared later on to check whether the positioning backend is up again.
-    \o UnknownSourceError - An unidentified error occurred.
+    \li UnknownSourceError - An unidentified error occurred.
     \endlist
 
 */

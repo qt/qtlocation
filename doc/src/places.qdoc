@@ -139,7 +139,7 @@
 
     \snippet snippets/places/requesthandler.h Search for places handler cpp
 
-    \bold {Note:} Depending upon the plugin backend that was chosen, the search results may contain places
+    \b {Note:} Depending upon the plugin backend that was chosen, the search results may contain places
     which have further details that can be fetched on a place by place basis.  To fetch these other details
     see \l {Fetching Place Details}.
 
@@ -262,10 +262,10 @@
 
     After the categories have been initialized we can then use these category functions.
     \list
-        \o QPlaceManager::childCategories()
-        \o QPlaceManager::category()
-        \o QPlaceManager::parentCategoryId()
-        \o QPlaceManager::childCategoryIds();
+        \li QPlaceManager::childCategories()
+        \li QPlaceManager::category()
+        \li QPlaceManager::parentCategoryId()
+        \li QPlaceManager::childCategoryIds();
     \endlist
 
     To retrieve the top level categories

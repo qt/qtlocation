@@ -40,23 +40,23 @@
     QML elements shown in this example:
 
     \list
-    \o Displaying a map
+    \li Displaying a map
         \list
-        \o \l{QtLocation5::Map}{Map}
-        \o \l{QtLocation5::MapFlickable}{MapFlickable}
-        \o \l{QtLocation5::MapPinchArea}{MapPinchArea}
-        \o \l{QtLocation5::Coordinate}{Coordinate}
+        \li \l{QtLocation5::Map}{Map}
+        \li \l{QtLocation5::MapFlickable}{MapFlickable}
+        \li \l{QtLocation5::MapPinchArea}{MapPinchArea}
+        \li \l{QtLocation5::Coordinate}{Coordinate}
         \endlist
-    \o Finding an address
+    \li Finding an address
         \list
-        \o \l{QtLocation5::GeocodeModel}{GeocodeModel}
-        \o \l{QtLocation5::MapItemView}{MapItemView}
-        \o \l{QtLocation5::MapCircle}{MapCircle}
+        \li \l{QtLocation5::GeocodeModel}{GeocodeModel}
+        \li \l{QtLocation5::MapItemView}{MapItemView}
+        \li \l{QtLocation5::MapCircle}{MapCircle}
         \endlist
-    \o Directions and travel routes
+    \li Directions and travel routes
         \list
-        \o \l{QtLocation5::RouteModel}{RouteModel}
-        \o \l{QtLocation5::MapRoute}{MapRoute}
+        \li \l{QtLocation5::RouteModel}{RouteModel}
+        \li \l{QtLocation5::MapRoute}{MapRoute}
         \endlist
     \endlist
 

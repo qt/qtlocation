@@ -107,14 +107,14 @@ QT_BEGIN_NAMESPACE
 
     Some important limitations apply to the use of a MapMouseArea:
     \list
-        \i The mouse event is guaranteed only to be valid for the
+        \li The mouse event is guaranteed only to be valid for the
    duration of the signal handler (e.g. onPositionChanged, onClicked). Consequently
    the mouse event itself should not be stored. The main reason for this is to
    optimize memory usage; we do not want to allocate heap memory every time the mouse
    moves.
-        \i Nested mouse areas are not supported (MapMouseArea { MapMouseArea {} }
-        \i If two or more MapMouseAreas overlap, the declaration order is significant (not e.g. 'z' value)
-        \i Only one MapMouseArea per MapItem is supported, and it always fills the whole MapItem
+        \li Nested mouse areas are not supported (MapMouseArea { MapMouseArea {} }
+        \li If two or more MapMouseAreas overlap, the declaration order is significant (not e.g. 'z' value)
+        \li Only one MapMouseArea per MapItem is supported, and it always fills the whole MapItem
     \endlist
 
     \sa MapMouseEvent
@@ -319,9 +319,9 @@ QQuickItem* QDeclarativeGeoMapMouseArea::parentMapItem()
 
     It contains a bitwise combination of:
     \list
-    \o Qt.LeftButton
-    \o Qt.RightButton
-    \o Qt.MiddleButton
+    \li Qt.LeftButton
+    \li Qt.RightButton
+    \li Qt.MiddleButton
     \endlist
 
     \sa acceptedButtons
@@ -333,9 +333,9 @@ QQuickItem* QDeclarativeGeoMapMouseArea::parentMapItem()
 
     The available buttons are:
     \list
-    \o Qt.LeftButton
-    \o Qt.RightButton
-    \o Qt.MiddleButton
+    \li Qt.LeftButton
+    \li Qt.RightButton
+    \li Qt.MiddleButton
     \endlist
 
     To accept more than one button the flags can be combined with the
