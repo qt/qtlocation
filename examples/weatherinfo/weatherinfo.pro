@@ -7,10 +7,6 @@ QT += core \
     declarative \
     quick
 
-symbian:TARGET.CAPABILITY += Location \
-    NetworkServices \
-    ReadUserData
-
 SOURCES += main.cpp \
     appmodel.cpp
 

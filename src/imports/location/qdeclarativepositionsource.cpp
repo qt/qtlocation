@@ -122,13 +122,6 @@ QDeclarativePositionSource::QDeclarativePositionSource()
         connect(m_positionSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
                 this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
         m_positioningMethod = supportedPositioningMethods();
-#if defined(Q_OS_SYMBIAN)
-    } else {
-        RProcess thisProcess;
-        if (!thisProcess.HasCapability(ECapabilityLocation)) {
-            qmlInfo(this) << tr("PositionSource requires the Symbian Location capability to succeed on the Symbian platform.");
-        }
-#endif
     }
 #ifdef QDECLARATIVE_POSITION_DEBUG
     if (m_positionSource)
