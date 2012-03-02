@@ -49,6 +49,9 @@
 #include <QMap>
 #include <QString>
 #include <QStringList>
+#include <QLocalSocket>
+#include <QDir>
+#include <QTest>
 
 const QLatin1String JsonDbUtils::Uuid("_uuid");
 const QLatin1String JsonDbUtils::Type("_type");
@@ -130,9 +133,16 @@ const QLatin1String JsonDbUtils::FullscreenIconSizeParam("fullscreenSize");
 const QLatin1String JsonDbUtils::CreatedDateTime("createdDateTime");
 const QLatin1String JsonDbUtils::ModifiedDateTime("modifiedDateTime");
 
+JsonDbUtils::~JsonDbUtils()
+{
+    if (m_jsondbProcess)
+        m_jsondbProcess->kill();
+}
+
 JsonDbUtils::JsonDbUtils(QObject *parent)
     : QObject(parent)
 {
+    m_jsondbProcess = launchJsonDbDaemon();
     m_connection = new QJsonDbConnection;
     m_connection->connectToServer();
 }
@@ -147,6 +157,7 @@ void JsonDbUtils::cleanDb()
     connect(getPlacesRequest, SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
             this, SLOT(requestError(QtJsonDb::QJsonDbRequest::ErrorCode,QString)));
     connect(getPlacesRequest, SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
+
             getPlacesRequest, SLOT(deleteLater()));
     m_connection->send(getPlacesRequest);
 }
@@ -289,4 +300,45 @@ void JsonDbUtils::makeConnections(QJsonDbRequest *request, QObject *parent,
                      SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
                      request,
                      SLOT(deleteLater()));
+}
+
+QProcess* JsonDbUtils::launchJsonDbDaemon(const QStringList &args)
+{
+    const QString socketName = QString("tst_qplacemanger_jsondb_%1").arg(getpid());
+    QString jsondb_app = QString::fromLocal8Bit(JSONDB_DAEMON_BASE) + QDir::separator() + "jsondb";
+    if (!QFile::exists(jsondb_app))
+        jsondb_app = QLatin1String("jsondb"); // rely on the PATH
+
+    QProcess *process = new QProcess;
+    process->setProcessChannelMode( QProcess::ForwardedChannels );
+
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("JSONDB_SOCKET", socketName);
+    process->setProcessEnvironment(env);
+    ::setenv("JSONDB_SOCKET", qPrintable(socketName), 1);
+    qDebug() << "Starting process" << jsondb_app << args << "with socket" << socketName;
+    process->start(jsondb_app, args);
+    if (!process->waitForStarted())
+        qFatal("Unable to start jsondb database process");
+
+    /* Wait until the jsondb is accepting connections */
+    int tries = 0;
+    bool connected = false;
+    while (!connected && tries++ < 100) {
+        QLocalSocket socket;
+        socket.connectToServer(socketName);
+        if (socket.waitForConnected())
+            connected = true;
+        QTest::qWait(250);
+    }
+    if (!connected)
+        qFatal("Unable to connect to jsondb process");
+    return process;
+}
+
+bool JsonDbUtils::hasJsonDbConnection() const
+{
+    return  m_jsondbProcess &&
+            m_connection &&
+            m_connection->status() == QtJsonDb::QJsonDbConnection::Connected;
 }

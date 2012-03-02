@@ -45,6 +45,7 @@
 #include <QMap>
 #include <QVariant>
 #include <QEventLoop>
+#include <QProcess>
 
 #include <QtCore/QJsonObject>
 #include <QtJsonDb/QJsonDbConnection>
@@ -56,6 +57,7 @@ class JsonDbUtils : public QObject
 {
     Q_OBJECT
 public:
+    ~JsonDbUtils();
     JsonDbUtils(QObject *parent = 0);
     void cleanDb();
     void sendRequest(QJsonDbRequest *request);
@@ -63,6 +65,7 @@ public:
     QList<QJsonObject> results();
     void fetchPlaceJson(const QString &uuid);
     void savePlaceJson(const QJsonObject &object);
+    bool hasJsonDbConnection() const;
 
     static const QLatin1String Uuid;
     static const QLatin1String Type;
@@ -159,6 +162,9 @@ signals:
 
 private:
     void makeConnections(QJsonDbRequest *request, QObject *parent, const char *slot);
+    static QProcess *launchJsonDbDaemon(const QStringList &args = QStringList());
+
+    QProcess *m_jsondbProcess;
     QJsonDbConnection *m_connection;
     QList<QJsonObject> m_results;
 };

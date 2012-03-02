@@ -12,5 +12,7 @@ QT += location testlib
 
 QT += jsondb
 
+DEFINES += JSONDB_DAEMON_BASE=\\\"$$QT.jsondb.bins\\\"
+
 RESOURCES += resources.qrc
 CONFIG += insignificant_test
