@@ -13,3 +13,4 @@ QT += location testlib
 QT += jsondb
 
 RESOURCES += resources.qrc
+CONFIG += insignificant_test
