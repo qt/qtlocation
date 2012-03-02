@@ -46,6 +46,7 @@ Rectangle {
     id: searchRectangle
 
     property bool suggestionsEnabled: true
+    property int expandedHeight: childrenRect.height
     readonly property int baseHeight: searchBox.height + 20
 
     color: "#ECECEC"
@@ -138,7 +139,7 @@ Rectangle {
         anchors.leftMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 10
-        height: 450
+        height: expandedHeight - y
         visible: false
 
         clip: true
@@ -247,7 +248,7 @@ Rectangle {
             name: "CategoriesShown"
             PropertyChanges {
                 target: searchRectangle
-                height: childrenRect.height + 20
+                height: expandedHeight
             }
             PropertyChanges {
                 target: busy

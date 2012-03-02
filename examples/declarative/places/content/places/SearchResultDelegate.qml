@@ -63,7 +63,7 @@ Item {
             Rectangle {
                 anchors.fill: parent
                 color: "#dbffde"
-                visible: sponsored
+                visible: model.sponsored !== undefined ? model.sponsored : false
             }
 
             Column {
@@ -85,7 +85,7 @@ Item {
                     horizontalAlignment: Text.AlignRight
                     font.pixelSize: 8
                     width: parent.width
-                    visible: sponsored
+                    visible: model.sponsored !== undefined ? model.sponsored : false
                 }
             }
 

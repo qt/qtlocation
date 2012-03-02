@@ -98,8 +98,7 @@ Item {
                     }
 
                     footer: Item {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
+                        width: searchView.width
                         height: childrenRect.height
 
                         Button {

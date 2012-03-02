@@ -158,27 +158,19 @@ Item {
 
             Group {
                 text: qsTr("Additional information")
-                visible: extendedAttributes.count > 0
+                visible: extendedAttributes.count > 0 && extendedAttributes.height > 0
             }
 
             Repeater {
                 id: extendedAttributes
                 model: place ? place.extendedAttributes.keys() : null
                 delegate: Text {
-                    text: {
-                        var attributes = place.extendedAttributes;
-                        var attribute = attributes[modelData];
-                        if (attribute) {
-                            if (attribute.label) {
-                                if (attribute.text) {
-                                    return attribute.label + ": " + attribute.text;
-                                }
-                            } else if (attribute.text) {
-                                return attribute.text;
-                            }
-                        }
-                        return ""
-                    }
+                    text: place.extendedAttributes[modelData] ?
+                              place.extendedAttributes[modelData].label +
+                              place.extendedAttributes[modelData].text : ""
+
+                    visible: place.extendedAttributes[modelData] ? place.extendedAttributes[modelData].label.length > 0 : false
+
                     width: c.width
                     wrapMode: Text.WordWrap
                 }
@@ -262,7 +254,7 @@ Item {
                             placeDelegate.placeChanged.connect(reset);
                         }
 
-                        text: (place.favorite !== null) ? qsTr("Remove Favorite") : qsTr("Save as Favorite");
+                        text: (place && place.favorite !== null) ? qsTr("Remove Favorite") : qsTr("Save as Favorite")
                         onClicked:  {
                             if (place.favorite === null) {
                                 place.initializeFavorite(placeSearchModel.favoritesPlugin);

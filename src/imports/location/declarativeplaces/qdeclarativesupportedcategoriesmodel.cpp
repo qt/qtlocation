@@ -420,12 +420,12 @@ void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
         return;
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    if (!serviceProvider)
+    if (!serviceProvider || serviceProvider->error() != QGeoServiceProvider::NoError)
         return;
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+    if (!placeManager) {
+        qmlInfo(this) << tr("Plugin %1 does not support places.").arg(m_plugin->name());
         return;
     }
 
@@ -450,12 +450,12 @@ void QDeclarativeSupportedCategoriesModel::update()
     }
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    if (!serviceProvider)
+    if (!serviceProvider || serviceProvider->error() != QGeoServiceProvider::NoError)
         return;
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
-    if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+    if (!placeManager) {
+        qmlInfo(this) << tr("Plugin %1 does not support places.").arg(m_plugin->name());
         return;
     }
 
@@ -477,12 +477,12 @@ void QDeclarativeSupportedCategoriesModel::updateLayout()
         return;
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
-    if (!serviceProvider)
+    if (!serviceProvider || serviceProvider->error() != QGeoServiceProvider::NoError)
         return;
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
-        qmlInfo(this) << tr("Places not  by %1 Plugin.").arg(m_plugin->name());
+        qmlInfo(this) << tr("Plugin %1 does not support places.").arg(m_plugin->name());
         return;
     }
 
@@ -625,7 +625,7 @@ QPlaceManager *QDeclarativeSupportedCategoriesModel::manager(bool checkState)
     QPlaceManager *placeManager = serviceProvider->placeManager();
 
     if (!placeManager) {
-        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        qmlInfo(this) << tr("Plugin %1 does not support places.").arg(m_plugin->name());
         return 0;
     }
 

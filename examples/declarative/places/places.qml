@@ -441,6 +441,7 @@ Item {
         anchors.top: page.top
         anchors.topMargin: page.mobileUi ? 20 : 0
         width: parent.width
+        expandedHeight: parent.height
         z: backgroundRect.z + 3
     }
 
