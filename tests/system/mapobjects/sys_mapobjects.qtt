@@ -64,7 +64,8 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen. |
         | | Verify that there are 2 circles associated with Nokia and Eight Mile Plains labels. |
-        | Zoom in the map | Verify that map still has the circles. |"
+        | Zoom in the map to about level 11 | Verify that map still has the circles. |
+        | Pan the map so circles' centres go out of the viewport | Verify that map can display partially visible circles |"
         ));
     },
 
