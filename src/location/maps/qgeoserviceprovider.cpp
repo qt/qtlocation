@@ -690,7 +690,7 @@ void QGeoServiceProviderPrivate::loadPlugin(const QMap<QString, QVariant> &param
 
     int idx = int(metaData.value(QStringLiteral("index")).toDouble());
 
-    // load the actual plugin (BWAHAHA)
+    // load the actual plugin
     factory = qobject_cast<QGeoServiceProviderFactory*>(loader()->instance(idx));
 }
 
