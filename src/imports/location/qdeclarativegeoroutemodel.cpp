@@ -834,12 +834,21 @@ void QDeclarativeGeoRouteQuery::clearExcludedAreas()
 
 void QDeclarativeGeoRouteQuery::addWaypoint(QDeclarativeCoordinate* waypoint)
 {
-    if (!waypoint)
+    if (!waypoint) {
+        qmlInfo(this) << tr("Not adding null waypoint.");
         return;
+    }
+
+    if (!waypoint->isValid()) {
+        qmlInfo(this) << tr("Not adding invalid waypoint.");
+        return;
+    }
+
     if (!waypoints_.contains(waypoint)) {
         connect (waypoint, SIGNAL(latitudeChanged(double)), this, SIGNAL(queryDetailsChanged()));
         connect (waypoint, SIGNAL(longitudeChanged(double)), this, SIGNAL(queryDetailsChanged()));
         connect (waypoint, SIGNAL(altitudeChanged(double)), this, SIGNAL(queryDetailsChanged()));
+        connect (waypoint, SIGNAL(destroyed(QObject*)), this, SLOT(waypointDestroyed(QObject*)));
     }
     waypoints_.append(waypoint);
     if (complete_) {
@@ -1163,6 +1172,19 @@ QGeoRouteRequest& QDeclarativeGeoRouteQuery::routeRequest()
     request_.setWaypoints(waypoints);
     request_.setExcludeAreas(exclusions);
     return request_;
+}
+
+void QDeclarativeGeoRouteQuery::waypointDestroyed(QObject* object)
+{
+    const int index = waypoints_.indexOf(static_cast<QDeclarativeCoordinate*>(object));
+
+    if (index >= 0) {
+        waypoints_.removeAt(index);
+        if (complete_) {
+            emit waypointsChanged();
+            emit queryDetailsChanged();
+        }
+    }
 }
 
 #include "moc_qdeclarativegeoroutemodel_p.cpp"

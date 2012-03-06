@@ -306,6 +306,9 @@ Q_SIGNALS:
 
     void queryDetailsChanged();
 
+private Q_SLOTS:
+    void waypointDestroyed(QObject* object);
+
 private:
 
     static void waypoints_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *waypoint);

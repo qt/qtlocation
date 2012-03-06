@@ -759,6 +759,14 @@ Item {
             wait(300)
             compare (automaticRoutesSpy.count, 3)
         }
+
+        function test_route_query_handles_destroyed_qml_objects() {
+            var coordinate = Qt.createQmlObject('import QtQuick 2.0; import QtLocation 5.0; Coordinate { latitude : 11; longitude : 52 }', this);
+            routeQuery.addWaypoint(coordinate);
+            coordinate.destroy();
+            wait(300);
+            routeQuery.clearWaypoints();
+        }
     }
 }
 
