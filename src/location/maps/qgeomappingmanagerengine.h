@@ -45,6 +45,11 @@
 #include <QObject>
 #include <QSize>
 #include <QPair>
+#include <QSet>
+#include <QList>
+#include <QMap>
+#include <QString>
+#include <QVariant>
 #include <QtLocation/qlocationglobal.h>
 #include "qgeomaptype.h"
 #include "qgeomappingmanager.h"

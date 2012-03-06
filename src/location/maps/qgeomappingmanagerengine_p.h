@@ -58,6 +58,7 @@
 #include <QMap>
 #include <QLocale>
 #include <QTimer>
+#include <QHash>
 #include "qgeomaptype.h"
 #include "qgeomappingmanager.h"
 #include "qgeocameracapabilities_p.h"
