@@ -45,6 +45,7 @@
 #include <QObject>
 #include <QSize>
 #include <QPair>
+#include <QSharedPointer>
 #include <QtLocation/qlocationglobal.h>
 #include "qgeomaptype.h"
 
@@ -113,7 +114,7 @@ Q_SIGNALS:
 private:
     QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
 
-    QGeoMappingManagerPrivate* d_ptr;
+    QSharedPointer<QGeoMappingManagerPrivate> d_ptr;
     Q_DISABLE_COPY(QGeoMappingManager)
 
     friend class QGeoServiceProvider;

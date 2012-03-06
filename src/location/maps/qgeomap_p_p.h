@@ -61,6 +61,7 @@
 #include <QMatrix4x4>
 #include <QString>
 #include <QSharedPointer>
+#include <QWeakPointer>
 
 #include "qgeocameradata_p.h"
 #include "qgeomaptype.h"
@@ -125,7 +126,7 @@ private:
 
     QGeoMap *map_;
     QGeoTileCache* cache_;
-    QGeoMappingManager *manager_;
+    QWeakPointer<QGeoMappingManager> manager_;
     QString pluginString_;
     QGeoMapController *controller_;
 

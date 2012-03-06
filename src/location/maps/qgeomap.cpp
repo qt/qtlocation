@@ -214,7 +214,6 @@ QGeoMapPrivate::QGeoMapPrivate(QGeoMap *parent, QGeoTileCache *cache)
       aspectRatio_(0.0),
       map_(parent),
       cache_(cache),
-      manager_(0),
       controller_(0),
       cameraTiles_(new QGeoCameraTiles()),
       mapGeometry_(new QGeoMapGeometry()),
@@ -229,7 +228,8 @@ QGeoMapPrivate::~QGeoMapPrivate()
     delete mapGeometry_;
     delete cameraTiles_;
 
-    manager_->deregisterMap(map_);
+    if (manager_)
+        manager_.data()->deregisterMap(map_);
     // TODO map items are not deallocated!
     // However: how to ensure this is done in rendering thread?
 }
@@ -241,6 +241,9 @@ QGeoTileCache* QGeoMapPrivate::tileCache()
 
 void QGeoMapPrivate::setMappingManager(QGeoMappingManager *manager)
 {
+    if (manager_)
+        manager_.data()->deregisterMap(map_);
+
     if (manager) {
         manager->registerMap(map_);
 
@@ -254,10 +257,8 @@ void QGeoMapPrivate::setMappingManager(QGeoMappingManager *manager)
 
         mapImages_ = new QGeoMapImages(map_);
         mapImages_->setMappingManager(manager);
-
-    } else {
-        manager->deregisterMap(map_);
     }
+
     manager_ = manager;
 }
 
@@ -286,7 +287,7 @@ void QGeoMapPrivate::setCameraData(const QGeoCameraData &cameraData)
     }
 
     if (manager_) {
-        QGeoCameraCapabilities capabilities = manager_->cameraCapabilities();
+        QGeoCameraCapabilities capabilities = manager_.data()->cameraCapabilities();
         if (cameraData_.zoomLevel() < capabilities.minimumZoomLevel())
             cameraData_.setZoomLevel(capabilities.minimumZoomLevel());
 
@@ -347,7 +348,7 @@ QGeoCameraData QGeoMapPrivate::cameraData() const
 
 QGeoMappingManager *QGeoMapPrivate::manager() const
 {
-    return manager_;
+    return manager_.data();
 }
 
 void QGeoMapPrivate::resize(int width, int height)

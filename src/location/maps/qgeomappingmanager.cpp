@@ -57,6 +57,9 @@
 
 QT_BEGIN_NAMESPACE
 
+#define Q_SHARED_D(type) \
+    QSharedPointer< type > d = d_ptr;
+
 /*!
     \class QGeoMappingManager
     \inmodule QtLocation
@@ -129,7 +132,6 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
 */
 QGeoMappingManager::~QGeoMappingManager()
 {
-    delete d_ptr;
 }
 
 /*!
@@ -148,7 +150,9 @@ QGeoMappingManager::~QGeoMappingManager()
 */
 QString QGeoMappingManager::managerName() const
 {
-    return d_ptr->engine->managerName();
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return QString();
+    return d->engine->managerName();
 }
 
 /*!
@@ -160,41 +164,68 @@ QString QGeoMappingManager::managerName() const
 */
 int QGeoMappingManager::managerVersion() const
 {
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return 0;
     return d_ptr->engine->managerVersion();
 }
 
 void QGeoMappingManager::registerMap(QGeoMap *map)
 {
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return;
+
     QGeoTileCache *cache = map->tileCache();
-    QSet<QGeoMap*> maps = d_ptr->caches.value(cache);
+    QSet<QGeoMap*> maps = d->caches.value(cache);
     maps.insert(map);
-    d_ptr->caches.insert(cache, maps);
+    d->caches.insert(cache, maps);
 }
 
 void QGeoMappingManager::deregisterMap(QGeoMap *map)
 {
-    Q_UNUSED(map);
-//    TileCache *cache = map->tileCache();
-//    QSet<Map*> maps = d_ptr->caches.value(cache);
-//    maps.remove(map);
-//    if (maps.isEmpty()) {
-//        d_ptr->caches.remove(cache);
-//    } else {
-//        d_ptr->caches.insert(cache, maps);
-//    }
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return;
+
+    QGeoTileCache *cache = map->tileCache();
+    QSet<QGeoMap*> maps = d->caches.value(cache);
+    maps.remove(map);
+    if (maps.isEmpty()) {
+        d->caches.remove(cache);
+    } else {
+        d->caches.insert(cache, maps);
+    }
 
     // clear any tileHash / mapHash entries
+    d->mapHash.remove(map);
+
+    QHash<QGeoTileSpec, QSet<QGeoMap*> > newTileHash = d->tileHash;
+    typedef QHash<QGeoTileSpec, QSet<QGeoMap*> >::const_iterator h_iter;
+    h_iter hi = d->tileHash.constBegin();
+    h_iter hend = d->tileHash.constEnd();
+    for (; hi != hend; ++hi) {
+        QSet<QGeoMap*> maps = hi.value();
+        if (maps.contains(map)) {
+            maps.remove(map);
+            if (maps.isEmpty())
+                newTileHash.remove(hi.key());
+            else
+                newTileHash.insert(hi.key(), maps);
+        }
+    }
+    d->tileHash = newTileHash;
 }
 
 void QGeoMappingManager::updateTileRequests(QGeoMap *map,
                                             const QSet<QGeoTileSpec> &tilesAdded,
                                             const QSet<QGeoTileSpec> &tilesRemoved)
 {
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return;
+
     typedef QSet<QGeoTileSpec>::const_iterator tile_iter;
 
     // add and remove tiles from tileset for this map
 
-    QSet<QGeoTileSpec> oldTiles = d_ptr->mapHash.value(map);
+    QSet<QGeoTileSpec> oldTiles = d->mapHash.value(map);
 
     tile_iter rem = tilesRemoved.constBegin();
     tile_iter remEnd = tilesRemoved.constEnd();
@@ -208,7 +239,7 @@ void QGeoMappingManager::updateTileRequests(QGeoMap *map,
         oldTiles.insert(*add);
     }
 
-    d_ptr->mapHash.insert(map, oldTiles);
+    d->mapHash.insert(map, oldTiles);
 
     // add and remove map from mapset for the tiles
 
@@ -217,29 +248,29 @@ void QGeoMappingManager::updateTileRequests(QGeoMap *map,
 
     rem = tilesRemoved.constBegin();
     for (; rem != remEnd; ++rem) {
-        QSet<QGeoMap*> mapSet = d_ptr->tileHash.value(*rem);
+        QSet<QGeoMap*> mapSet = d->tileHash.value(*rem);
         mapSet.remove(map);
         if (mapSet.isEmpty()) {
             cancelTiles.insert(*rem);
-            d_ptr->tileHash.remove(*rem);
+            d->tileHash.remove(*rem);
         } else {
-            d_ptr->tileHash.insert(*rem, mapSet);
+            d->tileHash.insert(*rem, mapSet);
         }
     }
 
     add = tilesAdded.constBegin();
     for (; add != addEnd; ++add) {
-        QSet<QGeoMap*> mapSet = d_ptr->tileHash.value(*add);
+        QSet<QGeoMap*> mapSet = d->tileHash.value(*add);
         if (mapSet.isEmpty()) {
             reqTiles.insert(*add);
         }
         mapSet.insert(map);
-        d_ptr->tileHash.insert(*add, mapSet);
+        d->tileHash.insert(*add, mapSet);
     }
 
     cancelTiles -= reqTiles;
 
-    QMetaObject::invokeMethod(d_ptr->engine, "updateTileRequests",
+    QMetaObject::invokeMethod(d->engine, "updateTileRequests",
                               Qt::QueuedConnection,
                               Q_ARG(QSet<QGeoTileSpec>, reqTiles),
                               Q_ARG(QSet<QGeoTileSpec>, cancelTiles));
@@ -247,9 +278,12 @@ void QGeoMappingManager::updateTileRequests(QGeoMap *map,
 
 void QGeoMappingManager::engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format)
 {
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return;
+
     QSet<QGeoTileCache*> caches;
 
-    QSet<QGeoMap*> maps = d_ptr->tileHash.value(spec);
+    QSet<QGeoMap*> maps = d->tileHash.value(spec);
 
     typedef QSet<QGeoMap*>::const_iterator map_iter;
 
@@ -258,22 +292,22 @@ void QGeoMappingManager::engineTileFinished(const QGeoTileSpec &spec, const QByt
     for (; map != mapEnd; ++map) {
         caches.insert((*map)->tileCache());
 
-        QSet<QGeoTileSpec> tileSet = d_ptr->mapHash.value(*map);
+        QSet<QGeoTileSpec> tileSet = d->mapHash.value(*map);
         tileSet.remove(spec);
         if (tileSet.isEmpty())
-            d_ptr->mapHash.remove(*map);
+            d->mapHash.remove(*map);
         else
-            d_ptr->mapHash.insert(*map, tileSet);
+            d->mapHash.insert(*map, tileSet);
     }
 
-    d_ptr->tileHash.remove(spec);
+    d->tileHash.remove(spec);
 
     typedef QSet<QGeoTileCache*>::const_iterator cache_iter;
 
     cache_iter cache = caches.constBegin();
     cache_iter cacheEnd = caches.constEnd();
     for (; cache != cacheEnd; ++cache) {
-        (*cache)->insert(spec, bytes, format, d_ptr->engine->cacheHint());
+        (*cache)->insert(spec, bytes, format, d->engine->cacheHint());
     }
 
     map = maps.constBegin();
@@ -289,7 +323,9 @@ void QGeoMappingManager::engineTileError(const QGeoTileSpec &spec, const QString
 
 QList<QGeoMapType> QGeoMappingManager::supportedMapTypes() const
 {
-    return d_ptr->engine->supportedMapTypes();
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return QList<QGeoMapType>();
+    return d->engine->supportedMapTypes();
 }
 
 /*!
@@ -299,7 +335,9 @@ QList<QGeoMapType> QGeoMappingManager::supportedMapTypes() const
 */
 int QGeoMappingManager::tileSize() const
 {
-    return d_ptr->engine->tileSize();
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return -1;
+    return d->engine->tileSize();
 }
 
 /*!
@@ -309,7 +347,9 @@ int QGeoMappingManager::tileSize() const
 */
 bool QGeoMappingManager::isInitialized() const
 {
-    return d_ptr->engine->isInitialized();
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return false;
+    return d->engine->isInitialized();
 }
 
 /*!
@@ -317,7 +357,9 @@ bool QGeoMappingManager::isInitialized() const
 */
 QGeoCameraCapabilities QGeoMappingManager::cameraCapabilities() const
 {
-    return d_ptr->engine->cameraCapabilities();
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return QGeoCameraCapabilities();
+    return d->engine->cameraCapabilities();
 }
 
 /*!
@@ -330,7 +372,9 @@ QGeoCameraCapabilities QGeoMappingManager::cameraCapabilities() const
 */
 void QGeoMappingManager::setLocale(const QLocale &locale)
 {
-    d_ptr->engine->setLocale(locale);
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return;
+    d->engine->setLocale(locale);
 }
 
 /*!
@@ -339,11 +383,15 @@ void QGeoMappingManager::setLocale(const QLocale &locale)
 */
 QLocale QGeoMappingManager::locale() const
 {
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return QLocale();
     return d_ptr->engine->locale();
 }
 
 QGeoMappingManager::CacheAreas QGeoMappingManager::cacheHint() const
 {
+    Q_SHARED_D(QGeoMappingManagerPrivate);
+    if (!d) return QGeoMappingManager::CacheAreas();
     return d_ptr->engine->cacheHint();
 }
 
