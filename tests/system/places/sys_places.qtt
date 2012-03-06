@@ -44,8 +44,8 @@
 testcase = {
 
     qml_searching_for_places_by_category_for_given_position_data: {
-        data:["48.9", "2.4", "Shopping", "Pharmacy", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&dym=5&q=Pharmacy",
-              "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&dym=5&q=Shopping"]
+        data:["48.9", "2.4", "Shopping", "Pharmacy", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=places&dv=oviMaps&lat=48.9&lon=2.4&ta=9000049&of=0&dym=5",
+              "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=places&dv=oviMaps&lat=48.9&lon=2.4&ta=9000270&of=0&dym=5"]
     },
 
     qml_searching_for_places_by_category_for_given_position: function(latitude, longitude, category, subcategory, url1, url2)
@@ -206,7 +206,7 @@ testcase = {
     },
 
     qml_place_editorials_data: {
-        search_string:["-48.9", "2.4", "sushi", "Nakagawa 2838m", "Untitled editorial", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a"]
+        search_string:["48.9", "2.4", "sushi", "Nakagawa 2838m", "Untitled editorial", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a"]
     },
 
     qml_place_editorials: function(latitude, longitude, search_string, place, editorial, url)
@@ -560,7 +560,7 @@ testcase = {
 */
 
     qml_searching_for_places_by_string_inside_bounding_box_data: {
-        data: ["sushi 1", "-27.5", "153", "place 2", "-27", "153", "-27.1", "153", "0.3", "0.3", "sushi" ]
+        data: ["sushi 1", "-27.5", "153", "sushi 2", "-27", "153", "-27.1", "153", "0.3", "0.3", "sushi" ]
     },
 
     qml_searching_for_places_by_string_inside_bounding_box: function(name1, lat1, long1, name2, lat2, long2, box_lat, box_long, box_width, box_height, search_string)
@@ -611,13 +611,13 @@ testcase = {
     },
 
     qml_searching_for_places_by_string_inside_bounding_circle_data: {
-        data: ["sushi 1", "-27.5", "153", "place 2", "-27", "153", "-27.5", "153", "10000", "sushi" ]
+        data: ["sushi 1", "-27.5", "153", "sushi 2", "-27", "153", "-27.5", "153", "10000", "sushi" ]
     },
 
     qml_searching_for_places_by_string_inside_bounding_circle: function(name1, lat1, long1, name2, lat2, long2, centre_lat, centre_long, radius, search_string)
     {
         // Test meta data
-        testTitle = "QML: Places - Searching by text string inside bounding box";
+        testTitle = "QML: Places - Searching by text string inside bounding circle";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that places can be found.";
