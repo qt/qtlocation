@@ -460,9 +460,22 @@ Item {
         onGoButtonClicked: {
             page.state = ""
             messageDialog.state = ""
-            map.markers[map.currentMarker].coordinate.latitude = dialogModel.get(0).inputText
-            map.markers[map.currentMarker].coordinate.longitude = dialogModel.get(1).inputText
-            map.center = map.markers[map.currentMarker].coordinate
+            var latitude = parseFloat(dialogModel.get(0).inputText)
+            var longitude = parseFloat(dialogModel.get(1).inputText)
+
+            if (latitude !== "NaN" && longitude !== "NaN") {
+
+                var coordinate = Qt.createQmlObject('import QtLocation 5.0; Coordinate {}', map)
+                coordinate.latitude = latitude
+                coordinate.longitude = longitude
+
+                if (coordinate.isValid) {
+                    map.markers[map.currentMarker].coordinate.latitude = latitude
+                    map.markers[map.currentMarker].coordinate.longitude = longitude
+                    map.center.latitude = latitude
+                    map.center.longitude = longitude
+                }
+            }
         }
 
         onCancelButtonClicked: {
