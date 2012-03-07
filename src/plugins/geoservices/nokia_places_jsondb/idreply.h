@@ -147,17 +147,22 @@ private slots:
     void checkParentExistsFinished();
     void getCurrentCategoryFinished();
     void getDescendantsAndSelfFinished();
+    void processIconsFinished(const QJsonObject &thumbnailsJson);
     void savingFinished();
 
     void requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString);
 
 private:
     QJsonObject prepareCategoryJson();
+    void processIcons();
 
     QPlaceCategory m_category;
     QString m_parentId;
     QJsonArray m_newAncestors;
     QJsonArray m_oldAncestors;
+    QJsonObject m_categoryJson;
+    QList<QJsonObject> m_descendantsJson;
+    IconHandler *m_iconHandler;
 };
 
 class RemoveCategoryReply : public IdReply

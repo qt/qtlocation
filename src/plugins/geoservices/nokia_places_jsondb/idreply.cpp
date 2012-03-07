@@ -268,12 +268,13 @@ void RemovePlaceReply::requestError(QJsonDbRequest::ErrorCode dbCode, const QStr
 //-------SaveCategoryReply
 
 SaveCategoryReply::SaveCategoryReply(QPlaceManagerEngineJsonDb *engine)
-    : IdReply(QPlaceIdReply::SaveCategory, engine)
+    : IdReply(QPlaceIdReply::SaveCategory, engine), m_iconHandler(0)
 {
 }
 
 SaveCategoryReply::~SaveCategoryReply()
 {
+    delete m_iconHandler;
 }
 
 void SaveCategoryReply::setCategory(const QPlaceCategory &category)
@@ -291,8 +292,10 @@ void SaveCategoryReply::start()
     //check if parentExists
    if (!m_parentId.isEmpty())
        db()->getCategory(m_parentId, this, SLOT(checkParentExistsFinished()));
-   else
-       db()->write(prepareCategoryJson(), this, SLOT(savingFinished()));
+   else {
+       m_categoryJson = prepareCategoryJson();
+       processIcons();
+   }
 }
 
 void SaveCategoryReply::checkParentExistsFinished()
@@ -315,7 +318,9 @@ void SaveCategoryReply::checkParentExistsFinished()
             db()->getCategory(m_category.categoryId(), this, SLOT(getCurrentCategoryFinished()));
             return;
         }
-        db()->write(prepareCategoryJson(), this, SLOT(savingFinished()));
+
+        m_categoryJson = prepareCategoryJson();
+        processIcons();
         return;
     }
 }
@@ -330,13 +335,13 @@ void SaveCategoryReply::getCurrentCategoryFinished()
         triggerDone(QPlaceReply::CategoryDoesNotExistError, "Category does not exist");
         return;
     } else {
-        QJsonObject categoryJson = results.first();
-        m_oldAncestors = categoryJson.value(JsonDb::Lineage).toArray();
+        m_categoryJson = results.first();
+        m_oldAncestors = m_categoryJson.value(JsonDb::Lineage).toArray();
         m_oldAncestors.removeLast();
 
         //if the new parent is different from the old, if so we need to change the ancestors
         //of it's descendants and the ancestors of itself
-        if (m_parentId != categoryJson.value(JsonDb::CategoryParentId).toString()) {
+        if (m_parentId != m_categoryJson.value(JsonDb::CategoryParentId).toString()) {
             QString getDescendantsAndSelf = QString::fromLatin1("[?_type=\"%1\"]").arg(JsonDb::CategoryType);
             for (int i = 0; i < m_oldAncestors.count(); ++i)
                 getDescendantsAndSelf += QString::fromLatin1("[?%1 contains \"%2\"]").arg(JsonDb::Lineage).arg(m_oldAncestors.at(i).toString());
@@ -344,9 +349,8 @@ void SaveCategoryReply::getCurrentCategoryFinished()
 
             db()->read(getDescendantsAndSelf, this, SLOT(getDescendantsAndSelfFinished()));
         } else {
-            JsonDb::addToJson(&categoryJson, m_category);
-
-            db()->write(categoryJson, this, SLOT(savingFinished()));
+            JsonDb::addToJson(&m_categoryJson, m_category);
+            processIcons();
         }
     }
 }
@@ -377,12 +381,12 @@ void SaveCategoryReply::getDescendantsAndSelfFinished()
         if (categoryJson.value(JsonDb::Uuid).toString() == m_category.categoryId()) {
             JsonDb::addToJson(&categoryJson, m_category);
             categoryJson.insert(JsonDb::CategoryParentId, m_parentId);
+            m_categoryJson = categoryJson;
+        } else  {
+            m_descendantsJson.append(categoryJson);
         }
-
-        categoriesJson.append(categoryJson);
     }
-
-    db()->write(categoriesJson, this, SLOT(savingFinished()));
+    processIcons();
 }
 
 void SaveCategoryReply::savingFinished()
@@ -397,6 +401,24 @@ void SaveCategoryReply::savingFinished()
         setId(results.first().value(JsonDb::Uuid).toString()); //must've been saving a new category
 
     triggerDone();
+}
+
+void SaveCategoryReply::processIconsFinished(const QJsonObject &thumbnailsJson)
+{
+    if (m_iconHandler->error() != QPlaceReply::NoError) {
+        triggerDone(m_iconHandler->error(), m_iconHandler->errorString());
+        return;
+    }
+
+    if (!thumbnailsJson.isEmpty())
+        m_categoryJson.insert(JsonDb::Thumbnails, thumbnailsJson);
+
+    delete m_iconHandler;
+    m_iconHandler = 0;
+
+    QList<QJsonObject> categories;
+    categories << m_categoryJson << m_descendantsJson;
+    db()->write(categories, this, SLOT(savingFinished()));
 }
 
 QJsonObject SaveCategoryReply::prepareCategoryJson()
@@ -415,6 +437,13 @@ QJsonObject SaveCategoryReply::prepareCategoryJson()
     categoryJson.insert(JsonDb::CategoryParentId,  m_parentId);
 
     return categoryJson;
+}
+
+void SaveCategoryReply::processIcons()
+{
+    m_iconHandler = new IconHandler(m_category.icon(), m_categoryJson.value(JsonDb::Thumbnails).toObject(),
+                                    this);
+    connect(m_iconHandler, SIGNAL(finished(QJsonObject)), this, SLOT(processIconsFinished(QJsonObject)));
 }
 
 void SaveCategoryReply::requestError(QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString)

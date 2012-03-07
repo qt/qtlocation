@@ -56,6 +56,7 @@ class QPlaceManagerEngineJsonDb;
 class QPlace;
 class QPlaceSearchRequest;
 class QPlaceCategory;
+class QPlaceIcon;
 
 class JsonDb : public QObject {
     Q_OBJECT
@@ -72,6 +73,7 @@ public:
     static QList<QPlaceCategory> convertJsonObjectsToCategories(const QList<QJsonObject> &objects , const QPlaceManagerEngineJsonDb *engine);
     static QPlace convertJsonObjectToPlace(const QJsonObject &placeJson, const QPlaceManagerEngineJsonDb *engine);
     static QPlaceCategory convertJsonObjectToCategory(const QJsonObject &object, const QPlaceManagerEngineJsonDb *engine);
+    static QPlaceIcon convertJsonObjectToIcon(const QJsonObject &thumbnailsJson, const QPlaceManagerEngineJsonDb *engine);
     static void makeConnections(QJsonDbRequest *request, QObject *parent, const char *slot = 0);
 
     void getCategory(const QString &uuid, QObject *parent);

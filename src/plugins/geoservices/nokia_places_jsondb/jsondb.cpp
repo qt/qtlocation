@@ -576,9 +576,33 @@ QPlace JsonDb::convertJsonObjectToPlace(const QJsonObject &placeJson,
         }
     }
 
-    QVariantMap iconParameters;
-    QJsonObject thumbnailsJson = placeJson.value(JsonDb::Thumbnails).toObject();
+    QPlaceIcon icon = convertJsonObjectToIcon(placeJson.value(JsonDb::Thumbnails).toObject(), engine);
+    place.setIcon(icon);
 
+    place.setVisibility(QtLocation::DeviceVisibility);
+
+    return place;
+}
+
+QPlaceCategory JsonDb::convertJsonObjectToCategory(const QJsonObject &categoryJson,
+                                                       const QPlaceManagerEngineJsonDb *engine)
+{
+    Q_UNUSED(engine);
+
+    QPlaceCategory category;
+    if (categoryJson.value(JsonDb::Type) == JsonDb::CategoryType) {
+        category.setName(categoryJson.value(JsonDb::Name).toString());
+        category.setCategoryId(categoryJson.value(JsonDb::Uuid).toString());
+    }
+
+    QPlaceIcon icon = convertJsonObjectToIcon(categoryJson.value(JsonDb::Thumbnails).toObject(), engine);
+    category.setIcon(icon);
+    return category;
+}
+
+QPlaceIcon JsonDb::convertJsonObjectToIcon(const QJsonObject &thumbnailsJson, const QPlaceManagerEngineJsonDb *engine)
+{
+    QVariantMap iconParameters;
     QList<QLatin1String> sizes;
     sizes << JsonDb::Small << JsonDb::Medium << JsonDb::Large << JsonDb::Fullscreen;
 
@@ -591,30 +615,13 @@ QPlace JsonDb::convertJsonObjectToPlace(const QJsonObject &placeJson,
         }
     }
 
+    QPlaceIcon icon;
     if (!iconParameters.isEmpty()) {
-        QPlaceIcon icon;
         icon.setParameters(iconParameters);
         icon.setManager(engine->manager());
-        place.setIcon(icon);
     }
 
-    place.setVisibility(QtLocation::DeviceVisibility);
-
-    return place;
-}
-
-QPlaceCategory JsonDb::convertJsonObjectToCategory(const QJsonObject &object,
-                                                       const QPlaceManagerEngineJsonDb *engine)
-{
-    Q_UNUSED(engine);
-
-    QPlaceCategory category;
-    if (object.value(JsonDb::Type) == JsonDb::CategoryType) {
-        category.setName(object.value(JsonDb::Name).toString());
-        category.setCategoryId(object.value(JsonDb::Uuid).toString());
-    }
-
-    return category;
+    return icon;
 }
 
 void JsonDb::makeConnections(QJsonDbRequest *request, QObject *parent, const char *slot)

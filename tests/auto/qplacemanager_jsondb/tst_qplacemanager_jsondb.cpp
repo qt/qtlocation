@@ -182,6 +182,10 @@ private:
     bool doRemoveCategory(const QPlaceCategory &category,
                           QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
+    bool doFetchCategory(const QString &categoryId,
+                         QPlaceCategory *category,
+                         QPlaceReply::Error expectedError = QPlaceReply::NoError);
+
     bool doMatch(const QPlaceMatchRequest &request,
                  QList<QPlace> *places,
                  QPlaceReply::Error expectedError = QPlaceReply::NoError);
@@ -2233,6 +2237,10 @@ void tst_QPlaceManagerJsonDb::iconSourceDestination()
         for (int destFileExists = Exists; destFileExists != (DoesNotExist + 1); ++destFileExists) {
             QPlace place;
             place.setName("place");
+
+            QPlaceCategory category;
+            category.setName("category");
+
             QPlaceIcon icon;
             QVariantMap iconParams;
 
@@ -2274,16 +2282,23 @@ void tst_QPlaceManagerJsonDb::iconSourceDestination()
 
             icon.setParameters(iconParams);
             place.setIcon(icon);
+            category.setIcon(icon);
 
             QString placeId;
+            QString categoryId;
             QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+            QVERIFY(doSaveCategory(category,QPlaceReply::NoError, &categoryId));
 
             QPlace retrievedPlace;
+            QPlaceCategory retrievedCategory;
             QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+            QVERIFY(doFetchCategory(categoryId, &retrievedCategory));
 
             QVERIFY(retrievedPlace.icon().parameters().contains(specifiedDestination));
+            QVERIFY(retrievedCategory.icon().parameters().contains(specifiedDestination));
 
             QUrl retrievedUrl = retrievedPlace.icon().parameters().value(specifiedDestination).toUrl();
+            QCOMPARE(retrievedCategory.icon().parameters().value(specifiedDestination).toUrl(), retrievedUrl);
 
             QImage retrievedImage;
 
@@ -2334,6 +2349,10 @@ void tst_QPlaceManagerJsonDb::iconSourceOnly()
 
     QPlace place;
     place.setName("place");
+
+    QPlaceCategory category;
+    category.setName("category");
+
     QPlaceIcon icon;
     QVariantMap iconParams;
 
@@ -2364,20 +2383,31 @@ void tst_QPlaceManagerJsonDb::iconSourceOnly()
 
     icon.setParameters(iconParams);
     place.setIcon(icon);
+    category.setIcon(icon);
+
     QString placeId;
+    QString categoryId;
 
     if (iconType == QLatin1String("accessible_incorrectWebUrl")) {
         QVERIFY(doSavePlace(place,QPlaceReply::UnsupportedError));
+        QVERIFY(doSaveCategory(category,QPlaceReply::UnsupportedError));
     } else if (iconType == QLatin1String("unaccessible_webUrl")){
         QVERIFY(doSavePlace(place,QPlaceReply::CommunicationError));
+        QVERIFY(doSaveCategory(category,QPlaceReply::CommunicationError));
     } else {
         QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+        QVERIFY(doSaveCategory(category,QPlaceReply::NoError, &categoryId));
+
         QPlace retrievedPlace;
+        QPlaceCategory retrievedCategory;
         QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+        QVERIFY(doFetchCategory(categoryId, &retrievedCategory));
         if (expectedDestination != QString()) {
             QVERIFY(retrievedPlace.icon().parameters().contains(expectedDestination));
+            QVERIFY(retrievedCategory.icon().parameters().contains(expectedDestination));
 
             QUrl retrievedUrl = retrievedPlace.icon().parameters().value(expectedDestination).toUrl();
+            QCOMPARE(retrievedUrl, retrievedCategory.icon().parameters().value(expectedDestination).toUrl());
             QImage retrievedImage;
             if (expectedDestination != QString())
                 QVERIFY(retrievedUrl.scheme().compare(QLatin1String("data"), Qt::CaseInsensitive) == 0);
@@ -2480,24 +2510,36 @@ void tst_QPlaceManagerJsonDb::iconDestinationOnly()
     place.setIcon(icon);
     QString placeId;
 
+    QPlaceCategory category;
+    category.setName("Cat");
+    category.setIcon(icon);
+    QString categoryId;
+
     if (specifiedSize.isEmpty() && iconResource.isEmpty()) {
         QVERIFY(doSavePlace(place, QPlaceReply::BadArgumentError));
+        QVERIFY(doSaveCategory(category, QPlaceReply::BadArgumentError));
         return;
     } else {
         QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+        QVERIFY(doSaveCategory(category,QPlaceReply::NoError, &categoryId));
     }
 
     QPlace retrievedPlace;
     QVERIFY(doFetchDetails(placeId, &retrievedPlace));
 
-    QVERIFY(retrievedPlace.icon().parameters().keys().contains(destination));
+    QPlaceCategory retrievedCategory;
+    QVERIFY(doFetchCategory(categoryId, &retrievedCategory));
+
+
     QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), destinationUrl);
+    QCOMPARE(retrievedCategory.icon().parameters().value(destination).toUrl(), destinationUrl);
 
     if (!specifiedSize.isEmpty() && iconResource.isEmpty()) {
-        QVERIFY(retrievedPlace.icon().parameters().contains(destinationSize));
         QCOMPARE(retrievedPlace.icon().parameters().value(destinationSize).toSize(), specifiedSize);
+        QCOMPARE(retrievedCategory.icon().parameters().value(destinationSize).toSize(), specifiedSize);
     } else {
         QCOMPARE(retrievedPlace.icon().parameters().value(destinationSize).toSize(), size);
+        QCOMPARE(retrievedCategory.icon().parameters().value(destinationSize).toSize(), size);
     }
 }
 
@@ -2681,22 +2723,36 @@ void tst_QPlaceManagerJsonDb::iconFormats()
 
     QPlace place;
     place.setName("place");
+
+    QPlaceCategory category;
+    category.setName("category");
+
     QPlaceIcon icon;
     icon.setParameters(iconParams);
+
     place.setIcon(icon);
+    category.setIcon(icon);
+
 
     QString placeId;
+    QString categoryId;
 
     if (imageFormat == "svg" && !QImageReader::supportedImageFormats().contains("svg")) {
         //svg format is not supported therefore saving of the icon should fail
         //in this instance we are creating a data url and therefore need to be
         //able to detect the image format and mime type.
         QVERIFY(doSavePlace(place,QPlaceReply::BadArgumentError));
+        QVERIFY(doSaveCategory(category,QPlaceReply::BadArgumentError));
     } else {
         QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+        QVERIFY(doSaveCategory(category,QPlaceReply::NoError, &categoryId));
 
         QPlace retrievedPlace;
         QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+
+        QPlaceCategory retrievedCategory;
+        QVERIFY(doFetchCategory(categoryId, &retrievedCategory));
+        QCOMPARE(retrievedPlace.icon(), retrievedCategory.icon());
 
         QRegExp regExp("^data:(.*);.*$");
         regExp.indexIn(retrievedPlace.icon().parameters().value(SmallDestination).toUrl().toString());
@@ -2734,6 +2790,10 @@ void tst_QPlaceManagerJsonDb::iconUrls()
 
     QPlace place;
     place.setName("place");
+
+    QPlaceCategory category;
+    category.setName("category");
+
     QPlaceIcon icon;
     QVariantMap iconParams;
 
@@ -2742,55 +2802,82 @@ void tst_QPlaceManagerJsonDb::iconUrls()
     iconParams.insert(destinationSize, size);
     icon.setParameters(iconParams);
     place.setIcon(icon);
+    category.setIcon(icon);
 
     QString placeId;
+    QString categoryId;
     QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+    QVERIFY(doSaveCategory(category,QPlaceReply::NoError, &categoryId));
 
     QPlace retrievedPlace;
+    QPlaceCategory retrievedCategory;
     QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QVERIFY(doFetchCategory(categoryId, &retrievedCategory));
+    QCOMPARE(retrievedPlace.icon(), retrievedCategory.icon());
     QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), QUrl("file:///home/user/icon.png"));
 
     //test conversion to valid url,
     iconParams.insert(destination, QUrl("qrc:/home/user/icon.png"));
     icon.setParameters(iconParams);
     place.setIcon(icon);
+    category.setIcon(icon);
     QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+    QVERIFY(doSaveCategory(category,QPlaceReply::NoError, &categoryId));
     QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QVERIFY(doFetchCategory(categoryId, &retrievedCategory));
+    QCOMPARE(retrievedPlace.icon(), retrievedCategory.icon());
     QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), QUrl("qrc:///home/user/icon.png"));
 
     iconParams.insert(destination, QUrl("qrc:///home/user/icon.png"));
     icon.setParameters(iconParams);
     place.setIcon(icon);
+    category.setIcon(icon);
+
     QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+    QVERIFY(doSaveCategory(category,QPlaceReply::NoError, &categoryId));
     QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QVERIFY(doFetchCategory(categoryId, &retrievedCategory));
+    QCOMPARE(retrievedPlace.icon(), retrievedCategory.icon());
     QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), QUrl("qrc:///home/user/icon.png"));
 
     //test urls that are non-encoded and encoded
     iconParams.insert(destination, QUrl("qrc:///home/user/i con.png"));
     icon.setParameters(iconParams);
     place.setIcon(icon);
+    category.setIcon(icon);
     QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+    QVERIFY(doSaveCategory(category,QPlaceReply::NoError, &categoryId));
     QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QVERIFY(doFetchCategory(categoryId, &retrievedCategory));
+    QCOMPARE(retrievedPlace.icon(), retrievedCategory.icon());
     QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), QUrl("qrc:///home/user/i con.png"));
 
     iconParams.insert(destination, QUrl("qrc:///home/user/ico%20n.png"));
     icon.setParameters(iconParams);
     place.setIcon(icon);
+    category.setIcon(icon);
     QVERIFY(doSavePlace(place,QPlaceReply::NoError, &placeId));
+    QVERIFY(doSaveCategory(category,QPlaceReply::NoError, &categoryId));
     QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QVERIFY(doFetchCategory(categoryId, &retrievedCategory));
+    QCOMPARE(retrievedPlace.icon(), retrievedCategory.icon());
     QCOMPARE(retrievedPlace.icon().parameters().value(destination).toUrl(), QUrl("qrc:///home/user/ico n.png"));
 
     //try using a QString instead of a url in the parameters
     iconParams.insert(destination, "www.example.com");
     icon.setParameters(iconParams);
     place.setIcon(icon);
+    category.setIcon(icon);
     QVERIFY(doSavePlace(place,QPlaceReply::BadArgumentError, &placeId));
+    QVERIFY(doSaveCategory(category,QPlaceReply::BadArgumentError, &categoryId));
 
     //try using a QString instead of a url in the parameters
     iconParams.insert(source, "www.example.com");
     icon.setParameters(iconParams);
     place.setIcon(icon);
+    category.setIcon(icon);
     QVERIFY(doSavePlace(place,QPlaceReply::BadArgumentError, &placeId));
+    QVERIFY(doSaveCategory(category,QPlaceReply::BadArgumentError, &categoryId));
 }
 
 void tst_QPlaceManagerJsonDb::iconUrls_data()
@@ -2818,6 +2905,9 @@ void tst_QPlaceManagerJsonDb::iconDownload()
     location.setCoordinate((coord));
     place.setLocation(location);
 
+    QPlaceCategory category;
+    category.setName("category");
+
     QPlaceIcon icon;
     QVariantMap parameters;
 
@@ -2844,15 +2934,21 @@ void tst_QPlaceManagerJsonDb::iconDownload()
 
     icon.setParameters(parameters);
     place.setIcon(icon);
+    category.setIcon(icon);
 
     QString placeId;
+    QString categoryId;
 
     if (errorCondition == "no error") {
         QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+        QVERIFY(doSaveCategory(category, QPlaceReply::NoError, &categoryId));
 
         QPlace retrievedPlace;
+        QPlaceCategory retrievedCategory;
 
         QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+        QVERIFY(doFetchCategory(categoryId, &retrievedCategory));
+        QCOMPARE(retrievedPlace.icon().url(), retrievedCategory.icon().url());
 
         QImage image;
         if (destinationType == "dataUrl")
@@ -2863,6 +2959,7 @@ void tst_QPlaceManagerJsonDb::iconDownload()
         QCOMPARE(image.size(), QSize(60, 65));
     } else if (errorCondition == "unreachable host") {
         QVERIFY(doSavePlace(place, QPlaceReply::CommunicationError));
+        QVERIFY(doSaveCategory(category, QPlaceReply::CommunicationError));
     }
 
     //Hardening Extension: Potentially there could be more thorough tests here to handle
@@ -3099,6 +3196,24 @@ bool tst_QPlaceManagerJsonDb::doRemoveCategory(const QPlaceCategory &category,
 
     bool isSuccessful = checkSignals(idReply, expectedError) &&
                         (idReply->error() == expectedError);
+    return isSuccessful;
+}
+
+bool tst_QPlaceManagerJsonDb::doFetchCategory(const QString &categoryId,
+                                              QPlaceCategory *category,
+                                              QPlaceReply::Error expectedError)
+{
+    Q_ASSERT(category);
+    QPlaceReply * catInitReply = placeManager->initializeCategories();
+    bool isSuccessful = checkSignals(catInitReply, QPlaceReply::NoError);
+    *category = placeManager->category(categoryId);
+
+    if (!isSuccessful)
+        qDebug() << "Error initializing categories, error string = "
+                 << catInitReply->errorString();
+
+    if (category->categoryId() != categoryId)
+        isSuccessful = false;
     return isSuccessful;
 }
 
