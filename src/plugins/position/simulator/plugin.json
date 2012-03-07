@@ -1,0 +1,7 @@
+{
+    "Keys": ["simulator"],
+    "Provider": "simulator",
+    "Position": true,
+    "Satellite": true,
+    "Priority": 1000
+}

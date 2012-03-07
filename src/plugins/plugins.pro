@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS +=  geoservices
+SUBDIRS +=  geoservices position

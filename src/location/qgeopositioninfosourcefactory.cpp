@@ -111,16 +111,6 @@ QT_BEGIN_NAMESPACE
   */
 
 /*!
-  Returns the priority of this factory in the list of available
-  factories. Factories with higher values of priority will be preferred
-  to those with lower values.
-  */
-int QGeoPositionInfoSourceFactory::sourcePriority() const
-{
-    return 0;
-}
-
-/*!
     Destroys the position info source factory.
 */
 QGeoPositionInfoSourceFactory::~QGeoPositionInfoSourceFactory()

@@ -1,0 +1,7 @@
+{
+    "Keys": ["gypsy"],
+    "Provider": "gypsy",
+    "Position": false,
+    "Satellite": true,
+    "Priority": 1000
+}

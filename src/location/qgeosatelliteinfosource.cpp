@@ -40,6 +40,7 @@
 ****************************************************************************/
 #include <qgeosatelliteinfosource.h>
 #include "qgeopositioninfosourcefactory.h"
+#include "qgeopositioninfosource_p.h"
 #include <QPluginLoader>
 #include <QStringList>
 #include <QCryptographicHash>
@@ -47,179 +48,7 @@
 #include <QtCore/private/qfactoryloader_p.h>
 #include <QFile>
 
-#if defined(QT_SIMULATOR)
-#   include "qgeosatelliteinfosource_simulator_p.h"
-#elif defined(Q_OS_WINCE)
-#   include "qgeosatelliteinfosource_wince_p.h"
-#elif defined(Q_WS_MAEMO_6)
-#   include "qgeosatelliteinfosource_maemo_p.h"
-#elif defined(Q_WS_MAEMO_5)
-#   include "qgeosatelliteinfosource_maemo5_p.h"
-#elif defined (NPE_BACKEND)
-#   include "qgeosatelliteinfosource_npe_backend_p.h"
-#endif
-
-#if defined(Q_WS_MEEGO)
-#include "qgeosatelliteinfosource_maemo_p.h"
-#if defined(GYPSY_AVAILABLE)
-#include "qgeosatelliteinfosource_gypsy_p.h"
-#endif
-#endif
-
 QT_BEGIN_NAMESPACE
-
-#ifndef QT_NO_LIBRARY
-Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
-        (QT_POSITION_SOURCE_INTERFACE, QLatin1String("/position")))
-#endif
-
-class QGeoSatelliteInfoSourcePrivate
-{
-public:
-    int interval;
-    static QList<QGeoPositionInfoSourceFactory*> pluginsSorted();
-    static QHash<QString, QGeoPositionInfoSourceFactory*> plugins(bool reload = false);
-    static void loadDynamicPlugins(QHash<QString, QGeoPositionInfoSourceFactory*> &plugins);
-    static void loadStaticPlugins(QHash<QString, QGeoPositionInfoSourceFactory*> &plugins);
-};
-
-QHash<QString, QGeoPositionInfoSourceFactory*> QGeoSatelliteInfoSourcePrivate::plugins(bool reload)
-{
-    static QHash<QString, QGeoPositionInfoSourceFactory*> plugins;
-    static bool alreadyDiscovered = false;
-
-    if (reload == true)
-        alreadyDiscovered = false;
-
-    if (!alreadyDiscovered) {
-        loadStaticPlugins(plugins);
-        loadDynamicPlugins(plugins);
-        alreadyDiscovered = true;
-    }
-    return plugins;
-}
-
-static bool pluginComparator(const QGeoPositionInfoSourceFactory *p1, const QGeoPositionInfoSourceFactory *p2)
-{
-    return (p1->sourcePriority() > p2->sourcePriority());
-}
-
-QList<QGeoPositionInfoSourceFactory*> QGeoSatelliteInfoSourcePrivate::pluginsSorted()
-{
-    QList<QGeoPositionInfoSourceFactory*> list = plugins().values();
-    qStableSort(list.begin(), list.end(), pluginComparator);
-    return list;
-}
-
-void QGeoSatelliteInfoSourcePrivate::loadDynamicPlugins(QHash<QString, QGeoPositionInfoSourceFactory *> &plugins)
-{
-    QPluginLoader qpl;
-    QString blockName;
-
-    QSettings settings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
-    QVariant value = settings.value(QLatin1String("position.plugin.operator.whitelist"));
-    if (value.isValid()) {
-        QStringList parts = value.toString().split(QLatin1String(","));
-        if (parts.size() == 4) {
-            QFile file(parts.at(1));
-            file.open(QIODevice::ReadOnly);
-
-            QCryptographicHash hash(QCryptographicHash::Sha1);
-            while (!file.atEnd()) {
-                QByteArray data = file.read(4096);
-                hash.addData(data);
-            }
-            file.close();
-
-            QByteArray hexHash = hash.result().toHex();
-
-            bool loadIt = true;
-            if (QString::number(file.size()) != parts.at(3)) {
-                qCritical("Position info plugin: bad plugin size for %s",
-                          qPrintable(parts.at(1)));
-                qWarning("Will fall back to platform default");
-                loadIt = false;
-            }
-
-            if (hexHash != parts.at(2).toLatin1()) {
-                qCritical("Position info plugin: bad plugin hash for %s",
-                          qPrintable(parts.at(1)));
-                qWarning("Will fall back to platform default");
-                loadIt = false;
-            }
-
-            if (loadIt) {
-                qpl.setFileName(parts.at(1));
-                QGeoPositionInfoSourceFactory *f =
-                        qobject_cast<QGeoPositionInfoSourceFactory*>(qpl.instance());
-
-                if (f) {
-                    QString name = f->sourceName();
-                    if (name == parts.at(0)) {
-                        plugins.insert(name, f);
-                    } else {
-                        qCritical("Position info plugin: bad plugin name for %s",
-                                  qPrintable(parts.at(1)));
-                        qWarning("Will fall back to platform default");
-                    }
-                }
-            }
-
-            // still set blockName to ensure the plugin doesn't load
-            blockName = parts.at(1);
-        } else {
-            qWarning("Position plugin whitelist: invalid format -- should be key,filename,hash,size");
-        }
-    }
-
-    QFactoryLoader* l = loader();
-    QString key;
-    for (int i = 0; i < l->keys().count(); ++i) {
-        key = l->keys().at(i);
-        QGeoPositionInfoSourceFactory *f =
-                qobject_cast<QGeoPositionInfoSourceFactory*>(l->instance(key));
-        if (f) {
-            const QString name = f->sourceName();
-            if (name == blockName) {
-                delete f;
-            } else {
-#if !defined QT_NO_DEBUG
-                const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
-                if (showDebug)
-                    qDebug("Dynamic: found a service provider plugin with name %s", qPrintable(name));
-#endif
-                plugins.insertMulti(name, f);
-            }
-        }
-    }
-}
-
-void QGeoSatelliteInfoSourcePrivate::loadStaticPlugins(QHash<QString, QGeoPositionInfoSourceFactory *> &plugins)
-{
-#if !defined QT_NO_DEBUG
-    const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
-#endif
-
-    QObjectList staticPlugins = QPluginLoader::staticInstances();
-    for (int i = 0; i < staticPlugins.count(); ++i) {
-        QGeoPositionInfoSourceFactory *f =
-                qobject_cast<QGeoPositionInfoSourceFactory*>(staticPlugins.at(i));
-
-        if (f) {
-
-            QString name = f->sourceName();
-
-#if !defined QT_NO_DEBUG
-            if (showDebug)
-                qDebug("Static: found a service provider plugin with name %s", qPrintable(name));
-#endif
-            if (!name.isEmpty()) {
-                plugins.insertMulti(name, f);
-            }
-        }
-
-    }
-}
 
 /*!
     \class QGeoSatelliteInfoSource
@@ -260,6 +89,12 @@ void QGeoSatelliteInfoSourcePrivate::loadStaticPlugins(QHash<QString, QGeoPositi
     \warning On Windows CE it is not possible to detect if a device is GPS enabled.
     The default satellite source on a Windows CE device without GPS support will never provide any satellite data.
 */
+
+class QGeoSatelliteInfoSourcePrivate
+{
+public:
+    int interval;
+};
 
 /*!
     Creates a satellite source with the specified \a parent.
@@ -323,63 +158,23 @@ int QGeoSatelliteInfoSource::updateInterval() const
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {
-    QSettings pluginSettings(QSettings::SystemScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSat"));
-    QVariant value = pluginSettings.value(QLatin1String("position.plugin.operator.whitelist"));
-    if (value.isValid()) {
-        QStringList parts = value.toString().split(QLatin1String(","));
-        if (parts.size() == 4) {
-            QGeoSatelliteInfoSource *source = createSource(parts.at(0), parent);
-            if (source)
-                return source;
+    QGeoPositionInfoSourcePrivate *d = new QGeoPositionInfoSourcePrivate;
+
+    QList<QJsonObject> plugins = QGeoPositionInfoSourcePrivate::pluginsSorted();
+    foreach (QJsonObject obj, plugins) {
+        if (obj.value(QStringLiteral("Satellite")).isBool()
+                && obj.value(QStringLiteral("Satellite")).toBool()) {
+            d->metaData = obj;
+            d->loadPlugin();
+            QGeoSatelliteInfoSource *s = d->factory->satelliteInfoSource(parent);
+            if (s) {
+                delete d;
+                return s;
+            }
         }
     }
 
-#if defined(Q_OS_WINCE)
-    return new QGeoSatelliteInfoSourceWinCE(parent);
-#elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))
-    QGeoSatelliteInfoSourceMaemo *source = new QGeoSatelliteInfoSourceMaemo(parent);
-    int status = source->init();
-
-    if (status != -1)
-        return source;
-    else
-        delete source;
-#elif defined(QT_SIMULATOR)
-    return new QGeoSatelliteInfoSourceSimulator(parent);
-#elif defined(Q_WS_MEEGO)
-    // Use Maemo6 backend if available, otherwise use Gypsy backend
-    QSettings maemo6Settings(QSettings::UserScope, QLatin1String("Nokia"), QLatin1String("QtLocationPosAndSatMaemo6"));
-    if (!maemo6Settings.value("maemo6satelliteavailable").isValid()) {
-        QGeoSatelliteInfoSourceMaemo *maemoSource = new QGeoSatelliteInfoSourceMaemo(parent);
-        int status = maemoSource->init();
-        if (status == -1) {
-            delete maemoSource;
-            maemoSource = 0;
-            maemo6Settings.setValue("maemo6satelliteavailable", false);
-        } else {
-            return maemoSource;
-        }
-    }
-#ifdef GYPSY_AVAILABLE
-    QGeoSatelliteInfoSourceGypsy* gypsySource = new QGeoSatelliteInfoSourceGypsy(parent);
-    int status = gypsySource->init();
-    if (status >= 0)
-        return gypsySource;
-    delete gypsySource;
-#endif // GYPSY_AVAILABLE
-#elif defined(NPE_BACKEND)
-    QGeoSatelliteInfoSourceNpeBackend* npeBackendSource = new QGeoSatelliteInfoSourceNpeBackend(parent);
-    if (npeBackendSource->init())
-        return npeBackendSource;
-    else
-        delete npeBackendSource;
-#endif
-    foreach (QGeoPositionInfoSourceFactory *f, QGeoSatelliteInfoSourcePrivate::pluginsSorted()) {
-        QGeoSatelliteInfoSource *src = f->satelliteInfoSource(parent);
-        if (src)
-            return src;
-    }
-
+    delete d;
     return 0;
 }
 
@@ -391,12 +186,19 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &sourceName, QObject *parent)
 {
-    QGeoPositionInfoSourceFactory *f = QGeoSatelliteInfoSourcePrivate::plugins().value(sourceName);
-    if (f) {
-        QGeoSatelliteInfoSource *src = f->satelliteInfoSource(parent);
-        if (src)
+    QGeoPositionInfoSourcePrivate *d = new QGeoPositionInfoSourcePrivate;
+    QHash<QString, QJsonObject> plugins = QGeoPositionInfoSourcePrivate::plugins();
+    if (plugins.contains(sourceName)) {
+        d->metaData = plugins.value(sourceName);
+        d->loadPlugin();
+        QGeoSatelliteInfoSource *src = d->factory->satelliteInfoSource(parent);
+        if (src) {
+            delete d;
             return src;
+        }
     }
+
+    delete d;
     return 0;
 }
 
@@ -406,7 +208,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &so
 */
 QStringList QGeoSatelliteInfoSource::availableSources()
 {
-    return QGeoSatelliteInfoSourcePrivate::plugins().keys();
+    return QGeoPositionInfoSourcePrivate::plugins().keys();
 }
 
 /*!

@@ -39,32 +39,16 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPOSITIONINFOSOURCEFACTORY_H
-#define QGEOPOSITIONINFOSOURCEFACTORY_H
+#include "qgeopositioninfosourcefactory_npe_backend.h"
+#include "qgeopositioninfosource_npe_backend_p.h"
+#include "qgeosatelliteinfosource_npe_backend_p.h"
 
-#include "qgeopositioninfosource.h"
-#include "qgeosatelliteinfosource.h"
-#include <QList>
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-class Q_LOCATION_EXPORT QGeoPositionInfoSourceFactory
+QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryNpeBackend::positionInfoSource(QObject *parent)
 {
-public:
-    virtual ~QGeoPositionInfoSourceFactory();
+    return new QGeoPositionInfoSourceNpeBackend(parent);
+}
 
-    virtual QGeoPositionInfoSource *positionInfoSource(QObject *parent) = 0;
-    virtual QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) = 0;
-};
-
-#define QT_POSITION_SOURCE_INTERFACE
-Q_DECLARE_INTERFACE(QGeoPositionInfoSourceFactory,
-                    "org.qt-project.qt.position.sourcefactory/5.0");
-
-QT_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QGEOPOSITIONINFOSOURCEFACTORY_H
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryNpeBackend::satelliteInfoSource(QObject *parent)
+{
+    return new QGeoSatelliteInfoSourceNpeBackend(parent);
+}

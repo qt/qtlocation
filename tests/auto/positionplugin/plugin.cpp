@@ -183,27 +183,14 @@ void DummySource::doTimeout()
 class QGeoPositionInfoSourceFactoryTest : public QObject, public QGeoPositionInfoSourceFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QGeoPositionInfoSourceFactory:QFactoryInterface)
+    Q_PLUGIN_METADATA(IID "org.qt-project.qt.position.sourcefactory/5.0"
+                      FILE "plugin.json")
+    Q_INTERFACES(QGeoPositionInfoSourceFactory)
 
 public:
-    QString sourceName() const;
-    int sourceVersion() const;
-
-    QStringList keys() const { return QStringList() << QLatin1String("testposition.source"); }
-
     QGeoPositionInfoSource *positionInfoSource(QObject *parent);
     QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent);
 };
-
-QString QGeoPositionInfoSourceFactoryTest::sourceName() const
-{
-    return QLatin1String("test.source");
-}
-
-int QGeoPositionInfoSourceFactoryTest::sourceVersion() const
-{
-    return 1;
-}
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryTest::positionInfoSource(QObject *parent)
 {
@@ -216,7 +203,5 @@ QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryTest::satelliteInfoSource(
     // not implemented
     return 0;
 }
-
-Q_EXPORT_PLUGIN2(qtposition_testplugin, QGeoPositionInfoSourceFactoryTest)
 
 #include "plugin.moc"

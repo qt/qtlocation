@@ -9,3 +9,6 @@ SOURCES += plugin.cpp
 
 target.path += $$[QT_INSTALL_PLUGINS]/position
 INSTALLS += target
+
+OTHER_FILES += \
+    plugin.json

@@ -1,0 +1,7 @@
+{
+    "Keys": ["npe_backend"],
+    "Provider": "npe_backend",
+    "Position": true,
+    "Satellite": true,
+    "Priority": 1000
+}

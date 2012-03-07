@@ -39,32 +39,16 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPOSITIONINFOSOURCEFACTORY_H
-#define QGEOPOSITIONINFOSOURCEFACTORY_H
+#include "qgeopositioninfosourcefactory_gypsy.h"
+#include "qgeosatelliteinfosource_gypsy_p.h"
 
-#include "qgeopositioninfosource.h"
-#include "qgeosatelliteinfosource.h"
-#include <QList>
-
-QT_BEGIN_HEADER
-
-QT_BEGIN_NAMESPACE
-
-class Q_LOCATION_EXPORT QGeoPositionInfoSourceFactory
+QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGypsy::positionInfoSource(QObject *parent)
 {
-public:
-    virtual ~QGeoPositionInfoSourceFactory();
+    Q_UNUSED(parent);
+    return 0;
+}
 
-    virtual QGeoPositionInfoSource *positionInfoSource(QObject *parent) = 0;
-    virtual QGeoSatelliteInfoSource *satelliteInfoSource(QObject *parent) = 0;
-};
-
-#define QT_POSITION_SOURCE_INTERFACE
-Q_DECLARE_INTERFACE(QGeoPositionInfoSourceFactory,
-                    "org.qt-project.qt.position.sourcefactory/5.0");
-
-QT_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif // QGEOPOSITIONINFOSOURCEFACTORY_H
+QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGypsy::satelliteInfoSource(QObject *parent)
+{
+    return new QGeoSatelliteInfoSourceGypsy(parent);
+}

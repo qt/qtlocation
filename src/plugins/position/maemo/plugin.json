@@ -1,0 +1,7 @@
+{
+    "Keys": ["maemo"],
+    "Provider": "maemo",
+    "Position": true,
+    "Satellite": true,
+    "Priority": 1000
+}
