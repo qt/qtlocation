@@ -317,9 +317,6 @@ void TestQGeoPositionInfoSource::setUpdateInterval_data()
         QTest::newRow("less then minInterval") << minUpdateInterval - 1 << minUpdateInterval;
         QTest::newRow("in btw zero and minInterval") << 1 << minUpdateInterval;
     }
-
-    // Fails on S60, should investigate
-    //QTest::newRow("INT_MAX") << INT_MAX << INT_MAX;
 }
 
 void TestQGeoPositionInfoSource::lastKnownPosition()
@@ -620,7 +617,6 @@ void TestQGeoPositionInfoSource::requestUpdate_defaultTimeout()
 
     m_source->requestUpdate(0);
 
-    // S60 emulator fail
     QTRY_VERIFY_WITH_TIMEOUT((spyUpdate.count() > 0) && (spyTimeout.count() == 0), 7000);
 }
 
