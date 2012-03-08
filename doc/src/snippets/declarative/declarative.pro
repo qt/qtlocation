@@ -1,6 +1,7 @@
 TEMPLATE = aux
 
 content.files = \
+    maps.qml \
     places.qml \
     plugin.qml \
     routing.qml

@@ -70,8 +70,15 @@
     \l MapPolyline.
 
     \section2 Example Usage
+
+    Here is how to draw a \l{Route}{route} on a \l{Map}{map}:
+
+    \snippet snippets/declarative/maps.qml QtQuick import
+    \snippet snippets/declarative/maps.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/maps.qml MapRoute
 */
-/* TODO: an example here. do we want to use a RouteModel? */
+
 
 QDeclarativeRouteMapItem::QDeclarativeRouteMapItem(QQuickItem *parent):
     QDeclarativeGeoMapItemBase(parent),

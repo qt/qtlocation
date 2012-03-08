@@ -63,6 +63,16 @@ QT_BEGIN_NAMESPACE
     The MapItemView is used to populate Map with MapItems from a model.
     The MapItemView element only makes sense when contained in a Map,
     meaning that it has no standalone presentation.
+
+    \section2 Example Usage
+
+    This example demonstrates how to use the MapViewItem element to display
+    a \l{Route}{route} on a \l{Map}{map}:
+
+    \snippet snippets/declarative/maps.qml QtQuick import
+    \snippet snippets/declarative/maps.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/maps.qml MapRoute
 */
 
 QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)

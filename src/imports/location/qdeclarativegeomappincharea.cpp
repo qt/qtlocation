@@ -63,6 +63,25 @@ QT_BEGIN_NAMESPACE
 
     Except for the \l accepted property, all properties are read-only.
 
+    \section2 Example Usage
+
+    The following example enables the pinch gesture on a map and reacts to the
+    finished event.
+
+    \code
+    Map {
+        id: map
+        pinch.enabled: true
+        pinch.onPinchFinished:{
+            var coordinate1 = map.toCoordinate(pinch.point1)
+            var coordinate2 = map.toCoordinate(pinch.point2)
+            console.log("Pinch startet at:")
+            console.log("        Points (" + pinch.point1.x + ", " + pinch.point1.y + ") - (" + pinch.point2.x + ", " + pinch.point2.y + ")")
+            console.log("   Coordinates (" + coordinate1.latitude + ", " + coordinate1.longitude + ") - (" + coordinate2.latitude + ", " + coordinate2.longitude + ")")
+        }
+    }
+    \endcode
+
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0
 */
@@ -164,12 +183,21 @@ QT_BEGIN_NAMESPACE
 /*!
     \qmlproperty enumeration QtLocation5::MapPinchArea::activeGestures
 
-    This property holds the gestures that the pinch should control.
-    For the time being, only ZoomGesture is supported.
+    This property holds the gestures that the pinch should control. By default
+    the ZoomGesture is enabled.
+
+    \list
+    \li PinchArea.NoGesture - Don't support any additional gestures (value: 0x0000).
+    \li PinchArea.ZoomGesture - Support the map zoom gesture (value: 0x0001).
+    \li PinchArea.RotationGesture - Support the map rotation gesture (value: 0x0002).
+    \li PinchArea.TiltGesture - Support the map tilt gesture (value: 0x0004).
+    \endlist
 
     For the extremist, one may OR flag the RotationGesture or TiltGesture
     but these come with absolutely no warranty or guarantees at the moment
     (may be removed, changed, moved around)
+
+    \note For the time being, only \l PinchArea.ZoomGesture is supported.
 */
 
 /*!
@@ -183,7 +211,7 @@ QT_BEGIN_NAMESPACE
     maximum pinch zoom. Default value is 2.0, maximum value is 10.0
 */
 
-/* todo uncomment this when rotation is supported
+/*!
     \qmlproperty real MapPinchArea::rotationFactor
 
     This property holds the rotation factor for zoom, essentially meant to be used for setting
@@ -192,6 +220,40 @@ QT_BEGIN_NAMESPACE
     It is an indicative measure; the default value 1.0 means the map roughly follows the fingers,
     whereas 2.0 means rotating twice as fast. Maximum value is 5.0.
 */
+
+/*!
+    \qmlsignal void QtLocation5::MapPinchArea::pinchStarted(PinchEvent event)
+
+    Raised when a pinch gesture is started.
+
+    \sa pinchUpdated pinchFinished
+*/
+
+/*!
+    \qmlsignal void QtLocation5::MapPinchArea::pinchUpdated(PinchEvent event)
+
+    Once a pinch has begun this event gets raised as the user moves her fingers
+    across the map.
+
+    \sa pinchStarted pinchFinished
+*/
+
+/*!
+    \qmlsignal void QtLocation5::MapPinchArea::pinchUpdated(PinchEvent event)
+
+    The end of a pinch gesture is signaled by this event.
+
+    \sa pinchUpdated pinchFinished
+*/
+
+/*!
+    \qmlproperty bool QtLocation5::MapPinchArea::enabled
+
+    This property holds whether the pinch gestures are enabled.
+    Note: disabling pinch during active pinch does not have effect on
+    the potentially active current pinch.
+*/
+
 
 QDeclarativeGeoMapPinchArea::QDeclarativeGeoMapPinchArea(QDeclarativeGeoMap* map, QObject *parent)
     : QObject(parent),

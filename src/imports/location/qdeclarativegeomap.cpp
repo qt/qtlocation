@@ -516,7 +516,7 @@ QDeclarativeGeoServiceProvider* QDeclarativeGeoMap::plugin() const
 }
 
 /*!
-    \qmlproperty qreal QtLocation5::Map::minimumZoomLevel
+    \qmlproperty real QtLocation5::Map::minimumZoomLevel
 
     This property holds the minimum valid zoom level for the map.
 
@@ -533,7 +533,7 @@ qreal QDeclarativeGeoMap::minimumZoomLevel() const
 }
 
 /*!
-\qmlproperty qreal QtLocation5::Map::maximumZoomLevel
+\qmlproperty real QtLocation5::Map::maximumZoomLevel
 
     This property holds the maximum valid zoom level for the map.
 
@@ -564,8 +564,8 @@ void QDeclarativeGeoMap::setBearing(qreal bearing)
     emit bearingChanged(bearing_);
 }
 
-/* <- put '!' mark here, temporarily undocumented until supported
-    \qmlproperty qreal Map::bearing
+/*!
+    \qmlproperty real Map::bearing
 
     This property holds the current bearing (starting from 0 and increasing
     clockwise to 359,9 degrees) pointing up.
@@ -604,6 +604,16 @@ void QDeclarativeGeoMap::setTilt(qreal tilt)
     emit tiltChanged(tilt);
 }
 
+/*!
+    \qmlproperty real Map::tilt
+
+    This property holds the current tilt (starting from 0 and increasing to 85 degrees).
+
+    The tilt gives the map a 2.5D feel. Certain map objects may be rendered
+    in 3D if the tilt is different from 0.
+
+    The default value is 0 corresponding to no tilt.
+*/
 qreal QDeclarativeGeoMap::tilt() const
 {
     if (!mappingManagerInitialized_)
@@ -612,7 +622,7 @@ qreal QDeclarativeGeoMap::tilt() const
 }
 
 /*!
-\qmlproperty qreal QtLocation5::Map::zoomLevel
+    \qmlproperty real QtLocation5::Map::zoomLevel
 
     This property holds the zoom level for the map.
 
@@ -797,6 +807,13 @@ void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
     }
 }
 
+/*!
+\qmlproperty list<MapType> QtLocation5::Map::supportedMapTypes
+
+    This read-only property holds the set of \l{MapTye}{map types} supported by this map.
+
+    \sa activeMapType
+*/
 QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 {
     return QQmlListProperty<QDeclarativeGeoMapType>(this, supportedMapTypes_);
@@ -866,18 +883,21 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 }
 
 /*!
-    \qmlmethod QtLocation5::Map::addMapItem(MapItem)
+    \qmlmethod QtLocation5::Map::addMapItem(MapItem item)
 
-    Adds the given MapItem to the Map (e.g. MapQuickItem, MapCircle). If the object
+    Adds the given \a item to the Map (e.g. MapQuickItem, MapCircle). If the object
     already is on the Map, it will not be added again.
 
     As an example, consider the case where you have a MapCircle representing your current position:
 
-    \snippet TODO
-    You can add it to Map (alternatively it can be defined as a child element of the Map):
+    \snippet snippets/declarative/maps.qml QtQuick import
+    \snippet snippets/declarative/maps.qml QtLocation import
+    \codeline
+    \snippet snippets/declarative/maps.qml Map addMapItem MapCircle at current position
 
-    \snippet TODO
-    Note: MapItemViews cannot be added with this method.
+    \note MapItemViews cannot be added with this method.
+
+    \sa mapitems removeMapItem clearMapItems
 */
 
 void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
@@ -894,15 +914,14 @@ void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
 }
 
 /*!
-    \qmlmethod QtLocation5::Map::mapItems()
+    \qmlproperty list<MapItem> QtLocation5::Map::mapItems
 
     Returns the list of all map items in no particular order.
     These items include items that were declared statically as part of
     the element declaration, as well as dynamical items (\l addMapItem,
     \l MapItemView).
 
-    \snippet TODO
-
+    \sa addMapItem removeMapItem clearMapItems
 */
 
 QList<QObject*> QDeclarativeGeoMap::mapItems()
@@ -910,6 +929,14 @@ QList<QObject*> QDeclarativeGeoMap::mapItems()
     return mapItems_;
 }
 
+/*!
+    \qmlmethod void QtLocation5::Map::removeMapItem(MapItem item)
+
+    Removes the given \a item from the Map (e.g. MapQuickItem, MapCircle). If
+    the item isn't on the map, the map remains unchanged.
+
+    \sa mapitems addMapItem clearMapItems
+*/
 void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
 {
     QLOC_TRACE0;
@@ -926,6 +953,13 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
     updateMutex_.unlock();
 }
 
+/*!
+    \qmlmethod void QtLocation5::Map::clearMapItems()
+
+    Removes all items from the map.
+
+    \sa mapitems addMapItem clearMapItems
+*/
 void QDeclarativeGeoMap::clearMapItems()
 {
     QLOC_TRACE0;
@@ -948,6 +982,18 @@ void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
     emit activeMapTypeChanged();
 }
 
+
+/*!
+    \qmlproperty MapType QtLocation5::Map::activeMapType
+
+    \brief Access to the currently active \l{MapType}{map type}.
+
+    This property can be set to change the active \l{MapType}{map type}.
+    See the \l{Map::supportedMapTypes}{supportedMapTypes} property for possible values.
+
+    \sa MapType
+*/
+
 QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
 {
     return activeMapType_;
@@ -958,13 +1004,6 @@ QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
 
     Removes the given MapItem from the Map. If the MapItem does not
     exist, function does nothing.
-
-    As an example, consider you have a MapCircle presenting your current position:
-    \snippet TODO
-
-    You can remove it from the Map element:
-    \snippet TODO
-
 */
 
 void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)

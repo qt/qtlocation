@@ -52,7 +52,8 @@ QT_BEGIN_NAMESPACE
     \brief The MapMouseEvent object provides information about a mouse event.
 
     The position of the mouse can be found via the \l x and \l y properties
-    or the \l coordinate property.
+    or the \l coordinate property. Both \a x and \a y are relative to the
+    \l MapMouseArea that generated the event.
     The button that caused the event is available via the \l button property.
 
     \sa MapMouseArea

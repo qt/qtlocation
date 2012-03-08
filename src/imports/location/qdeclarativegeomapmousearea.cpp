@@ -131,6 +131,11 @@ QDeclarativeGeoMapMouseArea::~QDeclarativeGeoMapMouseArea()
 {
 }
 
+/*!
+    \qmlmethod Coordinate QtLocation5::MapMouseArea::mouseToCoordinate(MouseEvent event)
+
+    Converts the \a event's coordinates to geo coordinates.
+ */
 QDeclarativeCoordinate* QDeclarativeGeoMapMouseArea::mouseToCoordinate(QQuickMouseEvent* event)
 {
     // figure out the map association for this mouse area and use it to resolve geocoordinate
