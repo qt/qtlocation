@@ -1,4 +1,4 @@
-QT *= location network declarative
+QT *= location network qml
 
 HEADERS += \
 #data classes

@@ -47,8 +47,8 @@
 #include "qdeclarativegeoboundingcircle_p.h"
 #include <qgeocodereply.h>
 
-#include <QtDeclarative/qdeclarative.h>
-#include <QDeclarativeParserStatus>
+#include <QtQml/qqml.h>
+#include <QtQml/QQmlParserStatus>
 #include "qdeclarativegeolocation_p.h"
 #include <QAbstractListModel>
 #include <QPointer>
@@ -59,7 +59,7 @@ class QGeoServiceProvider;
 class QGeocodingManager;
 class QDeclarativeGeoLocation;
 
-class QDeclarativeGeocodeModel : public QAbstractListModel, public QDeclarativeParserStatus
+class QDeclarativeGeocodeModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
     Q_ENUMS(Status)
@@ -75,7 +75,7 @@ class QDeclarativeGeocodeModel : public QAbstractListModel, public QDeclarativeP
     Q_PROPERTY(QVariant query READ query WRITE setQuery NOTIFY queryChanged)
     Q_PROPERTY(QObject* bounds READ bounds WRITE setBounds NOTIFY boundsChanged)
     Q_PROPERTY(GeocodeError error READ error NOTIFY errorChanged)
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     enum Status {
@@ -102,7 +102,7 @@ public:
     explicit QDeclarativeGeocodeModel(QObject* parent = 0);
     virtual ~QDeclarativeGeocodeModel();
 
-    // From QDeclarativeParserStatus
+    // From QQmlParserStatus
     virtual void classBegin() {}
     virtual void componentComplete();
 

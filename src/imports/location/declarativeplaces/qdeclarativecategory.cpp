@@ -43,7 +43,7 @@
 #include "qdeclarativeplaceicon_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 
-#include <QtDeclarative/QDeclarativeInfo>
+#include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
 
@@ -95,7 +95,7 @@ QDeclarativeCategory::QDeclarativeCategory(const QPlaceCategory &category,
 
 QDeclarativeCategory::~QDeclarativeCategory() {}
 
-// From QDeclarativeParserStatus
+// From QQmlParserStatus
 void QDeclarativeCategory::componentComplete()
 {
     // delayed instantiation of QObject based properties.

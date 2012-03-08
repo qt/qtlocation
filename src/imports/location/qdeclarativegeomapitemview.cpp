@@ -44,10 +44,10 @@
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapitembase_p.h"
 
-#include <QDeclarativeParserStatus>
-#include <QAbstractItemModel>
-#include <QDeclarativeContext>
-#include <QtDeclarative/private/qdeclarativeopenmetaobject_p.h>
+#include <QtCore/QAbstractItemModel>
+#include <QtQml/QQmlParserStatus>
+#include <QtQml/QQmlContext>
+#include <QtQml/private/qqmlopenmetaobject_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -148,7 +148,7 @@ void QDeclarativeGeoMapItemView::modelRowsRemoved(QModelIndex, int start, int en
     }
 }
 
-QDeclarativeComponent* QDeclarativeGeoMapItemView::delegate() const
+QQmlComponent* QDeclarativeGeoMapItemView::delegate() const
 {
     return delegate_;
 }
@@ -162,7 +162,7 @@ QDeclarativeComponent* QDeclarativeGeoMapItemView::delegate() const
 
 */
 
-void QDeclarativeGeoMapItemView::setDelegate(QDeclarativeComponent *delegate)
+void QDeclarativeGeoMapItemView::setDelegate(QQmlComponent *delegate)
 {
     if (!delegate)
         return;
@@ -229,10 +229,10 @@ QDeclarativeGeoMapItemBase* QDeclarativeGeoMapItemView::createItem(int modelRow)
     }
 
     QObject *model = new QObject(this);
-    QDeclarativeOpenMetaObject *modelMetaObject = new QDeclarativeOpenMetaObject(model);
+    QQmlOpenMetaObject *modelMetaObject = new QQmlOpenMetaObject(model);
 
     QHashIterator<int, QByteArray> iterator(model_->roleNames());
-    QDeclarativeContext *itemContext = new QDeclarativeContext(qmlContext(this));
+    QQmlContext *itemContext = new QQmlContext(qmlContext(this));
     while (iterator.hasNext()) {
         iterator.next();
         QVariant modelData = model_->data(index, iterator.key());

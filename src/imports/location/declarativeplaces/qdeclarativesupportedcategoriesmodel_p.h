@@ -47,8 +47,8 @@
 #include <QObject>
 #include <QtCore/QStringList>
 #include <QAbstractListModel>
-#include <QDeclarativeListProperty>
-#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QQmlListProperty>
+#include <QtQml/QQmlParserStatus>
 
 #include <QtLocation/QPlaceCategory>
 
@@ -68,7 +68,7 @@ public:
     QSharedPointer<QDeclarativeCategory> declCategory;
 };
 
-class QDeclarativeSupportedCategoriesModel : public QAbstractItemModel, public QDeclarativeParserStatus
+class QDeclarativeSupportedCategoriesModel : public QAbstractItemModel, public QQmlParserStatus
 {
     Q_OBJECT
 
@@ -78,14 +78,14 @@ class QDeclarativeSupportedCategoriesModel : public QAbstractItemModel, public Q
     Q_PROPERTY(bool hierarchical READ hierarchical WRITE setHierarchical NOTIFY hierarchicalChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged);
 
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
     Q_ENUMS(Roles)
 
 public:
     explicit QDeclarativeSupportedCategoriesModel(QObject *parent = 0);
     virtual ~QDeclarativeSupportedCategoriesModel();
 
-    // From QDeclarativeParserStatus
+    // From QQmlParserStatus
     virtual void classBegin() {}
     virtual void componentComplete();
 

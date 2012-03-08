@@ -45,14 +45,14 @@
 #include "qdeclarativegeoserviceprovider_p.h"
 
 #include <qplaceicon.h>
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/QDeclarativePropertyMap>
+#include <QtQml/qqml.h>
+#include <QtQml/QQmlPropertyMap>
 
 #include <QObject>
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativePropertyMap;
+class QQmlPropertyMap;
 
 class QDeclarativePlaceIcon : public QObject
 {
@@ -72,7 +72,7 @@ public:
 
     Q_INVOKABLE QUrl url(const QSize &size = QSize()) const;
 
-    QDeclarativePropertyMap *parameters() const;
+    QQmlPropertyMap *parameters() const;
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;
@@ -89,7 +89,7 @@ private:
     QPlaceManager *manager() const;
     void initParameters(const QVariantMap &parameterMap);
     QDeclarativeGeoServiceProvider *m_plugin;
-    QDeclarativePropertyMap *m_parameters;
+    QQmlPropertyMap *m_parameters;
 };
 
 QT_END_NAMESPACE

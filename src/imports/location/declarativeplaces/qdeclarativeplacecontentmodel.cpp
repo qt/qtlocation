@@ -44,7 +44,7 @@
 #include "qdeclarativegeoserviceprovider_p.h"
 #include "qdeclarativeplaceuser_p.h"
 
-#include <QtDeclarative/QDeclarativeInfo>
+#include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceContentRequest>

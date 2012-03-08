@@ -40,7 +40,7 @@
 
 #include <QGuiApplication>
 #include <QtQuick/QQuickView>
-#include <QtDeclarative/QDeclarativeEngine>
+#include <QtQml/QQmlEngine>
 
 int main(int argc, char *argv[])
 {

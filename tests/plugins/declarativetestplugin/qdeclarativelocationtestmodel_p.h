@@ -62,7 +62,7 @@ public:
     QDeclarativeCoordinate* coordinate() const {return coordinate_;}
 };
 
-class QDeclarativeLocationTestModel : public QAbstractListModel, public QDeclarativeParserStatus
+class QDeclarativeLocationTestModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
     Q_PROPERTY(int datacount READ datacount WRITE setDatacount NOTIFY datacountChanged)
@@ -70,7 +70,7 @@ class QDeclarativeLocationTestModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(bool crazyMode READ crazyMode WRITE setCrazyMode NOTIFY crazyModeChanged)
     Q_PROPERTY(int crazyLevel READ crazyLevel WRITE setCrazyLevel NOTIFY crazyLevelChanged)
     Q_PROPERTY(QString datatype READ datatype WRITE setDatatype NOTIFY datatypeChanged)
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     QDeclarativeLocationTestModel(QObject* parent = 0);
@@ -80,7 +80,7 @@ public:
         TestDataRole = Qt::UserRole + 500
     };
 
-    // from QDeclarativeParserStatus
+    // from QQmlParserStatus
     virtual void componentComplete();
     virtual void classBegin() {}
 

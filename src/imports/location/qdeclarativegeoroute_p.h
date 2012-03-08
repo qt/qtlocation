@@ -59,8 +59,8 @@ class QDeclarativeGeoRoute : public QObject
     Q_PROPERTY(QDeclarativeGeoBoundingBox *bounds READ bounds CONSTANT)
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ path CONSTANT)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoRouteSegment> segments READ segments CONSTANT)
+    Q_PROPERTY(QQmlListProperty<QDeclarativeCoordinate> path READ path CONSTANT)
+    Q_PROPERTY(QQmlListProperty<QDeclarativeGeoRouteSegment> segments READ segments CONSTANT)
 
 public:
     QDeclarativeGeoRoute(QObject *parent = 0);
@@ -70,8 +70,8 @@ public:
     QDeclarativeGeoBoundingBox* bounds() const;
     int travelTime() const;
     qreal distance() const;
-    QDeclarativeListProperty<QDeclarativeCoordinate> path();
-    QDeclarativeListProperty<QDeclarativeGeoRouteSegment> segments();
+    QQmlListProperty<QDeclarativeCoordinate> path();
+    QQmlListProperty<QDeclarativeGeoRouteSegment> segments();
 
     void appendPath(QDeclarativeCoordinate* coordinate);
     void clearPath();
@@ -80,15 +80,15 @@ public:
     void clearSegments();
 
 private:
-    static void path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
-    static int path_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate* path_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index);
-    static void path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
+    static void path_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
+    static int path_count(QQmlListProperty<QDeclarativeCoordinate> *prop);
+    static QDeclarativeCoordinate* path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
+    static void path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
 
-    static void segments_append(QDeclarativeListProperty<QDeclarativeGeoRouteSegment> *prop, QDeclarativeGeoRouteSegment *segment);
-    static int segments_count(QDeclarativeListProperty<QDeclarativeGeoRouteSegment> *prop);
-    static QDeclarativeGeoRouteSegment* segments_at(QDeclarativeListProperty<QDeclarativeGeoRouteSegment> *prop, int index);
-    static void segments_clear(QDeclarativeListProperty<QDeclarativeGeoRouteSegment> *prop);
+    static void segments_append(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, QDeclarativeGeoRouteSegment *segment);
+    static int segments_count(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
+    static QDeclarativeGeoRouteSegment* segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, int index);
+    static void segments_clear(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
 
     void init();
     QList<QGeoCoordinate> routePath();

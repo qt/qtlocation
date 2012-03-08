@@ -51,7 +51,7 @@
 
 #include <QtQuick/QSGTexture>
 #include <QtQuick/QQuickPaintedItem>
-#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtQml/QQmlParserStatus>
 #include "qdeclarativegeomapitemview_p.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
@@ -105,20 +105,20 @@ class QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel NOTIFY maximumZoomLevelChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
     Q_PROPERTY(QDeclarativeGeoMapType* activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
+    Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
     Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(QList<QObject*> mapItems READ mapItems NOTIFY mapItemsChanged)
     // Tilt and bearing are not part of supported API
     Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
 
     QDeclarativeGeoMap(QQuickItem *parent = 0);
     ~QDeclarativeGeoMap();
 
-    // From QDeclarativeParserStatus
+    // From QQmlParserStatus
     virtual void componentComplete();
 
     // from QQuickItem
@@ -150,7 +150,7 @@ public:
     void setCenter(QDeclarativeCoordinate *center);
     QDeclarativeCoordinate* center();
 
-    QDeclarativeListProperty<QDeclarativeGeoMapType> supportedMapTypes();
+    QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
     Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItemBase *item);
     Q_INVOKABLE void addMapItem(QDeclarativeGeoMapItemBase *item);

@@ -72,7 +72,7 @@ class QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
+    Q_PROPERTY(QQmlListProperty<QDeclarativeCoordinate> path READ declarativePath NOTIFY pathChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
 
@@ -87,7 +87,7 @@ public:
     Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate* coordinate);
     Q_INVOKABLE void removeCoordinate(QDeclarativeCoordinate* coordinate);
 
-    QDeclarativeListProperty<QDeclarativeCoordinate> declarativePath();
+    QQmlListProperty<QDeclarativeCoordinate> declarativePath();
 
     QColor color() const;
     void setColor(const QColor &color);
@@ -110,10 +110,10 @@ private Q_SLOTS:
     void updateAfterCoordinateChanged();
 
 private:
-    static void path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
-    static int path_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate* path_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index);
-    static void path_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
+    static void path_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
+    static int path_count(QQmlListProperty<QDeclarativeCoordinate> *prop);
+    static QDeclarativeCoordinate* path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
+    static void path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
     void pathPropertyChanged();
 
 private:

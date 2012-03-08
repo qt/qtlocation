@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPPINCHAREA_H
 #define QDECLARATIVEGEOMAPPINCHAREA_H
 
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 #include <QTouchEvent>
 #include <QObject>
 #include <QDebug>

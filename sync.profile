@@ -9,7 +9,7 @@
 %mastercontent = (
     "gui" => "#include <QtGui/QtGui>\n",
     "network" => "#include <QtNetwork/QtNetwork>\n",
-    "declarative" => "#include <QtDeclarative/qdeclarative.h>\n",
+    "declarative" => "#include <QtQml/qqml.h>\n",
 );
 %modulepris = (
     "QtLocation" => "$basedir/modules/qt_location.pri",

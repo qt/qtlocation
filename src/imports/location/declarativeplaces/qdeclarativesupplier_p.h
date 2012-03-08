@@ -44,15 +44,15 @@
 
 #include <QObject>
 #include <QtCore/QUrl>
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtQml/qqml.h>
+#include <QtQml/QQmlParserStatus>
 #include <qplacesupplier.h>
 
 #include "qdeclarativeplaceicon_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QDeclarativeSupplier : public QObject, public QDeclarativeParserStatus
+class QDeclarativeSupplier : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
 
@@ -62,14 +62,14 @@ class QDeclarativeSupplier : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
     Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
 
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     explicit QDeclarativeSupplier(QObject* parent = 0);
     explicit QDeclarativeSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin, QObject* parent = 0);
     ~QDeclarativeSupplier();
 
-    // From QDeclarativeParserStatus
+    // From QQmlParserStatus
     void classBegin() { }
     void componentComplete();
 

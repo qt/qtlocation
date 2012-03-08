@@ -55,7 +55,7 @@ class QDeclarativeSearchResultModel : public QDeclarativeResultModelBase
     Q_OBJECT
 
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
+    Q_PROPERTY(QQmlListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(int maximumCorrections READ maximumCorrections WRITE setMaximumCorrections NOTIFY maximumCorrectionsChanged)
     Q_PROPERTY(RelevanceHint relevanceHint READ relevanceHint WRITE setRelevanceHint NOTIFY relevanceHintChanged)
     Q_PROPERTY(QDeclarativePlace::Visibility visibilityScope READ visibilityScope WRITE setVisibilityScope NOTIFY visibilityScopeChanged)
@@ -81,12 +81,12 @@ public:
     QString searchTerm() const;
     void setSearchTerm(const QString &searchTerm);
 
-    QDeclarativeListProperty<QDeclarativeCategory> categories();
-    static void categories_append(QDeclarativeListProperty<QDeclarativeCategory> *list,
+    QQmlListProperty<QDeclarativeCategory> categories();
+    static void categories_append(QQmlListProperty<QDeclarativeCategory> *list,
                                   QDeclarativeCategory* category);
-    static int categories_count(QDeclarativeListProperty<QDeclarativeCategory> *list);
-    static QDeclarativeCategory* category_at(QDeclarativeListProperty<QDeclarativeCategory> *list, int index);
-    static void categories_clear(QDeclarativeListProperty<QDeclarativeCategory> *list);
+    static int categories_count(QQmlListProperty<QDeclarativeCategory> *list);
+    static QDeclarativeCategory* category_at(QQmlListProperty<QDeclarativeCategory> *list, int index);
+    static void categories_clear(QQmlListProperty<QDeclarativeCategory> *list);
 
     QDeclarativeSearchResultModel::RelevanceHint relevanceHint() const;
     void setRelevanceHint(QDeclarativeSearchResultModel::RelevanceHint hint);

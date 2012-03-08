@@ -44,7 +44,7 @@
 
 #include <qgeoserviceprovider.h>
 #include <qgeoroutingmanager.h>
-#include <QtDeclarative/qdeclarativeinfo.h>
+#include <QtQml/qqmlinfo.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -662,7 +662,7 @@ int QDeclarativeGeoRouteQuery::numberAlternativeRoutes() const
 }
 
 /*!
-    \qmlproperty QDeclarativeListProperty<Coordinate> RouteQuery::waypoints
+    \qmlproperty QQmlListProperty<Coordinate> RouteQuery::waypoints
 
 
     The waypoint coordinates of the desired route.
@@ -675,43 +675,40 @@ int QDeclarativeGeoRouteQuery::numberAlternativeRoutes() const
     \sa addWaypoint removeWaypoint clearWaypoints
 */
 
-QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativeGeoRouteQuery::waypoints()
+QQmlListProperty<QDeclarativeCoordinate> QDeclarativeGeoRouteQuery::waypoints()
 {
-    return QDeclarativeListProperty<QDeclarativeCoordinate>(this,
-                                                            0,
-                                                            waypoints_append,
-                                                            waypoints_count,
-                                                            waypoints_at,
-                                                            waypoints_clear);
+    return QQmlListProperty<QDeclarativeCoordinate>(this, 0, waypoints_append, waypoints_count,
+                                                    waypoints_at, waypoints_clear);
 }
 
-void QDeclarativeGeoRouteQuery::waypoints_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *waypoint)
+void QDeclarativeGeoRouteQuery::waypoints_append(QQmlListProperty<QDeclarativeCoordinate> *prop,
+                                                 QDeclarativeCoordinate *waypoint)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     model->addWaypoint(waypoint);
 }
 
-int QDeclarativeGeoRouteQuery::waypoints_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
+int QDeclarativeGeoRouteQuery::waypoints_count(QQmlListProperty<QDeclarativeCoordinate> *prop)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     return model->waypoints_.count();
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoRouteQuery::waypoints_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index)
+QDeclarativeCoordinate* QDeclarativeGeoRouteQuery::waypoints_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     Q_ASSERT(index < model->waypoints_.count());
     return model->waypoints_.at(index);
 }
 
-void QDeclarativeGeoRouteQuery::waypoints_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop)
+void QDeclarativeGeoRouteQuery::waypoints_clear(QQmlListProperty<QDeclarativeCoordinate> *prop)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     model->clearWaypoints();
 }
 
 /*!
-    \qmlproperty QDeclarativeListProperty<BoundingBox> RouteQuery::excludedAreas
+    \qmlproperty QQmlListProperty<BoundingBox> RouteQuery::excludedAreas
 
     Areas that the route must not cross.
 
@@ -721,36 +718,33 @@ void QDeclarativeGeoRouteQuery::waypoints_clear(QDeclarativeListProperty<QDeclar
     \sa addExcludedArea removeExcludedArea clearExcludedAreas
 */
 
-QDeclarativeListProperty<QDeclarativeGeoBoundingBox> QDeclarativeGeoRouteQuery::excludedAreas()
+QQmlListProperty<QDeclarativeGeoBoundingBox> QDeclarativeGeoRouteQuery::excludedAreas()
 {
-    return QDeclarativeListProperty<QDeclarativeGeoBoundingBox>(this,
-                                                                0,
-                                                                exclusions_append,
-                                                                exclusions_count,
-                                                                exclusions_at,
-                                                                exclusions_clear);
+    return QQmlListProperty<QDeclarativeGeoBoundingBox>(this, 0, exclusions_append,
+                                                        exclusions_count, exclusions_at,
+                                                        exclusions_clear);
 }
 
-void QDeclarativeGeoRouteQuery::exclusions_append(QDeclarativeListProperty<QDeclarativeGeoBoundingBox> *prop, QDeclarativeGeoBoundingBox *area)
+void QDeclarativeGeoRouteQuery::exclusions_append(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, QDeclarativeGeoBoundingBox *area)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     model->addExcludedArea(area);
 }
 
-int QDeclarativeGeoRouteQuery::exclusions_count(QDeclarativeListProperty<QDeclarativeGeoBoundingBox> *prop)
+int QDeclarativeGeoRouteQuery::exclusions_count(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     return model->exclusions_.count();
 }
 
-QDeclarativeGeoBoundingBox* QDeclarativeGeoRouteQuery::exclusions_at(QDeclarativeListProperty<QDeclarativeGeoBoundingBox> *prop, int index)
+QDeclarativeGeoBoundingBox* QDeclarativeGeoRouteQuery::exclusions_at(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, int index)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     Q_ASSERT(index < model->exclusions_.count());
     return model->exclusions_.at(index);
 }
 
-void QDeclarativeGeoRouteQuery::exclusions_clear(QDeclarativeListProperty<QDeclarativeGeoBoundingBox> *prop)
+void QDeclarativeGeoRouteQuery::exclusions_clear(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     model->clearExcludedAreas();

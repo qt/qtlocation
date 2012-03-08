@@ -44,7 +44,7 @@
 
 #include <QtCore/QObject>
 #include <QtLocation/QPlaceContactDetail>
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 

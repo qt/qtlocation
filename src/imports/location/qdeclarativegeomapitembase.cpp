@@ -42,7 +42,7 @@
 #include "qdeclarativegeomapitembase_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qgeocameradata_p.h"
-#include <QDeclarativeInfo>
+#include <QtQml/QQmlInfo>
 
 QT_BEGIN_NAMESPACE
 

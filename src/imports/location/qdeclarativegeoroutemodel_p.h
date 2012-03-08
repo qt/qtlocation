@@ -50,8 +50,8 @@
 #include <qgeorouterequest.h>
 #include <qgeoroutereply.h>
 
-#include <QtDeclarative/qdeclarative.h>
-#include <QDeclarativeParserStatus>
+#include <QtQml/qqml.h>
+#include <QtQml/QQmlParserStatus>
 #include <QAbstractListModel>
 
 #include <QObject>
@@ -63,7 +63,7 @@ class QGeoRoutingManager;
 class QDeclarativeGeoRoute;
 class QDeclarativeGeoRouteQuery;
 
-class QDeclarativeGeoRouteModel : public QAbstractListModel, public QDeclarativeParserStatus
+class QDeclarativeGeoRouteModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
     Q_ENUMS(Status)
@@ -76,7 +76,7 @@ class QDeclarativeGeoRouteModel : public QAbstractListModel, public QDeclarative
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
     Q_PROPERTY(RouteError error READ error NOTIFY errorChanged)
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     enum Roles {
@@ -102,7 +102,7 @@ public:
     QDeclarativeGeoRouteModel(QObject *parent = 0);
     ~QDeclarativeGeoRouteModel();
 
-    // From QDeclarativeParserStatus
+    // From QQmlParserStatus
     void classBegin() {}
     void componentComplete();
 
@@ -168,7 +168,7 @@ private:
     RouteError error_;
 };
 
-class QDeclarativeGeoRouteQuery : public QObject, public QDeclarativeParserStatus
+class QDeclarativeGeoRouteQuery : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
     Q_ENUMS(TravelMode)
@@ -187,17 +187,17 @@ class QDeclarativeGeoRouteQuery : public QObject, public QDeclarativeParserStatu
     Q_PROPERTY(RouteOptimizations routeOptimizations READ routeOptimizations WRITE setRouteOptimizations NOTIFY routeOptimizationsChanged)
     Q_PROPERTY(SegmentDetail segmentDetail READ segmentDetail WRITE setSegmentDetail NOTIFY segmentDetailChanged)
     Q_PROPERTY(ManeuverDetail maneuverDetail READ maneuverDetail WRITE setManeuverDetail NOTIFY maneuverDetailChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCoordinate> waypoints READ waypoints NOTIFY waypointsChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoBoundingBox> excludedAreas READ excludedAreas NOTIFY excludedAreasChanged)
+    Q_PROPERTY(QQmlListProperty<QDeclarativeCoordinate> waypoints READ waypoints NOTIFY waypointsChanged)
+    Q_PROPERTY(QQmlListProperty<QDeclarativeGeoBoundingBox> excludedAreas READ excludedAreas NOTIFY excludedAreasChanged)
     Q_PROPERTY(QList<int> featureTypes READ featureTypes NOTIFY featureTypesChanged)
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
 
     QDeclarativeGeoRouteQuery(QObject *parent = 0);
     ~QDeclarativeGeoRouteQuery();
 
-    // From QDeclarativeParserStatus
+    // From QQmlParserStatus
     void classBegin() {}
     void componentComplete();
 
@@ -261,8 +261,8 @@ public:
     QList<int> featureTypes();
 
     // READ functions for list properties
-    QDeclarativeListProperty<QDeclarativeCoordinate> waypoints();
-    QDeclarativeListProperty<QDeclarativeGeoBoundingBox> excludedAreas();
+    QQmlListProperty<QDeclarativeCoordinate> waypoints();
+    QQmlListProperty<QDeclarativeGeoBoundingBox> excludedAreas();
 
     Q_INVOKABLE void addWaypoint(QDeclarativeCoordinate* waypoint);
     Q_INVOKABLE void removeWaypoint(QDeclarativeCoordinate* waypoint);
@@ -308,15 +308,15 @@ Q_SIGNALS:
 
 private:
 
-    static void waypoints_append(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *waypoint);
-    static int waypoints_count(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate* waypoints_at(QDeclarativeListProperty<QDeclarativeCoordinate> *prop, int index);
-    static void waypoints_clear(QDeclarativeListProperty<QDeclarativeCoordinate> *prop);
+    static void waypoints_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *waypoint);
+    static int waypoints_count(QQmlListProperty<QDeclarativeCoordinate> *prop);
+    static QDeclarativeCoordinate* waypoints_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
+    static void waypoints_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
 
-    static void exclusions_append(QDeclarativeListProperty<QDeclarativeGeoBoundingBox> *prop, QDeclarativeGeoBoundingBox *area);
-    static int exclusions_count(QDeclarativeListProperty<QDeclarativeGeoBoundingBox> *prop);
-    static QDeclarativeGeoBoundingBox* exclusions_at(QDeclarativeListProperty<QDeclarativeGeoBoundingBox> *prop, int index);
-    static void exclusions_clear(QDeclarativeListProperty<QDeclarativeGeoBoundingBox> *prop);
+    static void exclusions_append(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, QDeclarativeGeoBoundingBox *area);
+    static int exclusions_count(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop);
+    static QDeclarativeGeoBoundingBox* exclusions_at(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, int index);
+    static void exclusions_clear(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop);
 
     QList<QDeclarativeCoordinate*> waypoints_;
     QList<QDeclarativeGeoBoundingBox*> exclusions_;

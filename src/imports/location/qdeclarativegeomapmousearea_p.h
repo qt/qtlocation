@@ -61,7 +61,7 @@ public:
 
     Q_INVOKABLE QDeclarativeCoordinate* mouseToCoordinate(QQuickMouseEvent* event);
 
-    // From QDeclarativeParserStatus
+    // From QQmlParserStatus
     virtual void componentComplete();
 
 protected:

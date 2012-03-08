@@ -41,7 +41,7 @@
 
 #include "qdeclarativepolylinemapitem_p.h"
 #include "qgeocameracapabilities_p.h"
-#include <QDeclarativeInfo>
+#include <QtQml/QQmlInfo>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPainterPathStroker>
@@ -439,13 +439,14 @@ void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *
     define the polyline.
 */
 
-QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativePolylineMapItem::declarativePath()
+QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolylineMapItem::declarativePath()
 {
-    return QDeclarativeListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
-                                                            path_at, path_clear);
+    return QQmlListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
+                                                    path_at, path_clear);
 }
 
-void QDeclarativePolylineMapItem::path_append(QDeclarativeListProperty<QDeclarativeCoordinate> *property, QDeclarativeCoordinate *coordinate)
+void QDeclarativePolylineMapItem::path_append(QQmlListProperty<QDeclarativeCoordinate> *property,
+                                              QDeclarativeCoordinate *coordinate)
 {
     QDeclarativePolylineMapItem* item = qobject_cast<QDeclarativePolylineMapItem*>(
                 property->object);
@@ -461,19 +462,19 @@ void QDeclarativePolylineMapItem::path_append(QDeclarativeListProperty<QDeclarat
 }
 
 int QDeclarativePolylineMapItem::path_count(
-        QDeclarativeListProperty<QDeclarativeCoordinate> *property)
+        QQmlListProperty<QDeclarativeCoordinate> *property)
 {
     return qobject_cast<QDeclarativePolylineMapItem*>(property->object)->coordPath_.count();
 }
 
 QDeclarativeCoordinate* QDeclarativePolylineMapItem::path_at(
-        QDeclarativeListProperty<QDeclarativeCoordinate> *property, int index)
+        QQmlListProperty<QDeclarativeCoordinate> *property, int index)
 {
     return qobject_cast<QDeclarativePolylineMapItem*>(property->object)->coordPath_.at(index);
 }
 
 void QDeclarativePolylineMapItem::path_clear(
-        QDeclarativeListProperty<QDeclarativeCoordinate> *property)
+        QQmlListProperty<QDeclarativeCoordinate> *property)
 {
     QDeclarativePolylineMapItem* item = qobject_cast<QDeclarativePolylineMapItem*>(
                 property->object);

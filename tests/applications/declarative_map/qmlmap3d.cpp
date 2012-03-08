@@ -40,7 +40,7 @@
 
 #include <QtGui/QGuiApplication>
 #include <QtCore/QStringList>
-#include <QtDeclarative/QDeclarativeEngine>
+#include <QtQml/QQmlEngine>
 #include <QNetworkProxy>
 #include <QtQuick/qquickview.h>
 

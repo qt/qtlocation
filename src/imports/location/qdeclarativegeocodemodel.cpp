@@ -42,7 +42,7 @@
 #include "qdeclarativegeocodemodel_p.h"
 
 #include "qdeclarativegeolocation_p.h"
-#include <QtDeclarative/qdeclarativeinfo.h>
+#include <QtQml/qqmlinfo.h>
 
 #include <qgeoserviceprovider.h>
 #include <qgeocodingmanager.h>
@@ -133,7 +133,7 @@ QDeclarativeGeocodeModel::~QDeclarativeGeocodeModel()
     delete reply_;
 }
 
-// From QDeclarativeParserStatus
+// From QQmlParserStatus
 void QDeclarativeGeocodeModel::componentComplete()
 {
     complete_ = true;

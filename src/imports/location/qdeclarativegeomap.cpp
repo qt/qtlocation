@@ -59,8 +59,8 @@
 #include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
 
-#include <QDeclarativeContext>
-#include <QtDeclarative/qdeclarativeinfo.h>
+#include <QtQml/QQmlContext>
+#include <QtQml/qqmlinfo.h>
 #include <QModelIndex>
 #include <QtQuick/QQuickCanvas>
 #include <QtQuick/QSGEngine>
@@ -793,9 +793,9 @@ void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
     }
 }
 
-QDeclarativeListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
+QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
 {
-    return QDeclarativeListProperty<QDeclarativeGeoMapType>(this, supportedMapTypes_);
+    return QQmlListProperty<QDeclarativeGeoMapType>(this, supportedMapTypes_);
 }
 
 /*!

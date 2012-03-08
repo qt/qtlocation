@@ -42,8 +42,8 @@
 #ifndef QDECLARATIVECATEGORY_P_H
 #define QDECLARATIVECATEGORY_P_H
 
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtQml/qqml.h>
+#include <QtQml/QQmlParserStatus>
 #include <QObject>
 
 #include <qplacecategory.h>
@@ -56,7 +56,7 @@ class QDeclarativePlaceIcon;
 class QPlaceReply;
 class QPlaceManager;
 
-class QDeclarativeCategory : public QObject, public QDeclarativeParserStatus
+class QDeclarativeCategory : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
 
@@ -71,7 +71,7 @@ class QDeclarativeCategory : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     explicit QDeclarativeCategory(QObject* parent = 0);
@@ -86,7 +86,7 @@ public:
     };
     enum Status {Ready, Saving, Removing, Error};
 
-    //From QDeclarativeParserStatus
+    //From QQmlParserStatus
     virtual void classBegin() {}
     virtual void componentComplete();
 

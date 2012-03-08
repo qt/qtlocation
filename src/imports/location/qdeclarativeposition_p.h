@@ -47,7 +47,7 @@
 #include <qgeopositioninfosource.h>
 #include <qgeopositioninfo.h>
 #include "qdeclarativecoordinate_p.h"
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 
 // Define this to get qDebug messages
 // #define QDECLARATIVE_POSITION_DEBUG

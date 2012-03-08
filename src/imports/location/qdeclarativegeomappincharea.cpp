@@ -44,7 +44,7 @@
 #include "qdeclarativegeomap_p.h"
 #include <QtGui/qevent.h>
 #include <QtGui/QStyleHints>
-#include <QtDeclarative/qdeclarativeinfo.h>
+#include <QtQml/qqmlinfo.h>
 #include <QDebug>
 #include "math.h"
 #include "qgeomap_p.h"

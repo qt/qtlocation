@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVEGEOMAPTYPE_H
 #define QDECLARATIVEGEOMAPTYPE_H
 
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 #include "qgeomaptype.h"
 #include <QObject>
 

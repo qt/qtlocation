@@ -40,8 +40,8 @@
 
 #include <QtGui/QGuiApplication>
 #include <QtQuick/QQuickView>
-#include <QtDeclarative/QDeclarativeEngine>
-#include <QtDeclarative/QDeclarativeContext>
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlContext>
 #include <QtQuick/QQuickItem>
 
 //! [0]

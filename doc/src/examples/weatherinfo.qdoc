@@ -83,7 +83,7 @@
     \snippet examples/weatherinfo/appmodel.h 3
     \snippet examples/weatherinfo/appmodel.h 4
 
-    We use a QDeclarativeListProperty for the weather forecast information,
+    We use a QQmlListProperty for the weather forecast information,
     which contains the next 4 days of forecast weather. This makes it
     easy to access from QML.
 

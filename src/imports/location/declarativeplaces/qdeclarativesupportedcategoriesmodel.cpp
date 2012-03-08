@@ -43,7 +43,7 @@
 #include "qdeclarativeplaceicon_p.h"
 #include "qgeoserviceprovider.h"
 
-#include <QtDeclarative/QDeclarativeInfo>
+#include <QtQml/QQmlInfo>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceIcon>
 
@@ -142,7 +142,7 @@ QDeclarativeSupportedCategoriesModel::~QDeclarativeSupportedCategoriesModel()
     qDeleteAll(m_categoriesTree);
 }
 
-// From QDeclarativeParserStatus
+// From QQmlParserStatus
 void QDeclarativeSupportedCategoriesModel::componentComplete()
 {
     m_complete = true;

@@ -44,7 +44,7 @@
 #include "qdeclarativepolylinemapitem_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qdeclarativegeoroute_p.h"
-#include <QtDeclarative/QDeclarativeInfo>
+#include <QtQml/QQmlInfo>
 #include <QtGui/QPainter>
 
 /*!

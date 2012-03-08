@@ -42,7 +42,7 @@
 #include "qdeclarativepolygonmapitem_p.h"
 #include "qgeocameracapabilities_p.h"
 #include <QtGui/private/qtriangulator_p.h>
-#include <QDeclarativeInfo>
+#include <QtQml/QQmlInfo>
 #include <QPainter>
 #include <QPainterPath>
 #include <qnumeric.h>
@@ -266,10 +266,10 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *m
     }
 }
 
-QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarativePath()
+QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarativePath()
 {
-    return QDeclarativeListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
-                                                            path_at, path_clear);
+    return QQmlListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
+                                                    path_at, path_clear);
 }
 
 /*!
@@ -282,7 +282,7 @@ QDeclarativeListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::dec
 */
 
 void QDeclarativePolygonMapItem::path_append(
-        QDeclarativeListProperty<QDeclarativeCoordinate> *property, QDeclarativeCoordinate *coordinate)
+        QQmlListProperty<QDeclarativeCoordinate> *property, QDeclarativeCoordinate *coordinate)
 {
     QDeclarativePolygonMapItem* item = qobject_cast<QDeclarativePolygonMapItem*>(property->object);
     item->coordPath_.append(coordinate);
@@ -298,19 +298,19 @@ void QDeclarativePolygonMapItem::path_append(
 }
 
 int QDeclarativePolygonMapItem::path_count(
-        QDeclarativeListProperty<QDeclarativeCoordinate> *property)
+        QQmlListProperty<QDeclarativeCoordinate> *property)
 {
     return qobject_cast<QDeclarativePolygonMapItem*>(property->object)->coordPath_.count();
 }
 
 QDeclarativeCoordinate* QDeclarativePolygonMapItem::path_at(
-        QDeclarativeListProperty<QDeclarativeCoordinate> *property, int index)
+        QQmlListProperty<QDeclarativeCoordinate> *property, int index)
 {
     return qobject_cast<QDeclarativePolygonMapItem*>(property->object)->coordPath_.at(index);
 }
 
 void QDeclarativePolygonMapItem::path_clear(
-        QDeclarativeListProperty<QDeclarativeCoordinate> *property)
+        QQmlListProperty<QDeclarativeCoordinate> *property)
 {
     QDeclarativePolygonMapItem* item = qobject_cast<QDeclarativePolygonMapItem*>(
                 property->object);

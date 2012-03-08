@@ -41,8 +41,8 @@
 #include <QtCore/QStringList>
 #include <QtCore/QTextStream>
 #include <QtGui/QGuiApplication>
-#include <QtDeclarative/QDeclarativeEngine>
-#include <QtDeclarative/QDeclarativeContext>
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlContext>
 #include <QtQuick/QQuickView>
 #include <QtQuick/QQuickItem>
 

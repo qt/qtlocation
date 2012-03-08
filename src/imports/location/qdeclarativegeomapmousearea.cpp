@@ -41,7 +41,7 @@
 
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativegeomapitembase_p.h"
-#include <QtDeclarative/qdeclarativeinfo.h>
+#include <QtQml/qqmlinfo.h>
 #include <QtQuick/QQuickCanvas>
 
 #include <QtQuick/private/qquickevents_p_p.h>

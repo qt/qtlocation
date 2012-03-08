@@ -43,7 +43,7 @@
 #define QDECLARATIVEPLACEATTRIBUTE_P_H
 
 #include <QObject>
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 #include <QString>
 
 #include <qplaceattribute.h>

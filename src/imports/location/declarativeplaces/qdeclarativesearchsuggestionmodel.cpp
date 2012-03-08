@@ -42,7 +42,7 @@
 #include "qdeclarativesearchsuggestionmodel_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
 
-#include <QtDeclarative/QDeclarativeInfo>
+#include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
 
 #include <qplacemanager.h>

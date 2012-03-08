@@ -43,7 +43,7 @@
 #define QDECLARATIVEGEOMAPFLICKABLE_H
 
 
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 #include <QtGui/qevent.h>
 #include <QElapsedTimer>
 #include <QVector>

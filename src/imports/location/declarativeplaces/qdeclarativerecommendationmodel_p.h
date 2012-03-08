@@ -42,7 +42,7 @@
 #ifndef QDECLARATIVERECOMMENDATIONMODEL_P_H
 #define QDECLARATIVERECOMMENDATIONMODEL_P_H
 
-#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtQml/QQmlParserStatus>
 #include "qdeclarativeresultmodelbase_p.h"
 
 QT_BEGIN_NAMESPACE
@@ -52,7 +52,7 @@ class QDeclarativeRecommendationModel : public QDeclarativeResultModelBase
     Q_OBJECT
 
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     explicit QDeclarativeRecommendationModel(QObject *parent = 0);

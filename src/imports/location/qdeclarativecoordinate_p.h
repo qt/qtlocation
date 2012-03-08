@@ -43,7 +43,7 @@
 #define QDECLARATIVECOORDINATE_H
 
 #include <qgeocoordinate.h>
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 
 #include <QObject>
 

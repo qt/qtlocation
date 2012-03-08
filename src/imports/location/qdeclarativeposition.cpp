@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativeposition_p.h"
-#include "qdeclarative.h"
+#include <QtQml/qqml.h>
 #include <qnmeapositioninfosource.h>
 #include <QFile>
 

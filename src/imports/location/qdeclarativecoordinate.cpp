@@ -41,7 +41,7 @@
 
 #include "qdeclarativecoordinate_p.h"
 #include <qnumeric.h>
-#include "qdeclarative.h"
+#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 

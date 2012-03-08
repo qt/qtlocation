@@ -39,10 +39,11 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeinfo.h>
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
-#include "qdeclarative.h"
+
+#include <QtQml/qqmlinfo.h>
+#include <QtQml/qqml.h>
 #include <qnmeapositioninfosource.h>
 #include <QFile>
 #include <QTimer>

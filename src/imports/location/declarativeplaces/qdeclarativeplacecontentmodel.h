@@ -43,7 +43,7 @@
 #define QDECLARATIVEPLACECONTENTMODEL_H
 
 #include <QtCore/QAbstractListModel>
-#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtQml/QQmlParserStatus>
 #include <QtLocation/QPlaceContent>
 #include <QtLocation/QPlaceContentReply>
 
@@ -55,7 +55,7 @@ class QGeoServiceProvider;
 class QDeclarativeSupplier;
 class QDeclarativePlaceUser;
 
-class QDeclarativePlaceContentModel : public QAbstractListModel, public QDeclarativeParserStatus
+class QDeclarativePlaceContentModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
 
@@ -63,7 +63,7 @@ class QDeclarativePlaceContentModel : public QAbstractListModel, public QDeclara
     Q_PROPERTY(int batchSize READ batchSize WRITE setBatchSize NOTIFY batchSizeChanged)
     Q_PROPERTY(int totalCount READ totalCount NOTIFY totalCountChanged)
 
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     explicit QDeclarativePlaceContentModel(QPlaceContent::Type type, QObject *parent = 0);
@@ -95,7 +95,7 @@ public:
     bool canFetchMore(const QModelIndex &parent) const;
     void fetchMore(const QModelIndex &parent);
 
-    // from QDeclarativeParserStatus
+    // from QQmlParserStatus
     void classBegin();
     void componentComplete();
 

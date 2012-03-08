@@ -91,7 +91,7 @@ class QDeclarativePinchGenerator : public QQuickItem
     Q_PROPERTY(QQuickItem* target READ target WRITE setTarget NOTIFY targetChanged)
     Q_PROPERTY(QList<QObject*> swipe1 READ swipe1 NOTIFY swipesChanged)
     Q_PROPERTY(QList<QObject*> swipe2 READ swipe2 NOTIFY swipesChanged)
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     QDeclarativePinchGenerator();
@@ -138,7 +138,7 @@ public:
         Replaying  = 3
     };
 
-    // from QDeclarativeParserStatus
+    // from QQmlParserStatus
     virtual void componentComplete();
     // from QQuickItem
     void itemChange(ItemChange change, const ItemChangeData & data);

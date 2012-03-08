@@ -39,15 +39,17 @@
 **
 ****************************************************************************/
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include "qdeclarativepinchgenerator_p.h"
 #include "qdeclarativelocationtestmodel_p.h"
-#include <QtDeclarative/qdeclarative.h>
+
+#include <QtQml/QQmlExtensionPlugin>
+#include <QtQml/qqml.h>
+
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
-class QLocationDeclarativeTestModule: public QDeclarativeExtensionPlugin
+class QLocationDeclarativeTestModule: public QQmlExtensionPlugin
 {
     Q_OBJECT
 

@@ -43,7 +43,7 @@
 #define QDECLARATIVESEARCHMODELBASE_H
 
 #include <QtCore/QAbstractListModel>
-#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtQml/QQmlParserStatus>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceSearchResult>
 #include <QtLocation/QPlaceReply>
@@ -58,7 +58,7 @@ class QPlaceSearchReply;
 class QDeclarativePlace;
 class QDeclarativeGeoBoundingArea;
 
-class QDeclarativeSearchModelBase : public QAbstractListModel, public QDeclarativeParserStatus
+class QDeclarativeSearchModelBase : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
 
@@ -70,7 +70,7 @@ class QDeclarativeSearchModelBase : public QAbstractListModel, public QDeclarati
 
     Q_ENUMS(Status)
 
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     enum Status {
@@ -106,7 +106,7 @@ public:
     virtual void clearData();
     virtual void updateSearchRequest();
 
-    // From QDeclarativeParserStatus
+    // From QQmlParserStatus
     virtual void classBegin();
     virtual void componentComplete();
 

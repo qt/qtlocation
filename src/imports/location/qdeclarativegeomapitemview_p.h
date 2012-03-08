@@ -45,7 +45,7 @@
 #include "QModelIndex"
 
 #include <QtQuick/QQuickItem>
-#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtQml/QQmlParserStatus>
 #include <QtCore/QPointer>
 
 QT_BEGIN_NAMESPACE
@@ -54,14 +54,14 @@ class QAbstractItemModel;
 class QDeclarativeGeoMap;
 class QDeclarativeGeoMapItemBase;
 
-class QDeclarativeGeoMapItemView : public QObject, public QDeclarativeParserStatus
+class QDeclarativeGeoMapItemView : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
 
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
     Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
-    Q_PROPERTY(QDeclarativeComponent* delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
+    Q_PROPERTY(QQmlComponent* delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
     Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
     Q_PROPERTY(qreal z READ zValue WRITE setZValue NOTIFY zChanged)
 
@@ -72,8 +72,8 @@ public:
     QVariant model() const;
     void setModel(const QVariant &);
 
-    QDeclarativeComponent *delegate() const;
-    void setDelegate(QDeclarativeComponent*);
+    QQmlComponent *delegate() const;
+    void setDelegate(QQmlComponent*);
 
     void setMapData(QDeclarativeGeoMap*);
     void repopulate();
@@ -86,7 +86,7 @@ public:
     bool isVisible() const;
 
     QDeclarativeGeoMapItemBase* createItem(int modelRow);
-    // From QDeclarativeParserStatus
+    // From QQmlParserStatus
     virtual void componentComplete();
     void classBegin() {}
 
@@ -104,7 +104,7 @@ private Q_SLOTS:
 private:
     bool visible_;
     bool componentCompleted_;
-    QDeclarativeComponent *delegate_;
+    QQmlComponent *delegate_;
     QVariant modelVariant_;
     QAbstractItemModel* model_;
     QDeclarativeGeoMap *map_;

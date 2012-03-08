@@ -129,7 +129,7 @@ public:
     QNetworkSession *ns;
     WeatherData now;
     QList<WeatherData*> forecast;
-    QDeclarativeListProperty<WeatherData> *fcProp;
+    QQmlListProperty<WeatherData> *fcProp;
     QSignalMapper *geoReplyMapper;
     QSignalMapper *weatherReplyMapper;
     bool ready;
@@ -145,19 +145,19 @@ public:
     {}
 };
 
-static void forecastAppend(QDeclarativeListProperty<WeatherData> *prop, WeatherData *val)
+static void forecastAppend(QQmlListProperty<WeatherData> *prop, WeatherData *val)
 {
     Q_UNUSED(val);
     Q_UNUSED(prop);
 }
 
-static WeatherData *forecastAt(QDeclarativeListProperty<WeatherData> *prop, int index)
+static WeatherData *forecastAt(QQmlListProperty<WeatherData> *prop, int index)
 {
     AppModelPrivate *d = static_cast<AppModelPrivate*>(prop->data);
     return d->forecast.at(index);
 }
 
-static int forecastCount(QDeclarativeListProperty<WeatherData> *prop)
+static int forecastCount(QQmlListProperty<WeatherData> *prop)
 {
     AppModelPrivate *d = static_cast<AppModelPrivate*>(prop->data);
     return d->forecast.size();
@@ -169,7 +169,7 @@ AppModel::AppModel(QObject *parent) :
         d(new AppModelPrivate)
 {
 //! [0]
-    d->fcProp = new QDeclarativeListProperty<WeatherData>(this, d,
+    d->fcProp = new QQmlListProperty<WeatherData>(this, d,
                                                           forecastAppend,
                                                           forecastCount,
                                                           forecastAt);
@@ -433,7 +433,7 @@ WeatherData *AppModel::weather() const
     return &(d->now);
 }
 
-QDeclarativeListProperty<WeatherData> AppModel::forecast() const
+QQmlListProperty<WeatherData> AppModel::forecast() const
 {
     return *(d->fcProp);
 }

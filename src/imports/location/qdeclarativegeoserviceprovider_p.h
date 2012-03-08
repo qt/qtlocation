@@ -44,7 +44,7 @@
 
 #include <qgeocoordinate.h>
 #include <QtQuick/QQuickItem>
-#include <QtDeclarative/QDeclarativeParserStatus>
+#include <QtQml/QQmlParserStatus>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
 
@@ -82,7 +82,7 @@ private:
 
 class QDeclarativeGeoServiceProviderRequirements;
 
-class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParserStatus
+class QDeclarativeGeoServiceProvider : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
     Q_ENUMS(RoutingFeature)
@@ -92,7 +92,7 @@ class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParser
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QStringList availableServiceProviders READ availableServiceProviders CONSTANT)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> parameters READ parameters)
+    Q_PROPERTY(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> parameters READ parameters)
     Q_PROPERTY(QDeclarativeGeoServiceProviderRequirements *required READ requirements)
     Q_PROPERTY(QStringList locales READ locales WRITE setLocales NOTIFY localesChanged)
     Q_PROPERTY(QStringList preferred READ preferred WRITE setPreferred NOTIFY preferredChanged)
@@ -100,7 +100,7 @@ class QDeclarativeGeoServiceProvider : public QObject, public QDeclarativeParser
     Q_PROPERTY(bool isAttached READ isAttached NOTIFY attached)
 
     Q_CLASSINFO("DefaultProperty", "parameters")
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     QDeclarativeGeoServiceProvider(QObject *parent = 0);
@@ -163,14 +163,14 @@ public:
     Q_DECLARE_FLAGS(PlacesFeatures, PlacesFeature)
     Q_FLAGS(PlacesFeatures)
 
-    // From QDeclarativeParserStatus
+    // From QQmlParserStatus
     virtual void classBegin() {}
     virtual void componentComplete();
 
     void setName(const QString &name);
     QString name() const;
 
-    QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> parameters();
+    QQmlListProperty<QDeclarativeGeoServiceProviderParameter> parameters();
     QMap<QString, QVariant> parameterMap() const;
 
     QStringList availableServiceProviders();
@@ -203,10 +203,10 @@ Q_SIGNALS:
     void allowExperimentalChanged(bool allow);
 
 private:
-    static void parameter_append(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *mapObject);
-    static int parameter_count(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
-    static QDeclarativeGeoServiceProviderParameter* parameter_at(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index);
-    static void parameter_clear(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
+    static void parameter_append(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *mapObject);
+    static int parameter_count(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
+    static QDeclarativeGeoServiceProviderParameter* parameter_at(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index);
+    static void parameter_clear(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
 
     QGeoServiceProvider *sharedProvider_;
     QString name_;

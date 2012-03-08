@@ -42,7 +42,7 @@
 #include "qdeclarativecontactdetail_p.h"
 
 /*!
-    \qmlclass ContactDetails QDeclarativePropertyMap
+    \qmlclass ContactDetails QQmlPropertyMap
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
@@ -88,7 +88,7 @@
     The following demonstrates how to assign multiple phone numbers to a place in javascript:
     \snippet snippets/declarative/places.qml  ContactDetails write multiple
 
-    Note, due to limitations of the QDeclarativePropertyMap, it is not possible
+    Note, due to limitations of the QQmlPropertyMap, it is not possible
     to declaratively specify the contact details in QML, it can only be accomplished
     via javascript.
 */
@@ -121,7 +121,7 @@
     The following demonstrates how to assign multiple phone numbers to a place in javascript:
     \snippet snippets/declarative/places.qml  ContactDetails write multiple
 
-    Note, due to limitations of the QDeclarativePropertyMap, it is not possible
+    Note, due to limitations of the QQmlPropertyMap, it is not possible
     to declaratively specify the contact details in QML, it can only be accomplished
     via javascript.
 */

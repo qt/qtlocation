@@ -45,8 +45,8 @@
 #include "qdeclarativeplaceattribute_p.h"
 #include "qdeclarativeplaceicon_p.h"
 
-#include <QtDeclarative/QDeclarativeEngine>
-#include <QtDeclarative/QDeclarativeInfo>
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceDetailsReply>
@@ -182,8 +182,8 @@ QT_USE_NAMESPACE
 QDeclarativePlace::QDeclarativePlace(QObject* parent)
 :   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
-    m_extendedAttributes(new QDeclarativePropertyMap(this)),
-    m_contactDetails(new QDeclarativePropertyMap(this)), m_reply(0), m_plugin(0),
+    m_extendedAttributes(new QQmlPropertyMap(this)),
+    m_contactDetails(new QQmlPropertyMap(this)), m_reply(0), m_plugin(0),
     m_complete(false), m_favorite(0), m_status(QDeclarativePlace::Ready)
 {
     connect(m_contactDetails, SIGNAL(valueChanged(QString,QVariant)),
@@ -195,8 +195,8 @@ QDeclarativePlace::QDeclarativePlace(QObject* parent)
 QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent)
 :   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
-    m_extendedAttributes(new QDeclarativePropertyMap(this)),
-    m_contactDetails(new QDeclarativePropertyMap(this)), m_reply(0), m_plugin(plugin),
+    m_extendedAttributes(new QQmlPropertyMap(this)),
+    m_contactDetails(new QQmlPropertyMap(this)), m_reply(0), m_plugin(plugin),
     m_complete(false), m_favorite(0), m_status(QDeclarativePlace::Ready)
 {
     Q_ASSERT(plugin);
@@ -211,7 +211,7 @@ QDeclarativePlace::~QDeclarativePlace()
 {
 }
 
-// From QDeclarativeParserStatus
+// From QQmlParserStatus
 void QDeclarativePlace::componentComplete()
 {
     m_complete = true;
@@ -711,7 +711,7 @@ void QDeclarativePlace::contactsModified(const QString &key, const QVariant &val
 {
     //TODO: This is a workaround to allow an assignment of a single contact detail
     //      to be treated as an asignment of a list with a single element.
-    //      A proper solution is to inherit off QDeclarativePropertyMap
+    //      A proper solution is to inherit off QQmlPropertyMap
     //      and override the write behaviour but this can only be done
     //      when QTBUG-23183 is complete.
     if (value.userType() == QMetaType::QObjectStar) {
@@ -858,7 +858,7 @@ QUrl QDeclarativePlace::primaryWebsite() const
     This property holds the extended attributes of a place.  Extended attributes are additional
     information about a place not covered by the place's properties.
 */
-QDeclarativePropertyMap *QDeclarativePlace::extendedAttributes() const
+QQmlPropertyMap *QDeclarativePlace::extendedAttributes() const
 {
     return m_extendedAttributes;
 }
@@ -869,7 +869,7 @@ QDeclarativePropertyMap *QDeclarativePlace::extendedAttributes() const
     This property holds the contact information for this place, for example a phone number or
     a website URL.  This property is a map of \l ContactDetail objects.
 */
-QDeclarativePropertyMap *QDeclarativePlace::contactDetails() const
+QQmlPropertyMap *QDeclarativePlace::contactDetails() const
 {
     return m_contactDetails;
 }
@@ -880,9 +880,9 @@ QDeclarativePropertyMap *QDeclarativePlace::contactDetails() const
     This property holds the list of categories this place is a member of.  The categories that can
     be assigned to a place are specific to each \l plugin.
 */
-QDeclarativeListProperty<QDeclarativeCategory> QDeclarativePlace::categories()
+QQmlListProperty<QDeclarativeCategory> QDeclarativePlace::categories()
 {
-    return QDeclarativeListProperty<QDeclarativeCategory>(this,
+    return QQmlListProperty<QDeclarativeCategory>(this,
                                                           0, // opaque data parameter
                                                           category_append,
                                                           category_count,
@@ -890,7 +890,7 @@ QDeclarativeListProperty<QDeclarativeCategory> QDeclarativePlace::categories()
                                                           category_clear);
 }
 
-void QDeclarativePlace::category_append(QDeclarativeListProperty<QDeclarativeCategory> *prop,
+void QDeclarativePlace::category_append(QQmlListProperty<QDeclarativeCategory> *prop,
                                                   QDeclarativeCategory *value)
 {
     QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
@@ -903,12 +903,12 @@ void QDeclarativePlace::category_append(QDeclarativeListProperty<QDeclarativeCat
     emit object->categoriesChanged();
 }
 
-int QDeclarativePlace::category_count(QDeclarativeListProperty<QDeclarativeCategory> *prop)
+int QDeclarativePlace::category_count(QQmlListProperty<QDeclarativeCategory> *prop)
 {
     return static_cast<QDeclarativePlace*>(prop->object)->m_categories.count();
 }
 
-QDeclarativeCategory* QDeclarativePlace::category_at(QDeclarativeListProperty<QDeclarativeCategory> *prop,
+QDeclarativeCategory* QDeclarativePlace::category_at(QQmlListProperty<QDeclarativeCategory> *prop,
                                                                           int index)
 {
     QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
@@ -919,7 +919,7 @@ QDeclarativeCategory* QDeclarativePlace::category_at(QDeclarativeListProperty<QD
     return res;
 }
 
-void QDeclarativePlace::category_clear(QDeclarativeListProperty<QDeclarativeCategory> *prop)
+void QDeclarativePlace::category_clear(QQmlListProperty<QDeclarativeCategory> *prop)
 {
     QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
     if (object->m_categories.isEmpty())

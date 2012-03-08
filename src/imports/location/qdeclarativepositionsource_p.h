@@ -46,7 +46,7 @@
 #include <QDateTime>
 #include <qgeopositioninfosource.h>
 #include <qgeopositioninfo.h>
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 #include "qdeclarativeposition_p.h"
 
 class QFile;

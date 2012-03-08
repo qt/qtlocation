@@ -43,7 +43,7 @@
 
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
-#include <QtDeclarative/QDeclarativeInfo>
+#include <QtQml/QQmlInfo>
 
 QT_USE_NAMESPACE
 
@@ -81,12 +81,12 @@ QT_USE_NAMESPACE
 */
 
 QDeclarativePlaceIcon::QDeclarativePlaceIcon(QObject *parent)
-    : QObject(parent), m_plugin(0), m_parameters(new QDeclarativePropertyMap(this))
+:   QObject(parent), m_plugin(0), m_parameters(new QQmlPropertyMap(this))
 {
 }
 
 QDeclarativePlaceIcon::QDeclarativePlaceIcon(const QPlaceIcon &icon, QDeclarativeGeoServiceProvider *plugin, QObject *parent)
-    : QObject(parent), m_parameters(new QDeclarativePropertyMap(this))
+:   QObject(parent), m_parameters(new QQmlPropertyMap(this))
 {
     if (icon.isEmpty())
         m_plugin = 0;
@@ -167,12 +167,12 @@ QUrl QDeclarativePlaceIcon::url(const QSize &size) const
     Consult the \l {Information about plugins} {plugin documentation}
     for what parameters are supported and how they should be used.
 
-    Note, due to limitations of the QDeclarativePropertyMap, it is not possible
+    Note, due to limitations of the QQmlPropertyMap, it is not possible
     to declaratively specify the parameters in QML, assignment of parameters keys
     and values can only be accomplished by javascript.
 
 */
-QDeclarativePropertyMap *QDeclarativePlaceIcon::parameters() const
+QQmlPropertyMap *QDeclarativePlaceIcon::parameters() const
 {
     return m_parameters;
 }

@@ -420,7 +420,7 @@ Module {
         prototype: "QObject"
         exports: ["MapItemView 5.0"]
         Property { name: "model"; type: "QVariant" }
-        Property { name: "delegate"; type: "QDeclarativeComponent"; isPointer: true }
+        Property { name: "delegate"; type: "QQmlComponent"; isPointer: true }
         Property { name: "visible"; type: "bool" }
         Property { name: "z"; type: "qreal" }
     }
@@ -1144,7 +1144,7 @@ Module {
         Method { name: "stop" }
     }
     Component {
-        name: "QDeclarativePropertyMap"
+        name: "QQmlPropertyMap"
         prototype: "QObject"
         Signal {
             name: "valueChanged"

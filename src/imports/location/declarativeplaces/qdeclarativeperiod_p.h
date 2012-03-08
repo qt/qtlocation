@@ -43,7 +43,7 @@
 #define QDECLARATIVEPERIOD_P_H
 
 #include <qplaceperiod.h>
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 
 #include <QObject>
 

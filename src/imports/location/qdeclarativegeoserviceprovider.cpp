@@ -44,8 +44,9 @@
 #include "qgeocodingmanager.h"
 #include "qgeomappingmanager.h"
 #include "qgeoroutingmanager.h"
+
 #include <QtCore/QStringList>
-#include <QDeclarativeInfo>
+#include <QtQml/QQmlInfo>
 
 #include <QDebug>
 
@@ -354,9 +355,9 @@ void QDeclarativeGeoServiceProvider::setLocales(const QStringList &locales)
 
     This property holds the list of plugin parameters.
 */
-QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> QDeclarativeGeoServiceProvider::parameters()
+QQmlListProperty<QDeclarativeGeoServiceProviderParameter> QDeclarativeGeoServiceProvider::parameters()
 {
-    return QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter>(this,
+    return QQmlListProperty<QDeclarativeGeoServiceProviderParameter>(this,
             0,
             parameter_append,
             parameter_count,
@@ -364,7 +365,7 @@ QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> QDeclarativeGe
             parameter_clear);
 }
 
-void QDeclarativeGeoServiceProvider::parameter_append(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *parameter)
+void QDeclarativeGeoServiceProvider::parameter_append(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *parameter)
 {
     QDeclarativeGeoServiceProvider *p = static_cast<QDeclarativeGeoServiceProvider*>(prop->object);
     p->parameters_.append(parameter);
@@ -372,17 +373,17 @@ void QDeclarativeGeoServiceProvider::parameter_append(QDeclarativeListProperty<Q
         p->sharedProvider_->setParameters(p->parameterMap());
 }
 
-int QDeclarativeGeoServiceProvider::parameter_count(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop)
+int QDeclarativeGeoServiceProvider::parameter_count(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop)
 {
     return static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->parameters_.count();
 }
 
-QDeclarativeGeoServiceProviderParameter* QDeclarativeGeoServiceProvider::parameter_at(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index)
+QDeclarativeGeoServiceProviderParameter* QDeclarativeGeoServiceProvider::parameter_at(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index)
 {
     return static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->parameters_[index];
 }
 
-void QDeclarativeGeoServiceProvider::parameter_clear(QDeclarativeListProperty<QDeclarativeGeoServiceProviderParameter> *prop)
+void QDeclarativeGeoServiceProvider::parameter_clear(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop)
 {
     QDeclarativeGeoServiceProvider *p = static_cast<QDeclarativeGeoServiceProvider*>(prop->object);
     p->parameters_.clear();

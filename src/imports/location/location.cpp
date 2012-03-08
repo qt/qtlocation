@@ -85,14 +85,14 @@
 #include "qdeclarativesearchresultmodel_p.h"
 #include "qdeclarativesearchsuggestionmodel_p.h"
 
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#include <QtDeclarative/qdeclarative.h>
-#include <qdeclarativepropertymap.h>
+#include <QtQml/qqmlextensionplugin.h>
+#include <QtQml/qqml.h>
+#include <qqmlpropertymap.h>
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
-class QLocationDeclarativeModule: public QDeclarativeExtensionPlugin
+class QLocationDeclarativeModule: public QQmlExtensionPlugin
 {
     Q_OBJECT
 

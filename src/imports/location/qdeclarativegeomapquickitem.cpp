@@ -42,7 +42,7 @@
 #include "qdeclarativegeomapquickitem_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativecoordinate_p.h"
-#include <QtDeclarative/qdeclarativeinfo.h>
+#include <QtQml/qqmlinfo.h>
 
 #include <QDebug>
 #include <cmath>

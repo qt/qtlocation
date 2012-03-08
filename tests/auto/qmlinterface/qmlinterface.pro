@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += location declarative testlib
+QT       += location qml testlib
 
 #QT       -= gui
 

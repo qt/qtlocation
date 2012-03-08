@@ -42,8 +42,8 @@
 #include "qdeclarativerecommendationmodel_p.h"
 #include "qdeclarativeplace_p.h"
 
-#include <QtDeclarative/QDeclarativeEngine>
-#include <QtDeclarative/QDeclarativeInfo>
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
 

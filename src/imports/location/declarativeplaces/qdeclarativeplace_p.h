@@ -42,10 +42,12 @@
 #ifndef QDECLARATIVEPLACE_P_H
 #define QDECLARATIVEPLACE_P_H
 
-#include <QObject>
-#include <QDeclarativeListProperty>
-#include <QtDeclarative/QDeclarativeParserStatus>
-#include <qplace.h>
+#include <QtCore/QObject>
+#include <QtQml/QQmlListProperty>
+#include <QtQml/QQmlParserStatus>
+#include <QtQml/QQmlPropertyMap>
+#include <QtLocation/QPlace>
+
 #include "qdeclarativegeolocation_p.h"
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativecontactdetail_p.h"
@@ -54,7 +56,6 @@
 #include "qdeclarativereviewmodel_p.h"
 #include "qdeclarativeplaceimagemodel_p.h"
 #include "qdeclarativeplaceeditorialmodel.h"
-#include <QDeclarativePropertyMap>
 
 QT_BEGIN_NAMESPACE
 
@@ -63,7 +64,7 @@ class QPlaceReply;
 class QPlaceManager;
 class QDeclarativePlaceIcon;
 
-class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
+class QDeclarativePlace : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
 
@@ -71,7 +72,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
 
     Q_PROPERTY(QPlace place READ place WRITE setPlace)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
-    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
+    Q_PROPERTY(QQmlListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
     Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
     Q_PROPERTY(QDeclarativeRatings* ratings READ ratings WRITE setRatings NOTIFY ratingsChanged);
     Q_PROPERTY(QDeclarativeSupplier *supplier READ supplier WRITE setSupplier NOTIFY supplierChanged)
@@ -97,7 +98,7 @@ class QDeclarativePlace : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
     Q_PROPERTY(QDeclarativePlace *favorite READ favorite WRITE setFavorite NOTIFY favoriteChanged)
 
-    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_INTERFACES(QQmlParserStatus)
 
 public:
     explicit QDeclarativePlace(QObject* parent = 0);
@@ -112,7 +113,7 @@ public:
         PublicVisibility = QtLocation::PublicVisibility
     };
 
-    //From QDeclarativeParserStatus
+    //From QQmlParserStatus
     virtual void classBegin() {}
     virtual void componentComplete();
 
@@ -126,12 +127,12 @@ public:
     QPlace place();
     void setPlace(const QPlace &src);
 
-    QDeclarativeListProperty<QDeclarativeCategory> categories();
-    static void category_append(QDeclarativeListProperty<QDeclarativeCategory> *prop,
+    QQmlListProperty<QDeclarativeCategory> categories();
+    static void category_append(QQmlListProperty<QDeclarativeCategory> *prop,
                                   QDeclarativeCategory* value);
-    static int category_count(QDeclarativeListProperty<QDeclarativeCategory> *prop);
-    static QDeclarativeCategory* category_at(QDeclarativeListProperty<QDeclarativeCategory> *prop, int index);
-    static void category_clear(QDeclarativeListProperty<QDeclarativeCategory> *prop);
+    static int category_count(QQmlListProperty<QDeclarativeCategory> *prop);
+    static QDeclarativeCategory* category_at(QQmlListProperty<QDeclarativeCategory> *prop, int index);
+    static void category_clear(QQmlListProperty<QDeclarativeCategory> *prop);
 
     QDeclarativeGeoLocation *location();
     void setLocation(QDeclarativeGeoLocation *location);
@@ -162,9 +163,9 @@ public:
     QString primaryEmail() const;
     QUrl primaryWebsite() const;
 
-    QDeclarativePropertyMap *extendedAttributes() const;
+    QQmlPropertyMap *extendedAttributes() const;
 
-    QDeclarativePropertyMap *contactDetails() const;
+    QQmlPropertyMap *contactDetails() const;
 
     Visibility visibility() const;
     void setVisibility(Visibility visibility);
@@ -224,8 +225,8 @@ private:
     QDeclarativeReviewModel *m_reviewModel;
     QDeclarativePlaceImageModel *m_imageModel;
     QDeclarativePlaceEditorialModel *m_editorialModel;
-    QDeclarativePropertyMap *m_extendedAttributes;
-    QDeclarativePropertyMap *m_contactDetails;
+    QQmlPropertyMap *m_extendedAttributes;
+    QQmlPropertyMap *m_contactDetails;
 
     QPlace m_src;
 

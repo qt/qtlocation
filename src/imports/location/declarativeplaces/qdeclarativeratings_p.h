@@ -43,7 +43,7 @@
 #define QDECLARATIVERATINGS_P_H
 
 #include <qplaceratings.h>
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 
 #include <QObject>
 

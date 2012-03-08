@@ -41,7 +41,7 @@
 
 #include "qdeclarativegeomaptype_p.h"
 #include <qnumeric.h>
-#include "qdeclarative.h"
+#include <QtQml/qqml.h>
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE

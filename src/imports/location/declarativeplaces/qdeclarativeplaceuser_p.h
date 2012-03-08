@@ -43,7 +43,7 @@
 #define QDECLARATIVEPLACEUSER_P_H
 
 #include <QtCore/QObject>
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 #include <QtLocation/QPlaceUser>
 
 QT_BEGIN_NAMESPACE

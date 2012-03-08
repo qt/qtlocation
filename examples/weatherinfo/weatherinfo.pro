@@ -1,11 +1,7 @@
 TEMPLATE = app
 TARGET = weatherinfo
 
-QT += core \
-    network \
-    location \
-    declarative \
-    quick
+QT += core network location qml quick
 
 SOURCES += main.cpp \
     appmodel.cpp

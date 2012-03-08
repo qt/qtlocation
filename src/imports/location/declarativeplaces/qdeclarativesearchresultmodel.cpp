@@ -43,8 +43,8 @@
 #include "qdeclarativeplace_p.h"
 #include "qdeclarativeplaceicon_p.h"
 
-#include <QtDeclarative/QDeclarativeEngine>
-#include <QtDeclarative/QDeclarativeInfo>
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceSearchReply>
 #include <QtLocation/QPlaceManager>
@@ -291,9 +291,9 @@ void QDeclarativeSearchResultModel::setSearchTerm(const QString &searchTerm)
     This property holds a list of categories to be used when searching.  Returned search results
     will be for places that match at least one of the categories.
 */
-QDeclarativeListProperty<QDeclarativeCategory> QDeclarativeSearchResultModel::categories()
+QQmlListProperty<QDeclarativeCategory> QDeclarativeSearchResultModel::categories()
 {
-    return QDeclarativeListProperty<QDeclarativeCategory>(this,
+    return QQmlListProperty<QDeclarativeCategory>(this,
                                                           0, // opaque data parameter
                                                           categories_append,
                                                           categories_count,
@@ -301,8 +301,8 @@ QDeclarativeListProperty<QDeclarativeCategory> QDeclarativeSearchResultModel::ca
                                                           categories_clear);
 }
 
-void QDeclarativeSearchResultModel::categories_append(QDeclarativeListProperty<QDeclarativeCategory> *list,
-                                                  QDeclarativeCategory *declCategory)
+void QDeclarativeSearchResultModel::categories_append(QQmlListProperty<QDeclarativeCategory> *list,
+                                                      QDeclarativeCategory *declCategory)
 {
     QDeclarativeSearchResultModel* searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
     if (searchModel && declCategory) {
@@ -314,7 +314,7 @@ void QDeclarativeSearchResultModel::categories_append(QDeclarativeListProperty<Q
     }
 }
 
-int QDeclarativeSearchResultModel::categories_count(QDeclarativeListProperty<QDeclarativeCategory> *list)
+int QDeclarativeSearchResultModel::categories_count(QQmlListProperty<QDeclarativeCategory> *list)
 {
     QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
     if (searchModel)
@@ -323,7 +323,7 @@ int QDeclarativeSearchResultModel::categories_count(QDeclarativeListProperty<QDe
         return -1;
 }
 
-QDeclarativeCategory* QDeclarativeSearchResultModel::category_at(QDeclarativeListProperty<QDeclarativeCategory> *list,
+QDeclarativeCategory* QDeclarativeSearchResultModel::category_at(QQmlListProperty<QDeclarativeCategory> *list,
                                                                           int index)
 {
     QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
@@ -333,7 +333,7 @@ QDeclarativeCategory* QDeclarativeSearchResultModel::category_at(QDeclarativeLis
         return 0;
 }
 
-void QDeclarativeSearchResultModel::categories_clear(QDeclarativeListProperty<QDeclarativeCategory> *list)
+void QDeclarativeSearchResultModel::categories_clear(QQmlListProperty<QDeclarativeCategory> *list)
 {
     QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
     if (searchModel) {

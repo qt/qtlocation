@@ -40,9 +40,9 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
-#include <QtDeclarative/QDeclarativeEngine>
-#include <QtDeclarative/QDeclarativeComponent>
-#include <QtDeclarative/QDeclarativeListReference>
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlComponent>
+#include <QtQml/QQmlListReference>
 #include <QtLocation/QGeoCoordinate>
 #include <QtLocation/QGeoAddress>
 #include <QtLocation/QGeoBoundingBox>
@@ -166,8 +166,8 @@ tst_qmlinterface::tst_qmlinterface()
 
 void tst_qmlinterface::testCoordinate()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestCoordinate.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestCoordinate.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -186,8 +186,8 @@ void tst_qmlinterface::testCoordinate()
 
 void tst_qmlinterface::testAddress()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestAddress.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestAddress.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -209,8 +209,8 @@ void tst_qmlinterface::testAddress()
 
 void tst_qmlinterface::testBoundingBox()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestBoundingBox.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestBoundingBox.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -229,8 +229,8 @@ void tst_qmlinterface::testBoundingBox()
 
 void tst_qmlinterface::testBoundingCircle()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestBoundingCircle.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestBoundingCircle.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -248,8 +248,8 @@ void tst_qmlinterface::testBoundingCircle()
 
 void tst_qmlinterface::testLocation()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestLocation.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestLocation.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -268,8 +268,8 @@ void tst_qmlinterface::testLocation()
 
 void tst_qmlinterface::testCategory()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestCategory.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestCategory.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -287,8 +287,8 @@ void tst_qmlinterface::testCategory()
 
 void tst_qmlinterface::testIcon()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestIcon.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestIcon.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -305,8 +305,8 @@ void tst_qmlinterface::testIcon()
 
 void tst_qmlinterface::testRatings()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestRatings.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestRatings.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -325,8 +325,8 @@ void tst_qmlinterface::testRatings()
 
 void tst_qmlinterface::testSupplier()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestSupplier.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestSupplier.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -346,8 +346,8 @@ void tst_qmlinterface::testSupplier()
 
 void tst_qmlinterface::testUser()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestUser.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestUser.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -365,8 +365,8 @@ void tst_qmlinterface::testUser()
 
 void tst_qmlinterface::testPlaceAttribute()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestPlaceAttribute.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestPlaceAttribute.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -384,8 +384,8 @@ void tst_qmlinterface::testPlaceAttribute()
 
 void tst_qmlinterface::testContactDetail()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestContactDetail.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestContactDetail.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -403,8 +403,8 @@ void tst_qmlinterface::testContactDetail()
 
 void tst_qmlinterface::testPlace()
 {
-    QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, SRCDIR "data/TestPlace.qml");
+    QQmlEngine engine;
+    QQmlComponent component(&engine, SRCDIR "data/TestPlace.qml");
     QVERIFY(component.isReady());
     QObject *qmlObject = component.create();
 
@@ -417,7 +417,7 @@ void tst_qmlinterface::testPlace()
     QVERIFY(qmlObject->property("name").toString().isEmpty());
     QVERIFY(qmlObject->property("placeId").toString().isEmpty());
     QVERIFY(qmlObject->property("attribution").toString().isEmpty());
-    QDeclarativeListReference categories(qmlObject, "categories", &engine);
+    QQmlListReference categories(qmlObject, "categories", &engine);
     QCOMPARE(categories.count(), 0);
     QCOMPARE(qmlObject->property("location").value<QGeoLocation>(), QGeoLocation());
     QCOMPARE(qmlObject->property("ratings").value<QPlaceRatings>(), QPlaceRatings());

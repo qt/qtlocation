@@ -43,7 +43,7 @@
 #define QDECLARATIVEBUSINESSFEATURE_P_H
 
 #include <qplacebusinessfeature.h>
-#include <QtDeclarative/qdeclarative.h>
+#include <QtQml/qqml.h>
 
 #include <QObject>
 

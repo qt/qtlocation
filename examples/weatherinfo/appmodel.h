@@ -44,7 +44,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtNetwork/QNetworkReply>
-#include <QDeclarativeListProperty>
+#include <QtQml/QQmlListProperty>
 
 #include <qgeopositioninfo.h>
 
@@ -120,7 +120,7 @@ class AppModel : public QObject
     Q_PROPERTY(WeatherData *weather
                READ weather
                NOTIFY weatherChanged)
-    Q_PROPERTY(QDeclarativeListProperty<WeatherData> forecast
+    Q_PROPERTY(QQmlListProperty<WeatherData> forecast
                READ forecast
                NOTIFY weatherChanged)
 
@@ -139,7 +139,7 @@ public:
     void setCity(const QString &value);
 
     WeatherData *weather() const;
-    QDeclarativeListProperty<WeatherData> forecast() const;
+    QQmlListProperty<WeatherData> forecast() const;
 
 public slots:
     Q_INVOKABLE void refreshWeather();

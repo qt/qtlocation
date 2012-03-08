@@ -42,9 +42,9 @@
 #ifndef QDECLARATIVEGEOLOCATION_P_H
 #define QDECLARATIVEGEOLOCATION_P_H
 
-#include <QObject>
-#include <QDeclarativeListProperty>
-#include <qgeolocation.h>
+#include <QtCore/QObject>
+#include <QtQml/QQmlListProperty>
+#include <QtLocation/QGeoLocation>
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoboundingbox_p.h"
 #include "qdeclarativegeoaddress_p.h"
