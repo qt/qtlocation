@@ -112,10 +112,10 @@ Item {
 
         Component.onCompleted: {
             var item = addItem("Place");
-            item.enabled = (function() { return placesPlugin.supportedPlacesFeatures & Plugin.SavePlaceFeature });
+            item.enabled = (function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SavePlaceFeature) : false});
 
             item = addItem("Category");
-            item.enabled = (function() { return placesPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature });
+            item.enabled = (function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SaveCategoryFeature) : false });
         }
 
         onClicked: {
