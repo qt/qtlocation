@@ -65,21 +65,6 @@
 #include <QtJsonDb/QJsonDbCreateRequest>
 #include <QtJsonDb/QJsonDbReadRequest>
 
-//Use until QTRY_VERIFY_WITH_TIMEOUT is available
-#ifndef TRY_VERIFY_WITH_TIMEOUT
-#define TRY_VERIFY_WITH_TIMEOUT(__expr, __timeout) \
-         do { \
-         const int __step = 50; \
-         if (!(__expr)) { \
-             QTest::qWait(0); \
-         } \
-         for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
-             QTest::qWait(__step); \
-         } \
-         QVERIFY(__expr); \
-     } while (0)
-#endif
-
 #ifndef WAIT_UNTIL
 #define WAIT_UNTIL(__expr) \
         do { \
@@ -222,6 +207,7 @@ private:
     static const QSize MediumSize;
     static const QSize LargeSize;
     static const QSize FullscreenSize;
+    static const int Timeout;
 
     QGeoServiceProvider *provider;
     QPlaceManager *placeManager;
@@ -250,6 +236,9 @@ const QSize tst_QPlaceManagerJsonDb::SmallSize = QSize(20,20);
 const QSize tst_QPlaceManagerJsonDb::MediumSize = QSize(30,30);
 const QSize tst_QPlaceManagerJsonDb::LargeSize = QSize(50, 50);
 const QSize tst_QPlaceManagerJsonDb::FullscreenSize = QSize(320, 480);
+
+//constant for timeout to verify signals
+const int tst_QPlaceManagerJsonDb::Timeout(10000);
 
 tst_QPlaceManagerJsonDb::tst_QPlaceManagerJsonDb()
 {
@@ -356,7 +345,7 @@ void tst_QPlaceManagerJsonDb::simpleUpdatePlace()
     QDateTime currentDateTime = QDateTime::currentDateTime();
     dbUtils->fetchPlaceJson(placeId);
     QSignalSpy spy(dbUtils, SIGNAL(placeFetched(QJsonObject)));
-    QTRY_VERIFY(spy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(spy.count() == 1, Timeout);
     QJsonObject placeJson = spy.at(0).at(0).value<QJsonObject>();
     spy.clear();
 
@@ -385,7 +374,7 @@ void tst_QPlaceManagerJsonDb::simpleUpdatePlace()
     //check that the created datetime is the same, while the modified date time has changed.
     currentDateTime = QDateTime::currentDateTime();
     dbUtils->fetchPlaceJson(placeId);
-    QTRY_VERIFY(spy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(spy.count() == 1, Timeout);
     placeJson = spy.at(0).at(0).value<QJsonObject>();
     spy.clear();
 
@@ -464,7 +453,7 @@ void tst_QPlaceManagerJsonDb::updatePlace()
 
     dbUtils->fetchPlaceJson(placeId);
     QSignalSpy spy(dbUtils, SIGNAL(placeFetched(QJsonObject)));
-    QTRY_VERIFY(spy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(spy.count() == 1, Timeout);
     QJsonObject placeJson = spy.at(0).at(0).value<QJsonObject>();
     spy.clear();
 
@@ -476,7 +465,7 @@ void tst_QPlaceManagerJsonDb::updatePlace()
 
     dbUtils->savePlaceJson(placeJson);
     QSignalSpy saveSpy(dbUtils, SIGNAL(placeSaved()));
-    QTRY_VERIFY(saveSpy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(saveSpy.count() == 1, Timeout);
 
     //modify all fields
     if (field == QLatin1String("category")) {
@@ -560,7 +549,7 @@ void tst_QPlaceManagerJsonDb::updatePlace()
     QVERIFY(doFetchDetails(placeId, &retrievedPlace));
 
     dbUtils->fetchPlaceJson(placeId);
-    QTRY_VERIFY(spy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(spy.count() == 1, Timeout);
     placeJson = spy.at(0).at(0).value<QJsonObject>();
     spy.clear();
 
@@ -738,7 +727,7 @@ void tst_QPlaceManagerJsonDb::updatePlace()
 
     QVERIFY(doFetchDetails(placeId, &retrievedPlace));
     dbUtils->fetchPlaceJson(placeId);
-    QTRY_VERIFY(spy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(spy.count() == 1, Timeout);
     placeJson = spy.at(0).at(0).value<QJsonObject>();
     locationJson = placeJson.value(JsonDbUtils::Location).toObject();
     addressJson = locationJson.value(JsonDbUtils::Address).toObject();
@@ -1683,13 +1672,13 @@ void tst_QPlaceManagerJsonDb::unsupportedFunctions()
     request.setOffset(0);
     QPlaceContentReply *contentReply = placeManager->getPlaceContent(place.placeId(), request);
     QSignalSpy contentSpy(contentReply, SIGNAL(finished()));
-    QTRY_VERIFY(contentSpy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(contentSpy.count() == 1, Timeout);
     QCOMPARE(contentReply->error(), QPlaceReply::UnsupportedError);
 
     QPlaceSearchRequest searchRequest;
     QPlaceSearchSuggestionReply *searchSuggestionReply = placeManager->searchSuggestions(searchRequest);
     QSignalSpy searchSuggestionSpy(searchSuggestionReply, SIGNAL(finished()));
-    QTRY_VERIFY(searchSuggestionSpy.count() == 1 );
+    QTRY_VERIFY_WITH_TIMEOUT(searchSuggestionSpy.count() == 1, Timeout);
     QCOMPARE(searchSuggestionReply->error(), QPlaceReply::UnsupportedError);
 }
 
@@ -1921,7 +1910,7 @@ void tst_QPlaceManagerJsonDb::placeNotifications()
     QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
     place.setPlaceId(placeId);
 
-    QTRY_VERIFY(createSpy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(createSpy.count() == 1, Timeout);
     createSpy.clear();
     QVERIFY(updateSpy.count() == 0);
     QVERIFY(removeSpy.count() == 0);
@@ -1931,14 +1920,14 @@ void tst_QPlaceManagerJsonDb::placeNotifications()
     location.setCoordinate(QGeoCoordinate(10,10));
     place.setLocation(location);
     QVERIFY(doSavePlace(place, QPlaceReply::NoError));
-    QTRY_VERIFY(updateSpy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(updateSpy.count() == 1, Timeout);
     updateSpy.clear();
     QVERIFY(createSpy.count() == 0);
     QVERIFY(removeSpy.count() == 0);
 
     //remove place
     QVERIFY(doRemovePlace(place, QPlaceReply::NoError));
-    QTRY_VERIFY(removeSpy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(removeSpy.count() == 1, Timeout);
     removeSpy.clear();
     QVERIFY(createSpy.count() == 0);
     QVERIFY(updateSpy.count() == 0);
@@ -1956,7 +1945,7 @@ void tst_QPlaceManagerJsonDb::categoryNotifications()
     restaurant.setName(QLatin1String("Restaurant"));
     QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &restaurantId));
     restaurant.setCategoryId(restaurantId);
-    QTRY_VERIFY(createSpy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(createSpy.count() == 1, Timeout);
     createSpy.clear();
     QVERIFY(updateSpy.count() == 0);
     QVERIFY(removeSpy.count() == 0);
@@ -1964,20 +1953,20 @@ void tst_QPlaceManagerJsonDb::categoryNotifications()
     //modify category
     restaurant.setName(QLatin1String("RESTAURANT"));
     QVERIFY(doSaveCategory(restaurant));
-    QTRY_VERIFY(updateSpy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(updateSpy.count() == 1, Timeout);
     updateSpy.clear();
     QVERIFY(createSpy.count() == 0);
     QVERIFY(removeSpy.count() == 0);
 
     QVERIFY(doRemoveCategory(restaurant));
-    QTRY_VERIFY(removeSpy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(removeSpy.count() == 1, Timeout);
     removeSpy.clear();
     QVERIFY(createSpy.count() == 0);
     QVERIFY(updateSpy.count() == 0);
 
     restaurant.setCategoryId(QString());
     QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &restaurantId));
-    QTRY_VERIFY(createSpy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(createSpy.count() == 1, Timeout);
     createSpy.clear();
     QVERIFY(updateSpy.count() == 0);
     QVERIFY(removeSpy.count() == 0);
@@ -1989,7 +1978,7 @@ void tst_QPlaceManagerJsonDb::categoryNotifications()
 
     QVERIFY(doSaveCategory(steak, restaurantId, QPlaceReply::NoError, &steakId));
     steak.setCategoryId(steakId);
-    QTRY_VERIFY(createSpy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(createSpy.count() == 1, Timeout);
     QVERIFY(createSpy.at(0).at(0).value<QPlaceCategory>() == steak);
     createSpy.clear();
     QVERIFY(updateSpy.count() == 0);
@@ -2868,7 +2857,7 @@ void tst_QPlaceManagerJsonDb::cleanup()
 {
     QSignalSpy cleanSpy(dbUtils, SIGNAL(dbCleaned()));
     dbUtils->cleanDb();
-    QTRY_VERIFY(cleanSpy.count() == 1);
+    QTRY_VERIFY_WITH_TIMEOUT(cleanSpy.count() == 1, Timeout);
 }
 
 bool tst_QPlaceManagerJsonDb::doSavePlace(const QPlace &place,
@@ -2900,7 +2889,7 @@ void tst_QPlaceManagerJsonDb::doSavePlaces(QList<QPlace> &places)
     foreach (QPlace place, places) {
         saveReply = placeManager->savePlace(place);
         QSignalSpy saveSpy(saveReply, SIGNAL(finished()));
-        TRY_VERIFY_WITH_TIMEOUT(saveSpy.count() == 1, 10000);
+        QTRY_VERIFY_WITH_TIMEOUT(saveSpy.count() == 1, Timeout);
         QCOMPARE(saveReply->error(), QPlaceReply::NoError);
         saveSpy.clear();
     }
@@ -2915,7 +2904,7 @@ void tst_QPlaceManagerJsonDb::doSavePlaces(const QList<QPlace *> &places)
         count++;
         saveReply = placeManager->savePlace(*place);
         QSignalSpy saveSpy(saveReply, SIGNAL(finished()));
-        TRY_VERIFY_WITH_TIMEOUT(saveSpy.count() == 1, 10000);
+        QTRY_VERIFY_WITH_TIMEOUT(saveSpy.count() == 1, Timeout);
         QCOMPARE(saveReply->error(), QPlaceReply::NoError);
         place->setPlaceId(saveReply->id());
         saveSpy.clear();
