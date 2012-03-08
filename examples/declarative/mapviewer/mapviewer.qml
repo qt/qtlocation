@@ -363,7 +363,8 @@ Item {
             map.routeModel.update();
 
             // center the map on the start coord
-            map.center = startCoordinate
+            map.center.latitude = startCoordinate.latitude
+            map.center.longitude = startCoordinate.longitude
 //! [routerequest1]
         }
 //! [routedialog1]
