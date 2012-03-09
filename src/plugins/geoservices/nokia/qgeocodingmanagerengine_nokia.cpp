@@ -55,6 +55,7 @@
 #include <QNetworkProxy>
 #include <QUrl>
 #include <QMap>
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 
@@ -120,28 +121,48 @@ QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
     requestString += "&lg=";
     requestString += languageToMarc(locale().language());
 
-    requestString += "&country=";
-    requestString += address.country();
+    if (address.country().isEmpty()) {
+        QStringList parts;
 
-    if (!address.state().isEmpty()) {
-        requestString += "&state=";
-        requestString += address.state();
+        if (!address.state().isEmpty())
+            parts << address.state();
+
+        if (!address.city().isEmpty())
+            parts << address.city();
+
+        if (!address.postalCode().isEmpty())
+            parts << address.postalCode();
+
+        if (!address.street().isEmpty())
+            parts << address.street();
+
+        requestString += "&obloc=";
+        requestString += parts.join(" ");
+    } else {
+        requestString += "&country=";
+        requestString += address.country();
+
+        if (!address.state().isEmpty()) {
+            requestString += "&state=";
+            requestString += address.state();
+        }
+
+        if (!address.city().isEmpty()) {
+            requestString += "&city=";
+            requestString += address.city();
+        }
+
+        if (!address.postalCode().isEmpty()) {
+            requestString += "&zip=";
+            requestString += address.postalCode();
+        }
+
+        if (!address.street().isEmpty()) {
+            requestString += "&street=";
+            requestString += address.street();
+        }
     }
 
-    if (!address.city().isEmpty()) {
-        requestString += "&city=";
-        requestString += address.city();
-    }
-
-    if (!address.postalCode().isEmpty()) {
-        requestString += "&zip=";
-        requestString += address.postalCode();
-    }
-
-    if (!address.street().isEmpty()) {
-        requestString += "&street=";
-        requestString += address.street();
-    }
 
     // TODO?
     // street number has been removed from QGeoAddress
