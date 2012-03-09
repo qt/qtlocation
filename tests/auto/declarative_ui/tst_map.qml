@@ -47,8 +47,8 @@ Item {
     width:100
     height:100
     // General-purpose elements for the test:
-    Plugin { id: testPlugin; name: "qmlgeo.test.plugin";}
-    Plugin { id: testPlugin2; name: "gmlgeo.test.plugin"; }
+    Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
+    Plugin { id: testPlugin2; name: "gmlgeo.test.plugin"; allowExperimental: true }
     Plugin { id: nokiaPlugin; name: "nokia"; }
     Coordinate{ id: coordinate1; latitude: 10; longitude: 11}
     Coordinate{ id: coordinate2; latitude: 12; longitude: 13}

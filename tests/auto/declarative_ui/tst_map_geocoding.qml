@@ -202,6 +202,7 @@ Item {
     Plugin {
         id: testPlugin;
         name: "qmlgeo.test.plugin"
+        allowExperimental: true
         parameters: [
             // Parms to guide the test plugin
             PluginParameter { name: "supported"; value: true},
@@ -213,6 +214,7 @@ Item {
     Plugin {
         id: immediatePlugin;
         name: "qmlgeo.test.plugin"
+        allowExperimental: true
         parameters: [
             // Parms to guide the test plugin
             PluginParameter { name: "supported"; value: true},
@@ -223,6 +225,7 @@ Item {
 
     Plugin {
         id: slackPlugin;
+        allowExperimental: true
         name: "qmlgeo.test.plugin"
         parameters: [
             // Parms to guide the test plugin
@@ -234,6 +237,7 @@ Item {
 
     Plugin {
         id: autoPlugin;
+        allowExperimental: true
         name: "qmlgeo.test.plugin"
         parameters: [
             // Parms to guide the test plugin

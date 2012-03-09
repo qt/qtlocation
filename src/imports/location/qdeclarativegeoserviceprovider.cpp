@@ -164,7 +164,7 @@ void QDeclarativeGeoServiceProvider::componentComplete()
                 // so we don't try it again later
                 providers.removeAll(name);
 
-                QGeoServiceProvider sp(name, parameterMap());
+                QGeoServiceProvider sp(name, parameterMap(), experimental_);
                 if (required_->matches(&sp)) {
                     setName(name);
                     return;
@@ -174,7 +174,7 @@ void QDeclarativeGeoServiceProvider::componentComplete()
 
         /* then try the rest */
         foreach (QString name, providers) {
-            QGeoServiceProvider sp(name, parameterMap());
+            QGeoServiceProvider sp(name, parameterMap(), experimental_);
             if (required_->matches(&sp)) {
                 setName(name);
                 return;

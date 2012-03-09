@@ -73,7 +73,7 @@ Item {
     x: 0; y: 0;
     width: 240
     height: 240
-    Plugin { id: testPlugin; name : "qmlgeo.test.plugin";}
+    Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
     Coordinate{ id: mapDefaultCenter; latitude: 20; longitude: 20}
     Coordinate{ id: someCoordinate1; latitude: 15; longitude: 15}
     Coordinate{ id: someCoordinate2; latitude: 16; longitude: 16}

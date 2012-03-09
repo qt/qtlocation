@@ -49,7 +49,7 @@ Item {
     id: page
     width: 100
     height: 100
-    Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; }
+    Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
     Coordinate{ id: coordinate1; latitude: 10; longitude: 11}
     Coordinate{ id: coordinate2; latitude: 12; longitude: 13}
     Map {

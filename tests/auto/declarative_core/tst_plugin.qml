@@ -47,9 +47,10 @@ Item {
 
     Plugin { id: unattachedPlugin }
     Plugin { id: nokiaPlugin; name: "nokia"}
-    Plugin { id: invalidPlugin; name: "invalid"}
+    Plugin { id: invalidPlugin; name: "invalid"; allowExperimental: true }
     Plugin { id: testPlugin;
             name: "qmlgeo.test.plugin"
+            allowExperimental: true
             parameters: [
                 // Parms to guide the test plugin
                 PluginParameter { name: "supported"; value: true},
@@ -59,7 +60,9 @@ Item {
         }
     SignalSpy {id: invalidAttachedSpy; target: invalidPlugin; signalName: "attached"}
 
-    Plugin { id: requiredPlugin;
+    Plugin {
+        id: requiredPlugin
+        allowExperimental: true
         required {
             mapping: Plugin.OfflineMappingFeature;
             geocoding: Plugin.OfflineGeocodingFeature;

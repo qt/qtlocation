@@ -91,6 +91,7 @@ void tst_QPlaceManager::initTestCase()
     QVERIFY(providers.contains("qmlgeo.test.plugin"));
 
     provider = new QGeoServiceProvider("qmlgeo.test.plugin");
+    provider->setAllowExperimental(true);
     QCOMPARE(provider->placesFeatures() & QGeoServiceProvider::OfflinePlacesFeature,
              QGeoServiceProvider::OfflinePlacesFeature);
     placeManager = provider->placeManager();

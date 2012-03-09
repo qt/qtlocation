@@ -44,7 +44,7 @@ import QtTest 1.0
 import QtLocation 5.0
 
 Item {
-    Plugin { id: testPlugin; name: "qmlgeo.test.plugin"}
+    Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
     Plugin { id: invalidPlugin; name: "invalid"}
     Coordinate{ id: coordinate1; latitude: 51; longitude: 0}
     Coordinate{ id: coordinate2; latitude: 52; longitude: 0}
@@ -483,6 +483,7 @@ Item {
     Plugin {
         id: testPlugin_immediate;
         name: "qmlgeo.test.plugin"
+        allowExperimental: true
         parameters: [
             // Parms to guide the test plugin
             PluginParameter { name: "gc_supported"; value: true},
@@ -494,6 +495,7 @@ Item {
     Plugin {
         id: testPlugin_slacker;
         name: "qmlgeo.test.plugin"
+        allowExperimental: true
         parameters: [
             // Parms to guide the test plugin
             PluginParameter { name: "gc_finishRequestImmediately"; value: false}
@@ -503,6 +505,7 @@ Item {
     Plugin {
         id: bacicRoutingPlugin_slacker;
         name: "qmlgeo.test.plugin"
+        allowExperimental: true
         parameters: [
             // Parms to guide the test plugin
             PluginParameter { name: "gc_finishRequestImmediately"; value: false}

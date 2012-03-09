@@ -2,7 +2,7 @@
     "Keys": ["qmlgeo.test.plugin"],
     "Provider": "qmlgeo.test.plugin",
     "Version": 100,
-    "Experimental": false,
+    "Experimental": true,
     "Features": [
         "OfflineMappingFeature",
         "OfflineRoutingFeature",

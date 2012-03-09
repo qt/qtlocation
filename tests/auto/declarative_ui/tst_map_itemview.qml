@@ -49,7 +49,7 @@ Item {
     width: 200
     height: 350
     // General-purpose elements for the test:
-    Plugin { id: testPlugin; name : "qmlgeo.test.plugin";}
+    Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
     Coordinate{ id: mapDefaultCenter; latitude: 10; longitude: 30}
 
     Map {
@@ -160,6 +160,7 @@ Item {
     Plugin {
         id: testPlugin_immediate;
         name: "qmlgeo.test.plugin"
+        allowExperimental: true
         parameters: [
             // Parms to guide the test plugin
             PluginParameter { name: "gc_supported"; value: true},
