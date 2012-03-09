@@ -15,6 +15,7 @@
         <file>imports/QtLocation/examples/components/TextWithLabel.qml</file>
         <file>imports/QtLocation/examples/components/TitleBar.qml</file>
         <file>imports/QtLocation/examples/dialogs/Dialog.qml</file>
+        <file>imports/QtLocation/examples/dialogs/ErrorDialog.qml</file>
         <file>resources/busy.png</file>
         <file>resources/button_pressed.png</file>
         <file>resources/button.png</file>

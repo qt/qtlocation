@@ -21,7 +21,9 @@ qmlcontentplaces.files += \
     content/places/ReviewPage.qml \
     content/places/PlaceImages.qml \
     content/places/MapComponent.qml \
-    content/places/OptionsDialog.qml
+    content/places/OptionsDialog.qml \
+    content/places/CategoryView.qml
+
 OTHER_FILES += $$qmlcontentplaces.files
 
 include(../common/common.pri)

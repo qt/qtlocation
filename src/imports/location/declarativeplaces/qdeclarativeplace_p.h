@@ -206,7 +206,7 @@ private slots:
     void finished();
     void contactsModified(const QString &, const QVariant &);
     void pluginReady();
-
+    void cleanupDeletedCategories();
 private:
     void synchronizeCategories();
     void synchronizeExtendedAttributes();
@@ -244,6 +244,8 @@ private:
 
     Status m_status;
     QString m_errorString;
+
+    QList<QDeclarativeCategory *>m_categoriesToBeDeleted;
 };
 
 QT_END_NAMESPACE

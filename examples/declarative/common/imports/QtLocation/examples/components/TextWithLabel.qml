@@ -55,10 +55,8 @@ Row {
         width:65;
         enabled: textWithLabel.enabled
         color: enabled ? "#242424" : "lightgrey"
-        anchors {
-            top: parent.top;
-            topMargin: (inputRectangle.height-height)/2
-        }
+        anchors.verticalCenter: parent.verticalCenter
+
         font.pixelSize: 14
     }
 

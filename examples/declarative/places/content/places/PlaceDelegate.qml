@@ -205,13 +205,13 @@ Item {
                 Button {
                     text: qsTr("Edit")
                     onClicked: editPlace(place)
-                    visible: placesPlugin.supportedPlacesFeatures & Plugin.SavePlaceFeature
+                    visible: placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SavePlaceFeature) : false;
                 }
 
                 Button {
                     text: qsTr("Delete");
                     onClicked: deletePlace(place)
-                    visible: placesPlugin.supportedPlacesFeatures & Plugin.RemovePlaceFeature
+                    visible: placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.RemovePlaceFeature) : false;
                 }
 
                 Item {

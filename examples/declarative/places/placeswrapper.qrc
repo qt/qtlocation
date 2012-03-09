@@ -3,6 +3,7 @@
         <file>places.qml</file>
         <file>content/places/CategoryDelegate.qml</file>
         <file>content/places/CategoryDialog.qml</file>
+        <file>content/places/CategoryView.qml</file>
         <file>content/places/EditorialDelegate.qml</file>
         <file>content/places/EditorialPage.qml</file>
         <file>content/places/Group.qml</file>

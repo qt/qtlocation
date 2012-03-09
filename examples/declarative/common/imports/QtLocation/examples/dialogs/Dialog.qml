@@ -45,6 +45,7 @@ Item {
     id: dialog
     signal goButtonClicked
     signal cancelButtonClicked
+    signal clearButtonClicked
 
     anchors.fill: parent
 
@@ -53,6 +54,8 @@ Item {
     property alias length: dialogModel.count
     property int gap: 10
     property int listItemHeight: titleBar.font.pixelSize * 1.5
+    property alias customComponent: componentLoader.sourceComponent
+    property bool showButtons: true
 
     opacity: 0
 
@@ -73,7 +76,7 @@ Item {
         color: "#ECECEC"
         opacity: parent.opacity
         width: parent.width - gap;
-        height: listview.height + titleBar.height + buttons.height + gap*1.5
+        height: dataRect.height + titleBar.height + buttons.height + gap*1.5
 
         anchors {
             verticalCenter: parent.verticalCenter
@@ -97,20 +100,17 @@ Item {
 
         Component{
             id: listDelegate
-            Column {
-                id: column1
-                height: listItemHeight
-                TextWithLabel {
-                    id: textWithLabel
-                    label: labelText
-                    text: inputText
-                    width: dataRect.width - gap
-                    labelWidth: 95
 
-                    onTextChanged:
-                    {
-                        dialogModel.set(index, {"inputText": text})
-                    }
+            TextWithLabel {
+                id: textWithLabel
+                label: labelText
+                text: inputText
+                width: dataRect.width - gap
+                labelWidth: 95
+
+                onTextChanged:
+                {
+                    dialogModel.set(index, {"inputText": text})
                 }
             }
         }
@@ -120,7 +120,7 @@ Item {
         color: "#ECECEC"
         radius: 5
         width:dialogRectangle.width - gap
-        height: listview.height// + gap
+        height: childrenRect.height + gap
         anchors {
             top: titleBar.bottom
             topMargin: gap/2
@@ -128,8 +128,9 @@ Item {
             leftMargin: gap/2
         }
 
-        ListView {
-            id: listview
+        Loader {
+            id: componentLoader;
+            sourceComponent: listComponent
             anchors {
                 top: dataRect.top
                 topMargin: gap/2
@@ -138,13 +139,22 @@ Item {
                 right: parent.right
                 rightMargin: gap/2
             }
-            model: dialogModel
-            delegate: listDelegate
-            spacing: gap/2
-            clip: true
-            snapMode: ListView.SnapToItem
-            interactive: height < (listItemHeight + gap/2)*length + gap/2
-            height: Math.min(dialog.height * 0.7, (listItemHeight + gap/2)*length + gap/2)
+        }
+
+        Component {
+            id: listComponent
+
+            ListView {
+                id: listview
+                model: dialogModel
+                delegate: listDelegate
+                spacing: gap/2
+                clip: true
+                snapMode: ListView.SnapToItem
+                interactive: height < (listItemHeight + gap/2)*length + gap/2
+                width: parent.width
+                height: Math.min(dialog.height * 0.7, (listItemHeight + gap/2)*length + gap/2)
+            }
         }
     }
 
@@ -155,14 +165,18 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: gap/3
             height: 32
+            visible: showButtons
             Button {
                 id: buttonClearAll
                 text: "Clear"
                 width: 80; height: parent.height
                 onClicked: {
-                    for (var i = 0; i<length; i++){
-                       dialogModel.set(i, {"inputText": ""})
+                    if (!customComponent) {
+                        for (var i = 0; i<length; i++){
+                            dialogModel.set(i, {"inputText": ""})
+                        }
                     }
+                    dialog.clearButtonClicked()
                 }
             }
             Button {

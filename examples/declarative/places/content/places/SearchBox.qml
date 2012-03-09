@@ -128,54 +128,25 @@ Rectangle {
         }
     }
 
-    //! [CategoryModel view 1]
-    ListView {
+    CategoryView {
         id: categoryView
-    //! [CategoryModel view 1]
 
         anchors.top: row.bottom
-        anchors.topMargin: 10
-        anchors.left: parent.left
-        anchors.leftMargin: 10
-        anchors.right: parent.right
-        anchors.rightMargin: 10
         height: expandedHeight - y
         visible: false
         spacing: 5
 
-        clip: true
-        snapMode: ListView.SnapToItem
-
-    //! [CategoryModel view 2]
-        header: IconButton {
-            source: "../../resources/left.png"
-            pressedSource: "../../resources/left_pressed.png"
-
-            onClicked: categoryListModel.rootIndex = categoryListModel.parentModelIndex()
-            visible: !busy.visible
+        onCategoryClicked: {
+            placeSearchModel.searchForCategory(category);
+            searchRectangle.state = "";
         }
-    //! [CategoryModel view 2]
 
-    //! [CategoryModel view 3]
-        model: VisualDataModel {
-            id: categoryListModel
-            model: categoryModel
-            delegate: CategoryDelegate {
-                onClicked: {
-                    placeSearchModel.searchForCategory(category);
-                    searchRectangle.state = "";
-                }
-                onArrowClicked: categoryListModel.rootIndex = categoryListModel.modelIndex(index)
-                onCrossClicked: category.remove()
-                onEditClicked: {
-                    editCategoryDialog.category = category;
-                    page.state = "EditCategory";
-                    searchRectangle.state = "";
-                }
-            }
+        onEditClicked: {
+            editCategoryDialog.category = category;
+            page.state = "EditCategory";
+            searchRectangle.state = "";
         }
     }
-    //! [CategoryModel view 3]
 
     BusyIndicator {
         id: busy
@@ -261,7 +232,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: categoryView
-                visible: true
+                visible: true && !busy.visible
             }
         },
         State {

@@ -40,28 +40,19 @@
 
 import QtQuick 2.0
 
-Item {
-    id: item1
-    width: parent.width
-    height: childrenRect.height + 3
+Dialog {
+    id: errorRoot
 
-    property alias text: heading.text
+    property string text
+    opacity: 0
+    showButtons:false
 
-    Text {
-        id: heading
-        text: '#heading#'
-        anchors.left: parent.left
+    customComponent: Text {
+        id:  errorText
+        text: errorRoot.text
     }
 
-    Rectangle {
-        id: rectangle1
-        width: parent.width
-        height: 1
-        radius: 1
-        border.width: 1
-        border.color: "#808080"
-        anchors.top: heading.bottom
-        anchors.topMargin: 3
-        anchors.horizontalCenter: parent.horizontalCenter
+    onCancelButtonClicked: {
+        opacity = 0;
     }
 }

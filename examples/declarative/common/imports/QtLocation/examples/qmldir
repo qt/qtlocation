@@ -9,3 +9,4 @@ Slider 5.0 components/Slider.qml
 TextWithLabel 5.0 components/TextWithLabel.qml
 TitleBar 5.0 components/TitleBar.qml
 Dialog 5.0 dialogs/Dialog.qml
+ErrorDialog 5.0 dialogs/ErrorDialog.qml

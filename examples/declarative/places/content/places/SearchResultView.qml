@@ -195,7 +195,7 @@ Item {
                     //! [PlaceRecommendationModel search]
 
                     onEditPlace: {
-                        editPlaceDialog.place = place;
+                        editPlaceDialog.prepareDialog(place);
                         page.state = "EditPlace"
                     }
 

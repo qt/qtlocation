@@ -45,6 +45,10 @@ import QtLocation.examples 5.0
 Item {
     id: root
 
+    property bool showSave: true
+    property bool showRemove: true
+    property bool showChildren: true
+
     signal clicked
     signal arrowClicked
     signal crossClicked
@@ -77,15 +81,17 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
 
+            verticalAlignment: Text.AlignVCenter
+
             text: category.name
             elide: Text.ElideRight
         }
-        //! [CategoryModel delegate text]
 
         MouseArea {
             anchors.fill: parent
             onClicked: root.clicked()
         }
+        //! [CategoryModel delegate text]
     }
 
     //! [CategoryModel delegate icon]
@@ -95,6 +101,7 @@ Item {
         anchors.right: cross.left
         anchors.verticalCenter: parent.verticalCenter
         visible: (placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SaveCategoryFeature) : false)
+                 && showSave
 
         source: "../../resources/pencil.png"
         hoveredSource: "../../resources/pencil_hovered.png"
@@ -109,6 +116,7 @@ Item {
         anchors.right: arrow.left
         anchors.verticalCenter: parent.verticalCenter
         visible: (placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.RemoveCategoryFeature) : false)
+                 && showRemove
 
         source: "../../resources/cross.png"
         hoveredSource: "../../resources/cross_hovered.png"
@@ -122,7 +130,7 @@ Item {
 
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        visible: model.hasModelChildren
+        visible: model.hasModelChildren && showChildren
 
         source: "../../resources/right.png"
         pressedSource: "../../resources/right_pressed.png"

@@ -112,16 +112,17 @@ Item {
 
         Component.onCompleted: {
             var item = addItem("Place");
-            item.enabled = (function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SavePlaceFeature) : false});
+            item.enabled = (function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SavePlaceFeature) : false })
 
             item = addItem("Category");
-            item.enabled = (function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SaveCategoryFeature) : false });
+            item.enabled = (function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SaveCategoryFeature) : false })
         }
 
         onClicked: {
             switch (button) {
             case "Place": {
-                editPlaceDialog.place = null;
+                editPlaceDialog.prepareDialog();
+
                 page.state = "NewPlace";
                 break;
             }
@@ -157,26 +158,7 @@ Item {
         z: backgroundRect.z + 4
 
         onCancelButtonClicked: page.state = ""
-
-        Connections {
-            target: editPlaceDialog.place
-            onStatusChanged: {
-                switch (editPlaceDialog.place.status) {
-                case Place.Saving: {
-                    console.log("Saving...");
-                    break;
-                }
-                case Place.Ready: {
-                    page.state = "";
-                    break;
-                }
-                case Place.Error: {
-                    console.log("Error while saving!");
-                    break;
-                }
-                }
-            }
-        }
+        onCompleted: page.state = "";
     }
 
     CategoryDialog {
@@ -620,7 +602,7 @@ Item {
         },
         State {
             name: "EditPlace"
-            PropertyChanges { target: editPlaceDialog; opacity: 1 }
+            PropertyChanges { target: editPlaceDialog; title: "Edit Place"; opacity: 1 }
         },
         State {
             name: "EditCategory"

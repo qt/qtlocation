@@ -76,11 +76,11 @@
 
     Next we create a view to display the category model.
 
-    \snippet declarative/places/content/places/SearchBox.qml CategoryModel view 1
+    \snippet declarative/places/content/places/CategoryView.qml CategoryModel view 1
     \codeline
-    \snippet declarative/places/content/places/SearchBox.qml CategoryModel view 2
+    \snippet declarative/places/content/places/CategoryView.qml CategoryModel view 2
     \codeline
-    \snippet declarative/places/content/places/SearchBox.qml CategoryModel view 3
+    \snippet declarative/places/content/places/CategoryView.qml CategoryModel view 3
 
     Because a hierarchical model is being used, a \l VisualDataModel is needed to provide
     navigation functionality.  If flat list model was being used the view could use the
@@ -90,18 +90,22 @@
     The \e onClicked handler sets the root index of the \l VisualDataModel to the parent of the
     current index.  Categories are displayed by the \e CategoryDelegate, which provides four
     signals.  The \e onArrowClicked handler sets the root index to the current index causing the
-    sub categories of the selected category to be displayed.  The \e onClicked handler performs a
-    search with using the selected category.  The \e onCrossClicked handler will invoke the
-    categories \l {Category::remove()}{remove()} method.  The \e onEditClicked handler will display
-    a dialog to edit the category.
+    sub categories of the selected category to be displayed.  The \e onClicked handler emits
+    the \b categoryClicked() signal with a category parameter indicating which specific category
+    has been chosen.  The \e onCrossClicked handler will invoke the
+    categories \l {Category::remove()}{remove()} method.  The \e onEditClicked handler invokes the
+    \b editClicked() signal of the root item, this is used to notify which particular category
+    is to be edited.
 
-    The \e CategoryDelegate displays the category name and emits the \b clicked() signal when
+    The \e CategoryDelegate displays the category name and emits the \e clicked signal when
     the text is clicked:
 
     \snippet declarative/places/content/places/CategoryDelegate.qml CategoryModel delegate text
 
     The \e CategoryDelegate also displays icons for editing, removing and displaying child
-    categories.  These icons are only shown when the function is available.
+    categories.  These icons are shown as desired when the \e showSave and \e showRemove
+    and \e showChildren properties are set and only then in cases where the function is
+    supported.
 
     \snippet declarative/places/content/places/CategoryDelegate.qml CategoryModel delegate icon
 

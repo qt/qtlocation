@@ -726,6 +726,15 @@ void QDeclarativePlace::contactsModified(const QString &key, const QVariant &val
     primarySignalsEmission(key);
 }
 
+void QDeclarativePlace::cleanupDeletedCategories()
+{
+    foreach (QDeclarativeCategory * category, m_categoriesToBeDeleted) {
+        if (category->parent() == this)
+            delete category;
+    }
+    m_categoriesToBeDeleted.clear();
+}
+
 /*!
     \qmlmethod void Place::getDetails()
 
@@ -894,13 +903,18 @@ void QDeclarativePlace::category_append(QQmlListProperty<QDeclarativeCategory> *
                                                   QDeclarativeCategory *value)
 {
     QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
-    QDeclarativeCategory *altValue = new QDeclarativeCategory(object);
-    altValue->setCategory(value->category());
-    object->m_categories.append(altValue);
-    QList<QPlaceCategory> list = object->m_src.categories();
-    list.append(value->category());
-    object->m_src.setCategories(list);
-    emit object->categoriesChanged();
+
+    if (object->m_categoriesToBeDeleted.contains(value))
+        object->m_categoriesToBeDeleted.removeAll(value);
+
+    if (!object->m_categories.contains(value)) {
+        object->m_categories.append(value);
+        QList<QPlaceCategory> list = object->m_src.categories();
+        list.append(value->category());
+        object->m_src.setCategories(list);
+
+        emit object->categoriesChanged();
+    }
 }
 
 int QDeclarativePlace::category_count(QQmlListProperty<QDeclarativeCategory> *prop)
@@ -925,10 +939,15 @@ void QDeclarativePlace::category_clear(QQmlListProperty<QDeclarativeCategory> *p
     if (object->m_categories.isEmpty())
         return;
 
-    qDeleteAll(object->m_categories);
+    for (int i = 0; i < object->m_categories.count(); ++i) {
+        if (object->m_categories.at(i)->parent() == object)
+            object->m_categoriesToBeDeleted.append(object->m_categories.at(i));
+    }
+
     object->m_categories.clear();
     object->m_src.setCategories(QList<QPlaceCategory>());
     emit object->categoriesChanged();
+    QTimer::singleShot(0, object, SLOT(cleanupDeletedCategories()));
 }
 
 void QDeclarativePlace::synchronizeCategories()
