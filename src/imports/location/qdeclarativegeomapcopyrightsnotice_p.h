@@ -38,87 +38,35 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAP_P_H
-#define QGEOMAP_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef QDECLARATIVEGEOMAPCOPYRIGHTSNOTICE_H
+#define QDECLARATIVEGEOMAPCOPYRIGHTSNOTICE_H
 
-#include <QObject>
-
-#include "qgeocameradata_p.h"
-#include "qgeomaptype.h"
-#include "qgeocoordinateinterpolator_p.h"
+#include <QQuickPaintedItem>
+#include <QImage>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-
-class QGeoMappingManager;
-
-class MapItem;
-class QGeoMapController;
-class QGeoCameraCapabilities;
-
-class QGLCamera;
-class QGLPainter;
-class QGeoMapData;
-
-class QPointF;
-
-class Q_LOCATION_EXPORT QGeoMap : public QObject
+class QDeclarativeGeoMapCopyrightNotice : public QQuickPaintedItem
 {
     Q_OBJECT
-
-    Q_PROPERTY(QGeoCameraData camera READ cameraData WRITE setCameraData NOTIFY cameraDataChanged)
-    Q_PROPERTY(QGeoMapType activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
-
 public:
-    QGeoMap(QGeoMapData *mapData, QObject *parent = 0);
-    virtual ~QGeoMap();
+    QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent);
+    ~QDeclarativeGeoMapCopyrightNotice();
 
-    QGeoMapController* mapController();
-
-    QGLCamera* glCamera() const;
-    void paintGL(QGLPainter *painter);
-
-    void resize(int width, int height);
-    int width() const;
-    int height() const;
-
-    void setCameraData(const QGeoCameraData &cameraData);
-    QGeoCameraData cameraData() const;
-    QGeoCameraCapabilities cameraCapabilities() const;
-
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const;
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
-
-    void setActiveMapType(const QGeoMapType mapType);
-    const QGeoMapType activeMapType() const;
-
-    QString pluginString();
+    void setCopyrightsZ(int copyrightsZ);
 
 public Q_SLOTS:
-    void update();
-
-Q_SIGNALS:
-    void cameraDataChanged(const QGeoCameraData &cameraData);
-    void updateRequired();
-    void activeMapTypeChanged();
     void copyrightsChanged(const QImage &copyrightsImage, const QPoint &copyrightsPos);
 
+protected:
+    void paint(QPainter *painter);
+
 private:
-    QGeoMapData *mapData_;
+    QImage copyrightsImage_;
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAP_P_H
+#endif
+

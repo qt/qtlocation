@@ -37,45 +37,40 @@
 **
 ** $QT_END_LICENSE$
 **
-** This file is part of the Ovi services plugin for the Maps and
-** Navigation API.  The use of these services, whether by use of the
-** plugin or by other means, is governed by the terms and conditions
-** described by the file OVI_SERVICES_TERMS_AND_CONDITIONS.txt in
-** this package, located in the directory containing the Ovi services
-** plugin source code.
-**
 ****************************************************************************/
 
-#ifndef QGEOMAPDATA_NOKIA_H
-#define QGEOMAPDATA_NOKIA_H
+#include <QPainter>
+#include <QPoint>
 
-#include "qgeotiledmapdata_p.h"
-#include <QImage>
-#include <QSize>
+#include "qdeclarativegeomapcopyrightsnotice_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMapDataNokia: public QGeoTiledMapData
+QDeclarativeGeoMapCopyrightNotice::QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent)
+    : QQuickPaintedItem(parent) {}
+
+QDeclarativeGeoMapCopyrightNotice::~QDeclarativeGeoMapCopyrightNotice()
 {
-Q_OBJECT
-public:
-    QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
-    ~QGeoTiledMapDataNokia();
+}
 
-    QString getViewCopyright();
-    void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
+void QDeclarativeGeoMapCopyrightNotice::paint(QPainter *painter)
+{
+    painter->drawImage(0, 0, copyrightsImage_);
+}
 
-private:
-    Q_DISABLE_COPY(QGeoTiledMapDataNokia)
+void QDeclarativeGeoMapCopyrightNotice::setCopyrightsZ(int copyrightsZ)
+{
+    setZ(copyrightsZ);
+    update();
+}
 
-    QImage watermark;
-    QPoint lastTopLeft;
-    QPoint lastBottomRight;
-    int lastZoomLevel;
-    int lastMapId;
-    QSize mapSize;
-};
+void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QImage &copyrightsImage, const QPoint &copyrightsPos)
+{
+    setX(copyrightsPos.x());
+    setY(copyrightsPos.y());
+    setWidth(copyrightsImage.width());
+    setHeight(copyrightsImage.height());
+    copyrightsImage_ = copyrightsImage;
+}
 
 QT_END_NAMESPACE
-
-#endif // QGEOMAPDATA_NOKIA_H

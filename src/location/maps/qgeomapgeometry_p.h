@@ -52,6 +52,7 @@
 // We mean it.
 //
 
+#include <QObject>
 #include <QSet>
 #include <QSharedPointer>
 #include <QSize>
@@ -74,7 +75,10 @@ class QPointF;
 
 class QGeoMapGeometryPrivate;
 
-class QGeoMapGeometry {
+class QGeoMapGeometry : public QObject
+{
+    Q_OBJECT
+
 public:
     QGeoMapGeometry();
     ~QGeoMapGeometry();
@@ -82,6 +86,7 @@ public:
     void setScreenSize(const QSize &size);
     void setTileSize(int tileSize);
     void setCameraData(const QGeoCameraData &cameraData_);
+
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
 
     void setUseVerticalLock(bool lock);
@@ -96,6 +101,9 @@ public:
     void paintGL(QGLPainter *painter);
 
     bool verticalLock() const;
+
+Q_SIGNALS:
+    void newTilesVisible(const QSet<QGeoTileSpec> &newTiles);
 
 private:
     QGeoMapGeometryPrivate *d_ptr;

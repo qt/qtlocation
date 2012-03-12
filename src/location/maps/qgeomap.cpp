@@ -81,6 +81,7 @@ QGeoMap::QGeoMap(QGeoMapData *mapData, QObject *parent)
     connect(mapData_, SIGNAL(cameraDataChanged(const QGeoCameraData&)), this, SIGNAL(cameraDataChanged(const QGeoCameraData&)));
     connect(mapData_, SIGNAL(updateRequired()), this, SIGNAL(updateRequired()));
     connect(mapData_, SIGNAL(activeMapTypeChanged()), this, SIGNAL(activeMapTypeChanged()));
+    connect(mapData_, SIGNAL(copyrightsChanged(const QImage&, const QPoint&)), this, SIGNAL(copyrightsChanged(const QImage&, const QPoint&)));
 }
 
 QGeoMap::~QGeoMap()

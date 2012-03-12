@@ -165,6 +165,7 @@ void QGeoTiledMapData::mapResized(int width, int height)
 {
     Q_D(QGeoTiledMapData);
     d->resized(width, height);
+    evaluateCopyrights(d->visibleTiles());
 }
 
 void QGeoTiledMapData::changeCameraData(const QGeoCameraData &oldCameraData)
@@ -177,6 +178,11 @@ void QGeoTiledMapData::changeActiveMapType(const QGeoMapType mapType)
 {
     Q_D(QGeoTiledMapData);
     d->changeActiveMapType(mapType);
+}
+
+void QGeoTiledMapData::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
+{
+    Q_UNUSED(visibleTiles);
 }
 
 QGeoCoordinate QGeoTiledMapData::screenPositionToCoordinate(const QPointF &pos, bool clipToViewport) const
@@ -226,6 +232,11 @@ QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoT
     cameraTiles_->setPluginString(map_->pluginString());
 
     mapGeometry_->setTileSize(engine->tileSize().width());
+
+    QObject::connect(mapGeometry_,
+                     SIGNAL(newTilesVisible(const QSet<QGeoTileSpec>&)),
+                     map_,
+                     SLOT(evaluateCopyrights(const QSet<QGeoTileSpec>)));
 }
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
@@ -316,6 +327,11 @@ void QGeoTiledMapDataPrivate::tileFetched(const QGeoTileSpec &spec)
     }
     mapImages_->tileFetched(spec);
     map_->update();
+}
+
+QSet<QGeoTileSpec> QGeoTiledMapDataPrivate::visibleTiles()
+{
+    return visibleTiles_;
 }
 
 void QGeoTiledMapDataPrivate::paintGL(QGLPainter *painter)

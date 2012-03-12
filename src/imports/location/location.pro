@@ -44,7 +44,8 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativepolygonmapitem_p.h \
            qdeclarativepolylinemapitem_p.h \
            qdeclarativeroutemapitem_p.h \
-           qgeomapitemgeometry_p.h
+           qgeomapitemgeometry_p.h \
+           qdeclarativegeomapcopyrightsnotice_p.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -76,7 +77,8 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativepolygonmapitem.cpp \
            qdeclarativepolylinemapitem.cpp \
            qdeclarativeroutemapitem.cpp \
-           qgeomapitemgeometry.cpp
+           qgeomapitemgeometry.cpp \
+           qdeclarativegeomapcopyrightsnotice.cpp
 
 include(declarativeplaces/declarativeplaces.pri)
 

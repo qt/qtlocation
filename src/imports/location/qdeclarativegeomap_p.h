@@ -56,6 +56,7 @@
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
 #include "qgeomapcontroller_p.h"
+#include "qdeclarativegeomapcopyrightsnotice_p.h"
 
 //#define QT_DECLARATIVE_LOCATION_TRACE 1
 
@@ -72,6 +73,7 @@
 #include "qgeocameradata_p.h"
 #include "qgeomap_p.h"
 #include "qdeclarativegeomaptype_p.h"
+#include <QWeakPointer>
 
 QT_BEGIN_NAMESPACE
 
@@ -200,6 +202,7 @@ private Q_SLOTS:
     void mapBearingChanged(qreal bearing);
     void mapCenterChanged(AnimatableCoordinate center);
     void pluginReady();
+    void onMapChildrenChanged();
 
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
@@ -233,6 +236,7 @@ private:
 
     QGeoTileCache *tileCache_;
     QGeoMap *map_;
+    QWeakPointer<QDeclarativeGeoMapCopyrightNotice> copyrightsWPtr_;
 
     QList<QObject*> mapItems_;
 

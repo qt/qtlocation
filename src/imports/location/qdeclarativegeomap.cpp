@@ -203,6 +203,8 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton | Qt::RightButton);
     setFlags(QQuickItem::ItemHasContents | QQuickItem::ItemClipsChildrenToShape);
 
+    connect(this, SIGNAL(childrenChanged()), this, SLOT(onMapChildrenChanged()), Qt::QueuedConnection);
+
     // Create internal flickable and pinch area.
     flickable_ = new QDeclarativeGeoMapFlickable(this);
     pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
@@ -216,6 +218,55 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
     for (int i = 0; i < mapItems_.count(); ++i)
         qobject_cast<QDeclarativeGeoMapItemBase*>(mapItems_.at(i))->setMap(0,0);
     mapItems_.clear();
+
+    if (copyrightsWPtr_.data()) {
+        delete copyrightsWPtr_.data();
+        copyrightsWPtr_.clear();
+    }
+}
+
+void QDeclarativeGeoMap::onMapChildrenChanged()
+{
+    if (!componentCompleted_)
+        return;
+
+    int maxChildZ = 0;
+    QObjectList kids = children();
+    bool foundCopyrights = false;
+
+    for (int i = 0; i < kids.size(); i++) {
+        QDeclarativeGeoMapCopyrightNotice *copyrights = qobject_cast<QDeclarativeGeoMapCopyrightNotice*>(kids.at(i));
+        if (copyrights) {
+            foundCopyrights = true;
+        } else {
+            QDeclarativeGeoMapItemBase* mapItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
+            if (mapItem) {
+                if (mapItem->z() > maxChildZ)
+                    maxChildZ = mapItem->z();
+            }
+        }
+    }
+
+    QDeclarativeGeoMapCopyrightNotice *copyrights = copyrightsWPtr_.data();
+    // if copyrights object not found within the map's children
+    if (!foundCopyrights) {
+        // if copyrights object was deleted!
+        if (!copyrights) {
+            // create a new one and set its parent, re-assign it to the weak pointer, then connect the copyrights-change signal
+            copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
+            copyrights = copyrightsWPtr_.data();
+            connect(map_,
+                    SIGNAL(copyrightsChanged(const QImage&, const QPoint&)),
+                    copyrights,
+                    SLOT(copyrightsChanged(const QImage&, const QPoint&)));
+        } else {
+            // just re-set its parent.
+            copyrights->setParent(this);
+        }
+    }
+
+    // put the copyrights notice object at the highest z order
+    copyrights->setCopyrightsZ(maxChildZ + 1);
 }
 
 void QDeclarativeGeoMap::pluginReady()
@@ -395,6 +446,12 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     map_->setActiveMapType(QGeoMapType());
     flickable_->setMap(map_);
+
+    copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
+    connect(map_,
+            SIGNAL(copyrightsChanged(const QImage&, const QPoint&)),
+            copyrightsWPtr_.data(),
+            SLOT(copyrightsChanged(const QImage&, const QPoint&)));
 
     pinchArea_->zoomLevelLimits(mappingManager_->cameraCapabilities().minimumZoomLevel(),
                                 mappingManager_->cameraCapabilities().maximumZoomLevel());

@@ -99,6 +99,7 @@ public:
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
 
     void tileFetched(const QGeoTileSpec &spec);
+    QSet<QGeoTileSpec> visibleTiles();
 
 private:
     QGeoTiledMapData *map_;

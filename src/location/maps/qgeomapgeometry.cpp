@@ -63,9 +63,10 @@
 #include <cmath>
 
 QT_BEGIN_NAMESPACE
+
 class QGeoMapGeometryPrivate {
 public:
-    QGeoMapGeometryPrivate();
+    QGeoMapGeometryPrivate(QGeoMapGeometry *geometry);
     ~QGeoMapGeometryPrivate();
 
     QSize screenSize_;
@@ -118,10 +119,15 @@ public:
     void setupCamera();
 
     void paintGL(QGLPainter *painter);
+
+private:
+    QGeoMapGeometry *q_ptr;
+    Q_DECLARE_PUBLIC(QGeoMapGeometry)
 };
 
 QGeoMapGeometry::QGeoMapGeometry()
-    : d_ptr(new QGeoMapGeometryPrivate()) {}
+    : QObject(),
+      d_ptr(new QGeoMapGeometryPrivate(this)) {}
 
 QGeoMapGeometry::~QGeoMapGeometry()
 {
@@ -202,7 +208,7 @@ void QGeoMapGeometry::paintGL(QGLPainter *painter)
     d->paintGL(painter);
 }
 
-QGeoMapGeometryPrivate::QGeoMapGeometryPrivate()
+QGeoMapGeometryPrivate::QGeoMapGeometryPrivate(QGeoMapGeometry *geometry)
     : tileSize_(0),
       camera_(new QGLCamera()),
       sceneNode_(new QGLSceneNode()),
@@ -224,7 +230,8 @@ QGeoMapGeometryPrivate::QGeoMapGeometryPrivate()
       screenWidth_(0.0),
       screenHeight_(0.0),
       useVerticalLock_(false),
-      verticalLock_(false) {}
+      verticalLock_(false),
+      q_ptr(geometry) {}
 
 QGeoMapGeometryPrivate::~QGeoMapGeometryPrivate()
 {
@@ -366,8 +373,14 @@ void QGeoMapGeometryPrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QG
     }
 }
 
+// return true if new tiles introduced in [tiles]
 void QGeoMapGeometryPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
 {
+    Q_Q(QGeoMapGeometry);
+
+    // detect if new tiles introduced
+    bool newTilesIntroduced = !visibleTiles_.contains(tiles);
+
     // work out the tile bounds for the new geometry
     setTileBounds(tiles);
 
@@ -382,6 +395,8 @@ void QGeoMapGeometryPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
         updateTiles(toUpdate);
 
     visibleTiles_ = tiles;
+    if (newTilesIntroduced)
+        emit q->newTilesVisible(visibleTiles_);
 }
 
 void QGeoMapGeometryPrivate::updateTiles(const QSet<QGeoTileSpec> &tiles)

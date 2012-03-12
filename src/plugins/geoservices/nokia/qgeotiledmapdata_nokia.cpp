@@ -48,11 +48,7 @@
 
 #include "qgeotiledmapdata_nokia.h"
 #include "jsonparser.h"
-#include "qgeoboundingbox.h"
-#include "qgeocoordinate.h"
-
-#include <QNetworkAccessManager>
-#include <QNetworkProxy>
+#include "qgeotilespec.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -61,12 +57,27 @@ QT_BEGIN_NAMESPACE
  \a geoMap and makes use of the functionality provided by \a engine.
  */
 QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent /*= 0*/) :
-    QGeoTiledMapData(engine, parent)
-{
-}
+    QGeoTiledMapData(engine, parent),
+    watermark(":/images/watermark.png"), // default watermark
+    lastZoomLevel(-1), // an invalid zoom level
+    mapSize(-1, -1), // an invalid map object size
+    lastMapId(-1) /* an invalid map Id */ {}
 
-QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia()
+QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia() {}
+
+// Current implementation is just to accomodate for first time visible tiles change, or map width/height change.
+void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
 {
+    // TODO: implementation of real copyrights fetching mechanism.
+    static bool firstTimeChange = true;
+
+    if (firstTimeChange || height() != mapSize.height() || width() != mapSize.width()) {
+        firstTimeChange = false;
+        QPoint copyrightsPos(10, height() - 50);
+        emit copyrightsChanged(watermark, copyrightsPos);
+    }
+    mapSize.setWidth(width());
+    mapSize.setHeight(height());
 }
 
 QT_END_NAMESPACE

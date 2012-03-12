@@ -91,6 +91,9 @@ protected:
     void changeCameraData(const QGeoCameraData &oldCameraData);
     void changeActiveMapType(const QGeoMapType mapType);
 
+protected Q_SLOTS:
+    virtual void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);
+
 private:
     QGeoTiledMapDataPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoTiledMapData)
