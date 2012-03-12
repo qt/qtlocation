@@ -270,7 +270,19 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
     unsupported |= !query.searchTerm().isEmpty() && query.offset() > 0;
 
-    if (!unsupported && !query.searchTerm().isEmpty() && query.categories().isEmpty()) {
+    // Both a search term and search categories are not supported.
+    unsupported |= !query.searchTerm().isEmpty() && !query.categories().isEmpty();
+
+    if (unsupported) {
+        QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(0, this);
+        QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
+                                  Q_ARG(QPlaceReply::Error, QPlaceReply::BadArgumentError),
+                                  Q_ARG(QString, "Unsupported search request options specified."));
+
+        return reply;
+    }
+
+    if (!query.searchTerm().isEmpty()) {
         // search term query
         QUrl requestUrl(m_placesServer + QLatin1String("/v1/discover/search"));
 
@@ -297,7 +309,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
                 this, SLOT(replyError(QPlaceReply::Error,QString)));
 
         return reply;
-    } else if (!unsupported && query.searchTerm().isEmpty() && !query.categories().isEmpty()) {
+    } else {
         // category search
         // The request URL should be "/v1/discover/explore" but that returns both places and
         // clusters of places.  We don't support clusters so we use the undocumented
@@ -337,13 +349,6 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         return reply;
     }
-
-    QPlaceSearchReplyImpl *reply = new QPlaceSearchReplyImpl(0, this);
-    QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
-                              Q_ARG(QPlaceReply::Error, QPlaceReply::BadArgumentError),
-                              Q_ARG(QString, "Unsupported search request options specified."));
-
-    return reply;
 }
 
 QPlaceSearchReply *QPlaceManagerEngineNokiaV2::recommendations(const QString &placeId, const QPlaceSearchRequest &query)
