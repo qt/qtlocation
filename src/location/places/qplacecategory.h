@@ -85,6 +85,8 @@ public:
     QPlaceIcon icon() const;
     void setIcon(const QPlaceIcon &icon);
 
+    bool isEmpty() const;
+
 private:
     QSharedDataPointer<QPlaceCategoryPrivate> d;
 };

@@ -3,7 +3,7 @@
 ** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/
 **
-** This file is part of the QtLocation module of the Qt Toolkit.
+** This file is part of the test suite of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** GNU Lesser General Public License Usage
@@ -39,34 +39,70 @@
 **
 ****************************************************************************/
 
-#ifndef QPLACECATEGORY_P_H
-#define QPLACECATEGORY_P_H
-
-#include <QtCore/QSharedData>
 #include <QtCore/QString>
-#include <QtLocation/qtlocation.h>
+#include <QtTest/QtTest>
 
-#include "qplaceicon.h"
+#include <qplaceattribute.h>
 
-QT_BEGIN_NAMESPACE
+QT_USE_NAMESPACE
 
-class QPlaceCategoryPrivate : public QSharedData
+class tst_QPlaceAttribute : public QObject
 {
+    Q_OBJECT
+
 public:
-    QPlaceCategoryPrivate();
-    QPlaceCategoryPrivate(const QPlaceCategoryPrivate &other);
+    tst_QPlaceAttribute();
 
-    ~QPlaceCategoryPrivate();
-    QPlaceCategoryPrivate &operator= (const QPlaceCategoryPrivate &other);
-    bool operator==(const QPlaceCategoryPrivate &other) const;
-    bool isEmpty() const;
-
-    QString categoryId;
-    QString name;
-    QtLocation::Visibility visibility;
-    QPlaceIcon icon;
+private Q_SLOTS:
+    void constructorTest();
+    void operatorsTest();
+    void isEmptyTest();
 };
 
-QT_END_NAMESPACE
+tst_QPlaceAttribute::tst_QPlaceAttribute()
+{
+}
 
-#endif // QPLACECATEGORY_P_H
+void tst_QPlaceAttribute::constructorTest()
+{
+    QPlaceAttribute testObj;
+
+    QPlaceAttribute *testObjPtr = new QPlaceAttribute(testObj);
+    QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
+    QVERIFY2(testObjPtr->label() == QString(), "Copy constructor - wrong label");
+    QVERIFY2(testObjPtr->text() == QString(), "Copy constructor - wrong text");
+    QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
+    delete testObjPtr;
+}
+
+void tst_QPlaceAttribute::operatorsTest()
+{
+    QPlaceAttribute testObj;
+    testObj.setLabel(QStringLiteral("label"));
+    QPlaceAttribute testObj2;
+    testObj2 = testObj;
+    QVERIFY2(testObj == testObj2, "Not copied correctly");
+    testObj2.setText(QStringLiteral("text"));
+    QVERIFY2(testObj != testObj2, "Object should be different");
+}
+
+void tst_QPlaceAttribute::isEmptyTest()
+{
+    QPlaceAttribute attribute;
+
+    QVERIFY(attribute.isEmpty());
+
+    attribute.setLabel(QStringLiteral("label"));
+    QVERIFY(!attribute.isEmpty());
+    attribute.setLabel(QString());
+    QVERIFY(attribute.isEmpty());
+
+    attribute.setText(QStringLiteral("text"));
+    QVERIFY(!attribute.isEmpty());
+    attribute.setText(QString());
+    QVERIFY(attribute.isEmpty());
+}
+
+QTEST_APPLESS_MAIN(tst_QPlaceAttribute);
+
+#include "tst_qplaceattribute.moc"

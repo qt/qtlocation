@@ -67,6 +67,14 @@ QPlaceCategoryPrivate &QPlaceCategoryPrivate::operator=(const QPlaceCategoryPriv
     return *this;
 }
 
+bool QPlaceCategoryPrivate::isEmpty() const
+{
+    return  categoryId.isEmpty()
+            && name.isEmpty()
+            && icon.isEmpty()
+            && QtLocation::UnspecifiedVisibility == visibility;
+}
+
 /*!
     \class QPlaceCategory
     \inmodule QtLocation
@@ -198,6 +206,14 @@ QPlaceIcon QPlaceCategory::icon() const
 void QPlaceCategory::setIcon(const QPlaceIcon &icon)
 {
     d->icon = icon;
+}
+
+/*!
+    Returns a boolean indicating whether the all the fields of the place category are empty or not.
+*/
+bool QPlaceCategory::isEmpty() const
+{
+    return d->isEmpty();
 }
 
 QT_END_NAMESPACE

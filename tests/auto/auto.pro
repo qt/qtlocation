@@ -2,6 +2,7 @@ TEMPLATE = subdirs
 
 #Place unit tests
 SUBDIRS += qplace \
+           qplaceattribute \
            qplacecategory \
            qplacecontactdetail \
            qplacecontentrequest \

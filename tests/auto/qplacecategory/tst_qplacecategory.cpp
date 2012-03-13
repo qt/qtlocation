@@ -43,6 +43,7 @@
 #include <QtTest/QtTest>
 
 #include <qplacecategory.h>
+#include <qplaceicon.h>
 
 QT_USE_NAMESPACE
 
@@ -59,6 +60,7 @@ private Q_SLOTS:
     void nameTest();
     void visibilityTest();
     void operatorsTest();
+    void isEmptyTest();
 };
 
 tst_QPlaceCategory::tst_QPlaceCategory()
@@ -113,6 +115,39 @@ void tst_QPlaceCategory::operatorsTest()
     QVERIFY2(testObj == testObj2, "Not copied correctly");
     testObj2.setCategoryId("a3rfg");
     QVERIFY2(testObj != testObj2, "Object should be different");
+}
+
+void tst_QPlaceCategory::isEmptyTest()
+{
+    QPlaceIcon icon;
+    QVariantMap parameters;
+    parameters.insert(QLatin1String("para"), QLatin1String("meter"));
+    icon.setParameters(parameters);
+    QVERIFY(!icon.isEmpty());
+
+    QPlaceCategory category;
+
+    QVERIFY(category.isEmpty());
+
+    category.setName(QStringLiteral("name"));
+    QVERIFY(!category.isEmpty());
+    category.setName(QString());
+    QVERIFY(category.isEmpty());
+
+    category.setCategoryId(QStringLiteral("id"));
+    QVERIFY(!category.isEmpty());
+    category.setCategoryId(QString());
+    QVERIFY(category.isEmpty());
+
+    category.setVisibility(QtLocation::PublicVisibility);
+    QVERIFY(!category.isEmpty());
+    category.setVisibility(QtLocation::UnspecifiedVisibility);
+    QVERIFY(category.isEmpty());
+
+    category.setIcon(icon);
+    QVERIFY(!category.isEmpty());
+    category.setIcon(QPlaceIcon());
+    QVERIFY(category.isEmpty());
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceCategory);

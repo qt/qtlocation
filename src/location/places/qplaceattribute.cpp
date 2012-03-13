@@ -65,6 +65,13 @@ bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) co
             && text == other.text;
 }
 
+bool QPlaceAttributePrivate::isEmpty() const
+{
+    return  label.isEmpty()
+            && text.isEmpty();
+}
+
+
 /*!
     \class QPlaceAttribute
     \inmodule QtLocation
@@ -210,4 +217,12 @@ QString QPlaceAttribute::text() const
 void QPlaceAttribute::setText(const QString &text)
 {
     d_ptr->text = text;
+}
+
+/*!
+    Returns a boolean indicating whether the all the fields of the place attribute are empty or not.
+*/
+bool QPlaceAttribute::isEmpty() const
+{
+    return d_ptr->isEmpty();
 }

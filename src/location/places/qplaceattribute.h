@@ -77,6 +77,8 @@ public:
     QString text() const;
     void setText(const QString &text);
 
+    bool isEmpty() const;
+
 protected:
     QSharedDataPointer<QPlaceAttributePrivate> d_ptr;
 };
