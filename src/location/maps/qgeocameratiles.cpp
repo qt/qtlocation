@@ -189,6 +189,12 @@ void QGeoCameraTiles::setTileSize(int tileSize)
     d->updateGeometry();
 }
 
+int QGeoCameraTiles::tileSize() const
+{
+    Q_D(const QGeoCameraTiles);
+    return d->tileSize_;
+}
+
 void QGeoCameraTiles::setMaximumZoomLevel(int maxZoom)
 {
     Q_D(QGeoCameraTiles);

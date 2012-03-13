@@ -60,7 +60,7 @@ public:
     void tileFetched(const QGeoTileSpec &tile);
 
     QSet<QGeoTileSpec> visible_;
-    QSet<QGeoTileSpec> cached_;
+    QList<QSharedPointer<QGeoTileTexture> > cachedTex_;
     QSet<QGeoTileSpec> requested_;
 };
 
@@ -78,10 +78,10 @@ void QGeoMapImages::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
     d->setVisibleTiles(tiles);
 }
 
-QSet<QGeoTileSpec> QGeoMapImages::cachedTiles() const
+QList<QSharedPointer<QGeoTileTexture> > QGeoMapImages::cachedTiles() const
 {
     Q_D(const QGeoMapImages);
-    return d->cached_;
+    return d->cachedTex_;
 }
 
 void QGeoMapImages::tileFetched(const QGeoTileSpec &tile)
@@ -102,22 +102,27 @@ void QGeoMapImagesPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
 {
     QSet<QGeoTileSpec> cancelTiles = requested_ - tiles;
     QSet<QGeoTileSpec> requestTiles = tiles - visible_ - requested_;
+    QSet<QGeoTileSpec> cached;
 
-    cached_.clear();
+    typedef QSet<QGeoTileSpec>::const_iterator iter;
+
+    cachedTex_.clear();
 
     // remove tiles in cache from request tiles
     if (cache_) {
-        typedef QSet<QGeoTileSpec>::const_iterator iter;
         iter i = requestTiles.constBegin();
         iter end = requestTiles.constEnd();
         for (; i != end; ++i) {
             QGeoTileSpec tile = *i;
-            if (cache_->contains(tile))
-                cached_.insert(tile);
+            QSharedPointer<QGeoTileTexture> tex = cache_->get(tile);
+            if (tex) {
+                cachedTex_ << tex;
+                cached.insert(tile);
+            }
         }
     }
 
-    requestTiles -= cached_;
+    requestTiles -= cached;
 
     visible_ = tiles;
 

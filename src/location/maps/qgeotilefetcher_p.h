@@ -58,6 +58,8 @@
 #include <QMap>
 #include <QLocale>
 #include <QTimer>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QHash>
 #include "qgeomaptype.h"
 
@@ -80,6 +82,7 @@ public:
     bool stopped_;
     bool initialized_;
     QTimer *timer_;
+    QMutex queueMutex_;
     QList<QGeoTileSpec> queue_;
     QHash<QGeoTileSpec, QGeoTiledMapReply*> invmap_;
 

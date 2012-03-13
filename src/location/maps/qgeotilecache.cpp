@@ -56,54 +56,53 @@ Q_DECLARE_METATYPE(QSet<QGeoTileSpec>)
 
 QT_BEGIN_NAMESPACE
 
-class TileDisk
+class QGeoCachedTileMemory
 {
 public:
-    ~TileDisk()
+    ~QGeoCachedTileMemory()
     {
-//        qWarning() << "evicting (disk) " << spec;
-//        cache->evictFromDiskCache(this);
+        if (cache)
+            cache->evictFromMemoryCache(this);
     }
 
     QGeoTileSpec spec;
-    QString filename;
     QGeoTileCache *cache;
+    QByteArray bytes;
+    QString format;
 };
 
-class TileMemory
+void QCache3QTileEvictionPolicy::aboutToBeRemoved(const QGeoTileSpec &key, QSharedPointer<QGeoCachedTileDisk> obj)
 {
-public:
-    ~TileMemory()
-    {
-//        qWarning() << "evicting (memory) " << spec;
-        cache->evictFromMemoryCache(this);
-    }
+    Q_UNUSED(key);
+    // set the cache pointer to zero so we can't call evictFromDiskCache
+    obj->cache = 0;
+}
 
-    QGeoTileSpec spec;
-    QPixmap pixmap;
-    QGeoTileCache *cache;
-};
+void QCache3QTileEvictionPolicy::aboutToBeEvicted(const QGeoTileSpec &key, QSharedPointer<QGeoCachedTileDisk> obj)
+{
+    Q_UNUSED(key);
+    Q_UNUSED(obj);
+    // leave the pointer set if it's a real eviction
+}
 
-class TileTexture {
-public:
-    ~TileTexture()
-    {
-//        qWarning() << "evicting (texture) " << spec;
+QGeoCachedTileDisk::~QGeoCachedTileDisk()
+{
+    if (cache)
+        cache->evictFromDiskCache(this);
+}
+
+QGeoTileTexture::~QGeoTileTexture()
+{
+    if (cache)
         cache->evictFromTextureCache(this);
-    }
-
-    QGeoTileSpec spec;
-    QGLTexture2D *texture;
-    QGeoTileCache *cache;
-};
+}
 
 QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
-:   QObject(parent), directory_(directory)
+    : QObject(parent), directory_(directory)
 {
     qRegisterMetaType<QGeoTileSpec>();
     qRegisterMetaType<QList<QGeoTileSpec> >();
     qRegisterMetaType<QSet<QGeoTileSpec> >();
-
 
     if (directory_.isEmpty()) {
         QString dirname = QLatin1String(".tilecache");
@@ -112,16 +111,22 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
             home.mkdir(dirname);
         directory_ = home.filePath(dirname);
     }
-    qDebug() << __FUNCTION__ << directory_;
 
-    diskCache_.setMaxCost(100 * 1024 * 1024);
-    memoryCache_.setMaxCost(50 * 1024 * 1024);
-    textureCache_.setMaxCost(100 * 1024 * 1024);
+    setMaxDiskUsage(20 * 1024 * 1024);
+    setMaxMemoryUsage(4 * 1024 * 1024);
+    setMaxTextureUsage(16 * 1024 * 1024);
 
     loadTiles();
 }
 
 QGeoTileCache::~QGeoTileCache() {}
+
+void QGeoTileCache::printStats()
+{
+    textureCache_.printStats();
+    memoryCache_.printStats();
+    diskCache_.printStats();
+}
 
 void QGeoTileCache::setMaxDiskUsage(int diskUsage)
 {
@@ -170,41 +175,63 @@ int QGeoTileCache::textureUsage() const
 
 void QGeoTileCache::GLContextAvailable()
 {
-    int size = cleanupList_.size();
-    for (int i = 0; i < size; ++i) {
-        QGLTexture2D* texture = cleanupList_.at(i);
+    QMutexLocker ml(&cleanupMutex_);
+
+    /* Throttle the cleanup to 10 items/frame to avoid blocking the render
+     * for too long. Normally only 6-20 tiles are on screen at a time so
+     * eviction rates shouldn't be much higher than this. */
+    int todo = qMin(cleanupList_.size(), 10);
+    for (int i = 0; i < todo; ++i) {
+        QGLTexture2D *texture = cleanupList_.front();
         if (texture) {
             texture->release();
+            texture->cleanupResources();
             delete texture;
         }
+        cleanupList_.pop_front();
     }
-    cleanupList_.clear();
 }
 
-bool QGeoTileCache::contains(const QGeoTileSpec &spec) const
+QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
 {
-    return keys_.contains(spec);
-}
+    QSharedPointer<QGeoTileTexture> tt = textureCache_.object(spec);
+    if (tt)
+        return tt;
 
-QGLTexture2D* QGeoTileCache::get(const QGeoTileSpec &spec)
-{
-    if (textureCache_.contains(spec)) {
-        TileTexture *tt = textureCache_.object(spec);
-        return tt->texture;
-    }
-//    if (memoryCache_.contains(spec)) {
-//        TileMemory *tm = memoryCache_.object(spec);
-//        TileTexture *tt = addToTextureCache(tm->spec, tm->pixmap);
-//        return tt->texture;
-//    }
-    if (diskCache_.contains(spec)) {
-        TileDisk *td = diskCache_.object(spec);
-//        TileMemory *tm = addToMemoryCache(td->spec, QPixmap(td->filename));
-        TileTexture *tt = addToTextureCache(td->spec, QPixmap(td->filename));
-        return tt->texture;
+    QSharedPointer<QGeoCachedTileMemory> tm = memoryCache_.object(spec);
+    if (tm) {
+        QPixmap pixmap;
+        if (!pixmap.loadFromData(tm->bytes)) {
+            handleError(spec, QLatin1String("Problem with tile image"));
+            return QSharedPointer<QGeoTileTexture>(0);
+        }
+        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(spec, pixmap);
+        if (tt)
+            return tt;
     }
 
-    return 0;
+    QSharedPointer<QGeoCachedTileDisk> td = diskCache_.object(spec);
+    if (td) {
+        QStringList parts = td->filename.split('.');
+        QFile file(td->filename);
+        file.open(QIODevice::ReadOnly);
+        QByteArray bytes = file.readAll();
+        file.close();
+
+        QPixmap pixmap;
+        const char *format = (parts.size() == 2 ? parts.at(1).toLocal8Bit().constData() : 0);
+        if (!pixmap.loadFromData(bytes, format)) {
+            handleError(spec, QLatin1String("Problem with tile image"));
+            return QSharedPointer<QGeoTileTexture>(0);
+        }
+
+        addToMemoryCache(spec, bytes, (parts.size() == 2 ? parts.at(1) : ""));
+        QSharedPointer<QGeoTileTexture> tt = addToTextureCache(td->spec, pixmap);
+        if (tt)
+            return tt;
+    }
+
+    return QSharedPointer<QGeoTileTexture>();
 }
 
 void QGeoTileCache::insert(const QGeoTileSpec &spec,
@@ -212,15 +239,6 @@ void QGeoTileCache::insert(const QGeoTileSpec &spec,
                            const QString &format,
                            QGeoTiledMappingManagerEngine::CacheAreas areas)
 {
-    keys_.insert(spec);
-
-    QPixmap pixmap;
-    // TODO use format string here to hint to the loading code?
-    if (!pixmap.loadFromData(bytes)) {
-        handleError(spec, QLatin1String("Problem with tile image"));
-        return;
-    }
-
     if (areas & QGeoTiledMappingManagerEngine::DiskCache) {
         QString filename = tileSpecToFilename(spec, format, directory_);
 
@@ -233,36 +251,32 @@ void QGeoTileCache::insert(const QGeoTileSpec &spec,
     }
 
     if (areas & QGeoTiledMappingManagerEngine::MemoryCache) {
-//        addToMemoryCache(spec, pixmap);
+        addToMemoryCache(spec, bytes, format);
     }
 
-    if (areas & QGeoTiledMappingManagerEngine::TextureCache) {
-        addToTextureCache(spec, pixmap);
-    }
+    /* inserts do not hit the texture cache -- this actually reduces overall
+     * cache hit rates because many tiles come too late to be useful
+     * and act as a poison */
 }
 
-void QGeoTileCache::evictFromDiskCache(TileDisk *td)
+void QGeoTileCache::evictFromDiskCache(QGeoCachedTileDisk *td)
 {
-    keys_.remove(td->spec);
     QFile::remove(td->filename);
 }
 
-void QGeoTileCache::evictFromMemoryCache(TileMemory * /* tm  */)
+void QGeoTileCache::evictFromMemoryCache(QGeoCachedTileMemory * /* tm  */)
 {
 }
 
-void QGeoTileCache::evictFromTextureCache(TileTexture *tt)
+void QGeoTileCache::evictFromTextureCache(QGeoTileTexture *tt)
 {
+    QMutexLocker ml(&cleanupMutex_);
     cleanupList_ << tt->texture;
 }
 
-TileDisk* QGeoTileCache::addToDiskCache(const QGeoTileSpec &spec, const QString &filename)
+QSharedPointer<QGeoCachedTileDisk> QGeoTileCache::addToDiskCache(const QGeoTileSpec &spec, const QString &filename)
 {
-    keys_.insert(spec);
-
-//    qWarning() << "adding (disk) " << spec;
-
-    TileDisk *td = new TileDisk;
+    QSharedPointer<QGeoCachedTileDisk> td(new QGeoCachedTileDisk);
     td->spec = spec;
     td->filename = filename;
     td->cache = this;
@@ -270,56 +284,39 @@ TileDisk* QGeoTileCache::addToDiskCache(const QGeoTileSpec &spec, const QString 
     QFileInfo fi(filename);
     int diskCost = fi.size();
 
-    diskCache_.insert(spec,
-                      td,
-                      diskCost);
-
+    diskCache_.insert(spec, td, diskCost);
     return td;
 }
 
-TileMemory* QGeoTileCache::addToMemoryCache(const QGeoTileSpec &spec, const QPixmap &pixmap)
+QSharedPointer<QGeoCachedTileMemory> QGeoTileCache::addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format)
 {
-    keys_.insert(spec);
+    QSharedPointer<QGeoCachedTileMemory> tt(new QGeoCachedTileMemory);
+    tt->spec = spec;
+    tt->cache = this;
+    tt->bytes = bytes;
+    tt->format = format;
 
-//    qWarning() << "adding (memory) " << spec;
+    int cost = bytes.size();
+    memoryCache_.insert(spec, tt, cost);
 
-    TileMemory *tm = new TileMemory;
-    tm->spec = spec;
-    tm->pixmap = pixmap;
-    tm->cache = this;
-
-    int memoryCost = pixmap.width() * pixmap.height() * pixmap.depth() / 8;
-
-    memoryCache_.insert(spec,
-                        tm,
-                        memoryCost);
-
-    return tm;
+    return tt;
 }
 
-TileTexture* QGeoTileCache::addToTextureCache(const QGeoTileSpec &spec, const QPixmap &pixmap)
+QSharedPointer<QGeoTileTexture> QGeoTileCache::addToTextureCache(const QGeoTileSpec &spec, const QPixmap &pixmap)
 {
-    keys_.insert(spec);
-
-//    qWarning() << "adding (texture) " << spec;
-
-    TileTexture *tt = new TileTexture;
+    QSharedPointer<QGeoTileTexture> tt(new QGeoTileTexture);
     tt->spec = spec;
     tt->texture = new QGLTexture2D();
     tt->texture->setPixmap(pixmap);
     tt->texture->setHorizontalWrap(QGL::ClampToEdge);
     tt->texture->setVerticalWrap(QGL::ClampToEdge);
-
-//    tt->texture->bind();
-//    tt->texture->clearImage();
-
     tt->cache = this;
 
-    int textureCost = pixmap.width() * pixmap.height() * pixmap.depth() / 8;;
+    /* Do not bind/cleanImage on the texture here -- it needs to be done
+     * in the render thread (by qgeomapgeometry) */
 
-    textureCache_.insert(spec,
-                         tt,
-                         textureCost);
+    int textureCost = pixmap.width() * pixmap.height() * pixmap.depth() / 8;
+    textureCache_.insert(spec, tt, textureCost);
 
     return tt;
 }
@@ -347,8 +344,6 @@ void QGeoTileCache::loadTiles()
         addToDiskCache(spec, filename);
         tiles++;
     }
-    qDebug() << __FUNCTION__ << " loaded this many map tiles to cache: " << tiles;
-
 }
 
 QString QGeoTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory)

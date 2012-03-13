@@ -58,7 +58,8 @@ PRIVATE_HEADERS += \
                     maps/qgeoserviceprovider_p.h \
                     maps/qgeotilecache_p.h \
                     maps/qgeotiledmapreply_p.h \
-                    maps/qgeotilespec_p.h
+                    maps/qgeotilespec_p.h \
+                    maps/qcache3q_p.h
 
 SOURCES += \
             maps/qdoublevector2d.cpp \
@@ -94,3 +95,4 @@ SOURCES += \
             maps/qgeotilecache.cpp \
             maps/qgeotiledmapreply.cpp \
             maps/qgeotilespec.cpp
+

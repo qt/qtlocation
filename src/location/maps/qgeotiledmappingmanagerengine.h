@@ -76,7 +76,6 @@ public:
     enum CacheArea {
         DiskCache = 0x01,
         MemoryCache = 0x02,
-        TextureCache = 0x04,
         AllCaches = 0xFF
     };
     Q_DECLARE_FLAGS(CacheAreas, CacheArea)

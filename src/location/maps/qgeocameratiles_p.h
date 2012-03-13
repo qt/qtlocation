@@ -76,6 +76,8 @@ public:
     void setTileSize(int tileSize);
     void setMaximumZoomLevel(int maxZoom);
 
+    int tileSize() const;
+
     void setPluginString(const QString &pluginString);
     void setMapType(const QGeoMapType &mapType);
 

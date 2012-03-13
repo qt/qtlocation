@@ -68,6 +68,7 @@ class QGLSceneNode;
 class QGLCamera;
 class QGLPainter;
 class QGLTexture2D;
+class QGeoTileTexture;
 
 class QPointF;
 
@@ -85,7 +86,7 @@ public:
 
     void setUseVerticalLock(bool lock);
 
-    void addTile(const QGeoTileSpec &spec, QGLTexture2D *texture);
+    void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
 
     QDoubleVector2D screenPositionToMercator(const QPointF &pos) const;
     QPointF mercatorToScreenPosition(const QDoubleVector2D &mercator) const;

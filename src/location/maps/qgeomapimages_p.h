@@ -53,6 +53,8 @@
 //
 
 #include <QSet>
+#include <QList>
+#include <QSharedPointer>
 
 QT_BEGIN_NAMESPACE
 
@@ -60,6 +62,7 @@ class QGeoTiledMapData;
 class QGeoTiledMappingManagerEngine;
 class QGeoTileSpec;
 class QGeoTileCache;
+class QGeoTileTexture;
 
 class QGeoMapImagesPrivate;
 
@@ -70,7 +73,7 @@ public:
     ~QGeoMapImages();
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
-    QSet<QGeoTileSpec> cachedTiles() const;
+    QList<QSharedPointer<QGeoTileTexture> > cachedTiles() const;
 
     void tileFetched(const QGeoTileSpec &tile);
 

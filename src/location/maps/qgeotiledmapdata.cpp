@@ -264,17 +264,11 @@ void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraDa
     if (mapImages_) {
         mapImages_->setVisibleTiles(visibleTiles_);
 
-        //QSet<QGeoTileSpec> cachedTiles = mapImages_->cachedTiles();
-        // TODO make this more efficient
-        QSet<QGeoTileSpec> cachedTiles = visibleTiles_;
+        QList<QSharedPointer<QGeoTileTexture> > cachedTiles =
+                mapImages_->cachedTiles();
 
-        typedef QSet<QGeoTileSpec>::const_iterator iter;
-        iter i = cachedTiles.constBegin();
-        iter end = cachedTiles.constEnd();
-        for (; i != end; ++i) {
-            QGeoTileSpec tile = *i;
-            if (cache_->contains(tile))
-                mapGeometry_->addTile(tile, cache_->get(tile));
+        foreach (QSharedPointer<QGeoTileTexture> tex, cachedTiles) {
+            mapGeometry_->addTile(tex->spec, tex);
         }
 
         if (!cachedTiles.isEmpty())
@@ -294,12 +288,29 @@ void QGeoTiledMapDataPrivate::resized(int width, int height)
     cameraTiles_->setScreenSize(QSize(width, height));
     mapGeometry_->setScreenSize(QSize(width, height));
     map_->setCameraData(map_->cameraData());
+
+    if (width > 0 && height > 0 && cache_ && cameraTiles_) {
+        // absolute minimum size: one tile each side of display, 32-bit colour
+        int texCacheSize = (width + cameraTiles_->tileSize()*2) *
+                (height + cameraTiles_->tileSize()*2) * 4;
+
+        // triple it for good measure
+        texCacheSize *= 3;
+
+        int newSize = qMax(cache_->maxTextureUsage(), texCacheSize);
+        if (newSize == texCacheSize) {
+            qDebug("Increasing texcache size to %d bytes", newSize);
+            cache_->setMaxTextureUsage(newSize);
+        }
+    }
 }
 
 void QGeoTiledMapDataPrivate::tileFetched(const QGeoTileSpec &spec)
 {
-    if (cache_->contains(spec))
-        mapGeometry_->addTile(spec, cache_->get(spec));
+    QSharedPointer<QGeoTileTexture> tex = cache_->get(spec);
+    if (tex) {
+        mapGeometry_->addTile(spec, tex);
+    }
     mapImages_->tileFetched(spec);
     map_->update();
 }
@@ -307,6 +318,7 @@ void QGeoTiledMapDataPrivate::tileFetched(const QGeoTileSpec &spec)
 void QGeoTiledMapDataPrivate::paintGL(QGLPainter *painter)
 {
     mapGeometry_->paintGL(painter);
+    cache_->GLContextAvailable();
 }
 
 QGeoCoordinate QGeoTiledMapDataPrivate::screenPositionToCoordinate(const QPointF &pos) const

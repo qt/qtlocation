@@ -105,6 +105,8 @@ void QGeoTileFetcher::updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded,
 {
     Q_D(QGeoTileFetcher);
 
+    QMutexLocker ml(&d->queueMutex_);
+
     if (d->stopped_)
         return;
 
@@ -126,6 +128,10 @@ void QGeoTileFetcher::cancelTileRequests(const QSet<QGeoTileSpec> &tiles)
     for (; tile != end; ++tile) {
         QGeoTiledMapReply* reply = d->invmap_.value(*tile, 0);
         if (reply) {
+            /* when we call abort() it will directly emit finished(), so
+             * we must disconnect it first to avoid recursing on the lock */
+            disconnect(reply, SIGNAL(finished()),
+                       this, SLOT(finished()));
             d->invmap_.remove(*tile);
             reply->abort();
             reply->deleteLater();
@@ -140,6 +146,8 @@ void QGeoTileFetcher::cancelTileRequests(const QSet<QGeoTileSpec> &tiles)
 void QGeoTileFetcher::requestNextTile()
 {
     Q_D(QGeoTileFetcher);
+
+    QMutexLocker ml(&d->queueMutex_);
 
     if (d->stopped_)
         return;
@@ -171,6 +179,8 @@ void QGeoTileFetcher::requestNextTile()
 void QGeoTileFetcher::finished()
 {
     Q_D(QGeoTileFetcher);
+
+    QMutexLocker ml(&d->queueMutex_);
 
     QGeoTiledMapReply *reply = qobject_cast<QGeoTiledMapReply*>(sender());
     if (!reply)

@@ -42,6 +42,7 @@
 
 #include "qgeocameradata_p.h"
 #include "qgeoprojection_p.h"
+#include "qgeotilecache_p.h"
 #include "qgeotilespec.h"
 
 #include "qdoublevector2d_p.h"
@@ -81,11 +82,14 @@ public:
     int sideLength_;
 
     QHash<QGeoTileSpec, QGLSceneNode*> nodes_;
+    QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > textures_;
+    QList<QSharedPointer<QGeoTileTexture> > newUploads_;
 
     int minTileX_;
     int minTileY_;
     int maxTileX_;
     int maxTileY_;
+    int tileZ_;
     int tileXWrapsBelow_;
 
     double mercatorCenterX_;
@@ -101,14 +105,16 @@ public:
     bool useVerticalLock_;
     bool verticalLock_;
 
-    void addTile(const QGeoTileSpec &spec, QGLTexture2D *texture);
+    void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
 
     QDoubleVector2D screenPositionToMercator(const QPointF &pos) const;
     QPointF mercatorToScreenPosition(const QDoubleVector2D &mercator) const;
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
-    void removeOldTiles(const QSet<QGeoTileSpec> &oldTiles);
-    void setTileBounds();
+    void removeTiles(const QSet<QGeoTileSpec> &oldTiles);
+    void updateTiles(const QSet<QGeoTileSpec> &tiles);
+    QGLSceneNode *buildGeometry(const QGeoTileSpec &spec);
+    void setTileBounds(const QSet<QGeoTileSpec> &tiles);
     void setupCamera();
 
     void paintGL(QGLPainter *painter);
@@ -154,7 +160,7 @@ void QGeoMapGeometry::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
     d->setVisibleTiles(tiles);
 }
 
-void QGeoMapGeometry::addTile(const QGeoTileSpec &spec, QGLTexture2D *texture)
+void QGeoMapGeometry::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture)
 {
     Q_D(QGeoMapGeometry);
     d->addTile(spec, texture);
@@ -270,7 +276,7 @@ QPointF QGeoMapGeometryPrivate::mercatorToScreenPosition(const QDoubleVector2D &
     return QPointF(x + screenOffsetX_, y + screenOffsetY_);
 }
 
-void QGeoMapGeometryPrivate::addTile(const QGeoTileSpec &spec, QGLTexture2D *texture)
+QGLSceneNode *QGeoMapGeometryPrivate::buildGeometry(const QGeoTileSpec &spec)
 {
     int x = spec.x();
 
@@ -280,80 +286,128 @@ void QGeoMapGeometryPrivate::addTile(const QGeoTileSpec &spec, QGLTexture2D *tex
     if ((x < minTileX_)
             || (maxTileX_ < x)
             || (spec.y() < minTileY_)
-            || (maxTileY_ < spec.y())) {
-        return;
+            || (maxTileY_ < spec.y())
+            || (spec.zoom() != tileZ_)) {
+        return 0;
     }
 
+    double edge = scaleFactor_ * tileSize_;
+
+    QGLBuilder builder;
+
+    double x1 = (x - minTileX_);
+    double x2 = x1 + 1.0;
+
+    double y1 = (minTileY_ - spec.y());
+    double y2 = y1 - 1.0;
+
+    x1 *= edge;
+    x2 *= edge;
+    y1 *= edge;
+    y2 *= edge;
+
+    QGeometryData g;
+
+    QDoubleVector3D n = QDoubleVector3D(0, 0, 1);
+
+    g.appendVertex(QVector3D(x1, y1, 0.0));
+    g.appendNormal(n);
+    g.appendTexCoord(QVector2D(0.0, 1.0));
+
+    g.appendVertex(QVector3D(x1, y2, 0.0));
+    g.appendNormal(n);
+    g.appendTexCoord(QVector2D(0.0, 0.0));
+
+    g.appendVertex(QVector3D(x2, y2, 0.0));
+    g.appendNormal(n);
+    g.appendTexCoord(QVector2D(1.0, 0.0));
+
+    g.appendVertex(QVector3D(x2, y1, 0.0));
+    g.appendNormal(n);
+    g.appendTexCoord(QVector2D(1.0, 1.0));
+
+    builder.addQuads(g);
+
+    return builder.finalizedSceneNode();
+}
+
+void QGeoMapGeometryPrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture)
+{
     QGLSceneNode *node = nodes_.value(spec, 0);
     if (!node) {
-
-        double edge = scaleFactor_ * tileSize_;
-
-        QGLBuilder builder;
-
-        double x1 = (x - minTileX_);
-        double x2 = x1 + 1.0;
-
-        double y1 = (minTileY_ - spec.y());
-        double y2 = y1 - 1.0;
-
-        x1 *= edge;
-        x2 *= edge;
-        y1 *= edge;
-        y2 *= edge;
-
-        QGeometryData g;
-
-        QDoubleVector3D n = QDoubleVector3D(0, 0, 1);
-
-        g.appendVertex(QVector3D(x1, y1, 0.0));
-        g.appendNormal(n);
-        g.appendTexCoord(QVector2D(0.0, 1.0));
-
-        g.appendVertex(QVector3D(x1, y2, 0.0));
-        g.appendNormal(n);
-        g.appendTexCoord(QVector2D(0.0, 0.0));
-
-        g.appendVertex(QVector3D(x2, y2, 0.0));
-        g.appendNormal(n);
-        g.appendTexCoord(QVector2D(1.0, 0.0));
-
-        g.appendVertex(QVector3D(x2, y1, 0.0));
-        g.appendNormal(n);
-        g.appendTexCoord(QVector2D(1.0, 1.0));
-
-        builder.addQuads(g);
-
-        node = builder.finalizedSceneNode();
+        node = buildGeometry(spec);
+        if (!node)
+            return;
 
         QGLMaterial *mat = new QGLMaterial(node);
-        mat->setTexture(texture);
+        mat->setTexture(texture->texture);
         node->setEffect(QGL::LitDecalTexture2D);
         node->setMaterial(mat);
 
         sceneNode_->addNode(node);
         nodes_.insert(spec, node);
+        textures_.insert(spec, texture);
+        newUploads_ << texture;
+
     } else {
         // TODO handle texture updates when we make node removal more efficient
-        node->material()->setTexture(texture);
+        if (textures_[spec].data() != texture.data()) {
+            textures_.insert(spec, texture);
+            node->material()->setTexture(texture->texture);
+            newUploads_ << texture;
+        }
     }
 }
 
 void QGeoMapGeometryPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
 {
-    // TODO make this more efficient
-    removeOldTiles(visibleTiles_);
-
-    visibleTiles_ = tiles;
-
     // work out the tile bounds for the new geometry
-    setTileBounds();
+    setTileBounds(tiles);
 
     // set up the gl camera for the new geometry
     setupCamera();
+
+    QSet<QGeoTileSpec> toRemove = visibleTiles_ - tiles;
+    QSet<QGeoTileSpec> toUpdate = visibleTiles_ - toRemove;
+    if (!toRemove.isEmpty())
+        removeTiles(toRemove);
+    if (!toUpdate.isEmpty())
+        updateTiles(toUpdate);
+
+    visibleTiles_ = tiles;
 }
 
-void QGeoMapGeometryPrivate::removeOldTiles(const QSet<QGeoTileSpec> &oldTiles)
+void QGeoMapGeometryPrivate::updateTiles(const QSet<QGeoTileSpec> &tiles)
+{
+    typedef QSet<QGeoTileSpec>::const_iterator iter;
+    iter i = tiles.constBegin();
+    iter end = tiles.constEnd();
+    for (; i != end; ++i) {
+        QGeoTileSpec tile = *i;
+        QGLSceneNode *node = nodes_.value(tile, 0);
+
+        if (node) {
+            sceneNode_->removeNode(node);
+            // TODO: re-use more of the geometry calculations?
+            QGLSceneNode *newNode = buildGeometry(tile);
+
+            if (newNode) {
+                QGLMaterial *mat = new QGLMaterial(newNode);
+                mat->setTexture(textures_[tile]->texture);
+                newNode->setEffect(QGL::LitDecalTexture2D);
+                newNode->setMaterial(mat);
+                sceneNode_->addNode(newNode);
+                nodes_.insert(tile, newNode);
+            } else {
+                nodes_.remove(tile);
+                textures_.remove(tile);
+            }
+            delete node;
+        }
+    }
+}
+
+void QGeoMapGeometryPrivate::removeTiles(const QSet<QGeoTileSpec> &oldTiles)
 {
     typedef QSet<QGeoTileSpec>::const_iterator iter;
     iter i = oldTiles.constBegin();
@@ -366,25 +420,28 @@ void QGeoMapGeometryPrivate::removeOldTiles(const QSet<QGeoTileSpec> &oldTiles)
             // TODO protect with mutex?
             sceneNode_->removeNode(node);
             nodes_.remove(tile);
+            textures_.remove(tile);
             delete node;
-            // TODO handle deleting of node elsewhere?
         }
     }
 }
 
-void QGeoMapGeometryPrivate::setTileBounds()
+void QGeoMapGeometryPrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
 {
-    if (visibleTiles_.isEmpty()) {
+    if (tiles.isEmpty()) {
         minTileX_ = -1;
         minTileY_ = -1;
         maxTileX_ = -1;
         maxTileY_ = -1;
+        tileZ_ = -1;
         return;
     }
 
     typedef QSet<QGeoTileSpec>::const_iterator iter;
-    iter i = visibleTiles_.constBegin();
-    iter end = visibleTiles_.constEnd();
+    iter i = tiles.constBegin();
+    iter end = tiles.constEnd();
+
+    tileZ_ = i->zoom();
 
     bool hasFarLeft = false;
     bool hasFarRight = false;
@@ -414,7 +471,7 @@ void QGeoMapGeometryPrivate::setTileBounds()
         }
     }
 
-    i = visibleTiles_.constBegin();
+    i = tiles.constBegin();
 
     QGeoTileSpec tile = *i;
 
@@ -550,6 +607,13 @@ void QGeoMapGeometryPrivate::paintGL(QGLPainter *painter)
     // TODO protect with mutex?
 
     // TODO add a shortcut here for when we don't need to repeat and clip the map
+
+    // do any pending upload/releases
+    while (!newUploads_.isEmpty()) {
+        newUploads_.front()->texture->bind();
+        newUploads_.front()->texture->clearImage();
+        newUploads_.pop_front();
+    }
 
     glEnable(GL_SCISSOR_TEST);
 

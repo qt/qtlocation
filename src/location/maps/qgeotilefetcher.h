@@ -70,9 +70,9 @@ public Q_SLOTS:
     void threadStarted();
     void threadFinished();
     void updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded, const QSet<QGeoTileSpec> &tilesRemoved);
-    void cancelTileRequests(const QSet<QGeoTileSpec> &tiles);
 
 private Q_SLOTS:
+    void cancelTileRequests(const QSet<QGeoTileSpec> &tiles);
     void requestNextTile();
     void finished();
 
