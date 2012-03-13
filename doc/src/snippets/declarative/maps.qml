@@ -45,47 +45,49 @@ import QtQuick 2.0
 import QtLocation 5.0
 //! [QtLocation import]
 
-//! [MapRoute]
-Map {
-    RouteModel {
-        id: routeModel
-    }
+Item {
+    //! [MapRoute]
+    Map {
+        RouteModel {
+            id: routeModel
+        }
 
-    MapItemView {
-        model: routeModel
-        delegate: routeDelegate
-    }
+        MapItemView {
+            model: routeModel
+            delegate: routeDelegate
+        }
 
-    Component {
-        id: routeDelegate
+        Component {
+            id: routeDelegate
 
-        MapRoute {
-            route: routeData
-            line.color: "blue"
-            line.width: 5
-            smooth: true
-            opacity: 0.8
+            MapRoute {
+                route: routeData
+                line.color: "blue"
+                line.width: 5
+                smooth: true
+                opacity: 0.8
+            }
         }
     }
-}
-//! [MapRoute]
+    //! [MapRoute]
 
-//! [Map addMapItem MapCircle at current position]
-PositionSource {
-    id: positionSource
-}
-
-Map {
-    id: map
-    property MapCircle circle
-
-    Component.onCompleted: {
-        circle = Qt.createQmlObject('import QtLocation 5.0; MapCircle {}')
-        circle.center = positionSource.position.coordinate
-        circle.radius = 5000.0
-        circle.color = 'green'
-        circle.border.width = 3
-        map.addMapItem(circle)
+    //! [Map addMapItem MapCircle at current position]
+    PositionSource {
+        id: positionSource
     }
+
+    Map {
+        id: map
+        property MapCircle circle
+
+        Component.onCompleted: {
+            circle = Qt.createQmlObject('import QtLocation 5.0; MapCircle {}')
+            circle.center = positionSource.position.coordinate
+            circle.radius = 5000.0
+            circle.color = 'green'
+            circle.border.width = 3
+            map.addMapItem(circle)
+        }
+    }
+    //! [Map addMapItem MapCircle at current position]
 }
-//! [Map addMapItem MapCircle at current position]
