@@ -42,8 +42,9 @@
 #include "mapnode_p.h"
 #include "qgeomap_p.h"
 #include <Qt3D/qglpainter.h>
-#include <Qt3D/qglframebufferobjectsurface.h>
+#include <Qt3D/QGLFramebufferObjectSurface>
 #include <QtGui/QOpenGLFramebufferObject>
+#include <QtQuick/private/qsgtexture_p.h>
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE 0x809D
@@ -166,7 +167,6 @@ void MapNode::updateFBO()
         QGLCamera defCamera;
         painter.setCamera(&defCamera);
     }
-    painter.projectionMatrix().scale(1, -1, 1);
     m_map->paintGL(&painter);
 
     restoreDefaults(&painter);
@@ -186,7 +186,7 @@ void MapNode::updateFBO()
     painter.end();
 
     QSGGeometry::updateTexturedRectGeometry(&m_geometry,
-                                            QRectF(0, 0, m_fbo->size().width(), m_fbo->size().height()),
+                                            QRectF(QPointF(0, m_fbo->size().height()), QPointF(m_fbo->size().width(), 0)),
                                             QRectF(0, 0, 1, 1));
     delete m_texture;
     m_texture = new QSGPlainTexture();

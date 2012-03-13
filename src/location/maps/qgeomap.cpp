@@ -61,9 +61,9 @@
 
 #include <qnumeric.h>
 
-#include <qglscenenode.h>
-#include <qgeometrydata.h>
-#include <qglbuilder.h>
+#include <Qt3D/qglscenenode.h>
+#include <Qt3D/qgeometrydata.h>
+#include <Qt3D/qglbuilder.h>
 #include <Qt3D/qglpainter.h>
 #include <Qt3D/qgeometrydata.h>
 #include <Qt3D/qglbuilder.h>

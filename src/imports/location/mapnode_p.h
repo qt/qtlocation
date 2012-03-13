@@ -55,14 +55,14 @@
 
 #include <QtQuick/QSGNode>
 #include <QtQuick/QSGTextureMaterial>
-#include <QtQuick/private/qsgtexture_p.h>
-#include <Qt3D/QGLFramebufferObjectSurface>
 
 QT_BEGIN_NAMESPACE
 
 class QGeoMap;
 class QOpenGLFramebufferObject;
+class QGLFramebufferObjectSurface;
 class QGLPainter;
+class QSGPlainTexture;
 
 class MapNode : public QSGGeometryNode
 {

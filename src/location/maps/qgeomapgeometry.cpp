@@ -556,7 +556,6 @@ void QGeoMapGeometryPrivate::paintGL(QGLPainter *painter)
     painter->setScissor(QRect(screenOffsetX_, screenOffsetY_, screenWidth_, screenHeight_));
 
     painter->setCamera(camera_);
-    painter->projectionMatrix().scale(1, -1, 1);
     sceneNode_->draw(painter);
 
     QGLCamera *camera = camera_;
@@ -576,7 +575,6 @@ void QGeoMapGeometryPrivate::paintGL(QGLPainter *painter)
     camera->setEye(e);
 
     painter->setCamera(camera);
-    painter->projectionMatrix().scale(1, -1, 1);
     sceneNode_->draw(painter);
 
     c.setX(c.x() - 2 * sideLength);
@@ -585,7 +583,6 @@ void QGeoMapGeometryPrivate::paintGL(QGLPainter *painter)
     camera->setEye(e);
 
     painter->setCamera(camera);
-    painter->projectionMatrix().scale(1, -1, 1);
     sceneNode_->draw(painter);
 
     c.setX(c.x() + sideLength);
@@ -594,7 +591,6 @@ void QGeoMapGeometryPrivate::paintGL(QGLPainter *painter)
     camera->setEye(e);
 
     painter->setCamera(camera);
-    painter->projectionMatrix().scale(1, -1, 1);
     sceneNode_->draw(painter);
 
     glEnable(GL_DEPTH_TEST);
