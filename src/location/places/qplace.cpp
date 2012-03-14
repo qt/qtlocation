@@ -302,7 +302,9 @@ void QPlace::insertContent(QPlaceContent::Type type, const QPlaceContent::Collec
     Returns the total count of content objects of the given \a type.
     This total count indicates how many the manager/provider should have available.
     (As opposed to how many objects this place instance is currently assigned).
+
     A negative count indicates that the total number of items is unknown.
+    By default the total content count is set to 0.
 */
 int QPlace::totalContentCount(QPlaceContent::Type type) const
 {

@@ -66,7 +66,8 @@ private Q_SLOTS:
     void imageContentTest();
     void reviewContentTest();
     void editorialContentTest();
-    void contentCountTest();
+    void totalContentCountTest();
+    void totalContentCountTest_data();
     void nameTest();
     void placeIdTest();
     void attributionTest();
@@ -120,15 +121,24 @@ void tst_Place::placeIdTest()
     QVERIFY2(testObj.placeId() == "testText", "Wrong value returned");
 }
 
-void tst_Place::contentCountTest()
+void tst_Place::totalContentCountTest()
 {
+    QFETCH(QPlaceContent::Type, contentType);
     QPlace testObj;
-    QVERIFY2(testObj.totalContentCount(QPlaceContent::ImageType) == 0, "Wrong default value");
-    testObj.setTotalContentCount(QPlaceContent::ImageType, 50);
-    QVERIFY2(testObj.totalContentCount(QPlaceContent::ImageType) == 50, "Wrong value returned");
+    QVERIFY2(testObj.totalContentCount(contentType) == 0, "Wrong default value");
+    testObj.setTotalContentCount(contentType, 50);
+    QVERIFY2(testObj.totalContentCount(contentType) == 50, "Wrong value returned");
 
-    testObj.setTotalContentCount(QPlaceContent::ImageType,0);
-    QVERIFY2(testObj.totalContentCount(QPlaceContent::ImageType) == 0, "Wrong value returned");
+    testObj.setTotalContentCount(contentType,0);
+    QVERIFY2(testObj.totalContentCount(contentType) == 0, "Wrong value returned");
+}
+
+void tst_Place::totalContentCountTest_data()
+{
+    QTest::addColumn<QPlaceContent::Type>("contentType");
+    QTest::newRow("Image content") << QPlaceContent::ImageType;
+    QTest::newRow("Editoral content") << QPlaceContent::EditorialType;
+    QTest::newRow("Review content") << QPlaceContent::ReviewType;
 }
 
 void tst_Place::ratingTest()

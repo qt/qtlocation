@@ -378,15 +378,15 @@ void QDeclarativePlace::setPlace(const QPlace &src)
         emit primaryWebsiteChanged();
     }
 
-    if (m_reviewModel) {
+    if (m_reviewModel && m_src.totalContentCount(QPlaceContent::ReviewType) >= 0) {
         m_reviewModel->initializeCollection(m_src.totalContentCount(QPlaceContent::ReviewType),
                                             m_src.content(QPlaceContent::ReviewType));
     }
-    if (m_imageModel) {
+    if (m_imageModel && m_src.totalContentCount(QPlaceContent::ImageType) >= 0) {
         m_imageModel->initializeCollection(m_src.totalContentCount(QPlaceContent::ImageType),
                                            m_src.content(QPlaceContent::ImageType));
     }
-    if (m_editorialModel) {
+    if (m_editorialModel && m_src.totalContentCount(QPlaceContent::EditorialType) >= 0) {
         m_editorialModel->initializeCollection(m_src.totalContentCount(QPlaceContent::EditorialType),
                                                m_src.content(QPlaceContent::EditorialType));
     }

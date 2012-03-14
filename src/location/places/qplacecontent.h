@@ -110,6 +110,7 @@ private:
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QPlaceContent)
+Q_DECLARE_METATYPE(QPlaceContent::Type)
 
 QT_END_HEADER
 

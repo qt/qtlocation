@@ -222,6 +222,10 @@ QPlace QPlaceJSonDetailsParser::buildPlace(const QJSValue &placeValue, QPlaceMan
 
     newPlace.setExtendedAttribute(QLatin1String("x_provider"), managerName);
 
+    newPlace.setTotalContentCount(QPlaceContent::ImageType, -1);
+    newPlace.setTotalContentCount(QPlaceContent::EditorialType, -1);
+    newPlace.setTotalContentCount(QPlaceContent::ReviewType, -1);
+
     return newPlace;
 }
 

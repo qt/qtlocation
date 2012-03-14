@@ -2074,6 +2074,8 @@ void tst_QPlaceManagerJsonDb::compatiblePlace()
     QVERIFY(compatPlace.content(QPlaceContent::ReviewType).isEmpty());
     QVERIFY(compatPlace.content(QPlaceContent::EditorialType).isEmpty());
     QCOMPARE(compatPlace.totalContentCount(QPlaceContent::ImageType), 0);
+    QCOMPARE(compatPlace.totalContentCount(QPlaceContent::ReviewType), 0);
+    QCOMPARE(compatPlace.totalContentCount(QPlaceContent::EditorialType), 0);
 
     QCOMPARE(compatPlace.icon().parameters().value(SmallSource).toString(),  QLatin1String("www.example.com/small.png"));
     QCOMPARE(compatPlace.icon().parameters().value(MediumSource).toString(),  QLatin1String("www.example.com/medium.png"));
