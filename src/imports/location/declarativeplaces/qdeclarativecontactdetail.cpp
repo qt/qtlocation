@@ -194,7 +194,7 @@ void QDeclarativeContactDetail::setLabel(const QString &label)
     \qmlproperty string QtLocation5::ContactDetail::value
 
     This property holds the value of the contact detail which may be a phone number, an email
-    address, a website url etc.
+    address, a website url and so on.
 */
 QString QDeclarativeContactDetail::value() const
 {

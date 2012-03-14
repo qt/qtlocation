@@ -111,7 +111,7 @@ QPlaceReply::Type QPlaceIdReply::type() const
 /*!
     Returns the operation type of the reply. i.e whether this
     id reply was for a save place operation,
-    remove category operation etc.
+    remove category operation and so on.
 */
 QPlaceIdReply::OperationType QPlaceIdReply::operationType() const
 {

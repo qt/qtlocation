@@ -34,7 +34,7 @@
            fetch local content from a web service.
 
     This is a small example, illustrating one of the very core parts of the
-    QtLocation API: the ability to retrieve and use the user's current
+    Qt Location API: the ability to retrieve and use the user's current
     geographic location.
 
     Key QML elements shown in this example:
@@ -45,7 +45,7 @@
 
     \image  qml-flickr-1.jpg
 
-    \section2 Retrieving the current location
+    \section2 Retrieving the Current Location
 
     Retrieving the user's current location is achieved using the PositionSource
     element. In this example, we instantiate the PositionSource as part of the

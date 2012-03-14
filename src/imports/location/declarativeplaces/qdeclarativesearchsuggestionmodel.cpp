@@ -216,7 +216,7 @@ void QDeclarativeSearchSuggestionModel::setSearchTerm(const QString &searchTerm)
 }
 
 /*!
-    \qmlproperty QStringList PlaceSearchSuggestionModel::suggestions
+    \qmlproperty list<string> PlaceSearchSuggestionModel::suggestions
 
     This property holds the list of predicted search terms that the model currently has.
 */

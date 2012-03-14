@@ -265,7 +265,7 @@ bool QGeoCameraCapabilities::supportsTilting() const
     Sets the minimum tilt supported by the associated plugin to \a minimumTilt.
 
     The value is in degrees where 0 is equivalent to 90 degrees between
-    the line of view and earth's surface i.e. looking straight down to earth.
+    the line of view and earth's surface, that is, looking straight down to earth.
 */
 void QGeoCameraCapabilities::setMinimumTilt(double minimumTilt)
 {
@@ -277,7 +277,7 @@ void QGeoCameraCapabilities::setMinimumTilt(double minimumTilt)
     Returns the minimum tilt supported by the associated plugin.
 
     The value is in degrees where 0 is equivalent to 90 degrees between
-    the line of view and earth's surface i.e. looking straight down to earth.
+    the line of view and earth's surface, that is, looking straight down to earth.
 */
 double QGeoCameraCapabilities::minimumTilt() const
 {
@@ -289,7 +289,7 @@ double QGeoCameraCapabilities::minimumTilt() const
     Sets the maximum tilt supported by the associated plugin to \a maximumTilt.
 
     The value is in degrees where 0 is equivalent to 90 degrees between
-    the line of view and earth's surface i.e. looking straight down to earth.
+    the line of view and earth's surface, that is, looking straight down to earth.
 */
 void QGeoCameraCapabilities::setMaximumTilt(double maximumTilt)
 {
@@ -301,7 +301,7 @@ void QGeoCameraCapabilities::setMaximumTilt(double maximumTilt)
     Returns the maximum tilt supported by the associated plugin.
 
     The value is in degrees where 0 is equivalent to 90 degrees between
-    the line of view and earth's surface i.e. looking straight down to earth.
+    the line of view and earth's surface, that is, looking straight down to earth.
 */
 double QGeoCameraCapabilities::maximumTilt() const
 {

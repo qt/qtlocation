@@ -27,8 +27,8 @@
 
 /*!
 \page location-plugin-jsondb.html
-\title QtLocation JsonDb plugin
-\previouspage {QtLocation Module}
+\title Qt Location JsonDb plugin
+\previouspage {Qt Location Module}
 
 \ingroup QtLocation-plugins
 
@@ -36,7 +36,7 @@
 
 \section1 Overview
 
-Included with QtLocation is a plugin which stores places in a Json database (aka JsonDb)
+Included with Qt Location is a plugin which stores places in a Json database (aka JsonDb)
 
 The JsonDb GeoServices plugin can be loaded by using the plugin key "nokia_places_jsondb".
 
@@ -107,7 +107,7 @@ capabilities are outlined below:
         \li yes
 \endtable
 
-\section2 Plugin specific behaviours
+\section2 Plugin Specific Behaviors
 \section3 Search
 The following list shows what core place data is returned during a place search:
 \list
@@ -192,11 +192,11 @@ largeUrl: file:///opt/icons/new_icon_large.png
 \endcode
 
 All we need to do is set the URLs to where the new icon image is.  The size typically does not need to be specified
-since it is generally automatically calculated.  In some cases where the size cannot be calculated, e.g. if the
+since it is generally automatically calculated.  In some cases where the size cannot be calculated, for example if the
 specified URL cannot currently be accessed, it is necessary to specify a recommended size.
 If the size of the image can be calculated and a size is also specified, then the specified size is ignored.
 
-\section4 Copying/Downloading icons to a specified destination
+\section4 Copying/Downloading Icons to a Specified Destination
 When saving icons, we use the source parameters to hold the URL of the source image we are copying from
 \code
 smallSourceUrl: http://www.example.com/icon_s.png
@@ -206,11 +206,11 @@ smallUrl: file:///bar/icon_small.png
 
 Using the parameters above will copy the icon from \c smallSourceUrl to the \c smallUrl.  The smallSourceUrl can be a remote or local URL,
 but the smallUrl must be local.  If the smallUrl already exists, it is overwritten, otherwise it is created.
-\c smallSize typically does not need to be set since an attempt will be made to calculate the icon's size.   In some cases where the size cannot be calculated, e.g. if the
+\c smallSize typically does not need to be set since an attempt will be made to calculate the icon's size.   In some cases where the size cannot be calculated, for example if the
 specified URL cannot currently be accessed, it is necessary to specify a recommended size.
 If the size of the image can be calculated and a size is also specified, then the specified size is ignored.
 
-\section4 Copying/Downloading icons without a specified destination
+\section4 Copying/Downloading Icons Without a Specified Destination
 It is possible to copy icons, when a place/category is saved and not have to
 specify a destination.  In this case, a data URL will be created for the icon
 in the underlying database.  A data URL contains the icon image embedded

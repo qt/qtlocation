@@ -56,7 +56,7 @@ qhp.qtlocation.namespace = qtlocation.500
 
 # Title for the package, will be the main title for the package in
 # Assistant/Creator.
-qhp.qtlocation.indexTitle = Qt Sensors Documentation
+qhp.qtlocation.indexTitle = Qt Location Documentation
 
 # Extra files to add to the output which are not linked to from anywhere
 # using a qdoc \l command.

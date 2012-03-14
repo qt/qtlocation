@@ -29,7 +29,7 @@
 \page location-positioning-qml.html
 
 \title Positioning (QML)
-\previouspage {qtlocation-module.html}{QtLocation}
+\previouspage {index-qtlocation-module.html}{Qt Location}
 
 \brief The Location Positioning API enables location positioning by means of
 GPS or an NMEA data source.
@@ -59,7 +59,7 @@ location data source within the API is that it provides a
 latitude-longitude coordinate with a date/time value, with the option of
 providing the other attributes listed above.
 
-\section2 Example: Centering the map on the current position
+\section2 Example: Centering the Map on the Current Position
 
 Here is an example of a client that uses a \l{PositionSource}{position source}
 to center a \l{Map}{map} on the current position:
@@ -87,7 +87,7 @@ The \l{Flickr (QML)}{Flickr Example} uses the Location to download thumbnail
 images from Flickr relevant to the current location.
 
 
-\section1 Location Position classes
+\section1 Location Position Classes
 
 \annotatedlist qml-QtLocation5-positioning
 */

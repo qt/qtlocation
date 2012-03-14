@@ -34,7 +34,7 @@
 
     \ingroup qtlocation-examples
 
-    Key QtLocation classes used in this example:
+    Key Qt Location classes used in this example:
 
     \list
     \li \l{QGeoPositionInfo}

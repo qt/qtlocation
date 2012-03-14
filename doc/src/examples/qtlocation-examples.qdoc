@@ -27,12 +27,12 @@
 
 /*!
     \group qtlocation-examples
-    \title QtLocation Examples
-    \brief Examples for the QtLocation module
+    \title Qt Location Examples
+    \brief Examples for the Qt Location module
     \ingroup all-examples
     \ingroup qtlocation
 
-    These are the QtLocation examples.
+    These are the Qt Location examples.
 
     \generatelist related
 */

@@ -27,15 +27,15 @@
 
 /*!
 \page location-plugin-nokia.html
-\title QtLocation Nokia plugin
-\previouspage {QtLocation Module}
+\title Qt Location Nokia plugin
+\previouspage {Qt Location Module}
 \ingroup QtLocation-plugins
 
 \brief Uses the relevant Nokia services provided by Nokia.
 
 \section1 Overview
 
-Included with the QtLocation is a Maps and Navigation API plugin which accesses the relevant Ovi
+Included with the Qt Location is a Maps and Navigation API plugin which accesses the relevant Ovi
 services provided by Nokia.  The use of these services is governed by the terms and conditions
 available in the file plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt.
 
@@ -195,7 +195,7 @@ and behaviours are outlined below:
         \li no
 \endtable
 
-\section2 Plugin specific behaviours
+\section2 Plugin Specific Behaviors
 \section3 Search
 The following list shows what core place data is returned during a place search:
 \list
@@ -222,7 +222,7 @@ that has matched the user's search query.  An 'address' only has location and na
 If a Place has a placeId, then it is a specific 'point of interest', which may have some
 or all Place properties available.
 
-\section3 Search term suggestions.
+\section3 Search Term suggestions
 Only a partial search term and search center is supported when retrieving suggestions.
 
 \section3 Recommendation

@@ -66,12 +66,12 @@
             \li The trading hours of the place
         \row
             \li payment
-            \li The types of payment the place accepts, e.g. visa, mastercard etc.
+            \li The types of payment the place accepts, for example visa, mastercard.
         \row
             \li x_provider
             \li The name of the provider that a place is sourced from
         \row
-            \li x_id_<provider> (e.g x_id_nokia)
+            \li x_id_<provider> (for example x_id_nokia)
             \li An alternative id which identifies the place from the
                perspective of the specified provider.
     \endtable

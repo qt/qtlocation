@@ -28,7 +28,7 @@
 /*!
     \page location-places-qml.html
     \title QML Places API
-    \previouspage {qtlocation-qml.html}{QtLocation}
+    \previouspage {qtlocation-qml.html}{Qt Location}
 
     \section1 Overview
 
@@ -67,7 +67,7 @@
     The search model may also be used to specify whether corrections are returned.
     See the documentation for \l PlaceSearchModel for details.
 
-    \section2 Fetching details
+    \section2 Fetching Details
     In order to save bandwidth, sometimes a backend will only return places which
     are partially populated with details.  This can be checked with the
     Place::detailsFetched property which indicates whether all availalable details
@@ -75,7 +75,7 @@
 
     \snippet snippets/declarative/places.qml Place fetchDetails
 
-    \section2 Saving/Removing a place.
+    \section2 Saving/Removing a Place.
     Some backends may support saving/removing of places, this can be done by
     calling the Place::save() or Place::remove() function.  Note that in order
     to save a \l Place, a \l Plugin must be assigned to specify which backend we
@@ -104,7 +104,7 @@
 /*!
     \page location-places-cpp.html
     \title Places (C++)
-    \previouspage {qtlocation-module.html}{QtLocation}
+    \previouspage {Qt Location Module}{Qt Location}
 
     \section1 Overview
 
@@ -119,7 +119,7 @@
 
     \section1 Common Operations
 
-    \section2 Initializing a manager
+    \section2 Initializing a Manager
     All places functionality is facilitated by a QPlaceManager instance.  One must specify
     a QGeoServiceProvider in order to create the QPlaceManager
 
@@ -205,7 +205,7 @@
     \snippet snippets/places/requesthandler.h Recommendation handler
 
     \target Saving a place cpp
-    \section2 Saving a place
+    \section2 Saving a Place
     The saving of a new place is performed as follows, we create a QPlace instance
     and populate it with information such as a name, address and coordinate.  Once
     done we can invoke QPlaceManager::savePlace() to begin a save operation.
@@ -227,10 +227,10 @@
     \section3 Caveats
     \input place-caveats.qdocinc
 
-    \section3 Saving between managers
+    \section3 Saving Between Managers
     When saving places between managers, there are a few things to be aware of.
     Some fields of a place such as the id, categories and icons are manager specific entities
-    e.g. the categories in one manager may not be recognized in another.
+    for example the categories in one manager may not be recognized in another.
     Therefore trying to save a place directly from one manager to another is not possible.
 
     The typical approach is to use the QPlaceManager::compatiblePlace() function,
@@ -242,7 +242,7 @@
     \snippet snippets/places/requesthandler.h Save to different manager
 
     \target Removing a place cpp
-    \section2 Removing a place
+    \section2 Removing a Place
     The removal of a place is performed as follows:
     \snippet snippets/places/requesthandler.h Remove place
     \dots
@@ -278,7 +278,7 @@
 
     \snippet snippets/places/requesthandler.h Child categories
 
-    \section2 Saving a category
+    \section2 Saving a Category
     The following shows how to save a category
     \snippet snippets/places/requesthandler.h Save category
     \dots
@@ -290,7 +290,7 @@
     from a web service will typically not emit these signals while managers accessing places locally stored generally will.
 
 
-    \section2 Removing a category
+    \section2 Removing a Category
     Category removal is very similar to removing a place
     \snippet snippets/places/requesthandler.h Remove category
     \dots
@@ -301,7 +301,7 @@
     manager does so is provider specific.  Managers accessing places from a web service will typically not emit
     these signals, while managers accessing places stored locally generally will.
 
-    \section2 Matching places between managers
+    \section2 Matching Places Between Managers
     Sometimes you may want to cross reference whether places from one manager match those from another manager.
     Such a situation may arise where one manager provides read-only access to places (origin manager) while another second r/w
     manager (destination manager) is used to save selected favorites from the first. During a search
@@ -329,17 +329,17 @@
 
     \section1 Classes in Places
 
-    \section2 Data classes
+    \section2 Data Classes
     \annotatedlist QtLocation-places-data
 
-    \section2 Request classes
+    \section2 Request Classes
     \annotatedlist QtLocation-places-requests
 
     \target Places Reply Classes
     \section2 Reply classes
     \annotatedlist QtLocation-places-replies
 
-    \section2 Manager classes
+    \section2 Manager Classes
     \annotatedlist QtLocation-places-manager
 */
 

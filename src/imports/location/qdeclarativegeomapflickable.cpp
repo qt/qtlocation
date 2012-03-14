@@ -151,7 +151,7 @@ QT_BEGIN_NAMESPACE
     interaction.  If a flick was generated, this handler will
     be triggered once the flick stops.  If a flick was not
     generated, the handler will be triggered when the
-    user stops dragging - i.e. a mouse or touch release.
+    user stops dragging - that is a mouse or touch release.
 
 */
 

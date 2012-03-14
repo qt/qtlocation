@@ -90,7 +90,7 @@ QT_BEGIN_NAMESPACE
     departure / arrrival time could be set, and the presence of this transport
     options subclass (and the fact that user auth said that the user had
     support) would mean we could provide better values for the estimated
-    travel times etc...
+    travel times and so on.
 
     This all relies on at least one service making this data available to us,
     which would probably be tied to token based authorization.  It could be

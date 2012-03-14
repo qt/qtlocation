@@ -35,7 +35,7 @@
     \page qml-location-plugin.html
 
     \title Location QML Plugin
-    \previouspage {qtlocation-module.html}{QtLocation Module}
+    \previouspage {index-qtlocation-module.html}{Qt Location Module}
 
     \brief A QML plugin for the Qt Location API.
 

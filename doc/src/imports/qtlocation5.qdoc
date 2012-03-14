@@ -32,7 +32,7 @@
 
 \section1 Overview
 
-The identifying string for this component is \e QtLocation. Use this in the QML \e import statement.
+The identifying string for this component is \e {QtLocation}. Use this in the QML \e import statement.
 
 \section1 Common QML Elements
 

@@ -29,7 +29,7 @@
 /*!
 \page location-maps-qml.html
 \title Maps & Navigation (QML)
-\previouspage {qtlocation-module.html}{QtLocation}
+\previouspage {Qt Location Module}{Qt Location}
 
 \brief Provides QtQuick user interfaces for displaying, navigating and
        interacting with maps, as well as geocoding and navigation.
@@ -45,7 +45,7 @@ It builds upon the API concepts and elements in the
 
 \section1 Maps
 
-\section2 Displaying maps
+\section2 Displaying Maps
 
 Displaying a map is done using the \l{QtLocation5::Map}{Map} QML element,
 which comes provided with many basic interaction utilities including the
@@ -70,7 +70,7 @@ available.
         \li Interaction helper for the "pinch to zoom" gesture on a Map.
 \endtable
 
-\section2 Putting objects on a Map
+\section2 Putting Objects on a Map
 
 Maps can also contain map objects, which are used to display information on
 its surface. There is a set of basic pre-defined map objects, as well as the
@@ -99,7 +99,7 @@ standard QtQuick item.
         \li Turns any arbitrary QtQuick Item into a map object.
 \endtable
 
-\section2 Model-view design with Map objects
+\section2 Model-View Design with Map Objects
 
 To automatically generate Map objects based on the contents of a QtQuick
 model (eg a ListModel item), the \l{QtLocation5::MapItemView}{MapItemView}
@@ -113,7 +113,7 @@ only be created within a \l{QtLocation5::Map}{Map}.
         \li Populates a Map with Map objects based on a model.
 \endtable
 
-\section2 Interaction with Map objects
+\section2 Interaction with Map Objects
 
 Interaction with the pre-defined Map objects is done using the
 \l{QtLocation5::MapMouseArea}{MapMouseArea} element, which behaves much like a
@@ -135,7 +135,7 @@ available.
         \li Provides additional information unique to mouse events on a Map.
 \endtable
 
-\section1 Geocoding -- address to coordinate and vice versa
+\section1 Geocoding -- Address to Coordinate and Vice Versa
 
 A geocoding query in QML is performed using the
 \l{QtLocation5::GeocodeModel}{GeocodeModel} element. For an address-to-coordinate
@@ -158,7 +158,7 @@ of the model.
         \li Structured address for use in queries and results of geocoding
 \endtable
 
-\section1 Routing and navigation
+\section1 Routing and Navigation
 
 */
 
@@ -166,7 +166,7 @@ of the model.
 /*!
 \page location-maps-cpp.html
 \title Maps & Navigation (C++)
-\previouspage {qtlocation-module.html}{QtLocation}
+\previouspage {Qt Location Module}{Qt Location}
 
 \brief Provides C++ classes for Geocoding and Navigation.
 

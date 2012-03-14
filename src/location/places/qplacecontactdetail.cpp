@@ -66,7 +66,7 @@ bool QPlaceContactDetailPrivate::operator== (const QPlaceContactDetailPrivate &o
 \ingroup QtLocation-places-data
 
 The detail consists of a label and value.  The label is a localized string that can be presented
-to the end user that describes that detail value which is the actual phone number, email address etc.
+to the end user that describes that detail value which is the actual phone number, email address and so on.
 
 \section2 Contact Types
 

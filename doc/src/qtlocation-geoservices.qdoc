@@ -27,13 +27,13 @@
 
 /*!
 \page qtlocation-geoservices.html
-\title QtLocation GeoServices
-\brief Implementing QtLocation GeoService plugins
+\title Qt Location GeoServices
+\brief Implementing Qt Location GeoService plugins
 
-The QtLocation provides the majority of its functionality through GeoService plugins. This
+The Qt Location provides the majority of its functionality through GeoService plugins. This
 document outlines how to develop a new GeoService plugin.
 
-\section1 Implementing plugins
+\section1 Implementing Plugins
 
 A plugin implementer needs to subclass QGeoServiceProviderFactory and as
 many of the ManagerEngine classes as they want to provide implementations for.
@@ -45,7 +45,7 @@ QGeoServiceProviderFactory::createSearchManagerEngine(),
 QGeoServiceProviderFactory::createMappingManagerEngine() and
 QGeoServiceProviderFactory::createRoutingManagerEngine() as appropriate.
 
-\section3 Tile-based map convenience classes
+\section3 Tile-Based Map Convenience Classes
 
 Most of the current tile based mapping APIs are very similar, and so we
 provide a number of classes intended to make writing tile based mapping

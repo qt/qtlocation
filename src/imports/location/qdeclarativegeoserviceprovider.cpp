@@ -310,7 +310,7 @@ QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider() 
 }
 
 /*!
-    \qmlproperty stringlist Plugin::locales
+    \qmlproperty list<string> Plugin::locales
 
     This property holds a set of locale preferences.  If the first locale cannot be accommodated, then
     the backend falls back to using the second, and so on.  By default the locales property contains the system locale.

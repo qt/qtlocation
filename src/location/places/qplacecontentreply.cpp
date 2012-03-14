@@ -117,7 +117,7 @@ void QPlaceContentReply::setContent(const QPlaceContent::Collection &content)
 /*!
     Returns the total number of content objects for a place.  If the total number of
     content objects cannot be counted, a value of -1 is returned.  This count only
-    refers to the total count for a single content type i.e. the content type that
+    refers to the total count for a single content type, that is, the content type that
     was specified when content was requested with the QPlaceManager.
 */
 int QPlaceContentReply::totalCount() const

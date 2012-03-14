@@ -34,7 +34,7 @@
            search for an address, and find driving directions.
 
     This is a large example covering many basic uses of maps, positioning, and
-    navigation services in QtLocation. This page is divided into sections
+    navigation services in Qt Location. This page is divided into sections
     covering each of these areas of functionality with snippets from the code.
 
     QML elements shown in this example:
@@ -62,7 +62,7 @@
 
     \image ../images/example-mapviewer.png
 
-    \section2 Displaying a map
+    \section2 Displaying a Map
 
     Drawing a map on-screen is accomplished using the Map element, as shown
     below.
@@ -85,7 +85,7 @@
     Ovi Maps. Additional licensing conditions do apply to the use of this data,
     please see the documentation for further details.
 
-    \section2 Finding an address (geocoding)
+    \section2 Finding an Address (Geocoding)
 
     To locate a certain address or place on the map uses a process called
     geocoding. In order to perform a geocode operation, we first need to adjust
@@ -125,10 +125,10 @@
     \snippet examples/declarative/mapviewer/mapviewer.qml geocode1
     \snippet examples/declarative/mapviewer/mapviewer.qml geocode2
 
-    \section2 Directions and travel routes
+    \section2 Directions and Travel Routes
 
-    Similar to the GeocodeModel, QtLocation also features the RouteModel element,
-    which allows information about routes (e.g. driving directions) between two
+    Similar to the GeocodeModel, Qt Location also features the RouteModel element,
+    which allows information about routes (for example driving directions) between two
     or more points, to be received and used with a Map.
 
     Here again, we instantiate the RouteModel as a property of our Map:

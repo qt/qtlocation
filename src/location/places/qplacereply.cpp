@@ -56,13 +56,13 @@ QT_USE_NAMESPACE
 
     The QPlaceReply and each of its specialized subclasses manage the
     state and results of their corresponding operations.  The QPlaceReply itself is used
-    for operations that have no results i.e. it only necessary to know if the operation
+    for operations that have no results, that is, it only necessary to know if the operation
     succeeded or failed.
 
     The finished() signal can be used to monitor the progress of an operation.
     Once an operation is complete, the error() and errorString() methods provide information
     on whether the operation completed successfully.  If successful, the reply
-    will contain the results for that operation i.e. each subclass will have appropriate
+    will contain the results for that operation, that is, each subclass will have appropriate
     functions to retrieve the results of an operation.
 
     \sa QPlaceManager

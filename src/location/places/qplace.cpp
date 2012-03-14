@@ -92,7 +92,7 @@ QT_BEGIN_NAMESPACE
 
     \section2 Content
     The QPlace object is only meant to be a convenient container to hold
-    rich content such as images, reviews etc.  Retrieval of content
+    rich content such as images, reviews and so on.  Retrieval of content
     should happen via QPlaceManager::getPlaceContent().
 
     The content is stored as a QPlaceContent::Collection which contains

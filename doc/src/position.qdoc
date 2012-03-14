@@ -29,7 +29,7 @@
 \page location-positioning-cpp.html
 
 \title Positioning (C++)
-\previouspage {qtlocation-module.html}{QtLocation}
+\previouspage {index-qtlocation-module.html}{Qt Location}
 
 \brief The Location Positioning API enables location positioning by means of
 GPS or an NMEA data source.
@@ -87,7 +87,7 @@ if one is available. Alternatively, clients can subclass it to provide a
 custom satellite data source.
 
 
-\section2 Requesting location data from data sources
+\section2 Requesting Location Data from Data Sources
 
 To receive data from a source, connect to its
 \l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal,
@@ -122,7 +122,7 @@ private slots:
 
 \endcode
 
-\section2 Controlling aspects of data sources
+\section2 Controlling Aspects of Data Sources
 
 The QGeoPositionInfoSource::setUpdateInterval() method can be used to
 control the rate at which position updates are received. For example, if
@@ -143,7 +143,7 @@ cases, the default positioning methods should not be changed, as a source
 may internally use a variety of positioning methods that can be useful to
 the application.
 
-\section2 Reading NMEA data
+\section2 Reading NMEA Data
 
 \l {http://en.wikipedia.org/wiki/NMEA_0183}{NMEA} is a common text-based
 protocol for specifying navigational data. For convenience, the
@@ -155,7 +155,7 @@ according to the time stamp of each NMEA sentence to produce a "replay"
 of the recorded data.
 
 
-\section2 Example: Creating a custom location data source
+\section2 Example: Creating a Custom Location Data Source
 
 Generally, the capabilities provided by the default position source as
 returned by QGeoPositionInfoSource::createDefaultSource(), along with the
@@ -232,7 +232,7 @@ images from Flickr relevant to the current location.
 
 
 
-\section1 Location Position classes
+\section1 Location Position Classes
 
 \annotatedlist QtLocation-positioning
 

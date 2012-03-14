@@ -35,10 +35,9 @@
 /*!
 \page qml-location5-maps.html
 \title QML Maps
-\previouspage {qtlocation-module.html}{QtLocation Module}
+\previouspage {index-qtlocation-module.html}{Qt Location Module}
 
-\brief Maps is the section QtQuick Location that deals with maps,
-their contents and navigation through the maps. ???
+\brief Maps deals with maps, their contents and navigation.
 
 \section1 Overview
 
@@ -146,7 +145,7 @@ route will be divided up into a series of segments. At the end of each segment
 is a vertex called a \e maneuver. The \e segments contain information about
 the time and distance to the end of the segment. The \e maneuvers contain information
 about what to do next, how to get onto the next segment, if there is one. So
-a \e maneuver contains navigational information, e.g. "turn right now".
+a \e maneuver contains navigational information, for example "turn right now".
 
 To find a suitable route we will need to use a \l RouteQuery to define the
 selection criteria and adding any required waypoints.
@@ -181,7 +180,7 @@ The \l RouteQuery properties can include
         \li A list of excluded areas that the route must not cross
     \row
         \li \l {RouteQuery::}{featureTypes}
-        \li Relevant map features, e.g. highway, ferry
+        \li Relevant map features, for example highway, ferry
 \endtable
 
 

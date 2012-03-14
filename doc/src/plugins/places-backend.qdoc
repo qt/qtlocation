@@ -28,7 +28,7 @@
 /*!
 \page location-places-backend.html
 \title Places Backend
-\previouspage {QtLocation Module}
+\previouspage {Qt Location Module}
 
 \brief The Places backend is responsible for managing a places datastore whether
        it is located remotely or locally
@@ -48,7 +48,7 @@ default implementation for all virtual functions.  The default implementations f
 functions return a reply that will emit the error() and finished() signals at the next iteration
 through the event loop.
 
-\section1 Implementing/Inheriting reply objects
+\section1 Implementing/Inheriting Reply Objects
 A reply object would be inherited as follows:
 \snippet snippets/places/requesthandler.h Implement reply pt1
 \dots
@@ -62,7 +62,7 @@ with a \l {Qt::QueuedConnection} to emit the signals.
 \snippet snippets/places/requesthandler.h Trigger done
 
 Note that the \c finished signals should always be emitted when a reply is complete, even if
-an error has been encountered, i.e. if there is an error, both the \c error and \c finished signals
+an error has been encountered, that is, if there is an error, both the \c error and \c finished signals
 should be emitted while if there is no error, only the \c finished signals are emitted.
 
 The protected functions of QPlaceSearchReply::setResults() and QPlaceSearchReply::setRequest()
@@ -101,12 +101,12 @@ the QPlaceManagerEngine::compatiblePlace() function.  This function returns a co
 with properties pruned or modified as necessary such that the copy can be saved into manager.
 
 Construction of a compatible place may involve ignoring certain properties from the
-original place, e.g. if contact details are not supported, these are left out of the
-compatible place.  Other times it may involve modifying certain properties, e.g.
+original place, for example if contact details are not supported, these are left out of the
+compatible place.  Other times it may involve modifying certain properties, for example
 modifying the icon parameters to facilitate copying or downloading of the original
 place's icon to a location that the backend can access.
 
-\section1 Cross-referencing Places Between Managers.
+\section1 Cross-Referencing Places Between Managers.
 Sometimes a situation may arise where we wish to cross-reference and match places between managers.
 Such a situation may arise where one manager provides read-only access to places (origin manager), while another second r/w
 manager (destination manager) is used to save selected favorites from the first.  During a search of the origin manager, we may want to
@@ -141,12 +141,12 @@ If an origin manager does not supply a place id, it may be necessary to provide 
 One approach might be to do so via the place coordinates, if the coordinate of a place in the origin manager is identical or close
 to a place in the destination manager, there is a high likelihood that they are the same place.
 In this case, the manager might implement QPlaceManager::matchingPlaces() to accept a QPlaceMatchRequest with a parameter key of 'proximity'
-and a parameter value of the distance two places must be in order to detect a match.  e.g. if an origin place and destination place are within 50m
+and a parameter value of the distance two places must be in order to detect a match.  for example if an origin place and destination place are within 50m
 of each other, they can be considered the same place.
 
 Generally however it is recommended that cross referencing be implemented via alternative ids as mentioned above.
 
-\section3 User readable vs non-user readable extended attributes
+\section3 User Readable vs Non-User Readable Extended Attributes
 If an attribute is not intended to be readable by end users, the label field should be kept
 empty as an indicator of this fact.
 */

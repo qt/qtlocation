@@ -26,18 +26,18 @@
 ****************************************************************************/
 
 /*!
-\page qtlocation-module.html
-\title QtLocation Module
-\brief The QtLocation API provides location positioning, mapping, navigation and place search
+\page index-qtlocation-module.html
+\title Qt Location Module
+\brief The Qt Location API provides location positioning, mapping, navigation and place search
        via QML and C++ interfaces.
 \ingroup technology-apis
 
-The QtLocation API provides location positioning, mapping, navigation and place search via QML
+The Qt Location API provides location positioning, mapping, navigation and place search via QML
 and C++ interfaces.
 
 \section1 Overview
 
-QtLocation is split into three core sub-modules, which each have QML and C++
+Qt Location is split into three core sub-modules, which each have QML and C++
 APIs.
 
 \section3 Positioning
@@ -47,8 +47,8 @@ using GPS, GLONASS, or other available services.
 \table
 \row
     \li Positioning introduction & overview:
-    \li \l{location-positioning-qml.html}{for QML}
-    \li \l{location-positioning-cpp.html}{for C++}
+    \li \l{Positioning (QML)}{for QML}
+    \li \l{Qt Location C++ API}{for C++}
 \endtable
 
 \section3 Places
@@ -61,8 +61,8 @@ a user's favorites.
 \table
 \row
     \li Places introduction & overview:
-    \li \l{location-places-qml.html}{for QML}
-    \li \l{location-places-cpp.html}{for C++}
+    \li \l{QML Places API}{for QML}
+    \li \l{Places (C++)}{for C++}
 \endtable
 
 \section3 Maps & Navigation
@@ -75,12 +75,12 @@ directions).
 \table
 \row
     \li Maps and Nav. introduction & overview:
-    \li \l{location-maps-qml.html}{for QML}
-    \li \l{location-maps-cpp.html}{for C++}
+    \li \l{Maps & Navigation (QML)}{for QML}
+    \li \l{Maps & Navigation (C++)}{for C++}
 \endtable
 
 
-\section1 API references and examples
+\section1 API References and Examples
 
 Alphabetized lists of all classes and elements in the API, as well as detailed
 example applications to demonstrate their usage.
@@ -88,13 +88,13 @@ example applications to demonstrate their usage.
 \table
     \row
         \li \l {QtLocation 5.x}{QML API Reference}
-        \li Full list of QML elements in the QtLocation API
+        \li Full list of QML elements in the Qt Location API
     \row
-        \li \l {QtLocation C++ API}{C++ API Reference}
-        \li Full list of C++ classes and methods in the QtLocation API
+        \li \l {Qt Location C++ API}{C++ API Reference}
+        \li Full list of C++ classes and methods in the Qt Location API
     \row
-        \li \l {QtLocation Examples}{Example Apps}
-        \li Examples demonstrating use of the QtLocation APIs
+        \li \l {Qt Location Examples}{Example Apps}
+        \li Examples demonstrating use of the Qt Location APIs
 \endtable
 
 \section1 Plugin references and parameters
@@ -104,15 +104,15 @@ be provided to influence their behavior.
 
 \annotatedlist QtLocation-plugins
 
-\section1 Porting and implementing new back-ends
+\section1 Porting and Implementing New Back-ends
 
 For systems integrators and distributors, information relating to making
-QtLocation available for a new platform.
+Qt Location available for a new platform.
 
 \table
     \row
-        \li \l {QtLocation GeoServices}{GeoServices}
-        \li Information about the QtLocation GeoServices plugins
+        \li \l {Qt Location GeoServices}{GeoServices}
+        \li Information about the Qt Location GeoServices plugins
     \row
         \li \l {Places Backend} {Places}
         \li Information for \l {Places Backend} Implementors
