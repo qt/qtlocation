@@ -255,6 +255,7 @@ Item {
         function real_double_click (target, x, y) {
             mousePress(target, x,y)
             mouseRelease(target, x, y)
+            mousePress(target, x, y)
             mouseDoubleClick(target, x, y)
             mouseRelease(target, x, y)
         }
@@ -644,13 +645,13 @@ Item {
             compare(mouseUpperDoubleClickedSpy.count, 2)
             compare(mouseLowerDoubleClickedSpy.count, 2)
             compare(mouseOverlapperDoubleClickedSpy.count, 1)
-            compare(mouseOverlapperPressedSpy.count, 1)
+            compare(mouseOverlapperPressedSpy.count, 2)
             compare(mouseOverlapperReleasedSpy.count, 2)
             real_double_click(map, 55, 75)
             compare(mouseUpperDoubleClickedSpy.count, 2)
             compare(mouseLowerDoubleClickedSpy.count, 2)
             compare(mouseOverlapperDoubleClickedSpy.count, 2)
-            compare(mouseOverlapperPressedSpy.count, 2)
+            compare(mouseOverlapperPressedSpy.count, 4)
             compare(mouseOverlapperReleasedSpy.count, 4)
             // disable overlapping area and check event is delivered to the ones beneath
             mouseOverlapper.enabled = false
