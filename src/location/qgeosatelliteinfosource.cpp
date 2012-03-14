@@ -44,7 +44,6 @@
 #include <QPluginLoader>
 #include <QStringList>
 #include <QCryptographicHash>
-#include <QSettings>
 #include <QtCore/private/qfactoryloader_p.h>
 #include <QFile>
 

@@ -88,32 +88,17 @@ const char *const_deviceproductid = "&dv=oviMaps"; // oviMaps, ml, rv
 const char *const_review_start = "&start=";
 const char *const_review_limit = "&limit=";
 
-static QString searchServer;
-static QString placeServer;
-
 QPlaceRestManager *QPlaceRestManager::mInstance = NULL;
 
 /*!
     Constructor.
 */
-QPlaceRestManager::QPlaceRestManager(QObject *parent) :
-    QObject(parent)
+QPlaceRestManager::QPlaceRestManager(QObject *parent)
+:   QObject(parent), placeServer(QLatin1String(placesServerUrl)),
+    searchServer(QLatin1String(searchServerUrl))
 {
     mLocales << QLocale();
     mManager = new QNetworkAccessManager(this);
-
-    if (searchServer.isNull()) {
-        QSettings settings("Nokia");
-        // no app name, they are in Nokia/OrganizationDefaults
-        searchServer = settings.value("searchURI").toString();
-        if (searchServer.isEmpty()) {
-            searchServer = searchServerUrl;
-        }
-        placeServer = settings.value("placesURI").toString();
-        if (placeServer.isEmpty()) {
-            placeServer = placesServerUrl;
-        }
-    }
 }
 
 /*!

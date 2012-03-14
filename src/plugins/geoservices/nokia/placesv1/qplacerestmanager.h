@@ -98,6 +98,8 @@ private:
 private:
     QNetworkAccessManager *mManager;
     static QPlaceRestManager *mInstance;
+    QString placeServer;
+    QString searchServer;
     QList<QLocale> mLocales;
 };
 
