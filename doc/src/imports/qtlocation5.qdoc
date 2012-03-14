@@ -32,7 +32,20 @@
 
 \section1 Overview
 
-The identifying string for this component is \e {QtLocation}. Use this in the QML \e import statement.
+The identifying string for this component is \e QtLocation. Use this in the QML \e import statement.
+The following table provides links to more detailed information on sections of the Qt Lcoation QML API.
+
+\table
+    \row
+        \li \l {Positioning (QML)}{Location Positioning}
+        \li Retrieving information about the current position.
+    \row
+        \li \l {Maps & Navigation (QML)}{Maps and Navigation}
+        \li Displaying maps and finding routes.
+    \row
+        \li \l {QML PLaces API} {Places}
+        \li Searching for and managing points of interest.
+\endtable
 
 \section1 Common QML Elements
 
