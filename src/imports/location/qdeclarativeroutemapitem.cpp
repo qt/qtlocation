@@ -113,7 +113,7 @@ void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map
 }
 
 /*!
-    \qmlproperty GeoRoute MapRoute::route
+    \qmlproperty Route MapRoute::route
 
     Holds the route to be drawn.
 */
