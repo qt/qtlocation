@@ -77,7 +77,7 @@ private Q_SLOTS:
     void finished();
 
 Q_SIGNALS:
-    void tileFinished(const QGeoTileSpec &spec, const QByteArray &bytes);
+    void tileFinished(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
     void tileError(const QGeoTileSpec &spec, const QString &errorString);
 
 protected:
