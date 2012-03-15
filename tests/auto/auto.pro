@@ -35,6 +35,8 @@ SUBDIRS += geotestplugin \
            qgeoboundingarea \
            qgeoboundingbox \
            qgeoboundingcircle \
+           qgeocameradata \
+           qgeocameracapabilities \
            qgeocameratiles \
            qgeocodereply \
            qgeocodingmanager \
@@ -51,6 +53,7 @@ SUBDIRS += geotestplugin \
            qgeoroutingmanagerplugins \
            qgeosatelliteinfo \
            qgeosatelliteinfosource \
+           qgeotilespec \
            qnmeapositioninfosource \
            declarative_core \
            qgeoroutexmlparser \

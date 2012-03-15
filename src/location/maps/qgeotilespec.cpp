@@ -193,6 +193,11 @@ bool QGeoTileSpecPrivate::operator < (const QGeoTileSpecPrivate &rhs) const
     if (plugin_ > rhs.plugin_)
         return false;
 
+    if (mapId_ < rhs.mapId_)
+        return true;
+    if (mapId_ > rhs.mapId_)
+        return false;
+
     if (zoom_ < rhs.zoom_)
         return true;
     if (zoom_ > rhs.zoom_)
