@@ -431,8 +431,11 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 
     requestString += "&instructionformat=text";
 
-    requestString += "&language=";
-    requestString += locale().name();
+    const QLocale loc(locale());
+    if (QLocale::C != loc.language() && QLocale::AnyLanguage != loc.language()) {
+        requestString += "&language=";
+        requestString += loc.name();
+    }
 
     return requestString;
 }
