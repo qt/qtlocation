@@ -213,9 +213,16 @@ QGeoMapGeometryPrivate::QGeoMapGeometryPrivate()
       minTileY_(-1),
       maxTileX_(-1),
       maxTileY_(-1),
+      tileZ_(0),
       tileXWrapsBelow_(0),
+      mercatorCenterX_(0.0),
+      mercatorCenterY_(0.0),
+      mercatorWidth_(0.0),
+      mercatorHeight_(0.0),
       screenOffsetX_(0.0),
       screenOffsetY_(0.0),
+      screenWidth_(0.0),
+      screenHeight_(0.0),
       useVerticalLock_(false),
       verticalLock_(false) {}
 

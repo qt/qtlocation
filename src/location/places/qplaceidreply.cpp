@@ -46,7 +46,8 @@ QT_BEGIN_NAMESPACE
 class QPlaceIdReplyPrivate : public QPlaceReplyPrivate
 {
 public:
-    QPlaceIdReplyPrivate() {}
+    QPlaceIdReplyPrivate(QPlaceIdReply::OperationType operationType)
+        : operationType(operationType) {}
     ~QPlaceIdReplyPrivate() {}
     QString id;
     QPlaceIdReply::OperationType operationType;
@@ -87,11 +88,7 @@ QT_USE_NAMESPACE
     Constructs an id reply with a given \a operationType and \a parent.
 */
 QPlaceIdReply::QPlaceIdReply(QPlaceIdReply::OperationType operationType, QObject *parent)
-    : QPlaceReply(new QPlaceIdReplyPrivate, parent)
-{
-    Q_D(QPlaceIdReply);
-    d->operationType = operationType;
-}
+    : QPlaceReply(new QPlaceIdReplyPrivate(operationType), parent) {}
 
 /*!
     Destroys the reply.

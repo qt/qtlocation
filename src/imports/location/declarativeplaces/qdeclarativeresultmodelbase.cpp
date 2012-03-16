@@ -151,12 +151,14 @@ void QDeclarativeResultModelBase::queryFinished()
             if (!serviceProvider) {
                 updateLayout();
                 setStatus(Error, QLatin1String("Favorites plugin returns a null QGeoServiceProvider instance"));
+                return;
             }
 
             QPlaceManager *favoritesManager = serviceProvider->placeManager();
             if (!favoritesManager) {
                 updateLayout();
                 setStatus(Error, QLatin1String("Favorites plugin returns a null QPlaceManager"));
+                return;
             }
 
             QPlaceMatchRequest request;

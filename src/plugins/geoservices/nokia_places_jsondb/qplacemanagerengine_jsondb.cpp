@@ -309,7 +309,6 @@ QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const Q
         }
         return candidates.last().second;
     }
-    return QUrl();
 }
 
 QPlaceMatchReply * QPlaceManagerEngineJsonDb::matchingPlaces(const QPlaceMatchRequest &request)

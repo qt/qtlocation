@@ -50,8 +50,6 @@
 #define QGEOMAPDATA_NOKIA_H
 
 #include "qgeotiledmapdata_p.h"
-#include <QPixmap>
-#include <QNetworkReply>
 
 QT_BEGIN_NAMESPACE
 
@@ -64,18 +62,8 @@ public:
     QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
     ~QGeoTiledMapDataNokia();
 
-    QString getViewCopyright();
-
 private:
     Q_DISABLE_COPY(QGeoTiledMapDataNokia)
-
-    QPixmap watermark;
-
-    QPixmap lastCopyright;
-    QString lastCopyrightText;
-    QRect lastViewport;
-    QRect lastCopyrightRect;
-    QNetworkAccessManager *m_networkManager;
 };
 
 QT_END_NAMESPACE

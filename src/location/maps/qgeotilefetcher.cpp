@@ -222,6 +222,7 @@ void QGeoTileFetcher::handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &
 QGeoTileFetcherPrivate::QGeoTileFetcherPrivate(QGeoTiledMappingManagerEngine *engine)
     : started_(false),
       stopped_(false),
+      timer_(0),
       engine_(engine) {}
 
 QGeoTileFetcherPrivate::~QGeoTileFetcherPrivate()

@@ -54,11 +54,17 @@
 #include <QGeoServiceProvider>
 #include "qgeotilefetcher.h"
 
+#include <QMap>
+
 #ifdef USE_CHINA_NETWORK_REGISTRATION
 #include <qnetworkinfo.h>
 #endif
 
 QT_BEGIN_NAMESPACE
+
+class QChar;
+class QSize;
+class QVariant;
 
 class QNetworkAccessManager;
 class QNetworkDiskCache;
@@ -86,7 +92,7 @@ public:
     const QString& applicationId() const;
     const QString& referer() const;
 
-    void setParams(const QMap<QString, QVariant> *parameters);
+    void setParams(const QMap<QString, QVariant> &parameters);
     void setTileSize(QSize tileSize);
 
 #ifdef USE_CHINA_NETWORK_REGISTRATION
@@ -107,7 +113,7 @@ private:
 
     QNetworkAccessManager *m_networkManager;
     QNetworkDiskCache *m_cache;
-    const QMap<QString, QVariant> *m_parameters;
+    QMap<QString, QVariant> m_parameters;
     QSize m_tileSize;
     QString m_host;
     QString m_token;

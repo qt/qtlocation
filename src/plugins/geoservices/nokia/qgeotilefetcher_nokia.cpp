@@ -77,6 +77,7 @@ const char* MAPTILES_HOST_CN = "a-k.maptile.maps.svc.nokia.com.cn";
 
 QGeoTileFetcherNokia::QGeoTileFetcherNokia(QGeoTiledMappingManagerEngine *engine)
         : QGeoTileFetcher(engine),
+        m_networkManager(0),
         m_cache(0),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
         m_referer(QGeoServiceProviderFactoryNokia::defaultReferer),
@@ -93,8 +94,8 @@ bool QGeoTileFetcherNokia::init()
 
     m_networkManager = new QNetworkAccessManager(this);
 
-    if (m_parameters->contains("mapping.proxy")) {
-        QString proxy = m_parameters->value("mapping.proxy").toString();
+    if (m_parameters.contains("mapping.proxy")) {
+        QString proxy = m_parameters.value("mapping.proxy").toString();
         if (!proxy.isEmpty()) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
@@ -107,28 +108,28 @@ bool QGeoTileFetcherNokia::init()
         }
     }
 
-    if (m_parameters->contains("mapping.host")) {
-        QString host = m_parameters->value("mapping.host").toString();
+    if (m_parameters.contains("mapping.host")) {
+        QString host = m_parameters.value("mapping.host").toString();
         if (!host.isEmpty())
             setHost(host);
     }
 
-    if (m_parameters->contains("mapping.referer")) {
-        m_referer = m_parameters->value("mapping.referer").toString();
+    if (m_parameters.contains("mapping.referer")) {
+        m_referer = m_parameters.value("mapping.referer").toString();
     }
 
-    if (m_parameters->contains("mapping.app_id")) {
-        m_applicationId = m_parameters->value("mapping.app_id").toString();
+    if (m_parameters.contains("mapping.app_id")) {
+        m_applicationId = m_parameters.value("mapping.app_id").toString();
     }
-    else if (m_parameters->contains("app_id")) {
-        m_applicationId = m_parameters->value("app_id").toString();
+    else if (m_parameters.contains("app_id")) {
+        m_applicationId = m_parameters.value("app_id").toString();
     }
 
-    if (m_parameters->contains("mapping.token")) {
-        m_token = m_parameters->value("mapping.token").toString();
+    if (m_parameters.contains("mapping.token")) {
+        m_token = m_parameters.value("mapping.token").toString();
     }
-    else if (m_parameters->contains("token")) {
-        m_token = m_parameters->value("token").toString();
+    else if (m_parameters.contains("token")) {
+        m_token = m_parameters.value("token").toString();
     }
 #ifdef DISK_CACHE_ENABLED
     QString cacheDir;
@@ -296,7 +297,7 @@ const QString & QGeoTileFetcherNokia::referer() const
     return m_referer;
 }
 
-void QGeoTileFetcherNokia::setParams(const QMap<QString, QVariant> *parameters)
+void QGeoTileFetcherNokia::setParams(const QMap<QString, QVariant> &parameters)
 {
     m_parameters = parameters;
 }

@@ -73,7 +73,6 @@ private slots:
     void replyError(QNetworkReply::NetworkError error);
 
 private:
-    QPlaceManager *m_manager;
     QNetworkReply *m_reply;
 };
 

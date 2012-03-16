@@ -285,9 +285,12 @@ void QGeoTiledMapDataPrivate::changeActiveMapType(const QGeoMapType mapType)
 
 void QGeoTiledMapDataPrivate::resized(int width, int height)
 {
-    cameraTiles_->setScreenSize(QSize(width, height));
-    mapGeometry_->setScreenSize(QSize(width, height));
-    map_->setCameraData(map_->cameraData());
+    if (cameraTiles_)
+        cameraTiles_->setScreenSize(QSize(width, height));
+    if (mapGeometry_)
+        mapGeometry_->setScreenSize(QSize(width, height));
+    if (map_)
+        map_->setCameraData(map_->cameraData());
 
     if (width > 0 && height > 0 && cache_ && cameraTiles_) {
         // absolute minimum size: one tile each side of display, 32-bit colour

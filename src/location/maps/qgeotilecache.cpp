@@ -225,7 +225,7 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::get(const QGeoTileSpec &spec)
             return QSharedPointer<QGeoTileTexture>(0);
         }
 
-        addToMemoryCache(spec, bytes, (parts.size() == 2 ? parts.at(1) : ""));
+        addToMemoryCache(spec, bytes, (parts.size() == 2 ? parts.at(1) : QLatin1String("")));
         QSharedPointer<QGeoTileTexture> tt = addToTextureCache(td->spec, pixmap);
         if (tt)
             return tt;
@@ -283,23 +283,23 @@ QSharedPointer<QGeoCachedTileDisk> QGeoTileCache::addToDiskCache(const QGeoTileS
 
     QFileInfo fi(filename);
     int diskCost = fi.size();
-
     diskCache_.insert(spec, td, diskCost);
+
     return td;
 }
 
 QSharedPointer<QGeoCachedTileMemory> QGeoTileCache::addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format)
 {
-    QSharedPointer<QGeoCachedTileMemory> tt(new QGeoCachedTileMemory);
-    tt->spec = spec;
-    tt->cache = this;
-    tt->bytes = bytes;
-    tt->format = format;
+    QSharedPointer<QGeoCachedTileMemory> tm(new QGeoCachedTileMemory);
+    tm->spec = spec;
+    tm->cache = this;
+    tm->bytes = bytes;
+    tm->format = format;
 
     int cost = bytes.size();
-    memoryCache_.insert(spec, tt, cost);
+    memoryCache_.insert(spec, tm, cost);
 
-    return tt;
+    return tm;
 }
 
 QSharedPointer<QGeoTileTexture> QGeoTileCache::addToTextureCache(const QGeoTileSpec &spec, const QPixmap &pixmap)

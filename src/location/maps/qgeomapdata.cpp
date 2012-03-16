@@ -189,10 +189,10 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(QGeoMappingManagerEngine *engine, QGeoMap
     : width_(0),
       height_(0),
       aspectRatio_(0.0),
+      camera_(new QGLCamera()),
       map_(parent),
       engine_(engine),
       controller_(0),
-      camera_(new QGLCamera()),
       activeMapType_(QGeoMapType())
 {
     pluginString_ = engine_->managerName() + QLatin1String("_") + QString::number(engine_->managerVersion());

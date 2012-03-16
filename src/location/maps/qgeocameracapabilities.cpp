@@ -282,7 +282,6 @@ void QGeoCameraCapabilities::setMinimumTilt(double minimumTilt)
 double QGeoCameraCapabilities::minimumTilt() const
 {
     return d->minTilt_;
-    d->valid_ = true;
 }
 
 /*!

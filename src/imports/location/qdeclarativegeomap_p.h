@@ -175,7 +175,6 @@ protected:
 
     void touchEvent(QTouchEvent *event);
     void wheelEvent(QWheelEvent *event);
-    void keyPressEvent(QKeyEvent *e);
 
 Q_SIGNALS:
     void wheel(qreal delta);

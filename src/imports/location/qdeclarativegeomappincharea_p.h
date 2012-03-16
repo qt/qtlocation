@@ -72,7 +72,11 @@ public:
         : QObject(), center_(center), angle_(angle),
           point1_(point1), point2_(point2),
         pointCount_(pointCount), accepted_(accepted) {}
-    QDeclarativeGeoMapPinchEvent() {}
+    QDeclarativeGeoMapPinchEvent()
+        : QObject(),
+          angle_(0.0),
+          pointCount_(0),
+          accepted_(true) {}
 
     QPointF center() const { return center_; }
     void setCenter(QPointF center) { center_ = center; }

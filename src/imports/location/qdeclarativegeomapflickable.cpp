@@ -175,8 +175,11 @@ QDeclarativeGeoMapFlickable::QDeclarativeGeoMapFlickable(QObject *parent)
       pressed_(false),
       maxVelocity_(QML_MAP_FLICK_DEFAULTMAXVELOCITY),
       deceleration_(QML_MAP_FLICK_DEFAULTDECELERATION),
+      velocityX_(0.0),
+      velocityY_(0.0),
       flicking_(false),
       map_(0),
+      animation_(0),
       enabled_(true),
       moving_(false)
 {

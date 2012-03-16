@@ -222,14 +222,11 @@ void QDeclarativeGeoMap::pluginReady()
 {
     serviceProvider_  = plugin_->sharedGeoServiceProvider();
     mappingManager_ = serviceProvider_->mappingManager();
-    map_ = mappingManager_->createMap(this);
-    flickable_->setMap(map_);
-    pinchArea_->zoomLevelLimits(mappingManager_->cameraCapabilities().minimumZoomLevel(), mappingManager_->cameraCapabilities().maximumZoomLevel());
 
     if (!mappingManager_  || serviceProvider_->error() != QGeoServiceProvider::NoError) {
-           qmlInfo(this) << tr("Warning: Plugin does not support mapping.");
-           return;
-       }
+        qmlInfo(this) << tr("Warning: Plugin does not support mapping.");
+        return;
+    }
 
     if (!mappingManager_->isInitialized())
         connect(mappingManager_, SIGNAL(initialized()), this, SLOT(mappingManagerInitialized()));
@@ -337,59 +334,6 @@ void QDeclarativeGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
     view->repopulate();
 }
 
-// Note: this keyboard handling is for development purposes only
-void QDeclarativeGeoMap::keyPressEvent(QKeyEvent *e)
-{
-    if (!mappingManagerInitialized_)
-        return;
-    QLOC_TRACE2(" key: ", e->key());
-    QGeoCameraData cameraData = map_->cameraData();
-    if (e->key() == Qt::Key_Left) {
-        if (e->modifiers() & Qt::ShiftModifier) {
-            map_->mapController()->pan(-1.0 * map_->width() / 8.0, 0);
-            cameraData = map_->cameraData();
-        } else {
-            cameraData.setBearing(cameraData.bearing() - 5.0);
-        }
-    } else if (e->key() == Qt::Key_Right) {
-        if (e->modifiers() & Qt::ShiftModifier) {
-            map_->mapController()->pan(map_->width() / 8.0, 0);
-            cameraData = map_->cameraData();
-        } else {
-            cameraData.setBearing(cameraData.bearing() + 5.0);
-        }
-    } else if (e->key() == Qt::Key_Up) {
-        if (e->modifiers() & Qt::ShiftModifier) {
-            map_->mapController()->pan(0, map_->height() / 8.0);
-            cameraData = map_->cameraData();
-        } else {
-            cameraData.setTilt(cameraData.tilt() - 5.0);
-        }
-    } else if (e->key() == Qt::Key_Down) {
-        if (e->modifiers() & Qt::ShiftModifier) {
-            map_->mapController()->pan(0, -1.0 * map_->height() / 8.0);
-            cameraData = map_->cameraData();
-        } else {
-            cameraData.setTilt(cameraData.tilt() + 5.0);
-        }
-    } else if (e->key() == Qt::Key_Plus) {
-        if (e->modifiers() & Qt::ShiftModifier) {
-            cameraData.setZoomLevel(cameraData.zoomLevel() + 1.0);
-            map_->setCameraData(cameraData);
-        }
-    } else if (e->key() == Qt::Key_Minus) {
-        if (e->modifiers() & Qt::ShiftModifier) {
-            if (cameraData.zoomLevel() != 1.0)
-                cameraData.setZoomLevel(cameraData.zoomLevel() - 1.0);
-            map_->setCameraData(cameraData);
-        }
-    } else if (e->key() == Qt::Key_U) {
-        map_->setCameraData(cameraData);
-    }
-    map_->setCameraData(cameraData);
-    update();
-}
-
 QSGNode* QDeclarativeGeoMap::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data)
@@ -444,6 +388,10 @@ void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 void QDeclarativeGeoMap::mappingManagerInitialized()
 {
     mappingManagerInitialized_ = true;
+
+    map_ = mappingManager_->createMap(this);
+    flickable_->setMap(map_);
+    pinchArea_->zoomLevelLimits(mappingManager_->cameraCapabilities().minimumZoomLevel(), mappingManager_->cameraCapabilities().maximumZoomLevel());
 
     map_->setActiveMapType(QGeoMapType());
     flickable_->setMap(map_);

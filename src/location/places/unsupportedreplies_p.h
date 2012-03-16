@@ -61,7 +61,7 @@ public:
     {
         setError(QPlaceReply::UnsupportedError,
                  QStringLiteral("Getting place details is not supported."));
-        setFinished(this);
+        setFinished(true);
         QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, error()),
                                   Q_ARG(QString, errorString()));
@@ -85,7 +85,7 @@ public:
     {
         setError(QPlaceReply::UnsupportedError,
                  QStringLiteral("Place content is not supported."));
-        setFinished(this);
+        setFinished(true);
         QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, error()),
                                   Q_ARG(QString, errorString()));
@@ -108,7 +108,7 @@ public:
     :   QPlaceSearchReply(parent)
     {
         setError(QPlaceReply::UnsupportedError, message);
-        setFinished(this);
+        setFinished(true);
         QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, error()),
                                   Q_ARG(QString, errorString()));
@@ -132,7 +132,7 @@ public:
     {
         setError(QPlaceReply::UnsupportedError,
                  QStringLiteral("Place search suggestions are not supported."));
-        setFinished(this);
+        setFinished(true);
         QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, error()),
                                   Q_ARG(QString, errorString()));
@@ -156,7 +156,7 @@ public:
     :   QPlaceIdReply(type, parent)
     {
         setError(QPlaceReply::UnsupportedError, message);
-        setFinished(this);
+        setFinished(true);
         QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, error()),
                                   Q_ARG(QString, errorString()));
@@ -179,7 +179,7 @@ public:
     :   QPlaceReply(parent)
     {
         setError(QPlaceReply::UnsupportedError, message);
-        setFinished(this);
+        setFinished(true);
         QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, error()),
                                   Q_ARG(QString, errorString()));
@@ -203,7 +203,7 @@ public:
     {
         setError(QPlaceReply::UnsupportedError,
                  QStringLiteral("Place matching is not supported."));
-        setFinished(this);
+        setFinished(true);
         QMetaObject::invokeMethod(this, "error", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, error()),
                                   Q_ARG(QString, errorString()));

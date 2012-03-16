@@ -180,9 +180,6 @@ private slots:
     void getCategoriesToBeRemovedFinished();
     void removeFinished();
     void requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString);
-
-private:
-    int m_reqId;
 };
 
 QT_END_NAMESPACE

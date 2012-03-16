@@ -159,7 +159,11 @@ QGeoMapPolylineGeometry::QGeoMapPolylineGeometry(QObject *parent) :
 void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
                                                  const QList<QGeoCoordinate> &path)
 {
-    qreal minX, minY, maxX, maxY;
+    bool foundValid = false;
+    qreal minX = -1.0;
+    qreal minY = -1.0;
+    qreal maxX = -1.0;
+    qreal maxY = -1.0;
 
     if (!sourceDirty_)
         return;
@@ -184,13 +188,16 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
         if (!qIsFinite(point.x()) || !qIsFinite(point.y()))
             return;
 
-        if (i == 0) {
+        if (!foundValid) {
+            foundValid = true;
             srcOrigin_ = coord;
             origin = point;
             point = QPointF(0,0);
 
-            minX = (maxX = point.x());
-            minY = (maxY = point.y());
+            minX = point.x();
+            maxX = minX;
+            minY = point.y();
+            maxY = minY;
 
             srcPoints_ << point.x() << point.y();
             srcPointTypes_ << QPainterPath::MoveToElement;
@@ -259,7 +266,8 @@ static void clipSegmentToRect(qreal x0, qreal y0, qreal x1, qreal y1,
         } else if (type0 & type1) {
             break;
         } else {
-            qreal x, y;
+            qreal x = 0.0;
+            qreal y = 0.0;
             int outsideType = type0 ? type0 : type1;
 
             if (outsideType & BottomPoint) {

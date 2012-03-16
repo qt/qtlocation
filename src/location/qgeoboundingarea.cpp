@@ -185,10 +185,7 @@ bool QGeoBoundingArea::operator==(const QGeoBoundingArea &other) const
     if (d == other.d_func())
         return true;
 
-    if (d && !other.d_func())
-        return false;
-
-    if (!d && other.d_func())
+    if (!d || !(other.d_func()))
         return false;
 
     return *d == *other.d_func();

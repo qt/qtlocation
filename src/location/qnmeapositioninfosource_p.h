@@ -77,7 +77,7 @@ class QNmeaPositionInfoSourcePrivate : public QObject
 {
     Q_OBJECT
 public:
-    explicit QNmeaPositionInfoSourcePrivate(QNmeaPositionInfoSource *parent);
+    QNmeaPositionInfoSourcePrivate(QNmeaPositionInfoSource *parent, QNmeaPositionInfoSource::UpdateMode updateMode);
     ~QNmeaPositionInfoSourcePrivate();
 
     void startUpdates();

@@ -195,8 +195,10 @@ void QNmeaSimulatedReader::processNextSentence()
 //============================================================
 
 
-QNmeaPositionInfoSourcePrivate::QNmeaPositionInfoSourcePrivate(QNmeaPositionInfoSource *parent)
+QNmeaPositionInfoSourcePrivate::QNmeaPositionInfoSourcePrivate(QNmeaPositionInfoSource *parent, QNmeaPositionInfoSource::UpdateMode updateMode)
         : QObject(parent),
+        m_updateMode(updateMode),
+        m_device(0),
         m_invokedStart(false),
         m_positionError(QGeoPositionInfoSource::UnknownSourceError),
         m_source(parent),
@@ -469,10 +471,8 @@ void QNmeaPositionInfoSourcePrivate::emitUpdated(const QGeoPositionInfo &update)
 */
 QNmeaPositionInfoSource::QNmeaPositionInfoSource(UpdateMode updateMode, QObject *parent)
         : QGeoPositionInfoSource(parent),
-        d(new QNmeaPositionInfoSourcePrivate(this))
+        d(new QNmeaPositionInfoSourcePrivate(this, updateMode))
 {
-    d->m_updateMode = updateMode;
-    d->m_device = 0;
 }
 
 /*!

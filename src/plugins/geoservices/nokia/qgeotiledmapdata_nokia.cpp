@@ -61,8 +61,7 @@ QT_BEGIN_NAMESPACE
  \a geoMap and makes use of the functionality provided by \a engine.
  */
 QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent /*= 0*/) :
-    QGeoTiledMapData(engine, parent),
-    watermark(":/images/watermark.png")
+    QGeoTiledMapData(engine, parent)
 {
 }
 

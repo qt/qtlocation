@@ -151,7 +151,7 @@ private:
 
 public:
     explicit QCache3Q(int maxCost = 100, int minRecent = -1, int maxOldPopular = -1);
-    inline ~QCache3Q() { clear(); delete q1_; delete q2_; delete q3_; }
+    inline ~QCache3Q() { clear(); delete q1_; delete q2_; delete q3_; delete q1_evicted_; }
 
     inline int maxCost() const { return maxCost_; }
     void setMaxCost(int maxCost, int minRecent=-1, int maxOldPopular=-1);

@@ -80,7 +80,6 @@ public:
 
     bool started_;
     bool stopped_;
-    bool initialized_;
     QTimer *timer_;
     QMutex queueMutex_;
     QList<QGeoTileSpec> queue_;

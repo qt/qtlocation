@@ -74,12 +74,12 @@ public:
     QGeoTiledMappingManagerEnginePrivate();
     ~QGeoTiledMappingManagerEnginePrivate();
 
-    QThread *thread;
-    QSize tileSize;
-    QHash<QGeoTileCache*, QSet<QGeoTiledMapData*> > caches;
-    QHash<QGeoTiledMapData*, QSet<QGeoTileSpec> > mapHash;
-    QHash<QGeoTileSpec, QSet<QGeoTiledMapData*> > tileHash;
-    QGeoTiledMappingManagerEngine::CacheAreas cacheHint;
+    QThread *thread_;
+    QSize tileSize_;
+    QHash<QGeoTileCache*, QSet<QGeoTiledMapData*> > caches_;
+    QHash<QGeoTiledMapData*, QSet<QGeoTileSpec> > mapHash_;
+    QHash<QGeoTileSpec, QSet<QGeoTiledMapData*> > tileHash_;
+    QGeoTiledMappingManagerEngine::CacheAreas cacheHint_;
     QGeoTileCache *tileCache_;
     QGeoTileFetcher *fetcher_;
 

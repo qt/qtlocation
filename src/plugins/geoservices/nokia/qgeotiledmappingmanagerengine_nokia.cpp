@@ -85,7 +85,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(const QMa
     setSupportedMapTypes(types);
 
     QGeoTileFetcherNokia *fetcher = new QGeoTileFetcherNokia(this);
-    fetcher->setParams(&parameters);
+    fetcher->setParams(parameters);
     fetcher->setTileSize(tileSize());
     setTileFetcher(fetcher);
 }
