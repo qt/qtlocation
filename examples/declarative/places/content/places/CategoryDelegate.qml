@@ -51,11 +51,13 @@ Item {
     signal editClicked
 
     width: parent.width
-    height: childrenRect.height
+    height: textItem.height
 
     Item {
+        id: textItem
         anchors.left: parent.left
         anchors.right: arrow.left
+        anchors.verticalCenter: parent.verticalCenter
 
         height: Math.max(icon.height, name.height)
 
@@ -63,6 +65,7 @@ Item {
             id: icon
 
             anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
             source: category.icon.url()
         }
 
@@ -71,7 +74,7 @@ Item {
             id: name
 
             anchors.left: icon.right
-            anchors.verticalCenter: icon.verticalCenter
+            anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
 
             text: category.name
@@ -90,7 +93,8 @@ Item {
         id: edit
 
         anchors.right: cross.left
-        visible: placesPlugin.supportedPlacesFeatures & Plugin.SaveCategoryFeature
+        anchors.verticalCenter: parent.verticalCenter
+        visible: (placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SaveCategoryFeature) : false)
 
         source: "../../resources/pencil.png"
         hoveredSource: "../../resources/pencil_hovered.png"
@@ -103,7 +107,8 @@ Item {
         id: cross
 
         anchors.right: arrow.left
-        visible: placesPlugin.supportedPlacesFeatures & Plugin.RemoveCategoryFeature
+        anchors.verticalCenter: parent.verticalCenter
+        visible: (placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.RemoveCategoryFeature) : false)
 
         source: "../../resources/cross.png"
         hoveredSource: "../../resources/cross_hovered.png"
@@ -116,6 +121,7 @@ Item {
         id: arrow
 
         anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
         visible: model.hasModelChildren
 
         source: "../../resources/right.png"

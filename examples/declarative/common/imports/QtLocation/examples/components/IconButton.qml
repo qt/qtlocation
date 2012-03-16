@@ -56,6 +56,7 @@ Item {
         id: image
 
         source: parent.source
+        height: sourceSize.height
 
         MouseArea {
             id: mouseRegion

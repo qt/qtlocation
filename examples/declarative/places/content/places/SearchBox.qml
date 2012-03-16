@@ -141,6 +141,7 @@ Rectangle {
         anchors.rightMargin: 10
         height: expandedHeight - y
         visible: false
+        spacing: 5
 
         clip: true
         snapMode: ListView.SnapToItem
