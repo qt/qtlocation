@@ -324,7 +324,7 @@ void QDeclarativePinchGenerator::timerEvent(QTimerEvent *event)
     Q_ASSERT(state_ == Replaying);
 
     // Create touchevent. May have one or two touchpoints.
-    QTouchEvent* touchEvent;
+    QTouchEvent* touchEvent = 0;
     switch (swipes_.at(masterSwipe_)->touchPoints.at(replayBookmark_).state()) {
     case (Qt::TouchPointPressed):
         touchEvent = new QTouchEvent(QEvent::TouchBegin,NULL,Qt::NoModifier,Qt::TouchPointReleased);
@@ -337,7 +337,7 @@ void QDeclarativePinchGenerator::timerEvent(QTimerEvent *event)
         break;
     default:
         Q_ASSERT(false);
-        break;
+        return;
     }
     // Set touch points. Master swipe has touchpoints as it was chosen to have more touchpoints.
     // For the other swipe we need to check.

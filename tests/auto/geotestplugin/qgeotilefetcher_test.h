@@ -55,6 +55,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QTimerEvent>
+#include <QVariant>
 
 QT_USE_NAMESPACE
 
@@ -79,12 +80,16 @@ class QGeoTileFetcherTest: public QGeoTileFetcher
 Q_OBJECT
 public:
     QGeoTileFetcherTest(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0)
-        : QGeoTileFetcher(engine, parent) {}
+        : QGeoTileFetcher(engine, parent),
+          finishRequestImmediately_(false),
+          mappingReply_(0),
+          timerId_(0),
+          errorCode_(QGeoTiledMapReply::NoError) {}
 
     bool init()
     {
-        if (m_parameters->contains("finishRequestImmediately"))
-            finishRequestImmediately_ = qvariant_cast<bool>(m_parameters->value("finishRequestImmediately"));
+        if (parameters_.contains("finishRequestImmediately"))
+            finishRequestImmediately_ = parameters_.value("finishRequestImmediately").toBool();
         return true;
     }
 
@@ -123,17 +128,17 @@ public:
         mappingReply_->callSetMapImageFormat("png");
         mappingReply_->callSetFinished(true);
 
-        return static_cast<QGeoTiledMapReply*>(mappingReply_);
+        return mappingReply_;
     }
 
-    void setParams(const QMap<QString, QVariant> *parameters)
+    void setParams(const QMap<QString, QVariant> &parameters)
     {
-        m_parameters = parameters;
+        parameters_ = parameters;
     }
 
     void setTileSize(QSize tileSize)
     {
-        m_tileSize = tileSize;
+        tileSize_ = tileSize;
     }
 
 public Q_SLOTS:
@@ -170,8 +175,8 @@ private:
     int timerId_;
     QGeoTiledMapReply::Error errorCode_;
     QString errorString_;
-    const QMap<QString, QVariant> *m_parameters;
-    QSize m_tileSize;
+    QMap<QString, QVariant> parameters_;
+    QSize tileSize_;
 };
 
 #endif

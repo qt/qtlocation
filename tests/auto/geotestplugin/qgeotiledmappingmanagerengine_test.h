@@ -79,7 +79,7 @@ public:
         setTileSize(QSize(256, 256));
 
         QGeoTileFetcherTest *fetcher = new QGeoTileFetcherTest(this);
-        fetcher->setParams(&parameters);
+        fetcher->setParams(parameters);
         fetcher->setTileSize(QSize(256, 255));
         setTileFetcher(fetcher);
     }
