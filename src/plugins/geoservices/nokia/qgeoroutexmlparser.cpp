@@ -100,6 +100,13 @@ bool QGeoRouteXmlParser::parseRootElement()
         return false;
     }
 
+    if (m_reader->name() == QLatin1String("Error")) {
+        QXmlStreamAttributes attributes = m_reader->attributes();
+        if (attributes.value(QLatin1String("type")) == QLatin1String("ApplicationError")
+            && attributes.value("subtype") == QLatin1String("NoRouteFound"))
+            return true;
+    }
+
     bool updateroute = false;
     if (m_reader->name() != "CalculateRoute" && m_reader->name() != "GetRoute")  {
         m_reader->raiseError(QString("The root element is expected to have the name \"CalculateRoute\" or \"GetRoute\" (root element was named \"%1\").").arg(m_reader->name().toString()));

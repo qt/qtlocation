@@ -117,7 +117,19 @@ void QGeoRouteReplyNokia::networkError(QNetworkReply::NetworkError error)
     if (!m_reply)
         return;
 
-    setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
+    bool resolvedError = false;
+
+    if (QNetworkReply::UnknownContentError == error) {
+        QGeoRouteXmlParser parser(request());
+        if (parser.parse(m_reply)) {
+            setRoutes(parser.results());
+            setFinished(true);
+            resolvedError = true;
+        }
+    }
+
+    if (!resolvedError)
+        setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
 
     m_reply->deleteLater();
     m_reply = 0;
