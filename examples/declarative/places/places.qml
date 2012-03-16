@@ -252,8 +252,8 @@ Item {
             setModel([
                 ["Latitude", searchRegion.center ? String(searchRegion.center.latitude) : ""],
                 ["Longitude", searchRegion.center ? String(searchRegion.center.longitude) : ""],
-                ["Width", searchRegion.width ? String(searchRegion.width) : "" ],
-                ["Height", searchRegion.height ? String(searchRegion.height) : "" ]
+                ["Width(deg)", searchRegion.width ? String(searchRegion.width) : "" ],
+                ["Height(deg)", searchRegion.height ? String(searchRegion.height) : "" ]
             ]);
         }
 
@@ -298,7 +298,7 @@ Item {
             setModel([
                 ["Latitude", searchRegion.center ? String(searchRegion.center.latitude) : ""],
                 ["Longitude", searchRegion.center ? String(searchRegion.center.longitude) : ""],
-                ["Radius", searchRegion.radius ? String(searchRegion.radius) : "" ]
+                ["Radius(m)", searchRegion.radius ? String(searchRegion.radius) : "" ]
             ]);
         }
 
