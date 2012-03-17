@@ -84,7 +84,8 @@ QPlaceCategory parseCategory(const QJsonObject &categoryObject)
     category.setName(categoryObject.value(QLatin1String("title")).toString());
 
     const QUrl href(categoryObject.value(QLatin1String("href")).toString());
-    category.setCategoryId(href.path().mid(34));
+    const QString hrefPath(href.path());
+    category.setCategoryId(hrefPath.mid(hrefPath.lastIndexOf(QLatin1Char('/')) + 1));
 
     QVariantMap parameters;
     parameters.insert(QPlaceIcon::SingleUrl,
