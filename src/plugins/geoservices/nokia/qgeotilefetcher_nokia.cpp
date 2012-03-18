@@ -60,6 +60,8 @@
 #include <QDir>
 #include <QUrl>
 
+#include <map>
+
 #define LARGE_TILE_DIMENSION 256
 
 #if defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
