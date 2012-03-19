@@ -128,13 +128,8 @@ void QGeoTileFetcher::cancelTileRequests(const QSet<QGeoTileSpec> &tiles)
     for (; tile != end; ++tile) {
         QGeoTiledMapReply* reply = d->invmap_.value(*tile, 0);
         if (reply) {
-            /* when we call abort() it will directly emit finished(), so
-             * we must disconnect it first to avoid recursing on the lock */
-            disconnect(reply, SIGNAL(finished()),
-                       this, SLOT(finished()));
             d->invmap_.remove(*tile);
             reply->abort();
-            reply->deleteLater();
         }
         d->queue_.removeAll(*tile);
     }
@@ -167,7 +162,8 @@ void QGeoTileFetcher::requestNextTile()
         connect(reply,
                 SIGNAL(finished()),
                 this,
-                SLOT(finished()));
+                SLOT(finished()),
+                Qt::QueuedConnection);
 
         d->invmap_.insert(ts, reply);
     }
