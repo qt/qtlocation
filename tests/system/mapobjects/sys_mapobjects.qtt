@@ -95,21 +95,21 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Press and Hold on the map | |
-        | Select Add Marker button | |
-        | Create second Marker | |
-        | Create third Marker | |
-        | Press and Hold on the first marker | |
-        | Select Move To button | |
+        | Select 'Add Marker' button | |
+        | Press and Hold on the marker | |
+        | Select 'Move to' button | |
         | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
+        | Create second Marker | |
         | Press and Hold on the second marker | |
-        | Select Move To button | |
+        | Select 'Move to' button | |
         | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
+        | Create third Marker | |
         | Press and Hold on the third marker | |
-        | Select Move To button | |
+        | Select 'Move to' button | |
         | Fill in " + lat3 + " in Latitude field | |
         | Fill in " + long3 + " in Longitude | |
         | Select Go! button | |
@@ -146,33 +146,33 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Press and Hold on the map | |
-        | Select Add Marker button | |
-        | Create second Marker | |
-        | Create third Marker | |
-        | Create fourth Marker | |
-        | Create fifth Marker | |
-        | Press and Hold on the first marker | |
-        | Select Move To button | |
+        | Select 'Add Marker' button | |
+        | Press and Hold on the marker | |
+        | Select 'Move to' button | |
         | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
+        | Create second Marker | |
         | Press and Hold on the second marker | |
-        | Select Move To button | |
+        | Select 'Move to' button | |
         | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
+        | Create third Marker | |
         | Press and Hold on the third marker | |
-        | Select Move To button | |
+        | Select 'Move to' button | |
         | Fill in " + lat3 + " in Latitude field | |
         | Fill in " + long3 + " in Longitude | |
         | Select Go! button | |
+        | Create fourth Marker | |
         | Press and Hold on the fourth marker | |
-        | Select Move To button | |
+        | Select 'Move to' button | |
         | Fill in " + lat4 + " in Latitude field | |
         | Fill in " + long4 + " in Longitude | |
         | Select Go! button | |
+        | Create fifth Marker | |
         | Press and Hold on the fifth marker | |
-        | Select Move To button | |
+        | Select 'Move to' button | |
         | Fill in " + lat5 + " in Latitude field | |
         | Fill in " + long5 + " in Longitude | |
         | Select Go! button | |
@@ -208,15 +208,15 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Press and Hold on the map | |
-        | Select Add Marker button | |
-        | Create second Marker | |
-        | Press and Hold on the first marker | |
-        | Select Move To button | |
+        | Select 'Add Marker' button | |
+        | Press and Hold on the marker | |
+        | Select 'Move to' button | |
         | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
+        | Create second Marker | |
         | Press and Hold on the second marker | |
-        | Select Move To button | |
+        | Select 'Move to' button | |
         | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
@@ -252,9 +252,9 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Press and Hold on the map | |
-        | Select Add Marker button | |
+        | Select 'Add Marker' button | |
         | Press and Hold on the marker | |
-        | Select Move To button | |
+        | Select 'Move to' button | |
         | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude | |
         | Select Go! button | |
@@ -290,9 +290,9 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Press and Hold on the map | |
-        | Select Add Marker button | |
+        | Select 'Add Marker' button | |
         | Press and Hold on the marker | |
-        | Select Move To button | |
+        | Select 'Move to' button | |
         | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude | |
         | Select Go! button | |
@@ -328,15 +328,16 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Press and Hold on the map | |
-        | Select Add Marker button | |
+        | Select 'Add Marker' button | |
         | Press and Hold on the marker | |
-        | Select Move To button | |
+        | Select 'Move to' button | |
         | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude | |
         | Select Go! button | |
         | Press and Hold on the marker | |
         | Select Draw... button | |
-        | Select 3D QML Item button | Verify that rotating cube is on the map. |"
+        | Select '3D QML Item' button | Verify that rotating cube is on the map. |
+        | Wait for a minute | Verify that cube is rotating. |"
         ));
     },
 
@@ -361,7 +362,7 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Press and Hold on the map | |
-        | Select Add Marker button | |
+        | Select 'Add Marker' button | |
         | Create second Marker | |
         | Create third Marker | |
         | Create fourth Marker | |
@@ -382,7 +383,7 @@ testcase = {
         | Select Circle | |
         | Press and Hold on the third marker | |
         | Select Draw... button | |
-        | Select 3D QML Item | |
+        | Select '3D QML Item' | |
         | Press and Hold on the fourth marker | |
         | Select Draw... button | |
         | Select Video | |
@@ -416,9 +417,9 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Press and Hold on the map | |
-        | Select Add Marker button | |
+        | Select 'Add Marker' button | |
         | Press and Hold on the marker | |
-        | Select Move To button | |
+        | Select 'Move to' button | |
         | Fill in " + latitude + " in Latitude field | |
         | Fill in " + longitude + " in Longitude | |
         | Select Go! button | Verify that marker places next to " + city + " |
@@ -447,7 +448,7 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Press and Hold on the map | |
-        | Select Add Marker button | |
+        | Select 'Add Marker' button | |
         | Press and Hold on the marker | Verify that popup menu appears |
         | Press on the map | Verify that popup menu disappears | |
         | Pan the map | Verify that marker doesn't change it's coordinate. |
@@ -553,8 +554,8 @@ testcase = {
     },
 
 
-    qml_mapitem_border_interaction:{
-        nodes:["-27.1144", "152.6594", "-27.7434", "153.3021"],
+    qml_mapitem_border_interaction_data:{
+        nodes:["-27.1144", "152.6594", "-27.7434", "153.3021"]
     },
 
     qml_mapitem_border_interaction:function(rectlat1, rectlong1, rectlat2, rectlong2)
@@ -577,17 +578,17 @@ testcase = {
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
-        | Press and Hold on the map | |
-//        | Select Add Marker button | |
-        | Press and Hold on the map | |
-        | Select Add Marker button | |
-        | Press and Hold on the first marker | |
-        | Select Move To button | |
+        | Long Press on the map | |
+        | Select 'Add Marker' button | |
+        | Long Press on the marker | |
+        | Select 'Move to' button | |
         | Fill in " + rectlat1 + " in Latitude field | |
         | Fill in " + rectlong1 + " in Longitude | |
         | Select Go! button | |
-        | Press and Hold on the second marker | |
-        | Select Move To button | |
+        | Long Press on the map | |
+        | Select 'Add Marker' button | |
+        | Long Press on the second marker | |
+        | Select 'Move to' button | |
         | Fill in " + rectlat2 + " in Latitude field | |
         | Fill in " + rectlong2 + " in Longitude | |
         | Select Go! button | |

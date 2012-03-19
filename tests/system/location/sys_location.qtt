@@ -89,9 +89,9 @@ testcase = {
         | Launch " + testBinary + " | App launches normally. |
         | Select Provider button | |
         | Select nokia provider | Map is displayed on the screen |
-        | Zoom in the map to see *Brisbane* | |
+        | Zoom in the map to see Brisbane | |
         | Press and Hold on the square which represents Brisbane | |
-        | Select *Get coordinate* menu item | Verify that dialog with coordinates appears on the screen. Latitude is about *-27.46*, longitude is about *153.02* |"
+        | Select 'Get coordinate' menu item | Verify that dialog with coordinates appears on the screen. Latitude is about -27.46, longitude is about 153.02 |"
         ));
     },
 
@@ -276,28 +276,28 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
         | Long press on the map | |
-        | Select Add Marker menu item | |
-        | Create another Marker via Long Press | |
-        | Long Press on the first marker | |
-        | Select Move To menu item | |
+        | Select 'Add Marker' menu item | |
+        | Long Press on the marker | |
+        | Select 'Move to' menu item | |
         | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
+        | Create another Marker via Long Press | |
         | Long Press on the second marker | |
-        | Select Move To menu item | |
+        | Select 'Move to' menu item | |
         | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
         | Long Press on the first marker | |
-        | Select *Distance to the next point* | Verify that distance is " + distance + " |"
+        | Select 'Distance to the next point' | Verify that distance is " + distance + " |"
         ));
     },
 
-    qml_border_wrapping_for_map_data: {
+    qml_border_wrapping_data: {
         markers:["-27", "150", "-27", "-170"]
     },
 
-    qml_border_wrapping_for_map: function(lat1, long1, lat2, long2)
+    qml_border_wrapping: function(lat1, long1, lat2, long2)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Border wrapping";
@@ -319,15 +319,15 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Zoom out map to about level 3 | |
         | Long press on the map | |
-        | Select Add Marker menu item | |
-        | Create another Marker via Long Press | |
-        | Long Press on the first marker | |
-        | Select Move To menu item | |
+        | Select 'Add Marker' menu item | |
+        | Long Press on the marker | |
+        | Select 'Move to' menu item | |
         | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
+        | Create another Marker via Long Press | |
         | Long Press on the second marker | |
-        | Select Move To menu item | |
+        | Select 'Move to' menu item | |
         | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |

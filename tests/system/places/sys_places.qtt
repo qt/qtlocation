@@ -91,7 +91,7 @@ testcase = {
 
     qml_searching_for_places_by_text_string_for_given_position_data: {
         search_string:["48.9", "2.4", "pizza", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&dym=5&q=pizza"],
-        search_string_with_typo:["-27.5", "153", "pizzs", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=-27.5&lon=153&of=0&dym=5&q=pizzs"]
+        search_string_with_typo:["48.9", "2.4", "pizzs", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&dym=5&q=pizzs"]
     },
 
     qml_searching_for_places_by_text_string_for_given_position: function(latitude, longitude, search_string, url)
@@ -129,7 +129,7 @@ testcase = {
     },
 
     qml_recomendations_for_places_data: {
-        data:["48.9", "2.4", "La Romantica", "La Romantica 6996m", "http://places.maps.ovi.com/rest/v1/places/250u09wh-8412aba7c3f8475da0a7ebc5fa713ec4/recommendations/nearby"]
+        data:["48.9", "2.4", "La Romantica", "La Romantica 6988m", "http://places.maps.ovi.com/rest/v1/places/250u09wh-8412aba7c3f8475da0a7ebc5fa713ec4/recommendations/nearby"]
     },
 
     qml_recomendations_for_places: function(latitude, longitude, search_string, place, url)
@@ -164,7 +164,7 @@ testcase = {
         | Select Search button | |
         | Expand panel with results | |
         | Select " + place + " | |
-        | Select “Find Similar” | Verify that number of found places corresponds to the open web page. Verify that distance to reccommended places is the same. |"
+        | Select 'Find Similar' | Verify that number of found places corresponds to the open web page. Verify that distance to recommended places is the same. |"
         ));
     },
 
@@ -531,7 +531,7 @@ testcase = {
         | Select nokia provider | |
         | Select Search button | |
         | Select Search Options button | |
-        | Fill in " + locale + " in Locale(s) field |
+        | Fill in " + locale + " in Locale(s) field | |
         | Select OK button | |
         | Select Search button | |
         | Select Search Center button | |

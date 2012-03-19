@@ -73,6 +73,7 @@ testcase = {
         | Launch " + testBinary + " | App launches normally |
         | Select Tools button | |
         | Select Route menu item | |
+        | Select Clear button | |
         | Fill in " + lat1 + " in From Latitude field | |
         | Fill in " + long1 + " in From Longitude field | |
         | Fill in " + lat2 + " in To Latitude field | |
@@ -111,6 +112,7 @@ testcase = {
         | Select Tools button | |
         | Select Route menu item | |
         | Select second option group to enter start and end points as address | |
+        | Select Clear button | |
         | Fill in " + city1 + " in From City field | |
         | Fill in " + country1 + " in From Country field | |
         | Fill in " + city2 + " in To City field | |
@@ -146,37 +148,38 @@ testcase = {
         | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
         | Long press on the map | |
-        | Select Add Marker menu item | |
-        | Create another Marker via Long Press | |
-        | Create third Marker | |
-        | Long Press on the first marker | |
-        | Select Move To menu item | |
+        | Select 'Add Marker' menu item | |
+        | Long Press on the marker | |
+        | Select 'Move to' menu item | |
         | Fill in " + lat1 + " in Latitude field | |
         | Fill in " + long1 + " in Longitude | |
         | Select Go! button | |
+        | Create another Marker via Long Press | |
         | Long Press on the second marker | |
-        | Select Move To menu item | |
+        | Select 'Move to' menu item | |
         | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
+        | Create third Marker | |
         | Long Press on the third marker | |
-        | Select Move To menu item | |
+        | Select 'Move to' menu item | |
         | Fill in " + lat3 + " in Latitude field | |
         | Fill in " + long3 + " in Longitude | |
         | Press Go! button | |
         | Long press on the map | |
-        | Select Route To The Next Points | |
+        | Select 'Route to next points' | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
         ));
     },
 
     qml_travel_mode_data: {
-        point:["-27.5789", "153.0919", "-27.5792", "153.096",
-               "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5789,153.0919&waypoint1=-27.5792,153.096&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:07:16Z&instructionformat=text&language=en_AU",
+        car:["-27.5789", "153.0919", "-27.5792", "153.096", "Vehicle",
+               "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5789,153.0919&waypoint1=-27.5792,153.096&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:07:16Z&instructionformat=text&language=en_AU"],
+        pedestrian:["-27.5789", "153.0919", "-27.5792", "153.096", "Pedestrian",
                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5789,153.0919&waypoint1=-27.5792,153.096&mode0=fastestNow;pedestrian&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:07:51Z&instructionformat=text&language=en_AU"]
     },
 
-    qml_travel_mode: function(lat1, long1, lat2, long2, url1, url2)
+    qml_travel_mode: function(lat1, long1, lat2, long2, mode, url)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Travel mode (Car and Pedestrian)";
@@ -195,33 +198,30 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url1 + " url in a desktop browser | |
+        | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
         | Select Tools button | |
         | Select Route menu item | |
         | Selec first option group | |
+        | Select Clear button | |
         | Fill in " + lat1 + " in From Latitude field | |
         | Fill in " + long1 + " in From Longitude field | |
         | Fill in " + lat2 + " in To Latitude field | |
         | Fill in " + long2 + " in To Longitude field | |
-        | Select Go! button | |
-        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
-        | Open " + url2 + " url in a desktop browser | |
-        | Select Tools button | |
-        | Select Route menu item | |
-        | Select *Pedestrian* option button | |
+        | Select " + mode + " option button | |
         | Select Go! button | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
         ));
     },
 
-    qml_travel_feature_type: {
-        points:["-27.5299", "153.0713", "-27.4395", "153.0504",
-                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5299,153.0713&waypoint1=-27.4395,153.0504&mode0=fastestNow;car;tollroad:-1&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:16:14Z&instructionformat=text&language=en_AU",
+    qml_route_feature_type_data: {
+        tolls:["-27.5299", "153.0713", "-27.4395", "153.0504", "Avoid toll roads",
+                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5299,153.0713&waypoint1=-27.4395,153.0504&mode0=fastestNow;car;tollroad:-1&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:16:14Z&instructionformat=text&language=en_AU"],
+        highways:["-27.5299", "153.0713", "-27.4395", "153.0504", "Avoid highways",
                 "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5299,153.0713&waypoint1=-27.4395,153.0504&mode0=fastestNow;car;tollroad:-1,motorway:-1&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2011-12-28T22:16:37Z&instructionformat=text&language=en_AU"]
     },
 
-    qml_route_feature_type: function(lat1, long1, lat2, long2, url1, url2)
+    qml_route_feature_type: function(lat1, long1, lat2, long2, feature, url)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Route features (Avoid Highways and Avoid Tool Road)";
@@ -240,33 +240,30 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url1 + " url in a desktop browser | |
+        | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
         | Select Tools button | |
         | Select Route menu item | |
         | Selec first option group | |
+        | Select Clear button | |
         | Fill in " + lat1 + " in From Latitude field | |
         | Fill in " + long1 + " in From Longitude field | |
         | Fill in " + lat2 + " in To Latitude field | |
         | Fill in " + long2 + " in To Longitude field | |
-        | Select *Avoid toll roads* checkbox | |
-        | Select Go! button | |
-        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
-        | Select Tools button | |
-        | Select Route menu item | |
-        | Select *Avoid highways* checkbox | |
+        | Select '" +feature + "' checkbox | |
         | Select Go! button | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
         ));
     },
 
     qml_route_optimization_data: {
-        points:["-27.5374", "153.084", "-27.4391", "153.0488",
-                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5374,153.084&waypoint1=-27.4391,153.0488&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2012-02-20T00:28:38Z&instructionformat=text&language=en_AU",
+        fastest:["-27.5374", "153.084", "-27.4391", "153.0488", "Fastest",
+                "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5374,153.084&waypoint1=-27.4391,153.0488&mode0=fastestNow;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2012-02-20T00:28:38Z&instructionformat=text&language=en_AU"],
+        shortest:["-27.5374", "153.084", "-27.4391", "153.0488", "Shortest",
                 "http://prd.lbsp.navteq.com/routing/6.2/calculateroute.xml?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&waypoint0=-27.5374,153.084&waypoint1=-27.4391,153.0488&mode0=shortest;car&alternatives=0&linkattributes=sh,le&maneuverattributes=po,tt,le,di,li&routeattributes=sm,sh,bb,lg&legattributes=links,maneuvers&departure=2012-02-20T00:28:45Z&instructionformat=text&language=en_AU"]
     },
 
-    qml_route_optimization: function(lat1, long1, lat2, long2, url1, url2)
+    qml_route_optimization: function(lat1, long1, lat2, long2, optimization, url)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Route optimization (Shortest and Fastest)";
@@ -285,21 +282,17 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url1 + " url in a desktop browser | |
+        | Open " + url + " url in a desktop browser | |
         | Launch " + testBinary + " | App launches normally |
         | Select Tools button | |
         | Select Route menu item | |
         | Selec first option group | |
+        | Select Clear button | |
         | Fill in " + lat1 + " in From Latitude field | |
         | Fill in " + long1 + " in From Longitude field | |
         | Fill in " + lat2 + " in To Latitude field | |
         | Fill in " + long2 + " in To Longitude field | |
-        | Select Go! button | |
-        | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |
-        | Open " + url2 + " url in a desktop browser | |
-        | Select Tools button | |
-        | Select Route menu item | |
-        | Select *Shortest* option button | |
+        | Select '" + optimization + "' option button | |
         | Select Go! button | |
         | Wait for the route to be calculated. Expand route info if there were no errors | Verify route information corresponds to the open web page |"
         ));
@@ -330,7 +323,7 @@ testcase = {
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally |
-        | Select Language button| |
+        | Select Language button | |
         | Select Other | |
         | Fill in " +  locale + " in Language field | |
         | Select Go! button | |
