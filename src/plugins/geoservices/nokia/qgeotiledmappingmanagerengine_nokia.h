@@ -50,9 +50,19 @@
 #define QGEOTILEDMAPPINGMANAGERENGINE_NOKIA_H
 
 #include "qgeotiledmappingmanagerengine.h"
+#include "qgeoboundingbox.h"
+#include "qgeomaptype.h"
+
 #include <QGeoServiceProvider>
 
+#include <QList>
+#include <QHash>
+#include <QSet>
+
 QT_BEGIN_NAMESPACE
+
+class QByteArray;
+class QGeoTileSpec;
 
 class QGeoTiledMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
 {
@@ -65,9 +75,33 @@ public:
     ~QGeoTiledMappingManagerEngineNokia();
 
     virtual QGeoMapData* createMapData();
+    QString evaluateCopyrightsText(const QGeoMapType::MapStyle mapStyle,
+                                   const int zoomLevel,
+                                   const QSet<QGeoTileSpec> &tiles);
 
-protected:
+public Q_SLOTS:
+    void loadCopyrightsDescriptorsFromJson(const QByteArray &jsonData);
+
+private:
+    class CopyrightDesc
+    {
+    public:
+        CopyrightDesc()
+            : maxLevel(-1),
+              minLevel(-1) {}
+
+        qreal maxLevel;
+        qreal minLevel;
+        QList<QGeoBoundingBox> boxes;
+        QString alt;
+        QString label;
+    };
+
     void initialize();
+    void populateMapTypesDb();
+
+    QHash<QString, QList<CopyrightDesc> > m_copyrights;
+    QHash<QGeoMapType::MapStyle, QString> m_mapTypeStrings;
 };
 
 QT_END_NAMESPACE

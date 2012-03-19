@@ -62,19 +62,18 @@
 
 QT_BEGIN_NAMESPACE
 
-class QChar;
-class QSize;
-class QVariant;
-
 class QNetworkAccessManager;
 
 class QGeoTiledMapReply;
 class QGeoTileSpec;
 class QGeoTiledMappingManagerEngine;
+class QGeoTiledMappingManagerEngineNokia;
+class QNetworkReply;
 
 class QGeoTileFetcherNokia : public QGeoTileFetcher
 {
     Q_OBJECT
+
 public:
     QGeoTileFetcherNokia(QGeoTiledMappingManagerEngine *engine);
     ~QGeoTileFetcherNokia();
@@ -92,6 +91,10 @@ public:
     void setParams(const QMap<QString, QVariant> &parameters);
     void setTileSize(QSize tileSize);
 
+public Q_SLOTS:
+    void copyrightsFetched();
+    void fetchCopyrightsData();
+
 #ifdef USE_CHINA_NETWORK_REGISTRATION
 private Q_SLOTS:
     void currentMobileCountryCodeChanged(int interface, const QString& mcc);
@@ -108,12 +111,14 @@ private:
     void setHost(const QString& host);
     bool isValidParameter(const QString& param);
 
+    QGeoTiledMappingManagerEngineNokia *m_engineNokia;
     QNetworkAccessManager *m_networkManager;
     QMap<QString, QVariant> m_parameters;
     QSize m_tileSize;
     QString m_host;
     QString m_token;
     QChar m_firstSubdomain;
+    QNetworkReply *m_copyrightsReply;
 
     unsigned char m_maxSubdomains;
     QString m_applicationId;

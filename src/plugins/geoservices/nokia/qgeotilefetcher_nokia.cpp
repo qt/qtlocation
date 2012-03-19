@@ -49,6 +49,7 @@
 #include "qgeotilefetcher_nokia.h"
 #include "qgeomapreply_nokia.h"
 #include "qgeotiledmapdata_nokia.h"
+#include "qgeotiledmappingmanagerengine_nokia.h"
 
 #include <qgeotilespec.h>
 
@@ -72,9 +73,8 @@ QGeoTileFetcherNokia::QGeoTileFetcherNokia(QGeoTiledMappingManagerEngine *engine
         : QGeoTileFetcher(engine),
         m_networkManager(0),
         m_firstSubdomain(QChar::Null),
-        m_maxSubdomains(0)
-{
-}
+        m_maxSubdomains(0),
+        m_engineNokia(static_cast<QGeoTiledMappingManagerEngineNokia*>(engine)) {}
 
 QGeoTileFetcherNokia::~QGeoTileFetcherNokia() {}
 
@@ -314,6 +314,50 @@ bool QGeoTileFetcherNokia::isValidParameter(const QString &param)
     }
 
     return true;
+}
+
+void QGeoTileFetcherNokia::copyrightsFetched()
+{
+    QMetaObject::invokeMethod(m_engineNokia,
+                              "loadCopyrightsDescriptorsFromJson",
+                              Qt::QueuedConnection,
+                              Q_ARG(QByteArray, m_copyrightsReply->readAll()));
+}
+
+void QGeoTileFetcherNokia::fetchCopyrightsData()
+{
+    QString copyrightUrl = "http://";
+    if (!firstSubdomain().isNull()) {
+        copyrightUrl += firstSubdomain();
+        copyrightUrl += ".";
+    }
+
+    copyrightUrl += host();
+    copyrightUrl += "/maptiler/v2/copyright/newest?output=json";
+
+    if (!token().isEmpty()) {
+        copyrightUrl += "&token=";
+        copyrightUrl += token();
+    }
+
+    if (!applicationId().isEmpty()) {
+        copyrightUrl += "&app_id=";
+        copyrightUrl += applicationId();
+    }
+
+    QNetworkRequest netRequest((QUrl(copyrightUrl)));
+    m_copyrightsReply = m_networkManager->get(netRequest);
+    if (m_copyrightsReply->error() != QNetworkReply::NoError) {
+        qWarning() << __FUNCTION__ << m_copyrightsReply->errorString();
+        m_copyrightsReply->deleteLater();
+        return;
+    }
+
+    if (m_copyrightsReply->isFinished()) {
+        copyrightsFetched();
+    } else {
+        connect(m_copyrightsReply, SIGNAL(finished()), this, SLOT(copyrightsFetched()));
+    }
 }
 
 QT_END_NAMESPACE

@@ -55,11 +55,13 @@
 
 QT_BEGIN_NAMESPACE
 
+class QGeoTiledMappingManagerEngineNokia;
+
 class QGeoTiledMapDataNokia: public QGeoTiledMapData
 {
 Q_OBJECT
 public:
-    QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
+    QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent = 0);
     ~QGeoTiledMapDataNokia();
 
     QString getViewCopyright();
@@ -68,12 +70,9 @@ public:
 private:
     Q_DISABLE_COPY(QGeoTiledMapDataNokia)
 
-    QImage watermark;
-    QPoint lastTopLeft;
-    QPoint lastBottomRight;
-    int lastZoomLevel;
-    int lastMapId;
-    QSize mapSize;
+    QImage logo;
+    QImage copyrightsSlab;
+    QString lastCopyrightsString;
 };
 
 QT_END_NAMESPACE

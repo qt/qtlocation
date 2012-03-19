@@ -48,7 +48,18 @@
 
 #include "qgeotiledmapdata_nokia.h"
 #include "jsonparser.h"
-#include "qgeotilespec.h"
+#include "qgeotiledmappingmanagerengine_nokia.h"
+#include "qgeomapcontroller_p.h"
+
+#include <QDebug>
+#include <QObject>
+#include <QColor>
+#include <QFont>
+#include <QPainter>
+#include <QImage>
+#include <QRect>
+
+#include <QStaticText>
 
 QT_BEGIN_NAMESPACE
 
@@ -56,28 +67,82 @@ QT_BEGIN_NAMESPACE
  Constructs a new tiled map data object, which stores the map data required by
  \a geoMap and makes use of the functionality provided by \a engine.
  */
-QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngine *engine, QObject *parent /*= 0*/) :
+QGeoTiledMapDataNokia::QGeoTiledMapDataNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent /*= 0*/) :
     QGeoTiledMapData(engine, parent),
-    watermark(":/images/watermark.png"), // default watermark
-    lastZoomLevel(-1), // an invalid zoom level
-    mapSize(-1, -1), // an invalid map object size
-    lastMapId(-1) /* an invalid map Id */ {}
+    logo(":/images/logo.png"), // Nokia logo image
+    copyrightsSlab(1, 1, QImage::Format_ARGB32) {}
 
 QGeoTiledMapDataNokia::~QGeoTiledMapDataNokia() {}
 
-// Current implementation is just to accomodate for first time visible tiles change, or map width/height change.
 void QGeoTiledMapDataNokia::evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles)
 {
-    // TODO: implementation of real copyrights fetching mechanism.
-    static bool firstTimeChange = true;
+    const int copyrightsMargin = 10;
+    const int shadowWidth = 2;
+    const int fontSize = 10;
 
-    if (firstTimeChange || height() != mapSize.height() || width() != mapSize.width()) {
-        firstTimeChange = false;
-        QPoint copyrightsPos(10, height() - 50);
-        emit copyrightsChanged(watermark, copyrightsPos);
+    QGeoTiledMappingManagerEngineNokia *engineNokia = static_cast<QGeoTiledMappingManagerEngineNokia*>(engine());
+    QString copyrightsString = engineNokia->evaluateCopyrightsText(activeMapType().style(), mapController()->zoom(), visibleTiles);
+
+    if (width() > 0 && height() > 0 && (lastCopyrightsString.isNull() || copyrightsString != lastCopyrightsString)) {
+        copyrightsSlab = copyrightsSlab.copy(0, 0, width(), height());
+
+        // Blank image with full alpha
+        copyrightsSlab.fill(Qt::transparent);
+
+        QPainter painter(&copyrightsSlab);
+        painter.drawImage(QPoint(1, 1), logo);
+
+        QColor fontColor(Qt::black);
+        QFont font("Sans Serif");
+        font.setPixelSize(fontSize);
+        font.setStyleHint(QFont::SansSerif);
+        font.setWeight(QFont::Bold);
+
+        painter.setFont(font);
+        painter.setPen(fontColor);
+        QRect textLimitsRect(0,
+                             logo.height(),
+                             copyrightsSlab.width() - (copyrightsMargin * 2),
+                             copyrightsSlab.height() - logo.height());
+
+        // Drawing the copyrights base shadow (watermark)
+        QRect textBoundingRect;
+        QRect wmRect(textLimitsRect);
+        int x, y;
+        for (x = 0; x < shadowWidth; x++) {
+            wmRect.setLeft(textLimitsRect.left() + x*shadowWidth);
+            for (y = 0; y < shadowWidth; y++) {
+                wmRect.setTop(textLimitsRect.top() + y*shadowWidth);
+                painter.drawText(wmRect,
+                                 Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap,
+                                 copyrightsString,
+                                 &textBoundingRect);
+            }
+        }
+
+        // Drawing the copyrights text top face
+        font.setWeight(QFont::Bold);
+        fontColor = Qt::white;
+        painter.setFont(font);
+        painter.setPen(fontColor);
+        wmRect.setLeft(textLimitsRect.left() + 1);
+        wmRect.setTop(textLimitsRect.top() + 1);
+        painter.drawText(wmRect,
+                         Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap,
+                         copyrightsString,
+                         &textBoundingRect);
+
+        painter.end();
+
+        copyrightsSlab = copyrightsSlab.copy(0, 0,
+                                             qMax(logo.width(), textBoundingRect.width()) + shadowWidth,
+                                             logo.height() + textBoundingRect.height());
+
+        QPoint copyrightsPos(copyrightsMargin, height() - (copyrightsSlab.height() + copyrightsMargin));
+        emit copyrightsChanged(copyrightsSlab, copyrightsPos);
+
+        lastCopyrightsString = copyrightsString;
     }
-    mapSize.setWidth(width());
-    mapSize.setHeight(height());
 }
 
 QT_END_NAMESPACE
