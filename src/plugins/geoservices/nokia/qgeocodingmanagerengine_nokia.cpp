@@ -61,19 +61,16 @@ QT_BEGIN_NAMESPACE
 
 QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeocodingManagerEngine(parameters),
-        m_host("loc.desktop.maps.svc.ovi.com"),
-        m_token(QGeoServiceProviderFactoryNokia::defaultToken),
-        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
+        m_host("loc.desktop.maps.svc.ovi.com")
 {
     m_networkManager = new QNetworkAccessManager(this);
 
-    if (parameters.contains("places.proxy")) {
-        QString proxy = parameters.value("places.proxy").toString();
+    if (parameters.contains("proxy")) {
+        QString proxy = parameters.value("proxy").toString();
         if (!proxy.isEmpty()) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
                 m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
-
                     proxyUrl.host(),
                     proxyUrl.port(8080),
                     proxyUrl.userName(),
@@ -82,21 +79,18 @@ QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(const QMap<QString, Q
         }
     }
 
-    if (parameters.contains("places.host")) {
-        QString host = parameters.value("places.host").toString();
+    if (parameters.contains("geocoding.host")) {
+        QString host = parameters.value("geocoding.host").toString();
         if (!host.isEmpty())
             m_host = host;
     }
 
-    if (parameters.contains("places.referer")) {
-        m_referer = parameters.value("places.referer").toString();
+    if (parameters.contains("token")) {
+        m_token = parameters.value("token").toString();
     }
 
-    if (parameters.contains("places.token")) {
-        m_token = parameters.value("places.token").toString();
-    }
-    else if (parameters.contains("token")) {
-        m_token = parameters.value("token").toString();
+    if (parameters.contains("app_id")) {
+        m_applicationId = parameters.value("app_id").toString();
     }
 
     if (error)
@@ -108,15 +102,36 @@ QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(const QMap<QString, Q
 
 QGeocodingManagerEngineNokia::~QGeocodingManagerEngineNokia() {}
 
+QString QGeocodingManagerEngineNokia::getAuthenticationString() const
+{
+    QString authenticationString;
+
+    if (!m_token.isEmpty() && !m_applicationId.isEmpty()) {
+        authenticationString += "?token=";
+        authenticationString += m_token;
+
+        authenticationString += "&app_id=";
+        authenticationString += m_applicationId;
+    } else {
+        authenticationString += "?token=";
+        authenticationString += QGeoServiceProviderFactoryNokia::defaultToken;
+
+        authenticationString += "&referer=";
+        authenticationString += QGeoServiceProviderFactoryNokia::defaultReferer;
+    }
+
+    return authenticationString;
+}
+
+
 QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
         const QGeoBoundingArea &bounds)
 {
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/gc/2.0?referer=" + m_referer;
+    requestString += "/geocoder/gc/2.0";
 
-    if (!m_token.isNull())
-        requestString += "&token=" + m_token;
+    requestString += getAuthenticationString();
 
     requestString += "&lg=";
     requestString += languageToMarc(locale().language());
@@ -183,9 +198,10 @@ QGeocodeReply* QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate
 {
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/rgc/2.0?referer=" + m_referer;
-    if (!m_token.isNull())
-        requestString += "&token=" + m_token;
+    requestString += "/geocoder/rgc/2.0";
+
+    requestString += getAuthenticationString();
+
     requestString += "&long=";
     requestString += trimDouble(coordinate.longitude());
     requestString += "&lat=";
@@ -204,10 +220,9 @@ QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QString &address,
 {
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/geocoder/gc/2.0?referer=" + m_referer;
+    requestString += "/geocoder/gc/2.0";
 
-    if (!m_token.isNull())
-        requestString += "&token=" + m_token;
+    requestString += getAuthenticationString();
 
     requestString += "&lg=";
     requestString += languageToMarc(locale().language());

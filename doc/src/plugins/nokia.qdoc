@@ -81,6 +81,9 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \li mapping.cache.size
     \li Map tile cache size. Maximum size of the cache is 50MB.
 \row
+    \li geocoding.host
+    \li Geocoding service URL used by geocoding manager.
+\row
     \li routing.proxy
     \li Proxy server URL used by routing manager.
 \row

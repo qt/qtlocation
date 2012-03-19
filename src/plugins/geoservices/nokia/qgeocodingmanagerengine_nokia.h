@@ -87,11 +87,12 @@ private:
     static QString trimDouble(double degree, int decimalDigits = 10);
     QGeocodeReply* geocode(QString requestString, const QGeoBoundingArea &bounds, int limit = -1, int offset = 0);
     QString languageToMarc(QLocale::Language language);
+    QString getAuthenticationString() const;
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;
     QString m_token;
-    QString m_referer;
+    QString m_applicationId;
 };
 
 QT_END_NAMESPACE
