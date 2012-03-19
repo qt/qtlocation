@@ -101,19 +101,11 @@ Item {
             TextWithLabel {
                 id: localesInput
 
-                function resetVisibility() {
-                    visible = placesPlugin.supportedPlacesFeatures & Plugin.LocaleFeature
-                }
-
                 width: parent.width - gap
                 height: listItemHeight
                 label: "Locale(s)"
                 enabled: true
-
-                Component.onCompleted: {
-                    resetVisibility();
-                    placesPlugin.nameChanged.connect(resetVisibility);
-                }
+                visible: placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.LocalizedPlacesFeature) : false;
             }
 
             Optionbutton {

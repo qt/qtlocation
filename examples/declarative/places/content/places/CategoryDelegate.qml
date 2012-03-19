@@ -100,6 +100,7 @@ Item {
 
         anchors.right: cross.left
         anchors.verticalCenter: parent.verticalCenter
+
         visible: (placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SaveCategoryFeature) : false)
                  && showSave
 
