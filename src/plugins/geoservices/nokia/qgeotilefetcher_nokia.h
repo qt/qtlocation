@@ -67,7 +67,6 @@ class QSize;
 class QVariant;
 
 class QNetworkAccessManager;
-class QNetworkDiskCache;
 
 class QGeoTiledMapReply;
 class QGeoTileSpec;
@@ -112,7 +111,6 @@ private:
     bool isValidParameter(const QString& param);
 
     QNetworkAccessManager *m_networkManager;
-    QNetworkDiskCache *m_cache;
     QMap<QString, QVariant> m_parameters;
     QSize m_tileSize;
     QString m_host;

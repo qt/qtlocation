@@ -54,23 +54,15 @@
 #include <qgeotilecache_p.h>
 
 #include <QNetworkAccessManager>
-#include <QNetworkDiskCache>
 #include <QNetworkProxy>
 #include <QSize>
 #include <QDir>
 #include <QUrl>
+#include <QTime>
 
 #include <map>
 
 #define LARGE_TILE_DIMENSION 256
-
-#if defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-#undef DISK_CACHE_ENABLED
-#else
-#define DISK_CACHE_ENABLED 1
-#endif
-
-#undef DISK_CACHE_ENABLED
 
 QT_BEGIN_NAMESPACE
 
@@ -80,7 +72,6 @@ const char* MAPTILES_HOST_CN = "a-k.maptile.maps.svc.nokia.com.cn";
 QGeoTileFetcherNokia::QGeoTileFetcherNokia(QGeoTiledMappingManagerEngine *engine)
         : QGeoTileFetcher(engine),
         m_networkManager(0),
-        m_cache(0),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
         m_referer(QGeoServiceProviderFactoryNokia::defaultReferer),
         m_firstSubdomain(QChar::Null),
@@ -93,6 +84,8 @@ QGeoTileFetcherNokia::~QGeoTileFetcherNokia() {}
 bool QGeoTileFetcherNokia::init()
 {
     setHost(MAPTILES_HOST);
+
+    qsrand((uint)QTime::currentTime().msec());
 
     m_networkManager = new QNetworkAccessManager(this);
 
@@ -133,35 +126,6 @@ bool QGeoTileFetcherNokia::init()
     else if (m_parameters.contains("token")) {
         m_token = m_parameters.value("token").toString();
     }
-#ifdef DISK_CACHE_ENABLED
-    QString cacheDir;
-    if (parameters.contains("mapping.cache.directory"))
-        cacheDir = parameters.value("mapping.cache.directory").toString();
-
-    if (cacheDir.isEmpty()) {
-        cacheDir = QDir::temp().path()+"/maptiles";
-    }
-    if (!cacheDir.isEmpty()) {
-        m_cache = new QNetworkDiskCache(this);
-        QDir dir;
-        dir.mkpath(cacheDir);
-        dir.setPath(cacheDir);
-
-        m_cache->setCacheDirectory(dir.path());
-
-        if (parameters.contains("mapping.cache.size")) {
-            bool ok = false;
-            qint64 cacheSize = parameters.value("mapping.cache.size").toString().toLongLong(&ok);
-            if (ok)
-                m_cache->setMaximumCacheSize(cacheSize);
-        }
-
-        if (m_cache->maximumCacheSize() > DISK_CACHE_MAX_SIZE)
-            m_cache->setMaximumCacheSize(DISK_CACHE_MAX_SIZE);
-
-        m_networkManager->setCache(m_cache);
-    }
-#endif
 
 #ifdef USE_CHINA_NETWORK_REGISTRATION
     connect(&m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(int, const QString&)),
@@ -192,25 +156,17 @@ QGeoTiledMapReply* QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
     QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
     netRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 
-#ifdef DISK_CACHE_ENABLED
-    netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
-#endif
-
     QNetworkReply* netReply = m_networkManager->get(netRequest);
 
     QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, spec);
 
-    // TODO goes badly on linux
-    //qDebug() << "request: " << QString::number(reinterpret_cast<int>(mapReply), 16) << " " << request.row() << "," << request.column();
-    // this one might work better. It follows defined behaviour, unlike reinterpret_cast
-    //qDebug("request: %p %i,%i @ %i", mapReply, request.row(), request.column(), request.zoomLevel());
     return mapReply;
 }
 
 QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
 {
     const char subdomain = m_maxSubdomains ? m_firstSubdomain.toAscii() +
-                                             (spec.x() + spec.y()) % m_maxSubdomains : 0;
+                                             qrand() % m_maxSubdomains : 0;
     static const QString http("http://");
     static const QString path("/maptiler/v2/maptile/newest/");
     static const QChar dot('.');

@@ -104,20 +104,6 @@ void QGeoMapReplyNokia::networkFinished()
     if (m_reply->error() != QNetworkReply::NoError)
         return;
 
-//    QVariant fromCache = m_reply->attribute(QNetworkRequest::SourceIsFromCacheAttribute);
-//    setCached(fromCache.toBool());
-
-//    if (!isCached()) {
-//        QAbstractNetworkCache *cache = m_reply->manager()->cache();
-//        if (cache) {
-//            QNetworkCacheMetaData metaData = cache->metaData(m_reply->url());
-//            QDateTime exp = QDateTime::currentDateTime();
-//            exp = exp.addDays(14);
-//            metaData.setExpirationDate(exp);
-//            cache->updateMetaData(metaData);
-//        }
-//    }
-
     setMapImageData(m_reply->readAll());
     setMapImageFormat("png");
     setFinished(true);
