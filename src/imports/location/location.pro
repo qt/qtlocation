@@ -82,17 +82,27 @@ SOURCES += qdeclarativeposition.cpp \
 
 include(declarativeplaces/declarativeplaces.pri)
 
-# Tell qmake to create such makefile that qmldir and target (i.e. declarative_location)
-# are both copied to qt/imports/QtMobility/location -directory,
-# as the "/imports" is the default place where qmlviewer looks for plugins
-# (otherwise qmlviewer -I <path> -option is needed)
-
 # plugin.qmltypes is used by Qt Creator for syntax highlighting and the QML code model.  It needs
-# to be regenerated whenever the QML elements exported change.
-# To regenerate run:
+# to be regenerated whenever the QML elements exported by the plugin change.  This cannot be done
+# automatically at compile time because qmlplugindump does not support some QML features and it may
+# not be possible when cross-compiling.
+#
+# To regenerate run 'make qmltypes' which will update the plugins.qmltypes file in the source
+# directory.  Then review and commit the changes made to plugins.qmltypes.
+#
+# This will run the following command:
 #     qmlplugindump <import name> <import version> <path to import plugin> > plugins.qmltypes
 # e.g.:
 #     qmlplugindump QtLocation 5.0 imports/QtLocation/libdeclarative_location.so > plugins.qmltypes
+
+load(resolve_target)
+qmltypes.target = qmltypes
+qmltypes.commands = $$[QT_INSTALL_BINS]/qmlplugindump QtLocation 5.0 $$QMAKE_RESOLVED_TARGET > $$PWD/plugins.qmltypes
+qmltypes.depends = $$QMAKE_RESOLVED_TARGET
+QMAKE_EXTRA_TARGETS += qmltypes
+
+# Tell qmake to create such makefile that qmldir, plugins.qmltypes and target
+# (i.e. declarative_location) are all copied to $$[QT_INSTALL_IMPORTS]/QtLocation directory,
 
 qmldir.files += $$PWD/qmldir $$PWD/plugins.qmltypes
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
