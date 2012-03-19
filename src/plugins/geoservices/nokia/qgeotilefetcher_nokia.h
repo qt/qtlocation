@@ -70,7 +70,6 @@ class QNetworkAccessManager;
 
 class QGeoTiledMapReply;
 class QGeoTileSpec;
-class QGeoTileCache;
 class QGeoTiledMappingManagerEngine;
 
 class QGeoTileFetcherNokia : public QGeoTileFetcher
@@ -89,7 +88,6 @@ public:
     unsigned char maxSubdomains() const;
     const QString& token() const;
     const QString& applicationId() const;
-    const QString& referer() const;
 
     void setParams(const QMap<QString, QVariant> &parameters);
     void setTileSize(QSize tileSize);
@@ -115,7 +113,6 @@ private:
     QSize m_tileSize;
     QString m_host;
     QString m_token;
-    QString m_referer;
     QChar m_firstSubdomain;
 
     unsigned char m_maxSubdomains;

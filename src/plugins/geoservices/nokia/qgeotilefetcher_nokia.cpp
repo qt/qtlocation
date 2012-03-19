@@ -51,7 +51,6 @@
 #include "qgeotiledmapdata_nokia.h"
 
 #include <qgeotilespec.h>
-#include <qgeotilecache_p.h>
 
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>
@@ -72,8 +71,6 @@ const char* MAPTILES_HOST_CN = "a-k.maptile.maps.svc.nokia.com.cn";
 QGeoTileFetcherNokia::QGeoTileFetcherNokia(QGeoTiledMappingManagerEngine *engine)
         : QGeoTileFetcher(engine),
         m_networkManager(0),
-        m_token(QGeoServiceProviderFactoryNokia::defaultToken),
-        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer),
         m_firstSubdomain(QChar::Null),
         m_maxSubdomains(0)
 {
@@ -109,10 +106,6 @@ bool QGeoTileFetcherNokia::init()
             setHost(host);
     }
 
-    if (m_parameters.contains("mapping.referer")) {
-        m_referer = m_parameters.value("mapping.referer").toString();
-    }
-
     if (m_parameters.contains("mapping.app_id")) {
         m_applicationId = m_parameters.value("mapping.app_id").toString();
     }
@@ -133,7 +126,7 @@ bool QGeoTileFetcherNokia::init()
     currentMobileCountryCodeChanged(0, m_networkInfo.currentMobileCountryCode(0));
 #endif
 
-    if (!isValidParameter(m_applicationId) || !isValidParameter(m_referer)) {
+    if (!isValidParameter(m_applicationId) || !isValidParameter(m_token)) {
         qWarning() << "Qt Location requires usage of app_id and token parameters obtained from:";
         qWarning() << "https://api.forum.nokia.com/ovi-api/ui/registration";
     }
@@ -192,21 +185,18 @@ QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
     static const QString slashpng("/png8");
     requestString += slashpng;
 
-    if (!m_token.isEmpty()) {
+    if (!m_token.isEmpty() && !m_applicationId.isEmpty()) {
         requestString += "?token=";
         requestString += m_token;
 
-        if (!m_referer.isEmpty()) {
-            requestString += "&referer=";
-            requestString += m_referer;
-        }
-    } else if (!m_referer.isEmpty()) {
-        requestString += "?referer=";
-        requestString += m_referer;
-    }
-    if (!m_applicationId.isEmpty()) {
         requestString += "&app_id=";
         requestString += m_applicationId;
+    } else {
+        requestString += "?token=";
+        requestString += QGeoServiceProviderFactoryNokia::defaultToken;
+
+        requestString += "&referer=";
+        requestString += QGeoServiceProviderFactoryNokia::defaultReferer;
     }
     return requestString;
 }
@@ -248,11 +238,6 @@ QString QGeoTileFetcherNokia::mapIdToStr(int mapId)
 
     qWarning() << "Unknown mapId: " << mapId;
     return "normal.day";
-}
-
-const QString & QGeoTileFetcherNokia::referer() const
-{
-    return m_referer;
 }
 
 void QGeoTileFetcherNokia::setParams(const QMap<QString, QVariant> &parameters)
@@ -322,8 +307,8 @@ bool QGeoTileFetcherNokia::isValidParameter(const QString &param)
         return false;
 
     foreach (QChar c, param) {
-        if (!c.isLetterOrNumber() || c.toAscii() != '%' || c.toAscii() != '-' ||
-                c.toAscii() != '+' || c.toAscii() != '_') {
+        if (!c.isLetterOrNumber() && c.toAscii() != '%' && c.toAscii() != '-' &&
+            c.toAscii() != '+' && c.toAscii() != '_') {
             return false;
         }
     }
