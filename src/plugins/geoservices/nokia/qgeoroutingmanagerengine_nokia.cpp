@@ -104,7 +104,9 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     setSupportedFeatureTypes(featureTypes);
 
     QGeoRouteRequest::FeatureWeights featureWeights;
+    featureWeights |= QGeoRouteRequest::DisallowFeatureWeight;
     featureWeights |= QGeoRouteRequest::AvoidFeatureWeight;
+    featureWeights |= QGeoRouteRequest::PreferFeatureWeight;
     setSupportedFeatureWeights(featureWeights);
 
     QGeoRouteRequest::ManeuverDetails maneuverDetails;
