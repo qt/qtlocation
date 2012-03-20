@@ -50,6 +50,8 @@
 #include "qgeomaptype.h"
 
 #include <QVector>
+#include <QMap>
+#include <QPair>
 
 #include <QDebug>
 
@@ -110,15 +112,11 @@ public:
 
     struct TileMap
     {
-        TileMap(int minY, int maxY);
-
-        int size;
-        int minY;
-        int maxY;
-        QVector<int> minX;
-        QVector<int> maxX;
+        TileMap();
 
         void add(int tileX, int tileY);
+
+        QMap<int, QPair<int, int> > data;
     };
 };
 
@@ -519,9 +517,9 @@ QPair<Polygon, Polygon> QGeoCameraTilesPrivate::clipFootprintToMap(const Polygon
     const_iter end = footprint.constEnd();
     for (; i != end; ++i) {
         QDoubleVector3D p = *i;
-        if (p.x() < 0.0)
+        if ((p.x() < 0.0) || (qFuzzyIsNull(p.x())))
             clipX0 = true;
-        if (side < p.x())
+        if ((side < p.x()) || (qFuzzyCompare(side, p.x())))
             clipX1 = true;
         if (p.y() < 0.0)
             clipY0 = true;
@@ -546,16 +544,72 @@ QPair<Polygon, Polygon> QGeoCameraTilesPrivate::clipFootprintToMap(const Polygon
             return QPair<Polygon, Polygon>(results, Polygon());
         } else {
             QPair<Polygon, Polygon> pair = splitPolygonAtAxisValue(results, 0, 0.0);
-            for (int i = 0; i < pair.first.size(); ++i) {
-                pair.first[i].setX(pair.first.at(i).x() + side);
+            if (pair.first.isEmpty()) {
+                // if we touched the line but didn't cross it...
+                for (int i = 0; i < pair.second.size(); ++i) {
+                    if (qFuzzyIsNull(pair.second.at(i).x()))
+                        pair.first.append(pair.second.at(i));
+                }
+                if (pair.first.size() == 2) {
+                    double y0 = pair.first[0].y();
+                    double y1 = pair.first[1].y();
+                    pair.first.clear();
+                    pair.first.append(QDoubleVector3D(side, y0, 0.0));
+                    pair.first.append(QDoubleVector3D(side - 0.001, y0, 0.0));
+                    pair.first.append(QDoubleVector3D(side - 0.001, y1, 0.0));
+                    pair.first.append(QDoubleVector3D(side, y1, 0.0));
+                } else if (pair.first.size() == 1) {
+                    // FIXME this is trickier
+                    // - touching at one point on the tile boundary
+                    // - probably need to build a triangular polygon across the edge
+                    // - don't want to add another y tile if we can help it
+                    //   - initial version doesn't care
+                    double y = pair.first.at(0).y();
+                    pair.first.clear();
+                    pair.first.append(QDoubleVector3D(side - 0.001, y, 0.0));
+                    pair.first.append(QDoubleVector3D(side, y + 0.001, 0.0));
+                    pair.first.append(QDoubleVector3D(side, y - 0.001, 0.0));
+                }
+            } else {
+                for (int i = 0; i < pair.first.size(); ++i) {
+                    pair.first[i].setX(pair.first.at(i).x() + side);
+                }
             }
             return pair;
         }
     } else {
         if (clipX1) {
             QPair<Polygon, Polygon> pair = splitPolygonAtAxisValue(results, 0, side);
-            for (int i = 0; i < pair.second.size(); ++i) {
-                pair.second[i].setX(pair.second.at(i).x() - side);
+            if (pair.second.isEmpty()) {
+                // if we touched the line but didn't cross it...
+                for (int i = 0; i < pair.first.size(); ++i) {
+                    if (qFuzzyCompare(side, pair.first.at(i).x()))
+                        pair.second.append(pair.first.at(i));
+                }
+                if (pair.second.size() == 2) {
+                    double y0 = pair.second[0].y();
+                    double y1 = pair.second[1].y();
+                    pair.second.clear();
+                    pair.second.append(QDoubleVector3D(0, y0, 0.0));
+                    pair.second.append(QDoubleVector3D(0.001, y0, 0.0));
+                    pair.second.append(QDoubleVector3D(0.001, y1, 0.0));
+                    pair.second.append(QDoubleVector3D(0, y1, 0.0));
+                } else if (pair.second.size() == 1) {
+                    // FIXME this is trickier
+                    // - touching at one point on the tile boundary
+                    // - probably need to build a triangular polygon across the edge
+                    // - don't want to add another y tile if we can help it
+                    //   - initial version doesn't care
+                    double y = pair.second.at(0).y();
+                    pair.second.clear();
+                    pair.second.append(QDoubleVector3D(0.001, y, 0.0));
+                    pair.second.append(QDoubleVector3D(0.0, y - 0.001, 0.0));
+                    pair.second.append(QDoubleVector3D(0.0, y + 0.001, 0.0));
+                }
+            } else {
+                for (int i = 0; i < pair.second.size(); ++i) {
+                    pair.second[i].setX(pair.second.at(i).x() - side);
+                }
             }
             return pair;
         } else {
@@ -606,9 +660,6 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
     if (numPoints == 0)
         return QSet<QGeoTileSpec>();
 
-    int minY = -1;
-    int maxY = -1;
-
     QVector<int> tilesX(polygon.size());
     QVector<int> tilesY(polygon.size());
 
@@ -621,47 +672,97 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
 
         if (qFuzzyCompare(p.x(), sideLength_ * 1.0))
             x = sideLength_ - 1;
-        else
+        else {
             x = static_cast<int>(p.x()) % sideLength_;
+            if ( !qFuzzyCompare(p.x(), 1.0 * x) && qFuzzyCompare(p.x(), 1.0 * (x + 1)) )
+                x++;
+        }
 
         if (qFuzzyCompare(p.y(), sideLength_ * 1.0))
             y = sideLength_ - 1;
-        else
+        else {
             y = static_cast<int>(p.y()) % sideLength_;
-
-        if (minY == -1) {
-            minY = y;
-            maxY = y;
-        } else {
-            minY = qMin(minY, y);
-            maxY = qMax(maxY, y);
+            if ( !qFuzzyCompare(p.y(), 1.0 * y) && qFuzzyCompare(p.y(), 1.0 * (y + 1)) )
+                y++;
         }
 
         tilesX[i] = x;
         tilesY[i] = y;
     }
 
-    QGeoCameraTilesPrivate::TileMap map(minY, maxY);
+    QGeoCameraTilesPrivate::TileMap map;
 
     for (int i1 = 0; i1 < numPoints; ++i1) {
         int i2 = (i1 + 1) % numPoints;
 
+        double x1 = polygon.at(i1).get(0);
+        double x2 = polygon.at(i2).get(0);
+
+        bool xFixed = qFuzzyCompare(x1, x2);
+        bool xIntegral = qFuzzyCompare(x1, floor(x1)) || qFuzzyCompare(x1 + 1.0, floor(x1 + 1.0));
+
         QList<QPair<double, int> > xIntersects
-                = tileIntersections(polygon.at(i1).get(0),
+                = tileIntersections(x1,
                                     tilesX.at(i1),
-                                    polygon.at(i2).get(0),
+                                    x2,
                                     tilesX.at(i2));
 
+        double y1 = polygon.at(i1).get(1);
+        double y2 = polygon.at(i2).get(1);
+
+        bool yFixed = qFuzzyCompare(y1, y2);
+        bool yIntegral = qFuzzyCompare(y1, floor(y1)) || qFuzzyCompare(y1 + 1.0, floor(y1 + 1.0));
+
         QList<QPair<double, int> > yIntersects
-                = tileIntersections(polygon.at(i1).get(1),
+                = tileIntersections(y1,
                                     tilesY.at(i1),
-                                    polygon.at(i2).get(1),
+                                    y2,
                                     tilesY.at(i2));
 
         int x = xIntersects.takeFirst().second;
         int y = yIntersects.takeFirst().second;
 
-        map.add(x, y);
+        int xOther = x;
+        int yOther = y;
+
+        if (xFixed && xIntegral) {
+             if (y2 < y1) {
+                 xOther = qMax(0, x - 1);
+            }
+        }
+
+        if (yFixed && yIntegral) {
+            if (x1 < x2) {
+                yOther = qMax(0, y - 1);
+
+            }
+        }
+
+        if (xIntegral) {
+            map.add(xOther, y);
+            if (yIntegral)
+                map.add(xOther, yOther);
+
+        }
+
+        if (yIntegral)
+            map.add(x, yOther);
+
+        map.add(x,y);
+
+        // corner case
+        int iPrev =  (i1 + numPoints - 1 ) % numPoints;
+        double xPrevious = polygon.at(iPrev).get(0);
+        double yPrevious = polygon.at(iPrev).get(1);
+        bool xPreviousFixed = qFuzzyCompare(xPrevious, x1);
+        if ( xIntegral && xPreviousFixed && yIntegral && yFixed){
+            if ( (x2 > x1) && (yPrevious > y1) ){
+                if ( (x-1) > 0 && (y-1) > 0)
+                    map.add(x-1,y-1);
+            }
+            else if ( (x2 < x1) && (yPrevious < y1) ){
+            }
+        }
 
         while (!xIntersects.isEmpty() && !yIntersects.isEmpty()) {
             QPair<double, int> nextX = xIntersects.first();
@@ -670,10 +771,12 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
                 x = nextX.second;
                 map.add(x, y);
                 xIntersects.removeFirst();
+
             } else if (nextX.first > nextY.first) {
                 y = nextY.second;
                 map.add(x, y);
                 yIntersects.removeFirst();
+
             } else {
                 map.add(x, nextY.second);
                 map.add(nextX.second, y);
@@ -688,11 +791,16 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
         while (!xIntersects.isEmpty()) {
             x = xIntersects.takeFirst().second;
             map.add(x, y);
+            if (yIntegral && yFixed)
+                map.add(x, yOther);
+
         }
 
         while (!yIntersects.isEmpty()) {
             y = yIntersects.takeFirst().second;
             map.add(x, y);
+            if (xIntegral && xFixed)
+                map.add(xOther, y);
         }
     }
 
@@ -700,11 +808,14 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
 
     int z = intZoomLevel_;
 
-    int size = map.minX.size();
-    for (int i = 0; i < size; ++i) {
-        int y = map.minY + i;
-        int minX = map.minX[i];
-        int maxX = map.maxX[i];
+    typedef QMap<int, QPair<int, int> >::const_iterator iter;
+    iter i = map.data.constBegin();
+    iter end = map.data.constEnd();
+
+    for (; i != end; ++i) {
+        int y = i.key();
+        int minX = i->first;
+        int maxX = i->second;
         for (int x = minX; x <= maxX; ++x) {
             results.insert(QGeoTileSpec(pluginString_, mapType_.mapId(), z, x, y));
         }
@@ -713,36 +824,16 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
     return results;
 }
 
-QGeoCameraTilesPrivate::TileMap::TileMap(int minY, int maxY)
-    : size(0),
-      minY(minY),
-      maxY(maxY),
-      minX(maxY - minY + 1, -1),
-      maxX(maxY - minY + 1, -1)
-{}
+QGeoCameraTilesPrivate::TileMap::TileMap() {}
 
 void QGeoCameraTilesPrivate::TileMap::add(int tileX, int tileY)
 {
-    int index = tileY - minY;
-    int min = minX.at(index);
-    int max = maxX.at(index);
-
-    if (min == -1) {
-        min = tileX;
-        max = tileX;
-        minX[index] = min;
-        maxX[index] = max;
-        size += 1;
+    if (data.contains(tileY)) {
+        int oldMinX = data.value(tileY).first;
+        int oldMaxX = data.value(tileY).second;
+        data.insert(tileY, QPair<int, int>(qMin(tileX, oldMinX), qMax(tileX, oldMaxX)));
     } else {
-        int oldSize = (max - min);
-        int min2 = qMin(min, tileX);
-        if (min2 != min)
-            minX[index] = min2;
-        int max2 = qMax(max, tileX);
-        if (max2 != max)
-            maxX[index] = max2;
-        int newSize = (max2 - min2);
-        size += (newSize - oldSize);
+        data.insert(tileY, QPair<int, int>(tileX, tileX));
     }
 }
 

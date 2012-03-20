@@ -239,7 +239,7 @@ private slots:
         ct.setMaximumZoomLevel(8);
         ct.setTileSize(16);
         ct.setCamera(camera);
-        ct.setScreenSize(QSize(width, height));
+        ct.setScreenSize(QSize(ceil(width), ceil(height)));
 
         QSet<QGeoTileSpec> tiles;
 
@@ -247,11 +247,6 @@ private slots:
 
         for (int i = 0; i < tilesX.size(); ++i)
             tiles.insert(QGeoTileSpec("", 0, static_cast<int>(floor(zoom)), tilesX.at(i), tilesY.at(i)));
-
-        if (ct.tiles() != tiles) {
-            qWarning() << ct.tiles();
-            qWarning() << tiles;
-        }
 
         QCOMPARE(ct.tiles(), tiles);
     }
@@ -316,7 +311,15 @@ private slots:
               "T" - boundary of tile the viewport is centered on
               "O" - same as "T" but coincident with the viewport boundary
 
-            TODO explain expectations about inclusiveness and overlapping boundaries
+            Whenever the viewport boundary is coincident with a tile boundary,
+            the tiles on both sides of the boundary are expected to be fetched.
+
+            Those tiles are needed in case we perform bilinear antialiasing,
+            provide us with at least a pixel width of tolerance for errors in
+            other parts of the code or the system.  There is a decent chance
+            that some or all of those extra tiles will need to be fetched before
+            long, so getting them into the cache sooner rather than later is
+            likely to be beneficial on average.
 
             The tests are carried out per viewport height / width.
 
@@ -681,28 +684,24 @@ private slots:
                 +       +       T       T       +       +
                 + + + + + + + + T T T T T + + + + + + + +
 
-                Starts at:  T           /   T - 1
-                Covers:     1 tiles     /   3 tiles
+                Starts at:  T - 1
+                Covers:     3 tiles
         */
 
-        // FIXME
-        // - these are all kinds of dodgy
-        // - need to nail down the expected behaviour first
-
-        mid_tx << 8;
-        mid_tw << 2;
+        mid_tx << 7;
+        mid_tw << 3;
 
         top_tx << 0;
         top_tw << 2;
 
-        bottom_tx << 15;
-        bottom_tw << 1;
+        bottom_tx << 14;
+        bottom_tw << 2;
 
-        left_tx << 0;
-        left_tw << 2;
+        left_tx << 15;
+        left_tw << 3;
 
-        right_tx << 15;
-        right_tw << 1;
+        right_tx << 14;
+        right_tw << 3;
 
         /*
                 offset = 3
@@ -804,36 +803,35 @@ private slots:
         pti.w = pti.w * pow(2.0, 0.5);
         pti.h = pti.h * pow(2.0, 0.5);
 
-        // TODO need to sort out the semantics before enabling these
-//        pti.x = 0.5;
-//        pti.y = 0.5;
-//        pti.xyString = QLatin1String("middle");
+        pti.x = 0.5;
+        pti.y = 0.5;
+        pti.xyString = QLatin1String("middle");
 
-//        test_group(pti, mid_tx, mid_tw, mid_tx, mid_tw);
+        test_group(pti, mid_tx, mid_tw, mid_tx, mid_tw);
 
-//        pti.x = 0.5;
-//        pti.y = 0.0;
-//        pti.xyString = QLatin1String("top");
+        pti.x = 0.5;
+        pti.y = 0.0;
+        pti.xyString = QLatin1String("top");
 
-//        test_group(pti, mid_tx, mid_tw, top_tx, top_tw);
+        test_group(pti, mid_tx, mid_tw, top_tx, top_tw);
 
-//        pti.x = 0.5;
-//        pti.y = 15.0 / 16.0;
-//        pti.xyString = QLatin1String("bottom");
+        pti.x = 0.5;
+        pti.y = 15.0 / 16.0;
+        pti.xyString = QLatin1String("bottom");
 
-//        test_group(pti, mid_tx, mid_tw, bottom_tx, bottom_tw);
+        test_group(pti, mid_tx, mid_tw, bottom_tx, bottom_tw);
 
-//        pti.x = 0.0;
-//        pti.y = 0.5;
-//        pti.xyString = QLatin1String("left");
+        pti.x = 0.0;
+        pti.y = 0.5;
+        pti.xyString = QLatin1String("left");
 
-//        test_group(pti, left_tx, left_tw, mid_tx, mid_tw);
+        test_group(pti, left_tx, left_tw, mid_tx, mid_tw);
 
-//        pti.x = 15.0 / 16.0;
-//        pti.y = 0.5;
-//        pti.xyString = QLatin1String("right");
+        pti.x = 15.0 / 16.0;
+        pti.y = 0.5;
+        pti.xyString = QLatin1String("right");
 
-//        test_group(pti, right_tx, right_tw, mid_tx, mid_tw);
+        test_group(pti, right_tx, right_tw, mid_tx, mid_tw);
 
         /*
             width = t + 1
@@ -1356,28 +1354,24 @@ private slots:
                 +       +       T       T       +       +
                 + + + + + + + + T T T T T + + + + + + + +
 
-                Starts at:  T  - 1      /   T - 2
-                Covers:     2 tiles     /   4 tiles
+                Starts at:  T - 2
+                Covers:     4 tiles
         */
 
-        // FIXME
-        // - these are all kinds of dodgy
-        // - need to nail down the expected behaviour first
-
-        mid_t2x << 7;
-        mid_t2w << 3;
+        mid_t2x << 6;
+        mid_t2w << 4;
 
         top_t2x << 0;
         top_t2w << 2;
 
-        bottom_t2x << 14;
-        bottom_t2w << 2;
+        bottom_t2x << 13;
+        bottom_t2w << 3;
 
-        left_t2x << 15;
-        left_t2w << 3;
+        left_t2x << 14;
+        left_t2w << 4;
 
-        right_t2x << 14;
-        right_t2w << 2;
+        right_t2x << 13;
+        right_t2w << 4;
 
         /*
                 offset = 1
@@ -1484,28 +1478,24 @@ private slots:
                 +       +       T       T       +       +
                 + + + + + + + + T T T T T + + + + + + + +
 
-                Starts at:  T       /   T - 1
-                Covers:     2 tiles /   4 tiles
+                Starts at:  T - 1
+                Covers:     4 tiles
         */
 
-        // FIXME
-        // - these are all kinds of dodgy
-        // - need to nail down the expected behaviour first
-
-        mid_t2x << 8;
-        mid_t2w << 3;
+        mid_t2x << 7;
+        mid_t2w << 4;
 
         top_t2x << 0;
-        top_t2w << 2;
+        top_t2w << 3;
 
-        bottom_t2x << 15;
-        bottom_t2w << 1;
+        bottom_t2x << 14;
+        bottom_t2w << 2;
 
-        left_t2x << 0;
-        left_t2w << 3;
+        left_t2x << 15;
+        left_t2w << 4;
 
-        right_t2x << 15;
-        right_t2w << 3;
+        right_t2x << 14;
+        right_t2w << 4;
 
         pti.zoom = 4.0;
         pti.zoomString = QLatin1String("int zoom");
@@ -1545,36 +1535,35 @@ private slots:
         pti.w = pti.w * pow(2.0, 0.5);
         pti.h = pti.h * pow(2.0, 0.5);
 
-        // TODO need to sort out the semantics before enabling these
-//        pti.x = 0.5;
-//        pti.y = 0.5;
-//        pti.xyString = QLatin1String("middle");
+        pti.x = 0.5;
+        pti.y = 0.5;
+        pti.xyString = QLatin1String("middle");
 
-//        test_group(pti, mid_t2x, mid_t2w, mid_t2x, mid_t2w);
+        test_group(pti, mid_t2x, mid_t2w, mid_t2x, mid_t2w);
 
-//        pti.x = 0.5;
-//        pti.y = 0.0;
-//        pti.xyString = QLatin1String("top");
+        pti.x = 0.5;
+        pti.y = 0.0;
+        pti.xyString = QLatin1String("top");
 
-//        test_group(pti, mid_t2x, mid_t2w, top_t2x, top_t2w);
+        test_group(pti, mid_t2x, mid_t2w, top_t2x, top_t2w);
 
-//        pti.x = 0.5;
-//        pti.y = 15.0 / 16.0;
-//        pti.xyString = QLatin1String("bottom");
+        pti.x = 0.5;
+        pti.y = 15.0 / 16.0;
+        pti.xyString = QLatin1String("bottom");
 
-//        test_group(pti, mid_t2x, mid_t2w, bottom_t2x, bottom_t2w);
+        test_group(pti, mid_t2x, mid_t2w, bottom_t2x, bottom_t2w);
 
-//        pti.x = 0.0;
-//        pti.y = 0.5;
-//        pti.xyString = QLatin1String("left");
+        pti.x = 0.0;
+        pti.y = 0.5;
+        pti.xyString = QLatin1String("left");
 
-//        test_group(pti, left_t2x, left_t2w, mid_t2x, mid_t2w);
+        test_group(pti, left_t2x, left_t2w, mid_t2x, mid_t2w);
 
-//        pti.x = 15.0 / 16.0;
-//        pti.y = 0.5;
-//        pti.xyString = QLatin1String("right");
+        pti.x = 15.0 / 16.0;
+        pti.y = 0.5;
+        pti.xyString = QLatin1String("right");
 
-//        test_group(pti, right_t2x, right_t2w, mid_t2x, mid_t2w);
+        test_group(pti, right_t2x, right_t2w, mid_t2x, mid_t2w);
 
         /*
             width = 2t + 1
