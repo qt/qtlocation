@@ -163,6 +163,11 @@ private:
     QGeoServiceProviderPrivate* d_ptr;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::RoutingFeatures)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::GeocodingFeatures)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::MappingFeatures)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::PlacesFeatures)
+
 QT_END_NAMESPACE
 
 QT_END_HEADER
