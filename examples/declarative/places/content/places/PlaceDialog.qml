@@ -51,7 +51,6 @@ Dialog {
     signal completed;
 
     function prepareDialog(inputPlace) {
-
         if (!inputPlace) {
             __place = Qt.createQmlObject('import QtLocation 5.0; Place { }', root);
             __createdPlace = true;
@@ -110,6 +109,8 @@ Dialog {
 
         processStatus.prevStatus = __place.status;
     }
+
+   Behavior on opacity { NumberAnimation { duration: 500 } }
 
     ErrorDialog {
         id: errorDialog
@@ -171,12 +172,18 @@ Dialog {
             __place.destroy();
     }
 
+    onOpacityChanged: {
+        if (opacity == 0)
+            customLoader.item.currentIndex = 0
+    }
+
     ListModel {
         id: dataFieldsModel
     }
 
-    customComponent: ListView {
+    customLoader.sourceComponent: ListView {
         id: view
+
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: 10

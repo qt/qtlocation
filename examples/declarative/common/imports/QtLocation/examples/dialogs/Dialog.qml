@@ -54,7 +54,7 @@ Item {
     property alias length: dialogModel.count
     property int gap: 10
     property int listItemHeight: titleBar.font.pixelSize * 1.5
-    property alias customComponent: componentLoader.sourceComponent
+    property alias customLoader: componentLoader
     property bool showButtons: true
 
     opacity: 0
@@ -130,7 +130,6 @@ Item {
 
         Loader {
             id: componentLoader;
-            sourceComponent: listComponent
             anchors {
                 top: dataRect.top
                 topMargin: gap/2
@@ -139,6 +138,12 @@ Item {
                 right: parent.right
                 rightMargin: gap/2
             }
+
+            Component.onCompleted: {
+                if (!sourceComponent)
+                    sourceComponent = listComponent;
+            }
+
         }
 
         Component {
@@ -154,6 +159,14 @@ Item {
                 interactive: height < (listItemHeight + gap/2)*length + gap/2
                 width: parent.width
                 height: Math.min(dialog.height * 0.7, (listItemHeight + gap/2)*length + gap/2)
+
+                Connections {
+                    target: dialog
+                    onClearButtonClicked: {
+                        for (var i = 0; i<length; i++)
+                            dialogModel.set(i, {"inputText": ""})
+                    }
+                }
             }
         }
     }
@@ -170,14 +183,7 @@ Item {
                 id: buttonClearAll
                 text: "Clear"
                 width: 80; height: parent.height
-                onClicked: {
-                    if (!customComponent) {
-                        for (var i = 0; i<length; i++){
-                            dialogModel.set(i, {"inputText": ""})
-                        }
-                    }
-                    dialog.clearButtonClicked()
-                }
+                onClicked: dialog.clearButtonClicked()
             }
             Button {
                 id: buttonGo
