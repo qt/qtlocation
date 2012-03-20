@@ -41,6 +41,7 @@
 import QtQuick 2.0
 import QtLocation 5.0
 import QtLocation.examples 5.0
+import "PlacesUtils.js" as PlacesUtils
 
 Item {
     id: placeDelegate
@@ -90,7 +91,7 @@ Item {
             RatingView { rating: (place && place.ratings) ? place.ratings.average : 0 }
 
             Group { text: qsTr("Address") }
-            Text { text: distance + "m away" }
+            Text { text: PlacesUtils.prettyDistance(distance) }
             Text {
                 function placeAddress(place) {
                     if (!place)

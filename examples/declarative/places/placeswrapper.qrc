@@ -20,5 +20,6 @@
         <file>content/places/SearchBox.qml</file>
         <file>content/places/SearchResultDelegate.qml</file>
         <file>content/places/SearchResultView.qml</file>
+        <file>content/places/PlacesUtils.js</file>
     </qresource>
 </RCC>

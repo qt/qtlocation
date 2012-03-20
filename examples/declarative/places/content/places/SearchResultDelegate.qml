@@ -40,6 +40,7 @@
 
 import QtQuick 2.0
 import QtLocation 5.0
+import "PlacesUtils.js" as PlacesUtils
 
 Item {
     id: root
@@ -79,7 +80,7 @@ Item {
 
                     Text { id: placeName; text: place.favorite ? place.favorite.name : place.name }
                 }
-                Text { id: distanceText; text: distance + "m"; font.italic: true; }
+                Text { id: distanceText; text: PlacesUtils.prettyDistance(distance); font.italic: true }
                 Text {
                     text: qsTr("Sponsored result")
                     horizontalAlignment: Text.AlignRight

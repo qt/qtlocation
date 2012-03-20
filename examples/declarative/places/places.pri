@@ -4,6 +4,7 @@ qmlcontent.files += \
 OTHER_FILES += $$qmlcontent.files
 
 qmlcontentplaces.files += \
+    content/places/PlacesUtils.js \
     content/places/Group.qml \
     content/places/SearchBox.qml \
     content/places/CategoryDelegate.qml \
