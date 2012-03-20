@@ -88,7 +88,7 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(c
                                                                                QGeoServiceProvider::Error *error,
                                                                                QString *errorString) const
 {
-    switch (parameters.value(QLatin1String("places.api_version"), 1).toUInt()) {
+    switch (parameters.value(QLatin1String("places.api_version"), 2).toUInt()) {
     case 1:
         return new QPlaceManagerEngineNokiaV1(parameters, error, errorString);
     case 2:

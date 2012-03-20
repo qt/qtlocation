@@ -409,6 +409,9 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV2::savePlace(const QPlace &place)
     QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
                               Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
                               Q_ARG(QString, tr("Saving places is not supported.")));
+    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
+            this, SLOT(replyError(QPlaceReply::Error,QString)));
     return reply;
 }
 
@@ -419,6 +422,9 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV2::removePlace(const QString &placeId)
     QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
                               Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
                               Q_ARG(QString, tr("Removing places is not supported.")));
+    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
+            this, SLOT(replyError(QPlaceReply::Error,QString)));
     return reply;
 }
 
@@ -431,6 +437,9 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV2::saveCategory(const QPlaceCategory &ca
     QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
                               Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
                               Q_ARG(QString, tr("Saving categories is not supported.")));
+    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
+            this, SLOT(replyError(QPlaceReply::Error,QString)));
     return reply;
 }
 
@@ -441,6 +450,9 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV2::removeCategory(const QString &categor
     QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
                               Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
                               Q_ARG(QString, tr("Removing categories is not supported.")));
+    connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
+    connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
+            this, SLOT(replyError(QPlaceReply::Error,QString)));
     return reply;
 }
 

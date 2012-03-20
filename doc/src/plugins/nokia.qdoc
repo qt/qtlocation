@@ -104,7 +104,7 @@ The following table lists optional parameters that can be passed to the Nokia pl
 \row
     \li places.api_version
     \li Version of the REST API used by the places manager.  Currently versions 1 and 2 are
-       supported.  The default is version 1.
+       supported. The version 1 is deprecated and will not be part of the final Qt release.  The default is version 2.
 \endtable
 
 \section1 Parameter Usage Example
