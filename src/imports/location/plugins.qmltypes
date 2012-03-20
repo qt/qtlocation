@@ -243,6 +243,7 @@ Module {
         prototype: "QObject"
         exports: ["Address 5.0"]
         Property { name: "address"; type: "QGeoAddress" }
+        Property { name: "text"; type: "string" }
         Property { name: "country"; type: "string" }
         Property { name: "countryCode"; type: "string" }
         Property { name: "state"; type: "string" }
@@ -726,6 +727,7 @@ Module {
             type: "int"
             Parameter { name: "featureType"; type: "FeatureType" }
         }
+        Method { name: "resetFeatureWeights" }
     }
     Component {
         name: "QDeclarativeGeoRouteSegment"
@@ -742,57 +744,109 @@ Module {
         prototype: "QObject"
         exports: ["Plugin 5.0"]
         Enum {
-            name: "PluginFeature"
+            name: "RoutingFeature"
             values: {
-                "NoFeatures": 0,
-                "GeocodingFeature": 1,
-                "ReverseGeocodingFeature": 2,
-                "RoutingFeature": 4,
-                "MappingFeature": 8,
-                "AnyPlacesFeature": 16
+                "NoRoutingFeatures": 0,
+                "OnlineRoutingFeature": 1,
+                "OfflineRoutingFeature": 2,
+                "LocalizedRoutingFeature": 4,
+                "RouteUpdatesFeature": 8,
+                "AlternativeRoutesFeature": 16,
+                "ExcludeAreasRoutingFeature": 32,
+                "AnyRoutingFeatures": -1
             }
         }
         Enum {
-            name: "PluginFeatures"
+            name: "RoutingFeatures"
             values: {
-                "NoFeatures": 0,
-                "GeocodingFeature": 1,
-                "ReverseGeocodingFeature": 2,
-                "RoutingFeature": 4,
-                "MappingFeature": 8,
-                "AnyPlacesFeature": 16
+                "NoRoutingFeatures": 0,
+                "OnlineRoutingFeature": 1,
+                "OfflineRoutingFeature": 2,
+                "LocalizedRoutingFeature": 4,
+                "RouteUpdatesFeature": 8,
+                "AlternativeRoutesFeature": 16,
+                "ExcludeAreasRoutingFeature": 32,
+                "AnyRoutingFeatures": -1
+            }
+        }
+        Enum {
+            name: "GeocodingFeature"
+            values: {
+                "NoGeocodingFeatures": 0,
+                "OnlineGeocodingFeature": 1,
+                "OfflineGeocodingFeature": 2,
+                "ReverseGeocodingFeature": 4,
+                "LocalizedGeocodingFeature": 8,
+                "AnyGeocodingFeatures": -1
+            }
+        }
+        Enum {
+            name: "GeocodingFeatures"
+            values: {
+                "NoGeocodingFeatures": 0,
+                "OnlineGeocodingFeature": 1,
+                "OfflineGeocodingFeature": 2,
+                "ReverseGeocodingFeature": 4,
+                "LocalizedGeocodingFeature": 8,
+                "AnyGeocodingFeatures": -1
+            }
+        }
+        Enum {
+            name: "MappingFeature"
+            values: {
+                "NoMappingFeatures": 0,
+                "OnlineMappingFeature": 1,
+                "OfflineMappingFeature": 2,
+                "LocalizedMappingFeature": 4,
+                "AnyMappingFeatures": -1
+            }
+        }
+        Enum {
+            name: "MappingFeatures"
+            values: {
+                "NoMappingFeatures": 0,
+                "OnlineMappingFeature": 1,
+                "OfflineMappingFeature": 2,
+                "LocalizedMappingFeature": 4,
+                "AnyMappingFeatures": -1
             }
         }
         Enum {
             name: "PlacesFeature"
             values: {
-                "NoPlaceFeatures": 0,
-                "SavePlaceFeature": 1,
-                "RemovePlaceFeature": 2,
-                "SaveCategoryFeature": 4,
-                "RemoveCategoryFeature": 8,
-                "RecommendationsFeature": 16,
-                "SearchSuggestionsFeature": 32,
-                "CorrectionsFeature": 64,
-                "LocaleFeature": 128,
-                "NotificationsFeature": 256,
-                "FavoritesMatchingFeature": 512
+                "NoPlacesFeatures": 0,
+                "OnlinePlacesFeature": 1,
+                "OfflinePlacesFeature": 2,
+                "SavePlaceFeature": 4,
+                "RemovePlaceFeature": 8,
+                "SaveCategoryFeature": 16,
+                "RemoveCategoryFeature": 32,
+                "PlaceRecommendationsFeature": 64,
+                "SearchSuggestionsFeature": 128,
+                "CorrectionsFeature": 256,
+                "LocalizedPlacesFeature": 512,
+                "NotificationsFeature": 1024,
+                "PlaceMatchingFeature": 2048,
+                "AnyPlacesFeatures": -1
             }
         }
         Enum {
             name: "PlacesFeatures"
             values: {
-                "NoPlaceFeatures": 0,
-                "SavePlaceFeature": 1,
-                "RemovePlaceFeature": 2,
-                "SaveCategoryFeature": 4,
-                "RemoveCategoryFeature": 8,
-                "RecommendationsFeature": 16,
-                "SearchSuggestionsFeature": 32,
-                "CorrectionsFeature": 64,
-                "LocaleFeature": 128,
-                "NotificationsFeature": 256,
-                "FavoritesMatchingFeature": 512
+                "NoPlacesFeatures": 0,
+                "OnlinePlacesFeature": 1,
+                "OfflinePlacesFeature": 2,
+                "SavePlaceFeature": 4,
+                "RemovePlaceFeature": 8,
+                "SaveCategoryFeature": 16,
+                "RemoveCategoryFeature": 32,
+                "PlaceRecommendationsFeature": 64,
+                "SearchSuggestionsFeature": 128,
+                "CorrectionsFeature": 256,
+                "LocalizedPlacesFeature": 512,
+                "NotificationsFeature": 1024,
+                "PlaceMatchingFeature": 2048,
+                "AnyPlacesFeatures": -1
             }
         }
         Property { name: "name"; type: "string" }
@@ -803,26 +857,53 @@ Module {
             isList: true
             isReadonly: true
         }
-        Property { name: "required"; type: "PluginFeatures" }
-        Property { name: "supported"; type: "PluginFeatures"; isReadonly: true }
-        Property { name: "supportedPlacesFeatures"; type: "PlacesFeatures"; isReadonly: true }
+        Property {
+            name: "required"
+            type: "QDeclarativeGeoServiceProviderRequirements"
+            isReadonly: true
+            isPointer: true
+        }
         Property { name: "locales"; type: "QStringList" }
+        Property { name: "preferred"; type: "QStringList" }
+        Property { name: "allowExperimental"; type: "bool" }
+        Property { name: "isAttached"; type: "bool"; isReadonly: true }
         Signal {
             name: "nameChanged"
             Parameter { name: "name"; type: "string" }
         }
+        Signal { name: "attached" }
         Signal {
-            name: "supportedFeaturesChanged"
-            Parameter { name: "features"; type: "PluginFeatures" }
+            name: "preferredChanged"
+            Parameter { name: "preferences"; type: "QStringList" }
         }
         Signal {
-            name: "requiredFeaturesChanged"
-            Parameter { name: "features"; type: "PluginFeatures" }
+            name: "allowExperimentalChanged"
+            Parameter { name: "allow"; type: "bool" }
         }
-        Signal {
-            name: "supportedPlacesFeaturesChanged"
-            Parameter { name: "features"; type: "PlacesFeatures" }
+        Method {
+            name: "supportsRouting"
+            type: "bool"
+            Parameter { name: "feature"; type: "RoutingFeatures" }
         }
+        Method { name: "supportsRouting"; type: "bool" }
+        Method {
+            name: "supportsGeocoding"
+            type: "bool"
+            Parameter { name: "feature"; type: "GeocodingFeatures" }
+        }
+        Method { name: "supportsGeocoding"; type: "bool" }
+        Method {
+            name: "supportsMapping"
+            type: "bool"
+            Parameter { name: "feature"; type: "MappingFeatures" }
+        }
+        Method { name: "supportsMapping"; type: "bool" }
+        Method {
+            name: "supportsPlaces"
+            type: "bool"
+            Parameter { name: "feature"; type: "PlacesFeatures" }
+        }
+        Method { name: "supportsPlaces"; type: "bool" }
     }
     Component {
         name: "QDeclarativeGeoServiceProviderParameter"
@@ -837,6 +918,37 @@ Module {
         Signal {
             name: "valueChanged"
             Parameter { name: "value"; type: "QVariant" }
+        }
+    }
+    Component {
+        name: "QDeclarativeGeoServiceProviderRequirements"
+        prototype: "QObject"
+        exports: ["PluginRequirements 5.0"]
+        Property { name: "mapping"; type: "QDeclarativeGeoServiceProvider::MappingFeatures" }
+        Property { name: "routing"; type: "QDeclarativeGeoServiceProvider::RoutingFeatures" }
+        Property { name: "geocoding"; type: "QDeclarativeGeoServiceProvider::GeocodingFeatures" }
+        Property { name: "places"; type: "QDeclarativeGeoServiceProvider::PlacesFeatures" }
+        Signal {
+            name: "mappingRequirementsChanged"
+            Parameter { name: "features"; type: "QDeclarativeGeoServiceProvider::MappingFeatures" }
+        }
+        Signal {
+            name: "routingRequirementsChanged"
+            Parameter { name: "features"; type: "QDeclarativeGeoServiceProvider::RoutingFeatures" }
+        }
+        Signal {
+            name: "geocodingRequirementsChanged"
+            Parameter { name: "features"; type: "QDeclarativeGeoServiceProvider::GeocodingFeatures" }
+        }
+        Signal {
+            name: "placesRequirementsChanged"
+            Parameter { name: "features"; type: "QDeclarativeGeoServiceProvider::PlacesFeatures" }
+        }
+        Signal { name: "requirementsChanged" }
+        Method {
+            name: "matches"
+            type: "bool"
+            Parameter { name: "provider"; type: "const QGeoServiceProvider"; isPointer: true }
         }
     }
     Component {
@@ -996,38 +1108,9 @@ Module {
         name: "QDeclarativePlaceIcon"
         prototype: "QObject"
         exports: ["Icon 5.0"]
-        Enum {
-            name: "IconFlag"
-            values: {
-                "Normal": 0,
-                "Disabled": 1,
-                "Active": 2,
-                "Selected": 4,
-                "Map": 8,
-                "List": 16
-            }
-        }
-        Enum {
-            name: "IconFlags"
-            values: {
-                "Normal": 0,
-                "Disabled": 1,
-                "Active": 2,
-                "Selected": 4,
-                "Map": 8,
-                "List": 16
-            }
-        }
         Property { name: "icon"; type: "QPlaceIcon" }
-        Property { name: "baseUrl"; type: "QUrl" }
-        Property { name: "fullUrl"; type: "QUrl" }
+        Property { name: "parameters"; type: "QObject"; isReadonly: true; isPointer: true }
         Property { name: "plugin"; type: "QDeclarativeGeoServiceProvider"; isPointer: true }
-        Method {
-            name: "url"
-            type: "QUrl"
-            Parameter { name: "size"; type: "QSize" }
-            Parameter { name: "flags"; type: "QDeclarativePlaceIcon::IconFlags" }
-        }
         Method {
             name: "url"
             type: "QUrl"
@@ -1133,25 +1216,24 @@ Module {
                 "AllPositioningMethods": -1
             }
         }
+        Enum {
+            name: "SourceError"
+            values: {
+                "AccessError": 0,
+                "ClosedError": 1,
+                "UnknownSourceError": -1
+            }
+        }
         Property { name: "position"; type: "QDeclarativePosition"; isReadonly: true; isPointer: true }
         Property { name: "active"; type: "bool" }
         Property { name: "nmeaSource"; type: "QUrl" }
         Property { name: "updateInterval"; type: "int" }
         Property { name: "supportedPositioningMethods"; type: "PositioningMethods"; isReadonly: true }
         Property { name: "preferredPositioningMethods"; type: "PositioningMethods" }
+        Property { name: "sourceError"; type: "SourceError"; isReadonly: true }
         Method { name: "update" }
         Method { name: "start" }
         Method { name: "stop" }
-    }
-    Component {
-        name: "QQmlPropertyMap"
-        prototype: "QObject"
-        Signal {
-            name: "valueChanged"
-            Parameter { name: "key"; type: "string" }
-            Parameter { name: "value"; type: "QVariant" }
-        }
-        Method { name: "keys"; type: "QStringList" }
     }
     Component {
         name: "QDeclarativeRatings"
@@ -1249,6 +1331,7 @@ Module {
         Property { name: "status"; type: "Status"; isReadonly: true }
         Method { name: "execute" }
         Method { name: "cancel" }
+        Method { name: "clear" }
         Method { name: "errorString"; type: "string" }
     }
     Component {
@@ -1323,5 +1406,15 @@ Module {
             Parameter { name: "role"; type: "int" }
         }
         Method { name: "errorString"; type: "string" }
+    }
+    Component {
+        name: "QQmlPropertyMap"
+        prototype: "QObject"
+        Signal {
+            name: "valueChanged"
+            Parameter { name: "key"; type: "string" }
+            Parameter { name: "value"; type: "QVariant" }
+        }
+        Method { name: "keys"; type: "QStringList" }
     }
 }
