@@ -441,13 +441,13 @@ void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
 
 void QDeclarativeSupportedCategoriesModel::update()
 {
-    if (!m_plugin) {
-        beginResetModel();
-        qDeleteAll(m_categoriesTree);
-        m_categoriesTree.clear();
-        endResetModel();
+    beginResetModel();
+    qDeleteAll(m_categoriesTree);
+    m_categoriesTree.clear();
+    endResetModel();
+
+    if (!m_plugin)
         return;
-    }
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     if (!serviceProvider || serviceProvider->error() != QGeoServiceProvider::NoError)
