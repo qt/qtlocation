@@ -765,6 +765,12 @@ void QDeclarativePlace::getDetails()
     success the \l placeId property will be updated and \l status will be set to Place.Ready.  On
     error \l status will be set to Place.Error.  The \l errorString() method can be used to get the
     details of the error.
+
+    Note that a \l PlaceSearchModel will call Place::getDetails on any place that it detects an update
+    on.  A consequence of this is that whenever a Place from a \l PlaceSearchModel is successfully saved,
+    it will be followed by a fetch of place details, leading to a sequence of state changes
+    of \c Saving, \c Ready, \c Fetching, \c Ready.
+
 */
 void QDeclarativePlace::save()
 {

@@ -126,6 +126,14 @@ QT_USE_NAMESPACE
             \o The contents of the search result are unknown.
     \endtable
 
+    \section1 Detection of updated/removed places
+
+    The PlaceSearchModel listens for places that have been updated or removed from its plugin's backend.
+    If it detects that a place has been updated and that place is currently present in the model, then
+    it will call \l Place::getDetails to refresh the details.  If it detects that a place has been
+    removed, then correspondingly the place will be removed from the model if it is currently
+    present.
+
     \section1 Example
 
     The following example shows how to use the PlaceSearchModel to search for Pizza restaurants in
