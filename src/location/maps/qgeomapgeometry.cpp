@@ -527,7 +527,7 @@ void QGeoMapGeometryPrivate::setupCamera()
 
     double z = pow(2.0, cameraData_.zoomLevel() - intZoomLevel_);
 
-    double altitude = scaleFactor_ * f / (4.0 * z);
+    double altitude = scaleFactor_ * f / (2.0 * z);
 
     double aspectRatio = 1.0 * screenSize_.width() / screenSize_.height();
 
@@ -612,8 +612,8 @@ void QGeoMapGeometryPrivate::setupCamera()
 
     // near plane and far plane
 
-    double nearPlane = 0.5;
-    double farPlane = 2.0 * edge;
+    double nearPlane = 1.0;
+    double farPlane = 4.0 * edge;
 
     // TODO protect with mutex?
     // set glcamera parameters
