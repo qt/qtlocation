@@ -117,6 +117,7 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     optimizations |= QGeoRouteRequest::ShortestRoute;
     optimizations |= QGeoRouteRequest::FastestRoute;
     optimizations |= QGeoRouteRequest::MostEconomicRoute;
+    optimizations |= QGeoRouteRequest::MostScenicRoute;
     setSupportedRouteOptimizations(optimizations);
 
     QGeoRouteRequest::TravelModes travelModes;
