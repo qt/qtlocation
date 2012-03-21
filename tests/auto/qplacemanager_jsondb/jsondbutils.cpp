@@ -52,6 +52,22 @@
 #include <QLocalSocket>
 #include <QDir>
 #include <QTest>
+#include <QSignalSpy>
+#include <QUuid>
+
+#ifndef WAIT_UNTIL
+#define WAIT_UNTIL(__expr) \
+        do { \
+        const int __step = 50; \
+        const int __timeout = 10000; \
+        if (!(__expr)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+    } while (0)
+#endif
 
 const QLatin1String JsonDbUtils::Uuid("_uuid");
 const QLatin1String JsonDbUtils::Type("_type");
@@ -133,11 +149,8 @@ const QLatin1String JsonDbUtils::FullscreenIconSizeParam("fullscreenSize");
 const QLatin1String JsonDbUtils::CreatedDateTime("createdDateTime");
 const QLatin1String JsonDbUtils::ModifiedDateTime("modifiedDateTime");
 
-JsonDbUtils::~JsonDbUtils()
-{
-    if (m_jsondbProcess)
-        m_jsondbProcess->kill();
-}
+const QLatin1String JsonDbUtils::DefaultPartition("");
+const QLatin1String JsonDbUtils::PartitionType("Partition");
 
 JsonDbUtils::JsonDbUtils(QObject *parent)
     : QObject(parent)
@@ -147,18 +160,20 @@ JsonDbUtils::JsonDbUtils(QObject *parent)
     m_connection->connectToServer();
 }
 
+JsonDbUtils::~JsonDbUtils()
+{
+    if (m_jsondbProcess)
+        m_jsondbProcess->kill();
+}
+
 void JsonDbUtils::cleanDb()
 {
     QJsonDbReadRequest *getPlacesRequest = new QJsonDbReadRequest(this);
+    getPlacesRequest->setPartition(m_currentPartition);
     getPlacesRequest->setQuery(QString::fromLatin1("[?%1=\"%2\"]")
                                .arg(Type).arg(PlaceType));
-    connect(getPlacesRequest, SIGNAL(finished()), this, SLOT(getPlacesFinished()));
-    connect(getPlacesRequest, SIGNAL(finished()), getPlacesRequest, SLOT(deleteLater()));
-    connect(getPlacesRequest, SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
-            this, SLOT(requestError(QtJsonDb::QJsonDbRequest::ErrorCode,QString)));
-    connect(getPlacesRequest, SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
 
-            getPlacesRequest, SLOT(deleteLater()));
+    setupRequest(getPlacesRequest, this, SLOT(getPlacesFinished()));
     m_connection->send(getPlacesRequest);
 }
 
@@ -177,21 +192,74 @@ QList<QJsonObject> JsonDbUtils::results()
 void JsonDbUtils::fetchPlaceJson(const QString &uuid)
 {
     QJsonDbReadRequest *request = new QJsonDbReadRequest(this);
+    request->setPartition(m_currentPartition);
     request->setQuery(QStringLiteral("[?_type=%type][?_uuid=%uuid]"));
     request->bindValue(QStringLiteral("type"), PlaceType);
     request->bindValue(QStringLiteral("uuid"), uuid);
-    makeConnections(request, this, SLOT(fetchPlaceJsonFinished()));
+    setupRequest(request, this, SLOT(fetchPlaceJsonFinished()));
     m_connection->send(request);
 }
 
 void JsonDbUtils::savePlaceJson(const QJsonObject &object)
 {
     QJsonDbWriteRequest *request = new QJsonDbWriteRequest(this);
+    request->setPartition(m_currentPartition);
     QList<QJsonObject> objects;
     objects << object;
     request->setObjects(objects);
-    makeConnections(request, this, SLOT(savePlaceJsonFinished()));
+    setupRequest(request, this, SLOT(savePlaceJsonFinished()));
     m_connection->send(request);
+}
+
+bool JsonDbUtils::hasJsonDbConnection() const
+{
+    return  m_jsondbProcess &&
+            m_connection &&
+            m_connection->status() == QtJsonDb::QJsonDbConnection::Connected;
+}
+
+void JsonDbUtils::setCurrentPartition(const QString &partition)
+{
+    m_currentPartition = partition;
+}
+
+void JsonDbUtils::setupPartition(const QString &partition)
+{
+    QJsonDbReadRequest *readPartitionRequest = new QJsonDbReadRequest();
+    readPartitionRequest->setQuery(QStringLiteral("[?_type=%type][?name=%name]"));
+    readPartitionRequest->bindValue(QStringLiteral("type"), JsonDbUtils::PartitionType);
+    readPartitionRequest->bindValue(QStringLiteral("name"), partition);
+    QSignalSpy readSpy(readPartitionRequest, SIGNAL(finished()));
+    sendRequest(readPartitionRequest);
+    WAIT_UNTIL(readSpy.count() == 1);
+    if (readSpy.isEmpty()) {
+        qWarning() << "No finished signal emitted when trying to read partition: " << partition;
+        return;
+    }
+
+    QList<QJsonObject> results = readPartitionRequest->takeResults();
+    if (results.isEmpty()) {
+        //create user partition because it doesn't exist
+        QJsonObject userPartition;
+        userPartition.insert(JsonDbUtils::Uuid, QUuid::createUuid().toString());
+        userPartition.insert(JsonDbUtils::Type, JsonDbUtils::PartitionType);
+        userPartition.insert(QLatin1String("name"), partition);
+
+        QJsonDbWriteRequest *writePartitionRequest = new QJsonDbWriteRequest(this);
+        QList<QJsonObject> objects;
+        objects << userPartition;
+        writePartitionRequest->setObjects(objects);
+
+        QSignalSpy writeSpy(writePartitionRequest, SIGNAL(finished()));
+        sendRequest(writePartitionRequest);
+        WAIT_UNTIL(writeSpy.count() == 1);
+        if (writeSpy.isEmpty()) {
+            qWarning() << "No finished signal emitted when trying to create partition: " << partition;
+            return;
+        }
+    }
+
+    QMetaObject::invokeMethod(this, "partitionSetupDone", Qt::QueuedConnection);
 }
 
 void JsonDbUtils::getPlacesFinished()
@@ -202,16 +270,7 @@ void JsonDbUtils::getPlacesFinished()
     if (!results.isEmpty()) {
         QJsonDbRemoveRequest *removePlacesRequest
                 = new QJsonDbRemoveRequest(results, this);
-        connect(removePlacesRequest, SIGNAL(finished()),
-                this, SLOT(removePlacesFinished()));
-        connect(removePlacesRequest, SIGNAL(finished()),
-                removePlacesRequest, SLOT(deleteLater()));
-        connect(removePlacesRequest,
-                SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
-                this, SLOT(requestError(QtJsonDb::QJsonDbRequest::ErrorCode,QString)));
-        connect(removePlacesRequest,
-                SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
-                removePlacesRequest, SLOT(deleteLater()));
+        setupRequest(removePlacesRequest,this, SLOT(removePlacesFinished()));
         m_connection->send(removePlacesRequest);
     } else {
         removePlacesFinished();
@@ -221,18 +280,10 @@ void JsonDbUtils::getPlacesFinished()
 void JsonDbUtils::removePlacesFinished()
 {
     QJsonDbReadRequest *getCategoriesRequest = new QJsonDbReadRequest(this);
+    getCategoriesRequest->setPartition(m_currentPartition);
     getCategoriesRequest->setQuery(QString::fromLatin1("[?%1=\"%2\"]")
                                    .arg(Type).arg(CategoryType));
-    connect(getCategoriesRequest, SIGNAL(finished()),
-            this, SLOT(getCategoriesFinished()));
-    connect(getCategoriesRequest, SIGNAL(finished()),
-            getCategoriesRequest, SLOT(deleteLater()));
-    connect(getCategoriesRequest,
-            SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
-            this, SLOT(requestError(QtJsonDb::QJsonDbRequest::ErrorCode,QString)));
-    connect(getCategoriesRequest,
-            SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
-            getCategoriesRequest, SLOT(deleteLater()));
+    setupRequest(getCategoriesRequest,this, SLOT(getCategoriesFinished()));
     m_connection->send(getCategoriesRequest);
 }
 
@@ -243,16 +294,7 @@ void JsonDbUtils::getCategoriesFinished()
     if (!results.isEmpty()) {
         QJsonDbRemoveRequest *removeCategoriesRequest
                 = new QJsonDbRemoveRequest(results, this);
-        connect(removeCategoriesRequest, SIGNAL(finished()),
-                this, SLOT(removeCategoriesFinished()));
-        connect(removeCategoriesRequest, SIGNAL(finished()),
-                removeCategoriesRequest, SLOT(deleteLater()));
-        connect(removeCategoriesRequest,
-                SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
-                this, SLOT(requestError(QtJsonDb::QJsonDbRequest::ErrorCode,QString)));
-        connect(removeCategoriesRequest,
-                SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
-                removeCategoriesRequest, SLOT(deleteLater()));
+        setupRequest(removeCategoriesRequest, this, SLOT(removeCategoriesFinished()));
         m_connection->send(removeCategoriesRequest);
     } else {
         removeCategoriesFinished();
@@ -267,7 +309,11 @@ void JsonDbUtils::removeCategoriesFinished()
 void JsonDbUtils::fetchPlaceJsonFinished()
 {
     QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
-    emit placeFetched(request->takeResults().first());
+    QList<QJsonObject> results = request->takeResults();
+    if (results.count() == 1)
+        emit placeFetched(results.first());
+    else
+        emit placeFetched(QJsonObject());
 }
 
 void JsonDbUtils::savePlaceJsonFinished()
@@ -282,7 +328,7 @@ void JsonDbUtils::requestError(QJsonDbRequest::ErrorCode error,
              << QStringLiteral(" Error String: ") << errorString;
 }
 
-void JsonDbUtils::makeConnections(QJsonDbRequest *request, QObject *parent,
+void JsonDbUtils::setupRequest(QJsonDbRequest *request, QObject *parent,
                                   const char *slot)
 {
     Q_ASSERT(request);
@@ -300,6 +346,7 @@ void JsonDbUtils::makeConnections(QJsonDbRequest *request, QObject *parent,
                      SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
                      request,
                      SLOT(deleteLater()));
+    request->setPartition(m_currentPartition);
 }
 
 QProcess* JsonDbUtils::launchJsonDbDaemon(const QStringList &args)
@@ -334,11 +381,4 @@ QProcess* JsonDbUtils::launchJsonDbDaemon(const QStringList &args)
     if (!connected)
         qFatal("Unable to connect to jsondb process");
     return process;
-}
-
-bool JsonDbUtils::hasJsonDbConnection() const
-{
-    return  m_jsondbProcess &&
-            m_connection &&
-            m_connection->status() == QtJsonDb::QJsonDbConnection::Connected;
 }

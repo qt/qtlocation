@@ -58,12 +58,20 @@ QT_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QJsonObject);
 
+const QLatin1String QPlaceManagerEngineJsonDb::PartitionKey("places.partition");
+
 QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVariant> &parameters,
                                                      QGeoServiceProvider::Error *error,
                                                      QString *errorString)
-    :   QPlaceManagerEngine(parameters), m_jsonDb(new JsonDb()), m_netManager(0)
+    :   QPlaceManagerEngine(parameters), m_netManager(0)
 {
     qRegisterMetaType<QJsonObject>();
+
+    QString partition;
+    if (parameters.contains(PartitionKey))
+        partition = parameters.value(PartitionKey).toString();
+
+    m_jsonDb = new JsonDb(partition);
 
     connect(m_jsonDb, SIGNAL(placeNotifications(QList<QJsonDbNotification>)),
             this, SLOT(processPlaceNotifications(QList<QJsonDbNotification>)));

@@ -147,6 +147,7 @@ private Q_SLOTS:
     void iconDownload_data();
 #endif
     void constructIconUrl();
+    void specifiedPartition();
 
 private:
     bool doSavePlace(const QPlace &place,
@@ -3055,6 +3056,93 @@ void tst_QPlaceManagerJsonDb::constructIconUrl()
     QCOMPARE(icon.url(QSize(60,60)), QUrl("http://www.example.com/icon_large.png"));
 
     //TODO: edge case testing for all combinations
+}
+
+void tst_QPlaceManagerJsonDb::specifiedPartition()
+{
+    const QLatin1String ArbitraryPartition("com.nokia.arbitraryPartition");
+    dbUtils->setupPartition(ArbitraryPartition);
+    dbUtils->setCurrentPartition(ArbitraryPartition);
+    QSignalSpy spy(dbUtils, SIGNAL(partitionSetupDone()));
+    QTRY_VERIFY_WITH_TIMEOUT(spy.count() ==1, 10000);
+
+    QGeoServiceProvider *oldProvider = provider;
+    QPlaceManager *oldManager = placeManager;
+
+    QVariantMap parameters;
+    parameters.insert(QLatin1String("partition"), ArbitraryPartition);
+    provider = new QGeoServiceProvider(QLatin1String("nokia_places_jsondb"), parameters);
+    placeManager = provider->placeManager();
+
+    QSignalSpy createPlaceSpy(placeManager, SIGNAL(placeAdded(QString)));
+    QSignalSpy updatePlaceSpy(placeManager, SIGNAL(placeUpdated(QString)));
+    QSignalSpy removePlaceSpy(placeManager, SIGNAL(placeRemoved(QString)));
+
+    QSignalSpy createCategorySpy(placeManager, SIGNAL(categoryAdded(QPlaceCategory,QString)));
+    QSignalSpy updateCategorySpy(placeManager, SIGNAL(categoryUpdated(QPlaceCategory,QString)));
+    QSignalSpy removeCategorySpy(placeManager, SIGNAL(categoryRemoved(QString,QString)));
+
+    //Test saving, updating and removing a place
+    QPlace place;
+    place.setName(QLatin1String("Place"));
+    QGeoLocation location;
+    location.setCoordinate(QGeoCoordinate(10,20));
+
+    QString placeId;
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+    QCOMPARE(createPlaceSpy.count(), 1);
+    place.setPlaceId(placeId);
+    place.setVisibility(QtLocation::DeviceVisibility);
+
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QVERIFY(retrievedPlace == place);
+
+    place.setName(QLatin1String("place2"));
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId));
+    QCOMPARE(updatePlaceSpy.count(), 1);
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QVERIFY(retrievedPlace == place);
+
+    QVERIFY(doRemovePlace(place, QPlaceReply::NoError));
+    QCOMPARE(removePlaceSpy.count(), 1);
+
+    //test saving, updating and removing a category
+    QString categoryId;
+    QPlaceCategory restaurant;
+    restaurant.setName(QLatin1String("Restaurant"));
+
+    QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
+    QCOMPARE(createCategorySpy.count(), 1);
+    restaurant.setCategoryId(categoryId);
+    QPlaceReply * catInitReply = placeManager->initializeCategories();
+    QVERIFY(checkSignals(catInitReply, QPlaceReply::NoError));
+
+    QList<QPlaceCategory> categories = placeManager->childCategories();
+    QCOMPARE(categories.count(), 1);
+
+    restaurant.setName(QLatin1String("Restaurant2"));
+    QVERIFY(doSaveCategory(restaurant, QPlaceReply::NoError, &categoryId));
+    QCOMPARE(updateCategorySpy.count(), 1);
+    catInitReply = placeManager->initializeCategories();
+    QVERIFY(checkSignals(catInitReply, QPlaceReply::NoError));
+
+    categories = placeManager->childCategories();
+    QCOMPARE(categories.count(), 1);
+
+    QVERIFY(doRemoveCategory(restaurant));
+    QCOMPARE(removeCategorySpy.count(), 1);
+
+    QSignalSpy cleanSpy(dbUtils, SIGNAL(dbCleaned()));
+    dbUtils->cleanDb();
+    QTRY_VERIFY(cleanSpy.count() == 1);
+
+    //restore old state
+    delete provider;
+
+    provider = oldProvider;
+    placeManager = oldManager;
+    dbUtils->setCurrentPartition(JsonDbUtils::DefaultPartition);
 }
 
 void tst_QPlaceManagerJsonDb::cleanup()

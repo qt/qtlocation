@@ -223,4 +223,16 @@
 
     To remove a place, invoke its \l {Place::remove()}{remove()} method.  To remove a category,
     invoke its \l {Category::remove()}{remove()} method.
+
+    \section1 Running the example
+    The example detects which plugins are available and has an option to show them in the via
+    the Provider button.
+
+    The \l {Qt Location JsonDb plugin} {JsonDb plugin} in particular acts as a data store for
+    user defined favorites which can be saved and removed.  In order to use the JsonDb plugin however
+    the JsonDb daemon must be running in the background.
+
+    \code
+    jsondb & //run jsondb daemon in the background
+    \endcode
 */

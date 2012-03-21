@@ -61,7 +61,7 @@ class QPlaceIcon;
 class JsonDb : public QObject {
     Q_OBJECT
 public:
-    JsonDb();
+    JsonDb(const QString &partition);
     ~JsonDb();
     static QString convertToQueryString(const QPlaceSearchRequest &query);
 
@@ -74,9 +74,7 @@ public:
     static QPlace convertJsonObjectToPlace(const QJsonObject &placeJson, const QPlaceManagerEngineJsonDb *engine);
     static QPlaceCategory convertJsonObjectToCategory(const QJsonObject &object, const QPlaceManagerEngineJsonDb *engine);
     static QPlaceIcon convertJsonObjectToIcon(const QJsonObject &thumbnailsJson, const QPlaceManagerEngineJsonDb *engine);
-    static void makeConnections(QJsonDbRequest *request, QObject *parent, const char *slot = 0);
 
-    void getCategory(const QString &uuid, QObject *parent);
     void getCategory(const QString &uuid, QObject *parent, const char *slot);
     void getCategories(const QList<QPlaceCategory> &categories, QObject *parent, const char *slot);
     void getCategories(const QStringList &uuids, QObject *parent, const char *slot);
@@ -91,6 +89,8 @@ public:
     void remove(const QJsonObject &jsonObject, QObject *parent, const char *slot);
     void remove(const QList<QJsonObject> &jsonObjects, QObject *parent, const char *slot);
     void searchForPlaces(const QPlaceSearchRequest &request, QObject *parent, const char *slot);
+
+    void setupRequest(QJsonDbRequest *request, QObject *parent, const char *slot);
 
     static QStringList categoryIds(QList<QPlace> places);
 
@@ -175,6 +175,7 @@ private:
     QtJsonDb::QJsonDbConnection *m_connection;
     QJsonDbWatcher *m_placeWatcher;
     QJsonDbWatcher *m_categoryWatcher;
+    QString m_partition;
 };
 
 QT_END_NAMESPACE

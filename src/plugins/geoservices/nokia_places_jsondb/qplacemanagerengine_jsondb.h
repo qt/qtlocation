@@ -122,8 +122,9 @@ private:
 
     mutable QMutex m_treeMutex;
     CategoryTree m_tree;
-
     QNetworkAccessManager *m_netManager;
+
+    static const QLatin1String PartitionKey;
 
     friend class SaveReply;
     friend class MediaReply;

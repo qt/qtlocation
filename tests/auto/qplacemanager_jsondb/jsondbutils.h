@@ -57,8 +57,9 @@ class JsonDbUtils : public QObject
 {
     Q_OBJECT
 public:
-    ~JsonDbUtils();
     JsonDbUtils(QObject *parent = 0);
+    ~JsonDbUtils();
+
     void cleanDb();
     void sendRequest(QJsonDbRequest *request);
 
@@ -66,6 +67,7 @@ public:
     void fetchPlaceJson(const QString &uuid);
     void savePlaceJson(const QJsonObject &object);
     bool hasJsonDbConnection() const;
+    void setCurrentPartition(const QString &partition);
 
     static const QLatin1String Uuid;
     static const QLatin1String Type;
@@ -145,7 +147,11 @@ public:
     static const QLatin1String CreatedDateTime;
     static const QLatin1String ModifiedDateTime;
 
+    static const QLatin1String DefaultPartition;
+    static const QLatin1String PartitionType;
+
 public slots:
+    void setupPartition(const QString &partition);
     void getPlacesFinished();
     void removePlacesFinished();
     void getCategoriesFinished();
@@ -159,14 +165,16 @@ signals:
     void dbCleaned();
     void placeFetched(QJsonObject placeJson);
     void placeSaved();
+    void partitionSetupDone();
 
 private:
-    void makeConnections(QJsonDbRequest *request, QObject *parent, const char *slot);
+    void setupRequest(QJsonDbRequest *request, QObject *parent, const char *slot);
     static QProcess *launchJsonDbDaemon(const QStringList &args = QStringList());
 
     QProcess *m_jsondbProcess;
     QJsonDbConnection *m_connection;
     QList<QJsonObject> m_results;
+    QString m_currentPartition;
 };
 
 #endif

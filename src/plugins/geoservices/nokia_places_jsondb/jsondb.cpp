@@ -114,14 +114,16 @@ const QLatin1String JsonDb::DeviceVisibility("device");
 const QLatin1String JsonDb::CreatedDateTime("createdDateTime");
 const QLatin1String JsonDb::ModifiedDateTime("modifiedDateTime");
 
-JsonDb::JsonDb()
+JsonDb::JsonDb(const QString &partition)
     : m_connection(new QJsonDbConnection),
       m_placeWatcher(new QJsonDbWatcher(this)),
-      m_categoryWatcher(new QJsonDbWatcher(this))
+      m_categoryWatcher(new QJsonDbWatcher(this)),
+      m_partition(partition)
 {
     m_connection->connectToServer();
 
     m_placeWatcher->setQuery(QString::fromLatin1("[?%1 = \"%2\"]").arg(JsonDb::Type).arg(JsonDb::PlaceType));
+    m_placeWatcher->setPartition(m_partition);
     connect(m_placeWatcher, SIGNAL(notificationsAvailable(int)),
             this, SLOT(processPlaceNotifications()));
     connect(m_placeWatcher, SIGNAL(error(QtJsonDb::QJsonDbWatcher::ErrorCode,QString)),
@@ -129,6 +131,7 @@ JsonDb::JsonDb()
     m_connection->addWatcher(m_placeWatcher);
 
     m_categoryWatcher->setQuery(QString::fromLatin1("[?%1 = \"%2\"]").arg(JsonDb::Type).arg(JsonDb::CategoryType));
+    m_categoryWatcher->setPartition(m_partition);
     connect(m_categoryWatcher, SIGNAL(notificationsAvailable(int)),
             this, SLOT(processCategoryNotifications()));
     connect(m_categoryWatcher, SIGNAL(error(QtJsonDb::QJsonDbWatcher::ErrorCode,QString)),
@@ -624,28 +627,16 @@ QPlaceIcon JsonDb::convertJsonObjectToIcon(const QJsonObject &thumbnailsJson, co
     return icon;
 }
 
-void JsonDb::makeConnections(QJsonDbRequest *request, QObject *parent, const char *slot)
+void JsonDb::setupRequest(QJsonDbRequest *request, QObject *parent, const char *slot)
 {
-    if (slot)
-        QObject::connect(request, SIGNAL(finished()), parent, slot);
-    else
-        QObject::connect(request, SIGNAL(finished()), parent, SLOT(requestFinished()));//TODO: eventually remove this
+    Q_ASSERT(slot);
+    QObject::connect(request, SIGNAL(finished()), parent, slot);
     QObject::connect(request, SIGNAL(finished()), request, SLOT(deleteLater()));
     QObject::connect(request, SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
             parent, SLOT(requestError(QtJsonDb::QJsonDbRequest::ErrorCode,QString)));
     QObject::connect(request, SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
             request, SLOT(deleteLater()));
-}
-
-void JsonDb::getCategory(const QString &uuid, QObject *parent)
-{
-    QJsonDbReadRequest *request = new QJsonDbReadRequest(parent);
-    request->setQuery(QStringLiteral("[?_type=%type][?_uuid=%uuid]"));
-    request->bindValue(QStringLiteral("type"), JsonDb::CategoryType);
-    request->bindValue(QStringLiteral("uuid"), uuid);
-
-    makeConnections(request, parent);
-    m_connection->send(request);
+    request->setPartition(m_partition);
 }
 
 void JsonDb::getCategories(const QList<QPlaceCategory> &categories, QObject *parent, const char *slot)
@@ -664,7 +655,7 @@ void JsonDb::getCategories(const QStringList &uuids, QObject *parent, const char
     request->bindValue(QStringLiteral("type"), JsonDb::CategoryType);
     request->bindValue(QStringLiteral("categoryUuids"), QJsonArray::fromStringList(uuids));
 
-    JsonDb::makeConnections(request, parent, slot);
+    JsonDb::setupRequest(request, parent, slot);
     m_connection->send(request);
 }
 
@@ -675,7 +666,7 @@ void JsonDb::getChildCategories(const QString &uuid, QObject *parent, const char
     request->bindValue(QStringLiteral("type"), JsonDb::CategoryType);
     request->bindValue(QStringLiteral("uuid"), uuid);
 
-    makeConnections(request, parent, slot);
+    setupRequest(request, parent, slot);
     m_connection->send(request);
 }
 
@@ -686,7 +677,7 @@ void JsonDb::getCategory(const QString &uuid, QObject *parent, const char *slot)
     request->bindValue(QStringLiteral("type"), JsonDb::CategoryType);
     request->bindValue(QStringLiteral("uuid"), uuid);
 
-    makeConnections(request, parent, slot);
+    setupRequest(request, parent, slot);
     m_connection->send(request);
 }
 
@@ -699,7 +690,7 @@ void JsonDb::getPlace(const QString &uuid, QObject *parent, const char *slot)
     request->bindValue(QStringLiteral("type"), JsonDb::PlaceType);
     request->bindValue(QStringLiteral("uuid"), uuid);
 
-    makeConnections(request, parent, slot);
+    setupRequest(request, parent, slot);
     m_connection->send(request);
 }
 
@@ -715,7 +706,7 @@ void JsonDb::findPlacesByAlternativeId(const QString externalIdName, const QStri
                       + QString::fromLatin1("[?%1 in %alternativeIds]").arg(extIdPropertyName));
     request->bindValue(QStringLiteral("type"), JsonDb::PlaceType);
     request->bindValue(QStringLiteral("alternativeIds"), QJsonArray::fromStringList(alternativeIds));
-    makeConnections(request, parent, slot);
+    setupRequest(request, parent, slot);
     m_connection->send(request);
 }
 
@@ -724,7 +715,7 @@ void JsonDb::findAllPlaces(QObject *parent, const char *slot)
     QJsonDbReadRequest *request = new QJsonDbReadRequest(this);
     request->setQuery(QStringLiteral("[?_type= %type]"));
     request->bindValue(QStringLiteral("type"), JsonDb::PlaceType);
-    makeConnections(request, parent, slot);
+    setupRequest(request, parent, slot);
     m_connection->send(request);
 }
 
@@ -732,7 +723,7 @@ void JsonDb::read(const QString &query, QObject *parent, const char *slot)
 {
     QJsonDbReadRequest *request = new QJsonDbReadRequest(parent);
     request->setQuery(query);
-    makeConnections(request, parent, slot);
+    setupRequest(request, parent, slot);
     m_connection->send(request);
 }
 
@@ -754,21 +745,21 @@ void JsonDb::write(const QList<QJsonObject> &jsonObjects, QObject *parent, const
 
     QJsonDbWriteRequest *writeRequest = new QJsonDbWriteRequest(parent);
     writeRequest->setObjects(objects);
-    makeConnections(writeRequest, parent, slot);
+    setupRequest(writeRequest, parent, slot);
     m_connection->send(writeRequest);
 }
 
 void JsonDb::remove(const QJsonObject &jsonObject, QObject *parent, const char *slot)
 {
     QJsonDbRemoveRequest *removeRequest = new QJsonDbRemoveRequest(jsonObject, parent);
-    JsonDb::makeConnections(removeRequest, parent, slot);
+    JsonDb::setupRequest(removeRequest, parent, slot);
     m_connection->send(removeRequest);
 }
 
 void JsonDb::remove(const QList<QJsonObject> &jsonObjects, QObject *parent, const char *slot)
 {
     QJsonDbRemoveRequest *removeRequest = new QJsonDbRemoveRequest(jsonObjects, parent);
-    JsonDb::makeConnections(removeRequest, parent, slot);
+    JsonDb::setupRequest(removeRequest, parent, slot);
     m_connection->send(removeRequest);
 }
 
@@ -801,7 +792,7 @@ void JsonDb::searchForPlaces(const QPlaceSearchRequest &request, QObject *parent
 
     QJsonDbReadRequest *jsonDbRequest = new QJsonDbReadRequest(parent);
     jsonDbRequest->setQuery(queryString);
-    makeConnections(jsonDbRequest, parent, slot);
+    setupRequest(jsonDbRequest, parent, slot);
     m_connection->send(jsonDbRequest);
 }
 

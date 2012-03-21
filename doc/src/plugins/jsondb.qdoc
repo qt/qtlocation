@@ -44,6 +44,18 @@ The JsonDb GeoServices plugin can be loaded by using the plugin key "nokia_place
 Note that in order to use this plugin, the JsonDb daemon must be running in the
 background.
 
+\section1 Parameters
+
+The following table lists optional parameters that can be passed to the Nokia plugin.
+\table
+    \header
+        \li Parameter
+        \li Description
+    \row
+        \li places.partition
+        \li Specifies which JsonDb partition to store Places and Categories.  If no partition is specified, the default
+            partition is used.
+\endtable
 
 \section1 Places
 The Nokia JsonDb provider accesses places stored locally on device.
