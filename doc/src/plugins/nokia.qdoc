@@ -56,17 +56,17 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \li Parameter
     \li Description
 \row
-    \li mapping.proxy
-    \li Proxy server URL used by mapping manager.
+    \li app_id
+    \li Client app_id part of the app_id/token pair used for authentication by all managers.
+\row
+    \li token
+    \li Client token part of the app_id/token pair for the service used for authentication by all managers.
+\row
+    \li proxy
+    \li Proxy server URL used by all managers.
 \row
     \li mapping.host
     \li Map tile service URL used by mapping manager.
-\row
-    \li mapping.app_id
-    \li Client app_id part of the app_id/token pair used for authentication by mapping manager.
-\row
-    \li mapping.token
-    \li Client token part of the app_id/token pair for the service used for authentication by mapping manager.
 \row
     \li mapping.cache.directory
     \li Map tile cache directory used as network disk cache.
@@ -84,20 +84,8 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \li geocoding.host
     \li Geocoding service URL used by geocoding manager.
 \row
-    \li routing.proxy
-    \li Proxy server URL used by routing manager.
-\row
     \li routing.host
     \li Routing service URL used by routing manager.
-\row
-    \li routing.referer
-    \li Referer for the routing token used for authentication by routing manager.
-\row
-    \li routing.token
-    \li Client token for the service used for authentication by routing manager.
-\row
-    \li places.proxy
-    \li Proxy server URL used by search manager.
 \row
     \li places.host
     \li Search service URL used by search manager.
@@ -118,8 +106,8 @@ application.
 \code
 Plugin {
     name: "nokia"
-    PluginParameter { name: "routing.proxy"; value: "http://127.0.0.1:8080" }
-    PluginParameter { name: "routing.token"; value: "abcdefg12345" }
+    PluginParameter { name: "proxy"; value: "http://127.0.0.1:8080" }
+    PluginParameter { name: "token"; value: "abcdefg12345" }
 }
 \endcode
 
@@ -127,8 +115,8 @@ Plugin {
 
 \code
 QMap<QString,QVariant> params;
-params["routing.proxy"] = "http://127.0.0.1:8080";
-params["routing.token"] = "abcdefg12345";
+params["proxy"] = "http://127.0.0.1:8080";
+params["token"] = "abcdefg12345";
 
 QGeoServiceProvider *gsp = new QGeoServiceProvider("nokia", params);
 \endcode

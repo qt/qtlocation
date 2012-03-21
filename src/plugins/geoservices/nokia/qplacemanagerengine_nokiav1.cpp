@@ -70,8 +70,11 @@ QPlaceManagerEngineNokiaV1::QPlaceManagerEngineNokiaV1(const QMap<QString, QVari
 {
     qRegisterMetaType<QPlaceReply::Error>();
 
-    if (parameters.contains(QLatin1String("places.proxy"))) {
-        QString proxy = parameters.value("places.proxy").toString();
+    if (parameters.contains(QLatin1String("proxy")) || parameters.contains(QLatin1String("places.proxy"))) {
+        QString proxy = parameters.value("proxy").toString();
+        if (proxy.isEmpty())
+            proxy = parameters.value("places.proxy").toString();
+
         if (!proxy.isEmpty()) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {

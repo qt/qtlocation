@@ -94,13 +94,21 @@ QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(const QMap<QString, QVari
 {
     m_locales.append(QLocale());
 
-    if (parameters.contains(QLatin1String("places.proxy"))) {
-        const QUrl proxy(parameters.value("places.proxy").toString());
-        if (proxy.isValid()) {
-            m_manager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy.host(),
-                                              proxy.port(8080), proxy.userName(),
-                                              proxy.password()));
+    if (parameters.contains(QLatin1String("proxy")) || parameters.contains(QLatin1String("places.proxy"))) {
+        QString proxy = parameters.value("proxy").toString();
+        if (proxy.isEmpty())
+            proxy = parameters.value("places.proxy").toString();
+
+        if (!proxy.isEmpty()) {
+            QUrl proxyUrl(proxy);
+            if (proxyUrl.isValid()) {
+                m_manager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
+                                                  proxyUrl.host(),
+                                                  proxyUrl.port(8080),
+                                                  proxyUrl.userName(),
+                                                  proxyUrl.password()));
             }
+        }
     }
 
     // Unless specified in the plugin parameters set the international places server to the builtin
@@ -108,8 +116,8 @@ QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(const QMap<QString, QVari
     m_host = parameters.value(QLatin1String("places.host"),
                               QLatin1String(placesServerInternational)).toString();
 
-    m_appId = parameters.value(QLatin1String("places.appid")).toString();
-    m_appCode = parameters.value(QLatin1String("places.appcode")).toString();
+    m_appId = parameters.value(QLatin1String("app_id")).toString();
+    m_appCode = parameters.value(QLatin1String("token")).toString();
 
 #ifdef USE_CHINA_NETWORK_REGISTRATION
     m_networkInfo = new QNetworkInfo(this);

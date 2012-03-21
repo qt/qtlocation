@@ -64,8 +64,11 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
 {
     m_networkManager = new QNetworkAccessManager(this);
 
-    if (parameters.contains("routing.proxy")) {
-        QString proxy = parameters.value("routing.proxy").toString();
+    if (parameters.contains("proxy") || parameters.contains("routing.proxy")) {
+        QString proxy = parameters.value("proxy").toString();
+        if (proxy.isEmpty())
+            proxy = parameters.value("routing.proxy").toString();
+
         if (!proxy.isEmpty()) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
@@ -84,16 +87,12 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
             m_host = host;
     }
 
-    if (parameters.contains("routing.referer")) {
-        m_referer = parameters.value("routing.referer").toString();
-    }
-
-    if (parameters.contains("routing.token")) {
-        m_token = parameters.value("routing.token").toString();
-    }
-    else if (parameters.contains("token")) {
+    // The navteq server doesn't support app_id and token
+    /*
+    if (parameters.contains("token")) {
         m_token = parameters.value("token").toString();
     }
+    */
 
     QGeoRouteRequest::FeatureTypes featureTypes;
     featureTypes |= QGeoRouteRequest::TollFeature;

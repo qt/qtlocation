@@ -86,8 +86,11 @@ bool QGeoTileFetcherNokia::init()
 
     m_networkManager = new QNetworkAccessManager(this);
 
-    if (m_parameters.contains("mapping.proxy")) {
-        QString proxy = m_parameters.value("mapping.proxy").toString();
+    if (m_parameters.contains("proxy") || m_parameters.contains("mapping.proxy")) {
+        QString proxy = m_parameters.value("proxy").toString();
+        if (proxy.isEmpty())
+            proxy = m_parameters.value("mapping.proxy").toString();
+
         if (!proxy.isEmpty()) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
@@ -106,17 +109,11 @@ bool QGeoTileFetcherNokia::init()
             setHost(host);
     }
 
-    if (m_parameters.contains("mapping.app_id")) {
-        m_applicationId = m_parameters.value("mapping.app_id").toString();
-    }
-    else if (m_parameters.contains("app_id")) {
+    if (m_parameters.contains("app_id")) {
         m_applicationId = m_parameters.value("app_id").toString();
     }
 
-    if (m_parameters.contains("mapping.token")) {
-        m_token = m_parameters.value("mapping.token").toString();
-    }
-    else if (m_parameters.contains("token")) {
+    if (m_parameters.contains("token")) {
         m_token = m_parameters.value("token").toString();
     }
 
