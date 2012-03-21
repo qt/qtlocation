@@ -135,7 +135,7 @@ bool tst_QPlaceManagerNokia::checkSignals(QPlaceReply *reply, QPlaceReply::Error
         //check that we get an error signal from the reply
         WAIT_UNTIL(errorSpy.count() == 1);
         if (errorSpy.count() != 1) {
-            qWarning() << "Error signal for search operation not received";
+            qWarning() << "Error signal for operation not received";
             return false;
         }
 
