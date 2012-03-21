@@ -55,6 +55,7 @@
 
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>
+#include <QNetworkProxyFactory>
 #include <QSize>
 #include <QDir>
 #include <QUrl>
@@ -91,7 +92,7 @@ bool QGeoTileFetcherNokia::init()
         if (proxy.isEmpty())
             proxy = m_parameters.value("mapping.proxy").toString();
 
-        if (!proxy.isEmpty()) {
+        if (!proxy.isEmpty() && proxy.toLower() != QLatin1String("system")) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
                 m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
@@ -100,6 +101,9 @@ bool QGeoTileFetcherNokia::init()
                     proxyUrl.userName(),
                     proxyUrl.password()));
             }
+        } else if (!proxy.isEmpty()) {
+            if (QNetworkProxy::applicationProxy().type() == QNetworkProxy::NoProxy)
+                QNetworkProxyFactory::setUseSystemConfiguration(true);
         }
     }
 

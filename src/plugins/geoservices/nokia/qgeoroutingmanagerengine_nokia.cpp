@@ -51,6 +51,7 @@
 
 #include <QStringList>
 #include <QNetworkProxy>
+#include <QNetworkProxyFactory>
 #include <QUrl>
 #include <qgeoboundingbox.h>
 
@@ -69,7 +70,7 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
         if (proxy.isEmpty())
             proxy = parameters.value("routing.proxy").toString();
 
-        if (!proxy.isEmpty()) {
+        if (!proxy.isEmpty() && proxy.toLower() != QLatin1String("system")) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
                 m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
@@ -78,6 +79,9 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
                     proxyUrl.userName(),
                     proxyUrl.password()));
             }
+        } else if (!proxy.isEmpty()) {
+            if (QNetworkProxy::applicationProxy().type() == QNetworkProxy::NoProxy)
+                QNetworkProxyFactory::setUseSystemConfiguration(true);
         }
     }
 

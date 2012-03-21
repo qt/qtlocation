@@ -59,6 +59,7 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtNetwork/QNetworkProxy>
+#include <QtNetwork/QNetworkProxyFactory>
 #ifdef USE_CHINA_NETWORK_REGISTRATION
 #include <QtSystemInfo/QNetworkInfo>
 #endif
@@ -99,7 +100,7 @@ QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(const QMap<QString, QVari
         if (proxy.isEmpty())
             proxy = parameters.value("places.proxy").toString();
 
-        if (!proxy.isEmpty()) {
+        if (!proxy.isEmpty() && proxy.toLower() != QLatin1String("system")) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
                 m_manager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
@@ -108,6 +109,9 @@ QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(const QMap<QString, QVari
                                                   proxyUrl.userName(),
                                                   proxyUrl.password()));
             }
+        } else if (!proxy.isEmpty()) {
+            if (QNetworkProxy::applicationProxy().type() == QNetworkProxy::NoProxy)
+                QNetworkProxyFactory::setUseSystemConfiguration(true);
         }
     }
 

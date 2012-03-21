@@ -75,7 +75,7 @@ QPlaceManagerEngineNokiaV1::QPlaceManagerEngineNokiaV1(const QMap<QString, QVari
         if (proxy.isEmpty())
             proxy = parameters.value("places.proxy").toString();
 
-        if (!proxy.isEmpty()) {
+        if (!proxy.isEmpty() && proxy.toLower() != QLatin1String("system")) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
                 QPlaceRestManager::instance()->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
@@ -84,6 +84,9 @@ QPlaceManagerEngineNokiaV1::QPlaceManagerEngineNokiaV1(const QMap<QString, QVari
                                                                       proxyUrl.userName(),
                                                                       proxyUrl.password()));
             }
+        } else if (!proxy.isEmpty()) {
+            if (QNetworkProxy::applicationProxy().type() == QNetworkProxy::NoProxy)
+                QNetworkProxyFactory::setUseSystemConfiguration(true);
         }
     }
 

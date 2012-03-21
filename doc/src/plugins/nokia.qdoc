@@ -67,7 +67,9 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \li Client token part of the app_id/token pair for the service used for authentication by all managers.
 \row
     \li proxy
-    \li Proxy server URL used by all managers.
+    \li Proxy server URL used by all managers. For usage of the system proxy just pass "system" as value.
+
+    \note See the notes in \l{QNetworkProxy::systemProxyForQuery}{QNetworkProxy} for further information.
 \row
     \li mapping.host
     \li Map tile service URL used by mapping manager.
@@ -110,7 +112,7 @@ application.
 \code
 Plugin {
     name: "nokia"
-    PluginParameter { name: "proxy"; value: "http://127.0.0.1:8080" }
+    PluginParameter { name: "proxy"; value: "system" }
     PluginParameter { name: "token"; value: "abcdefg12345" }
 }
 \endcode
@@ -119,7 +121,7 @@ Plugin {
 
 \code
 QMap<QString,QVariant> params;
-params["proxy"] = "http://127.0.0.1:8080";
+params["proxy"] = "system";
 params["token"] = "abcdefg12345";
 
 QGeoServiceProvider *gsp = new QGeoServiceProvider("nokia", params);
