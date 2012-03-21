@@ -248,7 +248,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     for (int i = 0;i < numWaypoints;++i) {
         requestString += "&waypoint";
         requestString += QString::number(i);
-        requestString += "=";
+        requestString += "=geo!";
         requestString += trimDouble(request.waypoints().at(i).latitude());
         requestString += ",";
         requestString += trimDouble(request.waypoints().at(i).longitude());
