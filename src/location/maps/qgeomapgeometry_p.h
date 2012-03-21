@@ -56,6 +56,7 @@
 #include <QSet>
 #include <QSharedPointer>
 #include <QSize>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -75,13 +76,12 @@ class QPointF;
 
 class QGeoMapGeometryPrivate;
 
-class QGeoMapGeometry : public QObject
+class Q_LOCATION_EXPORT QGeoMapGeometry : public QObject
 {
     Q_OBJECT
-
 public:
     QGeoMapGeometry();
-    ~QGeoMapGeometry();
+    virtual ~QGeoMapGeometry();
 
     void setScreenSize(const QSize &size);
     void setTileSize(int tileSize);

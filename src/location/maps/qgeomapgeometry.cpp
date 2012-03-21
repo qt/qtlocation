@@ -278,7 +278,7 @@ QPointF QGeoMapGeometryPrivate::mercatorToScreenPosition(const QDoubleVector2D &
                 m = (mx - mercatorCenterX_ - sideLength_) / mercatorWidth_;
             }
         } else if (lb < mercatorCenterX_) {
-            if (mx < ub) {
+            if (mx <= ub) {
                 m = (mx - mercatorCenterX_ + sideLength_) / mercatorWidth_;
             }
         }

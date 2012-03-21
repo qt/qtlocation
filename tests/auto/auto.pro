@@ -43,6 +43,7 @@ SUBDIRS += geotestplugin \
            qgeocoordinate \
            qgeolocation \
            qgeomaneuver \
+           qgeomapgeometry \
            qgeopositioninfo \
            qgeopositioninfosource \
            qgeoroute \
