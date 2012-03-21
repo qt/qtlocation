@@ -378,20 +378,18 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 {
     QString requestString;
 
-    int numAreas = request.excludeAreas().count();
-    if (numAreas > 0) {
-        requestString += "&avoidareas";
-        for (int i = 0;i < numAreas;++i) {
-            requestString += i == 0 ? "=" : ";";
-            QGeoBoundingBox box = request.excludeAreas().at(i);
-            requestString += trimDouble(box.topLeft().latitude());
-            requestString += ",";
-            requestString += trimDouble(box.topLeft().longitude());
-            requestString += ",";
-            requestString += trimDouble(box.bottomRight().latitude());
-            requestString += ",";
-            requestString += trimDouble(box.bottomRight().longitude());
-        }
+    const QList<QGeoBoundingBox> excludeAreas = request.excludeAreas();
+    QList<QGeoBoundingBox>::const_iterator beg = excludeAreas.begin();
+    QList<QGeoBoundingBox>::const_iterator end = excludeAreas.begin();
+    for (QList<QGeoBoundingBox>::const_iterator it = beg; it != end; ++it) {
+        requestString += QLatin1String("&avoidareas=");
+        requestString += trimDouble(it->topLeft().latitude());
+        requestString += QLatin1String(",");
+        requestString += trimDouble(it->topLeft().longitude());
+        requestString += QLatin1String(";");
+        requestString += trimDouble(it->bottomRight().latitude());
+        requestString += QLatin1String(",");
+        requestString += trimDouble(it->bottomRight().longitude());
     }
 
 //    TODO: work out what was going on here
