@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 import QtQuick 2.0
+import QtQuick.XmlListModel 2.0
 import "flickrcommon" as Common
 import "flickrmobile" as Mobile
 
@@ -61,6 +62,16 @@ Item {
             id: views
             x: 2; width: parent.width - 4
             anchors.top: titleBar.bottom; anchors.bottom: toolBar.top
+
+            Text {
+                text: qsTr("Network error")
+                font.pixelSize: 48
+                fontSizeMode: Text.HorizontalFit
+                anchors.centerIn: parent
+                width: parent.width * 0.9
+                visible: restModel.status === XmlListModel.Error
+
+            }
 
             Mobile.GridDelegate { id: gridDelegate }
             GridView {
