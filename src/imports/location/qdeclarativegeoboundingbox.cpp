@@ -52,7 +52,43 @@ QT_BEGIN_NAMESPACE
 
     \brief The BoundingBox element represents a rectangular geographic area.
 
-    For behavioral details, please see \l QGeoBoundingBox.
+    A BoundingBox is described by a \l{QDeclarativeCoordinate}{Coordinate} which
+    represents the top-left of the BoundingBox and a second
+    \l{QDeclarativeCoordinate}{Coordinate} which represents the bottom-right of
+    BoundingBox.
+
+    A BoundingBox is considered invalid if the top-left or bottom-right
+    coordinates are invalid or if the top-left coordinate is South of the
+    bottom-right coordinate.
+
+    Bounding boxes can never cross the poles.
+
+    If the height or center of a bounding box is adjusted such that it would
+    cross one of the poles the height is modified such that the bounding box
+    touches but does not cross the pole and that the center coordinate is still
+    in the center of the bounding box.
+
+    \section2 Example Usage
+
+    The following code snippet shows the declaration of a BoundingBox element.
+
+    \code
+    BoundingBox {
+        topLeft: Coordinate {
+            latitude: 23.34
+            longitude: 44.4
+        }
+        bottomRight: Coordinate {
+            latitude: 22.25
+            longitude: 42.88
+        }
+    }
+    \endcode
+
+    This could then be used, for example, as a region to scan for landmarks,
+    or refining searches.
+
+    \sa QGeoBoundingBox.
 */
 
 QDeclarativeGeoBoundingBox::QDeclarativeGeoBoundingBox(QObject* parent)

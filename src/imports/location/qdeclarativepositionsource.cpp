@@ -74,15 +74,15 @@ QT_BEGIN_NAMESPACE
     chosen instead.
 
     The \l updateInterval property can then be used to indicate how often your
-    application wishes to receive position updates. Once set, the \l{start}(),
+    application wishes to receive position updates. The \l{start}(),
     \l{stop}() and \l{update}() methods can be used to control the operation
     of the PositionSource, as well as the \l{active} property, which when set
     is equivalent to calling \l{start}() or \l{stop}().
 
     When the PositionSource is active, position updates can be retrieved
     either by simply using the \l{position} property in a binding (as the
-    value of another item's property), or by providing a handler for the
-    \l{onPositionChanged} signal.
+    value of another item's property), or by providing an implementation of
+    the \l{onPositionChanged} signal-handler.
 
     \section2 Example Usage
 
@@ -217,11 +217,12 @@ void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
 /*!
     \qmlproperty url PositionSource::nmeaSource
 
-    This property holds the source for NMEA data (file). One purpose of this
-    property is to be of development convenience.
+    This property holds the source for NMEA (National Marine Electronics Association)
+    position-specification data (file). One purpose of this property is to be of
+    development convenience.
 
     Setting this property will override any other position source. Currently only
-    files local to the .qml -file are supported. Nmea source is created in simulation mode,
+    files local to the .qml -file are supported. The NMEA source is created in simulation mode,
     meaning that the data and time information in the NMEA source data is used to provide
     positional updates at the rate at which the data was originally recorded.
 
@@ -261,10 +262,10 @@ void QDeclarativePositionSource::setPreferredPositioningMethods(QGeoPositionInfo
     current source.
 
     \list
-    \li NoPositioningMethod - No positioning methods supported (no source).
-    \li SatellitePositioningMethod - Satellite-based positioning methods such as GPS is supported.
-    \li NonSatellitePositioningMethod - Non satellite methods are supported.
-    \li AllPositioningMethods - Combination of methods are supported.
+    \li PositionSource.NoPositioningMethod - No positioning methods supported (no source).
+    \li PositionSource.SatellitePositioningMethod - Satellite-based positioning methods such as GPS are supported.
+    \li PositionSource.NonSatellitePositioningMethod - Non-satellite-based methods are supported.
+    \li PositionSource.AllPositioningMethods - Both satellite-based and non-satellite positioning methods are supported.
     \endlist
 
 */
@@ -287,13 +288,13 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::suppo
 /*!
     \qmlproperty enumeration PositionSource::preferredPositioningMethods
 
-    This property holds the supported positioning methods of the
+    This property holds the preferred positioning methods of the
     current source.
 
     \list
-    \li SatellitePositioningMethod - Satellite-based positioning methods such as GPS is supported.
-    \li NonSatellitePositioningMethod - Non satellite methods are supported.
-    \li AllPositioningMethods - Combination of methods are supported.
+    \li PositionSource.SatellitePositioningMethod - Satellite-based positioning methods such as GPS should be preferred.
+    \li PositionSource.NonSatellitePositioningMethod - Non-satellite-based methods should be preferred.
+    \li PositionSource.AllPositioningMethods - Any positioning methods are acceptable.
     \endlist
 
 */
@@ -342,6 +343,10 @@ void QDeclarativePositionSource::start()
     A convenience method to request single update from the location source.
     If there is no source available, this method has no effect.
 
+    If the position source is not active, it will be activated for as
+    long as it takes to receive an update, or until the request times
+    out.  The request timeout period is source-specific.
+
     \sa start, stop, active
 */
 
@@ -389,7 +394,18 @@ void QDeclarativePositionSource::stop()
     position::latitude, position::longitude, and position::timestamp
     members of the \l position have been updated.
 
-    \sa updateInterval
+    \sa updateInterval, onPositionChanged
+
+*/
+
+/*!
+    \qmlslot PositionSource::onPositionChanged()
+
+    An implementation for this signal handler may be provided in
+    order to perform custom behavior when a position update has
+    been received.
+
+    \sa updateInterval, positionChanged
 
 */
 
@@ -424,6 +440,7 @@ bool QDeclarativePositionSource::isActive() const
     \qmlproperty Position PositionSource::position
 
     This property holds the last known positional data.
+    It is a read-only property.
 
     The Position element has different positional member variables,
     whose validity can be checked with appropriate validity functions
@@ -434,7 +451,6 @@ bool QDeclarativePositionSource::isActive() const
     be assumed to be valid.
 
     \sa start, stop, update
-
 */
 
 QDeclarativePosition* QDeclarativePositionSource::position()
@@ -478,12 +494,12 @@ QDeclarativePositionSource::SourceError QDeclarativePositionSource::sourceError(
     This property holds the error which last occured with the PositionSource.
 
     \list
-    \li AccessError - The connection setup to the remote positioning backend failed because the
+    \li PositionSource.AccessError - The connection setup to the remote positioning backend failed because the
         application lacked the required privileges.
-    \li ClosedError - The remote positioning backend closed the connection, which happens e.g. in case
+    \li PositionSource.ClosedError - The remote positioning backend closed the connection, which happens e.g. in case
         the user is switching location services to off. This object becomes invalid and should be deleted.
         A new source can be declared later on to check whether the positioning backend is up again.
-    \li UnknownSourceError - An unidentified error occurred.
+    \li PositionSource.UnknownSourceError - An unidentified error occurred.
     \endlist
 
 */

@@ -95,6 +95,12 @@ QT_BEGIN_NAMESPACE
     As an example, the value of \c{coord1.distanceTo(coord2)} would now be
     approximately 34790 (34.8 km).
 
+    \b{NOTE:} if another element has a Coordinate property, a change notification
+    signal for that property will only be emitted if that property is assigned
+    a new Coordinate, and \b{not} if the position data of the existing Coordinate
+    assigned to the property changes.  The only exception to this rule is that
+    the \l{QDeclarativePosition}{Position} element does emit change signals if
+    its coordinate property's values change.
 */
 
 QDeclarativeCoordinate::QDeclarativeCoordinate(QObject* parent)
@@ -241,6 +247,10 @@ double QDeclarativeCoordinate::latitude() const
     This property holds the current validity of the coordinate. Coordinates
     are considered valid if they have been set with a valid latitude and
     longitude (altitude is not required).
+
+    The latitude must be between -90 to 90 inclusive to be considered valid,
+    and the longitude must be between -180 to 180 inclusive to be considered
+    valid.
 */
 
 bool QDeclarativeCoordinate::isValid() const
@@ -284,7 +294,7 @@ qreal QDeclarativeCoordinate::azimuthTo(QObject *coordinate)
     \qmlmethod Coordinate::atDistanceAndAzimuth(qreal, qreal)
 
     Returns the coordinate that is reached by traveling distance metres
-    from the current coordinate at azimuth (or bearing) along a great-circle.
+    from the current coordinate at azimuth degrees along a great-circle.
 
     There is an assumption that the Earth is spherical for the purpose
     of this calculation.

@@ -49,11 +49,11 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since QtLocation 5.0
 
-    \brief The Address element presents an address.
+    \brief The Address QML element represents a specific location as a street address.
 
-    The Address element presents an address of a location. This is used as a
-    unit of data for queries such as (Reverse) Geocoding or Places searches --
-    many of these operations either accept an Address or return one.
+    An Address is used as a unit of data for queries such as (Reverse) Geocoding
+    or Places searches -- many of these operations either accept an Address
+    or return one.
 
     Not all properties of an Address are necessarily available or relevant
     in all parts of the world and all locales. The \l district, \l state and
@@ -99,7 +99,7 @@ QGeoAddress QDeclarativeGeoAddress::address() const
 /*!
     \qmlproperty QGeoAddress QtLocation5::Address::address
 
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
+    This property is used to provide an interface between C++ and QML code.  First a pointer to an
     Address object must be obtained from C++, then use the \l {QObject::property()}{property()} and
     \l {QObject::setProperty()}{setProperty()} functions to get and set the \c address property.
 
@@ -132,9 +132,9 @@ void QDeclarativeGeoAddress::setAddress(const QGeoAddress& address)
     This property holds the address as a single formatted string.  If this property is not empty
     then it is the recommended string to use to display the address to the user.
 
-    The address text may contain a subset of all address properties and is provided by the
-    \l Plugin.  A common pattern is for the text to take the format of an address as found on an
-    envelope, but this is not always necessarily the case.
+    The address text may contain a subset of all address properties.  A common pattern is for the
+    text to take the format of an address as found on an envelope, but this is not always necessarily
+    the case.
 */
 QString QDeclarativeGeoAddress::text() const
 {

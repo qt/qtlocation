@@ -177,7 +177,7 @@ QDeclarativeGeoAddress *QDeclarativeGeoLocation::address()
 /*!
     \qmlproperty Coordinate QtLocation5::Location::coordinate
 
-    This property holds display coordinates of the location.
+    This property holds the exact geographical coordinate of the location.
 
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.

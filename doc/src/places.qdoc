@@ -32,9 +32,9 @@
 
     \section1 Overview
 
-    The Places API allows users to discover places/points of interest
-    and view details about them such as address and contact information;
-    some places may even have rich content such as images and reviews.
+    The Places API allows users to discover places of interest and view
+    details about them, such as address and contact information.  Some places may have
+    additional content associated with them, such as images and reviews.
     The Places API also facilitates management of places and
     categories, allowing users to save and remove them.
 
@@ -71,15 +71,16 @@
     In order to save bandwidth, sometimes a backend will only return places which
     are partially populated with details.  This can be checked with the
     Place::detailsFetched property which indicates whether all availalable details
-    have been fetched or not.  If not the Place::getDetails() method can be invoked.
+    have been fetched or not.  If not, the Place::getDetails() method can be invoked
+    to fetch the missing details.
 
     \snippet snippets/declarative/places.qml Place fetchDetails
 
-    \section2 Saving/Removing a Place.
-    Some backends may support saving/removing of places, this can be done by
-    calling the Place::save() or Place::remove() function.  Note that in order
-    to save a \l Place, a \l Plugin must be assigned to specify which backend we
-    are saving to.
+    \section2 Saving and Removing Places
+    Some backends may support saving and removing places.  This can be done by
+    calling the Place::save() and Place::remove() functions, respectively.  Note
+    that in order to save a \l Place, a \l Plugin must be assigned to specify
+    which backend we are saving to.
 
     \snippet snippets/declarative/places.qml Place createAndSavePlace
     \codeline

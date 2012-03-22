@@ -52,11 +52,14 @@ QT_BEGIN_NAMESPACE
     \ingroup qml-QtLocation5-positioning
     \since QtLocation 5.0
 
-    \brief The Position element holds various positional data, such as coordinate
-    (longitude, latitude, altitude) and speed.
+    \brief The Position element holds positional data at a particular point in time,
+    such as coordinate (longitude, latitude, altitude) and speed.
 
-    The Position element holds various positional data, such as \l coordinate,
-    (longitude, latitude, and altitude) and \l speed, as well as \l timestamp.
+    The Position element holds values related to geographic location such as
+    a \l coordinate (longitude, latitude, and altitude), the \l timestamp when
+    the Position was obtained, the \l speed at that time, and the accuracy of
+    the data.
+
     Primarily, it is used in the \l{PositionSource::position}{position} property
     of a \l{PositionSource}, as the basic unit of data available from the system
     location data source.
@@ -96,8 +99,10 @@ QDeclarativePosition::~QDeclarativePosition()
     This property holds the latitude, longitude, and altitude
     value of the Position.
 
+    It is a read-only property.
+
     Note: due to its inherent changing nature, the coordinateChanged()
-    - signal is emitted also when the values of the coordinate changes,
+    signal is emitted also when the values of the coordinate change,
     which enables easier data binding to Coordinate element instead of
     directly connecting to e.g. its latitude and longitude.
 
@@ -213,7 +218,8 @@ bool QDeclarativePosition::isAltitudeValid() const
     \qmlproperty double Position::speed
 
     This property holds the value of speed (groundspeed, meters / second).
-    Currently a read-only property.
+
+    It is a read-only property.
 
     \sa speedValid, coordinate
 */
@@ -323,6 +329,7 @@ bool QDeclarativePosition::isVerticalAccuracyValid() const
     This property holds the timestamp when this position
     was received. If the property has not been set, it is invalid.
 
+    It is a read-only property.
 */
 
 void QDeclarativePosition::setTimestamp(const QDateTime& timestamp)
