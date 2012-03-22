@@ -89,8 +89,7 @@ testcase = {
         | Launch " + testBinary + " | App launches normally. |
         | Select Provider button | |
         | Select nokia provider | Map is displayed on the screen |
-        | Zoom in the map to see Brisbane | |
-        | Press and Hold on the square which represents Brisbane | |
+        | Press and Hold on the dot which represents Brisbane | |
         | Select 'Get coordinate' menu item | Verify that dialog with coordinates appears on the screen. Latitude is about -27.46, longitude is about 153.02 |"
         ));
     },
@@ -114,33 +113,33 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Launch " + testBinary + " | Verify that map is loaded in *Street* view with the center next to Brisbane |
+        | Launch " + testBinary + " | Verify that map is loaded in 'Street' view with the center next to Brisbane |
         | Select Provider button | |
-        | Select nokia provider | Verify that map is displayed in *Street* view |
-        | Select Map Type button | |
-        | Select Satelite Map(day) | Verify that map is displayed in *Satelite (day)* view |
-        | Pan map | Verify that new map tiles are in *Satelite Map(day)* view |
-        | Zoom in map | Verify that new map tiles are in *Satelite Map(day)* view |
-        | Select Map Type | |
-        | Select Terrain Map | Verify that map is displayed in *Terrain (day)* view |
-        | Select Map Type | |
-        | Select Hybrid Map | Verify that map is displayed in *Hybrid* view |
-        | Select Map Type | |
-        | Select Transit Map | Verify that map is displayed in *Transit* view |
-        | Select Map Type | |
-        | Select Gray Street Map | Verify that map is displayed in *Gray Street* view |
-        | Select Map Type | |
-        | Select Mobile Street Map | Verify that map is displayed in *Mobile Street* view |
-        | Select Map Type | |
-        | Select Mobile Terrain Map | Verify that map is displayed in *Mobile Terrain* view |
-        | Select Map Type | |
-        | Select Mobile Hybrid Map | Verify that map is displayed in *Mobile Hybrid* view |
-        | Select Map Type | |
-        | Select Mobile Transit Map | Verify that map is displayed in *Mobile Transit* view |
-        | Select Map Type | |
-        | Select Mobile Gray Street Map | Verify that map is displayed in *Mobile Gray Street* view |
-        | Select Map Type | |
-        | Select Street Map | Verify that map is displayed in *Street (day)* view |"
+        | Select nokia provider | Verify that map is displayed in 'Street' view |
+        | Select 'Map Type' button | |
+        | Select 'Satelite Map(day)' | Verify that map is displayed in 'Satelite (day)' view |
+        | Pan map | Verify that new map tiles are in 'Satelite (day)' view |
+        | Zoom in map | Verify that new map tiles are in 'Satelite (day)' view |
+        | Select 'Map Type' button | |
+        | Select 'Terrain Map' | Verify that map is displayed in 'Terrain' view |
+        | Select 'Map Type' button | |
+        | Select 'Hybrid Map' | Verify that map is displayed in 'Hybrid' view |
+        | Select 'Map Type' button | |
+        | Select 'Transit Map' | Verify that map is displayed in 'Transit' view |
+        | Select 'Map Type' button | |
+        | Select Gray Street Map | Verify that map is displayed in 'Gray Street' view |
+        | Select 'Map Type' button | |
+        | Select 'Mobile Street Map' | Verify that map is displayed in 'Mobile Street' view |
+        | Select 'Map Type' button | |
+        | Select Mobile Terrain Map | Verify that map is displayed in 'Mobile Terrain' view |
+        | Select 'Map Type' button | |
+        | Select Mobile Hybrid Map | Verify that map is displayed in 'Mobile Hybrid' view |
+        | Select 'Map Type' button | |
+        | Select 'Mobile Transit Map' | Verify that map is displayed in 'Mobile Transit' view |
+        | Select 'Map Type' button | |
+        | Select 'Mobile Gray Street Map' | Verify that map is displayed in 'Mobile Gray Street' view |
+        | Select 'Map Type' button | |
+        | Select 'Street Map' | Verify that map is displayed in 'Street (day)' view |"
         ));
     },
 
@@ -252,7 +251,7 @@ testcase = {
     },
 
     qml_distance_between_points_data: {
-        points:["-27.5013", "153.1002", "-27.4395", "153.0504", "8.4"]
+        points:["-27", "153", "-27.5", "153.1", "56.5"]
     },
 
     qml_distance_between_points:function(lat1, long1, lat2, long2, distance)
@@ -331,9 +330,8 @@ testcase = {
         | Fill in " + lat2 + " in Latitude field | |
         | Fill in " + long2 + " in Longitude | |
         | Select Go! button | |
-        | Pan map to the left so the map center crosses dateline | Verify that there are 2 markers on the screen |
         | Pan map to the right so the map center crosses dateline | Verify that there are 2 markers on the screen |
-        | Zoom out hte map to zoom level 0 | |
+        | Zoom out the map to zoom level 0 | |
         | Pan map to make round-the-world trip | Verify that map looks and behaves as unfolded cylinder. Verify that all markers visible and drawn correctly. |
         | Pan map from North pole to the South pole | Verify that all markers visible and drawn correctly. |"
         ));
