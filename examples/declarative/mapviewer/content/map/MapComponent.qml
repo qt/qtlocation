@@ -291,7 +291,7 @@ Map {
             MapMouseArea {
                 id: routeMouseArea
                 anchors.fill: parent
-                hoverEnabled: true
+                hoverEnabled: false
 
                 onPressed : {
                     map.resetState();
@@ -339,7 +339,7 @@ Map {
             MapMouseArea {
                 anchors.fill:parent
                 id: circleMouseArea
-                hoverEnabled: true
+                hoverEnabled: false
 
                 onPressed : {
                     map.resetState();
@@ -517,7 +517,7 @@ Map {
             radius: 5
             MouseArea {
                 anchors.fill: parent
-                hoverEnabled: true
+                hoverEnabled: false
             }
             Item {
                 id: textArea

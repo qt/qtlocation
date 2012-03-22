@@ -70,6 +70,6 @@ MapRectangle {
     MapMouseArea {
         anchors.fill:parent
         id: mousearea
-        hoverEnabled: true
+        hoverEnabled: false
     }
 }

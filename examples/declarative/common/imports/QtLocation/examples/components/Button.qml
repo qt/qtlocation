@@ -74,7 +74,7 @@ Item {
     MouseArea {
         id: mouseRegion
         anchors.fill: buttonImage
-        hoverEnabled: true
+        hoverEnabled: false
         onClicked: { container.clicked() }
     }
     Text {

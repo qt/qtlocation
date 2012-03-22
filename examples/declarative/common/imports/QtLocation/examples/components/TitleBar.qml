@@ -57,7 +57,7 @@ Item {
         source: "../../../../resources/quit.png"
         MouseArea {
             id: mouseRegion
-            hoverEnabled: true
+            hoverEnabled: false
             anchors.fill: parent
             onClicked: { titleBar.clicked(); }
         }

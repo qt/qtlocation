@@ -67,7 +67,7 @@ MapQuickItem {
             property int lastX: -1
             property int lastY: -1
             anchors.fill: parent
-            hoverEnabled : true
+            hoverEnabled : false
             drag.target: marker
 
             onPressed : {

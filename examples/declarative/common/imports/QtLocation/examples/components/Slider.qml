@@ -114,7 +114,7 @@ Item {
 
         MouseArea {
             id: mouseRegion
-            hoverEnabled: true
+            hoverEnabled: false
             anchors.fill: parent; drag.target: parent
             drag.axis: Drag.XAxis; drag.minimumX: 0; drag.maximumX: slider.length
             onPositionChanged: { slider.value = (slider.maximum - slider.minimum) * handle.x / slider.length + slider.minimum; }
