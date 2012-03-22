@@ -327,7 +327,7 @@ Item {
                     TextWithLabel {
                         id: streetTo
                         width: parent.width - fromLabel2.width - gap*3
-                        text: "Brunswick st"
+                        text: "Heal st"
                         label: "street"
                         enabled: address.enabled
                         anchors {
