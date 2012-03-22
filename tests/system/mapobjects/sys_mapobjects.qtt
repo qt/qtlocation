@@ -70,8 +70,8 @@ testcase = {
     },
 
     qml_polyline_mapitem_data: {
-        nodes:["-26.15", "152.1", "-28", "-152.6", "-27", "153"],
-        nodes_near_dateline:["67", "179.5", "66.5", "0.5", "66.7", "179"]
+        nodes:["-26.15", "152.1", "-28", "152.6", "-27", "153"],
+        nodes_near_dateline:["67", "179.5", "66.5", "-179.5", "66.7", "179"]
     },
 
     qml_polyline_mapitem:function(lat1, long1, lat2, long2, lat3, long3)
@@ -120,9 +120,9 @@ testcase = {
     },
 
     qml_polygon_mapitem_data: {
-        pentagon:["-27", "150", "-27", "-170", "-26", "155", "-25", "160", "-26", "167"],
-        concave_pentagon:["-27", "150", "-27", "-170", "-26", "155", "-26.5", "160", "-26", "167"],
-        pentagon_crossing_dateline:["67", "179.5", "66.8", "0.6", "66.4", "0.8", "66", "0", "66.9", "179.1"]
+        pentagon:["-27", "150", "-20", "155", "-15", "160", "-20", "167", "-27", "167"],
+        concave_pentagon:["-27", "150", "-20", "155", "-24", "160", "-20", "167", "-27", "-167"],
+        pentagon_crossing_dateline:["67", "170", "62", "175", "58", "180", "62", "-175", "67", "-170"]
     },
 
     qml_polygon_mapitem:function(lat1, long1, lat2, long2, lat3, long3, lat4, long4, lat5, long5)
@@ -145,6 +145,7 @@ testcase = {
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
+        | Zoom out to about level 4 | |
         | Press and Hold on the map | |
         | Select 'Add Marker' button | |
         | Press and Hold on the marker | |
@@ -183,8 +184,8 @@ testcase = {
     },
 
     qml_circle_mapitem_data:{
-        nodes:["-27", "150", "-27", "-170"],
-        nodes_near_dateline:["67", "179.5", "66.8", "0.6"]
+        nodes:["-27", "150", "-27", "151"],
+        nodes_near_dateline:["67", "179.5", "67", "-179.5"]
     },
 
     qml_circle_mapitem:function(lat1, long1, lat2, long2)
@@ -222,13 +223,14 @@ testcase = {
         | Select Go! button | |
         | Press and Hold on the first marker | |
         | Select Draw... button | |
-        | Select Circle button | Verify that circle is drawn correctly. |"
+        | Select Circle button | Verify that circle is drawn correctly. |
+        | Pan the map to the left until the second marker hits the screen border | Verify that circle can be partually drawn. |"
         ));
     },
 
     qml_video_mapitem_data:{
         nodes:["-27", "150"],
-        nodes_near_dateline:["-27", "179"]
+        nodes_near_dateline:["-27", "179.9"]
     },
 
     qml_video_mapitem:function(latitude, longitude)
@@ -260,13 +262,14 @@ testcase = {
         | Select Go! button | |
         | Press and Hold on the marker | |
         | Select Draw... button | |
-        | Select Video button | Verify that video is positioned correctly and it plays. |"
+        | Select Video button | Verify that video is positioned correctly and it plays. |
+        | Press on the Video"
         ));
     },
 
     qml_image_mapitem_data:{
         nodes:["-27", "150"],
-        nodes_near_dateline:["-27", "179"]
+        nodes_near_dateline:["-27", "179.9"]
     },
 
     qml_image_mapitem:function(latitude,longitude)
@@ -304,7 +307,7 @@ testcase = {
 
     qml_3dqml_mapitem_data:{
         nodes:["-27", "150"],
-        nodes_near_dateline:["-27", "179"]
+        nodes_near_dateline:["-27", "179.9"]
     },
 
     qml_3dqml_mapitem:function(latitude, longitude)
@@ -393,7 +396,7 @@ testcase = {
     },
 
     qml_mapquickitem_updating_coordinates_data:{
-        nodes:["-27.3644", "153.0178", "Sydney"],
+        nodes:["-33.8707", "151.1898", "Sydney"],
     },
 
     qml_mapquickitem_updating_coordinates: function(latitude, longitude, city)
@@ -548,8 +551,7 @@ testcase = {
         | Select Route | |
         | Select Go! button | |
         | Wait for successful route result | |
-        | Press and Hold on the route | Verify that route is green. |
-        | Select Delete | Verify that route was red before deleting. |"
+        | Press and Hold on the route | Verify that route is green. |"
         ));
     },
 
