@@ -146,7 +146,7 @@ QPlaceSupplier QDeclarativeSupplier::supplier()
 /*!
     \qmlproperty string Supplier::supplierId
 
-    This property holds id.
+    This property holds the id of the supplier.
 */
 
 void QDeclarativeSupplier::setSupplierId(const QString &supplierId)
@@ -165,7 +165,7 @@ QString QDeclarativeSupplier::supplierId() const
 /*!
     \qmlproperty string Supplier::name
 
-    This property holds name.
+    This property holds the name of the supplier.
 */
 
 void QDeclarativeSupplier::setName(const QString &name)

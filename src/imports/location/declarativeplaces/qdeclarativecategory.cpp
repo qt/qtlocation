@@ -251,6 +251,11 @@ QString QDeclarativeCategory::name() const
             \li Category.PublicVisibility
             \li The category is public.
     \endtable
+
+    Note that visibility does not affect how \l{Place}s associated with
+    the category are displayed in the user-interface of an application
+    on the device.  Instead, it defines the sharing semantics of the
+    category.
 */
 QDeclarativeCategory::Visibility QDeclarativeCategory::visibility() const
 {

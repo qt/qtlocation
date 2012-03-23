@@ -169,7 +169,7 @@ QUrl QDeclarativePlaceIcon::url(const QSize &size) const
 
     Note, due to limitations of the QQmlPropertyMap, it is not possible
     to declaratively specify the parameters in QML, assignment of parameters keys
-    and values can only be accomplished by javascript.
+    and values can only be accomplished by JavaScript.
 
 */
 QQmlPropertyMap *QDeclarativePlaceIcon::parameters() const

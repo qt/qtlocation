@@ -82,15 +82,15 @@
     \codeline
     \snippet snippets/declarative/places.qml ContactDetails phoneList
 
-    The following example demonstrates how to assign a single phone number to a place in javascript:
+    The following example demonstrates how to assign a single phone number to a place in JavaScript:
     \snippet snippets/declarative/places.qml  ContactDetails write single
 
-    The following demonstrates how to assign multiple phone numbers to a place in javascript:
+    The following demonstrates how to assign multiple phone numbers to a place in JavaScript:
     \snippet snippets/declarative/places.qml  ContactDetails write multiple
 
     Note, due to limitations of the QQmlPropertyMap, it is not possible
     to declaratively specify the contact details in QML, it can only be accomplished
-    via javascript.
+    via JavaScript.
 */
 
 /*!
@@ -115,15 +115,15 @@
 
     \section1 Examples
 
-    The following example demonstrates how to assign a single phone number to a place in javascript:
+    The following example demonstrates how to assign a single phone number to a place in JavaScript:
     \snippet snippets/declarative/places.qml  ContactDetails write single
 
-    The following demonstrates how to assign multiple phone numbers to a place in javascript:
+    The following demonstrates how to assign multiple phone numbers to a place in JavaScript:
     \snippet snippets/declarative/places.qml  ContactDetails write multiple
 
     Note, due to limitations of the QQmlPropertyMap, it is not possible
     to declaratively specify the contact details in QML, it can only be accomplished
-    via javascript.
+    via JavaScript.
 */
 QDeclarativeContactDetail::QDeclarativeContactDetail(QObject *parent)
     : QObject(parent)

@@ -107,12 +107,12 @@ QT_USE_NAMESPACE
 
     \section2 Saving a place
 
-    If the \l Plugin supports it the Place element can be used to save a place.  First create a new
-    Place and set its properties.
+    If the \l Plugin supports it, the Place element can be used to save a place.  First create a new
+    Place and set its properties:
 
     \snippet snippets/declarative/places.qml Place savePlace def
 
-    Then invoke the \l save() method.
+    Then invoke the \l save() method:
 
     \snippet snippets/declarative/places.qml Place savePlace
 
@@ -133,11 +133,14 @@ QT_USE_NAMESPACE
     Therefore trying to save a place directly from one plugin to another is not possible.
 
     It is generally recommended that saving across plugins be handled as saving \l {Favorites}{favorites}
-    as explained below.  However there is another approach which is to create a new place,
+    as explained in the Favorites section.  However there is another approach which is to create a new place,
     set its (destination) plugin and then use the \l copyFrom() method to copy the details of the original place.
     Using \l copyFrom() only copies data that is supported by the destination plugin,
     plugin specific data such as the place id is not copied over. Once the copy is done,
-    the place is in a suitable state to be saved.  The call to initializeFavorite
+    the place is in a suitable state to be saved.
+
+    The following snippet provides an example of saving a place to a different plugin
+    using the \l copyFrom method:
 
     \snippet snippets/declarative/places.qml Place save to different plugin
 
@@ -149,8 +152,8 @@ QT_USE_NAMESPACE
 
     \section2 Favorites
     The Places API supports the concept of favorites. Favorites are generally implemented
-    by using two plugins, the first plugin is typically a r/o source of places (origin plugin) and a second
-    r/w plugin (destination plugin) is used to store places from the origin as favorites.
+    by using two plugins, the first plugin is typically a read-only source of places (origin plugin) and a second
+    read-write plugin (destination plugin) is used to store places from the origin as favorites.
 
     Each Place has a favorite property which is intended to contain the corresponding place
     from the destination plugin (the place itself is sourced from the origin plugin).  Because both the original
@@ -467,7 +470,7 @@ QDeclarativeGeoLocation *QDeclarativePlace::location()
 /*!
     \qmlproperty Ratings Place::ratings
 
-    This property holds ratings of the place.  The ratings provides an indication of the quality of a
+    This property holds ratings of the place.  The ratings provide an indication of the quality of a
     place.
 */
 void QDeclarativePlace::setRatings(QDeclarativeRatings *rating)
@@ -598,7 +601,7 @@ QString QDeclarativePlace::attribution() const
     \qmlproperty bool Place::detailsFetched
 
     This property indicates whether the details of the place have been fetched.  If this property
-    is false then the place details have not yet been fetch, which can be done by invoking the
+    is false, the place details have not yet been fetched.  Fetching can be done by invoking the
     \l getDetails() method.
 
     \sa getDetails()
@@ -616,7 +619,7 @@ bool QDeclarativePlace::detailsFetched() const
     \table
         \row
             \li Place.Ready
-            \li No Error occurred during the last operation, further operations may be performed on
+            \li No error occurred during the last operation, further operations may be performed on
                the place.
         \row
             \li Place.Saving
@@ -641,7 +644,6 @@ bool QDeclarativePlace::detailsFetched() const
     in status.
 
     \snippet snippets/declarative/places.qml Place checkStatus
-    \dots
     \dots
     \snippet snippets/declarative/places.qml Place checkStatus handler
 
@@ -740,7 +742,7 @@ void QDeclarativePlace::cleanupDeletedCategories()
 
     This method starts fetching place details.
 
-    The \l status property will change to Place. Fetching while the fetch is in progress.  On
+    The \l status property will change to Place.Fetching while the fetch is in progress.  On
     success the element properties will be updated, \l status will be set to Place.Ready and
     \l detailsFetched will be set to true.  On error \l status will be set to Place.Error.  The
     \l errorString() method can be used to get the details of the error.
@@ -762,9 +764,11 @@ void QDeclarativePlace::getDetails()
     This method performs a save operation on the place.
 
     The \l status property will change to Place.Saving while the save operation is in progress.  On
-    success the \l placeId property will be updated and \l status will be set to Place.Ready.  On
-    error \l status will be set to Place.Error.  The \l errorString() method can be used to get the
-    details of the error.
+    success the \l status will be set to Place.Ready.  On error \l status will be set to Place.Error.
+    The \l errorString() method can be used to get the details of the error.
+
+    If the \l placeId property was previously empty, it will be assigned a valid value automatically
+    during a successful save operation.
 
     Note that a \l PlaceSearchModel will call Place::getDetails on any place that it detects an update
     on.  A consequence of this is that whenever a Place from a \l PlaceSearchModel is successfully saved,
@@ -988,6 +992,10 @@ void QDeclarativePlace::synchronizeCategories()
             \li Place.PublicVisibility
             \li The place is public.
     \endtable
+
+    Note that visibility does not affect how the place is displayed
+    in the user-interface of an application on the device.  Instead,
+    it defines the sharing semantics of the place.
 */
 QDeclarativePlace::Visibility QDeclarativePlace::visibility() const
 {
