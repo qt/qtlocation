@@ -325,6 +325,16 @@ QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider() 
     \li the "C" locale is identical in behavior to English/UnitedStates as per QLocale
     \endlist
 
+    If the first specified locale cannot be accommodated, the \l {Plugin} falls back to the next and so forth.
+    Some \l {Plugin} backends may not support a set of locales which are rigidly defined.  An arbitrary
+    example is that some \l {Place}'s in France could have French and English localizations, while
+    certain areas in America may only have the English localization available.  In the above scenario,
+    the set of supported locales is context dependent on the search location.
+
+    If the \l {Plugin} cannot accommodate any of the preferred locales, the manager falls
+    back to using a supported language that is backend specific.
+
+    For \l {Plugin}'s that do not support locales, the locales list is always empty.
 
     The following code demonstrates how to set a single and multiple locales:
     \snippet snippets/declarative/plugin.qml Plugin locale

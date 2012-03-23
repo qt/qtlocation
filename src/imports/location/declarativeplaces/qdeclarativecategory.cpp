@@ -237,8 +237,9 @@ QString QDeclarativeCategory::name() const
     \table
         \row
             \li Category.UnspecifiedVisibility
-            \li The visibility of the category is unspecified, the default visibility of the plugin
-               will be used.
+            \li The visibility of the category is unspecified.  If saving a category, the
+            plugin will automatically set a default visibility to the category saved in the backend.
+            This default is dependent on the plugin implementation.
         \row
             \li Category.DeviceVisibility
             \li The category is limited to the current device.  The category will not be transferred

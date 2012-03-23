@@ -146,7 +146,11 @@ bool QPlaceSupplier::operator==(const QPlaceSupplier &other) const
 */
 
 /*!
-    Returns the name of the supplier.
+    Returns the name of the supplier which can be displayed to the user.
+
+    The name can potentially be localized. The language is dependent on the
+    entity that sets it, typically this is the QPlaceManager.
+    The QPlaceManager::locales() field defines what language is used.
 */
 QString QPlaceSupplier::name() const
 {
@@ -162,7 +166,9 @@ void QPlaceSupplier::setName(const QString &name)
 }
 
 /*!
-    Returns the id of the supplier.
+    Returns the id of the supplier. The id is unique
+    to the manager backend which provided the supplier and is generally
+    not suitable for displaying to the user.
 */
 QString QPlaceSupplier::supplierId() const
 {
@@ -178,7 +184,7 @@ void QPlaceSupplier::setSupplierId(const QString &id)
 }
 
 /*!
-    Returns the url of the supplier.
+    Returns the URL of the supplier's website.
 */
 QUrl QPlaceSupplier::url() const
 {
@@ -186,7 +192,7 @@ QUrl QPlaceSupplier::url() const
 }
 
 /*!
-    Sets the \a url of the supplier.
+    Sets the \a url of the supplier's website.
 */
 void QPlaceSupplier::setUrl(const QUrl &url)
 {

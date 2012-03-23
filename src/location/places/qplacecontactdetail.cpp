@@ -168,7 +168,11 @@ bool QPlaceContactDetail::operator!= (const QPlaceContactDetail &other) const
 }
 
 /*!
-    Returns a localized label describing the contact detail.
+    Returns a label describing the contact detail.
+
+    The label can potentially be localized. The language is dependent on the entity that sets it,
+    typically this is the manager from which the places are sourced.
+    The QPlaceManager::locales() field defines what language is used.
 */
 QString QPlaceContactDetail::label() const
 {

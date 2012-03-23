@@ -355,10 +355,17 @@ QList<QPlaceCategory> QPlaceManager::childCategories(const QString &parentId) co
     place and category details should be returned in.
 
     If the first specified locale cannot be accommodated, the manager falls back to the next and so forth.
+    Some manager backends may not support a set of locales which are rigidly defined.  An arbitrary
+    example is that some places in France could have French and English localizations, while
+    certain areas in America may only have the English localization available.  In this example,
+    the set of supported locales is context dependent on the search location.
+
+    If the manager cannot accommodate any of the preferred locales, the manager falls
+    back to using a supported language that is backend specific.
 
     Support for locales may vary from provider to provider.  For those that do support it,
-    by default, the global default locale is set as the manager's only locale.  If the manager
-    has no locales assigned to it, it implicitly uses the global default locale.
+    by default, the global default locale is set as the manager's only locale.
+
     For managers that do not support locales, the locale list is always empty.
 */
 QList<QLocale> QPlaceManager::locales() const

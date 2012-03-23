@@ -146,7 +146,9 @@ QPlaceSupplier QDeclarativeSupplier::supplier()
 /*!
     \qmlproperty string Supplier::supplierId
 
-    This property holds the id of the supplier.
+    This property holds the id of the supplier.  The id is unique
+    to the Plugin backend which provided the supplier and is generally
+    not suitable for displaying to the user.
 */
 
 void QDeclarativeSupplier::setSupplierId(const QString &supplierId)
@@ -165,7 +167,12 @@ QString QDeclarativeSupplier::supplierId() const
 /*!
     \qmlproperty string Supplier::name
 
-    This property holds the name of the supplier.
+    This property holds the name of the supplier which can be displayed
+    to the user.
+
+    The name can potentially be localized.  The language is dependent on the
+    entity that sets it, typically this is the \l Plugin.  The \l {Plugin::locales}
+    property defines what language is used.
 */
 
 void QDeclarativeSupplier::setName(const QString &name)
@@ -184,7 +191,7 @@ QString QDeclarativeSupplier::name() const
 /*!
     \qmlproperty url Supplier::url
 
-    This property holds supplier URL.
+    This property holds the URL of the supplier's website.
 */
 
 void QDeclarativeSupplier::setUrl(const QUrl &url)

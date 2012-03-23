@@ -153,7 +153,7 @@ QT_USE_NAMESPACE
     \section2 Favorites
     The Places API supports the concept of favorites. Favorites are generally implemented
     by using two plugins, the first plugin is typically a read-only source of places (origin plugin) and a second
-    read-write plugin (destination plugin) is used to store places from the origin as favorites.
+    read/write plugin (destination plugin) is used to store places from the origin as favorites.
 
     Each Place has a favorite property which is intended to contain the corresponding place
     from the destination plugin (the place itself is sourced from the origin plugin).  Because both the original
@@ -822,7 +822,8 @@ QString QDeclarativePlace::errorString() const
     \qmlproperty string Place::primaryPhone
 
     This property holds the primary phone number of the place.  If no "phone" contact detail is
-    defined for this place this property will be an empty string.  It is equivalent to
+    defined for this place, this property will be an empty string.  It is equivalent to:
+
 
     \snippet snippets/declarative/places.qml Place primaryPhone
 */

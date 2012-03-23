@@ -175,7 +175,11 @@ QPlaceContactDetail QDeclarativeContactDetail::contactDetail() const
 /*!
     \qmlproperty string QtLocation5::ContactDetail::label
 
-    This property holds a localized label describing the contact detail.
+    This property holds a label describing the contact detail.
+
+    The label can potentially be localized. The language is dependent on the entity that sets it,
+    typically this is the \l {Plugin}.  The \l {Plugin::locales} property defines
+    what language is used.
 */
 QString QDeclarativeContactDetail::label() const
 {
