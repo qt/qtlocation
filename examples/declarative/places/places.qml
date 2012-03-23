@@ -188,7 +188,7 @@ Item {
         }
     }
 
-    Dialog {
+    InputDialog {
         id: searchCenterDialog
         z: backgroundRect.z + 4
 
@@ -220,7 +220,7 @@ Item {
         }
     }
 
-    Dialog {
+    InputDialog {
         id: searchBoxDialog
         z: backgroundRect.z + 4
 
@@ -266,7 +266,7 @@ Item {
         }
     }
 
-    Dialog {
+    InputDialog {
         id: searchCircleDialog
         z: backgroundRect.z + 4
 

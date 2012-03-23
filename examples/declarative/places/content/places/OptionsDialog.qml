@@ -42,120 +42,54 @@ import QtQuick 2.0
 import QtLocation 5.0
 import QtLocation.examples 5.0
 
-Item {
+Dialog {
     id: dialog
 
-    property int gap: 10
-    property int listItemHeight: titleBar.font.pixelSize * 1.5
     property alias isFavoritesEnabled: enableFavoritesButton.selected
     property alias locales: localesInput.text
+    property int listItemHeight: 21
 
-    signal goButtonClicked
-    signal cancelButtonClicked
+    title: "Options"
 
-    opacity: 0
-    anchors.fill: parent
+    item: Column {
+        id: options
+        width: parent.width
+        spacing: gap
 
-    Fader{}
+        TextWithLabel {
+            id: localesInput
 
-    Rectangle {
-        id: dialogRectangle
-        color: "#ECECEC"
-        opacity:  1
-        width: parent.width - gap
-        height: titleBar.height + options.height + gap * 1.5
-
-        anchors {
-            verticalCenter: parent.verticalCenter
-            left: parent.left
-            leftMargin: gap/2
+            width: parent.width - gap
+            height: listItemHeight
+            label: "Locale(s)"
+            enabled: true
+            visible: placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.LocalizedPlacesFeature) : false;
         }
 
-        radius: 5
+        Optionbutton {
+            id: enableFavoritesButton
 
-        TitleBar {
-            id: titleBar;
-            width: parent.width; height: 40;
-            anchors.top: parent.top; anchors.left: parent.left;
-            opacity: 0.9
-            text: "Options"
-
-            onClicked: { dialog.cancelButtonClicked() }
-        }
-
-        Column {
-            id: options
-            height: childrenRect.height
-            width: parent.width
-            spacing: gap
-
-            anchors {
-                top: titleBar.bottom
-                topMargin: gap
-                left: dialogRectangle.left
-                right: dialogRectangle.right
-                leftMargin: gap
-                rightMargin: gap
-            }
-
-            TextWithLabel {
-                id: localesInput
-
-                width: parent.width - gap
-                height: listItemHeight
-                label: "Locale(s)"
-                enabled: true
-                visible: placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.LocalizedPlacesFeature) : false;
-            }
-
-            Optionbutton {
-                id: enableFavoritesButton
-
-                function resetVisibility() {
-                    if (placesPlugin.name !== "nokia_places_jsondb") {
-                        var pluginNames = placesPlugin.availableServiceProviders;
-                        for (var i= 0; i < pluginNames.length; ++i) {
-                            if (pluginNames[i] === "nokia_places_jsondb") {
-                                enableFavoritesButton.visible = true;
-                                return;
-                            }
+            function resetVisibility() {
+                if (placesPlugin.name !== "nokia_places_jsondb") {
+                    var pluginNames = placesPlugin.availableServiceProviders;
+                    for (var i = 0; i < pluginNames.length; ++i) {
+                        if (pluginNames[i] === "nokia_places_jsondb") {
+                            enableFavoritesButton.visible = true;
+                            return;
                         }
                     }
-                    enableFavoritesButton.visible = false;
                 }
-
-                width:  parent.width
-                text: "Enable favorites"
-                toggle:  true
-                visible: false
-
-                Component.onCompleted: {
-                    resetVisibility();
-                    placesPlugin.nameChanged.connect(resetVisibility);
-                }
+                enableFavoritesButton.visible = false;
             }
 
-            Row {
-                id: buttons
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: gap/3
-                height: 32
+            width: parent.width
+            text: "Enable favorites"
+            toggle:  true
+            visible: false
 
-                Button {
-                    id: cancelButton
-                    text: "Cancel"
-                    width: 80; height: parent.height
-
-                    onClicked: dialog.cancelButtonClicked()
-                }
-
-                Button {
-                    id: okButton
-                    text: "Ok"
-                    width:80; height: parent.height
-
-                    onClicked: dialog.goButtonClicked()
-                }
+            Component.onCompleted: {
+                resetVisibility();
+                placesPlugin.nameChanged.connect(resetVisibility);
             }
         }
     }

@@ -39,36 +39,56 @@
 ****************************************************************************/
 
 import QtQuick 2.0
-import QtLocation 5.0
-import QtLocation.examples 5.0
+import "../components"
 
-InputDialog {
-    title: "Edit Category"
+Dialog {
+    id: dialog
 
-    property Category category
+    property alias dialogModel: dialogModel
+    property alias length: dialogModel.count
 
-    Behavior on opacity { NumberAnimation { duration: 500 } }
+    property int listItemHeight: 21
 
-    Component.onCompleted: prepareDialog()
-    onCategoryChanged: prepareDialog()
-
-    function prepareDialog() {
-        setModel([
-            ["Name", category ? category.name : ""]
-        ]);
+    onClearButtonClicked: {
+        for (var i = 0; i < length; ++i)
+            dialogModel.set(i, { "inputText": "" });
     }
 
-    //! [Category save]
-    onGoButtonClicked: {
-        console.log("Go clicked!");
-        var modifiedCategory = category ? category : Qt.createQmlObject('import QtLocation 5.0; Category { }', page);
-        modifiedCategory.plugin = placesPlugin;
+    item: ListView {
+        id: listview
 
-        modifiedCategory.name = dialogModel.get(0).inputText;
-
-        category = modifiedCategory;
-
-        category.save();
+        model: dialogModel
+        delegate: listDelegate
+        spacing: gap/2
+        clip: true
+        snapMode: ListView.SnapToItem
+        implicitHeight: (listItemHeight + gap/2)*length + gap/2
+        interactive: height < implicitHeight
+        width: parent.width
     }
-    //! [Category save]
+
+    function setModel(objects) {
+        dialogModel.clear();
+        for (var i = 0; i < objects.length; ++i) {
+            dialogModel.append({ "labelText": objects[i][0], "inputText": objects[i][1] });
+        }
+    }
+
+    ListModel {
+        id: dialogModel
+    }
+
+    Component {
+        id: listDelegate
+
+        TextWithLabel {
+            id: textWithLabel
+            label: labelText
+            text: inputText
+            width: parent ? parent.width : 0
+            labelWidth: 95
+
+            onTextChanged: dialogModel.set(index, {"inputText": text})
+        }
+    }
 }

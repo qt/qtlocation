@@ -43,133 +43,90 @@ import "../components"
 
 Item {
     id: dialog
+
     signal goButtonClicked
     signal cancelButtonClicked
     signal clearButtonClicked
 
-    anchors.fill: parent
-
     property alias title: titleBar.text
-    property alias dialogModel: dialogModel
-    property alias length: dialogModel.count
+
     property int gap: 10
-    property int listItemHeight: titleBar.font.pixelSize * 1.5
-    property alias customLoader: componentLoader
     property bool showButtons: true
+    property Item item
 
     opacity: 0
-
-    function setModel(objects)
-    {
-        dialogModel.clear()
-
-        for (var i=0; i< objects.length; i++){
-            dialogModel.append({"labelText": objects[i][0], "inputText": objects[i][1]})
-        }
-    }
+    anchors.fill: parent
 
     Fader {}
+
+    onItemChanged: {
+        if (item)
+            item.parent = dataRect;
+    }
 
     Rectangle {
         id: dialogRectangle
 
+        property int maximumDialogHeight: {
+            if (dialog.opacity === 0 ||
+                (Qt.inputMethod.keyboardRectangle.width === 0 && Qt.inputMethod.keyboardRectangle.height === 0)) {
+                return dialog.height;
+            } else {
+                return dialog.mapFromItem(null, Qt.inputMethod.keyboardRectangle.x, Qt.inputMethod.keyboardRectangle.y).y
+            }
+        }
+        property int maximumContentHeight: maximumDialogHeight - titleBar.height - buttons.height - gap*1.5
+
         color: "#ECECEC"
         opacity: parent.opacity
-        width: parent.width - gap;
-        height: dataRect.height + titleBar.height + buttons.height + gap*1.5
 
-        anchors {
-            verticalCenter: parent.verticalCenter
-            left: parent.left
-            leftMargin: gap/2
-        }
+        height: dataRect.height + titleBar.height + buttons.height + gap*1.5
+        y: (maximumDialogHeight - height) / 2
+        anchors.left: parent.left
+        anchors.leftMargin: gap/2
+        anchors.right: parent.right
+        anchors.rightMargin: gap/2
 
         radius: 5
 
         TitleBar {
             id: titleBar;
-            width: parent.width; height: 40;
-            anchors.top: parent.top; anchors.left: parent.left;
+
+            height: 40
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+
             opacity: 0.9
-            onClicked: { dialog.cancelButtonClicked() }
-        }
-
-        ListModel {
-            id: dialogModel
-        }
-
-        Component{
-            id: listDelegate
-
-            TextWithLabel {
-                id: textWithLabel
-                label: labelText
-                text: inputText
-                width: dataRect.width - gap
-                labelWidth: 95
-
-                onTextChanged:
-                {
-                    dialogModel.set(index, {"inputText": text})
-                }
-            }
-        }
-
-    Rectangle {
-        id: dataRect
-        color: "#ECECEC"
-        radius: 5
-        width:dialogRectangle.width - gap
-        height: childrenRect.height + gap
-        anchors {
-            top: titleBar.bottom
-            topMargin: gap/2
-            left: parent.left
-            leftMargin: gap/2
-        }
-
-        Loader {
-            id: componentLoader;
-            anchors {
-                top: dataRect.top
-                topMargin: gap/2
-                left: parent.left
-                leftMargin: gap/2
-                right: parent.right
-                rightMargin: gap/2
-            }
-
-            Component.onCompleted: {
-                if (!sourceComponent)
-                    sourceComponent = listComponent;
+            onClicked: {
+                Qt.inputMethod.hide();
+                dialog.cancelButtonClicked();
             }
 
         }
 
-        Component {
-            id: listComponent
+        Rectangle {
+            id: dataRect
+            color: "#ECECEC"
+            radius: 5
 
-            ListView {
-                id: listview
-                model: dialogModel
-                delegate: listDelegate
-                spacing: gap/2
-                clip: true
-                snapMode: ListView.SnapToItem
-                interactive: height < (listItemHeight + gap/2)*length + gap/2
-                width: parent.width
-                height: Math.min(dialog.height * 0.7, (listItemHeight + gap/2)*length + gap/2)
+            anchors.top: titleBar.bottom
+            anchors.left: dialogRectangle.left
+            anchors.right: dialogRectangle.right
+            anchors.margins: gap/2
+            height: Math.min(dialogRectangle.maximumContentHeight, item ? item.implicitHeight : 0)
 
-                Connections {
-                    target: dialog
-                    onClearButtonClicked: {
-                        for (var i = 0; i<length; i++)
-                            dialogModel.set(i, {"inputText": ""})
-                    }
-                }
+            Binding {
+                target: item
+                property: "anchors.fill"
+                value: dataRect
+            }
+            Binding {
+                target: item
+                property: "anchors.margins"
+                value: gap/2
             }
         }
-    }
 
         Row {
             id: buttons
@@ -182,16 +139,16 @@ Item {
             Button {
                 id: buttonClearAll
                 text: "Clear"
-                width: 80; height: parent.height
+                width: 80
+                height: parent.height
                 onClicked: dialog.clearButtonClicked()
             }
             Button {
                 id: buttonGo
                 text: "Go!"
-                width: 80; height: parent.height
-                onClicked: {
-                    dialog.goButtonClicked ()
-                }
+                width: 80
+                height: parent.height
+                onClicked: dialog.goButtonClicked()
             }
         }
     }

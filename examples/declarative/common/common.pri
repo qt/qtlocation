@@ -29,6 +29,7 @@ OTHER_FILES += $$qmlcomponentsstyle.files
 
 qmldialogs.files += \
     $$PWD/imports/QtLocation/examples/dialogs/Dialog.qml \
+    $$PWD/imports/QtLocation/examples/dialogs/InputDialog.qml \
     $$PWD/imports/QtLocation/examples/dialogs/ErrorDialog.qml
 OTHER_FILES += $$qmldialogs.files
 

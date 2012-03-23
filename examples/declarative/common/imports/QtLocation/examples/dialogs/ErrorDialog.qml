@@ -47,7 +47,7 @@ Dialog {
     opacity: 0
     showButtons:false
 
-    customLoader.sourceComponent: Text {
+    item: Text {
         id:  errorText
         text: errorRoot.text
     }

@@ -373,7 +373,7 @@ Item {
 
     //Geocode Dialog
 //! [geocode0]
-    Dialog {
+    InputDialog {
         id: geocodeDialog
 //! [geocode0]
         title: "Geocode"
@@ -417,7 +417,7 @@ Item {
 //! [geocode2]
 
     //Reverse Geocode Dialog
-    Dialog {
+    InputDialog {
         id: reverseGeocodeDialog
         title: "Reverse Geocode"
         z: backgroundRect.z + 2
@@ -447,7 +447,7 @@ Item {
     }
 
     //Get new coordinates for marker
-    Dialog {
+    InputDialog {
         id: coordinatesDialog
         title: "New coordinates"
         z: backgroundRect.z + 2
@@ -484,7 +484,7 @@ Item {
     }
 
     //Get new locale
-    Dialog {
+    InputDialog {
         id: localeDialog
         title: "New Locale"
         z: backgroundRect.z + 2

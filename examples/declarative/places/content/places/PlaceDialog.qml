@@ -174,21 +174,22 @@ Dialog {
 
     onOpacityChanged: {
         if (opacity == 0)
-            customLoader.item.currentIndex = 0
+            view.currentIndex = 0
     }
 
     ListModel {
         id: dataFieldsModel
     }
 
-    customLoader.sourceComponent: ListView {
+    item: ListView {
         id: view
 
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: 10
 
-        height: Math.min(root.height * 0.6, flickable.contentHeight);
+        implicitHeight: flickable.contentHeight
+
         spacing: gap/2
         orientation: ListView.Horizontal
         interactive: false

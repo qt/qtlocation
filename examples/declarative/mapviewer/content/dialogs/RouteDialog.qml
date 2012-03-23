@@ -42,16 +42,12 @@ import QtQuick 2.0
 import QtLocation 5.0
 import QtLocation.examples 5.0
 
-Item {
+Dialog {
     id: dialog
-    signal goButtonClicked
-    signal cancelButtonClicked
 
-    anchors.fill: parent
-    property int gap: 6
-    opacity: 0
+    title: "Route"
+    gap: 6
 
-    property alias title: titleBar.text
     property alias startLatitude: latFrom.text
     property alias startLongitude: longFrom.text
     property alias endLatitude: latTo.text
@@ -63,6 +59,7 @@ Item {
     property alias endCity: cityTo.text
     property alias endCountry: countryTo.text
     property alias byCoordinates: coord.enabled
+
     property int travelMode: RouteQuery.CarTravel             // CarTravel, PedestrianTravel, BicycleTravel, PublicTransitTravel, TruckTravel
     property int routeOptimization: RouteQuery.FastestRoute   // ShortestRoute, FastestRoute, MostEconomicRoute, MostScenicRoute
     property variant features: []                             // NoFeature, TollFeature, HighwayFeature, PublicTransitFeature, FerryFeature, TunnelFeature, DirtRoadFeature, ParksFeature, MotorPoolLaneFeature
@@ -72,427 +69,386 @@ Item {
     property color backgroundColorEnabled: "#98D0FC"
     property color backgroundColorDisabled: "grey"
 
-    Fader {}
+    item: Flickable {
+        id: f
 
-    Rectangle {
-        id: dialogRectangle
-        color: backgroundColorNormal
-        opacity: 1
-        width: parent.width - gap*2;
-        height: options.height + gap*4 + buttons.height + titleBar.height + routeOptions.height
+        clip: true
+        interactive: height + gap < contentHeight
+        implicitHeight: contentItem.height
+        contentHeight: contentItem.height
+        contentWidth: contentItem.width
 
-        anchors {
-            verticalCenter: parent.verticalCenter
-            left: parent.left
-            leftMargin: gap
-        }
+        Item {
+            id: contentItem
+            width: f.width
+            height: childrenRect.height
 
-        radius: 5
-
-        TitleBar {
-            id: titleBar;
-            width: parent.width; height: 40;
-            anchors.top: parent.top; anchors.left: parent.left;
-            opacity: 0.9
-            text: "Route"
-            onClicked: { dialog.cancelButtonClicked() }
-        }
-
-        Column {
-           id: options
-           spacing: gap
-           width: dialogRectangle.width - gap*2
-
-           anchors {
-               top: titleBar.bottom
-               topMargin: gap
-               left: dialogRectangle.left
-               leftMargin: gap
-           }
-
-            states: [
-                State {
-                    name: "Address"
-                    PropertyChanges { target: coord; enabled: false }
-                    PropertyChanges { target: address; enabled: true }
-                }
-            ]
-
-
-//by coordinates
-            Row {
-                id: row1
+            Column {
+                id: options
                 spacing: gap
-                Image {
-                    id: optionButtonCoord
-                    anchors.verticalCenter:parent.verticalCenter
-                    source: coord.enabled ? "../../resources/option_button_selected.png" : "../../resources/option_button.png"
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: { options.state = "" }
+                width: parent.width
+
+                states: [
+                    State {
+                        name: "Address"
+                        PropertyChanges { target: coord; enabled: false }
+                        PropertyChanges { target: address; enabled: true }
+                    }
+                ]
+
+                //by coordinates
+                Row {
+                    id: row1
+                    spacing: gap
+                    Image {
+                        id: optionButtonCoord
+                        anchors.verticalCenter:parent.verticalCenter
+                        source: coord.enabled ? "../../resources/option_button_selected.png" : "../../resources/option_button.png"
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: { options.state = "" }
+                        }
+                    }
+
+                    Rectangle {
+                        id: coord
+                        color: enabled ? backgroundColorEnabled : backgroundColorDisabled
+                        radius: 5
+                        width:options.width - optionButtonCoord.width - row1.spacing
+                        height: longTo.y + longTo.height + gap
+                        enabled: true
+
+                        //start point
+                        Text {
+                            id: fromLabel;
+                            font.bold: true;
+                            enabled: coord.enabled
+                            anchors {
+                                top: latFrom.top
+                                topMargin:latFrom.height + gap/6 - fromLabel.height/2
+                                left: parent.left;
+                                leftMargin: gap
+                            }
+                            text: "From"
+                            color: enabled ? fontColorNormal : fontColorDisabled
+                            font.pixelSize: 14
+                        }
+
+                        TextWithLabel {
+                            id: latFrom
+                            width: parent.width - fromLabel.width - gap*3
+                            text: "-27.575"
+                            label: "latitude"
+                            enabled: coord.enabled
+                            anchors {
+                                left: fromLabel.right
+                                leftMargin: gap
+                                top: parent.top
+                                topMargin:gap
+                            }
+                        }
+
+                        TextWithLabel {
+                            id: longFrom
+                            width: latFrom.width
+                            text: "153.088"
+                            label: "longitude"
+                            enabled: coord.enabled
+                            anchors {
+                                left: latFrom.left
+                                top: latFrom.bottom
+                                topMargin:gap/3
+                            }
+                        }
+
+                        //end point
+                        Text {
+                            id: toLabel;
+                            font.bold: true;
+                            width: fromLabel.width
+                            enabled: coord.enabled
+                            anchors {
+                                top: latTo.top
+                                topMargin:latTo.height + gap/6 - toLabel.height/2
+                                left: parent.left;
+                                leftMargin: gap;
+                            }
+                            text: "To"
+                            color: enabled ? fontColorNormal : fontColorDisabled
+                            font.pixelSize: 14
+                        }
+
+                        TextWithLabel {
+                            id: latTo
+                            width: latFrom.width
+                            text: "-27.465"
+                            label: "latitude"
+                            enabled: coord.enabled
+                            anchors {
+                                left: toLabel.right
+                                leftMargin: gap
+                                top: longFrom.bottom
+                                topMargin:gap
+                            }
+                        }
+
+                        TextWithLabel {
+                            id: longTo
+                            width: latTo.width
+                            text: "153.023"
+                            label: "longitude"
+                            enabled: coord.enabled
+                            anchors {
+                                left: latTo.left
+                                top: latTo.bottom
+                                topMargin:gap/3
+                            }
+                        }
                     }
                 }
 
-                Rectangle {
-                    id: coord
-                    color: enabled ? backgroundColorEnabled : backgroundColorDisabled
-                    radius: 5
-                    width:options.width - optionButtonCoord.width - row1.spacing
-                    height: longTo.y + longTo.height + gap
-                    enabled: true
+                //by address
+                Row {
+                    id: row2
+                    spacing: gap
 
-//start point
-                    Text {
-                        id: fromLabel;
-                        font.bold: true;
-                        enabled: coord.enabled
-                        anchors {
-                            top: latFrom.top
-                            topMargin:latFrom.height + gap/6 - fromLabel.height/2
-                            left: parent.left;
-                            leftMargin: gap
-                        }
-                        text: "From"
-                        color: enabled ? fontColorNormal : fontColorDisabled
-                        font.pixelSize: 14
-                    }
-
-                    TextWithLabel {
-                        id: latFrom
-                        width: parent.width - fromLabel.width - gap*3
-                        text: "-27.575"
-                        label: "latitude"
-                        enabled: coord.enabled
-                        anchors {
-                            left: fromLabel.right
-                            leftMargin: gap
-                            top: parent.top
-                            topMargin:gap
+                    Image {
+                        id: optionButtonAddress
+                        source: address.enabled ? "../../resources/option_button_selected.png" : "../../resources/option_button.png"
+                        anchors.verticalCenter: parent.verticalCenter
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: { options.state = "Address" }
                         }
                     }
 
-                    TextWithLabel {
-                        id: longFrom
-                        width: latFrom.width
-                        text: "153.088"
-                        label: "longitude"
-                        enabled: coord.enabled
-                        anchors {
-                            left: latFrom.left
-                            top: latFrom.bottom
-                            topMargin:gap/3
-                        }
-                    }
+                    Rectangle {
+                        id: address
+                        color: enabled ? backgroundColorEnabled : backgroundColorDisabled
+                        radius: 5
+                        width:coord.width
+                        height: countryTo.y + countryTo.height + gap
+                        enabled: false
 
-//end point
-                    Text {
-                        id: toLabel;
-                        font.bold: true;
-                        width: fromLabel.width
-                        enabled: coord.enabled
-                        anchors {
-                            top: latTo.top
-                            topMargin:latTo.height + gap/6 - toLabel.height/2
-                            left: parent.left;
-                            leftMargin: gap;
+                        //start point
+                        Text {
+                            id: fromLabel2;
+                            font.bold: true;
+                            enabled: address.enabled
+                            anchors {
+                                top: cityFrom.top
+                                left: parent.left;
+                                leftMargin: gap
+                            }
+                            text: "From"
+                            color: enabled ? fontColorNormal : fontColorDisabled
+                            font.pixelSize: 14
                         }
-                        text: "To"
-                        color: enabled ? fontColorNormal : fontColorDisabled
-                        font.pixelSize: 14
-                    }
 
-                    TextWithLabel {
-                        id: latTo
-                        width: latFrom.width
-                        text: "-27.465"
-                        label: "latitude"
-                        enabled: coord.enabled
-                        anchors {
-                            left: toLabel.right
-                            leftMargin: gap
-                            top: longFrom.bottom
-                            topMargin:gap
+                        TextWithLabel {
+                            id: streetFrom
+                            width: parent.width - fromLabel2.width - gap*3
+                            text: "Brandl st"
+                            label: "street"
+                            enabled: address.enabled
+                            anchors {
+                                left: fromLabel2.right
+                                leftMargin: gap
+                                top: parent.top
+                                topMargin:gap
+                            }
                         }
-                    }
 
-                    TextWithLabel {
-                        id: longTo
-                        width: latTo.width
-                        text: "153.023"
-                        label: "longitude"
-                        enabled: coord.enabled
-                        anchors {
-                            left: latTo.left
-                            top: latTo.bottom
-                            topMargin:gap/3
+                        TextWithLabel {
+                            id: cityFrom
+                            width: streetFrom.width
+                            text: "Eight Mile Plains"
+                            label: "city"
+                            enabled: address.enabled
+                            anchors {
+                                left: streetFrom.left
+                                top: streetFrom.bottom
+                                topMargin:gap/3
+                            }
+                        }
+
+                        TextWithLabel {
+                            id: countryFrom
+                            width: streetFrom.width
+                            text: "Australia"
+                            label: "country"
+                            enabled: address.enabled
+                            anchors {
+                                left: streetFrom.left
+                                top: cityFrom.bottom
+                                topMargin:gap/3
+                            }
+                        }
+
+                        //end point
+                        Text {
+                            id: toLabel2;
+                            font.bold: true;
+                            enabled: address.enabled
+                            anchors {
+                                top: cityTo.top
+                                left: parent.left;
+                                leftMargin: gap
+                            }
+                            text: "To"
+                            color: enabled ? fontColorNormal : fontColorDisabled
+                            font.pixelSize: 14
+                        }
+
+                        TextWithLabel {
+                            id: streetTo
+                            width: parent.width - fromLabel2.width - gap*3
+                            text: "Heal st"
+                            label: "street"
+                            enabled: address.enabled
+                            anchors {
+                                left: fromLabel2.right
+                                leftMargin: gap
+                                top: countryFrom.bottom
+                                topMargin:gap
+                            }
+                        }
+
+                        TextWithLabel {
+                            id: cityTo
+                            width: streetTo.width
+                            text: "New Farm"
+                            label: "city"
+                            enabled: address.enabled
+                            anchors {
+                                left: streetTo.left
+                                top: streetTo.bottom
+                                topMargin:gap/3
+                            }
+                        }
+
+                        TextWithLabel {
+                            id: countryTo
+                            width: streetTo.width
+                            text: "Australia"
+                            label: "country"
+                            enabled: address.enabled
+                            anchors {
+                                left: streetTo.left
+                                top: cityTo.bottom
+                                topMargin:gap/3
+                            }
                         }
                     }
                 }
             }
 
-//by address
             Row {
-                id: row2
-                spacing: gap
-
-                Image {
-                    id: optionButtonAddress
-                    source: address.enabled ? "../../resources/option_button_selected.png" : "../../resources/option_button.png"
-                    anchors.verticalCenter: parent.verticalCenter
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: { options.state = "Address" }
+                id: routeOptions
+                anchors.top: options.bottom
+                anchors.topMargin: gap
+                anchors.left: parent.left
+                anchors.leftMargin: gap
+                width: parent.width - gap*2
+                height: checkboxToll.height*2 + gap
+                spacing: 0
+                Column {//travel mode
+                    spacing: gap/3
+                    height: parent.height
+                    width: parent.width*0.325
+                    Optionbutton {
+                        id: optionbuttonVehicle
+                        width: parent.width
+                        text: "Vehicle"
+                        selected: true
+                        onClicked: {
+                            travelMode = RouteQuery.CarTravel
+                            optionbuttonPedestrian.selected = false
+                        }
+                    }
+                    Optionbutton {
+                        id: optionbuttonPedestrian
+                        width: parent.width
+                        text: "Pedestrian"
+                        onClicked: {
+                            travelMode = RouteQuery.PedestrianTravel
+                            optionbuttonVehicle.selected = false
+                        }
                     }
                 }
 
-                Rectangle {
-                    id: address
-                    color: enabled ? backgroundColorEnabled : backgroundColorDisabled
-                    radius: 5
-                    width:coord.width
-                    height: countryTo.y + countryTo.height + gap
-                    enabled: false
-
-//start point
-                    Text {
-                        id: fromLabel2;
-                        font.bold: true;
-                        enabled: address.enabled
-                        anchors {
-                            top: cityFrom.top
-                            left: parent.left;
-                            leftMargin: gap
-                        }
-                        text: "From"
-                        color: enabled ? fontColorNormal : fontColorDisabled
-                        font.pixelSize: 14
-                    }
-
-                    TextWithLabel {
-                        id: streetFrom
-                        width: parent.width - fromLabel2.width - gap*3
-                        text: "Brandl st"
-                        label: "street"
-                        enabled: address.enabled
-                        anchors {
-                            left: fromLabel2.right
-                            leftMargin: gap
-                            top: parent.top
-                            topMargin:gap
+                Column {//Optimization
+                    spacing: gap/3
+                    height: parent.height
+                    width: parent.width*0.275
+                    Optionbutton {
+                        id: optionbuttonFastest
+                        width: parent.width
+                        text: "Fastest"
+                        selected: true
+                        onClicked: {
+                            routeOptimization = RouteQuery.FastestRoute
+                            optionbuttonShortest.selected = false
                         }
                     }
-
-                    TextWithLabel {
-                        id: cityFrom
-                        width: streetFrom.width
-                        text: "Eight Mile Plains"
-                        label: "city"
-                        enabled: address.enabled
-                        anchors {
-                            left: streetFrom.left
-                            top: streetFrom.bottom
-                            topMargin:gap/3
+                    Optionbutton {
+                        id: optionbuttonShortest
+                        width: parent.width
+                        text: "Shortest"
+                        onClicked: {
+                            routeOptimization = RouteQuery.ShortestRoute
+                            optionbuttonFastest.selected = false
                         }
                     }
+                }
 
-                    TextWithLabel {
-                        id: countryFrom
-                        width: streetFrom.width
-                        text: "Australia"
-                        label: "country"
-                        enabled: address.enabled
-                        anchors {
-                            left: streetFrom.left
-                            top: cityFrom.bottom
-                            topMargin:gap/3
-                        }
+                Column {//Route features
+                    id: routeFeatures
+                    spacing: gap/3
+                    height: parent.height
+                    width: parent.width*0.4
+                    Checkbox {
+                        id: checkboxToll
+                        width: parent.width
+                        text: "Avoid toll roads"
+                        onSelectedChanged: {routeFeatures.updateRouteFeatures()}
                     }
 
-
-//end point
-                    Text {
-                        id: toLabel2;
-                        font.bold: true;
-                        enabled: address.enabled
-                        anchors {
-                            top: cityTo.top
-                            left: parent.left;
-                            leftMargin: gap
-                        }
-                        text: "To"
-                        color: enabled ? fontColorNormal : fontColorDisabled
-                        font.pixelSize: 14
+                    Checkbox {
+                        id: checkboxHighways
+                        width: parent.width
+                        text: "Avoid highways"
+                        onSelectedChanged: {routeFeatures.updateRouteFeatures()}
                     }
 
-                    TextWithLabel {
-                        id: streetTo
-                        width: parent.width - fromLabel2.width - gap*3
-                        text: "Heal st"
-                        label: "street"
-                        enabled: address.enabled
-                        anchors {
-                            left: fromLabel2.right
-                            leftMargin: gap
-                            top: countryFrom.bottom
-                            topMargin:gap
-                        }
-                    }
+                    function updateRouteFeatures(){
+                        features = []
+                        var myArray = new Array
 
-                    TextWithLabel {
-                        id: cityTo
-                        width: streetTo.width
-                        text: "New Farm"
-                        label: "city"
-                        enabled: address.enabled
-                        anchors {
-                            left: streetTo.left
-                            top: streetTo.bottom
-                            topMargin:gap/3
-                        }
-                    }
+                        if (checkboxToll.selected) myArray.push(RouteQuery.TollFeature)
+                        if (checkboxHighways.selected) myArray.push(RouteQuery.HighwayFeature)
 
-                    TextWithLabel {
-                        id: countryTo
-                        width: streetTo.width
-                        text: "Australia"
-                        label: "country"
-                        enabled: address.enabled
-                        anchors {
-                            left: streetTo.left
-                            top: cityTo.bottom
-                            topMargin:gap/3
-                        }
+                        features = myArray
                     }
                 }
             }
         }
+    }
 
-        Row {
-            id: routeOptions
-            anchors.top: options.bottom
-            anchors.topMargin: gap
-            anchors.left: parent.left
-            anchors.leftMargin: gap
-            width: parent.width - gap*2
-            height: checkboxToll.height*2 + gap
-            spacing: 0
-            Column {//travel mode
-                spacing: gap/3
-                height: parent.height
-                width: parent.width*0.325
-                Optionbutton {
-                    id: optionbuttonVehicle
-                    width: parent.width
-                    text: "Vehicle"
-                    selected: true
-                    onClicked: {
-                        travelMode = RouteQuery.CarTravel
-                        optionbuttonPedestrian.selected = false
-                    }
-                }
-                Optionbutton {
-                    id: optionbuttonPedestrian
-                    width: parent.width
-                    text: "Pedestrian"
-                    onClicked: {
-                        travelMode = RouteQuery.PedestrianTravel
-                        optionbuttonVehicle.selected = false
-                    }
-                }
-            }
-
-            Column {//Optimization
-                spacing: gap/3
-                height: parent.height
-                width: parent.width*0.275
-                Optionbutton {
-                    id: optionbuttonFastest
-                    width: parent.width
-                    text: "Fastest"
-                    selected: true
-                    onClicked: {
-                        routeOptimization = RouteQuery.FastestRoute
-                        optionbuttonShortest.selected = false
-                    }
-                }
-                Optionbutton {
-                    id: optionbuttonShortest
-                    width: parent.width
-                    text: "Shortest"
-                    onClicked: {
-                        routeOptimization = RouteQuery.ShortestRoute
-                        optionbuttonFastest.selected = false
-                    }
-                }
-            }
-
-            Column {//Route features
-                id: routeFeatures
-                spacing: gap/3
-                height: parent.height
-                width: parent.width*0.4
-                Checkbox {
-                    id: checkboxToll
-                    width: parent.width
-                    text: "Avoid toll roads"
-                    onSelectedChanged: {routeFeatures.updateRouteFeatures()}
-                }
-
-                Checkbox {
-                    id: checkboxHighways
-                    width: parent.width
-                    text: "Avoid highways"
-                    onSelectedChanged: {routeFeatures.updateRouteFeatures()}
-                }
-
-                function updateRouteFeatures(){
-                    features = []
-                    var myArray = new Array()
-
-                    if (checkboxToll.selected) myArray.push(RouteQuery.TollFeature)
-                    if (checkboxHighways.selected) myArray.push(RouteQuery.HighwayFeature)
-
-                    features = myArray
-                }
-            }
+    onClearButtonClicked: {
+        if (byCoordinates == true){
+            latFrom.text = ""
+            longFrom.text = ""
+            latTo.text = ""
+            longTo.text = ""
         }
-
-
-        Row {
-            id: buttons
-            anchors.top: routeOptions.bottom
-            anchors.topMargin: gap
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: gap/3
-            height: 32
-            Button {
-                text: "Clear"
-                width: 80; height: parent.height
-                onClicked: {
-                    if (byCoordinates == true){
-                        latFrom.text = ""
-                        longFrom.text = ""
-                        latTo.text = ""
-                        longTo.text = ""
-                    }
-                    else {
-                        streetFrom.text = ""
-                        cityFrom.text = ""
-                        countryFrom.text = ""
-                        streetTo.text = ""
-                        cityTo.text = ""
-                        countryTo.text = ""
-                    }
-                }
-            }
-
-            Button {
-                text: "Go!"
-                width: 80; height: parent.height
-                onClicked: {
-                    dialog.goButtonClicked ()
-                }
-            }
+        else {
+            streetFrom.text = ""
+            cityFrom.text = ""
+            countryFrom.text = ""
+            streetTo.text = ""
+            cityTo.text = ""
+            countryTo.text = ""
         }
     }
 }
