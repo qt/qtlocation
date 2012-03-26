@@ -27,7 +27,7 @@
 
 /*!
 \page location-plugin-nokia.html
-\title Qt Location Nokia plugin
+\title Qt Location Nokia Plugin
 \previouspage {Qt Location Module}
 \ingroup QtLocation-plugins
 
@@ -38,6 +38,10 @@
 Included with the Qt Location is a Maps and Navigation API plugin which accesses the relevant Ovi
 services provided by Nokia.  The use of these services is governed by the terms and conditions
 available in the file plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt.
+
+The Ovi services plugin requires an application id and token pair to authenticate the application
+with the Ovi service.  To obtain an application id and token pair visit
+\l {https://api.developer.nokia.com/}
 
 The Ovi services plugin can be loaded by using the plugin key "nokia".
 

@@ -125,7 +125,7 @@ bool QGeoTileFetcherNokia::init()
 
     if (!isValidParameter(m_applicationId) || !isValidParameter(m_token)) {
         qWarning() << "Qt Location requires usage of app_id and token parameters obtained from:";
-        qWarning() << "https://api.forum.nokia.com/ovi-api/ui/registration";
+        qWarning() << "https://api.developer.nokia.com/";
     }
 
     // Temporary testing aid for setting China maptile server
