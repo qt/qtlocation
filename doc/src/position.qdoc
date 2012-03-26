@@ -143,7 +143,7 @@ cases, the default positioning methods should not be changed, as a source
 may internally use a variety of positioning methods that can be useful to
 the application.
 
-\section2 Reading NMEA Data
+\section2 NMEA Data
 
 \l {http://en.wikipedia.org/wiki/NMEA_0183}{NMEA} is a common text-based
 protocol for specifying navigational data. For convenience, the
@@ -154,18 +154,39 @@ from a NMEA log file). In simulation mode, the source will emit updates
 according to the time stamp of each NMEA sentence to produce a "replay"
 of the recorded data.
 
-
-\section2 Example: Creating a Custom Location Data Source
-
 Generally, the capabilities provided by the default position source as
 returned by QGeoPositionInfoSource::createDefaultSource(), along with the
 QNmeaPositionInfoSource class, are sufficient for retrieving location
 data. However, in some cases developers may wish to write their own custom
-location data sources.
+location data source.
 
 The \c LogFilePositionSource class in \c examples/logfilepositionsource
-shows how to subclass QGeoPositionInfoSource to create a custom location
-data source.
+shows how to subclass QGeoPositionInfoSource to create a
+\l{location-positioning-custom-data-source-example-cpp.html}{custom location
+data source}.
+
+
+\section1 Examples
+
+\section3 \b{Flickr Example}
+
+The \l{Flickr QML}{Flickr Example} uses the Location to download thumbnail
+images from Flickr relevant to the current location.
+
+
+
+\section1 Location Position Classes
+
+\annotatedlist QtLocation-positioning
+
+*/
+
+
+/*!
+\page location-positioning-custom-data-source-example-cpp.html
+
+\title Creating a Custom Location Data Source
+\previouspage {location-positioning-cpp.html}{Positioning (C++)}
 
 This example class reads location data from a text file, \e log.txt. The
 file specifies location data using a simple text format: it contains one
@@ -221,20 +242,5 @@ that is received by \c ClientApplication.
 
 Before running the example, make sure you have done both \tt make
 and \tt {make install}.
-
-
-\section1 Examples
-
-\section3 \b{Flickr Example}
-
-The \l{Flickr QML}{Flickr Example} uses the Location to download thumbnail
-images from Flickr relevant to the current location.
-
-
-
-\section1 Location Position Classes
-
-\annotatedlist QtLocation-positioning
-
 
 */
