@@ -36,9 +36,9 @@
 
 \b{Maps & Navigation} provides QtQuick user interface elements for
 displaying geographic information on a map, as well as allowing user
-interaction with map objects and the display itself. It also contains
-utilities for geocoding (finding a geographic coordinate from a street
-address) and navigation (including driving and walking directions).
+interaction with map overlay objects and the display itself. It also
+contains utilities for geocoding (finding a geographic coordinate from a
+street address) and navigation (including driving and walking directions).
 
 It builds upon the API concepts and elements in the
 \l{qtlocation-positioning-qml.html}{QML Positioning API}.
@@ -47,21 +47,21 @@ It builds upon the API concepts and elements in the
 
 \section2 Displaying Maps
 
-Displaying a map is done using the \l{QtLocation5::Map}{Map} QML element,
-which comes provided with many basic interaction utilities including the
+Displaying a map is done using the \l{QtLocation5::Map}{Map} QML element.
+The Map element supports user interaction through the
 \l{QtLocation5::MapFlickable}{MapFlickable} and
-\l{QtLocation5::MapPinchArea}{MapPinchArea}. The Map element draws the map
-on-screen using OpenGL (ES), allowing for hardware-accelerated rendering where
-available.
+\l{QtLocation5::MapPinchArea}{MapPinchArea} QML elements. The Map element
+draws the map on-screen using OpenGL (ES), allowing for hardware-accelerated
+rendering where available.
 
 \b{Key elements}
 \table
     \row
         \li \l{QtLocation5::Plugin}{Plugin}
-        \li A plugin element is necessary before creating a Map.
+        \li A location-based services plugin provides data including map data which is then displayed in a Map element.
     \row
         \li \l{QtLocation5::Map}{Map}
-        \li QtQuick item to display a map on-screen
+        \li QtQuick item to display a map on-screen.
     \row
         \li \l{QtLocation5::MapFlickable}{MapFlickable}
         \li Interaction helper for the "flick" panning gesture on a Map.
@@ -70,11 +70,15 @@ available.
         \li Interaction helper for the "pinch to zoom" gesture on a Map.
 \endtable
 
-\section2 Putting Objects on a Map
+Note that the client must create a \l{QtLocation5::Plugin}{Plugin} element
+prior to using a \l{QtLocation5::Map}{Map} element in order to have access
+to map data to display.
 
-Maps can also contain map objects, which are used to display information on
-its surface. There is a set of basic pre-defined map objects, as well as the
-ability to implement custom objects using the
+\section2 Putting Objects on a Map (Map Overlay Objects)
+
+Maps can also contain map overlay objects, which are used to display information
+on its surface. There is a set of basic pre-defined map overlay objects, as well
+as the ability to implement custom map overlay objects using the
 \l{QtLocation5::MapQuickItem}{MapQuickItem} element, which can contain any
 standard QtQuick item.
 
@@ -82,60 +86,67 @@ standard QtQuick item.
 \table
     \row
         \li \l{QtLocation5::MapCircle}{MapCircle}
-        \li Geographic circle (all points at a set distance from a center), optionally with a border.
+        \li A geographic circle (all points at a set distance from a center), optionally with a border.
     \row
         \li \l{QtLocation5::MapRectangle}{MapRectangle}
-        \li Rectangle in lat/lon space, optional border
+        \li A rectangle whose top left and bottom right points are specified as Coordinate elements, optionally with a border.
     \row
         \li \l{QtLocation5::MapPolygon}{MapPolygon}
-        \li Polygon made of an arbitrary list of \l{QtLocation5::Coordinate}{Coordinate} elements
+        \li A polygon made of an arbitrary list of \l{QtLocation5::Coordinate}{Coordinate} elements.
     \row
         \li \l{QtLocation5::MapPolyline}{MapPolyline}
-        \li Polyline made of an arbitrary list of \l{QtLocation5::Coordinate}{Coordinate} elements
-\endtable
-\table
+        \li A polyline made of an arbitrary list of \l{QtLocation5::Coordinate}{Coordinate} elements.
     \row
         \li \l{QtLocation5::MapQuickItem}{MapQuickItem}
-        \li Turns any arbitrary QtQuick Item into a map object.
+        \li Turns any arbitrary QtQuick Item into a map overlay object.  MapQuickItem is an enabler for specifying custom map overlay objects.
 \endtable
 
-\section2 Model-View Design with Map Objects
+\section2 Model-View Design with Map Overlay Objects
 
-To automatically generate Map objects based on the contents of a QtQuick
+To automatically generate map overlay objects based on the contents of a QtQuick
 model (eg a ListModel item), the \l{QtLocation5::MapItemView}{MapItemView}
-element is available. It accepts any Map object as its delegate, and can
+element is available. It accepts any map overlay object as its delegate, and can
 only be created within a \l{QtLocation5::Map}{Map}.
 
 \b{Key elements}
 \table
     \row
         \li \l{QtLocation5::MapItemView}{MapItemView}
-        \li Populates a Map with Map objects based on a model.
+        \li Populates a Map with map overlay objects based on the data provided by a model.
 \endtable
 
-\section2 Interaction with Map Objects
+\section2 Interaction with Map Overlay Objects
 
-Interaction with the pre-defined Map objects is done using the
+Interaction with the pre-defined map overlay object types is done using the
 \l{QtLocation5::MapMouseArea}{MapMouseArea} element, which behaves much like a
 normal QtQuick MouseArea. MapQuickItems can also contain MapMouseArea elements,
 but can additionally use normal QtQuick MouseAreas to provide interaction.
 
-Properties of Map objects that influence their appearance on the display can
+Properties of map overlay objects that influence their appearance on the display can
 be changed at any time, and many can also be used in animations. Animating
-coordinate-based map objects, such as MapPolygon and MapPolyline, is not yet
+coordinate-based map overlay objects, such as MapPolygon and MapPolyline, is not yet
 available.
 
 \b{Key elements}
 \table
     \row
         \li \l{QtLocation5::MapMouseArea}{MapMouseArea}
-        \li Accepts mouse events for a pre-defined Map object (eg MapCircle)
+        \li Accepts mouse events for a pre-defined map overlay object (eg MapCircle).
     \row
         \li \l{QtLocation5::MapMouseEvent}{MapMouseEvent}
         \li Provides additional information unique to mouse events on a Map.
 \endtable
 
 \section1 Geocoding -- Address to Coordinate and Vice Versa
+
+Geocoding is the translation of geographic coordinates into addresses, or vice
+versa.  Such a translation usually involves sending the source data to a server
+which then performs the translation and returns the results, although some
+location-based service provider \l{QtLocation5::Plugin}{plugins} may be able to
+provide some geocoding functionality without sending data to a remote server.
+The availability and accuracy of the translation usually depends on the location
+or address being translated, as different areas of the Earth are mapped to
+varying degrees of accuracy.
 
 A geocoding query in QML is performed using the
 \l{QtLocation5::GeocodeModel}{GeocodeModel} element. For an address-to-coordinate
@@ -149,14 +160,18 @@ of the model.
 \table
     \row
         \li \l{QtLocation5::Plugin}{Plugin}
-        \li A Plugin element is necessary before creating a GeocodeModel
+        \li A location-based services plugin provides data including geocoding translation results which are exposed to clients via a GeocodeModel.
     \row
         \li \l{QtLocation5::GeocodeModel}{GeocodeModel}
-        \li Performs geocoding queries and gives results as a model
+        \li Queries the Plugin for geocoding translations and provides access to results via indexes in the model.
     \row
         \li \l{QtLocation5::Address}{Address}
-        \li Structured address for use in queries and results of geocoding
+        \li Structured address for use in queries and results of geocoding.
 \endtable
+
+Note that the client must create a \l{QtLocation5::Plugin}{Plugin} element
+prior to using a \l{QtLocation5::GeocodeModel}{GeocodeModel} element in order
+to have access to geocoding translation services and thus data to display.
 
 \section1 Routing and Navigation
 
@@ -187,12 +202,12 @@ on the same class. Instances of QGeocodingManager are available via
 \table
     \row
         \li \l{QGeoServiceProvider}
-        \li Provides a QGeocodingManager instance ready for use
+        \li Provides a QGeocodingManager instance ready for use.
     \row
         \li \l{QGeocodingManager}
-        \li Accepts queries and produces QGeocodeReply objects
+        \li Accepts queries and produces QGeocodeReply objects.
     \row
         \li \l{QGeocodeReply}
-        \li Contains the results of a geocoding query
+        \li Contains the results of a geocoding query.
 \endtable
 */

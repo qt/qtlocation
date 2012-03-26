@@ -334,6 +334,9 @@ bool QDeclarativeGeoMap::mouseEvent(QMouseEvent* event)
 
 /*!
     \qmlproperty MapPinchArea QtLocation5::Map::pinch
+
+    Contains the MapPinchArea created with the Map.  Use \c{pinch.enabled: true}
+    to enable basic pinch gestures, or see \l{MapPinchArea} for further details.
 */
 
 QDeclarativeGeoMapPinchArea* QDeclarativeGeoMap::pinch()
@@ -414,8 +417,8 @@ QSGNode* QDeclarativeGeoMap::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
 
     This property holds the plugin which provides the mapping functionality.
 
-    This is write-once property.  Once the map has a plugin associated with
-    it any attempted modifications of the plugin will be ignored.
+    This is a write-once property. Once the map has a plugin associated with
+    it, any attempted modifications of the plugin will be ignored.
 */
 
 void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
@@ -526,7 +529,7 @@ QDeclarativeGeoServiceProvider* QDeclarativeGeoMap::plugin() const
     This property holds the minimum valid zoom level for the map.
 
     The minimum zoom level is defined by the \l plugin used.
-    If plugin supporting mapping is not set, a -1.0 is returned.
+    If a plugin supporting mapping is not set, -1.0 is returned.
 */
 
 qreal QDeclarativeGeoMap::minimumZoomLevel() const
@@ -543,7 +546,7 @@ qreal QDeclarativeGeoMap::minimumZoomLevel() const
     This property holds the maximum valid zoom level for the map.
 
     The maximum zoom level is defined by the \l plugin used.
-    If plugin supporting mapping is not set, a -1.0 is returned.
+    If a plugin supporting mapping is not set, -1.0 is returned.
 */
 
 qreal QDeclarativeGeoMap::maximumZoomLevel() const
@@ -938,7 +941,8 @@ QList<QObject*> QDeclarativeGeoMap::mapItems()
     \qmlmethod void QtLocation5::Map::removeMapItem(MapItem item)
 
     Removes the given \a item from the Map (e.g. MapQuickItem, MapCircle). If
-    the item isn't on the map, the map remains unchanged.
+    the MapItem does not exist or was not previously added to the map, the
+    method does nothing.
 
     \sa mapitems addMapItem clearMapItems
 */

@@ -241,7 +241,7 @@ bool QDeclarativeGeoServiceProvider::supportsPlaces(const PlacesFeatures &featur
     Plugin element when choosing which service plugin to attach to. If the
     \l name property is set, this has no effect.
 
-    The following values, or any bitwise combination (AND, OR etc) of these
+    Any of the following values or a bitwise combination of multiple values
     may be set:
 
     \list
@@ -312,7 +312,7 @@ QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider() 
 /*!
     \qmlproperty list<string> Plugin::locales
 
-    This property holds a set of locale preferences.  If the first locale cannot be accommodated, then
+    This property contains an ordered list of preferred plugin locales.  If the first locale cannot be accommodated, then
     the backend falls back to using the second, and so on.  By default the locales property contains the system locale.
 
     The locales are specified as strings which have the format
@@ -322,6 +322,7 @@ QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider() 
     \li language is a lowercase, two-letter, ISO 639 language code,
     \li script is a titlecase, four-letter, ISO 15924 script code,
     \li country is an uppercase, two- or three-letter, ISO 3166 country code (also "419" as defined by United Nations),
+    \li the "C" locale is identical in behavior to English/UnitedStates as per QLocale
     \endlist
 
 
