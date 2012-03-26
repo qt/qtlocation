@@ -28,12 +28,12 @@
 /*!
 \page index-qtlocation-module.html
 \title Qt Location Module
-\brief The Qt Location API provides location positioning, mapping, navigation and place search
-       via QML and C++ interfaces.
+\brief The Qt Location API provides location positioning, mapping, navigation,
+       and place search services via QML and C++ interfaces.
 \ingroup technology-apis
 
-The Qt Location API provides location positioning, mapping, navigation and place search via QML
-and C++ interfaces.
+The Qt Location API provides location positioning, mapping, navigation, and
+place search services via QML and C++ interfaces.
 
 \section1 Overview
 
