@@ -66,8 +66,8 @@ a user's favorites.
 \endtable
 
 \section3 Maps & Navigation
-Maps & Navigation provides QtQuick user
-interface elements for displaying geographic information on a map, as
+Maps & Navigation provides Qt Quick user
+interface components for displaying geographic information on a map, as
 well as allowing user interaction with map objects and the display itself.
 It also contains utilities for geocoding (finding a geographic coordinate
 from a street address) and navigation (including driving and walking
