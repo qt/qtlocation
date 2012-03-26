@@ -225,8 +225,15 @@ Map {
 //! [routemodel1]
         onStatusChanged: {
             if (status == RouteModel.Ready) {
-                if (count == 1)
+                switch (count) {
+                case 0:
+                    clearAll() // technically not an error
+                    map.routeError()
+                    break
+                case 1:
                     routeInfoModel.update()
+                    break
+                }
             }
 //! [routemodel1]
             else if (status == RouteModel.Error) {
