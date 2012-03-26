@@ -37,13 +37,96 @@ place search services via QML and C++ interfaces.
 
 \section1 Overview
 
-Qt Location is split into three core sub-modules, which each have QML and C++
+The Qt Location API gives developers the ability to determine a position by
+using a variety of possible sources, including satellite, or wifi, or text file,
+and so on. That information can then be used to determine a position in a map
+context with appropriate navigation and to embed, in the map, defined places
+with descriptive metadata. These three parts
+allow a device to know where it is and its location with respect to important
+features. Using features such as roads, destinations, routes,
+and other navigation attributes, applications can specify beginning and end-points
+for navigation and awareness of objects that may aid or hinder a journey.
+
+\section1 Getting Started
+
+To load the Qt Location module, add the following statement to your .qml files
+
+\code
+    import QtLocation 5.0
+\endcode
+
+For C++ projects include the header appropriate for the current use case,
+for example applications using routes may use
+
+\code #include <QGeoRoute> \endcode
+
+The .pro file should have the \e location keyword added
+
+\code
+    QT += location
+\endcode
+
+\section2 Concepts (in a QML Context)
+
+What follows assumes that we are using the Qt Location QML API.
+
+Position information can come from a variety of sources including satellites,
+wifi, text files and so on.
+
+The position is described by the usual latitude, longitude, and the altitude
+in meters. For more information see \l {http://en.wikipedia.org/wiki/Geographic_coordinate}{Geographic Coordinate}.
+
+The QML position is stored in a \l {QtLocation5::Coordinate}{Coordinate} which
+contains the latitude, longitude and
+altitude of the device. The \l {QtLocation5::Location}{Location} contains this Coordinate and adds an address, and a bounding box thus making
+the location a region and not just a point.
+
+Now that the device has a position, with regular updates the API can determine
+the speed and heading of the device. It can define a box or a circle that can
+produce a notification when the device either leaves or enters that region.
+
+If we introduce the idea of a \l {QtLocation5::Map}{Map} with positions of interest, \l {QtLocation5::Places}{Places}, then
+the device can be made aware of nearby features and related information, displayed
+graphically. Features on the \l Map may be places of business, entertainment and so on.
+They may include paths, roads, or forms of transport leading to the idea that
+navigation optimization and assistance are possible.
+
+To enable navigation we need \l {Route}s from start to destination. These routes
+are made up of segments. Each \l {QtLocation5::RouteSegment}{RouteSegment}
+can be considered a navigation sub-task: drive 100 meters, turn left. The beginning and
+end of each segment is a \e waypoint, that is, one part of our journey.
+
+Putting it all together we can imagine the following scenario. A user of the device
+wishes to find a local restaurant specializing in a particular cuisine. She selects
+a map application which centers on her current location/coordinate based on GPS.
+She enters a search string to search a list of local positions of interest. The
+results are displayed as a list. She selects one, this \l Place is displayed
+on the \l Map. She chooses options to navigate to it on foot. The application
+examines optimal transportation features and determines a series of waypoints
+and segments each with their own navigation advice. The navigation then proceeds
+with the user's progress monitored by means of the current \l Location. The application is
+fictional, it could be implemented many ways. However, the API supports all steps
+of this scenario.
+
+\l {Plugin}s are a means of specifying which Location based service to use. For example,
+a plugin may allow connection to a provider's service that handles geocoding and routing
+that the API and application can use. There may be various GeoServices plugins for various tasks
+with some plugins providing more than one service. One QML \l Plugin should be created
+for each required GeoService plugin. Plugins are required for maps, routing and geocoding,
+however the default plugin handles all three of these services.
+
+\section2 API Sub-Modules
+
+[ sub-module relationships diagram ]
+
+The API is split into three core sub-modules, which each have QML and C++
 APIs.
 
 \section3 Positioning
 Positioning includes all the functionality necessary to find and work with geographic
-coordinates, including working out the user's current position on the Earth's surface
-using GPS, GLONASS, or other available services.
+coordinates. It can use a variety of external sources of information, including GPS. This
+provides us with a coordinate and altitude for the device with additional features
+such as speed and direction. This provides the fundamental location information used in the API.
 \table
 \row
     \li Positioning introduction and overview:
@@ -79,6 +162,28 @@ directions).
     \li \l{Maps and Navigation (C++)}{for C++}
 \endtable
 
+\section1 New Since Qt4
+
+In Qt4 QtMobility provided some location functionality for positioning and Maps
+with landmarks support. The new Qt Location API has had an extensive reworking
+of \l {Map}s and \l Places (formerly Landmarks).
+
+New features of Qt Location includes
+\list
+    \li Maps are now part of the QML2 scenegraph, and rendered using hardware- accelerated OpenGL
+    \li Arbitrary QML2 items on the map are supported using \l MapQuickItem
+    \li Model-view support for creating map objects from a QML model
+    \li Built-in support for pinch-to-zoom gestures, flicking and "kinetic" panning
+    \li Vast performance improvements over Mobility 1.2, especially for large map polylines and objects in general
+    \li Full QML API now available for routing and geocoding -- compatible with standard QML model-view design
+    \li Service provider feature detection without having to open all the available plugins
+    \li Unified "Plugin" QML element used by routing/geocoding/maps etc with easy-to-set PluginParameters
+    \li Two plugins are supplied with Qt. The Nokia plugin for GeoServices and the JsonDb plugin for storing locally created places. The JsonDb plugin can also be used to save Favorite places linked to another plugin.
+    \li Landmarks API is replaced by the Places API
+    \li Both C++ and QML APIs have been reworked to be simpler to use.
+    \li Supports viewing of richer content such as reviews, images, and editorials
+    \li Supports locale handling, sponsored search results, and supplier attribution
+\endlist
 
 \section1 API References and Examples
 
