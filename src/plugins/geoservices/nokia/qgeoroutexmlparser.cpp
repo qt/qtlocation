@@ -333,8 +333,11 @@ bool QGeoRouteXmlParser::parseMode(QGeoRoute *route)
                     route->setTravelMode(QGeoRouteRequest::BicycleTravel);
                 else if (value == "truck")
                     route->setTravelMode(QGeoRouteRequest::TruckTravel);
-                else // unsupported optimization
+                else {
+                    // unsupported mode
+                    m_reader->raiseError(QString("Unsupported travel mode '\"%1\"'").arg(value));
                     return false;
+                }
             } else {
                 m_reader->skipCurrentElement();
             }

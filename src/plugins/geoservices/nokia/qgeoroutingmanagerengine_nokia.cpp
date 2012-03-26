@@ -223,6 +223,16 @@ bool QGeoRoutingManagerEngineNokia::checkEngineSupport(const QGeoRouteRequest &r
     if ((travelModes & supportedTravelModes()) != travelModes)
         return false;
 
+    // Count the number of set bits (= number of travel modes) (popcount)
+    int count = 0;
+
+    for (unsigned bits = travelModes; bits; bits >>= 1)
+        count += (bits & 1);
+
+    // We only allow one travel mode at a time
+    if (count != 1)
+        return false;
+
     return true;
 }
 
