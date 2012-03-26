@@ -88,7 +88,7 @@ QT_BEGIN_NAMESPACE
 
     The two most commonly used properties of the MapFlickable are \l enabled and
     \l deceleration. The former must be set in order for the MapFlickable to
-    have any effect upon its parent Map. The latter property customises the
+    have any effect upon its parent Map. The latter property customizes the
     response of the MapFlickable to input from the user, by adjusting how much
     "friction" slows down the flick after the user has raised their finger
     or released the mouse button.
@@ -130,9 +130,10 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty bool QtLocation5::MapFlickable::deceleration
+    \qmlproperty real QtLocation5::MapFlickable::deceleration
 
-    This property holds the rate at which a flick will decelerate.
+    This property holds the rate at which a flick will decelerate. The
+    larger the value, the faster the flick decelerates.
     Default value is 2500, minimum value is 500 and maximum value is 10000.
 */
 
@@ -140,8 +141,8 @@ QT_BEGIN_NAMESPACE
     \qmlsignal QtLocation5::MapFlickable::onMovementStarted()
 
     This handler is called when the view begins moving due to user
-    interaction. Typically this means that user is dragging finger
-    or mouse on the map (mouse with pressed button) but has not released yet.
+    interaction. Typically this means that the user is dragging a finger -
+    or a mouse with one of more mouse buttons pressed - on the map.
 */
 
 /*!

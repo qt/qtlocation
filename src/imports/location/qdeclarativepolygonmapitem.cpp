@@ -326,7 +326,7 @@ void QDeclarativePolygonMapItem::path_clear(
 /*!
     \qmlmethod MapPolygon::addCoordinate(Coordinate)
 
-    Adds coordinate to the path.
+    Adds a coordinate to the path.
 
     \sa removeCoordinate path
 */
@@ -348,7 +348,7 @@ void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate* coordinat
 /*!
     \qmlmethod MapPolygon::removeCoordinate(Coordinate)
 
-    Remove coordinate from the path. If there are multiple instances of the
+    Removes a coordinate from the path. If there are multiple instances of the
     same coordinate, the one added last is removed.
 
     \sa addCoordinate path

@@ -313,7 +313,7 @@ qreal QDeclarativeCircleMapItem::radius() const
   number between 0 (fully transparent) and 1 (fully opaque).  The default is 1.
 
   If an item's opacity is set to 0, the item will no longer receive mouse
-  events. In contrast, setting the visible property to false stops mouse events.
+  events. Similarly, setting the visible property to false stops mouse events.
 */
 
 

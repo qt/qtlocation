@@ -74,8 +74,8 @@ QT_BEGIN_NAMESPACE
     \section2 Performance
 
     MapPolylines have a rendering cost that is O(n) with respect to the number
-    of vertices. This means that the per frame cost of having a Polyline on
-    the Map grows in direct proportion to the number of points in the Polyline.
+    of vertices. This means that the per frame cost of having a polyline on
+    the Map grows in direct proportion to the number of points in the polyline.
 
     Like the other map objects, MapPolyline is normally drawn without a smooth
     appearance. Setting the \l opacity property will force the object to be
@@ -497,7 +497,7 @@ void QDeclarativePolylineMapItem::path_clear(
 /*!
     \qmlmethod MapPolyline::addCoordinate(Coordinate)
 
-    Adds coordinate to the path.
+    Adds a coordinate to the path.
 
     \sa removeCoordinate path
 */
@@ -518,7 +518,7 @@ void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordina
 /*!
     \qmlmethod MapPolyline::removeCoordinate(Coordinate)
 
-    Remove coordinate from the path. If there are multiple instances of the
+    Removes a coordinate from the path. If there are multiple instances of the
     same coordinate, the one added last is removed.
 
     \sa addCoordinate path
