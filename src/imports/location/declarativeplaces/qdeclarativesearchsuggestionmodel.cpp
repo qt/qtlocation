@@ -139,7 +139,7 @@ QT_USE_NAMESPACE
     \table
         \row
             \li SearchSuggestionModel.Ready
-            \li The search query has completed and the result are available.
+            \li The search query has completed, and the results are available.
         \row
             \li SearchSuggestionModel.Executing
             \li A search query is currently being executed.

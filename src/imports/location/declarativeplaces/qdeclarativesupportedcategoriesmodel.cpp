@@ -510,7 +510,7 @@ QString QDeclarativeSupportedCategoriesModel::errorString() const
     \table
         \row
             \li CategoryModel.Ready
-            \li No Error occurred during the last operation, further operations may be performed on
+            \li No error occurred during the last operation, further operations may be performed on
                the model.
         \row
             \li CategoryModel.Updating

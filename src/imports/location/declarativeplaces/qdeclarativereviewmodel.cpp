@@ -96,15 +96,15 @@ QT_BEGIN_NAMESPACE
         \row
             \li supplier
             \li \l Supplier
-            \li The supplier of the editorial.
+            \li The supplier of the review.
         \row
             \li user
             \li \l {QtLocation5::User}{User}
-            \li The user who contributed the editorial.
+            \li The user who contributed the review.
         \row
             \li attribution
             \li string
-            \li Attribution text which must be displayed when displaying the editorial.
+            \li Attribution text which must be displayed when displaying the review.
     \endtable
 */
 

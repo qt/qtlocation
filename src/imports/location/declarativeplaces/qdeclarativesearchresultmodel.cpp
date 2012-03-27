@@ -217,7 +217,7 @@ QT_USE_NAMESPACE
     \table
         \row
             \li PlaceSearchModel.Ready
-            \li The search query has completed and the result are available.
+            \li The search query has completed, and the results are available.
         \row
             \li PlaceSearchModel.Executing
             \li A search query is currently being executed.
