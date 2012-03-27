@@ -59,9 +59,11 @@ QT_BEGIN_NAMESPACE
 
     The MapRectangle element displays a rectangle on a Map. Rectangles are a
     special case of Polygon with exactly 4 vertices and "straight" sides. In
-    this case, "straight" means that the top-left and top-right points (the
-    top side) have the same latitude, the points on the left side have the
-    same longitude, and the points on the right side have another.
+    this case, "straight" means that the top-left point has the same latitude
+    as the top-right point (the top side), and the bottom-left point has the
+    same latitude as the bottom-right point (the bottom side). Similarly, the
+    points on the left side have the same longitude, and the points on the
+    right side have the same longitude.
 
     To specify the rectangle, it requires a \l topLeft and \l bottomRight point,
     both given by \l Coordinate elements.

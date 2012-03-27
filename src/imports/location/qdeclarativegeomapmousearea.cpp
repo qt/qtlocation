@@ -78,8 +78,8 @@ QT_BEGIN_NAMESPACE
 
     Information about the mouse position and button clicks are provided via
     signals for which event handler properties are defined. The most commonly
-    used involved handling mouse presses and clicks: onClicked, onDoubleClicked,
-    onPressed and onReleased.
+    used handlers involve handling mouse presses and clicks: onClicked,
+    onDoubleClicked, onPressed and onReleased.
 
     \section2 Example Usage
 
@@ -112,9 +112,9 @@ QT_BEGIN_NAMESPACE
    the mouse event itself should not be stored. The main reason for this is to
    optimize memory usage; we do not want to allocate heap memory every time the mouse
    moves.
-        \li Nested mouse areas are not supported (MapMouseArea { MapMouseArea {} }
-        \li If two or more MapMouseAreas overlap, the declaration order is significant (not e.g. 'z' value)
-        \li Only one MapMouseArea per MapItem is supported, and it always fills the whole MapItem
+        \li Nested mouse areas are not supported (MapMouseArea { MapMouseArea {} }.
+        \li If two or more MapMouseAreas overlap, the declaration order is significant (not e.g. 'z' value).
+        \li Only one MapMouseArea per MapItem is supported, and it always fills the whole MapItem.
     \endlist
 
     \sa MapMouseEvent

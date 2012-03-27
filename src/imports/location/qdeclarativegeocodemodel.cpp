@@ -294,7 +294,7 @@ void QDeclarativeGeocodeModel::pluginReady()
 /*!
     \qmlproperty Plugin QtLocation5::GeocodeModel::plugin
 
-    This property holds the plugin that providers the actual geocoding service.
+    This property holds the plugin that provides the actual geocoding service.
     Note that all plugins do not necessarily provide geocoding (could e.g. provide
     only routing or maps).
 
@@ -467,7 +467,7 @@ void QDeclarativeGeocodeModel::setLocations(const QList<QGeoLocation> &locations
 /*!
     \qmlproperty int QtLocation5::GeocodeModel::count
 
-    This property holds how many locations the model currently has
+    This property holds how many locations the model currently has.
     Amongst other uses, you can use this value when accessing locations
     via the QtLocation5::GeocodeModel::get -method.
 */
@@ -499,7 +499,7 @@ QDeclarativeGeoLocation* QDeclarativeGeocodeModel::get(int index)
 /*!
     \qmlproperty int QtLocation5::GeocodeModel::limit
 
-    This property holds the maximum number of results. The \l limit and \l offset values only
+    This property holds the maximum number of results. The \l limit and \l offset values are only
     applicable with free string geocoding (that is they are not considered when using addresses
     or coordinates in the search query).
 
@@ -585,7 +585,7 @@ void QDeclarativeGeocodeModel::reset()
     \qmlproperty QVariant QtLocation5::GeocodeModel::query
 
     This property holds the data of the geocoding request.
-    The property accepts three types of queries, which determines both the data and
+    The property accepts three types of queries which determine both the data and
     the type of action to be performed:
 
     \list

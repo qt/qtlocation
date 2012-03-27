@@ -79,7 +79,7 @@ QDeclarativeGeoMapMouseEvent::~QDeclarativeGeoMapMouseEvent()
     \qmlproperty bool QtLocation5::MapMouseEvent::accepted
 
     Setting \a accepted to true prevents the mouse event from being
-    propagated to items below this item.
+    propagated to items below the item currently handling the event.
 
     Generally, if the item acts on the mouse event then it should be accepted
     so that items lower in the stacking order do not also respond to the same event.

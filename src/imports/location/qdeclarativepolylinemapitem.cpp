@@ -604,6 +604,15 @@ void QDeclarativePolylineMapItem::updateMapItem()
     update();
 }
 
+/*!
+  \qmlproperty real MapPolyline::opacity
+
+  This property holds the opacity of the item. Opacity is specified as a
+  number between 0 (fully transparent) and 1 (fully opaque). The default is 1.
+
+  If an item's opacity is set to 0, the item will no longer receive mouse
+  events. Similarly, setting the visible property to false stops mouse events.
+*/
 QSGNode* QDeclarativePolylineMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
