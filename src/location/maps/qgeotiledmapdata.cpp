@@ -266,10 +266,24 @@ void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraDa
         map_->cameraData().setCenter(coord);
     }
 
-    cameraTiles_->setCamera(map_->cameraData());
+    // For zoomlevel, "snap" 0.05 either side of a whole number.
+    // This is so that when we turn off bilinear scaling, we're
+    // snapped to the exact pixel size of the tiles
+    QGeoCameraData cam = map_->cameraData();
+    int izl = static_cast<int>(floor(cam.zoomLevel()));
+    float delta = cam.zoomLevel() - izl;
+    if (delta > 0.5) {
+        izl++;
+        delta -= 1.0;
+    }
+    if (qAbs(delta) < 0.05) {
+        cam.setZoomLevel(izl);
+    }
+
+    cameraTiles_->setCamera(cam);
     visibleTiles_ = cameraTiles_->tiles();
 
-    mapGeometry_->setCameraData(map_->cameraData());
+    mapGeometry_->setCameraData(cam);
     mapGeometry_->setVisibleTiles(visibleTiles_);
 
     if (mapImages_) {

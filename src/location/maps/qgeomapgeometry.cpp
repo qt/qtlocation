@@ -105,6 +105,7 @@ public:
 
     bool useVerticalLock_;
     bool verticalLock_;
+    bool linearScaling_;
 
     void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
 
@@ -117,6 +118,7 @@ public:
     QGLSceneNode *buildGeometry(const QGeoTileSpec &spec);
     void setTileBounds(const QSet<QGeoTileSpec> &tiles);
     void setupCamera();
+    void setScalingOnTextures();
 
     void paintGL(QGLPainter *painter);
 
@@ -157,6 +159,14 @@ void QGeoMapGeometry::setCameraData(const QGeoCameraData &cameraData)
     Q_D(QGeoMapGeometry);
     d->cameraData_ = cameraData;
     d->intZoomLevel_ = static_cast<int>(floor(d->cameraData_.zoomLevel()));
+    float delta = cameraData.zoomLevel() - d->intZoomLevel_;
+    if (qAbs(delta) < 0.05) {
+        d->linearScaling_ = false;
+        d->setScalingOnTextures();
+    } else {
+        d->linearScaling_ = true;
+        d->setScalingOnTextures();
+    }
     d->sideLength_ = 1 << d->intZoomLevel_;
 }
 
@@ -231,6 +241,7 @@ QGeoMapGeometryPrivate::QGeoMapGeometryPrivate(QGeoMapGeometry *geometry)
       screenHeight_(0.0),
       useVerticalLock_(false),
       verticalLock_(false),
+      linearScaling_(true),
       q_ptr(geometry) {}
 
 QGeoMapGeometryPrivate::~QGeoMapGeometryPrivate()
@@ -345,8 +356,31 @@ QGLSceneNode *QGeoMapGeometryPrivate::buildGeometry(const QGeoTileSpec &spec)
     return builder.finalizedSceneNode();
 }
 
+void QGeoMapGeometryPrivate::setScalingOnTextures()
+{
+    if (!linearScaling_) {
+        foreach (const QSharedPointer<QGeoTileTexture> &tex, textures_.values()) {
+            tex->texture->setBindOptions(tex->texture->bindOptions() &
+                                         (~QGLTexture2D::LinearFilteringBindOption));
+        }
+    } else {
+        foreach (const QSharedPointer<QGeoTileTexture> &tex, textures_.values()) {
+            tex->texture->setBindOptions(tex->texture->bindOptions() |
+                                         (QGLTexture2D::LinearFilteringBindOption));
+        }
+    }
+}
+
 void QGeoMapGeometryPrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture)
 {
+    if (linearScaling_) {
+        texture->texture->setBindOptions(texture->texture->bindOptions() |
+                                         (QGLTexture2D::LinearFilteringBindOption));
+    } else {
+        texture->texture->setBindOptions(texture->texture->bindOptions() &
+                                         (~QGLTexture2D::LinearFilteringBindOption));
+    }
+
     QGLSceneNode *node = nodes_.value(spec, 0);
     if (!node) {
         node = buildGeometry(spec);
