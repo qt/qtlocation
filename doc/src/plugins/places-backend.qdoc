@@ -113,24 +113,24 @@ manager (destination manager) is used to save selected favorites from the first.
 know which ones have been 'favorited' into the destination manager and perhaps display the customized favorite name
 rather than the original name.
 
-\section2 Alternative Id Cross-Referencing
+\section2 Alternative Identifier Cross-Referencing
 In order to accomplish cross-referencing, there needs to be a link between the original place and the favorited place
-and this is typically handled via an alternative id attribute.  The favorited place contains an alternative id attribute which has the id of the original place.
+and this is typically handled via an alternative identifier attribute.  The favorited place contains an alternative identifier attribute which has the identifier of the original place.
 
 \input place-crossref.qdocinc
 
-There are 3 prerequisites for implementing cross-referencing by alternative id.  The first is that the origin manager must provide the x_provider attribute
+There are 3 prerequisites for implementing cross-referencing by alternative identifier.  The first is that the origin manager must provide the x_provider attribute
 with the value being the name of the manager's QGeoServiceProvider.  The attribute label should be kept empty, indicating the attribute should not
 be displayed to users.  \note It is generally expected that all managers should set the \c x_provider attribute.
 
 The second is that QPlaceManager::compatiblePlace() of the destination manager use the \c x_provider attribute of the initial place
-and set an alternative id attribute of the place to be saved.  The key of the alternative id attribute is \c x_id_<provider name> and
-the text value is the id of the initial place.  The \c x_provider attribute should not be passed to the compatible place.  When
+and set an alternative identifier attribute of the place to be saved.  The key of the alternative identifier attribute is \c x_id_<provider name> and
+the text value is the identifier of the initial place.  The \c x_provider attribute should not be passed to the compatible place.  When
 it is saved, the x_provider of the saved place is considered to be the destination manager.
 
 The third is that QPlaceManager::matchingPlaces() of the destination manager accept the QPlaceMatchRequest::AlternativeId as a parameter key
-and the alternative id attribute key as the value, in this case \c x_id_<provider name> would be the expected value.
-This indicates that the ids of places in the QPlaceMatchRequest should be matched against the \c x_id_<provider name> alternative id attributes.
+and the alternative identifier attribute key as the value, in this case \c x_id_<provider name> would be the expected value.
+This indicates that the identifiers of places in the QPlaceMatchRequest should be matched against the \c x_id_<provider name> alternative identifier attributes.
 
 Note that if the destination manager is to facilitate saving and cross-referencing from any arbitrary manager, it internally must
 accommodate saving of arbitrary key value pairs since we cannot know the provider names before hand, nor can we know what structure the
@@ -144,7 +144,7 @@ In this case, the manager might implement QPlaceManager::matchingPlaces() to acc
 and a parameter value of the distance two places must be in order to detect a match.  for example if an origin place and destination place are within 50m
 of each other, they can be considered the same place.
 
-Generally however it is recommended that cross referencing be implemented via alternative ids as mentioned above.
+Generally however it is recommended that cross referencing be implemented via alternative identifiers as mentioned above.
 
 \section3 User Readable vs Non-User Readable Extended Attributes
 If an attribute is not intended to be readable by end users, the label field should be kept

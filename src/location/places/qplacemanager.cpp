@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-manager
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceManager class provides the interface which allows clients to access
     places stored in a particular backend.
@@ -82,7 +82,7 @@ QT_BEGIN_NAMESPACE
             \li Rich content such as images, reviews etc can be retrieved in a paged
                fashion.
         \row
-            \li Place/Category management
+            \li Place or Category management
             \li Places and categories may be saved and removed.  It is possible
                for notifications to be given when this happens.
         \row
@@ -91,12 +91,12 @@ QT_BEGIN_NAMESPACE
                data in different languages.
     \endtable
 
-    \section1 Obtaining a QPlaceManager instance
+    \section1 Obtaining a QPlaceManager Instance
     Creation of a QPlaceManager is facilitated by the QGeoServiceProvider.
     See \l {Initializing a manager} for an example on how to create a manager.
 
 
-    \section1 Asynchronous interface.
+    \section1 Asynchronous Interface.
     The QPlaceManager class provides an abstraction of the datastore which contains place information.
     The functions provided by the QPlaceManager and primarily asynchronous and follow
     a request-reply model.   Typically a request is given to the manager, consisting
@@ -144,7 +144,7 @@ QT_BEGIN_NAMESPACE
     \value LocaleFeature The manager can be used to provide place data localized
                           according to locale
     \value NotificationsFeature The manager has signal notifications for when
-                                places/categories are added/modified/removed.
+                                places or categories are added, modified or removed.
     \value MatchingFeature The manager support matching places from other managers.
 */
 
@@ -317,7 +317,7 @@ QPlaceReply *QPlaceManager::initializeCategories()
 }
 
 /*!
-    Returns the parent category id of the category corresponding to \a categoryId.
+    Returns the parent category identifier of the category corresponding to \a categoryId.
 */
 QString QPlaceManager::parentCategoryId(const QString &categoryId) const
 {
@@ -325,8 +325,8 @@ QString QPlaceManager::parentCategoryId(const QString &categoryId) const
 }
 
 /*!
-    Returns the child category ids of the category corresponding to \a parentId.
-    If \a parentId is empty then all top level category ids are returned.
+    Returns the child category identifiers of the category corresponding to \a parentId.
+    If \a parentId is empty then all top level category identifiers are returned.
 */
 QStringList QPlaceManager::childCategoryIds(const QString &parentId) const
 {

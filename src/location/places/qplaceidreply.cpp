@@ -62,16 +62,16 @@ QT_USE_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-replies
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
-    \brief The QPlaceIdReply class manages operations which return an id such as
+    \brief The QPlaceIdReply class manages operations which return an identifier such as
            saving and removal operations of places and categories.
 
     The QPlaceIdReply can be considered a multipurpose reply in that it can
     be used to save places, save categories, remove places and remove categories.
-    In each case it returns an id of the place or category that was added/modified/removed.
+    In each case it returns an identifier of the place or category that was added, modified or removed.
 
-    See \l {Saving a place cpp}{Saving a place} for an example of how to use an id reply.
+    See \l {Saving a place cpp}{Saving a place} for an example of how to use an identifier reply.
     \sa QPlaceManager
 */
 
@@ -85,7 +85,7 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    Constructs an id reply with a given \a operationType and \a parent.
+    Constructs a reply which contains the identifier of the object operated upon. The reply is for the given \a operationType and with \a parent.
 */
 QPlaceIdReply::QPlaceIdReply(QPlaceIdReply::OperationType operationType, QObject *parent)
     : QPlaceReply(new QPlaceIdReplyPrivate(operationType), parent) {}
@@ -106,8 +106,8 @@ QPlaceReply::Type QPlaceIdReply::type() const
 }
 
 /*!
-    Returns the operation type of the reply. i.e whether this
-    id reply was for a save place operation,
+    Returns the operation type of the reply. This means whether this
+    identifier reply was for a save place operation,
     remove category operation and so on.
 */
 QPlaceIdReply::OperationType QPlaceIdReply::operationType() const
@@ -117,9 +117,9 @@ QPlaceIdReply::OperationType QPlaceIdReply::operationType() const
 }
 
 /*!
-    Returns the relevant id for the operation. Eg for a save place operation,
-    the id is that of the saved place.  For a category removal operation,
-    it is the id of the category that was removed.
+    Returns the relevant identifier for the operation. For example for a save place operation,
+    the identifier is that of the saved place.  For a category removal operation,
+    it is the identifier of the category that was removed.
 */
 QString QPlaceIdReply::id() const
 {
@@ -128,10 +128,10 @@ QString QPlaceIdReply::id() const
 }
 
 /*!
-    Sets the \a id of the reply.
+    Sets the \a identifier of the reply.
 */
-void QPlaceIdReply::setId(const QString &id)
+void QPlaceIdReply::setId(const QString &identifier)
 {
     Q_D(QPlaceIdReply);
-    d->id = id;
+    d->id = identifier;
 }

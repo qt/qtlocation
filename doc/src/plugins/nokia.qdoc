@@ -39,8 +39,8 @@ Included with the Qt Location is a Maps and Navigation API plugin which accesses
 services provided by Nokia.  The use of these services is governed by the terms and conditions
 available in the file plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt.
 
-The Ovi services plugin requires an application id and token pair to authenticate the application
-with the Ovi service.  To obtain an application id and token pair visit
+The Ovi services plugin requires an application identifier and token pair to authenticate the application
+with the Ovi service.  To obtain an application identifier and token pair visit
 \l {https://api.developer.nokia.com/}
 
 The Ovi services plugin can be loaded by using the plugin key "nokia".
@@ -219,7 +219,7 @@ that has matched the user's search query.  An 'address' only has location and na
 If a Place has a placeId, then it is a specific 'point of interest', which may have some
 or all Place properties available.
 
-\section3 Search Term suggestions
+\section3 Search Term Suggestions
 Only a partial search term and search center is supported when retrieving suggestions.
 
 \section3 Recommendation

@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass BoundingCircle QDeclarativeGeoBoundingCircle
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The BoundingCircle element represents a circular geographic area.
 
@@ -94,18 +94,8 @@ QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(const QGeoBoundingC
 /*!
     \qmlproperty QGeoBoundingCircle BoundingCircle::circle
 
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    BoundingCircle object must be obtained from C++, then use the
-    \l {QObject::property()}{property()} and \l {QObject::setProperty()}{setProperty()} functions
-    to get and set the \c circle property.
-
-    The following gets the QGeoBoundingCircle representing this object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp BoundingCircle get
-
-    The following sets the properties of this object based on a QGeoBoundingCircle object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp BoundingCircle set
+    For details on how to use this property to interface between C++ and QML see
+    "\l {location-cpp-qml.html#boundingcircle} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeGeoBoundingCircle::setCircle(const QGeoBoundingCircle& circle)
 {
@@ -119,6 +109,9 @@ QGeoBoundingCircle QDeclarativeGeoBoundingCircle::circle() const
     return m_circle;
 }
 
+/*!
+    \internal
+*/
 QGeoBoundingArea QDeclarativeGeoBoundingCircle::area() const
 {
     return circle();
@@ -202,6 +195,9 @@ void QDeclarativeGeoBoundingCircle::setRadius(qreal radius)
     synchronizeDeclarative(oldCircle, false);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoBoundingCircle::coordinateChanged()
 {
     QDeclarativeCoordinate *c = qobject_cast<QDeclarativeCoordinate *>(sender());
@@ -216,6 +212,9 @@ void QDeclarativeGeoBoundingCircle::coordinateChanged()
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoBoundingCircle::synchronizeDeclarative(const QGeoBoundingCircle &old, bool skipCenter)
 {
     if (!skipCenter && m_center && old.center() != m_circle.center())

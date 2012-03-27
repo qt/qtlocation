@@ -52,7 +52,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The Icon element represents an icon image source which can have multiple sizes.
 
@@ -100,6 +100,12 @@ QDeclarativePlaceIcon::~QDeclarativePlaceIcon()
 {
 }
 
+/*!
+    \qmlproperty QPlaceIcon Icon::icon
+
+    For details on how to use this property to interface between C++ and QML see
+    "\l {location-cpp-qml.html#placeicon} {Interfaces between C++ and QML Code}".
+*/
 QPlaceIcon QDeclarativePlaceIcon::icon() const
 {
     QPlaceIcon result;
@@ -123,21 +129,6 @@ QPlaceIcon QDeclarativePlaceIcon::icon() const
     return result;
 }
 
-/*!
-    \qmlproperty QPlaceIcon Icon::icon
-
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    Icon object must be obtained from C++, then use the \l {QObject::property()}{property()} and
-    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c icon property.
-
-    The following gets the QPlaceIcon representing this object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Icon get
-
-    The following sets the properties of this object based on a QPlaceIcon object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Icon set
-*/
 void QDeclarativePlaceIcon::setIcon(const QPlaceIcon &src)
 {
     initParameters(src.parameters());
@@ -206,6 +197,9 @@ void QDeclarativePlaceIcon::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlaceIcon::pluginReady()
 {
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
@@ -216,7 +210,8 @@ void QDeclarativePlaceIcon::pluginReady()
     }
 }
 
-/*
+/*!
+    \internal
     Helper function to return the manager from the plugin
 */
 QPlaceManager *QDeclarativePlaceIcon::manager() const
@@ -240,6 +235,9 @@ QPlaceManager *QDeclarativePlaceIcon::manager() const
     return placeManager;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlaceIcon::initParameters(const QVariantMap &parameterMap)
 {
     //clear out old parameters

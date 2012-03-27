@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass MapCircle QDeclarativeCircleMapItem
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The MapCircle element displays a geographic circle on a Map.
 
@@ -316,7 +316,9 @@ qreal QDeclarativeCircleMapItem::radius() const
   events. Similarly, setting the visible property to false stops mouse events.
 */
 
-
+/*!
+    \internal
+*/
 QSGNode* QDeclarativeCircleMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
@@ -336,6 +338,9 @@ QSGNode* QDeclarativeCircleMapItem::updatePaintNode(QSGNode* oldNode, UpdatePain
     return node;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeCircleMapItem::updateMapItem()
 {
     if (!map() || !center() || !center()->coordinate().isValid())
@@ -373,6 +378,9 @@ void QDeclarativeCircleMapItem::updateMapItem()
     update();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
     // if the scene is tilted, we must regenerate our geometry every frame
@@ -402,6 +410,9 @@ void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChange
     updateMapItem();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeCircleMapItem::dragEnded()
 {
     QPointF newPoint = QPointF(x(),y()) + QPointF(width(), height()) / 2;
@@ -412,6 +423,9 @@ void QDeclarativeCircleMapItem::dragEnded()
     }
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativeCircleMapItem::contains(QPointF point)
 {
     return (geometry_.contains(point) || borderGeometry_.contains(point));

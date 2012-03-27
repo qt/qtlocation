@@ -55,7 +55,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The PlaceSearchSuggestionModel element provides access to search term suggestions.
 
@@ -216,7 +216,7 @@ void QDeclarativeSearchSuggestionModel::setSearchTerm(const QString &searchTerm)
 }
 
 /*!
-    \qmlproperty list<string> PlaceSearchSuggestionModel::suggestions
+    \qmlproperty stringlist PlaceSearchSuggestionModel::suggestions
 
     This property holds the list of predicted search terms that the model currently has.
 */
@@ -225,6 +225,9 @@ QStringList QDeclarativeSearchSuggestionModel::suggestions() const
     return m_suggestions;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchSuggestionModel::clearData()
 {
     QDeclarativeSearchModelBase::clearData();
@@ -232,11 +235,17 @@ void QDeclarativeSearchSuggestionModel::clearData()
     m_suggestions.clear();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchSuggestionModel::updateSearchRequest()
 {
     QDeclarativeSearchModelBase::updateSearchRequest();
 }
 
+/*!
+    \internal
+*/
 int QDeclarativeSearchSuggestionModel::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent)
@@ -244,6 +253,9 @@ int QDeclarativeSearchSuggestionModel::rowCount(const QModelIndex& parent) const
     return m_suggestions.count();
 }
 
+/*!
+    \internal
+*/
 QVariant QDeclarativeSearchSuggestionModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
@@ -261,6 +273,9 @@ QVariant QDeclarativeSearchSuggestionModel::data(const QModelIndex& index, int r
     return QVariant();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchSuggestionModel::queryFinished()
 {
     if (!m_reply)
@@ -288,6 +303,9 @@ void QDeclarativeSearchSuggestionModel::queryFinished()
     reply->deleteLater();
 }
 
+/*!
+    \internal
+*/
 QPlaceReply *QDeclarativeSearchSuggestionModel::sendQuery(QPlaceManager *manager,
                                                         const QPlaceSearchRequest &request)
 {

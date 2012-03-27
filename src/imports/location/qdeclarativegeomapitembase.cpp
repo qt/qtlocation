@@ -84,6 +84,9 @@ QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
         quickMap_->removeMapItem(this);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemBase::afterChildrenChanged()
 {
     QList<QQuickItem*> kids = childItems();
@@ -104,20 +107,32 @@ void QDeclarativeGeoMapItemBase::afterChildrenChanged()
     }
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativeGeoMapItemBase::contains(QPointF point)
 {
     Q_UNUSED(point);
     return true;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemBase::dragStarted()
 {
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemBase::dragEnded()
 {
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) {
     if (quickMap == quickMap_)
         return;
@@ -139,6 +154,9 @@ void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemBase::baseCameraDataChanged(const QGeoCameraData &cameraData)
 {
     QGeoMapViewportChangeEvent evt;
@@ -165,6 +183,9 @@ void QDeclarativeGeoMapItemBase::baseCameraDataChanged(const QGeoCameraData &cam
     afterViewportChanged(evt);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate& coordinate, const QPointF& offset)
 {
     if (!map_ || !quickMap_)

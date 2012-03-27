@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \inherits QObject
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The MapType element holds information about a map type.
 
@@ -71,14 +71,14 @@ QDeclarativeGeoMapType::~QDeclarativeGeoMapType() {}
     This read-only property gives access to the style of the map type.
 
     \list
-    \o MapType.NoMap - No map.
-    \o MapType.StreetMap - A street map.
-    \o MapType.SatelliteMapDay - A map with day-time satellite imagery.
-    \o MapType.SatelliteMapNight - A map with night-time satellite imagery.
-    \o MapType.TerrainMap - A terrain map.
-    \o MapType.HybridMap - A map with satellite imagery and streen information.
-    \o MapType.GrayStreetMap - A gray-shaded street map.
-    \o MapType.CustomMap - A custom map type.
+    \li MapType.NoMap - No map.
+    \li MapType.StreetMap - A street map.
+    \li MapType.SatelliteMapDay - A map with day-time satellite imagery.
+    \li MapType.SatelliteMapNight - A map with night-time satellite imagery.
+    \li MapType.TerrainMap - A terrain map.
+    \li MapType.HybridMap - A map with satellite imagery and streen information.
+    \li MapType.GrayStreetMap - A gray-shaded street map.
+    \li MapType.CustomMap - A custom map type.
     \endlist
 */
 QDeclarativeGeoMapType::MapStyle QDeclarativeGeoMapType::style() const
@@ -89,7 +89,7 @@ QDeclarativeGeoMapType::MapStyle QDeclarativeGeoMapType::style() const
 /*!
     \qmlproperty string MapType::name
 
-    This read-only property holds the name of the map type.
+    This read-only property holds the name of the map type as a single formatted string.
 */
 QString QDeclarativeGeoMapType::name() const
 {
@@ -99,7 +99,7 @@ QString QDeclarativeGeoMapType::name() const
 /*!
     \qmlproperty string MapType::description
 
-    This read-only property holds the description of the map type.
+    This read-only property holds the description of the map type as a single formatted string.
 */
 QString QDeclarativeGeoMapType::description() const
 {

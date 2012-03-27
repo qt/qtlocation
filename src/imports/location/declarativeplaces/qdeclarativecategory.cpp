@@ -55,7 +55,7 @@ QT_USE_NAMESPACE
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
 
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The Category element represents a category that a \l Place can be associated with.
 
@@ -110,7 +110,7 @@ void QDeclarativeCategory::componentComplete()
 /*!
     \qmlproperty Plugin Category::plugin
 
-    This property holds the plugin to which the category belongs.
+    This property holds the location based service to which the category belongs.
 */
 void QDeclarativeCategory::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
@@ -135,6 +135,14 @@ void QDeclarativeCategory::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     }
 }
 
+QDeclarativeGeoServiceProvider* QDeclarativeCategory::plugin() const
+{
+    return m_plugin;
+}
+
+/*!
+    \internal
+*/
 void QDeclarativeCategory::pluginReady()
 {
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
@@ -146,25 +154,13 @@ void QDeclarativeCategory::pluginReady()
     }
 }
 
-QDeclarativeGeoServiceProvider* QDeclarativeCategory::plugin() const
-{
-    return m_plugin;
-}
 
 /*!
     \qmlproperty QPlaceCategory Category::category
+    \target Category::category
 
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    Category object must be obtained from C++, then use the \l {QObject::property()}{property()} and
-    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c category property.
-
-    The following gets the QPlaceCategory representing this object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Category get
-
-    The following sets the properties of this object based on a QPlaceCategory object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Category set
+    For details on how to use this property to interface between C++ and QML see
+    "\l {location-cpp-qml.html#category} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
 {
@@ -195,7 +191,7 @@ QPlaceCategory QDeclarativeCategory::category()
 /*!
     \qmlproperty string Category::categoryId
 
-    This property holds the id of the category.  The categoryId is a string which uniquely
+    This property holds the identifier of the category.  The categoryId is a string which uniquely
     identifies this category within the categories \l plugin.
 */
 void QDeclarativeCategory::setCategoryId(const QString &id)
@@ -214,7 +210,7 @@ QString QDeclarativeCategory::categoryId() const
 /*!
     \qmlproperty string Category::name
 
-    This property holds name of the category.
+    This property holds string based name of the category.
 */
 void QDeclarativeCategory::setName(const QString &name)
 {
@@ -275,7 +271,7 @@ void QDeclarativeCategory::setVisibility(Visibility visibility)
 /*!
     \qmlproperty PlaceIcon Category::icon
 
-    This property holds the icon associated with the category.
+    This property holds the image source associated with the category. To display the icon you can use the \l Image element.
 */
 QDeclarativePlaceIcon *QDeclarativeCategory::icon() const
 {
@@ -377,6 +373,9 @@ void QDeclarativeCategory::remove()
     setStatus(QDeclarativeCategory::Removing);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeCategory::replyFinished()
 {
     if (!m_reply)
@@ -421,7 +420,8 @@ void QDeclarativeCategory::replyFinished()
     }
 }
 
-/*
+/*!
+    \internal
     Helper function to return the manager, this manager is intended to be used to perform the next
     operation.  Sets status to Error and an appropriate m_errorString if the manager cannot be
     obtained.

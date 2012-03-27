@@ -74,7 +74,7 @@ public:
     qreal rating() const;
     void setRating(qreal data);
     QString reviewId() const;
-    void setReviewId(const QString &data);
+    void setReviewId(const QString &identifier);
     QString title() const;
     void setTitle(const QString &data);
 

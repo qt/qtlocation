@@ -49,7 +49,7 @@ QT_USE_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-replies
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceReply class manages an operation started by an instance of QPlaceManager and
            serves as a base class for more specialized replies.
@@ -109,8 +109,8 @@ QT_USE_NAMESPACE
     \value ContentReply
         This is a reply for content associated with a place.
     \value IdReply
-        This is a reply that returns an id of a place/category.
-        Typically used for place/category save and remove operations.
+        This is a reply that returns an identifier of a place or category.
+        Typically used for place or category save and remove operations.
     \value MatchReply
         This is a reply that returns places that match
         those from another provider.

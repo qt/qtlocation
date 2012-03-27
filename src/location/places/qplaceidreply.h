@@ -73,7 +73,7 @@ public:
     QString id() const;
 
 protected:
-    void setId(const QString &id);
+    void setId(const QString &identifier);
 private:
     Q_DISABLE_COPY(QPlaceIdReply)
     Q_DECLARE_PRIVATE(QPlaceIdReply)

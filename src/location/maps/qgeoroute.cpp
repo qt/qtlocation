@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoRoute
     \inmodule QtLocation
     \ingroup QtLocation-routing
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoRoute class represents a route between two points.
 
@@ -118,11 +118,11 @@ bool QGeoRoute::operator !=(const QGeoRoute &other) const
 }
 
 /*!
-    Sets the ID of this route to \a id.
+    Sets the identifier of this route to \a id.
 
     Service providers which support the updating of routes commonly assign
-    IDs to routes.  If this route came from such a service provider changing
-    the ID will probably cause route updates to stop working.
+    identifiers to routes.  If this route came from such a service provider changing
+    the identifier will probably cause route updates to stop working.
 */
 void QGeoRoute::setRouteId(const QString &id)
 {
@@ -130,10 +130,10 @@ void QGeoRoute::setRouteId(const QString &id)
 }
 
 /*!
-    Returns the ID of this route.
+    Returns the identifier of this route.
 
     Service providers which support the updating of routes commonly assign
-    IDs to routes.  If this route did not come from such a service provider
+    identifiers to routes.  If this route did not come from such a service provider
     the function will return an empty string.
 */
 QString QGeoRoute::routeId() const

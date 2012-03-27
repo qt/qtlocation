@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass RouteModel QDeclarativeGeoRouteModel
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-routing
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The RouteModel element provides access to routes.
 
@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
     geographic routes from a backend provider. Routes include data about driving
     directions between two points, walking directions with multiple waypoints,
     and various other similar concepts. It functions much like other Model
-    elements in QML (see eg. \l ListModel and \l XmlListModel), and interacts
+    elements in QML (see for example \l ListModel and \l XmlListModel), and interacts
     with views such as \l MapItemView, and \l{ListView}.
 
     Like \l Map and \l GeocodeModel, all the data for a RouteModel to work comes
@@ -190,6 +190,9 @@ void QDeclarativeGeoRouteModel::reset()
     setStatus(QDeclarativeGeoRouteModel::Null);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteModel::abortRequest()
 {
     if (reply_) {
@@ -219,6 +222,9 @@ QDeclarativeGeoRoute* QDeclarativeGeoRouteModel::get(int index)
     return routes_.at(index);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteModel::componentComplete()
 {
     complete_ = true;
@@ -227,12 +233,18 @@ void QDeclarativeGeoRouteModel::componentComplete()
     }
 }
 
+/*!
+    \internal
+*/
 int QDeclarativeGeoRouteModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     return routes_.count();
 }
 
+/*!
+    \internal
+*/
 QVariant QDeclarativeGeoRouteModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
@@ -252,6 +264,9 @@ QVariant QDeclarativeGeoRouteModel::data(const QModelIndex &index, int role) con
     return QVariant();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (plugin_ == plugin)
@@ -273,6 +288,9 @@ void QDeclarativeGeoRouteModel::setPlugin(QDeclarativeGeoServiceProvider *plugin
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteModel::pluginReady()
 {
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
@@ -287,6 +305,9 @@ void QDeclarativeGeoRouteModel::pluginReady()
             this, SLOT(routingError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteModel::queryDetailsChanged()
 {
     if (autoUpdate_ && complete_)
@@ -298,7 +319,7 @@ void QDeclarativeGeoRouteModel::queryDetailsChanged()
 
     This property holds the plugin that providers the actual
     routing service. Note that all plugins do not necessarily
-    provide routing (could e.g. provide only geocoding or maps).
+    provide routing (could for example provide only geocoding or maps).
 
     A valid plugin must be set before the RouteModel can perform any useful
     operations.
@@ -311,6 +332,9 @@ QDeclarativeGeoServiceProvider* QDeclarativeGeoRouteModel::plugin() const
     return plugin_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteModel::setQuery(QDeclarativeGeoRouteQuery* query)
 {
     if (!query || query == routeQuery_)
@@ -339,6 +363,9 @@ QDeclarativeGeoRouteQuery* QDeclarativeGeoRouteModel::query() const
     return routeQuery_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteModel::setAutoUpdate(bool autoUpdate)
 {
     if (autoUpdate_ == autoUpdate)
@@ -367,6 +394,9 @@ bool QDeclarativeGeoRouteModel::autoUpdate() const
     return autoUpdate_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteModel::setStatus(QDeclarativeGeoRouteModel::Status status)
 {
     if (status_ == status)
@@ -396,6 +426,9 @@ QDeclarativeGeoRouteModel::Status QDeclarativeGeoRouteModel::status() const
     return status_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteModel::setErrorString(const QString &error)
 {
     if (errorString_ == error)
@@ -501,6 +534,9 @@ void QDeclarativeGeoRouteModel::update()
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteModel::routingFinished(QGeoRouteReply *reply)
 {
     if (reply->error() != QGeoRouteReply::NoError) {
@@ -528,6 +564,9 @@ void QDeclarativeGeoRouteModel::routingFinished(QGeoRouteReply *reply)
         emit countChanged();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
                                                QGeoRouteReply::Error error,
                                                const QString &errorString)
@@ -544,7 +583,7 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
     \qmlclass RouteQuery QDeclarativeGeoRouteQuery
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-routing
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The RouteQuery element is used to provide query parameters to a
            RouteModel.
@@ -599,6 +638,9 @@ QDeclarativeGeoRouteQuery::~QDeclarativeGeoRouteQuery()
         exclusions_.clear();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteQuery::componentComplete()
 {
     complete_ = true;
@@ -635,19 +677,6 @@ QList<int> QDeclarativeGeoRouteQuery::featureTypes()
     return list;
 }
 
-void QDeclarativeGeoRouteQuery::setNumberAlternativeRoutes(int numberAlternativeRoutes)
-{
-    if (numberAlternativeRoutes == request_.numberAlternativeRoutes())
-        return;
-
-    request_.setNumberAlternativeRoutes(numberAlternativeRoutes);
-
-    if (complete_) {
-        emit numberAlternativeRoutesChanged();
-        emit queryDetailsChanged();
-    }
-}
-
 /*!
     \qmlproperty int RouteQuery::numberAlternativeRoutes
 
@@ -659,6 +688,19 @@ void QDeclarativeGeoRouteQuery::setNumberAlternativeRoutes(int numberAlternative
 int QDeclarativeGeoRouteQuery::numberAlternativeRoutes() const
 {
     return request_.numberAlternativeRoutes();
+}
+
+void QDeclarativeGeoRouteQuery::setNumberAlternativeRoutes(int numberAlternativeRoutes)
+{
+    if (numberAlternativeRoutes == request_.numberAlternativeRoutes())
+        return;
+
+    request_.setNumberAlternativeRoutes(numberAlternativeRoutes);
+
+    if (complete_) {
+        emit numberAlternativeRoutesChanged();
+        emit queryDetailsChanged();
+    }
 }
 
 /*!
@@ -681,6 +723,9 @@ QQmlListProperty<QDeclarativeCoordinate> QDeclarativeGeoRouteQuery::waypoints()
                                                     waypoints_at, waypoints_clear);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteQuery::waypoints_append(QQmlListProperty<QDeclarativeCoordinate> *prop,
                                                  QDeclarativeCoordinate *waypoint)
 {
@@ -688,12 +733,18 @@ void QDeclarativeGeoRouteQuery::waypoints_append(QQmlListProperty<QDeclarativeCo
     model->addWaypoint(waypoint);
 }
 
+/*!
+    \internal
+*/
 int QDeclarativeGeoRouteQuery::waypoints_count(QQmlListProperty<QDeclarativeCoordinate> *prop)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     return model->waypoints_.count();
 }
 
+/*!
+    \internal
+*/
 QDeclarativeCoordinate* QDeclarativeGeoRouteQuery::waypoints_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
@@ -701,6 +752,9 @@ QDeclarativeCoordinate* QDeclarativeGeoRouteQuery::waypoints_at(QQmlListProperty
     return model->waypoints_.at(index);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteQuery::waypoints_clear(QQmlListProperty<QDeclarativeCoordinate> *prop)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
@@ -725,18 +779,27 @@ QQmlListProperty<QDeclarativeGeoBoundingBox> QDeclarativeGeoRouteQuery::excluded
                                                         exclusions_clear);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteQuery::exclusions_append(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, QDeclarativeGeoBoundingBox *area)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     model->addExcludedArea(area);
 }
 
+/*!
+    \internal
+*/
 int QDeclarativeGeoRouteQuery::exclusions_count(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     return model->exclusions_.count();
 }
 
+/*!
+    \internal
+*/
 QDeclarativeGeoBoundingBox* QDeclarativeGeoRouteQuery::exclusions_at(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, int index)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
@@ -744,6 +807,9 @@ QDeclarativeGeoBoundingBox* QDeclarativeGeoRouteQuery::exclusions_at(QQmlListPro
     return model->exclusions_.at(index);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteQuery::exclusions_clear(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop)
 {
     QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
@@ -979,6 +1045,9 @@ int QDeclarativeGeoRouteQuery::featureWeight(FeatureType featureType)
     return request_.featureWeight(static_cast<QGeoRouteRequest::FeatureType>(featureType));
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteQuery::setTravelModes(QDeclarativeGeoRouteQuery::TravelModes travelModes)
 {
     QGeoRouteRequest::TravelModes reqTravelModes;
@@ -1102,30 +1171,6 @@ QDeclarativeGeoRouteQuery::TravelModes QDeclarativeGeoRouteQuery::travelModes() 
     return travelModes;
 }
 
-void QDeclarativeGeoRouteQuery::setRouteOptimizations(QDeclarativeGeoRouteQuery::RouteOptimizations optimization)
-{
-    QGeoRouteRequest::RouteOptimizations reqOptimizations;
-
-    if (optimization & QDeclarativeGeoRouteQuery::ShortestRoute)
-        reqOptimizations |= QGeoRouteRequest::ShortestRoute;
-    if (optimization & QDeclarativeGeoRouteQuery::FastestRoute)
-        reqOptimizations |= QGeoRouteRequest::FastestRoute;
-    if (optimization & QDeclarativeGeoRouteQuery::MostEconomicRoute)
-        reqOptimizations |= QGeoRouteRequest::MostEconomicRoute;
-    if (optimization & QDeclarativeGeoRouteQuery::MostScenicRoute)
-        reqOptimizations |= QGeoRouteRequest::MostScenicRoute;
-
-    if (reqOptimizations == request_.routeOptimization())
-        return;
-
-    request_.setRouteOptimization(reqOptimizations);
-
-    if (complete_) {
-        emit routeOptimizationsChanged();
-        emit queryDetailsChanged();
-    }
-}
-
 /*!
     \qmlproperty RouteOptimizations RouteQuery::routeOptimizations
 
@@ -1159,6 +1204,33 @@ QDeclarativeGeoRouteQuery::RouteOptimizations QDeclarativeGeoRouteQuery::routeOp
     return optimization;
 }
 
+void QDeclarativeGeoRouteQuery::setRouteOptimizations(QDeclarativeGeoRouteQuery::RouteOptimizations optimization)
+{
+    QGeoRouteRequest::RouteOptimizations reqOptimizations;
+
+    if (optimization & QDeclarativeGeoRouteQuery::ShortestRoute)
+        reqOptimizations |= QGeoRouteRequest::ShortestRoute;
+    if (optimization & QDeclarativeGeoRouteQuery::FastestRoute)
+        reqOptimizations |= QGeoRouteRequest::FastestRoute;
+    if (optimization & QDeclarativeGeoRouteQuery::MostEconomicRoute)
+        reqOptimizations |= QGeoRouteRequest::MostEconomicRoute;
+    if (optimization & QDeclarativeGeoRouteQuery::MostScenicRoute)
+        reqOptimizations |= QGeoRouteRequest::MostScenicRoute;
+
+    if (reqOptimizations == request_.routeOptimization())
+        return;
+
+    request_.setRouteOptimization(reqOptimizations);
+
+    if (complete_) {
+        emit routeOptimizationsChanged();
+        emit queryDetailsChanged();
+    }
+}
+
+/*!
+    \internal
+*/
 QGeoRouteRequest& QDeclarativeGeoRouteQuery::routeRequest()
 {
     // Bit inefficient, but waypoint and excludearea count is not big
@@ -1174,6 +1246,9 @@ QGeoRouteRequest& QDeclarativeGeoRouteQuery::routeRequest()
     return request_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoRouteQuery::waypointDestroyed(QObject* object)
 {
     const int index = waypoints_.indexOf(static_cast<QDeclarativeCoordinate*>(object));

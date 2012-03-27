@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass MapItemView QDeclarativeGeoMapItemView
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
     \inherits QQuickItem
 
     \brief The MapItemView is used to populate Map from a model.
@@ -87,14 +87,12 @@ QDeclarativeGeoMapItemView::~QDeclarativeGeoMapItemView()
         removeInstantiatedItems();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemView::componentComplete()
 {
     componentCompleted_ = true;
-}
-
-QVariant QDeclarativeGeoMapItemView::model() const
-{
-    return modelVariant_;
 }
 
 /*!
@@ -103,6 +101,10 @@ QVariant QDeclarativeGeoMapItemView::model() const
     This property holds the model that provides data for
     populating data with delegates.
 */
+QVariant QDeclarativeGeoMapItemView::model() const
+{
+    return modelVariant_;
+}
 
 void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
 {
@@ -124,11 +126,17 @@ void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
     emit modelChanged();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemView::modelReset()
 {
     repopulate();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemView::modelRowsInserted(QModelIndex, int start, int end)
 {
     if (!componentCompleted_ || !map_ || !delegate_ || !model_) {
@@ -144,6 +152,9 @@ void QDeclarativeGeoMapItemView::modelRowsInserted(QModelIndex, int start, int e
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemView::modelRowsRemoved(QModelIndex, int start, int end)
 {
     if (!componentCompleted_ || !map_ || !delegate_ || !model_)
@@ -158,11 +169,6 @@ void QDeclarativeGeoMapItemView::modelRowsRemoved(QModelIndex, int start, int en
     }
 }
 
-QQmlComponent* QDeclarativeGeoMapItemView::delegate() const
-{
-    return delegate_;
-}
-
 /*!
     \qmlproperty Component QtLocation5::MapItemView::delegate
 
@@ -171,6 +177,10 @@ QQmlComponent* QDeclarativeGeoMapItemView::delegate() const
     MapItem -derived element as the root element.
 
 */
+QQmlComponent* QDeclarativeGeoMapItemView::delegate() const
+{
+    return delegate_;
+}
 
 void QDeclarativeGeoMapItemView::setDelegate(QQmlComponent *delegate)
 {
@@ -182,7 +192,9 @@ void QDeclarativeGeoMapItemView::setDelegate(QQmlComponent *delegate)
     emit delegateChanged();
 }
 
-//void QDeclarativeGeoMapItemView::setMapData(QDeclarativeGraphicsGeoMap* map)
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemView::setMapData(QDeclarativeGeoMap* map)
 {
     if (!map || map_) // changing map on the fly not supported
@@ -190,6 +202,9 @@ void QDeclarativeGeoMapItemView::setMapData(QDeclarativeGeoMap* map)
     map_ = map;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapItemView::removeInstantiatedItems()
 {
     if (!map_)
@@ -201,7 +216,10 @@ void QDeclarativeGeoMapItemView::removeInstantiatedItems()
     mapItemList_.clear();
 }
 
-// Removes and repopulates all items.
+/*!
+    \internal
+    Removes and repopulates all items.
+*/
 void QDeclarativeGeoMapItemView::repopulate()
 {
     if (!componentCompleted_ || !map_ || !delegate_ || !model_)
@@ -224,10 +242,12 @@ void QDeclarativeGeoMapItemView::repopulate()
     }
 }
 
-// Currently item creation is tightly bound to models providing
-// QObject* as data. Some day this may be leveraged to any user defined
-// model or e.g. XML model.
-//QDeclarativeGeoMapItem* QDeclarativeGeoMapItemView::createItem(int modelRow)
+/*!
+    \internal
+    Currently item creation is tightly bound to models providing
+    QObject* as data. Some day this may be leveraged to any user defined
+    model or for example XML model.
+*/
 QDeclarativeGeoMapItemBase* QDeclarativeGeoMapItemView::createItem(int modelRow)
 {
     if (!delegate_ || !model_)
@@ -279,7 +299,6 @@ QDeclarativeGeoMapItemBase* QDeclarativeGeoMapItemView::createItem(int modelRow)
 
     This property holds whether the delegate objects created from the
     model are visible or not. Default value is true.
-
 */
 
 void QDeclarativeGeoMapItemView::setVisible(bool visible)
@@ -303,7 +322,6 @@ bool QDeclarativeGeoMapItemView::isVisible() const
     drawn in insertion order.
 
 */
-
 void QDeclarativeGeoMapItemView::setZValue(qreal zValue)
 {
     // TODO z values

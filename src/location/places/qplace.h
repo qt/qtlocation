@@ -104,7 +104,7 @@ public:
     QString name() const;
     void setName(const QString &name);
     QString placeId() const;
-    void setPlaceId(const QString &placeId);
+    void setPlaceId(const QString &identifier);
 
     QString primaryPhone() const;
     QString primaryFax() const;

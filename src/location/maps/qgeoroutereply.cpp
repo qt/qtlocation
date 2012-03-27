@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoRouteReply
     \inmodule QtLocation
     \ingroup QtLocation-routing
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoRouteReply class manages an operation started by an instance
     of QGeoRoutingManager.

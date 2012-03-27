@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
     \brief MapPinchEvent element provides basic information about pinch event.
 
     MapPinchEvent element provides basic information about pinch event. They are
-    present in handlers of MapPinch (e.g. pinchStarted/pinchUpdated). Events are only
+    present in handlers of MapPinch (for example pinchStarted/pinchUpdated). Events are only
     guaranteed to be valid for the duration of the handler.
 
     Except for the \l accepted property, all properties are read-only.
@@ -83,7 +83,7 @@ QT_BEGIN_NAMESPACE
     \endcode
 
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 */
 
 /*!
@@ -163,7 +163,7 @@ QT_BEGIN_NAMESPACE
     \endcode
 
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 */
 
 /*!
@@ -289,11 +289,17 @@ QDeclarativeGeoMapPinchArea::~QDeclarativeGeoMapPinchArea()
 {
 }
 
+/*!
+    \internal
+*/
 QDeclarativeGeoMapPinchArea::ActiveGestures QDeclarativeGeoMapPinchArea::activeGestures() const
 {
     return activeGestures_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setActiveGestures(ActiveGestures activeGestures)
 {
     if (activeGestures == activeGestures_)
@@ -306,11 +312,17 @@ void QDeclarativeGeoMapPinchArea::setActiveGestures(ActiveGestures activeGesture
     emit activeGesturesChanged();
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativeGeoMapPinchArea::active() const
 {
     return active_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setActive(bool active)
 {
     if (active == active_)
@@ -319,11 +331,17 @@ void QDeclarativeGeoMapPinchArea::setActive(bool active)
     emit activeChanged();
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativeGeoMapPinchArea::enabled() const
 {
     return enabled_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setEnabled(bool enabled)
 {
     if (enabled == enabled_)
@@ -332,11 +350,17 @@ void QDeclarativeGeoMapPinchArea::setEnabled(bool enabled)
     emit enabledChanged();
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeGeoMapPinchArea::minimumZoomLevel() const
 {
     return minimumZoomLevel_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setMinimumZoomLevel(qreal zoomLevel)
 {
     if (zoomLevel == minimumZoomLevel_ ||
@@ -347,11 +371,17 @@ void QDeclarativeGeoMapPinchArea::setMinimumZoomLevel(qreal zoomLevel)
     emit minimumZoomLevelChanged();
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeGeoMapPinchArea::maximumZoomLevel() const
 {
     return maximumZoomLevel_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setMaximumZoomLevel(qreal zoomLevel)
 {
     if (zoomLevel == maximumZoomLevel_ ||
@@ -362,9 +392,12 @@ void QDeclarativeGeoMapPinchArea::setMaximumZoomLevel(qreal zoomLevel)
     emit maximumZoomLevelChanged();
 }
 
-// called internally when plugin's limits change. somewhat dodgy but
-// initialization order complicates the zoom limit settings a bit (e.g. when is
-// it possible to check against mapping plugins' limits)
+/*!
+    \internal
+    called internally when plugin's limits change. somewhat dodgy but
+    initialization order complicates the zoom limit settings a bit (for example when is
+    it possible to check against mapping plugins' limits)
+*/
 void QDeclarativeGeoMapPinchArea::zoomLevelLimits(qreal min, qreal max)
 {
     if (minimumZoomLevel_ == -1.0 || min > minimumZoomLevel_)
@@ -373,11 +406,17 @@ void QDeclarativeGeoMapPinchArea::zoomLevelLimits(qreal min, qreal max)
         setMaximumZoomLevel(max);
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeGeoMapPinchArea::maximumZoomLevelChange() const
 {
     return maximumZoomLevelChange_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setMaximumZoomLevelChange(qreal maxChange)
 {
     if (maxChange == maximumZoomLevelChange_ || maxChange < 0.1 || maxChange > 10.0)
@@ -386,11 +425,17 @@ void QDeclarativeGeoMapPinchArea::setMaximumZoomLevelChange(qreal maxChange)
     emit maximumZoomLevelChangeChanged();
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeGeoMapPinchArea::minimumRotation() const
 {
     return minimumRotation_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setMinimumRotation(qreal rotation)
 {
     if (rotation == minimumRotation_ ||
@@ -401,11 +446,17 @@ void QDeclarativeGeoMapPinchArea::setMinimumRotation(qreal rotation)
     emit minimumRotationChanged();
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeGeoMapPinchArea::maximumRotation() const
 {
     return maximumRotation_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setMaximumRotation(qreal rotation)
 {
     if (rotation == maximumRotation_ ||
@@ -416,11 +467,17 @@ void QDeclarativeGeoMapPinchArea::setMaximumRotation(qreal rotation)
     emit maximumRotationChanged();
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeGeoMapPinchArea::rotationFactor() const
 {
     return rotationFactor_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setRotationFactor(qreal factor)
 {
     if (rotationFactor_ == factor ||
@@ -431,11 +488,17 @@ void QDeclarativeGeoMapPinchArea::setRotationFactor(qreal factor)
     emit rotationFactorChanged();
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeGeoMapPinchArea::maximumTilt() const
 {
     return maximumTilt_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setMaximumTilt(qreal tilt)
 {
     if (maximumTilt_ == tilt)
@@ -444,11 +507,17 @@ void QDeclarativeGeoMapPinchArea::setMaximumTilt(qreal tilt)
     emit maximumTiltChanged();
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeGeoMapPinchArea::minimumTilt() const
 {
     return minimumTilt_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setMinimumTilt(qreal tilt)
 {
     if (minimumTilt_ == tilt || tilt < 0.1)
@@ -457,11 +526,17 @@ void QDeclarativeGeoMapPinchArea::setMinimumTilt(qreal tilt)
     emit minimumTiltChanged();
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeGeoMapPinchArea::maximumTiltChange() const
 {
     return maximumTiltChange_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::setMaximumTiltChange(qreal tilt)
 {
     if (maximumTiltChange_ == tilt || tilt < 0.1)
@@ -470,6 +545,9 @@ void QDeclarativeGeoMapPinchArea::setMaximumTiltChange(qreal tilt)
     emit maximumTiltChangeChanged();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::touchEvent(QTouchEvent *event)
 {
     // Keep processing if gesture(s) are in progress. Otherwise we might
@@ -497,6 +575,9 @@ void QDeclarativeGeoMapPinchArea::touchEvent(QTouchEvent *event)
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapPinchArea::updatePinch()
 {
     if (touchPoints_.count() == 0) {

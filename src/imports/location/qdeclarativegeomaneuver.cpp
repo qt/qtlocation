@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass RouteManeuver QDeclarativeGeoManeuver
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-routing
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The RouteManeuver element represents the information relevant to the
     point at which two RouteSegments meet.

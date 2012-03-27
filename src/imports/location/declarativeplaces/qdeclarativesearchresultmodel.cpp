@@ -58,7 +58,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The PlaceSearchModel element provides access to place search results.
 
@@ -110,23 +110,23 @@ QT_USE_NAMESPACE
                the search term.
     \endtable
 
-    \section2 Search result types
+    \section2 Search Result Types
 
     The \c type role can take on the following values:
 
     \table
         \row
-            \o PlaceSearchModel.PlaceResult
-            \o The search result contains a place.
+            \li PlaceSearchModel.PlaceResult
+            \li The search result contains a place.
         \row
-            \o PlaceSearchModel.CorrectionResult
-            \o The search result contains a search term correction.
+            \li PlaceSearchModel.CorrectionResult
+            \li The search result contains a search term correction.
         \row
-            \o PlaceSearchModel.UnknownSearchResult
-            \o The contents of the search result are unknown.
+            \li PlaceSearchModel.UnknownSearchResult
+            \li The contents of the search result are unknown.
     \endtable
 
-    \section1 Detection of updated/removed places
+    \section1 Detection of Updated and Removed Places
 
     The PlaceSearchModel listens for places that have been updated or removed from its plugin's backend.
     If it detects that a place has been updated and that place is currently present in the model, then
@@ -174,10 +174,10 @@ QT_USE_NAMESPACE
     are matched to favorites in the favoritesPlugin.
 
     By default the parameter map is empty and implies that the favorites plugin
-    matches by \l {Alternative Id cross-referencing}{alternative ids}.  Generally,
+    matches by \l {Alternative Identifier Cross-Referencing}{alternative identifiers}.  Generally,
     an application developer will not need to set this property.
 
-    In cases where the favorites plugin does not support matching by alternative ids,
+    In cases where the favorites plugin does not support matching by alternative identifiers,
     then the \l {Information about plugins} {backend plugin documentation} should be consulted
     to see precisely what key-value parameters to set.
 */
@@ -471,6 +471,9 @@ QPlaceReply *QDeclarativeSearchResultModel::sendQuery(QPlaceManager *manager,
     return manager->search(request);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     //disconnect the manager of the old plugin if we have one
@@ -511,6 +514,9 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
     This property holds the number of results the model has.
 */
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchResultModel::placeUpdated(const QString &placeId)
 {
     int row = getRow(placeId);
@@ -521,6 +527,9 @@ void QDeclarativeSearchResultModel::placeUpdated(const QString &placeId)
         m_places.at(row)->getDetails();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchResultModel::placeRemoved(const QString &placeId)
 {
     int row = getRow(placeId);
@@ -536,6 +545,9 @@ void QDeclarativeSearchResultModel::placeRemoved(const QString &placeId)
     emit rowCountChanged();
 }
 
+/*!
+    \internal
+*/
 int QDeclarativeSearchResultModel::getRow(const QString &placeId) const
 {
     for (int i = 0; i < m_places.count(); ++i) {

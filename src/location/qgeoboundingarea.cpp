@@ -62,7 +62,7 @@ bool QGeoBoundingAreaPrivate::operator==(const QGeoBoundingAreaPrivate &other) c
     \class QGeoBoundingArea
     \inmodule QtLocation
     \ingroup QtLocation-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoBoundingArea class defines a geographic area.
 

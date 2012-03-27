@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass MapRectangle QDeclarativeRectangleMapItem
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The MapRectangle element displays a rectangle on a Map.
 
@@ -112,6 +112,9 @@ QGeoMapRectangleGeometry::QGeoMapRectangleGeometry(QObject *parent) :
 {
 }
 
+/*!
+    \internal
+*/
 void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
                                             const QGeoCoordinate &topLeft,
                                             const QGeoCoordinate &bottomRight)
@@ -169,6 +172,9 @@ QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
 {
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
@@ -197,7 +203,7 @@ QDeclarativeMapLineProperties *QDeclarativeRectangleMapItem::border()
 /*!
     \qmlproperty Coordinate MapRectangle::topLeft
 
-    Holds the top-left coordinate of the MapRectangle.
+    Holds the top-left coordinate of the MapRectangle which can be used to retrieve longitude, latitude and altitude of the coordination.
 */
 void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
 {
@@ -222,6 +228,9 @@ QDeclarativeCoordinate* QDeclarativeRectangleMapItem::topLeft()
     return topLeft_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeRectangleMapItem::updateMapItemAssumeDirty()
 {
     geometry_.markSourceDirty();
@@ -232,7 +241,7 @@ void QDeclarativeRectangleMapItem::updateMapItemAssumeDirty()
 /*!
     \qmlproperty Coordinate MapRectangle::bottomRight
 
-    Holds the bottom-right coordinate of the MapRectangle.
+    Holds the bottom-right coordinate of the MapRectangle which can be used to retrieve longitude, latitude and altitude of the coordination.
 */
 void QDeclarativeRectangleMapItem::setBottomRight(QDeclarativeCoordinate *bottomRight)
 {
@@ -286,6 +295,10 @@ void QDeclarativeRectangleMapItem::setColor(const QColor &color)
   If an item's opacity is set to 0, the item will no longer receive mouse
   events. Similarly, setting the visible property to false stops mouse events.
 */
+
+/*!
+    \internal
+*/
 QSGNode* QDeclarativeRectangleMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
@@ -306,6 +319,9 @@ QSGNode* QDeclarativeRectangleMapItem::updatePaintNode(QSGNode* oldNode, UpdateP
     return node;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeRectangleMapItem::updateMapItem()
 {
     if (!map() || !topLeft() || !topLeft()->coordinate().isValid()
@@ -348,6 +364,9 @@ void QDeclarativeRectangleMapItem::updateMapItem()
     update();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeRectangleMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
     // if the scene is tilted, we must regenerate our geometry every frame
@@ -377,11 +396,17 @@ void QDeclarativeRectangleMapItem::afterViewportChanged(const QGeoMapViewportCha
     updateMapItem();
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativeRectangleMapItem::contains(QPointF point)
 {
     return (geometry_.contains(point) || borderGeometry_.contains(point));
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeRectangleMapItem::dragEnded()
 {
     QPointF newTopLeftPoint = QPointF(x(),y());

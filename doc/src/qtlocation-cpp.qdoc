@@ -54,7 +54,7 @@ Qt Location C++ API.
         \li \l {Positioning (C++)}{Location Positioning}
         \li Retrieving information about the current position.
     \row
-        \li \l {Maps & Navigation (C++)}{Maps and Navigation}
+        \li \l {Maps and Navigation (C++)}{Maps and Navigation}
         \li Displaying maps and finding routes.
     \row
         \li \l {Places (C++)} {Places}
@@ -81,7 +81,7 @@ Qt Location C++ API.
 
 
 
-\section1 Places classes
+\section1 Places Classes
 
     \annotatedlist QtLocation-places
 */

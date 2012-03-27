@@ -60,7 +60,7 @@ QT_USE_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-replies
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceDetailsReply class manages a place details fetch operation started by an
     instance of QPlaceManager.

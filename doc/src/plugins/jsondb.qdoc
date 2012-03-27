@@ -199,7 +199,7 @@ Only small and large icons were available in this case.  Note that for a given s
 These URLs and dimensions are used by the JsonDb plugin to determine the correct URL to return when QPlaceIcon::url() or \l {QtLocation5::Icon::url()} {Icon::url()}
 is called.
 
-If we wish to change the icons we, can simply specify a different set of parameter values and then save the place/category containing the icon.
+If we wish to change the icons we, can simply specify a different set of parameter values and then save the place or category containing the icon.
 \code
 smallUrl: file:///opt/icons/new_icon_small.png
 (smallSize: QSize(20,20)) //optional
@@ -227,7 +227,7 @@ specified URL cannot currently be accessed, it is necessary to specify a recomme
 If the size of the image can be calculated and a size is also specified, then the specified size is ignored.
 
 \section4 Copying/Downloading Icons Without a Specified Destination
-It is possible to copy icons, when a place/category is saved and not have to
+It is possible to copy icons, when a place or category is saved and not have to
 specify a destination.  In this case, a data URL will be created for the icon
 in the underlying database.  A data URL contains the icon image embedded
 into the URL itself.  A destination size is chosen for the icon depending
@@ -271,7 +271,7 @@ largeSize: QSize(50,50)
 The fullscreen icon is never retrieved and converted into a data URL because data URLs are only meant
 for small icon images.
 
-\section3 Visibility scope
+\section3 Visibility Scope
 The JsonDb plugin only supports places of the QtLocation::PrivateVisibility scope.
 Specifying the QtLocation::UnspecifiedVisibility when saving a place will default
 to the QtLocation::PrivateVisibility scope.
@@ -285,7 +285,7 @@ parameters.
         \li value
     \row
         \li "alternativeId" (aka QPlaceMatchRequest::AlternativeId)
-        \li  alternative id attribute type, of the form "x_id_<provider name>" eg "x_id_nokia"
+        \li  alternative identifier attribute type, of the form "x_id_<provider name>" for example "x_id_nokia"
     \row
         \li "proximity"
         \li The distance (m) allowed between places in order to be considered a match.

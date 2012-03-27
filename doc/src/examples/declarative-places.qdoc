@@ -61,7 +61,7 @@
     from the "New" menu and fill in the fields.  Click "Go!" to save the category.
 
 
-    \section1 Displaying categories
+    \section1 Displaying Categories
 
     Before search by category can be performed, the list of available categories needs to be
     retrieved.  This is achieved by creating a \l CategoryModel.
@@ -71,7 +71,7 @@
     The \l CategoryModel element provides a model of the available categories.  It can provide
     either a flat list or a hierarchical tree model.  In this example, we use a hierarchical tree
     model, by setting the \l {CategoryModel::hierarchical}{hierarchical} property to \e true.  The
-    \l {CategoryModel::plugin}{plugin} property is set to \e placesPlugin which is the \e id of the
+    \l {CategoryModel::plugin}{plugin} property is set to \e placesPlugin which is the \e identifier of the
     \l Plugin object used for place search throughout the example.
 
     Next we create a view to display the category model.
@@ -110,7 +110,7 @@
     \snippet declarative/places/content/places/CategoryDelegate.qml CategoryModel delegate icon
 
 
-    \section1 Presenting search suggestions
+    \section1 Presenting Search Suggestions
 
     The \l PlaceSearchSuggestionModel element is used to fetch suggested search terms based on a
     partially entered search term.
@@ -141,7 +141,7 @@
     suggestion.
 
 
-    \section1 Searching for places
+    \section1 Searching for Places
 
     The \l PlaceSearchModel element is used to search for places.
 
@@ -169,7 +169,7 @@
     \snippet declarative/places/content/places/SearchResultDelegate.qml PlaceSearchModel place delegate
 
 
-    \section1 Recommending similar places
+    \section1 Recommending Similar Places
 
     The \l PlaceRecommendationModel is used to find similar places to a given place.  The model
     should be set up similarly to the \l PlaceSearchModel.  Here we use a \l BoundingCircle with a
@@ -190,7 +190,7 @@
     \l {Searching for places}{place search}.
 
 
-    \section1 Displaying place content
+    \section1 Displaying Place Content
 
     Places can have additional rich content, including editorials, reviews and images.  Rich
     content is accessed via a set of models.  Content models are generally not created directly by
@@ -201,7 +201,7 @@
     \snippet declarative/places/content/places/PlaceEditorials.qml PlaceEditorialModel view
 
 
-    \section1 Place and Category creation
+    \section1 Place and Category Creation
 
     Some backends may support creation and saving of new places and categories.  Plugin support can
     be checked an run-time by testing the \l Plugin::supportedPlacesFeatures property for the
@@ -224,7 +224,7 @@
     To remove a place, invoke its \l {Place::remove()}{remove()} method.  To remove a category,
     invoke its \l {Category::remove()}{remove()} method.
 
-    \section1 Running the example
+    \section1 Running the Example
     The example detects which plugins are available and has an option to show them in the via
     the Provider button.
 

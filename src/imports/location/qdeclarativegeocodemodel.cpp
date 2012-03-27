@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass GeocodeModel QDeclarativeGeocodeModel
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-geocoding
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The GeocodeModel element provides support for searching operations
            related to geographic information.
@@ -61,7 +61,7 @@ QT_BEGIN_NAMESPACE
     The GeocodeModel element is used as part of a model/view grouping to
     match addresses or search strings with geographic locations. How the
     geographic locations generated are used or displayed is decided by any
-    Views attached to the GeocodeModel (eg. a \l MapItemView or \l{ListView}).
+    Views attached to the GeocodeModel (for example a \l MapItemView or \l{ListView}).
 
     Like \l Map and \l RouteModel, all the data for a GeocodeModel to work
     comes from a services plugin. This is contained in the \l{plugin} property,
@@ -133,7 +133,10 @@ QDeclarativeGeocodeModel::~QDeclarativeGeocodeModel()
     delete reply_;
 }
 
-// From QQmlParserStatus
+/*!
+    \internal
+    From QQmlParserStatus
+*/
 void QDeclarativeGeocodeModel::componentComplete()
 {
     complete_ = true;
@@ -141,6 +144,9 @@ void QDeclarativeGeocodeModel::componentComplete()
         update();
 }
 
+/*!
+    \internal
+*/
 QGeoBoundingArea QDeclarativeGeocodeModel::boundingArea()
 {
     if (qobject_cast<QDeclarativeGeoBoundingBox*>(boundingArea_) && boundingBox_.isValid()) {
@@ -220,6 +226,9 @@ void QDeclarativeGeocodeModel::update()
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeocodeModel::abortRequest()
 {
     if (reply_) {
@@ -229,19 +238,28 @@ void QDeclarativeGeocodeModel::abortRequest()
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeocodeModel::queryContentChanged()
 {
     if (autoUpdate_)
         update();
 }
 
-// From QAbstractListModel
+/*!
+    \internal
+    From QAbstractListModel
+*/
 int QDeclarativeGeocodeModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     return declarativeLocations_.count();
 }
 
+/*!
+    \internal
+*/
 QVariant QDeclarativeGeocodeModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
@@ -256,6 +274,9 @@ QVariant QDeclarativeGeocodeModel::data(const QModelIndex &index, int role) cons
     return QVariant();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeocodeModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (plugin_ == plugin)
@@ -277,6 +298,9 @@ void QDeclarativeGeocodeModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeocodeModel::pluginReady()
 {
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
@@ -295,7 +319,7 @@ void QDeclarativeGeocodeModel::pluginReady()
     \qmlproperty Plugin QtLocation5::GeocodeModel::plugin
 
     This property holds the plugin that provides the actual geocoding service.
-    Note that all plugins do not necessarily provide geocoding (could e.g. provide
+    Note that all plugins do not necessarily provide geocoding (could for example provide
     only routing or maps).
 
     \sa Plugin
@@ -355,6 +379,9 @@ void QDeclarativeGeocodeModel::geocodeFinished(QGeocodeReply *reply)
         emit countChanged();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeocodeModel::geocodeError(QGeocodeReply *reply,
         QGeocodeReply::Error error,
         const QString &errorString)
@@ -452,6 +479,9 @@ void QDeclarativeGeocodeModel::setErrorString(const QString &error)
     emit errorStringChanged();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeocodeModel::setLocations(const QList<QGeoLocation> &locations)
 {
     beginResetModel();

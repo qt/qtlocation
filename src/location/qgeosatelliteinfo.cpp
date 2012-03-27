@@ -60,7 +60,7 @@ public:
     \class QGeoSatelliteInfo
     \inmodule QtLocation
     \ingroup QtLocation-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoSatelliteInfo class contains basic information about a satellite.
 
@@ -165,11 +165,11 @@ QGeoSatelliteInfo::SatelliteSystem QGeoSatelliteInfo::satelliteSystem() const
 }
 
 /*!
-    Sets the satellite ID number to \a satId.
+    Sets the satellite identifier number to \a satId.
 
-    The satellite ID number can be used to identify a satellite inside the satellite system.
-    For satellite system GPS the satellite ID number represents the PRN (Pseudo-random noise) number.
-    For satellite system GLONASS the satellite ID number represents the slot number.
+    The satellite identifier number can be used to identify a satellite inside the satellite system.
+    For satellite system GPS the satellite identifier number represents the PRN (Pseudo-random noise) number.
+    For satellite system GLONASS the satellite identifier number represents the slot number.
 */
 void QGeoSatelliteInfo::setSatelliteIdentifier(int satId)
 {
@@ -177,11 +177,11 @@ void QGeoSatelliteInfo::setSatelliteIdentifier(int satId)
 }
 
 /*!
-    Returns the satellite ID number.
+    Returns the satellite identifier number.
 
-    The satellite ID number can be used to identify a satellite inside the satellite system.
-    For satellite system GPS the satellite ID number represents the PRN (Pseudo-random noise) number.
-    For satellite system GLONASS the satellite ID number represents the slot number.
+    The satellite identifier number can be used to identify a satellite inside the satellite system.
+    For satellite system GPS the satellite identifier number represents the PRN (Pseudo-random noise) number.
+    For satellite system GLONASS the satellite identifier number represents the slot number.
 */
 int QGeoSatelliteInfo::satelliteIdentifier() const
 {

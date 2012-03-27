@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass BoundingArea QDeclarativeGeoBoundingArea
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The BoundingArea element represents an abstract geographic area.
 

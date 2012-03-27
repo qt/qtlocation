@@ -48,7 +48,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The User element identifies a user who contributed a particular \l Place content item.
 
@@ -81,17 +81,8 @@ QDeclarativePlaceUser::~QDeclarativePlaceUser() {}
 /*!
     \qmlproperty QPlaceUser User::user
 
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    User object must be obtained from C++, then use the \l {QObject::property()}{property()} and
-    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c user property.
-
-    The following gets the QPlaceUser representing this object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp User get
-
-    The following sets the properties of this object based on a QPlaceUser object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp User set
+    For details on how to use this property to interface between C++ and QML see
+    "\l {location-cpp-qml.html#placeuser} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativePlaceUser::setUser(const QPlaceUser &user)
 {
@@ -113,7 +104,7 @@ QPlaceUser QDeclarativePlaceUser::user() const
 /*!
     \qmlproperty string User::userId
 
-    This property holds the id of the user.
+    This property holds the unique identifier of the user.
 */
 
 void QDeclarativePlaceUser::setUserId(const QString &id)

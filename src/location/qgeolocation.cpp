@@ -83,7 +83,7 @@ bool QGeoLocationPrivate::isEmpty() const
     \ingroup QtLocation-positioning
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoLocation class represents basic information about a location.
 

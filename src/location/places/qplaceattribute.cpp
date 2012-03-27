@@ -77,7 +77,7 @@ bool QPlaceAttributePrivate::isEmpty() const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceAttribute class represents generic attribute information about a place.
 
@@ -94,8 +94,8 @@ bool QPlaceAttributePrivate::isEmpty() const
         \li QPlaceAttribute::Provider
     \endlist
 
-    There is a class of attribute types of the format x_id_<provider> e.g. x_id_nokia.
-    This class of attributes is a set of alternative ids of the place, from the specified provider's
+    There is a class of attribute types of the format x_id_<provider> for example x_id_nokia.
+    This class of attributes is a set of alternative identifiers of the place, from the specified provider's
     perspective.
 
     The above types are used to access and modify attributes in QPlace via:
@@ -110,7 +110,7 @@ bool QPlaceAttributePrivate::isEmpty() const
     new attributes as necessary.  Custom attribute types should always be prefixed
     by a qualifier in order to avoid conflicts.
 
-    \section3 User readable vs non-user readable attributes
+    \section3 User Readable vs Non-User Readable Attributes
     Some attributes may not be intended to be readable by end users, the label field
     of such attributes are empty to indicate this fact.
 */

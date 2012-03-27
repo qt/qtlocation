@@ -62,7 +62,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     \class QGeoPositionInfoSource
     \inmodule QtLocation
     \ingroup QtLocation-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.
 
@@ -104,7 +104,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     Defines the types of positioning methods.
 
     \value SatellitePositioningMethods Satellite-based positioning methods such as GPS or GLONASS.
-    \value NonSatellitePositioningMethods Other positioning methods such as 3GPP cell ID or WiFi based positioning.
+    \value NonSatellitePositioningMethods Other positioning methods such as 3GPP cell identifier or WiFi based positioning.
     \value AllPositioningMethods Satellite-based positioning methods as soon as available. Otherwise non-satellite based methods.
 */
 
@@ -427,7 +427,7 @@ QStringList QGeoPositionInfoSource::availableSources()
 
     \value AccessError The connection setup to the remote positioning backend failed because the
         application lacked the required privileges.
-    \value ClosedError  The remote positioning backend closed the connection, which happens e.g. in case
+    \value ClosedError  The remote positioning backend closed the connection, which happens for example in case
         the user is switching location services to off. This object becomes invalid and should be deleted.
         A call to createDefaultSource() can be used to create a new source later on.
     \value UnknownSourceError An unidentified error occurred.

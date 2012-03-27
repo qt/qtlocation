@@ -61,7 +61,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The Place element represents a place.
 
@@ -105,7 +105,7 @@ QT_USE_NAMESPACE
     possible to call \l save(), \l remove() or \l getDetails().  The \l reviewModel, \l imageModel
     and \l editorialModel are only valid then the \l plugin property is set.
 
-    \section2 Saving a place
+    \section2 Saving a Place
 
     If the \l Plugin supports it, the Place element can be used to save a place.  First create a new
     Place and set its properties:
@@ -120,15 +120,15 @@ QT_USE_NAMESPACE
     successful or to Place.Error if an error occurs.
 
     If the \l placeId property is set, the backend will update an existing place otherwise it will
-    create a new place.  On success the \l placeId property will be updated with the id of the newly
+    create a new place.  On success the \l placeId property will be updated with the identifier of the newly
     saved place.
 
     \section3 Caveats
     \input place-caveats.qdocinc
 
-    \section3 Saving between plugins
+    \section3 Saving Between Plugins
     When saving places between plugins, there are a few things to be aware of.
-    Some fields of a place such as the id, categories and icons are plugin specific entities e.g.
+    Some fields of a place such as the id, categories and icons are plugin specific entities. For example
     the categories in one manager may not be recognised in another.
     Therefore trying to save a place directly from one plugin to another is not possible.
 
@@ -136,7 +136,7 @@ QT_USE_NAMESPACE
     as explained in the Favorites section.  However there is another approach which is to create a new place,
     set its (destination) plugin and then use the \l copyFrom() method to copy the details of the original place.
     Using \l copyFrom() only copies data that is supported by the destination plugin,
-    plugin specific data such as the place id is not copied over. Once the copy is done,
+    plugin specific data such as the place identifier is not copied over. Once the copy is done,
     the place is in a suitable state to be saved.
 
     The following snippet provides an example of saving a place to a different plugin
@@ -144,7 +144,7 @@ QT_USE_NAMESPACE
 
     \snippet snippets/declarative/places.qml Place save to different plugin
 
-    \section2 Removing a place
+    \section2 Removing a Place
 
     To remove a place, ensure that a Place object with a valid \l placeId property exists and call
     its \l remove() method.  The \l status property will change to Place.Removing and then to
@@ -158,7 +158,7 @@ QT_USE_NAMESPACE
     Each Place has a favorite property which is intended to contain the corresponding place
     from the destination plugin (the place itself is sourced from the origin plugin).  Because both the original
     place and favorite instances are available, the developer can choose which
-    properties to show to the user.  e.g. the favorite may have a modified name which should
+    properties to show to the user. For example the favorite may have a modified name which should
     be displayed rather than the original name.
 
     \snippet snippets/declarative/places.qml Place favorite
@@ -223,7 +223,7 @@ void QDeclarativePlace::componentComplete()
 /*!
     \qmlproperty Plugin Place::plugin
 
-    This property holds the \l Plugin that provided this place.
+    This property holds the \l Plugin that provided this place which can be used to retrieve more information about the service.
 */
 void QDeclarativePlace::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
@@ -305,17 +305,8 @@ QDeclarativePlaceEditorialModel *QDeclarativePlace::editorialModel()
 /*!
     \qmlproperty QPlace Place::place
 
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    Place object must be obtained from C++, then use the \l {QObject::property()}{property()} and
-    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c place property.
-
-    The following gets the QPlace representing this object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Place get
-
-    The following sets the properties of this object based on a QPlace object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Place set
+    For details on how to use this property to interface between C++ and QML see
+    "\l {location-cpp-qml.html#place} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativePlace::setPlace(const QPlace &src)
 {
@@ -448,7 +439,7 @@ QPlace QDeclarativePlace::place()
 /*!
     \qmlproperty QtLocation5::Location Place::location
 
-    This property holds the location of the place.
+    This property holds the location of the place which can be used to retrieve the coordinate, address and the BoundingBox.
 */
 void QDeclarativePlace::setLocation(QDeclarativeGeoLocation *location)
 {
@@ -495,6 +486,7 @@ QDeclarativeRatings *QDeclarativePlace::ratings()
     \qmlproperty Supplier Place::supplier
 
     This property holds the supplier of the place data.
+    The supplier is typically a business or organization that collected the data about the place.
 */
 void QDeclarativePlace::setSupplier(QDeclarativeSupplier *supplier)
 {
@@ -538,7 +530,7 @@ void QDeclarativePlace::setIcon(QDeclarativePlaceIcon *icon)
 /*!
     \qmlproperty string Place::name
 
-    This property holds the name of the place.
+    This property holds the name of the place which can be used to represent the place.
 */
 void QDeclarativePlace::setName(const QString &name)
 {
@@ -556,11 +548,11 @@ QString QDeclarativePlace::name() const
 /*!
     \qmlproperty string Place::placeId
 
-    This property holds the unique identifier of the place.  The place id is only meaningful to the
+    This property holds the unique identifier of the place.  The place identifier is only meaningful to the
     \l Plugin that generated it and is not transferable between \l {Plugin}{Plugins}.  The place id
     is not guaranteed to be universally unique, but unique within the \l Plugin that generated it.
 
-    If only the place id is known, all other place data can fetched from the \l Plugin.
+    If only the place identifier is known, all other place data can fetched from the \l Plugin.
 
     \snippet snippets/declarative/places.qml Place placeId
 */
@@ -661,6 +653,9 @@ QDeclarativePlace::Status QDeclarativePlace::status() const
     return m_status;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlace::finished()
 {
     if (!m_reply)
@@ -709,6 +704,9 @@ void QDeclarativePlace::finished()
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlace::contactsModified(const QString &key, const QVariant &value)
 {
     //TODO: This is a workaround to allow an assignment of a single contact detail
@@ -728,6 +726,9 @@ void QDeclarativePlace::contactsModified(const QString &key, const QVariant &val
     primarySignalsEmission(key);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlace::cleanupDeletedCategories()
 {
     foreach (QDeclarativeCategory * category, m_categoriesToBeDeleted) {
@@ -910,6 +911,9 @@ QQmlListProperty<QDeclarativeCategory> QDeclarativePlace::categories()
                                                           category_clear);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlace::category_append(QQmlListProperty<QDeclarativeCategory> *prop,
                                                   QDeclarativeCategory *value)
 {
@@ -928,11 +932,17 @@ void QDeclarativePlace::category_append(QQmlListProperty<QDeclarativeCategory> *
     }
 }
 
+/*!
+    \internal
+*/
 int QDeclarativePlace::category_count(QQmlListProperty<QDeclarativeCategory> *prop)
 {
     return static_cast<QDeclarativePlace*>(prop->object)->m_categories.count();
 }
 
+/*!
+    \internal
+*/
 QDeclarativeCategory* QDeclarativePlace::category_at(QQmlListProperty<QDeclarativeCategory> *prop,
                                                                           int index)
 {
@@ -944,6 +954,9 @@ QDeclarativeCategory* QDeclarativePlace::category_at(QQmlListProperty<QDeclarati
     return res;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlace::category_clear(QQmlListProperty<QDeclarativeCategory> *prop)
 {
     QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
@@ -961,6 +974,9 @@ void QDeclarativePlace::category_clear(QQmlListProperty<QDeclarativeCategory> *p
     QTimer::singleShot(0, object, SLOT(cleanupDeletedCategories()));
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlace::synchronizeCategories()
 {
     qDeleteAll(m_categories);
@@ -1039,7 +1055,7 @@ void QDeclarativePlace::setFavorite(QDeclarativePlace *favorite)
     \qmlmethod Place::copyFrom(Place original)
 
     Copies data from an \a original place into this place.  Only data that is supported by this
-    place's plugin is copied over and plugin specific data such as place id is not copied over.
+    place's plugin is copied over and plugin specific data such as place identifier is not copied over.
 */
 void QDeclarativePlace::copyFrom(QDeclarativePlace *original)
 {
@@ -1067,6 +1083,9 @@ void QDeclarativePlace::initializeFavorite(QDeclarativeGeoServiceProvider *plugi
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlace::synchronizeExtendedAttributes()
 {
     QStringList keys = m_extendedAttributes->keys();
@@ -1082,6 +1101,9 @@ void QDeclarativePlace::synchronizeExtendedAttributes()
     emit extendedAttributesChanged();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlace::synchronizeContacts()
 {
     //clear out contact data
@@ -1109,7 +1131,8 @@ void QDeclarativePlace::synchronizeContacts()
     primarySignalsEmission();
 }
 
-/*
+/*!
+    \internal
     Helper function to emit the signals for the primary___()
     fields.  It is expected that the values of the primary___()
     functions have already been modified to new values.
@@ -1151,7 +1174,8 @@ void QDeclarativePlace::primarySignalsEmission(const QString &type)
     }
 }
 
-/*
+/*!
+    \internal
     Helper function to return the manager, this manager is intended to be used
     to perform the next operation.  If a an operation is currently underway
     then return a null pointer.
@@ -1186,6 +1210,9 @@ QPlaceManager *QDeclarativePlace::manager()
     return placeManager;
 }
 
+/*!
+    \internal
+*/
 QString QDeclarativePlace::primaryValue(const QString &contactType) const
 {
     if (m_contactDetails->value(contactType).userType() == QVariant::List) {

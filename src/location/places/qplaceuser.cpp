@@ -68,7 +68,7 @@ bool QPlaceUserPrivate::operator==(const QPlaceUserPrivate &other) const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceUser class represents an individual user.
 */
@@ -122,7 +122,7 @@ bool QPlaceUser::operator==(const QPlaceUser &other) const
 }
 
 /*!
-    Returns the id of the user.
+    Returns the identifier of the user.
 */
 QString QPlaceUser::userId() const
 {
@@ -130,11 +130,11 @@ QString QPlaceUser::userId() const
 }
 
 /*!
-    Sets the \a id of the user.
+    Sets the \a identifier of the user.
 */
-void QPlaceUser::setUserId(const QString &id)
+void QPlaceUser::setUserId(const QString &identifier)
 {
-    d->userId = id;
+    d->userId = identifier;
 }
 
 /*!

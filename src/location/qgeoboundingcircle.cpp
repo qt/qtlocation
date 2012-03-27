@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoBoundingCircle
     \inmodule QtLocation
     \ingroup QtLocation-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoBoundingCircle class defines a circular geographic area.
 

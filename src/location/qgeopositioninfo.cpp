@@ -58,7 +58,7 @@ public:
     \class QGeoPositionInfo
     \inmodule QtLocation
     \ingroup QtLocation-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoPositionInfo class contains information gathered on a global position, direction and velocity at a particular point in time.
 

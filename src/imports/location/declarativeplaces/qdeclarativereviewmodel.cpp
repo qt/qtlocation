@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The ReviewModel element provides access to reviews of a \l Place.
 
@@ -88,7 +88,7 @@ QT_BEGIN_NAMESPACE
         \row
             \li reviewId
             \li string
-            \li The id of the review.
+            \li The identifier of the review.
         \row
             \li title
             \li string
@@ -144,6 +144,9 @@ QDeclarativeReviewModel::~QDeclarativeReviewModel()
     qDeleteAll(m_suppliers);
 }
 
+/*!
+    \internal
+*/
 QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())

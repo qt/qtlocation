@@ -75,7 +75,7 @@ bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceContent class serves as the base class for rich content types.
 
@@ -112,7 +112,7 @@ bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
     index of the content.  The value is the content object itself.
 
     The \c {Collection} is intended to be a container where content items, that have been retrieved
-    as pages, can be stored.  This enables a developer to skip pages, e.g. indexes 0-9 may be
+    as pages, can be stored.  This enables a developer to skip pages, for example indexes 0-9 may be
     stored in the collection,  if the user skips to indexes 80-99, these can be stored in the
     collection as well.
 */

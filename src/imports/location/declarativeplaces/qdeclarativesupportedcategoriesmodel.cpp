@@ -54,7 +54,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The CategoryModel element provides a model of the categories supported by a \l Plugin.
 
@@ -122,9 +122,9 @@ QT_USE_NAMESPACE
     This read-only property holds the current status of the model.
 
     \list
-    \o CategoryModel.Ready - Category request(s) have finished successfully.
-    \o CategoryModel.Updating - Category request has been issued but not yet finished
-    \o CategoryModel.Error - An error has occurred, details are in \l errorString
+    \li CategoryModel.Ready - Category request(s) have finished successfully.
+    \li CategoryModel.Updating - Category request has been issued but not yet finished
+    \li CategoryModel.Error - An error has occurred, details are in \l errorString
     \endlist
 */
 
@@ -147,12 +147,18 @@ QDeclarativeSupportedCategoriesModel::~QDeclarativeSupportedCategoriesModel()
     qDeleteAll(m_categoriesTree);
 }
 
+/*!
+    \internal
+*/
 // From QQmlParserStatus
 void QDeclarativeSupportedCategoriesModel::componentComplete()
 {
     m_complete = true;
 }
 
+/*!
+    \internal
+*/
 int QDeclarativeSupportedCategoriesModel::rowCount(const QModelIndex& parent) const
 {
     if (m_categoriesTree.keys().isEmpty())
@@ -167,6 +173,9 @@ int QDeclarativeSupportedCategoriesModel::rowCount(const QModelIndex& parent) co
     return node->childIds.count();
 }
 
+/*!
+    \internal
+*/
 int QDeclarativeSupportedCategoriesModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
@@ -174,6 +183,9 @@ int QDeclarativeSupportedCategoriesModel::columnCount(const QModelIndex &parent)
     return 1;
 }
 
+/*!
+    \internal
+*/
 QModelIndex QDeclarativeSupportedCategoriesModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (column != 0 || row < 0)
@@ -195,6 +207,9 @@ QModelIndex QDeclarativeSupportedCategoriesModel::index(int row, int column, con
     return createIndex(row, 0, m_categoriesTree.value(id));
 }
 
+/*!
+    \internal
+*/
 QModelIndex QDeclarativeSupportedCategoriesModel::parent(const QModelIndex &child) const
 {
     PlaceCategoryNode *childNode = static_cast<PlaceCategoryNode *>(child.internalPointer());
@@ -227,6 +242,9 @@ QVariant QDeclarativeSupportedCategoriesModel::data(const QModelIndex &index, in
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (m_plugin == plugin)
@@ -264,11 +282,17 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
     update();
 }
 
+/*!
+    \internal
+*/
 QDeclarativeGeoServiceProvider* QDeclarativeSupportedCategoriesModel::plugin() const
 {
     return m_plugin;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSupportedCategoriesModel::setHierarchical(bool hierarchical)
 {
     if (m_hierarchical == hierarchical)
@@ -280,11 +304,17 @@ void QDeclarativeSupportedCategoriesModel::setHierarchical(bool hierarchical)
     updateLayout();
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativeSupportedCategoriesModel::hierarchical() const
 {
     return m_hierarchical;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSupportedCategoriesModel::replyFinished()
 {
     if (!m_response)
@@ -308,6 +338,9 @@ void QDeclarativeSupportedCategoriesModel::replyFinished()
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSupportedCategoriesModel::addedCategory(const QPlaceCategory &category,
                                                          const QString &parentId)
 {
@@ -337,6 +370,9 @@ void QDeclarativeSupportedCategoriesModel::addedCategory(const QPlaceCategory &c
     reset();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSupportedCategoriesModel::updatedCategory(const QPlaceCategory &category,
                                                            const QString &parentId)
 {
@@ -399,6 +435,9 @@ void QDeclarativeSupportedCategoriesModel::updatedCategory(const QPlaceCategory 
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSupportedCategoriesModel::removedCategory(const QString &categoryId, const QString &parentId)
 {
     if (!m_categoriesTree.contains(categoryId) || !m_categoriesTree.contains(parentId))
@@ -414,6 +453,9 @@ void QDeclarativeSupportedCategoriesModel::removedCategory(const QString &catego
     endRemoveRows();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
 {
     if (!m_plugin)
@@ -439,6 +481,9 @@ void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
             this, SLOT(removedCategory(QString, QString)));
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSupportedCategoriesModel::update()
 {
     beginResetModel();
@@ -471,6 +516,9 @@ void QDeclarativeSupportedCategoriesModel::update()
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSupportedCategoriesModel::updateLayout()
 {
     if (!m_plugin)
@@ -534,6 +582,9 @@ QDeclarativeSupportedCategoriesModel::Status QDeclarativeSupportedCategoriesMode
     return m_status;
 }
 
+/*!
+    \internal
+*/
 QStringList QDeclarativeSupportedCategoriesModel::populateCategories(QPlaceManager *manager, const QPlaceCategory &parent)
 {
     Q_ASSERT(manager);
@@ -565,6 +616,9 @@ QStringList QDeclarativeSupportedCategoriesModel::populateCategories(QPlaceManag
     return childIds;
 }
 
+/*!
+    \internal
+*/
 QModelIndex QDeclarativeSupportedCategoriesModel::index(const QString &categoryId) const
 {
     if (categoryId.isEmpty())
@@ -584,6 +638,9 @@ QModelIndex QDeclarativeSupportedCategoriesModel::index(const QString &categoryI
     return createIndex(parentNode->childIds.indexOf(categoryId), 0, categoryNode);
 }
 
+/*!
+    \internal
+*/
 int QDeclarativeSupportedCategoriesModel::rowToAddChild(PlaceCategoryNode *node, const QPlaceCategory &category)
 {
     Q_ASSERT(node);
@@ -594,7 +651,8 @@ int QDeclarativeSupportedCategoriesModel::rowToAddChild(PlaceCategoryNode *node,
     return node->childIds.count();
 }
 
-/*
+/*!
+    \internal
     Helper function to return the manager, this manager is intended to be used
     to perform the next operation.  If the checkState parameter is true,
     the model is checked to see if an operation is underway and if so

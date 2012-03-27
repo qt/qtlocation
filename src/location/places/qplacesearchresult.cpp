@@ -79,7 +79,7 @@ bool QPlaceSearchResultPrivate::operator==(const QPlaceSearchResultPrivate &othe
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceSearchResult class represents a search result.
 

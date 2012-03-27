@@ -49,7 +49,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass Coordinate QDeclarativeCoordinate
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The Coordinate element represents and stores a geographic position.
 
@@ -116,18 +116,8 @@ QDeclarativeCoordinate::~QDeclarativeCoordinate() {}
 /*!
     \qmlproperty QGeoCoordinate Coordinate::coordinate
 
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    Coordinate object must be obtained from C++, then use the \l {QObject::property()}{property()}
-    and \l {QObject::setProperty()}{setProperty()} functions to get and set the \c coordinate
-    property.
-
-    The following gets the QGeoCoordinate representing this object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Coordinate get
-
-    The following sets the properties of this object based on a QGeoCoordinate object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Coordinate set
+    For details on how to use this property to interface between C++ and QML see
+    "\l {location-cpp-qml.html#geocoordinate} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeCoordinate::setCoordinate(const QGeoCoordinate &coordinate)
 {

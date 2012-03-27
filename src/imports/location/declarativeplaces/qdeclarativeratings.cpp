@@ -48,7 +48,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The Ratings element holds place rating information.
 
@@ -75,17 +75,8 @@ QDeclarativeRatings::~QDeclarativeRatings() {}
 /*!
     \qmlproperty QPlaceRatings Ratings::ratings
 
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    Ratings object must be obtained from C++, then use the \l {QObject::property()}{property()} and
-    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c ratings property.
-
-    The following gets the QPlaceRating representing this object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Ratings get
-
-    The following sets the properties of this object based on a QPlaceRatings object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Ratings set
+    For details on how to use this property to interface between C++ and QML see
+    "\l {location-cpp-qml.html#placeratings} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeRatings::setRatings(const QPlaceRatings &ratings)
 {

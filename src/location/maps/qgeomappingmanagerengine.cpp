@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoMappingManagerEngine
     \inmodule QtLocation
     \ingroup QtLocation-impl
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoMappingManagerEngine class provides an interface and convenience methods
     to implementors of QGeoServiceProvider plugins who want to provide support for displaying

@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass MapQuickItem QDeclarativeGeoMapQuickItem
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The MapQuickItem element displays an arbitrary Qt Quick element
            on a Map.
@@ -201,6 +201,9 @@ void QDeclarativeGeoMapQuickItem::setCoordinate(QDeclarativeCoordinate *coordina
     emit coordinateChanged();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
@@ -212,6 +215,9 @@ void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapQuickItem::dragEnded()
 {
     if (!mapAndSourceItemSet_)
@@ -223,6 +229,9 @@ void QDeclarativeGeoMapQuickItem::dragEnded()
     }
 }
 
+/*!
+    \internal
+*/
 QDeclarativeCoordinate* QDeclarativeGeoMapQuickItem::coordinate()
 {
     return coordinate_;
@@ -249,6 +258,9 @@ QQuickItem* QDeclarativeGeoMapQuickItem::sourceItem()
     return sourceItem_.data();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapQuickItem::afterChildrenChanged()
 {
     QList<QQuickItem*> kids = childItems();
@@ -322,6 +334,9 @@ qreal QDeclarativeGeoMapQuickItem::zoomLevel() const
     return zoomLevel_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapQuickItem::updateMapItem()
 {
     if (!quickMap() && sourceItem_) {
@@ -357,11 +372,17 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
     update();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapQuickItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
     // do nothing
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeGeoMapQuickItem::scaleFactor()
 {
     qreal scale = 1.0;

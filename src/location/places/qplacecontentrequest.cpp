@@ -80,7 +80,7 @@ void QPlaceContentRequestPrivate::clear()
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-requests
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceContentRequest class represents the parameters of a content request.
 
@@ -150,7 +150,7 @@ bool QPlaceContentRequest::operator!= (const QPlaceContentRequest &other) const
 }
 
 /*!
-    Returns the type of content to be requested, e.g. reviews or images
+    Returns the type of content to be requested, for example reviews or images
 */
 QPlaceContent::Type QPlaceContentRequest::contentType() const
 {

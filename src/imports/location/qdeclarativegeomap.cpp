@@ -72,7 +72,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass Map QDeclarativeGeoMap
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The Map element displays a map.
 
@@ -110,7 +110,7 @@ QT_BEGIN_NAMESPACE
 
     Map objects can be declared within the body of a Map element in QML and will
     automatically appear on the Map. To add objects programmatically, first be
-    sure they are created with the Map as their parent (e.g. in an argument to
+    sure they are created with the Map as their parent (for example in an argument to
     Component::createObject), and then call the \l addMapItem method on the Map.
     A corresponding \l removeMapItem method also exists to do the opposite and
     remove an object from the Map.
@@ -225,6 +225,9 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::onMapChildrenChanged()
 {
     if (!componentCompleted_)
@@ -269,6 +272,9 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
     copyrights->setCopyrightsZ(maxChildZ + 1);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::pluginReady()
 {
     serviceProvider_  = plugin_->sharedGeoServiceProvider();
@@ -288,6 +294,9 @@ void QDeclarativeGeoMap::pluginReady()
     disconnect(this, SLOT(pluginReady()));
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::componentComplete()
 {
     QLOC_TRACE0;
@@ -297,25 +306,37 @@ void QDeclarativeGeoMap::componentComplete()
     QQuickItem::componentComplete();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::mousePressEvent(QMouseEvent *event)
 {
     if (!mouseEvent(event))
         event->ignore();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::mouseMoveEvent(QMouseEvent *event)
 {
     if (!mouseEvent(event))
         event->ignore();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
 {
     if (!mouseEvent(event))
         event->ignore();
 }
 
-// returns whether flickable used the event
+/*!
+    \internal
+    returns whether flickable used the event
+*/
 bool QDeclarativeGeoMap::mouseEvent(QMouseEvent* event)
 {
     if (!mappingManagerInitialized_)
@@ -356,6 +377,9 @@ QDeclarativeGeoMapFlickable* QDeclarativeGeoMap::flick()
     return flickable_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData & data)
 {
     QLOC_TRACE0;
@@ -363,6 +387,9 @@ void QDeclarativeGeoMap::itemChange(ItemChange change, const ItemChangeData & da
         canvas_ = data.canvas;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::populateMap()
 {
     QObjectList kids = children();
@@ -381,6 +408,9 @@ void QDeclarativeGeoMap::populateMap()
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
 {
     Q_UNUSED(view)
@@ -388,6 +418,9 @@ void QDeclarativeGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
     view->repopulate();
 }
 
+/*!
+    \internal
+*/
 QSGNode* QDeclarativeGeoMap::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data)
@@ -438,7 +471,10 @@ void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     }
 }
 
-// this function will only be ever called once
+/*!
+    \internal
+    this function will only be ever called once
+*/
 void QDeclarativeGeoMap::mappingManagerInitialized()
 {
     mappingManagerInitialized_ = true;
@@ -512,12 +548,19 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     emit activeMapTypeChanged();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::updateMapDisplay(const QRectF &target)
 {
     Q_UNUSED(target);
     QQuickItem::update();
 }
 
+
+/*!
+    \internal
+*/
 QDeclarativeGeoServiceProvider* QDeclarativeGeoMap::plugin() const
 {
     return plugin_;
@@ -557,6 +600,9 @@ qreal QDeclarativeGeoMap::maximumZoomLevel() const
         return -1.0;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::setBearing(qreal bearing)
 {
     if (bearing_ == bearing)
@@ -582,9 +628,9 @@ void QDeclarativeGeoMap::setBearing(qreal bearing)
     visually looks like rotating the map counter-clockwise.
 
     You can also assign negative values, which will internally get
-    translated into positive bearing (e.g. -10 equals 350). This is primarily for
-    convenience (e.g. you can decrement bearing without worrying about it).
-    Assigning values greater than abs(360) will be mod'd (e.g. 365 will result
+    translated into positive bearing (for example -10 equals 350). This is primarily for
+    convenience (for example you can decrement bearing without worrying about it).
+    Assigning values greater than abs(360) will be mod'd (for example 365 will result
     in 5).
 
     The default value is 0 corresponding North pointing up.
@@ -602,16 +648,6 @@ qreal QDeclarativeGeoMap::bearing() const
     }
 }
 
-void QDeclarativeGeoMap::setTilt(qreal tilt)
-{
-    if (tilt_ == tilt || tilt > 85.0 || tilt < 0)
-        return;
-    tilt_ = tilt;
-    if (mappingManagerInitialized_)
-        map_->mapController()->setTilt(tilt);
-    emit tiltChanged(tilt);
-}
-
 /*!
     \qmlproperty real Map::tilt
 
@@ -627,6 +663,16 @@ qreal QDeclarativeGeoMap::tilt() const
     if (!mappingManagerInitialized_)
         return tilt_;
     return map_->mapController()->tilt();
+}
+
+void QDeclarativeGeoMap::setTilt(qreal tilt)
+{
+    if (tilt_ == tilt || tilt > 85.0 || tilt < 0)
+        return;
+    tilt_ = tilt;
+    if (mappingManagerInitialized_)
+        map_->mapController()->setTilt(tilt);
+    emit tiltChanged(tilt);
 }
 
 /*!
@@ -725,6 +771,9 @@ QDeclarativeCoordinate* QDeclarativeGeoMap::center()
     return center_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::mapZoomLevelChanged(qreal zoom)
 {
     if (zoom == zoomLevel_)
@@ -733,6 +782,9 @@ void QDeclarativeGeoMap::mapZoomLevelChanged(qreal zoom)
     emit zoomLevelChanged(zoomLevel_);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::mapTiltChanged(qreal tilt)
 {
     if (tilt == zoomLevel_)
@@ -741,6 +793,9 @@ void QDeclarativeGeoMap::mapTiltChanged(qreal tilt)
     emit tiltChanged(tilt_);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::mapBearingChanged(qreal bearing)
 {
     if (bearing == bearing_)
@@ -749,6 +804,9 @@ void QDeclarativeGeoMap::mapBearingChanged(qreal bearing)
     emit bearingChanged(bearing_);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::mapCenterChanged(AnimatableCoordinate center)
 {
     if (center.coordinate() != this->center()->coordinate()) {
@@ -758,6 +816,9 @@ void QDeclarativeGeoMap::mapCenterChanged(AnimatableCoordinate center)
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::centerLatitudeChanged(double latitude)
 {
     if (qIsNaN(latitude))
@@ -777,6 +838,9 @@ void QDeclarativeGeoMap::centerLatitudeChanged(double latitude)
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::centerLongitudeChanged(double longitude)
 {
     if (qIsNaN(longitude))
@@ -796,6 +860,9 @@ void QDeclarativeGeoMap::centerLongitudeChanged(double longitude)
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
 {
     if (qIsNaN(altitude))
@@ -865,6 +932,9 @@ QPointF QDeclarativeGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate)
     return point;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::pan(int dx, int dy)
 {
     if (!mappingManagerInitialized_)
@@ -872,6 +942,9 @@ void QDeclarativeGeoMap::pan(int dx, int dy)
     map_->mapController()->pan(dx, dy);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
 {
     if (!mappingManagerInitialized_) {
@@ -883,6 +956,9 @@ void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
     pinchArea_->touchEvent(event);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 {
     QLOC_TRACE0;
@@ -893,7 +969,7 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 /*!
     \qmlmethod QtLocation5::Map::addMapItem(MapItem item)
 
-    Adds the given \a item to the Map (e.g. MapQuickItem, MapCircle). If the object
+    Adds the given \a item to the Map (for example MapQuickItem, MapCircle). If the object
     already is on the Map, it will not be added again.
 
     As an example, consider the case where you have a MapCircle representing your current position:
@@ -940,7 +1016,7 @@ QList<QObject*> QDeclarativeGeoMap::mapItems()
 /*!
     \qmlmethod void QtLocation5::Map::removeMapItem(MapItem item)
 
-    Removes the given \a item from the Map (e.g. MapQuickItem, MapCircle). If
+    Removes the given \a item from the Map (for example MapQuickItem, MapCircle). If
     the MapItem does not exist or was not previously added to the map, the
     method does nothing.
 
@@ -984,14 +1060,6 @@ void QDeclarativeGeoMap::clearMapItems()
     updateMutex_.unlock();
 }
 
-void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
-{
-    activeMapType_ = mapType;
-    map_->setActiveMapType(mapType->mapType());
-    emit activeMapTypeChanged();
-}
-
-
 /*!
     \qmlproperty MapType QtLocation5::Map::activeMapType
 
@@ -1002,6 +1070,12 @@ void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
 
     \sa MapType
 */
+void QDeclarativeGeoMap::setActiveMapType(QDeclarativeGeoMapType *mapType)
+{
+    activeMapType_ = mapType;
+    map_->setActiveMapType(mapType->mapType());
+    emit activeMapTypeChanged();
+}
 
 QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
 {
@@ -1009,12 +1083,8 @@ QDeclarativeGeoMapType * QDeclarativeGeoMap::activeMapType() const
 }
 
 /*!
-    \qmlmethod QtLocation5::Map::removeMapItem(MapItem)
-
-    Removes the given MapItem from the Map. If the MapItem does not
-    exist, function does nothing.
+    \internal
 */
-
 void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
     if (!mappingManagerInitialized_)

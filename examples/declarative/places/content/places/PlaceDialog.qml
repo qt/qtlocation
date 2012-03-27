@@ -45,39 +45,39 @@ import QtLocation.examples 5.0
 Dialog {
     id: root
     property list<Category> __categories
-    property Place __place
+    property Place locationPlace
     property bool __createdPlace: false
 
     signal completed;
 
     function prepareDialog(inputPlace) {
         if (!inputPlace) {
-            __place = Qt.createQmlObject('import QtLocation 5.0; Place { }', root);
+            locationPlace = Qt.createQmlObject('import QtLocation 5.0; Place { }', root);
             __createdPlace = true;
         } else {
-            __place  = inputPlace;
+            locationPlace  = inputPlace;
             __createdPlace = false;
         }
 
         setDataFields([
-            ["Name", __place ? __place.name : ""],
-            ["Street", __place ? __place.location.address.street : ""],
-            ["District", __place ? __place.location.address.district : ""],
-            ["City", __place ? __place.location.address.city : ""],
-            ["County", __place ? __place.location.address.county : ""],
-            ["State", __place ? __place.location.address.state : ""],
-            ["Country code", __place ? __place.location.address.countryCode : ""],
-            ["Country", __place ? __place.location.address.country : ""],
-            ["Postal code", __place ? __place.location.address.postalCode : ""],
-            ["Latitude", __place ? __place.location.latitude : ""],
-            ["Longitude", __place ? __place.location.longitude : ""],
-            ["Phone", __place ? __place.primaryPhone : ""],
-            ["Fax", __place ? __place.primaryFax : ""],
-            ["Email", __place ? __place.primaryEmail : ""],
-            ["Website", __place ? __place.primaryWebsite.toString() : ""]
+            ["Name", locationPlace ? locationPlace.name : ""],
+            ["Street", locationPlace ? locationPlace.location.address.street : ""],
+            ["District", locationPlace ? locationPlace.location.address.district : ""],
+            ["City", locationPlace ? locationPlace.location.address.city : ""],
+            ["County", locationPlace ? locationPlace.location.address.county : ""],
+            ["State", locationPlace ? locationPlace.location.address.state : ""],
+            ["Country code", locationPlace ? locationPlace.location.address.countryCode : ""],
+            ["Country", locationPlace ? locationPlace.location.address.country : ""],
+            ["Postal code", locationPlace ? locationPlace.location.address.postalCode : ""],
+            ["Latitude", locationPlace ? locationPlace.location.latitude : ""],
+            ["Longitude", locationPlace ? locationPlace.location.longitude : ""],
+            ["Phone", locationPlace ? locationPlace.primaryPhone : ""],
+            ["Fax", locationPlace ? locationPlace.primaryFax : ""],
+            ["Email", locationPlace ? locationPlace.primaryEmail : ""],
+            ["Website", locationPlace ? locationPlace.primaryWebsite.toString() : ""]
         ]);
 
-        __categories = __place ? __place.categories : new Array()
+        __categories = locationPlace ? locationPlace.categories : new Array()
     }
 
     function setDataFields(objects)
@@ -89,25 +89,25 @@ Dialog {
 
     function processStatus() {
         if (processStatus.prevStatus == Place.Saving) {
-            switch (__place.status) {
+            switch (locationPlace.status) {
             case Place.Ready:
                 console.log("Save complete");
                 if (__createdPlace) {
-                    __place.destroy();
+                    locationPlace.destroy();
                     __createdPlace  = false;
                     processStatus.prevStatus = null;
                 }
                 completed();
                 break;
             case Place.Error:
-                console.log("Save failed:" + __place.errorString());
-                errorDialog.text = __place.errorString();
+                console.log("Save failed:" + locationPlace.errorString());
+                errorDialog.text = locationPlace.errorString();
                 errorDialog.opacity = 1;
                 break;
             }
         }
 
-        processStatus.prevStatus = __place.status;
+        processStatus.prevStatus = locationPlace.status;
     }
 
    Behavior on opacity { NumberAnimation { duration: 500 } }
@@ -118,47 +118,48 @@ Dialog {
     }
 
     onGoButtonClicked: {
-        if (__place.status == Place.Saving)
+        if (locationPlace.status == Place.Saving)
             return;
+//! [Place save]
+        locationPlace.plugin = placesPlugin;
 
-        __place.plugin = placesPlugin;
+        locationPlace.name = dataFieldsModel.get(0).inputText;
+        locationPlace.location.address.street = dataFieldsModel.get(1).inputText;
+        locationPlace.location.address.district = dataFieldsModel.get(2).inputText;
+        locationPlace.location.address.city = dataFieldsModel.get(3).inputText;
+        locationPlace.location.address.county = dataFieldsModel.get(4).inputText;
+        locationPlace.location.address.state = dataFieldsModel.get(5).inputText;
+        locationPlace.location.address.countryCode = dataFieldsModel.get(6).inputText;
+        locationPlace.location.address.country = dataFieldsModel.get(7).inputText;
+        locationPlace.location.address.postalCode = dataFieldsModel.get(8).inputText;
 
-        __place.name = dataFieldsModel.get(0).inputText;
-        __place.location.address.street = dataFieldsModel.get(1).inputText;
-        __place.location.address.district = dataFieldsModel.get(2).inputText;
-        __place.location.address.city = dataFieldsModel.get(3).inputText;
-        __place.location.address.county = dataFieldsModel.get(4).inputText;
-        __place.location.address.state = dataFieldsModel.get(5).inputText;
-        __place.location.address.countryCode = dataFieldsModel.get(6).inputText;
-        __place.location.address.country = dataFieldsModel.get(7).inputText;
-        __place.location.address.postalCode = dataFieldsModel.get(8).inputText;
+        locationPlace.location.coordinate.latitude = parseFloat(dataFieldsModel.get(9).inputText);
+        locationPlace.location.coordinate.longitude = parseFloat(dataFieldsModel.get(10).inputText);
 
-        __place.location.coordinate.latitude = parseFloat(dataFieldsModel.get(9).inputText);
-        __place.location.coordinate.longitude = parseFloat(dataFieldsModel.get(10).inputText);
-
-        var phone = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', __place);
+        var phone = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', locationPlace);
         phone.label = "Phone";
         phone.value = dataFieldsModel.get(11).inputText;
-        __place.contactDetails.phone = phone;
+        locationPlace.contactDetails.phone = phone;
 
-        var fax = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', __place);
+        var fax = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', locationPlace);
         fax.label = "Fax";
         fax.value = dataFieldsModel.get(12).inputText;
-        __place.contactDetails.fax = fax;
+        locationPlace.contactDetails.fax = fax;
 
-        var email = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', __place);
+        var email = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', locationPlace);
         email.label = "Email";
         email.value = dataFieldsModel.get(13).inputText;
-        __place.contactDetails.email = email;
+        locationPlace.contactDetails.email = email;
 
-        var website = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', __place);
+        var website = Qt.createQmlObject('import QtLocation 5.0; ContactDetail { }', locationPlace);
         website.label = "Website";
         website.value = dataFieldsModel.get(14).inputText;
-        __place.contactDetails.website = website;
+        locationPlace.contactDetails.website = website;
 
-        __place.categories = __categories;
-        __place.statusChanged.connect(processStatus);
-        __place.save();
+        locationPlace.categories = __categories;
+        locationPlace.statusChanged.connect(processStatus);
+        locationPlace.save();
+//! [Place save]
     }
 
     onClearButtonClicked: {
@@ -168,8 +169,8 @@ Dialog {
     }
 
     onCancelButtonClicked: {
-        if (__place && __createdPlace)
-            __place.destroy();
+        if (locationPlace && __createdPlace)
+            locationPlace.destroy();
     }
 
     onOpacityChanged: {

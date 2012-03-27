@@ -105,7 +105,7 @@ void QPlaceMatchRequestPrivate::clear()
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-requests
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceMatchRequest class is used to find places from one manager that match those from another.  It represents
     a set of request parameters.
@@ -113,8 +113,8 @@ void QPlaceMatchRequestPrivate::clear()
     Places from another manager that may have corresponding/matching places in the current manager are assigned using setPlaces() or setResults().
     A set of further parameters are specified which determines the criteria for matching.
 
-    The typical key for matching is the QPlaceMatchRequest::AlternativeId, the value is an alternative id attribute type of the format
-    x_id_<provider name> eg x_id_nokia.  The provider name is name supplied to the QGeoServiceProvider instance.
+    The typical key for matching is the QPlaceMatchRequest::AlternativeId, the value is an alternative identifier attribute type of the format
+    x_id_<provider name> for example x_id_nokia.  The provider name is name supplied to the QGeoServiceProvider instance.
 
     See \l {Matching places between managers} for an example on how to use a match request.
 
@@ -123,7 +123,7 @@ void QPlaceMatchRequestPrivate::clear()
 
 /*!
    \variable QPlaceMatchRequest::AlternativeId
-   The key to specify that matching is to be accomplished via an alternative place id.
+   The key to specify that matching is to be accomplished via an alternative place identifier.
 */
 const QString QPlaceMatchRequest::AlternativeId(QLatin1String("alternativeId"));
 

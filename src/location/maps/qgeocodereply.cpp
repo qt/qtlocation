@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
     \class QGeocodeReply
     \inmodule QtLocation
     \ingroup QtLocation-geocoding
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeocodeReply class manages an operation started by an
     instance of QGeocodingManager.

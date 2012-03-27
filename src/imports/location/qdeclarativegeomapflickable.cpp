@@ -118,7 +118,7 @@ QT_BEGIN_NAMESPACE
     \endcode
 
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 */
 
 /*!
@@ -193,6 +193,9 @@ QDeclarativeGeoMapFlickable::~QDeclarativeGeoMapFlickable()
 {
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapFlickable::setMap(QGeoMap* map)
 {
     if (map_ || !map)
@@ -203,11 +206,17 @@ void QDeclarativeGeoMapFlickable::setMap(QGeoMap* map)
     connect(animation_, SIGNAL(finished()), this, SLOT(flickAnimationFinished()));
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeGeoMapFlickable::deceleration() const
 {
     return deceleration_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapFlickable::setDeceleration(qreal deceleration)
 {
     if (deceleration < QML_MAP_FLICK_MINIMUMDECELERATION)
@@ -220,6 +229,9 @@ void QDeclarativeGeoMapFlickable::setDeceleration(qreal deceleration)
     emit decelerationChanged();
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativeGeoMapFlickable::mousePressEvent(QMouseEvent *event)
 {
     if (!enabled_)
@@ -234,6 +246,9 @@ bool QDeclarativeGeoMapFlickable::mousePressEvent(QMouseEvent *event)
     return true;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapFlickable::stop()
 {
     velocityBufferX_.clear();
@@ -255,6 +270,9 @@ void QDeclarativeGeoMapFlickable::stop()
     velocityTime_.invalidate();
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativeGeoMapFlickable::mouseMoveEvent(QMouseEvent *event)
 {
     if (!enabled_ || !pressed_ || !lastPosTime_.isValid())
@@ -298,6 +316,9 @@ bool QDeclarativeGeoMapFlickable::mouseMoveEvent(QMouseEvent *event)
     return true;
 }
 
+/*!
+    \internal
+*/
 // FIXME:
 // - not left right / up down flicking, so if map is rotated, will act unintuitively
 void QDeclarativeGeoMapFlickable::updateCamera(int dx, int dy, int timeMs)
@@ -333,8 +354,11 @@ void QDeclarativeGeoMapFlickable::updateCamera(int dx, int dy, int timeMs)
     }
 }
 
-// Adds velocity sample to sample buffer. Data is later used to calculate
-// flick speed. By default 3 latest samples are considered.
+/*!
+    \internal
+    Adds velocity sample to sample buffer. Data is later used to calculate
+    flick speed. By default 3 latest samples are considered.
+*/
 void QDeclarativeGeoMapFlickable::addVelocitySample(QVector<qreal>& buffer, qreal sample)
 {
     if (sample > maxVelocity_)
@@ -346,6 +370,9 @@ void QDeclarativeGeoMapFlickable::addVelocitySample(QVector<qreal>& buffer, qrea
         buffer.remove(0);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapFlickable::updateVelocity(QVector<qreal>& buffer, qreal& velocity)
 {
     if (buffer.count() > QML_MAP_FLICK_DISCARDSAMPLES) {
@@ -359,7 +386,9 @@ void QDeclarativeGeoMapFlickable::updateVelocity(QVector<qreal>& buffer, qreal& 
     }
 }
 
-
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapFlickable::setEnabled(bool enabled)
 {
     if (enabled_ == enabled)
@@ -370,11 +399,17 @@ void QDeclarativeGeoMapFlickable::setEnabled(bool enabled)
     emit enabledChanged();
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativeGeoMapFlickable::enabled() const
 {
     return enabled_;
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativeGeoMapFlickable::mouseReleaseEvent(QMouseEvent *event)
 {
     if (!pressed_ || !enabled_)
@@ -434,6 +469,9 @@ bool QDeclarativeGeoMapFlickable::mouseReleaseEvent(QMouseEvent *event)
     return true;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapFlickable::flickAnimationFinished()
 {
     //qDebug() << metaObject()->className() << __FUNCTION__;
@@ -452,6 +490,9 @@ void QDeclarativeGeoMapFlickable::flickAnimationValueChanged(const QVariant& val
 }
 */
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapFlickable::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event); // TODO press delay handling

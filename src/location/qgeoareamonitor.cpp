@@ -46,7 +46,7 @@
     \class QGeoAreaMonitor
     \inmodule QtLocation
     \ingroup QtLocation-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoAreaMonitor class enables the detection of proximity
     changes for a specified set of coordinates.

@@ -80,7 +80,7 @@ bool QPlaceCategoryPrivate::isEmpty() const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceCategory class represents a category that a \l QPlace can be associated with.
 
@@ -143,8 +143,8 @@ bool QPlaceCategory::operator==(const QPlaceCategory &other) const
 }
 
 /*!
-    Returns the id of the category.  The category id is a string which uniquely identifies this category
-    within a particular \l QPlaceManager.  The id is only meaningful to the QPlaceManager
+    Returns the identifier of the category.  The category identifier is a string which uniquely identifies this category
+    within a particular \l QPlaceManager.  The identifier is only meaningful to the QPlaceManager
     that generated it and is not transferable between managers.
 */
 QString QPlaceCategory::categoryId() const
@@ -153,11 +153,11 @@ QString QPlaceCategory::categoryId() const
 }
 
 /*!
-    Sets the \a id of the category.
+    Sets the \a identifier of the category.
 */
-void QPlaceCategory::setCategoryId(const QString &id)
+void QPlaceCategory::setCategoryId(const QString &identifier)
 {
-    d->categoryId = id;
+    d->categoryId = identifier;
 }
 
 /*!

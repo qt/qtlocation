@@ -47,7 +47,7 @@ QT_USE_NAMESPACE
     \qmlclass Location QDeclarativeGeoLocation
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The Location element holds location data.
 
@@ -107,17 +107,8 @@ QDeclarativeGeoLocation::~QDeclarativeGeoLocation()
 /*!
     \qmlproperty QGeoLocation QtLocation5::Location::location
 
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    Location object must be obtained from C++, then use the \l {QObject::property()}{property()} and
-    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c location property.
-
-    The following gets the QGeoLocation representing this object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Location get
-
-    The following sets the properties of this object based on a QGeoLocation object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Location set
+    For details on how to use this property to interface between C++ and QML see
+    "\l {location-cpp-qml.html#location} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
 {
@@ -155,7 +146,7 @@ QGeoLocation QDeclarativeGeoLocation::location()
 /*!
     \qmlproperty Address QtLocation5::Location::address
 
-    This property holds address of the location.
+    This property holds the address of the location which can be use to retrieve address details of the location.
 */
 void QDeclarativeGeoLocation::setAddress(QDeclarativeGeoAddress *address)
 {
@@ -177,7 +168,7 @@ QDeclarativeGeoAddress *QDeclarativeGeoLocation::address()
 /*!
     \qmlproperty Coordinate QtLocation5::Location::coordinate
 
-    This property holds the exact geographical coordinate of the location.
+    This property holds the exact geographical coordinate of the location which can be used to retrieve the latitude, longitude and altitude of the location.
 
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.

@@ -72,12 +72,12 @@ bool QPlaceImagePrivate::compare(const QPlaceContentPrivate *other) const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceImage class represents a reference to an image.
 
     Each QPlaceImage represents a set of metadata about an image such as it's
-    url, id and MIME type.  These are properties in addition to those provided
+    url, identifier and MIME type.  These are properties in addition to those provided
     by QPlaceContent.
 
     Note: The Places API only supports images as 'retrieve-only' objects.  Submitting
@@ -128,7 +128,7 @@ void QPlaceImage::setUrl(const QUrl &url)
 }
 
 /*!
-    Returns the image's id.
+    Returns the image's identifier.
 */
 QString QPlaceImage::imageId() const
 {
@@ -137,12 +137,12 @@ QString QPlaceImage::imageId() const
 }
 
 /*!
-    Sets image's \a id.
+    Sets image's \a identifier.
 */
-void QPlaceImage::setImageId(const QString &id)
+void QPlaceImage::setImageId(const QString &identifier)
 {
     Q_D(QPlaceImage);
-    d->id = id;
+    d->id = identifier;
 }
 
 /*!

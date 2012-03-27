@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
     \ingroup QtLocation-impl
     \ingroup QtLocation-places
     \ingroup QtLocation-places-manager
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceManagerEngine class provides an interface for
     implementers of QGeoServiceProvider plugins who want to provide access to place
@@ -256,7 +256,7 @@ QPlaceReply *QPlaceManagerEngine::initializeCategories()
 }
 
 /*!
-    Returns the parent category id of the category corresponding to \a categoryId.
+    Returns the parent category identifier of the category corresponding to \a categoryId.
 */
 QString QPlaceManagerEngine::parentCategoryId(const QString &categoryId) const
 {
@@ -266,8 +266,8 @@ QString QPlaceManagerEngine::parentCategoryId(const QString &categoryId) const
 }
 
 /*!
-    Returns the child category ids of the category corresponding to \a parentId.  If \a parentId is
-    empty then all top level category ids are returned.
+    Returns the child category identifiers of the category corresponding to \a parentId.  If \a parentId is
+    empty then all top level category identifiers are returned.
 */
 QStringList QPlaceManagerEngine::childCategoryIds(const QString &categoryId) const
 {

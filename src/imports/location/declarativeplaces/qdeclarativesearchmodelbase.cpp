@@ -58,11 +58,17 @@ QDeclarativeSearchModelBase::~QDeclarativeSearchModelBase()
 {
 }
 
+/*!
+    \internal
+*/
 QDeclarativeGeoServiceProvider* QDeclarativeSearchModelBase::plugin() const
 {
     return m_plugin;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (m_plugin == plugin)
@@ -74,11 +80,17 @@ void QDeclarativeSearchModelBase::setPlugin(QDeclarativeGeoServiceProvider *plug
         emit pluginChanged();
 }
 
+/*!
+    \internal
+*/
 QDeclarativeGeoBoundingArea *QDeclarativeSearchModelBase::searchArea() const
 {
     return m_searchArea;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::setSearchArea(QDeclarativeGeoBoundingArea *searchArea)
 {
     if (m_searchArea == searchArea)
@@ -88,11 +100,17 @@ void QDeclarativeSearchModelBase::setSearchArea(QDeclarativeGeoBoundingArea *sea
     emit searchAreaChanged();
 }
 
+/*!
+    \internal
+*/
 int QDeclarativeSearchModelBase::offset() const
 {
     return m_request.offset();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::setOffset(int offset)
 {
     if (m_request.offset() == offset)
@@ -102,11 +120,17 @@ void QDeclarativeSearchModelBase::setOffset(int offset)
     emit offsetChanged();
 }
 
+/*!
+    \internal
+*/
 int QDeclarativeSearchModelBase::limit() const
 {
     return m_request.limit();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::setLimit(int limit)
 {
     if (m_request.limit() == limit)
@@ -116,11 +140,17 @@ void QDeclarativeSearchModelBase::setLimit(int limit)
     emit limitChanged();
 }
 
+/*!
+    \internal
+*/
 QDeclarativeSearchModelBase::Status QDeclarativeSearchModelBase::status() const
 {
     return m_status;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::setStatus(Status status, const QString &errorString)
 {
     if (m_status == status)
@@ -131,6 +161,9 @@ void QDeclarativeSearchModelBase::setStatus(Status status, const QString &errorS
     emit statusChanged();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::execute()
 {
     if (!m_plugin) {
@@ -163,6 +196,9 @@ void QDeclarativeSearchModelBase::execute()
     setStatus(Executing);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::cancel()
 {
     if (!m_reply)
@@ -178,6 +214,9 @@ void QDeclarativeSearchModelBase::cancel()
     setStatus(Ready);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::clear()
 {
     beginResetModel();
@@ -185,30 +224,48 @@ void QDeclarativeSearchModelBase::clear()
     endResetModel();
 }
 
+/*!
+    \internal
+*/
 QString QDeclarativeSearchModelBase::errorString() const
 {
     return m_errorString;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::clearData()
 {
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::updateSearchRequest()
 {
     if (m_searchArea)
         m_request.setSearchArea(m_searchArea->area());
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::classBegin()
 {
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::componentComplete()
 {
     m_complete = true;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (plugin != m_plugin) {
@@ -235,6 +292,9 @@ void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvide
     reset(); // reset the model
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSearchModelBase::pluginNameChanged()
 {
     initializePlugin(m_plugin);

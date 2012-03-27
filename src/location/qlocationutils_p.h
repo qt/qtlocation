@@ -91,7 +91,7 @@ public:
     Q_AUTOTEST_EXPORT static bool getNmeaTime(const QByteArray &bytes, QTime *time);
 
     /*
-        Accepts e.g. ("2734.7964", 'S', "15306.0124", 'E') and returns the
+        Accepts for example ("2734.7964", 'S', "15306.0124", 'E') and returns the
         lat-long values. Fails if lat or long fail isValidLat() or isValidLong().
     */
     Q_AUTOTEST_EXPORT static bool getNmeaLatLong(const QByteArray &latString, char latDirection, const QByteArray &lngString, char lngDirection, double *lat, double *lon);

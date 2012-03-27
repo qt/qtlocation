@@ -50,7 +50,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The Supplier element holds data regarding the supplier of a place,
     a place's image, review, or editorial.
@@ -92,6 +92,9 @@ QDeclarativeSupplier::~QDeclarativeSupplier()
 {
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeSupplier::componentComplete()
 {
     // delayed instantiation of QObject based properties.
@@ -102,17 +105,8 @@ void QDeclarativeSupplier::componentComplete()
 /*!
     \qmlproperty QPlaceSupplier Supplier::supplier
 
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    Supplier object must be obtained from C++, then use the \l {QObject::property()}{property()} and
-    \l {QObject::setProperty()}{setProperty()} functions to get and set the \c supplier property.
-
-    The following gets the QPlaceSupplier representing this object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Supplier get
-
-    The following sets the properties of this object based on a QPlaceSupplier object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp Supplier set
+    For details on how to use this property to interface between C++ and QML see
+    "\l {location-cpp-qml.html#placesupplier} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeSupplier::setSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin)
 {
@@ -146,7 +140,7 @@ QPlaceSupplier QDeclarativeSupplier::supplier()
 /*!
     \qmlproperty string Supplier::supplierId
 
-    This property holds the id of the supplier.  The id is unique
+    This property holds the identifier of the supplier.  The identifier is unique
     to the Plugin backend which provided the supplier and is generally
     not suitable for displaying to the user.
 */

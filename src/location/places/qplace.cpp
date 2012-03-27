@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlace class represents a set of data about a place.
 
@@ -340,8 +340,8 @@ void QPlace::setName(const QString &name)
 }
 
 /*!
-    Returns the id of the place.  The place id is only meaningful to the QPlaceManager that
-    generated it and is not transferable between managers.  The place id is not guaranteed
+    Returns the identifier of the place.  The place identifier is only meaningful to the QPlaceManager that
+    generated it and is not transferable between managers.  The place identifier is not guaranteed
     to be universally unique, but unique for the manager that generated it.
 */
 QString QPlace::placeId() const
@@ -351,12 +351,12 @@ QString QPlace::placeId() const
 }
 
 /*!
-    Sets the \a id of the place.
+    Sets the \a identifier of the place.
 */
-void QPlace::setPlaceId(const QString &id)
+void QPlace::setPlaceId(const QString &identifier)
 {
     Q_D(QPlace);
-    d->placeId = id;
+    d->placeId = identifier;
 }
 
 /*!
@@ -497,7 +497,7 @@ QPlaceAttribute QPlace::extendedAttribute(const QString &attributeType) const
     already exists in the place, then it is overwritten.
 
     If \a attribute is a default constructed QPlaceAttribute, then the \a attributeType
-    is removed from the place i.e it will not be listed by QPlace::extendedAttributeTypes().
+    is removed from the place which means it will not be listed by QPlace::extendedAttributeTypes().
 */
 void QPlace::setExtendedAttribute(const QString &attributeType,
                                     const QPlaceAttribute &attribute)

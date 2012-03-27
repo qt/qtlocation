@@ -85,7 +85,7 @@ bool QPlaceSupplierPrivate::isEmpty() const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceSupplier class represents a supplier of a place or content associated
     with a place.
@@ -166,7 +166,7 @@ void QPlaceSupplier::setName(const QString &name)
 }
 
 /*!
-    Returns the id of the supplier. The id is unique
+    Returns the identifier of the supplier. The identifier is unique
     to the manager backend which provided the supplier and is generally
     not suitable for displaying to the user.
 */
@@ -176,11 +176,11 @@ QString QPlaceSupplier::supplierId() const
 }
 
 /*!
-    Sets the \a id of the supplier.
+    Sets the \a identifier of the supplier.
 */
-void QPlaceSupplier::setSupplierId(const QString &id)
+void QPlaceSupplier::setSupplierId(const QString &identifier)
 {
-    d->supplierId = id;
+    d->supplierId = identifier;
 }
 
 /*!

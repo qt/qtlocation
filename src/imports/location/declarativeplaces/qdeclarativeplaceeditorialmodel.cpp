@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The EditorialModel element provides a model of place editorials.
 
@@ -142,6 +142,9 @@ QDeclarativePlaceEditorialModel::~QDeclarativePlaceEditorialModel()
 {
 }
 
+/*!
+    \internal
+*/
 QVariant QDeclarativePlaceEditorialModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())

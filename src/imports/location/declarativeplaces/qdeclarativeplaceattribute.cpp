@@ -46,7 +46,7 @@
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The ExtendedAttributes element holds additional data about a \l Place.
 
@@ -72,7 +72,7 @@
             \li The name of the provider that a place is sourced from
         \row
             \li x_id_<provider> (for example x_id_nokia)
-            \li An alternative id which identifies the place from the
+            \li An alternative identifier which identifies the place from the
                perspective of the specified provider.
     \endtable
 
@@ -107,7 +107,7 @@
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The PlaceAttribute element holds generic place attribute information.
 
@@ -142,18 +142,8 @@ QDeclarativePlaceAttribute::~QDeclarativePlaceAttribute()
 /*!
     \qmlproperty QPlaceAttribute PlaceAttribute::attribute
 
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    PlaceAttribute object must be obtained from C++, then use the
-    \l {QObject::property()}{property()} and \l {QObject::setProperty()}{setProperty()} functions
-    to get and set the \c attribute property.
-
-    The following gets the QPlaceAttribute representing this object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp PlaceAttribute get
-
-    The following sets the properties of this object based on a QPlaceAttribute object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp PlaceAttribute set
+    For details on how to use this property to interface between C++ and QML see
+    "\l {location-cpp-qml.html#placeattribute} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativePlaceAttribute::setAttribute(const QPlaceAttribute &src)
 {
@@ -193,7 +183,7 @@ QString QDeclarativePlaceAttribute::label() const
 /*!
     \qmlproperty string PlaceAttribute::text
 
-    This property holds the attribute text.
+    This property holds the attribute text which can be used to show additional information about the place.
 */
 void QDeclarativePlaceAttribute::setText(const QString &text)
 {

@@ -46,7 +46,7 @@
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The ContactDetails element holds contact details for a \l Place.
 
@@ -104,7 +104,7 @@
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The ContactDetail element holds a contact detail such as a phone number or a website
            address.
@@ -142,19 +142,8 @@ QDeclarativeContactDetail::~QDeclarativeContactDetail()
 /*!
     \qmlproperty QPlaceContactDetail QtLocation5::ContactDetail::contactDetail
 
-    This property is used to provide an interface between C++ and QML code.  First a pointer to a
-    ContactDetail object must be obtained from C++, then use the
-    \l {QObject::property()}{property()} and \l {QObject::setProperty()}{setProperty()} functions
-    to get and set the \c contactDetail property.
-
-    The following gets the QPlaceContactDetail representing this object from C++:
-
-    \snippet snippets/cpp/cppqml.cpp ContactDetail get
-
-    The following sets the properties of this object based on a QPlaceContactDetail object from
-    C++:
-
-    \snippet snippets/cpp/cppqml.cpp ContactDetail set
+    For details on how to use this property to interface between C++ and QML see
+    "\l {location-cpp-qml.html#contact_detail} {Interfaces between C++ and QML Code}".
 */
 void QDeclarativeContactDetail::setContactDetail(const QPlaceContactDetail &src)
 {

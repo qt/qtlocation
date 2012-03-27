@@ -64,7 +64,7 @@ QT_USE_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-replies
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceContentReply class manages a content retrieval operation started by an
     instance of QPlaceManager.

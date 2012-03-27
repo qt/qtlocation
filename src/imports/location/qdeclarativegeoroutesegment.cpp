@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass RouteSegment QDeclarativeGeoRouteSegment
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-routing
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The RouteSegment element represents a segment of a Route.
 

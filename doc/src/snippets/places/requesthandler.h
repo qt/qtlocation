@@ -219,7 +219,7 @@ public:
         /*QPlaceIdReply */ saveCategoryReply = manager->saveCategory(category);
         connect(saveCategoryReply, SIGNAL(finished()), this, SLOT(handleSaveCategoryReply()));
 
-        //we could have saved a category as a child by supplying a parent id.
+        //we could have saved a category as a child by supplying a parent identifier.
         saveCategoryReply = manager->saveCategory(category, fastFood.categoryId());
         //! [Save category]
     }

@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoMappingManager
     \inmodule QtLocation
     \ingroup QtLocation-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoMappingManager class provides support for displaying
     and interacting with maps.

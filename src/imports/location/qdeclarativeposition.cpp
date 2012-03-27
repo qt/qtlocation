@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass Position QDeclarativePosition
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The Position element holds positional data at a particular point in time,
     such as coordinate (longitude, latitude, altitude) and speed.
@@ -65,9 +65,9 @@ QT_BEGIN_NAMESPACE
     location data source.
 
     Not all properties of a Position object are necessarily valid or available
-    (e.g. latitude and longitude may be valid, but speed update has not been
+    (for example latitude and longitude may be valid, but speed update has not been
     received or set manually). As a result, corresponding "valid" properties
-    are available (eg. \l{coordinate} and \l{longitudeValid}, \l{latitudeValid}
+    are available (for example \l{coordinate} and \l{longitudeValid}, \l{latitudeValid}
     etc) to discern whether the data is available and valid in this position
     update.
 
@@ -104,7 +104,7 @@ QDeclarativePosition::~QDeclarativePosition()
     Note: due to its inherent changing nature, the coordinateChanged()
     signal is emitted also when the values of the coordinate change,
     which enables easier data binding to Coordinate element instead of
-    directly connecting to e.g. its latitude and longitude.
+    directly connecting to for example its latitude and longitude.
 
     \sa longitudeValid latitudeValid altitudeValid
 

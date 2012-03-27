@@ -67,12 +67,17 @@ QDeclarativePlaceContentModel::~QDeclarativePlaceContentModel()
 {
 }
 
-
+/*!
+    \internal
+*/
 QDeclarativePlace *QDeclarativePlaceContentModel::place() const
 {
     return m_place;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlaceContentModel::setPlace(QDeclarativePlace *place)
 {
     if (m_place != place) {
@@ -101,11 +106,17 @@ void QDeclarativePlaceContentModel::setPlace(QDeclarativePlace *place)
     }
 }
 
+/*!
+    \internal
+*/
 int QDeclarativePlaceContentModel::batchSize() const
 {
     return m_batchSize;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlaceContentModel::setBatchSize(int batchSize)
 {
     if (m_batchSize != batchSize) {
@@ -114,11 +125,17 @@ void QDeclarativePlaceContentModel::setBatchSize(int batchSize)
     }
 }
 
+/*!
+    \internal
+*/
 int QDeclarativePlaceContentModel::totalCount() const
 {
     return m_contentCount;
 }
 
+/*!
+    \internal
+*/
 static QPair<int, int> findMissingKey(const QMap<int, QPlaceContent> &map)
 {
     int start = 0;
@@ -136,6 +153,9 @@ static QPair<int, int> findMissingKey(const QMap<int, QPlaceContent> &map)
     return qMakePair(start, end - 1);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlaceContentModel::clear()
 {
     beginResetModel();
@@ -143,6 +163,9 @@ void QDeclarativePlaceContentModel::clear()
     endResetModel();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlaceContentModel::clearData()
 {
     qDeleteAll(m_users);
@@ -158,6 +181,9 @@ void QDeclarativePlaceContentModel::clearData()
     m_reply = 0;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlaceContentModel::initializeCollection(int totalCount, const QPlaceContent::Collection &collection)
 {
     beginResetModel();
@@ -191,6 +217,9 @@ void QDeclarativePlaceContentModel::initializeCollection(int totalCount, const Q
     endResetModel();
 }
 
+/*!
+    \internal
+*/
 int QDeclarativePlaceContentModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
@@ -199,6 +228,9 @@ int QDeclarativePlaceContentModel::rowCount(const QModelIndex &parent) const
     return m_content.count();
 }
 
+/*!
+    \internal
+*/
 QVariant QDeclarativePlaceContentModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
@@ -221,6 +253,9 @@ QVariant QDeclarativePlaceContentModel::data(const QModelIndex &index, int role)
     }
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativePlaceContentModel::canFetchMore(const QModelIndex &parent) const
 {
     if (parent.isValid())
@@ -235,6 +270,9 @@ bool QDeclarativePlaceContentModel::canFetchMore(const QModelIndex &parent) cons
     return m_content.count() != m_contentCount;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlaceContentModel::fetchMore(const QModelIndex &parent)
 {
     if (parent.isValid())
@@ -280,16 +318,25 @@ void QDeclarativePlaceContentModel::fetchMore(const QModelIndex &parent)
     connect(m_reply, SIGNAL(finished()), this, SLOT(fetchFinished()), Qt::QueuedConnection);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlaceContentModel::classBegin()
 {
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlaceContentModel::componentComplete()
 {
     m_complete = true;
     fetchMore(QModelIndex());
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePlaceContentModel::fetchFinished()
 {
     if (!m_reply)

@@ -46,7 +46,7 @@ coordinates, including working out the user's current position on the Earth's su
 using GPS, GLONASS, or other available services.
 \table
 \row
-    \li Positioning introduction & overview:
+    \li Positioning introduction and overview:
     \li \l{Positioning (QML)}{for QML}
     \li \l{Qt Location C++ API}{for C++}
 \endtable
@@ -60,13 +60,13 @@ reviews and other rich content, and integrate with platform sources of
 a user's favorites.
 \table
 \row
-    \li Places introduction & overview:
+    \li Places introduction and overview:
     \li \l{QML Places API}{for QML}
     \li \l{Places (C++)}{for C++}
 \endtable
 
-\section3 Maps & Navigation
-Maps & Navigation provides Qt Quick user
+\section3 Maps and Navigation
+Maps and Navigation provides QtQuick user
 interface components for displaying geographic information on a map, as
 well as allowing user interaction with map objects and the display itself.
 It also contains utilities for geocoding (finding a geographic coordinate
@@ -74,9 +74,9 @@ from a street address) and navigation (including driving and walking
 directions).
 \table
 \row
-    \li Maps and Nav. introduction & overview:
-    \li \l{Maps & Navigation (QML)}{for QML}
-    \li \l{Maps & Navigation (C++)}{for C++}
+    \li Maps and Navigation introduction and overview:
+    \li \l{Maps and Navigation (QML)}{for QML}
+    \li \l{Maps and Navigation (C++)}{for C++}
 \endtable
 
 
@@ -87,7 +87,7 @@ example applications to demonstrate their usage.
 
 \table
     \row
-        \li \l {QtLocation 5.x}{QML API Reference}
+        \li \l {Qt Location 5.x}{QML API Reference}
         \li Full list of QML elements in the Qt Location API
     \row
         \li \l {Qt Location C++ API}{C++ API Reference}
@@ -97,14 +97,14 @@ example applications to demonstrate their usage.
         \li Examples demonstrating use of the Qt Location APIs
 \endtable
 
-\section1 Plugin references and parameters
+\section1 Plugin References and Parameters
 
 Information about plugins, important notes on their usage, parameters that can
 be provided to influence their behavior.
 
 \annotatedlist QtLocation-plugins
 
-\section1 Porting and Implementing New Back-ends
+\section1 Porting and Implementing New Back-Ends
 
 For systems integrators and distributors, information relating to making
 Qt Location available for a new platform.

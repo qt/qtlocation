@@ -54,7 +54,7 @@
 
     \snippet examples/declarative/flickr/flickrmobile/GeoTab.qml possrc
 
-    When the "Locate & update" button is pressed, we first interrogate the
+    When the "Locate and update" button is pressed, we first interrogate the
     PositionSource to check if it has an available backend for positioning
     data. If it does not, we fall back to using a pre-recorded NMEA log
     for demonstration. We then instruct the PositionSource to update.

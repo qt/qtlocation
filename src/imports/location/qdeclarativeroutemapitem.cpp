@@ -51,7 +51,7 @@
     \qmlclass MapRoute QDeclarativeRouteMapItem
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The MapRoute element displays a Route on a Map.
 
@@ -96,6 +96,9 @@ QDeclarativeRouteMapItem::~QDeclarativeRouteMapItem()
 {
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeRouteMapItem::updateAfterLinePropertiesChanged()
 {
     // mark dirty just in case we're a width change
@@ -103,6 +106,9 @@ void QDeclarativeRouteMapItem::updateAfterLinePropertiesChanged()
     updateMapItem();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
@@ -115,7 +121,7 @@ void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map
 /*!
     \qmlproperty Route MapRoute::route
 
-    Holds the route to be drawn.
+    Holds the route to be drawn which can be used to represents one geographical route.
 */
 QDeclarativeGeoRoute* QDeclarativeRouteMapItem::route() const
 {
@@ -141,6 +147,9 @@ void QDeclarativeRouteMapItem::setRoute(QDeclarativeGeoRoute *route)
 
 }
 
+/*!
+    \internal
+*/
 QSGNode* QDeclarativeRouteMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
@@ -177,6 +186,9 @@ QDeclarativeMapLineProperties *QDeclarativeRouteMapItem::line()
     return &line_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeRouteMapItem::updateMapItem()
 {
     if (!map() || path_.isEmpty())
@@ -191,6 +203,9 @@ void QDeclarativeRouteMapItem::updateMapItem()
     update();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeRouteMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
     // if the scene is tilted, we must regenerate our geometry every frame
@@ -216,6 +231,9 @@ void QDeclarativeRouteMapItem::afterViewportChanged(const QGeoMapViewportChangeE
     updateMapItem();
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativeRouteMapItem::contains(QPointF point)
 {
     return geometry_.contains(point);

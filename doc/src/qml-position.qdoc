@@ -51,8 +51,8 @@ This data can be extracted through a variety of methods. One of the most
 well known methods of positioning is GPS (Global Positioning System), a
 publicly available system that uses radiowave signals received from
 Earth-orbiting satellites to calculate the precise position and time of
-the receiver. Another popular method is Cell ID positioning, which uses
-the cell ID of the cell site that is currently serving the receiving
+the receiver. Another popular method is 'Cell Identifier Positioning', which uses
+the cell identifier of the cell site that is currently serving the receiving
 device to calculate its approximate location. These and other positioning
 methods can all be used with the Location API; the only requirement for a
 location data source within the API is that it provides a

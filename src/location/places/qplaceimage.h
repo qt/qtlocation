@@ -72,7 +72,7 @@ public:
     void setUrl(const QUrl &url);
 
     QString imageId() const;
-    void setImageId(const QString &id);
+    void setImageId(const QString &identifier);
 
     QString mimeType() const;
     void setMimeType(const QString &data);

@@ -67,7 +67,7 @@ public:
     }
 
     QString userId() const;
-    void setUserId(const QString &);
+    void setUserId(const QString &identifier);
 
     QString name() const;
     void setName(const QString &name);

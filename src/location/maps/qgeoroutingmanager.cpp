@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoRoutingManager
     \inmodule QtLocation
     \ingroup QtLocation-routing
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoRoutingManager class provides support for geographic routing
     operations.

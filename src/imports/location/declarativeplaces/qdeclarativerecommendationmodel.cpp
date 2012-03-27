@@ -58,7 +58,7 @@ QT_USE_NAMESPACE
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The PlaceRecommendationModel element provides a model of place recommendations.
 
@@ -124,10 +124,10 @@ QT_USE_NAMESPACE
     are matched to favorites in the favoritesPlugin.
 
     By default the parameter map is empty and implies that the favorites plugin
-    matches by \l {Alternative Id cross-referencing}{alternative ids}.  Generally,
+    matches by \l {Alternative Identifier Cross-Referencing}{alternative identifiers}.  Generally,
     an application developer will not need to set this property.
 
-    In cases where the favorites plugin does not support matching by alternative ids,
+    In cases where the favorites plugin does not support matching by alternative identifiers,
     then the \l {Information about plugins} {backend plugin documentation} should be consulted
     to see precisely what key-value parameters to set.
 */
@@ -223,7 +223,7 @@ QDeclarativeRecommendationModel::~QDeclarativeRecommendationModel()
 /*!
     \qmlproperty string PlaceRecommendationModel::placeId
 
-    This property holds place id used in the recommendation search query.
+    This property holds place identifier used in the recommendation search query.
 */
 QString QDeclarativeRecommendationModel::placeId() const
 {

@@ -53,17 +53,26 @@ QDeclarativeGeoMapCopyrightNotice::~QDeclarativeGeoMapCopyrightNotice()
 {
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapCopyrightNotice::paint(QPainter *painter)
 {
     painter->drawImage(0, 0, copyrightsImage_);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapCopyrightNotice::setCopyrightsZ(int copyrightsZ)
 {
     setZ(copyrightsZ);
     update();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeGeoMapCopyrightNotice::copyrightsChanged(const QImage &copyrightsImage, const QPoint &copyrightsPos)
 {
     setX(copyrightsPos.x());

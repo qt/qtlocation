@@ -73,7 +73,7 @@ bool QPlaceRatingsPrivate::isEmpty() const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceRatings class holds rating information about a place.
 

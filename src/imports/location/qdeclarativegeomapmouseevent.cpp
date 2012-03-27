@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass MapMouseEvent QDeclarativeGeoMapMouseEvent
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The MapMouseEvent object provides information about a mouse event.
 
@@ -194,9 +194,8 @@ bool QDeclarativeGeoMapMouseEvent::wasHeld() const
 
 /*!
     \qmlproperty int QtLocation5::MapMouseEvent::x
-    \qmlproperty int QtLocation5::MapMouseEvent::y
 
-    These properties hold the screen coordinates of the position supplied
+    This property holds the x-screen coordinate of the position supplied
     by the mouse event.
 */
 
@@ -209,6 +208,13 @@ int QDeclarativeGeoMapMouseEvent::x() const
 {
     return x_;
 }
+
+/*!
+    \qmlproperty int QtLocation5::MapMouseEvent::y
+
+    This property holds the y-screen coordinate of the position supplied
+    by the mouse event.
+*/
 
 void QDeclarativeGeoMapMouseEvent::setY(int y)
 {

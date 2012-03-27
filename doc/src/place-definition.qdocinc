@@ -8,7 +8,7 @@ This information can be divided into 2 broad classifications
 \li Rich content
 \endlist
 
-The place details consist of properties of the place, such as the name, location, contact information etc.
+The place details consist of properties of the place, such as the name, location, contact information and so on.
 When a place is returned during a search, these details are filled in.  Sometimes in order to save bandwidth,
 there are further details about the place that can be retrieved on an individual place by place basis,
 if the user is interested.  The QPlace::detailsFetched() function can be queried to see if all available details

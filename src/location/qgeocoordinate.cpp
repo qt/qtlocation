@@ -81,7 +81,7 @@ QGeoCoordinatePrivate::QGeoCoordinatePrivate() {
     \class QGeoCoordinate
     \inmodule QtLocation
     \ingroup QtLocation-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoCoordinate class defines a geographical position on the surface of the Earth.
 

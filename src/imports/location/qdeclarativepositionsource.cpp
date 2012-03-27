@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass PositionSource QDeclarativePositionSource
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The PositionSource element provides the device's current position.
 
@@ -138,6 +138,9 @@ QDeclarativePositionSource::~QDeclarativePositionSource()
     delete m_positionSource;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
 {
     // Strip the filename. This is clumsy but the file may be prefixed in several
@@ -202,6 +205,9 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
     emit this->nmeaSourceChanged();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePositionSource::setUpdateInterval(int updateInterval)
 {
     if (m_updateInterval == updateInterval)
@@ -249,12 +255,6 @@ int QDeclarativePositionSource::updateInterval() const
     return m_updateInterval;
 }
 
-void QDeclarativePositionSource::setPreferredPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods)
-{
-    m_positionSource->setPreferredPositioningMethods(methods);
-    emit preferredPositioningMethodsChanged();
-}
-
 /*!
     \qmlproperty enumeration PositionSource::supportedPositioningMethods
 
@@ -298,6 +298,12 @@ QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::suppo
     \endlist
 
 */
+
+void QDeclarativePositionSource::setPreferredPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods)
+{
+    m_positionSource->setPreferredPositioningMethods(methods);
+    emit preferredPositioningMethodsChanged();
+}
 
 QDeclarativePositionSource::PositioningMethods QDeclarativePositionSource::preferredPositioningMethods() const
 {
@@ -444,7 +450,7 @@ bool QDeclarativePositionSource::isActive() const
 
     The Position element has different positional member variables,
     whose validity can be checked with appropriate validity functions
-    (e.g. sometimes an update does not have speed or altitude data).
+    (for example sometimes an update does not have speed or altitude data).
 
     However, whenever a \l positionChanged signal has been received, at least
     position::coordinate::latitude, position::coordinate::longitude, and position::timestamp can
@@ -483,10 +489,6 @@ void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& 
     }
 }
 
-QDeclarativePositionSource::SourceError QDeclarativePositionSource::sourceError() const
-{
-    return m_sourceError;
-}
 
 /*!
     \qmlproperty enumeration PositionSource::sourceError
@@ -496,7 +498,7 @@ QDeclarativePositionSource::SourceError QDeclarativePositionSource::sourceError(
     \list
     \li PositionSource.AccessError - The connection setup to the remote positioning backend failed because the
         application lacked the required privileges.
-    \li PositionSource.ClosedError - The remote positioning backend closed the connection, which happens e.g. in case
+    \li PositionSource.ClosedError - The remote positioning backend closed the connection, which happens for example in case
         the user is switching location services to off. This object becomes invalid and should be deleted.
         A new source can be declared later on to check whether the positioning backend is up again.
     \li PositionSource.UnknownSourceError - An unidentified error occurred.
@@ -504,6 +506,14 @@ QDeclarativePositionSource::SourceError QDeclarativePositionSource::sourceError(
 
 */
 
+QDeclarativePositionSource::SourceError QDeclarativePositionSource::sourceError() const
+{
+    return m_sourceError;
+}
+
+/*!
+    \internal
+*/
 void QDeclarativePositionSource::sourceErrorReceived(const QGeoPositionInfoSource::Error error)
 {
     if (error == QGeoPositionInfoSource::AccessError) {

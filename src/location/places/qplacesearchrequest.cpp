@@ -139,7 +139,7 @@ void QPlaceSearchRequestPrivate::clear()
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-requests
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceSearchRequest class represents the set of parameters for a search request.
 
@@ -157,11 +157,11 @@ void QPlaceSearchRequestPrivate::clear()
     \l {QPlaceManager::search()} {search for places}, however it is also
     used to provide parameters for \l {QPlaceManager::searchSuggestions()}{generating search term suggestions}
     and \l {QPlaceManager::recommendations()} {retreiving recommendations}.  Note that depending on usage,
-    some parameters may not be relevant, e.g. the relevance hint is not important for search term suggestions.  However
-    in general, most of the parameters are useful for each of these operations, eg for a recommendation, a search area
+    some parameters may not be relevant, for example the relevance hint is not important for search term suggestions.  However
+    in general, most of the parameters are useful for each of these operations, for example for a recommendation, a search area
     and categories can be useful in narrowing down recommendation candidates.
 
-    Also be aware that providers may vary by which parameters they support e.g. some providers may not support
+    Also be aware that providers may vary by which parameters they support for example some providers may not support
     paging while others do, some providers may honor relevance hints while others may completely ignore them,
     see \l {Information about plugins}.
 
@@ -349,7 +349,7 @@ void QPlaceSearchRequest::setVisibilityScope(QtLocation::VisibilityScope scope)
 
 /*!
     Returns the relevance hint of the request.  The hint is given to the provider
-    to help but not dictate the ranking of results.  e.g. providing a distance hint
+    to help but not dictate the ranking of results. For example providing a distance hint
     may give closer places a higher ranking but it doesn't necessarily mean
     that he results will be ordered strictly according to distance.
 */

@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \class QGeoSatelliteInfoSource
     \inmodule QtLocation
     \ingroup QtLocation-positioning
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.
 
@@ -297,7 +297,7 @@ QStringList QGeoSatelliteInfoSource::availableSources()
 
     \value AccessError The connection setup to the remote positioning backend failed because the
         application lacked the required privileges.
-    \value ClosedError  The remote satellite backend closed the connection, which happens e.g. in case
+    \value ClosedError  The remote satellite backend closed the connection, which happens for example in case
         the user is switching location services to off. This object becomes invalid and should be deleted.
         A new satellite source can be created by calling createDefaultSource() later on.
     \value UnknownSourceError An unidentified error occurred.

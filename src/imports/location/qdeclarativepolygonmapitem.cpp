@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass MapPolygon QDeclarativePolygonMapItem
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The MapPolygon element displays a polygon on a Map
 
@@ -120,6 +120,9 @@ QGeoMapPolygonGeometry::QGeoMapPolygonGeometry(QObject *parent) :
 {
 }
 
+/*!
+    \internal
+*/
 void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
                                                 const QList<QGeoCoordinate> &path)
 {
@@ -155,6 +158,9 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     sourceBounds_ = srcPath_.boundingRect();
 }
 
+/*!
+    \internal
+*/
 void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 {
     if (!screenDirty_)
@@ -217,12 +223,18 @@ QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
                      this, SLOT(handleBorderUpdated()));
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolygonMapItem::handleBorderUpdated()
 {
     borderGeometry_.markSourceDirty();
     updateMapItem();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolygonMapItem::updateAfterCoordinateChanged()
 {
     QDeclarativeCoordinate *coord = qobject_cast<QDeclarativeCoordinate*>(QObject::sender());
@@ -256,6 +268,9 @@ QDeclarativeMapLineProperties *QDeclarativePolygonMapItem::border()
     return &border_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
@@ -266,12 +281,6 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *m
     }
 }
 
-QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarativePath()
-{
-    return QQmlListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
-                                                    path_at, path_clear);
-}
-
 /*!
     \qmlproperty list<Coordinate> MapPolygon::path
 
@@ -280,7 +289,15 @@ QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarative
 
     \sa addCoordinate removeCoordinate
 */
+QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarativePath()
+{
+    return QQmlListProperty<QDeclarativeCoordinate>(this, 0, path_append, path_count,
+                                                    path_at, path_clear);
+}
 
+/*!
+    \internal
+*/
 void QDeclarativePolygonMapItem::path_append(
         QQmlListProperty<QDeclarativeCoordinate> *property, QDeclarativeCoordinate *coordinate)
 {
@@ -297,18 +314,27 @@ void QDeclarativePolygonMapItem::path_append(
     emit item->pathChanged();
 }
 
+/*!
+    \internal
+*/
 int QDeclarativePolygonMapItem::path_count(
         QQmlListProperty<QDeclarativeCoordinate> *property)
 {
     return qobject_cast<QDeclarativePolygonMapItem*>(property->object)->coordPath_.count();
 }
 
+/*!
+    \internal
+*/
 QDeclarativeCoordinate* QDeclarativePolygonMapItem::path_at(
         QQmlListProperty<QDeclarativeCoordinate> *property, int index)
 {
     return qobject_cast<QDeclarativePolygonMapItem*>(property->object)->coordPath_.at(index);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolygonMapItem::path_clear(
         QQmlListProperty<QDeclarativeCoordinate> *property)
 {
@@ -404,15 +430,8 @@ void QDeclarativePolygonMapItem::setColor(const QColor &color)
     emit colorChanged(color_);
 }
 
-
 /*!
-  \qmlproperty real MapPolygon::opacity
-
-  This property holds the opacity of the item. Opacity is specified as a
-  number between 0 (fully transparent) and 1 (fully opaque). The default is 1.
-
-  If an item's opacity is set to 0, the item will no longer receive mouse
-  events. Similarly, setting the visible property to false stops mouse events.
+    \internal
 */
 QSGNode* QDeclarativePolygonMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
@@ -432,6 +451,9 @@ QSGNode* QDeclarativePolygonMapItem::updatePaintNode(QSGNode* oldNode, UpdatePai
     return node;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolygonMapItem::updateMapItem()
 {
     if (!map() || path_.count() == 0)
@@ -463,6 +485,9 @@ void QDeclarativePolygonMapItem::updateMapItem()
     update();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolygonMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
     // if the scene is tilted, we must regenerate our geometry every frame
@@ -492,6 +517,9 @@ void QDeclarativePolygonMapItem::afterViewportChanged(const QGeoMapViewportChang
     updateMapItem();
 }
 
+/*!
+    \internal
+*/
 bool QDeclarativePolygonMapItem::contains(QPointF point)
 {
     return (geometry_.contains(point) || borderGeometry_.contains(point));
@@ -514,6 +542,9 @@ MapPolygonNode::~MapPolygonNode()
 {
 }
 
+/*!
+    \internal
+*/
 void MapPolygonNode::update(const QColor& fillColor, const QColor& borderColor,
                             const QGeoMapItemGeometry *fillShape,
                             const QGeoMapItemGeometry *borderShape)

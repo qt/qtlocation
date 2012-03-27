@@ -27,7 +27,7 @@
 
 /*!
 \qmlmodule QtLocation 5
-\title QtLocation 5.x
+\title Qt Location 5.x
 \brief The QML import for QtLocation
 
 \section1 Overview
@@ -40,7 +40,7 @@ The following table provides links to more detailed information on sections of t
         \li \l {Positioning (QML)}{Location Positioning}
         \li Retrieving information about the current position.
     \row
-        \li \l {Maps & Navigation (QML)}{Maps and Navigation}
+        \li \l {Maps and Navigation (QML)}{Maps and Navigation}
         \li Displaying maps and finding routes.
     \row
         \li \l {QML PLaces API} {Places}

@@ -80,7 +80,7 @@ bool QPlaceIconPrivate::operator == (const QPlaceIconPrivate &other) const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceIcon class represents an icon.
 

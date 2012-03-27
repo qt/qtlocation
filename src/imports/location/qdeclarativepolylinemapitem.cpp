@@ -57,7 +57,7 @@ QT_BEGIN_NAMESPACE
     \qmlclass MapPolyline QDeclarativePolylineMapItem
     \inqmlmodule QtLocation 5
     \ingroup qml-QtLocation5-maps
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The MapPolyline element displays a polyline on a map.
 
@@ -118,11 +118,17 @@ QDeclarativeMapLineProperties::QDeclarativeMapLineProperties(QObject *parent) :
 {
 }
 
+/*!
+    \internal
+*/
 QColor QDeclarativeMapLineProperties::color() const
 {
     return color_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeMapLineProperties::setColor(const QColor &color)
 {
     if (color_ == color)
@@ -132,11 +138,17 @@ void QDeclarativeMapLineProperties::setColor(const QColor &color)
     emit colorChanged(color_);
 }
 
+/*!
+    \internal
+*/
 qreal QDeclarativeMapLineProperties::width() const
 {
     return width_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeMapLineProperties::setWidth(qreal width)
 {
     if (width_ == width)
@@ -156,6 +168,9 @@ QGeoMapPolylineGeometry::QGeoMapPolylineGeometry(QObject *parent) :
 {
 }
 
+/*!
+    \internal
+*/
 void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
                                                  const QList<QGeoCoordinate> &path)
 {
@@ -339,6 +354,9 @@ static void clipPathToRect(const QVector<qreal> &points,
     }
 }
 
+/*!
+    \internal
+*/
 void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
                                                  qreal strokeWidth)
 {
@@ -412,6 +430,9 @@ QDeclarativePolylineMapItem::~QDeclarativePolylineMapItem()
 {
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged()
 {
     // mark dirty just in case we're a width change
@@ -419,6 +440,9 @@ void QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged()
     updateMapItem();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolylineMapItem::updateAfterCoordinateChanged()
 {
     QDeclarativeCoordinate *coord = qobject_cast<QDeclarativeCoordinate*>(QObject::sender());
@@ -431,6 +455,9 @@ void QDeclarativePolylineMapItem::updateAfterCoordinateChanged()
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
@@ -453,6 +480,9 @@ QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolylineMapItem::declarativ
                                                     path_at, path_clear);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolylineMapItem::path_append(QQmlListProperty<QDeclarativeCoordinate> *property,
                                               QDeclarativeCoordinate *coordinate)
 {
@@ -469,18 +499,27 @@ void QDeclarativePolylineMapItem::path_append(QQmlListProperty<QDeclarativeCoord
     emit item->pathChanged();
 }
 
+/*!
+    \internal
+*/
 int QDeclarativePolylineMapItem::path_count(
         QQmlListProperty<QDeclarativeCoordinate> *property)
 {
     return qobject_cast<QDeclarativePolylineMapItem*>(property->object)->coordPath_.count();
 }
 
+/*!
+    \internal
+*/
 QDeclarativeCoordinate* QDeclarativePolylineMapItem::path_at(
         QQmlListProperty<QDeclarativeCoordinate> *property, int index)
 {
     return qobject_cast<QDeclarativePolylineMapItem*>(property->object)->coordPath_.at(index);
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolylineMapItem::path_clear(
         QQmlListProperty<QDeclarativeCoordinate> *property)
 {
@@ -565,6 +604,9 @@ QDeclarativeMapLineProperties *QDeclarativePolylineMapItem::line()
     return &line_;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolylineMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
     // if the scene is tilted, we must regenerate our geometry every frame
@@ -590,6 +632,9 @@ void QDeclarativePolylineMapItem::afterViewportChanged(const QGeoMapViewportChan
     updateMapItem();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativePolylineMapItem::updateMapItem()
 {
     if (!map() || path_.count() == 0)
@@ -605,13 +650,7 @@ void QDeclarativePolylineMapItem::updateMapItem()
 }
 
 /*!
-  \qmlproperty real MapPolyline::opacity
-
-  This property holds the opacity of the item. Opacity is specified as a
-  number between 0 (fully transparent) and 1 (fully opaque). The default is 1.
-
-  If an item's opacity is set to 0, the item will no longer receive mouse
-  events. Similarly, setting the visible property to false stops mouse events.
+    \internal
 */
 QSGNode* QDeclarativePolylineMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
@@ -638,6 +677,9 @@ bool QDeclarativePolylineMapItem::contains(QPointF point)
 
 //////////////////////////////////////////////////////////////////////
 
+/*!
+    \internal
+*/
 MapPolylineNode::MapPolylineNode() :
     geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
 {
@@ -647,10 +689,16 @@ MapPolylineNode::MapPolylineNode() :
 }
 
 
+/*!
+    \internal
+*/
 MapPolylineNode::~MapPolylineNode()
 {
 }
 
+/*!
+    \internal
+*/
 void MapPolylineNode::update(const QColor& fillColor,
                              const QGeoMapItemGeometry* shape)
 {

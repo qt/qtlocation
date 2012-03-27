@@ -50,11 +50,17 @@ QDeclarativeResultModelBase::QDeclarativeResultModelBase(QObject *parent)
     setRoleNames(roles);
 }
 
+/*!
+    \internal
+*/
 QDeclarativeGeoServiceProvider* QDeclarativeResultModelBase::favoritesPlugin() const
 {
     return m_favoritesPlugin;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeResultModelBase::setFavoritesPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
 
@@ -65,11 +71,17 @@ void QDeclarativeResultModelBase::setFavoritesPlugin(QDeclarativeGeoServiceProvi
     emit favoritesPluginChanged();
 }
 
+/*!
+    \internal
+*/
 QVariantMap QDeclarativeResultModelBase::favoritesMatchParameters() const
 {
     return m_matchParameters;
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeResultModelBase::setFavoritesMatchParameters(const QVariantMap &parameters)
 {
     if (m_matchParameters == parameters)
@@ -79,6 +91,9 @@ void QDeclarativeResultModelBase::setFavoritesMatchParameters(const QVariantMap 
     emit favoritesMatchParametersChanged();
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeResultModelBase::clearData()
 {
     QDeclarativeSearchModelBase::clearData();
@@ -88,6 +103,9 @@ void QDeclarativeResultModelBase::clearData()
     m_results.clear();
 }
 
+/*!
+    \internal
+*/
 int QDeclarativeResultModelBase::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
@@ -95,12 +113,18 @@ int QDeclarativeResultModelBase::rowCount(const QModelIndex &parent) const
     return m_results.count();
 }
 
+/*!
+    \internal
+*/
 QVariant QDeclarativeResultModelBase::data(int index, const QString &role) const
 {
     QModelIndex modelIndex = createIndex(index, 0);
     return data(modelIndex, roleNames().key(role.toLatin1()));
 }
 
+/*!
+    \internal
+*/
 QVariant QDeclarativeResultModelBase::data(const QModelIndex &index, int role) const
 {
     if (index.row() > m_results.count())
@@ -123,6 +147,9 @@ QVariant QDeclarativeResultModelBase::data(const QModelIndex &index, int role) c
     }
 }
 
+/*!
+    \internal
+*/
 void QDeclarativeResultModelBase::queryFinished()
 {
     if (!m_reply)
@@ -192,9 +219,11 @@ void QDeclarativeResultModelBase::queryFinished()
     }
 }
 
-
-//Note: m_results buffer should be correctly populated before
-//calling this function
+/*!
+    \internal
+    Note: m_results buffer should be correctly populated before
+    calling this function
+*/
 void QDeclarativeResultModelBase::updateLayout(const QList<QPlace> &favoritePlaces)
 {
     int oldRowCount = rowCount();

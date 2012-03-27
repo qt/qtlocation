@@ -71,7 +71,7 @@ public:
     void setName(const QString &data);
 
     QString supplierId() const;
-    void setSupplierId(const QString &data);
+    void setSupplierId(const QString &identifier);
 
     QUrl url() const;
     void setUrl(const QUrl &data);

@@ -28,13 +28,13 @@
 
 /*!
 \page location-maps-qml.html
-\title Maps & Navigation (QML)
+\title Maps and Navigation (QML)
 \previouspage {Qt Location Module}{Qt Location}
 
 \brief Provides QtQuick user interfaces for displaying, navigating and
        interacting with maps, as well as geocoding and navigation.
 
-\b{Maps & Navigation} provides QtQuick user interface elements for
+\b{Maps and Navigation} provides QtQuick user interface elements for
 displaying geographic information on a map, as well as allowing user
 interaction with map overlay objects and the display itself. It also
 contains utilities for geocoding (finding a geographic coordinate from a
@@ -104,7 +104,7 @@ standard QtQuick item.
 \section2 Model-View Design with Map Overlay Objects
 
 To automatically generate map overlay objects based on the contents of a QtQuick
-model (eg a ListModel item), the \l{QtLocation5::MapItemView}{MapItemView}
+model (for example a ListModel item), the \l{QtLocation5::MapItemView}{MapItemView}
 element is available. It accepts any map overlay object as its delegate, and can
 only be created within a \l{QtLocation5::Map}{Map}.
 
@@ -131,7 +131,7 @@ available.
 \table
     \row
         \li \l{QtLocation5::MapMouseArea}{MapMouseArea}
-        \li Accepts mouse events for a pre-defined map overlay object (eg MapCircle).
+        \li Accepts mouse events for a pre-defined map overlay object (for example MapCircle).
     \row
         \li \l{QtLocation5::MapMouseEvent}{MapMouseEvent}
         \li Provides additional information unique to mouse events on a Map.
@@ -180,12 +180,12 @@ to have access to geocoding translation services and thus data to display.
 
 /*!
 \page location-maps-cpp.html
-\title Maps & Navigation (C++)
+\title Maps and Navigation (C++)
 \previouspage {Qt Location Module}{Qt Location}
 
 \brief Provides C++ classes for Geocoding and Navigation.
 
-\b{Maps & Navigation} provides C++ utilities for geocoding (finding a
+\b{Maps and Navigation} provides C++ utilities for geocoding (finding a
 geographic coordinate from a street address) and navigation (including driving
 and walking directions).
 

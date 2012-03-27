@@ -50,6 +50,9 @@ QGeoMapItemGeometry::QGeoMapItemGeometry(QObject *parent) :
 {
 }
 
+/*!
+    \internal
+*/
 void QGeoMapItemGeometry::translate(const QPointF &offset)
 {
     for (int i = 0; i < screenTriangles_.size()/2*2; i += 2) {
@@ -61,6 +64,9 @@ void QGeoMapItemGeometry::translate(const QPointF &offset)
     screenBounds_.translate(offset);
 }
 
+/*!
+    \internal
+*/
 QRectF QGeoMapItemGeometry::translateToCommonOrigin(QList<QGeoMapItemGeometry *> geoms)
 {
     QGeoCoordinate origin = geoms.at(0)->origin();

@@ -81,7 +81,7 @@ bool QPlaceReviewPrivate::compare(const QPlaceContentPrivate *other) const
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data
-    \since QtLocation 5.0
+    \since Qt Location 5.0
 
     \brief The QPlaceReview class represents a review of a place.
 
@@ -196,7 +196,7 @@ void QPlaceReview::setRating(qreal rating)
 }
 
 /*!
-    Returns the review's id.
+    Returns the review's identifier.
 */
 QString QPlaceReview::reviewId() const
 {
@@ -205,12 +205,12 @@ QString QPlaceReview::reviewId() const
 }
 
 /*!
-    Sets the \a id of the review.
+    Sets the \a identifier of the review.
 */
-void QPlaceReview::setReviewId(const QString &id)
+void QPlaceReview::setReviewId(const QString &identifier)
 {
     Q_D(QPlaceReview);
-    d->reviewId = id;
+    d->reviewId = identifier;
 }
 
 /*!
