@@ -55,10 +55,14 @@ QT_BEGIN_NAMESPACE
 
     \brief The EditorialModel element provides a model of place editorials.
 
-    The EditorialModel is a read-only model used to fetch editorials related to a \l Place.  The
-    model performs fetches incrementally.  The number of editorials which are fetched at a time is
-    specified by the \l batchSize property.  The total number of editorials available can be
-    accessed via the \l totalCount property.
+    The EditorialModel is a read-only model used to fetch editorials related to a \l Place.
+    Binding a \l Place via \l EditorialModel::place initiates an initial fetch of editorials.
+    The model performs fetches incrementally and is intended to be used in conjunction
+    with a View such as a \l ListView.  When the View reaches the last of the editorials
+    currently in the model, a fetch is performed to retrieve more if they are available.
+    The View is automatically updated as the editorials are received.  The number of
+    editorials which are fetched at a time is specified by the \l batchSize property.
+    The total number of editorials available can be accessed via the \l totalCount property.
 
     The model returns data for the following roles:
 
@@ -94,7 +98,7 @@ QT_BEGIN_NAMESPACE
             \li Attribution text which must be displayed when displaying the editorial.
     \endtable
 
-    \section Example
+    \section1 Example
 
     The following example shows how to display editorials for a place:
 

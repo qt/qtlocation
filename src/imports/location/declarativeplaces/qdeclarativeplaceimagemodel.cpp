@@ -56,10 +56,14 @@ QT_BEGIN_NAMESPACE
 
     \brief The ImageModel element provides a model of place images.
 
-    The ImageModel is a read-only model used to fetch images related to a \l Place.  The model
-    performs fetches incrementally.  The number of images which are fetched at a time is specified
-    by the \l batchSize property.  The total number of images available can be accessed via the
-    \l totalCount property.
+    The ImageModel is a read-only model used to fetch images related to a \l Place.
+    Binding a \l Place via \l ImageModel::place initiates an initial fetch of images.
+    The model performs fetches incrementally and is intended to be used in conjunction
+    with a View such as a \l ListView.  When the View reaches the last of the images
+    currently in the model, a fetch is performed to retrieve more if they are available.
+    The View is automatically updated as the images are received.  The number of images
+    which are fetched at a time is specified by the \l batchSize property.  The total number
+    of images available can be accessed via the \l totalCount property.
 
     The model returns data for the following roles:
 
@@ -83,15 +87,15 @@ QT_BEGIN_NAMESPACE
         \row
             \li supplier
             \li \l Supplier
-            \li The supplier of the editorial.
+            \li The supplier of the image.
         \row
             \li user
             \li \l {QtLocation5::User}{User}
-            \li The user who contributed the editorial.
+            \li The user who contributed the image.
         \row
             \li attribution
             \li string
-            \li Attribution text which must be displayed when displaying the editorial.
+            \li Attribution text which must be displayed when displaying the image.
     \endtable
 
 
