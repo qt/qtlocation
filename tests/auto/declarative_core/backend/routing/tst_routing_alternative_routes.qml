@@ -1,0 +1,113 @@
+/****************************************************************************
+**
+** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/
+**
+** This file is part of the test suite of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+import QtQuick 2.0
+import QtTest 1.0
+import QtLocation 5.0
+
+Item {
+    id: root
+
+    property Fixture fixture: Qt.createQmlObject('Fixture {}', root)
+
+
+
+    Coordinate {
+        id: germanyBerlinA
+        latitude: 52.5134576
+        longitude: 13.3932963
+    }
+
+    Coordinate {
+        id: germanyBerlinB
+        latitude: 52.5197881
+        longitude: 13.4336914
+    }
+
+
+    TestCase {
+        name: "Alternative routes"
+
+        function test_router_computes_alternative_route_for_the_given_set_of_optimizations() {
+            var testData = { }
+            testData.waypoints = [ germanyBerlinA, germanyBerlinB ]
+            testData.numberAlternativeRoutes = 1
+            testData.expectRoutes = 2
+            testData.routeOptimizations = RouteQuery.ShortestRoute | RouteQuery.FastestRoute
+            fixture.runTest(this, testData)
+        }
+
+        function test_router_computes_only_as_many_routes_as_there_are_optimizations() {
+            var testData = { }
+            testData.waypoints = [ germanyBerlinA, germanyBerlinB ]
+            testData.numberAlternativeRoutes = 5
+            testData.expectRoutes = 2
+            testData.routeOptimizations = RouteQuery.ShortestRoute | RouteQuery.FastestRoute
+            fixture.runTest(this, testData)
+        }
+
+        function test_can_use_alternative_routes_to_limit_number_of_routes_to_return() {
+            skip("Not supported by current router")
+            var testData = { }
+            testData.waypoints = [ germanyBerlinA, germanyBerlinB ]
+            testData.numberAlternativeRoutes = 0
+            testData.expectRoutes = 1
+            testData.routeOptimizations = RouteQuery.ShortestRoute | RouteQuery.FastestRoute
+            fixture.runTest(this, testData)
+        }
+
+        function test_can_use_alternative_routes_to_force_number_of_routes_regardless_of_travelmodes() {
+            skip("Not supported by current router")
+            var testData = { }
+            testData.waypoints = [ germanyBerlinA, germanyBerlinB ]
+            testData.numberAlternativeRoutes = 3
+            testData.expectRoutes = 4
+            testData.routeOptimizations = RouteQuery.FastestRoute
+            fixture.runTest(this, testData)
+        }
+
+    }
+
+}
+
+
+
+
