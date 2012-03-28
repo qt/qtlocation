@@ -663,6 +663,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
     QVector<int> tilesX(polygon.size());
     QVector<int> tilesY(polygon.size());
 
+    // grab tiles at the corners of the polygon
     for (int i = 0; i < numPoints; ++i) {
 
         QDoubleVector2D p = polygon.at(i).toVector2D();
@@ -692,6 +693,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
 
     QGeoCameraTilesPrivate::TileMap map;
 
+    // walk along the edges of the polygon and add all tiles covered by them
     for (int i1 = 0; i1 < numPoints; ++i1) {
         int i2 = (i1 + 1) % numPoints;
 
@@ -722,6 +724,33 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
         int x = xIntersects.takeFirst().second;
         int y = yIntersects.takeFirst().second;
 
+
+        /*
+          If the polygon coincides with the tile edges we must be
+          inclusive and grab all tiles on both sides. We also need
+          to handle tiles with corners coindent with the
+          corners of the polygon.
+          e.g. all tiles marked with 'x' will be added
+
+              "+" - tile boundaries
+              "O" - polygon boundary
+
+                + + + + + + + + + + + + + + + + + + + + +
+                +       +       +       +       +       +
+                +       +   x   +   x   +   x   +       +
+                +       +       +       +       +       +
+                + + + + + + + + O O O O O + + + + + + + +
+                +       +       O       0       +       +
+                +       +   x   O   x   0   x   +       +
+                +       +       O       0       +       +
+                + + + + + + + + O 0 0 0 0 + + + + + + + +
+                +       +       +       +       +       +
+                +       +   x   +   x   +   x   +       +
+                +       +       +       +       +       +
+                + + + + + + + + + + + + + + + + + + + + +
+        */
+
+
         int xOther = x;
         int yOther = y;
 
@@ -750,7 +779,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
 
         map.add(x,y);
 
-        // corner case
+        // top left corner
         int iPrev =  (i1 + numPoints - 1 ) % numPoints;
         double xPrevious = polygon.at(iPrev).get(0);
         double yPrevious = polygon.at(iPrev).get(1);
@@ -763,6 +792,10 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
             else if ( (x2 < x1) && (yPrevious < y1) ){
             }
         }
+
+        // for the simple case where intersections do not coincide with
+        // the boundaries, we move along the edge and add tiles until
+        // the x and y intersection lists are exhausted
 
         while (!xIntersects.isEmpty() && !yIntersects.isEmpty()) {
             QPair<double, int> nextX = xIntersects.first();

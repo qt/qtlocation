@@ -421,6 +421,9 @@ void QGeoMapGeometryPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
     // set up the gl camera for the new geometry
     setupCamera();
 
+    // geometry update is currently done by destroying old scene nodes
+    // then creating new ones.
+    // TODO reuse geometry information
     QSet<QGeoTileSpec> toRemove = visibleTiles_ - tiles;
     QSet<QGeoTileSpec> toUpdate = visibleTiles_ - toRemove;
     if (!toRemove.isEmpty())
@@ -446,7 +449,6 @@ void QGeoMapGeometryPrivate::updateTiles(const QSet<QGeoTileSpec> &tiles)
             sceneNode_->removeNode(node);
             // TODO: re-use more of the geometry calculations?
             QGLSceneNode *newNode = buildGeometry(tile);
-
             if (newNode) {
                 QGLMaterial *mat = new QGLMaterial(newNode);
                 mat->setTexture(textures_[tile]->texture);
@@ -499,6 +501,8 @@ void QGeoMapGeometryPrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
 
     tileZ_ = i->zoom();
 
+    // determine whether the set of map tiles crosses the dateline.
+    // A gap in the tiles indicates dateline crossing
     bool hasFarLeft = false;
     bool hasFarRight = false;
     bool hasMidLeft = false;
@@ -517,6 +521,8 @@ void QGeoMapGeometryPrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
         }
     }
 
+    // if dateline crossing is detected we wrap all x pos of tiles
+    // that are in the left half of the map.
     tileXWrapsBelow_ = 0;
 
     if (hasFarLeft && hasFarRight) {
@@ -527,6 +533,7 @@ void QGeoMapGeometryPrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
         }
     }
 
+    // finally, determine the min and max bounds
     i = tiles.constBegin();
 
     QGeoTileSpec tile = *i;
@@ -557,16 +564,25 @@ void QGeoMapGeometryPrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
 
 void QGeoMapGeometryPrivate::setupCamera()
 {
+
     double f = 1.0 * qMin(screenSize_.width(), screenSize_.height());
 
+    // fraction of zoom level
     double z = pow(2.0, cameraData_.zoomLevel() - intZoomLevel_);
 
+    // calculate altitdue that allows the visible map tiles
+    // to fit in the screen correctly (note that a larger f will cause
+    // the camera be higher, resulting in gray areas displayed around
+    // the tiles)
     double altitude = scaleFactor_ * f / (2.0 * z);
 
     double aspectRatio = 1.0 * screenSize_.width() / screenSize_.height();
 
     double a = f / (z * tileSize_);
 
+    // mercatorWidth_ and mercatorHeight_ define the ratio for
+    // mercator and screen coordinate conversion,
+    // see mercatorToScreenPosition() and screenPositionToMercator()
     if (aspectRatio > 1.0) {
         mercatorHeight_ = a;
         mercatorWidth_ = a * aspectRatio;
@@ -579,14 +595,17 @@ void QGeoMapGeometryPrivate::setupCamera()
 
     double edge = scaleFactor_ * tileSize_;
 
+    // first calculate the camera center in map space in the range of 0 <-> sideLength (2^z)
     QDoubleVector3D center = (sideLength_ * QGeoProjection::coordToMercator(cameraData_.center()));
 
+    // wrap the center if necessary (due to dateline crossing)
     if (center.x() < tileXWrapsBelow_)
         center.setX(center.x() + 1.0 * sideLength_);
 
     mercatorCenterX_ = center.x();
     mercatorCenterY_ = center.y();
 
+    // work out where the camera center is w.r.t mininum tile bounds
     center.setX(center.x() - 1.0 * minTileX_);
     center.setY(1.0 * minTileY_ - center.y());
 
@@ -613,6 +632,7 @@ void QGeoMapGeometryPrivate::setupCamera()
         screenWidth_ = screenSize_.width();
     }
 
+    // apply necessary scaling to the camera center
     center *= edge;
 
     // calculate eye
