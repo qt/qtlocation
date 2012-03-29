@@ -644,9 +644,9 @@ void QPlaceJSonDetailsParser::processPremiumContentDescription(const QJSValue &c
     }
     value = content.property(place_premiumcontent_content_vendorurl_element);
     if (!value.isUndefined() && !value.toString().isEmpty()) {
-        QPlaceSupplier supplier = desc.supplier();
-        supplier.setUrl(value.toString());
-        desc.setSupplier(supplier);
+        QPlaceSupplier desc_supplier = desc.supplier();
+        desc_supplier.setUrl(value.toString());
+        desc.setSupplier(desc_supplier);
     }
     value = content.property(place_premiumcontent_content_language_element);
     if (!value.isUndefined() && !value.toString().isEmpty()) {
