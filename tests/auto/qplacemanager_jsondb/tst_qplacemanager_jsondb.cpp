@@ -1997,7 +1997,9 @@ void tst_QPlaceManagerJsonDb::categoryNotifications()
 void tst_QPlaceManagerJsonDb::compatiblePlace()
 {
     QGeoServiceProvider geoTest(QLatin1String("qmlgeo.test.plugin"));
+    geoTest.setAllowExperimental(true);
     QPlaceManager *geoTestManager = geoTest.placeManager();
+    QVERIFY(geoTestManager);
 
     QPlace place;
     place.setPlaceId(QLatin1String("123"));
@@ -2599,6 +2601,7 @@ void tst_QPlaceManagerJsonDb::iconDestinationOnly_data()
 void tst_QPlaceManagerJsonDb::iconSavedFromDifferentManager()
 {
     QGeoServiceProvider geoTest("qmlgeo.test.plugin");
+    geoTest.setAllowExperimental(true);
     QPlaceManager *geoTestManager = geoTest.placeManager();
 
     QPlaceIcon icon;
