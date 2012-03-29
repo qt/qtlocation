@@ -322,14 +322,13 @@ void QGeoTiledMapDataPrivate::resized(int width, int height)
         int texCacheSize = (width + cameraTiles_->tileSize()*2) *
                 (height + cameraTiles_->tileSize()*2) * 4;
 
-        // triple it for good measure
+        // multiply by 3 so the 'recent' list in the cache is big enough for
+        // an entire display of tiles
         texCacheSize *= 3;
+        // TODO: move this reasoning into the tilecache
 
-        int newSize = qMax(cache_->maxTextureUsage(), texCacheSize);
-        if (newSize == texCacheSize) {
-            qDebug("Increasing texcache size to %d bytes", newSize);
-            cache_->setMaxTextureUsage(newSize);
-        }
+        int newSize = qMax(cache_->minTextureUsage(), texCacheSize);
+        cache_->setMinTextureUsage(newSize);
     }
 }
 

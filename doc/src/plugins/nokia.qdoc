@@ -49,8 +49,8 @@ Note that accepting the terms and conditions only applies those terms and condit
 the Ovi Maps Services plugin and does not limit the use of the other maps and navigation API
 plugins that may be included with Qt.
 
-The online plugin uses the tiled map classes, which cache tile data in heap memory (currently up to
-10 MB).
+The online plugin uses the tiled map classes, which caches tile data in heap memory and texture
+memory.
 
 \section1 Parameters
 
@@ -77,15 +77,16 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \li mapping.cache.directory
     \li Map tile cache directory used as network disk cache.
 
-    Default place for the cache is "maptiles" directory in system temp.
-
-    Map tile caching is disabled on Maemo, Meego and Windows CE platforms. Using the parameter on
-    these platforms will have no effect.
-
-    Map tiles will expire and are refetched 14 days after download.
+    Default place for the cache is ".tilecache" directory in \l {QDir::home}{QDir}.
 \row
-    \li mapping.cache.size
-    \li Map tile cache size. Maximum size of the cache is 50MB.
+    \li mapping.cache.disk.size
+    \li Map tile disk cache size in bytes. Default size of the cache is 20MB.
+\row
+    \li mapping.cache.memory.size
+    \li Map tile memory cache size in bytes. Default size of the cache is 4MB.
+\row
+    \li mapping.cache.texture.size
+    \li Map tile texture cache size in bytes. Default size of the cache is 12MB. Note that the texture cache has a hard minimum size which depends on the size of the map viewport (it must contain enough data to display the tiles currently visible on the display). This value is the amount of cache to be used in addition to the bare minimum.
 \row
     \li geocoding.host
     \li Geocoding service URL used by geocoding manager.

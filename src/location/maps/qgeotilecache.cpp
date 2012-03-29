@@ -103,11 +103,16 @@ QGeoTileTexture::~QGeoTileTexture()
 }
 
 QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
-    : QObject(parent), directory_(directory)
+    : QObject(parent), directory_(directory),
+      minTextureUsage_(0), extraTextureUsage_(0)
 {
     qRegisterMetaType<QGeoTileSpec>();
     qRegisterMetaType<QList<QGeoTileSpec> >();
     qRegisterMetaType<QSet<QGeoTileSpec> >();
+
+    // We keep default values here so that they are in one place
+    // rather than in each individual plugin (the plugins can
+    // of course override them)
 
     if (directory_.isEmpty()) {
         QString dirname = QLatin1String(".tilecache");
@@ -117,9 +122,10 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
         directory_ = home.filePath(dirname);
     }
 
+    // default values
     setMaxDiskUsage(20 * 1024 * 1024);
     setMaxMemoryUsage(4 * 1024 * 1024);
-    setMaxTextureUsage(16 * 1024 * 1024);
+    setExtraTextureUsage(12 * 1024 * 1024);
 
     loadTiles();
 }
@@ -163,15 +169,28 @@ int QGeoTileCache::memoryUsage() const
     return memoryCache_.totalCost();
 }
 
-void QGeoTileCache::setMaxTextureUsage(int textureUsage)
+void QGeoTileCache::setExtraTextureUsage(int textureUsage)
 {
-    textureCache_.setMaxCost(textureUsage);
+    extraTextureUsage_ = textureUsage;
+    textureCache_.setMaxCost(minTextureUsage_ + extraTextureUsage_);
+}
+
+void QGeoTileCache::setMinTextureUsage(int textureUsage)
+{
+    minTextureUsage_ = textureUsage;
+    textureCache_.setMaxCost(minTextureUsage_ + extraTextureUsage_);
 }
 
 int QGeoTileCache::maxTextureUsage() const
 {
     return textureCache_.maxCost();
 }
+
+int QGeoTileCache::minTextureUsage() const
+{
+    return minTextureUsage_;
+}
+
 
 int QGeoTileCache::textureUsage() const
 {

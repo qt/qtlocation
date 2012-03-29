@@ -126,8 +126,10 @@ public:
     int maxMemoryUsage() const;
     int memoryUsage() const;
 
-    void setMaxTextureUsage(int textureUsage);
+    void setMinTextureUsage(int textureUsage);
+    void setExtraTextureUsage(int textureUsage);
     int maxTextureUsage() const;
+    int minTextureUsage() const;
     int textureUsage() const;
 
     void GLContextAvailable();
@@ -161,6 +163,9 @@ private:
     QCache3Q<QGeoTileSpec, QGeoCachedTileDisk, QCache3QTileEvictionPolicy > diskCache_;
     QCache3Q<QGeoTileSpec, QGeoCachedTileMemory > memoryCache_;
     QCache3Q<QGeoTileSpec, QGeoTileTexture > textureCache_;
+
+    int minTextureUsage_;
+    int extraTextureUsage_;
 
     QMutex cleanupMutex_;
     QList<QGLTexture2D*> cleanupList_;

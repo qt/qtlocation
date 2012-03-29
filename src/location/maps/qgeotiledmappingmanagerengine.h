@@ -112,6 +112,8 @@ protected:
     void setTileSize(const QSize &tileSize);
     void setCacheHint(QGeoTiledMappingManagerEngine::CacheAreas cacheHint);
 
+    QGeoTileCache *createTileCacheWithDir(const QString& cacheDirectory);
+
 private:
     QGeoTiledMappingManagerEnginePrivate* d_ptr;
 

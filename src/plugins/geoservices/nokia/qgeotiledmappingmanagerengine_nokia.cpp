@@ -53,8 +53,10 @@
 #include "qgeotilespec.h"
 #include "qgeoprojection_p.h"
 #include "qdoublevector2d_p.h"
+#include "qgeotilecache_p.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QVariant>
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonObject>
@@ -98,6 +100,36 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(const QMa
     fetcher->setParams(parameters);
     fetcher->setTileSize(tileSize());
     setTileFetcher(fetcher);
+
+    // TODO: do this in a plugin-neutral way so that other tiled map plugins
+    //       don't need this boilerplate
+
+    QString cacheDir;
+    if (parameters.contains(QLatin1String("mapping.cache.directory")))
+        cacheDir = parameters.value(QLatin1String("mapping.cache.directory")).toString();
+
+    QGeoTileCache* tileCache = createTileCacheWithDir(cacheDir);
+
+    if (parameters.contains(QLatin1String("mapping.cache.disk.size"))) {
+      bool ok = false;
+      int cacheSize = parameters.value(QLatin1String("mapping.cache.disk.size")).toString().toInt(&ok);
+      if (ok)
+          tileCache->setMaxDiskUsage(cacheSize);
+    }
+
+    if (parameters.contains(QLatin1String("mapping.cache.memory.size"))) {
+      bool ok = false;
+      int cacheSize = parameters.value(QLatin1String("mapping.cache.memory.size")).toString().toInt(&ok);
+      if (ok)
+          tileCache->setMaxMemoryUsage(cacheSize);
+    }
+
+    if (parameters.contains(QLatin1String("mapping.cache.texture.size"))) {
+      bool ok = false;
+      int cacheSize = parameters.value(QLatin1String("mapping.cache.texture.size")).toString().toInt(&ok);
+      if (ok)
+          tileCache->setExtraTextureUsage(cacheSize);
+    }
 
     populateMapTypesDb();
     QMetaObject::invokeMethod(fetcher, "fetchCopyrightsData", Qt::QueuedConnection);
@@ -239,7 +271,7 @@ QString QGeoTiledMappingManagerEngineNokia::evaluateCopyrightsText(const QGeoMap
 
 QGeoMapData *QGeoTiledMappingManagerEngineNokia::createMapData()
 {
-    return new QGeoTiledMapDataNokia(this);;
+    return new QGeoTiledMapDataNokia(this);
 }
 
 QT_END_NAMESPACE

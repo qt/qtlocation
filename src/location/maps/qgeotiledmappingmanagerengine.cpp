@@ -291,12 +291,19 @@ void QGeoTiledMappingManagerEngine::setCacheHint(QGeoTiledMappingManagerEngine::
     d->cacheHint_ = cacheHint;
 }
 
+QGeoTileCache *QGeoTiledMappingManagerEngine::createTileCacheWithDir(const QString &cacheDirectory)
+{
+    Q_D(QGeoTiledMappingManagerEngine);
+    Q_ASSERT_X(!d->tileCache_, Q_FUNC_INFO, "This should be called only once");
+    d->tileCache_ = new QGeoTileCache(cacheDirectory);
+    return d->tileCache_;
+}
+
 QGeoTileCache *QGeoTiledMappingManagerEngine::tileCache()
 {
     Q_D(QGeoTiledMappingManagerEngine);
-    if (!d->tileCache_) {
+    if (!d->tileCache_)
         d->tileCache_ = new QGeoTileCache();
-    }
     return d->tileCache_;
 }
 
