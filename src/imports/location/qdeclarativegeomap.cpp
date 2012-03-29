@@ -933,7 +933,15 @@ QPointF QDeclarativeGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate)
 }
 
 /*!
-    \internal
+    \qmlslot QtLocation5::Map::pan(int dx, int dy)
+
+    Starts panning the map by \a dx pixels along the x-axis and
+    by \a dy pixels along the y-axis.
+
+    Positive values for \a dx move the map right, negative values left.
+    Positive values for \a dy move the map down, negative values up.
+
+    During panning the \l center, \l tilt, \l bearing, and \l zoomLevel may change.
 */
 void QDeclarativeGeoMap::pan(int dx, int dy)
 {
