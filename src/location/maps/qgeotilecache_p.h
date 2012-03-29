@@ -92,11 +92,14 @@ public:
 /* This is also used in the mapgeometry */
 class QGeoTileTexture {
 public:
+
+    QGeoTileTexture();
     ~QGeoTileTexture();
 
     QGeoTileSpec spec;
     QGLTexture2D *texture;
     QGeoTileCache *cache;
+    bool textureBound;
 };
 
 /* Custom eviction policy for the disk cache, to avoid deleting all the files

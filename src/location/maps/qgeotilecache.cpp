@@ -71,6 +71,11 @@ public:
     QString format;
 };
 
+QGeoTileTexture::QGeoTileTexture()
+    : texture(0),
+      cache(0),
+      textureBound(false) {}
+
 void QCache3QTileEvictionPolicy::aboutToBeRemoved(const QGeoTileSpec &key, QSharedPointer<QGeoCachedTileDisk> obj)
 {
     Q_UNUSED(key);

@@ -686,8 +686,11 @@ void QGeoMapGeometryPrivate::paintGL(QGLPainter *painter)
 
     // do any pending upload/releases
     while (!newUploads_.isEmpty()) {
-        newUploads_.front()->texture->bind();
-        newUploads_.front()->texture->clearImage();
+        if (!newUploads_.front()->textureBound){
+            newUploads_.front()->texture->bind();
+            newUploads_.front()->texture->clearImage();
+            newUploads_.front()->textureBound = true;
+        }
         newUploads_.pop_front();
     }
 
