@@ -193,7 +193,7 @@ and behaviours are outlined below:
         \li no
 \endtable
 
-\section2 Plugin Specific Behaviors
+\section2 Plugin Specific Behaviors and Limitations.
 \section3 Search
 The following list shows what core place data is returned during a place search:
 \list
@@ -213,16 +213,38 @@ via QPlaceManager::getDetails()
 \li extended attributes
 \endlist
 
-\section3 Addresses vs POIs
-Sometimes a search will return a Place without a placeId, which indicates that the place is simply an 'address'
-that has matched the user's search query.  An 'address' only has location and name properties.
+\section3 Searching for Places
+\section4 Search Term and Categories
+The \c nokia plugin supports searching with a \e {search term} and \e {category or categories}, however
+both are not supported simultaneously.
 
-If a Place has a placeId, then it is a specific 'point of interest', which may have some
-or all Place properties available.
+\list
+    \li Valid usage: \e {search term} + \e {search center}
+    \li Valid usage: \e {category} + \e {search center}
+    \li Invalid usage: \e {search term} + \e {category} + \e {search center}
+\endlist
 
-\section3 Search Term Suggestions
-Only a partial search term and search center is supported when retrieving suggestions.
+This limitation applies when using the \c nokia plugin with \l PlaceSearchModel and QPlaceManager::search().
 
-\section3 Recommendation
-Only a given place is supported as a parameter for a recommendation.  No other parameters are used.
+\section4 Search Area
+The \c nokia plugin only supports provision of a \e {search center} when searching for places via \l PlaceSearchModel
+and QPlaceManager::search().  A search center can be provided via a bounding circle, however the
+radius should be kept at the default value of -1.  Typically a developer should not have to set the radius at all.
+If a developer sets a radius, it is ignored by the plugin and the boundaries are not honored.
+
+In a similar manner only the center of a bounding box is taken into consideration when searching.  The boundaries
+of the box are not honored.
+
+A search center \e {must} be provided for all searches.
+
+\section3 Search Term suggestions
+Only a partial \e {search term} and \e {search center} is supported when retrieving suggestions.
+This limitation applies when using the \c nokia plugin with the \l PlaceSearchSuggestionModel and QPlaceManager::searchSuggestions().
+
+Both search term and search center \e {must} be provided when retrieving search term suggestions.
+
+\section3 Recommendations
+Only a given \e {place identifier} is supported as a parameter for a recommendations.  No other parameters
+such as limit, offset, and  search area are supported.  This limitation applies when using the
+\c nokia plugin with \l PlaceRecommendationModel and QPlaceManager::recommendations().
 */

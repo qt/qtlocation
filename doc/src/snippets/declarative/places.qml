@@ -120,6 +120,8 @@ Item {
     PlaceSearchModel {
         id: searchModel
 
+        plugin: myPlugin
+
         searchTerm: "Pizza"
         searchArea: BoundingCircle {
             center: Coordinate {
@@ -142,14 +144,9 @@ Item {
     PlaceRecommendationModel {
         id: recommendationModel
 
+        plugin: myPlugin
+
         placeId: place.placeId
-        searchArea: BoundingCircle {
-            center: Coordinate {
-                // Brisbane
-                longitude: 153.02778
-                latitude: -27.46778
-            }
-        }
 
         Component.onCompleted: execute()
     }
@@ -163,6 +160,9 @@ Item {
     //! [SearchSuggestionModel]
     PlaceSearchSuggestionModel {
         id: suggestionModel
+
+        plugin: myPlugin
+
         searchArea: BoundingCircle {
             center: Coordinate {
                 // Brisbane

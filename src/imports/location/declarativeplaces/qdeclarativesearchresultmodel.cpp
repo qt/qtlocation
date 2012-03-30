@@ -66,14 +66,6 @@ QT_USE_NAMESPACE
     \l searchTerm and \l categories properties can be set to restrict the search results to
     places matching those criteria.
 
-    The \l maximumCorrections property can be used to limit the maximum number of search term
-    correction results that may be returned.  Setting \l maximumCorrections to 0 will prevent any
-    search term correction results from being returned.
-
-    The \l offset and \l limit properties can be used to access paged search results.  When the
-    \l offset and \l limit properties are set the search results between \l offset and
-    (\l offset + \l limit - 1) will be returned.
-
     The PlaceSearchModel returns both sponsored and
     \l {http://en.wikipedia.org/wiki/Organic_search}{organic search results}.  Sponsored search
     results will have the \c sponsored role set to true.
@@ -92,7 +84,9 @@ QT_USE_NAMESPACE
         \row
             \li distance
             \li real
-            \li Valid only when the \c type role is \c PlaceResult, the distance to the place.
+            \li Valid only when the \c type role is \c PlaceResult, the distance to the place
+                from the center of the \l searchArea. If no \l searchArea
+                has been specified, the distance is NaN.
         \row
             \li place
             \li \l Place
@@ -137,7 +131,10 @@ QT_USE_NAMESPACE
     \section1 Example
 
     The following example shows how to use the PlaceSearchModel to search for Pizza restaurants in
-    close proximity of a given position.
+    close proximity of a given position.  A \l searchTerm and \l searchArea are provided to the model
+    and \l execute() is used to perform a lookup query.  Note that the model does not incrementally
+    fetch search results, but rather performs a single fetch when \l execute() is run.  The \l count
+    is set to the number of search results returned during the fetch.
 
     \snippet snippets/declarative/places.qml QtQuick import
     \snippet snippets/declarative/places.qml QtLocation import
@@ -145,6 +142,29 @@ QT_USE_NAMESPACE
     \snippet snippets/declarative/places.qml PlaceSearchModel
 
     \sa PlaceRecommendationModel, CategoryModel, {QPlaceManager}
+
+    \section1 Paging
+    The PlaceSearchModel API has some limited support
+    for paging. The \l offset and \l limit properties can be used to access
+    paged search results. When the \l offset and \l limit properties are set
+    the search results between \l offset and (\l offset + \l limit - 1) will be
+    returned. For example, if the backend has 5 search results in total
+    [a,b,c,d,e], an offset of 0 specifies that the first item returned in the
+    model will be 'a'. An offset of 1 secifies that the first item in the model
+    will be 'b' and so on. The limit specifies the maximum number of items to
+    be returned.  For example, assuming an offset of 0 and limit of 3 then a,b,c is
+    returned. If the offset exceeds (or equals) the total number of items, then
+    0 results are returned in the model. Note that the API currently does not
+    support a means to retrieve the total number of items available from the
+    backed. Also note that support for \l offset and \l limit can vary
+    according to the \l plugin.
+
+    \section1 Corrections
+    The PlaceSearchModel can return correction results if supported by the \l plugin.
+    Correction results consist of a string which can be used as a search term for another query and
+    are often used in the context of "Did you mean" corrections. The \l maximumCorrections property
+    can be used to limit the maximum number of search term correction results that may be returned.
+    Setting \l maximumCorrections to 0 will prevent any search term correction results from being returned.
 */
 
 /*!
@@ -157,9 +177,9 @@ QT_USE_NAMESPACE
     \qmlproperty Plugin PlaceSearchModel::favoritesPlugin
 
     This property holds the \l Plugin which will be used to search for favorites.
-    Any places from the search which can be cross-referenced/matched
-    in the favorites \l Plugin will have their \l {Place::favorite}{favorite} property
-    set with the \l Place from the favorites \l Plugin.
+    Any places from the search which can be cross-referenced or matched
+    in the favoritesPlugin will have their \l {Place::favorite}{favorite} property
+    set to the corresponding \l Place from the favoritesPlugin.
 
     If the favoritesPlugin is not set, the \l {Place::favorite}{favorite} property
     of the places in the results will always be null.
@@ -191,6 +211,9 @@ QT_USE_NAMESPACE
     If this property is set to a \l BoundingCircle its \l {BoundingCircle::radius}{radius} property
     may be left unset, in which case the \l Plugin will choose an appropriate radius for the
     search.
+
+    Support for specifying a search area can vary according to the \l plugin backend implementation.
+    For example, some may support a search center only while others may only support bounding boxes.
 */
 
 /*!
@@ -231,7 +254,8 @@ QT_USE_NAMESPACE
     \qmlmethod PlaceSearchModel::execute()
 
     Executes a search query using the element's properties as search parameters.  Once the query
-    completes, the model items are updated with the search results.
+    completes, the model items are updated with the search results.  If an error occurs, the model
+    is cleared.
 
     \sa cancel(), status
 */
@@ -509,9 +533,13 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
 */
 
 /*!
-    \qmlproperty string PlaceSearchModel::count
+    \qmlproperty int PlaceSearchModel::count
 
     This property holds the number of results the model has.
+
+    Note that it does not refer to the total number of search results
+    available in the backend.  The total number of search results
+    is not currently supported by the API.
 */
 
 /*!

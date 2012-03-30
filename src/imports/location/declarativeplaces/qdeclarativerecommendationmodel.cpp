@@ -62,15 +62,10 @@ QT_USE_NAMESPACE
 
     \brief The PlaceRecommendationModel element provides a model of place recommendations.
 
-    PlaceRecommendationModel provides a model of place recommendation results within the \l searchArea,
-    that are similar to the place identified by the \l placeId property.
+    PlaceRecommendationModel provides a model of place recommendation results that are
+    similar to the place identified by the \l placeId property.
 
-    The \l offset and \l limit properties can be used to access paged search results.  When the
-    \l offset and \l limit properties are set the search results between \l offset and
-    (\l offset + \l limit - 1) will be returned.
-
-    The model returns data for the following roles:
-
+    The following roles can be used to access each recommendation result:
     \table
         \header
             \li Role
@@ -79,15 +74,20 @@ QT_USE_NAMESPACE
         \row
             \li distance
             \li real
-            \li The distance to the place.
+            \li If a search area has been specified and is supported by the \l plugin,
+                the distance is from the recommended place to the search center, otherwise the distance is
+                from the recommended place to the place identified by \l placeId.  If no area has been
+                specified, the distance is NaN.
         \row
             \li place
             \li \l Place
-            \li The place.
+            \li The recommended place.
     \endtable
 
     The following example shows how to use the PlaceRecommendationModel to search for recommendations in
-    close proximity of a given position.
+    similar to a given place by providing a place identifier.  Note that model does not incrementally fetch
+    recommendations but rather performs a single fetch when \l execute() is run.  The \l count is set to the
+    number of recommendations returned during the fetch.
 
     \snippet snippets/declarative/places.qml QtQuick import
     \snippet snippets/declarative/places.qml QtLocation import
@@ -95,6 +95,22 @@ QT_USE_NAMESPACE
     \snippet snippets/declarative/places.qml RecommendationModel
 
     \sa PlaceSearchModel, CategoryModel, {QPlaceManager}
+
+    \section1 Paging
+    The PlaceRecommendationModel API has some limited support
+    for paging. The \l offset and \l limit properties can be used to access
+    paged search results. When the \l offset and \l limit properties are set
+    the search results between \l offset and (\l offset + \l limit - 1) will be
+    returned. For example, if the backend has 5 recommendations in total
+    [a,b,c,d,e], an offset of 0 specifies that the first item returned in the
+    model will be 'a'. An offset of 1 secifies that the first item in the model
+    will be 'b' and so on. The limit specifies the maximum number of items to
+    be returned. For example, assuming an offset of 0 and limit of 3 then a,b,c is
+    returned. If the offset exceeds (or equals) the total number of items, then
+    0 results are returned in the model. Note that the API currently does not
+    support a means to retrieve the total number of items available from the
+    backed. Also note that support for \l offset and \l limit can vary
+    according to the \l plugin.
 */
 
 /*!
@@ -107,9 +123,9 @@ QT_USE_NAMESPACE
     \qmlproperty Plugin PlaceRecommendationModel::favoritesPlugin
 
     This property holds the \l Plugin which will be used to look for favorites.
-    Any places from the recommendation search which can be cross-referenced/matched
-    in the favorites \l Plugin will have their \l {Place::favorite}{favorite} property
-    set with the \l Place from the favorites \l Plugin.
+    Any places from the recommendation search which can be cross-referenced or matched
+    in the favoritesPlugin will have their \l {Place::favorite}{favorite} property
+    set to the corresponding \l Place from the favoritesPlugin.
 
     If the favoritesPlugin is not set, the \l {Place::favorite}{favorite} property
     of the places in the results will always be null.
@@ -141,6 +157,10 @@ QT_USE_NAMESPACE
     If this property is set to a \l BoundingCircle its \l {BoundingCircle::radius}{radius} property
     may be left unset, in which case the \l Plugin will choose an appropriate radius for the
     search.
+
+    Support for specifying a search area can vary according according to the \l plugin backend
+    implementation. For example, some may support a search center only while others may only support
+    bounding boxes.
 */
 
 /*!
@@ -154,7 +174,7 @@ QT_USE_NAMESPACE
 /*!
     \qmlproperty int PlaceRecommendationModel::limit
 
-    This property holds the limit of the number of items that will be returned.
+    This property holds the maximum number of items that will be returned.
 
     \sa offset
 */
@@ -182,7 +202,7 @@ QT_USE_NAMESPACE
 
     Executes a recommendation search query for places similar to the place identified by the
     \l placeId property.  Once the query completes the model items are updated with the search
-    results.
+    results.  If an error occurs, the model is cleared.
 
     \sa cancel(), status
 */
@@ -240,9 +260,13 @@ void QDeclarativeRecommendationModel::setPlaceId(const QString &placeId)
 }
 
 /*!
-    \qmlproperty string PlaceRecommendationModel::count
+    \qmlproperty int PlaceRecommendationModel::count
 
     This property holds the number of results the model has.
+
+    Note that it does not refer to the total number of recommendations
+    available in the backend.  The total number of recommendations
+    is not currently supported by the API.
 */
 
 /*!
