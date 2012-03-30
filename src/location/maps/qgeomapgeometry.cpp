@@ -115,7 +115,8 @@ public:
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
     void removeTiles(const QSet<QGeoTileSpec> &oldTiles);
     void updateTiles(const QSet<QGeoTileSpec> &tiles);
-    QGLSceneNode *buildGeometry(const QGeoTileSpec &spec);
+    QGeometryData buildGeometry(const QGeoTileSpec &spec);
+    QGLSceneNode *buildSceneNodeFromGeometry(const QGeometryData &geom);
     void setTileBounds(const QSet<QGeoTileSpec> &tiles);
     void setupCamera();
     void setScalingOnTextures();
@@ -301,7 +302,7 @@ QPointF QGeoMapGeometryPrivate::mercatorToScreenPosition(const QDoubleVector2D &
     return QPointF(x + screenOffsetX_, y + screenOffsetY_);
 }
 
-QGLSceneNode *QGeoMapGeometryPrivate::buildGeometry(const QGeoTileSpec &spec)
+QGeometryData QGeoMapGeometryPrivate::buildGeometry(const QGeoTileSpec &spec)
 {
     int x = spec.x();
 
@@ -317,8 +318,6 @@ QGLSceneNode *QGeoMapGeometryPrivate::buildGeometry(const QGeoTileSpec &spec)
     }
 
     double edge = scaleFactor_ * tileSize_;
-
-    QGLBuilder builder;
 
     double x1 = (x - minTileX_);
     double x2 = x1 + 1.0;
@@ -351,10 +350,16 @@ QGLSceneNode *QGeoMapGeometryPrivate::buildGeometry(const QGeoTileSpec &spec)
     g.appendNormal(n);
     g.appendTexCoord(QVector2D(1.0, 1.0));
 
-    builder.addQuads(g);
+    return g;
+}
 
+QGLSceneNode *QGeoMapGeometryPrivate::buildSceneNodeFromGeometry(const QGeometryData &geom)
+{
+    QGLBuilder builder;
+    builder.addQuads(geom);
     return builder.finalizedSceneNode();
 }
+
 
 void QGeoMapGeometryPrivate::setScalingOnTextures()
 {
@@ -383,7 +388,8 @@ void QGeoMapGeometryPrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QG
 
     QGLSceneNode *node = nodes_.value(spec, 0);
     if (!node) {
-        node = buildGeometry(spec);
+        QGeometryData geom = buildGeometry(spec);
+        node = buildSceneNodeFromGeometry(geom);
         if (!node)
             return;
 
@@ -421,14 +427,13 @@ void QGeoMapGeometryPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
     // set up the gl camera for the new geometry
     setupCamera();
 
-    // geometry update is currently done by destroying old scene nodes
-    // then creating new ones.
-    // TODO reuse geometry information
     QSet<QGeoTileSpec> toRemove = visibleTiles_ - tiles;
     QSet<QGeoTileSpec> toUpdate = visibleTiles_ - toRemove;
     if (!toRemove.isEmpty())
         removeTiles(toRemove);
-    if (!toUpdate.isEmpty())
+
+    // only need to update tiles when the bounds have changed,
+    if (visibleTiles_ != tiles && !toUpdate.isEmpty())
         updateTiles(toUpdate);
 
     visibleTiles_ = tiles;
@@ -446,9 +451,16 @@ void QGeoMapGeometryPrivate::updateTiles(const QSet<QGeoTileSpec> &tiles)
         QGLSceneNode *node = nodes_.value(tile, 0);
 
         if (node) {
+            QGeometryData geom = buildGeometry(tile);
+            // if the new geometry (after wrapping) is the same as the old one,
+            // it can be reused
+            if ( node->children().size() > 0) {
+                if (node->children().front()->geometry() == geom)
+                    continue;
+            }
+
             sceneNode_->removeNode(node);
-            // TODO: re-use more of the geometry calculations?
-            QGLSceneNode *newNode = buildGeometry(tile);
+            QGLSceneNode *newNode = buildSceneNodeFromGeometry(geom);
             if (newNode) {
                 QGLMaterial *mat = new QGLMaterial(newNode);
                 mat->setTexture(textures_[tile]->texture);
@@ -605,7 +617,7 @@ void QGeoMapGeometryPrivate::setupCamera()
     mercatorCenterX_ = center.x();
     mercatorCenterY_ = center.y();
 
-    // work out where the camera center is w.r.t mininum tile bounds
+    // work out where the camera center is w.r.t minimum tile bounds
     center.setX(center.x() - 1.0 * minTileX_);
     center.setY(1.0 * minTileY_ - center.y());
 
