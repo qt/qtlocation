@@ -60,6 +60,18 @@
     in the fields.  Click "Go!" to save the place.  To create a new category, select "Category"
     from the "New" menu and fill in the fields.  Click "Go!" to save the category.
 
+    The Places example can work with any of the available geo services plugins.  However, some
+    plugins may require additional \l {QtLocation5::PluginParameter}{plugin parameters} in order to
+    function correctly.  \l {QtLocation5::PluginParameter}{Plugin parameters} can be passed on the
+    command line using the \c {--plugin} argument, which takes the form:
+
+    \code
+        --plugin.<parameter name> <parameter value>
+    \endcode
+
+    Refer to the documentation for each of the geo services plugins for details on what plugin
+    parameters they support.  The Nokia services plugin supplied with Qt requires an \e app_id and
+    \e token pair.  See "\l {Qt Location Nokia Plugin}" for details.
 
     \section1 Displaying Categories
 
