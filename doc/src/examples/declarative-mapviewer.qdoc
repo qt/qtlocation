@@ -95,7 +95,7 @@
 
     As we do not specify a plugin for supplying map data, the platform default
     will be used. This is typically the "nokia" plugin, which provides data from
-    Ovi Maps. Additional licensing conditions do apply to the use of this data,
+    Nokia services. Additional licensing conditions do apply to the use of this data,
     please see the documentation for further details.
 
     \section2 Finding an Address (Geocoding)
