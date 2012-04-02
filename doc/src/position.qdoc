@@ -34,7 +34,14 @@
 \brief The Location Positioning API enables location positioning by means of
 GPS or an NMEA data source.
 
-\section1 Location Positioning
+\section1 Positioning
+
+The Positioning component of the Qt Location API is about the geographical position, size
+and address of some place. Positioning contains a QGeoCoordinate class, containing latitude, longitude and altitude in meters. QGeoLocation contains a QGeoCoordinate plus address
+and size information (a bounding box) so that positions can be more than mathematical points.
+Movement into or out of the defined bounding box areas can be monitored. The API
+also allows the developer to control the source of the positional information
+as well.
 
 Location data involves a precisely specified position on the Earth's
 surface \unicode {0x2014} as provided by a latitude-longitude coordinate

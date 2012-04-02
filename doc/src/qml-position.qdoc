@@ -67,8 +67,12 @@ to center a \l{Map}{map} on the current position:
 \code
 Rectangle {
 
+    import QtLocation 5.0
+    ...
+
     map : Map {
         // initialize map
+        ...
     }
 
     PositionSource {
@@ -87,7 +91,7 @@ The \l{Flickr (QML)}{Flickr Example} uses the Location to download thumbnail
 images from Flickr relevant to the current location.
 
 
-\section1 Location Position Classes
+\section1 Position QML Components
 
 \annotatedlist qml-QtLocation5-positioning
 */
