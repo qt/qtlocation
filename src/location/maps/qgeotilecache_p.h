@@ -90,7 +90,7 @@ public:
 };
 
 /* This is also used in the mapgeometry */
-class QGeoTileTexture {
+class Q_LOCATION_EXPORT QGeoTileTexture {
 public:
 
     QGeoTileTexture();
