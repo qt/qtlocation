@@ -546,6 +546,14 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     emit maximumZoomLevelChanged();
     emit supportedMapTypesChanged();
     emit activeMapTypeChanged();
+
+    // Any map items that were added before the plugin was ready
+    // need to have setMap called again
+    foreach (QObject *obj, mapItems_) {
+        QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase*>(obj);
+        if (item)
+            item->setMap(this, map_);
+    }
 }
 
 /*!
@@ -999,7 +1007,8 @@ void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
         return;
     updateMutex_.lock();
     item->setParentItem(this);
-    item->setMap(this, map_);
+    if (map_)
+        item->setMap(this, map_);
     mapItems_.append(item);
     emit mapItemsChanged();
     updateMutex_.unlock();
