@@ -95,6 +95,8 @@ QT_BEGIN_NAMESPACE
 class QLocationDeclarativeModule: public QQmlExtensionPlugin
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface/1.0"
+                      FILE "plugin.json")
 
 public:
     virtual void registerTypes(const char* uri) {
@@ -182,5 +184,3 @@ public:
 #include "location.moc"
 
 QT_END_NAMESPACE
-
-Q_EXPORT_PLUGIN2(declarative_location, QT_PREPEND_NAMESPACE(QLocationDeclarativeModule));

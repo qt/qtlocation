@@ -108,3 +108,6 @@ qmldir.files += $$PWD/qmldir $$PWD/plugins.qmltypes
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INSTALLS += target qmldir
+
+OTHER_FILES += \
+    plugin.json
