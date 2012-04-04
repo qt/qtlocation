@@ -163,7 +163,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
 */
 void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 {
-    if (!screenDirty_)
+    if (!screenDirty_ || map.width() == 0 || map.height() == 0)
         return;
 
     QPointF origin = map.coordinateToScreenPosition(srcOrigin_, false);
