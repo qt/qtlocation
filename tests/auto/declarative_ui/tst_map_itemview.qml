@@ -208,6 +208,43 @@ Item {
     }
 
     Map {
+        id: mapForTestingListModel;
+        center: mapDefaultCenter;
+        plugin: testPlugin;
+        anchors.fill: parent;
+        zoomLevel: 2
+        Coordinate {
+            id: firstItemCoord
+            latitude: 11
+            longitude: 31
+        }
+        Coordinate {
+            id: secondItemCoord
+            latitude: 12
+            longitude: 32
+        }
+
+        MapItemView {
+            id: listModelItemView
+            model: ListModel {
+                id: testingListModel
+                ListElement { lat: 11; lon: 31 }
+                ListElement { lat: 12; lon: 32 }
+                ListElement { lat: 13; lon: 33 }
+            }
+            delegate: Component {
+                MapCircle {
+                    radius: 1500000
+                    center: Coordinate {
+                        latitude: lat;
+                        longitude: lon;
+                    }
+                }
+            }
+        }
+    }
+
+    Map {
         id: mapForTestingRouteModel;
         plugin: testPlugin;
         center: mapDefaultCenter;
@@ -356,6 +393,21 @@ Item {
             compare(mapForView.mapItems.length, 9)
             theItemView.model = testModel2
             compare(mapForView.mapItems.length, 4)
+        }
+
+        function test_listmodel() {
+            compare(mapForTestingListModel.mapItems.length, 3);
+            compare(mapForTestingListModel.mapItems[0].center.longitude, firstItemCoord.longitude);
+            compare(mapForTestingListModel.mapItems[0].center.latitude, firstItemCoord.latitude);
+            testingListModel.remove(0);
+            compare(mapForTestingListModel.mapItems.length, 2);
+            compare(mapForTestingListModel.mapItems[0].center.longitude, secondItemCoord.longitude);
+            compare(mapForTestingListModel.mapItems[0].center.latitude, secondItemCoord.latitude);
+            testingListModel.append({ lat: 1, lon: 1 });
+            compare(mapForTestingListModel.mapItems.length, 3);
+            compare(mapForTestingListModel.mapItems[2].center.latitude, 1);
+            testingListModel.clear();
+            compare(mapForTestingListModel.mapItems.length, 0);
         }
 
         function test_routemodel() {

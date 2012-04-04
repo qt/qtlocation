@@ -51,6 +51,7 @@
 QT_BEGIN_NAMESPACE
 
 class QAbstractItemModel;
+class QListModelInterface;
 class QDeclarativeGeoMap;
 class QDeclarativeGeoMapItemBase;
 
@@ -96,17 +97,27 @@ Q_SIGNALS:
     void visibleChanged();
     void zChanged();
 
+private:
+    QDeclarativeGeoMapItemBase *createItemFromItemModel(int modelRow);
+    QDeclarativeGeoMapItemBase *createItemFromListModel(int modelRow);
+
 private Q_SLOTS:
-    void modelReset();
-    void modelRowsInserted(QModelIndex, int start, int end);
-    void modelRowsRemoved(QModelIndex, int start, int end);
+    void itemModelReset();
+    void itemModelRowsInserted(QModelIndex, int start, int end);
+    void itemModelRowsRemoved(QModelIndex, int start, int end);
+
+    void listModelItemsInserted(int index, int count);
+    void listModelItemsRemoved(int index, int count);
+    void listModelItemsChanged(int index, int count, const QList<int> &roles);
+    void listModelItemsMoved(int from, int to, int count);
 
 private:
     bool visible_;
     bool componentCompleted_;
     QQmlComponent *delegate_;
     QVariant modelVariant_;
-    QAbstractItemModel* model_;
+    QAbstractItemModel* itemModel_;
+    QListModelInterface* listModel_;
     QDeclarativeGeoMap *map_;
     QList<QDeclarativeGeoMapItemBase*> mapItemList_;
 };
