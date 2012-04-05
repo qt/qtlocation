@@ -819,7 +819,9 @@ void QDeclarativeGeoMap::mapCenterChanged(AnimatableCoordinate center)
 {
     if (center.coordinate() != this->center()->coordinate()) {
         QDeclarativeCoordinate* currentCenter = this->center();
-        currentCenter->setCoordinate(center.coordinate());
+        currentCenter->setLatitude(center.coordinate().latitude());
+        currentCenter->setLongitude(center.coordinate().longitude());
+        currentCenter->setAltitude(center.coordinate().altitude());
         emit centerChanged(currentCenter);
     }
 }
@@ -834,12 +836,11 @@ void QDeclarativeGeoMap::centerLatitudeChanged(double latitude)
     if (mappingManagerInitialized_) {
         AnimatableCoordinate acoord = map_->mapController()->center();
         QGeoCoordinate coord = acoord.coordinate();
+
         // if the change originated from app, emit (other changes via mapctrl signals)
         if (latitude != coord.latitude())
             emit centerChanged(center_);
-        coord.setLatitude(latitude);
-        acoord.setCoordinate(coord);
-        map_->mapController()->setCenter(acoord);
+        map_->mapController()->setLatitude(latitude);
         update();
     } else {
         emit centerChanged(center_);
@@ -859,9 +860,7 @@ void QDeclarativeGeoMap::centerLongitudeChanged(double longitude)
         // if the change originated from app, emit (other changes via mapctrl signals)
         if (longitude != coord.longitude())
             emit centerChanged(center_);
-        coord.setLongitude(longitude);
-        acoord.setCoordinate(coord);
-        map_->mapController()->setCenter(acoord);
+        map_->mapController()->setLongitude(longitude);
         update();
     } else {
         emit centerChanged(center_);
@@ -881,9 +880,7 @@ void QDeclarativeGeoMap::centerAltitudeChanged(double altitude)
         // if the change originated from app, emit (other changes via mapctrl signals)
         if (altitude != coord.altitude())
             emit centerChanged(center_);
-        coord.setAltitude(altitude);
-        acoord.setCoordinate(coord);
-        map_->mapController()->setCenter(acoord);
+        map_->mapController()->setAltitude(altitude);
         update();
     } else {
         emit centerChanged(center_);

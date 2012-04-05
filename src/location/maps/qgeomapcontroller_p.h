@@ -96,6 +96,10 @@ public:
     AnimatableCoordinate center() const;
     void setCenter(const AnimatableCoordinate &center);
 
+    void setLatitude(qreal latitude);
+    void setLongitude(qreal longitude);
+    void setAltitude(qreal altitude);
+
     qreal bearing() const;
     void setBearing(qreal bearing);
 

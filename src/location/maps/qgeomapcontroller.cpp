@@ -156,6 +156,43 @@ void QGeoMapController::setCenter(const AnimatableCoordinate &center)
     map_->setCameraData(cd);
 }
 
+void QGeoMapController::setLatitude(qreal latitude)
+{
+    QGeoCameraData cd = map_->cameraData();
+
+    if (latitude == cd.center().latitude())
+        return;
+
+    QGeoCoordinate coord(latitude, cd.center().longitude(), cd.center().altitude());
+    cd.setCenter(coord);
+    map_->setCameraData(cd);
+}
+
+void QGeoMapController::setLongitude(qreal longitude)
+{
+    QGeoCameraData cd = map_->cameraData();
+
+    if (longitude == cd.center().longitude())
+        return;
+
+    QGeoCoordinate coord(cd.center().latitude(), longitude, cd.center().altitude());
+    cd.setCenter(coord);
+    map_->setCameraData(cd);
+}
+
+
+void QGeoMapController::setAltitude(qreal altitude)
+{
+    QGeoCameraData cd = map_->cameraData();
+
+    if (altitude == cd.center().altitude())
+        return;
+
+    QGeoCoordinate coord(cd.center().latitude(), cd.center().longitude(), altitude);
+    cd.setCenter(coord);
+    map_->setCameraData(cd);
+}
+
 qreal QGeoMapController::bearing() const
 {
     return map_->cameraData().bearing();
