@@ -1,3 +1,6 @@
+load(configure)
+qtCompileTest(locationd)
+
 TEMPLATE = subdirs
 
 module_qtlocation_src.subdir = src

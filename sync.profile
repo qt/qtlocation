@@ -25,8 +25,3 @@
     "qtjsbackend" => "refs/heads/master",
     "qt3d" => "refs/heads/master"
 );
-
-# compile tests
-%configtests = (
-            "locationd" => {},
-);
