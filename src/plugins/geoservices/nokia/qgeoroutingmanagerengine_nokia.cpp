@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoRoutingManagerEngine(parameters),
-        m_host("prd.lbsp.navteq.com"),
+        m_host("route.nlp.nokia.com"),
         m_token(QGeoServiceProviderFactoryNokia::defaultToken),
         m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
 {
