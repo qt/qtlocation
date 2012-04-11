@@ -266,6 +266,9 @@ void QGeoMapController::pan(qreal dx, qreal dy)
                                 QPointF(map_->width() / 2 + dx,
                                         map_->height() / 2 + dy));
 
+
+    // keep altitude as it was
+    coord.setAltitude(cd.center().altitude());
     if (coord.isValid()) {
         cd.setCenter(coord);
         map_->setCameraData(cd);
