@@ -194,7 +194,6 @@ Dialog {
         spacing: gap/2
         orientation: ListView.Horizontal
         interactive: false
-        snapMode: ListView.SnapOneItem
 
         model: VisualItemModel {
             Item {
