@@ -42,11 +42,249 @@
 #include "qgeoaddress.h"
 #include "qgeoaddress_p.h"
 
+#include <QtCore/QStringList>
+
 #ifdef QGEOADDRESS_DEBUG
 #include <QDebug>
 #endif
 
 QT_BEGIN_NAMESPACE
+
+/*
+    Combines a  list of address parts into  a single line.
+
+    The parts parameter contains both address elements such as city, state and so on
+    as well as separators such as spaces and commas.
+
+    It is expected that an element is always followed by a separator and the last
+    sepator is usually a new line delimeter.
+
+    For example: Springfield, 8900
+    would have four parts
+    ["Springfield", ", ", "8900", "<br>"]
+
+    The addressLine takes care of putting in separators appropriately or leaving
+    them out depending on whether the adjacent elements are present or not.
+    For example if city were empty in the above scenario the returned string is "8900<br>"
+    If the postal code was empty, returned string is "Springfield<br>"
+    If both city and postal code were empty, the returned string is "".
+*/
+static QString addressLine(const QStringList &parts)
+{
+    QString line;
+    Q_ASSERT(parts.count() % 2 == 0);
+
+    //iterate until just before the last pair
+    QString penultimateSeparator;
+    for (int i=0; i < parts.count() - 2; i = i + 2) {
+        if (!parts.at(i).isEmpty()) {
+            line.append(parts.at(i) + parts.at(i + 1));
+            penultimateSeparator = parts.at(i + 1);
+        }
+    }
+
+    if (parts.at(parts.count() - 2).isEmpty()) {
+        line.chop(penultimateSeparator.length());
+
+        if (!line.isEmpty())
+            line.append(parts.at(parts.count() -1));
+    } else {
+        line.append(parts.at(parts.count() -2));
+        line.append(parts.at(parts.count() -1));
+    }
+
+    return line;
+}
+
+/*
+    Returns a single formatted string representing the \a address. Lines of the address
+    are delimited by \a newLine. By default lines are delimited by <br>. The \l
+    {QGeoAddress::countryCode} {countryCode} of the \a address determines the format of
+    the resultant string.
+*/
+static QString formattedAddress(const QGeoAddress &address,
+                                const QString &newLine = QLatin1String("<br>"))
+{
+    const QString Comma(QLatin1String(", "));
+    const QString Dash(QLatin1String("-"));
+    const QString Space(QLatin1String(" "));
+
+    QString text;
+
+    if (address.countryCode() == QLatin1String("ALB")
+        || address.countryCode() == QLatin1String("MTQ")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.postalCode() << Comma
+                                          << address.city() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("AND")
+               || address.countryCode() == QLatin1String("AUT")
+               || address.countryCode() == QLatin1String("FRA")
+               || address.countryCode() == QLatin1String("GLP")
+               || address.countryCode() == QLatin1String("GUF")
+               || address.countryCode() == QLatin1String("ITA")
+               || address.countryCode() == QLatin1String("LUX")
+               || address.countryCode() == QLatin1String("MCO")
+               || address.countryCode() == QLatin1String("REU")
+               || address.countryCode() == QLatin1String("RUS")
+               || address.countryCode() == QLatin1String("SMR")
+               || address.countryCode() == QLatin1String("VAT")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.postalCode() << Space
+                                          << address.city() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("ARE")
+               || address.countryCode() == QLatin1String("BHS")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << Space
+                                          << address.city() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("AUS")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << (address.district().isEmpty() ? address.city() : address.district())
+                                << Space << address.state() << Space << address.postalCode() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("BHR")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << Comma
+                                << address.city() << Comma << address.state() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("BRA")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << Space
+                    << address.city() << Dash << address.state() << Space << address.postalCode() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("BRN")
+               || address.countryCode() == QLatin1String("JOR")
+               || address.countryCode() == QLatin1String("LBN")
+               || address.countryCode() == QLatin1String("NZL")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << Space
+                                << address.city() << Space << address.postalCode() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("CAN")
+               || address.countryCode() == QLatin1String("USA")
+               || address.countryCode() == QLatin1String("VIR")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.city() << Comma << address.state() << Space
+                                              << address.postalCode() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("CHN")) {
+        text += addressLine(QStringList() << address.street() << Comma << address.city() << newLine);
+        text += addressLine(QStringList() << address.postalCode() << Space << address.state() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("CHL")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.postalCode() << Space
+                                << address.district() << Comma << address.city() << Comma
+                                << address.state() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("CYM")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.state() << Space
+                                << address.postalCode() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("GBR")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << Comma
+                                << address.city() << Comma << address.postalCode() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("GIB")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.city() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("HKG")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << newLine);
+        text += addressLine(QStringList() << address.city() << newLine);
+    } else if (address.countryCode() == QLatin1String("IND")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.city() << Space << address.postalCode() << Space
+                                              << address.state() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("IDN")
+               || address.countryCode() == QLatin1String("JEY")
+               || address.countryCode() == QLatin1String("LVA")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.city() << Comma << address.postalCode() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("IRL")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << Comma << address.state() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("KWT")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.postalCode() << Comma
+                            << address.district() << Comma << address.city() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("MLT")
+               || address.countryCode() == QLatin1String("SGP")
+               || address.countryCode() == QLatin1String("UKR")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.city() << Space << address.postalCode() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("MEX")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << newLine);
+        text += addressLine(QStringList() << address.postalCode() << Space << address.city() << Comma
+                                              << address.state() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("MYS")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.postalCode() << Space << address.city() << newLine);
+        text += addressLine(QStringList() << address.state() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("OMN")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << Comma
+                                << address.postalCode() << Comma
+                                << address.city() << Comma
+                                << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("PRI")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << Comma << address.city() << Comma
+                                                 << address.state() << Comma << address.postalCode() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("QAT")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << Space << address.city() << Comma
+                                              << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("SAU")) {
+        text += addressLine(QStringList() << address.street() << Space << address.district() << newLine);
+        text += addressLine(QStringList() << address.city() << Space << address.postalCode() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("TWN")) {
+        text += addressLine(QStringList() << address.street() << Comma
+                                << address.district() << Comma << address.city() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("THA")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << Comma << address.city() << Space
+                                              << address.postalCode()<< newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("TUR")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.postalCode() << Space << address.district() << Comma
+                                              << address.city()<< newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("VEN")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.city() << Space << address.postalCode() << Comma
+                                              << address.state() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else if (address.countryCode() == QLatin1String("ZAF")) {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.district() << Comma << address.city() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    } else {
+        text += addressLine(QStringList() << address.street() << newLine);
+        text += addressLine(QStringList() << address.postalCode() << Space << address.city() << newLine);
+        text += addressLine(QStringList() << address.country() << newLine);
+    }
+
+    text.chop(newLine.length());
+    return text;
+}
 
 QGeoAddressPrivate::QGeoAddressPrivate()
         : QSharedData()
@@ -146,6 +384,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
     qDebug() << "district:" << (d->sDistrict == other.district());
     qDebug() << "street:" << (d->sStreet == other.street());
     qDebug() << "postalCode:" << (d->sPostalCode == other.postalCode());
+    qDebug() << "text:" << (text() == other.text());
 #endif
 
     return d->sCountry == other.country() &&
@@ -156,7 +395,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
            d->sDistrict == other.district() &&
            d->sStreet == other.street() &&
            d->sPostalCode == other.postalCode() &&
-           d->sText == other.text();
+           this->text()  == other.text();
 }
 
 /*!
@@ -167,24 +406,43 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
 */
 
 /*!
-    Returns the address as a single formatted string.  If the returned string is not empty then
-    it is the recommended string to use to display the address to the user.
+    Returns the address as a single formatted string. It is the recommended string
+    to use to display the address to the user. It typically takes the format of
+    an address as found on an envelope, but this is not always necessarily the case.
 
-    The address text may contain a subset of all address properties and is provided by the
-    plugin.  A common pattern is for the text to take the format of an address as found on an
-    envelope, but this is not always necessarily the case.
+    The adddress text is either automatically generated or explicitly assigned.
+    This can be determined by checking \l {QGeoAddress::isTextGenerated()} {isTextGenerated}.
+
+    If an empty string is provided to setText(), then isTextGenerated() will be set
+    to true and text() will return a string which is locally formatted according to
+    countryCode() and based on the elements of the address such as street, city and so on.
+    Because the text string is generated from the address elements, a sequence
+    of calls such as text(), setStreet(), text() may return different strings for each
+    invocation of text().
+
+    If a non-empty string is provided to setText(), then isTextGenerated() will be
+    set to false and text() will always return the explicitly assigned string.
+    Calls to modify other elements such as setStreet(), setCity() and so on will not
+    affect the resultant string from text().
 */
 QString QGeoAddress::text() const
 {
-    return d->sText;
+    if (d->sText.isEmpty())
+        return formattedAddress(*this);
+    else
+        return d->sText;
 }
 
 /*!
-    Sets the address text to \a address.
+    If \a text is not empty, explicitly assigns \a text as the string to be returned by
+    text().  isTextGenerated() will return false.
+
+    If \a text is empty, indicates that text() should be automatically generated
+    from the address elements.  isTextGenerated() will return true.
 */
-void QGeoAddress::setText(const QString &address)
+void QGeoAddress::setText(const QString &text)
 {
-    d->sText = address;
+    d->sText = text;
 }
 
 /*!
@@ -357,6 +615,17 @@ void QGeoAddress::clear()
     d->sStreet.clear();
     d->sPostalCode.clear();
     d->sText.clear();
+}
+
+/*!
+    Returns true if QGeoAddress::text() is automatically generated from address elements,
+    otherwise returns false if text() has been explicitly assigned.
+
+    \sa text(), setText()
+*/
+bool QGeoAddress::isTextGenerated() const
+{
+    return d->sText.isEmpty();
 }
 
 QT_END_NAMESPACE

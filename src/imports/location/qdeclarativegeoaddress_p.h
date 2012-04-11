@@ -62,6 +62,7 @@ class QDeclarativeGeoAddress : public QObject
     Q_PROPERTY(QString district READ district WRITE setDistrict NOTIFY districtChanged)
     Q_PROPERTY(QString street READ street WRITE setStreet NOTIFY streetChanged)
     Q_PROPERTY(QString postalCode READ postalCode WRITE setPostalCode NOTIFY postalCodeChanged)
+    Q_PROPERTY(bool isTextGenerated READ isTextGenerated NOTIFY isTextGeneratedChanged)
 
 public:
     explicit QDeclarativeGeoAddress(QObject* parent = 0);
@@ -88,6 +89,7 @@ public:
     void setStreet(const QString& street);
     QString postalCode() const;
     void setPostalCode(const QString& postalCode);
+    bool isTextGenerated() const;
 
 signals:
     void textChanged();
@@ -99,6 +101,7 @@ signals:
     void districtChanged();
     void streetChanged();
     void postalCodeChanged();
+    void isTextGeneratedChanged();
 
 private:
     QGeoAddress m_address;

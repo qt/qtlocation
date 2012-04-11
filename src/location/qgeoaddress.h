@@ -68,7 +68,7 @@ public:
     }
 
     QString text() const;
-    void setText(const QString &address);
+    void setText(const QString &text);
 
     QString country() const;
     void setCountry(const QString &country);
@@ -96,6 +96,8 @@ public:
 
     bool isEmpty() const;
     void clear();
+
+    bool isTextGenerated() const;
 
 private:
     QSharedDataPointer<QGeoAddressPrivate> d;

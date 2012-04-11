@@ -1,0 +1,101 @@
+/****************************************************************************
+**
+** Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: http://www.qt-project.org/
+**
+** This file is part of the test suite of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** GNU Lesser General Public License Usage
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+import QtTest 1.0
+import QtLocation 5.0
+
+TestCase {
+    id: testCase
+
+    name: "Address"
+
+    Address {
+        id: address
+
+        street: "742 Evergreen Tce"
+        district: "Pressboard Estates"
+        city: "Springfield"
+        state: "Oregon"
+        postalCode: "8900"
+        country: "United States"
+        countryCode: "USA"
+    }
+
+    function test_qmlAddressText() {
+        compare(address.isTextGenerated, true);
+        compare(address.text, "742 Evergreen Tce<br>Springfield, Oregon 8900<br>United States");
+        var textChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        textChangedSpy.target = address;
+        textChangedSpy.signalName = "textChanged"
+
+        var isTextGeneratedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
+        isTextGeneratedSpy.target = address
+        isTextGeneratedSpy.signalName = "isTextGeneratedChanged"
+
+        address.countryCode = "FRA";
+        compare(address.text, "742 Evergreen Tce<br>8900 Springfield<br>United States");
+        compare(textChangedSpy.count, 1);
+        textChangedSpy.clear();
+        compare(isTextGeneratedSpy.count, 0);
+
+        address.text = "address label";
+        compare(address.isTextGenerated, false);
+        compare(address.text, "address label");
+        compare(textChangedSpy.count, 1);
+        textChangedSpy.clear();
+        compare(isTextGeneratedSpy.count, 1);
+        isTextGeneratedSpy.clear();
+
+        address.countryCode = "USA";
+        compare(address.text, "address label");
+        compare(textChangedSpy.count, 0);
+        textChangedSpy.clear();
+        compare(isTextGeneratedSpy.count, 0);
+
+        address.text = "";
+        compare(address.isTextGenerated, true);
+        compare(address.text, "742 Evergreen Tce<br>Springfield, Oregon 8900<br>United States");
+        compare(textChangedSpy.count, 1);
+        textChangedSpy.clear();
+        compare(isTextGeneratedSpy.count, 1);
+        isTextGeneratedSpy.clear();
+    }
+}
