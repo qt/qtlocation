@@ -58,6 +58,7 @@ SUBDIRS += geotestplugin \
            qnmeapositioninfosource \
            declarative_core \
            qgeoroutexmlparser \
+           qgeomapcontroller \
            maptype
 
 !mac: SUBDIRS += declarative_ui
