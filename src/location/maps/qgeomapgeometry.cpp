@@ -283,18 +283,28 @@ QPointF QGeoMapGeometryPrivate::mercatorToScreenPosition(const QDoubleVector2D &
 
     double m = (mx - mercatorCenterX_) / mercatorWidth_;
 
+    double mWrapLower = (mx - mercatorCenterX_ - sideLength_) / mercatorWidth_;
+    double mWrapUpper = (mx - mercatorCenterX_ + sideLength_) / mercatorWidth_;
+
     // correct for crossing dateline
     if (qFuzzyCompare(ub - lb + 1.0, 1.0) || (ub < lb) ) {
         if (mercatorCenterX_ < ub) {
             if (lb < mx) {
-                m = (mx - mercatorCenterX_ - sideLength_) / mercatorWidth_;
+                 m = mWrapLower;
             }
         } else if (lb < mercatorCenterX_) {
             if (mx <= ub) {
-                m = (mx - mercatorCenterX_ + sideLength_) / mercatorWidth_;
+                m = mWrapUpper;
             }
         }
     }
+
+    // apply wrapping if necessary so we don't return unreasonably large pos/neg screen positions
+    // also allows map items to be drawn properly if some of their coords are out of the screen
+    if ( qAbs(mWrapLower) < qAbs(m) )
+        m = mWrapLower;
+    if ( qAbs(mWrapUpper) < qAbs(m) )
+        m = mWrapUpper;
 
     double x = screenWidth_ * (0.5 + m);
     double y = screenHeight_ * (0.5 + (sideLength_ * mercator.y() - mercatorCenterY_) / mercatorHeight_);
