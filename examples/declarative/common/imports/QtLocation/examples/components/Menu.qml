@@ -110,6 +110,7 @@ Grid {
 
     function clear() {
         children = []
+        exclusiveButton = ""
     }
 
     function disableItem(caption){
