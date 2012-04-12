@@ -4,9 +4,8 @@ TARGET = QtLocation
 QPRO_PWD   = $$PWD
 
 CONFIG += module
-MODULE_PRI = ../../modules/qt_location.pri
 
-QT = core core-private gui
+QT = core-private gui
 
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
