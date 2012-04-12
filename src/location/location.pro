@@ -1,18 +1,11 @@
-load(qt_module)
+load(qt_build_config)
 
 TARGET = QtLocation
-QPRO_PWD   = $$PWD
-
-CONFIG += module
-
 QT = core-private gui
-
-DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
 load(qt_module_config)
 
-HEADERS += qtlocationversion.h \
-    qgeopositioninfosource_p.h
+HEADERS += qgeopositioninfosource_p.h
 
 include(maps/maps.pri)
 include(places/places.pri)

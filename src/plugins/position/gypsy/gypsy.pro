@@ -1,4 +1,4 @@
-load(qt_module)
+load(qt_build_config)
 
 TARGET = qtposition_gypsy
 QT += location gui
@@ -21,7 +21,6 @@ INCLUDEPATH += $$QT.location.includes
 CONFIG += qdbus link_pkgconfig
 DEFINES += GYPSY_AVAILABLE=1
 PKGCONFIG += gypsy
-QMAKE_PKGCONFIG_REQUIRES += gypsy
 
 target.path += $$[QT_INSTALL_PLUGINS]/position
 INSTALLS += target

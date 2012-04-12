@@ -1,4 +1,4 @@
-load(qt_module)
+load(qt_build_config)
 
 TARGET = qtposition_geoclue
 QT += location gui
@@ -21,7 +21,6 @@ INCLUDEPATH += $$QT.location.includes
 CONFIG += qdbus link_pkgconfig
 DEFINES += GEOCLUE_MASTER_AVAILABLE=1
 PKGCONFIG += geoclue
-QMAKE_PKGCONFIG_REQUIRES += geoclue
 
 target.path += $$[QT_INSTALL_PLUGINS]/position
 INSTALLS += target
