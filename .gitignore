@@ -1,6 +1,7 @@
 # This file is used to ignore files which are generated in the Qt build system
 # ----------------------------------------------------------------------------
 
+.directory
 qml_location_*
 
 callgrind.out.*
