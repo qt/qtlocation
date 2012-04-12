@@ -45,10 +45,20 @@
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryNpeBackend::positionInfoSource(QObject *parent)
 {
-    return new QGeoPositionInfoSourceNpeBackend(parent);
+    QGeoPositionInfoSourceNpeBackend *src = new QGeoPositionInfoSourceNpeBackend(parent);
+    if (!src->init()) {
+        delete src;
+        src = 0;
+    }
+    return src;
 }
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryNpeBackend::satelliteInfoSource(QObject *parent)
 {
-    return new QGeoSatelliteInfoSourceNpeBackend(parent);
+    QGeoSatelliteInfoSourceNpeBackend *src = new QGeoSatelliteInfoSourceNpeBackend(parent);
+    if (!src->init()) {
+        delete src;
+        src = 0;
+    }
+    return src;
 }

@@ -44,7 +44,12 @@
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGeoclue::positionInfoSource(QObject *parent)
 {
-    return new QGeoPositionInfoSourceGeoclueMaster(parent);
+    QGeoPositionInfoSourceGeoclueMaster *src = new QGeoPositionInfoSourceGeoclueMaster(parent);
+    if (src->init() < 0) {
+        delete src;
+        src = 0;
+    }
+    return src;
 }
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGeoclue::satelliteInfoSource(QObject *parent)

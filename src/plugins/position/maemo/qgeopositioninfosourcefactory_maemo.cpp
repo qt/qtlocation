@@ -45,10 +45,20 @@
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryMaemo::positionInfoSource(QObject *parent)
 {
-    return new QGeoPositionInfoSourceMaemo(parent);
+    QGeoPositionInfoSourceMaemo *src = new QGeoPositionInfoSourceMaemo(parent);
+    if (src->init() == -1) {
+        delete src;
+        src = 0;
+    }
+    return src;
 }
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryMaemo::satelliteInfoSource(QObject *parent)
 {
-    return new QGeoSatelliteInfoSourceMaemo(parent);
+    QGeoSatelliteInfoSourceMaemo *src = new QGeoSatelliteInfoSourceMaemo(parent);
+    if (src->init() == -1) {
+        delete src;
+        src = 0;
+    }
+    return src;
 }

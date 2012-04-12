@@ -50,5 +50,10 @@ QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryGypsy::positionInfoSource(Q
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryGypsy::satelliteInfoSource(QObject *parent)
 {
-    return new QGeoSatelliteInfoSourceGypsy(parent);
+    QGeoSatelliteInfoSourceGypsy *src = new QGeoSatelliteInfoSourceGypsy(parent);
+    if (src->init() < 0) {
+        delete src;
+        src = 0;
+    }
+    return src;
 }
