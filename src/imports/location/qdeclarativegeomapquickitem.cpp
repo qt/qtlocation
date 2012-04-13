@@ -122,6 +122,10 @@ QT_BEGIN_NAMESPACE
     }
     \endcode
 
+    Note, however, that using a MapMouseArea inside the sourceItem (in this
+    case, inside the Rectangle element), is unsupported, and may not work as
+    desired.
+
     MouseAreas used inside a complex \l{sourceItem} can be used to create, for
     example, a "close" button within a speech bubble that can be clicked
     separately to the rest of the bubble, which would be impossible using

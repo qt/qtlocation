@@ -68,6 +68,9 @@ QT_BEGIN_NAMESPACE
     MouseArea elements defined within the sourceItem. See the documentation
     for \l{MapQuickItem} for more details.
 
+    MapMouseArea elements should only ever be used within a map object, such as
+    a MapPolygon or MapQuickItem, and never within another Qt Quick component.
+
     The \l enabled property of the MapMouseArea is used to enable and disable
     mouse handling for the proxied item. When disabled, the mouse area becomes
     transparent to mouse events.
