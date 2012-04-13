@@ -83,7 +83,7 @@ Item {
         Text{
             id: label
             color: "darkgrey"
-            text: Math.round(slider.value *100)/100
+            text: slider.value.toFixed(2)
             width: font.pointSize * 3.5
             anchors.horizontalCenter: labelRect.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
