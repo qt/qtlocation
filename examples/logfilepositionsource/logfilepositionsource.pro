@@ -1,5 +1,5 @@
-TARGET = logfilepositionsource
 TEMPLATE = app
+TARGET = logfilepositionsource
 QT = location core widgets
 
 
@@ -9,13 +9,8 @@ SOURCES = logfilepositionsource.cpp \
           clientapplication.cpp \
           main.cpp
 
-wince* {
-    addFiles.sources = ./simplelog.txt
-    addFiles.path = .
-    DEPLOYMENT += addFiles
-} else {
-    logfileexample.path = $$PWD
-    logfileexample.files = simplelog.txt
-    INSTALLS += logfileexample
-}
+target.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/logfilepositionsource
+sources.files = $$SOURCES $$HEADERS *.pro simplelog.txt
+sources.path = $$[QT_INSTALL_EXAMPLES]/qtlocation/logfilepositionsource
 
+INSTALLS += target sources
