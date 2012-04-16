@@ -210,8 +210,8 @@ void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate& coordina
         setVisible(false);
     } else {
         setVisible(true);
-        setPos(topLeft);
     }
+    setPos(topLeft);
 }
 
 #include "moc_qdeclarativegeomapitembase_p.cpp"

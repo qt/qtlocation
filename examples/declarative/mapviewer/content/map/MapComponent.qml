@@ -735,6 +735,10 @@ Map {
                 map.coordinatesCaptured(mouseArea.lastCoordinate.latitude, mouseArea.lastCoordinate.longitude)
                 break;
             }
+            case "Fit Viewport To Map Items": {
+                map.fitViewportToMapItems()
+                break;
+            }
 
             case "Delete all markers": {
                 deleteMarkers()
@@ -886,6 +890,7 @@ Map {
                 popupMenu.clear()
                 popupMenu.addItem("Add Marker")
                 popupMenu.addItem("Get coordinate")
+                popupMenu.addItem("Fit Viewport To Map Items")
 
                 if (map.markers.length>0) {
                     popupMenu.addItem("Delete all markers")

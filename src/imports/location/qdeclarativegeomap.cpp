@@ -42,6 +42,7 @@
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
 
+#include "qdeclarativecirclemapitem_p.h"
 #include "qdeclarativegeomapquickitem_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
@@ -1106,6 +1107,109 @@ void QDeclarativeGeoMap::geometryChanged(const QRectF &newGeometry, const QRectF
 
     map_->resize(newGeometry.width(), newGeometry.height());
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
+}
+
+/*!
+    \qmlmethod QtLocation5::Map::fitViewportToMapItems()
+
+    Fits the current viewport to the boundary of all map items. The camera is positioned
+    in the center of the map items, and at the largest integral zoom level possible which
+    allows all map items to be visible on screen
+
+*/
+void QDeclarativeGeoMap::fitViewportToMapItems()
+{
+    if (!mappingManagerInitialized_)
+        return;
+    fitViewportToMapItemsRefine(true);
+}
+
+
+void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
+{
+    if (mapItems_.size() == 0)
+        return;
+
+    qreal minX =  0;
+    qreal maxX = 0;
+    qreal minY =  0;
+    qreal maxY = 0;
+    qreal topLeftX = 0;
+    qreal topLeftY = 0;
+    qreal bottomRightX = 0;
+    qreal bottomRightY = 0;
+
+    // find bounds of all map items
+    QGeoCoordinate geoCenter;
+    QPointF centerPt;
+    int itemCount = 0;
+    for (int i = 0; i < mapItems_.count(); ++i) {
+        QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase*>(mapItems_.at(i));
+        // account for the special case - circle
+        QDeclarativeCircleMapItem *circleItem = qobject_cast<QDeclarativeCircleMapItem*>(mapItems_.at(i));
+        if ((!circleItem || !circleItem->center()) && !item)
+            continue;
+        if (circleItem && circleItem->center()) {
+            geoCenter = QGeoCoordinate(circleItem->center()->latitude(),
+                                       circleItem->center()->longitude());
+            centerPt = map_->coordinateToScreenPosition(geoCenter, false);
+            topLeftX = centerPt.x() - circleItem->width();
+            topLeftY = centerPt.y() - circleItem->height();
+            bottomRightX = centerPt.x() + circleItem->width();
+            bottomRightY = centerPt.y() + circleItem->height();
+        } else if (item) {
+            topLeftX = item->pos().x();
+            topLeftY = item->pos().y();
+            bottomRightX = topLeftX + item->width();
+            bottomRightY = topLeftY + item->height();
+            itemCount++;
+        }
+        if (itemCount == 0) {
+            minX = topLeftX;
+            maxX = bottomRightX;
+            minY = topLeftY;
+            maxY = bottomRightY;
+        } else {
+            minX = qMin(minX, topLeftX);
+            maxX = qMax(maxX, bottomRightX);
+            minY = qMin(minY, topLeftY);
+            maxY = qMax(maxY, bottomRightY);
+        }
+        itemCount++;
+    }
+
+    if (itemCount == 0)
+        return;
+
+    qreal bboxWidth = maxX - minX;
+    qreal bboxHeight = maxY - minY;
+    qreal bboxCenterX = minX + (bboxWidth / 2.0);
+    qreal bboxCenterY = minY + (bboxHeight / 2.0);
+
+    // position camera to the center of bounding box
+    QGeoCoordinate coordinate;
+    coordinate = map_->screenPositionToCoordinate(QPointF(bboxCenterX, bboxCenterY), false);
+    AnimatableCoordinate acenter = map_->mapController()->center();
+    acenter.setCoordinate(coordinate);
+    setCenter(new QDeclarativeCoordinate(coordinate));
+
+    // adjust zoom
+    double bboxWidthRatio = bboxWidth / (bboxWidth + bboxHeight);
+    double mapWidthRatio = width() / (width() + height());
+    double zoomRatio;
+    if (bboxWidthRatio > mapWidthRatio)
+        zoomRatio =  bboxWidth / width();
+    else
+        zoomRatio =  bboxHeight / height();
+
+    qreal newZoom = log10(zoomRatio) / log10(0.5);
+    newZoom = floor(qMax(minimumZoomLevel(), (map_->mapController()->zoom() + newZoom)));
+    setZoomLevel(newZoom);
+
+    // as map items change their size after the camera zooms in/out
+    // we refine the viewport again to achieve better results
+    if (refine)
+        fitViewportToMapItemsRefine(false);
 }
 
 #include "moc_qdeclarativegeomap_p.cpp"

@@ -167,6 +167,8 @@ public:
 
     QDeclarativeGeoMapPinchArea* pinch();
 
+    Q_INVOKABLE void fitViewportToMapItems();
+
 public Q_SLOTS:
     void pan(int dx, int dy);
 
@@ -208,6 +210,7 @@ private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
     void updateAspectRatio();
     void populateMap();
+    void fitViewportToMapItemsRefine(bool refine);
 
     QDeclarativeGeoServiceProvider* plugin_;
     QGeoServiceProvider* serviceProvider_;
