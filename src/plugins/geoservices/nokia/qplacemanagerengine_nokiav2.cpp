@@ -149,7 +149,7 @@ QPlaceDetailsReply *QPlaceManagerEngineNokiaV2::getPlaceDetails(const QString &p
 
     QList<QPair<QString, QString> > queryItems;
 
-    queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("plain")));
+    queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
     //queryItems.append(qMakePair<QString, QString>(QLatin1String("size"), QString::number(5)));
     //queryItems.append(qMakePair<QString, QString>(QLatin1String("image_dimensions"), QLatin1String("w64-h64,w100")));
 
@@ -178,7 +178,7 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &p
     case QPlaceContent::ImageType:
         requestUrl.setPath(requestUrl.path() + QLatin1String("images"));
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("plain")));
+        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
 
         if (request.limit() > 0) {
             queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
@@ -198,7 +198,7 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &p
     case QPlaceContent::ReviewType:
         requestUrl.setPath(requestUrl.path() + QLatin1String("reviews"));
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("plain")));
+        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
 
         if (request.limit() > 0) {
             queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
@@ -216,7 +216,7 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &p
     case QPlaceContent::EditorialType:
         requestUrl.setPath(requestUrl.path() + QLatin1String("editorials"));
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("plain")));
+        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
 
         if (request.limit() > 0) {
             queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
@@ -304,7 +304,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         addAtForBoundingArea(query.searchArea(), &queryItems);
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("plain")));
+        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
 
         if (query.limit() > 0) {
             queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
@@ -339,7 +339,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
         addAtForBoundingArea(query.searchArea(), &queryItems);
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("plain")));
+        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
 
         if (query.limit() > 0) {
             queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
@@ -369,7 +369,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::recommendations(const QString &pl
 
     QList<QPair<QString, QString> > queryItems;
 
-    queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("plain")));
+    queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
 
     if (query.limit() > 0) {
         queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
