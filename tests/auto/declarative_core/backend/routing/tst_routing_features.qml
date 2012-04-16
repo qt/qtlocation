@@ -171,6 +171,7 @@ Item {
             testData.waypoints = [ germanyBerlinInvalidenstr54, germanyBerlinHildebrandstrasse1 ]
             testData.weights = [ RouteQuery.TunnelFeature, RouteQuery.AvoidFeatureWeight ]
             testData.noGrep = ["tunnel"]
+            testData.flaky = true
             fixture.runTest(this, testData)
         }
 
@@ -179,6 +180,7 @@ Item {
             testData.waypoints = [ germanyBerlinInvalidenstr54, germanyBerlinHildebrandstrasse1 ]
             testData.weights = [ RouteQuery.TunnelFeature, RouteQuery.PreferFeatureWeight ]
             testData.grep = ["tunnel"]
+            testData.flaky = true
             fixture.runTest(this, testData)
         }
     }
@@ -207,6 +209,7 @@ Item {
             testData.waypoints = [ germanyBerlinSpanndauerdamm89, germanyBerlinJungfernheideweg80 ]
             testData.weights = [ RouteQuery.HighwayFeature, RouteQuery.AvoidFeatureWeight ]
             testData.noGrep = ["111"]
+            testData.flaky = true
             fixture.runTest(this, testData)
         }
 
@@ -215,6 +218,7 @@ Item {
             testData.waypoints = [ germanyBerlinSpanndauerdamm89, germanyBerlinJungfernheideweg80 ]
             testData.weights = [ RouteQuery.HighwayFeature, RouteQuery.PreferFeatureWeight ]
             testData.grep = ["111"]
+            testData.flaky = true
             fixture.runTest(this, testData)
         }
     }
@@ -235,6 +239,7 @@ Item {
             testData.waypoints = [ franceReims32RuedeMars, franceLaon30RueStJean ]
             testData.weights = [ RouteQuery.TollFeature, RouteQuery.AvoidFeatureWeight ]
             testData.noGrep = ["A26"]
+            testData.flaky = true
             fixture.runTest(this, testData)
         }
 
@@ -243,6 +248,7 @@ Item {
             testData.waypoints = [ franceReims32RuedeMars, franceLaon30RueStJean ]
             testData.weights = [ RouteQuery.TollFeature, RouteQuery.PreferFeatureWeight ]
             testData.grep = ["A26"]
+            testData.flaky = true
             fixture.runTest(this, testData)
         }
     }

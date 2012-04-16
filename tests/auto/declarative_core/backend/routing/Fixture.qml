@@ -135,7 +135,17 @@ Item {
     function verify(_value) {
         try
         {
-            __testCase.verify(_value)
+            if (!(_value)) {
+                if (__data.flaky) {
+                    var name = __testCase.name;
+                    if (!name)
+                        name = "<Unnamed Testcase>"
+                    __testCase.warn(name + ": Ignoring failure, marked as flaky");
+                }
+                else {
+                    __testCase.verify(_value);
+                }
+            }
         }
         catch (e)
         {
