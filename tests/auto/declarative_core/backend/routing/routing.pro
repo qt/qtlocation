@@ -1,6 +1,7 @@
 TEMPLATE = app
 TARGET = tst_routing
-CONFIG += warn_on qmltestcase
+# see QTBUG-25326 for why this is insignificant
+CONFIG += warn_on qmltestcase insignificant_test
 SOURCES += tst_routing.cpp
 
 CONFIG(qtlocation-backend-tests) DEFINES += QTLOCATION_BACKEND_TESTS
