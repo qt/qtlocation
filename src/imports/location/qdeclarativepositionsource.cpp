@@ -138,6 +138,45 @@ QDeclarativePositionSource::~QDeclarativePositionSource()
     delete m_positionSource;
 }
 
+
+/*!
+    \qmlproperty string PositionSource::plugin
+
+    This property holds the unique internal name for the plugin currently
+    providing position information.
+
+    Setting the property causes the PositionSource to use a particular backend
+    plugin. If the PositionSource is active at the time that the plugin property
+    is changed, it will become inactive.
+*/
+
+
+QString QDeclarativePositionSource::name() const
+{
+    if (m_positionSource)
+        return m_positionSource->sourceName();
+    else
+        return QString();
+}
+
+void QDeclarativePositionSource::setName(const QString &name)
+{
+    if (m_positionSource && m_positionSource->sourceName() == name)
+        return;
+
+    delete m_positionSource;
+    m_positionSource = QGeoPositionInfoSource::createSource(name, this);
+    if (m_positionSource) {
+        connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
+                this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
+        connect(m_positionSource, SIGNAL(error(QGeoPositionInfoSource::Error)),
+                this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
+        m_positioningMethod = supportedPositioningMethods();
+    }
+    m_active = false;
+    emit this->nameChanged();
+}
+
 /*!
     \internal
 */
@@ -252,7 +291,17 @@ QUrl QDeclarativePositionSource::nmeaSource() const
 
 int QDeclarativePositionSource::updateInterval() const
 {
-    return m_updateInterval;
+    if (m_positionSource) {
+        int ival = m_positionSource->updateInterval();
+        if (m_updateInterval != ival) {
+            QDeclarativePositionSource *me = const_cast<QDeclarativePositionSource*>(this);
+            me->m_updateInterval = ival;
+            emit me->updateIntervalChanged();
+        }
+        return ival;
+    } else {
+        return m_updateInterval;
+    }
 }
 
 /*!

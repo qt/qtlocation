@@ -57,6 +57,7 @@ class Q_LOCATION_EXPORT QGeoPositionInfoSource : public QObject
     Q_OBJECT
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval)
     Q_PROPERTY(int minimumUpdateInterval READ minimumUpdateInterval)
+    Q_PROPERTY(QString sourceName READ sourceName)
 
 public:
     enum Error {
@@ -86,6 +87,8 @@ public:
 
     virtual PositioningMethods supportedPositioningMethods() const = 0;
     virtual int minimumUpdateInterval() const = 0;
+
+    QString sourceName() const;
 
     static QGeoPositionInfoSource *createDefaultSource(QObject *parent);
     static QGeoPositionInfoSource *createSource(const QString &sourceName, QObject *parent);

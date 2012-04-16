@@ -64,6 +64,7 @@ class QDeclarativePositionSource : public QObject
     Q_PROPERTY(PositioningMethods supportedPositioningMethods READ supportedPositioningMethods NOTIFY supportedPositioningMethodsChanged)
     Q_PROPERTY(PositioningMethods preferredPositioningMethods READ preferredPositioningMethods WRITE setPreferredPositioningMethods NOTIFY preferredPositioningMethodsChanged)
     Q_PROPERTY(SourceError sourceError READ sourceError NOTIFY sourceErrorChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_ENUMS(PositioningMethod)
 
 public:
@@ -92,6 +93,9 @@ public:
     void setActive(bool active);
     void setPreferredPositioningMethods(QGeoPositionInfoSource::PositioningMethods methods);
 
+    QString name() const;
+    void setName(const QString &name);
+
     QUrl nmeaSource() const;
     int updateInterval() const;
     bool isActive() const;
@@ -113,6 +117,7 @@ Q_SIGNALS:
     void supportedPositioningMethodsChanged();
     void preferredPositioningMethodsChanged();
     void sourceErrorChanged();
+    void nameChanged();
 
 
 private Q_SLOTS:

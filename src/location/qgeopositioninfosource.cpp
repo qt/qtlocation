@@ -189,6 +189,19 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
 }
 
 /*!
+    \property QGeoPositionInfoSource::sourceName
+    \brief This property holds the unique name of the position source
+           implementation in use.
+
+    This is the same name that can be passed to createSource() in order to
+    create a new instance of a particular position source implementation.
+*/
+QString QGeoPositionInfoSource::sourceName() const
+{
+    return d->metaData.value(QStringLiteral("Provider")).toString();
+}
+
+/*!
     \property QGeoPositionInfoSource::updateInterval
     \brief This property holds the requested interval in milliseconds between each update.
 
@@ -270,6 +283,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
             d->loadPlugin();
             QGeoPositionInfoSource *s = d->factory->positionInfoSource(parent);
             if (s) {
+                s->d->metaData = d->metaData;
                 delete d;
                 return s;
             }
@@ -296,6 +310,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(const QString &sour
         d->loadPlugin();
         QGeoPositionInfoSource *src = d->factory->positionInfoSource(parent);
         if (src) {
+            src->d->metaData = d->metaData;
             delete d;
             return src;
         }
