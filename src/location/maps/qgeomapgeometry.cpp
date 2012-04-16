@@ -69,39 +69,50 @@ public:
     QGeoMapGeometryPrivate(QGeoMapGeometry *geometry);
     ~QGeoMapGeometryPrivate();
 
-    QSize screenSize_;
-    int tileSize_;
+    QSize screenSize_; // in pixels
+    int tileSize_; // the pixel resolution for each tile
     QGeoCameraData cameraData_;
     QSet<QGeoTileSpec> visibleTiles_;
 
     QGLCamera *camera_;
     QGLSceneNode *sceneNode_;
 
+    // scales up the tile geometry and the camera altitude, resulting in no visible effect
+    // other than to control the accuracy of the render by keeping the values in a sensible range
     double scaleFactor_;
 
+    // rounded down, positive zoom is zooming in, corresponding to reduced altitude
     int intZoomLevel_;
+
+    // mercatorToGrid transform
+    // the number of tiles in each direction for the whole map (earth) at the current zoom level.
+    // it is 1<<zoomLevel
     int sideLength_;
 
     QHash<QGeoTileSpec, QGLSceneNode*> nodes_;
     QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > textures_;
     QList<QSharedPointer<QGeoTileTexture> > newUploads_;
 
-    int minTileX_;
+    // tilesToGrid transform
+    int minTileX_; // the minimum tile index, i.e. 0 to sideLength which is 1<< zoomLevel
     int minTileY_;
     int maxTileX_;
     int maxTileY_;
-    int tileZ_;
-    int tileXWrapsBelow_;
+    int tileZ_;    // caches the zoom level for this tile set
+    int tileXWrapsBelow_; // the wrap point as a tile index
 
-    double mercatorCenterX_;
+    // cameraToGrid transform
+    double mercatorCenterX_; // centre of camera in grid space (0 to sideLength)
     double mercatorCenterY_;
-    double mercatorWidth_;
+    double mercatorWidth_;   // width of camera in grid space (0 to sideLength)
     double mercatorHeight_;
 
-    double screenOffsetX_;
-    double screenOffsetY_;
-    double screenWidth_;
-    double screenHeight_;
+    // screenToWindow transform
+    double screenOffsetX_; // in pixels
+    double screenOffsetY_; // in pixels
+    // cameraToScreen transform
+    double screenWidth_; // in pixels
+    double screenHeight_; // in pixels
 
     bool useVerticalLock_;
     bool verticalLock_;
@@ -705,6 +716,8 @@ void QGeoMapGeometryPrivate::paintGL(QGLPainter *painter)
     // TODO protect with mutex?
 
     // TODO add a shortcut here for when we don't need to repeat and clip the map
+    // NOTE- this is important as the repeat code below removes a lot of accuracy
+    // by converting to float and adding/removing large numbers when at high zoom
 
     // do any pending upload/releases
     while (!newUploads_.isEmpty()) {
