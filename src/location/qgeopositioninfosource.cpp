@@ -322,12 +322,21 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createSource(const QString &sour
 
 
 /*!
-    Returns a list of available source plugins. Note that this list does not
-    include the default platform backend, if one is available.
+    Returns a list of available source plugins. This includes any default backend
+    plugin for the current platform.
 */
 QStringList QGeoPositionInfoSource::availableSources()
 {
-    return QGeoPositionInfoSourcePrivate::plugins().keys();
+    QStringList plugins;
+    QHash<QString, QJsonObject> meta = QGeoPositionInfoSourcePrivate::plugins();
+    foreach (const QString &name, meta.keys()) {
+        if (meta.value(name).value(QStringLiteral("Position")).isBool()
+                && meta.value(name).value(QStringLiteral("Position")).toBool()) {
+            plugins << name;
+        }
+    }
+
+    return plugins;
 }
 
 /*!

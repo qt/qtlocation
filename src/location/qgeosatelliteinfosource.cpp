@@ -202,12 +202,21 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createSource(const QString &so
 }
 
 /*!
-    Returns a list of available source plugins. Note that this does not
-    include the default system backend, if one is available.
+    Returns a list of available source plugins, including the default system
+    backend if one is available.
 */
 QStringList QGeoSatelliteInfoSource::availableSources()
 {
-    return QGeoPositionInfoSourcePrivate::plugins().keys();
+    QStringList plugins;
+    QHash<QString, QJsonObject> meta = QGeoPositionInfoSourcePrivate::plugins();
+    foreach (const QString &name, meta.keys()) {
+        if (meta.value(name).value(QStringLiteral("Satellite")).isBool()
+                && meta.value(name).value(QStringLiteral("Satellite")).toBool()) {
+            plugins << name;
+        }
+    }
+
+    return plugins;
 }
 
 /*!

@@ -71,7 +71,7 @@ void tst_PositionPlugin::initTestCase()
 void tst_PositionPlugin::availableSources()
 {
     QVERIFY(QGeoPositionInfoSource::availableSources().contains("test.source"));
-    QVERIFY(QGeoSatelliteInfoSource::availableSources().contains("test.source"));
+    QVERIFY(!QGeoSatelliteInfoSource::availableSources().contains("test.source"));
 }
 
 void tst_PositionPlugin::create()
@@ -81,6 +81,13 @@ void tst_PositionPlugin::create()
     QVERIFY(src != 0);
 
     QVERIFY(src->minimumUpdateInterval() == 1000);
+
+    src = QGeoPositionInfoSource::createSource("invalid source that will never exist", 0);
+    QVERIFY(src == 0);
+
+    QGeoSatelliteInfoSource *ssrc = 0;
+    ssrc = QGeoSatelliteInfoSource::createSource("test.source", 0);
+    QVERIFY(ssrc == 0);
 }
 
 void tst_PositionPlugin::getUpdates()
