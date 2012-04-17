@@ -334,8 +334,10 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         foreach (const QPlaceCategory &category, query.categories())
             ids.append(category.categoryId());
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("cat"),
-                                                      ids.join(QLatin1String(","))));
+        if (ids.count() > 0) {
+            queryItems.append(qMakePair<QString, QString>(QLatin1String("cat"),
+                                                          ids.join(QLatin1String(","))));
+        }
 
         addAtForBoundingArea(query.searchArea(), &queryItems);
 
