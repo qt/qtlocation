@@ -108,6 +108,7 @@ Q_SIGNALS:
 private:
     QGeoMapGeometryPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoMapGeometry)
+    Q_DISABLE_COPY(QGeoMapGeometry)
 };
 
 QT_END_NAMESPACE

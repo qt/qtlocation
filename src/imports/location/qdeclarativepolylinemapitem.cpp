@@ -715,7 +715,7 @@ void MapPolylineNode::update(const QColor& fillColor,
 
     Vertex *vertices = (Vertex *)fill->vertexData();
 
-    for (int i = 0; i < shape->size(); ++i) {
+    for (uint i = 0; i < shape->size(); ++i) {
         vertices[fillVertexCount++].position = shape->vertex(i);
     }
 

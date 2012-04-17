@@ -113,6 +113,8 @@ private:
     QGeoCameraTiles *cameraTiles_;
     QGeoMapGeometry *mapGeometry_;
     QGeoMapImages *mapImages_;
+
+    Q_DISABLE_COPY(QGeoTiledMapDataPrivate)
 };
 
 QT_END_NAMESPACE

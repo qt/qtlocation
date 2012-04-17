@@ -80,6 +80,7 @@ public:
 private:
     QGeoMapImagesPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoMapImages)
+    Q_DISABLE_COPY(QGeoMapImages)
 };
 
 QT_END_NAMESPACE

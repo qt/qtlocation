@@ -57,15 +57,25 @@ QGeoMapViewportChangeEvent::QGeoMapViewportChangeEvent()
 }
 
 QGeoMapViewportChangeEvent::QGeoMapViewportChangeEvent(const QGeoMapViewportChangeEvent &other)
-    : cameraData(other.cameraData),
-      mapSize(other.mapSize),
-      zoomLevelChanged(other.zoomLevelChanged),
-      centerChanged(other.centerChanged),
-      mapSizeChanged(other.mapSizeChanged),
-      tiltChanged(other.tiltChanged),
-      bearingChanged(other.bearingChanged),
-      rollChanged(other.rollChanged)
 {
+    this->operator=(other);
+}
+
+QGeoMapViewportChangeEvent &QGeoMapViewportChangeEvent::operator=(const QGeoMapViewportChangeEvent &other)
+{
+    if (this == &other)
+        return (*this);
+
+    cameraData = other.cameraData;
+    mapSize = other.mapSize;
+    zoomLevelChanged = other.zoomLevelChanged;
+    centerChanged = other.centerChanged;
+    mapSizeChanged = other.mapSizeChanged;
+    tiltChanged = other.tiltChanged;
+    bearingChanged = other.bearingChanged;
+    rollChanged = other.rollChanged;
+
+    return (*this);
 }
 
 QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)

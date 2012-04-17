@@ -177,6 +177,11 @@ private:
     void rebalance();
     void unlink(Node *n);
     void link_front(Node *n, Queue *q);
+
+private:
+    // make these private so they can't be used
+    inline QCache3Q(const QCache3Q<Key,T,EvPolicy> &) {}
+    inline QCache3Q<Key,T,EvPolicy> &operator=(const QCache3Q<Key,T,EvPolicy> &) {}
 };
 
 template <class Key, class T, class EvPolicy>
@@ -233,7 +238,7 @@ bool QCache3Q<Key,T,EvPolicy>::insert(const Key &key, QSharedPointer<T> object, 
         n->q->cost += cost;
 
         if (n->q == q1_evicted_) {
-            if (n->pop > promote_) {
+            if (n->pop > (uint)promote_) {
                 unlink(n);
                 link_front(n, q2_);
                 rebalance();

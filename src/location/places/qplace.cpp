@@ -645,6 +645,9 @@ QPlacePrivate::~QPlacePrivate() {}
 
 QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
 {
+    if (this == &other)
+        return *this;
+
     categories = other.categories;
     location = other.location;
     ratings = other.ratings;

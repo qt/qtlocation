@@ -93,6 +93,9 @@ QGeoCameraCapabilitiesPrivate::~QGeoCameraCapabilitiesPrivate() {}
 
 QGeoCameraCapabilitiesPrivate& QGeoCameraCapabilitiesPrivate::operator = (const QGeoCameraCapabilitiesPrivate &other)
 {
+    if (this == &other)
+        return *this;
+
     supportsBearing_ = other.supportsBearing_;
     supportsRolling_ = other.supportsRolling_;
     supportsTilting_ = other.supportsTilting_;

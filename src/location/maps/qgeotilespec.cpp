@@ -158,11 +158,15 @@ QGeoTileSpecPrivate::~QGeoTileSpecPrivate() {}
 
 QGeoTileSpecPrivate& QGeoTileSpecPrivate::operator = (const QGeoTileSpecPrivate &other)
 {
+    if (this == &other)
+        return *this;
+
     plugin_ = other.plugin_;
     mapId_ = other.mapId_;
     zoom_ = other.zoom_;
     x_ = other.x_;
     y_ = other.y_;
+
     return *this;
 }
 

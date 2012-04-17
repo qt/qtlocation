@@ -72,10 +72,11 @@ const char* MAPTILES_HOST_CN = "a-k.maptile.maps.svc.nokia.com.cn";
 
 QGeoTileFetcherNokia::QGeoTileFetcherNokia(QGeoTiledMappingManagerEngine *engine)
         : QGeoTileFetcher(engine),
-        m_networkManager(0),
-        m_firstSubdomain(QChar::Null),
-        m_maxSubdomains(0),
-        m_engineNokia(static_cast<QGeoTiledMappingManagerEngineNokia*>(engine)) {}
+          m_engineNokia(static_cast<QGeoTiledMappingManagerEngineNokia*>(engine)),
+          m_networkManager(0),
+          m_firstSubdomain(QChar::Null),
+          m_copyrightsReply(0),
+          m_maxSubdomains(0) {}
 
 QGeoTileFetcherNokia::~QGeoTileFetcherNokia() {}
 

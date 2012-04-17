@@ -97,6 +97,7 @@ protected Q_SLOTS:
 private:
     QGeoTiledMapDataPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoTiledMapData)
+    Q_DISABLE_COPY(QGeoTiledMapData)
 
 };
 

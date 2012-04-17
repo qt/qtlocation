@@ -126,6 +126,7 @@ Q_SIGNALS:
 private:
     QGeoMapDataPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoMapData)
+    Q_DISABLE_COPY(QGeoMapData)
 };
 
 QT_END_NAMESPACE

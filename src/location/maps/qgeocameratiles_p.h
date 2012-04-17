@@ -86,6 +86,7 @@ public:
 private:
     QGeoCameraTilesPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoCameraTiles)
+    Q_DISABLE_COPY(QGeoCameraTiles)
 };
 
 QT_END_NAMESPACE

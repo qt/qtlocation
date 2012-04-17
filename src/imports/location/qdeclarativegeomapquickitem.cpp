@@ -381,7 +381,7 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
 */
 void QDeclarativeGeoMapQuickItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
-    // do nothing
+    Q_UNUSED(event);
 }
 
 /*!

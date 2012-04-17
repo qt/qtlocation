@@ -89,6 +89,9 @@ QGeoCameraDataPrivate::QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs)
 
 QGeoCameraDataPrivate& QGeoCameraDataPrivate::operator = (const QGeoCameraDataPrivate &rhs)
 {
+    if (this == &rhs)
+        return *this;
+
     center_ = rhs.center_;
     bearing_ = rhs.bearing_;
     tilt_ = rhs.tilt_;

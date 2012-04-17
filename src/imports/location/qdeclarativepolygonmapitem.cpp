@@ -561,7 +561,7 @@ void MapPolygonNode::update(const QColor& fillColor, const QColor& borderColor,
     fill->allocate(fillShape->size());
 
     Vertex *vertices = (Vertex *)fill->vertexData();
-    for (int i = 0; i < fillShape->size(); ++i)
+    for (uint i = 0; i < fillShape->size(); ++i)
         vertices[fillVertexCount++].position = fillShape->vertex(i);
 
     Q_ASSERT(fillVertexCount == fill->vertexCount());

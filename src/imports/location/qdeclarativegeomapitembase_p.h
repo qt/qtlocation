@@ -54,6 +54,7 @@ class QGeoMapViewportChangeEvent
 public:
     QGeoMapViewportChangeEvent();
     QGeoMapViewportChangeEvent(const QGeoMapViewportChangeEvent &other);
+    QGeoMapViewportChangeEvent &operator=(const QGeoMapViewportChangeEvent &other);
 
     QGeoCameraData cameraData;
     QSizeF mapSize;

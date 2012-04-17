@@ -64,8 +64,12 @@ QPlaceIconPrivate::~QPlaceIconPrivate()
 
 QPlaceIconPrivate &QPlaceIconPrivate::operator=(const QPlaceIconPrivate &other)
 {
+    if (this == &other)
+        return *this;
+
     manager = other.manager;
     parameters = other.parameters;
+
     return *this;
 }
 
