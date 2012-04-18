@@ -50,7 +50,7 @@
 #define QPLACESUPPLIERSREPOSITORY_H
 
 #include <QtCore/QObject>
-#include <QtCore/QMap>
+#include <QtCore/QHash>
 
 #include <qplacesupplier.h>
 

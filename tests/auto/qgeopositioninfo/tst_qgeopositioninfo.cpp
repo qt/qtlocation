@@ -367,7 +367,10 @@ private slots:
         qInstallMsgHandler(0);
 
         // use endsWith() so we don't depend on QDateTime's debug() implementation
-        QVERIFY(tst_qgeopositioninfo_debug.endsWith(debugStringEnd));
+        QVERIFY2(tst_qgeopositioninfo_debug.endsWith(debugStringEnd),
+                 qPrintable(QString::fromLatin1("'%1' does not end with '%2'").
+                            arg(QLatin1String(tst_qgeopositioninfo_debug),
+                                QLatin1String(debugStringEnd))));
     }
 
     void debug_data()
