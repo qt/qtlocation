@@ -93,6 +93,7 @@ private:
     Q_DISABLE_COPY(QGeocodingManager)
 
     friend class QGeoServiceProvider;
+    friend class QGeoServiceProviderPrivate;
 };
 
 QT_END_NAMESPACE

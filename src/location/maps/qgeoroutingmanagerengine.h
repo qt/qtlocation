@@ -101,6 +101,7 @@ private:
     Q_DISABLE_COPY(QGeoRoutingManagerEngine)
 
     friend class QGeoServiceProvider;
+    friend class QGeoServiceProviderPrivate;
 };
 
 QT_END_NAMESPACE

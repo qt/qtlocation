@@ -77,6 +77,14 @@ public:
     void loadMeta();
     void loadPlugin(const QMap<QString, QVariant> &parameters);
     void unload();
+
+    /* helper templates for generating the feature and manager accessors */
+    template <class Manager, class Engine>
+    Manager *manager(QGeoServiceProvider::Error *error,
+                     QString *errorString, Manager **manager);
+    template <class Flags>
+    Flags features(const char *enumName);
+
     QGeoServiceProviderFactory *factory;
     QJsonObject metaData;
 

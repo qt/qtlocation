@@ -165,88 +165,129 @@ QGeoServiceProvider::~QGeoServiceProvider()
     delete d_ptr;
 }
 
-QGeoServiceProvider::RoutingFeatures QGeoServiceProvider::routingFeatures() const
+/* Template for the routingFeatures(), geocodingFeatures() etc methods.
+ * Ideally, the enumName would be a template parameter, but strings
+ * are not a valid const expr. :( */
+template <class Flags>
+Flags QGeoServiceProviderPrivate::features(const char *enumName)
 {
-    const QMetaObject *mo = QGeoServiceProvider::metaObject();
+    const QMetaObject *mo = &QGeoServiceProvider::staticMetaObject;
     const QMetaEnum en = mo->enumerator(
-                mo->indexOfEnumerator("RoutingFeatures"));
+                mo->indexOfEnumerator(enumName));
 
-    RoutingFeatures ret = NoRoutingFeatures;
-    if (d_ptr->metaData.contains(QStringLiteral("Features"))
-            && d_ptr->metaData.value(QStringLiteral("Features")).isArray()) {
-        QJsonArray features = d_ptr->metaData.value(QStringLiteral("Features")).toArray();
+    /* We need the typename keyword here, or Flags::enum_type will be parsed
+     * as a non-type and lead to an error */
+    Flags ret = typename Flags::enum_type(0);
+    if (this->metaData.contains(QStringLiteral("Features"))
+            && this->metaData.value(QStringLiteral("Features")).isArray()) {
+        QJsonArray features = this->metaData.value(QStringLiteral("Features")).toArray();
         foreach (QJsonValue v, features) {
             int val = en.keyToValue(v.toString().toAscii().constData());
             if (v.isString() && val != -1) {
-                ret |= RoutingFeature(val);
+                ret |= typename Flags::enum_type(val);
             }
         }
     }
 
     return ret;
+}
+
+QGeoServiceProvider::RoutingFeatures QGeoServiceProvider::routingFeatures() const
+{
+    return d_ptr->features<RoutingFeatures>("RoutingFeatures");
 }
 
 QGeoServiceProvider::GeocodingFeatures QGeoServiceProvider::geocodingFeatures() const
 {
-    const QMetaObject *mo = QGeoServiceProvider::metaObject();
-    const QMetaEnum en = mo->enumerator(
-                mo->indexOfEnumerator("GeocodingFeatures"));
-
-    GeocodingFeatures ret = NoGeocodingFeatures;
-    if (d_ptr->metaData.contains(QStringLiteral("Features"))
-            && d_ptr->metaData.value(QStringLiteral("Features")).isArray()) {
-        QJsonArray features = d_ptr->metaData.value(QStringLiteral("Features")).toArray();
-        foreach (QJsonValue v, features) {
-            int val = en.keyToValue(v.toString().toAscii().constData());
-            if (v.isString() && val != -1) {
-                ret |= GeocodingFeature(val);
-            }
-        }
-    }
-
-    return ret;
+    return d_ptr->features<GeocodingFeatures>("GeocodingFeatures");
 }
 
 QGeoServiceProvider::MappingFeatures QGeoServiceProvider::mappingFeatures() const
 {
-    const QMetaObject *mo = QGeoServiceProvider::metaObject();
-    const QMetaEnum en = mo->enumerator(
-                mo->indexOfEnumerator("MappingFeatures"));
-
-    MappingFeatures ret = NoMappingFeatures;
-    if (d_ptr->metaData.contains(QStringLiteral("Features"))
-            && d_ptr->metaData.value(QStringLiteral("Features")).isArray()) {
-        QJsonArray features = d_ptr->metaData.value(QStringLiteral("Features")).toArray();
-        foreach (QJsonValue v, features) {
-            int val = en.keyToValue(v.toString().toAscii().constData());
-            if (v.isString() && val != -1) {
-                ret |= MappingFeature(val);
-            }
-        }
-    }
-
-    return ret;
+    return d_ptr->features<MappingFeatures>("MappingFeatures");
 }
 
 QGeoServiceProvider::PlacesFeatures QGeoServiceProvider::placesFeatures() const
 {
-    const QMetaObject *mo = QGeoServiceProvider::metaObject();
-    const QMetaEnum en = mo->enumerator(
-                mo->indexOfEnumerator("PlacesFeatures"));
+    return d_ptr->features<PlacesFeatures>("PlacesFeatures");
+}
 
-    PlacesFeatures ret = NoPlacesFeatures;
-    if (d_ptr->metaData.contains(QStringLiteral("Features"))
-            && d_ptr->metaData.value(QStringLiteral("Features")).isArray()) {
-        QJsonArray features = d_ptr->metaData.value(QStringLiteral("Features")).toArray();
-        foreach (QJsonValue v, features) {
-            int val = en.keyToValue(v.toString().toAscii().constData());
-            if (v.isString() && val != -1) {
-                ret |= PlacesFeature(val);
-            }
+/* Sadly, these are necessary to figure out which of the factory->createX
+ * methods we need to call. Ideally it would be nice to find a way to embed
+ * these into the manager() template. */
+template <class Engine>
+Engine *createEngine(QGeoServiceProviderPrivate *d_ptr)
+{
+    return 0;
+}
+template <> QGeocodingManagerEngine *createEngine<QGeocodingManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
+{
+    return d_ptr->factory->createGeocodingManagerEngine(d_ptr->parameterMap, &(d_ptr->geocodeError), &(d_ptr->geocodeErrorString));
+}
+template <> QGeoRoutingManagerEngine *createEngine<QGeoRoutingManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
+{
+    return d_ptr->factory->createRoutingManagerEngine(d_ptr->parameterMap, &(d_ptr->routingError), &(d_ptr->routingErrorString));
+}
+template <> QGeoMappingManagerEngine *createEngine<QGeoMappingManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
+{
+    return d_ptr->factory->createMappingManagerEngine(d_ptr->parameterMap, &(d_ptr->mappingError), &(d_ptr->mappingErrorString));
+}
+template <> QPlaceManagerEngine *createEngine<QPlaceManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
+{
+    return d_ptr->factory->createPlaceManagerEngine(d_ptr->parameterMap, &(d_ptr->placeError), &(d_ptr->placeErrorString));
+}
+
+/* Template for generating the code for each of the geocodingManager(),
+ * mappingManager() etc methods */
+template <class Manager, class Engine>
+Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
+                                             QString *_errorString, Manager **_manager)
+{
+    // make local references just so this method is easier to read
+    QGeoServiceProvider::Error &error = *_error;
+    QString &errorString = *_errorString;
+    Manager * &manager = *_manager;
+
+    if (!this->factory)
+        this->loadPlugin(this->parameterMap);
+
+    if (!this->factory || error != QGeoServiceProvider::NoError)
+        return 0;
+
+    if (!manager) {
+        Engine *engine = createEngine<Engine>(this);
+
+        if (engine) {
+            engine->setManagerName(
+                        this->metaData.value(QStringLiteral("Provider")).toString());
+            engine->setManagerVersion(
+                        int(this->metaData.value(QStringLiteral("Version")).toDouble()));
+            manager = new Manager(engine);
+        } else {
+            error = QGeoServiceProvider::NotSupportedError;
+            errorString = QLatin1String("The service provider does not support the ");
+            errorString.append(Manager::staticMetaObject.className());
+            errorString.append(" type.");
         }
+
+        if (error != QGeoServiceProvider::NoError) {
+            if (manager)
+                delete manager;
+            manager = 0;
+            this->error = error;
+            this->errorString = errorString;
+        }
+
+        if (manager && this->localeSet)
+            manager->setLocale(this->locale);
     }
 
-    return ret;
+    if (manager) {
+        this->error = QGeoServiceProvider::NoError;
+        this->errorString.clear();
+    }
+
+    return manager;
 }
 
 /*!
@@ -272,45 +313,9 @@ QGeoServiceProvider::PlacesFeatures QGeoServiceProvider::placesFeatures() const
 */
 QGeocodingManager* QGeoServiceProvider::geocodingManager() const
 {
-    if (!d_ptr->factory)
-        d_ptr->loadPlugin(d_ptr->parameterMap);
-
-    if (!d_ptr->factory || d_ptr->geocodeError != QGeoServiceProvider::NoError)
-        return 0;
-
-    if (!d_ptr->geocodingManager) {
-        QGeocodingManagerEngine *engine = d_ptr->factory->createGeocodingManagerEngine(d_ptr->parameterMap,
-                                          &(d_ptr->geocodeError),
-                                          &(d_ptr->geocodeErrorString));
-        if (engine) {
-            engine->setManagerName(
-                        d_ptr->metaData.value(QStringLiteral("Provider")).toString());
-            engine->setManagerVersion(
-                        int(d_ptr->metaData.value(QStringLiteral("Version")).toDouble()));
-            d_ptr->geocodingManager = new QGeocodingManager(engine);
-        } else {
-            d_ptr->geocodeError = QGeoServiceProvider::NotSupportedError;
-            d_ptr->geocodeErrorString = QLatin1String("The service provider does not support geocodingManager().");
-        }
-
-        if (d_ptr->geocodeError != QGeoServiceProvider::NoError) {
-            if (d_ptr->geocodingManager)
-                delete d_ptr->geocodingManager;
-            d_ptr->geocodingManager = 0;
-            d_ptr->error = d_ptr->geocodeError;
-            d_ptr->errorString = d_ptr->geocodeErrorString;
-        }
-
-        if (d_ptr->geocodingManager && d_ptr->localeSet)
-            d_ptr->geocodingManager->setLocale(d_ptr->locale);
-    }
-
-    if (d_ptr->geocodingManager) {
-        d_ptr->error = QGeoServiceProvider::NoError;
-        d_ptr->errorString.clear();
-    }
-
-    return d_ptr->geocodingManager;
+    return d_ptr->manager<QGeocodingManager, QGeocodingManagerEngine>(
+               &(d_ptr->geocodeError), &(d_ptr->geocodeErrorString),
+               &(d_ptr->geocodingManager));
 }
 
 /*!
@@ -335,46 +340,9 @@ QGeocodingManager* QGeoServiceProvider::geocodingManager() const
 */
 QGeoMappingManager* QGeoServiceProvider::mappingManager() const
 {
-    if (!d_ptr->factory)
-        d_ptr->loadPlugin(d_ptr->parameterMap);
-
-    if (!d_ptr->factory || (d_ptr->mappingError != QGeoServiceProvider::NoError))
-        return 0;
-
-    if (!d_ptr->mappingManager) {
-        QGeoMappingManagerEngine *engine = d_ptr->factory->createMappingManagerEngine(d_ptr->parameterMap,
-                                           &(d_ptr->mappingError),
-                                           &(d_ptr->mappingErrorString));
-
-        if (engine) {
-            engine->setManagerName(
-                        d_ptr->metaData.value(QStringLiteral("Provider")).toString());
-            engine->setManagerVersion(
-                        int(d_ptr->metaData.value(QStringLiteral("Version")).toDouble()));
-            d_ptr->mappingManager = new QGeoMappingManager(engine);
-        } else {
-            d_ptr->mappingError = QGeoServiceProvider::NotSupportedError;
-            d_ptr->mappingErrorString = QLatin1String("The service provider does not support mappingManager().");
-        }
-
-        if (d_ptr->mappingError != QGeoServiceProvider::NoError) {
-            if (d_ptr->mappingManager)
-                delete d_ptr->mappingManager;
-            d_ptr->mappingManager = 0;
-            d_ptr->error = d_ptr->mappingError;
-            d_ptr->errorString = d_ptr->mappingErrorString;
-        }
-
-        if (d_ptr->mappingManager && d_ptr->localeSet)
-            d_ptr->mappingManager->setLocale(d_ptr->locale);
-    }
-
-    if (d_ptr->mappingManager) {
-        d_ptr->error = QGeoServiceProvider::NoError;
-        d_ptr->errorString.clear();
-    }
-
-    return d_ptr->mappingManager;
+    return d_ptr->manager<QGeoMappingManager, QGeoMappingManagerEngine>(
+               &(d_ptr->mappingError), &(d_ptr->mappingErrorString),
+               &(d_ptr->mappingManager));
 }
 
 /*!
@@ -399,46 +367,9 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
 */
 QGeoRoutingManager* QGeoServiceProvider::routingManager() const
 {
-    if (!d_ptr->factory)
-        d_ptr->loadPlugin(d_ptr->parameterMap);
-
-    if (!d_ptr->factory || (d_ptr->routingError != QGeoServiceProvider::NoError))
-        return 0;
-
-    if (!d_ptr->routingManager) {
-        QGeoRoutingManagerEngine *engine = d_ptr->factory->createRoutingManagerEngine(d_ptr->parameterMap,
-                                           &(d_ptr->routingError),
-                                           &(d_ptr->routingErrorString));
-
-        if (engine) {
-            engine->setManagerName(
-                        d_ptr->metaData.value(QStringLiteral("Provider")).toString());
-            engine->setManagerVersion(
-                        int(d_ptr->metaData.value(QStringLiteral("Version")).toDouble()));
-            d_ptr->routingManager = new QGeoRoutingManager(engine);
-        } else {
-            d_ptr->routingError = QGeoServiceProvider::NotSupportedError;
-            d_ptr->routingErrorString = QLatin1String("The service provider does not support routingManager().");
-        }
-
-        if (d_ptr->routingError != QGeoServiceProvider::NoError) {
-            if (d_ptr->routingManager)
-                delete d_ptr->routingManager;
-            d_ptr->routingManager = 0;
-            d_ptr->error = d_ptr->routingError;
-            d_ptr->errorString = d_ptr->routingErrorString;
-        }
-
-        if (d_ptr->routingManager && d_ptr->localeSet)
-            d_ptr->routingManager->setLocale(d_ptr->locale);
-    }
-
-    if (d_ptr->routingManager) {
-        d_ptr->error = QGeoServiceProvider::NoError;
-        d_ptr->errorString.clear();
-    }
-
-    return d_ptr->routingManager;
+    return d_ptr->manager<QGeoRoutingManager, QGeoRoutingManagerEngine>(
+               &(d_ptr->routingError), &(d_ptr->routingErrorString),
+               &(d_ptr->routingManager));
 }
 
 /*!
@@ -462,48 +393,9 @@ QGeoRoutingManager* QGeoServiceProvider::routingManager() const
 */
 QPlaceManager *QGeoServiceProvider::placeManager() const
 {
-    if (!d_ptr->factory)
-        d_ptr->loadPlugin(d_ptr->parameterMap);
-
-    if (!d_ptr->factory || (d_ptr->placeError != QGeoServiceProvider::NoError))
-        return 0;
-
-    if (!d_ptr->placeManager) {
-        QPlaceManagerEngine *engine = d_ptr->factory->createPlaceManagerEngine(d_ptr->parameterMap,
-                                           &(d_ptr->placeError),
-                                           &(d_ptr->placeErrorString));
-
-        if (engine) {
-            engine->setManagerName(
-                        d_ptr->metaData.value(QStringLiteral("Provider")).toString());
-            engine->setManagerVersion(
-                        int(d_ptr->metaData.value(QStringLiteral("Version")).toDouble()));
-            d_ptr->placeManager = new QPlaceManager(engine);
-            engine->d_ptr->manager = d_ptr->placeManager;
-
-        } else {
-            d_ptr->placeError = QGeoServiceProvider::NotSupportedError;
-            d_ptr->placeErrorString = QLatin1String("The service provider does not support placeManager().");
-        }
-
-        if (d_ptr->placeError != QGeoServiceProvider::NoError) {
-            if (d_ptr->placeManager)
-                delete d_ptr->placeManager;
-            d_ptr->placeManager = 0;
-            d_ptr->error = d_ptr->placeError;
-            d_ptr->errorString = d_ptr->placeErrorString;
-        }
-
-        if (d_ptr->placeManager && d_ptr->localeSet)
-            d_ptr->placeManager->setLocale(d_ptr->locale);
-    }
-
-    if (d_ptr->placeManager) {
-        d_ptr->error = QGeoServiceProvider::NoError;
-        d_ptr->errorString.clear();
-    }
-
-    return d_ptr->placeManager;
+    return d_ptr->manager<QPlaceManager, QPlaceManagerEngine>(
+               &(d_ptr->placeError), &(d_ptr->placeErrorString),
+               &(d_ptr->placeManager));
 }
 
 /*!

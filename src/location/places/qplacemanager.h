@@ -127,6 +127,7 @@ private:
     QPlaceManagerEngine *d;
 
     friend class QGeoServiceProvider;
+    friend class QGeoServiceProviderPrivate;
     friend class QPlaceIcon;
 };
 

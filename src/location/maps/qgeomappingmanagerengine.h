@@ -113,6 +113,7 @@ private:
     Q_DISABLE_COPY(QGeoMappingManagerEngine)
 
     friend class QGeoServiceProvider;
+    friend class QGeoServiceProviderPrivate;
 };
 
 QT_END_NAMESPACE
