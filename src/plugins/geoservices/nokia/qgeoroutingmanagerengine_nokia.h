@@ -85,8 +85,8 @@ private:
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;
+    QString m_appId;
     QString m_token;
-    QString m_referer;
 };
 
 QT_END_NAMESPACE

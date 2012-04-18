@@ -58,19 +58,17 @@
 QT_BEGIN_NAMESPACE
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-        : QGeoRoutingManagerEngine(parameters),
-        m_host("route.nlp.nokia.com"),
-        m_token(QGeoServiceProviderFactoryNokia::defaultToken),
-        m_referer(QGeoServiceProviderFactoryNokia::defaultReferer)
+        : QGeoRoutingManagerEngine(parameters)
+        , m_host(QStringLiteral("route.nlp.nokia.com"))
 {
     m_networkManager = new QNetworkAccessManager(this);
 
-    if (parameters.contains("proxy") || parameters.contains("routing.proxy")) {
+    if (parameters.contains(QStringLiteral("proxy")) || parameters.contains(QStringLiteral("routing.proxy"))) {
         QString proxy = parameters.value("proxy").toString();
         if (proxy.isEmpty())
-            proxy = parameters.value("routing.proxy").toString();
+            proxy = parameters.value(QStringLiteral("routing.proxy")).toString();
 
-        if (!proxy.isEmpty() && proxy.toLower() != QLatin1String("system")) {
+        if (!proxy.isEmpty() && proxy.toLower() != QStringLiteral("system")) {
             QUrl proxyUrl(proxy);
             if (proxyUrl.isValid()) {
                 m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
@@ -85,18 +83,14 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
         }
     }
 
-    if (parameters.contains("routing.host")) {
-        QString host = parameters.value("routing.host").toString();
+    if (parameters.contains(QStringLiteral("routing.host"))) {
+        QString host = parameters.value(QStringLiteral("routing.host")).toString();
         if (!host.isEmpty())
             m_host = host;
     }
 
-    // The navteq server doesn't support app_id and token
-    /*
-    if (parameters.contains("token")) {
-        m_token = parameters.value("token").toString();
-    }
-    */
+    m_appId = parameters.value(QStringLiteral("app_id")).toString();
+    m_token = parameters.value(QStringLiteral("token")).toString();
 
     QGeoRouteRequest::FeatureTypes featureTypes;
     featureTypes |= QGeoRouteRequest::TollFeature;
@@ -137,7 +131,7 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
         *error = QGeoServiceProvider::NoError;
 
     if (errorString)
-        *errorString = "";
+        *errorString = QString();
 }
 
 QGeoRoutingManagerEngineNokia::~QGeoRoutingManagerEngineNokia() {}
@@ -245,33 +239,36 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     bool supported = checkEngineSupport(request, request.travelModes());
 
     if (!supported)
-        return "";
+        return QString();
 
-    QString requestString = "http://";
+    QString requestString = QStringLiteral("http://");
     requestString += m_host;
-    requestString += "/routing/6.2/calculateroute.xml?referer=" + m_referer;
+    requestString += QStringLiteral("/routing/6.2/calculateroute.xml");
 
-    if (!m_token.isNull())
-        requestString += "&token=" + m_token;
+    requestString += QStringLiteral("?alternatives=");
+    requestString += QString::number(request.numberAlternativeRoutes());
+
+    if (!m_appId.isEmpty() && !m_token.isEmpty()) {
+        requestString += QStringLiteral("&app_id=");
+        requestString += m_appId;
+        requestString += QStringLiteral("&token=");
+        requestString += m_token;
+    }
 
     int numWaypoints = request.waypoints().size();
     if (numWaypoints < 2)
-        return "";
+        return QString();
 
     for (int i = 0;i < numWaypoints;++i) {
-        requestString += "&waypoint";
+        requestString += QStringLiteral("&waypoint");
         requestString += QString::number(i);
-        requestString += "=geo!";
+        requestString += QStringLiteral("=geo!");
         requestString += trimDouble(request.waypoints().at(i).latitude());
         requestString += ",";
         requestString += trimDouble(request.waypoints().at(i).longitude());
     }
 
     requestString += modesRequestString(request, request.travelModes());
-
-    requestString += "&alternatives=";
-    requestString += QString::number(request.numberAlternativeRoutes());
-
     requestString += routeRequestString(request);
 
     return requestString;
