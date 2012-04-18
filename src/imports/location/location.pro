@@ -10,6 +10,7 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 INCLUDEPATH += ../../location/maps
 INCLUDEPATH *= $$PWD
+DEFINES += TOUCH_EVENT_WORKAROUND
 
 # On some platforms, build both versions because debug and release
 # versions are incompatible
@@ -45,7 +46,8 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativepolylinemapitem_p.h \
            qdeclarativeroutemapitem_p.h \
            qgeomapitemgeometry_p.h \
-           qdeclarativegeomapcopyrightsnotice_p.h
+           qdeclarativegeomapcopyrightsnotice_p.h \
+    qdeclarativegeomapgesturearea_p.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -78,7 +80,8 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativepolylinemapitem.cpp \
            qdeclarativeroutemapitem.cpp \
            qgeomapitemgeometry.cpp \
-           qdeclarativegeomapcopyrightsnotice.cpp
+           qdeclarativegeomapcopyrightsnotice.cpp \
+    qdeclarativegeomapgesturearea.cpp
 
 include(declarativeplaces/declarativeplaces.pri)
 

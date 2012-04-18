@@ -53,6 +53,7 @@
 #include <QtQuick/QQuickPaintedItem>
 #include <QtQml/QQmlParserStatus>
 #include "qdeclarativegeomapitemview_p.h"
+#include "qdeclarativegeomapgesturearea_p.h"
 #include "qdeclarativegeomapflickable_p.h"
 #include "qdeclarativegeomappincharea_p.h"
 #include "qgeomapcontroller_p.h"
@@ -100,6 +101,7 @@ class QDeclarativeGeoMap : public QQuickItem
 {
     Q_OBJECT
 
+    Q_PROPERTY(QDeclarativeGeoMapGestureArea* gesture READ gesture CONSTANT)
     Q_PROPERTY(QDeclarativeGeoMapPinchArea* pinch READ pinch CONSTANT)
     Q_PROPERTY(QDeclarativeGeoMapFlickable* flick READ flick CONSTANT)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
@@ -166,6 +168,7 @@ public:
     bool mouseEvent(QMouseEvent* event);
 
     QDeclarativeGeoMapPinchArea* pinch();
+    QDeclarativeGeoMapGestureArea* gesture();
 
     Q_INVOKABLE void fitViewportToMapItems();
 
@@ -227,6 +230,7 @@ private:
     bool mappingManagerInitialized_;
     QList<QDeclarativeGeoMapItemView*> mapViews_;
 
+    QDeclarativeGeoMapGestureArea* gestureArea_;
     QDeclarativeGeoMapFlickable* flickable_;
     QDeclarativeGeoMapPinchArea* pinchArea_;
 
@@ -246,6 +250,7 @@ private:
     QMutex updateMutex_;
     friend class QDeclarativeGeoMapItem;
     friend class QDeclarativeGeoMapItemView;
+    friend class QDeclarativeGeoMapGestureArea;
     friend class QDeclarativeGeoMapPinchArea;
     friend class QDeclarativeGeoMapFlickable;
     Q_DISABLE_COPY(QDeclarativeGeoMap)

@@ -49,6 +49,7 @@
 #include <QVector>
 #include <QObject>
 #include <QDebug>
+#include "qdeclarativegeomapgesturearea_p.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -57,6 +58,8 @@ class QPropertyAnimation;
 class QGeoCameraData;
 class QGeoMap;
 
+// Note: this class will be deprecated in future versions, it remains as a wrapper
+// Please use the gesture object instead.
 class QDeclarativeGeoMapFlickable: public QObject
 {
     Q_OBJECT
@@ -64,59 +67,27 @@ class QDeclarativeGeoMapFlickable: public QObject
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged())
 
 public:
-    QDeclarativeGeoMapFlickable(QObject *parent = 0);
+    QDeclarativeGeoMapFlickable(QObject *parent, QDeclarativeGeoMapGestureArea *gestureArea_);
     ~QDeclarativeGeoMapFlickable();
 
-    qreal deceleration() const;
-    void setDeceleration(qreal deceleration);
+    qreal deceleration() const { return gestureArea_->flickDeceleration(); }
+    void setDeceleration(qreal deceleration){ gestureArea_->setFlickDeceleration(deceleration); }
 
-    bool enabled() const;
-    void setEnabled(bool enabled);
+    bool enabled() const { return gestureArea_->panEnabled(); }
+    void setEnabled(bool enabled){ gestureArea_->setPanEnabled(enabled); }
 
-    void setMap(QGeoMap* map);
-
-    bool mousePressEvent(QMouseEvent *event);
-    bool mouseMoveEvent(QMouseEvent *event);
-    bool mouseReleaseEvent(QMouseEvent *event);
-    virtual void timerEvent(QTimerEvent *event);
+    void setMap(QGeoMap* map){ gestureArea_->setMap(map); }
 
 signals:
     void decelerationChanged();
     void enabledChanged();
-    // public (documented) signals:
     void movementStarted();
     void movementEnded();
     void flickStarted();
     void flickEnded();
 
 private:
-    void addVelocitySample(QVector<qreal>& buffer, qreal sample);
-    void updateVelocity(QVector<qreal>& buffer, qreal& velocity);
-    void updateCamera(int dx, int dy, int timeMs = 0);
-    void stop();
-
-private slots:
-    void flickAnimationFinished();
-    //void flickAnimationValueChanged(const QVariant&);
-
-private:
-    bool pressed_;
-    qreal maxVelocity_;
-    qreal deceleration_;
-    QElapsedTimer lastPosTime_;
-    QElapsedTimer pressTime_;
-    QElapsedTimer velocityTime_;
-    QVector<qreal> velocityBufferX_;
-    qreal velocityX_;
-    QVector<qreal> velocityBufferY_;
-    qreal velocityY_;
-    QPointF lastPos_;
-    QPointF pressPos_;
-    bool flicking_;
-    QGeoMap* map_;
-    QPropertyAnimation* animation_;
-    bool enabled_;
-    bool moving_;
+    QDeclarativeGeoMapGestureArea *gestureArea_; // the destination for this wrapper class
 };
 
 QT_END_NAMESPACE

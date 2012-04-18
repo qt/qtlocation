@@ -136,6 +136,7 @@ public:
             qmlRegisterUncreatableType<QDeclarativeGeoMapFlickable>(uri, 5, 0, "MapFlickable", QDeclarativeGeoMapFlickable::tr("(Map)Flickable is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QDeclarativeGeoMapPinchArea>(uri, 5, 0, "MapPinchArea", QDeclarativeGeoMapPinchArea::tr("(Map)PinchArea is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent>(uri, 5, 0, "MapPinchEvent", QDeclarativeGeoMapPinchEvent::tr("(Map)PinchEvent is not intended instantiable by developer."));
+            qmlRegisterUncreatableType<QDeclarativeGeoMapGestureArea>(uri, 5, 0, "MapGestureArea", QDeclarativeGeoMapGestureArea::tr("(Map)GestureArea is not intended instantiable by developer."));
             qmlRegisterUncreatableType<QDeclarativeGeoMapType>(uri, 5, 0, "MapType",QDeclarativeGeoMapType::tr("MapType is not intended instantiable by developer."));
             qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
             qmlRegisterType<QDeclarativePlaceEditorialModel>(uri, 5, 0, "EditorialModel");

@@ -207,8 +207,9 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     connect(this, SIGNAL(childrenChanged()), this, SLOT(onMapChildrenChanged()), Qt::QueuedConnection);
 
     // Create internal flickable and pinch area.
-    flickable_ = new QDeclarativeGeoMapFlickable(this);
-    pinchArea_ = new QDeclarativeGeoMapPinchArea(this, this);
+    gestureArea_ = new QDeclarativeGeoMapGestureArea(this, this);
+    flickable_ = new QDeclarativeGeoMapFlickable(this, gestureArea_);
+    pinchArea_ = new QDeclarativeGeoMapPinchArea(this, gestureArea_);
 }
 
 QDeclarativeGeoMap::~QDeclarativeGeoMap()
@@ -344,14 +345,28 @@ bool QDeclarativeGeoMap::mouseEvent(QMouseEvent* event)
         return false;
     switch (event->type()) {
     case QEvent::MouseButtonPress:
-        return flickable_->mousePressEvent(event);
+        return gestureArea_->mousePressEvent(event);
     case QEvent::MouseButtonRelease:
-        return flickable_->mouseReleaseEvent(event);
+        return gestureArea_->mouseReleaseEvent(event);
     case QEvent::MouseMove:
-        return flickable_->mouseMoveEvent(event);
+        return gestureArea_->mouseMoveEvent(event);
     default:
         return false;
     }
+}
+
+
+/*!
+    \qmlproperty MapPinchArea QtLocation5::Map::gesture
+
+    Contains the MapGestureArea created with the Map. This covers pan, flick and pinch gestures.
+    Use \c{gesture.enabled: true} to enable basic gestures, or see \l{MapGestureArea} for
+    further details.
+*/
+
+QDeclarativeGeoMapGestureArea* QDeclarativeGeoMap::gesture()
+{
+    return gestureArea_;
 }
 
 /*!
@@ -359,6 +374,7 @@ bool QDeclarativeGeoMap::mouseEvent(QMouseEvent* event)
 
     Contains the MapPinchArea created with the Map.  Use \c{pinch.enabled: true}
     to enable basic pinch gestures, or see \l{MapPinchArea} for further details.
+    This object will be deprecated, use the gesture object instead.
 */
 
 QDeclarativeGeoMapPinchArea* QDeclarativeGeoMap::pinch()
@@ -371,6 +387,7 @@ QDeclarativeGeoMapPinchArea* QDeclarativeGeoMap::pinch()
 
     Contains the MapFlickable created with the Map. Use \c{flick.enabled: true}
     to enable basic flick gestures, or see \l{MapFlickable} for further details.
+    This object will be deprecated, use the gesture object instead.
 */
 
 QDeclarativeGeoMapFlickable* QDeclarativeGeoMap::flick()
@@ -486,6 +503,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     map_->setActiveMapType(QGeoMapType());
     flickable_->setMap(map_);
+    pinchArea_->setMap(map_);
 
     copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
     connect(map_,
@@ -967,7 +985,7 @@ void QDeclarativeGeoMap::touchEvent(QTouchEvent *event)
     }
     QLOC_TRACE0;
     event->accept();
-    pinchArea_->touchEvent(event);
+    gestureArea_->touchEvent(event);
 }
 
 /*!
