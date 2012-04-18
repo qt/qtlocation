@@ -80,6 +80,13 @@ public:
 
     static const QString defaultToken;
     static const QString defaultReferer;
+
+private:
+    void informOnceAboutUsageTermsIfNecessary(const QMap<QString, QVariant> &parameters) const;
+    static bool isValidParameter(const QString &param);
+
+private:
+    mutable bool m_informedAboutUsageTerms;
 };
 
 QT_END_NAMESPACE

@@ -109,7 +109,6 @@ private:
     static QString mapIdToStr(int mapId);
 
     void setHost(const QString& host);
-    bool isValidParameter(const QString& param);
 
     QGeoTiledMappingManagerEngineNokia *m_engineNokia;
     QNetworkAccessManager *m_networkManager;

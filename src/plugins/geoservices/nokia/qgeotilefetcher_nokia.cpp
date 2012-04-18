@@ -128,11 +128,6 @@ bool QGeoTileFetcherNokia::init()
     currentMobileCountryCodeChanged(0, m_networkInfo.currentMobileCountryCode(0));
 #endif
 
-    if (!isValidParameter(m_applicationId) || !isValidParameter(m_token)) {
-        qWarning() << "Qt Location requires usage of app_id and token parameters obtained from:";
-        qWarning() << "https://api.developer.nokia.com/";
-    }
-
     // Temporary testing aid for setting China maptile server
     QFile file("/.enable_china_maptile_server");
     if (file.exists()) {
@@ -299,24 +294,6 @@ void QGeoTileFetcherNokia::currentMobileCountryCodeChanged(int interface, const 
     }
 }
 #endif
-
-bool QGeoTileFetcherNokia::isValidParameter(const QString &param)
-{
-    if (param.isEmpty())
-        return false;
-
-    if (param.length() > 512)
-        return false;
-
-    foreach (QChar c, param) {
-        if (!c.isLetterOrNumber() && c.toAscii() != '%' && c.toAscii() != '-' &&
-            c.toAscii() != '+' && c.toAscii() != '_') {
-            return false;
-        }
-    }
-
-    return true;
-}
 
 void QGeoTileFetcherNokia::copyrightsFetched()
 {

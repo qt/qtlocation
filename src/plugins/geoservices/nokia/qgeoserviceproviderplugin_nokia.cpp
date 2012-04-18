@@ -59,7 +59,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia() {}
+QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia()
+    : m_informedAboutUsageTerms(false)
+{}
 
 QGeoServiceProviderFactoryNokia::~QGeoServiceProviderFactoryNokia() {}
 
@@ -67,6 +69,8 @@ QGeocodingManagerEngine* QGeoServiceProviderFactoryNokia::createGeocodingManager
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
+    informOnceAboutUsageTermsIfNecessary(parameters);
+
     return new QGeocodingManagerEngineNokia(parameters, error, errorString);
 }
 
@@ -74,6 +78,8 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerE
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
+    informOnceAboutUsageTermsIfNecessary(parameters);
+
     return new QGeoTiledMappingManagerEngineNokia(parameters, error, errorString);
 }
 
@@ -81,6 +87,8 @@ QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerE
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
+    informOnceAboutUsageTermsIfNecessary(parameters);
+
     return new QGeoRoutingManagerEngineNokia(parameters, error, errorString);
 }
 
@@ -88,6 +96,8 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(c
                                                                                QGeoServiceProvider::Error *error,
                                                                                QString *errorString) const
 {
+    informOnceAboutUsageTermsIfNecessary(parameters);
+
     switch (parameters.value(QLatin1String("places.api_version"), 2).toUInt()) {
     case 1:
         return new QPlaceManagerEngineNokiaV1(parameters, error, errorString);
@@ -96,6 +106,42 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(c
     }
 
     return 0;
+}
+
+void QGeoServiceProviderFactoryNokia::informOnceAboutUsageTermsIfNecessary(
+        const QMap<QString, QVariant> &parameters) const
+{
+    if (m_informedAboutUsageTerms)
+        return;
+
+    const QString appId = parameters.value(QLatin1String("app_id")).toString();
+    const QString token = parameters.value(QLatin1String("token")).toString();
+
+    if (!isValidParameter(appId) || !isValidParameter(token)) {
+        m_informedAboutUsageTerms = true;
+        qWarning() << "****************************************************************************";
+        qWarning() << "* Qt Location requires usage of app_id and token parameters obtained from: *";
+        qWarning() << "* https://api.developer.nokia.com/                                         *";
+        qWarning() << "****************************************************************************";
+    }
+}
+
+bool QGeoServiceProviderFactoryNokia::isValidParameter(const QString &param)
+{
+    if (param.isEmpty())
+        return false;
+
+    if (param.length() > 512)
+        return false;
+
+    foreach (QChar c, param) {
+        if (!c.isLetterOrNumber() && c.toAscii() != '%' && c.toAscii() != '-' &&
+            c.toAscii() != '+' && c.toAscii() != '_') {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 const QString QGeoServiceProviderFactoryNokia::defaultToken("152022572f0e44e07489c35cd46fa246");
