@@ -5,4 +5,4 @@ INCLUDEPATH += ../../../src/location/maps
 
 SOURCES += tst_qgeocameratiles.cpp
 
-QT += location testlib
+QT += location testlib 3d
