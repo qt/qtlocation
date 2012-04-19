@@ -81,7 +81,7 @@ private:
     void setError(QGeoPositionInfoSource::Error positionError);
     void shutdownRequestSession();
     LocationDaemonConnection* m_locationdConn;
-    bool locationOngoing;
+    bool trackingOngoing;
     bool timeoutSent;
     QTimer* requestTimer;
     QGeoPositionInfoSource::Error mPositionError;

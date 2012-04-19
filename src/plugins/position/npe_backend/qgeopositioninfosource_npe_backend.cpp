@@ -43,7 +43,8 @@
 
 
 QGeoPositionInfoSourceNpeBackend::QGeoPositionInfoSourceNpeBackend(QObject *parent):
-    QGeoPositionInfoSource(parent), locationOngoing(false), timeoutSent(false), mPositionError(QGeoPositionInfoSource::UnknownSourceError), m_locationdConn(0)
+    QGeoPositionInfoSource(parent), m_locationdConn(0), trackingOngoing(false), timeoutSent(false),
+    mPositionError(QGeoPositionInfoSource::UnknownSourceError)
 {
     requestTimer = new QTimer(this);
     QObject::connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimerExpired()));
@@ -147,8 +148,8 @@ int QGeoPositionInfoSourceNpeBackend::minimumUpdateInterval() const
 
 void QGeoPositionInfoSourceNpeBackend::startUpdates()
 {
-    if (!locationOngoing) {
-        locationOngoing = true;
+    if (!trackingOngoing) {
+        trackingOngoing = true;
         m_locationdConn->startPositionUpdates();
     }
 }
@@ -156,9 +157,12 @@ void QGeoPositionInfoSourceNpeBackend::startUpdates()
 
 void QGeoPositionInfoSourceNpeBackend::stopUpdates()
 {
-    if ( locationOngoing && !requestTimer->isActive() ) {
-        locationOngoing = false;
-        m_locationdConn->stopPositionUpdates();
+    if (trackingOngoing) {
+        trackingOngoing = false;
+
+        // if there's still a pending position request, wait for it to complete before stopping position updates
+        if (!requestTimer->isActive())
+            m_locationdConn->stopPositionUpdates();
     }
 }
 
@@ -177,12 +181,10 @@ void QGeoPositionInfoSourceNpeBackend::requestUpdate(int timeout)
             return;
         }
         // get position as fast as possible in case of ongoing satellite based session
-        if ( locationOngoing ) {
+        if ( trackingOngoing ) {
             if ( QGeoPositionInfoSource::updateInterval() != minimumInterval)
                 m_locationdConn->setUpdateInterval(minimumInterval);
-        }
-        // request the update only if no tracking session is active
-        if ( !locationOngoing) {
+        } else {         // request the update only if no tracking session is active
             m_locationdConn->requestPositionUpdate();
         }
         requestTimer->start(timeout);
@@ -202,10 +204,14 @@ void QGeoPositionInfoSourceNpeBackend::shutdownRequestSession()
 {
     requestTimer->stop();
     // Restore updateInterval from before Request Session
-    if ( locationOngoing ) {
+    if (trackingOngoing) {
         int minimumInterval = minimumUpdateInterval();
         if ( QGeoPositionInfoSource::updateInterval() != minimumInterval)
             setUpdateInterval(QGeoPositionInfoSource::updateInterval());
+    } else {
+        // If our timer expired before we could get a fix, make sure we stop the location daemon position request
+        // (which would otherwise go on until a fix is obtained).
+        m_locationdConn->stopPositionUpdates();
     }
 }
 

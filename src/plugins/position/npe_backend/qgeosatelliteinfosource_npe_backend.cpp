@@ -50,8 +50,9 @@
 #define SATELLITES_STATUS_USED_POS           0x0004  // -------------1--
 
 
-QGeoSatelliteInfoSourceNpeBackend::QGeoSatelliteInfoSourceNpeBackend(QObject *parent): QGeoSatelliteInfoSource(parent),
-    satOngoing(false), mSatelliteError(QGeoSatelliteInfoSource::UnknownSourceError), m_locationdConn(0)
+QGeoSatelliteInfoSourceNpeBackend::QGeoSatelliteInfoSourceNpeBackend(QObject *parent):
+    QGeoSatelliteInfoSource(parent),m_locationdConn(0), satOngoing(false),
+    mSatelliteError(QGeoSatelliteInfoSource::UnknownSourceError)
 {
     requestTimer = new QTimer(this);
     QObject::connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimerExpired()));
@@ -98,9 +99,12 @@ void QGeoSatelliteInfoSourceNpeBackend::startUpdates()
 
 void QGeoSatelliteInfoSourceNpeBackend::stopUpdates()
 {
-    if (satOngoing && !requestTimer->isActive()) {
+    if (satOngoing) {
         satOngoing = false;
-        m_locationdConn->stopSatelliteUpdates();
+
+        // if there's still a pending sat update request, wait for it to complete before stopping satellite updates
+        if (!requestTimer->isActive())
+            m_locationdConn->stopSatelliteUpdates();
     }
 }
 
@@ -121,10 +125,9 @@ void QGeoSatelliteInfoSourceNpeBackend::requestUpdate(int timeout)
         if ( satOngoing ) {
             if ( QGeoSatelliteInfoSource::updateInterval() != minimumInterval)
                 m_locationdConn->setUpdateInterval(minimumInterval);
-        }
-        // request the update only if no tracking session is active
-        if ( !satOngoing)
+        } else { // request the update only if no tracking session is active
             m_locationdConn->requestSatelliteUpdate();
+        }
         requestTimer->start(timeout);
     }
 }
@@ -145,6 +148,10 @@ void QGeoSatelliteInfoSourceNpeBackend::shutdownRequestSession()
         int minimumInterval = minimumUpdateInterval();
         if ( QGeoSatelliteInfoSource::updateInterval() != minimumInterval)
             setUpdateInterval(QGeoSatelliteInfoSource::updateInterval());
+    } else {
+        // If our timer expired before we could get a sat update, make sure we stop the locationd request
+        // (which would otherwise go on until a valid satellite update is obtained).
+        m_locationdConn->stopSatelliteUpdates();
     }
 }
 
