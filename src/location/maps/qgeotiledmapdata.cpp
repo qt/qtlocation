@@ -140,6 +140,7 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoTiledMappingManagerEngine *engine, QObjec
 
 QGeoTiledMapData::~QGeoTiledMapData()
 {
+    d_ptr->engine()->deregisterMap(this);
     delete d_ptr;
 }
 
@@ -223,6 +224,7 @@ void QGeoTiledMapData::updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded, 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoTiledMappingManagerEngine *engine)
     : map_(parent),
       cache_(engine->tileCache()),
+      engine_(engine),
       cameraTiles_(new QGeoCameraTiles()),
       mapGeometry_(new QGeoMapGeometry()),
       mapImages_(new QGeoMapImages(parent, engine->tileCache()))
@@ -254,6 +256,11 @@ QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 QGeoTileCache* QGeoTiledMapDataPrivate::tileCache()
 {
     return cache_;
+}
+
+QGeoTiledMappingManagerEngine *QGeoTiledMapDataPrivate::engine() const
+{
+    return engine_;
 }
 
 void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraData)

@@ -101,9 +101,12 @@ public:
     void tileFetched(const QGeoTileSpec &spec);
     QSet<QGeoTileSpec> visibleTiles();
 
+    QGeoTiledMappingManagerEngine *engine() const;
+
 private:
     QGeoTiledMapData *map_;
     QGeoTileCache* cache_;
+    QGeoTiledMappingManagerEngine *engine_;
 
     QSet<QGeoTileSpec> visibleTiles_;
 
