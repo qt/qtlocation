@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     const QString configurationFile = QStringLiteral("/var/lib/qt/qtlocation_tests_configuration.js");
 
     if (QFile::exists(configurationFile))
-        return quick_test_main(argc, argv, TESTNAME, 0, QUICK_TEST_SOURCE_DIR);
+        return quick_test_main(argc, argv, TESTNAME, QUICK_TEST_SOURCE_DIR);
 
     qWarning("File '/var/lib/qt/qtlocation_tests_configuration.js' does not exist.");
     qWarning("Not running tests.");
