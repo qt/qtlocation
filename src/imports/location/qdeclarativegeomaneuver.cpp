@@ -62,7 +62,7 @@ QT_BEGIN_NAMESPACE
 
     \section1 Example
 
-    The following QML snipplet demonstrates how to print information about a
+    The following QML snippet demonstrates how to print information about a
     route maneuver:
 
     \snippet snippets/declarative/routing.qml QtQuick import

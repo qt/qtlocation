@@ -57,9 +57,21 @@ QT_BEGIN_NAMESPACE
     \brief The ReviewModel element provides access to reviews of a \l Place.
 
     The ReviewModel is a read-only model used to fetch reviews about a \l Place.  The model
-    incrementally fetches reviews.  The number of reviews which are fetched at a time is specified
-    by the \l batchSize property.  The total number of reviews available can be accessed via the
+    incrementally fetches. The number of reviews which are fetched at a time is specified
+    by the \l batchSize property. The total number of reviews available can be accessed via the
     \l totalCount property.
+
+    To use the ReviewModel we need a view and a delegate. In this snippet we
+    see the setting up of a ListView with a ReviewModel model and a delegate.
+
+    \snippet declarative/places/content/places/PlaceReviews.qml  ReviewModel delegate
+
+    The various roles listed below can be selectively displayed, in the \l {Places (QML) Example}
+    the \l {ReviewModel::rating}{rating} is used with the code in \e ReviewPage.qml
+    to provide the format of the displayed data by using the roles from the passed \c data
+    object.
+
+
 
     The model returns data for the following roles:
 
@@ -109,19 +121,19 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty Place ReviewModel::place
+    \qmlproperty Place QtLocation5::ReviewModel::place
 
     This property holds the Place that the reviews are for.
 */
 
 /*!
-    \qmlproperty int ReviewModel::batchSize
+    \qmlproperty int QtLocation5::ReviewModel::batchSize
 
     This property holds the batch size to use when fetching more reviews.
 */
 
 /*!
-    \qmlproperty int ReviewModel::totalCount
+    \qmlproperty int QtLocation5::ReviewModel::totalCount
 
     This property holds the total number of reviews for the place.
 */

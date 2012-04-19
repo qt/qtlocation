@@ -253,9 +253,44 @@ QT_USE_NAMESPACE
 /*!
     \qmlmethod PlaceSearchModel::execute()
 
-    Executes a search query using the element's properties as search parameters.  Once the query
-    completes, the model items are updated with the search results.  If an error occurs, the model
-    is cleared.
+    Executes a search query.  Search criteria is specified by setting
+    properties such as the \l searchTerm, \l categories, \l limit and \l offset.
+    Support for these properties may var according to \l plugin.
+    \c execute() then submits the set of criteria to the \l plugin to process.
+
+    While the query is executing the \l status of the model is set to
+    \c PlaceSearchModel.Executing.  If the query successfully completes,
+    the \l status is set to \c PlaceSearchModel.Ready, while if it unsuccessfully
+    completes, the \l status is set to \c PlaceSearchModel.Error.  Once the query
+    completes, the model items are updated with search results.
+
+    \code
+    BoundingCircle {
+        id: searchLocation
+        center: Coordinate {
+            latitude: 10
+            longitude: 10
+        }
+    }
+
+    PlaceSearchModel {
+        id: model
+        plugin: backendPlugin
+        searchArea : searchLocation
+        ...
+    }
+
+    MouseArea {
+        ...
+        onClicked: {
+            model.searchTerm = "pizza";
+            model.categories = null;  //not searching by any category
+            searchLocation.center.latitude = -27.5
+            searchLocation.center.longitude = 153
+            model.execute();
+        }
+    }
+    \endcode
 
     \sa cancel(), status
 */

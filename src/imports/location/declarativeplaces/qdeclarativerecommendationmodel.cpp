@@ -201,8 +201,33 @@ QT_USE_NAMESPACE
     \qmlmethod PlaceRecommendationModel::execute()
 
     Executes a recommendation search query for places similar to the place identified by the
-    \l placeId property.  Once the query completes the model items are updated with the search
-    results.  If an error occurs, the model is cleared.
+    \l placeId property. If the \l plugin supports it, additional prameters such as \l limit,
+    and \l offset may be specified and then \c execute() submits the set of criteria
+    to the \l  plugin to process.
+
+
+    While the query is executing the \l status of the model is set to
+    \c PlaceRecommendationModel.Executing.  If the query successfully completes,
+    the \l status is set to \c PlaceRecommendationModel.Ready, while if it unsuccessfully
+    completes, the \l status is set to \c PlaceRecommendationModel.Error.  Once the query
+    completes, the model items are updated with recommendation results.
+    \code
+    PlaceRecomendationModel {
+        id: model
+        plugin:  backendPlugin
+        ...
+    }
+
+    MouseArea {
+        ...
+        onClicked: {
+            model.placeId = place.placeId
+            limit = -1;
+            offset = 0;
+            model.execute();
+        }
+    }
+    \endcode
 
     \sa cancel(), status
 */

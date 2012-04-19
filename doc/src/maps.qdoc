@@ -54,7 +54,7 @@ The Map element supports user interaction through the
 draws the map on-screen using OpenGL (ES), allowing for hardware-accelerated
 rendering where available.
 
-\b{Key elements}
+\b{Key Elements}
 \table
     \row
         \li \l{QtLocation5::Plugin}{Plugin}
@@ -82,7 +82,7 @@ as the ability to implement custom map overlay objects using the
 \l{QtLocation5::MapQuickItem}{MapQuickItem} element, which can contain any
 standard QtQuick item.
 
-\b{Key elements}
+\b{Key Elements}
 \table
     \row
         \li \l{QtLocation5::MapCircle}{MapCircle}
@@ -108,7 +108,7 @@ model (for example a ListModel item), the \l{QtLocation5::MapItemView}{MapItemVi
 element is available. It accepts any map overlay object as its delegate, and can
 only be created within a \l{QtLocation5::Map}{Map}.
 
-\b{Key elements}
+\b{Key Elements}
 \table
     \row
         \li \l{QtLocation5::MapItemView}{MapItemView}
@@ -127,7 +127,7 @@ be changed at any time, and many can also be used in animations. Animating
 coordinate-based map overlay objects, such as MapPolygon and MapPolyline, is not yet
 available.
 
-\b{Key elements}
+\b{Key Elements}
 \table
     \row
         \li \l{QtLocation5::MapMouseArea}{MapMouseArea}
@@ -156,7 +156,7 @@ form of the address to search for. To perform the reverse, the same property
 can be set to a Coordinate instead. Results are made available in the contents
 of the model.
 
-\b{Key elements}
+\b{Key Elements}
 \table
     \row
         \li \l{QtLocation5::Plugin}{Plugin}
@@ -174,6 +174,35 @@ prior to using a \l{QtLocation5::GeocodeModel}{GeocodeModel} element in order
 to have access to geocoding translation services and thus data to display.
 
 \section1 Routing and Navigation
+
+Routing is the determination of a navigable path from one point to another on
+a map. Given a map that is aware of features that aid or hinder navigation, such as
+bridges, waterways and so on, a series of segments that make
+up the journey can be constructed. If these \l {RouteSegment}s are simple then we can
+add navigation information at the connecting points, \l {RouteManeuver}s,
+between the segments.
+
+\b{Key Elements}
+\table
+    \row
+        \li \l{QtLocation5::Route}{Routing}
+        \li The entire path to be navigated.
+    \row
+        \li \l{QtLocation5::RouteSegment}{Segments}
+        \li The individual components of a route.
+    \row
+        \li \l{QtLocation5::RouteManeuver}{Maneuvers}
+        \li The navigation information that joins segments.
+    \row
+        \li \l{QtLocation5::RouteModel}{RouteModel}
+        \li The means of making requests on the backend to supply route
+        information.
+\endtable
+
+
+
+
+
 
 */
 
@@ -198,7 +227,7 @@ class. For coordinate-to-address queries, the
 on the same class. Instances of QGeocodingManager are available via
 \l{QGeoServiceProvider}.
 
-\b{Key classes}
+\b{Key Classes}
 \table
     \row
         \li \l{QGeoServiceProvider}

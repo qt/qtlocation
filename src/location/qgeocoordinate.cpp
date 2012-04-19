@@ -102,7 +102,12 @@ QGeoCoordinatePrivate::~QGeoCoordinatePrivate()
     and altitude). Use distanceTo() and azimuthTo() to calculate the distance
     and bearing between coordinates.
 
-    The coordinate values should be specified using the WGS84 datum.
+    The coordinate values should be specified using the WGS84 datum. For more information
+    on geographical terms see this article on \l {http://en.wikipedia.org/wiki/Geographic_coordinate_system}{coordinates} and
+    another on \l {http://en.wikipedia.org/wiki/Geodetic_system}{geodetic systems}
+    including WGS84.
+
+    Azimuth in this context is equivalent to a compass bearing based on true north.
 */
 
 /*!

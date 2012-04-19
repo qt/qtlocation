@@ -46,6 +46,7 @@ Item {
 
     clip: true
 
+//! [ReviewModel delegate]
     ListView {
         anchors.fill: parent
 
@@ -53,4 +54,5 @@ Item {
 
         delegate: ReviewDelegate { }
     }
+//! [ReviewModel delegate]
 }

@@ -27,7 +27,7 @@
 
 /*!
     \example declarative/places
-    \title Places (QML)
+    \title Places (QML) Example
     \ingroup qtlocation-examples
 
     \brief The Places example demonstrates how to search for Places and access
@@ -122,6 +122,7 @@
     \snippet declarative/places/content/places/CategoryDelegate.qml CategoryModel delegate icon
 
 
+    \target Presenting-Search-Suggestions
     \section1 Presenting Search Suggestions
 
     The \l PlaceSearchSuggestionModel element is used to fetch suggested search terms based on a
@@ -229,9 +230,11 @@
 
     \snippet declarative/places/content/places/CategoryDialog.qml Category save
 
-    Support for place and category remove can be checked at run-time by testing the
-    \l Plugin::supportedPlacesFeatures property for the \e Plugin::RemovePlaceFeature and
-    \e Plugin::RemoveCategoryFeature flags.
+    Support for place and category removal can be checked at run-time by using the
+    \l {Plugin::supportsPlaces} method, passing in a \l {Plugin::supportsPlaces}{Plugin::PlacesFeatures} flag and
+    getting back \e true if the feature is supported. For example one would invoke
+    \e {supportsPlaces(Plugin.RemovePlaceFeature)} to check if the \e Plugin.RemovePlaceFeature is supported.
+
 
     To remove a place, invoke its \l {Place::remove()}{remove()} method.  To remove a category,
     invoke its \l {Category::remove()}{remove()} method.

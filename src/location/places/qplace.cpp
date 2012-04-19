@@ -455,7 +455,8 @@ QUrl QPlace::primaryWebsite() const
 }
 
 /*!
-    Returns whether the details of this place have been fetched or not.
+    Returns true if the details of this place have been fetched,
+    otherwise returns false.
 */
 bool QPlace::detailsFetched() const
 {

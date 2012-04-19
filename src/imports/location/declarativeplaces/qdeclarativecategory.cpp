@@ -309,7 +309,7 @@ QString QDeclarativeCategory::errorString() const
     \table
         \row
             \li Category.Ready
-            \li No Error occurred during the last operation, further operations may be performed on
+            \li No error occurred during the last operation, further operations may be performed on
                the category.
         \row
             \li Category.Saving

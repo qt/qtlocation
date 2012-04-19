@@ -995,7 +995,7 @@ void QDeclarativePlace::synchronizeCategories()
     \table
         \row
             \li Place.UnspecifiedVisibility
-            \li The visibility of the place is unspecified, the default visibility of the \l plugin
+            \li The visibility of the place is unspecified, the default visibility of the \l Plugin
                will be used.
         \row
             \li Place.DeviceVisibility

@@ -52,6 +52,8 @@
 
 QT_BEGIN_NAMESPACE
 
+
+
 /*!
     \qmlclass Plugin QDeclarativeGeoServiceProvider
     \inqmlmodule QtLocation 5
@@ -107,6 +109,8 @@ QDeclarativeGeoServiceProvider::~QDeclarativeGeoServiceProvider()
     delete required_;
     delete sharedProvider_;
 }
+
+
 
 /*!
     \qmlproperty string Plugin::name
@@ -237,13 +241,63 @@ bool QDeclarativeGeoServiceProvider::supportsRouting(const RoutingFeatures &feat
 }
 
 /*!
-    \internal
-*/
-bool QDeclarativeGeoServiceProvider::supportsPlaces(const PlacesFeatures &feature) const
+
+  \qmlmethod Plugin::supportsPlaces(PlacesFeatures features)
+
+  This method returns a boolean indicating whether the specified set of
+  \a features flags is supported or not.  True is returned if it is supported,
+  otherwise false is returned.
+
+  \target PluginPlacesFeatures
+  The \a features parameter can be any flag combination of:
+    \table
+        \header
+            \li Feature
+            \li Description
+        \row
+            \li Plugin.NoPlacesFeatures
+            \li No features supported
+        \row
+            \li Plugin.OnlinePlacesFeature
+            \li Place data online
+        \row
+            \li Plugin.OfflinePlacesFeature
+            \li Supports offline data for places
+        \row
+            \li Plugin.SavePlaceFeature
+            \li Can save place data
+        \row
+            \li Plugin.RemovePlaceFeature
+            \li Supports removal of a place
+        \row
+            \li Plugin.PlaceRecommendationsFeature
+            \li Supports user recommendations
+        \row
+            \li Plugin.SearchSuggestionsFeature
+            \li Supports suggestions to user query
+        \row
+            \li Plugin.CorrectionsFeature
+            \li User can edit saved place data.
+        \row
+            \li Plugin.LocalizedPlacesFeature
+            \li Local places
+        \row
+            \li Plugin.NotificationsFeature
+            \li Notify user of place event
+        \row
+            \li Plugin.PlaceMatchingFeature
+            \li Find places
+        \row
+            \li Plugin.AnyPlacesFeatures
+            \li Are any features supported
+    \endtable
+
+    */
+bool QDeclarativeGeoServiceProvider::supportsPlaces(const PlacesFeatures &features) const
 {
     QGeoServiceProvider *sp = sharedGeoServiceProvider();
     QGeoServiceProvider::PlacesFeatures f =
-            static_cast<QGeoServiceProvider::PlacesFeature>(int(feature));
+            static_cast<QGeoServiceProvider::PlacesFeature>(int(features));
     if (f == QGeoServiceProvider::AnyPlacesFeatures)
         return (sp && (sp->placesFeatures() != QGeoServiceProvider::NoPlacesFeatures));
     else
@@ -533,7 +587,8 @@ void QDeclarativeGeoServiceProviderRequirements::setGeocodingRequirements(const 
 
 /*!
     \internal
-*/
+
+    */
 QDeclarativeGeoServiceProvider::PlacesFeatures QDeclarativeGeoServiceProviderRequirements::placesRequirements() const
 {
     return places_;

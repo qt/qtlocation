@@ -138,13 +138,13 @@ QT_USE_NAMESPACE
 
     \table
         \row
-            \li SearchSuggestionModel.Ready
+            \li PlaceSearchSuggestionModel.Ready
             \li The search query has completed, and the results are available.
         \row
-            \li SearchSuggestionModel.Executing
+            \li PlaceSearchSuggestionModel.Executing
             \li A search query is currently being executed.
         \row
-            \li SearchSuggestionModel.Error
+            \li PlaceSearchSuggestionModel.Error
             \li An error occurred when executing the previous search query.
     \endtable
 */
@@ -152,8 +152,46 @@ QT_USE_NAMESPACE
 /*!
     \qmlmethod PlaceSearchSuggestionModel::execute()
 
-    Executes a search suggestion query for the partial \l searchTerm and \l searchArea.  Once the
-    query completes the model items are updated with the suggestions.
+    Executes a search suggestion query for the partial \l searchTerm and a \l searchArea.
+    If the \l plugin supports it, other paramaters such as \l limit and \l offset may
+    be specified.  \c execute() submits the set of parameters to the \l plugin to process.
+
+
+    While the query is executing the \l status of the model is set to
+    \c PlaceSearchSuggestionModel.Executing.  If the query successfully completes,
+    the \l status is set to \c PlaceSearchSuggestionModel.Ready, while if it unsuccessfully
+    completes, the \l status is set to \c PlaceSearchSuggestionModel.Error.  Once the query
+    completes, the model items are updated with search suggestions.
+
+    This example shows use of the model
+    \code
+    BoundingCircle {
+        id: searchLocation
+        center: Coordinate {
+            latitude: 10
+            longitude: 10
+        }
+    }
+
+    PlaceSeachSuggestionModel {
+        id: model
+        plugin: backendPlugin
+        searchArea: searchLocation
+        ...
+    }
+
+    MouseArea {
+        ...
+        onClicked: {
+            model.searchTerm = "piz"
+            searchLocation.center.latitude = -27.5
+            searchLocation.cetner.longitude = 153
+            model.execute();
+        }
+    }
+    \endcode
+
+    A more detailed example can be found in the in \l {Places (QML) Example#Presenting-Search-Suggestions}{places example}.
 
     \sa cancel(), status
 */

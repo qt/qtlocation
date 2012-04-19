@@ -108,6 +108,10 @@ require online access or may support on-board maps and data. The default "nokia"
 plugin only supports online use which would be managed by QNetworkInfo and
 QNetworkConfigurationManager.
 
+\note: Plugins may not provide various features such as paging or relevance hints.
+Since plugins may be supplied by other providers, support for these aspects is
+dependent on the provider's implementation.
+
 
 \section2 API Sub-Modules
 

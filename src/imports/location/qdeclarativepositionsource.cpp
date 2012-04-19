@@ -485,8 +485,8 @@ void QDeclarativePositionSource::stop()
 /*!
     \qmlproperty bool PositionSource::active
 
-    This property indicates whether the position source is (/should be)
-    active. Setting this property to false equals calling \l stop, and
+    This property indicates whether the position source is active.
+    Setting this property to false equals calling \l stop, and
     setting this property true equals calling \l start.
 
     \sa start, stop, update
