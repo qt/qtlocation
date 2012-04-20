@@ -675,6 +675,28 @@ bool QDeclarativePolylineMapItem::contains(QPointF point)
     return geometry_.contains(point);
 }
 
+/*!
+    \internal
+*/
+void QDeclarativePolylineMapItem::dragEnded()
+{
+    QPointF newPoint = QPointF(x(),y()) + geometry_.firstPointOffset();
+    QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(newPoint, false);
+    if (newCoordinate.isValid()) {
+        qreal firstLongitude = path_.at(0).longitude();
+        qreal firstLatitude = path_.at(0).latitude();
+        for (int i = 0; i<path_.count(); i++){
+            QGeoCoordinate coord = path_.at(i);
+            coord.setLongitude(coord.longitude() + newCoordinate.longitude() - firstLongitude);
+            coord.setLatitude(coord.latitude() + newCoordinate.latitude() - firstLatitude);
+            this->path_.replace(i, coord);
+        }
+        geometry_.markSourceDirty();
+        updateMapItem();
+        emit pathChanged();
+    }
+}
+
 //////////////////////////////////////////////////////////////////////
 
 /*!

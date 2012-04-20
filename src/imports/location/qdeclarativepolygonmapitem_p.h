@@ -95,6 +95,7 @@ public:
     QDeclarativeMapLineProperties *border();
 
     bool contains(QPointF point);
+    void dragEnded();
 
 Q_SIGNALS:
     void pathChanged();
