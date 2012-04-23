@@ -44,6 +44,7 @@
 
 #include <QtCore/QMetaType>
 #include <QtCore/QString>
+#include <QSharedDataPointer>
 #include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_HEADER
@@ -107,7 +108,7 @@ public:
     QString toString(CoordinateFormat format = DegreesMinutesSecondsWithHemisphere) const;
 
 private:
-    QGeoCoordinatePrivate *d;
+    QSharedDataPointer<QGeoCoordinatePrivate> d;
 
     friend class QGeoCoordinatePrivate;
 };

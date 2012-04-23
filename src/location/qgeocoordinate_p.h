@@ -53,14 +53,17 @@
 // We mean it.
 //
 
+#include <QSharedData>
 #include "qgeocoordinate.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinatePrivate
+class QGeoCoordinatePrivate : public QSharedData
 {
 public:
     QGeoCoordinatePrivate();
+    QGeoCoordinatePrivate(const QGeoCoordinatePrivate &other);
+    ~QGeoCoordinatePrivate();
 
     double lat;
     double lng;

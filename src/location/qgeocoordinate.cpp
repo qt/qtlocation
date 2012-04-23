@@ -76,6 +76,16 @@ QGeoCoordinatePrivate::QGeoCoordinatePrivate() {
     alt = qQNaN();
 }
 
+QGeoCoordinatePrivate::QGeoCoordinatePrivate(const QGeoCoordinatePrivate &other)
+    : QSharedData(other),
+      lat(other.lat),
+      lng(other.lng),
+      alt(other.alt)
+{}
+
+QGeoCoordinatePrivate::~QGeoCoordinatePrivate()
+{}
+
 
 /*!
     \class QGeoCoordinate
@@ -172,9 +182,13 @@ QGeoCoordinate::QGeoCoordinate(double latitude, double longitude, double altitud
     Constructs a coordinate from the contents of \a other.
 */
 QGeoCoordinate::QGeoCoordinate(const QGeoCoordinate &other)
-        : d(new QGeoCoordinatePrivate)
+        : d(other.d)
+{}
+
+QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
 {
-    operator=(other);
+    d = other.d;
+    return (*this);
 }
 
 /*!
@@ -182,23 +196,6 @@ QGeoCoordinate::QGeoCoordinate(const QGeoCoordinate &other)
 */
 QGeoCoordinate::~QGeoCoordinate()
 {
-    delete d;
-}
-
-/*!
-    Assigns \a other to this coordinate and returns a reference to this
-    coordinate.
-*/
-QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate & other)
-{
-    if (this == &other)
-        return *this;
-
-    d->lat = other.d->lat;
-    d->lng = other.d->lng;
-    d->alt = other.d->alt;
-
-    return *this;
 }
 
 /*!
