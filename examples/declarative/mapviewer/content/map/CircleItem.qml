@@ -49,9 +49,11 @@ MapCircle {
     border.width: 5
     smooth: true
     opacity: 0.5
+    center: Coordinate{}
 
     function setGeometry(markers, index){
-        center = markers[index].coordinate
+        center.latitude = markers[index].coordinate.latitude
+        center.longitude = markers[index].coordinate.longitude
         radius= center.distanceTo(markers[index + 1].coordinate)
     }
 }
