@@ -55,6 +55,7 @@
 #include <QSet>
 #include <QList>
 #include <QSharedPointer>
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 
@@ -76,6 +77,7 @@ public:
     QList<QSharedPointer<QGeoTileTexture> > cachedTiles() const;
 
     void tileFetched(const QGeoTileSpec &tile);
+    void tileError(const QGeoTileSpec &tile, const QString &errorString);
 
 private:
     QGeoMapImagesPrivate *d_ptr;

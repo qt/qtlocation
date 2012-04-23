@@ -264,6 +264,27 @@ void QGeoTiledMappingManagerEngine::engineTileFinished(const QGeoTileSpec &spec,
 
 void QGeoTiledMappingManagerEngine::engineTileError(const QGeoTileSpec &spec, const QString &errorString)
 {
+    Q_D(QGeoTiledMappingManagerEngine);
+
+    QSet<QGeoTiledMapData*> maps = d->tileHash_.value(spec);
+    typedef QSet<QGeoTiledMapData*>::const_iterator map_iter;
+    map_iter map = maps.constBegin();
+    map_iter mapEnd = maps.constEnd();
+    for (; map != mapEnd; ++map) {
+        QSet<QGeoTileSpec> tileSet = d->mapHash_.value(*map);
+
+        tileSet.remove(spec);
+        if (tileSet.isEmpty())
+            d->mapHash_.remove(*map);
+        else
+            d->mapHash_.insert(*map, tileSet);
+    }
+    d->tileHash_.remove(spec);
+
+    for (map = maps.constBegin(); map != mapEnd; ++map) {
+        (*map)->tileError(spec, errorString);
+    }
+
     emit tileError(spec, errorString);
 }
 

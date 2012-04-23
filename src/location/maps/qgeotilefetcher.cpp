@@ -130,6 +130,8 @@ void QGeoTileFetcher::cancelTileRequests(const QSet<QGeoTileSpec> &tiles)
         if (reply) {
             d->invmap_.remove(*tile);
             reply->abort();
+            if (reply->isFinished())
+                reply->deleteLater();
         }
         d->queue_.removeAll(*tile);
     }

@@ -53,6 +53,7 @@
 //
 
 #include <QObject>
+#include <QString>
 
 #include "qgeomapdata_p.h"
 #include "qgeocameradata_p.h"
@@ -80,6 +81,7 @@ public:
     void paintGL(QGLPainter *painter);
 
     void tileFetched(const QGeoTileSpec &spec);
+    void tileError(const QGeoTileSpec &spec, const QString &errorString);
 
     QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const;
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;

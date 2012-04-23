@@ -40,12 +40,15 @@
 ****************************************************************************/
 #include "qgeomapimages_p.h"
 
+#include <QSharedPointer>
 #include "qgeotilespec.h"
 #include "qgeotiledmapdata_p.h"
 #include "qgeotiledmappingmanagerengine.h"
 #include "qgeotilecache_p.h"
 
 QT_BEGIN_NAMESPACE
+
+class RetryFuture;
 
 class QGeoMapImagesPrivate
 {
@@ -58,7 +61,10 @@ public:
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
     void tileFetched(const QGeoTileSpec &tile);
+    void tileError(const QGeoTileSpec &tile, const QString &errorString);
 
+    QHash<QGeoTileSpec, int> retries_;
+    QHash<QGeoTileSpec, QSharedPointer<RetryFuture> > futures_;
     QSet<QGeoTileSpec> visible_;
     QList<QSharedPointer<QGeoTileTexture> > cachedTex_;
     QSet<QGeoTileSpec> requested_;
@@ -76,6 +82,12 @@ void QGeoMapImages::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
 {
     Q_D(QGeoMapImages);
     d->setVisibleTiles(tiles);
+}
+
+void QGeoMapImages::tileError(const QGeoTileSpec &tile, const QString &errorString)
+{
+    Q_D(QGeoMapImages);
+    d->tileError(tile, errorString);
 }
 
 QList<QSharedPointer<QGeoTileTexture> > QGeoMapImages::cachedTiles() const
@@ -132,6 +144,71 @@ void QGeoMapImagesPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
     if (!requestTiles.isEmpty() || !cancelTiles.isEmpty()) {
         if (map_) {
             map_->updateTileRequests(requestTiles, cancelTiles);
+
+            // Remove any cancelled tiles from the error retry hash to avoid
+            // re-using the numbers for a totally different request cycle.
+            iter i = cancelTiles.constBegin();
+            iter end = cancelTiles.constEnd();
+            for (; i != end; ++i) {
+                retries_.remove(*i);
+                futures_.remove(*i);
+            }
+        }
+    }
+}
+
+// Represents a tile that needs to be retried after a certain period of time
+class RetryFuture : public QObject
+{
+    Q_OBJECT
+public:
+    RetryFuture(const QGeoTileSpec &tile, QGeoTiledMapData *map, QObject *parent=0);
+
+public slots:
+    void retry();
+
+private:
+    QGeoTileSpec tile_;
+    QGeoTiledMapData *map_;
+};
+
+RetryFuture::RetryFuture(const QGeoTileSpec &tile, QGeoTiledMapData *map, QObject *parent)
+    : QObject(parent), tile_(tile), map_(map)
+{}
+
+void RetryFuture::retry()
+{
+    QSet<QGeoTileSpec> requestTiles;
+    QSet<QGeoTileSpec> cancelTiles;
+    requestTiles.insert(tile_);
+    if (map_)
+        map_->updateTileRequests(requestTiles, cancelTiles);
+}
+
+void QGeoMapImagesPrivate::tileError(const QGeoTileSpec &tile, const QString &errorString)
+{
+    if (requested_.contains(tile)) {
+        int count = retries_.value(tile, 0);
+        retries_.insert(tile, count + 1);
+
+        if (count >= 5) {
+            qWarning("QGeoMapImages: Failed to fetch tile (%d,%d,%d) 5 times, giving up. "
+                     "Last error message was: '%s'",
+                     tile.x(), tile.y(), tile.zoom(), qPrintable(errorString));
+            requested_.remove(tile);
+            retries_.remove(tile);
+            futures_.remove(tile);
+
+        } else {
+            // Exponential time backoff when retrying
+            int delay = (1 << count) * 500;
+
+            QSharedPointer<RetryFuture> future(new RetryFuture(tile, map_));
+            futures_.insert(tile, future);
+
+            QTimer::singleShot(delay, future.data(), SLOT(retry()));
+            // Passing .data() to singleShot is ok -- Qt will clean up the
+            // connection if the target qobject is deleted
         }
     }
 }
@@ -139,6 +216,10 @@ void QGeoMapImagesPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
 void QGeoMapImagesPrivate::tileFetched(const QGeoTileSpec &tile)
 {
     requested_.remove(tile);
+    retries_.remove(tile);
+    futures_.remove(tile);
 }
+
+#include "qgeomapimages.moc"
 
 QT_END_NAMESPACE

@@ -150,6 +150,12 @@ void QGeoTiledMapData::tileFetched(const QGeoTileSpec &spec)
     d->tileFetched(spec);
 }
 
+void QGeoTiledMapData::tileError(const QGeoTileSpec &spec, const QString &errorString)
+{
+    Q_D(QGeoTiledMapData);
+    d->tileError(spec, errorString);
+}
+
 QGeoTileCache* QGeoTiledMapData::tileCache()
 {
     Q_D(QGeoTiledMapData);
@@ -347,6 +353,11 @@ void QGeoTiledMapDataPrivate::tileFetched(const QGeoTileSpec &spec)
     }
     mapImages_->tileFetched(spec);
     map_->update();
+}
+
+void QGeoTiledMapDataPrivate::tileError(const QGeoTileSpec &spec, const QString &errorString)
+{
+    mapImages_->tileError(spec, errorString);
 }
 
 QSet<QGeoTileSpec> QGeoTiledMapDataPrivate::visibleTiles()

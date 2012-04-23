@@ -78,6 +78,9 @@ class QGeoProjection;
 class QGeoCameraTiles;
 class QGeoMapImages;
 class QGeoMapGeometry;
+class QGeoTiledMapData;
+class QGeoTiledMappingManagerEngine;
+class QGLPainter;
 
 class QGLSceneNode;
 
@@ -99,6 +102,7 @@ public:
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
 
     void tileFetched(const QGeoTileSpec &spec);
+    void tileError(const QGeoTileSpec &spec, const QString &errorString);
     QSet<QGeoTileSpec> visibleTiles();
 
     QGeoTiledMappingManagerEngine *engine() const;
