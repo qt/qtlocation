@@ -65,10 +65,12 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters,
-                                                                       QGeoServiceProvider::Error *error,
-                                                                       QString *errorString)
-        : QGeoTiledMappingManagerEngine()
+QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
+    QGeoNetworkAccessManager* networkManager,
+    const QMap<QString, QVariant> &parameters,
+    QGeoServiceProvider::Error *error,
+    QString *errorString)
+    : QGeoTiledMappingManagerEngine()
 {
     Q_UNUSED(error);
     Q_UNUSED(errorString);
@@ -96,7 +98,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(const QMa
     types << QGeoMapType(QGeoMapType::GrayStreetMap,tr("Mobile Gray Street Map"),tr("Nokia Mobile Gray Street Map"), true, 11);
     setSupportedMapTypes(types);
 
-    QGeoTileFetcherNokia *fetcher = new QGeoTileFetcherNokia(this);
+    QGeoTileFetcherNokia *fetcher = new QGeoTileFetcherNokia(networkManager, this);
     fetcher->setParams(parameters);
     fetcher->setTileSize(tileSize());
     setTileFetcher(fetcher);

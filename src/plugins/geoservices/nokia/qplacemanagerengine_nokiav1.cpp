@@ -63,32 +63,17 @@
 
 QT_USE_NAMESPACE
 
-QPlaceManagerEngineNokiaV1::QPlaceManagerEngineNokiaV1(const QMap<QString, QVariant> &parameters,
-                                                 QGeoServiceProvider::Error *error,
-                                                 QString *errorString)
+QPlaceManagerEngineNokiaV1::QPlaceManagerEngineNokiaV1(
+    QGeoNetworkAccessManager* networkManager,
+    const QMap<QString, QVariant> &parameters,
+    QGeoServiceProvider::Error *error,
+    QString *errorString)
 :   QPlaceManagerEngine(parameters)
 {
     qRegisterMetaType<QPlaceReply::Error>();
 
-    if (parameters.contains(QLatin1String("proxy")) || parameters.contains(QLatin1String("places.proxy"))) {
-        QString proxy = parameters.value("proxy").toString();
-        if (proxy.isEmpty())
-            proxy = parameters.value("places.proxy").toString();
-
-        if (!proxy.isEmpty() && proxy.toLower() != QLatin1String("system")) {
-            QUrl proxyUrl(proxy);
-            if (proxyUrl.isValid()) {
-                QPlaceRestManager::instance()->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
-                                                                      proxyUrl.host(),
-                                                                      proxyUrl.port(8080),
-                                                                      proxyUrl.userName(),
-                                                                      proxyUrl.password()));
-            }
-        } else if (!proxy.isEmpty()) {
-            if (QNetworkProxy::applicationProxy().type() == QNetworkProxy::NoProxy)
-                QNetworkProxyFactory::setUseSystemConfiguration(true);
-        }
-    }
+    Q_ASSERT(networkManager);
+    QPlaceRestManager::instance()->setNetworkAccessManager(networkManager);
 
     if (error)
         *error = QGeoServiceProvider::NoError;

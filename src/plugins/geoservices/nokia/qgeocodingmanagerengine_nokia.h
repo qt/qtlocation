@@ -54,17 +54,20 @@
 #include <qgeoserviceprovider.h>
 #include <qgeocodingmanagerengine.h>
 
-#include <QNetworkAccessManager>
+
 #include <QLocale>
 
 
 QT_BEGIN_NAMESPACE
 
+class QGeoNetworkAccessManager;
+
 class QGeocodingManagerEngineNokia : public QGeocodingManagerEngine
 {
     Q_OBJECT
 public:
-    QGeocodingManagerEngineNokia(const QMap<QString, QVariant> &parameters,
+    QGeocodingManagerEngineNokia(QGeoNetworkAccessManager* networkManager,
+                                 const QMap<QString, QVariant> &parameters,
                                  QGeoServiceProvider::Error *error,
                                  QString *errorString);
     ~QGeocodingManagerEngineNokia();
@@ -89,7 +92,7 @@ private:
     QString languageToMarc(QLocale::Language language);
     QString getAuthenticationString() const;
 
-    QNetworkAccessManager *m_networkManager;
+    QGeoNetworkAccessManager *m_networkManager;
     QString m_host;
     QString m_token;
     QString m_applicationId;

@@ -53,15 +53,17 @@
 
 #include <qgeoserviceprovider.h>
 #include <qgeoroutingmanagerengine.h>
-#include <QNetworkAccessManager>
 
 QT_BEGIN_NAMESPACE
+
+class QGeoNetworkAccessManager;
 
 class QGeoRoutingManagerEngineNokia : public QGeoRoutingManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoRoutingManagerEngineNokia(const QMap<QString, QVariant> &parameters,
+    QGeoRoutingManagerEngineNokia(QGeoNetworkAccessManager* networkInterface,
+                                  const QMap<QString, QVariant> &parameters,
                                   QGeoServiceProvider::Error *error,
                                   QString *errorString);
     ~QGeoRoutingManagerEngineNokia();
@@ -83,7 +85,7 @@ private:
                                QGeoRouteRequest::TravelModes travelModes) const;
     static QString trimDouble(double degree, int decimalDigits = 10);
 
-    QNetworkAccessManager *m_networkManager;
+    QGeoNetworkAccessManager *m_networkManager;
     QString m_host;
     QString m_appId;
     QString m_token;

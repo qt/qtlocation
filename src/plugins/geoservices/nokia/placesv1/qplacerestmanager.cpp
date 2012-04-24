@@ -48,6 +48,7 @@
 
 #include "qplacerestmanager.h"
 #include "qplacecategoriesrepository.h"
+#include "../qgeointrinsicnetworkaccessmanager.h"
 
 #include <QtNetwork>
 #include <QHash>
@@ -94,11 +95,11 @@ QPlaceRestManager *QPlaceRestManager::mInstance = NULL;
     Constructor.
 */
 QPlaceRestManager::QPlaceRestManager(QObject *parent)
-:   QObject(parent), placeServer(QLatin1String(placesServerUrl)),
+:   QObject(parent), mManager(new QGeoIntrinsicNetworkAccessManager(this)),
+    placeServer(QLatin1String(placesServerUrl)),
     searchServer(QLatin1String(searchServerUrl))
 {
     mLocales << QLocale();
-    mManager = new QNetworkAccessManager(this);
 }
 
 /*!
@@ -113,11 +114,15 @@ QPlaceRestManager *QPlaceRestManager::instance()
 }
 
 /*!
-    Sets the proxy used for requests.
+    Sets the network access manager used for requests.
 */
-void QPlaceRestManager::setProxy(const QNetworkProxy &proxy)
+void QPlaceRestManager::setNetworkAccessManager(QGeoNetworkAccessManager* manager)
 {
-    mManager->setProxy(proxy);
+    if (manager) {
+        delete mManager;
+        mManager = manager;
+        mManager->setParent(this);
+    }
 }
 
 /*!

@@ -61,6 +61,7 @@ class QNetworkReply;
 class QNetworkAccessManager;
 class QPlaceCategoriesReplyImpl;
 class QNetworkInfo;
+class QGeoNetworkAccessManager;
 
 struct PlaceCategoryNode
 {
@@ -76,9 +77,10 @@ class QPlaceManagerEngineNokiaV2 : public QPlaceManagerEngine
     Q_OBJECT
 
 public:
-    QPlaceManagerEngineNokiaV2(const QMap<QString, QVariant> &parameters,
-                             QGeoServiceProvider::Error *error,
-                             QString *errorString);
+    QPlaceManagerEngineNokiaV2(QGeoNetworkAccessManager* networkManager,
+                               const QMap<QString, QVariant> &parameters,
+                               QGeoServiceProvider::Error *error,
+                               QString *errorString);
     ~QPlaceManagerEngineNokiaV2();
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId);
@@ -119,7 +121,7 @@ private slots:
 #endif
 
 private:
-    QNetworkAccessManager *m_manager;
+    QGeoNetworkAccessManager *m_manager;
 #ifdef USE_CHINA_NETWORK_REGISTRATION
     QNetworkInfo *m_networkInfo;
 #endif

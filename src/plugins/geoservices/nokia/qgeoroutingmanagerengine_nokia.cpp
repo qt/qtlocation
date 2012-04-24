@@ -48,46 +48,34 @@
 
 #include "qgeoroutingmanagerengine_nokia.h"
 #include "qgeoroutereply_nokia.h"
+#include "qgeonetworkaccessmanager.h"
 
 #include <QStringList>
-#include <QNetworkProxy>
-#include <QNetworkProxyFactory>
 #include <QUrl>
+#include <QLocale>
 #include <qgeoboundingbox.h>
 
 QT_BEGIN_NAMESPACE
 
-QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(
+        QGeoNetworkAccessManager* networkManager,
+        const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error,
+        QString *errorString)
         : QGeoRoutingManagerEngine(parameters)
+        , m_networkManager(networkManager)
         , m_host(QStringLiteral("route.nlp.nokia.com"))
+
 {
-    m_networkManager = new QNetworkAccessManager(this);
-
-    if (parameters.contains(QStringLiteral("proxy")) || parameters.contains(QStringLiteral("routing.proxy"))) {
-        QString proxy = parameters.value("proxy").toString();
-        if (proxy.isEmpty())
-            proxy = parameters.value(QStringLiteral("routing.proxy")).toString();
-
-        if (!proxy.isEmpty() && proxy.toLower() != QStringLiteral("system")) {
-            QUrl proxyUrl(proxy);
-            if (proxyUrl.isValid()) {
-                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
-                    proxyUrl.host(),
-                    proxyUrl.port(8080),
-                    proxyUrl.userName(),
-                    proxyUrl.password()));
-            }
-        } else if (!proxy.isEmpty()) {
-            if (QNetworkProxy::applicationProxy().type() == QNetworkProxy::NoProxy)
-                QNetworkProxyFactory::setUseSystemConfiguration(true);
-        }
-    }
+    Q_ASSERT(networkManager);
+    m_networkManager->setParent(this);
 
     if (parameters.contains(QStringLiteral("routing.host"))) {
         QString host = parameters.value(QStringLiteral("routing.host")).toString();
         if (!host.isEmpty())
             m_host = host;
     }
+
 
     m_appId = parameters.value(QStringLiteral("app_id")).toString();
     m_token = parameters.value(QStringLiteral("token")).toString();

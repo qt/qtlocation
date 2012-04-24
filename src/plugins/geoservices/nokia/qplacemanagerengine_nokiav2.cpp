@@ -55,6 +55,7 @@
 #include "placesv2/qplacerecommendationreplyimpl.h"
 #include "placesv2/qplacedetailsreplyimpl.h"
 #include "placesv2/qplaceidreplyimpl.h"
+#include "qgeonetworkaccessmanager.h"
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -88,32 +89,17 @@ static const int FIXED_CATEGORIES_indices[] = {
 static const char * const placesServerInternational = "http://api.places.lbs.maps.nokia.com/places";
 static const char * const placesServerChina = "http://api.places.lbs.maps.nokia.com.cn/places";
 
-QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(const QMap<QString, QVariant> &parameters,
-                                                 QGeoServiceProvider::Error *error,
-                                                 QString *errorString)
-:   QPlaceManagerEngine(parameters), m_manager(new QNetworkAccessManager(this))
+QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
+    QGeoNetworkAccessManager* networkManager,
+    const QMap<QString, QVariant> &parameters,
+    QGeoServiceProvider::Error *error,
+    QString *errorString)
+:   QPlaceManagerEngine(parameters), m_manager(networkManager)
 {
+    Q_ASSERT(networkManager);
+    m_manager->setParent(this);
+
     m_locales.append(QLocale());
-
-    if (parameters.contains(QLatin1String("proxy")) || parameters.contains(QLatin1String("places.proxy"))) {
-        QString proxy = parameters.value("proxy").toString();
-        if (proxy.isEmpty())
-            proxy = parameters.value("places.proxy").toString();
-
-        if (!proxy.isEmpty() && proxy.toLower() != QLatin1String("system")) {
-            QUrl proxyUrl(proxy);
-            if (proxyUrl.isValid()) {
-                m_manager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
-                                                  proxyUrl.host(),
-                                                  proxyUrl.port(8080),
-                                                  proxyUrl.userName(),
-                                                  proxyUrl.password()));
-            }
-        } else if (!proxy.isEmpty()) {
-            if (QNetworkProxy::applicationProxy().type() == QNetworkProxy::NoProxy)
-                QNetworkProxyFactory::setUseSystemConfiguration(true);
-        }
-    }
 
     // Unless specified in the plugin parameters set the international places server to the builtin
     // one.  This is the server used when not in China.
@@ -139,9 +125,7 @@ QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(const QMap<QString, QVari
         errorString->clear();
 }
 
-QPlaceManagerEngineNokiaV2::~QPlaceManagerEngineNokiaV2()
-{
-}
+QPlaceManagerEngineNokiaV2::~QPlaceManagerEngineNokiaV2() {}
 
 QPlaceDetailsReply *QPlaceManagerEngineNokiaV2::getPlaceDetails(const QString &placeId)
 {

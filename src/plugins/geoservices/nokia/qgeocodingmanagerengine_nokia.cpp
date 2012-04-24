@@ -49,39 +49,27 @@
 #include "qgeocodingmanagerengine_nokia.h"
 #include "qgeocodereply_nokia.h"
 #include "marclanguagecodes.h"
+#include "qgeonetworkaccessmanager.h"
 
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
-#include <QNetworkProxy>
-#include <QNetworkProxyFactory>
 #include <QUrl>
 #include <QMap>
 #include <QStringList>
 
 QT_BEGIN_NAMESPACE
 
-QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-        : QGeocodingManagerEngine(parameters),
-        m_host("loc.desktop.maps.svc.ovi.com")
+QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(
+        QGeoNetworkAccessManager* networkManager,
+        const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error,
+        QString *errorString)
+        : QGeocodingManagerEngine(parameters)
+        , m_networkManager(networkManager)
+        , m_host("loc.desktop.maps.svc.ovi.com")
 {
-    m_networkManager = new QNetworkAccessManager(this);
-
-    if (parameters.contains("proxy")) {
-        QString proxy = parameters.value("proxy").toString();
-        if (!proxy.isEmpty() && proxy.toLower() != QLatin1String("system")) {
-            QUrl proxyUrl(proxy);
-            if (proxyUrl.isValid()) {
-                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
-                    proxyUrl.host(),
-                    proxyUrl.port(8080),
-                    proxyUrl.userName(),
-                    proxyUrl.password()));
-            }
-        } else if (!proxy.isEmpty()) {
-            if (QNetworkProxy::applicationProxy().type() == QNetworkProxy::NoProxy)
-                QNetworkProxyFactory::setUseSystemConfiguration(true);
-        }
-    }
+    Q_ASSERT(networkManager);
+    m_networkManager->setParent(this);
 
     if (parameters.contains("geocoding.host")) {
         QString host = parameters.value("geocoding.host").toString();

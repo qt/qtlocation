@@ -26,7 +26,10 @@ HEADERS += \
             qgeoroutexmlparser.h \
             qgeoroutingmanagerengine_nokia.h \
             qgeoserviceproviderplugin_nokia.h \
-            marclanguagecodes.h
+            marclanguagecodes.h \
+            qgeonetworkaccessmanager.h \
+            qgeointrinsicnetworkaccessmanager.h
+
 
 SOURCES += \
             qgeocodereply_nokia.cpp \
@@ -39,7 +42,8 @@ SOURCES += \
             qgeoroutereply_nokia.cpp \
             qgeoroutexmlparser.cpp \
             qgeoroutingmanagerengine_nokia.cpp \
-            qgeoserviceproviderplugin_nokia.cpp
+            qgeoserviceproviderplugin_nokia.cpp \
+            qgeointrinsicnetworkaccessmanager.cpp
 
 include(placesv1/placesv1.pri)
 include(placesv2/placesv2.pri)

@@ -53,11 +53,13 @@
 #include "qgeotiledmappingmanagerengine_nokia.h"
 #include "qplacemanagerengine_nokiav1.h"
 #include "qplacemanagerengine_nokiav2.h"
+#include "qgeointrinsicnetworkaccessmanager.h"
 
 #include <QtPlugin>
 #include <QNetworkProxy>
 
 QT_BEGIN_NAMESPACE
+
 
 QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia()
     : m_informedAboutUsageTerms(false)
@@ -71,7 +73,10 @@ QGeocodingManagerEngine* QGeoServiceProviderFactoryNokia::createGeocodingManager
 {
     informOnceAboutUsageTermsIfNecessary(parameters);
 
-    return new QGeocodingManagerEngineNokia(parameters, error, errorString);
+    QGeoIntrinsicNetworkAccessManager* networkManager = new QGeoIntrinsicNetworkAccessManager();
+    networkManager->configure(parameters);
+
+    return new QGeocodingManagerEngineNokia(networkManager, parameters, error, errorString);
 }
 
 QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
@@ -80,7 +85,11 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerE
 {
     informOnceAboutUsageTermsIfNecessary(parameters);
 
-    return new QGeoTiledMappingManagerEngineNokia(parameters, error, errorString);
+    QGeoIntrinsicNetworkAccessManager* networkManager = new QGeoIntrinsicNetworkAccessManager();
+    networkManager->setCustomProxyToken(QStringLiteral("mapping.proxy"));
+    networkManager->configure(parameters);
+
+    return new QGeoTiledMappingManagerEngineNokia(networkManager, parameters, error, errorString);
 }
 
 QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
@@ -89,7 +98,11 @@ QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerE
 {
     informOnceAboutUsageTermsIfNecessary(parameters);
 
-    return new QGeoRoutingManagerEngineNokia(parameters, error, errorString);
+    QGeoIntrinsicNetworkAccessManager* networkManager = new QGeoIntrinsicNetworkAccessManager();
+    networkManager->setCustomProxyToken(QStringLiteral("routing.proxy"));
+    networkManager->configure(parameters);
+
+    return new QGeoRoutingManagerEngineNokia(networkManager, parameters, error, errorString);
 }
 
 QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(const QMap<QString, QVariant> &parameters,
@@ -98,11 +111,15 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(c
 {
     informOnceAboutUsageTermsIfNecessary(parameters);
 
+    QGeoIntrinsicNetworkAccessManager* networkManager = new QGeoIntrinsicNetworkAccessManager();
+    networkManager->setCustomProxyToken(QStringLiteral("places.proxy"));
+    networkManager->configure(parameters);
+
     switch (parameters.value(QLatin1String("places.api_version"), 2).toUInt()) {
     case 1:
-        return new QPlaceManagerEngineNokiaV1(parameters, error, errorString);
+        return new QPlaceManagerEngineNokiaV1(networkManager, parameters, error, errorString);
     case 2:
-        return new QPlaceManagerEngineNokiaV2(parameters, error, errorString);
+        return new QPlaceManagerEngineNokiaV2(networkManager, parameters, error, errorString);
     }
 
     return 0;

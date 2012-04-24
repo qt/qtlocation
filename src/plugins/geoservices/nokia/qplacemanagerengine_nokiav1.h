@@ -55,16 +55,19 @@
 
 QT_BEGIN_NAMESPACE
 
+class QNetworkInterface;
 class QPlaceContentReply;
+class QGeoNetworkAccessManager;
 
 class QPlaceManagerEngineNokiaV1 : public QPlaceManagerEngine
 {
     Q_OBJECT
 public:
 
-    QPlaceManagerEngineNokiaV1(const QMap<QString, QVariant> &parameters,
-                             QGeoServiceProvider::Error *error,
-                             QString *errorString);
+    QPlaceManagerEngineNokiaV1(QGeoNetworkAccessManager* networkManager,
+                               const QMap<QString, QVariant> &parameters,
+                               QGeoServiceProvider::Error *error,
+                               QString *errorString);
     ~QPlaceManagerEngineNokiaV1();
 
     QPlaceDetailsReply *getPlaceDetails(const QString &placeId);

@@ -63,13 +63,15 @@ QT_BEGIN_NAMESPACE
 
 class QByteArray;
 class QGeoTileSpec;
+class QGeoNetworkAccessManager;
 
 class QGeoTiledMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
 {
     Q_OBJECT
 
 public:
-    QGeoTiledMappingManagerEngineNokia(const QMap<QString, QVariant> &parameters,
+    QGeoTiledMappingManagerEngineNokia(QGeoNetworkAccessManager* networkManager,
+                                       const QMap<QString, QVariant> &parameters,
                                        QGeoServiceProvider::Error *error,
                                        QString *errorString);
     ~QGeoTiledMappingManagerEngineNokia();

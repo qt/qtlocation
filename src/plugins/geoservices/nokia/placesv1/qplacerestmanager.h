@@ -51,8 +51,6 @@
 
 #include <QObject>
 
-#include <QtNetwork/QNetworkProxy>
-#include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtLocation/QPlaceContentRequest>
 
@@ -61,6 +59,8 @@
 
 QT_BEGIN_NAMESPACE
 
+class QGeoNetworkAccessManager;
+
 class QPlaceRestManager : public QObject
 {
     Q_OBJECT
@@ -68,7 +68,7 @@ class QPlaceRestManager : public QObject
 public:
     static QPlaceRestManager *instance();
 
-    void setProxy(const QNetworkProxy &proxy);
+    void setNetworkAccessManager(QGeoNetworkAccessManager* networkManager);
 
     QPlaceRestReply *sendPlaceRequest(const QString &placeId);
     QPlaceRestReply *sendPlaceImagesRequest(const QString &placeId, const QPlaceContentRequest &params);
@@ -96,7 +96,7 @@ private:
     QByteArray createLanguageString() const;
 
 private:
-    QNetworkAccessManager *mManager;
+    QGeoNetworkAccessManager *mManager;
     static QPlaceRestManager *mInstance;
     QString placeServer;
     QString searchServer;

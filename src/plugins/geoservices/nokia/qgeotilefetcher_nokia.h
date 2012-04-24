@@ -62,20 +62,19 @@
 
 QT_BEGIN_NAMESPACE
 
-class QNetworkAccessManager;
-
 class QGeoTiledMapReply;
 class QGeoTileSpec;
 class QGeoTiledMappingManagerEngine;
 class QGeoTiledMappingManagerEngineNokia;
 class QNetworkReply;
+class QGeoNetworkAccessManager;
 
 class QGeoTileFetcherNokia : public QGeoTileFetcher
 {
     Q_OBJECT
 
 public:
-    QGeoTileFetcherNokia(QGeoTiledMappingManagerEngine *engine);
+    QGeoTileFetcherNokia(QGeoNetworkAccessManager* networkManager, QGeoTiledMappingManagerEngine *engine);
     ~QGeoTileFetcherNokia();
 
     bool init();
@@ -111,7 +110,7 @@ private:
     void setHost(const QString& host);
 
     QGeoTiledMappingManagerEngineNokia *m_engineNokia;
-    QNetworkAccessManager *m_networkManager;
+    QGeoNetworkAccessManager *m_networkManager;
     QMap<QString, QVariant> m_parameters;
     QSize m_tileSize;
     QString m_host;

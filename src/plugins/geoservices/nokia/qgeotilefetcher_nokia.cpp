@@ -50,12 +50,11 @@
 #include "qgeomapreply_nokia.h"
 #include "qgeotiledmapdata_nokia.h"
 #include "qgeotiledmappingmanagerengine_nokia.h"
+#include "qgeonetworkaccessmanager.h"
 
 #include <qgeotilespec.h>
 
-#include <QNetworkAccessManager>
-#include <QNetworkProxy>
-#include <QNetworkProxyFactory>
+#include <QDebug>
 #include <QSize>
 #include <QDir>
 #include <QUrl>
@@ -70,13 +69,18 @@ QT_BEGIN_NAMESPACE
 const char* MAPTILES_HOST = "1-4.maptile.lbs.ovi.com";
 const char* MAPTILES_HOST_CN = "a-k.maptile.maps.svc.nokia.com.cn";
 
-QGeoTileFetcherNokia::QGeoTileFetcherNokia(QGeoTiledMappingManagerEngine *engine)
+QGeoTileFetcherNokia::QGeoTileFetcherNokia(QGeoNetworkAccessManager* networkManager,
+                                           QGeoTiledMappingManagerEngine *engine)
         : QGeoTileFetcher(engine),
           m_engineNokia(static_cast<QGeoTiledMappingManagerEngineNokia*>(engine)),
-          m_networkManager(0),
+          m_networkManager(networkManager),
           m_firstSubdomain(QChar::Null),
           m_copyrightsReply(0),
-          m_maxSubdomains(0) {}
+          m_maxSubdomains(0)
+{
+    Q_ASSERT(networkManager);
+    m_networkManager->setParent(this);
+}
 
 QGeoTileFetcherNokia::~QGeoTileFetcherNokia() {}
 
@@ -85,28 +89,6 @@ bool QGeoTileFetcherNokia::init()
     setHost(MAPTILES_HOST);
 
     qsrand((uint)QTime::currentTime().msec());
-
-    m_networkManager = new QNetworkAccessManager(this);
-
-    if (m_parameters.contains("proxy") || m_parameters.contains("mapping.proxy")) {
-        QString proxy = m_parameters.value("proxy").toString();
-        if (proxy.isEmpty())
-            proxy = m_parameters.value("mapping.proxy").toString();
-
-        if (!proxy.isEmpty() && proxy.toLower() != QLatin1String("system")) {
-            QUrl proxyUrl(proxy);
-            if (proxyUrl.isValid()) {
-                m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
-                    proxyUrl.host(),
-                    proxyUrl.port(8080),
-                    proxyUrl.userName(),
-                    proxyUrl.password()));
-            }
-        } else if (!proxy.isEmpty()) {
-            if (QNetworkProxy::applicationProxy().type() == QNetworkProxy::NoProxy)
-                QNetworkProxyFactory::setUseSystemConfiguration(true);
-        }
-    }
 
     if (m_parameters.contains("mapping.host")) {
         QString host = m_parameters.value("mapping.host").toString();
