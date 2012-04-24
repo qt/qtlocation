@@ -266,8 +266,8 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
         } else {
             error = QGeoServiceProvider::NotSupportedError;
             errorString = QLatin1String("The service provider does not support the ");
-            errorString.append(Manager::staticMetaObject.className());
-            errorString.append(" type.");
+            errorString.append(QLatin1String(Manager::staticMetaObject.className()));
+            errorString.append(QLatin1String(" type."));
         }
 
         if (error != QGeoServiceProvider::NoError) {
