@@ -71,5 +71,6 @@ MapRectangle {
         anchors.fill:parent
         id: mousearea
         hoverEnabled: false
+        drag.target: parent
     }
 }

@@ -55,4 +55,9 @@ MapPolygon {
             addCoordinate(markers[i].coordinate)
         }
     }
+    MapMouseArea {
+        anchors.fill:parent
+        id: mousearea
+        drag.target: parent
+    }
 }
