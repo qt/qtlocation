@@ -179,9 +179,13 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     // get the clipped version of the path
     QPainterPath ppi = srcPath_.intersected(vpPath);
 
+    screenTriangles_.clear();
+
     // Nothing on the screen
-    if (ppi.elementCount() == 0)
+    if (ppi.elementCount() == 0) {
+        firstPointOffset_ = QPointF(0,0);
         return;
+    }
 
     // translate the path into top-left-centric coordinates
     QRectF bb = ppi.boundingRect();
@@ -193,7 +197,6 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     QTriangleSet ts = qTriangulate(ppi);
     qreal *vx = ts.vertices.data();
 
-    screenTriangles_.clear();
     screenTriangles_.reserve(ts.indices.size());
 
     if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
@@ -539,7 +542,7 @@ void QDeclarativePolygonMapItem::dragEnded()
             QGeoCoordinate coord = path_.at(i);
             coord.setLongitude(coord.longitude() + newCoordinate.longitude() - firstLongitude);
             coord.setLatitude(coord.latitude() + newCoordinate.latitude() - firstLatitude);
-            this->path_.replace(i, coord);
+            this->coordPath_.at(i)->setCoordinate(coord);
         }
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();

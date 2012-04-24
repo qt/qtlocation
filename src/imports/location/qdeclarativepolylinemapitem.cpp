@@ -383,13 +383,15 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     QTriangulatingStroker ts;
     ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), viewport);
 
+    firstPointOffset_ = QPointF(0,0);
+    screenTriangles_.clear();
+
     // Nothing is on the screen
     if (ts.vertexCount() == 0)
         return;
 
     // QTriangulatingStroker#vertexCount is actually the length of the array,
     // not the number of vertices
-    screenTriangles_.clear();
     screenTriangles_.reserve(ts.vertexCount());
 
     screenOutline_ = QPainterPath();
@@ -411,7 +413,6 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
 
     QRectF bb = screenOutline_.boundingRect();
     screenBounds_ = bb;
-    firstPointOffset_ = QPointF(0,0);
     this->translate(-1 * bb.topLeft());
 }
 
@@ -689,7 +690,7 @@ void QDeclarativePolylineMapItem::dragEnded()
             QGeoCoordinate coord = path_.at(i);
             coord.setLongitude(coord.longitude() + newCoordinate.longitude() - firstLongitude);
             coord.setLatitude(coord.latitude() + newCoordinate.latitude() - firstLatitude);
-            this->path_.replace(i, coord);
+            this->coordPath_.at(i)->setCoordinate(coord);
         }
         geometry_.markSourceDirty();
         updateMapItem();
