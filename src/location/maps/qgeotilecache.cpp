@@ -124,8 +124,8 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
 
     // default values
     setMaxDiskUsage(20 * 1024 * 1024);
-    setMaxMemoryUsage(4 * 1024 * 1024);
-    setExtraTextureUsage(12 * 1024 * 1024);
+    setMaxMemoryUsage(3 * 1024 * 1024);
+    setExtraTextureUsage(6 * 1024 * 1024);
 
     loadTiles();
 }
