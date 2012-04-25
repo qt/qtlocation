@@ -65,6 +65,8 @@ testcase = {
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen. |
         | | Verify that there are 2 circles associated with Nokia and Eight Mile Plains labels. |
         | Zoom in the map to about level 11 | Verify that map still has the circles. |
+        | Zoom in the map to about level 18 so green circle would fill entire viewport | Verify that map has the circles. |
+        | Zoom in the map to about level 17 so green circle should still fill entire viewport | Verify that map has the circles. |
         | Pan the map so circles' centres go out of the viewport | Verify that map can display partially visible circles |"
         ));
     },
@@ -197,7 +199,7 @@ testcase = {
         testGoal = "Verify that circle can be drawn on map.";
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
-        testRequirements = "MOBILITY-2861";
+        testRequirements = "MOBILITY-2861, QTBUG-25388";
 
         // Test steps
         prompt(twiki("---+++ " + testTitle + "<br><br>
@@ -224,6 +226,8 @@ testcase = {
         | Press and Hold on the first marker | |
         | Select Draw... button | |
         | Select Circle button | Verify that circle is drawn correctly. |
+        | Pres and hold center marker | |
+        | Select Delete button | |
         | Pan the map to the left until the second marker hits the screen border | Verify that circle can be partually drawn. |"
         ));
     },
@@ -263,7 +267,7 @@ testcase = {
         | Press and Hold on the marker | |
         | Select Draw... button | |
         | Select Video button | Verify that video is positioned correctly and it plays. |
-        | Press on the Video"
+        | Press on the Video | Verify that it stops |"
         ));
     },
 
