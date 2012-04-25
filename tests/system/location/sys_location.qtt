@@ -48,6 +48,7 @@ testcase = {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Select Service Provider";
         testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that service provider can be selected";
         testPreconditions = "Several service providers should be available. Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
@@ -64,7 +65,7 @@ testcase = {
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Pan the map | |
         | Select Provider button | Verify that one of the providers is indicated as current service provider |
-        | Select other provider | Verify that map is displayed on the screen with default location next to Brisbane |
+        | Select other provider | Verify that map is displayed on the screen, Nokia point is at the centre of the map. |
         "));
     },
 
@@ -73,6 +74,7 @@ testcase = {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Coordinate Capturing";
         testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that coordinates can be captured when selecting a location on the map.";
         testPreconditions = "internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
@@ -113,7 +115,7 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Launch " + testBinary + " | Verify that map is loaded in 'Street' view with the center next to Brisbane |
+        | Launch " + testBinary + " | Verify that map is loaded in 'Street' view. Nokia point is a centre of the map |
         | Select Provider button | |
         | Select nokia provider | Verify that map is displayed in 'Street' view |
         | Select 'Map Type' button | |
@@ -121,7 +123,7 @@ testcase = {
         | Pan map | Verify that new map tiles are in 'Satelite (day)' view |
         | Zoom in map | Verify that new map tiles are in 'Satelite (day)' view |
         | Select 'Map Type' button | |
-        | Select 'Terrain Map' | Verify that map is displayed in 'Terrain' view |
+        | Select 'Terrain Map' | Verify that map is displayed in 'Terrain' view, centre of the map is not changed |
         | Select 'Map Type' button | |
         | Select 'Hybrid Map' | Verify that map is displayed in 'Hybrid' view |
         | Select 'Map Type' button | |
@@ -167,7 +169,10 @@ testcase = {
         | Make a short flick gesture from the left side the right | Verify that map center was moving to the rigth with dropping speed at the end. Verify that map center has been moved to the less distance in comparing with previous step |
         | Make a flick gesture 2 o'clock direction | Verify that map center was following flick gesture. |
         | Zoom in map close to the maximum zoom level | |
-        | Flick map | Verify that flick gesture worked as expected. |"
+        | Flick map | Verify that flick gesture worked as expected. |
+        | Select Tools button | |
+        | Select Minimap | |
+        | Make a flick gesture | Verify that flick gesture worked as expected, there is no dirt on the screen |"
         ));
     },
 
@@ -191,8 +196,8 @@ testcase = {
 
         | *Step* | *Verification* |
         | Launch " + testBinary + " | Verify that map is loaded with the center next to Brisbane  |
-        | Make a long zooming in pinch gesture | Verify that map is zoomed in |
-        | Make a short zooming out pinch gesture | Verify that map is zoomed out to less degree incaomparing with previous step. |"
+        | Make a long zooming in pinch gesture | Verify that map is zoomed in. Verify that centre of the pinch gesture is between touchpoints. |
+        | Make a short zooming out pinch gesture | Verify that map is zoomed out to less degree in comparing with previous step. |"
         ));
     },
 
@@ -241,12 +246,13 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Launch " + testBinary + " | Verify that map is loaded with the center next to Brisbane  |
+        | Launch " + testBinary + " | Verify that map is loaded with Nokia at the center |
         | Move slider to the right | Verify that map is zoomed in |
         | Move slider to the left | Verify that map is zoomed out |
         | Move slider to have zoom level between 8 and 9 | |
         | Move slider the right to have zoom level less than 9 | Verify that map is scaled |
-        | Move slider the right to jump over 9 zoom level but less than 10 | Verify that new tiles are displayed to reflect bigger zoom level |"
+        | Move slider the right to jump over 9 zoom level but less than 10 | Verify that new tiles are displayed to reflect bigger zoom level |
+        | Zoom in to the maximum level | Verify that map is not blurry |"
         ));
     },
 
@@ -367,7 +373,9 @@ testcase = {
         | Select Map Type button | |
         | Select Terrain Map button | Verify that base map is in Terrain view and minimap's type is unaltered |
         | Select Provider button | |
-        | Select any other provider except nokia | Verify that map is displayed on the screen with default location next to Brisbane. |
+        | Select any other provider except nokia | Verify that map is displayed on the screen Nokia at the centre. |
+        | Select Tools button | |
+        | Select Minimap button | Verify that another smaller map above the base map. |
         | | Verify that Brisbane is inside red rectangle on the minimap. |
         | Pan the base map | Verify that minimap is updated smoothly with centre following base map centre. |"
         ));
@@ -394,7 +402,9 @@ testcase = {
         | *Step* | *Verification* |
         | Launch " + testBinary + " | App launches normally. Map is displayed on the screen |
         | Select Provider button | |
-        | Select nokia provider | Verify that map with logo is displayed on the screen. |"
+        | Select nokia provider | |
+        | Select Tools button | |
+        | Select Minimap button | Verify that minimap with logo is displayed on the screen. |"
         ));
     }
 

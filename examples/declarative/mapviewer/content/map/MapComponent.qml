@@ -46,7 +46,7 @@ Map {
     id: map
     anchors.fill: parent
     zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
-    center: brisbaneCoordinate
+    center: nokiaCoordinate
 
     // Enable pinch gestures to zoom in and out
     pinch.activeGestures: MapPinchArea.ZoomGesture
@@ -76,9 +76,9 @@ Map {
 
 //! [coord]
     Coordinate {
-        id: brisbaneCoordinate
-        latitude: -27.5
-        longitude: 153
+        id: nokiaCoordinate
+        latitude: -27.5796
+        longitude: 153.1003
     }
 //! [coord]
 
