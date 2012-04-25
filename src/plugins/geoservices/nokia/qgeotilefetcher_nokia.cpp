@@ -186,12 +186,6 @@ QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
 
         requestString += "&app_id=";
         requestString += m_applicationId;
-    } else {
-        requestString += "?token=";
-        requestString += QGeoServiceProviderFactoryNokia::defaultToken;
-
-        requestString += "&referer=";
-        requestString += QGeoServiceProviderFactoryNokia::defaultReferer;
     }
 
     requestString += "&lg=";

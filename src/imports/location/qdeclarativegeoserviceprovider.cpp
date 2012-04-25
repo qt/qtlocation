@@ -690,7 +690,7 @@ bool QDeclarativeGeoServiceProviderRequirements::matches(const QGeoServiceProvid
     \code
     Plugin {
         name: "nokia"
-        PluginParameter { name: "mapping.token"; value: "SOMETOKEN123" }
+        PluginParameter { name: "token"; value: "SOMETOKEN123" }
     }
     \endcode
 */

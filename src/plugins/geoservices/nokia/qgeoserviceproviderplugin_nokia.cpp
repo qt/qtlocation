@@ -170,7 +170,4 @@ void QGeoServiceProviderFactoryNokia::informOnceAboutUsageTermsIfNecessary(
     }
 }
 
-const QString QGeoServiceProviderFactoryNokia::defaultToken("152022572f0e44e07489c35cd46fa246");
-const QString QGeoServiceProviderFactoryNokia::defaultReferer("qtlocationapi");
-
 QT_END_NAMESPACE

@@ -79,10 +79,6 @@ public:
     QPlaceManagerEngine *createPlaceManagerEngine(const QVariantMap &parameters,
                                                   QGeoServiceProvider::Error *error,
                                                   QString *errorString) const;
-
-    static const QString defaultToken;
-    static const QString defaultReferer;
-
 private:
     void informOnceAboutUsageTermsIfNecessary(const QVariantMap &parameters) const;
 

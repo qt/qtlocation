@@ -100,12 +100,6 @@ QString QGeocodingManagerEngineNokia::getAuthenticationString() const
 
         authenticationString += "&app_id=";
         authenticationString += m_applicationId;
-    } else {
-        authenticationString += "?token=";
-        authenticationString += QGeoServiceProviderFactoryNokia::defaultToken;
-
-        authenticationString += "&referer=";
-        authenticationString += QGeoServiceProviderFactoryNokia::defaultReferer;
     }
 
     return authenticationString;
