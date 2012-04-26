@@ -1,0 +1,13 @@
+TEMPLATE = app
+CONFIG += testcase
+TARGET = tst_routing
+
+QT += location testlib
+INCLUDEPATH += $$PWD/../../../../src/plugins/geoservices/nokia
+
+HEADERS += $$PWD/../../../../src/plugins/geoservices/nokia/qgeonetworkaccessmanager.h
+SOURCES += tst_routing.cpp
+
+OTHER_FILES += *.xml
+
+TESTDATA = $$OTHER_FILES

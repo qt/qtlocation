@@ -81,6 +81,18 @@ public:
     QString maneuverId;
 };
 
+class QGeoDynamicSpeedInfoContainer
+{
+public:
+    QGeoDynamicSpeedInfoContainer();
+
+public:
+    double trafficSpeed;
+    double baseSpeed;
+    int trafficTime;
+    int baseTime;
+};
+
 class QGeoRouteXmlParser
 {
 public:
@@ -105,13 +117,14 @@ private:
     bool postProcessRoute(QGeoRoute *route);
 
     bool parseBoundingBox(QGeoBoundingBox &bounds);
+    bool parseDynamicSpeedInfo(QGeoDynamicSpeedInfoContainer &speedInfo);
 
     QGeoRouteRequest m_request;
     QXmlStreamReader *m_reader;
     QList<QGeoRoute> m_results;
     QString m_errorString;
-    QList<QGeoManeuverContainer> maneuvers;
-    QList<QGeoRouteSegmentContainer> segments;
+    QList<QGeoManeuverContainer> m_maneuvers;
+    QList<QGeoRouteSegmentContainer> m_segments;
 };
 
 QT_END_NAMESPACE

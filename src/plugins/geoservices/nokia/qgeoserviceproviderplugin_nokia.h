@@ -54,6 +54,8 @@
 
 QT_BEGIN_NAMESPACE
 
+class QGeoNetworkAccessManager;
+
 class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
@@ -65,16 +67,16 @@ public:
     QGeoServiceProviderFactoryNokia();
     ~QGeoServiceProviderFactoryNokia();
 
-    QGeocodingManagerEngine* createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
+    QGeocodingManagerEngine* createGeocodingManagerEngine(const QVariantMap &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
-    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+    QGeoMappingManagerEngine* createMappingManagerEngine(const QVariantMap &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
-    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
+    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QVariantMap &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
-    QPlaceManagerEngine *createPlaceManagerEngine(const QMap<QString, QVariant> &parameters,
+    QPlaceManagerEngine *createPlaceManagerEngine(const QVariantMap &parameters,
                                                   QGeoServiceProvider::Error *error,
                                                   QString *errorString) const;
 
@@ -82,8 +84,9 @@ public:
     static const QString defaultReferer;
 
 private:
-    void informOnceAboutUsageTermsIfNecessary(const QMap<QString, QVariant> &parameters) const;
+    void informOnceAboutUsageTermsIfNecessary(const QVariantMap &parameters) const;
     static bool isValidParameter(const QString &param);
+    static bool tryGetNetworkAccessManager(QGeoNetworkAccessManager*&, const QVariantMap &parameters);
 
 private:
     mutable bool m_informedAboutUsageTerms;
