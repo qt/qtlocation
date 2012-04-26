@@ -460,7 +460,19 @@ testcase = {
         | Press on the map | Verify that popup menu disappears | |
         | Pan the map | Verify that marker doesn't change it's coordinate. |
         | Flick the map both ways | Verify that marker doesn't change it's coordinate. |
-        | Drag the marker | Verify that marker can be dragged correctly. |"
+        | Drag the marker | Verify that marker can be dragged correctly. |
+        | Press and Hold on the map | |
+        | Select 'Add Marker' button | |
+        | Press and Hold on the map | |
+        | Select 'Add Marker' button | |
+        | Press and Hold on the first marker | |
+        | Select 'Draw...' button | |
+        | Select Polygon button | |
+        | Drag polygon | Verify that poligon is dragged correcly |
+        | Pan the map | Verify that polygon doesn't change it's coordinates |
+        | Drag polygon to the side of the screen so it is partially overlapping |
+        | Drag polygon back (do not release mouse button) | Verify that polygon is not scissored |
+        | Release mouse button | Verify that polygon is not scissored |"
         ));
     },
 
