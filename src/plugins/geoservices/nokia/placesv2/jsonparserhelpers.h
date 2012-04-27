@@ -54,11 +54,14 @@ class QPlaceImage;
 class QPlaceReview;
 class QPlaceEditorial;
 class QPlaceCategory;
+class QPlaceManagerEngineNokiaV2;
 
 QGeoCoordinate parseCoordinate(const QJsonArray &coordinateArray);
 QPlaceSupplier parseSupplier(const QJsonObject &supplierObject);
-QPlaceCategory parseCategory(const QJsonObject &categoryObject);
-QList<QPlaceCategory> parseCategories(const QJsonArray &categoryArray);
+QPlaceCategory parseCategory(const QJsonObject &categoryObject,
+                             const QPlaceManagerEngineNokiaV2 *engine);
+QList<QPlaceCategory> parseCategories(const QJsonArray &categoryArray,
+                             const QPlaceManagerEngineNokiaV2 *engine);
 QList<QPlaceContactDetail> parseContactDetails(const QJsonArray &contacts);
 
 QPlaceImage parseImage(const QJsonObject &imageObject);

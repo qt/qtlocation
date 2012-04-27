@@ -54,12 +54,15 @@
 
 QT_BEGIN_NAMESPACE
 
+class QPlaceManagerEngineNokiaV2;
+
 class QPlaceSearchReplyImpl : public QPlaceSearchReply
 {
     Q_OBJECT
 
 public:
-    explicit QPlaceSearchReplyImpl(QNetworkReply *reply, QObject *parent = 0);
+    explicit QPlaceSearchReplyImpl(QNetworkReply *reply,
+                                   QPlaceManagerEngineNokiaV2 *parent);
     ~QPlaceSearchReplyImpl();
 
     void abort();
@@ -71,6 +74,7 @@ private slots:
 
 private:
     QNetworkReply *m_reply;
+    QPlaceManagerEngineNokiaV2 *m_engine;
 };
 
 QT_END_NAMESPACE

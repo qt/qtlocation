@@ -48,6 +48,7 @@
 
 #include "qplacedetailsreplyimpl.h"
 #include "jsonparserhelpers.h"
+#include "../qplacemanagerengine_nokiav2.h"
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -95,9 +96,12 @@ static bool countryTableContains(const QString &countryCode)
     return false;
 }
 
-QPlaceDetailsReplyImpl::QPlaceDetailsReplyImpl(QNetworkReply *reply, QObject *parent)
-:   QPlaceDetailsReply(parent), m_reply(reply)
+QPlaceDetailsReplyImpl::QPlaceDetailsReplyImpl(QNetworkReply *reply,
+                                               QPlaceManagerEngineNokiaV2 *parent)
+    :   QPlaceDetailsReply(parent), m_reply(reply), m_engine(parent)
 {
+    Q_ASSERT(parent);
+
     if (!m_reply)
         return;
 
@@ -210,10 +214,13 @@ void QPlaceDetailsReplyImpl::replyFinished()
 
     place.setLocation(location);
 
-    place.setCategories(parseCategories(object.value(QLatin1String("categories")).toArray()));
+    place.setCategories(parseCategories(object.value(QLatin1String("categories")).toArray(),
+                                        m_engine));
 
+    QString iconPath = m_engine->iconPath(
+                            object.value(QLatin1String("icon")).toString());
     QVariantMap parameters;
-    parameters.insert(QPlaceIcon::SingleUrl, QUrl(object.value(QLatin1String("icon")).toString()));
+    parameters.insert(QPlaceIcon::SingleUrl, QUrl(iconPath));
     QPlaceIcon icon;
     icon.setParameters(parameters);
     place.setIcon(icon);

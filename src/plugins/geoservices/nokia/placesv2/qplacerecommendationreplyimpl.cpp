@@ -48,6 +48,7 @@
 
 #include "qplacerecommendationreplyimpl.h"
 #include "jsonparserhelpers.h"
+#include "../qplacemanagerengine_nokiav2.h"
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -56,9 +57,12 @@
 
 QT_BEGIN_NAMESPACE
 
-QPlaceRecommendationReplyImpl::QPlaceRecommendationReplyImpl(QNetworkReply *reply, QObject *parent)
-:   QPlaceSearchReply(parent), m_reply(reply)
+QPlaceRecommendationReplyImpl::QPlaceRecommendationReplyImpl(QNetworkReply *reply,
+                                                             QPlaceManagerEngineNokiaV2 *parent)
+    :   QPlaceSearchReply(parent), m_reply(reply), m_engine(parent)
 {
+    Q_ASSERT(parent);
+
     if (!m_reply)
         return;
 
@@ -131,14 +135,17 @@ void QPlaceRecommendationReplyImpl::replyFinished()
 
         place.setName(item.value(QLatin1String("title")).toString());
 
+        QString iconPath = m_engine->iconPath(
+                                item.value(QLatin1String("icon")).toString());
         QVariantMap parameters;
         parameters.insert(QPlaceIcon::SingleUrl,
-                          QUrl(item.value(QLatin1String("icon")).toString()));
+                          QUrl(iconPath));
         QPlaceIcon icon;
         icon.setParameters(parameters);
         place.setIcon(icon);
 
-        place.setCategories(parseCategories(item.value(QLatin1String("categories")).toArray()));
+        place.setCategories(parseCategories(item.value(QLatin1String("categories")).toArray(),
+                                            m_engine));
 
         //QJsonArray having = item.value(QLatin1String("having")).toArray();
 

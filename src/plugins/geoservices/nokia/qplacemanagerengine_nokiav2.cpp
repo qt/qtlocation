@@ -57,8 +57,10 @@
 #include "placesv2/qplaceidreplyimpl.h"
 #include "qgeonetworkaccessmanager.h"
 
+#include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
+#include <QtCore/QStandardPaths>
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkProxyFactory>
 #ifdef USE_CHINA_NETWORK_REGISTRATION
@@ -117,6 +119,21 @@ QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
 #else
     m_placesServer = m_host;
 #endif
+
+    m_theme = parameters.value("places.theme", QString()).toString();
+
+    if (m_theme == QLatin1String("default"))
+        m_theme.clear();
+
+    m_localDataPath = parameters.value(QLatin1String("local_data_path"), QString()).toString();
+    if (m_localDataPath.isEmpty()) {
+        QStringList dataLocations = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
+
+        if (!dataLocations.isEmpty() && !dataLocations.first().isEmpty()) {
+            m_localDataPath = dataLocations.first()
+                                + QLatin1String("/nokia/qtlocation/data");
+        }
+    }
 
     if (error)
         *error = QGeoServiceProvider::NoError;
@@ -514,6 +531,31 @@ void QPlaceManagerEngineNokiaV2::setLocales(const QList<QLocale> &locales)
     m_locales = locales;
 }
 
+QString QPlaceManagerEngineNokiaV2::iconPath(const QString &remotePath) const
+{
+    if (remotePath.isEmpty())
+        return QString();
+
+    QString remoteIcon = remotePath
+            + (!m_theme.isEmpty() ? QLatin1Char('.') + m_theme : QString());
+
+    if (!remotePath.contains(QLatin1String("/icons/categories/"))
+            || m_localDataPath.isEmpty()) {
+        return remoteIcon;
+    }
+
+    QString localIcon = remotePath.mid(remotePath.lastIndexOf(QLatin1Char('/')) + 1);
+    localIcon.prepend(m_localDataPath + QLatin1String("/icons/categories/"));
+
+    if (!m_theme.isEmpty())
+        localIcon.append(QLatin1Char('.') + m_theme);
+
+    if (QFile::exists(localIcon))
+        return QString::fromLatin1("file://") + localIcon;
+    else
+        return remoteIcon;
+}
+
 void QPlaceManagerEngineNokiaV2::replyFinished()
 {
     QPlaceReply *reply = qobject_cast<QPlaceReply *>(sender());
@@ -551,9 +593,11 @@ void QPlaceManagerEngineNokiaV2::categoryReplyFinished()
         node.category.setCategoryId(category.value(QLatin1String("categoryId")).toString());
         node.category.setName(category.value(QLatin1String("name")).toString());
 
+        QString iconPath = QPlaceManagerEngineNokiaV2::iconPath(
+                        category.value(QLatin1String("icon")).toString());
         QVariantMap parameters;
         parameters.insert(QPlaceIcon::SingleUrl,
-                          QUrl(category.value(QLatin1String("icon")).toString()));
+                          QUrl(iconPath));
         QPlaceIcon icon;
         icon.setParameters(parameters);
         node.category.setIcon(icon);

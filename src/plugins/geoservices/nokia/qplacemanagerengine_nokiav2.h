@@ -107,6 +107,8 @@ public:
     QList<QLocale> locales() const;
     void setLocales(const QList<QLocale> &locales);
 
+    QString iconPath(const QString &remotePath) const;
+
 private:
     QNetworkReply *sendRequest(const QUrl &url);
     QByteArray createLanguageString() const;
@@ -138,6 +140,8 @@ private:
     QString m_host;
 
     QString m_placesServer;
+    QString m_localDataPath;
+    QString m_theme;
 };
 
 QT_END_NAMESPACE

@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "jsonparserhelpers.h"
+#include "../qplacemanagerengine_nokiav2.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDateTime>
@@ -77,8 +78,11 @@ QPlaceSupplier parseSupplier(const QJsonObject &supplierObject)
     return supplier;
 }
 
-QPlaceCategory parseCategory(const QJsonObject &categoryObject)
+QPlaceCategory parseCategory(const QJsonObject &categoryObject,
+                             const QPlaceManagerEngineNokiaV2 *engine)
 {
+    Q_ASSERT(engine);
+
     QPlaceCategory category;
 
     category.setName(categoryObject.value(QLatin1String("title")).toString());
@@ -87,9 +91,11 @@ QPlaceCategory parseCategory(const QJsonObject &categoryObject)
     const QString hrefPath(href.path());
     category.setCategoryId(hrefPath.mid(hrefPath.lastIndexOf(QLatin1Char('/')) + 1));
 
+    QString iconPath = engine->iconPath(
+                            categoryObject.value(QLatin1String("icon")).toString());
     QVariantMap parameters;
     parameters.insert(QPlaceIcon::SingleUrl,
-                      QUrl(categoryObject.value(QLatin1String("icon")).toString()));
+                      QUrl(iconPath));
     QPlaceIcon icon;
     icon.setParameters(parameters);
     category.setIcon(icon);
@@ -97,11 +103,15 @@ QPlaceCategory parseCategory(const QJsonObject &categoryObject)
     return category;
 }
 
-QList<QPlaceCategory> parseCategories(const QJsonArray &categoryArray)
+QList<QPlaceCategory> parseCategories(const QJsonArray &categoryArray,
+                                     const QPlaceManagerEngineNokiaV2 *engine)
 {
+    Q_ASSERT(engine);
+
     QList<QPlaceCategory> categoryList;
     for (int i = 0; i < categoryArray.count(); ++i)
-        categoryList.append(parseCategory(categoryArray.at(i).toObject()));
+        categoryList.append(parseCategory(categoryArray.at(i).toObject(),
+                                          engine));
 
     return categoryList;
 }
