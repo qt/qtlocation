@@ -374,13 +374,8 @@ Item {
                 verify_visibility_all_items()
                 var i
                 for (i = 0; i < preMapPolygonDefaultPath.length; ++i) {
-                    var lon = preMapPolygon.path[0].longitude + move * xDir
-                    var lat = preMapPolygon.path[0].latitude + move * yDir
-                    var coord = map.toCoordinate(Qt.point)
-                    coord.longitude = lon
-                    coord.latitude = lat
-                    preMapPolygon.removeCoordinate(preMapPolygon.path[0])
-                    preMapPolygon.addCoordinate(coord)
+                    preMapPolygon.path[i].longitude += move * xDir
+                    preMapPolygon.path[i].latitude += move * yDir
                 }
                 calculate_bounds()
                 verify(!is_coord_on_screen(mapPolygonTopLeft))
