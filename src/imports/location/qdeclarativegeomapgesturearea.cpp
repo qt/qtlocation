@@ -56,12 +56,8 @@
 #define QML_MAP_FLICK_MINIMUMDECELERATION 500
 #define QML_MAP_FLICK_DEFAULTDECELERATION 2500
 #define QML_MAP_FLICK_MAXIMUMDECELERATION 10000
-// The number of samples to use in calculating the velocity of a flick
-#define QML_MAP_FLICK_SAMPLEBUFFER 3
-// The number of samples to discard when calculating the flick velocity.
-// Touch panels often produce inaccurate results as the finger is lifted.
-#define QML_MAP_FLICK_DISCARDSAMPLES 1
 
+#define QML_MAP_FLICK_VELOCITY_SAMPLE_PERIOD 50
 // FlickThreshold determines how far the "mouse" must have moved
 // before we perform a flick.
 static const int FlickThreshold = 20;
@@ -810,8 +806,8 @@ void QDeclarativeGeoMapGestureArea::touchEvent(QTouchEvent *event)
 */
 void QDeclarativeGeoMapGestureArea::clearTouchData()
 {
-    velocityBufferX_.clear();
-    velocityBufferY_.clear();
+    velocityX_ = 0;
+    velocityY_ = 0;
     pressTime_.start();
     touchCenterCoord_.setLongitude(0);
     touchCenterCoord_.setLatitude(0);
@@ -825,52 +821,20 @@ void QDeclarativeGeoMapGestureArea::clearTouchData()
 */
 void QDeclarativeGeoMapGestureArea::updateVelocityList(const QPointF &pos)
 {
-    // Take velocity samples, used later to determine the flick
+    // Take velocity samples every sufficient period of time, used later to determine the flick
     // duration and speed (when mouse is released).
-    if (!lastPos_.isNull()) {
+    qreal elapsed = qreal(lastPosTime_.elapsed());
+
+    if (elapsed >= QML_MAP_FLICK_VELOCITY_SAMPLE_PERIOD) {
+        elapsed /= 1000.;
         int dyFromLastPos = pos.y() - lastPos_.y();
         int dxFromLastPos = pos.x() - lastPos_.x();
-
-        qreal elapsed = qreal(lastPosTime_.elapsed()) / 1000.;
-        if (elapsed <= 0) {
-            return;
-        }
+        lastPos_ = pos;
         lastPosTime_.restart();
-        addVelocitySample(velocityBufferY_, double(dyFromLastPos)/elapsed);
-        addVelocitySample(velocityBufferX_, double(dxFromLastPos)/elapsed);
-    }
-}
-
-
-/*!
-    \internal
-    Adds velocity sample to sample buffer. Data is later used to calculate
-    flick speed. By default 3 latest samples are considered.
-*/
-void QDeclarativeGeoMapGestureArea::addVelocitySample(QVector<qreal>& buffer, qreal sample)
-{
-    if (sample > pan_.maxVelocity_)
-        sample = pan_.maxVelocity_;
-    else if (sample < -pan_.maxVelocity_)
-        sample = -pan_.maxVelocity_;
-    buffer.append(sample);
-    if (buffer.count() > QML_MAP_FLICK_SAMPLEBUFFER)
-        buffer.remove(0);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMapGestureArea::updateVelocity(QVector<qreal>& buffer, qreal& velocity)
-{
-    if (buffer.count() > QML_MAP_FLICK_DISCARDSAMPLES) {
-        velocity = 0;
-        int count = buffer.count() - QML_MAP_FLICK_DISCARDSAMPLES;
-        for (int i = 0; i < count; ++i) {
-            qreal v = buffer.at(i);
-            velocity += v;
-        }
-        velocity /= count;
+        qreal velX = qreal(dxFromLastPos)/elapsed;
+        qreal velY = qreal(dyFromLastPos)/elapsed;
+        velocityX_ = qBound<qreal>(-pan_.maxVelocity_, velX, pan_.maxVelocity_);
+        velocityY_ = qBound<qreal>(-pan_.maxVelocity_, velY, pan_.maxVelocity_);
     }
 }
 
@@ -961,9 +925,10 @@ void QDeclarativeGeoMapGestureArea::touchPointStateMachine()
 void QDeclarativeGeoMapGestureArea::startOneTouchPoint()
 {
     sceneCenter_ = QPointF();
-    lastPosTime_.start();
 
     sceneStartPoint1_ = touchPoints_.at(0).scenePos();
+    lastPos_ = sceneStartPoint1_;
+    lastPosTime_.start();
     QGeoCoordinate startCoord = map_->screenPositionToCoordinate(sceneStartPoint1_, false);
     // ensures a smooth transition for panning
     startCoord_.setLongitude(startCoord_.longitude() + startCoord.longitude() -
@@ -977,7 +942,6 @@ void QDeclarativeGeoMapGestureArea::startOneTouchPoint()
 */
 void QDeclarativeGeoMapGestureArea::updateOneTouchPoint()
 {
-    lastPos_ = sceneCenter_;
     sceneCenter_ = touchPoints_.at(0).scenePos();
     touchCenterCoord_ = map_->screenPositionToCoordinate(sceneCenter_, false);
 
@@ -991,11 +955,12 @@ void QDeclarativeGeoMapGestureArea::updateOneTouchPoint()
 void QDeclarativeGeoMapGestureArea::startTwoTouchPoints()
 {
     sceneCenter_ = QPointF();
-    lastPosTime_.start();
 
     sceneStartPoint1_ = touchPoints_.at(0).scenePos();
     sceneStartPoint2_ = touchPoints_.at(1).scenePos();
     QPointF startPos = (sceneStartPoint1_ + sceneStartPoint2_) * 0.5;
+    lastPos_ = startPos;
+    lastPosTime_.start();
     QGeoCoordinate startCoord =  map_->screenPositionToCoordinate(startPos, false);
     startCoord_.setLongitude(startCoord_.longitude() + startCoord.longitude() -
                              touchCenterCoord_.longitude());
@@ -1013,7 +978,6 @@ void QDeclarativeGeoMapGestureArea::updateTwoTouchPoints()
     qreal dx = p1.x() - p2.x();
     qreal dy = p1.y() - p2.y();
     distanceBetweenTouchPoints_ = sqrt(dx*dx + dy*dy);
-    lastPos_ = sceneCenter_;
     sceneCenter_ = (p1 + p2)/2;
     touchCenterCoord_ = map_->screenPositionToCoordinate(sceneCenter_, false);
 
@@ -1283,9 +1247,8 @@ bool QDeclarativeGeoMapGestureArea::canStartPan()
     QPointF p1 = touchPoints_.at(0).scenePos();
     int dyFromPress = int(p1.y() - sceneStartPoint1_.y());
     int dxFromPress = int(p1.x() - sceneStartPoint1_.x());
-    if ((qAbs(dyFromPress) > startDragDistance
-      || qAbs(dxFromPress) > startDragDistance
-            || pressTime_.elapsed() > 200) && !lastPos_.isNull())
+    if ((qAbs(dyFromPress) > startDragDistance || qAbs(dxFromPress) > startDragDistance
+         || pressTime_.elapsed() > 200))
         return true;
     return false;
 }
@@ -1312,9 +1275,9 @@ bool QDeclarativeGeoMapGestureArea::tryStartFlick()
     // if we drag then pause before release we should not cause a flick.
     qreal velocityX = 0.0;
     qreal velocityY = 0.0;
-    if (lastPosTime_.elapsed() < 100) {
-        updateVelocity(velocityBufferY_, velocityY);
-        updateVelocity(velocityBufferX_, velocityX);
+    if (lastPosTime_.elapsed() < QML_MAP_FLICK_VELOCITY_SAMPLE_PERIOD) {
+        velocityY = velocityY_;
+        velocityX = velocityX_;
     }
     int flickTimeY = 0;
     int flickTimeX = 0;
@@ -1372,8 +1335,8 @@ void QDeclarativeGeoMapGestureArea::startFlick(int dx, int dy, int timeMs)
 
 void QDeclarativeGeoMapGestureArea::stopPan()
 {
-    velocityBufferX_.clear();
-    velocityBufferY_.clear();
+    velocityX_ = 0;
+    velocityY_ = 0;
     if (panState_ == panFlick)
         endFlick();
     else if (panState_ == panActive){

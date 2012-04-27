@@ -270,8 +270,6 @@ private:
     void stopPan();
     void clearTouchData();
     void updateVelocityList(const QPointF &pos);
-    void addVelocitySample(QVector<qreal>& buffer, qreal sample);
-    void updateVelocity(QVector<qreal>& buffer, qreal& velocity);
 
 private:
     QGeoMap *map_;
@@ -315,8 +313,8 @@ private:
     } pan_;
 
     // these are calculated regardless of gesture or number of touch points
-    QVector<qreal> velocityBufferX_;
-    QVector<qreal> velocityBufferY_;
+    qreal velocityX_;
+    qreal velocityY_;
     QElapsedTimer lastPosTime_;
     QPointF lastPos_;
     QElapsedTimer pressTime_;
