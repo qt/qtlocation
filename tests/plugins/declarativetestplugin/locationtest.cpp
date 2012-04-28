@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 class QLocationDeclarativeTestModule: public QQmlExtensionPlugin
 {
     Q_OBJECT
-
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface/1.0")
 public:
     virtual void registerTypes(const char* uri) {
         qDebug() << "registerTypes in new test plugin: " << uri;
@@ -71,4 +71,3 @@ public:
 
 QT_END_NAMESPACE
 
-Q_EXPORT_PLUGIN2(declarative_location_test, QT_PREPEND_NAMESPACE(QLocationDeclarativeTestModule))
