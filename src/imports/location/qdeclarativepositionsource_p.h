@@ -59,6 +59,7 @@ class QDeclarativePositionSource : public QObject
 
     Q_PROPERTY(QDeclarativePosition* position READ position NOTIFY positionChanged)
     Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
+    Q_PROPERTY(bool valid READ isValid NOTIFY validityChanged)
     Q_PROPERTY(QUrl nmeaSource READ nmeaSource WRITE setNmeaSource NOTIFY nmeaSourceChanged)
     Q_PROPERTY(int updateInterval READ updateInterval WRITE setUpdateInterval NOTIFY updateIntervalChanged)
     Q_PROPERTY(PositioningMethods supportedPositioningMethods READ supportedPositioningMethods NOTIFY supportedPositioningMethodsChanged)
@@ -99,6 +100,7 @@ public:
     QUrl nmeaSource() const;
     int updateInterval() const;
     bool isActive() const;
+    bool isValid() const;
     QDeclarativePosition* position();
     PositioningMethods supportedPositioningMethods() const;
     PositioningMethods preferredPositioningMethods() const;
@@ -118,6 +120,7 @@ Q_SIGNALS:
     void preferredPositioningMethodsChanged();
     void sourceErrorChanged();
     void nameChanged();
+    void validityChanged();
 
 
 private Q_SLOTS:

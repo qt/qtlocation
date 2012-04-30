@@ -71,7 +71,9 @@ QT_BEGIN_NAMESPACE
     To indicate which methods are suitable for your application, set the
     \l{preferredPositioningMethods} property. If the preferred methods are not
     available, the default source of location data for the platform will be
-    chosen instead.
+    chosen instead. If no default source is available (because none are installed
+    for the runtime platform, or because it is disabled), the \l{valid} property
+    will be set to false.
 
     The \l updateInterval property can then be used to indicate how often your
     application wishes to receive position updates. The \l{start}(),
@@ -173,8 +175,24 @@ void QDeclarativePositionSource::setName(const QString &name)
                 this, SLOT(sourceErrorReceived(QGeoPositionInfoSource::Error)));
         m_positioningMethod = supportedPositioningMethods();
     }
+    emit validityChanged();
     m_active = false;
     emit this->nameChanged();
+}
+
+/*!
+    \qmlproperty bool PositionSource::valid
+
+    This property is true if the PositionSource element has acquired a valid
+    backend plugin to provide data. If false, other methods on the PositionSource
+    will have no effect.
+
+    Applications should check this property to determine whether positioning is
+    available and enabled on the runtime platform, and react accordingly.
+*/
+bool QDeclarativePositionSource::isValid() const
+{
+    return (m_positionSource != 0);
 }
 
 /*!
