@@ -421,9 +421,9 @@ Item {
             routeQuery.numberAlternativeRoutes = 3
             routeModel.update();
             compare(mapForTestingRouteModel.mapItems.length, 3)
-            routeModel.clear();
+            routeModel.reset();
             compare(mapForTestingRouteModel.mapItems.length, 0)
-            routeModel.clear(); // clear empty model
+            routeModel.reset(); // clear empty model
             routeQuery.numberAlternativeRoutes = 3
             routeModel.update();
             compare(mapForTestingRouteModel.mapItems.length, 3)

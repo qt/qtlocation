@@ -74,6 +74,7 @@ class QDeclarativeSearchModelBase : public QAbstractListModel, public QQmlParser
 
 public:
     enum Status {
+        Null,
         Ready,
         Executing,
         Error
@@ -99,7 +100,7 @@ public:
 
     Q_INVOKABLE void execute();
     Q_INVOKABLE void cancel();
-    Q_INVOKABLE void clear();
+    Q_INVOKABLE void reset();
 
     Q_INVOKABLE QString errorString() const;
 

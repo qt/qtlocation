@@ -403,7 +403,6 @@ Item {
             geocodeAddress.postalCode = dialogModel.get(4).inputText
 
             // send the geocode request
-            map.geocodeModel.clear()
             map.geocodeModel.query = geocodeAddress
             map.geocodeModel.update()
         }
@@ -436,7 +435,6 @@ Item {
             messageDialog.state = ""
             reverseGeocodeCoordinate.latitude = dialogModel.get(0).inputText
             reverseGeocodeCoordinate.longitude = dialogModel.get(1).inputText
-            map.geocodeModel.clear()
             map.geocodeModel.query = reverseGeocodeCoordinate
             map.geocodeModel.update();
         }

@@ -154,26 +154,6 @@ int QDeclarativeGeoRouteModel::count() const
 }
 
 /*!
-    \qmlmethod QtLocation5::RouteModel::clear()
-
-    Clears the route data of the model. Any outstanding requests or
-    errors remain intact.
-*/
-
-void QDeclarativeGeoRouteModel::clear()
-{
-    int oldCount = routes_.count();
-    beginResetModel();
-    qDeleteAll(routes_);
-    routes_.clear();
-    if (oldCount) {
-       emit countChanged();
-       emit routesChanged();
-    }
-    endResetModel();
-}
-
-/*!
     \qmlmethod QtLocation5::RouteModel::reset()
 
     Resets the model. All route data is cleared, any outstanding requests
@@ -183,9 +163,17 @@ void QDeclarativeGeoRouteModel::clear()
 
 void QDeclarativeGeoRouteModel::reset()
 {
-    clear();
+    if (!routes_.isEmpty()) {
+        beginResetModel();
+        qDeleteAll(routes_);
+        routes_.clear();
+        emit countChanged();
+        emit routesChanged();
+        endResetModel();
+    }
+
     abortRequest();
-    setErrorString("");
+    setErrorString(QString());
     setError(NoError);
     setStatus(QDeclarativeGeoRouteModel::Null);
 }

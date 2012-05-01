@@ -767,7 +767,7 @@ Map {
         onClicked: {
             switch (button) {
                 case "Delete": {//delete route
-                    routeModel.clear()
+                    routeModel.reset()
                     routeInfoModel.update()
                     break;
                 }
@@ -797,7 +797,7 @@ Map {
                     break;
                 }
                 case "Delete": {
-                    geocodeModel.clear()
+                    geocodeModel.reset()
                     break;
                 }
             }

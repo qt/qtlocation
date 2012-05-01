@@ -181,7 +181,6 @@ Item {
          SignalSpy {id: countInvalidSpy; target: invalidModel; signalName: "countChanged"}
          function test_invalid_plugin() {
              invalidModel.update()
-             invalidModel.clear()
              invalidModel.reset()
              invalidModel.update()
              invalidModel.get(-1)
@@ -275,7 +274,7 @@ Item {
     TestCase {
         name: "Map GeocodeModel basic (reverse) geocoding"
         function clear_slack_model() {
-            slackModel.clear()
+            slackModel.reset()
             locationsSlackSpy.clear()
             countSlackSpy.clear()
             querySlackSpy.clear()
@@ -285,7 +284,7 @@ Item {
             slackModel.offset = 0
         }
         function clear_immediate_model() {
-            immediateModel.clear()
+            immediateModel.reset()
             locationsImmediateSpy.clear()
             countImmediateSpy.clear()
             queryImmediateSpy.clear()
@@ -389,7 +388,7 @@ Item {
             immediateModel.query = errorCoordinate1
             immediateModel.update()
             if (immediateModel.errorString != "")
-                compare (errorStringImmediateSpy.count, 2) // the previous error is cleared upon update()
+                compare (errorStringImmediateSpy.count, 1) // the previous error is cleared upon update()
             else
                 compare (errorImmediateSpy.count, 1)
             compare (immediateModel.errorString, "error")
@@ -424,7 +423,7 @@ Item {
             testQuerySpy.clear()
             locationsSpy.clear()
             testStatusSpy.clear()
-            testModel.clear()
+            testModel.reset()
             countSpy.clear()
             compare (locationsSpy.count, 0)
             compare (testModel.errorString, "")
@@ -448,7 +447,7 @@ Item {
             testQuerySpy.clear()
             locationsSpy.clear()
             testStatusSpy.clear()
-            testModel.clear()
+            testModel.reset()
             countSpy.clear()
             compare (locationsSpy.count, 0)
             compare (testModel.errorString, "")
@@ -473,7 +472,7 @@ Item {
             tryCompare(testModel, "count", 0)
             compare(testModel.errorString, "2")
             compare (testModel.error, GeocodeModel.CommunicationError)
-            testModel.clear()
+            testModel.reset()
             tryCompare(countSpy, "count", 2)
             compare (testModel.count, 0)
         }
@@ -495,7 +494,7 @@ Item {
             compare (countSlackSpy.count, 1)
             compare (locationsSlackSpy.count, 1)
             // Frequent updates, previous requests are aborted
-            slackModel.clear()
+            slackModel.reset()
             locationsSlackSpy.clear()
             countSlackSpy.clear()
             slackModel.update()
@@ -544,7 +543,7 @@ Item {
 
         function test_delayed_geocode() {
             // basic delayed response
-            slackModel.clear()
+            slackModel.reset()
             querySlackSpy.clear()
             countSlackSpy.clear()
             locationsSlackSpy.clear()
@@ -561,7 +560,7 @@ Item {
             compare (locationsSlackSpy.count, 1)
             compare (slackModel.count, 7) //  slackAddress1.county)
             // Frequent updates, previous requests are aborted
-            slackModel.clear()
+            slackModel.reset()
             locationsSlackSpy.clear()
             countSlackSpy.clear()
             slackModel.update()
@@ -603,7 +602,7 @@ Item {
             compare (testModel.errorString, "")
             compare (testModel.error, GeocodeModel.NoError)
             compare (testModel.count, 2)
-            testModel.clear()
+            testModel.reset()
             tryCompare(countSpy, "count", 2)
             compare (testModel.count, 0)
         }
@@ -621,7 +620,7 @@ Item {
             compare (locationsSlackSpy.count, 1)
             compare (slackModel.count, 3) //  slackCoordinate1.longitude
             // Frequent updates, previous requests are aborted
-            slackModel.clear()
+            slackModel.reset()
             locationsSlackSpy.clear()
             countSlackSpy.clear()
             slackModel.update()

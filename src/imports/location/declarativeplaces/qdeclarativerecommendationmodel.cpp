@@ -186,6 +186,9 @@ QT_USE_NAMESPACE
 
     \table
         \row
+            \li PlaceRecommendationModel.Null
+            \li No search query has been executed.  The model is empty.
+        \row
             \li PlaceRecommendationModel.Ready
             \li The search query has completed and the result are available.
         \row
@@ -241,9 +244,10 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod PlaceRecommendationModel::clear()
+    \qmlmethod PlaceRecommendationModel::reset()
 
-    Clears the current place recommendations stored in the model.
+    Resets the model.  All place recommendations are cleared, any outstanding requests are aborted
+    and possible errors are cleared.  Model status will be set to PlaceRecommendationModel.Null.
 */
 
 /*!

@@ -581,21 +581,6 @@ void QDeclarativeGeocodeModel::setOffset(int offset)
 }
 
 /*!
-    \qmlmethod QtLocation5::GeocodeModel::clear()
-
-    Clears the location data of the model. Any outstanding requests or
-    errors remain intact.
-*/
-
-void QDeclarativeGeocodeModel::clear()
-{
-    bool hasChanged = !declarativeLocations_.isEmpty();
-    setLocations(QList<QGeoLocation>());
-    if (hasChanged)
-        emit countChanged();
-}
-
-/*!
     \qmlmethod QtLocation5::GeocodeModel::reset()
 
     Resets the model. All location data is cleared, any outstanding requests
@@ -605,9 +590,15 @@ void QDeclarativeGeocodeModel::clear()
 
 void QDeclarativeGeocodeModel::reset()
 {
-    clear();
+    beginResetModel();
+    if (!declarativeLocations_.isEmpty()) {
+        setLocations(QList<QGeoLocation>());
+        emit countChanged();
+    }
+    endResetModel();
+
     abortRequest();
-    setErrorString("");
+    setErrorString(QString());
     setError(NoError);
     setStatus(QDeclarativeGeocodeModel::Null);
 }

@@ -110,7 +110,7 @@ Item {
 
                         Button {
                             text: qsTr("Clear")
-                            onClicked: placeSearchModel.clear()
+                            onClicked: placeSearchModel.reset()
 
                             anchors.horizontalCenter: parent.horizontalCenter
                         }

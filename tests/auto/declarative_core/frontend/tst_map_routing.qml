@@ -449,7 +449,7 @@ Item {
             compare(emptyQuery.routeOptimizations, RouteQuery.ShortestRoute | RouteQuery.MostScenicRoute)
 
             // Must act gracefully
-            emptyModel.clear()
+            emptyModel.reset()
             emptyModel.update()
 
             // Plugin
@@ -463,7 +463,7 @@ Item {
             compare(pluginSpy.count, 2)
 
             // Must act gracefully
-            emptyModel.clear()
+            emptyModel.reset()
             emptyModel.update()
         }
         // Test that model acts gracefully when plugin is not set or is invalid
@@ -472,7 +472,6 @@ Item {
         SignalSpy {id: countInvalidSpy; target: invalidModel; signalName: "countChanged"}
         function test_invalid_plugin() {
             invalidModel.update()
-            invalidModel.clear()
             invalidModel.reset()
             invalidModel.update()
             invalidModel.get(-1)
@@ -564,7 +563,7 @@ Item {
     TestCase {
         name: "Routing"
         function clear_immediate_model() {
-            routeModel.clear()
+            routeModel.reset()
             testRoutesSpy.clear()
             testCountSpy.clear()
             testStatusSpy.clear()
@@ -572,7 +571,7 @@ Item {
             testErrorSpy.clear()
         }
         function clear_slacker_model() {
-            routeModelSlack.clear()
+            routeModelSlack.reset()
             testRoutesSlackSpy.clear()
             testCountSlackSpy.clear()
             testStatusSlackSpy.clear()
@@ -683,8 +682,8 @@ Item {
             compare (routeQuery.waypoints.length, 5)
             compare (routeModel.get(0).path.length, 5)
             compare (routeModel.get(0).path[0].latitude, routeQuery.waypoints[0].latitude)
-            // check clear() functionality
-            routeModel.clear()
+            // check reset() functionality
+            routeModel.reset()
             tryCompare (testRoutesSpy, "count", 2) // 5 sec
             tryCompare (testCountSpy, "count", 2)
             compare (routeModel.count, 0)
@@ -707,7 +706,7 @@ Item {
             compare (routeModelSlack.get(0).path[0].latitude, routeQuery.waypoints[0].latitude)
 
             // Frequent updates, previous requests are aborted
-            routeModelSlack.clear()
+            routeModelSlack.reset()
             testRoutesSlackSpy.clear()
             testCountSlackSpy.clear()
             routeModelSlack.update()

@@ -133,7 +133,6 @@ public:
 
     QVariant query() const;
     void setQuery(const QVariant& query);
-    Q_INVOKABLE void clear();
     Q_INVOKABLE void reset();
 
 Q_SIGNALS:

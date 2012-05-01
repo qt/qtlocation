@@ -218,10 +218,11 @@ void QDeclarativeSearchModelBase::cancel()
 /*!
     \internal
 */
-void QDeclarativeSearchModelBase::clear()
+void QDeclarativeSearchModelBase::reset()
 {
     beginResetModel();
     clearData();
+    setStatus(Null);
     endResetModel();
 }
 
