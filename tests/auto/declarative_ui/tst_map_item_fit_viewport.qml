@@ -321,7 +321,7 @@ Item {
             }
         }
 
-        function test_ad_visible_items_move() {
+        /*function test_ad_visible_items_move() {
             // move different individual items out of screen
             // then fit viewport
             var xDir = 1
@@ -390,7 +390,7 @@ Item {
                 xDir += xDirChange
                 yDir += yDirChange
             }
-        }
+        }*/
 
         function clear_data() {
             preMapRectClicked.clear()
@@ -534,7 +534,7 @@ Item {
             }
             // remove items
             map.clearMapItems()
-            clear_data()
+            //clear_data()
             compare (map.mapItems.length, 0)
             // reset map
             map.center.latitude = 20
