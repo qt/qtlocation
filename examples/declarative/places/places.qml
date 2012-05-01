@@ -112,10 +112,10 @@ Item {
 
         Component.onCompleted: {
             var item = addItem("Place");
-            item.enabled = (function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SavePlaceFeature) : false })
+            item.enabled = Qt.binding(function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SavePlaceFeature) : false })
 
             item = addItem("Category");
-            item.enabled = (function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SaveCategoryFeature) : false })
+            item.enabled = Qt.binding(function() { return placesPlugin.name != "" ? placesPlugin.supportsPlaces(Plugin.SaveCategoryFeature) : false })
         }
 
         onClicked: {

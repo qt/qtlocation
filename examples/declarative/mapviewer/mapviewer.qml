@@ -143,9 +143,9 @@ Item {
             addItem("Geocode")
             addItem("Route")
             var item = addItem("Follow me")
-            item.text = (function() { return map.followme ? "Stop following" : "Follow me" });
+            item.text = Qt.binding(function() { return map.followme ? "Stop following" : "Follow me" });
             item = addItem("Minimap")
-            item.text = (function() { return minimap ? "Hide minimap" : "Minimap" });
+            item.text = Qt.binding(function() { return minimap ? "Hide minimap" : "Minimap" });
         }
     }
 
