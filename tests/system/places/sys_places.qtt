@@ -44,18 +44,17 @@
 testcase = {
 
     qml_searching_for_places_by_category_for_given_position_data: {
-        data:["48.9", "2.4", "Shopping", "Pharmacy", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=places&dv=oviMaps&lat=48.9&lon=2.4&ta=9000049&of=0&dym=5",
-              "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=places&dv=oviMaps&lat=48.9&lon=2.4&ta=9000270&of=0&dym=5"]
+        data:["48.9", "2.4", "Shopping", "Shakespeare & Co. 6.6km"]
     },
 
-    qml_searching_for_places_by_category_for_given_position: function(latitude, longitude, category, subcategory, url1, url2)
+    qml_searching_for_places_by_category_for_given_position: function(latitude, longitude, category, place)
     {
         // Test meta data
         testTitle = "QML: Places - Searching by category for the given position";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that places can be found.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-190: Place Discovery";
 
@@ -67,41 +66,32 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url1 + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia provider | |
-        | Select Search button | |
-        | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! button | |
-        | Select Categories button | |
-        | Select Right arrow next to " + category + " | |
-        | Select " + subcategory + " | |
-        | Expand panel with seacrh results | Verify that number of found places corresponds to the open web page. Verify that details of the first place is the same. |
-        | Hide panel with results | |
-        | Open " + url2 + " url in a desktop browser | |
-        | Select Categories button | |
-        | Select Back button | |
-        | Select " + category + " | |
-        | Expand panel with seacrh result | Verify that number of found places corresponds to the open web page. Verify that details of the first place is the same. |"
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Select Category icon | Verify that each categoty has specific icon |
+        | Select [" + category + "] | |
+        | Expand panel with seacrh results | Verify that [" + place + "] is the first item in the list. |"
         ));
     },
 
     qml_searching_for_places_by_text_string_for_given_position_data: {
-        search_string:["48.9", "2.4", "pizza", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&dym=5&q=pizza"],
-        search_string_with_typo:["48.9", "2.4", "pizzs", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&dym=5&q=pizzs"]
+        search_string:["48.9", "2.4", "pizza", "Pizza Di Napoli 576m"]
     },
 
-    qml_searching_for_places_by_text_string_for_given_position: function(latitude, longitude, search_string, url)
+    qml_searching_for_places_by_text_string_for_given_position: function(latitude, longitude, search_string, place)
     {
         // Test meta data
         testTitle = "QML: Places - Searching by text string for the given position";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that places can be found or user is informed about the error.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-190: Place Discovery";
 
@@ -113,33 +103,68 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia provider | |
-        | Select Search button | |
-        | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! button | |
-        | Fill in " + search_string + " in Search field | |
-        | Select Search button | |
-        | Expand panel with results | Verify that number of found places corresponds to the open web page. |"
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
+        | Expand panel with results | Verify that [" + place + "] is the first item in the list. |"
+        ));
+    },
+
+    qml_searching_for_places_by_text_string_with_typo_data: {
+        search_string_with_typo:["48.9", "2.4", "pizzs"]
+    },
+
+    qml_searching_for_places_by_text_string_with_typo: function(latitude, longitude, search_string, place)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Searching by text string with typo";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that no places found.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-190: Place Discovery";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | Verify that no results were found |"
         ));
     },
 
     qml_recomendations_for_places_data: {
-        data:["48.9", "2.4", "La Romantica", "La Romantica 6988m", "http://places.maps.ovi.com/rest/v1/places/250u09wh-8412aba7c3f8475da0a7ebc5fa713ec4/recommendations/nearby"]
+        data:["48.9", "2.4", "La Romantica", "La Romantica 7.0km", "Guy Savoy 2.9km"]
     },
 
-    qml_recomendations_for_places: function(latitude, longitude, search_string, place, url)
+    qml_recomendations_for_places: function(latitude, longitude, search_string, place, similar_place)
     {
         // Test meta data
         testTitle = "QML: Places - Recommendation for places";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that recomendation for places can be found.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-190: Place Discovery";
 
@@ -151,36 +176,35 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia provider | |
-        | Select Search button | |
-        | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! button | |
-        | Fill in " + search_string + " in Search field | |
-        | Select Search button | |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
         | Expand panel with results | |
-        | Select " + place + " | |
-        | Select 'Find Similar' | Verify that number of found places corresponds to the open web page. Verify that distance to recommended places is the same. |"
+        | Select [" + place + "] | |
+        | Select [Find Similar] | Verify that [" + similar_place + "] is the first item in the list. |"
         ));
     },
 
     qml_suggestions_for_places_data: {
-        search_string_of_3_symbols:["48.9", "2.4", "piz", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&q=piz&lh=1"],
-        search_string_of_4_symbols:["48.9", "2.4", "pizz", "http://where.desktop.mos.svc.ovi.com/NOSe/json?vi=where&dv=oviMaps&lat=48.9&lon=2.4&of=0&q=pizz&lh=1"]
+        search_string_of_3_symbols:["48.9", "2.4", "piz", "Pizza Di Napoli"],
+        search_string_of_4_symbols:["48.9", "2.4", "pizz", "Pizza Pazza"]
     },
 
-    qml_suggestions_for_places: function(latitude, longitude, search_string, url)
+    qml_suggestions_for_places: function(latitude, longitude, search_string, place)
     {
         // Test meta data
         testTitle = "QML: Places - Suggestions for places";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that suggestions for places can be obtained.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-190: Place Discovery";
 
@@ -192,31 +216,31 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia provider | |
-        | Select Search button | |
-        | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! button | |
-        | Fill in " + search_string + " in Search field | Verify that list of suggested places corresponds to the open web page. |"
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Fill in [" + search_string + "] in Search field | Verify that [" + place + "] is the fourth item in the list. |"
         ));
     },
 
     qml_place_editorials_data: {
-        search_string:["48.9", "2.4", "sushi", "Nakagawa 2838m", "Untitled editorial", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a"]
+        prime_editorial:["48.9", "2.4", "le pouilly reuilly", "Le Pouilly Reuilly 1.7km", "2", "Untitled editorial", "prime", "Une institution bustronomique...", "Business Owner"],
+        not_prime_editorial:["48.9", "2.4", "marche ou crepe", "Marche ou Crepe 4.2km", "1", "Untitled editorial", "not prime", "This little outlet near...", "Lonely planet"]
     },
 
-    qml_place_editorials: function(latitude, longitude, search_string, place, editorial, url)
+    qml_place_editorials: function(latitude, longitude, search_string, place, editorials, editorial_name, editorial_icon, editorial_text, editorial_author)
     {
         // Test meta data
         testTitle = "QML: Places - Retrieval of editorials";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that editorials for places can be obtained.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-191: Place Retrieval";
 
@@ -228,36 +252,38 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia provider | |
-        | Select Search button | |
-        | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! button | |
-        | Fill in " + search_string + " in Search field | |
-        | Select Search button | |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
         | Expand panel with results | |
-        | Select " + place + " | |
-        | Select “Editorials” | |
-        | Select " + editorial + " | Verify that text, title and vendor correspond to the 'premiumContent' section of the open web page. |"
+        | Select [" + place + "] | |
+        | Select [Editorials] | Verify that there are [" + editorials + "] editorials. |
+        | | Verify that there is [" + editorial_name + "] |
+        | | Verify that icon indicates the editorial as [" + editorial_icon + "] one |
+        | Select [" + editorial_name + "] | Verify that text starts with [" + editorial_text + "] |
+        | | Verify that author as [" + editorial_author + "] one |"
         ));
     },
 
     qml_place_images_data: {
-        search_string:["48.9", "2.4", "sushi", "Nakagawa 2838m", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a/images"]
+        search_string:["48.9", "2.4", "marfil", "Marfil (Le) 8.3km", "3"]
     },
 
-    qml_place_images: function(latitude, longitude, search_string, place, url)
+    qml_place_images: function(latitude, longitude, search_string, place, images)
     {
         // Test meta data
         testTitle = "QML: Places - Retrieval of images";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that editorials for places can be obtained.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-191: Place Retrieval";
 
@@ -269,35 +295,35 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia provider | |
-        | Select Search button | |
-        | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! button | |
-        | Fill in " + search_string + " in Search field | |
-        | Select Search button | |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
         | Expand panel with results | |
-        | Select " + place + " | |
-        | Select “Images” | Verify that images correspond to the open web page. |"
+        | Select [" + place + "] | |
+        | Select [Images] | Verify that there are [" + images + "] images with restaurant view/dish. |"
         ));
     },
 
     qml_place_reviews_data: {
-        search_string:["48.9", "2.4", "sushi", "Nakagawa 2838m", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a/reviews?&start=0&limit=100"]
+        tripadviser:["48.9", "2.4", "sushi", "Nakagawa 2.8km", "5", "Ottimo sushi", "Ottima cucina con ottimo rapporto...", "4", "TripAdvisor"],
+        nokiauser:["48.9", "2.4", "marfil", "marfil (le) 8.3km", "1", "empty", "Nice place, good food", "3", "Nokia User"]
     },
 
-    qml_place_reviews: function(latitude, longitude, search_string, place, url)
+    qml_place_reviews: function(latitude, longitude, search_string, place, reviews, review_name, review_text, review_raiting, review_author)
     {
         // Test meta data
         testTitle = "QML: Places - Retrieval of reviews";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that editorials for places can be obtained.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-191: Place Retrieval";
 
@@ -309,35 +335,42 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia provider | |
-        | Select Search button | |
-        | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! button | |
-        | Fill in " + search_string + " in Search field | |
-        | Select Search button | |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
         | Expand panel with results | |
-        | Select " + place + " | |
-        | Select “Reviews” | Verify that reviews correspond to the open web page. |"
+        | Select [" + place + "] | |
+        | Select [Reviews] | Verify that first review has [" + review_name + "] title. |
+        | | Verify that there are [" + reviews + "] reviews in total. |
+        | Select [" +review_name + "] | Verify that text starts with [" + review_text + "] |
+        | | Verify that the place has [" + review_raiting + "] rating |
+        | | Verify that author is [" + review_author + "] |"
         ));
     },
 
     qml_place_retrieval_data: {
-        search_string:["48.9", "2.4", "sushi", "Nakagawa 2838m", "http://places.maps.ovi.com/rest/v1/places/250u09wn-077bc389b68e4642b0dea40dcec9489a"]
+        not_prime_place:["48.9", "2.4", "marfil", "Marfil (Le) 8.3km", "not prime", "4", "4 Rue Auguste Vacqueri 75116 Paris",
+                         "Restaurant, Fair & Convention Facility, Theatre, Music & Culture", "+33147206252"],
+        prime_place:["48.9", "2.4", "La Romantica", "La Romantica 7.0km", "prime", "4", "73 Boulevard Jean Jaures 92110 Clichy France",
+                         "Hospital or health Care Facility, Restaurant", "+33147372971"]
+
     },
 
-    qml_place_retrieval: function(latitude, longitude, search_string, place, url)
+    qml_place_retrieval: function(latitude, longitude, search_string, place, icon, rating, address, categories, phone)
     {
         // Test meta data
         testTitle = "QML: Places - Retrieval of general data of a place";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that general information about place can be obtained.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-191: Place Retrieval";
 
@@ -349,19 +382,60 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia provider | |
-        | Select Search button | |
-        | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! button | |
-        | Fill in " + search_string + " in Search field | |
-        | Select Search button | |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon button | |
         | Expand panel with results | |
-        | Select " + place + " | Verify that rating, address, category and contact details correspond to the open web page. |"
+        | Select [" + place + "] | Verify that place has rating [" + rating + "] |
+        | | Verify that icon indicates that it is [" + icon + "] place. |
+        | | Verify that address is [" + address + "]. |
+        | | Verify that categories are [" + categories + "]. |
+        | | Verify that phone is [" + phone + "]. |"
+        ));
+    },
+
+    qml_sponsored_result_data:{
+        data:["48.9", "2.4", "La Romantica", "La Romantica 7.0km", "La Romantica 26km"]
+    },
+
+    qml_sponsored_result: function(latitude, longitude, search_string, sponsored_place, not_sponsored_place)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Sponsored result";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that general information about place can be obtained.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-191: Place Retrieval";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select Go! button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
+        | Expand panel with results | Verify that [" + sponsored_place + "] is a sponsored place. |
+        | | Verify that [" + not_sponsored_place + "] is not a sponsored place. |"
         ));
     },
 
@@ -388,21 +462,21 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia_places_jsondb provider | |
-        | Select Category button | Verify that there are no categories |
-        | Select Category button | |
-        | Select New button | |
-        | Select Category button | |
-        | Fill in " + name + " in Name field | |
-        | Select Go! button | |
-        | Select Category button | Verify that there is only " + name + " |
-        | Select Edit button | |
-        | Fill in " + newname + " in Name field | |
-        | Select Go! button | |
-        | Select Category button | Verify that there is only " + newname + "  |
-        | Select Delete button | Verify that there are no categories | "
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia_places_jsondb] | |
+        | Select Category icon | Verify that there are no categories |
+        | Select Category icon | |
+        | Select [New] button | |
+        | Select [Category] button | |
+        | Fill in [" + name + "] in Name field | |
+        | Select [Go!] button | |
+        | Select Category icon | Verify that there is only [" + name + "] |
+        | Select [Edit] button | |
+        | Fill in [" + newname + "] in Name field | |
+        | Select [Go!] button | |
+        | Select Category icon | Verify that there is only [" + newname + "] |
+        | Select [Delete] button | Verify that there are no categories | "
         ));
     },
 
@@ -429,35 +503,35 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia_places_jsondb provider | |
-        | Select New button | |
-        | Select Place button | |
-        | Fill in " + name + " in Name field | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia_places_jsondb] | |
+        | Select [New] button | |
+        | Select [Place] button | |
+        | Fill in [" + name + "] in Name field | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
         | Select Go! button | |
-        | Fill in " + name + " in search field | |
-        | Select Search button | |
-        | Expand panel with results | Verify that only " + name + " is found in 0m away |
-        | Select " + name + " | |
-        | Select Edit button | |
-        | Fill in " + newname + " in Name field | |
-        | Select Go! button | |
-        | Fill in " + name + " in search field | |
-        | Select Search button | Verify that no places are found |
-        | Fill in " + newname + " in search field | |
-        | Select Search button | Verify that only " + newname + " is found in 0m away |
-        | Select " + newname + " | |
-        | Select Delete button | |
-        | Fill in " + newname + " in Search field | |
-        | Select Search button | Verify that no places are found |"
+        | Fill in [" + name + "] in search field | |
+        | Select Loupe icon | |
+        | Expand panel with results | Verify that only [" + name + "] is found in 0m away |
+        | Select [" + name + "] | |
+        | Select [Edit] button | |
+        | Fill in [" + newname + "] in Name field | |
+        | Select [Go!] button | |
+        | Fill in [" + name + "] in Search field | |
+        | Select Loupe icon | Verify that no places are found |
+        | Fill in [" + newname + "] in search field | |
+        | Select Loupe icon | Verify that only [" + newname + "] is found in 0m away |
+        | Select [" + newname + "] | |
+        | Select [Delete] button | |
+        | Fill in [" + newname + "] in Search field | |
+        | Select Loupe icon | Verify that no places are found |"
         ));
     },
 
     qml_favorite_places_data: {
-        search_string:["-27.5", "153", "sushi", "Oz Sushi" ]
+        search_string:["-27.5", "153", "sushi", "Oz Sushi 1.9km" ]
     },
 
     qml_favorite_places: function(latitude, longitude, search_string, place )
@@ -479,26 +553,43 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia provider | |
-        | Select Search button | |
-        | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! button | |
-        | Select Search button | |
-        | Select Search Options button | |
-        | Select Enable favorites button | |
-        | Fill in " + search_string + " in Search field | |
-        | Select Search button | |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Select [Search] button | |
+        | Select [Search Options] button | |
+        | Select [Enable favorites] button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
         | Expand panel with results | |
-        | Select " + place + " | |
-        | Select Save as Favorite button | |
-        | Select back button | Verify that " + place + " has a star |
-        | Select " + place + " | |
-        | Select Remove Favorite button | |
-        | Select back button | Verify that " + place + " has no star |"
+        | Select [" + place + "] | |
+        | Select [Save as Favorite] button | |
+        | Select back button | Verify that [" + place + "] has a star |
+        | Hide search results | |
+        | Select [Provider] | |
+        | Select [nokia_places_jsondb] | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
+        | Expand panel with results | Verify that list contains [" + place + "] |
+        | Select [" + place + "] | |
+        | Select [Delete] | |
+        | Hide search results | |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
+        | Expand panel with results | Verify that [" + place + "] has no star |
+        | Select [" + place + "] | |
+        | Select [Save as Favorite] button | |
+        | Select back button | Verify that [" + place + "] has a star |
+        | Select [" + place + "] | |
+        | Select [Remove Favorite] button | |
+        | Select back button | Verify that [" + place + "] has no star |"
         ));
     },
 
@@ -514,7 +605,7 @@ testcase = {
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that places can be found for different locale.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed. ";
         testGroups = "BAT,5.0";
         testRequirements = "MOBILITY-2861";
 
@@ -526,39 +617,210 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia provider | |
-        | Select Search button | |
-        | Select Search Options button | |
-        | Fill in " + locale + " in Locale(s) field | |
-        | Select OK button | |
-        | Select Search button | |
-        | Select Search Center button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! button | |
-        | Fill in " + search_string + " in Search field | |
-        | Select Search button | |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia] | |
+        | Select [Search] button | |
+        | Select [Search Options] button | |
+        | Fill in [" + locale + "] in Locale(s) field | |
+        | Select [Go!] button | |
+        | Select [Search] button | |
+        | Select [Search Center] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
         | Expand panel with seacrh results | |
-        | Select the fist place | Verify that Category name is in " + language + "|"
+        | Select the fist place | Verify that Category name is in [" + language + "] |"
        ));
     },
 
-/*
-    qml_searching_for_places_by_category_inside_bounding_box: function()
+
+    qml_searching_for_places_by_category_inside_bounding_box_data: {
+        category:["category 1", "category 2", "sushi 1", "-26", "153", "sushi 2", "-27", "153", "sushi 3", "-27.5", "153",
+            "-27.5", "153", "0.5", "1"]
+    },
+
+    qml_searching_for_places_by_category_inside_bounding_box: function(category1, category2, place1, lat1, long1,
+                                                                       place2, lat2, long2, place3, lat3, long3,
+                                                                       latitude, longitude, width, height)
     {
         // Test meta data
         testTitle = "QML: Places - Searching by category inside bounding box";
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that places can be found.";
-        testPreconditions = "Jsondb plugin is available";
+        testPreconditions = "Jsondb plugin is available. Jsondb is in initial state";
         testGroups = "BAT,5.0";
         testRequirements = "MTMW-190: Place Discovery";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia_places_jsondb] | |
+        | Select [New] button | |
+        | Select [Category] button | |
+        | Fill in [" + category1 + "] in Name field | |
+        | Select [Go!] button | |
+        | Select [New] button | |
+        | Select [Category] button | |
+        | Fill in [" + category2 + "] in Name field | |
+        | Select [Go!] button | |
+        | Select [New] button | |
+        | Select [Place] button | |
+        | Fill in [" + lat1 + "] in Latitude field | |
+        | Fill in [" + long1 + "] in Longitude field | |
+        | Fill in [" + place1 + "] in Name field | |
+        | Select [Add Category] button | |
+        | Select [" + category1 + "] | |
+        | Select [Go!] button | |
+        | Select [New] button | |
+        | Select [Place] button | |
+        | Fill in [" + lat2 + "] in Latitude field | |
+        | Fill in [" + long2 + "] in Longitude field | |
+        | Fill in [" + place2 + "] in Name field | |
+        | Select [Add Category] button | |
+        | Select [" + category1 + "] | |
+        | Select [Go!] button | |
+        | Select [New] button | |
+        | Select [Place] button | |
+        | Fill in [" + lat3 + "] in Latitude field | |
+        | Fill in [" + long3 + "] in Longitude field | |
+        | Fill in [" + place3 + "] in Name field | |
+        | Select [Add Category] button | |
+        | Select [" + category2 + "] | |
+        | Select [Go!] button | |
+        | Select [Search] button | |
+        | Select [Search by Bounding Box] button | |
+        | Select [Clear] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Fill in [" + width + "] in Width field | |
+        | Fill in [" + height + "] in Height field | |
+        | Select [Go!] button | |
+        | Select Category icon | |
+        | Select [" + category1 + "] | |
+        | Expand panel with seacrh results | Verify that the list contains only [" + place2 + "] |"
+        ));
+    },
+
+    qml_searching_for_places_by_category_inside_bounding_circle_data: {
+        category:["category 1", "category 2", "sushi 1", "-26", "153", "sushi 2", "-27", "153", "sushi 3", "-27.5", "153",
+            "-27.5", "153", "100000"]
+    },
+
+    qml_searching_for_places_by_category_inside_bounding_circle: function(category1, category2, place1, lat1, long1,
+                                                                       place2, lat2, long2, place3, lat3, long3,
+                                                                       latitude, longitude, radius)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Searching by category inside bounding circle";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that places can be found.";
+        testPreconditions = "Jsondb plugin is available. Jsondb is in initial state";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-190: Place Discovery";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia_places_jsondb] | |
+        | Select [New] button | |
+        | Select [Category] button | |
+        | Fill in [" + category1 + "] in Name field | |
+        | Select [Go!] button | |
+        | Select [New] button | |
+        | Select [Category] button | |
+        | Fill in [" + category2 + "] in Name field | |
+        | Select [Go!] button | |
+        | Select [New] button | |
+        | Select [Place] button | |
+        | Fill in [" + lat1 + "] in Latitude field | |
+        | Fill in [" + long1 + "] in Longitude field | |
+        | Fill in [" + place1 + "] in Name field | |
+        | Select [Add Category] button | |
+        | Select [" + category1 + "] | |
+        | Select [Go!] button | |
+        | Select [New] button | |
+        | Select [Place] button | |
+        | Fill in [" + lat2 + "] in Latitude field | |
+        | Fill in [" + long2 + "] in Longitude field | |
+        | Fill in [" + place2 + "] in Name field | |
+        | Select [Add Category] button | |
+        | Select [" + category1 + "] | |
+        | Select [Go!] button | |
+        | Select [New] button | |
+        | Select [Place] button | |
+        | Fill in [" + lat3 + "] in Latitude field | |
+        | Fill in [" + long3 + "] in Longitude field | |
+        | Fill in [" + place3 + "] in Name field | |
+        | Select [Add Category] button | |
+        | Select [" + category2 + "] | |
+        | Select [Go!] button | |
+        | Select [Search] button | |
+        | Select [Search by Bounding Circle] button | |
+        | Select [Clear] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Fill in [" + radius + "] in Radius field | |
+        | Select [Go!] button | |
+        | Select Category icon | |
+        | Select [" + category1 + "] | |
+        | Expand panel with seacrh results | Verify that the list contains only [" + place2 + "] |"
+        ));
+    },
+
+    qml_searching_for_places_by_subcategory_data: {
+        data:["48.9", "2.4", "Pharmacy"]
+    },
+
+/*
+    qml_searching_for_places_by_subcategory: function(latitude, longitude, subcategory)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Searching by subcategory";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that places can be found.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-190: Place Discovery";
+        Skip("test is not supported by benchmark app", SkipAll);
+    },
+
+    qml_searching_for_places_by_multiple_categories_data: {
+        data:["48.9", "2.4", "Shopping", "Accomodation"]
+    },
+
+    qml_searching_for_places_by_multiple_categories: function(latitude, longitude, category1, category2)
+    {
+        // Test meta data
+        testTitle = "QML: Places - Searching by multiple categories";
+        testBinary = "qml_location_places";
+        testSource = "$QTDIR/qtlocation/examples/declarative/places"
+        testGoal = "Verify that places can be found.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
+        testGroups = "BAT,5.0";
+        testRequirements = "MTMW-190: Place Discovery";
+        Skip("test is not supported by benchmark app", SkipAll);
     },
 */
-
     qml_searching_for_places_by_string_inside_bounding_box_data: {
         data: ["sushi 1", "-27.5", "153", "sushi 2", "-27", "153", "-27.1", "153", "0.3", "0.3", "sushi" ]
     },
@@ -582,31 +844,31 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia_places_jsondb provider | |
-        | Select New button | |
-        | Select Place button | |
-        | Fill in " + name1 + " in Name field | |
-        | Fill in " + lat1 + " in Latitude field | |
-        | Fill in " + long1 + " in Longitude field | |
-        | Select Go! button | |
-        | Select New button | |
-        | Select Place button | |
-        | Fill in " + name2 + " in Name field | |
-        | Fill in " + lat2 + " in Latitude field | |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia_places_jsondb] | |
+        | Select [New] button | |
+        | Select [Place] button | |
+        | Fill in [" + name1 + "] in Name field | |
+        | Fill in [" + lat1 + "] in Latitude field | |
+        | Fill in [" + long1 + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Select [New] button | |
+        | Select [Place] button | |
+        | Fill in [" + name2 + "] in Name field | |
+        | Fill in [" + lat2 + "] in Latitude field | |
         | Fill in " + long2 + " in Longitude field | |
-        | Select Go! button | |
-        | Select Search | |
-        | Select Search Bounding Box | |
-        | Fill in " + box_lat + " in Latitude field | |
-        | Fill in " + box_long + " in Longitude field | |
-        | Fill in " + box_width + " in Width field | |
-        | Fill in " + box_height + " in Height field | |
-        | Select Go! button | |
-        | Fill in " + search_string + " in Search field | |
-        | Select Search button | |
-        | Expand panel with seacrh results | Verify that only " + name2 + " is listed |"
+        | Select [Go!] button | |
+        | Select [Search] | |
+        | Select [Search Bounding Box] | |
+        | Fill in [" + box_lat + "] in Latitude field | |
+        | Fill in [" + box_long + "] in Longitude field | |
+        | Fill in [" + box_width + "] in Width field | |
+        | Fill in [" + box_height + "] in Height field | |
+        | Select [Go!] button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
+        | Expand panel with seacrh results | Verify that only [" + name2 + "] is listed |"
        ));
     },
 
@@ -633,30 +895,30 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Provider button | |
-        | Select nokia_places_jsondb provider | |
-        | Select New button | |
-        | Select Place button | |
-        | Fill in " + name1 + " in Name field | |
-        | Fill in " + lat1 + " in Latitude field | |
-        | Fill in " + long1 + " in Longitude field | |
-        | Select Go! button | |
-        | Select New button | |
-        | Select Place button | |
-        | Fill in " + name2 + " in Name field | |
-        | Fill in " + lat2 + " in Latitude field | |
-        | Fill in " + long2 + " in Longitude field | |
-        | Select Go! button | |
-        | Select Search | |
-        | Select Search Bounding Circle | |
-        | Fill in " + centre_lat + " in Latitude field | |
-        | Fill in " + centre_long + " in Longitude field | |
-        | Fill in " + radius + " in Width field | |
-        | Select Go! button | |
-        | Fill in " + search_string + " in Search field | |
-        | Select Search button | |
-        | Expand panel with seacrh results | Verify that only " + name1 + " is listed |"
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Provider] button | |
+        | Select [nokia_places_jsondb] | |
+        | Select [New] button | |
+        | Select [Place] button | |
+        | Fill in [" + name1 + "] in Name field | |
+        | Fill in [" + lat1 + "] in Latitude field | |
+        | Fill in [" + long1 + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Select [New] button | |
+        | Select [Place] button | |
+        | Fill in [" + name2 + "] in Name field | |
+        | Fill in [" + lat2 + "] in Latitude field | |
+        | Fill in [" + long2 + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Select [Search] | |
+        | Select [Search Bounding Circle] | |
+        | Fill in [" + centre_lat + "] in Latitude field | |
+        | Fill in [" + centre_long + "] in Longitude field | |
+        | Fill in [" + radius + "] in Width field | |
+        | Select [Go!] button | |
+        | Fill in [" + search_string + "] in Search field | |
+        | Select Loupe icon | |
+        | Expand panel with seacrh results | Verify that only [" + name1 + "] is listed |"
        ));
     }
 
