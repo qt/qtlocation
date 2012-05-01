@@ -204,13 +204,14 @@ void QDeclarativeSearchModelBase::cancel()
     if (!m_reply)
         return;
 
-    QPlaceReply *reply = m_reply;
+    if (!m_reply->isFinished())
+        m_reply->abort();
 
-    if (!reply->isFinished())
-        reply->abort();
+    if (m_reply) {
+        m_reply->deleteLater();
+        m_reply = 0;
+    }
 
-    reply->deleteLater();
-    reply = 0;
     setStatus(Ready);
 }
 
