@@ -134,6 +134,7 @@ public:
     QVariant query() const;
     void setQuery(const QVariant& query);
     Q_INVOKABLE void reset();
+    Q_INVOKABLE void cancel();
 
 Q_SIGNALS:
     void countChanged();

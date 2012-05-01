@@ -126,6 +126,7 @@ public:
     int count() const;
     Q_INVOKABLE QDeclarativeGeoRoute* get(int index);
     Q_INVOKABLE void reset();
+    Q_INVOKABLE void cancel();
 
 Q_SIGNALS:
     void countChanged();

@@ -604,6 +604,20 @@ void QDeclarativeGeocodeModel::reset()
 }
 
 /*!
+    \qmlmethod QtLocation5::GeocodeModel::cancel()
+
+    Cancels any outstanding requests and clears errors.  Model status will be set to either
+    GeocodeModel.Null or GeocodeModel.Ready.
+*/
+void QDeclarativeGeocodeModel::cancel()
+{
+    abortRequest();
+    setErrorString(QString());
+    setError(NoError);
+    setStatus(declarativeLocations_.isEmpty() ? Null : Ready);
+}
+
+/*!
     \qmlproperty QVariant QtLocation5::GeocodeModel::query
 
     This property holds the data of the geocoding request.

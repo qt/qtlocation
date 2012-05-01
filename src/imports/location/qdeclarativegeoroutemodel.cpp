@@ -179,6 +179,20 @@ void QDeclarativeGeoRouteModel::reset()
 }
 
 /*!
+    \qmlmethod QtLocation5::RouteModel::cancel()
+
+    Cancels any outstanding requests and clears errors.  Model status will be set to either
+    RouteModel.Null or RouteModel.Ready.
+*/
+void QDeclarativeGeoRouteModel::cancel()
+{
+    abortRequest();
+    setErrorString(QString());
+    setError(NoError);
+    setStatus(routes_.isEmpty() ? Null : Ready);
+}
+
+/*!
     \internal
 */
 void QDeclarativeGeoRouteModel::abortRequest()

@@ -181,6 +181,7 @@ Item {
          SignalSpy {id: countInvalidSpy; target: invalidModel; signalName: "countChanged"}
          function test_invalid_plugin() {
              invalidModel.update()
+             invalidModel.cancel()
              invalidModel.reset()
              invalidModel.update()
              invalidModel.get(-1)
