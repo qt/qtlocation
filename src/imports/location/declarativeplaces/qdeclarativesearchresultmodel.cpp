@@ -245,7 +245,7 @@ QT_USE_NAMESPACE
             \li PlaceSearchModel.Ready
             \li The search query has completed, and the results are available.
         \row
-            \li PlaceSearchModel.Executing
+            \li PlaceSearchModel.Loading
             \li A search query is currently being executed.
         \row
             \li PlaceSearchModel.Error
@@ -254,18 +254,18 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod PlaceSearchModel::execute()
+    \qmlmethod PlaceSearchModel::update()
 
-    Executes a search query.  Search criteria is specified by setting
-    properties such as the \l searchTerm, \l categories, \l limit and \l offset.
-    Support for these properties may var according to \l plugin.
-    \c execute() then submits the set of criteria to the \l plugin to process.
+    Updates the model based on the provided query parameters.  The model will be populated with a
+    list of places matching the search parameters specified by the element's properties.  Search
+    criteria is specified by setting properties such as the \l searchTerm, \l categories, \l limit
+    and \l offset.  Support for these properties may vary according to \l plugin.  \c update() then
+    submits the set of criteria to the \l plugin to process.
 
-    While the query is executing the \l status of the model is set to
-    \c PlaceSearchModel.Executing.  If the query successfully completes,
-    the \l status is set to \c PlaceSearchModel.Ready, while if it unsuccessfully
-    completes, the \l status is set to \c PlaceSearchModel.Error.  Once the query
-    completes, the model items are updated with search results.
+    While the model is updating the \l status of the model is set to
+    \c PlaceSearchModel.Loading.  If the model is successfully updated the \l status is set to
+    \c PlaceSearchModel.Ready, while if it unsuccessfully completes, the \l status is set to
+    \c PlaceSearchModel.Error and the model cleared.
 
     \code
     BoundingCircle {
@@ -290,7 +290,7 @@ QT_USE_NAMESPACE
             model.categories = null;  //not searching by any category
             searchLocation.center.latitude = -27.5
             searchLocation.center.longitude = 153
-            model.execute();
+            model.update();
         }
     }
     \endcode

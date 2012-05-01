@@ -70,7 +70,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 10
 
-        busy: placeSearchModel.status === PlaceSearchModel.Executing
+        busy: placeSearchModel.status === PlaceSearchModel.Loading
 
         //! [PlaceSearchSuggestionModel search text changed]
         onTextChanged: {
@@ -78,7 +78,7 @@ Rectangle {
                 if (text.length >= 3) {
                     if (suggestionModel != null) {
                         suggestionModel.searchTerm = text;
-                        suggestionModel.execute();
+                        suggestionModel.update();
                     }
                 } else {
                     searchRectangle.state = "";

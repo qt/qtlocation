@@ -189,7 +189,7 @@ Item {
                     onSearchForSimilar: {
                         placeContentList.source = "";
                         recommendationModel.placeId = place.placeId;
-                        recommendationModel.execute();
+                        recommendationModel.update();
                         view.currentIndex = 0;
                     }
                     //! [PlaceRecommendationModel search]

@@ -76,7 +76,7 @@ public:
     enum Status {
         Null,
         Ready,
-        Executing,
+        Loading,
         Error
     };
 
@@ -98,7 +98,8 @@ public:
     Status status() const;
     void setStatus(Status status, const QString &errorString = QString());
 
-    Q_INVOKABLE void execute();
+    Q_INVOKABLE void update();
+
     Q_INVOKABLE void cancel();
     Q_INVOKABLE void reset();
 

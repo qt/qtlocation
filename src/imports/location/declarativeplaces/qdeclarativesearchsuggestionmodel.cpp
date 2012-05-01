@@ -144,7 +144,7 @@ QT_USE_NAMESPACE
             \li PlaceSearchSuggestionModel.Ready
             \li The search query has completed, and the results are available.
         \row
-            \li PlaceSearchSuggestionModel.Executing
+            \li PlaceSearchSuggestionModel.Loading
             \li A search query is currently being executed.
         \row
             \li PlaceSearchSuggestionModel.Error
@@ -153,18 +153,18 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod PlaceSearchSuggestionModel::execute()
+    \qmlmethod PlaceSearchSuggestionModel::update()
 
-    Executes a search suggestion query for the partial \l searchTerm and a \l searchArea.
-    If the \l plugin supports it, other paramaters such as \l limit and \l offset may
-    be specified.  \c execute() submits the set of parameters to the \l plugin to process.
+    Updates the model based on the provided query parameters.  The model will be populated with a
+    list of search suggestions for the partial \l searchTerm and \l searchArea.  If the \l plugin
+    supports it, other paramaters such as \l limit and \l offset may be specified.  \c update()
+    submits the set of parameters to the \l plugin to process.
 
 
-    While the query is executing the \l status of the model is set to
-    \c PlaceSearchSuggestionModel.Executing.  If the query successfully completes,
-    the \l status is set to \c PlaceSearchSuggestionModel.Ready, while if it unsuccessfully
-    completes, the \l status is set to \c PlaceSearchSuggestionModel.Error.  Once the query
-    completes, the model items are updated with search suggestions.
+    While the model is updating the \l status of the model is set to
+    \c PlaceSearchSuggestionModel.Loading.  If the model is successfully updated, the \l status is
+    set to \c PlaceSearchSuggestionModel.Ready, while if it unsuccessfully completes, the \l status
+    is set to \c PlaceSearchSuggestionModel.Error and the model cleared.
 
     This example shows use of the model
     \code
@@ -189,7 +189,7 @@ QT_USE_NAMESPACE
             model.searchTerm = "piz"
             searchLocation.center.latitude = -27.5
             searchLocation.cetner.longitude = 153
-            model.execute();
+            model.update();
         }
     }
     \endcode

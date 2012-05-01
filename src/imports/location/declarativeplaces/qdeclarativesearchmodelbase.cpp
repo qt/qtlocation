@@ -164,7 +164,7 @@ void QDeclarativeSearchModelBase::setStatus(Status status, const QString &errorS
 /*!
     \internal
 */
-void QDeclarativeSearchModelBase::execute()
+void QDeclarativeSearchModelBase::update()
 {
     if (!m_plugin) {
         qmlInfo(this) << "plugin not set.";
@@ -193,7 +193,7 @@ void QDeclarativeSearchModelBase::execute()
     m_reply->setParent(this);
     connect(m_reply, SIGNAL(finished()), this, SLOT(queryFinished()));
 
-    setStatus(Executing);
+    setStatus(Loading);
 }
 
 /*!

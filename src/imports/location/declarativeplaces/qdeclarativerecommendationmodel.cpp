@@ -192,7 +192,7 @@ QT_USE_NAMESPACE
             \li PlaceRecommendationModel.Ready
             \li The search query has completed and the result are available.
         \row
-            \li PlaceRecommendationModel.Executing
+            \li PlaceRecommendationModel.Loading
             \li A search query is currently being executed.
         \row
             \li PlaceRecommendationModel.Error
@@ -201,19 +201,18 @@ QT_USE_NAMESPACE
 */
 
 /*!
-    \qmlmethod PlaceRecommendationModel::execute()
+    \qmlmethod PlaceRecommendationModel::update()
 
-    Executes a recommendation search query for places similar to the place identified by the
-    \l placeId property. If the \l plugin supports it, additional prameters such as \l limit,
-    and \l offset may be specified and then \c execute() submits the set of criteria
-    to the \l  plugin to process.
+    Updates the model based on the provided query parameters.  The model will be populated with a
+    list of places similar to the place identified by the \l placeId property.  If the \l plugin
+    supports it, additional parameters such as \l limit and \l offset may be specified and then
+    \c update() submits the set of criteria to the \l plugin to process.
 
+    While the model is updating the \l status of the model is set to
+    \c PlaceRecommendationModel.Loading.  If the model is successfully updated the \l status is set
+    to \c PlaceRecommendationModel.Ready, while if it unsuccessfully completes, the \l status is
+    set to \c PlaceRecommendationModel.Error and the model is cleared.
 
-    While the query is executing the \l status of the model is set to
-    \c PlaceRecommendationModel.Executing.  If the query successfully completes,
-    the \l status is set to \c PlaceRecommendationModel.Ready, while if it unsuccessfully
-    completes, the \l status is set to \c PlaceRecommendationModel.Error.  Once the query
-    completes, the model items are updated with recommendation results.
     \code
     PlaceRecomendationModel {
         id: model
@@ -227,7 +226,7 @@ QT_USE_NAMESPACE
             model.placeId = place.placeId
             limit = -1;
             offset = 0;
-            model.execute();
+            model.update();
         }
     }
     \endcode

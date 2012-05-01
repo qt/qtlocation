@@ -131,7 +131,7 @@ Item {
             }
         }
 
-        Component.onCompleted: execute()
+        Component.onCompleted: update()
     }
 
     ListView {
@@ -148,7 +148,7 @@ Item {
 
         placeId: place.placeId
 
-        Component.onCompleted: execute()
+        Component.onCompleted: update()
     }
 
     ListView {
@@ -171,7 +171,7 @@ Item {
             }
         }
 
-        onSearchTermChanged: execute()
+        onSearchTermChanged: update()
     }
 
     ListView {

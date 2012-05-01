@@ -368,7 +368,7 @@ Item {
             categories = category;
             limit = -1;
             offset = 0;
-            execute();
+            update();
         }
 
         function searchForText(text) {
@@ -376,21 +376,21 @@ Item {
             categories = null;
             limit = -1;
             offset = 0;
-            execute();
+            update();
         }
 
         function previousPage() {
             if (limit === -1)
                 limit = count;
             offset = Math.max(0, offset - limit);
-            execute();
+            update();
         }
 
         function nextPage() {
             if (limit === -1)
                 limit = count;
             offset += limit;
-            execute();
+            update();
         }
 
         onStatusChanged: {
