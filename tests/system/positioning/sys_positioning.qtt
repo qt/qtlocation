@@ -48,6 +48,7 @@ testcase = {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Current Position";
         testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that current position is detected and displayed.";
         testPreconditions = "Internet connection is required for this test case. GPS signal can be acquired or simulated.";
         testGroups = "BAT, 5.0";
@@ -73,6 +74,7 @@ testcase = {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Current Position";
         testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location data is received and map is updated after changing location.";
         testPreconditions = "Internet connection is required for this test case.";
         testGroups = "BAT, 5.0";
