@@ -107,7 +107,7 @@ public:
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
        //from QuickItem
-    virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
+    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
     Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate* coordinate);
     Q_INVOKABLE void removeCoordinate(QDeclarativeCoordinate* coordinate);

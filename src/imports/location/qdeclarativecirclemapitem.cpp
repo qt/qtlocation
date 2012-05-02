@@ -319,7 +319,7 @@ qreal QDeclarativeCircleMapItem::radius() const
 /*!
     \internal
 */
-QSGNode* QDeclarativeCircleMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+QSGNode* QDeclarativeCircleMapItem::updateMapItemPaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
 

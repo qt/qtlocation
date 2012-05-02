@@ -43,6 +43,7 @@
 #define QDECLARATIVEGEOMAPQUICKITEM_H
 
 #include <QtQuick/QQuickItem>
+#include <QtQuick/QSGNode>
 
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativecoordinate_p.h"
@@ -94,6 +95,7 @@ private:
     QDeclarativeCoordinate* coordinate_;
     QDeclarativeCoordinate internalCoordinate_;
     QWeakPointer<QQuickItem> sourceItem_;
+    QQuickItem *opacityContainer_;
     QPointF anchorPoint_;
     qreal zoomLevel_;
     bool inUpdate_;

@@ -79,7 +79,7 @@ public:
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
     //from QuickItem
-    virtual QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
+    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
     QDeclarativeCoordinate* topLeft();
     void setTopLeft(QDeclarativeCoordinate *center);

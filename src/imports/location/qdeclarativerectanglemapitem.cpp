@@ -299,7 +299,7 @@ void QDeclarativeRectangleMapItem::setColor(const QColor &color)
 /*!
     \internal
 */
-QSGNode* QDeclarativeRectangleMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+QSGNode* QDeclarativeRectangleMapItem::updateMapItemPaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
 

@@ -653,7 +653,7 @@ void QDeclarativePolylineMapItem::updateMapItem()
 /*!
     \internal
 */
-QSGNode* QDeclarativePolylineMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+QSGNode* QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
 

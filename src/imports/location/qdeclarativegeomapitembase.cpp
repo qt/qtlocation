@@ -43,6 +43,7 @@
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qgeocameradata_p.h"
 #include <QtQml/QQmlInfo>
+#include <QtQuick/QSGOpacityNode>
 
 QT_BEGIN_NAMESPACE
 
@@ -213,6 +214,58 @@ void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate& coordina
     }
     setPos(topLeft);
 }
+
+/*!
+    \internal
+*/
+float QDeclarativeGeoMapItemBase::zoomLevelOpacity() const
+{
+    if (quickMap_->zoomLevel() > 3.0)
+        return 1.0;
+    else if (quickMap_->zoomLevel() > 2.0)
+        return quickMap_->zoomLevel() - 2.0;
+    else
+        return 0.0;
+}
+
+/*!
+    \internal
+*/
+QSGNode *QDeclarativeGeoMapItemBase::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *pd)
+{
+    if (!map_ || !quickMap_) {
+        delete oldNode;
+        return 0;
+    }
+
+    QSGOpacityNode *opn = static_cast<QSGOpacityNode*>(oldNode);
+    if (!opn)
+        opn = new QSGOpacityNode();
+
+    opn->setOpacity(zoomLevelOpacity());
+
+    QSGNode *oldN = opn->childCount() ? opn->firstChild() : 0;
+    opn->removeAllChildNodes();
+    if (opn->opacity() > 0.0) {
+        QSGNode *n = this->updateMapItemPaintNode(oldN, pd);
+        if (n)
+            opn->appendChildNode(n);
+    } else {
+        delete oldN;
+    }
+
+    return opn;
+}
+
+/*!
+    \internal
+*/
+QSGNode *QDeclarativeGeoMapItemBase::updateMapItemPaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
+{
+    delete oldNode;
+    return 0;
+}
+
 
 #include "moc_qdeclarativegeomapitembase_p.cpp"
 

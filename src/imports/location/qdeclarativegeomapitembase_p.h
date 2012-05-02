@@ -83,10 +83,16 @@ public:
     QDeclarativeGeoMap* quickMap() {return quickMap_;}
     QGeoMap* map() {return map_;}
 
+    QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
+    virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
+
 protected Q_SLOTS:
     virtual void updateMapItem() = 0;
     virtual void afterChildrenChanged();
     virtual void afterViewportChanged(const QGeoMapViewportChangeEvent &event) = 0;
+
+protected:
+    float zoomLevelOpacity() const;
 
 private Q_SLOTS:
     void baseCameraDataChanged(const QGeoCameraData &camera);

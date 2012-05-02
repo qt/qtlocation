@@ -150,7 +150,7 @@ void QDeclarativeRouteMapItem::setRoute(QDeclarativeGeoRoute *route)
 /*!
     \internal
 */
-QSGNode* QDeclarativeRouteMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+QSGNode* QDeclarativeRouteMapItem::updateMapItemPaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
 

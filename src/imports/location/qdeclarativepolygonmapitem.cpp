@@ -436,7 +436,7 @@ void QDeclarativePolygonMapItem::setColor(const QColor &color)
 /*!
     \internal
 */
-QSGNode* QDeclarativePolygonMapItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+QSGNode* QDeclarativePolygonMapItem::updateMapItemPaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
 {
     Q_UNUSED(data);
     MapPolygonNode *node = static_cast<MapPolygonNode*>(oldNode);

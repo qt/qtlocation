@@ -43,6 +43,7 @@
 #include "qdeclarativegeomapmousearea_p.h"
 #include "qdeclarativecoordinate_p.h"
 #include <QtQml/qqmlinfo.h>
+#include <QtQuick/QSGOpacityNode>
 
 #include <QDebug>
 #include <cmath>
@@ -138,6 +139,13 @@ QT_BEGIN_NAMESPACE
     and (possibly) scaling of the original item, as well as a transformation
     from longitude and latitude to screen position.
 
+    \section2 Limitations
+
+    \bold{Note:} Due to an implementation detail, items placed inside a
+    MapQuickItem will have a \c{parent} item which is not the MapQuickItem.
+    Refer to the MapQuickItem by its \c{id}, and avoid the use of \c{anchor}
+    in the \c{sourceItem}.
+
     \section2 Example Usage
 
     The following snippet shows a MapQuickItem containing an Image element,
@@ -160,6 +168,9 @@ QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
       mapAndSourceItemSet_(false)
 {
     setFlag(ItemHasContents, true);
+    opacityContainer_ = new QQuickItem(this);
+    opacityContainer_->setParentItem(this);
+    opacityContainer_->setFlag(ItemHasContents, true);
 }
 
 QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
@@ -273,7 +284,8 @@ void QDeclarativeGeoMapQuickItem::afterChildrenChanged()
         foreach (QQuickItem *i, kids) {
             if (i->flags() & QQuickItem::ItemHasContents
                     && !qobject_cast<QDeclarativeGeoMapMouseArea*>(i)
-                    && sourceItem_.data() != i) {
+                    && sourceItem_.data() != i
+                    && opacityContainer_ != i) {
                 if (!printedWarning) {
                     qmlInfo(this) << "Use the sourceItem property for the contained item, direct children are not supported";
                     printedWarning = true;
@@ -356,7 +368,7 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
 
     if (!mapAndSourceItemSet_ && quickMap() && map() && sourceItem_) {
         mapAndSourceItemSet_ = true;
-        sourceItem_.data()->setParentItem(this);
+        sourceItem_.data()->setParentItem(opacityContainer_);
         sourceItem_.data()->setTransformOrigin(QQuickItem::TopLeft);
         connect(sourceItem_.data(), SIGNAL(xChanged()),
                 this, SLOT(updateMapItem()));
@@ -367,6 +379,8 @@ void QDeclarativeGeoMapQuickItem::updateMapItem()
         connect(sourceItem_.data(), SIGNAL(heightChanged()),
                 this, SLOT(updateMapItem()));
     }
+
+    opacityContainer_->setOpacity(zoomLevelOpacity());
 
     sourceItem_.data()->setScale(scaleFactor());
     sourceItem_.data()->setPos(QPointF(0,0));
