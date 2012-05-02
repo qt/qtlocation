@@ -127,7 +127,7 @@ testcase = {
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that route can be calculated.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT, 5.0";
         testRequirements = "MTMW-235: QML Routing";
 

@@ -43,19 +43,18 @@
 
 testcase = {
     qml_geocode_data: {
-        australian_place:["Brandl st", "Eight Mile Plains", "Australia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Australia&city=Eight Mile Plains&street=Brandl St"],
-        russian_place:["Minina I Pozharskogo Ploshchad", "Nizhny Novgorod", "Russia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Russia&city=Nizhny Novgorod&street=Minina I Pozharskogo Ploshchad"],
-        fictional_place:["My street", "The Best City", "Australia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Australia&city=The Best City&street=My street"]
+        australian_place:["Brandl st", "Eight Mile Plains", "Australia", "-27.5816", "153.0973"],
+        russian_place:["Minina I Pozharskogo Ploshchad", "Nizhny Novgorod", "Russia", "56.329", "44.0085"]
     },
 
-    qml_geocode: function(street, city, country, url)
+    qml_geocode: function(street, city, country, latitude, longitude)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Geocoding";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT, 5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
@@ -67,32 +66,65 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Tools button | |
-        | Select Geocode menu item | |
-        | Select Clear button | |
-        | Fill in " + street + " in Street field | |
-        | Fill in " + city + " in City field | |
-        | Fill in " + country + " in Country field | |
-        | Select Go! button | |
-        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Tools] button | |
+        | Select [Geocode] menu item | |
+        | Select [Clear] button | |
+        | Fill in [" + street + "] in Street field | |
+        | Fill in [" + city + "] in City field | |
+        | Fill in [" + country + "] in Country field | |
+        | Select [Go!] button | |
+        | Wait for message appears on the screen | Verify that latitude is [" + latitude + "], longitude is [" + longitude + "]. |"
+        ));
+    },
+
+    qml_geocode_fictional_place_data: {
+        fictional_place:["My street", "The Best City", "Australia"]
+    },
+
+    qml_geocode_fictional_place: function(street, city, country)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Geocoding";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that location can not be found.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-236: QML Geocoding";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Tools] button | |
+        | Select [Geocode] menu item | |
+        | Select [Clear] button | |
+        | Fill in [" + street + "] in Street field | |
+        | Fill in [" + city + "] in City field | |
+        | Fill in [" + country + "] in Country field | |
+        | Select [Go!] button | |
+        | Wait for message appears on the screen | Verify that place is not found. |"
         ));
     },
 
     qml_geocode_not_unique_location_data: {
-        request:["Moscow", "Idaho","USA", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=USA&city=Moscow",
-                 "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=USA&state=Idaho&city=Moscow"]
+        request:["Moscow", "Idaho","USA", "4", "46.7323", "-117.0005"]
     },
 
-    qml_geocode_not_unique_location: function(city, state, country, url1, url2)
+    qml_geocode_not_unique_location: function(city, state, country, places, latitude, longitude)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Geocoding of non-unique address";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT, 5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
@@ -104,35 +136,33 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url1 + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Tools button | |
-        | Select Geocode menu item | |
-        | Select Clear button | |
-        | Fill in " + city + " in City field | |
-        | Fill in " + country + " in Country field | |
-        | Select Go! button | |
-        | Wait for message appears on the screen | Verify that several locations were found, number of locations is the same as in the open web page |
-        | Open " + url2 + " url in a desktop browser | |
-        | Select Tools button | |
-        | Select Geocode menu item | |
-        | Fill in " + state + " in State field | |
-        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Tools] button | |
+        | Select [Geocode] menu item | |
+        | Select [Clear] button | |
+        | Fill in [" + city + "] in City field | |
+        | Fill in [" + country + "] in Country field | |
+        | Select [Go!] button | |
+        | Wait for message appears on the screen | Verify that [" + places + "] locations were found. |
+        | Select [Tools] button | |
+        | Select [Geocode] menu item | |
+        | Fill in [" + state + "] in State field | |
+        | Wait for message appears on the screen | Verify that latitude is [" + latitude + "], longitude is [" + longitude + "]. |"
         ));
     },
 
     qml_geocode_request_with_post_code_data: {
-        request:["Brandl St", "4113", "Australia", "http://loc.desktop.maps.svc.ovi.com/geocoder/gc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&lg=eng&country=Australia&zip=4113&street=Brandl St"]
+        request:["Brandl", "4113", "Australia", "-27.5816", "153.0973"]
     },
 
-    qml_geocode_request_with_post_code: function(street, postcode, country, url)
+    qml_geocode_request_with_post_code: function(street, postcode, country, latitude, longitude)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Geocode post code";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT, 5.0";
         testRequirements = "MTMW-236: QML Geocoding";
 
@@ -144,33 +174,31 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Tools button | |
-        | Select Geocode menu item | |
-        | Select Clear button | |
-        | Fill in " + street + " in Street field | |
-        | Fill in " + postcode + " in Post Code field | |
-        | Fill in " + country + " in Country field | |
-        | Select Go! button | |
-        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Tools] button | |
+        | Select [Geocode] menu item | |
+        | Select [Clear] button | |
+        | Fill in [" + street + "] in Street field | |
+        | Fill in [" + postcode + "] in Post Code field | |
+        | Fill in [" + country + "] in Country field | |
+        | Select [Go!] button | |
+        | Wait for message appears on the screen | Verify that latitude is [" + latitude + "], longitude is [" + longitude + "]. |"
         ));
     },
 
     qml_reverse_geocode_data: {
-        australian_place:["-27.575", "153.088", "http://loc.desktop.maps.svc.ovi.com/geocoder/rgc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&long=153.088&lat=-27.575&lg=eng"],
-        russian_place:["56.3264", "44.0048", "http://loc.desktop.maps.svc.ovi.com/geocoder/rgc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&long=44.0048&lat=56.3264&lg=eng"],
-        uninhabited_place:["-27", "155", "http://loc.desktop.maps.svc.ovi.com/geocoder/rgc/2.0?referer=qtlocationapi&token=152022572f0e44e07489c35cd46fa246&long=155&lat=-27&lg=eng"]
+        australian_place:["-27.575", "153.088", "230 Padstow Rd"],
+        russian_place:["56.3264", "44.0048", "Minina i Pozharskogo ploshchad'"]
     },
 
-    qml_reverse_geocode: function(latitude, longitude, url)
+    qml_reverse_geocode: function(latitude, longitude, street)
     {
         // Test meta data
         testTitle = "QML: Maps and Navigation - Reverse geocode";
         testBinary = "qml_location_mapviewer";
         testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
         testGoal = "Verify that location can be geocoded.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT, 5.0";
         testRequirements = "MTMW-237:QML Reverse geocoding";
 
@@ -182,17 +210,51 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Open " + url + " url in a desktop browser | |
-        | Launch " + testBinary + " | App launches normally |
-        | Select Tools button | |
-        | Select Reverse Geocode | |
-        | Select Clear button | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! button | |
-        | Wait for message appears on the screen | Verify that result corresponds to the open web page with latitude and longitude rounded to 4 places |"
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Tools] button | |
+        | Select [Reverse] Geocode | |
+        | Select [Clear] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Wait for message appears on the screen | Verify that street is [" + street + "] |"
         ));
     },
+
+    qml_reverse_geocode_uninhabited_place_data: {
+        uninhabited_place:["-27", "155"]
+    },
+
+    qml_reverse_geocode_uninhabited_place: function(latitude, longitude)
+    {
+        // Test meta data
+        testTitle = "QML: Maps and Navigation - Reverse geocode";
+        testBinary = "qml_location_mapviewer";
+        testSource = "$QTDIR/qtlocation/examples/declarative/mapviewer"
+        testGoal = "Verify that location can be geocoded.";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
+        testGroups = "BAT, 5.0";
+        testRequirements = "MTMW-237:QML Reverse geocoding";
+
+        // Test steps
+        prompt(twiki("---+++ " + testTitle + "<br><br>
+        *Goal:* " + testGoal + "<br>
+        *Pre-Requisites:* " + testPreconditions + "<br>
+        *Tested Binary:* " + testBinary + "<br>
+        *Requirements:* " + testRequirements + "<br>
+
+        | *Step* | *Verification* |
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select [Tools] button | |
+        | Select [Reverse] Geocode | |
+        | Select [Clear] button | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] button | |
+        | Wait for message appears on the screen | Verify that location is not found. |"
+        ));
+    },
+
     qml_geocoding_and_locale_data: {
         english:["38", "24", "en", "English"],
         greek:["38", "24", "el", "Greek"]
@@ -205,7 +267,7 @@ testcase = {
         testBinary = "qml_location_places";
         testSource = "$QTDIR/qtlocation/examples/declarative/places"
         testGoal = "Verify that geocode information can be present in different languages.";
-        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed '--plugin.places.proxy http://172.16.9.165:8080/'";
+        testPreconditions = "Internet connection is required for this test case. Pass proxy settings to app if needed.";
         testGroups = "BAT,5.0";
         testRequirements = "MOBILITY-2861";
 
@@ -217,17 +279,17 @@ testcase = {
         *Requirements:* " + testRequirements + "<br>
 
         | *Step* | *Verification* |
-        | Launch " + testBinary + " | App launches normally |
-        | Select en button | |
-        | Select Other | |
-        | Fill in " + locale + " in Language field | |
-        | Select Go! | |
-        | Select Tools button | |
-        | Select Reverse geocode | |
-        | Fill in " + latitude + " in Latitude field | |
-        | Fill in " + longitude + " in Longitude field | |
-        | Select Go! | |
-        | Wait for success geocode message | Verify that address is in " + language + " |"
+        | Launch [" + testBinary + "] | App launches normally |
+        | Select Language  button | |
+        | Select [Other] | |
+        | Fill in [" + locale + "] in Language field | |
+        | Select [Go!] | |
+        | Select [Tools] button | |
+        | Select [Reverse] geocode | |
+        | Fill in [" + latitude + "] in Latitude field | |
+        | Fill in [" + longitude + "] in Longitude field | |
+        | Select [Go!] | |
+        | Wait for success geocode message | Verify that address is in [" + language + "] |"
         ));
     }
 
