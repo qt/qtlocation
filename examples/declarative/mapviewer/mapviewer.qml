@@ -583,7 +583,7 @@ Item {
                                        MapComponent{\
                                            z : backgroundRect.z + 1;\
                                            width: page.width;\
-                                           height: page.height;\
+                                           height: page.height - mainMenu.height;\
                                            onFollowmeChanged: {toolsMenu.update()}\
                                            onSupportedMapTypesChanged: {mapTypeMenu.update()}\
                                            onCoordinatesCaptured: {\

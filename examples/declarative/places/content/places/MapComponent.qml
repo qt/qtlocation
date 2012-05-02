@@ -44,7 +44,6 @@ import QtLocation.examples 5.0
 
 Map {
     id: map
-    anchors.fill: parent
     zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
     center: brisbaneCoordinate
 
