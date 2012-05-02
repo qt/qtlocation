@@ -81,8 +81,8 @@ private:
     bool insideArea;
     QGeoPositionInfoSource *location;
 
-    void connectNotify(const char *signal);
-    void disconnectNotify(const char *signal);
+    void connectNotify(const QMetaMethod &signal);
+    void disconnectNotify(const QMetaMethod &signal);
 
     void checkStartStop();
 };

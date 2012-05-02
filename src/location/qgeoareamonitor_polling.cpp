@@ -42,6 +42,8 @@
 #include "qgeoareamonitor_polling_p.h"
 #include "qgeocoordinate.h"
 
+#include <QtCore/qmetaobject.h>
+
 QT_BEGIN_NAMESPACE
 
 #define UPDATE_INTERVAL_5S  5000
@@ -77,17 +79,29 @@ void QGeoAreaMonitorPolling::setRadius(qreal radius)
     checkStartStop();
 }
 
-void QGeoAreaMonitorPolling::connectNotify(const char *signal)
+static QMetaMethod areaEnteredSignal()
 {
-    if (signal == SIGNAL(areaEntered(QGeoPositionInfo)) ||
-            signal == SIGNAL(areaExited(QGeoPositionInfo)))
+    static QMetaMethod signal = QMetaMethod::fromSignal(&QGeoAreaMonitorPolling::areaEntered);
+    return signal;
+}
+
+static QMetaMethod areaExitedSignal()
+{
+    static QMetaMethod signal = QMetaMethod::fromSignal(&QGeoAreaMonitorPolling::areaExited);
+    return signal;
+}
+
+void QGeoAreaMonitorPolling::connectNotify(const QMetaMethod &signal)
+{
+    if (signal == areaEnteredSignal() ||
+            signal == areaExitedSignal())
         checkStartStop();
 }
 
-void QGeoAreaMonitorPolling::disconnectNotify(const char *signal)
+void QGeoAreaMonitorPolling::disconnectNotify(const QMetaMethod &signal)
 {
-    if (signal == SIGNAL(areaEntered(QGeoPositionInfo)) ||
-            signal == SIGNAL(areaExited(QGeoPositionInfo)))
+    if (signal == areaEnteredSignal() ||
+            signal == areaExitedSignal())
         checkStartStop();
 }
 
@@ -95,8 +109,8 @@ void QGeoAreaMonitorPolling::checkStartStop()
 {
     if (!location) return;
 
-    if ((QObject::receivers(SIGNAL(areaEntered(QGeoPositionInfo))) > 0 ||
-            QObject::receivers(SIGNAL(areaExited(QGeoPositionInfo))) > 0) &&
+    if ((isSignalConnected(areaEnteredSignal()) ||
+            isSignalConnected(areaExitedSignal())) &&
             QGeoAreaMonitor::center().isValid() &&
             QGeoAreaMonitor::radius() > qreal(0.0)) {
         location->startUpdates();
