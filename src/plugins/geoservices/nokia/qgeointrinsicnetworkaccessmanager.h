@@ -54,12 +54,15 @@ class QGeoIntrinsicNetworkAccessManager : public QGeoNetworkAccessManager
 {
 public:
     explicit QGeoIntrinsicNetworkAccessManager(QObject *parent = 0);
-    void configure(const QMap<QString, QVariant> &parameters);
-    void setCustomProxyToken(const QString& token);
+    QGeoIntrinsicNetworkAccessManager(const QMap<QString, QVariant> &parameters, const QString &token = QString(), QObject *parent = 0);
+
     virtual QNetworkReply* get(const QNetworkRequest& request);
     virtual QNetworkReply *post(const QNetworkRequest &request, const QByteArray &data);
+
 private:
-    QString m_customProxyToken;
+    void configure(const QMap<QString, QVariant> &parameters);
+
+    const QString m_customProxyToken;
     QNetworkAccessManager* m_networkManager;
 };
 

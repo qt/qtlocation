@@ -85,8 +85,6 @@ public:
 
 private:
     void informOnceAboutUsageTermsIfNecessary(const QVariantMap &parameters) const;
-    static bool isValidParameter(const QString &param);
-    static bool tryGetNetworkAccessManager(QGeoNetworkAccessManager*&, const QVariantMap &parameters);
 
 private:
     mutable bool m_informedAboutUsageTerms;

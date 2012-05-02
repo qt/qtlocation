@@ -46,12 +46,21 @@
 #include <QNetworkProxy>
 #include <QNetworkAccessManager>
 
+QT_BEGIN_NAMESPACE
+
 QGeoIntrinsicNetworkAccessManager::QGeoIntrinsicNetworkAccessManager(QObject *parent)
 : QGeoNetworkAccessManager(parent)
 , m_networkManager(new QNetworkAccessManager(this))
 {
 }
 
+QGeoIntrinsicNetworkAccessManager::QGeoIntrinsicNetworkAccessManager(const QMap<QString, QVariant> &parameters, const QString &token, QObject *parent)
+: QGeoNetworkAccessManager(parent)
+, m_customProxyToken(token)
+, m_networkManager(new QNetworkAccessManager(this))
+{
+    configure(parameters);
+}
 
 void QGeoIntrinsicNetworkAccessManager::configure(const QMap<QString, QVariant> &parameters)
 {
@@ -80,12 +89,6 @@ void QGeoIntrinsicNetworkAccessManager::configure(const QMap<QString, QVariant> 
     }
 }
 
-
-void QGeoIntrinsicNetworkAccessManager::setCustomProxyToken(const QString& token)
-{
-    m_customProxyToken = token;
-}
-
 QNetworkReply* QGeoIntrinsicNetworkAccessManager::get(const QNetworkRequest& request)
 {
     return m_networkManager->get(request);
@@ -95,3 +98,4 @@ QNetworkReply *QGeoIntrinsicNetworkAccessManager::post(const QNetworkRequest &re
 {
     return m_networkManager->post(request, data);
 }
+QT_END_NAMESPACE
