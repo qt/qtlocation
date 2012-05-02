@@ -1,6 +1,6 @@
 TEMPLATE = app
 CONFIG += testcase
-TARGET = tst_routing
+TARGET = tst_nokia_routing
 
 QT += location testlib
 INCLUDEPATH += $$PWD/../../../../src/plugins/geoservices/nokia

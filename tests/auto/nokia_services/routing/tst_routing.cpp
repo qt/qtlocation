@@ -168,12 +168,12 @@ void MockGeoNetworkAccessManager::setReply(MockGeoNetworkReply* reply)
         m_reply->setParent(this);
 }
 
-class tst_routing : public QObject
+class tst_nokia_routing : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_routing();
+    tst_nokia_routing();
 
 private:
     void calculateRoute();
@@ -214,7 +214,7 @@ private:
     bool m_expectError;
 };
 
-tst_routing::tst_routing()
+tst_nokia_routing::tst_nokia_routing()
 : m_geoServiceProvider(0)
 , m_networkManager(0)
 , m_routingManager(0)
@@ -225,7 +225,7 @@ tst_routing::tst_routing()
 {
 }
 
-void tst_routing::loadReply(const QString& filename)
+void tst_nokia_routing::loadReply(const QString& filename)
 {
     QFile* file = new QFile(filename);
     if (!file->open(QIODevice::ReadOnly)) {
@@ -240,7 +240,7 @@ void tst_routing::loadReply(const QString& filename)
     m_networkManager->setReply(m_replyUnowned);
 }
 
-void tst_routing::calculateRoute()
+void tst_nokia_routing::calculateRoute()
 {
     QVERIFY2(m_replyUnowned, "No reply set");
     m_calculationDone = false;
@@ -250,7 +250,7 @@ void tst_routing::calculateRoute()
     QTRY_VERIFY_WITH_TIMEOUT(m_calculationDone, 100);
 }
 
-void tst_routing::onReply(QGeoRouteReply* reply)
+void tst_nokia_routing::onReply(QGeoRouteReply* reply)
 {
     QVERIFY(reply);
     //QVERIFY(0 == m_reply);
@@ -260,7 +260,7 @@ void tst_routing::onReply(QGeoRouteReply* reply)
     m_calculationDone = true;
 }
 
-void tst_routing::verifySaneRoute(const QGeoRoute& route)
+void tst_nokia_routing::verifySaneRoute(const QGeoRoute& route)
 {
     QVERIFY(route.distance() > 0);
     QVERIFY(route.travelTime() > 0);
@@ -312,12 +312,12 @@ void tst_routing::verifySaneRoute(const QGeoRoute& route)
     } while (!last);
 }
 
-void tst_routing::routingFinished(QGeoRouteReply* reply)
+void tst_nokia_routing::routingFinished(QGeoRouteReply* reply)
 {
     onReply(reply);
 }
 
-void tst_routing::routingError(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString)
+void tst_nokia_routing::routingError(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString)
 {
     Q_UNUSED(error);
 
@@ -328,7 +328,7 @@ void tst_routing::routingError(QGeoRouteReply* reply, QGeoRouteReply::Error erro
     }
 }
 
-void tst_routing::initTestCase()
+void tst_nokia_routing::initTestCase()
 {
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
     QVERIFY(providers.contains(QStringLiteral("nokia")));
@@ -355,7 +355,7 @@ void tst_routing::initTestCase()
     m_dummyRequest.setWaypoints(waypoints);
 }
 
-void tst_routing::cleanupTestCase()
+void tst_nokia_routing::cleanupTestCase()
 {
     delete m_geoServiceProvider;
 
@@ -366,7 +366,7 @@ void tst_routing::cleanupTestCase()
     m_routingManager = 0;
 }
 
-void tst_routing::cleanup()
+void tst_nokia_routing::cleanup()
 {
     delete m_reply;
     m_reply = 0;
@@ -374,7 +374,7 @@ void tst_routing::cleanup()
     m_expectError = false;
 }
 
-void tst_routing::can_compute_route_for_all_supported_travel_modes()
+void tst_nokia_routing::can_compute_route_for_all_supported_travel_modes()
 {
     QFETCH(int, travelMode);
     QFETCH(QString, file);
@@ -393,7 +393,7 @@ void tst_routing::can_compute_route_for_all_supported_travel_modes()
     verifySaneRoute(route);
 }
 
-void tst_routing::can_compute_route_for_all_supported_travel_modes_data()
+void tst_nokia_routing::can_compute_route_for_all_supported_travel_modes_data()
 {
     QTest::addColumn<int>("travelMode");
     QTest::addColumn<QString>("file");
@@ -405,7 +405,7 @@ void tst_routing::can_compute_route_for_all_supported_travel_modes_data()
     QTest::newRow("Public Transport") << (int)QGeoRouteRequest::PublicTransitTravel << QString("travelmode-public-transport.xml") << (qreal)1388.0 << 641;
 }
 
-void tst_routing::can_compute_route_for_all_supported_optimizations()
+void tst_nokia_routing::can_compute_route_for_all_supported_optimizations()
 {
     QFETCH(int, optimization);
     Q_UNUSED(optimization);
@@ -423,7 +423,7 @@ void tst_routing::can_compute_route_for_all_supported_optimizations()
     verifySaneRoute(route);
 }
 
-void tst_routing::can_compute_route_for_all_supported_optimizations_data()
+void tst_nokia_routing::can_compute_route_for_all_supported_optimizations_data()
 {
     QTest::addColumn<int>("optimization");
     QTest::addColumn<QString>("file");
@@ -437,7 +437,7 @@ void tst_routing::can_compute_route_for_all_supported_optimizations_data()
 }
 
 
-void tst_routing::can_handle_multiple_routes_in_response()
+void tst_nokia_routing::can_handle_multiple_routes_in_response()
 {
     loadReply(QStringLiteral("multiple-routes-in-response.xml"));
     calculateRoute();
@@ -448,7 +448,7 @@ void tst_routing::can_handle_multiple_routes_in_response()
     verifySaneRoute(routes[1]);
 }
 
-void tst_routing::can_handle_no_route_exists_case()
+void tst_nokia_routing::can_handle_no_route_exists_case()
 {
     loadReply(QStringLiteral("error-no-route.xml"));
     calculateRoute();
@@ -457,7 +457,7 @@ void tst_routing::can_handle_no_route_exists_case()
     QCOMPARE(0, routes.size());
 }
 
-void tst_routing::can_handle_additions_to_routing_xml()
+void tst_nokia_routing::can_handle_additions_to_routing_xml()
 {
     loadReply(QStringLiteral("littered-with-new-tags.xml"));
     calculateRoute();
@@ -466,7 +466,7 @@ void tst_routing::can_handle_additions_to_routing_xml()
     QVERIFY(routes.size() > 0);
 }
 
-void tst_routing::can_handle_invalid_server_responses()
+void tst_nokia_routing::can_handle_invalid_server_responses()
 {
     QFETCH(QString, file);
 
@@ -477,7 +477,7 @@ void tst_routing::can_handle_invalid_server_responses()
     QCOMPARE(QGeoRouteReply::ParseError, m_reply->error());
 }
 
-void tst_routing::can_handle_invalid_server_responses_data()
+void tst_nokia_routing::can_handle_invalid_server_responses_data()
 {
     QTest::addColumn<QString>("file");
 
@@ -486,7 +486,7 @@ void tst_routing::can_handle_invalid_server_responses_data()
     QTest::newRow("No <CalculateRoute> tag") << QString("invalid-response-no-calculateroute-tag.xml");
 }
 
-void tst_routing::foobar()
+void tst_nokia_routing::foobar()
 {
     QFETCH(int, code);
 
@@ -498,7 +498,7 @@ void tst_routing::foobar()
     QCOMPARE(QGeoRouteReply::CommunicationError, m_reply->error());
 }
 
-void tst_routing::foobar_data()
+void tst_nokia_routing::foobar_data()
 {
     QTest::addColumn<int>("code");
 
@@ -528,6 +528,6 @@ void tst_routing::foobar_data()
 }
 
 
-QTEST_APPLESS_MAIN(tst_routing)
+QTEST_APPLESS_MAIN(tst_nokia_routing)
 
 #include "tst_routing.moc"
