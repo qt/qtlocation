@@ -41,7 +41,6 @@
 
 #include "qdeclarativepinchgenerator_p.h"
 #include <QtWidgets/QApplication>
-#include <QtQuick/QSGEngine>
 
 QDeclarativePinchGenerator::QDeclarativePinchGenerator():
     target_(0),

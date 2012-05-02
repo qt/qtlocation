@@ -64,7 +64,6 @@
 #include <QtQml/qqmlinfo.h>
 #include <QModelIndex>
 #include <QtQuick/QQuickCanvas>
-#include <QtQuick/QSGEngine>
 #include <QtGui/QGuiApplication>
 
 QT_BEGIN_NAMESPACE
