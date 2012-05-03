@@ -90,8 +90,6 @@ void QDeclarativePlaceContentModel::setPlace(QDeclarativePlace *place)
 
         clearData();
 
-        endResetModel();
-
         if (m_contentCount != -1) {
             m_contentCount = -1;
             emit totalCountChanged();
@@ -100,7 +98,7 @@ void QDeclarativePlaceContentModel::setPlace(QDeclarativePlace *place)
         m_place = place;
         emit placeChanged();
 
-        reset();
+        endResetModel();
 
         fetchMore(QModelIndex());
     }

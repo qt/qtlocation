@@ -269,6 +269,7 @@ void QDeclarativeSearchModelBase::componentComplete()
 */
 void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvider *plugin)
 {
+    beginResetModel();
     if (plugin != m_plugin) {
         if (m_plugin)
             disconnect(m_plugin, SIGNAL(nameChanged(QString)), this, SLOT(pluginNameChanged()));
@@ -290,7 +291,7 @@ void QDeclarativeSearchModelBase::initializePlugin(QDeclarativeGeoServiceProvide
         }
     }
 
-    reset(); // reset the model
+    endResetModel();
 }
 
 /*!

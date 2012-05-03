@@ -367,7 +367,8 @@ void QDeclarativeSupportedCategoriesModel::addedCategory(const QPlaceCategory &c
 
     //this is a workaround to deal with the fact that the hasModelChildren field of VisualDataodel
     //does not get updated when a child is added to a model
-    reset();
+    beginResetModel();
+    endResetModel();
 }
 
 /*!
@@ -431,7 +432,8 @@ void QDeclarativeSupportedCategoriesModel::updatedCategory(const QPlaceCategory 
 
         //this is a workaround to deal with the fact that the hasModelChildren field of VisualDataodel
         //does not get updated when an index is updated to contain children
-        reset();
+        beginResetModel();
+        endResetModel();
     }
 }
 
