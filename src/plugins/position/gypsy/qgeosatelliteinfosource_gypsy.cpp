@@ -232,7 +232,7 @@ int QGeoSatelliteInfoSourceGypsy::init()
     }
     device_name = m_engine->eng_gconf_client_get_string(client, "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice", NULL);
     g_object_unref(client);
-    QString deviceName(QString::fromAscii(device_name));
+    QString deviceName(QString::fromLatin1(device_name));
     if (deviceName.isEmpty() ||
             (deviceName.trimmed().at(0) == '/' && !QFile::exists(deviceName.trimmed()))) {
         qWarning ("QGeoSatelliteInfoSourceGypsy Empty/nonexistent GPS device name detected.");

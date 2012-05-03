@@ -69,8 +69,8 @@ static bool isValidParameter(const QString &param)
         return false;
 
     foreach (QChar c, param) {
-        if (!c.isLetterOrNumber() && c.toAscii() != '%' && c.toAscii() != '-' &&
-            c.toAscii() != '+' && c.toAscii() != '_') {
+        if (!c.isLetterOrNumber() && c.toLatin1() != '%' && c.toLatin1() != '-' &&
+            c.toLatin1() != '+' && c.toLatin1() != '_') {
             return false;
         }
     }

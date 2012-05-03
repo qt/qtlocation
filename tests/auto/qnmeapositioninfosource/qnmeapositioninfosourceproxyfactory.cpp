@@ -66,7 +66,7 @@ QGeoPositionInfoSource *QNmeaPositionInfoSourceProxy::source() const
 
 void QNmeaPositionInfoSourceProxy::feedUpdate(const QDateTime &dt)
 {
-    m_outDevice->write(QLocationTestUtils::createRmcSentence(dt).toAscii());
+    m_outDevice->write(QLocationTestUtils::createRmcSentence(dt).toLatin1());
 }
 
 void QNmeaPositionInfoSourceProxy::feedBytes(const QByteArray &bytes)

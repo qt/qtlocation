@@ -160,8 +160,8 @@ void DBusComm::receiveSettings(QGeoPositionInfoSource::PositioningMethod methods
 bool DBusComm::sendDBusRegister()
 {
     QDBusMessage reply = positioningdProxy->call("registerListener",
-                                                 myService.toAscii().constData(),
-                                                 myPath.toAscii().constData());
+                                                 myService.toLatin1().constData(),
+                                                 myPath.toLatin1().constData());
     if (reply.type() == QDBusMessage::ReplyMessage) {
         QList<QVariant> values = reply.arguments();
         clientId = values.takeFirst().toInt();
@@ -170,8 +170,8 @@ bool DBusComm::sendDBusRegister()
         minimumUpdateInterval = values.takeFirst().toUInt();
     } else {
         cerr << endl << "DBus error:\n";
-        cerr << reply.errorName().toAscii().constData() << endl;
-        cerr << reply.errorMessage().toAscii().constData() << endl;
+        cerr << reply.errorName().toLatin1().constData() << endl;
+        cerr << reply.errorMessage().toLatin1().constData() << endl;
         return false;
     }
 
@@ -204,8 +204,8 @@ bool DBusComm::sendConfigRequest(Command command, QGeoPositionInfoSource::Positi
         int n = reply.value();
     } else {
         cerr << endl << "DBus error:\n";
-        cerr << reply.error().name().toAscii().constData() << endl;
-        cerr << reply.error().message().toAscii().constData() << endl;
+        cerr << reply.error().name().toLatin1().constData() << endl;
+        cerr << reply.error().message().toLatin1().constData() << endl;
         return false;
     }
 
@@ -226,8 +226,8 @@ QGeoPositionInfo& DBusComm::requestLastKnownPosition(bool satelliteMethodOnly)
         stream >> update;
     } else {
         cerr << endl << "DBus error:\n";
-        cerr << reply.error().name().toAscii().constData() << endl;
-        cerr << reply.error().message().toAscii().constData() << endl;
+        cerr << reply.error().name().toLatin1().constData() << endl;
+        cerr << reply.error().message().toLatin1().constData() << endl;
         update = QGeoPositionInfo();
     }
 

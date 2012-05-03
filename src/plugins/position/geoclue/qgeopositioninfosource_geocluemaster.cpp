@@ -236,7 +236,7 @@ bool QGeoPositionInfoSourceGeoclueMaster::tryGPS()
     gchar* device_name;
     client = gconf_client_get_default();
     device_name = gconf_client_get_string(client, "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice", NULL);
-    QString deviceName(QString::fromAscii(device_name));
+    QString deviceName(QString::fromLatin1(device_name));
     g_object_unref(client);
     g_free(device_name);
 

@@ -607,7 +607,7 @@ void QPlaceJSonDetailsParser::processPremiumContent(const QJSValue &content, QPl
     if (!value.isUndefined() && !value.toString().isEmpty()) {
         QPlaceIcon icon;
         QVariantMap iconParams;
-        iconParams.insert(QPlaceIcon::SingleUrl, QUrl::fromEncoded(value.toString().toAscii()));
+        iconParams.insert(QPlaceIcon::SingleUrl, QUrl::fromEncoded(value.toString().toLatin1()));
         icon.setParameters(iconParams);
         //note: the icon manager is set in QPlaceJSonDetailsParser::buildPlace()
         supplier.setIcon(icon);

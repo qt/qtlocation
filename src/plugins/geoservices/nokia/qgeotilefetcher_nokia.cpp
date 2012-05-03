@@ -137,7 +137,7 @@ QGeoTiledMapReply* QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
 
 QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
 {
-    const char subdomain = m_maxSubdomains ? m_firstSubdomain.toAscii() +
+    const char subdomain = m_maxSubdomains ? m_firstSubdomain.toLatin1() +
                                              qrand() % m_maxSubdomains : 0;
     static const QString http("http://");
     static const QString path("/maptiler/v2/maptile/newest/");
@@ -258,7 +258,7 @@ void QGeoTileFetcherNokia::setHost(const QString &host)
     if (host.length() > 4 && host.at(1) == QChar('-') && host.at(3) == QChar('.')) {
         QString realHost = host.right(host.length() - 4);
         m_firstSubdomain = host.at(0);
-        m_maxSubdomains = host.at(2).toAscii() - host.at(0).toAscii() + 1;
+        m_maxSubdomains = host.at(2).toLatin1() - host.at(0).toLatin1() + 1;
         m_host = realHost;
     } else {
         m_host = host;

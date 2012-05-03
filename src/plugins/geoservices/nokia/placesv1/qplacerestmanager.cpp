@@ -209,7 +209,7 @@ QPlaceRestReply *QPlaceRestManager::postRatingRequest(const QString &placeId, co
 #if defined(QT_PLACES_LOGGING)
     qDebug() << "QRestDataProvider::sendGeneralRequest: " + url;
 #endif
-    QByteArray data = "{ratings:{rating:[{value:" + QString::number(value).toAscii() + ",type:OVERALL}]}}";
+    QByteArray data = "{ratings:{rating:[{value:" + QString::number(value).toLatin1() + ",type:OVERALL}]}}";
     return new QPlaceRestReply(mManager->post(request, data));
 }
 

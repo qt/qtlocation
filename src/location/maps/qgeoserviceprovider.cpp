@@ -182,7 +182,7 @@ Flags QGeoServiceProviderPrivate::features(const char *enumName)
             && this->metaData.value(QStringLiteral("Features")).isArray()) {
         QJsonArray features = this->metaData.value(QStringLiteral("Features")).toArray();
         foreach (QJsonValue v, features) {
-            int val = en.keyToValue(v.toString().toAscii().constData());
+            int val = en.keyToValue(v.toString().toLatin1().constData());
             if (v.isString() && val != -1) {
                 ret |= typename Flags::enum_type(val);
             }

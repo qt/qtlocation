@@ -158,7 +158,7 @@ QPlaceReview QPlaceJSonReviewParser::buildReview(const QJSValue &review, QPlaceM
     if (!value.isUndefined() && !value.toString().isEmpty()) {
         QPlaceIcon icon;
         QVariantMap iconParams;
-        iconParams.insert(QPlaceIcon::SingleUrl, QUrl::fromEncoded(value.toString().toAscii()));
+        iconParams.insert(QPlaceIcon::SingleUrl, QUrl::fromEncoded(value.toString().toLatin1()));
         icon.setParameters(iconParams);
         icon.setManager(manager);
         supplier.setIcon(icon);

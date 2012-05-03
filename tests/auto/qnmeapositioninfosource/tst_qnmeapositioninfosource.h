@@ -152,7 +152,7 @@ public:
 public slots:
     void timeout()
     {
-        m_proxy->feedBytes(QLocationTestUtils::createRmcSentence(QDateTime::currentDateTime()).toAscii());
+        m_proxy->feedBytes(QLocationTestUtils::createRmcSentence(QDateTime::currentDateTime()).toLatin1());
     }
 
 private:
