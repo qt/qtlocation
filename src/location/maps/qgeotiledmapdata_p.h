@@ -62,10 +62,12 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoTileSpec;
+class QGeoTileTexture;
 class QGeoTileCache;
 class QGeoTiledMapDataPrivate;
 class QGeoTiledMappingManagerEngine;
 class MapItem;
+class QGeoTileRequestManager;
 
 class QPointF;
 
@@ -80,14 +82,14 @@ public:
 
     void paintGL(QGLPainter *painter);
 
-    void tileFetched(const QGeoTileSpec &spec);
-    void tileError(const QGeoTileSpec &spec, const QString &errorString);
+    void newTileFetched(QSharedPointer<QGeoTileTexture> texture);
 
     QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const;
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
 
-    void updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded, const QSet<QGeoTileSpec> &tilesRemoved);
-
+    // Alternative to exposing this is to make tileFetched a slot, but then requestManager would
+    // need to be a QObject
+    QGeoTileRequestManager *getRequestManager();
 protected:
     void mapResized(int width, int height);
     void changeCameraData(const QGeoCameraData &oldCameraData);

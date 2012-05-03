@@ -76,7 +76,7 @@ public:
 
     QThread *thread_;
     QSize tileSize_;
-    QHash<QGeoTileCache*, QSet<QGeoTiledMapData*> > caches_;
+    QSet<QGeoTiledMapData*> tileMaps_;
     QHash<QGeoTiledMapData*, QSet<QGeoTileSpec> > mapHash_;
     QHash<QGeoTileSpec, QSet<QGeoTiledMapData*> > tileHash_;
     QGeoTiledMappingManagerEngine::CacheAreas cacheHint_;

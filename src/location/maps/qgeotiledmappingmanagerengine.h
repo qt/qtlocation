@@ -63,6 +63,7 @@ QT_BEGIN_NAMESPACE
 class QGeoTiledMappingManagerEnginePrivate;
 class QGeoMapRequestOptions;
 class QGeoTileFetcher;
+class QGeoTileTexture;
 
 class QGeoTileSpec;
 class QGeoTiledMapData;
@@ -96,7 +97,9 @@ public:
                             const QSet<QGeoTileSpec> &tilesAdded,
                             const QSet<QGeoTileSpec> &tilesRemoved);
 
-    QGeoTileCache *tileCache();
+    QGeoTileCache *tileCache(); // TODO: check this is still used
+    QSharedPointer<QGeoTileTexture> getTileTexture(const QGeoTileSpec &spec);
+
 
     QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
 

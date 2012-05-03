@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAPGEOMETRY_P_H
-#define QGEOMAPGEOMETRY_P_H
+#ifndef QGEOTILEREQUESTMANAGER_P_H
+#define QGEOTILEREQUESTMANAGER_P_H
 
 //
 //  W A R N I N G
@@ -52,65 +52,37 @@
 // We mean it.
 //
 
-#include <QObject>
 #include <QSet>
+#include <QList>
 #include <QSharedPointer>
-#include <QSize>
-#include <QtLocation/qlocationglobal.h>
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoCameraData;
+class QGeoTiledMapData;
+class QGeoTiledMappingManagerEngine;
 class QGeoTileSpec;
-
-class QDoubleVector2D;
-
-class QGLSceneNode;
-class QGLCamera;
-class QGLPainter;
-class QGLTexture2D;
+class QGeoTileCache;
 class QGeoTileTexture;
 
-class QPointF;
+class QGeoTileRequestManagerPrivate;
 
-class QGeoMapGeometryPrivate;
-
-class Q_LOCATION_EXPORT QGeoMapGeometry : public QObject
+class QGeoTileRequestManager
 {
-    Q_OBJECT
 public:
-    QGeoMapGeometry();
-    virtual ~QGeoMapGeometry();
+    QGeoTileRequestManager(QGeoTiledMapData *map);
+    ~QGeoTileRequestManager();
 
-    void setScreenSize(const QSize &size);
-    void setTileSize(int tileSize);
-    void setCameraData(const QGeoCameraData &cameraData_);
+    QList<QSharedPointer<QGeoTileTexture> > requestTiles(const QSet<QGeoTileSpec> &tiles);
 
-    void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
-
-    void setUseVerticalLock(bool lock);
-
-    void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
-
-    QDoubleVector2D screenPositionToMercator(const QPointF &pos) const;
-    QPointF mercatorToScreenPosition(const QDoubleVector2D &mercator) const;
-
-    QGLCamera *camera() const;
-    QGLSceneNode *sceneNode() const;
-    void paintGL(QGLPainter *painter);
-
-    bool verticalLock() const;
-
-Q_SIGNALS:
-    void newTilesVisible(const QSet<QGeoTileSpec> &newTiles);
-
+    void tileError(const QGeoTileSpec &tile, const QString &errorString);
+    void tileFetched(QSharedPointer<QGeoTileTexture> texture);
 private:
-    QGeoMapGeometryPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMapGeometry)
-    Q_DISABLE_COPY(QGeoMapGeometry)
+    QGeoTileRequestManagerPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoTileRequestManager)
+    Q_DISABLE_COPY(QGeoTileRequestManager)
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPGEOMETRY_P_H
+#endif // QGEOTILEREQUESTMANAGER_P_H

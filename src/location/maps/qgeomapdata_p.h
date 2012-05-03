@@ -105,10 +105,10 @@ public:
 
     QString pluginString();
     QGeoCameraCapabilities cameraCapabilities();
+    QGeoMappingManagerEngine *engine();
 
 protected:
     void setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator);
-    QGeoMappingManagerEngine *engine();
 
     virtual void mapResized(int width, int height) = 0;
     virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0;

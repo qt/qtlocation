@@ -51,8 +51,8 @@
 #include "qdoublevector3d_p.h"
 
 #include "qgeocameratiles_p.h"
-#include "qgeomapimages_p.h"
-#include "qgeomapgeometry_p.h"
+#include "qgeotilerequestmanager_p.h"
+#include "qgeomapscene_p.h"
 
 #include "qgeomappingmanager.h"
 

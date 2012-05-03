@@ -76,8 +76,8 @@ class QGeoMapController;
 class QGeoProjection;
 
 class QGeoCameraTiles;
-class QGeoMapImages;
-class QGeoMapGeometry;
+class QGeoTileRequestManager;
+class QGeoMapScene;
 class QGeoTiledMapData;
 class QGeoTiledMappingManagerEngine;
 class QGLPainter;
@@ -101,8 +101,7 @@ public:
     QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
 
-    void tileFetched(const QGeoTileSpec &spec);
-    void tileError(const QGeoTileSpec &spec, const QString &errorString);
+    void newTileFetched(QSharedPointer<QGeoTileTexture> texture);
     QSet<QGeoTileSpec> visibleTiles();
 
     QGeoTiledMappingManagerEngine *engine() const;
@@ -115,10 +114,10 @@ private:
     QSet<QGeoTileSpec> visibleTiles_;
 
     QGeoCameraTiles *cameraTiles_;
-    QGeoMapGeometry *mapGeometry_;
-    QGeoMapImages *mapImages_;
-
+    QGeoMapScene *mapScene_;
     Q_DISABLE_COPY(QGeoTiledMapDataPrivate)
+public:
+    QGeoTileRequestManager *tileRequests_;
 };
 
 QT_END_NAMESPACE

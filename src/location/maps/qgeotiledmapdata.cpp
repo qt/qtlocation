@@ -47,8 +47,8 @@
 #include "qgeoprojection_p.h"
 
 #include "qgeocameratiles_p.h"
-#include "qgeomapimages_p.h"
-#include "qgeomapgeometry_p.h"
+#include "qgeotilerequestmanager_p.h"
+#include "qgeomapscene_p.h"
 #include "qgeocoordinateinterpolator_p.h"
 #include "qgeoprojection_p.h"
 #include "qdoublevector2d_p.h"
@@ -143,17 +143,16 @@ QGeoTiledMapData::~QGeoTiledMapData()
     d_ptr->engine()->deregisterMap(this);
     delete d_ptr;
 }
-
-void QGeoTiledMapData::tileFetched(const QGeoTileSpec &spec)
+QGeoTileRequestManager *QGeoTiledMapData::getRequestManager()
 {
     Q_D(QGeoTiledMapData);
-    d->tileFetched(spec);
+    return d->tileRequests_;
 }
 
-void QGeoTiledMapData::tileError(const QGeoTileSpec &spec, const QString &errorString)
+void QGeoTiledMapData::newTileFetched(QSharedPointer<QGeoTileTexture> texture)
 {
     Q_D(QGeoTiledMapData);
-    d->tileError(spec, errorString);
+    d->newTileFetched(texture);
 }
 
 QGeoTileCache* QGeoTiledMapData::tileCache()
@@ -222,26 +221,21 @@ QPointF QGeoTiledMapData::coordinateToScreenPosition(const QGeoCoordinate &coord
     return pos;
 }
 
-void QGeoTiledMapData::updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded, const QSet<QGeoTileSpec> &tilesRemoved)
-{
-    static_cast<QGeoTiledMappingManagerEngine*>(engine())->updateTileRequests(this, tilesAdded, tilesRemoved);
-}
-
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoTiledMappingManagerEngine *engine)
     : map_(parent),
       cache_(engine->tileCache()),
       engine_(engine),
       cameraTiles_(new QGeoCameraTiles()),
-      mapGeometry_(new QGeoMapGeometry()),
-      mapImages_(new QGeoMapImages(parent, engine->tileCache()))
+      mapScene_(new QGeoMapScene()),
+      tileRequests_(new QGeoTileRequestManager(parent))
 {
     cameraTiles_->setMaximumZoomLevel(static_cast<int>(ceil(engine->cameraCapabilities().maximumZoomLevel())));
     cameraTiles_->setTileSize(engine->tileSize().width());
     cameraTiles_->setPluginString(map_->pluginString());
 
-    mapGeometry_->setTileSize(engine->tileSize().width());
+    mapScene_->setTileSize(engine->tileSize().width());
 
-    QObject::connect(mapGeometry_,
+    QObject::connect(mapScene_,
                      SIGNAL(newTilesVisible(const QSet<QGeoTileSpec>&)),
                      map_,
                      SLOT(evaluateCopyrights(const QSet<QGeoTileSpec>)));
@@ -251,8 +245,8 @@ QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
 {
     // controller_ is a child of map_, don't need to delete it here
 
-    delete mapImages_;
-    delete mapGeometry_;
+    delete tileRequests_;
+    delete mapScene_;
     delete cameraTiles_;
 
     // TODO map items are not deallocated!
@@ -273,7 +267,7 @@ void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraDa
 {
     double lat = oldCameraData.center().latitude();
 
-    if (mapGeometry_->verticalLock()) {
+    if (mapScene_->verticalLock()) {
         QGeoCoordinate coord = map_->cameraData().center();
         coord.setLatitude(lat);
         map_->cameraData().setCenter(coord);
@@ -296,17 +290,15 @@ void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraDa
     cameraTiles_->setCamera(cam);
     visibleTiles_ = cameraTiles_->tiles();
 
-    mapGeometry_->setCameraData(cam);
-    mapGeometry_->setVisibleTiles(visibleTiles_);
+    mapScene_->setCameraData(cam);
+    mapScene_->setVisibleTiles(visibleTiles_);
 
-    if (mapImages_) {
-        mapImages_->setVisibleTiles(visibleTiles_);
-
+    if (tileRequests_) {
         QList<QSharedPointer<QGeoTileTexture> > cachedTiles =
-                mapImages_->cachedTiles();
+                tileRequests_->requestTiles(visibleTiles_);
 
         foreach (QSharedPointer<QGeoTileTexture> tex, cachedTiles) {
-            mapGeometry_->addTile(tex->spec, tex);
+            mapScene_->addTile(tex->spec, tex);
         }
 
         if (!cachedTiles.isEmpty())
@@ -325,8 +317,8 @@ void QGeoTiledMapDataPrivate::resized(int width, int height)
 {
     if (cameraTiles_)
         cameraTiles_->setScreenSize(QSize(width, height));
-    if (mapGeometry_)
-        mapGeometry_->setScreenSize(QSize(width, height));
+    if (mapScene_)
+        mapScene_->setScreenSize(QSize(width, height));
     if (map_)
         map_->setCameraData(map_->cameraData());
 
@@ -345,19 +337,10 @@ void QGeoTiledMapDataPrivate::resized(int width, int height)
     }
 }
 
-void QGeoTiledMapDataPrivate::tileFetched(const QGeoTileSpec &spec)
+void QGeoTiledMapDataPrivate::newTileFetched(QSharedPointer<QGeoTileTexture> texture)
 {
-    QSharedPointer<QGeoTileTexture> tex = cache_->get(spec);
-    if (tex) {
-        mapGeometry_->addTile(spec, tex);
-    }
-    mapImages_->tileFetched(spec);
+    mapScene_->addTile(texture->spec, texture);
     map_->update();
-}
-
-void QGeoTiledMapDataPrivate::tileError(const QGeoTileSpec &spec, const QString &errorString)
-{
-    mapImages_->tileError(spec, errorString);
 }
 
 QSet<QGeoTileSpec> QGeoTiledMapDataPrivate::visibleTiles()
@@ -367,18 +350,18 @@ QSet<QGeoTileSpec> QGeoTiledMapDataPrivate::visibleTiles()
 
 void QGeoTiledMapDataPrivate::paintGL(QGLPainter *painter)
 {
-    mapGeometry_->paintGL(painter);
+    mapScene_->paintGL(painter);
     cache_->GLContextAvailable();
 }
 
 QGeoCoordinate QGeoTiledMapDataPrivate::screenPositionToCoordinate(const QPointF &pos) const
 {
-    return QGeoProjection::mercatorToCoord(mapGeometry_->screenPositionToMercator(pos));
+    return QGeoProjection::mercatorToCoord(mapScene_->screenPositionToMercator(pos));
 }
 
 QPointF QGeoTiledMapDataPrivate::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 {
-    return mapGeometry_->mercatorToScreenPosition(QGeoProjection::coordToMercator(coordinate));
+    return mapScene_->mercatorToScreenPosition(QGeoProjection::coordToMercator(coordinate));
 }
 
 QT_END_NAMESPACE

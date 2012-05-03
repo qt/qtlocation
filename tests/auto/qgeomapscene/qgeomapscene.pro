@@ -1,8 +1,8 @@
 CONFIG += testcase
-TARGET = tst_qgeomapgeometry
+TARGET = tst_qgeomapscene
 
 INCLUDEPATH += ../../../src/location/maps
 
-SOURCES += tst_qgeomapgeometry.cpp
+SOURCES += tst_qgeomapscene.cpp
 
 QT += location testlib

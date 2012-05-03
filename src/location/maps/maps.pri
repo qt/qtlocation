@@ -36,8 +36,8 @@ PRIVATE_HEADERS += \
                     maps/qgeocoordinateinterpolator_p.h \
                     maps/qgeomaneuver_p.h \
                     maps/qgeomapcontroller_p.h \
-                    maps/qgeomapgeometry_p.h \
-                    maps/qgeomapimages_p.h \
+                    maps/qgeomapscene_p.h \
+                    maps/qgeotilerequestmanager_p.h \
                     maps/qgeomap_p.h \
                     maps/qgeomapdata_p.h \
                     maps/qgeomapdata_p_p.h \
@@ -73,8 +73,8 @@ SOURCES += \
             maps/qgeocoordinateinterpolator.cpp \
             maps/qgeomaneuver.cpp \
             maps/qgeomapcontroller.cpp \
-            maps/qgeomapgeometry.cpp \
-            maps/qgeomapimages.cpp \
+            maps/qgeomapscene.cpp \
+            maps/qgeotilerequestmanager.cpp \
             maps/qgeomap.cpp \
             maps/qgeomapdata.cpp \
             maps/qgeotiledmapdata.cpp \
@@ -95,4 +95,5 @@ SOURCES += \
             maps/qgeotilecache.cpp \
             maps/qgeotiledmapreply.cpp \
             maps/qgeotilespec.cpp
+
 

@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeomapimages_p.h"
+#include "qgeotilerequestmanager_p.h"
 
 #include <QSharedPointer>
 #include "qgeotilespec.h"
@@ -50,67 +50,64 @@ QT_BEGIN_NAMESPACE
 
 class RetryFuture;
 
-class QGeoMapImagesPrivate
+class QGeoTileRequestManagerPrivate
 {
 public:
-    QGeoMapImagesPrivate(QGeoTiledMapData *map, QGeoTileCache *cache);
-    ~QGeoMapImagesPrivate();
+    QGeoTileRequestManagerPrivate(QGeoTiledMapData *map);
+    ~QGeoTileRequestManagerPrivate();
 
     QGeoTiledMapData *map_;
     QGeoTileCache *cache_;
 
-    void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
-    void tileFetched(const QGeoTileSpec &tile);
+    QList<QSharedPointer<QGeoTileTexture> > requestTiles(const QSet<QGeoTileSpec> &tiles);
     void tileError(const QGeoTileSpec &tile, const QString &errorString);
 
     QHash<QGeoTileSpec, int> retries_;
     QHash<QGeoTileSpec, QSharedPointer<RetryFuture> > futures_;
     QSet<QGeoTileSpec> visible_;
-    QList<QSharedPointer<QGeoTileTexture> > cachedTex_;
     QSet<QGeoTileSpec> requested_;
+
+    void tileFetched(QSharedPointer<QGeoTileTexture> texture);
 };
 
-QGeoMapImages::QGeoMapImages(QGeoTiledMapData *map, QGeoTileCache *cache)
-    : d_ptr(new QGeoMapImagesPrivate(map, cache)) {}
+QGeoTileRequestManager::QGeoTileRequestManager(QGeoTiledMapData *map)
+    : d_ptr(new QGeoTileRequestManagerPrivate(map))
+{
+}
 
-QGeoMapImages::~QGeoMapImages()
+QGeoTileRequestManager::~QGeoTileRequestManager()
 {
     delete d_ptr;
 }
 
-void QGeoMapImages::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
+QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManager::requestTiles(const QSet<QGeoTileSpec> &tiles)
 {
-    Q_D(QGeoMapImages);
-    d->setVisibleTiles(tiles);
+    Q_D(QGeoTileRequestManager);
+    return d->requestTiles(tiles);
 }
 
-void QGeoMapImages::tileError(const QGeoTileSpec &tile, const QString &errorString)
+void QGeoTileRequestManager::tileFetched(QSharedPointer<QGeoTileTexture> texture)
 {
-    Q_D(QGeoMapImages);
+    Q_D(QGeoTileRequestManager);
+    d->tileFetched(texture);
+}
+
+void QGeoTileRequestManager::tileError(const QGeoTileSpec &tile, const QString &errorString)
+{
+    Q_D(QGeoTileRequestManager);
     d->tileError(tile, errorString);
 }
 
-QList<QSharedPointer<QGeoTileTexture> > QGeoMapImages::cachedTiles() const
-{
-    Q_D(const QGeoMapImages);
-    return d->cachedTex_;
-}
-
-void QGeoMapImages::tileFetched(const QGeoTileSpec &tile)
-{
-    Q_D(QGeoMapImages);
-    d->tileFetched(tile);
-}
-
-QGeoMapImagesPrivate::QGeoMapImagesPrivate(QGeoTiledMapData *map, QGeoTileCache *cache)
-    : map_(map),
-      cache_(cache) {}
-
-QGeoMapImagesPrivate::~QGeoMapImagesPrivate()
+QGeoTileRequestManagerPrivate::QGeoTileRequestManagerPrivate(QGeoTiledMapData *map)
+    : map_(map)
 {
 }
 
-void QGeoMapImagesPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
+QGeoTileRequestManagerPrivate::~QGeoTileRequestManagerPrivate()
+{
+}
+
+QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPrivate::requestTiles(const QSet<QGeoTileSpec> &tiles)
 {
     QSet<QGeoTileSpec> cancelTiles = requested_ - tiles;
     QSet<QGeoTileSpec> requestTiles = tiles - visible_ - requested_;
@@ -118,17 +115,20 @@ void QGeoMapImagesPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
 
     typedef QSet<QGeoTileSpec>::const_iterator iter;
 
-    cachedTex_.clear();
+    QList<QSharedPointer<QGeoTileTexture> > cachedTex;
+
+    QGeoTiledMappingManagerEngine *engine = map_ ?
+                static_cast<QGeoTiledMappingManagerEngine*>(map_->engine()) : 0;
 
     // remove tiles in cache from request tiles
-    if (cache_) {
+    if (engine){
         iter i = requestTiles.constBegin();
         iter end = requestTiles.constEnd();
         for (; i != end; ++i) {
             QGeoTileSpec tile = *i;
-            QSharedPointer<QGeoTileTexture> tex = cache_->get(tile);
+            QSharedPointer<QGeoTileTexture> tex = engine->getTileTexture(tile);
             if (tex) {
-                cachedTex_ << tex;
+                cachedTex << tex;
                 cached.insert(tile);
             }
         }
@@ -142,8 +142,8 @@ void QGeoMapImagesPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
     requested_ += requestTiles;
 
     if (!requestTiles.isEmpty() || !cancelTiles.isEmpty()) {
-        if (map_) {
-            map_->updateTileRequests(requestTiles, cancelTiles);
+        if (engine) {
+            engine->updateTileRequests(map_, requestTiles, cancelTiles);
 
             // Remove any cancelled tiles from the error retry hash to avoid
             // re-using the numbers for a totally different request cycle.
@@ -155,6 +155,16 @@ void QGeoMapImagesPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
             }
         }
     }
+
+    return cachedTex;
+}
+
+void QGeoTileRequestManagerPrivate::tileFetched(QSharedPointer<QGeoTileTexture> texture)
+{
+    map_->newTileFetched(texture);
+    requested_.remove(texture->spec);
+    retries_.remove(texture->spec);
+    futures_.remove(texture->spec);
 }
 
 // Represents a tile that needs to be retried after a certain period of time
@@ -182,17 +192,21 @@ void RetryFuture::retry()
     QSet<QGeoTileSpec> cancelTiles;
     requestTiles.insert(tile_);
     if (map_)
-        map_->updateTileRequests(requestTiles, cancelTiles);
+    {
+        QGeoTiledMappingManagerEngine *engine =
+                static_cast<QGeoTiledMappingManagerEngine*>(map_->engine());
+        engine->updateTileRequests(map_, requestTiles, cancelTiles);
+    }
 }
 
-void QGeoMapImagesPrivate::tileError(const QGeoTileSpec &tile, const QString &errorString)
+void QGeoTileRequestManagerPrivate::tileError(const QGeoTileSpec &tile, const QString &errorString)
 {
     if (requested_.contains(tile)) {
         int count = retries_.value(tile, 0);
         retries_.insert(tile, count + 1);
 
         if (count >= 5) {
-            qWarning("QGeoMapImages: Failed to fetch tile (%d,%d,%d) 5 times, giving up. "
+            qWarning("QGeoTileRequestManager: Failed to fetch tile (%d,%d,%d) 5 times, giving up. "
                      "Last error message was: '%s'",
                      tile.x(), tile.y(), tile.zoom(), qPrintable(errorString));
             requested_.remove(tile);
@@ -213,13 +227,6 @@ void QGeoMapImagesPrivate::tileError(const QGeoTileSpec &tile, const QString &er
     }
 }
 
-void QGeoMapImagesPrivate::tileFetched(const QGeoTileSpec &tile)
-{
-    requested_.remove(tile);
-    retries_.remove(tile);
-    futures_.remove(tile);
-}
-
-#include "qgeomapimages.moc"
+#include "qgeotilerequestmanager.moc"
 
 QT_END_NAMESPACE

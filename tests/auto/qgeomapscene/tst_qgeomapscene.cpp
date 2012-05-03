@@ -42,7 +42,7 @@
 //TESTED_COMPONENT=src/location/maps
 
 #include "qgeotilespec.h"
-#include "qgeomapgeometry_p.h"
+#include "qgeomapscene_p.h"
 #include "qgeocameratiles_p.h"
 #include "qgeocameradata_p.h"
 #include "qgeoprojection_p.h"
@@ -62,7 +62,7 @@
 
 QT_USE_NAMESPACE
 
-class tst_QGeoMapGeometry : public QObject
+class tst_QGeoMapScene : public QObject
 {
     Q_OBJECT
 
@@ -301,24 +301,24 @@ class tst_QGeoMapGeometry : public QObject
             ct.setCamera(camera);
             ct.setScreenSize(QSize(16,16));
 
-            QGeoMapGeometry mapGeometry;
-            mapGeometry.setTileSize(16);
-            mapGeometry.setScreenSize(QSize(16,16*32));
-            mapGeometry.setCameraData(camera);
-            QVERIFY(!mapGeometry.verticalLock());
-            mapGeometry.setUseVerticalLock(true);
-            mapGeometry.setVisibleTiles(ct.tiles());
-            QVERIFY(mapGeometry.verticalLock());
+            QGeoMapScene mapScene;
+            mapScene.setTileSize(16);
+            mapScene.setScreenSize(QSize(16,16*32));
+            mapScene.setCameraData(camera);
+            QVERIFY(!mapScene.verticalLock());
+            mapScene.setUseVerticalLock(true);
+            mapScene.setVisibleTiles(ct.tiles());
+            QVERIFY(mapScene.verticalLock());
 
             // Test the case when setting vertical lock has no effect
-            QGeoMapGeometry mapGeometry2;
-            mapGeometry2.setTileSize(16);
-            mapGeometry2.setScreenSize(QSize(16,16));
-            mapGeometry2.setCameraData(camera);
-            QVERIFY(!mapGeometry2.verticalLock());
-            mapGeometry2.setUseVerticalLock(true);
-            mapGeometry2.setVisibleTiles(ct.tiles());
-            QVERIFY(!mapGeometry2.verticalLock());
+            QGeoMapScene mapScene2;
+            mapScene2.setTileSize(16);
+            mapScene2.setScreenSize(QSize(16,16));
+            mapScene2.setCameraData(camera);
+            QVERIFY(!mapScene2.verticalLock());
+            mapScene2.setUseVerticalLock(true);
+            mapScene2.setVisibleTiles(ct.tiles());
+            QVERIFY(!mapScene2.verticalLock());
         }
 
         void screenToMercatorPositions(){
@@ -343,7 +343,7 @@ class tst_QGeoMapGeometry : public QObject
             ct.setCamera(camera);
             ct.setScreenSize(QSize(screenWidth,screenHeight));
 
-            QGeoMapGeometry mapGeometry;
+            QGeoMapScene mapGeometry;
             mapGeometry.setTileSize(tileSize);
             mapGeometry.setScreenSize(QSize(screenWidth,screenHeight));
             mapGeometry.setCameraData(camera);
@@ -383,7 +383,7 @@ class tst_QGeoMapGeometry : public QObject
             ct.setCamera(camera);
             ct.setScreenSize(QSize(screenWidth,screenHeight));
 
-            QGeoMapGeometry mapGeometry;
+            QGeoMapScene mapGeometry;
             mapGeometry.setTileSize(tileSize);
             mapGeometry.setScreenSize(QSize(screenWidth,screenHeight));
             mapGeometry.setCameraData(camera);
@@ -405,7 +405,7 @@ class tst_QGeoMapGeometry : public QObject
             camera.setZoomLevel(4.0);
             camera.setCenter(QGeoProjection::mercatorToCoord(QDoubleVector2D(0.5, 0.5)));
 
-            QGeoMapGeometry mapGeometry;
+            QGeoMapScene mapGeometry;
             mapGeometry.setTileSize(16);
             mapGeometry.setScreenSize(QSize(16,16));
             mapGeometry.setCameraData(camera);
@@ -482,5 +482,5 @@ class tst_QGeoMapGeometry : public QObject
         }
 };
 
-QTEST_GUILESS_MAIN(tst_QGeoMapGeometry)
-#include "tst_qgeomapgeometry.moc"
+QTEST_GUILESS_MAIN(tst_QGeoMapScene)
+#include "tst_qgeomapscene.moc"

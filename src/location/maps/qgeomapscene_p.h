@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAPIMAGES_P_H
-#define QGEOMAPIMAGES_P_H
+#ifndef QGEOMAPSCENE_P_H
+#define QGEOMAPSCENE_P_H
 
 //
 //  W A R N I N G
@@ -52,39 +52,65 @@
 // We mean it.
 //
 
+#include <QObject>
 #include <QSet>
-#include <QList>
 #include <QSharedPointer>
-#include <QString>
+#include <QSize>
+#include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMapData;
-class QGeoTiledMappingManagerEngine;
+class QGeoCoordinate;
+class QGeoCameraData;
 class QGeoTileSpec;
-class QGeoTileCache;
+
+class QDoubleVector2D;
+
+class QGLSceneNode;
+class QGLCamera;
+class QGLPainter;
+class QGLTexture2D;
 class QGeoTileTexture;
 
-class QGeoMapImagesPrivate;
+class QPointF;
 
-class QGeoMapImages
+class QGeoMapScenePrivate;
+
+class Q_LOCATION_EXPORT QGeoMapScene : public QObject
 {
+    Q_OBJECT
 public:
-    QGeoMapImages(QGeoTiledMapData *map, QGeoTileCache *cache);
-    ~QGeoMapImages();
+    QGeoMapScene();
+    virtual ~QGeoMapScene();
+
+    void setScreenSize(const QSize &size);
+    void setTileSize(int tileSize);
+    void setCameraData(const QGeoCameraData &cameraData_);
 
     void setVisibleTiles(const QSet<QGeoTileSpec> &tiles);
-    QList<QSharedPointer<QGeoTileTexture> > cachedTiles() const;
 
-    void tileFetched(const QGeoTileSpec &tile);
-    void tileError(const QGeoTileSpec &tile, const QString &errorString);
+    void setUseVerticalLock(bool lock);
+
+    void addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture);
+
+    QDoubleVector2D screenPositionToMercator(const QPointF &pos) const;
+    QPointF mercatorToScreenPosition(const QDoubleVector2D &mercator) const;
+
+    QGLCamera *camera() const;
+    QGLSceneNode *sceneNode() const;
+    void paintGL(QGLPainter *painter);
+
+    bool verticalLock() const;
+
+Q_SIGNALS:
+    void newTilesVisible(const QSet<QGeoTileSpec> &newTiles);
 
 private:
-    QGeoMapImagesPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMapImages)
-    Q_DISABLE_COPY(QGeoMapImages)
+    QGeoMapScenePrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoMapScene)
+    Q_DISABLE_COPY(QGeoMapScene)
 };
 
 QT_END_NAMESPACE
 
-#endif // QGEOMAPIMAGES_P_H
+#endif // QGEOMAPSCENE_P_H

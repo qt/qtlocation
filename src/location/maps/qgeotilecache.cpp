@@ -337,7 +337,7 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::addToTextureCache(const QGeoTileS
     tt->cache = this;
 
     /* Do not bind/cleanImage on the texture here -- it needs to be done
-     * in the render thread (by qgeomapgeometry) */
+     * in the render thread (by qgeomapscene) */
 
     int textureCost = pixmap.width() * pixmap.height() * pixmap.depth() / 8;
     textureCache_.insert(spec, tt, textureCost);

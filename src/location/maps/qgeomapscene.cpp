@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeomapgeometry_p.h"
+#include "qgeomapscene_p.h"
 
 #include "qgeocameradata_p.h"
 #include "qgeoprojection_p.h"
@@ -64,10 +64,10 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapGeometryPrivate {
+class QGeoMapScenePrivate {
 public:
-    QGeoMapGeometryPrivate(QGeoMapGeometry *geometry);
-    ~QGeoMapGeometryPrivate();
+    QGeoMapScenePrivate(QGeoMapScene *scene);
+    ~QGeoMapScenePrivate();
 
     QSize screenSize_; // in pixels
     int tileSize_; // the pixel resolution for each tile
@@ -135,40 +135,40 @@ public:
     void paintGL(QGLPainter *painter);
 
 private:
-    QGeoMapGeometry *q_ptr;
-    Q_DECLARE_PUBLIC(QGeoMapGeometry)
+    QGeoMapScene *q_ptr;
+    Q_DECLARE_PUBLIC(QGeoMapScene)
 };
 
-QGeoMapGeometry::QGeoMapGeometry()
+QGeoMapScene::QGeoMapScene()
     : QObject(),
-      d_ptr(new QGeoMapGeometryPrivate(this)) {}
+      d_ptr(new QGeoMapScenePrivate(this)) {}
 
-QGeoMapGeometry::~QGeoMapGeometry()
+QGeoMapScene::~QGeoMapScene()
 {
     delete d_ptr;
 }
 
-void QGeoMapGeometry::setUseVerticalLock(bool lock)
+void QGeoMapScene::setUseVerticalLock(bool lock)
 {
-    Q_D(QGeoMapGeometry);
+    Q_D(QGeoMapScene);
     d->useVerticalLock_ = lock;
 }
 
-void QGeoMapGeometry::setScreenSize(const QSize &size)
+void QGeoMapScene::setScreenSize(const QSize &size)
 {
-    Q_D(QGeoMapGeometry);
+    Q_D(QGeoMapScene);
     d->screenSize_ = size;
 }
 
-void QGeoMapGeometry::setTileSize(int tileSize)
+void QGeoMapScene::setTileSize(int tileSize)
 {
-    Q_D(QGeoMapGeometry);
+    Q_D(QGeoMapScene);
     d->tileSize_ = tileSize;
 }
 
-void QGeoMapGeometry::setCameraData(const QGeoCameraData &cameraData)
+void QGeoMapScene::setCameraData(const QGeoCameraData &cameraData)
 {
-    Q_D(QGeoMapGeometry);
+    Q_D(QGeoMapScene);
     d->cameraData_ = cameraData;
     d->intZoomLevel_ = static_cast<int>(floor(d->cameraData_.zoomLevel()));
     float delta = cameraData.zoomLevel() - d->intZoomLevel_;
@@ -182,55 +182,55 @@ void QGeoMapGeometry::setCameraData(const QGeoCameraData &cameraData)
     d->sideLength_ = 1 << d->intZoomLevel_;
 }
 
-void QGeoMapGeometry::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
+void QGeoMapScene::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
 {
-    Q_D(QGeoMapGeometry);
+    Q_D(QGeoMapScene);
     d->setVisibleTiles(tiles);
 }
 
-void QGeoMapGeometry::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture)
+void QGeoMapScene::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture)
 {
-    Q_D(QGeoMapGeometry);
+    Q_D(QGeoMapScene);
     d->addTile(spec, texture);
 }
 
-QDoubleVector2D QGeoMapGeometry::screenPositionToMercator(const QPointF &pos) const
+QDoubleVector2D QGeoMapScene::screenPositionToMercator(const QPointF &pos) const
 {
-    Q_D(const QGeoMapGeometry);
+    Q_D(const QGeoMapScene);
     return d->screenPositionToMercator(pos);
 }
 
-QPointF QGeoMapGeometry::mercatorToScreenPosition(const QDoubleVector2D &mercator) const
+QPointF QGeoMapScene::mercatorToScreenPosition(const QDoubleVector2D &mercator) const
 {
-    Q_D(const QGeoMapGeometry);
+    Q_D(const QGeoMapScene);
     return d->mercatorToScreenPosition(mercator);
 }
 
-QGLCamera* QGeoMapGeometry::camera() const
+QGLCamera* QGeoMapScene::camera() const
 {
-    Q_D(const QGeoMapGeometry);
+    Q_D(const QGeoMapScene);
     return d->camera_;
 }
 
-QGLSceneNode* QGeoMapGeometry::sceneNode() const
+QGLSceneNode* QGeoMapScene::sceneNode() const
 {
-    Q_D(const QGeoMapGeometry);
+    Q_D(const QGeoMapScene);
     return d->sceneNode_;
 }
 
-bool QGeoMapGeometry::verticalLock() const
+bool QGeoMapScene::verticalLock() const
 {
-    Q_D(const QGeoMapGeometry);
+    Q_D(const QGeoMapScene);
     return d->verticalLock_;
 }
 
-void QGeoMapGeometry::paintGL(QGLPainter *painter)
+void QGeoMapScene::paintGL(QGLPainter *painter)
 {
-    Q_D(QGeoMapGeometry);
+    Q_D(QGeoMapScene);
     d->paintGL(painter);
 }
 
-QGeoMapGeometryPrivate::QGeoMapGeometryPrivate(QGeoMapGeometry *geometry)
+QGeoMapScenePrivate::QGeoMapScenePrivate(QGeoMapScene *scene)
     : tileSize_(0),
       camera_(new QGLCamera()),
       sceneNode_(new QGLSceneNode()),
@@ -254,15 +254,15 @@ QGeoMapGeometryPrivate::QGeoMapGeometryPrivate(QGeoMapGeometry *geometry)
       useVerticalLock_(false),
       verticalLock_(false),
       linearScaling_(true),
-      q_ptr(geometry) {}
+      q_ptr(scene) {}
 
-QGeoMapGeometryPrivate::~QGeoMapGeometryPrivate()
+QGeoMapScenePrivate::~QGeoMapScenePrivate()
 {
     delete sceneNode_;
     delete camera_;
 }
 
-QDoubleVector2D QGeoMapGeometryPrivate::screenPositionToMercator(const QPointF &pos) const
+QDoubleVector2D QGeoMapScenePrivate::screenPositionToMercator(const QPointF &pos) const
 {
     double x = mercatorWidth_ * (((pos.x() - screenOffsetX_) / screenWidth_) - 0.5);
     x += mercatorCenterX_;
@@ -281,7 +281,7 @@ QDoubleVector2D QGeoMapGeometryPrivate::screenPositionToMercator(const QPointF &
     return QDoubleVector2D(x, y);
 }
 
-QPointF QGeoMapGeometryPrivate::mercatorToScreenPosition(const QDoubleVector2D &mercator) const
+QPointF QGeoMapScenePrivate::mercatorToScreenPosition(const QDoubleVector2D &mercator) const
 {
     double mx = sideLength_ * mercator.x();
 
@@ -323,7 +323,7 @@ QPointF QGeoMapGeometryPrivate::mercatorToScreenPosition(const QDoubleVector2D &
     return QPointF(x + screenOffsetX_, y + screenOffsetY_);
 }
 
-QGeometryData QGeoMapGeometryPrivate::buildGeometry(const QGeoTileSpec &spec)
+QGeometryData QGeoMapScenePrivate::buildGeometry(const QGeoTileSpec &spec)
 {
     int x = spec.x();
 
@@ -374,7 +374,7 @@ QGeometryData QGeoMapGeometryPrivate::buildGeometry(const QGeoTileSpec &spec)
     return g;
 }
 
-QGLSceneNode *QGeoMapGeometryPrivate::buildSceneNodeFromGeometry(const QGeometryData &geom)
+QGLSceneNode *QGeoMapScenePrivate::buildSceneNodeFromGeometry(const QGeometryData &geom)
 {
     QGLBuilder builder;
     builder.addQuads(geom);
@@ -382,7 +382,7 @@ QGLSceneNode *QGeoMapGeometryPrivate::buildSceneNodeFromGeometry(const QGeometry
 }
 
 
-void QGeoMapGeometryPrivate::setScalingOnTextures()
+void QGeoMapScenePrivate::setScalingOnTextures()
 {
     if (!linearScaling_) {
         foreach (const QSharedPointer<QGeoTileTexture> &tex, textures_.values()) {
@@ -397,7 +397,7 @@ void QGeoMapGeometryPrivate::setScalingOnTextures()
     }
 }
 
-void QGeoMapGeometryPrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture)
+void QGeoMapScenePrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture)
 {
     if (linearScaling_) {
         texture->texture->setBindOptions(texture->texture->bindOptions() |
@@ -435,17 +435,17 @@ void QGeoMapGeometryPrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QG
 }
 
 // return true if new tiles introduced in [tiles]
-void QGeoMapGeometryPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
+void QGeoMapScenePrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
 {
-    Q_Q(QGeoMapGeometry);
+    Q_Q(QGeoMapScene);
 
     // detect if new tiles introduced
     bool newTilesIntroduced = !visibleTiles_.contains(tiles);
 
-    // work out the tile bounds for the new geometry
+    // work out the tile bounds for the new scene
     setTileBounds(tiles);
 
-    // set up the gl camera for the new geometry
+    // set up the gl camera for the new scene
     setupCamera();
 
     QSet<QGeoTileSpec> toRemove = visibleTiles_ - tiles;
@@ -462,7 +462,7 @@ void QGeoMapGeometryPrivate::setVisibleTiles(const QSet<QGeoTileSpec> &tiles)
         emit q->newTilesVisible(visibleTiles_);
 }
 
-void QGeoMapGeometryPrivate::updateTiles(const QSet<QGeoTileSpec> &tiles)
+void QGeoMapScenePrivate::updateTiles(const QSet<QGeoTileSpec> &tiles)
 {
     typedef QSet<QGeoTileSpec>::const_iterator iter;
     iter i = tiles.constBegin();
@@ -498,7 +498,7 @@ void QGeoMapGeometryPrivate::updateTiles(const QSet<QGeoTileSpec> &tiles)
     }
 }
 
-void QGeoMapGeometryPrivate::removeTiles(const QSet<QGeoTileSpec> &oldTiles)
+void QGeoMapScenePrivate::removeTiles(const QSet<QGeoTileSpec> &oldTiles)
 {
     typedef QSet<QGeoTileSpec>::const_iterator iter;
     iter i = oldTiles.constBegin();
@@ -517,7 +517,7 @@ void QGeoMapGeometryPrivate::removeTiles(const QSet<QGeoTileSpec> &oldTiles)
     }
 }
 
-void QGeoMapGeometryPrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
+void QGeoMapScenePrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
 {
     if (tiles.isEmpty()) {
         minTileX_ = -1;
@@ -595,7 +595,7 @@ void QGeoMapGeometryPrivate::setTileBounds(const QSet<QGeoTileSpec> &tiles)
     }
 }
 
-void QGeoMapGeometryPrivate::setupCamera()
+void QGeoMapScenePrivate::setupCamera()
 {
 
     double f = 1.0 * qMin(screenSize_.width(), screenSize_.height());
@@ -711,7 +711,7 @@ void QGeoMapGeometryPrivate::setupCamera()
     camera_->setFarPlane(farPlane);
 }
 
-void QGeoMapGeometryPrivate::paintGL(QGLPainter *painter)
+void QGeoMapScenePrivate::paintGL(QGLPainter *painter)
 {
     // TODO protect with mutex?
 
