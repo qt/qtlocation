@@ -61,6 +61,7 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtCore/QStandardPaths>
+#include <QtCore/QUrlQuery>
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkProxyFactory>
 #ifdef USE_CHINA_NETWORK_REGISTRATION
@@ -148,13 +149,13 @@ QPlaceDetailsReply *QPlaceManagerEngineNokiaV2::getPlaceDetails(const QString &p
 {
     QUrl requestUrl(m_placesServer + QLatin1String("/v1/places/") + placeId);
 
-    QList<QPair<QString, QString> > queryItems;
+    QUrlQuery queryItems;
 
-    queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
+    queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
     //queryItems.append(qMakePair<QString, QString>(QLatin1String("size"), QString::number(5)));
     //queryItems.append(qMakePair<QString, QString>(QLatin1String("image_dimensions"), QLatin1String("w64-h64,w100")));
 
-    requestUrl.setQueryItems(queryItems);
+    requestUrl.setQuery(queryItems);
 
     QNetworkReply *networkReply = sendRequest(requestUrl);
 
@@ -173,62 +174,62 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &p
 
     QNetworkReply *networkReply = 0;
 
-    QList<QPair<QString, QString> > queryItems;
+    QUrlQuery queryItems;
 
     switch (request.contentType()) {
     case QPlaceContent::ImageType:
         requestUrl.setPath(requestUrl.path() + QLatin1String("images"));
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
+        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
 
         if (request.limit() > 0) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
-                                                          QString::number(request.limit())));
+            queryItems.addQueryItem(QLatin1String("size"),
+                                    QString::number(request.limit()));
         }
         if (request.offset() > -1) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("offset"),
-                                                          QString::number(request.offset())));
+            queryItems.addQueryItem(QLatin1String("offset"),
+                                    QString::number(request.offset()));
         }
 
         //queryItems.append(qMakePair<QString, QString>(QLatin1String("image_dimensions"), QLatin1String("w64-h64,w100")));
 
-        requestUrl.setQueryItems(queryItems);
+        requestUrl.setQuery(queryItems);
 
         networkReply = sendRequest(requestUrl);
         break;
     case QPlaceContent::ReviewType:
         requestUrl.setPath(requestUrl.path() + QLatin1String("reviews"));
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
+        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
 
         if (request.limit() > 0) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
-                                                          QString::number(request.limit())));
+            queryItems.addQueryItem(QLatin1String("size"),
+                                    QString::number(request.limit()));
         }
         if (request.offset() > -1) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("offset"),
-                                                          QString::number(request.offset())));
+            queryItems.addQueryItem(QLatin1String("offset"),
+                                    QString::number(request.offset()));
         }
 
-        requestUrl.setQueryItems(queryItems);
+        requestUrl.setQuery(queryItems);
 
         networkReply = sendRequest(requestUrl);
         break;
     case QPlaceContent::EditorialType:
         requestUrl.setPath(requestUrl.path() + QLatin1String("editorials"));
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
+        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
 
         if (request.limit() > 0) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
-                                                          QString::number(request.limit())));
+            queryItems.addQueryItem(QLatin1String("size"),
+                                    QString::number(request.limit()));
         }
         if (request.offset() > -1) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("offset"),
-                                                          QString::number(request.offset())));
+            queryItems.addQueryItem(QLatin1String("offset"),
+                                    QString::number(request.offset()));
         }
 
-        requestUrl.setQueryItems(queryItems);
+        requestUrl.setQuery(queryItems);
 
         networkReply = sendRequest(requestUrl);
         break;
@@ -251,7 +252,7 @@ QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &p
 }
 
 static void addAtForBoundingArea(const QGeoBoundingArea &area,
-                                 QList<QPair<QString, QString> > *queryItems)
+                                 QUrlQuery *queryItems)
 {
     QGeoCoordinate center;
     switch (area.type()) {
@@ -268,10 +269,10 @@ static void addAtForBoundingArea(const QGeoBoundingArea &area,
     if (!center.isValid())
         return;
 
-    queryItems->append(qMakePair<QString, QString>(QLatin1String("at"),
-                                                   QString::number(center.latitude()) +
-                                                   QLatin1Char(',') +
-                                                   QString::number(center.longitude())));
+    queryItems->addQueryItem(QLatin1String("at"),
+                             QString::number(center.latitude()) +
+                             QLatin1Char(',') +
+                             QString::number(center.longitude()));
 }
 
 QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest &query)
@@ -299,20 +300,20 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         // search term query
         QUrl requestUrl(m_placesServer + QLatin1String("/v1/discover/search"));
 
-        QList<QPair<QString, QString> > queryItems;
+        QUrlQuery queryItems;
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("q"), query.searchTerm()));
+        queryItems.addQueryItem(QLatin1String("q"), query.searchTerm());
 
         addAtForBoundingArea(query.searchArea(), &queryItems);
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
+        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
 
         if (query.limit() > 0) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
-                                                          QString::number(query.limit())));
+            queryItems.addQueryItem(QLatin1String("size"),
+                                    QString::number(query.limit()));
         }
 
-        requestUrl.setQueryItems(queryItems);
+        requestUrl.setQuery(queryItems);
 
         QNetworkReply *networkReply = sendRequest(requestUrl);
 
@@ -329,31 +330,31 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         // "/v1/discover/explore/places" instead which only returns places.
         QUrl requestUrl(m_placesServer + QLatin1String("/v1/discover/explore/places"));
 
-        QList<QPair<QString, QString> > queryItems;
+        QUrlQuery queryItems;
 
         QStringList ids;
         foreach (const QPlaceCategory &category, query.categories())
             ids.append(category.categoryId());
 
         if (ids.count() > 0) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("cat"),
-                                                          ids.join(QLatin1String(","))));
+            queryItems.addQueryItem(QLatin1String("cat"),
+                                    ids.join(QLatin1String(",")));
         }
 
         addAtForBoundingArea(query.searchArea(), &queryItems);
 
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
+        queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
 
         if (query.limit() > 0) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
-                                                          QString::number(query.limit())));
+            queryItems.addQueryItem(QLatin1String("size"),
+                                    QString::number(query.limit()));
         }
         if (query.offset() > -1) {
-            queryItems.append(qMakePair<QString, QString>(QLatin1String("offset"),
-                                                          QString::number(query.offset())));
+            queryItems.addQueryItem(QLatin1String("offset"),
+                                    QString::number(query.offset()));
         }
 
-        requestUrl.setQueryItems(queryItems);
+        requestUrl.setQuery(queryItems);
 
         QNetworkReply *networkReply = sendRequest(requestUrl);
 
@@ -370,20 +371,20 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::recommendations(const QString &pl
 {
     QUrl requestUrl(m_placesServer + QLatin1String("/v1/places/") + placeId + QLatin1String("/related/recommended"));
 
-    QList<QPair<QString, QString> > queryItems;
+    QUrlQuery queryItems;
 
-    queryItems.append(qMakePair<QString, QString>(QLatin1String("tf"), QLatin1String("html")));
+    queryItems.addQueryItem(QLatin1String("tf"), QLatin1String("html"));
 
     if (query.limit() > 0) {
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("size"),
-                                                      QString::number(query.limit())));
+        queryItems.addQueryItem(QLatin1String("size"),
+                                QString::number(query.limit()));
     }
     if (query.offset() > -1) {
-        queryItems.append(qMakePair<QString, QString>(QLatin1String("offset"),
-                                                      QString::number(query.offset())));
+        queryItems.addQueryItem(QLatin1String("offset"),
+                                QString::number(query.offset()));
     }
 
-    requestUrl.setQueryItems(queryItems);
+    requestUrl.setQuery(queryItems);
 
     QNetworkReply *networkReply = sendRequest(requestUrl);
 
@@ -399,13 +400,13 @@ QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const
 {
     QUrl requestUrl(m_placesServer + QLatin1String("/v1/suggest"));
 
-    QList<QPair<QString, QString> > queryItems;
+    QUrlQuery queryItems;
 
-    queryItems.append(qMakePair<QString, QString>(QLatin1String("q"), query.searchTerm()));
+    queryItems.addQueryItem(QLatin1String("q"), query.searchTerm());
 
     addAtForBoundingArea(query.searchArea(), &queryItems);
 
-    requestUrl.setQueryItems(queryItems);
+    requestUrl.setQuery(queryItems);
 
     QNetworkReply *networkReply = sendRequest(requestUrl);
 
@@ -639,12 +640,12 @@ void QPlaceManagerEngineNokiaV2::currentMobileCountryCodeChanged(int interface, 
 
 QNetworkReply *QPlaceManagerEngineNokiaV2::sendRequest(const QUrl &url)
 {
-    QList<QPair<QString, QString> > queryItems = url.queryItems();
-    queryItems.append(qMakePair<QString, QString>(QLatin1String("app_id"), m_appId));
-    queryItems.append(qMakePair<QString, QString>(QLatin1String("app_code"), m_appCode));
+    QUrlQuery queryItems(url);
+    queryItems.addQueryItem(QLatin1String("app_id"), m_appId);
+    queryItems.addQueryItem(QLatin1String("app_code"), m_appCode);
 
     QUrl requestUrl = url;
-    requestUrl.setQueryItems(queryItems);
+    requestUrl.setQuery(queryItems);
 
     QNetworkRequest request;
     request.setUrl(requestUrl);
@@ -664,7 +665,7 @@ QByteArray QPlaceManagerEngineNokiaV2::createLanguageString() const
         locales << QLocale();
 
     foreach (const QLocale &loc, locales) {
-        language.append(loc.name().replace(2, 1, QLatin1Char('-')).toAscii());
+        language.append(loc.name().replace(2, 1, QLatin1Char('-')).toLatin1());
         language.append(", ");
     }
     language.chop(2);
