@@ -57,7 +57,6 @@
 #include <QVector>
 #include <QString>
 #include <QObject>
-#include <QAuthenticator>
 #include <QtLocation/QPlaceIcon>
 
 QT_BEGIN_HEADER
