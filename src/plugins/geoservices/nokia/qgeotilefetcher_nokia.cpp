@@ -193,7 +193,46 @@ QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
         requestString += "&referer=";
         requestString += QGeoServiceProviderFactoryNokia::defaultReferer;
     }
+
+    requestString += "&lg=";
+    requestString += getLanguageString();
+
     return requestString;
+}
+
+QString QGeoTileFetcherNokia::getLanguageString() const
+{
+    const QLocale::Language lang = m_engineNokia->locale().language();
+    // English is the default, where no ln is specified. We hardcode the languages
+    // here even though the entire list is updated automagically from the server.
+    // The current languages are Arabic, Chinese, Simplified Chinese, English
+    // French, German, Italian, Polish, Russian and Spanish. The default is English.
+    // These are acually available from the same host under the URL: /maptiler/v2/info
+
+    switch (lang) {
+    case QLocale::Arabic:
+        return "ARA";
+    case QLocale::Chinese:
+        if (QLocale::TraditionalChineseScript == m_engineNokia->locale().script())
+            return "CHI";
+        else
+            return "CHT";
+    case QLocale::French:
+        return "FRE";
+    case QLocale::German:
+        return "GER";
+    case QLocale::Italian:
+        return "ITA";
+    case QLocale::Polish:
+        return "POL";
+    case QLocale::Russian:
+        return "RUS";
+    case QLocale::Spanish:
+        return "SPA";
+    default:
+        return "ENG";
+    }
+    // No "lg" param means that we want English.
 }
 
 QString QGeoTileFetcherNokia::token() const

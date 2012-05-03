@@ -91,6 +91,8 @@ private:
 
     QString getRequestString(const QGeoTileSpec &spec);
 
+    QString getLanguageString() const;
+
     QGeoTiledMappingManagerEngineNokia *m_engineNokia;
     QGeoNetworkAccessManager *m_networkManager;
     QMap<QString, QVariant> m_parameters;
