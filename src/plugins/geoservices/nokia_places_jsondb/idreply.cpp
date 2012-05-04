@@ -293,8 +293,13 @@ void SaveCategoryReply::start()
    if (!m_parentId.isEmpty())
        db()->getCategory(m_parentId, this, SLOT(checkParentExistsFinished()));
    else {
-       m_categoryJson = prepareCategoryJson();
-       processIcons();
+
+       if (!m_category.categoryId().isEmpty()) {
+           db()->getCategory(m_category.categoryId(), this, SLOT(getCurrentCategoryFinished()));
+       } else {
+           m_categoryJson = prepareCategoryJson();
+           processIcons();
+       }
    }
 }
 

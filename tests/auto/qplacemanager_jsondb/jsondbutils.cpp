@@ -155,7 +155,9 @@ const QLatin1String JsonDbUtils::PartitionType("Partition");
 JsonDbUtils::JsonDbUtils(QObject *parent)
     : QObject(parent)
 {
-    m_jsondbProcess = launchJsonDbDaemon();
+    QStringList args;
+    args <<"-reject-stale-updates";
+    m_jsondbProcess = launchJsonDbDaemon(args);
     m_connection = new QJsonDbConnection;
     m_connection->connectToServer();
 }
