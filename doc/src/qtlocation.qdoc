@@ -96,7 +96,22 @@ are made up of segments. Each \l {QtLocation5::RouteSegment}{RouteSegment}
 can be considered a navigation sub-task: drive 100 meters, turn left. The beginning and
 end of each segment is a \e waypoint, that is, one part of our journey.
 
-A typical use case for the API is a user looking for a particular type of place, say a restaurant. The user could enter a search string into the map application and respond to a list or display of results for restaurants "near" the device. The application could then be used to navigate to the restaurant using an optimized route that is aware of features in the environment that can help or hinder the journey. The navigation then proceeds with the user's progress monitored by means of the current \l Location. In the context of this API the map application would be aware of the location and size of various places and the location of the user. Plugins would supply the data used by the application to determine routes and navigation instructions. The \l Place types would hold information about the destination and surrounding objects including displayable representations. The \l Map type would enable this information to be displayed, panned, zoomed and so on. The \l Route would be determined by a plugin with each \l RouteSegment holding the navigation instructions guided by the updated current \l Location.
+A typical use case for the API is a user looking for a particular type of
+place, say a restaurant. The user could enter a search string into the map
+application and respond to a list or display of results for restaurants
+"near" the device. The application could then be used to navigate to the
+restaurant using an optimized route that is aware of features in the
+environment that can help or hinder the journey. The navigation then
+proceeds with the user's progress monitored by means of the current
+\l Location. In the context of this API the map application would be aware
+of the location and size of various places and the location of the user.
+Plugins would supply the data used by the application to determine routes and
+navigation instructions. The \l Place types would hold information about the
+destination and surrounding objects including displayable representations.
+The \l Map type would enable this information to be displayed, panned,
+zoomed and so on. The \l Route would be determined by a plugin with each
+\l RouteSegment holding the navigation instructions guided by the updated
+current \l Location.
 
 \l {Plugin}s are a means of specifying which Location based service to use. For example,
 a plugin may allow connection to a provider's service that handles geocoding and routing
@@ -111,6 +126,7 @@ QNetworkConfigurationManager.
 \note: Plugins may not provide various features such as paging or relevance hints.
 Since plugins may be supplied by other providers, support for these aspects is
 dependent on the provider's implementation.
+
 
 
 \section2 API Sub-Modules

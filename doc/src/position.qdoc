@@ -74,12 +74,16 @@ location data can connect to the
 \l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal and
 call \l{QGeoPositionInfoSource::startUpdates()}{startUpdates()} or
 \l{QGeoPositionInfoSource::requestUpdate()}{requestUpdate()} to trigger the
-distribution of location data.
+distribution of location data. The location data distribution can be stopped by
+calling the \l {QGeoPositionInfoSource::stopUpdates()}{stopUpdates()} function.
 
 A default position source may be available on some platforms. Call
 QGeoPositionInfoSource::createDefaultSource() to create an instance of the default
 position source; the method returns 0 if no default source is available for
 the platform.
+
+If a problem occurs with access to the information source then an
+\l {QGeoPositionInfoSource::error()}{error()} signal is emitted.
 
 The QGeoAreaMonitor class enables client applications to be notified when
 the receiving device has moved in or out of a particular area, as specified
@@ -92,6 +96,7 @@ QGeoSatelliteInfoSource class. Call QGeoSatelliteInfoSource::createDefaultSource
 create an instance of the default satellite data source for the platform,
 if one is available. Alternatively, clients can subclass it to provide a
 custom satellite data source.
+
 
 
 \section2 Requesting Location Data from Data Sources

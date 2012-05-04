@@ -368,7 +368,7 @@ finished successfully.
 
 This signal and QGeoRouteReply::finished() will be emitted at the same time.
 
-\note Do no delete the \a reply object in the slot connected to this signal.
+\note Do not delete the \a reply object in the slot connected to this signal.
 Use deleteLater() instead.
 */
 
@@ -383,7 +383,7 @@ not empty it will contain a textual description of the error.
 
 This signal and QGeoRouteReply::error() will be emitted at the same time.
 
-\note Do no delete the \a reply object in the slot connected to this signal.
+\note Do not delete the \a reply object in the slot connected to this signal.
 Use deleteLater() instead.
 */
 

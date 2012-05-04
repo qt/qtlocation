@@ -573,9 +573,10 @@ QString QDeclarativePlace::placeId() const
 /*!
     \qmlproperty string Place::attribution
 
-    This property holds a rich text attribution string for the place.  Some providers may require
-    that the attribution be shown whenever a place is displayed to an end user.  The contents of
-    this property should be shown to the user if it is not empty.
+    This property holds a rich text attribution string for the place.
+    Some providers may require that the attribution be shown to the user
+    whenever a place is displayed.  The contents of this property should
+    be shown to the user if it is not empty.
 */
 void QDeclarativePlace::setAttribution(const QString &attribution)
 {

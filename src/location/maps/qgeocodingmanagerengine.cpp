@@ -63,12 +63,12 @@ QT_BEGIN_NAMESPACE
 
     If the service provider supports geocoding the subclass should provide an
     implementation of geocode() and call setSupportsGeocoding(true) at
-    some point in time before geoocode() is called.
+    some point in time before geocode() is called.
 
     Similarly, if the service provider supports reverse geocoding the subclass
     should provide an implementation reverseGeocode() and call
     setSupportsReverseGeocoding(true) at some point in time before
-    reverseGeoocode() is called.
+    reverseGeocode() is called.
 
     A subclass of QGeocodingManagerEngine will often make use of a subclass
     fo QGeocodeReply internally, in order to add any engine-specific
@@ -304,7 +304,7 @@ QLocale QGeocodingManagerEngine::locale() const
     This signal and QGeocodeReply::finished() will be emitted at the same
     time.
 
-    \note Do no delete the \a reply object in the slot connected to this
+    \note Do not delete the \a reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 
@@ -319,7 +319,7 @@ QLocale QGeocodingManagerEngine::locale() const
 
     This signal and QGeocodeReply::error() will be emitted at the same time.
 
-    \note Do no delete the \a reply object in the slot connected to this
+    \note Do not delete the \a reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 

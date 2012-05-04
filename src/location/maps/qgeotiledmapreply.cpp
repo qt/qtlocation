@@ -70,8 +70,8 @@ QT_BEGIN_NAMESPACE
     important to check the result of isFinished() before making the connections
     to the signals.
 
-    If the operation completes successfully the results will be able to be
-    accessed with mapImageData() and mapImageFormat().
+    If the operation completes successfully the results are accessed by
+    mapImageData() and mapImageFormat().
 */
 
 /*!
@@ -121,8 +121,7 @@ QGeoTiledMapReply::~QGeoTiledMapReply()
     emitted.
 
     If the operation completed successfully,
-    QGeoTiledMapReply::setMapImageData() and
-    QGeoTiledMapReply::setTiledMapFormat() should be called before this
+    QGeoTiledMapReply::setMapImageData() should be called before this
     function. If an error occurred, QGeoTiledMapReply::setError() should be used
     instead.
 */
@@ -260,7 +259,7 @@ void QGeoTiledMapReply::abort()
     This signal and QGeoRoutingManager::finished() will be
     emitted at the same time.
 
-    \note Do no delete this reply object in the slot connected to this
+    \note Do not delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
 
     \fn void QGeoTiledMapReply::error(QGeoTiledMapReply::Error error, const QString &errorString)
@@ -273,7 +272,7 @@ void QGeoTiledMapReply::abort()
 
     This signal and QGeoRoutingManager::error() will be emitted at the same time.
 
-    \note Do no delete this reply object in the slot connected to this
+    \note Do not delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 
@@ -285,7 +284,7 @@ void QGeoTiledMapReply::abort()
     If error() equals QGeoTiledMapReply::NoError then the processing
     finished successfully.
 
-    \note Do no delete this reply object in the slot connected to this
+    \note Do not delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 /*!
@@ -297,7 +296,7 @@ void QGeoTiledMapReply::abort()
     The error will be described by the error code \a error. If \a errorString is
     not empty it will contain a textual description of the error.
 
-    \note Do no delete this reply object in the slot connected to this
+    \note Do not delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 

@@ -55,9 +55,11 @@ QT_BEGIN_NAMESPACE
     \ingroup QtLocation-impl
     \since Qt Location 5.0
 
-    \brief The QGeoMappingManagerEngine class provides an interface and convenience methods
-    to implementors of QGeoServiceProvider plugins who want to provide support for displaying
-    and interacting with maps.
+    \brief Provides support functionality for map display with QGeoServiceProvider.
+
+    The QGeoMappingManagerEngine class provides an interface and convenience
+    methods to implementors of QGeoServiceProvider plugins who want to
+    provide support for displaying and interacting with maps.
 */
 
 /*!

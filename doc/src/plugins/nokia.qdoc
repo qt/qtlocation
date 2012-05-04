@@ -61,10 +61,10 @@ The following table lists optional parameters that can be passed to the Nokia pl
     \li Description
 \row
     \li app_id
-    \li Client app_id part of the app_id/token pair used for authentication by all managers.
+    \li Client \e app_id part of the app_id/token pair used for authentication by all managers.
 \row
     \li token
-    \li Client token part of the app_id/token pair for the service used for authentication by all managers.
+    \li Client \e token part of the app_id/token pair for the service used for authentication by all managers.
 \row
     \li proxy
     \li Proxy server URL used by all managers. For usage of the system proxy just pass "system" as value.

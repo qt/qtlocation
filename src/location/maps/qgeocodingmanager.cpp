@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
     \brief The QGeocodingManager class provides support for geocoding
     operations.
 
-    The geocode(), reverseGeocode() and search() functions return
+    The geocode() and reverseGeocode() functions return
     QGeocodeReply objects, which manage these operations and report on the
     result of the operations and any errors which may have occurred.
 
@@ -303,7 +303,7 @@ QLocale QGeocodingManager::locale() const
     This signal and QGeocodeReply::finished() will be emitted at the same
     time.
 
-    \note Do no delete the \a reply object in the slot connected to this
+    \note Do not delete the \a reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 
@@ -318,7 +318,7 @@ QLocale QGeocodingManager::locale() const
 
     This signal and QGeocodeReply::error() will be emitted at the same time.
 
-    \note Do no delete the \a reply object in the slot connected to this
+    \note Do not delete the \a reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 

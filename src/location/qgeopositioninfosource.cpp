@@ -404,7 +404,7 @@ QStringList QGeoPositionInfoSource::availableSources()
     it can be called even if startUpdates() has already been called and
     regular updates are in progress.
 
-    If the source uses multiple positioning methods, it tries to gets the
+    If the source uses multiple positioning methods, it tries to get the
     current position from the most accurate positioning method within the
     given timeout.
 */

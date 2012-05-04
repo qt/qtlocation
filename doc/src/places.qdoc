@@ -47,7 +47,10 @@
     Note that different Plugin backends may have different nuances and behaviours, refer to
     the \l {Plugin references and parameters}{Plugin References} for these details.
 
-    \snippet snippets/declarative/places.qml Initialize Plugin
+    \snippet declarative/places.qml Initialize Plugin
+
+    See also the \l {Places (C++)}{overview for the C++ API} which
+    introduces aspects of the API in greater detail.
 
     \section2 Searching
     Searching is accomplished via the \l PlaceSearchModel.  To instantiate a \l PlaceSearchModel we
@@ -55,14 +58,14 @@
     can be used with a \l ListView and delegate to display the results.  A search operation
     is started by invoking the PlaceSearchModel::execute() method.
 
-    \snippet snippets/declarative/places.qml PlaceSearchModel
+    \snippet declarative/places.qml PlaceSearchModel
 
     The \l PlaceSearchModel can also be used in conjuction with a MapItemView to display
     markers on a map.  The MapItemView's model is set to the search model, and for the delegate
     we use a MapQuickItem to display and position a given marker image.  A marker is shown
     for every place that was found by the search model.
 
-    \snippet snippets/declarative/places.qml Search MapItemView
+    \snippet declarative/places.qml Search MapItemView
 
     The search model may also be used to specify whether corrections are returned.
     See the documentation for \l PlaceSearchModel for details.
@@ -74,7 +77,7 @@
     have been fetched or not.  If not, the Place::getDetails() method can be invoked
     to fetch the missing details.
 
-    \snippet snippets/declarative/places.qml Place fetchDetails
+    \snippet declarative/places.qml Place fetchDetails
 
     \section2 Saving and Removing Places
     Some backends may support saving and removing places.  This can be done by
@@ -82,9 +85,9 @@
     that in order to save a \l Place, a \l Plugin must be assigned to specify
     which backend we are saving to.
 
-    \snippet snippets/declarative/places.qml Place createAndSavePlace
+    \snippet declarative/places.qml Place createAndSavePlace
     \codeline
-    \snippet snippets/declarative/places.qml Place removePlace
+    \snippet declarative/places.qml Place removePlace
 
     \section2 Learn More
     The above quickstart tutorial only exhibits a subset of Places functionality.
@@ -124,21 +127,21 @@
     All places functionality is facilitated by a QPlaceManager instance.  One must specify
     a QGeoServiceProvider in order to create the QPlaceManager
 
-    \snippet snippets/places/requesthandler.h Initialize Manager
+    \snippet places/requesthandler.h Initialize Manager
 
     \section2 Discovery/Search
 
     In order to perform a search operation we simply create a QPlaceSearchRequest
     and set the desired search parameters, such as a search term and search center.
 
-    \snippet snippets/places/requesthandler.h Search for places cpp
+    \snippet places/requesthandler.h Search for places cpp
 
     The request  is an asynchronous operation so we need a slot to handle the
     completion of the request. In the handler we check that there are no errors and that our search result
     type is a place.  If so we can then retrieve some of the core details of the
     place.  At the end of the slot, we delete the reply since they are for single use only.
 
-    \snippet snippets/places/requesthandler.h Search for places handler cpp
+    \snippet places/requesthandler.h Search for places handler cpp
 
     \b {Note:} Depending upon the plugin backend that was chosen, the search results may contain places
     which have further details that can be fetched on a place by place basis.  To fetch these other details
@@ -146,34 +149,34 @@
 
     \section3 Paging
     If the plugin supports paging, limit and offset parameters may be provided to the search request.
-    \snippet snippets/places/requesthandler.h Search paging
+    \snippet places/requesthandler.h Search paging
 
     \section3 Corrections
     Suggested search term corrections to user input may also be returned with the search results if desired.
     A maximum number can be set in the search request.
-    \snippet snippets/places/requesthandler.h Corrections
+    \snippet places/requesthandler.h Corrections
     \dots
     \dots
-    \snippet snippets/places/requesthandler.h Corrections handling pt1
+    \snippet places/requesthandler.h Corrections handling pt1
     \dots
-    \snippet snippets/places/requesthandler.h Corrections handling pt2
+    \snippet places/requesthandler.h Corrections handling pt2
 
     \section2 Fetching Place Details
     A place that has been returned from a search request may have more details
     that can be fetched.  The following demonstrates how to check if there
     are further details and if so how to request them.
 
-    \snippet snippets/places/requesthandler.h Details check
+    \snippet places/requesthandler.h Details check
     \dots
     \dots
-    \snippet snippets/places/requesthandler.h Details handler cpp
+    \snippet places/requesthandler.h Details handler cpp
 
     \section2 Fetching Rich Content
     Rich content such as images and reviews is retrieved through the manager and then if required assigned to a place.
-    \snippet snippets/places/requesthandler.h Image request
+    \snippet places/requesthandler.h Image request
 
     We can handle the content request as shown below.
-    \snippet snippets/places/requesthandler.h Image handler
+    \snippet places/requesthandler.h Image handler
 
     It is important to note that the results in the QPlaceContentReply,
     is a QPlaceContent::Collection which is essentially a QMap<int, QPlaceContent>.  The key \c {int} in this case is the
@@ -191,31 +194,31 @@
     is used just like a place search, the only difference being that the search term is set to a
     partially completed string.
 
-    \snippet snippets/places/requesthandler.h Suggestion request
+    \snippet places/requesthandler.h Suggestion request
     And when the request is done, we can use the reply to show the suggestions.
-    \snippet snippets/places/requesthandler.h Suggestion handler
+    \snippet places/requesthandler.h Suggestion handler
 
     \section2 Recommendations
     Recommendations are suggestions for places that are similar to a specified place.
     The retrieval of recommendations is very similar to retrieving search term suggestions or
     performing a place search.
 
-    \snippet snippets/places/requesthandler.h Recommendation
+    \snippet places/requesthandler.h Recommendation
     \dots
     \dots
-    \snippet snippets/places/requesthandler.h Recommendation handler
+    \snippet places/requesthandler.h Recommendation handler
 
     \target Saving a place cpp
     \section2 Saving a Place
     The saving of a new place is performed as follows, we create a QPlace instance
     and populate it with information such as a name, address and coordinate.  Once
     done we can invoke QPlaceManager::savePlace() to begin a save operation.
-    \snippet snippets/places/requesthandler.h Save place pt1
+    \snippet places/requesthandler.h Save place pt1
     \dots
-    \snippet snippets/places/requesthandler.h Save place pt2
+    \snippet places/requesthandler.h Save place pt2
 
     Once a place is saved the reply contains the new identifier for that place.
-    \snippet snippets/places/requesthandler.h Save place handler
+    \snippet places/requesthandler.h Save place handler
 
     Note that to save an already \e existing place, the QPlace::placeId() must
     be filled in with the correct identifier.  Otherwise a new place will be created if empty or the
@@ -240,26 +243,30 @@
     copy is now suitable for saving into the manager.  If the manager supports matching by alternative
     identifiers, an alternative identifier attribute is assigned to the copy (see \l {Matching places between managers})
 
-    \snippet snippets/places/requesthandler.h Save to different manager
+    \snippet places/requesthandler.h Save to different manager
 
     \target Removing a place cpp
     \section2 Removing a Place
     The removal of a place is performed as follows:
-    \snippet snippets/places/requesthandler.h Remove place
+    \snippet places/requesthandler.h Remove place
     \dots
     \dots
-    \snippet snippets/places/requesthandler.h Remove place handler
+    \snippet places/requesthandler.h Remove place handler
 
     When a place is removed, the QPlaceManager may emit the QPlaceManager::placeRemoved() signal.  Whether a
     manager does so is provider specific.  Managers accessing places from a web service will typically not emit
     these signals, while managers accessing places stored locally generally will.
 
     \section2 Using Categories
+
+    Categories are keywords that can describe a place. For example, 'park', 'theater',
+    'restaurant'. A place could be described by many categories, it could be a park and a music venue and a ferry or bus stop.
+
     To use categories they must first be initialized.
-    \snippet snippets/places/requesthandler.h Initialize categories
+    \snippet places/requesthandler.h Initialize categories
     \dots
     \dots
-    \snippet snippets/places/requesthandler.h Initialize categories reply
+    \snippet places/requesthandler.h Initialize categories reply
 
     After the categories have been initialized we can then use these category functions.
     \list
@@ -273,18 +280,18 @@
     we use the QPlaceManager::childCategories() function but do not provide
     a category identifier.
 
-    \snippet snippets/places/requesthandler.h Top level categories
+    \snippet places/requesthandler.h Top level categories
 
     If we did provide an identifier then we could retrieve a category's children.
 
-    \snippet snippets/places/requesthandler.h Child categories
+    \snippet places/requesthandler.h Child categories
 
     \section2 Saving a Category
     The following shows how to save a category
-    \snippet snippets/places/requesthandler.h Save category
+    \snippet places/requesthandler.h Save category
     \dots
     \dots
-    \snippet snippets/places/requesthandler.h Save category handler
+    \snippet places/requesthandler.h Save category handler
 
     When a category is saved, the QPlaceManager may emit QPlaceManager::categoryAdded() or QPlaceManager::categoryUpdated()
     signals.  However whether a manager does so or not is provider specific, managers accessing places
@@ -293,10 +300,10 @@
 
     \section2 Removing a Category
     Category removal is very similar to removing a place
-    \snippet snippets/places/requesthandler.h Remove category
+    \snippet places/requesthandler.h Remove category
     \dots
     \dots
-    \snippet snippets/places/requesthandler.h Remove category handler
+    \snippet places/requesthandler.h Remove category handler
 
     When a category is removed, the QPlaceManager may emit the QPlaceManager::categoryRemoved() signal.  Whether a
     manager does so is provider specific.  Managers accessing places from a web service will typically not emit
@@ -323,10 +330,10 @@
     the key is QPlaceMatchRequest::AlternativeId to indicate we are matching by alternative id, the value in this case would be
     x_id_nokia which specifies which alternative identifier attribute we are using to do the matching.
 
-    \snippet snippets/places/requesthandler.h Match places
+    \snippet places/requesthandler.h Match places
     \dots
     \dots
-    \snippet snippets/places/requesthandler.h Match places handler
+    \snippet places/requesthandler.h Match places handler
 
     \section1 Classes in Places
 

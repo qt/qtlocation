@@ -9,7 +9,7 @@
         \li location
         \li contact details
         \li icon
-        \li categories
+        \li categories (tag-like names to describe a place)
         \li visibility scope
     \endlist
 

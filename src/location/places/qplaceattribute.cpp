@@ -82,7 +82,7 @@ bool QPlaceAttributePrivate::isEmpty() const
     \brief The QPlaceAttribute class represents generic attribute information about a place.
 
     A QPlaceAttribute instance stores an additional piece of information about a place that is not
-    otherwise exposed though the QPlace class.  A QPlaceAttribute encapsulates a
+    otherwise exposed through the QPlace class.  A QPlaceAttribute encapsulates a
     localized label which describes the attribute and rich text string representing the attribute's value.
     Generally, both are intended to be displayed to the end-user as is.
 
@@ -110,7 +110,7 @@ bool QPlaceAttributePrivate::isEmpty() const
     new attributes as necessary.  Custom attribute types should always be prefixed
     by a qualifier in order to avoid conflicts.
 
-    \section3 User Readable vs Non-User Readable Attributes
+    \section3 User Readable and Non-User Readable Attributes
     Some attributes may not be intended to be readable by end users, the label field
     of such attributes are empty to indicate this fact.
 */

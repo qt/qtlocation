@@ -388,7 +388,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 
     This signal and QPlaceReply::finished() will be emitted at the same time.
 
-    \note Do no delete the \a reply object in the slot connected to this signal.
+    \note Do not delete the \a reply object in the slot connected to this signal.
     Use deleteLater() instead.
 */
 
@@ -404,7 +404,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 
     This signal and QPlaceReply::error() will be emitted at the same time.
 
-    \note Do no delete the \a reply object in the slot connected to this signal.
+    \note Do not delete the \a reply object in the slot connected to this signal.
     Use deleteLater() instead.
 */
 

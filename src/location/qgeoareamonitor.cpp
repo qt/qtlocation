@@ -63,14 +63,18 @@
             MyClass::MyClass()
             {
                 QGeoAreaMonitor *monitor = QGeoAreaMonitor::createDefaultMonitor();
-                connect(monitor, SIGNAL(areaEntered(QGeoPositionInfo)),
-                        this, SLOT(areaEntered(QGeoPositionInfo)));
-                connect(monitor, SIGNAL(areaExited(QGeoPositionInfo)),
-                        this, SLOT(areaExited(QGeoPositionInfo)));
+                if (monitor) {
+                    connect(monitor, SIGNAL(areaEntered(QGeoPositionInfo)),
+                            this, SLOT(areaEntered(QGeoPositionInfo)));
+                    connect(monitor, SIGNAL(areaExited(QGeoPositionInfo)),
+                            this, SLOT(areaExited(QGeoPositionInfo)));
 
-                QGeoCoordinate bigBenLocation(51.50104, -0.124632);
-                monitor->setCenter(bigBenLocation);
-                monitor->setRadius(100);
+                    QGeoCoordinate bigBenLocation(51.50104, -0.124632);
+                    monitor->setCenter(bigBenLocation);
+                    monitor->setRadius(100);
+                } else {
+                    qDebug() << "Could not create default area monitor";
+                }
             }
 
         public Q_SLOTS:

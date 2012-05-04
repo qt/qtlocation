@@ -217,7 +217,7 @@ void QPlaceReply::abort()
     This signal and QPlaceManager::finished() will be
     emitted at the same time.
 
-    \note Do no delete this reply object in the slot connected to this
+    \note Do not delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 
@@ -233,6 +233,6 @@ void QPlaceReply::abort()
 
     This signal and QPlaceManager::error() will be emitted at the same time.
 
-    \note Do no delete this reply object in the slot connected to this
+    \note Do not delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
