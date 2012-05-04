@@ -140,10 +140,13 @@ public:
                 const QGeoMapItemGeometry *fillShape,
                 const QGeoMapItemGeometry *borderShape);
 
+    bool isSubtreeBlocked() const;
+
 private:
     QSGFlatColorMaterial fill_material_;
     MapPolylineNode* border_;
     QSGGeometry geometry_;
+    bool blocked_;
 };
 
 QT_END_NAMESPACE

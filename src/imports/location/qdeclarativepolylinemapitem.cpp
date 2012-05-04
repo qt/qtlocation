@@ -365,8 +365,11 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
 
     QPointF origin = map.coordinateToScreenPosition(srcOrigin_, false);
 
-    if (!qIsFinite(origin.x()) || !qIsFinite(origin.y()))
+    if (!qIsFinite(origin.x()) || !qIsFinite(origin.y())) {
+        firstPointOffset_ = QPointF(0,0);
+        screenTriangles_.clear();
         return;
+    }
 
     // Create the viewport rect in the same coordinate system
     // as the actual points
@@ -704,7 +707,8 @@ void QDeclarativePolylineMapItem::dragEnded()
     \internal
 */
 MapPolylineNode::MapPolylineNode() :
-    geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
+    geometry_(QSGGeometry::defaultAttributes_Point2D(),0),
+    blocked_(true)
 {
     geometry_.setDrawingMode(GL_TRIANGLE_STRIP);
     QSGGeometryNode::setMaterial(&fill_material_);
@@ -722,11 +726,23 @@ MapPolylineNode::~MapPolylineNode()
 /*!
     \internal
 */
+bool MapPolylineNode::isSubtreeBlocked() const
+{
+    return blocked_;
+}
+
+/*!
+    \internal
+*/
 void MapPolylineNode::update(const QColor& fillColor,
                              const QGeoMapItemGeometry* shape)
 {
-    if (shape->size() == 0)
+    if (shape->size() == 0) {
+        blocked_ = true;
         return;
+    } else {
+        blocked_ = false;
+    }
 
     QSGGeometry *fill = QSGGeometryNode::geometry();
 

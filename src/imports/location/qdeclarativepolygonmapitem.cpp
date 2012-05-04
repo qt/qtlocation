@@ -163,8 +163,14 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
 */
 void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 {
-    if (!screenDirty_ || map.width() == 0 || map.height() == 0)
+    if (!screenDirty_)
         return;
+
+    if (map.width() == 0 || map.height() == 0) {
+        firstPointOffset_ = QPointF(0,0);
+        screenTriangles_.clear();
+        return;
+    }
 
     QPointF origin = map.coordinateToScreenPosition(srcOrigin_, false);
 
@@ -555,7 +561,8 @@ void QDeclarativePolygonMapItem::dragEnded()
 
 MapPolygonNode::MapPolygonNode() :
     border_(new MapPolylineNode()),
-    geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
+    geometry_(QSGGeometry::defaultAttributes_Point2D(), 0),
+    blocked_(true)
 {
     geometry_.setDrawingMode(GL_TRIANGLES);
     QSGGeometryNode::setMaterial(&fill_material_);
@@ -571,12 +578,35 @@ MapPolygonNode::~MapPolygonNode()
 /*!
     \internal
 */
+bool MapPolygonNode::isSubtreeBlocked() const
+{
+    return blocked_;
+}
+
+/*!
+    \internal
+*/
 void MapPolygonNode::update(const QColor& fillColor, const QColor& borderColor,
                             const QGeoMapItemGeometry *fillShape,
                             const QGeoMapItemGeometry *borderShape)
 {
-    if (fillShape->size() == 0)
+    /* Do the border update first */
+    border_->update(borderColor, borderShape);
+
+    /* If we have neither fill nor border with valid points, block the whole
+     * tree. We can't just block the fill without blocking the border too, so
+     * we're a little conservative here (maybe at the expense of rendering
+     * accuracy) */
+    if (fillShape->size() == 0) {
+        if (borderShape->size() == 0) {
+            blocked_ = true;
+        } else {
+            blocked_ = false;
+        }
         return;
+    } else {
+        blocked_ = false;
+    }
 
     QSGGeometry *fill = QSGGeometryNode::geometry();
 
@@ -597,6 +627,5 @@ void MapPolygonNode::update(const QColor& fillColor, const QColor& borderColor,
         fill_material_.setColor(fillColor);
         setMaterial(&fill_material_);
     }
-    border_->update(borderColor, borderShape);
 }
 QT_END_NAMESPACE

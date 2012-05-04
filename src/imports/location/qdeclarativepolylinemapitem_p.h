@@ -156,10 +156,12 @@ public:
     ~MapPolylineNode();
 
     void update(const QColor& fillColor, const QGeoMapItemGeometry *shape);
+    bool isSubtreeBlocked() const;
 
 private:
     QSGFlatColorMaterial fill_material_;
     QSGGeometry geometry_;
+    bool blocked_;
 };
 
 QT_END_NAMESPACE
