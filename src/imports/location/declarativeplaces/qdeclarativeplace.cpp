@@ -247,7 +247,8 @@ void QDeclarativePlace::pluginReady()
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support places.");
+        qmlInfo(this) << tr("Warning: Plugin does not support places. Error message: %1")
+                         .arg(serviceProvider->errorString());
         return;
     }
 }

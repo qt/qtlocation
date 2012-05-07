@@ -306,7 +306,8 @@ void QDeclarativeGeocodeModel::pluginReady()
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeocodingManager *geocodingManager = serviceProvider->geocodingManager();
     if (!geocodingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support (reverse) geocoding.");
+        qmlInfo(this) << tr("Warning: Plugin does not support (reverse) geocoding. Error message: %1")
+                         .arg(serviceProvider->errorString());
         return;
     }
     connect(geocodingManager, SIGNAL(finished(QGeocodeReply*)),

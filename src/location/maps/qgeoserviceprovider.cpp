@@ -263,7 +263,7 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
             engine->setManagerVersion(
                         int(this->metaData.value(QStringLiteral("Version")).toDouble()));
             manager = new Manager(engine);
-        } else {
+        } else if (error == QGeoServiceProvider::NoError) {
             error = QGeoServiceProvider::NotSupportedError;
             errorString = QLatin1String("The service provider does not support the ");
             errorString.append(QLatin1String(Manager::staticMetaObject.className()));

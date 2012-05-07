@@ -296,7 +296,8 @@ void QDeclarativeGeoRouteModel::pluginReady()
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
     if (!routingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support routing.");
+        qmlInfo(this) << tr("Warning: Plugin does not support routing. Error message: %1")
+                         .arg(serviceProvider->errorString());
         return;
     }
     connect(routingManager, SIGNAL(finished(QGeoRouteReply*)),
