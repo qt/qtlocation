@@ -57,6 +57,7 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoNetworkAccessManager;
+class QGeoUriProvider;
 
 class QGeoRoutingManagerEngineNokia : public QGeoRoutingManagerEngine
 {
@@ -86,7 +87,7 @@ private:
     static QString trimDouble(double degree, int decimalDigits = 10);
 
     QGeoNetworkAccessManager *m_networkManager;
-    QString m_host;
+    QGeoUriProvider *m_uriProvider;
     QString m_appId;
     QString m_token;
 };

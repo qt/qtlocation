@@ -50,6 +50,8 @@
 #include "qgeocodereply_nokia.h"
 #include "marclanguagecodes.h"
 #include "qgeonetworkaccessmanager.h"
+#include "qgeouriprovider.h"
+#include "uri_constants.h"
 
 #include <qgeoaddress.h>
 #include <qgeocoordinate.h>
@@ -66,16 +68,10 @@ QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(
         QString *errorString)
         : QGeocodingManagerEngine(parameters)
         , m_networkManager(networkManager)
-        , m_host("loc.desktop.maps.svc.ovi.com")
+        , m_uriProvider(new QGeoUriProvider(this, parameters, "geocoding.host", GEOCODING_HOST, GEOCODING_HOST_CN))
 {
     Q_ASSERT(networkManager);
     m_networkManager->setParent(this);
-
-    if (parameters.contains("geocoding.host")) {
-        QString host = parameters.value("geocoding.host").toString();
-        if (!host.isEmpty())
-            m_host = host;
-    }
 
     if (parameters.contains("token")) {
         m_token = parameters.value("token").toString();
@@ -120,7 +116,7 @@ QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
         const QGeoBoundingArea &bounds)
 {
     QString requestString = "http://";
-    requestString += m_host;
+    requestString += m_uriProvider->getCurrentHost();
     requestString += "/geocoder/gc/2.0";
 
     requestString += getAuthenticationString();
@@ -189,7 +185,7 @@ QGeocodeReply *QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate
         const QGeoBoundingArea &bounds)
 {
     QString requestString = "http://";
-    requestString += m_host;
+    requestString += m_uriProvider->getCurrentHost();
     requestString += "/geocoder/rgc/2.0";
 
     requestString += getAuthenticationString();
@@ -211,7 +207,7 @@ QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QString &address,
         const QGeoBoundingArea &bounds)
 {
     QString requestString = "http://";
-    requestString += m_host;
+    requestString += m_uriProvider->getCurrentHost();
     requestString += "/geocoder/gc/2.0";
 
     requestString += getAuthenticationString();

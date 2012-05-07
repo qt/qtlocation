@@ -98,9 +98,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     types << QGeoMapType(QGeoMapType::GrayStreetMap,tr("Mobile Gray Street Map"),tr("Nokia Mobile Gray Street Map"), true, 11);
     setSupportedMapTypes(types);
 
-    QGeoTileFetcherNokia *fetcher = new QGeoTileFetcherNokia(networkManager, this);
-    fetcher->setParams(parameters);
-    fetcher->setTileSize(tileSize());
+    QGeoTileFetcherNokia *fetcher = new QGeoTileFetcherNokia(parameters, networkManager, this, tileSize());
     setTileFetcher(fetcher);
 
     // TODO: do this in a plugin-neutral way so that other tiled map plugins

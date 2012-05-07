@@ -45,58 +45,46 @@
 ** plugin source code.
 **
 ****************************************************************************/
+#ifndef QGEO_MOBILE_COUNTRY_TRACKER_H
+#define QGEO_MOBILE_COUNTRY_TRACKER_H
 
-#ifndef QGEOCODINGMANAGER_NOKIA_H
-#define QGEOCODINGMANAGER_NOKIA_H
-
-#include "qgeoserviceproviderplugin_nokia.h"
-
-#include <qgeoserviceprovider.h>
-#include <qgeocodingmanagerengine.h>
-
-#include <QLocale>
+#include <QObject>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoNetworkAccessManager;
-class QGeoUriProvider;
+class QNetworkInfo;
 
-class QGeocodingManagerEngineNokia : public QGeocodingManagerEngine
+class QGeoUriProvider : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(QGeoUriProvider)
+
 public:
-    QGeocodingManagerEngineNokia(QGeoNetworkAccessManager *networkManager,
-                                 const QMap<QString, QVariant> &parameters,
-                                 QGeoServiceProvider::Error *error,
-                                 QString *errorString);
-    ~QGeocodingManagerEngineNokia();
+    QGeoUriProvider(QObject *parent,
+                    const QMap<QString, QVariant> & parameters,
+                    const QString &hostParameterName,
+                    const QString &internationalHost,
+                    const QString &localizedHost = QString());
 
-    QGeocodeReply *geocode(const QGeoAddress &address,
-                             const QGeoBoundingArea &bounds);
-    QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
-                                    const QGeoBoundingArea &bounds);
-
-    QGeocodeReply *geocode(const QString &searchString,
-                            int limit,
-                            int offset,
-                            const QGeoBoundingArea &bounds);
+    QString getCurrentHost() const;
 
 private Q_SLOTS:
-    void placesFinished();
-    void placesError(QGeocodeReply::Error error, const QString &errorString);
+    void mobileCountryCodeChanged(int interface, const QString& mcc);
 
 private:
-    static QString trimDouble(double degree, int decimalDigits = 10);
-    QGeocodeReply *geocode(QString requestString, const QGeoBoundingArea &bounds, int limit = -1, int offset = 0);
-    QString languageToMarc(QLocale::Language language);
-    QString getAuthenticationString() const;
+    bool isInternationalNetwork() const;
+    void setCurrentHost(const QString &host);
 
-    QGeoNetworkAccessManager *m_networkManager;
-    QString m_token;
-    QString m_applicationId;
-    QGeoUriProvider *m_uriProvider;
+#ifdef USE_CHINA_NETWORK_REGISTRATION
+    QNetworkInfo *m_networkInfo;
+#endif
+    const QString m_internationalHost;
+    const QString m_localizedHost;
+    QString m_currentHost;
+    QChar m_firstSubdomain;
+    unsigned char m_maxSubdomains;
 };
 
 QT_END_NAMESPACE
 
-#endif
+#endif // QGEO_MOBILE_COUNTRY_TRACKER_H

@@ -45,58 +45,16 @@
 ** plugin source code.
 **
 ****************************************************************************/
-
-#ifndef QGEOCODINGMANAGER_NOKIA_H
-#define QGEOCODINGMANAGER_NOKIA_H
-
-#include "qgeoserviceproviderplugin_nokia.h"
-
-#include <qgeoserviceprovider.h>
-#include <qgeocodingmanagerengine.h>
-
-#include <QLocale>
+#include "uri_constants.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoNetworkAccessManager;
-class QGeoUriProvider;
-
-class QGeocodingManagerEngineNokia : public QGeocodingManagerEngine
-{
-    Q_OBJECT
-public:
-    QGeocodingManagerEngineNokia(QGeoNetworkAccessManager *networkManager,
-                                 const QMap<QString, QVariant> &parameters,
-                                 QGeoServiceProvider::Error *error,
-                                 QString *errorString);
-    ~QGeocodingManagerEngineNokia();
-
-    QGeocodeReply *geocode(const QGeoAddress &address,
-                             const QGeoBoundingArea &bounds);
-    QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
-                                    const QGeoBoundingArea &bounds);
-
-    QGeocodeReply *geocode(const QString &searchString,
-                            int limit,
-                            int offset,
-                            const QGeoBoundingArea &bounds);
-
-private Q_SLOTS:
-    void placesFinished();
-    void placesError(QGeocodeReply::Error error, const QString &errorString);
-
-private:
-    static QString trimDouble(double degree, int decimalDigits = 10);
-    QGeocodeReply *geocode(QString requestString, const QGeoBoundingArea &bounds, int limit = -1, int offset = 0);
-    QString languageToMarc(QLocale::Language language);
-    QString getAuthenticationString() const;
-
-    QGeoNetworkAccessManager *m_networkManager;
-    QString m_token;
-    QString m_applicationId;
-    QGeoUriProvider *m_uriProvider;
-};
+const QString ROUTING_HOST = QStringLiteral("route.nlp.nokia.com");
+const QString GEOCODING_HOST = QStringLiteral("loc.desktop.maps.svc.ovi.com");
+const QString GEOCODING_HOST_CN = QStringLiteral("pr.geo.maps.svc.nokia.com.cn");
+const QString PLACES_HOST = QStringLiteral("api.places.lbs.maps.nokia.com/places");
+const QString PLACES_HOST_CN = QStringLiteral("api.places.lbs.maps.nokia.com.cn/places");
+const QString MAP_TILES_HOST = QStringLiteral("1-4.maptile.lbs.ovi.com");
+const QString MAP_TILES_HOST_CN = QStringLiteral("a-k.maptile.maps.svc.nokia.com.cn");
 
 QT_END_NAMESPACE
-
-#endif

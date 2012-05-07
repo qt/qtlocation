@@ -5,8 +5,8 @@ QT += location network
 
 contains(QT_CONFIG, location-china-support) {
     # China support
-    QT += systeminfo
     DEFINES += USE_CHINA_NETWORK_REGISTRATION
+    QT += systeminfo
 }
 
 load(qt_plugin)
@@ -28,7 +28,9 @@ HEADERS += \
             qgeoserviceproviderplugin_nokia.h \
             marclanguagecodes.h \
             qgeonetworkaccessmanager.h \
-            qgeointrinsicnetworkaccessmanager.h
+            qgeointrinsicnetworkaccessmanager.h \
+            qgeouriprovider.h \
+            uri_constants.h
 
 
 SOURCES += \
@@ -43,7 +45,9 @@ SOURCES += \
             qgeoroutexmlparser.cpp \
             qgeoroutingmanagerengine_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp \
-            qgeointrinsicnetworkaccessmanager.cpp
+            qgeointrinsicnetworkaccessmanager.cpp \
+            qgeouriprovider.cpp \
+            uri_constants.cpp
 
 include(placesv1/placesv1.pri)
 include(placesv2/placesv2.pri)

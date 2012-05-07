@@ -50,15 +50,7 @@
 #define QGEOTILEFETCHER_NOKIA_H
 
 #include "qgeoserviceproviderplugin_nokia.h"
-
-#include <QGeoServiceProvider>
 #include "qgeotilefetcher.h"
-
-#include <QMap>
-
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-#include <qnetworkinfo.h>
-#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -68,62 +60,46 @@ class QGeoTiledMappingManagerEngine;
 class QGeoTiledMappingManagerEngineNokia;
 class QNetworkReply;
 class QGeoNetworkAccessManager;
+class QGeoUriProvider;
 
 class QGeoTileFetcherNokia : public QGeoTileFetcher
 {
     Q_OBJECT
 
 public:
-    QGeoTileFetcherNokia(QGeoNetworkAccessManager *networkManager, QGeoTiledMappingManagerEngine *engine);
+    QGeoTileFetcherNokia(
+            const QMap<QString, QVariant> &parameters,
+            QGeoNetworkAccessManager *networkManager,
+            QGeoTiledMappingManagerEngine *engine,
+            const QSize &tileSize);
+
     ~QGeoTileFetcherNokia();
 
     bool init();
 
     QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
 
-    const QString &host() const;
-    QChar firstSubdomain() const;
-    unsigned char maxSubdomains() const;
-    const QString &token() const;
-    const QString &applicationId() const;
-
-    void setParams(const QMap<QString, QVariant> &parameters);
-    void setTileSize(QSize tileSize);
+    QString token() const;
+    QString applicationId() const;
 
 public Q_SLOTS:
     void copyrightsFetched();
     void fetchCopyrightsData();
-
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-private Q_SLOTS:
-    void currentMobileCountryCodeChanged(int interface, const QString &mcc);
-#endif
 
 private:
     Q_DISABLE_COPY(QGeoTileFetcherNokia)
 
     QString getRequestString(const QGeoTileSpec &spec);
 
-    static QString sizeToStr(const QSize &size);
-    static QString mapIdToStr(int mapId);
-
-    void setHost(const QString &host);
-
     QGeoTiledMappingManagerEngineNokia *m_engineNokia;
     QGeoNetworkAccessManager *m_networkManager;
     QMap<QString, QVariant> m_parameters;
     QSize m_tileSize;
-    QString m_host;
     QString m_token;
-    QChar m_firstSubdomain;
     QNetworkReply *m_copyrightsReply;
 
-    unsigned char m_maxSubdomains;
     QString m_applicationId;
-
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-    QNetworkInfo m_networkInfo;
-#endif
+    QGeoUriProvider *m_uriProvider;
 };
 
 QT_END_NAMESPACE

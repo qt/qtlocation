@@ -49,6 +49,8 @@
 #include "qgeoroutingmanagerengine_nokia.h"
 #include "qgeoroutereply_nokia.h"
 #include "qgeonetworkaccessmanager.h"
+#include "qgeouriprovider.h"
+#include "uri_constants.h"
 
 #include <QStringList>
 #include <QUrl>
@@ -64,18 +66,11 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(
         QString *errorString)
         : QGeoRoutingManagerEngine(parameters)
         , m_networkManager(networkManager)
-        , m_host(QStringLiteral("route.nlp.nokia.com"))
+        , m_uriProvider(new QGeoUriProvider(this, parameters, "routing.host", ROUTING_HOST))
 
 {
     Q_ASSERT(networkManager);
     m_networkManager->setParent(this);
-
-    if (parameters.contains(QStringLiteral("routing.host"))) {
-        QString host = parameters.value(QStringLiteral("routing.host")).toString();
-        if (!host.isEmpty())
-            m_host = host;
-    }
-
 
     m_appId = parameters.value(QStringLiteral("app_id")).toString();
     m_token = parameters.value(QStringLiteral("token")).toString();
@@ -230,7 +225,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
         return QString();
 
     QString requestString = QStringLiteral("http://");
-    requestString += m_host;
+    requestString += m_uriProvider->getCurrentHost();
     requestString += QStringLiteral("/routing/6.2/calculateroute.xml");
 
     requestString += QStringLiteral("?alternatives=");
@@ -268,7 +263,7 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
         return "";
 
     QString requestString = "http://";
-    requestString += m_host;
+    requestString += m_uriProvider->getCurrentHost();
     requestString += "/routing/6.2/getroute.xml";
 
     requestString += "?routeid=";

@@ -60,8 +60,8 @@ class QPlaceContentReply;
 class QNetworkReply;
 class QNetworkAccessManager;
 class QPlaceCategoriesReplyImpl;
-class QNetworkInfo;
 class QGeoNetworkAccessManager;
+class QGeoUriProvider;
 
 struct PlaceCategoryNode
 {
@@ -118,15 +118,10 @@ private Q_SLOTS:
     void replyError(QPlaceReply::Error error_, const QString &errorString);
     void categoryReplyFinished();
     void categoryReplyError();
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-    void currentMobileCountryCodeChanged(int interface, const QString &mcc);
-#endif
 
 private:
     QGeoNetworkAccessManager *m_manager;
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-    QNetworkInfo *m_networkInfo;
-#endif
+    QGeoUriProvider *m_uriProvider;
 
     QList<QLocale> m_locales;
 
@@ -137,9 +132,7 @@ private:
 
     QString m_appId;
     QString m_appCode;
-    QString m_host;
 
-    QString m_placesServer;
     QString m_localDataPath;
     QString m_theme;
 };

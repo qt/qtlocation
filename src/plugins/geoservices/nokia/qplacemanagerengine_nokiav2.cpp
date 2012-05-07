@@ -56,6 +56,8 @@
 #include "placesv2/qplacedetailsreplyimpl.h"
 #include "placesv2/qplaceidreplyimpl.h"
 #include "qgeonetworkaccessmanager.h"
+#include "qgeouriprovider.h"
+#include "uri_constants.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QJsonDocument>
@@ -64,9 +66,7 @@
 #include <QtCore/QUrlQuery>
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkProxyFactory>
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-#include <QtSystemInfo/QNetworkInfo>
-#endif
+
 #include <QtLocation/QPlaceContentRequest>
 #include <QtLocation/QGeoBoundingCircle>
 
@@ -89,37 +89,22 @@ static const int FIXED_CATEGORIES_indices[] = {
      115,   -1
 };
 
-static const char * const placesServerInternational = "http://api.places.lbs.maps.nokia.com/places";
-static const char * const placesServerChina = "http://api.places.lbs.maps.nokia.com.cn/places";
-
 QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
     QGeoNetworkAccessManager *networkManager,
     const QMap<QString, QVariant> &parameters,
     QGeoServiceProvider::Error *error,
     QString *errorString)
-:   QPlaceManagerEngine(parameters), m_manager(networkManager)
+    : QPlaceManagerEngine(parameters)
+    , m_manager(networkManager)
+    , m_uriProvider(new QGeoUriProvider(this, parameters, "places.host", PLACES_HOST, PLACES_HOST_CN))
 {
     Q_ASSERT(networkManager);
     m_manager->setParent(this);
 
     m_locales.append(QLocale());
 
-    // Unless specified in the plugin parameters set the international places server to the builtin
-    // one.  This is the server used when not in China.
-    m_host = parameters.value(QLatin1String("places.host"),
-                              QLatin1String(placesServerInternational)).toString();
-
     m_appId = parameters.value(QLatin1String("app_id")).toString();
     m_appCode = parameters.value(QLatin1String("token")).toString();
-
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-    m_networkInfo = new QNetworkInfo(this);
-    connect(m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(int,QString)),
-            this, SLOT(currentMobileCountryCodeChanged(int,QString)));
-    currentMobileCountryCodeChanged(0, m_networkInfo->currentMobileCountryCode(0));
-#else
-    m_placesServer = m_host;
-#endif
 
     m_theme = parameters.value("places.theme", QString()).toString();
 
@@ -147,7 +132,7 @@ QPlaceManagerEngineNokiaV2::~QPlaceManagerEngineNokiaV2() {}
 
 QPlaceDetailsReply *QPlaceManagerEngineNokiaV2::getPlaceDetails(const QString &placeId)
 {
-    QUrl requestUrl(m_placesServer + QLatin1String("/v1/places/") + placeId);
+    QUrl requestUrl(m_uriProvider->getCurrentHost() + QLatin1String("/v1/places/") + placeId);
 
     QUrlQuery queryItems;
 
@@ -170,7 +155,7 @@ QPlaceDetailsReply *QPlaceManagerEngineNokiaV2::getPlaceDetails(const QString &p
 QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &placeId,
                                                               const QPlaceContentRequest &request)
 {
-    QUrl requestUrl(m_placesServer + QLatin1String("/v1/places/") + placeId + QLatin1String("/media/"));
+    QUrl requestUrl(m_uriProvider->getCurrentHost() + QLatin1String("/v1/places/") + placeId + QLatin1String("/media/"));
 
     QNetworkReply *networkReply = 0;
 
@@ -298,7 +283,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
     if (!query.searchTerm().isEmpty()) {
         // search term query
-        QUrl requestUrl(m_placesServer + QLatin1String("/v1/discover/search"));
+        QUrl requestUrl(m_uriProvider->getCurrentHost() + QLatin1String("/v1/discover/search"));
 
         QUrlQuery queryItems;
 
@@ -328,7 +313,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         // The request URL should be "/v1/discover/explore" but that returns both places and
         // clusters of places.  We don't support clusters so we use the undocumented
         // "/v1/discover/explore/places" instead which only returns places.
-        QUrl requestUrl(m_placesServer + QLatin1String("/v1/discover/explore/places"));
+        QUrl requestUrl(m_uriProvider->getCurrentHost() + QLatin1String("/v1/discover/explore/places"));
 
         QUrlQuery queryItems;
 
@@ -369,7 +354,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
 QPlaceSearchReply *QPlaceManagerEngineNokiaV2::recommendations(const QString &placeId, const QPlaceSearchRequest &query)
 {
-    QUrl requestUrl(m_placesServer + QLatin1String("/v1/places/") + placeId + QLatin1String("/related/recommended"));
+    QUrl requestUrl(m_uriProvider->getCurrentHost() + QLatin1String("/v1/places/") + placeId + QLatin1String("/related/recommended"));
 
     QUrlQuery queryItems;
 
@@ -398,7 +383,7 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::recommendations(const QString &pl
 
 QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const QPlaceSearchRequest &query)
 {
-    QUrl requestUrl(m_placesServer + QLatin1String("/v1/suggest"));
+    QUrl requestUrl(m_uriProvider->getCurrentHost() + QLatin1String("/v1/suggest"));
 
     QUrlQuery queryItems;
 
@@ -481,7 +466,7 @@ QPlaceReply *QPlaceManagerEngineNokiaV2::initializeCategories()
         const QString id = QString::fromLatin1(FIXED_CATEGORIES_string +
                                                FIXED_CATEGORIES_indices[i]);
 
-        QUrl requestUrl(m_placesServer + QLatin1String("/v1/categories/places/") + id);
+        QUrl requestUrl(m_uriProvider->getCurrentHost() + QLatin1String("/v1/categories/places/") + id);
         QNetworkReply *networkReply = sendRequest(requestUrl);
         connect(networkReply, SIGNAL(finished()), this, SLOT(categoryReplyFinished()));
         connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)),
@@ -623,20 +608,6 @@ void QPlaceManagerEngineNokiaV2::categoryReplyError()
                                   Q_ARG(QString, tr("Network error.")));
     }
 }
-
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-void QPlaceManagerEngineNokiaV2::currentMobileCountryCodeChanged(int interface, const QString &mcc)
-{
-    Q_UNUSED(interface)
-
-    if (mcc == QLatin1String("460") || mcc == QLatin1String("461") ||
-        mcc == QLatin1String("454") || mcc == QLatin1String("455")) {
-        m_placesServer = QLatin1String(placesServerChina);
-    } else {
-        m_placesServer = m_host;
-    }
-}
-#endif
 
 QNetworkReply *QPlaceManagerEngineNokiaV2::sendRequest(const QUrl &url)
 {

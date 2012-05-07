@@ -51,6 +51,8 @@
 #include "qgeotiledmapdata_nokia.h"
 #include "qgeotiledmappingmanagerengine_nokia.h"
 #include "qgeonetworkaccessmanager.h"
+#include "qgeouriprovider.h"
+#include "uri_constants.h"
 
 #include <qgeotilespec.h>
 
@@ -66,17 +68,59 @@
 
 QT_BEGIN_NAMESPACE
 
-const char *MAPTILES_HOST = "1-4.maptile.lbs.ovi.com";
-const char *MAPTILES_HOST_CN = "a-k.maptile.maps.svc.nokia.com.cn";
+namespace
+{
+    QString sizeToStr(const QSize &size)
+    {
+        static const QString s256("256");
+        static const QString s128("128");
+        if (size.height() >= LARGE_TILE_DIMENSION ||
+                size.width() >= LARGE_TILE_DIMENSION)
+            return s256;
+        else
+            return s128;
+    }
 
-QGeoTileFetcherNokia::QGeoTileFetcherNokia(QGeoNetworkAccessManager *networkManager,
-                                           QGeoTiledMappingManagerEngine *engine)
+    QString mapIdToStr(int mapId)
+    {
+        typedef std::map<int, QString> MapTypeRegistry;
+        static MapTypeRegistry registeredTypes;
+        if (registeredTypes.empty()) {
+            registeredTypes[0] = "normal.day";
+            registeredTypes[1] = "normal.day";
+            registeredTypes[2] = "satellite.day";
+            registeredTypes[3] = "terrain.day";
+            registeredTypes[4] = "hybrid.day";
+            registeredTypes[5] = "normal.day.transit";
+            registeredTypes[6] = "normal.day.grey";
+            registeredTypes[7] = "normal.day.mobile";
+            registeredTypes[8] = "terrain.day.mobile";
+            registeredTypes[9] = "hybrid.day.mobile";
+            registeredTypes[10] = "normal.day.transit.mobile";
+            registeredTypes[11] = "normal.day.grey.mobile";
+        }
+
+        MapTypeRegistry::const_iterator it = registeredTypes.find(mapId);
+        if (it != registeredTypes.end()) {
+            return it->second;
+        }
+
+        qWarning() << "Unknown mapId: " << mapId;
+        return "normal.day";
+    }
+}
+QGeoTileFetcherNokia::QGeoTileFetcherNokia(
+        const QMap<QString, QVariant> &parameters,
+        QGeoNetworkAccessManager *networkManager,
+        QGeoTiledMappingManagerEngine *engine,
+        const QSize &tileSize)
         : QGeoTileFetcher(engine),
           m_engineNokia(static_cast<QGeoTiledMappingManagerEngineNokia *>(engine)),
           m_networkManager(networkManager),
-          m_firstSubdomain(QChar::Null),
+          m_parameters(parameters),
+          m_tileSize(tileSize),
           m_copyrightsReply(0),
-          m_maxSubdomains(0)
+          m_uriProvider(new QGeoUriProvider(this, parameters, "mapping.host", MAP_TILES_HOST, MAP_TILES_HOST_CN))
 {
     Q_ASSERT(networkManager);
     m_networkManager->setParent(this);
@@ -86,15 +130,7 @@ QGeoTileFetcherNokia::~QGeoTileFetcherNokia() {}
 
 bool QGeoTileFetcherNokia::init()
 {
-    setHost(MAPTILES_HOST);
-
     qsrand((uint)QTime::currentTime().msec());
-
-    if (m_parameters.contains("mapping.host")) {
-        QString host = m_parameters.value("mapping.host").toString();
-        if (!host.isEmpty())
-            setHost(host);
-    }
 
     if (m_parameters.contains("app_id")) {
         m_applicationId = m_parameters.value("app_id").toString();
@@ -103,20 +139,6 @@ bool QGeoTileFetcherNokia::init()
     if (m_parameters.contains("token")) {
         m_token = m_parameters.value("token").toString();
     }
-
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-    connect(&m_networkInfo, SIGNAL(currentMobileCountryCodeChanged(int, const QString&)),
-            SLOT(currentMobileCountryCodeChanged(int, const QString&)));
-    currentMobileCountryCodeChanged(0, m_networkInfo.currentMobileCountryCode(0));
-#endif
-
-    // Temporary testing aid for setting China maptile server
-    QFile file("/.enable_china_maptile_server");
-    if (file.exists()) {
-        qDebug() << "CHINA MAPTILE SERVER SET FOR TESTING PURPOSES.";
-        setHost(MAPTILES_HOST_CN);
-    }
-
     return true;
 }
 
@@ -137,19 +159,13 @@ QGeoTiledMapReply *QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
 
 QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
 {
-    const char subdomain = m_maxSubdomains ? m_firstSubdomain.toLatin1() +
-                                             qrand() % m_maxSubdomains : 0;
     static const QString http("http://");
     static const QString path("/maptiler/v2/maptile/newest/");
-    static const QChar dot('.');
     static const QChar slash('/');
 
     QString requestString = http;
-    if (subdomain != 0) {
-        requestString += subdomain;
-        requestString += dot;
-    }
-    requestString += m_host;
+
+    requestString += m_uriProvider->getCurrentHost();
     requestString += path;
 
     requestString += mapIdToStr(spec.mapId());
@@ -180,102 +196,15 @@ QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
     return requestString;
 }
 
-QString QGeoTileFetcherNokia::sizeToStr(const QSize &size)
-{
-    static const QString s256("256");
-    static const QString s128("128");
-    if (size.height() >= LARGE_TILE_DIMENSION ||
-            size.width() >= LARGE_TILE_DIMENSION)
-        return s256;
-    else
-        return s128;
-}
-
-QString QGeoTileFetcherNokia::mapIdToStr(int mapId)
-{
-    typedef std::map<int, QString> MapTypeRegistry;
-    static MapTypeRegistry registeredTypes;
-    if (registeredTypes.empty()) {
-        registeredTypes[0] = "normal.day";
-        registeredTypes[1] = "normal.day";
-        registeredTypes[2] = "satellite.day";
-        registeredTypes[3] = "terrain.day";
-        registeredTypes[4] = "hybrid.day";
-        registeredTypes[5] = "normal.day.transit";
-        registeredTypes[6] = "normal.day.grey";
-        registeredTypes[7] = "normal.day.mobile";
-        registeredTypes[8] = "terrain.day.mobile";
-        registeredTypes[9] = "hybrid.day.mobile";
-        registeredTypes[10] = "normal.day.transit.mobile";
-        registeredTypes[11] = "normal.day.grey.mobile";
-    }
-
-    MapTypeRegistry::const_iterator it = registeredTypes.find(mapId);
-    if (it != registeredTypes.end()) {
-        return it->second;
-    }
-
-    qWarning() << "Unknown mapId: " << mapId;
-    return "normal.day";
-}
-
-void QGeoTileFetcherNokia::setParams(const QMap<QString, QVariant> &parameters)
-{
-    m_parameters = parameters;
-}
-
-void QGeoTileFetcherNokia::setTileSize(QSize tileSize)
-{
-    m_tileSize = tileSize;
-}
-
-const QString & QGeoTileFetcherNokia::token() const
+QString QGeoTileFetcherNokia::token() const
 {
     return m_token;
 }
 
-const QString & QGeoTileFetcherNokia::host() const
-{
-    return m_host;
-}
-
-const QString & QGeoTileFetcherNokia::applicationId() const
+QString QGeoTileFetcherNokia::applicationId() const
 {
     return m_applicationId;
 }
-QChar QGeoTileFetcherNokia::firstSubdomain() const
-{
-    return m_firstSubdomain;
-}
-
-unsigned char QGeoTileFetcherNokia::maxSubdomains() const
-{
-    return m_maxSubdomains;
-}
-
-void QGeoTileFetcherNokia::setHost(const QString &host)
-{
-    if (host.length() > 4 && host.at(1) == QChar('-') && host.at(3) == QChar('.')) {
-        QString realHost = host.right(host.length() - 4);
-        m_firstSubdomain = host.at(0);
-        m_maxSubdomains = host.at(2).toLatin1() - host.at(0).toLatin1() + 1;
-        m_host = realHost;
-    } else {
-        m_host = host;
-        m_firstSubdomain = QChar::Null;
-        m_maxSubdomains = 0;
-    }
-}
-
-#ifdef USE_CHINA_NETWORK_REGISTRATION
-void QGeoTileFetcherNokia::currentMobileCountryCodeChanged(int interface, const QString & mcc)
-{
-    Q_UNUSED(interface)
-    if (mcc == "460" || mcc == "461" || mcc == "454" || mcc == "455") {
-        setHost(MAPTILES_HOST_CN);
-    }
-}
-#endif
 
 void QGeoTileFetcherNokia::copyrightsFetched()
 {
@@ -288,12 +217,8 @@ void QGeoTileFetcherNokia::copyrightsFetched()
 void QGeoTileFetcherNokia::fetchCopyrightsData()
 {
     QString copyrightUrl = "http://";
-    if (!firstSubdomain().isNull()) {
-        copyrightUrl += firstSubdomain();
-        copyrightUrl += ".";
-    }
 
-    copyrightUrl += host();
+    copyrightUrl += m_uriProvider->getCurrentHost();
     copyrightUrl += "/maptiler/v2/copyright/newest?output=json";
 
     if (!token().isEmpty()) {
