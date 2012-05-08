@@ -375,6 +375,9 @@ Module {
             Parameter { name: "coordinate"; type: "const QDeclarativeCoordinate"; isPointer: true }
         }
         Method {
+            name: "cameraStopped"
+        }
+        Method {
             name: "pan"
             Parameter { name: "dx"; type: "int" }
             Parameter { name: "dy"; type: "int" }

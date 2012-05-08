@@ -359,6 +359,7 @@ QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap 
     touchPointState_ = touchPoints0;
     pinchState_ = pinchInactive;
     panState_ = panInactive;
+
 }
 /*!
     \internal
@@ -371,6 +372,8 @@ void QDeclarativeGeoMapGestureArea::setMap(QGeoMap *map)
     pan_.animation_ = new QPropertyAnimation(map_->mapController(), "center", this);
     pan_.animation_->setEasingCurve(QEasingCurve(QEasingCurve::OutQuad));
     connect(pan_.animation_, SIGNAL(finished()), this, SLOT(endFlick()));
+    connect(this, SIGNAL(movementStopped()),
+            map_, SLOT(cameraStopped()));
 }
 
 QDeclarativeGeoMapGestureArea::~QDeclarativeGeoMapGestureArea()
@@ -1163,6 +1166,9 @@ void QDeclarativeGeoMapGestureArea::endPinch()
     emit pinchFinished(&pinchEvent_);
     emit pinchDep_->pinchFinished(&pinchEvent_);
     pinchStartDist_ = 0;
+    // mark as inactive for use by camera
+    if (panState_ == panInactive)
+        emit movementStopped();
 }
 
 /*!
@@ -1182,7 +1188,12 @@ void QDeclarativeGeoMapGestureArea::panStateMachine()
         if (touchPoints_.count() == 0) {
             panState_ = panFlick;
             if (!tryStartFlick())
+            {
                 panState_ = panInactive;
+                // mark as inactive for use by camera
+                if (pinchState_ == pinchInactive)
+                    emit movementStopped();
+            }
         }
         break;
     case panFlick:
@@ -1333,6 +1344,7 @@ void QDeclarativeGeoMapGestureArea::endFlick()
     emit flickFinished();
     emit flickableDep_->flickEnded();
     panState_ = panInactive;
+    emit movementStopped();
 }
 
 

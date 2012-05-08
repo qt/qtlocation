@@ -149,10 +149,10 @@ QGeoTileRequestManager *QGeoTiledMapData::getRequestManager()
     return d->tileRequests_;
 }
 
-void QGeoTiledMapData::newTileFetched(QSharedPointer<QGeoTileTexture> texture)
+void QGeoTiledMapData::newTileFetched(const QGeoTileSpec &spec)
 {
     Q_D(QGeoTiledMapData);
-    d->newTileFetched(texture);
+    d->newTileFetched(spec);
 }
 
 QGeoTileCache *QGeoTiledMapData::tileCache()
@@ -178,6 +178,12 @@ void QGeoTiledMapData::changeCameraData(const QGeoCameraData &oldCameraData)
 {
     Q_D(QGeoTiledMapData);
     d->changeCameraData(oldCameraData);
+}
+
+void QGeoTiledMapData::prefetchData()
+{
+    Q_D(QGeoTiledMapData);
+    d->prefetchTiles();
 }
 
 void QGeoTiledMapData::changeActiveMapType(const QGeoMapType mapType)
@@ -263,6 +269,14 @@ QGeoTiledMappingManagerEngine *QGeoTiledMapDataPrivate::engine() const
     return engine_;
 }
 
+void QGeoTiledMapDataPrivate::prefetchTiles()
+{
+    cameraTiles_->findPrefetchTiles();
+
+    if (tileRequests_)
+        tileRequests_->requestTiles(cameraTiles_->tiles() - mapScene_->texturedTiles());
+}
+
 void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraData)
 {
     double lat = oldCameraData.center().latitude();
@@ -288,14 +302,14 @@ void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraDa
     }
 
     cameraTiles_->setCamera(cam);
-    visibleTiles_ = cameraTiles_->tiles();
 
     mapScene_->setCameraData(cam);
-    mapScene_->setVisibleTiles(visibleTiles_);
+    mapScene_->setVisibleTiles(cameraTiles_->tiles());
 
     if (tileRequests_) {
+        // don't request tiles that are already built and textured
         QList<QSharedPointer<QGeoTileTexture> > cachedTiles =
-                tileRequests_->requestTiles(visibleTiles_);
+                tileRequests_->requestTiles(cameraTiles_->tiles() - mapScene_->texturedTiles());
 
         foreach (const QSharedPointer<QGeoTileTexture> &tex, cachedTiles) {
             mapScene_->addTile(tex->spec, tex);
@@ -303,14 +317,12 @@ void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraDa
 
         if (!cachedTiles.isEmpty())
             map_->update();
-
     }
 }
 
 void QGeoTiledMapDataPrivate::changeActiveMapType(const QGeoMapType mapType)
 {
     cameraTiles_->setMapType(mapType);
-    visibleTiles_ = cameraTiles_->tiles();
 }
 
 void QGeoTiledMapDataPrivate::resized(int width, int height)
@@ -337,15 +349,18 @@ void QGeoTiledMapDataPrivate::resized(int width, int height)
     }
 }
 
-void QGeoTiledMapDataPrivate::newTileFetched(QSharedPointer<QGeoTileTexture> texture)
+void QGeoTiledMapDataPrivate::newTileFetched(const QGeoTileSpec &spec)
 {
-    mapScene_->addTile(texture->spec, texture);
-    map_->update();
+    // Only promote the texture up to GPU if it is visible
+    if (cameraTiles_->tiles().contains(spec)){
+        mapScene_->addTile(spec, engine_->getTileTexture(spec));
+        map_->update();
+    }
 }
 
 QSet<QGeoTileSpec> QGeoTiledMapDataPrivate::visibleTiles()
 {
-    return visibleTiles_;
+    return cameraTiles_->tiles();
 }
 
 void QGeoTiledMapDataPrivate::paintGL(QGLPainter *painter)

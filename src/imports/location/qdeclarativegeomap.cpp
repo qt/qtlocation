@@ -540,7 +540,6 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
             this,
             SLOT(mapZoomLevelChanged(qreal)));
 
-    map_->resize(width(), height());
     AnimatableCoordinate acenter = map_->mapController()->center();
     acenter.setCoordinate(center()->coordinate());
     map_->mapController()->setCenter(acenter);
@@ -560,7 +559,12 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
         map_->setActiveMapType(type->mapType());
     }
 
+    // Map tiles are built in this call
+    map_->resize(width(), height());
+    // This prefetches a buffer around the map
+    map_->cameraStopped();
     map_->update();
+
     emit minimumZoomLevelChanged();
     emit maximumZoomLevelChanged();
     emit supportedMapTypesChanged();
@@ -971,6 +975,19 @@ void QDeclarativeGeoMap::pan(int dx, int dy)
     if (!mappingManagerInitialized_)
         return;
     map_->mapController()->pan(dx, dy);
+}
+
+
+/*!
+    \qmlslot QtLocation5::Map::cameraStopped()
+
+    Optional hint that allows the map to prefetch during this idle period
+*/
+void QDeclarativeGeoMap::cameraStopped()
+{
+    if (!mappingManagerInitialized_)
+        return;
+    map_->cameraStopped();
 }
 
 /*!

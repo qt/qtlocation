@@ -101,6 +101,7 @@ public:
     void paintGL(QGLPainter *painter);
 
     bool verticalLock() const;
+    QSet<QGeoTileSpec> texturedTiles();
 
 Q_SIGNALS:
     void newTilesVisible(const QSet<QGeoTileSpec> &newTiles);

@@ -101,17 +101,16 @@ public:
     QGeoCoordinate screenPositionToCoordinate(const QPointF &pos) const;
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
 
-    void newTileFetched(QSharedPointer<QGeoTileTexture> texture);
+    void newTileFetched(const QGeoTileSpec &spec);
     QSet<QGeoTileSpec> visibleTiles();
 
     QGeoTiledMappingManagerEngine *engine() const;
+    void prefetchTiles();
 
 private:
     QGeoTiledMapData *map_;
     QGeoTileCache *cache_;
     QGeoTiledMappingManagerEngine *engine_;
-
-    QSet<QGeoTileSpec> visibleTiles_;
 
     QGeoCameraTiles *cameraTiles_;
     QGeoMapScene *mapScene_;

@@ -174,6 +174,7 @@ public:
 
 public Q_SLOTS:
     void pan(int dx, int dy);
+    void cameraStopped(); // optional hint for prefetch
 
 protected:
     void mousePressEvent(QMouseEvent *event);

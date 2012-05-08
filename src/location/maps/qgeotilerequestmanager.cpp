@@ -41,6 +41,7 @@
 #include "qgeotilerequestmanager_p.h"
 
 #include <QSharedPointer>
+#include <QDebug>
 #include "qgeotilespec.h"
 #include "qgeotiledmapdata_p.h"
 #include "qgeotiledmappingmanagerengine.h"
@@ -64,10 +65,9 @@ public:
 
     QHash<QGeoTileSpec, int> retries_;
     QHash<QGeoTileSpec, QSharedPointer<RetryFuture> > futures_;
-    QSet<QGeoTileSpec> visible_;
     QSet<QGeoTileSpec> requested_;
 
-    void tileFetched(QSharedPointer<QGeoTileTexture> texture);
+    void tileFetched(const QGeoTileSpec &spec);
 };
 
 QGeoTileRequestManager::QGeoTileRequestManager(QGeoTiledMapData *map)
@@ -86,10 +86,10 @@ QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManager::requestTiles(con
     return d->requestTiles(tiles);
 }
 
-void QGeoTileRequestManager::tileFetched(QSharedPointer<QGeoTileTexture> texture)
+void QGeoTileRequestManager::tileFetched(const QGeoTileSpec &spec)
 {
     Q_D(QGeoTileRequestManager);
-    d->tileFetched(texture);
+    d->tileFetched(spec);
 }
 
 void QGeoTileRequestManager::tileError(const QGeoTileSpec &tile, const QString &errorString)
@@ -110,8 +110,10 @@ QGeoTileRequestManagerPrivate::~QGeoTileRequestManagerPrivate()
 QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPrivate::requestTiles(const QSet<QGeoTileSpec> &tiles)
 {
     QSet<QGeoTileSpec> cancelTiles = requested_ - tiles;
-    QSet<QGeoTileSpec> requestTiles = tiles - visible_ - requested_;
+    QSet<QGeoTileSpec> requestTiles = tiles - requested_;
     QSet<QGeoTileSpec> cached;
+//    int tileSize = tiles.size();
+//    int newTiles = requestTiles.size();
 
     typedef QSet<QGeoTileSpec>::const_iterator iter;
 
@@ -136,13 +138,14 @@ QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPrivate::requestTi
 
     requestTiles -= cached;
 
-    visible_ = tiles;
-
     requested_ -= cancelTiles;
     requested_ += requestTiles;
 
+//    qDebug() << "required # tiles: " << tileSize << ", new tiles: " << newTiles << ", total server requests: " << requested_.size();
+
     if (!requestTiles.isEmpty() || !cancelTiles.isEmpty()) {
         if (engine) {
+//            qDebug() << "new server requests: " << requestTiles.size() << ", server cancels: " << cancelTiles.size();
             engine->updateTileRequests(map_, requestTiles, cancelTiles);
 
             // Remove any cancelled tiles from the error retry hash to avoid
@@ -159,12 +162,12 @@ QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPrivate::requestTi
     return cachedTex;
 }
 
-void QGeoTileRequestManagerPrivate::tileFetched(QSharedPointer<QGeoTileTexture> texture)
+void QGeoTileRequestManagerPrivate::tileFetched(const QGeoTileSpec &spec)
 {
-    map_->newTileFetched(texture);
-    requested_.remove(texture->spec);
-    retries_.remove(texture->spec);
-    futures_.remove(texture->spec);
+    map_->newTileFetched(spec);
+    requested_.remove(spec);
+    retries_.remove(spec);
+    futures_.remove(spec);
 }
 
 // Represents a tile that needs to be retried after a certain period of time

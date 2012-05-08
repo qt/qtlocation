@@ -239,12 +239,10 @@ void QGeoTiledMappingManagerEngine::engineTileFinished(const QGeoTileSpec &spec,
 
     tileCache()->insert(spec, bytes, format, d->cacheHint_);
 
-    QSharedPointer<QGeoTileTexture> tile = tileCache()->get(spec);
-
     map = maps.constBegin();
     mapEnd = maps.constEnd();
     for (; map != mapEnd; ++map) {
-        (*map)->getRequestManager()->tileFetched(tile);
+        (*map)->getRequestManager()->tileFetched(spec);
     }
 }
 

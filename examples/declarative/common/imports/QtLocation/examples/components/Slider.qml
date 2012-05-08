@@ -47,6 +47,7 @@ Item {
     property real minimum: 0
     property real maximum: 1
     property int length: width - handle.width
+    property bool released: false
 
     Rectangle {
         anchors.fill: parent
@@ -118,6 +119,7 @@ Item {
             anchors.fill: parent; drag.target: parent
             drag.axis: Drag.XAxis; drag.minimumX: 0; drag.maximumX: slider.length
             onPositionChanged: { slider.value = (slider.maximum - slider.minimum) * handle.x / slider.length + slider.minimum; }
+            onReleased: slider.released = true
         }
     }
 }

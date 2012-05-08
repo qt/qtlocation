@@ -82,10 +82,11 @@ public:
 
     void paintGL(QGLPainter *painter);
 
-    void newTileFetched(QSharedPointer<QGeoTileTexture> texture);
+    void newTileFetched(const QGeoTileSpec &spec);
 
     QGeoCoordinate screenPositionToCoordinate(const QPointF &pos, bool clipToViewport = true) const;
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate, bool clipToViewport = true) const;
+    void prefetchTiles();
 
     // Alternative to exposing this is to make tileFetched a slot, but then requestManager would
     // need to be a QObject
@@ -94,6 +95,7 @@ protected:
     void mapResized(int width, int height);
     void changeCameraData(const QGeoCameraData &oldCameraData);
     void changeActiveMapType(const QGeoMapType mapType);
+    void prefetchData();
 
 protected Q_SLOTS:
     virtual void evaluateCopyrights(const QSet<QGeoTileSpec> &visibleTiles);

@@ -108,6 +108,7 @@ public:
 
 public Q_SLOTS:
     void update();
+    void cameraStopped(); // optional hint for prefetch
 
 Q_SIGNALS:
     void cameraDataChanged(const QGeoCameraData &cameraData);

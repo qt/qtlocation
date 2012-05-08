@@ -129,6 +129,11 @@ void QGeoMap::setCameraData(const QGeoCameraData &cameraData)
     mapData_->setCameraData(cameraData);
 }
 
+void QGeoMap::cameraStopped()
+{
+    mapData_->prefetchData();
+}
+
 QGeoCameraData QGeoMap::cameraData() const
 {
     return mapData_->cameraData();

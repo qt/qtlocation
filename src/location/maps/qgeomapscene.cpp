@@ -231,6 +231,16 @@ void QGeoMapScene::paintGL(QGLPainter *painter)
     d->paintGL(painter);
 }
 
+QSet<QGeoTileSpec> QGeoMapScene::texturedTiles()
+{
+    Q_D(QGeoMapScene);
+    QSet<QGeoTileSpec> textured;
+    foreach (const QGeoTileSpec &tile, d->textures_.keys()) {
+        textured += tile;
+    }
+    return textured;
+}
+
 QGeoMapScenePrivate::QGeoMapScenePrivate(QGeoMapScene *scene)
     : tileSize_(0),
       camera_(new QGLCamera()),
@@ -400,6 +410,8 @@ void QGeoMapScenePrivate::setScalingOnTextures()
 
 void QGeoMapScenePrivate::addTile(const QGeoTileSpec &spec, QSharedPointer<QGeoTileTexture> texture)
 {
+    if (!visibleTiles_.contains(spec)) // Don't add the geometry if it isn't visible
+        return;
     if (linearScaling_) {
         texture->texture->setBindOptions(texture->texture->bindOptions() |
                                          (QGLTexture2D::LinearFilteringBindOption));

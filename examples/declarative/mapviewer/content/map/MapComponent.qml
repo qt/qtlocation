@@ -164,6 +164,13 @@ Map {
             target: zoomSlider; property: "value"; value: map.zoomLevel
         }
 
+        onReleasedChanged: {
+            if (released == true){
+                map.cameraStopped()
+                released = false
+            }
+        }
+
         onValueChanged: {
             map.zoomLevel = value
             map.state=""

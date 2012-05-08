@@ -76,7 +76,7 @@ public:
     QList<QSharedPointer<QGeoTileTexture> > requestTiles(const QSet<QGeoTileSpec> &tiles);
 
     void tileError(const QGeoTileSpec &tile, const QString &errorString);
-    void tileFetched(QSharedPointer<QGeoTileTexture> texture);
+    void tileFetched(const QGeoTileSpec &spec);
 private:
     QGeoTileRequestManagerPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeoTileRequestManager)

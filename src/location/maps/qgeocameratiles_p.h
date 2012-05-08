@@ -82,6 +82,7 @@ public:
     void setMapType(const QGeoMapType &mapType);
 
     QSet<QGeoTileSpec> tiles() const;
+    void findPrefetchTiles();
 
 private:
     QGeoCameraTilesPrivate *d_ptr;
