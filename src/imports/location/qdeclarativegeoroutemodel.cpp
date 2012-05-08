@@ -136,8 +136,7 @@ QDeclarativeGeoRouteModel::~QDeclarativeGeoRouteModel()
         qDeleteAll(routes_);
         routes_.clear();
     }
-    if (reply_)
-        delete reply_;
+    delete reply_;
 }
 
 /*!

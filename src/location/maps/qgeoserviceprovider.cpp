@@ -271,8 +271,7 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
         }
 
         if (error != QGeoServiceProvider::NoError) {
-            if (manager)
-                delete manager;
+            delete manager;
             manager = 0;
             this->error = error;
             this->errorString = errorString;
@@ -488,40 +487,25 @@ QGeoServiceProviderPrivate::QGeoServiceProviderPrivate()
 
 QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
 {
-    if (geocodingManager)
-        delete geocodingManager;
-
-    if (routingManager)
-        delete routingManager;
-
-    if (mappingManager)
-        delete mappingManager;
-
-    if (placeManager)
-        delete placeManager;
+    delete geocodingManager;
+    delete routingManager;
+    delete mappingManager;
+    delete placeManager;
 }
 
 void QGeoServiceProviderPrivate::unload()
 {
-    if (geocodingManager) {
-        delete geocodingManager;
-        geocodingManager = 0;
-    }
+    delete geocodingManager;
+    geocodingManager = 0;
 
-    if (routingManager) {
-        delete routingManager;
-        routingManager = 0;
-    }
+    delete routingManager;
+    routingManager = 0;
 
-    if (mappingManager) {
-        delete mappingManager;
-        mappingManager = 0;
-    }
+    delete mappingManager;
+    mappingManager = 0;
 
-    if (placeManager) {
-        delete placeManager;
-        placeManager = 0;
-    }
+    delete placeManager;
+    placeManager = 0;
 
     factory = 0;
     error = QGeoServiceProvider::NoError;

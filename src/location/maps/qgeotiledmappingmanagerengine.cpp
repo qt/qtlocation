@@ -330,11 +330,8 @@ QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
 
 QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate()
 {
-    if (tileCache_)
-        delete tileCache_;
-
-    if (fetcher_)
-        delete fetcher_;
+    delete tileCache_;
+    delete fetcher_;
 
     thread_->quit();
 }

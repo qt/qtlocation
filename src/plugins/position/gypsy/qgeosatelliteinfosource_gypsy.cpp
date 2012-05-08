@@ -151,8 +151,7 @@ QGeoSatelliteInfoSourceGypsy::QGeoSatelliteInfoSourceGypsy(QObject *parent) : QG
 
 void QGeoSatelliteInfoSourceGypsy::createEngine()
 {
-    if (m_engine)
-        delete m_engine;
+    delete m_engine;
     m_engine = new SatelliteGypsyEngine(this);
 }
 
@@ -167,8 +166,7 @@ QGeoSatelliteInfoSourceGypsy::~QGeoSatelliteInfoSourceGypsy()
         g_object_unref(m_satellite);
     if (error)
         g_error_free(error);
-    if (m_engine)
-        delete m_engine;
+    delete m_engine;
 }
 
 void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite *satellite,

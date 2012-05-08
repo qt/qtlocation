@@ -60,14 +60,12 @@ QGeoCodeXmlParser::QGeoCodeXmlParser()
 
 QGeoCodeXmlParser::~QGeoCodeXmlParser()
 {
-    if (m_reader)
-        delete m_reader;
+    delete m_reader;
 }
 
 bool QGeoCodeXmlParser::parse(QIODevice *source)
 {
-    if (m_reader)
-        delete m_reader;
+    delete m_reader;
     m_reader = new QXmlStreamReader(source);
 
     if (!parseRootElement()) {

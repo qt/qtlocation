@@ -383,8 +383,7 @@ QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
 
 QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
 {
-    if (engine)
-        delete engine;
+    delete engine;
 }
 
 #include "moc_qgeoroutingmanager.cpp"

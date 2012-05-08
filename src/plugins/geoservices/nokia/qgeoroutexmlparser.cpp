@@ -70,14 +70,12 @@ QGeoRouteXmlParser::QGeoRouteXmlParser(const QGeoRouteRequest &request)
 
 QGeoRouteXmlParser::~QGeoRouteXmlParser()
 {
-    if (m_reader)
-        delete m_reader;
+    delete m_reader;
 }
 
 bool QGeoRouteXmlParser::parse(QIODevice *source)
 {
-    if (m_reader)
-        delete m_reader;
+    delete m_reader;
     m_reader = new QXmlStreamReader(source);
 
     if (!parseRootElement()) {

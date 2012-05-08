@@ -219,10 +219,8 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
     m_nmeaSource = nmeaSource;
     // The current position source needs to be deleted
     // because QNmeaPositionInfoSource can be bound only to a one file.
-    if (m_positionSource) {
-        delete m_positionSource;
-        m_positionSource = 0;
-    }
+    delete m_positionSource;
+    m_positionSource = 0;
     // Create the NMEA source based on the given data. QML has automatically set QUrl
     // type to point to correct path. If the file is not found, check if the file actually
     // was an embedded resource file.

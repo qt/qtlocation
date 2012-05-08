@@ -220,10 +220,8 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
         qobject_cast<QDeclarativeGeoMapItemBase *>(mapItems_.at(i))->setMap(0,0);
     mapItems_.clear();
 
-    if (copyrightsWPtr_.data()) {
-        delete copyrightsWPtr_.data();
-        copyrightsWPtr_.clear();
-    }
+    delete copyrightsWPtr_.data();
+    copyrightsWPtr_.clear();
 }
 
 /*!

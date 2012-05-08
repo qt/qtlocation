@@ -330,8 +330,7 @@ QGeocodingManagerPrivate::QGeocodingManagerPrivate()
 
 QGeocodingManagerPrivate::~QGeocodingManagerPrivate()
 {
-    if (engine)
-        delete engine;
+    delete engine;
 }
 
 /*******************************************************************************
