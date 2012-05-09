@@ -150,6 +150,10 @@ public:
     static const QLatin1String DefaultPartition;
     static const QLatin1String PartitionType;
 
+    static const QLatin1String LatitudeIndex;
+    static const QLatin1String LongitudeIndex;
+    static const QLatin1String PlaceNameIndex;
+
 public slots:
     void setupPartition(const QString &partition);
     void getPlacesFinished();

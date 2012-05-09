@@ -1,0 +1,20 @@
+[
+{
+    "_type": "Index",
+    "objectType": "com.nokia.mt.location.Place",
+    "propertyName": "displayName",
+    "propertyType": "string"
+},
+{
+    "_type": "Index",
+    "objectType": "com.nokia.mt.location.Place",
+    "propertyName": "location.geo.latitude",
+    "propertyType": "number"
+},
+{
+    "_type": "Index",
+    "objectType": "com.nokia.mt.location.Place",
+    "propertyName": "location.geo.longitude",
+    "propertyType": "number"
+}
+]

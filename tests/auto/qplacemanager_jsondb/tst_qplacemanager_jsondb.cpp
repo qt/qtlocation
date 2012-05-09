@@ -148,6 +148,7 @@ private Q_SLOTS:
 #endif
     void constructIconUrl();
     void specifiedPartition();
+    void validateIndexes();
 
 private:
     bool doSavePlace(const QPlace &place,
@@ -3148,6 +3149,80 @@ void tst_QPlaceManagerJsonDb::specifiedPartition()
     provider = oldProvider;
     placeManager = oldManager;
     dbUtils->setCurrentPartition(JsonDbUtils::DefaultPartition);
+}
+
+void tst_QPlaceManagerJsonDb::validateIndexes()
+{
+    QPlace place;
+    place.setName(QLatin1String("Winterfell"));
+    QGeoLocation location;
+
+    location.setCoordinate(QGeoCoordinate(1,-30));
+    place.setLocation(location);
+
+    QString placeId1;
+    QVERIFY(doSavePlace(place, QPlaceReply::NoError, &placeId1));
+
+    QPlace place2;
+    place2.setName(QLatin1String("Casterly Rock"));
+    location.setCoordinate(QGeoCoordinate(11,-20));
+    place2.setLocation(location);
+
+    QString placeId2;
+    QVERIFY(doSavePlace(place2, QPlaceReply::NoError, &placeId2));
+
+    QPlace place3;
+    place3.setName(QLatin1String("Qarth"));
+    location.setCoordinate(QGeoCoordinate(5,5));
+    place3.setLocation(location);
+
+    QString placeId3;
+    QVERIFY(doSavePlace(place3, QPlaceReply::NoError, &placeId3));
+
+    QPlace place4;
+    place4.setName(QLatin1String("Wall"));
+    location.setCoordinate(QGeoCoordinate(7,20));
+    place4.setLocation(location);
+
+    QString placeId4;
+    QVERIFY(doSavePlace(place4, QPlaceReply::NoError, &placeId4));
+
+    //validate latitude index
+    QJsonDbReadRequest *request = new QJsonDbReadRequest();
+    request->setQuery(QStringLiteral("[?_type=%type][?location.geo.latitude < 10]"));
+    request->bindValue(QStringLiteral("type"), JsonDbUtils::PlaceType);
+    dbUtils->sendRequest(request);
+
+    QSignalSpy readSpy(request, SIGNAL(finished()));
+    WAIT_UNTIL(readSpy.count() == 1);
+    readSpy.clear();
+    QCOMPARE(request->takeResults().count(), 3);
+    QCOMPARE(request->sortKey(), JsonDbUtils::LatitudeIndex);
+
+    //validate longitude index
+    request->setQuery(QStringLiteral("[?_type=%type][?location.geo.longitude < -25]"));
+    request->bindValue(QStringLiteral("type"), JsonDbUtils::PlaceType);
+    dbUtils->sendRequest(request);
+
+    WAIT_UNTIL(readSpy.count() == 1);
+    readSpy.clear();
+    QCOMPARE(request->takeResults().count(), 1);
+    QCOMPARE(request->sortKey(), JsonDbUtils::LongitudeIndex);
+
+    //verify place display name index
+    request->setQuery(QStringLiteral("[?_type=%type][/displayName]"));
+    request->bindValue(QStringLiteral("type"), JsonDbUtils::PlaceType);
+    dbUtils->sendRequest(request);
+
+    WAIT_UNTIL(readSpy.count() == 1);
+    QList<QJsonObject> results= request->takeResults();
+    QCOMPARE(results.count(), 4);
+    QCOMPARE(results.at(0).value(JsonDbUtils::Uuid).toString(), placeId2);
+    QCOMPARE(results.at(1).value(JsonDbUtils::Uuid).toString(), placeId3);
+    QCOMPARE(results.at(2).value(JsonDbUtils::Uuid).toString(), placeId4);
+    QCOMPARE(results.at(3).value(JsonDbUtils::Uuid).toString(), placeId1);
+
+    QCOMPARE(request->sortKey(), JsonDbUtils::PlaceNameIndex);
 }
 
 void tst_QPlaceManagerJsonDb::cleanup()

@@ -152,6 +152,10 @@ const QLatin1String JsonDbUtils::ModifiedDateTime("modifiedDateTime");
 const QLatin1String JsonDbUtils::DefaultPartition("");
 const QLatin1String JsonDbUtils::PartitionType("Partition");
 
+const QLatin1String JsonDbUtils::LongitudeIndex("location.geo.longitude");
+const QLatin1String JsonDbUtils::LatitudeIndex("location.geo.latitude");
+const QLatin1String JsonDbUtils::PlaceNameIndex("displayName");
+
 JsonDbUtils::JsonDbUtils(QObject *parent)
     : QObject(parent)
 {
@@ -380,7 +384,28 @@ QProcess* JsonDbUtils::launchJsonDbDaemon(const QStringList &args)
             connected = true;
         QTest::qWait(250);
     }
+
     if (!connected)
         qFatal("Unable to connect to jsondb process");
+
+    //Start jsondb-client and get it to load a prepopulation file that contains
+    //Indexes
+    QProcess *prepopulateProcess = new QProcess;
+    prepopulateProcess->setProcessEnvironment(env);
+
+    QString jsondb_client = QString::fromLocal8Bit(JSONDB_DAEMON_BASE)
+                            + QDir::separator() + "jsondb-client";
+    if (!QFile::exists(jsondb_client))
+        jsondb_client = QLatin1String("jsondb-client"); // rely on the PATH
+    QStringList clientArgs;
+    clientArgs << QLatin1String("-load");
+    clientArgs << QLatin1String(JSONFILE);
+    clientArgs << QLatin1String("-terminate");
+    prepopulateProcess->setProcessChannelMode( QProcess::ForwardedChannels);
+    prepopulateProcess->start(jsondb_client, clientArgs);
+
+    if (!prepopulateProcess->waitForFinished())
+        qFatal("Unable to complete loading index via jsondb-client");
+
     return process;
 }
