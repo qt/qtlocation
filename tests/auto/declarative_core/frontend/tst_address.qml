@@ -61,7 +61,7 @@ TestCase {
 
     function test_qmlAddressText() {
         compare(address.isTextGenerated, true);
-        compare(address.text, "742 Evergreen Tce<br>Springfield, Oregon 8900<br>United States");
+        compare(address.text, "742 Evergreen Tce<br/>Springfield, Oregon 8900<br/>United States");
         var textChangedSpy = Qt.createQmlObject('import QtTest 1.0; SignalSpy {}', testCase, "SignalSpy");
         textChangedSpy.target = address;
         textChangedSpy.signalName = "textChanged"
@@ -71,7 +71,7 @@ TestCase {
         isTextGeneratedSpy.signalName = "isTextGeneratedChanged"
 
         address.countryCode = "FRA";
-        compare(address.text, "742 Evergreen Tce<br>8900 Springfield<br>United States");
+        compare(address.text, "742 Evergreen Tce<br/>8900 Springfield<br/>United States");
         compare(textChangedSpy.count, 1);
         textChangedSpy.clear();
         compare(isTextGeneratedSpy.count, 0);
@@ -92,7 +92,7 @@ TestCase {
 
         address.text = "";
         compare(address.isTextGenerated, true);
-        compare(address.text, "742 Evergreen Tce<br>Springfield, Oregon 8900<br>United States");
+        compare(address.text, "742 Evergreen Tce<br/>Springfield, Oregon 8900<br/>United States");
         compare(textChangedSpy.count, 1);
         textChangedSpy.clear();
         compare(isTextGeneratedSpy.count, 1);

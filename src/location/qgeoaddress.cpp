@@ -98,12 +98,12 @@ static QString addressLine(const QStringList &parts)
 
 /*
     Returns a single formatted string representing the \a address. Lines of the address
-    are delimited by \a newLine. By default lines are delimited by <br>. The \l
+    are delimited by \a newLine. By default lines are delimited by <br/>. The \l
     {QGeoAddress::countryCode} {countryCode} of the \a address determines the format of
     the resultant string.
 */
 static QString formattedAddress(const QGeoAddress &address,
-                                const QString &newLine = QLatin1String("<br>"))
+                                const QString &newLine = QLatin1String("<br/>"))
 {
     const QString Comma(QLatin1String(", "));
     const QString Dash(QLatin1String("-"));

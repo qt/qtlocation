@@ -236,269 +236,269 @@ void tst_QGeoAddress::generatedText_data()
 
     QTest::newRow("Albania") << QString::fromLatin1("ALB")
                              << QString::fromLatin1("postcode") /* postal code only */
-                             << QString::fromLatin1("street<br>"   /* full address */
-                                                    "postcode, city<br>"
+                             << QString::fromLatin1("street<br/>"   /* full address */
+                                                    "postcode, city<br/>"
                                                     "country");
 
     QTest::newRow("Andorra") << QString::fromLatin1("AND")
                              << QString::fromLatin1("postcode")
-                             << QString::fromLatin1("street<br>"
-                                                    "postcode city<br>"
+                             << QString::fromLatin1("street<br/>"
+                                                    "postcode city<br/>"
                                                     "country");
     QTest::newRow("United Arab Emirates") << QString::fromLatin1("ARE")
                                           << QString()
-                                          << QString::fromLatin1("street<br>"
-                                                                 "district city<br>"
+                                          << QString::fromLatin1("street<br/>"
+                                                                 "district city<br/>"
                                                                  "country");
     QTest::newRow("Australia") << QString::fromLatin1("AUS")
                                << QString::fromLatin1("postcode")
-                               << QString::fromLatin1("street<br>"
-                                                      "district state postcode<br>"
+                               << QString::fromLatin1("street<br/>"
+                                                      "district state postcode<br/>"
                                                       "country");
     QTest::newRow("Austria") << QString::fromLatin1("AUT")
                              << QString::fromLatin1("postcode")
-                             << QString::fromLatin1("street<br>"
-                                                    "postcode city<br>"
+                             << QString::fromLatin1("street<br/>"
+                                                    "postcode city<br/>"
                                                     "country");
     QTest::newRow("Bahamas") << QString::fromLatin1("BHS")
                              << QString()
-                                     << QString::fromLatin1("street<br>"
-                                                            "district city<br>"
+                                     << QString::fromLatin1("street<br/>"
+                                                            "district city<br/>"
                                                             "country");
     QTest::newRow("Bahrain") << QString::fromLatin1("BHR")
                              << QString()
-                             << QString::fromLatin1("street<br>"
-                                                    "district, city, state<br>"
+                             << QString::fromLatin1("street<br/>"
+                                                    "district, city, state<br/>"
                                                     "country");
     QTest::newRow("Brazil") << QString::fromLatin1("BRA")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "district city-state postcode<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "district city-state postcode<br/>"
                                                    "country");
     QTest::newRow("Brunei Darussalam") << QString::fromLatin1("BRN")
                                        << QString::fromLatin1("postcode")
-                                       << QString::fromLatin1("street<br>"
-                                                              "district city postcode<br>"
+                                       << QString::fromLatin1("street<br/>"
+                                                              "district city postcode<br/>"
                                                               "country");
     QTest::newRow("Canada") << QString::fromLatin1("CAN")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "city, state postcode<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "city, state postcode<br/>"
                                                    "country");
     QTest::newRow("China") << QString::fromLatin1("CHN")
                            << QString::fromLatin1("postcode")
-                           << QString::fromLatin1("street, city<br>"
-                                                  "postcode state<br>"
+                           << QString::fromLatin1("street, city<br/>"
+                                                  "postcode state<br/>"
                                                   "country");
     QTest::newRow("Chile") << QString::fromLatin1("CHL")
                            << QString::fromLatin1("postcode")
-                           << QString::fromLatin1("street<br>"
-                                                  "postcode district, city, state<br>"
+                           << QString::fromLatin1("street<br/>"
+                                                  "postcode district, city, state<br/>"
                                                   "country");
     QTest::newRow("Cayman Islands") << QString::fromLatin1("CYM")
                                     << QString::fromLatin1("postcode")
-                                    << QString::fromLatin1("street<br>"
-                                                           "state postcode<br>"
+                                    << QString::fromLatin1("street<br/>"
+                                                           "state postcode<br/>"
                                                            "country");
     QTest::newRow("France") << QString::fromLatin1("FRA")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "postcode city<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "postcode city<br/>"
                                                    "country");
 
     QTest::newRow("United Kingdom") << QString::fromLatin1("GBR")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "district, city, postcode<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "district, city, postcode<br/>"
                                                    "country");
     QTest::newRow("Gibraltar") << QString::fromLatin1("GIB")
                                << QString()
-                               << QString::fromLatin1("street<br>"
-                                                      "city<br>"
+                               << QString::fromLatin1("street<br/>"
+                                                      "city<br/>"
                                                       "country");
     QTest::newRow("Guadeloupe") << QString::fromLatin1("GLP")
                                 << QString::fromLatin1("postcode")
-                                << QString::fromLatin1("street<br>"
-                                                       "postcode city<br>"
+                                << QString::fromLatin1("street<br/>"
+                                                       "postcode city<br/>"
                                                        "country");
     QTest::newRow("French Guiana") << QString::fromLatin1("GUF")
                                    << QString::fromLatin1("postcode")
-                                   << QString::fromLatin1("street<br>"
-                                                          "postcode city<br>"
+                                   << QString::fromLatin1("street<br/>"
+                                                          "postcode city<br/>"
                                                           "country");
     QTest::newRow("Hong Kong") << QString::fromLatin1("HKG")
                                << QString()
-                               << QString::fromLatin1("street<br>"
-                                                      "district<br>"
+                               << QString::fromLatin1("street<br/>"
+                                                      "district<br/>"
                                                       "city");
     QTest::newRow("India") << QString::fromLatin1("IND")
                            << QString::fromLatin1("postcode")
-                           << QString::fromLatin1("street<br>"
-                                                  "city postcode state<br>"
+                           << QString::fromLatin1("street<br/>"
+                                                  "city postcode state<br/>"
                                                   "country");
     QTest::newRow("Indonesia") << QString::fromLatin1("IDN")
                                << QString::fromLatin1("postcode")
-                               << QString::fromLatin1("street<br>"
-                                                      "city, postcode<br>"
+                               << QString::fromLatin1("street<br/>"
+                                                      "city, postcode<br/>"
                                                       "country");
     QTest::newRow("Ireland") << QString::fromLatin1("IRL")
                              << QString()
-                             << QString::fromLatin1("street<br>"
-                                                    "district, state<br>"
+                             << QString::fromLatin1("street<br/>"
+                                                    "district, state<br/>"
                                                     "country");
     QTest::newRow("Italy") << QString::fromLatin1("ITA")
                            << QString::fromLatin1("postcode")
-                           << QString::fromLatin1("street<br>"
-                                                  "postcode city<br>"
+                           << QString::fromLatin1("street<br/>"
+                                                  "postcode city<br/>"
                                                   "country");
     QTest::newRow("Jersey") << QString::fromLatin1("JEY")
                            << QString::fromLatin1("postcode")
-                           << QString::fromLatin1("street<br>"
-                                                  "city, postcode<br>"
+                           << QString::fromLatin1("street<br/>"
+                                                  "city, postcode<br/>"
                                                   "country");
     QTest::newRow("Jordan") << QString::fromLatin1("JOR")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "district city postcode<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "district city postcode<br/>"
                                                    "country");
     QTest::newRow("Kuwait") << QString::fromLatin1("KWT")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "postcode, district, city<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "postcode, district, city<br/>"
                                                    "country");
     QTest::newRow("Latvia") << QString::fromLatin1("LVA")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "city, postcode<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "city, postcode<br/>"
                                                    "country");
     QTest::newRow("Lebanon") << QString::fromLatin1("LBN")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "district city postcode<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "district city postcode<br/>"
                                                    "country");
     QTest::newRow("Luxembourg") << QString::fromLatin1("LUX")
                                 << QString::fromLatin1("postcode")
-                                << QString::fromLatin1("street<br>"
-                                                       "postcode city<br>"
+                                << QString::fromLatin1("street<br/>"
+                                                       "postcode city<br/>"
                                                        "country");
     QTest::newRow("Malta") << QString::fromLatin1("MLT")
                            << QString::fromLatin1("postcode")
-                           << QString::fromLatin1("street<br>"
-                                                  "city postcode<br>"
+                           << QString::fromLatin1("street<br/>"
+                                                  "city postcode<br/>"
                                                   "country");
     QTest::newRow("Monaco") << QString::fromLatin1("MCO")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "postcode city<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "postcode city<br/>"
                                                    "country");
     QTest::newRow("Mexico") <<  QString::fromLatin1("MEX")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "district<br>"
-                                                   "postcode city, state<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "district<br/>"
+                                                   "postcode city, state<br/>"
                                                    "country");
     QTest::newRow("Martinique") << QString::fromLatin1("MTQ")
                                 << QString::fromLatin1("postcode")
-                                << QString::fromLatin1("street<br>"
-                                                       "postcode, city<br>"
+                                << QString::fromLatin1("street<br/>"
+                                                       "postcode, city<br/>"
                                                        "country");
     QTest::newRow("Malaysia") << QString::fromLatin1("MYS")
                                 << QString::fromLatin1("postcode")
-                                << QString::fromLatin1("street<br>"
-                                                       "postcode city<br>"
-                                                       "state<br>"
+                                << QString::fromLatin1("street<br/>"
+                                                       "postcode city<br/>"
+                                                       "state<br/>"
                                                        "country");
     QTest::newRow("New Zealand") << QString::fromLatin1("NZL")
                                  << QString::fromLatin1("postcode")
-                                 << QString::fromLatin1("street<br>"
-                                                        "district city postcode<br>"
+                                 << QString::fromLatin1("street<br/>"
+                                                        "district city postcode<br/>"
                                                         "country");
     QTest::newRow("Oman") << QString::fromLatin1("OMN")
                           << QString::fromLatin1("postcode")
-                          << QString::fromLatin1("street<br>"
+                          << QString::fromLatin1("street<br/>"
                                                  "district, postcode, city, country");
     QTest::newRow("Puerto Rico") << QString::fromLatin1("PRI")
                                  << QString::fromLatin1("postcode")
-                                 << QString::fromLatin1("street<br>"
-                                                        "district, city, state, postcode<br>"
+                                 << QString::fromLatin1("street<br/>"
+                                                        "district, city, state, postcode<br/>"
                                                         "country");
     QTest::newRow("Qatar") << QString::fromLatin1("QAT")
                            << QString()
-                           << QString::fromLatin1("street<br>"
+                           << QString::fromLatin1("street<br/>"
                                                   "district city, country");
     QTest::newRow("Reunion") << QString::fromLatin1("REU")
                              << QString::fromLatin1("postcode")
-                             << QString::fromLatin1("street<br>"
-                                                    "postcode city<br>"
+                             << QString::fromLatin1("street<br/>"
+                                                    "postcode city<br/>"
                                                     "country");
     QTest::newRow("Russian Federation") << QString::fromLatin1("RUS")
                              << QString::fromLatin1("postcode")
-                             << QString::fromLatin1("street<br>"
-                                                    "postcode city<br>"
+                             << QString::fromLatin1("street<br/>"
+                                                    "postcode city<br/>"
                                                     "country");
     QTest::newRow("Saudi Arabia") << QString::fromLatin1("SAU")
                                   << QString::fromLatin1("postcode")
-                                  << QString::fromLatin1("street district<br>"
-                                                         "city postcode<br>"
+                                  << QString::fromLatin1("street district<br/>"
+                                                         "city postcode<br/>"
                                                          "country");
     QTest::newRow("Singapore") << QString::fromLatin1("SGP")
                                << QString::fromLatin1("postcode")
-                               << QString::fromLatin1("street<br>"
-                                                      "city postcode<br>"
+                               << QString::fromLatin1("street<br/>"
+                                                      "city postcode<br/>"
                                                       "country");
     QTest::newRow("Marino") << QString::fromLatin1("SMR")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "postcode city<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "postcode city<br/>"
                                                    "country");
     QTest::newRow("Taiwan") << QString::fromLatin1("TWN")
                             << QString()
-                            << QString::fromLatin1("street, district, city<br>"
+                            << QString::fromLatin1("street, district, city<br/>"
                                                    "country");
     QTest::newRow("Thailand") << QString::fromLatin1("THA")
                               << QString("postcode")
-                              << QString::fromLatin1("street<br>"
-                                                     "district, city postcode<br>"
+                              << QString::fromLatin1("street<br/>"
+                                                     "district, city postcode<br/>"
                                                      "country");
     QTest::newRow("Turkey") <<  QString::fromLatin1("TUR")
                             << QString("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "postcode district, city<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "postcode district, city<br/>"
                                                    "country");
     QTest::newRow("Ukraine") << QString::fromLatin1("UKR")
                             << QString::fromLatin1("postcode")
-                            << QString::fromLatin1("street<br>"
-                                                   "city postcode<br>"
+                            << QString::fromLatin1("street<br/>"
+                                                   "city postcode<br/>"
                                                    "country");
     QTest::newRow("United States") << QString::fromLatin1("USA")
                                    << QString::fromLatin1("postcode")
-                                   << QString::fromLatin1("street<br>"
-                                                          "city, state postcode<br>"
+                                   << QString::fromLatin1("street<br/>"
+                                                          "city, state postcode<br/>"
                                                           "country");
     QTest::newRow("Virgin Islands, US") << QString::fromLatin1("VIR")
                                         << QString("postcode")
-                                        << QString::fromLatin1("street<br>"
-                                                               "city, state postcode<br>"
+                                        << QString::fromLatin1("street<br/>"
+                                                               "city, state postcode<br/>"
                                                                "country");
     QTest::newRow("Vatican City State") << QString::fromLatin1("VAT")
                                         << QString::fromLatin1("postcode")
-                                        << QString::fromLatin1("street<br>"
-                                                               "postcode city<br>"
+                                        << QString::fromLatin1("street<br/>"
+                                                               "postcode city<br/>"
                                                                "country");
     QTest::newRow("Venezuela") << QString::fromLatin1("VEN")
                                << QString::fromLatin1("postcode")
-                               << QString::fromLatin1("street<br>"
-                                                      "city postcode, state<br>"
+                               << QString::fromLatin1("street<br/>"
+                                                      "city postcode, state<br/>"
                                                       "country");
     QTest::newRow("South Africa") << QString::fromLatin1("ZAF")
                                << QString()
-                               << QString::fromLatin1("street<br>"
-                                                      "district, city<br>"
+                               << QString::fromLatin1("street<br/>"
+                                                      "district, city<br/>"
                                                       "country");
     QTest::newRow("Finland") << QString::fromLatin1("FIN")
                              << QString::fromLatin1("postcode")
-                             << QString::fromLatin1("street<br>"
-                                                    "postcode city<br>"
+                             << QString::fromLatin1("street<br/>"
+                                                    "postcode city<br/>"
                                                     "country");
 }
 
