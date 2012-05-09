@@ -366,8 +366,7 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     QPointF origin = map.coordinateToScreenPosition(srcOrigin_, false);
 
     if (!qIsFinite(origin.x()) || !qIsFinite(origin.y())) {
-        firstPointOffset_ = QPointF(0,0);
-        screenTriangles_.clear();
+        clear();
         return;
     }
 
@@ -386,8 +385,7 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     QTriangulatingStroker ts;
     ts.process(vp, QPen(QBrush(Qt::black), strokeWidth), viewport);
 
-    firstPointOffset_ = QPointF(0,0);
-    screenTriangles_.clear();
+    clear();
 
     // Nothing is on the screen
     if (ts.vertexCount() == 0)
@@ -395,14 +393,14 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
 
     // QTriangulatingStroker#vertexCount is actually the length of the array,
     // not the number of vertices
-    screenTriangles_.reserve(ts.vertexCount());
+    screenVertices_.reserve(ts.vertexCount());
 
     screenOutline_ = QPainterPath();
 
     QPolygonF tri;
     const float *vs = ts.vertices();
     for (int i = 0; i < ts.vertexCount()/2*2; i+=2) {
-        screenTriangles_ << vs[i] << vs[i+1];
+        screenVertices_ << Point(vs[i], vs[i+1]);
 
         if (!qIsFinite(vs[i]) || !qIsFinite(vs[i+1]))
             break;
@@ -745,26 +743,13 @@ void MapPolylineNode::update(const QColor& fillColor,
     }
 
     QSGGeometry *fill = QSGGeometryNode::geometry();
-
-    Q_ASSERT(fill->sizeOfVertex() == sizeof(Vertex));
-
-    int fillVertexCount = 0;
-    //note this will not allocate new buffer if the size has not changed
-    fill->allocate(shape->size());
-
-    Vertex *vertices = (Vertex *)fill->vertexData();
-
-    for (uint i = 0; i < shape->size(); ++i) {
-        vertices[fillVertexCount++].position = shape->vertex(i);
-    }
-
-    Q_ASSERT(fillVertexCount == fill->vertexCount());
-
+    shape->allocateAndFill(fill);
     markDirty(DirtyGeometry);
 
     if (fillColor != fill_material_.color()) {
         fill_material_.setColor(fillColor);
         setMaterial(&fill_material_);
+        markDirty(DirtyMaterial);
     }
 }
 

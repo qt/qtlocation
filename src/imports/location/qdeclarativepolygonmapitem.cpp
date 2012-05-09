@@ -167,8 +167,7 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
         return;
 
     if (map.width() == 0 || map.height() == 0) {
-        firstPointOffset_ = QPointF(0,0);
-        screenTriangles_.clear();
+        clear();
         return;
     }
 
@@ -185,13 +184,11 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     // get the clipped version of the path
     QPainterPath ppi = srcPath_.intersected(vpPath);
 
-    screenTriangles_.clear();
+    clear();
 
     // Nothing on the screen
-    if (ppi.elementCount() == 0) {
-        firstPointOffset_ = QPointF(0,0);
+    if (ppi.elementCount() == 0)
         return;
-    }
 
     // translate the path into top-left-centric coordinates
     QRectF bb = ppi.boundingRect();
@@ -203,19 +200,20 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     QTriangleSet ts = qTriangulate(ppi);
     qreal *vx = ts.vertices.data();
 
-    screenTriangles_.reserve(ts.indices.size());
+    screenIndices_.reserve(ts.indices.size());
+    screenVertices_.reserve(ts.vertices.size());
 
     if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
-        const quint32 *tx = reinterpret_cast<const quint32*>(ts.indices.data());
-        for (int i = 0; i < (ts.indices.size()/3*3); i++) {
-            screenTriangles_ << vx[tx[i]*2] << vx[tx[i]*2+1];
-        }
+        const quint32 *ix = reinterpret_cast<const quint32*>(ts.indices.data());
+        for (int i = 0; i < (ts.indices.size()/3*3); i++)
+            screenIndices_ << ix[i];
     } else {
-        const quint16 *tx = reinterpret_cast<const quint16*>(ts.indices.data());
-        for (int i = 0; i < (ts.indices.size()/3*3); i++) {
-            screenTriangles_ << vx[tx[i]*2] << vx[tx[i]*2+1];
-        }
+        const quint16 *ix = reinterpret_cast<const quint16*>(ts.indices.data());
+        for (int i = 0; i < (ts.indices.size()/3*3); i++)
+            screenIndices_ << ix[i];
     }
+    for (int i = 0; i < (ts.vertices.size()/2*2); i += 2)
+        screenVertices_ << Point(vx[i], vx[i+1]);
 
     screenBounds_ = ppi.boundingRect();
 }
@@ -609,23 +607,13 @@ void MapPolygonNode::update(const QColor& fillColor, const QColor& borderColor,
     }
 
     QSGGeometry *fill = QSGGeometryNode::geometry();
-
-    Q_ASSERT(fill->sizeOfVertex() == sizeof(Vertex));
-
-    int fillVertexCount = 0;
-    //note this will not allocate new buffer if the size has not changed
-    fill->allocate(fillShape->size());
-
-    Vertex *vertices = (Vertex *)fill->vertexData();
-    for (uint i = 0; i < fillShape->size(); ++i)
-        vertices[fillVertexCount++].position = fillShape->vertex(i);
-
-    Q_ASSERT(fillVertexCount == fill->vertexCount());
+    fillShape->allocateAndFill(fill);
     markDirty(DirtyGeometry);
 
     if (fillColor != fill_material_.color()) {
         fill_material_.setColor(fillColor);
         setMaterial(&fill_material_);
+        markDirty(DirtyMaterial);
     }
 }
 QT_END_NAMESPACE

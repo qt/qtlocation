@@ -53,11 +53,21 @@
 
 QT_BEGIN_NAMESPACE
 
+class QSGGeometry;
+
 class QGeoMapItemGeometry : public QObject
 {
     Q_OBJECT
 
 public:
+
+    struct Point {
+        inline Point(qreal x, qreal y) : x(x), y(y) {}
+        inline Point() : x(0), y(0) {}
+        inline Point(const QPointF &pt) : x(pt.x()), y(pt.y()) {}
+        qreal x, y;
+    };
+
     explicit QGeoMapItemGeometry(QObject *parent = 0);
 
     inline bool isSourceDirty() const { return sourceDirty_; }
@@ -79,12 +89,27 @@ public:
     }
 
     inline QVector2D vertex(quint32 index) const {
-        return QVector2D(screenTriangles_[index*2], screenTriangles_[index*2+1]);
+        return QVector2D(screenVertices_[index].x, screenVertices_[index].y);
     }
 
-    inline quint32 size() const { return screenTriangles_.size()/2; }
+    inline QVector<Point> vertices() const { return screenVertices_; }
+    inline QVector<quint32> indices() const { return screenIndices_; }
 
-    inline void clear() { screenTriangles_.clear(); }
+    inline bool isIndexed() const { return (!screenIndices_.isEmpty()); }
+
+    /* Size is # of triangles */
+    inline quint32 size() const
+    {
+        if (isIndexed())
+            return screenIndices_.size()/3;
+        else
+            return screenVertices_.size()/3;
+    }
+
+    inline void clear() { firstPointOffset_ = QPointF(0,0);
+                          screenVertices_.clear(); screenIndices_.clear(); }
+
+    void allocateAndFill(QSGGeometry *geom) const;
 
     static QRectF translateToCommonOrigin(QList<QGeoMapItemGeometry*> geoms);
 
@@ -100,7 +125,8 @@ protected:
 
     QGeoCoordinate srcOrigin_;
 
-    QVector<qreal> screenTriangles_;
+    QVector<Point> screenVertices_;
+    QVector<quint32> screenIndices_;
 };
 
 QT_END_NAMESPACE

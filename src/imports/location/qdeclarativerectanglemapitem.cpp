@@ -135,16 +135,16 @@ void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
     QRectF re(tl, br);
     re.translate(-1 * tl);
 
-    screenTriangles_.clear();
-    screenTriangles_.reserve(6);
+    clear();
+    screenVertices_.reserve(6);
 
-    screenTriangles_ << re.topLeft().x() << re.topLeft().y();
-    screenTriangles_ << re.topRight().x() << re.topRight().y();
-    screenTriangles_ << re.bottomLeft().x() << re.bottomLeft().y();
+    screenVertices_ << re.topLeft();
+    screenVertices_ << re.topRight();
+    screenVertices_ << re.bottomLeft();
 
-    screenTriangles_ << re.topRight().x() << re.topRight().y();
-    screenTriangles_ << re.bottomLeft().x() << re.bottomLeft().y();
-    screenTriangles_ << re.bottomRight().x() << re.bottomRight().y();
+    screenVertices_ << re.topRight();
+    screenVertices_ << re.bottomLeft();
+    screenVertices_ << re.bottomRight();
 
     firstPointOffset_ = QPointF(0,0);
     srcOrigin_ = topLeft;

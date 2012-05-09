@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qgeomapitemgeometry_p.h"
+#include <QtQuick/QSGGeometry>
 
 QT_BEGIN_NAMESPACE
 
@@ -55,13 +56,41 @@ QGeoMapItemGeometry::QGeoMapItemGeometry(QObject *parent) :
 */
 void QGeoMapItemGeometry::translate(const QPointF &offset)
 {
-    for (int i = 0; i < screenTriangles_.size()/2*2; i += 2) {
-        screenTriangles_[i] += offset.x();
-        screenTriangles_[i+1] += offset.y();
+    for (int i = 0; i < screenVertices_.size(); ++i) {
+        screenVertices_[i].x += offset.x();
+        screenVertices_[i].y += offset.y();
     }
     firstPointOffset_ += offset;
     screenOutline_.translate(offset);
     screenBounds_.translate(offset);
+}
+
+/*!
+    \internal
+*/
+void QGeoMapItemGeometry::allocateAndFill(QSGGeometry *geom) const
+{
+    const QVector<QGeoMapItemGeometry::Point> &vx = screenVertices_;
+    const QVector<quint32> &ix = screenIndices_;
+
+    if (isIndexed()) {
+        geom->allocate(vx.size(), ix.size());
+        if (geom->indexType() == GL_UNSIGNED_SHORT) {
+            quint16 *its = geom->indexDataAsUShort();
+            for (int i = 0; i < ix.size(); ++i)
+                its[i] = ix[i];
+        } else if (geom->indexType() == GL_UNSIGNED_INT) {
+            quint32 *its = geom->indexDataAsUInt();
+            for (int i = 0; i < ix.size(); ++i)
+                its[i] = ix[i];
+        }
+    } else {
+        geom->allocate(vx.size());
+    }
+
+    QSGGeometry::Point2D *pts = geom->vertexDataAsPoint2D();
+    for (int i = 0; i < vx.size(); ++i)
+        pts[i].set(vx[i].x, vx[i].y);
 }
 
 /*!
