@@ -1,6 +1,6 @@
 ﻿NOKIA DEVELOPER SOFTWARE AGREEMENT 2.1
 
-FOR THE NOKIA MAPS PLUG-IN TO Qt MOBILITY
+FOR THE NOKIA MAPS PLUG-IN TO Qt LOCATION
 
 
 Please read this Nokia Developer Software Agreement carefully before accessing, downloading or using any part ofthe Nokia Maps Plug-In to Qt Mobility. By accessing, downloading, installing, using or clicking on the "Accept" button while downloading, installing and/or using the Software, You agree to the terms and conditions of this Agreement. 

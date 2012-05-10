@@ -32,10 +32,10 @@
 
 Use of the relevant Nokia services provided by Nokia via the \l {Qt Location Nokia Plugin} are
 governed by the terms and conditions available in the file
-src/plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt in the Qt Location source
+src/plugins/geoservices/nokia/NOKIA_TERMS_AND_CONDITIONS.txt in the Qt Location source
 package.  The terms and conditions are reproduced below for convenience.
 
 \legalese
-\input plugins/geoservices/nokia/OVI_SERVICES_TERMS_AND_CONDITIONS.txt
+\input plugins/geoservices/nokia/NOKIA_TERMS_AND_CONDITIONS.txt
 \endlegalese
 */
