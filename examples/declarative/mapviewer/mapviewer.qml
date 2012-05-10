@@ -125,7 +125,7 @@ Item {
                 break;
             }
             case "Minimap": {
-                minimap = Qt.createQmlObject ('import "content/map"; MiniMap{}', map)
+                minimap = Qt.createQmlObject ('import "content/map"; MiniMap{ z: map.z + 2 }', map)
                 page.state = ""
                 break;
             }
