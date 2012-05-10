@@ -47,6 +47,10 @@
 #include <QPainterPath>
 #include <qnumeric.h>
 
+/* poly2tri triangulator includes */
+#include "../../3rdparty/poly2tri/common/shapes.h"
+#include "../../3rdparty/poly2tri/sweep/cdt.h"
+
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -116,7 +120,7 @@ struct Vertex
 };
 
 QGeoMapPolygonGeometry::QGeoMapPolygonGeometry(QObject *parent) :
-    QGeoMapItemGeometry(parent)
+    QGeoMapItemGeometry(parent), assumeSimple_(false)
 {
 }
 
@@ -131,6 +135,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
 
     // build the actual path
     QPointF origin;
+    QPointF lastPoint;
     srcPath_ = QPainterPath();
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
@@ -149,11 +154,19 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
             origin = point;
             srcOrigin_ = coord;
             srcPath_.moveTo(point - origin);
+            lastPoint = point;
         } else {
-            srcPath_.lineTo(point - origin);
+            const QPointF diff = (point - lastPoint);
+            if (diff.x() * diff.x() + diff.y() * diff.y() >= 3.0) {
+                srcPath_.lineTo(point - origin);
+                lastPoint = point;
+            }
         }
     }
     srcPath_.closeSubpath();
+
+    if (!assumeSimple_)
+        srcPath_ = srcPath_.simplified();
 
     sourceBounds_ = srcPath_.boundingRect();
 }
@@ -195,25 +208,51 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     ppi.translate(-bb.left(), -bb.top());
     firstPointOffset_ = -1 * bb.topLeft();
 
+    ppi.closeSubpath();
+
     screenOutline_ = ppi;
 
-    QTriangleSet ts = qTriangulate(ppi);
-    qreal *vx = ts.vertices.data();
+    std::vector<p2t::Point*> curPts;
+    curPts.reserve(ppi.elementCount());
 
-    screenIndices_.reserve(ts.indices.size());
-    screenVertices_.reserve(ts.vertices.size());
+    for (int i = 0; i < ppi.elementCount(); ++i) {
+        const QPainterPath::Element e = ppi.elementAt(i);
+        if (e.isMoveTo() || i == ppi.elementCount() - 1
+                || (qAbs(e.x - curPts.front()->x) < 0.1
+                    && qAbs(e.y - curPts.front()->y) < 0.1)) {
+            if (curPts.size() > 2) {
+                p2t::CDT *cdt = new p2t::CDT(curPts);
+                cdt->Triangulate();
+                std::vector<p2t::Triangle*> tris = cdt->GetTriangles();
 
-    if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
-        const quint32 *ix = reinterpret_cast<const quint32 *>(ts.indices.data());
-        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
-            screenIndices_ << ix[i];
-    } else {
-        const quint16 *ix = reinterpret_cast<const quint16 *>(ts.indices.data());
-        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
-            screenIndices_ << ix[i];
+                screenVertices_.reserve(screenVertices_.size() + tris.size());
+
+                for (int i = 0; i < tris.size(); ++i) {
+                    p2t::Triangle *t = tris.at(i);
+
+                    for (int j = 0; j < 3; ++j) {
+                        p2t::Point *p = t->GetPoint(j);
+                        screenVertices_ << Point(p->x, p->y);
+                    }
+                }
+
+                delete cdt;
+            }
+            curPts.clear();
+            curPts.reserve(ppi.elementCount() - i);
+            curPts.push_back(new p2t::Point(e.x, e.y));
+        } else if (e.isLineTo()) {
+            curPts.push_back(new p2t::Point(e.x, e.y));
+        } else {
+            qWarning("Unhandled element type in polygon painterpath");
+        }
     }
-    for (int i = 0; i < (ts.vertices.size()/2*2); i += 2)
-        screenVertices_ << Point(vx[i], vx[i + 1]);
+
+    if (curPts.size() > 0) {
+        for (int i = 0; i < curPts.size(); ++i)
+            delete curPts.at(i);
+        curPts.clear();
+    }
 
     screenBounds_ = ppi.boundingRect();
 }

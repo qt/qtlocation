@@ -10,7 +10,8 @@ project = Qt Location
 exampledirs += ../src/examples \
                ../.. \
                ../../examples \
-               ../src
+               ../src \
+               ../../src/3rdparty
 
 headerdirs += ../src \
               ../../src

@@ -192,6 +192,10 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent):
                      this, SLOT(updateMapItemAssumeDirty()));
     QObject::connect(&border_, SIGNAL(widthChanged(qreal)),
                      this, SLOT(updateMapItemAssumeDirty()));
+
+    // assume that circles are not self-intersecting
+    // to speed up processing
+    geometry_.setAssumeSimple(true);
 }
 
 QDeclarativeCircleMapItem::~QDeclarativeCircleMapItem()

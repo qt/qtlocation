@@ -12,6 +12,9 @@ INCLUDEPATH += ../../location/maps
 INCLUDEPATH *= $$PWD
 DEFINES += TOUCH_EVENT_WORKAROUND
 
+LIBS += -L../../3rdparty/poly2tri -lpoly2tri
+win32:LIBS += -L../../3rdparty/poly2tri/release -L../../3rdparty/poly2tri/debug
+
 # On some platforms, build both versions because debug and release
 # versions are incompatible
 #win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release
@@ -114,3 +117,4 @@ INSTALLS += target qmldir
 
 OTHER_FILES += \
     plugin.json
+

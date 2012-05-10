@@ -18,7 +18,8 @@ exampledirs += ../src/examples \
                ../.. \
                ../../examples \
                ../../examples/declarative \
-               ../src
+               ../src \
+               ../../src/3rdparty
 
 headerdirs += ../src \
               ../../src \

@@ -59,6 +59,8 @@ class QGeoMapPolygonGeometry : public QGeoMapItemGeometry
 public:
     explicit QGeoMapPolygonGeometry(QObject *parent = 0);
 
+    inline void setAssumeSimple(bool value) { assumeSimple_ = value; }
+
     void updateSourcePoints(const QGeoMap &map,
                             const QList<QGeoCoordinate> &path);
 
@@ -66,6 +68,7 @@ public:
 
 private:
     QPainterPath srcPath_;
+    bool assumeSimple_;
 };
 
 class QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
