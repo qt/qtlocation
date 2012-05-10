@@ -294,7 +294,7 @@ void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *m
     This property holds the ordered list of coordinates which
     define the polygon.
 
-    \sa addCoordinate removeCoordinate
+    \sa addCoordinate, removeCoordinate
 */
 QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarativePath()
 {
@@ -361,7 +361,7 @@ void QDeclarativePolygonMapItem::path_clear(
 
     Adds a coordinate to the path.
 
-    \sa removeCoordinate path
+    \sa removeCoordinate, path
 */
 
 void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate* coordinate)
@@ -384,7 +384,7 @@ void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate* coordinat
     Removes a coordinate from the path. If there are multiple instances of the
     same coordinate, the one added last is removed.
 
-    \sa addCoordinate path
+    \sa addCoordinate, path
 
 */
 

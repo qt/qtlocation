@@ -540,7 +540,7 @@ void QDeclarativePolylineMapItem::path_clear(
 
     Adds a coordinate to the path.
 
-    \sa removeCoordinate path
+    \sa removeCoordinate, path
 */
 
 void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordinate)
@@ -562,7 +562,7 @@ void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordina
     Removes a coordinate from the path. If there are multiple instances of the
     same coordinate, the one added last is removed.
 
-    \sa addCoordinate path
+    \sa addCoordinate, path
 */
 
 void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate* coordinate)

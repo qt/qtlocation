@@ -667,7 +667,7 @@ void QDeclarativeGeoRouteQuery::componentComplete()
     \li RouteQuery.MotorPoolLaneFeature - Consider motor pool lanes when planning the route
     \endlist
 
-    \sa setFeatureWeight featureWeight
+    \sa setFeatureWeight, featureWeight
 */
 
 QList<int> QDeclarativeGeoRouteQuery::featureTypes()
@@ -717,7 +717,7 @@ void QDeclarativeGeoRouteQuery::setNumberAlternativeRoutes(int numberAlternative
     Waypoints can be set as part of the RouteQuery element declaration or
     dynamically with the functions provided.
 
-    \sa addWaypoint removeWaypoint clearWaypoints
+    \sa addWaypoint, removeWaypoint, clearWaypoints
 */
 
 QQmlListProperty<QDeclarativeCoordinate> QDeclarativeGeoRouteQuery::waypoints()
@@ -772,7 +772,7 @@ void QDeclarativeGeoRouteQuery::waypoints_clear(QQmlListProperty<QDeclarativeCoo
     Excluded areas can be set as part of the RouteQuery element declaration or
     dynamically with the functions provided.
 
-    \sa addExcludedArea removeExcludedArea clearExcludedAreas
+    \sa addExcludedArea, removeExcludedArea, clearExcludedAreas
 */
 
 QQmlListProperty<QDeclarativeGeoBoundingBox> QDeclarativeGeoRouteQuery::excludedAreas()
@@ -825,7 +825,7 @@ void QDeclarativeGeoRouteQuery::exclusions_clear(QQmlListProperty<QDeclarativeGe
     Adds the given area to excluded areas (areas that the route must not cross).
     Same area can only be added once.
 
-    \sa removeExcludedArea clearExcludedAreas
+    \sa removeExcludedArea, clearExcludedAreas
 */
 
 
@@ -854,7 +854,7 @@ void QDeclarativeGeoRouteQuery::addExcludedArea(QDeclarativeGeoBoundingBox* area
 
     Removes the given area to excluded areas (areas that the route must not cross).
 
-    \sa addExcludedArea clearExcludedAreas
+    \sa addExcludedArea, clearExcludedAreas
 */
 
 void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoBoundingBox* area)
@@ -878,7 +878,7 @@ void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoBoundingBox* a
 
     Clears all excluded areas (areas that the route must not cross).
 
-    \sa addExcludedArea removeExcludedAreas
+    \sa addExcludedArea, removeExcludedAreas
 */
 
 void QDeclarativeGeoRouteQuery::clearExcludedAreas()
@@ -898,7 +898,7 @@ void QDeclarativeGeoRouteQuery::clearExcludedAreas()
     Appends a coordinate to the list of waypoints. Same coordinate
     can be set multiple times.
 
-    \sa removeWaypoint clearWaypoints
+    \sa removeWaypoint, clearWaypoints
 */
 
 void QDeclarativeGeoRouteQuery::addWaypoint(QDeclarativeCoordinate* waypoint)
@@ -933,7 +933,7 @@ void QDeclarativeGeoRouteQuery::addWaypoint(QDeclarativeCoordinate* waypoint)
     appears multiple times, the most recently added coordinate instance is
     removed.
 
-    \sa addWaypoint clearWaypoints
+    \sa addWaypoint, clearWaypoints
 */
 
 void QDeclarativeGeoRouteQuery::removeWaypoint(QDeclarativeCoordinate* waypoint)
@@ -959,7 +959,7 @@ void QDeclarativeGeoRouteQuery::removeWaypoint(QDeclarativeCoordinate* waypoint)
 
     Clears all waypoints.
 
-    \sa removeWaypoint addWaypoints
+    \sa removeWaypoint, addWaypoints
 */
 
 void QDeclarativeGeoRouteQuery::clearWaypoints()

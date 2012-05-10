@@ -106,7 +106,7 @@ QDeclarativePosition::~QDeclarativePosition()
     which enables easier data binding to Coordinate element instead of
     directly connecting to for example its latitude and longitude.
 
-    \sa longitudeValid latitudeValid altitudeValid
+    \sa longitudeValid, latitudeValid, altitudeValid
 
 */
 

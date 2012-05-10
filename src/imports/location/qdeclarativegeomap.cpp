@@ -1013,7 +1013,7 @@ void QDeclarativeGeoMap::wheelEvent(QWheelEvent *event)
 
     \note MapItemViews cannot be added with this method.
 
-    \sa mapitems removeMapItem clearMapItems
+    \sa mapitems, removeMapItem, clearMapItems
 */
 
 void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
@@ -1038,7 +1038,7 @@ void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
     the element declaration, as well as dynamical items (\l addMapItem,
     \l MapItemView).
 
-    \sa addMapItem removeMapItem clearMapItems
+    \sa addMapItem, removeMapItem, clearMapItems
 */
 
 QList<QObject*> QDeclarativeGeoMap::mapItems()
@@ -1053,7 +1053,7 @@ QList<QObject*> QDeclarativeGeoMap::mapItems()
     the MapItem does not exist or was not previously added to the map, the
     method does nothing.
 
-    \sa mapitems addMapItem clearMapItems
+    \sa mapitems, addMapItem, clearMapItems
 */
 void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
 {
@@ -1076,7 +1076,7 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
 
     Removes all items from the map.
 
-    \sa mapitems addMapItem clearMapItems
+    \sa mapitems, addMapItem, clearMapItems
 */
 void QDeclarativeGeoMap::clearMapItems()
 {

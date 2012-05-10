@@ -269,7 +269,7 @@ QT_BEGIN_NAMESPACE
 
     Raised when a pinch gesture is started.
 
-    \sa pinchUpdated pinchFinished
+    \sa pinchUpdated, pinchFinished
 */
 
 /*!
@@ -278,7 +278,7 @@ QT_BEGIN_NAMESPACE
     Once a pinch has begun this event gets raised as the user moves her fingers
     across the map.
 
-    \sa pinchStarted pinchFinished
+    \sa pinchStarted, pinchFinished
 */
 
 /*!
@@ -286,7 +286,7 @@ QT_BEGIN_NAMESPACE
 
     The end of a pinch gesture is signaled by this event.
 
-    \sa pinchUpdated pinchFinished
+    \sa pinchUpdated, pinchFinished
 */
 
 /*!
