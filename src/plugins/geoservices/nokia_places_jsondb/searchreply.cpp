@@ -139,29 +139,6 @@ void SearchReply::searchFinished()
         //There seem to be some issues with using the comparison operators
         //so for now we filter in the plugin code
         QGeoBoundingBox box(request().searchArea());
-        double tly = box.topLeft().latitude();
-        double bry = box.bottomRight().latitude();
-        double tlx = box.topLeft().longitude();
-        double brx = box.bottomRight().longitude();
-
-        foreach (const QPlace &place, places) {
-            const QGeoCoordinate &coord = place.location().coordinate();
-            if (coord.latitude() > tly)
-                places.removeAll(place);
-            if (coord.latitude() < bry)
-                places.removeAll(place);
-
-            bool lonWrap = (tlx > brx); //box wraps over the dateline
-            if (!lonWrap) {
-                if (coord.longitude() < tlx || coord.longitude() > brx) {
-                    places.removeAll(place);
-                }
-            } else {
-                if (coord.longitude() < tlx && coord.longitude() > brx) {
-                    places.removeAll(place);
-                }
-            }
-        }
 
         const QGeoCoordinate bCenter = box.center();
         foreach (const QPlace &place, places) {

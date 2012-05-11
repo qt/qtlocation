@@ -63,7 +63,6 @@ class JsonDb : public QObject {
 public:
     JsonDb(const QString &partition);
     ~JsonDb();
-    static QString convertToQueryString(const QPlaceSearchRequest &query);
 
     static void addToJson(QJsonObject *jsonObj, const QPlaceCategory &category);
     static void addToJson(QJsonObject *jsonObj, const QPlace &place);
@@ -91,6 +90,8 @@ public:
     void searchForPlaces(const QPlaceSearchRequest &request, QObject *parent, const char *slot);
 
     void setupRequest(QJsonDbRequest *request, QObject *parent, const char *slot);
+
+    static QString query(const QString &expression);
 
     static QStringList categoryIds(QList<QPlace> places);
 

@@ -146,23 +146,6 @@ JsonDb::~JsonDb()
     delete m_connection;
 }
 
-QString JsonDb::convertToQueryString(const QPlaceSearchRequest &request)
-{
-    QString queryString;
-    if (!request.searchTerm().isEmpty()) {
-        queryString += QString::fromLatin1("[?%1=\"%2\"][?%3 =~ \"!.*%4.*!i\"]")
-                        .arg(JsonDb::Type).arg(JsonDb::PlaceType).arg(JsonDb::Name).arg(request.searchTerm());
-    }
-
-    if (queryString.isEmpty())
-        queryString = QString::fromLatin1("[?%1 = \"%2\"]").arg(JsonDb::Type).arg(JsonDb::PlaceType);
-
-    if (request.relevanceHint() == QPlaceSearchRequest::LexicalPlaceNameHint)
-        queryString += QString::fromLatin1("[/") + JsonDb::Name + QLatin1String("]");
-
-    return queryString;
-}
-
 void JsonDb::addToJson(QJsonObject *jsonObj, const QPlaceCategory &category)
 {
     if (!category.categoryId().isEmpty())
@@ -627,6 +610,11 @@ QPlaceIcon JsonDb::convertJsonObjectToIcon(const QJsonObject &thumbnailsJson, co
     return icon;
 }
 
+QString JsonDb::query(const QString &expression)
+{
+    return QLatin1Char('[') + expression + QLatin1Char(']');
+}
+
 void JsonDb::setupRequest(QJsonDbRequest *request, QObject *parent, const char *slot)
 {
     Q_ASSERT(slot);
@@ -788,6 +776,28 @@ void JsonDb::searchForPlaces(const QPlaceSearchRequest &request, QObject *parent
             }
         }
         queryString += QString::fromLatin1("]");
+    }
+
+    if (request.searchArea().type() == QGeoBoundingArea::BoxType) {
+        const double epsilon = 0.0001;
+        QGeoBoundingBox box(request.searchArea());
+        double tly = box.topLeft().latitude();
+        double bry = box.bottomRight().latitude();
+        double tlx = box.topLeft().longitude();
+        double brx = box.bottomRight().longitude();
+
+        queryString += query(QLatin1String("?location.geo.latitude >= ") + QString::number(bry - epsilon));
+        queryString += query(QLatin1String("?location.geo.latitude <= ") + QString::number(tly + epsilon));
+
+        bool lonWrap = (tlx > brx); //box wraps over the dateline
+
+        if (lonWrap) {
+            queryString += query(QLatin1String("?location.geo.longitude >= ") + QString::number(tlx - epsilon)
+                    + QLatin1String(" | location.geo.longitude <= ") +  QString::number(brx + epsilon));
+        } else {
+            queryString += query(QLatin1String("?location.geo.longitude >= ") + QString::number(tlx - epsilon));
+            queryString += query(QLatin1String("?location.geo.longitude <= ") +  QString::number(brx + epsilon));
+        }
     }
 
     QJsonDbReadRequest *jsonDbRequest = new QJsonDbReadRequest(parent);
