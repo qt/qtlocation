@@ -59,7 +59,7 @@ Rectangle{
         width: 150
         height: 150
         plugin: Plugin {name: "nokia"}
-        zoomLevel: (map.zoomLevel > minimumZoomLevel + 2) ? minimumZoomLevel + 2 : minimumZoomLevel
+        zoomLevel: (map.zoomLevel > minimumZoomLevel + 3) ? minimumZoomLevel + 3 : 2.5
         center: map.center
 
         pinch.enabled: false
