@@ -142,7 +142,7 @@ private slots:
     {
         monitor = QGeoAreaMonitor::createDefaultMonitor(0);
         QVERIFY(monitor != 0);
-        QVERIFY(monitor->center().isValid() == FALSE);
+        QVERIFY(monitor->center().isValid() == false);
     }
 
     //TC_ID_4_x_1
@@ -172,9 +172,9 @@ private slots:
         QTest::addColumn<QGeoCoordinate>("coord");
         QTest::addColumn<bool>("validity");
 
-        QTest::newRow("valid coordinate") << QGeoCoordinate(34.56, -12.4, 56) << TRUE;   //TC_ID_4_x_1
-        QTest::newRow("invalid coordinate") << QGeoCoordinate(173.2, -195.8) << FALSE;      //TC_ID_4_x_2
-        QTest::newRow("uninitialised coordinate") << QGeoCoordinate() << FALSE;                   //TC_ID_4_x_3
+        QTest::newRow("valid coordinate") << QGeoCoordinate(34.56, -12.4, 56) << true;   //TC_ID_4_x_1
+        QTest::newRow("invalid coordinate") << QGeoCoordinate(173.2, -195.8) << false;      //TC_ID_4_x_2
+        QTest::newRow("uninitialised coordinate") << QGeoCoordinate() << false;                   //TC_ID_4_x_3
     }
 
     void setCenter_twice()

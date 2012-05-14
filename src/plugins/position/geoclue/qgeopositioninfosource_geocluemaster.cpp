@@ -311,7 +311,7 @@ int QGeoPositionInfoSourceGeoclueMaster::configurePositionSource()
     if (!geoclue_master_client_set_requirements (m_client,
                                                  m_preferredAccuracy,   // min_accuracy
                                                  0,                     // min_time
-                                                 TRUE,                  // require_updates (signals)
+                                                 true,                  // require_updates (signals)
                                                  m_preferredResources,
                                                  &error)){
         qCritical ("QGeoPositionInfoSourceGeoclueMaster geoclue set_requirements failed.");

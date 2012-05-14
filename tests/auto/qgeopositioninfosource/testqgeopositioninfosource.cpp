@@ -383,7 +383,7 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
             QCOMPARE(isNaN1, isNaN2);
             if (!isNaN1) {
                 QCOMPARE(qFuzzyCompare(info.attribute(QGeoPositionInfo::HorizontalAccuracy),
-                                       lastPositioninfo.attribute(QGeoPositionInfo::HorizontalAccuracy)), TRUE);
+                                       lastPositioninfo.attribute(QGeoPositionInfo::HorizontalAccuracy)), true);
             }
         }
 
@@ -396,7 +396,7 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
             QCOMPARE(isNaN1, isNaN2);
             if (!isNaN1) {
                 QCOMPARE(qFuzzyCompare(info.attribute(QGeoPositionInfo::VerticalAccuracy),
-                                       lastPositioninfo.attribute(QGeoPositionInfo::VerticalAccuracy)), TRUE);
+                                       lastPositioninfo.attribute(QGeoPositionInfo::VerticalAccuracy)), true);
             }
         }
     }
