@@ -812,6 +812,8 @@ void QDeclarativeGeoMapGestureArea::clearTouchData()
     velocityX_ = 0;
     velocityY_ = 0;
     pressTime_.start();
+    sceneCenter_.setX(0);
+    sceneCenter_.setY(0);
     touchCenterCoord_.setLongitude(0);
     touchCenterCoord_.setLatitude(0);
     startCoord_.setLongitude(0);
@@ -884,6 +886,7 @@ void QDeclarativeGeoMapGestureArea::touchPointStateMachine()
         if (touchPoints_.count() == 0) {
             touchPointState_ = touchPoints0;
         } else if (touchPoints_.count() == 2) {
+            touchCenterCoord_ = map_->screenPositionToCoordinate(sceneCenter_, false);
             startTwoTouchPoints();
             touchPointState_ = touchPoints2;
         }
@@ -892,6 +895,7 @@ void QDeclarativeGeoMapGestureArea::touchPointStateMachine()
         if (touchPoints_.count() == 0) {
             touchPointState_ = touchPoints0;
         } else if (touchPoints_.count() == 1) {
+            touchCenterCoord_ = map_->screenPositionToCoordinate(sceneCenter_, false);
             startOneTouchPoint();
             touchPointState_ = touchPoints1;
         }
@@ -916,8 +920,6 @@ void QDeclarativeGeoMapGestureArea::touchPointStateMachine()
 */
 void QDeclarativeGeoMapGestureArea::startOneTouchPoint()
 {
-    sceneCenter_ = QPointF();
-
     sceneStartPoint1_ = touchPoints_.at(0).scenePos();
     lastPos_ = sceneStartPoint1_;
     lastPosTime_.start();
@@ -935,8 +937,6 @@ void QDeclarativeGeoMapGestureArea::startOneTouchPoint()
 void QDeclarativeGeoMapGestureArea::updateOneTouchPoint()
 {
     sceneCenter_ = touchPoints_.at(0).scenePos();
-    touchCenterCoord_ = map_->screenPositionToCoordinate(sceneCenter_, false);
-
     updateVelocityList(sceneCenter_);
 }
 
@@ -946,8 +946,6 @@ void QDeclarativeGeoMapGestureArea::updateOneTouchPoint()
 */
 void QDeclarativeGeoMapGestureArea::startTwoTouchPoints()
 {
-    sceneCenter_ = QPointF();
-
     sceneStartPoint1_ = touchPoints_.at(0).scenePos();
     sceneStartPoint2_ = touchPoints_.at(1).scenePos();
     QPointF startPos = (sceneStartPoint1_ + sceneStartPoint2_) * 0.5;
@@ -971,7 +969,6 @@ void QDeclarativeGeoMapGestureArea::updateTwoTouchPoints()
     qreal dy = p1.y() - p2.y();
     distanceBetweenTouchPoints_ = sqrt(dx * dx + dy * dy);
     sceneCenter_ = (p1 + p2) / 2;
-    touchCenterCoord_ = map_->screenPositionToCoordinate(sceneCenter_, false);
 
     updateVelocityList(sceneCenter_);
 
@@ -1244,11 +1241,16 @@ bool QDeclarativeGeoMapGestureArea::canStartPan()
 */
 void QDeclarativeGeoMapGestureArea::updatePan()
 {
-    QDeclarativeCoordinate *center = declarativeMap_->center();
-    qreal newLat = center->latitude() + startCoord_.latitude() - touchCenterCoord_.latitude();
-    qreal newLong = center->longitude() + startCoord_.longitude() - touchCenterCoord_.longitude();
-    center->setLatitude(newLat);
-    center->setLongitude(newLong);
+    QPointF startPoint = map_->coordinateToScreenPosition(startCoord_, false);
+    int dx = static_cast<int>(sceneCenter_.x() - startPoint.x());
+    int dy = static_cast<int>(sceneCenter_.y() - startPoint.y());
+    QPointF mapCenterPoint;
+    mapCenterPoint.setY(map_->height() / 2.0  - dy);
+    mapCenterPoint.setX(map_->width() / 2.0 - dx);
+    AnimatableCoordinate animationStartCoordinate;
+    animationStartCoordinate.setCoordinate(map_->screenPositionToCoordinate(mapCenterPoint, false));
+    map_->mapController()->setCenter(animationStartCoordinate);
+
 }
 
 /*!
