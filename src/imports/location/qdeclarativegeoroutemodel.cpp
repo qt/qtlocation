@@ -674,7 +674,7 @@ QList<int> QDeclarativeGeoRouteQuery::featureTypes()
 {
     QList<int> list;
 
-    for (int i = 0; i < request_.featureTypes().count(); i++) {
+    for (int i = 0; i < request_.featureTypes().count(); ++i) {
         list.append(static_cast<int>(request_.featureTypes().at(i)));
     }
     return list;
@@ -885,7 +885,7 @@ void QDeclarativeGeoRouteQuery::clearExcludedAreas()
 {
     if (!exclusions_.count())
         return;
-    for (int i = 0; i < exclusions_.count(); i++)
+    for (int i = 0; i < exclusions_.count(); ++i)
         exclusions_.at(i)->disconnect(this);
     exclusions_.clear();
     emit excludedAreasChanged();
@@ -966,7 +966,7 @@ void QDeclarativeGeoRouteQuery::clearWaypoints()
 {
     if (!waypoints_.count())
         return;
-    for (int i = 0; i < waypoints_.count(); i++)
+    for (int i = 0; i < waypoints_.count(); ++i)
         waypoints_.at(i)->disconnect(this);
     waypoints_.clear();
     emit waypointsChanged();
@@ -1238,10 +1238,10 @@ QGeoRouteRequest& QDeclarativeGeoRouteQuery::routeRequest()
 {
     // Bit inefficient, but waypoint and excludearea count is not big
     QList<QGeoCoordinate> waypoints;
-    for (int i = 0; i < waypoints_.count(); i++)
+    for (int i = 0; i < waypoints_.count(); ++i)
         waypoints.append(waypoints_.at(i)->coordinate());
     QList<QGeoBoundingBox> exclusions;
-    for (int i = 0; i < exclusions_.count(); i++)
+    for (int i = 0; i < exclusions_.count(); ++i)
         exclusions.append(exclusions_.at(i)->box());
 
     request_.setWaypoints(waypoints);

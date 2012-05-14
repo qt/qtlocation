@@ -251,7 +251,7 @@ QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
 
 
     QList<int> attribs = info.d->doubleAttribs.keys();
-    for (int i = 0; i < attribs.count(); i++) {
+    for (int i = 0; i < attribs.count(); ++i) {
         dbg.nospace() << ", ";
         switch (attribs[i]) {
             case QGeoSatelliteInfo::Elevation:

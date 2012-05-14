@@ -605,7 +605,7 @@ void QGeoServiceProviderPrivate::loadPluginMetadata(QHash<QString, QJsonObject> 
 {
     QFactoryLoader *l = loader();
     QList<QJsonObject> meta = l->metaData();
-    for (int i = 0; i < meta.size(); i++) {
+    for (int i = 0; i < meta.size(); ++i) {
         QJsonObject obj = meta.at(i).value(QStringLiteral("MetaData")).toObject();
         obj.insert(QStringLiteral("index"), i);
         list.insertMulti(obj.value(QStringLiteral("Provider")).toString(), obj);

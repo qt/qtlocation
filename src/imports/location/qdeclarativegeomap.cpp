@@ -238,7 +238,7 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
     QObjectList kids = children();
     bool foundCopyrights = false;
 
-    for (int i = 0; i < kids.size(); i++) {
+    for (int i = 0; i < kids.size(); ++i) {
         QDeclarativeGeoMapCopyrightNotice *copyrights = qobject_cast<QDeclarativeGeoMapCopyrightNotice*>(kids.at(i));
         if (copyrights) {
             foundCopyrights = true;
@@ -1180,7 +1180,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
             topLeftY = item->pos().y();
             bottomRightX = topLeftX + item->width();
             bottomRightY = topLeftY + item->height();
-            itemCount++;
+            ++itemCount;
         }
         if (itemCount == 0) {
             minX = topLeftX;
@@ -1193,7 +1193,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
             minY = qMin(minY, topLeftY);
             maxY = qMax(maxY, bottomRightY);
         }
-        itemCount++;
+        ++itemCount;
     }
 
     if (itemCount == 0)

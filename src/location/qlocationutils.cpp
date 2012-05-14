@@ -273,7 +273,7 @@ bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPosition
 bool QLocationUtils::hasValidNmeaChecksum(const char *data, int size)
 {
     int asteriskIndex = -1;
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
         if (data[i] == '*') {
             asteriskIndex = i;
             break;
@@ -286,7 +286,7 @@ bool QLocationUtils::hasValidNmeaChecksum(const char *data, int size)
 
     // XOR byte value of all characters between '$' and '*'
     int result = 0;
-    for (int i = 1; i < asteriskIndex; i++)
+    for (int i = 1; i < asteriskIndex; ++i)
         result ^= data[i];
     /*
         char calc[CSUM_LEN + 1];

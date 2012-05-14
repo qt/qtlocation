@@ -343,7 +343,7 @@ static void clipPathToRect(const QVector<qreal> &points,
     outTypes.reserve(types.size());
 
     qreal lastX, lastY;
-    for (int i = 0; i < types.size(); i++) {
+    for (int i = 0; i < types.size(); ++i) {
         if (i > 0 && types[i] != QPainterPath::MoveToElement) {
             qreal x = points[i*2], y = points[i*2+1];
             clipSegmentToRect(lastX, lastY, x, y, clipRect, outPoints, outTypes);
@@ -687,7 +687,7 @@ void QDeclarativePolylineMapItem::dragEnded()
     if (newCoordinate.isValid()) {
         qreal firstLongitude = path_.at(0).longitude();
         qreal firstLatitude = path_.at(0).latitude();
-        for (int i = 0; i<path_.count(); i++){
+        for (int i = 0; i<path_.count(); ++i) {
             QGeoCoordinate coord = path_.at(i);
             coord.setLongitude(coord.longitude() + newCoordinate.longitude() - firstLongitude);
             coord.setLatitude(coord.latitude() + newCoordinate.latitude() - firstLatitude);

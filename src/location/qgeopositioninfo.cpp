@@ -261,7 +261,7 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
 
     QList<int> attribs = info.d->doubleAttribs.keys();
     qStableSort(attribs.begin(), attribs.end()); // Output a sorted list from an unsorted hash.
-    for (int i = 0; i < attribs.count(); i++) {
+    for (int i = 0; i < attribs.count(); ++i) {
         dbg.nospace() << ", ";
         switch (attribs[i]) {
             case QGeoPositionInfo::Direction:

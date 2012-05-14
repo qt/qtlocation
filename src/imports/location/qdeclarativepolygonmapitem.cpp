@@ -205,11 +205,11 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 
     if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
         const quint32 *ix = reinterpret_cast<const quint32*>(ts.indices.data());
-        for (int i = 0; i < (ts.indices.size()/3*3); i++)
+        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
             screenIndices_ << ix[i];
     } else {
         const quint16 *ix = reinterpret_cast<const quint16*>(ts.indices.data());
-        for (int i = 0; i < (ts.indices.size()/3*3); i++)
+        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
             screenIndices_ << ix[i];
     }
     for (int i = 0; i < (ts.vertices.size()/2*2); i += 2)
@@ -542,7 +542,7 @@ void QDeclarativePolygonMapItem::dragEnded()
     if (newCoordinate.isValid()) {
         qreal firstLongitude = path_.at(0).longitude();
         qreal firstLatitude = path_.at(0).latitude();
-        for (int i = 0; i<path_.count(); i++){
+        for (int i = 0; i<path_.count(); ++i) {
             QGeoCoordinate coord = path_.at(i);
             coord.setLongitude(coord.longitude() + newCoordinate.longitude() - firstLongitude);
             coord.setLatitude(coord.latitude() + newCoordinate.latitude() - firstLatitude);
