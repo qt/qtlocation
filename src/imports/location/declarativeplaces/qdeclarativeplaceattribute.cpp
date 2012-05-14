@@ -169,7 +169,7 @@ QPlaceAttribute QDeclarativePlaceAttribute::attribute() const
 */
 void QDeclarativePlaceAttribute::setLabel(const QString &label)
 {
-    if (m_attribute.label()!= label) {
+    if (m_attribute.label() != label) {
         m_attribute.setLabel(label);
         emit labelChanged();
     }

@@ -92,7 +92,7 @@ protected Q_SLOTS:
 
 private:
     qreal scaleFactor();
-    QDeclarativeCoordinate* coordinate_;
+    QDeclarativeCoordinate *coordinate_;
     QDeclarativeCoordinate internalCoordinate_;
     QWeakPointer<QQuickItem> sourceItem_;
     QQuickItem *opacityContainer_;

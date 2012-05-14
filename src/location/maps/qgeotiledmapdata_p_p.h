@@ -108,7 +108,7 @@ public:
 
 private:
     QGeoTiledMapData *map_;
-    QGeoTileCache* cache_;
+    QGeoTileCache *cache_;
     QGeoTiledMappingManagerEngine *engine_;
 
     QSet<QGeoTileSpec> visibleTiles_;

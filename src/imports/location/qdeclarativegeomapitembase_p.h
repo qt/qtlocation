@@ -81,7 +81,7 @@ public:
     virtual void dragEnded();
 
     QDeclarativeGeoMap* quickMap() {return quickMap_;}
-    QGeoMap* map() {return map_;}
+    QGeoMap* map() { return map_; }
 
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *);
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
@@ -98,8 +98,8 @@ private Q_SLOTS:
     void baseCameraDataChanged(const QGeoCameraData &camera);
 
 private:
-    QGeoMap* map_;
-    QDeclarativeGeoMap* quickMap_;
+    QGeoMap *map_;
+    QDeclarativeGeoMap *quickMap_;
 
     QSizeF lastSize_;
     QGeoCameraData lastCameraData_;

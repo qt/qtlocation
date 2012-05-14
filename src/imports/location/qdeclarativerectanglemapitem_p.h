@@ -106,8 +106,8 @@ protected Q_SLOTS:
     void afterViewportChanged(const QGeoMapViewportChangeEvent &event);
 
 private:
-    QDeclarativeCoordinate* topLeft_;
-    QDeclarativeCoordinate* bottomRight_;
+    QDeclarativeCoordinate *topLeft_;
+    QDeclarativeCoordinate *bottomRight_;
     QDeclarativeCoordinate internalTopLeft_;
     QDeclarativeCoordinate internalBottomRight_;
     QDeclarativeMapLineProperties border_;

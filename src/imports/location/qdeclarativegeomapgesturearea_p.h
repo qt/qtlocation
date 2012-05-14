@@ -204,10 +204,15 @@ public:
     void setMap(QGeoMap* map);
 
     // will be removed
-    void registerFlickDeprecated(QDeclarativeGeoMapFlickable *flickable){
-        flickableDep_ = flickable; }
-    void registerPinchDeprecated(QDeclarativeGeoMapPinchArea *pinchArea){
-        pinchDep_ = pinchArea; }
+    void registerFlickDeprecated(QDeclarativeGeoMapFlickable *flickable)
+    {
+        flickableDep_ = flickable;
+    }
+
+    void registerPinchDeprecated(QDeclarativeGeoMapPinchArea *pinchArea)
+    {
+        pinchDep_ = pinchArea;
+    }
 
 Q_SIGNALS:
     void pinchActiveChanged();

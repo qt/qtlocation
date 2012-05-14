@@ -324,8 +324,8 @@ void QGeoTiledMapDataPrivate::resized(int width, int height)
 
     if (width > 0 && height > 0 && cache_ && cameraTiles_) {
         // absolute minimum size: one tile each side of display, 32-bit colour
-        int texCacheSize = (width + cameraTiles_->tileSize()*2) *
-                (height + cameraTiles_->tileSize()*2) * 4;
+        int texCacheSize = (width + cameraTiles_->tileSize() * 2) *
+                (height + cameraTiles_->tileSize() * 2) * 4;
 
         // multiply by 3 so the 'recent' list in the cache is big enough for
         // an entire display of tiles

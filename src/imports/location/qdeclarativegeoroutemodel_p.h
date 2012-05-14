@@ -157,9 +157,9 @@ private:
 
     bool complete_;
 
-    QDeclarativeGeoServiceProvider* plugin_;
-    QDeclarativeGeoRouteQuery* routeQuery_;
-    QGeoRouteReply* reply_;
+    QDeclarativeGeoServiceProvider *plugin_;
+    QDeclarativeGeoRouteQuery *routeQuery_;
+    QGeoRouteReply *reply_;
 
     QList<QDeclarativeGeoRoute*> routes_;
     bool autoUpdate_;

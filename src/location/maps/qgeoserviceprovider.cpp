@@ -246,7 +246,7 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
     // make local references just so this method is easier to read
     QGeoServiceProvider::Error &error = *_error;
     QString &errorString = *_errorString;
-    Manager * &manager = *_manager;
+    Manager *&manager = *_manager;
 
     if (!this->factory)
         this->loadPlugin(this->parameterMap);
@@ -591,7 +591,7 @@ QHash<QString, QJsonObject> QGeoServiceProviderPrivate::plugins(bool reload)
     static QHash<QString, QJsonObject> plugins;
     static bool alreadyDiscovered = false;
 
-    if (reload  == true)
+    if (reload == true)
         alreadyDiscovered = false;
 
     if (!alreadyDiscovered) {

@@ -126,7 +126,7 @@ void QGeoTileFetcher::cancelTileRequests(const QSet<QGeoTileSpec> &tiles)
     tile_iter tile = tiles.constBegin();
     tile_iter end = tiles.constEnd();
     for (; tile != end; ++tile) {
-        QGeoTiledMapReply* reply = d->invmap_.value(*tile, 0);
+        QGeoTiledMapReply *reply = d->invmap_.value(*tile, 0);
         if (reply) {
             d->invmap_.remove(*tile);
             reply->abort();

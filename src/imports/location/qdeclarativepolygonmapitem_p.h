@@ -144,7 +144,7 @@ public:
 
 private:
     QSGFlatColorMaterial fill_material_;
-    MapPolylineNode* border_;
+    MapPolylineNode *border_;
     QSGGeometry geometry_;
     bool blocked_;
 };

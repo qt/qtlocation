@@ -243,7 +243,7 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
         if (copyrights) {
             foundCopyrights = true;
         } else {
-            QDeclarativeGeoMapItemBase* mapItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
+            QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
             if (mapItem) {
                 if (mapItem->z() > maxChildZ)
                     maxChildZ = mapItem->z();
@@ -278,10 +278,10 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
 */
 void QDeclarativeGeoMap::pluginReady()
 {
-    serviceProvider_  = plugin_->sharedGeoServiceProvider();
+    serviceProvider_ = plugin_->sharedGeoServiceProvider();
     mappingManager_ = serviceProvider_->mappingManager();
 
-    if (!mappingManager_  || serviceProvider_->error() != QGeoServiceProvider::NoError) {
+    if (!mappingManager_ || serviceProvider_->error() != QGeoServiceProvider::NoError) {
         qmlInfo(this) << tr("Warning: Plugin does not support mapping. Error message: %1")
                          .arg(serviceProvider_->errorString());
         return;
@@ -413,13 +413,13 @@ void QDeclarativeGeoMap::populateMap()
     QObjectList kids = children();
     for (int i = 0; i < kids.size(); ++i) {
         // dispatch items appropriately
-        QDeclarativeGeoMapItemView* mapView = qobject_cast<QDeclarativeGeoMapItemView*>(kids.at(i));
+        QDeclarativeGeoMapItemView *mapView = qobject_cast<QDeclarativeGeoMapItemView*>(kids.at(i));
         if (mapView) {
             mapViews_.append(mapView);
             setupMapView(mapView);
             continue;
         }
-        QDeclarativeGeoMapItemBase* mapItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
+        QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
         if (mapItem) {
             addMapItem(mapItem);
         }
@@ -837,7 +837,7 @@ void QDeclarativeGeoMap::mapBearingChanged(qreal bearing)
 void QDeclarativeGeoMap::mapCenterChanged(AnimatableCoordinate center)
 {
     if (center.coordinate() != this->center()->coordinate()) {
-        QDeclarativeCoordinate* currentCenter = this->center();
+        QDeclarativeCoordinate *currentCenter = this->center();
         currentCenter->setLatitude(center.coordinate().latitude());
         currentCenter->setLongitude(center.coordinate().longitude());
         currentCenter->setAltitude(center.coordinate().altitude());
@@ -1148,9 +1148,9 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     if (mapItems_.size() == 0)
         return;
 
-    qreal minX =  0;
+    qreal minX = 0;
     qreal maxX = 0;
-    qreal minY =  0;
+    qreal minY = 0;
     qreal maxY = 0;
     qreal topLeftX = 0;
     qreal topLeftY = 0;
@@ -1216,9 +1216,9 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     double mapWidthRatio = width() / (width() + height());
     double zoomRatio;
     if (bboxWidthRatio > mapWidthRatio)
-        zoomRatio =  bboxWidth / width();
+        zoomRatio = bboxWidth / width();
     else
-        zoomRatio =  bboxHeight / height();
+        zoomRatio = bboxHeight / height();
 
     qreal newZoom = log10(zoomRatio) / log10(0.5);
     newZoom = floor(qMax(minimumZoomLevel(), (map_->mapController()->zoom() + newZoom)));

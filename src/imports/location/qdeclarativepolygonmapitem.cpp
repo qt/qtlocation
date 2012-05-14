@@ -213,7 +213,7 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
             screenIndices_ << ix[i];
     }
     for (int i = 0; i < (ts.vertices.size()/2*2); i += 2)
-        screenVertices_ << Point(vx[i], vx[i+1]);
+        screenVertices_ << Point(vx[i], vx[i + 1]);
 
     screenBounds_ = ppi.boundingRect();
 }
@@ -308,7 +308,7 @@ QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarative
 void QDeclarativePolygonMapItem::path_append(
         QQmlListProperty<QDeclarativeCoordinate> *property, QDeclarativeCoordinate *coordinate)
 {
-    QDeclarativePolygonMapItem* item = qobject_cast<QDeclarativePolygonMapItem*>(property->object);
+    QDeclarativePolygonMapItem *item = qobject_cast<QDeclarativePolygonMapItem*>(property->object);
     item->coordPath_.append(coordinate);
     item->path_.append(coordinate->coordinate());
 
@@ -345,7 +345,7 @@ QDeclarativeCoordinate* QDeclarativePolygonMapItem::path_at(
 void QDeclarativePolygonMapItem::path_clear(
         QQmlListProperty<QDeclarativeCoordinate> *property)
 {
-    QDeclarativePolygonMapItem* item = qobject_cast<QDeclarativePolygonMapItem*>(
+    QDeclarativePolygonMapItem *item = qobject_cast<QDeclarativePolygonMapItem*>(
                 property->object);
     qDeleteAll(item->coordPath_);
     item->coordPath_.clear();
@@ -542,7 +542,7 @@ void QDeclarativePolygonMapItem::dragEnded()
     if (newCoordinate.isValid()) {
         qreal firstLongitude = path_.at(0).longitude();
         qreal firstLatitude = path_.at(0).latitude();
-        for (int i = 0; i<path_.count(); ++i) {
+        for (int i = 0; i < path_.count(); ++i) {
             QGeoCoordinate coord = path_.at(i);
             coord.setLongitude(coord.longitude() + newCoordinate.longitude() - firstLongitude);
             coord.setLatitude(coord.latitude() + newCoordinate.latitude() - firstLatitude);

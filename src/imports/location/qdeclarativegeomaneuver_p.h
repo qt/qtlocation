@@ -96,8 +96,8 @@ public:
 
 private:
     QGeoManeuver maneuver_;
-    QDeclarativeCoordinate* position_;
-    QDeclarativeCoordinate* waypoint_;
+    QDeclarativeCoordinate *position_;
+    QDeclarativeCoordinate *waypoint_;
 };
 
 QT_END_NAMESPACE

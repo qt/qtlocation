@@ -59,7 +59,8 @@
 
 QT_BEGIN_NAMESPACE
 
-struct Frustum {
+struct Frustum
+{
     QDoubleVector3D topLeftNear;
     QDoubleVector3D topLeftFar;
     QDoubleVector3D topRightNear;
@@ -72,7 +73,8 @@ struct Frustum {
 
 typedef QVector<QDoubleVector3D> Polygon;
 
-class QGeoCameraTilesPrivate {
+class QGeoCameraTilesPrivate
+{
 public:
     QGeoCameraTilesPrivate();
     ~QGeoCameraTilesPrivate();
@@ -93,10 +95,12 @@ public:
 
     Frustum frustum() const;
 
-    class LengthSorter {
+    class LengthSorter
+    {
     public:
         QDoubleVector3D base;
-        bool operator()(const QDoubleVector3D &lhs, const QDoubleVector3D &rhs) {
+        bool operator()(const QDoubleVector3D &lhs, const QDoubleVector3D &rhs)
+        {
             return (lhs - base).lengthSquared() < (rhs - base).lengthSquared();
         }
     };
@@ -780,16 +784,16 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const Polygon &polyg
         map.add(x,y);
 
         // top left corner
-        int iPrev =  (i1 + numPoints - 1 ) % numPoints;
+        int iPrev =  (i1 + numPoints - 1) % numPoints;
         double xPrevious = polygon.at(iPrev).get(0);
         double yPrevious = polygon.at(iPrev).get(1);
         bool xPreviousFixed = qFuzzyCompare(xPrevious, x1);
-        if ( xIntegral && xPreviousFixed && yIntegral && yFixed){
-            if ( (x2 > x1) && (yPrevious > y1) ){
-                if ( (x-1) > 0 && (y-1) > 0)
-                    map.add(x-1,y-1);
-            }
-            else if ( (x2 < x1) && (yPrevious < y1) ){
+        if (xIntegral && xPreviousFixed && yIntegral && yFixed) {
+            if ((x2 > x1) && (yPrevious > y1)) {
+                if ((x - 1) > 0 && (y - 1) > 0)
+                    map.add(x - 1, y - 1);
+            } else if ((x2 < x1) && (yPrevious < y1)) {
+                // what?
             }
         }
 

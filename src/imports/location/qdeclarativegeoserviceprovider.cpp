@@ -498,7 +498,7 @@ QMap<QString, QVariant> QDeclarativeGeoServiceProvider::parameterMap() const
 {
     QMap<QString, QVariant> map;
 
-    for(int i = 0; i < parameters_.size(); ++i) {
+    for (int i = 0; i < parameters_.size(); ++i) {
         QDeclarativeGeoServiceProviderParameter *parameter = parameters_.at(i);
         map.insert(parameter->name(), parameter->value());
     }

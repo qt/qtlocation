@@ -90,7 +90,7 @@ protected:
     QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
 
 private:
-    QGeoMappingManagerPrivate* d_ptr;
+    QGeoMappingManagerPrivate *d_ptr;
     Q_DISABLE_COPY(QGeoMappingManager)
 
     friend class QGeoServiceProvider;

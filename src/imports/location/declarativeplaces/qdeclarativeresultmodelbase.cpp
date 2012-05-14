@@ -207,7 +207,7 @@ void QDeclarativeResultModelBase::queryFinished()
             m_reply = favoritesManager->matchingPlaces(request);
             connect(m_reply, SIGNAL(finished()), this, SLOT(queryFinished()));
         }
-    } else if (reply->type() == QPlaceReply::MatchReply){
+    } else if (reply->type() == QPlaceReply::MatchReply) {
         QPlaceMatchReply *matchReply = qobject_cast<QPlaceMatchReply *>(reply);
         Q_ASSERT(matchReply);
         updateLayout(matchReply->places());
@@ -233,7 +233,7 @@ void QDeclarativeResultModelBase::updateLayout(const QList<QPlace> &favoritePlac
     m_results = m_resultsBuffer;
     m_resultsBuffer.clear();
 
-    for (int i=0 ;i < m_results.count(); ++i) {
+    for (int i = 0; i < m_results.count(); ++i) {
         QDeclarativePlace *place = new QDeclarativePlace(m_results.at(i).place(),plugin(), this);
         m_places.append(place);
 

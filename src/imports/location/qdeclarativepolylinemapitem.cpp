@@ -185,7 +185,7 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
 
     // clear the old data and reserve enough memory
     srcPoints_.clear();
-    srcPoints_.reserve(path.size()*2);
+    srcPoints_.reserve(path.size() * 2);
     srcPointTypes_.clear();
     srcPointTypes_.reserve(path.size());
 
@@ -314,8 +314,8 @@ static void clipSegmentToRect(qreal x0, qreal y0, qreal x1, qreal y1,
     if (accept) {
         if (outPoints.size() >= 2) {
             qreal lastX, lastY;
-            lastY = outPoints.at(outPoints.size()-1);
-            lastX = outPoints.at(outPoints.size()-2);
+            lastY = outPoints.at(outPoints.size() - 1);
+            lastX = outPoints.at(outPoints.size() - 2);
 
             if (!qFuzzyCompare(lastY, y0) || !qFuzzyCompare(lastX, x0)) {
                 outTypes << QPainterPath::MoveToElement;
@@ -345,12 +345,12 @@ static void clipPathToRect(const QVector<qreal> &points,
     qreal lastX, lastY;
     for (int i = 0; i < types.size(); ++i) {
         if (i > 0 && types[i] != QPainterPath::MoveToElement) {
-            qreal x = points[i*2], y = points[i*2+1];
+            qreal x = points[i * 2], y = points[i * 2 + 1];
             clipSegmentToRect(lastX, lastY, x, y, clipRect, outPoints, outTypes);
         }
 
-        lastX = points[i*2];
-        lastY = points[i*2+1];
+        lastX = points[i * 2];
+        lastY = points[i * 2 + 1];
     }
 }
 
@@ -399,13 +399,13 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
 
     QPolygonF tri;
     const float *vs = ts.vertices();
-    for (int i = 0; i < ts.vertexCount()/2*2; i+=2) {
-        screenVertices_ << Point(vs[i], vs[i+1]);
+    for (int i = 0; i < (ts.vertexCount()/2*2); i += 2) {
+        screenVertices_ << Point(vs[i], vs[i + 1]);
 
-        if (!qIsFinite(vs[i]) || !qIsFinite(vs[i+1]))
+        if (!qIsFinite(vs[i]) || !qIsFinite(vs[i + 1]))
             break;
 
-        tri << QPointF(vs[i], vs[i+1]);
+        tri << QPointF(vs[i], vs[i + 1]);
         if (tri.size() == 4) {
             tri.remove(0);
             screenOutline_.addPolygon(tri);
@@ -463,7 +463,7 @@ void QDeclarativePolylineMapItem::updateAfterCoordinateChanged()
 void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
-    if (map){
+    if (map) {
         geometry_.markSourceDirty();
         updateMapItem();
     }
@@ -488,7 +488,7 @@ QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolylineMapItem::declarativ
 void QDeclarativePolylineMapItem::path_append(QQmlListProperty<QDeclarativeCoordinate> *property,
                                               QDeclarativeCoordinate *coordinate)
 {
-    QDeclarativePolylineMapItem* item = qobject_cast<QDeclarativePolylineMapItem*>(
+    QDeclarativePolylineMapItem *item = qobject_cast<QDeclarativePolylineMapItem*>(
                 property->object);
 
     QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
@@ -525,7 +525,7 @@ QDeclarativeCoordinate* QDeclarativePolylineMapItem::path_at(
 void QDeclarativePolylineMapItem::path_clear(
         QQmlListProperty<QDeclarativeCoordinate> *property)
 {
-    QDeclarativePolylineMapItem* item = qobject_cast<QDeclarativePolylineMapItem*>(
+    QDeclarativePolylineMapItem *item = qobject_cast<QDeclarativePolylineMapItem*>(
                 property->object);
     qDeleteAll(item->coordPath_);
     item->coordPath_.clear();
@@ -687,7 +687,7 @@ void QDeclarativePolylineMapItem::dragEnded()
     if (newCoordinate.isValid()) {
         qreal firstLongitude = path_.at(0).longitude();
         qreal firstLatitude = path_.at(0).latitude();
-        for (int i = 0; i<path_.count(); ++i) {
+        for (int i = 0; i < path_.count(); ++i) {
             QGeoCoordinate coord = path_.at(i);
             coord.setLongitude(coord.longitude() + newCoordinate.longitude() - firstLongitude);
             coord.setLatitude(coord.latitude() + newCoordinate.latitude() - firstLatitude);

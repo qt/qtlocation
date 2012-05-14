@@ -104,7 +104,7 @@ protected:
     void engineInitialized();
 
 private:
-    QGeoMappingManagerEnginePrivate* d_ptr;
+    QGeoMappingManagerEnginePrivate *d_ptr;
 
     void setManagerName(const QString &managerName);
     void setManagerVersion(int managerVersion);

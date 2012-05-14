@@ -375,7 +375,7 @@ QQmlListProperty<QDeclarativeCategory> QDeclarativeSearchResultModel::categories
 void QDeclarativeSearchResultModel::categories_append(QQmlListProperty<QDeclarativeCategory> *list,
                                                       QDeclarativeCategory *declCategory)
 {
-    QDeclarativeSearchResultModel* searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
+    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
     if (searchModel && declCategory) {
         searchModel->m_categories.append(declCategory);
         QList<QPlaceCategory> categories = searchModel->m_request.categories();

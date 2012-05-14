@@ -61,7 +61,8 @@ class QGeoMapItemGeometry : public QObject
 
 public:
 
-    struct Point {
+    struct Point
+    {
         inline Point(qreal x, qreal y) : x(x), y(y) {}
         inline Point() : x(0), y(0) {}
         inline Point(const QPointF &pt) : x(pt.x()), y(pt.y()) {}
@@ -101,9 +102,9 @@ public:
     inline quint32 size() const
     {
         if (isIndexed())
-            return screenIndices_.size()/3;
+            return screenIndices_.size() / 3;
         else
-            return screenVertices_.size()/3;
+            return screenVertices_.size() / 3;
     }
 
     inline void clear() { firstPointOffset_ = QPointF(0,0);

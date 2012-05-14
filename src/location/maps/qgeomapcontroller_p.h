@@ -62,7 +62,8 @@ QT_BEGIN_NAMESPACE
 
 class QGeoMapData;
 
-class Q_LOCATION_EXPORT AnimatableCoordinate {
+class Q_LOCATION_EXPORT AnimatableCoordinate
+{
 public:
     AnimatableCoordinate();
     AnimatableCoordinate(const QGeoCoordinate &coordinate,

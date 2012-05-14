@@ -918,7 +918,7 @@ QQmlListProperty<QDeclarativeCategory> QDeclarativePlace::categories()
 void QDeclarativePlace::category_append(QQmlListProperty<QDeclarativeCategory> *prop,
                                                   QDeclarativeCategory *value)
 {
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
+    QDeclarativePlace *object = static_cast<QDeclarativePlace*>(prop->object);
 
     if (object->m_categoriesToBeDeleted.contains(value))
         object->m_categoriesToBeDeleted.removeAll(value);
@@ -947,7 +947,7 @@ int QDeclarativePlace::category_count(QQmlListProperty<QDeclarativeCategory> *pr
 QDeclarativeCategory* QDeclarativePlace::category_at(QQmlListProperty<QDeclarativeCategory> *prop,
                                                                           int index)
 {
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
+    QDeclarativePlace *object = static_cast<QDeclarativePlace*>(prop->object);
     QDeclarativeCategory *res = NULL;
     if (object->m_categories.count() > index && index > -1) {
         res = object->m_categories[index];
@@ -960,7 +960,7 @@ QDeclarativeCategory* QDeclarativePlace::category_at(QQmlListProperty<QDeclarati
 */
 void QDeclarativePlace::category_clear(QQmlListProperty<QDeclarativeCategory> *prop)
 {
-    QDeclarativePlace* object = static_cast<QDeclarativePlace*>(prop->object);
+    QDeclarativePlace *object = static_cast<QDeclarativePlace*>(prop->object);
     if (object->m_categories.isEmpty())
         return;
 
@@ -983,7 +983,7 @@ void QDeclarativePlace::synchronizeCategories()
     qDeleteAll(m_categories);
     m_categories.clear();
     foreach (const QPlaceCategory &value, m_src.categories()) {
-        QDeclarativeCategory* declarativeValue = new QDeclarativeCategory(value, m_plugin, this);
+        QDeclarativeCategory *declarativeValue = new QDeclarativeCategory(value, m_plugin, this);
         m_categories.append(declarativeValue);
     }
 }

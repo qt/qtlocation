@@ -85,7 +85,7 @@ protected Q_SLOTS:
 
 private:
     QDeclarativeMapLineProperties line_;
-    QDeclarativeGeoRoute* route_;
+    QDeclarativeGeoRoute *route_;
     QList<QGeoCoordinate> path_;
     bool dirtyMaterial_;
     bool dragActive_;

@@ -60,7 +60,8 @@ QT_BEGIN_NAMESPACE
 
 class QGeoCameraCapabilitiesPrivate;
 
-class Q_LOCATION_EXPORT QGeoCameraCapabilities {
+class Q_LOCATION_EXPORT QGeoCameraCapabilities
+{
 public:
     QGeoCameraCapabilities();
     QGeoCameraCapabilities(const QGeoCameraCapabilities &other);

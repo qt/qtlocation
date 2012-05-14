@@ -119,7 +119,8 @@ class QCache3Q : public EvPolicy
 {
 private:
     class Queue;
-    class Node {
+    class Node
+    {
     public:
         inline explicit Node() : q(0), n(0), p(0), pop(0), cost(0) {}
 
@@ -132,7 +133,8 @@ private:
         int cost;
     };
 
-    class Queue {
+    class Queue
+    {
     public:
         inline explicit Queue() : f(0), l(0), cost(0), pop(0), size(0) {}
 
@@ -154,7 +156,7 @@ public:
     inline ~QCache3Q() { clear(); delete q1_; delete q2_; delete q3_; delete q1_evicted_; }
 
     inline int maxCost() const { return maxCost_; }
-    void setMaxCost(int maxCost, int minRecent=-1, int maxOldPopular=-1);
+    void setMaxCost(int maxCost, int minRecent = -1, int maxOldPopular = -1);
 
     inline int promoteAt() const { return promote_; }
     inline void setPromoteAt(int p) { promote_ = p; }
@@ -189,9 +191,9 @@ void QCache3Q<Key,T,EvPolicy>::printStats()
 {
     qDebug("\n=== cache %p ===", this);
     qDebug("hits: %d (%.2f%%)\tmisses: %d\tfill: %.2f%%", hitCount_,
-           100.0 * float(hitCount_)/(float(hitCount_+missCount_)),
+           100.0 * float(hitCount_) / (float(hitCount_ + missCount_)),
            missCount_,
-           100.0 * float(totalCost())/float(maxCost()));
+           100.0 * float(totalCost()) / float(maxCost()));
     qDebug("q1g: size=%d, pop=%llu", q1_evicted_->size, q1_evicted_->pop);
     qDebug("q1:  cost=%d, size=%d, pop=%llu", q1_->cost, q1_->size, q1_->pop);
     qDebug("q2:  cost=%d, size=%d, pop=%llu", q2_->cost, q2_->size, q2_->pop);

@@ -77,7 +77,7 @@ void QGeoTiledMappingManagerEngine::setTileFetcher(QGeoTileFetcher *fetcher)
     d->fetcher_ = fetcher;
     d->fetcher_->init();
 
-    d->thread_= new QThread;
+    d->thread_ = new QThread;
 
     qRegisterMetaType<QGeoTileSpec>();
 

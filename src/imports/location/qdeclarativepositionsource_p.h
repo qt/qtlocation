@@ -127,10 +127,10 @@ private Q_SLOTS:
     void positionUpdateReceived(const QGeoPositionInfo& update);
     void sourceErrorReceived(const QGeoPositionInfoSource::Error error);
 private:
-    QGeoPositionInfoSource* m_positionSource;
+    QGeoPositionInfoSource *m_positionSource;
     PositioningMethods m_positioningMethod;
     QDeclarativePosition m_position;
-    QFile* m_nmeaFile;
+    QFile *m_nmeaFile;
     QString m_nmeaFileName;
     QUrl m_nmeaSource;
     bool m_active;

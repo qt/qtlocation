@@ -118,7 +118,7 @@ protected:
     QGeoTileCache *createTileCacheWithDir(const QString& cacheDirectory);
 
 private:
-    QGeoTiledMappingManagerEnginePrivate* d_ptr;
+    QGeoTiledMappingManagerEnginePrivate *d_ptr;
 
     Q_DECLARE_PRIVATE(QGeoTiledMappingManagerEngine)
     Q_DISABLE_COPY(QGeoTiledMappingManagerEngine)

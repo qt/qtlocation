@@ -121,7 +121,7 @@ QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPrivate::requestTi
                 static_cast<QGeoTiledMappingManagerEngine*>(map_->engine()) : 0;
 
     // remove tiles in cache from request tiles
-    if (engine){
+    if (engine) {
         iter i = requestTiles.constBegin();
         iter end = requestTiles.constEnd();
         for (; i != end; ++i) {
@@ -172,7 +172,7 @@ class RetryFuture : public QObject
 {
     Q_OBJECT
 public:
-    RetryFuture(const QGeoTileSpec &tile, QGeoTiledMapData *map, QObject *parent=0);
+    RetryFuture(const QGeoTileSpec &tile, QGeoTiledMapData *map, QObject *parent = 0);
 
 public Q_SLOTS:
     void retry();
@@ -191,8 +191,7 @@ void RetryFuture::retry()
     QSet<QGeoTileSpec> requestTiles;
     QSet<QGeoTileSpec> cancelTiles;
     requestTiles.insert(tile_);
-    if (map_)
-    {
+    if (map_) {
         QGeoTiledMappingManagerEngine *engine =
                 static_cast<QGeoTiledMappingManagerEngine*>(map_->engine());
         engine->updateTileRequests(map_, requestTiles, cancelTiles);

@@ -71,9 +71,7 @@ public:
     ~MapNode();
 
     void setSize(const QSize &size);
-    QSize size() const {
-        return m_size;
-    }
+    QSize size() const { return m_size; }
     void update();
     void preprocess();
 

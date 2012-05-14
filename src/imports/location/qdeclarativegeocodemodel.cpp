@@ -267,7 +267,7 @@ QVariant QDeclarativeGeocodeModel::data(const QModelIndex &index, int role) cons
     if (index.row() >= declarativeLocations_.count())
         return QVariant();
     if (role == QDeclarativeGeocodeModel::LocationRole) {
-        QObject* locationObject = declarativeLocations_.at(index.row());
+        QObject *locationObject = declarativeLocations_.at(index.row());
         Q_ASSERT(locationObject);
         return QVariant::fromValue(locationObject);
     }
@@ -489,7 +489,7 @@ void QDeclarativeGeocodeModel::setLocations(const QList<QGeoLocation> &locations
     qDeleteAll(declarativeLocations_);
     declarativeLocations_.clear();
     for (int i = 0;  i < locations.count(); ++i) {
-        QDeclarativeGeoLocation* location = new QDeclarativeGeoLocation(locations.at(i), this);
+        QDeclarativeGeoLocation *location = new QDeclarativeGeoLocation(locations.at(i), this);
         declarativeLocations_.append(location);
     }
     endResetModel();
@@ -640,7 +640,7 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant& query)
 {
     if (query == queryVariant_)
         return;
-    QObject* object = qvariant_cast<QObject*>(query);
+    QObject *object = qvariant_cast<QObject*>(query);
     if (qobject_cast<QDeclarativeCoordinate*>(object)) {
         if (coordinate_)
             coordinate_->disconnect(this);

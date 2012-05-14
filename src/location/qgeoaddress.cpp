@@ -76,7 +76,7 @@ static QString addressLine(const QStringList &parts)
 
     //iterate until just before the last pair
     QString penultimateSeparator;
-    for (int i=0; i < parts.count() - 2; i = i + 2) {
+    for (int i = 0; i < parts.count() - 2; i += 2) {
         if (!parts.at(i).isEmpty()) {
             line.append(parts.at(i) + parts.at(i + 1));
             penultimateSeparator = parts.at(i + 1);
@@ -87,10 +87,10 @@ static QString addressLine(const QStringList &parts)
         line.chop(penultimateSeparator.length());
 
         if (!line.isEmpty())
-            line.append(parts.at(parts.count() -1));
+            line.append(parts.at(parts.count() - 1));
     } else {
-        line.append(parts.at(parts.count() -2));
-        line.append(parts.at(parts.count() -1));
+        line.append(parts.at(parts.count() - 2));
+        line.append(parts.at(parts.count() - 1));
     }
 
     return line;
@@ -260,12 +260,12 @@ static QString formattedAddress(const QGeoAddress &address,
     } else if (address.countryCode() == QLatin1String("THA")) {
         text += addressLine(QStringList() << address.street() << newLine);
         text += addressLine(QStringList() << address.district() << Comma << address.city() << Space
-                                              << address.postalCode()<< newLine);
+                                              << address.postalCode() << newLine);
         text += addressLine(QStringList() << address.country() << newLine);
     } else if (address.countryCode() == QLatin1String("TUR")) {
         text += addressLine(QStringList() << address.street() << newLine);
         text += addressLine(QStringList() << address.postalCode() << Space << address.district() << Comma
-                                              << address.city()<< newLine);
+                                              << address.city() << newLine);
         text += addressLine(QStringList() << address.country() << newLine);
     } else if (address.countryCode() == QLatin1String("VEN")) {
         text += addressLine(QStringList() << address.street() << newLine);
@@ -400,7 +400,7 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
            d->sDistrict == other.district() &&
            d->sStreet == other.street() &&
            d->sPostalCode == other.postalCode() &&
-           this->text()  == other.text();
+           this->text() == other.text();
 }
 
 /*!

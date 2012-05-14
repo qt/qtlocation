@@ -414,8 +414,7 @@ void QGeoCoordinatePrivate::atDistanceAndAzimuth(const QGeoCoordinate &coord,
 
     double resultLatRad = asin(sinLatRad * cosRatio
                                + cosLatRad * sinRatio * cos(azimuthRad));
-    double resultLonRad  = lonRad
-                           + atan2(sin(azimuthRad) * sinRatio * cosLatRad,
+    double resultLonRad = lonRad + atan2(sin(azimuthRad) * sinRatio * cosLatRad,
                                    cosRatio - sinLatRad * sin(resultLatRad));
 
     *lat = qgeocoordinate_radToDeg(resultLatRad);

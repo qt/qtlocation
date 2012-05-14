@@ -139,10 +139,10 @@ QDeclarativeGeoMapMouseArea::~QDeclarativeGeoMapMouseArea()
 
     Converts the \a event's coordinates to geo coordinates.
  */
-QDeclarativeCoordinate* QDeclarativeGeoMapMouseArea::mouseToCoordinate(QQuickMouseEvent* event)
+QDeclarativeCoordinate *QDeclarativeGeoMapMouseArea::mouseToCoordinate(QQuickMouseEvent* event)
 {
     // figure out the map association for this mouse area and use it to resolve geocoordinate
-    QDeclarativeGeoMap* quickmap = map();
+    QDeclarativeGeoMap *quickmap = map();
     if (quickmap)
         return quickmap->toCoordinate(quickmap->mapFromItem(this, QPointF(event->x(), event->y())));
     return new QDeclarativeCoordinate; // return invalid coordinate
@@ -152,14 +152,14 @@ QDeclarativeCoordinate* QDeclarativeGeoMapMouseArea::mouseToCoordinate(QQuickMou
     \internal
 */
 // TODO: cache the map association and hook up to parent change -signals
-QDeclarativeGeoMap* QDeclarativeGeoMapMouseArea::map()
+QDeclarativeGeoMap *QDeclarativeGeoMapMouseArea::map()
 {
-    QQuickItem* pmi = parentMapItem();
-    QDeclarativeGeoMap* map = 0;
+    QQuickItem *pmi = parentMapItem();
+    QDeclarativeGeoMap *map = 0;
     if (pmi) {
         map = qobject_cast<QDeclarativeGeoMap*>(pmi);
         if (!map) {
-            QDeclarativeGeoMapItemBase* item = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi);
+            QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi);
             if (item)
                 map = item->quickMap();
         }
@@ -192,7 +192,7 @@ void QDeclarativeGeoMapMouseArea::componentComplete()
 void QDeclarativeGeoMapMouseArea::mousePressEvent(QMouseEvent *event)
 {
     // map element's flickable may use the event
-    QQuickItem* pmi = parentMapItem();
+    QQuickItem *pmi = parentMapItem();
     if (pmi && qobject_cast<QDeclarativeGeoMap*>(pmi))
         qobject_cast<QDeclarativeGeoMap*>(pmi)->mouseEvent(event);
 
@@ -213,7 +213,7 @@ void QDeclarativeGeoMapMouseArea::mousePressEvent(QMouseEvent *event)
 void QDeclarativeGeoMapMouseArea::mouseReleaseEvent(QMouseEvent *event)
 {
     // map element's flickable may use the event
-    QQuickItem* pmi = parentMapItem();
+    QQuickItem *pmi = parentMapItem();
 
     if (pmi && qobject_cast<QDeclarativeGeoMap*>(pmi)) {
         qobject_cast<QDeclarativeGeoMap*>(pmi)->mouseEvent(event);
@@ -241,7 +241,7 @@ void QDeclarativeGeoMapMouseArea::mouseDoubleClickEvent(QMouseEvent *event)
 void QDeclarativeGeoMapMouseArea::mouseMoveEvent(QMouseEvent *event)
 {
     // map element's flickable may use the event
-    QQuickItem* pmi = parentMapItem();
+    QQuickItem *pmi = parentMapItem();
     if (pmi && qobject_cast<QDeclarativeGeoMap*>(pmi))
         qobject_cast<QDeclarativeGeoMap*>(pmi)->mouseEvent(event);
 
@@ -253,7 +253,7 @@ void QDeclarativeGeoMapMouseArea::mouseMoveEvent(QMouseEvent *event)
 */
 void QDeclarativeGeoMapMouseArea::hoverEnterEvent(QHoverEvent *event)
 {
-    QQuickItem* pmi = parentMapItem();
+    QQuickItem *pmi = parentMapItem();
     bool contains = true;
     if (pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi))
          contains = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->contains(event->pos());
@@ -270,7 +270,7 @@ void QDeclarativeGeoMapMouseArea::hoverEnterEvent(QHoverEvent *event)
 */
 void QDeclarativeGeoMapMouseArea::hoverMoveEvent(QHoverEvent *event)
 {
-    QQuickItem* pmi = parentMapItem();
+    QQuickItem *pmi = parentMapItem();
     bool contains = true;
     if (pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi))
          contains = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->contains(event->pos());
@@ -293,7 +293,7 @@ void QDeclarativeGeoMapMouseArea::hoverMoveEvent(QHoverEvent *event)
 */
 void QDeclarativeGeoMapMouseArea::hoverLeaveEvent(QHoverEvent *event)
 {
-    QQuickItem* pmi = parentMapItem();
+    QQuickItem *pmi = parentMapItem();
     bool contains = true;
     if (pmi && qobject_cast<QDeclarativeGeoMapItemBase*>(pmi))
          contains = qobject_cast<QDeclarativeGeoMapItemBase*>(pmi)->contains(event->pos());
@@ -312,7 +312,7 @@ void QDeclarativeGeoMapMouseArea::hoverLeaveEvent(QHoverEvent *event)
 */
 QQuickItem* QDeclarativeGeoMapMouseArea::parentMapItem()
 {
-    QQuickItem* item = this;
+    QQuickItem *item = this;
     while (item->parentItem()) {
         item = item->parentItem();
         if (qobject_cast<QDeclarativeGeoMap*>(item) ||

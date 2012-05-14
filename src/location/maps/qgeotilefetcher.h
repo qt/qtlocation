@@ -85,7 +85,7 @@ protected:
     QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
 
 private:
-    QGeoTileFetcherPrivate* d_ptr;
+    QGeoTileFetcherPrivate *d_ptr;
 
     virtual QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec) = 0;
     void handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec);

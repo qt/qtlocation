@@ -75,7 +75,7 @@ private:
     static void path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
 
     QGeoRouteSegment segment_;
-    QDeclarativeGeoManeuver* maneuver_;
+    QDeclarativeGeoManeuver *maneuver_;
     QList<QDeclarativeCoordinate*> path_;
 };
 

@@ -160,7 +160,7 @@ public:
     void setAllowExperimental(bool allow);
 
 private:
-    QGeoServiceProviderPrivate* d_ptr;
+    QGeoServiceProviderPrivate *d_ptr;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoServiceProvider::RoutingFeatures)

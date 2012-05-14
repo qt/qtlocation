@@ -215,30 +215,30 @@ private:
     void populateMap();
     void fitViewportToMapItemsRefine(bool refine);
 
-    QDeclarativeGeoServiceProvider* plugin_;
-    QGeoServiceProvider* serviceProvider_;
-    QGeoMappingManager* mappingManager_;
+    QDeclarativeGeoServiceProvider *plugin_;
+    QGeoServiceProvider *serviceProvider_;
+    QGeoMappingManager *mappingManager_;
 
     qreal zoomLevel_;
     qreal bearing_;
     qreal tilt_;
     QPointer<QDeclarativeCoordinate> center_;
 
-    QDeclarativeGeoMapType* activeMapType_;
+    QDeclarativeGeoMapType *activeMapType_;
     QList<QDeclarativeGeoMapType*> supportedMapTypes_;
     bool componentCompleted_;
     bool mappingManagerInitialized_;
     QList<QDeclarativeGeoMapItemView*> mapViews_;
 
-    QDeclarativeGeoMapGestureArea* gestureArea_;
-    QDeclarativeGeoMapFlickable* flickable_;
-    QDeclarativeGeoMapPinchArea* pinchArea_;
+    QDeclarativeGeoMapGestureArea *gestureArea_;
+    QDeclarativeGeoMapFlickable *flickable_;
+    QDeclarativeGeoMapPinchArea *pinchArea_;
 
     void paintGL(QGLPainter *painter);
     void earlyDraw(QGLPainter *painter);
     void restoreDefaults(QGLPainter *painter);
 
-    QQuickCanvas* canvas_;
+    QQuickCanvas *canvas_;
     int touchTimer_;
 
     QGeoTileCache *tileCache_;

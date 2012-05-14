@@ -260,7 +260,7 @@ QVariant QDeclarativeGeoRouteModel::data(const QModelIndex &index, int role) con
     }
 
     if (role == RouteRole) {
-        QObject* route = routes_.at(index.row());
+        QObject *route = routes_.at(index.row());
         return QVariant::fromValue(route);
     }
     return QVariant();
@@ -732,7 +732,7 @@ QQmlListProperty<QDeclarativeCoordinate> QDeclarativeGeoRouteQuery::waypoints()
 void QDeclarativeGeoRouteQuery::waypoints_append(QQmlListProperty<QDeclarativeCoordinate> *prop,
                                                  QDeclarativeCoordinate *waypoint)
 {
-    QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
+    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     model->addWaypoint(waypoint);
 }
 
@@ -741,7 +741,7 @@ void QDeclarativeGeoRouteQuery::waypoints_append(QQmlListProperty<QDeclarativeCo
 */
 int QDeclarativeGeoRouteQuery::waypoints_count(QQmlListProperty<QDeclarativeCoordinate> *prop)
 {
-    QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
+    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     return model->waypoints_.count();
 }
 
@@ -750,7 +750,7 @@ int QDeclarativeGeoRouteQuery::waypoints_count(QQmlListProperty<QDeclarativeCoor
 */
 QDeclarativeCoordinate* QDeclarativeGeoRouteQuery::waypoints_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index)
 {
-    QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
+    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     Q_ASSERT(index < model->waypoints_.count());
     return model->waypoints_.at(index);
 }
@@ -760,7 +760,7 @@ QDeclarativeCoordinate* QDeclarativeGeoRouteQuery::waypoints_at(QQmlListProperty
 */
 void QDeclarativeGeoRouteQuery::waypoints_clear(QQmlListProperty<QDeclarativeCoordinate> *prop)
 {
-    QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
+    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     model->clearWaypoints();
 }
 
@@ -787,7 +787,7 @@ QQmlListProperty<QDeclarativeGeoBoundingBox> QDeclarativeGeoRouteQuery::excluded
 */
 void QDeclarativeGeoRouteQuery::exclusions_append(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, QDeclarativeGeoBoundingBox *area)
 {
-    QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
+    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     model->addExcludedArea(area);
 }
 
@@ -796,7 +796,7 @@ void QDeclarativeGeoRouteQuery::exclusions_append(QQmlListProperty<QDeclarativeG
 */
 int QDeclarativeGeoRouteQuery::exclusions_count(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop)
 {
-    QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
+    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     return model->exclusions_.count();
 }
 
@@ -805,7 +805,7 @@ int QDeclarativeGeoRouteQuery::exclusions_count(QQmlListProperty<QDeclarativeGeo
 */
 QDeclarativeGeoBoundingBox* QDeclarativeGeoRouteQuery::exclusions_at(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, int index)
 {
-    QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
+    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     Q_ASSERT(index < model->exclusions_.count());
     return model->exclusions_.at(index);
 }
@@ -815,7 +815,7 @@ QDeclarativeGeoBoundingBox* QDeclarativeGeoRouteQuery::exclusions_at(QQmlListPro
 */
 void QDeclarativeGeoRouteQuery::exclusions_clear(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop)
 {
-    QDeclarativeGeoRouteQuery* model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
+    QDeclarativeGeoRouteQuery *model = static_cast<QDeclarativeGeoRouteQuery*>(prop->object);
     model->clearExcludedAreas();
 }
 

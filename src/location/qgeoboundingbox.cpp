@@ -319,7 +319,7 @@ void QGeoBoundingBox::setCenter(const QGeoCoordinate &center)
         brLon -= 360.0;
 
     if (tlLat > 90.0) {
-        brLat = 2* center.latitude() - 90.0;
+        brLat = 2 * center.latitude() - 90.0;
         tlLat = 90.0;
     }
 

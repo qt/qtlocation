@@ -401,7 +401,7 @@ void QDeclarativePlaceContentModel::fetchFinished()
             if (startIndex == -1)
                 startIndex = currentIndex;
 
-            if (!changedIndexesIter.hasNext() || (changedIndexesIter.hasNext() && changedIndexesIter.peekNext() > (currentIndex +1))) {
+            if (!changedIndexesIter.hasNext() || (changedIndexesIter.hasNext() && changedIndexesIter.peekNext() > (currentIndex + 1))) {
                 for (int i = startIndex; i <= currentIndex; ++i) {
                     const QPlaceContent &content = contents.value(i);
                     m_content.insert(i, content);

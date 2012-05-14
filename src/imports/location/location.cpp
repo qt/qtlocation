@@ -99,7 +99,8 @@ class QLocationDeclarativeModule: public QQmlExtensionPlugin
                       FILE "plugin.json")
 
 public:
-    virtual void registerTypes(const char* uri) {
+    virtual void registerTypes(const char* uri)
+    {
         if (QLatin1String(uri) == QLatin1String("QtMobility.location")) {
             qWarning("QtMobility.location is not supported. Use QtLocation instead.");
         } else if (QLatin1String(uri) == QLatin1String("Qt.location")) {

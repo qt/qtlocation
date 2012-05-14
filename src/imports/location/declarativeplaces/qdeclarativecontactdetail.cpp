@@ -177,7 +177,7 @@ QString QDeclarativeContactDetail::label() const
 
 void QDeclarativeContactDetail::setLabel(const QString &label)
 {
-    if (m_contactDetail.label()!= label) {
+    if (m_contactDetail.label() != label) {
         m_contactDetail.setLabel(label);
         emit labelChanged();
     }
@@ -196,7 +196,7 @@ QString QDeclarativeContactDetail::value() const
 
 void QDeclarativeContactDetail::setValue(const QString &value)
 {
-    if (m_contactDetail.value()!= value) {
+    if (m_contactDetail.value() != value) {
         m_contactDetail.setValue(value);
         emit valueChanged();
     }

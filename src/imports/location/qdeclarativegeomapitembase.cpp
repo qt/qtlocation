@@ -144,7 +144,8 @@ void QDeclarativeGeoMapItemBase::dragEnded()
 /*!
     \internal
 */
-void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) {
+void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
+{
     if (quickMap == quickMap_)
         return;
     if (quickMap && quickMap_)

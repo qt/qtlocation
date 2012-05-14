@@ -172,9 +172,9 @@ private:
     void setLocations(const QList<QGeoLocation> &locations);
     QGeoBoundingArea boundingArea();
     void abortRequest();
-    QGeocodeReply* reply_;
+    QGeocodeReply *reply_;
 
-    QDeclarativeGeoServiceProvider* plugin_;
+    QDeclarativeGeoServiceProvider *plugin_;
     QPointer<QObject> boundingArea_;
     QGeoBoundingBox boundingBox_;
     QGeoBoundingCircle boundingCircle_;
@@ -185,8 +185,8 @@ private:
     QString errorString_;
     GeocodeError error_;
     QVariant queryVariant_;
-    QDeclarativeCoordinate* coordinate_;
-    QDeclarativeGeoAddress* address_;
+    QDeclarativeCoordinate *coordinate_;
+    QDeclarativeGeoAddress *address_;
     QString searchString_;
 
     int limit_;

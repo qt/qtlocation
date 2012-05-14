@@ -94,7 +94,7 @@ private:
     QList<QGeoCoordinate> routePath();
 
     QGeoRoute route_;
-    QDeclarativeGeoBoundingBox* bounds_;
+    QDeclarativeGeoBoundingBox *bounds_;
     QList<QDeclarativeCoordinate*> path_;
     QList<QDeclarativeGeoRouteSegment*> segments_;
     friend class QDeclarativeRouteMapItem;

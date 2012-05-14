@@ -121,14 +121,14 @@ void QDeclarativeGeoLocation::setLocation(const QGeoLocation &src)
 
     if (m_coordinate && m_coordinate->parent() == this) {
         m_coordinate->setCoordinate(src.coordinate());
-    } else if (!m_coordinate || m_coordinate->parent() != this){
+    } else if (!m_coordinate || m_coordinate->parent() != this) {
         m_coordinate = new QDeclarativeCoordinate(src.coordinate(), this);
         emit coordinateChanged();
     }
 
     if (m_boundingBox && m_boundingBox->parent() == this) {
         m_boundingBox->setBox(src.boundingBox());
-    } else if (!m_boundingBox || m_boundingBox->parent() != this){
+    } else if (!m_boundingBox || m_boundingBox->parent() != this) {
         m_boundingBox = new QDeclarativeGeoBoundingBox(src.boundingBox(), this);
         emit boundingBoxChanged();
     }

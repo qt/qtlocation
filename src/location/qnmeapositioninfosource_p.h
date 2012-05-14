@@ -67,7 +67,8 @@ class QTimerEvent;
 class QTimer;
 
 class QNmeaReader;
-struct QPendingGeoPositionInfo {
+struct QPendingGeoPositionInfo
+{
     QGeoPositionInfo info;
     bool hasFix;
 };

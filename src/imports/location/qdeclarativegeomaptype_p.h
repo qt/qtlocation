@@ -79,7 +79,7 @@ public:
     QString description() const;
     bool mobile() const;
 
-    const QGeoMapType mapType(){return mapType_;}
+    const QGeoMapType mapType() { return mapType_; }
 
 private:
     QGeoMapType mapType_;

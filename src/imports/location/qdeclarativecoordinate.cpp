@@ -261,7 +261,7 @@ bool QDeclarativeCoordinate::isValid() const
 
 qreal QDeclarativeCoordinate::distanceTo(QObject* coordinate)
 {
-    QDeclarativeCoordinate* coord = static_cast<QDeclarativeCoordinate*>(coordinate);
+    QDeclarativeCoordinate *coord = static_cast<QDeclarativeCoordinate*>(coordinate);
     return m_coordinate.distanceTo(coord->coordinate());
 }
 

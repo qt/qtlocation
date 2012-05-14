@@ -64,7 +64,8 @@
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapScenePrivate {
+class QGeoMapScenePrivate
+{
 public:
     explicit QGeoMapScenePrivate(QGeoMapScene *scene);
     ~QGeoMapScenePrivate();
@@ -721,7 +722,7 @@ void QGeoMapScenePrivate::paintGL(QGLPainter *painter)
 
     // do any pending upload/releases
     while (!newUploads_.isEmpty()) {
-        if (!newUploads_.front()->textureBound){
+        if (!newUploads_.front()->textureBound) {
             newUploads_.front()->texture->bind();
             newUploads_.front()->texture->clearImage();
             newUploads_.front()->textureBound = true;

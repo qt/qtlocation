@@ -116,8 +116,8 @@ private:
     bool componentCompleted_;
     QQmlComponent *delegate_;
     QVariant modelVariant_;
-    QAbstractItemModel* itemModel_;
-    QListModelInterface* listModel_;
+    QAbstractItemModel *itemModel_;
+    QListModelInterface *listModel_;
     QDeclarativeGeoMap *map_;
     QList<QDeclarativeGeoMapItemBase*> mapItemList_;
 };
