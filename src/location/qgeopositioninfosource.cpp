@@ -276,7 +276,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     QGeoPositionInfoSourcePrivate *d = new QGeoPositionInfoSourcePrivate;
 
     QList<QJsonObject> plugins = QGeoPositionInfoSourcePrivate::pluginsSorted();
-    foreach (QJsonObject obj, plugins) {
+    foreach (const QJsonObject &obj, plugins) {
         if (obj.value(QStringLiteral("Position")).isBool()
                 && obj.value(QStringLiteral("Position")).toBool()) {
             d->metaData = obj;

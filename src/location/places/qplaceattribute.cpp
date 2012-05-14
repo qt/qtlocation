@@ -163,6 +163,9 @@ QPlaceAttribute::QPlaceAttribute(const QPlaceAttribute &other)
 */
 QPlaceAttribute &QPlaceAttribute::operator=(const QPlaceAttribute &other)
 {
+    if (this == &other)
+        return *this;
+
     d_ptr = other.d_ptr;
     return *this;
 }

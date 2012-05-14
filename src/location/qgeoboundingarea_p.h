@@ -62,7 +62,7 @@ QT_BEGIN_NAMESPACE
 class QGeoBoundingAreaPrivate : public QSharedData
 {
 public:
-    QGeoBoundingAreaPrivate(QGeoBoundingArea::AreaType type);
+    explicit QGeoBoundingAreaPrivate(QGeoBoundingArea::AreaType type);
     virtual ~QGeoBoundingAreaPrivate();
 
     virtual bool isValid() const = 0;

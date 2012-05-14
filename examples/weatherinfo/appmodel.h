@@ -92,7 +92,7 @@ private:
 };
 //! [1]
 
-Q_DECLARE_METATYPE(WeatherData);
+Q_DECLARE_METATYPE(WeatherData)
 
 class AppModelPrivate;
 //! [2]

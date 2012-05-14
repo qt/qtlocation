@@ -234,7 +234,7 @@ int QDeclarativeGeoMapMouseEvent::y() const
     occurred.
 */
 
-void QDeclarativeGeoMapMouseEvent::setCoordinate(QGeoCoordinate coordinate)
+void QDeclarativeGeoMapMouseEvent::setCoordinate(const QGeoCoordinate &coordinate)
 {
     coordinate_.setCoordinate(coordinate);
 }

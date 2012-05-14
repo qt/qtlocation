@@ -367,6 +367,9 @@ QGeoAddress::~QGeoAddress()
 */
 QGeoAddress &QGeoAddress::operator=(const QGeoAddress & address)
 {
+    if (this == &address)
+        return *this;
+
     d = address.d;
     return *this;
 }

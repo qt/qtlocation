@@ -62,7 +62,7 @@ class QDeclarativeGeoServiceProviderParameter : public QObject
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
 
 public:
-    QDeclarativeGeoServiceProviderParameter(QObject *parent = 0);
+    explicit QDeclarativeGeoServiceProviderParameter(QObject *parent = 0);
     ~QDeclarativeGeoServiceProviderParameter();
 
     void setName(const QString &name);
@@ -103,7 +103,7 @@ class QDeclarativeGeoServiceProvider : public QObject, public QQmlParserStatus
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    QDeclarativeGeoServiceProvider(QObject *parent = 0);
+    explicit QDeclarativeGeoServiceProvider(QObject *parent = 0);
     ~QDeclarativeGeoServiceProvider();
 
     enum RoutingFeature {
@@ -236,7 +236,7 @@ class QDeclarativeGeoServiceProviderRequirements : public QObject
                NOTIFY placesRequirementsChanged)
 
 public:
-    QDeclarativeGeoServiceProviderRequirements(QObject *parent = 0);
+    explicit QDeclarativeGeoServiceProviderRequirements(QObject *parent = 0);
     ~QDeclarativeGeoServiceProviderRequirements();
 
     QDeclarativeGeoServiceProvider::MappingFeatures mappingRequirements() const;

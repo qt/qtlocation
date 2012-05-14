@@ -143,6 +143,9 @@ QPlaceContactDetail::QPlaceContactDetail(const QPlaceContactDetail &other)
 */
 QPlaceContactDetail &QPlaceContactDetail::operator=(const QPlaceContactDetail &other)
 {
+    if (this == &other)
+        return *this;
+
     d_ptr = other.d_ptr;
     return *this;
 }

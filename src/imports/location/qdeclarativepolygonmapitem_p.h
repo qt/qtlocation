@@ -77,7 +77,7 @@ class QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
 
 public:
-    QDeclarativePolygonMapItem(QQuickItem *parent = 0);
+    explicit QDeclarativePolygonMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolygonMapItem();
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
@@ -94,7 +94,7 @@ public:
 
     QDeclarativeMapLineProperties *border();
 
-    bool contains(QPointF point);
+    bool contains(const QPointF &point);
     void dragEnded();
 
 Q_SIGNALS:

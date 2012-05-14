@@ -119,7 +119,7 @@ class QDeclarativeGeoMap : public QQuickItem
 
 public:
 
-    QDeclarativeGeoMap(QQuickItem *parent = 0);
+    explicit QDeclarativeGeoMap(QQuickItem *parent = 0);
     ~QDeclarativeGeoMap();
 
     // From QQmlParserStatus
@@ -161,7 +161,7 @@ public:
     Q_INVOKABLE void clearMapItems();
     QList<QObject*> mapItems();
 
-    Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(QPointF screenPosition) const;
+    Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(const QPointF &screenPosition) const;
     Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
 
     // callback for map mouse areas

@@ -101,6 +101,9 @@ QPlaceUser::~QPlaceUser()
 */
 QPlaceUser &QPlaceUser::operator=(const QPlaceUser &other)
 {
+    if (this == &other)
+        return *this;
+
     d = other.d;
     return *this;
 }

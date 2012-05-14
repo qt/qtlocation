@@ -73,12 +73,12 @@ class QDeclarativePlace : public QObject, public QQmlParserStatus
     Q_PROPERTY(QPlace place READ place WRITE setPlace)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
-    Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged);
-    Q_PROPERTY(QDeclarativeRatings* ratings READ ratings WRITE setRatings NOTIFY ratingsChanged);
+    Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged)
+    Q_PROPERTY(QDeclarativeRatings* ratings READ ratings WRITE setRatings NOTIFY ratingsChanged)
     Q_PROPERTY(QDeclarativeSupplier *supplier READ supplier WRITE setSupplier NOTIFY supplierChanged)
     Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
-    Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged);
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
     Q_PROPERTY(QString attribution READ attribution WRITE setAttribution NOTIFY attributionChanged)
 
     Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged)
@@ -88,12 +88,12 @@ class QDeclarativePlace : public QObject, public QQmlParserStatus
     Q_PROPERTY(QObject *extendedAttributes READ extendedAttributes NOTIFY extendedAttributesChanged)
     Q_PROPERTY(QObject *contactDetails READ contactDetails NOTIFY contactDetailsChanged)
     Q_PROPERTY(bool detailsFetched READ detailsFetched NOTIFY detailsFetchedChanged)
-    Q_PROPERTY(Status status READ status NOTIFY statusChanged);
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 
-    Q_PROPERTY(QString primaryPhone READ primaryPhone NOTIFY primaryPhoneChanged);
-    Q_PROPERTY(QString primaryFax READ primaryFax NOTIFY primaryFaxChanged);
-    Q_PROPERTY(QString primaryEmail READ primaryEmail NOTIFY primaryEmailChanged);
-    Q_PROPERTY(QUrl primaryWebsite READ primaryWebsite NOTIFY primaryWebsiteChanged);
+    Q_PROPERTY(QString primaryPhone READ primaryPhone NOTIFY primaryPhoneChanged)
+    Q_PROPERTY(QString primaryFax READ primaryFax NOTIFY primaryFaxChanged)
+    Q_PROPERTY(QString primaryEmail READ primaryEmail NOTIFY primaryEmailChanged)
+    Q_PROPERTY(QUrl primaryWebsite READ primaryWebsite NOTIFY primaryWebsiteChanged)
 
     Q_PROPERTY(Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
     Q_PROPERTY(QDeclarativePlace *favorite READ favorite WRITE setFavorite NOTIFY favoriteChanged)

@@ -156,6 +156,8 @@ QPlaceMatchRequest::~QPlaceMatchRequest()
 */
 QPlaceMatchRequest &QPlaceMatchRequest::operator= (const QPlaceMatchRequest & other)
 {
+    if (this == &other)
+        return *this;
     d_ptr = other.d_ptr;
     return *this;
 }

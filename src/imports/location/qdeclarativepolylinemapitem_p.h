@@ -102,7 +102,7 @@ class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
     Q_PROPERTY(QDeclarativeMapLineProperties *line READ line CONSTANT)
 
 public:
-    QDeclarativePolylineMapItem(QQuickItem *parent = 0);
+    explicit QDeclarativePolylineMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolylineMapItem();
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
@@ -114,7 +114,7 @@ public:
 
     QQmlListProperty<QDeclarativeCoordinate> declarativePath();
 
-    bool contains(QPointF point);
+    bool contains(const QPointF &point);
 
     QDeclarativeMapLineProperties *line();
 

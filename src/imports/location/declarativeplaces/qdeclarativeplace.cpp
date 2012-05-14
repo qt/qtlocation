@@ -982,7 +982,7 @@ void QDeclarativePlace::synchronizeCategories()
 {
     qDeleteAll(m_categories);
     m_categories.clear();
-    foreach (QPlaceCategory value, m_src.categories()) {
+    foreach (const QPlaceCategory &value, m_src.categories()) {
         QDeclarativeCategory* declarativeValue = new QDeclarativeCategory(value, m_plugin, this);
         m_categories.append(declarativeValue);
     }

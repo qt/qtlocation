@@ -75,7 +75,7 @@ class QDeclarativePosition : public QObject
 
 public:
 
-    QDeclarativePosition(QObject* parent = 0);
+    explicit QDeclarativePosition(QObject* parent = 0);
     ~QDeclarativePosition();
 
     bool isLatitudeValid() const;
@@ -96,7 +96,7 @@ public:
     void setVerticalAccuracy(qreal verticalAccuracy);
 
     // C++
-    void setCoordinate(QGeoCoordinate coordinate);
+    void setCoordinate(const QGeoCoordinate &coordinate);
     void invalidate();
 
 Q_SIGNALS:

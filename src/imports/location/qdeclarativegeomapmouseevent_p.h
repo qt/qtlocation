@@ -62,7 +62,7 @@ class QDeclarativeGeoMapMouseEvent : public QObject
     Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate)
 
 public:
-    QDeclarativeGeoMapMouseEvent(QObject *parent = 0);
+    explicit QDeclarativeGeoMapMouseEvent(QObject *parent = 0);
     ~QDeclarativeGeoMapMouseEvent();
 
     void setAccepted(bool accepted);
@@ -86,7 +86,7 @@ public:
     void setY(int y);
     int y() const;
 
-    void setCoordinate(QGeoCoordinate coordinate);
+    void setCoordinate(const QGeoCoordinate &coordinate);
     QDeclarativeCoordinate* coordinate();
 
 private:

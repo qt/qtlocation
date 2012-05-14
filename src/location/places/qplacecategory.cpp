@@ -61,6 +61,9 @@ QPlaceCategoryPrivate::~QPlaceCategoryPrivate()
 
 QPlaceCategoryPrivate &QPlaceCategoryPrivate::operator=(const QPlaceCategoryPrivate &other)
 {
+    if (this == &other)
+        return *this;
+
     categoryId = other.categoryId;
     name = other.name;
     icon = other.icon;
@@ -127,6 +130,9 @@ QPlaceCategory::~QPlaceCategory()
 */
 QPlaceCategory &QPlaceCategory::operator =(const QPlaceCategory &other)
 {
+    if (this == &other)
+        return *this;
+
     d = other.d;
     return *this;
 }

@@ -53,9 +53,9 @@ class QDeclarativeBusinessFeature : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString key READ key WRITE setKey NOTIFY keyChanged);
-    Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged);
-    Q_PROPERTY(QString value READ value WRITE setValue NOTIFY valueChanged);
+    Q_PROPERTY(QString key READ key WRITE setKey NOTIFY keyChanged)
+    Q_PROPERTY(QString label READ label WRITE setLabel NOTIFY labelChanged)
+    Q_PROPERTY(QString value READ value WRITE setValue NOTIFY valueChanged)
 
 public:
     explicit QDeclarativeBusinessFeature(QObject* parent = 0);

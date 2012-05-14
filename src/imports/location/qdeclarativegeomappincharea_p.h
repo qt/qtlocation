@@ -82,7 +82,7 @@ public:
         RotationGesture = 0x0002,
         TiltGesture = 0x0004
     };
-    Q_DECLARE_FLAGS(ActiveGestures, ActiveGesture);
+    Q_DECLARE_FLAGS(ActiveGestures, ActiveGesture)
     ActiveGestures activeGestures()
     {
         QDeclarativeGeoMapGestureArea::ActiveGestures gestures = gestureArea_->activeGestures();

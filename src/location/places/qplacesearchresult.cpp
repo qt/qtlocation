@@ -130,7 +130,11 @@ QPlaceSearchResult::~QPlaceSearchResult()
     Assigns \a other to this search result and returns a reference to this
     search result.
 */
-QPlaceSearchResult &QPlaceSearchResult::operator =(const QPlaceSearchResult &other) {
+QPlaceSearchResult &QPlaceSearchResult::operator =(const QPlaceSearchResult &other)
+{
+    if (this == &other)
+        return *this;
+
     d = other.d;
     return *this;
 }

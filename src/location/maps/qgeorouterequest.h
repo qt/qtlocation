@@ -112,7 +112,7 @@ public:
     };
     Q_DECLARE_FLAGS(ManeuverDetails, ManeuverDetail)
 
-    QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints = QList<QGeoCoordinate>());
+    explicit QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints = QList<QGeoCoordinate>());
     QGeoRouteRequest(const QGeoCoordinate &origin,
                      const QGeoCoordinate &destination);
     QGeoRouteRequest(const QGeoRouteRequest &other);

@@ -198,6 +198,9 @@ bool QGeoBoundingArea::operator!=(const QGeoBoundingArea &other) const
 
 QGeoBoundingArea &QGeoBoundingArea::operator=(const QGeoBoundingArea &other)
 {
+    if (this == &other)
+        return *this;
+
     d_ptr = other.d_ptr;
     return *this;
 }

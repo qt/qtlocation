@@ -123,7 +123,11 @@ QGeoLocation::~QGeoLocation()
 /*!
     Assigns \a other to this location and returns a reference to this location.
 */
-QGeoLocation &QGeoLocation::operator =(const QGeoLocation &other) {
+QGeoLocation &QGeoLocation::operator =(const QGeoLocation &other)
+{
+    if (this == &other)
+        return *this;
+
     d = other.d;
     return *this;
 }

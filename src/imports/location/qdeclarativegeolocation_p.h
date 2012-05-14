@@ -56,8 +56,8 @@ class QDeclarativeGeoLocation : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QGeoLocation location READ location WRITE setLocation)
-    Q_PROPERTY(QDeclarativeGeoAddress* address READ address WRITE setAddress NOTIFY addressChanged);
-    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged);
+    Q_PROPERTY(QDeclarativeGeoAddress* address READ address WRITE setAddress NOTIFY addressChanged)
+    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
     Q_PROPERTY(QDeclarativeGeoBoundingBox *boundingBox READ boundingBox WRITE setBoundingBox NOTIFY boundingBoxChanged)
 
 public:

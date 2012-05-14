@@ -928,7 +928,7 @@ QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
     the current viewport.
 */
 
-QDeclarativeCoordinate* QDeclarativeGeoMap::toCoordinate(QPointF screenPosition) const
+QDeclarativeCoordinate* QDeclarativeGeoMap::toCoordinate(const QPointF &screenPosition) const
 {
     QGeoCoordinate coordinate;
     if (map_)

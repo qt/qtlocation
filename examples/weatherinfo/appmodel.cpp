@@ -68,6 +68,9 @@ WeatherData::WeatherData(const WeatherData &other) :
 
 const WeatherData &WeatherData::operator=(const WeatherData &other)
 {
+    if (this == &other)
+        return *this;
+
     m_dayOfWeek = other.m_dayOfWeek;
     m_weather = other.m_weather;
     m_weatherDesc = other.m_weatherDesc;

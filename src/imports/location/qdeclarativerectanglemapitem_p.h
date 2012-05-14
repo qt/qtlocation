@@ -74,7 +74,7 @@ class QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border)
 
 public:
-    QDeclarativeRectangleMapItem(QQuickItem *parent = 0);
+    explicit QDeclarativeRectangleMapItem(QQuickItem *parent = 0);
     ~QDeclarativeRectangleMapItem();
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
@@ -93,7 +93,7 @@ public:
     QDeclarativeMapLineProperties *border();
 
     void dragEnded();
-    bool contains(QPointF point);
+    bool contains(const QPointF &point);
 
 Q_SIGNALS:
     void topLeftChanged(const QDeclarativeCoordinate *topLeft);

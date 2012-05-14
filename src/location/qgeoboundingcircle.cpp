@@ -121,6 +121,9 @@ QGeoBoundingCircle::~QGeoBoundingCircle() {}
 */
 QGeoBoundingCircle& QGeoBoundingCircle::operator = (const QGeoBoundingCircle & other)
 {
+    if (this == &other)
+        return *this;
+
     QGeoBoundingArea::operator=(other);
     d_ptr = other.d_ptr;
     return *this;

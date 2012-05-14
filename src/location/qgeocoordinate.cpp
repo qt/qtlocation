@@ -192,6 +192,9 @@ QGeoCoordinate::QGeoCoordinate(const QGeoCoordinate &other)
 
 QGeoCoordinate &QGeoCoordinate::operator=(const QGeoCoordinate &other)
 {
+    if (this == &other)
+        return *this;
+
     d = other.d;
     return (*this);
 }

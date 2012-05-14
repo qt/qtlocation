@@ -148,6 +148,9 @@ QGeoBoundingBox::~QGeoBoundingBox() {}
 */
 QGeoBoundingBox& QGeoBoundingBox::operator = (const QGeoBoundingBox & other)
 {
+    if (this == &other)
+        return *this;
+
     QGeoBoundingArea::operator=(other);
     d_ptr = other.d_ptr;
     return *this;

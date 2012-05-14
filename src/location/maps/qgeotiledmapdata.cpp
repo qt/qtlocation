@@ -297,7 +297,7 @@ void QGeoTiledMapDataPrivate::changeCameraData(const QGeoCameraData &oldCameraDa
         QList<QSharedPointer<QGeoTileTexture> > cachedTiles =
                 tileRequests_->requestTiles(visibleTiles_);
 
-        foreach (QSharedPointer<QGeoTileTexture> tex, cachedTiles) {
+        foreach (const QSharedPointer<QGeoTileTexture> &tex, cachedTiles) {
             mapScene_->addTile(tex->spec, tex);
         }
 

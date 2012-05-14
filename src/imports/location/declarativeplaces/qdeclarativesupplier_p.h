@@ -57,8 +57,8 @@ class QDeclarativeSupplier : public QObject, public QQmlParserStatus
     Q_OBJECT
 
     Q_PROPERTY(QPlaceSupplier supplier READ supplier WRITE setSupplier)
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
-    Q_PROPERTY(QString supplierId READ supplierId WRITE setSupplierId NOTIFY supplierIdChanged);
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString supplierId READ supplierId WRITE setSupplierId NOTIFY supplierIdChanged)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
     Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
 

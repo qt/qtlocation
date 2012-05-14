@@ -121,7 +121,7 @@ void QDeclarativeGeoMapItemBase::afterChildrenChanged()
 /*!
     \internal
 */
-bool QDeclarativeGeoMapItemBase::contains(QPointF point)
+bool QDeclarativeGeoMapItemBase::contains(const QPointF &point)
 {
     Q_UNUSED(point);
     return true;

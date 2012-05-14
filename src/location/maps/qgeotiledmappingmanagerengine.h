@@ -81,7 +81,7 @@ public:
     };
     Q_DECLARE_FLAGS(CacheAreas, CacheArea)
 
-    QGeoTiledMappingManagerEngine(QObject *parent = 0);
+    explicit QGeoTiledMappingManagerEngine(QObject *parent = 0);
     virtual ~QGeoTiledMappingManagerEngine();
 
     QGeoTileFetcher *tileFetcher();

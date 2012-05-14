@@ -96,7 +96,7 @@ void QGeoMapItemGeometry::allocateAndFill(QSGGeometry *geom) const
 /*!
     \internal
 */
-QRectF QGeoMapItemGeometry::translateToCommonOrigin(QList<QGeoMapItemGeometry *> geoms)
+QRectF QGeoMapItemGeometry::translateToCommonOrigin(const QList<QGeoMapItemGeometry *> &geoms)
 {
     QGeoCoordinate origin = geoms.at(0)->origin();
 

@@ -153,6 +153,9 @@ QPlaceContent::QPlaceContent(const QPlaceContent &other)
 */
 QPlaceContent &QPlaceContent::operator=(const QPlaceContent &other)
 {
+    if (this == &other)
+        return *this;
+
     d_ptr = other.d_ptr;
     return *this;
 }

@@ -111,7 +111,7 @@ public:
 
     void allocateAndFill(QSGGeometry *geom) const;
 
-    static QRectF translateToCommonOrigin(QList<QGeoMapItemGeometry*> geoms);
+    static QRectF translateToCommonOrigin(const QList<QGeoMapItemGeometry*> &geoms);
 
 protected:
     bool sourceDirty_, screenDirty_;

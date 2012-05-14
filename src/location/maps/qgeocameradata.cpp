@@ -158,6 +158,9 @@ QGeoCameraData::~QGeoCameraData()
 
 QGeoCameraData& QGeoCameraData::operator = (const QGeoCameraData &other)
 {
+    if (this == &other)
+        return *this;
+
     d = other.d;
     return *this;
 }

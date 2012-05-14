@@ -65,7 +65,7 @@ class QGeoRoute;
 class QGeoRouteReplyPrivate
 {
 public:
-    QGeoRouteReplyPrivate(const QGeoRouteRequest &request);
+    explicit QGeoRouteReplyPrivate(const QGeoRouteRequest &request);
     QGeoRouteReplyPrivate(QGeoRouteReply::Error error, QString errorString);
     ~QGeoRouteReplyPrivate();
 

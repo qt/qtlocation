@@ -234,7 +234,7 @@ void QDeclarativeRouteMapItem::afterViewportChanged(const QGeoMapViewportChangeE
 /*!
     \internal
 */
-bool QDeclarativeRouteMapItem::contains(QPointF point)
+bool QDeclarativeRouteMapItem::contains(const QPointF &point)
 {
     return geometry_.contains(point);
 }

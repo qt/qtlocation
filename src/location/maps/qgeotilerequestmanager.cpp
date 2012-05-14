@@ -53,7 +53,7 @@ class RetryFuture;
 class QGeoTileRequestManagerPrivate
 {
 public:
-    QGeoTileRequestManagerPrivate(QGeoTiledMapData *map);
+    explicit QGeoTileRequestManagerPrivate(QGeoTiledMapData *map);
     ~QGeoTileRequestManagerPrivate();
 
     QGeoTiledMapData *map_;

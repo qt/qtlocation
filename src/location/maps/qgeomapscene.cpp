@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoMapScenePrivate {
 public:
-    QGeoMapScenePrivate(QGeoMapScene *scene);
+    explicit QGeoMapScenePrivate(QGeoMapScene *scene);
     ~QGeoMapScenePrivate();
 
     QSize screenSize_; // in pixels

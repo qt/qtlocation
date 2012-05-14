@@ -80,7 +80,7 @@ public:
         DirectionBearLeft = QGeoManeuver::DirectionBearLeft
     };
 
-    QDeclarativeGeoManeuver(QObject *parent = 0);
+    explicit QDeclarativeGeoManeuver(QObject *parent = 0);
     QDeclarativeGeoManeuver(const QGeoManeuver &maneuver, QObject *parent = 0);
     ~QDeclarativeGeoManeuver();
 

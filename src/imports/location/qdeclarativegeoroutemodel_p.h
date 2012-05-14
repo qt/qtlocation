@@ -99,7 +99,7 @@ public:
         UnknownError = QGeoRouteReply::UnknownError
     };
 
-    QDeclarativeGeoRouteModel(QObject *parent = 0);
+    explicit QDeclarativeGeoRouteModel(QObject *parent = 0);
     ~QDeclarativeGeoRouteModel();
 
     // From QQmlParserStatus
@@ -194,7 +194,7 @@ class QDeclarativeGeoRouteQuery : public QObject, public QQmlParserStatus
 
 public:
 
-    QDeclarativeGeoRouteQuery(QObject *parent = 0);
+    explicit QDeclarativeGeoRouteQuery(QObject *parent = 0);
     ~QDeclarativeGeoRouteQuery();
 
     // From QQmlParserStatus

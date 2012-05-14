@@ -160,7 +160,7 @@ QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *p
     QGeoPositionInfoSourcePrivate *d = new QGeoPositionInfoSourcePrivate;
 
     QList<QJsonObject> plugins = QGeoPositionInfoSourcePrivate::pluginsSorted();
-    foreach (QJsonObject obj, plugins) {
+    foreach (const QJsonObject &obj, plugins) {
         if (obj.value(QStringLiteral("Satellite")).isBool()
                 && obj.value(QStringLiteral("Satellite")).toBool()) {
             d->metaData = obj;

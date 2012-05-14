@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 class QGeoMapViewportChangeEvent
 {
 public:
-    QGeoMapViewportChangeEvent();
+    explicit QGeoMapViewportChangeEvent();
     QGeoMapViewportChangeEvent(const QGeoMapViewportChangeEvent &other);
     QGeoMapViewportChangeEvent &operator=(const QGeoMapViewportChangeEvent &other);
 
@@ -71,12 +71,12 @@ class QDeclarativeGeoMapItemBase : public QQuickItem
 {
     Q_OBJECT
 public:
-    QDeclarativeGeoMapItemBase(QQuickItem *parent = 0);
+    explicit QDeclarativeGeoMapItemBase(QQuickItem *parent = 0);
     virtual ~QDeclarativeGeoMapItemBase();
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
     virtual void setPositionOnMap(const QGeoCoordinate& coordinate, const QPointF& offset);
-    virtual bool contains(QPointF point);
+    virtual bool contains(const QPointF &point);
     virtual void dragStarted();
     virtual void dragEnded();
 

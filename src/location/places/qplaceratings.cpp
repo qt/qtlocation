@@ -114,6 +114,9 @@ QPlaceRatings::~QPlaceRatings()
 */
 QPlaceRatings &QPlaceRatings::operator=(const QPlaceRatings &other)
 {
+    if (this == &other)
+        return *this;
+
     d = other.d;
     return *this;
 }

@@ -61,7 +61,7 @@ class QDeclarativeRouteMapItem : public QDeclarativeGeoMapItemBase
     Q_PROPERTY(QDeclarativeMapLineProperties *line READ line CONSTANT)
 
 public:
-    QDeclarativeRouteMapItem(QQuickItem *parent = 0);
+    explicit QDeclarativeRouteMapItem(QQuickItem *parent = 0);
     ~QDeclarativeRouteMapItem();
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
@@ -73,7 +73,7 @@ public:
 
     QDeclarativeMapLineProperties *line();
 
-    bool contains(QPointF point);
+    bool contains(const QPointF &point);
 
 Q_SIGNALS:
     void routeChanged(const QDeclarativeGeoRoute *route);

@@ -67,7 +67,7 @@ class QGeoAreaMonitorPolling : public QGeoAreaMonitor
     Q_OBJECT
 
 public :
-    QGeoAreaMonitorPolling(QObject *parent = 0);
+    explicit QGeoAreaMonitorPolling(QObject *parent = 0);
     ~QGeoAreaMonitorPolling();
     void setCenter(const QGeoCoordinate &coordinate);
     void setRadius(qreal radius);

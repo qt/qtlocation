@@ -75,7 +75,7 @@ class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
     Q_OBJECT
 
 public:
-    QGeoMappingManagerEngine(QObject *parent = 0);
+    explicit QGeoMappingManagerEngine(QObject *parent = 0);
     virtual ~QGeoMappingManagerEngine();
 
     virtual QGeoMapData* createMapData() = 0;

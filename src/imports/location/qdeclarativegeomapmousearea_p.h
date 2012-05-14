@@ -56,7 +56,7 @@ class QDeclarativeGeoMapMouseArea : public QQuickMouseArea
     Q_OBJECT
 
 public:
-    QDeclarativeGeoMapMouseArea(QQuickItem *parent = 0);
+    explicit QDeclarativeGeoMapMouseArea(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapMouseArea();
 
     Q_INVOKABLE QDeclarativeCoordinate* mouseToCoordinate(QQuickMouseEvent* event);

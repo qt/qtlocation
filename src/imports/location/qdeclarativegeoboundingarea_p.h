@@ -55,7 +55,7 @@ class QDeclarativeGeoBoundingArea : public QObject
     Q_OBJECT
 
 public:
-    QDeclarativeGeoBoundingArea(QObject *parent) :QObject(parent){}
+    explicit QDeclarativeGeoBoundingArea(QObject *parent) :QObject(parent){}
     virtual QGeoBoundingArea area() const = 0;
 };
 

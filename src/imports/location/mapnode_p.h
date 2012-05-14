@@ -67,7 +67,7 @@ class QSGPlainTexture;
 class MapNode : public QSGGeometryNode
 {
 public:
-    MapNode(QGeoMap *m_map);
+    explicit MapNode(QGeoMap *m_map);
     ~MapNode();
 
     void setSize(const QSize &size);

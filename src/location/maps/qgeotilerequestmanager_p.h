@@ -70,7 +70,7 @@ class QGeoTileRequestManagerPrivate;
 class QGeoTileRequestManager
 {
 public:
-    QGeoTileRequestManager(QGeoTiledMapData *map);
+    explicit QGeoTileRequestManager(QGeoTiledMapData *map);
     ~QGeoTileRequestManager();
 
     QList<QSharedPointer<QGeoTileTexture> > requestTiles(const QSet<QGeoTileSpec> &tiles);

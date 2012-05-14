@@ -61,7 +61,7 @@ class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
 
 public:
-    QDeclarativeCircleMapItem(QQuickItem *parent = 0);
+    explicit QDeclarativeCircleMapItem(QQuickItem *parent = 0);
     ~QDeclarativeCircleMapItem();
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
@@ -79,7 +79,7 @@ public:
     QDeclarativeMapLineProperties *border();
 
     void dragEnded();
-    bool contains(QPointF point);
+    bool contains(const QPointF &point);
 
 Q_SIGNALS:
     void centerChanged(const QDeclarativeCoordinate *center);

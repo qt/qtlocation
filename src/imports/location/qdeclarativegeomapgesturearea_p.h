@@ -71,8 +71,8 @@ class QDeclarativeGeoMapPinchEvent : public QObject
     Q_PROPERTY(bool accepted READ accepted WRITE setAccepted)
 
 public:
-    QDeclarativeGeoMapPinchEvent(QPointF center, qreal angle,
-                                 QPointF point1, QPointF point2,
+    QDeclarativeGeoMapPinchEvent(const QPointF &center, qreal angle,
+                                 const QPointF &point1, const QPointF &point2,
                                  int pointCount = 0, bool accepted = true)
         : QObject(), center_(center), angle_(angle),
           point1_(point1), point2_(point2),
@@ -84,13 +84,13 @@ public:
           accepted_(true) {}
 
     QPointF center() const { return center_; }
-    void setCenter(QPointF center) { center_ = center; }
+    void setCenter(const QPointF &center) { center_ = center; }
     qreal angle() const { return angle_; }
     void setAngle(qreal angle) { angle_ = angle; }
     QPointF point1() const { return point1_; }
-    void setPoint1(QPointF p) { point1_ = p; }
+    void setPoint1(const QPointF &p) { point1_ = p; }
     QPointF point2() const { return point2_; }
-    void setPoint2(QPointF p) { point2_ = p; }
+    void setPoint2(const QPointF &p) { point2_ = p; }
     int pointCount() const { return pointCount_; }
     void setPointCount(int count) { pointCount_ = count; }
     bool accepted() const { return accepted_; }
@@ -146,7 +146,7 @@ public:
         PanGesture = 0x0008,
         FlickGesture = 0x0010
     };
-    Q_DECLARE_FLAGS(ActiveGestures, ActiveGesture);
+    Q_DECLARE_FLAGS(ActiveGestures, ActiveGesture)
 
     ActiveGestures activeGestures() const;
     void setActiveGestures(ActiveGestures activeGestures);

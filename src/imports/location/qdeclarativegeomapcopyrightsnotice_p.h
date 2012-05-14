@@ -51,7 +51,7 @@ class QDeclarativeGeoMapCopyrightNotice : public QQuickPaintedItem
 {
     Q_OBJECT
 public:
-    QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent);
+    explicit QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent);
     ~QDeclarativeGeoMapCopyrightNotice();
 
     void setCopyrightsZ(int copyrightsZ);

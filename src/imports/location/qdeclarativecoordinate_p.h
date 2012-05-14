@@ -60,7 +60,7 @@ class QDeclarativeCoordinate : public QObject
     Q_PROPERTY(bool isValid READ isValid NOTIFY validityChanged)
 
 public:
-    QDeclarativeCoordinate(QObject* parent = 0);
+    explicit QDeclarativeCoordinate(QObject* parent = 0);
     QDeclarativeCoordinate(const QGeoCoordinate &coordinate, QObject* parent = 0);
     ~QDeclarativeCoordinate();
 

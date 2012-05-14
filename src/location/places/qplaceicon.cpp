@@ -143,6 +143,9 @@ QPlaceIcon::~QPlaceIcon()
 */
 QPlaceIcon &QPlaceIcon::operator=(const QPlaceIcon &other)
 {
+    if (this == &other)
+        return *this;
+
     d = other.d;
     return *this;
 }

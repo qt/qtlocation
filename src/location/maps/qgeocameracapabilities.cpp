@@ -146,6 +146,9 @@ QGeoCameraCapabilities::~QGeoCameraCapabilities() {}
 */
 QGeoCameraCapabilities& QGeoCameraCapabilities::operator = (const QGeoCameraCapabilities &other)
 {
+    if (this == &other)
+        return *this;
+
     d = other.d;
     return *this;
 }

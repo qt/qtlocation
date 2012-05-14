@@ -76,7 +76,7 @@ class QDeclarativeSupportedCategoriesModel : public QAbstractItemModel, public Q
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(bool hierarchical READ hierarchical WRITE setHierarchical NOTIFY hierarchicalChanged)
-    Q_PROPERTY(Status status READ status NOTIFY statusChanged);
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 
     Q_INTERFACES(QQmlParserStatus)
     Q_ENUMS(Roles) //The Roles enum is for internal usage only.

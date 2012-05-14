@@ -172,7 +172,7 @@ void QDeclarativeGeoServiceProvider::componentComplete()
         QStringList providers = QGeoServiceProvider::availableServiceProviders();
 
         /* first check any preferred plugins */
-        foreach (QString name, prefer_) {
+        foreach (const QString &name, prefer_) {
             if (providers.contains(name)) {
                 // so we don't try it again later
                 providers.removeAll(name);
@@ -186,7 +186,7 @@ void QDeclarativeGeoServiceProvider::componentComplete()
         }
 
         /* then try the rest */
-        foreach (QString name, providers) {
+        foreach (const QString &name, providers) {
             QGeoServiceProvider sp(name, parameterMap(), experimental_);
             if (required_->matches(&sp)) {
                 setName(name);

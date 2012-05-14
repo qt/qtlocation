@@ -67,7 +67,7 @@ class QDeclarativeGeoMapItemView : public QObject, public QQmlParserStatus
     Q_PROPERTY(qreal z READ zValue WRITE setZValue NOTIFY zChanged)
 
 public:
-    QDeclarativeGeoMapItemView(QQuickItem *parent = 0);
+    explicit QDeclarativeGeoMapItemView(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapItemView();
 
     QVariant model() const;

@@ -73,7 +73,7 @@ QT_BEGIN_NAMESPACE
 class QGeoTileFetcherPrivate
 {
 public:
-    QGeoTileFetcherPrivate(QGeoTiledMappingManagerEngine *engine);
+    explicit QGeoTileFetcherPrivate(QGeoTiledMappingManagerEngine *engine);
     virtual ~QGeoTileFetcherPrivate();
 
     QGeoTiledMappingManagerEngine *engine_;

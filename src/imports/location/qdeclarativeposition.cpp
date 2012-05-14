@@ -110,7 +110,7 @@ QDeclarativePosition::~QDeclarativePosition()
 
 */
 
-void QDeclarativePosition::setCoordinate(QGeoCoordinate coordinate)
+void QDeclarativePosition::setCoordinate(const QGeoCoordinate &coordinate)
 {
     m_coordinate.setCoordinate(coordinate);
 

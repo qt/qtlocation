@@ -59,7 +59,7 @@ class QDeclarativeGeoRouteSegment : public QObject
     Q_PROPERTY(QDeclarativeGeoManeuver* maneuver READ maneuver CONSTANT)
 
 public:
-    QDeclarativeGeoRouteSegment(QObject *parent = 0);
+    explicit QDeclarativeGeoRouteSegment(QObject *parent = 0);
     QDeclarativeGeoRouteSegment(const QGeoRouteSegment &segment, QObject *parent = 0);
     ~QDeclarativeGeoRouteSegment();
 

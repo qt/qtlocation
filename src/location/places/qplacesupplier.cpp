@@ -124,7 +124,11 @@ QPlaceSupplier::~QPlaceSupplier()
     Assigns \a other to this supplier and returns a reference to this
     supplier.
 */
-QPlaceSupplier &QPlaceSupplier::operator=(const QPlaceSupplier &other) {
+QPlaceSupplier &QPlaceSupplier::operator=(const QPlaceSupplier &other)
+{
+    if (this == &other)
+        return *this;
+
     d = other.d;
     return *this;
 }

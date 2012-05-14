@@ -57,6 +57,9 @@ QGeoMapType::~QGeoMapType() {}
 
 QGeoMapType& QGeoMapType::operator = (const QGeoMapType &other)
 {
+    if (this == &other)
+        return *this;
+
     d_ptr = other.d_ptr;
     return *this;
 }

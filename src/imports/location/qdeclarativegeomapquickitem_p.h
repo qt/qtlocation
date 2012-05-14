@@ -60,7 +60,7 @@ class QDeclarativeGeoMapQuickItem : public QDeclarativeGeoMapItemBase
     Q_PROPERTY(QQuickItem* sourceItem READ sourceItem WRITE setSourceItem NOTIFY sourceItemChanged)
 
 public:
-    QDeclarativeGeoMapQuickItem(QQuickItem *parent = 0);
+    explicit QDeclarativeGeoMapQuickItem(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapQuickItem();
 
     virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);

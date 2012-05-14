@@ -98,6 +98,9 @@ QGeoRouteSegment::~QGeoRouteSegment() {}
 */
 QGeoRouteSegment& QGeoRouteSegment::operator= (const QGeoRouteSegment & other)
 {
+    if (this == &other)
+        return *this;
+
     d_ptr = other.d_ptr;
     return *this;
 }

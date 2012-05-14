@@ -58,6 +58,9 @@ QGeoTileSpec::~QGeoTileSpec() {
 
 QGeoTileSpec& QGeoTileSpec::operator = (const QGeoTileSpec &other)
 {
+    if (this == &other)
+        return *this;
+
     d = other.d;
     return *this;
 }
