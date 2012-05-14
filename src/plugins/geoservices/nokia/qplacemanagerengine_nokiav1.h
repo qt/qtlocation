@@ -94,7 +94,7 @@ public:
     QList<QLocale> locales() const;
     void setLocales(const QList<QLocale> &locales);
 
-private slots:
+private Q_SLOTS:
     void processingError(QPlaceReply *reply, const QPlaceReply::Error &error, const QString &errorMessage);
     void processingFinished(QPlaceReply *reply);
 };

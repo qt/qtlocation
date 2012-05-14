@@ -115,7 +115,7 @@ public:
     Q_INVOKABLE void save(const QString &parentId = QString());
     Q_INVOKABLE void remove();
 
-signals:
+Q_SIGNALS:
     void pluginChanged();
     void categoryIdChanged();
     void nameChanged();
@@ -123,7 +123,7 @@ signals:
     void iconChanged();
     void statusChanged();
 
-private slots:
+private Q_SLOTS:
     void replyFinished();
     void pluginReady();
 

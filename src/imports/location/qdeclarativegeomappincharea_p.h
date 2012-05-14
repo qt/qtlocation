@@ -151,7 +151,7 @@ public:
     void zoomLevelLimits(qreal min, qreal max){ gestureArea_->zoomLevelLimits(min, max); }
     void setMap(QGeoMap* map){ gestureArea_->setMap(map); }
 
-signals:
+Q_SIGNALS:
     void activeChanged();
     void enabledChanged();
     void minimumZoomLevelChanged();

@@ -75,7 +75,7 @@ public:
     int count() const;
     void setCount(int count);
 
-signals:
+Q_SIGNALS:
     void averageChanged();
     void maximumChanged();
     void countChanged();

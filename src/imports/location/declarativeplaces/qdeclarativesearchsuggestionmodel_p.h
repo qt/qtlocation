@@ -77,10 +77,10 @@ public:
         SearchSuggestionRole = Qt::UserRole
     };
 
-protected slots:
+protected Q_SLOTS:
     virtual void queryFinished();
 
-signals:
+Q_SIGNALS:
     void searchTermChanged();
     void suggestionsChanged();
 

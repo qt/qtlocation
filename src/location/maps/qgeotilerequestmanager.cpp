@@ -174,7 +174,7 @@ class RetryFuture : public QObject
 public:
     RetryFuture(const QGeoTileSpec &tile, QGeoTiledMapData *map, QObject *parent=0);
 
-public slots:
+public Q_SLOTS:
     void retry();
 
 private:

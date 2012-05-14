@@ -70,7 +70,7 @@ public:
     QString name() const;
     void setName(const QString &name);
 
-signals:
+Q_SIGNALS:
     void userIdChanged();
     void nameChanged();
 

@@ -91,7 +91,7 @@ public:
     void setPostalCode(const QString& postalCode);
     bool isTextGenerated() const;
 
-signals:
+Q_SIGNALS:
     void textChanged();
     void countryChanged();
     void countryCodeChanged();

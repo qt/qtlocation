@@ -115,15 +115,15 @@ public:
     Status status() const;
     void setStatus(Status status);
 
-signals:
+Q_SIGNALS:
     void pluginChanged();
     void hierarchicalChanged();
     void statusChanged();
 
-public slots:
+public Q_SLOTS:
     void update();
 
-private slots:
+private Q_SLOTS:
     void replyFinished();
     void addedCategory(const QPlaceCategory &category, const QString &parentId);
     void updatedCategory(const QPlaceCategory &category, const QString &parentId);

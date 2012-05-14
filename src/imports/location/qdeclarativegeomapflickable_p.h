@@ -78,7 +78,7 @@ public:
 
     void setMap(QGeoMap* map){ gestureArea_->setMap(map); }
 
-signals:
+Q_SIGNALS:
     void decelerationChanged();
     void enabledChanged();
     void movementStarted();

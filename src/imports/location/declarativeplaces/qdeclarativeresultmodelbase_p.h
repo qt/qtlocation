@@ -71,15 +71,15 @@ public:
     virtual QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const;
     Q_INVOKABLE QVariant data(int index, const QString &roleName) const;
 
-signals:
+Q_SIGNALS:
     void rowCountChanged();
     void favoritesPluginChanged();
     void favoritesMatchParametersChanged();
 
-protected slots:
+protected Q_SLOTS:
     virtual void queryFinished();
 
-private slots:
+private Q_SLOTS:
     void updateLayout(const QList<QPlace> &favoritePlaces = QList<QPlace>());
 
 protected:

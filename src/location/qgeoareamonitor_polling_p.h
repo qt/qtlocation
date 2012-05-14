@@ -74,7 +74,7 @@ public :
 
     inline bool isValid() { return location; }
 
-private slots:
+private Q_SLOTS:
     void positionUpdated(const QGeoPositionInfo &info);
 
 private:

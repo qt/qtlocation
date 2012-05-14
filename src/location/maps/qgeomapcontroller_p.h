@@ -114,10 +114,10 @@ public:
 
     void pan(qreal dx, qreal dy);
 
-private slots:
+private Q_SLOTS:
     void cameraDataChanged(const QGeoCameraData &cameraData);
 
-signals:
+Q_SIGNALS:
     void centerChanged(const AnimatableCoordinate &center);
     void bearingChanged(qreal bearing);
     void tiltChanged(qreal tilt);

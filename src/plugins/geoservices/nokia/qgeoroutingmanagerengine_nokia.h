@@ -71,7 +71,7 @@ public:
     QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
     QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
 
-private slots:
+private Q_SLOTS:
     void routeFinished();
     void routeError(QGeoRouteReply::Error error, const QString &errorString);
 

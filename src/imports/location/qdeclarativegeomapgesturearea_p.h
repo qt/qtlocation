@@ -209,7 +209,7 @@ public:
     void registerPinchDeprecated(QDeclarativeGeoMapPinchArea *pinchArea){
         pinchDep_ = pinchArea; }
 
-signals:
+Q_SIGNALS:
     void pinchActiveChanged();
     void enabledChanged();
     void minimumZoomLevelChanged();
@@ -263,7 +263,7 @@ private:
     void updatePan();
     bool tryStartFlick();
     void startFlick(int dx, int dy, int timeMs = 0);
-private slots:
+private Q_SLOTS:
     void endFlick();
 
 private:

@@ -75,7 +75,7 @@ public:
     void setValue(const QString &value);
 
 
-signals:
+Q_SIGNALS:
     void keyChanged();
     void labelChanged();
     void valueChanged();

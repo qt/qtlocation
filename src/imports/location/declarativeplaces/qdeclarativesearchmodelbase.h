@@ -112,7 +112,7 @@ public:
     virtual void classBegin();
     virtual void componentComplete();
 
-signals:
+Q_SIGNALS:
     void pluginChanged();
     void searchAreaChanged();
     void offsetChanged();
@@ -122,10 +122,10 @@ signals:
 protected:
     virtual void initializePlugin(QDeclarativeGeoServiceProvider *plugin);
 
-protected slots:
+protected Q_SLOTS:
     virtual void queryFinished() = 0;
 
-private slots:
+private Q_SLOTS:
     void pluginNameChanged();
 
 protected:

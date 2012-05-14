@@ -113,7 +113,7 @@ private:
     QNetworkReply *sendRequest(const QUrl &url);
     QByteArray createLanguageString() const;
 
-private slots:
+private Q_SLOTS:
     void replyFinished();
     void replyError(QPlaceReply::Error error_, const QString &errorString);
     void categoryReplyFinished();

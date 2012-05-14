@@ -63,7 +63,7 @@ public:
 
     void abort();
 
-private slots:
+private Q_SLOTS:
     void networkFinished();
     void networkError(QNetworkReply::NetworkError error);
 

@@ -77,7 +77,7 @@ public:
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;
 
-signals:
+Q_SIGNALS:
     void pluginChanged();
     void parametersChanged(); //in practice is never emitted since parameters cannot be re-assigned
                               //the declaration is needed to avoid warnings about non-notifyable properties

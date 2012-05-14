@@ -86,7 +86,7 @@ public:
     QDeclarativePlaceIcon *icon() const;
     void setIcon(QDeclarativePlaceIcon *icon);
 
-signals:
+Q_SIGNALS:
     void nameChanged();
     void supplierIdChanged();
     void urlChanged();

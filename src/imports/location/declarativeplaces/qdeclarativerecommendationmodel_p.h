@@ -61,7 +61,7 @@ public:
     QString placeId() const;
     void setPlaceId(const QString &placeId);
 
-signals:
+Q_SIGNALS:
     void placeIdChanged();
 
 protected:

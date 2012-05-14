@@ -99,7 +99,7 @@ public:
 
     QVariant data(const QModelIndex &index, int role) const;
 
-signals:
+Q_SIGNALS:
     void searchTermChanged();
     void categoriesChanged();
     void maximumCorrectionsChanged();
@@ -110,7 +110,7 @@ protected:
     QPlaceReply *sendQuery(QPlaceManager *manager, const QPlaceSearchRequest &request);
     virtual void initializePlugin(QDeclarativeGeoServiceProvider *plugin);
 
-private slots:
+private Q_SLOTS:
     void placeUpdated(const QString &placeId);
     void placeRemoved(const QString &placeId);
 

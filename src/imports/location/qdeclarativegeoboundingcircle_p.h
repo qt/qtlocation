@@ -73,11 +73,11 @@ public:
     qreal radius() const;
     void setRadius(qreal radius);
 
-signals:
+Q_SIGNALS:
     void centerChanged();
     void radiusChanged();
 
-private slots:
+private Q_SLOTS:
     void coordinateChanged();
 
 private:

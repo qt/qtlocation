@@ -87,7 +87,7 @@ public:
     double width();
     void setWidth(double width);
 
-signals:
+Q_SIGNALS:
     void bottomLeftChanged();
     void bottomRightChanged();
     void topLeftChanged();
@@ -96,7 +96,7 @@ signals:
     void heightChanged();
     void widthChanged();
 
-private slots:
+private Q_SLOTS:
     void coordinateChanged();
 
 private:

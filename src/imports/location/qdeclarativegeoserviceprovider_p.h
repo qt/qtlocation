@@ -253,7 +253,7 @@ public:
 
     Q_INVOKABLE bool matches(const QGeoServiceProvider *provider) const;
 
-signals:
+Q_SIGNALS:
     void mappingRequirementsChanged(const QDeclarativeGeoServiceProvider::MappingFeatures &features);
     void routingRequirementsChanged(const QDeclarativeGeoServiceProvider::RoutingFeatures &features);
     void geocodingRequirementsChanged(const QDeclarativeGeoServiceProvider::GeocodingFeatures &features);

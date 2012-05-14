@@ -70,7 +70,7 @@ public:
     QString value() const;
     void setValue(const QString &value);
 
-signals:
+Q_SIGNALS:
     void labelChanged();
     void valueChanged();
 

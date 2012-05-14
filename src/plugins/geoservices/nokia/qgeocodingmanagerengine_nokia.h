@@ -82,7 +82,7 @@ public:
                             int offset,
                             const QGeoBoundingArea &bounds);
 
-private slots:
+private Q_SLOTS:
     void placesFinished();
     void placesError(QGeocodeReply::Error error, const QString &errorString);
 

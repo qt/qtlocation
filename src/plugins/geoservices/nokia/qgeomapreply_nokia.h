@@ -67,7 +67,7 @@ public:
 
     QNetworkReply* networkReply() const;
 
-private slots:
+private Q_SLOTS:
     void replyDestroyed();
     void networkFinished();
     void networkError(QNetworkReply::NetworkError error);

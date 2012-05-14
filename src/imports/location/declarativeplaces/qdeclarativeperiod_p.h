@@ -75,7 +75,7 @@ public:
     QTime endTime() const;
     void setEndTime(const QTime &data);
 
-signals:
+Q_SIGNALS:
     void startDateChanged();
     void startTimeChanged();
     void endDateChanged();

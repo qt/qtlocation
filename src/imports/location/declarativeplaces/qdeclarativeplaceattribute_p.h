@@ -73,7 +73,7 @@ public:
     QString label() const;
     void setLabel(const QString &label);
 
-signals:
+Q_SIGNALS:
     void labelChanged();
     void textChanged();
 

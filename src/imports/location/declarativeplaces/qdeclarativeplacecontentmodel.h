@@ -99,12 +99,12 @@ public:
     void classBegin();
     void componentComplete();
 
-signals:
+Q_SIGNALS:
     void placeChanged();
     void batchSizeChanged();
     void totalCountChanged();
 
-private slots:
+private Q_SLOTS:
     void fetchFinished();
 
 protected:

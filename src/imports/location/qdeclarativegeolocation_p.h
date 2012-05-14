@@ -76,7 +76,7 @@ public:
     QDeclarativeGeoBoundingBox *boundingBox();
     void setBoundingBox(QDeclarativeGeoBoundingBox *boundingBox);
 
-signals:
+Q_SIGNALS:
     void addressChanged();
     void coordinateChanged();
     void boundingBoxChanged();

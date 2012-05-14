@@ -176,7 +176,7 @@ public:
     Q_INVOKABLE void copyFrom(QDeclarativePlace *original);
     Q_INVOKABLE void initializeFavorite(QDeclarativeGeoServiceProvider *plugin);
 
-signals:
+Q_SIGNALS:
     void pluginChanged();
     void categoriesChanged();
     void locationChanged();
@@ -202,7 +202,7 @@ signals:
     void visibilityChanged();
     void favoriteChanged();
 
-private slots:
+private Q_SLOTS:
     void finished();
     void contactsModified(const QString &, const QVariant &);
     void pluginReady();

@@ -146,7 +146,7 @@ public:
                 QGeoTiledMappingManagerEngine::CacheAreas areas = QGeoTiledMappingManagerEngine::AllCaches);
     void handleError(const QGeoTileSpec &spec, const QString &errorString);
 
-public slots:
+public Q_SLOTS:
     void printStats();
 
 private:
