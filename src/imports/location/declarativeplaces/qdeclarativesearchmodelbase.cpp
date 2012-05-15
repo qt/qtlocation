@@ -50,7 +50,7 @@
 
 QDeclarativeSearchModelBase::QDeclarativeSearchModelBase(QObject *parent)
 :   QAbstractListModel(parent), m_plugin(0), m_reply(0), m_searchArea(0), m_complete(false),
-    m_status(Ready)
+    m_status(Null)
 {
 }
 
@@ -212,7 +212,7 @@ void QDeclarativeSearchModelBase::cancel()
         m_reply = 0;
     }
 
-    setStatus(Ready);
+    setStatus(Null);
 }
 
 /*!

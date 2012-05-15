@@ -89,7 +89,6 @@ void QPlaceSearchReplyImpl::setError(QPlaceReply::Error error_, const QString &e
     QPlaceReply::setError(error_, errorString);
     emit error(error_, errorString);
     setFinished(true);
-    emit finished();
 }
 
 void QPlaceSearchReplyImpl::replyFinished()
