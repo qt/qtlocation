@@ -174,7 +174,7 @@ int QGeocodingManagerEngine::managerVersion() const
     QGeocodingManagerEngine::error(), QGeocodeReply::finished() or
     QGeocodeReply::error() with deleteLater().
 */
-QGeocodeReply* QGeocodingManagerEngine::geocode(const QGeoAddress &address,
+QGeocodeReply *QGeocodingManagerEngine::geocode(const QGeoAddress &address,
         const QGeoBoundingArea &bounds)
 {
     Q_UNUSED(address)
@@ -219,7 +219,7 @@ QGeocodeReply* QGeocodingManagerEngine::geocode(const QGeoAddress &address,
     QGeocodingManagerEngine::error(), QGeocodeReply::finished() or
     QGeocodeReply::error() with deleteLater().
 */
-QGeocodeReply* QGeocodingManagerEngine::reverseGeocode(const QGeoCoordinate &coordinate,
+QGeocodeReply *QGeocodingManagerEngine::reverseGeocode(const QGeoCoordinate &coordinate,
         const QGeoBoundingArea &bounds)
 {
     Q_UNUSED(coordinate)
@@ -257,7 +257,7 @@ QGeocodeReply* QGeocodingManagerEngine::reverseGeocode(const QGeoCoordinate &coo
     QGeocodingManagerEngine::error(), QGeocodeReply::finished() or
     QGeocodeReply::error() with deleteLater().
 */
-QGeocodeReply* QGeocodingManagerEngine::geocode(const QString &address,
+QGeocodeReply *QGeocodingManagerEngine::geocode(const QString &address,
         int limit,
         int offset,
         const QGeoBoundingArea &bounds)
@@ -294,7 +294,7 @@ QLocale QGeocodingManagerEngine::locale() const
 }
 
 /*!
-\fn void QGeocodingManagerEngine::finished(QGeocodeReply* reply)
+\fn void QGeocodingManagerEngine::finished(QGeocodeReply *reply)
 
     This signal is emitted when \a reply has finished processing.
 
@@ -309,7 +309,7 @@ QLocale QGeocodingManagerEngine::locale() const
 */
 
 /*!
-\fn void QGeocodingManagerEngine::error(QGeocodeReply* reply, QGeocodeReply::Error error, QString errorString)
+\fn void QGeocodingManagerEngine::error(QGeocodeReply *reply, QGeocodeReply::Error error, QString errorString)
 
     This signal is emitted when an error has been detected in the processing of
     \a reply. The QGeocodingManagerEngine::finished() signal will probably follow.

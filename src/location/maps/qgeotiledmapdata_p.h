@@ -78,7 +78,7 @@ public:
     QGeoTiledMapData(QGeoTiledMappingManagerEngine *engine, QObject *parent);
     virtual ~QGeoTiledMapData();
 
-    QGeoTileCache* tileCache();
+    QGeoTileCache *tileCache();
 
     void paintGL(QGLPainter *painter);
 

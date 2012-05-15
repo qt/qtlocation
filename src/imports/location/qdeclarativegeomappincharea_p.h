@@ -149,7 +149,7 @@ public:
     void setFlickDeceleration(qreal deceleration){ gestureArea_->setFlickDeceleration(deceleration); }
 
     void zoomLevelLimits(qreal min, qreal max){ gestureArea_->zoomLevelLimits(min, max); }
-    void setMap(QGeoMap* map){ gestureArea_->setMap(map); }
+    void setMap(QGeoMap *map){ gestureArea_->setMap(map); }
 
 Q_SIGNALS:
     void activeChanged();
@@ -166,9 +166,9 @@ Q_SIGNALS:
     void maximumTiltChangeChanged();
     void flickDecelerationChanged();
 
-    void pinchStarted(QDeclarativeGeoMapPinchEvent* pinch);
-    void pinchUpdated(QDeclarativeGeoMapPinchEvent* pinch);
-    void pinchFinished(QDeclarativeGeoMapPinchEvent* pinch);
+    void pinchStarted(QDeclarativeGeoMapPinchEvent *pinch);
+    void pinchUpdated(QDeclarativeGeoMapPinchEvent *pinch);
+    void pinchFinished(QDeclarativeGeoMapPinchEvent *pinch);
 
 private:
     QDeclarativeGeoMapGestureArea *gestureArea_; // the destination for this wrapper class

@@ -55,11 +55,11 @@ class QGeoNetworkAccessManager : public QObject
     Q_OBJECT
 public:
     virtual ~QGeoNetworkAccessManager() {}
-    virtual QNetworkReply* get(const QNetworkRequest& request) = 0;
+    virtual QNetworkReply *get(const QNetworkRequest &request) = 0;
     virtual QNetworkReply *post(const QNetworkRequest &request, const QByteArray &data) = 0;
 
 protected:
-    QGeoNetworkAccessManager(QObject* parent) : QObject(parent) {}
+    QGeoNetworkAccessManager(QObject *parent) : QObject(parent) {}
 };
 
 QT_END_NAMESPACE

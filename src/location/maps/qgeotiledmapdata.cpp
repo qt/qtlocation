@@ -155,7 +155,7 @@ void QGeoTiledMapData::newTileFetched(QSharedPointer<QGeoTileTexture> texture)
     d->newTileFetched(texture);
 }
 
-QGeoTileCache* QGeoTiledMapData::tileCache()
+QGeoTileCache *QGeoTiledMapData::tileCache()
 {
     Q_D(QGeoTiledMapData);
     return d->tileCache();
@@ -253,7 +253,7 @@ QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate()
     // However: how to ensure this is done in rendering thread?
 }
 
-QGeoTileCache* QGeoTiledMapDataPrivate::tileCache()
+QGeoTileCache *QGeoTiledMapDataPrivate::tileCache()
 {
     return cache_;
 }

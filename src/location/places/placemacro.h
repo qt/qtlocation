@@ -51,23 +51,23 @@ QT_BEGIN_NAMESPACE
 
 
 #define Q_DECLARE_D_FUNC(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const;\
+    inline Class##Private *d_func(); \
+    inline const Class##Private *d_func() const;\
     friend class Class##Private;
 
 #define Q_DECLARE_COPY_CTOR(Class, BaseClass) \
     Class(const BaseClass &other);
 
 #define Q_IMPLEMENT_D_FUNC(Class) \
-    Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
-    const Class##Private* Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); }
+    Class##Private *Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
+    const Class##Private *Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); }
 
 #define Q_IMPLEMENT_COPY_CTOR(Class, BaseClass) \
-    Class::Class(const BaseClass& other) : BaseClass() { Class##Private::copyIfPossible(d_ptr, other); }
+    Class::Class(const BaseClass &other) : BaseClass() { Class##Private::copyIfPossible(d_ptr, other); }
 
 #define Q_DEFINE_PRIVATE_HELPER(Class, BaseClass, ClassType) \
-    BaseClass##Private* clone() const { return new Class##Private(*this); } \
-    static void copyIfPossible(QSharedDataPointer<BaseClass##Private>& d_ptr, const BaseClass &other) \
+    BaseClass##Private *clone() const { return new Class##Private(*this); } \
+    static void copyIfPossible(QSharedDataPointer<BaseClass##Private> &d_ptr, const BaseClass &other) \
     { \
         if (other.type() == ClassType) \
             d_ptr = extract_d(other); \

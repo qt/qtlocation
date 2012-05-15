@@ -51,7 +51,7 @@ class QDeclarativeReviewModel : public QDeclarativePlaceContentModel
     Q_OBJECT
 
 public:
-    explicit QDeclarativeReviewModel(QObject* parent = 0);
+    explicit QDeclarativeReviewModel(QObject *parent = 0);
     ~QDeclarativeReviewModel();
 
     QVariant data(const QModelIndex &index, int role) const;

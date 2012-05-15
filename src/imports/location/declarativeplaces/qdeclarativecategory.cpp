@@ -79,7 +79,7 @@ QT_USE_NAMESPACE
     \sa CategoryModel
 */
 
-QDeclarativeCategory::QDeclarativeCategory(QObject* parent)
+QDeclarativeCategory::QDeclarativeCategory(QObject *parent)
 :   QObject(parent), m_icon(0), m_plugin(0), m_reply(0), m_complete(false), m_status(Ready)
 {
 }
@@ -135,7 +135,7 @@ void QDeclarativeCategory::setPlugin(QDeclarativeGeoServiceProvider *plugin)
     }
 }
 
-QDeclarativeGeoServiceProvider* QDeclarativeCategory::plugin() const
+QDeclarativeGeoServiceProvider *QDeclarativeCategory::plugin() const
 {
     return m_plugin;
 }

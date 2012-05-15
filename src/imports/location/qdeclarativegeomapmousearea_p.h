@@ -59,7 +59,7 @@ public:
     explicit QDeclarativeGeoMapMouseArea(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapMouseArea();
 
-    Q_INVOKABLE QDeclarativeCoordinate* mouseToCoordinate(QQuickMouseEvent* event);
+    Q_INVOKABLE QDeclarativeCoordinate *mouseToCoordinate(QQuickMouseEvent *event);
 
     // From QQmlParserStatus
     virtual void componentComplete();
@@ -78,8 +78,8 @@ private Q_SLOTS:
     void dragActiveChanged();
 
 private:
-    QQuickItem* parentMapItem();
-    QDeclarativeGeoMap* map();
+    QQuickItem *parentMapItem();
+    QDeclarativeGeoMap *map();
 
 private:
     bool componentCompleted_;

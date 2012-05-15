@@ -60,7 +60,7 @@
 QT_BEGIN_NAMESPACE
 
 QGeocodingManagerEngineNokia::QGeocodingManagerEngineNokia(
-        QGeoNetworkAccessManager* networkManager,
+        QGeoNetworkAccessManager *networkManager,
         const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)
@@ -116,7 +116,7 @@ QString QGeocodingManagerEngineNokia::getAuthenticationString() const
 }
 
 
-QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
+QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
         const QGeoBoundingArea &bounds)
 {
     QString requestString = "http://";
@@ -185,7 +185,7 @@ QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QGeoAddress &address,
     return geocode(requestString, bounds);
 }
 
-QGeocodeReply* QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
+QGeocodeReply *QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate &coordinate,
         const QGeoBoundingArea &bounds)
 {
     QString requestString = "http://";
@@ -205,7 +205,7 @@ QGeocodeReply* QGeocodingManagerEngineNokia::reverseGeocode(const QGeoCoordinate
     return geocode(requestString, bounds);
 }
 
-QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QString &address,
+QGeocodeReply *QGeocodingManagerEngineNokia::geocode(const QString &address,
         int limit,
         int offset,
         const QGeoBoundingArea &bounds)
@@ -235,7 +235,7 @@ QGeocodeReply* QGeocodingManagerEngineNokia::geocode(const QString &address,
     return geocode(requestString, bounds, limit, offset);
 }
 
-QGeocodeReply* QGeocodingManagerEngineNokia::geocode(QString requestString,
+QGeocodeReply *QGeocodingManagerEngineNokia::geocode(QString requestString,
         const QGeoBoundingArea &bounds,
         int limit,
         int offset)
@@ -270,7 +270,7 @@ QString QGeocodingManagerEngineNokia::trimDouble(double degree, int decimalDigit
 
 void QGeocodingManagerEngineNokia::placesFinished()
 {
-    QGeocodeReply *reply = qobject_cast<QGeocodeReply*>(sender());
+    QGeocodeReply *reply = qobject_cast<QGeocodeReply *>(sender());
 
     if (!reply)
         return;
@@ -285,12 +285,12 @@ void QGeocodingManagerEngineNokia::placesFinished()
 
 void QGeocodingManagerEngineNokia::placesError(QGeocodeReply::Error error, const QString &errorString)
 {
-    QGeocodeReply *reply = qobject_cast<QGeocodeReply*>(sender());
+    QGeocodeReply *reply = qobject_cast<QGeocodeReply *>(sender());
 
     if (!reply)
         return;
 
-    if (receivers(SIGNAL(error(QGeocodeReply*, QGeocodeReply::Error, QString))) == 0) {
+    if (receivers(SIGNAL(error(QGeocodeReply *, QGeocodeReply::Error, QString))) == 0) {
         reply->deleteLater();
         return;
     }

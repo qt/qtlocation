@@ -153,12 +153,12 @@ QPlace &QPlace::operator= (const QPlace & other)
     return *this;
 }
 
-inline QPlacePrivate* QPlace::d_func()
+inline QPlacePrivate *QPlace::d_func()
 {
     return static_cast<QPlacePrivate *>(d_ptr.data());
 }
 
-inline const QPlacePrivate* QPlace::d_func() const
+inline const QPlacePrivate *QPlace::d_func() const
 {
     return static_cast<const QPlacePrivate *>(d_ptr.constData());
 }
@@ -647,7 +647,7 @@ QPlacePrivate::QPlacePrivate(const QPlacePrivate &other)
 
 QPlacePrivate::~QPlacePrivate() {}
 
-QPlacePrivate& QPlacePrivate::operator= (const QPlacePrivate & other)
+QPlacePrivate &QPlacePrivate::operator= (const QPlacePrivate & other)
 {
     if (this == &other)
         return *this;

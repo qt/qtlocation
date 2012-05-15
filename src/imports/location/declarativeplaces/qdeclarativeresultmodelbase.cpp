@@ -53,7 +53,7 @@ QDeclarativeResultModelBase::QDeclarativeResultModelBase(QObject *parent)
 /*!
     \internal
 */
-QDeclarativeGeoServiceProvider* QDeclarativeResultModelBase::favoritesPlugin() const
+QDeclarativeGeoServiceProvider *QDeclarativeResultModelBase::favoritesPlugin() const
 {
     return m_favoritesPlugin;
 }

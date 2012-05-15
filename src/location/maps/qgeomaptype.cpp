@@ -55,7 +55,7 @@ QGeoMapType::QGeoMapType(QGeoMapType::MapStyle style, const QString &name, const
 
 QGeoMapType::~QGeoMapType() {}
 
-QGeoMapType& QGeoMapType::operator = (const QGeoMapType &other)
+QGeoMapType &QGeoMapType::operator = (const QGeoMapType &other)
 {
     if (this == &other)
         return *this;

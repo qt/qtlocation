@@ -118,14 +118,14 @@ private:
                                            double                latitude,
                                            double                longitude,
                                            double                altitude,
-                                           GeoclueAccuracy*      accuracy);
+                                           GeoclueAccuracy *     accuracy);
 private:
     int m_updateInterval;
     GeoclueResourceFlags m_preferredResources;
     GeoclueAccuracyLevel m_preferredAccuracy;
     GeoclueMasterClient *m_client;
     GeocluePosition *m_pos;
-    GeoclueVelocity* m_vel;
+    GeoclueVelocity *m_vel;
     QTimer m_updateTimer;
     QTimer m_requestTimer;
     bool m_lastPositionIsFresh;

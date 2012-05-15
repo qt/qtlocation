@@ -224,12 +224,12 @@ void QPlaceContentRequest::clear()
     d->clear();
 }
 
-inline QPlaceContentRequestPrivate* QPlaceContentRequest::d_func()
+inline QPlaceContentRequestPrivate *QPlaceContentRequest::d_func()
 {
     return static_cast<QPlaceContentRequestPrivate *>(d_ptr.data());
 }
 
-inline const QPlaceContentRequestPrivate* QPlaceContentRequest::d_func() const
+inline const QPlaceContentRequestPrivate *QPlaceContentRequest::d_func() const
 {
     return static_cast<const QPlaceContentRequestPrivate *>(d_ptr.constData());
 }

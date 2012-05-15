@@ -68,7 +68,7 @@ class QPlaceRestManager : public QObject
 public:
     static QPlaceRestManager *instance();
 
-    void setNetworkAccessManager(QGeoNetworkAccessManager* networkManager);
+    void setNetworkAccessManager(QGeoNetworkAccessManager *networkManager);
 
     QPlaceRestReply *sendPlaceRequest(const QString &placeId);
     QPlaceRestReply *sendPlaceImagesRequest(const QString &placeId, const QPlaceContentRequest &params);

@@ -379,7 +379,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
 }
 
 /*!
-    \fn void QPlaceManagerEngine::finished(QPlaceReply* reply)
+    \fn void QPlaceManagerEngine::finished(QPlaceReply *reply)
 
     This signal is emitted when \a reply has finished processing.
 

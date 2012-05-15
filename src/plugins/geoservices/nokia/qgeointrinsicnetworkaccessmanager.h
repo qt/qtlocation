@@ -56,14 +56,14 @@ public:
     explicit QGeoIntrinsicNetworkAccessManager(QObject *parent = 0);
     QGeoIntrinsicNetworkAccessManager(const QMap<QString, QVariant> &parameters, const QString &token = QString(), QObject *parent = 0);
 
-    virtual QNetworkReply* get(const QNetworkRequest& request);
+    virtual QNetworkReply *get(const QNetworkRequest &request);
     virtual QNetworkReply *post(const QNetworkRequest &request, const QByteArray &data);
 
 private:
     void configure(const QMap<QString, QVariant> &parameters);
 
     const QString m_customProxyToken;
-    QNetworkAccessManager* m_networkManager;
+    QNetworkAccessManager *m_networkManager;
 };
 
 QT_END_NAMESPACE

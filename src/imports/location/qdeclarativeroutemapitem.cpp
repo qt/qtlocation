@@ -109,7 +109,7 @@ void QDeclarativeRouteMapItem::updateAfterLinePropertiesChanged()
 /*!
     \internal
 */
-void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
+void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
@@ -123,7 +123,7 @@ void QDeclarativeRouteMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map
 
     Holds the route to be drawn which can be used to represents one geographical route.
 */
-QDeclarativeGeoRoute* QDeclarativeRouteMapItem::route() const
+QDeclarativeGeoRoute *QDeclarativeRouteMapItem::route() const
 {
     return route_;
 }
@@ -150,11 +150,11 @@ void QDeclarativeRouteMapItem::setRoute(QDeclarativeGeoRoute *route)
 /*!
     \internal
 */
-QSGNode* QDeclarativeRouteMapItem::updateMapItemPaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+QSGNode *QDeclarativeRouteMapItem::updateMapItemPaintNode(QSGNode *oldNode, UpdatePaintNodeData *data)
 {
     Q_UNUSED(data);
 
-    MapPolylineNode *node = static_cast<MapPolylineNode*>(oldNode);
+    MapPolylineNode *node = static_cast<MapPolylineNode *>(oldNode);
 
     if (!node) {
         node = new MapPolylineNode();

@@ -59,8 +59,8 @@ class QDeclarativePeriod : public QObject
     Q_PROPERTY(QTime endTime READ endTime WRITE setEndTime NOTIFY endTimeChanged)
 
 public:
-    explicit QDeclarativePeriod(QObject* parent = 0);
-    explicit QDeclarativePeriod(const QPlacePeriod &period, QObject* parent = 0);
+    explicit QDeclarativePeriod(QObject *parent = 0);
+    explicit QDeclarativePeriod(const QPlacePeriod &period, QObject *parent = 0);
     ~QDeclarativePeriod();
 
     QPlacePeriod period() const;

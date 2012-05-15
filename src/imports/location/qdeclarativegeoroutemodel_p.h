@@ -70,7 +70,7 @@ class QDeclarativeGeoRouteModel : public QAbstractListModel, public QQmlParserSt
     Q_ENUMS(RouteError)
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
-    Q_PROPERTY(QDeclarativeGeoRouteQuery* query READ query WRITE setQuery NOTIFY queryChanged)
+    Q_PROPERTY(QDeclarativeGeoRouteQuery *query READ query WRITE setQuery NOTIFY queryChanged)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
@@ -111,10 +111,10 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
-    QDeclarativeGeoServiceProvider* plugin() const;
+    QDeclarativeGeoServiceProvider *plugin() const;
 
-    void setQuery(QDeclarativeGeoRouteQuery* query);
-    QDeclarativeGeoRouteQuery* query() const;
+    void setQuery(QDeclarativeGeoRouteQuery *query);
+    QDeclarativeGeoRouteQuery *query() const;
 
     void setAutoUpdate(bool autoUpdate);
     bool autoUpdate() const;
@@ -124,7 +124,7 @@ public:
     RouteError error() const;
 
     int count() const;
-    Q_INVOKABLE QDeclarativeGeoRoute* get(int index);
+    Q_INVOKABLE QDeclarativeGeoRoute *get(int index);
     Q_INVOKABLE void reset();
     Q_INVOKABLE void cancel();
 
@@ -161,7 +161,7 @@ private:
     QDeclarativeGeoRouteQuery *routeQuery_;
     QGeoRouteReply *reply_;
 
-    QList<QDeclarativeGeoRoute*> routes_;
+    QList<QDeclarativeGeoRoute *> routes_;
     bool autoUpdate_;
     Status status_;
     QString errorString_;
@@ -201,7 +201,7 @@ public:
     void classBegin() {}
     void componentComplete();
 
-    QGeoRouteRequest& routeRequest();
+    QGeoRouteRequest &routeRequest();
 
     enum TravelMode {
         CarTravel = QGeoRouteRequest::CarTravel,
@@ -264,12 +264,12 @@ public:
     QQmlListProperty<QDeclarativeCoordinate> waypoints();
     QQmlListProperty<QDeclarativeGeoBoundingBox> excludedAreas();
 
-    Q_INVOKABLE void addWaypoint(QDeclarativeCoordinate* waypoint);
-    Q_INVOKABLE void removeWaypoint(QDeclarativeCoordinate* waypoint);
+    Q_INVOKABLE void addWaypoint(QDeclarativeCoordinate *waypoint);
+    Q_INVOKABLE void removeWaypoint(QDeclarativeCoordinate *waypoint);
     Q_INVOKABLE void clearWaypoints();
 
-    Q_INVOKABLE void addExcludedArea(QDeclarativeGeoBoundingBox* area);
-    Q_INVOKABLE void removeExcludedArea(QDeclarativeGeoBoundingBox* area);
+    Q_INVOKABLE void addExcludedArea(QDeclarativeGeoBoundingBox *area);
+    Q_INVOKABLE void removeExcludedArea(QDeclarativeGeoBoundingBox *area);
     Q_INVOKABLE void clearExcludedAreas();
 
     Q_INVOKABLE void setFeatureWeight(FeatureType featureType, FeatureWeight featureWeight);
@@ -307,22 +307,22 @@ Q_SIGNALS:
     void queryDetailsChanged();
 
 private Q_SLOTS:
-    void waypointDestroyed(QObject* object);
+    void waypointDestroyed(QObject *object);
 
 private:
 
     static void waypoints_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *waypoint);
     static int waypoints_count(QQmlListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate* waypoints_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
+    static QDeclarativeCoordinate *waypoints_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
     static void waypoints_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
 
     static void exclusions_append(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, QDeclarativeGeoBoundingBox *area);
     static int exclusions_count(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop);
-    static QDeclarativeGeoBoundingBox* exclusions_at(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, int index);
+    static QDeclarativeGeoBoundingBox *exclusions_at(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop, int index);
     static void exclusions_clear(QQmlListProperty<QDeclarativeGeoBoundingBox> *prop);
 
-    QList<QDeclarativeCoordinate*> waypoints_;
-    QList<QDeclarativeGeoBoundingBox*> exclusions_;
+    QList<QDeclarativeCoordinate *> waypoints_;
+    QList<QDeclarativeGeoBoundingBox *> exclusions_;
 
     QGeoRouteRequest request_;
     bool complete_;

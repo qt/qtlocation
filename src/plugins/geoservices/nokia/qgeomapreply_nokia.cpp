@@ -78,7 +78,7 @@ QGeoMapReplyNokia::~QGeoMapReplyNokia()
 {
 }
 
-QNetworkReply* QGeoMapReplyNokia::networkReply() const
+QNetworkReply *QGeoMapReplyNokia::networkReply() const
 {
     return m_reply;
 }

@@ -73,10 +73,10 @@ class QDeclarativePlace : public QObject, public QQmlParserStatus
     Q_PROPERTY(QPlace place READ place WRITE setPlace)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
-    Q_PROPERTY(QDeclarativeGeoLocation* location READ location WRITE setLocation NOTIFY locationChanged)
-    Q_PROPERTY(QDeclarativeRatings* ratings READ ratings WRITE setRatings NOTIFY ratingsChanged)
+    Q_PROPERTY(QDeclarativeGeoLocation *location READ location WRITE setLocation NOTIFY locationChanged)
+    Q_PROPERTY(QDeclarativeRatings *ratings READ ratings WRITE setRatings NOTIFY ratingsChanged)
     Q_PROPERTY(QDeclarativeSupplier *supplier READ supplier WRITE setSupplier NOTIFY supplierChanged)
-    Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(QDeclarativePlaceIcon *icon READ icon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
     Q_PROPERTY(QString attribution READ attribution WRITE setAttribution NOTIFY attributionChanged)
@@ -101,8 +101,8 @@ class QDeclarativePlace : public QObject, public QQmlParserStatus
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    explicit QDeclarativePlace(QObject* parent = 0);
-    QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject* parent = 0);
+    explicit QDeclarativePlace(QObject *parent = 0);
+    QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent = 0);
     ~QDeclarativePlace();
 
     enum Status {Ready, Saving, Fetching, Removing, Error};
@@ -118,7 +118,7 @@ public:
     virtual void componentComplete();
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
-    QDeclarativeGeoServiceProvider* plugin() const;
+    QDeclarativeGeoServiceProvider *plugin() const;
 
     QDeclarativeReviewModel *reviewModel();
     QDeclarativePlaceImageModel *imageModel();
@@ -129,9 +129,9 @@ public:
 
     QQmlListProperty<QDeclarativeCategory> categories();
     static void category_append(QQmlListProperty<QDeclarativeCategory> *prop,
-                                  QDeclarativeCategory* value);
+                                  QDeclarativeCategory *value);
     static int category_count(QQmlListProperty<QDeclarativeCategory> *prop);
-    static QDeclarativeCategory* category_at(QQmlListProperty<QDeclarativeCategory> *prop, int index);
+    static QDeclarativeCategory *category_at(QQmlListProperty<QDeclarativeCategory> *prop, int index);
     static void category_clear(QQmlListProperty<QDeclarativeCategory> *prop);
 
     QDeclarativeGeoLocation *location();
@@ -217,7 +217,7 @@ private:
 private:
     QPlaceManager *manager();
 
-    QList<QDeclarativeCategory*> m_categories;
+    QList<QDeclarativeCategory *> m_categories;
     QDeclarativeGeoLocation *m_location;
     QDeclarativeRatings *m_ratings;
     QDeclarativeSupplier *m_supplier;

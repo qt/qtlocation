@@ -126,7 +126,7 @@ qreal QDeclarativeGeoRouteSegment::distance() const
     of this route segment.
 */
 
-QDeclarativeGeoManeuver* QDeclarativeGeoRouteSegment::maneuver() const
+QDeclarativeGeoManeuver *QDeclarativeGeoRouteSegment::maneuver() const
 {
     return maneuver_;
 }
@@ -154,22 +154,22 @@ QQmlListProperty<QDeclarativeCoordinate> QDeclarativeGeoRouteSegment::path()
 void QDeclarativeGeoRouteSegment::path_append(QQmlListProperty<QDeclarativeCoordinate> *prop,
                                               QDeclarativeCoordinate *coordinate)
 {
-    static_cast<QDeclarativeGeoRouteSegment*>(prop->object)->path_.append(coordinate);
+    static_cast<QDeclarativeGeoRouteSegment *>(prop->object)->path_.append(coordinate);
 }
 
 int QDeclarativeGeoRouteSegment::path_count(QQmlListProperty<QDeclarativeCoordinate> *prop)
 {
-    return static_cast<QDeclarativeGeoRouteSegment*>(prop->object)->path_.count();
+    return static_cast<QDeclarativeGeoRouteSegment *>(prop->object)->path_.count();
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoRouteSegment::path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index)
+QDeclarativeCoordinate *QDeclarativeGeoRouteSegment::path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index)
 {
-    return static_cast<QDeclarativeGeoRouteSegment*>(prop->object)->path_.at(index);
+    return static_cast<QDeclarativeGeoRouteSegment *>(prop->object)->path_.at(index);
 }
 
 void QDeclarativeGeoRouteSegment::path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop)
 {
-    static_cast<QDeclarativeGeoRouteSegment*>(prop->object)->path_.clear();
+    static_cast<QDeclarativeGeoRouteSegment *>(prop->object)->path_.clear();
 }
 
 #include "moc_qdeclarativegeoroutesegment_p.cpp"

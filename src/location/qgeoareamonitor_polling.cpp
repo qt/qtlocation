@@ -65,7 +65,7 @@ QGeoAreaMonitorPolling::~QGeoAreaMonitorPolling()
         location->stopUpdates();
 }
 
-void QGeoAreaMonitorPolling::setCenter(const QGeoCoordinate& coordinate)
+void QGeoAreaMonitorPolling::setCenter(const QGeoCoordinate &coordinate)
 {
     if (coordinate.isValid()) {
         QGeoAreaMonitor::setCenter(coordinate);

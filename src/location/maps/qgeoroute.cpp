@@ -95,7 +95,7 @@ QGeoRoute::~QGeoRoute()
     Assigns the contents of \a other to this route and returns a reference to
     this route.
 */
-QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
+QGeoRoute &QGeoRoute::operator= (const QGeoRoute & other)
 {
     if (this == &other)
         return *this;

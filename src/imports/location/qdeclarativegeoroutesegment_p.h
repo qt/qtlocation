@@ -56,7 +56,7 @@ class QDeclarativeGeoRouteSegment : public QObject
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
     Q_PROPERTY(QQmlListProperty<QDeclarativeCoordinate> path READ path)
-    Q_PROPERTY(QDeclarativeGeoManeuver* maneuver READ maneuver CONSTANT)
+    Q_PROPERTY(QDeclarativeGeoManeuver *maneuver READ maneuver CONSTANT)
 
 public:
     explicit QDeclarativeGeoRouteSegment(QObject *parent = 0);
@@ -66,17 +66,17 @@ public:
     int travelTime() const;
     qreal distance() const;
     QQmlListProperty<QDeclarativeCoordinate> path();
-    QDeclarativeGeoManeuver* maneuver() const;
+    QDeclarativeGeoManeuver *maneuver() const;
 
 private:
     static void path_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
     static int path_count(QQmlListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate* path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
+    static QDeclarativeCoordinate *path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
     static void path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
 
     QGeoRouteSegment segment_;
     QDeclarativeGeoManeuver *maneuver_;
-    QList<QDeclarativeCoordinate*> path_;
+    QList<QDeclarativeCoordinate *> path_;
 };
 
 QT_END_NAMESPACE

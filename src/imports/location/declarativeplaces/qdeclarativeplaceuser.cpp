@@ -68,7 +68,7 @@ QT_USE_NAMESPACE
     \snippet snippets/declarative/places.qml EditorialModel
 */
 
-QDeclarativePlaceUser::QDeclarativePlaceUser(QObject* parent)
+QDeclarativePlaceUser::QDeclarativePlaceUser(QObject *parent)
         : QObject(parent) {}
 
 QDeclarativePlaceUser::QDeclarativePlaceUser(const QPlaceUser &user,

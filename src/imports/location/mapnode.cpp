@@ -50,7 +50,7 @@
 #define GL_MULTISAMPLE 0x809D
 #endif
 
-MapNode::MapNode(QGeoMap* map): QSGGeometryNode(),
+MapNode::MapNode(QGeoMap *map): QSGGeometryNode(),
         m_fbo(0),
         m_fboSurface(0),
         m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4),

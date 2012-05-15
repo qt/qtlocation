@@ -68,14 +68,14 @@ class QDeclarativeCategory : public QObject, public QQmlParserStatus
     Q_PROPERTY(QString categoryId READ categoryId WRITE setCategoryId NOTIFY categoryIdChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(Visibility visibility READ visibility WRITE setVisibility NOTIFY visibilityChanged)
-    Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(QDeclarativePlaceIcon *icon READ icon WRITE setIcon NOTIFY iconChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    explicit QDeclarativeCategory(QObject* parent = 0);
-    QDeclarativeCategory(const QPlaceCategory &category, QDeclarativeGeoServiceProvider *plugin, QObject* parent = 0);
+    explicit QDeclarativeCategory(QObject *parent = 0);
+    QDeclarativeCategory(const QPlaceCategory &category, QDeclarativeGeoServiceProvider *plugin, QObject *parent = 0);
     ~QDeclarativeCategory();
 
     enum Visibility {
@@ -91,7 +91,7 @@ public:
     virtual void componentComplete();
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
-    QDeclarativeGeoServiceProvider* plugin() const;
+    QDeclarativeGeoServiceProvider *plugin() const;
 
     QPlaceCategory category();
     void setCategory(const QPlaceCategory &category);

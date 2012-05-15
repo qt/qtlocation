@@ -83,7 +83,7 @@ public:
     explicit QDeclarativeSearchModelBase(QObject *parent = 0);
     ~QDeclarativeSearchModelBase();
 
-    QDeclarativeGeoServiceProvider* plugin() const;
+    QDeclarativeGeoServiceProvider *plugin() const;
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
 
     QDeclarativeGeoBoundingArea *searchArea() const;

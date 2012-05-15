@@ -73,7 +73,7 @@ public:
     QGeoMapType(MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
     ~QGeoMapType();
 
-    QGeoMapType& operator = (const QGeoMapType &other);
+    QGeoMapType &operator = (const QGeoMapType &other);
 
     bool operator == (const QGeoMapType &other) const;
     bool operator != (const QGeoMapType &other) const;

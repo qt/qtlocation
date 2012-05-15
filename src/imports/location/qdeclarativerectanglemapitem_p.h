@@ -68,8 +68,8 @@ class QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeCoordinate* topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
-    Q_PROPERTY(QDeclarativeCoordinate* bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
+    Q_PROPERTY(QDeclarativeCoordinate *topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
+    Q_PROPERTY(QDeclarativeCoordinate *bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border)
 
@@ -77,14 +77,14 @@ public:
     explicit QDeclarativeRectangleMapItem(QQuickItem *parent = 0);
     ~QDeclarativeRectangleMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
     //from QuickItem
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
-    QDeclarativeCoordinate* topLeft();
+    QDeclarativeCoordinate *topLeft();
     void setTopLeft(QDeclarativeCoordinate *center);
 
-    QDeclarativeCoordinate* bottomRight();
+    QDeclarativeCoordinate *bottomRight();
     void setBottomRight(QDeclarativeCoordinate *center);
 
     QColor color() const;

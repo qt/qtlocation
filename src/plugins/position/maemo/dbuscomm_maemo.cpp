@@ -50,8 +50,8 @@ const QString DBusComm::positioningdService   = QString("com.nokia.positioningd.
 const QString DBusComm::positioningdPath      = QString("/com/nokia/positioningd/client");
 const QString DBusComm::positioningdInterface = QString("com.nokia.positioningd.client");
 
-DBusComm::DBusComm(QObject *parent) : QObject(parent), 
-                                      minimumUpdateInterval(1000), 
+DBusComm::DBusComm(QObject *parent) : QObject(parent),
+                                      minimumUpdateInterval(1000),
                                       availablePositioningMethods(QGeoPositionInfoSource::AllPositioningMethods)
 {
 }
@@ -67,7 +67,7 @@ int DBusComm::init()
     // Application auto-start by dbus may take a while, so try
     // connecting a few times.
 
-    int cnt = 10; 
+    int cnt = 10;
     positioningdProxy = new QDBusInterface(positioningdService,
                                            positioningdPath,
                                            positioningdInterface,
@@ -87,20 +87,20 @@ int DBusComm::init()
         cerr << "DBus connection to positioning daemon failed.\n";
         return -1;
     }
-    serviceDisconnectWatcher = new QDBusServiceWatcher (positioningdService, QDBusConnection::sessionBus(), 
+    serviceDisconnectWatcher = new QDBusServiceWatcher (positioningdService, QDBusConnection::sessionBus(),
                                                         QDBusServiceWatcher::WatchForUnregistration, this);
-    
+
     QObject::connect(serviceDisconnectWatcher, SIGNAL(serviceUnregistered ( const QString &)),
                      this,SLOT(onServiceDisconnect(const QString &)));
 
-    serviceConnectWatcher = new QDBusServiceWatcher (positioningdService, QDBusConnection::sessionBus(), 
+    serviceConnectWatcher = new QDBusServiceWatcher (positioningdService, QDBusConnection::sessionBus(),
                                                      QDBusServiceWatcher::WatchForRegistration, this);
-    
+
     QObject::connect(serviceConnectWatcher, SIGNAL(serviceRegistered ( const QString &)),
                      this,SLOT(onServiceConnect(const QString &)));
-    
 
-    if (createUniqueName() == false) { // set myService, myPath 
+
+    if (createUniqueName() == false) { // set myService, myPath
         return -1;
     }
 
@@ -194,12 +194,12 @@ int DBusComm::minimumInterval() const
 bool DBusComm::sendConfigRequest(Command command, QGeoPositionInfoSource::PositioningMethods method,
                                  int interval) const
 {
-    QDBusReply<int> reply; 
+    QDBusReply<int> reply;
     reply = positioningdProxy->call("configSession", clientId, command, int(method), interval);
-    
+
     //cout << "sessionConfigRequest cmd: cmd:" << command << " method: ";
     //cout << method << " interval: " << interval << "\n";
-    
+
     if (reply.isValid()) {
         int n = reply.value();
     } else {
@@ -213,9 +213,9 @@ bool DBusComm::sendConfigRequest(Command command, QGeoPositionInfoSource::Positi
 }
 
 
-QGeoPositionInfo& DBusComm::requestLastKnownPosition(bool satelliteMethodOnly)
+QGeoPositionInfo &DBusComm::requestLastKnownPosition(bool satelliteMethodOnly)
 {
-    QDBusReply<QByteArray> reply; 
+    QDBusReply<QByteArray> reply;
     reply = positioningdProxy->call("latestPosition", satelliteMethodOnly);
     static QGeoPositionInfo update;
 
@@ -232,7 +232,7 @@ QGeoPositionInfo& DBusComm::requestLastKnownPosition(bool satelliteMethodOnly)
     }
 
     return update;
-} 
+}
 
 
 bool DBusComm::createUniqueName()

@@ -90,7 +90,7 @@ public:
     QGeoTiledMapDataPrivate(QGeoTiledMapData *parent, QGeoTiledMappingManagerEngine *engine);
     ~QGeoTiledMapDataPrivate();
 
-    QGeoTileCache* tileCache();
+    QGeoTileCache *tileCache();
 
     void paintGL(QGLPainter *painter);
 

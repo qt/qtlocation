@@ -96,7 +96,7 @@ QGeoRouteSegment::~QGeoRouteSegment() {}
     Assigns \a other to this route segment object and then returns a
     reference to this route segment object.
 */
-QGeoRouteSegment& QGeoRouteSegment::operator= (const QGeoRouteSegment & other)
+QGeoRouteSegment &QGeoRouteSegment::operator= (const QGeoRouteSegment & other)
 {
     if (this == &other)
         return *this;

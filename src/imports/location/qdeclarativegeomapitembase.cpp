@@ -100,12 +100,12 @@ QDeclarativeGeoMapItemBase::~QDeclarativeGeoMapItemBase()
 */
 void QDeclarativeGeoMapItemBase::afterChildrenChanged()
 {
-    QList<QQuickItem*> kids = childItems();
+    QList<QQuickItem *> kids = childItems();
     if (kids.size() > 0) {
         bool printedWarning = false;
         foreach (QQuickItem *i, kids) {
             if (i->flags() & QQuickItem::ItemHasContents
-                    && !qobject_cast<QDeclarativeGeoMapMouseArea*>(i)) {
+                    && !qobject_cast<QDeclarativeGeoMapMouseArea *>(i)) {
                 if (!printedWarning) {
                     qmlInfo(this) << "Geographic map items do not support child items";
                     printedWarning = true;
@@ -198,7 +198,7 @@ void QDeclarativeGeoMapItemBase::baseCameraDataChanged(const QGeoCameraData &cam
 /*!
     \internal
 */
-void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate& coordinate, const QPointF& offset)
+void QDeclarativeGeoMapItemBase::setPositionOnMap(const QGeoCoordinate &coordinate, const QPointF &offset)
 {
     if (!map_ || !quickMap_)
         return;
@@ -239,7 +239,7 @@ QSGNode *QDeclarativeGeoMapItemBase::updatePaintNode(QSGNode *oldNode, UpdatePai
         return 0;
     }
 
-    QSGOpacityNode *opn = static_cast<QSGOpacityNode*>(oldNode);
+    QSGOpacityNode *opn = static_cast<QSGOpacityNode *>(oldNode);
     if (!opn)
         opn = new QSGOpacityNode();
 

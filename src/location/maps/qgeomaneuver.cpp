@@ -137,7 +137,7 @@ QGeoManeuver::~QGeoManeuver() {}
     Assigns \a other to this maneuver object and then returns
     a reference to this maneuver object.
 */
-QGeoManeuver& QGeoManeuver::operator= (const QGeoManeuver & other)
+QGeoManeuver &QGeoManeuver::operator= (const QGeoManeuver & other)
 {
     if (this == &other)
         return *this;

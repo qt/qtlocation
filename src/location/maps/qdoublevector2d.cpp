@@ -46,7 +46,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDoubleVector2D::QDoubleVector2D(const QDoubleVector3D& vector)
+QDoubleVector2D::QDoubleVector2D(const QDoubleVector3D &vector)
 {
     xp = vector.xp;
     yp = vector.yp;
@@ -89,7 +89,7 @@ void QDoubleVector2D::normalize()
     yp /= len;
 }
 
-double QDoubleVector2D::dotProduct(const QDoubleVector2D& v1, const QDoubleVector2D& v2)
+double QDoubleVector2D::dotProduct(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
 {
     return v1.xp * v2.xp + v1.yp * v2.yp;
 }

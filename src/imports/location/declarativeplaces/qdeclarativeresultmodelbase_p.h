@@ -59,7 +59,7 @@ public:
 
     explicit QDeclarativeResultModelBase(QObject *parent = 0);
 
-    QDeclarativeGeoServiceProvider* favoritesPlugin() const;
+    QDeclarativeGeoServiceProvider *favoritesPlugin() const;
     void setFavoritesPlugin(QDeclarativeGeoServiceProvider *plugin);
 
     QVariantMap favoritesMatchParameters() const;

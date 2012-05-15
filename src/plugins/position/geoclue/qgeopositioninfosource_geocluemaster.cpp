@@ -66,9 +66,9 @@ static void position_changed (GeocluePosition      *position,
     Q_UNUSED(position);
     if (!(fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
           fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)) {
-        static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->regularUpdateFailed();
+        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->regularUpdateFailed();
     } else {
-        static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->regularUpdateSucceeded(
+        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->regularUpdateSucceeded(
                     fields, timestamp, latitude, longitude, altitude, accuracy);
     }
 }
@@ -87,10 +87,10 @@ static void velocity_changed (GeoclueVelocity *velocity,
     Q_UNUSED(direction)
     Q_UNUSED(climb)
     if (!(fields & GEOCLUE_VELOCITY_FIELDS_SPEED)) {
-        static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->velocityUpdateFailed();
+        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->velocityUpdateFailed();
         return;
     }
-    static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->velocityUpdateSucceeded(speed);
+    static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->velocityUpdateSucceeded(speed);
 }
 
 // Callback for single async update
@@ -111,10 +111,10 @@ static void position_callback (GeocluePosition      *pos,
         g_error_free (error);
     if (!(fields & GEOCLUE_POSITION_FIELDS_LATITUDE &&
                    fields & GEOCLUE_POSITION_FIELDS_LONGITUDE)) {
-        static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->singleUpdateFailed();
+        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->singleUpdateFailed();
 
     } else {
-        static_cast<QGeoPositionInfoSourceGeoclueMaster*>(userdata)->singleUpdateSucceeded(
+        static_cast<QGeoPositionInfoSourceGeoclueMaster *>(userdata)->singleUpdateSucceeded(
                     fields, timestamp, latitude, longitude, altitude, accuracy);
     }
 }
@@ -232,8 +232,8 @@ void QGeoPositionInfoSourceGeoclueMaster::regularUpdateSucceeded(GeocluePosition
 bool QGeoPositionInfoSourceGeoclueMaster::tryGPS()
 {
     // Check if the gconf value is set properly
-    GConfClient* client;
-    gchar* device_name;
+    GConfClient *client;
+    gchar *device_name;
     client = gconf_client_get_default();
     device_name = gconf_client_get_string(client, "/apps/geoclue/master/org.freedesktop.Geoclue.GPSDevice", NULL);
     QString deviceName(QString::fromLatin1(device_name));
@@ -465,9 +465,9 @@ void QGeoPositionInfoSourceGeoclueMaster::stopUpdates()
     if (m_updateTimer.isActive())
         m_updateTimer.stop();
     if (m_pos) {
-        g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void*)position_changed, this);
+        g_signal_handlers_disconnect_by_func(G_OBJECT(m_pos), (void *)position_changed, this);
     } if (m_vel) {
-        g_signal_handlers_disconnect_by_func(G_OBJECT(m_vel), (void*)velocity_changed, this);
+        g_signal_handlers_disconnect_by_func(G_OBJECT(m_vel), (void *)velocity_changed, this);
     }
 }
 
@@ -523,7 +523,7 @@ QGeoPositionInfo QGeoPositionInfoSourceGeoclueMaster::geoclueToPositionInfo(
                                                double                latitude,
                                                double                longitude,
                                                double                altitude,
-                                               GeoclueAccuracy*      accuracy)
+                                               GeoclueAccuracy *     accuracy)
 {
     QGeoCoordinate coordinate(latitude, longitude);
     QDateTime dateTime = QDateTime();

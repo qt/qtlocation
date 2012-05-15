@@ -66,7 +66,7 @@
 QT_BEGIN_NAMESPACE
 
 QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
-    QGeoNetworkAccessManager* networkManager,
+    QGeoNetworkAccessManager *networkManager,
     const QMap<QString, QVariant> &parameters,
     QGeoServiceProvider::Error *error,
     QString *errorString)
@@ -110,7 +110,7 @@ QGeoTiledMappingManagerEngineNokia::QGeoTiledMappingManagerEngineNokia(
     if (parameters.contains(QLatin1String("mapping.cache.directory")))
         cacheDir = parameters.value(QLatin1String("mapping.cache.directory")).toString();
 
-    QGeoTileCache* tileCache = createTileCacheWithDir(cacheDir);
+    QGeoTileCache *tileCache = createTileCacheWithDir(cacheDir);
 
     if (parameters.contains(QLatin1String("mapping.cache.disk.size"))) {
       bool ok = false;

@@ -52,7 +52,7 @@ public:
     QGeoCameraCapabilitiesPrivate(const QGeoCameraCapabilitiesPrivate &other);
     ~QGeoCameraCapabilitiesPrivate();
 
-    QGeoCameraCapabilitiesPrivate& operator = (const QGeoCameraCapabilitiesPrivate &other);
+    QGeoCameraCapabilitiesPrivate &operator = (const QGeoCameraCapabilitiesPrivate &other);
 
     bool supportsBearing_;
     bool supportsRolling_;
@@ -91,7 +91,7 @@ QGeoCameraCapabilitiesPrivate::QGeoCameraCapabilitiesPrivate(const QGeoCameraCap
 
 QGeoCameraCapabilitiesPrivate::~QGeoCameraCapabilitiesPrivate() {}
 
-QGeoCameraCapabilitiesPrivate& QGeoCameraCapabilitiesPrivate::operator = (const QGeoCameraCapabilitiesPrivate &other)
+QGeoCameraCapabilitiesPrivate &QGeoCameraCapabilitiesPrivate::operator = (const QGeoCameraCapabilitiesPrivate &other)
 {
     if (this == &other)
         return *this;
@@ -144,7 +144,7 @@ QGeoCameraCapabilities::~QGeoCameraCapabilities() {}
     Assigns the contents of \a other to this camera capabilities object and
     returns a reference to this camera capabilities object.
 */
-QGeoCameraCapabilities& QGeoCameraCapabilities::operator = (const QGeoCameraCapabilities &other)
+QGeoCameraCapabilities &QGeoCameraCapabilities::operator = (const QGeoCameraCapabilities &other)
 {
     if (this == &other)
         return *this;

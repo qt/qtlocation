@@ -217,7 +217,7 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
         qDeleteAll(mapViews_);
     // remove any map items associations
     for (int i = 0; i < mapItems_.count(); ++i)
-        qobject_cast<QDeclarativeGeoMapItemBase*>(mapItems_.at(i))->setMap(0,0);
+        qobject_cast<QDeclarativeGeoMapItemBase *>(mapItems_.at(i))->setMap(0,0);
     mapItems_.clear();
 
     if (copyrightsWPtr_.data()) {
@@ -239,11 +239,11 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
     bool foundCopyrights = false;
 
     for (int i = 0; i < kids.size(); ++i) {
-        QDeclarativeGeoMapCopyrightNotice *copyrights = qobject_cast<QDeclarativeGeoMapCopyrightNotice*>(kids.at(i));
+        QDeclarativeGeoMapCopyrightNotice *copyrights = qobject_cast<QDeclarativeGeoMapCopyrightNotice *>(kids.at(i));
         if (copyrights) {
             foundCopyrights = true;
         } else {
-            QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
+            QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase *>(kids.at(i));
             if (mapItem) {
                 if (mapItem->z() > maxChildZ)
                     maxChildZ = mapItem->z();
@@ -260,9 +260,9 @@ void QDeclarativeGeoMap::onMapChildrenChanged()
             copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
             copyrights = copyrightsWPtr_.data();
             connect(map_,
-                    SIGNAL(copyrightsChanged(const QImage&, const QPoint&)),
+                    SIGNAL(copyrightsChanged(const QImage &, const QPoint &)),
                     copyrights,
-                    SLOT(copyrightsChanged(const QImage&, const QPoint&)));
+                    SLOT(copyrightsChanged(const QImage &, const QPoint &)));
         } else {
             // just re-set its parent.
             copyrights->setParent(this);
@@ -339,7 +339,7 @@ void QDeclarativeGeoMap::mouseReleaseEvent(QMouseEvent *event)
     \internal
     returns whether flickable used the event
 */
-bool QDeclarativeGeoMap::mouseEvent(QMouseEvent* event)
+bool QDeclarativeGeoMap::mouseEvent(QMouseEvent *event)
 {
     if (!mappingManagerInitialized_)
         return false;
@@ -364,7 +364,7 @@ bool QDeclarativeGeoMap::mouseEvent(QMouseEvent* event)
     further details.
 */
 
-QDeclarativeGeoMapGestureArea* QDeclarativeGeoMap::gesture()
+QDeclarativeGeoMapGestureArea *QDeclarativeGeoMap::gesture()
 {
     return gestureArea_;
 }
@@ -377,7 +377,7 @@ QDeclarativeGeoMapGestureArea* QDeclarativeGeoMap::gesture()
     This object will be deprecated, use the gesture object instead.
 */
 
-QDeclarativeGeoMapPinchArea* QDeclarativeGeoMap::pinch()
+QDeclarativeGeoMapPinchArea *QDeclarativeGeoMap::pinch()
 {
     return pinchArea_;
 }
@@ -390,7 +390,7 @@ QDeclarativeGeoMapPinchArea* QDeclarativeGeoMap::pinch()
     This object will be deprecated, use the gesture object instead.
 */
 
-QDeclarativeGeoMapFlickable* QDeclarativeGeoMap::flick()
+QDeclarativeGeoMapFlickable *QDeclarativeGeoMap::flick()
 {
     return flickable_;
 }
@@ -413,13 +413,13 @@ void QDeclarativeGeoMap::populateMap()
     QObjectList kids = children();
     for (int i = 0; i < kids.size(); ++i) {
         // dispatch items appropriately
-        QDeclarativeGeoMapItemView *mapView = qobject_cast<QDeclarativeGeoMapItemView*>(kids.at(i));
+        QDeclarativeGeoMapItemView *mapView = qobject_cast<QDeclarativeGeoMapItemView *>(kids.at(i));
         if (mapView) {
             mapViews_.append(mapView);
             setupMapView(mapView);
             continue;
         }
-        QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase*>(kids.at(i));
+        QDeclarativeGeoMapItemBase *mapItem = qobject_cast<QDeclarativeGeoMapItemBase *>(kids.at(i));
         if (mapItem) {
             addMapItem(mapItem);
         }
@@ -439,7 +439,7 @@ void QDeclarativeGeoMap::setupMapView(QDeclarativeGeoMapItemView *view)
 /*!
     \internal
 */
-QSGNode* QDeclarativeGeoMap::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *data)
 {
     Q_UNUSED(data)
     if (width() <= 0 || height() <= 0) {
@@ -507,9 +507,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     copyrightsWPtr_ = new QDeclarativeGeoMapCopyrightNotice(this);
     connect(map_,
-            SIGNAL(copyrightsChanged(const QImage&, const QPoint&)),
+            SIGNAL(copyrightsChanged(const QImage &, const QPoint &)),
             copyrightsWPtr_.data(),
-            SLOT(copyrightsChanged(const QImage&, const QPoint&)));
+            SLOT(copyrightsChanged(const QImage &, const QPoint &)));
 
     pinchArea_->zoomLevelLimits(mappingManager_->cameraCapabilities().minimumZoomLevel(),
                                 mappingManager_->cameraCapabilities().maximumZoomLevel());
@@ -569,7 +569,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     // Any map items that were added before the plugin was ready
     // need to have setMap called again
     foreach (QObject *obj, mapItems_) {
-        QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase*>(obj);
+        QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase *>(obj);
         if (item)
             item->setMap(this, map_);
     }
@@ -588,7 +588,7 @@ void QDeclarativeGeoMap::updateMapDisplay(const QRectF &target)
 /*!
     \internal
 */
-QDeclarativeGeoServiceProvider* QDeclarativeGeoMap::plugin() const
+QDeclarativeGeoServiceProvider *QDeclarativeGeoMap::plugin() const
 {
     return plugin_;
 }
@@ -775,7 +775,7 @@ void QDeclarativeGeoMap::setCenter(QDeclarativeCoordinate *center)
     emit centerChanged(center_);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMap::center()
+QDeclarativeCoordinate *QDeclarativeGeoMap::center()
 {
     if (!center_) {
         if (mappingManagerInitialized_)
@@ -928,7 +928,7 @@ QQmlListProperty<QDeclarativeGeoMapType> QDeclarativeGeoMap::supportedMapTypes()
     the current viewport.
 */
 
-QDeclarativeCoordinate* QDeclarativeGeoMap::toCoordinate(const QPointF &screenPosition) const
+QDeclarativeCoordinate *QDeclarativeGeoMap::toCoordinate(const QPointF &screenPosition) const
 {
     QGeoCoordinate coordinate;
     if (map_)
@@ -948,7 +948,7 @@ QDeclarativeCoordinate* QDeclarativeGeoMap::toCoordinate(const QPointF &screenPo
     current viewport.
 */
 
-QPointF QDeclarativeGeoMap::toScreenPosition(QDeclarativeCoordinate* coordinate) const
+QPointF QDeclarativeGeoMap::toScreenPosition(QDeclarativeCoordinate *coordinate) const
 {
     QPointF point(qQNaN(), qQNaN());
     if (coordinate && map_)
@@ -1041,7 +1041,7 @@ void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
     \sa addMapItem, removeMapItem, clearMapItems
 */
 
-QList<QObject*> QDeclarativeGeoMap::mapItems()
+QList<QObject *> QDeclarativeGeoMap::mapItems()
 {
     return mapItems_;
 }
@@ -1085,8 +1085,8 @@ void QDeclarativeGeoMap::clearMapItems()
         return;
     updateMutex_.lock();
     for (int i = 0; i < mapItems_.count(); ++i) {
-        qobject_cast<QDeclarativeGeoMapItemBase*>(mapItems_.at(i))->setParentItem(0);
-        qobject_cast<QDeclarativeGeoMapItemBase*>(mapItems_.at(i))->setMap(0, 0);
+        qobject_cast<QDeclarativeGeoMapItemBase *>(mapItems_.at(i))->setParentItem(0);
+        qobject_cast<QDeclarativeGeoMapItemBase *>(mapItems_.at(i))->setMap(0, 0);
     }
     mapItems_.clear();
     emit mapItemsChanged();
@@ -1162,9 +1162,9 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     QPointF centerPt;
     int itemCount = 0;
     for (int i = 0; i < mapItems_.count(); ++i) {
-        QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase*>(mapItems_.at(i));
+        QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase *>(mapItems_.at(i));
         // account for the special case - circle
-        QDeclarativeCircleMapItem *circleItem = qobject_cast<QDeclarativeCircleMapItem*>(mapItems_.at(i));
+        QDeclarativeCircleMapItem *circleItem = qobject_cast<QDeclarativeCircleMapItem *>(mapItems_.at(i));
         if ((!circleItem || !circleItem->center()) && !item)
             continue;
         if (circleItem && circleItem->center()) {

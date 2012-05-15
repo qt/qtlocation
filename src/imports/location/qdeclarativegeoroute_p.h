@@ -67,27 +67,27 @@ public:
     QDeclarativeGeoRoute(const QGeoRoute &route, QObject *parent = 0);
     ~QDeclarativeGeoRoute();
 
-    QDeclarativeGeoBoundingBox* bounds() const;
+    QDeclarativeGeoBoundingBox *bounds() const;
     int travelTime() const;
     qreal distance() const;
     QQmlListProperty<QDeclarativeCoordinate> path();
     QQmlListProperty<QDeclarativeGeoRouteSegment> segments();
 
-    void appendPath(QDeclarativeCoordinate* coordinate);
+    void appendPath(QDeclarativeCoordinate *coordinate);
     void clearPath();
 
-    void appendSegment(QDeclarativeGeoRouteSegment* segment);
+    void appendSegment(QDeclarativeGeoRouteSegment *segment);
     void clearSegments();
 
 private:
     static void path_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
     static int path_count(QQmlListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate* path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
+    static QDeclarativeCoordinate *path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
     static void path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
 
     static void segments_append(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, QDeclarativeGeoRouteSegment *segment);
     static int segments_count(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
-    static QDeclarativeGeoRouteSegment* segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, int index);
+    static QDeclarativeGeoRouteSegment *segments_at(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop, int index);
     static void segments_clear(QQmlListProperty<QDeclarativeGeoRouteSegment> *prop);
 
     void init();
@@ -95,8 +95,8 @@ private:
 
     QGeoRoute route_;
     QDeclarativeGeoBoundingBox *bounds_;
-    QList<QDeclarativeCoordinate*> path_;
-    QList<QDeclarativeGeoRouteSegment*> segments_;
+    QList<QDeclarativeCoordinate *> path_;
+    QList<QDeclarativeGeoRouteSegment *> segments_;
     friend class QDeclarativeRouteMapItem;
 };
 

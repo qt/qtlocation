@@ -87,7 +87,7 @@ QT_USE_NAMESPACE
 
 */
 
-QDeclarativeGeoLocation::QDeclarativeGeoLocation(QObject* parent)
+QDeclarativeGeoLocation::QDeclarativeGeoLocation(QObject *parent)
     : QObject(parent), m_address(0), m_coordinate(0), m_boundingBox(0)
 
 {

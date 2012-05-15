@@ -111,12 +111,12 @@ void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
 {
     if (!model.isValid() || model == modelVariant_)
         return;
-    QObject *object = qvariant_cast<QObject*>(model);
+    QObject *object = qvariant_cast<QObject *>(model);
     QAbstractItemModel *itemModel;
     QListModelInterface *listModel;
     if (object) {
-        itemModel = qobject_cast<QAbstractItemModel*>(object);
-        listModel = qobject_cast<QListModelInterface*>(object);
+        itemModel = qobject_cast<QAbstractItemModel *>(object);
+        listModel = qobject_cast<QListModelInterface *>(object);
     } else {
         return;
     }
@@ -194,7 +194,7 @@ void QDeclarativeGeoMapItemView::itemModelRowsRemoved(QModelIndex, int start, in
     }
 }
 
-void QDeclarativeGeoMapItemView::listModelItemsChanged(int index, int count, const QList<int>&)
+void QDeclarativeGeoMapItemView::listModelItemsChanged(int index, int count, const QList<int> &)
 {
     if (!componentCompleted_ || !map_ || !delegate_ || !listModel_)
         return;
@@ -232,7 +232,7 @@ void QDeclarativeGeoMapItemView::listModelItemsInserted(int index, int count)
 
 void QDeclarativeGeoMapItemView::listModelItemsMoved(int from, int to, int count)
 {
-    QList<QDeclarativeGeoMapItemBase*> temp;
+    QList<QDeclarativeGeoMapItemBase *> temp;
 
     for (int i = 0; i < count; ++i)
         temp.append(mapItemList_.takeAt(from));
@@ -268,7 +268,7 @@ void QDeclarativeGeoMapItemView::listModelItemsRemoved(int index, int count)
     MapItem -derived element as the root element.
 
 */
-QQmlComponent* QDeclarativeGeoMapItemView::delegate() const
+QQmlComponent *QDeclarativeGeoMapItemView::delegate() const
 {
     return delegate_;
 }
@@ -286,7 +286,7 @@ void QDeclarativeGeoMapItemView::setDelegate(QQmlComponent *delegate)
 /*!
     \internal
 */
-void QDeclarativeGeoMapItemView::setMapData(QDeclarativeGeoMap* map)
+void QDeclarativeGeoMapItemView::setMapData(QDeclarativeGeoMap *map)
 {
     if (!map || map_) // changing map on the fly not supported
         return;
@@ -380,7 +380,7 @@ QDeclarativeGeoMapItemBase *QDeclarativeGeoMapItemView::createItemFromListModel(
         delete itemContext;
         return 0;
     }
-    QDeclarativeGeoMapItemBase *declMapObj = qobject_cast<QDeclarativeGeoMapItemBase*>(obj);
+    QDeclarativeGeoMapItemBase *declMapObj = qobject_cast<QDeclarativeGeoMapItemBase *>(obj);
     if (!declMapObj) {
         qWarning() << "QDeclarativeGeoMapItemView map item delegate is of unsupported type.";
         delete itemContext;
@@ -394,7 +394,7 @@ QDeclarativeGeoMapItemBase *QDeclarativeGeoMapItemView::createItemFromListModel(
 /*!
     \internal
 */
-QDeclarativeGeoMapItemBase* QDeclarativeGeoMapItemView::createItemFromItemModel(int modelRow)
+QDeclarativeGeoMapItemBase *QDeclarativeGeoMapItemView::createItemFromItemModel(int modelRow)
 {
     if (!delegate_ || !itemModel_)
         return 0;
@@ -430,7 +430,7 @@ QDeclarativeGeoMapItemBase* QDeclarativeGeoMapItemView::createItemFromItemModel(
         delete itemContext;
         return 0;
     }
-    QDeclarativeGeoMapItemBase *declMapObj = qobject_cast<QDeclarativeGeoMapItemBase*>(obj);
+    QDeclarativeGeoMapItemBase *declMapObj = qobject_cast<QDeclarativeGeoMapItemBase *>(obj);
     if (!declMapObj) {
         qWarning() << "QDeclarativeGeoMapItemView map item delegate is of unsupported type.";
         delete itemContext;

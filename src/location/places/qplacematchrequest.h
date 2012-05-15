@@ -62,7 +62,7 @@ public:
     QPlaceMatchRequest(const QPlaceMatchRequest &other);
 
 
-    QPlaceMatchRequest& operator=(const QPlaceMatchRequest &other);
+    QPlaceMatchRequest &operator=(const QPlaceMatchRequest &other);
 
     bool operator==(const QPlaceMatchRequest &other) const;
     bool operator!=(const QPlaceMatchRequest &other) const;

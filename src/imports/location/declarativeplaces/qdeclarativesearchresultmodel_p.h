@@ -83,9 +83,9 @@ public:
 
     QQmlListProperty<QDeclarativeCategory> categories();
     static void categories_append(QQmlListProperty<QDeclarativeCategory> *list,
-                                  QDeclarativeCategory* category);
+                                  QDeclarativeCategory *category);
     static int categories_count(QQmlListProperty<QDeclarativeCategory> *list);
-    static QDeclarativeCategory* category_at(QQmlListProperty<QDeclarativeCategory> *list, int index);
+    static QDeclarativeCategory *category_at(QQmlListProperty<QDeclarativeCategory> *list, int index);
     static void categories_clear(QQmlListProperty<QDeclarativeCategory> *list);
 
     QDeclarativeSearchResultModel::RelevanceHint relevanceHint() const;
@@ -122,7 +122,7 @@ private:
     };
 
     int getRow(const QString &placeId) const;
-    QList<QDeclarativeCategory*> m_categories;
+    QList<QDeclarativeCategory *> m_categories;
     QtLocation::VisibilityScope m_visibilityScope;
 };
 

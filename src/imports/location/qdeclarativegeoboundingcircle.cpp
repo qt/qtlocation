@@ -97,7 +97,7 @@ QDeclarativeGeoBoundingCircle::QDeclarativeGeoBoundingCircle(const QGeoBoundingC
     For details on how to use this property to interface between C++ and QML see
     "\l {location-cpp-qml.html#boundingcircle} {Interfaces between C++ and QML Code}".
 */
-void QDeclarativeGeoBoundingCircle::setCircle(const QGeoBoundingCircle& circle)
+void QDeclarativeGeoBoundingCircle::setCircle(const QGeoBoundingCircle &circle)
 {
     QGeoBoundingCircle oldCircle = m_circle;
     m_circle = circle;
@@ -138,7 +138,7 @@ bool QDeclarativeGeoBoundingCircle::contains(QDeclarativeCoordinate *coordinate)
     Note: this property's changed() signal is currently emitted only if the
     whole element changes, not if only the contents of the element change.
 */
-QDeclarativeCoordinate* QDeclarativeGeoBoundingCircle::center()
+QDeclarativeCoordinate *QDeclarativeGeoBoundingCircle::center()
 {
     if (!m_center) {
         m_center = new QDeclarativeCoordinate(m_circle.center(), this);

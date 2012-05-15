@@ -89,7 +89,7 @@ void QGeoIntrinsicNetworkAccessManager::configure(const QMap<QString, QVariant> 
     }
 }
 
-QNetworkReply* QGeoIntrinsicNetworkAccessManager::get(const QNetworkRequest& request)
+QNetworkReply *QGeoIntrinsicNetworkAccessManager::get(const QNetworkRequest &request)
 {
     return m_networkManager->get(request);
 }

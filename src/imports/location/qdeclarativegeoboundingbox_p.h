@@ -56,32 +56,32 @@ class QDeclarativeGeoBoundingBox : public QDeclarativeGeoBoundingArea
     Q_OBJECT
 
     Q_PROPERTY(QGeoBoundingBox box READ box WRITE setBox)
-    Q_PROPERTY(QDeclarativeCoordinate* bottomLeft READ bottomLeft WRITE setBottomLeft NOTIFY bottomLeftChanged)
-    Q_PROPERTY(QDeclarativeCoordinate* bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
-    Q_PROPERTY(QDeclarativeCoordinate* topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
-    Q_PROPERTY(QDeclarativeCoordinate* topRight READ topRight WRITE setTopRight NOTIFY topRightChanged)
-    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(QDeclarativeCoordinate *bottomLeft READ bottomLeft WRITE setBottomLeft NOTIFY bottomLeftChanged)
+    Q_PROPERTY(QDeclarativeCoordinate *bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
+    Q_PROPERTY(QDeclarativeCoordinate *topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
+    Q_PROPERTY(QDeclarativeCoordinate *topRight READ topRight WRITE setTopRight NOTIFY topRightChanged)
+    Q_PROPERTY(QDeclarativeCoordinate *center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(double height READ height WRITE setHeight NOTIFY heightChanged)
     Q_PROPERTY(double width READ width WRITE setWidth NOTIFY widthChanged)
 
 public:
-    explicit QDeclarativeGeoBoundingBox(QObject* parent = 0);
+    explicit QDeclarativeGeoBoundingBox(QObject *parent = 0);
     explicit QDeclarativeGeoBoundingBox(const QGeoBoundingBox &box, QObject *parent = 0);
-    void setBox(const QGeoBoundingBox& box);
+    void setBox(const QGeoBoundingBox &box);
     QGeoBoundingBox box();
     QGeoBoundingArea area() const;
 
-    Q_INVOKABLE bool contains(QDeclarativeCoordinate* coordinate);
-    QDeclarativeCoordinate* bottomLeft();
-    void setBottomLeft(QDeclarativeCoordinate* coordinate);
-    QDeclarativeCoordinate* bottomRight();
-    void setBottomRight(QDeclarativeCoordinate* coordinate);
-    QDeclarativeCoordinate* topLeft();
-    void setTopLeft(QDeclarativeCoordinate* coordinate);
-    QDeclarativeCoordinate* topRight();
-    void setTopRight(QDeclarativeCoordinate* coordinate);
-    QDeclarativeCoordinate* center();
-    void setCenter(QDeclarativeCoordinate* coordinate);
+    Q_INVOKABLE bool contains(QDeclarativeCoordinate *coordinate);
+    QDeclarativeCoordinate *bottomLeft();
+    void setBottomLeft(QDeclarativeCoordinate *coordinate);
+    QDeclarativeCoordinate *bottomRight();
+    void setBottomRight(QDeclarativeCoordinate *coordinate);
+    QDeclarativeCoordinate *topLeft();
+    void setTopLeft(QDeclarativeCoordinate *coordinate);
+    QDeclarativeCoordinate *topRight();
+    void setTopRight(QDeclarativeCoordinate *coordinate);
+    QDeclarativeCoordinate *center();
+    void setCenter(QDeclarativeCoordinate *coordinate);
     double height();
     void setHeight(double height);
     double width();

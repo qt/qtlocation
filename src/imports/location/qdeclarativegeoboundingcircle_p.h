@@ -57,19 +57,19 @@ class QDeclarativeGeoBoundingCircle : public QDeclarativeGeoBoundingArea
     Q_OBJECT
 
     Q_PROPERTY(QGeoBoundingCircle circle READ circle WRITE setCircle)
-    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(QDeclarativeCoordinate *center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
 
 public:
-    explicit QDeclarativeGeoBoundingCircle(QObject* parent = 0);
+    explicit QDeclarativeGeoBoundingCircle(QObject *parent = 0);
     explicit QDeclarativeGeoBoundingCircle(const QGeoBoundingCircle &circle, QObject *parent = 0);
-    void setCircle(const QGeoBoundingCircle& circle);
+    void setCircle(const QGeoBoundingCircle &circle);
     QGeoBoundingCircle circle() const;
     QGeoBoundingArea area() const;
 
-    Q_INVOKABLE bool contains(QDeclarativeCoordinate* coordinate);
-    QDeclarativeCoordinate* center();
-    void setCenter(QDeclarativeCoordinate* coordinate);
+    Q_INVOKABLE bool contains(QDeclarativeCoordinate *coordinate);
+    QDeclarativeCoordinate *center();
+    void setCenter(QDeclarativeCoordinate *coordinate);
     qreal radius() const;
     void setRadius(qreal radius);
 

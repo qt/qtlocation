@@ -101,17 +101,17 @@ class QDeclarativeGeoMap : public QQuickItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeGeoMapGestureArea* gesture READ gesture CONSTANT)
-    Q_PROPERTY(QDeclarativeGeoMapPinchArea* pinch READ pinch CONSTANT)
-    Q_PROPERTY(QDeclarativeGeoMapFlickable* flick READ flick CONSTANT)
+    Q_PROPERTY(QDeclarativeGeoMapGestureArea *gesture READ gesture CONSTANT)
+    Q_PROPERTY(QDeclarativeGeoMapPinchArea *pinch READ pinch CONSTANT)
+    Q_PROPERTY(QDeclarativeGeoMapFlickable *flick READ flick CONSTANT)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel NOTIFY minimumZoomLevelChanged)
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel NOTIFY maximumZoomLevelChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
-    Q_PROPERTY(QDeclarativeGeoMapType* activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
+    Q_PROPERTY(QDeclarativeGeoMapType *activeMapType READ activeMapType WRITE setActiveMapType NOTIFY activeMapTypeChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
-    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
-    Q_PROPERTY(QList<QObject*> mapItems READ mapItems NOTIFY mapItemsChanged)
+    Q_PROPERTY(QDeclarativeCoordinate *center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(QList<QObject *> mapItems READ mapItems NOTIFY mapItemsChanged)
     // Tilt and bearing are not part of supported API
     Q_PROPERTY(qreal tilt READ tilt WRITE setTilt NOTIFY tiltChanged)
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
@@ -132,15 +132,15 @@ public:
     void itemChange(ItemChange change, const ItemChangeData & data);
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
-    QDeclarativeGeoServiceProvider* plugin() const;
+    QDeclarativeGeoServiceProvider *plugin() const;
 
-    void setActiveMapType(QDeclarativeGeoMapType* mapType);
-    QDeclarativeGeoMapType* activeMapType()const;
+    void setActiveMapType(QDeclarativeGeoMapType *mapType);
+    QDeclarativeGeoMapType *activeMapType() const;
 
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
 
-    QDeclarativeGeoMapFlickable* flick();
+    QDeclarativeGeoMapFlickable *flick();
 
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
@@ -152,23 +152,23 @@ public:
     qreal tilt() const;
 
     void setCenter(QDeclarativeCoordinate *center);
-    QDeclarativeCoordinate* center();
+    QDeclarativeCoordinate *center();
 
     QQmlListProperty<QDeclarativeGeoMapType> supportedMapTypes();
 
     Q_INVOKABLE void removeMapItem(QDeclarativeGeoMapItemBase *item);
     Q_INVOKABLE void addMapItem(QDeclarativeGeoMapItemBase *item);
     Q_INVOKABLE void clearMapItems();
-    QList<QObject*> mapItems();
+    QList<QObject *> mapItems();
 
-    Q_INVOKABLE QDeclarativeCoordinate* toCoordinate(const QPointF &screenPosition) const;
-    Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate* coordinate) const;
+    Q_INVOKABLE QDeclarativeCoordinate *toCoordinate(const QPointF &screenPosition) const;
+    Q_INVOKABLE QPointF toScreenPosition(QDeclarativeCoordinate *coordinate) const;
 
     // callback for map mouse areas
-    bool mouseEvent(QMouseEvent* event);
+    bool mouseEvent(QMouseEvent *event);
 
-    QDeclarativeGeoMapPinchArea* pinch();
-    QDeclarativeGeoMapGestureArea* gesture();
+    QDeclarativeGeoMapPinchArea *pinch();
+    QDeclarativeGeoMapGestureArea *gesture();
 
     Q_INVOKABLE void fitViewportToMapItems();
 
@@ -197,7 +197,7 @@ Q_SIGNALS:
     void mapItemsChanged();
 
 private Q_SLOTS:
-    void updateMapDisplay(const QRectF& target);
+    void updateMapDisplay(const QRectF &target);
     void centerLatitudeChanged(double latitude);
     void centerLongitudeChanged(double longitude);
     void centerAltitudeChanged(double altitude);
@@ -225,10 +225,10 @@ private:
     QPointer<QDeclarativeCoordinate> center_;
 
     QDeclarativeGeoMapType *activeMapType_;
-    QList<QDeclarativeGeoMapType*> supportedMapTypes_;
+    QList<QDeclarativeGeoMapType *> supportedMapTypes_;
     bool componentCompleted_;
     bool mappingManagerInitialized_;
-    QList<QDeclarativeGeoMapItemView*> mapViews_;
+    QList<QDeclarativeGeoMapItemView *> mapViews_;
 
     QDeclarativeGeoMapGestureArea *gestureArea_;
     QDeclarativeGeoMapFlickable *flickable_;
@@ -245,7 +245,7 @@ private:
     QGeoMap *map_;
     QWeakPointer<QDeclarativeGeoMapCopyrightNotice> copyrightsWPtr_;
 
-    QList<QObject*> mapItems_;
+    QList<QObject *> mapItems_;
 
     QMutex updateMutex_;
     friend class QDeclarativeGeoMapItem;

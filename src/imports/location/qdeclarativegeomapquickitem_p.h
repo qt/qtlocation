@@ -54,22 +54,22 @@ QT_BEGIN_NAMESPACE
 class QDeclarativeGeoMapQuickItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeCoordinate* coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
+    Q_PROPERTY(QDeclarativeCoordinate *coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
     Q_PROPERTY(QPointF anchorPoint READ anchorPoint WRITE setAnchorPoint NOTIFY anchorPointChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
-    Q_PROPERTY(QQuickItem* sourceItem READ sourceItem WRITE setSourceItem NOTIFY sourceItemChanged)
+    Q_PROPERTY(QQuickItem *sourceItem READ sourceItem WRITE setSourceItem NOTIFY sourceItemChanged)
 
 public:
     explicit QDeclarativeGeoMapQuickItem(QQuickItem *parent = 0);
     ~QDeclarativeGeoMapQuickItem();
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
 
     void setCoordinate(QDeclarativeCoordinate *coordinate);
-    QDeclarativeCoordinate* coordinate();
+    QDeclarativeCoordinate *coordinate();
 
-    void setSourceItem(QQuickItem* sourceItem);
-    QQuickItem* sourceItem();
+    void setSourceItem(QQuickItem *sourceItem);
+    QQuickItem *sourceItem();
 
     void setAnchorPoint(const QPointF &anchorPoint);
     QPointF anchorPoint() const;

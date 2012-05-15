@@ -51,7 +51,7 @@ QPlaceIconPrivate::QPlaceIconPrivate()
 {
 }
 
-QPlaceIconPrivate::QPlaceIconPrivate(const QPlaceIconPrivate&other)
+QPlaceIconPrivate::QPlaceIconPrivate(const QPlaceIconPrivate &other)
     : QSharedData(other),
       manager(other.manager),
       parameters(other.parameters)

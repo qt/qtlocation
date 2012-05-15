@@ -106,7 +106,7 @@ QT_BEGIN_NAMESPACE
     \endcode
 */
 
-QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject* parent)
+QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject *parent)
     : QAbstractListModel(parent),
       autoUpdate_(false),
       complete_(false),
@@ -149,9 +149,9 @@ void QDeclarativeGeocodeModel::componentComplete()
 */
 QGeoBoundingArea QDeclarativeGeocodeModel::boundingArea()
 {
-    if (qobject_cast<QDeclarativeGeoBoundingBox*>(boundingArea_) && boundingBox_.isValid()) {
+    if (qobject_cast<QDeclarativeGeoBoundingBox *>(boundingArea_) && boundingBox_.isValid()) {
         return boundingBox_;
-    } else if (qobject_cast<QDeclarativeGeoBoundingCircle*>(boundingArea_) && boundingCircle_.isValid()) {
+    } else if (qobject_cast<QDeclarativeGeoBoundingCircle *>(boundingArea_) && boundingCircle_.isValid()) {
         return boundingCircle_;
     }
     return QGeoBoundingArea();
@@ -326,19 +326,19 @@ void QDeclarativeGeocodeModel::pluginReady()
     \sa Plugin
 */
 
-QDeclarativeGeoServiceProvider* QDeclarativeGeocodeModel::plugin() const
+QDeclarativeGeoServiceProvider *QDeclarativeGeocodeModel::plugin() const
 {
     return plugin_;
 }
 
-void QDeclarativeGeocodeModel::setBounds(QObject* bounds)
+void QDeclarativeGeocodeModel::setBounds(QObject *bounds)
 {
     if (boundingArea_ == bounds)
             return;
-    if (qobject_cast<QDeclarativeGeoBoundingBox*>(bounds)) {
-        boundingBox_ = qobject_cast<QDeclarativeGeoBoundingBox*>(bounds)->box();
-    } else if (qobject_cast<QDeclarativeGeoBoundingCircle*>(bounds)) {
-        boundingCircle_ = qobject_cast<QDeclarativeGeoBoundingCircle*>(bounds)->circle();
+    if (qobject_cast<QDeclarativeGeoBoundingBox *>(bounds)) {
+        boundingBox_ = qobject_cast<QDeclarativeGeoBoundingBox *>(bounds)->box();
+    } else if (qobject_cast<QDeclarativeGeoBoundingCircle *>(bounds)) {
+        boundingCircle_ = qobject_cast<QDeclarativeGeoBoundingCircle *>(bounds)->circle();
     } else {
         qmlInfo(this) << tr("Unsupported bound type (Box and Circle supported)");
         return;
@@ -358,7 +358,7 @@ void QDeclarativeGeocodeModel::setBounds(QObject* bounds)
 
 */
 
-QObject* QDeclarativeGeocodeModel::bounds() const
+QObject *QDeclarativeGeocodeModel::bounds() const
 {
     return boundingArea_;
 }
@@ -518,7 +518,7 @@ int QDeclarativeGeocodeModel::count() const
     If you access out of bounds, a zero (null object) is returned and a warning is issued.
 */
 
-QDeclarativeGeoLocation* QDeclarativeGeocodeModel::get(int index)
+QDeclarativeGeoLocation *QDeclarativeGeocodeModel::get(int index)
 {
     if (index < 0 || index >= declarativeLocations_.count()) {
         qmlInfo(this) << tr("Error, too big or small index in get(): ") << index;
@@ -636,28 +636,28 @@ QVariant QDeclarativeGeocodeModel::query() const
     return queryVariant_;
 }
 
-void QDeclarativeGeocodeModel::setQuery(const QVariant& query)
+void QDeclarativeGeocodeModel::setQuery(const QVariant &query)
 {
     if (query == queryVariant_)
         return;
-    QObject *object = qvariant_cast<QObject*>(query);
-    if (qobject_cast<QDeclarativeCoordinate*>(object)) {
+    QObject *object = qvariant_cast<QObject *>(query);
+    if (qobject_cast<QDeclarativeCoordinate *>(object)) {
         if (coordinate_)
             coordinate_->disconnect(this);
         if (address_)
             address_->disconnect(this);
-        coordinate_ = qobject_cast<QDeclarativeCoordinate*>(object);
+        coordinate_ = qobject_cast<QDeclarativeCoordinate *>(object);
         connect(coordinate_, SIGNAL(latitudeChanged(double)), this, SLOT(queryContentChanged()));
         connect(coordinate_, SIGNAL(longitudeChanged(double)), this, SLOT(queryContentChanged()));
         connect(coordinate_, SIGNAL(altitudeChanged(double)), this, SLOT(queryContentChanged()));
         address_ = 0;
         searchString_.clear();
-    } else if (qobject_cast<QDeclarativeGeoAddress*>(object)) {
+    } else if (qobject_cast<QDeclarativeGeoAddress *>(object)) {
         if (address_)
             address_->disconnect(this);
         if (coordinate_)
             coordinate_->disconnect(this);
-        address_ = qobject_cast<QDeclarativeGeoAddress*>(object);
+        address_ = qobject_cast<QDeclarativeGeoAddress *>(object);
         connect(address_, SIGNAL(countryChanged()), this, SLOT(queryContentChanged()));
         connect(address_, SIGNAL(countryCodeChanged()), this, SLOT(queryContentChanged()));
         connect(address_, SIGNAL(stateChanged()), this, SLOT(queryContentChanged()));

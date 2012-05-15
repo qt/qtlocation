@@ -128,7 +128,7 @@ inline static qreal qgeocoordinate_radToDeg(qreal rad)
     return rad * 180 / M_PI;
 }
 
-static void calculatePeripheralPoints(QList<QGeoCoordinate>& path, const QGeoCoordinate& center, qreal distance, int steps)
+static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoordinate &center, qreal distance, int steps)
 {
     // get angular distance in radians
     distance = distance / (qgeocoordinate_EARTH_MEAN_RADIUS * 1000);
@@ -220,7 +220,7 @@ void QDeclarativeCircleMapItem::updateMapItemAssumeDirty()
     updateMapItem();
 }
 
-void QDeclarativeCircleMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
+void QDeclarativeCircleMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
@@ -256,7 +256,7 @@ void QDeclarativeCircleMapItem::setCenter(QDeclarativeCoordinate *center)
     emit centerChanged(center_);
 }
 
-QDeclarativeCoordinate* QDeclarativeCircleMapItem::center()
+QDeclarativeCoordinate *QDeclarativeCircleMapItem::center()
 {
     return center_;
 }
@@ -319,11 +319,11 @@ qreal QDeclarativeCircleMapItem::radius() const
 /*!
     \internal
 */
-QSGNode* QDeclarativeCircleMapItem::updateMapItemPaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+QSGNode *QDeclarativeCircleMapItem::updateMapItemPaintNode(QSGNode *oldNode, UpdatePaintNodeData *data)
 {
     Q_UNUSED(data);
 
-    MapPolygonNode *node = static_cast<MapPolygonNode*>(oldNode);
+    MapPolygonNode *node = static_cast<MapPolygonNode *>(oldNode);
 
     if (!node)
         node = new MapPolygonNode();
@@ -361,7 +361,7 @@ void QDeclarativeCircleMapItem::updateMapItem()
         borderGeometry_.updateSourcePoints(*map(), closedPath);
         borderGeometry_.updateScreenPoints(*map(), border_.width());
 
-        QList<QGeoMapItemGeometry*> geoms;
+        QList<QGeoMapItemGeometry *> geoms;
         geoms << &geometry_ << &borderGeometry_;
         QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
 

@@ -65,30 +65,30 @@ class QDeclarativeGeoAddress : public QObject
     Q_PROPERTY(bool isTextGenerated READ isTextGenerated NOTIFY isTextGeneratedChanged)
 
 public:
-    explicit QDeclarativeGeoAddress(QObject* parent = 0);
-    QDeclarativeGeoAddress(const QGeoAddress& address, QObject* parent = 0);
+    explicit QDeclarativeGeoAddress(QObject *parent = 0);
+    QDeclarativeGeoAddress(const QGeoAddress &address, QObject *parent = 0);
     QGeoAddress address() const;
-    void setAddress(const QGeoAddress& address);
+    void setAddress(const QGeoAddress &address);
 
     QString text() const;
     void setText(const QString &address);
 
     QString country() const;
-    void setCountry(const QString& country);
+    void setCountry(const QString &country);
     QString countryCode() const;
-    void setCountryCode(const QString& countryCode);
+    void setCountryCode(const QString &countryCode);
     QString state() const;
-    void setState(const QString& state);
+    void setState(const QString &state);
     QString county() const;
-    void setCounty(const QString& county);
+    void setCounty(const QString &county);
     QString city() const;
-    void setCity(const QString& city);
+    void setCity(const QString &city);
     QString district() const;
-    void setDistrict(const QString& district);
+    void setDistrict(const QString &district);
     QString street() const;
-    void setStreet(const QString& street);
+    void setStreet(const QString &street);
     QString postalCode() const;
-    void setPostalCode(const QString& postalCode);
+    void setPostalCode(const QString &postalCode);
     bool isTextGenerated() const;
 
 Q_SIGNALS:

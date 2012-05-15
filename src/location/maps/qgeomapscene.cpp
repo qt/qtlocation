@@ -90,7 +90,7 @@ public:
     // it is 1<<zoomLevel
     int sideLength_;
 
-    QHash<QGeoTileSpec, QGLSceneNode*> nodes_;
+    QHash<QGeoTileSpec, QGLSceneNode *> nodes_;
     QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > textures_;
     QList<QSharedPointer<QGeoTileTexture> > newUploads_;
 
@@ -207,13 +207,13 @@ QPointF QGeoMapScene::mercatorToScreenPosition(const QDoubleVector2D &mercator) 
     return d->mercatorToScreenPosition(mercator);
 }
 
-QGLCamera* QGeoMapScene::camera() const
+QGLCamera *QGeoMapScene::camera() const
 {
     Q_D(const QGeoMapScene);
     return d->camera_;
 }
 
-QGLSceneNode* QGeoMapScene::sceneNode() const
+QGLSceneNode *QGeoMapScene::sceneNode() const
 {
     Q_D(const QGeoMapScene);
     return d->sceneNode_;

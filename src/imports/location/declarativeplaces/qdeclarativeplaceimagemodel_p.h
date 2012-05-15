@@ -53,7 +53,7 @@ class QDeclarativePlaceImageModel : public QDeclarativePlaceContentModel
     Q_OBJECT
 
 public:
-    explicit QDeclarativePlaceImageModel(QObject* parent = 0);
+    explicit QDeclarativePlaceImageModel(QObject *parent = 0);
     ~QDeclarativePlaceImageModel();
 
     QVariant data(const QModelIndex &index, int role) const;

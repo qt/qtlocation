@@ -324,7 +324,7 @@ QT_BEGIN_NAMESPACE
 */
 
 
-QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap* map, QObject *parent)
+QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap *map, QObject *parent)
     : QObject(parent),
       declarativeMap_(map),
       enabled_(true),
@@ -363,7 +363,7 @@ QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap*
 /*!
     \internal
 */
-void QDeclarativeGeoMapGestureArea::setMap(QGeoMap* map)
+void QDeclarativeGeoMapGestureArea::setMap(QGeoMap *map)
 {
     if (map_ || !map)
         return;

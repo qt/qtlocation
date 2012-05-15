@@ -85,9 +85,9 @@ public:
     QGeoMap(QGeoMapData *mapData, QObject *parent = 0);
     virtual ~QGeoMap();
 
-    QGeoMapController* mapController();
+    QGeoMapController *mapController();
 
-    QGLCamera* glCamera() const;
+    QGLCamera *glCamera() const;
     void paintGL(QGLPainter *painter);
 
     void resize(int width, int height);

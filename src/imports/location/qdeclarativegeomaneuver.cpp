@@ -109,7 +109,7 @@ bool QDeclarativeGeoManeuver::valid() const
 
 */
 
-QDeclarativeCoordinate* QDeclarativeGeoManeuver::position() const
+QDeclarativeCoordinate *QDeclarativeGeoManeuver::position() const
 {
     return position_;
 }
@@ -187,7 +187,7 @@ qreal QDeclarativeGeoManeuver::distanceToNextInstruction() const
 
 */
 
-QDeclarativeCoordinate* QDeclarativeGeoManeuver::waypoint() const
+QDeclarativeCoordinate *QDeclarativeGeoManeuver::waypoint() const
 {
     return waypoint_;
 }

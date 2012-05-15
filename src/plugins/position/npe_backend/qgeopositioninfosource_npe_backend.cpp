@@ -65,7 +65,7 @@ bool QGeoPositionInfoSourceNpeBackend::init()
 
 QGeoPositionInfo QGeoPositionInfoSourceNpeBackend::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
-    const PositionData& position = m_locationdConn->lastKnownPosition(fromSatellitePositioningMethodsOnly);
+    const PositionData &position = m_locationdConn->lastKnownPosition(fromSatellitePositioningMethodsOnly);
     QGeoCoordinate coordinate;
     QGeoPositionInfo lastPosition;
     coordinate.setLatitude(position.latitude);
@@ -216,7 +216,7 @@ void QGeoPositionInfoSourceNpeBackend::shutdownRequestSession()
 }
 
 
-void QGeoPositionInfoSourceNpeBackend::onPositionUpdate(const PositionData& position)
+void QGeoPositionInfoSourceNpeBackend::onPositionUpdate(const PositionData &position)
 {
     if (position.valid) {
         QGeoPositionInfo update;

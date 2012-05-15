@@ -69,7 +69,7 @@ public:
     QDoubleVector2D();
     explicit QDoubleVector2D(const QVector2D &vector);
     QDoubleVector2D(double xpos, double ypos);
-    explicit QDoubleVector2D(const QDoubleVector3D& vector);
+    explicit QDoubleVector2D(const QDoubleVector3D &vector);
 
     operator QVector2D() const;
 
@@ -93,7 +93,7 @@ public:
     QDoubleVector2D &operator*=(const QDoubleVector2D &vector);
     QDoubleVector2D &operator/=(double divisor);
 
-    static double dotProduct(const QDoubleVector2D& v1, const QDoubleVector2D& v2);
+    static double dotProduct(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
 
     friend inline bool operator==(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
     friend inline bool operator!=(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
@@ -105,7 +105,7 @@ public:
     friend inline const QDoubleVector2D operator-(const QDoubleVector2D &vector);
     friend inline const QDoubleVector2D operator/(const QDoubleVector2D &vector, double divisor);
 
-    friend inline bool qFuzzyCompare(const QDoubleVector2D& v1, const QDoubleVector2D& v2);
+    friend inline bool qFuzzyCompare(const QDoubleVector2D &v1, const QDoubleVector2D &v2);
 
     QDoubleVector3D toVector3D() const;
 
@@ -219,7 +219,7 @@ inline const QDoubleVector2D operator/(const QDoubleVector2D &vector, double div
     return QDoubleVector2D(vector.xp / divisor, vector.yp / divisor);
 }
 
-inline bool qFuzzyCompare(const QDoubleVector2D& v1, const QDoubleVector2D& v2)
+inline bool qFuzzyCompare(const QDoubleVector2D &v1, const QDoubleVector2D &v2)
 {
     return qFuzzyCompare(v1.xp, v2.xp) && qFuzzyCompare(v1.yp, v2.yp);
 }

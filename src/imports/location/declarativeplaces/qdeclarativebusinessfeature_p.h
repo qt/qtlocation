@@ -58,8 +58,8 @@ class QDeclarativeBusinessFeature : public QObject
     Q_PROPERTY(QString value READ value WRITE setValue NOTIFY valueChanged)
 
 public:
-    explicit QDeclarativeBusinessFeature(QObject* parent = 0);
-    explicit QDeclarativeBusinessFeature(const QPlaceBusinessFeature &value, QObject* parent = 0);
+    explicit QDeclarativeBusinessFeature(QObject *parent = 0);
+    explicit QDeclarativeBusinessFeature(const QPlaceBusinessFeature &value, QObject *parent = 0);
     ~QDeclarativeBusinessFeature();
 
     QPlaceBusinessFeature businessFeature() const;

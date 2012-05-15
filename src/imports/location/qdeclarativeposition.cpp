@@ -82,7 +82,7 @@ QT_BEGIN_NAMESPACE
 
 */
 
-QDeclarativePosition::QDeclarativePosition(QObject* parent)
+QDeclarativePosition::QDeclarativePosition(QObject *parent)
         : QObject(parent), m_latitudeValid(false), m_longitudeValid(false),
           m_altitudeValid(false), m_speed(-1), m_speedValid(false), m_horizontalAccuracyValid(false),
           m_verticalAccuracyValid(false), m_horizontalAccuracy(-1), m_verticalAccuracy(-1)
@@ -143,7 +143,7 @@ void QDeclarativePosition::setCoordinate(const QGeoCoordinate &coordinate)
     emit coordinateChanged();
 }
 
-QDeclarativeCoordinate* QDeclarativePosition::coordinate()
+QDeclarativeCoordinate *QDeclarativePosition::coordinate()
 {
     return &m_coordinate;
 }
@@ -332,7 +332,7 @@ bool QDeclarativePosition::isVerticalAccuracyValid() const
     It is a read-only property.
 */
 
-void QDeclarativePosition::setTimestamp(const QDateTime& timestamp)
+void QDeclarativePosition::setTimestamp(const QDateTime &timestamp)
 {
     if (timestamp == m_timestamp)
         return;

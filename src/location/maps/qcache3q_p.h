@@ -149,7 +149,7 @@ private:
     Queue *q2_;          // regular nodes, promoted from newbies, evicted LRU
     Queue *q3_;          // "hobos": evicted from q2 but were very popular (above mean)
     Queue *q1_evicted_;  // ghosts of recently evicted newbies and regulars
-    QHash<Key, Node*> lookup_;
+    QHash<Key, Node *> lookup_;
 
 public:
     explicit QCache3Q(int maxCost = 100, int minRecent = -1, int maxOldPopular = -1);
@@ -393,11 +393,11 @@ template <class Key, class T, class EvPolicy>
 QSharedPointer<T> QCache3Q<Key,T,EvPolicy>::object(const Key &key) const
 {
     if (!lookup_.contains(key)) {
-        const_cast<QCache3Q<Key,T,EvPolicy>*>(this)->missCount_++;
+        const_cast<QCache3Q<Key,T,EvPolicy> *>(this)->missCount_++;
         return QSharedPointer<T>(0);
     }
 
-    QCache3Q<Key,T,EvPolicy> *me = const_cast<QCache3Q<Key,T,EvPolicy>*>(this);
+    QCache3Q<Key,T,EvPolicy> *me = const_cast<QCache3Q<Key,T,EvPolicy> *>(this);
 
     Node *n = me->lookup_[key];
     n->pop++;

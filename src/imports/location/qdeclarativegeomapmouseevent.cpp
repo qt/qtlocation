@@ -239,7 +239,7 @@ void QDeclarativeGeoMapMouseEvent::setCoordinate(const QGeoCoordinate &coordinat
     coordinate_.setCoordinate(coordinate);
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoMapMouseEvent::coordinate()
+QDeclarativeCoordinate *QDeclarativeGeoMapMouseEvent::coordinate()
 {
     return &coordinate_;
 }

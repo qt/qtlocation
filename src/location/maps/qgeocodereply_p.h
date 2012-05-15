@@ -67,7 +67,7 @@ class QGeocodeReplyPrivate
 {
 public:
     QGeocodeReplyPrivate();
-    QGeocodeReplyPrivate(QGeocodeReply::Error error, const QString& errorString);
+    QGeocodeReplyPrivate(QGeocodeReply::Error error, const QString &errorString);
     ~QGeocodeReplyPrivate();
 
     QGeocodeReply::Error error;

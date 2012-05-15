@@ -416,7 +416,7 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
 }
 
 /*!
-    \fn void QPlaceManager::finished(QPlaceReply* reply)
+    \fn void QPlaceManager::finished(QPlaceReply *reply)
 
     This signal is emitted when \a reply has finished processing.
 
@@ -430,7 +430,7 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
 */
 
 /*!
-    \fn void QPlaceManager::error(QPlaceReply* reply, QPlaceReply::Error error, const QString &errorString)
+    \fn void QPlaceManager::error(QPlaceReply *reply, QPlaceReply::Error error, const QString &errorString)
 
     This signal is emitted when an error has been detected in the processing of
     \a reply.  The QPlaceManager::finished() signal will probably follow.

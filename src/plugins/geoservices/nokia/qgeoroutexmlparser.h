@@ -99,7 +99,7 @@ public:
     QGeoRouteXmlParser(const QGeoRouteRequest &request);
     ~QGeoRouteXmlParser();
 
-    bool parse(QIODevice* source);
+    bool parse(QIODevice *source);
     QList<QGeoRoute> results() const;
     QString errorString() const;
 
@@ -110,7 +110,7 @@ private:
     bool parseCoordinates(QGeoCoordinate &coord);
     bool parseMode(QGeoRoute *route);
     bool parseSummary(QGeoRoute *route);
-    bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName);
+    bool parseGeoPoints(const QString &strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName);
     bool parseLeg();
     bool parseManeuver();
     bool parseLink();

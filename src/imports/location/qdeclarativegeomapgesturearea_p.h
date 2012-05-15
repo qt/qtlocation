@@ -135,7 +135,7 @@ class QDeclarativeGeoMapGestureArea: public QObject
     //Q_PROPERTY(qreal maximumTiltChange READ maximumTiltChange WRITE setMaximumTiltChange NOTIFY maximumTiltChangeChanged)
 
 public:
-    QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap* map, QObject *parent = 0);
+    QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap *map, QObject *parent = 0);
     ~QDeclarativeGeoMapGestureArea();
 
     enum ActiveGesture {
@@ -201,7 +201,7 @@ public:
     bool mouseReleaseEvent(QMouseEvent *event);
 
     void zoomLevelLimits(qreal min, qreal max);
-    void setMap(QGeoMap* map);
+    void setMap(QGeoMap *map);
 
     // will be removed
     void registerFlickDeprecated(QDeclarativeGeoMapFlickable *flickable)
@@ -233,9 +233,9 @@ Q_SIGNALS:
     void pinchEnabledChanged();
     void panEnabledChanged();
 
-    void pinchStarted(QDeclarativeGeoMapPinchEvent* pinch);
-    void pinchUpdated(QDeclarativeGeoMapPinchEvent* pinch);
-    void pinchFinished(QDeclarativeGeoMapPinchEvent* pinch);
+    void pinchStarted(QDeclarativeGeoMapPinchEvent *pinch);
+    void pinchUpdated(QDeclarativeGeoMapPinchEvent *pinch);
+    void pinchFinished(QDeclarativeGeoMapPinchEvent *pinch);
     void panStarted();
     void panFinished();
     void flickStarted();

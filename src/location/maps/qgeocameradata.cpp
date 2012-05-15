@@ -57,7 +57,7 @@ public:
     QGeoCameraDataPrivate();
     QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs);
 
-    QGeoCameraDataPrivate& operator = (const QGeoCameraDataPrivate &rhs);
+    QGeoCameraDataPrivate &operator = (const QGeoCameraDataPrivate &rhs);
 
     bool operator == (const QGeoCameraDataPrivate &rhs) const;
 
@@ -87,7 +87,7 @@ QGeoCameraDataPrivate::QGeoCameraDataPrivate(const QGeoCameraDataPrivate &rhs)
       zoomLevel_(rhs.zoomLevel_),
       interpolator_(rhs.interpolator_) {}
 
-QGeoCameraDataPrivate& QGeoCameraDataPrivate::operator = (const QGeoCameraDataPrivate &rhs)
+QGeoCameraDataPrivate &QGeoCameraDataPrivate::operator = (const QGeoCameraDataPrivate &rhs)
 {
     if (this == &rhs)
         return *this;
@@ -156,7 +156,7 @@ QGeoCameraData::~QGeoCameraData()
 {
 }
 
-QGeoCameraData& QGeoCameraData::operator = (const QGeoCameraData &other)
+QGeoCameraData &QGeoCameraData::operator = (const QGeoCameraData &other)
 {
     if (this == &other)
         return *this;

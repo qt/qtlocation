@@ -52,7 +52,7 @@ QT_USE_NAMESPACE
     \ingroup qml-places
 */
 
-QDeclarativeBusinessFeature::QDeclarativeBusinessFeature(QObject* parent)
+QDeclarativeBusinessFeature::QDeclarativeBusinessFeature(QObject *parent)
         : QObject(parent)
 {
 }

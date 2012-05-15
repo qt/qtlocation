@@ -68,7 +68,7 @@ public:
     QGeoCodeXmlParser();
     ~QGeoCodeXmlParser();
 
-    bool parse(QIODevice* source);
+    bool parse(QIODevice *source);
 
     QList<QGeoLocation> results() const;
     QString errorString() const;

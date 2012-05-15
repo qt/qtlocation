@@ -146,7 +146,7 @@ QGeoBoundingBox::~QGeoBoundingBox() {}
     Assigns \a other to this bounding box and returns a reference to this
     bounding box.
 */
-QGeoBoundingBox& QGeoBoundingBox::operator = (const QGeoBoundingBox & other)
+QGeoBoundingBox &QGeoBoundingBox::operator = (const QGeoBoundingBox & other)
 {
     if (this == &other)
         return *this;
@@ -739,7 +739,7 @@ QGeoBoundingBox QGeoBoundingBox::united(const QGeoBoundingBox &boundingBox) cons
     independent of the order of the operands.
 
 */
-QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingBox)
+QGeoBoundingBox &QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingBox)
 {
     // If non-intersecting goes for most narrow box
 

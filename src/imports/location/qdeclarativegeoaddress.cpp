@@ -89,12 +89,12 @@ QT_BEGIN_NAMESPACE
     \sa {QGeoAddress}
 */
 
-QDeclarativeGeoAddress::QDeclarativeGeoAddress(QObject* parent) :
+QDeclarativeGeoAddress::QDeclarativeGeoAddress(QObject *parent) :
         QObject(parent)
 {
 }
 
-QDeclarativeGeoAddress::QDeclarativeGeoAddress(const QGeoAddress& address, QObject* parent) :
+QDeclarativeGeoAddress::QDeclarativeGeoAddress(const QGeoAddress &address, QObject *parent) :
         QObject(parent), m_address(address)
 {
 }
@@ -110,7 +110,7 @@ QGeoAddress QDeclarativeGeoAddress::address() const
     return m_address;
 }
 
-void QDeclarativeGeoAddress::setAddress(const QGeoAddress& address)
+void QDeclarativeGeoAddress::setAddress(const QGeoAddress &address)
 {
     // Elaborate but takes care of emiting needed signals
     setText(address.text());
@@ -172,7 +172,7 @@ QString QDeclarativeGeoAddress::country() const
     return m_address.country();
 }
 
-void QDeclarativeGeoAddress::setCountry(const QString& country)
+void QDeclarativeGeoAddress::setCountry(const QString &country)
 {
     if (m_address.country() == country)
         return;
@@ -194,7 +194,7 @@ QString QDeclarativeGeoAddress::countryCode() const
     return m_address.countryCode();
 }
 
-void QDeclarativeGeoAddress::setCountryCode(const QString& countryCode)
+void QDeclarativeGeoAddress::setCountryCode(const QString &countryCode)
 {
     if (m_address.countryCode() == countryCode)
         return;
@@ -216,7 +216,7 @@ QString QDeclarativeGeoAddress::state() const
     return m_address.state();
 }
 
-void QDeclarativeGeoAddress::setState(const QString& state)
+void QDeclarativeGeoAddress::setState(const QString &state)
 {
     if (m_address.state() == state)
         return;
@@ -238,7 +238,7 @@ QString QDeclarativeGeoAddress::county() const
     return m_address.county();
 }
 
-void QDeclarativeGeoAddress::setCounty(const QString& county)
+void QDeclarativeGeoAddress::setCounty(const QString &county)
 {
     if (m_address.county() == county)
         return;
@@ -260,7 +260,7 @@ QString QDeclarativeGeoAddress::city() const
     return m_address.city();
 }
 
-void QDeclarativeGeoAddress::setCity(const QString& city)
+void QDeclarativeGeoAddress::setCity(const QString &city)
 {
     if (m_address.city() == city)
         return;
@@ -282,7 +282,7 @@ QString QDeclarativeGeoAddress::district() const
     return m_address.district();
 }
 
-void QDeclarativeGeoAddress::setDistrict(const QString& district)
+void QDeclarativeGeoAddress::setDistrict(const QString &district)
 {
     if (m_address.district() == district)
         return;
@@ -307,7 +307,7 @@ QString QDeclarativeGeoAddress::street() const
     return m_address.street();
 }
 
-void QDeclarativeGeoAddress::setStreet(const QString& street)
+void QDeclarativeGeoAddress::setStreet(const QString &street)
 {
     if (m_address.street() == street)
         return;
@@ -329,7 +329,7 @@ QString QDeclarativeGeoAddress::postalCode() const
     return m_address.postalCode();
 }
 
-void QDeclarativeGeoAddress::setPostalCode(const QString& postalCode)
+void QDeclarativeGeoAddress::setPostalCode(const QString &postalCode)
 {
     if (m_address.postalCode() == postalCode)
         return;

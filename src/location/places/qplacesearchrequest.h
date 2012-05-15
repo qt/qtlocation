@@ -69,7 +69,7 @@ public:
     QPlaceSearchRequest(const QPlaceSearchRequest &other);
 
 
-    QPlaceSearchRequest& operator=(const QPlaceSearchRequest &other);
+    QPlaceSearchRequest &operator=(const QPlaceSearchRequest &other);
 
     bool operator==(const QPlaceSearchRequest &other) const;
     bool operator!=(const QPlaceSearchRequest &other) const;

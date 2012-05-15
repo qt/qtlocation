@@ -72,7 +72,7 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    QGeoMap* createMap(QObject *parent);
+    QGeoMap *createMap(QObject *parent);
 
     QList<QGeoMapType> supportedMapTypes() const;
 

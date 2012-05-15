@@ -60,11 +60,11 @@ class QDeclarativeCoordinate : public QObject
     Q_PROPERTY(bool isValid READ isValid NOTIFY validityChanged)
 
 public:
-    explicit QDeclarativeCoordinate(QObject* parent = 0);
-    QDeclarativeCoordinate(const QGeoCoordinate &coordinate, QObject* parent = 0);
+    explicit QDeclarativeCoordinate(QObject *parent = 0);
+    QDeclarativeCoordinate(const QGeoCoordinate &coordinate, QObject *parent = 0);
     ~QDeclarativeCoordinate();
 
-    Q_INVOKABLE qreal distanceTo(QObject* coordinate);
+    Q_INVOKABLE qreal distanceTo(QObject *coordinate);
     Q_INVOKABLE qreal azimuthTo(QObject *coordinate);
 
     Q_INVOKABLE QDeclarativeCoordinate *atDistanceAndAzimuth(qreal distance, qreal azimuth);

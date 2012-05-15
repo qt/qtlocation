@@ -74,18 +74,18 @@ class QGeoTileFetcherNokia : public QGeoTileFetcher
     Q_OBJECT
 
 public:
-    QGeoTileFetcherNokia(QGeoNetworkAccessManager* networkManager, QGeoTiledMappingManagerEngine *engine);
+    QGeoTileFetcherNokia(QGeoNetworkAccessManager *networkManager, QGeoTiledMappingManagerEngine *engine);
     ~QGeoTileFetcherNokia();
 
     bool init();
 
-    QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec);
+    QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec);
 
-    const QString& host() const;
+    const QString &host() const;
     QChar firstSubdomain() const;
     unsigned char maxSubdomains() const;
-    const QString& token() const;
-    const QString& applicationId() const;
+    const QString &token() const;
+    const QString &applicationId() const;
 
     void setParams(const QMap<QString, QVariant> &parameters);
     void setTileSize(QSize tileSize);
@@ -96,7 +96,7 @@ public Q_SLOTS:
 
 #ifdef USE_CHINA_NETWORK_REGISTRATION
 private Q_SLOTS:
-    void currentMobileCountryCodeChanged(int interface, const QString& mcc);
+    void currentMobileCountryCodeChanged(int interface, const QString &mcc);
 #endif
 
 private:
@@ -107,7 +107,7 @@ private:
     static QString sizeToStr(const QSize &size);
     static QString mapIdToStr(int mapId);
 
-    void setHost(const QString& host);
+    void setHost(const QString &host);
 
     QGeoTiledMappingManagerEngineNokia *m_engineNokia;
     QGeoNetworkAccessManager *m_networkManager;

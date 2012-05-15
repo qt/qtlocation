@@ -103,7 +103,7 @@ void QGeoSatelliteInfoSourceMaemo::newSatellitesInView(const QList<QGeoSatellite
         requestTimer->stop();
         if ( !running )
             dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
-        else 
+        else
             emit satellitesInViewUpdated(update);
     } else {
         emit satellitesInViewUpdated(update);

@@ -68,7 +68,7 @@ public:
 
 
     virtual bool operator== (const QPlaceAttributePrivate &other) const;
-    virtual QPlaceAttributePrivate* clone() const { return new QPlaceAttributePrivate(*this); }
+    virtual QPlaceAttributePrivate *clone() const { return new QPlaceAttributePrivate(*this); }
 
     bool isEmpty() const;
 

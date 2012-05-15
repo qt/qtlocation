@@ -120,7 +120,7 @@ QGeoTileFetcher *QGeoTiledMappingManagerEngine::tileFetcher()
     return d->fetcher_;
 }
 
-QGeoMap* QGeoTiledMappingManagerEngine::createMap(QObject *parent)
+QGeoMap *QGeoTiledMappingManagerEngine::createMap(QObject *parent)
 {
     Q_UNUSED(parent);
     return NULL;
@@ -136,12 +136,12 @@ void QGeoTiledMappingManagerEngine::deregisterMap(QGeoTiledMapData *map)
     d_ptr->tileMaps_.remove(map);
     d_ptr->mapHash_.remove(map);
 
-    QHash<QGeoTileSpec, QSet<QGeoTiledMapData*> > newTileHash = d_ptr->tileHash_;
-    typedef QHash<QGeoTileSpec, QSet<QGeoTiledMapData*> >::const_iterator h_iter;
+    QHash<QGeoTileSpec, QSet<QGeoTiledMapData *> > newTileHash = d_ptr->tileHash_;
+    typedef QHash<QGeoTileSpec, QSet<QGeoTiledMapData *> >::const_iterator h_iter;
     h_iter hi = d_ptr->tileHash_.constBegin();
     h_iter hend = d_ptr->tileHash_.constEnd();
     for (; hi != hend; ++hi) {
-        QSet<QGeoTiledMapData*> maps = hi.value();
+        QSet<QGeoTiledMapData *> maps = hi.value();
         if (maps.contains(map)) {
             maps.remove(map);
             if (maps.isEmpty())
@@ -186,7 +186,7 @@ void QGeoTiledMappingManagerEngine::updateTileRequests(QGeoTiledMapData *map,
 
     rem = tilesRemoved.constBegin();
     for (; rem != remEnd; ++rem) {
-        QSet<QGeoTiledMapData*> mapSet = d->tileHash_.value(*rem);
+        QSet<QGeoTiledMapData *> mapSet = d->tileHash_.value(*rem);
         mapSet.remove(map);
         if (mapSet.isEmpty()) {
             cancelTiles.insert(*rem);
@@ -198,7 +198,7 @@ void QGeoTiledMappingManagerEngine::updateTileRequests(QGeoTiledMapData *map,
 
     add = tilesAdded.constBegin();
     for (; add != addEnd; ++add) {
-        QSet<QGeoTiledMapData*> mapSet = d->tileHash_.value(*add);
+        QSet<QGeoTiledMapData *> mapSet = d->tileHash_.value(*add);
         if (mapSet.isEmpty()) {
             reqTiles.insert(*add);
         }
@@ -218,9 +218,9 @@ void QGeoTiledMappingManagerEngine::engineTileFinished(const QGeoTileSpec &spec,
 {
     Q_D(QGeoTiledMappingManagerEngine);
 
-    QSet<QGeoTiledMapData*> maps = d->tileHash_.value(spec);
+    QSet<QGeoTiledMapData *> maps = d->tileHash_.value(spec);
 
-    typedef QSet<QGeoTiledMapData*>::const_iterator map_iter;
+    typedef QSet<QGeoTiledMapData *>::const_iterator map_iter;
 
     map_iter map = maps.constBegin();
     map_iter mapEnd = maps.constEnd();
@@ -235,7 +235,7 @@ void QGeoTiledMappingManagerEngine::engineTileFinished(const QGeoTileSpec &spec,
 
     d->tileHash_.remove(spec);
 
-    typedef QSet<QGeoTileCache*>::const_iterator cache_iter;
+    typedef QSet<QGeoTileCache *>::const_iterator cache_iter;
 
     tileCache()->insert(spec, bytes, format, d->cacheHint_);
 
@@ -252,8 +252,8 @@ void QGeoTiledMappingManagerEngine::engineTileError(const QGeoTileSpec &spec, co
 {
     Q_D(QGeoTiledMappingManagerEngine);
 
-    QSet<QGeoTiledMapData*> maps = d->tileHash_.value(spec);
-    typedef QSet<QGeoTiledMapData*>::const_iterator map_iter;
+    QSet<QGeoTiledMapData *> maps = d->tileHash_.value(spec);
+    typedef QSet<QGeoTiledMapData *>::const_iterator map_iter;
     map_iter map = maps.constBegin();
     map_iter mapEnd = maps.constEnd();
     for (; map != mapEnd; ++map) {

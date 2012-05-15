@@ -119,7 +119,7 @@ QGeoBoundingCircle::~QGeoBoundingCircle() {}
     Assigns \a other to this bounding circle and returns a reference to this
     bounding circle.
 */
-QGeoBoundingCircle& QGeoBoundingCircle::operator = (const QGeoBoundingCircle & other)
+QGeoBoundingCircle &QGeoBoundingCircle::operator = (const QGeoBoundingCircle & other)
 {
     if (this == &other)
         return *this;

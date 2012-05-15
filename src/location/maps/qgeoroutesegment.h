@@ -64,7 +64,7 @@ public:
     QGeoRouteSegment(const QGeoRouteSegment &other);
     ~QGeoRouteSegment();
 
-    QGeoRouteSegment& operator= (const QGeoRouteSegment &other);
+    QGeoRouteSegment &operator= (const QGeoRouteSegment &other);
 
     bool operator ==(const QGeoRouteSegment &other) const;
     bool operator !=(const QGeoRouteSegment &other) const;

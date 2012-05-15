@@ -73,7 +73,7 @@ public:
     QPlace(const QPlace &other);
     ~QPlace();
 
-    QPlace& operator=(const QPlace &other);
+    QPlace &operator=(const QPlace &other);
 
     bool operator==(const QPlace &other) const;
     bool operator!=(const QPlace &other) const;

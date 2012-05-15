@@ -65,16 +65,16 @@ QT_BEGIN_NAMESPACE
 
 
 #define Q_IMPLEMENT_CONTENT_D_FUNC(Class) \
-    Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
-    const Class##Private* Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); } \
+    Class##Private *Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
+    const Class##Private *Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); } \
 
 #define Q_IMPLEMENT_CONTENT_COPY_CTOR(Class) \
-    Class::Class(const QPlaceContent& other) : QPlaceContent() { Class##Private::copyIfPossible(d_ptr, other); }
+    Class::Class(const QPlaceContent &other) : QPlaceContent() { Class##Private::copyIfPossible(d_ptr, other); }
 
 #define Q_DEFINE_CONTENT_PRIVATE_HELPER(Class, ContentType) \
-    QPlaceContentPrivate* clone() const { return new Class##Private(*this); } \
+    QPlaceContentPrivate *clone() const { return new Class##Private(*this); } \
     virtual QPlaceContent::Type type() const {return ContentType;} \
-    static void copyIfPossible(QSharedDataPointer<QPlaceContentPrivate>& d_ptr, const QPlaceContent& other) \
+    static void copyIfPossible(QSharedDataPointer<QPlaceContentPrivate> &d_ptr, const QPlaceContent &other) \
     { \
         if (other.type() == ContentType) \
             d_ptr = extract_d(other); \
@@ -89,11 +89,11 @@ public:
     virtual ~QPlaceContentPrivate(){}
 
     virtual bool compare(const QPlaceContentPrivate *other) const;
-    virtual QPlaceContentPrivate* clone() const = 0;
+    virtual QPlaceContentPrivate *clone() const = 0;
     virtual QPlaceContent::Type type() const = 0;
 
     /* Helper functions for C++ protection rules */
-    static const QSharedDataPointer<QPlaceContentPrivate>& extract_d(const QPlaceContent& other) {return other.d_ptr;}
+    static const QSharedDataPointer<QPlaceContentPrivate> &extract_d(const QPlaceContent &other) {return other.d_ptr;}
 
     QPlaceSupplier supplier;
     QPlaceUser user;

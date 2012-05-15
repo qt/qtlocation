@@ -58,7 +58,7 @@
 QT_BEGIN_NAMESPACE
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(
-        QGeoNetworkAccessManager* networkManager,
+        QGeoNetworkAccessManager *networkManager,
         const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)
@@ -124,7 +124,7 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(
 
 QGeoRoutingManagerEngineNokia::~QGeoRoutingManagerEngineNokia() {}
 
-QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteRequest& request)
+QGeoRouteReply *QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteRequest &request)
 {
     QString reqString = calculateRouteRequestString(request);
 
@@ -150,7 +150,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
     return reply;
 }
 
-QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
+QGeoRouteReply *QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
     QString reqString = updateRouteRequestString(route, position);
 
@@ -453,7 +453,7 @@ QString QGeoRoutingManagerEngineNokia::trimDouble(double degree, int decimalDigi
 
 void QGeoRoutingManagerEngineNokia::routeFinished()
 {
-    QGeoRouteReply *reply = qobject_cast<QGeoRouteReply*>(sender());
+    QGeoRouteReply *reply = qobject_cast<QGeoRouteReply *>(sender());
 
     if (!reply)
         return;
@@ -468,7 +468,7 @@ void QGeoRoutingManagerEngineNokia::routeFinished()
 
 void QGeoRoutingManagerEngineNokia::routeError(QGeoRouteReply::Error error, const QString &errorString)
 {
-    QGeoRouteReply *reply = qobject_cast<QGeoRouteReply*>(sender());
+    QGeoRouteReply *reply = qobject_cast<QGeoRouteReply *>(sender());
 
     if (!reply)
         return;

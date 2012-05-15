@@ -65,7 +65,7 @@ public:
 
     void abort();
 
-    QNetworkReply* networkReply() const;
+    QNetworkReply *networkReply() const;
 
 private Q_SLOTS:
     void replyDestroyed();

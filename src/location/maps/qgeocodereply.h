@@ -90,7 +90,7 @@ Q_SIGNALS:
     void error(QGeocodeReply::Error error, const QString &errorString = QString());
 
 protected:
-    QGeocodeReply(QObject* parent = 0);
+    QGeocodeReply(QObject *parent = 0);
 
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);

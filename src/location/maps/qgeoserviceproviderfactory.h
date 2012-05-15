@@ -57,13 +57,13 @@ class Q_LOCATION_EXPORT QGeoServiceProviderFactory
 public:
     virtual ~QGeoServiceProviderFactory() {}
 
-    virtual QGeocodingManagerEngine* createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
+    virtual QGeocodingManagerEngine *createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
-    virtual QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+    virtual QGeoMappingManagerEngine *createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
-    virtual QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
+    virtual QGeoRoutingManagerEngine *createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
     virtual QPlaceManagerEngine *createPlaceManagerEngine(const QMap<QString, QVariant> &parameters,

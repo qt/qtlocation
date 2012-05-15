@@ -147,9 +147,9 @@ public:
     MappingFeatures mappingFeatures() const;
     PlacesFeatures placesFeatures() const;
 
-    QGeocodingManager* geocodingManager() const;
-    QGeoMappingManager* mappingManager() const;
-    QGeoRoutingManager* routingManager() const;
+    QGeocodingManager *geocodingManager() const;
+    QGeoMappingManager *mappingManager() const;
+    QGeoRoutingManager *routingManager() const;
     QPlaceManager *placeManager() const;
 
     Error error() const;

@@ -73,7 +73,7 @@ QT_USE_NAMESPACE
     \snippet snippets/declarative/places.qml Supplier
 */
 
-QDeclarativeSupplier::QDeclarativeSupplier(QObject* parent)
+QDeclarativeSupplier::QDeclarativeSupplier(QObject *parent)
     : QObject(parent), m_icon(0)
 {
 }

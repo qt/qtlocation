@@ -447,7 +447,7 @@ void QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged()
 */
 void QDeclarativePolylineMapItem::updateAfterCoordinateChanged()
 {
-    QDeclarativeCoordinate *coord = qobject_cast<QDeclarativeCoordinate*>(QObject::sender());
+    QDeclarativeCoordinate *coord = qobject_cast<QDeclarativeCoordinate *>(QObject::sender());
     if (coord) {
         // TODO: maybe use a QHash instead of indexOf here?
         int idx = this->coordPath_.indexOf(coord);
@@ -460,7 +460,7 @@ void QDeclarativePolylineMapItem::updateAfterCoordinateChanged()
 /*!
     \internal
 */
-void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
+void QDeclarativePolylineMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
@@ -488,7 +488,7 @@ QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolylineMapItem::declarativ
 void QDeclarativePolylineMapItem::path_append(QQmlListProperty<QDeclarativeCoordinate> *property,
                                               QDeclarativeCoordinate *coordinate)
 {
-    QDeclarativePolylineMapItem *item = qobject_cast<QDeclarativePolylineMapItem*>(
+    QDeclarativePolylineMapItem *item = qobject_cast<QDeclarativePolylineMapItem *>(
                 property->object);
 
     QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
@@ -507,16 +507,16 @@ void QDeclarativePolylineMapItem::path_append(QQmlListProperty<QDeclarativeCoord
 int QDeclarativePolylineMapItem::path_count(
         QQmlListProperty<QDeclarativeCoordinate> *property)
 {
-    return qobject_cast<QDeclarativePolylineMapItem*>(property->object)->coordPath_.count();
+    return qobject_cast<QDeclarativePolylineMapItem *>(property->object)->coordPath_.count();
 }
 
 /*!
     \internal
 */
-QDeclarativeCoordinate* QDeclarativePolylineMapItem::path_at(
+QDeclarativeCoordinate *QDeclarativePolylineMapItem::path_at(
         QQmlListProperty<QDeclarativeCoordinate> *property, int index)
 {
-    return qobject_cast<QDeclarativePolylineMapItem*>(property->object)->coordPath_.at(index);
+    return qobject_cast<QDeclarativePolylineMapItem *>(property->object)->coordPath_.at(index);
 }
 
 /*!
@@ -525,7 +525,7 @@ QDeclarativeCoordinate* QDeclarativePolylineMapItem::path_at(
 void QDeclarativePolylineMapItem::path_clear(
         QQmlListProperty<QDeclarativeCoordinate> *property)
 {
-    QDeclarativePolylineMapItem *item = qobject_cast<QDeclarativePolylineMapItem*>(
+    QDeclarativePolylineMapItem *item = qobject_cast<QDeclarativePolylineMapItem *>(
                 property->object);
     qDeleteAll(item->coordPath_);
     item->coordPath_.clear();
@@ -543,7 +543,7 @@ void QDeclarativePolylineMapItem::path_clear(
     \sa removeCoordinate, path
 */
 
-void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordinate)
+void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate *coordinate)
 {
     coordPath_.append(coordinate);
     path_.append(coordinate->coordinate());
@@ -565,7 +565,7 @@ void QDeclarativePolylineMapItem::addCoordinate(QDeclarativeCoordinate* coordina
     \sa addCoordinate, path
 */
 
-void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate* coordinate)
+void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate *coordinate)
 {
     int index = coordPath_.lastIndexOf(coordinate);
 
@@ -654,11 +654,11 @@ void QDeclarativePolylineMapItem::updateMapItem()
 /*!
     \internal
 */
-QSGNode* QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, UpdatePaintNodeData *data)
 {
     Q_UNUSED(data);
 
-    MapPolylineNode *node = static_cast<MapPolylineNode*>(oldNode);
+    MapPolylineNode *node = static_cast<MapPolylineNode *>(oldNode);
 
     if (!node) {
         node = new MapPolylineNode();
@@ -732,8 +732,8 @@ bool MapPolylineNode::isSubtreeBlocked() const
 /*!
     \internal
 */
-void MapPolylineNode::update(const QColor& fillColor,
-                             const QGeoMapItemGeometry* shape)
+void MapPolylineNode::update(const QColor &fillColor,
+                             const QGeoMapItemGeometry *shape)
 {
     if (shape->size() == 0) {
         blocked_ = true;

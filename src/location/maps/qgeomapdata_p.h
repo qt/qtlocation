@@ -83,9 +83,9 @@ public:
     QGeoMapData(QGeoMappingManagerEngine *engine, QObject *parent = 0);
     virtual ~QGeoMapData();
 
-    QGeoMapController* mapController();
+    QGeoMapController *mapController();
 
-    QGLCamera* glCamera() const;
+    QGLCamera *glCamera() const;
     virtual void paintGL(QGLPainter *painter) = 0;
 
     void resize(int width, int height);

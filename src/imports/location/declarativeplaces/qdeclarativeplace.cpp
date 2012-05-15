@@ -182,7 +182,7 @@ QT_USE_NAMESPACE
     \sa PlaceSearchModel, PlaceRecommendationModel
 */
 
-QDeclarativePlace::QDeclarativePlace(QObject* parent)
+QDeclarativePlace::QDeclarativePlace(QObject *parent)
 :   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
     m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
     m_extendedAttributes(new QQmlPropertyMap(this)),
@@ -253,7 +253,7 @@ void QDeclarativePlace::pluginReady()
     }
 }
 
-QDeclarativeGeoServiceProvider* QDeclarativePlace::plugin() const
+QDeclarativeGeoServiceProvider *QDeclarativePlace::plugin() const
 {
     return m_plugin;
 }
@@ -422,12 +422,12 @@ QPlace QDeclarativePlace::place()
         if (m_contactDetails->value(key).type() == QVariant::List) {
             QVariantList detailsVarList = m_contactDetails->value(key).toList();
             foreach (const QVariant &detailVar, detailsVarList) {
-                QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(detailVar.value<QObject*>());
+                QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(detailVar.value<QObject *>());
                 if (detail)
                     cppDetails.append(detail->contactDetail());
             }
         } else {
-            QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(m_contactDetails->value(key).value<QObject*>());
+            QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(m_contactDetails->value(key).value<QObject *>());
             if (detail)
                 cppDetails.append(detail->contactDetail());
         }
@@ -716,7 +716,7 @@ void QDeclarativePlace::contactsModified(const QString &key, const QVariant &val
     //      and override the write behaviour but this can only be done
     //      when QTBUG-23183 is complete.
     if (value.userType() == QMetaType::QObjectStar) {
-        QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail*>(value.value<QObject *>());
+        QDeclarativeContactDetail *detail = qobject_cast<QDeclarativeContactDetail *>(value.value<QObject *>());
         if (detail) {
             QVariantList varList;
             varList.append(value);
@@ -918,7 +918,7 @@ QQmlListProperty<QDeclarativeCategory> QDeclarativePlace::categories()
 void QDeclarativePlace::category_append(QQmlListProperty<QDeclarativeCategory> *prop,
                                                   QDeclarativeCategory *value)
 {
-    QDeclarativePlace *object = static_cast<QDeclarativePlace*>(prop->object);
+    QDeclarativePlace *object = static_cast<QDeclarativePlace *>(prop->object);
 
     if (object->m_categoriesToBeDeleted.contains(value))
         object->m_categoriesToBeDeleted.removeAll(value);
@@ -938,16 +938,16 @@ void QDeclarativePlace::category_append(QQmlListProperty<QDeclarativeCategory> *
 */
 int QDeclarativePlace::category_count(QQmlListProperty<QDeclarativeCategory> *prop)
 {
-    return static_cast<QDeclarativePlace*>(prop->object)->m_categories.count();
+    return static_cast<QDeclarativePlace *>(prop->object)->m_categories.count();
 }
 
 /*!
     \internal
 */
-QDeclarativeCategory* QDeclarativePlace::category_at(QQmlListProperty<QDeclarativeCategory> *prop,
+QDeclarativeCategory *QDeclarativePlace::category_at(QQmlListProperty<QDeclarativeCategory> *prop,
                                                                           int index)
 {
-    QDeclarativePlace *object = static_cast<QDeclarativePlace*>(prop->object);
+    QDeclarativePlace *object = static_cast<QDeclarativePlace *>(prop->object);
     QDeclarativeCategory *res = NULL;
     if (object->m_categories.count() > index && index > -1) {
         res = object->m_categories[index];
@@ -960,7 +960,7 @@ QDeclarativeCategory* QDeclarativePlace::category_at(QQmlListProperty<QDeclarati
 */
 void QDeclarativePlace::category_clear(QQmlListProperty<QDeclarativeCategory> *prop)
 {
-    QDeclarativePlace *object = static_cast<QDeclarativePlace*>(prop->object);
+    QDeclarativePlace *object = static_cast<QDeclarativePlace *>(prop->object);
     if (object->m_categories.isEmpty())
         return;
 
@@ -1111,7 +1111,7 @@ void QDeclarativePlace::synchronizeContacts()
     foreach (const QString &contactType, m_contactDetails->keys()) {
         QList<QVariant> contacts = m_contactDetails->value(contactType).toList();
         foreach (const QVariant &var, contacts) {
-            QObject *obj = var.value<QObject*>();
+            QObject *obj = var.value<QObject *>();
             if (obj->parent() == this)
                 delete obj;
         }
@@ -1219,12 +1219,12 @@ QString QDeclarativePlace::primaryValue(const QString &contactType) const
     if (m_contactDetails->value(contactType).userType() == QVariant::List) {
         QVariantList detailList = m_contactDetails->value(contactType).toList();
         if (!detailList.isEmpty()) {
-            QDeclarativeContactDetail *primaryDetail = qobject_cast<QDeclarativeContactDetail*>(detailList.at(0).value<QObject *>());
+            QDeclarativeContactDetail *primaryDetail = qobject_cast<QDeclarativeContactDetail *>(detailList.at(0).value<QObject *>());
             if (primaryDetail)
                 return primaryDetail->value();
         }
     } else if (m_contactDetails->value(contactType).userType() == QMetaType::QObjectStar) {
-        QDeclarativeContactDetail *primaryDetail = qobject_cast<QDeclarativeContactDetail*>(m_contactDetails->value(contactType).value<QObject *>());
+        QDeclarativeContactDetail *primaryDetail = qobject_cast<QDeclarativeContactDetail *>(m_contactDetails->value(contactType).value<QObject *>());
         if (primaryDetail)
             return primaryDetail->value();
     }

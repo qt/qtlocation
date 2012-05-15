@@ -173,7 +173,7 @@ int QGeocodingManager::managerVersion() const
     QGeocodingManager::error(), QGeocodeReply::finished() or
     QGeocodeReply::error() with deleteLater().
 */
-QGeocodeReply* QGeocodingManager::geocode(const QGeoAddress &address, const QGeoBoundingArea &bounds)
+QGeocodeReply *QGeocodingManager::geocode(const QGeoAddress &address, const QGeoBoundingArea &bounds)
 {
 //    if (!d_ptr->engine)
 //        return new QGeocodeReply(QGeocodeReply::EngineNotSetError, "The geocoding manager was not created with a valid engine.", this);
@@ -218,7 +218,7 @@ QGeocodeReply* QGeocodingManager::geocode(const QGeoAddress &address, const QGeo
     QGeocodingManager::error(), QGeocodeReply::finished() or
     QGeocodeReply::error() with deleteLater().
 */
-QGeocodeReply* QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinate, const QGeoBoundingArea &bounds)
+QGeocodeReply *QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinate, const QGeoBoundingArea &bounds)
 {
 //    if (!d_ptr->engine)
 //        return new QGeocodeReply(QGeocodeReply::EngineNotSetError, "The geocoding manager was not created with a valid engine.", this);
@@ -255,7 +255,7 @@ QGeocodeReply* QGeocodingManager::reverseGeocode(const QGeoCoordinate &coordinat
     QGeocodingManager::error(), QGeocodeReply::finished() or
     QGeocodeReply::error() with deleteLater().
 */
-QGeocodeReply* QGeocodingManager::geocode(const QString &address,
+QGeocodeReply *QGeocodingManager::geocode(const QString &address,
         int limit,
         int offset,
         const QGeoBoundingArea &bounds)
@@ -293,7 +293,7 @@ QLocale QGeocodingManager::locale() const
 }
 
 /*!
-\fn void QGeocodingManager::finished(QGeocodeReply* reply)
+\fn void QGeocodingManager::finished(QGeocodeReply *reply)
 
     This signal is emitted when \a reply has finished processing.
 
@@ -308,7 +308,7 @@ QLocale QGeocodingManager::locale() const
 */
 
 /*!
-\fn void QGeocodingManager::error(QGeocodeReply* reply, QGeocodeReply::Error error, QString errorString)
+\fn void QGeocodingManager::error(QGeocodeReply *reply, QGeocodeReply::Error error, QString errorString)
 
     This signal is emitted when an error has been detected in the processing of
     \a reply. The QGeocodingManager::finished() signal will probably follow.

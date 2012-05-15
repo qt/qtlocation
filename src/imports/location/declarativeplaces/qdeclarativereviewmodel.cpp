@@ -138,7 +138,7 @@ QT_BEGIN_NAMESPACE
     This property holds the total number of reviews for the place.
 */
 
-QDeclarativeReviewModel::QDeclarativeReviewModel(QObject* parent)
+QDeclarativeReviewModel::QDeclarativeReviewModel(QObject *parent)
 :   QDeclarativePlaceContentModel(QPlaceContent::ReviewType, parent)
 {
     QHash<int, QByteArray> roles = roleNames();

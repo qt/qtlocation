@@ -235,7 +235,7 @@ int QGeoRoutingManager::managerVersion() const
     QGeoRoutingManager::error(), QGeoRouteReply::finished() or
     QGeoRouteReply::error() with deleteLater().
 */
-QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& request)
+QGeoRouteReply *QGeoRoutingManager::calculateRoute(const QGeoRouteRequest &request)
 {
     return d_ptr->engine->calculateRoute(request);
 }
@@ -267,7 +267,7 @@ QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& reque
     QGeoRoutingManager::error(), QGeoRouteReply::finished() or
     QGeoRouteReply::error() with deleteLater().
 */
-QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
+QGeoRouteReply *QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
     return d_ptr->engine->updateRoute(route, position);
 }
@@ -347,7 +347,7 @@ QLocale QGeoRoutingManager::locale() const
 }
 
 /*!
-\fn void QGeoRoutingManager::finished(QGeoRouteReply* reply)
+\fn void QGeoRoutingManager::finished(QGeoRouteReply *reply)
 
 This signal is emitted when \a reply has finished processing.
 
@@ -361,7 +361,7 @@ Use deleteLater() instead.
 */
 
 /*!
-\fn void QGeoRoutingManager::error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString)
+\fn void QGeoRoutingManager::error(QGeoRouteReply *reply, QGeoRouteReply::Error error, QString errorString)
 
 This signal is emitted when an error has been detected in the processing of
 \a reply.  The QGeoRoutingManager::finished() signal will probably follow.

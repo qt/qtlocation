@@ -116,7 +116,7 @@ QPlaceRestManager *QPlaceRestManager::instance()
 /*!
     Sets the network access manager used for requests.
 */
-void QPlaceRestManager::setNetworkAccessManager(QGeoNetworkAccessManager* manager)
+void QPlaceRestManager::setNetworkAccessManager(QGeoNetworkAccessManager *manager)
 {
     if (manager) {
         delete mManager;

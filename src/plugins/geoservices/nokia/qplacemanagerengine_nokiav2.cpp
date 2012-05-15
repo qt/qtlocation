@@ -93,7 +93,7 @@ static const char * const placesServerInternational = "http://api.places.lbs.map
 static const char * const placesServerChina = "http://api.places.lbs.maps.nokia.com.cn/places";
 
 QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
-    QGeoNetworkAccessManager* networkManager,
+    QGeoNetworkAccessManager *networkManager,
     const QMap<QString, QVariant> &parameters,
     QGeoServiceProvider::Error *error,
     QString *errorString)

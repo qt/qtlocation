@@ -61,7 +61,7 @@ public:
     QPlaceContentRequest(const QPlaceContentRequest &other);
     ~QPlaceContentRequest();
 
-    QPlaceContentRequest& operator=(const QPlaceContentRequest &other);
+    QPlaceContentRequest &operator=(const QPlaceContentRequest &other);
 
     bool operator==(const QPlaceContentRequest &other) const;
     bool operator!=(const QPlaceContentRequest &other) const;

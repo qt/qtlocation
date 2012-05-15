@@ -62,14 +62,14 @@ class QGeoRoutingManagerEngineNokia : public QGeoRoutingManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoRoutingManagerEngineNokia(QGeoNetworkAccessManager* networkInterface,
+    QGeoRoutingManagerEngineNokia(QGeoNetworkAccessManager *networkInterface,
                                   const QMap<QString, QVariant> &parameters,
                                   QGeoServiceProvider::Error *error,
                                   QString *errorString);
     ~QGeoRoutingManagerEngineNokia();
 
-    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
-    QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
+    QGeoRouteReply *calculateRoute(const QGeoRouteRequest &request);
+    QGeoRouteReply *updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
 
 private Q_SLOTS:
     void routeFinished();

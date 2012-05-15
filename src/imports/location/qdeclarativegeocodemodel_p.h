@@ -73,7 +73,7 @@ class QDeclarativeGeocodeModel : public QAbstractListModel, public QQmlParserSta
     Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged)
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(QVariant query READ query WRITE setQuery NOTIFY queryChanged)
-    Q_PROPERTY(QObject* bounds READ bounds WRITE setBounds NOTIFY boundsChanged)
+    Q_PROPERTY(QObject *bounds READ bounds WRITE setBounds NOTIFY boundsChanged)
     Q_PROPERTY(GeocodeError error READ error NOTIFY errorChanged)
     Q_INTERFACES(QQmlParserStatus)
 
@@ -99,7 +99,7 @@ public:
         LocationRole = Qt::UserRole + 1
     };
 
-    explicit QDeclarativeGeocodeModel(QObject* parent = 0);
+    explicit QDeclarativeGeocodeModel(QObject *parent = 0);
     virtual ~QDeclarativeGeocodeModel();
 
     // From QQmlParserStatus
@@ -111,10 +111,10 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
-    QDeclarativeGeoServiceProvider* plugin() const;
+    QDeclarativeGeoServiceProvider *plugin() const;
 
-    void setBounds(QObject* bounds);
-    QObject* bounds() const;
+    void setBounds(QObject *bounds);
+    QObject *bounds() const;
 
     Status status() const;
     QString errorString() const;
@@ -124,7 +124,7 @@ public:
     void setAutoUpdate(bool update);
 
     int count() const;
-    Q_INVOKABLE QDeclarativeGeoLocation* get(int index);
+    Q_INVOKABLE QDeclarativeGeoLocation *get(int index);
 
     int limit() const;
     void setLimit(int limit);
@@ -132,7 +132,7 @@ public:
     void setOffset(int offset);
 
     QVariant query() const;
-    void setQuery(const QVariant& query);
+    void setQuery(const QVariant &query);
     Q_INVOKABLE void reset();
     Q_INVOKABLE void cancel();
 
@@ -161,7 +161,7 @@ protected Q_SLOTS:
     void pluginReady();
 
 protected:
-    QGeocodingManager* searchManager();
+    QGeocodingManager *searchManager();
     void setStatus(Status status);
     void setErrorString(const QString &error);
     void setError(GeocodeError error);
@@ -179,7 +179,7 @@ private:
     QGeoBoundingBox boundingBox_;
     QGeoBoundingCircle boundingCircle_;
 
-    QList<QDeclarativeGeoLocation*> declarativeLocations_;
+    QList<QDeclarativeGeoLocation *> declarativeLocations_;
 
     Status status_;
     QString errorString_;

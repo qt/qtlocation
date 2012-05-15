@@ -205,12 +205,12 @@ Q_SIGNALS:
 private:
     static void parameter_append(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *mapObject);
     static int parameter_count(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
-    static QDeclarativeGeoServiceProviderParameter* parameter_at(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index);
+    static QDeclarativeGeoServiceProviderParameter *parameter_at(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index);
     static void parameter_clear(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop);
 
     QGeoServiceProvider *sharedProvider_;
     QString name_;
-    QList<QDeclarativeGeoServiceProviderParameter*> parameters_;
+    QList<QDeclarativeGeoServiceProviderParameter *> parameters_;
     QDeclarativeGeoServiceProviderRequirements *required_;
     bool complete_;
     bool experimental_;

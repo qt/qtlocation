@@ -80,7 +80,7 @@ static bool isValidParameter(const QString &param)
 
 static QGeoNetworkAccessManager *tryGetNetworkAccessManager(const QVariantMap &parameters)
 {
-    return static_cast<QGeoNetworkAccessManager*>(qvariant_cast<void*>(parameters.value(QStringLiteral("nam"))));
+    return static_cast<QGeoNetworkAccessManager *>(qvariant_cast<void *>(parameters.value(QStringLiteral("nam"))));
 }
 
 QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia()
@@ -89,42 +89,42 @@ QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia()
 
 QGeoServiceProviderFactoryNokia::~QGeoServiceProviderFactoryNokia() {}
 
-QGeocodingManagerEngine* QGeoServiceProviderFactoryNokia::createGeocodingManagerEngine(
+QGeocodingManagerEngine *QGeoServiceProviderFactoryNokia::createGeocodingManagerEngine(
         const QVariantMap &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
     informOnceAboutUsageTermsIfNecessary(parameters);
 
-    QGeoNetworkAccessManager* networkManager = tryGetNetworkAccessManager(parameters);
+    QGeoNetworkAccessManager *networkManager = tryGetNetworkAccessManager(parameters);
     if (!networkManager)
         networkManager = new QGeoIntrinsicNetworkAccessManager(parameters);
 
     return new QGeocodingManagerEngineNokia(networkManager, parameters, error, errorString);
 }
 
-QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerEngine(
+QGeoMappingManagerEngine *QGeoServiceProviderFactoryNokia::createMappingManagerEngine(
         const QVariantMap &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
     informOnceAboutUsageTermsIfNecessary(parameters);
 
-    QGeoNetworkAccessManager* networkManager = tryGetNetworkAccessManager(parameters);
+    QGeoNetworkAccessManager *networkManager = tryGetNetworkAccessManager(parameters);
     if (!networkManager)
         networkManager = new QGeoIntrinsicNetworkAccessManager(parameters, QStringLiteral("mapping.proxy"));
 
     return new QGeoTiledMappingManagerEngineNokia(networkManager, parameters, error, errorString);
 }
 
-QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(
+QGeoRoutingManagerEngine *QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(
         const QVariantMap &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
     informOnceAboutUsageTermsIfNecessary(parameters);
 
-    QGeoNetworkAccessManager* networkManager = tryGetNetworkAccessManager(parameters);
+    QGeoNetworkAccessManager *networkManager = tryGetNetworkAccessManager(parameters);
     if (!networkManager)
         networkManager = new QGeoIntrinsicNetworkAccessManager(parameters, QStringLiteral("routing.proxy"));
 
@@ -138,7 +138,7 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(
 {
     informOnceAboutUsageTermsIfNecessary(parameters);
 
-    QGeoNetworkAccessManager* networkManager = tryGetNetworkAccessManager(parameters);
+    QGeoNetworkAccessManager *networkManager = tryGetNetworkAccessManager(parameters);
     if (!networkManager)
         networkManager = new QGeoIntrinsicNetworkAccessManager(parameters, QStringLiteral("places.proxy"));
 

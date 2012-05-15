@@ -105,12 +105,12 @@ public:
     explicit QDeclarativePolylineMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolylineMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
        //from QuickItem
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
-    Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate* coordinate);
-    Q_INVOKABLE void removeCoordinate(QDeclarativeCoordinate* coordinate);
+    Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate *coordinate);
+    Q_INVOKABLE void removeCoordinate(QDeclarativeCoordinate *coordinate);
 
     QQmlListProperty<QDeclarativeCoordinate> declarativePath();
 
@@ -118,7 +118,7 @@ public:
 
     QDeclarativeMapLineProperties *line();
 
-    inline QList<QDeclarativeCoordinate*> &path() { return coordPath_; }
+    inline QList<QDeclarativeCoordinate *> &path() { return coordPath_; }
     void dragEnded();
 
 Q_SIGNALS:
@@ -133,13 +133,13 @@ protected Q_SLOTS:
 private:
     static void path_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
     static int path_count(QQmlListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate* path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
+    static QDeclarativeCoordinate *path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
     static void path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
     void pathPropertyChanged();
 
 private:
     QDeclarativeMapLineProperties line_;
-    QList<QDeclarativeCoordinate*> coordPath_;
+    QList<QDeclarativeCoordinate *> coordPath_;
     QList<QGeoCoordinate> path_;
     QColor color_;
     bool dirtyMaterial_;
@@ -155,7 +155,7 @@ public:
     MapPolylineNode();
     ~MapPolylineNode();
 
-    void update(const QColor& fillColor, const QGeoMapItemGeometry *shape);
+    void update(const QColor &fillColor, const QGeoMapItemGeometry *shape);
     bool isSubtreeBlocked() const;
 
 private:

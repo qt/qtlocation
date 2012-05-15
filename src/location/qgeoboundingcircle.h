@@ -65,7 +65,7 @@ public:
 
     ~QGeoBoundingCircle();
 
-    QGeoBoundingCircle& operator = (const QGeoBoundingCircle &other);
+    QGeoBoundingCircle &operator = (const QGeoBoundingCircle &other);
 
     using QGeoBoundingArea::operator==;
     bool operator==(const QGeoBoundingCircle &other) const;

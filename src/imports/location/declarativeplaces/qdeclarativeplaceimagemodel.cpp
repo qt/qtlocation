@@ -127,7 +127,7 @@ QT_BEGIN_NAMESPACE
     This property holds the total number of image items for the place.
 */
 
-QDeclarativePlaceImageModel::QDeclarativePlaceImageModel(QObject* parent)
+QDeclarativePlaceImageModel::QDeclarativePlaceImageModel(QObject *parent)
 :   QDeclarativePlaceContentModel(QPlaceContent::ImageType, parent)
 {
     QHash<int, QByteArray> roles = roleNames();

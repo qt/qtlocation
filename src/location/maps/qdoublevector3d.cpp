@@ -46,14 +46,14 @@
 
 QT_BEGIN_NAMESPACE
 
-QDoubleVector3D::QDoubleVector3D(const QDoubleVector2D& vector)
+QDoubleVector3D::QDoubleVector3D(const QDoubleVector2D &vector)
 {
     xp = vector.xp;
     yp = vector.yp;
     zp = 0.0;
 }
 
-QDoubleVector3D::QDoubleVector3D(const QDoubleVector2D& vector, double zpos)
+QDoubleVector3D::QDoubleVector3D(const QDoubleVector2D &vector, double zpos)
 {
     xp = vector.xp;
     yp = vector.yp;
@@ -90,44 +90,44 @@ void QDoubleVector3D::normalize()
     zp /= len;
 }
 
-double QDoubleVector3D::dotProduct(const QDoubleVector3D& v1, const QDoubleVector3D& v2)
+double QDoubleVector3D::dotProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
 {
     return v1.xp * v2.xp + v1.yp * v2.yp + v1.zp * v2.zp;
 }
 
-QDoubleVector3D QDoubleVector3D::crossProduct(const QDoubleVector3D& v1, const QDoubleVector3D& v2)
+QDoubleVector3D QDoubleVector3D::crossProduct(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
 {
     return QDoubleVector3D(v1.yp * v2.zp - v1.zp * v2.yp,
                     v1.zp * v2.xp - v1.xp * v2.zp,
                     v1.xp * v2.yp - v1.yp * v2.xp);
 }
 
-QDoubleVector3D QDoubleVector3D::normal(const QDoubleVector3D& v1, const QDoubleVector3D& v2)
+QDoubleVector3D QDoubleVector3D::normal(const QDoubleVector3D &v1, const QDoubleVector3D &v2)
 {
     return crossProduct(v1, v2).normalized();
 }
 
 QDoubleVector3D QDoubleVector3D::normal
-        (const QDoubleVector3D& v1, const QDoubleVector3D& v2, const QDoubleVector3D& v3)
+        (const QDoubleVector3D &v1, const QDoubleVector3D &v2, const QDoubleVector3D &v3)
 {
     return crossProduct((v2 - v1), (v3 - v1)).normalized();
 }
 
 double QDoubleVector3D::distanceToPlane
-        (const QDoubleVector3D& plane, const QDoubleVector3D& normal) const
+        (const QDoubleVector3D &plane, const QDoubleVector3D &normal) const
 {
     return dotProduct(*this - plane, normal);
 }
 
 double QDoubleVector3D::distanceToPlane
-    (const QDoubleVector3D& plane1, const QDoubleVector3D& plane2, const QDoubleVector3D& plane3) const
+    (const QDoubleVector3D &plane1, const QDoubleVector3D &plane2, const QDoubleVector3D &plane3) const
 {
     QDoubleVector3D n = normal(plane2 - plane1, plane3 - plane1);
     return dotProduct(*this - plane1, n);
 }
 
 double QDoubleVector3D::distanceToLine
-        (const QDoubleVector3D& point, const QDoubleVector3D& direction) const
+        (const QDoubleVector3D &point, const QDoubleVector3D &direction) const
 {
     if (direction.isNull())
         return (*this - point).length();

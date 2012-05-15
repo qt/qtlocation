@@ -375,7 +375,7 @@ QQmlListProperty<QDeclarativeCategory> QDeclarativeSearchResultModel::categories
 void QDeclarativeSearchResultModel::categories_append(QQmlListProperty<QDeclarativeCategory> *list,
                                                       QDeclarativeCategory *declCategory)
 {
-    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
+    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel *>(list->object);
     if (searchModel && declCategory) {
         searchModel->m_categories.append(declCategory);
         QList<QPlaceCategory> categories = searchModel->m_request.categories();
@@ -387,17 +387,17 @@ void QDeclarativeSearchResultModel::categories_append(QQmlListProperty<QDeclarat
 
 int QDeclarativeSearchResultModel::categories_count(QQmlListProperty<QDeclarativeCategory> *list)
 {
-    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
+    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel *>(list->object);
     if (searchModel)
         return searchModel->m_categories.count();
     else
         return -1;
 }
 
-QDeclarativeCategory* QDeclarativeSearchResultModel::category_at(QQmlListProperty<QDeclarativeCategory> *list,
+QDeclarativeCategory *QDeclarativeSearchResultModel::category_at(QQmlListProperty<QDeclarativeCategory> *list,
                                                                           int index)
 {
-    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
+    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel *>(list->object);
     if (searchModel && (searchModel->m_categories.count() > index) && (index > -1))
         return searchModel->m_categories.at(index);
     else
@@ -406,7 +406,7 @@ QDeclarativeCategory* QDeclarativeSearchResultModel::category_at(QQmlListPropert
 
 void QDeclarativeSearchResultModel::categories_clear(QQmlListProperty<QDeclarativeCategory> *list)
 {
-    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel*>(list->object);
+    QDeclarativeSearchResultModel *searchModel = qobject_cast<QDeclarativeSearchResultModel *>(list->object);
     if (searchModel) {
         //note: we do not need to delete each of the elements in m_categories since the search model
         //should never be the parent of the categories anyway.

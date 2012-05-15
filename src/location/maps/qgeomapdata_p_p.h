@@ -85,9 +85,9 @@ public:
 
     QGeoMappingManagerEngine *engine() const;
 
-    QGeoMapController* mapController();
+    QGeoMapController *mapController();
 
-    QGLCamera* glCamera() const;
+    QGLCamera *glCamera() const;
 
     void setCameraData(const QGeoCameraData &cameraData);
     QGeoCameraData cameraData() const;

@@ -65,7 +65,7 @@ public:
     QGeoTileSpecPrivate(const QString &plugin, int mapId, int zoom, int x, int y);
     ~QGeoTileSpecPrivate();
 
-    QGeoTileSpecPrivate& operator = (const QGeoTileSpecPrivate &other);
+    QGeoTileSpecPrivate &operator = (const QGeoTileSpecPrivate &other);
 
     bool operator == (const QGeoTileSpecPrivate &rhs) const;
     bool operator < (const QGeoTileSpecPrivate &rhs) const;

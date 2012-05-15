@@ -56,7 +56,7 @@ QGeoTileSpec::QGeoTileSpec(const QGeoTileSpec &other)
 QGeoTileSpec::~QGeoTileSpec() {
 }
 
-QGeoTileSpec& QGeoTileSpec::operator = (const QGeoTileSpec &other)
+QGeoTileSpec &QGeoTileSpec::operator = (const QGeoTileSpec &other)
 {
     if (this == &other)
         return *this;
@@ -159,7 +159,7 @@ QGeoTileSpecPrivate::QGeoTileSpecPrivate(const QString &plugin, int mapId, int z
 
 QGeoTileSpecPrivate::~QGeoTileSpecPrivate() {}
 
-QGeoTileSpecPrivate& QGeoTileSpecPrivate::operator = (const QGeoTileSpecPrivate &other)
+QGeoTileSpecPrivate &QGeoTileSpecPrivate::operator = (const QGeoTileSpecPrivate &other)
 {
     if (this == &other)
         return *this;

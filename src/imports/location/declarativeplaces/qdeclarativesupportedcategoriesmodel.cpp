@@ -159,7 +159,7 @@ void QDeclarativeSupportedCategoriesModel::componentComplete()
 /*!
     \internal
 */
-int QDeclarativeSupportedCategoriesModel::rowCount(const QModelIndex& parent) const
+int QDeclarativeSupportedCategoriesModel::rowCount(const QModelIndex &parent) const
 {
     if (m_categoriesTree.keys().isEmpty())
         return 0;
@@ -224,7 +224,7 @@ QModelIndex QDeclarativeSupportedCategoriesModel::parent(const QModelIndex &chil
 */
 QVariant QDeclarativeSupportedCategoriesModel::data(const QModelIndex &index, int role) const
 {
-    PlaceCategoryNode *node = static_cast<PlaceCategoryNode*>(index.internalPointer());
+    PlaceCategoryNode *node = static_cast<PlaceCategoryNode *>(index.internalPointer());
     if (!node)
         node = m_categoriesTree.value(QString());
     else if (m_categoriesTree.keys(node).isEmpty())
@@ -285,7 +285,7 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
 /*!
     \internal
 */
-QDeclarativeGeoServiceProvider* QDeclarativeSupportedCategoriesModel::plugin() const
+QDeclarativeGeoServiceProvider *QDeclarativeSupportedCategoriesModel::plugin() const
 {
     return m_plugin;
 }

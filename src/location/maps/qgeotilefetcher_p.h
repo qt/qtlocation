@@ -83,7 +83,7 @@ public:
     QTimer *timer_;
     QMutex queueMutex_;
     QList<QGeoTileSpec> queue_;
-    QHash<QGeoTileSpec, QGeoTiledMapReply*> invmap_;
+    QHash<QGeoTileSpec, QGeoTiledMapReply *> invmap_;
 
 private:
     Q_DISABLE_COPY(QGeoTileFetcherPrivate)

@@ -59,10 +59,10 @@ static void satellites_changed (GypsySatellite *satellite,
 #ifdef Q_LOCATION_GYPSY_DEBUG
     qDebug() << "QGeoSatelliteInfoSourceGypsy Gypsy satellites-changed -signal received.";
 #endif
-    ((QGeoSatelliteInfoSourceGypsy*)userdata)->satellitesChanged(satellite, satellites);
+    ((QGeoSatelliteInfoSourceGypsy *)userdata)->satellitesChanged(satellite, satellites);
 }
 
-SatelliteGypsyEngine::SatelliteGypsyEngine(QGeoSatelliteInfoSource* parent) :
+SatelliteGypsyEngine::SatelliteGypsyEngine(QGeoSatelliteInfoSource *parent) :
     m_owner(parent)
 {
 }
@@ -72,7 +72,7 @@ SatelliteGypsyEngine::~SatelliteGypsyEngine()
 
 // Glib symbols
 gulong SatelliteGypsyEngine::eng_g_signal_connect(gpointer instance,
-                                                  const gchar* detailed_signal,
+                                                  const gchar *detailed_signal,
                                                   GCallback c_handler,
                                                   gpointer data)
 {
@@ -90,11 +90,11 @@ void SatelliteGypsyEngine::eng_g_free(gpointer mem)
     return ::g_free(mem);
 }
 // Gypsy symbols
-GypsyControl* SatelliteGypsyEngine::eng_gypsy_control_get_default (void)
+GypsyControl *SatelliteGypsyEngine::eng_gypsy_control_get_default (void)
 {
     return ::gypsy_control_get_default();
 }
-char *SatelliteGypsyEngine::eng_gypsy_control_create (GypsyControl *control, const char*device_name, GError **error)
+char *SatelliteGypsyEngine::eng_gypsy_control_create (GypsyControl *control, const char *device_name, GError **error)
 {
     return ::gypsy_control_create(control, device_name, error);
 }
@@ -133,11 +133,11 @@ void SatelliteGypsyEngine::eng_gypsy_satellite_free_satellite_array (GPtrArray *
     return ::gypsy_satellite_free_satellite_array(satellites);
 }
 // GConf symbols (mockability due to X11 requirement)
-GConfClient* SatelliteGypsyEngine::eng_gconf_client_get_default(void)
+GConfClient *SatelliteGypsyEngine::eng_gconf_client_get_default(void)
 {
     return ::gconf_client_get_default();
 }
-gchar* SatelliteGypsyEngine::eng_gconf_client_get_string(GConfClient* client, const gchar* key, GError** err)
+gchar *SatelliteGypsyEngine::eng_gconf_client_get_string(GConfClient *client, const gchar *key, GError** err)
 {
     return ::gconf_client_get_string(client, key, err);
 }
@@ -158,7 +158,7 @@ void QGeoSatelliteInfoSourceGypsy::createEngine()
 
 QGeoSatelliteInfoSourceGypsy::~QGeoSatelliteInfoSourceGypsy()
 {
-    GError* error = NULL;
+    GError *error = NULL;
     if (m_device) {
         m_engine->eng_gypsy_device_stop (m_device, &error);
         g_object_unref(m_device);
@@ -171,8 +171,8 @@ QGeoSatelliteInfoSourceGypsy::~QGeoSatelliteInfoSourceGypsy()
         delete m_engine;
 }
 
-void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite* satellite,
-                                                     GPtrArray* satellites)
+void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite *satellite,
+                                                     GPtrArray *satellites)
 {
     if (!satellite || !satellites)
         return;
@@ -185,7 +185,7 @@ void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite* satellite,
 
     unsigned int i;
     for (i = 0; i < satellites->len; i++) {
-        GypsySatelliteDetails *details = (GypsySatelliteDetails*)satellites->pdata[i];
+        GypsySatelliteDetails *details = (GypsySatelliteDetails *)satellites->pdata[i];
         QGeoSatelliteInfo info;
         info.setAttribute(QGeoSatelliteInfo::Elevation, details->elevation);
         info.setAttribute(QGeoSatelliteInfo::Azimuth, details->azimuth);
@@ -202,7 +202,7 @@ void QGeoSatelliteInfoSourceGypsy::satellitesChanged(GypsySatellite* satellite,
         m_requestOngoing = false;
         // If there is no regular updates ongoing, disconnect now.
         if (!m_updatesOngoing) {
-            m_engine->eng_g_signal_handlers_disconnect_by_func(G_OBJECT(m_satellite), (void*)satellites_changed, this);
+            m_engine->eng_g_signal_handlers_disconnect_by_func(G_OBJECT(m_satellite), (void *)satellites_changed, this);
         }
     }
     // If regular updates are to be delivered as they come:
@@ -219,8 +219,8 @@ int QGeoSatelliteInfoSourceGypsy::init()
 {
     GError *error = NULL;
     char *path;
-    GConfClient* client;
-    gchar* device_name;
+    GConfClient *client;
+    gchar *device_name;
 
     g_type_init ();
     createEngine();
@@ -306,7 +306,7 @@ void QGeoSatelliteInfoSourceGypsy::stopUpdates()
     // is completed and it notices that there is no active update ongoing, it will disconnect
     // the signal.
     if (!m_requestTimer.isActive())
-        m_engine->eng_g_signal_handlers_disconnect_by_func(G_OBJECT(m_satellite), (void*)satellites_changed, this);
+        m_engine->eng_g_signal_handlers_disconnect_by_func(G_OBJECT(m_satellite), (void *)satellites_changed, this);
 }
 
 void QGeoSatelliteInfoSourceGypsy::requestUpdate(int timeout)
@@ -326,7 +326,7 @@ void QGeoSatelliteInfoSourceGypsy::requestUpdate(int timeout)
 #ifdef Q_LOCATION_GYPSY_DEBUG
         qDebug() << "QGeoSatelliteInfoSourceGypsy fix available, requesting current satellite data";
 #endif
-        GPtrArray* satelliteData = m_engine->eng_gypsy_satellite_get_satellites(m_satellite, &error);
+        GPtrArray *satelliteData = m_engine->eng_gypsy_satellite_get_satellites(m_satellite, &error);
         if (!error) {
             // The fix was available and we have satellite data to deliver right away.
             satellitesChanged(m_satellite, satelliteData);
@@ -358,7 +358,7 @@ void QGeoSatelliteInfoSourceGypsy::requestUpdateTimeout()
     // Emit timeout and disconnect from signal if regular updates are not
     // ongoing (as we were listening just for one single requestUpdate).
     if (!m_updatesOngoing) {
-        m_engine->eng_g_signal_handlers_disconnect_by_func(G_OBJECT(m_satellite), (void*)satellites_changed, this);
+        m_engine->eng_g_signal_handlers_disconnect_by_func(G_OBJECT(m_satellite), (void *)satellites_changed, this);
     }
     m_requestOngoing = false;
     emit requestTimeout();

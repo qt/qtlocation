@@ -86,7 +86,7 @@ public:
 
     QGeoTileFetcher *tileFetcher();
 
-    virtual QGeoMap* createMap(QObject *parent);
+    virtual QGeoMap *createMap(QObject *parent);
 
     void registerMap(QGeoTiledMapData *map);
     void deregisterMap(QGeoTiledMapData *map);
@@ -115,7 +115,7 @@ protected:
     void setTileSize(const QSize &tileSize);
     void setCacheHint(QGeoTiledMappingManagerEngine::CacheAreas cacheHint);
 
-    QGeoTileCache *createTileCacheWithDir(const QString& cacheDirectory);
+    QGeoTileCache *createTileCacheWithDir(const QString &cacheDirectory);
 
 private:
     QGeoTiledMappingManagerEnginePrivate *d_ptr;

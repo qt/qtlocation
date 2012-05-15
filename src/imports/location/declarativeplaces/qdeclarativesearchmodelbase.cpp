@@ -61,7 +61,7 @@ QDeclarativeSearchModelBase::~QDeclarativeSearchModelBase()
 /*!
     \internal
 */
-QDeclarativeGeoServiceProvider* QDeclarativeSearchModelBase::plugin() const
+QDeclarativeGeoServiceProvider *QDeclarativeSearchModelBase::plugin() const
 {
     return m_plugin;
 }

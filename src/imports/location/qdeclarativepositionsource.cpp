@@ -198,7 +198,7 @@ bool QDeclarativePositionSource::isValid() const
 /*!
     \internal
 */
-void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
+void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
 {
     // Strip the filename. This is clumsy but the file may be prefixed in several
     // ways: "file:///", "qrc:///", "/", "" in platform dependant manner.
@@ -237,7 +237,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl& nmeaSource)
         qDebug() << "QDeclarativePositionSource NMEA File was found: " << localFileName;
 #endif
         m_positionSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode);
-        (qobject_cast<QNmeaPositionInfoSource*>(m_positionSource))->setDevice(m_nmeaFile);
+        (qobject_cast<QNmeaPositionInfoSource *>(m_positionSource))->setDevice(m_nmeaFile);
         connect(m_positionSource, SIGNAL(positionUpdated(QGeoPositionInfo)),
                 this, SLOT(positionUpdateReceived(QGeoPositionInfo)));
         if (m_active && !m_singleUpdate) {
@@ -312,7 +312,7 @@ int QDeclarativePositionSource::updateInterval() const
     if (m_positionSource) {
         int ival = m_positionSource->updateInterval();
         if (m_updateInterval != ival) {
-            QDeclarativePositionSource *me = const_cast<QDeclarativePositionSource*>(this);
+            QDeclarativePositionSource *me = const_cast<QDeclarativePositionSource *>(this);
             me->m_updateInterval = ival;
             emit me->updateIntervalChanged();
         }
@@ -526,12 +526,12 @@ bool QDeclarativePositionSource::isActive() const
     \sa start, stop, update
 */
 
-QDeclarativePosition* QDeclarativePositionSource::position()
+QDeclarativePosition *QDeclarativePositionSource::position()
 {
     return &m_position;
 }
 
-void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo& update)
+void QDeclarativePositionSource::positionUpdateReceived(const QGeoPositionInfo &update)
 {
     if (update.isValid()) {
         m_position.setTimestamp(update.timestamp());

@@ -64,7 +64,7 @@ QGeoCodeXmlParser::~QGeoCodeXmlParser()
         delete m_reader;
 }
 
-bool QGeoCodeXmlParser::parse(QIODevice* source)
+bool QGeoCodeXmlParser::parse(QIODevice *source)
 {
     if (m_reader)
         delete m_reader;

@@ -69,7 +69,7 @@ public:
     QGeoMapTypePrivate(const QGeoMapTypePrivate &other);
     ~QGeoMapTypePrivate();
 
-    QGeoMapTypePrivate& operator = (const QGeoMapTypePrivate &other);
+    QGeoMapTypePrivate &operator = (const QGeoMapTypePrivate &other);
 
     bool operator == (const QGeoMapTypePrivate &other) const;
 

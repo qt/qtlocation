@@ -66,13 +66,13 @@
 
 QT_BEGIN_NAMESPACE
 
-const char* MAPTILES_HOST = "1-4.maptile.lbs.ovi.com";
-const char* MAPTILES_HOST_CN = "a-k.maptile.maps.svc.nokia.com.cn";
+const char *MAPTILES_HOST = "1-4.maptile.lbs.ovi.com";
+const char *MAPTILES_HOST_CN = "a-k.maptile.maps.svc.nokia.com.cn";
 
-QGeoTileFetcherNokia::QGeoTileFetcherNokia(QGeoNetworkAccessManager* networkManager,
+QGeoTileFetcherNokia::QGeoTileFetcherNokia(QGeoNetworkAccessManager *networkManager,
                                            QGeoTiledMappingManagerEngine *engine)
         : QGeoTileFetcher(engine),
-          m_engineNokia(static_cast<QGeoTiledMappingManagerEngineNokia*>(engine)),
+          m_engineNokia(static_cast<QGeoTiledMappingManagerEngineNokia *>(engine)),
           m_networkManager(networkManager),
           m_firstSubdomain(QChar::Null),
           m_copyrightsReply(0),
@@ -120,7 +120,7 @@ bool QGeoTileFetcherNokia::init()
     return true;
 }
 
-QGeoTiledMapReply* QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
+QGeoTiledMapReply *QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
 {
     // TODO add error detection for if request.connectivityMode() != QGraphicsGeoMap::OnlineMode
     QString rawRequest = getRequestString(spec);
@@ -128,9 +128,9 @@ QGeoTiledMapReply* QGeoTileFetcherNokia::getTileImage(const QGeoTileSpec &spec)
     QNetworkRequest netRequest((QUrl(rawRequest))); // The extra pair of parens disambiguates this from a function declaration
     netRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 
-    QNetworkReply* netReply = m_networkManager->get(netRequest);
+    QNetworkReply *netReply = m_networkManager->get(netRequest);
 
-    QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, spec);
+    QGeoTiledMapReply *mapReply = new QGeoMapReplyNokia(netReply, spec);
 
     return mapReply;
 }

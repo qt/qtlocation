@@ -67,13 +67,13 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    virtual QGeocodeReply* geocode(const QGeoAddress &address,
+    virtual QGeocodeReply *geocode(const QGeoAddress &address,
                                      const QGeoBoundingArea &bounds);
-    virtual QGeocodeReply* geocode(const QString &address,
+    virtual QGeocodeReply *geocode(const QString &address,
                                     int limit,
                                     int offset,
                                     const QGeoBoundingArea &bounds);
-    virtual QGeocodeReply* reverseGeocode(const QGeoCoordinate &coordinate,
+    virtual QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
                                           const QGeoBoundingArea &bounds);
 
 
@@ -81,8 +81,8 @@ public:
     QLocale locale() const;
 
 Q_SIGNALS:
-    void finished(QGeocodeReply* reply);
-    void error(QGeocodeReply* reply, QGeocodeReply::Error error, QString errorString = QString());
+    void finished(QGeocodeReply *reply);
+    void error(QGeocodeReply *reply, QGeocodeReply::Error error, QString errorString = QString());
 
 private:
     void setManagerName(const QString &managerName);

@@ -51,7 +51,7 @@ QGeoServiceProviderFactoryJsonDb::QGeoServiceProviderFactoryJsonDb() {}
 
 QGeoServiceProviderFactoryJsonDb::~QGeoServiceProviderFactoryJsonDb() {}
 
-QGeocodingManagerEngine* QGeoServiceProviderFactoryJsonDb::createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
+QGeocodingManagerEngine *QGeoServiceProviderFactoryJsonDb::createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
@@ -62,7 +62,7 @@ QGeocodingManagerEngine* QGeoServiceProviderFactoryJsonDb::createGeocodingManage
     return 0;
 }
 
-QGeoMappingManagerEngine* QGeoServiceProviderFactoryJsonDb::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+QGeoMappingManagerEngine *QGeoServiceProviderFactoryJsonDb::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
@@ -73,7 +73,7 @@ QGeoMappingManagerEngine* QGeoServiceProviderFactoryJsonDb::createMappingManager
     return 0;
 }
 
-QGeoRoutingManagerEngine* QGeoServiceProviderFactoryJsonDb::createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
+QGeoRoutingManagerEngine *QGeoServiceProviderFactoryJsonDb::createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {

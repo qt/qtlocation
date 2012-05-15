@@ -62,7 +62,7 @@ class QDeclarativeGeoMapItemView : public QObject, public QQmlParserStatus
     Q_INTERFACES(QQmlParserStatus)
 
     Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
-    Q_PROPERTY(QQmlComponent* delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
+    Q_PROPERTY(QQmlComponent *delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
     Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
     Q_PROPERTY(qreal z READ zValue WRITE setZValue NOTIFY zChanged)
 
@@ -74,9 +74,9 @@ public:
     void setModel(const QVariant &);
 
     QQmlComponent *delegate() const;
-    void setDelegate(QQmlComponent*);
+    void setDelegate(QQmlComponent *);
 
-    void setMapData(QDeclarativeGeoMap*);
+    void setMapData(QDeclarativeGeoMap *);
     void repopulate();
     void removeInstantiatedItems();
 
@@ -86,7 +86,7 @@ public:
     void setVisible(bool visible);
     bool isVisible() const;
 
-    QDeclarativeGeoMapItemBase* createItem(int modelRow);
+    QDeclarativeGeoMapItemBase *createItem(int modelRow);
     // From QQmlParserStatus
     virtual void componentComplete();
     void classBegin() {}
@@ -119,7 +119,7 @@ private:
     QAbstractItemModel *itemModel_;
     QListModelInterface *listModel_;
     QDeclarativeGeoMap *map_;
-    QList<QDeclarativeGeoMapItemBase*> mapItemList_;
+    QList<QDeclarativeGeoMapItemBase *> mapItemList_;
 };
 
 QT_END_NAMESPACE

@@ -61,7 +61,7 @@ public:
     QGeoTileSpec(const QString &plugin, int mapId, int zoom, int x, int y);
     ~QGeoTileSpec();
 
-    QGeoTileSpec& operator = (const QGeoTileSpec &other);
+    QGeoTileSpec &operator = (const QGeoTileSpec &other);
 
     QString plugin() const;
 

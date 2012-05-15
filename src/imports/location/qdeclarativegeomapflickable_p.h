@@ -71,12 +71,12 @@ public:
     ~QDeclarativeGeoMapFlickable();
 
     qreal deceleration() const { return gestureArea_->flickDeceleration(); }
-    void setDeceleration(qreal deceleration){ gestureArea_->setFlickDeceleration(deceleration); }
+    void setDeceleration(qreal deceleration) { gestureArea_->setFlickDeceleration(deceleration); }
 
     bool enabled() const { return gestureArea_->panEnabled(); }
-    void setEnabled(bool enabled){ gestureArea_->setPanEnabled(enabled); }
+    void setEnabled(bool enabled) { gestureArea_->setPanEnabled(enabled); }
 
-    void setMap(QGeoMap* map){ gestureArea_->setMap(map); }
+    void setMap(QGeoMap *map) { gestureArea_->setMap(map); }
 
 Q_SIGNALS:
     void decelerationChanged();

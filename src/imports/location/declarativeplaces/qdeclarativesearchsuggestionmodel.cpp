@@ -288,7 +288,7 @@ void QDeclarativeSearchSuggestionModel::updateSearchRequest()
 /*!
     \internal
 */
-int QDeclarativeSearchSuggestionModel::rowCount(const QModelIndex& parent) const
+int QDeclarativeSearchSuggestionModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
 
@@ -298,7 +298,7 @@ int QDeclarativeSearchSuggestionModel::rowCount(const QModelIndex& parent) const
 /*!
     \internal
 */
-QVariant QDeclarativeSearchSuggestionModel::data(const QModelIndex& index, int role) const
+QVariant QDeclarativeSearchSuggestionModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();

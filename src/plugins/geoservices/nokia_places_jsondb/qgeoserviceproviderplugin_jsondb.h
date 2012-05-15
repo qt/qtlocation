@@ -58,13 +58,13 @@ public:
     QGeoServiceProviderFactoryJsonDb();
     ~QGeoServiceProviderFactoryJsonDb();
 
-    QGeocodingManagerEngine* createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
+    QGeocodingManagerEngine *createGeocodingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
-    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+    QGeoMappingManagerEngine *createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
-    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
+    QGeoRoutingManagerEngine *createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
     QPlaceManagerEngine *createPlaceManagerEngine(const QMap<QString, QVariant> &parameters,

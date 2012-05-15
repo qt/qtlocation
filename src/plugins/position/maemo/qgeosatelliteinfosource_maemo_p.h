@@ -84,10 +84,10 @@ private Q_SLOTS:
     void requestTimerExpired();
 
 private:
-    DBusComm* dbusComm;
+    DBusComm *dbusComm;
     bool running;
     bool satInViewSeen;
-    QTimer* requestTimer; 
+    QTimer *requestTimer;
     Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
 };
 

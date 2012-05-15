@@ -180,7 +180,7 @@ void QGeoTileFetcher::finished()
 
     QMutexLocker ml(&d->queueMutex_);
 
-    QGeoTiledMapReply *reply = qobject_cast<QGeoTiledMapReply*>(sender());
+    QGeoTiledMapReply *reply = qobject_cast<QGeoTiledMapReply *>(sender());
     if (!reply)
         return;
 

@@ -118,7 +118,7 @@ void QGeoPositionInfoSourcePrivate::loadPlugin()
     int idx = int(metaData.value(QStringLiteral("index")).toDouble());
     if (idx < 0)
         return;
-    factory = qobject_cast<QGeoPositionInfoSourceFactory*>(loader()->instance(idx));
+    factory = qobject_cast<QGeoPositionInfoSourceFactory *>(loader()->instance(idx));
 }
 
 QHash<QString, QJsonObject> QGeoPositionInfoSourcePrivate::plugins(bool reload)

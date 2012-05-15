@@ -43,8 +43,8 @@
 
 QT_BEGIN_NAMESPACE
 
-DBusServer::DBusServer(QObject *obj, DBusServerIF *iface) : QDBusAbstractAdaptor(obj), 
-                                                            interface(iface) 
+DBusServer::DBusServer(QObject *obj, DBusServerIF *iface) : QDBusAbstractAdaptor(obj),
+                                                            interface(iface)
 {
 }
 

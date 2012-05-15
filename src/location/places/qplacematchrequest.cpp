@@ -246,12 +246,12 @@ void QPlaceMatchRequest::clear()
     d->clear();
 }
 
-inline QPlaceMatchRequestPrivate* QPlaceMatchRequest::d_func()
+inline QPlaceMatchRequestPrivate *QPlaceMatchRequest::d_func()
 {
     return static_cast<QPlaceMatchRequestPrivate *>(d_ptr.data());
 }
 
-inline const QPlaceMatchRequestPrivate* QPlaceMatchRequest::d_func() const
+inline const QPlaceMatchRequestPrivate *QPlaceMatchRequest::d_func() const
 {
     return static_cast<const QPlaceMatchRequestPrivate *>(d_ptr.constData());
 }

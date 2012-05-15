@@ -54,8 +54,8 @@ QT_BEGIN_NAMESPACE
 
 
 #define Q_DECLARE_CONTENT_D_FUNC(Class) \
-    inline Class##Private* d_func(); \
-    inline const Class##Private* d_func() const;\
+    inline Class##Private *d_func(); \
+    inline const Class##Private *d_func() const;\
     friend class Class##Private;
 
 #define Q_DECLARE_CONTENT_COPY_CTOR(Class) \

@@ -78,7 +78,7 @@ public:
     explicit QGeoMappingManagerEngine(QObject *parent = 0);
     virtual ~QGeoMappingManagerEngine();
 
-    virtual QGeoMapData* createMapData() = 0;
+    virtual QGeoMapData *createMapData() = 0;
 
     QMap<QString, QVariant> parameters() const;
 

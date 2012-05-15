@@ -92,10 +92,10 @@ public Q_SLOTS:
     void requestUpdate(int timeout = 5000);
 
 private:
-    DBusComm* dbusComm;
-    QTimer* requestTimer;
+    DBusComm *dbusComm;
+    QTimer *requestTimer;
     bool locationOngoing;
-    
+
     void shutdownRequestSession();
 
 private Q_SLOTS:

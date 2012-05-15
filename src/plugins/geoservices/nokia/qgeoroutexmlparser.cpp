@@ -74,7 +74,7 @@ QGeoRouteXmlParser::~QGeoRouteXmlParser()
         delete m_reader;
 }
 
-bool QGeoRouteXmlParser::parse(QIODevice* source)
+bool QGeoRouteXmlParser::parse(QIODevice *source)
 {
     if (m_reader)
         delete m_reader;
@@ -522,7 +522,7 @@ bool QGeoRouteXmlParser::parseLink()
     return true;
 }
 
-bool QGeoRouteXmlParser::parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName)
+bool QGeoRouteXmlParser::parseGeoPoints(const QString &strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName)
 {
     QStringList rawPoints = strPoints.split(' ');
 

@@ -70,13 +70,13 @@ class QGeoTiledMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
     Q_OBJECT
 
 public:
-    QGeoTiledMappingManagerEngineNokia(QGeoNetworkAccessManager* networkManager,
+    QGeoTiledMappingManagerEngineNokia(QGeoNetworkAccessManager *networkManager,
                                        const QMap<QString, QVariant> &parameters,
                                        QGeoServiceProvider::Error *error,
                                        QString *errorString);
     ~QGeoTiledMappingManagerEngineNokia();
 
-    virtual QGeoMapData* createMapData();
+    virtual QGeoMapData *createMapData();
     QString evaluateCopyrightsText(const QGeoMapType::MapStyle mapStyle,
                                    const int zoomLevel,
                                    const QSet<QGeoTileSpec> &tiles);

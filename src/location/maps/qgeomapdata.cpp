@@ -83,13 +83,13 @@ QGeoMapData::~QGeoMapData()
     delete d_ptr;
 }
 
-QGeoMapController* QGeoMapData::mapController()
+QGeoMapController *QGeoMapData::mapController()
 {
     Q_D(QGeoMapData);
     return d->mapController();
 }
 
-QGLCamera* QGeoMapData::glCamera() const
+QGLCamera *QGeoMapData::glCamera() const
 {
     Q_D(const QGeoMapData);
     return d->glCamera();
@@ -227,14 +227,14 @@ void QGeoMapDataPrivate::setCoordinateInterpolator(QSharedPointer<QGeoCoordinate
     coordinateInterpolator_ = interpolator;
 }
 
-QGeoMapController* QGeoMapDataPrivate::mapController()
+QGeoMapController *QGeoMapDataPrivate::mapController()
 {
     if (!controller_)
         controller_ = new QGeoMapController(map_, coordinateInterpolator_);
     return controller_;
 }
 
-QGLCamera* QGeoMapDataPrivate::glCamera() const
+QGLCamera *QGeoMapDataPrivate::glCamera() const
 {
     return camera_;
 }

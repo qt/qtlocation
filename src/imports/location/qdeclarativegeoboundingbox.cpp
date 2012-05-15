@@ -91,7 +91,7 @@ QT_BEGIN_NAMESPACE
     \sa QGeoBoundingBox.
 */
 
-QDeclarativeGeoBoundingBox::QDeclarativeGeoBoundingBox(QObject* parent)
+QDeclarativeGeoBoundingBox::QDeclarativeGeoBoundingBox(QObject *parent)
 :   QDeclarativeGeoBoundingArea(parent), m_bottomLeft(0), m_bottomRight(0),
     m_topLeft(0), m_topRight(0), m_center(0), m_width(qQNaN()), m_height(qQNaN())
 {
@@ -110,7 +110,7 @@ QDeclarativeGeoBoundingBox::QDeclarativeGeoBoundingBox(const QGeoBoundingBox &bo
     For details on how to use this property to interface between C++ and QML see
     "\l {location-cpp-qml.html#boundingbox} {Interfaces between C++ and QML Code}".
 */
-void QDeclarativeGeoBoundingBox::setBox(const QGeoBoundingBox& box)
+void QDeclarativeGeoBoundingBox::setBox(const QGeoBoundingBox &box)
 {
     QGeoBoundingBox oldBox = m_box;
     m_box = box;
@@ -140,7 +140,7 @@ bool QDeclarativeGeoBoundingBox::contains(QDeclarativeCoordinate *coordinate)
     return m_box.contains(coordinate->coordinate());
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::bottomLeft()
+QDeclarativeCoordinate *QDeclarativeGeoBoundingBox::bottomLeft()
 {
     if (!m_bottomLeft) {
         m_bottomLeft = new QDeclarativeCoordinate(m_box.bottomLeft(), this);
@@ -189,7 +189,7 @@ void QDeclarativeGeoBoundingBox::setBottomLeft(QDeclarativeCoordinate *coordinat
     emit bottomLeftChanged();
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::bottomRight()
+QDeclarativeCoordinate *QDeclarativeGeoBoundingBox::bottomRight()
 {
     if (!m_bottomRight) {
         m_bottomRight = new QDeclarativeCoordinate(m_box.bottomRight(), this);
@@ -238,7 +238,7 @@ void QDeclarativeGeoBoundingBox::setBottomRight(QDeclarativeCoordinate *coordina
     emit bottomRightChanged();
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::topLeft()
+QDeclarativeCoordinate *QDeclarativeGeoBoundingBox::topLeft()
 {
     if (!m_topLeft) {
         m_topLeft = new QDeclarativeCoordinate(m_box.topLeft(), this);
@@ -287,7 +287,7 @@ void QDeclarativeGeoBoundingBox::setTopLeft(QDeclarativeCoordinate *coordinate)
     emit topLeftChanged();
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::topRight()
+QDeclarativeCoordinate *QDeclarativeGeoBoundingBox::topRight()
 {
     if (!m_topRight) {
         m_topRight = new QDeclarativeCoordinate(m_box.topRight(), this);
@@ -336,7 +336,7 @@ void QDeclarativeGeoBoundingBox::setTopRight(QDeclarativeCoordinate *coordinate)
     emit topRightChanged();
 }
 
-QDeclarativeCoordinate* QDeclarativeGeoBoundingBox::center()
+QDeclarativeCoordinate *QDeclarativeGeoBoundingBox::center()
 {
     if (!m_center) {
         m_center = new QDeclarativeCoordinate(m_box.center(), this);

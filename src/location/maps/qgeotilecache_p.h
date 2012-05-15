@@ -169,7 +169,7 @@ private:
     int extraTextureUsage_;
 
     QMutex cleanupMutex_;
-    QList<QGLTexture2D*> cleanupList_;
+    QList<QGLTexture2D *> cleanupList_;
 };
 
 QT_END_NAMESPACE

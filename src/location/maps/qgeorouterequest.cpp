@@ -255,7 +255,7 @@ QGeoRouteRequest::~QGeoRouteRequest() {}
     Assigns \a other to this route request object and then returns a reference
     to this route request object.
 */
-QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
+QGeoRouteRequest &QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
 {
     if (this == &other)
         return *this;

@@ -73,7 +73,7 @@ public:
     QGeoCameraData(const QGeoCameraData &other);
     ~QGeoCameraData();
 
-    QGeoCameraData& operator = (const QGeoCameraData &other);
+    QGeoCameraData &operator = (const QGeoCameraData &other);
 
     bool operator == (const QGeoCameraData &other) const;
     bool operator != (const QGeoCameraData &other) const;

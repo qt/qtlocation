@@ -77,14 +77,14 @@ public Q_SLOTS:
 private:
     void setError(QGeoSatelliteInfoSource::Error satelliteError);
     void shutdownRequestSession();
-    LocationDaemonConnection* m_locationdConn;
+    LocationDaemonConnection *m_locationdConn;
     bool satOngoing;
-    QTimer* requestTimer;
+    QTimer *requestTimer;
     QGeoSatelliteInfoSource::Error mSatelliteError;
 
 
 private Q_SLOTS:
-    void onSatelliteUpdate(const QList<SatelliteData>& satellites);
+    void onSatelliteUpdate(const QList<SatelliteData> &satellites);
     void onConnectionError(LocationDaemonConnection::SocketError socketError);
     void requestTimerExpired();
 };

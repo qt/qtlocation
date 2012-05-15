@@ -219,7 +219,7 @@ void QDeclarativeGeoMapQuickItem::setCoordinate(QDeclarativeCoordinate *coordina
 /*!
     \internal
 */
-void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
+void QDeclarativeGeoMapQuickItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map && quickMap) {
@@ -247,7 +247,7 @@ void QDeclarativeGeoMapQuickItem::dragEnded()
 /*!
     \internal
 */
-QDeclarativeCoordinate* QDeclarativeGeoMapQuickItem::coordinate()
+QDeclarativeCoordinate *QDeclarativeGeoMapQuickItem::coordinate()
 {
     return coordinate_;
 }
@@ -257,7 +257,7 @@ QDeclarativeCoordinate* QDeclarativeGeoMapQuickItem::coordinate()
 
     This property holds the source item that will be drawn on the map.
 */
-void QDeclarativeGeoMapQuickItem::setSourceItem(QQuickItem* sourceItem)
+void QDeclarativeGeoMapQuickItem::setSourceItem(QQuickItem *sourceItem)
 {
     if (sourceItem_.data() == sourceItem)
         return;
@@ -268,7 +268,7 @@ void QDeclarativeGeoMapQuickItem::setSourceItem(QQuickItem* sourceItem)
     emit sourceItemChanged();
 }
 
-QQuickItem* QDeclarativeGeoMapQuickItem::sourceItem()
+QQuickItem *QDeclarativeGeoMapQuickItem::sourceItem()
 {
     return sourceItem_.data();
 }
@@ -278,12 +278,12 @@ QQuickItem* QDeclarativeGeoMapQuickItem::sourceItem()
 */
 void QDeclarativeGeoMapQuickItem::afterChildrenChanged()
 {
-    QList<QQuickItem*> kids = childItems();
+    QList<QQuickItem *> kids = childItems();
     if (kids.size() > 0) {
         bool printedWarning = false;
         foreach (QQuickItem *i, kids) {
             if (i->flags() & QQuickItem::ItemHasContents
-                    && !qobject_cast<QDeclarativeGeoMapMouseArea*>(i)
+                    && !qobject_cast<QDeclarativeGeoMapMouseArea *>(i)
                     && sourceItem_.data() != i
                     && opacityContainer_ != i) {
                 if (!printedWarning) {

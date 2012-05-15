@@ -175,7 +175,7 @@ QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
 /*!
     \internal
 */
-void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
+void QDeclarativeRectangleMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
@@ -223,7 +223,7 @@ void QDeclarativeRectangleMapItem::setTopLeft(QDeclarativeCoordinate *topLeft)
     emit topLeftChanged(topLeft_);
 }
 
-QDeclarativeCoordinate* QDeclarativeRectangleMapItem::topLeft()
+QDeclarativeCoordinate *QDeclarativeRectangleMapItem::topLeft()
 {
     return topLeft_;
 }
@@ -260,7 +260,7 @@ void QDeclarativeRectangleMapItem::setBottomRight(QDeclarativeCoordinate *bottom
     emit bottomRightChanged(bottomRight_);
 }
 
-QDeclarativeCoordinate* QDeclarativeRectangleMapItem::bottomRight()
+QDeclarativeCoordinate *QDeclarativeRectangleMapItem::bottomRight()
 {
     return bottomRight_;
 }
@@ -299,11 +299,11 @@ void QDeclarativeRectangleMapItem::setColor(const QColor &color)
 /*!
     \internal
 */
-QSGNode* QDeclarativeRectangleMapItem::updateMapItemPaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+QSGNode *QDeclarativeRectangleMapItem::updateMapItemPaintNode(QSGNode *oldNode, UpdatePaintNodeData *data)
 {
     Q_UNUSED(data);
 
-    MapPolygonNode *node = static_cast<MapPolygonNode*>(oldNode);
+    MapPolygonNode *node = static_cast<MapPolygonNode *>(oldNode);
 
     if (!node) {
         node = new MapPolygonNode();
@@ -347,7 +347,7 @@ void QDeclarativeRectangleMapItem::updateMapItem()
         borderGeometry_.updateSourcePoints(*map(), pathClosed);
         borderGeometry_.updateScreenPoints(*map(), border_.width());
 
-        QList<QGeoMapItemGeometry*> geoms;
+        QList<QGeoMapItemGeometry *> geoms;
         geoms << &geometry_ << &borderGeometry_;
         QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
 

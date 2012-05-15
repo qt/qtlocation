@@ -62,7 +62,7 @@ public:
 
     ~QGeoBoundingBox();
 
-    QGeoBoundingBox& operator = (const QGeoBoundingBox &other);
+    QGeoBoundingBox &operator = (const QGeoBoundingBox &other);
 
     using QGeoBoundingArea::operator==;
     bool operator==(const QGeoBoundingBox &other) const;
@@ -100,7 +100,7 @@ public:
 
     QGeoBoundingBox united(const QGeoBoundingBox &boundingBox) const;
     QGeoBoundingBox operator | (const QGeoBoundingBox &boundingBox) const;
-    QGeoBoundingBox& operator |= (const QGeoBoundingBox &boundingBox);
+    QGeoBoundingBox &operator |= (const QGeoBoundingBox &boundingBox);
 
 private:
     inline QGeoBoundingBoxPrivate *d_func();

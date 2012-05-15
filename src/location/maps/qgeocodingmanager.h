@@ -69,22 +69,22 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    QGeocodeReply* geocode(const QGeoAddress &address,
+    QGeocodeReply *geocode(const QGeoAddress &address,
                            const QGeoBoundingArea &bounds = QGeoBoundingArea());
-    QGeocodeReply* geocode(const QString &searchString,
+    QGeocodeReply *geocode(const QString &searchString,
                             int limit = -1,
                             int offset = 0,
                            const QGeoBoundingArea &bounds = QGeoBoundingArea());
 
-    QGeocodeReply* reverseGeocode(const QGeoCoordinate &coordinate,
+    QGeocodeReply *reverseGeocode(const QGeoCoordinate &coordinate,
                                   const QGeoBoundingArea &bounds = QGeoBoundingArea());
 
     void setLocale(const QLocale &locale);
     QLocale locale() const;
 
 Q_SIGNALS:
-    void finished(QGeocodeReply* reply);
-    void error(QGeocodeReply* reply, QGeocodeReply::Error error, QString errorString = QString());
+    void finished(QGeocodeReply *reply);
+    void error(QGeocodeReply *reply, QGeocodeReply::Error error, QString errorString = QString());
 
 private:
     QGeocodingManager(QGeocodingManagerEngine *engine, QObject *parent = 0);

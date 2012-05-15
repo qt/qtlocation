@@ -173,7 +173,7 @@ QQmlPropertyMap *QDeclarativePlaceIcon::parameters() const
 
     The property holds the plugin that is responsible for managing this icon.
 */
-QDeclarativeGeoServiceProvider* QDeclarativePlaceIcon::plugin() const
+QDeclarativeGeoServiceProvider *QDeclarativePlaceIcon::plugin() const
 {
     return m_plugin;
 }

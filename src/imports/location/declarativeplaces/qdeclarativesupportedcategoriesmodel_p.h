@@ -105,7 +105,7 @@ public:
     enum Status {Ready, Updating, Error};
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
-    QDeclarativeGeoServiceProvider* plugin() const;
+    QDeclarativeGeoServiceProvider *plugin() const;
 
     void setHierarchical(bool hierarchical);
     bool hierarchical() const;

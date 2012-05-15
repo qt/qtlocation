@@ -71,16 +71,16 @@ class DBusComm: public QObject, DBusServerIF
 
 
 public:
-    enum Command {CommandStart = 1,      CommandStop = 2,     CommandOneShot = 3, 
-                  CommandSetMethods = 4, CommandSetInterval = 8, 
+    enum Command {CommandStart = 1,      CommandStop = 2,     CommandOneShot = 3,
+                  CommandSetMethods = 4, CommandSetInterval = 8,
                   CommandSatStart = 16,  CommandSatStop = 32, CommandSatOneShot = 48};
 
     DBusComm(QObject *parent = 0);
     int  init();
     bool sendDBusRegister();
-    bool sendConfigRequest(Command command, QGeoPositionInfoSource::PositioningMethods method, 
+    bool sendConfigRequest(Command command, QGeoPositionInfoSource::PositioningMethods method,
                            int interval) const;
-    QGeoPositionInfo& requestLastKnownPosition(bool satelliteMethodOnly);
+    QGeoPositionInfo &requestLastKnownPosition(bool satelliteMethodOnly);
     QGeoPositionInfoSource::PositioningMethods availableMethods() const;
     int minimumInterval() const;
 
@@ -104,7 +104,7 @@ private:
     void receiveSettings(QGeoPositionInfoSource::PositioningMethod methods, qint32 interval);
 
     QDBusInterface *positioningdProxy;
-    DBusServer* dbusServer;
+    DBusServer *dbusServer;
     QObject serverObj;
     QString myService;
     QString myPath;

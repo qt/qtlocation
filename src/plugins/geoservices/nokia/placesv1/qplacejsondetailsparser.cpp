@@ -700,7 +700,7 @@ void QPlaceJSonDetailsParser::processPremiumContentMediaObjects(const QJSValue &
                 int insertionIndex = 0;
                 if (!images.keys().isEmpty())
                     insertionIndex = images.keys().last() + 1;
-                images.insert(insertionIndex,*obj);
+                images.insert(insertionIndex, *obj);
                 targetPlace->setContent(QPlaceContent::ImageType, images);
                 delete obj;
             }
@@ -822,7 +822,7 @@ void QPlaceJSonDetailsParser::processAdContentMediaObjects(const QJSValue &conte
                 if (it.name() != "length") {
                     QPlaceImage *obj = processAdContentMediaObject(it.value());
                     if (obj) {
-                        images.insert(insertionIndex,*obj);
+                        images.insert(insertionIndex, *obj);
                         insertionIndex++;
                         delete obj;
                     }

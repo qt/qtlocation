@@ -119,7 +119,7 @@ public:
 
     ~QGeoRouteRequest();
 
-    QGeoRouteRequest& operator= (const QGeoRouteRequest &other);
+    QGeoRouteRequest &operator= (const QGeoRouteRequest &other);
 
     bool operator == (const QGeoRouteRequest &other) const;
     bool operator != (const QGeoRouteRequest &other) const;

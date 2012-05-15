@@ -60,13 +60,13 @@ class QDeclarativeSupplier : public QObject, public QQmlParserStatus
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString supplierId READ supplierId WRITE setSupplierId NOTIFY supplierIdChanged)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
-    Q_PROPERTY(QDeclarativePlaceIcon* icon READ icon WRITE setIcon NOTIFY iconChanged)
+    Q_PROPERTY(QDeclarativePlaceIcon *icon READ icon WRITE setIcon NOTIFY iconChanged)
 
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    explicit QDeclarativeSupplier(QObject* parent = 0);
-    explicit QDeclarativeSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin, QObject* parent = 0);
+    explicit QDeclarativeSupplier(QObject *parent = 0);
+    explicit QDeclarativeSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent = 0);
     ~QDeclarativeSupplier();
 
     // From QQmlParserStatus

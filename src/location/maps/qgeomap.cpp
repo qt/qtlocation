@@ -89,12 +89,12 @@ QGeoMap::~QGeoMap()
     delete mapData_;
 }
 
-QGeoMapController* QGeoMap::mapController()
+QGeoMapController *QGeoMap::mapController()
 {
     return mapData_->mapController();
 }
 
-QGLCamera* QGeoMap::glCamera() const
+QGLCamera *QGeoMap::glCamera() const
 {
     return mapData_->glCamera();
 }

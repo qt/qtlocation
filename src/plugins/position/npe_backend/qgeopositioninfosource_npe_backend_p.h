@@ -80,10 +80,10 @@ public Q_SLOTS:
 private:
     void setError(QGeoPositionInfoSource::Error positionError);
     void shutdownRequestSession();
-    LocationDaemonConnection* m_locationdConn;
+    LocationDaemonConnection *m_locationdConn;
     bool trackingOngoing;
     bool timeoutSent;
-    QTimer* requestTimer;
+    QTimer *requestTimer;
     QGeoPositionInfoSource::Error mPositionError;
 
 

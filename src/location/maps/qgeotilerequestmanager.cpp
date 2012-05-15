@@ -118,7 +118,7 @@ QList<QSharedPointer<QGeoTileTexture> > QGeoTileRequestManagerPrivate::requestTi
     QList<QSharedPointer<QGeoTileTexture> > cachedTex;
 
     QGeoTiledMappingManagerEngine *engine = map_ ?
-                static_cast<QGeoTiledMappingManagerEngine*>(map_->engine()) : 0;
+                static_cast<QGeoTiledMappingManagerEngine *>(map_->engine()) : 0;
 
     // remove tiles in cache from request tiles
     if (engine) {
@@ -193,7 +193,7 @@ void RetryFuture::retry()
     requestTiles.insert(tile_);
     if (map_) {
         QGeoTiledMappingManagerEngine *engine =
-                static_cast<QGeoTiledMappingManagerEngine*>(map_->engine());
+                static_cast<QGeoTiledMappingManagerEngine *>(map_->engine());
         engine->updateTileRequests(map_, requestTiles, cancelTiles);
     }
 }

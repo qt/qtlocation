@@ -131,7 +131,7 @@ void QPlaceContentReplyImplV1::resultReady(const QPlaceJSonParser::Error &errorI
 {
     if (errorId == QPlaceJSonParser::NoError) {
         if (request().contentType() == QPlaceContent::ImageType) {
-            QPlaceJSonMediaParser * mediaParser = qobject_cast<QPlaceJSonMediaParser*>(parser);
+            QPlaceJSonMediaParser * mediaParser = qobject_cast<QPlaceJSonMediaParser *>(parser);
             QList<QPlaceImage> imageOjects = mediaParser->resultMedia();
             QPlaceContent::Collection collection;
             for (int i=0; i < imageOjects.count(); ++i)
@@ -139,7 +139,7 @@ void QPlaceContentReplyImplV1::resultReady(const QPlaceJSonParser::Error &errorI
             setContent(collection);
             setTotalCount(mediaParser->allMediaCount());
         } else if (request().contentType() == QPlaceContent::ReviewType) {
-            QPlaceJSonReviewParser *reviewParser = qobject_cast<QPlaceJSonReviewParser*>(parser);
+            QPlaceJSonReviewParser *reviewParser = qobject_cast<QPlaceJSonReviewParser *>(parser);
             QList<QPlaceReview> reviewObjects = reviewParser->results();
             QPlaceContent::Collection collection;
             for (int i=0; i < reviewObjects.count(); ++i)

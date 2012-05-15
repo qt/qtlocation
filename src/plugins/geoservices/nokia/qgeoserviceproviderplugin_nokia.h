@@ -67,13 +67,13 @@ public:
     QGeoServiceProviderFactoryNokia();
     ~QGeoServiceProviderFactoryNokia();
 
-    QGeocodingManagerEngine* createGeocodingManagerEngine(const QVariantMap &parameters,
+    QGeocodingManagerEngine *createGeocodingManagerEngine(const QVariantMap &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
-    QGeoMappingManagerEngine* createMappingManagerEngine(const QVariantMap &parameters,
+    QGeoMappingManagerEngine *createMappingManagerEngine(const QVariantMap &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
-    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QVariantMap &parameters,
+    QGeoRoutingManagerEngine *createRoutingManagerEngine(const QVariantMap &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
     QPlaceManagerEngine *createPlaceManagerEngine(const QVariantMap &parameters,

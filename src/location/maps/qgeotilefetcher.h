@@ -87,7 +87,7 @@ protected:
 private:
     QGeoTileFetcherPrivate *d_ptr;
 
-    virtual QGeoTiledMapReply* getTileImage(const QGeoTileSpec &spec) = 0;
+    virtual QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec) = 0;
     void handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec);
 
     Q_DECLARE_PRIVATE(QGeoTileFetcher)

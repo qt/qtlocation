@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
     a flag to indicate if the map type is optimized for mobile devices (\l mobile).
 */
 
-QDeclarativeGeoMapType::QDeclarativeGeoMapType(const QGeoMapType mapType, QObject* parent)
+QDeclarativeGeoMapType::QDeclarativeGeoMapType(const QGeoMapType mapType, QObject *parent)
     : QObject(parent),
       mapType_(mapType) {}
 

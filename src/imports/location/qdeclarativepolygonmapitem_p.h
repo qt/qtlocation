@@ -80,12 +80,12 @@ public:
     explicit QDeclarativePolygonMapItem(QQuickItem *parent = 0);
     ~QDeclarativePolygonMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
     //from QuickItem
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
-    Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate* coordinate);
-    Q_INVOKABLE void removeCoordinate(QDeclarativeCoordinate* coordinate);
+    Q_INVOKABLE void addCoordinate(QDeclarativeCoordinate *coordinate);
+    Q_INVOKABLE void removeCoordinate(QDeclarativeCoordinate *coordinate);
 
     QQmlListProperty<QDeclarativeCoordinate> declarativePath();
 
@@ -113,13 +113,13 @@ private Q_SLOTS:
 private:
     static void path_append(QQmlListProperty<QDeclarativeCoordinate> *prop, QDeclarativeCoordinate *coordinate);
     static int path_count(QQmlListProperty<QDeclarativeCoordinate> *prop);
-    static QDeclarativeCoordinate* path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
+    static QDeclarativeCoordinate *path_at(QQmlListProperty<QDeclarativeCoordinate> *prop, int index);
     static void path_clear(QQmlListProperty<QDeclarativeCoordinate> *prop);
     void pathPropertyChanged();
 
 private:
     QDeclarativeMapLineProperties border_;
-    QList<QDeclarativeCoordinate*> coordPath_;
+    QList<QDeclarativeCoordinate *> coordPath_;
     QList<QGeoCoordinate> path_;
     QColor color_;
     bool dirtyMaterial_;
@@ -136,7 +136,7 @@ public:
     MapPolygonNode();
     ~MapPolygonNode();
 
-    void update(const QColor& fillColor, const QColor& borderColor,
+    void update(const QColor &fillColor, const QColor &borderColor,
                 const QGeoMapItemGeometry *fillShape,
                 const QGeoMapItemGeometry *borderShape);
 

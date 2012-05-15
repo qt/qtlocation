@@ -79,7 +79,7 @@ public:
     QGeoManeuver(const QGeoManeuver &other);
     ~QGeoManeuver();
 
-    QGeoManeuver& operator= (const QGeoManeuver &other);
+    QGeoManeuver &operator= (const QGeoManeuver &other);
 
     bool operator== (const QGeoManeuver &other) const;
     bool operator!= (const QGeoManeuver &other) const;

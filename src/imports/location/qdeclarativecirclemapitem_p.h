@@ -55,7 +55,7 @@ class QDeclarativeGeoMapQuickItem;
 class QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
-    Q_PROPERTY(QDeclarativeCoordinate* center READ center WRITE setCenter NOTIFY centerChanged)
+    Q_PROPERTY(QDeclarativeCoordinate *center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
@@ -64,11 +64,11 @@ public:
     explicit QDeclarativeCircleMapItem(QQuickItem *parent = 0);
     ~QDeclarativeCircleMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
-    QDeclarativeCoordinate* center();
-    void setCenter(QDeclarativeCoordinate* center);
+    QDeclarativeCoordinate *center();
+    void setCenter(QDeclarativeCoordinate *center);
 
     qreal radius() const;
     void setRadius(qreal radius);

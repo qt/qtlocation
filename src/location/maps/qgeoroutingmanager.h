@@ -68,8 +68,8 @@ public:
     QString managerName() const;
     int managerVersion() const;
 
-    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
-    QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
+    QGeoRouteReply *calculateRoute(const QGeoRouteRequest &request);
+    QGeoRouteReply *updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
 
     QGeoRouteRequest::TravelModes supportedTravelModes() const;
     QGeoRouteRequest::FeatureTypes supportedFeatureTypes() const;
@@ -82,8 +82,8 @@ public:
     QLocale locale() const;
 
 Q_SIGNALS:
-    void finished(QGeoRouteReply* reply);
-    void error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString = QString());
+    void finished(QGeoRouteReply *reply);
+    void error(QGeoRouteReply *reply, QGeoRouteReply::Error error, QString errorString = QString());
 
 private:
     QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject *parent = 0);

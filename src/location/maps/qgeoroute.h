@@ -67,7 +67,7 @@ public:
     QGeoRoute(const QGeoRoute &other);
     ~QGeoRoute();
 
-    QGeoRoute& operator = (const QGeoRoute &other);
+    QGeoRoute &operator = (const QGeoRoute &other);
 
     bool operator == (const QGeoRoute &other) const;
     bool operator != (const QGeoRoute &other) const;

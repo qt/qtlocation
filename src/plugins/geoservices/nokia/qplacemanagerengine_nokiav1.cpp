@@ -64,7 +64,7 @@
 QT_USE_NAMESPACE
 
 QPlaceManagerEngineNokiaV1::QPlaceManagerEngineNokiaV1(
-    QGeoNetworkAccessManager* networkManager,
+    QGeoNetworkAccessManager *networkManager,
     const QMap<QString, QVariant> &parameters,
     QGeoServiceProvider::Error *error,
     QString *errorString)

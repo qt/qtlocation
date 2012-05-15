@@ -156,7 +156,7 @@ void QGeoSatelliteInfoSourceNpeBackend::shutdownRequestSession()
 }
 
 
-void QGeoSatelliteInfoSourceNpeBackend::onSatelliteUpdate(const QList<SatelliteData>& satellites)
+void QGeoSatelliteInfoSourceNpeBackend::onSatelliteUpdate(const QList<SatelliteData> &satellites)
 {
     QList<QGeoSatelliteInfo> inUse;
     QList<QGeoSatelliteInfo> inView;
@@ -166,7 +166,7 @@ void QGeoSatelliteInfoSourceNpeBackend::onSatelliteUpdate(const QList<SatelliteD
         while (it.hasNext())
         {
             QGeoSatelliteInfo satinfo;
-            const SatelliteData& satellite = it.next();
+            const SatelliteData &satellite = it.next();
             satinfo.setAttribute(QGeoSatelliteInfo::Elevation, satellite.elevation);
             satinfo.setAttribute(QGeoSatelliteInfo::Azimuth, satellite.azimuth);
             satinfo.setSatelliteIdentifier(satellite.id);

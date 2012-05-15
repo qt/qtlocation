@@ -63,8 +63,8 @@ class QDeclarativePlaceIcon : public QObject
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
 
 public:
-    explicit QDeclarativePlaceIcon(QObject* parent = 0);
-    QDeclarativePlaceIcon(const QPlaceIcon &src, QDeclarativeGeoServiceProvider *plugin, QObject* parent = 0);
+    explicit QDeclarativePlaceIcon(QObject *parent = 0);
+    QDeclarativePlaceIcon(const QPlaceIcon &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent = 0);
     ~QDeclarativePlaceIcon();
 
     QPlaceIcon icon() const;
@@ -95,4 +95,3 @@ private:
 QT_END_NAMESPACE
 
 #endif
-

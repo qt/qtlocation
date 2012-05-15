@@ -62,7 +62,7 @@ QT_USE_NAMESPACE
     \snippet snippets/declarative/places.qml Ratings
 */
 
-QDeclarativeRatings::QDeclarativeRatings(QObject* parent)
+QDeclarativeRatings::QDeclarativeRatings(QObject *parent)
         : QObject(parent) {}
 
 QDeclarativeRatings::QDeclarativeRatings(const QPlaceRatings &rating,

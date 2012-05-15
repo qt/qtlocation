@@ -57,18 +57,18 @@ class QDeclarativeRouteMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
 
-    Q_PROPERTY(QDeclarativeGeoRoute* route READ route WRITE setRoute NOTIFY routeChanged)
+    Q_PROPERTY(QDeclarativeGeoRoute *route READ route WRITE setRoute NOTIFY routeChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *line READ line CONSTANT)
 
 public:
     explicit QDeclarativeRouteMapItem(QQuickItem *parent = 0);
     ~QDeclarativeRouteMapItem();
 
-    virtual void setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map);
+    virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
     //from QuickItem
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
-    QDeclarativeGeoRoute* route() const;
+    QDeclarativeGeoRoute *route() const;
     void setRoute(QDeclarativeGeoRoute *route);
 
     QDeclarativeMapLineProperties *line();

@@ -103,7 +103,7 @@ QT_BEGIN_NAMESPACE
     its coordinate property's values change.
 */
 
-QDeclarativeCoordinate::QDeclarativeCoordinate(QObject* parent)
+QDeclarativeCoordinate::QDeclarativeCoordinate(QObject *parent)
         : QObject(parent) {}
 
 QDeclarativeCoordinate::QDeclarativeCoordinate(const QGeoCoordinate &coordinate,
@@ -259,9 +259,9 @@ bool QDeclarativeCoordinate::isValid() const
     purpose of this calculation.
 */
 
-qreal QDeclarativeCoordinate::distanceTo(QObject* coordinate)
+qreal QDeclarativeCoordinate::distanceTo(QObject *coordinate)
 {
-    QDeclarativeCoordinate *coord = static_cast<QDeclarativeCoordinate*>(coordinate);
+    QDeclarativeCoordinate *coord = static_cast<QDeclarativeCoordinate *>(coordinate);
     return m_coordinate.distanceTo(coord->coordinate());
 }
 
@@ -276,7 +276,7 @@ qreal QDeclarativeCoordinate::distanceTo(QObject* coordinate)
 */
 qreal QDeclarativeCoordinate::azimuthTo(QObject *coordinate)
 {
-    QDeclarativeCoordinate *coord = static_cast<QDeclarativeCoordinate*>(coordinate);
+    QDeclarativeCoordinate *coord = static_cast<QDeclarativeCoordinate *>(coordinate);
     return m_coordinate.azimuthTo(coord->coordinate());
 }
 

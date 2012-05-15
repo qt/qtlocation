@@ -67,7 +67,7 @@ public:
     QGeoCameraCapabilities(const QGeoCameraCapabilities &other);
     ~QGeoCameraCapabilities();
 
-    QGeoCameraCapabilities& operator = (const QGeoCameraCapabilities &other);
+    QGeoCameraCapabilities &operator = (const QGeoCameraCapabilities &other);
 
     void setMinimumZoomLevel(double minimumZoomLevel);
     double minimumZoomLevel() const;

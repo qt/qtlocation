@@ -458,7 +458,7 @@ QQmlListProperty<QDeclarativeGeoServiceProviderParameter> QDeclarativeGeoService
 */
 void QDeclarativeGeoServiceProvider::parameter_append(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, QDeclarativeGeoServiceProviderParameter *parameter)
 {
-    QDeclarativeGeoServiceProvider *p = static_cast<QDeclarativeGeoServiceProvider*>(prop->object);
+    QDeclarativeGeoServiceProvider *p = static_cast<QDeclarativeGeoServiceProvider *>(prop->object);
     p->parameters_.append(parameter);
     if (p->sharedProvider_)
         p->sharedProvider_->setParameters(p->parameterMap());
@@ -469,15 +469,15 @@ void QDeclarativeGeoServiceProvider::parameter_append(QQmlListProperty<QDeclarat
 */
 int QDeclarativeGeoServiceProvider::parameter_count(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop)
 {
-    return static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->parameters_.count();
+    return static_cast<QDeclarativeGeoServiceProvider *>(prop->object)->parameters_.count();
 }
 
 /*!
     \internal
 */
-QDeclarativeGeoServiceProviderParameter* QDeclarativeGeoServiceProvider::parameter_at(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index)
+QDeclarativeGeoServiceProviderParameter *QDeclarativeGeoServiceProvider::parameter_at(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop, int index)
 {
-    return static_cast<QDeclarativeGeoServiceProvider*>(prop->object)->parameters_[index];
+    return static_cast<QDeclarativeGeoServiceProvider *>(prop->object)->parameters_[index];
 }
 
 /*!
@@ -485,7 +485,7 @@ QDeclarativeGeoServiceProviderParameter* QDeclarativeGeoServiceProvider::paramet
 */
 void QDeclarativeGeoServiceProvider::parameter_clear(QQmlListProperty<QDeclarativeGeoServiceProviderParameter> *prop)
 {
-    QDeclarativeGeoServiceProvider *p = static_cast<QDeclarativeGeoServiceProvider*>(prop->object);
+    QDeclarativeGeoServiceProvider *p = static_cast<QDeclarativeGeoServiceProvider *>(prop->object);
     p->parameters_.clear();
     if (p->sharedProvider_)
         p->sharedProvider_->setParameters(p->parameterMap());

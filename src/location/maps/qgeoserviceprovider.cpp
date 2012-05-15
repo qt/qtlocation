@@ -311,7 +311,7 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
     report any errors which occurred during the construction of the
     QGeocodingManager.
 */
-QGeocodingManager* QGeoServiceProvider::geocodingManager() const
+QGeocodingManager *QGeoServiceProvider::geocodingManager() const
 {
     return d_ptr->manager<QGeocodingManager, QGeocodingManagerEngine>(
                &(d_ptr->geocodeError), &(d_ptr->geocodeErrorString),
@@ -338,7 +338,7 @@ QGeocodingManager* QGeoServiceProvider::geocodingManager() const
     report any errors which occurred during the construction of the
     QGeoMappingManager.
 */
-QGeoMappingManager* QGeoServiceProvider::mappingManager() const
+QGeoMappingManager *QGeoServiceProvider::mappingManager() const
 {
     return d_ptr->manager<QGeoMappingManager, QGeoMappingManagerEngine>(
                &(d_ptr->mappingError), &(d_ptr->mappingErrorString),
@@ -365,7 +365,7 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
     report any errors which occurred during the construction of the
     QGeoRoutingManager.
 */
-QGeoRoutingManager* QGeoServiceProvider::routingManager() const
+QGeoRoutingManager *QGeoServiceProvider::routingManager() const
 {
     return d_ptr->manager<QGeoRoutingManager, QGeoRoutingManagerEngine>(
                &(d_ptr->routingError), &(d_ptr->routingErrorString),
@@ -583,7 +583,7 @@ void QGeoServiceProviderPrivate::loadPlugin(const QMap<QString, QVariant> &param
     int idx = int(metaData.value(QStringLiteral("index")).toDouble());
 
     // load the actual plugin
-    factory = qobject_cast<QGeoServiceProviderFactory*>(loader()->instance(idx));
+    factory = qobject_cast<QGeoServiceProviderFactory *>(loader()->instance(idx));
 }
 
 QHash<QString, QJsonObject> QGeoServiceProviderPrivate::plugins(bool reload)

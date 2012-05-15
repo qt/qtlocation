@@ -204,11 +204,11 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     screenVertices_.reserve(ts.vertices.size());
 
     if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
-        const quint32 *ix = reinterpret_cast<const quint32*>(ts.indices.data());
+        const quint32 *ix = reinterpret_cast<const quint32 *>(ts.indices.data());
         for (int i = 0; i < (ts.indices.size()/3*3); ++i)
             screenIndices_ << ix[i];
     } else {
-        const quint16 *ix = reinterpret_cast<const quint16*>(ts.indices.data());
+        const quint16 *ix = reinterpret_cast<const quint16 *>(ts.indices.data());
         for (int i = 0; i < (ts.indices.size()/3*3); ++i)
             screenIndices_ << ix[i];
     }
@@ -244,7 +244,7 @@ void QDeclarativePolygonMapItem::handleBorderUpdated()
 */
 void QDeclarativePolygonMapItem::updateAfterCoordinateChanged()
 {
-    QDeclarativeCoordinate *coord = qobject_cast<QDeclarativeCoordinate*>(QObject::sender());
+    QDeclarativeCoordinate *coord = qobject_cast<QDeclarativeCoordinate *>(QObject::sender());
     if (coord) {
         // TODO: maybe use a QHash instead of indexOf here?
         int idx = this->coordPath_.indexOf(coord);
@@ -278,7 +278,7 @@ QDeclarativeMapLineProperties *QDeclarativePolygonMapItem::border()
 /*!
     \internal
 */
-void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap* quickMap, QGeoMap *map)
+void QDeclarativePolygonMapItem::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map)
 {
     QDeclarativeGeoMapItemBase::setMap(quickMap,map);
     if (map) {
@@ -308,7 +308,7 @@ QQmlListProperty<QDeclarativeCoordinate> QDeclarativePolygonMapItem::declarative
 void QDeclarativePolygonMapItem::path_append(
         QQmlListProperty<QDeclarativeCoordinate> *property, QDeclarativeCoordinate *coordinate)
 {
-    QDeclarativePolygonMapItem *item = qobject_cast<QDeclarativePolygonMapItem*>(property->object);
+    QDeclarativePolygonMapItem *item = qobject_cast<QDeclarativePolygonMapItem *>(property->object);
     item->coordPath_.append(coordinate);
     item->path_.append(coordinate->coordinate());
 
@@ -327,16 +327,16 @@ void QDeclarativePolygonMapItem::path_append(
 int QDeclarativePolygonMapItem::path_count(
         QQmlListProperty<QDeclarativeCoordinate> *property)
 {
-    return qobject_cast<QDeclarativePolygonMapItem*>(property->object)->coordPath_.count();
+    return qobject_cast<QDeclarativePolygonMapItem *>(property->object)->coordPath_.count();
 }
 
 /*!
     \internal
 */
-QDeclarativeCoordinate* QDeclarativePolygonMapItem::path_at(
+QDeclarativeCoordinate *QDeclarativePolygonMapItem::path_at(
         QQmlListProperty<QDeclarativeCoordinate> *property, int index)
 {
-    return qobject_cast<QDeclarativePolygonMapItem*>(property->object)->coordPath_.at(index);
+    return qobject_cast<QDeclarativePolygonMapItem *>(property->object)->coordPath_.at(index);
 }
 
 /*!
@@ -345,7 +345,7 @@ QDeclarativeCoordinate* QDeclarativePolygonMapItem::path_at(
 void QDeclarativePolygonMapItem::path_clear(
         QQmlListProperty<QDeclarativeCoordinate> *property)
 {
-    QDeclarativePolygonMapItem *item = qobject_cast<QDeclarativePolygonMapItem*>(
+    QDeclarativePolygonMapItem *item = qobject_cast<QDeclarativePolygonMapItem *>(
                 property->object);
     qDeleteAll(item->coordPath_);
     item->coordPath_.clear();
@@ -364,7 +364,7 @@ void QDeclarativePolygonMapItem::path_clear(
     \sa removeCoordinate, path
 */
 
-void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate* coordinate)
+void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate *coordinate)
 {
     coordPath_.append(coordinate);
     path_.append(coordinate->coordinate());
@@ -388,7 +388,7 @@ void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate* coordinat
 
 */
 
-void QDeclarativePolygonMapItem::removeCoordinate(QDeclarativeCoordinate* coordinate)
+void QDeclarativePolygonMapItem::removeCoordinate(QDeclarativeCoordinate *coordinate)
 {
     int index = coordPath_.lastIndexOf(coordinate);
 
@@ -440,10 +440,10 @@ void QDeclarativePolygonMapItem::setColor(const QColor &color)
 /*!
     \internal
 */
-QSGNode* QDeclarativePolygonMapItem::updateMapItemPaintNode(QSGNode* oldNode, UpdatePaintNodeData* data)
+QSGNode *QDeclarativePolygonMapItem::updateMapItemPaintNode(QSGNode *oldNode, UpdatePaintNodeData *data)
 {
     Q_UNUSED(data);
-    MapPolygonNode *node = static_cast<MapPolygonNode*>(oldNode);
+    MapPolygonNode *node = static_cast<MapPolygonNode *>(oldNode);
 
     if (!node)
         node = new MapPolygonNode();
@@ -475,7 +475,7 @@ void QDeclarativePolygonMapItem::updateMapItem()
         borderGeometry_.updateSourcePoints(*map(), closedPath);
         borderGeometry_.updateScreenPoints(*map(), border_.width());
 
-        QList<QGeoMapItemGeometry*> geoms;
+        QList<QGeoMapItemGeometry *> geoms;
         geoms << &geometry_ << &borderGeometry_;
         QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
 
@@ -584,7 +584,7 @@ bool MapPolygonNode::isSubtreeBlocked() const
 /*!
     \internal
 */
-void MapPolygonNode::update(const QColor& fillColor, const QColor& borderColor,
+void MapPolygonNode::update(const QColor &fillColor, const QColor &borderColor,
                             const QGeoMapItemGeometry *fillShape,
                             const QGeoMapItemGeometry *borderShape)
 {
