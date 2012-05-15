@@ -107,7 +107,10 @@ public:
     QList<QLocale> locales() const;
     void setLocales(const QList<QLocale> &locales);
 
-    QString iconPath(const QString &remotePath) const;
+    QPlaceIcon icon(const QString &remotePath,
+                    const QList<QPlaceCategory> &categories = QList<QPlaceCategory>()) const;
+
+    QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const;
 
 private:
     QNetworkReply *sendRequest(const QUrl &url);
@@ -126,6 +129,8 @@ private:
     QList<QLocale> m_locales;
 
     QPlaceCategoryTree m_categoryTree;
+    QPlaceCategoryTree m_tempTree;
+    QHash<QString, QString> m_restIdToIconHash;
 
     QWeakPointer<QPlaceCategoriesReplyImpl> m_categoryReply;
     QHash<QString, QNetworkReply *> m_categoryRequests;

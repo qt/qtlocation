@@ -116,8 +116,8 @@ private:
     QPlaceManagerEnginePrivate *d_ptr;
     Q_DISABLE_COPY(QPlaceManagerEngine)
 
-    friend class QGeoServiceProvider;
     friend class QGeoServiceProviderPrivate;
+    friend class QPlaceManager;
 };
 
 QT_END_NAMESPACE

@@ -49,9 +49,11 @@
 #include "unsupportedreplies.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/QFile>
 #include <QtCore/qnumeric.h>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
+#include <QtCore/QStandardPaths>
 #include <QtNetwork/QNetworkAccessManager>
 
 QT_USE_NAMESPACE
@@ -59,6 +61,12 @@ QT_USE_NAMESPACE
 Q_DECLARE_METATYPE(QJsonObject);
 
 const QLatin1String QPlaceManagerEngineJsonDb::PartitionKey("places.partition");
+const QLatin1String QPlaceManagerEngineJsonDb::LocalDataPathKey("places.local_data_path");
+
+const QLatin1String QPlaceManagerEngineJsonDb::IconThemeKey("places.icons.theme");
+const QLatin1String QPlaceManagerEngineJsonDb::CustomIconsKey("places.icons.custom");
+const QLatin1String QPlaceManagerEngineJsonDb::FavoriteBadgesKey("places.icons.favorite_badges");
+
 
 QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVariant> &parameters,
                                                      QGeoServiceProvider::Error *error,
@@ -77,6 +85,27 @@ QPlaceManagerEngineJsonDb::QPlaceManagerEngineJsonDb(const QMap<QString, QVarian
             this, SLOT(processPlaceNotifications(QList<QJsonDbNotification>)));
     connect(m_jsonDb, SIGNAL(categoryNotifications(QList<QJsonDbNotification>)),
             this, SLOT(processCategoryNotifications(QList<QJsonDbNotification>)));
+
+    m_localDataPath = parameters.value(LocalDataPathKey, QString()).toString();
+    if (m_localDataPath.isEmpty()) {
+        QStringList dataLocations = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
+
+        if (!dataLocations.isEmpty() && !dataLocations.first().isEmpty()) {
+            m_localDataPath = dataLocations.first()
+                                + QLatin1String("/nokia/qtlocation/data");
+        }
+    }
+
+    m_theme = parameters.value(IconThemeKey, QString()).toString();
+    if (m_theme == QLatin1String("default"))
+        m_theme.clear();
+
+    m_useFavoriteBadges = parameters.value(FavoriteBadgesKey).toBool();
+
+    if (parameters.contains(CustomIconsKey))
+        m_useCustomIcons = parameters.value(CustomIconsKey).toBool();
+    else
+        m_useCustomIcons = true;
 
     *error = QGeoServiceProvider::NoError;
     errorString->clear();
@@ -167,6 +196,11 @@ QPlaceIdReply *QPlaceManagerEngineJsonDb::removeCategory(const QString &category
 
 QPlaceReply *QPlaceManagerEngineJsonDb::initializeCategories()
 {
+    QString mappingFile = m_localDataPath + QLatin1String("/offline/offline-mapping.json");
+
+    if (!m_jsonDb->parseIconMapping(mappingFile))
+        qWarning() << QLatin1String("Could not parse nokia icon mapping file:") << mappingFile;
+
     CategoryInitReply *reply = new CategoryInitReply(this);
     reply->start();
     return reply;
@@ -241,11 +275,26 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
     foreach (const QString &attributeType, attributeTypes)
         place.setExtendedAttribute(attributeType, original.extendedAttribute(attributeType));
 
-    if (attributeTypes.contains(QLatin1String("x_provider")) && !original.extendedAttribute(QLatin1String("x_provider")).text().isEmpty()) {
+    QString provider = original.extendedAttribute(QLatin1String("x_provider")).text();
+    if (!provider.isEmpty()) {
         QPlaceAttribute alternativeId;
         alternativeId.setText(original.placeId());
-        place.setExtendedAttribute(QString::fromLatin1("x_id_") + original.extendedAttribute(QLatin1String("x_provider")).text(),
+        place.setExtendedAttribute(QString::fromLatin1("x_id_") + provider,
                                    alternativeId);
+
+        if (provider == QLatin1String("nokia") || provider == QLatin1String("nokia_mos")) {
+            QStringList nokiaCategoryIds;
+            foreach (const QPlaceCategory &cat, original.categories()) {
+                if (!cat.categoryId().isEmpty())
+                    nokiaCategoryIds.append(cat.categoryId());
+            }
+
+            if (!nokiaCategoryIds.isEmpty()) {
+                QPlaceAttribute nokiaCatIds;
+                nokiaCatIds.setText(nokiaCategoryIds.join(QLatin1String(",")));
+                place.setExtendedAttribute(QString::fromLatin1("x_nokia_category_ids"), nokiaCatIds);
+            }
+        }
     }
 
     QVariantMap parameters;
@@ -254,12 +303,28 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
         if (originalIcon.parameters().contains(QPlaceIcon::SingleUrl)) {
                 parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
         } else if (originalIcon.manager()) {
-            if (!originalIcon.url(Icon::SmallSize).isEmpty())
-                parameters.insert(Icon::SmallSource, originalIcon.url(Icon::SmallSize));
-            if (!originalIcon.url(Icon::MediumSize).isEmpty())
-                parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
-            if (!originalIcon.url(Icon::LargeSize).isEmpty())
-                parameters.insert(Icon::LargeSource, originalIcon.url(Icon::LargeSize));
+            if (originalIcon.manager()->managerName() == QLatin1String("nokia") ||
+                 originalIcon.manager()->managerName() == QLatin1String("nokia_mos")) {
+                QString nokiaIcon = originalIcon.parameters()
+                                    .value(Icon::NokiaIcon).toString();
+                if (!nokiaIcon.isEmpty())
+                    parameters.insert(Icon::NokiaIcon, nokiaIcon);
+
+                bool nokiaIconGenerated = originalIcon.parameters()
+                        .value(Icon::NokiaIconGenerated).toBool() == true;
+                if (nokiaIconGenerated)
+                     parameters.insert(Icon::NokiaIconGenerated, nokiaIconGenerated);
+            } else if (originalIcon.manager()->managerName()
+                            == QLatin1String("nokia_places_jsondb")) {
+                parameters = originalIcon.parameters();
+            } else {
+                if (!originalIcon.url(Icon::SmallSize).isEmpty())
+                    parameters.insert(Icon::SmallSource, originalIcon.url(Icon::SmallSize));
+                if (!originalIcon.url(Icon::MediumSize).isEmpty())
+                    parameters.insert(Icon::MediumSource, originalIcon.url(Icon::MediumSize));
+                if (!originalIcon.url(Icon::LargeSize).isEmpty())
+                    parameters.insert(Icon::LargeSource, originalIcon.url(Icon::LargeSize));
+            }
         }
     }
 
@@ -275,48 +340,71 @@ QPlace QPlaceManagerEngineJsonDb::compatiblePlace(const QPlace &original) const
 
 QUrl QPlaceManagerEngineJsonDb::constructIconUrl(const QPlaceIcon &icon, const QSize &size) const
 {
-    QList<QPair<int, QUrl> > candidates;
-    //TODO: possible optimizations
-    QMap<QString, QSize> sizeDictionary;
-    sizeDictionary.insert(Icon::SmallDestination, Icon::SmallSize);
+    QUrl iconUrl;
+    if (m_useCustomIcons) {
+        QList<QPair<int, QUrl> > candidates;
+        //TODO: possible optimizations
+        QMap<QString, QSize> sizeDictionary;
+        sizeDictionary.insert(Icon::SmallDestination, Icon::SmallSize);
 
-    sizeDictionary.insert(Icon::MediumDestination, Icon::MediumSize);
-    sizeDictionary.insert(Icon::LargeDestination, Icon::LargeSize);
-    sizeDictionary.insert(Icon::FullscreenDestination, Icon::FullscreenSize);
+        sizeDictionary.insert(Icon::MediumDestination, Icon::MediumSize);
+        sizeDictionary.insert(Icon::LargeDestination, Icon::LargeSize);
+        sizeDictionary.insert(Icon::FullscreenDestination, Icon::FullscreenSize);
 
-    QStringList sizeKeys;
-    sizeKeys << "small" <<  "medium" << "large"
-             << "fullscreen";
+        QStringList sizeKeys;
+        sizeKeys << "small" <<  "medium" << "large"
+                 << "fullscreen";
 
-    foreach (const QString &sizeKey, sizeKeys) {
-        if (icon.parameters().contains(sizeKey + QLatin1String("Url"))) {
-            QSize destSize = icon.parameters().value(sizeKey + QLatin1String("Size")).toSize();
-            if (destSize.isEmpty()) {
-                candidates.append(QPair<int, QUrl>(sizeDictionary.value(sizeKey + QLatin1String("Url")).height(),
-                                                   icon.parameters().value(sizeKey + QLatin1String("Url")).toUrl()));
-            } else {
-                candidates.append(QPair<int, QUrl>(destSize.height(),
-                                                   icon.parameters().value(sizeKey + QLatin1String("Url")).toUrl()));
+        foreach (const QString &sizeKey, sizeKeys) {
+            if (icon.parameters().contains(sizeKey + QLatin1String("Url"))) {
+                QSize destSize = icon.parameters().value(sizeKey + QLatin1String("Size")).toSize();
+                if (destSize.isEmpty()) {
+                    candidates.append(QPair<int, QUrl>(sizeDictionary.value(sizeKey + QLatin1String("Url")).height(),
+                                                       icon.parameters().value(sizeKey + QLatin1String("Url")).toUrl()));
+                } else {
+                    candidates.append(QPair<int, QUrl>(destSize.height(),
+                                                       icon.parameters().value(sizeKey + QLatin1String("Url")).toUrl()));
+                }
+            }
+        }
+
+        if (candidates.isEmpty()) {
+            iconUrl = QUrl();
+        } else if (candidates.count() == 1) {
+            iconUrl = candidates.first().second;
+        } else {
+            //we assume icons are squarish so we can use height to
+            //determine which particular icon to return
+            int requestedHeight = size.height();
+
+            for (int i = 0; i < candidates.count() - 1; ++i) {
+                int thresholdHeight = (candidates.at(i).first + candidates.at(i+1).first) / 2;
+                if (requestedHeight < thresholdHeight)
+                    return candidates.at(i).second;
+            }
+            iconUrl = candidates.last().second;
+        }
+    } else {
+        QString nokiaIcon = icon.parameters().value(Icon::NokiaIcon).toString();
+        if (!nokiaIcon.isEmpty()) {
+            QString nokiaIconPath = m_localDataPath + nokiaIcon;
+            if (QFile::exists(nokiaIconPath)) {
+                if (nokiaIconPath.contains(QLatin1String("/icons/categories"))) {
+                    if (m_useFavoriteBadges) {
+                        nokiaIconPath.replace(QStringLiteral(".icon"),
+                                                 QStringLiteral("_01.icon"));
+                    }
+
+                    if (!m_theme.isEmpty())
+                        nokiaIconPath += QLatin1Char('.') + m_theme;
+                }
+
+                iconUrl = QUrl::fromLocalFile(nokiaIconPath);
             }
         }
     }
 
-    if (candidates.isEmpty())
-        return QUrl();
-    else if (candidates.count() == 1) {
-        return candidates.first().second;
-    } else {
-        //we assume icons are squarish so we can use height to
-        //determine which particular icon to return
-        int requestedHeight = size.height();
-
-        for (int i = 0; i < candidates.count() - 1; ++i) {
-            int thresholdHeight = (candidates.at(i).first + candidates.at(i+1).first) / 2;
-            if (requestedHeight < thresholdHeight)
-                return candidates.at(i).second;
-        }
-        return candidates.last().second;
-    }
+    return iconUrl;
 }
 
 QPlaceMatchReply * QPlaceManagerEngineJsonDb::matchingPlaces(const QPlaceMatchRequest &request)

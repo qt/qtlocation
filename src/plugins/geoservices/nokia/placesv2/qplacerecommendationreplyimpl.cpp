@@ -135,17 +135,11 @@ void QPlaceRecommendationReplyImpl::replyFinished()
 
         place.setName(item.value(QLatin1String("title")).toString());
 
-        QString iconPath = m_engine->iconPath(
-                                item.value(QLatin1String("icon")).toString());
-        QVariantMap parameters;
-        parameters.insert(QPlaceIcon::SingleUrl,
-                          QUrl(iconPath));
-        QPlaceIcon icon;
-        icon.setParameters(parameters);
-        place.setIcon(icon);
-
         place.setCategories(parseCategories(item.value(QLatin1String("categories")).toArray(),
-                                            m_engine));
+                                                   m_engine));
+
+        place.setIcon(m_engine->icon(item.value(QLatin1String("icon")).toString(),
+                                     place.categories()));
 
         //QJsonArray having = item.value(QLatin1String("having")).toArray();
 

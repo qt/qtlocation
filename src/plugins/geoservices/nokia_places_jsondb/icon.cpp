@@ -69,6 +69,11 @@ const QLatin1String Icon::MediumDestinationSize("mediumSize");
 const QLatin1String Icon::LargeDestinationSize("largeSize");
 const QLatin1String Icon::FullscreenDestinationSize("fullscreenSize");
 
+const QLatin1String Icon::NokiaIcon("nokiaIcon");
+const QLatin1String Icon::NokiaIconGenerated("nokiaIconGenerated");
+
+const QLatin1String Icon::DefaultIcon("/icons/categories/06.icon");
+
 Icon::Icon(IconHandler *parent)
     : QObject(parent), m_iconHandler(parent), m_error(QPlaceReply::NoError)
 {

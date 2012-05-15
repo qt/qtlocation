@@ -116,13 +116,9 @@ QPlaceIcon QDeclarativePlaceIcon::icon() const
         result.setManager(0);
 
     QVariantMap params;
-    foreach (const QString &key, m_parameters->keys()) {
-        QVariant value = m_parameters->value(key);
-        if (value.type() == QVariant::Url && !value.toUrl().isEmpty())
-            params.insert(key, value);
-        else if (value.type() == QVariant::String && !value.toString().isEmpty())
-            params.insert(key, QUrl::fromUserInput(value.toString()));
-    }
+    foreach (const QString &key, m_parameters->keys())
+        params.insert(key, m_parameters->value(key));
+
 
     result.setParameters(params);
 
@@ -247,9 +243,6 @@ void QDeclarativePlaceIcon::initParameters(const QVariantMap &parameterMap)
 
     foreach (const QString &key, parameterMap.keys()) {
         QVariant value = parameterMap.value(key);
-        if (value.type() == QVariant::Url)
-            m_parameters->insert(key, value);
-        else if (value.type() == QVariant::String)
-            m_parameters->insert(key, QUrl::fromUserInput(value.toString()));
+        m_parameters->insert(key, value);
     }
 }

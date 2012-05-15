@@ -83,6 +83,11 @@ public:
     static const QLatin1String LargeDestinationSize;
     static const QLatin1String FullscreenDestinationSize;
 
+    static const QLatin1String NokiaIcon;
+    static const QLatin1String NokiaIconGenerated;
+
+    static const QLatin1String DefaultIcon;
+
     Icon(IconHandler *parent);
     ~Icon();
 

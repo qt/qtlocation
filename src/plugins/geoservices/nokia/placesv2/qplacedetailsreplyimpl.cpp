@@ -217,13 +217,8 @@ void QPlaceDetailsReplyImpl::replyFinished()
     place.setCategories(parseCategories(object.value(QLatin1String("categories")).toArray(),
                                         m_engine));
 
-    QString iconPath = m_engine->iconPath(
-                            object.value(QLatin1String("icon")).toString());
-    QVariantMap parameters;
-    parameters.insert(QPlaceIcon::SingleUrl, QUrl(iconPath));
-    QPlaceIcon icon;
-    icon.setParameters(parameters);
-    place.setIcon(icon);
+    place.setIcon(m_engine->icon(object.value(QLatin1String("icon")).toString(),
+                                 place.categories()));
 
     if (object.contains(QLatin1String("contacts"))) {
         QJsonObject contactsObject = object.value(QLatin1String("contacts")).toObject();
@@ -252,8 +247,10 @@ void QPlaceDetailsReplyImpl::replyFinished()
     if (object.contains(QLatin1String("attribution")))
         place.setAttribution(object.value(QLatin1String("attribution")).toString());
 
-    if (object.contains(QLatin1String("supplier")))
-        place.setSupplier(parseSupplier(object.value(QLatin1String("supplier")).toObject()));
+    if (object.contains(QLatin1String("supplier"))) {
+        place.setSupplier(parseSupplier(object.value(QLatin1String("supplier")).toObject(),
+                                        m_engine));
+    }
 
     if (object.contains(QLatin1String("ratings"))) {
         QJsonObject ratingsObject = object.value(QLatin1String("ratings")).toObject();
@@ -295,7 +292,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
 
             parseCollection(QPlaceContent::ImageType,
                             mediaObject.value(QLatin1String("images")).toObject(),
-                            &collection, &totalCount);
+                            &collection, &totalCount, m_engine);
 
             place.setTotalContentCount(QPlaceContent::ImageType, totalCount);
             place.setContent(QPlaceContent::ImageType, collection);
@@ -306,7 +303,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
 
             parseCollection(QPlaceContent::EditorialType,
                             mediaObject.value(QLatin1String("editorials")).toObject(),
-                            &collection, &totalCount);
+                            &collection, &totalCount, m_engine);
 
             place.setTotalContentCount(QPlaceContent::EditorialType, totalCount);
             place.setContent(QPlaceContent::EditorialType, collection);
@@ -317,7 +314,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
 
             parseCollection(QPlaceContent::ReviewType,
                             mediaObject.value(QLatin1String("reviews")).toObject(),
-                            &collection, &totalCount);
+                            &collection, &totalCount, m_engine);
 
             place.setTotalContentCount(QPlaceContent::ReviewType, totalCount);
             place.setContent(QPlaceContent::ReviewType, collection);

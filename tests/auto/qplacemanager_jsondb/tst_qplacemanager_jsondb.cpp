@@ -147,6 +147,7 @@ private Q_SLOTS:
     void iconDownload_data();
 #endif
     void constructIconUrl();
+    void providerIcons();
     void specifiedPartition();
     void validateIndexes();
 
@@ -170,6 +171,13 @@ private:
 
     bool doFetchDetails(QString placeId,
                         QPlace *place,
+                        QPlaceReply::Error expectedError = QPlaceReply::NoError) {
+        return doFetchDetails(placeManager, placeId, place, expectedError);
+    }
+
+    bool doFetchDetails(QPlaceManager *manager,
+                        QString placeId,
+                        QPlace *place,
                         QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
     bool doSaveCategory(const QPlaceCategory &category,
@@ -192,7 +200,12 @@ private:
                  QList<QPlace> *places,
                  QPlaceReply::Error expectedError = QPlaceReply::NoError);
 
-    bool checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError);
+    bool checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError) {
+        return checkSignals(reply, expectedError, placeManager);
+    }
+
+    bool checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError,
+                      QPlaceManager *manager);
 
     bool compareResultsByName(const QList<QPlaceSearchResult> &results, const QList<QPlace> &expectedResults);
 
@@ -213,16 +226,25 @@ private:
     static const QString FullscreenDestination;
     static const QString FullscreenDestinationSize;
 
+    static const QString Nokiaicon;
+    static const QString IconPrefix;
+    static const QString NokiaIconGenerated;
+
     static const QSize SmallSize;
     static const QSize MediumSize;
     static const QSize LargeSize;
     static const QSize FullscreenSize;
     static const int Timeout;
 
+    static const QString Provider;
+
+    static const QString CustomIcons;
+
     QGeoServiceProvider *provider;
     QPlaceManager *placeManager;
     QCoreApplication *coreApp;
     JsonDbUtils *dbUtils ;
+    QTemporaryDir tempDir;
 };
 
 //These constants are equivalent to those from the jsondb plugin icon class
@@ -242,6 +264,10 @@ const QString tst_QPlaceManagerJsonDb::FullscreenSource("fullscreenSourceUrl");
 const QString tst_QPlaceManagerJsonDb::FullscreenDestination("fullscreenUrl");
 const QString tst_QPlaceManagerJsonDb::FullscreenDestinationSize("fullscreenSize");
 
+const QString tst_QPlaceManagerJsonDb::Nokiaicon("nokiaIcon");
+const QString tst_QPlaceManagerJsonDb::IconPrefix("iconPrefix");
+const QString tst_QPlaceManagerJsonDb::NokiaIconGenerated("nokiaIconGenerated");
+
 const QSize tst_QPlaceManagerJsonDb::SmallSize = QSize(20,20);
 const QSize tst_QPlaceManagerJsonDb::MediumSize = QSize(30,30);
 const QSize tst_QPlaceManagerJsonDb::LargeSize = QSize(50, 50);
@@ -249,6 +275,12 @@ const QSize tst_QPlaceManagerJsonDb::FullscreenSize = QSize(320, 480);
 
 //constant for timeout to verify signals
 const int tst_QPlaceManagerJsonDb::Timeout(10000);
+
+//This constant is key for the place attribute that signifies which provider
+//a place originates from
+const QString tst_QPlaceManagerJsonDb::Provider("x_provider");
+
+const QString tst_QPlaceManagerJsonDb::CustomIcons("places.icons.custom");
 
 tst_QPlaceManagerJsonDb::tst_QPlaceManagerJsonDb()
 {
@@ -271,9 +303,34 @@ void tst_QPlaceManagerJsonDb::initTestCase()
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
     QVERIFY(providers.contains(QLatin1String("nokia_places_jsondb")));
 
+    //create dummy icon file
+    QString catIconPath = tempDir.path() + "/icons/categories/";
+    QDir::root().mkpath(catIconPath);
+    QFile iconFile(catIconPath + "01.icon");
+    iconFile.open(QIODevice::WriteOnly);
+    iconFile.close();
+
+    iconFile.setFileName(catIconPath + "02.icon");
+    iconFile.open(QIODevice::WriteOnly);
+    iconFile.close();
+
+    iconFile.setFileName(catIconPath + "06.icon");//default icon
+    iconFile.open(QIODevice::WriteOnly);
+    iconFile.close();
+
+    QString offlinePath = tempDir.path() + QStringLiteral("/offline/");
+    QDir::root().mkpath(offlinePath);
+    QFile mappingFile(QStringLiteral(":/resources/offline-mapping.json"));
+    mappingFile.copy(offlinePath + QStringLiteral("offline-mapping.json"));
+
     provider = new QGeoServiceProvider(QLatin1String("nokia_places_jsondb"));
+
     placeManager = provider->placeManager();
     QVERIFY(placeManager);
+
+    QPlaceReply * catInitReply = placeManager->initializeCategories();
+    QVERIFY(checkSignals(catInitReply, QPlaceReply::NoError));
+    catInitReply->deleteLater();
 
     cleanup();
 }
@@ -3062,6 +3119,180 @@ void tst_QPlaceManagerJsonDb::constructIconUrl()
     //TODO: edge case testing for all combinations
 }
 
+void tst_QPlaceManagerJsonDb::providerIcons()
+{
+    QGeoServiceProvider *oldProvider = provider;
+    QPlaceManager *oldManager = placeManager;
+
+    QVariantMap providerParams;
+    providerParams.insert(CustomIcons, false);
+    providerParams.insert(QLatin1String("places.local_data_path"), tempDir.path());
+
+    provider = new QGeoServiceProvider(QLatin1String("nokia_places_jsondb"), providerParams);
+    placeManager = provider->placeManager();
+
+    QPlaceReply * catInitReply = placeManager->initializeCategories();
+    QVERIFY(checkSignals(catInitReply, QPlaceReply::NoError));
+
+    QGeoServiceProvider *nokiaProvider = new QGeoServiceProvider(QLatin1String("nokia"));
+    QPlaceManager *nokiaManager = nokiaProvider->placeManager();
+    Q_ASSERT(nokiaManager);
+
+    QPlaceIcon icon;
+    QVariantMap params;
+    QPlaceCategory accommodation;
+    accommodation.setCategoryId("accommodation");
+    params.insert(Nokiaicon, QLatin1String("/icons/categories/01.icon"));
+    params.insert(IconPrefix, QLatin1String("www.server.com/foo"));
+    icon.setParameters(params);
+    icon.setManager(nokiaManager);
+    accommodation.setIcon(icon);
+
+    QPlaceCategory businessIndustry;
+    businessIndustry.setCategoryId("business-industry");
+    params.insert(Nokiaicon, QLatin1String("/icons/categories/02.icon"));
+    params.insert(IconPrefix, QLatin1String("www.server.com/foo"));
+    icon.setParameters(params);
+    icon.setManager(nokiaManager);
+    businessIndustry.setIcon(icon);
+
+    //Check the compatible place for an icon that was generated from its categories
+    QPlace place;
+    place.setName(QStringLiteral("Gotham City"));
+    QGeoCoordinate coord(31.516, 74.316);
+    QGeoLocation location;
+    location.setCoordinate(coord);
+    place.setLocation(location);
+    place.setCategory(accommodation);
+
+    QPlaceAttribute providerAttr;
+    providerAttr.setText("nokia");
+    place.setExtendedAttribute(Provider, providerAttr);
+
+    params.clear();
+    params.insert(Nokiaicon, QLatin1String("/icons/categories/01.icon"));
+    params.insert(IconPrefix, QLatin1String("www.server.com/foo"));
+    params.insert(NokiaIconGenerated, true);
+    icon.setParameters(params);
+
+    place.setIcon(icon);
+
+    QPlace compatiblePlace = placeManager->compatiblePlace(place);
+    QVariantMap compatParams = compatiblePlace.icon().parameters();
+    QCOMPARE(compatParams.value(Nokiaicon).toString(),
+            QLatin1String("/icons/categories/01.icon"));
+
+    QCOMPARE(compatParams.value(NokiaIconGenerated).toBool(), true);
+
+    QString placeId;
+    QVERIFY(doSavePlace(compatiblePlace, QPlaceReply::NoError, &placeId));
+    compatiblePlace.setPlaceId(placeId);
+    QPlace retrievedPlace;
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+
+    QCOMPARE(retrievedPlace.icon().url(),
+             QUrl(QString::fromLatin1("file://")
+                  + tempDir.path() + QLatin1String("/icons/categories/01.icon")));
+    QCOMPARE(retrievedPlace.icon().parameters().value(NokiaIconGenerated).toBool(), true);
+
+    //Try explicitly setting an icon that is not generated.
+    place.setIcon(businessIndustry.icon());
+    compatiblePlace = placeManager->compatiblePlace(place);
+    compatParams = compatiblePlace.icon().parameters();
+    QCOMPARE(compatParams.value(Nokiaicon).toString(),
+            QLatin1String("/icons/categories/02.icon"));
+
+    QVERIFY(doSavePlace(compatiblePlace, QPlaceReply::NoError, &placeId));
+
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+    QCOMPARE(retrievedPlace.icon().url(),
+             QUrl(QString::fromLatin1("file://")
+                  + tempDir.path() + QLatin1String("/icons/categories/02.icon")));
+    QCOMPARE(retrievedPlace.icon().parameters().value(Nokiaicon).toString(),
+            QLatin1String("/icons/categories/02.icon"));
+    QVERIFY(!retrievedPlace.icon().parameters().contains(NokiaIconGenerated));
+
+
+    QStringList sizes;
+    sizes << QLatin1String("small") << QLatin1String("medium")
+          << QLatin1String("large");
+    foreach (const QString &size, sizes) {
+        //save an icon with a custom field populated
+        //ensure a generated provider icon is returned.
+        params.clear();
+        params.insert(size + QLatin1String("Url"), QUrl("file:///opt/icon.png"));
+        params.insert(size + QLatin1String("Size"), QSize(40,40));
+        icon.setParameters(params);
+        icon.setManager(placeManager);
+        compatiblePlace.setIcon(icon);
+        QVERIFY(doSavePlace(compatiblePlace, QPlaceReply::NoError, &placeId));
+        QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+        QCOMPARE(retrievedPlace.icon().url(),
+                 QUrl(QString::fromLatin1("file://")
+                      + tempDir.path() + QLatin1String("/icons/categories/01.icon")));
+        QCOMPARE(retrievedPlace.icon().parameters().value(NokiaIconGenerated).toBool(), true);
+
+        //verify that retriving the same place via a plugin configured to return custom
+        //icons will return the custom icon
+        QVERIFY(doFetchDetails(oldManager, placeId, &retrievedPlace));
+        QCOMPARE(retrievedPlace.icon().url(), QUrl("file:///opt/icon.png"));
+        QCOMPARE(retrievedPlace.icon().parameters()
+                                             .value(size + QLatin1String("Url")).toUrl(),
+                 QUrl("file:///opt/icon.png"));
+
+        //save an icon with a custom icon populated and a provider icon explicitly populated
+        //ensure the explicitly set provider icon is returned.
+        params.clear();
+        params.insert(size + QLatin1String("Url"), QUrl("file:///opt/icon.png"));
+        params.insert(size + QLatin1String("Size"), QSize(40,40));
+        params.insert(Nokiaicon, QLatin1String("/icons/categories/02.icon"));
+
+        icon.setParameters(params);
+        icon.setManager(placeManager);
+        compatiblePlace.setIcon(icon);
+
+        QVERIFY(doSavePlace(compatiblePlace, QPlaceReply::NoError, &placeId));
+        QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+        QCOMPARE(retrievedPlace.icon().url(),
+                 QUrl(QString::fromLatin1("file://")
+                      + tempDir.path() + QLatin1String("/icons/categories/02.icon")));
+        QCOMPARE(retrievedPlace.icon().parameters().value(NokiaIconGenerated).toBool(),
+                 false);
+
+        //verify that retriving the same place via a plugin configured to return custom
+        //icons will return the custom icon
+        QVERIFY(doFetchDetails(oldManager, placeId, &retrievedPlace));
+        QCOMPARE(retrievedPlace.icon().url(), QUrl("file:///opt/icon.png"));
+        QCOMPARE(retrievedPlace.icon().parameters()
+                                             .value(size + QLatin1String("Url")).toUrl(),
+                 QUrl("file:///opt/icon.png"));
+    }
+
+    //try saving a place with no icon set and no provider category information either
+    //we expect that a default icon is returned
+    place.setIcon(QPlaceIcon());
+    place.setCategories(QList<QPlaceCategory>());
+    compatiblePlace = placeManager->compatiblePlace(place);
+    QVERIFY(compatiblePlace.icon().isEmpty());
+    QVERIFY(!compatiblePlace.extendedAttributeTypes()
+            .contains(QLatin1String("x_nokia_category_ids")));
+
+    QVERIFY(doSavePlace(compatiblePlace, QPlaceReply::NoError, &placeId));
+    QVERIFY(doFetchDetails(placeId, &retrievedPlace));
+
+    QCOMPARE(retrievedPlace.icon().url(),
+             QUrl(QString::fromLatin1("file://")
+                  + tempDir.path() + QLatin1String("/icons/categories/06.icon")));
+    QCOMPARE(retrievedPlace.icon().parameters().value(NokiaIconGenerated).toBool(),
+             true);
+
+    //restore old state
+    delete provider;
+
+    provider = oldProvider;
+    placeManager = oldManager;
+}
+
 void tst_QPlaceManagerJsonDb::specifiedPartition()
 {
     QSKIP("The behavior for creating partitions has changed, test needs to be updated");
@@ -3318,10 +3549,12 @@ bool tst_QPlaceManagerJsonDb::doSearch(const QPlaceSearchRequest &request,
     return success;
 }
 
-bool tst_QPlaceManagerJsonDb::doFetchDetails(QString placeId, QPlace *place, QPlaceReply::Error expectedError)
+bool tst_QPlaceManagerJsonDb::doFetchDetails(QPlaceManager *manager,
+                                             QString placeId, QPlace *place,
+                                             QPlaceReply::Error expectedError)
 {
-    QPlaceDetailsReply *detailsReply = placeManager->getPlaceDetails(placeId);
-    bool success = checkSignals(detailsReply, expectedError);
+    QPlaceDetailsReply *detailsReply = manager->getPlaceDetails(placeId);
+    bool success = checkSignals(detailsReply, expectedError, manager);
     *place = detailsReply->place();
 
     if (!success)
@@ -3387,12 +3620,13 @@ bool tst_QPlaceManagerJsonDb::doFetchCategory(const QString &categoryId,
     return isSuccessful;
 }
 
-bool tst_QPlaceManagerJsonDb::checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError)
+bool tst_QPlaceManagerJsonDb::checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError,
+                                           QPlaceManager *manager)
 {
     QSignalSpy finishedSpy(reply, SIGNAL(finished()));
     QSignalSpy errorSpy(reply, SIGNAL(error(QPlaceReply::Error,QString)));
-    QSignalSpy managerFinishedSpy(placeManager, SIGNAL(finished(QPlaceReply*)));
-    QSignalSpy managerErrorSpy(placeManager,SIGNAL(error(QPlaceReply*,QPlaceReply::Error,QString)));
+    QSignalSpy managerFinishedSpy(manager, SIGNAL(finished(QPlaceReply*)));
+    QSignalSpy managerErrorSpy(manager,SIGNAL(error(QPlaceReply*,QPlaceReply::Error,QString)));
 
     if (expectedError != QPlaceReply::NoError) {
         //check that we get an error signal from the reply

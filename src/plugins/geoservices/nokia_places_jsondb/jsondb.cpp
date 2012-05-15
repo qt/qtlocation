@@ -39,12 +39,15 @@
 **
 ****************************************************************************/
 
+#include "icon.h"
 #include "jsondb.h"
 #include "qgeoboundingcircle.h"
 #include "qplacemanagerengine_jsondb.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/QFile>
 #include <QtCore/QJsonArray>
+#include <QtCore/QJsonDocument>
 #include <QtCore/QString>
 #include <QtJsonDb/QJsonDbReadRequest>
 #include <QtJsonDb/QJsonDbWriteRequest>
@@ -98,6 +101,7 @@ const QLatin1String JsonDb::Url("url");
 
 const QLatin1String JsonDb::ExtendedAttributes("extendedAttributes");
 const QLatin1String JsonDb::Text("text");
+const QLatin1String JsonDb::NokiaCategoryIds("x_nokia_category_ids");
 
 const QLatin1String JsonDb::Height("height");
 const QLatin1String JsonDb::Width("width");
@@ -107,6 +111,7 @@ const QLatin1String JsonDb::Small("small");
 const QLatin1String JsonDb::Medium("medium");
 const QLatin1String JsonDb::Large("large");
 const QLatin1String JsonDb::Fullscreen("fullscreen");
+const QLatin1String JsonDb::NokiaIcon("nokiaIcon");
 
 const QLatin1String JsonDb::VisibilityScope("visibilityScope");
 const QLatin1String JsonDb::DeviceVisibility("device");
@@ -434,6 +439,12 @@ QJsonObject JsonDb::convertToJson(const QPlace &place)
                 attributeJson.insert(JsonDb::Text, place.extendedAttribute(attributeType).text());
                 attributesJson.insert(attributeType, attributeJson);
             }
+
+            if (attributeType == JsonDb::NokiaCategoryIds) {
+                QJsonObject attributeJson;
+                attributeJson.insert(JsonDb::Text, place.extendedAttribute(JsonDb::NokiaCategoryIds).text());
+                attributesJson.insert(JsonDb::NokiaCategoryIds, attributeJson);
+            }
         }
 
         if (!attributesJson.isEmpty())
@@ -562,7 +573,10 @@ QPlace JsonDb::convertJsonObjectToPlace(const QJsonObject &placeJson,
         }
     }
 
-    QPlaceIcon icon = convertJsonObjectToIcon(placeJson.value(JsonDb::Thumbnails).toObject(), engine);
+    QPlaceIcon icon = convertJsonObjectToIcon(placeJson.value(JsonDb::Thumbnails).toObject(),
+                                              engine,
+                                              place.extendedAttribute(JsonDb::NokiaCategoryIds)
+                                                    .text().split(QLatin1String(",")));
     place.setIcon(icon);
 
     place.setVisibility(QtLocation::DeviceVisibility);
@@ -586,7 +600,9 @@ QPlaceCategory JsonDb::convertJsonObjectToCategory(const QJsonObject &categoryJs
     return category;
 }
 
-QPlaceIcon JsonDb::convertJsonObjectToIcon(const QJsonObject &thumbnailsJson, const QPlaceManagerEngineJsonDb *engine)
+QPlaceIcon JsonDb::convertJsonObjectToIcon(const QJsonObject &thumbnailsJson,
+                                           const QPlaceManagerEngineJsonDb *engine,
+                                           const QStringList &nokiaCategoryIds)
 {
     QVariantMap iconParameters;
     QList<QLatin1String> sizes;
@@ -601,9 +617,37 @@ QPlaceIcon JsonDb::convertJsonObjectToIcon(const QJsonObject &thumbnailsJson, co
         }
     }
 
+    QString nokiaIcon = thumbnailsJson.value(JsonDb::NokiaIcon).toString();
+    if (!nokiaIcon.isEmpty())
+        iconParameters.insert(Icon::NokiaIcon, nokiaIcon);
+
+    if (nokiaIcon.isEmpty() && !engine->useCustomIcons()) {
+        const JsonDb *db = engine->db();
+        Q_ASSERT(db);
+
+        QString iconPrefix = engine->localDataPath();
+
+        foreach (const QString &categoryId, nokiaCategoryIds) {
+            if (db->m_restIdToIconHash.contains(categoryId)) {
+                nokiaIcon = QString::fromLatin1("/icons/categories/")
+                        + db->m_restIdToIconHash.value(categoryId);
+                break;
+            }
+        }
+
+        if (nokiaIcon.isEmpty())
+            nokiaIcon = Icon::DefaultIcon;
+
+        if (QFile::exists(iconPrefix + nokiaIcon)) {
+            iconParameters.insert(Icon::NokiaIcon, nokiaIcon);
+            iconParameters.insert(Icon::NokiaIconGenerated, true);
+        }
+    }
+
     QPlaceIcon icon;
     if (!iconParameters.isEmpty()) {
         icon.setParameters(iconParameters);
+        Q_ASSERT(engine->manager());
         icon.setManager(engine->manager());
     }
 
@@ -625,6 +669,31 @@ void JsonDb::setupRequest(QJsonDbRequest *request, QObject *parent, const char *
     QObject::connect(request, SIGNAL(error(QtJsonDb::QJsonDbRequest::ErrorCode,QString)),
             request, SLOT(deleteLater()));
     request->setPartition(m_partition);
+}
+
+bool JsonDb::parseIconMapping(const QString &fileName)
+{
+    QFile mappingFile(fileName);
+
+    m_restIdToIconHash.clear();
+    if (mappingFile.open(QIODevice::ReadOnly)) {
+        QJsonDocument document = QJsonDocument::fromJson(mappingFile.readAll());
+        if (document.isObject()) {
+            QJsonObject docObject = document.object();
+            if (docObject.contains(QLatin1String("offline_icons"))) {
+                QJsonObject offlineIconsObject = docObject.value(QLatin1String("offline_icons"))
+                                                .toObject();
+                QJsonObject::const_iterator iter;
+                for (iter = offlineIconsObject.constBegin(); iter != offlineIconsObject.constEnd(); ++iter) {
+                    m_restIdToIconHash.insert(iter.key(),
+                                              iter.value().toString() + QLatin1String(".icon"));
+                }
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 void JsonDb::getCategories(const QList<QPlaceCategory> &categories, QObject *parent, const char *slot)

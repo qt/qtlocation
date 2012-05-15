@@ -72,7 +72,8 @@ public:
     static QList<QPlaceCategory> convertJsonObjectsToCategories(const QList<QJsonObject> &objects , const QPlaceManagerEngineJsonDb *engine);
     static QPlace convertJsonObjectToPlace(const QJsonObject &placeJson, const QPlaceManagerEngineJsonDb *engine);
     static QPlaceCategory convertJsonObjectToCategory(const QJsonObject &object, const QPlaceManagerEngineJsonDb *engine);
-    static QPlaceIcon convertJsonObjectToIcon(const QJsonObject &thumbnailsJson, const QPlaceManagerEngineJsonDb *engine);
+    static QPlaceIcon convertJsonObjectToIcon(const QJsonObject &thumbnailsJson, const QPlaceManagerEngineJsonDb *engine,
+                                              const QStringList &nokiaCategoryIds = QStringList());
 
     void getCategory(const QString &uuid, QObject *parent, const char *slot);
     void getCategories(const QList<QPlaceCategory> &categories, QObject *parent, const char *slot);
@@ -92,6 +93,8 @@ public:
     void setupRequest(QJsonDbRequest *request, QObject *parent, const char *slot);
 
     static QString query(const QString &expression);
+
+    bool parseIconMapping(const QString &fileName);
 
     static QStringList categoryIds(QList<QPlace> places);
 
@@ -147,6 +150,7 @@ public:
 
     static const QLatin1String ExtendedAttributes;
     static const QLatin1String Text;
+    static const QLatin1String NokiaCategoryIds;
 
     static const QLatin1String Height;
     static const QLatin1String Width;
@@ -156,6 +160,7 @@ public:
     static const QLatin1String Medium;
     static const QLatin1String Large;
     static const QLatin1String Fullscreen;
+    static const QLatin1String NokiaIcon;
 
     static const QLatin1String VisibilityScope;
     static const QLatin1String DeviceVisibility;
@@ -177,6 +182,7 @@ private:
     QJsonDbWatcher *m_placeWatcher;
     QJsonDbWatcher *m_categoryWatcher;
     QString m_partition;
+    QHash<QString, QString> m_restIdToIconHash;
 };
 
 QT_END_NAMESPACE

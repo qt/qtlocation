@@ -76,13 +76,15 @@ Item {
                     id: iconImage
                     width: 40
                     height: 40
-                    source: place ? place.icon.url(Qt.size(40,40)) : ""
+                    source: place ? (place.favorite ? place.favorite.icon.url(Qt.size(40,40))
+                                                    : place.icon.url(Qt.size(40,40)))
+                                   : ""
                     visible: source != ""
                 }
 
                 Text {
                     id: placeName
-                    text: place ? place.name : ""
+                    text: place ? (place.favorite ? place.favorite.name : place.name) : ""
                     font.pixelSize: 16
                     font.bold: true
                 }

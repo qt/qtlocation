@@ -107,10 +107,13 @@ public:
     QUrl constructIconUrl(const QPlaceIcon &icon, const QSize &size) const;
 
     JsonDb *db() { return m_jsonDb;}
+    const JsonDb *db() const { return m_jsonDb;}
     QPlaceManager *manager() const { return QPlaceManagerEngine::manager(); }
     void setCategoryTree(const CategoryTree &tree);
 
     QNetworkAccessManager *networkAccessManager();
+    QString localDataPath() const { return m_localDataPath; }
+    bool useCustomIcons() const { return m_useCustomIcons; }
 
 private slots:
     void processPlaceNotifications(const QList<QJsonDbNotification> &notifications);
@@ -124,7 +127,17 @@ private:
     CategoryTree m_tree;
     QNetworkAccessManager *m_netManager;
 
+    QString m_localDataPath;
+    QString m_theme;
+    bool m_useFavoriteBadges;
+    bool m_useCustomIcons;
+
     static const QLatin1String PartitionKey;
+    static const QLatin1String LocalDataPathKey;
+
+    static const QLatin1String IconThemeKey;
+    static const QLatin1String CustomIconsKey;
+    static const QLatin1String FavoriteBadgesKey;
 
     friend class SaveReply;
     friend class MediaReply;

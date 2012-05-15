@@ -57,19 +57,24 @@ class QPlaceCategory;
 class QPlaceManagerEngineNokiaV2;
 
 QGeoCoordinate parseCoordinate(const QJsonArray &coordinateArray);
-QPlaceSupplier parseSupplier(const QJsonObject &supplierObject);
+QPlaceSupplier parseSupplier(const QJsonObject &supplierObject,
+                             const QPlaceManagerEngineNokiaV2 *engine);
 QPlaceCategory parseCategory(const QJsonObject &categoryObject,
                              const QPlaceManagerEngineNokiaV2 *engine);
 QList<QPlaceCategory> parseCategories(const QJsonArray &categoryArray,
                              const QPlaceManagerEngineNokiaV2 *engine);
 QList<QPlaceContactDetail> parseContactDetails(const QJsonArray &contacts);
 
-QPlaceImage parseImage(const QJsonObject &imageObject);
-QPlaceReview parseReview(const QJsonObject &reviewObject);
-QPlaceEditorial parseEditorial(const QJsonObject &editorialObject);
+QPlaceImage parseImage(const QJsonObject &imageObject,
+                       const QPlaceManagerEngineNokiaV2 *engine);
+QPlaceReview parseReview(const QJsonObject &reviewObject,
+                         const QPlaceManagerEngineNokiaV2 *engine);
+QPlaceEditorial parseEditorial(const QJsonObject &editorialObject,
+                               const QPlaceManagerEngineNokiaV2 *engine);
 
 void parseCollection(QPlaceContent::Type type, const QJsonObject &object,
-                     QPlaceContent::Collection *collection, int *totalCount);
+                     QPlaceContent::Collection *collection, int *totalCount,
+                     const QPlaceManagerEngineNokiaV2 *engine);
 
 QT_END_NAMESPACE
 

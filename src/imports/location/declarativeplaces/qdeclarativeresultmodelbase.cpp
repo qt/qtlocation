@@ -68,6 +68,20 @@ void QDeclarativeResultModelBase::setFavoritesPlugin(QDeclarativeGeoServiceProvi
         return;
 
     m_favoritesPlugin = plugin;
+
+    if (m_favoritesPlugin) {
+        QGeoServiceProvider *serviceProvider = m_favoritesPlugin->sharedGeoServiceProvider();
+        if (serviceProvider) {
+            QPlaceManager *placeManager = serviceProvider->placeManager();
+            if (placeManager) {
+                if (placeManager->childCategoryIds().isEmpty()) {
+                    QPlaceReply *reply = placeManager->initializeCategories();
+                    connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
+                }
+            }
+        }
+    }
+
     emit favoritesPluginChanged();
 }
 

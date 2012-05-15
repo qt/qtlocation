@@ -60,6 +60,7 @@
 #include "uri_constants.h"
 
 #include <QtCore/QFile>
+#include <QtCore/QJsonArray>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtCore/QStandardPaths>
@@ -89,6 +90,111 @@ static const int FIXED_CATEGORIES_indices[] = {
      115,   -1
 };
 
+static const char * const NokiaIcon = "nokiaIcon";
+static const char * const IconPrefix = "iconPrefix";
+static const char * const NokiaIconGenerated = "nokiaIconGenerated";
+
+static const char * const IconThemeKey = "places.icons.theme";
+static const char * const LocalDataPathKey = "places.local_data_path";
+
+class CategoryParser
+{
+public:
+    CategoryParser();
+    bool parse(const QString &fileName);
+
+    QPlaceCategoryTree tree() const { return m_tree; }
+    QHash<QString, QUrl> restIdToIconHash() const { return m_restIdToIconHash; }
+
+    QString errorString() const;
+
+private:
+    void processCategory(int level, const QString &id,
+                         const QString &parentId = QString());
+
+    QJsonObject m_exploreObject;
+    QPlaceCategoryTree m_tree;
+    QString m_errorString;
+
+    QHash<QString, QUrl> m_restIdToIconHash;
+};
+
+CategoryParser::CategoryParser()
+{
+}
+
+bool CategoryParser::parse(const QString &fileName)
+{
+    m_exploreObject = QJsonObject();
+    m_tree.clear();
+    m_errorString.clear();
+
+    QFile mappingFile(fileName);
+
+    if (mappingFile.open(QIODevice::ReadOnly)) {
+        QJsonDocument document = QJsonDocument::fromJson(mappingFile.readAll());
+        if (document.isObject()) {
+            QJsonObject docObject = document.object();
+            if (docObject.contains(QLatin1String("offline_explore"))) {
+                m_exploreObject = docObject.value(QLatin1String("offline_explore"))
+                                                .toObject();
+                if (m_exploreObject.contains(QLatin1String("ROOT"))) {
+                    processCategory(0, QString());
+                    return true;
+                }
+            } else {
+                m_errorString = fileName + QLatin1String("does not contain the "
+                                                       "offline_explore property");
+                return false;
+            }
+        } else {
+            m_errorString = fileName + QLatin1String("is not an json object");
+            return false;
+        }
+    }
+    m_errorString = QString::fromLatin1("Unable to open ") + fileName;
+    return false;
+}
+
+void CategoryParser::processCategory(int level, const QString &id, const QString &parentId)
+{
+    //We are basing the tree on a DAG  from the input file, however we are simplyfing
+    //this into a 2 level tree, and a given category only has one parent
+    //
+    // A->B->Z
+    // A->C->Z
+    // Z in this case is not in the tree because it is 3 levels deep.
+    //
+    // X->Z
+    // Y->Z
+    // Only one of these is shown in the tree since Z can only have one parent
+    // the choice made between X and Y is arbitrary.
+    const int maxLevel = 2;
+    PlaceCategoryNode node;
+    node.category.setCategoryId(id);
+    node.parentId = parentId;
+
+    m_tree.insert(node.category.categoryId(), node);
+    //this is simply to mark the node as being visited.
+    //a proper assignment to the tree happens at the end of function
+
+    QJsonObject categoryJson = m_exploreObject.value(id.isEmpty()
+                                                     ? QLatin1String("ROOT") : id).toObject();
+    QJsonArray children = categoryJson.value(QLatin1String("children")).toArray();
+
+    if (level + 1 <= maxLevel && !categoryJson.contains(QLatin1String("final"))) {
+        for (int i = 0; i < children.count(); ++i)  {
+            QString childId = children.at(i).toString();
+            if (!m_tree.contains(childId)) {
+                node.childIds.append(childId);
+                processCategory(level + 1, childId, id);
+            }
+        }
+    }
+
+    m_tree.insert(node.category.categoryId(), node);
+}
+
 QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
     QGeoNetworkAccessManager *networkManager,
     const QMap<QString, QVariant> &parameters,
@@ -106,12 +212,12 @@ QPlaceManagerEngineNokiaV2::QPlaceManagerEngineNokiaV2(
     m_appId = parameters.value(QLatin1String("app_id")).toString();
     m_appCode = parameters.value(QLatin1String("token")).toString();
 
-    m_theme = parameters.value("places.theme", QString()).toString();
+    m_theme = parameters.value(IconThemeKey, QString()).toString();
 
     if (m_theme == QLatin1String("default"))
         m_theme.clear();
 
-    m_localDataPath = parameters.value(QLatin1String("local_data_path"), QString()).toString();
+    m_localDataPath = parameters.value(LocalDataPathKey, QString()).toString();
     if (m_localDataPath.isEmpty()) {
         QStringList dataLocations = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
 
@@ -474,20 +580,39 @@ QPlaceReply *QPlaceManagerEngineNokiaV2::initializeCategories()
     if (m_categoryReply)
         return m_categoryReply.data();
 
-    for (int i = 0; FIXED_CATEGORIES_indices[i] != -1; ++i) {
-        const QString id = QString::fromLatin1(FIXED_CATEGORIES_string +
-                                               FIXED_CATEGORIES_indices[i]);
+        m_tempTree.clear();
+        CategoryParser parser;
 
-        QUrl requestUrl(QString::fromLatin1("http://")
-                        + m_uriProvider->getCurrentHost()
-                        + QLatin1String("/v1/categories/places/") + id);
-        QNetworkReply *networkReply = sendRequest(requestUrl);
-        connect(networkReply, SIGNAL(finished()), this, SLOT(categoryReplyFinished()));
-        connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)),
-                this, SLOT(categoryReplyError()));
+        if (!parser.parse(m_localDataPath + QLatin1String("/offline/offline-mapping.json"))) {
+            PlaceCategoryNode rootNode;
 
-        m_categoryRequests.insert(id, networkReply);
-    }
+            for (int i = 0; FIXED_CATEGORIES_indices[i] != -1; ++i) {
+                const QString id = QString::fromLatin1(FIXED_CATEGORIES_string +
+                                                       FIXED_CATEGORIES_indices[i]);
+                m_tempTree.insert(id, PlaceCategoryNode());
+                rootNode.childIds.append(id);
+            }
+
+            m_tempTree.insert(QString(), rootNode);
+        } else {
+            m_tempTree = parser.tree();
+        }
+
+        //request all categories in the tree from the server
+        //because we don't want the root node, we remove it from the list
+        QStringList ids = m_tempTree.keys();
+        ids.removeAll(QString());
+        foreach (const QString &id, ids) {
+            QUrl requestUrl(QString::fromLatin1("http://")
+                            + m_uriProvider->getCurrentHost()
+                            + QLatin1String("/v1/categories/places/") + id);
+            QNetworkReply *networkReply = sendRequest(requestUrl);
+            connect(networkReply, SIGNAL(finished()), this, SLOT(categoryReplyFinished()));
+            connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)),
+                    this, SLOT(categoryReplyError()));
+
+            m_categoryRequests.insert(id, networkReply);
+        }
 
     QPlaceCategoriesReplyImpl *reply = new QPlaceCategoriesReplyImpl(this);
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
@@ -531,29 +656,68 @@ void QPlaceManagerEngineNokiaV2::setLocales(const QList<QLocale> &locales)
     m_locales = locales;
 }
 
-QString QPlaceManagerEngineNokiaV2::iconPath(const QString &remotePath) const
+QPlaceIcon QPlaceManagerEngineNokiaV2::icon(const QString &remotePath,
+                                            const QList<QPlaceCategory> &categories) const
 {
-    if (remotePath.isEmpty())
-        return QString();
+    QPlaceIcon icon;
+    QVariantMap params;
 
-    QString remoteIcon = remotePath
-            + (!m_theme.isEmpty() ? QLatin1Char('.') + m_theme : QString());
+    QRegExp rx("(.*)(/icons/categories/.*)");
 
-    if (!remotePath.contains(QLatin1String("/icons/categories/"))
-            || m_localDataPath.isEmpty()) {
-        return remoteIcon;
+    QString iconPrefix;
+    QString nokiaIcon;
+    if (rx.indexIn(remotePath) != -1 && !rx.cap(1).isEmpty() && !rx.cap(2).isEmpty()) {
+            iconPrefix = rx.cap(1);
+            nokiaIcon = rx.cap(2);
+
+        if (QFile::exists(m_localDataPath + nokiaIcon))
+            iconPrefix = QString::fromLatin1("file://") + m_localDataPath;
+
+        params.insert(NokiaIcon, nokiaIcon);
+        params.insert(IconPrefix, iconPrefix);
+
+        foreach (const QPlaceCategory &category, categories) {
+            if (category.icon().parameters().value(NokiaIcon) == nokiaIcon) {
+                params.insert(NokiaIconGenerated, true);
+                break;
+            }
+        }
+    } else {
+        QString path = remotePath + (!m_theme.isEmpty()
+                                     ? QLatin1Char('.') + m_theme : QString());
+        params.insert(QPlaceIcon::SingleUrl, QUrl(path));
+
+        if (!nokiaIcon.isEmpty()) {
+            params.insert(NokiaIcon, nokiaIcon);
+            params.insert(IconPrefix, iconPrefix);
+            params.insert(NokiaIconGenerated, true);
+        }
     }
 
-    QString localIcon = remotePath.mid(remotePath.lastIndexOf(QLatin1Char('/')) + 1);
-    localIcon.prepend(m_localDataPath + QLatin1String("/icons/categories/"));
+    icon.setParameters(params);
+    return icon;
+}
 
-    if (!m_theme.isEmpty())
-        localIcon.append(QLatin1Char('.') + m_theme);
+QUrl QPlaceManagerEngineNokiaV2::constructIconUrl(const QPlaceIcon &icon,
+                                                        const QSize &size) const
+{
+    QVariantMap params = icon.parameters();
+    QString nokiaIcon = params.value(NokiaIcon).toString();
 
-    if (QFile::exists(localIcon))
-        return QString::fromLatin1("file://") + localIcon;
-    else
-        return remoteIcon;
+    if (!nokiaIcon.isEmpty()) {
+        nokiaIcon.append(!m_theme.isEmpty() ?
+                         QLatin1Char('.') + m_theme : QString());
+
+        if (params.contains(IconPrefix)) {
+            return QUrl(params.value(IconPrefix).toString() +
+                        nokiaIcon);
+        } else {
+            return QUrl(QString::fromLatin1("file://") + m_localDataPath
+                                     + nokiaIcon);
+        }
+    }
+
+    return QUrl();
 }
 
 void QPlaceManagerEngineNokiaV2::replyFinished()
@@ -589,29 +753,24 @@ void QPlaceManagerEngineNokiaV2::categoryReplyFinished()
 
         QJsonObject category = document.object();
 
-        PlaceCategoryNode node;
-        node.category.setCategoryId(category.value(QLatin1String("categoryId")).toString());
-        node.category.setName(category.value(QLatin1String("name")).toString());
+        QString categoryId = category.value(QLatin1String("categoryId")).toString();
+        if (m_tempTree.contains(categoryId)) {
+            PlaceCategoryNode node = m_tempTree.value(categoryId);
+            node.category.setName(category.value(QLatin1String("name")).toString());
+            node.category.setCategoryId(categoryId);
+            node.category.setIcon(icon(category.value(QLatin1String("icon")).toString()));
 
-        QString iconPath = QPlaceManagerEngineNokiaV2::iconPath(
-                        category.value(QLatin1String("icon")).toString());
-        QVariantMap parameters;
-        parameters.insert(QPlaceIcon::SingleUrl,
-                          QUrl(iconPath));
-        QPlaceIcon icon;
-        icon.setParameters(parameters);
-        node.category.setIcon(icon);
-
-        m_categoryTree.insert(node.category.categoryId(), node);
-
-        m_categoryTree[QString()].childIds.append(node.category.categoryId());
+            m_tempTree.insert(categoryId, node);
+        }
     }
 
     m_categoryRequests.remove(m_categoryRequests.key(reply));
     reply->deleteLater();
 
-    if (m_categoryRequests.isEmpty() && m_categoryReply)
+    if (m_categoryRequests.isEmpty() && m_categoryReply) {
+        m_categoryTree = m_tempTree;
         m_categoryReply.data()->emitFinished();
+    }
 }
 
 void QPlaceManagerEngineNokiaV2::categoryReplyError()

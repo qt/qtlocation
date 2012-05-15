@@ -145,14 +145,7 @@ void QPlaceSearchReplyImpl::replyFinished()
 
         place.setName(item.value(QLatin1String("title")).toString());
 
-        QVariantMap parameters;
-        QString iconPath = m_engine->iconPath(
-                                item.value(QLatin1String("icon")).toString());
-        parameters.insert(QPlaceIcon::SingleUrl,
-                          QUrl(iconPath));
-        QPlaceIcon icon;
-        icon.setParameters(parameters);
-        place.setIcon(icon);
+        place.setIcon(m_engine->icon(item.value(QLatin1String("icon")).toString()));
 
         place.setCategory(parseCategory(item.value(QLatin1String("category")).toObject(),
                                         m_engine));

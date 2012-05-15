@@ -82,6 +82,7 @@ private:
     void triggerDone(const QPlaceReply::Error error, const QString &errorString);
     QUrl convertToUrl(const QVariant &var, bool *ok);
 
+    QPlaceIcon m_inputIcon;
     QJsonObject m_thumbnailsJson;
 
     QPlaceReply::Error m_error;

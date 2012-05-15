@@ -62,18 +62,16 @@ QGeoCoordinate parseCoordinate(const QJsonArray &coordinateArray)
     return QGeoCoordinate(coordinateArray.at(0).toDouble(), coordinateArray.at(1).toDouble());
 }
 
-QPlaceSupplier parseSupplier(const QJsonObject &supplierObject)
+QPlaceSupplier parseSupplier(const QJsonObject &supplierObject,
+                             const QPlaceManagerEngineNokiaV2 *engine)
 {
+    Q_ASSERT(engine);
+
     QPlaceSupplier supplier;
     supplier.setName(supplierObject.value(QLatin1String("title")).toString());
     supplier.setUrl(supplierObject.value(QLatin1String("href")).toString());
 
-    QVariantMap parameters;
-    parameters.insert(QPlaceIcon::SingleUrl,
-                      QUrl(supplierObject.value(QLatin1String("icon")).toString()));
-    QPlaceIcon icon;
-    icon.setParameters(parameters);
-    supplier.setIcon(icon);
+    supplier.setIcon(engine->icon(supplierObject.value(QLatin1String("icon")).toString()));
 
     return supplier;
 }
@@ -91,15 +89,8 @@ QPlaceCategory parseCategory(const QJsonObject &categoryObject,
     const QString hrefPath(href.path());
     category.setCategoryId(hrefPath.mid(hrefPath.lastIndexOf(QLatin1Char('/')) + 1));
 
-    QString iconPath = engine->iconPath(
-                            categoryObject.value(QLatin1String("icon")).toString());
-    QVariantMap parameters;
-    parameters.insert(QPlaceIcon::SingleUrl,
-                      QUrl(iconPath));
-    QPlaceIcon icon;
-    icon.setParameters(parameters);
-    category.setIcon(icon);
 
+    category.setIcon(engine->icon(categoryObject.value(QLatin1String("icon")).toString()));
     return category;
 }
 
@@ -133,19 +124,26 @@ QList<QPlaceContactDetail> parseContactDetails(const QJsonArray &contacts)
     return contactDetails;
 }
 
-QPlaceImage parseImage(const QJsonObject &imageObject)
+QPlaceImage parseImage(const QJsonObject &imageObject,
+                       const QPlaceManagerEngineNokiaV2 *engine)
 {
+    Q_ASSERT(engine);
+
     QPlaceImage image;
 
     image.setAttribution(imageObject.value(QLatin1String("attribution")).toString());
     image.setUrl(imageObject.value(QLatin1String("src")).toString());
-    image.setSupplier(parseSupplier(imageObject.value(QLatin1String("supplier")).toObject()));
+    image.setSupplier(parseSupplier(imageObject.value(QLatin1String("supplier")).toObject(),
+                                    engine));
 
     return image;
 }
 
-QPlaceReview parseReview(const QJsonObject &reviewObject)
+QPlaceReview parseReview(const QJsonObject &reviewObject,
+                         const QPlaceManagerEngineNokiaV2 *engine)
 {
+    Q_ASSERT(engine);
+
     QPlaceReview review;
 
     review.setDateTime(QDateTime::fromString(reviewObject.value(QLatin1String("date")).toString()));
@@ -169,7 +167,8 @@ QPlaceReview parseReview(const QJsonObject &reviewObject)
 
     review.setLanguage(reviewObject.value(QLatin1String("language")).toString());
 
-    review.setSupplier(parseSupplier(reviewObject.value(QLatin1String("supplier")).toObject()));
+    review.setSupplier(parseSupplier(reviewObject.value(QLatin1String("supplier")).toObject(),
+                                     engine));
 
     //if (reviewObject.contains(QLatin1String("via"))) {
     //    QJsonObject viaObject = reviewObject.value(QLatin1String("via")).toObject();
@@ -178,8 +177,11 @@ QPlaceReview parseReview(const QJsonObject &reviewObject)
     return review;
 }
 
-QPlaceEditorial parseEditorial(const QJsonObject &editorialObject)
+QPlaceEditorial parseEditorial(const QJsonObject &editorialObject,
+                               const QPlaceManagerEngineNokiaV2 *engine)
 {
+    Q_ASSERT(engine);
+
     QPlaceEditorial editorial;
 
     editorial.setAttribution(editorialObject.value(QLatin1String("attribution")).toString());
@@ -188,7 +190,8 @@ QPlaceEditorial parseEditorial(const QJsonObject &editorialObject)
     //    QJsonObject viaObject = editorialObject.value(QLatin1String("via")).toObject();
     //}
 
-    editorial.setSupplier(parseSupplier(editorialObject.value(QLatin1String("supplier")).toObject()));
+    editorial.setSupplier(parseSupplier(editorialObject.value(QLatin1String("supplier")).toObject(),
+                                        engine));
     editorial.setLanguage(editorialObject.value(QLatin1String("language")).toString());
     editorial.setText(editorialObject.value(QLatin1String("description")).toString());
 
@@ -196,8 +199,11 @@ QPlaceEditorial parseEditorial(const QJsonObject &editorialObject)
 }
 
 void parseCollection(QPlaceContent::Type type, const QJsonObject &object,
-                     QPlaceContent::Collection *collection, int *totalCount)
+                     QPlaceContent::Collection *collection, int *totalCount,
+                     const QPlaceManagerEngineNokiaV2 *engine)
 {
+    Q_ASSERT(engine);
+
     if (totalCount)
         *totalCount = object.value(QLatin1String("available")).toDouble();
 
@@ -212,13 +218,13 @@ void parseCollection(QPlaceContent::Type type, const QJsonObject &object,
 
             switch (type) {
             case QPlaceContent::ImageType:
-                collection->insert(offset + i, parseImage(itemObject));
+                collection->insert(offset + i, parseImage(itemObject, engine));
                 break;
             case QPlaceContent::ReviewType:
-                collection->insert(offset + i, parseReview(itemObject));
+                collection->insert(offset + i, parseReview(itemObject, engine));
                 break;
             case QPlaceContent::EditorialType:
-                collection->insert(offset + i, parseEditorial(itemObject));
+                collection->insert(offset + i, parseEditorial(itemObject, engine));
                 break;
             case QPlaceContent::NoType:
                 break;

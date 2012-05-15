@@ -176,6 +176,8 @@ QUrl QPlaceIcon::url(const QSize &size) const
         QVariant value = d->parameters.value(QPlaceIcon::SingleUrl);
         if (value.type() == QVariant::Url)
             return value.toUrl();
+        else if (value.type() == QVariant::String)
+            return QUrl::fromUserInput(value.toString());
 
         return QUrl();
     }

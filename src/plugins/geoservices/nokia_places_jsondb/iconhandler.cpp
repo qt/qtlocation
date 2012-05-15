@@ -42,12 +42,13 @@
 #include "iconhandler.h"
 #include "idreply.h"
 
+#include <QtCore/QFile>
 #include <QtCore/QUrl>
 #include <QtCore/QVariantMap>
 
 IconHandler::IconHandler(const QPlaceIcon &inputIcon, const QJsonObject &thumbnailsJson,
                          IdReply *parent)
-    : QObject(parent), m_thumbnailsJson(thumbnailsJson),
+    : QObject(parent), m_inputIcon(inputIcon), m_thumbnailsJson(thumbnailsJson),
       m_error(QPlaceReply::NoError), m_currIconIndex(0), m_reply(parent)
 {
     QStringList prefixes;
@@ -56,13 +57,13 @@ IconHandler::IconHandler(const QPlaceIcon &inputIcon, const QJsonObject &thumbna
     QList<QUrl> uniqueInputUrls; //unique source urls that have been supplied without associated destinations
     foreach (const QString &prefix, prefixes) {
         bool ok;
-        QUrl sourceUrl = convertToUrl(inputIcon.parameters().value(prefix + QLatin1String("SourceUrl"), QUrl()), &ok);
+        QUrl sourceUrl = convertToUrl(m_inputIcon.parameters().value(prefix + QLatin1String("SourceUrl"), QUrl()), &ok);
         if (!ok) {
             triggerDone(QPlaceReply::BadArgumentError, QString::fromLatin1("icon parameter for key: ") + prefix + QLatin1String("SourceUrl")
                         + QLatin1String(" was not a QUrl object"));
             return;
         }
-        QUrl destinationUrl = convertToUrl(inputIcon.parameters().value(prefix + QLatin1String("Url"), QUrl()), &ok);
+        QUrl destinationUrl = convertToUrl(m_inputIcon.parameters().value(prefix + QLatin1String("Url"), QUrl()), &ok);
         if (!ok) {
             triggerDone(QPlaceReply::BadArgumentError, QString::fromLatin1("icon parameter for key: ") + prefix + QLatin1String("Url")
                         + QLatin1String(" was not a QUrl object"));
@@ -84,8 +85,8 @@ IconHandler::IconHandler(const QPlaceIcon &inputIcon, const QJsonObject &thumbna
         icon->setSourceUrl(sourceUrl);
         icon->setDestinationUrl(destinationUrl);
         icon->setDestination(destination);
-        if (inputIcon.parameters().contains(prefix + QLatin1String("Size")))
-            icon->setSpecifiedSize(inputIcon.parameters().value(prefix + QLatin1String("Size")).toSize());
+        if (m_inputIcon.parameters().contains(prefix + QLatin1String("Size")))
+            icon->setSpecifiedSize(m_inputIcon.parameters().value(prefix + QLatin1String("Size")).toSize());
 
         m_icons.append(icon);
     }
@@ -159,6 +160,7 @@ void IconHandler::processIcons()
         m_thumbnailsJson.remove(JsonDb::Medium);
         m_thumbnailsJson.remove(JsonDb::Large);
         m_thumbnailsJson.remove(JsonDb::Fullscreen);
+        m_thumbnailsJson.remove(JsonDb::NokiaIcon);
 
         foreach (Icon *icon, m_icons) {
             QJsonObject thumbnailJson;
@@ -200,6 +202,15 @@ void IconHandler::processIcons()
                 m_thumbnailsJson.insert(JsonDb::Large, thumbnailJson);
             else
                 m_thumbnailsJson.insert(JsonDb::Fullscreen, thumbnailJson);
+        }
+
+        QString nokiaIcon = m_inputIcon.parameters().value(Icon::NokiaIcon).toString();
+        bool nokiaIconGenerated = m_inputIcon.parameters()
+                                        .value(Icon::NokiaIconGenerated).toBool();
+        if (!nokiaIcon.isEmpty() && !nokiaIconGenerated) {
+            QString localIconPath = m_reply->engine()->localDataPath() + nokiaIcon;
+            if (QFile::exists(localIconPath))
+                m_thumbnailsJson.insert(JsonDb::NokiaIcon, nokiaIcon);
         }
 
         if (!error) {

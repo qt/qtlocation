@@ -46,8 +46,9 @@
 **
 ****************************************************************************/
 
-#include "qplacecontentreplyimpl.h"
 #include "jsonparserhelpers.h"
+#include "qplacecontentreplyimpl.h"
+#include "../qplacemanagerengine_nokiav2.h"
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -55,10 +56,11 @@
 QT_BEGIN_NAMESPACE
 
 QPlaceContentReplyImpl::QPlaceContentReplyImpl(const QPlaceContentRequest &request,
-                                               QNetworkReply *reply, QObject *parent)
-:   QPlaceContentReply(parent), m_reply(reply)
-
+                                               QNetworkReply *reply,
+                                               QPlaceManagerEngineNokiaV2 *engine)
+    :   QPlaceContentReply(engine), m_reply(reply), m_engine(engine)
 {
+    Q_ASSERT(engine);
     setRequest(request);
 
     if (!m_reply)
@@ -101,7 +103,7 @@ void QPlaceContentReplyImpl::replyFinished()
     QPlaceContent::Collection collection;
     int totalCount;
 
-    parseCollection(request().contentType(), object, &collection, &totalCount);
+    parseCollection(request().contentType(), object, &collection, &totalCount, m_engine);
 
     setTotalCount(totalCount);
     setContent(collection);

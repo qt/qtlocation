@@ -41,6 +41,7 @@
 
 #include "qplacemanager.h"
 #include "qplacemanagerengine.h"
+#include "qplacemanagerengine_p.h"
 
 #include <QtCore/QDebug>
 
@@ -161,6 +162,7 @@ QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
 {
     if (d) {
         d->setParent(this);
+        d->d_ptr->manager = this;
 
         qRegisterMetaType<QPlaceCategory>("QPlaceCategory");
 

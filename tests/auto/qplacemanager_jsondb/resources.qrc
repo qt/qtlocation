@@ -7,5 +7,6 @@
     <file>resources/icon_40x40.png</file>
     <file>resources/icon_large.png</file>
     <file>resources/icon_fullscreen.png</file>
+    <file>resources/offline-mapping.json</file>
 </qresource>
 </RCC>
