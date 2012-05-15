@@ -55,10 +55,10 @@
 #include <qplaceimage.h>
 #include "qplacejsonparser_p.h"
 
+QT_BEGIN_NAMESPACE
+
 class QJSEngine;
 class QJSValue;
-
-QT_BEGIN_NAMESPACE
 
 class QPlaceJSonMediaParser : public QPlaceJSonParser
 {

@@ -49,9 +49,9 @@
 #include <QtQml/qqml.h>
 #include "qdeclarativeposition_p.h"
 
-class QFile;
-
 QT_BEGIN_NAMESPACE
+
+class QFile;
 
 class QDeclarativePositionSource : public QObject
 {

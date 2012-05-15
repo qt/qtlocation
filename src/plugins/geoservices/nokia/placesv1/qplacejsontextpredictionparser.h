@@ -54,9 +54,9 @@
 
 #include "qplacejsonparser_p.h"
 
-class QJSEngine;
-
 QT_BEGIN_NAMESPACE
+
+class QJSEngine;
 
 class QPlaceJSonTextPredictionParser : public QPlaceJSonParser
 {

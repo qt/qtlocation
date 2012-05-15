@@ -63,12 +63,12 @@
 #include <QHash>
 #include "qgeomaptype.h"
 
+QT_BEGIN_NAMESPACE
+
 class QGeoTileSpec;
 class QGeoTiledMapReply;
 class QGeoTileCache;
 class QGeoTiledMappingManagerEngine;
-
-QT_BEGIN_NAMESPACE
 
 class QGeoTileFetcherPrivate
 {

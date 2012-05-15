@@ -55,11 +55,10 @@
 #include <qplacesearchresult.h>
 #include "qplacejsonparser_p.h"
 
-class QJSEngine;
-class QJSValue;
-
 QT_BEGIN_NAMESPACE
 
+class QJSEngine;
+class QJSValue;
 class QPlaceManager;
 
 class QPlaceJSonRecommendationParser : public QPlaceJSonParser

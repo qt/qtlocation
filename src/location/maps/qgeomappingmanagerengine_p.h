@@ -63,10 +63,10 @@
 #include "qgeomappingmanager.h"
 #include "qgeocameracapabilities_p.h"
 
+QT_BEGIN_NAMESPACE
+
 class QGeoTileSpec;
 class QGeoTiledMapReply;
-
-QT_BEGIN_NAMESPACE
 
 class QGeoMappingManagerEnginePrivate
 {
