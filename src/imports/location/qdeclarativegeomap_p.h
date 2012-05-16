@@ -245,7 +245,7 @@ private:
     QGeoMap *map_;
     QWeakPointer<QDeclarativeGeoMapCopyrightNotice> copyrightsWPtr_;
 
-    QList<QObject *> mapItems_;
+    QList<QWeakPointer<QDeclarativeGeoMapItemBase> > mapItems_;
 
     QMutex updateMutex_;
     friend class QDeclarativeGeoMapItem;

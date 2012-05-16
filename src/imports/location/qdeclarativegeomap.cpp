@@ -216,8 +216,10 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
     if (!mapViews_.isEmpty())
         qDeleteAll(mapViews_);
     // remove any map items associations
-    for (int i = 0; i < mapItems_.count(); ++i)
-        qobject_cast<QDeclarativeGeoMapItemBase *>(mapItems_.at(i))->setMap(0,0);
+    for (int i = 0; i < mapItems_.count(); ++i) {
+        if (mapItems_.at(i))
+            mapItems_.at(i).data()->setMap(0,0);
+    }
     mapItems_.clear();
 
     delete copyrightsWPtr_.data();
@@ -566,10 +568,9 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     // Any map items that were added before the plugin was ready
     // need to have setMap called again
-    foreach (QObject *obj, mapItems_) {
-        QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase *>(obj);
+    foreach (const QWeakPointer<QDeclarativeGeoMapItemBase> &item, mapItems_) {
         if (item)
-            item->setMap(this, map_);
+            item.data()->setMap(this, map_);
     }
 }
 
@@ -1041,7 +1042,12 @@ void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
 
 QList<QObject *> QDeclarativeGeoMap::mapItems()
 {
-    return mapItems_;
+    QList<QObject *> ret;
+    foreach (const QWeakPointer<QDeclarativeGeoMapItemBase> &ptr, mapItems_) {
+        if (ptr)
+            ret << ptr.data();
+    }
+    return ret;
 }
 
 /*!
@@ -1053,16 +1059,17 @@ QList<QObject *> QDeclarativeGeoMap::mapItems()
 
     \sa mapitems, addMapItem, clearMapItems
 */
-void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *item)
+void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
 {
     QLOC_TRACE0;
-    if (!item || !map_)
+    if (!ptr || !map_)
         return;
+    QWeakPointer<QDeclarativeGeoMapItemBase> item(ptr);
     if (!mapItems_.contains(item))
         return;
     updateMutex_.lock();
-    item->setParentItem(0);
-    item->setMap(0, 0);
+    item.data()->setParentItem(0);
+    item.data()->setMap(0, 0);
     // these can be optimized for perf, as we already check the 'contains' above
     mapItems_.removeOne(item);
     emit mapItemsChanged();
@@ -1083,8 +1090,10 @@ void QDeclarativeGeoMap::clearMapItems()
         return;
     updateMutex_.lock();
     for (int i = 0; i < mapItems_.count(); ++i) {
-        qobject_cast<QDeclarativeGeoMapItemBase *>(mapItems_.at(i))->setParentItem(0);
-        qobject_cast<QDeclarativeGeoMapItemBase *>(mapItems_.at(i))->setMap(0, 0);
+        if (mapItems_.at(i)) {
+            mapItems_.at(i).data()->setParentItem(0);
+            mapItems_.at(i).data()->setMap(0, 0);
+        }
     }
     mapItems_.clear();
     emit mapItemsChanged();
@@ -1160,9 +1169,13 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     QPointF centerPt;
     int itemCount = 0;
     for (int i = 0; i < mapItems_.count(); ++i) {
-        QDeclarativeGeoMapItemBase *item = qobject_cast<QDeclarativeGeoMapItemBase *>(mapItems_.at(i));
+        if (!mapItems_.at(i))
+            continue;
+        QDeclarativeGeoMapItemBase *item = mapItems_.at(i).data();
         // account for the special case - circle
-        QDeclarativeCircleMapItem *circleItem = qobject_cast<QDeclarativeCircleMapItem *>(mapItems_.at(i));
+        QDeclarativeCircleMapItem *circleItem =
+                qobject_cast<QDeclarativeCircleMapItem *>(item);
+
         if ((!circleItem || !circleItem->center()) && !item)
             continue;
         if (circleItem && circleItem->center()) {
