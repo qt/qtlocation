@@ -152,9 +152,9 @@ const QLatin1String JsonDbUtils::ModifiedDateTime("modifiedDateTime");
 const QLatin1String JsonDbUtils::DefaultPartition("");
 const QLatin1String JsonDbUtils::PartitionType("Partition");
 
-const QLatin1String JsonDbUtils::LongitudeIndex("location.geo.longitude");
-const QLatin1String JsonDbUtils::LatitudeIndex("location.geo.latitude");
-const QLatin1String JsonDbUtils::PlaceNameIndex("displayName");
+const QLatin1String JsonDbUtils::LongitudeIndex("placeLongitudeIndex");
+const QLatin1String JsonDbUtils::LatitudeIndex("placeLatitudeIndex");
+const QLatin1String JsonDbUtils::PlaceNameIndex("placeDisplayNameIndex");
 
 JsonDbUtils::JsonDbUtils(QObject *parent)
     : QObject(parent)

@@ -3189,7 +3189,7 @@ void tst_QPlaceManagerJsonDb::validateIndexes()
 
     //validate latitude index
     QJsonDbReadRequest *request = new QJsonDbReadRequest();
-    request->setQuery(QStringLiteral("[?_type=%type][?location.geo.latitude < 10]"));
+    request->setQuery(QStringLiteral("[?_type=%type][?placeLatitudeIndex < 10]"));
     request->bindValue(QStringLiteral("type"), JsonDbUtils::PlaceType);
     dbUtils->sendRequest(request);
 
@@ -3200,7 +3200,7 @@ void tst_QPlaceManagerJsonDb::validateIndexes()
     QCOMPARE(request->sortKey(), JsonDbUtils::LatitudeIndex);
 
     //validate longitude index
-    request->setQuery(QStringLiteral("[?_type=%type][?location.geo.longitude < -25]"));
+    request->setQuery(QStringLiteral("[?_type=%type][?placeLongitudeIndex < -25]"));
     request->bindValue(QStringLiteral("type"), JsonDbUtils::PlaceType);
     dbUtils->sendRequest(request);
 
@@ -3210,7 +3210,7 @@ void tst_QPlaceManagerJsonDb::validateIndexes()
     QCOMPARE(request->sortKey(), JsonDbUtils::LongitudeIndex);
 
     //verify place display name index
-    request->setQuery(QStringLiteral("[?_type=%type][/displayName]"));
+    request->setQuery(QStringLiteral("[?_type=%type][/placeDisplayNameIndex]"));
     request->bindValue(QStringLiteral("type"), JsonDbUtils::PlaceType);
     dbUtils->sendRequest(request);
 
