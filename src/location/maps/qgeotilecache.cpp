@@ -130,11 +130,84 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
     loadTiles();
 }
 
+void QGeoTileCache::loadTiles()
+{
+    QStringList formats;
+    formats << QLatin1String("*.*");
+
+    QDir dir(directory_);
+    QStringList files = dir.entryList(formats, QDir::Files);
+
+    // Method:
+    // 1. read each queue file then, if each file exists, deserialize the data into the appropriate
+    // cache queue.
+    for (int i = 1; i<=4; i++) {
+        QString filename = dir.filePath(QString::fromLatin1("queue") + QString::number(i));
+        QFile file(filename);
+        if (!file.open(QIODevice::ReadOnly))
+            continue;
+        QList<QSharedPointer<QGeoCachedTileDisk> > queue;
+        QList<QGeoTileSpec> specs;
+        QList<int> costs;
+        while (!file.atEnd()) {
+            QByteArray line = file.readLine();
+            QString filename(line);
+            filename.remove('\n');
+            if (dir.exists(filename)){
+                files.removeOne(filename);
+                QGeoTileSpec spec = filenameToTileSpec(filename);
+                if (spec.zoom() == -1)
+                    continue;
+                QSharedPointer<QGeoCachedTileDisk> tileDisk(new QGeoCachedTileDisk);
+                tileDisk->filename = dir.filePath(filename);
+                tileDisk->cache = this;
+                tileDisk->spec = spec;
+                QFileInfo fi(tileDisk->filename);
+                specs.append(spec);
+                queue.append(tileDisk);
+                costs.append(fi.size());
+            }
+        }
+
+        diskCache_.deserializeQueue(i, specs, queue, costs);
+        file.close();
+    }
+
+    // 2. remaining tiles that aren't registered in a queue get pushed into cache here
+    // this is a backup, in case the queue manifest files get deleted or out of sync due to
+    // the application not closing down properly
+    for (int i = 0; i < files.size(); ++i) {
+        QGeoTileSpec spec = filenameToTileSpec(files.at(i));
+        if (spec.zoom() == -1)
+            continue;
+        QString filename = dir.filePath(files.at(i));
+        addToDiskCache(spec, filename);
+    }
+}
+
 QGeoTileCache::~QGeoTileCache()
 {
-    textureCache_.clear();
-    memoryCache_.clear();
-    diskCache_.clear();
+    // write disk cache queues to disk
+    QDir dir(directory_);
+    for (int i = 1; i<=4; i++) {
+        QString filename = dir.filePath(QString::fromLatin1("queue") + QString::number(i));
+        QFile file(filename);
+        if (!file.open(QIODevice::WriteOnly)){
+            qWarning() << "Unable to write tile cache file " << filename;
+            continue;
+        }
+        QList<QSharedPointer<QGeoCachedTileDisk> > queue;
+        diskCache_.serializeQueue(i, queue);
+        int queueLength = queue.size();
+        for (int j = 0; j<queueLength; j++) {
+            QString nameLine = queue[j]->filename + "\n";
+            // we just want the filename here, not the full path
+            QStringList parts = nameLine.split('/');
+            QString name = parts.at(parts.length()-1);
+            file.write(name.toAscii());
+        }
+        file.close();
+    }
 }
 
 void QGeoTileCache::printStats()
@@ -270,7 +343,6 @@ void QGeoTileCache::insert(const QGeoTileSpec &spec,
 {
     if (areas & QGeoTiledMappingManagerEngine::DiskCache) {
         QString filename = tileSpecToFilename(spec, format, directory_);
-
         QFile file(filename);
         file.open(QIODevice::WriteOnly);
         file.write(bytes);
@@ -351,26 +423,6 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::addToTextureCache(const QGeoTileS
 void QGeoTileCache::handleError(const QGeoTileSpec &, const QString &error)
 {
     qWarning() << "tile request error " << error;
-}
-
-void QGeoTileCache::loadTiles()
-{
-    QStringList formats;
-    //formats << QLatin1String("*.png");
-    formats << QLatin1String("*.*");
-
-    QDir dir(directory_);
-    //QStringList files = dir.entryList(formats, QDir::Files, QDir::Time | QDir::Reversed);
-    QStringList files = dir.entryList(formats, QDir::Files);
-    int tiles = 0;
-    for (int i = 0; i < files.size(); ++i) {
-        QGeoTileSpec spec = filenameToTileSpec(files.at(i));
-        if (spec.zoom() == -1)
-            continue;
-        QString filename = dir.filePath(files.at(i));
-        addToDiskCache(spec, filename);
-        tiles++;
-    }
 }
 
 QString QGeoTileCache::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory)

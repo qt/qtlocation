@@ -172,6 +172,12 @@ public:
 
     void printStats();
 
+    // Copy data directly into a queue. Designed for single use after construction
+    void deserializeQueue(int queueNumber, const QList<Key> &keys,
+                          const QList<QSharedPointer<T> > &values, const QList<int> &costs);
+    // Copy data from specific queue into list
+    void serializeQueue(int queueNumber, QList<QSharedPointer<T> > &buffer);
+
 private:
     int maxCost_, minRecent_, maxOldPopular_;
     int hitCount_, missCount_, promote_;
@@ -211,6 +217,42 @@ QCache3Q<Key,T,EvPolicy>::QCache3Q(int maxCost, int minRecent, int maxOldPopular
     if (maxOldPopular_ < 0)
         maxOldPopular_ = maxCost_ / 5;
 }
+
+template <class Key, class T, class EvPolicy>
+void QCache3Q<Key,T,EvPolicy>::serializeQueue(int queueNumber, QList<QSharedPointer<T> > &buffer)
+{
+    Q_ASSERT(queueNumber >= 1 && queueNumber <= 4);
+    Queue *queue = queueNumber == 1 ? q1_ :
+                   queueNumber == 2 ? q2_ :
+                   queueNumber == 3 ? q3_ :
+                                      q1_evicted_;
+    for (Node *node = queue->f; node; node = node->n)
+        buffer.append(node->v);
+}
+
+template <class Key, class T, class EvPolicy>
+void QCache3Q<Key,T,EvPolicy>::deserializeQueue(int queueNumber, const QList<Key> &keys,
+                       const QList<QSharedPointer<T> > &values, const QList<int> &costs)
+{
+    Q_ASSERT(queueNumber >= 1 && queueNumber <= 4);
+    int bufferSize = keys.size();
+    if (bufferSize == 0)
+        return;
+    clear();
+    Queue *queue = queueNumber == 1 ? q1_ :
+                   queueNumber == 2 ? q2_ :
+                   queueNumber == 3 ? q3_ :
+                                      q1_evicted_;
+    for (int i = 0; i<bufferSize; ++i) {
+        Node *node = new Node;
+        node->v = values[i];
+        node->k = keys[i];
+        node->cost = costs[i];
+        link_front(node, queue);
+        lookup_[keys[i]] = node;
+    }
+}
+
 
 template <class Key, class T, class EvPolicy>
 inline void QCache3Q<Key,T,EvPolicy>::setMaxCost(int maxCost, int minRecent, int maxOldPopular)
