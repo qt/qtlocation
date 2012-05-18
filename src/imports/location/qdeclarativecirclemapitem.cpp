@@ -414,6 +414,17 @@ void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChange
     updateMapItem();
 }
 
+
+/*!
+    \internal
+*/
+void QDeclarativeCircleMapItem::dragStarted()
+{
+    geometry_.markFullScreenDirty();
+    borderGeometry_.markFullScreenDirty();
+    updateMapItem();
+}
+
 /*!
     \internal
 */

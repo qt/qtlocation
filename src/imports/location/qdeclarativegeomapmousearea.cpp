@@ -172,8 +172,12 @@ QDeclarativeGeoMap *QDeclarativeGeoMapMouseArea::map()
 */
 void QDeclarativeGeoMapMouseArea::dragActiveChanged()
 {
-    if (drag() && drag()->property("active").toBool())
+    if (drag() && drag()->property("active").toBool()) {
         dragActive_ = true;
+        QQuickItem *pmi = parentMapItem();
+        if (pmi && qobject_cast<QDeclarativeGeoMapItemBase *>(pmi))
+            qobject_cast<QDeclarativeGeoMapItemBase *>(pmi)->dragStarted();
+    }
 }
 
 /*!

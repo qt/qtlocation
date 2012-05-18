@@ -8,6 +8,7 @@ QT += quick-private network location qml-private 3d core-private gui-private
 DESTDIR = $$QT.location.imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
+INCLUDEPATH += ../../location
 INCLUDEPATH += ../../location/maps
 INCLUDEPATH *= $$PWD
 DEFINES += TOUCH_EVENT_WORKAROUND

@@ -41,6 +41,7 @@
 
 #include "qdeclarativepolygonmapitem_p.h"
 #include "qgeocameracapabilities_p.h"
+#include "qlocationutils_p.h"
 #include <QtGui/private/qtriangulator_p.h>
 #include <QtQml/QQmlInfo>
 #include <QPainter>
@@ -77,6 +78,12 @@ QT_BEGIN_NAMESPACE
     By default, the polygon is displayed as a 1 pixel black border with no
     fill. To change its appearance, use the \l color, \l border.color and
     \l border.width properties.
+
+    \note Since MapPolygons are geographic items, dragging a MapPolygon
+    (through the use of \l MapMouseArea) causes in its vertices to be
+    recalculated in the geographic coordinate space. The edges retain the
+    same geographic length but remain straight. Apparent stretching of the item
+    occurs when dragged to a different latitude.
 
     \section2 Performance
 
@@ -194,8 +201,10 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     QPainterPath vpPath;
     vpPath.addRect(viewport);
 
-    // get the clipped version of the path
-    QPainterPath ppi = srcPath_.intersected(vpPath);
+    QPainterPath ppi;
+    if (clipToViewport_)
+        ppi = srcPath_.intersected(vpPath); // get the clipped version of the path
+    else ppi = srcPath_;
 
     clear();
 
@@ -255,6 +264,7 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     }
 
     screenBounds_ = ppi.boundingRect();
+
 }
 
 QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent) :
@@ -522,12 +532,10 @@ void QDeclarativePolygonMapItem::updateMapItem()
         setHeight(combined.height());
     } else {
         borderGeometry_.clear();
-
-        setWidth(geometry_.screenBoundingBox().width());
-        setHeight(geometry_.screenBoundingBox().height());
+        setWidth(geometry_.sourceBoundingBox().width());
+        setHeight(geometry_.sourceBoundingBox().height());
     }
-
-    setPositionOnMap(path_.at(0), geometry_.firstPointOffset());
+    setPositionOnMap(path_.at(0), -1 * geometry_.sourceBoundingBox().topLeft());
     update();
 }
 
@@ -574,17 +582,43 @@ bool QDeclarativePolygonMapItem::contains(const QPointF &point)
 /*!
     \internal
 */
+void QDeclarativePolygonMapItem::dragStarted()
+{
+    geometry_.markFullScreenDirty();
+    borderGeometry_.markFullScreenDirty();
+    updateMapItem();
+}
+
+/*!
+    \internal
+*/
 void QDeclarativePolygonMapItem::dragEnded()
 {
     QPointF newPoint = QPointF(x(),y()) + geometry_.firstPointOffset();
     QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid()) {
-        qreal firstLongitude = path_.at(0).longitude();
-        qreal firstLatitude = path_.at(0).latitude();
+        double firstLongitude = path_.at(0).longitude();
+        double firstLatitude = path_.at(0).latitude();
+        double minMaxLatitude = firstLatitude;
+        // prevent dragging over valid min and max latitudes
+        for (int i = 0; i < path_.count(); ++i) {
+            double newLatitude = path_.at(i).latitude()
+                    + newCoordinate.latitude() - firstLatitude;
+            if (!QLocationUtils::isValidLat(newLatitude)) {
+                if (qAbs(newLatitude) > qAbs(minMaxLatitude)) {
+                    minMaxLatitude = newLatitude;
+                }
+            }
+        }
+        // calculate offset needed to re-position the item within map border
+        double offsetLatitude = minMaxLatitude - QLocationUtils::clipLat(minMaxLatitude);
         for (int i = 0; i < path_.count(); ++i) {
             QGeoCoordinate coord = path_.at(i);
-            coord.setLongitude(coord.longitude() + newCoordinate.longitude() - firstLongitude);
-            coord.setLatitude(coord.latitude() + newCoordinate.latitude() - firstLatitude);
+            // handle dateline crossing
+            coord.setLongitude(QLocationUtils::wrapLong(coord.longitude()
+                               + newCoordinate.longitude() - firstLongitude));
+            coord.setLatitude(coord.latitude()
+                              + newCoordinate.latitude() - firstLatitude - offsetLatitude);
             this->coordPath_.at(i)->setCoordinate(coord);
         }
         geometry_.markSourceDirty();

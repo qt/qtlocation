@@ -41,6 +41,7 @@
 
 #include "qdeclarativepolylinemapitem_p.h"
 #include "qgeocameracapabilities_p.h"
+#include "qlocationutils_p.h"
 #include <QtQml/QQmlInfo>
 #include <QPainter>
 #include <QPainterPath>
@@ -379,7 +380,13 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     // Perform clipping to the viewport limits
     QVector<qreal> points;
     QVector<QPainterPath::ElementType> types;
-    clipPathToRect(srcPoints_, srcPointTypes_, viewport, points, types);
+
+    if (clipToViewport_) {
+        clipPathToRect(srcPoints_, srcPointTypes_, viewport, points, types);
+    } else {
+        points = srcPoints_;
+        types = srcPointTypes_;
+    }
 
     QVectorPath vp(points.data(), types.size(), types.data());
     QTriangulatingStroker ts;
@@ -414,7 +421,7 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
 
     QRectF bb = screenOutline_.boundingRect();
     screenBounds_ = bb;
-    this->translate(-1 * bb.topLeft());
+    this->translate( -1 * sourceBounds_.topLeft());
 }
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent) :
@@ -644,10 +651,11 @@ void QDeclarativePolylineMapItem::updateMapItem()
 
     geometry_.updateSourcePoints(*map(), path_);
     geometry_.updateScreenPoints(*map(), line_.width());
-    setWidth(geometry_.screenBoundingBox().width());
-    setHeight(geometry_.screenBoundingBox().height());
 
-    setPositionOnMap(path_.at(0), geometry_.firstPointOffset());
+    setWidth(geometry_.sourceBoundingBox().width());
+    setHeight(geometry_.sourceBoundingBox().height());
+
+    setPositionOnMap(path_.at(0), -1 * geometry_.sourceBoundingBox().topLeft());
     update();
 }
 
@@ -680,17 +688,42 @@ bool QDeclarativePolylineMapItem::contains(const QPointF &point)
 /*!
     \internal
 */
+void QDeclarativePolylineMapItem::dragStarted()
+{
+    geometry_.markFullScreenDirty();
+    updateMapItem();
+}
+
+/*!
+    \internal
+*/
 void QDeclarativePolylineMapItem::dragEnded()
 {
     QPointF newPoint = QPointF(x(),y()) + geometry_.firstPointOffset();
     QGeoCoordinate newCoordinate = map()->screenPositionToCoordinate(newPoint, false);
     if (newCoordinate.isValid()) {
-        qreal firstLongitude = path_.at(0).longitude();
-        qreal firstLatitude = path_.at(0).latitude();
+        double firstLongitude = path_.at(0).longitude();
+        double firstLatitude = path_.at(0).latitude();
+        double minMaxLatitude = firstLatitude;
+        // prevent dragging over valid min and max latitudes
+        for (int i = 0; i < path_.count(); ++i) {
+            double newLatitude = path_.at(i).latitude()
+                    + newCoordinate.latitude() - firstLatitude;
+            if (!QLocationUtils::isValidLat(newLatitude)) {
+                if (qAbs(newLatitude) > qAbs(minMaxLatitude)) {
+                    minMaxLatitude = newLatitude;
+                }
+            }
+        }
+        // calculate offset needed to re-position the item within map border
+        double offsetLatitude = minMaxLatitude - QLocationUtils::clipLat(minMaxLatitude);
         for (int i = 0; i < path_.count(); ++i) {
             QGeoCoordinate coord = path_.at(i);
-            coord.setLongitude(coord.longitude() + newCoordinate.longitude() - firstLongitude);
-            coord.setLatitude(coord.latitude() + newCoordinate.latitude() - firstLatitude);
+            // handle dateline crossing
+            coord.setLongitude(QLocationUtils::wrapLong(coord.longitude()
+                               + newCoordinate.longitude() - firstLongitude));
+            coord.setLatitude(coord.latitude()
+                              + newCoordinate.latitude() - firstLatitude - offsetLatitude);
             this->coordPath_.at(i)->setCoordinate(coord);
         }
         geometry_.markSourceDirty();

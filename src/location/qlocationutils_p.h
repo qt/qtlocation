@@ -69,6 +69,22 @@ public:
         return lng >= -180 && lng <= 180;
     }
 
+    inline static double clipLat(double lat) {
+        if (lat > 90)
+            lat = 90;
+        else if (lat < -90)
+            lat = -90;
+        return lat;
+    }
+
+    inline static double wrapLong(double lng) {
+        if (lng > 180)
+            lng -= 360;
+        else if (lng < -180)
+            lng += 360;
+        return lng;
+    }
+
     /*
         Creates a QGeoPositionInfo from a GGA, GLL, RMC, VTG or ZDA sentence.
 

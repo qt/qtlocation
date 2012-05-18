@@ -114,7 +114,7 @@ QRectF QGeoMapItemGeometry::translateToCommonOrigin(const QList<QGeoMapItemGeome
     // then translate everything
     foreach (QGeoMapItemGeometry *g, geoms) {
         g->translate(maxOffset - g->firstPointOffset());
-        brects.addRect(g->screenBoundingBox());
+        brects.addRect(g->sourceBoundingBox());
     }
 
     return brects.boundingRect();

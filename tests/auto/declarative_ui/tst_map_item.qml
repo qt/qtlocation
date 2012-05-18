@@ -355,8 +355,10 @@ Item {
             compare (preMapRectBottomRightChanged.count, 1)
             verify(fuzzy_compare(preMapRect.topLeft.latitude, 27.2, 0.1))
             verify(fuzzy_compare(preMapRect.topLeft.longitude, 12.1, 0.1))
-            verify(fuzzy_compare(preMapRect.bottomRight.latitude, 17.7, 0.1))
-            verify(fuzzy_compare(preMapRect.bottomRight.longitude, 22.1, 0.1))
+            var latH = preMapRect.bottomRight.latitude - preMapRect.topLeft.latitude
+            var lonW = preMapRect.bottomRight.longitude - preMapRect.topLeft.longitude
+            verify(fuzzy_compare(preMapRect.bottomRight.latitude, preMapRect.topLeft.latitude + latH, 0.1))
+            verify(fuzzy_compare(preMapRect.bottomRight.longitude, preMapRect.topLeft.longitude + lonW, 0.1))
 
             // drag circle
             compare (preMapCircleActiveChanged.count, 0)

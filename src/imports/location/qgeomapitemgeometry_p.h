@@ -74,8 +74,9 @@ public:
     inline bool isSourceDirty() const { return sourceDirty_; }
     inline bool isScreenDirty() const { return screenDirty_; }
     inline void markSourceDirty() { sourceDirty_ = true; screenDirty_ = true; }
-    inline void markScreenDirty() { screenDirty_ = true; }
-    inline void markClean() { screenDirty_ = (sourceDirty_ = false); }
+    inline void markScreenDirty() { screenDirty_ = true; clipToViewport_ = true; }
+    inline void markFullScreenDirty() { screenDirty_ = true; clipToViewport_ = false;}
+    inline void markClean() { screenDirty_ = (sourceDirty_ = false); clipToViewport_ = true;}
 
     inline QRectF sourceBoundingBox() const { return sourceBounds_; }
     inline QRectF screenBoundingBox() const { return screenBounds_; }
@@ -115,7 +116,9 @@ public:
     static QRectF translateToCommonOrigin(const QList<QGeoMapItemGeometry *> &geoms);
 
 protected:
-    bool sourceDirty_, screenDirty_;
+    bool sourceDirty_;
+    bool screenDirty_;
+    bool clipToViewport_;
 
     QPointF firstPointOffset_;
 

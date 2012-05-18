@@ -42,6 +42,7 @@
 #include "qdeclarativerectanglemapitem_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
 #include "qgeocameracapabilities_p.h"
+#include "qlocationutils_p.h"
 #include <QPainterPath>
 #include <qnumeric.h>
 #include <QRectF>
@@ -58,10 +59,10 @@ QT_BEGIN_NAMESPACE
     \brief The MapRectangle element displays a rectangle on a Map.
 
     The MapRectangle element displays a rectangle on a Map. Rectangles are a
-    special case of Polygon with exactly 4 vertices and "straight" sides. In
+    special case of Polygon with exactly 4 vertices and 4 "straight" edges. In
     this case, "straight" means that the top-left point has the same latitude
-    as the top-right point (the top side), and the bottom-left point has the
-    same latitude as the bottom-right point (the bottom side). Similarly, the
+    as the top-right point (the top edge), and the bottom-left point has the
+    same latitude as the bottom-right point (the bottom edge). Similarly, the
     points on the left side have the same longitude, and the points on the
     right side have the same longitude.
 
@@ -71,6 +72,12 @@ QT_BEGIN_NAMESPACE
     By default, the rectangle is displayed with transparent fill and a 1-pixel
     thick black border. This can be changed using the \l color, \l border.color
     and \l border.width properties.
+
+    \note Similar to the \l MapPolygon element, MapRectangles are geographic
+    items, thus dragging a MapRectangle causes its vertices to be recalculated
+    in the geographic coordinate space. Apparent stretching of the item
+    occurs when dragged to the a different latitude, however, its edges
+    remain straight.
 
     \section2 Performance
 
@@ -332,14 +339,11 @@ void QDeclarativeRectangleMapItem::updateMapItem()
                            bottomRight_->coordinate());
 
     QList<QGeoCoordinate> pathClosed;
-    const double lonW = qAbs(bottomRight_->longitude() - topLeft_->longitude());
-    const double latH = qAbs(bottomRight_->latitude() - topLeft_->latitude());
     pathClosed << topLeft_->coordinate();
     pathClosed << QGeoCoordinate(topLeft_->latitude(),
-                                 topLeft_->longitude() + lonW);
-    pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
-                                 topLeft_->longitude() + lonW);
-    pathClosed << QGeoCoordinate(topLeft_->latitude() - latH,
+                                 bottomRight_->longitude());
+    pathClosed << bottomRight_->coordinate();
+    pathClosed << QGeoCoordinate(bottomRight_->latitude(),
                                  topLeft_->longitude());
     pathClosed << pathClosed.first();
 
@@ -407,13 +411,36 @@ bool QDeclarativeRectangleMapItem::contains(const QPointF &point)
 /*!
     \internal
 */
+void QDeclarativeRectangleMapItem::dragStarted()
+{
+    borderGeometry_.markFullScreenDirty();
+    updateMapItem();
+}
+
+/*!
+    \internal
+*/
 void QDeclarativeRectangleMapItem::dragEnded()
 {
     QPointF newTopLeftPoint = QPointF(x(),y());
     QGeoCoordinate newTopLeft = map()->screenPositionToCoordinate(newTopLeftPoint, false);
-    QPointF newBottomRightPoint = QPointF(x() + width(), y() + height());
-    QGeoCoordinate newBottomRight = map()->screenPositionToCoordinate(newBottomRightPoint, false);
-    if (newTopLeft.isValid() && newBottomRight.isValid()) {
+    if (newTopLeft.isValid()) {
+        // calculate new geo width while checking for dateline crossing
+        const double lonW = bottomRight_->longitude() > topLeft_->longitude() ?
+                    bottomRight_->longitude() - topLeft_->longitude() :
+                    bottomRight_->longitude() + 360 - topLeft_->longitude();
+        const double latH = qAbs(bottomRight_->latitude() - topLeft_->latitude());
+        QGeoCoordinate newBottomRight;
+        // prevent dragging over valid min and max latitudes
+        if (QLocationUtils::isValidLat(newTopLeft.latitude() - latH)) {
+            newBottomRight.setLatitude(newTopLeft.latitude() - latH);
+        } else {
+            newBottomRight.setLatitude(QLocationUtils::clipLat(newTopLeft.latitude() - latH));
+            newTopLeft.setLatitude(newBottomRight.latitude() + latH);
+        }
+        // handle dateline crossing
+        newBottomRight.setLongitude(QLocationUtils::wrapLong(newTopLeft.longitude() + lonW));
+        newBottomRight.setAltitude(newTopLeft.altitude());
         internalTopLeft_.setCoordinate(newTopLeft);
         internalBottomRight_.setCoordinate(newBottomRight);
         setTopLeft(&internalTopLeft_);

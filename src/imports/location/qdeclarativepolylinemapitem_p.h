@@ -119,6 +119,7 @@ public:
     QDeclarativeMapLineProperties *line();
 
     inline QList<QDeclarativeCoordinate *> &path() { return coordPath_; }
+    void dragStarted();
     void dragEnded();
 
 Q_SIGNALS:
