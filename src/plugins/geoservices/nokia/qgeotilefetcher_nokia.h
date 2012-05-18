@@ -93,7 +93,7 @@ private:
 
     QString getLanguageString() const;
 
-    QGeoTiledMappingManagerEngineNokia *m_engineNokia;
+    QWeakPointer<QGeoTiledMappingManagerEngineNokia> m_engineNokia;
     QGeoNetworkAccessManager *m_networkManager;
     QMap<QString, QVariant> m_parameters;
     QSize m_tileSize;

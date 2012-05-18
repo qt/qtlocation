@@ -104,13 +104,13 @@ public:
     void newTileFetched(const QGeoTileSpec &spec);
     QSet<QGeoTileSpec> visibleTiles();
 
-    QGeoTiledMappingManagerEngine *engine() const;
     void prefetchTiles();
+    QWeakPointer<QGeoTiledMappingManagerEngine> engine() const;
 
 private:
     QGeoTiledMapData *map_;
     QGeoTileCache *cache_;
-    QGeoTiledMappingManagerEngine *engine_;
+    QWeakPointer<QGeoTiledMappingManagerEngine> engine_;
 
     QGeoCameraTiles *cameraTiles_;
     QGeoMapScene *mapScene_;

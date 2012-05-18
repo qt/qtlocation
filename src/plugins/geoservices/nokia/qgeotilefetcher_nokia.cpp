@@ -196,7 +196,7 @@ QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec)
 
 QString QGeoTileFetcherNokia::getLanguageString() const
 {
-    const QLocale::Language lang = m_engineNokia->locale().language();
+    const QLocale::Language lang = m_engineNokia.data()->locale().language();
     // English is the default, where no ln is specified. We hardcode the languages
     // here even though the entire list is updated automagically from the server.
     // The current languages are Arabic, Chinese, Simplified Chinese, English
@@ -207,7 +207,7 @@ QString QGeoTileFetcherNokia::getLanguageString() const
     case QLocale::Arabic:
         return "ARA";
     case QLocale::Chinese:
-        if (QLocale::TraditionalChineseScript == m_engineNokia->locale().script())
+        if (QLocale::TraditionalChineseScript == m_engineNokia.data()->locale().script())
             return "CHI";
         else
             return "CHT";
@@ -241,10 +241,12 @@ QString QGeoTileFetcherNokia::applicationId() const
 
 void QGeoTileFetcherNokia::copyrightsFetched()
 {
-    QMetaObject::invokeMethod(m_engineNokia,
-                              "loadCopyrightsDescriptorsFromJson",
-                              Qt::QueuedConnection,
-                              Q_ARG(QByteArray, m_copyrightsReply->readAll()));
+    if (m_engineNokia) {
+        QMetaObject::invokeMethod(m_engineNokia.data(),
+                                  "loadCopyrightsDescriptorsFromJson",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(QByteArray, m_copyrightsReply->readAll()));
+    }
 }
 
 void QGeoTileFetcherNokia::fetchCopyrightsData()

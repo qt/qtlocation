@@ -91,12 +91,19 @@ bool QGeoTileFetcher::init()
     return false;
 }
 
-void QGeoTileFetcher::threadFinished()
+void QGeoTileFetcher::stopTimer()
 {
     Q_D(QGeoTileFetcher);
     d->stopped_ = true;
-    disconnect(d->timer_);
-    d->timer_->stop();
+    if (d->timer_) {
+        disconnect(d->timer_);
+        d->timer_->stop();
+    }
+}
+
+void QGeoTileFetcher::threadFinished()
+{
+    stopTimer();
     this->deleteLater();
 }
 

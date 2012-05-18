@@ -187,6 +187,8 @@ QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
 
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
 {
+    delete engine;
+    engine = 0;
 }
 
 #include "moc_qgeomappingmanager.cpp"

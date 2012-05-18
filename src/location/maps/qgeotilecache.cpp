@@ -55,6 +55,8 @@ Q_DECLARE_METATYPE(QList<QGeoTileSpec>)
 Q_DECLARE_METATYPE(QSet<QGeoTileSpec>)
 
 QT_BEGIN_NAMESPACE
+QMutex QGeoTileCache::cleanupMutex_;
+QList<QGLTexture2D*> QGeoTileCache::cleanupList_;
 
 class QGeoCachedTileMemory
 {
@@ -73,7 +75,6 @@ public:
 
 QGeoTileTexture::QGeoTileTexture()
     : texture(0),
-      cache(0),
       textureBound(false) {}
 
 void QCache3QTileEvictionPolicy::aboutToBeRemoved(const QGeoTileSpec &key, QSharedPointer<QGeoCachedTileDisk> obj)
@@ -98,8 +99,7 @@ QGeoCachedTileDisk::~QGeoCachedTileDisk()
 
 QGeoTileTexture::~QGeoTileTexture()
 {
-    if (cache)
-        cache->evictFromTextureCache(this);
+    QGeoTileCache::evictFromTextureCache(this);
 }
 
 QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
@@ -130,7 +130,12 @@ QGeoTileCache::QGeoTileCache(const QString &directory, QObject *parent)
     loadTiles();
 }
 
-QGeoTileCache::~QGeoTileCache() {}
+QGeoTileCache::~QGeoTileCache()
+{
+    textureCache_.clear();
+    memoryCache_.clear();
+    diskCache_.clear();
+}
 
 void QGeoTileCache::printStats()
 {
@@ -308,7 +313,6 @@ QSharedPointer<QGeoCachedTileDisk> QGeoTileCache::addToDiskCache(const QGeoTileS
     QFileInfo fi(filename);
     int diskCost = fi.size();
     diskCache_.insert(spec, td, diskCost);
-
     return td;
 }
 
@@ -334,7 +338,6 @@ QSharedPointer<QGeoTileTexture> QGeoTileCache::addToTextureCache(const QGeoTileS
     tt->texture->setPixmap(pixmap);
     tt->texture->setHorizontalWrap(QGL::ClampToEdge);
     tt->texture->setVerticalWrap(QGL::ClampToEdge);
-    tt->cache = this;
 
     /* Do not bind/cleanImage on the texture here -- it needs to be done
      * in the render thread (by qgeomapscene) */

@@ -65,6 +65,7 @@ class Q_LOCATION_EXPORT QGeoTileFetcher : public QObject
 public:
     QGeoTileFetcher(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
     virtual ~QGeoTileFetcher();
+    void stopTimer();
 
 public Q_SLOTS:
     void threadStarted();

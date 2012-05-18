@@ -242,7 +242,6 @@ private:
     QQuickCanvas *canvas_;
     int touchTimer_;
 
-    QGeoTileCache *tileCache_;
     QGeoMap *map_;
     QWeakPointer<QDeclarativeGeoMapCopyrightNotice> copyrightsWPtr_;
 

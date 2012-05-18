@@ -329,9 +329,12 @@ QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
 QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate()
 {
     delete tileCache_;
-    delete fetcher_;
 
-    thread_->quit();
+    // will delete fetcher and thread later
+    thread_->exit();
+
+    // but we still want to stop the fetcher's timer immediately
+    fetcher_->stopTimer();
 }
 #include "moc_qgeotiledmappingmanagerengine.cpp"
 

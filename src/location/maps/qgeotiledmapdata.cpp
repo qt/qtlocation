@@ -140,7 +140,8 @@ QGeoTiledMapData::QGeoTiledMapData(QGeoTiledMappingManagerEngine *engine, QObjec
 
 QGeoTiledMapData::~QGeoTiledMapData()
 {
-    d_ptr->engine()->deregisterMap(this);
+    if (d_ptr->engine()) // check if engine hasn't already been deleted
+        d_ptr->engine().data()->deregisterMap(this);
     delete d_ptr;
 }
 QGeoTileRequestManager *QGeoTiledMapData::getRequestManager()
@@ -264,7 +265,7 @@ QGeoTileCache *QGeoTiledMapDataPrivate::tileCache()
     return cache_;
 }
 
-QGeoTiledMappingManagerEngine *QGeoTiledMapDataPrivate::engine() const
+QWeakPointer<QGeoTiledMappingManagerEngine> QGeoTiledMapDataPrivate::engine() const
 {
     return engine_;
 }
@@ -353,8 +354,11 @@ void QGeoTiledMapDataPrivate::newTileFetched(const QGeoTileSpec &spec)
 {
     // Only promote the texture up to GPU if it is visible
     if (cameraTiles_->tiles().contains(spec)){
-        mapScene_->addTile(spec, engine_->getTileTexture(spec));
-        map_->update();
+        QSharedPointer<QGeoTileTexture> tex = engine_.data()->getTileTexture(spec);
+        if (tex) {
+            mapScene_->addTile(spec, tex);
+            map_->update();
+        }
     }
 }
 

@@ -99,7 +99,6 @@ public:
 
     QGeoTileSpec spec;
     QGLTexture2D *texture;
-    QGeoTileCache *cache;
     bool textureBound;
 };
 
@@ -137,9 +136,10 @@ public:
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec);
 
-    void evictFromDiskCache(QGeoCachedTileDisk *td);
-    void evictFromMemoryCache(QGeoCachedTileMemory *tm);
-    void evictFromTextureCache(QGeoTileTexture *tt);
+    // can be called without a specific tileCache pointer
+    static void evictFromDiskCache(QGeoCachedTileDisk *td);
+    static void evictFromMemoryCache(QGeoCachedTileMemory *tm);
+    static void evictFromTextureCache(QGeoTileTexture *tt);
 
     void insert(const QGeoTileSpec &spec,
                 const QByteArray &bytes,
@@ -168,8 +168,8 @@ private:
     int minTextureUsage_;
     int extraTextureUsage_;
 
-    QMutex cleanupMutex_;
-    QList<QGLTexture2D *> cleanupList_;
+    static QMutex cleanupMutex_;
+    static QList<QGLTexture2D*> cleanupList_;
 };
 
 QT_END_NAMESPACE
