@@ -64,10 +64,24 @@ public:
 
     QGeoBoundingBox &operator = (const QGeoBoundingBox &other);
 
+#ifdef Q_NO_USING_KEYWORD
+    bool operator==(const QGeoBoundingArea &other) const
+    {
+        return QGeoBoundingArea::operator==(other);
+    }
+#else
     using QGeoBoundingArea::operator==;
+#endif
     bool operator==(const QGeoBoundingBox &other) const;
 
+#ifdef Q_NO_USING_KEYWORD
+    bool operator!=(const QGeoBoundingArea &other) const
+    {
+        return QGeoBoundingArea::operator!=(other);
+    }
+#else
     using QGeoBoundingArea::operator!=;
+#endif
     bool operator!=(const QGeoBoundingBox &other) const;
 
     void setTopLeft(const QGeoCoordinate &topLeft);
@@ -91,7 +105,14 @@ public:
     void setHeight(double degreesHeight);
     double height() const;
 
+#ifdef Q_NO_USING_KEYWORD
+    bool contains(const QGeoCoordinate &coordinate) const
+    {
+        return QGeoBoundingArea::contains(coordinate);
+    }
+#else
     using QGeoBoundingArea::contains;
+#endif
     bool contains(const QGeoBoundingBox &boundingBox) const;
     bool intersects(const QGeoBoundingBox &boundingBox) const;
 

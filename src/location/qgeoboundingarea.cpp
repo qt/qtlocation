@@ -79,9 +79,9 @@ bool QGeoBoundingAreaPrivate::operator==(const QGeoBoundingAreaPrivate &other) c
 
     Describes the type of a bounding area.
 
-    \value BoxType A box shaped bounding area.
-
-    \value CircleType A circular bounding area.
+    \value UnknownType  A bounding area of unknown type.
+    \value BoxType      A box shaped bounding area.
+    \value CircleType   A circular bounding area.
 */
 
 inline QGeoBoundingAreaPrivate *QGeoBoundingArea::d_func()
@@ -94,15 +94,24 @@ inline const QGeoBoundingAreaPrivate *QGeoBoundingArea::d_func() const
     return static_cast<const QGeoBoundingAreaPrivate *>(d_ptr.constData());
 }
 
+/*!
+    Constructs a new invalid bounding area of \l UnknownType.
+*/
 QGeoBoundingArea::QGeoBoundingArea()
 {
 }
 
+/*!
+    Constructs a new bounding area which is a copy of \a other.
+*/
 QGeoBoundingArea::QGeoBoundingArea(const QGeoBoundingArea &other)
 :   d_ptr(other.d_ptr)
 {
 }
 
+/*!
+    \internal
+*/
 QGeoBoundingArea::QGeoBoundingArea(QGeoBoundingAreaPrivate *d)
 :   d_ptr(d)
 {
@@ -191,11 +200,18 @@ bool QGeoBoundingArea::operator==(const QGeoBoundingArea &other) const
     return *d == *other.d_func();
 }
 
+/*!
+    Returns true if the \a other bounding area is not equivalent to this bounding area, otherwise
+    returns false.
+*/
 bool QGeoBoundingArea::operator!=(const QGeoBoundingArea &other) const
 {
     return !(*this == other);
 }
 
+/*!
+    Assigns \a other to this bounding area and returns a reference to this bounding area.
+*/
 QGeoBoundingArea &QGeoBoundingArea::operator=(const QGeoBoundingArea &other)
 {
     if (this == &other)

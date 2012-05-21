@@ -75,6 +75,26 @@ QT_BEGIN_NAMESPACE
     in the center of the bounding box.
 */
 
+#ifdef Q_NO_USING_KEYWORD
+/*!
+    \fn bool QGeoBoundingBox::operator==(const QGeoBoundingArea &other) const
+
+    Returns true if \a other is equivalent to this bounding box; otherwise returns false.
+*/
+
+/*!
+    \fn bool QGeoBoundingBox::operator!=(const QGeoBoundingArea &other) const
+
+    Returns true if \a other is not equivalent to this bounding box; otherwise returns false.
+*/
+
+/*!
+    \fn bool QGeoBoundingBox::contains(const QGeoCoordinate &coordinate) const
+
+    Returns true if \a coordinate is within this bounding box; otherwise returns false.
+*/
+#endif
+
 inline QGeoBoundingBoxPrivate *QGeoBoundingBox::d_func()
 {
     return static_cast<QGeoBoundingBoxPrivate *>(d_ptr.data());

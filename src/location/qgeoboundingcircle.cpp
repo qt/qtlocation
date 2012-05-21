@@ -65,6 +65,20 @@ QT_BEGIN_NAMESPACE
     or if the radius is less than zero.
 */
 
+#ifdef Q_NO_USING_KEYWORD
+/*!
+    \fn bool QGeoBoundingCircle::operator==(const QGeoBoundingArea &other) const
+
+    Returns true if \a other is equal to this bounding circle; otherwise returns false.
+*/
+
+/*!
+    \fn bool QGeoBoundingCircle::operator!=(const QGeoBoundingArea &other) const
+
+    Returns true if \a other is not equal to this bounding circle; otherwise returns false.
+*/
+#endif
+
 inline QGeoBoundingCirclePrivate *QGeoBoundingCircle::d_func()
 {
     return static_cast<QGeoBoundingCirclePrivate *>(d_ptr.data());

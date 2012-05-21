@@ -67,10 +67,24 @@ public:
 
     QGeoBoundingCircle &operator = (const QGeoBoundingCircle &other);
 
+#ifdef Q_NO_USING_KEYWORD
+    bool operator==(const QGeoBoundingArea &other) const
+    {
+        return QGeoBoundingArea::operator==(other);
+    }
+#else
     using QGeoBoundingArea::operator==;
+#endif
     bool operator==(const QGeoBoundingCircle &other) const;
 
+#ifdef Q_NO_USING_KEYWORD
+    bool operator!=(const QGeoBoundingArea &other) const
+    {
+        return QGeoBoundingArea::operator!=(other);
+    }
+#else
     using QGeoBoundingArea::operator!=;
+#endif
     bool operator!=(const QGeoBoundingCircle &other) const;
 
     void setCenter(const QGeoCoordinate &center);
