@@ -103,7 +103,6 @@ int main(int argc, char *argv[])
     view.setResizeMode(QQuickView::SizeRootObjectToView);
 
     QQuickItem *object = view.rootObject();
-    object->setProperty("mobileUi", false);
     if (parameters.size() > 0) QMetaObject::invokeMethod(object, "setPluginParameters", Q_ARG(QVariant, QVariant::fromValue(parameters)));
 
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));

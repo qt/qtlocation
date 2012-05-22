@@ -105,8 +105,6 @@ int main(int argc, char *argv[])
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);
 
-    view.rootObject()->setProperty("mobileUi", false);
-
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
     view.setGeometry(QRect(100, 100, 360, 640));
     view.show();

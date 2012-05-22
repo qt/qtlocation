@@ -83,7 +83,7 @@ Map {
         z: map.z+1
         anchors {
             bottom: parent.bottom;
-            bottomMargin: 56; rightMargin: 10; leftMargin: 10
+            bottomMargin: 15; rightMargin: 10; leftMargin: 90
             left: parent.left
         }
         width: parent.width - anchors.rightMargin - anchors.leftMargin
@@ -110,7 +110,6 @@ Map {
         anchors {
             bottom: zoomSlider.top;
             bottomMargin: 8;
-            leftMargin: 20
             left: zoomSlider.left
         }
         Image {

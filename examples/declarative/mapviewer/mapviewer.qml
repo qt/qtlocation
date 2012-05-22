@@ -48,7 +48,6 @@ Item {
     id: page
     width: parent ? parent.width : 360
     height: parent ? parent.height : 640
-    property bool mobileUi: true
     property variant map
     property variant minimap
     property list<PluginParameter> parameters

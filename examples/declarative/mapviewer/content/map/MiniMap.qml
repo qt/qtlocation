@@ -48,7 +48,7 @@ Rectangle{
     anchors.right: (parent) ? parent.right : undefined
     anchors.rightMargin: 10
     anchors.top: (parent) ? parent.top : undefined
-    anchors.topMargin: page.mobileUi ? 35 : 10
+    anchors.topMargin: 10
     color: "#242424"
     Map {
         id: miniMap

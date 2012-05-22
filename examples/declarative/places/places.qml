@@ -47,7 +47,6 @@ Item {
     id: page
     width: (parent && parent.width > 0) ? parent.width : 360
     height: (parent && parent.height > 0) ? parent.height : 640
-    property bool mobileUi: true
     property variant map
     property variant searchRegion : startLocation
     property variant searchRegionItem
@@ -421,7 +420,6 @@ Item {
         id: searchBox
 
         anchors.top: page.top
-        anchors.topMargin: page.mobileUi ? 20 : 0
         width: parent.width
         expandedHeight: parent.height
         z: backgroundRect.z + 3
