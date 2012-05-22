@@ -51,17 +51,17 @@
 
 #include <QString>
 #include <QList>
-#include <QXmlStreamReader>
-
-
-#include <qgeocoordinate.h>
-#include <qgeoboundingbox.h>
-#include <qgeolocation.h>
-#include <qgeoaddress.h>
+#include <QScopedPointer>
 
 QT_BEGIN_NAMESPACE
 
 class QIODevice;
+class QGeoLocation;
+class QGeoAddress;
+class QGeoBoundingBox;
+class QGeoCoordinate;
+class QXmlStreamReader;
+
 class QGeoCodeXmlParser
 {
 public:
@@ -81,7 +81,7 @@ private:
     bool parseBoundingBox(QGeoBoundingBox *bounds);
     bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
 
-    QXmlStreamReader *m_reader;
+    QScopedPointer<QXmlStreamReader> m_reader;
 
     QList<QGeoLocation> m_results;
     QString m_errorString;

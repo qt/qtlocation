@@ -51,22 +51,21 @@
 #include <QXmlStreamReader>
 #include <QIODevice>
 
+#include <qgeolocation.h>
+
 QT_BEGIN_NAMESPACE
 
 QGeoCodeXmlParser::QGeoCodeXmlParser()
-        : m_reader(0)
 {
 }
 
 QGeoCodeXmlParser::~QGeoCodeXmlParser()
 {
-    delete m_reader;
 }
 
 bool QGeoCodeXmlParser::parse(QIODevice *source)
 {
-    delete m_reader;
-    m_reader = new QXmlStreamReader(source);
+    m_reader.reset(new QXmlStreamReader(source));
 
     if (!parseRootElement()) {
         m_errorString = m_reader->errorString();

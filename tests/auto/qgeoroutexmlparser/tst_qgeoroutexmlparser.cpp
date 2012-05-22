@@ -42,6 +42,7 @@
 #include <qgeoroutexmlparser.h>
 #include <qgeocoordinate.h>
 #include <qtest.h>
+#include <qgeoroute.h>
 
 #include <QMetaType>
 #include <QDebug>

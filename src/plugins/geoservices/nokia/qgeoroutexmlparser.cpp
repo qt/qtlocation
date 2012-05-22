@@ -53,6 +53,9 @@
 #include <QStringList>
 #include <QString>
 
+#include <qgeoroute.h>
+#include <qgeoboundingbox.h>
+
 QT_BEGIN_NAMESPACE
 
 QGeoDynamicSpeedInfoContainer::QGeoDynamicSpeedInfoContainer()
@@ -63,20 +66,17 @@ QGeoDynamicSpeedInfoContainer::QGeoDynamicSpeedInfoContainer()
 {}
 
 QGeoRouteXmlParser::QGeoRouteXmlParser(const QGeoRouteRequest &request)
-        : m_request(request),
-        m_reader(0)
+        : m_request(request)
 {
 }
 
 QGeoRouteXmlParser::~QGeoRouteXmlParser()
 {
-    delete m_reader;
 }
 
 bool QGeoRouteXmlParser::parse(QIODevice *source)
 {
-    delete m_reader;
-    m_reader = new QXmlStreamReader(source);
+    m_reader.reset(new QXmlStreamReader(source));
 
     if (!parseRootElement()) {
         m_errorString = m_reader->errorString();

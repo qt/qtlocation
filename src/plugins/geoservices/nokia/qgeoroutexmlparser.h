@@ -50,20 +50,19 @@
 #define QROUTEXMLPARSER_H
 
 #include <QList>
-#include <QMap>
 #include <QString>
-#include <QXmlStreamReader>
+#include <QScopedPointer>
 
-#include <qgeoroute.h>
 #include <qgeoroutesegment.h>
-#include <qgeocoordinate.h>
-#include <qgeoboundingbox.h>
 #include <qgeorouterequest.h>
 #include <qgeomaneuver.h>
 
 QT_BEGIN_NAMESPACE
 class QIODevice;
-
+class QXmlStreamReader;
+class QGeoRoute;
+class QGeoCoordinate;
+class QGeoBoundingBox;
 
 class QGeoManeuverContainer
 {
@@ -120,7 +119,7 @@ private:
     bool parseDynamicSpeedInfo(QGeoDynamicSpeedInfoContainer &speedInfo);
 
     QGeoRouteRequest m_request;
-    QXmlStreamReader *m_reader;
+    QScopedPointer<QXmlStreamReader> m_reader;
     QList<QGeoRoute> m_results;
     QString m_errorString;
     QList<QGeoManeuverContainer> m_maneuvers;
