@@ -106,7 +106,7 @@ public:
     QString pluginString();
     QGeoCameraCapabilities cameraCapabilities();
     QGeoMappingManagerEngine *engine();
-    virtual void prefetchData() = 0;
+    virtual void prefetchData() {}
 
 protected:
     void setCoordinateInterpolator(QSharedPointer<QGeoCoordinateInterpolator> interpolator);
