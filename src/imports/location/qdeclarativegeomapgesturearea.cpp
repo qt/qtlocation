@@ -323,29 +323,10 @@ QT_BEGIN_NAMESPACE
     The order of panFinished() and flickFinished() is not specified.
 */
 
-
 QDeclarativeGeoMapGestureArea::QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap *map, QObject *parent)
     : QObject(parent),
       declarativeMap_(map),
       enabled_(true),
-      pinchEnabled_(true),
-      minimumZoomLevel_(-1.0),
-      maximumZoomLevel_(-1.0),
-      minimumRotation_(0.0),
-      maximumRotation_(0.0),
-      pinchStartDist_(0),
-      pinchStartZoomLevel_(0.0),
-      pinchLastZoomLevel_(0.0),
-      pinchStartRotation_(0.0),
-      pinchLastAngle_(0.0),
-      pinchRotation_(0.0),
-      maximumZoomLevelChange_(2.0),
-      rotationFactor_(1.0),
-      minimumTilt_(0.0),
-      maximumTilt_(90.0),
-      maximumTiltChange_(20.0),
-      pinchLastTilt_(0.0),
-      pinchStartTilt_(0.0),
       activeGestures_(ZoomGesture | PanGesture | FlickGesture)
 {
     map_ = 0;
@@ -445,7 +426,7 @@ void QDeclarativeGeoMapGestureArea::setEnabled(bool enabled)
 */
 bool QDeclarativeGeoMapGestureArea::pinchEnabled() const
 {
-    return pinchEnabled_;
+    return pinch_.enabled;
 }
 
 /*!
@@ -453,9 +434,9 @@ bool QDeclarativeGeoMapGestureArea::pinchEnabled() const
 */
 void QDeclarativeGeoMapGestureArea::setPinchEnabled(bool enabled)
 {
-    if (enabled == pinchEnabled_)
+    if (enabled == pinch_.enabled)
         return;
-    pinchEnabled_ = enabled;
+    pinch_.enabled = enabled;
     emit pinchEnabledChanged();
     emit pinchDep_->enabledChanged();
 }
@@ -489,7 +470,7 @@ void QDeclarativeGeoMapGestureArea::setPanEnabled(bool enabled)
 */
 qreal QDeclarativeGeoMapGestureArea::minimumZoomLevel() const
 {
-    return minimumZoomLevel_;
+    return pinch_.zoom.minimum;
 }
 
 /*!
@@ -497,11 +478,11 @@ qreal QDeclarativeGeoMapGestureArea::minimumZoomLevel() const
 */
 void QDeclarativeGeoMapGestureArea::setMinimumZoomLevel(qreal zoomLevel)
 {
-    if (zoomLevel == minimumZoomLevel_ ||
+    if (zoomLevel == pinch_.zoom.minimum ||
             zoomLevel < declarativeMap_->minimumZoomLevel() ||
-            (maximumZoomLevel_ != -1.0 && zoomLevel > maximumZoomLevel_) )
+            (pinch_.zoom.maximum != -1.0 && zoomLevel > pinch_.zoom.maximum) )
         return;
-    minimumZoomLevel_ = zoomLevel;
+    pinch_.zoom.minimum = zoomLevel;
     emit minimumZoomLevelChanged();
     emit pinchDep_->minimumZoomLevelChanged();
 }
@@ -511,7 +492,7 @@ void QDeclarativeGeoMapGestureArea::setMinimumZoomLevel(qreal zoomLevel)
 */
 qreal QDeclarativeGeoMapGestureArea::maximumZoomLevel() const
 {
-    return maximumZoomLevel_;
+    return pinch_.zoom.maximum;
 }
 
 /*!
@@ -519,11 +500,11 @@ qreal QDeclarativeGeoMapGestureArea::maximumZoomLevel() const
 */
 void QDeclarativeGeoMapGestureArea::setMaximumZoomLevel(qreal zoomLevel)
 {
-    if (zoomLevel == maximumZoomLevel_ ||
+    if (zoomLevel == pinch_.zoom.maximum ||
             zoomLevel > declarativeMap_->maximumZoomLevel() ||
-            (minimumZoomLevel_ != - 1.0 && zoomLevel < minimumZoomLevel_))
+            (pinch_.zoom.minimum != - 1.0 && zoomLevel < pinch_.zoom.minimum))
         return;
-    maximumZoomLevel_ = zoomLevel;
+    pinch_.zoom.maximum = zoomLevel;
     emit maximumZoomLevelChanged();
     emit pinchDep_->maximumZoomLevelChanged();
 }
@@ -536,9 +517,9 @@ void QDeclarativeGeoMapGestureArea::setMaximumZoomLevel(qreal zoomLevel)
 */
 void QDeclarativeGeoMapGestureArea::zoomLevelLimits(qreal min, qreal max)
 {
-    if (minimumZoomLevel_ == -1.0 || min > minimumZoomLevel_)
+    if (pinch_.zoom.minimum == -1.0 || min > pinch_.zoom.minimum)
         setMinimumZoomLevel(min);
-    if (maximumZoomLevel_ == -1.0 || max < maximumZoomLevel_)
+    if (pinch_.zoom.maximum == -1.0 || max < pinch_.zoom.maximum)
         setMaximumZoomLevel(max);
 }
 
@@ -547,7 +528,7 @@ void QDeclarativeGeoMapGestureArea::zoomLevelLimits(qreal min, qreal max)
 */
 qreal QDeclarativeGeoMapGestureArea::maximumZoomLevelChange() const
 {
-    return maximumZoomLevelChange_;
+    return pinch_.zoom.maximumChange;
 }
 
 /*!
@@ -555,9 +536,9 @@ qreal QDeclarativeGeoMapGestureArea::maximumZoomLevelChange() const
 */
 void QDeclarativeGeoMapGestureArea::setMaximumZoomLevelChange(qreal maxChange)
 {
-    if (maxChange == maximumZoomLevelChange_ || maxChange < 0.1 || maxChange > 10.0)
+    if (maxChange == pinch_.zoom.maximumChange || maxChange < 0.1 || maxChange > 10.0)
         return;
-    maximumZoomLevelChange_ = maxChange;
+    pinch_.zoom.maximumChange = maxChange;
     emit maximumZoomLevelChangeChanged();
     emit pinchDep_->maximumZoomLevelChangeChanged();
 }
@@ -567,7 +548,7 @@ void QDeclarativeGeoMapGestureArea::setMaximumZoomLevelChange(qreal maxChange)
 */
 qreal QDeclarativeGeoMapGestureArea::minimumRotation() const
 {
-    return minimumRotation_;
+    return pinch_.rotation.minimum;
 }
 
 /*!
@@ -575,11 +556,11 @@ qreal QDeclarativeGeoMapGestureArea::minimumRotation() const
 */
 void QDeclarativeGeoMapGestureArea::setMinimumRotation(qreal rotation)
 {
-    if (rotation == minimumRotation_ ||
+    if (rotation == pinch_.rotation.minimum ||
             rotation < 0 ||
-            rotation > maximumRotation_)
+            rotation > pinch_.rotation.maximum)
         return;
-    minimumRotation_ = rotation;
+    pinch_.rotation.minimum = rotation;
     emit minimumRotationChanged();
     emit pinchDep_->minimumRotationChanged();
 }
@@ -589,7 +570,7 @@ void QDeclarativeGeoMapGestureArea::setMinimumRotation(qreal rotation)
 */
 qreal QDeclarativeGeoMapGestureArea::maximumRotation() const
 {
-    return maximumRotation_;
+    return pinch_.rotation.maximum;
 }
 
 /*!
@@ -597,11 +578,11 @@ qreal QDeclarativeGeoMapGestureArea::maximumRotation() const
 */
 void QDeclarativeGeoMapGestureArea::setMaximumRotation(qreal rotation)
 {
-    if (rotation == maximumRotation_ ||
+    if (rotation == pinch_.rotation.maximum ||
             rotation > 360 ||
-            rotation < minimumRotation_)
+            rotation < pinch_.rotation.minimum)
         return;
-    maximumRotation_ = rotation;
+    pinch_.rotation.maximum = rotation;
     emit maximumRotationChanged();
     emit pinchDep_->maximumRotationChanged();
 }
@@ -611,7 +592,7 @@ void QDeclarativeGeoMapGestureArea::setMaximumRotation(qreal rotation)
 */
 qreal QDeclarativeGeoMapGestureArea::rotationFactor() const
 {
-    return rotationFactor_;
+    return pinch_.rotation.factor;
 }
 
 /*!
@@ -619,11 +600,9 @@ qreal QDeclarativeGeoMapGestureArea::rotationFactor() const
 */
 void QDeclarativeGeoMapGestureArea::setRotationFactor(qreal factor)
 {
-    if (rotationFactor_ == factor ||
-            factor < 0 ||
-            factor > 5)
+    if (pinch_.rotation.factor == factor ||  factor < 0 || factor > 5)
         return;
-    rotationFactor_ = factor;
+    pinch_.rotation.factor = factor;
     emit rotationFactorChanged();
     emit pinchDep_->rotationFactorChanged();
 }
@@ -633,7 +612,7 @@ void QDeclarativeGeoMapGestureArea::setRotationFactor(qreal factor)
 */
 qreal QDeclarativeGeoMapGestureArea::maximumTilt() const
 {
-    return maximumTilt_;
+    return pinch_.tilt.maximum;
 }
 
 /*!
@@ -641,9 +620,9 @@ qreal QDeclarativeGeoMapGestureArea::maximumTilt() const
 */
 void QDeclarativeGeoMapGestureArea::setMaximumTilt(qreal tilt)
 {
-    if (maximumTilt_ == tilt)
+    if (pinch_.tilt.maximum == tilt)
         return;
-    maximumTilt_ = tilt;
+    pinch_.tilt.maximum = tilt;
     emit maximumTiltChanged();
     emit pinchDep_->maximumTiltChanged();
 }
@@ -653,7 +632,7 @@ void QDeclarativeGeoMapGestureArea::setMaximumTilt(qreal tilt)
 */
 qreal QDeclarativeGeoMapGestureArea::minimumTilt() const
 {
-    return minimumTilt_;
+    return pinch_.tilt.minimum;
 }
 
 /*!
@@ -661,9 +640,9 @@ qreal QDeclarativeGeoMapGestureArea::minimumTilt() const
 */
 void QDeclarativeGeoMapGestureArea::setMinimumTilt(qreal tilt)
 {
-    if (minimumTilt_ == tilt || tilt < 0.1)
+    if (pinch_.tilt.minimum == tilt || tilt < 0.1)
         return;
-    minimumTilt_ = tilt;
+    pinch_.tilt.minimum = tilt;
     emit minimumTiltChanged();
     emit pinchDep_->minimumTiltChanged();
 }
@@ -673,7 +652,7 @@ void QDeclarativeGeoMapGestureArea::setMinimumTilt(qreal tilt)
 */
 qreal QDeclarativeGeoMapGestureArea::maximumTiltChange() const
 {
-    return maximumTiltChange_;
+    return pinch_.tilt.maximumChange;
 }
 
 /*!
@@ -681,9 +660,9 @@ qreal QDeclarativeGeoMapGestureArea::maximumTiltChange() const
 */
 void QDeclarativeGeoMapGestureArea::setMaximumTiltChange(qreal tilt)
 {
-    if (maximumTiltChange_ == tilt || tilt < 0.1)
+    if (pinch_.tilt.maximumChange == tilt || tilt < 0.1)
         return;
-    maximumTiltChange_ = tilt;
+    pinch_.tilt.maximumChange = tilt;
     emit maximumTiltChangeChanged();
     emit pinchDep_->maximumTiltChangeChanged();
 }
@@ -853,7 +832,7 @@ void QDeclarativeGeoMapGestureArea::update()
     touchPointStateMachine();
 
     // Parallel state machine for pinch
-    if (isPinchActive() || (enabled_ && pinchEnabled_ && (activeGestures_ & (ZoomGesture | TiltGesture | RotationGesture))))
+    if (isPinchActive() || (enabled_ && pinch_.enabled && (activeGestures_ & (ZoomGesture | TiltGesture | RotationGesture))))
         pinchStateMachine();
 
     // Parallel state machine for pan (since you can pan at the same time as pinching)
@@ -1035,19 +1014,19 @@ bool QDeclarativeGeoMapGestureArea::canStartPinch()
     if (touchPoints_.count() >= 2) {
         QPointF p1 = touchPoints_.at(0).scenePos();
         QPointF p2 = touchPoints_.at(1).scenePos();
-        if (qAbs(p1.x() - sceneStartPoint1_.x()) > startDragDistance
-                 || qAbs(p1.y() - sceneStartPoint1_.y()) > startDragDistance
-                 || qAbs(p2.x() - sceneStartPoint2_.x()) > startDragDistance
-                 || qAbs(p2.y() - sceneStartPoint2_.y()) > startDragDistance) {
-            pinchEvent_.setCenter(declarativeMap_->mapFromScene(sceneCenter_));
-            pinchEvent_.setAngle(twoTouchAngle_);
-            pinchEvent_.setPoint1(p1);
-            pinchEvent_.setPoint2(p2);
-            pinchEvent_.setPointCount(touchPoints_.count());
-            pinchEvent_.setAccepted(true);
-            emit pinchStarted(&pinchEvent_);
-            emit pinchDep_->pinchStarted(&pinchEvent_);
-            return pinchEvent_.accepted();
+        if (qAbs(p1.x()-sceneStartPoint1_.x()) > startDragDistance
+         || qAbs(p1.y()-sceneStartPoint1_.y()) > startDragDistance
+         || qAbs(p2.x()-sceneStartPoint2_.x()) > startDragDistance
+         || qAbs(p2.y()-sceneStartPoint2_.y()) > startDragDistance) {
+            pinch_.event.setCenter(declarativeMap_->mapFromScene(sceneCenter_));
+            pinch_.event.setAngle(twoTouchAngle_);
+            pinch_.event.setPoint1(p1);
+            pinch_.event.setPoint2(p2);
+            pinch_.event.setPointCount(touchPoints_.count());
+            pinch_.event.setAccepted(true);
+            emit pinchStarted(&pinch_.event);
+            emit pinchDep_->pinchStarted(&pinch_.event);
+            return pinch_.event.accepted();
         }
     }
     return false;
@@ -1058,18 +1037,18 @@ bool QDeclarativeGeoMapGestureArea::canStartPinch()
 */
 void QDeclarativeGeoMapGestureArea::startPinch()
 {
-    pinchStartDist_ = distanceBetweenTouchPoints_;
-    pinchLastZoomLevel_ = 1.0;
-    pinchLastTilt_ = 0.0;
-    pinchLastAngle_ = twoTouchAngle_;
-    pinchRotation_ = 0.0;
+    pinch_.startDist = distanceBetweenTouchPoints_;
+    pinch_.zoom.previous = 1.0;
+    pinch_.tilt.previous = 0.0;
+    pinch_.lastAngle = twoTouchAngle_;
+    pinch_.rotation.angle = 0.0;
 
-    lastPoint1_ = touchPoints_.at(0).scenePos();
-    lastPoint2_ = touchPoints_.at(1).scenePos();
+    pinch_.lastPoint1 = touchPoints_.at(0).scenePos();
+    pinch_.lastPoint2 = touchPoints_.at(1).scenePos();
 
-    pinchStartZoomLevel_ = declarativeMap_->zoomLevel();
-    pinchStartRotation_ = declarativeMap_->bearing();
-    pinchStartTilt_ = declarativeMap_->tilt();
+    pinch_.zoom.start = declarativeMap_->zoomLevel();
+    pinch_.rotation.start = declarativeMap_->bearing();
+    pinch_.tilt.start = declarativeMap_->tilt();
 }
 
 /*!
@@ -1078,67 +1057,67 @@ void QDeclarativeGeoMapGestureArea::startPinch()
 void QDeclarativeGeoMapGestureArea::updatePinch()
 {
     // Calculate the new zoom level if we have distance ( >= 2 touchpoints), otherwise stick with old.
-    qreal newZoomLevel = pinchLastZoomLevel_;
+    qreal newZoomLevel = pinch_.zoom.previous;
     if (distanceBetweenTouchPoints_) {
         newZoomLevel =
                 // How much further/closer the current touchpoints are (in pixels) compared to pinch start
-                ((distanceBetweenTouchPoints_ - pinchStartDist_) *
+                ((distanceBetweenTouchPoints_ - pinch_.startDist)  *
                  //  How much one pixel corresponds in units of zoomlevel (and multiply by above delta)
-                 (maximumZoomLevelChange_ / ((declarativeMap_->width() + declarativeMap_->height()) / 2))) +
+                 (pinch_.zoom.maximumChange / ((declarativeMap_->width() + declarativeMap_->height()) / 2))) +
                 // Add to starting zoom level. Sign of (dist-pinchstartdist) takes care of zoom in / out
-                pinchStartZoomLevel_;
+                pinch_.zoom.start;
     }
-    qreal da = pinchLastAngle_ - twoTouchAngle_;
+    qreal da = pinch_.lastAngle - twoTouchAngle_;
     if (da > 180)
         da -= 360;
     else if (da < -180)
         da += 360;
-    pinchRotation_ -= da;
-    pinchEvent_.setCenter(declarativeMap_->mapFromScene(sceneCenter_));
-    pinchEvent_.setAngle(twoTouchAngle_);
+    pinch_.rotation.angle -= da;
+    pinch_.event.setCenter(declarativeMap_->mapFromScene(sceneCenter_));
+    pinch_.event.setAngle(twoTouchAngle_);
 
-    lastPoint1_ = touchPoints_.at(0).scenePos();
-    lastPoint2_ = touchPoints_.at(1).scenePos();
-    pinchEvent_.setPoint1(lastPoint1_);
-    pinchEvent_.setPoint2(lastPoint2_);
-    pinchEvent_.setPointCount(touchPoints_.count());
-    pinchEvent_.setAccepted(true);
+    pinch_.lastPoint1 = touchPoints_.at(0).scenePos();
+    pinch_.lastPoint2 = touchPoints_.at(1).scenePos();
+    pinch_.event.setPoint1(pinch_.lastPoint1);
+    pinch_.event.setPoint2(pinch_.lastPoint2);
+    pinch_.event.setPointCount(touchPoints_.count());
+    pinch_.event.setAccepted(true);
 
-    pinchLastAngle_ = twoTouchAngle_;
-    emit pinchUpdated(&pinchEvent_);
-    emit pinchDep_->pinchUpdated(&pinchEvent_);
+    pinch_.lastAngle = twoTouchAngle_;
+    emit pinchUpdated(&pinch_.event);
+    emit pinchDep_->pinchUpdated(&pinch_.event);
 
     if (activeGestures_ & ZoomGesture) {
         // Take maximum and minimumzoomlevel into account
-        qreal perPinchMinimumZoomLevel = qMax(pinchStartZoomLevel_ - maximumZoomLevelChange_, minimumZoomLevel_);
-        qreal perPinchMaximumZoomLevel = qMin(pinchStartZoomLevel_ + maximumZoomLevelChange_, maximumZoomLevel_);
+        qreal perPinchMinimumZoomLevel = qMax(pinch_.zoom.start - pinch_.zoom.maximumChange, pinch_.zoom.minimum);
+        qreal perPinchMaximumZoomLevel = qMin(pinch_.zoom.start + pinch_.zoom.maximumChange, pinch_.zoom.maximum);
         newZoomLevel = qMin(qMax(perPinchMinimumZoomLevel, newZoomLevel), perPinchMaximumZoomLevel);
         declarativeMap_->setZoomLevel(newZoomLevel);
     }
-    if (activeGestures_ & TiltGesture && minimumZoomLevel_ >= 0 && maximumZoomLevel_ >= 0) {
+    if (activeGestures_ & TiltGesture && pinch_.zoom.minimum >= 0 && pinch_.zoom.maximum >= 0) {
         // Note: tilt is not yet supported.
-        qreal newTilt = pinchLastTilt_;
+        qreal newTilt = pinch_.tilt.previous;
         if (distanceBetweenTouchPoints_) {
             newTilt =
                     // How much further/closer the current touchpoints are (in pixels) compared to pinch start
-                    ((distanceBetweenTouchPoints_ - pinchStartDist_) *
+                    ((distanceBetweenTouchPoints_ - pinch_.startDist)  *
                      //  How much one pixel corresponds in units of tilt degrees (and multiply by above delta)
-                     (maximumTiltChange_ / ((declarativeMap_->width() + declarativeMap_->height()) / 2))) +
+                     (pinch_.tilt.maximumChange / ((declarativeMap_->width() + declarativeMap_->height()) / 2))) +
                     // Add to starting tilt.
-                    pinchStartTilt_;
+                    pinch_.tilt.start;
         }
-        qreal perPinchMinimumTilt = qMax(pinchStartTilt_ - maximumTiltChange_, minimumTilt_);
-        qreal perPinchMaximumTilt = qMin(pinchStartTilt_ + maximumTiltChange_, maximumTilt_);
+        qreal perPinchMinimumTilt = qMax(pinch_.tilt.start - pinch_.tilt.maximumChange, pinch_.tilt.minimum);
+        qreal perPinchMaximumTilt = qMin(pinch_.tilt.start + pinch_.tilt.maximumChange, pinch_.tilt.maximum);
         newTilt = qMin(qMax(perPinchMinimumTilt, newTilt), perPinchMaximumTilt);
-        pinchLastTilt_ = newTilt;
+        pinch_.tilt.previous = newTilt;
         declarativeMap_->setTilt(newTilt);
     }
     if (activeGestures_ & RotationGesture) {
-        bool unlimitedRotation = (minimumRotation_ == 0.0 && maximumRotation_ == 0.0);
-        if ((pinchStartRotation_ >= minimumRotation_ && pinchStartRotation_ <= maximumRotation_) || unlimitedRotation) {
-            qreal r = pinchRotation_ * rotationFactor_ + pinchStartRotation_;
+        bool unlimitedRotation = (pinch_.rotation.minimum == 0.0 && pinch_.rotation.maximum == 0.0);
+        if ((pinch_.rotation.start >= pinch_.rotation.minimum && pinch_.rotation.start <= pinch_.rotation.maximum) || unlimitedRotation)  {
+            qreal r = pinch_.rotation.angle * pinch_.rotation.factor + pinch_.rotation.start;
             if (!unlimitedRotation)
-                r = qMin(qMax(minimumRotation_,r), maximumRotation_);
+                r = qMin(qMax(pinch_.rotation.minimum,r), pinch_.rotation.maximum);
             if (r > 360.0)
                 r -= 360;
             if (r < -360.0)
@@ -1154,18 +1133,15 @@ void QDeclarativeGeoMapGestureArea::updatePinch()
 void QDeclarativeGeoMapGestureArea::endPinch()
 {
     QPointF pinchCenter = declarativeMap_->mapFromScene(sceneCenter_);
-    pinchEvent_.setCenter(pinchCenter);
-    pinchEvent_.setAngle(pinchLastAngle_);
-    pinchEvent_.setPoint1(declarativeMap_->mapFromScene(lastPoint1_));
-    pinchEvent_.setPoint2(declarativeMap_->mapFromScene(lastPoint2_));
-    pinchEvent_.setAccepted(true);
-    pinchEvent_.setPointCount(0);
-    emit pinchFinished(&pinchEvent_);
-    emit pinchDep_->pinchFinished(&pinchEvent_);
-    pinchStartDist_ = 0;
-    // mark as inactive for use by camera
-    if (panState_ == panInactive)
-        emit movementStopped();
+    pinch_.event.setCenter(pinchCenter);
+    pinch_.event.setAngle(pinch_.lastAngle);
+    pinch_.event.setPoint1(declarativeMap_->mapFromScene(pinch_.lastPoint1));
+    pinch_.event.setPoint2(declarativeMap_->mapFromScene(pinch_.lastPoint2));
+    pinch_.event.setAccepted(true);
+    pinch_.event.setPointCount(0);
+    emit pinchFinished(&pinch_.event);
+    emit pinchDep_->pinchFinished(&pinch_.event);
+    pinch_.startDist = 0;
 }
 
 /*!

@@ -281,32 +281,47 @@ private:
     QGeoMap *map_;
     QDeclarativeGeoMap *declarativeMap_;
     bool enabled_;
-    // TODO: put these into a structure for clarity
-  //  struct Pinch
-  //  {
-        QDeclarativeGeoMapPinchEvent pinchEvent_;
-        bool pinchEnabled_;
-        qreal minimumZoomLevel_;
-        qreal maximumZoomLevel_;
-        qreal minimumRotation_;
-        qreal maximumRotation_;
-        QPointF lastPoint1_;
-        QPointF lastPoint2_;
-        qreal pinchStartDist_;
-        qreal pinchStartZoomLevel_;
-        qreal pinchLastZoomLevel_;
-        qreal pinchStartRotation_;
-        qreal pinchLastAngle_;
-        qreal pinchRotation_;
-        qreal maximumZoomLevelChange_;
-        qreal rotationFactor_;
-        qreal minimumTilt_;
-        qreal maximumTilt_;
-        qreal maximumTiltChange_;
 
-        qreal pinchLastTilt_;
-        qreal pinchStartTilt_;
-    // }  pinch_;
+    struct Pinch
+    {
+        Pinch() : enabled(true), startDist(0), lastAngle(0.0) {}
+
+        QDeclarativeGeoMapPinchEvent event;
+        bool enabled;
+        struct Zoom
+        {
+            Zoom() : minimum(-1.0), maximum(-1.0), start(0.0), previous(0.0),
+                     maximumChange(2.0) {}
+            qreal minimum;
+            qreal maximum;
+            qreal start;
+            qreal previous;
+            qreal maximumChange;
+        } zoom;
+        struct Rotation
+        {
+            Rotation() : minimum(0.0), maximum(0.0), start(0.0), angle(0.0), factor(1.0) {}
+            qreal minimum;
+            qreal maximum;
+            qreal start;
+            qreal angle;
+            qreal factor;
+        } rotation;
+        struct Tilt
+        {
+            Tilt() : minimum(0.0), maximum(90.0), maximumChange(20.0), previous(0.0), start(0.0) {}
+            qreal minimum;
+            qreal maximum;
+            qreal maximumChange;
+            qreal previous;
+            qreal start;
+        } tilt;
+
+        QPointF lastPoint1;
+        QPointF lastPoint2;
+        qreal startDist;
+        qreal lastAngle;
+     } pinch_;
 
     ActiveGestures activeGestures_;
 
