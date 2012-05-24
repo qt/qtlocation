@@ -1166,7 +1166,9 @@ void QDeclarativeGeoMap::fitViewportToMapItems()
     fitViewportToMapItemsRefine(true);
 }
 
-
+/*!
+    \internal
+*/
 void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
 {
     if (mapItems_.size() == 0)
@@ -1189,6 +1191,15 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
         if (!mapItems_.at(i))
             continue;
         QDeclarativeGeoMapItemBase *item = mapItems_.at(i).data();
+
+        // skip quick items in the first pass and refine the fit later
+        if (refine) {
+            QDeclarativeGeoMapQuickItem *quickItem =
+                    qobject_cast<QDeclarativeGeoMapQuickItem*>(item);
+            if (quickItem)
+                    continue;
+        }
+
         // account for the special case - circle
         QDeclarativeCircleMapItem *circleItem =
                 qobject_cast<QDeclarativeCircleMapItem *>(item);
@@ -1199,10 +1210,10 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
             geoCenter = QGeoCoordinate(circleItem->center()->latitude(),
                                        circleItem->center()->longitude());
             centerPt = map_->coordinateToScreenPosition(geoCenter, false);
-            topLeftX = centerPt.x() - circleItem->width();
-            topLeftY = centerPt.y() - circleItem->height();
-            bottomRightX = centerPt.x() + circleItem->width();
-            bottomRightY = centerPt.y() + circleItem->height();
+            topLeftX = centerPt.x() - circleItem->width() / 2.0;
+            topLeftY = centerPt.y() - circleItem->height() / 2.0;
+            bottomRightX = centerPt.x() + circleItem->width() / 2.0;
+            bottomRightY = centerPt.y() + circleItem->height() / 2.0;
         } else if (item) {
             topLeftX = item->pos().x();
             topLeftY = item->pos().y();
@@ -1243,6 +1254,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     double bboxWidthRatio = bboxWidth / (bboxWidth + bboxHeight);
     double mapWidthRatio = width() / (width() + height());
     double zoomRatio;
+
     if (bboxWidthRatio > mapWidthRatio)
         zoomRatio = bboxWidth / width();
     else
@@ -1252,7 +1264,7 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(bool refine)
     newZoom = floor(qMax(minimumZoomLevel(), (map_->mapController()->zoom() + newZoom)));
     setZoomLevel(newZoom);
 
-    // as map items change their size after the camera zooms in/out
+    // as map quick items retain the same screen size after the camera zooms in/out
     // we refine the viewport again to achieve better results
     if (refine)
         fitViewportToMapItemsRefine(false);
