@@ -85,8 +85,9 @@ MapQuickItem {  //to be used inside MapComponent only
                 NumberAnimation {
                     target: spin
                     property: "angle"
+                    from: 0
                     to: 360; duration: 5000; running: true
-                    loops: Animation.Infinite }
+                    loops: NumberAnimation.Infinite }
 
                 effect: Effect {
                     color: "#aaca00"
