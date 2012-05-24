@@ -49,7 +49,18 @@ Item {
     // General-purpose elements for the test:
     Plugin { id: testPlugin; name: "qmlgeo.test.plugin"; allowExperimental: true }
     Plugin { id: testPlugin2; name: "gmlgeo.test.plugin"; allowExperimental: true }
-    Plugin { id: nokiaPlugin; name: "nokia"; }
+    Plugin { id: nokiaPlugin; name: "nokia";
+        parameters: [
+                       PluginParameter {
+                           name: "app_id"
+                           value: "stub"
+                       },
+                       PluginParameter {
+                           name: "token"
+                           value: "stub"
+                       }
+                   ]
+    }
     Coordinate{ id: coordinate1; latitude: 10; longitude: 11}
     Coordinate{ id: coordinate2; latitude: 12; longitude: 13}
     Coordinate{ id: coordinate3; latitude: 50; longitude: 50; altitude: 0}

@@ -3134,7 +3134,10 @@ void tst_QPlaceManagerJsonDb::providerIcons()
     QPlaceReply * catInitReply = placeManager->initializeCategories();
     QVERIFY(checkSignals(catInitReply, QPlaceReply::NoError));
 
-    QGeoServiceProvider *nokiaProvider = new QGeoServiceProvider(QLatin1String("nokia"));
+    QMap<QString,QVariant> credentials;
+    credentials.insert("app_id", "stub");
+    credentials.insert("token", "stub");
+    QGeoServiceProvider *nokiaProvider = new QGeoServiceProvider(QLatin1String("nokia"), credentials);
     QPlaceManager *nokiaManager = nokiaProvider->placeManager();
     Q_ASSERT(nokiaManager);
 

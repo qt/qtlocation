@@ -41,8 +41,8 @@
 
 #include "qdeclarativegeocodemodel_p.h"
 #include "error_messages.h"
-
 #include "qdeclarativegeolocation_p.h"
+
 #include <QtQml/qqmlinfo.h>
 
 #include <qgeoserviceprovider.h>

@@ -64,9 +64,6 @@ class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProvid
                       FILE "nokia_plugin.json")
 
 public:
-    QGeoServiceProviderFactoryNokia();
-    ~QGeoServiceProviderFactoryNokia();
-
     QGeocodingManagerEngine *createGeocodingManagerEngine(const QVariantMap &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
@@ -79,11 +76,6 @@ public:
     QPlaceManagerEngine *createPlaceManagerEngine(const QVariantMap &parameters,
                                                   QGeoServiceProvider::Error *error,
                                                   QString *errorString) const;
-private:
-    void informOnceAboutUsageTermsIfNecessary(const QVariantMap &parameters) const;
-
-private:
-    mutable bool m_informedAboutUsageTerms;
 };
 
 QT_END_NAMESPACE

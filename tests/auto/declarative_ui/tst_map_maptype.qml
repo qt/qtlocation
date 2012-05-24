@@ -51,6 +51,16 @@ TestCase {
     Plugin {
         id: nokiaPlugin
         name: "nokia"
+        parameters: [
+                       PluginParameter {
+                           name: "app_id"
+                           value: "stub"
+                       },
+                       PluginParameter {
+                           name: "token"
+                           value: "stub"
+                       }
+                   ]
     }
 
     Map {

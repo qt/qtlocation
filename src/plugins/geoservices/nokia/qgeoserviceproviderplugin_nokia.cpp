@@ -54,53 +54,72 @@
 #include "qplacemanagerengine_nokiav1.h"
 #include "qplacemanagerengine_nokiav2.h"
 #include "qgeointrinsicnetworkaccessmanager.h"
+#include "qgeoerror_messages.h"
 
 #include <QtPlugin>
 #include <QNetworkProxy>
+#include <QCoreApplication>
 
 QT_BEGIN_NAMESPACE
 
-static bool isValidParameter(const QString &param)
+namespace
 {
-    if (param.isEmpty())
-        return false;
-
-    if (param.length() > 512)
-        return false;
-
-    foreach (QChar c, param) {
-        if (!c.isLetterOrNumber() && c.toLatin1() != '%' && c.toLatin1() != '-' &&
-            c.toLatin1() != '+' && c.toLatin1() != '_') {
+    bool isValidParameter(const QString &param)
+    {
+        if (param.isEmpty())
             return false;
+
+        if (param.length() > 512)
+            return false;
+
+        foreach (QChar c, param) {
+            if (!c.isLetterOrNumber() && c.toLatin1() != '%' && c.toLatin1() != '-' &&
+                c.toLatin1() != '+' && c.toLatin1() != '_') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    QGeoNetworkAccessManager *tryGetNetworkAccessManager(const QVariantMap &parameters)
+    {
+        return static_cast<QGeoNetworkAccessManager *>(qvariant_cast<void *>(parameters.value(QStringLiteral("nam"))));
+    }
+
+    void checkUsageTerms(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+    {
+        const QString appId = parameters.value(QLatin1String("app_id")).toString();
+        const QString token = parameters.value(QLatin1String("token")).toString();
+
+        if (!isValidParameter(appId) || !isValidParameter(token)) {
+
+            *error = QGeoServiceProvider::MissingRequiredParameterError;
+            *errorString = QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, MISSED_CREDENTIALS);
         }
     }
 
-    return true;
+    template<class TInstance>
+    TInstance * CreateInstanceOf(const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+    {
+        checkUsageTerms(parameters, error, errorString);
+
+        if (*error != QGeoServiceProvider::NoError)
+            return 0;
+
+        QGeoNetworkAccessManager *networkManager = tryGetNetworkAccessManager(parameters);
+        if (!networkManager)
+            networkManager = new QGeoIntrinsicNetworkAccessManager(parameters);
+
+        return new TInstance(networkManager, parameters, error, errorString);
+    }
 }
-
-static QGeoNetworkAccessManager *tryGetNetworkAccessManager(const QVariantMap &parameters)
-{
-    return static_cast<QGeoNetworkAccessManager *>(qvariant_cast<void *>(parameters.value(QStringLiteral("nam"))));
-}
-
-QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia()
-    : m_informedAboutUsageTerms(false)
-{}
-
-QGeoServiceProviderFactoryNokia::~QGeoServiceProviderFactoryNokia() {}
 
 QGeocodingManagerEngine *QGeoServiceProviderFactoryNokia::createGeocodingManagerEngine(
         const QVariantMap &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    informOnceAboutUsageTermsIfNecessary(parameters);
-
-    QGeoNetworkAccessManager *networkManager = tryGetNetworkAccessManager(parameters);
-    if (!networkManager)
-        networkManager = new QGeoIntrinsicNetworkAccessManager(parameters);
-
-    return new QGeocodingManagerEngineNokia(networkManager, parameters, error, errorString);
+    return CreateInstanceOf<QGeocodingManagerEngineNokia>(parameters, error, errorString);
 }
 
 QGeoMappingManagerEngine *QGeoServiceProviderFactoryNokia::createMappingManagerEngine(
@@ -108,13 +127,7 @@ QGeoMappingManagerEngine *QGeoServiceProviderFactoryNokia::createMappingManagerE
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    informOnceAboutUsageTermsIfNecessary(parameters);
-
-    QGeoNetworkAccessManager *networkManager = tryGetNetworkAccessManager(parameters);
-    if (!networkManager)
-        networkManager = new QGeoIntrinsicNetworkAccessManager(parameters, QStringLiteral("mapping.proxy"));
-
-    return new QGeoTiledMappingManagerEngineNokia(networkManager, parameters, error, errorString);
+    return CreateInstanceOf<QGeoTiledMappingManagerEngineNokia>(parameters, error, errorString);
 }
 
 QGeoRoutingManagerEngine *QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(
@@ -122,13 +135,7 @@ QGeoRoutingManagerEngine *QGeoServiceProviderFactoryNokia::createRoutingManagerE
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    informOnceAboutUsageTermsIfNecessary(parameters);
-
-    QGeoNetworkAccessManager *networkManager = tryGetNetworkAccessManager(parameters);
-    if (!networkManager)
-        networkManager = new QGeoIntrinsicNetworkAccessManager(parameters, QStringLiteral("routing.proxy"));
-
-    return new QGeoRoutingManagerEngineNokia(networkManager, parameters, error, errorString);
+    return CreateInstanceOf<QGeoRoutingManagerEngineNokia>(parameters, error, errorString);
 }
 
 QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(
@@ -136,38 +143,13 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    informOnceAboutUsageTermsIfNecessary(parameters);
-
-    QGeoNetworkAccessManager *networkManager = tryGetNetworkAccessManager(parameters);
-    if (!networkManager)
-        networkManager = new QGeoIntrinsicNetworkAccessManager(parameters, QStringLiteral("places.proxy"));
-
     switch (parameters.value(QLatin1String("places.api_version"), 2).toUInt()) {
     case 1:
-        return new QPlaceManagerEngineNokiaV1(networkManager, parameters, error, errorString);
+        return CreateInstanceOf<QPlaceManagerEngineNokiaV1>(parameters, error, errorString);
     case 2:
-        return new QPlaceManagerEngineNokiaV2(networkManager, parameters, error, errorString);
+        return CreateInstanceOf<QPlaceManagerEngineNokiaV2>(parameters, error, errorString);
     }
-
     return 0;
-}
-
-void QGeoServiceProviderFactoryNokia::informOnceAboutUsageTermsIfNecessary(
-        const QVariantMap &parameters) const
-{
-    if (m_informedAboutUsageTerms)
-        return;
-
-    const QString appId = parameters.value(QLatin1String("app_id")).toString();
-    const QString token = parameters.value(QLatin1String("token")).toString();
-
-    if (!isValidParameter(appId) || !isValidParameter(token)) {
-        m_informedAboutUsageTerms = true;
-        qWarning() << "****************************************************************************";
-        qWarning() << "* Qt Location requires usage of app_id and token parameters obtained from: *";
-        qWarning() << "* https://api.developer.nokia.com/                                         *";
-        qWarning() << "****************************************************************************";
-    }
 }
 
 QT_END_NAMESPACE

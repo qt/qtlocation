@@ -92,7 +92,10 @@ void tst_QPlaceManagerNokia::initTestCase()
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
     providers.contains("nokia_places_jsondb");
 
-    provider = new QGeoServiceProvider("nokia");
+    QMap<QString, QVariant> params;
+    params.insert("app_id", "stub");
+    params.insert("token", "stub");
+    provider = new QGeoServiceProvider("nokia", params);
     placeManager = provider->placeManager();
     QVERIFY(placeManager);
 }
