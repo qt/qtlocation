@@ -77,7 +77,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)
-    : QObject(parent), visible_(true), componentCompleted_(false), delegate_(0),
+    : QObject(parent), componentCompleted_(false), delegate_(0),
       itemModel_(0), listModel_(0), map_(0)
 {
 }
@@ -439,49 +439,6 @@ QDeclarativeGeoMapItemBase *QDeclarativeGeoMapItemView::createItemFromItemModel(
     itemContext->setParent(declMapObj);
     model->setParent(declMapObj);
     return declMapObj;
-}
-
-/*!
-    \qmlproperty bool QtLocation5::MapItemView::visible
-
-    This property holds whether the delegate objects created from the
-    model are visible or not. Default value is true.
-*/
-
-void QDeclarativeGeoMapItemView::setVisible(bool visible)
-{
-    // TODO!
-    Q_UNUSED(visible);
-}
-
-bool QDeclarativeGeoMapItemView::isVisible() const
-{
-    return visible_;
-}
-
-/*!
-    \qmlproperty int QtLocation5::MapItemView::z
-
-    This property holds the z-value of the MapItemView.
-    It determines the z-value of the instantiated delegates.
-
-    As with other Map items, objects with same z-value are
-    drawn in insertion order.
-
-*/
-void QDeclarativeGeoMapItemView::setZValue(qreal zValue)
-{
-    // TODO z values
-    Q_UNUSED(zValue);
-    // group_.setZValue(zValue);
-    // emit zChanged();
-}
-
-qreal QDeclarativeGeoMapItemView::zValue()
-{
-    // TODO z values what to do
-    return 1.0;
-    //return group_.zValue();
 }
 
 #include "moc_qdeclarativegeomapitemview_p.cpp"

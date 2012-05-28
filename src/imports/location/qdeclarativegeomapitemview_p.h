@@ -63,8 +63,6 @@ class QDeclarativeGeoMapItemView : public QObject, public QQmlParserStatus
 
     Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(QQmlComponent *delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
-    Q_PROPERTY(bool visible READ isVisible WRITE setVisible NOTIFY visibleChanged)
-    Q_PROPERTY(qreal z READ zValue WRITE setZValue NOTIFY zChanged)
 
 public:
     explicit QDeclarativeGeoMapItemView(QQuickItem *parent = 0);
@@ -83,7 +81,6 @@ public:
     qreal zValue();
     void setZValue(qreal zValue);
 
-    void setVisible(bool visible);
     bool isVisible() const;
 
     QDeclarativeGeoMapItemBase *createItem(int modelRow);
@@ -94,8 +91,6 @@ public:
 Q_SIGNALS:
     void modelChanged();
     void delegateChanged();
-    void visibleChanged();
-    void zChanged();
 
 private:
     QDeclarativeGeoMapItemBase *createItemFromItemModel(int modelRow);

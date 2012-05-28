@@ -196,6 +196,7 @@ Item {
             id: theItemView
             model: testModel
             delegate: Component {
+                id: theItemViewsComponent
                 MapCircle {
                     radius: 1500000
                     center: Coordinate {
@@ -266,6 +267,11 @@ Item {
         when: windowShown
         function clear_data() {
             mapItemSpy.clear()
+        }
+
+        function test_basics() {
+            compare(theItemView.delegate, theItemViewsComponent);
+            compare(theItemView.model, testModel);
         }
 
         function test_aaa_basic_add_remove() { // aaa to ensure execution first

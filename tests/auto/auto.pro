@@ -60,7 +60,8 @@ SUBDIRS += geotestplugin \
            qgeoroutexmlparser \
            qgeomapcontroller \
            maptype \
-           nokia_services
+           nokia_services \
+           doublevectors
 
 !mac: SUBDIRS += declarative_ui
 
