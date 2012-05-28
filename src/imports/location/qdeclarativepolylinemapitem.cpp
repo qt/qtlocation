@@ -682,7 +682,7 @@ QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, U
     return node;
 }
 
-bool QDeclarativePolylineMapItem::contains(const QPointF &point)
+bool QDeclarativePolylineMapItem::contains(const QPointF &point) const
 {
     return geometry_.contains(point);
 }

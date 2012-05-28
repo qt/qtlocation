@@ -94,7 +94,7 @@ public:
 
     void dragStarted();
     void dragEnded();
-    bool contains(const QPointF &point);
+    bool contains(const QPointF &point) const;
 
 Q_SIGNALS:
     void topLeftChanged(const QDeclarativeCoordinate *topLeft);

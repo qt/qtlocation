@@ -403,7 +403,7 @@ void QDeclarativeRectangleMapItem::afterViewportChanged(const QGeoMapViewportCha
 /*!
     \internal
 */
-bool QDeclarativeRectangleMapItem::contains(const QPointF &point)
+bool QDeclarativeRectangleMapItem::contains(const QPointF &point) const
 {
     return (geometry_.contains(point) || borderGeometry_.contains(point));
 }

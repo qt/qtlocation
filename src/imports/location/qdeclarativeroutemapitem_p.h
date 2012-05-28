@@ -73,7 +73,7 @@ public:
 
     QDeclarativeMapLineProperties *line();
 
-    bool contains(const QPointF &point);
+    bool contains(const QPointF &point) const;
 
 Q_SIGNALS:
     void routeChanged(const QDeclarativeGeoRoute *route);

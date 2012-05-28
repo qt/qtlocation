@@ -441,7 +441,7 @@ void QDeclarativeCircleMapItem::dragEnded()
 /*!
     \internal
 */
-bool QDeclarativeCircleMapItem::contains(const QPointF &point)
+bool QDeclarativeCircleMapItem::contains(const QPointF &point) const
 {
     return (geometry_.contains(point) || borderGeometry_.contains(point));
 }

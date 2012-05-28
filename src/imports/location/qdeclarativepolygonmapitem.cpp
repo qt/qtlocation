@@ -575,7 +575,7 @@ void QDeclarativePolygonMapItem::afterViewportChanged(const QGeoMapViewportChang
 /*!
     \internal
 */
-bool QDeclarativePolygonMapItem::contains(const QPointF &point)
+bool QDeclarativePolygonMapItem::contains(const QPointF &point) const
 {
     return (geometry_.contains(point) || borderGeometry_.contains(point));
 }

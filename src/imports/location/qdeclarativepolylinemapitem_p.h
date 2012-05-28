@@ -114,7 +114,7 @@ public:
 
     QQmlListProperty<QDeclarativeCoordinate> declarativePath();
 
-    bool contains(const QPointF &point);
+    bool contains(const QPointF &point) const;
 
     QDeclarativeMapLineProperties *line();
 

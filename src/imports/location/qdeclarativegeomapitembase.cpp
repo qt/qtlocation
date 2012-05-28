@@ -121,15 +121,6 @@ void QDeclarativeGeoMapItemBase::afterChildrenChanged()
 /*!
     \internal
 */
-bool QDeclarativeGeoMapItemBase::contains(const QPointF &point)
-{
-    Q_UNUSED(point);
-    return true;
-}
-
-/*!
-    \internal
-*/
 void QDeclarativeGeoMapItemBase::dragStarted()
 {
 }

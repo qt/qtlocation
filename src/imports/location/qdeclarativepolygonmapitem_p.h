@@ -97,7 +97,7 @@ public:
 
     QDeclarativeMapLineProperties *border();
 
-    bool contains(const QPointF &point);
+    bool contains(const QPointF &point) const;
     void dragStarted();
     void dragEnded();
 

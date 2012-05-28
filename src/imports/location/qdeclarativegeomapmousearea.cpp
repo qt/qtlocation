@@ -203,7 +203,7 @@ void QDeclarativeGeoMapMouseArea::mousePressEvent(QMouseEvent *event)
     // ignore event if it misses non-rectangular geometry (e.g. circle, route)
     bool contains = true;
     if (pmi && qobject_cast<QDeclarativeGeoMapItemBase *>(pmi))
-         contains = qobject_cast<QDeclarativeGeoMapItemBase *>(pmi)->contains(event->pos());
+        contains = pmi->contains(event->pos());
 
     if (contains)
         QQuickMouseArea::mousePressEvent(event);
@@ -260,7 +260,7 @@ void QDeclarativeGeoMapMouseArea::hoverEnterEvent(QHoverEvent *event)
     QQuickItem *pmi = parentMapItem();
     bool contains = true;
     if (pmi && qobject_cast<QDeclarativeGeoMapItemBase *>(pmi))
-         contains = qobject_cast<QDeclarativeGeoMapItemBase *>(pmi)->contains(event->pos());
+         contains = pmi->contains(event->pos());
 
     /* for many objects it's doubtful this will ever be true */
     if (!hovered() && contains)
@@ -277,7 +277,7 @@ void QDeclarativeGeoMapMouseArea::hoverMoveEvent(QHoverEvent *event)
     QQuickItem *pmi = parentMapItem();
     bool contains = true;
     if (pmi && qobject_cast<QDeclarativeGeoMapItemBase *>(pmi))
-         contains = qobject_cast<QDeclarativeGeoMapItemBase *>(pmi)->contains(event->pos());
+         contains = pmi->contains(event->pos());
 
     /* we may have already entered the object from scenegraph's perspective
      * (ie, the hoverEnterEvent fired and we ignored it), so make sure our
@@ -300,7 +300,7 @@ void QDeclarativeGeoMapMouseArea::hoverLeaveEvent(QHoverEvent *event)
     QQuickItem *pmi = parentMapItem();
     bool contains = true;
     if (pmi && qobject_cast<QDeclarativeGeoMapItemBase *>(pmi))
-         contains = qobject_cast<QDeclarativeGeoMapItemBase *>(pmi)->contains(event->pos());
+         contains = pmi->contains(event->pos());
 
     if (!hovered() && contains)
         QQuickMouseArea::hoverEnterEvent(event);
