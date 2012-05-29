@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += testcase
 TARGET = tst_nokia_routing
 
-QT += location testlib
+QT += network location testlib
 INCLUDEPATH += $$PWD/../../../../src/plugins/geoservices/nokia
 
 HEADERS += $$PWD/../../../../src/plugins/geoservices/nokia/qgeonetworkaccessmanager.h

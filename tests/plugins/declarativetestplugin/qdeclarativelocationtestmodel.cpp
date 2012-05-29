@@ -41,7 +41,6 @@
 
 #include "qdeclarativelocationtestmodel_p.h"
 #include <qgeocoordinate.h>
-#include <QtWidgets/QApplication>
 #include <QtCore/QTime>
 #include <QtCore>
 

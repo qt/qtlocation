@@ -46,9 +46,6 @@
 #include "qgeotilespec.h"
 #include "qgeotiledmapdata_p.h"
 
-#include <QThread>
-#include <QNetworkProxy>
-
 QT_BEGIN_NAMESPACE
 
 QGeoTileFetcher::QGeoTileFetcher(QGeoTiledMappingManagerEngine *engine, QObject *parent)

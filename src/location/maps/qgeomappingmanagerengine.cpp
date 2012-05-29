@@ -45,7 +45,6 @@
 #include "qgeotilespec.h"
 
 #include <QThread>
-#include <QNetworkProxy>
 
 QT_BEGIN_NAMESPACE
 

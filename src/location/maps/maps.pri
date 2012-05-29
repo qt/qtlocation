@@ -1,7 +1,7 @@
 
 INCLUDEPATH += maps
 
-QT += network 3d
+QT += 3d
 
 PUBLIC_HEADERS += \
                     maps/qgeocameracapabilities_p.h \

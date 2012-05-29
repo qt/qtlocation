@@ -49,7 +49,6 @@
 #include "qgeomap_p.h"
 
 #include <QTimer>
-#include <QNetworkProxy>
 #include <QLocale>
 
 QT_BEGIN_NAMESPACE

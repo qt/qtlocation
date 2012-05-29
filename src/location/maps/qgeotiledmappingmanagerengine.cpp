@@ -50,7 +50,6 @@
 #include "qgeotilespec.h"
 
 #include <QTimer>
-#include <QNetworkProxy>
 #include <QLocale>
 
 QT_BEGIN_NAMESPACE
