@@ -236,7 +236,7 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
 
                 screenVertices_.reserve(screenVertices_.size() + tris.size());
 
-                for (int i = 0; i < tris.size(); ++i) {
+                for (size_t i = 0; i < tris.size(); ++i) {
                     p2t::Triangle *t = tris.at(i);
 
                     for (int j = 0; j < 3; ++j) {
@@ -258,8 +258,7 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map)
     }
 
     if (curPts.size() > 0) {
-        for (int i = 0; i < curPts.size(); ++i)
-            delete curPts.at(i);
+        qDeleteAll(curPts.begin(), curPts.end());
         curPts.clear();
     }
 

@@ -243,11 +243,7 @@ class tst_QGeoMapScene : public QObject
         double zoom;
         int screenWidth;
         int screenHeight;
-        double screenX;
-        double screenY;
         QString name;
-        screenX = 0;
-        screenY = 0;
         tileSize = 16;
         zoom = 4.0;
 

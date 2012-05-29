@@ -3606,6 +3606,7 @@ bool tst_QPlaceManagerJsonDb::doFetchCategory(const QString &categoryId,
                                               QPlaceCategory *category,
                                               QPlaceReply::Error expectedError)
 {
+    Q_UNUSED(expectedError)
     Q_ASSERT(category);
     QPlaceReply * catInitReply = placeManager->initializeCategories();
     bool isSuccessful = checkSignals(catInitReply, QPlaceReply::NoError);

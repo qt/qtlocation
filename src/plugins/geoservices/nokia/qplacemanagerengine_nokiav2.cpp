@@ -701,6 +701,7 @@ QPlaceIcon QPlaceManagerEngineNokiaV2::icon(const QString &remotePath,
 QUrl QPlaceManagerEngineNokiaV2::constructIconUrl(const QPlaceIcon &icon,
                                                         const QSize &size) const
 {
+    Q_UNUSED(size)
     QVariantMap params = icon.parameters();
     QString nokiaIcon = params.value(NokiaIcon).toString();
 
