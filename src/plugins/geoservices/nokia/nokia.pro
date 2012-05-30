@@ -30,7 +30,8 @@ HEADERS += \
             qgeonetworkaccessmanager.h \
             qgeointrinsicnetworkaccessmanager.h \
             qgeouriprovider.h \
-            uri_constants.h
+            uri_constants.h \
+            qgeoerror_messages.h
 
 
 SOURCES += \
@@ -47,7 +48,8 @@ SOURCES += \
             qgeoserviceproviderplugin_nokia.cpp \
             qgeointrinsicnetworkaccessmanager.cpp \
             qgeouriprovider.cpp \
-            uri_constants.cpp
+            uri_constants.cpp \
+            qgeoerror_messages.cpp
 
 include(placesv1/placesv1.pri)
 include(placesv2/placesv2.pri)

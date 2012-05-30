@@ -42,7 +42,9 @@
 #include "qdeclarativesupportedcategoriesmodel_p.h"
 #include "qdeclarativeplaceicon_p.h"
 #include "qgeoserviceprovider.h"
+#include "error_messages.h"
 
+#include <QCoreApplication>
 #include <QtQml/QQmlInfo>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceIcon>
@@ -469,7 +471,7 @@ void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
-        qmlInfo(this) << tr("Plugin %1 does not support places.").arg(m_plugin->name());
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
         return;
     }
 
@@ -502,7 +504,7 @@ void QDeclarativeSupportedCategoriesModel::update()
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
-        qmlInfo(this) << tr("Plugin %1 does not support places.").arg(m_plugin->name());
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
         return;
     }
 
@@ -513,7 +515,7 @@ void QDeclarativeSupportedCategoriesModel::update()
             setStatus(QDeclarativeSupportedCategoriesModel::Updating);
         } else {
             setStatus(QDeclarativeSupportedCategoriesModel::Error);
-            m_errorString = tr("Unable to initialize categories");
+            m_errorString = QCoreApplication::translate(CONTEXT_NAME, CATEGORIES_NOT_INITIALIZED);
         }
     }
 }
@@ -532,7 +534,7 @@ void QDeclarativeSupportedCategoriesModel::updateLayout()
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
-        qmlInfo(this) << tr("Plugin %1 does not support places.").arg(m_plugin->name());
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
         return;
     }
 
@@ -674,7 +676,7 @@ QPlaceManager *QDeclarativeSupportedCategoriesModel::manager(bool checkState)
     }
 
     if (!m_plugin) {
-           qmlInfo(this) << tr("Plugin not assigned to place");
+           qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_NOT_ASSIGNED_TO_PLACE);
            return 0;
     }
 
@@ -685,7 +687,7 @@ QPlaceManager *QDeclarativeSupportedCategoriesModel::manager(bool checkState)
     QPlaceManager *placeManager = serviceProvider->placeManager();
 
     if (!placeManager) {
-        qmlInfo(this) << tr("Plugin %1 does not support places.").arg(m_plugin->name());
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
         return 0;
     }
 

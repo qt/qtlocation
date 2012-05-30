@@ -41,6 +41,7 @@
 
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativegeomapmousearea_p.h"
+#include "error_messages.h"
 
 #include "qdeclarativecirclemapitem_p.h"
 #include "qdeclarativegeomapquickitem_p.h"
@@ -65,6 +66,7 @@
 #include <QModelIndex>
 #include <QtQuick/QQuickCanvas>
 #include <QtGui/QGuiApplication>
+#include <QCoreApplication>
 
 QT_BEGIN_NAMESPACE
 
@@ -282,8 +284,8 @@ void QDeclarativeGeoMap::pluginReady()
     mappingManager_ = serviceProvider_->mappingManager();
 
     if (!mappingManager_ || serviceProvider_->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support mapping. Error message: %1")
-                         .arg(serviceProvider_->errorString());
+        QString msg = QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_MAPPING).arg(serviceProvider_->errorString());
+        qmlInfo(this) << msg;
         return;
     }
 
@@ -475,7 +477,7 @@ QSGNode *QDeclarativeGeoMap::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeDa
 void QDeclarativeGeoMap::setPlugin(QDeclarativeGeoServiceProvider *plugin)
 {
     if (plugin_) {
-        qmlInfo(this) << tr("Plugin is a write-once property, and cannot be set again.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_SET_ONCE);
         return;
     }
     plugin_ = plugin;

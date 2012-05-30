@@ -41,10 +41,12 @@
 
 #include "qdeclarativegeoroutemodel_p.h"
 #include "qdeclarativegeoroute_p.h"
+#include "error_messages.h"
 
 #include <qgeoserviceprovider.h>
 #include <qgeoroutingmanager.h>
 #include <QtQml/qqmlinfo.h>
+#include <QCoreApplication>
 
 QT_BEGIN_NAMESPACE
 
@@ -217,7 +219,7 @@ void QDeclarativeGeoRouteModel::abortRequest()
 QDeclarativeGeoRoute *QDeclarativeGeoRouteModel::get(int index)
 {
     if (index < 0 || index >= routes_.count()) {
-        qmlInfo(this) << tr("Error, invalid index for get(): ") << index;
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, INDEX_INVALID).arg(index);
         return 0;
     }
     return routes_.at(index);
@@ -249,12 +251,12 @@ int QDeclarativeGeoRouteModel::rowCount(const QModelIndex &parent) const
 QVariant QDeclarativeGeoRouteModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
-        qmlInfo(this) << tr("Error in indexing route model's data (invalid index).");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, MODEL_INDEX_INVALID);
         return QVariant();
     }
 
     if (index.row() >= routes_.count()) {
-        qmlInfo(this) << tr("Fatal error in indexing route model's data (index overflow).");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, MODEL_INDEX_OUT_OF_RANGE);
         return QVariant();
     }
 
@@ -297,8 +299,7 @@ void QDeclarativeGeoRouteModel::pluginReady()
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
     if (!routingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support routing. Error message: %1")
-                         .arg(serviceProvider->errorString());
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_ROUTING).arg(serviceProvider->errorString());
         return;
     }
     connect(routingManager, SIGNAL(finished(QGeoRouteReply*)),
@@ -498,7 +499,7 @@ void QDeclarativeGeoRouteModel::update()
         return;
 
     if (!plugin_) {
-        qmlInfo(this) << tr("Plugin not set, cannot route.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_PLUGIN_NOT_SET);
         return;
     }
 
@@ -508,17 +509,17 @@ void QDeclarativeGeoRouteModel::update()
 
     QGeoRoutingManager *routingManager = serviceProvider->routingManager();
     if (!routingManager) {
-        qmlInfo(this) << tr("No routing manager available, cannot route.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_MGR_NOT_SET);
         return;
     }
     if (!routeQuery_) {
-        qmlInfo(this) << tr("Route query not set, cannot route.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_QUERY_NOT_SET);
         return;
     }
     abortRequest(); // Clear previus requests
     QGeoRouteRequest request = routeQuery_->routeRequest();
     if (request.waypoints().count() < 2) {
-        qmlInfo(this) << tr("Not enough waypoints for routing.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, ROUTE_WAYPOINTS_NOT_SET);
         return;
     }
 
@@ -863,7 +864,7 @@ void QDeclarativeGeoRouteQuery::removeExcludedArea(QDeclarativeGeoBoundingBox *a
 
     int index = exclusions_.lastIndexOf(area);
     if (index == -1) {
-        qmlInfo(this) << tr("Cannot remove nonexistent area.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, CANNOT_REMOVE_AREA);
         return;
     }
     exclusions_.removeAt(index);
@@ -903,12 +904,12 @@ void QDeclarativeGeoRouteQuery::clearExcludedAreas()
 void QDeclarativeGeoRouteQuery::addWaypoint(QDeclarativeCoordinate *waypoint)
 {
     if (!waypoint) {
-        qmlInfo(this) << tr("Not adding null waypoint.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, CANNOT_ADD_NULL_WAYPOINT);
         return;
     }
 
     if (!waypoint->isValid()) {
-        qmlInfo(this) << tr("Not adding invalid waypoint.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, CANNOT_ADD_INVALID_WAYPOINT);
         return;
     }
 
@@ -942,7 +943,7 @@ void QDeclarativeGeoRouteQuery::removeWaypoint(QDeclarativeCoordinate *waypoint)
 
     int index = waypoints_.lastIndexOf(waypoint);
     if (index == -1) {
-        qmlInfo(this) << tr("Cannot remove nonexistent waypoint.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, CANNOT_REMOVE_WAYPOINT);
         return;
     }
     waypoints_.removeAt(index);

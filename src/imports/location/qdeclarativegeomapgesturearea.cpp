@@ -40,10 +40,13 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QGuiApplication>
+
 #include "qdeclarativegeomapgesturearea_p.h"
 #include "qdeclarativegeomap_p.h"
 #include "qdeclarativecoordinate_p.h"
+#include "error_messages.h"
+
+#include <QtGui/QGuiApplication>
 #include <QtGui/qevent.h>
 #include <QtGui/QStyleHints>
 #include <QtQml/qqmlinfo.h>
@@ -378,9 +381,9 @@ void QDeclarativeGeoMapGestureArea::setActiveGestures(ActiveGestures activeGestu
         return;
     activeGestures_ = activeGestures;
     if (activeGestures_ & RotationGesture)
-        qmlInfo(this) << tr("Pinchrotation gesture activated. Note that it is experimental feature.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PINCH_ROTATE_GESTURE_ACTIVATED);
     if (activeGestures_ & TiltGesture)
-        qmlInfo(this) << tr("Pinchtilt gesture activated. Note that it is experimental feature.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PINCH_TILT_GESTURE_ACTIVATED);
     emit activeGesturesChanged();
     emit pinchDep_->activeGesturesChanged();
 }

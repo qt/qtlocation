@@ -42,6 +42,8 @@
 #include "qdeclarativepolygonmapitem_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qlocationutils_p.h"
+#include "error_messages.h"
+
 #include <QtGui/private/qtriangulator_p.h>
 #include <QtQml/QQmlInfo>
 #include <QPainter>
@@ -441,12 +443,12 @@ void QDeclarativePolygonMapItem::removeCoordinate(QDeclarativeCoordinate *coordi
     int index = coordPath_.lastIndexOf(coordinate);
 
     if (index == -1) {
-        qmlInfo(this) << tr("Coordinate does not belong to PolygonMapItem.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolygonMapItem");
         return;
     }
 
     if (path_.count() < index + 1) {
-        qmlInfo(this) << tr("Coordinate does not belong to PolygonMapItem.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolygonMapItem");
         return;
     }
     coordPath_.removeAt(index);

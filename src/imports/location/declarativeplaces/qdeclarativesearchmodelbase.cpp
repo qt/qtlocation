@@ -41,6 +41,7 @@
 
 #include "qdeclarativesearchmodelbase.h"
 #include "qdeclarativeplace_p.h"
+#include "error_messages.h"
 
 #include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
@@ -177,7 +178,7 @@ void QDeclarativeSearchModelBase::update()
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
-        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
         return;
     }
 

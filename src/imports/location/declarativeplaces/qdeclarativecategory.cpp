@@ -42,10 +42,12 @@
 #include "qdeclarativecategory_p.h"
 #include "qdeclarativeplaceicon_p.h"
 #include "qdeclarativegeoserviceprovider_p.h"
+#include "error_messages.h"
 
 #include <QtQml/QQmlInfo>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
+#include <QCoreApplication>
 
 QT_USE_NAMESPACE
 
@@ -148,7 +150,7 @@ void QDeclarativeCategory::pluginReady()
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        m_errorString = tr("Places not supported by %1 plugin.").arg(m_plugin->name());
+        m_errorString = QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
         setStatus(Error);
         return;
     }
@@ -438,20 +440,20 @@ QPlaceManager *QDeclarativeCategory::manager()
     }
 
     if (!m_plugin) {
-        m_errorString = tr("Plugin property not set.");
+        m_errorString = QCoreApplication::translate(CONTEXT_NAME, PLUGIN_PROPERTY_NOT_SET);
         setStatus(Error);
         return 0;
     }
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     if (!serviceProvider) {
-        m_errorString = tr("Plugin not valid");
+        m_errorString = QCoreApplication::translate(CONTEXT_NAME, PLUGIN_NOT_VALID);
         setStatus(Error);
         return 0;
     }
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager) {
-        m_errorString = tr("Places not supported by %1 plugin.").arg(m_plugin->name());
+        m_errorString = QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
         setStatus(Error);
         return 0;
     }

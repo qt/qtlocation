@@ -41,6 +41,7 @@
 
 #include "qdeclarativepositionsource_p.h"
 #include "qdeclarativeposition_p.h"
+#include "error_messages.h"
 
 #include <QtQml/qqmlinfo.h>
 #include <QtQml/qqml.h>
@@ -243,7 +244,7 @@ void QDeclarativePositionSource::setNmeaSource(const QUrl &nmeaSource)
             QTimer::singleShot(0, this, SLOT(start()));
         }
     } else {
-        qmlInfo(this) << tr("Nmea file not found.") << localFileName;
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, MISSED_NMEA_FILE) << localFileName;
 #ifdef QDECLARATIVE_POSITION_DEBUG
         qDebug() << "QDeclarativePositionSource NMEA File was not found: " << localFileName;
 #endif

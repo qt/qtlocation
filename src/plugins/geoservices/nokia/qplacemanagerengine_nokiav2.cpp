@@ -58,7 +58,9 @@
 #include "qgeonetworkaccessmanager.h"
 #include "qgeouriprovider.h"
 #include "uri_constants.h"
+#include "qgeoerror_messages.h"
 
+#include <QCoreApplication>
 #include <QtCore/QFile>
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonDocument>
@@ -527,7 +529,7 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV2::savePlace(const QPlace &place)
     reply->setId(place.placeId());
     QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
                               Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
-                              Q_ARG(QString, tr("Saving places is not supported.")));
+                              Q_ARG(QString, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, SAVING_PLACE_NOT_SUPPORTED)));
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
             this, SLOT(replyError(QPlaceReply::Error,QString)));
@@ -540,7 +542,7 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV2::removePlace(const QString &placeId)
     reply->setId(placeId);
     QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
                               Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
-                              Q_ARG(QString, tr("Removing places is not supported.")));
+                              Q_ARG(QString, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, REMOVING_PLACE_NOT_SUPPORTED)));
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
             this, SLOT(replyError(QPlaceReply::Error,QString)));
@@ -555,7 +557,7 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV2::saveCategory(const QPlaceCategory &ca
     reply->setId(category.categoryId());
     QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
                               Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
-                              Q_ARG(QString, tr("Saving categories is not supported.")));
+                              Q_ARG(QString, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, SAVING_CATEGORY_NOT_SUPPORTED)));
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
             this, SLOT(replyError(QPlaceReply::Error,QString)));
@@ -568,7 +570,7 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV2::removeCategory(const QString &categor
     reply->setId(categoryId);
     QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
                               Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
-                              Q_ARG(QString, tr("Removing categories is not supported.")));
+                              Q_ARG(QString, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, REMOVING_CATEGORY_NOT_SUPPORTED)));
     connect(reply, SIGNAL(finished()), this, SLOT(replyFinished()));
     connect(reply, SIGNAL(error(QPlaceReply::Error,QString)),
             this, SLOT(replyError(QPlaceReply::Error,QString)));
@@ -747,7 +749,7 @@ void QPlaceManagerEngineNokiaV2::categoryReplyFinished()
             if (m_categoryReply) {
                 QMetaObject::invokeMethod(m_categoryReply.data(), "setError", Qt::QueuedConnection,
                                           Q_ARG(QPlaceReply::Error, QPlaceReply::ParseError),
-                                          Q_ARG(QString, tr("Error parsing response.")));
+                                          Q_ARG(QString, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, PARSE_ERROR)));
             }
             return;
         }
@@ -779,7 +781,7 @@ void QPlaceManagerEngineNokiaV2::categoryReplyError()
     if (m_categoryReply) {
         QMetaObject::invokeMethod(m_categoryReply.data(), "setError", Qt::QueuedConnection,
                                   Q_ARG(QPlaceReply::Error, QPlaceReply::CommunicationError),
-                                  Q_ARG(QString, tr("Network error.")));
+                                  Q_ARG(QString, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, NETWORK_ERROR)));
     }
 }
 

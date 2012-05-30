@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qdeclarativegeocodemodel_p.h"
+#include "error_messages.h"
 
 #include "qdeclarativegeolocation_p.h"
 #include <QtQml/qqmlinfo.h>
@@ -170,7 +171,7 @@ void QDeclarativeGeocodeModel::update()
         return;
 
     if (!plugin_) {
-        qmlInfo(this) << tr("Cannot geocode, plugin not set.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, GEOCODE_PLUGIN_NOT_SET);
         return;
     }
 
@@ -180,13 +181,13 @@ void QDeclarativeGeocodeModel::update()
 
     QGeocodingManager *geocodingManager = serviceProvider->geocodingManager();
     if (!geocodingManager) {
-        qmlInfo(this) << tr("Cannot geocode, search manager (/plugin) not set.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, GEOCODE_MGR_NOT_SET);
         return;
     }
     if ((!coordinate_ || !coordinate_->coordinate().isValid()) &&
             (!address_ || address_->address().isEmpty()) &&
             (searchString_.isEmpty())) {
-        qmlInfo(this) << tr("Cannot geocode, valid query not set.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, GEOCODE_QUERY_NOT_SET);
         return;
     }
     abortRequest(); // abort possible previous requests
@@ -306,8 +307,7 @@ void QDeclarativeGeocodeModel::pluginReady()
     QGeoServiceProvider *serviceProvider = plugin_->sharedGeoServiceProvider();
     QGeocodingManager *geocodingManager = serviceProvider->geocodingManager();
     if (!geocodingManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support (reverse) geocoding. Error message: %1")
-                         .arg(serviceProvider->errorString());
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_GEOCODING).arg(serviceProvider->errorString());
         return;
     }
     connect(geocodingManager, SIGNAL(finished(QGeocodeReply*)),
@@ -340,7 +340,7 @@ void QDeclarativeGeocodeModel::setBounds(QObject *bounds)
     } else if (qobject_cast<QDeclarativeGeoBoundingCircle *>(bounds)) {
         boundingCircle_ = qobject_cast<QDeclarativeGeoBoundingCircle *>(bounds)->circle();
     } else {
-        qmlInfo(this) << tr("Unsupported bound type (Box and Circle supported)");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, UNSUPPORTED_BOUND_TYPE);
         return;
     }
     boundingArea_ = bounds;
@@ -521,7 +521,7 @@ int QDeclarativeGeocodeModel::count() const
 QDeclarativeGeoLocation *QDeclarativeGeocodeModel::get(int index)
 {
     if (index < 0 || index >= declarativeLocations_.count()) {
-        qmlInfo(this) << tr("Error, too big or small index in get(): ") << index;
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, INDEX_OUT_OF_RANGE).arg(index);
         return 0;
     }
     return declarativeLocations_.at(index);
@@ -677,7 +677,7 @@ void QDeclarativeGeocodeModel::setQuery(const QVariant &query)
         address_ = 0;
         coordinate_ = 0;
     } else {
-        qmlInfo(this) << tr("Unsupported query type for geocode model (Coordinate, string and Address supported).");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, UNSUPPORTED_QUERY_TYPE);
         return;
     }
     queryVariant_ = query;

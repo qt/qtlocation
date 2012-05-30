@@ -47,7 +47,9 @@
 ****************************************************************************/
 
 #include "qplacemanagerengine_nokiav1.h"
+#include "qgeoerror_messages.h"
 
+#include <QCoreApplication>
 #include <QtLocation/QPlaceContentRequest>
 
 #include "placesv1/qplacecategoriesrepository.h"
@@ -219,7 +221,7 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV1::savePlace(const QPlace &place)
 {
     IdReply *reply = new IdReply(QPlaceIdReply::SavePlace, this);
     reply->setId(place.placeId());
-    reply->triggerDone(QPlaceReply::UnsupportedError, tr("Saving places is not supported"));
+    reply->triggerDone(QPlaceReply::UnsupportedError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, SAVING_PLACE_NOT_SUPPORTED));
     return reply;
 }
 
@@ -227,7 +229,7 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV1::removePlace(const QString &placeId)
 {
     IdReply *reply = new IdReply(QPlaceIdReply::RemovePlace, this);
     reply->setId(placeId);
-    reply->triggerDone(QPlaceReply::UnsupportedError, tr("Removing places is not supported"));
+    reply->triggerDone(QPlaceReply::UnsupportedError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, REMOVING_PLACE_NOT_SUPPORTED));
     return reply;
 }
 
@@ -237,7 +239,7 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV1::saveCategory(const QPlaceCategory &ca
 
     IdReply *reply = new IdReply(QPlaceIdReply::SaveCategory, this);
     reply->setId(category.categoryId());
-    reply->triggerDone(QPlaceReply::UnsupportedError, tr("Saving categories is not supported"));
+    reply->triggerDone(QPlaceReply::UnsupportedError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, SAVING_CATEGORY_NOT_SUPPORTED));
     return reply;
 }
 
@@ -245,7 +247,7 @@ QPlaceIdReply *QPlaceManagerEngineNokiaV1::removeCategory(const QString &categor
 {
     IdReply *reply = new IdReply(QPlaceIdReply::RemoveCategory, this);
     reply->setId(categoryId);
-    reply->triggerDone(QPlaceReply::UnsupportedError, tr("Removing categories is not supported"));
+    reply->triggerDone(QPlaceReply::UnsupportedError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, REMOVING_CATEGORY_NOT_SUPPORTED));
     return reply;
 }
 

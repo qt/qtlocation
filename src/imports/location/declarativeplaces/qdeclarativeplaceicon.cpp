@@ -40,10 +40,12 @@
 ****************************************************************************/
 
 #include "qdeclarativeplaceicon_p.h"
+#include "error_messages.h"
 
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QPlaceManager>
 #include <QtQml/QQmlInfo>
+#include <QCoreApplication>
 
 QT_USE_NAMESPACE
 
@@ -201,8 +203,7 @@ void QDeclarativePlaceIcon::pluginReady()
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     QPlaceManager *placeManager = serviceProvider->placeManager();
     if (!placeManager || serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qmlInfo(this) << tr("Warning: Plugin does not support places. Error message: %1")
-                         .arg(serviceProvider->errorString());
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES).arg(serviceProvider->errorString());
         return;
     }
 }
@@ -214,7 +215,7 @@ void QDeclarativePlaceIcon::pluginReady()
 QPlaceManager *QDeclarativePlaceIcon::manager() const
 {
     if (!m_plugin) {
-           qmlInfo(this) << tr("Plugin not assigned to place icon");
+           qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_NOT_ASSIGNED_TO_PLACE_ICON);
            return 0;
     }
 
@@ -225,7 +226,7 @@ QPlaceManager *QDeclarativePlaceIcon::manager() const
     QPlaceManager *placeManager = serviceProvider->placeManager();
 
     if (!placeManager) {
-        qmlInfo(this) << tr("Places not supported by %1 Plugin.").arg(m_plugin->name());
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, PLUGIN_DOESNOT_SUPPORT_PLACES2).arg(m_plugin->name());
         return 0;
     }
 

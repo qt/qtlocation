@@ -49,7 +49,9 @@
 #include "qplacedetailsreplyimpl.h"
 #include "jsonparserhelpers.h"
 #include "../qplacemanagerengine_nokiav2.h"
+#include "../qgeoerror_messages.h"
 
+#include <QCoreApplication>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonArray>
@@ -133,7 +135,7 @@ void QPlaceDetailsReplyImpl::replyFinished()
 {
     QJsonDocument document = QJsonDocument::fromJson(m_reply->readAll());
     if (!document.isObject()) {
-        setError(ParseError, tr("Error parsing response."));
+        setError(ParseError, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, PARSE_ERROR));
         return;
     }
 

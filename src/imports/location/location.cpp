@@ -84,6 +84,7 @@
 #include "qdeclarativesupportedcategoriesmodel_p.h"
 #include "qdeclarativesearchresultmodel_p.h"
 #include "qdeclarativesearchsuggestionmodel_p.h"
+#include "error_messages.h"
 
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
@@ -112,17 +113,17 @@ public:
             qmlRegisterType<QDeclarativePosition>(uri, 5, 0, "Position");
             qmlRegisterType<QDeclarativePositionSource>(uri, 5, 0, "PositionSource");
             qmlRegisterType<QDeclarativeCoordinate>(uri, 5, 0, "Coordinate");
-            qmlRegisterUncreatableType<QDeclarativeGeoBoundingArea>(uri, 5, 0, "BoundingArea", QDeclarativeGeoBoundingArea::tr("(Positioning)BoundingArea is not intended instantiable by developer."));
+            qmlRegisterUncreatableType<QDeclarativeGeoBoundingArea>(uri, 5, 0, "BoundingArea", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("(Positioning)BoundingArea"));
             qmlRegisterType<QDeclarativeGeoBoundingBox>(uri, 5, 0, "BoundingBox");
             qmlRegisterType<QDeclarativeGeoBoundingCircle>(uri, 5, 0, "BoundingCircle");
             qmlRegisterType<QDeclarativeGeoAddress>(uri, 5, 0, "Address");
 
             qmlRegisterType<QDeclarativeGeoServiceProvider>(uri, 5, 0, "Plugin");
             qmlRegisterType<QDeclarativeGeoServiceProviderParameter>(uri, 5, 0, "PluginParameter");
-            qmlRegisterUncreatableType<QDeclarativeGeoServiceProviderRequirements>(uri, 5, 0, "PluginRequirements", QDeclarativeGeoMapItemBase::tr("PluginRequirements is not intended instantiable by developer"));
+            qmlRegisterUncreatableType<QDeclarativeGeoServiceProviderRequirements>(uri, 5, 0, "PluginRequirements", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("PluginRequirements"));
             qmlRegisterType<QDeclarativeGeoMap>(uri, 5, 0, "Map");
 
-            qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase>(uri, 5, 0, "GeoMapItemBase",QDeclarativeGeoMapItemBase::tr("GeoMapItemBase is not intended instantiable by developer."));
+            qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase>(uri, 5, 0, "GeoMapItemBase", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("GeoMapItemBase"));
             qmlRegisterType<QDeclarativeGeoMapQuickItem>(uri, 5, 0, "MapQuickItem");
             qmlRegisterType<QDeclarativeGeoMapItemView>(uri, 5, 0, "MapItemView");
             qmlRegisterType<QDeclarativeGeoMapMouseArea>(uri, 5, 0, "MapMouseArea");
@@ -134,11 +135,11 @@ public:
             qmlRegisterType<QDeclarativeGeoRoute>(uri, 5, 0, "Route"); // data type
             qmlRegisterType<QDeclarativeGeoRouteSegment>(uri, 5, 0, "RouteSegment");
             qmlRegisterType<QDeclarativeGeoManeuver>(uri, 5, 0, "RouteManeuver");
-            qmlRegisterUncreatableType<QDeclarativeGeoMapFlickable>(uri, 5, 0, "MapFlickable", QDeclarativeGeoMapFlickable::tr("(Map)Flickable is not intended instantiable by developer."));
-            qmlRegisterUncreatableType<QDeclarativeGeoMapPinchArea>(uri, 5, 0, "MapPinchArea", QDeclarativeGeoMapPinchArea::tr("(Map)PinchArea is not intended instantiable by developer."));
-            qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent>(uri, 5, 0, "MapPinchEvent", QDeclarativeGeoMapPinchEvent::tr("(Map)PinchEvent is not intended instantiable by developer."));
-            qmlRegisterUncreatableType<QDeclarativeGeoMapGestureArea>(uri, 5, 0, "MapGestureArea", QDeclarativeGeoMapGestureArea::tr("(Map)GestureArea is not intended instantiable by developer."));
-            qmlRegisterUncreatableType<QDeclarativeGeoMapType>(uri, 5, 0, "MapType",QDeclarativeGeoMapType::tr("MapType is not intended instantiable by developer."));
+            qmlRegisterUncreatableType<QDeclarativeGeoMapFlickable>(uri, 5, 0, "MapFlickable", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("(Map)Flickable"));
+            qmlRegisterUncreatableType<QDeclarativeGeoMapPinchArea>(uri, 5, 0, "MapPinchArea", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("(Map)PinchArea"));
+            qmlRegisterUncreatableType<QDeclarativeGeoMapPinchEvent>(uri, 5, 0, "MapPinchEvent", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("(Map)PinchEvent"));
+            qmlRegisterUncreatableType<QDeclarativeGeoMapGestureArea>(uri, 5, 0, "MapGestureArea", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("(Map)GestureArea"));
+            qmlRegisterUncreatableType<QDeclarativeGeoMapType>(uri, 5, 0, "MapType", QCoreApplication::translate(CONTEXT_NAME, NOT_INSTANTIABLE_BY_DEVELOPER).arg("MapType"));
             qmlRegisterType<QDeclarativeCategory>(uri, 5, 0, "Category");
             qmlRegisterType<QDeclarativePlaceEditorialModel>(uri, 5, 0, "EditorialModel");
             qmlRegisterType<QDeclarativeGeoLocation>(uri, 5, 0, "Location");

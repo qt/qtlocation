@@ -58,7 +58,8 @@ HEADERS += qdeclarativeposition_p.h \
            qdeclarativeroutemapitem_p.h \
            qgeomapitemgeometry_p.h \
            qdeclarativegeomapcopyrightsnotice_p.h \
-    qdeclarativegeomapgesturearea_p.h
+           qdeclarativegeomapgesturearea_p.h \
+           error_messages.h
 
 SOURCES += qdeclarativeposition.cpp \
            location.cpp \
@@ -92,7 +93,8 @@ SOURCES += qdeclarativeposition.cpp \
            qdeclarativeroutemapitem.cpp \
            qgeomapitemgeometry.cpp \
            qdeclarativegeomapcopyrightsnotice.cpp \
-    qdeclarativegeomapgesturearea.cpp
+           qdeclarativegeomapgesturearea.cpp \
+           error_messages.cpp
 
 include(declarativeplaces/declarativeplaces.pri)
 

@@ -42,6 +42,8 @@
 #include "qdeclarativepolylinemapitem_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qlocationutils_p.h"
+#include "error_messages.h"
+
 #include <QtQml/QQmlInfo>
 #include <QPainter>
 #include <QPainterPath>
@@ -577,12 +579,12 @@ void QDeclarativePolylineMapItem::removeCoordinate(QDeclarativeCoordinate *coord
     int index = coordPath_.lastIndexOf(coordinate);
 
     if (index == -1) {
-        qmlInfo(this) << tr("Coordinate does not belong to PolylineMapItem.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolylineMapItem");
         return;
     }
 
     if (path_.count() < index + 1) {
-        qmlInfo(this) << tr("Coordinate does not belong to PolylineMapItem.");
+        qmlInfo(this) << QCoreApplication::translate(CONTEXT_NAME, COORD_NOT_BELONG_TO).arg("PolylineMapItem");
         return;
     }
     coordPath_.removeAt(index);
