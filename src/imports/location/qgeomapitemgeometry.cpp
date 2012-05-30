@@ -40,6 +40,8 @@
 ****************************************************************************/
 
 #include "qgeomapitemgeometry_p.h"
+#include "qdeclarativegeomap_p.h"
+#include "qlocationutils_p.h"
 #include <QtQuick/QSGGeometry>
 
 QT_BEGIN_NAMESPACE
@@ -48,7 +50,8 @@ QGeoMapItemGeometry::QGeoMapItemGeometry(QObject *parent) :
     QObject(parent),
     sourceDirty_(true),
     screenDirty_(true),
-    clipToViewport_(true)
+    clipToViewport_(true),
+    preserveGeometry_(false)
 {
 }
 
@@ -119,6 +122,25 @@ QRectF QGeoMapItemGeometry::translateToCommonOrigin(const QList<QGeoMapItemGeome
     }
 
     return brects.boundingRect();
+}
+
+/*!
+    \internal
+*/
+double QGeoMapItemGeometry::geoDistanceToScreenWidth(const QGeoMap &map,
+                                                     const QGeoCoordinate &fromCoord,
+                                                     const QGeoCoordinate &toCoord)
+{
+    QGeoCoordinate mapMid = map.screenPositionToCoordinate(QPointF(map.width()/2.0, 0));
+    double halfGeoDist = toCoord.longitude() - fromCoord.longitude();
+    if (toCoord.longitude() < fromCoord.longitude())
+        halfGeoDist += 360;
+    halfGeoDist /= 2.0;
+    QGeoCoordinate geoDelta =  QGeoCoordinate(0,
+                    QLocationUtils::wrapLong(mapMid.longitude() + halfGeoDist));
+    QPointF halfScreenDist = map.coordinateToScreenPosition(geoDelta, false)
+                                - QPointF(map.width()/2.0, 0);
+    return halfScreenDist.x() * 2.0;
 }
 
 QT_END_NAMESPACE

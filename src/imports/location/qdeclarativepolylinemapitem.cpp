@@ -193,6 +193,11 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
     srcPointTypes_.reserve(path.size());
 
     QPointF origin, lastPoint, lastAddedPoint;
+
+    double unwrapBelowX = 0;
+    if (preserveGeometry_)
+        unwrapBelowX = map.coordinateToScreenPosition(geoLeftBound_, false).x();
+
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
 
@@ -205,6 +210,10 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
         // is faulty -- probably best thing to do is abort
         if (!qIsFinite(point.x()) || !qIsFinite(point.y()))
             return;
+
+        // unwrap x to preserve geometry if moved to border of map
+        if (point.x() < unwrapBelowX && !qFuzzyCompare(point.x(), unwrapBelowX))
+            point.setX(unwrapBelowX + geoDistanceToScreenWidth(map, geoLeftBound_, coord));
 
         if (!foundValid) {
             foundValid = true;
@@ -220,6 +229,7 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
             srcPoints_ << point.x() << point.y();
             srcPointTypes_ << QPainterPath::MoveToElement;
             lastAddedPoint = point;
+
 
         } else {
             point -= origin;
@@ -241,6 +251,8 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
     }
 
     sourceBounds_ = QRectF(QPointF(minX, minY), QPointF(maxX, maxY));
+    geoLeftBound_ = map.screenPositionToCoordinate(
+                                    QPointF(minX + origin.x(), minY + origin.y()), false);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -620,6 +632,9 @@ QDeclarativeMapLineProperties *QDeclarativePolylineMapItem::line()
 */
 void QDeclarativePolylineMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
+    if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
+        return;
+
     // if the scene is tilted, we must regenerate our geometry every frame
     if (map()->cameraCapabilities().supportsTilting()
             && (event.cameraData.tilt() > 0.1
@@ -638,7 +653,7 @@ void QDeclarativePolylineMapItem::afterViewportChanged(const QGeoMapViewportChan
     if (event.bearingChanged || event.mapSizeChanged || event.zoomLevelChanged) {
         geometry_.markSourceDirty();
     }
-
+    geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
     geometry_.markScreenDirty();
     updateMapItem();
 }
@@ -677,6 +692,7 @@ QSGNode *QDeclarativePolylineMapItem::updateMapItemPaintNode(QSGNode *oldNode, U
     //TODO: update only material
     if (geometry_.isScreenDirty() || dirtyMaterial_) {
         node->update(line_.color(), &geometry_);
+        geometry_.setPreserveGeometry(false);
         geometry_.markClean();
     }
     return node;
@@ -726,8 +742,19 @@ void QDeclarativePolylineMapItem::dragEnded()
                                + newCoordinate.longitude() - firstLongitude));
             coord.setLatitude(coord.latitude()
                               + newCoordinate.latitude() - firstLatitude - offsetLatitude);
+            // temporarily disconnect signals to avoid unecessary screen updates for each coordinate
+            QObject::disconnect(coordPath_.at(i), SIGNAL(coordinateChanged(QGeoCoordinate)),
+                                this, SLOT(updateAfterCoordinateChanged()));
             this->coordPath_.at(i)->setCoordinate(coord);
+            this->path_.replace(i, coordPath_.at(i)->coordinate());
+            QObject::connect(coordPath_.at(i), SIGNAL(coordinateChanged(QGeoCoordinate)),
+                                this, SLOT(updateAfterCoordinateChanged()));
         }
+
+        QGeoCoordinate leftBoundCoord = geometry_.geoLeftBound();
+        leftBoundCoord.setLongitude(QLocationUtils::wrapLong(leftBoundCoord.longitude()
+                           + newCoordinate.longitude() - firstLongitude));
+        geometry_.setPreserveGeometry(true, leftBoundCoord);
         geometry_.markSourceDirty();
         updateMapItem();
         emit pathChanged();

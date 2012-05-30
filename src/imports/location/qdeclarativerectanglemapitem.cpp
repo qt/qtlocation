@@ -139,6 +139,13 @@ void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
     if (!qIsFinite(br.x()) || !qIsFinite(br.y()))
         return;
 
+    if ( preserveGeometry_ ) {
+        double unwrapBelowX = map.coordinateToScreenPosition(geoLeftBound_, false).x();
+        if (br.x() < unwrapBelowX)
+            br.setX(tl.x() + screenBounds_.width());
+    }
+
+
     QRectF re(tl, br);
     re.translate(-1 * tl);
 
@@ -159,6 +166,8 @@ void QGeoMapRectangleGeometry::updatePoints(const QGeoMap &map,
 
     screenOutline_ = QPainterPath();
     screenOutline_.addRect(re);
+
+    geoLeftBound_ = topLeft;
 }
 
 QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent):
@@ -319,6 +328,8 @@ QSGNode *QDeclarativeRectangleMapItem::updateMapItemPaintNode(QSGNode *oldNode, 
     //TODO: update only material
     if (geometry_.isScreenDirty() || borderGeometry_.isScreenDirty() || dirtyMaterial_) {
         node->update(color_, border_.color(), &geometry_, &borderGeometry_);
+        geometry_.setPreserveGeometry(false);
+        borderGeometry_.setPreserveGeometry(false);
         geometry_.markClean();
         borderGeometry_.markClean();
         dirtyMaterial_ = false;
@@ -373,6 +384,9 @@ void QDeclarativeRectangleMapItem::updateMapItem()
 */
 void QDeclarativeRectangleMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
+    if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
+        return;
+
     // if the scene is tilted, we must regenerate our geometry every frame
     if (map()->cameraCapabilities().supportsTilting()
             && (event.cameraData.tilt() > 0.1
@@ -394,7 +408,8 @@ void QDeclarativeRectangleMapItem::afterViewportChanged(const QGeoMapViewportCha
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }
-
+    geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
+    borderGeometry_.setPreserveGeometry(true, borderGeometry_.geoLeftBound());
     geometry_.markScreenDirty();
     borderGeometry_.markScreenDirty();
     updateMapItem();
@@ -443,8 +458,15 @@ void QDeclarativeRectangleMapItem::dragEnded()
         newBottomRight.setAltitude(newTopLeft.altitude());
         internalTopLeft_.setCoordinate(newTopLeft);
         internalBottomRight_.setCoordinate(newBottomRight);
-        setTopLeft(&internalTopLeft_);
-        setBottomRight(&internalBottomRight_);
+        topLeft_ = &internalTopLeft_;
+        bottomRight_ = &internalBottomRight_;
+        geometry_.setPreserveGeometry(true, newTopLeft);
+        borderGeometry_.setPreserveGeometry(true, newTopLeft);
+        geometry_.markSourceDirty();
+        borderGeometry_.markSourceDirty();
+        updateMapItem();
+        emit topLeftChanged(topLeft_);
+        emit bottomRightChanged(bottomRight_);
     }
 }
 

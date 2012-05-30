@@ -54,6 +54,7 @@
 QT_BEGIN_NAMESPACE
 
 class QSGGeometry;
+class QGeoMap;
 
 class QGeoMapItemGeometry : public QObject
 {
@@ -77,6 +78,14 @@ public:
     inline void markScreenDirty() { screenDirty_ = true; clipToViewport_ = true; }
     inline void markFullScreenDirty() { screenDirty_ = true; clipToViewport_ = false;}
     inline void markClean() { screenDirty_ = (sourceDirty_ = false); clipToViewport_ = true;}
+
+    inline void setPreserveGeometry(bool value, QGeoCoordinate geoLeftBound = QGeoCoordinate())
+    {
+        preserveGeometry_ = value;
+        if (preserveGeometry_)
+            geoLeftBound_ = geoLeftBound;
+    }
+    inline QGeoCoordinate geoLeftBound() { return geoLeftBound_; }
 
     inline QRectF sourceBoundingBox() const { return sourceBounds_; }
     inline QRectF screenBoundingBox() const { return screenBounds_; }
@@ -113,12 +122,19 @@ public:
 
     void allocateAndFill(QSGGeometry *geom) const;
 
+    double geoDistanceToScreenWidth(const QGeoMap &map,
+                                           const QGeoCoordinate &fromCoord,
+                                           const QGeoCoordinate &toCoord);
+
     static QRectF translateToCommonOrigin(const QList<QGeoMapItemGeometry *> &geoms);
+
 
 protected:
     bool sourceDirty_;
     bool screenDirty_;
     bool clipToViewport_;
+    bool preserveGeometry_;
+    QGeoCoordinate geoLeftBound_;
 
     QPointF firstPointOffset_;
 

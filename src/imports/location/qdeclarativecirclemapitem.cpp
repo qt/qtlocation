@@ -335,6 +335,8 @@ QSGNode *QDeclarativeCircleMapItem::updateMapItemPaintNode(QSGNode *oldNode, Upd
     //TODO: update only material
     if (geometry_.isScreenDirty() || borderGeometry_.isScreenDirty() || dirtyMaterial_) {
         node->update(color_, border_.color(), &geometry_, &borderGeometry_);
+        geometry_.setPreserveGeometry(false);
+        borderGeometry_.setPreserveGeometry(false);
         geometry_.markClean();
         borderGeometry_.markClean();
         dirtyMaterial_ = false;
@@ -356,12 +358,23 @@ void QDeclarativeCircleMapItem::updateMapItem()
                                   radius_, 125);
     }
 
+    QGeoCoordinate leftBoundCoord = map()->screenPositionToCoordinate(QPointF(0,0), false);
+    for (int i = 1; i < circlePath_.count()-1; ++i) {
+        if (circlePath_.at(i+1).longitude() > circlePath_.at(i).longitude()
+             && circlePath_.at(i-1).longitude() > circlePath_.at(i).longitude()) {
+            qreal diff = circlePath_.at(i+1).longitude() - circlePath_.at(i-1).longitude();
+            if (qAbs(diff) < 180)
+                leftBoundCoord = circlePath_.at(i);
+        }
+    }
+    geometry_.setPreserveGeometry(true, leftBoundCoord);
     geometry_.updateSourcePoints(*map(), circlePath_);
     geometry_.updateScreenPoints(*map());
 
     if (border_.color() != Qt::transparent && border_.width() > 0) {
         QList<QGeoCoordinate> closedPath = circlePath_;
         closedPath << closedPath.first();
+        borderGeometry_.setPreserveGeometry(true, leftBoundCoord);
         borderGeometry_.updateSourcePoints(*map(), closedPath);
         borderGeometry_.updateScreenPoints(*map(), border_.width());
 
@@ -387,6 +400,9 @@ void QDeclarativeCircleMapItem::updateMapItem()
 */
 void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
+    if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
+        return;
+
     // if the scene is tilted, we must regenerate our geometry every frame
     if (map()->cameraCapabilities().supportsTilting()
             && (event.cameraData.tilt() > 0.1
@@ -408,7 +424,8 @@ void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChange
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }
-
+    geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
+    borderGeometry_.setPreserveGeometry(true, borderGeometry_.geoLeftBound());
     geometry_.markScreenDirty();
     borderGeometry_.markScreenDirty();
     updateMapItem();

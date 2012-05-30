@@ -92,6 +92,8 @@ public:
 private:
     QVector<qreal> srcPoints_;
     QVector<QPainterPath::ElementType> srcPointTypes_;
+
+
 };
 
 class QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase

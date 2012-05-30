@@ -142,10 +142,17 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     if (!sourceDirty_)
         return;
 
+    qreal minX = -1.0;
+
     // build the actual path
     QPointF origin;
     QPointF lastPoint;
     srcPath_ = QPainterPath();
+
+    double unwrapBelowX = 0;
+    if (preserveGeometry_ )
+        unwrapBelowX = map.coordinateToScreenPosition(geoLeftBound_, false).x();
+
     for (int i = 0; i < path.size(); ++i) {
         const QGeoCoordinate &coord = path.at(i);
 
@@ -159,12 +166,19 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
         if (!qIsFinite(point.x()) || !qIsFinite(point.y()))
             return;
 
+        // unwrap x to preserve geometry if moved to border of map
+        if (point.x() < unwrapBelowX && !qFuzzyCompare(point.x(), unwrapBelowX))
+            point.setX(unwrapBelowX + geoDistanceToScreenWidth(map, geoLeftBound_, coord));
+
         if (i == 0) {
             origin = point;
+            minX = point.x();
             srcOrigin_ = coord;
             srcPath_.moveTo(point - origin);
             lastPoint = point;
         } else {
+            if (point.x() <= minX)
+                minX = point.x();
             const QPointF diff = (point - lastPoint);
             if (diff.x() * diff.x() + diff.y() * diff.y() >= 3.0) {
                 srcPath_.lineTo(point - origin);
@@ -178,6 +192,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
         srcPath_ = srcPath_.simplified();
 
     sourceBounds_ = srcPath_.boundingRect();
+    geoLeftBound_ = map.screenPositionToCoordinate(QPointF(minX, 0), false);
 }
 
 /*!
@@ -364,7 +379,6 @@ void QDeclarativePolygonMapItem::path_append(
 
     QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                      item, SLOT(updateAfterCoordinateChanged()));
-
     item->geometry_.markSourceDirty();
     item->borderGeometry_.markSourceDirty();
     item->updateMapItem();
@@ -421,7 +435,6 @@ void QDeclarativePolygonMapItem::addCoordinate(QDeclarativeCoordinate *coordinat
 
     QObject::connect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                      this, SLOT(updateAfterCoordinateChanged()));
-
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     updateMapItem();
@@ -456,7 +469,6 @@ void QDeclarativePolygonMapItem::removeCoordinate(QDeclarativeCoordinate *coordi
 
     QObject::disconnect(coordinate, SIGNAL(coordinateChanged(QGeoCoordinate)),
                         this, SLOT(updateAfterCoordinateChanged()));
-
     geometry_.markSourceDirty();
     borderGeometry_.markSourceDirty();
     updateMapItem();
@@ -501,6 +513,8 @@ QSGNode *QDeclarativePolygonMapItem::updateMapItemPaintNode(QSGNode *oldNode, Up
     //TODO: update only material
     if (geometry_.isScreenDirty() || borderGeometry_.isScreenDirty() || dirtyMaterial_) {
         node->update(color_, border_.color(), &geometry_, &borderGeometry_);
+        geometry_.setPreserveGeometry(false);
+        borderGeometry_.setPreserveGeometry(false);
         geometry_.markClean();
         borderGeometry_.markClean();
         dirtyMaterial_ = false;
@@ -545,6 +559,9 @@ void QDeclarativePolygonMapItem::updateMapItem()
 */
 void QDeclarativePolygonMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
+    if (event.mapSize.width() <= 0 || event.mapSize.height() <= 0)
+        return;
+
     // if the scene is tilted, we must regenerate our geometry every frame
     if (map()->cameraCapabilities().supportsTilting()
             && (event.cameraData.tilt() > 0.1
@@ -566,7 +583,8 @@ void QDeclarativePolygonMapItem::afterViewportChanged(const QGeoMapViewportChang
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
     }
-
+    geometry_.setPreserveGeometry(true, geometry_.geoLeftBound());
+    borderGeometry_.setPreserveGeometry(true, borderGeometry_.geoLeftBound());
     geometry_.markScreenDirty();
     borderGeometry_.markScreenDirty();
     updateMapItem();
@@ -620,8 +638,21 @@ void QDeclarativePolygonMapItem::dragEnded()
                                + newCoordinate.longitude() - firstLongitude));
             coord.setLatitude(coord.latitude()
                               + newCoordinate.latitude() - firstLatitude - offsetLatitude);
+
+            // temporarily disconnect signals to avoid unecessary screen updates for each coordinate
+            QObject::disconnect(coordPath_.at(i), SIGNAL(coordinateChanged(QGeoCoordinate)),
+                                this, SLOT(updateAfterCoordinateChanged()));
             this->coordPath_.at(i)->setCoordinate(coord);
+            this->path_.replace(i, coordPath_.at(i)->coordinate());
+            QObject::connect(coordPath_.at(i), SIGNAL(coordinateChanged(QGeoCoordinate)),
+                                this, SLOT(updateAfterCoordinateChanged()));
         }
+
+        QGeoCoordinate leftBoundCoord = geometry_.geoLeftBound();
+        leftBoundCoord.setLongitude(QLocationUtils::wrapLong(leftBoundCoord.longitude()
+                           + newCoordinate.longitude() - firstLongitude));
+        geometry_.setPreserveGeometry(true, leftBoundCoord);
+        borderGeometry_.setPreserveGeometry(true, leftBoundCoord);
         geometry_.markSourceDirty();
         borderGeometry_.markSourceDirty();
         updateMapItem();
