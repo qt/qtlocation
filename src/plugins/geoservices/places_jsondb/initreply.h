@@ -49,6 +49,10 @@
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlaceCategory>
 
+QT_BEGIN_NAMESPACE
+
+class CategoryTraverser;
+
 class CategoryInitReply : public QPlaceReply
 {
     Q_OBJECT
@@ -66,12 +70,13 @@ protected:
 
 private slots:
     void requestFinished();
-    void requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode, const QString &dbErrorString);
 
 private:
     QPlaceManagerEngineJsonDb *m_engine;
     CategoryTree m_tree;
-    QList<CategoryNode> m_queue;
+    CategoryTraverser *m_traverser;
 };
+
+QT_END_NAMESPACE
 
 #endif

@@ -42,6 +42,7 @@
 #include "idreply.h"
 #include "qplacemanagerengine_jsondb.h"
 #include "jsondb.h"
+#include "traverser.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
@@ -171,12 +172,6 @@ void SavePlaceReply::getCategoriesForPlaceFinished()
         return;
     }
 
-    QStringList allCategoryUuids;
-    foreach (const QJsonObject &categoryJson, results)
-        allCategoryUuids.append(categoryJson.value(JsonDb::Lineage).toVariant().toStringList());
-    allCategoryUuids.removeDuplicates();
-
-    m_placeJson.insert(JsonDb::AllCategoryUuids, QJsonArray::fromStringList(allCategoryUuids));
     JsonDb::addToJson(&m_placeJson, m_place);
 
     m_iconHandler = new IconHandler(m_place.icon(), m_placeJson.value(JsonDb::Thumbnails).toObject(),
@@ -317,8 +312,6 @@ void SaveCategoryReply::checkParentExistsFinished()
                     QStringLiteral("More than one category was found corresponding to (parent) id") + m_parentId);
         return;
     } else {
-        QJsonObject parentJson = results.first();
-        m_newAncestors = parentJson.value(JsonDb::Lineage).toArray();
         if (!m_category.categoryId().isEmpty()) {
             db()->getCategory(m_category.categoryId(), this, SLOT(getCurrentCategoryFinished()));
             return;
@@ -341,57 +334,10 @@ void SaveCategoryReply::getCurrentCategoryFinished()
         return;
     } else {
         m_categoryJson = results.first();
-        m_oldAncestors = m_categoryJson.value(JsonDb::Lineage).toArray();
-        m_oldAncestors.removeLast();
-
-        //if the new parent is different from the old, if so we need to change the ancestors
-        //of it's descendants and the ancestors of itself
-        if (m_parentId != m_categoryJson.value(JsonDb::CategoryParentId).toString()) {
-            QString getDescendantsAndSelf = QString::fromLatin1("[?_type=\"%1\"]").arg(JsonDb::CategoryType);
-            for (int i = 0; i < m_oldAncestors.count(); ++i)
-                getDescendantsAndSelf += QString::fromLatin1("[?%1 contains \"%2\"]").arg(JsonDb::Lineage).arg(m_oldAncestors.at(i).toString());
-            getDescendantsAndSelf += QString::fromLatin1("[?%1 contains \"%2\"]").arg(JsonDb::Lineage).arg(m_category.categoryId());
-
-            db()->read(getDescendantsAndSelf, this, SLOT(getDescendantsAndSelfFinished()));
-        } else {
-            JsonDb::addToJson(&m_categoryJson, m_category);
-            processIcons();
-        }
+        JsonDb::addToJson(&m_categoryJson, m_category);
+        m_categoryJson.insert(JsonDb::CategoryParentId, m_parentId);
+        processIcons();
     }
-}
-
-void SaveCategoryReply::getDescendantsAndSelfFinished()
-{
-    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
-    Q_ASSERT(request);
-    QList<QJsonObject> results = request->takeResults();
-
-    if (results.isEmpty()) {
-        triggerDone(QPlaceReply::CategoryDoesNotExistError, QStringLiteral("Category and it's descendants couldn ot be found"));
-        return;
-    }
-
-    QList<QJsonObject> categoriesJson;
-    for (int i = 0; i < results.count(); ++i) {
-        QJsonObject categoryJson = results.at(i);
-        QJsonArray lineage = categoryJson.value(JsonDb::Lineage).toArray();
-        for (int i = 0; i < m_oldAncestors.count(); ++i)
-           lineage.removeFirst();
-
-        for (int i = m_newAncestors.count() - 1; i >= 0; --i)
-            lineage.prepend(m_newAncestors.at(i));
-
-        categoryJson.insert(JsonDb::Lineage, lineage);
-
-        if (categoryJson.value(JsonDb::Uuid).toString() == m_category.categoryId()) {
-            JsonDb::addToJson(&categoryJson, m_category);
-            categoryJson.insert(JsonDb::CategoryParentId, m_parentId);
-            m_categoryJson = categoryJson;
-        } else  {
-            m_descendantsJson.append(categoryJson);
-        }
-    }
-    processIcons();
 }
 
 void SaveCategoryReply::savingFinished()
@@ -436,9 +382,6 @@ QJsonObject SaveCategoryReply::prepareCategoryJson()
     QJsonObject categoryJson;
     JsonDb::addToJson(&categoryJson, m_category);
 
-    QJsonArray lineage = m_newAncestors;
-    lineage.append(m_category.categoryId());
-    categoryJson.insert(JsonDb::Lineage, lineage);
     categoryJson.insert(JsonDb::CategoryParentId,  m_parentId);
 
     return categoryJson;
@@ -507,25 +450,33 @@ void RemoveCategoryReply::getCategoryFinished()
                            "Request UUID: %2").arg(uuid).arg(id()));
             return;
         } else {
-            //now check if there are any child categories which need to be removed as well
-            QString queryString = QString::fromLatin1("[?%1=\"%2\"]").arg(JsonDb::Type).arg(JsonDb::CategoryType);
-            QStringList lineage = categoryJson.value(JsonDb::Lineage).toVariant().toStringList();
-            foreach (const QString &ancestor, lineage)
-                queryString += QString::fromLatin1("[?%1 contains \"%2\"]").arg(JsonDb::Lineage).arg(ancestor);
-
-            db()->read(queryString, this, SLOT(getCategoriesToBeRemovedFinished()));
+            CategoryTraverser * traverser = new CategoryTraverser(engine()->db(), this);
+            connect(traverser, SIGNAL(finished()),
+                    this, SLOT(getCategoriesToBeRemovedFinished()));
+            traverser->start(id());
         }
     }
 }
 
 void RemoveCategoryReply::getCategoriesToBeRemovedFinished()
 {
-    QJsonDbRequest *request = qobject_cast<QJsonDbRequest *>(sender());
-    Q_ASSERT(request);
-    QList<QJsonObject> results = request->takeResults();
+    CategoryTraverser * traverser = qobject_cast<CategoryTraverser *>(sender());
 
-    if (!results.isEmpty())
-        db()->remove(results, this, SLOT(removeFinished()));
+    if (!traverser->errorString().isEmpty()) {
+        QString errorString =
+                QString::fromLatin1("Unknown error occurred during remove place operation: %1")
+                .arg(traverser->errorString());
+        traverser->deleteLater();
+
+        triggerDone(QPlaceReply::UnknownError, errorString);
+        return;
+    }
+
+    QList<QJsonObject> catObjects = traverser->results();
+    traverser->deleteLater();
+
+    if (!catObjects.isEmpty())
+        db()->remove(catObjects, this, SLOT(removeFinished()));
     else
         removeFinished();
 }

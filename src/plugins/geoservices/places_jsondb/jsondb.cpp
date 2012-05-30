@@ -61,12 +61,8 @@ const QLatin1String JsonDb::Type("_type");
 const QLatin1String JsonDb::Name("displayName");
 const QLatin1String JsonDb::PlaceType("com.nokia.mt.location.Place");
 const QLatin1String JsonDb::CategoryUuids("categoryUuids"); //only categories that are directly assigned to a place
-const QLatin1String JsonDb::AllCategoryUuids("allCategoryUuids"); //all categories that a place belongs to,
-                                                         //it includes all ancestors of the assigned categories
 
 const QLatin1String JsonDb::CategoryType("com.nokia.mt.location.PlaceCategory");
-const QLatin1String JsonDb::Lineage("lineageUuids");  //includes all ancestor category ids and also the current category id
-                                              //as the last element.   The first category is a top level category id.
 const QLatin1String JsonDb::CategoryParentId("parentUuid");
 
 //coord
@@ -296,7 +292,6 @@ void JsonDb::addToJson(QJsonObject *jsonObj, const QPlace &place)
         //note all category uuids is set elsewhere
     } else {
         jsonObj->remove(JsonDb::CategoryUuids);
-        jsonObj->remove(JsonDb::AllCategoryUuids);
     }
 
     if (!place.extendedAttributeTypes().isEmpty()) {
@@ -822,7 +817,13 @@ void JsonDb::remove(const QList<QJsonObject> &jsonObjects, QObject *parent, cons
     m_connection->send(removeRequest);
 }
 
-void JsonDb::searchForPlaces(const QPlaceSearchRequest &request, QObject *parent, const char *slot)
+/*
+    Sends off a query to jsondb requesting places which match the search parameters of
+    \a request.  Note that the \a catSearchIds must be populated as the set of category
+    ids given in \a request in addition to all their sub-category ids.
+*/
+void JsonDb::searchForPlaces(const QPlaceSearchRequest &request, QObject *parent, const char *slot,
+                             const QStringList &catSearchIds)
 {
     QString queryString;
     if (!request.searchTerm().isEmpty()) {
@@ -836,17 +837,15 @@ void JsonDb::searchForPlaces(const QPlaceSearchRequest &request, QObject *parent
     if (request.relevanceHint() == QPlaceSearchRequest::LexicalPlaceNameHint)
         queryString += QString::fromLatin1("[/") + JsonDb::Name + QLatin1String("]");
 
-    if (!request.categories().isEmpty()) {
-        for (int i = 0;  i < request.categories().count(); ++i) {
-            if (i == 0) {
-                queryString += QString::fromLatin1("[?%1 contains \"%2\" ")
-                        .arg(JsonDb::AllCategoryUuids).arg(request.categories().at(i).categoryId());
-            } else {
-                queryString += QString::fromLatin1("| ?%1 contains \"%2\" ")
-                .arg(JsonDb::AllCategoryUuids).arg(request.categories().at(i).categoryId());
-            }
-        }
-        queryString += QString::fromLatin1("]");
+    if (!catSearchIds.isEmpty()) {
+        queryString += QString::fromLatin1("[?%1 contains \"%2\" ")
+                .arg(JsonDb::CategoryUuids)
+                .arg(catSearchIds.first());
+        for (int i = 1; i < catSearchIds.count(); ++i)
+            queryString += QString::fromLatin1(" | %1 contains \"%2\" ")
+                    .arg(JsonDb::CategoryUuids)
+                    .arg(catSearchIds.at(i));
+        queryString += QLatin1Char(']');
     }
 
     if (request.searchArea().type() == QGeoShape::RectangleType) {

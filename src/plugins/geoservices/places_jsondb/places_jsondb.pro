@@ -19,7 +19,8 @@ HEADERS += \
             idreply.h \
             icon.h \
             iconhandler.h \
-            initreply.h
+            initreply.h \
+            traverser.h
 
 SOURCES += \
             qgeoserviceproviderplugin_jsondb.cpp \
@@ -31,7 +32,8 @@ SOURCES += \
             idreply.cpp \
             icon.cpp \
             iconhandler.cpp \
-            initreply.cpp
+            initreply.cpp \
+            traverser.cpp
 
 INCLUDEPATH += $$QT.location.includes
 

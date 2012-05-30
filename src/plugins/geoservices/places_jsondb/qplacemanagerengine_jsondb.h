@@ -118,6 +118,7 @@ private slots:
     void processPlaceNotifications(const QList<QJsonDbNotification> &notifications);
     void processCategoryNotifications(const QList<QJsonDbNotification> &notifications);
     void notificationsError(QtJsonDb::QJsonDbWatcher::ErrorCode code, const QString &errorString);
+    void reinitializeCategories();
 
 private:
     JsonDb *m_jsonDb;
@@ -130,6 +131,8 @@ private:
     QString m_theme;
     bool m_useFavoriteBadges;
     bool m_useCustomIcons;
+
+    QList<QList<QJsonDbNotification> > m_queuedNotifications;
 
     static const QLatin1String PartitionKey;
     static const QLatin1String LocalDataPathKey;

@@ -88,7 +88,8 @@ public:
     void write(const QList<QJsonObject> &jsonObjects, QObject *parent, const char *slot);
     void remove(const QJsonObject &jsonObject, QObject *parent, const char *slot);
     void remove(const QList<QJsonObject> &jsonObjects, QObject *parent, const char *slot);
-    void searchForPlaces(const QPlaceSearchRequest &request, QObject *parent, const char *slot);
+    void searchForPlaces(const QPlaceSearchRequest &request, QObject *parent, const char *slot,
+                         const QStringList &catSearchIds = QStringList());
 
     void setupRequest(QJsonDbRequest *request, QObject *parent, const char *slot);
 
@@ -109,12 +110,8 @@ public:
     static const QLatin1String Name;
     static const QLatin1String PlaceType;
     static const QLatin1String CategoryUuids; //only categories that are directly assigned to a place
-    static const QLatin1String AllCategoryUuids; //all categories that a place belongs to,
-                                                             //it includes all ancestors of the assigned categories
 
     static const QLatin1String CategoryType;
-    static const QLatin1String Lineage;  //includes all ancestor category ids and also the current category id
-                                                  //as the last element.   The first category is a top level category id.
     static const QLatin1String CategoryParentId;
 
     //coord

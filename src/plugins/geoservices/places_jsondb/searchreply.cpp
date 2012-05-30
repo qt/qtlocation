@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "searchreply.h"
+#include "traverser.h"
 
 #include <QtCore/qnumeric.h>
 #include <QtCore/QDebug>
@@ -94,7 +95,25 @@ void SearchReply::start()
         }
     }
 
-    db()->searchForPlaces(request(), this, SLOT(searchFinished()));
+    if (!request().categories().isEmpty()) {
+        foreach (const QPlaceCategory &category, request().categories()) {
+            m_catSearchIds.append(categorySearchIds(category.categoryId()));
+            db()->searchForPlaces(request(), this, SLOT(searchFinished()), m_catSearchIds);
+        }
+    } else {
+        db()->searchForPlaces(request(), this, SLOT(searchFinished()));
+    }
+}
+
+QStringList SearchReply::categorySearchIds(const QString &catId)
+{
+    QStringList ids;
+    ids << catId;
+    QStringList childIds =  m_engine->childCategoryIds(catId);
+    foreach (const QString &childId, childIds)
+        ids.append(categorySearchIds(childId));
+
+    return ids;
 }
 
 static bool lessThanDistance(const QPlaceSearchResult &p0, const QPlaceSearchResult &p1)

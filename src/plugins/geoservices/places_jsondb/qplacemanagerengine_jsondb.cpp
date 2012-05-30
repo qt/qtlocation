@@ -41,6 +41,7 @@
 
 #include "qplacemanagerengine_jsondb.h"
 
+#include "traverser.h"
 #include "detailsreply.h"
 #include "idreply.h"
 #include "initreply.h"
@@ -433,19 +434,41 @@ void QPlaceManagerEngineJsonDb::processPlaceNotifications(const QList<QJsonDbNot
 
 void QPlaceManagerEngineJsonDb::processCategoryNotifications(const QList<QJsonDbNotification> &notifications)
 {
-    foreach (const QJsonDbNotification &notification, notifications) {
-        QPlaceCategory category = JsonDb::convertJsonObjectToCategory(notification.object(), this);
-        QString parentId = notification.object().value(JsonDb::CategoryParentId).toString();
-        if (notification.action() == QJsonDbWatcher::Created)
-            emit categoryAdded(category, parentId);
-        else if (notification.action() == QJsonDbWatcher::Updated)
-            emit categoryUpdated(category, parentId);
-        else if (notification.action() == QJsonDbWatcher::Removed)
-            emit categoryRemoved(category.categoryId(), parentId);
-    }
+    m_queuedNotifications.append(notifications);
+
+    CategoryTraverser *traverser = new CategoryTraverser(m_jsonDb, this);
+    connect(traverser, SIGNAL(finished()), this, SLOT(reinitializeCategories()));
+    traverser->start();
 }
 
 void QPlaceManagerEngineJsonDb::notificationsError(QJsonDbWatcher::ErrorCode code, const QString &errorString)
 {
     qWarning() << Q_FUNC_INFO << " Error code: " << code << " Error String: " << errorString;
+}
+
+void QPlaceManagerEngineJsonDb::reinitializeCategories()
+{
+    CategoryTraverser *traverser = qobject_cast<CategoryTraverser *>(sender());
+    if (traverser->errorString().isEmpty()) {
+        CategoryTree tree = CategoryTraverser::convertToTree(traverser->results(), this);
+        setCategoryTree(tree);
+    } else {
+        qWarning() << QString::fromLatin1("Error trying to reinitializing categories "
+                                        "errorString: %1").arg(traverser->errorString());
+    }
+    traverser->deleteLater();
+
+    if (!m_queuedNotifications.isEmpty()) {
+        QList<QJsonDbNotification> notifications = m_queuedNotifications.takeFirst();
+        foreach (const QJsonDbNotification &notification, notifications) {
+            QPlaceCategory category = JsonDb::convertJsonObjectToCategory(notification.object(), this);
+            QString parentId = notification.object().value(JsonDb::CategoryParentId).toString();
+            if (notification.action() == QJsonDbWatcher::Created)
+                emit categoryAdded(category, parentId);
+            else if (notification.action() == QJsonDbWatcher::Updated)
+                emit categoryUpdated(category, parentId);
+            else if (notification.action() == QJsonDbWatcher::Removed)
+                emit categoryRemoved(category.categoryId(), parentId);
+        }
+    }
 }

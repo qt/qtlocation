@@ -81,7 +81,10 @@ private slots:
 
 private:
     QJsonDbRequest *searchRequest(const QPlaceSearchRequest &request);
+    QStringList categorySearchIds(const QString &childId);
+
     QPlaceManagerEngineJsonDb *m_engine;
+    QStringList m_catSearchIds;
 };
 
 QT_END_NAMESPACE

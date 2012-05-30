@@ -39,40 +39,51 @@
 **
 ****************************************************************************/
 
-#include "initreply.h"
-#include "traverser.h"
+#ifndef TRAVERSER_H
+#define TRAVERSER_H
 
-CategoryInitReply::CategoryInitReply(QPlaceManagerEngineJsonDb *engine)
-    : QPlaceReply(engine),
-      m_engine(engine),
-      m_traverser(new CategoryTraverser(m_engine->db(), this))
+#include "qplacemanagerengine_jsondb.h"
+
+#include <QtCore/QHash>
+#include <QtCore/QJsonObject>
+#include <QtCore/QStringList>
+#include <QtJsonDb/QJsonDbRequest>
+
+QT_BEGIN_NAMESPACE
+
+class JsonDb;
+
+class CategoryTraverser : public QObject
 {
-    Q_ASSERT(m_traverser);
-    connect(m_traverser, SIGNAL(finished()),
-            this, SLOT(requestFinished()));
-}
+    Q_OBJECT
+public:
+    CategoryTraverser(JsonDb *db, QObject *parent = 0);
+    void start(const QString &rootId = QString());
+    QList<QJsonObject> results() { return m_catObjs; }
 
-CategoryInitReply::~CategoryInitReply()
-{
-    delete m_traverser;
-}
+    QString errorString() { return m_errorString; }
 
-void CategoryInitReply::start()
-{
-    m_traverser->start();
-}
+    static CategoryTree convertToTree(const QList<QJsonObject> &catObjects,
+                                      const QPlaceManagerEngineJsonDb *engine);
 
-void CategoryInitReply::requestFinished()
-{
-    if (!m_traverser->errorString().isEmpty()) {
-        QString errorString =
-                QString::fromLatin1("Unknown error occurred during initialize catgory operation: %1")
-                .arg(m_traverser->errorString());
-        triggerDone(QPlaceReply::UnknownError, errorString);
-        return;
-    }
+Q_SIGNALS:
+    void finished();
 
-    CategoryTree tree = CategoryTraverser::convertToTree(m_traverser->results(), m_engine);
-    m_engine->setCategoryTree(tree);
-    triggerDone(QPlaceReply::NoError);
-}
+private slots:
+    void rootCategoryFinished();
+    void requestFinished();
+    void requestError(QtJsonDb::QJsonDbRequest::ErrorCode dbCode,
+                      const QString &dbErrorString);
+
+private:
+    void processQueue();
+    QList<QJsonObject> m_catObjs;
+    JsonDb *m_db;
+    QString m_rootId;
+    QStringList m_catIdQueue;
+    QString m_errorString;
+};
+
+QT_END_NAMESPACE
+
+#endif

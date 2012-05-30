@@ -146,7 +146,6 @@ public:
 private slots:
     void checkParentExistsFinished();
     void getCurrentCategoryFinished();
-    void getDescendantsAndSelfFinished();
     void processIconsFinished(const QJsonObject &thumbnailsJson);
     void savingFinished();
 
