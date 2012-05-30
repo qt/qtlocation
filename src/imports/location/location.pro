@@ -14,7 +14,14 @@ INCLUDEPATH *= $$PWD
 DEFINES += TOUCH_EVENT_WORKAROUND
 
 LIBS += -L../../3rdparty/poly2tri -lpoly2tri
-win32:LIBS += -L../../3rdparty/poly2tri/release -L../../3rdparty/poly2tri/debug
+
+win32 {
+    CONFIG(debug, debug|release) {
+        LIBS += -L../../3rdparty/poly2tri/debug
+    } else {
+        LIBS += -L../../3rdparty/poly2tri/release
+    }
+}
 
 # On some platforms, build both versions because debug and release
 # versions are incompatible
