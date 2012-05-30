@@ -123,17 +123,6 @@ class QDeclarativeGeoMapGestureArea: public QObject
     Q_PROPERTY(qreal maximumZoomLevelChange READ maximumZoomLevelChange WRITE setMaximumZoomLevelChange NOTIFY maximumZoomLevelChangeChanged)
     Q_PROPERTY(qreal rotationFactor READ rotationFactor WRITE setRotationFactor NOTIFY rotationFactorChanged)
     Q_PROPERTY(qreal flickDeceleration READ flickDeceleration WRITE setFlickDeceleration NOTIFY flickDecelerationChanged)
-
-    // need for these is not clear, use-case(s) not yet identified:
-    //Q_PROPERTY(qreal minimumRotation READ minimumRotation WRITE setMinimumRotation NOTIFY minimumRotationChanged)
-    //Q_PROPERTY(qreal maximumRotation READ maximumRotation WRITE setMaximumRotation NOTIFY maximumRotationChanged)
-    //Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel WRITE setMinimumZoomLevel NOTIFY minimumZoomLevelChanged)
-    //Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel WRITE setMaximumZoomLevel NOTIFY maximumZoomLevelChanged)
-    // when tilt is supported, these are needed:
-    //Q_PROPERTY(qreal maximumTilt READ maximumTilt WRITE setMaximumTilt NOTIFY maximumTiltChanged)
-    //Q_PROPERTY(qreal minimumTilt READ minimumTilt WRITE setMinimumTilt NOTIFY minimumTiltChanged)
-    //Q_PROPERTY(qreal maximumTiltChange READ maximumTiltChange WRITE setMaximumTiltChange NOTIFY maximumTiltChangeChanged)
-
 public:
     QDeclarativeGeoMapGestureArea(QDeclarativeGeoMap *map, QObject *parent = 0);
     ~QDeclarativeGeoMapGestureArea();
@@ -164,32 +153,11 @@ public:
     bool panEnabled() const;
     void setPanEnabled(bool enabled);
 
-    qreal minimumZoomLevel() const;
-    void setMinimumZoomLevel(qreal zoomLevel);
-
-    qreal maximumZoomLevel() const;
-    void setMaximumZoomLevel(qreal zoomLevel);
-
     qreal maximumZoomLevelChange() const;
     void setMaximumZoomLevelChange(qreal maxChange);
 
-    qreal minimumRotation() const;
-    void setMinimumRotation(qreal zoomLevel);
-
-    qreal maximumRotation() const;
-    void setMaximumRotation(qreal zoomLevel);
-
     qreal rotationFactor() const;
     void setRotationFactor(qreal factor);
-
-    qreal maximumTilt() const;
-    void setMaximumTilt(qreal tilt);
-
-    qreal minimumTilt() const;
-    void setMinimumTilt(qreal tilt);
-
-    qreal maximumTiltChange() const;
-    void setMaximumTiltChange(qreal tilt);
 
     qreal flickDeceleration() const;
     void setFlickDeceleration(qreal deceleration);
@@ -217,16 +185,9 @@ public:
 Q_SIGNALS:
     void pinchActiveChanged();
     void enabledChanged();
-    void minimumZoomLevelChanged();
-    void maximumZoomLevelChanged();
     void maximumZoomLevelChangeChanged();
-    void minimumRotationChanged();
-    void maximumRotationChanged();
     void rotationFactorChanged();
     void activeGesturesChanged();
-    void minimumTiltChanged();
-    void maximumTiltChanged();
-    void maximumTiltChangeChanged();
     void flickDecelerationChanged();
 
     // backwards compatibility

@@ -51,24 +51,6 @@
 #include "math.h"
 #include "qgeomap_p.h"
 
-#define QML_MAP_FLICK_DEFAULTMAXVELOCITY 2500
-#define QML_MAP_FLICK_MINIMUMDECELERATION 500
-#define QML_MAP_FLICK_DEFAULTDECELERATION 2500
-#define QML_MAP_FLICK_MAXIMUMDECELERATION 10000
-// The number of samples to use in calculating the velocity of a flick
-#define QML_MAP_FLICK_SAMPLEBUFFER 3
-// The number of samples to discard when calculating the flick velocity.
-// Touch panels often produce inaccurate results as the finger is lifted.
-#define QML_MAP_FLICK_DISCARDSAMPLES 1
-
-// FlickThreshold determines how far the "mouse" must have moved
-// before we perform a flick.
-static const int FlickThreshold = 20;
-// RetainGrabVelocity is the maxmimum instantaneous velocity that
-// will ensure the Flickable retains the grab on consecutive flicks.
-static const int RetainGrabVelocity = 15;
-// Really slow flicks can be annoying.
-const qreal MinimumFlickVelocity = 75.0;
 
 QT_BEGIN_NAMESPACE
 

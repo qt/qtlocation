@@ -470,50 +470,6 @@ void QDeclarativeGeoMapGestureArea::setPanEnabled(bool enabled)
 
 /*!
     \internal
-*/
-qreal QDeclarativeGeoMapGestureArea::minimumZoomLevel() const
-{
-    return pinch_.zoom.minimum;
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMapGestureArea::setMinimumZoomLevel(qreal zoomLevel)
-{
-    if (zoomLevel == pinch_.zoom.minimum ||
-            zoomLevel < declarativeMap_->minimumZoomLevel() ||
-            (pinch_.zoom.maximum != -1.0 && zoomLevel > pinch_.zoom.maximum) )
-        return;
-    pinch_.zoom.minimum = zoomLevel;
-    emit minimumZoomLevelChanged();
-    emit pinchDep_->minimumZoomLevelChanged();
-}
-
-/*!
-    \internal
-*/
-qreal QDeclarativeGeoMapGestureArea::maximumZoomLevel() const
-{
-    return pinch_.zoom.maximum;
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMapGestureArea::setMaximumZoomLevel(qreal zoomLevel)
-{
-    if (zoomLevel == pinch_.zoom.maximum ||
-            zoomLevel > declarativeMap_->maximumZoomLevel() ||
-            (pinch_.zoom.minimum != - 1.0 && zoomLevel < pinch_.zoom.minimum))
-        return;
-    pinch_.zoom.maximum = zoomLevel;
-    emit maximumZoomLevelChanged();
-    emit pinchDep_->maximumZoomLevelChanged();
-}
-
-/*!
-    \internal
     called internally when plugin's limits change. somewhat dodgy but
     initialization order complicates the zoom limit settings a bit (for example when is
     it possible to check against mapping plugins' limits)
@@ -521,9 +477,9 @@ void QDeclarativeGeoMapGestureArea::setMaximumZoomLevel(qreal zoomLevel)
 void QDeclarativeGeoMapGestureArea::zoomLevelLimits(qreal min, qreal max)
 {
     if (pinch_.zoom.minimum == -1.0 || min > pinch_.zoom.minimum)
-        setMinimumZoomLevel(min);
+        pinch_.zoom.minimum = min;
     if (pinch_.zoom.maximum == -1.0 || max < pinch_.zoom.maximum)
-        setMaximumZoomLevel(max);
+        pinch_.zoom.maximum = max;
 }
 
 /*!
@@ -549,50 +505,6 @@ void QDeclarativeGeoMapGestureArea::setMaximumZoomLevelChange(qreal maxChange)
 /*!
     \internal
 */
-qreal QDeclarativeGeoMapGestureArea::minimumRotation() const
-{
-    return pinch_.rotation.minimum;
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMapGestureArea::setMinimumRotation(qreal rotation)
-{
-    if (rotation == pinch_.rotation.minimum ||
-            rotation < 0 ||
-            rotation > pinch_.rotation.maximum)
-        return;
-    pinch_.rotation.minimum = rotation;
-    emit minimumRotationChanged();
-    emit pinchDep_->minimumRotationChanged();
-}
-
-/*!
-    \internal
-*/
-qreal QDeclarativeGeoMapGestureArea::maximumRotation() const
-{
-    return pinch_.rotation.maximum;
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMapGestureArea::setMaximumRotation(qreal rotation)
-{
-    if (rotation == pinch_.rotation.maximum ||
-            rotation > 360 ||
-            rotation < pinch_.rotation.minimum)
-        return;
-    pinch_.rotation.maximum = rotation;
-    emit maximumRotationChanged();
-    emit pinchDep_->maximumRotationChanged();
-}
-
-/*!
-    \internal
-*/
 qreal QDeclarativeGeoMapGestureArea::rotationFactor() const
 {
     return pinch_.rotation.factor;
@@ -608,66 +520,6 @@ void QDeclarativeGeoMapGestureArea::setRotationFactor(qreal factor)
     pinch_.rotation.factor = factor;
     emit rotationFactorChanged();
     emit pinchDep_->rotationFactorChanged();
-}
-
-/*!
-    \internal
-*/
-qreal QDeclarativeGeoMapGestureArea::maximumTilt() const
-{
-    return pinch_.tilt.maximum;
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMapGestureArea::setMaximumTilt(qreal tilt)
-{
-    if (pinch_.tilt.maximum == tilt)
-        return;
-    pinch_.tilt.maximum = tilt;
-    emit maximumTiltChanged();
-    emit pinchDep_->maximumTiltChanged();
-}
-
-/*!
-    \internal
-*/
-qreal QDeclarativeGeoMapGestureArea::minimumTilt() const
-{
-    return pinch_.tilt.minimum;
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMapGestureArea::setMinimumTilt(qreal tilt)
-{
-    if (pinch_.tilt.minimum == tilt || tilt < 0.1)
-        return;
-    pinch_.tilt.minimum = tilt;
-    emit minimumTiltChanged();
-    emit pinchDep_->minimumTiltChanged();
-}
-
-/*!
-    \internal
-*/
-qreal QDeclarativeGeoMapGestureArea::maximumTiltChange() const
-{
-    return pinch_.tilt.maximumChange;
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoMapGestureArea::setMaximumTiltChange(qreal tilt)
-{
-    if (pinch_.tilt.maximumChange == tilt || tilt < 0.1)
-        return;
-    pinch_.tilt.maximumChange = tilt;
-    emit maximumTiltChangeChanged();
-    emit pinchDep_->maximumTiltChangeChanged();
 }
 
 /*!
