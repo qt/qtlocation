@@ -143,13 +143,7 @@ QPlaceManagerEngine *QGeoServiceProviderFactoryNokia::createPlaceManagerEngine(
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    switch (parameters.value(QLatin1String("places.api_version"), 2).toUInt()) {
-    case 1:
-        return CreateInstanceOf<QPlaceManagerEngineNokiaV1>(parameters, error, errorString);
-    case 2:
-        return CreateInstanceOf<QPlaceManagerEngineNokiaV2>(parameters, error, errorString);
-    }
-    return 0;
+    return CreateInstanceOf<QPlaceManagerEngineNokiaV2>(parameters, error, errorString);
 }
 
 QT_END_NAMESPACE

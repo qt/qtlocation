@@ -51,7 +51,6 @@ SOURCES += \
             uri_constants.cpp \
             qgeoerror_messages.cpp
 
-include(placesv1/placesv1.pri)
 include(placesv2/placesv2.pri)
 
 RESOURCES += resource.qrc
