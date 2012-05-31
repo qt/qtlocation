@@ -138,10 +138,6 @@ QT_USE_NAMESPACE
 QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent)
 :   QAbstractItemModel(parent), m_plugin(0), m_hierarchical(true), m_complete(false)
 {
-    QHash<int, QByteArray> roles = roleNames();
-    roles = QAbstractItemModel::roleNames();
-    roles.insert(CategoryRole, "category");
-    setRoleNames(roles);
 }
 
 QDeclarativeSupportedCategoriesModel::~QDeclarativeSupportedCategoriesModel()
@@ -242,6 +238,13 @@ QVariant QDeclarativeSupportedCategoriesModel::data(const QModelIndex &index, in
     default:
         return QVariant();
     }
+}
+
+QHash<int, QByteArray> QDeclarativeSupportedCategoriesModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
+    roles.insert(CategoryRole, "category");
+    return roles;
 }
 
 /*!

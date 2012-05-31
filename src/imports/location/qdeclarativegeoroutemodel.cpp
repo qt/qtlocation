@@ -125,11 +125,6 @@ QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
       status_(QDeclarativeGeoRouteModel::Null),
       error_(QDeclarativeGeoRouteModel::NoError)
 {
-    // Establish role names so that they can be queried from this model
-    QHash<int, QByteArray> roleNames;
-    roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(RouteRole, "routeData");
-    setRoleNames(roleNames);
 }
 
 QDeclarativeGeoRouteModel::~QDeclarativeGeoRouteModel()
@@ -265,6 +260,13 @@ QVariant QDeclarativeGeoRouteModel::data(const QModelIndex &index, int role) con
         return QVariant::fromValue(route);
     }
     return QVariant();
+}
+
+QHash<int, QByteArray> QDeclarativeGeoRouteModel::roleNames() const
+{
+    QHash<int, QByteArray> roleNames = QAbstractListModel::roleNames();
+    roleNames.insert(RouteRole, "routeData");
+    return roleNames;
 }
 
 /*!

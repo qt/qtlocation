@@ -228,10 +228,6 @@ QT_USE_NAMESPACE
 QDeclarativeSearchSuggestionModel::QDeclarativeSearchSuggestionModel(QObject *parent)
 :   QDeclarativeSearchModelBase(parent)
 {
-    QHash<int, QByteArray> roleNames;
-    roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(SearchSuggestionRole, "suggestion");
-    setRoleNames(roleNames);
 }
 
 QDeclarativeSearchSuggestionModel::~QDeclarativeSearchSuggestionModel()
@@ -313,6 +309,13 @@ QVariant QDeclarativeSearchSuggestionModel::data(const QModelIndex &index, int r
     }
 
     return QVariant();
+}
+
+QHash<int, QByteArray> QDeclarativeSearchSuggestionModel::roleNames() const
+{
+    QHash<int, QByteArray> roleNames = QDeclarativeSearchModelBase::roleNames();
+    roleNames.insert(SearchSuggestionRole, "suggestion");
+    return roleNames;
 }
 
 /*!

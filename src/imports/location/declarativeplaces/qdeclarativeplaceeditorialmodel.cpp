@@ -130,12 +130,6 @@ QT_BEGIN_NAMESPACE
 QDeclarativePlaceEditorialModel::QDeclarativePlaceEditorialModel(QObject *parent)
 :   QDeclarativePlaceContentModel(QPlaceContent::EditorialType, parent)
 {
-    QHash<int, QByteArray> roleNames;
-    roleNames.insert(TextRole, "text");
-    roleNames.insert(TitleRole, "title");
-    roleNames.insert(SupplierRole, "supplier");
-    roleNames.insert(LanguageRole, "language");
-    setRoleNames(roleNames);
 }
 
 QDeclarativePlaceEditorialModel::~QDeclarativePlaceEditorialModel()
@@ -165,6 +159,15 @@ QVariant QDeclarativePlaceEditorialModel::data(const QModelIndex &index, int rol
     }
 
     return QDeclarativePlaceContentModel::data(index, role);
+}
+
+QHash<int, QByteArray> QDeclarativePlaceEditorialModel::roleNames() const
+{
+    QHash<int, QByteArray> roleNames = QDeclarativePlaceContentModel::roleNames();
+    roleNames.insert(TextRole, "text");
+    roleNames.insert(TitleRole, "title");
+    roleNames.insert(LanguageRole, "language");
+    return roleNames;
 }
 
 QT_END_NAMESPACE

@@ -121,10 +121,6 @@ QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject *parent)
       limit_(-1),
       offset_(0)
 {
-    QHash<int, QByteArray> roleNames;
-    roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(LocationRole, "locationData");
-    setRoleNames(roleNames);
 }
 
 QDeclarativeGeocodeModel::~QDeclarativeGeocodeModel()
@@ -273,6 +269,13 @@ QVariant QDeclarativeGeocodeModel::data(const QModelIndex &index, int role) cons
         return QVariant::fromValue(locationObject);
     }
     return QVariant();
+}
+
+QHash<int, QByteArray> QDeclarativeGeocodeModel::roleNames() const
+{
+    QHash<int, QByteArray> roleNames = QAbstractItemModel::roleNames();
+    roleNames.insert(LocationRole, "locationData");
+    return roleNames;
 }
 
 /*!

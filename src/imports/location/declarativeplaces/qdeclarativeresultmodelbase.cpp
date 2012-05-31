@@ -44,10 +44,6 @@
 QDeclarativeResultModelBase::QDeclarativeResultModelBase(QObject *parent)
 :   QDeclarativeSearchModelBase(parent), m_favoritesPlugin(0)
 {
-    QHash<int, QByteArray> roles = roleNames();
-    roles.insert(DistanceRole, "distance");
-    roles.insert(PlaceRole, "place");
-    setRoleNames(roles);
 }
 
 /*!
@@ -134,6 +130,14 @@ QVariant QDeclarativeResultModelBase::data(int index, const QString &role) const
 {
     QModelIndex modelIndex = createIndex(index, 0);
     return data(modelIndex, roleNames().key(role.toLatin1()));
+}
+
+QHash<int, QByteArray> QDeclarativeResultModelBase::roleNames() const
+{
+    QHash<int, QByteArray> roles = QDeclarativeSearchModelBase::roleNames();
+    roles.insert(DistanceRole, "distance");
+    roles.insert(PlaceRole, "place");
+    return roles;
 }
 
 /*!

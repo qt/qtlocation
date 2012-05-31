@@ -73,6 +73,8 @@ public:
     // From QAbstractListModel
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const;
+
     enum Roles {
         SearchSuggestionRole = Qt::UserRole
     };

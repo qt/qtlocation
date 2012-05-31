@@ -97,6 +97,7 @@ public:
     QModelIndex parent(const QModelIndex &child) const;
 
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const;
 
     enum Roles {
         CategoryRole = Qt::UserRole

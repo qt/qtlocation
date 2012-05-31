@@ -141,14 +141,6 @@ QT_BEGIN_NAMESPACE
 QDeclarativeReviewModel::QDeclarativeReviewModel(QObject *parent)
 :   QDeclarativePlaceContentModel(QPlaceContent::ReviewType, parent)
 {
-    QHash<int, QByteArray> roles = roleNames();
-    roles.insert(DateTimeRole, "dateTime");
-    roles.insert(TextRole, "text");
-    roles.insert(LanguageRole, "language");
-    roles.insert(RatingRole, "rating");
-    roles.insert(ReviewIdRole, "reviewId");
-    roles.insert(TitleRole, "title");
-    setRoleNames(roles);
 }
 
 QDeclarativeReviewModel::~QDeclarativeReviewModel()
@@ -185,6 +177,18 @@ QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
     }
 
     return QDeclarativePlaceContentModel::data(index, role);
+}
+
+QHash<int, QByteArray> QDeclarativeReviewModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QDeclarativePlaceContentModel::roleNames();
+    roles.insert(DateTimeRole, "dateTime");
+    roles.insert(TextRole, "text");
+    roles.insert(LanguageRole, "language");
+    roles.insert(RatingRole, "rating");
+    roles.insert(ReviewIdRole, "reviewId");
+    roles.insert(TitleRole, "title");
+    return roles;
 }
 
 QT_END_NAMESPACE

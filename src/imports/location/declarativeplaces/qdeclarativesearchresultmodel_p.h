@@ -98,6 +98,7 @@ public:
     void setVisibilityScope(QDeclarativePlace::Visibility visibilityScope);
 
     QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const;
 
 Q_SIGNALS:
     void searchTermChanged();

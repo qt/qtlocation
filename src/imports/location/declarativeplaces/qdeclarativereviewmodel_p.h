@@ -55,6 +55,7 @@ public:
     ~QDeclarativeReviewModel();
 
     QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const;
     enum Roles {
         DateTimeRole = UserRole,
         TextRole,

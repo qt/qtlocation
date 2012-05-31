@@ -57,6 +57,8 @@ public:
     ~QDeclarativePlaceImageModel();
 
     QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const;
+
     enum Roles {
         UrlRole = UserRole,
         ImageIdRole,

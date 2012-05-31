@@ -59,6 +59,8 @@ public:
     ~QDeclarativePlaceEditorialModel();
 
     QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const;
+
     enum Roles {
         TextRole = UserRole,
         TitleRole,

@@ -57,11 +57,6 @@ QDeclarativePlaceContentModel::QDeclarativePlaceContentModel(QPlaceContent::Type
 :   QAbstractListModel(parent), m_place(0), m_type(type), m_batchSize(1), m_contentCount(-1),
     m_reply(0), m_complete(false)
 {
-    QHash<int, QByteArray> roles = roleNames();
-    roles.insert(SupplierRole, "supplier");
-    roles.insert(PlaceUserRole, "user");
-    roles.insert(AttributionRole, "attribution");
-    setRoleNames(roles);
 }
 
 QDeclarativePlaceContentModel::~QDeclarativePlaceContentModel()
@@ -250,6 +245,15 @@ QVariant QDeclarativePlaceContentModel::data(const QModelIndex &index, int role)
     default:
         return QVariant();
     }
+}
+
+QHash<int, QByteArray> QDeclarativePlaceContentModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
+    roles.insert(SupplierRole, "supplier");
+    roles.insert(PlaceUserRole, "user");
+    roles.insert(AttributionRole, "attribution");
+    return roles;
 }
 
 /*!

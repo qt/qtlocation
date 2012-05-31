@@ -56,11 +56,6 @@ QDeclarativeLocationTestModel::QDeclarativeLocationTestModel(QObject *parent):
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()) + QCoreApplication::applicationPid());
     timer_.setSingleShot(true);
     connect(&timer_, SIGNAL(timeout()), this, SLOT(timerFired()));
-    // Establish role names so that they can be queried from this model
-    QHash<int, QByteArray> roleNames;
-    roleNames = QAbstractItemModel::roleNames();
-    roleNames.insert(TestDataRole, "modeldata");
-    setRoleNames(roleNames);
 }
 
 QDeclarativeLocationTestModel::~QDeclarativeLocationTestModel()
@@ -256,4 +251,11 @@ QVariant QDeclarativeLocationTestModel::data(const QModelIndex& index, int role)
         break;
     }
     return QVariant();
+}
+
+QHash<int, QByteArray> QDeclarativeLocationTestModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
+    roles.insert(TestDataRole, "modeldata");
+    return roles;
 }

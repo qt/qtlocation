@@ -70,6 +70,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual QVariant data (const QModelIndex &index, int role = Qt::DisplayRole) const;
     Q_INVOKABLE QVariant data(int index, const QString &roleName) const;
+    QHash<int, QByteArray> roleNames() const;
 
 Q_SIGNALS:
     void rowCountChanged();

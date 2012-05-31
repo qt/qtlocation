@@ -326,11 +326,6 @@ QT_USE_NAMESPACE
 QDeclarativeSearchResultModel::QDeclarativeSearchResultModel(QObject *parent)
 :   QDeclarativeResultModelBase(parent)
 {
-    QHash<int, QByteArray> roles = roleNames();
-    roles.insert(SearchResultTypeRole, "type");
-    roles.insert(CorrectionRole, "correction");
-    roles.insert(SponsoredRole, "sponsored");
-    setRoleNames(roles);
 }
 
 QDeclarativeSearchResultModel::~QDeclarativeSearchResultModel()
@@ -525,6 +520,15 @@ QVariant QDeclarativeSearchResultModel::data(const QModelIndex &index, int role)
     default:
         return QDeclarativeResultModelBase::data(index, role);
     }
+}
+
+QHash<int, QByteArray> QDeclarativeSearchResultModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QDeclarativeResultModelBase::roleNames();
+    roles.insert(SearchResultTypeRole, "type");
+    roles.insert(CorrectionRole, "correction");
+    roles.insert(SponsoredRole, "sponsored");
+    return roles;
 }
 
 QPlaceReply *QDeclarativeSearchResultModel::sendQuery(QPlaceManager *manager,

@@ -130,11 +130,6 @@ QT_BEGIN_NAMESPACE
 QDeclarativePlaceImageModel::QDeclarativePlaceImageModel(QObject *parent)
 :   QDeclarativePlaceContentModel(QPlaceContent::ImageType, parent)
 {
-    QHash<int, QByteArray> roles = roleNames();
-    roles.insert(UrlRole, "url");
-    roles.insert(ImageIdRole, "imageId");
-    roles.insert(MimeTypeRole, "mimeType");
-    setRoleNames(roles);
 }
 
 QDeclarativePlaceImageModel::~QDeclarativePlaceImageModel()
@@ -165,6 +160,15 @@ QVariant QDeclarativePlaceImageModel::data(const QModelIndex &index, int role) c
     }
 
     return QDeclarativePlaceContentModel::data(index, role);
+}
+
+QHash<int, QByteArray> QDeclarativePlaceImageModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QDeclarativePlaceContentModel::roleNames();
+    roles.insert(UrlRole, "url");
+    roles.insert(ImageIdRole, "imageId");
+    roles.insert(MimeTypeRole, "mimeType");
+    return roles;
 }
 
 QT_END_NAMESPACE
