@@ -162,9 +162,8 @@ Item {
         color: 'darkgrey'
     }
 
-    MapPolygon {
+    MapPolyline {
         id: extMapPolyline0
-        color: 'darkgrey'
     }
 
     MapPolyline {
@@ -177,6 +176,7 @@ Item {
         SignalSpy {id: extMapPolylineWidthChanged; target: parent.line; signalName: "widthChanged"}
         SignalSpy {id: extMapPolylinePathChanged; target: parent; signalName: "pathChanged"}
     }
+
     MapRoute {
         id: extMapRoute
         line.color: 'yellow'
@@ -222,20 +222,31 @@ Item {
             compare (extMapPolygonClicked.count, 0)
             var point = map.toScreenPosition(extMapPolygon.path[1])
             map.addMapItem(extMapPolygon)
-            visualInspectionPoint("polygon 2 points")
+            verify(extMapPolygon.path.length == 2)
             mouseClick(map, point.x - 5, point.y)
             compare(extMapPolygonClicked.count, 0)
             map.addMapItem(extMapPolygon0) // mustn't crash or ill-behave
+            verify(extMapPolygon0.path.length == 0)
             extMapPolygon.addCoordinate(polyCoordinate)
-            visualInspectionPoint("polygon 3 points")
+            verify(extMapPolygon.path.length == 3)
             mouseClick(map, point.x - 5, point.y)
             compare(extMapPolygonClicked.count, 1)
+
+            extMapPolygon.path[0].latitude = 10
+            verify(extMapPolygon.path[0].latitude, 10)
+            extMapPolygon.path[0].latitude = polyCoordinate.latitude
+            verify(extMapPolygon.path[0].latitude, 15)
+            extMapPolygon.path[0].longitude = 2
+            verify(extMapPolygon.path[0].longitude, 2)
+            extMapPolygon.path[0].longitude = polyCoordinate.longitude
+            verify(extMapPolygon.path[0].longitude, 6)
+
             extMapPolygon.removeCoordinate(polyCoordinate)
-            visualInspectionPoint("polygon 2 points")
+            verify(extMapPolygon.path.length == 2)
             extMapPolygon.removeCoordinate(extMapPolygon.path[1])
-            visualInspectionPoint("polygon 1 points")
+            verify(extMapPolygon.path.length == 1)
             extMapPolygon.removeCoordinate(extMapPolygon.path[0])
-            visualInspectionPoint("polygon 0 points")
+            verify(extMapPolygon.path.length == 0)
         }
 
         function test_polyline() {
@@ -243,24 +254,35 @@ Item {
             clear_data()
             compare (extMapPolyline.line.width, 1.0)
             var point = map.toScreenPosition(extMapPolyline.path[1])
-            map.addMapItem(extMapPolyline)
-            visualInspectionPoint("polyline 2 points")
             map.addMapItem(extMapPolyline0) // mustn't crash or ill-behave
+            verify(extMapPolyline0.path.length == 0)
+            map.addMapItem(extMapPolyline)
+            verify(extMapPolyline.path.length == 2)
             extMapPolyline.addCoordinate(polyCoordinate)
-            visualInspectionPoint("polyline 3 points")
+            verify(extMapPolyline.path.length == 3)
             extMapPolyline.addCoordinate(extMapPolyline.path[0])
-            visualInspectionPoint("polyline 4 points")
+            verify(extMapPolyline.path.length == 4)
+
+            extMapPolyline.path[0].latitude = 10
+            verify(extMapPolyline.path[0].latitude, 10)
+            extMapPolyline.path[0].latitude = polyCoordinate.latitude
+            verify(extMapPolyline.path[0].latitude, 15)
+            extMapPolyline.path[0].longitude = 2
+            verify(extMapPolyline.path[0].longitude, 2)
+            extMapPolyline.path[0].longitude = polyCoordinate.longitude
+            verify(extMapPolyline.path[0].longitude, 6)
+
             // TODO when line rendering is ready
             //mouseClick(map, point.x - 5, point.y)
             //compare(extMapPolylineClicked.count, 1)
             extMapPolyline.removeCoordinate(extMapPolyline.path[0])
-            visualInspectionPoint("polyline 3 points")
+            verify(extMapPolyline.path.length == 3)
             extMapPolyline.removeCoordinate(polyCoordinate)
-            visualInspectionPoint("polyline 2 points")
+            verify(extMapPolyline.path.length == 2)
             extMapPolyline.removeCoordinate(extMapPolyline.path[1])
-            visualInspectionPoint("polyline 1 points")
+            verify(extMapPolyline.path.length == 1)
             extMapPolyline.removeCoordinate(extMapPolyline.path[0])
-            visualInspectionPoint("polyline 0 points")
+            verify(extMapPolyline.path.length == 0)
         }
 
         function clear_data() {
