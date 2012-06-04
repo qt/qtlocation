@@ -204,63 +204,60 @@ void TestQGeoPositionInfoSource::updateInterval()
 
 void TestQGeoPositionInfoSource::setPreferredPositioningMethods()
 {
-    QFETCH(int, supported);
-    QFETCH(int, preferred);
-    QFETCH(int, resulting);
+    QFETCH(QGeoPositionInfoSource::PositioningMethod, supported);
+    QFETCH(QGeoPositionInfoSource::PositioningMethod, preferred);
+    QFETCH(QGeoPositionInfoSource::PositioningMethod, resulting);
 
     MyPositionSource s;
-    s.setSupportedPositioningMethods(
-        static_cast<QGeoPositionInfoSource::PositioningMethods>(supported));
-    s.setPreferredPositioningMethods(
-        static_cast<QGeoPositionInfoSource::PositioningMethods>(preferred));
-    QCOMPARE(s.preferredPositioningMethods(),
-             static_cast<QGeoPositionInfoSource::PositioningMethods>(resulting));
+    s.setSupportedPositioningMethods(supported);
+    s.setPreferredPositioningMethods(preferred);
+    QCOMPARE(s.preferredPositioningMethods(), resulting);
 }
 
 void TestQGeoPositionInfoSource::setPreferredPositioningMethods_data()
 {
-    QTest::addColumn<int>("supported");
-    QTest::addColumn<int>("preferred");
-    QTest::addColumn<int>("resulting");
+    QTest::addColumn<QGeoPositionInfoSource::PositioningMethod>("supported");
+    QTest::addColumn<QGeoPositionInfoSource::PositioningMethod>("preferred");
+    QTest::addColumn<QGeoPositionInfoSource::PositioningMethod>("resulting");
 
     QTest::newRow("Sat supported, Sat preferred")
-    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::SatellitePositioningMethods);
+        << QGeoPositionInfoSource::SatellitePositioningMethods
+        << QGeoPositionInfoSource::SatellitePositioningMethods
+        << QGeoPositionInfoSource::SatellitePositioningMethods;
     QTest::newRow("Sat supported, Non-Sat preferred")
-    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::SatellitePositioningMethods);
+        << QGeoPositionInfoSource::SatellitePositioningMethods
+        << QGeoPositionInfoSource::NonSatellitePositioningMethods
+        << QGeoPositionInfoSource::SatellitePositioningMethods;
     QTest::newRow("Sat supported, All preferred")
-    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::AllPositioningMethods)
-    << int(QGeoPositionInfoSource::SatellitePositioningMethods);
+        << QGeoPositionInfoSource::SatellitePositioningMethods
+        << QGeoPositionInfoSource::AllPositioningMethods
+        << QGeoPositionInfoSource::SatellitePositioningMethods;
 
     QTest::newRow("Non-Sat supported, Sat preferred")
-    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+        << QGeoPositionInfoSource::NonSatellitePositioningMethods
+        << QGeoPositionInfoSource::SatellitePositioningMethods
+        << QGeoPositionInfoSource::NonSatellitePositioningMethods;
     QTest::newRow("Non-Sat supported, Non-Sat preferred")
-    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+        << QGeoPositionInfoSource::NonSatellitePositioningMethods
+        << QGeoPositionInfoSource::NonSatellitePositioningMethods
+        << QGeoPositionInfoSource::NonSatellitePositioningMethods;
     QTest::newRow("Non-Sat supported, All preferred")
-    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::AllPositioningMethods)
-    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+        << QGeoPositionInfoSource::NonSatellitePositioningMethods
+        << QGeoPositionInfoSource::AllPositioningMethods
+        << QGeoPositionInfoSource::NonSatellitePositioningMethods;
 
     QTest::newRow("All supported, Sat preferred")
-    << int(QGeoPositionInfoSource::AllPositioningMethods)
-    << int(QGeoPositionInfoSource::SatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::SatellitePositioningMethods);
+        << QGeoPositionInfoSource::AllPositioningMethods
+        << QGeoPositionInfoSource::SatellitePositioningMethods
+        << QGeoPositionInfoSource::SatellitePositioningMethods;
     QTest::newRow("All supported, Non-Sat preferred")
-    << int(QGeoPositionInfoSource::AllPositioningMethods)
-    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods)
-    << int(QGeoPositionInfoSource::NonSatellitePositioningMethods);
+        << QGeoPositionInfoSource::AllPositioningMethods
+        << QGeoPositionInfoSource::NonSatellitePositioningMethods
+        << QGeoPositionInfoSource::NonSatellitePositioningMethods;
     QTest::newRow("All supported, All preferred")
-    << int(QGeoPositionInfoSource::AllPositioningMethods)
-    << int(QGeoPositionInfoSource::AllPositioningMethods)
-    << int(QGeoPositionInfoSource::AllPositioningMethods);
+        << QGeoPositionInfoSource::AllPositioningMethods
+        << QGeoPositionInfoSource::AllPositioningMethods
+        << QGeoPositionInfoSource::AllPositioningMethods;
 }
 
 void TestQGeoPositionInfoSource::preferredPositioningMethods()
@@ -322,17 +319,13 @@ void TestQGeoPositionInfoSource::setUpdateInterval_data()
 void TestQGeoPositionInfoSource::lastKnownPosition()
 {
     CHECK_SOURCE_VALID;
-    QFETCH(int, positioningMethod);
+    QFETCH(QGeoPositionInfoSource::PositioningMethod, positioningMethod);
     QFETCH(bool, lastKnownPositionArgument);
-    QFETCH(bool, positionValid);
 
-    QGeoPositionInfoSource::PositioningMethods method
-            = static_cast<QGeoPositionInfoSource::PositioningMethods>(positioningMethod);
-
-    if ((m_source->supportedPositioningMethods() & method) == 0)
+    if ((m_source->supportedPositioningMethods() & positioningMethod) == 0)
         QSKIP("Not a supported positioning method for this position source");
 
-    m_source->setPreferredPositioningMethods(method);
+    m_source->setPreferredPositioningMethods(positioningMethod);
 
     QSignalSpy spy(m_source, SIGNAL(positionUpdated(const QGeoPositionInfo&)));
     QSignalSpy timeout(m_source, SIGNAL(updateTimeout()));
@@ -357,14 +350,17 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
     QVERIFY((spy.count() > 0) && (timeout.count() == 0));
 
     QList<QVariant> list = spy.takeFirst();
-    QGeoPositionInfo info;
-    info = list.at(0).value<QGeoPositionInfo>();
-    QGeoPositionInfo lastPositioninfo;
-    lastPositioninfo = m_source->lastKnownPosition(lastKnownPositionArgument);
+    QGeoPositionInfo info = list.at(0).value<QGeoPositionInfo>();
+    QGeoPositionInfo lastPositioninfo = m_source->lastKnownPosition(lastKnownPositionArgument);
 
-    QCOMPARE(lastPositioninfo.isValid(), positionValid);
+    // lastPositioninfo is only gauranteed to be valid in all cases when only using satelite
+    // positioning methods or when lastKnownPositionArgument is false
+    if (!lastKnownPositionArgument ||
+        positioningMethod == QGeoPositionInfoSource::SatellitePositioningMethods) {
+        QVERIFY(lastPositioninfo.isValid());
+    }
 
-    if (positionValid) {
+    if (lastPositioninfo.isValid()) {
         QCOMPARE(info.coordinate(), lastPositioninfo.coordinate());
         // On some CI machines the above evenloop code is not sufficient as positionUpdated
         // still fires causing last know position and last update to be out of sync.
@@ -406,16 +402,15 @@ void TestQGeoPositionInfoSource::lastKnownPosition()
 
 void TestQGeoPositionInfoSource::lastKnownPosition_data()
 {
-    QTest::addColumn<int>("positioningMethod");
+    QTest::addColumn<QGeoPositionInfoSource::PositioningMethod>("positioningMethod");
     QTest::addColumn<bool>("lastKnownPositionArgument");
-    QTest::addColumn<bool>("positionValid");
 
     // no good way to determine on MeeGo what are supported. If we ask for all or non-satellites, we
     // typically get geoclue-example provider, which is not suitable for this test.
-    QTest::newRow("all - false") << int(QGeoPositionInfoSource::AllPositioningMethods) << false << true;
-    QTest::newRow("all - true") << int(QGeoPositionInfoSource::AllPositioningMethods) << true << true;
-    QTest::newRow("satellite - false") << int(QGeoPositionInfoSource::SatellitePositioningMethods) << false << true;
-    QTest::newRow("satellite - true") << int(QGeoPositionInfoSource::SatellitePositioningMethods) << true << true;
+    QTest::newRow("all - false") << QGeoPositionInfoSource::AllPositioningMethods << false;
+    QTest::newRow("all - true") << QGeoPositionInfoSource::AllPositioningMethods << true;
+    QTest::newRow("satellite - false") << QGeoPositionInfoSource::SatellitePositioningMethods << false;
+    QTest::newRow("satellite - true") << QGeoPositionInfoSource::SatellitePositioningMethods << true;
 }
 
 void TestQGeoPositionInfoSource::minimumUpdateInterval()
