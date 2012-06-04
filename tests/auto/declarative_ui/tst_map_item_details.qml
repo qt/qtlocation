@@ -75,72 +75,14 @@ Item {
     height: 240
     Plugin { id: testPlugin; name : "qmlgeo.test.plugin"; allowExperimental: true }
     Coordinate{ id: mapDefaultCenter; latitude: 20; longitude: 20}
-    Coordinate{ id: someCoordinate1; latitude: 15; longitude: 15}
-    Coordinate{ id: someCoordinate2; latitude: 16; longitude: 16}
-    Route { id: someRoute;
-        path: [
-            Coordinate { latitude: 22; longitude: 15},
-            Coordinate { latitude: 21; longitude: 16},
-            Coordinate { latitude: 23; longitude: 17}
-        ]
-    }
-    Item { id: someItem }
 
-    MapRectangle {
-        id: extMapRect
-        color: 'darkcyan'
-        topLeft: Coordinate { latitude: 20; longitude: 20}
-        bottomRight: Coordinate { latitude: 10; longitude: 30}
-        MapMouseArea {
-            id: extMapRectMa
-            anchors.fill: parent
-            drag.target: parent
-            SignalSpy { id: extMapRectClicked; target: parent; signalName: "clicked" }
-            SignalSpy { id: extMapRectActiveChanged; target: parent.drag; signalName: "activeChanged" }
-        }
-        SignalSpy {id: extMapRectTopLeftChanged; target: parent; signalName: "topLeftChanged" }
-        SignalSpy {id: extMapRectBottomRightChanged; target: parent; signalName: "bottomRightChanged" }
-        SignalSpy {id: extMapRectColorChanged; target: parent; signalName: "colorChanged"}
-    }
-    MapCircle {
-        id: extMapCircle
-        color: 'darkmagenta'
-        center: Coordinate { latitude: 10; longitude: 30}
-        radius: 400000
-        MapMouseArea {
-            id: extMapCircleMa
-            anchors.fill: parent
-            drag.target: parent
-            SignalSpy { id: extMapCircleClicked; target: parent; signalName: "clicked" }
-            SignalSpy { id: extMapCircleActiveChanged; target: parent.drag; signalName: "activeChanged" }
-        }
-        SignalSpy {id: extMapCircleCenterChanged; target: parent; signalName: "centerChanged"}
-        SignalSpy {id: extMapCircleColorChanged; target: parent; signalName: "colorChanged"}
-        SignalSpy {id: extMapCircleRadiusChanged; target: parent; signalName: "radiusChanged"}
-        SignalSpy {id: extMapCircleBorderColorChanged; target: parent.border; signalName: "colorChanged"}
-        SignalSpy {id: extMapCircleBorderWidthChanged; target: parent.border; signalName: "widthChanged"}
-    }
-    MapQuickItem {
-        id: extMapQuickItem
-        MapMouseArea {
-            anchors.fill: parent
-            drag.target: parent
-            SignalSpy { id: extMapQuickItemClicked; target: parent; signalName: "clicked" }
-            SignalSpy { id: extMapQuickItemActiveChanged; target: parent.drag; signalName: "activeChanged" }
-        }
-        coordinate: Coordinate { latitude: 35; longitude: 3}
-        sourceItem: Rectangle {
-            color: 'darkgreen'
-            width: 20
-            height: 20
-        }
-        SignalSpy { id: extMapQuickItemCoordinateChanged; target: parent; signalName: "coordinateChanged"}
-        SignalSpy { id: extMapQuickItemAnchorPointChanged; target: parent; signalName: "anchorPointChanged"}
-        SignalSpy { id: extMapQuickItemZoomLevelChanged; target: parent; signalName: "zoomLevelChanged"}
-        SignalSpy { id: extMapQuickItemSourceItemChanged; target: parent; signalName: "sourceItemChanged"}
-    }
+    Coordinate{ id: datelineCoordinate; latitude: 20; longitude: 180}
+    Coordinate{ id: datelineCoordinateLeft; latitude: 20; longitude: 170}
+    Coordinate{ id: datelineCoordinateRight; latitude: 20; longitude: -170}
+
     MapPolygon {
         id: extMapPolygon
+        color: 'darkgrey'
         path: [
             Coordinate { latitude: 25; longitude: 5},
             Coordinate { latitude: 20; longitude: 10}
@@ -177,20 +119,79 @@ Item {
         SignalSpy {id: extMapPolylinePathChanged; target: parent; signalName: "pathChanged"}
     }
 
+    MapRectangle {
+        id: extMapRectDateline
+        color: 'darkcyan'
+        topLeft: Coordinate { latitude: 20; longitude: 175}
+        bottomRight: Coordinate { latitude: 10; longitude: -175}
+        MapMouseArea {
+            anchors.fill: parent
+            drag.target: parent
+        }
+    }
+
+    MapCircle {
+        id: extMapCircleDateline
+        color: 'darkmagenta'
+        center: Coordinate { latitude: 20; longitude: 180}
+        radius: 400000
+        MapMouseArea {
+            anchors.fill: parent
+            drag.target: parent
+        }
+    }
+
+    MapQuickItem {
+        id: extMapQuickItemDateline
+        MapMouseArea {
+            anchors.fill: parent
+            drag.target: parent
+        }
+        coordinate: Coordinate { latitude: 20; longitude: 175}
+        sourceItem: Rectangle {
+            color: 'darkgreen'
+            width: 20
+            height: 20
+        }
+    }
+
+    MapPolygon {
+        id: extMapPolygonDateline
+        color: 'darkmagenta'
+        path: [
+            Coordinate { latitude: 20; longitude: 175},
+            Coordinate { latitude: 20; longitude: -175},
+            Coordinate { latitude: 10; longitude: -175},
+            Coordinate { latitude: 10; longitude: 175}
+        ]
+        MapMouseArea {
+            anchors.fill: parent
+            drag.target: parent
+        }
+    }
+
+    MapPolyline {
+        id: extMapPolylineDateline
+        line.width : 3
+        path: [
+            Coordinate { latitude: 20; longitude: 175},
+            Coordinate { latitude: 25; longitude: -175}
+        ]
+        MapMouseArea {
+            anchors.fill: parent
+            drag.target: parent
+        }
+    }
+
     MapRoute {
-        id: extMapRoute
+        id: extMapRouteDateline
         line.color: 'yellow'
-        // don't try this at home - route is not user instantiable
         route: Route {
             path: [
-                Coordinate { latitude: 25; longitude: 14},
-                Coordinate { latitude: 20; longitude: 18},
-                Coordinate { latitude: 15; longitude: 15}
+                Coordinate { latitude: 25; longitude: 175},
+                Coordinate { latitude: 20; longitude: -175}
             ]
         }
-        SignalSpy {id: extMapRouteRouteChanged; target: parent; signalName: "routeChanged"}
-        SignalSpy {id: extMapRouteLineWidthChanged; target: parent.line; signalName: "widthChanged"}
-        SignalSpy {id: extMapRouteLineColorChanged; target: parent.line; signalName: "colorChanged"}
     }
 
     Map {
@@ -285,19 +286,151 @@ Item {
             verify(extMapPolyline.path.length == 0)
         }
 
+        function test_zz_dateline() {
+            map.clearMapItems()
+            clear_data()
+            map.center = datelineCoordinate
+            map.zoomLevel = 2.2
+
+            // rectangle
+            // item spanning across dateline
+            map.addMapItem(extMapRectDateline)
+            verify(extMapRectDateline.topLeft.longitude == 175)
+            verify(extMapRectDateline.bottomRight.longitude == -175)
+            var point = map.toScreenPosition(extMapRectDateline.topLeft)
+            verify(point.x < map.width / 2.0)
+            point = map.toScreenPosition(extMapRectDateline.bottomRight)
+            verify(point.x > map.width / 2.0)
+            // move item away from dataline by directly setting its coords
+            extMapRectDateline.bottomRight.longitude = datelineCoordinateRight.longitude
+            point = map.toScreenPosition(extMapRectDateline.bottomRight)
+            verify(point.x > map.width / 2.0)
+            extMapRectDateline.topLeft.longitude = datelineCoordinate.longitude
+            point = map.toScreenPosition(extMapRectDateline.topLeft)
+            verify(point.x == map.width / 2.0)
+            // drag item back onto dateline
+            mousePress(map, point.x + 5, point.y + 5)
+            var i
+            for (i=0; i < 20; i += 2) {
+                wait(1)
+                mouseMove(map, point.x + 5 - i, point.y + 5 )
+            }
+            mouseRelease(map, point.x + 5 - i, point.y + 5)
+            point = map.toScreenPosition(extMapRectDateline.topLeft)
+            verify(point.x < map.width / 2.0)
+            point = map.toScreenPosition(extMapRectDateline.bottomRight)
+            verify(point.x > map.width / 2.0)
+            map.removeMapItem(extMapRectDateline)
+
+            // circle
+            map.addMapItem(extMapCircleDateline)
+            verify(extMapCircleDateline.center.longitude == 180)
+            var point = map.toScreenPosition(extMapCircleDateline.center)
+            verify(point.x == map.width / 2.0)
+            extMapCircleDateline.center.longitude = datelineCoordinateRight.longitude
+            point = map.toScreenPosition(extMapCircleDateline.center)
+            verify(point.x > map.width / 2.0)
+            mousePress(map, point.x, point.y)
+            for (i=0; i < 40; i += 4) {
+                wait(1)
+                mouseMove(map, point.x - i, point.y)
+            }
+            mouseRelease(map, point.x - i, point.y)
+            point = map.toScreenPosition(extMapCircleDateline.center)
+            verify(point.x < map.width / 2.0)
+            map.removeMapItem(extMapCircleDateline)
+
+            // quickitem
+            map.addMapItem(extMapQuickItemDateline)
+            verify(extMapQuickItemDateline.coordinate.longitude == 175)
+            point = map.toScreenPosition(extMapQuickItemDateline.coordinate)
+            verify(point.x < map.width / 2.0)
+            extMapQuickItemDateline.coordinate.longitude = datelineCoordinateRight.longitude
+            point = map.toScreenPosition(extMapQuickItemDateline.coordinate)
+            verify(point.x > map.width / 2.0)
+            mousePress(map, point.x + 5, point.y + 5)
+            for (i=0; i < 50; i += 5) {
+                wait(1)
+                mouseMove(map, point.x + 5 - i, point.y + 5 )
+            }
+            mouseRelease(map, point.x + 5 - i, point.y + 5)
+            point = map.toScreenPosition(extMapQuickItemDateline.coordinate)
+            verify(point.x < map.width / 2.0)
+            map.removeMapItem(extMapQuickItemDateline)
+
+            // polygon
+            map.addMapItem(extMapPolygonDateline)
+            verify(extMapPolygonDateline.path[0].longitude == 175)
+            verify(extMapPolygonDateline.path[1].longitude == -175)
+            verify(extMapPolygonDateline.path[2].longitude == -175)
+            verify(extMapPolygonDateline.path[3].longitude == 175)
+            point = map.toScreenPosition(extMapPolygonDateline.path[0])
+            verify(point.x < map.width / 2.0)
+            point = map.toScreenPosition(extMapPolygonDateline.path[1])
+            verify(point.x > map.width / 2.0)
+            point = map.toScreenPosition(extMapPolygonDateline.path[2])
+            verify(point.x > map.width / 2.0)
+            point = map.toScreenPosition(extMapPolygonDateline.path[3])
+            verify(point.x < map.width / 2.0)
+            extMapPolygonDateline.path[1].longitude = datelineCoordinateRight.longitude
+            point = map.toScreenPosition(extMapPolygonDateline.path[1])
+            verify(point.x > map.width / 2.0)
+            extMapPolygonDateline.path[2].longitude = datelineCoordinateRight.longitude
+            point = map.toScreenPosition(extMapPolygonDateline.path[2])
+            verify(point.x > map.width / 2.0)
+            extMapPolygonDateline.path[0].longitude = datelineCoordinate.longitude
+            point = map.toScreenPosition(extMapPolygonDateline.path[0])
+            verify(point.x == map.width / 2.0)
+            extMapPolygonDateline.path[3].longitude = datelineCoordinate.longitude
+            point = map.toScreenPosition(extMapPolygonDateline.path[3])
+            verify(point.x == map.width / 2.0)
+            mousePress(map, point.x + 5, point.y - 5)
+            for (i=0; i < 20; i += 2) {
+                wait(1)
+                mouseMove(map, point.x + 5 - i, point.y - 5 )
+            }
+            mouseRelease(map, point.x + 5 - i, point.y - 5)
+            point = map.toScreenPosition(extMapPolygonDateline.path[0])
+            verify(point.x < map.width / 2.0)
+            point = map.toScreenPosition(extMapPolygonDateline.path[1])
+            verify(point.x > map.width / 2.0)
+            point = map.toScreenPosition(extMapPolygonDateline.path[2])
+            verify(point.x > map.width / 2.0)
+            point = map.toScreenPosition(extMapPolygonDateline.path[3])
+            verify(point.x < map.width / 2.0)
+            map.removeMapItem(extMapPolygonDateline)
+
+            // polyline
+            map.addMapItem(extMapPolylineDateline)
+            verify(extMapPolylineDateline.path[0].longitude == 175)
+            verify(extMapPolylineDateline.path[1].longitude == -175)
+            point = map.toScreenPosition(extMapPolylineDateline.path[0])
+            verify(point.x < map.width / 2.0)
+            point = map.toScreenPosition(extMapPolylineDateline.path[1])
+            verify(point.x > map.width / 2.0)
+            extMapPolylineDateline.path[1].longitude = datelineCoordinateRight.longitude
+            point = map.toScreenPosition(extMapPolylineDateline.path[1])
+            verify(point.x > map.width / 2.0)
+            extMapPolylineDateline.path[0].longitude = datelineCoordinate.longitude
+            point = map.toScreenPosition(extMapPolylineDateline.path[0])
+            verify(point.x == map.width / 2.0)
+            map.removeMapItem(extMapPolylineDateline)
+
+            // map route
+            // (does not support setting of path coords)
+            map.addMapItem(extMapRouteDateline)
+            verify(extMapRouteDateline.route.path[0].longitude == 175)
+            verify(extMapRouteDateline.route.path[1].longitude == -175)
+            point = map.toScreenPosition(extMapRouteDateline.route.path[0])
+            verify(point.x < map.width / 2.0)
+            point = map.toScreenPosition(extMapRouteDateline.route.path[1])
+            verify(point.x > map.width / 2.0)
+            map.removeMapItem(extMapRouteDateline)
+        }
+
+
         function clear_data() {
-            extMapRectClicked.clear()
-            extMapCircleClicked.clear()
-            extMapQuickItemClicked.clear()
             extMapPolygonClicked.clear()
-            extMapCircleCenterChanged.clear()
-            extMapCircleColorChanged.clear()
-            extMapCircleRadiusChanged.clear()
-            extMapCircleBorderColorChanged.clear()
-            extMapCircleBorderWidthChanged.clear()
-            extMapRectTopLeftChanged.clear()
-            extMapRectBottomRightChanged.clear()
-            extMapRectColorChanged.clear()
             extMapPolylineColorChanged.clear()
             extMapPolylineWidthChanged.clear()
             extMapPolylinePathChanged.clear()
@@ -305,13 +438,6 @@ Item {
             extMapPolygonColorChanged.clear()
             extMapPolygonBorderColorChanged.clear()
             extMapPolygonBorderWidthChanged.clear()
-            extMapRouteRouteChanged.clear()
-            extMapRouteLineColorChanged.clear()
-            extMapRouteLineWidthChanged.clear()
-            extMapQuickItemCoordinateChanged.clear()
-            extMapQuickItemAnchorPointChanged.clear()
-            extMapQuickItemZoomLevelChanged.clear()
-            extMapQuickItemSourceItemChanged.clear()
         }
 
         function fuzzy_compare(val, ref, tol) {
