@@ -61,30 +61,17 @@
 #include <qplacesupplier.h>
 
 #include "jsondbutils.h"
+#include "../placemanager_utils/placemanager_utils.h"
 
 #include <QtJsonDb/QJsonDbCreateRequest>
 #include <QtJsonDb/QJsonDbReadRequest>
-
-#ifndef WAIT_UNTIL
-#define WAIT_UNTIL(__expr) \
-        do { \
-        const int __step = 50; \
-        const int __timeout = 10000; \
-        if (!(__expr)) { \
-            QTest::qWait(0); \
-        } \
-        for (int __i = 0; __i < __timeout && !(__expr); __i+=__step) { \
-            QTest::qWait(__step); \
-        } \
-    } while (0)
-#endif
 
 Q_DECLARE_METATYPE(QPlaceIdReply *);
 Q_DECLARE_METATYPE(QJsonObject);
 
 QT_USE_NAMESPACE
 
-class tst_QPlaceManagerJsonDb : public QObject
+class tst_QPlaceManagerJsonDb : public PlaceManagerUtils
 {
     Q_OBJECT
     enum UrlCorrectnes {
@@ -152,66 +139,7 @@ private Q_SLOTS:
     void validateIndexes();
 
 private:
-    bool doSavePlace(const QPlace &place,
-                QPlaceReply::Error expectedError = QPlaceReply::NoError,
-                QString *placeId = 0);
-    void doSavePlaces(QList<QPlace> &places);
-    void doSavePlaces(const QList<QPlace *> &places);
-
-    bool doRemovePlace(const QPlace &place,
-                       QPlaceReply::Error expectedError = QPlaceReply::NoError);
-
-    bool doSearch(const QPlaceSearchRequest &request,
-                  QList<QPlaceSearchResult> *results,
-             QPlaceReply::Error expectedError = QPlaceReply::NoError);
-
-    bool doSearch(const QPlaceSearchRequest &request,
-                  QList<QPlace> *results,
-             QPlaceReply::Error expectedError = QPlaceReply::NoError);
-
-    bool doFetchDetails(QString placeId,
-                        QPlace *place,
-                        QPlaceReply::Error expectedError = QPlaceReply::NoError) {
-        return doFetchDetails(placeManager, placeId, place, expectedError);
-    }
-
-    bool doFetchDetails(QPlaceManager *manager,
-                        QString placeId,
-                        QPlace *place,
-                        QPlaceReply::Error expectedError = QPlaceReply::NoError);
-
-    bool doSaveCategory(const QPlaceCategory &category,
-                        QPlaceReply::Error expectedError = QPlaceReply::NoError,
-                        QString *categoryId = 0);
-
-    bool doSaveCategory(const QPlaceCategory &category,
-                        const QString &parentId,
-                        QPlaceReply::Error expectedError = QPlaceReply::NoError,
-                        QString *categoryId = 0);
-
-    bool doRemoveCategory(const QPlaceCategory &category,
-                          QPlaceReply::Error expectedError = QPlaceReply::NoError);
-
-    bool doFetchCategory(const QString &categoryId,
-                         QPlaceCategory *category,
-                         QPlaceReply::Error expectedError = QPlaceReply::NoError);
-
-    bool doMatch(const QPlaceMatchRequest &request,
-                 QList<QPlace> *places,
-                 QPlaceReply::Error expectedError = QPlaceReply::NoError);
-
-    bool checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError) {
-        return checkSignals(reply, expectedError, placeManager);
-    }
-
-    bool checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError,
-                      QPlaceManager *manager);
-
-    bool compareResultsByName(const QList<QPlaceSearchResult> &results, const QList<QPlace> &expectedResults);
-
     QImage dataUrlToImage(const QUrl &url);
-
-    void setVisibility(QList<QPlace *>places, QtLocation::Visibility visibility);
 
     static const QString SmallSource;
     static const QString SmallDestination;
@@ -234,14 +162,11 @@ private:
     static const QSize MediumSize;
     static const QSize LargeSize;
     static const QSize FullscreenSize;
-    static const int Timeout;
-
     static const QString Provider;
 
     static const QString CustomIcons;
 
     QGeoServiceProvider *provider;
-    QPlaceManager *placeManager;
     QCoreApplication *coreApp;
     JsonDbUtils *dbUtils ;
     QTemporaryDir tempDir;
@@ -272,9 +197,6 @@ const QSize tst_QPlaceManagerJsonDb::SmallSize = QSize(20,20);
 const QSize tst_QPlaceManagerJsonDb::MediumSize = QSize(30,30);
 const QSize tst_QPlaceManagerJsonDb::LargeSize = QSize(50, 50);
 const QSize tst_QPlaceManagerJsonDb::FullscreenSize = QSize(320, 480);
-
-//constant for timeout to verify signals
-const int tst_QPlaceManagerJsonDb::Timeout(10000);
 
 //This constant is key for the place attribute that signifies which provider
 //a place originates from
@@ -1142,19 +1064,20 @@ void tst_QPlaceManagerJsonDb::searchByName()
     brisbane.setName(QLatin1String("brisbane"));
     bradel.setName(QLatin1String("bradel"));
 
-    QList<QPlace> places;
-    places << adelaide << adel << ad << brisbane << bradel;
+    QList<QPlace *> places;
+    places << &adelaide << &adel << &ad << &brisbane << &bradel;
+    setVisibility(places, QtLocation::DeviceVisibility);
     doSavePlaces(places);
 
     //test that search has exhibits substring behaviour
     //and is case insensitive
     QPlaceSearchRequest request;
     request.setSearchTerm(QLatin1String("adel"));
-    QList<QPlaceSearchResult> results;
+    QList<QPlace> results;
     QVERIFY(doSearch(request, &results));
     QList<QPlace> expectedPlaces;
     expectedPlaces << adelaide << adel << bradel;
-    QVERIFY(compareResultsByName(results, expectedPlaces));
+    QVERIFY(PlaceManagerUtils::compare(results, expectedPlaces));
 
     //Search for a non-exisent place
     request.setSearchTerm(QLatin1String("Nowhere"));
@@ -1290,12 +1213,8 @@ void tst_QPlaceManagerJsonDb::searchByBox()
     QPlaceSearchRequest request;
     request.setSearchArea(QGeoBoundingBox(QGeoCoordinate(5.0, -5.0), QGeoCoordinate(-5.0, 5.0)));
 
-    QList<QPlaceSearchResult> results1;
-    doSearch(request, &results1);
     QList<QPlace> places1;
-    foreach (const QPlaceSearchResult  &result, results1)
-        places1.append(result.place());
-
+    doSearch(request, &places1);
     QCOMPARE(places1.size(), inBox1.size());
 
     QSet<QString> testSet1;
@@ -1498,24 +1417,19 @@ void tst_QPlaceManagerJsonDb::searchByCircle()
 
     qreal dist = QGeoCoordinate(0.0, 0.0).distanceTo(QGeoCoordinate(5.0, 5.0));
 
-    QList<QPlaceSearchResult> results;
-    QList<QPlace> places;
     for (int i = 0; i < testSets.size(); ++i) {
         QList<QGeoCoordinate> filterCoords = testSets.at(i).first;
         QList<QGeoCoordinate> plCoords = testSets.at(i).second;
 
         QPlaceSearchRequest request;
         for (int j = 0; j < filterCoords.size(); ++j) {
+            QList<QPlace> places;
             request.setSearchArea(QGeoBoundingCircle(filterCoords.at(j),dist));
 
-            if (i ==2 || i ==3) {
-                //TODO: Testing poles, ignore fo rnow
-                continue;
-            } else {
-                doSearch(request, &results);
-                foreach (const QPlaceSearchResult &result, results)
-                    places.append(result.place());
-            }
+            if (i ==2 || i ==3)
+                continue; //TODO: Testing poles, ignore for now
+            else
+                doSearch(request, &places);
 
             if (places.size() != plCoords.size()) {
                 for (int k = 0; k < places.size(); ++k)
@@ -1529,11 +1443,10 @@ void tst_QPlaceManagerJsonDb::searchByCircle()
             for (int k = 0; k < places.size(); ++k) {
                 QVERIFY(plCoords.contains(places.at(k).location().coordinate()));
             }
-            results.clear();
-            places.clear();
         }
     }
 
+    QList<QPlace> places;
     //--- Test error conditions and edge cases
     //try a circle that covers the north pole
     QPlaceSearchRequest request;
@@ -3466,282 +3379,6 @@ void tst_QPlaceManagerJsonDb::cleanup()
     QTRY_VERIFY_WITH_TIMEOUT(cleanSpy.count() == 1, Timeout);
 }
 
-bool tst_QPlaceManagerJsonDb::doSavePlace(const QPlace &place,
-                                          QPlaceReply::Error expectedError,
-                                          QString *placeId)
-{
-    QPlaceIdReply *saveReply = placeManager->savePlace(place);
-    bool isSuccessful = checkSignals(saveReply, expectedError);
-    if (placeId != 0) {
-        *placeId = saveReply->id();
-    }
-
-    if (saveReply->id().isEmpty() && expectedError == QPlaceReply::NoError) {
-        qWarning("ID is empty in reply for save operation");
-        qWarning() << "Error string = " << saveReply->errorString();
-        isSuccessful = false;
-    }
-
-    if (!isSuccessful)
-        qWarning() << "Error string = " << saveReply->errorString();
-
-    return isSuccessful;
-}
-
-void tst_QPlaceManagerJsonDb::doSavePlaces(QList<QPlace> &places)
-{
-    QPlaceIdReply *saveReply;
-
-    foreach (QPlace place, places) {
-        saveReply = placeManager->savePlace(place);
-        QSignalSpy saveSpy(saveReply, SIGNAL(finished()));
-        QTRY_VERIFY_WITH_TIMEOUT(saveSpy.count() == 1, Timeout);
-        QCOMPARE(saveReply->error(), QPlaceReply::NoError);
-        saveSpy.clear();
-    }
-}
-
-void tst_QPlaceManagerJsonDb::doSavePlaces(const QList<QPlace *> &places)
-{
-    QPlaceIdReply *saveReply;
-
-    static int count= 0;
-    foreach (QPlace *place, places) {
-        count++;
-        saveReply = placeManager->savePlace(*place);
-        QSignalSpy saveSpy(saveReply, SIGNAL(finished()));
-        QTRY_VERIFY_WITH_TIMEOUT(saveSpy.count() == 1, Timeout);
-        QCOMPARE(saveReply->error(), QPlaceReply::NoError);
-        place->setPlaceId(saveReply->id());
-        saveSpy.clear();
-    }
-}
-
-bool tst_QPlaceManagerJsonDb::doRemovePlace(const QPlace &place,
-                                            QPlaceReply::Error expectedError)
-{
-    QPlaceIdReply *removeReply = placeManager->removePlace(place.placeId());
-    bool isSuccessful = false;
-    isSuccessful = checkSignals(removeReply, expectedError)
-                    && (removeReply->id() == place.placeId());
-
-    if (!isSuccessful)
-        qWarning() << "Place removal unsuccessful errorString = " << removeReply->errorString();
-
-    return isSuccessful;
-}
-
-bool tst_QPlaceManagerJsonDb::doSearch(const QPlaceSearchRequest &request,
-                                       QList<QPlaceSearchResult> *results, QPlaceReply::Error expectedError)
-{
-    QPlaceSearchReply *searchReply= placeManager->search(request);
-    bool success = checkSignals(searchReply, expectedError);
-    *results = searchReply->results();
-    return success;
-}
-
-bool tst_QPlaceManagerJsonDb::doSearch(const QPlaceSearchRequest &request,
-                                       QList<QPlace> *results, QPlaceReply::Error expectedError)
-{
-    bool success = false;
-    results->clear();
-    QList<QPlaceSearchResult> searchResults;
-    success = doSearch(request, &searchResults, expectedError);
-    foreach (const QPlaceSearchResult &searchResult, searchResults)
-        results->append(searchResult.place());
-    return success;
-}
-
-bool tst_QPlaceManagerJsonDb::doFetchDetails(QPlaceManager *manager,
-                                             QString placeId, QPlace *place,
-                                             QPlaceReply::Error expectedError)
-{
-    QPlaceDetailsReply *detailsReply = manager->getPlaceDetails(placeId);
-    bool success = checkSignals(detailsReply, expectedError, manager);
-    *place = detailsReply->place();
-
-    if (!success)
-        qDebug() << "Error string = " << detailsReply->errorString();
-
-    return success;
-}
-
-bool tst_QPlaceManagerJsonDb::doSaveCategory(const QPlaceCategory &category,
-                                          QPlaceReply::Error expectedError,
-                                          QString *categoryId)
-{
-    QPlaceIdReply *saveReply = placeManager->saveCategory(category);
-    bool isSuccessful = false;
-    isSuccessful = checkSignals(saveReply, expectedError);
-    if (categoryId != 0)
-        *categoryId = saveReply->id();
-    return isSuccessful;
-}
-
-bool tst_QPlaceManagerJsonDb::doSaveCategory(const QPlaceCategory &category,
-                                             const QString &parentId,
-                                          QPlaceReply::Error expectedError,
-                                          QString *categoryId)
-{
-    QPlaceIdReply *idReply = placeManager->saveCategory(category, parentId);
-    bool isSuccessful = checkSignals(idReply, expectedError)
-                        && (idReply->error() == expectedError);
-
-    if (categoryId != 0)
-        *categoryId = idReply->id();
-
-    if (!isSuccessful)
-        qDebug() << "Error string =" << idReply->errorString();
-    return isSuccessful;
-}
-
-bool tst_QPlaceManagerJsonDb::doRemoveCategory(const QPlaceCategory &category,
-                                          QPlaceReply::Error expectedError)
-{
-    QPlaceIdReply *idReply = placeManager->removeCategory(category.categoryId());
-
-    bool isSuccessful = checkSignals(idReply, expectedError) &&
-                        (idReply->error() == expectedError);
-    return isSuccessful;
-}
-
-bool tst_QPlaceManagerJsonDb::doFetchCategory(const QString &categoryId,
-                                              QPlaceCategory *category,
-                                              QPlaceReply::Error expectedError)
-{
-    Q_UNUSED(expectedError)
-    Q_ASSERT(category);
-    QPlaceReply * catInitReply = placeManager->initializeCategories();
-    bool isSuccessful = checkSignals(catInitReply, QPlaceReply::NoError);
-    *category = placeManager->category(categoryId);
-
-    if (!isSuccessful)
-        qDebug() << "Error initializing categories, error string = "
-                 << catInitReply->errorString();
-
-    if (category->categoryId() != categoryId)
-        isSuccessful = false;
-    return isSuccessful;
-}
-
-bool tst_QPlaceManagerJsonDb::checkSignals(QPlaceReply *reply, QPlaceReply::Error expectedError,
-                                           QPlaceManager *manager)
-{
-    QSignalSpy finishedSpy(reply, SIGNAL(finished()));
-    QSignalSpy errorSpy(reply, SIGNAL(error(QPlaceReply::Error,QString)));
-    QSignalSpy managerFinishedSpy(manager, SIGNAL(finished(QPlaceReply*)));
-    QSignalSpy managerErrorSpy(manager,SIGNAL(error(QPlaceReply*,QPlaceReply::Error,QString)));
-
-    if (expectedError != QPlaceReply::NoError) {
-        //check that we get an error signal from the reply
-        WAIT_UNTIL(errorSpy.count() == 1);
-        if (errorSpy.count() != 1) {
-            qWarning() << "Error signal for search operation not received";
-            return false;
-        }
-
-        //check that we get the correct error from the reply's signal
-        QPlaceReply::Error actualError = qvariant_cast<QPlaceReply::Error>(errorSpy.at(0).at(0));
-        if (actualError != expectedError) {
-            qWarning() << "Actual error code in reply signal does not match expected error code";
-            qWarning() << "Actual error code = " << actualError;
-            qWarning() << "Expected error coe =" << expectedError;
-            return false;
-        }
-
-        //check that we get an error  signal from the manager
-        WAIT_UNTIL(managerErrorSpy.count() == 1);
-        if (managerErrorSpy.count() !=1) {
-           qWarning() << "Error signal from manager for search operation not received";
-           return false;
-        }
-
-        //check that we get the correct reply instance in the error signal from the manager
-        if (qvariant_cast<QPlaceReply*>(managerErrorSpy.at(0).at(0)) != reply)  {
-            qWarning() << "Reply instance in error signal from manager is incorrect";
-            return false;
-        }
-
-        //check that we get the correct error from the signal of the manager
-        actualError = qvariant_cast<QPlaceReply::Error>(managerErrorSpy.at(0).at(1));
-        if (actualError != expectedError) {
-            qWarning() << "Actual error code from manager signal does not match expected error code";
-            qWarning() << "Actual error code =" << actualError;
-            qWarning() << "Expected error code = " << expectedError;
-            return false;
-        }
-    }
-
-    //check that we get a finished signal
-    WAIT_UNTIL(finishedSpy.count() == 1);
-    if (finishedSpy.count() !=1) {
-        qWarning() << "Finished signal from reply not received";
-        return false;
-    }
-
-    if (reply->error() != expectedError) {
-        qWarning() << "Actual error code does not match expected error code";
-        qWarning() << "Actual error code: " << reply->error();
-        qWarning() << "Expected error code" << expectedError;
-        return false;
-    }
-
-    if (expectedError == QPlaceReply::NoError && !reply->errorString().isEmpty()) {
-        qWarning() << "Expected error was no error but error string was not empty";
-        qWarning() << "Error string=" << reply->errorString();
-        return false;
-    }
-
-    //check that we get the finished signal from the manager
-    WAIT_UNTIL(managerFinishedSpy.count() == 1);
-    if (managerFinishedSpy.count() != 1) {
-        qWarning() << "Finished signal from manager not received";
-        return false;
-    }
-
-    //check that the reply instance in the finished signal from the manager is correct
-    if (qvariant_cast<QPlaceReply *>(managerFinishedSpy.at(0).at(0)) != reply) {
-        qWarning() << "Reply instance in finished signal from manager is incorrect";
-        return false;
-    }
-
-    return true;
-}
-
-bool tst_QPlaceManagerJsonDb::doMatch(const QPlaceMatchRequest &request,
-                                      QList<QPlace> *places,
-                                      QPlaceReply::Error expectedError)
-{
-    QPlaceMatchReply *reply = placeManager->matchingPlaces(request);
-    bool isSuccessful = checkSignals(reply, expectedError) &&
-                        (reply->error() == expectedError);
-    *places = reply->places();
-    return isSuccessful;
-}
-
-//Assumes all place names are unique
-bool tst_QPlaceManagerJsonDb::compareResultsByName(const QList<QPlaceSearchResult> &results,
-                                             const QList<QPlace> &expectedResults)
-{
-    QSet<QString> resultNames;
-    foreach (const QPlaceSearchResult &result, results)
-        resultNames.insert(result.place().name());
-
-    QSet<QString> expectedNames;
-    foreach (const QPlace &place, expectedResults)
-        expectedNames.insert(place.name());
-
-    bool isMatch = (resultNames == expectedNames);
-    if (results.count() != expectedResults.count() || !isMatch) {
-        qWarning() << "comparison of results by name does not match";
-        qWarning() << "result names: " << resultNames;
-        qWarning() << "expected names: " << expectedNames;
-        return false;
-    }
-
-    return isMatch;
-}
-
 QImage tst_QPlaceManagerJsonDb::dataUrlToImage(const QUrl &url)
 {
     QByteArray data = QByteArray::fromPercentEncoding(url.toEncoded());
@@ -3760,12 +3397,6 @@ QImage tst_QPlaceManagerJsonDb::dataUrlToImage(const QUrl &url)
     }
 
     return QImage();
-}
-
-void tst_QPlaceManagerJsonDb::setVisibility(QList<QPlace *> places, QtLocation::Visibility visibility)
-{
-    foreach (QPlace *place, places)
-        place->setVisibility(visibility);
 }
 
 QTEST_APPLESS_MAIN(tst_QPlaceManagerJsonDb)

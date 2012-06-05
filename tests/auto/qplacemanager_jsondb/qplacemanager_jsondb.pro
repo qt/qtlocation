@@ -1,10 +1,12 @@
 !no_system_tests:CONFIG += testcase
 TARGET = tst_qplacemanager_jsondb
 
-HEADERS += jsondbutils.h
+HEADERS += jsondbutils.h \
+           ..\placemanager_utils\placemanager_utils.h
 
 SOURCES += tst_qplacemanager_jsondb.cpp \
-           jsondbutils.cpp
+           jsondbutils.cpp \
+           ..\placemanager_utils\placemanager_utils.cpp
 
 QT += location testlib
 
