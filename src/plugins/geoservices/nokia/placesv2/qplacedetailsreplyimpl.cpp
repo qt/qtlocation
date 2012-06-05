@@ -145,7 +145,6 @@ void QPlaceDetailsReplyImpl::replyFinished()
 
     place.setPlaceId(object.value(QLatin1String("placeId")).toString());
 
-    //const QString refId = object.value(QLatin1String("refId")).toString();
     //const QUrl view = object.value(QLatin1String("view")).toString();
 
     place.setName(object.value(QLatin1String("name")).toString());

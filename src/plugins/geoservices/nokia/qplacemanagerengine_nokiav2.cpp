@@ -240,9 +240,8 @@ QPlaceManagerEngineNokiaV2::~QPlaceManagerEngineNokiaV2() {}
 
 QPlaceDetailsReply *QPlaceManagerEngineNokiaV2::getPlaceDetails(const QString &placeId)
 {
-    QUrl requestUrl(QString::fromLatin1("http://")
-                    + m_uriProvider->getCurrentHost()
-                    + QLatin1String("/v1/places/") + placeId);
+    QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
+                    QLatin1String("/places/v1/places/") + placeId);
 
     QUrlQuery queryItems;
 
@@ -265,9 +264,8 @@ QPlaceDetailsReply *QPlaceManagerEngineNokiaV2::getPlaceDetails(const QString &p
 QPlaceContentReply *QPlaceManagerEngineNokiaV2::getPlaceContent(const QString &placeId,
                                                               const QPlaceContentRequest &request)
 {
-    QUrl requestUrl(QString::fromLatin1("http://")
-                    + m_uriProvider->getCurrentHost()
-                    + QLatin1String("/v1/places/") + placeId + QLatin1String("/media/"));
+    QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
+                    QLatin1String("/places/v1/places/") + placeId + QLatin1String("/media/"));
 
     QNetworkReply *networkReply = 0;
 
@@ -395,9 +393,8 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
     if (!query.searchTerm().isEmpty()) {
         // search term query
-        QUrl requestUrl(QString::fromLatin1("http://")
-                        + m_uriProvider->getCurrentHost()
-                        + QLatin1String("/v1/discover/search"));
+        QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
+                        QLatin1String("/places/v1/discover/search"));
 
         QUrlQuery queryItems;
 
@@ -424,12 +421,11 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
         return reply;
     } else {
         // category search
-        // The request URL should be "/v1/discover/explore" but that returns both places and
+        // The request URL should be "/places/v1/discover/explore" but that returns both places and
         // clusters of places.  We don't support clusters so we use the undocumented
-        // "/v1/discover/explore/places" instead which only returns places.
-        QUrl requestUrl(QString::fromLatin1("http://")
-                        + m_uriProvider->getCurrentHost()
-                        + QLatin1String("/v1/discover/explore/places"));
+        // "/places/v1/discover/explore/places" instead which only returns places.
+        QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
+                        QLatin1String("/places/v1/discover/explore/places"));
 
         QUrlQuery queryItems;
 
@@ -470,9 +466,9 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::search(const QPlaceSearchRequest 
 
 QPlaceSearchReply *QPlaceManagerEngineNokiaV2::recommendations(const QString &placeId, const QPlaceSearchRequest &query)
 {
-    QUrl requestUrl(QString::fromLatin1("http://")
-                    + m_uriProvider->getCurrentHost()
-                    + QLatin1String("/v1/places/") + placeId + QLatin1String("/related/recommended"));
+    QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
+                    QLatin1String("/places/v1/places/") + placeId +
+                    QLatin1String("/related/recommended"));
 
     QUrlQuery queryItems;
 
@@ -501,9 +497,8 @@ QPlaceSearchReply *QPlaceManagerEngineNokiaV2::recommendations(const QString &pl
 
 QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const QPlaceSearchRequest &query)
 {
-    QUrl requestUrl(QString::fromLatin1("http://")
-                    + m_uriProvider->getCurrentHost()
-                    + QLatin1String("/v1/suggest"));
+    QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
+                    QLatin1String("/places/v1/suggest"));
 
     QUrlQuery queryItems;
 
@@ -605,9 +600,8 @@ QPlaceReply *QPlaceManagerEngineNokiaV2::initializeCategories()
         QStringList ids = m_tempTree.keys();
         ids.removeAll(QString());
         foreach (const QString &id, ids) {
-            QUrl requestUrl(QString::fromLatin1("http://")
-                            + m_uriProvider->getCurrentHost()
-                            + QLatin1String("/v1/categories/places/") + id);
+            QUrl requestUrl(QString::fromLatin1("http://") + m_uriProvider->getCurrentHost() +
+                            QLatin1String("/places/v1/categories/places/") + id);
             QNetworkReply *networkReply = sendRequest(requestUrl);
             connect(networkReply, SIGNAL(finished()), this, SLOT(categoryReplyFinished()));
             connect(networkReply, SIGNAL(error(QNetworkReply::NetworkError)),

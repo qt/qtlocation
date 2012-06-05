@@ -148,8 +148,6 @@ void QPlaceRecommendationReplyImpl::replyFinished()
         QUrl href = item.value(QLatin1String("href")).toString();
         place.setPlaceId(href.path().mid(18, 41));
 
-        //const QString refId = item.value(QLatin1String("refId")).toString();
-
         result.setPlace(place);
 
         results.append(result);
