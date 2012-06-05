@@ -60,10 +60,10 @@ QT_BEGIN_NAMESPACE
 
 namespace
 {
-    const QString CHINA_MCC = QStringLiteral("460");     // China mobile country code
-    const QString CHINA2_MCC = QStringLiteral("461");    // China mobile country code
-    const QString HONG_KONG_MCC = QStringLiteral("454"); // Hong Kong mobile country code
-    const QString MACAU_MCC = QStringLiteral("455");     // Macau mobile country code
+    const QString CHINA_MCC = QLatin1String("460");     // China mobile country code
+    const QString CHINA2_MCC = QLatin1String("461");    // China mobile country code
+    const QString HONG_KONG_MCC = QLatin1String("454"); // Hong Kong mobile country code
+    const QString MACAU_MCC = QLatin1String("455");     // Macau mobile country code
 }
 
 QGeoUriProvider::QGeoUriProvider(

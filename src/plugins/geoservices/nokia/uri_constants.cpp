@@ -49,12 +49,12 @@
 
 QT_BEGIN_NAMESPACE
 
-const QString ROUTING_HOST = QStringLiteral("route.nlp.nokia.com");
-const QString GEOCODING_HOST = QStringLiteral("loc.desktop.maps.svc.ovi.com");
-const QString GEOCODING_HOST_CN = QStringLiteral("pr.geo.maps.svc.nokia.com.cn");
-const QString PLACES_HOST = QStringLiteral("api.places.lbs.maps.nokia.com/places");
-const QString PLACES_HOST_CN = QStringLiteral("api.places.lbs.maps.nokia.com.cn/places");
-const QString MAP_TILES_HOST = QStringLiteral("1-4.maptile.lbs.ovi.com");
-const QString MAP_TILES_HOST_CN = QStringLiteral("a-k.maptile.maps.svc.nokia.com.cn");
+const QString ROUTING_HOST = QLatin1String("route.nlp.nokia.com");
+const QString GEOCODING_HOST = QLatin1String("loc.desktop.maps.svc.ovi.com");
+const QString GEOCODING_HOST_CN = QLatin1String("pr.geo.maps.svc.nokia.com.cn");
+const QString PLACES_HOST = QLatin1String("api.places.lbs.maps.nokia.com/places");
+const QString PLACES_HOST_CN = QLatin1String("api.places.lbs.maps.nokia.com.cn/places");
+const QString MAP_TILES_HOST = QLatin1String("1-4.maptile.lbs.ovi.com");
+const QString MAP_TILES_HOST_CN = QLatin1String("a-k.maptile.maps.svc.nokia.com.cn");
 
 QT_END_NAMESPACE
