@@ -39,66 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEFETCHER_H
-#define QGEOTILEFETCHER_H
 
-#include <QObject>
-#include <qlocationglobal.h>
-#include "qgeomaptype.h"
-#include "qgeotiledmappingmanagerengine.h"
+#ifndef QGEOTILEDMAPPINGMANAGER_P_H
+#define QGEOTILEDMAPPINGMANAGER_P_H
 
-QT_BEGIN_HEADER
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QSize>
+#include <QList>
+#include <QHash>
+#include <QSet>
+#include <QThread>
+#include "qgeotiledmappingmanagerengine_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapRequestOptions;
-
-class QGeoTileFetcherPrivate;
-class QGeoTiledMappingManagerEngine;
-class QGeoTiledMapReply;
+class QGeoTiledMapData;
+class QGeoTileCache;
 class QGeoTileSpec;
+class QGeoTileFetcher;
 
-class Q_LOCATION_EXPORT QGeoTileFetcher : public QObject
+class QGeoTiledMappingManagerEnginePrivate
 {
-    Q_OBJECT
-
 public:
-    QGeoTileFetcher(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
-    virtual ~QGeoTileFetcher();
-    void stopTimer();
+    QGeoTiledMappingManagerEnginePrivate();
+    ~QGeoTiledMappingManagerEnginePrivate();
 
-public Q_SLOTS:
-    void threadStarted();
-    void threadFinished();
-    void updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded, const QSet<QGeoTileSpec> &tilesRemoved);
-
-private Q_SLOTS:
-    void cancelTileRequests(const QSet<QGeoTileSpec> &tiles);
-    void requestNextTile();
-    void finished();
-
-Q_SIGNALS:
-    void tileFinished(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
-    void tileError(const QGeoTileSpec &spec, const QString &errorString);
-
-protected:
-    virtual bool init();
-    QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
+    QThread *thread_;
+    QSize tileSize_;
+    QSet<QGeoTiledMapData *> tileMaps_;
+    QHash<QGeoTiledMapData *, QSet<QGeoTileSpec> > mapHash_;
+    QHash<QGeoTileSpec, QSet<QGeoTiledMapData *> > tileHash_;
+    QGeoTiledMappingManagerEngine::CacheAreas cacheHint_;
+    QGeoTileCache *tileCache_;
+    QGeoTileFetcher *fetcher_;
 
 private:
-    QGeoTileFetcherPrivate *d_ptr;
-
-    virtual QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec) = 0;
-    void handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec);
-
-    Q_DECLARE_PRIVATE(QGeoTileFetcher)
-    Q_DISABLE_COPY(QGeoTileFetcher)
-
-    friend class QGeoTiledMappingManagerEngine;
+    Q_DISABLE_COPY(QGeoTiledMappingManagerEnginePrivate)
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

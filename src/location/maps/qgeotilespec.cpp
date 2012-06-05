@@ -38,9 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qgeotilespec.h"
+
 #include "qgeotilespec_p.h"
-#include <QDebug>
+#include "qgeotilespec_p_p.h"
+
+#include <QtCore/QDebug>
 
 QT_BEGIN_NAMESPACE
 

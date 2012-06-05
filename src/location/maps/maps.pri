@@ -4,16 +4,10 @@ INCLUDEPATH += maps
 QT += 3d
 
 PUBLIC_HEADERS += \
-                    maps/qgeocameracapabilities_p.h \
                     maps/qgeocodereply.h \
                     maps/qgeocodingmanagerengine.h \
                     maps/qgeocodingmanager.h \
                     maps/qgeomaneuver.h \
-                    maps/qgeotilefetcher.h \
-                    maps/qgeomappingmanager.h \
-                    maps/qgeomappingmanagerengine.h \
-                    maps/qgeotiledmappingmanagerengine.h \
-                    maps/qgeomaptype.h \
                     maps/qgeoroute.h \
                     maps/qgeoroutereply.h \
                     maps/qgeorouterequest.h \
@@ -21,13 +15,12 @@ PUBLIC_HEADERS += \
                     maps/qgeoroutingmanagerengine.h \
                     maps/qgeoroutingmanager.h \
                     maps/qgeoserviceproviderfactory.h \
-                    maps/qgeoserviceprovider.h \
-                    maps/qgeotiledmapreply.h \
-                    maps/qgeotilespec.h
+                    maps/qgeoserviceprovider.h
 
 PRIVATE_HEADERS += \
                     maps/qdoublevector2d_p.h \
                     maps/qdoublevector3d_p.h \
+                    maps/qgeocameracapabilities_p.h \
                     maps/qgeocameradata_p.h \
                     maps/qgeocameratiles_p.h \
                     maps/qgeocodereply_p.h \
@@ -44,10 +37,15 @@ PRIVATE_HEADERS += \
                     maps/qgeotiledmapdata_p.h \
                     maps/qgeotiledmapdata_p_p.h \
                     maps/qgeotilefetcher_p.h \
+                    maps/qgeotilefetcher_p_p.h \
                     maps/qgeomappingmanager_p.h \
+                    maps/qgeomappingmanager_p_p.h \
                     maps/qgeomappingmanagerengine_p.h \
+                    maps/qgeomappingmanagerengine_p_p.h \
                     maps/qgeotiledmappingmanagerengine_p.h \
+                    maps/qgeotiledmappingmanagerengine_p_p.h \
                     maps/qgeomaptype_p.h \
+                    maps/qgeomaptype_p_p.h \
                     maps/qgeoprojection_p.h \
                     maps/qgeoroute_p.h \
                     maps/qgeoroutereply_p.h \
@@ -58,7 +56,9 @@ PRIVATE_HEADERS += \
                     maps/qgeoserviceprovider_p.h \
                     maps/qgeotilecache_p.h \
                     maps/qgeotiledmapreply_p.h \
+                    maps/qgeotiledmapreply_p_p.h \
                     maps/qgeotilespec_p.h \
+                    maps/qgeotilespec_p_p.h \
                     maps/qcache3q_p.h
 
 SOURCES += \

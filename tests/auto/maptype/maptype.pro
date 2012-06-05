@@ -4,4 +4,4 @@ TARGET = tst_maptype
 
 SOURCES += tst_maptype.cpp
 
-QT += location testlib
+QT += location-private testlib

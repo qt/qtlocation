@@ -37,56 +37,99 @@
 **
 ** $QT_END_LICENSE$
 **
+** This file is part of the Nokia services plugin for the Maps and
+** Navigation API.  The use of these services, whether by use of the
+** plugin or by other means, is governed by the terms and conditions
+** described by the file NOKIA_TERMS_AND_CONDITIONS.txt in
+** this package, located in the directory containing the Nokia services
+** plugin source code.
+**
 ****************************************************************************/
 
+#ifndef QGEOTILEDMAPPINGMANAGERENGINE_H
+#define QGEOTILEDMAPPINGMANAGERENGINE_H
 
-#ifndef QGEOTILEDMAPPINGMANAGER_P_H
-#define QGEOTILEDMAPPINGMANAGER_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
+#include <QObject>
 #include <QSize>
-#include <QList>
-#include <QHash>
-#include <QSet>
-#include <QThread>
-#include "qgeotiledmappingmanagerengine.h"
+#include <QPair>
+#include <QtLocation/qlocationglobal.h>
+#include "qgeomaptype_p.h"
+#include "qgeomappingmanagerengine_p.h"
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+class QGeoTiledMappingManagerEnginePrivate;
+class QGeoMapRequestOptions;
+class QGeoTileFetcher;
+class QGeoTileTexture;
+
+class QGeoTileSpec;
 class QGeoTiledMapData;
 class QGeoTileCache;
-class QGeoTileSpec;
-class QGeoTileFetcher;
 
-class QGeoTiledMappingManagerEnginePrivate
+class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
 {
-public:
-    QGeoTiledMappingManagerEnginePrivate();
-    ~QGeoTiledMappingManagerEnginePrivate();
+    Q_OBJECT
 
-    QThread *thread_;
-    QSize tileSize_;
-    QSet<QGeoTiledMapData *> tileMaps_;
-    QHash<QGeoTiledMapData *, QSet<QGeoTileSpec> > mapHash_;
-    QHash<QGeoTileSpec, QSet<QGeoTiledMapData *> > tileHash_;
-    QGeoTiledMappingManagerEngine::CacheAreas cacheHint_;
-    QGeoTileCache *tileCache_;
-    QGeoTileFetcher *fetcher_;
+public:
+    enum CacheArea {
+        DiskCache = 0x01,
+        MemoryCache = 0x02,
+        AllCaches = 0xFF
+    };
+    Q_DECLARE_FLAGS(CacheAreas, CacheArea)
+
+    explicit QGeoTiledMappingManagerEngine(QObject *parent = 0);
+    virtual ~QGeoTiledMappingManagerEngine();
+
+    QGeoTileFetcher *tileFetcher();
+
+    virtual QGeoMap *createMap(QObject *parent);
+
+    void registerMap(QGeoTiledMapData *map);
+    void deregisterMap(QGeoTiledMapData *map);
+
+    QSize tileSize() const;
+
+    void updateTileRequests(QGeoTiledMapData *map,
+                            const QSet<QGeoTileSpec> &tilesAdded,
+                            const QSet<QGeoTileSpec> &tilesRemoved);
+
+    QGeoTileCache *tileCache(); // TODO: check this is still used
+    QSharedPointer<QGeoTileTexture> getTileTexture(const QGeoTileSpec &spec);
+
+
+    QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
+
+private Q_SLOTS:
+    void engineTileFinished(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
+    void engineTileError(const QGeoTileSpec &spec, const QString &errorString);
+
+Q_SIGNALS:
+    void tileError(const QGeoTileSpec &spec, const QString &errorString);
+
+protected:
+    void setTileFetcher(QGeoTileFetcher *fetcher);
+    void setTileSize(const QSize &tileSize);
+    void setCacheHint(QGeoTiledMappingManagerEngine::CacheAreas cacheHint);
+
+    QGeoTileCache *createTileCacheWithDir(const QString &cacheDirectory);
 
 private:
-    Q_DISABLE_COPY(QGeoTiledMappingManagerEnginePrivate)
+    QGeoTiledMappingManagerEnginePrivate *d_ptr;
+
+    Q_DECLARE_PRIVATE(QGeoTiledMappingManagerEngine)
+    Q_DISABLE_COPY(QGeoTiledMappingManagerEngine)
+
+    friend class QGeoTileFetcher;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoTiledMappingManagerEngine::CacheAreas)
+
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

@@ -40,19 +40,10 @@
 ****************************************************************************/
 
 #include "qdeclarativegeoserviceprovider_p.h"
-#include "qgeoserviceprovider.h"
-#include "qgeocodingmanager.h"
-#include "qgeomappingmanager.h"
-#include "qgeoroutingmanager.h"
 
-#include <QtCore/QStringList>
 #include <QtQml/QQmlInfo>
 
-#include <QDebug>
-
 QT_BEGIN_NAMESPACE
-
-
 
 /*!
     \qmlclass Plugin QDeclarativeGeoServiceProvider

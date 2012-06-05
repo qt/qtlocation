@@ -38,60 +38,57 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOTILESPEC_H
-#define QGEOTILESPEC_H
 
-#include <QtLocation/qlocationglobal.h>
-#include <QtCore/QMetaType>
-#include <QString>
+#ifndef QGEOTILEFETCHER_P_H
+#define QGEOTILEFETCHER_P_H
 
-#include <QSharedDataPointer>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QT_BEGIN_HEADER
+#include <QSize>
+#include <QList>
+#include <QMap>
+#include <QLocale>
+#include <QTimer>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QHash>
+#include "qgeomaptype_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTileSpecPrivate;
+class QGeoTileSpec;
+class QGeoTiledMapReply;
+class QGeoTileCache;
+class QGeoTiledMappingManagerEngine;
 
-class Q_LOCATION_EXPORT QGeoTileSpec
+class QGeoTileFetcherPrivate
 {
 public:
-    QGeoTileSpec();
-    QGeoTileSpec(const QGeoTileSpec &other);
-    QGeoTileSpec(const QString &plugin, int mapId, int zoom, int x, int y);
-    ~QGeoTileSpec();
+    explicit QGeoTileFetcherPrivate(QGeoTiledMappingManagerEngine *engine);
+    virtual ~QGeoTileFetcherPrivate();
 
-    QGeoTileSpec &operator = (const QGeoTileSpec &other);
+    QGeoTiledMappingManagerEngine *engine_;
 
-    QString plugin() const;
-
-    void setZoom(int zoom);
-    int zoom() const;
-
-    void setX(int x);
-    int x() const;
-
-    void setY(int y);
-    int y() const;
-
-    void setMapId(int mapId);
-    int mapId() const;
-
-    bool operator == (const QGeoTileSpec &rhs) const;
-    bool operator < (const QGeoTileSpec &rhs) const;
+    bool started_;
+    bool stopped_;
+    QTimer *timer_;
+    QMutex queueMutex_;
+    QList<QGeoTileSpec> queue_;
+    QHash<QGeoTileSpec, QGeoTiledMapReply *> invmap_;
 
 private:
-    QSharedDataPointer<QGeoTileSpecPrivate> d;
+    Q_DISABLE_COPY(QGeoTileFetcherPrivate)
 };
-
-Q_LOCATION_EXPORT unsigned int qHash(const QGeoTileSpec &spec);
-
-Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QGeoTileSpec &);
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QGeoTileSpec)
-
-QT_END_HEADER
-
-#endif // QGEOTILESPEC_H
+#endif

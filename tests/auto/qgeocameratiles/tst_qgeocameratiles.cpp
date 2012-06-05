@@ -41,12 +41,12 @@
 
 //TESTED_COMPONENT=src/location/maps
 
-#include "qgeotilespec.h"
+#include "qgeotilespec_p.h"
 #include "qgeocameratiles_p.h"
 #include "qgeocameradata_p.h"
 #include "qgeoprojection_p.h"
 #include "qdoublevector2d_p.h"
-#include "qgeomaptype.h"
+#include "qgeomaptype_p.h"
 
 #include <qtest.h>
 

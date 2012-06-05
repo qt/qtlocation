@@ -38,86 +38,50 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QGEOMAPTYPE_P_H
+#define QGEOMAPTYPE_P_H
 
-#ifndef QGEOMAPPINGMANAGERENGINE_H
-#define QGEOMAPPINGMANAGERENGINE_H
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-#include <QSize>
-#include <QPair>
-#include <QSet>
-#include <QList>
-#include <QMap>
+#include <QMetaType>
 #include <QString>
-#include <QVariant>
-#include <QtLocation/qlocationglobal.h>
-#include "qgeomaptype.h"
-#include "qgeomappingmanager.h"
+#include <QSharedData>
 
-QT_BEGIN_HEADER
+#include "qgeomaptype_p.h"
 
 QT_BEGIN_NAMESPACE
 
-
-
-class QLocale;
-
-class QGeoBoundingBox;
-class QGeoCoordinate;
-class QGeoMappingManagerPrivate;
-class QGeoMapRequestOptions;
-
-class QGeoMappingManagerEnginePrivate;
-class QGeoMapData;
-
-class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
+class QGeoMapTypePrivate : public QSharedData
 {
-    Q_OBJECT
 
 public:
-    explicit QGeoMappingManagerEngine(QObject *parent = 0);
-    virtual ~QGeoMappingManagerEngine();
+    QGeoMapTypePrivate();
+    QGeoMapTypePrivate(QGeoMapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
+    QGeoMapTypePrivate(const QGeoMapTypePrivate &other);
+    ~QGeoMapTypePrivate();
 
-    virtual QGeoMapData *createMapData() = 0;
+    QGeoMapTypePrivate &operator = (const QGeoMapTypePrivate &other);
 
-    QMap<QString, QVariant> parameters() const;
+    bool operator == (const QGeoMapTypePrivate &other) const;
 
-    QString managerName() const;
-    int managerVersion() const;
-
-    QList<QGeoMapType> supportedMapTypes() const;
-
-    QGeoCameraCapabilities cameraCapabilities();
-
-    void setLocale(const QLocale &locale);
-    QLocale locale() const;
-
-    bool isInitialized() const;
-
-Q_SIGNALS:
-    void initialized();
-
-protected:
-    void setSupportedMapTypes(const QList<QGeoMapType> &supportedMapTypes);
-    void setCameraCapabilities(const QGeoCameraCapabilities &capabilities);
-
-    void engineInitialized();
-
-private:
-    QGeoMappingManagerEnginePrivate *d_ptr;
-
-    void setManagerName(const QString &managerName);
-    void setManagerVersion(int managerVersion);
-
-    Q_DECLARE_PRIVATE(QGeoMappingManagerEngine)
-    Q_DISABLE_COPY(QGeoMappingManagerEngine)
-
-    friend class QGeoServiceProvider;
-    friend class QGeoServiceProviderPrivate;
+    QGeoMapType::MapStyle style_;
+    QString name_;
+    QString description_;
+    bool mobile_;
+    int mapId_;
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
+Q_DECLARE_METATYPE(QGeoMapTypePrivate)
 
-#endif
+#endif // QGEOMAPTYPE_P_H

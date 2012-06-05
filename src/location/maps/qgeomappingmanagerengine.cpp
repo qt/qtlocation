@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qgeomappingmanagerengine.h"
 #include "qgeomappingmanagerengine_p.h"
-#include "qgeotiledmapreply.h"
-#include "qgeotilespec.h"
+#include "qgeomappingmanagerengine_p_p.h"
+#include "qgeotiledmapreply_p.h"
+#include "qgeotilespec_p.h"
 
 #include <QThread>
 
@@ -53,6 +53,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-impl
     \since Qt Location 5.0
+    \internal
 
     \brief Provides support functionality for map display with QGeoServiceProvider.
 
@@ -206,6 +207,6 @@ QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate()
 
 QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 
-#include "moc_qgeomappingmanagerengine.cpp"
+#include "moc_qgeomappingmanagerengine_p.cpp"
 
 QT_END_NAMESPACE

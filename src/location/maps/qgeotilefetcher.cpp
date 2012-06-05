@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#include "qgeomappingmanagerengine.h"
-#include "qgeotilefetcher.h"
+#include "qgeomappingmanagerengine_p.h"
 #include "qgeotilefetcher_p.h"
-#include "qgeotiledmapreply.h"
-#include "qgeotilespec.h"
+#include "qgeotilefetcher_p_p.h"
+#include "qgeotiledmapreply_p.h"
+#include "qgeotilespec_p.h"
 #include "qgeotiledmapdata_p.h"
 
 QT_BEGIN_NAMESPACE

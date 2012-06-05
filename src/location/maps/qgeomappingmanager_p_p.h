@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILESPEC_H
-#define QGEOTILESPEC_H
+#ifndef QGEOMAPPINGMANAGER_P_H
+#define QGEOMAPPINGMANAGER_P_H
 
 //
 //  W A R N I N G
@@ -53,57 +53,26 @@
 // We mean it.
 //
 
-#include <QtLocation/qlocationglobal.h>
-#include <QtCore/QMetaType>
-#include <QString>
-
-#include <QSharedDataPointer>
-
-QT_BEGIN_HEADER
+#include <QSize>
+#include <QList>
+#include <QHash>
+#include <QSet>
+#include <QThread>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTileSpecPrivate;
-
-class Q_LOCATION_EXPORT QGeoTileSpec
+class QGeoMappingManagerPrivate
 {
 public:
-    QGeoTileSpec();
-    QGeoTileSpec(const QGeoTileSpec &other);
-    QGeoTileSpec(const QString &plugin, int mapId, int zoom, int x, int y);
-    ~QGeoTileSpec();
+    QGeoMappingManagerPrivate();
+    ~QGeoMappingManagerPrivate();
 
-    QGeoTileSpec &operator = (const QGeoTileSpec &other);
-
-    QString plugin() const;
-
-    void setZoom(int zoom);
-    int zoom() const;
-
-    void setX(int x);
-    int x() const;
-
-    void setY(int y);
-    int y() const;
-
-    void setMapId(int mapId);
-    int mapId() const;
-
-    bool operator == (const QGeoTileSpec &rhs) const;
-    bool operator < (const QGeoTileSpec &rhs) const;
+    QGeoMappingManagerEngine *engine;
 
 private:
-    QSharedDataPointer<QGeoTileSpecPrivate> d;
+    Q_DISABLE_COPY(QGeoMappingManagerPrivate)
 };
-
-Q_LOCATION_EXPORT unsigned int qHash(const QGeoTileSpec &spec);
-
-Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QGeoTileSpec &);
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QGeoTileSpec)
-
-QT_END_HEADER
-
-#endif // QGEOTILESPEC_H
+#endif

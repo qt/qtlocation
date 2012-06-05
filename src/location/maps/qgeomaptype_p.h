@@ -38,8 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QGEOMAPTYPE_P_H
-#define QGEOMAPTYPE_P_H
+
+#ifndef QGEOMAPTYPE_H
+#define QGEOMAPTYPE_H
 
 //
 //  W A R N I N G
@@ -52,36 +53,54 @@
 // We mean it.
 //
 
-#include <QMetaType>
+#include <QtLocation/qlocationglobal.h>
 #include <QString>
-#include <QSharedData>
+#include <QSharedDataPointer>
 
-#include "qgeomaptype.h"
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapTypePrivate : public QSharedData
+class QGeoMapTypePrivate;
+
+class Q_LOCATION_EXPORT QGeoMapType
 {
 
 public:
-    QGeoMapTypePrivate();
-    QGeoMapTypePrivate(QGeoMapType::MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
-    QGeoMapTypePrivate(const QGeoMapTypePrivate &other);
-    ~QGeoMapTypePrivate();
+    enum MapStyle {
+        NoMap = 0,
+        StreetMap,
+        SatelliteMapDay,
+        SatelliteMapNight,
+        TerrainMap,
+        HybridMap,
+        TransitMap,
+        GrayStreetMap,
+        CustomMap = 100
+    };
 
-    QGeoMapTypePrivate &operator = (const QGeoMapTypePrivate &other);
+    QGeoMapType();
+    QGeoMapType(const QGeoMapType &other);
+    QGeoMapType(MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
+    ~QGeoMapType();
 
-    bool operator == (const QGeoMapTypePrivate &other) const;
+    QGeoMapType &operator = (const QGeoMapType &other);
 
-    QGeoMapType::MapStyle style_;
-    QString name_;
-    QString description_;
-    bool mobile_;
-    int mapId_;
+    bool operator == (const QGeoMapType &other) const;
+    bool operator != (const QGeoMapType &other) const;
+
+    MapStyle style() const;
+    QString name() const;
+    QString description() const;
+    bool mobile() const;
+    int mapId() const;
+
+private:
+    QSharedDataPointer<QGeoMapTypePrivate> d_ptr;
 };
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QGeoMapTypePrivate)
+QT_END_HEADER
 
-#endif // QGEOMAPTYPE_P_H
+#endif // QGEOMAPTYPE_H

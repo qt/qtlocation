@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qgeomappingmanager.h"
 #include "qgeomappingmanager_p.h"
-#include "qgeomappingmanagerengine.h"
-#include "qgeotiledmapreply.h"
+#include "qgeomappingmanager_p_p.h"
+#include "qgeomappingmanagerengine_p.h"
+#include "qgeotiledmapreply_p.h"
 #include "qgeocameracapabilities_p.h"
 
 
@@ -58,6 +58,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-maps
     \since Qt Location 5.0
+    \internal
 
     \brief The QGeoMappingManager class provides support for displaying
     and interacting with maps.
@@ -190,6 +191,6 @@ QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
     engine = 0;
 }
 
-#include "moc_qgeomappingmanager.cpp"
+#include "moc_qgeomappingmanager_p.cpp"
 
 QT_END_NAMESPACE

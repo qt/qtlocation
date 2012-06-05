@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgeomaptype.h"
 #include "qgeomaptype_p.h"
+#include "qgeomaptype_p_p.h"
 
 QT_BEGIN_NAMESPACE
 

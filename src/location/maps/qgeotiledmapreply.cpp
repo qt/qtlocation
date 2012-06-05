@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmapreply.h"
 #include "qgeotiledmapreply_p.h"
+#include "qgeotiledmapreply_p_p.h"
 
 #include <qdebug.h>
 
@@ -50,6 +50,7 @@ QT_BEGIN_NAMESPACE
     \inmodule QtLocation
     \ingroup QtLocation-impl
     \since Qt Location 5.0
+    \internal
 
     \brief The QGeoTiledMapReply class manages a tile fetch operation started
     by an instance of QGeoTiledManagerEngine.
@@ -318,6 +319,6 @@ QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error erro
 
 QGeoTiledMapReplyPrivate::~QGeoTiledMapReplyPrivate() {}
 
-#include "moc_qgeotiledmapreply.cpp"
+#include "moc_qgeotiledmapreply_p.cpp"
 
 QT_END_NAMESPACE

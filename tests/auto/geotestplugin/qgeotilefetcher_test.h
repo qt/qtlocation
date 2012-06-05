@@ -42,10 +42,9 @@
 #ifndef QGEOTILEFETCHER_TEST_H
 #define QGEOTILEFETCHER_TEST_H
 
-#include <qgeotiledmapreply.h>
-
-#include "qgeotilefetcher.h"
-#include "qgeotilespec.h"
+#include "qgeotiledmapreply_p.h"
+#include "qgeotilefetcher_p.h"
+#include "qgeotilespec_p.h"
 
 #include <QLocale>
 #include <QPainter>

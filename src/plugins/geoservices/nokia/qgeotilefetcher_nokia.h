@@ -50,7 +50,8 @@
 #define QGEOTILEFETCHER_NOKIA_H
 
 #include "qgeoserviceproviderplugin_nokia.h"
-#include "qgeotilefetcher.h"
+
+#include <QtLocation/private/qgeotilefetcher_p.h>
 
 QT_BEGIN_NAMESPACE
 

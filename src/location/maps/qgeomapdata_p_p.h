@@ -63,7 +63,7 @@
 #include <QSharedPointer>
 
 #include "qgeocameradata_p.h"
-#include "qgeomaptype.h"
+#include "qgeomaptype_p.h"
 
 #include "qdoublevector3d_p.h"
 

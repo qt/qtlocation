@@ -39,66 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGMANAGER_H
-#define QGEOMAPPINGMANAGER_H
+#ifndef QGEOTILEDMAPREPLY_P_H
+#define QGEOTILEDMAPREPLY_P_H
 
-#include <QObject>
-#include <QSize>
-#include <QPair>
-#include <QtLocation/qlocationglobal.h>
-#include "qgeomaptype.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QT_BEGIN_HEADER
+#include "qgeotiledmapreply_p.h"
+#include "qgeotilespec_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMap;
-class QLocale;
-class QGeoBoundingBox;
-class QGeoCoordinate;
-class QGeoMappingManagerPrivate;
-class QGeoMapRequestOptions;
-class QGeoMappingManagerEngine;
-class QGeoCameraCapabilities;
-
-
-class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
+class QGeoTiledMapReplyPrivate
 {
-    Q_OBJECT
-
 public:
-    ~QGeoMappingManager();
+    QGeoTiledMapReplyPrivate(const QGeoTileSpec &spec);
+    QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error error, const QString &errorString);
+    ~QGeoTiledMapReplyPrivate();
 
-    QString managerName() const;
-    int managerVersion() const;
+    QGeoTiledMapReply::Error error;
+    QString errorString;
+    bool isFinished;
+    bool isCached;
 
-    QGeoMap *createMap(QObject *parent);
-
-    QList<QGeoMapType> supportedMapTypes() const;
-
-    bool isInitialized() const;
-
-    QGeoCameraCapabilities cameraCapabilities() const;
-
-    void setLocale(const QLocale &locale);
-    QLocale locale() const;
-
-Q_SIGNALS:
-    void initialized();
-
-protected:
-    QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
-
-private:
-    QGeoMappingManagerPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoMappingManager)
-
-    friend class QGeoServiceProvider;
-    friend class QGeoServiceProviderPrivate;
+    QGeoTileSpec spec;
+    QByteArray mapImageData;
+    QString mapImageFormat;
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

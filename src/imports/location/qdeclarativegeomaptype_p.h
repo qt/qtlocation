@@ -42,9 +42,9 @@
 #ifndef QDECLARATIVEGEOMAPTYPE_H
 #define QDECLARATIVEGEOMAPTYPE_H
 
+#include <QtCore/QObject>
 #include <QtQml/qqml.h>
-#include "qgeomaptype.h"
-#include <QObject>
+#include <QtLocation/private/qgeomaptype_p.h>
 
 QT_BEGIN_NAMESPACE
 

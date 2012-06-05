@@ -58,8 +58,8 @@
 #include "mapnode_p.h"
 #include <cmath>
 
-#include <qgeoserviceprovider.h>
-#include "qgeomappingmanager.h"
+#include <QtLocation/QGeoServiceProvider>
+#include <QtLocation/private/qgeomappingmanager_p.h>
 
 #include <QtQml/QQmlContext>
 #include <QtQml/qqmlinfo.h>

@@ -49,9 +49,9 @@
 #ifndef QGEOMAPREPLY_NOKIA_H
 #define QGEOMAPREPLY_NOKIA_H
 
-#include <qgeotilespec.h>
-#include <qgeotiledmapreply.h>
-#include <QNetworkReply>
+#include <QtNetwork/QNetworkReply>
+#include <QtLocation/private/qgeotilespec_p.h>
+#include <QtLocation/private/qgeotiledmapreply_p.h>
 
 QT_BEGIN_NAMESPACE
 

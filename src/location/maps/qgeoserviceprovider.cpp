@@ -44,11 +44,11 @@
 #include "qgeoserviceproviderfactory.h"
 
 #include "qgeocodingmanager.h"
-#include "qgeomappingmanager.h"
+#include "qgeomappingmanager_p.h"
 #include "qgeoroutingmanager.h"
 #include "qplacemanager.h"
 #include "qgeocodingmanagerengine.h"
-#include "qgeomappingmanagerengine.h"
+#include "qgeomappingmanagerengine_p.h"
 #include "qgeoroutingmanagerengine.h"
 #include "qplacemanagerengine.h"
 #include "qplacemanagerengine_p.h"
@@ -336,6 +336,8 @@ QGeocodingManager *QGeoServiceProvider::geocodingManager() const
     After this function has been called, error() and errorString() will
     report any errors which occurred during the construction of the
     QGeoMappingManager.
+
+    \internal
 */
 QGeoMappingManager *QGeoServiceProvider::mappingManager() const
 {

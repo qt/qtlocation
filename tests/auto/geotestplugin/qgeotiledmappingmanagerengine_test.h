@@ -43,10 +43,10 @@
 #define QGEOTILEDMAPPINGMANAGERENGINE_TEST_H
 
 #include <qgeoserviceprovider.h>
-#include <qgeotiledmappingmanagerengine.h>
+#include "qgeotiledmappingmanagerengine_p.h"
 #include <QLocale>
-#include <qgeotiledmapreply.h>
-#include "qgeomaptype.h"
+#include "qgeotiledmapreply_p.h"
+#include "qgeomaptype_p.h"
 #include "qgeocameracapabilities_p.h"
 
 #include "qgeotiledmapdata_test.h"

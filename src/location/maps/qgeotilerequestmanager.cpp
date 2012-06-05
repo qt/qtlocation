@@ -42,9 +42,9 @@
 
 #include <QSharedPointer>
 #include <QDebug>
-#include "qgeotilespec.h"
+#include "qgeotilespec_p.h"
 #include "qgeotiledmapdata_p.h"
-#include "qgeotiledmappingmanagerengine.h"
+#include "qgeotiledmappingmanagerengine_p.h"
 #include "qgeotilecache_p.h"
 
 QT_BEGIN_NAMESPACE

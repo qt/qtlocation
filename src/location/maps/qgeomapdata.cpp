@@ -43,7 +43,7 @@
 #include "qgeomap_p.h"
 
 #include "qgeotilecache_p.h"
-#include "qgeotilespec.h"
+#include "qgeotilespec_p.h"
 #include "qgeoprojection_p.h"
 #include "qgeocameracapabilities_p.h"
 #include "qgeomapcontroller_p.h"
@@ -54,7 +54,7 @@
 #include "qgeotilerequestmanager_p.h"
 #include "qgeomapscene_p.h"
 
-#include "qgeomappingmanager.h"
+#include "qgeomappingmanager_p.h"
 
 #include <QMutex>
 #include <QMap>

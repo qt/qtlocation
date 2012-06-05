@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEFETCHER_P_H
-#define QGEOTILEFETCHER_P_H
+#ifndef QGEOTILEFETCHER_H
+#define QGEOTILEFETCHER_H
 
 //
 //  W A R N I N G
@@ -53,42 +53,63 @@
 // We mean it.
 //
 
-#include <QSize>
-#include <QList>
-#include <QMap>
-#include <QLocale>
-#include <QTimer>
-#include <QMutex>
-#include <QMutexLocker>
-#include <QHash>
-#include "qgeomaptype.h"
+#include <QObject>
+#include <qlocationglobal.h>
+#include "qgeomaptype_p.h"
+#include "qgeotiledmappingmanagerengine_p.h"
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTileSpec;
-class QGeoTiledMapReply;
-class QGeoTileCache;
+class QGeoMapRequestOptions;
+
+class QGeoTileFetcherPrivate;
 class QGeoTiledMappingManagerEngine;
+class QGeoTiledMapReply;
+class QGeoTileSpec;
 
-class QGeoTileFetcherPrivate
+class Q_LOCATION_EXPORT QGeoTileFetcher : public QObject
 {
+    Q_OBJECT
+
 public:
-    explicit QGeoTileFetcherPrivate(QGeoTiledMappingManagerEngine *engine);
-    virtual ~QGeoTileFetcherPrivate();
+    QGeoTileFetcher(QGeoTiledMappingManagerEngine *engine, QObject *parent = 0);
+    virtual ~QGeoTileFetcher();
+    void stopTimer();
 
-    QGeoTiledMappingManagerEngine *engine_;
+public Q_SLOTS:
+    void threadStarted();
+    void threadFinished();
+    void updateTileRequests(const QSet<QGeoTileSpec> &tilesAdded, const QSet<QGeoTileSpec> &tilesRemoved);
 
-    bool started_;
-    bool stopped_;
-    QTimer *timer_;
-    QMutex queueMutex_;
-    QList<QGeoTileSpec> queue_;
-    QHash<QGeoTileSpec, QGeoTiledMapReply *> invmap_;
+private Q_SLOTS:
+    void cancelTileRequests(const QSet<QGeoTileSpec> &tiles);
+    void requestNextTile();
+    void finished();
+
+Q_SIGNALS:
+    void tileFinished(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format);
+    void tileError(const QGeoTileSpec &spec, const QString &errorString);
+
+protected:
+    virtual bool init();
+    QGeoTiledMappingManagerEngine::CacheAreas cacheHint() const;
 
 private:
-    Q_DISABLE_COPY(QGeoTileFetcherPrivate)
+    QGeoTileFetcherPrivate *d_ptr;
+
+    virtual QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec) = 0;
+    void handleReply(QGeoTiledMapReply *reply, const QGeoTileSpec &spec);
+
+    Q_DECLARE_PRIVATE(QGeoTileFetcher)
+    Q_DISABLE_COPY(QGeoTileFetcher)
+
+    friend class QGeoTiledMappingManagerEngine;
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

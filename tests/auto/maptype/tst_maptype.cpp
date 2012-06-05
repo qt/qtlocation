@@ -42,7 +42,7 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include <qgeomaptype.h>
+#include <QtLocation/private/qgeomaptype_p.h>
 
 QT_USE_NAMESPACE
 

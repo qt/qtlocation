@@ -39,71 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPREPLY_H
-#define QGEOTILEDMAPREPLY_H
+#ifndef QGEOMAPPINGMANAGERENGINE_P_H
+#define QGEOMAPPINGMANAGERENGINE_P_H
 
-#include <QtLocation/qlocationglobal.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-
-QT_BEGIN_HEADER
+#include <QSize>
+#include <QList>
+#include <QMap>
+#include <QLocale>
+#include <QTimer>
+#include <QHash>
+#include "qgeomaptype_p.h"
+#include "qgeomappingmanager_p.h"
+#include "qgeocameracapabilities_p.h"
 
 QT_BEGIN_NAMESPACE
 
-
-
 class QGeoTileSpec;
-class QGeoTiledMapReplyPrivate;
+class QGeoTiledMapReply;
 
-class Q_LOCATION_EXPORT QGeoTiledMapReply : public QObject
+class QGeoMappingManagerEnginePrivate
 {
-    Q_OBJECT
-
 public:
-    enum Error {
-        NoError,
-        CommunicationError,
-        ParseError,
-        UnknownError
-    };
+    QGeoMappingManagerEnginePrivate();
+    ~QGeoMappingManagerEnginePrivate();
 
-    QGeoTiledMapReply(const QGeoTileSpec &spec, QObject *parent = 0);
-    QGeoTiledMapReply(Error error, const QString &errorString, QObject *parent = 0);
-    virtual ~QGeoTiledMapReply();
+    QString managerName;
+    int managerVersion;
 
-    bool isFinished() const;
-    Error error() const;
-    QString errorString() const;
+    QList<QGeoMapType> supportedMapTypes;
+    QGeoCameraCapabilities capabilities_;
 
-    bool isCached() const;
-
-    QGeoTileSpec tileSpec() const;
-
-    QByteArray mapImageData() const;
-    QString mapImageFormat() const;
-
-    virtual void abort();
-
-Q_SIGNALS:
-    void finished();
-    void error(QGeoTiledMapReply::Error error, const QString &errorString = QString());
-
-protected:
-    void setError(Error error, const QString &errorString);
-    void setFinished(bool finished);
-
-    void setCached(bool cached);
-
-    void setMapImageData(const QByteArray &data);
-    void setMapImageFormat(const QString &format);
+    QLocale locale;
+    bool initialized;
 
 private:
-    QGeoTiledMapReplyPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoTiledMapReply)
+    Q_DISABLE_COPY(QGeoMappingManagerEnginePrivate)
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

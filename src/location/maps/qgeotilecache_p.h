@@ -61,8 +61,8 @@
 #include <QMutex>
 #include <QTimer>
 
-#include "qgeotilespec.h"
-#include "qgeotiledmappingmanagerengine.h"
+#include "qgeotilespec_p.h"
+#include "qgeotiledmappingmanagerengine_p.h"
 
 QT_BEGIN_NAMESPACE
 

@@ -42,7 +42,7 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include <qgeotilespec.h>
+#include "qgeotilespec_p.h"
 
 QT_USE_NAMESPACE
 

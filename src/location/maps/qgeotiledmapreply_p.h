@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPREPLY_P_H
-#define QGEOTILEDMAPREPLY_P_H
+#ifndef QGEOTILEDMAPREPLY_H
+#define QGEOTILEDMAPREPLY_H
 
 //
 //  W A R N I N G
@@ -53,28 +53,68 @@
 // We mean it.
 //
 
-#include "qgeotiledmapreply.h"
-#include "qgeotilespec.h"
+#include <QtLocation/qlocationglobal.h>
+
+#include <QObject>
+
+QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QGeoTiledMapReplyPrivate
+
+
+class QGeoTileSpec;
+class QGeoTiledMapReplyPrivate;
+
+class Q_LOCATION_EXPORT QGeoTiledMapReply : public QObject
 {
+    Q_OBJECT
+
 public:
-    QGeoTiledMapReplyPrivate(const QGeoTileSpec &spec);
-    QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error error, const QString &errorString);
-    ~QGeoTiledMapReplyPrivate();
+    enum Error {
+        NoError,
+        CommunicationError,
+        ParseError,
+        UnknownError
+    };
 
-    QGeoTiledMapReply::Error error;
-    QString errorString;
-    bool isFinished;
-    bool isCached;
+    QGeoTiledMapReply(const QGeoTileSpec &spec, QObject *parent = 0);
+    QGeoTiledMapReply(Error error, const QString &errorString, QObject *parent = 0);
+    virtual ~QGeoTiledMapReply();
 
-    QGeoTileSpec spec;
-    QByteArray mapImageData;
-    QString mapImageFormat;
+    bool isFinished() const;
+    Error error() const;
+    QString errorString() const;
+
+    bool isCached() const;
+
+    QGeoTileSpec tileSpec() const;
+
+    QByteArray mapImageData() const;
+    QString mapImageFormat() const;
+
+    virtual void abort();
+
+Q_SIGNALS:
+    void finished();
+    void error(QGeoTiledMapReply::Error error, const QString &errorString = QString());
+
+protected:
+    void setError(Error error, const QString &errorString);
+    void setFinished(bool finished);
+
+    void setCached(bool cached);
+
+    void setMapImageData(const QByteArray &data);
+    void setMapImageFormat(const QString &format);
+
+private:
+    QGeoTiledMapReplyPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoTiledMapReply)
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

@@ -1,7 +1,7 @@
 load(qt_module)
 
 TARGET = qtgeoservices_nokia
-QT += location network
+QT += location-private network
 
 contains(QT_CONFIG, location-china-support) {
     # China support

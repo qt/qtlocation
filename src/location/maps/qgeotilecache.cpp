@@ -40,9 +40,9 @@
 ****************************************************************************/
 #include "qgeotilecache_p.h"
 
-#include "qgeotilespec.h"
+#include "qgeotilespec_p.h"
 
-#include "qgeomappingmanager.h"
+#include "qgeomappingmanager_p.h"
 
 #include <QDir>
 #include <QMetaType>

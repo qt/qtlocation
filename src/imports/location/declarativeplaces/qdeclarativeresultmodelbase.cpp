@@ -41,6 +41,8 @@
 
 #include "qdeclarativeresultmodelbase_p.h"
 
+#include <QtLocation/QPlaceManager>
+
 QDeclarativeResultModelBase::QDeclarativeResultModelBase(QObject *parent)
 :   QDeclarativeSearchModelBase(parent), m_favoritesPlugin(0)
 {

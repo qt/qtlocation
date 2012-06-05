@@ -39,15 +39,15 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmappingmanagerengine.h"
 #include "qgeotiledmappingmanagerengine_p.h"
-#include "qgeotilefetcher.h"
+#include "qgeotiledmappingmanagerengine_p_p.h"
+#include "qgeotilefetcher_p.h"
 
 
 #include "qgeotiledmapdata_p.h"
 #include "qgeotilerequestmanager_p.h"
 #include "qgeotilecache_p.h"
-#include "qgeotilespec.h"
+#include "qgeotilespec_p.h"
 
 #include <QTimer>
 #include <QLocale>
@@ -336,6 +336,6 @@ QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate()
     thread_->exit();
 }
 
-#include "moc_qgeotiledmappingmanagerengine.cpp"
+#include "moc_qgeotiledmappingmanagerengine_p.cpp"
 
 QT_END_NAMESPACE

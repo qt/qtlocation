@@ -113,6 +113,7 @@ QGeoCameraCapabilitiesPrivate &QGeoCameraCapabilitiesPrivate::operator = (const 
     \inmodule QtLocation
     \ingroup QtLocation-impl
     \since Qt Location 5.0
+    \internal
 
     \brief The QGeoCameraCapabilities class describes the limitations on camera settings imposed by a mapping plugin.
 

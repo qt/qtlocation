@@ -49,9 +49,9 @@
 #ifndef QGEOTILEDMAPPINGMANAGERENGINE_NOKIA_H
 #define QGEOTILEDMAPPINGMANAGERENGINE_NOKIA_H
 
-#include "qgeotiledmappingmanagerengine.h"
+#include "qgeotiledmappingmanagerengine_p.h"
 #include "qgeoboundingbox.h"
-#include "qgeomaptype.h"
+#include "qgeomaptype_p.h"
 
 #include <QGeoServiceProvider>
 

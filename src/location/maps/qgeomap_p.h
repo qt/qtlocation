@@ -55,7 +55,7 @@
 #include <QObject>
 
 #include "qgeocameradata_p.h"
-#include "qgeomaptype.h"
+#include "qgeomaptype_p.h"
 #include "qgeocoordinateinterpolator_p.h"
 
 QT_BEGIN_NAMESPACE

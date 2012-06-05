@@ -50,7 +50,7 @@
 #include "qgeotiledmappingmanagerengine_nokia.h"
 #include "qgeotiledmapdata_nokia.h"
 #include "qgeotilefetcher_nokia.h"
-#include "qgeotilespec.h"
+#include "qgeotilespec_p.h"
 #include "qgeoprojection_p.h"
 #include "qdoublevector2d_p.h"
 #include "qgeotilecache_p.h"

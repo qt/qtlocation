@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QGEOCAMERACAPABILITIES_P_H
 #define QGEOCAMERACAPABILITIES_P_H
 

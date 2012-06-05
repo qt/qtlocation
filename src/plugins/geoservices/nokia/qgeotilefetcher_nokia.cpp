@@ -54,7 +54,7 @@
 #include "qgeouriprovider.h"
 #include "uri_constants.h"
 
-#include <qgeotilespec.h>
+#include <QtLocation/private/qgeotilespec_p.h>
 
 #include <QDebug>
 #include <QSize>

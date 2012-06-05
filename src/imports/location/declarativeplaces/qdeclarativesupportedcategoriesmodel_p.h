@@ -46,6 +46,7 @@
 
 #include <QObject>
 #include <QtCore/QStringList>
+#include <QtCore/QSharedPointer>
 #include <QAbstractListModel>
 #include <QQmlListProperty>
 #include <QtQml/QQmlParserStatus>

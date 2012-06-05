@@ -38,58 +38,45 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QGEOTILESPEC_P_H
+#define QGEOTILESPEC_P_H
 
-#ifndef QGEOMAPTYPE_H
-#define QGEOMAPTYPE_H
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QtLocation/qlocationglobal.h>
 #include <QString>
-#include <QSharedDataPointer>
-
-QT_BEGIN_HEADER
+#include <QSharedData>
 
 QT_BEGIN_NAMESPACE
 
-class QGeoMapTypePrivate;
-
-class Q_LOCATION_EXPORT QGeoMapType
+class QGeoTileSpecPrivate : public QSharedData
 {
-
 public:
-    enum MapStyle {
-        NoMap = 0,
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap,
-        HybridMap,
-        TransitMap,
-        GrayStreetMap,
-        CustomMap = 100
-    };
+    QGeoTileSpecPrivate();
+    QGeoTileSpecPrivate(const QGeoTileSpecPrivate &other);
+    QGeoTileSpecPrivate(const QString &plugin, int mapId, int zoom, int x, int y);
+    ~QGeoTileSpecPrivate();
 
-    QGeoMapType();
-    QGeoMapType(const QGeoMapType &other);
-    QGeoMapType(MapStyle style, const QString &name, const QString &description, bool mobile, int mapId);
-    ~QGeoMapType();
+    QGeoTileSpecPrivate &operator = (const QGeoTileSpecPrivate &other);
 
-    QGeoMapType &operator = (const QGeoMapType &other);
+    bool operator == (const QGeoTileSpecPrivate &rhs) const;
+    bool operator < (const QGeoTileSpecPrivate &rhs) const;
 
-    bool operator == (const QGeoMapType &other) const;
-    bool operator != (const QGeoMapType &other) const;
-
-    MapStyle style() const;
-    QString name() const;
-    QString description() const;
-    bool mobile() const;
-    int mapId() const;
-
-private:
-    QSharedDataPointer<QGeoMapTypePrivate> d_ptr;
+    QString plugin_;
+    int mapId_;
+    int zoom_;
+    int x_;
+    int y_;
 };
 
 QT_END_NAMESPACE
 
-QT_END_HEADER
-
-#endif // QGEOMAPTYPE_H
+#endif // QGEOTILESPEC_P_H

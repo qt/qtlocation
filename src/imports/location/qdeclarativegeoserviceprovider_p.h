@@ -42,15 +42,14 @@
 #ifndef QDECLARATIVEQGEOSERVICEPROVIDER_H
 #define QDECLARATIVEQGEOSERVICEPROVIDER_H
 
-#include <qgeocoordinate.h>
-#include <QtQuick/QQuickItem>
+#include <QtCore/QMap>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QVariant>
+#include <QtQml/qqml.h>
 #include <QtQml/QQmlParserStatus>
+#include <QtQml/QQmlListProperty>
 #include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/QPlaceManager>
-
-#include <QMap>
-#include <QString>
-#include <QVariant>
 
 QT_BEGIN_NAMESPACE
 
