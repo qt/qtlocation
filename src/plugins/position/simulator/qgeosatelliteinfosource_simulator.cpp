@@ -57,6 +57,11 @@ QGeoSatelliteInfoSourceSimulator::QGeoSatelliteInfoSourceSimulator(QObject *pare
     connect(requestTimer, SIGNAL(timeout()), this, SLOT(updateData()));
 }
 
+bool QGeoSatelliteInfoSourceSimulator::isConnected() const
+{
+    return Simulator::LocationConnection::ensureSimulatorConnection();
+}
+
 void QGeoSatelliteInfoSourceSimulator::startUpdates()
 {
     int interval = updateInterval();

@@ -67,7 +67,8 @@ namespace Simulator
         qt_registerLocationTypes();
         mWorker = mConnection->connectToServer(Connection::simulatorHostName(true), simulatorPort);
         if (!mWorker)
-            qFatal("Could not connect to server");
+            return;
+
         mWorker->addReceiver(this);
 
         // register for location notifications
@@ -85,9 +86,10 @@ namespace Simulator
         delete mConnection;
     }
 
-    void LocationConnection::ensureSimulatorConnection()
+    bool LocationConnection::ensureSimulatorConnection()
     {
         static LocationConnection locationConnection;
+        return locationConnection.mWorker;
     }
 
     void LocationConnection::initialLocationDataSent()

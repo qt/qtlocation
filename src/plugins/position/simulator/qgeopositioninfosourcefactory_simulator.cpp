@@ -48,5 +48,10 @@ QGeoPositionInfoSource *QGeoPositionInfoSourceFactorySimulator::positionInfoSour
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactorySimulator::satelliteInfoSource(QObject *parent)
 {
-    return new QGeoSatelliteInfoSourceSimulator(parent);
+    QGeoSatelliteInfoSourceSimulator *src = new QGeoSatelliteInfoSourceSimulator(parent);
+    if (!src->isConnected()) {
+        delete src;
+        src = 0;
+    }
+    return src;
 }

@@ -60,6 +60,8 @@ class QGeoSatelliteInfoSourceSimulator : public QGeoSatelliteInfoSource
 public:
     explicit QGeoSatelliteInfoSourceSimulator(QObject *parent = 0);
 
+    bool isConnected() const;
+
     virtual void setUpdateInterval(int msec);
     virtual int minimumUpdateInterval() const;
 

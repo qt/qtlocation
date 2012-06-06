@@ -57,8 +57,9 @@ namespace Simulator
     class LocationConnection : public QObject
     {
         Q_OBJECT
+
     public:
-        static void ensureSimulatorConnection();
+        static bool ensureSimulatorConnection();
         virtual ~LocationConnection();
 
     private:
