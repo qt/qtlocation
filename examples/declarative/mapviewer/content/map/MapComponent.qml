@@ -251,7 +251,6 @@ Map {
 //! [routemodel2]
 
         function clearAll() {
-            clear()
             routeInfoModel.update()
         }
 //! [routemodel3]

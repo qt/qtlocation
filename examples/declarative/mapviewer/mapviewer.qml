@@ -272,18 +272,21 @@ Item {
             plugin : map.plugin
             property int success: 0
 
-            onStatusChanged:{
+            onCountChanged: {
+                if (success == 1 && count == 1) {
+                    query = endAddress
+                    update();
+                }
+            }
+
+            onStatusChanged: {
                 if ((status == GeocodeModel.Ready) && (count == 1)) {
                     success++
                     if (success == 1){
                         startCoordinate.latitude = get(0).coordinate.latitude
                         startCoordinate.longitude = get(0).coordinate.longitude
-                        clear()
-                        query = endAddress
-                        update();
                     }
-                    if (success == 2)
-                    {
+                    if (success == 2) {
                         endCoordinate.latitude = get(0).coordinate.latitude
                         endCoordinate.longitude = get(0).coordinate.longitude
                         success = 0
@@ -310,7 +313,7 @@ Item {
         }
 
         onGoButtonClicked: {
-            var status = true
+            tempGeocodeModel.reset()
             messageDialog.state = ""
             if (routeDialog.byCoordinates) {
                 startCoordinate.latitude = routeDialog.startLatitude
