@@ -49,7 +49,7 @@
 #ifndef QPLACEMANAGERENGINE_NOKIAV2_H
 #define QPLACEMANAGERENGINE_NOKIAV2_H
 
-#include <QtCore/QWeakPointer>
+#include <QtCore/QPointer>
 #include <QtNetwork/QNetworkReply>
 #include <QtLocation/QPlaceManagerEngine>
 #include <QtLocation/QGeoServiceProvider>
@@ -132,7 +132,7 @@ private:
     QPlaceCategoryTree m_tempTree;
     QHash<QString, QString> m_restIdToIconHash;
 
-    QWeakPointer<QPlaceCategoriesReplyImpl> m_categoryReply;
+    QPointer<QPlaceCategoriesReplyImpl> m_categoryReply;
     QHash<QString, QNetworkReply *> m_categoryRequests;
 
     QString m_appId;

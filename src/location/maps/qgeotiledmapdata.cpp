@@ -265,7 +265,7 @@ QGeoTileCache *QGeoTiledMapDataPrivate::tileCache()
     return cache_;
 }
 
-QWeakPointer<QGeoTiledMappingManagerEngine> QGeoTiledMapDataPrivate::engine() const
+QPointer<QGeoTiledMappingManagerEngine> QGeoTiledMapDataPrivate::engine() const
 {
     return engine_;
 }

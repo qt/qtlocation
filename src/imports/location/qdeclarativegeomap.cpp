@@ -574,7 +574,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     // Any map items that were added before the plugin was ready
     // need to have setMap called again
-    foreach (const QWeakPointer<QDeclarativeGeoMapItemBase> &item, mapItems_) {
+    foreach (const QPointer<QDeclarativeGeoMapItemBase> &item, mapItems_) {
         if (item)
             item.data()->setMap(this, map_);
     }
@@ -1062,7 +1062,7 @@ void QDeclarativeGeoMap::addMapItem(QDeclarativeGeoMapItemBase *item)
 QList<QObject *> QDeclarativeGeoMap::mapItems()
 {
     QList<QObject *> ret;
-    foreach (const QWeakPointer<QDeclarativeGeoMapItemBase> &ptr, mapItems_) {
+    foreach (const QPointer<QDeclarativeGeoMapItemBase> &ptr, mapItems_) {
         if (ptr)
             ret << ptr.data();
     }
@@ -1083,7 +1083,7 @@ void QDeclarativeGeoMap::removeMapItem(QDeclarativeGeoMapItemBase *ptr)
     QLOC_TRACE0;
     if (!ptr || !map_)
         return;
-    QWeakPointer<QDeclarativeGeoMapItemBase> item(ptr);
+    QPointer<QDeclarativeGeoMapItemBase> item(ptr);
     if (!mapItems_.contains(item))
         return;
     updateMutex_.lock();

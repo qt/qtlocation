@@ -94,7 +94,7 @@ private:
     qreal scaleFactor();
     QDeclarativeCoordinate *coordinate_;
     QDeclarativeCoordinate internalCoordinate_;
-    QWeakPointer<QQuickItem> sourceItem_;
+    QPointer<QQuickItem> sourceItem_;
     QQuickItem *opacityContainer_;
     QPointF anchorPoint_;
     qreal zoomLevel_;

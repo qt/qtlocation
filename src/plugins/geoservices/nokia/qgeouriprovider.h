@@ -49,6 +49,7 @@
 #define QGEO_MOBILE_COUNTRY_TRACKER_H
 
 #include <QObject>
+#include <QPointer>
 
 QT_BEGIN_NAMESPACE
 

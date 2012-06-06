@@ -243,9 +243,9 @@ private:
     int touchTimer_;
 
     QGeoMap *map_;
-    QWeakPointer<QDeclarativeGeoMapCopyrightNotice> copyrightsWPtr_;
+    QPointer<QDeclarativeGeoMapCopyrightNotice> copyrightsWPtr_;
 
-    QList<QWeakPointer<QDeclarativeGeoMapItemBase> > mapItems_;
+    QList<QPointer<QDeclarativeGeoMapItemBase> > mapItems_;
 
     QMutex updateMutex_;
     friend class QDeclarativeGeoMapItem;

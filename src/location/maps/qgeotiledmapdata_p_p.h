@@ -61,6 +61,7 @@
 #include <QMatrix4x4>
 #include <QString>
 #include <QSharedPointer>
+#include <QPointer>
 
 #include "qgeocameradata_p.h"
 #include "qgeomaptype_p.h"
@@ -105,12 +106,12 @@ public:
     QSet<QGeoTileSpec> visibleTiles();
 
     void prefetchTiles();
-    QWeakPointer<QGeoTiledMappingManagerEngine> engine() const;
+    QPointer<QGeoTiledMappingManagerEngine> engine() const;
 
 private:
     QGeoTiledMapData *map_;
     QGeoTileCache *cache_;
-    QWeakPointer<QGeoTiledMappingManagerEngine> engine_;
+    QPointer<QGeoTiledMappingManagerEngine> engine_;
 
     QGeoCameraTiles *cameraTiles_;
     QGeoMapScene *mapScene_;
