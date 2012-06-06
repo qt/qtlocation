@@ -1,2 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS += declarative logfilepositionsource weatherinfo
+SUBDIRS += declarative weatherinfo
+!contains(QT_CONFIG, no-widgets): SUBDIRS += logfilepositionsource
