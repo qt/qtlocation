@@ -368,9 +368,8 @@ QObject *QDeclarativeGeocodeModel::bounds() const
 
 void QDeclarativeGeocodeModel::geocodeFinished(QGeocodeReply *reply)
 {
-    if (reply->error() != QGeocodeReply::NoError) {
+    if (reply != reply_ || reply->error() != QGeocodeReply::NoError)
         return;
-    }
     int oldCount = declarativeLocations_.count();
     setLocations(reply->locations());
     setErrorString("");
@@ -390,6 +389,8 @@ void QDeclarativeGeocodeModel::geocodeError(QGeocodeReply *reply,
         QGeocodeReply::Error error,
         const QString &errorString)
 {
+    if (reply != reply_)
+        return;
     Q_UNUSED(error);
     int oldCount = declarativeLocations_.count();
     if (oldCount > 0) {

@@ -544,9 +544,8 @@ void QDeclarativeGeoRouteModel::update()
 */
 void QDeclarativeGeoRouteModel::routingFinished(QGeoRouteReply *reply)
 {
-    if (reply->error() != QGeoRouteReply::NoError) {
+    if (reply != reply_ || reply->error() != QGeoRouteReply::NoError)
         return;
-    }
     beginResetModel();
     int oldCount = routes_.count();
     qDeleteAll(routes_);
@@ -576,6 +575,8 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
                                                QGeoRouteReply::Error error,
                                                const QString &errorString)
 {
+    if (reply != reply_)
+        return;
     setErrorString(errorString);
     setError(static_cast<QDeclarativeGeoRouteModel::RouteError>(error));
     setStatus(QDeclarativeGeoRouteModel::Error);
