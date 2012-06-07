@@ -183,6 +183,8 @@ QPlaceManager::QPlaceManager(QPlaceManagerEngine *engine, QObject *parent)
                 this, SIGNAL(categoryUpdated(QPlaceCategory,QString)), Qt::QueuedConnection);
         connect(d, SIGNAL(categoryRemoved(QString,QString)),
                 this, SIGNAL(categoryRemoved(QString,QString)), Qt::QueuedConnection);
+        connect(d, SIGNAL(dataChanged()),
+                this, SIGNAL(dataChanged()), Qt::QueuedConnection);
     } else {
         qFatal("The place manager engine that was set for this place manager was NULL.");
     }
@@ -454,7 +456,7 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
     The particular added place is specified by \a placeId.
 
     This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
-
+    \sa dataChanged()
 */
 
 /*!
@@ -464,6 +466,7 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
     The particular modified place is specified by \a placeId.
 
     This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
+    \sa dataChanged()
 */
 
 /*!
@@ -473,6 +476,7 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
     The particular place that has been removed is specified by \a placeId.
 
     This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
+    \sa dataChanged()
 */
 
 /*!
@@ -482,7 +486,7 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
     The parent of the \a category is specified by \a parentId.
 
     This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
-
+    \sa dataChanged()
 */
 
 /*!
@@ -492,6 +496,7 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
     The parent of the modified category is specified by \a parentId.
 
     This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
+    \sa dataChanged()
 */
 
 /*!
@@ -500,6 +505,18 @@ QPlaceMatchReply *QPlaceManager::matchingPlaces(const QPlaceMatchRequest &reques
     This signal is emitted when the category corresponding to \a categoryId has
     been removed from the manager's datastore.  The parent of the removed category
     is specified by \a parentId.
+
+    This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
+    \sa dataChanged()
+*/
+
+/*!
+    \fn QPlaceManager::dataChanged()
+    This signal is emitted by the manager if there are large scale changes to its
+    underlying datastore and the manager considers these changes radical enough
+    to require clients to reload all data.
+
+    If the signal is emitted, no other signals will be emitted for the associated changes.
 
     This signal is only emitted by managers that support the QPlaceManager::NotificationsFeature.
 */

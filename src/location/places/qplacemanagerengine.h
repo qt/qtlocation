@@ -105,6 +105,7 @@ Q_SIGNALS:
     void categoryAdded(const QPlaceCategory &category, const QString &parentCategoryId);
     void categoryUpdated(const QPlaceCategory &category, const QString &parentCategoryId);
     void categoryRemoved(const QString &categoryId, const QString &parentCategoryId);
+    void dataChanged();
 
 protected:
     QPlaceManager *manager() const;

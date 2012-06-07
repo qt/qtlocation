@@ -415,6 +415,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     The particular added place is specified by \a placeId.
 
     This signal is only emitted by manager engines that support the QPlaceManager::NotificationsFeature.
+    \sa dataChanged()
 */
 
 /*!
@@ -424,6 +425,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     The particular modified place is specified by \a placeId.
 
     This signal is only emitted by manager engines that support the QPlaceManager::NotificationsFeature.
+    \sa dataChanged()
 */
 
 /*!
@@ -433,6 +435,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     The particular place that has been removed is specified by \a placeId.
 
     This signal is only emitted by manager engines that support the QPlaceManager::NotificationsFeature.
+    \sa dataChanged()
 */
 
 /*!
@@ -442,7 +445,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     The parent of the \a category is specified by \a parentId.
 
     This signal is only emitted by manager engines that support the QPlaceManager::NotificationsFeature.
-
+    \sa dataChanged()
 */
 
 /*!
@@ -452,6 +455,7 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     The parent of the modified category is specified by \a parentId.
 
     This signal is only emitted by manager engines that support the QPlaceManager::NotificationsFeature.
+    \sa dataChanged()
 */
 
 /*!
@@ -462,6 +466,17 @@ QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
     is specified by \a parentId.
 
     This signal is only emitted by manager engines that support the QPlaceManager::NotificationsFeature.
+    \sa dataChanged()
+*/
+
+/*!
+ * \fn QPlaceManagerEngine::dataChanged()
+
+    This signal is emitted by the engine if there are large scale changes to its
+    underlying datastore and the engine considers these changes radical enough
+    to require clients to reload all data.
+
+    If the signal is emitted, no other signals will be emitted for the associated changes.
 */
 
 QT_END_NAMESPACE
