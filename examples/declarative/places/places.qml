@@ -339,6 +339,9 @@ Item {
                 recommendationModel.favoritesPlugin = null;
             }
 
+            placeSearchModel.relevanceHint = orderByDistance ? PlaceSearchModel.DistanceHint :
+                                                               orderByName ? PlaceSearchModel.LexicalPlaceNameHint :
+                                                                             PlaceSearchModel.UnspecifiedHint;
             placesPlugin.locales = locales.split(Qt.locale().groupSeparator);
             categoryModel.update();
             page.state = "";

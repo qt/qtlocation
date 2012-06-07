@@ -46,6 +46,8 @@ Dialog {
     id: dialog
 
     property alias isFavoritesEnabled: enableFavoritesButton.selected
+    property alias orderByDistance: orderByDistanceButton.selected
+    property alias orderByName: orderByNameButton.selected
     property alias locales: localesInput.text
     property int listItemHeight: 21
 
@@ -91,6 +93,27 @@ Dialog {
                 resetVisibility();
                 placesPlugin.nameChanged.connect(resetVisibility);
             }
+        }
+
+        Optionbutton {
+            id: orderByDistanceButton
+            width: parent.width
+            text: "Order by distance"
+            toggle: true
+            visible: true
+            onClicked:
+                if (selected)
+                    orderByNameButton.selected = false;
+        }
+        Optionbutton {
+            id: orderByNameButton
+            width: parent.width
+            text: "Order by name"
+            toggle: true
+            visible: true
+            onClicked:
+                if (selected)
+                    orderByDistanceButton.selected = false;
         }
     }
 }

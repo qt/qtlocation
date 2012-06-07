@@ -91,6 +91,16 @@ void SearchReply::start()
     db()->searchForPlaces(request(), this, SLOT(searchFinished()));
 }
 
+static bool lessThanDistance(const QPlaceSearchResult &p0, const QPlaceSearchResult &p1)
+{
+    return p0.distance() < p1.distance();
+}
+
+static bool lessThanName(const QPlaceSearchResult &p0, const QPlaceSearchResult &p1)
+{
+    return p0.place().name() <  p1.place().name();
+}
+
 void SearchReply::searchFinished()
 {
     QJsonDbRequest *jsonDbRequest = qobject_cast<QJsonDbRequest *>(sender());
@@ -102,60 +112,40 @@ void SearchReply::searchFinished()
     QPlaceSearchResult result;
     result.setType(QPlaceSearchResult::PlaceResult);
 
-    if (request().searchArea().type() == QGeoBoundingArea::CircleType) {
-        QGeoBoundingCircle circle(request().searchArea());
+    const QGeoBoundingArea &area = request().searchArea();
+    const QGeoBoundingArea::AreaType &type = area.type();
+    const QGeoCoordinate &center = type == QGeoBoundingArea::CircleType ? static_cast<QGeoBoundingCircle>(area).center() :
+                                   type == QGeoBoundingArea::BoxType ? static_cast<QGeoBoundingBox>(area).center() :
+                                                                       QGeoCoordinate();
+    const bool noDistanceFilter = type == QGeoBoundingArea::CircleType
+                                  && static_cast<QGeoBoundingCircle>(area).radius() < 0.0;
 
-        QPlace place;
-        for (int i=0; i < places.count(); ++i) {
-            place = places.at(i);
-
-            qreal dist = circle.center().distanceTo(place.location().coordinate());
-            if (dist < circle.radius() || qFuzzyCompare(dist, circle.radius()) || circle.radius() < 0.0) {
-                result.setDistance(dist);
-                result.setPlace(place);
-
-                if (request().relevanceHint() == QPlaceSearchRequest::DistanceHint) {
-                    //TODO: we can optimize this insertion sort
-                    bool added = false;
-                    for (int i=0; i < results.count(); ++i) {
-                        if (result.distance() < results.at(i).distance() || qFuzzyCompare(result.distance(),results.at(i).distance())) {
-                            results.insert(i, result);
-                            added = true;
-                            break;
-                        }
-                    }
-                    if (!added)
-                        results.append(result);
-
-                } else {
-                    results.append(result);
-                }
-            }
-        }
-        //TODO: we can optimize this using a bounding box to cull candidates
-        //      and then use distance comparisons for the rest.
-
-    } else if (request().searchArea().type() == QGeoBoundingArea::BoxType) {
-        //There seem to be some issues with using the comparison operators
-        //so for now we filter in the plugin code
-        QGeoBoundingBox box(request().searchArea());
-
-        const QGeoCoordinate bCenter = box.center();
-        foreach (const QPlace &place, places) {
-            const QGeoCoordinate &coord = place.location().coordinate();
-            qreal distance = bCenter.distanceTo(coord);
+    // First filter the results
+    foreach (const QPlace &place, places) {
+        const QGeoCoordinate &coord = place.location().coordinate();
+        if (noDistanceFilter || area.contains(coord)) {
+            // distance is invalid if center is invalid/not set
+            qreal distance = center.distanceTo(coord);
             result.setPlace(place);
             result.setDistance(distance);
-            results.append(result);
-        }
-    } else {
-        foreach (const QPlace &place, places) {
-            result.setPlace(place);
             results.append(result);
         }
     }
 
     setResults(results);
+
+    // Now sort the result set
+    switch (request().relevanceHint() ) {
+    case QPlaceSearchRequest::DistanceHint:
+        qSort(results.begin(), results.end(), lessThanDistance);
+        break;
+    case QPlaceSearchRequest::LexicalPlaceNameHint:
+        qSort(results.begin(), results.end(), lessThanName);
+        break;
+    default:
+        break;
+    }
+
 
     //See if we have to fetch any category data
     QStringList categoryUuids;
