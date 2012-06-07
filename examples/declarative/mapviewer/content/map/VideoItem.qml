@@ -78,14 +78,14 @@ MapQuickItem {  //to be used inside MapComponent only
             id: videoItem
             source: player
             anchors.fill: parent
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    if (player.playing)
-                        player.stop()
-                    else
-                        player.play()
-                }
+        }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                if (player.playing)
+                    player.stop()
+                else
+                    player.play()
             }
         }
     }
