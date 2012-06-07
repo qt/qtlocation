@@ -403,6 +403,7 @@ Map {
             }
 //! [routeinfodel1]
             Text {
+                id: instructionText
                 text: instruction
                 color: "#242424"
                 wrapMode: Text.Wrap
