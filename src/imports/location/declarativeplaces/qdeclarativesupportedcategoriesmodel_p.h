@@ -118,10 +118,12 @@ public:
     Status status() const;
     void setStatus(Status status);
 
+    using QAbstractItemModel::dataChanged;
 Q_SIGNALS:
     void pluginChanged();
     void hierarchicalChanged();
     void statusChanged();
+    void dataChanged();
 
 public Q_SLOTS:
     void update();

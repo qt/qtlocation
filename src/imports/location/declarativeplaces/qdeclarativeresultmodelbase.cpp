@@ -167,6 +167,30 @@ QVariant QDeclarativeResultModelBase::data(const QModelIndex &index, int role) c
     }
 }
 
+void QDeclarativeResultModelBase::initializePlugin(QDeclarativeGeoServiceProvider *plugin)
+{
+    //disconnect the manager of the old plugin if we have one
+    if (m_plugin) {
+        QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
+        if (serviceProvider) {
+            QPlaceManager *placeManager = serviceProvider->placeManager();
+            if (placeManager)
+                disconnect(placeManager, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
+        }
+    }
+
+    //connect to the manager of the new plugin.
+    if (plugin) {
+        QGeoServiceProvider *serviceProvider = plugin->sharedGeoServiceProvider();
+        if (serviceProvider) {
+            QPlaceManager *placeManager = serviceProvider->placeManager();
+            if (placeManager)
+                connect(placeManager, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
+        }
+    }
+    QDeclarativeSearchModelBase::initializePlugin(plugin);
+}
+
 /*!
     \internal
 */

@@ -566,7 +566,7 @@ void QDeclarativeSearchResultModel::initializePlugin(QDeclarativeGeoServiceProvi
             }
         }
     }
-    QDeclarativeSearchModelBase::initializePlugin(plugin);
+    QDeclarativeResultModelBase::initializePlugin(plugin);
 }
 
 /*!
@@ -630,4 +630,15 @@ int QDeclarativeSearchResultModel::getRow(const QString &placeId) const
 
     return -1;
 }
+
+/*!
+    \qmlsignal PlaceSearchResultModel::dataChanged()
+
+   Indicates that significant changes have been made to the underlying datastore.
+
+   Applications should act on this signal at their own discretion.  The data
+   provided by the model could be out of date and so the model should be reupdated
+   sometime, however an immediate reupdate may be disoncerting to users if the results
+   change without any action on their part.
+*/
 

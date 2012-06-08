@@ -279,6 +279,8 @@ void QDeclarativeSupportedCategoriesModel::setPlugin(QDeclarativeGeoServiceProvi
                            this, SLOT(updatedCategory(QPlaceCategory, QString)));
                 disconnect(placeManager, SIGNAL(categoryRemoved(QString, QString)),
                            this, SLOT(removedCategory(QString, QString)));
+                disconnect(placeManager, SIGNAL(dataChanged()),
+                           this, SIGNAL(dataChanged()));
             }
         }
     }
@@ -498,6 +500,8 @@ void QDeclarativeSupportedCategoriesModel::connectNotificationSignals()
             this, SLOT(updatedCategory(QPlaceCategory, QString)));
     connect(placeManager, SIGNAL(categoryRemoved(QString, QString)),
             this, SLOT(removedCategory(QString, QString)));
+    connect(placeManager, SIGNAL(dataChanged()),
+            this, SIGNAL(dataChanged()));
 }
 
 /*!
@@ -708,3 +712,14 @@ QPlaceManager *QDeclarativeSupportedCategoriesModel::manager(bool checkState)
 
     return placeManager;
 }
+
+/*!
+    \qmlsignal CategoryModel::dataChanged()
+
+   Indicates that significant changes have been made to the underlying datastore.
+
+   Applications should act on this signal at their own discretion.  The data
+   provided by the model could be out of date and so the model should be reupdated
+   sometime, however an immediate reupdate may be disoncerting to users if the categories
+   change without any action on their part.
+*/

@@ -76,6 +76,10 @@ Q_SIGNALS:
     void rowCountChanged();
     void favoritesPluginChanged();
     void favoritesMatchParametersChanged();
+    void dataChanged();
+
+protected:
+    virtual void initializePlugin(QDeclarativeGeoServiceProvider *plugin);
 
 protected Q_SLOTS:
     virtual void queryFinished();
