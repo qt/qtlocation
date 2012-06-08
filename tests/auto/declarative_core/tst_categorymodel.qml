@@ -146,6 +146,10 @@ TestCase {
             category = categoryModel.model.data(categoryModel.modelIndex(i),
                                                     CategoryModel.CategoryRole);
             compare(category.name, expectedNames[i]);
+
+            var parentCategory = categoryModel.model.data(categoryModel.modelIndex(i),
+                                                         CategoryModel.ParentCategoryRole);
+            compare(parentCategory.name, "Accommodation");
         }
 
         categoryModel.rootIndex = categoryModel.parentModelIndex();

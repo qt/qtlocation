@@ -75,6 +75,11 @@ QT_USE_NAMESPACE
             \li category
             \li \l Category
             \li Category object for the current item.
+      \row
+            \li parentCategory
+            \li \l Category
+            \li Parent category object for the current item.
+                If there is no parent, null is returned.
     \endtable
 
     The following example displays a flat list of all available categories:
@@ -235,6 +240,12 @@ QVariant QDeclarativeSupportedCategoriesModel::data(const QModelIndex &index, in
         return category->name();
     case CategoryRole:
         return QVariant::fromValue(category);
+    case ParentCategoryRole: {
+        if (!m_categoriesTree.keys().contains(node->parentId))
+            return QVariant();
+        else
+            return QVariant::fromValue(m_categoriesTree.value(node->parentId)->declCategory.data());
+    }
     default:
         return QVariant();
     }
@@ -244,6 +255,7 @@ QHash<int, QByteArray> QDeclarativeSupportedCategoriesModel::roleNames() const
 {
     QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
     roles.insert(CategoryRole, "category");
+    roles.insert(ParentCategoryRole, "parentCategory");
     return roles;
 }
 

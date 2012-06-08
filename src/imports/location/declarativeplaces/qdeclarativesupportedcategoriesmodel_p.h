@@ -101,7 +101,8 @@ public:
     QHash<int, QByteArray> roleNames() const;
 
     enum Roles {
-        CategoryRole = Qt::UserRole
+        CategoryRole = Qt::UserRole,
+        ParentCategoryRole
     };  //for internal usage only
 
     enum Status {Ready, Updating, Error};
