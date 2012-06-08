@@ -48,8 +48,6 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-
-
 #define Q_DECLARE_D_FUNC(Class) \
     inline Class##Private *d_func(); \
     inline const Class##Private *d_func() const;\
@@ -75,8 +73,8 @@ QT_BEGIN_NAMESPACE
             d_ptr = new Class##Private; \
     }
 
-#endif
-
 QT_END_NAMESPACE
 
 QT_END_HEADER
+
+#endif
