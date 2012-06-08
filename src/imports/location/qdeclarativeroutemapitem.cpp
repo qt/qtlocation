@@ -196,10 +196,10 @@ void QDeclarativeRouteMapItem::updateMapItem()
 
     geometry_.updateSourcePoints(*map(), path_);
     geometry_.updateScreenPoints(*map(), line_.width());
-    setWidth(geometry_.screenBoundingBox().width());
-    setHeight(geometry_.screenBoundingBox().height());
+    setWidth(geometry_.sourceBoundingBox().width());
+    setHeight(geometry_.sourceBoundingBox().height());
 
-    setPositionOnMap(path_.at(0), geometry_.firstPointOffset());
+    setPositionOnMap(path_.at(0), -1 * geometry_.sourceBoundingBox().topLeft());
     update();
 }
 
