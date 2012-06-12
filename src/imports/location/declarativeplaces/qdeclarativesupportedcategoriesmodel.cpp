@@ -720,6 +720,6 @@ QPlaceManager *QDeclarativeSupportedCategoriesModel::manager(bool checkState)
 
    Applications should act on this signal at their own discretion.  The data
    provided by the model could be out of date and so the model should be reupdated
-   sometime, however an immediate reupdate may be disoncerting to users if the categories
+   sometime, however an immediate reupdate may be disconcerting to users if the categories
    change without any action on their part.
 */

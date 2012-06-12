@@ -316,6 +316,6 @@ QPlaceReply *QDeclarativeRecommendationModel::sendQuery(QPlaceManager *manager,
 
    Applications should act on this signal at their own discretion.  The data
    provided by the model could be out of date and so the model should be reupdated
-   sometime, however an immediate reupdate may be disoncerting to users if the results
+   sometime, however an immediate reupdate may be disconcerting to users if the results
    change without any action on their part.
 */
