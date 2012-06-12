@@ -27,7 +27,7 @@
 
 /*!
 \page location-plugin-jsondb.html
-\title Qt Location JsonDb plugin
+\title Qt Location JsonDb plugin (technical preview only)
 \previouspage {Qt Location Module}
 
 \ingroup QtLocation-plugins
@@ -36,13 +36,18 @@
 
 \section1 Overview
 
-Included with Qt Location is a plugin which stores places in a Json Database (aka JsonDb).
-This plugin is intended to be used as a local store for user defined favorite places.
+Included with Qt Location is a plugin which stores places in a Qt Json Database
+(also known as JsonDb).  This plugin is intended to be used as a local store for
+user defined favorite places.
 
 The JsonDb GeoServices plugin can be loaded by using the plugin key "nokia_places_jsondb".
 
 Note that in order to use this plugin, the JsonDb daemon must be running in the
 background.
+
+This plugin is provided as a technical preview only, there is no guarantee that
+data integrity is maintined when upgrading to the official plugin release.  This plugin
+has a build dependency on Qt JsonDb.
 
 \section1 Parameters
 

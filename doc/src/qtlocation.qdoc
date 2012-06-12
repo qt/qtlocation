@@ -153,8 +153,8 @@ Places is
 the natural complement to Positioning, providing a source of geographic
 data about places of interest (POIs). As well as providing the location,
 size and other vitals about a POI, the Places API can also retrieve images,
-reviews and other rich content, and integrate with platform sources or
-a user's favorites to add user content, such as photos or a review, related to the place.
+reviews and other rich content related to the place.
+
 \table
 \row
     \li Places introduction:
