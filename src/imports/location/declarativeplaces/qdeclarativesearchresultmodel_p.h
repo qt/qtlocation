@@ -64,9 +64,9 @@ class QDeclarativeSearchResultModel : public QDeclarativeResultModelBase
 
 public:
     enum SearchResultType {
+        UnknownSearchResult = QPlaceSearchResult::UnknownSearchResult,
         PlaceResult = QPlaceSearchResult::PlaceResult,
-        CorrectionResult = QPlaceSearchResult::CorrectionResult,
-        UnknownSearchResult = QPlaceSearchResult::UnknownSearchResult
+        CorrectionResult = QPlaceSearchResult::CorrectionResult
     };
 
     enum RelevanceHint {

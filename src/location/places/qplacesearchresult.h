@@ -71,9 +71,9 @@ public:
     }
 
     enum SearchResultType {
+        UnknownSearchResult = 0,
         PlaceResult,
-        CorrectionResult,
-        UnknownSearchResult
+        CorrectionResult
     };
 
     qreal distance() const;
